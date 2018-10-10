@@ -1,4 +1,5 @@
 # Add all the application routes to the app.routes file
+
 ->         /tariff-classification-frontend              app.Routes
 ->         /                          health.Routes
 ->     	   /template                  template.Routes
