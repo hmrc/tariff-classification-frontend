@@ -7,8 +7,8 @@ val appName = "tariff-classification-frontend"
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin, SbtArtifactory)
   .settings(
-    majorVersion                     := 0,
-    libraryDependencies              ++= AppDependencies.compile ++ AppDependencies.test
+    majorVersion := 0,
+    libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test
   )
   .settings(publishingSettings: _*)
   .configs(IntegrationTest)
