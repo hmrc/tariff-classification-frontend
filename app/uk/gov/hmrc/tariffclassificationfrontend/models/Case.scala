@@ -16,9 +16,15 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.models
 
+import java.time.LocalDate
+
 case class Case
 (
   reference: String,
   description: String,
-  traderName: String
+  traderName: String,
+  createdDate: LocalDate,
+  status: String,
+  applicationType: String,
+  daysElapsed: Int
 )
