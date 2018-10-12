@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
+import java.time.LocalDate
+
 import javax.inject.{Inject, Singleton}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
@@ -29,9 +31,9 @@ import scala.concurrent.Future
 @Singleton
 class CasesController @Inject()(val messagesApi: MessagesApi, implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
-  val case1 = Case("1", "Laptops", "Pol's PCs")
-  val case2 = Case("2", "Pizza", "Ed's Eatery")
-  val case3 = Case("3", "Pasta", "Stefano's Supermarket")
+  val case1 = Case("1", "Laptops", "Pol's PCs", LocalDate.of(2018,10,1), "OPEN", "BTI", 1)
+  val case2 = Case("2", "Pizza", "Ed's Eatery", LocalDate.of(2018,10,5), "DRAFT", "BTI", 10)
+  val case3 = Case("3", "Pasta", "Stefano's Supermarket", LocalDate.of(2018,10,15), "OPEN", "BTI", 5)
 
   val cases = Action.async {
     implicit request => Future.successful(Ok(views.html.cases_list(Seq(case1, case2, case3))))
