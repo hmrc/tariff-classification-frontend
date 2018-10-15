@@ -2,3 +2,5 @@
 
 GET        /hello-world             @uk.gov.hmrc.tariffclassificationfrontend.controllers.HelloWorld.helloWorld
 GET        /cases                   @uk.gov.hmrc.tariffclassificationfrontend.controllers.CasesController.cases
+
+GET        /assets/*file            controllers.Assets.at(path="/public", file)
