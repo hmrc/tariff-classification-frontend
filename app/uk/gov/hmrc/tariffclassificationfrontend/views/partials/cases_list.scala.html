@@ -15,7 +15,7 @@
  *@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.models.Case
-
+@import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
 @(cases: Seq[Case])
 
 <table class="govuk-table">
@@ -33,10 +33,12 @@
     <tbody class="govuk-table__body">
         @for(c <- cases) {
             <tr class="govuk-table__row">
-                <th class="govuk-table__header" scope="row">@c.reference</th>
+                <th class="govuk-table__header" scope="row">
+                    <a href="#">@c.reference</a>
+                </th>
                 <td class="govuk-table__cell">@c.description</td>
                 <td class="govuk-table__cell">@c.traderName</td>
-                <td class="govuk-table__cell">@c.createdDate.toString</td>
+                <td class="govuk-table__cell">@Dates.format(c.createdDate)</td>
                 <td class="govuk-table__cell">@c.status</td>
                 <td class="govuk-table__cell">@c.applicationType</td>
                 <td class="govuk-table__cell">@c.daysElapsed</td>
