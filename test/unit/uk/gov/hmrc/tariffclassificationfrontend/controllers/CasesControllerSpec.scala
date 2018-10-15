@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
+import org.mockito.BDDMockito._
+import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{Matchers, WordSpec}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status
@@ -24,9 +26,10 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
+import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 
 
-class CasesControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite {
+class CasesControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite with MockitoSugar {
   val fakeRequest = FakeRequest("GET", "/")
 
   val env = Environment.simple()
@@ -34,10 +37,12 @@ class CasesControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuit
 
   val messageApi = new DefaultMessagesApi(env, configuration, new DefaultLangs(configuration))
   val appConfig = new AppConfig(configuration, env)
+  val service = mock[CasesService]
 
-  val controller = new CasesController(messageApi, appConfig)
+  val controller = new CasesController(service, messageApi, appConfig)
 
   "GET /cases" should {
+    given(service.getAllCases()).willReturn(Seq())
 
     "return 200" in {
       val result = controller.gateway(fakeRequest)

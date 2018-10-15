@@ -10,6 +10,9 @@ object AppDependencies {
   )
 
   val test = Seq(
+    "org.assertj"             % "assertj-core"              % "3.11.1"                % "test, it",
+    "org.mockito"             % "mockito-core"              % "2.23.0"                % "test",
+    "uk.gov.hmrc"             %% "hmrctest"                 % "3.0.0"                 % "test, it",
     "org.scalatest"           %% "scalatest"                % "3.0.4"                 % "test, it",
     "com.typesafe.play"       %% "play-test"                % current                 % "test, it",
     "org.pegdown"             %  "pegdown"                  % "1.6.0"                 % "test, it",
