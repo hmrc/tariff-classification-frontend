@@ -35,8 +35,8 @@ class CasesController @Inject()(val messagesApi: MessagesApi, implicit val appCo
   val case2 = Case("2", "Pizza", "Ed's Eatery", LocalDate.of(2018,10,5), "DRAFT", "BTI", 10)
   val case3 = Case("3", "Pasta", "Stefano's Supermarket", LocalDate.of(2018,10,15), "OPEN", "BTI", 5)
 
-  val cases = Action.async {
-    implicit request => Future.successful(Ok(views.html.cases_list(Seq(case1, case2, case3))))
+  val gateway = Action.async {
+    implicit request => Future.successful(Ok(views.html.gateway_cases(Seq(case1, case2, case3))))
   }
 
 }
