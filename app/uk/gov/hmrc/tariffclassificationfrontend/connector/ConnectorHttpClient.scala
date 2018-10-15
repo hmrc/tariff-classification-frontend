@@ -14,18 +14,24 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.tariffclassificationfrontend.service
+package uk.gov.hmrc.tariffclassificationfrontend.connector
 
-import javax.inject.Inject
-import uk.gov.hmrc.tariffclassificationfrontend.connector.CasesConnector
-import uk.gov.hmrc.tariffclassificationfrontend.models.Case
+import com.typesafe.config.Config
+import play.api.libs.ws.WSClient
+import uk.gov.hmrc.http._
+import uk.gov.hmrc.http.hooks.HttpHook
+import uk.gov.hmrc.play.http.ws._
 
-import scala.concurrent.Future
+class ConnectorHttpClient(config: Option[Config], client: WSClient) extends HttpGet with WSGet
+  with HttpPut with WSPut
+  with HttpDelete with WSDelete
+  with HttpPost with WSPost
+  with HttpPatch with WSPatch {
 
-class CasesService @Inject()(connector: CasesConnector){
+  override val hooks: Seq[HttpHook] = Seq.empty
 
-  def getAllCases(): Future[Seq[Case]] = {
-    connector.getAllCases()
-  }
+  override lazy val configuration: Option[Config] = config
+
+  override lazy val wsClient: WSClient = client
 
 }

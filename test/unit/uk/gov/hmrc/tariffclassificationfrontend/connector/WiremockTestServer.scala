@@ -14,18 +14,23 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.tariffclassificationfrontend.service
+package unit.uk.gov.hmrc.tariffclassificationfrontend.connector
 
-import javax.inject.Inject
-import uk.gov.hmrc.tariffclassificationfrontend.connector.CasesConnector
-import uk.gov.hmrc.tariffclassificationfrontend.models.Case
+import com.github.tomakehurst.wiremock.WireMockServer
+import com.github.tomakehurst.wiremock.client.WireMock
+import org.scalatest.{BeforeAndAfterEach, FlatSpec}
 
-import scala.concurrent.Future
 
-class CasesService @Inject()(connector: CasesConnector){
+trait WiremockTestServer extends FlatSpec with BeforeAndAfterEach {
 
-  def getAllCases(): Future[Seq[Case]] = {
-    connector.getAllCases()
+  val wireMockServer = new WireMockServer(20001)
+
+  override protected def beforeEach(): Unit = {
+    wireMockServer.start()
+    WireMock.configureFor("localhost", 20001)
   }
 
+  override protected def afterEach(): Unit = {
+    wireMockServer.stop()
+  }
 }

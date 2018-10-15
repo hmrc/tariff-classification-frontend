@@ -28,6 +28,8 @@ import play.api.{Configuration, Environment}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 
+import scala.concurrent.Future
+
 
 class CasesControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite with MockitoSugar {
   val fakeRequest = FakeRequest("GET", "/")
@@ -42,7 +44,7 @@ class CasesControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuit
   val controller = new CasesController(service, messageApi, appConfig)
 
   "GET /cases" should {
-    given(service.getAllCases()).willReturn(Seq())
+    given(service.getAllCases()).willReturn(Future.successful(Seq()))
 
     "return 200" in {
       val result = controller.gateway(fakeRequest)

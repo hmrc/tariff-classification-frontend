@@ -10,6 +10,8 @@ object AppDependencies {
   )
 
   val test = Seq(
+    "uk.gov.hmrc" %% "http-verbs-test" % "1.1.0" % "test",
+    "com.github.tomakehurst"  % "wiremock"                  % "2.19.0"                %  "test",
     "org.assertj"             % "assertj-core"              % "3.11.1"                % "test, it",
     "org.mockito"             % "mockito-core"              % "2.23.0"                % "test",
     "uk.gov.hmrc"             %% "hmrctest"                 % "3.0.0"                 % "test, it",

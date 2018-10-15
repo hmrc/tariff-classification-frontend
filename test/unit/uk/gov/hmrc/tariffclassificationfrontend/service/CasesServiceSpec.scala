@@ -21,10 +21,13 @@ import org.mockito.BDDMockito._
 import org.scalatest.FlatSpec
 import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.tariffclassificationfrontend.connector.CasesConnector
+import uk.gov.hmrc.tariffclassificationfrontend.models.Case
+
+import scala.concurrent.Future
 
 class CasesServiceSpec extends FlatSpec with MockitoSugar {
 
-  val cases = Seq()
+  val cases = mock[Future[Seq[Case]]]
   val connector = mock[CasesConnector]
 
   "Get All Cases" should "retrieve connector cases" in {

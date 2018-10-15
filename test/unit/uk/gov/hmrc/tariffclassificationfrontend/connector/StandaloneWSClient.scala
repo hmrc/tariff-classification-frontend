@@ -14,18 +14,16 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.tariffclassificationfrontend.service
+package unit.uk.gov.hmrc.tariffclassificationfrontend.connector
 
-import javax.inject.Inject
-import uk.gov.hmrc.tariffclassificationfrontend.connector.CasesConnector
-import uk.gov.hmrc.tariffclassificationfrontend.models.Case
+import akka.actor.ActorSystem
+import akka.stream.ActorMaterializer
+import play.api.libs.ws.WSClient
+import play.api.libs.ws.ahc.AhcWSClient
 
-import scala.concurrent.Future
+object StandaloneWSClient {
 
-class CasesService @Inject()(connector: CasesConnector){
-
-  def getAllCases(): Future[Seq[Case]] = {
-    connector.getAllCases()
-  }
-
+  implicit val actorSystem = ActorSystem()
+  implicit val materializer = ActorMaterializer()
+  val client: WSClient = AhcWSClient()
 }

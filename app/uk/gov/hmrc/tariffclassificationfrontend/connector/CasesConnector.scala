@@ -16,20 +16,25 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.connector
 
-import java.time.LocalDate
-
 import com.google.inject.Inject
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import play.api.libs.json.Json
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
 import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 
-class CasesConnector @Inject()(client: HttpClient) {
+import scala.concurrent.Future
 
-  val case1 = Case("1", "Laptops", "Pol's PCs", LocalDate.of(2018,10,1), "OPEN", "BTI", 1)
-  val case2 = Case("2", "Pizza", "Ed's Eatery", LocalDate.of(2018,10,5), "DRAFT", "BTI", 10)
-  val case3 = Case("3", "Pasta", "Stefano's Supermarket", LocalDate.of(2018,10,15), "OPEN", "BTI", 5)
+class CasesConnector @Inject()(baseURL: String, client: ConnectorHttpClient) {
 
-  def getAllCases(): Seq[Case] = {
-    Seq(case1, case2, case3)
+  implicit val hc = HeaderCarrier()
+  implicit val reads = Json.format[Case]
+
+  //val case1 = Case("1", "Laptops", "Pol's PCs", LocalDate.of(2018,10,1), "OPEN", "BTI", 1)
+  //val case2 = Case("2", "Pizza", "Ed's Eatery", LocalDate.of(2018,10,5), "DRAFT", "BTI", 10)
+  //val case3 = Case("3", "Pasta", "Stefano's Supermarket", LocalDate.of(2018,10,15), "OPEN", "BTI", 5)
+
+  def getAllCases(): Future[Seq[Case]] = {
+    client.GET[Seq[Case]](baseURL + "/binding-tariff-classification/cases")
   }
 
 }
