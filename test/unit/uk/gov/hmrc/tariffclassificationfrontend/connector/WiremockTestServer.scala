@@ -18,10 +18,11 @@ package unit.uk.gov.hmrc.tariffclassificationfrontend.connector
 
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
-import org.scalatest.{BeforeAndAfterEach, FlatSpec}
+import org.scalatest.BeforeAndAfterEach
+import uk.gov.hmrc.play.test.UnitSpec
 
 
-trait WiremockTestServer extends FlatSpec with BeforeAndAfterEach {
+trait WiremockTestServer extends UnitSpec with BeforeAndAfterEach {
 
   val wireMockServer = new WireMockServer(20001)
 

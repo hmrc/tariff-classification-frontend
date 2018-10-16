@@ -22,9 +22,9 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import org.apache.http.HttpStatus
 import org.assertj.core.api.Assertions._
 import org.mockito.BDDMockito._
-import org.scalatest.FlatSpec
 import org.scalatest.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.tariffclassificationfrontend.config.{AppConfig, WSHttp}
 import uk.gov.hmrc.tariffclassificationfrontend.connector.CasesConnector
 import uk.gov.hmrc.tariffclassificationfrontend.models.Case
@@ -32,41 +32,43 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 
-class CasesConnectorSpec extends FlatSpec with WiremockTestServer with MockitoSugar with GuiceOneAppPerSuite {
+class CasesConnectorSpec extends UnitSpec with WiremockTestServer with MockitoSugar with GuiceOneAppPerSuite {
 
   private val configuration = mock[AppConfig]
   private val client = new WSHttp()
 
-  "Connector" should "get empty cases" in {
-    given(configuration.bindingTariffClassificationUrl).willReturn("http://localhost:20001")
+  "Connector" should {
+    "get empty cases" in {
+      given(configuration.bindingTariffClassificationUrl).willReturn("http://localhost:20001")
 
-    stubFor(get(urlEqualTo("/cases?queue_id=gateway&assignee_id=none&sort-by=elapsed-days"))
-      .willReturn(aResponse()
-        .withStatus(HttpStatus.SC_OK)
-        .withBody("[]"))
-    )
+      stubFor(get(urlEqualTo("/cases?queue_id=gateway&assignee_id=none&sort-by=elapsed-days"))
+        .willReturn(aResponse()
+          .withStatus(HttpStatus.SC_OK)
+          .withBody("[]"))
+      )
 
-    val connector = new CasesConnector(configuration, client)
-    val response = connector.getGatewayCases
+      val connector = new CasesConnector(configuration, client)
+      val response = connector.getGatewayCases
 
-    val cases: Seq[Case] = Await.result(response, Duration(1, TimeUnit.SECONDS))
-    assertThat(cases.size).isZero
-  }
+      val cases: Seq[Case] = Await.result(response, Duration(1, TimeUnit.SECONDS))
+      assertThat(cases.size).isZero
+    }
 
-  "Connector" should "get non-empty cases" in {
-    given(configuration.bindingTariffClassificationUrl).willReturn("http://localhost:20001")
+    "get non-empty cases" in {
+      given(configuration.bindingTariffClassificationUrl).willReturn("http://localhost:20001")
 
-    stubFor(get(urlEqualTo("/cases?queue_id=gateway&assignee_id=none&sort-by=elapsed-days"))
-      .willReturn(aResponse()
-        .withStatus(HttpStatus.SC_OK)
-        .withBody(Payloads.GATEWAY_CASES))
-    )
+      stubFor(get(urlEqualTo("/cases?queue_id=gateway&assignee_id=none&sort-by=elapsed-days"))
+        .willReturn(aResponse()
+          .withStatus(HttpStatus.SC_OK)
+          .withBody(Payloads.GATEWAY_CASES))
+      )
 
-    val connector = new CasesConnector(configuration, client)
-    val response = connector.getGatewayCases
+      val connector = new CasesConnector(configuration, client)
+      val response = connector.getGatewayCases
 
-    val cases: Seq[Case] = Await.result(response, Duration(1, TimeUnit.SECONDS))
-    assertThat(cases.size).isOne
+      val cases: Seq[Case] = Await.result(response, Duration(1, TimeUnit.SECONDS))
+      assertThat(cases.size).isOne
+    }
   }
 
 }
