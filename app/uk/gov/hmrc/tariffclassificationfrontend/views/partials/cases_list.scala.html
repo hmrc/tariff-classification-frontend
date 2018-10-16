@@ -36,12 +36,12 @@
                 <th class="govuk-table__header" scope="row">
                     <a href="#">@c.reference</a>
                 </th>
-                <td class="govuk-table__cell">@c.description</td>
-                <td class="govuk-table__cell">@c.traderName</td>
+                <td class="govuk-table__cell">@c.application.goodName</td>
+                <td class="govuk-table__cell">@c.application.holder.traderName</td>
                 <td class="govuk-table__cell">@Dates.format(c.createdDate)</td>
                 <td class="govuk-table__cell">@c.status</td>
-                <td class="govuk-table__cell">@c.applicationType</td>
-                <td class="govuk-table__cell">@c.daysElapsed</td>
+                <td class="govuk-table__cell">@c.application.`type`</td>
+                <td class="govuk-table__cell">@c.elapsedDays</td>
             </tr>
         }
     </tbody>

@@ -16,15 +16,27 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.models
 
-import java.time.LocalDate
+import java.time.{Duration, ZonedDateTime}
 
 case class Case
 (
   reference: String,
-  description: String,
-  traderName: String,
-  createdDate: LocalDate,
   status: String,
-  applicationType: String,
-  daysElapsed: Int
-)
+  createdDate: ZonedDateTime = ZonedDateTime.now(),
+  adjustedCreateDate: ZonedDateTime = ZonedDateTime.now(),
+  closedDate: Option[ZonedDateTime] = None,
+  caseBoardsFileNumber: Option[String] = None,
+  assigneeId: Option[String] = None,
+  queueId: String = "gateway",
+  application: Application,
+  decision: Option[Decision] = None,
+  attachments: Seq[Attachment] = Seq.empty
+) {
+  def elapsedDays: Long = {
+    if(closedDate.isEmpty) {
+      Duration.between(adjustedCreateDate, ZonedDateTime.now()).toDays
+    } else {
+      Duration.between(adjustedCreateDate, closedDate.get).toDays
+    }
+  }
+}
