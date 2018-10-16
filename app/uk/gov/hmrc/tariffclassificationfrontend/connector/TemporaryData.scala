@@ -16,23 +16,15 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.connector
 
-import com.typesafe.config.Config
-import javax.inject.Inject
-import play.api.libs.ws.WSClient
-import uk.gov.hmrc.http._
-import uk.gov.hmrc.http.hooks.HttpHook
-import uk.gov.hmrc.play.http.ws._
+import java.time.LocalDate
 
-class ConnectorHttpClient @Inject()(config: Option[Config], client: WSClient) extends HttpGet with WSGet
-  with HttpPut with WSPut
-  with HttpDelete with WSDelete
-  with HttpPost with WSPost
-  with HttpPatch with WSPatch {
+import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 
-  override val hooks: Seq[HttpHook] = Seq.empty
+object TemporaryData {
 
-  override lazy val configuration: Option[Config] = config
+  private val case1 = Case("1", "Laptops", "Pol's PCs", LocalDate.of(2018,10,1), "OPEN", "BTI", 1)
+  private val case2 = Case("2", "Pizza", "Ed's Eatery", LocalDate.of(2018,10,5), "DRAFT", "BTI", 10)
+  private val case3 = Case("3", "Pasta", "Stefano's Supermarket", LocalDate.of(2018,10,15), "OPEN", "BTI", 5)
 
-  override lazy val wsClient: WSClient = client
-
+  val CASES = Seq(case1, case2, case3)
 }

@@ -16,32 +16,26 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.connector
 
-import java.time.LocalDate
-
 import com.google.inject.Inject
 import javax.inject.Singleton
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
-import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
+import uk.gov.hmrc.tariffclassificationfrontend.config.{AppConfig, WSHttp}
 import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 
 import scala.concurrent.Future
 
 @Singleton
-class CasesConnector @Inject()(configuration: AppConfig, client: ConnectorHttpClient) {
+class CasesConnector @Inject()(configuration: AppConfig, client: WSHttp) {
 
   implicit val hc = HeaderCarrier()
   implicit val reads = Json.format[Case]
 
-  val case1 = Case("1", "Laptops", "Pol's PCs", LocalDate.of(2018,10,1), "OPEN", "BTI", 1)
-  val case2 = Case("2", "Pizza", "Ed's Eatery", LocalDate.of(2018,10,5), "DRAFT", "BTI", 10)
-  val case3 = Case("3", "Pasta", "Stefano's Supermarket", LocalDate.of(2018,10,15), "OPEN", "BTI", 5)
-
   def getGatewayCases: Future[Seq[Case]] = {
     val url = configuration.bindingTariffClassificationUrl + "/cases?queue_id=gateway&assignee_id=none&sort-by=elapsed-days"
     client.GET[Seq[Case]](url)
-      .fallbackTo(Future.successful(Seq(case1, case2, case3)))
+      .fallbackTo(Future.successful(TemporaryData.CASES))
   }
 
 }

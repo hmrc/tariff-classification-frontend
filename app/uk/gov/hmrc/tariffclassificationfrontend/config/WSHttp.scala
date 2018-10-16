@@ -14,17 +14,14 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.tariffclassificationfrontend.ioc
+package uk.gov.hmrc.tariffclassificationfrontend.config
 
-import play.api.inject.{Binding, Module}
-import play.api.{Configuration, Environment}
-import uk.gov.hmrc.play.config.ServicesConfig
-import uk.gov.hmrc.tariffclassificationfrontend.config.APIDependencyConfig
+import uk.gov.hmrc.http.hooks.HttpHooks
+import uk.gov.hmrc.http.{HttpDelete, HttpGet, HttpPost, HttpPut}
+import uk.gov.hmrc.play.http.ws.{WSDelete, WSGet, WSPost, WSPut}
 
-class IOCModule extends Module {
-  override def bindings(environment: Environment, configuration: Configuration): Seq[Binding[_]] = {
-    Seq(
-      bind[ServicesConfig].to[APIDependencyConfig]
-    )
-  }
+class WSHttp extends HttpGet with WSGet with HttpPut with WSPut with HttpPost with WSPost with HttpDelete with WSDelete with Hooks
+
+trait Hooks extends HttpHooks{
+  override val hooks = Seq()
 }

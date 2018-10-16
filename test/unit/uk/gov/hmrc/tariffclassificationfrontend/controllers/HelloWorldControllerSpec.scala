@@ -29,7 +29,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.controllers.HelloWorld
 
 
 class HelloWorldControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite with MockitoSugar {
-  val fakeRequest = FakeRequest("GET", "/")
+  val fakeRequest = FakeRequest()
 
   val env = Environment.simple()
   val configuration = Configuration.load(env)
@@ -41,7 +41,7 @@ class HelloWorldControllerSpec extends WordSpec with Matchers with GuiceOneAppPe
 
   val controller = new HelloWorld(messageApi, appConfig)
 
-  "GET /" should {
+  "Hello World" should {
 
     "return 200" in {
       val result = controller.helloWorld(fakeRequest)

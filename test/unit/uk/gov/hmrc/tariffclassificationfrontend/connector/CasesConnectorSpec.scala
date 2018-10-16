@@ -24,17 +24,18 @@ import org.assertj.core.api.Assertions._
 import org.mockito.BDDMockito._
 import org.scalatest.FlatSpec
 import org.scalatest.mockito.MockitoSugar
-import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.connector.{CasesConnector, ConnectorHttpClient, StandaloneWSClient}
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import uk.gov.hmrc.tariffclassificationfrontend.config.{AppConfig, WSHttp}
+import uk.gov.hmrc.tariffclassificationfrontend.connector.CasesConnector
 import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 
-class CasesConnectorSpec extends FlatSpec with WiremockTestServer with MockitoSugar {
+class CasesConnectorSpec extends FlatSpec with WiremockTestServer with MockitoSugar with GuiceOneAppPerSuite {
 
   private val configuration = mock[AppConfig]
-  private val client = new ConnectorHttpClient(None, StandaloneWSClient.client)
+  private val client = new WSHttp()
 
   "Connector" should "get empty cases" in {
     given(configuration.bindingTariffClassificationUrl).willReturn("http://localhost:20001")

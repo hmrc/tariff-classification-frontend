@@ -32,7 +32,7 @@ import scala.concurrent.Future
 
 
 class CasesControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite with MockitoSugar {
-  private val fakeRequest = FakeRequest("GET", "/")
+  private val fakeRequest = FakeRequest()
   private val env = Environment.simple()
   private val configuration = Configuration.load(env)
   private val serviceConfig = mock[APIDependencyConfig]
@@ -42,7 +42,7 @@ class CasesControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuit
 
   private val controller = new CasesController(service, messageApi, appConfig)
 
-  "GET /cases" should {
+  "Gateway Cases" should {
     given(service.getAllCases).willReturn(Future.successful(Seq()))
 
     "return 200" in {
