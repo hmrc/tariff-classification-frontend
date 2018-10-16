@@ -25,12 +25,13 @@ import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
 @Singleton
-class CasesController @Inject()(casesService: CasesService, val messagesApi: MessagesApi, implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
+class CasesController @Inject()(casesService: CasesService,
+                                val messagesApi: MessagesApi,
+                                implicit val appConfig: AppConfig
+                               ) extends FrontendController with I18nSupport {
 
-  val gateway = Action.async {
-    implicit request => {
-      casesService.getAllCases.map(cases => Ok(views.html.gateway_cases(cases)))
-    }
+  val gateway: Action[AnyContent] = Action.async {
+    implicit request => casesService.getAllCases.map(cases => Ok(views.html.gateway_cases(cases)))
   }
 
 }
