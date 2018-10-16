@@ -40,7 +40,7 @@ class CasesConnector @Inject()(configuration: Configuration, client: ConnectorHt
 
   def getGatewayCases: Future[Seq[Case]] = {
     val baseURL = configuration.getString("client.binding-tariff-classification.base").get
-    val url = baseURL + "/binding-tariff-classification/cases?queue_id=gateway&assignee_id=none"
+    val url = baseURL + "/binding-tariff-classification/cases?queue_id=gateway&assignee_id=none&sort-by=elapsed-days"
     client.GET[Seq[Case]](url)
       .fallbackTo(Future.successful(Seq(case1, case2, case3)))
   }

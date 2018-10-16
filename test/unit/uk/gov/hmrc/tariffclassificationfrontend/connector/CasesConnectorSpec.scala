@@ -49,7 +49,7 @@ class CasesConnectorSpec extends FlatSpec with WiremockTestServer with MockitoSu
   "Connector" should "get empty cases" in {
     given(configuration.getString("client.binding-tariff-classification.base")).willReturn(Some("http://localhost:20001"))
 
-    stubFor(get(urlEqualTo("/binding-tariff-classification/cases?queue_id=gateway&assignee_id=none"))
+    stubFor(get(urlEqualTo("/binding-tariff-classification/cases?queue_id=gateway&assignee_id=none&sort-by=elapsed-days"))
       .willReturn(aResponse()
         .withStatus(HttpStatus.SC_OK)
         .withBody("[]"))
@@ -65,7 +65,7 @@ class CasesConnectorSpec extends FlatSpec with WiremockTestServer with MockitoSu
   "Connector" should "get non-empty cases" in {
     given(configuration.getString("client.binding-tariff-classification.base")).willReturn(Some("http://localhost:20001"))
 
-    stubFor(get(urlEqualTo("/binding-tariff-classification/cases?queue_id=gateway&assignee_id=none"))
+    stubFor(get(urlEqualTo("/binding-tariff-classification/cases?queue_id=gateway&assignee_id=none&sort-by=elapsed-days"))
       .willReturn(aResponse()
         .withStatus(HttpStatus.SC_OK)
         .withBody(Payloads.GATEWAY_CASES))
