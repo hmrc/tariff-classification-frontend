@@ -24,7 +24,7 @@ import org.assertj.core.api.Assertions._
 import org.mockito.BDDMockito._
 import org.scalatest.FlatSpec
 import org.scalatest.mockito.MockitoSugar
-import play.api.Configuration
+import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.connector.{CasesConnector, ConnectorHttpClient, StandaloneWSClient}
 import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 
@@ -33,23 +33,13 @@ import scala.concurrent.duration.Duration
 
 class CasesConnectorSpec extends FlatSpec with WiremockTestServer with MockitoSugar {
 
-  private val configuration = mock[Configuration]
+  private val configuration = mock[AppConfig]
   private val client = new ConnectorHttpClient(None, StandaloneWSClient.client)
 
-  "Connector" should "throw exception for missing client URL" in {
-    given(configuration.getString("client.binding-tariff-classification.base")).willReturn(None)
-
-    val connector = new CasesConnector(configuration, client)
-
-    assertThrows[NoSuchElementException] {
-      connector.getGatewayCases
-    }
-  }
-
   "Connector" should "get empty cases" in {
-    given(configuration.getString("client.binding-tariff-classification.base")).willReturn(Some("http://localhost:20001"))
+    given(configuration.bindingTariffClassificationUrl).willReturn("http://localhost:20001")
 
-    stubFor(get(urlEqualTo("/binding-tariff-classification/cases?queue_id=gateway&assignee_id=none&sort-by=elapsed-days"))
+    stubFor(get(urlEqualTo("/cases?queue_id=gateway&assignee_id=none&sort-by=elapsed-days"))
       .willReturn(aResponse()
         .withStatus(HttpStatus.SC_OK)
         .withBody("[]"))
@@ -63,9 +53,9 @@ class CasesConnectorSpec extends FlatSpec with WiremockTestServer with MockitoSu
   }
 
   "Connector" should "get non-empty cases" in {
-    given(configuration.getString("client.binding-tariff-classification.base")).willReturn(Some("http://localhost:20001"))
+    given(configuration.bindingTariffClassificationUrl).willReturn("http://localhost:20001")
 
-    stubFor(get(urlEqualTo("/binding-tariff-classification/cases?queue_id=gateway&assignee_id=none&sort-by=elapsed-days"))
+    stubFor(get(urlEqualTo("/cases?queue_id=gateway&assignee_id=none&sort-by=elapsed-days"))
       .willReturn(aResponse()
         .withStatus(HttpStatus.SC_OK)
         .withBody(Payloads.GATEWAY_CASES))

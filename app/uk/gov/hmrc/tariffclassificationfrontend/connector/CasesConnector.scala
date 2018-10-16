@@ -20,16 +20,16 @@ import java.time.LocalDate
 
 import com.google.inject.Inject
 import javax.inject.Singleton
-import play.api.Configuration
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
+import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 
 import scala.concurrent.Future
 
 @Singleton
-class CasesConnector @Inject()(configuration: Configuration, client: ConnectorHttpClient) {
+class CasesConnector @Inject()(configuration: AppConfig, client: ConnectorHttpClient) {
 
   implicit val hc = HeaderCarrier()
   implicit val reads = Json.format[Case]
@@ -39,8 +39,7 @@ class CasesConnector @Inject()(configuration: Configuration, client: ConnectorHt
   val case3 = Case("3", "Pasta", "Stefano's Supermarket", LocalDate.of(2018,10,15), "OPEN", "BTI", 5)
 
   def getGatewayCases: Future[Seq[Case]] = {
-    val baseURL = configuration.getString("client.binding-tariff-classification.base").get
-    val url = baseURL + "/binding-tariff-classification/cases?queue_id=gateway&assignee_id=none&sort-by=elapsed-days"
+    val url = configuration.bindingTariffClassificationUrl + "/cases?queue_id=gateway&assignee_id=none&sort-by=elapsed-days"
     client.GET[Seq[Case]](url)
       .fallbackTo(Future.successful(Seq(case1, case2, case3)))
   }

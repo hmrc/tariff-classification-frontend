@@ -14,19 +14,15 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.tariffclassificationfrontend.ioc
+package uk.gov.hmrc.tariffclassificationfrontend.config
 
-import play.api.inject.{Binding, Module}
+import javax.inject.{Inject, Singleton}
+import play.api.Mode.Mode
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.play.config.ServicesConfig
-import uk.gov.hmrc.tariffclassificationfrontend.config.APIDependencyConfig
-import uk.gov.hmrc.tariffclassificationfrontend.connector.{ConnectorHttpClient, StandaloneWSClient}
 
-class IOCModule extends Module {
-  override def bindings(environment: Environment, configuration: Configuration): Seq[Binding[_]] = {
-    Seq(
-      bind[ConnectorHttpClient].toInstance(new ConnectorHttpClient(None, StandaloneWSClient.client)),
-      bind[ServicesConfig].to[APIDependencyConfig]
-    )
-  }
+@Singleton
+class APIDependencyConfig @Inject()(override val runModeConfiguration: Configuration,
+                                    environment: Environment) extends ServicesConfig {
+  override protected def mode: Mode = environment.mode
 }

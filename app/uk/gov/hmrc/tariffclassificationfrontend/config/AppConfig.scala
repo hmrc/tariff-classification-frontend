@@ -17,13 +17,12 @@
 package uk.gov.hmrc.tariffclassificationfrontend.config
 
 import javax.inject.{Inject, Singleton}
-
-import play.api.{Configuration, Environment}
 import play.api.Mode.Mode
+import play.api.{Configuration, Environment}
 import uk.gov.hmrc.play.config.ServicesConfig
 
 @Singleton
-class AppConfig @Inject()(val runModeConfiguration: Configuration, environment: Environment) extends ServicesConfig {
+class AppConfig @Inject()(servicesConfig: ServicesConfig, val runModeConfiguration: Configuration, environment: Environment) extends ServicesConfig {
   override protected def mode: Mode = environment.mode
 
   private def loadConfig(key: String) = runModeConfiguration.getString(key).getOrElse(throw new Exception(s"Missing configuration key: $key"))
@@ -31,9 +30,10 @@ class AppConfig @Inject()(val runModeConfiguration: Configuration, environment: 
   private val contactHost = runModeConfiguration.getString(s"contact-frontend.host").getOrElse("")
   private val contactFormServiceIdentifier = "MyService"
 
-  lazy val assetsPrefix = loadConfig(s"assets.url") + loadConfig(s"assets.version")
-  lazy val analyticsToken = loadConfig(s"google-analytics.token")
-  lazy val analyticsHost = loadConfig(s"google-analytics.host")
-  lazy val reportAProblemPartialUrl = s"$contactHost/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
-  lazy val reportAProblemNonJSUrl = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
+  def assetsPrefix: String = loadConfig(s"assets.url") + loadConfig(s"assets.version")
+  def analyticsToken: String = loadConfig(s"google-analytics.token")
+  def analyticsHost: String = loadConfig(s"google-analytics.host")
+  def reportAProblemPartialUrl = s"$contactHost/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
+  def reportAProblemNonJSUrl = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
+  def bindingTariffClassificationUrl: String = servicesConfig.baseUrl("binding-tariff-classification")
 }
