@@ -23,7 +23,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 import scala.concurrent.Future
 
 @Singleton
-class CasesService @Inject()(connector: CasesConnector){
+class CasesService @Inject()(connector: CasesConnector) {
 
   def getAllCases: Future[Seq[Case]] = {
     connector.getGatewayCases
