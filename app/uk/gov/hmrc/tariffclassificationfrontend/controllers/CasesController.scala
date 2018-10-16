@@ -29,7 +29,7 @@ class CasesController @Inject()(casesService: CasesService, val messagesApi: Mes
 
   val gateway = Action.async {
     implicit request => {
-      casesService.getAllCases().map(cases => Ok(views.html.gateway_cases(cases)))
+      casesService.getAllCases.map(cases => Ok(views.html.gateway_cases(cases)))
     }
   }
 

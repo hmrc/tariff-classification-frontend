@@ -16,16 +16,17 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.service
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.tariffclassificationfrontend.connector.CasesConnector
 import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 
 import scala.concurrent.Future
 
+@Singleton
 class CasesService @Inject()(connector: CasesConnector){
 
-  def getAllCases(): Future[Seq[Case]] = {
-    connector.getGatewayCases()
+  def getAllCases: Future[Seq[Case]] = {
+    connector.getGatewayCases
   }
 
 }

@@ -27,14 +27,14 @@ import scala.concurrent.Future
 
 class CasesServiceSpec extends FlatSpec with MockitoSugar {
 
-  val cases = mock[Future[Seq[Case]]]
-  val connector = mock[CasesConnector]
+  private val cases = mock[Future[Seq[Case]]]
+  private val connector = mock[CasesConnector]
 
   "Get All Cases" should "retrieve connector cases" in {
-    given(connector.getGatewayCases()).willReturn(cases)
+    given(connector.getGatewayCases).willReturn(cases)
 
     val service = new CasesService(connector)
-    val response = service.getAllCases()
+    val response = service.getAllCases
 
     assertThat(response) isEqualTo cases
   }

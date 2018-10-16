@@ -42,21 +42,21 @@ class CasesConnectorSpec extends FlatSpec with WiremockTestServer with MockitoSu
     val connector = new CasesConnector(configuration, client)
 
     assertThrows[NoSuchElementException] {
-      connector.getGatewayCases()
+      connector.getGatewayCases
     }
   }
 
   "Connector" should "get all cases" in {
     given(configuration.getString("client.binding-tariff-classification.base")).willReturn(Some("http://localhost:20001"))
 
-    stubFor(get(urlEqualTo("/binding-tariff-classification/cases"))
+    stubFor(get(urlEqualTo("/binding-tariff-classification/cases?queue_id=gateway&assignee_id=none"))
       .willReturn(aResponse()
         .withStatus(HttpStatus.SC_OK)
         .withBody("[]"))
     )
 
     val connector = new CasesConnector(configuration, client)
-    val response = connector.getGatewayCases()
+    val response = connector.getGatewayCases
 
     val cases: Seq[Case] = Await.result(response, Duration(2, TimeUnit.SECONDS))
     assertThat(cases.size).isZero
