@@ -18,13 +18,9 @@ package uk.gov.hmrc.tariffclassificationfrontend.ioc
 
 import play.api.inject.{Binding, Module}
 import play.api.{Configuration, Environment}
-import uk.gov.hmrc.play.config.ServicesConfig
-import uk.gov.hmrc.tariffclassificationfrontend.config.APIDependencyConfig
 
 class IOCModule extends Module {
   override def bindings(environment: Environment, configuration: Configuration): Seq[Binding[_]] = {
-    Seq(
-      bind[ServicesConfig].to[APIDependencyConfig]
-    )
+    Seq()
   }
 }

@@ -25,7 +25,7 @@ import play.api.i18n.{DefaultLangs, DefaultMessagesApi}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.api.{Configuration, Environment}
-import uk.gov.hmrc.tariffclassificationfrontend.config.{APIDependencyConfig, AppConfig}
+import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 
 import scala.concurrent.Future
@@ -35,9 +35,8 @@ class CasesControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuit
   private val fakeRequest = FakeRequest()
   private val env = Environment.simple()
   private val configuration = Configuration.load(env)
-  private val serviceConfig = mock[APIDependencyConfig]
   private val messageApi = new DefaultMessagesApi(env, configuration, new DefaultLangs(configuration))
-  private val appConfig = new AppConfig(serviceConfig, configuration, env)
+  private val appConfig = new AppConfig(configuration, env)
   private val service = mock[CasesService]
 
   private val controller = new CasesController(service, messageApi, appConfig)
