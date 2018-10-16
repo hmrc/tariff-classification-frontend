@@ -46,7 +46,7 @@ class CasesConnectorSpec extends FlatSpec with WiremockTestServer with MockitoSu
     }
   }
 
-  "Connector" should "get all cases" in {
+  "Connector" should "get empty cases" in {
     given(configuration.getString("client.binding-tariff-classification.base")).willReturn(Some("http://localhost:20001"))
 
     stubFor(get(urlEqualTo("/binding-tariff-classification/cases?queue_id=gateway&assignee_id=none"))
@@ -58,8 +58,24 @@ class CasesConnectorSpec extends FlatSpec with WiremockTestServer with MockitoSu
     val connector = new CasesConnector(configuration, client)
     val response = connector.getGatewayCases
 
-    val cases: Seq[Case] = Await.result(response, Duration(2, TimeUnit.SECONDS))
+    val cases: Seq[Case] = Await.result(response, Duration(1, TimeUnit.SECONDS))
     assertThat(cases.size).isZero
+  }
+
+  "Connector" should "get non-empty cases" in {
+    given(configuration.getString("client.binding-tariff-classification.base")).willReturn(Some("http://localhost:20001"))
+
+    stubFor(get(urlEqualTo("/binding-tariff-classification/cases?queue_id=gateway&assignee_id=none"))
+      .willReturn(aResponse()
+        .withStatus(HttpStatus.SC_OK)
+        .withBody(Payloads.GATEWAY_CASES))
+    )
+
+    val connector = new CasesConnector(configuration, client)
+    val response = connector.getGatewayCases
+
+    val cases: Seq[Case] = Await.result(response, Duration(1, TimeUnit.SECONDS))
+    assertThat(cases.size).isOne
   }
 
 }
