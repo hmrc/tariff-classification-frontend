@@ -26,7 +26,7 @@ object Payloads {
 
   implicit val writes: OWrites[Case] = Json.writes[Case]
 
-  val GATEWAY_CASES: String = jsonOf(Seq(Case(
+  val gatewayCases: String = jsonOf(Seq(Case(
     "123", "description", "trader-name", LocalDate.of(2018, 1, 1), "status", "type", 1
   )))
 

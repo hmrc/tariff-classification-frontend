@@ -60,7 +60,7 @@ class CasesConnectorSpec extends UnitSpec with WiremockTestServer with MockitoSu
       stubFor(get(urlEqualTo("/cases?queue_id=gateway&assignee_id=none&sort-by=elapsed-days"))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
-          .withBody(Payloads.GATEWAY_CASES))
+          .withBody(Payloads.gatewayCases))
       )
 
       val connector = new CasesConnector(configuration, client)
