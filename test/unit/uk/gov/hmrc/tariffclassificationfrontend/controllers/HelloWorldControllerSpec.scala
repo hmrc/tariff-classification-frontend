@@ -16,6 +16,7 @@
 
 package unit.uk.gov.hmrc.tariffclassificationfrontend.controllers
 
+import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{Matchers, WordSpec}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status
@@ -23,18 +24,20 @@ import play.api.i18n.{DefaultLangs, DefaultMessagesApi}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.api.{Configuration, Environment}
-import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
+import uk.gov.hmrc.tariffclassificationfrontend.config.{APIDependencyConfig, AppConfig}
 import uk.gov.hmrc.tariffclassificationfrontend.controllers.HelloWorld
 
 
-class HelloWorldControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite {
+class HelloWorldControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite with MockitoSugar {
   val fakeRequest = FakeRequest("GET", "/")
 
   val env = Environment.simple()
   val configuration = Configuration.load(env)
 
+  private val serviceConfig = mock[APIDependencyConfig]
+
   val messageApi = new DefaultMessagesApi(env, configuration, new DefaultLangs(configuration))
-  val appConfig = new AppConfig(configuration, env)
+  val appConfig = new AppConfig(serviceConfig, configuration, env)
 
   val controller = new HelloWorld(messageApi, appConfig)
 
