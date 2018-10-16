@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-package unit.uk.gov.hmrc.tariffclassificationfrontend.controllers
+package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
+import org.mockito.BDDMockito._
+import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{Matchers, WordSpec}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status
@@ -24,29 +26,31 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.controllers.HelloWorld
+import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
+
+import scala.concurrent.Future
 
 
-class HelloWorldControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite {
-  val fakeRequest = FakeRequest()
+class CasesControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite with MockitoSugar {
+  private val fakeRequest = FakeRequest()
+  private val env = Environment.simple()
+  private val configuration = Configuration.load(env)
+  private val messageApi = new DefaultMessagesApi(env, configuration, new DefaultLangs(configuration))
+  private val appConfig = new AppConfig(configuration, env)
+  private val service = mock[CasesService]
 
-  val env = Environment.simple()
-  val configuration = Configuration.load(env)
+  private val controller = new CasesController(service, messageApi, appConfig)
 
-  val messageApi = new DefaultMessagesApi(env, configuration, new DefaultLangs(configuration))
-  val appConfig = new AppConfig(configuration, env)
-
-  val controller = new HelloWorld(messageApi, appConfig)
-
-  "Hello World" should {
+  "Gateway Cases" should {
+    given(service.getAllCases).willReturn(Future.successful(Seq()))
 
     "return 200" in {
-      val result = controller.helloWorld(fakeRequest)
+      val result = controller.gateway(fakeRequest)
       status(result) shouldBe Status.OK
     }
 
     "return HTML" in {
-      val result = controller.helloWorld(fakeRequest)
+      val result = controller.gateway(fakeRequest)
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
     }

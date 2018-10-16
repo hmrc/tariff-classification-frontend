@@ -1,0 +1,20 @@
+.side-nav {
+  border-right: 1px solid #bfc1c3
+}
+
+.side-nav__list {
+  list-style: none;
+}
+
+.side-nav__list--selected, .side-nav__list--selected:hover {
+  .side-nav__link {
+    color: #fff;
+    background-color: #005ea5;
+  }
+}
+
+.side-nav__link {
+  padding: 12px 30px 8px 15px;
+  text-decoration: none;
+  display: block;
+}

@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,18 +12,26 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.govuk_wrapper
-@(pageTitle: String, heading: String, message: String)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+package unit.uk.gov.hmrc.tariffclassificationfrontend.connector
 
-@contentHeader = {
-  <h1>@heading</h1>
+import com.github.tomakehurst.wiremock.WireMockServer
+import com.github.tomakehurst.wiremock.client.WireMock
+import org.scalatest.BeforeAndAfterEach
+import uk.gov.hmrc.play.test.UnitSpec
+
+
+trait WiremockTestServer extends UnitSpec with BeforeAndAfterEach {
+
+  val wireMockServer = new WireMockServer(20001)
+
+  override protected def beforeEach(): Unit = {
+    wireMockServer.start()
+    WireMock.configureFor("localhost", 20001)
+  }
+
+  override protected def afterEach(): Unit = {
+    wireMockServer.stop()
+  }
 }
-
-@mainContent = {
-  <p>@message</p>
-}
-
-@govuk_wrapper(appConfig = appConfig, title = pageTitle, contentHeader = Some(contentHeader), mainContent = mainContent)
