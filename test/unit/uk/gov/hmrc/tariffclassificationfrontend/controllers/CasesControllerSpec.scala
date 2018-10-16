@@ -30,8 +30,8 @@ import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 
 import scala.concurrent.Future
 
-
 class CasesControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite with MockitoSugar {
+
   private val fakeRequest = FakeRequest()
   private val env = Environment.simple()
   private val configuration = Configuration.load(env)
@@ -42,17 +42,19 @@ class CasesControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuit
   private val controller = new CasesController(service, messageApi, appConfig)
 
   "Gateway Cases" should {
-    given(service.getAllCases).willReturn(Future.successful(Seq()))
 
-    "return 200" in {
+    "return 200 OK and HMTL content type" in {
+      given(service.getAllCases).willReturn(Future.successful(Seq.empty))
       val result = controller.gateway(fakeRequest)
       status(result) shouldBe Status.OK
-    }
-
-    "return HTML" in {
-      val result = controller.gateway(fakeRequest)
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
+    }
+
+    "return 500" in {
+      given(service.getAllCases).willReturn(Future.failed(new RuntimeException))
+      val result = controller.gateway(fakeRequest)
+      status(result) shouldBe Status.INTERNAL_SERVER_ERROR
     }
 
   }

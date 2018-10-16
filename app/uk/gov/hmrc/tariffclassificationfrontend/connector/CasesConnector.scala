@@ -35,7 +35,6 @@ class CasesConnector @Inject()(configuration: AppConfig, client: WSHttp) {
   def getGatewayCases: Future[Seq[Case]] = {
     val url = configuration.bindingTariffClassificationUrl + "/cases?queue_id=gateway&assignee_id=none&sort-by=elapsed-days"
     client.GET[Seq[Case]](url)
-      .fallbackTo(Future.successful(TemporaryData.CASES))
   }
 
 }

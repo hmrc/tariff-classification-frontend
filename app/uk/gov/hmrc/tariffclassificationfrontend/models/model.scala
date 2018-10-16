@@ -14,17 +14,27 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.tariffclassificationfrontend.connector
+package uk.gov.hmrc.tariffclassificationfrontend
 
-import java.time.LocalDate
+import play.api.libs.json.Json.JsValueWrapper
+import play.api.libs.json.{JsObject, Json}
 
-import uk.gov.hmrc.tariffclassificationfrontend.models.Case
+package object model {
 
-object TemporaryData {
+  object ErrorCode extends Enumeration {
+    type ErrorCode = Value
 
-  private val case1 = Case("1", "Laptops", "Pol's PCs", LocalDate.of(2018,10,1), "OPEN", "BTI", 1)
-  private val case2 = Case("2", "Pizza", "Ed's Eatery", LocalDate.of(2018,10,5), "DRAFT", "BTI", 10)
-  private val case3 = Case("3", "Pasta", "Stefano's Supermarket", LocalDate.of(2018,10,15), "OPEN", "BTI", 5)
+    val INVALID_REQUEST_PAYLOAD = Value("INVALID_REQUEST_PAYLOAD")
+    val UNKNOWN_ERROR = Value("UNKNOWN_ERROR")
 
-  val CASES = Seq(case1, case2, case3)
+  }
+
+  object JsErrorResponse {
+    def apply(errorCode: ErrorCode.Value, message: JsValueWrapper): JsObject =
+      Json.obj(
+        "code" -> errorCode.toString,
+        "message" -> message
+      )
+  }
+
 }

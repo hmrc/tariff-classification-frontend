@@ -35,9 +35,10 @@ import scala.concurrent.duration.Duration
 class CasesConnectorSpec extends UnitSpec with WiremockTestServer with MockitoSugar with GuiceOneAppPerSuite {
 
   private val configuration = mock[AppConfig]
-  private val client = new WSHttp()
+  private val client = WSHttp
 
   "Connector" should {
+
     "get empty cases" in {
       given(configuration.bindingTariffClassificationUrl).willReturn("http://localhost:20001")
 
@@ -69,6 +70,7 @@ class CasesConnectorSpec extends UnitSpec with WiremockTestServer with MockitoSu
       val cases: Seq[Case] = Await.result(response, Duration(1, TimeUnit.SECONDS))
       assertThat(cases.size).isOne
     }
+
   }
 
 }

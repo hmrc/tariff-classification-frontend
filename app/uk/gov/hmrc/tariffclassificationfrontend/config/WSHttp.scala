@@ -20,8 +20,10 @@ import uk.gov.hmrc.http.hooks.HttpHooks
 import uk.gov.hmrc.http.{HttpDelete, HttpGet, HttpPost, HttpPut}
 import uk.gov.hmrc.play.http.ws.{WSDelete, WSGet, WSPost, WSPut}
 
-class WSHttp extends HttpGet with WSGet with HttpPut with WSPut with HttpPost with WSPost with HttpDelete with WSDelete with Hooks
-
-trait Hooks extends HttpHooks{
-  override val hooks = Seq()
+trait Hooks extends HttpHooks {
+  override val hooks = Seq.empty
 }
+
+trait WSHttp extends HttpGet with WSGet with HttpPut with WSPut with HttpPost with WSPost with HttpDelete with WSDelete with Hooks
+
+object WSHttp extends WSHttp

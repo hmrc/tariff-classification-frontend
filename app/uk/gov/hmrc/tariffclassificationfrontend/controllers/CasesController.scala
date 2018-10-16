@@ -19,7 +19,6 @@ package uk.gov.hmrc.tariffclassificationfrontend.controllers
 import javax.inject.{Inject, Singleton}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
@@ -27,11 +26,12 @@ import uk.gov.hmrc.tariffclassificationfrontend.views
 @Singleton
 class CasesController @Inject()(casesService: CasesService,
                                 val messagesApi: MessagesApi,
-                                implicit val appConfig: AppConfig
-                               ) extends FrontendController with I18nSupport {
+                                implicit val appConfig: AppConfig) extends CommonController with I18nSupport {
 
-  val gateway: Action[AnyContent] = Action.async {
-    implicit request => casesService.getAllCases.map(cases => Ok(views.html.gateway_cases(cases)))
+  val gateway: Action[AnyContent] = Action.async { implicit request =>
+    casesService.getAllCases.map { cases =>
+      Ok(views.html.gateway_cases(cases))
+    } recover recovery
   }
 
 }

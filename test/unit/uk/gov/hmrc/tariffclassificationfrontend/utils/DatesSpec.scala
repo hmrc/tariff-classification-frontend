@@ -18,15 +18,19 @@ package uk.gov.hmrc.tariffclassificationfrontend.utils
 
 import java.time.LocalDate
 
-import org.scalatest.FlatSpec
+import uk.gov.hmrc.play.test.UnitSpec
 
-class DatesSpec extends FlatSpec {
+class DatesSpec extends UnitSpec {
 
-  "Format" should "convert date to string" in {
-    val date = LocalDate.of(2018,1,1)
-    val output = Dates.format(date)
+  "Format" should {
 
-    assert(output == "01 Jan 2018")
+    "convert date to string" in {
+      val date = LocalDate.of(2018,1,1)
+      val output = Dates.format(date)
+
+       output shouldBe "01 Jan 2018"
+    }
+
   }
 
 }

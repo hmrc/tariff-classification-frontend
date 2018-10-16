@@ -28,6 +28,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.controllers.HelloWorld
 
 
 class HelloWorldControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite {
+
   val fakeRequest = FakeRequest()
 
   val env = Environment.simple()
