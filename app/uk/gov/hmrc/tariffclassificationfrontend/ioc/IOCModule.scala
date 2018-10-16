@@ -14,18 +14,16 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.tariffclassificationfrontend.service
+package uk.gov.hmrc.tariffclassificationfrontend.ioc
 
-import javax.inject.Inject
-import uk.gov.hmrc.tariffclassificationfrontend.connector.CasesConnector
-import uk.gov.hmrc.tariffclassificationfrontend.models.Case
+import play.api.inject.{Binding, Module}
+import play.api.{Configuration, Environment}
+import uk.gov.hmrc.tariffclassificationfrontend.connector.{ConnectorHttpClient, StandaloneWSClient}
 
-import scala.concurrent.Future
-
-class CasesService @Inject()(connector: CasesConnector){
-
-  def getAllCases(): Future[Seq[Case]] = {
-    connector.getGatewayCases()
+class IOCModule extends Module {
+  override def bindings(environment: Environment, configuration: Configuration): Seq[Binding[_]] = {
+    Seq(
+      bind[ConnectorHttpClient].toInstance(new ConnectorHttpClient(None, StandaloneWSClient.client))
+    )
   }
-
 }

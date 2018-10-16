@@ -17,12 +17,13 @@
 package uk.gov.hmrc.tariffclassificationfrontend.connector
 
 import com.typesafe.config.Config
+import javax.inject.Inject
 import play.api.libs.ws.WSClient
 import uk.gov.hmrc.http._
 import uk.gov.hmrc.http.hooks.HttpHook
 import uk.gov.hmrc.play.http.ws._
 
-class ConnectorHttpClient(config: Option[Config], client: WSClient) extends HttpGet with WSGet
+class ConnectorHttpClient @Inject()(config: Option[Config], client: WSClient) extends HttpGet with WSGet
   with HttpPut with WSPut
   with HttpDelete with WSDelete
   with HttpPost with WSPost

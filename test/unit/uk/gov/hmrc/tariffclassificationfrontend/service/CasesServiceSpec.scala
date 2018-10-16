@@ -31,7 +31,7 @@ class CasesServiceSpec extends FlatSpec with MockitoSugar {
   val connector = mock[CasesConnector]
 
   "Get All Cases" should "retrieve connector cases" in {
-    given(connector.getAllCases()).willReturn(cases)
+    given(connector.getGatewayCases()).willReturn(cases)
 
     val service = new CasesService(connector)
     val response = service.getAllCases()

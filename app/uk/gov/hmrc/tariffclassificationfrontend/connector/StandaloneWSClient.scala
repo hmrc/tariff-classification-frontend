@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package unit.uk.gov.hmrc.tariffclassificationfrontend.connector
+package uk.gov.hmrc.tariffclassificationfrontend.connector
 
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer

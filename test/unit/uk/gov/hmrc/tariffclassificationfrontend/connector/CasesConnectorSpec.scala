@@ -19,27 +19,44 @@ package unit.uk.gov.hmrc.tariffclassificationfrontend.connector
 import java.util.concurrent.TimeUnit
 
 import com.github.tomakehurst.wiremock.client.WireMock._
+import org.apache.http.HttpStatus
 import org.assertj.core.api.Assertions._
+import org.mockito.BDDMockito._
 import org.scalatest.FlatSpec
-import uk.gov.hmrc.tariffclassificationfrontend.connector.{CasesConnector, ConnectorHttpClient}
+import org.scalatest.mockito.MockitoSugar
+import play.api.Configuration
+import uk.gov.hmrc.tariffclassificationfrontend.connector.{CasesConnector, ConnectorHttpClient, StandaloneWSClient}
 import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 
-class CasesConnectorSpec extends FlatSpec with WiremockTestServer {
+class CasesConnectorSpec extends FlatSpec with WiremockTestServer with MockitoSugar {
 
+  private val configuration = mock[Configuration]
   private val client = new ConnectorHttpClient(None, StandaloneWSClient.client)
 
+  "Connector" should "throw exception for missing client URL" in {
+    given(configuration.getString("client.binding-tariff-classification.base")).willReturn(None)
+
+    val connector = new CasesConnector(configuration, client)
+
+    assertThrows[NoSuchElementException] {
+      connector.getGatewayCases()
+    }
+  }
+
   "Connector" should "get all cases" in {
+    given(configuration.getString("client.binding-tariff-classification.base")).willReturn(Some("http://localhost:20001"))
+
     stubFor(get(urlEqualTo("/binding-tariff-classification/cases"))
       .willReturn(aResponse()
-        .withStatus(200)
+        .withStatus(HttpStatus.SC_OK)
         .withBody("[]"))
     )
 
-    val connector = new CasesConnector("http://localhost:20001", client)
-    val response = connector.getAllCases()
+    val connector = new CasesConnector(configuration, client)
+    val response = connector.getGatewayCases()
 
     val cases: Seq[Case] = Await.result(response, Duration(2, TimeUnit.SECONDS))
     assertThat(cases.size).isZero
