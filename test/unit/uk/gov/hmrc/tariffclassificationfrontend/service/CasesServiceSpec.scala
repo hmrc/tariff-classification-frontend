@@ -38,8 +38,7 @@ class CasesServiceSpec extends UnitSpec with MockitoSugar {
 
     "retrieve connector cases" in {
       given(connector.getGatewayCases).willReturn(manyCases)
-
-      service.getAllCases shouldBe manyCases
+      await(service.getAllCases) shouldBe manyCases
     }
   }
 
@@ -48,7 +47,7 @@ class CasesServiceSpec extends UnitSpec with MockitoSugar {
     "retrieve connector cases" in {
       given(connector.getOne("reference")).willReturn(oneCase)
 
-      service.getOne("reference") shouldBe  oneCase
+      await(service.getOne("reference")) shouldBe  oneCase
     }
   }
 

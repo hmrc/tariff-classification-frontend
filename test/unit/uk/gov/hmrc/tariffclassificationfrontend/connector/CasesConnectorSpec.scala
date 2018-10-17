@@ -16,11 +16,8 @@
 
 package unit.uk.gov.hmrc.tariffclassificationfrontend.connector
 
-import java.util.concurrent.TimeUnit
-
 import com.github.tomakehurst.wiremock.client.WireMock._
 import org.apache.http.HttpStatus
-import org.assertj.core.api.Assertions._
 import org.mockito.BDDMockito._
 import org.scalatest.mockito.MockitoSugar
 import play.api.Environment
@@ -32,7 +29,7 @@ import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.connector.CasesConnector
 import uk.gov.hmrc.tariffclassificationfrontend.models.Case
-import unit.uk.gov.hmrc.tariffclassificationfrontend.utils.CasePayloads
+import unit.uk.gov.hmrc.tariffclassificationfrontend.utils.{CaseExamples, CasePayloads}
 
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
@@ -59,10 +56,7 @@ class CasesConnectorSpec extends UnitSpec with WiremockTestServer with MockitoSu
           .withBody("[]"))
       )
 
-      val response = connector.getGatewayCases
-
-      val cases: Seq[Case] = Await.result(response, Duration(1, TimeUnit.SECONDS))
-      assertThat(cases.size).isZero
+      await(connector.getGatewayCases) shouldBe Seq()
     }
 
     "get gateway cases" in {
@@ -74,10 +68,7 @@ class CasesConnectorSpec extends UnitSpec with WiremockTestServer with MockitoSu
           .withBody(CasePayloads.gatewayCases))
       )
 
-      val response = connector.getGatewayCases
-
-      val cases: Seq[Case] = Await.result(response, Duration(1, TimeUnit.SECONDS))
-      assertThat(cases.size).isOne
+      await(connector.getGatewayCases) shouldBe Seq(CaseExamples.caseExample)
     }
 
     "get an unknown case" in {
@@ -88,9 +79,7 @@ class CasesConnectorSpec extends UnitSpec with WiremockTestServer with MockitoSu
           .withStatus(HttpStatus.SC_NOT_FOUND))
       )
 
-      val future = connector.getOne("id")
-      val response: Option[Case] = Await.result(future, Duration(1, TimeUnit.SECONDS))
-      assertThat(response.isEmpty).isTrue
+      await(connector.getOne("id")) shouldBe None
     }
 
     "get a case" in {
@@ -102,10 +91,7 @@ class CasesConnectorSpec extends UnitSpec with WiremockTestServer with MockitoSu
           .withBody(CasePayloads.btiCase))
       )
 
-      val future = connector.getOne("id")
-
-      val response: Option[Case] = Await.result(future, Duration(1, TimeUnit.SECONDS))
-      assertThat(response.isEmpty).isFalse
+      await(connector.getOne("id")) shouldBe CaseExamples.caseExample
     }
 
   }
