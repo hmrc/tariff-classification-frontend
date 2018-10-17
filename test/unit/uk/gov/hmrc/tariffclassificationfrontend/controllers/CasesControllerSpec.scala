@@ -14,8 +14,11 @@
  * limitations under the License.
  */
 
-package unit.uk.gov.hmrc.tariffclassificationfrontend.controllers
+package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
+import org.mockito.ArgumentMatchers.any
+import org.mockito.BDDMockito._
+import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{Matchers, WordSpec}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status
@@ -23,30 +26,30 @@ import play.api.i18n.{DefaultLangs, DefaultMessagesApi}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.api.{Configuration, Environment}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.controllers.HelloWorld
+import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 
+import scala.concurrent.Future
 
-class HelloWorldControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite {
-  val fakeRequest = FakeRequest("GET", "/")
+class CasesControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite with MockitoSugar {
 
-  val env = Environment.simple()
-  val configuration = Configuration.load(env)
+  private val fakeRequest = FakeRequest()
+  private val env = Environment.simple()
+  private val configuration = Configuration.load(env)
+  private val messageApi = new DefaultMessagesApi(env, configuration, new DefaultLangs(configuration))
+  private val appConfig = new AppConfig(configuration, env)
+  private val service = mock[CasesService]
+  private implicit val hc = HeaderCarrier()
 
-  val messageApi = new DefaultMessagesApi(env, configuration, new DefaultLangs(configuration))
-  val appConfig = new AppConfig(configuration, env)
+  private val controller = new CasesController(service, messageApi, appConfig)
 
-  val controller = new HelloWorld(messageApi, appConfig)
+  "Gateway Cases" should {
 
-  "GET /" should {
-
-    "return 200" in {
-      val result = controller.helloWorld(fakeRequest)
+    "return 200 OK and HMTL content type" in {
+      given(service.getAllCases(any[HeaderCarrier])).willReturn(Future.successful(Seq.empty))
+      val result = controller.gateway(fakeRequest)
       status(result) shouldBe Status.OK
-    }
-
-    "return HTML" in {
-      val result = controller.helloWorld(fakeRequest)
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
     }

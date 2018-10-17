@@ -23,6 +23,7 @@ lazy val microservice = (project in file("."))
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
     evictionWarningOptions in update := EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
     parallelExecution in Test := false,
+    testGrouping in Test := oneForkedJvmPerTest((definedTests in Test).value),
     fork in Test := false,
     retrieveManaged := true,
     routesGenerator := StaticRoutesGenerator
@@ -57,6 +58,6 @@ def oneForkedJvmPerTest(tests: Seq[TestDefinition]): Seq[Group] = {
 }
 
 // Coverage configuration
-coverageMinimum := 51 // TODO: to be improved
+coverageMinimum := 71 // TODO: to be improved
 coverageFailOnMinimum := true
 coverageExcludedPackages := "<empty>;com.kenshoo.play.metrics.*;prod.*;testOnlyDoNotUseInAppConf.*;app.*;uk.gov.hmrc.BuildInfo"

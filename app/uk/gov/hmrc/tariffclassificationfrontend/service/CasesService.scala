@@ -14,23 +14,20 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.tariffclassificationfrontend.controllers
+package uk.gov.hmrc.tariffclassificationfrontend.service
 
 import javax.inject.{Inject, Singleton}
-
-import play.api.mvc._
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.tariffclassificationfrontend.connector.CasesConnector
+import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 
 import scala.concurrent.Future
-import play.api.i18n.{I18nSupport, MessagesApi}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.views
 
 @Singleton
-class HelloWorld @Inject()(val messagesApi: MessagesApi, implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
+class CasesService @Inject()(connector: CasesConnector) {
 
-  val helloWorld = Action.async { implicit request =>
-    Future.successful(Ok(views.html.hello_world()))
+  def getAllCases(implicit hc : HeaderCarrier): Future[Seq[Case]] = {
+    connector.getGatewayCases
   }
 
 }

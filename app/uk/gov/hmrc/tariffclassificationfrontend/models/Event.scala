@@ -16,27 +16,36 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.models
 
-import java.time.{Duration, ZonedDateTime}
+import java.time.ZonedDateTime
 
-case class Case
+case class Event
 (
-  reference: String,
-  status: String,
-  createdDate: ZonedDateTime,
-  adjustedCreateDate: ZonedDateTime,
-  closedDate: Option[ZonedDateTime],
-  caseBoardsFileNumber: Option[String],
-  assigneeId: Option[String],
-  queueId: Option[String],
-  application: Application,
-  decision: Option[Decision],
-  attachments: Seq[Attachment]
-) {
-  def elapsedDays: Long = {
-    if(closedDate.isEmpty) {
-      Duration.between(adjustedCreateDate, ZonedDateTime.now()).toDays
-    } else {
-      Duration.between(adjustedCreateDate, closedDate.get).toDays
-    }
-  }
+  id: String,
+  details: Details,
+  userId: String,
+  caseReference: String,
+  timestamp: ZonedDateTime
+)
+
+sealed trait Details {
+  val `type`: String
+  val comment: Option[String]
+}
+
+case class CaseStatusChange
+(
+  from: String,
+  to: String,
+  override val comment: Option[String]
+
+) extends Details {
+  override val `type` = "CASE_STATUS_CHANGE"
+}
+
+case class Note
+(
+  override val comment: Option[String]
+
+) extends Details {
+  override val `type` = "NOTE"
 }

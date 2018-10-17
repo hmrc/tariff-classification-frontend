@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,12 +12,27 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.main_template
-@()(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+package uk.gov.hmrc.tariffclassificationfrontend.models
 
-@main_template(title = "Hello! Welcome to the Tariff Classification Frontend!", bodyClasses = None) {
-    <h1>Hello from tariff-classification-frontend !</h1>
-}
+import java.time.ZonedDateTime
+
+case class Decision
+(
+  bindingCommodityCode: String,
+  effectiveStartDate: ZonedDateTime,
+  effectiveEndDate: ZonedDateTime,
+  justification: String,
+  goodsDescription: String,
+  keywords: Seq[String],
+  methodSearch: Option[String],
+  methodCommercialDenomination: Option[String],
+  appeal: Option[Appeal]
+)
+
+case class Appeal
+(
+  reviewStatus: String,
+  reviewResult: String
+)
