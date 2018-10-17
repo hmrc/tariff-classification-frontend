@@ -32,6 +32,7 @@ import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.connector.CasesConnector
 import uk.gov.hmrc.tariffclassificationfrontend.models.Case
+import unit.uk.gov.hmrc.tariffclassificationfrontend.utils.CasePayloads
 
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
@@ -49,7 +50,7 @@ class CasesConnectorSpec extends UnitSpec with WiremockTestServer with MockitoSu
 
   "Connector" should {
 
-    "get empty cases" in {
+    "get empty gateway cases" in {
       given(configuration.bindingTariffClassificationUrl).willReturn("http://localhost:20001")
 
       stubFor(get(urlEqualTo("/cases?queue_id=none&assignee_id=none&sort-by=elapsed-days"))
@@ -64,19 +65,47 @@ class CasesConnectorSpec extends UnitSpec with WiremockTestServer with MockitoSu
       assertThat(cases.size).isZero
     }
 
-    "get non-empty cases" in {
+    "get gateway cases" in {
       given(configuration.bindingTariffClassificationUrl).willReturn("http://localhost:20001")
 
       stubFor(get(urlEqualTo("/cases?queue_id=none&assignee_id=none&sort-by=elapsed-days"))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
-          .withBody(Payloads.gatewayCases))
+          .withBody(CasePayloads.gatewayCases))
       )
 
       val response = connector.getGatewayCases
 
       val cases: Seq[Case] = Await.result(response, Duration(1, TimeUnit.SECONDS))
       assertThat(cases.size).isOne
+    }
+
+    "get an unknown case" in {
+      given(configuration.bindingTariffClassificationUrl).willReturn("http://localhost:20001")
+
+      stubFor(get(urlEqualTo("/cases/id"))
+        .willReturn(aResponse()
+          .withStatus(HttpStatus.SC_NOT_FOUND))
+      )
+
+      val future = connector.getOne("id")
+      val response: Option[Case] = Await.result(future, Duration(1, TimeUnit.SECONDS))
+      assertThat(response.isEmpty).isTrue
+    }
+
+    "get a case" in {
+      given(configuration.bindingTariffClassificationUrl).willReturn("http://localhost:20001")
+
+      stubFor(get(urlEqualTo("/cases/id"))
+        .willReturn(aResponse()
+          .withStatus(HttpStatus.SC_OK)
+          .withBody(CasePayloads.btiCase))
+      )
+
+      val future = connector.getOne("id")
+
+      val response: Option[Case] = Await.result(future, Duration(1, TimeUnit.SECONDS))
+      assertThat(response.isEmpty).isFalse
     }
 
   }

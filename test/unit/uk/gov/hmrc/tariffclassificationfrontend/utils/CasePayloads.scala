@@ -14,24 +14,18 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.tariffclassificationfrontend.service
+package unit.uk.gov.hmrc.tariffclassificationfrontend.utils
 
-import javax.inject.{Inject, Singleton}
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.tariffclassificationfrontend.connector.CasesConnector
-import uk.gov.hmrc.tariffclassificationfrontend.models.Case
+import play.api.libs.json.{Json, Writes}
+import uk.gov.hmrc.tariffclassificationfrontend.utils.JsonFormatters._
 
-import scala.concurrent.Future
+object CasePayloads {
 
-@Singleton
-class CasesService @Inject()(connector: CasesConnector) {
+  val btiCase: String = jsonOf(CaseExamples.caseExample)
+  val gatewayCases: String = jsonOf(Seq(CaseExamples.caseExample))
 
-  def getOne(reference: String)(implicit hc : HeaderCarrier): Future[Option[Case]] = {
-    connector.getOne(reference)
-  }
-
-  def getAllCases(implicit hc : HeaderCarrier): Future[Seq[Case]] = {
-    connector.getGatewayCases
+  private def jsonOf[T](obj: T)(implicit tjs : Writes[T]): String = {
+    Json.toJson(obj).toString()
   }
 
 }

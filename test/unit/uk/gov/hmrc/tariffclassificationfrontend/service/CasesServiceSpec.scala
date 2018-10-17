@@ -29,18 +29,31 @@ import scala.concurrent.Future
 class CasesServiceSpec extends UnitSpec with MockitoSugar {
 
   private implicit val hc = HeaderCarrier()
-  private val cases = mock[Future[Seq[Case]]]
+  private val manyCases = mock[Future[Seq[Case]]]
+  private val oneCase = mock[Future[Option[Case]]]
   private val connector = mock[CasesConnector]
 
   "Get All Cases" should {
 
     "retrieve connector cases" in {
-      given(connector.getGatewayCases).willReturn(cases)
+      given(connector.getGatewayCases).willReturn(manyCases)
 
       val service = new CasesService(connector)
       val response = service.getAllCases
 
-      assertThat(response) isEqualTo cases
+      assertThat(response) isEqualTo manyCases
+    }
+  }
+
+  "Get One Case" should {
+
+    "retrieve connector cases" in {
+      given(connector.getOne("reference")).willReturn(oneCase)
+
+      val service = new CasesService(connector)
+      val response = service.getOne("reference")
+
+      assertThat(response) isEqualTo oneCase
     }
   }
 

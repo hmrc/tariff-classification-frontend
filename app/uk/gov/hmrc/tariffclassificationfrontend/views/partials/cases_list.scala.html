@@ -37,7 +37,7 @@
             @if(c.application.isInstanceOf[BTIApplication]) {
                 <tr class="govuk-table__row">
                     <th class="govuk-table__header" scope="row">
-                        <a href="#">@c.reference</a>
+                        <a href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.summary(c.reference)">@c.reference</a>
                     </th>
                     <td class="govuk-table__cell">@c.application.asBTI().goodName</td>
                     <td class="govuk-table__cell">@c.application.asBTI().holder.traderName</td>

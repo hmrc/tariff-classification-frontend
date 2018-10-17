@@ -1,0 +1,43 @@
+@*
+ * Copyright 2018 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@(section: String, reference: String)
+
+<div class="side-nav" role="navigation" aria-labelledby="nav" style="margin-top: 30px">
+    <ul>
+        <li class="side-nav__list @if(section == "summary") { side-nav__list--selected }">
+            <a class="side-nav__link" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.summary(reference)">Summary</a>
+        </li>
+        <li class="side-nav__list @if(section == "application") { side-nav__list--selected }">
+            <a class="side-nav__link" href="#">Application Details</a>
+        </li>
+        <li class="side-nav__list @if(section == "samples") { side-nav__list--selected }">
+            <a class="side-nav__link" href="#">Samples</a>
+        </li>
+        <li class="side-nav__list @if(section == "notes-and-attachments") { side-nav__list--selected }">
+            <a class="side-nav__link" href="#">Notes & Attachments</a>
+        </li>
+        <li class="side-nav__list @if(section == "related-cases") { side-nav__list--selected }">
+            <a class="side-nav__link" href="#">Related Cases</a>
+        </li>
+        <li class="side-nav__list @if(section == "ruling") { side-nav__list--selected }">
+            <a class="side-nav__link" href="#">Ruling</a>
+        </li>
+    </ul>
+    <br>
+</div>
+
+
