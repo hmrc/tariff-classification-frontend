@@ -29,7 +29,7 @@ object Payloads {
   private val eoriDetailsExample = EORIDetails("eori", "trader-name", "line1", "line2", "line3", "postcode", "country")
   private val contactExample = Contact("name", "email", "phone")
   private val applicationExample = models.BTIApplication(eoriDetailsExample, contactExample, None, false, "Laptop", "Personal Computer", None, None, None, None, None, None, false, false)
-  private val caseExample = Case("1", "OPEN", ZonedDateTime.now(), ZonedDateTime.now(), None, None, None, None, applicationExample, None, Seq())
+  val caseExample = Case("1", "OPEN", ZonedDateTime.now(), ZonedDateTime.now(), None, None, None, None, applicationExample, None, Seq())
 
   val gatewayCases: String = jsonOf(Seq(caseExample))
 

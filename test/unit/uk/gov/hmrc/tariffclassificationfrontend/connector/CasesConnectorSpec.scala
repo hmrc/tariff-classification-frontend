@@ -16,11 +16,8 @@
 
 package unit.uk.gov.hmrc.tariffclassificationfrontend.connector
 
-import java.util.concurrent.TimeUnit
-
 import com.github.tomakehurst.wiremock.client.WireMock._
 import org.apache.http.HttpStatus
-import org.assertj.core.api.Assertions._
 import org.mockito.BDDMockito._
 import org.scalatest.mockito.MockitoSugar
 import play.api.Environment
@@ -31,10 +28,7 @@ import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.connector.CasesConnector
-import uk.gov.hmrc.tariffclassificationfrontend.models.Case
-
-import scala.concurrent.Await
-import scala.concurrent.duration.Duration
+import unit.uk.gov.hmrc.tariffclassificationfrontend.connector.Payloads.caseExample
 
 class CasesConnectorSpec extends UnitSpec with WiremockTestServer with MockitoSugar with WithFakeApplication {
 
@@ -49,34 +43,30 @@ class CasesConnectorSpec extends UnitSpec with WiremockTestServer with MockitoSu
 
   "Connector" should {
 
+    val url = "/cases?queue_id=none&assignee_id=none&sort-by=elapsed-days"
+
     "get empty cases" in {
       given(configuration.bindingTariffClassificationUrl).willReturn("http://localhost:20001")
 
-      stubFor(get(urlEqualTo("/cases?queue_id=none&assignee_id=none&sort-by=elapsed-days"))
+      stubFor(get(urlEqualTo(url))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
           .withBody("[]"))
       )
 
-      val response = connector.getGatewayCases
-
-      val cases: Seq[Case] = Await.result(response, Duration(1, TimeUnit.SECONDS))
-      assertThat(cases.size).isZero
+      await(connector.getGatewayCases) shouldBe Seq()
     }
 
     "get non-empty cases" in {
       given(configuration.bindingTariffClassificationUrl).willReturn("http://localhost:20001")
 
-      stubFor(get(urlEqualTo("/cases?queue_id=none&assignee_id=none&sort-by=elapsed-days"))
+      stubFor(get(urlEqualTo(url))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
           .withBody(Payloads.gatewayCases))
       )
 
-      val response = connector.getGatewayCases
-
-      val cases: Seq[Case] = Await.result(response, Duration(1, TimeUnit.SECONDS))
-      assertThat(cases.size).isOne
+      await(connector.getGatewayCases) shouldBe Seq(caseExample)
     }
 
   }

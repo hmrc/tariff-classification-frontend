@@ -39,7 +39,7 @@ class CasesServiceSpec extends UnitSpec with MockitoSugar {
 
     "retrieve connector cases" in {
       given(connector.getGatewayCases).willReturn(cases)
-      service.getAllCases shouldBe cases
+      await(service.getAllCases) shouldBe cases
     }
   }
 
