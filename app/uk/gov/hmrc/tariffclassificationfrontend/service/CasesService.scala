@@ -30,7 +30,7 @@ class CasesService @Inject()(connector: CasesConnector) {
     connector.getOne(reference)
   }
 
-  def getAllCases(implicit hc : HeaderCarrier): Future[Seq[Case]] = {
+  def getGatewayCases(implicit hc : HeaderCarrier): Future[Seq[Case]] = {
     connector.getGatewayCases
   }
 

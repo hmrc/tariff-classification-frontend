@@ -28,11 +28,7 @@ import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.connector.CasesConnector
-import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 import unit.uk.gov.hmrc.tariffclassificationfrontend.utils.{CaseExamples, CasePayloads}
-
-import scala.concurrent.Await
-import scala.concurrent.duration.Duration
 
 class CasesConnectorSpec extends UnitSpec with WiremockTestServer with MockitoSugar with WithFakeApplication {
 
@@ -91,7 +87,7 @@ class CasesConnectorSpec extends UnitSpec with WiremockTestServer with MockitoSu
           .withBody(CasePayloads.btiCase))
       )
 
-      await(connector.getOne("id")) shouldBe CaseExamples.caseExample
+      await(connector.getOne("id")) shouldBe Some(CaseExamples.caseExample)
     }
 
   }

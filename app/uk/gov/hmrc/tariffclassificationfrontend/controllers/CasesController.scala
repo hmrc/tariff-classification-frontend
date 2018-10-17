@@ -32,7 +32,7 @@ class CasesController @Inject()(casesService: CasesService,
                                 implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
   def gateway: Action[AnyContent] = Action.async { implicit request =>
-    casesService.getAllCases.map { cases =>
+    casesService.getGatewayCases.map { cases =>
       Ok(views.html.gateway_cases(cases))
     }
   }

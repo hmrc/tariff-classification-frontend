@@ -18,8 +18,8 @@ package unit.uk.gov.hmrc.tariffclassificationfrontend.controllers
 
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito._
-import org.scalatest.mockito.MockitoSugar
 import org.scalatest.Matchers
+import org.scalatest.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status
 import play.api.i18n.{DefaultLangs, DefaultMessagesApi}
@@ -49,7 +49,7 @@ class CasesControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSuit
   "Gateway Cases" should {
 
     "return 200 OK and HMTL content type" in {
-      given(service.getAllCases(any[HeaderCarrier])).willReturn(Future.successful(Seq.empty))
+      given(service.getGatewayCases(any[HeaderCarrier])).willReturn(Future.successful(Seq.empty))
 
       val result = await(controller.gateway(fakeRequest))
       status(result) shouldBe Status.OK
