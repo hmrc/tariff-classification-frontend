@@ -18,28 +18,48 @@ package uk.gov.hmrc.tariffclassificationfrontend.models
 
 import java.time.ZonedDateTime
 
-case class Application
+sealed trait Application {
+  val `type`: String
+
+  def asBTI(): BTIApplication = {
+    this.asInstanceOf[BTIApplication]
+  }
+  def getType() : String = {
+    `type`
+  }
+}
+
+case class BTIApplication
 (
   holder: EORIDetails,
   contact: Contact,
-  `type`: String,
-  agent: Option[EORIDetails] = None,
-  offline: Boolean = false,
+  agent: Option[EORIDetails],
+  offline: Boolean,
   goodName: String,
   goodDescription: String,
-  confidentialInformation: Option[String] = None,
-  otherInformation: Option[String] = None,
-  reissuedBTIReference: Option[String] = None,
-  relatedBTIReference: Option[String] = None,
-  knownLegalProceedings: Option[String] = None,
-  envisagesCommodityCode: Option[String] = None,
-  sampleToBeProvided: Boolean = false,
-  sampleToBeReturned: Boolean = false,
+  confidentialInformation: Option[String],
+  otherInformation: Option[String],
+  reissuedBTIReference: Option[String],
+  relatedBTIReference: Option[String],
+  knownLegalProceedings: Option[String],
+  envisagesCommodityCode: Option[String],
+  sampleToBeProvided: Boolean,
+  sampleToBeReturned: Boolean
+) extends Application {
+  override val `type` = "BTI"
+}
+
+case class LiabilityOrder
+(
+  holder: EORIDetails,
+  contact: Contact,
   status: String,
   port: String,
   entryNumber: String,
   endDate: ZonedDateTime
-)
+) extends Application {
+  override val `type` = "LIABILITY_ORDER"
+}
 
 case class EORIDetails
 (

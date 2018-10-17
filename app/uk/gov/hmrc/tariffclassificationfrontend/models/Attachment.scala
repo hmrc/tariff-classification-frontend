@@ -24,5 +24,5 @@ case class Attachment
   public: Boolean,
   url: String,
   mimeType: String,
-  timestamp: ZonedDateTime = ZonedDateTime.now()
+  timestamp: ZonedDateTime
 )

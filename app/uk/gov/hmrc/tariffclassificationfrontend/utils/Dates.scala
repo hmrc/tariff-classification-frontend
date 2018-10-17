@@ -21,7 +21,7 @@ import java.time.temporal.TemporalAccessor
 
 object Dates {
 
-  val formatter = DateTimeFormatter.ofPattern("dd MMM yyyy")
+  val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd MMM yyyy")
 
   def format(temporal: TemporalAccessor) : String = {
     formatter.format(temporal)

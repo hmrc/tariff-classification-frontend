@@ -19,6 +19,7 @@ package uk.gov.hmrc.tariffclassificationfrontend.service
 import org.assertj.core.api.Assertions._
 import org.mockito.BDDMockito._
 import org.scalatest.mockito.MockitoSugar
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.tariffclassificationfrontend.connector.CasesConnector
 import uk.gov.hmrc.tariffclassificationfrontend.models.Case
@@ -27,6 +28,7 @@ import scala.concurrent.Future
 
 class CasesServiceSpec extends UnitSpec with MockitoSugar {
 
+  private implicit val hc = HeaderCarrier()
   private val cases = mock[Future[Seq[Case]]]
   private val connector = mock[CasesConnector]
 

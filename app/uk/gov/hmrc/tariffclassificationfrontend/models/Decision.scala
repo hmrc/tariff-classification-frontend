@@ -26,9 +26,9 @@ case class Decision
   justification: String,
   goodsDescription: String,
   keywords: Seq[String],
-  methodSearch: Option[String] = None,
-  methodCommercialDenomination: Option[String] = None,
-  appeal: Option[Appeal] = None
+  methodSearch: Option[String],
+  methodCommercialDenomination: Option[String],
+  appeal: Option[Appeal]
 )
 
 case class Appeal

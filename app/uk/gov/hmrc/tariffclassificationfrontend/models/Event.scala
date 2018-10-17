@@ -21,17 +21,31 @@ import java.time.ZonedDateTime
 case class Event
 (
   id: String,
-  `type`: String,
   details: Details,
   userId: String,
   caseReference: String,
-  timestamp: ZonedDateTime = ZonedDateTime.now()
+  timestamp: ZonedDateTime
 )
 
-case class Details
+sealed trait Details {
+  val `type`: String
+  val comment: Option[String]
+}
+
+case class CaseStatusChange
 (
-  `type`: String,
   from: String,
   to: String,
-  comment: Option[String]
-)
+  override val comment: Option[String]
+
+) extends Details {
+  override val `type` = "CASE_STATUS_CHANGE"
+}
+
+case class Note
+(
+  override val comment: Option[String]
+
+) extends Details {
+  override val `type` = "NOTE"
+}

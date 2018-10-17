@@ -19,25 +19,17 @@ package unit.uk.gov.hmrc.tariffclassificationfrontend.connector
 
 import java.time.ZonedDateTime
 
-import play.api.libs.json.{Json, OWrites, Writes}
+import play.api.libs.json.{Json, Writes}
+import uk.gov.hmrc.tariffclassificationfrontend.models
 import uk.gov.hmrc.tariffclassificationfrontend.models._
+import uk.gov.hmrc.tariffclassificationfrontend.utils.JsonFormatters.caseFormat
 
 object Payloads {
-  implicit val eventDetailsWrites: OWrites[Details] = Json.writes[Details]
-  implicit val eventWrites: OWrites[Event] = Json.writes[Event]
-  implicit val attachmentWrites: OWrites[Attachment] = Json.writes[Attachment]
-  implicit val eoriDetailsWrites: OWrites[EORIDetails] = Json.writes[EORIDetails]
-  implicit val contactWrites: OWrites[Contact] = Json.writes[Contact]
-  implicit val appealWrites: OWrites[Appeal] = Json.writes[Appeal]
-  implicit val decisionWrites: OWrites[Decision] = Json.writes[Decision]
-  implicit val applicationWrites: OWrites[Application] = Json.writes[Application]
-  implicit val caseWrites: OWrites[Case] = Json.writes[Case]
 
   private val eoriDetailsExample = EORIDetails("eori", "trader-name", "line1", "line2", "line3", "postcode", "country")
   private val contactExample = Contact("name", "email", "phone")
-  private val applicationExample = Application(eoriDetailsExample, contactExample, "BTI", None, false, "Laptop", "Personal Computer", None, None, None, None, None, None, false, false, "liability-status", "liability-port", "liability-entry-number", ZonedDateTime.now())
-  private val caseExample = Case("1", "OPEN", ZonedDateTime.now(), ZonedDateTime.now(), None, None, None, "gateway", applicationExample, None, Seq())
-
+  private val applicationExample = models.BTIApplication(eoriDetailsExample, contactExample, None, false, "Laptop", "Personal Computer", None, None, None, None, None, None, false, false)
+  private val caseExample = Case("1", "OPEN", ZonedDateTime.now(), ZonedDateTime.now(), None, None, None, None, applicationExample, None, Seq())
 
   val gatewayCases: String = jsonOf(Seq(caseExample))
 

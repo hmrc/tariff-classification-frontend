@@ -17,21 +17,15 @@
 package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
 import play.api.Logger
-import play.api.mvc.Result
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import uk.gov.hmrc.tariffclassificationfrontend.model.{ErrorCode, JsErrorResponse}
 
 trait CommonController extends FrontendController {
 
-  private[controllers] def recovery: PartialFunction[Throwable, Result] = {
+  private[controllers] def recovery: PartialFunction[Throwable, Unit] = {
     case e: Throwable =>
-      Logger.error(s"Error occurred: ${e.getMessage}", e)
-      handleException(e)
+      Logger.error(s"An unexpected error occurred: ${e.getMessage}", e)
+
   }
 
-  private[controllers] def handleException(e: Throwable) = {
-    Logger.error(s"An unexpected error occurred: ${e.getMessage}", e)
-    InternalServerError(JsErrorResponse(ErrorCode.UNKNOWN_ERROR, "An unexpected error occurred"))
-  }
 
 }

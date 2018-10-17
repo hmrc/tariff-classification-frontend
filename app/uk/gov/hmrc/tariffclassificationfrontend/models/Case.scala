@@ -22,15 +22,15 @@ case class Case
 (
   reference: String,
   status: String,
-  createdDate: ZonedDateTime = ZonedDateTime.now(),
-  adjustedCreateDate: ZonedDateTime = ZonedDateTime.now(),
-  closedDate: Option[ZonedDateTime] = None,
-  caseBoardsFileNumber: Option[String] = None,
-  assigneeId: Option[String] = None,
-  queueId: String = "gateway",
+  createdDate: ZonedDateTime,
+  adjustedCreateDate: ZonedDateTime,
+  closedDate: Option[ZonedDateTime],
+  caseBoardsFileNumber: Option[String],
+  assigneeId: Option[String],
+  queueId: Option[String],
   application: Application,
-  decision: Option[Decision] = None,
-  attachments: Seq[Attachment] = Seq.empty
+  decision: Option[Decision],
+  attachments: Seq[Attachment]
 ) {
   def elapsedDays: Long = {
     if(closedDate.isEmpty) {

@@ -23,6 +23,8 @@ import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
+import scala.concurrent.ExecutionContext.Implicits.global
+
 @Singleton
 class CasesController @Inject()(casesService: CasesService,
                                 val messagesApi: MessagesApi,
@@ -31,7 +33,7 @@ class CasesController @Inject()(casesService: CasesService,
   def gateway: Action[AnyContent] = Action.async { implicit request =>
     casesService.getAllCases.map { cases =>
       Ok(views.html.gateway_cases(cases))
-    } recover recovery
+    }
   }
 
 }

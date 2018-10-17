@@ -23,6 +23,7 @@ lazy val microservice = (project in file("."))
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
     evictionWarningOptions in update := EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
     parallelExecution in Test := false,
+    testGrouping in Test := oneForkedJvmPerTest((definedTests in Test).value),
     fork in Test := false,
     retrieveManaged := true,
     routesGenerator := StaticRoutesGenerator

@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
+import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito._
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{Matchers, WordSpec}
@@ -25,6 +26,7 @@ import play.api.i18n.{DefaultLangs, DefaultMessagesApi}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.api.{Configuration, Environment}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 
@@ -38,23 +40,18 @@ class CasesControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuit
   private val messageApi = new DefaultMessagesApi(env, configuration, new DefaultLangs(configuration))
   private val appConfig = new AppConfig(configuration, env)
   private val service = mock[CasesService]
+  private implicit val hc = HeaderCarrier()
 
   private val controller = new CasesController(service, messageApi, appConfig)
 
   "Gateway Cases" should {
 
     "return 200 OK and HMTL content type" in {
-      given(service.getAllCases).willReturn(Future.successful(Seq.empty))
+      given(service.getAllCases(any[HeaderCarrier])).willReturn(Future.successful(Seq.empty))
       val result = controller.gateway(fakeRequest)
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
-    }
-
-    "return 500" in {
-      given(service.getAllCases).willReturn(Future.failed(new RuntimeException))
-      val result = controller.gateway(fakeRequest)
-      status(result) shouldBe Status.INTERNAL_SERVER_ERROR
     }
 
   }

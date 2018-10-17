@@ -23,19 +23,27 @@ import org.apache.http.HttpStatus
 import org.assertj.core.api.Assertions._
 import org.mockito.BDDMockito._
 import org.scalatest.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import uk.gov.hmrc.play.test.UnitSpec
-import uk.gov.hmrc.tariffclassificationfrontend.config.{AppConfig, WSHttp}
+import play.api.Environment
+import play.api.libs.ws.WSClient
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.audit.DefaultAuditConnector
+import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
+import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
+import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.connector.CasesConnector
 import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 
-class CasesConnectorSpec extends UnitSpec with WiremockTestServer with MockitoSugar with GuiceOneAppPerSuite {
+class CasesConnectorSpec extends UnitSpec with WiremockTestServer with MockitoSugar with WithFakeApplication {
 
   private val configuration = mock[AppConfig]
-  private val client = WSHttp
+
+  private val wsClient: WSClient = fakeApplication.injector.instanceOf[WSClient]
+  private val auditConnector = new DefaultAuditConnector(fakeApplication.configuration, fakeApplication.injector.instanceOf[Environment])
+  private val client = new DefaultHttpClient(fakeApplication.configuration, auditConnector, wsClient)
+  private implicit val hc = HeaderCarrier()
 
   private val connector = new CasesConnector(configuration, client)
 
@@ -44,7 +52,7 @@ class CasesConnectorSpec extends UnitSpec with WiremockTestServer with MockitoSu
     "get empty cases" in {
       given(configuration.bindingTariffClassificationUrl).willReturn("http://localhost:20001")
 
-      stubFor(get(urlEqualTo("/cases?queue_id=gateway&assignee_id=none&sort-by=elapsed-days"))
+      stubFor(get(urlEqualTo("/cases?queue_id=none&assignee_id=none&sort-by=elapsed-days"))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
           .withBody("[]"))
@@ -59,7 +67,7 @@ class CasesConnectorSpec extends UnitSpec with WiremockTestServer with MockitoSu
     "get non-empty cases" in {
       given(configuration.bindingTariffClassificationUrl).willReturn("http://localhost:20001")
 
-      stubFor(get(urlEqualTo("/cases?queue_id=gateway&assignee_id=none&sort-by=elapsed-days"))
+      stubFor(get(urlEqualTo("/cases?queue_id=none&assignee_id=none&sort-by=elapsed-days"))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
           .withBody(Payloads.gatewayCases))

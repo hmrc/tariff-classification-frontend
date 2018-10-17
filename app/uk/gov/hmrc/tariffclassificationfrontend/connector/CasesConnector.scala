@@ -18,30 +18,20 @@ package uk.gov.hmrc.tariffclassificationfrontend.connector
 
 import com.google.inject.Inject
 import javax.inject.Singleton
-import play.api.libs.json.Json
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
-import uk.gov.hmrc.tariffclassificationfrontend.config.{AppConfig, WSHttp}
+import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models._
+import uk.gov.hmrc.tariffclassificationfrontend.utils.JsonFormatters.caseFormat
 
 import scala.concurrent.Future
 
 @Singleton
-class CasesConnector @Inject()(configuration: AppConfig, client: WSHttp) {
+class CasesConnector @Inject()(configuration: AppConfig, client: HttpClient) {
 
-  implicit val hc = HeaderCarrier()
-  implicit val eventDetailsReads = Json.format[Details]
-  implicit val eventReads = Json.format[Event]
-  implicit val attachmentReads = Json.format[Attachment]
-  implicit val appealReads = Json.format[Appeal]
-  implicit val contactReads = Json.format[Contact]
-  implicit val eoriDetailsReads = Json.format[EORIDetails]
-  implicit val decisionReads = Json.format[Decision]
-  implicit val applicationReads = Json.format[Application]
-  implicit val caseReads = Json.format[Case]
-
-  def getGatewayCases: Future[Seq[Case]] = {
-    val url = configuration.bindingTariffClassificationUrl + "/cases?queue_id=gateway&assignee_id=none&sort-by=elapsed-days"
+  def getGatewayCases(implicit hc: HeaderCarrier): Future[Seq[Case]] = {
+    val url = configuration.bindingTariffClassificationUrl + "/cases?queue_id=none&assignee_id=none&sort-by=elapsed-days"
     client.GET[Seq[Case]](url)
   }
 
