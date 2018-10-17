@@ -28,7 +28,7 @@ class CasesController @Inject()(casesService: CasesService,
                                 val messagesApi: MessagesApi,
                                 implicit val appConfig: AppConfig) extends CommonController with I18nSupport {
 
-  val gateway: Action[AnyContent] = Action.async { implicit request =>
+  def gateway: Action[AnyContent] = Action.async { implicit request =>
     casesService.getAllCases.map { cases =>
       Ok(views.html.gateway_cases(cases))
     } recover recovery

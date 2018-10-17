@@ -37,6 +37,8 @@ class CasesConnectorSpec extends UnitSpec with WiremockTestServer with MockitoSu
   private val configuration = mock[AppConfig]
   private val client = WSHttp
 
+  private val connector = new CasesConnector(configuration, client)
+
   "Connector" should {
 
     "get empty cases" in {
@@ -48,7 +50,6 @@ class CasesConnectorSpec extends UnitSpec with WiremockTestServer with MockitoSu
           .withBody("[]"))
       )
 
-      val connector = new CasesConnector(configuration, client)
       val response = connector.getGatewayCases
 
       val cases: Seq[Case] = Await.result(response, Duration(1, TimeUnit.SECONDS))
@@ -64,7 +65,6 @@ class CasesConnectorSpec extends UnitSpec with WiremockTestServer with MockitoSu
           .withBody(Payloads.gatewayCases))
       )
 
-      val connector = new CasesConnector(configuration, client)
       val response = connector.getGatewayCases
 
       val cases: Seq[Case] = Await.result(response, Duration(1, TimeUnit.SECONDS))
