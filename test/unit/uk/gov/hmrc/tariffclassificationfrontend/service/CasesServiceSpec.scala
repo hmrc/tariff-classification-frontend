@@ -14,33 +14,32 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.tariffclassificationfrontend.service
+package unit.uk.gov.hmrc.tariffclassificationfrontend.service
 
-import org.assertj.core.api.Assertions._
 import org.mockito.BDDMockito._
 import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.tariffclassificationfrontend.connector.CasesConnector
 import uk.gov.hmrc.tariffclassificationfrontend.models.Case
+import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 
 import scala.concurrent.Future
 
 class CasesServiceSpec extends UnitSpec with MockitoSugar {
 
   private implicit val hc = HeaderCarrier()
+
   private val cases = mock[Future[Seq[Case]]]
   private val connector = mock[CasesConnector]
+
+  private val service = new CasesService(connector)
 
   "Get All Cases" should {
 
     "retrieve connector cases" in {
       given(connector.getGatewayCases).willReturn(cases)
-
-      val service = new CasesService(connector)
-      val response = service.getAllCases
-
-      assertThat(response) isEqualTo cases
+      service.getAllCases shouldBe cases
     }
   }
 

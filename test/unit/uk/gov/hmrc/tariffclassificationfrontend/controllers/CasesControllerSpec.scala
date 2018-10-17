@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.tariffclassificationfrontend.controllers
+package unit.uk.gov.hmrc.tariffclassificationfrontend.controllers
 
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito._
 import org.scalatest.mockito.MockitoSugar
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.Matchers
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status
 import play.api.i18n.{DefaultLangs, DefaultMessagesApi}
@@ -27,12 +27,14 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
+import uk.gov.hmrc.tariffclassificationfrontend.controllers.CasesController
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 
 import scala.concurrent.Future
 
-class CasesControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite with MockitoSugar {
+class CasesControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSuite with MockitoSugar {
 
   private val fakeRequest = FakeRequest()
   private val env = Environment.simple()
@@ -48,7 +50,8 @@ class CasesControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuit
 
     "return 200 OK and HMTL content type" in {
       given(service.getAllCases(any[HeaderCarrier])).willReturn(Future.successful(Seq.empty))
-      val result = controller.gateway(fakeRequest)
+
+      val result = await(controller.gateway(fakeRequest))
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
