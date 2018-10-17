@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.tariffclassificationfrontend.service
+ package uk.gov.hmrc.tariffclassificationfrontend.service
 
-import org.assertj.core.api.Assertions._
 import org.mockito.BDDMockito._
 import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.http.HeaderCarrier
@@ -33,15 +32,14 @@ class CasesServiceSpec extends UnitSpec with MockitoSugar {
   private val oneCase = mock[Future[Option[Case]]]
   private val connector = mock[CasesConnector]
 
+  private val service = new CasesService(connector)
+
   "Get All Cases" should {
 
     "retrieve connector cases" in {
       given(connector.getGatewayCases).willReturn(manyCases)
 
-      val service = new CasesService(connector)
-      val response = service.getAllCases
-
-      assertThat(response) isEqualTo manyCases
+      service.getAllCases shouldBe manyCases
     }
   }
 
@@ -50,10 +48,7 @@ class CasesServiceSpec extends UnitSpec with MockitoSugar {
     "retrieve connector cases" in {
       given(connector.getOne("reference")).willReturn(oneCase)
 
-      val service = new CasesService(connector)
-      val response = service.getOne("reference")
-
-      assertThat(response) isEqualTo oneCase
+      service.getOne("reference") shouldBe  oneCase
     }
   }
 

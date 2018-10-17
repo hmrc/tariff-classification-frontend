@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.tariffclassificationfrontend.utils
+package unit.uk.gov.hmrc.tariffclassificationfrontend.utils
 
 import java.time.LocalDate
 
 import uk.gov.hmrc.play.test.UnitSpec
+import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
 
 class DatesSpec extends UnitSpec {
 
