@@ -30,7 +30,7 @@ class CasesServiceSpec extends UnitSpec with MockitoSugar {
 
   private implicit val hc = HeaderCarrier()
 
-  private val cases = mock[Future[Seq[Case]]]
+  private val c = mock[Case]
   private val connector = mock[CasesConnector]
 
   private val service = new CasesService(connector)
@@ -38,8 +38,8 @@ class CasesServiceSpec extends UnitSpec with MockitoSugar {
   "Get All Cases" should {
 
     "retrieve connector cases" in {
-      given(connector.getGatewayCases).willReturn(cases)
-      await(service.getAllCases) shouldBe cases
+      given(connector.getGatewayCases).willReturn(Future.successful(Seq(c)))
+      await(service.getAllCases) shouldBe Seq(c)
     }
   }
 
