@@ -33,55 +33,55 @@
             <h3 class="heading-medium">Summary</h3>
 
             <div class="grid-row">
-                <div class="column-one-half">
+                <div class="column-one-third">
                     <p>Status</p>
                 </div>
-                <div class="column-one-half">
+                <div class="column-two-thirds">
                     <p>@c.status</p>
                 </div>
             </div>
 
             <div class="grid-row">
-                <div class="column-one-half">
+                <div class="column-one-third">
                     <p>Date Received</p>
                 </div>
-                <div class="column-one-half">
+                <div class="column-two-thirds">
                     <p>@Dates.format(c.createdDate)</p>
                 </div>
             </div>
 
             <div class="grid-row">
-                <div class="column-one-half">
+                <div class="column-one-third">
                     <p>Days Elapsed</p>
                 </div>
-                <div class="column-one-half">
+                <div class="column-two-thirds">
                     <p>@c.elapsedDays</p>
                 </div>
             </div>
 
             <div class="grid-row">
-                <div class="column-one-half">
+                <div class="column-one-third">
                     <p>Contact Name</p>
                 </div>
-                <div class="column-one-half">
+                <div class="column-two-thirds">
                     <p>@c.application.asBTI().contact.name</p>
                 </div>
             </div>
 
             <div class="grid-row">
-                <div class="column-one-half">
+                <div class="column-one-third">
                     <p>Email</p>
                 </div>
-                <div class="column-one-half">
+                <div class="column-two-thirds">
                     <a href="mailto:@c.application.asBTI().contact.email">@c.application.asBTI().contact.email</a>
                 </div>
             </div>
 
             <div class="grid-row">
-                <div class="column-one-half">
+                <div class="column-one-third">
                     <p>Telephone</p>
                 </div>
-                <div class="column-one-half">
+                <div class="column-two-thirds">
                     <p>@c.application.asBTI().contact.phone</p>
                 </div>
             </div>
