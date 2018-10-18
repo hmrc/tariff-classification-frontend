@@ -19,8 +19,10 @@ package uk.gov.hmrc.tariffclassificationfrontend.controllers
 import javax.inject.{Inject, Singleton}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
+import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
+import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
@@ -36,6 +38,39 @@ class CaseController @Inject()(casesService: CasesService,
       .map(response => {
         if (response.isEmpty) Ok(views.html.case_not_found(reference))
         else Ok(views.html.case_summary(response.get))
+      })
+  }
+
+  def applicationDetails(reference: String): Action[AnyContent] = Action.async { implicit request =>
+    casesService.getOne(reference)
+      .map(response => {
+        if (response.isEmpty) {
+          Ok(views.html.case_not_found(reference))
+        } else {
+          Ok(views.html.application_details(response.get))
+        }
+      })
+  }
+
+  def summary(reference: String): Action[AnyContent] = Action.async { implicit request =>
+    casesService.getOne(reference)
+      .map(response => {
+        if (response.isEmpty) {
+          Ok(views.html.case_not_found(reference))
+        } else {
+          Ok(views.html.case_summary(response.get))
+        }
+      })
+  }
+
+  def getCaseAndRender(reference: String, html: Case => Html)(implicit request: Request[_]) = {
+    casesService.getOne(reference)
+      .map(response => {
+        if (response.isEmpty) {
+          Ok(views.html.case_not_found(reference))
+        } else {
+          Ok(views.html.case_summary(response.get))
+        }
       })
   }
 
