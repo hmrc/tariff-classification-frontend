@@ -42,8 +42,8 @@
 
 @insideHeader = {
 @uiLayouts.header_nav(
-    navTitle = Some("tariff-classification-frontend"),
-    navTitleLink = None,
+    navTitle = Some("HMRC Tariff Classification"),
+    navTitleLink = Some(Call("GET", "/tariff-classification/queue/gateway")),
     showBetaLink = false,
     navLinks = Some(headerNavLinks))
 }
