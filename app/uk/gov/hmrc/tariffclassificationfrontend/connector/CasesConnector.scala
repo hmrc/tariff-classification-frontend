@@ -31,12 +31,12 @@ import scala.concurrent.Future
 class CasesConnector @Inject()(configuration: AppConfig, client: HttpClient) {
 
   def getOne(reference: String)(implicit hc: HeaderCarrier): Future[Option[Case]] = {
-    val url = configuration.bindingTariffClassificationUrl + "/cases/" + reference
+    val url = s"${configuration.bindingTariffClassificationUrl}/cases/$reference"
     client.GET[Option[Case]](url)
   }
 
   def getGatewayCases(implicit hc: HeaderCarrier): Future[Seq[Case]] = {
-    val url = configuration.bindingTariffClassificationUrl + "/cases?queue_id=none&assignee_id=none&sort-by=elapsed-days"
+    val url = s"${configuration.bindingTariffClassificationUrl}/cases?queue_id=none&assignee_id=none&sort-by=elapsed-days"
     client.GET[Seq[Case]](url)
   }
 

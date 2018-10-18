@@ -41,11 +41,12 @@ class CasesConnectorSpec extends UnitSpec with WiremockTestServer with MockitoSu
   private val connector = new CasesConnector(configuration, client)
 
   "Connector" should {
+    val url = "/cases?queue_id=none&assignee_id=none&sort-by=elapsed-days"
 
     "get empty gateway cases" in {
       given(configuration.bindingTariffClassificationUrl).willReturn("http://localhost:20001")
 
-      stubFor(get(urlEqualTo("/cases?queue_id=none&assignee_id=none&sort-by=elapsed-days"))
+      stubFor(get(urlEqualTo(url))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
           .withBody("[]"))
@@ -57,7 +58,7 @@ class CasesConnectorSpec extends UnitSpec with WiremockTestServer with MockitoSu
     "get gateway cases" in {
       given(configuration.bindingTariffClassificationUrl).willReturn("http://localhost:20001")
 
-      stubFor(get(urlEqualTo("/cases?queue_id=none&assignee_id=none&sort-by=elapsed-days"))
+      stubFor(get(urlEqualTo(url))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
           .withBody(CasePayloads.gatewayCases))
