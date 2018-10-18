@@ -16,7 +16,7 @@
 
 @(section: String, reference: String)
 
-<div class="side-nav" role="navigation" aria-labelledby="nav" style="margin-top: 30px">
+<div class="side-nav" role="navigation" aria-labelledby="nav">
     <ul>
         <li class="side-nav__list @if(section == "summary") { side-nav__list--selected }">
             <a class="side-nav__link" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.summary(reference)">Summary</a>
