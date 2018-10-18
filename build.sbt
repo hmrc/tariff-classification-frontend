@@ -26,7 +26,8 @@ lazy val microservice = (project in file("."))
     testGrouping in Test := oneForkedJvmPerTest((definedTests in Test).value),
     fork in Test := false,
     retrieveManaged := true,
-    routesGenerator := StaticRoutesGenerator
+    routesGenerator := StaticRoutesGenerator,
+    unmanagedSourceDirectories in Test := Seq((baseDirectory in Test).value / "test/unit")
   )
   .configs(IntegrationTest)
   .settings(inConfig(TemplateItTest)(Defaults.itSettings): _*)

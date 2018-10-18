@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package unit.uk.gov.hmrc.tariffclassificationfrontend.models
+package uk.gov.hmrc.tariffclassificationfrontend.models
 
 import uk.gov.hmrc.play.test.UnitSpec
-import uk.gov.hmrc.tariffclassificationfrontend.models.{BTIApplication, LiabilityOrder}
-import unit.uk.gov.hmrc.tariffclassificationfrontend.utils.CaseExamples
+import uk.gov.hmrc.tariffclassificationfrontend.utils.CaseExamples
 
 class ApplicationSpec extends UnitSpec {
 

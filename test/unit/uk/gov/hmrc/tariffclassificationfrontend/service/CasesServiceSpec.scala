@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
- package uk.gov.hmrc.tariffclassificationfrontend.service
+package uk.gov.hmrc.tariffclassificationfrontend.service
 
 import org.mockito.BDDMockito._
 import org.scalatest.mockito.MockitoSugar

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package unit.uk.gov.hmrc.tariffclassificationfrontend.controllers
+package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito._
@@ -29,7 +29,6 @@ import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.controllers.CasesController
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 
 import scala.concurrent.Future

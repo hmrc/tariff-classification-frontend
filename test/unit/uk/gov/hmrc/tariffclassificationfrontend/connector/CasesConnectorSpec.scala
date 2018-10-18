@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package unit.uk.gov.hmrc.tariffclassificationfrontend.connector
+package uk.gov.hmrc.tariffclassificationfrontend.connector
 
 import com.github.tomakehurst.wiremock.client.WireMock._
 import org.apache.http.HttpStatus
@@ -27,8 +27,7 @@ import uk.gov.hmrc.play.bootstrap.audit.DefaultAuditConnector
 import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.connector.CasesConnector
-import unit.uk.gov.hmrc.tariffclassificationfrontend.utils.{CaseExamples, CasePayloads}
+import uk.gov.hmrc.tariffclassificationfrontend.utils.{CaseExamples, CasePayloads}
 
 class CasesConnectorSpec extends UnitSpec with WiremockTestServer with MockitoSugar with WithFakeApplication {
 
