@@ -17,11 +17,11 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 @import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.main_template
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.case_nav
 @(c: Case)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@main_template(bodyClasses = None) {
+@main(bodyClasses = None) {
 
     <h1 class="heading-large">#@c.reference - @c.application.getType() for @c.application.asBTI().holder.traderName</h1>
 
