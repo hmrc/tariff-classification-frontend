@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
-import org.mockito.ArgumentMatchers.{any, anyString}
+import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito._
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{Matchers, WordSpec}
@@ -48,7 +48,7 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
   "Case Summary" should {
 
     "return 200 OK and HMTL content type" in {
-      given(service.getOne(anyString())(any[HeaderCarrier])).willReturn(Future.successful(Some(CaseExamples.btiCaseExample)))
+      given(service.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(CaseExamples.btiCaseExample)))
       val result = controller.summary("reference")(fakeRequest)
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -56,7 +56,7 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
     }
 
     "return 404 Not Found and HMTL content type" in {
-      given(service.getOne(anyString())(any[HeaderCarrier])).willReturn(Future.successful(None))
+      given(service.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(None))
       val result = controller.summary("reference")(fakeRequest)
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
