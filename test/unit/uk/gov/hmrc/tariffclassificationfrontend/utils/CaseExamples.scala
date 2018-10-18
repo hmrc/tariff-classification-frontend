@@ -18,14 +18,15 @@ package unit.uk.gov.hmrc.tariffclassificationfrontend.utils
 
 import java.time.ZonedDateTime
 
-import uk.gov.hmrc.tariffclassificationfrontend.models
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Contact, EORIDetails}
+import uk.gov.hmrc.tariffclassificationfrontend.models._
 
 object CaseExamples {
 
   val eoriDetailsExample = EORIDetails("eori", "trader-name", "line1", "line2", "line3", "postcode", "country")
   val contactExample = Contact("name", "email", "phone")
-  val applicationExample = models.BTIApplication(eoriDetailsExample, contactExample, None, false, "Laptop", "Personal Computer", None, None, None, None, None, None, false, false)
-  val caseExample = Case("1", "OPEN", ZonedDateTime.now(), ZonedDateTime.now(), None, None, None, None, applicationExample, None, Seq())
+  val btiApplicationExample = BTIApplication(eoriDetailsExample, contactExample, None, false, "Laptop", "Personal Computer", None, None, None, None, None, None, false, false)
+  val liabilityApplicationExample = LiabilityOrder(eoriDetailsExample, contactExample, "status", "port", "entry number", ZonedDateTime.now())
+  val btiCaseExample = Case("1", "OPEN", ZonedDateTime.now(), ZonedDateTime.now(), None, None, None, None, btiApplicationExample, None, Seq())
+  val liabilityCaseExample = Case("1", "OPEN", ZonedDateTime.now(), ZonedDateTime.now(), None, None, None, None, liabilityApplicationExample, None, Seq())
 
 }

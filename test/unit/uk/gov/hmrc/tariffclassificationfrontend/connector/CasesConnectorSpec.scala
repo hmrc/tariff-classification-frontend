@@ -64,7 +64,7 @@ class CasesConnectorSpec extends UnitSpec with WiremockTestServer with MockitoSu
           .withBody(CasePayloads.gatewayCases))
       )
 
-      await(connector.getGatewayCases) shouldBe Seq(CaseExamples.caseExample)
+      await(connector.getGatewayCases) shouldBe Seq(CaseExamples.btiCaseExample)
     }
 
     "get an unknown case" in {
@@ -87,7 +87,7 @@ class CasesConnectorSpec extends UnitSpec with WiremockTestServer with MockitoSu
           .withBody(CasePayloads.btiCase))
       )
 
-      await(connector.getOne("id")) shouldBe Some(CaseExamples.caseExample)
+      await(connector.getOne("id")) shouldBe Some(CaseExamples.btiCaseExample)
     }
 
   }

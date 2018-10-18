@@ -49,7 +49,7 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
   "Case Summary" should {
 
     "return 200 OK and HMTL content type" in {
-      given(service.getOne(anyString())(any[HeaderCarrier])).willReturn(Future.successful(Some(CaseExamples.caseExample)))
+      given(service.getOne(anyString())(any[HeaderCarrier])).willReturn(Future.successful(Some(CaseExamples.btiCaseExample)))
       val result = controller.summary("reference")(fakeRequest)
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")

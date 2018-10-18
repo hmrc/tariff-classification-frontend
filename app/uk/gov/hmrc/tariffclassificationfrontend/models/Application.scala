@@ -24,8 +24,24 @@ sealed trait Application {
   def asBTI(): BTIApplication = {
     this.asInstanceOf[BTIApplication]
   }
+
+  def asLiabilityOrder(): LiabilityOrder = {
+    this.asInstanceOf[LiabilityOrder]
+  }
+
+  def isBTI(): Boolean = {
+    this.isInstanceOf[BTIApplication]
+  }
+
+  def isLiabilityOrder(): Boolean = {
+    this.isInstanceOf[LiabilityOrder]
+  }
+
   def getType() : String = {
-    `type`
+    `type` match {
+      case "BTI" => "BTI"
+      case "LIABILITY_ORDER" => "Liability Order"
+    }
   }
 }
 
