@@ -68,7 +68,7 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
   "Application Details" should {
 
     "return 200 OK and HMTL content type" in {
-      given(service.getOne(anyString())(any[HeaderCarrier])).willReturn(Future.successful(Some(CaseExamples.btiCaseExample)))
+      given(service.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(CaseExamples.btiCaseExample)))
       val result = controller.applicationDetails("reference")(fakeRequest)
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -76,7 +76,7 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
     }
 
     "return 404 Not Found and HMTL content type" in {
-      given(service.getOne(anyString())(any[HeaderCarrier])).willReturn(Future.successful(None))
+      given(service.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(None))
       val result = controller.applicationDetails("reference")(fakeRequest)
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")

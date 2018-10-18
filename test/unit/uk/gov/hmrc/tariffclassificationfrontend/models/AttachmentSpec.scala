@@ -18,20 +18,32 @@ package uk.gov.hmrc.tariffclassificationfrontend.models
 
 import java.time.ZonedDateTime
 
-case class Attachment
-(
-  application: Boolean,
-  public: Boolean,
-  url: String,
-  mimeType: String,
-  timestamp: ZonedDateTime
-) {
-  def isImage: Boolean = {
-    mimeType match {
-      case "image/png" => true
-      case "image/jpeg" => true
-      case "image/gif" => true
-      case _ => false
+import uk.gov.hmrc.play.test.UnitSpec
+
+class AttachmentSpec extends UnitSpec {
+
+  "Application 'Is Image'" should {
+
+    "recognise PNG" in {
+      anImageOfType("image/png").isImage shouldBe true
     }
+
+    "recognise JPEG" in {
+      anImageOfType("image/jpeg").isImage shouldBe true
+    }
+
+    "recognise GIF" in {
+      anImageOfType("image/gif").isImage shouldBe true
+    }
+
+    "not recognise other types" in {
+      anImageOfType("other").isImage shouldBe false
+    }
+
   }
+
+  private def anImageOfType(t: String) = {
+    Attachment(application = false, public = false, "url", t, ZonedDateTime.now())
+  }
+
 }
