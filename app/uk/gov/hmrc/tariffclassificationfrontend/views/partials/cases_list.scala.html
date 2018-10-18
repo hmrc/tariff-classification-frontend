@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.tariffclassificationfrontend.models.{BTIApplication, Case}
+@import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 @import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
 
 
@@ -34,10 +34,10 @@
     </thead>
     <tbody class="govuk-table__body">
         @for(c <- cases) {
-            @if(c.application.isInstanceOf[BTIApplication]) {
+            @if(c.application.isBTI()) {
                 <tr class="govuk-table__row">
                     <th class="govuk-table__header" scope="row">
-                        <a href="#">@c.reference</a>
+                        <a href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.summary(c.reference)">@c.reference</a>
                     </th>
                     <td class="govuk-table__cell">@c.application.asBTI().goodName</td>
                     <td class="govuk-table__cell">@c.application.asBTI().holder.traderName</td>

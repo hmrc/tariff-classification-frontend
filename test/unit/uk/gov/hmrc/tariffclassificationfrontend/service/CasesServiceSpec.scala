@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package unit.uk.gov.hmrc.tariffclassificationfrontend.service
+package uk.gov.hmrc.tariffclassificationfrontend.service
 
 import org.mockito.BDDMockito._
 import org.scalatest.mockito.MockitoSugar
@@ -22,15 +22,14 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.tariffclassificationfrontend.connector.CasesConnector
 import uk.gov.hmrc.tariffclassificationfrontend.models.Case
-import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 
 import scala.concurrent.Future
 
 class CasesServiceSpec extends UnitSpec with MockitoSugar {
 
   private implicit val hc = HeaderCarrier()
-
-  private val c = mock[Case]
+  private val manyCases = mock[Seq[Case]]
+  private val oneCase = mock[Option[Case]]
   private val connector = mock[CasesConnector]
 
   private val service = new CasesService(connector)
@@ -38,8 +37,18 @@ class CasesServiceSpec extends UnitSpec with MockitoSugar {
   "Get All Cases" should {
 
     "retrieve connector cases" in {
-      given(connector.getGatewayCases).willReturn(Future.successful(Seq(c)))
-      await(service.getAllCases) shouldBe Seq(c)
+      given(connector.getGatewayCases) willReturn Future.successful(manyCases)
+
+      await(service.getGatewayCases) shouldBe manyCases
+    }
+  }
+
+  "Get One Case" should {
+
+    "retrieve connector case" in {
+      given(connector.getOne("reference")) willReturn Future.successful(oneCase)
+
+      await(service.getOne("reference")) shouldBe oneCase
     }
   }
 

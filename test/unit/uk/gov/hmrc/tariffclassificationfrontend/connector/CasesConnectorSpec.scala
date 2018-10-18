@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package unit.uk.gov.hmrc.tariffclassificationfrontend.connector
+package uk.gov.hmrc.tariffclassificationfrontend.connector
 
 import com.github.tomakehurst.wiremock.client.WireMock._
 import org.apache.http.HttpStatus
@@ -27,8 +27,7 @@ import uk.gov.hmrc.play.bootstrap.audit.DefaultAuditConnector
 import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.connector.CasesConnector
-import unit.uk.gov.hmrc.tariffclassificationfrontend.connector.Payloads.caseExample
+import uk.gov.hmrc.tariffclassificationfrontend.utils.{CaseExamples, CasePayloads}
 
 class CasesConnectorSpec extends UnitSpec with WiremockTestServer with MockitoSugar with WithFakeApplication {
 
@@ -42,10 +41,9 @@ class CasesConnectorSpec extends UnitSpec with WiremockTestServer with MockitoSu
   private val connector = new CasesConnector(configuration, client)
 
   "Connector" should {
-
     val url = "/cases?queue_id=none&assignee_id=none&sort-by=elapsed-days"
 
-    "get empty cases" in {
+    "get empty gateway cases" in {
       given(configuration.bindingTariffClassificationUrl).willReturn("http://localhost:20001")
 
       stubFor(get(urlEqualTo(url))
@@ -57,16 +55,39 @@ class CasesConnectorSpec extends UnitSpec with WiremockTestServer with MockitoSu
       await(connector.getGatewayCases) shouldBe Seq()
     }
 
-    "get non-empty cases" in {
+    "get gateway cases" in {
       given(configuration.bindingTariffClassificationUrl).willReturn("http://localhost:20001")
 
       stubFor(get(urlEqualTo(url))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
-          .withBody(Payloads.gatewayCases))
+          .withBody(CasePayloads.gatewayCases))
       )
 
-      await(connector.getGatewayCases) shouldBe Seq(caseExample)
+      await(connector.getGatewayCases) shouldBe Seq(CaseExamples.btiCaseExample)
+    }
+
+    "get an unknown case" in {
+      given(configuration.bindingTariffClassificationUrl).willReturn("http://localhost:20001")
+
+      stubFor(get(urlEqualTo("/cases/id"))
+        .willReturn(aResponse()
+          .withStatus(HttpStatus.SC_NOT_FOUND))
+      )
+
+      await(connector.getOne("id")) shouldBe None
+    }
+
+    "get a case" in {
+      given(configuration.bindingTariffClassificationUrl).willReturn("http://localhost:20001")
+
+      stubFor(get(urlEqualTo("/cases/id"))
+        .willReturn(aResponse()
+          .withStatus(HttpStatus.SC_OK)
+          .withBody(CasePayloads.btiCase))
+      )
+
+      await(connector.getOne("id")) shouldBe Some(CaseExamples.btiCaseExample)
     }
 
   }

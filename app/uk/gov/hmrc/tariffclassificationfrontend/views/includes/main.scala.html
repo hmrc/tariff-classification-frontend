@@ -15,9 +15,8 @@
  *@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.govuk_wrapper
-@(title: String,
-  sidebarLinks: Option[Html] = None,
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.govuk_wrapper
+@(sidebarLinks: Option[Html] = None,
   contentHeader: Option[Html] = None,
   bodyClasses: Option[String] = None,
   mainClass: Option[String] = None,
@@ -36,7 +35,7 @@
 
 
 @govuk_wrapper(appConfig = appConfig,
-               title = title,
+               title = "Tariff Classification",
                mainClass = mainClass,
                bodyClasses = bodyClasses,
                sidebar = sidebar,

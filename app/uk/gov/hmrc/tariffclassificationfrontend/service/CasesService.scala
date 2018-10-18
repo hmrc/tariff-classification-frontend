@@ -26,7 +26,11 @@ import scala.concurrent.Future
 @Singleton
 class CasesService @Inject()(connector: CasesConnector) {
 
-  def getAllCases(implicit hc : HeaderCarrier): Future[Seq[Case]] = {
+  def getOne(reference: String)(implicit hc : HeaderCarrier): Future[Option[Case]] = {
+    connector.getOne(reference)
+  }
+
+  def getGatewayCases(implicit hc : HeaderCarrier): Future[Seq[Case]] = {
     connector.getGatewayCases
   }
 

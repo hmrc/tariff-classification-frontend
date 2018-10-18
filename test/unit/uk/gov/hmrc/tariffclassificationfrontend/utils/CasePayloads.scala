@@ -16,21 +16,16 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.utils
 
-import java.time.LocalDate
+import play.api.libs.json.{Json, Writes}
+import uk.gov.hmrc.tariffclassificationfrontend.utils.JsonFormatters._
 
-import uk.gov.hmrc.play.test.UnitSpec
+object CasePayloads {
 
-class DatesSpec extends UnitSpec {
+  val btiCase: String = jsonOf(CaseExamples.btiCaseExample)
+  val gatewayCases: String = jsonOf(Seq(CaseExamples.btiCaseExample))
 
-  "Format" should {
-
-    "convert date to string" in {
-      val date = LocalDate.of(2018,1,1)
-      val output = Dates.format(date)
-
-       output shouldBe "01 Jan 2018"
-    }
-
+  private def jsonOf[T](obj: T)(implicit tjs : Writes[T]): String = {
+    Json.toJson(obj).toString()
   }
 
 }

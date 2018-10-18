@@ -27,14 +27,16 @@ import uk.gov.hmrc.tariffclassificationfrontend.views
 import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton
-class CasesController @Inject()(casesService: CasesService,
-                                val messagesApi: MessagesApi,
-                                implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
+class CaseController @Inject()(casesService: CasesService,
+                               val messagesApi: MessagesApi,
+                               implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
-  def gateway: Action[AnyContent] = Action.async { implicit request =>
-    casesService.getGatewayCases.map { cases =>
-      Ok(views.html.gateway_cases(cases))
-    }
+  def summary(reference: String): Action[AnyContent] = Action.async { implicit request =>
+    casesService.getOne(reference)
+      .map(response => {
+        if (response.isEmpty) Ok(views.html.case_not_found(reference))
+        else Ok(views.html.case_summary(response.get))
+      })
   }
 
 }
