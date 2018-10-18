@@ -47,7 +47,7 @@ class CaseController @Inject()(casesService: CasesService,
         if (response.isEmpty) {
           Ok(views.html.case_not_found(reference))
         } else {
-          Ok(views.html.case_summary(response.get))
+          Ok(html.apply(response.get))
         }
       })
   }
