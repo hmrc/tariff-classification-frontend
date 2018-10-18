@@ -34,36 +34,14 @@ class CaseController @Inject()(casesService: CasesService,
                                implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
   def summary(reference: String): Action[AnyContent] = Action.async { implicit request =>
-    casesService.getOne(reference)
-      .map(response => {
-        if (response.isEmpty) Ok(views.html.case_not_found(reference))
-        else Ok(views.html.case_summary(response.get))
-      })
+    getCaseAndRender(reference, c => views.html.case_summary(c))
   }
 
   def applicationDetails(reference: String): Action[AnyContent] = Action.async { implicit request =>
-    casesService.getOne(reference)
-      .map(response => {
-        if (response.isEmpty) {
-          Ok(views.html.case_not_found(reference))
-        } else {
-          Ok(views.html.application_details(response.get))
-        }
-      })
+    getCaseAndRender(reference, c => views.html.application_details(c))
   }
 
-  def summary(reference: String): Action[AnyContent] = Action.async { implicit request =>
-    casesService.getOne(reference)
-      .map(response => {
-        if (response.isEmpty) {
-          Ok(views.html.case_not_found(reference))
-        } else {
-          Ok(views.html.case_summary(response.get))
-        }
-      })
-  }
-
-  def getCaseAndRender(reference: String, html: Case => Html)(implicit request: Request[_]) = {
+  private def getCaseAndRender(reference: String, html: Case => Html)(implicit request: Request[_]) = {
     casesService.getOne(reference)
       .map(response => {
         if (response.isEmpty) {
