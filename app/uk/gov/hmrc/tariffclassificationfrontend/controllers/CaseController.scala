@@ -34,11 +34,8 @@ class CaseController @Inject()(casesService: CasesService,
   def summary(reference: String): Action[AnyContent] = Action.async { implicit request =>
     casesService.getOne(reference)
       .map(response => {
-        if (response.isEmpty) {
-          Ok(views.html.case_not_found(reference))
-        } else {
-          Ok(views.html.case_summary(response.get))
-        }
+        if (response.isEmpty) Ok(views.html.case_not_found(reference))
+        else Ok(views.html.case_summary(response.get))
       })
   }
 
