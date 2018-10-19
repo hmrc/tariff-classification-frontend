@@ -47,7 +47,7 @@ class QueuesControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSui
 
   private val controller = new QueuesController(casesService, queuesService, messageApi, appConfig)
 
-  "Gateway Cases" should {
+  "Queue" should {
 
     "return 200 OK and HMTL content type when Queue is found" in {
       given(casesService.getCasesByQueue(refEq(queue))(any[HeaderCarrier])).willReturn(Future.successful(Seq.empty))
