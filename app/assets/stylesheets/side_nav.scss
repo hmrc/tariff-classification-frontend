@@ -13,6 +13,13 @@
   }
 }
 
+.side-nav__list:hover {
+  .side-nav__link {
+    color: #0b0c0c;
+    background-color: #DEE0E2;
+  }
+}
+
 .side-nav__link {
   padding: 12px 30px 8px 15px;
   text-decoration: none;
