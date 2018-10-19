@@ -27,6 +27,7 @@ import uk.gov.hmrc.play.bootstrap.audit.DefaultAuditConnector
 import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
+import uk.gov.hmrc.tariffclassificationfrontend.service.Queue
 import uk.gov.hmrc.tariffclassificationfrontend.utils.{CaseExamples, CasePayloads}
 
 class CasesConnectorSpec extends UnitSpec with WiremockTestServer with MockitoSugar with WithFakeApplication {
@@ -36,36 +37,64 @@ class CasesConnectorSpec extends UnitSpec with WiremockTestServer with MockitoSu
   private val wsClient: WSClient = fakeApplication.injector.instanceOf[WSClient]
   private val auditConnector = new DefaultAuditConnector(fakeApplication.configuration, fakeApplication.injector.instanceOf[Environment])
   private val client = new DefaultHttpClient(fakeApplication.configuration, auditConnector, wsClient)
+  private val gatewayQueue = Queue(1, "gateway", "Gateway")
+  private val otherQueue = Queue(2, "other", "Other")
   private implicit val hc = HeaderCarrier()
 
   private val connector = new CasesConnector(configuration, client)
 
-  "Connector" should {
-    val url = "/cases?queue_id=none&assignee_id=none&sort-by=elapsed-days"
+  "Connector 'Get Cases By Queue'" should {
 
-    "get empty gateway cases" in {
+    "get empty cases in 'gateway' queue" in {
       given(configuration.bindingTariffClassificationUrl).willReturn("http://localhost:20001")
 
-      stubFor(get(urlEqualTo(url))
+      stubFor(get(urlEqualTo("/cases?queue_id=none&assignee_id=none&sort-by=elapsed-days"))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
           .withBody("[]"))
       )
 
-      await(connector.getGatewayCases) shouldBe Seq()
+      await(connector.getCasesByQueue(gatewayQueue)) shouldBe Seq()
     }
 
-    "get gateway cases" in {
+    "get cases in 'gateway' queue" in {
       given(configuration.bindingTariffClassificationUrl).willReturn("http://localhost:20001")
 
-      stubFor(get(urlEqualTo(url))
+      stubFor(get(urlEqualTo("/cases?queue_id=none&assignee_id=none&sort-by=elapsed-days"))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
           .withBody(CasePayloads.gatewayCases))
       )
 
-      await(connector.getGatewayCases) shouldBe Seq(CaseExamples.btiCaseExample)
+      await(connector.getCasesByQueue(gatewayQueue)) shouldBe Seq(CaseExamples.btiCaseExample)
     }
+
+    "get empty cases in 'other' queue" in {
+      given(configuration.bindingTariffClassificationUrl).willReturn("http://localhost:20001")
+
+      stubFor(get(urlEqualTo("/cases?queue_id=2&assignee_id=none&sort-by=elapsed-days"))
+        .willReturn(aResponse()
+          .withStatus(HttpStatus.SC_OK)
+          .withBody("[]"))
+      )
+
+      await(connector.getCasesByQueue(otherQueue)) shouldBe Seq()
+    }
+
+    "get cases in 'other' queue" in {
+      given(configuration.bindingTariffClassificationUrl).willReturn("http://localhost:20001")
+
+      stubFor(get(urlEqualTo("/cases?queue_id=2&assignee_id=none&sort-by=elapsed-days"))
+        .willReturn(aResponse()
+          .withStatus(HttpStatus.SC_OK)
+          .withBody(CasePayloads.gatewayCases))
+      )
+
+      await(connector.getCasesByQueue(otherQueue)) shouldBe Seq(CaseExamples.btiCaseExample)
+    }
+  }
+
+  "Connector 'Get One'" should {
 
     "get an unknown case" in {
       given(configuration.bindingTariffClassificationUrl).willReturn("http://localhost:20001")

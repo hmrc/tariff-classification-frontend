@@ -17,13 +17,12 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
 
-@(reference: String)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@()(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None) {
 
     <h1 class="heading-large">
-        Case not found
+        Resource not found
     </h1>
-    <p>We could not find a Case with reference: @reference</p>
     <a href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.QueuesController.queue("gateway")">Back Home</a>
 }

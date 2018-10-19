@@ -14,28 +14,19 @@
  * limitations under the License.
  *@
 
-@(section: String)
+@import uk.gov.hmrc.tariffclassificationfrontend.service.Queue
+@(queues: Seq[Queue], section: String)
 
 <div class="side-nav" role="navigation" aria-labelledby="nav" style="margin-top: 30px">
     <ul>
         <li class="side-nav__list @if(section == "my-cases") { side-nav__list--selected }">
             <a class="side-nav__link" href="#">My Cases</a>
         </li>
-        <li class="side-nav__list @if(section == "gateway-cases") { side-nav__list--selected }">
-            <a class="side-nav__link" href="#">Gateway Cases</a>
-        </li>
-        <li class="side-nav__list @if(section == "act-cases") { side-nav__list--selected }">
-            <a class="side-nav__link" href="#">ACT Cases</a>
-        </li>
-        <li class="side-nav__list @if(section == "cap-cases") { side-nav__list--selected }">
-            <a class="side-nav__link" href="#">CAP Cases</a>
-        </li>
-        <li class="side-nav__list @if(section == "cars-cases") { side-nav__list--selected }">
-            <a class="side-nav__link" href="#">Cars Cases</a>
-        </li>
-        <li class="side-nav__list @if(section == "elm-cases") { side-nav__list--selected }">
-            <a class="side-nav__link" href="#">ELM Cases</a>
-        </li>
+        @for(q <- queues) {
+            <li class="side-nav__list @if(section == q.slug) { side-nav__list--selected }">
+                <a class="side-nav__link" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.QueuesController.queue(q.slug)">@q.name Cases</a>
+            </li>
+        }
         <li class="side-nav__list @if(section == "search-cases") { side-nav__list--selected }">
             <a class="side-nav__link" href="#">Search Cases</a>
         </li>
