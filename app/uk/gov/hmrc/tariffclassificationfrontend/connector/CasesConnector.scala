@@ -23,7 +23,6 @@ import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models._
-import uk.gov.hmrc.tariffclassificationfrontend.service.Queue
 import uk.gov.hmrc.tariffclassificationfrontend.utils.JsonFormatters.caseFormat
 
 import scala.concurrent.Future

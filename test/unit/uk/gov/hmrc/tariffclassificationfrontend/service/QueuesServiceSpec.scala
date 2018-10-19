@@ -17,6 +17,7 @@
 package uk.gov.hmrc.tariffclassificationfrontend.service
 
 import uk.gov.hmrc.play.test.UnitSpec
+import uk.gov.hmrc.tariffclassificationfrontend.models.Queue
 
 class QueuesServiceSpec extends UnitSpec {
 

@@ -15,8 +15,7 @@
  *@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-@import uk.gov.hmrc.tariffclassificationfrontend.models.Case
-@import uk.gov.hmrc.tariffclassificationfrontend.service.Queue
+@import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Queue}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{cases_list, queue_nav}
 @(queues: Seq[Queue], queue: Queue, cases: Seq[Case])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)

@@ -14,35 +14,6 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.tariffclassificationfrontend.service
+package uk.gov.hmrc.tariffclassificationfrontend.models
 
-import javax.inject.Singleton
-import uk.gov.hmrc.tariffclassificationfrontend.models.Queue
-
-@Singleton
-class QueuesService {
-
-  private val queues = Seq(
-    Queue(1, "gateway", "Gateway"),
-    Queue(2, "act", "Act"),
-    Queue(3, "cap", "CAP"),
-    Queue(4, "cars", "Cars"),
-    Queue(5, "elm", "ELM")
-  )
-
-  def getQueues: Seq[Queue] = {
-    queues
-  }
-
-  def getOneBySlug(slug: String): Option[Queue] = {
-    queues.find(q => q.slug == slug)
-  }
-
-  def getOneById(id: Int): Option[Queue] = {
-    queues.find(q => q.id == id)
-  }
-
-}
-
-
-
+case class Queue(id: Int, slug: String, name: String)
