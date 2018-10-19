@@ -15,24 +15,14 @@
  *@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-@import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{cases_list, queue_nav}
-@(cases: Seq[Case])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+
+@()(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None) {
 
-    <div class="grid-row">
-        <div class="column-one-quarter">
-            @queue_nav("gateway-cases")
-        </div>
-        <div class="column-three-quarters">
-            <div class="grid-row">
-                <div class="column-full">
-                    <h1 class="heading-large">Gateway Cases</h1>
-                </div>
-            </div>
-            @cases_list(cases)
-        </div>
-    </div>
+    <h1 class="heading-large">
+        Resource not found
+    </h1>
+    <a href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.QueuesController.queue("gateway")">Back Home</a>
 }

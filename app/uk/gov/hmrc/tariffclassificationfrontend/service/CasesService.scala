@@ -19,7 +19,7 @@ package uk.gov.hmrc.tariffclassificationfrontend.service
 import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.tariffclassificationfrontend.connector.CasesConnector
-import uk.gov.hmrc.tariffclassificationfrontend.models.Case
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Queue}
 
 import scala.concurrent.Future
 
@@ -30,8 +30,8 @@ class CasesService @Inject()(connector: CasesConnector) {
     connector.getOne(reference)
   }
 
-  def getGatewayCases(implicit hc : HeaderCarrier): Future[Seq[Case]] = {
-    connector.getGatewayCases
+  def getCasesByQueue(queue: Queue)(implicit hc : HeaderCarrier): Future[Seq[Case]] = {
+    connector.getCasesByQueue(queue)
   }
 
 }

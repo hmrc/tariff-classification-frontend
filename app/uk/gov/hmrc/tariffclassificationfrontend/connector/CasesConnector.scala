@@ -35,8 +35,9 @@ class CasesConnector @Inject()(configuration: AppConfig, client: HttpClient) {
     client.GET[Option[Case]](url)
   }
 
-  def getGatewayCases(implicit hc: HeaderCarrier): Future[Seq[Case]] = {
-    val url = s"${configuration.bindingTariffClassificationUrl}/cases?queue_id=none&assignee_id=none&sort-by=elapsed-days"
+  def getCasesByQueue(queue: Queue)(implicit hc: HeaderCarrier): Future[Seq[Case]] = {
+    val queueId = if(queue.id == 1) "none" else queue.id
+    val url = s"${configuration.bindingTariffClassificationUrl}/cases?queue_id=$queueId&assignee_id=none&sort-by=elapsed-days"
     client.GET[Seq[Case]](url)
   }
 

@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
-import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito._
 import org.scalatest.Matchers
 import org.scalatest.mockito.MockitoSugar
@@ -29,31 +29,49 @@ import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
+import uk.gov.hmrc.tariffclassificationfrontend.models.Queue
+import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, QueuesService}
 
 import scala.concurrent.Future
 
-class CasesControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSuite with MockitoSugar {
+class QueuesControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSuite with MockitoSugar {
 
   private val fakeRequest = FakeRequest()
   private val env = Environment.simple()
   private val configuration = Configuration.load(env)
   private val messageApi = new DefaultMessagesApi(env, configuration, new DefaultLangs(configuration))
   private val appConfig = new AppConfig(configuration, env)
-  private val service = mock[CasesService]
+  private val casesService = mock[CasesService]
+  private val queuesService = mock[QueuesService]
+  private val queue = Queue(0, "queue", "Queue Name")
   private implicit val hc = HeaderCarrier()
 
-  private val controller = new CasesController(service, messageApi, appConfig)
+  private val controller = new QueuesController(casesService, queuesService, messageApi, appConfig)
 
-  "Gateway Cases" should {
+  "Queue" should {
 
-    "return 200 OK and HMTL content type" in {
-      given(service.getGatewayCases(any[HeaderCarrier])).willReturn(Future.successful(Seq.empty))
+    "return 200 OK and HMTL content type when Queue is found" in {
+      given(casesService.getCasesByQueue(refEq(queue))(any[HeaderCarrier])).willReturn(Future.successful(Seq.empty))
+      given(queuesService.getOneBySlug("slug")).willReturn(Some(queue))
+      given(queuesService.getQueues).willReturn(Seq(queue))
 
-      val result = await(controller.gateway(fakeRequest))
+      val result = await(controller.queue("slug")(fakeRequest))
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
+      contentAsString(result) should include ("Queue Name")
+    }
+
+    "return 200 OK and HMTL content type when Queue is not found" in {
+      given(casesService.getCasesByQueue(refEq(queue))(any[HeaderCarrier])).willReturn(Future.successful(Seq.empty))
+      given(queuesService.getOneBySlug("slug")).willReturn(None)
+      given(queuesService.getQueues).willReturn(Seq(queue))
+
+      val result = await(controller.queue("slug")(fakeRequest))
+      status(result) shouldBe Status.OK
+      contentType(result) shouldBe Some("text/html")
+      charset(result) shouldBe Some("utf-8")
+      contentAsString(result) should include ("Resource not found")
     }
 
   }

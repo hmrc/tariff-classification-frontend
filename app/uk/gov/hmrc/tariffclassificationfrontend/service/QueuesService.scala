@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,18 +12,37 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
+package uk.gov.hmrc.tariffclassificationfrontend.service
 
-@(reference: String)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+import javax.inject.Singleton
+import uk.gov.hmrc.tariffclassificationfrontend.models.Queue
 
-@main(bodyClasses = None) {
+@Singleton
+class QueuesService {
 
-    <h1 class="heading-large">
-        Case not found
-    </h1>
-    <p>We could not find a Case with reference: @reference</p>
-    <a href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.QueuesController.queue("gateway")">Back Home</a>
+  private val queues = Seq(
+    Queue(1, "gateway", "Gateway"),
+    Queue(2, "act", "Act"),
+    Queue(3, "cap", "CAP"),
+    Queue(4, "cars", "Cars"),
+    Queue(5, "elm", "ELM")
+  )
+
+  def getQueues: Seq[Queue] = {
+    queues
+  }
+
+  def getOneBySlug(slug: String): Option[Queue] = {
+    queues.find(q => q.slug == slug)
+  }
+
+  def getOneById(id: Int): Option[Queue] = {
+    queues.find(q => q.id == id)
+  }
+
 }
+
+
+

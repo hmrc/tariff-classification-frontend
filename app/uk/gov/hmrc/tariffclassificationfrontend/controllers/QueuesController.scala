@@ -21,20 +21,26 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
+import uk.gov.hmrc.tariffclassificationfrontend.models.Queue
+import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, QueuesService}
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 @Singleton
-class CasesController @Inject()(casesService: CasesService,
-                                val messagesApi: MessagesApi,
-                                implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
+class QueuesController @Inject()(casesService: CasesService,
+                                 queuesService: QueuesService,
+                                 val messagesApi: MessagesApi,
+                                 implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
-  def gateway: Action[AnyContent] = Action.async { implicit request =>
-    casesService.getGatewayCases.map { cases =>
-      Ok(views.html.gateway_cases(cases))
-    }
+  def queue(slug: String): Action[AnyContent] = Action.async { implicit request =>
+    val queue: Option[Queue] = queuesService.getOneBySlug(slug)
+    queue.map(queue => {
+      casesService.getCasesByQueue(queue).map({ cases =>
+        Ok(views.html.queue(queuesService.getQueues, queue, cases))
+      })
+    }).getOrElse(Future.successful(Ok(views.html.resource_not_found())))
   }
 
 }
