@@ -32,7 +32,7 @@
             @case_nav("application", c.reference)
         </div>
         <div class="column-three-quarters">
-            <h3 class="heading-medium" style="margin-top: 0">Application Details</h3>
+            <h3 class="heading-medium mt-0">Application Details</h3>
 
             <div class="grid-row">
                 <div class="column-one-third">
@@ -181,17 +181,20 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @for(a <- c.attachments) {
-                            <td>@Dates.format(a.timestamp)</td>
-                            <td>@a.mimeType</td>
-                            <td>
-                                @if(a.isImage) {
-                                    <img src="@a.url" style="max-width: 100px; max-height: 100px"/>
-                                } else {
-                                    <a href="@a.url" target="_blank">Open</a>
-                                }
-                            </td>
-                        }
+                    @for(a <- c.attachments) {
+                        <td>@Dates.format(a.timestamp)</td>
+                        <td>@a.mimeType</td>
+                        <td>
+                            <a href="@a.url" target="_blank">
+
+                            @if(a.isImage) {
+                                <img class="image-preview" src="@a.url"/>
+                            } else {
+                                Open
+                            }
+                            </a>
+                        </td>
+                    }
                     </tbody>
                 </table>
 
