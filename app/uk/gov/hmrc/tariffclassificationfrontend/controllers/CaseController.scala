@@ -42,14 +42,10 @@ class CaseController @Inject()(casesService: CasesService,
   }
 
   private def getCaseAndRender(reference: String, html: Case => Html)(implicit request: Request[_]) = {
-    casesService.getOne(reference)
-      .map(response => {
-        if (response.isEmpty) {
-          Ok(views.html.case_not_found(reference))
-        } else {
-          Ok(html.apply(response.get))
-        }
-      })
+    casesService.getOne(reference).map { response =>
+      if (response.isEmpty) Ok(views.html.case_not_found(reference))
+      else Ok(html.apply(response.get))
+    }
   }
 
 }
