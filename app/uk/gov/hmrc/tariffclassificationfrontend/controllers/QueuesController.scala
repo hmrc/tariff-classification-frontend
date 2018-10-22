@@ -36,11 +36,9 @@ class QueuesController @Inject()(casesService: CasesService,
 
   def queue(slug: String): Action[AnyContent] = Action.async { implicit request =>
     val queue: Option[Queue] = queuesService.getOneBySlug(slug)
-    queue.map(queue => {
-      casesService.getCasesByQueue(queue).map({ cases =>
-        Ok(views.html.queue(queuesService.getQueues, queue, cases))
-      })
-    }).getOrElse(Future.successful(Ok(views.html.resource_not_found())))
+    queue.map { queue =>
+      casesService.getCasesByQueue(queue).map { cases => Ok(views.html.queue(queuesService.getQueues, queue, cases)) }
+    }.getOrElse(Future.successful(Ok(views.html.resource_not_found())))
   }
 
 }

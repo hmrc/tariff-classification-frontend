@@ -35,14 +35,11 @@ class QueuesService {
   }
 
   def getOneBySlug(slug: String): Option[Queue] = {
-    queues.find(q => q.slug == slug)
+    queues.find(_.slug == slug)
   }
 
   def getOneById(id: Int): Option[Queue] = {
-    queues.find(q => q.id == id)
+    queues.find(_.id == id)
   }
 
 }
-
-
-
