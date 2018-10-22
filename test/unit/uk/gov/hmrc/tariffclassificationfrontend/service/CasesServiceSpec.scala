@@ -20,7 +20,7 @@ import org.mockito.BDDMockito._
 import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
-import uk.gov.hmrc.tariffclassificationfrontend.connector.CasesConnector
+import uk.gov.hmrc.tariffclassificationfrontend.connector.BindingTariffClassificationConnector
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Queue}
 
 import scala.concurrent.Future
@@ -31,7 +31,7 @@ class CasesServiceSpec extends UnitSpec with MockitoSugar {
   private val manyCases = mock[Seq[Case]]
   private val oneCase = mock[Option[Case]]
   private val queue = mock[Queue]
-  private val connector = mock[CasesConnector]
+  private val connector = mock[BindingTariffClassificationConnector]
 
   private val service = new CasesService(connector)
 
@@ -47,7 +47,7 @@ class CasesServiceSpec extends UnitSpec with MockitoSugar {
   "Get One Case" should {
 
     "retrieve connector case" in {
-      given(connector.getOne("reference")) willReturn Future.successful(oneCase)
+      given(connector.getOneCase("reference")) willReturn Future.successful(oneCase)
 
       await(service.getOne("reference")) shouldBe oneCase
     }

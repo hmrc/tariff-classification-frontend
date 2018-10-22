@@ -30,7 +30,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models.Queue
 import uk.gov.hmrc.tariffclassificationfrontend.utils.{CaseExamples, CasePayloads}
 
-class CasesConnectorSpec extends UnitSpec with WiremockTestServer with MockitoSugar with WithFakeApplication {
+class BindingTariffClassificationConnectorSpec extends UnitSpec with WiremockTestServer with MockitoSugar with WithFakeApplication {
 
   private val configuration = mock[AppConfig]
 
@@ -41,7 +41,7 @@ class CasesConnectorSpec extends UnitSpec with WiremockTestServer with MockitoSu
   private val otherQueue = Queue(2, "other", "Other")
   private implicit val hc = HeaderCarrier()
 
-  private val connector = new CasesConnector(configuration, client)
+  private val connector = new BindingTariffClassificationConnector(configuration, client)
 
   "Connector 'Get Cases By Queue'" should {
 
@@ -104,7 +104,7 @@ class CasesConnectorSpec extends UnitSpec with WiremockTestServer with MockitoSu
           .withStatus(HttpStatus.SC_NOT_FOUND))
       )
 
-      await(connector.getOne("id")) shouldBe None
+      await(connector.getOneCase("id")) shouldBe None
     }
 
     "get a case" in {
@@ -116,7 +116,7 @@ class CasesConnectorSpec extends UnitSpec with WiremockTestServer with MockitoSu
           .withBody(CasePayloads.btiCase))
       )
 
-      await(connector.getOne("id")) shouldBe Some(CaseExamples.btiCaseExample)
+      await(connector.getOneCase("id")) shouldBe Some(CaseExamples.btiCaseExample)
     }
 
   }

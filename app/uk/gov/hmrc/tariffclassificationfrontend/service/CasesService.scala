@@ -18,16 +18,16 @@ package uk.gov.hmrc.tariffclassificationfrontend.service
 
 import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.tariffclassificationfrontend.connector.CasesConnector
+import uk.gov.hmrc.tariffclassificationfrontend.connector.BindingTariffClassificationConnector
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Queue}
 
 import scala.concurrent.Future
 
 @Singleton
-class CasesService @Inject()(connector: CasesConnector) {
+class CasesService @Inject()(connector: BindingTariffClassificationConnector) {
 
   def getOne(reference: String)(implicit hc : HeaderCarrier): Future[Option[Case]] = {
-    connector.getOne(reference)
+    connector.getOneCase(reference)
   }
 
   def getCasesByQueue(queue: Queue)(implicit hc : HeaderCarrier): Future[Seq[Case]] = {

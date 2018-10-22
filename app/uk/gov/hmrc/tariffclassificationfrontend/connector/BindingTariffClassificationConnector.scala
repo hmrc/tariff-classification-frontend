@@ -28,9 +28,9 @@ import uk.gov.hmrc.tariffclassificationfrontend.utils.JsonFormatters.caseFormat
 import scala.concurrent.Future
 
 @Singleton
-class CasesConnector @Inject()(configuration: AppConfig, client: HttpClient) {
+class BindingTariffClassificationConnector @Inject()(configuration: AppConfig, client: HttpClient) {
 
-  def getOne(reference: String)(implicit hc: HeaderCarrier): Future[Option[Case]] = {
+  def getOneCase(reference: String)(implicit hc: HeaderCarrier): Future[Option[Case]] = {
     val url = s"${configuration.bindingTariffClassificationUrl}/cases/$reference"
     client.GET[Option[Case]](url)
   }
