@@ -1,8 +1,8 @@
 # microservice specific routes
 
-GET        /                                controllers.Default.redirect(to = "/tariff-classification/queues/gateway")
-GET        /queues/:slug                     @uk.gov.hmrc.tariffclassificationfrontend.controllers.QueuesController.queue(slug: String)
+GET        /                                 controllers.Default.redirect(to = "/tariff-classification/queues/gateway")
+GET        /queues/:slug                    @uk.gov.hmrc.tariffclassificationfrontend.controllers.QueuesController.queue(slug: String)
 GET        /cases/:reference                @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.summary(reference: String)
 GET        /cases/:reference/application    @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.applicationDetails(reference: String)
 
-GET        /assets/*file                    controllers.Assets.at(path="/public", file)
+GET        /assets/*file                     controllers.Assets.at(path="/public", file)
