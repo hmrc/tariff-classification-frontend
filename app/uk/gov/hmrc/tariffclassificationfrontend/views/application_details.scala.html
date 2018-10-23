@@ -181,7 +181,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                    @for(a <- c.attachments) {
+                    @for(a <- c.attachments.filter(_.application)) {
                         <td>@Dates.format(a.timestamp)</td>
                         <td>@a.mimeType</td>
                         <td>
