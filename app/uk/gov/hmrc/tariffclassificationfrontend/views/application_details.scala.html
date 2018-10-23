@@ -198,7 +198,7 @@
                     </tbody>
                 </table>
 
-                @if(c.attachments.isEmpty) {
+                @if(!c.attachments.exists(_.application)) {
                     <p>None</p>
                 }
             </div>
