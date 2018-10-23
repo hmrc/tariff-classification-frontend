@@ -24,7 +24,7 @@ class QueuesService {
 
   private val queues = Seq(
     Queue(1, "gateway", "Gateway"),
-    Queue(2, "act", "Act"),
+    Queue(2, "act", "ACT"),
     Queue(3, "cap", "CAP"),
     Queue(4, "cars", "Cars"),
     Queue(5, "elm", "ELM")
