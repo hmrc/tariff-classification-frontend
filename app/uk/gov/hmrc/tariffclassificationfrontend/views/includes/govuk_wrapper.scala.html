@@ -15,6 +15,7 @@
  *@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.govuk_template
 @(appConfig: AppConfig,
         title: String,
         mainClass: Option[String] = None,
@@ -26,7 +27,7 @@
         serviceInfoContent: Html = HtmlFormat.empty,
         scriptElem: Option[Html] = None)(implicit request: Request[_], messages: Messages)
 
-@import layouts.{govuk_template => hmrcGovUkTemplate}
+
 @import uk.gov.hmrc.play.views.html.{helpers => uiHelpers, layouts => uiLayouts}
 
 @head = {
@@ -91,4 +92,4 @@
     sidebar = sidebar)
 }
 
-@hmrcGovUkTemplate(Some(title), bodyClasses)(head, bodyEnd, insideHeader, afterHeader, footerTop, Some(uiLayouts.footer_links()), true)(content)
+@govuk_template(Some(title), bodyClasses)(head, bodyEnd, insideHeader, afterHeader, footerTop, Some(uiLayouts.footer_links()), true)(content)
