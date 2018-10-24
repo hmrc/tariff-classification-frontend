@@ -35,7 +35,7 @@ class CasesServiceSpec extends UnitSpec with MockitoSugar {
 
   private val service = new CasesService(connector)
 
-  "Get All Cases" should {
+  "Get Cases 'By Queue'" should {
 
     "retrieve connector cases" in {
       given(connector.getCasesByQueue(queue)) willReturn Future.successful(manyCases)
@@ -44,7 +44,16 @@ class CasesServiceSpec extends UnitSpec with MockitoSugar {
     }
   }
 
-  "Get One Case" should {
+  "Get Cases 'By Assignee'" should {
+
+    "retrieve connector cases" in {
+      given(connector.getCasesByAssignee("assignee")) willReturn Future.successful(manyCases)
+
+      await(service.getCasesByAssignee("assignee")) shouldBe manyCases
+    }
+  }
+
+  "Get One Case 'By Reference'" should {
 
     "retrieve connector case" in {
       given(connector.getOneCase("reference")) willReturn Future.successful(oneCase)
