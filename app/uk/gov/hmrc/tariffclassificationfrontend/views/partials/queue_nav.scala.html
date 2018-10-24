@@ -20,7 +20,7 @@
 <div class="side-nav" role="navigation" aria-labelledby="nav" style="margin-top: 30px">
     <ul>
         <li class="side-nav__list @if(section == "my-cases") { side-nav__list--selected }">
-            <a class="side-nav__link" href="#">My Cases</a>
+            <a class="side-nav__link" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.MyCasesController.myCases()">My Cases</a>
         </li>
         @for(q <- queues) {
             <li class="side-nav__list @if(section == q.slug) { side-nav__list--selected }">

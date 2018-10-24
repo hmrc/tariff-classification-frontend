@@ -34,7 +34,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, QueuesSer
 
 import scala.concurrent.Future
 
-class QueuesControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSuite with MockitoSugar {
+class MyCasesControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSuite with MockitoSugar {
 
   private val fakeRequest = FakeRequest()
   private val env = Environment.simple()
@@ -46,32 +46,18 @@ class QueuesControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSui
   private val queue = Queue(0, "queue", "Queue Name")
   private implicit val hc = HeaderCarrier()
 
-  private val controller = new QueuesController(casesService, queuesService, messageApi, appConfig)
+  private val controller = new MyCasesController(casesService, queuesService, messageApi, appConfig)
 
-  "Queue" should {
+  "My Cases" should {
 
-    "return 200 OK and HTML content type when Queue is found" in {
-      given(casesService.getCasesByQueue(refEq(queue))(any[HeaderCarrier])).willReturn(Future.successful(Seq.empty))
-      given(queuesService.getOneBySlug("slug")).willReturn(Some(queue))
+    "return 200 OK and HTML content type" in {
+      given(casesService.getCasesByAssignee(refEq("0"))(any[HeaderCarrier])).willReturn(Future.successful(Seq.empty))
       given(queuesService.getQueues).willReturn(Seq(queue))
 
-      val result = await(controller.queue("slug")(fakeRequest))
+      val result = await(controller.myCases()(fakeRequest))
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
-      contentAsString(result) should include ("Queue Name")
-    }
-
-    "return 200 OK and HTML content type when Queue is not found" in {
-      given(casesService.getCasesByQueue(refEq(queue))(any[HeaderCarrier])).willReturn(Future.successful(Seq.empty))
-      given(queuesService.getOneBySlug("slug")).willReturn(None)
-      given(queuesService.getQueues).willReturn(Seq(queue))
-
-      val result = await(controller.queue("slug")(fakeRequest))
-      status(result) shouldBe Status.OK
-      contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
-      contentAsString(result) should include ("Resource not found")
     }
 
   }
