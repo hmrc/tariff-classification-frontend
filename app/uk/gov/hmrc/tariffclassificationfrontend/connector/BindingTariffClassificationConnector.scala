@@ -41,4 +41,9 @@ class BindingTariffClassificationConnector @Inject()(configuration: AppConfig, c
     client.GET[Seq[Case]](url)
   }
 
+  def getCasesByAssignee(assignee: String)(implicit hc: HeaderCarrier): Future[Seq[Case]] = {
+    val url = s"${configuration.bindingTariffClassificationUrl}/cases?assignee_id=$assignee&sort-by=elapsed-days"
+    client.GET[Seq[Case]](url)
+  }
+
 }
