@@ -33,11 +33,11 @@ class CaseController @Inject()(casesService: CasesService,
                                val messagesApi: MessagesApi,
                                implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
-  def summary(reference: String): Action[AnyContent] = Action.async { implicit request =>
+  def summary(reference: String): Action[AnyContent] = AuthenticatedAction.async { implicit request =>
     getCaseAndRender(reference, c => views.html.case_summary(c))
   }
 
-  def applicationDetails(reference: String): Action[AnyContent] = Action.async { implicit request =>
+  def applicationDetails(reference: String): Action[AnyContent] = AuthenticatedAction.async { implicit request =>
     getCaseAndRender(reference, c => views.html.application_details(c))
   }
 

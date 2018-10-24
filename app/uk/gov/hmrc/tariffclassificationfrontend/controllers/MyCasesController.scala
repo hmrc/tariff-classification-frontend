@@ -32,8 +32,8 @@ class MyCasesController @Inject()(casesService: CasesService,
                                   val messagesApi: MessagesApi,
                                   implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
-  def myCases(): Action[AnyContent] = Action.async { implicit request =>
-    val eventualCases = casesService.getCasesByAssignee("0")
+  def myCases(): Action[AnyContent] = AuthenticatedAction.async { implicit request =>
+    val eventualCases = casesService.getCasesByAssignee(request.operatorId)
     eventualCases.map {
       cases => Ok(views.html.my_cases(queuesService.getQueues, cases))
     }

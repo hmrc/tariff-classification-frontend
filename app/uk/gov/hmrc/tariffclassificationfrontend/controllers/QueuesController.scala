@@ -34,7 +34,7 @@ class QueuesController @Inject()(casesService: CasesService,
                                  val messagesApi: MessagesApi,
                                  implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
-  def queue(slug: String): Action[AnyContent] = Action.async { implicit request =>
+  def queue(slug: String): Action[AnyContent] = AuthenticatedAction.async { implicit request =>
     val queue: Option[Queue] = queuesService.getOneBySlug(slug)
     queue.map { queue =>
       casesService.getCasesByQueue(queue).map { cases => Ok(views.html.queue(queuesService.getQueues, queue, cases)) }
