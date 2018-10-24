@@ -34,4 +34,8 @@ class CasesService @Inject()(connector: BindingTariffClassificationConnector) {
     connector.getCasesByQueue(queue)
   }
 
+  def getCasesByAssignee(assignee: String)(implicit hc : HeaderCarrier): Future[Seq[Case]] = {
+    connector.getCasesByAssignee(assignee)
+  }
+
 }

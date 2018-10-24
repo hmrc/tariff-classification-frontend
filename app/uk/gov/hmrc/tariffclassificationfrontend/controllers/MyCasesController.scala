@@ -19,32 +19,22 @@ package uk.gov.hmrc.tariffclassificationfrontend.controllers
 import javax.inject.{Inject, Singleton}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
-import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.models.Case
-import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
+import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, QueuesService}
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton
-class CaseController @Inject()(casesService: CasesService,
-                               val messagesApi: MessagesApi,
-                               implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
+class MyCasesController @Inject()(casesService: CasesService,
+                                  queuesService: QueuesService,
+                                  val messagesApi: MessagesApi,
+                                  implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
-  def summary(reference: String): Action[AnyContent] = AuthenticatedAction.async { implicit request =>
-    getCaseAndRender(reference, c => views.html.case_summary(c))
-  }
-
-  def applicationDetails(reference: String): Action[AnyContent] = AuthenticatedAction.async { implicit request =>
-    getCaseAndRender(reference, c => views.html.application_details(c))
-  }
-
-  private def getCaseAndRender(reference: String, html: Case => Html)(implicit request: Request[_]) = {
-    casesService.getOne(reference).map { response =>
-      if (response.isEmpty) Ok(views.html.case_not_found(reference))
-      else Ok(html.apply(response.get))
+  def myCases(): Action[AnyContent] = AuthenticatedAction.async { implicit request =>
+    casesService.getCasesByAssignee(request.operatorId).map { cases =>
+      Ok(views.html.my_cases(queuesService.getQueues, cases))
     }
   }
 
