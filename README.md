@@ -1,7 +1,21 @@
 
-# tariff-classification-frontend
+# Tariff Classification Front End
 
-This is a placeholder README.md for a new repository
+The Front End for the internal Operator Service for reviewing & determining BTI applications
+
+
+### Running
+
+To run this Service you will need:
+ 
+ 1) Run [Binding Tariff Classification](https://github.com/hmrc/binding-tariff-classification) on Port 9090: `sbt 'run 9090'`
+ 2) Run Assets Frontend: `sm --start ASSETS_FRONTEND`
+ 3) Run this app: `sbt run`
+ 4) Open in a browser at `http://localhost:9000/tariff-classification-frontend`
+ 
+See [Binding Tariff Classification](https://github.com/hmrc/binding-tariff-classification) for info on how to set up test data
+ 
+Service Manager Set Up TBC
 
 ### License
 
