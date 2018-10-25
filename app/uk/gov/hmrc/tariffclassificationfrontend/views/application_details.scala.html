@@ -24,185 +24,193 @@
 @(c: Case)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None) {
+    @defining(c.application) { a =>
+        @defining(a.asBTI) { btiApp =>
+            @defining(btiApp.holder) { btiHolder =>
 
-    <h1 class="heading-large">#@c.reference - @c.application.getType for @c.application.asBTI.holder.traderName</h1>
-
-    <div class="grid-row">
-        <div class="column-one-quarter">
-            @case_nav("application", c.reference)
-        </div>
-        <div class="column-three-quarters">
-            <h3 class="heading-medium mt-0">Application Details</h3>
-
-            <div class="grid-row">
-                <div class="column-one-third">
-                    <p>EORI Number</p>
-                </div>
-                <div class="column-two-thirds">
-                    <p>@c.application.asBTI.holder.eori</p>
-                </div>
-            </div>
-
-            <div class="grid-row">
-                <div class="column-one-third">
-                    <p>Registered Company Name</p>
-                </div>
-                <div class="column-two-thirds">
-                    <p>@c.application.asBTI.holder.traderName</p>
-                </div>
-            </div>
-
-            <div class="grid-row">
-                <div class="column-one-third">
-                    <p>Registered Company Address</p>
-                </div>
-                <div class="column-two-thirds">
-                    <p>@c.application.asBTI.holder.addressLine1</p>
-                    <p>@c.application.asBTI.holder.addressLine2</p>
-                    <p>@c.application.asBTI.holder.addressLine3</p>
-                    <p>@c.application.asBTI.holder.postcode</p>
-                    <p>@c.application.asBTI.holder.country</p>
-                </div>
-            </div>
-
-            @if(c.application.asBTI.agent.isDefined) {
-                <h4 class="heading-small">This application was submitted by an agent</h4>
+                <h1 class="heading-large">#@c.reference - @a.getType for @btiHolder.traderName</h1>
 
                 <div class="grid-row">
-                    <div class="column-one-third">
-                        <p>Agent's EORI Number</p>
+                    <div class="column-one-quarter">
+                        @case_nav("application", c.reference)
                     </div>
-                    <div class="column-two-thirds">
-                        <p>@c.application.asBTI.agent.get.eori</p>
-                    </div>
-                </div>
+                    <div class="column-three-quarters">
+                        <h3 class="heading-medium mt-0">Application Details</h3>
 
-                <div class="grid-row">
-                    <div class="column-one-third">
-                        <p>Agent's Registered Company Name</p>
-                    </div>
-                    <div class="column-two-thirds">
-                        <p>@c.application.asBTI.agent.get.traderName</p>
-                    </div>
-                </div>
+                        <div class="grid-row">
+                            <div class="column-one-third">
+                                <p>EORI Number</p>
+                            </div>
+                            <div class="column-two-thirds">
+                                <p>@btiHolder.eori</p>
+                            </div>
+                        </div>
 
-                <div class="grid-row">
-                    <div class="column-one-third">
-                        <p>Agent's Registered Company Address</p>
-                    </div>
-                    <div class="column-two-thirds">
-                        <p>@c.application.asBTI.agent.get.addressLine1</p>
-                        <p>@c.application.asBTI.agent.get.addressLine2</p>
-                        <p>@c.application.asBTI.agent.get.addressLine3</p>
-                        <p>@c.application.asBTI.agent.get.postcode</p>
-                        <p>@c.application.asBTI.agent.get.country</p>
-                    </div>
-                </div>
+                        <div class="grid-row">
+                            <div class="column-one-third">
+                                <p>Registered Company Name</p>
+                            </div>
+                            <div class="column-two-thirds">
+                                <p>@btiHolder.traderName</p>
+                            </div>
+                        </div>
 
-                <a href="#">View letter of authorisation</a>
-            }
+                        <div class="grid-row">
+                            <div class="column-one-third">
+                                <p>Registered Company Address</p>
+                            </div>
+                            <div class="column-two-thirds">
+                                <p>@btiHolder.addressLine1</p>
+                                <p>@btiHolder.addressLine2</p>
+                                <p>@btiHolder.addressLine3</p>
+                                <p>@btiHolder.postcode</p>
+                                <p>@btiHolder.country</p>
+                            </div>
+                        </div>
 
-            @if(c.application.asBTI.reissuedBTIReference.isDefined) {
-                <h4 class="heading-small">This application is for a re-issue for BTI reference #@c.application.asBTI.reissuedBTIReference.get</h4>
-            }
+                        @if(btiApp.agent.isDefined) {
+                            @defining(btiApp.agent.get) { btiAgent =>
+                                <h4 class="heading-small">This application was submitted by an agent</h4>
 
-            @if(c.application.asBTI.envisagedCommodityCode.isDefined) {
-                <div class="grid-row">
-                    <div class="column-one-third">
-                        <p>Suggested Commodity Code</p>
-                    </div>
-                    <div class="column-two-thirds">
-                        <p>@c.application.asBTI.envisagedCommodityCode.get</p>
-                    </div>
-                </div>
-            }
+                                <div class="grid-row">
+                                    <div class="column-one-third">
+                                        <p>Agent's EORI Number</p>
+                                    </div>
+                                    <div class="column-two-thirds">
+                                        <p>@btiAgent.eori</p>
+                                    </div>
+                                </div>
 
-            <div class="grid-row">
-                <div class="column-one-third">
-                    <p>Goods Description</p>
-                </div>
-                <div class="column-two-thirds">
-                    <p>@c.application.asBTI.goodDescription</p>
-                </div>
-            </div>
+                                <div class="grid-row">
+                                    <div class="column-one-third">
+                                        <p>Agent's Registered Company Name</p>
+                                    </div>
+                                    <div class="column-two-thirds">
+                                        <p>@btiAgent.traderName</p>
+                                    </div>
+                                </div>
 
-            @if(c.application.asBTI.confidentialInformation.isDefined) {
-                <div class="grid-row">
-                    <div class="column-one-third">
-                        <p>Confidential Information</p>
-                    </div>
-                    <div class="column-two-thirds">
-                        <p>@c.application.asBTI.confidentialInformation.get</p>
-                    </div>
-                </div>
-            }
+                                <div class="grid-row">
+                                    <div class="column-one-third">
+                                        <p>Agent's Registered Company Address</p>
+                                    </div>
+                                    <div class="column-two-thirds">
+                                        <p>@btiAgent.addressLine1</p>
+                                        <p>@btiAgent.addressLine2</p>
+                                        <p>@btiAgent.addressLine3</p>
+                                        <p>@btiAgent.postcode</p>
+                                        <p>@btiAgent.country</p>
+                                    </div>
+                                </div>
 
-            @if(c.application.asBTI.relatedBTIReference.isDefined) {
-                <div class="grid-row">
-                    <div class="column-one-third">
-                        <p>Similar BTI Ruling</p>
-                    </div>
-                    <div class="column-two-thirds">
-                        <p>@c.application.asBTI.relatedBTIReference.get</p>
-                    </div>
-                </div>
-            }
-
-            @if(c.application.asBTI.knownLegalProceedings.isDefined) {
-                <div class="grid-row">
-                    <div class="column-one-third">
-                        <p>Known Legal Proceedings</p>
-                    </div>
-                    <div class="column-two-thirds">
-                        <p>@c.application.asBTI.knownLegalProceedings.get</p>
-                    </div>
-                </div>
-            }
-
-            @if(c.application.asBTI.otherInformation.isDefined) {
-                <div class="grid-row">
-                    <div class="column-one-third">
-                        <p>Other Information</p>
-                    </div>
-                    <div class="column-two-thirds">
-                        <p>@c.application.asBTI.otherInformation.get</p>
-                    </div>
-                </div>
-            }
-
-            <div class="grid-row">
-                <h3 class="heading-medium">Attachments</h3>
-                <table>
-                    <thead>
-                    <tr>
-                        <th scope="col">Date</th>
-                        <th scope="col">Type</th>
-                        <th scope="col"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    @for(a <- c.attachments.filter(_.application)) {
-                        <td>@Dates.format(a.timestamp)</td>
-                        <td>@a.mimeType</td>
-                        <td>
-                            <a href="@a.url" target="_blank">
-
-                            @if(a.isImage) {
-                                <img class="image-preview" src="@a.url"/>
-                            } else {
-                                Open
+                                <a href="#">View letter of authorisation</a>
                             }
-                            </a>
-                        </td>
-                    }
-                    </tbody>
-                </table>
+                        }
 
-                @if(!c.attachments.exists(_.application)) {
-                    <p>None</p>
-                }
-            </div>
+                        @if(btiApp.reissuedBTIReference.isDefined) {
+                            <h4 class="heading-small">This application is for a re-issue for BTI reference #@btiApp.reissuedBTIReference.get</h4>
+                        }
 
-        </div>
-    </div>
+                        @if(btiApp.envisagedCommodityCode.isDefined) {
+                            <div class="grid-row">
+                                <div class="column-one-third">
+                                    <p>Suggested Commodity Code</p>
+                                </div>
+                                <div class="column-two-thirds">
+                                    <p>@btiApp.envisagedCommodityCode.get</p>
+                                </div>
+                            </div>
+                        }
+
+                        <div class="grid-row">
+                            <div class="column-one-third">
+                                <p>Goods Description</p>
+                            </div>
+                            <div class="column-two-thirds">
+                                <p>@btiApp.goodDescription</p>
+                            </div>
+                        </div>
+
+                        @if(btiApp.confidentialInformation.isDefined) {
+                            <div class="grid-row">
+                                <div class="column-one-third">
+                                    <p>Confidential Information</p>
+                                </div>
+                                <div class="column-two-thirds">
+                                    <p>@btiApp.confidentialInformation.get</p>
+                                </div>
+                            </div>
+                        }
+
+                        @if(btiApp.relatedBTIReference.isDefined) {
+                            <div class="grid-row">
+                                <div class="column-one-third">
+                                    <p>Similar BTI Ruling</p>
+                                </div>
+                                <div class="column-two-thirds">
+                                    <p>@btiApp.relatedBTIReference.get</p>
+                                </div>
+                            </div>
+                        }
+
+                        @if(btiApp.knownLegalProceedings.isDefined) {
+                            <div class="grid-row">
+                                <div class="column-one-third">
+                                    <p>Known Legal Proceedings</p>
+                                </div>
+                                <div class="column-two-thirds">
+                                    <p>@btiApp.knownLegalProceedings.get</p>
+                                </div>
+                            </div>
+                        }
+
+                        @if(btiApp.otherInformation.isDefined) {
+                            <div class="grid-row">
+                                <div class="column-one-third">
+                                    <p>Other Information</p>
+                                </div>
+                                <div class="column-two-thirds">
+                                    <p>@btiApp.otherInformation.get</p>
+                                </div>
+                            </div>
+                        }
+
+                        <div class="grid-row">
+                            <h3 class="heading-medium">Attachments</h3>
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th scope="col">Date</th>
+                                    <th scope="col">Type</th>
+                                    <th scope="col"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                @for(att <- c.attachments.filter(_.application)) {
+                                    <td>@Dates.format(att.timestamp)</td>
+                                    <td>@att.mimeType</td>
+                                    <td>
+                                        <a href="@att.url" target="_blank">
+
+                                        @if(att.isImage) {
+                                            <img class="image-preview" src="@att.url"/>
+                                        } else {
+                                            Open
+                                        }
+                                        </a>
+                                    </td>
+                                }
+                                </tbody>
+                            </table>
+
+                            @if(!c.attachments.exists(_.application)) {
+                                <p>None</p>
+                            }
+                        </div>
+
+                    </div>
+                </div>
+            }
+        }
+    }
 }
