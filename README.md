@@ -13,6 +13,8 @@ To run this Service you will need:
  3) Run this app: `sbt run`
  4) Open in a browser at `http://localhost:9000/tariff-classification-frontend`
  
+See [Binding Tariff Classification](https://github.com/hmrc/binding-tariff-classification) for info on how to set up test data
+ 
 Service Manager Set Up TBC
 
 ### License
