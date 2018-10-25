@@ -24,11 +24,11 @@ class ApplicationSpec extends UnitSpec {
   "Application 'Get Type'" should {
 
     "convert liability order type" in {
-      CaseExamples.liabilityApplicationExample.getType() shouldBe "Liability Order"
+      CaseExamples.liabilityApplicationExample.getType shouldBe "Liability Order"
     }
 
     "convert bti type" in {
-      CaseExamples.btiApplicationExample.getType() shouldBe "BTI"
+      CaseExamples.btiApplicationExample.getType shouldBe "BTI"
     }
 
   }
@@ -36,11 +36,11 @@ class ApplicationSpec extends UnitSpec {
   "Application 'Is BTI'" should {
 
     "be truthy for a BTI" in {
-      CaseExamples.btiApplicationExample.isBTI() shouldBe true
+      CaseExamples.btiApplicationExample.isBTI shouldBe true
     }
 
     "be falsy for another type" in {
-      CaseExamples.liabilityApplicationExample.isBTI() shouldBe false
+      CaseExamples.liabilityApplicationExample.isBTI shouldBe false
     }
 
   }
@@ -48,11 +48,11 @@ class ApplicationSpec extends UnitSpec {
   "Application 'Is Liability Order'" should {
 
     "be truthy for a Liability" in {
-      CaseExamples.liabilityApplicationExample.isLiabilityOrder() shouldBe true
+      CaseExamples.liabilityApplicationExample.isLiabilityOrder shouldBe true
     }
 
     "be falsy for another type" in {
-      CaseExamples.btiApplicationExample.isLiabilityOrder() shouldBe false
+      CaseExamples.btiApplicationExample.isLiabilityOrder shouldBe false
     }
 
   }
@@ -60,12 +60,12 @@ class ApplicationSpec extends UnitSpec {
   "Application 'As BTI'" should {
 
     "cast a BTI" in {
-      CaseExamples.btiApplicationExample.asBTI() shouldBe a[BTIApplication]
+      CaseExamples.btiApplicationExample.asBTI shouldBe a[BTIApplication]
     }
 
     "fail to case another type" in {
       assertThrows[RuntimeException] {
-        CaseExamples.liabilityApplicationExample.asBTI()
+        CaseExamples.liabilityApplicationExample.asBTI
       }
     }
 
@@ -74,12 +74,12 @@ class ApplicationSpec extends UnitSpec {
   "Application 'As Liability'" should {
 
     "cast a Liability" in {
-      CaseExamples.liabilityApplicationExample.asLiabilityOrder() shouldBe a[LiabilityOrder]
+      CaseExamples.liabilityApplicationExample.asLiabilityOrder shouldBe a[LiabilityOrder]
     }
 
     "fail to case another type" in {
       assertThrows[RuntimeException] {
-        CaseExamples.btiApplicationExample.asLiabilityOrder()
+        CaseExamples.btiApplicationExample.asLiabilityOrder
       }
     }
 

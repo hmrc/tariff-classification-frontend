@@ -25,7 +25,7 @@
 
 @main(bodyClasses = None) {
 
-    <h1 class="heading-large">#@c.reference - @c.application.getType() for @c.application.asBTI().holder.traderName</h1>
+    <h1 class="heading-large">#@c.reference - @c.application.getType for @c.application.asBTI.holder.traderName</h1>
 
     <div class="grid-row">
         <div class="column-one-quarter">
@@ -39,7 +39,7 @@
                     <p>EORI Number</p>
                 </div>
                 <div class="column-two-thirds">
-                    <p>@c.application.asBTI().holder.eori</p>
+                    <p>@c.application.asBTI.holder.eori</p>
                 </div>
             </div>
 
@@ -48,7 +48,7 @@
                     <p>Registered Company Name</p>
                 </div>
                 <div class="column-two-thirds">
-                    <p>@c.application.asBTI().holder.traderName</p>
+                    <p>@c.application.asBTI.holder.traderName</p>
                 </div>
             </div>
 
@@ -57,15 +57,15 @@
                     <p>Registered Company Address</p>
                 </div>
                 <div class="column-two-thirds">
-                    <p>@c.application.asBTI().holder.addressLine1</p>
-                    <p>@c.application.asBTI().holder.addressLine2</p>
-                    <p>@c.application.asBTI().holder.addressLine3</p>
-                    <p>@c.application.asBTI().holder.postcode</p>
-                    <p>@c.application.asBTI().holder.country</p>
+                    <p>@c.application.asBTI.holder.addressLine1</p>
+                    <p>@c.application.asBTI.holder.addressLine2</p>
+                    <p>@c.application.asBTI.holder.addressLine3</p>
+                    <p>@c.application.asBTI.holder.postcode</p>
+                    <p>@c.application.asBTI.holder.country</p>
                 </div>
             </div>
 
-            @if(c.application.asBTI().agent.isDefined) {
+            @if(c.application.asBTI.agent.isDefined) {
                 <h4 class="heading-small">This application was submitted by an agent</h4>
 
                 <div class="grid-row">
@@ -73,7 +73,7 @@
                         <p>Agent's EORI Number</p>
                     </div>
                     <div class="column-two-thirds">
-                        <p>@c.application.asBTI().agent.get.eori</p>
+                        <p>@c.application.asBTI.agent.get.eori</p>
                     </div>
                 </div>
 
@@ -82,7 +82,7 @@
                         <p>Agent's Registered Company Name</p>
                     </div>
                     <div class="column-two-thirds">
-                        <p>@c.application.asBTI().agent.get.traderName</p>
+                        <p>@c.application.asBTI.agent.get.traderName</p>
                     </div>
                 </div>
 
@@ -91,28 +91,28 @@
                         <p>Agent's Registered Company Address</p>
                     </div>
                     <div class="column-two-thirds">
-                        <p>@c.application.asBTI().agent.get.addressLine1</p>
-                        <p>@c.application.asBTI().agent.get.addressLine2</p>
-                        <p>@c.application.asBTI().agent.get.addressLine3</p>
-                        <p>@c.application.asBTI().agent.get.postcode</p>
-                        <p>@c.application.asBTI().agent.get.country</p>
+                        <p>@c.application.asBTI.agent.get.addressLine1</p>
+                        <p>@c.application.asBTI.agent.get.addressLine2</p>
+                        <p>@c.application.asBTI.agent.get.addressLine3</p>
+                        <p>@c.application.asBTI.agent.get.postcode</p>
+                        <p>@c.application.asBTI.agent.get.country</p>
                     </div>
                 </div>
 
                 <a href="#">View letter of authorisation</a>
             }
 
-            @if(c.application.asBTI().reissuedBTIReference.isDefined) {
-                <h4 class="heading-small">This application is for a re-issue for BTI reference #@c.application.asBTI().reissuedBTIReference.get</h4>
+            @if(c.application.asBTI.reissuedBTIReference.isDefined) {
+                <h4 class="heading-small">This application is for a re-issue for BTI reference #@c.application.asBTI.reissuedBTIReference.get</h4>
             }
 
-            @if(c.application.asBTI().envisagedCommodityCode.isDefined) {
+            @if(c.application.asBTI.envisagedCommodityCode.isDefined) {
                 <div class="grid-row">
                     <div class="column-one-third">
                         <p>Suggested Commodity Code</p>
                     </div>
                     <div class="column-two-thirds">
-                        <p>@c.application.asBTI().envisagedCommodityCode.get</p>
+                        <p>@c.application.asBTI.envisagedCommodityCode.get</p>
                     </div>
                 </div>
             }
@@ -122,50 +122,50 @@
                     <p>Goods Description</p>
                 </div>
                 <div class="column-two-thirds">
-                    <p>@c.application.asBTI().goodDescription</p>
+                    <p>@c.application.asBTI.goodDescription</p>
                 </div>
             </div>
 
-            @if(c.application.asBTI().confidentialInformation.isDefined) {
+            @if(c.application.asBTI.confidentialInformation.isDefined) {
                 <div class="grid-row">
                     <div class="column-one-third">
                         <p>Confidential Information</p>
                     </div>
                     <div class="column-two-thirds">
-                        <p>@c.application.asBTI().confidentialInformation.get</p>
+                        <p>@c.application.asBTI.confidentialInformation.get</p>
                     </div>
                 </div>
             }
 
-            @if(c.application.asBTI().relatedBTIReference.isDefined) {
+            @if(c.application.asBTI.relatedBTIReference.isDefined) {
                 <div class="grid-row">
                     <div class="column-one-third">
                         <p>Similar BTI Ruling</p>
                     </div>
                     <div class="column-two-thirds">
-                        <p>@c.application.asBTI().relatedBTIReference.get</p>
+                        <p>@c.application.asBTI.relatedBTIReference.get</p>
                     </div>
                 </div>
             }
 
-            @if(c.application.asBTI().knownLegalProceedings.isDefined) {
+            @if(c.application.asBTI.knownLegalProceedings.isDefined) {
                 <div class="grid-row">
                     <div class="column-one-third">
                         <p>Known Legal Proceedings</p>
                     </div>
                     <div class="column-two-thirds">
-                        <p>@c.application.asBTI().knownLegalProceedings.get</p>
+                        <p>@c.application.asBTI.knownLegalProceedings.get</p>
                     </div>
                 </div>
             }
 
-            @if(c.application.asBTI().otherInformation.isDefined) {
+            @if(c.application.asBTI.otherInformation.isDefined) {
                 <div class="grid-row">
                     <div class="column-one-third">
                         <p>Other Information</p>
                     </div>
                     <div class="column-two-thirds">
-                        <p>@c.application.asBTI().otherInformation.get</p>
+                        <p>@c.application.asBTI.otherInformation.get</p>
                     </div>
                 </div>
             }

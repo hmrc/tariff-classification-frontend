@@ -21,23 +21,23 @@ import java.time.ZonedDateTime
 sealed trait Application {
   val `type`: String
 
-  def asBTI(): BTIApplication = {
+  def asBTI: BTIApplication = {
     this.asInstanceOf[BTIApplication]
   }
 
-  def asLiabilityOrder(): LiabilityOrder = {
+  def asLiabilityOrder: LiabilityOrder = {
     this.asInstanceOf[LiabilityOrder]
   }
 
-  def isBTI(): Boolean = {
+  def isBTI: Boolean = {
     this.isInstanceOf[BTIApplication]
   }
 
-  def isLiabilityOrder(): Boolean = {
+  def isLiabilityOrder: Boolean = {
     this.isInstanceOf[LiabilityOrder]
   }
 
-  def getType() : String = {
+  def getType: String = {
     `type` match {
       case "BTI" => "BTI"
       case "LIABILITY_ORDER" => "Liability Order"
