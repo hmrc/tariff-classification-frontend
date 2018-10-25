@@ -106,7 +106,7 @@
                 <h4 class="heading-small">This application is for a re-issue for BTI reference #@c.application.asBTI().reissuedBTIReference.get</h4>
             }
 
-            @if(c.application.asBTI().relatedBTIReference.isDefined) {
+            @if(c.application.asBTI().envisagedCommodityCode.isDefined) {
                 <div class="grid-row">
                     <div class="column-one-third">
                         <p>Suggested Commodity Code</p>
