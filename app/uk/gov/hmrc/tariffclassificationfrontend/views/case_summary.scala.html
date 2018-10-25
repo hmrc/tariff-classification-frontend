@@ -23,7 +23,7 @@
 
 @main(bodyClasses = None) {
 
-    <h1 class="heading-large">#@c.reference - @c.application.getType() for @c.application.asBTI().holder.traderName</h1>
+    <h1 class="heading-large">#@c.reference - @c.application.getType for @c.application.asBTI.holder.traderName</h1>
 
     <div class="grid-row">
         <div class="column-one-quarter">
@@ -64,7 +64,7 @@
                     <p>Contact Name</p>
                 </div>
                 <div class="column-two-thirds">
-                    <p>@c.application.asBTI().contact.name</p>
+                    <p>@c.application.asBTI.contact.name</p>
                 </div>
             </div>
 
@@ -73,7 +73,7 @@
                     <p>Email</p>
                 </div>
                 <div class="column-two-thirds">
-                    <a href="mailto:@c.application.asBTI().contact.email?subject=@c.application.getType() application #@c.reference">@c.application.asBTI().contact.email</a>
+                    <a href="mailto:@c.application.asBTI.contact.email?subject=@c.application.getType application #@c.reference">@c.application.asBTI.contact.email</a>
                 </div>
             </div>
 
@@ -82,7 +82,7 @@
                     <p>Telephone</p>
                 </div>
                 <div class="column-two-thirds">
-                    <p>@c.application.asBTI().contact.phone</p>
+                    <p>@c.application.asBTI.contact.phone</p>
                 </div>
             </div>
         </div>

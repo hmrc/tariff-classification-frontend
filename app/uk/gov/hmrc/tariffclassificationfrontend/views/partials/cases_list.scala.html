@@ -34,16 +34,16 @@
     </thead>
     <tbody class="govuk-table__body">
         @for(c <- cases) {
-            @if(c.application.isBTI()) {
+            @if(c.application.isBTI) {
                 <tr class="govuk-table__row">
                     <th class="govuk-table__header" scope="row">
                         <a href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.summary(c.reference)">@c.reference</a>
                     </th>
-                    <td class="govuk-table__cell">@c.application.asBTI().goodName</td>
-                    <td class="govuk-table__cell">@c.application.asBTI().holder.traderName</td>
+                    <td class="govuk-table__cell">@c.application.asBTI.goodName</td>
+                    <td class="govuk-table__cell">@c.application.asBTI.holder.traderName</td>
                     <td class="govuk-table__cell">@Dates.format(c.createdDate)</td>
                     <td class="govuk-table__cell">@c.status</td>
-                    <td class="govuk-table__cell">@c.application.getType()</td>
+                    <td class="govuk-table__cell">@c.application.getType</td>
                     <td class="govuk-table__cell">@c.elapsedDays</td>
                 </tr>
             }
@@ -55,4 +55,3 @@
 @if(cases.isEmpty) {
     <p>There are no cases in this queue.</p>
 }
-
