@@ -15,18 +15,15 @@
  *@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-@import uk.gov.hmrc.tariffclassificationfrontend.models.Case
-@import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
+@import uk.gov.hmrc.tariffclassificationfrontend.models.{Application, BTIApplication, Case, EORIDetails}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.case_nav
-
-
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{attachments, case_nav}
 @(c: Case)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None) {
-    @defining(c.application) { a =>
-        @defining(a.asBTI) { btiApp =>
-            @defining(btiApp.holder) { btiHolder =>
+    @defining(c.application) { a: Application =>
+        @defining(a.asBTI) { btiApp: BTIApplication =>
+            @defining(btiApp.holder) { btiHolder: EORIDetails =>
 
                 <h1 class="heading-large">#@c.reference - @a.getType for @btiHolder.traderName</h1>
 
@@ -69,7 +66,9 @@
                         </div>
 
                         @if(btiApp.agent.isDefined) {
-                            @defining(btiApp.agent.get) { btiAgent =>
+                            <hr/>
+
+                            @defining(btiApp.agent.get) { btiAgent: EORIDetails =>
                                 <h4 class="heading-small">This application was submitted by an agent</h4>
 
                                 <div class="grid-row">
@@ -108,10 +107,12 @@
                         }
 
                         @if(btiApp.reissuedBTIReference.isDefined) {
+                            <hr/>
                             <h4 class="heading-small">This application is for a re-issue for BTI reference #@btiApp.reissuedBTIReference.get</h4>
                         }
 
                         @if(btiApp.envisagedCommodityCode.isDefined) {
+                            <hr/>
                             <div class="grid-row">
                                 <div class="column-one-third">
                                     <p>Suggested Commodity Code</p>
@@ -175,37 +176,11 @@
                             </div>
                         }
 
-                        <div class="grid-row">
-                            <h3 class="heading-medium">Attachments</h3>
-                            <table>
-                                <thead>
-                                <tr>
-                                    <th scope="col">Date</th>
-                                    <th scope="col">Type</th>
-                                    <th scope="col"></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                @for(att <- c.attachments.filter(_.application)) {
-                                    <td>@Dates.format(att.timestamp)</td>
-                                    <td>@att.mimeType</td>
-                                    <td>
-                                        <a href="@att.url" target="_blank">
-                                        @if(att.isImage) {
-                                            <img class="image-preview" src="@att.url"/>
-                                        } else {
-                                            Open
-                                        }
-                                        </a>
-                                    </td>
-                                }
-                                </tbody>
-                            </table>
+                        <hr/>
 
-                            @if(!c.attachments.exists(_.application)) {
-                                <p>None</p>
-                            }
-                        </div>
+                        <h3 class="heading-medium">Attachments</h3>
+                        @attachments(attachments = c.attachments.filter(_.application))
+
 
                     </div>
                 </div>

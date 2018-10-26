@@ -20,10 +20,14 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.case_nav
 
+@import uk.gov.hmrc.tariffclassificationfrontend.models.BTIApplication
+@import uk.gov.hmrc.tariffclassificationfrontend.models.Decision
+
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.attachments
 @(c: Case)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None) {
-    @defining(c.application.asBTI) { btiApp =>
+    @defining(c.application.asBTI) { btiApp: BTIApplication =>
 
         <h1 class="heading-large">#@c.reference - @btiApp.getType for @btiApp.holder.traderName</h1>
 
@@ -33,19 +37,15 @@
             </div>
 
             <div class="column-three-quarters">
-
                 @if(c.decision.isDefined) {
-
                     <div class="grid-row">
                         <div id="ruling" class="column-one-third">
                             <h4 class="heading-medium mt-0">Ruling</h4>
                         </div>
-                        <div id="change-details" class="column-two-thirds">
-                            <p><a id="change" href="#">Change</a></p>
+                        <div id="change-details" class="column-two-thirds text-right">
+                            <p><a id="change" href="#">Edit</a></p>
                         </div>
                     </div>
-
-                    <hr/>
 
                     @if(btiApp.envisagedCommodityCode.isDefined) {
                         <div class="grid-row">
@@ -53,113 +53,98 @@
                                 <p>Suggested Commodity Code</p>
                             </div>
                             <div class="column-two-thirds">
-                                <p id="envisagedCommodityCodeValue">@{btiApp.envisagedCommodityCode.get}</p>
+                                <p id="envisagedCommodityCodeValue">@{
+                                    btiApp.envisagedCommodityCode.get
+                                }</p>
                             </div>
                         </div>
                     }
 
                     <div class="grid-row">
                         <div id="goodDescription" class="column-one-third">
-                            <p>Good Description</p>
+                            <p>Applicants Good Description</p>
                         </div>
                         <div class="column-two-thirds">
-                            <p id="goodDescriptionValue">@{btiApp.goodDescription}</p>
+                            <p id="goodDescriptionValue">@{
+                                btiApp.goodDescription
+                            }</p>
                         </div>
                     </div>
 
                     <hr/>
 
-                    @defining(c.decision.get) { d =>
+                    @defining(c.decision.get) { d: Decision =>
 
                         <div class="grid-row">
                             <div id="bindingCommodityCode" class="column-one-third">
                                 <p>Binding Commodity Code</p>
                             </div>
                             <div class="column-two-thirds">
-                                <p id="bindingCommodityCodeValue">@{d.bindingCommodityCode}</p>
+                                <p id="bindingCommodityCodeValue">
+                                    @d.bindingCommodityCode</p>
                             </div>
                         </div>
 
-                        <div class="grid-row">
-                            <div id="searches" class="column-one-third">
-                                <p>Searches</p>
+                        @if(d.methodSearch.isDefined) {
+                            <div class="grid-row">
+                                <div id="searches" class="column-one-third">
+                                    <p>Searches Performed</p>
+                                </div>
+                                <div class="column-two-thirds">
+                                    <p id="searchesValue">@d.methodSearch</p>
+                                </div>
                             </div>
-                            <div class="column-two-thirds">
-                                <p id="searchesValue">???</p>
-                            </div>
-                        </div>
+                        }
 
                         <div class="grid-row">
                             <div id="justification" class="column-one-third">
                                 <p>Justification</p>
                             </div>
                             <div class="column-two-thirds">
-                                <p id="justificationValue">@{d.justification}</p>
+                                <p id="justificationValue">
+                                @d.justification</p>
                             </div>
                         </div>
 
                         @if(d.methodCommercialDenomination.isDefined) {
                             <div class="grid-row">
                                 <div id="methodCommercialDenomination" class="column-one-third">
-                                    <p>Commercial denomination</p>
+                                    <p>Commercial Denomination</p>
                                 </div>
                                 <div class="column-two-thirds">
-                                    <p id="methodCommercialDenominationValue">@{d.methodCommercialDenomination.get}</p>
+                                    <p id="methodCommercialDenominationValue">
+                                        @d.methodCommercialDenomination.get
+                                    </p>
                                 </div>
                             </div>
                         }
 
                         <div class="grid-row">
                             <div id="sanitisedGoodDescription" class="column-one-third">
-                                <p>Good Description</p>
+                                <p>Sanitised Goods Description</p>
                             </div>
                             <div class="column-two-thirds">
-                                <p id="sanitisedGoodDescriptionValue">@{d.goodsDescription}</p>
+                                <p id="sanitisedGoodDescriptionValue">
+                                @d.goodsDescription</p>
                             </div>
                         </div>
 
-                        <div class="grid-row">
-                            <div id="inclusionField" class="column-one-third">
-                                <p>Inclusion/Exclusion Field</p>
-                            </div>
-                            <div class="column-two-thirds">
-                                <p id="inclusionFieldValue">???</p>
-                            </div>
-                        </div>
+                        @*<div class="grid-row">*@
+                            @*<div id="inclusionField" class="column-one-third">*@
+                                @*<p>Inclusion/Exclusions</p>*@
+                            @*</div>*@
+                            @*<div class="column-two-thirds">*@
+                                @*<p id="inclusionFieldValue">???</p>*@
+                            @*</div>*@
+                        @*</div>*@
 
                     }
+                    <hr/>
 
-                    <div class="grid-row">
-                        <h3 class="heading-medium">Attachments</h3>
-                        <table>
-                            <thead>
-                            <tr>
-                                <th scope="col">Date</th>
-                                <th scope="col">Type</th>
-                                <th scope="col"></th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            @for(att <- c.attachments.filter(_.public)) {
-                                <td>@Dates.format(att.timestamp)</td>
-                                <td>@att.mimeType</td>
-                                <td>
-                                    <a href="@att.url" target="_blank">
-                                    @if(att.isImage) {
-                                        <img class="image-preview" src="@att.url"/>
-                                    } else {
-                                        Open
-                                    }
-                                    </a>
-                                </td>
-                            }
-                            </tbody>
-                        </table>
 
-                        @if(!c.attachments.exists(_.public)) {
-                            <p>None</p>
-                        }
-                    </div>
+                    <h3 class="heading-medium">Files to attach to the decision</h3>
+                    @attachments(attachments = c.attachments.filter(_.public))
+
 
                 } else {
                     <p>There are no ruling information associated to this case.</p>
