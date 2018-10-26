@@ -37,7 +37,7 @@ case class Case
   }
 
   def elapsedDays(clock: Clock): Long = {
-    if(closedDate.isEmpty) {
+    if (closedDate.isEmpty) {
       Duration.between(adjustedCreateDate, ZonedDateTime.now(clock)).toDays
     } else {
       Duration.between(adjustedCreateDate, closedDate.get).toDays

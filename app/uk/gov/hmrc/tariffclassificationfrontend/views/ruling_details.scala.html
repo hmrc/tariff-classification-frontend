@@ -23,6 +23,22 @@
 
 @main(bodyClasses = None) {
 
-    <h1 class="heading-large">Not implemented yet!</h1>
+    <h1 class="heading-large">#@c.reference - @c.application.getType for @c.application.asBTI.holder.traderName</h1>
+
+    <div class="grid-row">
+        <div class="column-one-quarter">
+            @case_nav("ruling", c.reference)
+        </div>
+
+        <div class="column-three-quarters">
+            <h3 class="heading-medium mt-0">Ruling details</h3>
+
+            @if (c.decision.isDefined) {
+                <p>Not implemented yet!</p>
+            } else {
+                <p>There are no ruling information associated to this case.</p>
+            }
+        </div>
+    </div>
 
 }
