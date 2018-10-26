@@ -126,7 +126,7 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec with WiremockTes
     "get empty cases" in {
       given(configuration.bindingTariffClassificationUrl).willReturn("http://localhost:20001")
 
-      stubFor(get(urlEqualTo("/cases?assignee_id=assignee&sort-by=elapsed-days"))
+      stubFor(get(urlEqualTo("/cases?assignee_id=assignee&status=NEW,OPEN,REFERRED,SUSPENDED&sort-by=elapsed-days"))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
           .withBody("[]"))
@@ -138,7 +138,7 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec with WiremockTes
     "get cases" in {
       given(configuration.bindingTariffClassificationUrl).willReturn("http://localhost:20001")
 
-      stubFor(get(urlEqualTo("/cases?assignee_id=assignee&sort-by=elapsed-days"))
+      stubFor(get(urlEqualTo("/cases?assignee_id=assignee&status=NEW,OPEN,REFERRED,SUSPENDED&sort-by=elapsed-days"))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
           .withBody(CasePayloads.gatewayCases))
