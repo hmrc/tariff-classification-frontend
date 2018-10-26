@@ -29,3 +29,19 @@
 #global-header .header-wrapper .header-global .header-logo {
   width: unset !important;
 }
+
+
+.service-info {
+  border-top: 10px solid #005ea5;
+  padding-bottom: 0.5em;
+}
+
+.centered-content {
+  display: block;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.text-right {
+  text-align: right
+}
