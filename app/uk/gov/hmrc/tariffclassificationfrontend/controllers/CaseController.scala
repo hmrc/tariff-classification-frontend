@@ -41,6 +41,10 @@ class CaseController @Inject()(casesService: CasesService,
     getCaseAndRender(reference, c => views.html.application_details(c))
   }
 
+  def rulingDetails(reference: String): Action[AnyContent] = AuthenticatedAction.async { implicit request =>
+    getCaseAndRender(reference, c => views.html.ruling_details(c))
+  }
+
   private def getCaseAndRender(reference: String, html: Case => Html)(implicit request: Request[_]) = {
     casesService.getOne(reference).map { response =>
       if (response.isEmpty) Ok(views.html.case_not_found(reference))
