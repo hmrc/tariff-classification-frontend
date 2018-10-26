@@ -80,14 +80,16 @@
                             </div>
                         </div>
 
-                        <div class="grid-row">
-                            <div id="searches" class="column-one-third">
-                                <p>Searches</p>
+                        @if(d.methodSearch.isDefined) {
+                            <div class="grid-row">
+                                <div id="searches" class="column-one-third">
+                                    <p>Searches</p>
+                                </div>
+                                <div class="column-two-thirds">
+                                    <p id="searchesValue">@{d.methodSearch.get}</p>
+                                </div>
                             </div>
-                            <div class="column-two-thirds">
-                                <p id="searchesValue">???</p>
-                            </div>
-                        </div>
+                        }
 
                         <div class="grid-row">
                             <div id="justification" class="column-one-third">
