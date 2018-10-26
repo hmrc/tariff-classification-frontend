@@ -37,33 +37,34 @@
                 @if(c.decision.isDefined) {
 
                     <div class="grid-row">
-                        <div id="ruling" class="column-one-third">
+                        <div id="ruling_table" class="column-one-third">
                             <h4 class="heading-medium mt-0">Ruling</h4>
                         </div>
                         <div id="change-details" class="column-two-thirds">
-                            <p><a id="change" href="#">Change</a></p>
+                            <p><a id="ruling_change" href="#">Change</a></p>
                         </div>
                     </div>
 
                     <hr/>
 
+                    <!-- TODO: DIT-289 - the following 2 rows contain data related to the application data, we should use a HTML arrow that hides them by default (see prototype) -->
                     @if(btiApp.envisagedCommodityCode.isDefined) {
                         <div class="grid-row">
-                            <div id="envisagedCommodityCode" class="column-one-third">
+                            <div id="application_envisagedCommodityCode" class="column-one-third">
                                 <p>Suggested Commodity Code</p>
                             </div>
                             <div class="column-two-thirds">
-                                <p id="envisagedCommodityCodeValue">@{btiApp.envisagedCommodityCode.get}</p>
+                                <p id="application_envisagedCommodityCodeValue">@{btiApp.envisagedCommodityCode.get}</p>
                             </div>
                         </div>
                     }
 
                     <div class="grid-row">
-                        <div id="goodDescription" class="column-one-third">
+                        <div id="application_goodDescription" class="column-one-third">
                             <p>Good Description</p>
                         </div>
                         <div class="column-two-thirds">
-                            <p id="goodDescriptionValue">@{btiApp.goodDescription}</p>
+                            <p id="application_goodDescriptionValue">@{btiApp.goodDescription}</p>
                         </div>
                     </div>
 
@@ -72,61 +73,61 @@
                     @defining(c.decision.get) { d =>
 
                         <div class="grid-row">
-                            <div id="bindingCommodityCode" class="column-one-third">
+                            <div id="ruling_bindingCommodityCode" class="column-one-third">
                                 <p>Binding Commodity Code</p>
                             </div>
                             <div class="column-two-thirds">
-                                <p id="bindingCommodityCodeValue">@{d.bindingCommodityCode}</p>
+                                <p id="ruling_bindingCommodityCodeValue">@{d.bindingCommodityCode}</p>
                             </div>
                         </div>
 
                         @if(d.methodSearch.isDefined) {
                             <div class="grid-row">
-                                <div id="searches" class="column-one-third">
+                                <div id="ruling_searches" class="column-one-third">
                                     <p>Searches</p>
                                 </div>
                                 <div class="column-two-thirds">
-                                    <p id="searchesValue">@{d.methodSearch.get}</p>
+                                    <p id="ruling_searchesValue">@{d.methodSearch.get}</p>
                                 </div>
                             </div>
                         }
 
                         <div class="grid-row">
-                            <div id="justification" class="column-one-third">
+                            <div id="ruling_justification" class="column-one-third">
                                 <p>Justification</p>
                             </div>
                             <div class="column-two-thirds">
-                                <p id="justificationValue">@{d.justification}</p>
+                                <p id="ruling_justificationValue">@{d.justification}</p>
                             </div>
                         </div>
 
                         @if(d.methodCommercialDenomination.isDefined) {
                             <div class="grid-row">
-                                <div id="methodCommercialDenomination" class="column-one-third">
+                                <div id="ruling_methodCommercialDenomination" class="column-one-third">
                                     <p>Commercial denomination</p>
                                 </div>
                                 <div class="column-two-thirds">
-                                    <p id="methodCommercialDenominationValue">@{d.methodCommercialDenomination.get}</p>
+                                    <p id="ruling_methodCommercialDenominationValue">@{d.methodCommercialDenomination.get}</p>
                                 </div>
                             </div>
                         }
 
                         <div class="grid-row">
-                            <div id="sanitisedGoodDescription" class="column-one-third">
+                            <div id="ruling_sanitisedGoodDescription" class="column-one-third">
                                 <p>Good Description</p>
                             </div>
                             <div class="column-two-thirds">
-                                <p id="sanitisedGoodDescriptionValue">@{d.goodsDescription}</p>
+                                <p id="ruling_sanitisedGoodDescriptionValue">@{d.goodsDescription}</p>
                             </div>
                         </div>
 
                         <!--TODO: DIT-289 - we need to add a new field in the model: `MethodExclusions` -->
                         <!--<div class="grid-row">-->
-                            <!--<div id="inclusionField" class="column-one-third">-->
+                            <!--<div id="ruling_inclusionField" class="column-one-third">-->
                                 <!--<p>Inclusion/Exclusion Field</p>-->
                             <!--</div>-->
                             <!--<div class="column-two-thirds">-->
-                                <!--<p id="inclusionFieldValue">???</p>-->
+                                <!--<p id="ruling_inclusionFieldValue">???</p>-->
                             <!--</div>-->
                         <!--</div>-->
 
