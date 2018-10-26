@@ -16,159 +16,29 @@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.models.Case
-@import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.case_nav
 
 @(c: Case)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None) {
-    @defining(c.application.asBTI) { btiApp =>
 
-        <h1 class="heading-large">#@c.reference - @btiApp.getType for @btiApp.holder.traderName</h1>
+    <h1 class="heading-large">#@c.reference - @c.application.getType for @c.application.asBTI.holder.traderName</h1>
 
-        <div class="grid-row">
-            <div class="column-one-quarter">
-                @case_nav("ruling", c.reference)
-            </div>
-
-            <div class="column-three-quarters">
-
-                @if(c.decision.isDefined) {
-
-                    <div class="grid-row">
-                        <div id="ruling_table" class="column-one-third">
-                            <h4 class="heading-medium mt-0">Ruling</h4>
-                        </div>
-                        <div id="change-details" class="column-two-thirds">
-                            <p><a id="ruling_change" href="#">Change</a></p>
-                        </div>
-                    </div>
-
-                    <hr/>
-
-                    <!-- TODO: DIT-289 - the following 2 rows contain data related to the application data, we should use a HTML arrow that hides them by default (see prototype) -->
-                    @if(btiApp.envisagedCommodityCode.isDefined) {
-                        <div class="grid-row">
-                            <div id="application_envisagedCommodityCode" class="column-one-third">
-                                <p>Suggested Commodity Code</p>
-                            </div>
-                            <div class="column-two-thirds">
-                                <p id="application_envisagedCommodityCodeValue">@{btiApp.envisagedCommodityCode.get}</p>
-                            </div>
-                        </div>
-                    }
-
-                    <div class="grid-row">
-                        <div id="application_goodDescription" class="column-one-third">
-                            <p>Good Description</p>
-                        </div>
-                        <div class="column-two-thirds">
-                            <p id="application_goodDescriptionValue">@{btiApp.goodDescription}</p>
-                        </div>
-                    </div>
-
-                    <hr/>
-
-                    @defining(c.decision.get) { d =>
-
-                        <div class="grid-row">
-                            <div id="ruling_bindingCommodityCode" class="column-one-third">
-                                <p>Binding Commodity Code</p>
-                            </div>
-                            <div class="column-two-thirds">
-                                <p id="ruling_bindingCommodityCodeValue">@{d.bindingCommodityCode}</p>
-                            </div>
-                        </div>
-
-                        @if(d.methodSearch.isDefined) {
-                            <div class="grid-row">
-                                <div id="ruling_searches" class="column-one-third">
-                                    <p>Searches</p>
-                                </div>
-                                <div class="column-two-thirds">
-                                    <p id="ruling_searchesValue">@{d.methodSearch.get}</p>
-                                </div>
-                            </div>
-                        }
-
-                        <div class="grid-row">
-                            <div id="ruling_justification" class="column-one-third">
-                                <p>Justification</p>
-                            </div>
-                            <div class="column-two-thirds">
-                                <p id="ruling_justificationValue">@{d.justification}</p>
-                            </div>
-                        </div>
-
-                        @if(d.methodCommercialDenomination.isDefined) {
-                            <div class="grid-row">
-                                <div id="ruling_methodCommercialDenomination" class="column-one-third">
-                                    <p>Commercial denomination</p>
-                                </div>
-                                <div class="column-two-thirds">
-                                    <p id="ruling_methodCommercialDenominationValue">@{d.methodCommercialDenomination.get}</p>
-                                </div>
-                            </div>
-                        }
-
-                        <div class="grid-row">
-                            <div id="ruling_sanitisedGoodDescription" class="column-one-third">
-                                <p>Good Description</p>
-                            </div>
-                            <div class="column-two-thirds">
-                                <p id="ruling_sanitisedGoodDescriptionValue">@{d.goodsDescription}</p>
-                            </div>
-                        </div>
-
-                        <!--TODO: DIT-289 - we need to add a new field in the model: `MethodExclusions` -->
-                        <!--<div class="grid-row">-->
-                            <!--<div id="ruling_inclusionField" class="column-one-third">-->
-                                <!--<p>Inclusion/Exclusion Field</p>-->
-                            <!--</div>-->
-                            <!--<div class="column-two-thirds">-->
-                                <!--<p id="ruling_inclusionFieldValue">???</p>-->
-                            <!--</div>-->
-                        <!--</div>-->
-
-                    }
-
-                    <div class="grid-row">
-                        <h3 class="heading-medium">Attachments</h3>
-                        <table>
-                            <thead>
-                            <tr>
-                                <th scope="col">Date</th>
-                                <th scope="col">Type</th>
-                                <th scope="col"></th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            @for(att <- c.attachments.filter(_.public)) {
-                                <td>@Dates.format(att.timestamp)</td>
-                                <td>@att.mimeType</td>
-                                <td>
-                                    <a href="@att.url" target="_blank">
-                                    @if(att.isImage) {
-                                        <img class="image-preview" src="@att.url"/>
-                                    } else {
-                                        Open
-                                    }
-                                    </a>
-                                </td>
-                            }
-                            </tbody>
-                        </table>
-
-                        @if(!c.attachments.exists(_.public)) {
-                            <p>None</p>
-                        }
-                    </div>
-
-                } else {
-                    <p>There are no ruling information associated to this case.</p>
-                }
-            </div>
+    <div class="grid-row">
+        <div class="column-one-quarter">
+            @case_nav("ruling", c.reference)
         </div>
-    }
+
+        <div class="column-three-quarters">
+            <h3 class="heading-medium mt-0">Ruling details</h3>
+
+            @if (c.decision.isDefined) {
+                <p>Not implemented yet!</p>
+            } else {
+                <p>There are no ruling information associated to this case.</p>
+            }
+        </div>
+    </div>
+
 }
