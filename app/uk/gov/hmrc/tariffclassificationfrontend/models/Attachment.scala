@@ -38,7 +38,11 @@ case class Attachment
     }
   }
   def name: Option[String] = {
-    val path = new URL(url).getPath
-    if(path.isEmpty) None else Option(FilenameUtils.getName(path))
+    try {
+      val path = new URL(url).getPath
+      if(path.isEmpty) None else Option(FilenameUtils.getName(path))
+    } catch {
+      case _: Exception => None
+    }
   }
 }

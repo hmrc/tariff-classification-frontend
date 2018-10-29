@@ -31,49 +31,49 @@
             </div>
 
             <div class="column-three-quarters">
+                <div id="ruling_table">
+                    <h3 class="heading-medium mt-0">Ruling</h3>
+                </div>
+
+                <h5 class="heading-small">Application Details</h5>
+
+                <hr class="mt-0"/>
+
+
+                <!-- TODO: DIT-289 - the following 2 rows contain data related to the application data, we should use a HTML arrow that hides them by default (see prototype) -->
+
+                <div class="grid-row">
+                    <div id="application_envisagedCommodityCode" class="column-one-third">
+                        <p>Suggested Commodity Code</p>
+                    </div>
+                    <div class="column-two-thirds">
+                        <p id="envisagedCommodityCodeValue">@{btiApp.envisagedCommodityCode.getOrElse("")}</p>
+                    </div>
+                </div>
+
+
+                <div class="grid-row">
+                    <div id="application_goodDescription" class="column-one-third">
+                        <p>Suggested Goods Description</p>
+                    </div>
+                    <div class="column-two-thirds">
+                        <p id="application_goodDescriptionValue">@{btiApp.goodDescription}</p>
+                    </div>
+                </div>
+
+
+                <div class="grid-row">
+                    <div class="column-one-third">
+                        <h5 class="heading-small">Ruling Details</h5>
+                    </div>
+                    <div id="ruling_edit_details" class="column-two-thirds text-right mt-1">
+                        <a id="ruling_edit" href="#">Edit</a>
+                    </div>
+                </div>
+
+                <hr class="mt-0"/>
+
                 @if(c.decision.isDefined) {
-                    <div id="ruling_table">
-                        <h3 class="heading-medium mt-0">Ruling</h3>
-                    </div>
-
-                    <h5 class="heading-small">Application Details</h5>
-
-                    <hr class="mt-0"/>
-
-
-                    <!-- TODO: DIT-289 - the following 2 rows contain data related to the application data, we should use a HTML arrow that hides them by default (see prototype) -->
-
-                    <div class="grid-row">
-                        <div id="application_envisagedCommodityCode" class="column-one-third">
-                            <p>Suggested Commodity Code</p>
-                        </div>
-                        <div class="column-two-thirds">
-                            <p id="envisagedCommodityCodeValue">@{btiApp.envisagedCommodityCode.getOrElse("")}</p>
-                        </div>
-                    </div>
-
-
-                    <div class="grid-row">
-                        <div id="application_goodDescription" class="column-one-third">
-                            <p>Suggested Goods Description</p>
-                        </div>
-                        <div class="column-two-thirds">
-                            <p id="application_goodDescriptionValue">@{btiApp.goodDescription}</p>
-                        </div>
-                    </div>
-
-
-                    <div class="grid-row">
-                        <div class="column-one-third">
-                            <h5 class="heading-small">Ruling Details</h5>
-                        </div>
-                        <div id="ruling_edit_details" class="column-two-thirds text-right mt-1">
-                            <a id="ruling_edit" href="#">Edit</a>
-                        </div>
-                    </div>
-
-                    <hr class="mt-0"/>
-
                     @defining(c.decision.get) { d: Decision =>
 
                         <div class="grid-row">
@@ -136,28 +136,25 @@
 
 
 
-        <!--TODO: DIT-289 - we need to add a new field in the model: `MethodExclusions` -->
+                        <!--TODO: DIT-289 - we need to add a new field in the model: `MethodExclusions` -->
                         @*<div class="grid-row">*@
-                            @*<div id="inclusionField" class="column-one-third">*@
-                                @*<p>Inclusion/Exclusions</p>*@
-                            @*</div>*@
-                            @*<div class="column-two-thirds">*@
-                                @*<p id="inclusionFieldValue">???</p>*@
-                            @*</div>*@
+                        @*<div id="inclusionField" class="column-one-third">*@
+                        @*<p>Inclusion/Exclusions</p>*@
+                        @*</div>*@
+                        @*<div class="column-two-thirds">*@
+                        @*<p id="inclusionFieldValue">???</p>*@
+                        @*</div>*@
                         @*</div>*@
 
+                        <h3 class="heading-small">Files to attach to the ruling</h3>
+                        <hr class="mt-0"/>
+
+                        @attachments(attachments = c.attachments.filter(_.public))
                     }
-
-
-                    <h3 class="heading-small">Files to attach to the ruling</h3>
-                    <hr class="mt-0"/>
-
-                    @attachments(attachments = c.attachments.filter(_.public))
-
-
                 } else {
-                    <p>There are no ruling information associated to this case.</p>
+                    <p>There is no ruling information associated to this case.</p>
                 }
+
             </div>
         </div>
     }
