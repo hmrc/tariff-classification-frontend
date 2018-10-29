@@ -16,7 +16,10 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.models
 
+import java.net.URL
 import java.time.ZonedDateTime
+
+import org.apache.commons.io.FilenameUtils
 
 case class Attachment
 (
@@ -33,5 +36,9 @@ case class Attachment
       case "image/gif" => true
       case _ => false
     }
+  }
+  def name: Option[String] = {
+    val path = new URL(url).getPath
+    if(path.isEmpty) None else Option(FilenameUtils.getName(path))
   }
 }
