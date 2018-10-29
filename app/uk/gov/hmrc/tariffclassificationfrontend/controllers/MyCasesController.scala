@@ -34,7 +34,7 @@ class MyCasesController @Inject()(casesService: CasesService,
 
   def myCases(): Action[AnyContent] = AuthenticatedAction.async { implicit request =>
     casesService.getCasesByAssignee(request.operator.id).map { cases =>
-      Ok(views.html.my_cases(queuesService.getQueues, cases))
+      Ok(views.html.my_cases(queuesService.queues, cases))
     }
   }
 

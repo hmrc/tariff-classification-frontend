@@ -22,17 +22,13 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.Queue
 @Singleton
 class QueuesService {
 
-  private val queues = Seq(
+  val queues = Seq(
     Queue(1, "gateway", "Gateway"),
     Queue(2, "act", "ACT"),
     Queue(3, "cap", "CAP"),
     Queue(4, "cars", "Cars"),
     Queue(5, "elm", "ELM")
   )
-
-  def getQueues: Seq[Queue] = {
-    queues
-  }
 
   def getOneBySlug(slug: String): Option[Queue] = {
     queues.find(_.slug == slug)
