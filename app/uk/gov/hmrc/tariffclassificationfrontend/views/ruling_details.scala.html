@@ -86,20 +86,12 @@
                         </div>
 
                         <div class="grid-row">
-                            <div id="ruling_searches" class="column-one-third">
-                                <p>Searches Performed</p>
+                            <div id="ruling_sanitisedGoodDescription" class="column-one-third">
+                                <p>Sanitised Goods Description</p>
                             </div>
                             <div class="column-two-thirds">
-                                <p id="ruling_searchesValue">@d.methodSearch.getOrElse("")</p>
-                            </div>
-                        </div>
-
-                        <div class="grid-row">
-                            <div id="ruling_searches" class="column-one-third">
-                                <p>Exclusions/Inclusions</p>
-                            </div>
-                            <div class="column-two-thirds">
-                                <p id="ruling_searchesValue">@d.methodExclusion.getOrElse("")</p>
+                                <p id="ruling_sanitisedGoodDescriptionValue">
+                                @d.goodsDescription</p>
                             </div>
                         </div>
 
@@ -113,6 +105,14 @@
                             </div>
                         </div>
 
+                        <div class="grid-row">
+                            <div id="ruling_searches" class="column-one-third">
+                                <p>Searches Performed</p>
+                            </div>
+                            <div class="column-two-thirds">
+                                <p id="ruling_searchesValue">@d.methodSearch.getOrElse("")</p>
+                            </div>
+                        </div>
 
                         <div class="grid-row">
                             <div id="ruling_methodCommercialDenomination" class="column-one-third">
@@ -120,21 +120,21 @@
                             </div>
                             <div class="column-two-thirds">
                                 <p id="ruling_methodCommercialDenominationValue">
-                                    @d.methodCommercialDenomination.getOrElse("")
+                                @d.methodCommercialDenomination.getOrElse("")
                                 </p>
                             </div>
                         </div>
 
-
                         <div class="grid-row">
-                            <div id="ruling_sanitisedGoodDescription" class="column-one-third">
-                                <p>Sanitised Goods Description</p>
+                            <div id="ruling_searches" class="column-one-third">
+                                <p>Exclusions/Inclusions</p>
                             </div>
                             <div class="column-two-thirds">
-                                <p id="ruling_sanitisedGoodDescriptionValue">
-                                @d.goodsDescription</p>
+                                <p id="ruling_searchesValue">@d.methodExclusion.getOrElse("")</p>
                             </div>
                         </div>
+
+
 
         <!--TODO: DIT-289 - we need to add a new field in the model: `MethodExclusions` -->
                         @*<div class="grid-row">*@
