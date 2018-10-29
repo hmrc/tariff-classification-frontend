@@ -27,6 +27,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 @Singleton
 class CaseController @Inject()(casesService: CasesService,
@@ -34,21 +35,21 @@ class CaseController @Inject()(casesService: CasesService,
                                implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
   def summary(reference: String): Action[AnyContent] = AuthenticatedAction.async { implicit request =>
-    getCaseAndRender(reference, c => views.html.case_summary(c))
+    getCaseAndRender(reference, views.html.case_summary(_))
   }
 
   def applicationDetails(reference: String): Action[AnyContent] = AuthenticatedAction.async { implicit request =>
-    getCaseAndRender(reference, c => views.html.application_details(c))
+    getCaseAndRender(reference, views.html.application_details(_))
   }
 
   def rulingDetails(reference: String): Action[AnyContent] = AuthenticatedAction.async { implicit request =>
-    getCaseAndRender(reference, c => views.html.ruling_details(c))
+    getCaseAndRender(reference, views.html.ruling_details(_))
   }
 
-  private def getCaseAndRender(reference: String, html: Case => Html)(implicit request: Request[_]) = {
-    casesService.getOne(reference).map { response =>
-      if (response.isEmpty) Ok(views.html.case_not_found(reference))
-      else Ok(html.apply(response.get))
+  private def getCaseAndRender(reference: String, toHtml: Case => Html)(implicit request: Request[_]): Future[Result] = {
+    casesService.getOne(reference).map {
+      case Some(c: Case) => Ok(toHtml(c))
+      case _ => Ok(views.html.case_not_found(reference))
     }
   }
 

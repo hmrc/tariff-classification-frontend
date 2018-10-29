@@ -26,7 +26,7 @@ class QueuesServiceSpec extends UnitSpec {
   "Get All Queues" should {
 
     "retrieve static queues" in {
-      service.getQueues.size shouldBe 5
+      service.queues.size shouldBe 5
     }
 
   }
