@@ -21,6 +21,8 @@ import java.time.ZonedDateTime
 
 import org.apache.commons.io.FilenameUtils
 
+import scala.util.{Success, Try}
+
 case class Attachment
 (
   application: Boolean,
@@ -29,6 +31,7 @@ case class Attachment
   mimeType: String,
   timestamp: ZonedDateTime
 ) {
+
   def isImage: Boolean = {
     mimeType match {
       case "image/png" => true
@@ -37,12 +40,12 @@ case class Attachment
       case _ => false
     }
   }
+
   def name: Option[String] = {
-    try {
-      val path = new URL(url).getPath
-      if(path.isEmpty) None else Option(FilenameUtils.getName(path))
-    } catch {
-      case _: Exception => None
+    Try(new URL(url)) match {
+      case Success(u: URL) if u.getPath.nonEmpty => Some(FilenameUtils.getName(u.getPath))
+      case _ => None
     }
   }
+
 }
