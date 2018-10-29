@@ -22,7 +22,7 @@ import uk.gov.hmrc.play.test.UnitSpec
 
 class AttachmentSpec extends UnitSpec {
 
-  "Application 'Is Image'" should {
+  "Attachment 'Is Image'" should {
 
     "recognise PNG" in {
       anImageOfType("image/png").isImage shouldBe true
@@ -39,11 +39,29 @@ class AttachmentSpec extends UnitSpec {
     "not recognise other types" in {
       anImageOfType("other").isImage shouldBe false
     }
+  }
 
+  "Attachment 'name'" should {
+
+    "parse valid URL with filename" in {
+      anAttachmentWithURL("http://host.com/path/image.png").name shouldBe Some("image.png")
+    }
+
+    "parse invalid URL" in {
+      anAttachmentWithURL("abc").name shouldBe None
+    }
+
+    "parse valid URL without extension" in {
+      anAttachmentWithURL("http://host.com/path/image").name shouldBe Some("image")
+    }
   }
 
   private def anImageOfType(t: String) = {
     Attachment(application = false, public = false, "url", t, ZonedDateTime.now())
+  }
+
+  private def anAttachmentWithURL(url: String) = {
+    Attachment(application = false, public = false, url, "type", ZonedDateTime.now())
   }
 
 }
