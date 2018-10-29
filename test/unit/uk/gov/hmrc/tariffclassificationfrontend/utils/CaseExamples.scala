@@ -26,7 +26,7 @@ object CaseExamples {
   val eoriAgentDetailsExample = EORIDetails("eori", "agent-name", "line1", "line2", "line3", "postcode", "country")
   val contactExample = Contact("name", "email", "phone")
   val btiApplicationExample = BTIApplication(eoriDetailsExample, contactExample, Some(eoriAgentDetailsExample), false, "Laptop", "Personal Computer", None, None, None, None, None, None, false, false)
-  val decision = Decision("AD12324FR", ZonedDateTime.now(), ZonedDateTime.now().plusYears(2), "justification", "good description", Seq("k1", "k2"), None, Some("denomination"), None)
+  val decision = Decision("AD12324FR", ZonedDateTime.now(), ZonedDateTime.now().plusYears(2), "justification", "good description", Seq("k1", "k2"), None, None, Some("denomination"), None)
   val liabilityApplicationExample = LiabilityOrder(eoriDetailsExample, contactExample, "status", "port", "entry number", ZonedDateTime.now())
   val btiCaseExample = Case("1", "OPEN", ZonedDateTime.now(), ZonedDateTime.now(), None, None, None, None, btiApplicationExample, Some(decision), Seq())
   val liabilityCaseExample = Case("1", "OPEN", ZonedDateTime.now(), ZonedDateTime.now(), None, None, None, None, liabilityApplicationExample, None, Seq())
