@@ -17,9 +17,14 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.models.Attachment
 @(attachments: Seq[Attachment])
 
+<ul class="list">
 @for(att <- attachments) {
-    <p><a href="@att.url">@att.name.getOrElse("Unknown")</a></p>
+    <li>
+        <a href="@att.url">@att.name.getOrElse("Unknown")</a>
+    </li>
 }
+</ul>
+
 
 @*<table>
     <thead>
