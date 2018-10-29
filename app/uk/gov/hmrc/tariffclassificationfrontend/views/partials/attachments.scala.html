@@ -15,37 +15,40 @@
  *@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.models.Attachment
-@import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
 @(attachments: Seq[Attachment])
 
-<table>
+@for(att <- attachments) {
+    <p><a href="@att.url">@att.name.getOrElse("Unknown")</a></p>
+}
+
+@*<table>
     <thead>
         <tr>
-            <th scope="col">Date</th>
-            <th scope="col">Type</th>
-            <th scope="col"></th>
+            <th scope="col">File</th>
+            <th scope="col">Preview</th>
         </tr>
     </thead>
     <tbody>
         @for(att <- attachments) {
-            <td>@Dates.format(att.timestamp)</td>
-            <td>@att.mimeType</td>
-            <td>
-                <a href="@att.url" target="_blank">
+            <tr>
+                <td>
+                    <a href="@att.url">@att.name.getOrElse("Unknown")</a>
+                </td>
+
+                <td>
                 @if(att.isImage) {
-                    <img class="image-preview" src="@att.url"/>
+                    <a href="@att.url">
+                        <img class="image-preview" src="@att.url"/>
+                    </a>
                 } else {
-                    Open
+                    <span>-</span>
                 }
-                </a>
-            </td>
+                </td>
+            </tr>
         }
     </tbody>
-</table>
+</table>*@
 
 @if(attachments.isEmpty) {
     <p>None</p>
 }
-
-
-

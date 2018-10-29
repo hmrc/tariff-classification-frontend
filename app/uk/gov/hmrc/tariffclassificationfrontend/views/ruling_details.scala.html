@@ -15,15 +15,9 @@
  *@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-@import uk.gov.hmrc.tariffclassificationfrontend.models.Case
-@import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
+@import uk.gov.hmrc.tariffclassificationfrontend.models.{BTIApplication, Case, Decision}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.case_nav
-
-@import uk.gov.hmrc.tariffclassificationfrontend.models.BTIApplication
-@import uk.gov.hmrc.tariffclassificationfrontend.models.Decision
-
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.attachments
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{attachments, case_nav}
 @(c: Case)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None) {
@@ -38,37 +32,47 @@
 
             <div class="column-three-quarters">
                 @if(c.decision.isDefined) {
+                    <div id="ruling_table">
+                        <h4 class="heading-medium mt-0">Ruling</h4>
+                    </div>
+
+                    <h5 class="heading-small">Application Details</h5>
+
+                    <hr class="mt-0"/>
+
+
+                    <!-- TODO: DIT-289 - the following 2 rows contain data related to the application data, we should use a HTML arrow that hides them by default (see prototype) -->
+
                     <div class="grid-row">
-                        <div id="ruling_table" class="column-one-third">
-                            <h4 class="heading-medium mt-0">Ruling</h4>
+                        <div id="application_envisagedCommodityCode" class="column-one-third">
+                            <p>Suggested Commodity Code</p>
                         </div>
-                        <div id="ruling_edit_details" class="column-two-thirds text-right">
-                            <p><a id="ruling_edit" href="#">Edit</a></p>
+                        <div class="column-two-thirds">
+                            <p id="envisagedCommodityCodeValue">@{btiApp.envisagedCommodityCode.getOrElse("")}</p>
                         </div>
                     </div>
 
-                    <!-- TODO: DIT-289 - the following 2 rows contain data related to the application data, we should use a HTML arrow that hides them by default (see prototype) -->
-                    @if(btiApp.envisagedCommodityCode.isDefined) {
-                        <div class="grid-row">
-                            <div id="application_envisagedCommodityCode" class="column-one-third">
-                                <p>Suggested Commodity Code</p>
-                            </div>
-                            <div class="column-two-thirds">
-                                <p id="envisagedCommodityCodeValue">@{btiApp.envisagedCommodityCode.get}</p>
-                            </div>
-                        </div>
-                    }
 
                     <div class="grid-row">
                         <div id="application_goodDescription" class="column-one-third">
-                            <p>Goods Description</p>
+                            <p>Suggested Goods Description</p>
                         </div>
                         <div class="column-two-thirds">
                             <p id="application_goodDescriptionValue">@{btiApp.goodDescription}</p>
                         </div>
                     </div>
 
-                    <hr/>
+
+                    <div class="grid-row">
+                        <div class="column-one-third">
+                            <h5 class="heading-small">Ruling Details</h5>
+                        </div>
+                        <div id="ruling_edit_details" class="column-two-thirds text-right mt-1">
+                            <a id="ruling_edit" href="#">Edit</a>
+                        </div>
+                    </div>
+
+                    <hr class="mt-0"/>
 
                     @defining(c.decision.get) { d: Decision =>
 
@@ -81,16 +85,15 @@
                             </div>
                         </div>
 
-                        @if(d.methodSearch.isDefined) {
-                            <div class="grid-row">
-                                <div id="ruling_searches" class="column-one-third">
-                                    <p>Searches Performed</p>
-                                </div>
-                                <div class="column-two-thirds">
-                                    <p id="ruling_searchesValue">@d.methodSearch.get</p>
-                                </div>
+                        <div class="grid-row">
+                            <div id="ruling_sanitisedGoodDescription" class="column-one-third">
+                                <p>Sanitised Goods Description</p>
                             </div>
-                        }
+                            <div class="column-two-thirds">
+                                <p id="ruling_sanitisedGoodDescriptionValue">
+                                @d.goodsDescription</p>
+                            </div>
+                        </div>
 
                         <div class="grid-row">
                             <div id="ruling_justification" class="column-one-third">
@@ -102,28 +105,36 @@
                             </div>
                         </div>
 
-                        @if(d.methodCommercialDenomination.isDefined) {
-                            <div class="grid-row">
-                                <div id="ruling_methodCommercialDenomination" class="column-one-third">
-                                    <p>Commercial Denomination</p>
-                                </div>
-                                <div class="column-two-thirds">
-                                    <p id="ruling_methodCommercialDenominationValue">
-                                        @d.methodCommercialDenomination.get
-                                    </p>
-                                </div>
-                            </div>
-                        }
-
                         <div class="grid-row">
-                            <div id="ruling_sanitisedGoodDescription" class="column-one-third">
-                                <p>Sanitised Goods Description</p>
+                            <div id="ruling_searches" class="column-one-third">
+                                <p>Searches Performed</p>
                             </div>
                             <div class="column-two-thirds">
-                                <p id="ruling_sanitisedGoodDescriptionValue">
-                                @d.goodsDescription</p>
+                                <p id="ruling_searchesValue">@d.methodSearch.getOrElse("")</p>
                             </div>
                         </div>
+
+                        <div class="grid-row">
+                            <div id="ruling_methodCommercialDenomination" class="column-one-third">
+                                <p>Commercial Denomination</p>
+                            </div>
+                            <div class="column-two-thirds">
+                                <p id="ruling_methodCommercialDenominationValue">
+                                @d.methodCommercialDenomination.getOrElse("")
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="grid-row">
+                            <div id="ruling_searches" class="column-one-third">
+                                <p>Exclusions/Inclusions</p>
+                            </div>
+                            <div class="column-two-thirds">
+                                <p id="ruling_searchesValue">@d.methodExclusion.getOrElse("")</p>
+                            </div>
+                        </div>
+
+
 
         <!--TODO: DIT-289 - we need to add a new field in the model: `MethodExclusions` -->
                         @*<div class="grid-row">*@
@@ -136,10 +147,11 @@
                         @*</div>*@
 
                     }
-                    <hr/>
 
 
-                    <h3 class="heading-medium">Files to attach to the decision</h3>
+                    <h3 class="heading-small">Files to attach to the ruling</h3>
+                    <hr class="mt-0"/>
+
                     @attachments(attachments = c.attachments.filter(_.public))
 
 

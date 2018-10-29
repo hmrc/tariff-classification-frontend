@@ -27,6 +27,7 @@ case class Decision
   goodsDescription: String,
   keywords: Seq[String],
   methodSearch: Option[String],
+  methodExclusion: Option[String],
   methodCommercialDenomination: Option[String],
   appeal: Option[Appeal]
 )

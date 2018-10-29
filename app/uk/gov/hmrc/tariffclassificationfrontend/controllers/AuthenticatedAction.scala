@@ -17,7 +17,7 @@
 package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
 import play.api.mvc.{ActionBuilder, Request, Result}
-import uk.gov.hmrc.tariffclassificationfrontend.models.AuthenticatedRequest
+import uk.gov.hmrc.tariffclassificationfrontend.models.{AuthenticatedRequest, Operator}
 
 import scala.concurrent.Future
 
@@ -25,6 +25,6 @@ object AuthenticatedAction extends ActionBuilder[AuthenticatedRequest]{
   override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] = {
     // TODO Implement Authentication Check based on the `request`. See DIT-311.
     // This currently hard-codes the current operator with operatorId "0"
-    block(AuthenticatedRequest("0", request))
+    block(AuthenticatedRequest(Operator("0"), request))
   }
 }

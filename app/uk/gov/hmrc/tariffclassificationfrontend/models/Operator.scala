@@ -16,6 +16,4 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.models
 
-import play.api.mvc.{Request, WrappedRequest}
-
-case class AuthenticatedRequest[A](operator: Operator, request: Request[A]) extends WrappedRequest[A](request)
+case class Operator(id: String)
