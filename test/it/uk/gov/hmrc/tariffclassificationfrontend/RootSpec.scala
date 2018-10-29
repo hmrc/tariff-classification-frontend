@@ -23,7 +23,7 @@ class RootSpec extends UnitSpec with WiremockTestServer with MockitoSugar with G
 
     "return status 200 and redirect to My Cases" in {
       // Given
-      stubFor(get(urlEqualTo("/cases?queue_id=none&assignee_id=none&sort-by=elapsed-days"))
+      stubFor(get(urlEqualTo("/cases?assignee_id=0&status=NEW,OPEN,REFERRED,SUSPENDED&sort-by=elapsed-days"))
         .willReturn(aResponse()
           .withStatus(OK)
           .withBody(CasePayloads.gatewayCases))
