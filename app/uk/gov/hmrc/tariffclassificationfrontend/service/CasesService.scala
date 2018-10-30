@@ -19,6 +19,7 @@ package uk.gov.hmrc.tariffclassificationfrontend.service
 import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.tariffclassificationfrontend.connector.BindingTariffClassificationConnector
+import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionForm
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Queue}
 
 import scala.concurrent.Future
@@ -37,5 +38,10 @@ class CasesService @Inject()(connector: BindingTariffClassificationConnector) {
   def getCasesByAssignee(assignee: String)(implicit hc : HeaderCarrier): Future[Seq[Case]] = {
     connector.getCasesByAssignee(assignee)
   }
+
+  def updateDesicion(reference: String, decisionForm : DecisionForm)(implicit hc : HeaderCarrier): Future[Option[Case]] = {
+    connector.getOneCase(reference)
+  }
+
 
 }

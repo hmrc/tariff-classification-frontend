@@ -1,0 +1,163 @@
+@*
+ * Copyright 2018 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
+@import uk.gov.hmrc.tariffclassificationfrontend.models.Case
+@import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.case_nav
+
+@import uk.gov.hmrc.tariffclassificationfrontend.models.BTIApplication
+@import uk.gov.hmrc.tariffclassificationfrontend.models.Decision
+
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.attachments
+
+@import helper._
+
+
+@(c: Case)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+
+@main(bodyClasses = None) {
+    @defining(c.application.asBTI) { btiApp: BTIApplication =>
+
+        <h1 class="heading-large">#@c.reference - @btiApp.getType for @btiApp.holder.traderName</h1>
+
+        <div class="grid-row">
+            <div class="column-one-quarter">
+                @case_nav("ruling", c.reference)
+            </div>
+
+            <div class="column-three-quarters form-group">
+
+                <div class="grid-row">
+                    <div id="ruling_table" class="column-one-third">
+                        <h4 class="heading-medium mt-0">Ruling</h4>
+                    </div>
+                </div>
+
+                <h5 class="heading-small">Application Details</h5>
+
+                <hr class="mt-0"/>
+
+                <div class="grid-row">
+                    <div id="application_envisagedCommodityCode" class="column-one-third">
+                        <p>Suggested Commodity Code</p>
+                    </div>
+                    <div class="column-two-thirds">
+                        <p id="envisagedCommodityCodeValue">@{btiApp.envisagedCommodityCode.getOrElse("")}</p>
+                    </div>
+                </div>
+
+                <div class="grid-row">
+                    <div id="application_goodDescription" class="column-one-third">
+                        <p>Suggested Goods Description</p>
+                    </div>
+                    <div class="column-two-thirds">
+                        <p id="application_goodDescriptionValue">@{btiApp.goodDescription}</p>
+                    </div>
+                </div>
+
+
+                <div class="grid-row">
+                    <div class="column-one-third">
+                        <h5 class="heading-small">Ruling Details</h5>
+                    </div>
+                </div>
+
+                <hr class="mt-0"/>
+
+                @form(action = uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.updateRulingDetails(c.reference), 'class -> "form") {
+                    @CSRF.formField
+
+                    @defining(c.decision.get) { d: Decision =>
+
+                        <div class="form-group">
+                            <label class="form-label-bold" for="bindingCommodityCode">
+                                Binding Commodity Code
+                                <span class="form-hint">
+                                    Valid format of a commodity code: 10-22 digits
+                                </span>
+                            </label>
+                            <input class="form-control" id="bindingCommodityCode" type="text" name="bindingCommodityCode" value="@d.bindingCommodityCode">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label-bold" for="goodsDescription">
+                                Sanitised Goods Description
+                            </label>
+                            <textarea class="form-control full-width" name="goodsDescription" id="goodsDescription" rows="5"> @d.goodsDescription </textarea>
+                        </div>
+
+                        @if(d.methodSearch.isDefined) {
+                            <div class="form-group">
+                                <label class="form-label-bold" for="methodSearch">
+                                    Searches Performed
+                                </label>
+                                <textarea class="form-control full-width" name="methodSearch" id="methodSearch" rows="2"> @d.methodSearch.get </textarea>
+                            </div>
+                        }
+
+                        <div class="form-group">
+                            <label class="form-label-bold" for="justification">
+                                Justification
+                            </label>
+                            <textarea class="form-control  full-width" name="justification" id="justification" rows="5"> @d.justification </textarea>
+                        </div>
+
+                        @if(d.methodCommercialDenomination.isDefined) {
+                            <div class="form-group">
+                                <label class="form-label-bold" for="methodCommercialDenomination">
+                                    Commercial denomination and additional information
+                                </label>
+                                <textarea class="form-control  full-width" name="methodCommercialDenomination" id="methodCommercialDenomination" rows="5"> @d.methodCommercialDenomination </textarea>
+                            </div>
+                        }
+
+                        <div class="form-group">
+                            <label class="form-label-bold" for="methodExclusion">
+                                Exclusions/Inclusions
+                            </label>
+                            <textarea class="form-control  full-width" name="methodExclusion" id="methodExclusion" rows="5"> @d.methodExclusion.getOrElse("") </textarea>
+                        </div>
+
+                    }
+
+                    <div class="form-group">
+                        <fieldset>
+                            <legend>
+                                <h3 class="heading-medium">Files to publish</h3>
+                                <span class="body-text">Select public attachments</span>
+                            </legend>
+
+                            @for(att <- c.attachments) {
+                                <div class="multiple-choice">
+                                    <input id="@att.name" name="attachments" type="checkbox" value="@att.url" @if(att.public){ checked } >
+                                    <label for="@att.name">  <a href="@att.url" target="_blank">@att.name.getOrElse("Unknown")</a> </label>
+                                </div>
+                            }
+
+                        </fieldset>
+                    </div>
+
+                    <div class="form-group">
+                        <button id="submit" class="button" type="submit">Save changes</button>
+                        <a href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.rulingDetails(c.reference)" class="secondary-button"> Cancel</a>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+}
