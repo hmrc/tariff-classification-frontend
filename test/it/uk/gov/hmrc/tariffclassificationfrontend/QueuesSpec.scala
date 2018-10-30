@@ -42,7 +42,7 @@ class QueuesSpec extends UnitSpec with WiremockTestServer with MockitoSugar with
 
     "return status 200" in {
       // Given
-      stubFor(get(urlEqualTo("/cases?queue_id=none&assignee_id=none&sort-by=elapsed-days"))
+      stubFor(get(urlEqualTo("/cases?queue_id=none&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort-by=elapsed-days"))
         .willReturn(aResponse()
           .withStatus(OK)
           .withBody(CasePayloads.gatewayCases))
@@ -61,7 +61,7 @@ class QueuesSpec extends UnitSpec with WiremockTestServer with MockitoSugar with
 
     "return status 200" in {
       // Given
-      stubFor(get(urlEqualTo("/cases?queue_id=2&assignee_id=none&sort-by=elapsed-days"))
+      stubFor(get(urlEqualTo("/cases?queue_id=2&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort-by=elapsed-days"))
         .willReturn(aResponse()
           .withStatus(OK)
           .withBody(CasePayloads.gatewayCases))
@@ -80,7 +80,7 @@ class QueuesSpec extends UnitSpec with WiremockTestServer with MockitoSugar with
 
     "return status 200" in {
       // Given
-      stubFor(get(urlEqualTo("/cases?queue_id=3&assignee_id=none&sort-by=elapsed-days"))
+      stubFor(get(urlEqualTo("/cases?queue_id=3&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort-by=elapsed-days"))
         .willReturn(aResponse()
           .withStatus(OK)
           .withBody(CasePayloads.gatewayCases))
@@ -99,7 +99,7 @@ class QueuesSpec extends UnitSpec with WiremockTestServer with MockitoSugar with
 
     "return status 200" in {
       // Given
-      stubFor(get(urlEqualTo("/cases?queue_id=4&assignee_id=none&sort-by=elapsed-days"))
+      stubFor(get(urlEqualTo("/cases?queue_id=4&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort-by=elapsed-days"))
         .willReturn(aResponse()
           .withStatus(OK)
           .withBody(CasePayloads.gatewayCases))
@@ -118,7 +118,7 @@ class QueuesSpec extends UnitSpec with WiremockTestServer with MockitoSugar with
 
     "return status 200" in {
       // Given
-      stubFor(get(urlEqualTo("/cases?queue_id=5&assignee_id=none&sort-by=elapsed-days"))
+      stubFor(get(urlEqualTo("/cases?queue_id=5&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort-by=elapsed-days"))
         .willReturn(aResponse()
           .withStatus(OK)
           .withBody(CasePayloads.gatewayCases))

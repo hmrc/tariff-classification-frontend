@@ -48,7 +48,7 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec with WiremockTes
     "get empty cases in 'gateway' queue" in {
       given(configuration.bindingTariffClassificationUrl).willReturn("http://localhost:20001")
 
-      stubFor(get(urlEqualTo("/cases?queue_id=none&assignee_id=none&sort-by=elapsed-days"))
+      stubFor(get(urlEqualTo("/cases?queue_id=none&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort-by=elapsed-days"))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
           .withBody("[]"))
@@ -60,7 +60,7 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec with WiremockTes
     "get cases in 'gateway' queue" in {
       given(configuration.bindingTariffClassificationUrl).willReturn("http://localhost:20001")
 
-      stubFor(get(urlEqualTo("/cases?queue_id=none&assignee_id=none&sort-by=elapsed-days"))
+      stubFor(get(urlEqualTo("/cases?queue_id=none&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort-by=elapsed-days"))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
           .withBody(CasePayloads.gatewayCases))
@@ -72,7 +72,7 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec with WiremockTes
     "get empty cases in 'other' queue" in {
       given(configuration.bindingTariffClassificationUrl).willReturn("http://localhost:20001")
 
-      stubFor(get(urlEqualTo("/cases?queue_id=2&assignee_id=none&sort-by=elapsed-days"))
+      stubFor(get(urlEqualTo("/cases?queue_id=2&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort-by=elapsed-days"))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
           .withBody("[]"))
@@ -84,7 +84,7 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec with WiremockTes
     "get cases in 'other' queue" in {
       given(configuration.bindingTariffClassificationUrl).willReturn("http://localhost:20001")
 
-      stubFor(get(urlEqualTo("/cases?queue_id=2&assignee_id=none&sort-by=elapsed-days"))
+      stubFor(get(urlEqualTo("/cases?queue_id=2&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort-by=elapsed-days"))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
           .withBody(CasePayloads.gatewayCases))
