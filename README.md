@@ -6,16 +6,35 @@ The Front End for the internal Operator Service for reviewing & determining BTI 
 
 ### Running
 
-To run this Service you will need:
+##### To run this Service you will need:
+
+1) [Service Manager](https://github.com/hmrc/service-manager) Installed
+2) [SBT](https://www.scala-sbt.org) Version `>0.13.13` Installed
+
+##### Starting the application:
  
- 1) Run [Binding Tariff Classification](https://github.com/hmrc/binding-tariff-classification) on Port 9090: `sbt 'run 9090'`
- 2) Run Assets Frontend: `sm --start ASSETS_FRONTEND`
- 3) Run this app: `sbt run`
- 4) Open in a browser at `http://localhost:9000/tariff-classification-frontend`
+1) Run Assets Frontend: `sm --start ASSETS_FRONTEND -r 4.5.0`
+2) Start [Binding Tariff Classification](https://github.com/hmrc/binding-tariff-classification) Using `sm --start BINDING_TARIFF_CLASSIFICATION -f`
+
+Finally Run `sbt run` to boot the app
+
+Open `http://localhost:9000/tariff-classification-frontend`
  
 See [Binding Tariff Classification](https://github.com/hmrc/binding-tariff-classification) for info on how to set up test data
- 
-Service Manager Set Up TBC
+
+##### Starting With Service Manager
+
+This application runs on port 9581
+
+Run `sm --start TARIFF_CLASSIFICATION_FRONTEND -r`
+
+Open `http://localhost:9581/tariff-classification-frontend`
+
+### Testing
+
+Run `./run_all_tests.sh`
+
+or `sbt test it:test`
 
 ### License
 
