@@ -22,20 +22,29 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.Queue
 @Singleton
 class QueuesService {
 
-  val queues = Seq(
-    Queue(1, "gateway", "Gateway"),
-    Queue(2, "act", "ACT"),
-    Queue(3, "cap", "CAP"),
-    Queue(4, "cars", "Cars"),
-    Queue(5, "elm", "ELM")
-  )
+  def getAll: Seq[Queue] = Queues.all
+
+  def getNonGateway: Seq[Queue] = Queues.non_gateway
+
+  def getGateway: Queue = Queues.gateway
 
   def getOneBySlug(slug: String): Option[Queue] = {
-    queues.find(_.slug == slug)
+    Queues.all.find(_.slug == slug)
   }
 
   def getOneById(id: Int): Option[Queue] = {
-    queues.find(_.id == id)
+    Queues.all.find(_.id == id)
   }
 
+}
+
+private object Queues {
+  val gateway = Queue(1, "gateway", "Gateway")
+  val act = Queue(2, "act", "ACT")
+  val cap = Queue(3, "cap", "CAP")
+  val cars = Queue(4, "cars", "Cars")
+  val elm = Queue(5, "elm", "ELM")
+
+  def all: Seq[Queue] = Seq(gateway, act, cap, cars, elm)
+  def non_gateway: Seq[Queue] = Seq(act, cap, cars, elm)
 }

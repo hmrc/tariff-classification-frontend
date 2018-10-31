@@ -14,15 +14,12 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
+@import uk.gov.hmrc.tariffclassificationfrontend.models.Case
+@(c: Case)
 
-@(resource: Option[String] = None)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
-
-@main(bodyClasses = None) {
-
-    <h1 class="heading-large">
-        @resource.getOrElse("Resource") not found
-    </h1>
-    <a href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.QueuesController.queue("gateway")">Back Home</a>
+@if(c.status == "NEW") {
+    <form name="release-case">
+        <a class="button" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.releaseCase(c.reference)">
+            Release Case</a>
+    </form>
 }

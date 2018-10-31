@@ -15,9 +15,9 @@
  *@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-@import uk.gov.hmrc.tariffclassificationfrontend.models.{Application, BTIApplication, Case, EORIDetails}
+@import uk.gov.hmrc.tariffclassificationfrontend.models.{Application, Attachment, BTIApplication, Case, EORIDetails}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{attachments, case_nav}
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{attachments, case_nav, release_case_button}
 @(c: Case)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None) {
@@ -176,12 +176,15 @@
                             </div>
                         }
 
-                        <hr/>
+                        @defining(c.attachments.filter(_.application)) { atts: Seq[Attachment] =>
+                                @if(atts.nonEmpty) {
+                                    <hr/>
+                                    <h3 class="heading-medium">Attachments</h3>
+                                    @attachments(atts)
+                                }
+                        }
 
-                        <h3 class="heading-medium">Attachments</h3>
-                        @attachments(attachments = c.attachments.filter(_.application))
-
-
+                        @release_case_button(c)
                     </div>
                 </div>
             }
