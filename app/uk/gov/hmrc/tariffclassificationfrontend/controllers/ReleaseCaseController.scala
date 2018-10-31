@@ -17,11 +17,13 @@
 package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
 import javax.inject.{Inject, Singleton}
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
+import uk.gov.hmrc.tariffclassificationfrontend.forms.ReleaseCaseForm
 import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, QueuesService}
 import uk.gov.hmrc.tariffclassificationfrontend.views
@@ -30,21 +32,29 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class CaseController @Inject()(casesService: CasesService,
-                               queueService: QueuesService,
-                               val messagesApi: MessagesApi,
-                               implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
+class ReleaseCaseController @Inject()(casesService: CasesService,
+                                      queueService: QueuesService,
+                                      val messagesApi: MessagesApi,
+                                      implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
-  def summary(reference: String): Action[AnyContent] = AuthenticatedAction.async { implicit request =>
-    getCaseAndRender(reference, views.html.case_summary(_))
+  val releaseCaseForm: Form[ReleaseCaseForm] = ReleaseCaseForm.form
+
+  def releaseCase(reference: String): Action[AnyContent] = AuthenticatedAction.async { implicit request =>
+    getCaseAndRender(reference, views.html.release_case(_, releaseCaseForm, queueService.getNonGateway))
   }
 
-  def applicationDetails(reference: String): Action[AnyContent] = AuthenticatedAction.async { implicit request =>
-    getCaseAndRender(reference, views.html.application_details(_))
-  }
+  def releaseCaseToQueue(reference: String): Action[AnyContent] = AuthenticatedAction.async { implicit request =>
+    def onInvalidForm(formWithErrors: Form[ReleaseCaseForm]) = {
+      getCaseAndRender(reference, views.html.release_case(_, formWithErrors, queueService.getNonGateway))
+    }
 
-  def rulingDetails(reference: String): Action[AnyContent] = AuthenticatedAction.async { implicit request =>
-    getCaseAndRender(reference, views.html.ruling_details(_))
+    def onValidForm(validForm: ReleaseCaseForm): Future[Result] = {
+      queueService.getOneBySlug(validForm.queue)
+        .map(queue => getCaseAndRender(reference, views.html.confirm_release_case(_, queue)))
+        .getOrElse(Future.successful(Ok(views.html.resource_not_found(Some("Queue")))))
+    }
+
+    releaseCaseForm.bindFromRequest.fold(onInvalidForm, onValidForm)
   }
 
   private def getCaseAndRender(reference: String, toHtml: Case => Html)(implicit request: Request[_]): Future[Result] = {

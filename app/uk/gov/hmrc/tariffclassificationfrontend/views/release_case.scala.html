@@ -17,6 +17,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.forms.ReleaseCaseForm
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{BTIApplication, Case, Queue}
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.release_case_form
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
 
 @(c: Case, form: Form[ReleaseCaseForm], queues: Seq[Queue])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
@@ -51,30 +52,7 @@
                     </div>
                 </div>
 
-                @helper.form(action = uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.releaseCaseToQueue(c.reference), 'id -> "release-case-form") {
-                    @helper.CSRF.formField
-
-                    <div class="form-group">
-                        <fieldset>
-                            <legend>
-                                <h3 class="heading-small">Choose a queue</h3>
-                            </legend>
-
-                            @for(queue <- queues) {
-                                <div class="multiple-choice">
-                                    <input id="input-@queue.slug" type="radio" name="queue" value="@queue.slug">
-                                    <label for="input-@queue.slug">@queue.name</label>
-                                </div>
-                            }
-
-                        </fieldset>
-                    </div>
-
-                    <div>
-                        <button class="button" type="submit">Release Case</button>
-                        <a class="secondary-button" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.applicationDetails(c.reference)">Cancel</a>
-                    </div>
-                }
+                @release_case_form(c, form("queue"), queues)
 
             </div>
         </div>
