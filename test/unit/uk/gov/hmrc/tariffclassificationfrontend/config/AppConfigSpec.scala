@@ -49,7 +49,7 @@ class AppConfigSpec extends UnitSpec with MockitoSugar with WithFakeApplication 
     }
 
     "Builds local Binding Tariff Base URL" in {
-      appConfig.bindingTariffClassificationUrl shouldBe "http://localhost:9850"
+      appConfig.bindingTariffClassificationUrl shouldBe "http://localhost:9580"
     }
 
   }
