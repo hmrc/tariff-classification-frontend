@@ -30,6 +30,12 @@ Run `sm --start TARIFF_CALSSIFICATION_FRONTEND -r`
 
 Open `http://localhost:9581/tariff-classification-frontend`
 
+### Testing
+
+Run `./run_all_tests.sh`
+
+or `sbt test it:test`
+
 ### License
 
 This code is open source software licensed under the [Apache 2.0 License]("http://www.apache.org/licenses/LICENSE-2.0.html").
