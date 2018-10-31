@@ -26,7 +26,7 @@ See [Binding Tariff Classification](https://github.com/hmrc/binding-tariff-class
 
 This application runs on port 9581
 
-Run `sm --start TARIFF_CALSSIFICATION_FRONTEND -r`
+Run `sm --start TARIFF_CLASSIFICATION_FRONTEND -r`
 
 Open `http://localhost:9581/tariff-classification-frontend`
 
