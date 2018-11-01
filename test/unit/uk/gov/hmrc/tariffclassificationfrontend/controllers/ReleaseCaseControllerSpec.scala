@@ -146,7 +146,7 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with GuiceOneAppP
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
-      contentAsString(result) should include("Queue not found")
+      contentAsString(result) should include("Queue queue not found")
     }
 
   }
