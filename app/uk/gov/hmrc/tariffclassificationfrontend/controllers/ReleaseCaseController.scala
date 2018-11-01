@@ -24,7 +24,7 @@ import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.ReleaseCaseForm
-import uk.gov.hmrc.tariffclassificationfrontend.models.Case
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Queue}
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, QueuesService}
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
@@ -50,22 +50,25 @@ class ReleaseCaseController @Inject()(casesService: CasesService,
 
     def onValidForm(validForm: ReleaseCaseForm): Future[Result] = {
       queueService.getOneBySlug(validForm.queue)
-        .map(queue => {
-          casesService.getOne(reference).flatMap {
-            case Some(c: Case) => {
-              if(c.status == "NEW") {
-                casesService.releaseCase(c, queue).map(updatedCase => Ok(views.html.confirm_release_case(updatedCase, queue)))
-              } else {
-                Future.successful(Redirect(routes.CaseController.applicationDetails(reference)))
-              }
-            }
-            case _ => Future.successful(Ok(views.html.case_not_found(reference)))
-          }
-        })
+        .map(releaseCaseOntoQueue(reference, _))
         .getOrElse(Future.successful(Ok(views.html.resource_not_found(s"Queue ${validForm.queue}"))))
     }
 
     releaseCaseForm.bindFromRequest.fold(onInvalidForm, onValidForm)
+  }
+
+  private def releaseCaseOntoQueue(reference: String, queue: Queue)(implicit request: Request[_]): Future[Result] = {
+    casesService.getOne(reference).flatMap {
+      case Some(c: Case) =>
+        if (c.status == "NEW") {
+          casesService.releaseCase(c, queue).map {
+              updatedCase => Ok(views.html.confirm_release_case(updatedCase, queue))
+            }
+        } else {
+          Future.successful(Redirect(routes.CaseController.applicationDetails(reference)))
+        }
+      case _ => Future.successful(Ok(views.html.case_not_found(reference)))
+    }
   }
 
   private def getCaseAndRender(reference: String, toHtml: Case => Html)(implicit request: Request[_]): Future[Result] = {
