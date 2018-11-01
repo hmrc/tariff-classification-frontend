@@ -23,13 +23,14 @@ import org.scalatest.{Matchers, WordSpec}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status
 import play.api.i18n.{DefaultLangs, DefaultMessagesApi}
-import play.api.mvc.AnyContentAsEmpty
+import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded}
 import play.api.test.Helpers._
 import play.api.test.{FakeHeaders, FakeRequest}
 import play.api.{Configuration, Environment}
 import play.filters.csrf.CSRF.{Token, TokenProvider}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
+import uk.gov.hmrc.tariffclassificationfrontend.models.Queue
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, QueuesService}
 import uk.gov.hmrc.tariffclassificationfrontend.utils.CaseExamples
 
@@ -55,7 +56,7 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with GuiceOneAppP
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(caseWithStatusNEW)))
       given(queueService.getNonGateway).willReturn(Seq.empty)
 
-      val result = controller.releaseCase("reference")(newFakeRequestWithCSRF())
+      val result = controller.releaseCase("reference")(newFakeGETRequestWithCSRF())
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
@@ -66,7 +67,7 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with GuiceOneAppP
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(caseWithStatusOPEN)))
       given(queueService.getNonGateway).willReturn(Seq.empty)
 
-      val result = controller.releaseCase("reference")(newFakeRequestWithCSRF())
+      val result = controller.releaseCase("reference")(newFakeGETRequestWithCSRF())
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
@@ -77,7 +78,7 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with GuiceOneAppP
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(None))
       given(queueService.getNonGateway).willReturn(Seq.empty)
 
-      val result = controller.releaseCase("reference")(newFakeRequestWithCSRF())
+      val result = controller.releaseCase("reference")(newFakeGETRequestWithCSRF())
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
@@ -86,9 +87,85 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with GuiceOneAppP
 
   }
 
-  private def newFakeRequestWithCSRF(method: String = "GET"): FakeRequest[AnyContentAsEmpty.type] = {
+  "Release Case To Queue" should {
+    val caseWithStatusNEW = CaseExamples.btiCaseExample.copy(status = "NEW")
+    val caseWithStatusOPEN = CaseExamples.btiCaseExample.copy(status = "OPEN")
+    val queue = mock[Queue]
+
+    "return OK and HTML content type" in {
+      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(caseWithStatusNEW)))
+      given(queueService.getOneBySlug("queue")).willReturn(Some(queue))
+      given(casesService.releaseCase(refEq(caseWithStatusNEW), any[Queue])(any[HeaderCarrier])).willReturn(Future.successful(caseWithStatusOPEN))
+
+      val result = controller.releaseCaseToQueue("reference")(newFakePUTRequestWithCSRF("queue"))
+      status(result) shouldBe Status.OK
+      contentType(result) shouldBe Some("text/html")
+      charset(result) shouldBe Some("utf-8")
+      contentAsString(result) should include("This case has been released")
+    }
+
+    "redirect back to case on Form Error" in {
+      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(caseWithStatusNEW)))
+      given(queueService.getOneBySlug("queue")).willReturn(Some(queue))
+      given(casesService.releaseCase(refEq(caseWithStatusNEW), any[Queue])(any[HeaderCarrier])).willReturn(Future.successful(caseWithStatusOPEN))
+
+      val result = controller.releaseCaseToQueue("reference")(newInvalidFakePUTRequestWithCSRF())
+      status(result) shouldBe Status.OK
+      contentType(result) shouldBe Some("text/html")
+      charset(result) shouldBe Some("utf-8")
+      contentAsString(result) should include("Release this Case for Classification")
+    }
+
+    "redirect to Application Details for non NEW Statuses" in {
+      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(caseWithStatusOPEN)))
+      given(queueService.getOneBySlug("queue")).willReturn(Some(queue))
+
+      val result = controller.releaseCaseToQueue("reference")(newFakePUTRequestWithCSRF("queue"))
+      status(result) shouldBe Status.SEE_OTHER
+      contentType(result) shouldBe None
+      charset(result) shouldBe None
+      redirectLocation(result) shouldBe Some("/tariff-classification/cases/reference/application")
+    }
+
+    "return Not Found and HTML content type on missing Case" in {
+      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(None))
+      given(queueService.getOneBySlug("queue")).willReturn(Some(queue))
+
+      val result = controller.releaseCaseToQueue("reference")(newFakePUTRequestWithCSRF("queue"))
+      status(result) shouldBe Status.OK
+      contentType(result) shouldBe Some("text/html")
+      charset(result) shouldBe Some("utf-8")
+      contentAsString(result) should include("We could not find a Case with reference")
+    }
+
+    "return Not Found and HTML content type on missing Queue" in {
+      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(caseWithStatusNEW)))
+      given(queueService.getOneBySlug("queue")).willReturn(None)
+
+      val result = controller.releaseCaseToQueue("reference")(newFakePUTRequestWithCSRF("queue"))
+      status(result) shouldBe Status.OK
+      contentType(result) shouldBe Some("text/html")
+      charset(result) shouldBe Some("utf-8")
+      contentAsString(result) should include("Queue not found")
+    }
+
+  }
+
+  private def newFakeGETRequestWithCSRF(): FakeRequest[AnyContentAsEmpty.type] = {
     val tokenProvider: TokenProvider = app.injector.instanceOf[TokenProvider]
     val csrfTags = Map(Token.NameRequestTag -> "csrfToken", Token.RequestTag -> tokenProvider.generateToken)
-    FakeRequest(method, "/", FakeHeaders(), AnyContentAsEmpty, tags = csrfTags)
+    FakeRequest("GET", "/", FakeHeaders(), AnyContentAsEmpty, tags = csrfTags)
+  }
+
+  private def newFakePUTRequestWithCSRF(queue: String): FakeRequest[AnyContentAsFormUrlEncoded] = {
+    val tokenProvider: TokenProvider = app.injector.instanceOf[TokenProvider]
+    val csrfTags = Map(Token.NameRequestTag -> "csrfToken", Token.RequestTag -> tokenProvider.generateToken)
+    FakeRequest("PUT", "/", FakeHeaders(), AnyContentAsFormUrlEncoded, tags = csrfTags).withFormUrlEncodedBody("queue" -> queue)
+  }
+
+  private def newInvalidFakePUTRequestWithCSRF(): FakeRequest[AnyContentAsFormUrlEncoded] = {
+    val tokenProvider: TokenProvider = app.injector.instanceOf[TokenProvider]
+    val csrfTags = Map(Token.NameRequestTag -> "csrfToken", Token.RequestTag -> tokenProvider.generateToken)
+    FakeRequest("PUT", "/", FakeHeaders(), AnyContentAsFormUrlEncoded, tags = csrfTags).withFormUrlEncodedBody()
   }
 }

@@ -52,7 +52,13 @@ class ReleaseCaseController @Inject()(casesService: CasesService,
       queueService.getOneBySlug(validForm.queue)
         .map(queue => {
           casesService.getOne(reference).flatMap {
-            case Some(c: Case) => casesService.releaseCase(c, queue).map(updatedCase => Ok(views.html.confirm_release_case(updatedCase, queue)))
+            case Some(c: Case) => {
+              if(c.status == "NEW") {
+                casesService.releaseCase(c, queue).map(updatedCase => Ok(views.html.confirm_release_case(updatedCase, queue)))
+              } else {
+                Future.successful(Redirect(routes.CaseController.applicationDetails(reference)))
+              }
+            }
             case _ => Future.successful(Ok(views.html.case_not_found(reference)))
           }
         })
