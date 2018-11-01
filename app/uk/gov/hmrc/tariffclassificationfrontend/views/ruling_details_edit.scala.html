@@ -23,10 +23,9 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.models.BTIApplication
 @import uk.gov.hmrc.tariffclassificationfrontend.models.Decision
 
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.attachments
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{text_area,input_text}
 
 @import helper._
-
 
 @(c: Case)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
@@ -84,54 +83,21 @@
 
                     @defining(c.decision.get) { d: Decision =>
 
-                        <div class="form-group">
-                            <label class="form-label-bold" for="bindingCommodityCode">
-                                Binding Commodity Code
-                                <span class="form-hint">
-                                    Valid format of a commodity code: 10-22 digits
-                                </span>
-                            </label>
-                            <input class="form-control" id="bindingCommodityCode" type="text" name="bindingCommodityCode" value="@d.bindingCommodityCode">
-                        </div>
+                        @input_text(identifier = "bindingCommodityCode", label = "Binding Commodity Code", content = d.bindingCommodityCode)
 
-                        <div class="form-group">
-                            <label class="form-label-bold" for="goodsDescription">
-                                Sanitised Goods Description
-                            </label>
-                            <textarea class="form-control full-width" name="goodsDescription" id="goodsDescription" rows="5"> @d.goodsDescription </textarea>
-                        </div>
+                        @text_area(identifier = "goodsDescription", label = "Sanitised Goods Description", content = d.goodsDescription, rows = 5 )
 
                         @if(d.methodSearch.isDefined) {
-                            <div class="form-group">
-                                <label class="form-label-bold" for="methodSearch">
-                                    Searches Performed
-                                </label>
-                                <textarea class="form-control full-width" name="methodSearch" id="methodSearch" rows="2"> @d.methodSearch.get </textarea>
-                            </div>
+                            @text_area(identifier = "methodSearch", label = "Searches Performed", content = d.methodSearch.get, rows = 2 )
                         }
 
-                        <div class="form-group">
-                            <label class="form-label-bold" for="justification">
-                                Justification
-                            </label>
-                            <textarea class="form-control  full-width" name="justification" id="justification" rows="5"> @d.justification </textarea>
-                        </div>
+                        @text_area(identifier = "justification", label = "Justification", content = d.justification, rows = 5 )
 
                         @if(d.methodCommercialDenomination.isDefined) {
-                            <div class="form-group">
-                                <label class="form-label-bold" for="methodCommercialDenomination">
-                                    Commercial denomination and additional information
-                                </label>
-                                <textarea class="form-control  full-width" name="methodCommercialDenomination" id="methodCommercialDenomination" rows="5"> @d.methodCommercialDenomination </textarea>
-                            </div>
+                            @text_area(identifier = "methodCommercialDenomination", label = "Commercial denomination and additional information", content = d.methodCommercialDenomination.get, rows = 5 )
                         }
 
-                        <div class="form-group">
-                            <label class="form-label-bold" for="methodExclusion">
-                                Exclusions/Inclusions
-                            </label>
-                            <textarea class="form-control  full-width" name="methodExclusion" id="methodExclusion" rows="5"> @d.methodExclusion.getOrElse("") </textarea>
-                        </div>
+                        @text_area(identifier = "methodExclusion", label = "Exclusions/Inclusions", content = d.methodExclusion.getOrElse(""), rows = 5 )
 
                     }
 
@@ -144,8 +110,8 @@
 
                             @for(att <- c.attachments) {
                                 <div class="multiple-choice">
-                                    <input id="@att.name" name="attachments" type="checkbox" value="@att.url" @if(att.public){ checked } >
-                                    <label for="@att.name">  <a href="@att.url" target="_blank">@att.name.getOrElse("Unknown")</a> </label>
+                                    <input id="attachments[]" name="attachments[]" type="checkbox" value="@att.url" @if(att.public){ checked } >
+                                    <label for="attachments[]">  <a href="@att.url" target="_blank">@att.name.getOrElse("Unknown")</a> </label>
                                 </div>
                             }
 

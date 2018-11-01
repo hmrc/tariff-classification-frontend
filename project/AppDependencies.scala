@@ -4,6 +4,7 @@ import sbt._
 object AppDependencies {
 
   val compile = Seq(
+    "org.typelevel"           %% "cats-core"                  % "1.1.0",
     "uk.gov.hmrc"             %% "bootstrap-play-25"          % "3.14.0",
     "uk.gov.hmrc"             %% "play-ui"                    % "7.22.0",
     "uk.gov.hmrc"             %% "play-json-union-formatter"  % "1.4.0"

@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,28 +12,13 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package uk.gov.hmrc.tariffclassificationfrontend.models
+@(identifier : String, label: String, content: String, rows: Integer)
 
-import java.time.ZonedDateTime
-
-case class Decision
-(
-  bindingCommodityCode: String,
-  effectiveStartDate: ZonedDateTime,
-  effectiveEndDate: ZonedDateTime,
-  justification: String,
-  goodsDescription: String,
-  keywords: Seq[String] = Seq.empty,
-  methodSearch: Option[String] = None,
-  methodExclusion: Option[String] = None,
-  methodCommercialDenomination: Option[String] = None,
-  appeal: Option[Appeal] = None
-)
-
-case class Appeal
-(
-  reviewStatus: String,
-  reviewResult: String
-)
+<div class="form-group">
+    <label class="form-label-bold" for="@identifier">
+        @label
+    </label>
+    <textarea class="form-control full-width" name="@identifier" id="@identifier" rows="@rows">@content</textarea>
+</div>

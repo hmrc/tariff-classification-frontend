@@ -17,12 +17,14 @@
 package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
 
+import cats.data.OptionT
+import cats.implicits._
 import javax.inject.{Inject, Singleton}
-import play.Logger
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{AnyContent, _}
 import play.twirl.api.Html
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionForm
@@ -33,8 +35,10 @@ import uk.gov.hmrc.tariffclassificationfrontend.views
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
+
 @Singleton
 class CaseController @Inject()(casesService: CasesService,
+                               mapper: FormMapper,
                                val messagesApi: MessagesApi,
                                implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
@@ -45,7 +49,7 @@ class CaseController @Inject()(casesService: CasesService,
   }
 
   def applicationDetails(reference: String): Action[AnyContent] = AuthenticatedAction.async { implicit request =>
-    getCaseAndRender(reference, views.html.application_details(_))
+    getCaseAndRender(reference, c => views.html.application_details(c))
   }
 
   def rulingDetails(reference: String): Action[AnyContent] = AuthenticatedAction.async { implicit request =>
@@ -58,16 +62,26 @@ class CaseController @Inject()(casesService: CasesService,
 
   def updateRulingDetails(reference: String): Action[AnyContent] = AuthenticatedAction.async { implicit request =>
 
-    def handleInvalidForm(formWithErrors: Form[DecisionForm]) = {
-      getCaseAndRender(reference, views.html.ruling_details_edit(_))
-    }
+    decisionForm.bindFromRequest.fold(
+      formWithErrors =>
+        // TODO : Handle errors on form
+        getCaseAndRender(reference, views.html.ruling_details_edit(_))
+      ,
+      formData => {
 
-    def handleValidForm(validForm: DecisionForm): Future[Result] = {
-      getCaseAndRender(reference, views.html.ruling_details(_))
-    }
+        val ot: OptionT[Future, Case] = for {
+          selectCase <- OptionT(casesService.getOne(reference))
+          updatedCase <- OptionT.liftF(casesService.updateCase(mapper.mergeForm(selectCase, formData)))
+        } yield updatedCase
 
-    decisionForm.bindFromRequest.fold(handleInvalidForm, handleValidForm)
+        ot.value.flatMap {
+          case None => Future.successful(Ok(views.html.case_not_found(reference)))
+          case Some(c: Case) => Future.successful(Ok(views.html.ruling_details(c)))
+        }
+      }
+    )
   }
+
 
   private def getCaseAndRender(reference: String, toHtml: Case => Html)(implicit request: Request[_]): Future[Result] = {
     casesService.getOne(reference).map {
@@ -75,6 +89,5 @@ class CaseController @Inject()(casesService: CasesService,
       case _ => Ok(views.html.case_not_found(reference))
     }
   }
-
 
 }
