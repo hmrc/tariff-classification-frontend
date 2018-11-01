@@ -28,7 +28,7 @@ import play.api.test.Helpers._
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, QueuesService}
+import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.utils.CaseExamples
 
 import scala.concurrent.Future
@@ -41,10 +41,9 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
   private val messageApi = new DefaultMessagesApi(env, configuration, new DefaultLangs(configuration))
   private val appConfig = new AppConfig(configuration, env)
   private val casesService = mock[CasesService]
-  private val queueService = mock[QueuesService]
   private implicit val hc = HeaderCarrier()
 
-  private val controller = new CaseController(casesService, queueService, messageApi, appConfig)
+  private val controller = new CaseController(casesService, messageApi, appConfig)
 
   "Case Summary" should {
 
