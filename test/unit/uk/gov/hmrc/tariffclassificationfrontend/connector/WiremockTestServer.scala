@@ -21,14 +21,19 @@ import com.github.tomakehurst.wiremock.client.WireMock
 import org.scalatest.BeforeAndAfterEach
 import uk.gov.hmrc.play.test.UnitSpec
 
-
 trait WiremockTestServer extends UnitSpec with BeforeAndAfterEach {
 
-  val wireMockServer = new WireMockServer(20001)
+  private val wireHost = "localhost"
+  protected val wirePort = 20001
+  private val wireMockServer = new WireMockServer(wirePort)
+
+  protected def getUrl: String = {
+    s"http://$wireHost:$wirePort"
+  }
 
   override protected def beforeEach(): Unit = {
     wireMockServer.start()
-    WireMock.configureFor("localhost", 20001)
+    WireMock.configureFor(wireHost, wirePort)
   }
 
   override protected def afterEach(): Unit = {

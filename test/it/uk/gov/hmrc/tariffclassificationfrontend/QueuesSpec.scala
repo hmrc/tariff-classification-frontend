@@ -14,7 +14,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.utils.CasePayloads
 class QueuesSpec extends UnitSpec with WiremockTestServer with MockitoSugar with GuiceOneServerPerSuite {
 
   override def fakeApplication(): Application = new GuiceApplicationBuilder()
-    .configure(Map("microservice.services.binding-tariff-classification.port" -> 20001))
+    .configure(Map("microservice.services.binding-tariff-classification.port" -> wirePort))
     .build()
 
   private val ws = fakeApplication().injector.instanceOf[WSClient]
