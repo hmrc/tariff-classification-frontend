@@ -68,10 +68,10 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with GuiceOneAppP
       given(queueService.getNonGateway).willReturn(Seq.empty)
 
       val result = controller.releaseCase("reference")(newFakeGETRequestWithCSRF())
-      status(result) shouldBe Status.OK
-      contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
-      contentAsString(result) should include("Application Details")
+      status(result) shouldBe Status.SEE_OTHER
+      contentType(result) shouldBe None
+      charset(result) shouldBe None
+      redirectLocation(result) shouldBe Some("/tariff-classification/cases/reference/application")
     }
 
     "return Not Found and HTML content type" in {
