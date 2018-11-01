@@ -19,6 +19,7 @@ package uk.gov.hmrc.tariffclassificationfrontend.connector
 import com.github.tomakehurst.wiremock.client.WireMock._
 import org.apache.http.HttpStatus
 import org.mockito.BDDMockito._
+import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import play.api.Environment
 import play.api.libs.json.Json
@@ -28,10 +29,11 @@ import uk.gov.hmrc.play.bootstrap.audit.DefaultAuditConnector
 import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Queue}
+import uk.gov.hmrc.tariffclassificationfrontend.models.Queue
 import uk.gov.hmrc.tariffclassificationfrontend.utils.{CaseExamples, CasePayloads}
 
-class BindingTariffClassificationConnectorSpec extends UnitSpec with WiremockTestServer with MockitoSugar with WithFakeApplication {
+class BindingTariffClassificationConnectorSpec extends UnitSpec
+  with WiremockTestServer with MockitoSugar with WithFakeApplication with BeforeAndAfterEach {
 
   import uk.gov.hmrc.tariffclassificationfrontend.utils.JsonFormatters.caseFormat
 
@@ -44,7 +46,9 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec with WiremockTes
   private val otherQueue = Queue(2, "other", "Other")
   private implicit val hc = HeaderCarrier()
 
-  given(configuration.bindingTariffClassificationUrl).willReturn("http://localhost:20001")
+  override def beforeEach(): Unit = {
+    given(configuration.bindingTariffClassificationUrl).willReturn("http://localhost:20001")
+  }
 
   private val connector = new BindingTariffClassificationConnector(configuration, client)
 
