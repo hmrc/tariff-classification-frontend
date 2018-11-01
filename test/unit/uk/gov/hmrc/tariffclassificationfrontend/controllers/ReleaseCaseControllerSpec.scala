@@ -160,12 +160,12 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with GuiceOneAppP
   private def newFakePUTRequestWithCSRF(queue: String): FakeRequest[AnyContentAsFormUrlEncoded] = {
     val tokenProvider: TokenProvider = app.injector.instanceOf[TokenProvider]
     val csrfTags = Map(Token.NameRequestTag -> "csrfToken", Token.RequestTag -> tokenProvider.generateToken)
-    FakeRequest("PUT", "/", FakeHeaders(), AnyContentAsFormUrlEncoded, tags = csrfTags).withFormUrlEncodedBody("queue" -> queue)
+    FakeRequest("POST", "/", FakeHeaders(), AnyContentAsFormUrlEncoded, tags = csrfTags).withFormUrlEncodedBody("queue" -> queue)
   }
 
   private def newInvalidFakePUTRequestWithCSRF(): FakeRequest[AnyContentAsFormUrlEncoded] = {
     val tokenProvider: TokenProvider = app.injector.instanceOf[TokenProvider]
     val csrfTags = Map(Token.NameRequestTag -> "csrfToken", Token.RequestTag -> tokenProvider.generateToken)
-    FakeRequest("PUT", "/", FakeHeaders(), AnyContentAsFormUrlEncoded, tags = csrfTags).withFormUrlEncodedBody()
+    FakeRequest("POST", "/", FakeHeaders(), AnyContentAsFormUrlEncoded, tags = csrfTags).withFormUrlEncodedBody()
   }
 }
