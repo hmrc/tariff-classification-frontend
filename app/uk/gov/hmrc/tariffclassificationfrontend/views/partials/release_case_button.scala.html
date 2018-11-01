@@ -18,8 +18,7 @@
 @(c: Case)
 
 @if(c.status == "NEW") {
-    <form name="release-case">
-        <a class="button" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.ReleaseCaseController.releaseCase(c.reference)">
-            Release Case</a>
-    </form>
+    <a class="button" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.ReleaseCaseController.releaseCase(c.reference)">
+        Release Case
+    </a>
 }
