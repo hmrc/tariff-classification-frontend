@@ -171,7 +171,7 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
         )
       )
 
-      assertThrows[NotFoundException] {
+      intercept[NotFoundException] {
         await(connector.updateCase(unknownCase))
       }
     }

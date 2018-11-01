@@ -79,4 +79,6 @@ class ReleaseCaseController @Inject()(casesService: CasesService,
     }
   }
 
+  // TODO: the methods `releaseCaseOntoQueue` and `getCaseAndRender` have similar code.
+  // For the DRY principle, we should not have this code repetition
 }
