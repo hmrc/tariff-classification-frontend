@@ -44,19 +44,22 @@ class ReleaseCaseController @Inject()(casesService: CasesService,
   }
 
   def releaseCaseToQueue(reference: String): Action[AnyContent] = AuthenticatedAction.async { implicit request =>
+
     def onInvalidForm(formWithErrors: Form[ReleaseCaseForm]): Future[Result] = {
       getCaseAndRender(reference, views.html.release_case(_, formWithErrors, queueService.getNonGateway))
     }
 
     def onValidForm(validForm: ReleaseCaseForm): Future[Result] = {
-      queueService.getOneBySlug(validForm.queue)
-        .map(releaseCaseOntoQueue(reference, _))
-        .getOrElse(Future.successful(Ok(views.html.resource_not_found(s"Queue ${validForm.queue}"))))
+      queueService.getOneBySlug(validForm.queue) match {
+        case Some(q: Queue) => releaseCaseOntoQueue(reference, q)
+        case _ => Future.successful(Ok(views.html.resource_not_found(s"Queue ${validForm.queue}")))
+      }
     }
 
     releaseCaseForm.bindFromRequest.fold(onInvalidForm, onValidForm)
   }
 
+  // TODO: case statuses need to be enumerated in the model
   private def releaseCaseOntoQueue(reference: String, queue: Queue)(implicit request: Request[_]): Future[Result] = {
     casesService.getOne(reference).flatMap {
       case Some(c: Case) if c.status == "NEW" =>
