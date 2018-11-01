@@ -62,7 +62,7 @@ class ReleaseCaseController @Inject()(casesService: CasesService,
             case _ => Future.successful(Ok(views.html.case_not_found(reference)))
           }
         })
-        .getOrElse(Future.successful(Ok(views.html.resource_not_found(Some("Queue")))))
+        .getOrElse(Future.successful(Ok(views.html.resource_not_found("Queue"))))
     }
 
     releaseCaseForm.bindFromRequest.fold(onInvalidForm, onValidForm)
