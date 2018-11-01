@@ -32,18 +32,18 @@ class QueuesService {
     Queues.all.find(_.slug == slug)
   }
 
-  def getOneById(id: Int): Option[Queue] = {
+  def getOneById(id: String): Option[Queue] = {
     Queues.all.find(_.id == id)
   }
 
 }
 
 private object Queues {
-  val gateway = Queue(1, "gateway", "Gateway")
-  val act = Queue(2, "act", "ACT")
-  val cap = Queue(3, "cap", "CAP")
-  val cars = Queue(4, "cars", "Cars")
-  val elm = Queue(5, "elm", "ELM")
+  val gateway = Queue("1", "gateway", "Gateway")
+  val act = Queue("2", "act", "ACT")
+  val cap = Queue("3", "cap", "CAP")
+  val cars = Queue("4", "cars", "Cars")
+  val elm = Queue("5", "elm", "ELM")
 
   def all: Seq[Queue] = Seq(gateway, act, cap, cars, elm)
   def non_gateway: Seq[Queue] = Seq(act, cap, cars, elm)

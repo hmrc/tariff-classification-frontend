@@ -30,6 +30,11 @@ import scala.concurrent.Future
 @Singleton
 class BindingTariffClassificationConnector @Inject()(configuration: AppConfig, client: HttpClient) {
 
+  def update(c: Case)(implicit hc: HeaderCarrier): Future[Case] = {
+    // TODO Replace this
+    Future.successful(c)
+  }
+
   def getOneCase(reference: String)(implicit hc: HeaderCarrier): Future[Option[Case]] = {
     val url = s"${configuration.bindingTariffClassificationUrl}/cases/$reference"
     client.GET[Option[Case]](url)

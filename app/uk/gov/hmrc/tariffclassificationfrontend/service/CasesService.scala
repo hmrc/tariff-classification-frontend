@@ -26,6 +26,10 @@ import scala.concurrent.Future
 @Singleton
 class CasesService @Inject()(connector: BindingTariffClassificationConnector) {
 
+  def releaseCase(c: Case, queue: Queue)(implicit hc : HeaderCarrier): Future[Case] = {
+    connector.update(c.copy(status= "OPEN", queueId = Some(queue.id)))
+  }
+
   def getOne(reference: String)(implicit hc : HeaderCarrier): Future[Option[Case]] = {
     connector.getOneCase(reference)
   }

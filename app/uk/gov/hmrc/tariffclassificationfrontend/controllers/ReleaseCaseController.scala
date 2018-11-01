@@ -44,13 +44,18 @@ class ReleaseCaseController @Inject()(casesService: CasesService,
   }
 
   def releaseCaseToQueue(reference: String): Action[AnyContent] = AuthenticatedAction.async { implicit request =>
-    def onInvalidForm(formWithErrors: Form[ReleaseCaseForm]) = {
+    def onInvalidForm(formWithErrors: Form[ReleaseCaseForm]): Future[Result] = {
       getCaseAndRender(reference, views.html.release_case(_, formWithErrors, queueService.getNonGateway))
     }
 
     def onValidForm(validForm: ReleaseCaseForm): Future[Result] = {
       queueService.getOneBySlug(validForm.queue)
-        .map(queue => getCaseAndRender(reference, views.html.confirm_release_case(_, queue)))
+        .map(queue => {
+          casesService.getOne(reference).flatMap {
+            case Some(c: Case) => casesService.releaseCase(c, queue).map(updatedCase => Ok(views.html.confirm_release_case(updatedCase, queue)))
+            case _ => Future.successful(Ok(views.html.case_not_found(reference)))
+          }
+        })
         .getOrElse(Future.successful(Ok(views.html.resource_not_found(Some("Queue")))))
     }
 
