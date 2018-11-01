@@ -139,12 +139,12 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec with WiremockTes
 
   "Connector 'Update Case'" should {
 
-    val validRef = "case-reference"
-    val validCase = CaseExamples.btiCaseExample.copy(reference = validRef)
-    val json = Json.toJson(validCase).toString()
-
     "update valid case" in {
-      stubFor(put(urlEqualTo(s"/cases/$validRef"))
+      val ref = "case-reference"
+      val validCase = CaseExamples.btiCaseExample.copy(reference = ref)
+      val json = Json.toJson(validCase).toString()
+
+      stubFor(put(urlEqualTo(s"/cases/$ref"))
         .withRequestBody(equalToJson(json))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
@@ -152,9 +152,22 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec with WiremockTes
         )
       )
 
-      val result = await(connector.updateCase(validCase))
+      await(connector.updateCase(validCase)) shouldBe Some(validCase)
+    }
 
-      result shouldBe validCase
+    "update with an unknown reference" in {
+      val unknownRef = "unknownRef"
+      val unknownCase = CaseExamples.btiCaseExample.copy(reference = unknownRef)
+      val json = Json.toJson(unknownCase).toString()
+
+      stubFor(put(urlEqualTo(s"/cases/$unknownRef"))
+        .withRequestBody(equalToJson(json))
+        .willReturn(aResponse()
+          .withStatus(HttpStatus.SC_NOT_FOUND)
+        )
+      )
+
+      await(connector.updateCase(unknownCase)) shouldBe None
     }
   }
 
