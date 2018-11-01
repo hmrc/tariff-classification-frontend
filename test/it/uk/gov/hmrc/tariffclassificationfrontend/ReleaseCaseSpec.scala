@@ -45,7 +45,6 @@ class ReleaseCaseSpec extends UnitSpec with WiremockTestServer with MockitoSugar
 //    val caseWithStatusOPEN = CasePayloads.jsonOf(CaseExamples.btiCaseExample.copy(status = "OPEN"))
 //    val token = fakeApplication().injector.instanceOf[TokenProvider].generateToken
 //
-//
 //    "return status 200" in {
 //      // Given
 //      stubFor(get(urlEqualTo("/cases/1"))
