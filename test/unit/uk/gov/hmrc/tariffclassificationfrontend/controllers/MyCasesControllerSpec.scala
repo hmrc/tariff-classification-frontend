@@ -52,7 +52,7 @@ class MyCasesControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSu
 
     "return 200 OK and HTML content type" in {
       given(casesService.getCasesByAssignee(refEq("0"))(any[HeaderCarrier])).willReturn(Future.successful(Seq.empty))
-      given(queuesService.getQueues).willReturn(Seq(queue))
+      given(queuesService.queues).willReturn(Seq(queue))
 
       val result = await(controller.myCases()(fakeRequest))
       status(result) shouldBe Status.OK

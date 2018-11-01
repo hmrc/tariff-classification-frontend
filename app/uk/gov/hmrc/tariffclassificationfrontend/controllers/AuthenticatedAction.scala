@@ -21,7 +21,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.{AuthenticatedRequest, Op
 
 import scala.concurrent.Future
 
-object AuthenticatedAction extends ActionBuilder[AuthenticatedRequest]{
+object AuthenticatedAction extends ActionBuilder[AuthenticatedRequest] {
   override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] = {
     // TODO Implement Authentication Check based on the `request`. See DIT-311.
     // This currently hard-codes the current operator with operatorId "0"

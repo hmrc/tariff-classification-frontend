@@ -37,13 +37,20 @@ class BindingTariffClassificationConnector @Inject()(configuration: AppConfig, c
 
   def getCasesByQueue(queue: Queue)(implicit hc: HeaderCarrier): Future[Seq[Case]] = {
     val queueId = if (queue.id == 1) "none" else queue.id
-    val url = s"${configuration.bindingTariffClassificationUrl}/cases?queue_id=$queueId&assignee_id=none&sort-by=elapsed-days"
+    val queryString = s"queue_id=$queueId&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort-by=elapsed-days"
+    val url = s"${configuration.bindingTariffClassificationUrl}/cases?$queryString"
     client.GET[Seq[Case]](url)
   }
 
   def getCasesByAssignee(assignee: String)(implicit hc: HeaderCarrier): Future[Seq[Case]] = {
-    val url = s"${configuration.bindingTariffClassificationUrl}/cases?assignee_id=$assignee&status=NEW,OPEN,REFERRED,SUSPENDED&sort-by=elapsed-days"
+    val queryString = s"assignee_id=$assignee&status=NEW,OPEN,REFERRED,SUSPENDED&sort-by=elapsed-days"
+    val url = s"${configuration.bindingTariffClassificationUrl}/cases?$queryString"
     client.GET[Seq[Case]](url)
+  }
+
+  def updateCase(c: Case)(implicit hc: HeaderCarrier): Future[Case] = {
+    val url = s"${configuration.bindingTariffClassificationUrl}/cases/${c.reference}"
+    client.PUT[Case, Case](url, body = c)
   }
 
 }

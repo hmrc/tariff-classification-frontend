@@ -53,7 +53,7 @@ class QueuesControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSui
     "return 200 OK and HTML content type when Queue is found" in {
       given(casesService.getCasesByQueue(refEq(queue))(any[HeaderCarrier])).willReturn(Future.successful(Seq.empty))
       given(queuesService.getOneBySlug("slug")).willReturn(Some(queue))
-      given(queuesService.getQueues).willReturn(Seq(queue))
+      given(queuesService.queues).willReturn(Seq(queue))
 
       val result = await(controller.queue("slug")(fakeRequest))
       status(result) shouldBe Status.OK
@@ -65,7 +65,7 @@ class QueuesControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSui
     "return 200 OK and HTML content type when Queue is not found" in {
       given(casesService.getCasesByQueue(refEq(queue))(any[HeaderCarrier])).willReturn(Future.successful(Seq.empty))
       given(queuesService.getOneBySlug("slug")).willReturn(None)
-      given(queuesService.getQueues).willReturn(Seq(queue))
+      given(queuesService.queues).willReturn(Seq(queue))
 
       val result = await(controller.queue("slug")(fakeRequest))
       status(result) shouldBe Status.OK

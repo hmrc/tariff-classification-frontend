@@ -69,10 +69,10 @@ class CaseController @Inject()(casesService: CasesService,
     decisionForm.bindFromRequest.fold(handleInvalidForm, handleValidForm)
   }
 
-  private def getCaseAndRender(reference: String, html: Case => Html)(implicit request: Request[_]) = {
-    casesService.getOne(reference).map { response =>
-      if (response.isEmpty) Ok(views.html.case_not_found(reference))
-      else Ok(html.apply(response.get))
+  private def getCaseAndRender(reference: String, toHtml: Case => Html)(implicit request: Request[_]): Future[Result] = {
+    casesService.getOne(reference).map {
+      case Some(c: Case) => Ok(toHtml(c))
+      case _ => Ok(views.html.case_not_found(reference))
     }
   }
 
