@@ -18,24 +18,21 @@ package uk.gov.hmrc.tariffclassificationfrontend.service
 
 import javax.inject.Singleton
 import uk.gov.hmrc.tariffclassificationfrontend.models.Queue
+import uk.gov.hmrc.tariffclassificationfrontend.models.Queues._
 
 @Singleton
 class QueuesService {
 
-  val queues = Seq(
-    Queue(1, "gateway", "Gateway"),
-    Queue(2, "act", "ACT"),
-    Queue(3, "cap", "CAP"),
-    Queue(4, "cars", "Cars"),
-    Queue(5, "elm", "ELM")
-  )
+  def getAll: Seq[Queue] = Seq(gateway, act, cap, cars, elm)
+
+  def getNonGateway: Seq[Queue] = getAll.filterNot(_ == gateway)
 
   def getOneBySlug(slug: String): Option[Queue] = {
-    queues.find(_.slug == slug)
+    getAll.find(_.slug == slug)
   }
 
-  def getOneById(id: Int): Option[Queue] = {
-    queues.find(_.id == id)
+  def getOneById(id: String): Option[Queue] = {
+    getAll.find(_.id == id)
   }
 
 }

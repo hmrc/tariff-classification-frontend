@@ -16,7 +16,8 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.utils
 
-import play.api.libs.json.{Json, Writes}
+import play.api.libs.json.Json
+import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 import uk.gov.hmrc.tariffclassificationfrontend.utils.JsonFormatters._
 
 object CasePayloads {
@@ -24,7 +25,11 @@ object CasePayloads {
   val btiCase: String = jsonOf(CaseExamples.btiCaseExample)
   val gatewayCases: String = jsonOf(Seq(CaseExamples.btiCaseExample))
 
-  private def jsonOf[T](obj: T)(implicit tjs : Writes[T]): String = {
+  def jsonOf(obj: Case): String = {
+    Json.toJson(obj).toString()
+  }
+
+  def jsonOf(obj: Seq[Case]): String = {
     Json.toJson(obj).toString()
   }
 

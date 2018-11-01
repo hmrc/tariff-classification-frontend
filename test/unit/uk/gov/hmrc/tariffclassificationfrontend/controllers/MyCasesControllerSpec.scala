@@ -43,7 +43,7 @@ class MyCasesControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSu
   private val appConfig = new AppConfig(configuration, env)
   private val casesService = mock[CasesService]
   private val queuesService = mock[QueuesService]
-  private val queue = Queue(0, "queue", "Queue Name")
+  private val queue = Queue("0", "queue", "Queue Name")
   private implicit val hc = HeaderCarrier()
 
   private val controller = new MyCasesController(casesService, queuesService, messageApi, appConfig)
@@ -52,7 +52,7 @@ class MyCasesControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSu
 
     "return 200 OK and HTML content type" in {
       given(casesService.getCasesByAssignee(refEq("0"))(any[HeaderCarrier])).willReturn(Future.successful(Seq.empty))
-      given(queuesService.queues).willReturn(Seq(queue))
+      given(queuesService.getAll).willReturn(Seq(queue))
 
       val result = await(controller.myCases()(fakeRequest))
       status(result) shouldBe Status.OK
