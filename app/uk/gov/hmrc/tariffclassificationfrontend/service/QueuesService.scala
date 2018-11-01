@@ -17,8 +17,8 @@
 package uk.gov.hmrc.tariffclassificationfrontend.service
 
 import javax.inject.Singleton
+import uk.gov.hmrc.tariffclassificationfrontend.models.Queue
 import uk.gov.hmrc.tariffclassificationfrontend.models.Queues._
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Queue, Queues}
 
 @Singleton
 class QueuesService {
@@ -26,8 +26,6 @@ class QueuesService {
   def getAll: Seq[Queue] = Seq(gateway, act, cap, cars, elm)
 
   def getNonGateway: Seq[Queue] = Seq(act, cap, cars, elm)
-
-  def getGateway: Queue = Queues.gateway
 
   def getOneBySlug(slug: String): Option[Queue] = {
     getAll.find(_.slug == slug)

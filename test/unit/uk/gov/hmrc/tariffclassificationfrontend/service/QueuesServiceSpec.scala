@@ -28,7 +28,6 @@ class QueuesServiceSpec extends UnitSpec {
     "retrieve queues" in {
       service.getAll.size shouldBe 5
     }
-
   }
 
   "Get Non Gateway" should {
@@ -36,15 +35,6 @@ class QueuesServiceSpec extends UnitSpec {
     "retrieve queues" in {
       service.getNonGateway.size shouldBe 4
     }
-
-  }
-
-  "Get Gateway" should {
-
-    "retrieve queue" in {
-      service.getGateway shouldBe Queue("1", "gateway", "Gateway")
-    }
-
   }
 
   "Get Queue By Slug" should {
