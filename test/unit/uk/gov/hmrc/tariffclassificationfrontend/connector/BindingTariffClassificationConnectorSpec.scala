@@ -19,7 +19,6 @@ package uk.gov.hmrc.tariffclassificationfrontend.connector
 import com.github.tomakehurst.wiremock.client.WireMock._
 import org.apache.http.HttpStatus
 import org.mockito.BDDMockito._
-import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import play.api.Environment
 import play.api.libs.json.Json
@@ -33,7 +32,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.Queue
 import uk.gov.hmrc.tariffclassificationfrontend.utils.{CaseExamples, CasePayloads}
 
 class BindingTariffClassificationConnectorSpec extends UnitSpec
-  with WiremockTestServer with MockitoSugar with WithFakeApplication with BeforeAndAfterEach {
+  with WiremockTestServer with MockitoSugar with WithFakeApplication {
 
   import uk.gov.hmrc.tariffclassificationfrontend.utils.JsonFormatters.caseFormat
 
@@ -46,15 +45,13 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
   private val otherQueue = Queue(2, "other", "Other")
   private implicit val hc = HeaderCarrier()
 
-  override def beforeEach(): Unit = {
-    given(configuration.bindingTariffClassificationUrl).willReturn("http://localhost:20001")
-  }
-
   private val connector = new BindingTariffClassificationConnector(configuration, client)
 
   "Connector 'Get Cases By Queue'" should {
 
     "get empty cases in 'gateway' queue" in {
+      given(configuration.bindingTariffClassificationUrl).willReturn("http://localhost:20001")
+
       stubFor(get(urlEqualTo("/cases?queue_id=none&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort-by=elapsed-days"))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
@@ -65,6 +62,8 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
     }
 
     "get cases in 'gateway' queue" in {
+      given(configuration.bindingTariffClassificationUrl).willReturn("http://localhost:20001")
+
       stubFor(get(urlEqualTo("/cases?queue_id=none&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort-by=elapsed-days"))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
@@ -75,6 +74,8 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
     }
 
     "get empty cases in 'other' queue" in {
+      given(configuration.bindingTariffClassificationUrl).willReturn("http://localhost:20001")
+
       stubFor(get(urlEqualTo("/cases?queue_id=2&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort-by=elapsed-days"))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
@@ -85,6 +86,8 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
     }
 
     "get cases in 'other' queue" in {
+      given(configuration.bindingTariffClassificationUrl).willReturn("http://localhost:20001")
+
       stubFor(get(urlEqualTo("/cases?queue_id=2&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort-by=elapsed-days"))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
@@ -98,6 +101,8 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
   "Connector 'Get One'" should {
 
     "get an unknown case" in {
+      given(configuration.bindingTariffClassificationUrl).willReturn("http://localhost:20001")
+
       stubFor(get(urlEqualTo("/cases/id"))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_NOT_FOUND))
@@ -107,6 +112,8 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
     }
 
     "get a case" in {
+      given(configuration.bindingTariffClassificationUrl).willReturn("http://localhost:20001")
+
       stubFor(get(urlEqualTo("/cases/id"))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
@@ -121,6 +128,8 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
   "Connector 'Get Cases By Assignee'" should {
 
     "get empty cases" in {
+      given(configuration.bindingTariffClassificationUrl).willReturn("http://localhost:20001")
+
       stubFor(get(urlEqualTo("/cases?assignee_id=assignee&status=NEW,OPEN,REFERRED,SUSPENDED&sort-by=elapsed-days"))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
@@ -131,6 +140,8 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
     }
 
     "get cases" in {
+      given(configuration.bindingTariffClassificationUrl).willReturn("http://localhost:20001")
+
       stubFor(get(urlEqualTo("/cases?assignee_id=assignee&status=NEW,OPEN,REFERRED,SUSPENDED&sort-by=elapsed-days"))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
@@ -144,9 +155,12 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
   "Connector 'Update Case'" should {
 
     "update valid case" in {
+
       val ref = "case-reference"
       val validCase = CaseExamples.btiCaseExample.copy(reference = ref)
       val json = Json.toJson(validCase).toString()
+
+      given(configuration.bindingTariffClassificationUrl).willReturn("http://localhost:20001")
 
       stubFor(put(urlEqualTo(s"/cases/$ref"))
         .withRequestBody(equalToJson(json))
@@ -156,13 +170,15 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
         )
       )
 
-      await(connector.updateCase(validCase)) shouldBe Some(validCase)
+      await(connector.updateCase(validCase)) shouldBe validCase
     }
 
-    "update with an unknown reference" in {
+    "update with an unknown case reference" in {
       val unknownRef = "unknownRef"
       val unknownCase = CaseExamples.btiCaseExample.copy(reference = unknownRef)
       val json = Json.toJson(unknownCase).toString()
+
+      given(configuration.bindingTariffClassificationUrl).willReturn("http://localhost:20001")
 
       stubFor(put(urlEqualTo(s"/cases/$unknownRef"))
         .withRequestBody(equalToJson(json))
