@@ -64,7 +64,7 @@ class ReleaseCaseController @Inject()(casesService: CasesService,
 
   private def getCaseAndRender(reference: String, toHtml: Case => Html)(implicit request: Request[_]): Future[Result] = {
     casesService.getOne(reference).map {
-      case Some(c: Case) => Ok(toHtml(c))
+      case Some(c: Case) => if(c.status == "NEW") Ok(toHtml(c)) else Ok(views.html.application_details(c))
       case _ => Ok(views.html.case_not_found(reference))
     }
   }
