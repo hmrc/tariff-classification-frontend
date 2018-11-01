@@ -37,8 +37,8 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec with WiremockTes
   private val wsClient: WSClient = fakeApplication.injector.instanceOf[WSClient]
   private val auditConnector = new DefaultAuditConnector(fakeApplication.configuration, fakeApplication.injector.instanceOf[Environment])
   private val client = new DefaultHttpClient(fakeApplication.configuration, auditConnector, wsClient)
-  private val gatewayQueue = Queue(1, "gateway", "Gateway")
-  private val otherQueue = Queue(2, "other", "Other")
+  private val gatewayQueue = Queue("1", "gateway", "Gateway")
+  private val otherQueue = Queue("2", "other", "Other")
   private implicit val hc = HeaderCarrier()
 
   private val connector = new BindingTariffClassificationConnector(configuration, client)

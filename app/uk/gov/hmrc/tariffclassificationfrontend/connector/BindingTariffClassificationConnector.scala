@@ -41,7 +41,7 @@ class BindingTariffClassificationConnector @Inject()(configuration: AppConfig, c
   }
 
   def getCasesByQueue(queue: Queue)(implicit hc: HeaderCarrier): Future[Seq[Case]] = {
-    val queueId = if (queue.id == 1) "none" else queue.id
+    val queueId = if (queue.id == "1") "none" else queue.id
     val url = s"${configuration.bindingTariffClassificationUrl}/cases?queue_id=$queueId&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort-by=elapsed-days"
     client.GET[Seq[Case]](url)
   }

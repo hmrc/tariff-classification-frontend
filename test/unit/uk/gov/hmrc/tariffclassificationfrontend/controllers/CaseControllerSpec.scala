@@ -28,7 +28,7 @@ import play.api.test.Helpers._
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
+import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, QueuesService}
 import uk.gov.hmrc.tariffclassificationfrontend.utils.CaseExamples
 
 import scala.concurrent.Future
@@ -40,15 +40,16 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
   private val configuration = Configuration.load(env)
   private val messageApi = new DefaultMessagesApi(env, configuration, new DefaultLangs(configuration))
   private val appConfig = new AppConfig(configuration, env)
-  private val service = mock[CasesService]
+  private val casesService = mock[CasesService]
+  private val queueService = mock[QueuesService]
   private implicit val hc = HeaderCarrier()
 
-  private val controller = new CaseController(service, messageApi, appConfig)
+  private val controller = new CaseController(casesService, queueService, messageApi, appConfig)
 
   "Case Summary" should {
 
     "return 200 OK and HTML content type" in {
-      given(service.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(CaseExamples.btiCaseExample)))
+      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(CaseExamples.btiCaseExample)))
       val result = controller.summary("reference")(fakeRequest)
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -56,7 +57,7 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
     }
 
     "return 404 Not Found and HTML content type" in {
-      given(service.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(None))
+      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(None))
       val result = controller.summary("reference")(fakeRequest)
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -68,7 +69,7 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
   "Application Details" should {
 
     "return 200 OK and HTML content type" in {
-      given(service.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(CaseExamples.btiCaseExample)))
+      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(CaseExamples.btiCaseExample)))
       val result = controller.applicationDetails("reference")(fakeRequest)
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -76,7 +77,7 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
     }
 
     "return 404 Not Found and HTML content type" in {
-      given(service.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(None))
+      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(None))
       val result = controller.applicationDetails("reference")(fakeRequest)
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -88,7 +89,7 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
   "Ruling Details" should {
 
     "return 200 OK and HTML content type" in {
-      given(service.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(CaseExamples.btiCaseExample)))
+      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(CaseExamples.btiCaseExample)))
       val result = controller.rulingDetails("reference")(fakeRequest)
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -96,7 +97,7 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
     }
 
     "return 404 Not Found and HTML content type" in {
-      given(service.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(None))
+      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(None))
       val result = controller.rulingDetails("reference")(fakeRequest)
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")

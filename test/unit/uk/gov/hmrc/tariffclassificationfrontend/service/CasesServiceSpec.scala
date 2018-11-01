@@ -62,4 +62,18 @@ class CasesServiceSpec extends UnitSpec with MockitoSugar {
     }
   }
 
+  "Release Case" should {
+    val oldCase = mock[Case]
+    val updatedCase = mock[Case]
+    val updatedPersistedCase = mock[Case]
+
+    "update case queue_id and status to NEW" in {
+      given(queue.id).willReturn("queue_id")
+      given(oldCase.copy(status= "OPEN", queueId = Some("queue_id"))).willReturn(updatedCase)
+      given(connector.update(updatedCase)).willReturn(Future.successful(updatedPersistedCase))
+
+      await(service.releaseCase(oldCase, queue)) shouldBe updatedPersistedCase
+    }
+  }
+
 }
