@@ -50,4 +50,5 @@ class BindingTariffClassificationConnector @Inject()(configuration: AppConfig, c
     val url = s"${configuration.bindingTariffClassificationUrl}/cases/${c.reference}"
     client.PUT[Case, Case](url, body = c)
   }
+
 }

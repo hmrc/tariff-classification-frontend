@@ -141,19 +141,21 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec with WiremockTes
 
     val validRef = "case-reference"
     val validCase = CaseExamples.btiCaseExample.copy(reference = validRef)
+    val json = Json.toJson(validCase).toString()
 
     "update valid case" in {
-      val jsonCase = Json.toJson(validCase).toString()
-
       stubFor(put(urlEqualTo(s"/cases/$validRef"))
-        .withHeader("Content-Type", containing("application/json"))
-        .withRequestBody(equalToJson(jsonCase))
+        .withRequestBody(equalToJson(json))
         .willReturn(aResponse()
-          .withStatus(HttpStatus.SC_OK)))
+          .withStatus(HttpStatus.SC_OK)
+          .withBody(json)
+        )
+      )
 
       val result = await(connector.updateCase(validCase))
 
-      result.reference shouldBe validRef
+      result shouldBe validCase
     }
   }
+
 }
