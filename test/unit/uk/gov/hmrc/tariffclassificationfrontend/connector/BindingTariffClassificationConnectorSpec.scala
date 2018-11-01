@@ -21,8 +21,9 @@ import org.apache.http.HttpStatus
 import org.mockito.BDDMockito._
 import org.scalatest.mockito.MockitoSugar
 import play.api.Environment
+import play.api.libs.json.Json
 import play.api.libs.ws.WSClient
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, NotFoundException}
 import uk.gov.hmrc.play.bootstrap.audit.DefaultAuditConnector
 import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
@@ -30,7 +31,10 @@ import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models.Queue
 import uk.gov.hmrc.tariffclassificationfrontend.utils.{CaseExamples, CasePayloads}
 
-class BindingTariffClassificationConnectorSpec extends UnitSpec with WiremockTestServer with MockitoSugar with WithFakeApplication {
+class BindingTariffClassificationConnectorSpec extends UnitSpec
+  with WiremockTestServer with MockitoSugar with WithFakeApplication {
+
+  import uk.gov.hmrc.tariffclassificationfrontend.utils.JsonFormatters.caseFormat
 
   private val configuration = mock[AppConfig]
 
@@ -145,6 +149,47 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec with WiremockTes
       )
 
       await(connector.getCasesByAssignee("assignee")) shouldBe Seq(CaseExamples.btiCaseExample)
+    }
+  }
+
+  "Connector 'Update Case'" should {
+
+    "update valid case" in {
+
+      val ref = "case-reference"
+      val validCase = CaseExamples.btiCaseExample.copy(reference = ref)
+      val json = Json.toJson(validCase).toString()
+
+      given(configuration.bindingTariffClassificationUrl).willReturn("http://localhost:20001")
+
+      stubFor(put(urlEqualTo(s"/cases/$ref"))
+        .withRequestBody(equalToJson(json))
+        .willReturn(aResponse()
+          .withStatus(HttpStatus.SC_OK)
+          .withBody(json)
+        )
+      )
+
+      await(connector.updateCase(validCase)) shouldBe validCase
+    }
+
+    "update with an unknown case reference" in {
+      val unknownRef = "unknownRef"
+      val unknownCase = CaseExamples.btiCaseExample.copy(reference = unknownRef)
+      val json = Json.toJson(unknownCase).toString()
+
+      given(configuration.bindingTariffClassificationUrl).willReturn("http://localhost:20001")
+
+      stubFor(put(urlEqualTo(s"/cases/$unknownRef"))
+        .withRequestBody(equalToJson(json))
+        .willReturn(aResponse()
+          .withStatus(HttpStatus.SC_NOT_FOUND)
+        )
+      )
+
+      assertThrows[NotFoundException] {
+        await(connector.updateCase(unknownCase))
+      }
     }
   }
 
