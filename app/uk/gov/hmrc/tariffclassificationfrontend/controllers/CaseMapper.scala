@@ -25,21 +25,20 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Decision}
 @Singleton
 class FormMapper {
 
-  def mergeForm(c: Case, form: DecisionForm): Case = {
+  def mergeForm(c: Case, decisionForm: DecisionForm): Case = {
 
     val decision = c.decision match {
-      case Some(d: Decision) => decisionFrom(d, form)
-      case _ => emptyDecision
+      case Some(d: Decision) => from(d, decisionForm)
+      case _ => from(decisionForm)
     }
 
     val attachments = c.attachments
-      .map(att => att.copy(public = form.attachments.contains(att.url)))
+      .map(att => att.copy(public = decisionForm.attachments.contains(att.url)))
 
     c.copy(decision = Some(decision), attachments = attachments)
   }
 
-
-  private def decisionFrom(decision: Decision, form: DecisionForm): Decision = {
+  private def from(decision: Decision, form: DecisionForm): Decision = {
     decision.copy(
       bindingCommodityCode = form.bindingCommodityCode.toString,
       goodsDescription = form.goodsDescription,
@@ -49,14 +48,16 @@ class FormMapper {
       methodExclusion = Some(form.methodExclusion))
   }
 
-  private def emptyDecision: Decision = {
+  private def from(form: DecisionForm): Decision = {
     Decision(
-      bindingCommodityCode = "",
       effectiveStartDate = ZonedDateTime.now(),
       effectiveEndDate = ZonedDateTime.now(),
-      justification = "",
-      goodsDescription = ""
-    )
+      bindingCommodityCode = form.bindingCommodityCode.toString,
+      goodsDescription = form.goodsDescription,
+      methodSearch = Some(form.methodSearch),
+      justification = form.justification,
+      methodCommercialDenomination = Some(form.methodCommercialDenomination),
+      methodExclusion = Some(form.methodExclusion))
   }
 
 }

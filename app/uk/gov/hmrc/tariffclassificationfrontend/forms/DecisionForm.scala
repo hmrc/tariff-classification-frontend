@@ -18,7 +18,7 @@ package uk.gov.hmrc.tariffclassificationfrontend.forms
 
 import play.api.data.{Form, Mapping}
 import play.api.data.Forms._
-import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
+import play.api.data.validation._
 
 case class DecisionForm(bindingCommodityCode: String = "",
                         goodsDescription: String = "",
@@ -33,8 +33,8 @@ object DecisionForm extends FormConstraints {
 
   val form = Form(
     mapping(
-      "bindingCommodityCode" -> commodityCodeCheck,
-      "goodsDescription" -> nonEmptyText,
+      "bindingCommodityCode" -> verifyCommodityCode,
+      "goodsDescription" -> text,
       "methodSearch" -> text,
       "justification" -> text,
       "methodCommercialDenomination" -> text,
@@ -42,20 +42,22 @@ object DecisionForm extends FormConstraints {
       "attachments" -> list(text)
     )(DecisionForm.apply)(DecisionForm.unapply)
   )
-
 }
-
 
 trait FormConstraints {
 
-  private val lengthRegex = """^[0-9]{12,24}$""".r
 
-  val commodityCodeCheck: Mapping[String] = text.verifying(commodityCodeConstraint)
+  //  Commodity code must be all numeric and contain between 6 and 22 digits
 
-  def commodityCodeConstraint: Constraint[String] = Constraint[String]("constraint.commodity.code.length") { e =>
-    lengthRegex.findFirstMatchIn(e)
-      .map(_ => Valid)
-      .getOrElse(Invalid(ValidationError("commodity code error")))
-  }
+  private val commodityCodeRegex = """^[0-9]{6,22}$"""
+  private val commodityCodeError = "Format must be numeric between 6 and 22 digits"
 
+  val verifyCommodityCode: Mapping[String] = text.verifying(regexp(commodityCodeRegex, commodityCodeError))
+
+
+  protected def regexp(regex: String, errorKey: String): Constraint[String] =
+    Constraint {
+      case str if str.matches(regex) => Valid
+      case _ => Invalid(errorKey, regex)
+    }
 }

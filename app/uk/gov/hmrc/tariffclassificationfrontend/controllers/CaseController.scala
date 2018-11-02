@@ -68,7 +68,6 @@ class CaseController @Inject()(casesService: CasesService,
         getCaseAndRender(reference, views.html.ruling_details_edit(_))
       ,
       formData => {
-
         val ot: OptionT[Future, Case] = for {
           selectCase <- OptionT(casesService.getOne(reference))
           updatedCase <- OptionT.liftF(casesService.updateCase(mapper.mergeForm(selectCase, formData)))
