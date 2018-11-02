@@ -25,16 +25,22 @@ class QueuesServiceSpec extends UnitSpec {
 
   "Get All Queues" should {
 
-    "retrieve static queues" in {
-      service.queues.size shouldBe 5
+    "retrieve queues" in {
+      service.getAll.size shouldBe 5
     }
+  }
 
+  "Get Non Gateway" should {
+
+    "retrieve queues" in {
+      service.getNonGateway.size shouldBe 4
+    }
   }
 
   "Get Queue By Slug" should {
 
     "find relevant queue" in {
-      service.getOneBySlug("gateway") shouldBe Some(Queue(1, "gateway", "Gateway"))
+      service.getOneBySlug("gateway") shouldBe Some(Queue("1", "gateway", "Gateway"))
     }
 
     "not find unknown queue" in {
@@ -45,11 +51,11 @@ class QueuesServiceSpec extends UnitSpec {
   "Get Queue By Id" should {
 
     "find relevant queue" in {
-      service.getOneById(1) shouldBe Some(Queue(1, "gateway", "Gateway"))
+      service.getOneById("1") shouldBe Some(Queue("1", "gateway", "Gateway"))
     }
 
     "not find unknown queue" in {
-      service.getOneById(0) shouldBe None
+      service.getOneById("0") shouldBe None
     }
   }
 

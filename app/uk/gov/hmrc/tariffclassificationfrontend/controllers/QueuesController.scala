@@ -21,6 +21,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
+import uk.gov.hmrc.tariffclassificationfrontend.models.Queue
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, QueuesService}
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
@@ -34,11 +35,12 @@ class QueuesController @Inject()(casesService: CasesService,
                                  implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
   def queue(slug: String): Action[AnyContent] = AuthenticatedAction.async { implicit request =>
-    queuesService.getOneBySlug(slug).map { q =>
-      casesService.getCasesByQueue(q).map { cases =>
-        Ok(views.html.queue(queuesService.queues, q, cases))
+    queuesService.getOneBySlug(slug) match {
+      case None => Future.successful(Ok(views.html.resource_not_found()))
+      case Some(q: Queue) => casesService.getCasesByQueue(q).map {
+        cases => Ok(views.html.queue(queuesService.getAll, q, cases))
       }
-    }.getOrElse(Future.successful(Ok(views.html.resource_not_found())))
+    }
   }
 
 }

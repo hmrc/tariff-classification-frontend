@@ -54,3 +54,32 @@
   text-align: right
 }
 
+.secondary-button {
+  position: relative;
+  display: inline-block;
+  font-size: 1em;
+  line-height: 1.25;
+  box-sizing: border-box;
+  box-shadow: none;
+  vertical-align: top;
+  background-color: #fff;
+  color: #005ea5;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: .526315em .789473em .263157em;
+
+  &:hover, &:focus {
+    position: relative;
+    display: inline-block;
+    font-size: 1em;
+    line-height: 1.25;
+    box-sizing: border-box;
+    box-shadow: none;
+    vertical-align: top;
+    background-color: #fff;
+    color: #2e8aca;
+    text-decoration: underline;
+
+    padding: .526315em .789473em .263157em;
+  }
+}
