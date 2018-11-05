@@ -41,5 +41,6 @@ object JsonFormatters {
     .and[LiabilityOrder]("LIABILITY_ORDER")
     .format
   implicit val caseFormat = Json.format[Case]
+  implicit val caseStatusFormat = Json.format[CaseStatus]
 
 }
