@@ -28,13 +28,13 @@ import uk.gov.hmrc.play.bootstrap.audit.DefaultAuditConnector
 import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.models.Queue
+import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, Queue}
 import uk.gov.hmrc.tariffclassificationfrontend.utils.{CaseExamples, CasePayloads}
 
 class BindingTariffClassificationConnectorSpec extends UnitSpec
   with WiremockTestServer with MockitoSugar with WithFakeApplication {
 
-  import uk.gov.hmrc.tariffclassificationfrontend.utils.JsonFormatters.caseFormat
+  import uk.gov.hmrc.tariffclassificationfrontend.utils.JsonFormatters.{caseFormat, caseStatusFormat}
 
   private val configuration = mock[AppConfig]
 
@@ -173,6 +173,43 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
 
       intercept[NotFoundException] {
         await(connector.updateCase(unknownCase))
+      }
+    }
+  }
+
+  "Connector 'Update Case Status'" should {
+
+    "update valid case" in {
+      val ref = "case-reference"
+      val validCase = CaseExamples.btiCaseExample.copy(reference = ref)
+      val newStatus = CaseStatus(status = "CANCELLED")
+      val json = Json.toJson(newStatus).toString()
+
+      stubFor(put(urlEqualTo(s"/cases/$ref/status"))
+        .withRequestBody(equalToJson(json))
+        .willReturn(aResponse()
+          .withStatus(HttpStatus.SC_OK)
+          .withBody(Json.toJson(validCase.copy(status = "CANCELLED")).toString)
+        )
+      )
+
+      await(connector.updateCaseStatus(ref, newStatus)) shouldBe validCase.copy(status = newStatus.status)
+    }
+
+    "update with an unknown case reference" in {
+      val unknownRef = "unknownRef"
+      val newStatus = CaseStatus(status = "AAAA")
+      val json = Json.toJson(newStatus).toString()
+
+      stubFor(put(urlEqualTo(s"/cases/$unknownRef/status"))
+        .withRequestBody(equalToJson(json))
+        .willReturn(aResponse()
+          .withStatus(HttpStatus.SC_NOT_FOUND)
+        )
+      )
+
+      intercept[NotFoundException] {
+        await(connector.updateCaseStatus(unknownRef, newStatus))
       }
     }
   }

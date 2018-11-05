@@ -18,6 +18,11 @@ package uk.gov.hmrc.tariffclassificationfrontend.models
 
 import java.time.{Clock, Duration, ZonedDateTime}
 
+case class CaseStatus
+(
+  status: String
+)
+
 case class Case
 (
   reference: String,
@@ -32,6 +37,7 @@ case class Case
   decision: Option[Decision],
   attachments: Seq[Attachment]
 ) {
+
   def elapsedDays: Long = {
     elapsedDays(Clock.systemDefaultZone())
   }
@@ -43,4 +49,5 @@ case class Case
       Duration.between(adjustedCreateDate, closedDate.get).toDays
     }
   }
+
 }

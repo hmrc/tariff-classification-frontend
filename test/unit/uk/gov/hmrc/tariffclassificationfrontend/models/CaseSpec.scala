@@ -41,6 +41,4 @@ class CaseSpec extends UnitSpec {
 
   }
 
-
-
 }
