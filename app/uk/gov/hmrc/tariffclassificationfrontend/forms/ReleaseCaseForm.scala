@@ -22,7 +22,9 @@ import play.api.data.Forms._
 case class ReleaseCaseForm(queue: String)
 
 object ReleaseCaseForm {
+
   val form = Form(
     mapping("queue" -> text)(ReleaseCaseForm.apply)(ReleaseCaseForm.unapply)
   )
+
 }

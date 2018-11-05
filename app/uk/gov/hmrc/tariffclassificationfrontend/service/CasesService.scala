@@ -19,15 +19,23 @@ package uk.gov.hmrc.tariffclassificationfrontend.service
 import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.tariffclassificationfrontend.connector.BindingTariffClassificationConnector
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Queue}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus, Queue}
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
 class CasesService @Inject()(connector: BindingTariffClassificationConnector) {
 
   def releaseCase(c: Case, queue: Queue)(implicit hc : HeaderCarrier): Future[Case] = {
-    connector.updateCase(c.copy(status= "OPEN", queueId = Some(queue.id)))
+    // TODO: DIT-246 - with an atomic operation we should:
+    // - update queue
+    // - update status
+    // - create case status change event
+    // If too complex, we should at least update the event and the event atomically
+    connector.updateCaseStatus(caseReference = c.reference, newStatus = CaseStatus("OPEN")).flatMap { withNewStatus: Case =>
+      connector.updateCase(withNewStatus.copy(queueId = Some(queue.id)))
+    }
   }
 
   def getOne(reference: String)(implicit hc : HeaderCarrier): Future[Option[Case]] = {

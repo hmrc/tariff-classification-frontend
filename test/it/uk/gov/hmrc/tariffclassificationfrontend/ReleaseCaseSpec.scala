@@ -40,7 +40,7 @@ class ReleaseCaseSpec extends UnitSpec with WiremockTestServer with MockitoSugar
     }
   }
 
-  // TODO: fix this test
+  // TODO: DIT-246 - fix this test
 //  "Case Release To Queue" should {
 //    val caseWithStatusNEW = CasePayloads.jsonOf(CaseExamples.btiCaseExample.copy(status = "NEW"))
 //    val caseWithStatusOPEN = CasePayloads.jsonOf(CaseExamples.btiCaseExample.copy(status = "OPEN"))

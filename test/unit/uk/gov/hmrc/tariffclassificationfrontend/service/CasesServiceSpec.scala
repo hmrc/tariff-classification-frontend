@@ -21,7 +21,7 @@ import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.tariffclassificationfrontend.connector.BindingTariffClassificationConnector
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Queue}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus, Queue}
 
 import scala.concurrent.Future
 
@@ -63,17 +63,23 @@ class CasesServiceSpec extends UnitSpec with MockitoSugar {
   }
 
   "Release Case" should {
-    val oldCase = mock[Case]
-    val updatedCase = mock[Case]
-    val updatedPersistedCase = mock[Case]
+
+    val reference = "ref1"
+
+    val originalCase = mock[Case]
+    val caseWithNewStatus = mock[Case]
+    val caseWithNewQueueId = mock[Case]
+
+    given(originalCase.reference).willReturn(reference)
+    given(queue.id).willReturn("queue_id")
+    given(caseWithNewStatus.copy(queueId = Some("queue_id"))).willReturn(caseWithNewQueueId)
+    given(connector.updateCaseStatus(reference, CaseStatus("OPEN"))).willReturn(Future.successful(caseWithNewStatus))
+    given(connector.updateCase(caseWithNewQueueId)).willReturn(Future.successful(caseWithNewQueueId))
 
     "update case queue_id and status to NEW" in {
-      given(queue.id).willReturn("queue_id")
-      given(oldCase.copy(status= "OPEN", queueId = Some("queue_id"))).willReturn(updatedCase)
-      given(connector.updateCase(updatedCase)).willReturn(Future.successful(updatedPersistedCase))
-
-      await(service.releaseCase(oldCase, queue)) shouldBe updatedPersistedCase
+      await(service.releaseCase(originalCase, queue)) shouldBe caseWithNewQueueId
     }
+
   }
 
 }
