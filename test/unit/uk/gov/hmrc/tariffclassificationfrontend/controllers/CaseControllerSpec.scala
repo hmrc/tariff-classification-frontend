@@ -28,6 +28,7 @@ import play.api.test.Helpers._
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
+import uk.gov.hmrc.tariffclassificationfrontend.forms.FormMapper
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.utils.CaseExamples
 
@@ -41,9 +42,10 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
   private val messageApi = new DefaultMessagesApi(env, configuration, new DefaultLangs(configuration))
   private val appConfig = new AppConfig(configuration, env)
   private val casesService = mock[CasesService]
-  private implicit val hc = HeaderCarrier()
+  private val mapper = mock[FormMapper]
+  private val controller = new CaseController(casesService, mapper, messageApi, appConfig)
 
-  private val controller = new CaseController(casesService, messageApi, appConfig)
+  private implicit val hc = HeaderCarrier()
 
   "Case Summary" should {
 

@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.tariffclassificationfrontend.controllers
+package uk.gov.hmrc.tariffclassificationfrontend.forms
+
+import java.time.ZonedDateTime
 
 import javax.inject.Singleton
-import java.time.ZonedDateTime
-import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionForm
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Decision}
-
 
 @Singleton
 class FormMapper {

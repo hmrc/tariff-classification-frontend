@@ -39,7 +39,6 @@
 
                 <hr class="mt-0"/>
 
-
                 <!-- TODO: DIT-289 - the following 2 rows contain data related to the application data, we should use a HTML arrow that hides them by default (see prototype) -->
 
                 <div class="grid-row">
@@ -90,8 +89,7 @@
                                 <p>Sanitised Goods Description</p>
                             </div>
                             <div class="column-two-thirds">
-                                <p id="ruling_sanitisedGoodDescriptionValue">
-                                @d.goodsDescription</p>
+                                <p id="ruling_sanitisedGoodDescriptionValue">@d.goodsDescription</p>
                             </div>
                         </div>
 
@@ -100,8 +98,7 @@
                                 <p>Justification</p>
                             </div>
                             <div class="column-two-thirds">
-                                <p id="ruling_justificationValue">
-                                @d.justification</p>
+                                <p id="ruling_justificationValue">@d.justification</p>
                             </div>
                         </div>
 
@@ -119,9 +116,7 @@
                                 <p>Commercial denomination and additional information</p>
                             </div>
                             <div class="column-two-thirds">
-                                <p id="ruling_methodCommercialDenominationValue">
-                                @d.methodCommercialDenomination.getOrElse("")
-                                </p>
+                                <p id="ruling_methodCommercialDenominationValue">@d.methodCommercialDenomination.getOrElse("")</p>
                             </div>
                         </div>
 
@@ -133,18 +128,6 @@
                                 <p id="ruling_exclusionsValue">@d.methodExclusion.getOrElse("")</p>
                             </div>
                         </div>
-
-
-
-                        <!--TODO: DIT-289 - we need to add a new field in the model: `MethodExclusions` -->
-                        @*<div class="grid-row">*@
-                        @*<div id="inclusionField" class="column-one-third">*@
-                        @*<p>Inclusion/Exclusions</p>*@
-                        @*</div>*@
-                        @*<div class="column-two-thirds">*@
-                        @*<p id="inclusionFieldValue">???</p>*@
-                        @*</div>*@
-                        @*</div>*@
 
                         <h3 class="heading-small">Files to attach to the ruling</h3>
                         <hr class="mt-0"/>
