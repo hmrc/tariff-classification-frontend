@@ -25,10 +25,10 @@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionData
 
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.{input_text, input_textarea}
 
 @import helper._
-
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.input_text
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.input_textarea
 @(c: Case, decisionForm : Form[DecisionData])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None) {
@@ -50,13 +50,13 @@
                     </div>
                 </div>
 
-                <h5 class="heading-small">Application Details</h5>
+                <h5 class="heading-small">Application details</h5>
 
                 <hr class="mt-0"/>
 
                 <div class="grid-row">
                     <div id="application_envisagedCommodityCode" class="column-one-third">
-                        <p>Suggested Commodity Code</p>
+                        <p>Suggested commodity code</p>
                     </div>
                     <div class="column-two-thirds">
                         <p id="envisagedCommodityCodeValue">@{btiApp.envisagedCommodityCode.getOrElse("")}</p>
@@ -65,7 +65,7 @@
 
                 <div class="grid-row">
                     <div id="application_goodDescription" class="column-one-third">
-                        <p>Suggested Goods Description</p>
+                        <p>Suggested goods description</p>
                     </div>
                     <div class="column-two-thirds">
                         <p id="application_goodDescriptionValue">@{btiApp.goodDescription}</p>
@@ -75,7 +75,7 @@
 
                 <div class="grid-row">
                     <div class="column-one-third">
-                        <h5 class="heading-small">Ruling Details</h5>
+                        <h5 class="heading-small">Ruling details</h5>
                     </div>
                 </div>
 
@@ -87,17 +87,17 @@
 
                     @input_text(
                         field = decisionForm("bindingCommodityCode"),
-                        label = "Binding Commodity Code"
+                        label = "Binding commodity Code"
                     )
 
                     @input_textarea(
                         field = decisionForm("goodsDescription"),
-                        label = "Sanitised Goods Description"
+                        label = "Sanitised goods description"
                     )
 
                     @input_textarea(
                         field = decisionForm("methodSearch"),
-                        label = "Searches Performed"
+                        label = "Searches performed"
                     )
 
                     @input_textarea(
@@ -111,13 +111,8 @@
                     )
 
                     @input_textarea(
-                        field = decisionForm("methodCommercialDenomination"),
-                        label = "Commercial denomination and additional information"
-                    )
-
-                    @input_textarea(
                         field = decisionForm("methodExclusion"),
-                        label = "Exclusions/Inclusions"
+                        label = "Exclusions/inclusions"
                     )
 
                     <div class="form-group">
@@ -126,15 +121,19 @@
                             <h3 class="heading-medium">Files to publish</h3>
 
                             @if(c.attachments.isEmpty) {
-                            <span class="body-text">There are no attachments for this case.</span>
+                                <span class="body-text">There are no attachments for this case.</span>
                             } else {
-                            <span class="body-text">Select attachments for the ruling</span>
-                            @for(att <- c.attachments) {
-                            <div class="multiple-choice">
-                                <input id="attachments[]" name="attachments[]" type="checkbox" value="@att.url" @if(att.public){ checked } >
-                                <label for="attachments[]">  <a href="@att.url" target="_blank">@att.name.getOrElse("Unknown")</a> </label>
-                            </div>
-                            }
+                                <span class="body-text">Select attachments for the ruling</span>
+                                @for(att <- c.attachments) {
+                                <div class="multiple-choice">
+                                    <input id="attachments[]" name="attachments[]" type="checkbox" value="@att.url" @if(att.public){checked="checked"}/>
+                                    <label for="attachments[]">
+                                        <a href="@att.url" target="_blank">
+                                            @att.name.getOrElse("Unknown")
+                                        </a>
+                                    </label>
+                                </div>
+                                }
                             }
 
                         </fieldset>

@@ -49,8 +49,8 @@ trait FormConstraints {
 
   //  Commodity code must be all numeric and contain between 10 and 22 digits
 
-  private val commodityCodeRegex = """^[0-9]{10,22}$"""
-  private val commodityCodeError = "Format must be numeric between 10 and 22 digits"
+  private val commodityCodeRegex = """^([0-9]{6,22})|()$"""
+  private val commodityCodeError = "Format must be numeric between 6 and 22 digits"
 
   val verifyCommodityCode: Mapping[String] = text.verifying(regexp(commodityCodeRegex, commodityCodeError))
 

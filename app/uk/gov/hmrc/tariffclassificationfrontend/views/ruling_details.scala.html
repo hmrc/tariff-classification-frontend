@@ -35,7 +35,7 @@
                     <h3 class="heading-medium mt-0">Ruling</h3>
                 </div>
 
-                <h5 class="heading-small">Application Details</h5>
+                <h5 class="heading-small">Application details</h5>
 
                 <hr class="mt-0"/>
 
@@ -43,7 +43,7 @@
 
                 <div class="grid-row">
                     <div id="application_envisagedCommodityCode" class="column-one-third">
-                        <p>Suggested Commodity Code</p>
+                        <p>Suggested commodity code</p>
                     </div>
                     <div class="column-two-thirds">
                         <p id="envisagedCommodityCodeValue">@{btiApp.envisagedCommodityCode.getOrElse("")}</p>
@@ -53,7 +53,7 @@
 
                 <div class="grid-row">
                     <div id="application_goodDescription" class="column-one-third">
-                        <p>Suggested Goods Description</p>
+                        <p>Suggested goods description</p>
                     </div>
                     <div class="column-two-thirds">
                         <p id="application_goodDescriptionValue">@{btiApp.goodDescription}</p>
@@ -63,11 +63,13 @@
 
                 <div class="grid-row">
                     <div class="column-one-third">
-                        <h5 class="heading-small">Ruling Details</h5>
+                        <h5 class="heading-small">Ruling details</h5>
                     </div>
-                    <div id="ruling_edit_details" class="column-two-thirds text-right mt-1">
-                        <a id="ruling_edit" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.editRulingDetails(c.reference)">Edit</a>
-                    </div>
+                    @if(c.status == "OPEN") {
+                        <div id="ruling_edit_details" class="column-two-thirds text-right mt-1">
+                            <a id="ruling_edit" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.editRulingDetails(c.reference)">Edit</a>
+                        </div>
+                    }
                 </div>
 
                 <hr class="mt-0"/>
@@ -77,7 +79,7 @@
 
                         <div class="grid-row">
                             <div id="ruling_bindingCommodityCode" class="column-one-third">
-                                <p>Binding Commodity Code</p>
+                                <p>Binding commodity code</p>
                             </div>
                             <div class="column-two-thirds">
                                 <p id="ruling_bindingCommodityCodeValue">@d.bindingCommodityCode</p>
@@ -86,7 +88,7 @@
 
                         <div class="grid-row">
                             <div id="ruling_sanitisedGoodDescription" class="column-one-third">
-                                <p>Sanitised Goods Description</p>
+                                <p>Sanitised goods description</p>
                             </div>
                             <div class="column-two-thirds">
                                 <p id="ruling_sanitisedGoodDescriptionValue">@d.goodsDescription</p>
@@ -104,7 +106,7 @@
 
                         <div class="grid-row">
                             <div id="ruling_searches" class="column-one-third">
-                                <p>Searches Performed</p>
+                                <p>Searches performed</p>
                             </div>
                             <div class="column-two-thirds">
                                 <p id="ruling_searchesValue">@d.methodSearch.getOrElse("")</p>
@@ -122,7 +124,7 @@
 
                         <div class="grid-row">
                             <div id="ruling_exclusions" class="column-one-third">
-                                <p>Exclusions/Inclusions</p>
+                                <p>Exclusions/inclusions</p>
                             </div>
                             <div class="column-two-thirds">
                                 <p id="ruling_exclusionsValue">@d.methodExclusion.getOrElse("")</p>
