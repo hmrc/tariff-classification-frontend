@@ -25,7 +25,7 @@ import play.api.mvc.{Action, AnyContent, Request, Result}
 import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.forms.{DecisionForm, DecisionFormData, FormMapper}
+import uk.gov.hmrc.tariffclassificationfrontend.forms.{DecisionForm, DecisionFormData, DecisionFormMapper}
 import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
@@ -35,9 +35,9 @@ import scala.concurrent.Future
 
 @Singleton
 class RulingController @Inject()(casesService: CasesService,
-                                  mapper: FormMapper,
-                                  val messagesApi: MessagesApi,
-                                  implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
+                                 mapper: DecisionFormMapper,
+                                 val messagesApi: MessagesApi,
+                                 implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
   val decisionForm: Form[DecisionFormData] = DecisionForm.form
 
@@ -65,7 +65,7 @@ class RulingController @Inject()(casesService: CasesService,
       validForm => {
         val ot: OptionT[Future, Case] = for {
           selectCase <- OptionT(casesService.getOne(reference))
-          updatedCase <- OptionT.liftF(casesService.updateCase(mapper.formToCase(selectCase, validForm)))
+          updatedCase <- OptionT.liftF(casesService.updateCase(mapper.mergeFormIntoCase(selectCase, validForm)))
         } yield updatedCase
 
         ot.value.flatMap {

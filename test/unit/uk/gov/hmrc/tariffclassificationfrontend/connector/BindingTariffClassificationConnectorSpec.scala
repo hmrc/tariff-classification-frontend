@@ -29,7 +29,7 @@ import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, Queue}
-import uk.gov.hmrc.tariffclassificationfrontend.utils.{CaseExamples, CasePayloads}
+import uk.gov.hmrc.tariffclassificationfrontend.utils.{oCase, CasePayloads}
 
 class BindingTariffClassificationConnectorSpec extends UnitSpec
   with WiremockTestServer with MockitoSugar with WithFakeApplication {
@@ -71,7 +71,7 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
           .withBody(CasePayloads.gatewayCases))
       )
 
-      await(connector.getCasesByQueue(gatewayQueue)) shouldBe Seq(CaseExamples.btiCaseExample)
+      await(connector.getCasesByQueue(gatewayQueue)) shouldBe Seq(oCase.btiCaseExample)
     }
 
     "get empty cases in 'other' queue" in {
@@ -91,7 +91,7 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
           .withBody(CasePayloads.gatewayCases))
       )
 
-      await(connector.getCasesByQueue(otherQueue)) shouldBe Seq(CaseExamples.btiCaseExample)
+      await(connector.getCasesByQueue(otherQueue)) shouldBe Seq(oCase.btiCaseExample)
     }
   }
 
@@ -113,7 +113,7 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
           .withBody(CasePayloads.btiCase))
       )
 
-      await(connector.getOneCase("id")) shouldBe Some(CaseExamples.btiCaseExample)
+      await(connector.getOneCase("id")) shouldBe Some(oCase.btiCaseExample)
     }
 
   }
@@ -137,7 +137,7 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
           .withBody(CasePayloads.gatewayCases))
       )
 
-      await(connector.getCasesByAssignee("assignee")) shouldBe Seq(CaseExamples.btiCaseExample)
+      await(connector.getCasesByAssignee("assignee")) shouldBe Seq(oCase.btiCaseExample)
     }
   }
 
@@ -145,7 +145,7 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
 
     "update valid case" in {
       val ref = "case-reference"
-      val validCase = CaseExamples.btiCaseExample.copy(reference = ref)
+      val validCase = oCase.btiCaseExample.copy(reference = ref)
       val json = Json.toJson(validCase).toString()
 
       stubFor(put(urlEqualTo(s"/cases/$ref"))
@@ -161,7 +161,7 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
 
     "update with an unknown case reference" in {
       val unknownRef = "unknownRef"
-      val unknownCase = CaseExamples.btiCaseExample.copy(reference = unknownRef)
+      val unknownCase = oCase.btiCaseExample.copy(reference = unknownRef)
       val json = Json.toJson(unknownCase).toString()
 
       stubFor(put(urlEqualTo(s"/cases/$unknownRef"))
@@ -181,7 +181,7 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
 
     "update valid case" in {
       val ref = "case-reference"
-      val validCase = CaseExamples.btiCaseExample.copy(reference = ref)
+      val validCase = oCase.btiCaseExample.copy(reference = ref)
       val newStatus = CaseStatus(status = "CANCELLED")
       val json = Json.toJson(newStatus).toString()
 

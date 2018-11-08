@@ -9,7 +9,7 @@ import play.api.libs.ws.{WSClient, WSResponse}
 import play.api.test.Helpers._
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.tariffclassificationfrontend.connector.WiremockTestServer
-import uk.gov.hmrc.tariffclassificationfrontend.utils.{CaseExamples, CasePayloads}
+import uk.gov.hmrc.tariffclassificationfrontend.utils.{oCase, CasePayloads}
 
 class ReleaseCaseSpec extends UnitSpec with WiremockTestServer with MockitoSugar with GuiceOneServerPerSuite {
 
@@ -20,7 +20,7 @@ class ReleaseCaseSpec extends UnitSpec with WiremockTestServer with MockitoSugar
   private val ws = fakeApplication().injector.instanceOf[WSClient]
 
   "Case Release" should {
-    val caseWithStatusNEW = CasePayloads.jsonOf(CaseExamples.btiCaseExample.copy(status = "NEW"))
+    val caseWithStatusNEW = CasePayloads.jsonOf(oCase.btiCaseExample.copy(status = "NEW"))
 
 
     "return status 200" in {

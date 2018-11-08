@@ -23,7 +23,7 @@ import play.api.mvc._
 import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.forms.FormMapper
+import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionFormMapper
 import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
@@ -33,7 +33,7 @@ import scala.concurrent.Future
 
 @Singleton
 class CaseController @Inject()(casesService: CasesService,
-                               mapper: FormMapper,
+                               mapper: DecisionFormMapper,
                                val messagesApi: MessagesApi,
                                implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 

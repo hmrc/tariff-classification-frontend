@@ -20,7 +20,7 @@ import java.time.ZonedDateTime
 
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 
-object CaseExamples {
+object oCase {
 
   val eoriDetailsExample = EORIDetails("eori", "trader-name", "line1", "line2", "line3", "postcode", "country")
   val eoriAgentDetailsExample = EORIDetails("eori", "agent-name", "line1", "line2", "line3", "postcode", "country")
@@ -31,4 +31,13 @@ object CaseExamples {
   val btiCaseExample = Case("1", "OPEN", ZonedDateTime.now(), ZonedDateTime.now(), None, None, None, None, btiApplicationExample, Some(decision), Seq())
   val liabilityCaseExample = Case("1", "OPEN", ZonedDateTime.now(), ZonedDateTime.now(), None, None, None, None, liabilityApplicationExample, None, Seq())
 
+
+  def createAttachment(url: String): Attachment =
+    Attachment(
+      application = true,
+      public = true,
+      url = url,
+      mimeType = "",
+      timestamp = ZonedDateTime.now()
+    )
 }

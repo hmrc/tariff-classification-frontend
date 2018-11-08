@@ -16,21 +16,24 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.utils
 
-import play.api.libs.json.Json
-import uk.gov.hmrc.tariffclassificationfrontend.models.Case
-import uk.gov.hmrc.tariffclassificationfrontend.utils.JsonFormatters._
 
-object CasePayloads {
+import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionFormData
 
-  val btiCase: String = jsonOf(oCase.btiCaseExample)
-  val gatewayCases: String = jsonOf(Seq(oCase.btiCaseExample))
 
-  def jsonOf(obj: Case): String = {
-    Json.toJson(obj).toString()
-  }
+object oDecisionForm {
 
-  def jsonOf(obj: Seq[Case]): String = {
-    Json.toJson(obj).toString()
-  }
+  val validForm = DecisionFormData(
+    "binding commodity code test",
+    "valid goods Description",
+    "valid method Search",
+    "valid justification",
+    "valid method Commercial Denomination",
+    "valid method Exclusion",
+    List.empty
+  )
 
+  val validFormWithAttachments =
+    DecisionFormData(
+      attachments = Seq("url.to.publish")
+    )
 }
