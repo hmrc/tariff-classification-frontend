@@ -18,12 +18,12 @@ package uk.gov.hmrc.tariffclassificationfrontend.service
 
 import java.time.ZonedDateTime
 
-import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionData
+import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionFormData
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Decision}
 
 object CaseMapper {
 
-  def mergeForm(c: Case, form: DecisionData): Case = {
+  def mergeForm(c: Case, form: DecisionFormData): Case = {
 
     val decision = c.decision match {
       case Some(d: Decision) => decisionFrom(d, form)
@@ -37,7 +37,7 @@ object CaseMapper {
   }
 
 
-  private def decisionFrom(decision: Decision, form: DecisionData): Decision = {
+  private def decisionFrom(decision: Decision, form: DecisionFormData): Decision = {
     decision.copy(
       bindingCommodityCode = form.bindingCommodityCode.toString,
       goodsDescription = form.goodsDescription,

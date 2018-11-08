@@ -23,13 +23,12 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.models.BTIApplication
 @import uk.gov.hmrc.tariffclassificationfrontend.models.Decision
 
-@import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionData
-
+@import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionFormData
 
 @import helper._
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.input_text
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.input_textarea
-@(c: Case, decisionForm : Form[DecisionData])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(c: Case, decisionForm : Form[DecisionFormData])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @defining(c.application.asBTI) { btiApp: BTIApplication =>
     <div class="form-group">
@@ -71,7 +70,7 @@
 
         <hr class="mt-0"/>
 
-        @form(action = uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.updateRulingDetails(c.reference), 'class -> "form") {
+        @form(action = uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.RulingController.updateRulingDetails(c.reference), 'class -> "form") {
 
             @CSRF.formField
 

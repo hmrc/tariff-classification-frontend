@@ -20,13 +20,13 @@ import play.api.data.Forms._
 import play.api.data.validation._
 import play.api.data.{Form, Mapping}
 
-case class DecisionData(bindingCommodityCode: String = "",
-                        goodsDescription: String = "",
-                        methodSearch: String = "",
-                        justification: String = "",
-                        methodCommercialDenomination: String = "",
-                        methodExclusion: String = "",
-                        attachments: Seq[String] = Seq.empty) {
+case class DecisionFormData(bindingCommodityCode: String = "",
+                            goodsDescription: String = "",
+                            methodSearch: String = "",
+                            justification: String = "",
+                            methodCommercialDenomination: String = "",
+                            methodExclusion: String = "",
+                            attachments: Seq[String] = Seq.empty) {
 }
 
 object DecisionForm extends FormConstraints {
@@ -40,7 +40,7 @@ object DecisionForm extends FormConstraints {
       "methodCommercialDenomination" -> text,
       "methodExclusion" -> text,
       "attachments" -> seq(text)
-    )(DecisionData.apply)(DecisionData.unapply)
+    )(DecisionFormData.apply)(DecisionFormData.unapply)
   )
 }
 

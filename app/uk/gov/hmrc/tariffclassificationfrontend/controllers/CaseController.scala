@@ -17,17 +17,14 @@
 package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
 
-import cats.data.OptionT
-import cats.implicits._
 import javax.inject.{Inject, Singleton}
-import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.forms.{DecisionData, DecisionForm, FormMapper}
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Decision}
+import uk.gov.hmrc.tariffclassificationfrontend.forms.FormMapper
+import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
@@ -40,8 +37,6 @@ class CaseController @Inject()(casesService: CasesService,
                                val messagesApi: MessagesApi,
                                implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
-  val decisionForm: Form[DecisionData] = DecisionForm.form
-
   def summary(reference: String): Action[AnyContent] = AuthenticatedAction.async { implicit request =>
     getCaseAndRenderView(reference, "summary", views.html.partials.case_summary(_))
   }
@@ -52,51 +47,6 @@ class CaseController @Inject()(casesService: CasesService,
 
   def rulingDetails(reference: String): Action[AnyContent] = AuthenticatedAction.async { implicit request =>
     getCaseAndRenderView(reference, "ruling", views.html.partials.ruling_details(_))
-  }
-
-  def editRulingDetails(reference: String): Action[AnyContent] = AuthenticatedAction.async { implicit request =>
-
-    casesService.getOne(reference).map {
-      case Some(c: Case) =>
-        val df = c.decision map { d: Decision =>
-            decisionForm.fill(
-              DecisionData(
-                d.bindingCommodityCode,
-                d.goodsDescription,
-                d.methodSearch.getOrElse(""),
-                d.justification,
-                d.methodCommercialDenomination.getOrElse(""),
-                d.methodExclusion.getOrElse(""),
-                c.attachments.filter(_.public).map(_.url)
-              )
-            )
-        }
-        Ok(views.html.case_details(c, "ruling", views.html.partials.ruling_details_edit(c, df.getOrElse(decisionForm))))
-      case _ => Ok(views.html.case_not_found(reference))
-    }
-  }
-
-  def updateRulingDetails(reference: String): Action[AnyContent] = AuthenticatedAction.async { implicit request =>
-
-    // TODO: optional subfields of the decision should be promoted to Some(_) only if non-empty
-
-    decisionForm.bindFromRequest.fold(
-      errorForm =>
-        // TODO: Handle errors on form
-        getCaseAndRenderView(reference, "ruling", views.html.partials.ruling_details_edit(_, errorForm))
-      ,
-      validForm => {
-        val ot: OptionT[Future, Case] = for {
-          selectCase <- OptionT(casesService.getOne(reference))
-          updatedCase <- OptionT.liftF(casesService.updateCase(mapper.formToCase(selectCase, validForm)))
-        } yield updatedCase
-
-        ot.value.flatMap {
-          case Some(c: Case) => Future.successful(Ok(views.html.case_details(c, "ruling", views.html.partials.ruling_details(c))))
-          case _ => Future.successful(Ok(views.html.case_not_found(reference)))
-        }
-      }
-    )
   }
 
   private def getCaseAndRenderView(reference: String, page: String, toHtml: Case => Html)(implicit request: Request[_]): Future[Result] = {

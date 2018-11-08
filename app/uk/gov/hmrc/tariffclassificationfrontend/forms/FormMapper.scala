@@ -19,14 +19,13 @@ package uk.gov.hmrc.tariffclassificationfrontend.forms
 import java.time.ZonedDateTime
 
 import javax.inject.Singleton
-import play.api.data.Form
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Decision}
 
 
 @Singleton
 class FormMapper {
 
-  def formToCase(c: Case, decisionForm: DecisionData): Case = {
+  def formToCase(c: Case, decisionForm: DecisionFormData): Case = {
 
     val decision = c.decision match {
       case Some(d: Decision) => from(d, decisionForm)
@@ -39,7 +38,25 @@ class FormMapper {
     c.copy(decision = Some(decision), attachments = attachments)
   }
 
-  private def from(decision: Decision, form: DecisionData): Decision = {
+  def caseToDecisionFormData(c: Case): DecisionFormData = {
+
+    val form =  c.decision map {
+      case d: Decision =>
+        DecisionFormData(
+          d.bindingCommodityCode,
+          d.goodsDescription,
+          d.methodSearch.getOrElse(""),
+          d.justification,
+          d.methodCommercialDenomination.getOrElse(""),
+          d.methodExclusion.getOrElse(""),
+          c.attachments.filter(_.public).map(_.url)
+        )
+    }
+
+    form.getOrElse( DecisionFormData())
+  }
+
+  private def from(decision: Decision, form: DecisionFormData): Decision = {
     decision.copy(
       bindingCommodityCode = form.bindingCommodityCode.toString,
       goodsDescription = form.goodsDescription,
@@ -49,7 +66,7 @@ class FormMapper {
       methodExclusion = Some(form.methodExclusion))
   }
 
-  private def from(form: DecisionData): Decision = {
+  private def from(form: DecisionFormData): Decision = {
     Decision(
       effectiveStartDate = ZonedDateTime.now(),
       effectiveEndDate = ZonedDateTime.now(),
