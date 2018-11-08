@@ -46,12 +46,12 @@ class RulingController @Inject()(casesService: CasesService,
   def editRulingDetails(reference: String): Action[AnyContent] = AuthenticatedAction.async { implicit request =>
 
     casesService.getOne(reference).map {
-      case Some(c: Case) =>
+      case Some(c: Case) if c.status == "OPEN" =>
         val formData = mapper.caseToDecisionFormData(c)
         val df = decisionForm.fill(formData)
 
         Ok(views.html.case_details(c, "ruling", views.html.partials.ruling_details_edit(c, df)))
-
+      case Some(_) => Redirect(routes.CaseController.rulingDetails(reference))
       case _ => Ok(views.html.case_not_found(reference))
     }
   }
@@ -78,7 +78,8 @@ class RulingController @Inject()(casesService: CasesService,
 
   private def getCaseAndRenderView(reference: String, page: String, toHtml: Case => Html)(implicit request: Request[_]): Future[Result] = {
     casesService.getOne(reference).map {
-      case Some(c: Case) => Ok(views.html.case_details(c, page, toHtml(c)))
+      case Some(c: Case) if c.status == "OPEN" => Ok(views.html.case_details(c, page, toHtml(c)))
+      case Some(_) => Redirect(routes.CaseController.rulingDetails(reference))
       case _ => Ok(views.html.case_not_found(reference))
     }
   }
