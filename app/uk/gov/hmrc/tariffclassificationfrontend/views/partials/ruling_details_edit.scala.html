@@ -114,14 +114,14 @@
                     } else {
                         <span class="body-text">Select attachments for the ruling</span>
                         @for(att <- c.attachments) {
-                        <div class="multiple-choice">
-                            <input id="attachments[]" name="attachments[]" type="checkbox" value="@att.url" @if(att.public){checked="checked"}/>
-                            <label for="attachments[]">
-                                <a href="@att.url" target="_blank">
-                                    @att.name.getOrElse("Unknown")
-                                </a>
-                            </label>
-                        </div>
+                            <div class="multiple-choice">
+                                <input id="attachments[]" name="attachments[]" type="checkbox" value="@att.url" @if(att.public){checked="checked"}/>
+                                <label for="attachments[]">
+                                    <a href="@att.url" target="_blank">
+                                        @att.name.getOrElse("Unknown")
+                                    </a>
+                                </label>
+                            </div>
                         }
                     }
 
