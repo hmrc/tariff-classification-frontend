@@ -14,32 +14,30 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.tariffclassificationfrontend.forms
+package uk.gov.hmrc.tariffclassificationfrontend.service
 
 import java.time.ZonedDateTime
 
-import javax.inject.Singleton
-import play.api.data.Form
+import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionData
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Decision}
 
+object CaseMapper {
 
-@Singleton
-class FormMapper {
-
-  def formToCase(c: Case, decisionForm: DecisionData): Case = {
+  def mergeForm(c: Case, form: DecisionData): Case = {
 
     val decision = c.decision match {
-      case Some(d: Decision) => from(d, decisionForm)
-      case _ => from(decisionForm)
+      case Some(d: Decision) => decisionFrom(d, form)
+      case _ => emptyDecision
     }
 
     val attachments = c.attachments
-      .map(att => att.copy(public = decisionForm.attachments.contains(att.url)))
+      .map(att => att.copy(public = form.attachments.contains(att.url)))
 
     c.copy(decision = Some(decision), attachments = attachments)
   }
 
-  private def from(decision: Decision, form: DecisionData): Decision = {
+
+  private def decisionFrom(decision: Decision, form: DecisionData): Decision = {
     decision.copy(
       bindingCommodityCode = form.bindingCommodityCode.toString,
       goodsDescription = form.goodsDescription,
@@ -49,16 +47,14 @@ class FormMapper {
       methodExclusion = Some(form.methodExclusion))
   }
 
-  private def from(form: DecisionData): Decision = {
+  private def emptyDecision: Decision = {
     Decision(
+      bindingCommodityCode = "",
       effectiveStartDate = ZonedDateTime.now(),
       effectiveEndDate = ZonedDateTime.now(),
-      bindingCommodityCode = form.bindingCommodityCode.toString,
-      goodsDescription = form.goodsDescription,
-      methodSearch = Some(form.methodSearch),
-      justification = form.justification,
-      methodCommercialDenomination = Some(form.methodCommercialDenomination),
-      methodExclusion = Some(form.methodExclusion))
+      justification = "",
+      goodsDescription = ""
+    )
   }
 
 }

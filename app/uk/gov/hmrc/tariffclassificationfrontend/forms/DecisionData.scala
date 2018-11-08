@@ -16,17 +16,17 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.forms
 
-import play.api.data.{Form, Mapping}
 import play.api.data.Forms._
 import play.api.data.validation._
+import play.api.data.{Form, Mapping}
 
-case class DecisionForm(bindingCommodityCode: String = "",
+case class DecisionData(bindingCommodityCode: String = "",
                         goodsDescription: String = "",
                         methodSearch: String = "",
                         justification: String = "",
                         methodCommercialDenomination: String = "",
                         methodExclusion: String = "",
-                        attachments: List[String] = List.empty) {
+                        attachments: Seq[String] = Seq.empty) {
 }
 
 object DecisionForm extends FormConstraints {
@@ -39,21 +39,20 @@ object DecisionForm extends FormConstraints {
       "justification" -> text,
       "methodCommercialDenomination" -> text,
       "methodExclusion" -> text,
-      "attachments" -> list(text)
-    )(DecisionForm.apply)(DecisionForm.unapply)
+      "attachments" -> seq(text)
+    )(DecisionData.apply)(DecisionData.unapply)
   )
 }
 
 trait FormConstraints {
 
 
-  //  Commodity code must be all numeric and contain between 6 and 22 digits
+  //  Commodity code must be all numeric and contain between 10 and 22 digits
 
-  private val commodityCodeRegex = """^[0-9]{6,22}$"""
-  private val commodityCodeError = "Format must be numeric between 6 and 22 digits"
+  private val commodityCodeRegex = """^[0-9]{10,22}$"""
+  private val commodityCodeError = "Format must be numeric between 10 and 22 digits"
 
   val verifyCommodityCode: Mapping[String] = text.verifying(regexp(commodityCodeRegex, commodityCodeError))
-
 
   protected def regexp(regex: String, errorKey: String): Constraint[String] =
     Constraint {

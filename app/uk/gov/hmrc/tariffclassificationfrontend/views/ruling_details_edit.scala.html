@@ -23,11 +23,13 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.models.BTIApplication
 @import uk.gov.hmrc.tariffclassificationfrontend.models.Decision
 
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{text_area,input_text}
+@import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionData
+
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.{input_text, input_textarea}
 
 @import helper._
 
-@(c: Case)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(c: Case, decisionForm : Form[DecisionData])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None) {
 
@@ -83,24 +85,40 @@
 
                     @CSRF.formField
 
-                    @defining(c.decision) { d: Option[Decision] =>
+                    @input_text(
+                        field = decisionForm("bindingCommodityCode"),
+                        label = "Binding Commodity Code"
+                    )
 
-                        @input_text(identifier = "bindingCommodityCode", label = "Binding Commodity Code", content = if (d.isDefined) d.get.bindingCommodityCode else "" )
+                    @input_textarea(
+                        field = decisionForm("goodsDescription"),
+                        label = "Sanitised Goods Description"
+                    )
 
-                        @text_area(identifier = "goodsDescription", label = "Sanitised Goods Description", content = if (d.isDefined) d.get.goodsDescription else "", rows = 5 )
+                    @input_textarea(
+                        field = decisionForm("methodSearch"),
+                        label = "Searches Performed"
+                    )
 
-                        @text_area(identifier = "methodSearch", label = "Searches Performed", content = if (d.isDefined && d.get.methodSearch.isDefined) d.get.methodSearch.get else "", rows = 2 )
+                    @input_textarea(
+                        field = decisionForm("justification"),
+                        label = "Justification"
+                    )
 
-                        @text_area(identifier = "justification", label = "Justification", content = if (d.isDefined) d.get.justification else "", rows = 5 )
+                    @input_textarea(
+                        field = decisionForm("methodCommercialDenomination"),
+                        label = "Commercial denomination and additional information"
+                    )
 
-                        @text_area(identifier = "methodCommercialDenomination", label = "Commercial denomination and additional information", content = if (d.isDefined && d.get.methodCommercialDenomination.isDefined) d.get.methodCommercialDenomination.get else "", rows = 5 )
+                    @input_textarea(
+                        field = decisionForm("methodCommercialDenomination"),
+                        label = "Commercial denomination and additional information"
+                    )
 
-                        @text_area(identifier = "methodExclusion", label = "Exclusions/Inclusions", content = if (d.isDefined && d.get.methodExclusion.isDefined) d.get.methodExclusion.get else "", rows = 5 )
-
-
-                        @* ==> TODO: when clicking save, the `decision` field becomes Some(_) regardless of the internal fields. The internal fields should be promoted to Some(_) only if non empty. *@
-
-                    }
+                    @input_textarea(
+                        field = decisionForm("methodExclusion"),
+                        label = "Exclusions/Inclusions"
+                    )
 
                     <div class="form-group">
                         <fieldset>
@@ -108,21 +126,22 @@
                             <h3 class="heading-medium">Files to publish</h3>
 
                             @if(c.attachments.isEmpty) {
-                                <span class="body-text">There are no attachments for this case.</span>
+                            <span class="body-text">There are no attachments for this case.</span>
                             } else {
-                                <span class="body-text">Select attachments for the ruling</span>
-                                @for(att <- c.attachments) {
-                                    <div class="multiple-choice">
-                                        <input id="attachments[]" name="attachments[]" type="checkbox" value="@att.url" @if(att.public){ checked } >
-                                        <label for="attachments[]">  <a href="@att.url" target="_blank">@att.name.getOrElse("Unknown")</a> </label>
-                                    </div>
-                                }
+                            <span class="body-text">Select attachments for the ruling</span>
+                            @for(att <- c.attachments) {
+                            <div class="multiple-choice">
+                                <input id="attachments[]" name="attachments[]" type="checkbox" value="@att.url" @if(att.public){ checked } >
+                                <label for="attachments[]">  <a href="@att.url" target="_blank">@att.name.getOrElse("Unknown")</a> </label>
+                            </div>
+                            }
                             }
 
                         </fieldset>
                     </div>
 
-                    <div class="form-group">
+
+                   <div class="form-group">
                         <button id="submit" class="button" type="submit">Save changes</button>
                         <a href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.rulingDetails(c.reference)" class="secondary-button"> Cancel</a>
                     </div>
