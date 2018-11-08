@@ -1,0 +1,15 @@
+cases.menu.my-cases=My Cases
+cases.table.reference=Reference
+cases.table.goods-name=Item Name
+cases.table.trader-name=Trader
+cases.table.created-date=Date Received
+cases.table.status=Status
+cases.table.type=Type
+cases.table.elapsed-days=Days Elapsed
+cases.table.empty=There are no cases in this queue.
+
+errors.case-not-found.title=Case not found
+errors.case-not-found.message=We could not find a Case with reference: {0}
+errors.all.back=Back Home
+
+errors.resource-not-found.title={0} not found.
