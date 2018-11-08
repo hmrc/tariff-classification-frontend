@@ -43,15 +43,15 @@ class CaseController @Inject()(casesService: CasesService,
   val decisionForm: Form[DecisionData] = DecisionForm.form
 
   def summary(reference: String): Action[AnyContent] = AuthenticatedAction.async { implicit request =>
-    getCaseAndRender(reference, views.html.case_summary(_))
+    getCaseAndRenderView(reference, "summary", views.html.partials.case_summary(_))
   }
 
   def applicationDetails(reference: String): Action[AnyContent] = AuthenticatedAction.async { implicit request =>
-    getCaseAndRender(reference, views.html.application_details(_))
+    getCaseAndRenderView(reference, "application", views.html.partials.application_details(_))
   }
 
   def rulingDetails(reference: String): Action[AnyContent] = AuthenticatedAction.async { implicit request =>
-    getCaseAndRender(reference, views.html.ruling_details(_))
+    getCaseAndRenderView(reference, "ruling", views.html.partials.ruling_details(_))
   }
 
   def editRulingDetails(reference: String): Action[AnyContent] = AuthenticatedAction.async { implicit request =>
@@ -71,7 +71,7 @@ class CaseController @Inject()(casesService: CasesService,
               )
             )
         }
-        Ok(views.html.ruling_details_edit(c, df.getOrElse(decisionForm)))
+        Ok(views.html.case_details(c, "ruling", views.html.partials.ruling_details_edit(c, df.getOrElse(decisionForm))))
       case _ => Ok(views.html.case_not_found(reference))
     }
   }
@@ -83,7 +83,7 @@ class CaseController @Inject()(casesService: CasesService,
     decisionForm.bindFromRequest.fold(
       errorForm =>
         // TODO: Handle errors on form
-        getCaseAndRender(reference, views.html.ruling_details_edit(_, errorForm))
+        getCaseAndRenderView(reference, "ruling", views.html.partials.ruling_details_edit(_, errorForm))
       ,
       validForm => {
         val ot: OptionT[Future, Case] = for {
@@ -92,16 +92,16 @@ class CaseController @Inject()(casesService: CasesService,
         } yield updatedCase
 
         ot.value.flatMap {
-          case Some(c: Case) => Future.successful(Ok(views.html.ruling_details(c)))
+          case Some(c: Case) => Future.successful(Ok(views.html.case_details(c, "ruling", views.html.partials.ruling_details(c))))
           case _ => Future.successful(Ok(views.html.case_not_found(reference)))
         }
       }
     )
   }
 
-  private def getCaseAndRender(reference: String, toHtml: Case => Html)(implicit request: Request[_]): Future[Result] = {
+  private def getCaseAndRenderView(reference: String, page: String, toHtml: Case => Html)(implicit request: Request[_]): Future[Result] = {
     casesService.getOne(reference).map {
-      case Some(c: Case) => Ok(toHtml(c))
+      case Some(c: Case) => Ok(views.html.case_details(c, page, toHtml(c)))
       case _ => Ok(views.html.case_not_found(reference))
     }
   }

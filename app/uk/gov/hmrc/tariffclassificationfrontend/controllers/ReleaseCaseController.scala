@@ -40,13 +40,13 @@ class ReleaseCaseController @Inject()(casesService: CasesService,
   val releaseCaseForm: Form[ReleaseCaseForm] = ReleaseCaseForm.form
 
   def releaseCase(reference: String): Action[AnyContent] = AuthenticatedAction.async { implicit request =>
-    getCaseAndRender(reference, views.html.release_case(_, releaseCaseForm, queueService.getNonGateway))
+    getCaseAndRenderView(reference, views.html.release_case(_, releaseCaseForm, queueService.getNonGateway))
   }
 
   def releaseCaseToQueue(reference: String): Action[AnyContent] = AuthenticatedAction.async { implicit request =>
 
     def onInvalidForm(formWithErrors: Form[ReleaseCaseForm]): Future[Result] = {
-      getCaseAndRender(reference, views.html.release_case(_, formWithErrors, queueService.getNonGateway))
+      getCaseAndRenderView(reference, views.html.release_case(_, formWithErrors, queueService.getNonGateway))
     }
 
     def onValidForm(validForm: ReleaseCaseForm): Future[Result] = {
@@ -71,7 +71,7 @@ class ReleaseCaseController @Inject()(casesService: CasesService,
     }
   }
 
-  private def getCaseAndRender(reference: String, toHtml: Case => Html)(implicit request: Request[_]): Future[Result] = {
+  private def getCaseAndRenderView(reference: String, toHtml: Case => Html)(implicit request: Request[_]): Future[Result] = {
     casesService.getOne(reference).map {
       case Some(c: Case) if c.status == "NEW" => Ok(toHtml(c))
       case Some(_) => Redirect(routes.CaseController.applicationDetails(reference))
