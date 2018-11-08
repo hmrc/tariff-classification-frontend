@@ -18,7 +18,6 @@ package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
 import cats.data.OptionT
 import cats.implicits._
-
 import javax.inject.{Inject, Singleton}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -26,8 +25,8 @@ import play.api.mvc.{Action, AnyContent, Request, Result}
 import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.forms.{DecisionFormData, DecisionForm, FormMapper}
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Decision}
+import uk.gov.hmrc.tariffclassificationfrontend.forms.{DecisionForm, DecisionFormData, FormMapper}
+import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
