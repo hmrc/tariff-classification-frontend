@@ -25,7 +25,7 @@
 @main(bodyClasses = None) {
     @defining(c.application.asBTI) { btiApp: BTIApplication =>
 
-        <h1 class="heading-large">#@c.reference - @btiApp.getType for @btiApp.holder.traderName</h1>
+        <h1 class="heading-large">@messages("case.title", c.reference, btiApp.getType, btiApp.holder.traderName)</h1>
 
         <div class="grid-row">
             <div class="column-full">
@@ -35,7 +35,7 @@
 
                 <div class="grid-row">
                     <div id="application_envisagedCommodityCode" class="column-one-third">
-                        <p>Suggested Commodity Code</p>
+                        <p>@messages("case.application.suggested-commodity-code")</p>
                     </div>
                     <div class="column-two-thirds">
                         <p id="envisagedCommodityCodeValue">@{btiApp.envisagedCommodityCode.getOrElse("")}</p>
@@ -45,7 +45,7 @@
 
                 <div class="grid-row">
                     <div id="application_goodDescription" class="column-one-third">
-                        <p>Suggested Goods Description</p>
+                        <p>@messages("case.application.suggested-goods-description")</p>
                     </div>
                     <div class="column-two-thirds">
                         <p id="application_goodDescriptionValue">@{btiApp.goodDescription}</p>

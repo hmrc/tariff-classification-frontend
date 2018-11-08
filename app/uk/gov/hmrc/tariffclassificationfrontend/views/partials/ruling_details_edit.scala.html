@@ -35,17 +35,17 @@
 
         <div class="grid-row">
             <div id="ruling_table" class="column-one-third">
-                <h4 class="heading-medium mt-0">Ruling</h4>
+                <h4 class="heading-medium mt-0">@messages("case.menu.ruling")</h4>
             </div>
         </div>
 
-        <h5 class="heading-small">Application details</h5>
+        <h5 class="heading-small">@messages("case.menu.application")</h5>
 
         <hr class="mt-0"/>
 
         <div class="grid-row">
             <div id="application_envisagedCommodityCode" class="column-one-third">
-                <p>Suggested commodity code</p>
+                <p>@messages("case.application.suggested-commodity-code")</p>
             </div>
             <div class="column-two-thirds">
                 <p id="envisagedCommodityCodeValue">@{btiApp.envisagedCommodityCode.getOrElse("")}</p>
@@ -54,7 +54,7 @@
 
         <div class="grid-row">
             <div id="application_goodDescription" class="column-one-third">
-                <p>Suggested goods description</p>
+                <p>@messages("case.application.suggested-goods-description")</p>
             </div>
             <div class="column-two-thirds">
                 <p id="application_goodDescriptionValue">@{btiApp.goodDescription}</p>
@@ -64,7 +64,7 @@
 
         <div class="grid-row">
             <div class="column-one-third">
-                <h5 class="heading-small">Ruling details</h5>
+                <h5 class="heading-small">@messages("case.menu.ruling-details")</h5>
             </div>
         </div>
 
@@ -76,52 +76,52 @@
 
             @input_text(
                 field = decisionForm("bindingCommodityCode"),
-                label = "Binding commodity Code"
+                label = messages("case.decision.commodity-code")
             )
 
             @input_textarea(
                 field = decisionForm("goodsDescription"),
-                label = "Sanitised goods description"
+                label = messages("case.decision.goods-description")
             )
 
             @input_textarea(
                 field = decisionForm("methodSearch"),
-                label = "Searches performed"
+                label = messages("case.decision.method-search")
             )
 
             @input_textarea(
                 field = decisionForm("justification"),
-                label = "Justification"
+                label = messages("case.decision.justification")
             )
 
             @input_textarea(
                 field = decisionForm("methodCommercialDenomination"),
-                label = "Commercial denomination and additional information"
+                label = messages("case.decision.method-commercial-denomination")
             )
 
             @input_textarea(
                 field = decisionForm("methodExclusion"),
-                label = "Exclusions/inclusions"
+                label = messages("case.decision.method-exclusion")
             )
 
             <div class="form-group">
                 <fieldset>
 
-                    <h3 class="heading-medium">Files to publish</h3>
+                    <h3 class="heading-medium">@messages("case.decision.attachments")</h3>
 
                     @if(c.attachments.isEmpty) {
                         <span class="body-text">There are no attachments for this case.</span>
                     } else {
                         <span class="body-text">Select attachments for the ruling</span>
                         @for(att <- c.attachments) {
-                        <div class="multiple-choice">
-                            <input id="attachments[]" name="attachments[]" type="checkbox" value="@att.url" @if(att.public){checked="checked"}/>
-                            <label for="attachments[]">
-                                <a href="@att.url" target="_blank">
-                                    @att.name.getOrElse("Unknown")
-                                </a>
-                            </label>
-                        </div>
+                            <div class="multiple-choice">
+                                <input id="attachments[]" name="attachments[]" type="checkbox" value="@att.url" @if(att.public){checked="checked"}/>
+                                <label for="attachments[]">
+                                    <a href="@att.url" target="_blank">
+                                        @att.name.getOrElse("Unknown")
+                                    </a>
+                                </label>
+                            </div>
                         }
                     }
 

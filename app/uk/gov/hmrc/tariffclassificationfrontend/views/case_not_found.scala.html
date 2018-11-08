@@ -22,8 +22,8 @@
 @main(bodyClasses = None) {
 
     <h1 class="heading-large">
-        Case not found
+        @messages("errors.case-not-found.title")
     </h1>
-    <p>We could not find a Case with reference: @reference</p>
-    <a href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.QueuesController.queue("gateway")">Back Home</a>
+    <p>@messages("errors.case-not-found.message", reference)</p>
+    <a href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.QueuesController.queue("gateway")">@messages("errors.all.back")</a>
 }

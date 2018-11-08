@@ -18,18 +18,18 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
 
 
-@(cases: Seq[Case])
+@(cases: Seq[Case])(implicit messages: Messages)
 
 <table class="govuk-table">
     <thead class="govuk-table__head">
         <tr class="govuk-table__row">
-            <th class="govuk-table__header" scope="col">Reference</th>
-            <th class="govuk-table__header" scope="col">Item Name</th>
-            <th class="govuk-table__header" scope="col">Trader</th>
-            <th class="govuk-table__header" scope="col">Date Received</th>
-            <th class="govuk-table__header" scope="col">Status</th>
-            <th class="govuk-table__header" scope="col">Type</th>
-            <th class="govuk-table__header" scope="col">Days Elapsed</th>
+            <th class="govuk-table__header" scope="col">@messages("cases.table.reference")</th>
+            <th class="govuk-table__header" scope="col">@messages("cases.table.goods-name")</th>
+            <th class="govuk-table__header" scope="col">@messages("cases.table.trader-name")</th>
+            <th class="govuk-table__header" scope="col">@messages("cases.table.created-date")</th>
+            <th class="govuk-table__header" scope="col">@messages("cases.table.status")</th>
+            <th class="govuk-table__header" scope="col">@messages("cases.table.type")</th>
+            <th class="govuk-table__header" scope="col">@messages("cases.table.elapsed-days")</th>
         </tr>
     </thead>
     <tbody class="govuk-table__body">
@@ -57,5 +57,5 @@
 </table>
 
 @if(cases.isEmpty) {
-    <p>There are no cases in this queue.</p>
+    <p>@messages("There are no cases in this queue.")</p>
 }

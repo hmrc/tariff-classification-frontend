@@ -14,15 +14,15 @@
  * limitations under the License.
  *@
 
-@(section: String, reference: String)
+@(section: String, reference: String)(implicit request: Request[_], messages: Messages)
 
 <div class="side-nav" role="navigation" aria-labelledby="nav">
     <ul>
         <li class="side-nav__list @if(section == "summary") { side-nav__list--selected }">
-            <a class="side-nav__link" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.summary(reference)">Summary</a>
+            <a class="side-nav__link" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.summary(reference)">@messages("case.menu.summary")</a>
         </li>
         <li class="side-nav__list @if(section == "application") { side-nav__list--selected }">
-            <a class="side-nav__link" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.applicationDetails(reference)">Application Details</a>
+            <a class="side-nav__link" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.applicationDetails(reference)">@messages("case.menu.application")</a>
         </li>
         <!--li class="side-nav__list @if(section == "samples") { side-nav__list--selected }">
             <a class="side-nav__link" href="#">Samples</a>
@@ -34,7 +34,7 @@
             <a class="side-nav__link" href="#">Related Cases</a>
         </li-->
         <li class="side-nav__list @if(section == "ruling") { side-nav__list--selected }">
-            <a class="side-nav__link" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.rulingDetails(reference)">Ruling</a>
+            <a class="side-nav__link" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.rulingDetails(reference)">@messages("case.menu.ruling")</a>
         </li>
     </ul>
     <br>

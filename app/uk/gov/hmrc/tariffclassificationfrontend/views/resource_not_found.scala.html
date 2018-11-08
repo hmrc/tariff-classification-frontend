@@ -22,7 +22,7 @@
 @main(bodyClasses = None) {
 
     <h1 class="heading-large">
-        @resource not found
+        @messages("errors.resource-not-found.title", resource)
     </h1>
-    <a href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.QueuesController.queue("gateway")">Back Home</a>
+    <a href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.QueuesController.queue("gateway")">@messages("errors.all.back")</a>
 }
