@@ -1,5 +1,7 @@
 cases.menu.my-cases=My Cases
 cases.menu.gateway-cases=Gateway Cases
+cases.menu.queue-cases={0} Cases
+
 cases.table.reference=Reference
 cases.table.goods-name=Item Name
 cases.table.trader-name=Trader
@@ -9,14 +11,21 @@ cases.table.type=Type
 cases.table.elapsed-days=Days Elapsed
 cases.table.empty=There are no cases in this queue.
 
-case.title=#{0} - {1} for {2}
 case.menu.summary=Summary
-case.menu.application=Application Details
+case.menu.application=Application details
 case.menu.ruling=Ruling
 case.menu.ruling-details=Ruling details
 
+case.title=#{0} - {1} for {2}
+case.status=Status
+case.created-date=Date received
+case.elapsed-days=Days elapsed
+
 case.application.suggested-commodity-code=Suggested commodity code
 case.application.suggested-goods-description=Suggested goods description
+case.application.contact.name=Contact name
+case.application.contact.email=Email
+case.application.contact.telephone=Telephone
 case.application.holder.eori-number=EORI number
 case.application.holder.trader-name=Registered company name
 case.application.holder.address=Registered company address

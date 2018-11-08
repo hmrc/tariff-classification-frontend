@@ -21,11 +21,11 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.case_nav
 @(c: Case)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-<h3 class="heading-medium mt-0">Summary</h3>
+<h3 class="heading-medium mt-0">@messages("case.menu.summary")</h3>
 
 <div class="grid-row">
     <div class="column-one-third">
-        <p>Status</p>
+        <p>@messages("case.status")</p>
     </div>
     <div class="column-two-thirds">
         <p>@c.status</p>
@@ -34,7 +34,7 @@
 
 <div class="grid-row">
     <div class="column-one-third">
-        <p>Date received</p>
+        <p>@messages("case.created-date")</p>
     </div>
     <div class="column-two-thirds">
         <p>@Dates.format(c.createdDate)</p>
@@ -43,7 +43,7 @@
 
 <div class="grid-row">
     <div class="column-one-third">
-        <p>Days elapsed</p>
+        <p>@messages("case.elapsed-days")</p>
     </div>
     <div class="column-two-thirds">
         <p>@c.elapsedDays</p>
@@ -52,7 +52,7 @@
 
 <div class="grid-row">
     <div class="column-one-third">
-        <p>Contact name</p>
+        <p>@messages("case.application.contact.name")</p>
     </div>
     <div class="column-two-thirds">
         <p>@c.application.asBTI.contact.name</p>
@@ -61,7 +61,7 @@
 
 <div class="grid-row">
     <div class="column-one-third">
-        <p>Email</p>
+        <p>@messages("case.application.contact.email")</p>
     </div>
     <div class="column-two-thirds">
         <a href="mailto:@c.application.asBTI.contact.email?subject=@c.application.getType application #@c.reference">@c.application.asBTI.contact.email</a>
@@ -70,7 +70,7 @@
 
 <div class="grid-row">
     <div class="column-one-third">
-        <p>Telephone</p>
+        <p>@messages("case.application.contact.telephone")</p>
     </div>
     <div class="column-two-thirds">
         <p>@c.application.asBTI.contact.phone</p>
