@@ -22,7 +22,7 @@
 @main(bodyClasses = None) {
     @defining(c.application.asBTI) { btiApp: BTIApplication =>
 
-        <h1 class="heading-large">#@c.reference - @btiApp.getType for @btiApp.holder.traderName</h1>
+        <h1 class="heading-large">@messages("case.title", c.reference, btiApp.getType, btiApp.holder.traderName)</h1>
 
         <div class="grid-row">
             <div class="column-full">
@@ -36,9 +36,9 @@
                 <hr class="mt-0"/>
 
                 <p>Work on another case from
-                    <a href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.MyCasesController.myCases()">My Cases</a>
+                    <a href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.MyCasesController.myCases()">@messages("cases.menu.my-cases")</a>
                     or
-                    <a href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.QueuesController.queue("gateway")">Gateway Cases</a></p>
+                    <a href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.QueuesController.queue("gateway")">@messages("cases.menu.gateway-cases")</a></p>
 
             </div>
         </div>

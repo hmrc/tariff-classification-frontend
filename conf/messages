@@ -1,4 +1,5 @@
 cases.menu.my-cases=My Cases
+cases.menu.gateway-cases=Gateway Cases
 cases.table.reference=Reference
 cases.table.goods-name=Item Name
 cases.table.trader-name=Trader
@@ -7,6 +8,37 @@ cases.table.status=Status
 cases.table.type=Type
 cases.table.elapsed-days=Days Elapsed
 cases.table.empty=There are no cases in this queue.
+
+case.title=#{0} - {1} for {2}
+case.menu.summary=Summary
+case.menu.application=Application Details
+case.menu.ruling=Ruling
+case.menu.ruling-details=Ruling details
+
+case.application.suggested-commodity-code=Suggested commodity code
+case.application.suggested-goods-description=Suggested goods description
+case.application.holder.eori-number=EORI number
+case.application.holder.trader-name=Registered company name
+case.application.holder.address=Registered company address
+case.application.agent.eori-number=Agent's EORI number
+case.application.agent.trader-name=Agent's registered company name
+case.application.agent.address=Agent's registered company address
+case.application.agent.letter-of-authorisation=View letter of authorisation
+case.application.goods-description=Goods description
+case.application.confidential-information=Confidential information
+case.application.related-bti-reference=Similar BTI ruling
+case.application.known-legal-proceedings=Known legal proceedings
+case.application.other-information=Other information
+case.application.attachments=Attachments
+
+case.decision.commodity-code=Binding commodity code
+case.decision.goods-description=Sanitised goods description
+case.decision.justification=Justification
+case.decision.method-search=Searches performed
+case.decision.method-commercial-denomination=Commercial denomination and additional information
+case.decision.method-exclusion=Exclusions/inclusions
+case.decision.attachments=Files to attach to the ruling
+case.decision.empty=There is no ruling information associated to this case.
 
 errors.case-not-found.title=Case not found
 errors.case-not-found.message=We could not find a Case with reference: {0}

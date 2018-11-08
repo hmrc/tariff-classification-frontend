@@ -24,11 +24,11 @@
     @defining(a.asBTI) { btiApp: BTIApplication =>
         @defining(btiApp.holder) { btiHolder: EORIDetails =>
 
-            <h3 class="heading-medium mt-0">Application Details</h3>
+            <h3 class="heading-medium mt-0">@messages("case.menu.application")</h3>
 
             <div class="grid-row">
                 <div class="column-one-third">
-                    <p>EORI number</p>
+                    <p>@messages("case.application.holder.eori-number")</p>
                 </div>
                 <div class="column-two-thirds">
                     <p>@btiHolder.eori</p>
@@ -37,7 +37,7 @@
 
             <div class="grid-row">
                 <div class="column-one-third">
-                    <p>Registered company name</p>
+                    <p>@messages("case.application.holder.trader-name")</p>
                 </div>
                 <div class="column-two-thirds">
                     <p>@btiHolder.traderName</p>
@@ -46,7 +46,7 @@
 
             <div class="grid-row">
                 <div class="column-one-third">
-                    <p>Registered company address</p>
+                    <p>@messages("case.application.holder.address")</p>
                 </div>
                 <div class="column-two-thirds">
                     <p>@btiHolder.addressLine1</p>
@@ -65,7 +65,7 @@
 
                     <div class="grid-row">
                         <div class="column-one-third">
-                            <p>Agent's EORI number</p>
+                            <p>@messages("case.application.agent.eori-number")</p>
                         </div>
                         <div class="column-two-thirds">
                             <p>@btiAgent.eori</p>
@@ -74,7 +74,7 @@
 
                     <div class="grid-row">
                         <div class="column-one-third">
-                            <p>Agent's registered company name</p>
+                            <p>@messages("case.application.agent.trader-name")</p>
                         </div>
                         <div class="column-two-thirds">
                             <p>@btiAgent.traderName</p>
@@ -83,7 +83,7 @@
 
                     <div class="grid-row">
                         <div class="column-one-third">
-                            <p>Agent's registered company address</p>
+                            <p>@messages("case.application.agent.address")</p>
                         </div>
                         <div class="column-two-thirds">
                             <p>@btiAgent.addressLine1</p>
@@ -94,7 +94,7 @@
                         </div>
                     </div>
 
-                    <a href="#">View letter of authorisation</a>
+                    <a href="#">@messages("case.application.agent.letter-of-authorisation")</a>
                 }
             }
 
@@ -107,7 +107,7 @@
                 <hr/>
                 <div class="grid-row">
                     <div class="column-one-third">
-                        <p>Suggested commodity code</p>
+                        <p>@messages("case.application.suggested-commodity-code")</p>
                     </div>
                     <div class="column-two-thirds">
                         <p>@btiApp.envisagedCommodityCode.get</p>
@@ -117,7 +117,7 @@
 
             <div class="grid-row">
                 <div class="column-one-third">
-                    <p>Goods description</p>
+                    <p>@messages("case.application.goods-description")</p>
                 </div>
                 <div class="column-two-thirds">
                     <p>@btiApp.goodDescription</p>
@@ -127,7 +127,7 @@
             @if(btiApp.confidentialInformation.isDefined) {
                 <div class="grid-row">
                     <div class="column-one-third">
-                        <p>Confidential information</p>
+                        <p>@messages("case.application.confidential-information")</p>
                     </div>
                     <div class="column-two-thirds">
                         <p>@btiApp.confidentialInformation.get</p>
@@ -138,7 +138,7 @@
             @if(btiApp.relatedBTIReference.isDefined) {
                 <div class="grid-row">
                     <div class="column-one-third">
-                        <p>Similar BTI ruling</p>
+                        <p>@messages("case.application.related-bti-reference")</p>
                     </div>
                     <div class="column-two-thirds">
                         <p>@btiApp.relatedBTIReference.get</p>
@@ -149,7 +149,7 @@
             @if(btiApp.knownLegalProceedings.isDefined) {
                 <div class="grid-row">
                     <div class="column-one-third">
-                        <p>Known legal proceedings</p>
+                        <p>@messages("case.application.known-legal-proceedings")</p>
                     </div>
                     <div class="column-two-thirds">
                         <p>@btiApp.knownLegalProceedings.get</p>
@@ -160,7 +160,7 @@
             @if(btiApp.otherInformation.isDefined) {
                 <div class="grid-row">
                     <div class="column-one-third">
-                        <p>Other information</p>
+                        <p>@messages("case.application.other-information")</p>
                     </div>
                     <div class="column-two-thirds">
                         <p>@btiApp.otherInformation.get</p>
@@ -171,7 +171,7 @@
             @defining(c.attachments.filter(_.application)) { atts: Seq[Attachment] =>
                     @if(atts.nonEmpty) {
                         <hr/>
-                        <h3 class="heading-medium">Attachments</h3>
+                        <h3 class="heading-medium">@messages("case.application.attachments")</h3>
                         @attachments(atts)
                     }
             }
