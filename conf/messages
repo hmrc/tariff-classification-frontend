@@ -12,9 +12,9 @@ cases.table.elapsed-days=Days Elapsed
 cases.table.empty=There are no cases in this queue.
 
 case.menu.summary=Summary
-case.menu.application=Application details
+case.menu.application=Application Details
 case.menu.ruling=Ruling
-case.menu.ruling-details=Ruling details
+case.menu.ruling-details=Ruling Details
 
 case.title=#{0} - {1} for {2}
 case.status=Status
