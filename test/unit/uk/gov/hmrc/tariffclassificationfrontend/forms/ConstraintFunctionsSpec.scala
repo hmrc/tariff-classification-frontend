@@ -21,17 +21,16 @@ import uk.gov.hmrc.play.test.UnitSpec
 
 class ConstraintFunctionsSpec extends UnitSpec {
 
-
   "regexp" should {
 
     "return Valid for an input that matches the expression" in {
-      val result = FormConstraints.regexp("""^\w+$""", "error.invalid")("foo")
+      val result = FormConstraints.regexp("""\w+""".r, "error.invalid")("foo")
       result shouldBe Valid
     }
 
     "return Invalid for an input that does not match the expression" in {
-      val result = FormConstraints.regexp("""^\d+$""", "error.invalid")("foo")
-      result shouldBe Invalid("error.invalid", """^\d+$""")
+      val result = FormConstraints.regexp("""\d+""".r, "error.invalid")("foo")
+      result shouldBe Invalid("error.invalid")
     }
   }
 

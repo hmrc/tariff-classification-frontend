@@ -29,21 +29,16 @@ class DecisionFormConstraintsSpec extends UnitSpec {
     val bindingCommodityCode = "bindingCommodityCode"
 
     "empty binding commodity code must be valid " in {
-
       decisionForm.bind(commodityCodeJsValue(""))
         .errors(bindingCommodityCode).size shouldBe 0
     }
 
-
     "numeric value between 6 and 22 digits must be valid " in {
-
       decisionForm.bind(commodityCodeJsValue("1234567890"))
         .errors(bindingCommodityCode).size shouldBe 0
     }
 
-
     "invalid numeric on binding commodity code return message error " in {
-
       val errors = decisionForm.bind(commodityCodeJsValue("123"))
         .errors(bindingCommodityCode)
 
