@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.views.partials
 
+import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus
 import uk.gov.hmrc.tariffclassificationfrontend.utils.oCase
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewSpec
@@ -26,7 +27,7 @@ class ReleaseCaseButtonViewSpec extends ViewSpec {
   "Attachments View" should {
 
     "render button for NEW case" in {
-      val case1 = oCase.btiCaseExample.copy(status = "NEW")
+      val case1 = oCase.btiCaseExample.copy(status = CaseStatus.NEW)
 
       // When
       val doc = view(release_case_button(case1))
@@ -37,7 +38,7 @@ class ReleaseCaseButtonViewSpec extends ViewSpec {
     }
 
     "not render button for other case status" in {
-      val case1 = oCase.btiCaseExample.copy(status = "OTHER")
+      val case1 = oCase.btiCaseExample.copy(status = CaseStatus.CANCELLED)
 
       // When
       val doc = view(release_case_button(case1))

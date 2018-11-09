@@ -24,7 +24,7 @@ import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.{DecisionForm, DecisionFormData, DecisionFormMapper}
-import uk.gov.hmrc.tariffclassificationfrontend.models.Case
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
@@ -68,7 +68,7 @@ class RulingController @Inject()(casesService: CasesService,
                                    toHtml: Case => Future[HtmlFormat.Appendable])
                                   (implicit request: Request[_]): Future[Result] = {
     casesService.getOne(reference).flatMap {
-      case Some(c: Case) if c.status == "OPEN" => toHtml(c).map(html => Ok(views.html.case_details(c, page, html)))
+      case Some(c: Case) if c.status == CaseStatus.OPEN => toHtml(c).map(html => Ok(views.html.case_details(c, page, html)))
       case Some(_) => Future.successful(Redirect(routes.CaseController.rulingDetails(reference)))
       case _ => Future.successful(Ok(views.html.case_not_found(reference)))
     }

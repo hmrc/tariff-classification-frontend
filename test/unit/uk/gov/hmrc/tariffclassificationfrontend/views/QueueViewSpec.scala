@@ -58,7 +58,7 @@ class QueueViewSpec extends ViewSpec {
 
       doc.getElementById("queue-name") should containText("Queue 1 Name")
       doc.getElementById("cases-list-table") should containText(case1.reference)
-      doc.getElementById("cases-list-table") should containText(case1.status)
+      doc.getElementById("cases-list-table") should containText(case1.status.toString)
       doc.getElementById("cases-list-table") should containText(case1.application.getType)
     }
   }
