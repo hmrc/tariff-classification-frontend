@@ -23,12 +23,12 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Decision}
 
 
 @Singleton
-class FormMapper {
+class DecisionFormMapper {
 
-  def formToCase(c: Case, decisionForm: DecisionFormData): Case = {
+  def mergeFormIntoCase(c: Case, decisionForm: DecisionFormData): Case = {
 
     val decision = c.decision match {
-      case Some(d: Decision) => from(d, decisionForm)
+      case Some(d: Decision) => amendDecision(d, decisionForm)
       case _ => from(decisionForm)
     }
 
@@ -40,7 +40,7 @@ class FormMapper {
 
   def caseToDecisionFormData(c: Case): DecisionFormData = {
 
-    val form =  c.decision map {
+    val form = c.decision map {
       case d: Decision =>
         DecisionFormData(
           d.bindingCommodityCode,
@@ -49,14 +49,14 @@ class FormMapper {
           d.justification,
           d.methodCommercialDenomination.getOrElse(""),
           d.methodExclusion.getOrElse(""),
-          c.attachments.filter(_.public).map(_.url)
+          Seq.empty // TODO : So far this field is only used to read from the FE
         )
     }
 
-    form.getOrElse( DecisionFormData())
+    form.getOrElse(DecisionFormData())
   }
 
-  private def from(decision: Decision, form: DecisionFormData): Decision = {
+  private def amendDecision(decision: Decision, form: DecisionFormData): Decision = {
     decision.copy(
       bindingCommodityCode = form.bindingCommodityCode.toString,
       goodsDescription = form.goodsDescription,

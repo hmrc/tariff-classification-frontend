@@ -28,9 +28,9 @@ import play.api.test.Helpers._
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.forms.FormMapper
+import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionFormMapper
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
-import uk.gov.hmrc.tariffclassificationfrontend.utils.CaseExamples
+import uk.gov.hmrc.tariffclassificationfrontend.utils.oCase
 
 import scala.concurrent.Future
 
@@ -42,7 +42,7 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
   private val messageApi = new DefaultMessagesApi(env, configuration, new DefaultLangs(configuration))
   private val appConfig = new AppConfig(configuration, env)
   private val casesService = mock[CasesService]
-  private val mapper = mock[FormMapper]
+  private val mapper = mock[DecisionFormMapper]
   private val controller = new CaseController(casesService, mapper, messageApi, appConfig)
 
   private implicit val hc = HeaderCarrier()
@@ -50,7 +50,7 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
   "Case Summary" should {
 
     "return 200 OK and HTML content type" in {
-      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(CaseExamples.btiCaseExample)))
+      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(oCase.btiCaseExample)))
       val result = controller.summary("reference")(fakeRequest)
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -70,7 +70,7 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
   "Application Details" should {
 
     "return 200 OK and HTML content type" in {
-      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(CaseExamples.btiCaseExample)))
+      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(oCase.btiCaseExample)))
       val result = controller.applicationDetails("reference")(fakeRequest)
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -90,7 +90,7 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
   "Ruling Details" should {
 
     "return 200 OK and HTML content type" in {
-      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(CaseExamples.btiCaseExample)))
+      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(oCase.btiCaseExample)))
       val result = controller.rulingDetails("reference")(fakeRequest)
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")

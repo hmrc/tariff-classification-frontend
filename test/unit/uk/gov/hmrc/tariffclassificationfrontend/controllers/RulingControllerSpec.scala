@@ -31,10 +31,10 @@ import play.api.{Configuration, Environment}
 import play.filters.csrf.CSRF.{Token, TokenProvider}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.forms.{DecisionFormData, FormMapper}
+import uk.gov.hmrc.tariffclassificationfrontend.forms.{DecisionFormData, DecisionFormMapper}
 import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
-import uk.gov.hmrc.tariffclassificationfrontend.utils.CaseExamples
+import uk.gov.hmrc.tariffclassificationfrontend.utils.oCase
 
 import scala.concurrent.Future
 
@@ -45,15 +45,15 @@ class RulingControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSui
   private val messageApi = new DefaultMessagesApi(env, configuration, new DefaultLangs(configuration))
   private val appConfig = new AppConfig(configuration, env)
   private val casesService = mock[CasesService]
-  private val mapper = mock[FormMapper]
+  private val mapper = mock[DecisionFormMapper]
 
   private implicit val hc = HeaderCarrier()
 
   private val controller = new RulingController(casesService, mapper, messageApi, appConfig)
 
   "Edit Ruling" should {
-    val caseWithStatusNEW = CaseExamples.btiCaseExample.copy(status = "NEW")
-    val caseWithStatusOPEN = CaseExamples.btiCaseExample.copy(status = "OPEN")
+    val caseWithStatusNEW = oCase.btiCaseExample.copy(status = "NEW")
+    val caseWithStatusOPEN = oCase.btiCaseExample.copy(status = "OPEN")
 
     "return OK and HTML content type" in {
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(caseWithStatusOPEN)))
@@ -88,9 +88,9 @@ class RulingControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSui
   }
 
   "Update Ruling" should {
-    val caseWithStatusNEW = CaseExamples.btiCaseExample.copy(status = "NEW")
-    val caseWithStatusOPEN = CaseExamples.btiCaseExample.copy(status = "OPEN")
-    val updatedCase = CaseExamples.btiCaseExample.copy(status = "OPEN")
+    val caseWithStatusNEW = oCase.btiCaseExample.copy(status = "NEW")
+    val caseWithStatusOPEN = oCase.btiCaseExample.copy(status = "OPEN")
+    val updatedCase = oCase.btiCaseExample.copy(status = "OPEN")
 
     val aValidForm = newFakePOSTRequestWithCSRF(
       "bindingCommodityCode" -> "",
@@ -127,7 +127,7 @@ class RulingControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSui
 
     "redirect to Ruling for non OPEN Statuses" in {
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(caseWithStatusNEW)))
-      given(mapper.formToCase(any[Case], any[DecisionFormData])).willReturn(caseWithStatusNEW)
+      given(mapper.mergeFormIntoCase(any[Case], any[DecisionFormData])).willReturn(caseWithStatusNEW)
 
       val result = controller.updateRulingDetails("reference")(aValidForm)
       verify(casesService, never()).updateCase(any[Case])(any[HeaderCarrier])

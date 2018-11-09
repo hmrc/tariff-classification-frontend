@@ -23,7 +23,7 @@ import play.api.mvc.{Action, AnyContent, Request, Result}
 import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.forms.{DecisionForm, DecisionFormData, FormMapper}
+import uk.gov.hmrc.tariffclassificationfrontend.forms.{DecisionForm, DecisionFormData, DecisionFormMapper}
 import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
@@ -33,7 +33,7 @@ import scala.concurrent.Future
 
 @Singleton
 class RulingController @Inject()(casesService: CasesService,
-                                 mapper: FormMapper,
+                                 mapper: DecisionFormMapper,
                                  val messagesApi: MessagesApi,
                                  implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
@@ -61,7 +61,7 @@ class RulingController @Inject()(casesService: CasesService,
       validForm => {
         casesService.getOne(reference).flatMap {
           case Some(c: Case) if c.status == "OPEN" =>
-            casesService.updateCase(mapper.formToCase(c, validForm))
+            casesService.updateCase(mapper.mergeFormIntoCase(c, validForm))
               .map(update => Ok(views.html.case_details(update, "ruling", views.html.partials.ruling_details(update))))
           case Some(_) => Future.successful(Redirect(routes.CaseController.rulingDetails(reference)))
           case _ => Future.successful(Ok(views.html.case_not_found(reference)))
