@@ -20,7 +20,7 @@
 
 @(cases: Seq[Case])(implicit messages: Messages)
 
-<table class="govuk-table">
+<table id="cases-list-table" class="govuk-table">
     <thead class="govuk-table__head">
         <tr class="govuk-table__row">
             <th class="govuk-table__header" scope="col">@messages("cases.table.reference")</th>
@@ -57,5 +57,5 @@
 </table>
 
 @if(cases.isEmpty) {
-    <p>@messages("There are no cases in this queue.")</p>
+    <p>@messages("cases.table.empty")</p>
 }

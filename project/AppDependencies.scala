@@ -22,7 +22,8 @@ object AppDependencies {
     "org.scalatestplus.play"  %% "scalatestplus-play"       % "2.0.1"     % scope,
     "uk.gov.hmrc"             %% "hmrctest"                 % "3.2.0"     % scope,
     "uk.gov.hmrc"             %% "http-verbs-test"          % "1.2.0"     % scope,
-    "uk.gov.hmrc"             %% "service-integration-test" % "0.3.0"     % scope
+    "uk.gov.hmrc"             %% "service-integration-test" % "0.3.0"     % scope,
+    "org.jsoup"               % "jsoup"                     % "1.11.3"    % scope
   )
 
 }
