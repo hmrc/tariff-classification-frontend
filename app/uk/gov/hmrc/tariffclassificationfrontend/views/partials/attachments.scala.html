@@ -17,43 +17,16 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.models.Attachment
 @(attachments: Seq[Attachment])
 
-<ul class="list">
-@for(att <- attachments) {
-    <li>
-        <a href="@att.url">@att.name.getOrElse("Unknown")</a>
-    </li>
-}
-</ul>
-
-
-@*<table>
-    <thead>
-        <tr>
-            <th scope="col">File</th>
-            <th scope="col">Preview</th>
-        </tr>
-    </thead>
-    <tbody>
+<div id="attachment-list">
+    <ul class="list">
         @for(att <- attachments) {
-            <tr>
-                <td>
-                    <a href="@att.url">@att.name.getOrElse("Unknown")</a>
-                </td>
-
-                <td>
-                @if(att.isImage) {
-                    <a href="@att.url">
-                        <img class="image-preview" src="@att.url"/>
-                    </a>
-                } else {
-                    <span>-</span>
-                }
-                </td>
-            </tr>
+            <li>
+                <a href="@att.url">@att.name.getOrElse("Unknown")</a>
+            </li>
         }
-    </tbody>
-</table>*@
+    </ul>
 
-@if(attachments.isEmpty) {
-    <p>None</p>
-}
+    @if(attachments.isEmpty) {
+        <p>None</p>
+    }
+</div>

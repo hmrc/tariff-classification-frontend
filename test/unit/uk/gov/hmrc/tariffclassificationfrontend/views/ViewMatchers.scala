@@ -19,6 +19,7 @@ package uk.gov.hmrc.tariffclassificationfrontend.views
 import org.scalatest._
 import matchers._
 import org.jsoup.nodes.{Document, Element}
+import org.jsoup.select.Elements
 
 object ViewMatchers {
 
@@ -42,6 +43,28 @@ object ViewMatchers {
     }
   }
 
+  class ElementHasAttributeMatcher(key: String, value: String) extends Matcher[Element] {
+    override def apply(left: Element): MatchResult = {
+      MatchResult(
+        left.attr(key) == value,
+        s"Element attribute {$key} had value {${left.attr(key)}}, expected {$value}",
+        s"Element attribute {$key} had value {$value}"
+      )
+    }
+  }
+
+  class ElementsHasSizeMatcher(size: Int) extends Matcher[Elements] {
+    override def apply(left: Elements): MatchResult = {
+      MatchResult(
+        left.size() == size,
+        s"Elements had size {${left.size()}}, expected {$size}",
+        s"Elements had size {$size}"
+      )
+    }
+  }
+
   def containElementWithID(id: String) = new ContainElementWithIDMatcher(id)
   def containText(text: String) = new ElementContainsTextMatcher(text)
+  def haveSize(size: Int) = new ElementsHasSizeMatcher(size)
+  def haveAttribute(key: String, value: String)  = new ElementHasAttributeMatcher(key, value)
 }

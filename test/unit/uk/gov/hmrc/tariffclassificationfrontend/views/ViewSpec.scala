@@ -26,7 +26,7 @@ import play.twirl.api.Html
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 
-class ViewSpec extends UnitSpec with GuiceOneAppPerSuite {
+abstract class ViewSpec extends UnitSpec with GuiceOneAppPerSuite {
 
   private def injector = app.injector
 
