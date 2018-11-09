@@ -15,10 +15,11 @@
  *@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.models.Case
+@import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus
 @(c: Case)
 
-@if(c.status == "NEW") {
-    <a class="button" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.ReleaseCaseController.releaseCase(c.reference)">
+@if(c.status == CaseStatus.NEW.toString) {
+    <a id="release-case-button" class="button" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.ReleaseCaseController.releaseCase(c.reference)">
         Release Case
     </a>
 }
