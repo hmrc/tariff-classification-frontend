@@ -37,12 +37,12 @@ class RulingController @Inject()(casesService: CasesService,
                                  val messagesApi: MessagesApi,
                                  implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
-  val decisionForm: Form[DecisionFormData] = DecisionForm.form
+  private val decisionForm: Form[DecisionFormData] = DecisionForm.form
 
-  val menuTitle = "ruling"
+  private val menuTitle = "ruling"
 
   def editRulingDetails(reference: String): Action[AnyContent] = AuthenticatedAction.async { implicit request =>
-    getCaseAndRenderView(reference, "ruling", c => {
+    getCaseAndRenderView(reference, menuTitle, c => {
       val formData = mapper.caseToDecisionFormData(c)
       val df = decisionForm.fill(formData)
 
@@ -53,10 +53,10 @@ class RulingController @Inject()(casesService: CasesService,
   def updateRulingDetails(reference: String): Action[AnyContent] = AuthenticatedAction.async { implicit request =>
     decisionForm.bindFromRequest.fold(
       errorForm =>
-        getCaseAndRenderView(reference, "ruling", c => Future.successful(views.html.partials.ruling_details_edit(c, errorForm))),
+        getCaseAndRenderView(reference, menuTitle, c => Future.successful(views.html.partials.ruling_details_edit(c, errorForm))),
 
       validForm =>
-        getCaseAndRenderView(reference, "ruling", c => {
+        getCaseAndRenderView(reference, menuTitle, c => {
           casesService.updateCase(mapper.mergeFormIntoCase(c, validForm))
             .map(update => views.html.partials.ruling_details(update))
         })
