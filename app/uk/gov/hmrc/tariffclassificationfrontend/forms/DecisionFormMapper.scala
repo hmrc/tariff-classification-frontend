@@ -21,7 +21,6 @@ import java.time.ZonedDateTime
 import javax.inject.Singleton
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Decision}
 
-
 @Singleton
 class DecisionFormMapper {
 
@@ -40,17 +39,16 @@ class DecisionFormMapper {
 
   def caseToDecisionFormData(c: Case): DecisionFormData = {
 
-    val form = c.decision map {
-      case d: Decision =>
-        DecisionFormData(
-          d.bindingCommodityCode,
-          d.goodsDescription,
-          d.methodSearch.getOrElse(""),
-          d.justification,
-          d.methodCommercialDenomination.getOrElse(""),
-          d.methodExclusion.getOrElse(""),
-          Seq.empty // TODO : So far this field is only used to read from the FE
-        )
+    val form = c.decision map { d: Decision =>
+      DecisionFormData(
+        d.bindingCommodityCode,
+        d.goodsDescription,
+        d.methodSearch.getOrElse(""),
+        d.justification,
+        d.methodCommercialDenomination.getOrElse(""),
+        d.methodExclusion.getOrElse(""),
+        Seq.empty // TODO : So far this field is only used to read from the FE
+      )
     }
 
     form.getOrElse(DecisionFormData())
