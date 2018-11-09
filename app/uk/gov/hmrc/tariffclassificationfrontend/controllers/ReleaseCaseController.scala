@@ -20,7 +20,7 @@ import javax.inject.{Inject, Singleton}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
-import play.twirl.api.Html
+import play.twirl.api.{Html, HtmlFormat}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.ReleaseCaseForm
@@ -40,18 +40,22 @@ class ReleaseCaseController @Inject()(casesService: CasesService,
   val releaseCaseForm: Form[ReleaseCaseForm] = ReleaseCaseForm.form
 
   def releaseCase(reference: String): Action[AnyContent] = AuthenticatedAction.async { implicit request =>
-    getCaseAndRenderView(reference, views.html.release_case(_, releaseCaseForm, queueService.getNonGateway))
+    getCaseAndRenderView(reference, c => Future.successful(views.html.release_case(c, releaseCaseForm, queueService.getNonGateway)))
   }
 
   def releaseCaseToQueue(reference: String): Action[AnyContent] = AuthenticatedAction.async { implicit request =>
-
     def onInvalidForm(formWithErrors: Form[ReleaseCaseForm]): Future[Result] = {
-      getCaseAndRenderView(reference, views.html.release_case(_, formWithErrors, queueService.getNonGateway))
+      getCaseAndRenderView(reference, c => Future.successful(views.html.release_case(c, formWithErrors, queueService.getNonGateway)))
     }
 
     def onValidForm(validForm: ReleaseCaseForm): Future[Result] = {
       queueService.getOneBySlug(validForm.queue) match {
-        case Some(q: Queue) => releaseCaseOntoQueue(reference, q)
+        case Some(q: Queue) =>
+          getCaseAndRenderView(reference, c => {
+            casesService.releaseCase(c, q).map {
+              updatedCase => views.html.confirm_release_case(updatedCase, q)
+            }
+          })
         case _ => Future.successful(Ok(views.html.resource_not_found(s"Queue ${validForm.queue}")))
       }
     }
@@ -60,25 +64,13 @@ class ReleaseCaseController @Inject()(casesService: CasesService,
   }
 
   // TODO: case statuses need to be enumerated in the model
-  private def releaseCaseOntoQueue(reference: String, queue: Queue)(implicit request: Request[_]): Future[Result] = {
+
+  private def getCaseAndRenderView(reference: String, toHtml: Case => Future[HtmlFormat.Appendable])(implicit request: Request[_]): Future[Result] = {
     casesService.getOne(reference).flatMap {
       case Some(c: Case) if c.status == "NEW" =>
-        casesService.releaseCase(c, queue).map {
-          updatedCase => Ok(views.html.confirm_release_case(updatedCase, queue))
-        }
+        toHtml(c).map(html => Ok(html))
       case Some(_) => Future.successful(Redirect(routes.CaseController.applicationDetails(reference)))
       case _ => Future.successful(Ok(views.html.case_not_found(reference)))
     }
   }
-
-  private def getCaseAndRenderView(reference: String, toHtml: Case => Html)(implicit request: Request[_]): Future[Result] = {
-    casesService.getOne(reference).map {
-      case Some(c: Case) if c.status == "NEW" => Ok(toHtml(c))
-      case Some(_) => Redirect(routes.CaseController.applicationDetails(reference))
-      case _ => Ok(views.html.case_not_found(reference))
-    }
-  }
-
-  // TODO: the methods `releaseCaseOntoQueue` and `getCaseAndRender` have similar code.
-  // For the DRY principle, we should not have this code repetition
 }

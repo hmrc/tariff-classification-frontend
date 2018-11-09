@@ -97,7 +97,7 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with GuiceOneAppP
       given(queueService.getOneBySlug("queue")).willReturn(Some(queue))
       given(casesService.releaseCase(refEq(caseWithStatusNEW), any[Queue])(any[HeaderCarrier])).willReturn(Future.successful(caseWithStatusOPEN))
 
-      val result = controller.releaseCaseToQueue("reference")(newFakePUTRequestWithCSRF("queue"))
+      val result = controller.releaseCaseToQueue("reference")(newFakePOSTRequestWithCSRF("queue"))
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
@@ -107,9 +107,10 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with GuiceOneAppP
     "redirect back to case on Form Error" in {
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(caseWithStatusNEW)))
       given(queueService.getOneBySlug("queue")).willReturn(Some(queue))
+      given(queueService.getNonGateway).willReturn(Seq.empty)
       given(casesService.releaseCase(refEq(caseWithStatusNEW), any[Queue])(any[HeaderCarrier])).willReturn(Future.successful(caseWithStatusOPEN))
 
-      val result = controller.releaseCaseToQueue("reference")(newInvalidFakePUTRequestWithCSRF())
+      val result = controller.releaseCaseToQueue("reference")(newInvalidFakePOSTRequestWithCSRF())
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
@@ -120,7 +121,7 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with GuiceOneAppP
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(caseWithStatusOPEN)))
       given(queueService.getOneBySlug("queue")).willReturn(Some(queue))
 
-      val result = controller.releaseCaseToQueue("reference")(newFakePUTRequestWithCSRF("queue"))
+      val result = controller.releaseCaseToQueue("reference")(newFakePOSTRequestWithCSRF("queue"))
       status(result) shouldBe Status.SEE_OTHER
       contentType(result) shouldBe None
       charset(result) shouldBe None
@@ -131,7 +132,7 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with GuiceOneAppP
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(None))
       given(queueService.getOneBySlug("queue")).willReturn(Some(queue))
 
-      val result = controller.releaseCaseToQueue("reference")(newFakePUTRequestWithCSRF("queue"))
+      val result = controller.releaseCaseToQueue("reference")(newFakePOSTRequestWithCSRF("queue"))
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
@@ -142,7 +143,7 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with GuiceOneAppP
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(caseWithStatusNEW)))
       given(queueService.getOneBySlug("queue")).willReturn(None)
 
-      val result = controller.releaseCaseToQueue("reference")(newFakePUTRequestWithCSRF("queue"))
+      val result = controller.releaseCaseToQueue("reference")(newFakePOSTRequestWithCSRF("queue"))
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
@@ -157,13 +158,13 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with GuiceOneAppP
     FakeRequest("GET", "/", FakeHeaders(), AnyContentAsEmpty, tags = csrfTags)
   }
 
-  private def newFakePUTRequestWithCSRF(queue: String): FakeRequest[AnyContentAsFormUrlEncoded] = {
+  private def newFakePOSTRequestWithCSRF(queue: String): FakeRequest[AnyContentAsFormUrlEncoded] = {
     val tokenProvider: TokenProvider = app.injector.instanceOf[TokenProvider]
     val csrfTags = Map(Token.NameRequestTag -> "csrfToken", Token.RequestTag -> tokenProvider.generateToken)
     FakeRequest("POST", "/", FakeHeaders(), AnyContentAsFormUrlEncoded, tags = csrfTags).withFormUrlEncodedBody("queue" -> queue)
   }
 
-  private def newInvalidFakePUTRequestWithCSRF(): FakeRequest[AnyContentAsFormUrlEncoded] = {
+  private def newInvalidFakePOSTRequestWithCSRF(): FakeRequest[AnyContentAsFormUrlEncoded] = {
     val tokenProvider: TokenProvider = app.injector.instanceOf[TokenProvider]
     val csrfTags = Map(Token.NameRequestTag -> "csrfToken", Token.RequestTag -> tokenProvider.generateToken)
     FakeRequest("POST", "/", FakeHeaders(), AnyContentAsFormUrlEncoded, tags = csrfTags).withFormUrlEncodedBody()
