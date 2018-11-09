@@ -18,9 +18,10 @@ package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito._
+import org.mockito.Mockito
 import org.mockito.Mockito.{never, verify}
 import org.scalatest.mockito.MockitoSugar
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.{BeforeAndAfterEach, Matchers, WordSpec}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status
 import play.api.i18n.{DefaultLangs, DefaultMessagesApi}
@@ -38,7 +39,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.utils.oCase
 
 import scala.concurrent.Future
 
-class RulingControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite with MockitoSugar {
+class RulingControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite with MockitoSugar with BeforeAndAfterEach {
 
   private val env = Environment.simple()
   private val configuration = Configuration.load(env)
@@ -50,6 +51,10 @@ class RulingControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSui
   private implicit val hc = HeaderCarrier()
 
   private val controller = new RulingController(casesService, mapper, messageApi, appConfig)
+
+  override protected def beforeEach(): Unit = {
+    Mockito.reset(casesService)
+  }
 
   "Edit Ruling" should {
     val caseWithStatusNEW = oCase.btiCaseExample.copy(status = "NEW")
