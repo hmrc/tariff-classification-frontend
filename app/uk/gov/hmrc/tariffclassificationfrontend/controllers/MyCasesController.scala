@@ -21,6 +21,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
+import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, QueuesService}
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
@@ -33,7 +34,7 @@ class MyCasesController @Inject()(casesService: CasesService,
                                   implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
   def myCases(): Action[AnyContent] = AuthenticatedAction.async { implicit request =>
-    casesService.getCasesByAssignee(request.operator.id).map { cases =>
+    casesService.getCasesByAssignee(request.operator.id).map { cases: Seq[Case] =>
       Ok(views.html.my_cases(queuesService.getAll, cases))
     }
   }

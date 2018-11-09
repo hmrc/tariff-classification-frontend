@@ -18,9 +18,7 @@ package uk.gov.hmrc.tariffclassificationfrontend.forms
 
 import play.api.data.Forms._
 import play.api.data.validation._
-import play.api.data.{Form, Mapping}
-
-import scala.util.matching.Regex
+import play.api.data.Form
 
 case class DecisionFormData(bindingCommodityCode: String = "",
                             goodsDescription: String = "",
@@ -28,14 +26,13 @@ case class DecisionFormData(bindingCommodityCode: String = "",
                             justification: String = "",
                             methodCommercialDenomination: String = "",
                             methodExclusion: String = "",
-                            attachments: Seq[String] = Seq.empty) {
-}
+                            attachments: Seq[String] = Seq.empty)
 
 object DecisionForm {
 
   val form = Form(
     mapping(
-      "bindingCommodityCode" -> FormConstraints.verifyCommodityCode,
+      "bindingCommodityCode" -> text.verifying(FormConstraints.commodityCodeConstraint),
       "goodsDescription" -> text,
       "methodSearch" -> text,
       "justification" -> text,
@@ -48,29 +45,13 @@ object DecisionForm {
 
 object FormConstraints {
 
-  //  Commodity code must be all numeric and contain between 10 and 22 digits
+  private val commodityCodeRegex = "[0-9]{6,22}"
+  private val commodityCodeError = "Format must be empty or numeric between 6 and 22 digits"
 
-  private val commodityCodeRegex = "[0-9]{6,22}".r
-  private val commodityCodeError = "Format must be numeric between 6 and 22 digits"
-  val verifyCommodityCode: Mapping[String] = text.verifying(isEmptyOrMatches(commodityCodeRegex, commodityCodeError))
-
-  def isEmptyOrMatches(regex: Regex, errorKey: String): Constraint[String] = {
-    Constraint { str: String =>
-        str match {
-          case _ if str.isEmpty => Valid
-          case regex() => Valid
-          case _ => Invalid(errorKey, regex)
-        }
-    }
-  }
-
-  def regexp(regex: Regex, errorKey: String): Constraint[String] =
-    Constraint {
-      str: String =>
-        str match {
-          case regex() => Valid
-          case _ => Invalid(errorKey)
-        }
-    }
+  val commodityCodeConstraint: Constraint[String] = Constraint("constraints.commoditycode")({
+    case s: String if s.isEmpty => Valid
+    case s: String if s.matches(commodityCodeRegex) => Valid
+    case _: String => Invalid(commodityCodeError)
+  })
 
 }

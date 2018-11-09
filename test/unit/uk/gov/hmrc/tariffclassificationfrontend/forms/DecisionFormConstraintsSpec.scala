@@ -39,10 +39,10 @@ class DecisionFormConstraintsSpec extends UnitSpec {
     }
 
     "invalid numeric on binding commodity code return message error " in {
-      val errors = decisionForm.bind(commodityCodeJsValue("123"))
+      val errors = decisionForm.bind(commodityCodeJsValue("12345"))
         .errors(bindingCommodityCode)
 
-      errors.map(_.message) should contain only "Format must be numeric between 6 and 22 digits"
+      errors.map(_.message) should contain only "Format must be empty or numeric between 6 and 22 digits"
     }
 
     def commodityCodeJsValue(value: String): JsValue = {

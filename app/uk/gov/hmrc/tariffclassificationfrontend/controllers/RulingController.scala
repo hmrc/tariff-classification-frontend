@@ -57,15 +57,12 @@ class RulingController @Inject()(casesService: CasesService,
 
       validForm =>
         getCaseAndRenderView(reference, menuTitle, c => {
-          casesService.updateCase(mapper.mergeFormIntoCase(c, validForm))
-            .map(update => views.html.partials.ruling_details(update))
+          casesService.updateCase(mapper.mergeFormIntoCase(c, validForm)).map(views.html.partials.ruling_details(_))
         })
     )
   }
 
-  private def getCaseAndRenderView(reference: String,
-                                   page: String,
-                                   toHtml: Case => Future[HtmlFormat.Appendable])
+  private def getCaseAndRenderView(reference: String, page: String, toHtml: Case => Future[HtmlFormat.Appendable])
                                   (implicit request: Request[_]): Future[Result] = {
     casesService.getOne(reference).flatMap {
       case Some(c: Case) if c.status == CaseStatus.OPEN => toHtml(c).map(html => Ok(views.html.case_details(c, page, html)))
@@ -73,4 +70,5 @@ class RulingController @Inject()(casesService: CasesService,
       case _ => Future.successful(Ok(views.html.case_not_found(reference)))
     }
   }
+
 }

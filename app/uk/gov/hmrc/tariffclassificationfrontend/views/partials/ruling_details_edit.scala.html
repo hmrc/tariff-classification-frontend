@@ -117,9 +117,7 @@
                             <div class="multiple-choice">
                                 <input id="attachments[]" name="attachments[]" type="checkbox" value="@att.url" @if(att.public){checked="checked"}/>
                                 <label for="attachments[]">
-                                    <a href="@att.url" target="_blank">
-                                        @att.name.getOrElse("Unknown")
-                                    </a>
+                                    <a href="@att.url" target="_blank">@att.name.getOrElse("Unknown")</a>
                                 </label>
                             </div>
                         }

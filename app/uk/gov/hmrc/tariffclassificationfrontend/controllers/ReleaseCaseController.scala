@@ -58,13 +58,13 @@ class ReleaseCaseController @Inject()(casesService: CasesService,
     releaseCaseForm.bindFromRequest.fold(onInvalidForm, onValidForm)
   }
 
-  // TODO: case statuses need to be enumerated in the model
-
-  private def getCaseAndRenderView(reference: String, toHtml: Case => Future[HtmlFormat.Appendable])(implicit request: Request[_]): Future[Result] = {
+  private def getCaseAndRenderView(reference: String, toHtml: Case => Future[HtmlFormat.Appendable])
+                                  (implicit request: Request[_]): Future[Result] = {
     casesService.getOne(reference).flatMap {
       case Some(c: Case) if c.status == CaseStatus.NEW => toHtml(c).map(html => Ok(html))
       case Some(_) => Future.successful(Redirect(routes.CaseController.applicationDetails(reference)))
       case _ => Future.successful(Ok(views.html.case_not_found(reference)))
     }
   }
+
 }
