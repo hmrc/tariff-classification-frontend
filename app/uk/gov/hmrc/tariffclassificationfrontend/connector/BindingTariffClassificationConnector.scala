@@ -54,7 +54,6 @@ class BindingTariffClassificationConnector @Inject()(configuration: AppConfig, c
     client.PUT[StatusOfTheCase, Case](url, body = StatusOfTheCase(newStatus))
   }
 
-  // TODO: DIT-246 - we should not have this method, but instead have a PUT /cases/:reference/queueId for updating the `queueId` only
   def updateCase(c: Case)(implicit hc: HeaderCarrier): Future[Case] = {
     val url = s"${configuration.bindingTariffClassificationUrl}/cases/${c.reference}"
     client.PUT[Case, Case](url, body = c)

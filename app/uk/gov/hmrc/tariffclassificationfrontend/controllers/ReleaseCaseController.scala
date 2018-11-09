@@ -50,12 +50,7 @@ class ReleaseCaseController @Inject()(casesService: CasesService,
 
     def onValidForm(validForm: ReleaseCaseForm): Future[Result] = {
       queueService.getOneBySlug(validForm.queue) match {
-        case Some(q: Queue) =>
-          getCaseAndRenderView(reference, c => {
-            casesService.releaseCase(c, q).map {
-              updatedCase => views.html.confirm_release_case(updatedCase, q)
-            }
-          })
+        case Some(q: Queue) => getCaseAndRenderView(reference, casesService.releaseCase(_, q).map (views.html.confirm_release_case(_, q)))
         case _ => Future.successful(Ok(views.html.resource_not_found(s"Queue ${validForm.queue}")))
       }
     }
