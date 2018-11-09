@@ -18,6 +18,7 @@ package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito._
+import org.mockito.Mockito.{never, verify}
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{Matchers, WordSpec}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
@@ -30,7 +31,7 @@ import play.api.{Configuration, Environment}
 import play.filters.csrf.CSRF.{Token, TokenProvider}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionFormMapper
+import uk.gov.hmrc.tariffclassificationfrontend.forms.{DecisionFormData, DecisionFormMapper}
 import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.utils.oCase
@@ -117,6 +118,7 @@ class RulingControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSui
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(caseWithStatusOPEN)))
 
       val result = controller.updateRulingDetails("reference")(newFakePOSTRequestWithCSRF())
+      verify(casesService, never()).updateCase(any[Case])(any[HeaderCarrier])
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
@@ -125,8 +127,10 @@ class RulingControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSui
 
     "redirect to Ruling for non OPEN Statuses" in {
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(caseWithStatusNEW)))
+      given(mapper.mergeFormIntoCase(any[Case], any[DecisionFormData])).willReturn(caseWithStatusNEW)
 
       val result = controller.updateRulingDetails("reference")(aValidForm)
+      verify(casesService, never()).updateCase(any[Case])(any[HeaderCarrier])
       status(result) shouldBe Status.SEE_OTHER
       contentType(result) shouldBe None
       charset(result) shouldBe None
