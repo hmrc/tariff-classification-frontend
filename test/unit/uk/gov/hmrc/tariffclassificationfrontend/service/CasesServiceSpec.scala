@@ -16,7 +16,9 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.service
 
+import org.mockito.ArgumentMatchers._
 import org.mockito.BDDMockito._
+import org.mockito.{ArgumentMatchers, Matchers}
 import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
@@ -79,7 +81,17 @@ class CasesServiceSpec extends UnitSpec with MockitoSugar {
     "update case queue_id and status to NEW" in {
       await(service.releaseCase(originalCase, queue)) shouldBe caseWithNewQueueId
     }
+  }
 
+  "Update Case" should {
+    val oldCase = mock[Case]
+    val updatedCase = mock[Case]
+
+    "delegate to connector" in {
+      given(connector.updateCase(refEq(oldCase))(any[HeaderCarrier])) willReturn Future.successful(updatedCase)
+
+      await(service.updateCase(oldCase)) shouldBe updatedCase
+    }
   }
 
 }
