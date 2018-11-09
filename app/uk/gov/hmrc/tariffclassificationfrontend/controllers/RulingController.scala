@@ -20,7 +20,7 @@ import javax.inject.{Inject, Singleton}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Request, Result}
-import play.twirl.api.Html
+import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.{DecisionForm, DecisionFormData, DecisionFormMapper}
@@ -42,39 +42,36 @@ class RulingController @Inject()(casesService: CasesService,
   val menuTitle = "ruling"
 
   def editRulingDetails(reference: String): Action[AnyContent] = AuthenticatedAction.async { implicit request =>
-    casesService.getOne(reference).map {
-      case Some(c: Case) if c.status == "OPEN" =>
-        val formData = mapper.caseToDecisionFormData(c)
-        val df = decisionForm.fill(formData)
+    getCaseAndRenderView(reference, "ruling", c => {
+      val formData = mapper.caseToDecisionFormData(c)
+      val df = decisionForm.fill(formData)
 
-        Ok(views.html.case_details(c, "ruling", views.html.partials.ruling_details_edit(c, df)))
-      case Some(_) => Redirect(routes.CaseController.rulingDetails(reference))
-      case _ => Ok(views.html.case_not_found(reference))
-    }
+      Future.successful(views.html.case_details(c, "ruling", views.html.partials.ruling_details_edit(c, df)))
+    })
   }
 
   def updateRulingDetails(reference: String): Action[AnyContent] = AuthenticatedAction.async { implicit request =>
     decisionForm.bindFromRequest.fold(
       errorForm =>
-        getCaseAndRenderView(reference, "ruling", views.html.partials.ruling_details_edit(_, errorForm)),
+        getCaseAndRenderView(reference, "ruling", c => Future.successful(views.html.partials.ruling_details_edit(c, errorForm))),
 
       validForm => {
-        casesService.getOne(reference).flatMap {
-          case Some(c: Case) if c.status == "OPEN" =>
-            casesService.updateCase(mapper.mergeFormIntoCase(c, validForm))
-              .map(update => Ok(views.html.case_details(update, "ruling", views.html.partials.ruling_details(update))))
-          case Some(_) => Future.successful(Redirect(routes.CaseController.rulingDetails(reference)))
-          case _ => Future.successful(Ok(views.html.case_not_found(reference)))
-        }
+        getCaseAndRenderView(reference, "ruling", c => {
+          casesService.updateCase(mapper.mergeFormIntoCase(c, validForm))
+            .map(update => views.html.case_details(update, "ruling", views.html.partials.ruling_details(update)))
+        })
       }
     )
   }
 
-  private def getCaseAndRenderView(reference: String, page: String, toHtml: Case => Html)(implicit request: Request[_]): Future[Result] = {
-    casesService.getOne(reference).map {
-      case Some(c: Case) if c.status == "OPEN" => Ok(views.html.case_details(c, page, toHtml(c)))
-      case Some(_) => Redirect(routes.CaseController.rulingDetails(reference))
-      case _ => Ok(views.html.case_not_found(reference))
+  private def getCaseAndRenderView(reference: String,
+                                   page: String,
+                                   toHtml: Case => Future[HtmlFormat.Appendable]
+                                  )(implicit request: Request[_]): Future[Result] = {
+    casesService.getOne(reference).flatMap {
+      case Some(c: Case) if c.status == "OPEN" => toHtml(c).map(html => Ok(views.html.case_details(c, page, html)))
+      case Some(_) => Future.successful(Redirect(routes.CaseController.rulingDetails(reference)))
+      case _ => Future.successful(Ok(views.html.case_not_found(reference)))
     }
   }
 }
