@@ -18,10 +18,12 @@ package uk.gov.hmrc.tariffclassificationfrontend.models
 
 import java.time.{Clock, Duration, ZonedDateTime}
 
+import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.CaseStatus
+
 case class Case
 (
   reference: String,
-  status: String,
+  status: CaseStatus,
   createdDate: ZonedDateTime,
   adjustedCreateDate: ZonedDateTime,
   closedDate: Option[ZonedDateTime],

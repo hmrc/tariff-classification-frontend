@@ -189,11 +189,11 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
         .withRequestBody(equalToJson(json))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
-          .withBody(Json.toJson(validCase.copy(status = "CANCELLED")).toString)
+          .withBody(Json.toJson(validCase.copy(status = CaseStatus.CANCELLED)).toString)
         )
       )
 
-      await(connector.updateCaseStatus(ref, newStatus)) shouldBe validCase.copy(status = newStatus.toString)
+      await(connector.updateCaseStatus(ref, newStatus)) shouldBe validCase.copy(status = newStatus)
     }
 
     "update with an unknown case reference" in {
