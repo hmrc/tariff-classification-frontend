@@ -16,8 +16,6 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
-import cats.data.OptionT
-import cats.implicits._
 import javax.inject.{Inject, Singleton}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -35,16 +33,15 @@ import scala.concurrent.Future
 
 @Singleton
 class RulingController @Inject()(casesService: CasesService,
-                                  mapper: FormMapper,
-                                  val messagesApi: MessagesApi,
-                                  implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
+                                 mapper: FormMapper,
+                                 val messagesApi: MessagesApi,
+                                 implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
   val decisionForm: Form[DecisionFormData] = DecisionForm.form
 
   val menuTitle = "ruling"
 
   def editRulingDetails(reference: String): Action[AnyContent] = AuthenticatedAction.async { implicit request =>
-
     casesService.getOne(reference).map {
       case Some(c: Case) if c.status == "OPEN" =>
         val formData = mapper.caseToDecisionFormData(c)
@@ -57,19 +54,16 @@ class RulingController @Inject()(casesService: CasesService,
   }
 
   def updateRulingDetails(reference: String): Action[AnyContent] = AuthenticatedAction.async { implicit request =>
-
     decisionForm.bindFromRequest.fold(
       errorForm =>
-        getCaseAndRenderView(reference, "ruling", views.html.partials.ruling_details_edit(_, errorForm))
-      ,
-      validForm => {
-        val ot: OptionT[Future, Case] = for {
-          selectCase <- OptionT(casesService.getOne(reference))
-          updatedCase <- OptionT.liftF(casesService.updateCase(mapper.formToCase(selectCase, validForm)))
-        } yield updatedCase
+        getCaseAndRenderView(reference, "ruling", views.html.partials.ruling_details_edit(_, errorForm)),
 
-        ot.value.flatMap {
-          case Some(c: Case) => Future.successful(Ok(views.html.case_details(c, "ruling", views.html.partials.ruling_details(c))))
+      validForm => {
+        casesService.getOne(reference).flatMap {
+          case Some(c: Case) if c.status == "OPEN" =>
+            casesService.updateCase(mapper.formToCase(c, validForm))
+              .map(update => Ok(views.html.case_details(update, "ruling", views.html.partials.ruling_details(update))))
+          case Some(_) => Future.successful(Redirect(routes.CaseController.rulingDetails(reference)))
           case _ => Future.successful(Ok(views.html.case_not_found(reference)))
         }
       }
