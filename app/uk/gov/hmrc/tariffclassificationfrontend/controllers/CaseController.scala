@@ -16,12 +16,14 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
+
 import javax.inject.{Inject, Singleton}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
+import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionFormMapper
 import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
@@ -31,24 +33,26 @@ import scala.concurrent.Future
 
 @Singleton
 class CaseController @Inject()(casesService: CasesService,
+                               mapper: DecisionFormMapper,
                                val messagesApi: MessagesApi,
                                implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
   def summary(reference: String): Action[AnyContent] = AuthenticatedAction.async { implicit request =>
-    getCaseAndRender(reference, views.html.case_summary(_))
+    getCaseAndRenderView(reference, "summary", views.html.partials.case_summary(_))
   }
 
   def applicationDetails(reference: String): Action[AnyContent] = AuthenticatedAction.async { implicit request =>
-    getCaseAndRender(reference, views.html.application_details(_))
+    getCaseAndRenderView(reference, "application", views.html.partials.application_details(_))
   }
 
   def rulingDetails(reference: String): Action[AnyContent] = AuthenticatedAction.async { implicit request =>
-    getCaseAndRender(reference, views.html.ruling_details(_))
+    getCaseAndRenderView(reference, "ruling", views.html.partials.ruling_details(_))
   }
 
-  private def getCaseAndRender(reference: String, toHtml: Case => Html)(implicit request: Request[_]): Future[Result] = {
+  private def getCaseAndRenderView(reference: String, page: String, toHtml: Case => Html)
+                                  (implicit request: Request[_]): Future[Result] = {
     casesService.getOne(reference).map {
-      case Some(c: Case) => Ok(toHtml(c))
+      case Some(c: Case) => Ok(views.html.case_details(c, page, toHtml(c)))
       case _ => Ok(views.html.case_not_found(reference))
     }
   }

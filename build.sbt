@@ -20,6 +20,7 @@ lazy val microservice = (project in file("."))
     name := appName,
     scalaVersion := "2.11.11",
     targetJvm := "jvm-1.8",
+    scalacOptions += "-Ypartial-unification",
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
     evictionWarningOptions in update := EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
     parallelExecution in Test := false,

@@ -1,0 +1,135 @@
+@*
+ * Copyright 2018 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
+@import uk.gov.hmrc.tariffclassificationfrontend.models.{BTIApplication, Case, Decision}
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{attachments, case_nav}
+@import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus
+@(c: Case)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+
+@defining(c.application.asBTI) { btiApp: BTIApplication =>
+
+    <div id="ruling_table">
+        <h3 class="heading-medium mt-0">@messages("case.menu.ruling")</h3>
+    </div>
+
+    <h5 class="heading-small">@messages("case.menu.application")</h5>
+
+    <hr class="mt-0"/>
+
+    <!-- TODO: DIT-289 - the following 2 rows contain data related to the application data, we should use a HTML arrow that hides them by default (see prototype) -->
+
+    <div class="grid-row">
+        <div id="application_envisagedCommodityCode" class="column-one-third">
+            <p>@messages("case.application.suggested-commodity-code")</p>
+        </div>
+        <div class="column-two-thirds">
+            <p id="envisagedCommodityCodeValue">@{btiApp.envisagedCommodityCode.getOrElse("")}</p>
+        </div>
+    </div>
+
+
+    <div class="grid-row">
+        <div id="application_goodDescription" class="column-one-third">
+            <p>@messages("case.application.suggested-goods-description")</p>
+        </div>
+        <div class="column-two-thirds">
+            <p id="application_goodDescriptionValue">@{btiApp.goodDescription}</p>
+        </div>
+    </div>
+
+
+    <div class="grid-row">
+        <div class="column-one-third">
+            <h5 class="heading-small">@messages("case.menu.ruling-details")</h5>
+        </div>
+        @if(c.status == CaseStatus.OPEN) {
+            <div id="ruling_edit_details" class="column-two-thirds text-right mt-1">
+                <a id="ruling_edit" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.RulingController.editRulingDetails(c.reference)">Edit</a>
+            </div>
+        }
+    </div>
+
+    <hr class="mt-0"/>
+
+    @if(c.decision.isDefined) {
+        @defining(c.decision.get) { d: Decision =>
+
+            <div class="grid-row">
+                <div id="ruling_bindingCommodityCode" class="column-one-third">
+                    <p>@messages("case.decision.commodity-code")</p>
+                </div>
+                <div class="column-two-thirds">
+                    <p id="ruling_bindingCommodityCodeValue">@d.bindingCommodityCode</p>
+                </div>
+            </div>
+
+            <div class="grid-row">
+                <div id="ruling_sanitisedGoodDescription" class="column-one-third">
+                    <p>@messages("case.decision.goods-description")</p>
+                </div>
+                <div class="column-two-thirds">
+                    <p id="ruling_sanitisedGoodDescriptionValue">@d.goodsDescription</p>
+                </div>
+            </div>
+
+            <div class="grid-row">
+                <div id="ruling_justification" class="column-one-third">
+                    <p>@messages("case.decision.justification")</p>
+                </div>
+                <div class="column-two-thirds">
+                    <p id="ruling_justificationValue">@d.justification</p>
+                </div>
+            </div>
+
+            <div class="grid-row">
+                <div id="ruling_searches" class="column-one-third">
+                    <p>@messages("case.decision.method-search")</p>
+                </div>
+                <div class="column-two-thirds">
+                    <p id="ruling_searchesValue">@d.methodSearch.getOrElse("")</p>
+                </div>
+            </div>
+
+            <div class="grid-row">
+                <div id="ruling_methodCommercialDenomination" class="column-one-third">
+                    <p>@messages("case.decision.method-commercial-denomination")</p>
+                </div>
+                <div class="column-two-thirds">
+                    <p id="ruling_methodCommercialDenominationValue">@d.methodCommercialDenomination.getOrElse("")</p>
+                </div>
+            </div>
+
+            <div class="grid-row">
+                <div id="ruling_exclusions" class="column-one-third">
+                    <p>@messages("case.decision.method-exclusion")</p>
+                </div>
+                <div class="column-two-thirds">
+                    <p id="ruling_exclusionsValue">@d.methodExclusion.getOrElse("")</p>
+                </div>
+            </div>
+
+            <h3 class="heading-small">@messages("case.decision.attachments")</h3>
+            <hr class="mt-0"/>
+
+            @attachments(attachments = c.attachments.filter(_.public))
+        }
+    } else {
+        <p>@messages("case.decision.empty")</p>
+    }
+}
+

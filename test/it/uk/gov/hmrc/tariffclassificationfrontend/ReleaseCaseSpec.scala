@@ -9,7 +9,8 @@ import play.api.libs.ws.{WSClient, WSResponse}
 import play.api.test.Helpers._
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.tariffclassificationfrontend.connector.WiremockTestServer
-import uk.gov.hmrc.tariffclassificationfrontend.utils.{CaseExamples, CasePayloads}
+import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus
+import uk.gov.hmrc.tariffclassificationfrontend.utils.{CasePayloads, oCase}
 
 class ReleaseCaseSpec extends UnitSpec with WiremockTestServer with MockitoSugar with GuiceOneServerPerSuite {
 
@@ -20,7 +21,7 @@ class ReleaseCaseSpec extends UnitSpec with WiremockTestServer with MockitoSugar
   private val ws = fakeApplication().injector.instanceOf[WSClient]
 
   "Case Release" should {
-    val caseWithStatusNEW = CasePayloads.jsonOf(CaseExamples.btiCaseExample.copy(status = "NEW"))
+    val caseWithStatusNEW = CasePayloads.jsonOf(oCase.btiCaseExample.copy(status = CaseStatus.NEW))
 
 
     "return status 200" in {
@@ -42,8 +43,8 @@ class ReleaseCaseSpec extends UnitSpec with WiremockTestServer with MockitoSugar
 
   // TODO: DIT-246 - fix this test
 //  "Case Release To Queue" should {
-//    val caseWithStatusNEW = CasePayloads.jsonOf(CaseExamples.btiCaseExample.copy(status = "NEW"))
-//    val caseWithStatusOPEN = CasePayloads.jsonOf(CaseExamples.btiCaseExample.copy(status = "OPEN"))
+//    val caseWithStatusNEW = CasePayloads.jsonOf(CaseExamples.btiCaseExample.copy(status = CaseStatus.NEW))
+//    val caseWithStatusOPEN = CasePayloads.jsonOf(CaseExamples.btiCaseExample.copy(status = CaseStatus.OPEN))
 //    val token = fakeApplication().injector.instanceOf[TokenProvider].generateToken
 //
 //    "return status 200" in {

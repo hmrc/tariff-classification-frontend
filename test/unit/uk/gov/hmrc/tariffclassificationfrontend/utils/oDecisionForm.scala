@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,17 +12,28 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
+package uk.gov.hmrc.tariffclassificationfrontend.utils
 
-@(resource: String = "Resource")(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None) {
+import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionFormData
 
-    <h1 class="heading-large">
-        @messages("errors.resource-not-found.title", resource)
-    </h1>
-    <a href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.QueuesController.queue("gateway")">@messages("errors.all.back")</a>
+
+object oDecisionForm {
+
+  val validForm = DecisionFormData(
+    "binding commodity code test",
+    "valid goods Description",
+    "valid method Search",
+    "valid justification",
+    "valid method Commercial Denomination",
+    "valid method Exclusion",
+    List.empty
+  )
+
+  val validFormWithAttachments =
+    DecisionFormData(
+      attachments = Seq("url.to.publish")
+    )
 }

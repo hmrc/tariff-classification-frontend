@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,21 +12,26 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import uk.gov.hmrc.tariffclassificationfrontend.models.Attachment
-@(attachments: Seq[Attachment])
+package uk.gov.hmrc.tariffclassificationfrontend.forms
 
-<div id="attachment-list">
-    <ul class="list">
-        @for(att <- attachments) {
-            <li>
-                <a href="@att.url">@att.name.getOrElse("Unknown")</a>
-            </li>
-        }
-    </ul>
+import play.api.data.validation.{Invalid, Valid}
+import uk.gov.hmrc.play.test.UnitSpec
 
-    @if(attachments.isEmpty) {
-        <p>None</p>
+class ConstraintFunctionsSpec extends UnitSpec {
+
+  "regexp" should {
+
+    "return Valid for an input that matches the expression" in {
+      val result = FormConstraints.regexp("""\w+""".r, "error.invalid")("foo")
+      result shouldBe Valid
     }
-</div>
+
+    "return Invalid for an input that does not match the expression" in {
+      val result = FormConstraints.regexp("""\d+""".r, "error.invalid")("foo")
+      result shouldBe Invalid("error.invalid")
+    }
+  }
+
+}

@@ -34,7 +34,7 @@ class RootSpec extends UnitSpec with WiremockTestServer with MockitoSugar with G
 
       // Then
       response.status shouldBe OK
-      response.body should include("<h1 class=\"heading-large\">My Cases</h1>")
+      response.body should include("<h1 id=\"queue-name\" class=\"heading-large\">My Cases</h1>")
     }
   }
 

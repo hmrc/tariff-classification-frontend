@@ -34,7 +34,7 @@ class QueuesSpec extends UnitSpec with WiremockTestServer with MockitoSugar with
 
       // Then
       response.status shouldBe OK
-      response.body should include("<h1 class=\"heading-large\">My Cases</h1>")
+      response.body should include("<h1 id=\"queue-name\" class=\"heading-large\">My Cases</h1>")
     }
   }
 
@@ -53,7 +53,7 @@ class QueuesSpec extends UnitSpec with WiremockTestServer with MockitoSugar with
 
       // Then
       response.status shouldBe OK
-      response.body should include("<h1 class=\"heading-large\">Gateway Cases</h1>")
+      response.body should include("<h1 id=\"queue-name\" class=\"heading-large\">Gateway Cases</h1>")
     }
   }
 
@@ -72,7 +72,7 @@ class QueuesSpec extends UnitSpec with WiremockTestServer with MockitoSugar with
 
       // Then
       response.status shouldBe OK
-      response.body should include("<h1 class=\"heading-large\">ACT Cases</h1>")
+      response.body should include("<h1 id=\"queue-name\" class=\"heading-large\">ACT Cases</h1>")
     }
   }
 
@@ -91,7 +91,7 @@ class QueuesSpec extends UnitSpec with WiremockTestServer with MockitoSugar with
 
       // Then
       response.status shouldBe OK
-      response.body should include("<h1 class=\"heading-large\">CAP Cases</h1>")
+      response.body should include("<h1 id=\"queue-name\" class=\"heading-large\">CAP Cases</h1>")
     }
   }
 
@@ -110,7 +110,7 @@ class QueuesSpec extends UnitSpec with WiremockTestServer with MockitoSugar with
 
       // Then
       response.status shouldBe OK
-      response.body should include("<h1 class=\"heading-large\">Cars Cases</h1>")
+      response.body should include("<h1 id=\"queue-name\" class=\"heading-large\">Cars Cases</h1>")
     }
   }
 
@@ -129,7 +129,7 @@ class QueuesSpec extends UnitSpec with WiremockTestServer with MockitoSugar with
 
       // Then
       response.status shouldBe OK
-      response.body should include("<h1 class=\"heading-large\">ELM Cases</h1>")
+      response.body should include("<h1 id=\"queue-name\" class=\"heading-large\">ELM Cases</h1>")
     }
   }
 

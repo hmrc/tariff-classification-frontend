@@ -22,8 +22,8 @@ import uk.gov.hmrc.tariffclassificationfrontend.utils.JsonFormatters._
 
 object CasePayloads {
 
-  val btiCase: String = jsonOf(CaseExamples.btiCaseExample)
-  val gatewayCases: String = jsonOf(Seq(CaseExamples.btiCaseExample))
+  val btiCase: String = jsonOf(oCase.btiCaseExample)
+  val gatewayCases: String = jsonOf(Seq(oCase.btiCaseExample))
 
   def jsonOf(obj: Case): String = {
     Json.toJson(obj).toString()

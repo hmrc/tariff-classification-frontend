@@ -18,6 +18,8 @@ package uk.gov.hmrc.tariffclassificationfrontend.models
 
 import java.time.ZonedDateTime
 
+import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.CaseStatus
+
 case class Event
 (
   id: String,
@@ -34,8 +36,8 @@ sealed trait Details {
 
 case class CaseStatusChange
 (
-  from: String,
-  to: String,
+  from: CaseStatus,
+  to: CaseStatus,
   override val comment: Option[String]
 
 ) extends Details {

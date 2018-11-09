@@ -25,11 +25,11 @@ case class Decision
   effectiveEndDate: ZonedDateTime,
   justification: String,
   goodsDescription: String,
-  keywords: Seq[String],
-  methodSearch: Option[String],
-  methodExclusion: Option[String],
-  methodCommercialDenomination: Option[String],
-  appeal: Option[Appeal]
+  keywords: Seq[String] = Seq.empty,
+  methodSearch: Option[String] = None,
+  methodExclusion: Option[String] = None,
+  methodCommercialDenomination: Option[String] = None,
+  appeal: Option[Appeal] = None
 )
 
 case class Appeal
