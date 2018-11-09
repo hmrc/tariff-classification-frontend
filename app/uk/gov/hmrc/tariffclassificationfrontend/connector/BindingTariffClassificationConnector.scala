@@ -22,8 +22,8 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.CaseStatus
-import uk.gov.hmrc.tariffclassificationfrontend.models._
-import uk.gov.hmrc.tariffclassificationfrontend.utils.JsonFormatters.{caseFormat, caseStatusFormat}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Queue, Queues, Status => StatusOfTheCase }
+import uk.gov.hmrc.tariffclassificationfrontend.utils.JsonFormatters.{caseFormat, statusFormat}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -51,7 +51,7 @@ class BindingTariffClassificationConnector @Inject()(configuration: AppConfig, c
 
   def updateCaseStatus(caseReference: String, newStatus: CaseStatus)(implicit hc: HeaderCarrier): Future[Case] = {
     val url = s"${configuration.bindingTariffClassificationUrl}/cases/$caseReference/status"
-    client.PUT[CaseStatus, Case](url, body = newStatus)
+    client.PUT[StatusOfTheCase, Case](url, body = StatusOfTheCase(newStatus))
   }
 
   // TODO: DIT-246 - we should not have this method, but instead have a PUT /cases/:reference/queueId for updating the `queueId` only

@@ -49,7 +49,8 @@ class CaseController @Inject()(casesService: CasesService,
     getCaseAndRenderView(reference, "ruling", views.html.partials.ruling_details(_))
   }
 
-  private def getCaseAndRenderView(reference: String, page: String, toHtml: Case => Html)(implicit request: Request[_]): Future[Result] = {
+  private def getCaseAndRenderView(reference: String, page: String, toHtml: Case => Html)
+                                  (implicit request: Request[_]): Future[Result] = {
     casesService.getOne(reference).map {
       case Some(c: Case) => Ok(views.html.case_details(c, page, toHtml(c)))
       case _ => Ok(views.html.case_not_found(reference))

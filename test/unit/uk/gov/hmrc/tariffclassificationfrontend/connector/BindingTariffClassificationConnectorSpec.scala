@@ -28,13 +28,13 @@ import uk.gov.hmrc.play.bootstrap.audit.DefaultAuditConnector
 import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, Queue}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, Queue, Status}
 import uk.gov.hmrc.tariffclassificationfrontend.utils.{oCase, CasePayloads}
 
 class BindingTariffClassificationConnectorSpec extends UnitSpec
   with WiremockTestServer with MockitoSugar with WithFakeApplication {
 
-  import uk.gov.hmrc.tariffclassificationfrontend.utils.JsonFormatters.{caseFormat, caseStatusFormat}
+  import uk.gov.hmrc.tariffclassificationfrontend.utils.JsonFormatters.{caseFormat, statusFormat}
 
   private val configuration = mock[AppConfig]
 
@@ -183,7 +183,7 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
       val ref = "case-reference"
       val validCase = oCase.btiCaseExample.copy(reference = ref)
       val newStatus = CaseStatus.CANCELLED
-      val json = Json.toJson(newStatus).toString()
+      val json = Json.toJson(Status(newStatus)).toString()
 
       stubFor(put(urlEqualTo(s"/cases/$ref/status"))
         .withRequestBody(equalToJson(json))
@@ -199,7 +199,7 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
     "update with an unknown case reference" in {
       val unknownRef = "unknownRef"
       val newStatus = CaseStatus.CANCELLED
-      val json = Json.toJson(newStatus).toString()
+      val json = Json.toJson(Status(newStatus)).toString()
 
       stubFor(put(urlEqualTo(s"/cases/$unknownRef/status"))
         .withRequestBody(equalToJson(json))

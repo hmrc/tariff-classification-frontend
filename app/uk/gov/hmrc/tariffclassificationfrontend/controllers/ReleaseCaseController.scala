@@ -20,7 +20,7 @@ import javax.inject.{Inject, Singleton}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
-import play.twirl.api.{Html, HtmlFormat}
+import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.ReleaseCaseForm
@@ -67,8 +67,7 @@ class ReleaseCaseController @Inject()(casesService: CasesService,
 
   private def getCaseAndRenderView(reference: String, toHtml: Case => Future[HtmlFormat.Appendable])(implicit request: Request[_]): Future[Result] = {
     casesService.getOne(reference).flatMap {
-      case Some(c: Case) if c.status == "NEW" =>
-        toHtml(c).map(html => Ok(html))
+      case Some(c: Case) if c.status == "NEW" => toHtml(c).map(html => Ok(html))
       case Some(_) => Future.successful(Redirect(routes.CaseController.applicationDetails(reference)))
       case _ => Future.successful(Ok(views.html.case_not_found(reference)))
     }
