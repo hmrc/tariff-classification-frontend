@@ -46,7 +46,7 @@ class RulingController @Inject()(casesService: CasesService,
       val formData = mapper.caseToDecisionFormData(c)
       val df = decisionForm.fill(formData)
 
-      Future.successful(views.html.case_details(c, "ruling", views.html.partials.ruling_details_edit(c, df)))
+      Future.successful(views.html.partials.ruling_details_edit(c, df))
     })
   }
 
@@ -58,7 +58,7 @@ class RulingController @Inject()(casesService: CasesService,
       validForm => {
         getCaseAndRenderView(reference, "ruling", c => {
           casesService.updateCase(mapper.mergeFormIntoCase(c, validForm))
-            .map(update => views.html.case_details(update, "ruling", views.html.partials.ruling_details(update)))
+            .map(update => views.html.partials.ruling_details(update))
         })
       }
     )

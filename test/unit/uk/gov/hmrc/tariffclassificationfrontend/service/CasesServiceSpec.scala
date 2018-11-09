@@ -18,7 +18,6 @@ package uk.gov.hmrc.tariffclassificationfrontend.service
 
 import org.mockito.ArgumentMatchers._
 import org.mockito.BDDMockito._
-import org.mockito.{ArgumentMatchers, Matchers}
 import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
@@ -75,7 +74,7 @@ class CasesServiceSpec extends UnitSpec with MockitoSugar {
     given(originalCase.reference).willReturn(reference)
     given(queue.id).willReturn("queue_id")
     given(caseWithNewStatus.copy(queueId = Some("queue_id"))).willReturn(caseWithNewQueueId)
-    given(connector.updateCaseStatus(reference, CaseStatus("OPEN"))).willReturn(Future.successful(caseWithNewStatus))
+    given(connector.updateCaseStatus(reference, CaseStatus.OPEN)).willReturn(Future.successful(caseWithNewStatus))
     given(connector.updateCase(caseWithNewQueueId)).willReturn(Future.successful(caseWithNewQueueId))
 
     "update case queue_id and status to NEW" in {

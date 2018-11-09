@@ -33,7 +33,7 @@ class CasesService @Inject()(connector: BindingTariffClassificationConnector) {
     // - update status
     // - create case status change event
     // If too complex, we should at least update the event and the event atomically
-    connector.updateCaseStatus(caseReference = c.reference, newStatus = CaseStatus("OPEN")).flatMap { withNewStatus: Case =>
+    connector.updateCaseStatus(caseReference = c.reference, newStatus = CaseStatus.OPEN).flatMap { withNewStatus: Case =>
       connector.updateCase(withNewStatus.copy(queueId = Some(queue.id)))
     }
   }

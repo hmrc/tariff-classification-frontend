@@ -182,7 +182,7 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
     "update valid case" in {
       val ref = "case-reference"
       val validCase = oCase.btiCaseExample.copy(reference = ref)
-      val newStatus = CaseStatus(status = "CANCELLED")
+      val newStatus = CaseStatus.CANCELLED
       val json = Json.toJson(newStatus).toString()
 
       stubFor(put(urlEqualTo(s"/cases/$ref/status"))
@@ -193,12 +193,12 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
         )
       )
 
-      await(connector.updateCaseStatus(ref, newStatus)) shouldBe validCase.copy(status = newStatus.status)
+      await(connector.updateCaseStatus(ref, newStatus)) shouldBe validCase.copy(status = newStatus.toString)
     }
 
     "update with an unknown case reference" in {
       val unknownRef = "unknownRef"
-      val newStatus = CaseStatus(status = "AAAA")
+      val newStatus = CaseStatus.CANCELLED
       val json = Json.toJson(newStatus).toString()
 
       stubFor(put(urlEqualTo(s"/cases/$unknownRef/status"))
