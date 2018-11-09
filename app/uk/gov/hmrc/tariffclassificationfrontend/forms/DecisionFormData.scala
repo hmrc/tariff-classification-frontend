@@ -20,6 +20,8 @@ import play.api.data.Forms._
 import play.api.data.validation._
 import play.api.data.{Form, Mapping}
 
+import scala.util.matching.Regex
+
 case class DecisionFormData(bindingCommodityCode: String = "",
                             goodsDescription: String = "",
                             methodSearch: String = "",
@@ -29,11 +31,11 @@ case class DecisionFormData(bindingCommodityCode: String = "",
                             attachments: Seq[String] = Seq.empty) {
 }
 
-object DecisionForm extends FormConstraints {
+object DecisionForm {
 
   val form = Form(
     mapping(
-      "bindingCommodityCode" -> verifyCommodityCode,
+      "bindingCommodityCode" -> FormConstraints.verifyCommodityCode,
       "goodsDescription" -> text,
       "methodSearch" -> text,
       "justification" -> text,
@@ -44,19 +46,15 @@ object DecisionForm extends FormConstraints {
   )
 }
 
-trait FormConstraints extends ConstraintFunctions {
+object FormConstraints {
 
   //  Commodity code must be all numeric and contain between 10 and 22 digits
 
-  val verifyCommodityCode: Mapping[String] = text.verifying(regexp(commodityCodeRegex, commodityCodeError))
-  private val commodityCodeRegex = """^([0-9]{6,22})|()$"""
+  private val commodityCodeRegex = "^([0-9]{6,22})|()$"
   private val commodityCodeError = "Format must be numeric between 6 and 22 digits"
+  val verifyCommodityCode: Mapping[String] = text.verifying(regexp(commodityCodeRegex, commodityCodeError))
 
-}
-
-trait ConstraintFunctions {
-
-  protected def regexp(regex: String, errorKey: String): Constraint[String] =
+  def regexp(regex: String, errorKey: String): Constraint[String] =
     Constraint {
       case str if str.matches(regex) => Valid
       case _ => Invalid(errorKey, regex)

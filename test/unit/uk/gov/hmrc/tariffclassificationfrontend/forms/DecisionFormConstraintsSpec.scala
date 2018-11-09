@@ -20,7 +20,7 @@ import play.api.data.Form
 import play.api.libs.json.{JsObject, JsString, JsValue}
 import uk.gov.hmrc.play.test.UnitSpec
 
-class DecisionFormConstraintsSpec extends UnitSpec with FormConstraints {
+class DecisionFormConstraintsSpec extends UnitSpec {
 
   val decisionForm: Form[DecisionFormData] = DecisionForm.form
 
