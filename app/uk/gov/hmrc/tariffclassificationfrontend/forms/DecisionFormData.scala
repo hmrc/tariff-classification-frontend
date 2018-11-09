@@ -44,19 +44,22 @@ object DecisionForm extends FormConstraints {
   )
 }
 
-trait FormConstraints {
-
+trait FormConstraints extends ConstraintFunctions {
 
   //  Commodity code must be all numeric and contain between 10 and 22 digits
 
+  val verifyCommodityCode: Mapping[String] = text.verifying(regexp(commodityCodeRegex, commodityCodeError))
   private val commodityCodeRegex = """^([0-9]{6,22})|()$"""
   private val commodityCodeError = "Format must be numeric between 6 and 22 digits"
 
-  val verifyCommodityCode: Mapping[String] = text.verifying(regexp(commodityCodeRegex, commodityCodeError))
+}
+
+trait ConstraintFunctions {
 
   protected def regexp(regex: String, errorKey: String): Constraint[String] =
     Constraint {
       case str if str.matches(regex) => Valid
       case _ => Invalid(errorKey, regex)
     }
+
 }

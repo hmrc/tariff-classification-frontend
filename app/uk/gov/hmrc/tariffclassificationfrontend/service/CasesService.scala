@@ -27,9 +27,8 @@ import scala.concurrent.Future
 @Singleton
 class CasesService @Inject()(connector: BindingTariffClassificationConnector) {
 
-  def releaseCase(c: Case, queue: Queue)(implicit hc : HeaderCarrier): Future[Case] = {
+  def releaseCase(c: Case, queue: Queue)(implicit hc: HeaderCarrier): Future[Case] = {
     // TODO: DIT-246 - with an atomic operation we should:
-    // - update queue
     // - update status
     // - create case status change event
     // If too complex, we should at least update the event and the event atomically
@@ -38,15 +37,15 @@ class CasesService @Inject()(connector: BindingTariffClassificationConnector) {
     }
   }
 
-  def getOne(reference: String)(implicit hc : HeaderCarrier): Future[Option[Case]] = {
+  def getOne(reference: String)(implicit hc: HeaderCarrier): Future[Option[Case]] = {
     connector.getOneCase(reference)
   }
 
-  def getCasesByQueue(queue: Queue)(implicit hc : HeaderCarrier): Future[Seq[Case]] = {
+  def getCasesByQueue(queue: Queue)(implicit hc: HeaderCarrier): Future[Seq[Case]] = {
     connector.getCasesByQueue(queue)
   }
 
-  def getCasesByAssignee(assignee: String)(implicit hc : HeaderCarrier): Future[Seq[Case]] = {
+  def getCasesByAssignee(assignee: String)(implicit hc: HeaderCarrier): Future[Seq[Case]] = {
     connector.getCasesByAssignee(assignee)
   }
 
