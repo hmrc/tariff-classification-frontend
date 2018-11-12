@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.forms
 
-import play.api.data.Form
+import play.api.data.{Form, FormError}
 import play.api.libs.json.{JsObject, JsString, JsValue}
 import uk.gov.hmrc.play.test.UnitSpec
 
@@ -29,55 +29,65 @@ class DecisionFormConstraintsSpec extends UnitSpec {
     val bindingCommodityCode = "bindingCommodityCode"
 
     "empty binding commodity code must be valid " in {
-      decisionForm.bind(commodityCodeJsValue(""))
-        .errors(bindingCommodityCode).size shouldBe 0
+      assertNoErrors(decisionForm.bind(commodityCodeJsValue(""))
+        .errors(bindingCommodityCode))
     }
 
     "numeric value between 6 and 22 digits must be valid " in {
-      decisionForm.bind(commodityCodeJsValue("1234567890"))
-        .errors(bindingCommodityCode).size shouldBe 0
+      assertNoErrors(decisionForm.bind(commodityCodeJsValue("1234567890"))
+        .errors(bindingCommodityCode))
     }
 
     "numeric value of 6 digits must be valid " in {
-      decisionForm.bind(commodityCodeJsValue("123456"))
-        .errors(bindingCommodityCode).size shouldBe 0
+      assertNoErrors(decisionForm.bind(commodityCodeJsValue("123456"))
+        .errors(bindingCommodityCode))
     }
 
     "numeric value of 22 digits must be valid " in {
-      decisionForm.bind(commodityCodeJsValue("1234567891234567890000"))
-        .errors(bindingCommodityCode).size shouldBe 0
+      assertNoErrors(decisionForm.bind(commodityCodeJsValue("1234567891234567890000"))
+        .errors(bindingCommodityCode))
     }
 
     "numeric value of 23 digits must be invalid  " in {
       val errors = decisionForm.bind(commodityCodeJsValue("12345678901234567890123"))
         .errors(bindingCommodityCode)
 
-      errors.map(_.message) should contain only "Format must be empty or numeric between 6 and 22 digits"
+      assertOnlyOneError(errors.map(_.message), "Format must be empty or numeric between 6 and 22 digits")
     }
 
     "invalid numeric on binding commodity code return message error " in {
       val errors = decisionForm.bind(commodityCodeJsValue("12345"))
         .errors(bindingCommodityCode)
 
-      errors.map(_.message) should contain only "Format must be empty or numeric between 6 and 22 digits"
+      assertOnlyOneError(errors.map(_.message), "Format must be empty or numeric between 6 and 22 digits")
     }
 
     "invalid alpha characters on binding commodity code return message error " in {
       val errors = decisionForm.bind(commodityCodeJsValue("12345Q"))
         .errors(bindingCommodityCode)
 
-      errors.map(_.message) should contain only "Format must be empty or numeric between 6 and 22 digits"
+      assertOnlyOneError(errors.map(_.message), "Format must be empty or numeric between 6 and 22 digits")
     }
 
     "invalid special characters on binding commodity code return message error " in {
       val errors = decisionForm.bind(commodityCodeJsValue("12345!"))
         .errors(bindingCommodityCode)
 
-      errors.map(_.message) should contain only "Format must be empty or numeric between 6 and 22 digits"
+      assertOnlyOneError(errors.map(_.message), "Format must be empty or numeric between 6 and 22 digits")
     }
 
     def commodityCodeJsValue(value: String): JsValue = {
       JsObject(Seq(bindingCommodityCode -> JsString(value)))
     }
+
   }
+
+  private def assertNoErrors(s: Seq[FormError]): Unit = {
+    s.isEmpty shouldBe true
+  }
+
+  private def assertOnlyOneError(s: Seq[String], element: String) {
+    s shouldBe Seq(element)
+  }
+
 }
