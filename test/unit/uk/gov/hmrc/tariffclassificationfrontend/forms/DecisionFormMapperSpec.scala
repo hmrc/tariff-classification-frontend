@@ -23,10 +23,10 @@ import uk.gov.hmrc.tariffclassificationfrontend.utils.oCase._
 
 class DecisionFormMapperSpec extends UnitSpec {
 
-  val validForm = oDecisionForm.validForm
-  val testCase = btiCaseExample
+  private val validForm = oDecisionForm.validForm
+  private val testCase = btiCaseExample
 
-  val mapper = new DecisionFormMapper
+  private val mapper = new DecisionFormMapper
 
   "Merge decision form into case object" should {
 
@@ -90,7 +90,7 @@ class DecisionFormMapperSpec extends UnitSpec {
 
   }
 
-  def compareAllFields(form: DecisionFormData, decision: Decision) = {
+  private def compareAllFields(form: DecisionFormData, decision: Decision): Unit = {
     decision.bindingCommodityCode shouldBe form.bindingCommodityCode
     decision.goodsDescription shouldBe form.goodsDescription
     decision.justification shouldBe form.justification

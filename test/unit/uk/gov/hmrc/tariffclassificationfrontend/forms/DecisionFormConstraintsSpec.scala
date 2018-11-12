@@ -22,31 +22,58 @@ import uk.gov.hmrc.play.test.UnitSpec
 
 class DecisionFormConstraintsSpec extends UnitSpec {
 
-  val decisionForm: Form[DecisionFormData] = DecisionForm.form
+  private val commodityCodeErrorMessage = "Format must be empty or numeric between 6 and 22 digits"
+  private val decisionForm: Form[DecisionFormData] = DecisionForm.form
+  private val bindingCommodityCodeElementId = "bindingCommodityCode"
 
-  "bindingCommodityCode on Decision form constrains" should {
+  "DecisionForm validation" should {
 
-    val bindingCommodityCode = "bindingCommodityCode"
-
-    "empty binding commodity code must be valid " in {
-      decisionForm.bind(commodityCodeJsValue(""))
-        .errors(bindingCommodityCode).size shouldBe 0
+    "pass if the commodity code is empty" in {
+      assertNoErrors("")
     }
 
-    "numeric value between 6 and 22 digits must be valid " in {
-      decisionForm.bind(commodityCodeJsValue("1234567890"))
-        .errors(bindingCommodityCode).size shouldBe 0
+    "pass if the commodity code value contains between 6 and 22 digits" in {
+      assertNoErrors("1234567890")
     }
 
-    "invalid numeric on binding commodity code return message error " in {
-      val errors = decisionForm.bind(commodityCodeJsValue("12345"))
-        .errors(bindingCommodityCode)
-
-      errors.map(_.message) should contain only "Format must be empty or numeric between 6 and 22 digits"
+    "pass if the commodity code value contains 6 digits" in {
+      assertNoErrors("123456")
     }
 
-    def commodityCodeJsValue(value: String): JsValue = {
-      JsObject(Seq(bindingCommodityCode -> JsString(value)))
+    "pass if the commodity code value contains 22 digits" in {
+      assertNoErrors("1234567891234567890000")
     }
+
+    "fail if the commodity code value contains more than 22 digits" in {
+      assertOnlyOneError("12345678901234567890123")
+    }
+
+    "fail if the commodity code value contains less than 6 digits" in {
+      assertOnlyOneError("12345")
+    }
+
+    "fail if the commodity code value contains non numeric characters" in {
+      assertOnlyOneError("12345Q")
+    }
+
+    "fail if the commodity code value contains special characters"  in {
+      assertOnlyOneError("12345!")
+    }
+
   }
+
+  private def commodityCodeJsValue(value: String): JsValue = {
+    JsObject(Seq(bindingCommodityCodeElementId -> JsString(value)))
+  }
+
+  private def assertNoErrors(commodityCodeValue: String): Unit = {
+    val errors = decisionForm.bind(commodityCodeJsValue(commodityCodeValue)).errors(bindingCommodityCodeElementId)
+    errors shouldBe Seq.empty
+  }
+
+  private def assertOnlyOneError(commodityCodeValue: String): Unit = {
+    val errors = decisionForm.bind(commodityCodeJsValue(commodityCodeValue)).errors(bindingCommodityCodeElementId)
+    errors shouldBe Seq(commodityCodeErrorMessage)
+  }
+
 }
