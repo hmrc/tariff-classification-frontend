@@ -16,78 +16,64 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.forms
 
-import play.api.data.{Form, FormError}
+import play.api.data.Form
 import play.api.libs.json.{JsObject, JsString, JsValue}
 import uk.gov.hmrc.play.test.UnitSpec
 
 class DecisionFormConstraintsSpec extends UnitSpec {
 
-  val decisionForm: Form[DecisionFormData] = DecisionForm.form
+  private val commodityCodeErrorMessage = "Format must be empty or numeric between 6 and 22 digits"
+  private val decisionForm: Form[DecisionFormData] = DecisionForm.form
+  private val bindingCommodityCodeElementId = "bindingCommodityCode"
 
-  "bindingCommodityCode on Decision form constrains" should {
+  "DecisionForm validation" should {
 
-    val bindingCommodityCode = "bindingCommodityCode"
-
-    "empty binding commodity code must be valid " in {
-      assertNoErrors(decisionForm.bind(commodityCodeJsValue(""))
-        .errors(bindingCommodityCode))
+    "pass if the commodity code is empty" in {
+      assertNoErrors("")
     }
 
-    "numeric value between 6 and 22 digits must be valid " in {
-      assertNoErrors(decisionForm.bind(commodityCodeJsValue("1234567890"))
-        .errors(bindingCommodityCode))
+    "pass if the commodity code value contains between 6 and 22 digits" in {
+      assertNoErrors("1234567890")
     }
 
-    "numeric value of 6 digits must be valid " in {
-      assertNoErrors(decisionForm.bind(commodityCodeJsValue("123456"))
-        .errors(bindingCommodityCode))
+    "pass if the commodity code value contains 6 digits" in {
+      assertNoErrors("123456")
     }
 
-    "numeric value of 22 digits must be valid " in {
-      assertNoErrors(decisionForm.bind(commodityCodeJsValue("1234567891234567890000"))
-        .errors(bindingCommodityCode))
+    "pass if the commodity code value contains 22 digits" in {
+      assertNoErrors("1234567891234567890000")
     }
 
-    "numeric value of 23 digits must be invalid  " in {
-      val errors = decisionForm.bind(commodityCodeJsValue("12345678901234567890123"))
-        .errors(bindingCommodityCode)
-
-      assertOnlyOneError(errors.map(_.message), "Format must be empty or numeric between 6 and 22 digits")
+    "fail if the commodity code value contains more than 22 digits" in {
+      assertOnlyOneError("12345678901234567890123")
     }
 
-    "invalid numeric on binding commodity code return message error " in {
-      val errors = decisionForm.bind(commodityCodeJsValue("12345"))
-        .errors(bindingCommodityCode)
-
-      assertOnlyOneError(errors.map(_.message), "Format must be empty or numeric between 6 and 22 digits")
+    "fail if the commodity code value contains less than 6 digits" in {
+      assertOnlyOneError("12345")
     }
 
-    "invalid alpha characters on binding commodity code return message error " in {
-      val errors = decisionForm.bind(commodityCodeJsValue("12345Q"))
-        .errors(bindingCommodityCode)
-
-      assertOnlyOneError(errors.map(_.message), "Format must be empty or numeric between 6 and 22 digits")
+    "fail if the commodity code value contains non numeric characters" in {
+      assertOnlyOneError("12345Q")
     }
 
-    "invalid special characters on binding commodity code return message error " in {
-      val errors = decisionForm.bind(commodityCodeJsValue("12345!"))
-        .errors(bindingCommodityCode)
-
-      assertOnlyOneError(errors.map(_.message), "Format must be empty or numeric between 6 and 22 digits")
-    }
-
-    def commodityCodeJsValue(value: String): JsValue = {
-      JsObject(Seq(bindingCommodityCode -> JsString(value)))
+    "fail if the commodity code value contains special characters"  in {
+      assertOnlyOneError("12345!")
     }
 
   }
 
-  private def assertNoErrors(s: Seq[FormError]): Unit = {
-    s.isEmpty shouldBe true
+  private def commodityCodeJsValue(value: String): JsValue = {
+    JsObject(Seq(bindingCommodityCodeElementId -> JsString(value)))
   }
 
-  private def assertOnlyOneError(s: Seq[String], element: String) {
-    s shouldBe Seq(element)
+  private def assertNoErrors(commodityCodeValue: String): Unit = {
+    val errors = decisionForm.bind(commodityCodeJsValue(commodityCodeValue)).errors(bindingCommodityCodeElementId)
+    errors shouldBe Seq.empty
+  }
+
+  private def assertOnlyOneError(commodityCodeValue: String): Unit = {
+    val errors = decisionForm.bind(commodityCodeJsValue(commodityCodeValue)).errors(bindingCommodityCodeElementId)
+    errors shouldBe Seq(commodityCodeErrorMessage)
   }
 
 }
