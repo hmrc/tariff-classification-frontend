@@ -73,7 +73,7 @@ class DecisionFormConstraintsSpec extends UnitSpec {
 
   private def assertOnlyOneError(commodityCodeValue: String): Unit = {
     val errors = decisionForm.bind(commodityCodeJsValue(commodityCodeValue)).errors(bindingCommodityCodeElementId)
-    errors shouldBe Seq(commodityCodeErrorMessage)
+    errors.map(_.message) shouldBe Seq(commodityCodeErrorMessage)
   }
 
 }
