@@ -48,7 +48,7 @@ class DecisionFormConstraintsSpec extends UnitSpec {
         .errors(bindingCommodityCode).size shouldBe 0
     }
 
-    "numeric value of 23 digits must be valid  " in {
+    "numeric value of 23 digits must be invalid  " in {
       val errors = decisionForm.bind(commodityCodeJsValue("12345678901234567890123"))
         .errors(bindingCommodityCode)
 
