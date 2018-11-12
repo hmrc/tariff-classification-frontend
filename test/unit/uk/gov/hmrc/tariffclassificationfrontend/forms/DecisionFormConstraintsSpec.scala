@@ -38,8 +38,39 @@ class DecisionFormConstraintsSpec extends UnitSpec {
         .errors(bindingCommodityCode).size shouldBe 0
     }
 
+    "numeric value of 6 digits must be valid " in {
+      decisionForm.bind(commodityCodeJsValue("123456"))
+        .errors(bindingCommodityCode).size shouldBe 0
+    }
+
+    "numeric value of 22 digits must be valid " in {
+      decisionForm.bind(commodityCodeJsValue("1234567891234567890000"))
+        .errors(bindingCommodityCode).size shouldBe 0
+    }
+
+    "numeric value of 23 digits must be valid  " in {
+      val errors = decisionForm.bind(commodityCodeJsValue("12345678901234567890123"))
+        .errors(bindingCommodityCode)
+
+      errors.map(_.message) should contain only "Format must be empty or numeric between 6 and 22 digits"
+    }
+
     "invalid numeric on binding commodity code return message error " in {
       val errors = decisionForm.bind(commodityCodeJsValue("12345"))
+        .errors(bindingCommodityCode)
+
+      errors.map(_.message) should contain only "Format must be empty or numeric between 6 and 22 digits"
+    }
+
+    "invalid alpha characters on binding commodity code return message error " in {
+      val errors = decisionForm.bind(commodityCodeJsValue("12345Q"))
+        .errors(bindingCommodityCode)
+
+      errors.map(_.message) should contain only "Format must be empty or numeric between 6 and 22 digits"
+    }
+
+    "invalid special characters on binding commodity code return message error " in {
+      val errors = decisionForm.bind(commodityCodeJsValue("12345!"))
         .errors(bindingCommodityCode)
 
       errors.map(_.message) should contain only "Format must be empty or numeric between 6 and 22 digits"
