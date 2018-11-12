@@ -21,7 +21,7 @@
     <ul class="list">
         @for(att <- attachments) {
             <li>
-                <a href="@att.url">@att.name.getOrElse("Unknown")</a>
+                <a href="@att.url" target="_blank">@att.name.getOrElse("Unknown")</a>
             </li>
         }
     </ul>
