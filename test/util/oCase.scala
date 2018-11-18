@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.tariffclassificationfrontend.utils
+package util
 
 import java.time.ZonedDateTime
 

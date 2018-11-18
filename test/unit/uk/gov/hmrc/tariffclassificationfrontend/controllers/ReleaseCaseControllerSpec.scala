@@ -32,7 +32,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, Queue}
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, QueuesService}
-import uk.gov.hmrc.tariffclassificationfrontend.utils.oCase
+import util.oCase
 
 import scala.concurrent.Future
 

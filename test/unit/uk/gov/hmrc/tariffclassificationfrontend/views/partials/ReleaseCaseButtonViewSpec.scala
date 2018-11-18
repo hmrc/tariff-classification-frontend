@@ -17,10 +17,10 @@
 package uk.gov.hmrc.tariffclassificationfrontend.views.partials
 
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus
-import uk.gov.hmrc.tariffclassificationfrontend.utils.oCase
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewSpec
 import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.release_case_button
+import util.oCase
 
 class ReleaseCaseButtonViewSpec extends ViewSpec {
 
