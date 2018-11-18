@@ -18,8 +18,8 @@ package uk.gov.hmrc.tariffclassificationfrontend.forms
 
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Decision}
-import uk.gov.hmrc.tariffclassificationfrontend.utils.oDecisionForm
-import uk.gov.hmrc.tariffclassificationfrontend.utils.oCase._
+import util.oCase._
+import util.oDecisionForm
 
 class DecisionFormMapperSpec extends UnitSpec {
 

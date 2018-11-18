@@ -29,7 +29,7 @@ import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, Queue, Status}
-import uk.gov.hmrc.tariffclassificationfrontend.utils.{oCase, CasePayloads}
+import util.{CasePayloads, WiremockTestServer, oCase}
 
 class BindingTariffClassificationConnectorSpec extends UnitSpec
   with WiremockTestServer with MockitoSugar with WithFakeApplication {

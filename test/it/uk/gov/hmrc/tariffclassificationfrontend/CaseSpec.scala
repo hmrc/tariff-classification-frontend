@@ -8,8 +8,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.ws.WSClient
 import play.api.test.Helpers._
 import uk.gov.hmrc.play.test.UnitSpec
-import uk.gov.hmrc.tariffclassificationfrontend.connector.WiremockTestServer
-import uk.gov.hmrc.tariffclassificationfrontend.utils.CasePayloads
+import util.{CasePayloads, WiremockTestServer}
 
 class CaseSpec extends UnitSpec with WiremockTestServer with MockitoSugar with GuiceOneServerPerSuite {
 

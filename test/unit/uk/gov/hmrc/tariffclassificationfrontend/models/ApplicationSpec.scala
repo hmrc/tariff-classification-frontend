@@ -17,7 +17,7 @@
 package uk.gov.hmrc.tariffclassificationfrontend.models
 
 import uk.gov.hmrc.play.test.UnitSpec
-import uk.gov.hmrc.tariffclassificationfrontend.utils.oCase
+import util.oCase
 
 class ApplicationSpec extends UnitSpec {
 

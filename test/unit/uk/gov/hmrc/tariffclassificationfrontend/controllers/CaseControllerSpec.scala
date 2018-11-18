@@ -30,7 +30,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionFormMapper
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
-import uk.gov.hmrc.tariffclassificationfrontend.utils.oCase
+import util.oCase
 
 import scala.concurrent.Future
 
