@@ -27,12 +27,12 @@ class AppConfig @Inject()(val runModeConfiguration: Configuration, environment: 
 
   private def loadConfig(key: String) = runModeConfiguration.getString(key).getOrElse(throw new Exception(s"Missing configuration key: $key"))
 
-  private val contactHost = runModeConfiguration.getString(s"contact-frontend.host").getOrElse("")
+  private val contactHost = runModeConfiguration.getString("contact-frontend.host").getOrElse("")
   private val contactFormServiceIdentifier = "MyService"
 
-  def assetsPrefix: String = loadConfig(s"assets.url") + loadConfig(s"assets.version")
-  def analyticsToken: String = loadConfig(s"google-analytics.token")
-  def analyticsHost: String = loadConfig(s"google-analytics.host")
+  def assetsPrefix: String = loadConfig("assets.url") + loadConfig("assets.version")
+  def analyticsToken: String = loadConfig("google-analytics.token")
+  def analyticsHost: String = loadConfig("google-analytics.host")
   def reportAProblemPartialUrl = s"$contactHost/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
   def reportAProblemNonJSUrl = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
   def bindingTariffClassificationUrl: String = baseUrl("binding-tariff-classification")
