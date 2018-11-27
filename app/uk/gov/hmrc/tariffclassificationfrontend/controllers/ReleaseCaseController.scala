@@ -37,7 +37,7 @@ class ReleaseCaseController @Inject()(casesService: CasesService,
                                       val messagesApi: MessagesApi,
                                       implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
-  val releaseCaseForm: Form[ReleaseCaseForm] = ReleaseCaseForm.form
+  private val releaseCaseForm: Form[ReleaseCaseForm] = ReleaseCaseForm.form
 
   def releaseCase(reference: String): Action[AnyContent] = AuthenticatedAction.async { implicit request =>
     getCaseAndRenderView(reference, c => Future.successful(views.html.release_case(c, releaseCaseForm, queueService.getNonGateway)))
