@@ -16,19 +16,17 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
-import java.nio.charset.Charset
-
 import akka.stream.Materializer
-import akka.util.ByteString
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterEach, Matchers, WordSpec}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.{MimeTypes, Status}
+import play.api.http.HeaderNames.LOCATION
 import play.api.i18n.{DefaultLangs, DefaultMessagesApi}
 import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded, Result}
-import play.api.test.Helpers._
+import uk.gov.hmrc.play.test.UnitSpec
 import play.api.test.{FakeHeaders, FakeRequest}
 import play.api.{Configuration, Environment}
 import play.filters.csrf.CSRF.{Token, TokenProvider}
@@ -40,7 +38,7 @@ import util.oCase
 
 import scala.concurrent.Future.{failed, successful}
 
-class ReleaseCaseControllerSpec extends WordSpec with Matchers
+class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   with GuiceOneAppPerSuite with MockitoSugar with BeforeAndAfterEach {
 
   private val env = Environment.simple()
@@ -79,7 +77,7 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers
 
       val result: Result = await(controller.releaseCase("reference")(newFakeGETRequestWithCSRF()))
 
-      statusOf(result) shouldBe Status.OK
+      status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result) shouldBe Some("utf-8")
       bodyOf(result) should include("Release this Case for Classification")
@@ -93,7 +91,7 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers
 
       val result: Result = await(controller.releaseCase("reference")(newFakeGETRequestWithCSRF()))
 
-      statusOf(result) shouldBe Status.SEE_OTHER
+      status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
       charsetOf(result) shouldBe None
       locationOf(result) shouldBe Some("/tariff-classification/cases/reference/application")
@@ -107,7 +105,7 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers
 
       val result: Result = await(controller.releaseCase("reference")(newFakeGETRequestWithCSRF()))
 
-      statusOf(result) shouldBe Status.OK
+      status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result) shouldBe Some("utf-8")
       bodyOf(result) should include("We could not find a Case with reference")
@@ -126,7 +124,7 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers
 
       val result: Result = await(controller.releaseCaseToQueue("reference")(newFakePOSTRequestWithCSRF("queue")))
 
-      statusOf(result) shouldBe Status.OK
+      status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result) shouldBe Some("utf-8")
       bodyOf(result) should include("This case has been released")
@@ -143,7 +141,7 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers
 
       val result: Result = await(controller.releaseCaseToQueue("reference")(newInvalidFakePOSTRequestWithCSRF()))
 
-      statusOf(result) shouldBe Status.OK
+      status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result) shouldBe Some("utf-8")
       bodyOf(result) should include("Release this Case for Classification")
@@ -157,7 +155,7 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers
 
       val result: Result= await(controller.releaseCaseToQueue("reference")(newFakePOSTRequestWithCSRF("queue")))
 
-      statusOf(result) shouldBe Status.SEE_OTHER
+      status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
       charsetOf(result) shouldBe None
       locationOf(result) shouldBe Some("/tariff-classification/cases/reference/application")
@@ -171,7 +169,7 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers
 
       val result: Result = await(controller.releaseCaseToQueue("reference")(newFakePOSTRequestWithCSRF("queue")))
 
-      statusOf(result) shouldBe Status.OK
+      status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result) shouldBe Some("utf-8")
       bodyOf(result) should include("We could not find a Case with reference")
@@ -185,7 +183,7 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers
 
       val result: Result = await(controller.releaseCaseToQueue("reference")(newFakePOSTRequestWithCSRF("queue")))
 
-      statusOf(result) shouldBe Status.OK
+      status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result) shouldBe Some("utf-8")
       bodyOf(result) should include("Queue queue not found")
@@ -224,15 +222,6 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers
     val tokenProvider: TokenProvider = app.injector.instanceOf[TokenProvider]
     val csrfTags = Map(Token.NameRequestTag -> "csrfToken", Token.RequestTag -> tokenProvider.generateToken)
     FakeRequest("POST", "/", FakeHeaders(), AnyContentAsFormUrlEncoded, tags = csrfTags).withFormUrlEncodedBody()
-  }
-
-  private def bodyOf(result: Result)(implicit mat: Materializer): String = {
-    val bodyBytes: ByteString = await(result.body.consumeData)
-    bodyBytes.decodeString(Charset.defaultCharset().name)
-  }
-
-  private def statusOf(result: Result): Int = {
-    result.header.status
   }
 
   private def locationOf(result: Result): Option[String] = {
