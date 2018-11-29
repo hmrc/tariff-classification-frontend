@@ -31,9 +31,10 @@ import play.api.test.{FakeHeaders, FakeRequest}
 import play.api.{Configuration, Environment}
 import play.filters.csrf.CSRF.{Token, TokenProvider}
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.tariffclassificationfrontend.audit.AuditService
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, Queue}
-import uk.gov.hmrc.tariffclassificationfrontend.service.{AuditService, CasesService, QueuesService}
+import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, QueuesService}
 import util.oCase
 
 import scala.concurrent.Future.{failed, successful}
