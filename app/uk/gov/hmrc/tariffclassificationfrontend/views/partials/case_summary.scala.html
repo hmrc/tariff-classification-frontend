@@ -15,7 +15,7 @@
  *@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-@import uk.gov.hmrc.tariffclassificationfrontend.models.Case
+@import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Contact}
 @import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.case_nav
@@ -50,31 +50,35 @@
     </div>
 </div>
 
-<div class="grid-row">
-    <div class="column-one-third">
-        <p>@messages("case.application.contact.name")</p>
-    </div>
-    <div class="column-two-thirds">
-        <p>@c.application.asBTI.contact.name</p>
-    </div>
-</div>
+@defining(c.application.asBTI.contact) { co: Contact =>
 
-<div class="grid-row">
-    <div class="column-one-third">
-        <p>@messages("case.application.contact.email")</p>
-    </div>
-    <div class="column-two-thirds">
-        <a href="mailto:@c.application.asBTI.contact.email?subject=@c.application.getType application #@c.reference">@c.application.asBTI.contact.email</a>
-    </div>
-</div>
-
-@if(c.application.asBTI.contact.phone.isDefined) {
     <div class="grid-row">
         <div class="column-one-third">
-            <p>@messages("case.application.contact.telephone")</p>
+            <p>@messages("case.application.contact.name")</p>
         </div>
         <div class="column-two-thirds">
-            <p>@c.application.asBTI.contact.phone.get</p>
+            <p>@co.name</p>
         </div>
     </div>
+
+    <div class="grid-row">
+        <div class="column-one-third">
+            <p>@messages("case.application.contact.email")</p>
+        </div>
+        <div class="column-two-thirds">
+            <a href="mailto:@c.application.asBTI.contact.email?subject=@c.application.getType application #@c.reference">@co.email</a>
+        </div>
+    </div>
+
+    @if(co.phone.isDefined) {
+        <div class="grid-row">
+            <div class="column-one-third">
+                <p>@messages("case.application.contact.telephone")</p>
+            </div>
+            <div class="column-two-thirds">
+                <p>@co.phone.get</p>
+            </div>
+        </div>
+    }
+
 }
