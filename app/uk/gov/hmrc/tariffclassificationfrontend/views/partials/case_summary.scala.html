@@ -68,12 +68,13 @@
     </div>
 </div>
 
-<div class="grid-row">
-    <div class="column-one-third">
-        <p>@messages("case.application.contact.telephone")</p>
+@if(c.application.asBTI.contact.phone.isDefined) {
+    <div class="grid-row">
+        <div class="column-one-third">
+            <p>@messages("case.application.contact.telephone")</p>
+        </div>
+        <div class="column-two-thirds">
+            <p>@c.application.asBTI.contact.phone.get</p>
+        </div>
     </div>
-    <div class="column-two-thirds">
-        <p>@c.application.asBTI.contact.phone</p>
-    </div>
-</div>
-
+}
