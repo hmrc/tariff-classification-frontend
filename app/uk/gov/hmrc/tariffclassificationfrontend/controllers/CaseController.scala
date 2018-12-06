@@ -20,6 +20,7 @@ package uk.gov.hmrc.tariffclassificationfrontend.controllers
 import javax.inject.{Inject, Singleton}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
+import play.mvc.Security.AuthenticatedAction
 import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
@@ -32,20 +33,21 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class CaseController @Inject()(casesService: CasesService,
+class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
+                               casesService: CasesService,
                                mapper: DecisionFormMapper,
                                val messagesApi: MessagesApi,
                                implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
-  def summary(reference: String): Action[AnyContent] = AuthenticatedAction.async { implicit request =>
+  def summary(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     getCaseAndRenderView(reference, "summary", views.html.partials.case_summary(_))
   }
 
-  def applicationDetails(reference: String): Action[AnyContent] = AuthenticatedAction.async { implicit request =>
+  def applicationDetails(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     getCaseAndRenderView(reference, "application", views.html.partials.application_details(_))
   }
 
-  def rulingDetails(reference: String): Action[AnyContent] = AuthenticatedAction.async { implicit request =>
+  def rulingDetails(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     getCaseAndRenderView(reference, "ruling", views.html.partials.ruling_details(_))
   }
 

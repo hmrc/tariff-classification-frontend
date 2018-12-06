@@ -16,17 +16,48 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
+import javax.inject.{Inject, Singleton}
+import play.api.mvc.Results._
 import play.api.mvc.{ActionBuilder, Request, Result}
+import play.api.{Configuration, Environment}
+import uk.gov.hmrc.auth.core.AuthProvider.PrivilegedApplication
+import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name, Retrievals, ~}
+import uk.gov.hmrc.auth.core.syntax.retrieved
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.HeaderCarrierConverter
+import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
+import uk.gov.hmrc.tariffclassificationfrontend.connector.StrideAuthConnector
 import uk.gov.hmrc.tariffclassificationfrontend.models.{AuthenticatedRequest, Operator}
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-object AuthenticatedAction extends ActionBuilder[AuthenticatedRequest] {
+@Singleton
+class AuthenticatedAction @Inject()(override val config: Configuration,
+                                    override val env: Environment,
+                                    override val authConnector: StrideAuthConnector)
+  extends ActionBuilder[AuthenticatedRequest]
+    with AuthorisedFunctions
+    with AuthRedirects {
 
   override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] = {
-    // TODO Implement Authentication Check based on the `request`. See DIT-311.
-    // This currently hard-codes the current operator with operatorId "0"
-    block(AuthenticatedRequest(Operator("0"), request))
-  }
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(
+      request.headers,
+      Some(request.session)
+    )
 
+    authorised(Enrolment("classification") and AuthProviders(PrivilegedApplication))
+      .retrieve(Retrievals.credentials and Retrievals.name) {
+        retrieved =>
+          val id = retrieved.a.providerId
+          val name = retrieved.b.name.getOrElse("Unknown Name")
+          block(AuthenticatedRequest(Operator(id, name), request))
+      } recover {
+      case _: NoActiveSession => toStrideLogin(s"http://${request.host}${request.uri}")
+      case _ => Redirect(routes.SecurityController.unauthorized())
+    }
+  }
 }
+
+case class NotInternalUser() extends AuthorisationException("User does not have an Internal ID")

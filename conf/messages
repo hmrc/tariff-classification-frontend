@@ -1,6 +1,7 @@
 cases.menu.my-cases=My Cases
 cases.menu.gateway-cases=Gateway Cases
 cases.menu.queue-cases={0} Cases
+cases.list.my-cases=Cases for {0}
 
 cases.table.reference=Reference
 cases.table.goods-name=Item Name

@@ -32,7 +32,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class RulingController @Inject()(casesService: CasesService,
+class RulingController @Inject()(authenticatedAction: AuthenticatedAction,
+                                 casesService: CasesService,
                                  mapper: DecisionFormMapper,
                                  val messagesApi: MessagesApi,
                                  implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
@@ -41,7 +42,7 @@ class RulingController @Inject()(casesService: CasesService,
 
   private val menuTitle = "ruling"
 
-  def editRulingDetails(reference: String): Action[AnyContent] = AuthenticatedAction.async { implicit request =>
+  def editRulingDetails(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     getCaseAndRenderView(reference, menuTitle, c => {
       val formData = mapper.caseToDecisionFormData(c)
       val df = decisionForm.fill(formData)
@@ -50,7 +51,7 @@ class RulingController @Inject()(casesService: CasesService,
     })
   }
 
-  def updateRulingDetails(reference: String): Action[AnyContent] = AuthenticatedAction.async { implicit request =>
+  def updateRulingDetails(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     decisionForm.bindFromRequest.fold(
       errorForm =>
         getCaseAndRenderView(reference, menuTitle, c => Future.successful(views.html.partials.ruling_details_edit(c, errorForm))),

@@ -46,7 +46,7 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with GuiceOneAppP
   private val queueService = mock[QueuesService]
   private implicit val hc = HeaderCarrier()
 
-  private val controller = new ReleaseCaseController(casesService, queueService, messageApi, appConfig)
+  private val controller = new ReleaseCaseController(new SuccessfulAuthenticatedAction, casesService, queueService, messageApi, appConfig)
 
   "Release Case" should {
     val caseWithStatusNEW = oCase.btiCaseExample.copy(status = CaseStatus.NEW)

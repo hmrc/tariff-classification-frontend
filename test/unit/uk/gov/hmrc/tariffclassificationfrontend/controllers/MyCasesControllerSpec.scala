@@ -46,7 +46,7 @@ class MyCasesControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSu
   private val queue = Queue("0", "queue", "Queue Name")
   private implicit val hc = HeaderCarrier()
 
-  private val controller = new MyCasesController(casesService, queuesService, messageApi, appConfig)
+  private val controller = new MyCasesController(new SuccessfulAuthenticatedAction, casesService, queuesService, messageApi, appConfig)
 
   "My Cases" should {
 

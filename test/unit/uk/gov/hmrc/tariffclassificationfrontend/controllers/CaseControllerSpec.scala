@@ -43,7 +43,7 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
   private val appConfig = new AppConfig(configuration, env)
   private val casesService = mock[CasesService]
   private val mapper = mock[DecisionFormMapper]
-  private val controller = new CaseController(casesService, mapper, messageApi, appConfig)
+  private val controller = new CaseController(new SuccessfulAuthenticatedAction, casesService, mapper, messageApi, appConfig)
 
   private implicit val hc = HeaderCarrier()
 

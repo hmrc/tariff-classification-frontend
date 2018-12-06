@@ -20,6 +20,7 @@ import javax.inject.{Inject, Singleton}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
+import play.mvc.Security.AuthenticatedAction
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
@@ -32,18 +33,19 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class ReleaseCaseController @Inject()(casesService: CasesService,
+class ReleaseCaseController @Inject()(authenticatedAction: AuthenticatedAction,
+                                      casesService: CasesService,
                                       queueService: QueuesService,
                                       val messagesApi: MessagesApi,
                                       implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
   private val releaseCaseForm: Form[ReleaseCaseForm] = ReleaseCaseForm.form
 
-  def releaseCase(reference: String): Action[AnyContent] = AuthenticatedAction.async { implicit request =>
+  def releaseCase(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     getCaseAndRenderView(reference, c => Future.successful(views.html.release_case(c, releaseCaseForm, queueService.getNonGateway)))
   }
 
-  def releaseCaseToQueue(reference: String): Action[AnyContent] = AuthenticatedAction.async { implicit request =>
+  def releaseCaseToQueue(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     def onInvalidForm(formWithErrors: Form[ReleaseCaseForm]): Future[Result] = {
       getCaseAndRenderView(reference, c => Future.successful(views.html.release_case(c, formWithErrors, queueService.getNonGateway)))
     }

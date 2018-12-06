@@ -19,6 +19,7 @@ package uk.gov.hmrc.tariffclassificationfrontend.controllers
 import javax.inject.{Inject, Singleton}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
+import play.mvc.Security.AuthenticatedAction
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Queue}
@@ -29,12 +30,13 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class QueuesController @Inject()(casesService: CasesService,
+class QueuesController @Inject()(authenticatedAction: AuthenticatedAction,
+                                 casesService: CasesService,
                                  queuesService: QueuesService,
                                  val messagesApi: MessagesApi,
                                  implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
-  def queue(slug: String): Action[AnyContent] = AuthenticatedAction.async { implicit request =>
+  def queue(slug: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     queuesService.getOneBySlug(slug) match {
       case None => Future.successful(Ok(views.html.resource_not_found()))
       case Some(q: Queue) => casesService.getCasesByQueue(q).map { cases: Seq[Case] =>

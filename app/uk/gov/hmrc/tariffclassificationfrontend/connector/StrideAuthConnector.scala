@@ -14,6 +14,17 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.tariffclassificationfrontend.models
+package uk.gov.hmrc.tariffclassificationfrontend.connector
 
-case class Operator(id: String, name: String)
+import com.google.inject.Inject
+import javax.inject.Singleton
+import uk.gov.hmrc.auth.core.PlayAuthConnector
+import uk.gov.hmrc.http.CorePost
+import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
+
+@Singleton
+class StrideAuthConnector @Inject()(configuration: AppConfig, client: HttpClient) extends PlayAuthConnector {
+  override val serviceUrl: String = configuration.baseUrl("auth")
+  override def http: CorePost = client
+}
