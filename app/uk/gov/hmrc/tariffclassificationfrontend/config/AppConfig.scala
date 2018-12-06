@@ -18,7 +18,7 @@ package uk.gov.hmrc.tariffclassificationfrontend.config
 
 import javax.inject.{Inject, Singleton}
 import play.api.Mode.Mode
-import play.api.{Configuration, Environment}
+import play.api.{Configuration, Environment, Logger}
 import uk.gov.hmrc.play.config.ServicesConfig
 
 @Singleton
@@ -36,4 +36,19 @@ class AppConfig @Inject()(val runModeConfiguration: Configuration, environment: 
   def reportAProblemPartialUrl = s"$contactHost/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
   def reportAProblemNonJSUrl = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
   def bindingTariffClassificationUrl: String = baseUrl("binding-tariff-classification")
+
+  lazy val whitelistDestination: String = getString("whitelist.destination")
+  lazy val whitelistedIps: Seq[String] = {
+    getString("whitelist.allowedIps")
+      .split(",")
+      .map(_.trim)
+      .filter(_.nonEmpty)
+  }
+  lazy val whitelistedExcludedPaths: Seq[String] = {
+    getString("whitelist.excluded")
+      .split(",")
+      .map(_.trim)
+      .filter(_.nonEmpty)
+  }
+
 }
