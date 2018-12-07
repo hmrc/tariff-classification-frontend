@@ -19,7 +19,7 @@ package uk.gov.hmrc.tariffclassificationfrontend.controllers
 import javax.inject.{Inject, Singleton}
 import play.api.mvc.Results._
 import play.api.mvc.{ActionBuilder, Request, Result}
-import play.api.{Configuration, Environment}
+import play.api.{Configuration, Environment, Mode}
 import uk.gov.hmrc.auth.core.AuthProvider.PrivilegedApplication
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.Retrievals
@@ -57,7 +57,9 @@ class AuthenticatedAction @Inject()(appConfig: AppConfig,
           val name = retrieved.b.name
           block(AuthenticatedRequest(Operator(id, name), request))
       } recover {
-      case _: NoActiveSession => toStrideLogin(s"http://${request.host}${request.uri}")
+      case _: NoActiveSession => toStrideLogin(
+        if(env.mode.equals(Mode.Dev)) s"http://${request.host}${request.uri}" else s"${request.uri}"
+      )
       case _: AuthorisationException => Redirect(routes.SecurityController.unauthorized())
     }
   }
