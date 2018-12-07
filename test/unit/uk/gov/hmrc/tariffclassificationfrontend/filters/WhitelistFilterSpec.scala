@@ -56,11 +56,11 @@ class WhitelistFilterSpec extends UnitSpec with MockitoSugar with BeforeAndAfter
     }
 
     "behave as expected" in {
-      when(appConfig.whitelistedIps).thenReturn(Seq("1.2.3", "1.25.4", "3.3.7"))
+      when(appConfig.whitelistedIps).thenReturn(Seq("a.b.c.d", "z.x.y.w"))
       when(appConfig.whitelistDestination).thenReturn("www.google.com")
       when(appConfig.whitelistedExcludedPaths).thenReturn(Seq("/", "/hello"))
 
-      whitelistFilter.whitelist shouldBe Seq("1.2.3", "1.25.4", "3.3.7")
+      whitelistFilter.whitelist shouldBe Seq("a.b.c.d", "z.x.y.w")
       whitelistFilter.destination shouldBe Call(GET, "www.google.com")
       whitelistFilter.excludedPaths shouldBe Seq(Call(GET, "/"), Call(GET, "/hello"))
     }

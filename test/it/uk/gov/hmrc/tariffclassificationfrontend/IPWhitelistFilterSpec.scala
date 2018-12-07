@@ -54,8 +54,8 @@ class IPWhitelistFilterSpec extends UnitSpec with MockitoSugar with GuiceOneAppP
         ).build()
 
       case n if n.matches("^.*missing$") =>
-        GuiceApplicationBuilder(
-          configuration = new Configuration(ConfigFactory.load("empty-application.conf"))
+        GuiceApplicationBuilder().loadConfig(
+          new Configuration(ConfigFactory.load("empty-application.conf"))
         ).build()
 
       case n => throw new IllegalArgumentException(s"Test scenario not expected: $n ")
