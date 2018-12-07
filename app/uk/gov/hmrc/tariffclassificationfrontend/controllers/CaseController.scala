@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
-
 import javax.inject.{Inject, Singleton}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
