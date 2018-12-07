@@ -29,6 +29,8 @@ import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.filters.WhitelistFilter
 
+import scala.util.{Failure, Try}
+
 class IPWhitelistFilterSpec extends UnitSpec with MockitoSugar with GuiceOneAppPerTest {
 
   private val mat = mock[Materializer]
@@ -43,7 +45,7 @@ class IPWhitelistFilterSpec extends UnitSpec with MockitoSugar with GuiceOneAppP
 
     testData.name match {
 
-      case n if n.matches("^.*set$") =>
+      case testName if testName.matches("^.*set$") =>
         val configuration = Map(
           "whitelist.allowedIps" -> " a.b.c.d,  z.x.y.w ",
           "whitelist.excluded" -> " /,   /hello/",
@@ -53,12 +55,12 @@ class IPWhitelistFilterSpec extends UnitSpec with MockitoSugar with GuiceOneAppP
           configuration = Configuration.from(configuration)
         ).build()
 
-      case n if n.matches("^.*missing$") =>
+      case testName if testName.matches("^.*missing$") =>
         GuiceApplicationBuilder().loadConfig(
           new Configuration(ConfigFactory.load("empty-application.conf"))
         ).build()
 
-      case n => throw new IllegalArgumentException(s"Test scenario not expected: $n ")
+      case testName => throw new IllegalArgumentException(s"Test scenario not expected: $testName ")
 
     }
 
@@ -75,17 +77,22 @@ class IPWhitelistFilterSpec extends UnitSpec with MockitoSugar with GuiceOneAppP
     }
 
     "behave as expected when all whitelisting configurations are missing" in {
+      var errorCount = 0
+
+      def tryExec(block: => Unit): Unit = {
+        Try(block) match {
+          case Failure(_: RuntimeException) => errorCount = 1 + errorCount
+          case x => throw new IllegalArgumentException(s"Unexpected: $x")
+        }
+      }
+
       val whitelistFilter = createFilter
 
-      intercept[RuntimeException] {
-        whitelistFilter.whitelist
-      }
-      intercept[RuntimeException] {
-        whitelistFilter.destination
-      }
-      intercept[RuntimeException] {
-        whitelistFilter.excludedPaths
-      }
+      tryExec(whitelistFilter.whitelist)
+      tryExec(whitelistFilter.destination)
+      tryExec(whitelistFilter.excludedPaths)
+
+      errorCount shouldBe 3
     }
 
   }

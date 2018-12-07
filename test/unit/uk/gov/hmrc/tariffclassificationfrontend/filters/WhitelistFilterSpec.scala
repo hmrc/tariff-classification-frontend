@@ -25,12 +25,12 @@ import play.api.mvc.Call
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 
+import scala.util.{Failure, Try}
+
 class WhitelistFilterSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
 
-  private val mockMaterializer = mock[Materializer]
+  private val mat = mock[Materializer]
   private val appConfig = mock[AppConfig]
-
-  private val whitelistFilter = new WhitelistFilter(appConfig, mockMaterializer)
 
   override protected def afterEach(): Unit = {
     super.afterEach()
@@ -39,30 +39,41 @@ class WhitelistFilterSpec extends UnitSpec with MockitoSugar with BeforeAndAfter
 
   "WhitelistFilter" should {
 
-    "throw an error if an expected configuration is missing" in {
-      when(appConfig.whitelistedIps).thenThrow(new RuntimeException)
-      when(appConfig.whitelistDestination).thenThrow(new RuntimeException)
-      when(appConfig.whitelistedExcludedPaths).thenThrow(new RuntimeException)
-
-      assertThrows[RuntimeException] {
-        whitelistFilter.whitelist
-      }
-      assertThrows[RuntimeException] {
-        whitelistFilter.destination
-      }
-      assertThrows[RuntimeException] {
-        whitelistFilter.excludedPaths
-      }
-    }
-
-    "behave as expected" in {
+    "behave as expected when the whitelisting configurations are set" in {
       when(appConfig.whitelistedIps).thenReturn(Seq("a.b.c.d", "z.x.y.w"))
       when(appConfig.whitelistDestination).thenReturn("www.google.com")
       when(appConfig.whitelistedExcludedPaths).thenReturn(Seq("/", "/hello"))
 
+      val whitelistFilter = new WhitelistFilter(appConfig, mat)
+
       whitelistFilter.whitelist shouldBe Seq("a.b.c.d", "z.x.y.w")
       whitelistFilter.destination shouldBe Call(GET, "www.google.com")
       whitelistFilter.excludedPaths shouldBe Seq(Call(GET, "/"), Call(GET, "/hello"))
+    }
+
+    "behave as expected when the whitelisting configurations are missing" in {
+      val error = new RuntimeException("simulated error")
+
+      var errorCount = 0
+
+      def tryExec(block: => Unit): Unit = {
+        Try(block) match {
+          case Failure(e) if e == error => errorCount = 1 + errorCount
+          case x => throw new IllegalStateException(s"Unexpected: $x")
+        }
+      }
+
+      when(appConfig.whitelistedIps).thenThrow(error)
+      when(appConfig.whitelistDestination).thenThrow(error)
+      when(appConfig.whitelistedExcludedPaths).thenThrow(error)
+
+      val whitelistFilter = new WhitelistFilter(appConfig, mat)
+
+      tryExec(whitelistFilter.whitelist)
+      tryExec(whitelistFilter.destination)
+      tryExec(whitelistFilter.excludedPaths)
+
+      errorCount shouldBe 3
     }
 
   }
