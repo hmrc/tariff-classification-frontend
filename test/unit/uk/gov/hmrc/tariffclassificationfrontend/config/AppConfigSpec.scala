@@ -52,8 +52,12 @@ class AppConfigSpec extends UnitSpec with MockitoSugar with WithFakeApplication 
       appConfig.bindingTariffClassificationUrl shouldBe "http://localhost:9580"
     }
 
+    "Builds whitelist configurations" in {
+      appConfig.whitelistDestination shouldBe "https://www.gov.uk"
+      appConfig.whitelistedIps shouldBe Seq.empty
+      appConfig.whitelistedExcludedPaths shouldBe Seq.empty
+    }
+
   }
-
-
 
 }
