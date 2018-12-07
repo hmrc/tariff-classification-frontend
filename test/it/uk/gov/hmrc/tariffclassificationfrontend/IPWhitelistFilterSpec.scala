@@ -45,7 +45,7 @@ class IPWhitelistFilterSpec extends UnitSpec with MockitoSugar with GuiceOneAppP
 
       case n if n.matches("^.*set$") =>
         val configuration = Map(
-          "whitelist.allowedIps" -> " 1.2.3.4, 2.3.4.5 ",
+          "whitelist.allowedIps" -> " a.b.c.d,  z.x.y.w ",
           "whitelist.excluded" -> " /,   /hello/",
           "whitelist.destination" -> "http://localhost/"
         )
@@ -69,7 +69,7 @@ class IPWhitelistFilterSpec extends UnitSpec with MockitoSugar with GuiceOneAppP
     "behave as expected when all whitelisting configurations are set" in {
       val whitelistFilter = createFilter
 
-      whitelistFilter.whitelist shouldBe Seq("1.2.3.4", "2.3.4.5")
+      whitelistFilter.whitelist shouldBe Seq("a.b.c.d", "z.x.y.w")
       whitelistFilter.destination shouldBe Call(GET, "http://localhost/")
       whitelistFilter.excludedPaths shouldBe Seq(Call(GET, "/"), Call(GET, "/hello/"))
     }
