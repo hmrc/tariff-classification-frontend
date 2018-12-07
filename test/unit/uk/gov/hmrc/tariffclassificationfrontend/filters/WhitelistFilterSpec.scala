@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.tariffclassificationfrontend
+package uk.gov.hmrc.tariffclassificationfrontend.filters
 
 import akka.stream.Materializer
 import com.typesafe.config.ConfigFactory
