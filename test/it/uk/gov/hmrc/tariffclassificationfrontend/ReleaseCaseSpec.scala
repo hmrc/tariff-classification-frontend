@@ -11,20 +11,14 @@ import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus
 import util.{CasePayloads, WiremockTestServer, oCase}
 
-class ReleaseCaseSpec extends UnitSpec with WiremockTestServer with MockitoSugar with GuiceOneServerPerSuite {
-
-  override def fakeApplication(): Application = new GuiceApplicationBuilder()
-    .configure(Map("microservice.services.binding-tariff-classification.port" -> wirePort))
-    .build()
-
-  private val ws = fakeApplication().injector.instanceOf[WSClient]
+class ReleaseCaseSpec extends IntegrationTest with MockitoSugar {
 
   "Case Release" should {
     val caseWithStatusNEW = CasePayloads.jsonOf(oCase.btiCaseExample.copy(status = CaseStatus.NEW))
 
-
     "return status 200" in {
       // Given
+      givenAuthSuccess()
       stubFor(get(urlEqualTo("/cases/1"))
         .willReturn(aResponse()
           .withStatus(OK)
@@ -37,6 +31,18 @@ class ReleaseCaseSpec extends UnitSpec with WiremockTestServer with MockitoSugar
       // Then
       response.status shouldBe OK
       response.body should include("<h3 class=\"heading-medium mt-0\">Release this Case for Classification</h3>")
+    }
+
+    "redirect on auth failure" in {
+      // Given
+      givenAuthFailed()
+
+      // When
+      val response: WSResponse = await(ws.url(s"http://localhost:$port/tariff-classification/cases/1/release").get())
+
+      // Then
+      response.status shouldBe OK
+      response.body should include("You are not authorized to access this page.")
     }
   }
 
