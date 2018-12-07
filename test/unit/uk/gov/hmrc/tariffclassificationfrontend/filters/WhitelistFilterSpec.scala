@@ -14,60 +14,79 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.tariffclassificationfrontend.filters
+package uk.gov.hmrc.tariffclassificationfrontend
 
 import akka.stream.Materializer
-import org.mockito.Mockito.{reset, when}
-import org.scalatest.BeforeAndAfterEach
+import com.typesafe.config.ConfigFactory
+import org.scalatest.TestData
 import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.play.guice.GuiceOneAppPerTest
 import play.api.http.HttpVerbs.GET
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.Call
+import play.api.{Application, Configuration, Environment}
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
+import uk.gov.hmrc.tariffclassificationfrontend.filters.WhitelistFilter
 
 import scala.util.{Failure, Try}
 
-class WhitelistFilterSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
+class IPWhitelistFilterSpec extends UnitSpec with MockitoSugar with GuiceOneAppPerTest {
 
   private val mat = mock[Materializer]
-  private val appConfig = mock[AppConfig]
 
-  override protected def afterEach(): Unit = {
-    super.afterEach()
-    reset(appConfig)
+  private def createFilter: WhitelistFilter = {
+    val environment = app.injector.instanceOf[Environment]
+    val appConfig = new AppConfig(app.configuration, environment)
+    new WhitelistFilter(appConfig, mat)
+  }
+
+  override def newAppForTest(testData: TestData): Application = {
+
+    testData.name match {
+
+      case testName if testName.matches("^.*set$") =>
+        val configuration = Map(
+          "whitelist.allowedIps" -> " a.b.c.d,  z.x.y.w ",
+          "whitelist.excluded" -> " /,   /hello/",
+          "whitelist.destination" -> "http://localhost/"
+        )
+        GuiceApplicationBuilder(
+          configuration = Configuration.from(configuration)
+        ).build()
+
+      case testName if testName.matches("^.*missing$") =>
+        GuiceApplicationBuilder().loadConfig(
+          new Configuration(ConfigFactory.load("empty-application.conf"))
+        ).build()
+
+      case testName => throw new IllegalArgumentException(s"Test scenario not expected: $testName ")
+
+    }
+
   }
 
   "WhitelistFilter" should {
 
-    "behave as expected when the whitelisting configurations are set" in {
-      when(appConfig.whitelistedIps).thenReturn(Seq("a.b.c.d", "z.x.y.w"))
-      when(appConfig.whitelistDestination).thenReturn("www.google.com")
-      when(appConfig.whitelistedExcludedPaths).thenReturn(Seq("/", "/hello"))
-
-      val whitelistFilter = new WhitelistFilter(appConfig, mat)
+    "behave as expected when all whitelisting configurations are set" in {
+      val whitelistFilter = createFilter
 
       whitelistFilter.whitelist shouldBe Seq("a.b.c.d", "z.x.y.w")
-      whitelistFilter.destination shouldBe Call(GET, "www.google.com")
-      whitelistFilter.excludedPaths shouldBe Seq(Call(GET, "/"), Call(GET, "/hello"))
+      whitelistFilter.destination shouldBe Call(GET, "http://localhost/")
+      whitelistFilter.excludedPaths shouldBe Seq(Call(GET, "/"), Call(GET, "/hello/"))
     }
 
-    "behave as expected when the whitelisting configurations are missing" in {
-      val error = new RuntimeException("simulated error")
-
+    "behave as expected when all whitelisting configurations are missing" in {
       var errorCount = 0
 
       def tryExec(block: => Unit): Unit = {
         Try(block) match {
-          case Failure(e) if e == error => errorCount = 1 + errorCount
-          case x => throw new IllegalStateException(s"Unexpected: $x")
+          case Failure(_: RuntimeException) => errorCount = 1 + errorCount
+          case x => throw new IllegalArgumentException(s"Unexpected: $x")
         }
       }
 
-      when(appConfig.whitelistedIps).thenThrow(error)
-      when(appConfig.whitelistDestination).thenThrow(error)
-      when(appConfig.whitelistedExcludedPaths).thenThrow(error)
-
-      val whitelistFilter = new WhitelistFilter(appConfig, mat)
+      val whitelistFilter = createFilter
 
       tryExec(whitelistFilter.whitelist)
       tryExec(whitelistFilter.destination)
