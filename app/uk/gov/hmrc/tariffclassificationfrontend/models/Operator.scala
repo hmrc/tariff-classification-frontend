@@ -16,4 +16,4 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.models
 
-case class Operator(id: String, name: String)
+case class Operator(id: String, name: Option[String])

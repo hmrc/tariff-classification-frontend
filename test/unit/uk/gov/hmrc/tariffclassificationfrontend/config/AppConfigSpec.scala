@@ -28,28 +28,32 @@ class AppConfigSpec extends UnitSpec with MockitoSugar with WithFakeApplication 
 
   "Config" should {
 
-    "Builds assets prefix" in {
+    "Build assets prefix" in {
       appConfig.assetsPrefix shouldBe "http://localhost:9032/assets/4.5.0"
     }
 
-    "Builds analytics token" in {
+    "Build analytics token" in {
       appConfig.analyticsToken shouldBe "N/A"
     }
 
-    "Builds analytics host" in {
+    "Build analytics host" in {
       appConfig.analyticsHost shouldBe "auto"
     }
 
-    "Builds report url" in {
+    "Build report url" in {
       appConfig.reportAProblemPartialUrl shouldBe "http://localhost:9250/contact/problem_reports_ajax?service=MyService"
     }
 
-    "Builds report non-json url" in {
+    "Build report non-json url" in {
       appConfig.reportAProblemNonJSUrl shouldBe "http://localhost:9250/contact/problem_reports_nonjs?service=MyService"
     }
 
-    "Builds local Binding Tariff Base URL" in {
+    "Build local Binding Tariff Base URL" in {
       appConfig.bindingTariffClassificationUrl shouldBe "http://localhost:9580"
+    }
+
+    "Build auth enrolment" in {
+      appConfig.authEnrolment shouldBe "classification"
     }
 
   }

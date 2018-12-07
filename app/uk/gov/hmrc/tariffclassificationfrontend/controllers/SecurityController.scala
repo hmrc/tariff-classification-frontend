@@ -21,15 +21,12 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, QueuesService}
 import uk.gov.hmrc.tariffclassificationfrontend.views.html.not_authorized
 
 import scala.concurrent.Future
 
 @Singleton
-class SecurityController @Inject()(casesService: CasesService,
-                                   queuesService: QueuesService,
-                                   val messagesApi: MessagesApi,
+class SecurityController @Inject()(val messagesApi: MessagesApi,
                                    implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
   def unauthorized(): Action[AnyContent] = Action.async { implicit request =>
