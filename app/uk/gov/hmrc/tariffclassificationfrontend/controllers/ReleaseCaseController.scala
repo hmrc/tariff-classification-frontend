@@ -20,7 +20,6 @@ import javax.inject.{Inject, Singleton}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
-import play.mvc.Security.AuthenticatedAction
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.audit.AuditService
