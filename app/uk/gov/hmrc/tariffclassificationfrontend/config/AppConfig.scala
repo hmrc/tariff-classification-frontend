@@ -23,6 +23,7 @@ import uk.gov.hmrc.play.config.ServicesConfig
 
 @Singleton
 class AppConfig @Inject()(val runModeConfiguration: Configuration, environment: Environment) extends ServicesConfig {
+
   override protected def mode: Mode = environment.mode
 
   private def loadConfig(key: String) = runModeConfiguration.getString(key).getOrElse(throw new Exception(s"Missing configuration key: $key"))
@@ -37,4 +38,19 @@ class AppConfig @Inject()(val runModeConfiguration: Configuration, environment: 
   def reportAProblemPartialUrl = s"$contactHost/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
   def reportAProblemNonJSUrl = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
   def bindingTariffClassificationUrl: String = baseUrl("binding-tariff-classification")
+
+  lazy val whitelistDestination: String = getString("whitelist.destination")
+  lazy val whitelistedIps: Seq[String] = {
+    getString("whitelist.allowedIps")
+      .split(",")
+      .map(_.trim)
+      .filter(_.nonEmpty)
+  }
+  lazy val whitelistedExcludedPaths: Seq[String] = {
+    getString("whitelist.excluded")
+      .split(",")
+      .map(_.trim)
+      .filter(_.nonEmpty)
+  }
+
 }
