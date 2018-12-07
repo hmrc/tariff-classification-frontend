@@ -18,7 +18,7 @@ package uk.gov.hmrc.tariffclassificationfrontend.config
 
 import javax.inject.{Inject, Singleton}
 import play.api.Mode.Mode
-import play.api.{Configuration, Environment, Logger}
+import play.api.{Configuration, Environment}
 import uk.gov.hmrc.play.config.ServicesConfig
 
 @Singleton
