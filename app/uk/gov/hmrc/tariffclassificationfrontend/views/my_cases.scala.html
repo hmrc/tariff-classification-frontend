@@ -18,7 +18,8 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Queue}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{cases_list, queue_nav}
-@(queues: Seq[Queue], cases: Seq[Case])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@import uk.gov.hmrc.tariffclassificationfrontend.models.Operator
+@(queues: Seq[Queue], cases: Seq[Case], operator: Operator)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None) {
 
@@ -29,7 +30,14 @@
         <div class="column-three-quarters">
             <div class="grid-row">
                 <div class="column-full">
-                    <h1 id="queue-name" class="heading-large">@messages("cases.menu.my-cases")</h1>
+                    <h1 id="queue-name" class="heading-large">
+                    @{
+                        operator
+                                .name
+                                .map(n => messages("cases.list.my-cases", n))
+                                .getOrElse(messages("cases.menu.my-cases"))
+                    }
+                    </h1>
                 </div>
             </div>
             @cases_list(cases)

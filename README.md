@@ -15,6 +15,9 @@ The Front End for the internal Operator Service for reviewing & determining BTI 
  
 1) Run Assets Frontend: `sm --start ASSETS_FRONTEND -r 4.5.0`
 2) Start [Binding Tariff Classification](https://github.com/hmrc/binding-tariff-classification) Using `sm --start BINDING_TARIFF_CLASSIFICATION -f`
+3) Start Stride Auth Frontend Using `sm --start STRIDE_AUTH_FRONTEND -r`
+4) Start Stride Auth Using `sm --start STRIDE_AUTH -r`
+5) Start Stride Auth IDP Stub Using `sm --start STRIDE_AUTH_IDP_STUB -r`
 
 Finally Run `sbt run` to boot the app
 

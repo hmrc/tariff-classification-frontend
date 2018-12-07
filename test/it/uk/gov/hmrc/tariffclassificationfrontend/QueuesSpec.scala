@@ -10,30 +10,37 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.play.test.UnitSpec
 import util.{CasePayloads, WiremockTestServer}
 
-class QueuesSpec extends UnitSpec with WiremockTestServer with MockitoSugar with GuiceOneServerPerSuite {
-
-  override def fakeApplication(): Application = new GuiceApplicationBuilder()
-    .configure(Map("microservice.services.binding-tariff-classification.port" -> wirePort))
-    .build()
-
-  private val ws = fakeApplication().injector.instanceOf[WSClient]
+class QueuesSpec extends IntegrationTest with MockitoSugar {
 
   "My Cases" should {
 
     "return status 200" in {
       // Given
-      stubFor(get(urlEqualTo("/cases?assignee_id=0&status=NEW,OPEN,REFERRED,SUSPENDED&sort-by=elapsed-days"))
+      givenAuthSuccess()
+      stubFor(get(urlEqualTo("/cases?assignee_id=123&status=NEW,OPEN,REFERRED,SUSPENDED&sort-by=elapsed-days"))
         .willReturn(aResponse()
           .withStatus(OK)
           .withBody(CasePayloads.gatewayCases))
       )
 
       // When
-      val response = await(ws.url(s"http://localhost:$port/tariff-classification/queues").get())
+      val response = await(ws.url(s"$appRoot/queues").get())
 
       // Then
       response.status shouldBe OK
-      response.body should include("<h1 id=\"queue-name\" class=\"heading-large\">My Cases</h1>")
+      response.body should include("Cases for Forename Surname")
+    }
+
+    "redirect on auth failure" in {
+      // Given
+      givenAuthFailed()
+
+      // When
+      val response = await(ws.url(s"$appRoot/queues").get())
+
+      // Then
+      response.status shouldBe OK
+      response.body should include("You are not authorized to access this page.")
     }
   }
 
@@ -41,6 +48,7 @@ class QueuesSpec extends UnitSpec with WiremockTestServer with MockitoSugar with
 
     "return status 200" in {
       // Given
+      givenAuthSuccess()
       stubFor(get(urlEqualTo("/cases?queue_id=none&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort-by=elapsed-days"))
         .willReturn(aResponse()
           .withStatus(OK)
@@ -48,11 +56,23 @@ class QueuesSpec extends UnitSpec with WiremockTestServer with MockitoSugar with
         )
 
       // When
-      val response = await(ws.url(s"http://localhost:$port/tariff-classification/queues/gateway").get())
+      val response = await(ws.url(s"$appRoot/queues/gateway").get())
 
       // Then
       response.status shouldBe OK
       response.body should include("<h1 id=\"queue-name\" class=\"heading-large\">Gateway Cases</h1>")
+    }
+
+    "redirect on auth failure" in {
+      // Given
+      givenAuthFailed()
+
+      // When
+      val response = await(ws.url(s"$appRoot/queues/gateway").get())
+
+      // Then
+      response.status shouldBe OK
+      response.body should include("You are not authorized to access this page.")
     }
   }
 
@@ -60,6 +80,7 @@ class QueuesSpec extends UnitSpec with WiremockTestServer with MockitoSugar with
 
     "return status 200" in {
       // Given
+      givenAuthSuccess()
       stubFor(get(urlEqualTo("/cases?queue_id=2&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort-by=elapsed-days"))
         .willReturn(aResponse()
           .withStatus(OK)
@@ -67,11 +88,23 @@ class QueuesSpec extends UnitSpec with WiremockTestServer with MockitoSugar with
       )
 
       // When
-      val response = await(ws.url(s"http://localhost:$port/tariff-classification/queues/act").get())
+      val response = await(ws.url(s"$appRoot/queues/act").get())
 
       // Then
       response.status shouldBe OK
       response.body should include("<h1 id=\"queue-name\" class=\"heading-large\">ACT Cases</h1>")
+    }
+
+    "redirect on auth failure" in {
+      // Given
+      givenAuthFailed()
+
+      // When
+      val response = await(ws.url(s"$appRoot/queues/gateway").get())
+
+      // Then
+      response.status shouldBe OK
+      response.body should include("You are not authorized to access this page.")
     }
   }
 
@@ -79,6 +112,7 @@ class QueuesSpec extends UnitSpec with WiremockTestServer with MockitoSugar with
 
     "return status 200" in {
       // Given
+      givenAuthSuccess()
       stubFor(get(urlEqualTo("/cases?queue_id=3&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort-by=elapsed-days"))
         .willReturn(aResponse()
           .withStatus(OK)
@@ -86,11 +120,23 @@ class QueuesSpec extends UnitSpec with WiremockTestServer with MockitoSugar with
       )
 
       // When
-      val response = await(ws.url(s"http://localhost:$port/tariff-classification/queues/cap").get())
+      val response = await(ws.url(s"$appRoot/queues/cap").get())
 
       // Then
       response.status shouldBe OK
       response.body should include("<h1 id=\"queue-name\" class=\"heading-large\">CAP Cases</h1>")
+    }
+
+    "redirect on auth failure" in {
+      // Given
+      givenAuthFailed()
+
+      // When
+      val response = await(ws.url(s"$appRoot/queues/gateway").get())
+
+      // Then
+      response.status shouldBe OK
+      response.body should include("You are not authorized to access this page.")
     }
   }
 
@@ -98,6 +144,7 @@ class QueuesSpec extends UnitSpec with WiremockTestServer with MockitoSugar with
 
     "return status 200" in {
       // Given
+      givenAuthSuccess()
       stubFor(get(urlEqualTo("/cases?queue_id=4&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort-by=elapsed-days"))
         .willReturn(aResponse()
           .withStatus(OK)
@@ -105,11 +152,23 @@ class QueuesSpec extends UnitSpec with WiremockTestServer with MockitoSugar with
       )
 
       // When
-      val response = await(ws.url(s"http://localhost:$port/tariff-classification/queues/cars").get())
+      val response = await(ws.url(s"$appRoot/queues/cars").get())
 
       // Then
       response.status shouldBe OK
       response.body should include("<h1 id=\"queue-name\" class=\"heading-large\">Cars Cases</h1>")
+    }
+
+    "redirect on auth failure" in {
+      // Given
+      givenAuthFailed()
+
+      // When
+      val response = await(ws.url(s"$appRoot/queues/cars").get())
+
+      // Then
+      response.status shouldBe OK
+      response.body should include("You are not authorized to access this page.")
     }
   }
 
@@ -117,6 +176,7 @@ class QueuesSpec extends UnitSpec with WiremockTestServer with MockitoSugar with
 
     "return status 200" in {
       // Given
+      givenAuthSuccess()
       stubFor(get(urlEqualTo("/cases?queue_id=5&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort-by=elapsed-days"))
         .willReturn(aResponse()
           .withStatus(OK)
@@ -124,11 +184,23 @@ class QueuesSpec extends UnitSpec with WiremockTestServer with MockitoSugar with
       )
 
       // When
-      val response = await(ws.url(s"http://localhost:$port/tariff-classification/queues/elm").get())
+      val response = await(ws.url(s"$appRoot/queues/elm").get())
 
       // Then
       response.status shouldBe OK
       response.body should include("<h1 id=\"queue-name\" class=\"heading-large\">ELM Cases</h1>")
+    }
+
+    "redirect on auth failure" in {
+      // Given
+      givenAuthFailed()
+
+      // When
+      val response = await(ws.url(s"$appRoot/queues/elm").get())
+
+      // Then
+      response.status shouldBe OK
+      response.body should include("You are not authorized to access this page.")
     }
   }
 

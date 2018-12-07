@@ -1,0 +1,9 @@
+{
+  "credentials": {
+    "providerId": "123",
+    "providerType": "PrivilegedApplication"
+  },
+  "name": {
+    "name": "Forename Surname"
+  }
+}

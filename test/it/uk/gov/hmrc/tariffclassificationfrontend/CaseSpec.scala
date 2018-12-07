@@ -10,29 +10,36 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.play.test.UnitSpec
 import util.{CasePayloads, WiremockTestServer}
 
-class CaseSpec extends UnitSpec with WiremockTestServer with MockitoSugar with GuiceOneServerPerSuite {
-
-  override def fakeApplication(): Application = new GuiceApplicationBuilder()
-    .configure(Map("microservice.services.binding-tariff-classification.port" -> 20001))
-    .build()
-
-  private val ws = fakeApplication().injector.instanceOf[WSClient]
+class CaseSpec extends IntegrationTest with MockitoSugar {
 
   "Unknown Case" should {
 
     "return status 200 with Case Not Found" in {
       // Given
+      givenAuthSuccess()
       stubFor(get(urlEqualTo("/cases/1"))
         .willReturn(aResponse()
           .withStatus(NOT_FOUND))
       )
 
       // When
-      val response = await(ws.url(s"http://localhost:$port/tariff-classification/cases/1").get())
+      val response = await(ws.url(s"$appRoot/cases/1").get())
 
       // Then
       response.status shouldBe OK
       response.body should include("Case not found")
+    }
+
+    "redirect on auth failure" in {
+      // Given
+      givenAuthFailed()
+
+      // When
+      val response = await(ws.url(s"$appRoot/cases/1").get())
+
+      // Then
+      response.status shouldBe OK
+      response.body should include("You are not authorized to access this page.")
     }
   }
 
@@ -40,6 +47,7 @@ class CaseSpec extends UnitSpec with WiremockTestServer with MockitoSugar with G
 
     "return status 200" in {
       // Given
+      givenAuthSuccess()
       stubFor(get(urlEqualTo("/cases/1"))
         .willReturn(aResponse()
           .withStatus(OK)
@@ -47,11 +55,23 @@ class CaseSpec extends UnitSpec with WiremockTestServer with MockitoSugar with G
       )
 
       // When
-      val response = await(ws.url(s"http://localhost:$port/tariff-classification/cases/1").get())
+      val response = await(ws.url(s"$appRoot/cases/1").get())
 
       // Then
       response.status shouldBe OK
       response.body should include("<h3 class=\"heading-medium mt-0\">Summary</h3>")
+    }
+
+    "redirect on auth failure" in {
+      // Given
+      givenAuthFailed()
+
+      // When
+      val response = await(ws.url(s"$appRoot/cases/1").get())
+
+      // Then
+      response.status shouldBe OK
+      response.body should include("You are not authorized to access this page.")
     }
   }
 
@@ -59,6 +79,7 @@ class CaseSpec extends UnitSpec with WiremockTestServer with MockitoSugar with G
 
     "return status 200" in {
       // Given
+      givenAuthSuccess()
       stubFor(get(urlEqualTo("/cases/1"))
         .willReturn(aResponse()
           .withStatus(OK)
@@ -66,11 +87,23 @@ class CaseSpec extends UnitSpec with WiremockTestServer with MockitoSugar with G
       )
 
       // When
-      val response = await(ws.url(s"http://localhost:$port/tariff-classification/cases/1/application").get())
+      val response = await(ws.url(s"$appRoot/cases/1/application").get())
 
       // Then
       response.status shouldBe OK
       response.body should include("<h3 class=\"heading-medium mt-0\">Application Details</h3>")
+    }
+
+    "redirect on auth failure" in {
+      // Given
+      givenAuthFailed()
+
+      // When
+      val response = await(ws.url(s"$appRoot/cases/1/application").get())
+
+      // Then
+      response.status shouldBe OK
+      response.body should include("You are not authorized to access this page.")
     }
   }
 
@@ -78,6 +111,7 @@ class CaseSpec extends UnitSpec with WiremockTestServer with MockitoSugar with G
 
     "return status 200" in {
       // Given
+      givenAuthSuccess()
       stubFor(get(urlEqualTo("/cases/1"))
         .willReturn(aResponse()
           .withStatus(OK)
@@ -85,11 +119,23 @@ class CaseSpec extends UnitSpec with WiremockTestServer with MockitoSugar with G
       )
 
       // When
-      val response = await(ws.url(s"http://localhost:$port/tariff-classification/cases/1/ruling").get())
+      val response = await(ws.url(s"$appRoot/cases/1/ruling").get())
 
       // Then
       response.status shouldBe OK
       response.body should include("<h3 class=\"heading-medium mt-0\">Ruling</h3>")
+    }
+
+    "redirect on auth failure" in {
+      // Given
+      givenAuthFailed()
+
+      // When
+      val response = await(ws.url(s"$appRoot/cases/1/ruling").get())
+
+      // Then
+      response.status shouldBe OK
+      response.body should include("You are not authorized to access this page.")
     }
   }
 

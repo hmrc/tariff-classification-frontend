@@ -1,6 +1,8 @@
 # microservice specific routes
 
-GET        /assets/*file                             controllers.Assets.at(path="/public", file)
+GET        /assets/*file                            controllers.Assets.at(path="/public", file)
+
+GET        /unauthorized                            @uk.gov.hmrc.tariffclassificationfrontend.controllers.SecurityController.unauthorized()
 
 GET        /                                        @uk.gov.hmrc.tariffclassificationfrontend.controllers.MyCasesController.myCases()
 GET        /queues                                   controllers.Default.redirect(to = "/tariff-classification")

@@ -58,7 +58,7 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   private implicit val mat: Materializer = app.materializer
   private implicit val hc: HeaderCarrier = HeaderCarrier()
 
-  private val controller = new ReleaseCaseController(casesService, auditService, queueService, messageApi, appConfig)
+  private val controller = new ReleaseCaseController(new SuccessfulAuthenticatedAction, casesService, auditService, queueService, messageApi, appConfig)
 
   override def beforeEach(): Unit = {
     super.beforeEach()

@@ -34,6 +34,7 @@ class AppConfig @Inject()(val runModeConfiguration: Configuration, environment: 
   def assetsPrefix: String = loadConfig("assets.url") + loadConfig("assets.version")
   def analyticsToken: String = loadConfig("google-analytics.token")
   def analyticsHost: String = loadConfig("google-analytics.host")
+  def authEnrolment: String = loadConfig("auth.enrolment")
   def reportAProblemPartialUrl = s"$contactHost/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
   def reportAProblemNonJSUrl = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
   def bindingTariffClassificationUrl: String = baseUrl("binding-tariff-classification")

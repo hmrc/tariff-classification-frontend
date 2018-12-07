@@ -50,7 +50,7 @@ class RulingControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSui
 
   private implicit val hc = HeaderCarrier()
 
-  private val controller = new RulingController(casesService, mapper, messageApi, appConfig)
+  private val controller = new RulingController(new SuccessfulAuthenticatedAction, casesService, mapper, messageApi, appConfig)
 
   override protected def beforeEach(): Unit = {
     Mockito.reset(casesService)
