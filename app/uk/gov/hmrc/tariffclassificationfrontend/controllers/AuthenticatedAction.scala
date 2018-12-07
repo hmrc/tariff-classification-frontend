@@ -59,7 +59,6 @@ class AuthenticatedAction @Inject()(appConfig: AppConfig,
       } recover {
       case _: NoActiveSession => toStrideLogin(s"http://${request.host}${request.uri}")
       case _: AuthorisationException => Redirect(routes.SecurityController.unauthorized())
-      case e => throw e
     }
   }
 }
