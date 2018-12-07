@@ -16,140 +16,195 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
+import akka.stream.Materializer
 import org.mockito.ArgumentMatchers.{any, refEq}
-import org.mockito.BDDMockito._
+import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.{BeforeAndAfterEach, Matchers, WordSpec}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.http.Status
+import play.api.http.{MimeTypes, Status}
+import play.api.http.HeaderNames.LOCATION
 import play.api.i18n.{DefaultLangs, DefaultMessagesApi}
-import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded}
-import play.api.test.Helpers._
+import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded, Result}
+import uk.gov.hmrc.play.test.UnitSpec
 import play.api.test.{FakeHeaders, FakeRequest}
 import play.api.{Configuration, Environment}
 import play.filters.csrf.CSRF.{Token, TokenProvider}
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.tariffclassificationfrontend.audit.AuditService
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, Queue}
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, QueuesService}
 import util.oCase
 
-import scala.concurrent.Future
+import scala.concurrent.Future.{failed, successful}
 
-class ReleaseCaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite with MockitoSugar {
+class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
+  with GuiceOneAppPerSuite with MockitoSugar with BeforeAndAfterEach {
 
   private val env = Environment.simple()
+
   private val configuration = Configuration.load(env)
   private val messageApi = new DefaultMessagesApi(env, configuration, new DefaultLangs(configuration))
   private val appConfig = new AppConfig(configuration, env)
   private val casesService = mock[CasesService]
+  private val auditService = mock[AuditService]
   private val queueService = mock[QueuesService]
-  private implicit val hc = HeaderCarrier()
+  private val queue = mock[Queue]
 
-  private val controller = new ReleaseCaseController(new SuccessfulAuthenticatedAction, casesService, queueService, messageApi, appConfig)
+  private val caseWithStatusNEW = oCase.btiCaseExample.copy(status = CaseStatus.NEW)
+  private val caseWithStatusOPEN = oCase.btiCaseExample.copy(status = CaseStatus.OPEN)
+
+  private implicit val mat: Materializer = app.materializer
+  private implicit val hc: HeaderCarrier = HeaderCarrier()
+
+  private val controller = new ReleaseCaseController(new SuccessfulAuthenticatedAction, casesService, auditService, queueService, messageApi, appConfig)
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+  }
+
+  override def afterEach(): Unit = {
+    super.afterEach()
+
+    reset(casesService, auditService)
+  }
 
   "Release Case" should {
-    val caseWithStatusNEW = oCase.btiCaseExample.copy(status = CaseStatus.NEW)
-    val caseWithStatusOPEN = oCase.btiCaseExample.copy(status = CaseStatus.OPEN)
 
     "return OK and HTML content type" in {
-      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(caseWithStatusNEW)))
-      given(queueService.getNonGateway).willReturn(Seq.empty)
+      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusNEW)))
+      when(queueService.getNonGateway).thenReturn(Seq.empty)
 
-      val result = controller.releaseCase("reference")(newFakeGETRequestWithCSRF())
+      val result: Result = await(controller.releaseCase("reference")(newFakeGETRequestWithCSRF()))
+
       status(result) shouldBe Status.OK
-      contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
-      contentAsString(result) should include("Release this Case for Classification")
+      contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
+      charsetOf(result) shouldBe Some("utf-8")
+      bodyOf(result) should include("Release this Case for Classification")
+
+      verifyZeroInteractions(auditService)
     }
 
-    "redirect to Application Details for non NEW Statuses" in {
-      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(caseWithStatusOPEN)))
-      given(queueService.getNonGateway).willReturn(Seq.empty)
+    "redirect to Application Details for non NEW statuses" in {
+      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusOPEN)))
+      when(queueService.getNonGateway).thenReturn(Seq.empty)
 
-      val result = controller.releaseCase("reference")(newFakeGETRequestWithCSRF())
+      val result: Result = await(controller.releaseCase("reference")(newFakeGETRequestWithCSRF()))
+
       status(result) shouldBe Status.SEE_OTHER
-      contentType(result) shouldBe None
-      charset(result) shouldBe None
-      redirectLocation(result) shouldBe Some("/tariff-classification/cases/reference/application")
+      contentTypeOf(result) shouldBe None
+      charsetOf(result) shouldBe None
+      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/application")
+
+      verifyZeroInteractions(auditService)
     }
 
     "return Not Found and HTML content type" in {
-      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(None))
-      given(queueService.getNonGateway).willReturn(Seq.empty)
+      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(None))
+      when(queueService.getNonGateway).thenReturn(Seq.empty)
 
-      val result = controller.releaseCase("reference")(newFakeGETRequestWithCSRF())
+      val result: Result = await(controller.releaseCase("reference")(newFakeGETRequestWithCSRF()))
+
       status(result) shouldBe Status.OK
-      contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
-      contentAsString(result) should include("We could not find a Case with reference")
+      contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
+      charsetOf(result) shouldBe Some("utf-8")
+      bodyOf(result) should include("We could not find a Case with reference")
+
+      verifyZeroInteractions(auditService)
     }
 
   }
 
   "Release Case To Queue" should {
-    val caseWithStatusNEW = oCase.btiCaseExample.copy(status = CaseStatus.NEW)
-    val caseWithStatusOPEN = oCase.btiCaseExample.copy(status = CaseStatus.OPEN)
-    val queue = mock[Queue]
 
     "return OK and HTML content type" in {
-      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(caseWithStatusNEW)))
-      given(queueService.getOneBySlug("queue")).willReturn(Some(queue))
-      given(casesService.releaseCase(refEq(caseWithStatusNEW), any[Queue])(any[HeaderCarrier])).willReturn(Future.successful(caseWithStatusOPEN))
+      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusNEW)))
+      when(queueService.getOneBySlug("queue")).thenReturn(Some(queue))
+      when(casesService.releaseCase(refEq(caseWithStatusNEW), any[Queue])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusOPEN))
 
-      val result = controller.releaseCaseToQueue("reference")(newFakePOSTRequestWithCSRF("queue"))
+      val result: Result = await(controller.releaseCaseToQueue("reference")(newFakePOSTRequestWithCSRF("queue")))
+
       status(result) shouldBe Status.OK
-      contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
-      contentAsString(result) should include("This case has been released")
+      contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
+      charsetOf(result) shouldBe Some("utf-8")
+      bodyOf(result) should include("This case has been released")
+
+      verify(auditService).auditCaseReleased(refEq(caseWithStatusOPEN))(any[HeaderCarrier])
+      verifyNoMoreInteractions(auditService)
     }
 
     "redirect back to case on Form Error" in {
-      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(caseWithStatusNEW)))
-      given(queueService.getOneBySlug("queue")).willReturn(Some(queue))
-      given(queueService.getNonGateway).willReturn(Seq.empty)
-      given(casesService.releaseCase(refEq(caseWithStatusNEW), any[Queue])(any[HeaderCarrier])).willReturn(Future.successful(caseWithStatusOPEN))
+      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusNEW)))
+      when(queueService.getOneBySlug("queue")).thenReturn(Some(queue))
+      when(queueService.getNonGateway).thenReturn(Seq.empty)
+      when(casesService.releaseCase(refEq(caseWithStatusNEW), any[Queue])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusOPEN))
 
-      val result = controller.releaseCaseToQueue("reference")(newInvalidFakePOSTRequestWithCSRF())
+      val result: Result = await(controller.releaseCaseToQueue("reference")(newInvalidFakePOSTRequestWithCSRF()))
+
       status(result) shouldBe Status.OK
-      contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
-      contentAsString(result) should include("Release this Case for Classification")
+      contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
+      charsetOf(result) shouldBe Some("utf-8")
+      bodyOf(result) should include("Release this Case for Classification")
+
+      verifyZeroInteractions(auditService)
     }
 
-    "redirect to Application Details for non NEW Statuses" in {
-      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(caseWithStatusOPEN)))
-      given(queueService.getOneBySlug("queue")).willReturn(Some(queue))
+    "redirect to Application Details for non NEW statuses" in {
+      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusOPEN)))
+      when(queueService.getOneBySlug("queue")).thenReturn(Some(queue))
 
-      val result = controller.releaseCaseToQueue("reference")(newFakePOSTRequestWithCSRF("queue"))
+      val result: Result= await(controller.releaseCaseToQueue("reference")(newFakePOSTRequestWithCSRF("queue")))
+
       status(result) shouldBe Status.SEE_OTHER
-      contentType(result) shouldBe None
-      charset(result) shouldBe None
-      redirectLocation(result) shouldBe Some("/tariff-classification/cases/reference/application")
+      contentTypeOf(result) shouldBe None
+      charsetOf(result) shouldBe None
+      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/application")
+
+      verifyZeroInteractions(auditService)
     }
 
     "return Not Found and HTML content type on missing Case" in {
-      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(None))
-      given(queueService.getOneBySlug("queue")).willReturn(Some(queue))
+      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(None))
+      when(queueService.getOneBySlug("queue")).thenReturn(Some(queue))
 
-      val result = controller.releaseCaseToQueue("reference")(newFakePOSTRequestWithCSRF("queue"))
+      val result: Result = await(controller.releaseCaseToQueue("reference")(newFakePOSTRequestWithCSRF("queue")))
+
       status(result) shouldBe Status.OK
-      contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
-      contentAsString(result) should include("We could not find a Case with reference")
+      contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
+      charsetOf(result) shouldBe Some("utf-8")
+      bodyOf(result) should include("We could not find a Case with reference")
+
+      verifyZeroInteractions(auditService)
     }
 
     "return Not Found and HTML content type on missing Queue" in {
-      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(caseWithStatusNEW)))
-      given(queueService.getOneBySlug("queue")).willReturn(None)
+      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusNEW)))
+      when(queueService.getOneBySlug("queue")).thenReturn(None)
 
-      val result = controller.releaseCaseToQueue("reference")(newFakePOSTRequestWithCSRF("queue"))
+      val result: Result = await(controller.releaseCaseToQueue("reference")(newFakePOSTRequestWithCSRF("queue")))
+
       status(result) shouldBe Status.OK
-      contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
-      contentAsString(result) should include("Queue queue not found")
+      contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
+      charsetOf(result) shouldBe Some("utf-8")
+      bodyOf(result) should include("Queue queue not found")
+
+      verifyZeroInteractions(auditService)
     }
 
+    "propagate the error in case the CaseService fails to release the case" in {
+      val error = new IllegalStateException("expected error")
+
+      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(failed(error))
+      when(queueService.getOneBySlug("queue")).thenReturn(Some(queue))
+
+      val caught = intercept[error.type] {
+        await(controller.releaseCaseToQueue("reference")(newFakePOSTRequestWithCSRF("queue")))
+      }
+      caught shouldBe error
+
+      verifyZeroInteractions(auditService)
+    }
   }
 
   private def newFakeGETRequestWithCSRF(): FakeRequest[AnyContentAsEmpty.type] = {
@@ -169,4 +224,20 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with GuiceOneAppP
     val csrfTags = Map(Token.NameRequestTag -> "csrfToken", Token.RequestTag -> tokenProvider.generateToken)
     FakeRequest("POST", "/", FakeHeaders(), AnyContentAsFormUrlEncoded, tags = csrfTags).withFormUrlEncodedBody()
   }
+
+  private def locationOf(result: Result): Option[String] = {
+    result.header.headers.get(LOCATION)
+  }
+
+  private def contentTypeOf(result: Result): Option[String] = {
+    result.body.contentType.map(_.split(";").take(1).mkString.trim)
+  }
+
+  private def charsetOf(result: Result): Option[String] = {
+    result.body.contentType match {
+      case Some(s) if s.contains("charset=") => Some(s.split("; *charset=").drop(1).mkString.trim)
+      case _ => None
+    }
+  }
+
 }

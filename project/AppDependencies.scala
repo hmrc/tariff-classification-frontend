@@ -4,8 +4,8 @@ import sbt._
 object AppDependencies {
 
   val compile = Seq(
-    "uk.gov.hmrc"             %% "bootstrap-play-25"          % "4.0.0",
-    "uk.gov.hmrc"             %% "play-ui"                    % "7.26.0-play-25",
+    "uk.gov.hmrc"             %% "bootstrap-play-25"          % "4.2.0",
+    "uk.gov.hmrc"             %% "play-ui"                    % "7.27.0-play-25",
     "uk.gov.hmrc"             %% "play-json-union-formatter"  % "1.4.0"
   )
 
@@ -20,7 +20,7 @@ object AppDependencies {
     "org.pegdown"             %  "pegdown"                  % "1.6.0"     % scope,
     "org.scalatest"           %% "scalatest"                % "3.0.4"     % scope,
     "org.scalatestplus.play"  %% "scalatestplus-play"       % "2.0.1"     % scope,
-    "uk.gov.hmrc"             %% "hmrctest"                 % "3.2.0"     % scope,
+    "uk.gov.hmrc"             %% "hmrctest"                 % "3.3.0"     % scope,
     "uk.gov.hmrc"             %% "http-verbs-test"          % "1.2.0"     % scope,
     "uk.gov.hmrc"             %% "service-integration-test" % "0.3.0"     % scope
   )
