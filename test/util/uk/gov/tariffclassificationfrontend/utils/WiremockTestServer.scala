@@ -32,11 +32,13 @@ trait WiremockTestServer extends UnitSpec with BeforeAndAfterEach {
   }
 
   override protected def beforeEach(): Unit = {
+    super.beforeEach()
     wireMockServer.start()
     WireMock.configureFor(wireHost, wirePort)
   }
 
   override protected def afterEach(): Unit = {
+    super.afterEach()
     wireMockServer.resetAll()
     wireMockServer.stop()
   }
