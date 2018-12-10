@@ -17,50 +17,76 @@
 package uk.gov.hmrc.tariffclassificationfrontend.config
 
 import org.scalatest.mockito.MockitoSugar
-import play.api.Environment
-import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
+import play.api.{Configuration, Environment, Mode}
+import uk.gov.hmrc.play.test.UnitSpec
 
-class AppConfigSpec extends UnitSpec with MockitoSugar with WithFakeApplication {
+class AppConfigSpec extends UnitSpec with MockitoSugar {
 
-  private val configuration = fakeApplication.configuration
-  private val environment = fakeApplication.injector.instanceOf[Environment]
-  private val appConfig = new AppConfig(configuration, environment)
+  def appConfig(pairs: (String, String)*): AppConfig = {
+    var defaultConfig: Map[String, String] = Map()
+    pairs.foreach(e => defaultConfig = defaultConfig + e)
+    new AppConfig(Configuration.from(defaultConfig), Environment.simple())
+  }
 
   "Config" should {
 
     "Build assets prefix" in {
-      appConfig.assetsPrefix shouldBe "http://localhost:9032/assets/4.5.0"
+      appConfig(
+        "assets.url" -> "http://localhost:9032/assets/",
+        "assets.version" -> "4.5.0"
+      ).assetsPrefix shouldBe "http://localhost:9032/assets/4.5.0"
     }
 
     "Build analytics token" in {
-      appConfig.analyticsToken shouldBe "N/A"
+      appConfig("google-analytics.token" -> "N/A").analyticsToken shouldBe "N/A"
     }
 
     "Build analytics host" in {
-      appConfig.analyticsHost shouldBe "auto"
+      appConfig("google-analytics.host" -> "auto").analyticsHost shouldBe "auto"
     }
 
     "Build report url" in {
-      appConfig.reportAProblemPartialUrl shouldBe "http://localhost:9250/contact/problem_reports_ajax?service=MyService"
+      appConfig("contact-frontend.host" -> "host").reportAProblemPartialUrl shouldBe "host/contact/problem_reports_ajax?service=MyService"
     }
 
     "Build report non-json url" in {
-      appConfig.reportAProblemNonJSUrl shouldBe "http://localhost:9250/contact/problem_reports_nonjs?service=MyService"
+      appConfig("contact-frontend.host" -> "host").reportAProblemNonJSUrl shouldBe "host/contact/problem_reports_nonjs?service=MyService"
     }
 
     "Build local Binding Tariff Base URL" in {
-      appConfig.bindingTariffClassificationUrl shouldBe "http://localhost:9580"
+      appConfig(
+        "microservice.services.binding-tariff-classification.host" -> "host",
+        "microservice.services.binding-tariff-classification.port" -> "123"
+      ).bindingTariffClassificationUrl shouldBe "http://host:123"
     }
 
-
     "Build auth enrolment" in {
-      appConfig.authEnrolment shouldBe "classification"
+      appConfig("auth.enrolment" -> "classification").authEnrolment shouldBe "classification"
     }
     
     "Builds whitelist configurations" in {
-      appConfig.whitelistDestination shouldBe "https://www.gov.uk"
-      appConfig.whitelistedIps shouldBe Seq.empty
-      appConfig.whitelistedExcludedPaths shouldBe Seq.empty
+      appConfig("whitelist.destination" -> "dest").whitelistDestination shouldBe "dest"
+      appConfig("whitelist.allowedIps" -> "a,b").whitelistedIps shouldBe Seq("a", "b")
+      appConfig("whitelist.excluded" -> "a,b").whitelistedExcludedPaths shouldBe Seq("a", "b")
+    }
+
+    "Builds runningAsDev from config override" in {
+      appConfig("run.mode" -> "Dev").runningAsDev shouldBe true
+      appConfig("run.mode" -> "Prod").runningAsDev shouldBe false
+    }
+
+    "Builds runningAsDev from mode" in {
+      val config = Configuration.from(Map())
+      new AppConfig(config, Environment.simple(mode = Mode.Dev)).runningAsDev shouldBe true
+      new AppConfig(config, Environment.simple(mode = Mode.Test)).runningAsDev shouldBe false
+    }
+
+    "Builds runningAsDev giving precedence to config override" in {
+      val testConfig = Configuration.from(Map("run.mode" -> "Test"))
+      new AppConfig(testConfig, Environment.simple(mode = Mode.Dev)).runningAsDev shouldBe false
+
+      val devConfig = Configuration.from(Map("run.mode" -> "Dev"))
+      new AppConfig(devConfig, Environment.simple(mode = Mode.Test)).runningAsDev shouldBe true
     }
   }
 

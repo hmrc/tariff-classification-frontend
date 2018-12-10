@@ -18,7 +18,7 @@ package uk.gov.hmrc.tariffclassificationfrontend.config
 
 import javax.inject.{Inject, Singleton}
 import play.api.Mode.Mode
-import play.api.{Configuration, Environment}
+import play.api.{Configuration, Environment, Mode}
 import uk.gov.hmrc.play.config.ServicesConfig
 
 @Singleton
@@ -51,6 +51,13 @@ class AppConfig @Inject()(val runModeConfiguration: Configuration, environment: 
       .split(",")
       .map(_.trim)
       .filter(_.nonEmpty)
+  }
+
+  def runningAsDev: Boolean = {
+    runModeConfiguration
+      .getString("run.mode")
+      .map(_.equals(Mode.Dev.toString))
+      .getOrElse(Mode.Dev.equals(mode))
   }
 
 }

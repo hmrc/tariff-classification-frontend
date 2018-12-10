@@ -19,7 +19,7 @@ package uk.gov.hmrc.tariffclassificationfrontend.controllers
 import javax.inject.{Inject, Singleton}
 import play.api.mvc.Results._
 import play.api.mvc.{ActionBuilder, Request, Result}
-import play.api.{Configuration, Environment, Mode}
+import play.api.{Configuration, Environment}
 import uk.gov.hmrc.auth.core.AuthProvider.PrivilegedApplication
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.Retrievals
@@ -28,8 +28,8 @@ import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.connector.StrideAuthConnector
-import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 import uk.gov.hmrc.tariffclassificationfrontend.models.Operator
+import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -59,7 +59,9 @@ class AuthenticatedAction @Inject()(appConfig: AppConfig,
           block(AuthenticatedRequest(Operator(id, name), request))
       } recover {
       case _: NoActiveSession => toStrideLogin(
-        if(env.mode.equals(Mode.Dev)) s"http://${request.host}${request.uri}" else s"${request.uri}"
+        if (appConfig.runningAsDev) {
+          s"http://${request.host}${request.uri}"
+        } else s"${request.uri}"
       )
       case _: AuthorisationException => Redirect(routes.SecurityController.unauthorized())
     }
