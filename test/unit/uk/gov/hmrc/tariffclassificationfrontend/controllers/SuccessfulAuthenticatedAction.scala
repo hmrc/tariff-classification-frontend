@@ -26,13 +26,13 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequ
 
 import scala.concurrent.Future
 
-class SuccessfulAuthenticatedAction extends AuthenticatedAction(
+class SuccessfulAuthenticatedAction(operator: Operator = Operator("0", Some("name"))) extends AuthenticatedAction(
   appConfig = mock(classOf[AppConfig]),
   config = mock(classOf[Configuration]),
   env = mock(classOf[Environment]),
   authConnector = mock(classOf[StrideAuthConnector])) {
 
   override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] = {
-    block(AuthenticatedRequest(Operator("0", Some("name")), request))
+    block(AuthenticatedRequest(operator, request))
   }
 }

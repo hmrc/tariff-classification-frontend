@@ -205,7 +205,7 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
       val validEventRequest = Events.eventRequest
       val requestJson = Json.toJson(validEventRequest).toString()
 
-      stubFor(put(urlEqualTo(s"/cases/$ref/events"))
+      stubFor(post(urlEqualTo(s"/cases/$ref/events"))
         .withRequestBody(equalToJson(requestJson))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_NOT_FOUND)

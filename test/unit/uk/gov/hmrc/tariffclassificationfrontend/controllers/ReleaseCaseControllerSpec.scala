@@ -51,6 +51,7 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   private val auditService = mock[AuditService]
   private val queueService = mock[QueuesService]
   private val queue = mock[Queue]
+  private val operator = mock[Operator]
 
   private val caseWithStatusNEW = Cases.btiCaseExample.copy(status = CaseStatus.NEW)
   private val caseWithStatusOPEN = Cases.btiCaseExample.copy(status = CaseStatus.OPEN)
@@ -58,7 +59,7 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   private implicit val mat: Materializer = app.materializer
   private implicit val hc: HeaderCarrier = HeaderCarrier()
 
-  private val controller = new ReleaseCaseController(new SuccessfulAuthenticatedAction, casesService, auditService, queueService, messageApi, appConfig)
+  private val controller = new ReleaseCaseController(new SuccessfulAuthenticatedAction(operator), casesService, auditService, queueService, messageApi, appConfig)
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -121,7 +122,7 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     "return OK and HTML content type" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusNEW)))
       when(queueService.getOneBySlug("queue")).thenReturn(Some(queue))
-      when(casesService.releaseCase(refEq(caseWithStatusNEW), any[Queue], any[Operator])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusOPEN))
+      when(casesService.releaseCase(refEq(caseWithStatusNEW), any[Queue], refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusOPEN))
 
       val result: Result = await(controller.releaseCaseToQueue("reference")(newFakePOSTRequestWithCSRF("queue")))
 
@@ -138,7 +139,7 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusNEW)))
       when(queueService.getOneBySlug("queue")).thenReturn(Some(queue))
       when(queueService.getNonGateway).thenReturn(Seq.empty)
-      when(casesService.releaseCase(refEq(caseWithStatusNEW), any[Queue], any[Operator])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusOPEN))
+      when(casesService.releaseCase(refEq(caseWithStatusNEW), any[Queue], refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusOPEN))
 
       val result: Result = await(controller.releaseCaseToQueue("reference")(newInvalidFakePOSTRequestWithCSRF()))
 
