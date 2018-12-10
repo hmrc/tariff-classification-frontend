@@ -28,7 +28,7 @@ import scala.concurrent.Future
 @Singleton
 class CasesService @Inject()(connector: BindingTariffClassificationConnector) {
 
-  def releaseCase(c: Case, queue: Queue)(implicit hc: HeaderCarrier, operator: Operator): Future[Case] = {
+  def releaseCase(c: Case, queue: Queue, operator: Operator)(implicit hc: HeaderCarrier): Future[Case] = {
     val eventualCase: Future[Case] = connector.updateCase(c.copy(status = CaseStatus.OPEN, queueId = Some(queue.id)))
     eventualCase.onSuccess({
       case updated =>

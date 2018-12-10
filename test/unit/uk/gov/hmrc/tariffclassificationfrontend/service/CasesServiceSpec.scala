@@ -77,8 +77,7 @@ class CasesServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEac
   "Release Case" should {
     "update case queue_id and status to NEW" in {
       // Given
-      implicit val operator: Operator = Operator("operator-id")
-
+      val operator: Operator = Operator("operator-id")
       val originalCase = Case("ref", CaseStatus.NEW, ZonedDateTime.now(), ZonedDateTime.now(), None, None, None, None, mock[Application], None, Seq.empty)
       val caseUpdated = Case("ref", CaseStatus.OPEN, ZonedDateTime.now(), ZonedDateTime.now(), None, None, None, None, mock[Application], None, Seq.empty)
 
@@ -86,7 +85,7 @@ class CasesServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEac
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(caseUpdated))
 
       // When Then
-      await(service.releaseCase(originalCase, queue)) shouldBe caseUpdated
+      await(service.releaseCase(originalCase, queue, operator)) shouldBe caseUpdated
 
       val caseUpdating = theCaseUpdating()
       caseUpdating.status shouldBe CaseStatus.OPEN

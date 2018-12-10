@@ -47,7 +47,6 @@ class ReleaseCaseController @Inject()(authenticatedAction: AuthenticatedAction,
   }
 
   def releaseCaseToQueue(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
-    implicit val operator: Operator = request.operator
 
     def onInvalidForm(formWithErrors: Form[ReleaseCaseForm]): Future[Result] = {
       getCaseAndRenderView(reference, c => Future.successful(views.html.release_case(c, formWithErrors, queueService.getNonGateway)))
@@ -57,7 +56,7 @@ class ReleaseCaseController @Inject()(authenticatedAction: AuthenticatedAction,
       queueService.getOneBySlug(validForm.queue) match {
         case None => Future.successful(Ok(views.html.resource_not_found(s"Queue ${validForm.queue}")))
         case Some(q: Queue) =>
-          getCaseAndRenderView(reference, casesService.releaseCase(_, q).map { c: Case =>
+          getCaseAndRenderView(reference, casesService.releaseCase(_, q, request.operator).map { c: Case =>
             auditService.auditCaseReleased(c)
             views.html.confirm_release_case(c, q)
           })
