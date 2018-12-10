@@ -14,8 +14,14 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.tariffclassificationfrontend.models
+package uk.gov.tariffclassificationfrontend.utils
 
-import play.api.mvc.{Request, WrappedRequest}
+import java.time.ZonedDateTime
 
-case class AuthenticatedRequest[A](operator: Operator, request: Request[A]) extends WrappedRequest[A](request)
+import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Event, Note}
+
+object Events {
+  val event = Event("id", Note(Some("comment")), "user-id", "case-ref", ZonedDateTime.now())
+  val eventRequest = NewEventRequest(Note(Some("comment")), "user-id", ZonedDateTime.now())
+}

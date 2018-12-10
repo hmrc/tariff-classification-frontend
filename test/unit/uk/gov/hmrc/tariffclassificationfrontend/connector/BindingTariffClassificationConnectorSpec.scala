@@ -28,13 +28,13 @@ import uk.gov.hmrc.play.bootstrap.audit.DefaultAuditConnector
 import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, Queue, Status}
-import util.{CasePayloads, WiremockTestServer, oCase}
+import uk.gov.hmrc.tariffclassificationfrontend.models.Queue
+import uk.gov.tariffclassificationfrontend.utils.{CasePayloads, Cases, Events, WiremockTestServer}
 
 class BindingTariffClassificationConnectorSpec extends UnitSpec
   with WiremockTestServer with MockitoSugar with WithFakeApplication {
 
-  import uk.gov.hmrc.tariffclassificationfrontend.utils.JsonFormatters.{caseFormat, statusFormat}
+  import uk.gov.hmrc.tariffclassificationfrontend.utils.JsonFormatters.{caseFormat, eventFormat, newEventRequestFormat}
 
   private val configuration = mock[AppConfig]
 
@@ -49,6 +49,7 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
+
     given(configuration.bindingTariffClassificationUrl).willReturn(getUrl)
   }
 
@@ -61,7 +62,7 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
           .withBody("[]"))
       )
 
-      await(connector.getCasesByQueue(gatewayQueue)) shouldBe Seq()
+      await(connector.findCasesByQueue(gatewayQueue)) shouldBe Seq()
     }
 
     "get cases in 'gateway' queue" in {
@@ -71,7 +72,7 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
           .withBody(CasePayloads.gatewayCases))
       )
 
-      await(connector.getCasesByQueue(gatewayQueue)) shouldBe Seq(oCase.btiCaseExample)
+      await(connector.findCasesByQueue(gatewayQueue)) shouldBe Seq(Cases.btiCaseExample)
     }
 
     "get empty cases in 'other' queue" in {
@@ -81,7 +82,7 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
           .withBody("[]"))
       )
 
-      await(connector.getCasesByQueue(otherQueue)) shouldBe Seq()
+      await(connector.findCasesByQueue(otherQueue)) shouldBe Seq()
     }
 
     "get cases in 'other' queue" in {
@@ -91,7 +92,7 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
           .withBody(CasePayloads.gatewayCases))
       )
 
-      await(connector.getCasesByQueue(otherQueue)) shouldBe Seq(oCase.btiCaseExample)
+      await(connector.findCasesByQueue(otherQueue)) shouldBe Seq(Cases.btiCaseExample)
     }
   }
 
@@ -103,7 +104,7 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
           .withStatus(HttpStatus.SC_NOT_FOUND))
       )
 
-      await(connector.getOneCase("id")) shouldBe None
+      await(connector.findCase("id")) shouldBe None
     }
 
     "get a case" in {
@@ -113,7 +114,7 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
           .withBody(CasePayloads.btiCase))
       )
 
-      await(connector.getOneCase("id")) shouldBe Some(oCase.btiCaseExample)
+      await(connector.findCase("id")) shouldBe Some(Cases.btiCaseExample)
     }
 
   }
@@ -127,7 +128,7 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
           .withBody("[]"))
       )
 
-      await(connector.getCasesByAssignee("assignee")) shouldBe Seq()
+      await(connector.findCasesByAssignee("assignee")) shouldBe Seq()
     }
 
     "get cases" in {
@@ -137,7 +138,7 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
           .withBody(CasePayloads.gatewayCases))
       )
 
-      await(connector.getCasesByAssignee("assignee")) shouldBe Seq(oCase.btiCaseExample)
+      await(connector.findCasesByAssignee("assignee")) shouldBe Seq(Cases.btiCaseExample)
     }
   }
 
@@ -145,7 +146,7 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
 
     "update valid case" in {
       val ref = "case-reference"
-      val validCase = oCase.btiCaseExample.copy(reference = ref)
+      val validCase = Cases.btiCaseExample.copy(reference = ref)
       val json = Json.toJson(validCase).toString()
 
       stubFor(put(urlEqualTo(s"/cases/$ref"))
@@ -161,7 +162,7 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
 
     "update with an unknown case reference" in {
       val unknownRef = "unknownRef"
-      val unknownCase = oCase.btiCaseExample.copy(reference = unknownRef)
+      val unknownCase = Cases.btiCaseExample.copy(reference = unknownRef)
       val json = Json.toJson(unknownCase).toString()
 
       stubFor(put(urlEqualTo(s"/cases/$unknownRef"))
@@ -177,39 +178,42 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
     }
   }
 
-  "Connector 'Update Case Status'" should {
+  "Connector 'Create Event'" should {
 
-    "update valid case" in {
+    "create event" in {
       val ref = "case-reference"
-      val validCase = oCase.btiCaseExample.copy(reference = ref)
-      val newStatus = CaseStatus.CANCELLED
-      val json = Json.toJson(Status(newStatus)).toString()
+      val validCase = Cases.btiCaseExample.copy(reference = ref)
+      val validEventRequest = Events.eventRequest
+      val validEvent = Events.event.copy(caseReference = ref)
+      val requestJson = Json.toJson(validEventRequest).toString()
+      val responseJson = Json.toJson(validEvent).toString()
 
-      stubFor(put(urlEqualTo(s"/cases/$ref/status"))
-        .withRequestBody(equalToJson(json))
+      stubFor(post(urlEqualTo(s"/cases/$ref/events"))
+        .withRequestBody(equalToJson(requestJson))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
-          .withBody(Json.toJson(validCase.copy(status = CaseStatus.CANCELLED)).toString)
+          .withBody(responseJson)
         )
       )
 
-      await(connector.updateCaseStatus(ref, newStatus)) shouldBe validCase.copy(status = newStatus)
+      await(connector.createEvent(validCase, validEventRequest)) shouldBe validEvent
     }
 
-    "update with an unknown case reference" in {
-      val unknownRef = "unknownRef"
-      val newStatus = CaseStatus.CANCELLED
-      val json = Json.toJson(Status(newStatus)).toString()
+    "create event with an unknown case reference" in {
+      val ref = "unknown-reference"
+      val validCase = Cases.btiCaseExample.copy(reference = ref)
+      val validEventRequest = Events.eventRequest
+      val requestJson = Json.toJson(validEventRequest).toString()
 
-      stubFor(put(urlEqualTo(s"/cases/$unknownRef/status"))
-        .withRequestBody(equalToJson(json))
+      stubFor(post(urlEqualTo(s"/cases/$ref/events"))
+        .withRequestBody(equalToJson(requestJson))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_NOT_FOUND)
         )
       )
 
       intercept[NotFoundException] {
-        await(connector.updateCaseStatus(unknownRef, newStatus))
+        await(connector.createEvent(validCase, validEventRequest))
       }
     }
   }

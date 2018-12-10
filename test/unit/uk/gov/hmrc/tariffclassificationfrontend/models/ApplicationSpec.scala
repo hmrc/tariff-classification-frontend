@@ -17,18 +17,18 @@
 package uk.gov.hmrc.tariffclassificationfrontend.models
 
 import uk.gov.hmrc.play.test.UnitSpec
-import util.oCase
+import uk.gov.tariffclassificationfrontend.utils.Cases
 
 class ApplicationSpec extends UnitSpec {
 
   "Application 'Get Type'" should {
 
     "convert liability order type" in {
-      oCase.liabilityApplicationExample.getType shouldBe "Liability Order"
+      Cases.liabilityApplicationExample.getType shouldBe "Liability Order"
     }
 
     "convert bti type" in {
-      oCase.btiApplicationExample.getType shouldBe "BTI"
+      Cases.btiApplicationExample.getType shouldBe "BTI"
     }
 
   }
@@ -36,11 +36,11 @@ class ApplicationSpec extends UnitSpec {
   "Application 'Is BTI'" should {
 
     "be truthy for a BTI" in {
-      oCase.btiApplicationExample.isBTI shouldBe true
+      Cases.btiApplicationExample.isBTI shouldBe true
     }
 
     "be falsy for another type" in {
-      oCase.liabilityApplicationExample.isBTI shouldBe false
+      Cases.liabilityApplicationExample.isBTI shouldBe false
     }
 
   }
@@ -48,11 +48,11 @@ class ApplicationSpec extends UnitSpec {
   "Application 'Is Liability Order'" should {
 
     "be truthy for a Liability" in {
-      oCase.liabilityApplicationExample.isLiabilityOrder shouldBe true
+      Cases.liabilityApplicationExample.isLiabilityOrder shouldBe true
     }
 
     "be falsy for another type" in {
-      oCase.btiApplicationExample.isLiabilityOrder shouldBe false
+      Cases.btiApplicationExample.isLiabilityOrder shouldBe false
     }
 
   }
@@ -60,12 +60,12 @@ class ApplicationSpec extends UnitSpec {
   "Application 'As BTI'" should {
 
     "cast a BTI" in {
-      oCase.btiApplicationExample.asBTI shouldBe a[BTIApplication]
+      Cases.btiApplicationExample.asBTI shouldBe a[BTIApplication]
     }
 
     "fail to case another type" in {
       assertThrows[RuntimeException] {
-        oCase.liabilityApplicationExample.asBTI
+        Cases.liabilityApplicationExample.asBTI
       }
     }
 
@@ -74,12 +74,12 @@ class ApplicationSpec extends UnitSpec {
   "Application 'As Liability'" should {
 
     "cast a Liability" in {
-      oCase.liabilityApplicationExample.asLiabilityOrder shouldBe a[LiabilityOrder]
+      Cases.liabilityApplicationExample.asLiabilityOrder shouldBe a[LiabilityOrder]
     }
 
     "fail to case another type" in {
       assertThrows[RuntimeException] {
-        oCase.btiApplicationExample.asLiabilityOrder
+        Cases.btiApplicationExample.asLiabilityOrder
       }
     }
 

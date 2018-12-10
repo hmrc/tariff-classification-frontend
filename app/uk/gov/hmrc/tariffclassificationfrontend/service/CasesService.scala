@@ -19,7 +19,8 @@ package uk.gov.hmrc.tariffclassificationfrontend.service
 import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.tariffclassificationfrontend.connector.BindingTariffClassificationConnector
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus, Queue}
+import uk.gov.hmrc.tariffclassificationfrontend.models._
+import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -27,26 +28,25 @@ import scala.concurrent.Future
 @Singleton
 class CasesService @Inject()(connector: BindingTariffClassificationConnector) {
 
-  def releaseCase(c: Case, queue: Queue)(implicit hc: HeaderCarrier): Future[Case] = {
-    // TODO: DIT-246 - with an atomic operation we should:
-    // - update status
-    // - create case status change event
-    // If too complex, we should at least update the event and the event atomically
-    connector.updateCaseStatus(caseReference = c.reference, newStatus = CaseStatus.OPEN).flatMap { withNewStatus: Case =>
-      connector.updateCase(withNewStatus.copy(queueId = Some(queue.id)))
-    }
+  def releaseCase(c: Case, queue: Queue, operator: Operator)(implicit hc: HeaderCarrier): Future[Case] = {
+    val eventualCase: Future[Case] = connector.updateCase(c.copy(status = CaseStatus.OPEN, queueId = Some(queue.id)))
+    eventualCase.onSuccess({
+      case updated =>
+        connector.createEvent(updated, NewEventRequest(CaseStatusChange(c.status, updated.status), operator.id))
+    })
+    eventualCase
   }
 
   def getOne(reference: String)(implicit hc: HeaderCarrier): Future[Option[Case]] = {
-    connector.getOneCase(reference)
+    connector.findCase(reference)
   }
 
   def getCasesByQueue(queue: Queue)(implicit hc: HeaderCarrier): Future[Seq[Case]] = {
-    connector.getCasesByQueue(queue)
+    connector.findCasesByQueue(queue)
   }
 
   def getCasesByAssignee(assignee: String)(implicit hc: HeaderCarrier): Future[Seq[Case]] = {
-    connector.getCasesByAssignee(assignee)
+    connector.findCasesByAssignee(assignee)
   }
 
   def updateCase(caseToUpdate: Case)(implicit hc: HeaderCarrier): Future[Case] = {

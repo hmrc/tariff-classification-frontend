@@ -19,6 +19,7 @@ package uk.gov.hmrc.tariffclassificationfrontend.utils
 import play.api.libs.json._
 import uk.gov.hmrc.play.json.Union
 import uk.gov.hmrc.tariffclassificationfrontend.models._
+import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
 
 object JsonFormatters {
 
@@ -36,6 +37,15 @@ object JsonFormatters {
     .format
   implicit val caseFormat = Json.format[Case]
   implicit val statusFormat = Json.format[Status]
+  implicit val formatCaseStatusChange = Json.format[CaseStatusChange]
+  implicit val formatNote = Json.format[Note]
+
+  implicit val formatEventDetail = Union.from[Details]("type")
+    .and[CaseStatusChange](EventType.CASE_STATUS_CHANGE.toString)
+    .and[Note](EventType.NOTE.toString)
+    .format
+  implicit val eventFormat = Json.format[Event]
+  implicit val newEventRequestFormat = Json.format[NewEventRequest]
 }
 
 object EnumJson {

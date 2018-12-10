@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,17 +12,11 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
+package uk.gov.hmrc.tariffclassificationfrontend.models.request
 
-@(resource: String = "Resource")(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+import play.api.mvc.{Request, WrappedRequest}
+import uk.gov.hmrc.tariffclassificationfrontend.models.Operator
 
-@main(bodyClasses = None) {
-
-    <h1 class="heading-large">You are not authorised to access this page.</h1>
-
-    <p>This could be because you are not enrolled to use this service.</p>
-    <p>Contact your manager if you believe you are seeing this in error.</p>
-}
+case class AuthenticatedRequest[A](operator: Operator, request: Request[A]) extends WrappedRequest[A](request)

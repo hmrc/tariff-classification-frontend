@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,17 +12,25 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
+package uk.gov.tariffclassificationfrontend.utils
 
-@(resource: String = "Resource")(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+import play.api.libs.json.Json
+import uk.gov.hmrc.tariffclassificationfrontend.models.Case
+import uk.gov.hmrc.tariffclassificationfrontend.utils.JsonFormatters.caseFormat
 
-@main(bodyClasses = None) {
+object CasePayloads {
 
-    <h1 class="heading-large">You are not authorised to access this page.</h1>
+  val btiCase: String = jsonOf(Cases.btiCaseExample)
+  val gatewayCases: String = jsonOf(Seq(Cases.btiCaseExample))
 
-    <p>This could be because you are not enrolled to use this service.</p>
-    <p>Contact your manager if you believe you are seeing this in error.</p>
+  def jsonOf(obj: Case): String = {
+    Json.toJson(obj).toString()
+  }
+
+  def jsonOf(obj: Seq[Case]): String = {
+    Json.toJson(obj).toString()
+  }
+
 }

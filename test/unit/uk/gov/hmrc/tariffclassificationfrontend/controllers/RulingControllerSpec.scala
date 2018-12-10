@@ -35,7 +35,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.{DecisionFormData, DecisionFormMapper}
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
-import util.oCase
+import uk.gov.tariffclassificationfrontend.utils.Cases
 
 import scala.concurrent.Future
 
@@ -57,8 +57,8 @@ class RulingControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSui
   }
 
   "Edit Ruling" should {
-    val caseWithStatusNEW = oCase.btiCaseExample.copy(status = CaseStatus.NEW)
-    val caseWithStatusOPEN = oCase.btiCaseExample.copy(status = CaseStatus.OPEN)
+    val caseWithStatusNEW = Cases.btiCaseExample.copy(status = CaseStatus.NEW)
+    val caseWithStatusOPEN = Cases.btiCaseExample.copy(status = CaseStatus.OPEN)
 
     "return OK and HTML content type" in {
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(caseWithStatusOPEN)))
@@ -93,9 +93,9 @@ class RulingControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSui
   }
 
   "Update Ruling" should {
-    val caseWithStatusNEW = oCase.btiCaseExample.copy(status = CaseStatus.NEW)
-    val caseWithStatusOPEN = oCase.btiCaseExample.copy(status = CaseStatus.OPEN)
-    val updatedCase = oCase.btiCaseExample.copy(status = CaseStatus.OPEN)
+    val caseWithStatusNEW = Cases.btiCaseExample.copy(status = CaseStatus.NEW)
+    val caseWithStatusOPEN = Cases.btiCaseExample.copy(status = CaseStatus.OPEN)
+    val updatedCase = Cases.btiCaseExample.copy(status = CaseStatus.OPEN)
 
     val aValidForm = newFakePOSTRequestWithCSRF(
       "bindingCommodityCode" -> "",

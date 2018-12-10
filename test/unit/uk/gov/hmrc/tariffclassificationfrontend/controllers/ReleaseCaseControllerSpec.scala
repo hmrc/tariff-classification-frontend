@@ -33,9 +33,9 @@ import play.filters.csrf.CSRF.{Token, TokenProvider}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.tariffclassificationfrontend.audit.AuditService
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, Queue}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, Operator, Queue}
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, QueuesService}
-import util.oCase
+import uk.gov.tariffclassificationfrontend.utils.Cases
 
 import scala.concurrent.Future.{failed, successful}
 
@@ -51,14 +51,15 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   private val auditService = mock[AuditService]
   private val queueService = mock[QueuesService]
   private val queue = mock[Queue]
+  private val operator = mock[Operator]
 
-  private val caseWithStatusNEW = oCase.btiCaseExample.copy(status = CaseStatus.NEW)
-  private val caseWithStatusOPEN = oCase.btiCaseExample.copy(status = CaseStatus.OPEN)
+  private val caseWithStatusNEW = Cases.btiCaseExample.copy(status = CaseStatus.NEW)
+  private val caseWithStatusOPEN = Cases.btiCaseExample.copy(status = CaseStatus.OPEN)
 
   private implicit val mat: Materializer = app.materializer
   private implicit val hc: HeaderCarrier = HeaderCarrier()
 
-  private val controller = new ReleaseCaseController(new SuccessfulAuthenticatedAction, casesService, auditService, queueService, messageApi, appConfig)
+  private val controller = new ReleaseCaseController(new SuccessfulAuthenticatedAction(operator), casesService, auditService, queueService, messageApi, appConfig)
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -121,7 +122,7 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     "return OK and HTML content type" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusNEW)))
       when(queueService.getOneBySlug("queue")).thenReturn(Some(queue))
-      when(casesService.releaseCase(refEq(caseWithStatusNEW), any[Queue])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusOPEN))
+      when(casesService.releaseCase(refEq(caseWithStatusNEW), any[Queue], refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusOPEN))
 
       val result: Result = await(controller.releaseCaseToQueue("reference")(newFakePOSTRequestWithCSRF("queue")))
 
@@ -138,7 +139,7 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusNEW)))
       when(queueService.getOneBySlug("queue")).thenReturn(Some(queue))
       when(queueService.getNonGateway).thenReturn(Seq.empty)
-      when(casesService.releaseCase(refEq(caseWithStatusNEW), any[Queue])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusOPEN))
+      when(casesService.releaseCase(refEq(caseWithStatusNEW), any[Queue], refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusOPEN))
 
       val result: Result = await(controller.releaseCaseToQueue("reference")(newInvalidFakePOSTRequestWithCSRF()))
 

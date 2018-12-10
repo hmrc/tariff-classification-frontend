@@ -18,14 +18,14 @@ package uk.gov.hmrc.tariffclassificationfrontend.views
 
 import uk.gov.hmrc.tariffclassificationfrontend.models.Queue
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
-import util.oCase
+import uk.gov.tariffclassificationfrontend.utils.Cases
 
 class QueueViewSpec extends ViewSpec {
 
   "Queue View" should {
     val queue1 = Queue("1", "queue1_name", "Queue 1 Name")
     val queue2 = Queue("2", "queue2_name", "Queue 2 Name")
-    val case1 = oCase.btiCaseExample
+    val case1 = Cases.btiCaseExample
 
     "render empty list of cases" in {
       // Given

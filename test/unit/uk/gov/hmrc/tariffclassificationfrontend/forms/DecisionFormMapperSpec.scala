@@ -18,12 +18,12 @@ package uk.gov.hmrc.tariffclassificationfrontend.forms
 
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Decision}
-import util.oCase._
-import util.oDecisionForm
+import uk.gov.tariffclassificationfrontend.utils.Cases._
+import uk.gov.tariffclassificationfrontend.utils.DecisionForms
 
 class DecisionFormMapperSpec extends UnitSpec {
 
-  private val validForm = oDecisionForm.validForm
+  private val validForm = DecisionForms.validForm
   private val testCase = btiCaseExample
 
   private val mapper = new DecisionFormMapper

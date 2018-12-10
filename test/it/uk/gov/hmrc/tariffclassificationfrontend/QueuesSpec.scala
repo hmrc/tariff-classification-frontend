@@ -2,13 +2,8 @@ package uk.gov.hmrc.tariffclassificationfrontend
 
 import com.github.tomakehurst.wiremock.client.WireMock._
 import org.scalatest.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneServerPerSuite
-import play.api.Application
-import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.ws.WSClient
 import play.api.test.Helpers._
-import uk.gov.hmrc.play.test.UnitSpec
-import util.{CasePayloads, WiremockTestServer}
+import uk.gov.tariffclassificationfrontend.utils.CasePayloads
 
 class QueuesSpec extends IntegrationTest with MockitoSugar {
 
@@ -40,7 +35,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body should include("You are not authorized to access this page.")
+      response.body should include("You are not authorised to access this page.")
     }
   }
 
@@ -72,7 +67,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body should include("You are not authorized to access this page.")
+      response.body should include("You are not authorised to access this page.")
     }
   }
 
@@ -104,7 +99,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body should include("You are not authorized to access this page.")
+      response.body should include("You are not authorised to access this page.")
     }
   }
 
@@ -136,7 +131,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body should include("You are not authorized to access this page.")
+      response.body should include("You are not authorised to access this page.")
     }
   }
 
@@ -168,7 +163,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body should include("You are not authorized to access this page.")
+      response.body should include("You are not authorised to access this page.")
     }
   }
 
@@ -200,7 +195,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body should include("You are not authorized to access this page.")
+      response.body should include("You are not authorised to access this page.")
     }
   }
 

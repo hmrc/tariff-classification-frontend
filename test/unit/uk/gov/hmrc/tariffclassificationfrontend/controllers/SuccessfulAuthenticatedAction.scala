@@ -21,17 +21,18 @@ import play.api.mvc.{Request, Result}
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.connector.StrideAuthConnector
-import uk.gov.hmrc.tariffclassificationfrontend.models.{AuthenticatedRequest, Operator}
+import uk.gov.hmrc.tariffclassificationfrontend.models.Operator
+import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 
 import scala.concurrent.Future
 
-class SuccessfulAuthenticatedAction extends AuthenticatedAction(
+class SuccessfulAuthenticatedAction(operator: Operator = Operator("0", Some("name"))) extends AuthenticatedAction(
   appConfig = mock(classOf[AppConfig]),
   config = mock(classOf[Configuration]),
   env = mock(classOf[Environment]),
   authConnector = mock(classOf[StrideAuthConnector])) {
 
   override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] = {
-    block(AuthenticatedRequest(Operator("0", Some("name")), request))
+    block(AuthenticatedRequest(operator, request))
   }
 }
