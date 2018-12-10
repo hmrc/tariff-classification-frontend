@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package util
+package uk.gov.tariffclassificationfrontend.utils
 
 import java.time.ZonedDateTime
 
 import uk.gov.hmrc.tariffclassificationfrontend.models._
-import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
 
-object oCase {
+object Cases {
 
   val eoriDetailsExample = EORIDetails("eori", "trader-name", "line1", "line2", "line3", "postcode", "country")
   val eoriAgentDetailsExample = EORIDetails("eori", "agent-name", "line1", "line2", "line3", "postcode", "country")
@@ -31,8 +30,6 @@ object oCase {
   val liabilityApplicationExample = LiabilityOrder(eoriDetailsExample, contactExample, "status", "port", "entry number", ZonedDateTime.now())
   val btiCaseExample = Case("1", CaseStatus.OPEN, ZonedDateTime.now(), ZonedDateTime.now(), None, None, None, None, btiApplicationExample, Some(decision), Seq())
   val liabilityCaseExample = Case("1", CaseStatus.OPEN, ZonedDateTime.now(), ZonedDateTime.now(), None, None, None, None, liabilityApplicationExample, None, Seq())
-  val event = Event("id", Note(Some("comment")), "user-id", "case-ref", ZonedDateTime.now())
-  val eventRequest = NewEventRequest(Note(Some("comment")), "user-id", ZonedDateTime.now())
 
   def createAttachment(url: String): Attachment =
     Attachment(

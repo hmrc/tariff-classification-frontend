@@ -30,7 +30,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionFormMapper
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
-import util.oCase
+import uk.gov.tariffclassificationfrontend.utils.Cases
 
 import scala.concurrent.Future
 
@@ -50,7 +50,7 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
   "Case Summary" should {
 
     "return 200 OK and HTML content type" in {
-      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(oCase.btiCaseExample)))
+      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(Cases.btiCaseExample)))
       val result = controller.summary("reference")(fakeRequest)
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -70,7 +70,7 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
   "Application Details" should {
 
     "return 200 OK and HTML content type" in {
-      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(oCase.btiCaseExample)))
+      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(Cases.btiCaseExample)))
       val result = controller.applicationDetails("reference")(fakeRequest)
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -90,7 +90,7 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
   "Ruling Details" should {
 
     "return 200 OK and HTML content type" in {
-      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(oCase.btiCaseExample)))
+      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(Cases.btiCaseExample)))
       val result = controller.rulingDetails("reference")(fakeRequest)
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")

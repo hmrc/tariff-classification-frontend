@@ -35,7 +35,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.audit.AuditService
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, Operator, Queue}
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, QueuesService}
-import util.oCase
+import uk.gov.tariffclassificationfrontend.utils.Cases
 
 import scala.concurrent.Future.{failed, successful}
 
@@ -52,8 +52,8 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   private val queueService = mock[QueuesService]
   private val queue = mock[Queue]
 
-  private val caseWithStatusNEW = oCase.btiCaseExample.copy(status = CaseStatus.NEW)
-  private val caseWithStatusOPEN = oCase.btiCaseExample.copy(status = CaseStatus.OPEN)
+  private val caseWithStatusNEW = Cases.btiCaseExample.copy(status = CaseStatus.NEW)
+  private val caseWithStatusOPEN = Cases.btiCaseExample.copy(status = CaseStatus.OPEN)
 
   private implicit val mat: Materializer = app.materializer
   private implicit val hc: HeaderCarrier = HeaderCarrier()

@@ -14,23 +14,24 @@
  * limitations under the License.
  */
 
-package util
+package uk.gov.tariffclassificationfrontend.utils
 
-import play.api.libs.json.Json
-import uk.gov.hmrc.tariffclassificationfrontend.models.Case
-import uk.gov.hmrc.tariffclassificationfrontend.utils.JsonFormatters.caseFormat
+import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionFormData
 
-object CasePayloads {
+object DecisionForms {
 
-  val btiCase: String = jsonOf(oCase.btiCaseExample)
-  val gatewayCases: String = jsonOf(Seq(oCase.btiCaseExample))
+  val validForm = DecisionFormData(
+    "binding commodity code test",
+    "valid goods Description",
+    "valid method Search",
+    "valid justification",
+    "valid method Commercial Denomination",
+    "valid method Exclusion",
+    List.empty
+  )
 
-  def jsonOf(obj: Case): String = {
-    Json.toJson(obj).toString()
-  }
-
-  def jsonOf(obj: Seq[Case]): String = {
-    Json.toJson(obj).toString()
-  }
-
+  val validFormWithAttachments =
+    DecisionFormData(
+      attachments = Seq("url.to.publish")
+    )
 }

@@ -14,24 +14,14 @@
  * limitations under the License.
  */
 
-package util
+package uk.gov.tariffclassificationfrontend.utils
 
-import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionFormData
+import java.time.ZonedDateTime
 
-object oDecisionForm {
+import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Event, Note}
 
-  val validForm = DecisionFormData(
-    "binding commodity code test",
-    "valid goods Description",
-    "valid method Search",
-    "valid justification",
-    "valid method Commercial Denomination",
-    "valid method Exclusion",
-    List.empty
-  )
-
-  val validFormWithAttachments =
-    DecisionFormData(
-      attachments = Seq("url.to.publish")
-    )
+object Events {
+  val event = Event("id", Note(Some("comment")), "user-id", "case-ref", ZonedDateTime.now())
+  val eventRequest = NewEventRequest(Note(Some("comment")), "user-id", ZonedDateTime.now())
 }
