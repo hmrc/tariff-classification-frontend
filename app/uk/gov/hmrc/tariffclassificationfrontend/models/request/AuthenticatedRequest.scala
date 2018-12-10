@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.tariffclassificationfrontend.models
+package uk.gov.hmrc.tariffclassificationfrontend.models.request
 
-case class Operator(id: String, name: Option[String] = None)
+import play.api.mvc.{Request, WrappedRequest}
+import uk.gov.hmrc.tariffclassificationfrontend.models.Operator
+
+case class AuthenticatedRequest[A](operator: Operator, request: Request[A]) extends WrappedRequest[A](request)

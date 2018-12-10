@@ -33,7 +33,7 @@ import play.filters.csrf.CSRF.{Token, TokenProvider}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.tariffclassificationfrontend.audit.AuditService
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, Queue}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, Operator, Queue}
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, QueuesService}
 import util.oCase
 
@@ -121,7 +121,7 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     "return OK and HTML content type" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusNEW)))
       when(queueService.getOneBySlug("queue")).thenReturn(Some(queue))
-      when(casesService.releaseCase(refEq(caseWithStatusNEW), any[Queue])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusOPEN))
+      when(casesService.releaseCase(refEq(caseWithStatusNEW), any[Queue])(any[HeaderCarrier], any[Operator])).thenReturn(successful(caseWithStatusOPEN))
 
       val result: Result = await(controller.releaseCaseToQueue("reference")(newFakePOSTRequestWithCSRF("queue")))
 
@@ -138,7 +138,7 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusNEW)))
       when(queueService.getOneBySlug("queue")).thenReturn(Some(queue))
       when(queueService.getNonGateway).thenReturn(Seq.empty)
-      when(casesService.releaseCase(refEq(caseWithStatusNEW), any[Queue])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusOPEN))
+      when(casesService.releaseCase(refEq(caseWithStatusNEW), any[Queue])(any[HeaderCarrier], any[Operator])).thenReturn(successful(caseWithStatusOPEN))
 
       val result: Result = await(controller.releaseCaseToQueue("reference")(newInvalidFakePOSTRequestWithCSRF()))
 

@@ -20,13 +20,12 @@ import javax.inject.{Inject, Singleton}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
-import play.mvc.Security.AuthenticatedAction
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.audit.AuditService
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.ReleaseCaseForm
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus, Queue}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus, Operator, Queue}
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, QueuesService}
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
@@ -48,6 +47,8 @@ class ReleaseCaseController @Inject()(authenticatedAction: AuthenticatedAction,
   }
 
   def releaseCaseToQueue(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
+    implicit val operator: Operator = request.operator
+
     def onInvalidForm(formWithErrors: Form[ReleaseCaseForm]): Future[Result] = {
       getCaseAndRenderView(reference, c => Future.successful(views.html.release_case(c, formWithErrors, queueService.getNonGateway)))
     }

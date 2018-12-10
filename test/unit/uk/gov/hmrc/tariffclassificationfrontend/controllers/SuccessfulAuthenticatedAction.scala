@@ -21,7 +21,8 @@ import play.api.mvc.{Request, Result}
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.connector.StrideAuthConnector
-import uk.gov.hmrc.tariffclassificationfrontend.models.{AuthenticatedRequest, Operator}
+import uk.gov.hmrc.tariffclassificationfrontend.models.Operator
+import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 
 import scala.concurrent.Future
 

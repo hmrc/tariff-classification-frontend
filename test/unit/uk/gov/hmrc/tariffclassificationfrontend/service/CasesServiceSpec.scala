@@ -16,17 +16,23 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.service
 
+import java.time.ZonedDateTime
+
 import org.mockito.ArgumentMatchers._
 import org.mockito.BDDMockito._
+import org.mockito.Mockito.verify
+import org.mockito.{ArgumentCaptor, Mockito}
+import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.tariffclassificationfrontend.connector.BindingTariffClassificationConnector
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus, Queue}
+import uk.gov.hmrc.tariffclassificationfrontend.models._
+import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
 
 import scala.concurrent.Future
 
-class CasesServiceSpec extends UnitSpec with MockitoSugar {
+class CasesServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
 
   private implicit val hc = HeaderCarrier()
   private val manyCases = mock[Seq[Case]]
@@ -36,10 +42,15 @@ class CasesServiceSpec extends UnitSpec with MockitoSugar {
 
   private val service = new CasesService(connector)
 
+  override protected def afterEach(): Unit = {
+    super.afterEach()
+    Mockito.reset(connector)
+  }
+
   "Get Cases 'By Queue'" should {
 
     "retrieve connector cases" in {
-      given(connector.getCasesByQueue(queue)) willReturn Future.successful(manyCases)
+      given(connector.findCasesByQueue(queue)) willReturn Future.successful(manyCases)
 
       await(service.getCasesByQueue(queue)) shouldBe manyCases
     }
@@ -48,7 +59,7 @@ class CasesServiceSpec extends UnitSpec with MockitoSugar {
   "Get Cases 'By Assignee'" should {
 
     "retrieve connector cases" in {
-      given(connector.getCasesByAssignee("assignee")) willReturn Future.successful(manyCases)
+      given(connector.findCasesByAssignee("assignee")) willReturn Future.successful(manyCases)
 
       await(service.getCasesByAssignee("assignee")) shouldBe manyCases
     }
@@ -57,29 +68,46 @@ class CasesServiceSpec extends UnitSpec with MockitoSugar {
   "Get One Case 'By Reference'" should {
 
     "retrieve connector case" in {
-      given(connector.getOneCase("reference")) willReturn Future.successful(oneCase)
+      given(connector.findCase("reference")) willReturn Future.successful(oneCase)
 
       await(service.getOne("reference")) shouldBe oneCase
     }
   }
 
   "Release Case" should {
-
-    val reference = "ref1"
-
-    val originalCase = mock[Case]
-    val caseWithNewStatus = mock[Case]
-    val caseWithNewQueueId = mock[Case]
-
-    given(originalCase.reference).willReturn(reference)
-    given(queue.id).willReturn("queue_id")
-    given(caseWithNewStatus.copy(queueId = Some("queue_id"))).willReturn(caseWithNewQueueId)
-    given(connector.updateCaseStatus(reference, CaseStatus.OPEN)).willReturn(Future.successful(caseWithNewStatus))
-    given(connector.updateCase(caseWithNewQueueId)).willReturn(Future.successful(caseWithNewQueueId))
-
     "update case queue_id and status to NEW" in {
-      await(service.releaseCase(originalCase, queue)) shouldBe caseWithNewQueueId
+      // Given
+      implicit val operator: Operator = Operator("operator-id")
+
+      val originalCase = Case("ref", CaseStatus.NEW, ZonedDateTime.now(), ZonedDateTime.now(), None, None, None, None, mock[Application], None, Seq.empty)
+      val caseUpdated = Case("ref", CaseStatus.OPEN, ZonedDateTime.now(), ZonedDateTime.now(), None, None, None, None, mock[Application], None, Seq.empty)
+
+      given(queue.id).willReturn("queue_id")
+      given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(caseUpdated))
+
+      // When Then
+      await(service.releaseCase(originalCase, queue)) shouldBe caseUpdated
+
+      val caseUpdating = theCaseUpdating()
+      caseUpdating.status shouldBe CaseStatus.OPEN
+      caseUpdating.queueId shouldBe Some("queue_id")
+
+      val eventCreated = theEventCreatedFor(caseUpdated)
+      eventCreated.userId shouldBe "operator-id"
+      eventCreated.details shouldBe CaseStatusChange(originalCase.status, CaseStatus.OPEN)
     }
+  }
+
+  def theCaseUpdating(): Case = {
+    val captor: ArgumentCaptor[Case] = ArgumentCaptor.forClass(classOf[Case])
+    verify(connector).updateCase(captor.capture())(any[HeaderCarrier])
+    captor.getValue
+  }
+
+  def theEventCreatedFor(c: Case): NewEventRequest = {
+    val captor: ArgumentCaptor[NewEventRequest] = ArgumentCaptor.forClass(classOf[NewEventRequest])
+    verify(connector).createEvent(refEq(c), captor.capture())(any[HeaderCarrier])
+    captor.getValue
   }
 
   "Update Case" should {

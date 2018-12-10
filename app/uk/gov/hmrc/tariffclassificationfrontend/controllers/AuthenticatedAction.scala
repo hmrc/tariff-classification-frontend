@@ -28,7 +28,8 @@ import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.connector.StrideAuthConnector
-import uk.gov.hmrc.tariffclassificationfrontend.models.{AuthenticatedRequest, Operator}
+import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
+import uk.gov.hmrc.tariffclassificationfrontend.models.Operator
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
