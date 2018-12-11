@@ -48,7 +48,7 @@ class CompleteCaseController @Inject()(authenticatedAction: AuthenticatedAction,
   private def getCaseAndRenderView(reference: String, toHtml: Case => Future[HtmlFormat.Appendable])
                                   (implicit request: Request[_]): Future[Result] = {
     casesService.getOne(reference).flatMap {
-      case Some(c: Case) if c.status == CaseStatus.OPEN => toHtml(c).map(Ok(_))
+      case Some(c: Case) if c.status == CaseStatus.OPEN && c.decision.isDefined => toHtml(c).map(Ok(_))
       case Some(_) => Future.successful(Redirect(routes.CaseController.rulingDetails(reference)))
       case _ => Future.successful(Ok(views.html.case_not_found(reference)))
     }

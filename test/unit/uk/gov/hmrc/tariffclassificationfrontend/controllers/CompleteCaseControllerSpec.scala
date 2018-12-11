@@ -51,6 +51,7 @@ class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
   private val caseWithStatusOPEN = Cases.btiCaseExample.copy(status = CaseStatus.OPEN)
   private val caseWithStatusCOMPLETED = Cases.btiCaseExample.copy(status = CaseStatus.COMPLETED)
+  private val caseWithoutDecision = Cases.btiCaseExample.copy(status = CaseStatus.OPEN, decision = None)
 
   private implicit val mat: Materializer = app.materializer
   private implicit val hc: HeaderCarrier = HeaderCarrier()
@@ -91,6 +92,17 @@ class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       locationOf(result) shouldBe Some("/tariff-classification/cases/reference/ruling")
     }
 
+    "redirect to Application Details for cases without a decision" in {
+      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithoutDecision)))
+
+      val result: Result = await(controller.completeCase("reference")(newFakeGETRequestWithCSRF()))
+
+      status(result) shouldBe Status.SEE_OTHER
+      contentTypeOf(result) shouldBe None
+      charsetOf(result) shouldBe None
+      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/ruling")
+    }
+
     "return Not Found and HTML content type" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(None))
 
@@ -120,6 +132,17 @@ class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
     "redirect to Application Details for non OPEN statuses" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusCOMPLETED)))
+
+      val result: Result= await(controller.confirmCompleteCase("reference")(newFakePOSTRequestWithCSRF()))
+
+      status(result) shouldBe Status.SEE_OTHER
+      contentTypeOf(result) shouldBe None
+      charsetOf(result) shouldBe None
+      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/ruling")
+    }
+
+    "redirect to Application Details for case without decision" in {
+      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithoutDecision)))
 
       val result: Result= await(controller.confirmCompleteCase("reference")(newFakePOSTRequestWithCSRF()))
 
