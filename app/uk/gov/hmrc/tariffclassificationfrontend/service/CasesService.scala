@@ -49,7 +49,7 @@ class CasesService @Inject()(auditService: AuditService, connector: BindingTarif
       case updated =>
         connector.createEvent(updated, NewEventRequest(CaseStatusChange(c.status, updated.status), operator.id))
           .onFailure({
-            case throwable: Throwable => Logger.error(s"Could not create Release Case event for case [${c.reference}]", throwable)
+            case throwable: Throwable => Logger.error(s"Could not create Complete Case event for case [${c.reference}]", throwable)
           })
         auditService.auditCaseCompleted(c)
     })

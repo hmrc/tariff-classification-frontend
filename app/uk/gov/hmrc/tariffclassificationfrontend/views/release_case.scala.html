@@ -20,18 +20,18 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.release_case_form
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
 
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.case_heading
 @(c: Case, form: Form[ReleaseCaseForm], queues: Seq[Queue])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None) {
     @defining(c.application.asBTI) { btiApp: BTIApplication =>
 
-        <h1 class="heading-large">@messages("case.title", c.reference, btiApp.getType, btiApp.holder.traderName)</h1>
+        @case_heading(c)
 
         <div class="grid-row">
             <div class="column-full">
-                <div id="ruling_table">
-                    <h3 class="heading-medium mt-0">Release this Case for Classification</h3>
-                </div>
+                <h3 class="heading-large mt-0">Release this Case for Classification</h3>
+                <hr class="mt-0"/>
 
                 <div class="grid-row">
                     <div id="application_envisagedCommodityCode" class="column-one-third">

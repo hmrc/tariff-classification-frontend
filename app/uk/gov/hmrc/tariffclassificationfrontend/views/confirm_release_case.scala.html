@@ -17,19 +17,20 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{BTIApplication, Case, Queue}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.case_heading
 @(c: Case, queue: Queue)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None) {
     @defining(c.application.asBTI) { btiApp: BTIApplication =>
 
-        <h1 class="heading-large">@messages("case.title", c.reference, btiApp.getType, btiApp.holder.traderName)</h1>
+        @case_heading(c)
 
         <div class="grid-row">
             <div class="column-full">
-                <p>This case has been released to the @queue.name queue for classification</p>
+                <h3 class="heading-large mt-0">This case has been released to the @queue.name queue for classification</h3>
+                <hr class="mt-0"/>
 
-                <p>The case status is now @c.status</p>
-
+                <p>The case status is now open</p>
 
                 <h5 class="heading-small">Next Steps</h5>
 

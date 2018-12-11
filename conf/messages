@@ -17,7 +17,7 @@ case.menu.application=Application Details
 case.menu.ruling=Ruling
 case.menu.ruling-details=Ruling Details
 
-case.title=#{0} - {1} for {2}
+case.title={0} for {1}
 case.status=Status
 case.created-date=Date received
 case.elapsed-days=Days elapsed

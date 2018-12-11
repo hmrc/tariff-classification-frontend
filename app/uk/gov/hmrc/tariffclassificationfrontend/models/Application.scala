@@ -20,6 +20,8 @@ import java.time.ZonedDateTime
 
 sealed trait Application {
   val `type`: String
+  val holder: EORIDetails
+  val contact: Contact
 
   def asBTI: BTIApplication = {
     this.asInstanceOf[BTIApplication]
@@ -47,8 +49,8 @@ sealed trait Application {
 
 case class BTIApplication
 (
-  holder: EORIDetails,
-  contact: Contact,
+  override val holder: EORIDetails,
+  override val contact: Contact,
   agent: Option[EORIDetails],
   offline: Boolean,
   goodName: String,
@@ -67,8 +69,8 @@ case class BTIApplication
 
 case class LiabilityOrder
 (
-  holder: EORIDetails,
-  contact: Contact,
+  override val holder: EORIDetails,
+  override val contact: Contact,
   status: String,
   port: String,
   entryNumber: String,

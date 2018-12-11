@@ -20,20 +20,19 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.release_case_form
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
 
-@import views.html.helper._
-
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.case_heading
+@import views.html.helper.{form, CSRF}
 @(c: Case)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None) {
     @defining(c.application.asBTI) { btiApp: BTIApplication =>
 
-        <h1 class="heading-large">@messages("case.title", c.reference, btiApp.getType, btiApp.holder.traderName)</h1>
+        @case_heading(c)
 
         <div class="grid-row">
             <div class="column-full">
-                <div id="ruling_table">
-                    <h3 class="heading-medium mt-0">Complete this case</h3>
-                </div>
+                <h3 class="heading-large mt-0">Complete this case</h3>
+                <hr class="mt-0"/>
 
                 <p>Completing this case will generate a BTI certificate, valid for 3 years from today.</p>
                 <p>This certificate will be available to the applicant on their listed rulings page.</p>
