@@ -35,7 +35,7 @@ class CasesService @Inject()(connector: BindingTariffClassificationConnector) {
       case updated =>
         connector.createEvent(updated, NewEventRequest(CaseStatusChange(c.status, updated.status), operator.id))
           .onFailure({
-            case throwable: Throwable => Logger.error(s"Could not create Release Case event for case [${c.reference}[", throwable)
+            case throwable: Throwable => Logger.error(s"Could not create Release Case event for case [${c.reference}]", throwable)
           })
     })
     eventualCase
