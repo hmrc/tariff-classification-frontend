@@ -17,6 +17,7 @@
 package uk.gov.hmrc.tariffclassificationfrontend.service
 
 import javax.inject.{Inject, Singleton}
+import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.tariffclassificationfrontend.connector.BindingTariffClassificationConnector
 import uk.gov.hmrc.tariffclassificationfrontend.models._
@@ -33,6 +34,9 @@ class CasesService @Inject()(connector: BindingTariffClassificationConnector) {
     eventualCase.onSuccess({
       case updated =>
         connector.createEvent(updated, NewEventRequest(CaseStatusChange(c.status, updated.status), operator.id))
+          .onFailure({
+            case throwable: Throwable => Logger.error(s"Could not create Release Case event for case [${c.reference}[", throwable)
+          })
     })
     eventualCase
   }
