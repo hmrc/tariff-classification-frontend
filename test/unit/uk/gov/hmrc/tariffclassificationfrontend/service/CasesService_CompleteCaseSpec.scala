@@ -1,0 +1,152 @@
+/*
+ * Copyright 2018 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package uk.gov.hmrc.tariffclassificationfrontend.service
+
+import java.time._
+
+import org.mockito.ArgumentCaptor
+import org.mockito.ArgumentMatchers._
+import org.mockito.BDDMockito._
+import org.mockito.Mockito.{never, reset, verify}
+import org.scalatest.BeforeAndAfterEach
+import org.scalatest.mockito.MockitoSugar
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.test.UnitSpec
+import uk.gov.hmrc.tariffclassificationfrontend.audit.AuditService
+import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
+import uk.gov.hmrc.tariffclassificationfrontend.connector.BindingTariffClassificationConnector
+import uk.gov.hmrc.tariffclassificationfrontend.models._
+import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
+
+import scala.concurrent.Future
+
+class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
+
+  private implicit val hc: HeaderCarrier = HeaderCarrier()
+  private val manyCases = mock[Seq[Case]]
+  private val oneCase = mock[Option[Case]]
+  private val queue = mock[Queue]
+  private val connector = mock[BindingTariffClassificationConnector]
+  private val audit = mock[AuditService]
+  private val config = mock[AppConfig]
+  private val clock = Clock.fixed(LocalDate.of(2018,1,1).atStartOfDay().toInstant(ZoneOffset.UTC), ZoneId.of("UTC"))
+  private val aCase = Case("ref", CaseStatus.OPEN, ZonedDateTime.now(), ZonedDateTime.now(), None, None, None, None, mock[Application], None, Seq.empty)
+  private val epoch = date("1970-01-01")
+
+  private val service = new CasesService(config, audit, connector)
+
+  override protected def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(connector, audit, queue, oneCase, manyCases, config)
+  }
+
+  "Complete Case" should {
+    "update case status to COMPLETED" in {
+      // Given
+      val operator: Operator = Operator("operator-id")
+      val originalDecision = Decision("code", epoch, epoch, "justification", "goods")
+      val originalCase = aCase.copy(status = CaseStatus.OPEN, decision = Some(originalDecision))
+      val updatedDecision = Decision("code", date("2018-01-01"), date("2019-01-01"), "justification", "goods")
+      val caseUpdated = aCase.copy(status = CaseStatus.COMPLETED, decision = Some(updatedDecision))
+
+      given(config.decisionLifetimeYears).willReturn(1)
+      given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(caseUpdated))
+      given(connector.createEvent(any[Case], any[NewEventRequest])(any[HeaderCarrier])).willReturn(Future.successful(mock[Event]))
+
+      // When Then
+      await(service.completeCase(originalCase, operator, clock)) shouldBe caseUpdated
+
+      verify(audit).auditCaseCompleted(refEq(caseUpdated))(any[HeaderCarrier])
+
+      val caseUpdating = theCaseUpdating()
+      caseUpdating.status shouldBe CaseStatus.COMPLETED
+
+      val eventCreated = theEventCreatedFor(caseUpdated)
+      eventCreated.userId shouldBe "operator-id"
+      eventCreated.details shouldBe CaseStatusChange(CaseStatus.OPEN, CaseStatus.COMPLETED)
+    }
+
+    "reject case without a decision" in {
+      // Given
+      val operator: Operator = Operator("operator-id")
+      val originalCase = aCase.copy(status = CaseStatus.OPEN, decision = None)
+
+      // When Then
+      intercept[IllegalArgumentException] {
+        await(service.completeCase(originalCase, operator))
+      }
+
+      verify(audit, never()).auditCaseCompleted(any[Case])(any[HeaderCarrier])
+      verify(connector, never()).createEvent(any[Case], any[NewEventRequest])(any[HeaderCarrier])
+    }
+
+    "not create event on update failure" in {
+      val operator: Operator = Operator("operator-id")
+      val originalDecision = Decision("code", epoch, epoch, "justification", "goods")
+      val originalCase = aCase.copy(status = CaseStatus.OPEN, decision = Some(originalDecision))
+
+      given(config.decisionLifetimeYears).willReturn(1)
+      given(queue.id).willReturn("queue_id")
+      given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.failed(new RuntimeException()))
+
+      intercept[RuntimeException] {
+        await(service.completeCase(originalCase, operator))
+      }
+
+      verify(audit, never()).auditCaseCompleted(any[Case])(any[HeaderCarrier])
+      verify(connector, never()).createEvent(any[Case], any[NewEventRequest])(any[HeaderCarrier])
+    }
+
+    "succeed on event create failure" in {
+      // Given
+      val operator: Operator = Operator("operator-id")
+      val originalDecision = Decision("code", epoch, epoch, "justification", "goods")
+      val originalCase = aCase.copy(status = CaseStatus.OPEN, decision = Some(originalDecision))
+      val updatedDecision = Decision("code", date("2018-01-01"), date("2019-01-01"), "justification", "goods")
+      val caseUpdated = aCase.copy(status = CaseStatus.COMPLETED, decision = Some(updatedDecision))
+
+      given(config.decisionLifetimeYears).willReturn(1)
+      given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(caseUpdated))
+      given(connector.createEvent(any[Case], any[NewEventRequest])(any[HeaderCarrier])).willReturn(Future.failed(new RuntimeException()))
+
+      // When Then
+      await(service.completeCase(originalCase, operator)) shouldBe caseUpdated
+
+      verify(audit).auditCaseCompleted(refEq(caseUpdated))(any[HeaderCarrier])
+
+      val caseUpdating = theCaseUpdating()
+      caseUpdating.status shouldBe CaseStatus.COMPLETED
+    }
+  }
+
+  private def theEventCreatedFor(c: Case): NewEventRequest = {
+    val captor: ArgumentCaptor[NewEventRequest] = ArgumentCaptor.forClass(classOf[NewEventRequest])
+    verify(connector).createEvent(refEq(c), captor.capture())(any[HeaderCarrier])
+    captor.getValue
+  }
+
+  private def theCaseUpdating(): Case = {
+    val captor: ArgumentCaptor[Case] = ArgumentCaptor.forClass(classOf[Case])
+    verify(connector).updateCase(captor.capture())(any[HeaderCarrier])
+    captor.getValue
+  }
+
+  private def date(yymmdd: String): ZonedDateTime = {
+    LocalDate.parse(yymmdd).atStartOfDay(ZoneId.of("UTC"))
+  }
+
+}

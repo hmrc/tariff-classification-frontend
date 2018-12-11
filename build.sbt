@@ -42,7 +42,7 @@ lazy val microservice = (project in file("."))
     Keys.fork in IntegrationTest := false,
     unmanagedSourceDirectories in IntegrationTest := Seq(
       (baseDirectory in IntegrationTest).value / "test/it",
-      (baseDirectory in Test).value / "test/util"
+      (baseDirectory in IntegrationTest).value / "test/util"
     ),
     addTestReportOption(IntegrationTest, "int-test-reports"),
     testGrouping in IntegrationTest := oneForkedJvmPerTest((definedTests in IntegrationTest).value),

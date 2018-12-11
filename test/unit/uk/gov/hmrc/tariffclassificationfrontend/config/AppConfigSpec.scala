@@ -88,6 +88,10 @@ class AppConfigSpec extends UnitSpec with MockitoSugar {
       val devConfig = Configuration.from(Map("run.mode" -> "Dev"))
       new AppConfig(devConfig, Environment.simple(mode = Mode.Test)).runningAsDev shouldBe true
     }
+
+    "Builds decisionLifetimeYears" in {
+      appConfig("app.decision-lifetime-years" -> "1").decisionLifetimeYears shouldBe 1
+    }
   }
 
 }
