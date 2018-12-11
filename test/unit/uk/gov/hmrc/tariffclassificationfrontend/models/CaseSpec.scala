@@ -29,7 +29,7 @@ class CaseSpec extends UnitSpec {
     val closed = LocalDate.of(2018,1,10).atStartOfDay().atZone(zone)
 
     "calculate for a closed case" in {
-      val c = Case("", CaseStatus.DECISION_MADE, null, created, Some(closed), None, None, None, null, None, Seq.empty)
+      val c = Case("", CaseStatus.COMPLETED, null, created, Some(closed), None, None, None, null, None, Seq.empty)
       c.elapsedDays shouldBe 9
     }
 

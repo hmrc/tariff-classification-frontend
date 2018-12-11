@@ -41,6 +41,18 @@ class CasesService @Inject()(connector: BindingTariffClassificationConnector) {
     eventualCase
   }
 
+  def completeCase(c: Case, operator: Operator)(implicit hc: HeaderCarrier): Future[Case] = {
+    val eventualCase: Future[Case] = connector.updateCase(c.copy(status = CaseStatus.COMPLETED))
+    eventualCase.onSuccess({
+      case updated =>
+        connector.createEvent(updated, NewEventRequest(CaseStatusChange(c.status, updated.status), operator.id))
+          .onFailure({
+            case throwable: Throwable => Logger.error(s"Could not create Release Case event for case [${c.reference}]", throwable)
+          })
+    })
+    eventualCase
+  }
+
   def getOne(reference: String)(implicit hc: HeaderCarrier): Future[Option[Case]] = {
     connector.findCase(reference)
   }

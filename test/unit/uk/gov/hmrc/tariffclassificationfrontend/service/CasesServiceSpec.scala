@@ -18,10 +18,10 @@ package uk.gov.hmrc.tariffclassificationfrontend.service
 
 import java.time.ZonedDateTime
 
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers._
 import org.mockito.BDDMockito._
-import org.mockito.Mockito.verify
-import org.mockito.{ArgumentCaptor, Mockito}
+import org.mockito.Mockito.{never, reset, verify}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.http.HeaderCarrier
@@ -34,7 +34,7 @@ import scala.concurrent.Future
 
 class CasesServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
 
-  private implicit val hc = HeaderCarrier()
+  private implicit val hc: HeaderCarrier = HeaderCarrier()
   private val manyCases = mock[Seq[Case]]
   private val oneCase = mock[Option[Case]]
   private val queue = mock[Queue]
@@ -44,11 +44,10 @@ class CasesServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEac
 
   override protected def afterEach(): Unit = {
     super.afterEach()
-    Mockito.reset(connector)
+    reset(connector)
   }
 
   "Get Cases 'By Queue'" should {
-
     "retrieve connector cases" in {
       given(connector.findCasesByQueue(queue)) willReturn Future.successful(manyCases)
 
@@ -57,7 +56,6 @@ class CasesServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEac
   }
 
   "Get Cases 'By Assignee'" should {
-
     "retrieve connector cases" in {
       given(connector.findCasesByAssignee("assignee")) willReturn Future.successful(manyCases)
 
@@ -66,7 +64,6 @@ class CasesServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEac
   }
 
   "Get One Case 'By Reference'" should {
-
     "retrieve connector case" in {
       given(connector.findCase("reference")) willReturn Future.successful(oneCase)
 
@@ -83,6 +80,7 @@ class CasesServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEac
 
       given(queue.id).willReturn("queue_id")
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(caseUpdated))
+      given(connector.createEvent(any[Case], any[NewEventRequest])(any[HeaderCarrier])).willReturn(Future.successful(mock[Event]))
 
       // When Then
       await(service.releaseCase(originalCase, queue, operator)) shouldBe caseUpdated
@@ -93,20 +91,92 @@ class CasesServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEac
 
       val eventCreated = theEventCreatedFor(caseUpdated)
       eventCreated.userId shouldBe "operator-id"
-      eventCreated.details shouldBe CaseStatusChange(originalCase.status, CaseStatus.OPEN)
+      eventCreated.details shouldBe CaseStatusChange(CaseStatus.NEW, CaseStatus.OPEN)
+    }
+
+    "not create event on update failure" in {
+      val operator: Operator = Operator("operator-id")
+      val originalCase = Case("ref", CaseStatus.NEW, ZonedDateTime.now(), ZonedDateTime.now(), None, None, None, None, mock[Application], None, Seq.empty)
+
+      given(queue.id).willReturn("queue_id")
+      given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.failed(new RuntimeException()))
+
+      intercept[RuntimeException] {
+        await(service.releaseCase(originalCase, queue, operator))
+      }
+
+      verify(connector, never()).createEvent(any[Case], any[NewEventRequest])(any[HeaderCarrier])
+    }
+
+    "succeed on event create failure" in {
+      // Given
+      val operator: Operator = Operator("operator-id")
+      val originalCase = Case("ref", CaseStatus.NEW, ZonedDateTime.now(), ZonedDateTime.now(), None, None, None, None, mock[Application], None, Seq.empty)
+      val caseUpdated = Case("ref", CaseStatus.OPEN, ZonedDateTime.now(), ZonedDateTime.now(), None, None, None, None, mock[Application], None, Seq.empty)
+
+      given(queue.id).willReturn("queue_id")
+      given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(caseUpdated))
+      given(connector.createEvent(any[Case], any[NewEventRequest])(any[HeaderCarrier])).willReturn(Future.failed(new RuntimeException()))
+
+      // When Then
+      await(service.releaseCase(originalCase, queue, operator)) shouldBe caseUpdated
+
+      val caseUpdating = theCaseUpdating()
+      caseUpdating.status shouldBe CaseStatus.OPEN
+      caseUpdating.queueId shouldBe Some("queue_id")
     }
   }
 
-  def theCaseUpdating(): Case = {
-    val captor: ArgumentCaptor[Case] = ArgumentCaptor.forClass(classOf[Case])
-    verify(connector).updateCase(captor.capture())(any[HeaderCarrier])
-    captor.getValue
-  }
+  "Complete Case" should {
+    "update case status to COMPLETED" in {
+      // Given
+      val operator: Operator = Operator("operator-id")
+      val originalCase = Case("ref", CaseStatus.OPEN, ZonedDateTime.now(), ZonedDateTime.now(), None, None, None, None, mock[Application], None, Seq.empty)
+      val caseUpdated = Case("ref", CaseStatus.COMPLETED, ZonedDateTime.now(), ZonedDateTime.now(), None, None, None, None, mock[Application], None, Seq.empty)
 
-  def theEventCreatedFor(c: Case): NewEventRequest = {
-    val captor: ArgumentCaptor[NewEventRequest] = ArgumentCaptor.forClass(classOf[NewEventRequest])
-    verify(connector).createEvent(refEq(c), captor.capture())(any[HeaderCarrier])
-    captor.getValue
+      given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(caseUpdated))
+      given(connector.createEvent(any[Case], any[NewEventRequest])(any[HeaderCarrier])).willReturn(Future.successful(mock[Event]))
+
+      // When Then
+      await(service.completeCase(originalCase, operator)) shouldBe caseUpdated
+
+      val caseUpdating = theCaseUpdating()
+      caseUpdating.status shouldBe CaseStatus.COMPLETED
+
+      val eventCreated = theEventCreatedFor(caseUpdated)
+      eventCreated.userId shouldBe "operator-id"
+      eventCreated.details shouldBe CaseStatusChange(CaseStatus.OPEN, CaseStatus.COMPLETED)
+    }
+
+    "not create event on update failure" in {
+      val operator: Operator = Operator("operator-id")
+      val originalCase = Case("ref", CaseStatus.OPEN, ZonedDateTime.now(), ZonedDateTime.now(), None, None, None, None, mock[Application], None, Seq.empty)
+
+      given(queue.id).willReturn("queue_id")
+      given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.failed(new RuntimeException()))
+
+      intercept[RuntimeException] {
+        await(service.completeCase(originalCase, operator))
+      }
+
+      verify(connector, never()).createEvent(any[Case], any[NewEventRequest])(any[HeaderCarrier])
+    }
+
+    "succeed on event create failure" in {
+      // Given
+      val operator: Operator = Operator("operator-id")
+      val originalCase = Case("ref", CaseStatus.OPEN, ZonedDateTime.now(), ZonedDateTime.now(), None, None, None, None, mock[Application], None, Seq.empty)
+      val caseUpdated = Case("ref", CaseStatus.COMPLETED, ZonedDateTime.now(), ZonedDateTime.now(), None, None, None, None, mock[Application], None, Seq.empty)
+
+      given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(caseUpdated))
+      given(connector.createEvent(any[Case], any[NewEventRequest])(any[HeaderCarrier])).willReturn(Future.failed(new RuntimeException()))
+
+      // When Then
+      await(service.completeCase(originalCase, operator)) shouldBe caseUpdated
+
+      val caseUpdating = theCaseUpdating()
+      caseUpdating.status shouldBe CaseStatus.COMPLETED
+    }
   }
 
   "Update Case" should {
@@ -118,6 +188,18 @@ class CasesServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEac
 
       await(service.updateCase(oldCase)) shouldBe updatedCase
     }
+  }
+
+  def theEventCreatedFor(c: Case): NewEventRequest = {
+    val captor: ArgumentCaptor[NewEventRequest] = ArgumentCaptor.forClass(classOf[NewEventRequest])
+    verify(connector).createEvent(refEq(c), captor.capture())(any[HeaderCarrier])
+    captor.getValue
+  }
+
+  def theCaseUpdating(): Case = {
+    val captor: ArgumentCaptor[Case] = ArgumentCaptor.forClass(classOf[Case])
+    verify(connector).updateCase(captor.capture())(any[HeaderCarrier])
+    captor.getValue
   }
 
 }
