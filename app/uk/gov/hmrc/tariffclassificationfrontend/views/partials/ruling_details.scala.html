@@ -19,6 +19,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{attachments, case_nav}
 @import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.complete_case_button
 @(c: Case)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @defining(c.application.asBTI) { btiApp: BTIApplication =>
@@ -127,6 +128,8 @@
             <hr class="mt-0"/>
 
             @attachments(attachments = c.attachments.filter(_.public))
+
+            @complete_case_button(c)
         }
     } else {
         <p>@messages("case.decision.empty")</p>

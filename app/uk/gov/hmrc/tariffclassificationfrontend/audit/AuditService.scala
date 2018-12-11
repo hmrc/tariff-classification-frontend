@@ -48,6 +48,11 @@ class AuditService @Inject()(auditConnector: DefaultAuditConnector) {
     sendExplicitAuditEvent(CaseReleased, toJson(c))
   }
 
+  def auditCaseCompleted(c: Case)
+                       (implicit hc: HeaderCarrier): Unit = {
+    sendExplicitAuditEvent(CaseReleased, toJson(c))
+  }
+
   private def sendExplicitAuditEvent(auditEventType: String, auditPayload: JsValue)
                                     (implicit hc : uk.gov.hmrc.http.HeaderCarrier): Unit = {
     auditConnector.sendExplicitAudit(auditType = auditEventType, detail = auditPayload)
@@ -58,4 +63,5 @@ class AuditService @Inject()(auditConnector: DefaultAuditConnector) {
 object AuditPayloadType {
 
   val CaseReleased = "CaseReleased"
+  val CaseCompleted = "CaseCompleted"
 }

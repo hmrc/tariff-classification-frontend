@@ -26,6 +26,7 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
+import uk.gov.hmrc.tariffclassificationfrontend.audit.AuditService
 import uk.gov.hmrc.tariffclassificationfrontend.connector.BindingTariffClassificationConnector
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
@@ -39,8 +40,9 @@ class CasesServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEac
   private val oneCase = mock[Option[Case]]
   private val queue = mock[Queue]
   private val connector = mock[BindingTariffClassificationConnector]
+  private val audit = mock[AuditService]
 
-  private val service = new CasesService(connector)
+  private val service = new CasesService(audit, connector)
 
   override protected def afterEach(): Unit = {
     super.afterEach()
@@ -85,6 +87,8 @@ class CasesServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEac
       // When Then
       await(service.releaseCase(originalCase, queue, operator)) shouldBe caseUpdated
 
+      verify(audit).auditCaseReleased(refEq(caseUpdated))(any[HeaderCarrier])
+
       val caseUpdating = theCaseUpdating()
       caseUpdating.status shouldBe CaseStatus.OPEN
       caseUpdating.queueId shouldBe Some("queue_id")
@@ -105,6 +109,7 @@ class CasesServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEac
         await(service.releaseCase(originalCase, queue, operator))
       }
 
+      verify(audit, never()).auditCaseReleased(any[Case])(any[HeaderCarrier])
       verify(connector, never()).createEvent(any[Case], any[NewEventRequest])(any[HeaderCarrier])
     }
 
@@ -120,6 +125,8 @@ class CasesServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEac
 
       // When Then
       await(service.releaseCase(originalCase, queue, operator)) shouldBe caseUpdated
+
+      verify(audit).auditCaseReleased(refEq(caseUpdated))(any[HeaderCarrier])
 
       val caseUpdating = theCaseUpdating()
       caseUpdating.status shouldBe CaseStatus.OPEN
@@ -140,6 +147,8 @@ class CasesServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEac
       // When Then
       await(service.completeCase(originalCase, operator)) shouldBe caseUpdated
 
+      verify(audit).auditCaseCompleted(refEq(caseUpdated))(any[HeaderCarrier])
+
       val caseUpdating = theCaseUpdating()
       caseUpdating.status shouldBe CaseStatus.COMPLETED
 
@@ -159,6 +168,7 @@ class CasesServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEac
         await(service.completeCase(originalCase, operator))
       }
 
+      verify(audit, never()).auditCaseReleased(any[Case])(any[HeaderCarrier])
       verify(connector, never()).createEvent(any[Case], any[NewEventRequest])(any[HeaderCarrier])
     }
 
@@ -173,6 +183,8 @@ class CasesServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEac
 
       // When Then
       await(service.completeCase(originalCase, operator)) shouldBe caseUpdated
+
+      verify(audit).auditCaseReleased(refEq(caseUpdated))(any[HeaderCarrier])
 
       val caseUpdating = theCaseUpdating()
       caseUpdating.status shouldBe CaseStatus.COMPLETED

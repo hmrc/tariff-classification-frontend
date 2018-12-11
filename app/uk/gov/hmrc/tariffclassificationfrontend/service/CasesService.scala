@@ -19,6 +19,7 @@ package uk.gov.hmrc.tariffclassificationfrontend.service
 import javax.inject.{Inject, Singleton}
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.tariffclassificationfrontend.audit.AuditService
 import uk.gov.hmrc.tariffclassificationfrontend.connector.BindingTariffClassificationConnector
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
@@ -27,7 +28,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class CasesService @Inject()(connector: BindingTariffClassificationConnector) {
+class CasesService @Inject()(auditService: AuditService, connector: BindingTariffClassificationConnector) {
 
   def releaseCase(c: Case, queue: Queue, operator: Operator)(implicit hc: HeaderCarrier): Future[Case] = {
     val eventualCase: Future[Case] = connector.updateCase(c.copy(status = CaseStatus.OPEN, queueId = Some(queue.id)))
@@ -37,6 +38,7 @@ class CasesService @Inject()(connector: BindingTariffClassificationConnector) {
           .onFailure({
             case throwable: Throwable => Logger.error(s"Could not create Release Case event for case [${c.reference}]", throwable)
           })
+        auditService.auditCaseReleased(c)
     })
     eventualCase
   }
@@ -49,6 +51,7 @@ class CasesService @Inject()(connector: BindingTariffClassificationConnector) {
           .onFailure({
             case throwable: Throwable => Logger.error(s"Could not create Release Case event for case [${c.reference}]", throwable)
           })
+        auditService.auditCaseCompleted(c)
     })
     eventualCase
   }
