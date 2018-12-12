@@ -43,7 +43,7 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
   private val connector = mock[BindingTariffClassificationConnector]
   private val audit = mock[AuditService]
   private val config = mock[AppConfig]
-  private val clock = Clock.fixed(LocalDate.of(2018,1,1).atStartOfDay().toInstant(ZoneOffset.UTC), ZoneId.of("UTC"))
+  private val clock = Clock.fixed(LocalDateTime.of(2018,1,1, 14,0).toInstant(ZoneOffset.UTC), ZoneId.of("UTC"))
   private val aCase = Case("ref", CaseStatus.OPEN, ZonedDateTime.now(), ZonedDateTime.now(), None, None, None, None, mock[Application], None, Seq.empty)
   private val epoch = date("1970-01-01")
 
@@ -63,6 +63,7 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
       val updatedDecision = Decision("code", date("2018-01-01"), date("2019-01-01"), "justification", "goods")
       val caseUpdated = aCase.copy(status = CaseStatus.COMPLETED, decision = Some(updatedDecision))
 
+      given(config.zoneId).willReturn(ZoneId.of("UTC"))
       given(config.decisionLifetimeYears).willReturn(1)
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(caseUpdated))
       given(connector.createEvent(any[Case], any[NewEventRequest])(any[HeaderCarrier])).willReturn(Future.successful(mock[Event]))
@@ -84,6 +85,7 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
       // Given
       val operator: Operator = Operator("operator-id")
       val originalCase = aCase.copy(status = CaseStatus.OPEN, decision = None)
+      given(config.zoneId).willReturn(ZoneId.of("UTC"))
 
       // When Then
       intercept[IllegalArgumentException] {
@@ -119,6 +121,7 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
       val updatedDecision = Decision("code", date("2018-01-01"), date("2019-01-01"), "justification", "goods")
       val caseUpdated = aCase.copy(status = CaseStatus.COMPLETED, decision = Some(updatedDecision))
 
+      given(config.zoneId).willReturn(ZoneId.of("UTC"))
       given(config.decisionLifetimeYears).willReturn(1)
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(caseUpdated))
       given(connector.createEvent(any[Case], any[NewEventRequest])(any[HeaderCarrier])).willReturn(Future.failed(new RuntimeException()))

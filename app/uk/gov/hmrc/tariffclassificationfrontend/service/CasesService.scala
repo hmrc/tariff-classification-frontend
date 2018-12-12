@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.service
 
-import java.time.{Clock, ZonedDateTime}
+import java.time.{Clock, LocalDate}
 
 import javax.inject.{Inject, Singleton}
 import play.api.Logger
@@ -53,7 +53,7 @@ class CasesService @Inject()(appConfig: AppConfig, auditService: AuditService, c
   }
 
   def completeCase(original: Case, operator: Operator, clock: Clock = Clock.systemDefaultZone())(implicit hc: HeaderCarrier): Future[Case] = {
-    val startDate = ZonedDateTime.now(clock)
+    val startDate = LocalDate.now(clock).atStartOfDay(appConfig.zoneId)
     val endDate = startDate.plusYears(appConfig.decisionLifetimeYears)
 
     val decisionUpdating: Decision = original.decision

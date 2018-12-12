@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.config
 
+import java.time.ZoneId
+
 import javax.inject.{Inject, Singleton}
 import play.api.Mode.Mode
 import play.api.{Configuration, Environment, Mode}
@@ -40,7 +42,7 @@ class AppConfig @Inject()(val runModeConfiguration: Configuration, environment: 
   def bindingTariffClassificationUrl: String = baseUrl("binding-tariff-classification")
 
   lazy val decisionLifetimeYears: Int = getInt("app.decision-lifetime-years")
-
+  lazy val zoneId: ZoneId = ZoneId.of("UTC")
   lazy val whitelistDestination: String = getString("whitelist.destination")
   lazy val whitelistedIps: Seq[String] = {
     getString("whitelist.allowedIps")
