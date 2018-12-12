@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
+import java.time.Clock
+
 import akka.stream.Materializer
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.Mockito._
@@ -32,8 +34,8 @@ import play.filters.csrf.CSRF.{Token, TokenProvider}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, Operator, Queue}
-import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, QueuesService}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, Operator}
+import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.tariffclassificationfrontend.utils.Cases
 
 import scala.concurrent.Future.{failed, successful}
@@ -120,7 +122,7 @@ class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
     "return OK and HTML content type" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusOPEN)))
-      when(casesService.completeCase(refEq(caseWithStatusOPEN), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusCOMPLETED))
+      when(casesService.completeCase(refEq(caseWithStatusOPEN), refEq(operator), any[Clock])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusCOMPLETED))
 
       val result: Result = await(controller.confirmCompleteCase("reference")(newFakePOSTRequestWithCSRF()))
 
