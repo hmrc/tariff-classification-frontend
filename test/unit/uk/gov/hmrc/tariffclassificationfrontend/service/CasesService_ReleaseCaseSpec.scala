@@ -62,6 +62,7 @@ class CasesService_ReleaseCaseSpec extends UnitSpec with MockitoSugar with Befor
       given(queue.id).willReturn("queue_id")
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(caseUpdated))
       given(connector.createEvent(any[Case], any[NewEventRequest])(any[HeaderCarrier])).willReturn(Future.successful(mock[Event]))
+      given(audit.auditCaseReleased(refEq(caseUpdated))(any[HeaderCarrier])).willReturn(Future.successful())
 
       // When Then
       await(service.releaseCase(originalCase, queue, operator)) shouldBe caseUpdated
@@ -101,6 +102,7 @@ class CasesService_ReleaseCaseSpec extends UnitSpec with MockitoSugar with Befor
       given(queue.id).willReturn("queue_id")
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(caseUpdated))
       given(connector.createEvent(any[Case], any[NewEventRequest])(any[HeaderCarrier])).willReturn(Future.failed(new RuntimeException()))
+      given(audit.auditCaseReleased(refEq(caseUpdated))(any[HeaderCarrier])).willReturn(Future.successful())
 
       // When Then
       await(service.releaseCase(originalCase, queue, operator)) shouldBe caseUpdated

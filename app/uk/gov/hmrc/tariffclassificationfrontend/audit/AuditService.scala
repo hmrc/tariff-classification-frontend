@@ -26,12 +26,13 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 import uk.gov.hmrc.tariffclassificationfrontend.utils.JsonFormatters.caseFormat
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 @Singleton
 class AuditService @Inject()(auditConnector: DefaultAuditConnector) {
 
   def auditCaseReleased(c: Case)
-                       (implicit hc: HeaderCarrier): Unit = {
+                       (implicit hc: HeaderCarrier): Future[Unit] = {
 /*
     TODO: verify with TxM if we need to include any specific detail about the user logged in.
 
@@ -49,13 +50,15 @@ class AuditService @Inject()(auditConnector: DefaultAuditConnector) {
   }
 
   def auditCaseCompleted(c: Case)
-                       (implicit hc: HeaderCarrier): Unit = {
+                       (implicit hc: HeaderCarrier): Future[Unit] = {
     sendExplicitAuditEvent(CaseReleased, toJson(c))
   }
 
   private def sendExplicitAuditEvent(auditEventType: String, auditPayload: JsValue)
-                                    (implicit hc : uk.gov.hmrc.http.HeaderCarrier): Unit = {
-    auditConnector.sendExplicitAudit(auditType = auditEventType, detail = auditPayload)
+                                    (implicit hc : uk.gov.hmrc.http.HeaderCarrier): Future[Unit] = {
+    Future {
+      auditConnector.sendExplicitAudit(auditType = auditEventType, detail = auditPayload)
+    }
   }
 
 }

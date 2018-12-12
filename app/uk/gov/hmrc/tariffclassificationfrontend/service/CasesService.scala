@@ -33,23 +33,23 @@ import scala.concurrent.Future
 @Singleton
 class CasesService @Inject()(appConfig: AppConfig, auditService: AuditService, connector: BindingTariffClassificationConnector) {
 
-  private def addEvent(original: Case, updated: Case, operator: Operator)(implicit hc: HeaderCarrier): Future[Case] = {
+  private def addEvent(original: Case, updated: Case, operator: Operator)(implicit hc: HeaderCarrier): Future[Unit] = {
     val event = NewEventRequest(CaseStatusChange(original.status, updated.status), operator.id)
     connector.createEvent(updated, event)
-      .map(_ => Unit)
       .recover({
         case throwable: Throwable =>
           Logger.error(s"Could not create Event for case [${original.reference}] with payload [$event]", throwable)
       })
-      .map(_ => updated)
+      .map(_ => Unit)
   }
 
   def releaseCase(original: Case, queue: Queue, operator: Operator)(implicit hc: HeaderCarrier): Future[Case] = {
-    connector.updateCase(original.copy(status = CaseStatus.OPEN, queueId = Some(queue.id)))
-      .flatMap((updated: Case) => {
-        auditService.auditCaseReleased(updated)
-        addEvent(original, updated, operator)
-      })
+    for {
+      updated <- connector.updateCase(original.copy(status = CaseStatus.OPEN, queueId = Some(queue.id)))
+      _ <- addEvent(original, updated, operator)
+      _ <- auditService.auditCaseReleased(updated)
+    } yield updated
+
   }
 
   def completeCase(original: Case, operator: Operator, clock: Clock = Clock.systemDefaultZone())(implicit hc: HeaderCarrier): Future[Case] = {
@@ -61,11 +61,11 @@ class CasesService @Inject()(appConfig: AppConfig, auditService: AuditService, c
       .copy(effectiveStartDate = startDate, effectiveEndDate = endDate)
     val caseUpdating = original.copy(status = CaseStatus.COMPLETED, decision = Some(decisionUpdating))
 
-    connector.updateCase(caseUpdating)
-      .flatMap((updated: Case) => {
-        auditService.auditCaseCompleted(updated)
-        addEvent(original, updated, operator)
-      })
+    for {
+      updated <- connector.updateCase(caseUpdating)
+      _ <- addEvent(original, updated, operator)
+      _ <- auditService.auditCaseCompleted(updated)
+    } yield updated
   }
 
   def getOne(reference: String)(implicit hc: HeaderCarrier): Future[Option[Case]] = {
