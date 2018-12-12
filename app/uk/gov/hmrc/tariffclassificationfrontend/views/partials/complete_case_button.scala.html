@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,18 +12,14 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package uk.gov.hmrc.tariffclassificationfrontend.models
+@import uk.gov.hmrc.tariffclassificationfrontend.models.Case
+@import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus
+@(c: Case, classes: Seq[String] = Seq.empty)
 
-import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.CaseStatus
-
-object CaseStatus extends Enumeration {
-  type CaseStatus = Value
-  val DRAFT, NEW, OPEN, SUPPRESSED, REFERRED, REJECTED, CANCELLED, SUSPENDED, COMPLETED, REVOKED, ANNULLED = Value
+@if(c.status == CaseStatus.OPEN) {
+    <a id="complete-case-button" class="button @classes.mkString(" ")" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CompleteCaseController.completeCase(c.reference)">
+        Complete Case
+    </a>
 }
-
-case class Status
-(
-  status: CaseStatus
-)

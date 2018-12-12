@@ -39,6 +39,8 @@ class AppConfig @Inject()(val runModeConfiguration: Configuration, environment: 
   def reportAProblemNonJSUrl = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
   def bindingTariffClassificationUrl: String = baseUrl("binding-tariff-classification")
 
+  lazy val decisionLifetimeYears: Int = getInt("app.decision-lifetime-years")
+
   lazy val whitelistDestination: String = getString("whitelist.destination")
   lazy val whitelistedIps: Seq[String] = {
     getString("whitelist.allowedIps")

@@ -16,9 +16,13 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.service
 
+import java.time.{Clock, ZonedDateTime}
+
 import javax.inject.{Inject, Singleton}
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.tariffclassificationfrontend.audit.AuditService
+import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.connector.BindingTariffClassificationConnector
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
@@ -27,18 +31,41 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class CasesService @Inject()(connector: BindingTariffClassificationConnector) {
+class CasesService @Inject()(appConfig: AppConfig, auditService: AuditService, connector: BindingTariffClassificationConnector) {
 
-  def releaseCase(c: Case, queue: Queue, operator: Operator)(implicit hc: HeaderCarrier): Future[Case] = {
-    val eventualCase: Future[Case] = connector.updateCase(c.copy(status = CaseStatus.OPEN, queueId = Some(queue.id)))
-    eventualCase.onSuccess({
-      case updated =>
-        connector.createEvent(updated, NewEventRequest(CaseStatusChange(c.status, updated.status), operator.id))
-          .onFailure({
-            case throwable: Throwable => Logger.error(s"Could not create Release Case event for case [${c.reference}]", throwable)
-          })
-    })
-    eventualCase
+  private def addEvent(original: Case, updated: Case, operator: Operator)(implicit hc: HeaderCarrier): Future[Unit] = {
+    val event = NewEventRequest(CaseStatusChange(original.status, updated.status), operator.id)
+    connector.createEvent(updated, event)
+      .recover({
+        case throwable: Throwable =>
+          Logger.error(s"Could not create Event for case [${original.reference}] with payload [$event]", throwable)
+      })
+      .map(_ => Unit)
+  }
+
+  def releaseCase(original: Case, queue: Queue, operator: Operator)(implicit hc: HeaderCarrier): Future[Case] = {
+    for {
+      updated <- connector.updateCase(original.copy(status = CaseStatus.OPEN, queueId = Some(queue.id)))
+      _ <- addEvent(original, updated, operator)
+      _ = auditService.auditCaseReleased(updated)
+    } yield updated
+
+  }
+
+  def completeCase(original: Case, operator: Operator, clock: Clock = Clock.systemDefaultZone())(implicit hc: HeaderCarrier): Future[Case] = {
+    val startDate = ZonedDateTime.now(clock)
+    val endDate = startDate.plusYears(appConfig.decisionLifetimeYears)
+
+    val decisionUpdating: Decision = original.decision
+      .getOrElse(throw new IllegalArgumentException("Cannot Complete a Case without a Decision"))
+      .copy(effectiveStartDate = startDate, effectiveEndDate = endDate)
+    val caseUpdating = original.copy(status = CaseStatus.COMPLETED, decision = Some(decisionUpdating))
+
+    for {
+      updated <- connector.updateCase(caseUpdating)
+      _ <- addEvent(original, updated, operator)
+      _ = auditService.auditCaseCompleted(updated)
+    } yield updated
   }
 
   def getOne(reference: String)(implicit hc: HeaderCarrier): Future[Option[Case]] = {

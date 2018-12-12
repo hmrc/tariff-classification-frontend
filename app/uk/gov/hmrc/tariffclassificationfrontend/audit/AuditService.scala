@@ -32,24 +32,30 @@ class AuditService @Inject()(auditConnector: DefaultAuditConnector) {
 
   def auditCaseReleased(c: Case)
                        (implicit hc: HeaderCarrier): Unit = {
-/*
-    TODO: verify with TxM if we need to include any specific detail about the user logged in.
+    /*
+        TODO: verify with TxM if we need to include any specific detail about the user logged in.
 
-    Possible example:
+        Possible example:
 
-    "operatorDetails" : {
-      "roles" : [ "hts helpdesk advisor", "other role"] // list of roles operator has
-      "pid"   : "abc123"                                // personal identifier operator uses to login to machine
-      "name"  : "Operator Shmoperator"                  // name of operator
-      "email" : "operator@shmoperator.com"              // email of operator
-    }
-*/
+        "operatorDetails" : {
+          "roles" : [ "hts helpdesk advisor", "other role"] // list of roles operator has
+          "pid"   : "abc123"                                // personal identifier operator uses to login to machine
+          "name"  : "Operator Shmoperator"                  // name of operator
+          "email" : "operator@shmoperator.com"              // email of operator
+        }
+    */
 
     sendExplicitAuditEvent(CaseReleased, toJson(c))
   }
 
+  def auditCaseCompleted(c: Case)
+                        (implicit hc: HeaderCarrier): Unit = {
+    sendExplicitAuditEvent(CaseReleased, toJson(c))
+  }
+
   private def sendExplicitAuditEvent(auditEventType: String, auditPayload: JsValue)
-                                    (implicit hc : uk.gov.hmrc.http.HeaderCarrier): Unit = {
+                                    (implicit hc: uk.gov.hmrc.http.HeaderCarrier): Unit = {
+
     auditConnector.sendExplicitAudit(auditType = auditEventType, detail = auditPayload)
   }
 
@@ -58,4 +64,5 @@ class AuditService @Inject()(auditConnector: DefaultAuditConnector) {
 object AuditPayloadType {
 
   val CaseReleased = "CaseReleased"
+  val CaseCompleted = "CaseCompleted"
 }

@@ -21,7 +21,8 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
 
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.case_heading
-@(c: Case, form: Form[ReleaseCaseForm], queues: Seq[Queue])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@import views.html.helper.{form, CSRF}
+@(c: Case)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None) {
     @defining(c.application.asBTI) { btiApp: BTIApplication =>
@@ -30,29 +31,19 @@
 
         <div class="grid-row">
             <div class="column-full">
-                <h3 class="heading-large mt-0">Release this Case for Classification</h3>
+                <h3 class="heading-large mt-0">Complete this case</h3>
                 <hr class="mt-0"/>
 
-                <div class="grid-row">
-                    <div id="application_envisagedCommodityCode" class="column-one-third">
-                        <p>@messages("case.application.suggested-commodity-code")</p>
-                    </div>
-                    <div class="column-two-thirds">
-                        <p id="envisagedCommodityCodeValue">@{btiApp.envisagedCommodityCode.getOrElse("")}</p>
-                    </div>
-                </div>
+                <p>Completing this case will generate a BTI certificate, valid for <span id="decision-lifetime">@{appConfig.decisionLifetimeYears}</span> years from today.</p>
+                <p>This certificate will be available to the applicant on their listed rulings page.</p>
+                <p>The ruling will also be published on the public rulings website.</p>
+                <p>An email will be automatically sent to the applicant, notifying them of the publication of the ruling.</p>
 
-
-                <div class="grid-row">
-                    <div id="application_goodDescription" class="column-one-third">
-                        <p>@messages("case.application.suggested-goods-description")</p>
-                    </div>
-                    <div class="column-two-thirds">
-                        <p id="application_goodDescriptionValue">@{btiApp.goodDescription}</p>
-                    </div>
-                </div>
-
-                @release_case_form(c, form("queue"), queues)
+                @form(action = uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CompleteCaseController.confirmCompleteCase(c.reference), 'class -> "form") {
+                    @CSRF.formField
+                    <button class="button" type="submit">Complete and publish case</button>
+                    <a class="secondary-button" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.rulingDetails(c.reference)">Cancel</a>
+                }
 
             </div>
         </div>

@@ -23,12 +23,13 @@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.case_summary
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.ruling_details_edit
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.case_heading
 @(c: Case, title: String, view: Html)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None) {
     @defining(c.application.asBTI) { btiApp: BTIApplication =>
 
-        <h1 class="heading-large">@messages("case.title", c.reference, btiApp.getType, btiApp.holder.traderName)</h1>
+        @case_heading(c)
 
         <div class="grid-row">
             <div class="column-one-quarter">

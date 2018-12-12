@@ -22,12 +22,32 @@
 
 }
 
+.bold {
+  font-weight: bold;
+}
+
 .mt-0 {
   margin-top: 0;
 }
 
+.mb-0 {
+  margin-bottom: 0;
+}
+
 .mt-1 {
   margin-top: 1.05263em;
+}
+
+.mb-1 {
+  margin-bottom: 1.05263em;
+}
+
+.mt-2 {
+  margin-top: 2.05263em;
+}
+
+.mb-2 {
+  margin-bottom: 2.05263em;
 }
 
 #global-header .header-wrapper .header-global {
@@ -82,4 +102,34 @@
 
     padding: .526315em .789473em .263157em;
   }
+}
+
+.case-heading {
+  .case-reference {
+    font-weight: 400;
+    font-size: 27px;
+    line-height: 1.11111;
+    color: #6f777b;
+    margin-bottom: 5px;
+  }
+
+  .case-title {
+    margin-top: 0;
+    margin-bottom: 8px;
+  }
+}
+
+.phase-tag {
+  display: inline-block;
+  margin: 0 8px 0 0;
+  padding: 2px 5px 0;
+  font-family: "nta", Arial, sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 1.14286;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-decoration: none;
+  color: #fff;
+  background-color: #005ea5;
 }

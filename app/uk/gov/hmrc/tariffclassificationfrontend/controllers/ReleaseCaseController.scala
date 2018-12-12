@@ -22,10 +22,9 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import uk.gov.hmrc.tariffclassificationfrontend.audit.AuditService
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.ReleaseCaseForm
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus, Operator, Queue}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus, Queue}
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, QueuesService}
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
@@ -35,7 +34,6 @@ import scala.concurrent.Future
 @Singleton
 class ReleaseCaseController @Inject()(authenticatedAction: AuthenticatedAction,
                                       casesService: CasesService,
-                                      auditService: AuditService,
                                       queueService: QueuesService,
                                       val messagesApi: MessagesApi,
                                       implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
@@ -57,7 +55,6 @@ class ReleaseCaseController @Inject()(authenticatedAction: AuthenticatedAction,
         case None => Future.successful(Ok(views.html.resource_not_found(s"Queue ${validForm.queue}")))
         case Some(q: Queue) =>
           getCaseAndRenderView(reference, casesService.releaseCase(_, q, request.operator).map { c: Case =>
-            auditService.auditCaseReleased(c)
             views.html.confirm_release_case(c, q)
           })
       }
