@@ -20,7 +20,7 @@ import java.time._
 
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers._
-import org.mockito.BDDMockito.{given, _}
+import org.mockito.BDDMockito.given
 import org.mockito.Mockito.{never, reset, verify}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
@@ -66,7 +66,6 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
       given(config.decisionLifetimeYears).willReturn(1)
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(caseUpdated))
       given(connector.createEvent(any[Case], any[NewEventRequest])(any[HeaderCarrier])).willReturn(Future.successful(mock[Event]))
-      given(audit.auditCaseCompleted(refEq(caseUpdated))(any[HeaderCarrier])).willReturn(Future.successful())
 
       // When Then
       await(service.completeCase(originalCase, operator, clock)) shouldBe caseUpdated
@@ -123,7 +122,6 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
       given(config.decisionLifetimeYears).willReturn(1)
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(caseUpdated))
       given(connector.createEvent(any[Case], any[NewEventRequest])(any[HeaderCarrier])).willReturn(Future.failed(new RuntimeException()))
-      given(audit.auditCaseCompleted(refEq(caseUpdated))(any[HeaderCarrier])).willReturn(Future.successful())
 
       // When Then
       await(service.completeCase(originalCase, operator)) shouldBe caseUpdated

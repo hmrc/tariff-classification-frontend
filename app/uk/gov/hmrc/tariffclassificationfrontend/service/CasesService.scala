@@ -47,7 +47,7 @@ class CasesService @Inject()(appConfig: AppConfig, auditService: AuditService, c
     for {
       updated <- connector.updateCase(original.copy(status = CaseStatus.OPEN, queueId = Some(queue.id)))
       _ <- addEvent(original, updated, operator)
-      _ <- auditService.auditCaseReleased(updated)
+      _ = auditService.auditCaseReleased(updated)
     } yield updated
 
   }
@@ -64,7 +64,7 @@ class CasesService @Inject()(appConfig: AppConfig, auditService: AuditService, c
     for {
       updated <- connector.updateCase(caseUpdating)
       _ <- addEvent(original, updated, operator)
-      _ <- auditService.auditCaseCompleted(updated)
+      _ = auditService.auditCaseCompleted(updated)
     } yield updated
   }
 

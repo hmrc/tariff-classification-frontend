@@ -26,39 +26,37 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 import uk.gov.hmrc.tariffclassificationfrontend.utils.JsonFormatters.caseFormat
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
 
 @Singleton
 class AuditService @Inject()(auditConnector: DefaultAuditConnector) {
 
   def auditCaseReleased(c: Case)
-                       (implicit hc: HeaderCarrier): Future[Unit] = {
-/*
-    TODO: verify with TxM if we need to include any specific detail about the user logged in.
+                       (implicit hc: HeaderCarrier): Unit = {
+    /*
+        TODO: verify with TxM if we need to include any specific detail about the user logged in.
 
-    Possible example:
+        Possible example:
 
-    "operatorDetails" : {
-      "roles" : [ "hts helpdesk advisor", "other role"] // list of roles operator has
-      "pid"   : "abc123"                                // personal identifier operator uses to login to machine
-      "name"  : "Operator Shmoperator"                  // name of operator
-      "email" : "operator@shmoperator.com"              // email of operator
-    }
-*/
+        "operatorDetails" : {
+          "roles" : [ "hts helpdesk advisor", "other role"] // list of roles operator has
+          "pid"   : "abc123"                                // personal identifier operator uses to login to machine
+          "name"  : "Operator Shmoperator"                  // name of operator
+          "email" : "operator@shmoperator.com"              // email of operator
+        }
+    */
 
     sendExplicitAuditEvent(CaseReleased, toJson(c))
   }
 
   def auditCaseCompleted(c: Case)
-                       (implicit hc: HeaderCarrier): Future[Unit] = {
+                        (implicit hc: HeaderCarrier): Unit = {
     sendExplicitAuditEvent(CaseReleased, toJson(c))
   }
 
   private def sendExplicitAuditEvent(auditEventType: String, auditPayload: JsValue)
-                                    (implicit hc : uk.gov.hmrc.http.HeaderCarrier): Future[Unit] = {
-    Future {
-      auditConnector.sendExplicitAudit(auditType = auditEventType, detail = auditPayload)
-    }
+                                    (implicit hc: uk.gov.hmrc.http.HeaderCarrier): Unit = {
+
+    auditConnector.sendExplicitAudit(auditType = auditEventType, detail = auditPayload)
   }
 
 }

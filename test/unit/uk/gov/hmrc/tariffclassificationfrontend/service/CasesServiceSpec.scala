@@ -16,12 +16,9 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.service
 
-import java.time._
-
-import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers._
 import org.mockito.BDDMockito._
-import org.mockito.Mockito.{never, reset, verify}
+import org.mockito.Mockito.reset
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.http.HeaderCarrier
@@ -30,7 +27,6 @@ import uk.gov.hmrc.tariffclassificationfrontend.audit.AuditService
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.connector.BindingTariffClassificationConnector
 import uk.gov.hmrc.tariffclassificationfrontend.models._
-import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
 
 import scala.concurrent.Future
 
