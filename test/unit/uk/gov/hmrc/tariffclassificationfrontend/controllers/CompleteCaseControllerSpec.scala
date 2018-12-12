@@ -60,10 +60,6 @@ class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
   private val controller = new CompleteCaseController(new SuccessfulAuthenticatedAction(operator), casesService, messageApi, appConfig)
 
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-  }
-
   override def afterEach(): Unit = {
     super.afterEach()
 
