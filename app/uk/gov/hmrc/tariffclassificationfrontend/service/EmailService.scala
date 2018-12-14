@@ -20,7 +20,7 @@ import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.tariffclassificationfrontend.connector.EmailConnector
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseCompletedEmail, CaseCompletedEmailParameters}
-import uk.gov.hmrc.tariffclassificationfrontend.utils.JsonFormatters
+import uk.gov.hmrc.tariffclassificationfrontend.utils.JsonFormatters.emailFormat
 
 import scala.concurrent.Future
 
@@ -36,8 +36,7 @@ class EmailService @Inject()(connector: EmailConnector) {
       Seq(c.application.contact.email),
       CaseCompletedEmailParameters(c.application.contact.name, c.reference, c.application.asBTI.goodName)
     )
-
-    connector.send(email)(hc, JsonFormatters.emailFormat)
+    connector.send(email)
   }
 
 }
