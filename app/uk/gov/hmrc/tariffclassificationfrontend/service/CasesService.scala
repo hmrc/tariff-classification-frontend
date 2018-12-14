@@ -31,7 +31,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class CasesService @Inject()(appConfig: AppConfig, auditService: AuditService, connector: BindingTariffClassificationConnector) {
+class CasesService @Inject()(appConfig: AppConfig, auditService: AuditService, emailService: EmailService, connector: BindingTariffClassificationConnector) {
 
   private def addEvent(original: Case, updated: Case, operator: Operator)(implicit hc: HeaderCarrier): Future[Unit] = {
     val event = NewEventRequest(CaseStatusChange(original.status, updated.status), operator.id)
@@ -64,6 +64,8 @@ class CasesService @Inject()(appConfig: AppConfig, auditService: AuditService, c
     for {
       updated <- connector.updateCase(caseUpdating)
       _ <- addEvent(original, updated, operator)
+      _ <- emailService.sendCaseCompleteEmail(updated)
+        .recover({case t: Throwable => Logger.error(s"Could not send Complete Case Email for case [${updated.reference}]", t)})
       _ = auditService.auditCaseCompleted(updated)
     } yield updated
   }

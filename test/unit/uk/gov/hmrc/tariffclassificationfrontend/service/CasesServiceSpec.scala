@@ -35,12 +35,13 @@ class CasesServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEac
   private implicit val hc: HeaderCarrier = HeaderCarrier()
   private val manyCases = mock[Seq[Case]]
   private val oneCase = mock[Option[Case]]
+  private val emailService = mock[EmailService]
   private val queue = mock[Queue]
   private val connector = mock[BindingTariffClassificationConnector]
   private val audit = mock[AuditService]
   private val config = mock[AppConfig]
 
-  private val service = new CasesService(config, audit, connector)
+  private val service = new CasesService(config, audit, emailService, connector)
 
   override protected def afterEach(): Unit = {
     super.afterEach()
