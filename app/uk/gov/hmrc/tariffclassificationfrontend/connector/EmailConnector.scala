@@ -30,9 +30,9 @@ import scala.concurrent.Future
 @Singleton
 class EmailConnector @Inject()(configuration: AppConfig, client: HttpClient) {
 
-  def send[E >: Email[T], T](e: E)(implicit hc: HeaderCarrier, writes: Writes[E]): Future[Unit] = {
-    val url = s"${configuration.emailUrl}/hmrc/email"
-    client.POST[E, String](url = url, body = e).map(_ => Unit)
+  def send[E >: Email[Any]](e: E)(implicit hc: HeaderCarrier, writes: Writes[E]): Future[Unit] = {
+    val url = s"${configuration.emailUrl}/email/hmrc/email"
+    client.POST(url = url, body = e).map(_ => Unit)
   }
 
 }

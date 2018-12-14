@@ -22,7 +22,7 @@ import org.apache.http.HttpStatus
 import org.mockito.BDDMockito._
 import org.scalatest.mockito.MockitoSugar
 import play.api.Environment
-import play.api.libs.json.Writes
+import play.api.libs.json.Format
 import play.api.libs.ws.WSClient
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.audit.DefaultAuditConnector
@@ -30,7 +30,7 @@ import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.ResourceFiles
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseCompletedEmail, CaseCompletedEmailParameters}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseCompletedEmail, CaseCompletedEmailParameters, Email}
 import uk.gov.hmrc.tariffclassificationfrontend.utils.JsonFormatters
 import uk.gov.tariffclassificationfrontend.utils.WiremockTestServer
 
@@ -42,7 +42,7 @@ class EmailConnectorSpec extends UnitSpec
   private val wsClient: WSClient = fakeApplication.injector.instanceOf[WSClient]
   private val auditConnector = new DefaultAuditConnector(fakeApplication.configuration, fakeApplication.injector.instanceOf[Environment])
   private val client = new DefaultHttpClient(fakeApplication.configuration, auditConnector, wsClient)
-  private implicit val hc = HeaderCarrier()
+  private implicit val hc: HeaderCarrier = HeaderCarrier()
 
   private val connector = new EmailConnector(configuration, client)
 
@@ -53,14 +53,13 @@ class EmailConnectorSpec extends UnitSpec
   }
 
   "Connector 'Send'" should {
-    implicit val format: Writes[CaseCompletedEmail] = JsonFormatters.emailCompleteFormat
+    implicit val format: Format[Email[_]] = JsonFormatters.emailFormat
 
     "POST Email payload" in {
-      stubFor(get(urlEqualTo("/email/hmrc/email"))
-          .withRequestBody(new EqualToJsonPattern(fromFile("resources"), true, false))
+      stubFor(post(urlEqualTo("/email/hmrc/email"))
+          .withRequestBody(new EqualToJsonPattern(fromFile("test/unit/resources/completion_email-request.json"), true, false))
         .willReturn(aResponse()
-          .withStatus(HttpStatus.SC_OK)
-          .withBody("[]"))
+          .withStatus(HttpStatus.SC_ACCEPTED))
       )
 
       await(connector.send(
