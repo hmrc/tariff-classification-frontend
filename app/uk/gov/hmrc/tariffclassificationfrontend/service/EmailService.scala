@@ -17,10 +17,9 @@
 package uk.gov.hmrc.tariffclassificationfrontend.service
 
 import javax.inject.{Inject, Singleton}
-import play.api.libs.json.Format
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.tariffclassificationfrontend.connector.EmailConnector
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseCompletedEmail, CaseCompletedEmailParameters, Email}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseCompletedEmail, CaseCompletedEmailParameters}
 import uk.gov.hmrc.tariffclassificationfrontend.utils.JsonFormatters
 
 import scala.concurrent.Future
@@ -38,8 +37,7 @@ class EmailService @Inject()(connector: EmailConnector) {
       CaseCompletedEmailParameters(c.application.contact.name, c.reference, c.application.asBTI.goodName)
     )
 
-    implicit val format: Format[Email[_]] = JsonFormatters.emailFormat
-    connector.send(email)
+    connector.send(email)(hc, JsonFormatters.emailFormat)
   }
 
 }
