@@ -21,7 +21,7 @@ import java.time._
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers._
 import org.mockito.BDDMockito._
-import org.mockito.Mockito.{never, reset, verify}
+import org.mockito.Mockito.{never, reset, verify, verifyZeroInteractions}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.http.HeaderCarrier
@@ -32,7 +32,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.connector.BindingTariffClassific
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
 
-import scala.concurrent.Future
+import scala.concurrent.Future.{failed, successful}
 
 class CasesService_ReleaseCaseSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
 
@@ -47,8 +47,8 @@ class CasesService_ReleaseCaseSpec extends UnitSpec with MockitoSugar with Befor
 
   private val service = new CasesService(config, audit, connector)
 
-  override protected def beforeEach(): Unit = {
-    super.beforeEach()
+  override protected def afterEach(): Unit = {
+    super.afterEach()
     reset(connector, audit, queue, oneCase, manyCases, config)
   }
 
@@ -60,8 +60,8 @@ class CasesService_ReleaseCaseSpec extends UnitSpec with MockitoSugar with Befor
       val caseUpdated = aCase.copy(status = CaseStatus.OPEN, queueId = Some("queue_id"))
 
       given(queue.id).willReturn("queue_id")
-      given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(caseUpdated))
-      given(connector.createEvent(any[Case], any[NewEventRequest])(any[HeaderCarrier])).willReturn(Future.successful(mock[Event]))
+      given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
+      given(connector.createEvent(any[Case], any[NewEventRequest])(any[HeaderCarrier])).willReturn(successful(mock[Event]))
 
       // When Then
       await(service.releaseCase(originalCase, queue, operator)) shouldBe caseUpdated
@@ -82,13 +82,13 @@ class CasesService_ReleaseCaseSpec extends UnitSpec with MockitoSugar with Befor
       val originalCase = aCase.copy(status = CaseStatus.NEW)
 
       given(queue.id).willReturn("queue_id")
-      given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.failed(new RuntimeException()))
+      given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(failed(new RuntimeException()))
 
       intercept[RuntimeException] {
         await(service.releaseCase(originalCase, queue, operator))
       }
 
-      verify(audit, never()).auditCaseReleased(any[Case])(any[HeaderCarrier])
+      verifyZeroInteractions(audit)
       verify(connector, never()).createEvent(any[Case], any[NewEventRequest])(any[HeaderCarrier])
     }
 
@@ -99,8 +99,8 @@ class CasesService_ReleaseCaseSpec extends UnitSpec with MockitoSugar with Befor
       val caseUpdated = aCase.copy(status = CaseStatus.OPEN, queueId = Some("queue_id"))
 
       given(queue.id).willReturn("queue_id")
-      given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(caseUpdated))
-      given(connector.createEvent(any[Case], any[NewEventRequest])(any[HeaderCarrier])).willReturn(Future.failed(new RuntimeException()))
+      given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
+      given(connector.createEvent(any[Case], any[NewEventRequest])(any[HeaderCarrier])).willReturn(failed(new RuntimeException()))
 
       // When Then
       await(service.releaseCase(originalCase, queue, operator)) shouldBe caseUpdated

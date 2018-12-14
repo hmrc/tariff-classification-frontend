@@ -21,7 +21,7 @@ import java.time._
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers._
 import org.mockito.BDDMockito.given
-import org.mockito.Mockito.{never, reset, verify}
+import org.mockito.Mockito.{never, reset, verify, verifyZeroInteractions}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.http.HeaderCarrier
@@ -32,7 +32,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.connector.BindingTariffClassific
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
 
-import scala.concurrent.Future
+import scala.concurrent.Future.{failed, successful}
 
 class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
 
@@ -49,8 +49,8 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
 
   private val service = new CasesService(config, audit, connector)
 
-  override protected def beforeEach(): Unit = {
-    super.beforeEach()
+  override protected def afterEach(): Unit = {
+    super.afterEach()
     reset(connector, audit, queue, oneCase, manyCases, config)
   }
 
@@ -65,8 +65,8 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
 
       given(config.zoneId).willReturn(ZoneId.of("UTC"))
       given(config.decisionLifetimeYears).willReturn(1)
-      given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(caseUpdated))
-      given(connector.createEvent(any[Case], any[NewEventRequest])(any[HeaderCarrier])).willReturn(Future.successful(mock[Event]))
+      given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
+      given(connector.createEvent(any[Case], any[NewEventRequest])(any[HeaderCarrier])).willReturn(successful(mock[Event]))
 
       // When Then
       await(service.completeCase(originalCase, operator, clock)) shouldBe caseUpdated
@@ -92,8 +92,8 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
         await(service.completeCase(originalCase, operator))
       }
 
-      verify(audit, never()).auditCaseCompleted(any[Case])(any[HeaderCarrier])
-      verify(connector, never()).createEvent(any[Case], any[NewEventRequest])(any[HeaderCarrier])
+      verifyZeroInteractions(audit)
+      verifyZeroInteractions(connector)
     }
 
     "not create event on update failure" in {
@@ -103,13 +103,13 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
 
       given(config.decisionLifetimeYears).willReturn(1)
       given(queue.id).willReturn("queue_id")
-      given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.failed(new RuntimeException()))
+      given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(failed(new RuntimeException()))
 
       intercept[RuntimeException] {
         await(service.completeCase(originalCase, operator))
       }
 
-      verify(audit, never()).auditCaseCompleted(any[Case])(any[HeaderCarrier])
+      verifyZeroInteractions(audit)
       verify(connector, never()).createEvent(any[Case], any[NewEventRequest])(any[HeaderCarrier])
     }
 
@@ -123,8 +123,8 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
 
       given(config.zoneId).willReturn(ZoneId.of("UTC"))
       given(config.decisionLifetimeYears).willReturn(1)
-      given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(caseUpdated))
-      given(connector.createEvent(any[Case], any[NewEventRequest])(any[HeaderCarrier])).willReturn(Future.failed(new RuntimeException()))
+      given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
+      given(connector.createEvent(any[Case], any[NewEventRequest])(any[HeaderCarrier])).willReturn(failed(new RuntimeException()))
 
       // When Then
       await(service.completeCase(originalCase, operator)) shouldBe caseUpdated

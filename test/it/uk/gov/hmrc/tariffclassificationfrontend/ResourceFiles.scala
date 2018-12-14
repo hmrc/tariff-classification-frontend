@@ -4,7 +4,7 @@ import scala.io.Source
 
 trait ResourceFiles {
 
-  def fromFile(path: String): String = {
+  protected def fromFile(path: String): String = {
     Source.fromFile(path).getLines().mkString
   }
 

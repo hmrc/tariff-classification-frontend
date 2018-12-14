@@ -72,12 +72,6 @@ class AppConfigSpec extends UnitSpec with MockitoSugar {
     "Build auth enrolment" in {
       appConfig("auth.enrolment" -> "classification").authEnrolment shouldBe "classification"
     }
-    
-    "Builds whitelist configurations" in {
-      appConfig("whitelist.destination" -> "dest").whitelistDestination shouldBe "dest"
-      appConfig("whitelist.allowedIps" -> "a,b").whitelistedIps shouldBe Seq("a", "b")
-      appConfig("whitelist.excluded" -> "a,b").whitelistedExcludedPaths shouldBe Seq("a", "b")
-    }
 
     "Builds runningAsDev from config override" in {
       appConfig("run.mode" -> "Dev").runningAsDev shouldBe true

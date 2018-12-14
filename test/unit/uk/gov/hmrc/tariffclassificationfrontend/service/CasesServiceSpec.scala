@@ -42,8 +42,8 @@ class CasesServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEac
 
   private val service = new CasesService(config, audit, connector)
 
-  override protected def beforeEach(): Unit = {
-    super.beforeEach()
+  override protected def afterEach(): Unit = {
+    super.afterEach()
     reset(connector, audit, queue, oneCase, manyCases, config)
   }
 

@@ -44,19 +44,6 @@ class AppConfig @Inject()(val runModeConfiguration: Configuration, environment: 
 
   lazy val decisionLifetimeYears: Int = getInt("app.decision-lifetime-years")
   lazy val zoneId: ZoneId = ZoneId.of("UTC")
-  lazy val whitelistDestination: String = getString("whitelist.destination")
-  lazy val whitelistedIps: Seq[String] = {
-    getString("whitelist.allowedIps")
-      .split(",")
-      .map(_.trim)
-      .filter(_.nonEmpty)
-  }
-  lazy val whitelistedExcludedPaths: Seq[String] = {
-    getString("whitelist.excluded")
-      .split(",")
-      .map(_.trim)
-      .filter(_.nonEmpty)
-  }
 
   def runningAsDev: Boolean = {
     runModeConfiguration
