@@ -28,11 +28,10 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.audit.DefaultAuditConnector
 import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
-import uk.gov.hmrc.tariffclassificationfrontend.ResourceFiles
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseCompletedEmail, CaseCompletedEmailParameters, Email}
 import uk.gov.hmrc.tariffclassificationfrontend.utils.JsonFormatters
-import uk.gov.tariffclassificationfrontend.utils.WiremockTestServer
+import uk.gov.tariffclassificationfrontend.utils.{ResourceFiles, WiremockTestServer}
 
 class EmailConnectorSpec extends UnitSpec
   with WiremockTestServer with MockitoSugar with WithFakeApplication with ResourceFiles {
@@ -57,7 +56,7 @@ class EmailConnectorSpec extends UnitSpec
 
     "POST Email payload" in {
       stubFor(post(urlEqualTo("/hmrc/email"))
-          .withRequestBody(new EqualToJsonPattern(fromFile("test/unit/resources/completion_email-request.json"), true, false))
+          .withRequestBody(new EqualToJsonPattern(fromResource("completion_email-request.json"), true, false))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_ACCEPTED))
       )

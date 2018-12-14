@@ -7,7 +7,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.ws.WSClient
 import play.api.test.Helpers.{OK, UNAUTHORIZED}
 import uk.gov.hmrc.play.test.UnitSpec
-import uk.gov.tariffclassificationfrontend.utils.WiremockTestServer
+import uk.gov.tariffclassificationfrontend.utils.{ResourceFiles, WiremockTestServer}
 
 trait IntegrationTest extends UnitSpec with GuiceOneServerPerSuite with ResourceFiles with WiremockTestServer {
 
@@ -26,7 +26,7 @@ trait IntegrationTest extends UnitSpec with GuiceOneServerPerSuite with Resource
       .willReturn(
         aResponse()
           .withStatus(OK)
-          .withBody(fromFile("test/it/resources/auth-success.json"))
+          .withBody(fromResource("auth-success.json"))
       )
     )
   }
