@@ -50,7 +50,7 @@ object JsonFormatters {
   implicit val emailCompleteParamsFormat = Json.format[CaseCompletedEmailParameters]
   implicit val emailCompleteFormat = Json.format[CaseCompletedEmail]
   implicit val emailFormat = Union.from[Email[_]]("templateId")
-    .and[CaseCompletedEmail]("digital_tariffs_case_completed")
+    .and[CaseCompletedEmail](EmailType.COMPLETE.toString)
     .format
 }
 
