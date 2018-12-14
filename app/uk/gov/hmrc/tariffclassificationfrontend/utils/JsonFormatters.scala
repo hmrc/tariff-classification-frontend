@@ -46,6 +46,9 @@ object JsonFormatters {
     .format
   implicit val eventFormat = Json.format[Event]
   implicit val newEventRequestFormat = Json.format[NewEventRequest]
+
+  implicit val emailCompleteParamsFormat = Json.format[CaseCompletedEmailParameters]
+  implicit val emailCompleteFormat: OFormat[CaseCompletedEmail] = Json.format[CaseCompletedEmail]
 }
 
 object EnumJson {

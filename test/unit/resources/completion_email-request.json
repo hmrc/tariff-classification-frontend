@@ -1,0 +1,8 @@
+{
+  "to": ["name@domain.com"],
+  "templateId": "digital_tariffs_case_completed",
+  "parameters": {
+    "recipientName_line1": "Joe Bloggs",
+  },
+  "force": false
+}
