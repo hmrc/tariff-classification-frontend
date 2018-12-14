@@ -32,7 +32,6 @@ import uk.gov.hmrc.tariffclassificationfrontend.connector.BindingTariffClassific
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
 
-import scala.concurrent.Future
 import scala.concurrent.Future.{failed, successful}
 
 class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
@@ -69,7 +68,7 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
       given(config.decisionLifetimeYears).willReturn(1)
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
       given(connector.createEvent(any[Case], any[NewEventRequest])(any[HeaderCarrier])).willReturn(successful(mock[Event]))
-      given(emailService.sendCaseCompleteEmail(refEq(caseUpdated))(any[HeaderCarrier])).willReturn(Future.successful())
+      given(emailService.sendCaseCompleteEmail(refEq(caseUpdated))(any[HeaderCarrier])).willReturn(successful((): Unit))
 
       // When Then
       await(service.completeCase(originalCase, operator, clock)) shouldBe caseUpdated
@@ -131,7 +130,7 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
       given(config.decisionLifetimeYears).willReturn(1)
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
       given(connector.createEvent(any[Case], any[NewEventRequest])(any[HeaderCarrier])).willReturn(failed(new RuntimeException()))
-      given(emailService.sendCaseCompleteEmail(refEq(caseUpdated))(any[HeaderCarrier])).willReturn(Future.successful())
+      given(emailService.sendCaseCompleteEmail(refEq(caseUpdated))(any[HeaderCarrier])).willReturn(successful((): Unit))
 
       // When Then
       await(service.completeCase(originalCase, operator)) shouldBe caseUpdated

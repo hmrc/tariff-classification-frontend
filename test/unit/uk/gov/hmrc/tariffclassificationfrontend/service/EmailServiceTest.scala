@@ -57,7 +57,7 @@ class EmailServiceTest extends UnitSpec with MockitoSugar {
       given(application.contact).willReturn(contact)
       given(application.goodName).willReturn("item")
 
-      given(connector.send(any[CaseCompletedEmail])(any[HeaderCarrier], any[Writes[Any]])).willReturn(Future.successful())
+      given(connector.send(any[CaseCompletedEmail])(any[HeaderCarrier], any[Writes[Any]])).willReturn(Future.successful((): Unit))
 
       await(service.sendCaseCompleteEmail(aCase))
 
