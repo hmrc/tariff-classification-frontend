@@ -18,6 +18,9 @@ The Front End for the internal Operator Service for reviewing & determining BTI 
 3) Start Stride Auth Frontend Using `sm --start STRIDE_AUTH_FRONTEND -r`
 4) Start Stride Auth Using `sm --start STRIDE_AUTH -r`
 5) Start Stride Auth IDP Stub Using `sm --start STRIDE_IDP_STUB -r`
+6) Start Email `sm --start EMAIL -r`
+7) Start Mailgun Stub `sm --start MAILGUN_STUB -r`
+8) Start Email Renderer `sm --start HMRC_EMAIL_RENDERER -r`
 
 Finally Run `sbt run` to boot the app
 

@@ -32,6 +32,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.connector.BindingTariffClassific
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
 
+import scala.concurrent.Future
 import scala.concurrent.Future.{failed, successful}
 
 class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
@@ -41,17 +42,18 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
   private val oneCase = mock[Option[Case]]
   private val queue = mock[Queue]
   private val connector = mock[BindingTariffClassificationConnector]
+  private val emailService = mock[EmailService]
   private val audit = mock[AuditService]
   private val config = mock[AppConfig]
   private val clock = Clock.fixed(LocalDateTime.of(2018,1,1, 14,0).toInstant(ZoneOffset.UTC), ZoneId.of("UTC"))
   private val aCase = Case("ref", CaseStatus.OPEN, ZonedDateTime.now(), ZonedDateTime.now(), None, None, None, None, mock[Application], None, Seq.empty)
   private val epoch = date("1970-01-01")
 
-  private val service = new CasesService(config, audit, connector)
+  private val service = new CasesService(config, audit, emailService, connector)
 
   override protected def afterEach(): Unit = {
     super.afterEach()
-    reset(connector, audit, queue, oneCase, manyCases, config)
+    reset(connector, audit, queue, oneCase, manyCases, config, emailService)
   }
 
   "Complete Case" should {
@@ -67,18 +69,20 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
       given(config.decisionLifetimeYears).willReturn(1)
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
       given(connector.createEvent(any[Case], any[NewEventRequest])(any[HeaderCarrier])).willReturn(successful(mock[Event]))
+      given(emailService.sendCaseCompleteEmail(refEq(caseUpdated))(any[HeaderCarrier])).willReturn(Future.successful())
 
       // When Then
       await(service.completeCase(originalCase, operator, clock)) shouldBe caseUpdated
 
       verify(audit).auditCaseCompleted(refEq(caseUpdated))(any[HeaderCarrier])
+      verify(emailService).sendCaseCompleteEmail(refEq(caseUpdated))(any[HeaderCarrier])
 
       val caseUpdating = theCaseUpdating()
       caseUpdating.status shouldBe CaseStatus.COMPLETED
 
       val eventCreated = theEventCreatedFor(caseUpdated)
       eventCreated.userId shouldBe "operator-id"
-      eventCreated.details shouldBe CaseStatusChange(CaseStatus.OPEN, CaseStatus.COMPLETED)
+      eventCreated.details shouldBe CaseStatusChange(CaseStatus.OPEN, CaseStatus.COMPLETED, Some("The applicant was sent an Email Confirmation with their reference"))
     }
 
     "reject case without a decision" in {
@@ -94,6 +98,7 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
 
       verifyZeroInteractions(audit)
       verifyZeroInteractions(connector)
+      verifyZeroInteractions(emailService)
     }
 
     "not create event on update failure" in {
@@ -110,6 +115,7 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
       }
 
       verifyZeroInteractions(audit)
+      verifyZeroInteractions(emailService)
       verify(connector, never()).createEvent(any[Case], any[NewEventRequest])(any[HeaderCarrier])
     }
 
@@ -125,6 +131,31 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
       given(config.decisionLifetimeYears).willReturn(1)
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
       given(connector.createEvent(any[Case], any[NewEventRequest])(any[HeaderCarrier])).willReturn(failed(new RuntimeException()))
+      given(emailService.sendCaseCompleteEmail(refEq(caseUpdated))(any[HeaderCarrier])).willReturn(Future.successful())
+
+      // When Then
+      await(service.completeCase(originalCase, operator)) shouldBe caseUpdated
+
+      verify(audit).auditCaseCompleted(refEq(caseUpdated))(any[HeaderCarrier])
+      verify(emailService).sendCaseCompleteEmail(refEq(caseUpdated))(any[HeaderCarrier])
+
+      val caseUpdating = theCaseUpdating()
+      caseUpdating.status shouldBe CaseStatus.COMPLETED
+    }
+
+    "succeed on email send failure" in {
+      // Given
+      val operator: Operator = Operator("operator-id")
+      val originalDecision = Decision("code", epoch, epoch, "justification", "goods")
+      val originalCase = aCase.copy(status = CaseStatus.OPEN, decision = Some(originalDecision))
+      val updatedDecision = Decision("code", date("2018-01-01"), date("2019-01-01"), "justification", "goods")
+      val caseUpdated = aCase.copy(status = CaseStatus.COMPLETED, decision = Some(updatedDecision))
+
+      given(config.zoneId).willReturn(ZoneId.of("UTC"))
+      given(config.decisionLifetimeYears).willReturn(1)
+      given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
+      given(connector.createEvent(any[Case], any[NewEventRequest])(any[HeaderCarrier])).willReturn(successful(mock[Event]))
+      given(emailService.sendCaseCompleteEmail(refEq(caseUpdated))(any[HeaderCarrier])).willReturn(failed(new RuntimeException()))
 
       // When Then
       await(service.completeCase(originalCase, operator)) shouldBe caseUpdated
@@ -133,6 +164,10 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
 
       val caseUpdating = theCaseUpdating()
       caseUpdating.status shouldBe CaseStatus.COMPLETED
+
+      val eventCreated = theEventCreatedFor(caseUpdated)
+      eventCreated.userId shouldBe "operator-id"
+      eventCreated.details shouldBe CaseStatusChange(CaseStatus.OPEN, CaseStatus.COMPLETED, Some("The applicant was sent an Email Confirmation with their reference"))
     }
   }
 

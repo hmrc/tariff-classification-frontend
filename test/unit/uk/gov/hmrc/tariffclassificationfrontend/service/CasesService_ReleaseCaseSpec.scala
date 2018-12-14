@@ -41,11 +41,12 @@ class CasesService_ReleaseCaseSpec extends UnitSpec with MockitoSugar with Befor
   private val oneCase = mock[Option[Case]]
   private val queue = mock[Queue]
   private val connector = mock[BindingTariffClassificationConnector]
+  private val emailService = mock[EmailService]
   private val audit = mock[AuditService]
   private val config = mock[AppConfig]
   private val aCase = Case("ref", CaseStatus.OPEN, ZonedDateTime.now(), ZonedDateTime.now(), None, None, None, None, mock[Application], None, Seq.empty)
 
-  private val service = new CasesService(config, audit, connector)
+  private val service = new CasesService(config, audit, emailService, connector)
 
   override protected def afterEach(): Unit = {
     super.afterEach()

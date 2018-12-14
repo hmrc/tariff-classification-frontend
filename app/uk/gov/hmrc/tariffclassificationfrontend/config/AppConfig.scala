@@ -40,6 +40,7 @@ class AppConfig @Inject()(val runModeConfiguration: Configuration, environment: 
   def reportAProblemPartialUrl = s"$contactHost/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
   def reportAProblemNonJSUrl = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
   def bindingTariffClassificationUrl: String = baseUrl("binding-tariff-classification")
+  def emailUrl: String = baseUrl("email")
 
   lazy val decisionLifetimeYears: Int = getInt("app.decision-lifetime-years")
   lazy val zoneId: ZoneId = ZoneId.of("UTC")
