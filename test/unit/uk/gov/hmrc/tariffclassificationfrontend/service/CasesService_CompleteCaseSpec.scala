@@ -82,7 +82,7 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
 
       val eventCreated = theEventCreatedFor(caseUpdated)
       eventCreated.userId shouldBe "operator-id"
-      eventCreated.details shouldBe CaseStatusChange(CaseStatus.OPEN, CaseStatus.COMPLETED)
+      eventCreated.details shouldBe CaseStatusChange(CaseStatus.OPEN, CaseStatus.COMPLETED, Some("The applicant was sent an Email Confirmation with their reference"))
     }
 
     "reject case without a decision" in {
@@ -167,7 +167,7 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
 
       val eventCreated = theEventCreatedFor(caseUpdated)
       eventCreated.userId shouldBe "operator-id"
-      eventCreated.details shouldBe CaseStatusChange(CaseStatus.OPEN, CaseStatus.COMPLETED)
+      eventCreated.details shouldBe CaseStatusChange(CaseStatus.OPEN, CaseStatus.COMPLETED, Some("The applicant was sent an Email Confirmation with their reference"))
     }
   }
 
