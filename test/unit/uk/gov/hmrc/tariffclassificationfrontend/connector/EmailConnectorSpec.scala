@@ -56,7 +56,7 @@ class EmailConnectorSpec extends UnitSpec
     implicit val format: Format[Email[_]] = JsonFormatters.emailFormat
 
     "POST Email payload" in {
-      stubFor(post(urlEqualTo("/email/hmrc/email"))
+      stubFor(post(urlEqualTo("/hmrc/email"))
           .withRequestBody(new EqualToJsonPattern(fromFile("test/unit/resources/completion_email-request.json"), true, false))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_ACCEPTED))
