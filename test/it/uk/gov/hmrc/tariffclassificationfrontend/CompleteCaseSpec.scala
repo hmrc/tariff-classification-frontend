@@ -22,11 +22,6 @@ class CompleteCaseSpec extends IntegrationTest with MockitoSugar {
           .withStatus(OK)
           .withBody(caseWithStatusOPEN))
       )
-      stubFor(post(urlEqualTo("/cases/1/events"))
-        .willReturn(aResponse()
-          .withStatus(CREATED)
-          .withBody(event))
-      )
 
       // When
       val response: WSResponse = await(ws.url(s"http://localhost:$port/tariff-classification/cases/1/complete").get())
@@ -68,6 +63,10 @@ class CompleteCaseSpec extends IntegrationTest with MockitoSugar {
 //        .willReturn(aResponse()
 //          .withStatus(CREATED)
 //          .withBody(event))
+//      )
+//      stubFor(post(urlEqualTo("/hmrc/email"))
+//        .willReturn(aResponse()
+//          .withStatus(ACCEPTED))
 //      )
 //
 //      // When
