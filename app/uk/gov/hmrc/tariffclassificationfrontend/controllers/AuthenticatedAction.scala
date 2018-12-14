@@ -65,5 +65,7 @@ class AuthenticatedAction @Inject()(appConfig: AppConfig,
       )
       case _: AuthorisationException => Redirect(routes.SecurityController.unauthorized())
     }
+
   }
+
 }
