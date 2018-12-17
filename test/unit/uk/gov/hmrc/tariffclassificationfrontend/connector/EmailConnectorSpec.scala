@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.connector
 
+import akka.actor.ActorSystem
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.matching.EqualToJsonPattern
 import org.apache.http.HttpStatus
@@ -38,9 +39,10 @@ class EmailConnectorSpec extends UnitSpec
 
   private val configuration = mock[AppConfig]
 
+  private val actorSystem = ActorSystem("test")
   private val wsClient: WSClient = fakeApplication.injector.instanceOf[WSClient]
   private val auditConnector = new DefaultAuditConnector(fakeApplication.configuration, fakeApplication.injector.instanceOf[Environment])
-  private val client = new DefaultHttpClient(fakeApplication.configuration, auditConnector, wsClient)
+  private val client = new DefaultHttpClient(fakeApplication.configuration, auditConnector, wsClient, actorSystem)
   private implicit val hc: HeaderCarrier = HeaderCarrier()
 
   private val connector = new EmailConnector(configuration, client)
