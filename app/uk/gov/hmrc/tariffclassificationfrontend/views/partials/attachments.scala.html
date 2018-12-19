@@ -18,15 +18,15 @@
 @(attachments: Seq[Attachment])
 
 <div id="attachment-list">
-    <ul class="list">
+    @if(attachments.isEmpty) {
+        <p>None</p>
+    } else {
+        <ul class="list">
         @for(att <- attachments) {
             <li>
                 <a href="@att.url" target="_blank">@att.name.getOrElse("Unknown")</a>
             </li>
         }
-    </ul>
-
-    @if(attachments.isEmpty) {
-        <p>None</p>
+        </ul>
     }
 </div>
