@@ -19,37 +19,24 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.case_nav_item
 @(page: CaseDetailPage, reference: String)(implicit request: Request[_], messages: Messages)
 
-<div class="tabs">
-    <ul class="govuk-tabs__list" role="tablist">
-        @case_nav_item(
-            active = page == CaseDetailPage.SUMMARY,
-            title = messages("case.menu.summary"),
-            call = uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.summary(reference)
-        )
+<ul class="govuk-tabs__list" role="tablist">
+    @case_nav_item(
+        active = page == CaseDetailPage.SUMMARY,
+        title = messages("case.menu.summary"),
+        call = uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.summary(reference)
+    )
 
-        @case_nav_item(
-            active = page == CaseDetailPage.APPLICATION_DETAILS,
-            title = messages("case.menu.application"),
-            call = uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.applicationDetails(reference)
-        )
+    @case_nav_item(
+        active = page == CaseDetailPage.APPLICATION_DETAILS,
+        title = messages("case.menu.application"),
+        call = uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.applicationDetails(reference)
+    )
 
-        @case_nav_item(
-            active = page == CaseDetailPage.RULING,
-            title = messages("case.menu.ruling"),
-            call = uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.rulingDetails(reference)
-        )
-
-        @*<li class="side-nav__list @if(section == "samples") { side-nav__list--selected }">*@
-            @*<a class="side-nav__link" href="#">Samples</a>*@
-        @*</li>*@
-        @*<li class="side-nav__list @if(section == "notes-and-attachments") { side-nav__list--selected }">*@
-            @*<a class="side-nav__link" href="#">Notes & Attachments</a>*@
-        @*</li>*@
-        @*<li class="side-nav__list @if(section == "related-cases") { side-nav__list--selected }">*@
-            @*<a class="side-nav__link" href="#">Related Cases</a>*@
-        @*</li>*@
-    </ul>
-    <br>
-</div>
+    @case_nav_item(
+        active = page == CaseDetailPage.RULING,
+        title = messages("case.menu.ruling"),
+        call = uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.rulingDetails(reference)
+    )
+</ul>
 
 

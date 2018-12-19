@@ -26,8 +26,12 @@
 
         @case_heading(c)
 
-        @case_nav(page, c.reference)
+        <div class="tabs">
+            @case_nav(page, c.reference)
 
-        @view
+            <div class="govuk-tabs__panel">
+                @view
+            </div>
+        </div>
     }
 }

@@ -1,5 +1,4 @@
 .tabs {
-  margin-bottom: 50px;
 
   ul {
     margin: 0;
@@ -59,4 +58,58 @@
       }
     }
   }
+
+  .govuk-tabs__panel {
+    border: 1px solid #bfc1c3;
+    border-top: 0;
+  }
+
+  .govuk-tabs__panel {
+    padding: 30px 20px 10px 20px;
+    float: left;
+    width: 100%;
+
+    h2 {
+      margin-top: 0;
+    }
+
+    form {
+      .form-group:last-child {
+        margin-bottom: 30px;
+      }
+    }
+
+    nav {
+      &.pager {
+        padding-bottom: 1em;
+      }
+    }
+
+    table {
+      thead {
+        th {
+          font-size: 16px;
+          line-height: 20px;
+
+        }
+      }
+
+      tbody {
+        td {
+          font-size: 16px;
+          line-height: 20px;
+
+          a {
+            //font-family: Helvetica, Arial;
+            font-weight: 400;
+
+            &.button--secondary {
+              line-height: 20px;
+            }
+          }
+        }
+      }
+    }
+  }
+
 }
