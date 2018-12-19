@@ -15,30 +15,19 @@
  *@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-@import uk.gov.hmrc.tariffclassificationfrontend.models.{BTIApplication, Case, Decision}
+@import uk.gov.hmrc.tariffclassificationfrontend.models.{BTIApplication, Case}
+@import uk.gov.hmrc.tariffclassificationfrontend.views.CaseDetailPage.CaseDetailPage
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{attachments, case_nav}
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.ruling_details
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.application_details
-
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.case_summary
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.ruling_details_edit
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.case_heading
-@(c: Case, title: String, view: Html)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{case_heading, case_nav}
+@(c: Case, page: CaseDetailPage, view: Html)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None) {
     @defining(c.application.asBTI) { btiApp: BTIApplication =>
 
         @case_heading(c)
 
-        <div class="grid-row">
-            <div class="column-one-quarter">
-                @case_nav(title, c.reference)
-            </div>
+        @case_nav(page, c.reference)
 
-            <div class="column-three-quarters">
-                @view
-            </div>
-        </div>
+        @view
     }
 }

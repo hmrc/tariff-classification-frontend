@@ -27,6 +27,8 @@ import uk.gov.hmrc.tariffclassificationfrontend.forms.{DecisionForm, DecisionFor
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
+import uk.gov.hmrc.tariffclassificationfrontend.views.CaseDetailPage
+import uk.gov.hmrc.tariffclassificationfrontend.views.CaseDetailPage.CaseDetailPage
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -40,7 +42,7 @@ class RulingController @Inject()(authenticatedAction: AuthenticatedAction,
 
   private val decisionForm: Form[DecisionFormData] = DecisionForm.form
 
-  private val menuTitle = "ruling"
+  private val menuTitle = CaseDetailPage.RULING
 
   def editRulingDetails(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     getCaseAndRenderView(reference, menuTitle, c => {
@@ -63,7 +65,7 @@ class RulingController @Inject()(authenticatedAction: AuthenticatedAction,
     )
   }
 
-  private def getCaseAndRenderView(reference: String, page: String, toHtml: Case => Future[HtmlFormat.Appendable])
+  private def getCaseAndRenderView(reference: String, page: CaseDetailPage, toHtml: Case => Future[HtmlFormat.Appendable])
                                   (implicit request: Request[_]): Future[Result] = {
     casesService.getOne(reference).flatMap {
       case Some(c: Case) if c.status == CaseStatus.OPEN => toHtml(c).map(html => Ok(views.html.case_details(c, page, html)))

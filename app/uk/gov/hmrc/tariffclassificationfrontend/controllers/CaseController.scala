@@ -26,6 +26,8 @@ import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionFormMapper
 import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
+import uk.gov.hmrc.tariffclassificationfrontend.views.CaseDetailPage
+import uk.gov.hmrc.tariffclassificationfrontend.views.CaseDetailPage.CaseDetailPage
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -38,18 +40,18 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
                                implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
   def summary(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
-    getCaseAndRenderView(reference, "summary", views.html.partials.case_summary(_))
+    getCaseAndRenderView(reference, CaseDetailPage.SUMMARY, views.html.partials.case_summary(_))
   }
 
   def applicationDetails(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
-    getCaseAndRenderView(reference, "application", views.html.partials.application_details(_))
+    getCaseAndRenderView(reference, CaseDetailPage.APPLICATION_DETAILS, views.html.partials.application_details(_))
   }
 
   def rulingDetails(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
-    getCaseAndRenderView(reference, "ruling", views.html.partials.ruling_details(_))
+    getCaseAndRenderView(reference, CaseDetailPage.RULING, views.html.partials.ruling_details(_))
   }
 
-  private def getCaseAndRenderView(reference: String, page: String, toHtml: Case => Html)
+  private def getCaseAndRenderView(reference: String, page: CaseDetailPage, toHtml: Case => Html)
                                   (implicit request: Request[_]): Future[Result] = {
     casesService.getOne(reference).map {
       case Some(c: Case) => Ok(views.html.case_details(c, page, toHtml(c)))
