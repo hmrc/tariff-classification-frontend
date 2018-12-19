@@ -69,6 +69,13 @@ class AppConfigSpec extends UnitSpec with MockitoSugar {
       ).emailUrl shouldBe "http://host:123"
     }
 
+    "Build local Email Renderer URL" in {
+      appConfig(
+        "microservice.services.hmrc-email-renderer.host" -> "host",
+        "microservice.services.hmrc-email-renderer.port" -> "123"
+      ).emailRendererUrl shouldBe "http://host:123"
+    }
+
     "Build auth enrolment" in {
       appConfig("auth.enrolment" -> "classification").authEnrolment shouldBe "classification"
     }

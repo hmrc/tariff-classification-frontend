@@ -19,15 +19,16 @@ package uk.gov.hmrc.tariffclassificationfrontend.service
 import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.tariffclassificationfrontend.connector.EmailConnector
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseCompletedEmail, CaseCompletedEmailParameters}
-import uk.gov.hmrc.tariffclassificationfrontend.utils.JsonFormatters.emailFormat
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseCompletedEmail, CaseCompletedEmailParameters, EmailTemplate}
+import uk.gov.hmrc.tariffclassificationfrontend.utils.JsonFormatters.{emailCompleteParamsFormat, emailFormat}
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
 class EmailService @Inject()(connector: EmailConnector) {
 
-  def sendCaseCompleteEmail(c: Case)(implicit hc: HeaderCarrier): Future[Unit] = {
+  def sendCaseCompleteEmail(c: Case)(implicit hc: HeaderCarrier): Future[EmailTemplate] = {
     if(!c.application.isBTI) {
       throw new IllegalArgumentException("Cannot send email for non BTI types")
     }
@@ -36,7 +37,7 @@ class EmailService @Inject()(connector: EmailConnector) {
       Seq(c.application.contact.email),
       CaseCompletedEmailParameters(c.application.contact.name, c.reference, c.application.asBTI.goodName)
     )
-    connector.send(email)
+    connector.send(email).flatMap(_ => connector.generate(email))
   }
 
 }

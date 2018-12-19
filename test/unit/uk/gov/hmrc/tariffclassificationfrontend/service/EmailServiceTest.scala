@@ -20,13 +20,13 @@ import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito.verify
 import org.scalatest.mockito.MockitoSugar
-import play.api.libs.json.Writes
+import play.api.libs.json.{Format, Writes}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.tariffclassificationfrontend.connector.EmailConnector
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 
-import scala.concurrent.Future
+import scala.concurrent.Future.successful
 
 class EmailServiceTest extends UnitSpec with MockitoSugar {
 
@@ -38,6 +38,7 @@ class EmailServiceTest extends UnitSpec with MockitoSugar {
     val aCase = mock[Case]
     val application = mock[BTIApplication]
     val contact = Contact("name", "email", None)
+    val template = mock[EmailTemplate]
 
     "Throw exception for non-bti" in {
       given(aCase.application).willReturn(application)
@@ -57,7 +58,8 @@ class EmailServiceTest extends UnitSpec with MockitoSugar {
       given(application.contact).willReturn(contact)
       given(application.goodName).willReturn("item")
 
-      given(connector.send(any[CaseCompletedEmail])(any[HeaderCarrier], any[Writes[Any]])).willReturn(Future.successful((): Unit))
+      given(connector.send(any[CaseCompletedEmail])(any[HeaderCarrier], any[Writes[Any]])).willReturn(successful(): Unit)
+      given(connector.generate(any[CaseCompletedEmail])(any[HeaderCarrier], any[Format[CaseCompletedEmailParameters]])).willReturn(successful(template))
 
       await(service.sendCaseCompleteEmail(aCase))
 

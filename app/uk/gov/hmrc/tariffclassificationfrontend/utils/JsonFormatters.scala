@@ -52,6 +52,7 @@ object JsonFormatters {
   implicit val emailFormat: Format[Email[_]] = Union.from[Email[_]]("templateId")
     .and[CaseCompletedEmail](EmailType.COMPLETE.toString)
     .format
+  implicit val emailTemplateFormat: OFormat[EmailTemplate] = Json.format[EmailTemplate]
 }
 
 object EnumJson {
