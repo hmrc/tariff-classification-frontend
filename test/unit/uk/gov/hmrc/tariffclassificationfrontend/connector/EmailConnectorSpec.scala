@@ -39,12 +39,11 @@ class EmailConnectorSpec extends UnitSpec
 
   private implicit val hc: HeaderCarrier = HeaderCarrier()
   private val configuration = mock[AppConfig]
-
   private val actorSystem: ActorSystem = ActorSystem("test")
   private val wsClient: WSClient = fakeApplication.injector.instanceOf[WSClient]
   private val auditConnector = new DefaultAuditConnector(fakeApplication.configuration, fakeApplication.injector.instanceOf[Environment])
   private val client = new DefaultHttpClient(fakeApplication.configuration, auditConnector, wsClient, actorSystem)
-  val email = CaseCompletedEmail(Seq("user@domain.com"), CaseCompletedEmailParameters("name", "case-ref", "item-name"))
+  private val email = CaseCompletedEmail(Seq("user@domain.com"), CaseCompletedEmailParameters("name", "case-ref", "item-name"))
 
   private val connector = new EmailConnector(configuration, client)
 

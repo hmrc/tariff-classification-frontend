@@ -23,6 +23,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Email, EmailTemplate}
+import uk.gov.hmrc.tariffclassificationfrontend.utils.Base64Utils
 import uk.gov.hmrc.tariffclassificationfrontend.utils.JsonFormatters.emailTemplateFormat
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -38,7 +39,12 @@ class EmailConnector @Inject()(configuration: AppConfig, client: HttpClient) {
 
   def generate[T](e: Email[T])(implicit hc: HeaderCarrier, writes: Format[T]): Future[EmailTemplate] = {
     val url = s"${configuration.emailRendererUrl}/templates/${e.templateId}"
-    client.POST[Map[String, T], EmailTemplate](url, Map("parameters" -> e.parameters))
+    client.POST[Map[String, T], EmailTemplate](url, Map("parameters" -> e.parameters)).map(decodingContent())
   }
+
+  private def decodingContent(): EmailTemplate => EmailTemplate = t => t.copy(
+    plain = Base64Utils.decode(t.plain),
+    html = Base64Utils.decode(t.html)
+  )
 
 }
