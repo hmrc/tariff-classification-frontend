@@ -18,7 +18,6 @@ package uk.gov.hmrc.tariffclassificationfrontend.models
 
 import java.time.ZonedDateTime
 
-
 sealed trait Application {
   val `type`: String
   val holder: EORIDetails
@@ -89,7 +88,7 @@ case class LiabilityOrder
 case class EORIDetails
 (
   eori: String,
-  traderName: String,
+  businessName: String,
   addressLine1: String,
   addressLine2: String,
   addressLine3: String,
