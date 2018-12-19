@@ -23,27 +23,28 @@ import org.apache.http.HttpStatus
 import org.mockito.BDDMockito._
 import org.scalatest.mockito.MockitoSugar
 import play.api.Environment
-import play.api.libs.json.Format
+import play.api.libs.json.{Format, OFormat}
 import play.api.libs.ws.WSClient
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.audit.DefaultAuditConnector
 import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseCompletedEmail, CaseCompletedEmailParameters, Email}
+import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.utils.JsonFormatters
 import uk.gov.tariffclassificationfrontend.utils.{ResourceFiles, WiremockTestServer}
 
 class EmailConnectorSpec extends UnitSpec
   with WiremockTestServer with MockitoSugar with WithFakeApplication with ResourceFiles {
 
+  private implicit val hc: HeaderCarrier = HeaderCarrier()
   private val configuration = mock[AppConfig]
 
-  private val actorSystem = ActorSystem("test")
+  private val actorSystem: ActorSystem = ActorSystem("test")
   private val wsClient: WSClient = fakeApplication.injector.instanceOf[WSClient]
   private val auditConnector = new DefaultAuditConnector(fakeApplication.configuration, fakeApplication.injector.instanceOf[Environment])
   private val client = new DefaultHttpClient(fakeApplication.configuration, auditConnector, wsClient, actorSystem)
-  private implicit val hc: HeaderCarrier = HeaderCarrier()
+  val email = CaseCompletedEmail(Seq("user@domain.com"), CaseCompletedEmailParameters("name", "case-ref", "item-name"))
 
   private val connector = new EmailConnector(configuration, client)
 
@@ -51,6 +52,7 @@ class EmailConnectorSpec extends UnitSpec
     super.beforeEach()
 
     given(configuration.emailUrl).willReturn(getUrl)
+    given(configuration.emailRendererUrl).willReturn(getUrl)
   }
 
   "Connector 'Send'" should {
@@ -63,12 +65,22 @@ class EmailConnectorSpec extends UnitSpec
           .withStatus(HttpStatus.SC_ACCEPTED))
       )
 
-      await(connector.send(
-        CaseCompletedEmail(
-          Seq("user@domain.com"),
-          CaseCompletedEmailParameters("name", "case-ref", "item-name")
-        )
-      ))
+      await(connector.send(email))
+    }
+  }
+
+  "Connector 'Generate'" should {
+    implicit val format: OFormat[CaseCompletedEmailParameters] = JsonFormatters.emailCompleteParamsFormat
+
+    "POST Email parameters" in {
+      stubFor(post(urlEqualTo(s"/templates/${EmailType.COMPLETE}"))
+        .withRequestBody(new EqualToJsonPattern(fromResource("parameters_email-request.json"), true, false))
+        .willReturn(aResponse()
+            .withBody(fromResource("email_template-response.json"))
+          .withStatus(HttpStatus.SC_OK))
+      )
+
+      await(connector.generate(email)) shouldBe EmailTemplate("text", "html", "from", "subject", "service")
     }
   }
 

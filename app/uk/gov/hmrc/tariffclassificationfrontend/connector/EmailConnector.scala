@@ -18,11 +18,12 @@ package uk.gov.hmrc.tariffclassificationfrontend.connector
 
 import com.google.inject.Inject
 import javax.inject.Singleton
-import play.api.libs.json.Writes
+import play.api.libs.json.{Format, Writes}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.models.Email
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Email, EmailTemplate}
+import uk.gov.hmrc.tariffclassificationfrontend.utils.JsonFormatters.emailTemplateFormat
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -33,6 +34,11 @@ class EmailConnector @Inject()(configuration: AppConfig, client: HttpClient) {
   def send[E >: Email[Any]](e: E)(implicit hc: HeaderCarrier, writes: Writes[E]): Future[Unit] = {
     val url = s"${configuration.emailUrl}/hmrc/email"
     client.POST(url = url, body = e).map(_ => Unit)
+  }
+
+  def generate[T](e: Email[T])(implicit hc: HeaderCarrier, writes: Format[T]): Future[EmailTemplate] = {
+    val url = s"${configuration.emailRendererUrl}/templates/${e.templateId}"
+    client.POST[Map[String, T], EmailTemplate](url, Map("parameters" -> e.parameters))
   }
 
 }

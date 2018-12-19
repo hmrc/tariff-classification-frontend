@@ -62,10 +62,25 @@ class CasesService @Inject()(appConfig: AppConfig, auditService: AuditService, e
     val caseUpdating = original.copy(status = CaseStatus.COMPLETED, decision = Some(decisionUpdating))
 
     for {
-      updated <- connector.updateCase(caseUpdating)
-      _ <- emailService.sendCaseCompleteEmail(updated)
-        .recover({case t: Throwable => Logger.error(s"Could not send Complete Case Email for case [${updated.reference}]", t)})
-      _ <- addEvent(original, updated, operator, Some("The applicant was sent an Email Confirmation with their reference"))
+      // Update the case
+      updated: Case <- connector.updateCase(caseUpdating)
+
+      // Send the email
+      message <- emailService.sendCaseCompleteEmail(updated)
+        .map(email => s"The applicant was sent an Email:\n- Subject: ${email.subject}\n- Body: ${email.plain}")
+          .recover({
+            case throwable =>
+              Logger.error("Failed to send email", throwable)
+              "Attempted to send an email to the applicant which failed"
+          })
+
+      // Create the event
+      _ <- addEvent(original, updated, operator, Some(message))
+        .recover({
+          case t: Throwable => Logger.error(s"Could not send Complete Case Email for case [${updated.reference}]", t)
+        })
+
+      // Audit
       _ = auditService.auditCaseCompleted(updated)
     } yield updated
   }
