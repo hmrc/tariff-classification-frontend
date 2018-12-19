@@ -23,7 +23,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.models._
 object Cases {
 
   val eoriDetailsExample = EORIDetails("eori", "trader-name", "line1", "line2", "line3", "postcode", "country")
-  val eoriAgentDetailsExample = EORIDetails("eori", "agent-name", "line1", "line2", "line3", "postcode", "country")
+  val eoriAgentDetailsExample = AgentDetails(EORIDetails("eori", "agent-name", "line1", "line2", "line3", "postcode", "country"), Attachment(false, true, "http://mockurl", "pdf-type", ZonedDateTime.now()))
   val contactExample = Contact("name", "email", Some("phone"))
   val btiApplicationExample = BTIApplication(eoriDetailsExample, contactExample, Some(eoriAgentDetailsExample), false, "Laptop", "Personal Computer", None, None, None, None, None, None, false, false)
   val decision = Decision("AD12324FR", ZonedDateTime.now(), ZonedDateTime.now().plusYears(2), "justification", "good description", Seq("k1", "k2"), None, None, Some("denomination"), None)
