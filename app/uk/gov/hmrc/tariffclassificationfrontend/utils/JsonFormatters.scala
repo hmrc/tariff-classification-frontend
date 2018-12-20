@@ -29,6 +29,7 @@ object JsonFormatters {
   implicit val contactFormat: OFormat[Contact] = Json.format[Contact]
   implicit val eoriDetailsFormat: OFormat[EORIDetails] = Json.format[EORIDetails]
   implicit val decisionFormat: OFormat[Decision] = Json.format[Decision]
+  implicit val agentDetailsFormat: OFormat[AgentDetails] = Json.format[AgentDetails]
   implicit val liabilityOrderFormat: OFormat[LiabilityOrder] = Json.format[LiabilityOrder]
   implicit val btiApplicationFormat: OFormat[BTIApplication] = Json.format[BTIApplication]
   implicit val applicationFormat: Format[Application] = Union.from[Application]("type")
