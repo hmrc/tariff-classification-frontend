@@ -31,7 +31,7 @@
         </tr>
     </thead>
     <tbody class="govuk-table__body">
-        @for(c <- cases.sortBy(_.daysElapsed)) {
+        @for(c <- cases) {
             @defining(c.application) { a: Application =>
                 @if(a.isBTI) {
                     @defining(a.asBTI) { btiApp: BTIApplication =>

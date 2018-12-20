@@ -42,13 +42,13 @@ class BindingTariffClassificationConnector @Inject()(configuration: AppConfig, c
 
   def findCasesByQueue(queue: Queue)(implicit hc: HeaderCarrier): Future[Seq[Case]] = {
     val queueId = if (queue == Queues.gateway) "none" else queue.id
-    val queryString = s"queue_id=$queueId&assignee_id=none&status=$statuses&sort_by=days-elapsed"
+    val queryString = s"queue_id=$queueId&assignee_id=none&status=$statuses&sort_by=days-elapsed&sort_direction=descending"
     val url = s"${configuration.bindingTariffClassificationUrl}/cases?$queryString"
     client.GET[Seq[Case]](url)
   }
 
   def findCasesByAssignee(assignee: String)(implicit hc: HeaderCarrier): Future[Seq[Case]] = {
-    val queryString = s"assignee_id=$assignee&status=$statuses&sort_by=days-elapsed"
+    val queryString = s"assignee_id=$assignee&status=$statuses&sort_by=days-elapsed&sort_direction=descending"
     val url = s"${configuration.bindingTariffClassificationUrl}/cases?$queryString"
     client.GET[Seq[Case]](url)
   }
