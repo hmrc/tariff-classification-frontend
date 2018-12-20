@@ -53,7 +53,7 @@ class AuditServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEac
       val payload = Map[String, String](
         "reference" -> "ref",
         "newStatus" -> "OPEN",
-        "oldStatus" -> "NEW",
+        "previousStatus" -> "NEW",
         "queue" -> "queue-name",
         "operatorId" -> "operator-id"
       )
@@ -72,7 +72,7 @@ class AuditServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEac
       val payload = Map[String, String](
         "reference" -> "ref",
         "newStatus" -> "COMPLETED",
-        "oldStatus" -> "OPEN",
+        "previousStatus" -> "OPEN",
         "operatorId" -> "operator-id"
       )
       verify(connector).sendExplicitAudit(refEq("CaseCompleted"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
