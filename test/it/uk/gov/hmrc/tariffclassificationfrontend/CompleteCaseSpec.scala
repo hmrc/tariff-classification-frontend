@@ -68,6 +68,12 @@ class CompleteCaseSpec extends IntegrationTest with MockitoSugar {
 //        .willReturn(aResponse()
 //          .withStatus(ACCEPTED))
 //      )
+//      stubFor(post(urlEqualTo(s"/templates/${EmailType.COMPLETE}"))
+//        .withRequestBody(new EqualToJsonPattern(fromResource("parameters_email-request.json"), true, false))
+//        .willReturn(aResponse()
+//          .withBody(fromResource("email_template-response.json"))
+//          .withStatus(HttpStatus.SC_OK))
+//      )
 //
 //      // When
 //      val response: WSResponse = await(ws.url(s"http://localhost:$port/tariff-classification/cases/1/complete").post(Map("csrfToken" -> Seq(csrfProvider.generateToken))))
