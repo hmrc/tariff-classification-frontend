@@ -73,7 +73,7 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
       // When Then
       await(service.completeCase(originalCase, operator, clock)) shouldBe caseUpdated
 
-      verify(audit).auditCaseCompleted(refEq(caseUpdated))(any[HeaderCarrier])
+      verify(audit).auditCaseCompleted(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
       verify(emailService).sendCaseCompleteEmail(refEq(caseUpdated))(any[HeaderCarrier])
 
       val caseUpdating = theCaseUpdating()
@@ -135,7 +135,7 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
       // When Then
       await(service.completeCase(originalCase, operator)) shouldBe caseUpdated
 
-      verify(audit).auditCaseCompleted(refEq(caseUpdated))(any[HeaderCarrier])
+      verify(audit).auditCaseCompleted(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
       verify(emailService).sendCaseCompleteEmail(refEq(caseUpdated))(any[HeaderCarrier])
 
       val caseUpdating = theCaseUpdating()
@@ -159,7 +159,7 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
       // When Then
       await(service.completeCase(originalCase, operator)) shouldBe caseUpdated
 
-      verify(audit).auditCaseCompleted(refEq(caseUpdated))(any[HeaderCarrier])
+      verify(audit).auditCaseCompleted(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
 
       val caseUpdating = theCaseUpdating()
       caseUpdating.status shouldBe CaseStatus.COMPLETED

@@ -47,7 +47,7 @@ class CasesService @Inject()(appConfig: AppConfig, auditService: AuditService, e
     for {
       updated <- connector.updateCase(original.copy(status = CaseStatus.OPEN, queueId = Some(queue.id)))
       _ <- addEvent(original, updated, operator)
-      _ = auditService.auditCaseReleased(updated)
+      _ = auditService.auditCaseReleased(original, updated, queue, operator)
     } yield updated
 
   }
@@ -66,7 +66,7 @@ class CasesService @Inject()(appConfig: AppConfig, auditService: AuditService, e
       _ <- emailService.sendCaseCompleteEmail(updated)
         .recover({case t: Throwable => Logger.error(s"Could not send Complete Case Email for case [${updated.reference}]", t)})
       _ <- addEvent(original, updated, operator, Some("The applicant was sent an Email Confirmation with their reference"))
-      _ = auditService.auditCaseCompleted(updated)
+      _ = auditService.auditCaseCompleted(original, updated, operator)
     } yield updated
   }
 

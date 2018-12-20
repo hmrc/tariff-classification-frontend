@@ -17,43 +17,38 @@
 package uk.gov.hmrc.tariffclassificationfrontend.audit
 
 import javax.inject.{Inject, Singleton}
-import play.api.libs.json.JsValue
-import play.api.libs.json.Json.toJson
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.audit.DefaultAuditConnector
-import uk.gov.hmrc.tariffclassificationfrontend.audit.AuditPayloadType.CaseReleased
-import uk.gov.hmrc.tariffclassificationfrontend.models.Case
-import uk.gov.hmrc.tariffclassificationfrontend.utils.JsonFormatters.caseFormat
+import uk.gov.hmrc.tariffclassificationfrontend.audit.AuditPayloadType._
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Operator, Queue}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton
 class AuditService @Inject()(auditConnector: DefaultAuditConnector) {
 
-  def auditCaseReleased(c: Case)
+  def auditCaseReleased(oldCase: Case, updatedCase: Case, queue: Queue, operator: Operator)
                        (implicit hc: HeaderCarrier): Unit = {
-    /*
-        TODO: verify with TxM if we need to include any specific detail about the user logged in.
-
-        Possible example:
-
-        "operatorDetails" : {
-          "roles" : [ "hts helpdesk advisor", "other role"] // list of roles operator has
-          "pid"   : "abc123"                                // personal identifier operator uses to login to machine
-          "name"  : "Operator Shmoperator"                  // name of operator
-          "email" : "operator@shmoperator.com"              // email of operator
-        }
-    */
-
-    sendExplicitAuditEvent(CaseReleased, toJson(c))
+    sendExplicitAuditEvent(CaseReleased, Map(
+      "reference" -> updatedCase.reference,
+      "newStatus" -> updatedCase.status.toString,
+      "oldStatus" -> oldCase.status.toString,
+      "queue" -> queue.name,
+      "operatorId" -> operator.id
+    ))
   }
 
-  def auditCaseCompleted(c: Case)
+  def auditCaseCompleted(oldCase: Case, updatedCase: Case, operator: Operator)
                         (implicit hc: HeaderCarrier): Unit = {
-    sendExplicitAuditEvent(CaseReleased, toJson(c))
+    sendExplicitAuditEvent(CaseCompleted, Map(
+      "reference" -> updatedCase.reference,
+      "newStatus" -> updatedCase.status.toString,
+      "oldStatus" -> oldCase.status.toString,
+      "operatorId" -> operator.id
+    ))
   }
 
-  private def sendExplicitAuditEvent(auditEventType: String, auditPayload: JsValue)
+  private def sendExplicitAuditEvent(auditEventType: String, auditPayload: Map[String, String])
                                     (implicit hc: uk.gov.hmrc.http.HeaderCarrier): Unit = {
 
     auditConnector.sendExplicitAudit(auditType = auditEventType, detail = auditPayload)
