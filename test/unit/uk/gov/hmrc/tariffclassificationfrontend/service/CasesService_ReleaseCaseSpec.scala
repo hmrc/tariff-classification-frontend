@@ -67,7 +67,7 @@ class CasesService_ReleaseCaseSpec extends UnitSpec with MockitoSugar with Befor
       // When Then
       await(service.releaseCase(originalCase, queue, operator)) shouldBe caseUpdated
 
-      verify(audit).auditCaseReleased(refEq(caseUpdated))(any[HeaderCarrier])
+      verify(audit).auditCaseReleased(refEq(originalCase), refEq(caseUpdated), refEq(queue), refEq(operator))(any[HeaderCarrier])
 
       val caseUpdating = theCaseUpdating()
       caseUpdating.status shouldBe CaseStatus.OPEN
@@ -106,7 +106,7 @@ class CasesService_ReleaseCaseSpec extends UnitSpec with MockitoSugar with Befor
       // When Then
       await(service.releaseCase(originalCase, queue, operator)) shouldBe caseUpdated
 
-      verify(audit).auditCaseReleased(refEq(caseUpdated))(any[HeaderCarrier])
+      verify(audit).auditCaseReleased(refEq(originalCase), refEq(caseUpdated), refEq(queue), refEq(operator))(any[HeaderCarrier])
 
       val caseUpdating = theCaseUpdating()
       caseUpdating.status shouldBe CaseStatus.OPEN

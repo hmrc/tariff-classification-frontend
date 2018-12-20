@@ -31,9 +31,11 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class CasesService @Inject()(appConfig: AppConfig, auditService: AuditService, emailService: EmailService, connector: BindingTariffClassificationConnector) {
+class CasesService @Inject()(appConfig: AppConfig, auditService: AuditService,
+                             emailService: EmailService, connector: BindingTariffClassificationConnector) {
 
-  private def addEvent(original: Case, updated: Case, operator: Operator, comment: Option[String] = None)(implicit hc: HeaderCarrier): Future[Unit] = {
+  private def addEvent(original: Case, updated: Case, operator: Operator, comment: Option[String] = None)
+                      (implicit hc: HeaderCarrier): Future[Unit] = {
     val event = NewEventRequest(CaseStatusChange(original.status, updated.status, comment), operator.id)
     connector.createEvent(updated, event)
       .recover({
@@ -43,16 +45,18 @@ class CasesService @Inject()(appConfig: AppConfig, auditService: AuditService, e
       .map(_ => Unit)
   }
 
-  def releaseCase(original: Case, queue: Queue, operator: Operator)(implicit hc: HeaderCarrier): Future[Case] = {
+  def releaseCase(original: Case, queue: Queue, operator: Operator)
+                 (implicit hc: HeaderCarrier): Future[Case] = {
     for {
       updated <- connector.updateCase(original.copy(status = CaseStatus.OPEN, queueId = Some(queue.id)))
       _ <- addEvent(original, updated, operator)
-      _ = auditService.auditCaseReleased(updated)
+      _ = auditService.auditCaseReleased(original, updated, queue, operator)
     } yield updated
 
   }
 
-  def completeCase(original: Case, operator: Operator, clock: Clock = Clock.systemDefaultZone())(implicit hc: HeaderCarrier): Future[Case] = {
+  def completeCase(original: Case, operator: Operator, clock: Clock = Clock.systemDefaultZone())
+                  (implicit hc: HeaderCarrier): Future[Case] = {
     val startDate = LocalDate.now(clock).atStartOfDay(appConfig.zoneId)
     val endDate = startDate.plusYears(appConfig.decisionLifetimeYears)
 
@@ -81,7 +85,7 @@ class CasesService @Inject()(appConfig: AppConfig, auditService: AuditService, e
         })
 
       // Audit
-      _ = auditService.auditCaseCompleted(updated)
+      _ = auditService.auditCaseCompleted(original, updated, operator)
     } yield updated
   }
 

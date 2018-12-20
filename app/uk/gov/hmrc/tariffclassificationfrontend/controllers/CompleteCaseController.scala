@@ -40,8 +40,8 @@ class CompleteCaseController @Inject()(authenticatedAction: AuthenticatedAction,
   }
 
   def confirmCompleteCase(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
-    getCaseAndRenderView(reference, casesService.completeCase(_, request.operator).map { c: Case =>
-      views.html.confirm_complete_case(c)
+    getCaseAndRenderView(reference, casesService.completeCase(_, request.operator).map {
+      views.html.confirm_complete_case(_)
     })
   }
 
