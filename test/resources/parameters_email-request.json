@@ -1,0 +1,7 @@
+{
+  "parameters": {
+    "recipientName_line1": "name",
+    "reference": "case-ref",
+    "itemName": "item-name"
+  }
+}

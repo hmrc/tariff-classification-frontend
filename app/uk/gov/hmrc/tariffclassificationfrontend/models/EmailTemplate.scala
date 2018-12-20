@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,14 +12,15 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import uk.gov.hmrc.tariffclassificationfrontend.models.Case
-@import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus
-@(c: Case)(implicit messages: Messages)
+package uk.gov.hmrc.tariffclassificationfrontend.models
 
-<div id="case-heading" class="case-heading mt-1 mb-2">
-    <span class="case-reference">Case @{c.reference}</span>
-    <h1 class="heading-xlarge case-title">@messages("case.title", c.application.getType, c.application.holder.businessName)</h1>
-    <span class="phase-tag">@c.status</span>
-</div>
+case class EmailTemplate
+(
+  plain: String,
+  html: String,
+  fromAddress: String,
+  subject: String,
+  service: String
+)

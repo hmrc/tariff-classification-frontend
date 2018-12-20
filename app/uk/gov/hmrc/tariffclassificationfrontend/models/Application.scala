@@ -51,7 +51,7 @@ case class BTIApplication
 (
   override val holder: EORIDetails,
   override val contact: Contact,
-  agent: Option[EORIDetails],
+  agent: Option[AgentDetails] = None,
   offline: Boolean,
   goodName: String,
   goodDescription: String,
@@ -66,6 +66,12 @@ case class BTIApplication
 ) extends Application {
   override val `type` = "BTI"
 }
+
+case class AgentDetails
+(
+  eoriDetails: EORIDetails,
+  letterOfAuthorisation: Attachment
+)
 
 case class LiabilityOrder
 (
@@ -82,7 +88,7 @@ case class LiabilityOrder
 case class EORIDetails
 (
   eori: String,
-  traderName: String,
+  businessName: String,
   addressLine1: String,
   addressLine2: String,
   addressLine3: String,

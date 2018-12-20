@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,14 +12,19 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import uk.gov.hmrc.tariffclassificationfrontend.models.Case
-@import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus
-@(c: Case)(implicit messages: Messages)
+package uk.gov.hmrc.tariffclassificationfrontend.utils
 
-<div id="case-heading" class="case-heading mt-1 mb-2">
-    <span class="case-reference">Case @{c.reference}</span>
-    <h1 class="heading-xlarge case-title">@messages("case.title", c.application.getType, c.application.holder.businessName)</h1>
-    <span class="phase-tag">@c.status</span>
-</div>
+import java.nio.charset.StandardCharsets
+import java.util.Base64
+
+object Base64Utils {
+
+  private val encoder: Base64.Encoder = Base64.getEncoder
+  private val decoder: Base64.Decoder = Base64.getDecoder
+
+  def encode(text: String): String = encoder.encodeToString(text.getBytes(StandardCharsets.UTF_8))
+  def decode(text: String): String = new String(decoder.decode(text))
+
+}

@@ -18,6 +18,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{Application, Attachment, BTIApplication, Case, EORIDetails}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{attachments, case_nav, release_case_button}
+@import uk.gov.hmrc.tariffclassificationfrontend.models.AgentDetails
 @(c: Case)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @defining(c.application) { a: Application =>
@@ -40,7 +41,7 @@
                     <p>@messages("case.application.holder.trader-name")</p>
                 </div>
                 <div class="column-two-thirds">
-                    <p>@btiHolder.traderName</p>
+                    <p>@btiHolder.businessName</p>
                 </div>
             </div>
 
@@ -60,7 +61,7 @@
             @if(btiApp.agent.isDefined) {
                 <hr/>
 
-                @defining(btiApp.agent.get) { btiAgent: EORIDetails =>
+                @defining(btiApp.agent.get) { btiAgent: AgentDetails =>
                     <h4 class="heading-small">This application was submitted by an agent</h4>
 
                     <div class="grid-row">
@@ -68,7 +69,7 @@
                             <p>@messages("case.application.agent.eori-number")</p>
                         </div>
                         <div class="column-two-thirds">
-                            <p>@btiAgent.eori</p>
+                            <p>@btiAgent.eoriDetails.eori</p>
                         </div>
                     </div>
 
@@ -77,7 +78,7 @@
                             <p>@messages("case.application.agent.trader-name")</p>
                         </div>
                         <div class="column-two-thirds">
-                            <p>@btiAgent.traderName</p>
+                            <p>@btiAgent.eoriDetails.businessName</p>
                         </div>
                     </div>
 
@@ -86,15 +87,15 @@
                             <p>@messages("case.application.agent.address")</p>
                         </div>
                         <div class="column-two-thirds">
-                            <p>@btiAgent.addressLine1</p>
-                            <p>@btiAgent.addressLine2</p>
-                            <p>@btiAgent.addressLine3</p>
-                            <p>@btiAgent.postcode</p>
-                            <p>@btiAgent.country</p>
+                            <p>@btiAgent.eoriDetails.addressLine1</p>
+                            <p>@btiAgent.eoriDetails.addressLine2</p>
+                            <p>@btiAgent.eoriDetails.addressLine3</p>
+                            <p>@btiAgent.eoriDetails.postcode</p>
+                            <p>@btiAgent.eoriDetails.country</p>
                         </div>
                     </div>
 
-                    <a href="#">@messages("case.application.agent.letter-of-authorisation")</a>
+                    <a href="@btiAgent.letterOfAuthorisation.url" target="_blank">@messages("case.application.agent.letter-of-authorisation")</a>
                 }
             }
 

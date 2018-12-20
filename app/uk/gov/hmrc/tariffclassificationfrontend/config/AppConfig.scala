@@ -41,6 +41,7 @@ class AppConfig @Inject()(val runModeConfiguration: Configuration, environment: 
   def reportAProblemNonJSUrl = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
   def bindingTariffClassificationUrl: String = baseUrl("binding-tariff-classification")
   def emailUrl: String = baseUrl("email")
+  def emailRendererUrl: String = baseUrl("hmrc-email-renderer")
 
   lazy val decisionLifetimeYears: Int = getInt("app.decision-lifetime-years")
   lazy val zoneId: ZoneId = ZoneId.of("UTC")
