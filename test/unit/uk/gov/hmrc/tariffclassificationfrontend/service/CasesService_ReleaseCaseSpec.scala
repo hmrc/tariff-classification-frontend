@@ -16,8 +16,6 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.service
 
-import java.time._
-
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers._
 import org.mockito.BDDMockito._
@@ -31,6 +29,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.connector.BindingTariffClassificationConnector
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
+import uk.gov.tariffclassificationfrontend.utils.Cases
 
 import scala.concurrent.Future.{failed, successful}
 
@@ -44,7 +43,7 @@ class CasesService_ReleaseCaseSpec extends UnitSpec with MockitoSugar with Befor
   private val emailService = mock[EmailService]
   private val audit = mock[AuditService]
   private val config = mock[AppConfig]
-  private val aCase = Case("ref", CaseStatus.OPEN, ZonedDateTime.now(), ZonedDateTime.now(), None, None, None, None, mock[Application], None, Seq.empty)
+  private val aCase = Cases.btiCaseExample
 
   private val service = new CasesService(config, audit, emailService, connector)
 

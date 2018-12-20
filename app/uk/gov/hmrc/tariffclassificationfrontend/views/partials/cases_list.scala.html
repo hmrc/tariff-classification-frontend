@@ -14,11 +14,8 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.tariffclassificationfrontend.models.Case
+@import uk.gov.hmrc.tariffclassificationfrontend.models.{Application, BTIApplication, Case}
 @import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
-
-@import uk.gov.hmrc.tariffclassificationfrontend.models.Application
-@import uk.gov.hmrc.tariffclassificationfrontend.models.BTIApplication
 @(cases: Seq[Case])(implicit messages: Messages)
 
 <table id="cases-list-table" class="govuk-table">
@@ -34,7 +31,7 @@
         </tr>
     </thead>
     <tbody class="govuk-table__body">
-        @for(c <- cases.sortBy(_.elapsedDays)) {
+        @for(c <- cases.sortBy(_.daysElapsed)) {
             @defining(c.application) { a: Application =>
                 @if(a.isBTI) {
                     @defining(a.asBTI) { btiApp: BTIApplication =>
@@ -47,7 +44,7 @@
                             <td class="govuk-table__cell">@Dates.format(c.createdDate)</td>
                             <td class="govuk-table__cell">@c.status</td>
                             <td class="govuk-table__cell">@a.getType</td>
-                            <td class="govuk-table__cell">@c.elapsedDays</td>
+                            <td class="govuk-table__cell">@c.daysElapsed</td>
                         </tr>
                     }
                 }
