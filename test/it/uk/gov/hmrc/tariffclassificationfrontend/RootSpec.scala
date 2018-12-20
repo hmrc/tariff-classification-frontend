@@ -13,7 +13,7 @@ class RootSpec extends IntegrationTest with MockitoSugar {
     "return status 200 and redirect to My Cases" in {
       // Given
       givenAuthSuccess()
-      stubFor(get(urlEqualTo("/cases?assignee_id=123&status=NEW,OPEN,REFERRED,SUSPENDED&sort_by=days-elapsed"))
+      stubFor(get(urlEqualTo("/cases?assignee_id=123&status=NEW,OPEN,REFERRED,SUSPENDED&sort_by=days-elapsed&sort_direction=descending"))
         .willReturn(aResponse()
           .withStatus(OK)
           .withBody(CasePayloads.gatewayCases))
