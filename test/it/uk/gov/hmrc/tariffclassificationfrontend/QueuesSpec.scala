@@ -12,7 +12,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar {
     "return status 200" in {
       // Given
       givenAuthSuccess()
-      stubFor(get(urlEqualTo("/cases?assignee_id=123&status=NEW,OPEN,REFERRED,SUSPENDED&sort-by=elapsed-days"))
+      stubFor(get(urlEqualTo("/cases?assignee_id=123&status=NEW,OPEN,REFERRED,SUSPENDED&sort_by=days-elapsed"))
         .willReturn(aResponse()
           .withStatus(OK)
           .withBody(CasePayloads.gatewayCases))
@@ -44,7 +44,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar {
     "return status 200" in {
       // Given
       givenAuthSuccess()
-      stubFor(get(urlEqualTo("/cases?queue_id=none&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort-by=elapsed-days"))
+      stubFor(get(urlEqualTo("/cases?queue_id=none&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort_by=days-elapsed"))
         .willReturn(aResponse()
           .withStatus(OK)
           .withBody(CasePayloads.gatewayCases))
@@ -76,7 +76,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar {
     "return status 200" in {
       // Given
       givenAuthSuccess()
-      stubFor(get(urlEqualTo("/cases?queue_id=2&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort-by=elapsed-days"))
+      stubFor(get(urlEqualTo("/cases?queue_id=2&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort_by=days-elapsed"))
         .willReturn(aResponse()
           .withStatus(OK)
           .withBody(CasePayloads.gatewayCases))
@@ -108,7 +108,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar {
     "return status 200" in {
       // Given
       givenAuthSuccess()
-      stubFor(get(urlEqualTo("/cases?queue_id=3&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort-by=elapsed-days"))
+      stubFor(get(urlEqualTo("/cases?queue_id=3&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort_by=days-elapsed"))
         .willReturn(aResponse()
           .withStatus(OK)
           .withBody(CasePayloads.gatewayCases))
@@ -140,7 +140,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar {
     "return status 200" in {
       // Given
       givenAuthSuccess()
-      stubFor(get(urlEqualTo("/cases?queue_id=4&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort-by=elapsed-days"))
+      stubFor(get(urlEqualTo("/cases?queue_id=4&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort_by=days-elapsed"))
         .willReturn(aResponse()
           .withStatus(OK)
           .withBody(CasePayloads.gatewayCases))
@@ -172,7 +172,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar {
     "return status 200" in {
       // Given
       givenAuthSuccess()
-      stubFor(get(urlEqualTo("/cases?queue_id=5&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort-by=elapsed-days"))
+      stubFor(get(urlEqualTo("/cases?queue_id=5&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort_by=days-elapsed"))
         .willReturn(aResponse()
           .withStatus(OK)
           .withBody(CasePayloads.gatewayCases))

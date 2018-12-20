@@ -21,8 +21,8 @@ import javax.inject.Singleton
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
 import uk.gov.hmrc.tariffclassificationfrontend.models._
+import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
 import uk.gov.hmrc.tariffclassificationfrontend.utils.JsonFormatters.{caseFormat, eventFormat, newEventRequestFormat}
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -42,13 +42,13 @@ class BindingTariffClassificationConnector @Inject()(configuration: AppConfig, c
 
   def findCasesByQueue(queue: Queue)(implicit hc: HeaderCarrier): Future[Seq[Case]] = {
     val queueId = if (queue == Queues.gateway) "none" else queue.id
-    val queryString = s"queue_id=$queueId&assignee_id=none&status=$statuses&sort-by=elapsed-days"
+    val queryString = s"queue_id=$queueId&assignee_id=none&status=$statuses&sort_by=days-elapsed"
     val url = s"${configuration.bindingTariffClassificationUrl}/cases?$queryString"
     client.GET[Seq[Case]](url)
   }
 
   def findCasesByAssignee(assignee: String)(implicit hc: HeaderCarrier): Future[Seq[Case]] = {
-    val queryString = s"assignee_id=$assignee&status=$statuses&sort-by=elapsed-days"
+    val queryString = s"assignee_id=$assignee&status=$statuses&sort_by=days-elapsed"
     val url = s"${configuration.bindingTariffClassificationUrl}/cases?$queryString"
     client.GET[Seq[Case]](url)
   }
