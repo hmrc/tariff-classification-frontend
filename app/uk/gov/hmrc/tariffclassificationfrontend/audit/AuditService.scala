@@ -32,7 +32,7 @@ class AuditService @Inject()(auditConnector: DefaultAuditConnector) {
     sendExplicitAuditEvent(CaseReleased, Map(
       "reference" -> updatedCase.reference,
       "newStatus" -> updatedCase.status.toString,
-      "oldStatus" -> oldCase.status.toString,
+      "previousStatus" -> oldCase.status.toString,
       "queue" -> queue.name,
       "operatorId" -> operator.id
     ))
@@ -43,7 +43,7 @@ class AuditService @Inject()(auditConnector: DefaultAuditConnector) {
     sendExplicitAuditEvent(CaseCompleted, Map(
       "reference" -> updatedCase.reference,
       "newStatus" -> updatedCase.status.toString,
-      "oldStatus" -> oldCase.status.toString,
+      "previousStatus" -> oldCase.status.toString,
       "operatorId" -> operator.id
     ))
   }
