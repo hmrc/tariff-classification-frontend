@@ -14,19 +14,14 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.tariffclassificationfrontend.models.Attachment
-@(attachments: Seq[Attachment])
+@(active: Boolean, title: String, call: Call)
 
-<div id="attachment-list">
-    @if(attachments.isEmpty) {
-        <p>None</p>
+<li class="tabs__list-item" role="tab">
+    @if(active) {
+        <span class="tabs__tab" aria-selected="true">@title</span>
     } else {
-        <ul class="list">
-        @for(att <- attachments) {
-            <li>
-                <a href="@att.url" target="_blank">@att.name.getOrElse("Unknown")</a>
-            </li>
-        }
-        </ul>
+        <a class="tabs__tab" href="@call">@title</a>
     }
-</div>
+</li>
+
+

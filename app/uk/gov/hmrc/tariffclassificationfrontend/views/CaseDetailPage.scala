@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,21 +12,13 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import uk.gov.hmrc.tariffclassificationfrontend.models.Attachment
-@(attachments: Seq[Attachment])
+package uk.gov.hmrc.tariffclassificationfrontend.views
 
-<div id="attachment-list">
-    @if(attachments.isEmpty) {
-        <p>None</p>
-    } else {
-        <ul class="list">
-        @for(att <- attachments) {
-            <li>
-                <a href="@att.url" target="_blank">@att.name.getOrElse("Unknown")</a>
-            </li>
-        }
-        </ul>
-    }
-</div>
+object CaseDetailPage extends Enumeration {
+  type CaseDetailPage = Value
+  val SUMMARY = Value("summary")
+  val RULING = Value("ruling")
+  val APPLICATION_DETAILS = Value("application")
+}
