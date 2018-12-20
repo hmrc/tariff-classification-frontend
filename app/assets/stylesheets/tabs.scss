@@ -1,15 +1,17 @@
 .tabs {
 
   ul {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    float: left;
-    width: 100%;
-    border-bottom: 1px solid #bfc1c3;
+    &.tabs__list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      float: left;
+      width: 100%;
+      border-bottom: 1px solid #bfc1c3;
+    }
 
     li {
-      &.govuk-tabs__list-item {
+      &.tabs__list-item {
         margin-left: 25px;
 
         &:before {
@@ -26,7 +28,7 @@
       }
 
 
-      &.govuk-tabs__list-item {
+      &.tabs__list-item {
         margin-left: 0;
 
         &:before {
@@ -38,7 +40,7 @@
           color: #0b0c0c;
           text-decoration: none;
 
-          &.govuk-tabs__tab {
+          &.tabs__tab {
             margin-right: 5px;
             padding-right: 20px;
             padding-left: 20px;
@@ -46,7 +48,7 @@
             background-color: #f8f8f8;
           }
 
-          &.govuk-tabs__tab[aria-selected="true"] {
+          &.tabs__tab[aria-selected="true"] {
             margin-top: -5px;
             margin-bottom: -1px;
             padding: 14px 19px 16px 19px;
@@ -59,12 +61,12 @@
     }
   }
 
-  .govuk-tabs__panel {
+  .tabs__panel {
     border: 1px solid #bfc1c3;
     border-top: 0;
   }
 
-  .govuk-tabs__panel {
+  .tabs__panel {
     padding: 30px 20px 10px 20px;
     float: left;
     width: 100%;

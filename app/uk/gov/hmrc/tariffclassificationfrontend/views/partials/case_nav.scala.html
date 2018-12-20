@@ -19,7 +19,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.case_nav_item
 @(page: CaseDetailPage, reference: String)(implicit request: Request[_], messages: Messages)
 
-<ul class="govuk-tabs__list" role="tablist">
+<ul class="tabs__list" role="tablist">
     @case_nav_item(
         active = page == CaseDetailPage.SUMMARY,
         title = messages("case.menu.summary"),
