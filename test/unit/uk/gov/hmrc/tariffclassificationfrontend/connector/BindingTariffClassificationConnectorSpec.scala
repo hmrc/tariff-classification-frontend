@@ -58,7 +58,7 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
   "Connector 'Get Cases By Queue'" should {
 
     "get empty cases in 'gateway' queue" in {
-      stubFor(get(urlEqualTo("/cases?queue_id=none&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort-by=elapsed-days"))
+      stubFor(get(urlEqualTo("/cases?queue_id=none&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort_by=days-elapsed&sort_direction=descending"))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
           .withBody("[]"))
@@ -68,7 +68,7 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
     }
 
     "get cases in 'gateway' queue" in {
-      stubFor(get(urlEqualTo("/cases?queue_id=none&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort-by=elapsed-days"))
+      stubFor(get(urlEqualTo("/cases?queue_id=none&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort_by=days-elapsed&sort_direction=descending"))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
           .withBody(CasePayloads.gatewayCases))
@@ -78,7 +78,7 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
     }
 
     "get empty cases in 'other' queue" in {
-      stubFor(get(urlEqualTo("/cases?queue_id=2&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort-by=elapsed-days"))
+      stubFor(get(urlEqualTo("/cases?queue_id=2&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort_by=days-elapsed&sort_direction=descending"))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
           .withBody("[]"))
@@ -88,7 +88,7 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
     }
 
     "get cases in 'other' queue" in {
-      stubFor(get(urlEqualTo("/cases?queue_id=2&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort-by=elapsed-days"))
+      stubFor(get(urlEqualTo("/cases?queue_id=2&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort_by=days-elapsed&sort_direction=descending"))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
           .withBody(CasePayloads.gatewayCases))
@@ -124,7 +124,7 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
   "Connector 'Get Cases By Assignee'" should {
 
     "get empty cases" in {
-      stubFor(get(urlEqualTo("/cases?assignee_id=assignee&status=NEW,OPEN,REFERRED,SUSPENDED&sort-by=elapsed-days"))
+      stubFor(get(urlEqualTo("/cases?assignee_id=assignee&status=NEW,OPEN,REFERRED,SUSPENDED&sort_by=days-elapsed&sort_direction=descending"))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
           .withBody("[]"))
@@ -134,7 +134,7 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
     }
 
     "get cases" in {
-      stubFor(get(urlEqualTo("/cases?assignee_id=assignee&status=NEW,OPEN,REFERRED,SUSPENDED&sort-by=elapsed-days"))
+      stubFor(get(urlEqualTo("/cases?assignee_id=assignee&status=NEW,OPEN,REFERRED,SUSPENDED&sort_by=days-elapsed&sort_direction=descending"))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
           .withBody(CasePayloads.gatewayCases))

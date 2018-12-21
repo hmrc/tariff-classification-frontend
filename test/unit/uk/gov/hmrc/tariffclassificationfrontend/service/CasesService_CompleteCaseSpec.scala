@@ -31,6 +31,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.connector.BindingTariffClassificationConnector
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
+import uk.gov.tariffclassificationfrontend.utils.Cases
 
 import scala.concurrent.Future
 import scala.concurrent.Future.{failed, successful}
@@ -46,7 +47,7 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
   private val audit = mock[AuditService]
   private val config = mock[AppConfig]
   private val clock = Clock.fixed(LocalDateTime.of(2018,1,1, 14,0).toInstant(ZoneOffset.UTC), ZoneId.of("UTC"))
-  private val aCase = Case("ref", CaseStatus.OPEN, ZonedDateTime.now(), ZonedDateTime.now(), None, None, None, None, mock[Application], None, Seq.empty)
+  private val aCase = Cases.btiCaseExample
   private val epoch = date("1970-01-01")
 
   private val service = new CasesService(config, audit, emailService, connector)
