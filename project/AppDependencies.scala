@@ -4,7 +4,7 @@ import sbt._
 object AppDependencies {
 
   val compile = Seq(
-    "uk.gov.hmrc"             %% "bootstrap-play-25"          % "4.4.0",
+    "uk.gov.hmrc"             %% "bootstrap-play-25"          % "4.6.0",
     "uk.gov.hmrc"             %% "play-ui"                    % "7.27.0-play-25",
     "uk.gov.hmrc"             %% "play-json-union-formatter"  % "1.4.0"
   )
@@ -12,7 +12,7 @@ object AppDependencies {
   val scope = "test, it"
 
   val test = Seq(
-    "com.github.tomakehurst"  %  "wiremock"                 % "2.19.0"    % scope,
+    "com.github.tomakehurst"  %  "wiremock"                 % "2.20.0"    % scope,
     "com.typesafe.play"       %% "play-test"                % current     % scope,
     "org.assertj"             %  "assertj-core"             % "3.11.1"    % scope,
     "org.mockito"             %  "mockito-core"             % "2.23.4"    % scope,
