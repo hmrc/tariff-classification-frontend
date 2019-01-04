@@ -50,16 +50,14 @@ class AuthenticatedAction @Inject()(appConfig: AppConfig,
       request.headers,
       Some(request.session)
     )
-    authorise().retrieve(Retrievals.credentials and Retrievals.name) {
-      retrieved =>
-        val id = retrieved.a.providerId
-        val name = retrieved.b.name
-        block(AuthenticatedRequest(Operator(id, name), request))
+    authorise().retrieve(Retrievals.credentials and Retrievals.name) { retrieved =>
+      val id = retrieved.a.providerId
+      val name = retrieved.b.name
+      block(AuthenticatedRequest(Operator(id, name), request))
     } recover {
       case _: NoActiveSession => toStrideLogin(
-        if (appConfig.runningAsDev) {
-          s"http://${request.host}${request.uri}"
-        } else s"${request.uri}"
+        if (appConfig.runningAsDev) s"http://${request.host}${request.uri}"
+        else s"${request.uri}"
       )
       case _: AuthorisationException => Redirect(routes.SecurityController.unauthorized())
     }
@@ -67,10 +65,9 @@ class AuthenticatedAction @Inject()(appConfig: AppConfig,
   }
 
   private def authorise(): AuthorisedFunction = {
-    if (enrolment.isDefined) {
-      authorised(enrolment.get and AuthProviders(PrivilegedApplication))
-    } else {
-      authorised(AuthProviders(PrivilegedApplication))
+    enrolment match {
+      case Some(e) => authorised(e and AuthProviders(PrivilegedApplication))
+      case _ => authorised(AuthProviders(PrivilegedApplication))
     }
   }
 

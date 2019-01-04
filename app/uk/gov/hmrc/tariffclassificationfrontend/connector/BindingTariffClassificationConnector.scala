@@ -22,6 +22,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models._
+import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus._
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
 import uk.gov.hmrc.tariffclassificationfrontend.utils.JsonFormatters.{caseFormat, eventFormat, newEventRequestFormat}
 
@@ -31,9 +32,9 @@ import scala.concurrent.Future
 @Singleton
 class BindingTariffClassificationConnector @Inject()(configuration: AppConfig, client: HttpClient) {
 
-  private val statuses: String = Seq(CaseStatus.NEW, CaseStatus.OPEN, CaseStatus.REFERRED, CaseStatus.SUSPENDED)
+  private lazy val statuses: String = Seq(NEW, OPEN, REFERRED, SUSPENDED)
     .map(_.toString)
-    .reduce((a,b) => s"$a,$b")
+    .reduce( (a: String, b: String) => s"$a,$b" )
 
   def findCase(reference: String)(implicit hc: HeaderCarrier): Future[Option[Case]] = {
     val url = s"${configuration.bindingTariffClassificationUrl}/cases/$reference"
@@ -55,7 +56,7 @@ class BindingTariffClassificationConnector @Inject()(configuration: AppConfig, c
 
   def updateCase(c: Case)(implicit hc: HeaderCarrier): Future[Case] = {
     val url = s"${configuration.bindingTariffClassificationUrl}/cases/${c.reference}"
-    client.PUT[Case, Case](url, body = c)
+    client.PUT[Case, Case](url = url, body = c)
   }
 
   def createEvent(c: Case, e: NewEventRequest)(implicit hc: HeaderCarrier): Future[Event] = {

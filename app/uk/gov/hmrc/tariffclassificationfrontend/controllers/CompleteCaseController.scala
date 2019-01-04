@@ -28,6 +28,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.views
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import scala.concurrent.Future.successful
 
 @Singleton
 class CompleteCaseController @Inject()(authenticatedAction: AuthenticatedAction,
@@ -36,7 +37,7 @@ class CompleteCaseController @Inject()(authenticatedAction: AuthenticatedAction,
                                        implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
   def completeCase(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
-    getCaseAndRenderView(reference, c => Future.successful(views.html.complete_case(c)))
+    getCaseAndRenderView(reference, c => successful(views.html.complete_case(c)))
   }
 
   def confirmCompleteCase(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
@@ -49,8 +50,8 @@ class CompleteCaseController @Inject()(authenticatedAction: AuthenticatedAction,
                                   (implicit request: Request[_]): Future[Result] = {
     casesService.getOne(reference).flatMap {
       case Some(c: Case) if c.status == CaseStatus.OPEN && c.decision.isDefined => toHtml(c).map(Ok(_))
-      case Some(_) => Future.successful(Redirect(routes.CaseController.rulingDetails(reference)))
-      case _ => Future.successful(Ok(views.html.case_not_found(reference)))
+      case Some(_) => successful(Redirect(routes.CaseController.rulingDetails(reference)))
+      case _ => successful(Ok(views.html.case_not_found(reference)))
     }
   }
 
