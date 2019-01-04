@@ -43,21 +43,19 @@ class AuthenticatedAction @Inject()(appConfig: AppConfig,
     with AuthorisedFunctions
     with AuthRedirects {
 
-  lazy val enrolment = Enrolment(appConfig.authEnrolment)
+  private lazy val enrolment: Option[Enrolment] = appConfig.authEnrolment.map(Enrolment(_))
 
   override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(
       request.headers,
       Some(request.session)
     )
-
-    authorised(enrolment and AuthProviders(PrivilegedApplication))
-      .retrieve(Retrievals.credentials and Retrievals.name) {
-        retrieved =>
-          val id = retrieved.a.providerId
-          val name = retrieved.b.name
-          block(AuthenticatedRequest(Operator(id, name), request))
-      } recover {
+    authorise().retrieve(Retrievals.credentials and Retrievals.name) {
+      retrieved =>
+        val id = retrieved.a.providerId
+        val name = retrieved.b.name
+        block(AuthenticatedRequest(Operator(id, name), request))
+    } recover {
       case _: NoActiveSession => toStrideLogin(
         if (appConfig.runningAsDev) {
           s"http://${request.host}${request.uri}"
@@ -66,6 +64,14 @@ class AuthenticatedAction @Inject()(appConfig: AppConfig,
       case _: AuthorisationException => Redirect(routes.SecurityController.unauthorized())
     }
 
+  }
+
+  private def authorise(): AuthorisedFunction = {
+    if (enrolment.isDefined) {
+      authorised(enrolment.get and AuthProviders(PrivilegedApplication))
+    } else {
+      authorised(AuthProviders(PrivilegedApplication))
+    }
   }
 
 }

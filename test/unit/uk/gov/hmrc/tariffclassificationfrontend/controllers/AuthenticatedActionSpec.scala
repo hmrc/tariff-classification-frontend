@@ -48,12 +48,9 @@ class AuthenticatedActionSpec extends UnitSpec with MockitoSugar with BeforeAndA
   private val block: AuthenticatedRequest[AnyContent] => Future[Result] = mock[AuthenticatedRequest[AnyContent] => Future[Result]]
   private val result = mock[Result]
 
-  private val action = new AuthenticatedAction(appConfig, config, environment, connector)
-
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     reset(config, environment, connector, block, result)
-    given(appConfig.authEnrolment).willReturn("enrolment")
     given(environment.mode).willReturn(Mode.Dev)
     given(config.getString(any[String], any[Option[Set[String]]])).willReturn(None)
   }
@@ -61,6 +58,7 @@ class AuthenticatedActionSpec extends UnitSpec with MockitoSugar with BeforeAndA
   "Invoke Block" should {
 
     "Invoke block on success" in {
+      givenTheServiceIsRoleRestricted()
       givenAuthSuccess()
       givenTheBlockExecutesSuccessfully()
 
@@ -71,7 +69,20 @@ class AuthenticatedActionSpec extends UnitSpec with MockitoSugar with BeforeAndA
       operator.name shouldBe Some("full name")
     }
 
+    "Invoke block on success when role not required/configured" in {
+      givenTheServiceIsNotRoleRestricted()
+      givenAuthSuccessWithoutRole()
+      givenTheBlockExecutesSuccessfully()
+
+      await(action.invokeBlock(FakeRequest(), block)) shouldBe result
+
+      val operator = theAuthenticatedRequest().operator
+      operator.id shouldBe "id"
+      operator.name shouldBe Some("full name")
+    }
+
     "Invoke block on success with missing name" in {
+      givenTheServiceIsRoleRestricted()
       givenAuthSuccess(name = Name(None, None))
       givenTheBlockExecutesSuccessfully()
 
@@ -83,6 +94,7 @@ class AuthenticatedActionSpec extends UnitSpec with MockitoSugar with BeforeAndA
     }
 
     "Allow invocation exceptions to propagate" in {
+      givenTheServiceIsRoleRestricted()
       val exception = new RuntimeException("Exception")
       givenAuthSuccess(name = Name(None, None))
       givenTheBlockThrowsAnError(exception)
@@ -93,6 +105,7 @@ class AuthenticatedActionSpec extends UnitSpec with MockitoSugar with BeforeAndA
     }
 
     "Allow unknown exceptions to propagate" in {
+      givenTheServiceIsRoleRestricted()
       val exception = new RuntimeException("Exception")
       given(connector.authorise(
         any[Predicate],
@@ -105,6 +118,7 @@ class AuthenticatedActionSpec extends UnitSpec with MockitoSugar with BeforeAndA
     }
 
     "Redirect to Stride Login on NoActiveSession" in {
+      givenTheServiceIsRoleRestricted()
       given(connector.authorise(
         any[Predicate],
         any[Retrieval[Credentials ~ Name]]
@@ -115,6 +129,7 @@ class AuthenticatedActionSpec extends UnitSpec with MockitoSugar with BeforeAndA
     }
 
     "Redirect to Unauthorized on AuthorizationException" in {
+      givenTheServiceIsRoleRestricted()
       given(connector.authorise(
         any[Predicate],
         any[Retrieval[Credentials ~ Name]]
@@ -123,6 +138,10 @@ class AuthenticatedActionSpec extends UnitSpec with MockitoSugar with BeforeAndA
       val result: Result = await(action.invokeBlock(FakeRequest(), block))
       status(result) shouldBe Status.SEE_OTHER
     }
+  }
+
+  private def action: AuthenticatedAction = {
+    new AuthenticatedAction(appConfig, config, environment, connector)
   }
 
   private def theAuthenticatedRequest(): AuthenticatedRequest[AnyContent] = {
@@ -138,12 +157,27 @@ class AuthenticatedActionSpec extends UnitSpec with MockitoSugar with BeforeAndA
     given(connector.authorise(refEq(predicate), refEq(retrieval))(any[HeaderCarrier], refEq(global))).willReturn(Future.successful(value))
   }
 
+  private def givenAuthSuccessWithoutRole(id: String = "id", name: Name = Name(Some("full name"), Some("surname"))): Unit = {
+    val predicate: Predicate = AuthProviders(PrivilegedApplication)
+    val retrieval: Retrieval[Credentials ~ Name] = Retrievals.credentials and Retrievals.name
+    val value: Credentials ~ Name = new ~(Credentials(id, "type"), name)
+    given(connector.authorise(refEq(predicate), refEq(retrieval))(any[HeaderCarrier], refEq(global))).willReturn(Future.successful(value))
+  }
+
   private def givenTheBlockExecutesSuccessfully(): Unit = {
     given(block.apply(any[AuthenticatedRequest[AnyContent]])).willReturn(Future.successful(result))
   }
 
   private def givenTheBlockThrowsAnError(e: RuntimeException): Unit = {
     given(block.apply(any[AuthenticatedRequest[AnyContent]])).willThrow(e)
+  }
+
+  private def givenTheServiceIsRoleRestricted(): Unit = {
+    given(appConfig.authEnrolment).willReturn(Some("enrolment"))
+  }
+
+  private def givenTheServiceIsNotRoleRestricted(): Unit = {
+    given(appConfig.authEnrolment).willReturn(None)
   }
 
 }
