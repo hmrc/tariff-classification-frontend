@@ -34,17 +34,19 @@ class EmailConnector @Inject()(configuration: AppConfig, client: HttpClient) {
 
   def send[E >: Email[Any]](e: E)(implicit hc: HeaderCarrier, writes: Writes[E]): Future[Unit] = {
     val url = s"${configuration.emailUrl}/hmrc/email"
-    client.POST(url = url, body = e).map(_ => Unit)
+    client.POST(url = url, body = e).map(_ => ())
   }
 
   def generate[T](e: Email[T])(implicit hc: HeaderCarrier, writes: Format[T]): Future[EmailTemplate] = {
     val url = s"${configuration.emailRendererUrl}/templates/${e.templateId}"
-    client.POST[Map[String, T], EmailTemplate](url, Map("parameters" -> e.parameters)).map(decodingContent())
+    client.POST[Map[String, T], EmailTemplate](url, Map("parameters" -> e.parameters)).map(decodingContent)
   }
 
-  private def decodingContent(): EmailTemplate => EmailTemplate = t => t.copy(
-    plain = Base64Utils.decode(t.plain),
-    html = Base64Utils.decode(t.html)
-  )
+  private def decodingContent: EmailTemplate => EmailTemplate = { t: EmailTemplate =>
+    t.copy(
+      plain = Base64Utils.decode(t.plain),
+      html = Base64Utils.decode(t.html)
+    )
+  }
 
 }

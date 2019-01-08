@@ -38,11 +38,10 @@ class CasesService @Inject()(appConfig: AppConfig, auditService: AuditService,
                       (implicit hc: HeaderCarrier): Future[Unit] = {
     val event = NewEventRequest(CaseStatusChange(original.status, updated.status, comment), operator.id)
     connector.createEvent(updated, event)
-      .recover({
-        case throwable: Throwable =>
-          Logger.error(s"Could not create Event for case [${original.reference}] with payload [$event]", throwable)
-      })
-      .map(_ => Unit)
+      .recover {
+        case t: Throwable => Logger.error(s"Could not create Event for case [${original.reference}] with payload [$event]", t)
+      }
+      .map(_ => ())
   }
 
   def releaseCase(original: Case, queue: Queue, operator: Operator)
@@ -71,18 +70,19 @@ class CasesService @Inject()(appConfig: AppConfig, auditService: AuditService,
 
       // Send the email
       message <- emailService.sendCaseCompleteEmail(updated)
-        .map(email => s"The applicant was sent an Email:\n- Subject: ${email.subject}\n- Body: ${email.plain}")
-          .recover({
-            case throwable =>
-              Logger.error("Failed to send email", throwable)
-              "Attempted to send an email to the applicant which failed"
-          })
+        .map { email: EmailTemplate =>
+          s"The applicant was sent an Email:\n- Subject: ${email.subject}\n- Body: ${email.plain}"
+        } recover {
+          case t: Throwable =>
+            Logger.error("Failed to send email", t)
+            "Attempted to send an email to the applicant which failed"
+        }
 
       // Create the event
       _ <- addEvent(original, updated, operator, Some(message))
-        .recover({
+        .recover {
           case t: Throwable => Logger.error(s"Could not send Complete Case Email for case [${updated.reference}]", t)
-        })
+        }
 
       // Audit
       _ = auditService.auditCaseCompleted(original, updated, operator)

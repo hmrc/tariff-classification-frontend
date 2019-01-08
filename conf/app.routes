@@ -21,4 +21,3 @@ POST       /cases/:reference/complete               @uk.gov.hmrc.tariffclassific
 GET        /cases/:reference/ruling                 @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.rulingDetails(reference: String)
 GET        /cases/:reference/ruling/edit            @uk.gov.hmrc.tariffclassificationfrontend.controllers.RulingController.editRulingDetails(reference: String)
 POST       /cases/:reference/ruling                 @uk.gov.hmrc.tariffclassificationfrontend.controllers.RulingController.updateRulingDetails(reference: String)
-

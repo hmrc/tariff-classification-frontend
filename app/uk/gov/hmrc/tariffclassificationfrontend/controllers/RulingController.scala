@@ -32,6 +32,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.views.CaseDetailPage.CaseDetailP
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import scala.concurrent.Future.successful
 
 @Singleton
 class RulingController @Inject()(authenticatedAction: AuthenticatedAction,
@@ -41,9 +42,9 @@ class RulingController @Inject()(authenticatedAction: AuthenticatedAction,
                                  val messagesApi: MessagesApi,
                                  implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
-  private val decisionForm: Form[DecisionFormData] = DecisionForm.form
+  private lazy val decisionForm: Form[DecisionFormData] = DecisionForm.form
 
-  private val menuTitle = CaseDetailPage.RULING
+  private lazy val menuTitle = CaseDetailPage.RULING
 
   def editRulingDetails(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     getCaseAndRenderView(reference, menuTitle, c => {
@@ -79,8 +80,8 @@ class RulingController @Inject()(authenticatedAction: AuthenticatedAction,
                                   (implicit request: Request[_]): Future[Result] = {
     casesService.getOne(reference).flatMap {
       case Some(c: Case) if c.status == CaseStatus.OPEN => toHtml(c).map(html => Ok(views.html.case_details(c, page, html)))
-      case Some(_) => Future.successful(Redirect(routes.CaseController.rulingDetails(reference)))
-      case _ => Future.successful(Ok(views.html.case_not_found(reference)))
+      case Some(_) => successful(Redirect(routes.CaseController.rulingDetails(reference)))
+      case _ => successful(Ok(views.html.case_not_found(reference)))
     }
   }
 

@@ -29,7 +29,7 @@ import scala.concurrent.Future
 class EmailService @Inject()(connector: EmailConnector) {
 
   def sendCaseCompleteEmail(c: Case)(implicit hc: HeaderCarrier): Future[EmailTemplate] = {
-    if(!c.application.isBTI) {
+    if (!c.application.isBTI) {
       throw new IllegalArgumentException("Cannot send email for non BTI types")
     }
 

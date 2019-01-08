@@ -30,6 +30,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.views
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import scala.concurrent.Future.successful
 
 @Singleton
 class ReleaseCaseController @Inject()(authenticatedAction: AuthenticatedAction,
@@ -38,21 +39,21 @@ class ReleaseCaseController @Inject()(authenticatedAction: AuthenticatedAction,
                                       val messagesApi: MessagesApi,
                                       implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
-  private val releaseCaseForm: Form[ReleaseCaseForm] = ReleaseCaseForm.form
+  private lazy val releaseCaseForm: Form[ReleaseCaseForm] = ReleaseCaseForm.form
 
   def releaseCase(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
-    getCaseAndRenderView(reference, c => Future.successful(views.html.release_case(c, releaseCaseForm, queueService.getNonGateway)))
+    getCaseAndRenderView(reference, c => successful(views.html.release_case(c, releaseCaseForm, queueService.getNonGateway)))
   }
 
   def releaseCaseToQueue(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
 
     def onInvalidForm(formWithErrors: Form[ReleaseCaseForm]): Future[Result] = {
-      getCaseAndRenderView(reference, c => Future.successful(views.html.release_case(c, formWithErrors, queueService.getNonGateway)))
+      getCaseAndRenderView(reference, c => successful(views.html.release_case(c, formWithErrors, queueService.getNonGateway)))
     }
 
     def onValidForm(validForm: ReleaseCaseForm): Future[Result] = {
       queueService.getOneBySlug(validForm.queue) match {
-        case None => Future.successful(Ok(views.html.resource_not_found(s"Queue ${validForm.queue}")))
+        case None => successful(Ok(views.html.resource_not_found(s"Queue ${validForm.queue}")))
         case Some(q: Queue) =>
           getCaseAndRenderView(reference, casesService.releaseCase(_, q, request.operator).map { c: Case =>
             views.html.confirm_release_case(c, q)
@@ -67,8 +68,8 @@ class ReleaseCaseController @Inject()(authenticatedAction: AuthenticatedAction,
                                   (implicit request: Request[_]): Future[Result] = {
     casesService.getOne(reference).flatMap {
       case Some(c: Case) if c.status == CaseStatus.NEW => toHtml(c).map(Ok(_))
-      case Some(_) => Future.successful(Redirect(routes.CaseController.applicationDetails(reference)))
-      case _ => Future.successful(Ok(views.html.case_not_found(reference)))
+      case Some(_) => successful(Redirect(routes.CaseController.applicationDetails(reference)))
+      case _ => successful(Ok(views.html.case_not_found(reference)))
     }
   }
 

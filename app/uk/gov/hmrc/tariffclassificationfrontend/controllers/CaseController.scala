@@ -29,7 +29,6 @@ import uk.gov.hmrc.tariffclassificationfrontend.views
 import uk.gov.hmrc.tariffclassificationfrontend.views.CaseDetailPage
 import uk.gov.hmrc.tariffclassificationfrontend.views.CaseDetailPage.CaseDetailPage
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
