@@ -17,13 +17,15 @@
 package uk.gov.tariffclassificationfrontend.utils
 
 import java.time.ZonedDateTime
+import java.util.UUID
 
 import uk.gov.hmrc.tariffclassificationfrontend.models._
+import uk.gov.hmrc.tariffclassificationfrontend.models.response.ScanStatus
 
 object Cases {
-
+  val storedAttachment = StoredAttachment("id", application = true, public = true, Some("url"), "name", "type", Some(ScanStatus.READY), ZonedDateTime.now())
   val eoriDetailsExample = EORIDetails("eori", "trader-business-name", "line1", "line2", "line3", "postcode", "country")
-  val eoriAgentDetailsExample = AgentDetails(EORIDetails("eori", "agent-business-name", "line1", "line2", "line3", "postcode", "country"), Attachment(false, true, "http://mockurl", "pdf-type", ZonedDateTime.now()))
+  val eoriAgentDetailsExample = AgentDetails(EORIDetails("eori", "agent-business-name", "line1", "line2", "line3", "postcode", "country"), Attachment(UUID.randomUUID().toString, false, true, ZonedDateTime.now()))
   val contactExample = Contact("name", "email", Some("phone"))
   val btiApplicationExample = BTIApplication(eoriDetailsExample, contactExample, Some(eoriAgentDetailsExample), false, "Laptop", "Personal Computer", None, None, None, None, None, None, false, false)
   val decision = Decision("AD12324FR", ZonedDateTime.now(), ZonedDateTime.now().plusYears(2), "justification", "good description", Seq("k1", "k2"), None, None, Some("denomination"), None)
@@ -33,10 +35,9 @@ object Cases {
 
   def createAttachment(url: String): Attachment = {
     Attachment(
+      id = UUID.randomUUID().toString,
       application = true,
       public = true,
-      url = url,
-      mimeType = "",
       timestamp = ZonedDateTime.now()
     )
   }

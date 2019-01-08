@@ -25,7 +25,7 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.{DecisionForm, DecisionFormData, DecisionFormMapper}
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus}
-import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
+import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, FileStoreService}
 import uk.gov.hmrc.tariffclassificationfrontend.views
 import uk.gov.hmrc.tariffclassificationfrontend.views.CaseDetailPage
 import uk.gov.hmrc.tariffclassificationfrontend.views.CaseDetailPage.CaseDetailPage
@@ -36,6 +36,7 @@ import scala.concurrent.Future
 @Singleton
 class RulingController @Inject()(authenticatedAction: AuthenticatedAction,
                                  casesService: CasesService,
+                                 fileStoreService: FileStoreService,
                                  mapper: DecisionFormMapper,
                                  val messagesApi: MessagesApi,
                                  implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
@@ -49,18 +50,27 @@ class RulingController @Inject()(authenticatedAction: AuthenticatedAction,
       val formData = mapper.caseToDecisionFormData(c)
       val df = decisionForm.fill(formData)
 
-      Future.successful(views.html.partials.ruling_details_edit(c, df))
+      fileStoreService.getAttachments(c).map(views.html.partials.ruling_details_edit(c, _, df))
     })
   }
 
   def updateRulingDetails(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     decisionForm.bindFromRequest.fold(
       errorForm =>
-        getCaseAndRenderView(reference, menuTitle, c => Future.successful(views.html.partials.ruling_details_edit(c, errorForm))),
+        getCaseAndRenderView(
+          reference,
+          menuTitle,
+          c => fileStoreService.getAttachments(c)
+          .map(views.html.partials.ruling_details_edit(c, _, errorForm))
+        ),
 
       validForm =>
         getCaseAndRenderView(reference, menuTitle, c => {
-          casesService.updateCase(mapper.mergeFormIntoCase(c, validForm)).map(views.html.partials.ruling_details(_))
+          casesService.updateCase(mapper.mergeFormIntoCase(c, validForm)).flatMap { updated =>
+            fileStoreService
+              .getAttachments(updated)
+              .map(views.html.partials.ruling_details(updated, _))
+          }
         })
     )
   }

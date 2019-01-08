@@ -32,7 +32,7 @@ class DecisionFormMapper {
     }
 
     val attachments = c.attachments
-      .map(att => att.copy(public = decisionForm.attachments.contains(att.url)))
+      .map(att => att.copy(public = decisionForm.attachments.contains(att.id)))
 
     c.copy(decision = Some(decision), attachments = attachments)
   }

@@ -34,16 +34,16 @@ class AppConfig @Inject()(val runModeConfiguration: Configuration, environment: 
   private val contactHost = runModeConfiguration.getString("contact-frontend.host").getOrElse("")
   private val contactFormServiceIdentifier = "MyService"
 
-  def assetsPrefix: String = loadConfig("assets.url") + loadConfig("assets.version")
-  def analyticsToken: String = loadConfig("google-analytics.token")
-  def analyticsHost: String = loadConfig("google-analytics.host")
-  def authEnrolment: Option[String] = Some(loadConfig("auth.enrolment")).filter(isNoneBlank(_))
-  def reportAProblemPartialUrl = s"$contactHost/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
-  def reportAProblemNonJSUrl = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
-  def bindingTariffClassificationUrl: String = baseUrl("binding-tariff-classification")
-  def emailUrl: String = baseUrl("email")
-  def emailRendererUrl: String = baseUrl("hmrc-email-renderer")
-
+  lazy val assetsPrefix: String = loadConfig("assets.url") + loadConfig("assets.version")
+  lazy val analyticsToken: String = loadConfig("google-analytics.token")
+  lazy val analyticsHost: String = loadConfig("google-analytics.host")
+  lazy val authEnrolment: Option[String] = Some(loadConfig("auth.enrolment")).filter(isNoneBlank(_))
+  lazy val reportAProblemPartialUrl = s"$contactHost/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
+  lazy val reportAProblemNonJSUrl = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
+  lazy val bindingTariffClassificationUrl: String = baseUrl("binding-tariff-classification")
+  lazy val emailUrl: String = baseUrl("email")
+  lazy val emailRendererUrl: String = baseUrl("hmrc-email-renderer")
+  lazy val fileStoreUrl: String = baseUrl("binding-tariff-filestore")
   lazy val decisionLifetimeYears: Int = getInt("app.decision-lifetime-years")
   lazy val zoneId: ZoneId = ZoneId.of("UTC")
 

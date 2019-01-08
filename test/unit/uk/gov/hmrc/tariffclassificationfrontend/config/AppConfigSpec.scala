@@ -107,6 +107,14 @@ class AppConfigSpec extends UnitSpec with MockitoSugar {
     "Build ZoneId" in {
       appConfig().zoneId shouldBe ZoneId.of("UTC")
     }
+
+    "build 'filestore' url" in {
+      appConfig(
+        "microservice.services.binding-tariff-filestore.protocol" -> "https",
+        "microservice.services.binding-tariff-filestore.host" -> "www.host.co.uk",
+        "microservice.services.binding-tariff-filestore.port" -> "123"
+      ).fileStoreUrl shouldBe "https://www.host.co.uk:123"
+    }
   }
 
 }
