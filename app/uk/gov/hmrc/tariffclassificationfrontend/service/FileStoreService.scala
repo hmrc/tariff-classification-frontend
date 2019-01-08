@@ -31,9 +31,9 @@ class FileStoreService @Inject()(connector: FileStoreConnector) {
     val attachmentsById: Map[String, Attachment] = c.attachments.map(a => a.id -> a).toMap
     connector.get(c.attachments) map { files =>
       files map { file =>
-        attachmentsById.get(file.id) map { attachment =>
-          StoredAttachment(attachment, file)
-        }
+        attachmentsById
+          .get(file.id)
+          .map(StoredAttachment(_, file))
       } filter(_.isDefined) map (_.get)
     }
   }
@@ -41,11 +41,10 @@ class FileStoreService @Inject()(connector: FileStoreConnector) {
   def getLetterOfAuthority(c: Case)(implicit hc: HeaderCarrier): Future[Option[StoredAttachment]] = {
     if(c.application.isBTI) {
       c.application.asBTI.agent match {
-        case Some(agent: AgentDetails) => connector.get(agent.letterOfAuthorisation) map { fileFound =>
-          fileFound map { file =>
-            StoredAttachment(agent.letterOfAuthorisation, file)
-          }
-        }
+        case Some(agent: AgentDetails) =>
+          connector
+            .get(agent.letterOfAuthorisation)
+            .map(_.map(StoredAttachment(agent.letterOfAuthorisation, _)))
         case _ => Future.successful(None)
       }
     } else {
