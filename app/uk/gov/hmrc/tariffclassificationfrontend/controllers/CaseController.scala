@@ -23,7 +23,7 @@ import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionFormMapper
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, StoredAttachment}
+import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, FileStoreService}
 import uk.gov.hmrc.tariffclassificationfrontend.views
 import uk.gov.hmrc.tariffclassificationfrontend.views.CaseDetailPage
@@ -49,11 +49,10 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
       reference,
       CaseDetailPage.APPLICATION_DETAILS,
       c => {
-        val result: Future[(Seq[StoredAttachment], Option[StoredAttachment])] = for {
-          attachments <- fileStoreService.getAttachments(c)
-          letterOfAuth <- fileStoreService.getLetterOfAuthority(c)
-        } yield (attachments, letterOfAuth)
-        result.map {
+        for {
+          a <- fileStoreService.getAttachments(c)
+          l <- fileStoreService.getLetterOfAuthority(c)
+        } yield (a, l) match {
           case (attachments, letter) => views.html.partials.application_details(c, attachments, letter)
         }
       }
