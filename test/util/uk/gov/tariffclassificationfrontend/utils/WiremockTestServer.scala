@@ -25,6 +25,7 @@ trait WiremockTestServer extends UnitSpec with BeforeAndAfterEach {
 
   private val wireHost = "localhost"
   protected val wirePort = 20001
+  protected lazy val wireMockUrl: String = s"http://$wireHost:$wirePort"
   private val wireMockServer = new WireMockServer(wirePort)
 
   protected def getUrl: String = {

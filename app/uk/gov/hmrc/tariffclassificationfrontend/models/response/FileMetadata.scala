@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,21 +12,26 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import uk.gov.hmrc.tariffclassificationfrontend.models.StoredAttachment
-@(attachments: Seq[StoredAttachment])
+package uk.gov.hmrc.tariffclassificationfrontend.models.response
 
-<div id="attachment-list">
-    @if(attachments.isEmpty) {
-        <p>None</p>
-    } else {
-        <ul class="list">
-        @for(att <- attachments) {
-            <li>
-                <a id="file-@{att.id}" href="@att.url" target="_blank">@att.fileName</a>
-            </li>
-        }
-        </ul>
-    }
-</div>
+import java.time.Instant
+
+import uk.gov.hmrc.tariffclassificationfrontend.models.response.ScanStatus.ScanStatus
+
+case class FileMetadata
+(
+  id: String,
+  fileName: String,
+  mimeType: String,
+  url: Option[String] = None,
+  scanStatus: Option[ScanStatus] = None,
+  lastUpdated: Instant
+)
+
+object ScanStatus extends Enumeration {
+  type ScanStatus = Value
+
+  val READY, FAILED = Value
+}

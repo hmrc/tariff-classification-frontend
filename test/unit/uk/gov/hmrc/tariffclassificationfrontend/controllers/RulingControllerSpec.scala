@@ -34,7 +34,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.{DecisionFormData, DecisionFormMapper}
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus}
-import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
+import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, FileStoreService}
 import uk.gov.tariffclassificationfrontend.utils.Cases
 
 import scala.concurrent.Future
@@ -46,11 +46,12 @@ class RulingControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSui
   private val messageApi = new DefaultMessagesApi(env, configuration, new DefaultLangs(configuration))
   private val appConfig = new AppConfig(configuration, env)
   private val casesService = mock[CasesService]
+  private val fileService = mock[FileStoreService]
   private val mapper = mock[DecisionFormMapper]
 
   private implicit val hc = HeaderCarrier()
 
-  private val controller = new RulingController(new SuccessfulAuthenticatedAction, casesService, mapper, messageApi, appConfig)
+  private val controller = new RulingController(new SuccessfulAuthenticatedAction, casesService, fileService, mapper, messageApi, appConfig)
 
   override protected def beforeEach(): Unit = {
     Mockito.reset(casesService)
@@ -59,9 +60,11 @@ class RulingControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSui
   "Edit Ruling" should {
     val caseWithStatusNEW = Cases.btiCaseExample.copy(status = CaseStatus.NEW)
     val caseWithStatusOPEN = Cases.btiCaseExample.copy(status = CaseStatus.OPEN)
+    val attachment = Cases.storedAttachment
 
     "return OK and HTML content type" in {
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(caseWithStatusOPEN)))
+      given(fileService.getAttachments(refEq(caseWithStatusOPEN))(any[HeaderCarrier])).willReturn(Future.successful(Seq(attachment)))
 
       val result = controller.editRulingDetails("reference")(newFakeGETRequestWithCSRF())
       status(result) shouldBe Status.OK
@@ -96,6 +99,7 @@ class RulingControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSui
     val caseWithStatusNEW = Cases.btiCaseExample.copy(status = CaseStatus.NEW)
     val caseWithStatusOPEN = Cases.btiCaseExample.copy(status = CaseStatus.OPEN)
     val updatedCase = Cases.btiCaseExample.copy(status = CaseStatus.OPEN)
+    val attachment = Cases.storedAttachment
 
     val aValidForm = newFakePOSTRequestWithCSRF(
       "bindingCommodityCode" -> "",
@@ -110,6 +114,7 @@ class RulingControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSui
     "return OK and HTML content type" in {
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(caseWithStatusOPEN)))
       given(casesService.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(updatedCase))
+      given(fileService.getAttachments(refEq(updatedCase))(any[HeaderCarrier])).willReturn(Future.successful(Seq(attachment)))
 
       val result = controller.updateRulingDetails("reference")(aValidForm)
       status(result) shouldBe Status.OK
@@ -121,6 +126,7 @@ class RulingControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSui
 
     "redirect back to edit ruling on Form Error" in {
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(caseWithStatusOPEN)))
+      given(fileService.getAttachments(refEq(caseWithStatusOPEN))(any[HeaderCarrier])).willReturn(Future.successful(Seq(attachment)))
 
       val result = controller.updateRulingDetails("reference")(newFakePOSTRequestWithCSRF())
       verify(casesService, never()).updateCase(any[Case])(any[HeaderCarrier])

@@ -29,7 +29,7 @@ import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionFormMapper
-import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
+import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, FileStoreService}
 import uk.gov.tariffclassificationfrontend.utils.Cases
 
 import scala.concurrent.Future
@@ -42,8 +42,9 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
   private val messageApi = new DefaultMessagesApi(env, configuration, new DefaultLangs(configuration))
   private val appConfig = new AppConfig(configuration, env)
   private val casesService = mock[CasesService]
+  private val fileService = mock[FileStoreService]
   private val mapper = mock[DecisionFormMapper]
-  private val controller = new CaseController(new SuccessfulAuthenticatedAction, casesService, mapper, messageApi, appConfig)
+  private val controller = new CaseController(new SuccessfulAuthenticatedAction, casesService, fileService,  mapper, messageApi, appConfig)
 
   private implicit val hc = HeaderCarrier()
 
@@ -51,7 +52,9 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
 
     "return 200 OK and HTML content type" in {
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(Cases.btiCaseExample)))
+
       val result = controller.summary("reference")(fakeRequest)
+
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
@@ -59,7 +62,9 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
 
     "return 404 Not Found and HTML content type" in {
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(None))
+
       val result = controller.summary("reference")(fakeRequest)
+
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
@@ -68,10 +73,16 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
   }
 
   "Application Details" should {
+    val aCase = Cases.btiCaseExample
+    val attachment = Cases.storedAttachment
 
     "return 200 OK and HTML content type" in {
-      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(Cases.btiCaseExample)))
+      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
+      given(fileService.getAttachments(refEq(aCase))(any[HeaderCarrier])).willReturn(Future.successful(Seq(attachment)))
+      given(fileService.getLetterOfAuthority(refEq(aCase))(any[HeaderCarrier])).willReturn(Future.successful(Some(attachment)))
+
       val result = controller.applicationDetails("reference")(fakeRequest)
+
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
@@ -79,7 +90,9 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
 
     "return 404 Not Found and HTML content type" in {
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(None))
+
       val result = controller.applicationDetails("reference")(fakeRequest)
+
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
@@ -90,8 +103,13 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
   "Ruling Details" should {
 
     "return 200 OK and HTML content type" in {
-      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(Cases.btiCaseExample)))
+      val aCase = Cases.btiCaseExample
+      val attachment = Cases.storedAttachment
+      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
+      given(fileService.getAttachments(refEq(aCase))(any[HeaderCarrier])).willReturn(Future.successful(Seq(attachment)))
+
       val result = controller.rulingDetails("reference")(fakeRequest)
+
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
@@ -99,7 +117,9 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
 
     "return 404 Not Found and HTML content type" in {
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(None))
+
       val result = controller.rulingDetails("reference")(fakeRequest)
+
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")

@@ -18,7 +18,8 @@ package uk.gov.hmrc.tariffclassificationfrontend.views.partials
 
 import java.time.ZonedDateTime
 
-import uk.gov.hmrc.tariffclassificationfrontend.models.Attachment
+import uk.gov.hmrc.tariffclassificationfrontend.models.StoredAttachment
+import uk.gov.hmrc.tariffclassificationfrontend.models.response.ScanStatus
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewSpec
 import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.attachments
@@ -38,29 +39,47 @@ class AttachmentsViewSpec extends ViewSpec {
     }
 
     "render list of attachments" in {
-      val attachment = Attachment(application = true, public = true, "http://www.host.co.uk/name.png", "type", ZonedDateTime.now())
+      val attachment = StoredAttachment(
+        id = "id",
+        application = true,
+        public = true,
+        timestamp = ZonedDateTime.now(),
+        url = Some("url"),
+        fileName = "name",
+        mimeType = "type",
+        scanStatus = Some(ScanStatus.READY)
+      )
 
       // When
       val doc = view(attachments(Seq(attachment)))
 
       // Then
       doc should containElementWithID("attachment-list")
-      doc.getElementsByTag("a") should haveSize(1)
-      doc.getElementsByTag("a").first() should containText("name.png")
-      doc.getElementsByTag("a").first() should haveAttribute("href", "http://www.host.co.uk/name.png")
+      doc should containElementWithID("file-id")
+      doc.getElementById("file-id") should containText("name")
+      doc.getElementById("file-id") should haveAttribute("href", "url")
     }
 
-    "render list of attachments with unknown names" in {
-      val attachment = Attachment(application = true, public = true, "http://www.host.co.uk", "type", ZonedDateTime.now())
+    "render list of attachments without URL" in {
+      val attachment = StoredAttachment(
+        id = "id",
+        application = true,
+        public = true,
+        timestamp = ZonedDateTime.now(),
+        url = None,
+        fileName = "name",
+        mimeType = "type",
+        scanStatus = Some(ScanStatus.READY)
+      )
 
       // When
       val doc = view(attachments(Seq(attachment)))
 
       // Then
       doc should containElementWithID("attachment-list")
-      doc.getElementsByTag("a") should haveSize(1)
-      doc.getElementsByTag("a").first() should containText("Unknown")
-      doc.getElementsByTag("a").first() should haveAttribute("href", "http://www.host.co.uk")
+      doc should containElementWithID("file-id")
+      doc.getElementById("file-id") should containText("name")
+      doc.getElementById("file-id") shouldNot haveAttribute("href", "url")
     }
   }
 

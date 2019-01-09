@@ -16,36 +16,12 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.models
 
-import java.net.URL
 import java.time.ZonedDateTime
-
-import org.apache.commons.io.FilenameUtils
-
-import scala.util.{Success, Try}
 
 case class Attachment
 (
+  id: String,
   application: Boolean,
   public: Boolean,
-  url: String,
-  mimeType: String,
   timestamp: ZonedDateTime
-) {
-
-  def isImage: Boolean = {
-    mimeType match {
-      case "image/png" => true
-      case "image/jpeg" => true
-      case "image/gif" => true
-      case _ => false
-    }
-  }
-
-  def name: Option[String] = {
-    Try(new URL(url)) match {
-      case Success(u: URL) if u.getPath.nonEmpty => Some(FilenameUtils.getName(u.getPath))
-      case _ => None
-    }
-  }
-
-}
+)

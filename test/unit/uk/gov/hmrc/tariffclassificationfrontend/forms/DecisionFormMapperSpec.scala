@@ -52,7 +52,7 @@ class DecisionFormMapperSpec extends UnitSpec {
       val attToPublish = createAttachment("url.to.publish")
       val attNotPublish = createAttachment("url.to.not.be.published")
       val caseWithAtt = testCase.copy(attachments = Seq(attToPublish, attNotPublish))
-      val decisionFormWithAttSelected = validForm.copy(attachments = Seq(attToPublish.url))
+      val decisionFormWithAttSelected = validForm.copy(attachments = Seq(attToPublish.id))
 
       val result: Case = mapper.mergeFormIntoCase(caseWithAtt, decisionFormWithAttSelected)
 

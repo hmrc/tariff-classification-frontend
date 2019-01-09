@@ -24,37 +24,51 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionFormMapper
 import uk.gov.hmrc.tariffclassificationfrontend.models.Case
-import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
+import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, FileStoreService}
 import uk.gov.hmrc.tariffclassificationfrontend.views
 import uk.gov.hmrc.tariffclassificationfrontend.views.CaseDetailPage
 import uk.gov.hmrc.tariffclassificationfrontend.views.CaseDetailPage.CaseDetailPage
 
 import scala.concurrent.Future
+import scala.concurrent.Future.successful
 
 @Singleton
 class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
                                casesService: CasesService,
+                               fileStoreService: FileStoreService,
                                mapper: DecisionFormMapper,
                                val messagesApi: MessagesApi,
                                implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
   def summary(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
-    getCaseAndRenderView(reference, CaseDetailPage.SUMMARY, views.html.partials.case_summary(_))
+    getCaseAndRenderView(reference, CaseDetailPage.SUMMARY, c => successful(views.html.partials.case_summary(c)))
   }
 
   def applicationDetails(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
-    getCaseAndRenderView(reference, CaseDetailPage.APPLICATION_DETAILS, views.html.partials.application_details(_))
+    getCaseAndRenderView(
+      reference,
+      CaseDetailPage.APPLICATION_DETAILS,
+      c => {
+        for {
+          attachments <- fileStoreService.getAttachments(c)
+          letter <- fileStoreService.getLetterOfAuthority(c)
+          response = views.html.partials.application_details(c, attachments, letter)
+        } yield response
+      }
+    )
   }
 
   def rulingDetails(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
-    getCaseAndRenderView(reference, CaseDetailPage.RULING, views.html.partials.ruling_details(_))
+    getCaseAndRenderView(reference, CaseDetailPage.RULING, c => {
+      fileStoreService.getAttachments(c).map(views.html.partials.ruling_details(c, _))
+    })
   }
 
-  private def getCaseAndRenderView(reference: String, page: CaseDetailPage, toHtml: Case => Html)
+  private def getCaseAndRenderView(reference: String, page: CaseDetailPage, toHtml: Case => Future[Html])
                                   (implicit request: Request[_]): Future[Result] = {
-    casesService.getOne(reference).map {
-      case Some(c: Case) => Ok(views.html.case_details(c, page, toHtml(c)))
-      case _ => Ok(views.html.case_not_found(reference))
+    casesService.getOne(reference).flatMap {
+      case Some(c: Case) => toHtml(c).map(html => Ok(views.html.case_details(c, page, html)))
+      case _ => successful(Ok(views.html.case_not_found(reference)))
     }
   }
 
