@@ -46,9 +46,7 @@ case class StoredAttachment
 
 object StoredAttachment {
   def apply(attachment: Attachment, metadata: FileMetadata): StoredAttachment = {
-    if(attachment.id != metadata.id) {
-      throw new IllegalArgumentException("Cannot combine different attachments")
-    }
+    require(attachment.id == metadata.id, "Cannot combine different attachments")
     StoredAttachment(
       id = attachment.id,
       application = attachment.application,
