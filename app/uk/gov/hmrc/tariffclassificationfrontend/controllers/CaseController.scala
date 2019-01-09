@@ -50,11 +50,10 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
       CaseDetailPage.APPLICATION_DETAILS,
       c => {
         for {
-          a <- fileStoreService.getAttachments(c)
-          l <- fileStoreService.getLetterOfAuthority(c)
-        } yield (a, l) match {
-          case (attachments, letter) => views.html.partials.application_details(c, attachments, letter)
-        }
+          attachments <- fileStoreService.getAttachments(c)
+          letter <- fileStoreService.getLetterOfAuthority(c)
+          response = views.html.partials.application_details(c, attachments, letter)
+        } yield response
       }
     )
   }
