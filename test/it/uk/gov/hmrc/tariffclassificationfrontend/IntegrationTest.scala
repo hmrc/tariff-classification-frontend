@@ -14,12 +14,14 @@ trait IntegrationTest extends UnitSpec with GuiceOneServerPerSuite with Resource
   override def fakeApplication(): Application = new GuiceApplicationBuilder()
     .configure(Map(
       "microservice.services.binding-tariff-classification.port" -> wirePort,
+      "microservice.services.binding-tariff-filestore.port" -> wirePort,
       "microservice.services.auth.port" -> wirePort
     ))
     .build()
 
   protected val ws = fakeApplication().injector.instanceOf[WSClient]
-  protected val appRoot = s"http://localhost:$port/tariff-classification"
+  protected val backendRoot = s"http://localhost:$port/tariff-classification"
+  protected val filestoreRoot = s"http://localhost:$port/binding-tariff-filestore"
 
   protected def givenAuthSuccess(): Unit = {
     stubFor(post(urlEqualTo("/auth/authorise"))

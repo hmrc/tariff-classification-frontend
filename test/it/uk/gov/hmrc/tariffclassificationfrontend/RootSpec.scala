@@ -20,7 +20,7 @@ class RootSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response = await(ws.url(s"$appRoot").get())
+      val response = await(ws.url(s"$backendRoot").get())
 
       // Then
       response.status shouldBe OK
@@ -32,7 +32,7 @@ class RootSpec extends IntegrationTest with MockitoSugar {
       givenAuthFailed()
 
       // When
-      val response = await(ws.url(s"$appRoot").get())
+      val response = await(ws.url(s"$backendRoot").get())
 
       // Then
       response.status shouldBe OK
