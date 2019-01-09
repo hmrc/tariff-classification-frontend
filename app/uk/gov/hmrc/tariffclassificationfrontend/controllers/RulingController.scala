@@ -62,7 +62,7 @@ class RulingController @Inject()(authenticatedAction: AuthenticatedAction,
           reference,
           menuTitle,
           c => fileStoreService.getAttachments(c)
-          .map(views.html.partials.ruling_details_edit(c, _, errorForm))
+            .map(views.html.partials.ruling_details_edit(c, _, errorForm))
         ),
 
       validForm =>

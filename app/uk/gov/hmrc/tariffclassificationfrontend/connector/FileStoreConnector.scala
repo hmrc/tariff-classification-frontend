@@ -32,7 +32,7 @@ import scala.concurrent.Future
 class FileStoreConnector @Inject()(appConfig: AppConfig, http: HttpClient) {
 
   def get(attachments: Seq[Attachment])(implicit headerCarrier: HeaderCarrier): Future[Seq[FileMetadata]] = {
-    if(attachments.isEmpty) {
+    if (attachments.isEmpty) {
       Future.successful(Seq.empty)
     } else {
       val query = s"?${attachments.map(att => s"id=${att.id}").mkString("&")}"

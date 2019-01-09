@@ -23,14 +23,14 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.views.html.not_authorized
 
-import scala.concurrent.Future
+import scala.concurrent.Future.successful
 
 @Singleton
 class SecurityController @Inject()(val messagesApi: MessagesApi,
                                    implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
   def unauthorized(): Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Ok(not_authorized()))
+    successful(Ok(not_authorized()))
   }
 
 }
