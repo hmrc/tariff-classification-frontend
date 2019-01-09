@@ -17,6 +17,7 @@
 package uk.gov.hmrc.tariffclassificationfrontend.service
 
 import javax.inject.{Inject, Singleton}
+import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.tariffclassificationfrontend.connector.FileStoreConnector
 import uk.gov.hmrc.tariffclassificationfrontend.models._
@@ -44,7 +45,10 @@ class FileStoreService @Inject()(connector: FileStoreConnector) {
         case Some(agent: AgentDetails) =>
           connector
             .get(agent.letterOfAuthorisation)
-            .map(_.map(StoredAttachment(agent.letterOfAuthorisation, _)))
+            .map{ file =>
+              Logger.warn(s"Agent Letter of Authority was present on Case [${c.reference}] but it didnt exist in the FileStore")
+              file.map(StoredAttachment(agent.letterOfAuthorisation, _))
+            }
         case _ => Future.successful(None)
       }
     } else {
