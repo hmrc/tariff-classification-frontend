@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.service
 
-import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers._
 import org.mockito.BDDMockito._
 import org.mockito.Mockito.{never, reset, verify, verifyZeroInteractions}
@@ -33,9 +32,10 @@ import uk.gov.tariffclassificationfrontend.utils.Cases
 
 import scala.concurrent.Future.{failed, successful}
 
-class CasesService_ReleaseCaseSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
+class CasesService_ReleaseCaseSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach with ConnectorCaptor {
 
   private implicit val hc: HeaderCarrier = HeaderCarrier()
+
   private val manyCases = mock[Seq[Case]]
   private val oneCase = mock[Option[Case]]
   private val queue = mock[Queue]
@@ -68,11 +68,11 @@ class CasesService_ReleaseCaseSpec extends UnitSpec with MockitoSugar with Befor
 
       verify(audit).auditCaseReleased(refEq(originalCase), refEq(caseUpdated), refEq(queue), refEq(operator))(any[HeaderCarrier])
 
-      val caseUpdating = theCaseUpdating()
+      val caseUpdating = theCaseUpdating(connector)
       caseUpdating.status shouldBe CaseStatus.OPEN
       caseUpdating.queueId shouldBe Some("queue_id")
 
-      val eventCreated = theEventCreatedFor(caseUpdated)
+      val eventCreated = theEventCreatedFor(connector, caseUpdated)
       eventCreated.userId shouldBe "operator-id"
       eventCreated.details shouldBe CaseStatusChange(CaseStatus.NEW, CaseStatus.OPEN)
     }
@@ -107,22 +107,10 @@ class CasesService_ReleaseCaseSpec extends UnitSpec with MockitoSugar with Befor
 
       verify(audit).auditCaseReleased(refEq(originalCase), refEq(caseUpdated), refEq(queue), refEq(operator))(any[HeaderCarrier])
 
-      val caseUpdating = theCaseUpdating()
+      val caseUpdating = theCaseUpdating(connector)
       caseUpdating.status shouldBe CaseStatus.OPEN
       caseUpdating.queueId shouldBe Some("queue_id")
     }
-  }
-
-  private def theEventCreatedFor(c: Case): NewEventRequest = {
-    val captor: ArgumentCaptor[NewEventRequest] = ArgumentCaptor.forClass(classOf[NewEventRequest])
-    verify(connector).createEvent(refEq(c), captor.capture())(any[HeaderCarrier])
-    captor.getValue
-  }
-
-  private def theCaseUpdating(): Case = {
-    val captor: ArgumentCaptor[Case] = ArgumentCaptor.forClass(classOf[Case])
-    verify(connector).updateCase(captor.capture())(any[HeaderCarrier])
-    captor.getValue
   }
 
 }

@@ -29,7 +29,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.models.response.{FileMetadata, ScanStatus}
 import uk.gov.tariffclassificationfrontend.utils.Cases
 
-import scala.concurrent.Future
+import scala.concurrent.Future.successful
 
 class FileStoreServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
 
@@ -40,36 +40,36 @@ class FileStoreServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfte
   "Service 'getAttachments'" should {
 
     "Return Stored Attachments" in {
-      val caze = aCase(withAnAttachmentWithId("1"))
+      val c = aCase(withAnAttachmentWithId("1"))
       givenFileStoreReturnsAttachments(someMetadataWithId("1"))
 
-      await(service.getAttachments(caze)) shouldBe Seq(
+      await(service.getAttachments(c)) shouldBe Seq(
         aStoredAttachmentWithId("1")
       )
     }
 
     "Filter missing Attachments" in {
-      val caze = aCase(withAnAttachmentWithId("1"))
+      val c = aCase(withAnAttachmentWithId("1"))
       givenFileStoreReturnsNoAttachments()
 
-      await(service.getAttachments(caze)) shouldBe Seq.empty
+      await(service.getAttachments(c)) shouldBe Seq.empty
     }
 
     "Ignore extra Attachments" in {
-      val caze = aCase()
+      val c = aCase()
       givenFileStoreReturnsAttachments(someMetadataWithId("1"))
 
-      await(service.getAttachments(caze)) shouldBe Seq.empty
+      await(service.getAttachments(c)) shouldBe Seq.empty
     }
   }
 
   "Service 'getLetterOfAuthority'" should {
 
     "Return Stored Attachment" in {
-      val caze = aCase(withLetterOfAuthWithId("1"))
+      val c = aCase(withLetterOfAuthWithId("1"))
       givenFileStoreReturnsAttachment(someMetadataWithId("1"))
 
-      await(service.getLetterOfAuthority(caze)) shouldBe Some(
+      await(service.getLetterOfAuthority(c)) shouldBe Some(
         aStoredAttachmentWithId("1")
       )
     }
@@ -131,16 +131,16 @@ class FileStoreServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfte
   }
 
   private def givenFileStoreReturnsNoAttachments(): Unit = {
-    given(connector.get(any[Seq[Attachment]])(any[HeaderCarrier])) willReturn Future.successful(Seq.empty)
-    given(connector.get(any[Attachment])(any[HeaderCarrier])) willReturn Future.successful(None)
+    given(connector.get(any[Seq[Attachment]])(any[HeaderCarrier])) willReturn successful(Seq.empty)
+    given(connector.get(any[Attachment])(any[HeaderCarrier])) willReturn successful(None)
   }
 
   private def givenFileStoreReturnsAttachments(attachments: FileMetadata*): Unit = {
-    given(connector.get(any[Seq[Attachment]])(any[HeaderCarrier])) willReturn Future.successful(attachments)
+    given(connector.get(any[Seq[Attachment]])(any[HeaderCarrier])) willReturn successful(attachments)
   }
 
   private def givenFileStoreReturnsAttachment(attachment: FileMetadata): Unit = {
-    given(connector.get(any[Attachment])(any[HeaderCarrier])) willReturn Future.successful(Some(attachment))
+    given(connector.get(any[Attachment])(any[HeaderCarrier])) willReturn successful(Some(attachment))
   }
 
 }

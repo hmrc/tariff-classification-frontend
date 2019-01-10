@@ -18,7 +18,6 @@ package uk.gov.hmrc.tariffclassificationfrontend.service
 
 import java.time._
 
-import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers._
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito.{never, reset, verify, verifyZeroInteractions}
@@ -36,9 +35,10 @@ import uk.gov.tariffclassificationfrontend.utils.Cases
 import scala.concurrent.Future
 import scala.concurrent.Future.{failed, successful}
 
-class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
+class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach with ConnectorCaptor {
 
   private implicit val hc: HeaderCarrier = HeaderCarrier()
+
   private val manyCases = mock[Seq[Case]]
   private val oneCase = mock[Option[Case]]
   private val queue = mock[Queue]
@@ -79,10 +79,10 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
       verify(audit).auditCaseCompleted(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
       verify(emailService).sendCaseCompleteEmail(refEq(caseUpdated))(any[HeaderCarrier])
 
-      val caseUpdating = theCaseUpdating()
+      val caseUpdating = theCaseUpdating(connector)
       caseUpdating.status shouldBe CaseStatus.COMPLETED
 
-      val eventCreated = theEventCreatedFor(caseUpdated)
+      val eventCreated = theEventCreatedFor(connector, caseUpdated)
       eventCreated.userId shouldBe "operator-id"
       eventCreated.details shouldBe CaseStatusChange(CaseStatus.OPEN, CaseStatus.COMPLETED, Some("The applicant was sent an Email:\n- Subject: subject\n- Body: plain"))
     }
@@ -142,7 +142,7 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
       verify(audit).auditCaseCompleted(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
       verify(emailService).sendCaseCompleteEmail(refEq(caseUpdated))(any[HeaderCarrier])
 
-      val caseUpdating = theCaseUpdating()
+      val caseUpdating = theCaseUpdating(connector)
       caseUpdating.status shouldBe CaseStatus.COMPLETED
     }
 
@@ -165,25 +165,13 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
 
       verify(audit).auditCaseCompleted(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
 
-      val caseUpdating = theCaseUpdating()
+      val caseUpdating = theCaseUpdating(connector)
       caseUpdating.status shouldBe CaseStatus.COMPLETED
 
-      val eventCreated = theEventCreatedFor(caseUpdated)
+      val eventCreated = theEventCreatedFor(connector, caseUpdated)
       eventCreated.userId shouldBe "operator-id"
       eventCreated.details shouldBe CaseStatusChange(CaseStatus.OPEN, CaseStatus.COMPLETED, Some("Attempted to send an email to the applicant which failed"))
     }
-  }
-
-  private def theEventCreatedFor(c: Case): NewEventRequest = {
-    val captor: ArgumentCaptor[NewEventRequest] = ArgumentCaptor.forClass(classOf[NewEventRequest])
-    verify(connector).createEvent(refEq(c), captor.capture())(any[HeaderCarrier])
-    captor.getValue
-  }
-
-  private def theCaseUpdating(): Case = {
-    val captor: ArgumentCaptor[Case] = ArgumentCaptor.forClass(classOf[Case])
-    verify(connector).updateCase(captor.capture())(any[HeaderCarrier])
-    captor.getValue
   }
 
   private def date(yymmdd: String): ZonedDateTime = {
