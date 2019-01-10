@@ -41,17 +41,11 @@ class ReferCaseController @Inject()(authenticatedAction: AuthenticatedAction,
   override protected def isValidCase: Case => Boolean = _.status == OPEN
 
   def referCase(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
-    getCaseAndRenderView(
-      reference,
-      c => successful(views.html.refer_case(c))
-    )
+    getCaseAndRenderView(reference, c => successful(views.html.refer_case(c)))
   }
 
   def confirmReferCase(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
-    getCaseAndRenderView(
-      reference,
-      casesService.referCase(_, request.operator).map(views.html.confirm_refer_case(_))
-    )
+    getCaseAndRenderView(reference, casesService.referCase(_, request.operator).map(views.html.confirm_refer_case(_)))
   }
 
 }

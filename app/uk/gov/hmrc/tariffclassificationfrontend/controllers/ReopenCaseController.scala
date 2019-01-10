@@ -43,17 +43,11 @@ class ReopenCaseController @Inject()(authenticatedAction: AuthenticatedAction,
   private lazy val validPreviousStatuses = Seq(SUSPENDED, REFERRED)
 
   def reopenCase(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
-    getCaseAndRenderView(
-      reference,
-      c => successful(views.html.reopen_case(c))
-    )
+    getCaseAndRenderView(reference, c => successful(views.html.reopen_case(c)))
   }
 
   def confirmReopenCase(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
-    getCaseAndRenderView(
-      reference,
-      casesService.reopenCase(_, request.operator).map(views.html.confirm_reopen_case(_))
-    )
+    getCaseAndRenderView(reference, casesService.reopenCase(_, request.operator).map(views.html.confirm_reopen_case(_)))
   }
 
 }
