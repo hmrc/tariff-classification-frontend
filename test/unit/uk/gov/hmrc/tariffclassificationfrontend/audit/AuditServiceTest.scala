@@ -112,7 +112,7 @@ class AuditServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEac
         "previousStatus" -> "REFERRED",
         "operatorId" -> "operator-id"
       )
-      verify(connector).sendExplicitAudit(refEq("CaseReopen"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+      verify(connector).sendExplicitAudit(refEq("CaseReopened"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
     }
   }
 
@@ -130,7 +130,7 @@ class AuditServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEac
         "previousStatus" -> "SUSPENDED",
         "operatorId" -> "operator-id"
       )
-      verify(connector).sendExplicitAudit(refEq("CaseReopen"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+      verify(connector).sendExplicitAudit(refEq("CaseReopened"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
     }
   }
 
