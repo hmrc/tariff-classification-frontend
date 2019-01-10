@@ -64,7 +64,7 @@ class ReopenCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     reset(casesService)
   }
 
-  "Refer Case" should {
+  "Reopen Case" should {
 
     "return OK and HTML content type" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusREFERRED)))
@@ -101,7 +101,7 @@ class ReopenCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
   }
 
-  "Confirm Refer a Case" should {
+  "Confirm Reopen a Case" should {
 
     "return OK and HTML content type" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusREFERRED)))
@@ -176,4 +176,5 @@ class ReopenCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     val csrfTags = Map(Token.NameRequestTag -> "csrfToken", Token.RequestTag -> tokenProvider.generateToken)
     FakeRequest("POST", "/", FakeHeaders(), AnyContentAsFormUrlEncoded, tags = csrfTags).withFormUrlEncodedBody()
   }
+
 }

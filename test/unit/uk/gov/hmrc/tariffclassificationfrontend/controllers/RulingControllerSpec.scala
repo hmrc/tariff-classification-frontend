@@ -172,4 +172,5 @@ class RulingControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSui
     val csrfTags = Map(Token.NameRequestTag -> "csrfToken", Token.RequestTag -> tokenProvider.generateToken)
     FakeRequest("POST", "/", FakeHeaders(), AnyContentAsFormUrlEncoded, tags = csrfTags).withFormUrlEncodedBody(data: _*)
   }
+
 }

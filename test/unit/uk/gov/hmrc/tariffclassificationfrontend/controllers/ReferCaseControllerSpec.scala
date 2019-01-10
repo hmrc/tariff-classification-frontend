@@ -157,4 +157,5 @@ class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     val csrfTags = Map(Token.NameRequestTag -> "csrfToken", Token.RequestTag -> tokenProvider.generateToken)
     FakeRequest("POST", "/", FakeHeaders(), AnyContentAsFormUrlEncoded, tags = csrfTags).withFormUrlEncodedBody()
   }
+
 }
