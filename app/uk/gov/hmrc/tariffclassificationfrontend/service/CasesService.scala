@@ -54,6 +54,18 @@ class CasesService @Inject()(appConfig: AppConfig, auditService: AuditService,
 
   }
 
+
+  def reopenCase(original: Case, operator: Operator)
+                (implicit hc: HeaderCarrier): Future[Case] = {
+    for {
+      updated <- connector.updateCase(original.copy(status = CaseStatus.OPEN))
+      _ <- addEvent(original, updated, operator)
+      _ = auditService.auditCaseReOpen(original, updated, operator)
+    } yield updated
+
+  }
+
+
   def referCase(original: Case, operator: Operator)
                (implicit hc: HeaderCarrier): Future[Case] = {
     for {
@@ -83,10 +95,10 @@ class CasesService @Inject()(appConfig: AppConfig, auditService: AuditService,
         .map { email: EmailTemplate =>
           s"The applicant was sent an Email:\n- Subject: ${email.subject}\n- Body: ${email.plain}"
         } recover {
-          case t: Throwable =>
-            Logger.error("Failed to send email", t)
-            "Attempted to send an email to the applicant which failed"
-        }
+        case t: Throwable =>
+          Logger.error("Failed to send email", t)
+          "Attempted to send an email to the applicant which failed"
+      }
 
       // Create the event
       _ <- addEvent(original, updated, operator, Some(message))
