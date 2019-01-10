@@ -17,43 +17,40 @@
 package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
 import javax.inject.{Inject, Singleton}
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.MessagesApi
 import play.api.mvc._
-import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus}
+import uk.gov.hmrc.tariffclassificationfrontend.models.Case
+import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.OPEN
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
 @Singleton
 class ReferCaseController @Inject()(authenticatedAction: AuthenticatedAction,
                                     casesService: CasesService,
                                     val messagesApi: MessagesApi,
-                                    implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
+                                    implicit val appConfig: AppConfig) extends CaseAction {
 
+  override protected val caseService: CasesService = casesService
+  override protected val config: AppConfig = appConfig
+  override protected lazy val redirect: String => Call = routes.CaseController.applicationDetails
+  override protected def isValidCase: Case => Boolean = _.status == OPEN
 
   def referCase(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
-    getCaseAndRenderView(reference, c => successful(views.html.refer_case(c)))
+    getCaseAndRenderView(
+      caseReference = reference,
+      toHtml = c => successful(views.html.refer_case(c))
+    )
   }
 
   def confirmReferCase(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
-    getCaseAndRenderView(reference, casesService.referCase(_, request.operator).map {
-      views.html.confirm_refer_case(_)
-    })
-  }
-
-  private def getCaseAndRenderView(reference: String, toHtml: Case => Future[HtmlFormat.Appendable])
-                                  (implicit request: Request[_]): Future[Result] = {
-    casesService.getOne(reference).flatMap {
-      case Some(c: Case) if c.status == CaseStatus.OPEN => toHtml(c).map(Ok(_))
-      case Some(_) => successful(Redirect(routes.CaseController.applicationDetails(reference)))
-      case _ => successful(Ok(views.html.case_not_found(reference)))
-    }
+    getCaseAndRenderView(
+      caseReference = reference,
+      toHtml = casesService.referCase(_, request.operator).map(views.html.confirm_refer_case(_))
+    )
   }
 
 }
