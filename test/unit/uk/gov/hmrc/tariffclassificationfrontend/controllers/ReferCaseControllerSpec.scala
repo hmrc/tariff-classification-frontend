@@ -31,14 +31,14 @@ import play.filters.csrf.CSRF.{Token, TokenProvider}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, Operator, Queue}
-import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, QueuesService}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, Operator}
+import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.tariffclassificationfrontend.utils.Cases
 
 import scala.concurrent.Future.{failed, successful}
 
-class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
-  with GuiceOneAppPerSuite with MockitoSugar with BeforeAndAfterEach with ControllerAssertions{
+class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
+  with GuiceOneAppPerSuite with MockitoSugar with BeforeAndAfterEach with ControllerAssertions {
 
   private val env = Environment.simple()
 
@@ -46,17 +46,16 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   private val messageApi = new DefaultMessagesApi(env, configuration, new DefaultLangs(configuration))
   private val appConfig = new AppConfig(configuration, env)
   private val casesService = mock[CasesService]
-  private val queueService = mock[QueuesService]
-  private val queue = mock[Queue]
   private val operator = mock[Operator]
 
   private val caseWithStatusNEW = Cases.btiCaseExample.copy(status = CaseStatus.NEW)
   private val caseWithStatusOPEN = Cases.btiCaseExample.copy(status = CaseStatus.OPEN)
+  private val caseWithStatusREFERRED = Cases.btiCaseExample.copy(status = CaseStatus.REFERRED)
 
   private implicit val mat: Materializer = app.materializer
   private implicit val hc: HeaderCarrier = HeaderCarrier()
 
-  private val controller = new ReleaseCaseController(new SuccessfulAuthenticatedAction(operator), casesService, queueService, messageApi, appConfig)
+  private val controller = new ReferCaseController(new SuccessfulAuthenticatedAction(operator), casesService, messageApi, appConfig)
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -68,25 +67,23 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     reset(casesService)
   }
 
-  "Release Case" should {
+  "Refer Case" should {
 
     "return OK and HTML content type" in {
-      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusNEW)))
-      when(queueService.getNonGateway).thenReturn(Seq.empty)
+      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusOPEN)))
 
-      val result: Result = await(controller.releaseCase("reference")(newFakeGETRequestWithCSRF()))
+      val result: Result = await(controller.referCase("reference")(newFakeGETRequestWithCSRF()))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result) shouldBe Some("utf-8")
-      bodyOf(result) should include("Release this Case for Classification")
+      bodyOf(result) should include("Refer this case")
     }
 
-    "redirect to Application Details for non NEW statuses" in {
-      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusOPEN)))
-      when(queueService.getNonGateway).thenReturn(Seq.empty)
+    "redirect to Application Details for non OPEN statuses" in {
+      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusNEW)))
 
-      val result: Result = await(controller.releaseCase("reference")(newFakeGETRequestWithCSRF()))
+      val result: Result = await(controller.referCase("reference")(newFakeGETRequestWithCSRF()))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
@@ -96,9 +93,8 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
     "return Not Found and HTML content type" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(None))
-      when(queueService.getNonGateway).thenReturn(Seq.empty)
 
-      val result: Result = await(controller.releaseCase("reference")(newFakeGETRequestWithCSRF()))
+      val result: Result = await(controller.referCase("reference")(newFakeGETRequestWithCSRF()))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -108,40 +104,24 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
   }
 
-  "Release Case To Queue" should {
+  "Confirm Refer a Case" should {
 
     "return OK and HTML content type" in {
-      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusNEW)))
-      when(queueService.getOneBySlug("queue")).thenReturn(Some(queue))
-      when(casesService.releaseCase(refEq(caseWithStatusNEW), any[Queue], refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusOPEN))
-
-      val result: Result = await(controller.releaseCaseToQueue("reference")(newFakePOSTRequestWithCSRF("queue")))
-
-      status(result) shouldBe Status.OK
-      contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
-      charsetOf(result) shouldBe Some("utf-8")
-      bodyOf(result) should include("This case has been released")
-    }
-
-    "redirect back to case on Form Error" in {
-      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusNEW)))
-      when(queueService.getOneBySlug("queue")).thenReturn(Some(queue))
-      when(queueService.getNonGateway).thenReturn(Seq.empty)
-      when(casesService.releaseCase(refEq(caseWithStatusNEW), any[Queue], refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusOPEN))
-
-      val result: Result = await(controller.releaseCaseToQueue("reference")(newInvalidFakePOSTRequestWithCSRF()))
-
-      status(result) shouldBe Status.OK
-      contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
-      charsetOf(result) shouldBe Some("utf-8")
-      bodyOf(result) should include("Release this Case for Classification")
-    }
-
-    "redirect to Application Details for non NEW statuses" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusOPEN)))
-      when(queueService.getOneBySlug("queue")).thenReturn(Some(queue))
+      when(casesService.referCase(refEq(caseWithStatusOPEN),refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREFERRED))
 
-      val result: Result= await(controller.releaseCaseToQueue("reference")(newFakePOSTRequestWithCSRF("queue")))
+      val result: Result = await(controller.confirmReferCase("reference")(newFakePOSTRequestWithCSRF("queue")))
+
+      status(result) shouldBe Status.OK
+      contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
+      charsetOf(result) shouldBe Some("utf-8")
+      bodyOf(result) should include("This case has been referred")
+    }
+
+    "redirect to Application Details for non OPEN statuses" in {
+      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusNEW)))
+
+      val result: Result= await(controller.confirmReferCase("reference")(newFakePOSTRequestWithCSRF("queue")))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
@@ -151,9 +131,7 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
     "return Not Found and HTML content type on missing Case" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(None))
-      when(queueService.getOneBySlug("queue")).thenReturn(Some(queue))
-
-      val result: Result = await(controller.releaseCaseToQueue("reference")(newFakePOSTRequestWithCSRF("queue")))
+      val result: Result = await(controller.confirmReferCase("reference")(newFakePOSTRequestWithCSRF("queue")))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -161,26 +139,13 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       bodyOf(result) should include("We could not find a Case with reference")
     }
 
-    "return Not Found and HTML content type on missing Queue" in {
-      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusNEW)))
-      when(queueService.getOneBySlug("queue")).thenReturn(None)
-
-      val result: Result = await(controller.releaseCaseToQueue("reference")(newFakePOSTRequestWithCSRF("queue")))
-
-      status(result) shouldBe Status.OK
-      contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
-      charsetOf(result) shouldBe Some("utf-8")
-      bodyOf(result) should include("Queue queue not found")
-    }
-
     "propagate the error in case the CaseService fails to release the case" in {
       val error = new IllegalStateException("expected error")
 
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(failed(error))
-      when(queueService.getOneBySlug("queue")).thenReturn(Some(queue))
 
       val caught = intercept[error.type] {
-        await(controller.releaseCaseToQueue("reference")(newFakePOSTRequestWithCSRF("queue")))
+        await(controller.confirmReferCase("reference")(newFakePOSTRequestWithCSRF("queue")))
       }
       caught shouldBe error
     }
@@ -193,12 +158,6 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   }
 
   private def newFakePOSTRequestWithCSRF(queue: String): FakeRequest[AnyContentAsFormUrlEncoded] = {
-    val tokenProvider: TokenProvider = app.injector.instanceOf[TokenProvider]
-    val csrfTags = Map(Token.NameRequestTag -> "csrfToken", Token.RequestTag -> tokenProvider.generateToken)
-    FakeRequest("POST", "/", FakeHeaders(), AnyContentAsFormUrlEncoded, tags = csrfTags).withFormUrlEncodedBody("queue" -> queue)
-  }
-
-  private def newInvalidFakePOSTRequestWithCSRF(): FakeRequest[AnyContentAsFormUrlEncoded] = {
     val tokenProvider: TokenProvider = app.injector.instanceOf[TokenProvider]
     val csrfTags = Map(Token.NameRequestTag -> "csrfToken", Token.RequestTag -> tokenProvider.generateToken)
     FakeRequest("POST", "/", FakeHeaders(), AnyContentAsFormUrlEncoded, tags = csrfTags).withFormUrlEncodedBody()

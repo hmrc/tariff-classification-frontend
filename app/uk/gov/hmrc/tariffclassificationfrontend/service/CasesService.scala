@@ -54,6 +54,16 @@ class CasesService @Inject()(appConfig: AppConfig, auditService: AuditService,
 
   }
 
+  def referCase(original: Case, operator: Operator)
+               (implicit hc: HeaderCarrier): Future[Case] = {
+    for {
+      updated <- connector.updateCase(original.copy(status = CaseStatus.REFERRED))
+      _ <- addEvent(original, updated, operator)
+      _ = auditService.auditCaseReferred(original, updated, operator)
+    } yield updated
+
+  }
+
   def completeCase(original: Case, operator: Operator, clock: Clock = Clock.systemDefaultZone())
                   (implicit hc: HeaderCarrier): Future[Case] = {
     val startDate = LocalDate.now(clock).atStartOfDay(appConfig.zoneId)
