@@ -29,7 +29,7 @@ class ReferCaseSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response: WSResponse = await(ws.url(s"http://localhost:$port/tariff-classification/cases/1/refer").get())
+      val response: WSResponse = await(ws.url(s"$backendRoot/cases/1/refer").get())
 
       // Then
       response.status shouldBe OK
@@ -41,7 +41,7 @@ class ReferCaseSpec extends IntegrationTest with MockitoSugar {
       givenAuthFailed()
 
       // When
-      val response: WSResponse = await(ws.url(s"http://localhost:$port/tariff-classification/cases/1/refer").get())
+      val response: WSResponse = await(ws.url(s"$backendRoot/cases/1/refer").get())
 
       // Then
       response.status shouldBe OK
