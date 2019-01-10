@@ -29,10 +29,11 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
-trait CaseAction extends FrontendController with I18nSupport {
+trait RenderCaseAction extends FrontendController with I18nSupport {
 
-  protected implicit def config: AppConfig
-  protected def caseService: CasesService
+  protected implicit val config: AppConfig
+  protected val caseService: CasesService
+
   protected def redirect: String => Call
   protected def isValidCase: Case => Boolean
 

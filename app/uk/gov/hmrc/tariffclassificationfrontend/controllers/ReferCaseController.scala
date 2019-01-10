@@ -32,24 +32,25 @@ import scala.concurrent.Future.successful
 class ReferCaseController @Inject()(authenticatedAction: AuthenticatedAction,
                                     casesService: CasesService,
                                     val messagesApi: MessagesApi,
-                                    implicit val appConfig: AppConfig) extends CaseAction {
+                                    implicit val appConfig: AppConfig) extends RenderCaseAction {
 
-  override protected val caseService: CasesService = casesService
   override protected val config: AppConfig = appConfig
-  override protected lazy val redirect: String => Call = routes.CaseController.applicationDetails
+  override protected val caseService: CasesService = casesService
+
+  override protected def redirect: String => Call = routes.CaseController.applicationDetails
   override protected def isValidCase: Case => Boolean = _.status == OPEN
 
   def referCase(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     getCaseAndRenderView(
-      caseReference = reference,
-      toHtml = c => successful(views.html.refer_case(c))
+      reference,
+      c => successful(views.html.refer_case(c))
     )
   }
 
   def confirmReferCase(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     getCaseAndRenderView(
-      caseReference = reference,
-      toHtml = casesService.referCase(_, request.operator).map(views.html.confirm_refer_case(_))
+      reference,
+      casesService.referCase(_, request.operator).map(views.html.confirm_refer_case(_))
     )
   }
 

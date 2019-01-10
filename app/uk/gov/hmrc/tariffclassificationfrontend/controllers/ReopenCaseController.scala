@@ -32,26 +32,27 @@ import scala.concurrent.Future.successful
 class ReopenCaseController @Inject()(authenticatedAction: AuthenticatedAction,
                                      casesService: CasesService,
                                      val messagesApi: MessagesApi,
-                                     implicit val appConfig: AppConfig) extends CaseAction {
+                                     implicit val appConfig: AppConfig) extends RenderCaseAction {
 
-  override protected val caseService: CasesService = casesService
   override protected val config: AppConfig = appConfig
-  override protected lazy val redirect: String => Call = routes.CaseController.applicationDetails
+  override protected val caseService: CasesService = casesService
+
+  override protected def redirect: String => Call = routes.CaseController.applicationDetails
   override protected def isValidCase: Case => Boolean = c => validPreviousStatuses.contains(c.status)
 
   private lazy val validPreviousStatuses = Seq(SUSPENDED, REFERRED)
 
   def reopenCase(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     getCaseAndRenderView(
-      caseReference = reference,
-      toHtml = c => successful(views.html.reopen_case(c))
+      reference,
+      c => successful(views.html.reopen_case(c))
     )
   }
 
   def confirmReopenCase(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     getCaseAndRenderView(
-      caseReference = reference,
-      toHtml = casesService.reopenCase(_, request.operator).map(views.html.confirm_reopen_case(_))
+      reference,
+      casesService.reopenCase(_, request.operator).map(views.html.confirm_reopen_case(_))
     )
   }
 
