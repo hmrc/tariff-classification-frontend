@@ -29,25 +29,37 @@ class AuditService @Inject()(auditConnector: DefaultAuditConnector) {
 
   def auditCaseReferred(oldCase: Case, updatedCase: Case, operator: Operator)
                        (implicit hc: HeaderCarrier): Unit = {
-    sendExplicitAuditEvent(CaseReferred, changeStatusPayload(oldCase, updatedCase, operator))
+    sendExplicitAuditEvent(
+      auditEventType = CaseReferred,
+      auditPayload = statusChangeAuditPayload(oldCase, updatedCase, operator)
+    )
   }
 
   def auditCaseReOpen(oldCase: Case, updatedCase: Case, operator: Operator)
                      (implicit hc: HeaderCarrier): Unit = {
-    sendExplicitAuditEvent(CaseReopen, changeStatusPayload(oldCase, updatedCase, operator))
+    sendExplicitAuditEvent(
+      auditEventType = CaseReopen,
+      auditPayload = statusChangeAuditPayload(oldCase, updatedCase, operator)
+    )
   }
 
   def auditCaseReleased(oldCase: Case, updatedCase: Case, queue: Queue, operator: Operator)
                        (implicit hc: HeaderCarrier): Unit = {
-    sendExplicitAuditEvent(CaseReleased, changeStatusPayload(oldCase, updatedCase, operator) + ("queue" -> queue.name))
+    sendExplicitAuditEvent(
+      auditEventType = CaseReleased,
+      auditPayload = statusChangeAuditPayload(oldCase, updatedCase, operator) + ("queue" -> queue.name)
+    )
   }
 
   def auditCaseCompleted(oldCase: Case, updatedCase: Case, operator: Operator)
                         (implicit hc: HeaderCarrier): Unit = {
-    sendExplicitAuditEvent(CaseCompleted, changeStatusPayload(oldCase, updatedCase, operator))
+    sendExplicitAuditEvent(
+      auditEventType = CaseCompleted,
+      auditPayload = statusChangeAuditPayload(oldCase, updatedCase, operator)
+    )
   }
 
-  private def changeStatusPayload(oldCase: Case, updatedCase: Case, operator: Operator) = {
+  private def statusChangeAuditPayload(oldCase: Case, updatedCase: Case, operator: Operator): Map[String, String] = {
     Map(
       "reference" -> updatedCase.reference,
       "newStatus" -> updatedCase.status.toString,
@@ -66,7 +78,7 @@ class AuditService @Inject()(auditConnector: DefaultAuditConnector) {
 
 object AuditPayloadType {
 
-  val CaseReopen = "CaseReopen"
+  val CaseReopen = "CaseReopened"
   val CaseReferred = "CaseReferred"
   val CaseReleased = "CaseReleased"
   val CaseCompleted = "CaseCompleted"
