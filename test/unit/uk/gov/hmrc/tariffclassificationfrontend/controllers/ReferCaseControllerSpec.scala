@@ -47,7 +47,6 @@ class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   private val messageApi = new DefaultMessagesApi(env, configuration, new DefaultLangs(configuration))
   private val appConfig = new AppConfig(configuration, env)
   private val casesService = mock[CasesService]
-  private val queue = mock[Queue]
   private val operator = mock[Operator]
 
   private val caseWithStatusNEW = Cases.btiCaseExample.copy(status = CaseStatus.NEW)
@@ -79,7 +78,7 @@ class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result) shouldBe Some("utf-8")
-      bodyOf(result) should include("Refer this Case")
+      bodyOf(result) should include("Refer this case")
     }
 
     "redirect to Application Details for non OPEN statuses" in {
@@ -118,18 +117,6 @@ class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result) shouldBe Some("utf-8")
       bodyOf(result) should include("This case has been referred")
-    }
-
-    "redirect back to case on Form Error" in {
-      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusOPEN)))
-      when(casesService.referCase(refEq(caseWithStatusOPEN),refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREFERRED))
-
-      val result: Result = await(controller.confirmReferCase("reference")(newInvalidFakePOSTRequestWithCSRF()))
-
-      status(result) shouldBe Status.OK
-      contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
-      charsetOf(result) shouldBe Some("utf-8")
-      bodyOf(result) should include("Refer this Case")
     }
 
     "redirect to Application Details for non OPEN statuses" in {
