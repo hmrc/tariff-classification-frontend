@@ -61,7 +61,6 @@ class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
   override def afterEach(): Unit = {
     super.afterEach()
-
     reset(casesService)
   }
 

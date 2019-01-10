@@ -116,7 +116,7 @@ class ReopenCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     }
 
 
-    def doNotRedirectWith(allowedStatus: CaseStatus*) = {
+    def doNotRedirectWith(allowedStatus: CaseStatus*): Unit = {
 
       for (s <- CaseStatus.values) {
         val statusCase = Cases.btiCaseExample.copy(status = s)

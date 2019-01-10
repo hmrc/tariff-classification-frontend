@@ -58,13 +58,8 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
   private val controller = new ReleaseCaseController(new SuccessfulAuthenticatedAction(operator), casesService, queueService, messageApi, appConfig)
 
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-  }
-
   override def afterEach(): Unit = {
     super.afterEach()
-
     reset(casesService)
   }
 
