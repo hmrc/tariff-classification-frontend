@@ -22,7 +22,6 @@ import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterEach, Matchers, WordSpec}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.http.HeaderNames.LOCATION
 import play.api.http.{MimeTypes, Status}
 import play.api.i18n.{DefaultLangs, DefaultMessagesApi}
 import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded, Result}
@@ -32,14 +31,14 @@ import play.filters.csrf.CSRF.{Token, TokenProvider}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, Operator, Queue}
-import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, QueuesService}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, Operator}
+import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.tariffclassificationfrontend.utils.Cases
 
 import scala.concurrent.Future.{failed, successful}
 
 class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
-  with GuiceOneAppPerSuite with MockitoSugar with BeforeAndAfterEach {
+  with GuiceOneAppPerSuite with MockitoSugar with BeforeAndAfterEach with ControllerAssertions {
 
   private val env = Environment.simple()
 
@@ -161,28 +160,6 @@ class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   private def newFakePOSTRequestWithCSRF(queue: String): FakeRequest[AnyContentAsFormUrlEncoded] = {
     val tokenProvider: TokenProvider = app.injector.instanceOf[TokenProvider]
     val csrfTags = Map(Token.NameRequestTag -> "csrfToken", Token.RequestTag -> tokenProvider.generateToken)
-    FakeRequest("POST", "/", FakeHeaders(), AnyContentAsFormUrlEncoded, tags = csrfTags).withFormUrlEncodedBody("queue" -> queue)
-  }
-
-  private def newInvalidFakePOSTRequestWithCSRF(): FakeRequest[AnyContentAsFormUrlEncoded] = {
-    val tokenProvider: TokenProvider = app.injector.instanceOf[TokenProvider]
-    val csrfTags = Map(Token.NameRequestTag -> "csrfToken", Token.RequestTag -> tokenProvider.generateToken)
     FakeRequest("POST", "/", FakeHeaders(), AnyContentAsFormUrlEncoded, tags = csrfTags).withFormUrlEncodedBody()
   }
-
-  private def locationOf(result: Result): Option[String] = {
-    result.header.headers.get(LOCATION)
-  }
-
-  private def contentTypeOf(result: Result): Option[String] = {
-    result.body.contentType.map(_.split(";").take(1).mkString.trim)
-  }
-
-  private def charsetOf(result: Result): Option[String] = {
-    result.body.contentType match {
-      case Some(s) if s.contains("charset=") => Some(s.split("; *charset=").drop(1).mkString.trim)
-      case _ => None
-    }
-  }
-
 }

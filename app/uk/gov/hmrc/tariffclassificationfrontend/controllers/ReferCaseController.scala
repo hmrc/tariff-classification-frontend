@@ -51,7 +51,7 @@ class ReferCaseController @Inject()(authenticatedAction: AuthenticatedAction,
                                   (implicit request: Request[_]): Future[Result] = {
     casesService.getOne(reference).flatMap {
       case Some(c: Case) if c.status == CaseStatus.OPEN => toHtml(c).map(Ok(_))
-      case Some(_)  => successful(Redirect(routes.CaseController.applicationDetails(reference)))
+      case Some(_) => successful(Redirect(routes.CaseController.applicationDetails(reference)))
       case _ => successful(Ok(views.html.case_not_found(reference)))
     }
   }

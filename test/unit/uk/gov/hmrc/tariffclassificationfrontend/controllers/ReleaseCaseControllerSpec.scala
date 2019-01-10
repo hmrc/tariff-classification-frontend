@@ -22,7 +22,6 @@ import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterEach, Matchers, WordSpec}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.http.HeaderNames.LOCATION
 import play.api.http.{MimeTypes, Status}
 import play.api.i18n.{DefaultLangs, DefaultMessagesApi}
 import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded, Result}
@@ -39,7 +38,7 @@ import uk.gov.tariffclassificationfrontend.utils.Cases
 import scala.concurrent.Future.{failed, successful}
 
 class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
-  with GuiceOneAppPerSuite with MockitoSugar with BeforeAndAfterEach {
+  with GuiceOneAppPerSuite with MockitoSugar with BeforeAndAfterEach with ControllerAssertions{
 
   private val env = Environment.simple()
 
@@ -204,20 +203,4 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     val csrfTags = Map(Token.NameRequestTag -> "csrfToken", Token.RequestTag -> tokenProvider.generateToken)
     FakeRequest("POST", "/", FakeHeaders(), AnyContentAsFormUrlEncoded, tags = csrfTags).withFormUrlEncodedBody()
   }
-
-  private def locationOf(result: Result): Option[String] = {
-    result.header.headers.get(LOCATION)
-  }
-
-  private def contentTypeOf(result: Result): Option[String] = {
-    result.body.contentType.map(_.split(";").take(1).mkString.trim)
-  }
-
-  private def charsetOf(result: Result): Option[String] = {
-    result.body.contentType match {
-      case Some(s) if s.contains("charset=") => Some(s.split("; *charset=").drop(1).mkString.trim)
-      case _ => None
-    }
-  }
-
 }
