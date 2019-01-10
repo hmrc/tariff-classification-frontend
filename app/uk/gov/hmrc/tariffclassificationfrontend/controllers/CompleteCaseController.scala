@@ -36,7 +36,7 @@ class CompleteCaseController @Inject()(authenticatedAction: AuthenticatedAction,
 
   override protected val caseService: CasesService = casesService
   override protected val config: AppConfig = appConfig
-  override protected lazy val redirect: String => Call = routes.CaseController.applicationDetails
+  override protected lazy val redirect: String => Call = routes.CaseController.rulingDetails
   override protected def isValidCase: Case => Boolean = c => c.status == OPEN && c.decision.isDefined
 
   def completeCase(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
@@ -49,7 +49,7 @@ class CompleteCaseController @Inject()(authenticatedAction: AuthenticatedAction,
   def confirmCompleteCase(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     getCaseAndRenderView(
       caseReference = reference,
-      casesService.completeCase(_, request.operator).map(views.html.confirm_complete_case(_))
+      toHtml = casesService.completeCase(_, request.operator).map(views.html.confirm_complete_case(_))
     )
   }
 
