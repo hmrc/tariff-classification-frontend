@@ -58,13 +58,8 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
   private val controller = new ReleaseCaseController(new SuccessfulAuthenticatedAction(operator), casesService, queueService, messageApi, appConfig)
 
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-  }
-
   override def afterEach(): Unit = {
     super.afterEach()
-
     reset(casesService)
   }
 
@@ -203,4 +198,5 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     val csrfTags = Map(Token.NameRequestTag -> "csrfToken", Token.RequestTag -> tokenProvider.generateToken)
     FakeRequest("POST", "/", FakeHeaders(), AnyContentAsFormUrlEncoded, tags = csrfTags).withFormUrlEncodedBody()
   }
+
 }

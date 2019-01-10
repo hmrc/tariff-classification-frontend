@@ -57,13 +57,8 @@ class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
   private val controller = new ReferCaseController(new SuccessfulAuthenticatedAction(operator), casesService, messageApi, appConfig)
 
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-  }
-
   override def afterEach(): Unit = {
     super.afterEach()
-
     reset(casesService)
   }
 
@@ -162,4 +157,5 @@ class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     val csrfTags = Map(Token.NameRequestTag -> "csrfToken", Token.RequestTag -> tokenProvider.generateToken)
     FakeRequest("POST", "/", FakeHeaders(), AnyContentAsFormUrlEncoded, tags = csrfTags).withFormUrlEncodedBody()
   }
+
 }
