@@ -27,6 +27,16 @@ import scala.concurrent.ExecutionContext.Implicits.global
 @Singleton
 class AuditService @Inject()(auditConnector: DefaultAuditConnector) {
 
+  def auditCaseReferred(oldCase: Case, updatedCase: Case, operator: Operator)
+                       (implicit hc: HeaderCarrier): Unit = {
+    sendExplicitAuditEvent(CaseReferred, Map(
+      "reference" -> updatedCase.reference,
+      "newStatus" -> updatedCase.status.toString,
+      "previousStatus" -> oldCase.status.toString,
+      "operatorId" -> operator.id
+    ))
+  }
+
   def auditCaseReleased(oldCase: Case, updatedCase: Case, queue: Queue, operator: Operator)
                        (implicit hc: HeaderCarrier): Unit = {
     sendExplicitAuditEvent(CaseReleased, Map(
@@ -58,6 +68,7 @@ class AuditService @Inject()(auditConnector: DefaultAuditConnector) {
 
 object AuditPayloadType {
 
+  val CaseReferred = "CaseReferred"
   val CaseReleased = "CaseReleased"
   val CaseCompleted = "CaseCompleted"
 }
