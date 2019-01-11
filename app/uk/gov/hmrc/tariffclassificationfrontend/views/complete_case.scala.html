@@ -38,8 +38,8 @@
 
                 @form(action = uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CompleteCaseController.confirmCompleteCase(c.reference), 'class -> "form") {
                     @CSRF.formField
-                    <button class="button" type="submit">Complete and publish case</button>
-                    <a class="secondary-button" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.rulingDetails(c.reference)">Cancel</a>
+                    <button class="button" id="complete-case-button" type="submit">Complete and publish case</button>
+                    <a class="secondary-button" id="cancel-button" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.rulingDetails(c.reference)">Cancel</a>
                 }
 
             </div>

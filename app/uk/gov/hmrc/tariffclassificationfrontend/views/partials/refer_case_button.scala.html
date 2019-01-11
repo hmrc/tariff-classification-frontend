@@ -18,7 +18,7 @@
 @(c: Case)
 
 @if(c.status == CaseStatus.OPEN) {
-    <a id="release-case-button" class="button" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.ReferCaseController.referCase(c.reference)">
+    <a id="refer-case-button" class="button" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.ReferCaseController.referCase(c.reference)">
         Refer case
     </a>
 }

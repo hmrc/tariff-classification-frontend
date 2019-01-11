@@ -36,8 +36,8 @@
             @helper.form(action = uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.ReferCaseController.confirmReferCase(c.reference), 'id -> "refer-case") {
                 @helper.CSRF.formField
                 <div>
-                    <button class="button" id="referCaseButton" type="submit">Refer case</button>
-                    <a class="secondary-button" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.applicationDetails(c.reference)"> Cancel</a>
+                    <button class="button" id="refer-case-button" type="submit">Refer case</button>
+                    <a class="secondary-button" id="cancel-button" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.applicationDetails(c.reference)">Cancel</a>
                 </div>
             }
         </div>
