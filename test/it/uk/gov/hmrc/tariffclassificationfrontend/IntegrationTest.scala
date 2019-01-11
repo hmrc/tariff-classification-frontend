@@ -20,8 +20,8 @@ trait IntegrationTest extends UnitSpec with GuiceOneServerPerSuite with Resource
     .build()
 
   protected val ws = fakeApplication().injector.instanceOf[WSClient]
-  protected val backendRoot = s"http://localhost:$port/tariff-classification"
-  protected val filestoreRoot = s"http://localhost:$port/binding-tariff-filestore"
+  protected val frontendRoot = s"http://localhost:$port/tariff-classification"
+  protected val filestoreRoot = s"http://localhost:$port"
 
   protected def givenAuthSuccess(): Unit = {
     stubFor(post(urlEqualTo("/auth/authorise"))

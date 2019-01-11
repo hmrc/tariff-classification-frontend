@@ -57,7 +57,7 @@ class FileStoreConnectorTest extends UnitSpec with WiremockTestServer with Mocki
       given(att.id) willReturn "id"
 
       stubFor(
-        get("/binding-tariff-filestore/file/id")
+        get("/file/id")
           .willReturn(aResponse().withStatus(Status.NOT_FOUND))
       )
 
@@ -69,7 +69,7 @@ class FileStoreConnectorTest extends UnitSpec with WiremockTestServer with Mocki
       given(att.id) willReturn "id"
 
       stubFor(
-        get("/binding-tariff-filestore/file/id")
+        get("/file/id")
           .willReturn(
             aResponse()
               .withStatus(Status.OK)
@@ -94,7 +94,7 @@ class FileStoreConnectorTest extends UnitSpec with WiremockTestServer with Mocki
       given(att.id) willReturn "id"
 
       stubFor(
-        get("/binding-tariff-filestore/file/id")
+        get("/file/id")
           .willReturn(
             aResponse()
               .withStatus(Status.OK)
@@ -128,7 +128,7 @@ class FileStoreConnectorTest extends UnitSpec with WiremockTestServer with Mocki
       given(att2.id) willReturn "id2"
 
       stubFor(
-        get("/binding-tariff-filestore/file?id=id1&id=id2")
+        get("/file?id=id1&id=id2")
           .willReturn(
             aResponse()
               .withStatus(Status.OK)
@@ -155,7 +155,7 @@ class FileStoreConnectorTest extends UnitSpec with WiremockTestServer with Mocki
       given(att2.id) willReturn "id2"
 
       stubFor(
-        get("/binding-tariff-filestore/file?id=id1&id=id2")
+        get("/file?id=id1&id=id2")
           .willReturn(
             aResponse()
               .withStatus(Status.OK)

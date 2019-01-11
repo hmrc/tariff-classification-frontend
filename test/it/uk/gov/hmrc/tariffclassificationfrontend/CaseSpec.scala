@@ -19,7 +19,7 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response = await(ws.url(s"$backendRoot/cases/1").get())
+      val response = await(ws.url(s"$frontendRoot/cases/1").get())
 
       // Then
       response.status shouldBe OK
@@ -31,7 +31,7 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
       givenAuthFailed()
 
       // When
-      val response = await(ws.url(s"$backendRoot/cases/1").get())
+      val response = await(ws.url(s"$frontendRoot/cases/1").get())
 
       // Then
       response.status shouldBe OK
@@ -51,7 +51,7 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response = await(ws.url(s"$backendRoot/cases/1").get())
+      val response = await(ws.url(s"$frontendRoot/cases/1").get())
 
       // Then
       response.status shouldBe OK
@@ -63,7 +63,7 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
       givenAuthFailed()
 
       // When
-      val response = await(ws.url(s"$backendRoot/cases/1").get())
+      val response = await(ws.url(s"$frontendRoot/cases/1").get())
 
       // Then
       response.status shouldBe OK
@@ -90,7 +90,7 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response = await(ws.url(s"$backendRoot/cases/1/application").get())
+      val response = await(ws.url(s"$frontendRoot/cases/1/application").get())
 
       // Then
       response.status shouldBe OK
@@ -102,7 +102,7 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
       givenAuthFailed()
 
       // When
-      val response = await(ws.url(s"$backendRoot/cases/1/application").get())
+      val response = await(ws.url(s"$frontendRoot/cases/1/application").get())
 
       // Then
       response.status shouldBe OK
@@ -129,7 +129,7 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response = await(ws.url(s"$backendRoot/cases/1/ruling").get())
+      val response = await(ws.url(s"$frontendRoot/cases/1/ruling").get())
 
       // Then
       response.status shouldBe OK
@@ -141,7 +141,7 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
       givenAuthFailed()
 
       // When
-      val response = await(ws.url(s"$backendRoot/cases/1/ruling").get())
+      val response = await(ws.url(s"$frontendRoot/cases/1/ruling").get())
 
       // Then
       response.status shouldBe OK

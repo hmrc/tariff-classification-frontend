@@ -36,12 +36,12 @@ class FileStoreConnector @Inject()(appConfig: AppConfig, http: HttpClient) {
       Future.successful(Seq.empty)
     } else {
       val query = s"?${attachments.map(att => s"id=${att.id}").mkString("&")}"
-      http.GET[Seq[FileMetadata]](s"${appConfig.fileStoreUrl}/binding-tariff-filestore/file$query")
+      http.GET[Seq[FileMetadata]](s"${appConfig.fileStoreUrl}/file$query")
     }
   }
 
   def get(attachment: Attachment)(implicit headerCarrier: HeaderCarrier): Future[Option[FileMetadata]] = {
-    http.GET[Option[FileMetadata]](s"${appConfig.fileStoreUrl}/binding-tariff-filestore/file/${attachment.id}")
+    http.GET[Option[FileMetadata]](s"${appConfig.fileStoreUrl}/file/${attachment.id}")
   }
 
 }
