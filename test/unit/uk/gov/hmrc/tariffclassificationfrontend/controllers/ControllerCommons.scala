@@ -16,10 +16,13 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
+import play.api.Application
 import play.api.http.HeaderNames.LOCATION
-import play.api.mvc.Result
+import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded, Result}
+import play.api.test.{FakeHeaders, FakeRequest}
+import play.filters.csrf.CSRF.{Token, TokenProvider}
 
-trait ControllerAssertions {
+trait ControllerCommons {
 
   protected def locationOf(result: Result): Option[String] = {
     result.header.headers.get(LOCATION)
@@ -34,6 +37,18 @@ trait ControllerAssertions {
       case Some(s) if s.contains("charset=") => Some(s.split("; *charset=").drop(1).mkString.trim)
       case _ => None
     }
+  }
+
+  protected def newFakeGETRequestWithCSRF(application: Application): FakeRequest[AnyContentAsEmpty.type] = {
+    val tokenProvider: TokenProvider = application.injector.instanceOf[TokenProvider]
+    val csrfTags = Map(Token.NameRequestTag -> "csrfToken", Token.RequestTag -> tokenProvider.generateToken)
+    FakeRequest("GET", "/", FakeHeaders(), AnyContentAsEmpty, tags = csrfTags)
+  }
+
+  protected def newFakePOSTRequestWithCSRF(application: Application, encodedBody: Map[String, String] = Map.empty): FakeRequest[AnyContentAsFormUrlEncoded] = {
+    val tokenProvider: TokenProvider = application.injector.instanceOf[TokenProvider]
+    val csrfTags = Map(Token.NameRequestTag -> "csrfToken", Token.RequestTag -> tokenProvider.generateToken)
+    FakeRequest("POST", "/", FakeHeaders(), AnyContentAsFormUrlEncoded, tags = csrfTags).withFormUrlEncodedBody(encodedBody.toSeq: _*)
   }
 
 }

@@ -39,7 +39,7 @@ import uk.gov.tariffclassificationfrontend.utils.Cases
 import scala.concurrent.Future.{failed, successful}
 
 class ReopenCaseControllerSpec extends WordSpec with Matchers with UnitSpec
-  with GuiceOneAppPerSuite with MockitoSugar with BeforeAndAfterEach with ControllerAssertions {
+  with GuiceOneAppPerSuite with MockitoSugar with BeforeAndAfterEach with ControllerCommons {
 
   private val env = Environment.simple()
 
@@ -69,7 +69,7 @@ class ReopenCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     "return OK and HTML content type" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusREFERRED)))
 
-      val result: Result = await(controller.reopenCase("reference")(newFakeGETRequestWithCSRF()))
+      val result: Result = await(controller.reopenCase("reference")(newFakeGETRequestWithCSRF(app)))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -80,7 +80,7 @@ class ReopenCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     "redirect to Application Details for non REFERRED or SUSPENDED statuses" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusNEW)))
 
-      val result: Result = await(controller.reopenCase("reference")(newFakeGETRequestWithCSRF()))
+      val result: Result = await(controller.reopenCase("reference")(newFakeGETRequestWithCSRF(app)))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
@@ -91,7 +91,7 @@ class ReopenCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     "return Not Found and HTML content type" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(None))
 
-      val result: Result = await(controller.reopenCase("reference")(newFakeGETRequestWithCSRF()))
+      val result: Result = await(controller.reopenCase("reference")(newFakeGETRequestWithCSRF(app)))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -107,7 +107,7 @@ class ReopenCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusREFERRED)))
       when(casesService.reopenCase(refEq(caseWithStatusREFERRED), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusOPEN))
 
-      val result: Result = await(controller.confirmReopenCase("reference")(newFakePOSTRequestWithCSRF()))
+      val result: Result = await(controller.confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(app)))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -122,7 +122,7 @@ class ReopenCaseControllerSpec extends WordSpec with Matchers with UnitSpec
         val statusCase = Cases.btiCaseExample.copy(status = s)
         when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(statusCase)))
         when(casesService.reopenCase(any[Case], refEq(operator))(any[HeaderCarrier])).thenReturn(successful(statusCase))
-        val result: Result = await(controller.confirmReopenCase("reference")(newFakePOSTRequestWithCSRF()))
+        val result: Result = await(controller.confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(app)))
         if (allowedStatus.contains(s)) {
           withClue(s"Status $s must be redirected") {
             status(result) shouldBe Status.OK
@@ -145,7 +145,7 @@ class ReopenCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
     "return Not Found and HTML content type on missing Case" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(None))
-      val result: Result = await(controller.confirmReopenCase("reference")(newFakePOSTRequestWithCSRF()))
+      val result: Result = await(controller.confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(app)))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -159,22 +159,9 @@ class ReopenCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(failed(error))
 
       val caught = intercept[error.type] {
-        await(controller.confirmReopenCase("reference")(newFakePOSTRequestWithCSRF()))
+        await(controller.confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(app)))
       }
       caught shouldBe error
     }
   }
-
-  private def newFakeGETRequestWithCSRF(): FakeRequest[AnyContentAsEmpty.type] = {
-    val tokenProvider: TokenProvider = app.injector.instanceOf[TokenProvider]
-    val csrfTags = Map(Token.NameRequestTag -> "csrfToken", Token.RequestTag -> tokenProvider.generateToken)
-    FakeRequest("GET", "/", FakeHeaders(), AnyContentAsEmpty, tags = csrfTags)
-  }
-
-  private def newFakePOSTRequestWithCSRF(): FakeRequest[AnyContentAsFormUrlEncoded] = {
-    val tokenProvider: TokenProvider = app.injector.instanceOf[TokenProvider]
-    val csrfTags = Map(Token.NameRequestTag -> "csrfToken", Token.RequestTag -> tokenProvider.generateToken)
-    FakeRequest("POST", "/", FakeHeaders(), AnyContentAsFormUrlEncoded, tags = csrfTags).withFormUrlEncodedBody()
-  }
-
 }

@@ -40,7 +40,7 @@ import uk.gov.tariffclassificationfrontend.utils.Cases
 import scala.concurrent.Future.{failed, successful}
 
 class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
-  with GuiceOneAppPerSuite with MockitoSugar with BeforeAndAfterEach with ControllerAssertions {
+  with GuiceOneAppPerSuite with MockitoSugar with BeforeAndAfterEach with ControllerCommons {
 
   private val env = Environment.simple()
 
@@ -69,7 +69,7 @@ class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     "return OK and HTML content type" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusOPEN)))
 
-      val result: Result = await(controller.completeCase("reference")(newFakeGETRequestWithCSRF()))
+      val result: Result = await(controller.completeCase("reference")(newFakeGETRequestWithCSRF(app)))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -80,7 +80,7 @@ class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     "redirect to Application Details for non OPEN statuses" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusCOMPLETED)))
 
-      val result: Result = await(controller.completeCase("reference")(newFakeGETRequestWithCSRF()))
+      val result: Result = await(controller.completeCase("reference")(newFakeGETRequestWithCSRF(app)))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
@@ -91,7 +91,7 @@ class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     "redirect to Application Details for cases without a decision" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithoutDecision)))
 
-      val result: Result = await(controller.completeCase("reference")(newFakeGETRequestWithCSRF()))
+      val result: Result = await(controller.completeCase("reference")(newFakeGETRequestWithCSRF(app)))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
@@ -102,7 +102,7 @@ class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     "return Not Found and HTML content type" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(None))
 
-      val result: Result = await(controller.completeCase("reference")(newFakeGETRequestWithCSRF()))
+      val result: Result = await(controller.completeCase("reference")(newFakeGETRequestWithCSRF(app)))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -118,7 +118,7 @@ class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusOPEN)))
       when(casesService.completeCase(refEq(caseWithStatusOPEN), refEq(operator), any[Clock])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusCOMPLETED))
 
-      val result: Result = await(controller.confirmCompleteCase("reference")(newFakePOSTRequestWithCSRF()))
+      val result: Result = await(controller.confirmCompleteCase("reference")(newFakePOSTRequestWithCSRF(app)))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -129,7 +129,7 @@ class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     "redirect to Application Details for non OPEN statuses" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusCOMPLETED)))
 
-      val result: Result= await(controller.confirmCompleteCase("reference")(newFakePOSTRequestWithCSRF()))
+      val result: Result= await(controller.confirmCompleteCase("reference")(newFakePOSTRequestWithCSRF(app)))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
@@ -140,7 +140,7 @@ class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     "redirect to Application Details for case without decision" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithoutDecision)))
 
-      val result: Result= await(controller.confirmCompleteCase("reference")(newFakePOSTRequestWithCSRF()))
+      val result: Result= await(controller.confirmCompleteCase("reference")(newFakePOSTRequestWithCSRF(app)))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
@@ -151,7 +151,7 @@ class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     "return Not Found and HTML content type on missing Case" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(None))
 
-      val result: Result = await(controller.confirmCompleteCase("reference")(newFakePOSTRequestWithCSRF()))
+      val result: Result = await(controller.confirmCompleteCase("reference")(newFakePOSTRequestWithCSRF(app)))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -165,22 +165,10 @@ class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(failed(error))
 
       val caught = intercept[error.type] {
-        await(controller.confirmCompleteCase("reference")(newFakePOSTRequestWithCSRF()))
+        await(controller.confirmCompleteCase("reference")(newFakePOSTRequestWithCSRF(app)))
       }
       caught shouldBe error
     }
-  }
-
-  private def newFakeGETRequestWithCSRF(): FakeRequest[AnyContentAsEmpty.type] = {
-    val tokenProvider: TokenProvider = app.injector.instanceOf[TokenProvider]
-    val csrfTags = Map(Token.NameRequestTag -> "csrfToken", Token.RequestTag -> tokenProvider.generateToken)
-    FakeRequest("GET", "/", FakeHeaders(), AnyContentAsEmpty, tags = csrfTags)
-  }
-
-  private def newFakePOSTRequestWithCSRF(): FakeRequest[AnyContentAsFormUrlEncoded] = {
-    val tokenProvider: TokenProvider = app.injector.instanceOf[TokenProvider]
-    val csrfTags = Map(Token.NameRequestTag -> "csrfToken", Token.RequestTag -> tokenProvider.generateToken)
-    FakeRequest("POST", "/", FakeHeaders(), AnyContentAsFormUrlEncoded, tags = csrfTags).withFormUrlEncodedBody()
   }
 
 }

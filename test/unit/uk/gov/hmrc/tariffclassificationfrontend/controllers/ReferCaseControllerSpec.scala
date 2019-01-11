@@ -24,10 +24,8 @@ import org.scalatest.{BeforeAndAfterEach, Matchers, WordSpec}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.{MimeTypes, Status}
 import play.api.i18n.{DefaultLangs, DefaultMessagesApi}
-import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded, Result}
-import play.api.test.{FakeHeaders, FakeRequest}
+import play.api.mvc.Result
 import play.api.{Configuration, Environment}
-import play.filters.csrf.CSRF.{Token, TokenProvider}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
@@ -38,7 +36,7 @@ import uk.gov.tariffclassificationfrontend.utils.Cases
 import scala.concurrent.Future.{failed, successful}
 
 class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
-  with GuiceOneAppPerSuite with MockitoSugar with BeforeAndAfterEach with ControllerAssertions {
+  with GuiceOneAppPerSuite with MockitoSugar with BeforeAndAfterEach with ControllerCommons {
 
   private val env = Environment.simple()
 
@@ -67,7 +65,7 @@ class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     "return OK and HTML content type" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusOPEN)))
 
-      val result: Result = await(controller.referCase("reference")(newFakeGETRequestWithCSRF()))
+      val result: Result = await(controller.referCase("reference")(newFakeGETRequestWithCSRF(app)))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -78,7 +76,7 @@ class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     "redirect to Application Details for non OPEN statuses" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusNEW)))
 
-      val result: Result = await(controller.referCase("reference")(newFakeGETRequestWithCSRF()))
+      val result: Result = await(controller.referCase("reference")(newFakeGETRequestWithCSRF(app)))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
@@ -89,7 +87,7 @@ class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     "return Not Found and HTML content type" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(None))
 
-      val result: Result = await(controller.referCase("reference")(newFakeGETRequestWithCSRF()))
+      val result: Result = await(controller.referCase("reference")(newFakeGETRequestWithCSRF(app)))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -105,7 +103,7 @@ class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusOPEN)))
       when(casesService.referCase(refEq(caseWithStatusOPEN), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREFERRED))
 
-      val result: Result = await(controller.confirmReferCase("reference")(newFakePOSTRequestWithCSRF()))
+      val result: Result = await(controller.confirmReferCase("reference")(newFakePOSTRequestWithCSRF(app)))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -116,7 +114,7 @@ class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     "redirect to Application Details for non OPEN statuses" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusNEW)))
 
-      val result: Result = await(controller.confirmReferCase("reference")(newFakePOSTRequestWithCSRF()))
+      val result: Result = await(controller.confirmReferCase("reference")(newFakePOSTRequestWithCSRF(app)))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
@@ -126,7 +124,7 @@ class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
     "return Not Found and HTML content type on missing Case" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(None))
-      val result: Result = await(controller.confirmReferCase("reference")(newFakePOSTRequestWithCSRF()))
+      val result: Result = await(controller.confirmReferCase("reference")(newFakePOSTRequestWithCSRF(app)))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -140,22 +138,10 @@ class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(failed(error))
 
       val caught = intercept[error.type] {
-        await(controller.confirmReferCase("reference")(newFakePOSTRequestWithCSRF()))
+        await(controller.confirmReferCase("reference")(newFakePOSTRequestWithCSRF(app)))
       }
       caught shouldBe error
     }
-  }
-
-  private def newFakeGETRequestWithCSRF(): FakeRequest[AnyContentAsEmpty.type] = {
-    val tokenProvider: TokenProvider = app.injector.instanceOf[TokenProvider]
-    val csrfTags = Map(Token.NameRequestTag -> "csrfToken", Token.RequestTag -> tokenProvider.generateToken)
-    FakeRequest("GET", "/", FakeHeaders(), AnyContentAsEmpty, tags = csrfTags)
-  }
-
-  private def newFakePOSTRequestWithCSRF(): FakeRequest[AnyContentAsFormUrlEncoded] = {
-    val tokenProvider: TokenProvider = app.injector.instanceOf[TokenProvider]
-    val csrfTags = Map(Token.NameRequestTag -> "csrfToken", Token.RequestTag -> tokenProvider.generateToken)
-    FakeRequest("POST", "/", FakeHeaders(), AnyContentAsFormUrlEncoded, tags = csrfTags).withFormUrlEncodedBody()
   }
 
 }

@@ -25,11 +25,8 @@ import org.scalatest.{BeforeAndAfterEach, Matchers, WordSpec}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status
 import play.api.i18n.{DefaultLangs, DefaultMessagesApi}
-import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded}
 import play.api.test.Helpers._
-import play.api.test.{FakeHeaders, FakeRequest}
 import play.api.{Configuration, Environment}
-import play.filters.csrf.CSRF.{Token, TokenProvider}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.{DecisionFormData, DecisionFormMapper}
@@ -39,7 +36,7 @@ import uk.gov.tariffclassificationfrontend.utils.Cases
 
 import scala.concurrent.Future
 
-class RulingControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite with MockitoSugar with BeforeAndAfterEach {
+class RulingControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite with MockitoSugar with BeforeAndAfterEach with ControllerCommons {
 
   private val env = Environment.simple()
   private val configuration = Configuration.load(env)
@@ -67,7 +64,7 @@ class RulingControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSui
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(caseWithStatusOPEN)))
       given(fileService.getAttachments(refEq(caseWithStatusOPEN))(any[HeaderCarrier])).willReturn(Future.successful(Seq(attachment)))
 
-      val result = controller.editRulingDetails("reference")(newFakeGETRequestWithCSRF())
+      val result = controller.editRulingDetails("reference")(newFakeGETRequestWithCSRF(app))
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
@@ -77,7 +74,7 @@ class RulingControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSui
     "redirect to Ruling for non OPEN Statuses" in {
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(caseWithStatusNEW)))
 
-      val result = controller.editRulingDetails("reference")(newFakeGETRequestWithCSRF())
+      val result = controller.editRulingDetails("reference")(newFakeGETRequestWithCSRF(app))
       status(result) shouldBe Status.SEE_OTHER
       contentType(result) shouldBe None
       charset(result) shouldBe None
@@ -87,7 +84,7 @@ class RulingControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSui
     "return Not Found and HTML content type" in {
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(None))
 
-      val result = controller.editRulingDetails("reference")(newFakeGETRequestWithCSRF())
+      val result = controller.editRulingDetails("reference")(newFakeGETRequestWithCSRF(app))
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
@@ -102,14 +99,14 @@ class RulingControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSui
     val updatedCase = Cases.btiCaseExample.copy(status = CaseStatus.OPEN)
     val attachment = Cases.storedAttachment
 
-    val aValidForm = newFakePOSTRequestWithCSRF(
+    val aValidForm = newFakePOSTRequestWithCSRF(app, Map(
       "bindingCommodityCode" -> "",
       "goodsDescription" -> "",
       "methodSearch" -> "",
       "justification" -> "",
       "methodCommercialDenomination" -> "",
       "methodExclusion" -> "",
-      "attachments" -> "[]"
+      "attachments" -> "[]")
     )
 
     "return OK and HTML content type" in {
@@ -129,7 +126,7 @@ class RulingControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSui
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(caseWithStatusOPEN)))
       given(fileService.getAttachments(refEq(caseWithStatusOPEN))(any[HeaderCarrier])).willReturn(Future.successful(Seq(attachment)))
 
-      val result = controller.updateRulingDetails("reference")(newFakePOSTRequestWithCSRF())
+      val result = controller.updateRulingDetails("reference")(newFakePOSTRequestWithCSRF(app))
       verify(casesService, never()).updateCase(any[Case])(any[HeaderCarrier])
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -160,17 +157,4 @@ class RulingControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSui
     }
 
   }
-
-  private def newFakeGETRequestWithCSRF(): FakeRequest[AnyContentAsEmpty.type] = {
-    val tokenProvider: TokenProvider = app.injector.instanceOf[TokenProvider]
-    val csrfTags = Map(Token.NameRequestTag -> "csrfToken", Token.RequestTag -> tokenProvider.generateToken)
-    FakeRequest("GET", "/", FakeHeaders(), AnyContentAsEmpty, tags = csrfTags)
-  }
-
-  private def newFakePOSTRequestWithCSRF(data: (String, String)*): FakeRequest[AnyContentAsFormUrlEncoded] = {
-    val tokenProvider: TokenProvider = app.injector.instanceOf[TokenProvider]
-    val csrfTags = Map(Token.NameRequestTag -> "csrfToken", Token.RequestTag -> tokenProvider.generateToken)
-    FakeRequest("POST", "/", FakeHeaders(), AnyContentAsFormUrlEncoded, tags = csrfTags).withFormUrlEncodedBody(data: _*)
-  }
-
 }
