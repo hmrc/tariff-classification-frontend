@@ -18,7 +18,7 @@
 @(c: Case)
 
 @if(c.status == CaseStatus.SUSPENDED || c.status == CaseStatus.REFERRED) {
-    <a id="release-case-button" class="button" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.ReopenCaseController.reopenCase(c.reference)">
+    <a id="reopen-case-button" class="button" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.ReopenCaseController.reopenCase(c.reference)">
         Reopen case
     </a>
 }
