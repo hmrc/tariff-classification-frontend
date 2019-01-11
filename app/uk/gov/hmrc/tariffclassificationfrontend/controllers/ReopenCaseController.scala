@@ -21,7 +21,7 @@ import play.api.i18n.MessagesApi
 import play.api.mvc._
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models.Case
-import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.OPEN
+import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus._
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
@@ -29,23 +29,25 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future.successful
 
 @Singleton
-class CompleteCaseController @Inject()(authenticatedAction: AuthenticatedAction,
-                                       casesService: CasesService,
-                                       val messagesApi: MessagesApi,
-                                       implicit val appConfig: AppConfig) extends RenderCaseAction {
+class ReopenCaseController @Inject()(authenticatedAction: AuthenticatedAction,
+                                     casesService: CasesService,
+                                     val messagesApi: MessagesApi,
+                                     implicit val appConfig: AppConfig) extends RenderCaseAction {
 
   override protected val config: AppConfig = appConfig
   override protected val caseService: CasesService = casesService
 
-  override protected def redirect: String => Call = routes.CaseController.rulingDetails
-  override protected def isValidCase: Case => Boolean = c => c.status == OPEN && c.decision.isDefined
+  override protected def redirect: String => Call = routes.CaseController.applicationDetails
+  override protected def isValidCase: Case => Boolean = c => validPreviousStatuses.contains(c.status)
 
-  def completeCase(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
-    getCaseAndRenderView(reference, c => successful(views.html.complete_case(c)))
+  private lazy val validPreviousStatuses = Seq(SUSPENDED, REFERRED)
+
+  def reopenCase(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
+    getCaseAndRenderView(reference, c => successful(views.html.reopen_case(c)))
   }
 
-  def confirmCompleteCase(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
-    getCaseAndRenderView(reference, casesService.completeCase(_, request.operator).map(views.html.confirm_complete_case(_)))
+  def confirmReopenCase(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
+    getCaseAndRenderView(reference, casesService.reopenCase(_, request.operator).map(views.html.confirm_reopen_case(_)))
   }
 
 }

@@ -48,9 +48,13 @@ class AuthenticatedActionSpec extends UnitSpec with MockitoSugar with BeforeAndA
   private val block: AuthenticatedRequest[AnyContent] => Future[Result] = mock[AuthenticatedRequest[AnyContent] => Future[Result]]
   private val result = mock[Result]
 
+  override protected def afterEach(): Unit = {
+    super.afterEach()
+    reset(config, environment, connector, block, result)
+  }
+
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    reset(config, environment, connector, block, result)
     given(environment.mode).willReturn(Mode.Dev)
     given(config.getString(any[String], any[Option[Set[String]]])).willReturn(None)
   }

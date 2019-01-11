@@ -38,7 +38,7 @@ import uk.gov.tariffclassificationfrontend.utils.Cases
 import scala.concurrent.Future.{failed, successful}
 
 class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
-  with GuiceOneAppPerSuite with MockitoSugar with BeforeAndAfterEach with ControllerAssertions{
+  with GuiceOneAppPerSuite with MockitoSugar with BeforeAndAfterEach with ControllerCommons{
 
   private val env = Environment.simple()
 
@@ -69,7 +69,7 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusNEW)))
       when(queueService.getNonGateway).thenReturn(Seq.empty)
 
-      val result: Result = await(controller.releaseCase("reference")(newFakeGETRequestWithCSRF()))
+      val result: Result = await(controller.releaseCase("reference")(newFakeGETRequestWithCSRF(app)))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -81,7 +81,7 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusOPEN)))
       when(queueService.getNonGateway).thenReturn(Seq.empty)
 
-      val result: Result = await(controller.releaseCase("reference")(newFakeGETRequestWithCSRF()))
+      val result: Result = await(controller.releaseCase("reference")(newFakeGETRequestWithCSRF(app)))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
@@ -93,7 +93,7 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(None))
       when(queueService.getNonGateway).thenReturn(Seq.empty)
 
-      val result: Result = await(controller.releaseCase("reference")(newFakeGETRequestWithCSRF()))
+      val result: Result = await(controller.releaseCase("reference")(newFakeGETRequestWithCSRF(app)))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -110,7 +110,7 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       when(queueService.getOneBySlug("queue")).thenReturn(Some(queue))
       when(casesService.releaseCase(refEq(caseWithStatusNEW), any[Queue], refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusOPEN))
 
-      val result: Result = await(controller.releaseCaseToQueue("reference")(newFakePOSTRequestWithCSRF("queue")))
+      val result: Result = await(controller.releaseCaseToQueue("reference")(requestWithQueue("queue")))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -124,7 +124,7 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       when(queueService.getNonGateway).thenReturn(Seq.empty)
       when(casesService.releaseCase(refEq(caseWithStatusNEW), any[Queue], refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusOPEN))
 
-      val result: Result = await(controller.releaseCaseToQueue("reference")(newInvalidFakePOSTRequestWithCSRF()))
+      val result: Result = await(controller.releaseCaseToQueue("reference")(newFakePOSTRequestWithCSRF(app)))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -136,7 +136,7 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusOPEN)))
       when(queueService.getOneBySlug("queue")).thenReturn(Some(queue))
 
-      val result: Result= await(controller.releaseCaseToQueue("reference")(newFakePOSTRequestWithCSRF("queue")))
+      val result: Result= await(controller.releaseCaseToQueue("reference")(requestWithQueue("queue")))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
@@ -148,7 +148,7 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(None))
       when(queueService.getOneBySlug("queue")).thenReturn(Some(queue))
 
-      val result: Result = await(controller.releaseCaseToQueue("reference")(newFakePOSTRequestWithCSRF("queue")))
+      val result: Result = await(controller.releaseCaseToQueue("reference")(requestWithQueue("queue")))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -160,7 +160,7 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusNEW)))
       when(queueService.getOneBySlug("queue")).thenReturn(None)
 
-      val result: Result = await(controller.releaseCaseToQueue("reference")(newFakePOSTRequestWithCSRF("queue")))
+      val result: Result = await(controller.releaseCaseToQueue("reference")(requestWithQueue("queue")))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -175,28 +175,14 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       when(queueService.getOneBySlug("queue")).thenReturn(Some(queue))
 
       val caught = intercept[error.type] {
-        await(controller.releaseCaseToQueue("reference")(newFakePOSTRequestWithCSRF("queue")))
+        await(controller.releaseCaseToQueue("reference")(requestWithQueue("queue")))
       }
       caught shouldBe error
     }
   }
 
-  private def newFakeGETRequestWithCSRF(): FakeRequest[AnyContentAsEmpty.type] = {
-    val tokenProvider: TokenProvider = app.injector.instanceOf[TokenProvider]
-    val csrfTags = Map(Token.NameRequestTag -> "csrfToken", Token.RequestTag -> tokenProvider.generateToken)
-    FakeRequest("GET", "/", FakeHeaders(), AnyContentAsEmpty, tags = csrfTags)
-  }
-
-  private def newFakePOSTRequestWithCSRF(queue: String): FakeRequest[AnyContentAsFormUrlEncoded] = {
-    val tokenProvider: TokenProvider = app.injector.instanceOf[TokenProvider]
-    val csrfTags = Map(Token.NameRequestTag -> "csrfToken", Token.RequestTag -> tokenProvider.generateToken)
-    FakeRequest("POST", "/", FakeHeaders(), AnyContentAsFormUrlEncoded, tags = csrfTags).withFormUrlEncodedBody("queue" -> queue)
-  }
-
-  private def newInvalidFakePOSTRequestWithCSRF(): FakeRequest[AnyContentAsFormUrlEncoded] = {
-    val tokenProvider: TokenProvider = app.injector.instanceOf[TokenProvider]
-    val csrfTags = Map(Token.NameRequestTag -> "csrfToken", Token.RequestTag -> tokenProvider.generateToken)
-    FakeRequest("POST", "/", FakeHeaders(), AnyContentAsFormUrlEncoded, tags = csrfTags).withFormUrlEncodedBody()
+  private def requestWithQueue(queue : String) : FakeRequest[AnyContentAsFormUrlEncoded] = {
+    newFakePOSTRequestWithCSRF(app, Map("queue" -> queue))
   }
 
 }

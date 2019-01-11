@@ -26,19 +26,17 @@ import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.tariffclassificationfrontend.audit.AuditService
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.connector.BindingTariffClassificationConnector
-import uk.gov.hmrc.tariffclassificationfrontend.models._
+import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.CaseStatus
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
+import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, _}
 import uk.gov.tariffclassificationfrontend.utils.Cases
 
 import scala.concurrent.Future.{failed, successful}
 
-class CasesService_ReleaseCaseSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach with ConnectorCaptor {
+class CasesService_ReopenCaseSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach with ConnectorCaptor {
 
   private implicit val hc: HeaderCarrier = HeaderCarrier()
 
-  private val manyCases = mock[Seq[Case]]
-  private val oneCase = mock[Option[Case]]
-  private val queue = mock[Queue]
   private val connector = mock[BindingTariffClassificationConnector]
   private val emailService = mock[EmailService]
   private val audit = mock[AuditService]
@@ -49,68 +47,90 @@ class CasesService_ReleaseCaseSpec extends UnitSpec with MockitoSugar with Befor
 
   override protected def afterEach(): Unit = {
     super.afterEach()
-    reset(connector, audit, queue, oneCase, manyCases, config)
+    reset(connector, audit, config)
   }
 
-  "Release Case" should {
-    "update case queue_id and status to NEW" in {
-      // Given
-      val operator: Operator = Operator("operator-id")
-      val originalCase = aCase.copy(status = CaseStatus.NEW)
-      val caseUpdated = aCase.copy(status = CaseStatus.OPEN, queueId = Some("queue_id"))
+  "Reopen a Case" should {
 
-      given(queue.id).willReturn("queue_id")
+    "update case status to OPEN when REFERRED" in {
+      updateCaseShould(CaseStatus.REFERRED, CaseStatus.OPEN)
+    }
+
+    "update case status to OPEN when SUSPENDED" in {
+      updateCaseShould(CaseStatus.SUSPENDED, CaseStatus.OPEN)
+    }
+
+    "not create event on update failure when status is SUSPENDED" in {
+      eventUpdateFailure(CaseStatus.REFERRED)
+    }
+
+    "not create event on update failure when status is REFERRED" in {
+      eventUpdateFailure(CaseStatus.SUSPENDED)
+    }
+
+    "succeed on event create failure from status REFERRED" in {
+      // Given
+      succeededOnCreateFailure(CaseStatus.REFERRED, CaseStatus.OPEN)
+    }
+
+    "succeed on event create failure from status SUSPENDED" in {
+      // Given
+      succeededOnCreateFailure(CaseStatus.SUSPENDED, CaseStatus.OPEN)
+    }
+
+
+    def updateCaseShould(originalStatus: CaseStatus, updatedStatus: CaseStatus) = {
+      val operator: Operator = Operator("operator-id")
+      val originalCase = aCase.copy(status = originalStatus)
+      val caseUpdated = aCase.copy(status = updatedStatus)
+
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
       given(connector.createEvent(any[Case], any[NewEventRequest])(any[HeaderCarrier])).willReturn(successful(mock[Event]))
 
       // When Then
-      await(service.releaseCase(originalCase, queue, operator)) shouldBe caseUpdated
+      await(service.reopenCase(originalCase, operator)) shouldBe caseUpdated
 
-      verify(audit).auditCaseReleased(refEq(originalCase), refEq(caseUpdated), refEq(queue), refEq(operator))(any[HeaderCarrier])
+      verify(audit).auditCaseReOpen(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
 
       val caseUpdating = theCaseUpdating(connector)
-      caseUpdating.status shouldBe CaseStatus.OPEN
-      caseUpdating.queueId shouldBe Some("queue_id")
+      caseUpdating.status shouldBe updatedStatus
 
       val eventCreated = theEventCreatedFor(connector, caseUpdated)
       eventCreated.userId shouldBe "operator-id"
-      eventCreated.details shouldBe CaseStatusChange(CaseStatus.NEW, CaseStatus.OPEN)
+      eventCreated.details shouldBe CaseStatusChange(originalStatus, updatedStatus)
     }
 
-    "not create event on update failure" in {
+    def eventUpdateFailure(originalStatus: CaseStatus) = {
       val operator: Operator = Operator("operator-id")
-      val originalCase = aCase.copy(status = CaseStatus.NEW)
+      val originalCase = aCase.copy(status = originalStatus)
 
-      given(queue.id).willReturn("queue_id")
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(failed(new RuntimeException()))
 
       intercept[RuntimeException] {
-        await(service.releaseCase(originalCase, queue, operator))
+        await(service.reopenCase(originalCase, operator))
       }
 
       verifyZeroInteractions(audit)
       verify(connector, never()).createEvent(any[Case], any[NewEventRequest])(any[HeaderCarrier])
     }
 
-    "succeed on event create failure" in {
-      // Given
+    def succeededOnCreateFailure(originalStatus: CaseStatus, updatedStatus: CaseStatus) = {
       val operator: Operator = Operator("operator-id")
-      val originalCase = aCase.copy(status = CaseStatus.NEW)
-      val caseUpdated = aCase.copy(status = CaseStatus.OPEN, queueId = Some("queue_id"))
+      val originalCase = aCase.copy(status = originalStatus)
+      val caseUpdated = aCase.copy(status = updatedStatus)
 
-      given(queue.id).willReturn("queue_id")
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
       given(connector.createEvent(any[Case], any[NewEventRequest])(any[HeaderCarrier])).willReturn(failed(new RuntimeException()))
 
       // When Then
-      await(service.releaseCase(originalCase, queue, operator)) shouldBe caseUpdated
+      await(service.reopenCase(originalCase, operator)) shouldBe caseUpdated
 
-      verify(audit).auditCaseReleased(refEq(originalCase), refEq(caseUpdated), refEq(queue), refEq(operator))(any[HeaderCarrier])
+      verify(audit).auditCaseReOpen(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
 
       val caseUpdating = theCaseUpdating(connector)
-      caseUpdating.status shouldBe CaseStatus.OPEN
-      caseUpdating.queueId shouldBe Some("queue_id")
+      caseUpdating.status shouldBe updatedStatus
     }
+
   }
 
 }

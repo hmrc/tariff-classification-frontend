@@ -16,8 +16,6 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
-import java.time.Clock
-
 import akka.stream.Materializer
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.Mockito._
@@ -33,13 +31,14 @@ import play.filters.csrf.CSRF.{Token, TokenProvider}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, Operator}
+import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.CaseStatus
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus, Operator}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.tariffclassificationfrontend.utils.Cases
 
 import scala.concurrent.Future.{failed, successful}
 
-class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
+class ReopenCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   with GuiceOneAppPerSuite with MockitoSugar with BeforeAndAfterEach with ControllerCommons {
 
   private val env = Environment.simple()
@@ -50,59 +49,49 @@ class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   private val casesService = mock[CasesService]
   private val operator = mock[Operator]
 
+  private val caseWithStatusNEW = Cases.btiCaseExample.copy(status = CaseStatus.NEW)
   private val caseWithStatusOPEN = Cases.btiCaseExample.copy(status = CaseStatus.OPEN)
-  private val caseWithStatusCOMPLETED = Cases.btiCaseExample.copy(status = CaseStatus.COMPLETED)
-  private val caseWithoutDecision = Cases.btiCaseExample.copy(status = CaseStatus.OPEN, decision = None)
+  private val caseWithStatusREFERRED = Cases.btiCaseExample.copy(status = CaseStatus.REFERRED)
+  private val caseWithStatusSUSPENDED = Cases.btiCaseExample.copy(status = CaseStatus.SUSPENDED)
 
   private implicit val mat: Materializer = app.materializer
   private implicit val hc: HeaderCarrier = HeaderCarrier()
 
-  private val controller = new CompleteCaseController(new SuccessfulAuthenticatedAction(operator), casesService, messageApi, appConfig)
+  private val controller = new ReopenCaseController(new SuccessfulAuthenticatedAction(operator), casesService, messageApi, appConfig)
 
   override def afterEach(): Unit = {
     super.afterEach()
     reset(casesService)
   }
 
-  "Complete Case" should {
+  "Reopen Case" should {
 
     "return OK and HTML content type" in {
-      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusOPEN)))
+      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusREFERRED)))
 
-      val result: Result = await(controller.completeCase("reference")(newFakeGETRequestWithCSRF(app)))
+      val result: Result = await(controller.reopenCase("reference")(newFakeGETRequestWithCSRF(app)))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result) shouldBe Some("utf-8")
-      bodyOf(result) should include("Complete this case")
+      bodyOf(result) should include("Reopen this case")
     }
 
-    "redirect to Application Details for non OPEN statuses" in {
-      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusCOMPLETED)))
+    "redirect to Application Details for non REFERRED or SUSPENDED statuses" in {
+      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusNEW)))
 
-      val result: Result = await(controller.completeCase("reference")(newFakeGETRequestWithCSRF(app)))
+      val result: Result = await(controller.reopenCase("reference")(newFakeGETRequestWithCSRF(app)))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
       charsetOf(result) shouldBe None
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/ruling")
-    }
-
-    "redirect to Application Details for cases without a decision" in {
-      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithoutDecision)))
-
-      val result: Result = await(controller.completeCase("reference")(newFakeGETRequestWithCSRF(app)))
-
-      status(result) shouldBe Status.SEE_OTHER
-      contentTypeOf(result) shouldBe None
-      charsetOf(result) shouldBe None
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/ruling")
+      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/application")
     }
 
     "return Not Found and HTML content type" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(None))
 
-      val result: Result = await(controller.completeCase("reference")(newFakeGETRequestWithCSRF(app)))
+      val result: Result = await(controller.reopenCase("reference")(newFakeGETRequestWithCSRF(app)))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -112,46 +101,51 @@ class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
   }
 
-  "Confirm Complete Case" should {
+  "Confirm Reopen a Case" should {
 
     "return OK and HTML content type" in {
-      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusOPEN)))
-      when(casesService.completeCase(refEq(caseWithStatusOPEN), refEq(operator), any[Clock])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusCOMPLETED))
+      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusREFERRED)))
+      when(casesService.reopenCase(refEq(caseWithStatusREFERRED), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusOPEN))
 
-      val result: Result = await(controller.confirmCompleteCase("reference")(newFakePOSTRequestWithCSRF(app)))
+      val result: Result = await(controller.confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(app)))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result) shouldBe Some("utf-8")
-      bodyOf(result) should include("This case has been completed")
+      bodyOf(result) should include("This case has been reopen")
     }
 
-    "redirect to Application Details for non OPEN statuses" in {
-      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusCOMPLETED)))
 
-      val result: Result= await(controller.confirmCompleteCase("reference")(newFakePOSTRequestWithCSRF(app)))
+    def doNotRedirectWith(allowedStatus: CaseStatus*): Unit = {
 
-      status(result) shouldBe Status.SEE_OTHER
-      contentTypeOf(result) shouldBe None
-      charsetOf(result) shouldBe None
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/ruling")
+      for (s <- CaseStatus.values) {
+        val statusCase = Cases.btiCaseExample.copy(status = s)
+        when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(statusCase)))
+        when(casesService.reopenCase(any[Case], refEq(operator))(any[HeaderCarrier])).thenReturn(successful(statusCase))
+        val result: Result = await(controller.confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(app)))
+        if (allowedStatus.contains(s)) {
+          withClue(s"Status $s must be redirected") {
+            status(result) shouldBe Status.OK
+          }
+        } else {
+          withClue(s"Status $s has not been redirected") {
+            status(result) shouldBe Status.SEE_OTHER
+          }
+          contentTypeOf(result) shouldBe None
+          charsetOf(result) shouldBe None
+          locationOf(result) shouldBe Some("/tariff-classification/cases/reference/application")
+        }
+      }
     }
 
-    "redirect to Application Details for case without decision" in {
-      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithoutDecision)))
 
-      val result: Result= await(controller.confirmCompleteCase("reference")(newFakePOSTRequestWithCSRF(app)))
-
-      status(result) shouldBe Status.SEE_OTHER
-      contentTypeOf(result) shouldBe None
-      charsetOf(result) shouldBe None
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/ruling")
+    "redirect to Application Details for non REFERRED or SUSPENDED statuses" in {
+      doNotRedirectWith(CaseStatus.REFERRED, CaseStatus.SUSPENDED)
     }
 
     "return Not Found and HTML content type on missing Case" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(None))
-
-      val result: Result = await(controller.confirmCompleteCase("reference")(newFakePOSTRequestWithCSRF(app)))
+      val result: Result = await(controller.confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(app)))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -165,10 +159,9 @@ class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(failed(error))
 
       val caught = intercept[error.type] {
-        await(controller.confirmCompleteCase("reference")(newFakePOSTRequestWithCSRF(app)))
+        await(controller.confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(app)))
       }
       caught shouldBe error
     }
   }
-
 }

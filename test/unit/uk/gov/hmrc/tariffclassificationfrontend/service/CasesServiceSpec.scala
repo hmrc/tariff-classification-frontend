@@ -33,6 +33,7 @@ import scala.concurrent.Future
 class CasesServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
 
   private implicit val hc: HeaderCarrier = HeaderCarrier()
+
   private val manyCases = mock[Seq[Case]]
   private val oneCase = mock[Option[Case]]
   private val emailService = mock[EmailService]
