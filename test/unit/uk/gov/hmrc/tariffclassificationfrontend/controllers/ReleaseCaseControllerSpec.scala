@@ -184,4 +184,5 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   private def requestWithQueue(queue : String) : FakeRequest[AnyContentAsFormUrlEncoded] = {
     newFakePOSTRequestWithCSRF(app, Map("queue" -> queue))
   }
+
 }
