@@ -42,12 +42,13 @@ class FileStoreService @Inject()(connector: FileStoreConnector) {
   def getLetterOfAuthority(c: Case)(implicit hc: HeaderCarrier): Future[Option[StoredAttachment]] = {
     if(c.application.isBTI) {
       c.application.asBTI.agent match {
-        case Some(agent: AgentDetails) =>
+        case Some(agent: AgentDetails) if agent.letterOfAuthorisation.isDefined =>
+          val attachment = agent.letterOfAuthorisation.get
           connector
-            .get(agent.letterOfAuthorisation)
+            .get(attachment)
             .map{ file =>
               Logger.warn(s"Agent Letter of Authority was present on Case [${c.reference}] but it didnt exist in the FileStore")
-              file.map(StoredAttachment(agent.letterOfAuthorisation, _))
+              file.map(StoredAttachment(attachment, _))
             }
         case _ => Future.successful(None)
       }
