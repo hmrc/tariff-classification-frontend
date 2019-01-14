@@ -73,6 +73,14 @@ class FileStoreServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfte
         aStoredAttachmentWithId("1")
       )
     }
+
+    "Return None for missing letter" in {
+      await(service.getLetterOfAuthority(aCase(withAgentDetails()))) shouldBe None
+    }
+
+    "Return None for missing agent" in {
+      await(service.getLetterOfAuthority(aCase(withoutAgentDetails()))) shouldBe None
+    }
   }
 
   private def aStoredAttachmentWithId(id: String): StoredAttachment = {
@@ -114,8 +122,19 @@ class FileStoreServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfte
   }
 
   private def withLetterOfAuthWithId(id: String): Case => Case = c => {
-    val details = AgentDetails(mock[EORIDetails], anAttachmentWithId(id))
+    val details = AgentDetails(mock[EORIDetails], Some(anAttachmentWithId(id)))
     val app = c.application.asBTI.copy(agent = Some(details))
+    c.copy(application = app)
+  }
+
+  private def withAgentDetails(): Case => Case = c => {
+    val details = AgentDetails(mock[EORIDetails], None)
+    val app = c.application.asBTI.copy(agent = Some(details))
+    c.copy(application = app)
+  }
+
+  private def withoutAgentDetails(): Case => Case = c => {
+    val app = c.application.asBTI.copy(agent = None)
     c.copy(application = app)
   }
 
