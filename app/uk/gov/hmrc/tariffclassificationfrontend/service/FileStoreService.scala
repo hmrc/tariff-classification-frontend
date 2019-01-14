@@ -41,9 +41,8 @@ class FileStoreService @Inject()(connector: FileStoreConnector) {
 
   def getLetterOfAuthority(c: Case)(implicit hc: HeaderCarrier): Future[Option[StoredAttachment]] = {
     if(c.application.isBTI) {
-      c.application.asBTI.agent match {
-        case Some(agent: AgentDetails) if agent.letterOfAuthorisation.isDefined =>
-          val attachment = agent.letterOfAuthorisation.get
+      c.application.asBTI.agent.flatMap(_.letterOfAuthorisation) match {
+        case Some(attachment: Attachment) =>
           connector
             .get(attachment)
             .map{ file =>
