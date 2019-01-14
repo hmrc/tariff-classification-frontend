@@ -94,7 +94,7 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body should include("<h3 class=\"heading-medium mt-0\">Application Details</h3>")
+      response.body should include("<h3 class=\"heading-medium mt-0\">Application details</h3>")
     }
 
     "redirect on auth failure" in {
