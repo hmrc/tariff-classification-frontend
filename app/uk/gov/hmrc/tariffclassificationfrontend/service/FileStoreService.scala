@@ -24,6 +24,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.models._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import scala.concurrent.Future.successful
 
 @Singleton
 class FileStoreService @Inject()(connector: FileStoreConnector) {
@@ -40,19 +41,19 @@ class FileStoreService @Inject()(connector: FileStoreConnector) {
   }
 
   def getLetterOfAuthority(c: Case)(implicit hc: HeaderCarrier): Future[Option[StoredAttachment]] = {
-    if(c.application.isBTI) {
+    if (c.application.isBTI) {
       c.application.asBTI.agent.flatMap(_.letterOfAuthorisation) match {
         case Some(attachment: Attachment) =>
           connector
             .get(attachment)
-            .map{ file =>
-              Logger.warn(s"Agent Letter of Authority was present on Case [${c.reference}] but it didnt exist in the FileStore")
+            .map { file =>
+              Logger.warn(s"Agent Letter of Authority was present on Case [${c.reference}] but it didn't exist in the FileStore")
               file.map(StoredAttachment(attachment, _))
             }
-        case _ => Future.successful(None)
+        case _ => successful(None)
       }
     } else {
-      Future.successful(None)
+      successful(None)
     }
   }
 
