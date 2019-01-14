@@ -28,10 +28,13 @@
         <div class="column-full">
             <h3 class="heading-large mt-0">This case has been referred</h3>
 
-            <p>The days elapsed count for this case has been paused until it is reopened.</p>
+            <p>The days elapsed count has paused at @(c.daysElapsed), until the case is reopened.</p>
             <p>The status of this case is now referred.</p>
 
-            @confirmation_next_steps()
+
+            <h5 class="heading-small">Next Steps</h5>
+            <p>Work on another case from <a href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.MyCasesController.myCases()">@messages("cases.menu.my-cases")</a>.</p>
+
         </div>
     </div>
 

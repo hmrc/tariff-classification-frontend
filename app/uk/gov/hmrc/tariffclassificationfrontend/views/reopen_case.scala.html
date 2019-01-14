@@ -32,7 +32,7 @@
 
             <p>Before you reopen this case,  <a href="#">add a note</a> explaining why you’re reopening it.</p>
             <p>You can also  <a href="#">attach</a> any relevant documentation.</p>
-            <p>Reopening this case will restart the days elapsed count.</p>
+            <p>The days elapsed count will resume from @(c.daysElapsed).</p>
 
             @helper.form(action = uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.ReopenCaseController.confirmReopenCase(c.reference), 'id -> "reopen-case") {
                 @helper.CSRF.formField

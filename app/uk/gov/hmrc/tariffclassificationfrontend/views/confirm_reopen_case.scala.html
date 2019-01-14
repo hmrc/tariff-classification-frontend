@@ -26,13 +26,16 @@
 
     <div class="grid-row">
         <div class="column-full">
-            <h3 class="heading-large mt-0">This case has been reopen</h3>
+            <h3 class="heading-large mt-0">This case has been reopened</h3>
 
-            <p>The days elapsed count for this case has been restarted.</p>
+            <p>The days elapsed count will resume from @(c.daysElapsed).</p>
             <p> The status of this case is now open.</p>
 
-            @confirmation_next_steps()
 
+            <h5 class="heading-small">Next Steps</h5>
+            <p>
+                Continue working on <a href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.summary(c.reference)"> this case</a>, or work on another case from <a href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.MyCasesController.myCases()">@messages("cases.menu.my-cases")</a>.
+            </p>
         </div>
     </div>
 }

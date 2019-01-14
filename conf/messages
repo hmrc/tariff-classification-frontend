@@ -1,6 +1,6 @@
-cases.menu.my-cases=My Cases
-cases.menu.gateway-cases=Gateway Cases
-cases.menu.queue-cases={0} Cases
+cases.menu.my-cases=My cases
+cases.menu.gateway-cases=Gateway cases
+cases.menu.queue-cases={0} cases
 cases.list.my-cases=Cases for {0}
 
 cases.table.reference=Reference
@@ -13,9 +13,9 @@ cases.table.elapsed-days=Days Elapsed
 cases.table.empty=There are no cases in this queue.
 
 case.menu.summary=Summary
-case.menu.application=Application Details
+case.menu.application=Application details
 case.menu.ruling=Ruling
-case.menu.ruling-details=Ruling Details
+case.menu.ruling-details=Ruling details
 
 case.title={0} for {1}
 case.status=Status
