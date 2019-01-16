@@ -70,7 +70,7 @@ class CasesService_ReferCaseSpec extends UnitSpec with MockitoSugar with BeforeA
       caseUpdating.status shouldBe CaseStatus.REFERRED
 
       val eventCreated = theEventCreatedFor(connector, caseUpdated)
-      eventCreated.userId shouldBe "operator-id"
+      eventCreated.operator.id shouldBe "operator-id"
       eventCreated.details shouldBe CaseStatusChange(CaseStatus.OPEN, CaseStatus.REFERRED)
     }
 

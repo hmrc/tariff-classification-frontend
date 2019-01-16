@@ -96,7 +96,7 @@ class CasesService_ReopenCaseSpec extends UnitSpec with MockitoSugar with Before
       caseUpdating.status shouldBe updatedStatus
 
       val eventCreated = theEventCreatedFor(connector, caseUpdated)
-      eventCreated.userId shouldBe "operator-id"
+      eventCreated.operator.id shouldBe "operator-id"
       eventCreated.details shouldBe CaseStatusChange(originalStatus, updatedStatus)
     }
 

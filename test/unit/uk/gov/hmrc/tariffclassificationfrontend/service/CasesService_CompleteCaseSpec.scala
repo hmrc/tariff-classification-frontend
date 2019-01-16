@@ -83,7 +83,7 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
       caseUpdating.status shouldBe CaseStatus.COMPLETED
 
       val eventCreated = theEventCreatedFor(connector, caseUpdated)
-      eventCreated.userId shouldBe "operator-id"
+      eventCreated.operator.id shouldBe "operator-id"
       eventCreated.details shouldBe CaseStatusChange(CaseStatus.OPEN, CaseStatus.COMPLETED, Some("The applicant was sent an Email:\n- Subject: subject\n- Body: plain"))
     }
 
@@ -169,7 +169,7 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
       caseUpdating.status shouldBe CaseStatus.COMPLETED
 
       val eventCreated = theEventCreatedFor(connector, caseUpdated)
-      eventCreated.userId shouldBe "operator-id"
+      eventCreated.operator.id shouldBe "operator-id"
       eventCreated.details shouldBe CaseStatusChange(CaseStatus.OPEN, CaseStatus.COMPLETED, Some("Attempted to send an email to the applicant which failed"))
     }
   }

@@ -73,7 +73,7 @@ class CasesService_ReleaseCaseSpec extends UnitSpec with MockitoSugar with Befor
       caseUpdating.queueId shouldBe Some("queue_id")
 
       val eventCreated = theEventCreatedFor(connector, caseUpdated)
-      eventCreated.userId shouldBe "operator-id"
+      eventCreated.operator.id shouldBe "operator-id"
       eventCreated.details shouldBe CaseStatusChange(CaseStatus.NEW, CaseStatus.OPEN)
     }
 
