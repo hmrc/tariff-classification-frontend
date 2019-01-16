@@ -50,3 +50,7 @@
         </tbody>
 
     </table>
+
+@if(events.isEmpty) {
+    <p>@messages("events.table.empty")</p>
+}
