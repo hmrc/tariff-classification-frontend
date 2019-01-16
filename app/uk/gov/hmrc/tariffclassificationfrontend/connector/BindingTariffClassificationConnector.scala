@@ -64,4 +64,9 @@ class BindingTariffClassificationConnector @Inject()(configuration: AppConfig, c
     client.POST[NewEventRequest, Event](url = url, body = e)
   }
 
+  def findEvents(reference: String)(implicit hc: HeaderCarrier): Future[Seq[Event]] = {
+    val url = s"${configuration.bindingTariffClassificationUrl}/cases/$reference/events"
+    client.GET[Seq[Event]](url)
+  }
+
 }

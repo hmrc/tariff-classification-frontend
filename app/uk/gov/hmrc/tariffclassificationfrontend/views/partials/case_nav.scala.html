@@ -37,6 +37,12 @@
         title = messages("case.menu.ruling"),
         call = uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.rulingDetails(reference)
     )
+
+    @case_nav_item(
+        active = page == CaseDetailPage.ACTIVITY,
+        title = messages("case.menu.activity"),
+        call = uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.activityDetails(reference)
+    )
 </ul>
 
 
