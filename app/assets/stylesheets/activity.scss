@@ -1,4 +1,6 @@
-.activity-cell {
+
+
+td {
   vertical-align: top;
   font-size: 24px;
 }
@@ -9,6 +11,16 @@
   text-align: left;
   vertical-align: top;
   font-size: 24px;
+}
+
+
+.activity-cell-date {
+  width: 110px;
+}
+
+
+.activity-note-content{
+  padding-left: 26px;
 }
 
 .activity-inline-label {

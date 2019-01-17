@@ -61,13 +61,14 @@
     }
   }
 
-  .tabs__panel {
-    border: 1px solid #bfc1c3;
-    border-top: 0;
+  .tabs__panel__content {
+    padding: 30px 20px 30px 20px;
+
   }
 
   .tabs__panel {
-    padding: 30px 20px 10px 20px;
+    border: 1px solid #bfc1c3;
+    border-top: 0;
     float: left;
     width: 100%;
 

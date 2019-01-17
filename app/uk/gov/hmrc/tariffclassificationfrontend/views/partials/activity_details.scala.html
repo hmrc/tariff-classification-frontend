@@ -26,18 +26,18 @@
         <h3 class="heading-medium mt-0">@messages("case.menu.activity")</h3>
     </div>
 
-    <table class="govuk-table">
-        <thead class="govuk-table__head">
-            <tr class="govuk-table__row">
-                <th class="govuk-table__header" scope="col">Name</th>
-                <th class="govuk-table__header" scope="col">Description</th>
-                <th class="govuk-table__header" scope="col">Date</th>
+    <table>
+        <thead>
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Description</th>
+                <th scope="col">Date</th>
 
             </tr>
         </thead>
-        <tbody class="govuk-table__body">
+        <tbody>
         @for(event <- events) {
-            <tr class="govuk-table__row">
+            <tr>
                 <td class="activity-cell">@event.operator.name</td>
 
                 @if(event.details.`type` == EventType.NOTE) {
@@ -48,7 +48,7 @@
                                 Case note added
                             </span>
                         </summary>
-                        <div id="case-note-comment">
+                        <div class="activity-note-content" id="case-note-comment">
                             @event.details.comment
                         </div>
                     </details>
@@ -56,10 +56,15 @@
                     <td>Status changed to @event.details.asInstanceOf[CaseStatusChange].to.toString.toLowerCase</td>
                 }
 
-                <td class="activity-cell">@Dates.format(event.timestamp)</td>
+                <td class="activity-cell-date">@Dates.format(event.timestamp)</td>
             </tr>
         }
-            <tr><td></td><td class="activity-cell">Application Submitted</td><td class="activity-cell">@Dates.format(c.createdDate)</td></tr>
+               <tr>
+                <td></td>
+                <td class="activity-cell">
+                Application Submitted</td>
+                <td class="activity-cell">@Dates.format(c.createdDate)</td>
+            </tr>
         </tbody>
 
     </table>
