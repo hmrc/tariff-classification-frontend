@@ -18,16 +18,12 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{BTIApplication, Case, CaseStatus, Decision, Event, StoredAttachment}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{attachments, complete_case_button}
 @import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
+@import uk.gov.hmrc.tariffclassificationfrontend.models.{EventType, CaseStatusChange}
 
 @(c: Case, events: Seq[Event])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
     <div id="activity_heading">
         <h3 class="heading-medium mt-0">@messages("case.menu.activity")</h3>
-    </div>
-
-    <div style="margin-bottom: 1em">
-        <h3 class="heading-small" style="display:inline;">@messages("case.activity.assigned-to"):</h3>
-        <span id="assigned-to" class="name">@c.assigneeId</span>
     </div>
 
     <table class="govuk-table">
@@ -43,7 +39,24 @@
         @for(event <- events) {
             <tr class="govuk-table__row">
                 <td class="govuk-table__cell">@event.operator.name</td>
-                <td class="govuk-table__cell">@event.details.comment</td>
+
+                @if(event.details.`type` == EventType.NOTE) {
+                <td class="govuk-table__cell">
+                    <details class="govuk-details activity" role="group">
+                        <summary class="govuk-details__summary note" role="button">
+                            <span class="govuk-details__summary-text ">
+                                Case note added
+                            </span>
+                        </summary>
+                        <div class="govuk-details__text notetext" id="case-note-comment">
+                            @event.details.comment
+                        </div>
+                    </details>
+                } else {
+                    <td>Status changed to @event.details.asInstanceOf[CaseStatusChange].to.toString.toLowerCase</td>
+                }
+
+                </td>
                 <td class="govuk-table__cell">@Dates.format(event.timestamp)</td>
             </tr>
         }
@@ -51,6 +64,12 @@
 
     </table>
 
-@if(events.isEmpty) {
-    <p>@messages("events.table.empty")</p>
-}
+    @if(events.isEmpty) {
+        <p>@messages("events.table.empty")</p>
+    }
+
+    <div style="margin-top: 2em">
+        <h3 class="heading-small" style="display:inline;">@messages("case.activity.assigned-to"):</h3>
+        <span id="assigned-to" class="name">@c.assigneeId</span>
+    </div>
+
