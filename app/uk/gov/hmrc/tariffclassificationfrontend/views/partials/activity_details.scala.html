@@ -38,17 +38,17 @@
         <tbody class="govuk-table__body">
         @for(event <- events) {
             <tr class="govuk-table__row">
-                <td class="govuk-table__cell">@event.operator.name</td>
+                <td class="activity-cell">@event.operator.name</td>
 
                 @if(event.details.`type` == EventType.NOTE) {
-                <td class="govuk-table__cell">
-                    <details class="govuk-details activity" role="group">
-                        <summary class="govuk-details__summary note" role="button">
-                            <span class="govuk-details__summary-text ">
+                <td class="activity-cell-desc">
+                    <details role="group">
+                        <summary role="button">
+                            <span>
                                 Case note added
                             </span>
                         </summary>
-                        <div class="govuk-details__text notetext" id="case-note-comment">
+                        <div id="case-note-comment">
                             @event.details.comment
                         </div>
                     </details>
@@ -56,10 +56,10 @@
                     <td>Status changed to @event.details.asInstanceOf[CaseStatusChange].to.toString.toLowerCase</td>
                 }
 
-                </td>
-                <td class="govuk-table__cell">@Dates.format(event.timestamp)</td>
+                <td class="activity-cell">@Dates.format(event.timestamp)</td>
             </tr>
         }
+            <tr><td></td><td class="activity-cell">Application Submitted</td><td class="activity-cell">@Dates.format(c.createdDate)</td></tr>
         </tbody>
 
     </table>
