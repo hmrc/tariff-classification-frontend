@@ -24,4 +24,5 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.{Event, Note, Operator}
 object Events {
   val event = Event("id", Note(Some("comment")), Operator("user-id", Some("user name")), "case-ref", ZonedDateTime.now())
   val eventRequest = NewEventRequest(Note(Some("comment")), Operator("user-id", Some("user name")), ZonedDateTime.now())
+  val events: Seq[Event] = Seq(event)
 }

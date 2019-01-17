@@ -25,6 +25,7 @@ object EventPayloads {
 
   val event: String = jsonOf(Events.event)
   val eventRequest: String = jsonOf(Events.eventRequest)
+  val events: String = jsonOf(Events.events)
 
   def jsonOf(obj: Event): String = {
     Json.toJson(obj).toString()
