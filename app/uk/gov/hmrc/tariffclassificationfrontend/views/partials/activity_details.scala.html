@@ -68,8 +68,10 @@
         <p>@messages("events.table.empty")</p>
     }
 
-    <div style="margin-top: 2em">
-        <h3 class="heading-small" style="display:inline;">@messages("case.activity.assigned-to"):</h3>
-        <span id="assigned-to" class="name">@c.assigneeId</span>
-    </div>
+
+    <p>
+        <h3 class="heading-small activity-inline-label">@messages("case.activity.assigned-to"):</h3>
+        <span id="assigned-to">@c.assigneeId</span>
+    </p>
+
 
