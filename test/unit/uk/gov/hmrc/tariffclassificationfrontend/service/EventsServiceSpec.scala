@@ -22,8 +22,6 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
-import uk.gov.hmrc.tariffclassificationfrontend.audit.AuditService
-import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.connector.BindingTariffClassificationConnector
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 
@@ -34,15 +32,13 @@ class EventsServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEa
   private implicit val hc: HeaderCarrier = HeaderCarrier()
 
   private val connector = mock[BindingTariffClassificationConnector]
-  private val audit = mock[AuditService]
-  private val config = mock[AppConfig]
   private val manyEvents = mock[Seq[Event]]
 
-  private val service = new EventsService(config, audit, connector)
+  private val service = new EventsService(connector)
 
   override protected def afterEach(): Unit = {
     super.afterEach()
-    reset(connector, audit, config, manyEvents)
+    reset(connector, manyEvents)
   }
 
   "Get Events by reference" should {

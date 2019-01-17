@@ -26,8 +26,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.models._
 import scala.concurrent.Future
 
 @Singleton
-class EventsService @Inject()(appConfig: AppConfig, auditService: AuditService,
-                              connector: BindingTariffClassificationConnector) {
+class EventsService @Inject()(connector: BindingTariffClassificationConnector) {
 
   def getEvents(reference: String)(implicit hc: HeaderCarrier): Future[Seq[Event]] = {
     connector.findEvents(reference)
