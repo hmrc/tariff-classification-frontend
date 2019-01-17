@@ -69,9 +69,15 @@
 
     </table>
 
-    <p>
-        <h3 class="heading-small activity-inline-label">@messages("case.activity.assigned-to"):</h3>
-        <span id="assigned-to">@c.assigneeId</span>
-    </p>
+    <p></p>
+    <h3 class="heading-small activity-inline-label">@messages("case.activity.assigned-to"):</h3>
+    <span id="assigned-to">
+        @if(c.assigneeId.isDefined) {
+            @c.assigneeId
+        } else {
+            This case is currently unassigned
+        }
+    </span>
+
 
 
