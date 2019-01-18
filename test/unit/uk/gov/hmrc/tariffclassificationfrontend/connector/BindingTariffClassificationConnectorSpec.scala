@@ -198,7 +198,7 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
         )
       )
 
-      await(connector.createEvent(validCase, validEventRequest)) shouldBe validEvent
+      await(connector.createEvent(validCase.reference, validEventRequest)) shouldBe validEvent
     }
 
     "create event with an unknown case reference" in {
@@ -215,7 +215,7 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
       )
 
       intercept[NotFoundException] {
-        await(connector.createEvent(validCase, validEventRequest))
+        await(connector.createEvent(validCase.reference, validEventRequest))
       }
     }
 

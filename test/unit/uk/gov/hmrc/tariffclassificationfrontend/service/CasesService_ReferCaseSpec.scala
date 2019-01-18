@@ -59,7 +59,7 @@ class CasesService_ReferCaseSpec extends UnitSpec with MockitoSugar with BeforeA
       val caseUpdated = aCase.copy(status = CaseStatus.REFERRED)
 
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
-      given(connector.createEvent(any[Case], any[NewEventRequest])(any[HeaderCarrier])).willReturn(successful(mock[Event]))
+      given(connector.createEvent(any[String], any[NewEventRequest])(any[HeaderCarrier])).willReturn(successful(mock[Event]))
 
       // When Then
       await(service.referCase(originalCase, operator)) shouldBe caseUpdated
@@ -85,7 +85,7 @@ class CasesService_ReferCaseSpec extends UnitSpec with MockitoSugar with BeforeA
       }
 
       verifyZeroInteractions(audit)
-      verify(connector, never()).createEvent(any[Case], any[NewEventRequest])(any[HeaderCarrier])
+      verify(connector, never()).createEvent(any[String], any[NewEventRequest])(any[HeaderCarrier])
     }
 
     "succeed on event create failure" in {
@@ -95,7 +95,7 @@ class CasesService_ReferCaseSpec extends UnitSpec with MockitoSugar with BeforeA
       val caseUpdated = aCase.copy(status = CaseStatus.REFERRED)
 
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
-      given(connector.createEvent(any[Case], any[NewEventRequest])(any[HeaderCarrier])).willReturn(failed(new RuntimeException()))
+      given(connector.createEvent(any[String], any[NewEventRequest])(any[HeaderCarrier])).willReturn(failed(new RuntimeException()))
 
       // When Then
       await(service.referCase(originalCase, operator)) shouldBe caseUpdated

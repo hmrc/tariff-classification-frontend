@@ -28,6 +28,7 @@ GET         /cases/:reference/ruling             @uk.gov.hmrc.tariffclassificati
 GET         /cases/:reference/ruling/edit        @uk.gov.hmrc.tariffclassificationfrontend.controllers.RulingController.editRulingDetails(reference: String)
 POST        /cases/:reference/ruling             @uk.gov.hmrc.tariffclassificationfrontend.controllers.RulingController.updateRulingDetails(reference: String)
 
-GET         /cases/:reference/activity           @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.activityDetails(reference: String)
+GET        /cases/:reference/activity            @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.activityDetails(reference: String)
+POST       /cases/:reference/activity            @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.addNote(reference: String)
 
 GET         /cases/:reference/attachments        @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.attachmentsDetails(reference: String)
