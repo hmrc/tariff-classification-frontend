@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
+import java.time.Clock
+
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito._
 import org.scalatest.mockito.MockitoSugar
@@ -136,10 +138,10 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
 
     "return 200 OK and HTML content type" in {
       val aCase = Cases.btiCaseExample
-      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
+      given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
       given(eventService.getEvents(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(Events.events))
 
-      val result = controller.activityDetails("reference")(newFakeGETRequestWithCSRF(app))
+      val result = controller.activityDetails(aCase.reference)(newFakeGETRequestWithCSRF(app))
 
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -148,10 +150,10 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
 
     "return 200 OK and HTML content type when no Events are present" in {
       val aCase = Cases.btiCaseExample
-      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
+      given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
       given(eventService.getEvents(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(Seq()))
 
-      val result = controller.activityDetails("reference")(newFakeGETRequestWithCSRF(app))
+      val result = controller.activityDetails(aCase.reference)(newFakeGETRequestWithCSRF(app))
 
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -216,24 +218,24 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
   }
 
   "Activity: Add Note" should {
-    "adds a new note when a case note is provided" in {
+    "add a new note when a case note is provided" in {
       val aCase = Cases.btiCaseExample
       val aNote = "This is a note"
       val aValidForm = newFakePOSTRequestWithCSRF(app, Map("note" -> aNote))
-      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
-      given(eventService.addNote(refEq("reference"), refEq("This is a note"), refEq(operator))(any[HeaderCarrier])).willReturn(Future.successful(()))
+      given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
+      given(eventService.addNote(refEq(aCase.reference), refEq(aNote), refEq(operator), any[Clock])(any[HeaderCarrier])).willReturn(Future.successful((): Unit))
 
-      val result = await(controller.addNote("reference")(aValidForm))
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/activity")
+      val result = await(controller.addNote(aCase.reference)(aValidForm))
+      locationOf(result) shouldBe Some("/tariff-classification/cases/1/activity")
     }
 
     "displays an error when no case note is provided" in {
       val aCase = Cases.btiCaseExample
       val aValidForm = newFakePOSTRequestWithCSRF(app, Map())
-      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
+      given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
       given(eventService.getEvents(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(Seq()))
 
-      val result = controller.addNote("reference")(aValidForm)
+      val result = controller.addNote(aCase.reference)(aValidForm)
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
