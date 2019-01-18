@@ -36,7 +36,7 @@ class CasesService @Inject()(appConfig: AppConfig, auditService: AuditService,
 
   private def addEvent(original: Case, updated: Case, operator: Operator, comment: Option[String] = None)
                       (implicit hc: HeaderCarrier): Future[Unit] = {
-    val event = NewEventRequest(CaseStatusChange(original.status, updated.status, comment), operator.id)
+    val event = NewEventRequest(CaseStatusChange(original.status, updated.status, comment), operator)
     connector.createEvent(updated, event)
       .recover {
         case t: Throwable => Logger.error(s"Could not create Event for case [${original.reference}] with payload [$event]", t)

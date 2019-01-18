@@ -60,7 +60,7 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
   "Complete Case" should {
     "update case status to COMPLETED" in {
       // Given
-      val operator: Operator = Operator("operator-id")
+      val operator: Operator = Operator("operator-id", Some("Billy Bobbins"))
       val originalDecision = Decision("code", epoch, epoch, "justification", "goods")
       val originalCase = aCase.copy(status = CaseStatus.OPEN, decision = Some(originalDecision))
       val updatedDecision = Decision("code", date("2018-01-01"), date("2019-01-01"), "justification", "goods")
@@ -83,7 +83,7 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
       caseUpdating.status shouldBe CaseStatus.COMPLETED
 
       val eventCreated = theEventCreatedFor(connector, caseUpdated)
-      eventCreated.userId shouldBe "operator-id"
+      eventCreated.operator shouldBe Operator("operator-id", Some("Billy Bobbins"))
       eventCreated.details shouldBe CaseStatusChange(CaseStatus.OPEN, CaseStatus.COMPLETED, Some("The applicant was sent an Email:\n- Subject: subject\n- Body: plain"))
     }
 
@@ -148,7 +148,7 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
 
     "succeed on email send failure" in {
       // Given
-      val operator: Operator = Operator("operator-id")
+      val operator: Operator = Operator("operator-id", Some("Billy Bobbins"))
       val originalDecision = Decision("code", epoch, epoch, "justification", "goods")
       val originalCase = aCase.copy(status = CaseStatus.OPEN, decision = Some(originalDecision))
       val updatedDecision = Decision("code", date("2018-01-01"), date("2019-01-01"), "justification", "goods")
@@ -169,7 +169,7 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
       caseUpdating.status shouldBe CaseStatus.COMPLETED
 
       val eventCreated = theEventCreatedFor(connector, caseUpdated)
-      eventCreated.userId shouldBe "operator-id"
+      eventCreated.operator shouldBe Operator("operator-id", Some("Billy Bobbins"))
       eventCreated.details shouldBe CaseStatusChange(CaseStatus.OPEN, CaseStatus.COMPLETED, Some("Attempted to send an email to the applicant which failed"))
     }
   }

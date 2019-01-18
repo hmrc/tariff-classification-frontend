@@ -54,7 +54,7 @@ class CasesService_ReferCaseSpec extends UnitSpec with MockitoSugar with BeforeA
   "Refer a Case" should {
     "update case status to REFERRED" in {
       // Given
-      val operator: Operator = Operator("operator-id")
+      val operator: Operator = Operator("operator-id", Some("Billy Bobbins"))
       val originalCase = aCase.copy(status = CaseStatus.OPEN)
       val caseUpdated = aCase.copy(status = CaseStatus.REFERRED)
 
@@ -70,7 +70,7 @@ class CasesService_ReferCaseSpec extends UnitSpec with MockitoSugar with BeforeA
       caseUpdating.status shouldBe CaseStatus.REFERRED
 
       val eventCreated = theEventCreatedFor(connector, caseUpdated)
-      eventCreated.userId shouldBe "operator-id"
+      eventCreated.operator shouldBe Operator("operator-id", Some("Billy Bobbins"))
       eventCreated.details shouldBe CaseStatusChange(CaseStatus.OPEN, CaseStatus.REFERRED)
     }
 

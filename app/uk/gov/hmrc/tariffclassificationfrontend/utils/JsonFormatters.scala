@@ -47,6 +47,8 @@ object JsonFormatters {
     .and[CaseStatusChange](EventType.CASE_STATUS_CHANGE.toString)
     .and[Note](EventType.NOTE.toString)
     .format
+
+  implicit val operator: OFormat[Operator] = Json.format[Operator]
   implicit val eventFormat: OFormat[Event] = Json.format[Event]
   implicit val newEventRequestFormat: OFormat[NewEventRequest] = Json.format[NewEventRequest]
 

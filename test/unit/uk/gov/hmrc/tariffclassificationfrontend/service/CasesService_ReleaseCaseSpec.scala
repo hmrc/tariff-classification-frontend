@@ -55,7 +55,7 @@ class CasesService_ReleaseCaseSpec extends UnitSpec with MockitoSugar with Befor
   "Release Case" should {
     "update case queue_id and status to NEW" in {
       // Given
-      val operator: Operator = Operator("operator-id")
+      val operator: Operator = Operator("operator-id", Some("Billy Bobbins"))
       val originalCase = aCase.copy(status = CaseStatus.NEW)
       val caseUpdated = aCase.copy(status = CaseStatus.OPEN, queueId = Some("queue_id"))
 
@@ -73,7 +73,7 @@ class CasesService_ReleaseCaseSpec extends UnitSpec with MockitoSugar with Befor
       caseUpdating.queueId shouldBe Some("queue_id")
 
       val eventCreated = theEventCreatedFor(connector, caseUpdated)
-      eventCreated.userId shouldBe "operator-id"
+      eventCreated.operator shouldBe Operator("operator-id", Some("Billy Bobbins"))
       eventCreated.details shouldBe CaseStatusChange(CaseStatus.NEW, CaseStatus.OPEN)
     }
 

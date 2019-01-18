@@ -30,7 +30,7 @@ import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models.Queue
-import uk.gov.tariffclassificationfrontend.utils.{CasePayloads, Cases, Events, WiremockTestServer}
+import uk.gov.tariffclassificationfrontend.utils._
 
 class BindingTariffClassificationConnectorSpec extends UnitSpec
   with WiremockTestServer with MockitoSugar with WithFakeApplication {
@@ -217,6 +217,32 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
       intercept[NotFoundException] {
         await(connector.createEvent(validCase, validEventRequest))
       }
+    }
+
+  }
+
+  "Connector find events" should {
+    val ref = "id"
+
+    "return a list of Events for this case" in {
+
+      stubFor(get(urlEqualTo(s"/cases/$ref/events"))
+        .willReturn(aResponse()
+          .withStatus(HttpStatus.SC_OK)
+          .withBody(EventPayloads.events))
+      )
+
+      await(connector.findEvents(ref)) shouldBe Events.events
+    }
+
+    "returns empty list when case ref not found" in {
+      stubFor(get(urlEqualTo(s"/cases/$ref/events"))
+        .willReturn(aResponse()
+          .withStatus(HttpStatus.SC_OK)
+          .withBody("[]"))
+      )
+
+      await(connector.findEvents(ref)) shouldBe Seq()
     }
   }
 

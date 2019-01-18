@@ -29,8 +29,8 @@ import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionFormMapper
-import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, FileStoreService}
-import uk.gov.tariffclassificationfrontend.utils.Cases
+import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, FileStoreService, EventsService}
+import uk.gov.tariffclassificationfrontend.utils.{Cases, Events}
 
 import scala.concurrent.Future
 
@@ -44,7 +44,8 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
   private val casesService = mock[CasesService]
   private val fileService = mock[FileStoreService]
   private val mapper = mock[DecisionFormMapper]
-  private val controller = new CaseController(new SuccessfulAuthenticatedAction, casesService, fileService,  mapper, messageApi, appConfig)
+  private val eventService = mock[EventsService]
+  private val controller = new CaseController(new SuccessfulAuthenticatedAction, casesService, fileService, eventService, mapper, messageApi, appConfig)
 
   private implicit val hc = HeaderCarrier()
 
@@ -119,6 +120,34 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(None))
 
       val result = controller.rulingDetails("reference")(fakeRequest)
+
+      status(result) shouldBe Status.OK
+      contentType(result) shouldBe Some("text/html")
+      charset(result) shouldBe Some("utf-8")
+    }
+
+  }
+
+  "Activity Details" should {
+
+    "return 200 OK and HTML content type" in {
+      val aCase = Cases.btiCaseExample
+      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
+      given(eventService.getEvents(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(Events.events))
+
+      val result = controller.activityDetails("reference")(fakeRequest)
+
+      status(result) shouldBe Status.OK
+      contentType(result) shouldBe Some("text/html")
+      charset(result) shouldBe Some("utf-8")
+    }
+
+    "return 200 OK and HTML content type when no Events are present" in {
+      val aCase = Cases.btiCaseExample
+      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
+      given(eventService.getEvents(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(Seq()))
+
+      val result = controller.activityDetails("reference")(fakeRequest)
 
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")

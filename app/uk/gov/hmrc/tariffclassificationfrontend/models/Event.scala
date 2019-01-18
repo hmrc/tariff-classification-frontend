@@ -26,7 +26,7 @@ case class Event
 (
   id: String,
   details: Details,
-  userId: String,
+  operator: Operator,
   caseReference: String,
   timestamp: ZonedDateTime = ZonedDateTime.now()
 )

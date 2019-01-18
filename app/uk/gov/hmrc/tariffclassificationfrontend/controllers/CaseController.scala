@@ -24,7 +24,7 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionFormMapper
 import uk.gov.hmrc.tariffclassificationfrontend.models.Case
-import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, FileStoreService}
+import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, EventsService, FileStoreService}
 import uk.gov.hmrc.tariffclassificationfrontend.views
 import uk.gov.hmrc.tariffclassificationfrontend.views.CaseDetailPage
 import uk.gov.hmrc.tariffclassificationfrontend.views.CaseDetailPage.CaseDetailPage
@@ -37,6 +37,7 @@ import scala.concurrent.Future.successful
 class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
                                casesService: CasesService,
                                fileStoreService: FileStoreService,
+                               eventsService: EventsService,
                                mapper: DecisionFormMapper,
                                val messagesApi: MessagesApi,
                                implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
@@ -62,6 +63,12 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
   def rulingDetails(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     getCaseAndRenderView(reference, CaseDetailPage.RULING, c => {
       fileStoreService.getAttachments(c).map(views.html.partials.ruling_details(c, _))
+    })
+  }
+
+  def activityDetails(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
+    getCaseAndRenderView(reference, CaseDetailPage.ACTIVITY, c => {
+      eventsService.getEvents(c.reference).map(views.html.partials.activity_details(c, _))
     })
   }
 

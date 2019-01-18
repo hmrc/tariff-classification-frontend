@@ -80,7 +80,7 @@ class CasesService_ReopenCaseSpec extends UnitSpec with MockitoSugar with Before
 
 
     def updateCaseShould(originalStatus: CaseStatus, updatedStatus: CaseStatus) = {
-      val operator: Operator = Operator("operator-id")
+      val operator: Operator = Operator("operator-id", Some("Billy Bobbins"))
       val originalCase = aCase.copy(status = originalStatus)
       val caseUpdated = aCase.copy(status = updatedStatus)
 
@@ -96,7 +96,7 @@ class CasesService_ReopenCaseSpec extends UnitSpec with MockitoSugar with Before
       caseUpdating.status shouldBe updatedStatus
 
       val eventCreated = theEventCreatedFor(connector, caseUpdated)
-      eventCreated.userId shouldBe "operator-id"
+      eventCreated.operator shouldBe Operator("operator-id", Some("Billy Bobbins"))
       eventCreated.details shouldBe CaseStatusChange(originalStatus, updatedStatus)
     }
 

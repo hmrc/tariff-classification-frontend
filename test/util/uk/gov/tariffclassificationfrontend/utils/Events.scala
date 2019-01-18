@@ -19,9 +19,10 @@ package uk.gov.tariffclassificationfrontend.utils
 import java.time.ZonedDateTime
 
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Event, Note}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Event, Note, Operator}
 
 object Events {
-  val event = Event("id", Note(Some("comment")), "user-id", "case-ref", ZonedDateTime.now())
-  val eventRequest = NewEventRequest(Note(Some("comment")), "user-id", ZonedDateTime.now())
+  val event = Event("id", Note(Some("comment")), Operator("user-id", Some("user name")), "case-ref", ZonedDateTime.now())
+  val eventRequest = NewEventRequest(Note(Some("comment")), Operator("user-id", Some("user name")), ZonedDateTime.now())
+  val events: Seq[Event] = Seq(event)
 }
