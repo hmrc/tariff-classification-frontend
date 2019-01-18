@@ -17,14 +17,14 @@
 package uk.gov.hmrc.tariffclassificationfrontend.forms
 
 import play.api.data.Form
-import play.api.data.Forms.{mapping, seq, text}
+import play.api.data.Forms.{mapping, nonEmptyText}
 
 case class ActivityFormData(note: String)
 
 object ActivityForm {
   val form = Form(
     mapping(
-      "note" -> text
+      "note" -> nonEmptyText
     )(ActivityFormData.apply)(ActivityFormData.unapply)
   )
 

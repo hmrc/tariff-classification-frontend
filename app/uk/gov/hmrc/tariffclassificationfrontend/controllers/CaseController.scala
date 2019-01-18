@@ -80,7 +80,7 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
       errorForm =>
         getCaseAndRenderView(
           reference, CaseDetailPage.ACTIVITY, c => {
-            eventsService.getEvents(c.reference).map(views.html.partials.activity_details(c, _, activityForm))
+            eventsService.getEvents(c.reference).map(views.html.partials.activity_details(c, _, errorForm))
           }),
 
       validForm => {
