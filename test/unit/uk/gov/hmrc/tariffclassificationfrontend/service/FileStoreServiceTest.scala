@@ -81,6 +81,10 @@ class FileStoreServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfte
     "Return None for missing agent" in {
       await(service.getLetterOfAuthority(aCase(withoutAgentDetails()))) shouldBe None
     }
+
+    "Return None for Non BTI applications" in {
+      await(service.getLetterOfAuthority(Cases.liabilityCaseExample)) shouldBe None
+    }
   }
 
   private def aStoredAttachmentWithId(id: String): StoredAttachment = {
