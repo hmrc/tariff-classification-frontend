@@ -1,31 +1,33 @@
 # microservice specific routes
 
-GET        /assets/*file                            controllers.Assets.at(path="/public", file)
+GET         /assets/*file                        controllers.Assets.at(path="/public", file)
 
-GET        /unauthorized                            @uk.gov.hmrc.tariffclassificationfrontend.controllers.SecurityController.unauthorized()
+GET         /unauthorized                        @uk.gov.hmrc.tariffclassificationfrontend.controllers.SecurityController.unauthorized()
 
-GET        /                                        @uk.gov.hmrc.tariffclassificationfrontend.controllers.MyCasesController.myCases()
-GET        /queues                                   controllers.Default.redirect(to = "/tariff-classification")
-GET        /queues/:slug                            @uk.gov.hmrc.tariffclassificationfrontend.controllers.QueuesController.queue(slug: String)
+GET         /                                    @uk.gov.hmrc.tariffclassificationfrontend.controllers.MyCasesController.myCases()
+GET         /queues                              controllers.Default.redirect(to = "/tariff-classification")
+GET         /queues/:slug                        @uk.gov.hmrc.tariffclassificationfrontend.controllers.QueuesController.queue(slug: String)
 
-GET        /cases                                    controllers.Default.redirect(to = "/tariff-classification/")
-GET        /cases/:reference                        @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.summary(reference: String)
-GET        /cases/:reference/application            @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.applicationDetails(reference: String)
+GET         /cases                               controllers.Default.redirect(to = "/tariff-classification/")
+GET         /cases/:reference                    @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.summary(reference: String)
+GET         /cases/:reference/application        @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.applicationDetails(reference: String)
 
-GET        /cases/:reference/release                @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReleaseCaseController.releaseCase(reference: String)
-POST       /cases/:reference/release                @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReleaseCaseController.releaseCaseToQueue(reference: String)
+GET         /cases/:reference/release            @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReleaseCaseController.releaseCase(reference: String)
+POST        /cases/:reference/release            @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReleaseCaseController.releaseCaseToQueue(reference: String)
 
-GET        /cases/:reference/refer                  @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReferCaseController.referCase(reference: String)
-POST       /cases/:reference/refer                  @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReferCaseController.confirmReferCase(reference: String)
+GET         /cases/:reference/refer              @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReferCaseController.referCase(reference: String)
+POST        /cases/:reference/refer              @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReferCaseController.confirmReferCase(reference: String)
 
-GET        /cases/:reference/reopen                  @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReopenCaseController.reopenCase(reference: String)
-POST       /cases/:reference/reopen                  @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReopenCaseController.confirmReopenCase(reference: String)
+GET         /cases/:reference/reopen             @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReopenCaseController.reopenCase(reference: String)
+POST        /cases/:reference/reopen             @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReopenCaseController.confirmReopenCase(reference: String)
 
-GET        /cases/:reference/complete               @uk.gov.hmrc.tariffclassificationfrontend.controllers.CompleteCaseController.completeCase(reference: String)
-POST       /cases/:reference/complete               @uk.gov.hmrc.tariffclassificationfrontend.controllers.CompleteCaseController.confirmCompleteCase(reference: String)
+GET         /cases/:reference/complete           @uk.gov.hmrc.tariffclassificationfrontend.controllers.CompleteCaseController.completeCase(reference: String)
+POST        /cases/:reference/complete           @uk.gov.hmrc.tariffclassificationfrontend.controllers.CompleteCaseController.confirmCompleteCase(reference: String)
 
-GET        /cases/:reference/ruling                 @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.rulingDetails(reference: String)
-GET        /cases/:reference/ruling/edit            @uk.gov.hmrc.tariffclassificationfrontend.controllers.RulingController.editRulingDetails(reference: String)
-POST       /cases/:reference/ruling                 @uk.gov.hmrc.tariffclassificationfrontend.controllers.RulingController.updateRulingDetails(reference: String)
+GET         /cases/:reference/ruling             @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.rulingDetails(reference: String)
+GET         /cases/:reference/ruling/edit        @uk.gov.hmrc.tariffclassificationfrontend.controllers.RulingController.editRulingDetails(reference: String)
+POST        /cases/:reference/ruling             @uk.gov.hmrc.tariffclassificationfrontend.controllers.RulingController.updateRulingDetails(reference: String)
 
-GET        /cases/:reference/activity                 @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.activityDetails(reference: String)
+GET         /cases/:reference/activity           @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.activityDetails(reference: String)
+
+GET         /cases/:reference/attachments        @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.attachmentsDetails(reference: String)

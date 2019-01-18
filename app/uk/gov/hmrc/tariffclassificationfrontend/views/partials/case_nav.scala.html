@@ -39,6 +39,12 @@
     )
 
     @case_nav_item(
+        active = page == CaseDetailPage.ATTACHMENTS,
+        title = messages("case.menu.attachments"),
+        call = uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.attachmentsDetails(reference)
+    )
+
+    @case_nav_item(
         active = page == CaseDetailPage.ACTIVITY,
         title = messages("case.menu.activity"),
         call = uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.activityDetails(reference)

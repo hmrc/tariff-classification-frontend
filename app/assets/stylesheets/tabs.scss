@@ -1,5 +1,15 @@
 .tabs {
 
+  h3 {
+    display: block;
+    font-size: 1.17em;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    font-weight: bold;
+  }
+
   ul {
     &.tabs__list {
       margin: 0;
@@ -76,6 +86,10 @@
       margin-top: 0;
     }
 
+    a:link {
+      color: #005ea5;
+    }
+
     form {
       .form-group:last-child {
         margin-bottom: 30px;
@@ -89,18 +103,18 @@
     }
 
     table {
+
+      margin-bottom: 30px;
+
       thead {
         th {
           font-size: 19px;
-          line-height: 20px;
-
         }
       }
 
       tbody {
         td {
           font-size: 19px;
-          line-height: 20px;
 
           a {
             //font-family: Helvetica, Arial;
