@@ -1,5 +1,9 @@
 .tabs {
 
+  a:link {
+    color: #005ea5;
+  }
+
   h3 {
     display: block;
     font-size: 1.17em;
@@ -84,10 +88,6 @@
 
     h2 {
       margin-top: 0;
-    }
-
-    a:link {
-      color: #005ea5;
     }
 
     form {
