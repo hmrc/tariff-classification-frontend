@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.service
 
+import java.time.{Clock, ZonedDateTime}
 import javax.inject.{Inject, Singleton}
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
@@ -33,8 +34,8 @@ class EventsService @Inject()(connector: BindingTariffClassificationConnector) {
     connector.findEvents(reference)
   }
 
-  def addNote(reference: String, note: String, operator: Operator)(implicit hc: HeaderCarrier): Future[Unit] = {
-    val event = NewEventRequest(Note(Some(note)), operator)
+  def addNote(reference: String, note: String, operator: Operator, clock: Clock = Clock.systemDefaultZone())(implicit hc: HeaderCarrier): Future[Unit] = {
+    val event = NewEventRequest(Note(Some(note)), operator, ZonedDateTime.now(clock))
     connector.createEvent(reference, event)
       .recover {
         case t: Throwable => Logger.error(s"Could not create Event for case [$reference] with payload [$event]", t)

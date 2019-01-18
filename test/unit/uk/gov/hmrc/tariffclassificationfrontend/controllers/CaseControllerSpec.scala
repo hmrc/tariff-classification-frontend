@@ -29,12 +29,13 @@ import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionFormMapper
-import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, FileStoreService, EventsService}
+import uk.gov.hmrc.tariffclassificationfrontend.models.Operator
+import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, EventsService, FileStoreService}
 import uk.gov.tariffclassificationfrontend.utils.{Cases, Events}
 
 import scala.concurrent.Future
 
-class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite with MockitoSugar {
+class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite with MockitoSugar with ControllerCommons {
 
   private val fakeRequest = FakeRequest()
   private val env = Environment.simple()
@@ -45,7 +46,10 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
   private val fileService = mock[FileStoreService]
   private val mapper = mock[DecisionFormMapper]
   private val eventService = mock[EventsService]
-  private val controller = new CaseController(new SuccessfulAuthenticatedAction, casesService, fileService, eventService, mapper, messageApi, appConfig)
+  private val operator = mock[Operator]
+
+  private val controller = new CaseController(new SuccessfulAuthenticatedAction(operator),
+                                              casesService, fileService, eventService, mapper, messageApi, appConfig)
 
   private implicit val hc = HeaderCarrier()
 
@@ -135,7 +139,7 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
       given(eventService.getEvents(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(Events.events))
 
-      val result = controller.activityDetails("reference")(fakeRequest)
+      val result = controller.activityDetails("reference")(newFakeGETRequestWithCSRF(app))
 
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -147,7 +151,7 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
       given(eventService.getEvents(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(Seq()))
 
-      val result = controller.activityDetails("reference")(fakeRequest)
+      val result = controller.activityDetails("reference")(newFakeGETRequestWithCSRF(app))
 
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -209,6 +213,32 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
     }
 
 
+  }
+
+  "Activity: Add Note" should {
+    "adds a new note when a case note is provided" in {
+      val aCase = Cases.btiCaseExample
+      val aNote = "This is a note"
+      val aValidForm = newFakePOSTRequestWithCSRF(app, Map("note" -> aNote))
+      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
+      given(eventService.addNote(refEq("reference"), refEq("This is a note"), refEq(operator))(any[HeaderCarrier])).willReturn(Future.successful(()))
+
+      val result = await(controller.addNote("reference")(aValidForm))
+      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/activity")
+    }
+
+    "displays an error when no case note is provided" in {
+      val aCase = Cases.btiCaseExample
+      val aValidForm = newFakePOSTRequestWithCSRF(app, Map())
+      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
+      given(eventService.getEvents(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(Seq()))
+
+      val result = controller.addNote("reference")(aValidForm)
+      status(result) shouldBe Status.OK
+      contentType(result) shouldBe Some("text/html")
+      charset(result) shouldBe Some("utf-8")
+      contentAsString(result) should include("This field is required")
+    }
   }
 
 }
