@@ -72,6 +72,18 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
     })
   }
 
+  def attachmentsDetails(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
+    getCaseAndRenderView(reference, CaseDetailPage.ATTACHMENTS, c => {
+      for {
+        attachments <- fileStoreService.getAttachments(c)
+        letter <- fileStoreService.getLetterOfAuthority(c)
+      } yield {
+        val (applicantFiles, nonApplicantFiles) = attachments.partition(_.operator.isEmpty)
+        views.html.partials.attachments_details(c, applicantFiles, letter, nonApplicantFiles)
+      }
+    })
+  }
+
   private def getCaseAndRenderView(reference: String, page: CaseDetailPage, toHtml: Case => Future[Html])
                                   (implicit request: Request[_]): Future[Result] = {
     casesService.getOne(reference).flatMap {

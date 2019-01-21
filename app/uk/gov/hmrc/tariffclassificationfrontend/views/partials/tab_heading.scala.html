@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,15 +12,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package uk.gov.hmrc.tariffclassificationfrontend.views
+@(tab: String, heading: String)
 
-object CaseDetailPage extends Enumeration {
-  type CaseDetailPage = Value
-  val SUMMARY = Value("summary")
-  val RULING = Value("ruling")
-  val APPLICATION_DETAILS = Value("application")
-  val ACTIVITY = Value("activity")
-  val ATTACHMENTS = Value("attachments")
-}
+<div id="@tab-heading">
+    <div class="heading-large mt-0 mb-30">@heading</div>
+</div>

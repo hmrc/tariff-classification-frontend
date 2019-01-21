@@ -154,6 +154,61 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
       charset(result) shouldBe Some("utf-8")
     }
 
+    "return 404 Not Found and HTML content type" in {
+      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(None))
+
+      val result = controller.activityDetails("reference")(fakeRequest)
+
+      status(result) shouldBe Status.OK
+      contentType(result) shouldBe Some("text/html")
+      charset(result) shouldBe Some("utf-8")
+    }
+
+  }
+
+
+  "Attachments Details" should {
+
+
+    "return 200 OK and HTML content type" in {
+      val aCase = Cases.btiCaseExample
+      val attachment = Cases.storedAttachment
+      val letterOfAuthority = Cases.letterOfAuthority
+      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
+      given(fileService.getAttachments(refEq(aCase))(any[HeaderCarrier])).willReturn(Future.successful(Seq(attachment)))
+      given(fileService.getLetterOfAuthority(refEq(aCase))(any[HeaderCarrier])).willReturn(Future.successful(Some(letterOfAuthority)))
+
+      val result = controller.attachmentsDetails("reference")(fakeRequest)
+
+      status(result) shouldBe Status.OK
+      contentType(result) shouldBe Some("text/html")
+      charset(result) shouldBe Some("utf-8")
+    }
+
+    "return 200 OK and HTML content type when no files are present" in {
+      val aCase = Cases.btiCaseExample
+      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
+      given(fileService.getAttachments(refEq(aCase))(any[HeaderCarrier])).willReturn(Future.successful(Seq.empty))
+      given(fileService.getLetterOfAuthority(refEq(aCase))(any[HeaderCarrier])).willReturn(Future.successful(None))
+
+      val result = controller.attachmentsDetails("reference")(fakeRequest)
+
+      status(result) shouldBe Status.OK
+      contentType(result) shouldBe Some("text/html")
+      charset(result) shouldBe Some("utf-8")
+    }
+
+    "return 404 Not Found and HTML content type" in {
+      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(None))
+
+      val result = controller.attachmentsDetails("reference")(fakeRequest)
+
+      status(result) shouldBe Status.OK
+      contentType(result) shouldBe Some("text/html")
+      charset(result) shouldBe Some("utf-8")
+    }
+
+
   }
 
 }

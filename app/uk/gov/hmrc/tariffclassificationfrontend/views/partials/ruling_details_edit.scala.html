@@ -24,11 +24,7 @@
 @defining(c.application.asBTI) { btiApp: BTIApplication =>
     <div class="form-group">
 
-        <div class="grid-row">
-            <div id="ruling_table" class="column-one-third">
-                <h4 class="heading-medium mt-0">@messages("case.menu.ruling")</h4>
-            </div>
-        </div>
+        @tab_heading("ruling", messages("case.menu.ruling"))
 
         <h5 class="heading-small">@messages("case.menu.application")</h5>
 

@@ -22,9 +22,7 @@
 
 @(c: Case, events: Seq[Event])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-    <div id="activity_heading">
-        <h3 class="heading-medium mt-0">@messages("case.menu.activity")</h3>
-    </div>
+    @tab_heading("activity", messages("case.menu.activity"))
 
     <table>
         <thead>

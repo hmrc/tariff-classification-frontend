@@ -19,7 +19,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
 @(c: Case)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-<h3 class="heading-medium mt-0">@messages("case.menu.summary")</h3>
+@tab_heading("summary", messages("case.menu.summary"))
 
 <div class="grid-row">
     <div class="column-one-third">

@@ -22,7 +22,7 @@ import play.api.mvc.{ActionBuilder, Request, Result}
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.auth.core.AuthProvider.PrivilegedApplication
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.retrieve.Retrievals
+import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name, Retrievals, ~}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
@@ -50,7 +50,7 @@ class AuthenticatedAction @Inject()(appConfig: AppConfig,
       request.headers,
       Some(request.session)
     )
-    authorise().retrieve(Retrievals.credentials and Retrievals.name) { retrieved =>
+    authorise().retrieve(Retrievals.credentials and Retrievals.name) { retrieved: Credentials ~ Name =>
       val id = retrieved.a.providerId
       val name = retrieved.b.name
       block(AuthenticatedRequest(Operator(id, name), request))

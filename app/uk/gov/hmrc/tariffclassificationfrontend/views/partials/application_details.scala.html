@@ -25,7 +25,7 @@
     @defining(a.asBTI) { btiApp: BTIApplication =>
         @defining(btiApp.holder) { btiHolder: EORIDetails =>
 
-            <h3 class="heading-medium mt-0">@messages("case.menu.application")</h3>
+            @tab_heading("application", messages("case.menu.application"))
 
             <div class="grid-row">
                 <div class="column-one-third">
@@ -172,7 +172,7 @@
                 </div>
             }
 
-            @defining(files.filter(_.application)) { applicationFiles: Seq[StoredAttachment] =>
+            @defining(files.filter(_.operator.isEmpty)) { applicationFiles: Seq[StoredAttachment] =>
                     @if(applicationFiles.nonEmpty) {
                         <hr/>
                         <h3 class="heading-medium">@messages("case.application.attachments")</h3>

@@ -90,8 +90,8 @@ class FileStoreServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfte
   private def aStoredAttachmentWithId(id: String): StoredAttachment = {
     StoredAttachment(
       id = id,
-      application = true,
       public = true,
+      operator = None,
       url = Some(s"url-$id"),
       fileName = s"name-$id",
       mimeType = s"type-$id",
@@ -103,8 +103,8 @@ class FileStoreServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfte
   private def anAttachmentWithId(id: String): Attachment = {
     Attachment(
       id = id,
-      application = true,
       public = true,
+      None,
       timestamp = ZonedDateTime.ofInstant(Instant.EPOCH, ZoneOffset.UTC)
     )
   }
@@ -118,8 +118,8 @@ class FileStoreServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfte
   private def withAnAttachmentWithId(id: String): Case => Case = c => {
     val attachments: Seq[Attachment] = c.attachments :+ Attachment(
       id = id,
-      application = true,
       public = true,
+      None,
       timestamp = ZonedDateTime.ofInstant(Instant.EPOCH, ZoneOffset.UTC)
     )
     c.copy(attachments = attachments)
