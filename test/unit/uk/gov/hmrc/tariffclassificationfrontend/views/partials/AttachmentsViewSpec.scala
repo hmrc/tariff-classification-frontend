@@ -18,7 +18,7 @@ package uk.gov.hmrc.tariffclassificationfrontend.views.partials
 
 import java.time.ZonedDateTime
 
-import uk.gov.hmrc.tariffclassificationfrontend.models.StoredAttachment
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Operator, StoredAttachment}
 import uk.gov.hmrc.tariffclassificationfrontend.models.response.ScanStatus
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewSpec
@@ -43,6 +43,7 @@ class AttachmentsViewSpec extends ViewSpec {
         id = "id",
         application = true,
         public = true,
+        operator = None,
         timestamp = ZonedDateTime.now(),
         url = Some("url"),
         fileName = "name",
@@ -65,6 +66,7 @@ class AttachmentsViewSpec extends ViewSpec {
         id = "id",
         application = true,
         public = true,
+        operator = None,
         timestamp = ZonedDateTime.now(),
         url = None,
         fileName = "name",

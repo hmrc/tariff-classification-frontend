@@ -77,7 +77,11 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
       val view = for {
         attachments <- fileStoreService.getAttachments(c)
         letter <- fileStoreService.getLetterOfAuthority(c)
-      } yield views.html.partials.attachments_details(c, attachments, letter, Seq.empty)
+      } yield {
+        val filesFromApplicant = attachments.toStream.filter(_.application)
+        val filesFromClassification = attachments.toStream.filter(!_.application)
+        views.html.partials.attachments_details(c, filesFromApplicant, letter, filesFromClassification)
+      }
       view
     })
   }

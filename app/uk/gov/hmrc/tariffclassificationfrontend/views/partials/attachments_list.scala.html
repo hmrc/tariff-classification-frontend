@@ -35,7 +35,15 @@
                     @for(file <- attachments) {
                         <tr>
                             <td class="w-50"><a href="@file.url" target="_blank">@file.fileName</a></td>
-                            @if(showUploadedBy) {<td> UploadedBy </td>}
+                            @if(showUploadedBy) {
+                                <td>
+                                @if(file.operator.isDefined){
+                                     @file.operator.get.name
+                                }else{
+                                     Undefined
+                                }
+                                </td>
+                            }
                             <td class="w-15">@Dates.format(file.timestamp)</td>
                         </tr>
                     }

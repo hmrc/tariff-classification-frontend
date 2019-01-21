@@ -22,14 +22,14 @@
 
 @import java.util.Optional
 
-@(c: Case, filesByApplicant: Seq[StoredAttachment], letterOfAuthority : Option[StoredAttachment], filesByOperator: Seq[StoredAttachment] )(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(c: Case, filesFromApplicant: Seq[StoredAttachment], letterOfAuthority : Option[StoredAttachment], filesFromClassification: Seq[StoredAttachment] )(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
     @tab_heading("attachments", messages("case.menu.attachments"))
 
-    @attachments_list(messages("cases.attachment.heading.applicant"), filesByApplicant)
+    @attachments_list(messages("cases.attachment.heading.applicant"), filesFromApplicant)
 
     @if(letterOfAuthority.isDefined) {
         @attachments_list(messages("cases.attachment.heading.letter-of-auth"), Seq(letterOfAuthority.get))
     }
 
-    @attachments_list(messages("cases.attachment.heading.classification-team"), filesByOperator, true)
+    @attachments_list(messages("cases.attachment.heading.classification-team"), filesFromClassification, true)
