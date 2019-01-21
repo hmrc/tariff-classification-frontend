@@ -78,7 +78,7 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
         attachments <- fileStoreService.getAttachments(c)
         letter <- fileStoreService.getLetterOfAuthority(c)
       } yield {
-        val (applicantFiles, nonApplicantFiles) = attachments.partition(!_.operator.isDefined)
+        val (applicantFiles, nonApplicantFiles) = attachments.partition(_.operator.isEmpty)
         views.html.partials.attachments_details(c, applicantFiles, letter, nonApplicantFiles)
       }
     })
