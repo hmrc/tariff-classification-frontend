@@ -16,12 +16,13 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.service
 
+import java.time.{Clock, ZonedDateTime}
+
 import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.tariffclassificationfrontend.audit.AuditService
-import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.connector.BindingTariffClassificationConnector
 import uk.gov.hmrc.tariffclassificationfrontend.models._
+import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
 
 import scala.concurrent.Future
 
@@ -30,6 +31,12 @@ class EventsService @Inject()(connector: BindingTariffClassificationConnector) {
 
   def getEvents(reference: String)(implicit hc: HeaderCarrier): Future[Seq[Event]] = {
     connector.findEvents(reference)
+  }
+
+  def addNote(c: Case, note: String, operator: Operator, clock: Clock = Clock.systemDefaultZone())
+             (implicit hc: HeaderCarrier): Future[Event] = {
+    val event = NewEventRequest(Note(Some(note)), operator, ZonedDateTime.now(clock))
+    connector.createEvent(c, event)
   }
 
 }

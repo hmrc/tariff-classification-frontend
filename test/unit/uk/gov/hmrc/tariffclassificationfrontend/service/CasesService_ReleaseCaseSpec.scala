@@ -61,7 +61,7 @@ class CasesService_ReleaseCaseSpec extends UnitSpec with MockitoSugar with Befor
 
       given(queue.id).willReturn("queue_id")
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
-      given(connector.createEvent(any[Case], any[NewEventRequest])(any[HeaderCarrier])).willReturn(successful(mock[Event]))
+      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])).willReturn(successful(mock[Event]))
 
       // When Then
       await(service.releaseCase(originalCase, queue, operator)) shouldBe caseUpdated
@@ -89,7 +89,7 @@ class CasesService_ReleaseCaseSpec extends UnitSpec with MockitoSugar with Befor
       }
 
       verifyZeroInteractions(audit)
-      verify(connector, never()).createEvent(any[Case], any[NewEventRequest])(any[HeaderCarrier])
+      verify(connector, never()).createEvent(refEq(aCase), any[NewEventRequest])(any[HeaderCarrier])
     }
 
     "succeed on event create failure" in {
@@ -100,7 +100,7 @@ class CasesService_ReleaseCaseSpec extends UnitSpec with MockitoSugar with Befor
 
       given(queue.id).willReturn("queue_id")
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
-      given(connector.createEvent(any[Case], any[NewEventRequest])(any[HeaderCarrier])).willReturn(failed(new RuntimeException()))
+      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])).willReturn(failed(new RuntimeException()))
 
       // When Then
       await(service.releaseCase(originalCase, queue, operator)) shouldBe caseUpdated

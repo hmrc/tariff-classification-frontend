@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
+import java.time.Clock
+
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito._
 import org.scalatest.mockito.MockitoSugar
@@ -29,12 +31,13 @@ import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionFormMapper
-import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, FileStoreService, EventsService}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Event, Operator}
+import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, EventsService, FileStoreService}
 import uk.gov.tariffclassificationfrontend.utils.{Cases, Events}
 
 import scala.concurrent.Future
 
-class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite with MockitoSugar {
+class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite with MockitoSugar with ControllerCommons {
 
   private val fakeRequest = FakeRequest()
   private val env = Environment.simple()
@@ -45,7 +48,11 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
   private val fileService = mock[FileStoreService]
   private val mapper = mock[DecisionFormMapper]
   private val eventService = mock[EventsService]
-  private val controller = new CaseController(new SuccessfulAuthenticatedAction, casesService, fileService, eventService, mapper, messageApi, appConfig)
+  private val operator = mock[Operator]
+  private val event = mock[Event]
+
+  private val controller = new CaseController(new SuccessfulAuthenticatedAction(operator),
+                                              casesService, fileService, eventService, mapper, messageApi, appConfig)
 
   private implicit val hc = HeaderCarrier()
 
@@ -69,6 +76,7 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
+      contentAsString(result) should include("We could not find a Case with reference")
     }
 
   }
@@ -97,6 +105,7 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
+      contentAsString(result) should include("We could not find a Case with reference")
     }
 
   }
@@ -124,6 +133,7 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
+      contentAsString(result) should include("We could not find a Case with reference")
     }
 
   }
@@ -132,10 +142,10 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
 
     "return 200 OK and HTML content type" in {
       val aCase = Cases.btiCaseExample
-      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
+      given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
       given(eventService.getEvents(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(Events.events))
 
-      val result = controller.activityDetails("reference")(fakeRequest)
+      val result = controller.activityDetails(aCase.reference)(newFakeGETRequestWithCSRF(app))
 
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -144,10 +154,10 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
 
     "return 200 OK and HTML content type when no Events are present" in {
       val aCase = Cases.btiCaseExample
-      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
+      given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
       given(eventService.getEvents(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(Seq()))
 
-      val result = controller.activityDetails("reference")(fakeRequest)
+      val result = controller.activityDetails(aCase.reference)(newFakeGETRequestWithCSRF(app))
 
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -172,11 +182,9 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
 
     "return 200 OK and HTML content type" in {
       val aCase = Cases.btiCaseExample
-      val attachment = Cases.storedAttachment
-      val letterOfAuthority = Cases.letterOfAuthority
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
-      given(fileService.getAttachments(refEq(aCase))(any[HeaderCarrier])).willReturn(Future.successful(Seq(attachment)))
-      given(fileService.getLetterOfAuthority(refEq(aCase))(any[HeaderCarrier])).willReturn(Future.successful(Some(letterOfAuthority)))
+      given(fileService.getAttachments(refEq(aCase))(any[HeaderCarrier])).willReturn(Future.successful(Seq(Cases.storedAttachment, Cases.storedOperatorAttachment)))
+      given(fileService.getLetterOfAuthority(refEq(aCase))(any[HeaderCarrier])).willReturn(Future.successful(Some(Cases.letterOfAuthority)))
 
       val result = controller.attachmentsDetails("reference")(fakeRequest)
 
@@ -209,6 +217,44 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
     }
 
 
+  }
+
+  "Activity: Add Note" should {
+    val aCase = Cases.btiCaseExample
+
+    "add a new note when a case note is provided" in {
+      val aNote = "This is a note"
+      val aValidForm = newFakePOSTRequestWithCSRF(app, Map("note" -> aNote))
+      given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
+      given(eventService.addNote(refEq(aCase), refEq(aNote), refEq(operator), any[Clock])(any[HeaderCarrier]))
+        .willReturn(Future.successful(event))
+
+      val result = await(controller.addNote(aCase.reference)(aValidForm))
+      locationOf(result) shouldBe Some("/tariff-classification/cases/1/activity")
+    }
+
+    "displays an error when no case note is provided" in {
+      val aValidForm = newFakePOSTRequestWithCSRF(app, Map())
+      given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
+      given(eventService.getEvents(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(Seq()))
+
+      val result = controller.addNote(aCase.reference)(aValidForm)
+      status(result) shouldBe Status.OK
+      contentType(result) shouldBe Some("text/html")
+      charset(result) shouldBe Some("utf-8")
+      contentAsString(result) should include("This field is required")
+    }
+
+    "displays case not found message" in {
+      val aValidForm = newFakePOSTRequestWithCSRF(app, Map("note" -> "note"))
+      given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(None))
+
+      val result = controller.addNote(aCase.reference)(aValidForm)
+      status(result) shouldBe Status.OK
+      contentType(result) shouldBe Some("text/html")
+      charset(result) shouldBe Some("utf-8")
+      contentAsString(result) should include("We could not find a Case with reference")
+    }
   }
 
 }

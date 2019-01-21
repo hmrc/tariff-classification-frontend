@@ -70,7 +70,7 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
       given(config.zoneId).willReturn(ZoneId.of("UTC"))
       given(config.decisionLifetimeYears).willReturn(1)
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
-      given(connector.createEvent(any[Case], any[NewEventRequest])(any[HeaderCarrier])).willReturn(successful(mock[Event]))
+      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])).willReturn(successful(mock[Event]))
       given(emailService.sendCaseCompleteEmail(refEq(caseUpdated))(any[HeaderCarrier])).willReturn(Future.successful(emailTemplate))
 
       // When Then
@@ -118,7 +118,7 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
 
       verifyZeroInteractions(audit)
       verifyZeroInteractions(emailService)
-      verify(connector, never()).createEvent(any[Case], any[NewEventRequest])(any[HeaderCarrier])
+      verify(connector, never()).createEvent(refEq(aCase), any[NewEventRequest])(any[HeaderCarrier])
     }
 
     "succeed on event create failure" in {
@@ -133,7 +133,7 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
       given(config.zoneId).willReturn(ZoneId.of("UTC"))
       given(config.decisionLifetimeYears).willReturn(1)
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
-      given(connector.createEvent(any[Case], any[NewEventRequest])(any[HeaderCarrier])).willReturn(failed(new RuntimeException("Failed to create Event")))
+      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])).willReturn(failed(new RuntimeException("Failed to create Event")))
       given(emailService.sendCaseCompleteEmail(refEq(caseUpdated))(any[HeaderCarrier])).willReturn(Future.successful(emailTemplate))
 
       // When Then
@@ -157,7 +157,7 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
       given(config.zoneId).willReturn(ZoneId.of("UTC"))
       given(config.decisionLifetimeYears).willReturn(1)
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
-      given(connector.createEvent(any[Case], any[NewEventRequest])(any[HeaderCarrier])).willReturn(successful(mock[Event]))
+      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])).willReturn(successful(mock[Event]))
       given(emailService.sendCaseCompleteEmail(refEq(caseUpdated))(any[HeaderCarrier])).willReturn(failed(new RuntimeException("Failed to send Email")))
 
       // When Then
