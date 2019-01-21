@@ -27,7 +27,7 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
     }
 
     "redirect on auth failure" in {
-      notAuthorisedFor("")
+      verifyNotAuthorisedFor("cases/1")
     }
   }
 
@@ -51,7 +51,7 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
     }
 
     "redirect on auth failure" in {
-      notAuthorisedFor("")
+      verifyNotAuthorisedFor("cases/1")
     }
   }
 
@@ -82,7 +82,7 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
     }
 
     "redirect on auth failure" in {
-      notAuthorisedFor("application")
+      verifyNotAuthorisedFor("cases/1/application")
     }
   }
 
@@ -113,7 +113,7 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
     }
 
     "redirect on auth failure" in {
-      notAuthorisedFor("ruling")
+      verifyNotAuthorisedFor("cases/1/ruling")
     }
   }
 
@@ -142,7 +142,7 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
     }
 
     "redirect on auth failure" in {
-      notAuthorisedFor("activity")
+      verifyNotAuthorisedFor("cases/1/activity")
     }
   }
 
@@ -174,19 +174,8 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
     }
 
     "redirect on auth failure" in {
-      notAuthorisedFor("attachments")
+      verifyNotAuthorisedFor("cases/1/attachments")
     }
   }
 
-  private def notAuthorisedFor(tabName : String) = {
-    // Given
-    givenAuthFailed()
-
-    // When
-    val response = await(ws.url(s"$frontendRoot/cases/1/$tabName").get())
-
-    // Then
-    response.status shouldBe OK
-    response.body should include("You are not authorised to access this page.")
-  }
 }

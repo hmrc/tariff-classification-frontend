@@ -172,7 +172,7 @@
                 </div>
             }
 
-            @defining(files.filter(!_.operator.isDefined)) { applicationFiles: Seq[StoredAttachment] =>
+            @defining(files.filter(_.operator.isEmpty)) { applicationFiles: Seq[StoredAttachment] =>
                     @if(applicationFiles.nonEmpty) {
                         <hr/>
                         <h3 class="heading-medium">@messages("case.application.attachments")</h3>

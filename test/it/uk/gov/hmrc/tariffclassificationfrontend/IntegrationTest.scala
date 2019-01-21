@@ -42,4 +42,14 @@ trait IntegrationTest extends UnitSpec with GuiceOneServerPerSuite with Resource
     )
   }
 
+  protected def verifyNotAuthorisedFor(path : String) = {
+
+    givenAuthFailed()
+
+    val response = await(ws.url(s"$frontendRoot/$path").get())
+
+    response.status shouldBe OK
+    response.body should include("You are not authorised to access this page.")
+  }
+
 }
