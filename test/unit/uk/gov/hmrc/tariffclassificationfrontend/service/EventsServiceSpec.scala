@@ -62,9 +62,11 @@ class EventsServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEa
       val clock = Clock.fixed(LocalDateTime.of(2018,1,1, 14,0).toInstant(ZoneOffset.UTC), ZoneId.of("UTC"))
       val operator = Operator("userId", Some("Billy Bobbins"))
       val newEventRequest = NewEventRequest(Note(Some(aNote)), operator, ZonedDateTime.now(clock))
-      given(connector.createEvent(refEq("reference"), refEq(newEventRequest))(any[HeaderCarrier])).willReturn(successful(mock[Event]))
+      val event = mock[Event]
+      given(connector.createEvent(refEq("reference"), refEq(newEventRequest))(any[HeaderCarrier]))
+        .willReturn(successful(event))
 
-      await(service.addNote("reference", aNote, operator, clock)) shouldBe((): Unit)
+      await(service.addNote("reference", aNote, operator, clock)) shouldBe event
     }
 
   }
