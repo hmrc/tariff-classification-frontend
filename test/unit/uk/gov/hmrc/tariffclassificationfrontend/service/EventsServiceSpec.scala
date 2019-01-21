@@ -62,13 +62,13 @@ class EventsServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEa
       val clock = Clock.fixed(LocalDateTime.of(2018,1,1, 14,0).toInstant(ZoneOffset.UTC), ZoneId.of("UTC"))
       val operator = Operator("userId", Some("Billy Bobbins"))
       val newEventRequest = NewEventRequest(Note(Some(aNote)), operator, ZonedDateTime.now(clock))
-      given(connector.createEvent(any[String], refEq(newEventRequest))(any[HeaderCarrier])).willReturn(successful(mock[Event]))
+      given(connector.createEvent(refEq("reference"), refEq(newEventRequest))(any[HeaderCarrier])).willReturn(successful(mock[Event]))
 
       await(service.addNote("reference", aNote, operator, clock)) shouldBe((): Unit)
     }
 
     "throws RuntimeException when connector fails to post note to backend" in {
-      given(connector.createEvent(any[String], any[NewEventRequest])(any[HeaderCarrier])).willReturn(failed(new RuntimeException()))
+      given(connector.createEvent(refEq("reference"), any[NewEventRequest])(any[HeaderCarrier])).willReturn(failed(new RuntimeException()))
 
       await(service.addNote("reference", aNote, operator))
 
