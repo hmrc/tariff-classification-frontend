@@ -24,7 +24,6 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.response.ScanStatus.ScanS
 case class StoredAttachment
 (
   id: String,
-  application: Boolean,
   public: Boolean,
   operator: Option[Operator],
   url: Option[String],
@@ -50,7 +49,6 @@ object StoredAttachment {
     require(attachment.id == metadata.id, "Cannot combine different attachments")
     StoredAttachment(
       id = attachment.id,
-      application = attachment.application,
       public = attachment.public,
       operator = attachment.operator,
       timestamp = attachment.timestamp,

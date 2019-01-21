@@ -41,7 +41,6 @@ class AttachmentsViewSpec extends ViewSpec {
     "render list of attachments" in {
       val attachment = StoredAttachment(
         id = "id",
-        application = true,
         public = true,
         operator = None,
         timestamp = ZonedDateTime.now(),
@@ -64,7 +63,6 @@ class AttachmentsViewSpec extends ViewSpec {
     "render list of attachments without URL" in {
       val attachment = StoredAttachment(
         id = "id",
-        application = true,
         public = true,
         operator = None,
         timestamp = ZonedDateTime.now(),

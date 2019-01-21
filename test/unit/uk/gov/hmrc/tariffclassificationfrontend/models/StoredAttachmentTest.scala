@@ -49,7 +49,6 @@ class StoredAttachmentTest extends UnitSpec {
 
       StoredAttachment(attachment, metadata) shouldBe StoredAttachment(
         id = attachment.id,
-        application = attachment.application,
         public = attachment.public,
         operator = None,
         timestamp = attachment.timestamp,
@@ -65,7 +64,7 @@ class StoredAttachmentTest extends UnitSpec {
     StoredAttachment(anAttachment, someMetadataWithType(t))
   }
 
-  private def anAttachment = Attachment(id = "id", application = true, public = true, None,  timestamp = ZonedDateTime.ofInstant(Instant.EPOCH, ZoneOffset.UTC))
+  private def anAttachment = Attachment(id = "id", public = true, None,  timestamp = ZonedDateTime.ofInstant(Instant.EPOCH, ZoneOffset.UTC))
 
   private def someMetadataWithType(t: String = "text/plain") = FileMetadata(
     id = "id",

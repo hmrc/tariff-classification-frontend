@@ -74,15 +74,13 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
 
   def attachmentsDetails(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     getCaseAndRenderView(reference, CaseDetailPage.ATTACHMENTS, c => {
-      val view = for {
+      for {
         attachments <- fileStoreService.getAttachments(c)
         letter <- fileStoreService.getLetterOfAuthority(c)
       } yield {
-        val filesFromApplicant = attachments.toStream.filter(_.application)
-        val filesFromClassification = attachments.toStream.filter(!_.application)
-        views.html.partials.attachments_details(c, filesFromApplicant, letter, filesFromClassification)
+        val (applicantFiles, nonApplicantFiles) = attachments.partition(!_.operator.isDefined)
+        views.html.partials.attachments_details(c, applicantFiles, letter, nonApplicantFiles)
       }
-      view
     })
   }
 

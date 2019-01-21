@@ -21,7 +21,6 @@ import java.time.ZonedDateTime
 case class Attachment
 (
   id: String,
-  application: Boolean,
   public: Boolean,
   operator: Option[Operator],
   timestamp: ZonedDateTime
