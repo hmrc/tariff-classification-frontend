@@ -25,6 +25,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.response.ScanStatus
 object Cases {
 
   val storedAttachment = StoredAttachment("id",  public = true, None, Some("url"), "name", "type", Some(ScanStatus.READY), ZonedDateTime.now())
+  val storedOperatorAttachment = StoredAttachment("id",  public = true, Some(Operator("0", Some("Operator Name"))), Some("url"), "name", "type", Some(ScanStatus.READY), ZonedDateTime.now())
   val letterOfAuthority = StoredAttachment("id", public = true, None, Some("url"), "letterOfAuthority", "pdf", Some(ScanStatus.READY), ZonedDateTime.now())
   val eoriDetailsExample = EORIDetails("eori", "trader-business-name", "line1", "line2", "line3", "postcode", "country")
   val eoriAgentDetailsExample = AgentDetails(EORIDetails("eori", "agent-business-name", "line1", "line2", "line3", "postcode", "country"), Some(Attachment(UUID.randomUUID().toString, true, None, ZonedDateTime.now())))

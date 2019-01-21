@@ -182,11 +182,9 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
 
     "return 200 OK and HTML content type" in {
       val aCase = Cases.btiCaseExample
-      val attachment = Cases.storedAttachment
-      val letterOfAuthority = Cases.letterOfAuthority
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
-      given(fileService.getAttachments(refEq(aCase))(any[HeaderCarrier])).willReturn(Future.successful(Seq(attachment)))
-      given(fileService.getLetterOfAuthority(refEq(aCase))(any[HeaderCarrier])).willReturn(Future.successful(Some(letterOfAuthority)))
+      given(fileService.getAttachments(refEq(aCase))(any[HeaderCarrier])).willReturn(Future.successful(Seq(Cases.storedAttachment, Cases.storedOperatorAttachment)))
+      given(fileService.getLetterOfAuthority(refEq(aCase))(any[HeaderCarrier])).willReturn(Future.successful(Some(Cases.letterOfAuthority)))
 
       val result = controller.attachmentsDetails("reference")(fakeRequest)
 
