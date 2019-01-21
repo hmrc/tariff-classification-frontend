@@ -33,10 +33,10 @@ class EventsService @Inject()(connector: BindingTariffClassificationConnector) {
     connector.findEvents(reference)
   }
 
-  def addNote(reference: String, note: String, operator: Operator, clock: Clock = Clock.systemDefaultZone())
+  def addNote(c: Case, note: String, operator: Operator, clock: Clock = Clock.systemDefaultZone())
              (implicit hc: HeaderCarrier): Future[Event] = {
     val event = NewEventRequest(Note(Some(note)), operator, ZonedDateTime.now(clock))
-    connector.createEvent(reference, event)
+    connector.createEvent(c, event)
   }
 
 }

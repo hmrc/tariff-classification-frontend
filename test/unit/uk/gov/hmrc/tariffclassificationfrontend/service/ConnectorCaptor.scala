@@ -28,7 +28,7 @@ trait ConnectorCaptor {
 
   protected def theEventCreatedFor(connector: BindingTariffClassificationConnector, c: Case): NewEventRequest = {
     val captor: ArgumentCaptor[NewEventRequest] = ArgumentCaptor.forClass(classOf[NewEventRequest])
-    verify(connector).createEvent(refEq(c.reference), captor.capture())(any[HeaderCarrier])
+    verify(connector).createEvent(refEq(c), captor.capture())(any[HeaderCarrier])
     captor.getValue
   }
 

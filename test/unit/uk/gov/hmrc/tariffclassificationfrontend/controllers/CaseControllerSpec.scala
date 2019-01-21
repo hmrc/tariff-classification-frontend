@@ -76,6 +76,7 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
+      contentAsString(result) should include("We could not find a Case with reference")
     }
 
   }
@@ -104,6 +105,7 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
+      contentAsString(result) should include("We could not find a Case with reference")
     }
 
   }
@@ -131,6 +133,7 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
+      contentAsString(result) should include("We could not find a Case with reference")
     }
 
   }
@@ -219,12 +222,13 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
   }
 
   "Activity: Add Note" should {
+    val aCase = Cases.btiCaseExample
+
     "add a new note when a case note is provided" in {
-      val aCase = Cases.btiCaseExample
       val aNote = "This is a note"
       val aValidForm = newFakePOSTRequestWithCSRF(app, Map("note" -> aNote))
       given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
-      given(eventService.addNote(refEq(aCase.reference), refEq(aNote), refEq(operator), any[Clock])(any[HeaderCarrier]))
+      given(eventService.addNote(refEq(aCase), refEq(aNote), refEq(operator), any[Clock])(any[HeaderCarrier]))
         .willReturn(Future.successful(event))
 
       val result = await(controller.addNote(aCase.reference)(aValidForm))
@@ -232,7 +236,6 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
     }
 
     "displays an error when no case note is provided" in {
-      val aCase = Cases.btiCaseExample
       val aValidForm = newFakePOSTRequestWithCSRF(app, Map())
       given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
       given(eventService.getEvents(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(Seq()))
@@ -242,6 +245,17 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
       contentAsString(result) should include("This field is required")
+    }
+
+    "displays case not found message" in {
+      val aValidForm = newFakePOSTRequestWithCSRF(app, Map("note" -> "note"))
+      given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(None))
+
+      val result = controller.addNote(aCase.reference)(aValidForm)
+      status(result) shouldBe Status.OK
+      contentType(result) shouldBe Some("text/html")
+      charset(result) shouldBe Some("utf-8")
+      contentAsString(result) should include("We could not find a Case with reference")
     }
   }
 

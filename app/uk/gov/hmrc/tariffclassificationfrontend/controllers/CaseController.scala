@@ -83,11 +83,11 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
             eventsService.getEvents(c.reference).map(views.html.partials.activity_details(c, _, errorForm))
           }),
 
-      validForm => {
-        eventsService.addNote(reference, validForm.note, request.operator).flatMap(_ =>
-          successful(Redirect(routes.CaseController.activityDetails(reference)))
-        )
-      }
+      validForm =>
+        getCaseAndRedirect(reference, CaseDetailPage.ACTIVITY, c => {
+          eventsService.addNote(c, validForm.note, request.operator).map(_ =>
+            routes.CaseController.activityDetails(reference))
+        })
     )
   }
 
@@ -107,6 +107,14 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
                                   (implicit request: Request[_]): Future[Result] = {
     casesService.getOne(reference).flatMap {
       case Some(c: Case) => toHtml(c).map(html => Ok(views.html.case_details(c, page, html)))
+      case _ => successful(Ok(views.html.case_not_found(reference)))
+    }
+  }
+
+  private def getCaseAndRedirect(reference: String, page: CaseDetailPage, toHtml: Case => Future[Call])
+                                  (implicit request: Request[_]): Future[Result] = {
+    casesService.getOne(reference).flatMap {
+      case Some(c: Case) => toHtml(c).map(_ => Redirect(routes.CaseController.activityDetails(reference)))
       case _ => successful(Ok(views.html.case_not_found(reference)))
     }
   }

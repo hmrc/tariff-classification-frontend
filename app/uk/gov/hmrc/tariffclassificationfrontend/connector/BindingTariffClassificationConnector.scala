@@ -59,8 +59,8 @@ class BindingTariffClassificationConnector @Inject()(configuration: AppConfig, c
     client.PUT[Case, Case](url = url, body = c)
   }
 
-  def createEvent(reference: String, e: NewEventRequest)(implicit hc: HeaderCarrier): Future[Event] = {
-    val url = s"${configuration.bindingTariffClassificationUrl}/cases/${reference}/events"
+  def createEvent(c: Case, e: NewEventRequest)(implicit hc: HeaderCarrier): Future[Event] = {
+    val url = s"${configuration.bindingTariffClassificationUrl}/cases/${c.reference}/events"
     client.POST[NewEventRequest, Event](url = url, body = e)
   }
 
