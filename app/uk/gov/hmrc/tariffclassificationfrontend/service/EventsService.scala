@@ -17,14 +17,13 @@
 package uk.gov.hmrc.tariffclassificationfrontend.service
 
 import java.time.{Clock, ZonedDateTime}
+
 import javax.inject.{Inject, Singleton}
-import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.tariffclassificationfrontend.connector.BindingTariffClassificationConnector
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
@@ -34,13 +33,10 @@ class EventsService @Inject()(connector: BindingTariffClassificationConnector) {
     connector.findEvents(reference)
   }
 
-  def addNote(reference: String, note: String, operator: Operator, clock: Clock = Clock.systemDefaultZone())(implicit hc: HeaderCarrier): Future[Unit] = {
+  def addNote(reference: String, note: String, operator: Operator, clock: Clock = Clock.systemDefaultZone())
+             (implicit hc: HeaderCarrier): Future[Event] = {
     val event = NewEventRequest(Note(Some(note)), operator, ZonedDateTime.now(clock))
     connector.createEvent(reference, event)
-      .recover {
-        case t: Throwable => Logger.error(s"Could not create Event for case [$reference] with payload [$event]", t)
-      }
-      .map(_ => ())
   }
 
 }

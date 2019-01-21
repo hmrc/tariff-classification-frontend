@@ -31,7 +31,7 @@ import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionFormMapper
-import uk.gov.hmrc.tariffclassificationfrontend.models.Operator
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Event, Operator}
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, EventsService, FileStoreService}
 import uk.gov.tariffclassificationfrontend.utils.{Cases, Events}
 
@@ -49,6 +49,7 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
   private val mapper = mock[DecisionFormMapper]
   private val eventService = mock[EventsService]
   private val operator = mock[Operator]
+  private val event = mock[Event]
 
   private val controller = new CaseController(new SuccessfulAuthenticatedAction(operator),
                                               casesService, fileService, eventService, mapper, messageApi, appConfig)
@@ -223,7 +224,8 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
       val aNote = "This is a note"
       val aValidForm = newFakePOSTRequestWithCSRF(app, Map("note" -> aNote))
       given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
-      given(eventService.addNote(refEq(aCase.reference), refEq(aNote), refEq(operator), any[Clock])(any[HeaderCarrier])).willReturn(Future.successful((): Unit))
+      given(eventService.addNote(refEq(aCase.reference), refEq(aNote), refEq(operator), any[Clock])(any[HeaderCarrier]))
+        .willReturn(Future.successful(event))
 
       val result = await(controller.addNote(aCase.reference)(aValidForm))
       locationOf(result) shouldBe Some("/tariff-classification/cases/1/activity")

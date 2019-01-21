@@ -67,14 +67,6 @@ class EventsServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEa
       await(service.addNote("reference", aNote, operator, clock)) shouldBe((): Unit)
     }
 
-    "throws RuntimeException when connector fails to post note to backend" in {
-      given(connector.createEvent(refEq("reference"), any[NewEventRequest])(any[HeaderCarrier])).willReturn(failed(new RuntimeException()))
-
-      await(service.addNote("reference", aNote, operator))
-
-      // TODO this test is only useful if we could verify that the error log was written
-    }
-
   }
 
 }
