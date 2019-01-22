@@ -18,12 +18,12 @@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
 
-@(heading: String, attachments: Seq[StoredAttachment], showUploadedBy : Boolean  = false)(implicit messages: Messages)
+@(id: String, attachments: Seq[StoredAttachment], showUploadedBy : Boolean  = false)(implicit messages: Messages)
 
-    <h3>@heading</h3>
+    <h3 id="@id-heading">@messages(s"cases.attachment.heading.$id")</h3>
 
     @if(attachments.nonEmpty){
-        <table>
+        <table id="@id-table">
             <thead>
                 <tr>
                     <th scope="col">File name</th>
@@ -34,7 +34,7 @@
             <tbody>
                     @for(file <- attachments) {
                         <tr>
-                            <td class="w-50"><a href="@file.url" target="_blank">@file.fileName</a></td>
+                            <td class="w-50"><a id="@id-file" href="@file.url" target="_blank">@file.fileName</a></td>
                             @if(showUploadedBy) {
                                 <td>
                                 @if(file.operator.isDefined){
@@ -50,5 +50,5 @@
             </tbody>
         </table>
     }else {
-        <p> @messages("cases.attachment.table.empty") </p>
+        <p id="@id-empty-table"> @messages("cases.attachment.table.empty") </p>
     }
