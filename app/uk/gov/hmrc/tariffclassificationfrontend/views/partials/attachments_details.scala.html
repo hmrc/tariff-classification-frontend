@@ -26,10 +26,10 @@
 
     @tab_heading("attachments", messages("case.menu.attachments"))
 
-    @attachments_list(messages("cases.attachment.heading.applicant"), filesFromApplicant)
+    @attachments_list("applicant", filesFromApplicant)
 
     @if(letterOfAuthority.isDefined) {
-        @attachments_list(messages("cases.attachment.heading.letter-of-auth"), Seq(letterOfAuthority.get))
+        @attachments_list("letter-of-auth", Seq(letterOfAuthority.get))
     }
 
-    @attachments_list(messages("cases.attachment.heading.classification-team"), filesFromClassification, true)
+    @attachments_list("classification-team", filesFromClassification, true)
