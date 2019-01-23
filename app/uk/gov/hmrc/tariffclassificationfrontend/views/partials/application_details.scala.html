@@ -61,7 +61,7 @@
                 <hr/>
 
                 @defining(btiApp.agent.get) { btiAgent: AgentDetails =>
-                    <h4 class="heading-small">This application was submitted by an agent</h4>
+                    <h4 id="agent-submitted-heading" class="heading-small">This application was submitted by an agent</h4>
 
                     <div class="grid-row">
                         <div class="column-one-third">
@@ -103,7 +103,7 @@
 
             @if(btiApp.reissuedBTIReference.isDefined) {
                 <hr/>
-                <h4 class="heading-small">This application is for a re-issue for BTI reference #@btiApp.reissuedBTIReference.get</h4>
+                <h4 id="re-issue-heading" class="heading-small">This application is for a re-issue for BTI reference #@btiApp.reissuedBTIReference.get</h4>
             }
 
             @if(btiApp.envisagedCommodityCode.isDefined) {
