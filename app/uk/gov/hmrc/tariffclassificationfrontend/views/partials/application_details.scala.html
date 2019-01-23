@@ -15,9 +15,8 @@
  *@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-@import uk.gov.hmrc.tariffclassificationfrontend.models.{AgentDetails, Application, Attachment, BTIApplication, Case, EORIDetails}
+@import uk.gov.hmrc.tariffclassificationfrontend.models.{AgentDetails, Application, BTIApplication, Case, EORIDetails, StoredAttachment}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials._
-@import uk.gov.hmrc.tariffclassificationfrontend.models.StoredAttachment
 
 @(c: Case, files: Seq[StoredAttachment], letterOfAuth: Option[StoredAttachment])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
@@ -176,7 +175,7 @@
                     @if(applicationFiles.nonEmpty) {
                         <hr/>
                         <h3 class="heading-medium">@messages("case.application.attachments")</h3>
-                        @attachments(applicationFiles)
+                        @attachments_list("attachments", files.filter(_.operator.isEmpty))
                     }
             }
 

@@ -16,8 +16,7 @@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{BTIApplication, Case, CaseStatus, Decision, StoredAttachment}
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{attachments, complete_case_button}
-
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{attachments_list, complete_case_button, tab_heading}
 @(c: Case, files: Seq[StoredAttachment])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @defining(c.application.asBTI) { btiApp: BTIApplication =>
@@ -123,8 +122,7 @@
             <h3 class="heading-small">@messages("case.decision.attachments")</h3>
             <hr class="mt-0"/>
 
-            @attachments(attachments = files.filter(_.public))
-
+            @attachments_list("attachments", files.filter(_.public))
             @complete_case_button(c)
         }
     } else {
