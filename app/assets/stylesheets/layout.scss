@@ -42,12 +42,28 @@
   margin-bottom: 1.05263em;
 }
 
+.ml-1 {
+  margin-left: 1.05263em;
+}
+
+.mr-1 {
+  margin-right: 1.05263em;
+}
+
 .mt-2 {
   margin-top: 2.05263em;
 }
 
 .mb-2 {
   margin-bottom: 2.05263em;
+}
+
+.ml-2 {
+  margin-left: 2.05263em;
+}
+
+.mr-2 {
+  margin-right: 2.05263em;
 }
 
 .mb-30 {
@@ -134,7 +150,6 @@
 
 .phase-tag {
   display: inline-block;
-  margin: 0 8px 0 0;
   padding: 2px 5px 0;
   font-family: "nta", Arial, sans-serif;
   font-weight: 700;
@@ -143,6 +158,4 @@
   text-transform: uppercase;
   letter-spacing: 1px;
   text-decoration: none;
-  color: #fff;
-  background-color: #005ea5;
 }
