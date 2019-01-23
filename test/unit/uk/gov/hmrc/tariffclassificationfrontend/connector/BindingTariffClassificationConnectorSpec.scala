@@ -29,7 +29,7 @@ import uk.gov.hmrc.play.bootstrap.audit.DefaultAuditConnector
 import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.models.Queue
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Operator, Queue}
 import uk.gov.tariffclassificationfrontend.utils._
 
 class BindingTariffClassificationConnectorSpec extends UnitSpec
@@ -130,7 +130,7 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
           .withBody("[]"))
       )
 
-      await(connector.findCasesByAssignee("assignee")) shouldBe Seq()
+      await(connector.findCasesByAssignee(Operator("assignee"))) shouldBe Seq()
     }
 
     "get cases" in {
@@ -140,7 +140,7 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
           .withBody(CasePayloads.gatewayCases))
       )
 
-      await(connector.findCasesByAssignee("assignee")) shouldBe Seq(Cases.btiCaseExample)
+      await(connector.findCasesByAssignee(Operator("assignee"))) shouldBe Seq(Cases.btiCaseExample)
     }
   }
 

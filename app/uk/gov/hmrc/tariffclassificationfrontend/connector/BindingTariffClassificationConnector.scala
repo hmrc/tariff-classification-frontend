@@ -48,8 +48,8 @@ class BindingTariffClassificationConnector @Inject()(configuration: AppConfig, c
     client.GET[Seq[Case]](url)
   }
 
-  def findCasesByAssignee(assignee: String)(implicit hc: HeaderCarrier): Future[Seq[Case]] = {
-    val queryString = s"assignee_id=$assignee&status=$statuses&sort_by=days-elapsed&sort_direction=descending"
+  def findCasesByAssignee(assignee: Operator)(implicit hc: HeaderCarrier): Future[Seq[Case]] = {
+    val queryString = s"assignee_id=${assignee.id}&status=$statuses&sort_by=days-elapsed&sort_direction=descending"
     val url = s"${configuration.bindingTariffClassificationUrl}/cases?$queryString"
     client.GET[Seq[Case]](url)
   }

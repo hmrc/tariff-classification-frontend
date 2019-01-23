@@ -59,9 +59,9 @@ class CasesServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEac
 
   "Get Cases 'By Assignee'" should {
     "retrieve connector cases" in {
-      given(connector.findCasesByAssignee("assignee")) willReturn Future.successful(manyCases)
+      given(connector.findCasesByAssignee(Operator("assignee"))) willReturn Future.successful(manyCases)
 
-      await(service.getCasesByAssignee("assignee")) shouldBe manyCases
+      await(service.getCasesByAssignee(Operator("assignee"))) shouldBe manyCases
     }
   }
 

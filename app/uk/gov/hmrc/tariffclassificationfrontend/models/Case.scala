@@ -28,7 +28,7 @@ case class Case
   daysElapsed: Long,
   closedDate: Option[ZonedDateTime],
   caseBoardsFileNumber: Option[String],
-  assigneeId: Option[String],
+  assignee: Option[Operator],
   queueId: Option[String],
   application: Application,
   decision: Option[Decision],
