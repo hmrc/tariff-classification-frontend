@@ -25,8 +25,6 @@
 
     <h5 class="heading-small">@messages("case.menu.application")</h5>
 
-    <hr class="mt-0"/>
-
     <!-- TODO: DIT-289 - the following 2 rows contain data related to the application data, we should use a HTML arrow that hides them by default (see prototype) -->
 
     <div class="grid-row">
@@ -49,6 +47,7 @@
     </div>
 
 
+    <hr class="mt-0"/>
     <div class="grid-row">
         <div class="column-one-third">
             <h5 class="heading-small">@messages("case.menu.ruling-details")</h5>
@@ -59,8 +58,6 @@
             </div>
         }
     </div>
-
-    <hr class="mt-0"/>
 
     @if(c.decision.isDefined) {
         @defining(c.decision.get) { d: Decision =>
@@ -119,9 +116,9 @@
                 </div>
             </div>
 
-            <h3 class="heading-small">@messages("case.decision.attachments")</h3>
             <hr class="mt-0"/>
 
+            <h3 class="heading-medium">@messages("case.decision.attachments")</h3>
             @attachments_list("attachments", files.filter(_.public))
             @complete_case_button(c)
         }
