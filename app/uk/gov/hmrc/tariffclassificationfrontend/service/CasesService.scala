@@ -119,7 +119,7 @@ class CasesService @Inject()(appConfig: AppConfig, auditService: AuditService,
     connector.findCasesByQueue(queue)
   }
 
-  def getCasesByAssignee(assignee: String)(implicit hc: HeaderCarrier): Future[Seq[Case]] = {
+  def getCasesByAssignee(assignee: Operator)(implicit hc: HeaderCarrier): Future[Seq[Case]] = {
     connector.findCasesByAssignee(assignee)
   }
 

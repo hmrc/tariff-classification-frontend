@@ -21,7 +21,9 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.input_textarea
 
-@(c: Case, events: Seq[Event], activityForm : Form[ActivityFormData])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.tab_heading
+@(c: Case, events: Seq[Event], activityForm : Form[ActivityFormData])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
     @tab_heading("activity", messages("case.menu.activity"))
 
@@ -91,13 +93,21 @@
 
     <p></p>
     <h3 class="heading-medium activity-inline-label">@messages("case.activity.assigned-to"):</h3>
-    <span id="assigned-to">
-        @if(c.assigneeId.isDefined) {
-            @c.assigneeId
+    <span>
+    @{
+        if(c.assignee.map(_.id).contains(request.operator.id)) {
+            "You"
+        } else if(c.assignee.flatMap(_.name).isDefined) {
+            c.assignee.get.name.get
+        } else if(c.assignee.isDefined) {
+            s"PID ${c.assignee.get.id}"
         } else {
-            This case is currently unassigned
+            "This case is currently unassigned"
         }
+    }
     </span>
+
+
 
 
 
