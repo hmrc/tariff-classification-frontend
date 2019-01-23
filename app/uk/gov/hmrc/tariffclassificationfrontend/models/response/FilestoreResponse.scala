@@ -20,7 +20,7 @@ import java.time.Instant
 
 import uk.gov.hmrc.tariffclassificationfrontend.models.response.ScanStatus.ScanStatus
 
-case class FileMetadata
+case class FilestoreResponse
 (
   id: String,
   fileName: String,

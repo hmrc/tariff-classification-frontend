@@ -32,7 +32,7 @@ import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models.Attachment
-import uk.gov.hmrc.tariffclassificationfrontend.models.response.{FileMetadata, ScanStatus}
+import uk.gov.hmrc.tariffclassificationfrontend.models.response.{FilestoreResponse, ScanStatus}
 import uk.gov.tariffclassificationfrontend.utils.{ResourceFiles, WiremockTestServer}
 
 class FileStoreConnectorTest extends UnitSpec with WiremockTestServer with MockitoSugar with WithFakeApplication with BeforeAndAfterEach with ResourceFiles {
@@ -40,11 +40,13 @@ class FileStoreConnectorTest extends UnitSpec with WiremockTestServer with Mocki
   private val config = mock[AppConfig]
   private implicit val headers: HeaderCarrier = HeaderCarrier()
 
+
   private val wsClient: WSClient = fakeApplication.injector.instanceOf[WSClient]
   private val auditConnector = new DefaultAuditConnector(fakeApplication.configuration, fakeApplication.injector.instanceOf[Environment])
   private val HMRCWSClient = new DefaultHttpClient(fakeApplication.configuration, auditConnector, wsClient, ActorSystem("test"))
 
-  private val connector = new FileStoreConnector(config, HMRCWSClient)
+
+  private val connector = new FileStoreConnector(config, HMRCWSClient, wsClient)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -78,7 +80,7 @@ class FileStoreConnectorTest extends UnitSpec with WiremockTestServer with Mocki
       )
 
       await(connector.get(att)) shouldBe Some(
-        FileMetadata(
+        FilestoreResponse(
           id = "id",
           fileName = "name",
           mimeType = "text/plain",
@@ -103,7 +105,7 @@ class FileStoreConnectorTest extends UnitSpec with WiremockTestServer with Mocki
       )
 
       await(connector.get(att)) shouldBe Some(
-        FileMetadata(
+        FilestoreResponse(
           id = "id",
           fileName = "name",
           mimeType = "text/plain",
@@ -137,7 +139,7 @@ class FileStoreConnectorTest extends UnitSpec with WiremockTestServer with Mocki
       )
 
       await(connector.get(Seq(att1, att2))) shouldBe Seq(
-        FileMetadata(
+        FilestoreResponse(
           id = "id",
           fileName = "name",
           mimeType = "text/plain",
@@ -164,7 +166,7 @@ class FileStoreConnectorTest extends UnitSpec with WiremockTestServer with Mocki
       )
 
       await(connector.get(Seq(att1, att2))) shouldBe Seq(
-        FileMetadata(
+        FilestoreResponse(
           id = "id",
           fileName = "name",
           mimeType = "text/plain",

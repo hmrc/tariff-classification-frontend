@@ -18,9 +18,12 @@ package uk.gov.hmrc.tariffclassificationfrontend.service
 
 import javax.inject.{Inject, Singleton}
 import play.api.Logger
+import play.api.libs.Files.TemporaryFile
+import play.api.mvc.MultipartFormData
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.tariffclassificationfrontend.connector.FileStoreConnector
 import uk.gov.hmrc.tariffclassificationfrontend.models._
+import uk.gov.hmrc.tariffclassificationfrontend.models.response.FilestoreResponse
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -57,4 +60,19 @@ class FileStoreService @Inject()(connector: FileStoreConnector) {
     }
   }
 
+  def upload(f: MultipartFormData.FilePart[TemporaryFile])(implicit hc: HeaderCarrier): Future[FileStoreAttachment] = {
+    connector.upload(f).map(toFileAttachment(f.ref.file.length))
+  }
+
+//  def publish(file: FileStoreAttachment)(implicit hc: HeaderCarrier): Future[PublishedFileAttachment] = {
+//    connector.publish(file).map(toPublishedAttachment(file.size))
+//  }
+
+  private def toFileAttachment(size: Long): FilestoreResponse => FileStoreAttachment = {
+    r => FileStoreAttachment(r.id, r.fileName, r.mimeType, size)
+  }
+
+//  private def toPublishedAttachment(size: Long): FilestoreResponse => PublishedFileAttachment = {
+//    r => PublishedFileAttachment(r.id, r.fileName, r.mimeType, size)
+//  }
 }

@@ -59,7 +59,10 @@ case.attachment.heading.applicant = Attached by applicant
 case.attachment.heading.letter-of-auth = Agent''s letter of authority
 case.attachment.heading.classification-team = Attached by classification team
 
-
+cases.attachment.upload.title =  You can upload:
+cases.attachment.upload.restrictionSize = a maximum file size of 10MB
+cases.attachment.upload.typeOfFiles = pdf, doc, docx, png, jpg, jpeg and txt files
+cases.attachment.upload.label = Upload a file
 
 events.table.empty=There are no events for this case
 

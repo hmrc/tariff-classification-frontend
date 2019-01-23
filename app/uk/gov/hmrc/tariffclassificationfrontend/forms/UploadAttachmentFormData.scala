@@ -14,22 +14,18 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.tariffclassificationfrontend.models
+package uk.gov.hmrc.tariffclassificationfrontend.forms
 
-import java.time.ZonedDateTime
+import play.api.data.Form
+import play.api.data.Forms.{mapping, _}
 
-case class Attachment
-(
-  id: String,
-  public: Boolean,
-  operator: Option[Operator],
-  timestamp: ZonedDateTime
-)
+case class UploadAttachmentFormData(fileInput: String)
 
-case class FileStoreAttachment
-(
-  id: String,
-  name: String,
-  mimeType: String,
-  size: Long
-)
+object UploadAttachmentFormData {
+  val form = Form(
+    mapping(
+      "file-input" -> text
+    )(UploadAttachmentFormData.apply)(UploadAttachmentFormData.unapply)
+  )
+
+}
