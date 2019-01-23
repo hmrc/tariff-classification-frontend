@@ -15,15 +15,12 @@
  *@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.models.StoredAttachment
-
+@import uk.gov.hmrc.tariffclassificationfrontend.models.response.ScanStatus
 @import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
-
-@(id: String, attachments: Seq[StoredAttachment], showUploadedBy : Boolean  = false)(implicit messages: Messages)
-
-    <h3 id="@id-heading">@messages(s"cases.attachment.heading.$id")</h3>
+@(id: String, attachments: Seq[StoredAttachment], showUploadedBy: Boolean = false)(implicit messages: Messages)
 
     @if(attachments.nonEmpty){
-        <table id="@id-table">
+        <table id="@{id}-table">
             <thead>
                 <tr>
                     <th scope="col">File name</th>
@@ -32,9 +29,24 @@
                 </tr>
             </thead>
             <tbody>
-                    @for(file <- attachments) {
+                    @for(file: StoredAttachment <- attachments) {
                         <tr>
-                            <td class="w-50"><a id="@id-file" href="@file.url" target="_blank">@file.fileName</a></td>
+                            <td class="w-50">
+                                @if(file.url.isDefined) {
+                                    <a id="@{id}-file" href="@file.url" target="_blank">
+                                        @file.fileName
+                                    </a>
+                                } else {
+                                    <p id="@{id}-file">
+                                        <span>@file.fileName</span>
+                                        @if(file.scanStatus.contains(ScanStatus.FAILED)) {
+                                            <span class="phase-tag bg-red ml-1">Quarantined</span>
+                                        } else {
+                                            <span class="phase-tag bg-blue ml-1">Pending</span>
+                                        }
+                                    </p>
+                                }
+                            </td>
                             @if(showUploadedBy) {
                                 <td>
                                 @if(file.operator.isDefined){
@@ -44,11 +56,13 @@
                                 }
                                 </td>
                             }
-                            <td class="w-15">@Dates.format(file.timestamp)</td>
+                            <td class="w-15">
+                                @Dates.format(file.timestamp)
+                            </td>
                         </tr>
                     }
             </tbody>
         </table>
     }else {
-        <p id="@id-empty-table"> @messages("cases.attachment.table.empty") </p>
+        <p id="@{id}-empty-table"> @messages("case.attachment.table.empty") </p>
     }

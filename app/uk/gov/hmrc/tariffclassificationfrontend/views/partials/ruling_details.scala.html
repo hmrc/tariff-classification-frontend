@@ -16,8 +16,7 @@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{BTIApplication, Case, CaseStatus, Decision, StoredAttachment}
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{attachments, complete_case_button}
-
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{attachments_list, complete_case_button, tab_heading}
 @(c: Case, files: Seq[StoredAttachment])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @defining(c.application.asBTI) { btiApp: BTIApplication =>
@@ -25,8 +24,6 @@
     @tab_heading("ruling", messages("case.menu.ruling"))
 
     <h5 class="heading-small">@messages("case.menu.application")</h5>
-
-    <hr class="mt-0"/>
 
     <!-- TODO: DIT-289 - the following 2 rows contain data related to the application data, we should use a HTML arrow that hides them by default (see prototype) -->
 
@@ -50,6 +47,7 @@
     </div>
 
 
+    <hr class="mt-0"/>
     <div class="grid-row">
         <div class="column-one-third">
             <h5 class="heading-small">@messages("case.menu.ruling-details")</h5>
@@ -60,8 +58,6 @@
             </div>
         }
     </div>
-
-    <hr class="mt-0"/>
 
     @if(c.decision.isDefined) {
         @defining(c.decision.get) { d: Decision =>
@@ -120,11 +116,10 @@
                 </div>
             </div>
 
-            <h3 class="heading-small">@messages("case.decision.attachments")</h3>
             <hr class="mt-0"/>
 
-            @attachments(attachments = files.filter(_.public))
-
+            <h3 class="heading-medium">@messages("case.decision.attachments")</h3>
+            @attachments_list("attachments", files.filter(_.public))
             @complete_case_button(c)
         }
     } else {
