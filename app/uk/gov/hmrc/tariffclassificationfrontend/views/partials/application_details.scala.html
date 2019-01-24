@@ -175,8 +175,8 @@
                 @if(applicationFiles.nonEmpty) {
                     <hr/>
                     <h3 class="heading-medium">@messages("case.application.attachments")</h3>
-                    @attachments_list("attachments", applicationFiles)
                     @attachments_state_message(attachments = applicationFiles, autoRefresh = true)
+                    @attachments_list("attachments", applicationFiles)
                 }
             }
 

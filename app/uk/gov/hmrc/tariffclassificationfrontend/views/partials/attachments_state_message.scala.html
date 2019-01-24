@@ -19,19 +19,19 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
 @(attachments: Seq[StoredAttachment], autoRefresh: Boolean = false)(implicit messages: Messages)
 
-@if(attachments.exists(_.scanStatus.isEmpty) || attachments.exists(_.scanStatus.contains(ScanStatus.FAILED))) {
+@if(attachments.exists(_.scanStatus.contains(ScanStatus.FAILED))) {
     <div class="panel panel-border-wide">
-        <p>All attachments are virus scanned when they are uploaded.</p>
-        <p>As a result some files may show as Processing or Failed if they fail the scan.</p>
-
-        @if(autoRefresh && attachments.exists(a => a.scanStatus.isEmpty)) {
-            <p>This page will auto refresh while attachments are Processing</p>
-            <script>
-                    setTimeout(function () {
-                        location.reload();
-                    }, 5000)
-            </script>
-        }
+        <p>At least one file has failed to process, a virus might have been detected.</p>
     </div>
+}
+
+@if(attachments.exists(_.scanStatus.isEmpty)) {
+    @if(autoRefresh && attachments.exists(a => a.scanStatus.isEmpty)) {
+        <script>
+                setTimeout(function () {
+                    location.reload();
+                }, 5000)
+        </script>
+    }
 
 }
