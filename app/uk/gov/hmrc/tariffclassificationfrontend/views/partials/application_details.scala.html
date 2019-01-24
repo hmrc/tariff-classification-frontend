@@ -172,11 +172,12 @@
             }
 
             @defining(files.filter(_.operator.isEmpty)) { applicationFiles: Seq[StoredAttachment] =>
-                    @if(applicationFiles.nonEmpty) {
-                        <hr/>
-                        <h3 class="heading-medium">@messages("case.application.attachments")</h3>
-                        @attachments_list("attachments", files.filter(_.operator.isEmpty))
-                    }
+                @if(applicationFiles.nonEmpty) {
+                    <hr/>
+                    <h3 class="heading-medium">@messages("case.application.attachments")</h3>
+                    @attachments_list("attachments", applicationFiles)
+                    @attachments_state_message(attachments = applicationFiles, autoRefresh = true)
+                }
             }
 
             <div class="mt-1">

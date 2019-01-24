@@ -40,9 +40,9 @@
                                     <p id="@{id}-file">
                                         <span>@file.fileName</span>
                                         @if(file.scanStatus.contains(ScanStatus.FAILED)) {
-                                            <span class="phase-tag bg-red ml-1">Quarantined</span>
+                                            <span class="phase-tag bg-red ml-1">Failed</span>
                                         } else {
-                                            <span class="phase-tag bg-blue ml-1">Pending</span>
+                                            <span class="phase-tag bg-blue ml-1">Processing</span>
                                         }
                                     </p>
                                 }
