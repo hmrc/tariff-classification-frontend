@@ -102,9 +102,6 @@ class CasesService @Inject()(appConfig: AppConfig, auditService: AuditService,
 
       // Create the event
       _ <- addEvent(original, updated, operator, Some(message))
-        .recover {
-          case t: Throwable => Logger.error(s"Could not send Complete Case Email for case [${updated.reference}]", t)
-        }
 
       // Audit
       _ = auditService.auditCaseCompleted(original, updated, operator)
