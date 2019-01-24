@@ -37,12 +37,12 @@
                                         @file.fileName
                                     </a>
                                 } else {
-                                    <div id="@{id}-file">
-                                        <span>@file.fileName</span>
+                                    <div>
+                                        <span id="@{id}-file">@file.fileName</span>
                                         @if(file.scanStatus.contains(ScanStatus.FAILED)) {
-                                            <span class="phase-tag bg-red ml-1">Failed</span>
+                                            <span id="@{id}-file-status" class="phase-tag bg-red ml-1">Failed</span>
                                         } else {
-                                            <span class="phase-tag bg-blue ml-1">Processing</span>
+                                            <span id="@{id}-file-status" class="phase-tag bg-blue ml-1">Processing</span>
                                         }
                                     </div>
                                 }
