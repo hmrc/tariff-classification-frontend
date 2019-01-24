@@ -38,6 +38,17 @@ class RootSpec extends IntegrationTest with MockitoSugar {
       response.status shouldBe OK
       response.body should include("You are not authorised to access this page.")
     }
+
+    "redirect to error handler for unknown path" in {
+      // When
+      val response = await(ws.url(s"$frontendRoot/rubbish").get())
+
+      // Then
+      response.status shouldBe NOT_FOUND
+      response.body should include("Please check that you have entered the correct web address.")
+      response.body should include("This page can’t be found")
+    }
+
   }
 
 }
