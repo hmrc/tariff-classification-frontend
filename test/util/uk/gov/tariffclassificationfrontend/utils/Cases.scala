@@ -45,4 +45,22 @@ object Cases {
     )
   }
 
+  def aCase(withModifier: (Case => Case)*): Case = {
+    var c = btiCaseExample
+    withModifier.foreach(m => c = m(c))
+    c
+  }
+
+  def withReference(ref: String): Case => Case = {
+    _.copy(reference = ref)
+  }
+
+  def withAttachment(attachment: Attachment): Case => Case = {
+    c => c.copy(attachments = c.attachments :+ attachment)
+  }
+
+  def withContact(contact: Contact): Case => Case = {
+    c =>c.copy(application = c.application.asBTI.copy(contact = contact))
+  }
+
 }

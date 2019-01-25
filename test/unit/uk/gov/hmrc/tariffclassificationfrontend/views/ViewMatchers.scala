@@ -23,8 +23,8 @@ import org.scalatest.matchers._
 
 object ViewMatchers {
 
-  class ContainElementWithIDMatcher(id: String) extends Matcher[Document] {
-    override def apply(left: Document): MatchResult = {
+  class ContainElementWithIDMatcher(id: String) extends Matcher[Element] {
+    override def apply(left: Element): MatchResult = {
       MatchResult(
         left.getElementById(id) != null,
         s"Document did not contain element with ID {$id}",
@@ -33,8 +33,8 @@ object ViewMatchers {
     }
   }
 
-  class ContainElementWithTagMatcher(tag: String) extends Matcher[Document] {
-    override def apply(left: Document): MatchResult = {
+  class ContainElementWithTagMatcher(tag: String) extends Matcher[Element] {
+    override def apply(left: Element): MatchResult = {
       MatchResult(
         !left.getElementsByTag(tag).isEmpty,
         s"Document did not contain element with Tag {$tag}",
@@ -103,6 +103,16 @@ object ViewMatchers {
     }
   }
 
+  class ElementTagMatcher(tag: String) extends Matcher[Element] {
+    override def apply(left: Element): MatchResult = {
+      MatchResult(
+        left.tagName() == tag,
+        s"Elements had tag {${left.tagName()}}, expected {$tag}",
+        s"Elements had tag {$tag}"
+      )
+    }
+  }
+
   class ChildMatcherBuilder(tag: String) {
     def containingText(text: String) = new ElementContainsChildWithTextMatcher(tag, text)
     def withAttribute(key: String, value: String)  = new ElementContainsChildWithAttributeMatcher(tag, key, value)
@@ -113,6 +123,7 @@ object ViewMatchers {
   def containText(text: String) = new ElementContainsTextMatcher(text)
   def haveSize(size: Int) = new ElementsHasSizeMatcher(size)
   def haveAttribute(key: String, value: String)  = new ElementHasAttributeMatcher(key, value)
+  def haveTag(tag: String)  = new ElementTagMatcher(tag)
   def haveChildCount(count: Int) = new ElementHasChildCountMatcher(count)
   def haveChild(tag: String) = new ChildMatcherBuilder(tag)
 }
