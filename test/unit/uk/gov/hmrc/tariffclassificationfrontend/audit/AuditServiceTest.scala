@@ -17,15 +17,15 @@
 package uk.gov.hmrc.tariffclassificationfrontend.audit
 
 import org.mockito.ArgumentMatchers._
-import org.mockito.Mockito
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.audit.DefaultAuditConnector
 import uk.gov.hmrc.play.test.UnitSpec
-import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, Operator, Queue}
-import uk.gov.tariffclassificationfrontend.utils.Cases
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Operator, Queue}
+import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus._
+import uk.gov.tariffclassificationfrontend.utils.Cases._
 
 import scala.concurrent.ExecutionContext
 
@@ -38,100 +38,109 @@ class AuditServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEac
 
   override protected def afterEach(): Unit = {
     super.afterEach()
-    Mockito.reset(connector)
+    reset(connector)
   }
 
   "Service 'audit case released'" should {
-    val original = Cases.btiCaseExample.copy(reference = "ref", status = CaseStatus.NEW)
-    val updated = Cases.btiCaseExample.copy(reference = "ref", status = CaseStatus.OPEN)
-    val queue = Queue("queue-id", "queueu-slug", "queue-name")
+    val original = btiCaseExample.copy(reference = "ref", status = NEW)
+    val updated = btiCaseExample.copy(reference = "ref", status = OPEN)
+    val queue = Queue("queue-id", "queue-slug", "queue-name")
     val operator = Operator("operator-id")
 
     "Delegate to connector" in {
       service.auditCaseReleased(original, updated, queue, operator)
 
-      val payload = Map[String, String](
-        "reference" -> "ref",
-        "newStatus" -> "OPEN",
-        "previousStatus" -> "NEW",
-        "queue" -> "queue-name",
-        "operatorId" -> "operator-id"
-      )
-      verify(connector).sendExplicitAudit(refEq("CaseReleased"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+      val payload = auditPayload(
+        caseReference = "ref",
+        newStatus = OPEN,
+        previousStatus = NEW,
+        operatorId = operator.id
+      ) + ("queue" -> queue.name)
+
+      verify(connector).sendExplicitAudit(refEq("caseReleased"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
     }
   }
 
   "Service 'audit case completed'" should {
-    val original = Cases.btiCaseExample.copy(reference = "ref", status = CaseStatus.OPEN)
-    val updated = Cases.btiCaseExample.copy(reference = "ref", status = CaseStatus.COMPLETED)
+    val original = btiCaseExample.copy(reference = "ref", status = OPEN)
+    val updated = btiCaseExample.copy(reference = "ref", status = COMPLETED)
     val operator = Operator("operator-id")
 
     "Delegate to connector" in {
       service.auditCaseCompleted(original, updated, operator)
 
-      val payload = Map[String, String](
-        "reference" -> "ref",
-        "newStatus" -> "COMPLETED",
-        "previousStatus" -> "OPEN",
-        "operatorId" -> "operator-id"
+      val payload = auditPayload(
+        caseReference = "ref",
+        newStatus = COMPLETED,
+        previousStatus = OPEN,
+        operatorId = operator.id
       )
-      verify(connector).sendExplicitAudit(refEq("CaseCompleted"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+      verify(connector).sendExplicitAudit(refEq("caseCompleted"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
     }
   }
 
   "Service 'audit case referred'" should {
-    val original = Cases.btiCaseExample.copy(reference = "ref", status = CaseStatus.OPEN)
-    val updated = Cases.btiCaseExample.copy(reference = "ref", status = CaseStatus.REFERRED)
+    val original = btiCaseExample.copy(reference = "ref", status = OPEN)
+    val updated = btiCaseExample.copy(reference = "ref", status = REFERRED)
     val operator = Operator("operator-id")
 
     "Delegate to connector" in {
       service.auditCaseReferred(original, updated, operator)
 
-      val payload = Map[String, String](
-        "reference" -> "ref",
-        "newStatus" -> "REFERRED",
-        "previousStatus" -> "OPEN",
-        "operatorId" -> "operator-id"
+      val payload = auditPayload(
+        caseReference = "ref",
+        newStatus = REFERRED,
+        previousStatus = OPEN,
+        operatorId = operator.id
       )
-      verify(connector).sendExplicitAudit(refEq("CaseReferred"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+      verify(connector).sendExplicitAudit(refEq("caseReferred"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
     }
   }
 
 
   "Service 'audit case reopen' when a case is referred" should {
-    val original = Cases.btiCaseExample.copy(reference = "ref", status = CaseStatus.REFERRED)
-    val updated = Cases.btiCaseExample.copy(reference = "ref", status = CaseStatus.OPEN)
+    val original = btiCaseExample.copy(reference = "ref", status = REFERRED)
+    val updated = btiCaseExample.copy(reference = "ref", status = OPEN)
     val operator = Operator("operator-id")
 
     "Delegate to connector" in {
       service.auditCaseReOpen(original, updated, operator)
 
-      val payload = Map[String, String](
-        "reference" -> "ref",
-        "newStatus" -> "OPEN",
-        "previousStatus" -> "REFERRED",
-        "operatorId" -> "operator-id"
+      val payload = auditPayload(
+        caseReference = "ref",
+        newStatus = OPEN,
+        previousStatus = REFERRED,
+        operatorId = operator.id
       )
-      verify(connector).sendExplicitAudit(refEq("CaseReopened"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+      verify(connector).sendExplicitAudit(refEq("caseReopened"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
     }
   }
 
   "Service 'audit case reopen' when a case is suspended" should {
-    val original = Cases.btiCaseExample.copy(reference = "ref", status = CaseStatus.SUSPENDED)
-    val updated = Cases.btiCaseExample.copy(reference = "ref", status = CaseStatus.OPEN)
+    val original = btiCaseExample.copy(reference = "ref", status = SUSPENDED)
+    val updated = btiCaseExample.copy(reference = "ref", status = OPEN)
     val operator = Operator("operator-id")
 
     "Delegate to connector" in {
       service.auditCaseReOpen(original, updated, operator)
 
-      val payload = Map[String, String](
-        "reference" -> "ref",
-        "newStatus" -> "OPEN",
-        "previousStatus" -> "SUSPENDED",
-        "operatorId" -> "operator-id"
+      val payload = auditPayload(
+        caseReference = "ref",
+        newStatus = OPEN,
+        previousStatus = SUSPENDED,
+        operatorId = operator.id
       )
-      verify(connector).sendExplicitAudit(refEq("CaseReopened"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+      verify(connector).sendExplicitAudit(refEq("caseReopened"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
     }
+  }
+
+  private def auditPayload(caseReference: String, newStatus: CaseStatus, previousStatus: CaseStatus, operatorId: String): Map[String, String] = {
+    Map[String, String](
+      "caseReference" -> caseReference,
+      "newStatus" -> newStatus.toString,
+      "previousStatus" -> previousStatus.toString,
+      "operatorId" -> operatorId
+    )
   }
 
 }
