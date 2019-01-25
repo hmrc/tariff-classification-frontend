@@ -71,8 +71,7 @@ class StoredAttachmentTest extends UnitSpec {
     fileName = "name",
     mimeType = t,
     url = Some("url"),
-    scanStatus = Some(ScanStatus.READY),
-    lastUpdated = Instant.EPOCH
+    scanStatus = Some(ScanStatus.READY)
   )
 
 }

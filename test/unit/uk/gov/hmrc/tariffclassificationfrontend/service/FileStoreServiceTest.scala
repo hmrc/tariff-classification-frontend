@@ -148,8 +148,7 @@ class FileStoreServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfte
       fileName = s"name-$id",
       mimeType = s"type-$id",
       url = Some(s"url-$id"),
-      scanStatus = Some(ScanStatus.READY),
-      lastUpdated = Instant.EPOCH
+      scanStatus = Some(ScanStatus.READY)
     )
   }
 

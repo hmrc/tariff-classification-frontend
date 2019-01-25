@@ -62,14 +62,10 @@ class FileStoreConnector @Inject()(appConfig: AppConfig, http: HttpClient,  ws: 
       FileIO.fromPath(file.ref.file.toPath)
     )
 
+    val dataPart: MultipartFormData.DataPart = MultipartFormData.DataPart("publish", "true")
+
     ws.url(s"${appConfig.fileStoreUrl}/file")
-      .post(Source(List(filePart)))
+      .post(Source(List(filePart, dataPart)))
       .map( response => Json.fromJson[FilestoreResponse](Json.parse(response.body)).get)
-
   }
-
-  def publish(file: Attachment)(implicit hc: HeaderCarrier): Future[FilestoreResponse] = {
-    http.POSTEmpty[FilestoreResponse](s"${appConfig.fileStoreUrl}/file/${file.id}/publish")
-  }
-
 }

@@ -21,9 +21,9 @@ import java.time.ZonedDateTime
 case class Attachment
 (
   id: String,
-  public: Boolean,
+  public: Boolean = false,
   operator: Option[Operator],
-  timestamp: ZonedDateTime
+  timestamp: ZonedDateTime = ZonedDateTime.now()
 )
 
 case class FileStoreAttachment

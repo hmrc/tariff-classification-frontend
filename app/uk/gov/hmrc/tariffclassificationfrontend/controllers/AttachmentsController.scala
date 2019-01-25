@@ -26,7 +26,8 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.UploadAttachmentFormData
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, FileStoreAttachment}
+import uk.gov.hmrc.tariffclassificationfrontend.models._
+import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, FileStoreService}
 import uk.gov.hmrc.tariffclassificationfrontend.views
 import uk.gov.hmrc.tariffclassificationfrontend.views.CaseDetailPage
@@ -62,7 +63,8 @@ class AttachmentsController @Inject()(authenticatedAction: AuthenticatedAction,
 
   }
 
-  private def renderErrors(reference: String, errorMessage: Option[String])(implicit hc: HeaderCarrier, req: Request[_]): Future[Result] = {
+  private def renderErrors(reference: String, errorMessage: Option[String])
+                          (implicit hc: HeaderCarrier, req: Request[_]): Future[Result] = {
     getCaseAndRenderView(
       reference,
       CaseDetailPage.ATTACHMENTS,
@@ -77,6 +79,23 @@ class AttachmentsController @Inject()(authenticatedAction: AuthenticatedAction,
     )
   }
 
+  private def uploadAndSave(reference: String, file: MultipartFormData.FilePart[TemporaryFile])
+                           (implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]) = {
+
+    casesService.getOne(reference).flatMap {
+      case Some(c: Case) =>
+        fileService.upload(file).flatMap {
+          case fileStored: FileStoreAttachment =>
+            val attachments = c.attachments :+ Attachment(id = fileStored.id, operator = Some(request.operator))
+            val caseToUpdate = c.copy(attachments = attachments)
+            casesService.updateCase(caseToUpdate)
+              .flatMap( _ => successful(Redirect(routes.AttachmentsController.attachmentsDetails(reference))))
+          case _ => renderErrors(reference, Some("file service has failed while uploading."))
+        }
+      case _ => successful(Ok(views.html.case_not_found(reference)))
+    }
+  }
+
   def uploadAttachment(reference: String): Action[MultipartFormData[TemporaryFile]] =
     authenticatedAction.async(parse.multipartFormData) { implicit request =>
 
@@ -85,11 +104,7 @@ class AttachmentsController @Inject()(authenticatedAction: AuthenticatedAction,
       attachment match {
         case Some(file) =>
           valid(file) match {
-            case Right(validFile) =>
-              fileService.upload(validFile) flatMap {
-                case _: FileStoreAttachment => successful(Redirect(routes.AttachmentsController.attachmentsDetails(reference)))
-                case _ => renderErrors(reference, Some("file service has failed while uploading."))
-              }
+            case Right(validFile) => uploadAndSave(reference, validFile)
             case Left(errorMessage) => renderErrors(reference, Some(errorMessage))
           }
         case _ => renderErrors(reference, Some("no file provided."))
@@ -114,13 +129,4 @@ class AttachmentsController @Inject()(authenticatedAction: AuthenticatedAction,
       case _ => successful(Ok(views.html.case_not_found(reference)))
     }
   }
-
-  private def getCaseAndRedirect(reference: String, page: CaseDetailPage, toHtml: Case => Future[Call])
-                                (implicit request: Request[_]): Future[Result] = {
-    casesService.getOne(reference).flatMap {
-      case Some(c: Case) => toHtml(c).map(_ => Redirect(routes.AttachmentsController.attachmentsDetails(reference)))
-      case _ => successful(Ok(views.html.case_not_found(reference)))
-    }
-  }
-
 }

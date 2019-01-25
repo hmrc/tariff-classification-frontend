@@ -21,7 +21,6 @@
 )(implicit messages: Messages)
 
 <div class="form-group @if(field.hasErrors){form-group-error}">
-    @field.errors
     <label class="form-label" for="@{field.id}">
         <span>@label</span>
         @field.errors.map { error =>
@@ -30,15 +29,11 @@
     </label>
     <div class="form-control-wrapper">
         <input
-        @*class="@inputClass"*@
         type="file"
         id="@{field.id}"
         name="@{field.name}"
         @if(accept.isDefined) { accept="@{accept.get}" }
-        @if(field.hasErrors){
-            aria-describedby="error-message-@{field.id}-input"
-        }
-
+        @if(field.hasErrors){  aria-describedby="error-message-@{field.id}-input" }
         />
     </div>
 </div>

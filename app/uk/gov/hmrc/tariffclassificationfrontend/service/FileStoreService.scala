@@ -72,7 +72,4 @@ class FileStoreService @Inject()(connector: FileStoreConnector) {
     r => FileStoreAttachment(r.id, r.fileName, r.mimeType, size)
   }
 
-//  private def toPublishedAttachment(size: Long): FilestoreResponse => PublishedFileAttachment = {
-//    r => PublishedFileAttachment(r.id, r.fileName, r.mimeType, size)
-//  }
 }

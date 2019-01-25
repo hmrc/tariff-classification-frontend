@@ -16,8 +16,6 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
-import java.time.Clock
-
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito._
 import org.scalatest.mockito.MockitoSugar
@@ -25,21 +23,26 @@ import org.scalatest.{Matchers, WordSpec}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status
 import play.api.i18n.{DefaultLangs, DefaultMessagesApi}
+import play.api.libs.Files.TemporaryFile
+import play.api.mvc.MultipartFormData.FilePart
+import play.api.mvc.{Call, MultipartFormData}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionFormMapper
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Event, Operator}
-import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, EventsService, FileStoreService}
-import uk.gov.tariffclassificationfrontend.utils.{Cases, Events}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Event, FileStoreAttachment, Operator}
+import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, FileStoreService}
+import uk.gov.tariffclassificationfrontend.utils.Cases
 
 import scala.concurrent.Future
 
 class AttachmentsControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite with MockitoSugar with ControllerCommons {
 
-  private val fakeRequest = FakeRequest()
+  private def onwardRoute = Call("POST", "/foo")
+
+  private val fakeRequest = FakeRequest(onwardRoute)
+
   private val env = Environment.simple()
   private val configuration = Configuration.load(env)
   private val messageApi = new DefaultMessagesApi(env, configuration, new DefaultLangs(configuration))
@@ -50,7 +53,7 @@ class AttachmentsControllerSpec extends WordSpec with Matchers with GuiceOneAppP
   private val event = mock[Event]
 
   private val controller = new AttachmentsController(new SuccessfulAuthenticatedAction(operator),
-                                                      casesService, fileService, messageApi, appConfig)
+    casesService, fileService, messageApi, appConfig)
 
   private implicit val hc = HeaderCarrier()
 
@@ -91,6 +94,105 @@ class AttachmentsControllerSpec extends WordSpec with Matchers with GuiceOneAppP
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
+    }
+  }
+
+  "Attachment upload" should {
+
+    val testReference = "test-reference"
+
+    def prepareValidForm = {
+      val file = TemporaryFile("example-file.txt")
+      val filePart = FilePart[TemporaryFile](key = "file-input", "file.txt", contentType = Some("text/plain"), ref = file)
+      MultipartFormData[TemporaryFile](dataParts = Map(), files = Seq(filePart), badParts = Seq.empty)
+    }
+
+
+    "reload page when valid data is submitted" in {
+
+      //Given
+
+      val aCase = Cases.btiCaseExample.copy(reference = testReference)
+      val updatedCase = aCase.copy(attachments = aCase.attachments :+ Cases.createAttachment("anyUrl"))
+
+      val file = TemporaryFile("example-file.txt")
+      val filePart = FilePart[TemporaryFile](key = "file-input", "file.txt", contentType = Some("text/plain"), ref = file)
+      val form = MultipartFormData[TemporaryFile](dataParts = Map(), files = Seq(filePart), badParts = Seq.empty)
+      val postRequest = fakeRequest.withBody(form)
+
+      given(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
+      given(casesService.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(updatedCase))
+      given(fileService.upload(refEq(filePart))(any[HeaderCarrier])).willReturn(Future.successful(FileStoreAttachment("id", "file-name", "type", 0)))
+
+      // When
+      val result = controller.uploadAttachment(testReference)(postRequest)
+
+      // Then
+      status(result) shouldBe SEE_OTHER
+      redirectLocation(result) shouldBe Some(routes.AttachmentsController.attachmentsDetails(testReference).toString)
+    }
+
+
+    "show not found case page when non existing case is provided" in {
+
+      //Given
+      val postRequest = fakeRequest.withBody(prepareValidForm)
+
+      given(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).willReturn(Future.successful(None))
+
+      // When
+      val result = controller.uploadAttachment(testReference)(postRequest)
+
+      // Then
+      status(result) shouldBe Status.OK
+      contentType(result) shouldBe Some("text/html")
+      charset(result) shouldBe Some("utf-8")
+      contentAsString(result) should include("We could not find a Case with reference")
+    }
+
+    "show file required error message when no file provided" in {
+
+      //Given
+      val aCase = Cases.btiCaseExample.copy(reference = testReference)
+
+      val form = MultipartFormData[TemporaryFile](dataParts = Map.empty, files = Seq.empty, badParts = Seq.empty)
+      val postRequest = fakeRequest.withBody(form)
+
+      given(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
+      given(fileService.getAttachments(refEq(aCase))(any[HeaderCarrier])).willReturn(Future.successful(Seq.empty))
+      given(fileService.getLetterOfAuthority(refEq(aCase))(any[HeaderCarrier])).willReturn(Future.successful(None))
+
+      // When
+      val result = controller.uploadAttachment(testReference)(postRequest)
+
+      // Then
+      status(result) shouldBe OK
+      contentAsString(result) should include("no file provided.")
+    }
+
+
+    "without file driver to attachments page with error" in {
+
+      //Given
+      val aCase = Cases.btiCaseExample.copy(reference = testReference)
+      val updatedCase = aCase.copy(attachments = aCase.attachments :+ Cases.createAttachment("anyUrl"))
+      val returnedAttachments = Seq(Cases.storedAttachment, Cases.storedOperatorAttachment)
+
+      val form = MultipartFormData[TemporaryFile](dataParts = Map(), files = Seq(), badParts = Seq.empty)
+      val postRequest = fakeRequest.withBody(form)
+
+      given(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
+      given(fileService.upload(any[FilePart[TemporaryFile]])(any[HeaderCarrier])).willReturn(Future.successful(FileStoreAttachment("id", "file-name", "type", 0)))
+      given(casesService.updateCase(refEq(aCase))(any[HeaderCarrier])).willReturn(Future.successful(updatedCase))
+      given(fileService.getAttachments(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(returnedAttachments))
+      given(fileService.getLetterOfAuthority(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(Some(Cases.letterOfAuthority)))
+
+      // When
+      val result = controller.uploadAttachment(testReference)(postRequest)
+
+      // Then
+      status(result) shouldBe OK
+
     }
   }
 

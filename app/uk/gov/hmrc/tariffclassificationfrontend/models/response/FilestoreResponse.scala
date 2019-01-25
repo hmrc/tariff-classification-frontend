@@ -26,8 +26,7 @@ case class FilestoreResponse
   fileName: String,
   mimeType: String,
   url: Option[String] = None,
-  scanStatus: Option[ScanStatus] = None,
-  lastUpdated: Instant
+  scanStatus: Option[ScanStatus] = None
 )
 
 object ScanStatus extends Enumeration {

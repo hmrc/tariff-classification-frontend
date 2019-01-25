@@ -25,7 +25,9 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import play.api.Environment
 import play.api.http.Status
+import play.api.libs.Files.TemporaryFile
 import play.api.libs.ws.WSClient
+import play.api.mvc.MultipartFormData
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.audit.DefaultAuditConnector
 import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
@@ -35,7 +37,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.Attachment
 import uk.gov.hmrc.tariffclassificationfrontend.models.response.{FilestoreResponse, ScanStatus}
 import uk.gov.tariffclassificationfrontend.utils.{ResourceFiles, WiremockTestServer}
 
-class FileStoreConnectorTest extends UnitSpec with WiremockTestServer with MockitoSugar with WithFakeApplication with BeforeAndAfterEach with ResourceFiles {
+class FileStoreConnectorSpec extends UnitSpec with WiremockTestServer with MockitoSugar with WithFakeApplication with BeforeAndAfterEach with ResourceFiles {
 
   private val config = mock[AppConfig]
   private implicit val headers: HeaderCarrier = HeaderCarrier()
@@ -45,6 +47,7 @@ class FileStoreConnectorTest extends UnitSpec with WiremockTestServer with Mocki
   private val auditConnector = new DefaultAuditConnector(fakeApplication.configuration, fakeApplication.injector.instanceOf[Environment])
   private val HMRCWSClient = new DefaultHttpClient(fakeApplication.configuration, auditConnector, wsClient, ActorSystem("test"))
 
+  private val instance = LocalDate.of(2019, 1, 1).atStartOfDay().toInstant(ZoneOffset.UTC)
 
   private val connector = new FileStoreConnector(config, HMRCWSClient, wsClient)
 
@@ -52,6 +55,7 @@ class FileStoreConnectorTest extends UnitSpec with WiremockTestServer with Mocki
     super.beforeEach()
     given(config.fileStoreUrl) willReturn wireMockUrl
   }
+
 
   "Connector 'GET' one" should {
     "handle 404" in {
@@ -85,8 +89,7 @@ class FileStoreConnectorTest extends UnitSpec with WiremockTestServer with Mocki
           fileName = "name",
           mimeType = "text/plain",
           url = None,
-          scanStatus = None,
-          lastUpdated = LocalDate.of(2019, 1, 1).atStartOfDay().toInstant(ZoneOffset.UTC)
+          scanStatus = None
         )
       )
     }
@@ -110,8 +113,7 @@ class FileStoreConnectorTest extends UnitSpec with WiremockTestServer with Mocki
           fileName = "name",
           mimeType = "text/plain",
           url = Some("url"),
-          scanStatus = Some(ScanStatus.READY),
-          lastUpdated = LocalDate.of(2019, 1, 1).atStartOfDay().toInstant(ZoneOffset.UTC)
+          scanStatus = Some(ScanStatus.READY)
         )
       )
     }
@@ -144,8 +146,7 @@ class FileStoreConnectorTest extends UnitSpec with WiremockTestServer with Mocki
           fileName = "name",
           mimeType = "text/plain",
           url = None,
-          scanStatus = None,
-          lastUpdated = LocalDate.of(2019, 1, 1).atStartOfDay().toInstant(ZoneOffset.UTC)
+          scanStatus = None
         )
       )
     }
@@ -171,11 +172,31 @@ class FileStoreConnectorTest extends UnitSpec with WiremockTestServer with Mocki
           fileName = "name",
           mimeType = "text/plain",
           url = Some("url"),
-          scanStatus = Some(ScanStatus.READY),
-          lastUpdated = LocalDate.of(2019, 1, 1).atStartOfDay().toInstant(ZoneOffset.UTC)
+          scanStatus = Some(ScanStatus.READY)
         )
       )
     }
+  }
+
+  "Upload" in {
+    stubFor(
+      post("/file")
+        .willReturn(
+          aResponse()
+            .withStatus(Status.ACCEPTED)
+            .withBody(fromResource("filestore/binding-tariff-filestore_upload-response.json"))
+        )
+    )
+
+    val file = MultipartFormData.FilePart[TemporaryFile]("file", "file-name", Some("text/plain"), TemporaryFile("file-name.txt"))
+
+    val result = await(connector.upload(file))
+
+    result shouldBe FilestoreResponse(
+      id = "id",
+      fileName = "file-name.txt",
+      mimeType = "text/plain"
+    )
   }
 
 }
