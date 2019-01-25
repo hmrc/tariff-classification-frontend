@@ -33,6 +33,16 @@ object ViewMatchers {
     }
   }
 
+  class ContainElementWithTagMatcher(tag: String) extends Matcher[Document] {
+    override def apply(left: Document): MatchResult = {
+      MatchResult(
+        !left.getElementsByTag(tag).isEmpty,
+        s"Document did not contain element with Tag {$tag}",
+        s"Document contained an element with Tag {$tag}"
+      )
+    }
+  }
+
   class ElementContainsTextMatcher(content: String) extends Matcher[Element] {
     override def apply(left: Element): MatchResult = {
       MatchResult(
@@ -99,6 +109,7 @@ object ViewMatchers {
   }
 
   def containElementWithID(id: String) = new ContainElementWithIDMatcher(id)
+  def containElementWithTag(tag: String) = new ContainElementWithTagMatcher(tag)
   def containText(text: String) = new ElementContainsTextMatcher(text)
   def haveSize(size: Int) = new ElementsHasSizeMatcher(size)
   def haveAttribute(key: String, value: String)  = new ElementHasAttributeMatcher(key, value)
