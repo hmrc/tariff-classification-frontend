@@ -64,10 +64,6 @@ class FileStoreService @Inject()(connector: FileStoreConnector) {
     connector.upload(f).map(toFileAttachment(f.ref.file.length))
   }
 
-//  def publish(file: FileStoreAttachment)(implicit hc: HeaderCarrier): Future[PublishedFileAttachment] = {
-//    connector.publish(file).map(toPublishedAttachment(file.size))
-//  }
-
   private def toFileAttachment(size: Long): FilestoreResponse => FileStoreAttachment = {
     r => FileStoreAttachment(r.id, r.fileName, r.mimeType, size)
   }
