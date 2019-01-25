@@ -1,0 +1,37 @@
+@*
+ * Copyright 2019 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.tariffclassificationfrontend.models.StoredAttachment
+@import uk.gov.hmrc.tariffclassificationfrontend.models.response.ScanStatus
+@import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
+@(attachments: Seq[StoredAttachment], autoRefresh: Boolean = false)(implicit messages: Messages)
+
+@if(attachments.exists(_.scanStatus.contains(ScanStatus.FAILED))) {
+    <div class="panel panel-border-wide">
+        <p>At least one file has failed to process, a virus may have been detected.</p>
+    </div>
+}
+
+@if(attachments.exists(_.scanStatus.isEmpty)) {
+    @if(autoRefresh && attachments.exists(a => a.scanStatus.isEmpty)) {
+        <script>
+                setTimeout(function () {
+                    location.reload();
+                }, 5000)
+        </script>
+    }
+
+}

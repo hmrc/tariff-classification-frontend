@@ -37,14 +37,14 @@
                                         @file.fileName
                                     </a>
                                 } else {
-                                    <p id="@{id}-file">
-                                        <span>@file.fileName</span>
+                                    <div>
+                                        <span id="@{id}-file">@file.fileName</span>
                                         @if(file.scanStatus.contains(ScanStatus.FAILED)) {
-                                            <span class="phase-tag bg-red ml-1">Quarantined</span>
+                                            <span id="@{id}-file-status" class="phase-tag bg-red ml-1">Failed</span>
                                         } else {
-                                            <span class="phase-tag bg-blue ml-1">Pending</span>
+                                            <span id="@{id}-file-status" class="phase-tag bg-blue ml-1">Processing</span>
                                         }
-                                    </p>
+                                    </div>
                                 }
                             </td>
                             @if(showUploadedBy) {

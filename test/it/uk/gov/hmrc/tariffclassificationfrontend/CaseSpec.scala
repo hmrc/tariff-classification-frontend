@@ -5,7 +5,6 @@ import org.scalatest.mockito.MockitoSugar
 import play.api.test.Helpers._
 import uk.gov.tariffclassificationfrontend.utils.{CasePayloads, EventPayloads}
 
-
 class CaseSpec extends IntegrationTest with MockitoSugar {
 
   "Unknown Case" should {

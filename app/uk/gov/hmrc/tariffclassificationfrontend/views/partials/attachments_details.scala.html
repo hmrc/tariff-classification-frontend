@@ -35,6 +35,8 @@
 
     @tab_heading("attachments", messages("case.menu.attachments"))
 
+    @attachments_state_message(attachments = filesFromApplicant ++ filesFromClassification)
+
     <h3 id="applicant-heading">@messages(s"case.attachment.heading.applicant")</h3>
     @attachments_list("applicant", filesFromApplicant)
 
@@ -44,7 +46,9 @@
     }
 
     <h3 id="classification-team-heading">@messages(s"case.attachment.heading.classification-team")</h3>
-    @attachments_list("classification-team", filesFromClassification, true)
+    @attachments_list("classification-team", filesFromClassification, showUploadedBy = true)
+
+
 
     @helpers.form(action = uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.AttachmentsController.uploadAttachment(c.reference),
         'enctype -> "multipart/form-data",
