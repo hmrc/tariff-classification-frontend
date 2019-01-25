@@ -24,15 +24,19 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.tariffclassificationfrontend.audit.AuditService
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.connector.BindingTariffClassificationConnector
+import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import scala.concurrent.Future.successful
 
 @Singleton
 class CasesService @Inject()(appConfig: AppConfig, auditService: AuditService,
-                             emailService: EmailService, connector: BindingTariffClassificationConnector) {
+                             emailService: EmailService,
+                             fileService:FileStoreService,
+                             connector: BindingTariffClassificationConnector) {
 
   private def addEvent(original: Case, updated: Case, operator: Operator, comment: Option[String] = None)
                       (implicit hc: HeaderCarrier): Future[Unit] = {
@@ -122,6 +126,16 @@ class CasesService @Inject()(appConfig: AppConfig, auditService: AuditService,
 
   def updateCase(caseToUpdate: Case)(implicit hc: HeaderCarrier): Future[Case] = {
     connector.updateCase(caseToUpdate)
+  }
+
+  def addAttachment(c: Case, f: FileUpload, o: Operator)(implicit headerCarrier: HeaderCarrier): Future[Case] = {
+    fileService.upload(f) flatMap {
+      case fileStored: FileStoreAttachment => {
+        val attachments = c.attachments :+ Attachment(id = fileStored.id, operator = Some(o))
+        connector.updateCase(c.copy(attachments = attachments))
+      }
+      case _ => throw new UnknownError()
+    }
   }
 
 }

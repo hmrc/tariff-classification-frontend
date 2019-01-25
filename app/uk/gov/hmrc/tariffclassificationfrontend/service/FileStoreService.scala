@@ -60,8 +60,8 @@ class FileStoreService @Inject()(connector: FileStoreConnector) {
     }
   }
 
-  def upload(f: MultipartFormData.FilePart[TemporaryFile])(implicit hc: HeaderCarrier): Future[FileStoreAttachment] = {
-    connector.upload(f).map(toFileAttachment(f.ref.file.length))
+  def upload(fileUpload: FileUpload)(implicit hc: HeaderCarrier): Future[FileStoreAttachment] = {
+    connector.upload(fileUpload).map(toFileAttachment(fileUpload.content.file.length))
   }
 
   private def toFileAttachment(size: Long): FilestoreResponse => FileStoreAttachment = {

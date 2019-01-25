@@ -37,7 +37,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class FileStoreConnector @Inject()(appConfig: AppConfig, http: HttpClient,  ws: WSClient) {
+class FileStoreConnector @Inject()(appConfig: AppConfig, http: HttpClient, ws: WSClient) {
 
   def get(attachments: Seq[Attachment])(implicit headerCarrier: HeaderCarrier): Future[Seq[FilestoreResponse]] = {
     if (attachments.isEmpty) {
@@ -52,20 +52,20 @@ class FileStoreConnector @Inject()(appConfig: AppConfig, http: HttpClient,  ws: 
     http.GET[Option[FilestoreResponse]](s"${appConfig.fileStoreUrl}/file/${attachment.id}")
   }
 
-  def upload(file: MultipartFormData.FilePart[TemporaryFile])
+  def upload(fileUpload: FileUpload)
             (implicit hc: HeaderCarrier): Future[FilestoreResponse] = {
-
-    val filePart: MultipartFormData.Part[Source[ByteString, Future[IOResult]]] = FilePart(
-      "file",
-      file.filename,
-      file.contentType,
-      FileIO.fromPath(file.ref.file.toPath)
-    )
 
     val dataPart: MultipartFormData.DataPart = MultipartFormData.DataPart("publish", "true")
 
+    val filePart: MultipartFormData.Part[Source[ByteString, Future[IOResult]]] = FilePart(
+      "file",
+      fileUpload.fileName,
+      Some(fileUpload.contentType),
+      FileIO.fromPath(fileUpload.content.file.toPath)
+    )
+
     ws.url(s"${appConfig.fileStoreUrl}/file")
       .post(Source(List(filePart, dataPart)))
-      .map( response => Json.fromJson[FilestoreResponse](Json.parse(response.body)).get)
+      .map(response => Json.fromJson[FilestoreResponse](Json.parse(response.body)).get)
   }
 }

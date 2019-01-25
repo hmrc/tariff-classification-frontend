@@ -16,11 +16,12 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
+import akka.stream.Materializer
 import javax.inject.{Inject, Singleton}
 import play.api.data.{Form, FormError}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.Files.TemporaryFile
-import play.api.mvc._
+import play.api.mvc.{Action, _}
 import play.twirl.api.Html
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -42,7 +43,8 @@ class AttachmentsController @Inject()(authenticatedAction: AuthenticatedAction,
                                       casesService: CasesService,
                                       fileService: FileStoreService,
                                       val messagesApi: MessagesApi,
-                                      implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
+                                      implicit val appConfig: AppConfig,
+                                      implicit val mat: Materializer) extends FrontendController with I18nSupport {
 
   private lazy val form: Form[UploadAttachmentFormData] = UploadAttachmentFormData.form
 
@@ -50,7 +52,7 @@ class AttachmentsController @Inject()(authenticatedAction: AuthenticatedAction,
     getCaseAndRenderView(reference, CaseDetailPage.ATTACHMENTS, c => renderView(c, form))
   }
 
-  private def renderView(c: Case, pForm: Form[_])
+  private def renderView(c: Case, uploadForm: Form[_])
                         (implicit hc: HeaderCarrier, request: Request[_]): Future[Html] = {
 
     for {
@@ -58,7 +60,7 @@ class AttachmentsController @Inject()(authenticatedAction: AuthenticatedAction,
       letter <- fileService.getLetterOfAuthority(c)
     } yield {
       val (applicantFiles, nonApplicantFiles) = attachments.partition(_.operator.isEmpty)
-      views.html.partials.attachments_details(c, pForm, applicantFiles, letter, nonApplicantFiles)
+      views.html.partials.attachments_details(c, uploadForm, applicantFiles, letter, nonApplicantFiles)
     }
 
   }
@@ -79,48 +81,39 @@ class AttachmentsController @Inject()(authenticatedAction: AuthenticatedAction,
     )
   }
 
-  private def uploadAndSave(reference: String, file: MultipartFormData.FilePart[TemporaryFile])
+  private def uploadAndSave(reference: String, multiPartFormData: MultipartFormData[TemporaryFile])
                            (implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]) = {
 
-    casesService.getOne(reference).flatMap {
-      case Some(c: Case) =>
-        fileService.upload(file).flatMap {
-          case fileStored: FileStoreAttachment =>
-            val attachments = c.attachments :+ Attachment(id = fileStored.id, operator = Some(request.operator))
-            val caseToUpdate = c.copy(attachments = attachments)
-            casesService.updateCase(caseToUpdate)
-              .flatMap( _ => successful(Redirect(routes.AttachmentsController.attachmentsDetails(reference))))
-          case _ => renderErrors(reference, Some("file service has failed while uploading."))
+    multiPartFormData.file("file-input") match {
+      case Some(filePart) if filePart.filename.isEmpty => renderErrors(reference, Some("You must select a file"))
+      case Some(filePart) => {
+        val fileUpload = FileUpload(filePart.ref, filePart.filename, filePart.contentType.getOrElse(""))
+        casesService.getOne(reference).flatMap {
+          case Some(c: Case) =>
+            casesService.addAttachment(c, fileUpload, request.operator)
+              .flatMap(_ => successful(Redirect(routes.AttachmentsController.attachmentsDetails(reference))))
+          case _ => successful(Ok(views.html.case_not_found(reference)))
         }
-      case _ => successful(Ok(views.html.case_not_found(reference)))
+      }
+      case _ => renderErrors(reference, Some("expected type file to upload"))
     }
   }
 
-  def uploadAttachment(reference: String): Action[MultipartFormData[TemporaryFile]] =
-    authenticatedAction.async(parse.multipartFormData) { implicit request =>
+  private val maxSizeMB = 100
 
-      val attachment = request.body.file("file-input").filter(_.filename.nonEmpty)
+  def uploadAttachment(reference: String): Action[Either[MaxSizeExceeded, MultipartFormData[TemporaryFile]]] =
+    authenticatedAction.async(parse.maxLength(maxSizeMB * 1024 * 1024, parse.multipartFormData)) { implicit request =>
 
-      attachment match {
-        case Some(file) =>
-          valid(file) match {
-            case Right(validFile) => uploadAndSave(reference, validFile)
-            case Left(errorMessage) => renderErrors(reference, Some(errorMessage))
+      request.body match {
+        case Left(MaxSizeExceeded(_)) => renderErrors(reference, Some(messagesApi("cases.attachment.upload.restrictionSize")))
+        case Right(multipartForm) => {
+          multipartForm match {
+            case file: MultipartFormData[TemporaryFile] => uploadAndSave(reference, file)
+            case _ => renderErrors(reference, Some("You must select a file"))
           }
-        case _ => renderErrors(reference, Some("no file provided."))
+        }
       }
     }
-
-  private val maxFileSize = 10485760
-
-  private def valid(file: MultipartFormData.FilePart[TemporaryFile]): Either[String, MultipartFormData.FilePart[TemporaryFile]] = {
-    if (file.ref.file.length() > maxFileSize) {
-      Left(messagesApi("cases.attachment.upload.restrictionSize"))
-    } else {
-      Right(file)
-    }
-  }
-
 
   private def getCaseAndRenderView(reference: String, page: CaseDetailPage, toHtml: Case => Future[Html])
                                   (implicit request: Request[_]): Future[Result] = {

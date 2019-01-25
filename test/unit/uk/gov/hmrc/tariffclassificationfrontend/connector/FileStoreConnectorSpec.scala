@@ -33,7 +33,7 @@ import uk.gov.hmrc.play.bootstrap.audit.DefaultAuditConnector
 import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.models.Attachment
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Attachment, FileUpload}
 import uk.gov.hmrc.tariffclassificationfrontend.models.response.{FilestoreResponse, ScanStatus}
 import uk.gov.tariffclassificationfrontend.utils.{ResourceFiles, WiremockTestServer}
 
@@ -188,7 +188,7 @@ class FileStoreConnectorSpec extends UnitSpec with WiremockTestServer with Mocki
         )
     )
 
-    val file = MultipartFormData.FilePart[TemporaryFile]("file", "file-name", Some("text/plain"), TemporaryFile("file-name.txt"))
+    val file = FileUpload(TemporaryFile("example-file.txt"), "file.txt", "text/plain")
 
     val result = await(connector.upload(file))
 
