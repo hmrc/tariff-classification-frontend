@@ -24,25 +24,25 @@
             <thead>
                 <tr>
                     <th scope="col">File name</th>
-                    @if(showUploadedBy) { <th scope="col">Uploaded By</th>}
+                    @if(showUploadedBy) {<th scope="col">Uploaded By</th>}
                     <th class="attachment-table-date" scope="col">Date</th>
                 </tr>
             </thead>
             <tbody>
                     @for(file: StoredAttachment <- attachments) {
-                        <tr>
+                        <tr id="@{id}-row-@{file.id}">
                             <td class="w-50">
-                                @if(file.url.isDefined) {
-                                    <a id="@{id}-file" href="@file.url" target="_blank">
+                                @if(file.scanStatus.contains(ScanStatus.READY) && file.url.isDefined) {
+                                    <a id="@{id}-file-@{file.id}" href="@file.url" target="_blank">
                                         @file.fileName
                                     </a>
                                 } else {
                                     <div>
-                                        <span id="@{id}-file">@file.fileName</span>
-                                        @if(file.scanStatus.contains(ScanStatus.FAILED)) {
-                                            <span id="@{id}-file-status" class="phase-tag bg-red ml-1">Failed</span>
+                                        <span id="@{id}-file-@{file.id}">@file.fileName</span>
+                                        @if(file.scanStatus.isEmpty) {
+                                            <span id="@{id}-file-@{file.id}-status" class="phase-tag bg-blue ml-1">Processing</span>
                                         } else {
-                                            <span id="@{id}-file-status" class="phase-tag bg-blue ml-1">Processing</span>
+                                            <span id="@{id}-file-@{file.id}-status" class="phase-tag bg-red ml-1">Failed</span>
                                         }
                                     </div>
                                 }

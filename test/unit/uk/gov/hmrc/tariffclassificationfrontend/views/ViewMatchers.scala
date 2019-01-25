@@ -43,12 +43,42 @@ object ViewMatchers {
     }
   }
 
+  class ElementContainsChildWithTextMatcher(tag: String, content: String) extends Matcher[Element] {
+    override def apply(left: Element): MatchResult = {
+      MatchResult(
+        left.getElementsByTag(tag).text().contains(content),
+        s"Element did not contain text {$content}",
+        s"Element contained text {$content}"
+      )
+    }
+  }
+
+  class ElementContainsChildWithAttributeMatcher(tag: String, key: String, value: String) extends Matcher[Element] {
+    override def apply(left: Element): MatchResult = {
+      MatchResult(
+        left.getElementsByTag(tag).attr(key) == value,
+        s"Element attribute {$key} had value {${left.attr(key)}}, expected {$value}",
+        s"Element attribute {$key} had value {$value}"
+      )
+    }
+  }
+
   class ElementHasAttributeMatcher(key: String, value: String) extends Matcher[Element] {
     override def apply(left: Element): MatchResult = {
       MatchResult(
         left.attr(key) == value,
         s"Element attribute {$key} had value {${left.attr(key)}}, expected {$value}",
         s"Element attribute {$key} had value {$value}"
+      )
+    }
+  }
+
+  class ElementHasChildCountMatcher(count: Int) extends Matcher[Element] {
+    override def apply(left: Element): MatchResult = {
+      MatchResult(
+        left.children().size() == count,
+        s"Element had child count {${left.children().size()}}, expected {$count}",
+        s"Element had child count {$count}"
       )
     }
   }
@@ -63,8 +93,15 @@ object ViewMatchers {
     }
   }
 
+  class ChildMatcherBuilder(tag: String) {
+    def containingText(text: String) = new ElementContainsChildWithTextMatcher(tag, text)
+    def withAttribute(key: String, value: String)  = new ElementContainsChildWithAttributeMatcher(tag, key, value)
+  }
+
   def containElementWithID(id: String) = new ContainElementWithIDMatcher(id)
   def containText(text: String) = new ElementContainsTextMatcher(text)
   def haveSize(size: Int) = new ElementsHasSizeMatcher(size)
   def haveAttribute(key: String, value: String)  = new ElementHasAttributeMatcher(key, value)
+  def haveChildCount(count: Int) = new ElementHasChildCountMatcher(count)
+  def haveChild(tag: String) = new ChildMatcherBuilder(tag)
 }
