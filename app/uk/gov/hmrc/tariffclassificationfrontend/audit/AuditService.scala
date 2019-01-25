@@ -61,7 +61,7 @@ class AuditService @Inject()(auditConnector: DefaultAuditConnector) {
 
   private def statusChangeAuditPayload(oldCase: Case, updatedCase: Case, operator: Operator): Map[String, String] = {
     Map(
-      "reference" -> updatedCase.reference,
+      "caseReference" -> updatedCase.reference,
       "newStatus" -> updatedCase.status.toString,
       "previousStatus" -> oldCase.status.toString,
       "operatorId" -> operator.id
@@ -78,8 +78,8 @@ class AuditService @Inject()(auditConnector: DefaultAuditConnector) {
 
 object AuditPayloadType {
 
-  val CaseReopen = "CaseReopened"
-  val CaseReferred = "CaseReferred"
-  val CaseReleased = "CaseReleased"
-  val CaseCompleted = "CaseCompleted"
+  val CaseReopen = "caseReopened"
+  val CaseReferred = "caseReferred"
+  val CaseReleased = "caseReleased"
+  val CaseCompleted = "caseCompleted"
 }
