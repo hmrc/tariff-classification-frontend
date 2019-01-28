@@ -87,15 +87,16 @@ class AttachmentsController @Inject()(authenticatedAction: AuthenticatedAction,
     multiPartFormData.file("file-input") match {
       case Some(filePart) if filePart.filename.isEmpty => renderErrors(reference, Some("You must select a file"))
       case Some(filePart) => {
-        val fileUpload = FileUpload(filePart.ref, filePart.filename, filePart.contentType.getOrElse(""))
+        val fileUpload = FileUpload(filePart.ref, filePart.filename, filePart.contentType.getOrElse("unknown"))
         casesService.getOne(reference).flatMap {
           case Some(c: Case) =>
             casesService.addAttachment(c, fileUpload, request.operator)
               .flatMap(_ => successful(Redirect(routes.AttachmentsController.attachmentsDetails(reference))))
-          case _ => successful(Ok(views.html.case_not_found(reference)))
+          case _ =>
+            successful(Ok(views.html.case_not_found(reference)))
         }
       }
-      case _ => renderErrors(reference, Some("expected type file to upload"))
+      case _ => renderErrors(reference, Some("expected type file on the form"))
     }
   }
 

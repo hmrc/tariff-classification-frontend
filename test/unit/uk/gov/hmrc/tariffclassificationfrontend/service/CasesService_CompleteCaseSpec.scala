@@ -44,13 +44,14 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
   private val queue = mock[Queue]
   private val connector = mock[BindingTariffClassificationConnector]
   private val emailService = mock[EmailService]
+  private val fileStoreService = mock[FileStoreService]
   private val audit = mock[AuditService]
   private val config = mock[AppConfig]
-  private val clock = Clock.fixed(LocalDateTime.of(2018,1,1, 14,0).toInstant(ZoneOffset.UTC), ZoneId.of("UTC"))
+  private val clock = Clock.fixed(LocalDateTime.of(2018, 1, 1, 14, 0).toInstant(ZoneOffset.UTC), ZoneId.of("UTC"))
   private val aCase = Cases.btiCaseExample
   private val epoch = date("1970-01-01")
 
-  private val service = new CasesService(config, audit, emailService, connector)
+  private val service = new CasesService(config, audit, emailService, fileStoreService, connector)
 
   override protected def afterEach(): Unit = {
     super.afterEach()

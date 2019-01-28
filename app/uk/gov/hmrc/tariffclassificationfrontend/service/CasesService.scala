@@ -24,18 +24,16 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.tariffclassificationfrontend.audit.AuditService
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.connector.BindingTariffClassificationConnector
-import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import scala.concurrent.Future.successful
 
 @Singleton
 class CasesService @Inject()(appConfig: AppConfig, auditService: AuditService,
                              emailService: EmailService,
-                             fileService:FileStoreService,
+                             fileService: FileStoreService,
                              connector: BindingTariffClassificationConnector) {
 
   private def addEvent(original: Case, updated: Case, operator: Operator, comment: Option[String] = None)

@@ -104,99 +104,99 @@ class AttachmentsControllerSpec extends WordSpec with Matchers with GuiceOneAppP
 
   "Attachment upload" should {
 
-//    val testReference = "test-reference"
-//
-//    def prepareValidForm = {
-//      val file = TemporaryFile("example-file.txt")
-//      val filePart = FilePart[TemporaryFile](key = "file-input", "file.txt", contentType = Some("text/plain"), ref = file)
-//      MultipartFormData[TemporaryFile](dataParts = Map(), files = Seq(filePart), badParts = Seq.empty)
-//    }
-//
-//
-//    "reload page when valid data is submitted" in {
-//
-//      //Given
-//
-//      val aCase = Cases.btiCaseExample.copy(reference = testReference)
-//      val updatedCase = aCase.copy(attachments = aCase.attachments :+ Cases.createAttachment("anyUrl"))
-//
-//      val postRequest = fakeRequest.withBody(prepareValidForm)
-//      val fileUpload = FileUpload(TemporaryFile("example-file.txt"), "file.txt", "text/plain")
-//
-//      given(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
-//      given(casesService.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(updatedCase))
-//      given(fileService.upload(refEq(fileUpload))(any[HeaderCarrier])).willReturn(Future.successful(FileStoreAttachment("id", "file-name", "type", 0)))
-//
-//      // When
-//      val runResult = controller.uploadAttachment(testReference)(postRequest)
-//      val result = runResult.run()(mtrlzr)
-//      // Then
-//      status(result) shouldBe SEE_OTHER
-//      redirectLocation(result) shouldBe Some(routes.AttachmentsController.attachmentsDetails(testReference).toString)
-//    }
-//
-//
-//    "show not found case page when non existing case is provided" in {
-//
-//      //Given
-//      val postRequest = fakeRequest.withBody(prepareValidForm)
-//
-//      given(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).willReturn(Future.successful(None))
-//
-//      // When
-//      val runResult = controller.uploadAttachment(testReference)(postRequest)
-//      val result: Future[Result] = runResult.run()(mtrlzr)
-//
-//      // Then
-//      status(result) shouldBe Status.OK
-//      contentType(result) shouldBe Some("text/html")
-//      charset(result) shouldBe Some("utf-8")
-//      contentAsString(result) should include("We could not find a Case with reference")
-//    }
-//
-//    "show file required error message when no file provided" in {
-//
-//      //Given
-//      val aCase = Cases.btiCaseExample.copy(reference = testReference)
-//
-//      val form = MultipartFormData[TemporaryFile](dataParts = Map.empty, files = Seq.empty, badParts = Seq.empty)
-//      val postRequest = fakeRequest.withBody(form)
-//
-//      given(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
-//      given(fileService.getAttachments(refEq(aCase))(any[HeaderCarrier])).willReturn(Future.successful(Seq.empty))
-//      given(fileService.getLetterOfAuthority(refEq(aCase))(any[HeaderCarrier])).willReturn(Future.successful(None))
-//
-//      // When
-//      val runResult = controller.uploadAttachment(testReference)(postRequest)
-//      val result: Future[Result] = runResult.run()(mtrlzr)
-//
-//      // Then
-//      status(result) shouldBe OK
-//      contentAsString(result) should include("You must select a file")
-//    }
-//
-//    "file service fails while upload show expecte message" in {
-//
-//      //Given
-//
-//      val aCase = Cases.btiCaseExample.copy(reference = testReference)
-//      val updatedCase = aCase.copy(attachments = aCase.attachments :+ Cases.createAttachment("anyUrl"))
-//
-//      val postRequest = fakeRequest.withBody(prepareValidForm)
-//      val fileUpload = FileUpload(TemporaryFile("example-file.txt"), "file.txt", "text/plain")
-//
-//      given(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
-//      given(casesService.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(updatedCase))
-//      given(fileService.upload(refEq(fileUpload))(any[HeaderCarrier])).willReturn(Future.successful(FileStoreAttachment("id", "file-name", "type", 0)))
-//
-//      // When
-//      val runResult = controller.uploadAttachment(testReference)(postRequest)
-//      val result: Future[Result] = runResult.run()(mtrlzr)
-//
-//      // Then
-//      status(result) shouldBe OK
-//      contentAsString(result) should include("file service has failed while uploading")
-//    }
+    val testReference = "test-reference"
+
+    def prepareValidForm = {
+      val file = TemporaryFile("example-file.txt")
+      val filePart = FilePart[TemporaryFile](key = "file-input", "file.txt", contentType = Some("text/plain"), ref = file)
+      MultipartFormData[TemporaryFile](dataParts = Map(), files = Seq(filePart), badParts = Seq.empty)
+    }
+
+
+    "reload page when valid data is submitted" in {
+
+      //Given
+
+      val aCase = Cases.btiCaseExample.copy(reference = testReference)
+      val updatedCase = aCase.copy(attachments = aCase.attachments :+ Cases.createAttachment("anyUrl"))
+
+      val postRequest = fakeRequest.withBody(prepareValidForm)
+      val fileUpload = FileUpload(TemporaryFile("example-file.txt"), "file.txt", "text/plain")
+
+      given(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
+      given(casesService.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(updatedCase))
+      given(fileService.upload(refEq(fileUpload))(any[HeaderCarrier])).willReturn(Future.successful(FileStoreAttachment("id", "file-name", "type", 0)))
+
+      // When
+      val runResult = controller.uploadAttachment(testReference)(postRequest)
+      val result = runResult.run()(mtrlzr)
+      // Then
+      status(result) shouldBe SEE_OTHER
+      redirectLocation(result) shouldBe Some(routes.AttachmentsController.attachmentsDetails(testReference).toString)
+    }
+
+
+    "show not found case page when non existing case is provided" in {
+
+      //Given
+      val postRequest = fakeRequest.withBody(prepareValidForm)
+
+      given(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).willReturn(Future.successful(None))
+
+      // When
+      val runResult = controller.uploadAttachment(testReference)(postRequest)
+      val result: Future[Result] = runResult.run()(mtrlzr)
+
+      // Then
+      status(result) shouldBe Status.OK
+      contentType(result) shouldBe Some("text/html")
+      charset(result) shouldBe Some("utf-8")
+      contentAsString(result) should include("We could not find a Case with reference")
+    }
+
+    "show file required error message when no file provided" in {
+
+      //Given
+      val aCase = Cases.btiCaseExample.copy(reference = testReference)
+
+      val form = MultipartFormData[TemporaryFile](dataParts = Map.empty, files = Seq.empty, badParts = Seq.empty)
+      val postRequest = fakeRequest.withBody(form)
+
+      given(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
+      given(fileService.getAttachments(refEq(aCase))(any[HeaderCarrier])).willReturn(Future.successful(Seq.empty))
+      given(fileService.getLetterOfAuthority(refEq(aCase))(any[HeaderCarrier])).willReturn(Future.successful(None))
+
+      // When
+      val runResult = controller.uploadAttachment(testReference)(postRequest)
+      val result: Future[Result] = runResult.run()(mtrlzr)
+
+      // Then
+      status(result) shouldBe OK
+      contentAsString(result) should include("You must select a file")
+    }
+
+    "file service fails while upload show expecte message" in {
+
+      //Given
+
+      val aCase = Cases.btiCaseExample.copy(reference = testReference)
+      val updatedCase = aCase.copy(attachments = aCase.attachments :+ Cases.createAttachment("anyUrl"))
+
+      val postRequest = fakeRequest.withBody(prepareValidForm)
+      val fileUpload = FileUpload(TemporaryFile("example-file.txt"), "file.txt", "text/plain")
+
+      given(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
+      given(casesService.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(updatedCase))
+      given(fileService.upload(refEq(fileUpload))(any[HeaderCarrier])).willReturn(Future.successful(FileStoreAttachment("id", "file-name", "type", 0)))
+
+      // When
+      val runResult = controller.uploadAttachment(testReference)(postRequest)
+      val result: Future[Result] = runResult.run()(mtrlzr)
+
+      // Then
+      status(result) shouldBe OK
+      contentAsString(result) should include("file service has failed while uploading")
+    }
 
   }
 
