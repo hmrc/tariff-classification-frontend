@@ -23,6 +23,18 @@ import uk.gov.hmrc.tariffclassificationfrontend.views.{CaseDetailPage, ViewSpec}
 
 class CaseNavViewSpec extends ViewSpec {
 
+  private val application = "Application details"
+  private val summary = "Summary"
+  private val ruling = "Ruling"
+  private val attachments = "Attachments"
+  private val activity = "Activity"
+
+  private val applicationDetailsURL = routes.CaseController.applicationDetails("ref").url
+  private val rulingURL = routes.CaseController.rulingDetails("ref").url
+  private val attachmentsURL = routes.CaseController.attachmentsDetails("ref").url
+  private val activityURL = routes.CaseController.activityDetails("ref").url
+  private val summaryURL = routes.CaseController.summary("ref").url
+
   "Case Heading" should {
 
     "Render Summary" in {
@@ -34,19 +46,19 @@ class CaseNavViewSpec extends ViewSpec {
       spans should haveSize(1)
 
       val selectedTab = spans.first()
-      selectedTab should containText("Summary")
+      selectedTab should containText(summary)
       selectedTab should haveAttribute("aria-selected", "true")
 
       val anchors = doc.getElementsByTag("a")
       anchors should haveSize(4)
-      anchors.get(0) should containText("Application details")
-      anchors.get(0) should haveAttribute("href", routes.CaseController.applicationDetails("ref").url)
-      anchors.get(1) should containText("Ruling")
-      anchors.get(1) should haveAttribute("href", routes.CaseController.rulingDetails("ref").url)
-      anchors.get(2) should containText("Attachments")
-      anchors.get(2) should haveAttribute("href", routes.CaseController.attachmentsDetails("ref").url)
-      anchors.get(3) should containText("Activity")
-      anchors.get(3) should haveAttribute("href", routes.CaseController.activityDetails("ref").url)
+      anchors.get(0) should containText(application)
+      anchors.get(0) should haveAttribute("href", applicationDetailsURL)
+      anchors.get(1) should containText(ruling)
+      anchors.get(1) should haveAttribute("href", rulingURL)
+      anchors.get(2) should containText(attachments)
+      anchors.get(2) should haveAttribute("href", attachmentsURL)
+      anchors.get(3) should containText(activity)
+      anchors.get(3) should haveAttribute("href", activityURL)
     }
 
     "Render Application Details" in {
@@ -58,19 +70,19 @@ class CaseNavViewSpec extends ViewSpec {
       spans should haveSize(1)
 
       val selectedTab = spans.first()
-      selectedTab should containText("Application details")
+      selectedTab should containText(application)
       selectedTab should haveAttribute("aria-selected", "true")
 
       val anchors = doc.getElementsByTag("a")
       anchors should haveSize(4)
-      anchors.get(0) should containText("Summary")
-      anchors.get(0) should haveAttribute("href", routes.CaseController.summary("ref").url)
-      anchors.get(1) should containText("Ruling")
-      anchors.get(1) should haveAttribute("href", routes.CaseController.rulingDetails("ref").url)
-      anchors.get(2) should containText("Attachments")
-      anchors.get(2) should haveAttribute("href", routes.CaseController.attachmentsDetails("ref").url)
-      anchors.get(3) should containText("Activity")
-      anchors.get(3) should haveAttribute("href", routes.CaseController.activityDetails("ref").url)
+      anchors.get(0) should containText(summary)
+      anchors.get(0) should haveAttribute("href", summaryURL)
+      anchors.get(1) should containText(ruling)
+      anchors.get(1) should haveAttribute("href", rulingURL)
+      anchors.get(2) should containText(attachments)
+      anchors.get(2) should haveAttribute("href", attachmentsURL)
+      anchors.get(3) should containText(activity)
+      anchors.get(3) should haveAttribute("href", activityURL)
     }
 
     "Render Ruling Details" in {
@@ -82,19 +94,19 @@ class CaseNavViewSpec extends ViewSpec {
       spans should haveSize(1)
 
       val selectedTab = spans.first()
-      selectedTab should containText("Ruling")
+      selectedTab should containText(ruling)
       selectedTab should haveAttribute("aria-selected", "true")
 
       val anchors = doc.getElementsByTag("a")
       anchors should haveSize(4)
-      anchors.get(0) should containText("Summary")
-      anchors.get(0) should haveAttribute("href", routes.CaseController.summary("ref").url)
-      anchors.get(1) should containText("Application details")
-      anchors.get(1) should haveAttribute("href", routes.CaseController.applicationDetails("ref").url)
-      anchors.get(2) should containText("Attachments")
-      anchors.get(2) should haveAttribute("href", routes.CaseController.attachmentsDetails("ref").url)
-      anchors.get(3) should containText("Activity")
-      anchors.get(3) should haveAttribute("href", routes.CaseController.activityDetails("ref").url)
+      anchors.get(0) should containText(summary)
+      anchors.get(0) should haveAttribute("href", summaryURL)
+      anchors.get(1) should containText(application)
+      anchors.get(1) should haveAttribute("href", applicationDetailsURL)
+      anchors.get(2) should containText(attachments)
+      anchors.get(2) should haveAttribute("href", attachmentsURL)
+      anchors.get(3) should containText(activity)
+      anchors.get(3) should haveAttribute("href", activityURL)
     }
 
     "Render Attachments" in {
@@ -106,19 +118,19 @@ class CaseNavViewSpec extends ViewSpec {
       spans should haveSize(1)
 
       val selectedTab = spans.first()
-      selectedTab should containText("Attachments")
+      selectedTab should containText(attachments)
       selectedTab should haveAttribute("aria-selected", "true")
 
       val anchors = doc.getElementsByTag("a")
       anchors should haveSize(4)
-      anchors.get(0) should containText("Summary")
-      anchors.get(0) should haveAttribute("href", routes.CaseController.summary("ref").url)
-      anchors.get(1) should containText("Application details")
-      anchors.get(1) should haveAttribute("href", routes.CaseController.applicationDetails("ref").url)
-      anchors.get(2) should containText("Ruling")
-      anchors.get(2) should haveAttribute("href", routes.CaseController.rulingDetails("ref").url)
-      anchors.get(3) should containText("Activity")
-      anchors.get(3) should haveAttribute("href", routes.CaseController.activityDetails("ref").url)
+      anchors.get(0) should containText(summary)
+      anchors.get(0) should haveAttribute("href", summaryURL)
+      anchors.get(1) should containText(application)
+      anchors.get(1) should haveAttribute("href", applicationDetailsURL)
+      anchors.get(2) should containText(ruling)
+      anchors.get(2) should haveAttribute("href", rulingURL)
+      anchors.get(3) should containText(activity)
+      anchors.get(3) should haveAttribute("href", activityURL)
     }
 
     "Render Activity" in {
@@ -130,19 +142,19 @@ class CaseNavViewSpec extends ViewSpec {
       spans should haveSize(1)
 
       val selectedTab = spans.first()
-      selectedTab should containText("Activity")
+      selectedTab should containText(activity)
       selectedTab should haveAttribute("aria-selected", "true")
 
       val anchors = doc.getElementsByTag("a")
       anchors should haveSize(4)
-      anchors.get(0) should containText("Summary")
-      anchors.get(0) should haveAttribute("href", routes.CaseController.summary("ref").url)
-      anchors.get(1) should containText("Application details")
-      anchors.get(1) should haveAttribute("href", routes.CaseController.applicationDetails("ref").url)
-      anchors.get(2) should containText("Ruling")
-      anchors.get(2) should haveAttribute("href", routes.CaseController.rulingDetails("ref").url)
-      anchors.get(3) should containText("Attachments")
-      anchors.get(3) should haveAttribute("href", routes.CaseController.attachmentsDetails("ref").url)
+      anchors.get(0) should containText(summary)
+      anchors.get(0) should haveAttribute("href", summaryURL)
+      anchors.get(1) should containText(application)
+      anchors.get(1) should haveAttribute("href", applicationDetailsURL)
+      anchors.get(2) should containText(ruling)
+      anchors.get(2) should haveAttribute("href", rulingURL)
+      anchors.get(3) should containText(attachments)
+      anchors.get(3) should haveAttribute("href", attachmentsURL)
     }
   }
 
