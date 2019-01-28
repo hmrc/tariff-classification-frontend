@@ -118,7 +118,7 @@ class AttachmentsControllerSpec extends UnitSpec with Matchers with GuiceOneAppP
     "reload page when valid data is submitted" in {
       //Given
       val aCase = Cases.btiCaseExample.copy(reference = testReference)
-      val updatedCase = aCase.copy(attachments = aCase.attachments :+ Cases.createAttachment("anyUrl"))
+      val updatedCase = aCase.copy(attachments = aCase.attachments :+ Cases.attachment("anyUrl"))
 
       val postRequest = fakeRequest.withBody(Right(aMultipartFile))
       val fileUpload = FileUpload(TemporaryFile("example-file.txt"), "file.txt", "text/plain")
@@ -174,7 +174,7 @@ class AttachmentsControllerSpec extends UnitSpec with Matchers with GuiceOneAppP
     "file service fails while upload show expected message" in {
       //Given
       val aCase = Cases.btiCaseExample.copy(reference = testReference)
-      val updatedCase = aCase.copy(attachments = aCase.attachments :+ Cases.createAttachment("anyUrl"))
+      val updatedCase = aCase.copy(attachments = aCase.attachments :+ Cases.attachment("anyUrl"))
 
       val postRequest = fakeRequest.withBody(Right(aMultipartFile))
       val fileUpload = FileUpload(TemporaryFile("example-file.txt"), "file.txt", "text/plain")
