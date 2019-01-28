@@ -28,7 +28,7 @@ import play.api.i18n.{DefaultLangs, DefaultMessagesApi}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.Files.TemporaryFile
 import play.api.mvc.MultipartFormData.FilePart
-import play.api.mvc.{Call, MultipartFormData, Result}
+import play.api.mvc.{Call, MaxSizeExceeded, MultipartFormData, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.api.{Configuration, Environment}
@@ -57,7 +57,6 @@ class AttachmentsControllerSpec extends UnitSpec with Matchers with GuiceOneAppP
   private val casesService = mock[CasesService]
   private val fileService = mock[FileStoreService]
   private val operator = mock[Operator]
-  private val event = mock[Event]
 
   private val controller = new AttachmentsController(
     new SuccessfulAuthenticatedAction(operator), casesService, fileService, messageApi, appConfig, mtrlzr
@@ -115,6 +114,11 @@ class AttachmentsControllerSpec extends UnitSpec with Matchers with GuiceOneAppP
       MultipartFormData[TemporaryFile](dataParts = Map(), files = Seq(filePart), badParts = Seq.empty)
     }
 
+    def aEmptyNameMultipartFile: MultipartFormData[TemporaryFile] = {
+      val filePart = FilePart[TemporaryFile](key = "file-input", "", contentType = Some("text/plain"), ref = TemporaryFile("example-file.txt"))
+      MultipartFormData[TemporaryFile](dataParts = Map(), files = Seq(filePart), badParts = Seq.empty)
+    }
+
     "reload page when valid data is submitted" in {
       //Given
       val aCase = Cases.btiCaseExample.copy(reference = testReference)
@@ -125,7 +129,7 @@ class AttachmentsControllerSpec extends UnitSpec with Matchers with GuiceOneAppP
 
       given(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
       given(casesService.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(updatedCase))
-      given(casesService.addAttachment(any[Case],any[FileUpload],any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(updatedCase))
+      given(casesService.addAttachment(any[Case], any[FileUpload], any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(updatedCase))
       given(fileService.upload(refEq(fileUpload))(any[HeaderCarrier])).willReturn(Future.successful(FileStoreAttachment("id", "file-name", "type", 0)))
 
       // When
@@ -172,6 +176,45 @@ class AttachmentsControllerSpec extends UnitSpec with Matchers with GuiceOneAppP
       contentAsString(result) should include("You must select a file")
     }
 
+
+    "show file required error message when a empty file is provided" in {
+      //Given
+      val aCase = Cases.btiCaseExample.copy(reference = testReference)
+      val postRequest = fakeRequest.withBody(Right(aEmptyNameMultipartFile))
+
+      given(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
+      given(fileService.getAttachments(refEq(aCase))(any[HeaderCarrier])).willReturn(Future.successful(Seq.empty))
+      given(fileService.getLetterOfAuthority(refEq(aCase))(any[HeaderCarrier])).willReturn(Future.successful(None))
+
+      // When
+      val result: Result = await(controller.uploadAttachment(testReference)(postRequest))
+
+      // Then
+      status(result) shouldBe OK
+      contentAsString(result) should include("You must select a file")
+    }
+
+
+
+    "upload a file higher than the size permitted shows expected error" in {
+      //Given
+      val aCase = Cases.btiCaseExample.copy(reference = testReference)
+
+      val postRequest = FakeRequest().withBody(Left(MaxSizeExceeded(1)))
+
+      given(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
+      given(fileService.getAttachments(refEq(aCase))(any[HeaderCarrier])).willReturn(Future.successful(Seq.empty))
+      given(fileService.getLetterOfAuthority(refEq(aCase))(any[HeaderCarrier])).willReturn(Future.successful(None))
+
+      // When
+      val result  = controller.uploadAttachment(testReference)(postRequest)
+
+      // Then
+      status(result) shouldBe OK
+      contentAsString(result) should include("Your file will not upload")
+    }
+
+
     "file service fails while upload show expected message" in {
       //Given
       val aCase = Cases.btiCaseExample.copy(reference = testReference)
@@ -182,7 +225,7 @@ class AttachmentsControllerSpec extends UnitSpec with Matchers with GuiceOneAppP
 
       given(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
       given(casesService.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(updatedCase))
-      given(casesService.addAttachment(any[Case],any[FileUpload],any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(updatedCase))
+      given(casesService.addAttachment(any[Case], any[FileUpload], any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(updatedCase))
       given(fileService.upload(refEq(fileUpload))(any[HeaderCarrier])).willReturn(Future.successful(FileStoreAttachment("id", "file-name", "type", 0)))
 
       // When

@@ -64,6 +64,7 @@ cases.attachment.upload.restrictionSize = a maximum file size of 100MB
 cases.attachment.upload.typeOfFiles = pdf, doc, docx, png, jpg, jpeg and txt files
 cases.attachment.upload.label = Upload a file
 cases.attachment.upload.error.restrictionSize = Your file will not upload because it''s bigger than 100MB
+cases.attachment.upload.error.mustSelect = You must select a file
 events.table.empty=There are no events for this case
 
 errors.case-not-found.title=Case not found

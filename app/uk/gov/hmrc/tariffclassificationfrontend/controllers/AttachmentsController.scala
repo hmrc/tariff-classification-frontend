@@ -88,7 +88,7 @@ class AttachmentsController @Inject()(authenticatedAction: AuthenticatedAction,
                            (implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]) = {
 
     multiPartFormData.file("file-input") match {
-      case Some(filePart) if filePart.filename.isEmpty => renderErrors(reference, Some("You must select a file"))
+      case Some(filePart) if filePart.filename.isEmpty => renderErrors(reference, Some(messagesApi("cases.attachment.upload.error.mustSelect")))
       case Some(filePart) => {
         val fileUpload = FileUpload(filePart.ref, filePart.filename, filePart.contentType.getOrElse("unknown"))
         casesService.getOne(reference).flatMap {
@@ -113,7 +113,7 @@ class AttachmentsController @Inject()(authenticatedAction: AuthenticatedAction,
         case Right(multipartForm) => {
           multipartForm match {
             case file: MultipartFormData[TemporaryFile] if (!file.files.isEmpty) => uploadAndSave(reference, file)
-            case _ => renderErrors(reference, Some("You must select a file"))
+            case _ => renderErrors(reference, Some(messagesApi("cases.attachment.upload.error.mustSelect")))
           }
         }
       }
