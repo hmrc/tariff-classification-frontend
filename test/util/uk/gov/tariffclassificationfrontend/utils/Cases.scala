@@ -19,6 +19,7 @@ package uk.gov.tariffclassificationfrontend.utils
 import java.time.ZonedDateTime
 import java.util.UUID
 
+import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.CaseStatus
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.models.response.ScanStatus
 
@@ -72,6 +73,10 @@ object Cases {
     _.copy(reference = ref)
   }
 
+  def withStatus(status: CaseStatus): Case => Case = {
+    _.copy(status = status)
+  }
+
   def withoutAgent(): Case => Case = {
     c => c.copy(application = c.application.asBTI.copy(agent = None))
   }
@@ -100,6 +105,10 @@ object Cases {
 
   def withoutAttachments(): Case => Case = {
     _.copy(attachments = Seq.empty)
+  }
+
+  def withoutDecision(): Case => Case = {
+    _.copy(decision = None)
   }
 
 }
