@@ -21,10 +21,13 @@ import org.jsoup.nodes.Document
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.AnyContentAsEmpty
-import play.api.test.FakeRequest
+import play.api.test.{FakeHeaders, FakeRequest}
+import play.filters.csrf.CSRF.{Token, TokenProvider}
 import play.twirl.api.Html
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
+import uk.gov.hmrc.tariffclassificationfrontend.models.Operator
+import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 
 abstract class ViewSpec extends UnitSpec with GuiceOneAppPerSuite {
 
@@ -32,9 +35,14 @@ abstract class ViewSpec extends UnitSpec with GuiceOneAppPerSuite {
 
   implicit val appConfig: AppConfig = injector.instanceOf[AppConfig]
 
-  implicit val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
+  private val tokenProvider: TokenProvider = app.injector.instanceOf[TokenProvider]
+  private val csrfTags = Map(Token.NameRequestTag -> "csrfToken", Token.RequestTag -> tokenProvider.generateToken)
 
-  implicit val messages: Messages = injector.instanceOf[MessagesApi].preferred(fakeRequest)
+  private val request = FakeRequest("GET", "/", FakeHeaders(), AnyContentAsEmpty, tags = csrfTags)
+  protected val authenticatedOperator = Operator("operator-id")
+  implicit val authenticatedFakeRequest: AuthenticatedRequest[AnyContentAsEmpty.type] = AuthenticatedRequest(authenticatedOperator, request)
+
+  implicit val messages: Messages = injector.instanceOf[MessagesApi].preferred(authenticatedFakeRequest)
 
   protected def view(html: Html): Document = {
     Jsoup.parse(html.toString())

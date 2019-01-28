@@ -50,6 +50,10 @@ object Cases {
     withModifier.foldLeft(btiCaseExample)((current: Case, modifier) => modifier.apply(current))
   }
 
+  def withAssignee(operator: Option[Operator]): Case => Case = {
+    _.copy(assignee = operator)
+  }
+
   def withOptionalApplicationFields(confidentialInformation: Option[String] = None,
                                     otherInformation: Option[String] = None,
                                     reissuedBTIReference: Option[String] = None,
@@ -135,6 +139,10 @@ object Cases {
         methodCommercialDenomination,
         appeal
       )))
+  }
+
+  def withCreatedDate(date: ZonedDateTime) : Case => Case = {
+    _.copy(createdDate = date)
   }
 
 }

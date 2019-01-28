@@ -60,36 +60,34 @@
             </tr>
         </thead>
         <tbody>
-        @for(event <- events) {
-            <tr>
-                <td class="activity-cell">@event.operator.name</td>
+        @for(event: Event <- events) {
+            <tr id="activity-events-row-@{event.id}">
+                <td id="activity-events-row-@{event.id}-operator" class="activity-cell">@event.operator.name.getOrElse("Unknown")</td>
 
-                @if(event.details.`type` == EventType.NOTE) {
-                    <td class="activity-cell-desc">
+                <td id="activity-events-row-@{event.id}-content" class="activity-cell-desc">
+                    @if(event.details.`type` == EventType.NOTE) {
                         @progressive_disclosure(
-                            id = "case-note-comment",
+                            id = s"activity-events-row-${event.id}",
                             summary = "Case note added",
                             body = event.details.comment
                         )
-                    </td>
-                }
-                @if(event.details.`type` == EventType.CASE_STATUS_CHANGE) {
-                    <td class="activity-cell-desc">
+                    }
+                    @if(event.details.`type` == EventType.CASE_STATUS_CHANGE) {
                         @progressive_disclosure(
-                            id="case-note-comment",
+                            id = s"activity-events-row-${event.id}",
                             summary = s"Status changed to ${event.details.asInstanceOf[CaseStatusChange].to.toString.toLowerCase}",
                             body = event.details.comment
                         )
-                    </td>
-                }
+                    }
+                </td>
 
-                <td class="activity-cell-date">@Dates.format(event.timestamp)</td>
+                <td id="activity-events-row-@{event.id}-date" class="activity-cell-date">@Dates.format(event.timestamp)</td>
             </tr>
         }
-            <tr>
+            <tr id="activity-events-row-application_submitted">
                 <td></td>
-                <td class="activity-cell">Application submitted</td>
-                <td class="activity-cell">@Dates.format(c.createdDate)</td>
+                <td id="activity-events-row-application_submitted-content" class="activity-cell">Application submitted</td>
+                <td id="activity-events-row-application_submitted-date" class="activity-cell">@Dates.format(c.createdDate)</td>
             </tr>
         </tbody>
 
@@ -97,7 +95,7 @@
 
     <p></p>
     <h3 class="heading-medium activity-inline-label">@messages("case.activity.assigned-to"):</h3>
-    <span>
+    <span id="activity-events-assignee">
     @{
         if(c.assignee.map(_.id).contains(request.operator.id)) {
             "You"

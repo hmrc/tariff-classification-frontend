@@ -16,18 +16,25 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.views
 
-import org.jsoup.nodes.{Document, Element}
+import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
-import org.scalatest._
 import org.scalatest.matchers._
 
 object ViewMatchers {
+
+  private def actualContentWas(node: Element): String = {
+    s"\nActual content was:\n${node.html}\n"
+  }
+
+  private def actualContentWas(node: Elements): String = {
+    s"\nActual content was:\n${node.html}\n"
+  }
 
   class ContainElementWithIDMatcher(id: String) extends Matcher[Element] {
     override def apply(left: Element): MatchResult = {
       MatchResult(
         left.getElementById(id) != null,
-        s"Document did not contain element with ID {$id}",
+        s"Document did not contain element with ID {$id}\n${actualContentWas(left)}",
         s"Document contained an element with ID {$id}"
       )
     }
@@ -37,7 +44,7 @@ object ViewMatchers {
     override def apply(left: Element): MatchResult = {
       MatchResult(
         !left.getElementsByTag(tag).isEmpty,
-        s"Document did not contain element with Tag {$tag}",
+        s"Document did not contain element with Tag {$tag}\n${actualContentWas(left)}",
         s"Document contained an element with Tag {$tag}"
       )
     }
@@ -47,7 +54,7 @@ object ViewMatchers {
     override def apply(left: Element): MatchResult = {
       MatchResult(
         left.text().contains(content),
-        s"Element did not contain {$content}",
+        s"Element did not contain {$content}\n${actualContentWas(left)}",
         s"Element contained {$content}"
       )
     }
@@ -55,9 +62,10 @@ object ViewMatchers {
 
   class ElementContainsChildWithTextMatcher(tag: String, content: String) extends Matcher[Element] {
     override def apply(left: Element): MatchResult = {
+      val elements = left.getElementsByTag(tag)
       MatchResult(
-        left.getElementsByTag(tag).text().contains(content),
-        s"Element did not contain text {$content}",
+        elements.text().contains(content),
+        s"Element did not contain text {$content}\n${actualContentWas(elements)}",
         s"Element contained text {$content}"
       )
     }
