@@ -16,6 +16,9 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.views.partials
 
+import java.time.{ZoneOffset, ZonedDateTime}
+
+import uk.gov.hmrc.tariffclassificationfrontend.models.Operator
 import uk.gov.hmrc.tariffclassificationfrontend.models.response.ScanStatus
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewSpec
@@ -35,62 +38,84 @@ class AttachmentsListViewSpec extends ViewSpec {
       doc should containElementWithID("MODULE-empty-table")
     }
 
-    "Render List of Pending attachments" in {
-      val attachment = Cases.storedAttachment.copy(id = "FILE_ID", fileName = "name", scanStatus = None)
+    "Render attachments" in {
+      val attachment = Cases.storedAttachment.copy(
+        id = "FILE_ID",
+        fileName = "name",
+        url = Some("url"),
+        scanStatus = Some(ScanStatus.READY),
+        timestamp = ZonedDateTime.of(2019,1,1,0,0,0,0,ZoneOffset.UTC)
+      )
 
       // When
       val doc = view(attachments_list("MODULE", Seq(attachment)))
 
       // Then
       doc should containElementWithID("MODULE-table")
-      doc should containElementWithID("MODULE-file-FILE_ID")
-      doc should containElementWithID("MODULE-file-FILE_ID-status")
-      doc.getElementById("MODULE-file-FILE_ID") should haveChild("span").containingText("name")
-      doc.getElementById("MODULE-file-FILE_ID-status") should containText("Processing")
+      doc should containElementWithID("MODULE-row-FILE_ID")
+      doc should containElementWithID("MODULE-row-FILE_ID-title")
+      doc should containElementWithID("MODULE-row-FILE_ID-date")
+      doc.getElementById("MODULE-row-FILE_ID-title") should containText("name")
+      doc.getElementById("MODULE-row-FILE_ID-date") should containText("01 Jan 2019")
     }
 
-    "Render List of Quarantined attachments" in {
-      val attachment = Cases.storedAttachment.copy(id = "FILE_ID", fileName = "name", scanStatus = Some(ScanStatus.FAILED))
+    "Hide 'uploaded by'" in {
+      val attachment = Cases.storedAttachment.copy(id = "FILE_ID", fileName = "name", url = Some("url"), scanStatus = Some(ScanStatus.READY))
 
       // When
       val doc = view(attachments_list("MODULE", Seq(attachment)))
 
       // Then
-      doc should containElementWithID("MODULE-table")
-      doc should containElementWithID("MODULE-file-FILE_ID")
-      doc should containElementWithID("MODULE-file-FILE_ID-status")
-      doc.getElementById("MODULE-file-FILE_ID") should haveChild("span").containingText("name")
-      doc.getElementById("MODULE-file-FILE_ID-status") should containText("Failed")
+      doc shouldNot containElementWithID("MODULE-header-uploaded_by")
+      doc shouldNot containElementWithID("MODULE-row-FILE_ID-uploaded_by")
     }
 
-    "Render List of Safe attachments without URL" in {
-      val attachment = Cases.storedAttachment.copy(id = "FILE_ID", fileName = "name", scanStatus = Some(ScanStatus.READY), url = None)
+    "Render 'uploaded by'" in {
+      val attachment = Cases.storedAttachment.copy(
+        id = "FILE_ID",
+        fileName = "name",
+        operator = Some(Operator("id", Some("operator name")))
+      )
 
       // When
-      val doc = view(attachments_list("MODULE", Seq(attachment)))
+      val doc = view(attachments_list("MODULE", Seq(attachment), showUploadedBy = true))
 
       // Then
-      doc should containElementWithID("MODULE-table")
-      doc should containElementWithID("MODULE-file-FILE_ID")
-      doc should containElementWithID("MODULE-file-FILE_ID-status")
-      doc.getElementById("MODULE-file-FILE_ID") should haveChild("span").containingText("name")
-      doc.getElementById("MODULE-file-FILE_ID-status") should containText("Failed")
+      doc should containElementWithID("MODULE-header-uploaded_by")
+      doc should containElementWithID("MODULE-row-FILE_ID-uploaded_by")
+      doc.getElementById("MODULE-row-FILE_ID-uploaded_by") should containText("operator name")
     }
 
-    "Render List of Safe attachments" in {
-      val attachment = Cases.storedAttachment.copy(id = "FILE_ID", fileName = "name", scanStatus = Some(ScanStatus.READY), url = Some("url"))
+    "Render 'uploaded by' with unknown operator" in {
+      val attachment = Cases.storedAttachment.copy(
+        id = "FILE_ID",
+        fileName = "name",
+        operator = None
+      )
 
       // When
-      val doc = view(attachments_list("MODULE", Seq(attachment)))
+      val doc = view(attachments_list("MODULE", Seq(attachment), showUploadedBy = true))
 
       // Then
-      doc should containElementWithID("MODULE-table")
-      doc should containElementWithID("MODULE-file-FILE_ID")
-      doc shouldNot containElementWithID("MODULE-file-FILE_ID-status")
+      doc should containElementWithID("MODULE-header-uploaded_by")
+      doc should containElementWithID("MODULE-row-FILE_ID-uploaded_by")
+      doc.getElementById("MODULE-row-FILE_ID-uploaded_by") should containText("Unknown")
+    }
 
-      val anchor = doc.getElementById("MODULE-file-FILE_ID")
-      anchor should haveChild("a").containingText("name")
-      anchor should haveChild("a").withAttribute("href", "url")
+    "Render 'uploaded by' with unknown operator name" in {
+      val attachment = Cases.storedAttachment.copy(
+        id = "FILE_ID",
+        fileName = "name",
+        operator = Some(Operator("id", None))
+      )
+
+      // When
+      val doc = view(attachments_list("MODULE", Seq(attachment), showUploadedBy = true))
+
+      // Then
+      doc should containElementWithID("MODULE-header-uploaded_by")
+      doc should containElementWithID("MODULE-row-FILE_ID-uploaded_by")
+      doc.getElementById("MODULE-row-FILE_ID-uploaded_by") should containText("Unknown")
     }
 
   }
