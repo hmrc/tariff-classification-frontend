@@ -49,8 +49,8 @@ class DecisionFormMapperSpec extends UnitSpec {
 
     "make attachments public when are contained into the form" in {
 
-      val attToPublish = createAttachment("url.to.publish")
-      val attNotPublish = createAttachment("url.to.not.be.published")
+      val attToPublish = attachment("url.to.publish")
+      val attNotPublish = attachment("url.to.not.be.published")
       val caseWithAtt = testCase.copy(attachments = Seq(attToPublish, attNotPublish))
       val decisionFormWithAttSelected = validForm.copy(attachments = Seq(attToPublish.id))
 
@@ -66,7 +66,7 @@ class DecisionFormMapperSpec extends UnitSpec {
 
     "create valid decision form from a valid case " in {
 
-      val caseWithAtt = testCase.copy(attachments = Seq(createAttachment("url.to.publish")))
+      val caseWithAtt = testCase.copy(attachments = Seq(attachment("url.to.publish")))
       val result: DecisionFormData = mapper.caseToDecisionFormData(caseWithAtt)
 
       compareAllFields(result, testCase.decision.get)

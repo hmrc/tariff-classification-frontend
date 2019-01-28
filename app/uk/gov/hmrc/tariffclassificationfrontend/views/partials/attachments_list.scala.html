@@ -17,6 +17,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.models.StoredAttachment
 @import uk.gov.hmrc.tariffclassificationfrontend.models.response.ScanStatus
 @import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.attachment
 @(id: String, attachments: Seq[StoredAttachment], showUploadedBy: Boolean = false)(implicit messages: Messages)
 
     @if(attachments.nonEmpty){
@@ -32,20 +33,7 @@
                     @for(file: StoredAttachment <- attachments) {
                         <tr id="@{id}-row-@{file.id}">
                             <td class="w-50">
-                                @if(file.scanStatus.contains(ScanStatus.READY) && file.url.isDefined) {
-                                    <a id="@{id}-file-@{file.id}" href="@file.url" target="_blank">
-                                        @file.fileName
-                                    </a>
-                                } else {
-                                    <div>
-                                        <span id="@{id}-file-@{file.id}">@file.fileName</span>
-                                        @if(file.scanStatus.isEmpty) {
-                                            <span id="@{id}-file-@{file.id}-status" class="phase-tag bg-blue ml-1">Processing</span>
-                                        } else {
-                                            <span id="@{id}-file-@{file.id}-status" class="phase-tag bg-red ml-1">Failed</span>
-                                        }
-                                    </div>
-                                }
+                                @attachment(id, file)
                             </td>
                             @if(showUploadedBy) {
                                 <td>

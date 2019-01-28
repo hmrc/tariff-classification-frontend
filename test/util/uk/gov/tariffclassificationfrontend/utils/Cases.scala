@@ -36,9 +36,9 @@ object Cases {
   val btiCaseExample = Case("1", CaseStatus.OPEN, ZonedDateTime.now(), 0, None, None, None, None, btiApplicationExample, Some(decision), Seq())
   val liabilityCaseExample = Case("1", CaseStatus.OPEN, ZonedDateTime.now(), 0, None, None, None, None, liabilityApplicationExample, None, Seq())
 
-  def createAttachment(url: String): Attachment = {
+  def attachment(id: String = UUID.randomUUID().toString): Attachment = {
     Attachment(
-      id = UUID.randomUUID().toString,
+      id = id,
       public = true,
       operator = Some(Operator("0", Some("operatorName"))),
       timestamp = ZonedDateTime.now()
@@ -46,13 +46,48 @@ object Cases {
   }
 
   def aCase(withModifier: (Case => Case)*): Case = {
-    var c = btiCaseExample
-    withModifier.foreach(m => c = m(c))
-    c
+    withModifier.foldLeft(btiCaseExample)((current: Case, modifier) => modifier.apply(current))
+  }
+
+  def withOptionalApplicationFields(confidentialInformation: Option[String] = None,
+                                    otherInformation: Option[String] = None,
+                                    reissuedBTIReference: Option[String] = None,
+                                    relatedBTIReference: Option[String] = None,
+                                    knownLegalProceedings: Option[String] = None,
+                                    envisagedCommodityCode: Option[String] = None): Case => Case = {
+    c =>
+      c.copy(
+        application = c.application.asBTI.copy(
+          confidentialInformation = confidentialInformation,
+          otherInformation = otherInformation,
+          reissuedBTIReference = reissuedBTIReference,
+          relatedBTIReference = relatedBTIReference,
+          knownLegalProceedings = knownLegalProceedings,
+          envisagedCommodityCode = envisagedCommodityCode
+        )
+      )
   }
 
   def withReference(ref: String): Case => Case = {
     _.copy(reference = ref)
+  }
+
+  def withoutAgent(): Case => Case = {
+    c => c.copy(application = c.application.asBTI.copy(agent = None))
+  }
+
+  def withAgent(eori: String = "agent-eori",
+                businessName: String = "agent-business",
+                addressLine1: String = "agent-address1",
+                addressLine2: String = "agent-address2",
+                addressLine3: String = "agent-address3",
+                postcode: String = "agent-postcode",
+                country: String = "agent-country",
+                letter: Option[Attachment] = None): Case => Case = {
+    c =>
+      val eoriDetails = EORIDetails(eori, businessName, addressLine1, addressLine2, addressLine3, postcode, country)
+      val agentDetails = AgentDetails(eoriDetails, letter)
+      c.copy(application = c.application.asBTI.copy(agent = Some(agentDetails)))
   }
 
   def withAttachment(attachment: Attachment): Case => Case = {
@@ -61,6 +96,10 @@ object Cases {
 
   def withContact(contact: Contact): Case => Case = {
     c =>c.copy(application = c.application.asBTI.copy(contact = contact))
+  }
+
+  def withoutAttachments(): Case => Case = {
+    _.copy(attachments = Seq.empty)
   }
 
 }
