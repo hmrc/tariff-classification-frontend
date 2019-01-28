@@ -19,9 +19,10 @@ package uk.gov.hmrc.tariffclassificationfrontend.controllers
 import akka.stream.Materializer
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito._
+import org.scalatest.Matchers
 import org.scalatest.mockito.MockitoSugar
-import org.scalatest.{Matchers, WordSpec}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api
 import play.api.http.Status
 import play.api.i18n.{DefaultLangs, DefaultMessagesApi}
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -32,6 +33,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, FileStoreService}
@@ -39,14 +41,14 @@ import uk.gov.tariffclassificationfrontend.utils.Cases
 
 import scala.concurrent.Future
 
-class AttachmentsControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite with MockitoSugar with ControllerCommons {
+class AttachmentsControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSuite with MockitoSugar with ControllerCommons {
 
   private def onwardRoute = Call("POST", "/foo")
 
   private val fakeRequest = FakeRequest(onwardRoute)
 
-  def mockApp = new GuiceApplicationBuilder().build()
-  val mtrlzr: Materializer = mockApp.injector.instanceOf[Materializer]
+  private implicit def application: api.Application = new GuiceApplicationBuilder().build()
+  private implicit val mtrlzr: Materializer = application.injector.instanceOf[Materializer]
 
   private val env = Environment.simple()
   private val configuration = Configuration.load(env)
@@ -57,10 +59,11 @@ class AttachmentsControllerSpec extends WordSpec with Matchers with GuiceOneAppP
   private val operator = mock[Operator]
   private val event = mock[Event]
 
-  private val controller = new AttachmentsController(new SuccessfulAuthenticatedAction(operator),
-    casesService, fileService, messageApi, appConfig, mtrlzr)
+  private val controller = new AttachmentsController(
+    new SuccessfulAuthenticatedAction(operator), casesService, fileService, messageApi, appConfig, mtrlzr
+  )
 
-  private implicit val hc = HeaderCarrier()
+  private implicit val hc: HeaderCarrier = HeaderCarrier()
 
 
   "Attachments Details" should {
@@ -106,30 +109,28 @@ class AttachmentsControllerSpec extends WordSpec with Matchers with GuiceOneAppP
 
     val testReference = "test-reference"
 
-    def prepareValidForm = {
+    def aMultipartFile: MultipartFormData[TemporaryFile] = {
       val file = TemporaryFile("example-file.txt")
       val filePart = FilePart[TemporaryFile](key = "file-input", "file.txt", contentType = Some("text/plain"), ref = file)
       MultipartFormData[TemporaryFile](dataParts = Map(), files = Seq(filePart), badParts = Seq.empty)
     }
 
-
     "reload page when valid data is submitted" in {
-
       //Given
-
       val aCase = Cases.btiCaseExample.copy(reference = testReference)
       val updatedCase = aCase.copy(attachments = aCase.attachments :+ Cases.createAttachment("anyUrl"))
 
-      val postRequest = fakeRequest.withBody(prepareValidForm)
+      val postRequest = fakeRequest.withBody(Right(aMultipartFile))
       val fileUpload = FileUpload(TemporaryFile("example-file.txt"), "file.txt", "text/plain")
 
       given(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
       given(casesService.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(updatedCase))
       given(fileService.upload(refEq(fileUpload))(any[HeaderCarrier])).willReturn(Future.successful(FileStoreAttachment("id", "file-name", "type", 0)))
 
+
       // When
-      val runResult = controller.uploadAttachment(testReference)(postRequest)
-      val result = runResult.run()(mtrlzr)
+      val result: Result = await(controller.uploadAttachment(testReference)(postRequest))
+
       // Then
       status(result) shouldBe SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.AttachmentsController.attachmentsDetails(testReference).toString)
@@ -137,15 +138,13 @@ class AttachmentsControllerSpec extends WordSpec with Matchers with GuiceOneAppP
 
 
     "show not found case page when non existing case is provided" in {
-
       //Given
-      val postRequest = fakeRequest.withBody(prepareValidForm)
+      val postRequest = fakeRequest.withBody(Right(aMultipartFile))
 
       given(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).willReturn(Future.successful(None))
 
       // When
-      val runResult = controller.uploadAttachment(testReference)(postRequest)
-      val result: Future[Result] = runResult.run()(mtrlzr)
+      val result: Result = await(controller.uploadAttachment(testReference)(postRequest))
 
       // Then
       status(result) shouldBe Status.OK
@@ -159,7 +158,7 @@ class AttachmentsControllerSpec extends WordSpec with Matchers with GuiceOneAppP
       //Given
       val aCase = Cases.btiCaseExample.copy(reference = testReference)
 
-      val form = MultipartFormData[TemporaryFile](dataParts = Map.empty, files = Seq.empty, badParts = Seq.empty)
+      val form = Right(MultipartFormData[TemporaryFile](dataParts = Map.empty, files = Seq.empty, badParts = Seq.empty))
       val postRequest = fakeRequest.withBody(form)
 
       given(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
@@ -167,22 +166,21 @@ class AttachmentsControllerSpec extends WordSpec with Matchers with GuiceOneAppP
       given(fileService.getLetterOfAuthority(refEq(aCase))(any[HeaderCarrier])).willReturn(Future.successful(None))
 
       // When
-      val runResult = controller.uploadAttachment(testReference)(postRequest)
-      val result: Future[Result] = runResult.run()(mtrlzr)
+      val result: Result = await(controller.uploadAttachment(testReference)(postRequest))
 
       // Then
       status(result) shouldBe OK
       contentAsString(result) should include("You must select a file")
     }
 
-    "file service fails while upload show expecte message" in {
+    "file service fails while upload show expected message" in {
 
       //Given
 
       val aCase = Cases.btiCaseExample.copy(reference = testReference)
       val updatedCase = aCase.copy(attachments = aCase.attachments :+ Cases.createAttachment("anyUrl"))
 
-      val postRequest = fakeRequest.withBody(prepareValidForm)
+      val postRequest = fakeRequest.withBody(Right(aMultipartFile))
       val fileUpload = FileUpload(TemporaryFile("example-file.txt"), "file.txt", "text/plain")
 
       given(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
@@ -190,8 +188,7 @@ class AttachmentsControllerSpec extends WordSpec with Matchers with GuiceOneAppP
       given(fileService.upload(refEq(fileUpload))(any[HeaderCarrier])).willReturn(Future.successful(FileStoreAttachment("id", "file-name", "type", 0)))
 
       // When
-      val runResult = controller.uploadAttachment(testReference)(postRequest)
-      val result: Future[Result] = runResult.run()(mtrlzr)
+      val result: Result = await(controller.uploadAttachment(testReference)(postRequest))
 
       // Then
       status(result) shouldBe OK
