@@ -19,13 +19,14 @@ package uk.gov.tariffclassificationfrontend.utils
 import java.time.ZonedDateTime
 import java.util.UUID
 
+import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.CaseStatus
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.models.response.ScanStatus
 
 object Cases {
 
-  val storedAttachment = StoredAttachment("id",  public = true, None, Some("url"), "name", "type", Some(ScanStatus.READY), ZonedDateTime.now())
-  val storedOperatorAttachment = StoredAttachment("id",  public = true, Some(Operator("0", Some("Operator Name"))), Some("url"), "name", "type", Some(ScanStatus.READY), ZonedDateTime.now())
+  val storedAttachment = StoredAttachment("id", public = true, None, Some("url"), "name", "type", Some(ScanStatus.READY), ZonedDateTime.now())
+  val storedOperatorAttachment = StoredAttachment("id", public = true, Some(Operator("0", Some("Operator Name"))), Some("url"), "name", "type", Some(ScanStatus.READY), ZonedDateTime.now())
   val letterOfAuthority = StoredAttachment("id", public = true, None, Some("url"), "letterOfAuthority", "pdf", Some(ScanStatus.READY), ZonedDateTime.now())
   val eoriDetailsExample = EORIDetails("eori", "trader-business-name", "line1", "line2", "line3", "postcode", "country")
   val eoriAgentDetailsExample = AgentDetails(EORIDetails("eori", "agent-business-name", "line1", "line2", "line3", "postcode", "country"), Some(Attachment(UUID.randomUUID().toString, true, None, ZonedDateTime.now())))
@@ -47,6 +48,10 @@ object Cases {
 
   def aCase(withModifier: (Case => Case)*): Case = {
     withModifier.foldLeft(btiCaseExample)((current: Case, modifier) => modifier.apply(current))
+  }
+
+  def withAssignee(operator: Option[Operator]): Case => Case = {
+    _.copy(assignee = operator)
   }
 
   def withOptionalApplicationFields(confidentialInformation: Option[String] = None,
@@ -72,6 +77,10 @@ object Cases {
     _.copy(reference = ref)
   }
 
+  def withStatus(status: CaseStatus): Case => Case = {
+    _.copy(status = status)
+  }
+
   def withoutAgent(): Case => Case = {
     c => c.copy(application = c.application.asBTI.copy(agent = None))
   }
@@ -95,11 +104,45 @@ object Cases {
   }
 
   def withContact(contact: Contact): Case => Case = {
-    c =>c.copy(application = c.application.asBTI.copy(contact = contact))
+    c => c.copy(application = c.application.asBTI.copy(contact = contact))
   }
 
   def withoutAttachments(): Case => Case = {
     _.copy(attachments = Seq.empty)
+  }
+
+  def withoutDecision(): Case => Case = {
+    _.copy(decision = None)
+  }
+
+  def withDecision(bindingCommodityCode: String = "decision-commodity-code",
+                   effectiveStartDate: ZonedDateTime = ZonedDateTime.now(),
+                   effectiveEndDate: ZonedDateTime = ZonedDateTime.now(),
+                   justification: String = "decision-justification",
+                   goodsDescription: String = "decision-goods-description",
+                   keywords: Seq[String] = Seq.empty,
+                   methodSearch: Option[String] = None,
+                   methodExclusion: Option[String] = None,
+                   methodCommercialDenomination: Option[String] = None,
+                   appeal: Option[Appeal] = None
+                  ): Case => Case = {
+    _.copy(decision = Some(
+      Decision(
+        bindingCommodityCode,
+        effectiveStartDate,
+        effectiveEndDate,
+        justification,
+        goodsDescription,
+        keywords,
+        methodSearch,
+        methodExclusion,
+        methodCommercialDenomination,
+        appeal
+      )))
+  }
+
+  def withCreatedDate(date: ZonedDateTime) : Case => Case = {
+    _.copy(createdDate = date)
   }
 
 }
