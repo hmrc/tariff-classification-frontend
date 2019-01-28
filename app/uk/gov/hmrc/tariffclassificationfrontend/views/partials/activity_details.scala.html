@@ -74,7 +74,7 @@
                     }
                     @if(event.details.`type` == EventType.CASE_STATUS_CHANGE) {
                         @progressive_disclosure(
-                            id="case-note-comment",
+                            id= s"activity-events-row-${event.id}",
                             summary = s"Status changed from ${event.details.asInstanceOf[CaseStatusChange].from.toString.toLowerCase} to ${event.details.asInstanceOf[CaseStatusChange].to.toString.toLowerCase}",
                             body = event.details.comment
                         )

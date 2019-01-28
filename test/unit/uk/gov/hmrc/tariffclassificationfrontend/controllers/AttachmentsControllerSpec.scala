@@ -73,7 +73,7 @@ class AttachmentsControllerSpec extends UnitSpec with Matchers with GuiceOneAppP
       given(fileService.getAttachments(refEq(aCase))(any[HeaderCarrier])).willReturn(Future.successful(Seq(Cases.storedAttachment, Cases.storedOperatorAttachment)))
       given(fileService.getLetterOfAuthority(refEq(aCase))(any[HeaderCarrier])).willReturn(Future.successful(Some(Cases.letterOfAuthority)))
 
-      val result = controller.attachmentsDetails("reference")(fakeRequest)
+      val result = await(controller.attachmentsDetails("reference")(fakeRequest))
 
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -86,7 +86,7 @@ class AttachmentsControllerSpec extends UnitSpec with Matchers with GuiceOneAppP
       given(fileService.getAttachments(refEq(aCase))(any[HeaderCarrier])).willReturn(Future.successful(Seq.empty))
       given(fileService.getLetterOfAuthority(refEq(aCase))(any[HeaderCarrier])).willReturn(Future.successful(None))
 
-      val result = controller.attachmentsDetails("reference")(fakeRequest)
+      val result = await(controller.attachmentsDetails("reference")(fakeRequest))
 
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -96,7 +96,7 @@ class AttachmentsControllerSpec extends UnitSpec with Matchers with GuiceOneAppP
     "return 404 Not Found and HTML content type" in {
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(None))
 
-      val result = controller.attachmentsDetails("reference")(fakeRequest)
+      val result = await(controller.attachmentsDetails("reference")(fakeRequest))
 
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -207,7 +207,7 @@ class AttachmentsControllerSpec extends UnitSpec with Matchers with GuiceOneAppP
       given(fileService.getLetterOfAuthority(refEq(aCase))(any[HeaderCarrier])).willReturn(Future.successful(None))
 
       // When
-      val result  = controller.uploadAttachment(testReference)(postRequest)
+      val result  = await(controller.uploadAttachment(testReference)(postRequest))
 
       // Then
       status(result) shouldBe OK
