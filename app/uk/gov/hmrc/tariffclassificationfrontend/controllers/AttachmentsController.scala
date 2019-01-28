@@ -56,7 +56,10 @@ class AttachmentsController @Inject()(authenticatedAction: AuthenticatedAction,
                         (implicit hc: HeaderCarrier, request: Request[_]): Future[Html] = {
 
     for {
-      attachments <- fileService.getAttachments(c)
+      attachments <- fileService.getAttachments(c)map {
+        case seq : Seq[StoredAttachment] => seq.sortWith(_.timestamp.toEpochSecond > _.timestamp.toEpochSecond)
+        case _ => Seq.empty
+      }
       letter <- fileService.getLetterOfAuthority(c)
     } yield {
       val (applicantFiles, nonApplicantFiles) = attachments.partition(_.operator.isEmpty)
@@ -100,16 +103,16 @@ class AttachmentsController @Inject()(authenticatedAction: AuthenticatedAction,
     }
   }
 
-  private val maxSizeMB = 100
+  private val maxSizeMB = 100 * 1024 * 1024
 
   def uploadAttachment(reference: String): Action[Either[MaxSizeExceeded, MultipartFormData[TemporaryFile]]] =
-    authenticatedAction.async(parse.maxLength(maxSizeMB * 1024 * 1024, parse.multipartFormData)) { implicit request =>
+    authenticatedAction.async(parse.maxLength(maxSizeMB, parse.multipartFormData)) { implicit request =>
 
       request.body match {
-        case Left(MaxSizeExceeded(_)) => renderErrors(reference, Some(messagesApi("cases.attachment.upload.restrictionSize")))
+        case Left(MaxSizeExceeded(_)) => renderErrors(reference, Some(messagesApi("cases.attachment.upload.error.restrictionSize")))
         case Right(multipartForm) => {
           multipartForm match {
-            case file: MultipartFormData[TemporaryFile] => uploadAndSave(reference, file)
+            case file: MultipartFormData[TemporaryFile] if (!file.files.isEmpty) => uploadAndSave(reference, file)
             case _ => renderErrors(reference, Some("You must select a file"))
           }
         }

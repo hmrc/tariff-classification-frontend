@@ -125,6 +125,7 @@ class AttachmentsControllerSpec extends UnitSpec with Matchers with GuiceOneAppP
 
       given(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
       given(casesService.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(updatedCase))
+      given(casesService.addAttachment(any[Case],any[FileUpload],any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(updatedCase))
       given(fileService.upload(refEq(fileUpload))(any[HeaderCarrier])).willReturn(Future.successful(FileStoreAttachment("id", "file-name", "type", 0)))
 
       // When
@@ -181,14 +182,15 @@ class AttachmentsControllerSpec extends UnitSpec with Matchers with GuiceOneAppP
 
       given(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
       given(casesService.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(updatedCase))
+      given(casesService.addAttachment(any[Case],any[FileUpload],any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(updatedCase))
       given(fileService.upload(refEq(fileUpload))(any[HeaderCarrier])).willReturn(Future.successful(FileStoreAttachment("id", "file-name", "type", 0)))
 
       // When
       val result: Result = await(controller.uploadAttachment(testReference)(postRequest))
 
       // Then
-      status(result) shouldBe OK
-      contentAsString(result) should include("file service has failed while uploading")
+      status(result) shouldBe SEE_OTHER
+      redirectLocation(result) shouldBe Some(routes.AttachmentsController.attachmentsDetails(testReference).toString)
     }
 
   }

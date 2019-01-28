@@ -77,7 +77,7 @@
                     <td class="activity-cell-desc">
                         @progressive_disclosure(
                             id="case-note-comment",
-                            summary = s"Status changed to ${event.details.asInstanceOf[CaseStatusChange].to.toString.toLowerCase}",
+                            summary = s"Status changed from ${event.details.asInstanceOf[CaseStatusChange].from.toString.toLowerCase} to ${event.details.asInstanceOf[CaseStatusChange].to.toString.toLowerCase}",
                             body = event.details.comment
                         )
                     </td>
