@@ -127,7 +127,6 @@ class AttachmentsControllerSpec extends UnitSpec with Matchers with GuiceOneAppP
       given(casesService.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(updatedCase))
       given(fileService.upload(refEq(fileUpload))(any[HeaderCarrier])).willReturn(Future.successful(FileStoreAttachment("id", "file-name", "type", 0)))
 
-
       // When
       val result: Result = await(controller.uploadAttachment(testReference)(postRequest))
 
@@ -154,12 +153,11 @@ class AttachmentsControllerSpec extends UnitSpec with Matchers with GuiceOneAppP
     }
 
     "show file required error message when no file provided" in {
-
       //Given
       val aCase = Cases.btiCaseExample.copy(reference = testReference)
 
-      val form = Right(MultipartFormData[TemporaryFile](dataParts = Map.empty, files = Seq.empty, badParts = Seq.empty))
-      val postRequest = fakeRequest.withBody(form)
+      val form = MultipartFormData[TemporaryFile](dataParts = Map.empty, files = Seq.empty, badParts = Seq.empty)
+      val postRequest = fakeRequest.withBody(Right(form))
 
       given(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
       given(fileService.getAttachments(refEq(aCase))(any[HeaderCarrier])).willReturn(Future.successful(Seq.empty))
@@ -174,9 +172,7 @@ class AttachmentsControllerSpec extends UnitSpec with Matchers with GuiceOneAppP
     }
 
     "file service fails while upload show expected message" in {
-
       //Given
-
       val aCase = Cases.btiCaseExample.copy(reference = testReference)
       val updatedCase = aCase.copy(attachments = aCase.attachments :+ Cases.createAttachment("anyUrl"))
 
