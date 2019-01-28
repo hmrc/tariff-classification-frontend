@@ -96,6 +96,41 @@ class RulingDetailsViewSpec extends ViewSpec {
       doc shouldNot containElementWithID("ruling_methodCommercialDenomination")
       doc shouldNot containElementWithID("ruling_exclusions")
       doc shouldNot containElementWithID("complete-case-button")
+
+      doc should containElementWithID("no-ruling-information")
+    }
+
+    "Render Decision details" in {
+      // Given
+      val c = aCase(
+        withStatus(CaseStatus.OPEN),
+        withDecision(
+          bindingCommodityCode = "commodity code",
+          justification = "justification",
+          goodsDescription = "goods description",
+          methodSearch = Some("method search"),
+          methodExclusion = Some("method exclusion"),
+          methodCommercialDenomination = Some("commercial denomination")
+        )
+      )
+
+      // When
+      val doc = view(ruling_details(c, Seq.empty))
+
+      // Then
+      doc should containElementWithID("ruling_bindingCommodityCodeValue")
+      doc.getElementById("ruling_bindingCommodityCodeValue") should containText("commodity code")
+      doc should containElementWithID("ruling_sanitisedGoodDescriptionValue")
+      doc.getElementById("ruling_sanitisedGoodDescriptionValue") should containText("goods description")
+      doc should containElementWithID("ruling_justificationValue")
+      doc.getElementById("ruling_justificationValue") should containText("justification")
+      doc should containElementWithID("ruling_searchesValue")
+      doc.getElementById("ruling_searchesValue") should containText("method search")
+      doc should containElementWithID("ruling_methodCommercialDenominationValue")
+      doc.getElementById("ruling_methodCommercialDenominationValue") should containText("commercial denomination")
+      doc should containElementWithID("ruling_exclusionsValue")
+      doc.getElementById("ruling_exclusionsValue") should containText("method exclusion")
+      doc should containElementWithID("complete-case-button")
     }
   }
 
