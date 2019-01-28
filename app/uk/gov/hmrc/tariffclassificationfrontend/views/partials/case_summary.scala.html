@@ -17,6 +17,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Contact}
 @import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.tab_heading
 @(c: Case)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @tab_heading("summary", messages("case.menu.summary"))
@@ -65,9 +66,9 @@
         </div>
         <div class="column-two-thirds">
             @if(co.email.contains("@")){
-                <a href="mailto:@co.email?subject=@c.application.getType application #@c.reference">@co.email</a>
+                <a id="contact-email" href="mailto:@co.email?subject=@c.application.getType application #@c.reference">@co.email</a>
             } else {
-                <span>@co.email</span>
+                <span id="contact-email">@co.email</span>
             }
         </div>
     </div>
@@ -78,7 +79,7 @@
                 <p>@messages("case.application.contact.telephone")</p>
             </div>
             <div class="column-two-thirds">
-                <p>@co.phone.get</p>
+                <p id="contact-phone">@co.phone.get</p>
             </div>
         </div>
     }

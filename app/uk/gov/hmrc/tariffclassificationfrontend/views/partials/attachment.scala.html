@@ -17,21 +17,20 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.models.StoredAttachment
 @import uk.gov.hmrc.tariffclassificationfrontend.models.response.ScanStatus
 @import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
-@(attachments: Seq[StoredAttachment], autoRefresh: Boolean = false)(implicit messages: Messages)
+@(id: String, file: StoredAttachment, name: Option[String] = None)(implicit messages: Messages)
 
-@if(attachments.exists(_.scanStatus.contains(ScanStatus.FAILED))) {
-    <div class="panel panel-border-wide">
-        <p id="attachment-state-message">At least one file has failed to process, a virus may have been detected.</p>
+
+@if(file.scanStatus.contains(ScanStatus.READY) && file.url.isDefined) {
+    <a id="@{id}-file-@{file.id}" href="@file.url" target="_blank">
+        @name.getOrElse(file.fileName)
+    </a>
+} else {
+    <div>
+        <span id="@{id}-file-@{file.id}">@name.getOrElse(file.fileName)</span>
+        @if(file.scanStatus.isEmpty) {
+            <span id="@{id}-file-@{file.id}-status" class="phase-tag bg-blue ml-1">Processing</span>
+        } else {
+            <span id="@{id}-file-@{file.id}-status" class="phase-tag bg-red ml-1">Failed</span>
+        }
     </div>
-}
-
-@if(attachments.exists(_.scanStatus.isEmpty)) {
-    @if(autoRefresh && attachments.exists(a => a.scanStatus.isEmpty)) {
-        <script id="auto-refresh">
-                setTimeout(function () {
-                    location.reload();
-                }, 5000)
-        </script>
-    }
-
 }

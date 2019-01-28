@@ -28,16 +28,16 @@
 @if(body.isDefined) {
     <details role="group">
         <summary role="button">
-            <span>
-                Case note added
+            <span id="@{id}-title">
+                @summary
             </span>
         </summary>
-        <div id="@id">
+        <div id="@{id}-body">
             @body.get
         </div>
     </details>
 } else {
-    <div>
+    <div id="@{id}-title">
         @summary
     </div>
 }

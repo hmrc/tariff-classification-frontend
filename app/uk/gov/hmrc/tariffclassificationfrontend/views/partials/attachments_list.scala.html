@@ -17,6 +17,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.models.StoredAttachment
 @import uk.gov.hmrc.tariffclassificationfrontend.models.response.ScanStatus
 @import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.attachment
 @(id: String, attachments: Seq[StoredAttachment], showUploadedBy: Boolean = false)(implicit messages: Messages)
 
     @if(attachments.nonEmpty){
@@ -24,39 +25,22 @@
             <thead>
                 <tr>
                     <th scope="col">File name</th>
-                    @if(showUploadedBy) { <th scope="col">Uploaded By</th>}
+                    @if(showUploadedBy) {<th id="@{id}-header-uploaded_by" scope="col">Uploaded By</th>}
                     <th class="attachment-table-date" scope="col">Date</th>
                 </tr>
             </thead>
             <tbody>
                     @for(file: StoredAttachment <- attachments) {
-                        <tr>
-                            <td class="w-50">
-                                @if(file.url.isDefined) {
-                                    <a id="@{id}-file" href="@file.url" target="_blank">
-                                        @file.fileName
-                                    </a>
-                                } else {
-                                    <div>
-                                        <span id="@{id}-file">@file.fileName</span>
-                                        @if(file.scanStatus.contains(ScanStatus.FAILED)) {
-                                            <span id="@{id}-file-status" class="phase-tag bg-red ml-1">Failed</span>
-                                        } else {
-                                            <span id="@{id}-file-status" class="phase-tag bg-blue ml-1">Processing</span>
-                                        }
-                                    </div>
-                                }
+                        <tr id="@{id}-row-@{file.id}">
+                            <td id="@{id}-row-@{file.id}-title" class="w-50">
+                                @attachment(id, file)
                             </td>
                             @if(showUploadedBy) {
-                                <td>
-                                @if(file.operator.isDefined){
-                                     @file.operator.get.name
-                                }else{
-                                    Unknown
-                                }
+                                <td id="@{id}-row-@{file.id}-uploaded_by">
+                                    @file.operator.flatMap(_.name).getOrElse("Unknown")
                                 </td>
                             }
-                            <td class="w-15">
+                            <td id="@{id}-row-@{file.id}-date" class="w-15">
                                 @Dates.format(file.timestamp)
                             </td>
                         </tr>

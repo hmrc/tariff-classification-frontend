@@ -23,12 +23,22 @@ import org.scalatest.matchers._
 
 object ViewMatchers {
 
-  class ContainElementWithIDMatcher(id: String) extends Matcher[Document] {
-    override def apply(left: Document): MatchResult = {
+  class ContainElementWithIDMatcher(id: String) extends Matcher[Element] {
+    override def apply(left: Element): MatchResult = {
       MatchResult(
         left.getElementById(id) != null,
         s"Document did not contain element with ID {$id}",
         s"Document contained an element with ID {$id}"
+      )
+    }
+  }
+
+  class ContainElementWithTagMatcher(tag: String) extends Matcher[Element] {
+    override def apply(left: Element): MatchResult = {
+      MatchResult(
+        !left.getElementsByTag(tag).isEmpty,
+        s"Document did not contain element with Tag {$tag}",
+        s"Document contained an element with Tag {$tag}"
       )
     }
   }
@@ -43,12 +53,42 @@ object ViewMatchers {
     }
   }
 
+  class ElementContainsChildWithTextMatcher(tag: String, content: String) extends Matcher[Element] {
+    override def apply(left: Element): MatchResult = {
+      MatchResult(
+        left.getElementsByTag(tag).text().contains(content),
+        s"Element did not contain text {$content}",
+        s"Element contained text {$content}"
+      )
+    }
+  }
+
+  class ElementContainsChildWithAttributeMatcher(tag: String, key: String, value: String) extends Matcher[Element] {
+    override def apply(left: Element): MatchResult = {
+      MatchResult(
+        left.getElementsByTag(tag).attr(key) == value,
+        s"Element attribute {$key} had value {${left.attr(key)}}, expected {$value}",
+        s"Element attribute {$key} had value {$value}"
+      )
+    }
+  }
+
   class ElementHasAttributeMatcher(key: String, value: String) extends Matcher[Element] {
     override def apply(left: Element): MatchResult = {
       MatchResult(
         left.attr(key) == value,
         s"Element attribute {$key} had value {${left.attr(key)}}, expected {$value}",
         s"Element attribute {$key} had value {$value}"
+      )
+    }
+  }
+
+  class ElementHasChildCountMatcher(count: Int) extends Matcher[Element] {
+    override def apply(left: Element): MatchResult = {
+      MatchResult(
+        left.children().size() == count,
+        s"Element had child count {${left.children().size()}}, expected {$count}",
+        s"Element had child count {$count}"
       )
     }
   }
@@ -63,8 +103,27 @@ object ViewMatchers {
     }
   }
 
+  class ElementTagMatcher(tag: String) extends Matcher[Element] {
+    override def apply(left: Element): MatchResult = {
+      MatchResult(
+        left.tagName() == tag,
+        s"Elements had tag {${left.tagName()}}, expected {$tag}",
+        s"Elements had tag {$tag}"
+      )
+    }
+  }
+
+  class ChildMatcherBuilder(tag: String) {
+    def containingText(text: String) = new ElementContainsChildWithTextMatcher(tag, text)
+    def withAttribute(key: String, value: String)  = new ElementContainsChildWithAttributeMatcher(tag, key, value)
+  }
+
   def containElementWithID(id: String) = new ContainElementWithIDMatcher(id)
+  def containElementWithTag(tag: String) = new ContainElementWithTagMatcher(tag)
   def containText(text: String) = new ElementContainsTextMatcher(text)
   def haveSize(size: Int) = new ElementsHasSizeMatcher(size)
   def haveAttribute(key: String, value: String)  = new ElementHasAttributeMatcher(key, value)
+  def haveTag(tag: String)  = new ElementTagMatcher(tag)
+  def haveChildCount(count: Int) = new ElementHasChildCountMatcher(count)
+  def haveChild(tag: String) = new ChildMatcherBuilder(tag)
 }
