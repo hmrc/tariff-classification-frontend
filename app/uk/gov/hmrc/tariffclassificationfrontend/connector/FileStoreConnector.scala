@@ -21,7 +21,6 @@ import akka.stream.scaladsl.{FileIO, Source}
 import akka.util.ByteString
 import com.google.inject.Inject
 import javax.inject.Singleton
-import play.api.libs.Files.TemporaryFile
 import play.api.libs.json.Json
 import play.api.libs.ws.WSClient
 import play.api.mvc.MultipartFormData

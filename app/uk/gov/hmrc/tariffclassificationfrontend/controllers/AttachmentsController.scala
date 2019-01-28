@@ -56,8 +56,8 @@ class AttachmentsController @Inject()(authenticatedAction: AuthenticatedAction,
                         (implicit hc: HeaderCarrier, request: Request[_]): Future[Html] = {
 
     for {
-      attachments <- fileService.getAttachments(c)map {
-        case seq : Seq[StoredAttachment] => seq.sortWith(_.timestamp.toEpochSecond > _.timestamp.toEpochSecond)
+      attachments <- fileService.getAttachments(c) map {
+        case seq: Seq[StoredAttachment] => seq.sortWith(_.timestamp.toEpochSecond > _.timestamp.toEpochSecond)
         case _ => Seq.empty
       }
       letter <- fileService.getLetterOfAuthority(c)

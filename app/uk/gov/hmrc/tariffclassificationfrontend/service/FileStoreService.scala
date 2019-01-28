@@ -18,8 +18,6 @@ package uk.gov.hmrc.tariffclassificationfrontend.service
 
 import javax.inject.{Inject, Singleton}
 import play.api.Logger
-import play.api.libs.Files.TemporaryFile
-import play.api.mvc.MultipartFormData
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.tariffclassificationfrontend.connector.FileStoreConnector
 import uk.gov.hmrc.tariffclassificationfrontend.models._
@@ -39,7 +37,7 @@ class FileStoreService @Inject()(connector: FileStoreConnector) {
         attachmentsById
           .get(file.id)
           .map(StoredAttachment(_, file))
-      } filter(_.isDefined) map (_.get)
+      } filter (_.isDefined) map (_.get)
     }
   }
 
