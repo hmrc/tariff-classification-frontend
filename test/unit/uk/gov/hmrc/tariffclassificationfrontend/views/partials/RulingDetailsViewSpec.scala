@@ -16,7 +16,9 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.views.partials
 
-import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus
+import java.time.ZonedDateTime
+
+import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, StoredAttachment}
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewSpec
 import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.ruling_details
@@ -131,6 +133,52 @@ class RulingDetailsViewSpec extends ViewSpec {
       doc should containElementWithID("ruling_exclusionsValue")
       doc.getElementById("ruling_exclusionsValue") should containText("method exclusion")
       doc should containElementWithID("complete-case-button")
+    }
+
+    "Render 'public' attachments" in {
+      // Given
+      val c = aCase(
+        withDecision()
+      )
+      val stored = StoredAttachment(
+        id = "FILE_ID",
+        public = true,
+        operator = None,
+        fileName = "file.txt",
+        url = None,
+        mimeType = "text/plain",
+        scanStatus = None,
+        timestamp = ZonedDateTime.now()
+      )
+
+      // When
+      val doc = view(ruling_details(c, Seq(stored)))
+
+      // Then
+      doc should containElementWithID("attachments-file-FILE_ID")
+    }
+
+    "Not render 'non public' attachments" in {
+      // Given
+      val c = aCase(
+        withDecision()
+      )
+      val stored = StoredAttachment(
+        id = "FILE_ID",
+        public = false,
+        operator = None,
+        fileName = "file.txt",
+        url = None,
+        mimeType = "text/plain",
+        scanStatus = None,
+        timestamp = ZonedDateTime.now()
+      )
+
+      // When
+      val doc = view(ruling_details(c, Seq(stored)))
+
+      // Then
+      doc shouldNot containElementWithID("attachments-file-FILE_ID")
     }
   }
 
