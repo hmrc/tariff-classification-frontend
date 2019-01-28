@@ -19,13 +19,13 @@ package uk.gov.hmrc.tariffclassificationfrontend.utils
 import play.api.libs.json._
 import uk.gov.hmrc.play.json.Union
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
-import uk.gov.hmrc.tariffclassificationfrontend.models.response.{FilestoreResponse, ScanStatus}
+import uk.gov.hmrc.tariffclassificationfrontend.models.response.{FileMetadata, ScanStatus}
 import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, _}
 
 object JsonFormatters {
 
   implicit val operator: OFormat[Operator] = Json.format[Operator]
-  implicit val scanStatusFormat:Format[ScanStatus.Value] = EnumJson.format(ScanStatus)
+  implicit val scanStatusFormat: Format[ScanStatus.Value] = EnumJson.format(ScanStatus)
   implicit val caseStatusFormat: Format[CaseStatus.Value] = EnumJson.format(CaseStatus)
   implicit val attachmentFormat: OFormat[Attachment] = Json.format[Attachment]
   implicit val appealFormat: OFormat[Appeal] = Json.format[Appeal]
@@ -43,7 +43,7 @@ object JsonFormatters {
   implicit val statusFormat: OFormat[Status] = Json.format[Status]
   implicit val formatCaseStatusChange: OFormat[CaseStatusChange] = Json.format[CaseStatusChange]
   implicit val formatNote: OFormat[Note] = Json.format[Note]
-  implicit val fileMetaDataFormat: OFormat[FilestoreResponse] = Json.format[FilestoreResponse]
+  implicit val fileMetaDataFormat: OFormat[FileMetadata] = Json.format[FileMetadata]
   implicit val formatEventDetail: Format[Details] = Union.from[Details]("type")
     .and[CaseStatusChange](EventType.CASE_STATUS_CHANGE.toString)
     .and[Note](EventType.NOTE.toString)

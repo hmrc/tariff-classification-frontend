@@ -16,11 +16,9 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.models.response
 
-import java.time.Instant
-
 import uk.gov.hmrc.tariffclassificationfrontend.models.response.ScanStatus.ScanStatus
 
-case class FilestoreResponse
+case class FileMetadata
 (
   id: String,
   fileName: String,

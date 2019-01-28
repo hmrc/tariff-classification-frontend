@@ -18,7 +18,7 @@ package uk.gov.hmrc.tariffclassificationfrontend.models
 
 import java.time.ZonedDateTime
 
-import uk.gov.hmrc.tariffclassificationfrontend.models.response.FilestoreResponse
+import uk.gov.hmrc.tariffclassificationfrontend.models.response.FileMetadata
 import uk.gov.hmrc.tariffclassificationfrontend.models.response.ScanStatus.ScanStatus
 
 case class StoredAttachment
@@ -45,7 +45,7 @@ case class StoredAttachment
 }
 
 object StoredAttachment {
-  def apply(attachment: Attachment, metadata: FilestoreResponse): StoredAttachment = {
+  def apply(attachment: Attachment, metadata: FileMetadata): StoredAttachment = {
     require(attachment.id == metadata.id, "Cannot combine different attachments")
     StoredAttachment(
       id = attachment.id,

@@ -29,7 +29,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models._
-import uk.gov.hmrc.tariffclassificationfrontend.models.response.FilestoreResponse
+import uk.gov.hmrc.tariffclassificationfrontend.models.response.FileMetadata
 import uk.gov.hmrc.tariffclassificationfrontend.utils.JsonFormatters.fileMetaDataFormat
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -38,21 +38,21 @@ import scala.concurrent.Future
 @Singleton
 class FileStoreConnector @Inject()(appConfig: AppConfig, http: HttpClient, ws: WSClient) {
 
-  def get(attachments: Seq[Attachment])(implicit headerCarrier: HeaderCarrier): Future[Seq[FilestoreResponse]] = {
+  def get(attachments: Seq[Attachment])(implicit headerCarrier: HeaderCarrier): Future[Seq[FileMetadata]] = {
     if (attachments.isEmpty) {
       Future.successful(Seq.empty)
     } else {
       val query = s"?${attachments.map(att => s"id=${att.id}").mkString("&")}"
-      http.GET[Seq[FilestoreResponse]](s"${appConfig.fileStoreUrl}/file$query")
+      http.GET[Seq[FileMetadata]](s"${appConfig.fileStoreUrl}/file$query")
     }
   }
 
-  def get(attachment: Attachment)(implicit headerCarrier: HeaderCarrier): Future[Option[FilestoreResponse]] = {
-    http.GET[Option[FilestoreResponse]](s"${appConfig.fileStoreUrl}/file/${attachment.id}")
+  def get(attachment: Attachment)(implicit headerCarrier: HeaderCarrier): Future[Option[FileMetadata]] = {
+    http.GET[Option[FileMetadata]](s"${appConfig.fileStoreUrl}/file/${attachment.id}")
   }
 
   def upload(fileUpload: FileUpload)
-            (implicit hc: HeaderCarrier): Future[FilestoreResponse] = {
+            (implicit hc: HeaderCarrier): Future[FileMetadata] = {
 
     val dataPart: MultipartFormData.DataPart = MultipartFormData.DataPart("publish", "true")
 
@@ -65,6 +65,6 @@ class FileStoreConnector @Inject()(appConfig: AppConfig, http: HttpClient, ws: W
 
     ws.url(s"${appConfig.fileStoreUrl}/file")
       .post(Source(List(filePart, dataPart)))
-      .map(response => Json.fromJson[FilestoreResponse](Json.parse(response.body)).get)
+      .map(response => Json.fromJson[FileMetadata](Json.parse(response.body)).get)
   }
 }

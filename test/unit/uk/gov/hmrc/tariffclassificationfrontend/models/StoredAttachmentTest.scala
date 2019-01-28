@@ -19,7 +19,7 @@ package uk.gov.hmrc.tariffclassificationfrontend.models
 import java.time.{Instant, ZoneOffset, ZonedDateTime}
 
 import uk.gov.hmrc.play.test.UnitSpec
-import uk.gov.hmrc.tariffclassificationfrontend.models.response.{FilestoreResponse, ScanStatus}
+import uk.gov.hmrc.tariffclassificationfrontend.models.response.{FileMetadata, ScanStatus}
 
 class StoredAttachmentTest extends UnitSpec {
 
@@ -64,9 +64,9 @@ class StoredAttachmentTest extends UnitSpec {
     StoredAttachment(anAttachment, someMetadataWithType(t))
   }
 
-  private def anAttachment = Attachment(id = "id", public = true, None,  timestamp = ZonedDateTime.ofInstant(Instant.EPOCH, ZoneOffset.UTC))
+  private def anAttachment = Attachment(id = "id", public = true, None, timestamp = ZonedDateTime.ofInstant(Instant.EPOCH, ZoneOffset.UTC))
 
-  private def someMetadataWithType(t: String = "text/plain") = FilestoreResponse(
+  private def someMetadataWithType(t: String = "text/plain") = FileMetadata(
     id = "id",
     fileName = "name",
     mimeType = t,

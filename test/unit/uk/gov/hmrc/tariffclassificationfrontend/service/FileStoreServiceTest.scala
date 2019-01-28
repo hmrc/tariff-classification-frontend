@@ -26,7 +26,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.tariffclassificationfrontend.connector.FileStoreConnector
 import uk.gov.hmrc.tariffclassificationfrontend.models._
-import uk.gov.hmrc.tariffclassificationfrontend.models.response.{FilestoreResponse, ScanStatus}
+import uk.gov.hmrc.tariffclassificationfrontend.models.response.{FileMetadata, ScanStatus}
 import uk.gov.tariffclassificationfrontend.utils.Cases
 
 import scala.concurrent.Future.successful
@@ -100,15 +100,6 @@ class FileStoreServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfte
     )
   }
 
-  private def anAttachmentWithId(id: String): Attachment = {
-    Attachment(
-      id = id,
-      public = true,
-      None,
-      timestamp = ZonedDateTime.ofInstant(Instant.EPOCH, ZoneOffset.UTC)
-    )
-  }
-
   private def aCase(modifiers: (Case => Case)*): Case = {
     var c = Cases.btiCaseExample
     modifiers.foreach(m => c = m(c))
@@ -131,6 +122,15 @@ class FileStoreServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfte
     c.copy(application = app)
   }
 
+  private def anAttachmentWithId(id: String): Attachment = {
+    Attachment(
+      id = id,
+      public = true,
+      None,
+      timestamp = ZonedDateTime.ofInstant(Instant.EPOCH, ZoneOffset.UTC)
+    )
+  }
+
   private def withAgentDetails(): Case => Case = c => {
     val details = AgentDetails(mock[EORIDetails], None)
     val app = c.application.asBTI.copy(agent = Some(details))
@@ -142,8 +142,8 @@ class FileStoreServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfte
     c.copy(application = app)
   }
 
-  private def someMetadataWithId(id: String): FilestoreResponse = {
-    FilestoreResponse(
+  private def someMetadataWithId(id: String): FileMetadata = {
+    FileMetadata(
       id = id,
       fileName = s"name-$id",
       mimeType = s"type-$id",
@@ -157,11 +157,11 @@ class FileStoreServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfte
     given(connector.get(any[Attachment])(any[HeaderCarrier])) willReturn successful(None)
   }
 
-  private def givenFileStoreReturnsAttachments(attachments: FilestoreResponse*): Unit = {
+  private def givenFileStoreReturnsAttachments(attachments: FileMetadata*): Unit = {
     given(connector.get(any[Seq[Attachment]])(any[HeaderCarrier])) willReturn successful(attachments)
   }
 
-  private def givenFileStoreReturnsAttachment(attachment: FilestoreResponse): Unit = {
+  private def givenFileStoreReturnsAttachment(attachment: FileMetadata): Unit = {
     given(connector.get(any[Attachment])(any[HeaderCarrier])) willReturn successful(Some(attachment))
   }
 
