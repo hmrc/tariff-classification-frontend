@@ -23,5 +23,4 @@ case class FileUpload
   content: TemporaryFile,
   fileName: String,
   contentType: String
-
 )

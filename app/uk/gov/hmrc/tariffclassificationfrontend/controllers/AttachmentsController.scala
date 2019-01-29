@@ -21,7 +21,7 @@ import javax.inject.{Inject, Singleton}
 import play.api.data.{Form, FormError}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.Files.TemporaryFile
-import play.api.mvc.{Action, _}
+import play.api.mvc._
 import play.twirl.api.Html
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
