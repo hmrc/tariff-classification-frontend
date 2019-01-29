@@ -107,7 +107,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
       doc should containElementWithID("activity-events-row-EVENT_ID-operator")
       doc.getElementById("activity-events-row-EVENT_ID-operator") should containText("name")
       doc should containElementWithID("activity-events-row-EVENT_ID-content")
-      doc.getElementById("activity-events-row-EVENT_ID-content") should containText("Status changed to completed")
+      doc.getElementById("activity-events-row-EVENT_ID-content") should containText("Status changed from open to completed")
       doc.getElementById("activity-events-row-EVENT_ID-content") should containText("comment")
       doc should containElementWithID("activity-events-row-EVENT_ID-date")
       doc.getElementById("activity-events-row-EVENT_ID-date") should containText("01 Jan 2019")
