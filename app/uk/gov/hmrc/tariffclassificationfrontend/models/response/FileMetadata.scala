@@ -16,8 +16,6 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.models.response
 
-import java.time.Instant
-
 import uk.gov.hmrc.tariffclassificationfrontend.models.response.ScanStatus.ScanStatus
 
 case class FileMetadata
@@ -26,8 +24,7 @@ case class FileMetadata
   fileName: String,
   mimeType: String,
   url: Option[String] = None,
-  scanStatus: Option[ScanStatus] = None,
-  lastUpdated: Instant
+  scanStatus: Option[ScanStatus] = None
 )
 
 object ScanStatus extends Enumeration {

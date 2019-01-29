@@ -64,15 +64,14 @@ class StoredAttachmentTest extends UnitSpec {
     StoredAttachment(anAttachment, someMetadataWithType(t))
   }
 
-  private def anAttachment = Attachment(id = "id", public = true, None,  timestamp = ZonedDateTime.ofInstant(Instant.EPOCH, ZoneOffset.UTC))
+  private def anAttachment = Attachment(id = "id", public = true, None, timestamp = ZonedDateTime.ofInstant(Instant.EPOCH, ZoneOffset.UTC))
 
   private def someMetadataWithType(t: String = "text/plain") = FileMetadata(
     id = "id",
     fileName = "name",
     mimeType = t,
     url = Some("url"),
-    scanStatus = Some(ScanStatus.READY),
-    lastUpdated = Instant.EPOCH
+    scanStatus = Some(ScanStatus.READY)
   )
 
 }

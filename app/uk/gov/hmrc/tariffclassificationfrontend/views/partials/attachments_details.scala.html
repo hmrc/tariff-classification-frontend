@@ -15,9 +15,24 @@
  *@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-@import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, StoredAttachment}
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{attachments_list, tab_heading, attachments_state_message}
-@(c: Case, filesFromApplicant: Seq[StoredAttachment], letterOfAuthority : Option[StoredAttachment], filesFromClassification: Seq[StoredAttachment] )(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@import uk.gov.hmrc.tariffclassificationfrontend.models.{BTIApplication, Case, CaseStatus, Decision, Event, StoredAttachment}
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{complete_case_button}
+@import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
+@import uk.gov.hmrc.tariffclassificationfrontend.models.{EventType, CaseStatusChange}
+
+@import java.util.Optional
+
+@import uk.gov.hmrc.play.views.html.helpers
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.attachments_list
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.tab_heading
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.attachments_state_message
+
+@import views.html.helper.form
+@import play.filters.csrf.CSRF
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.components.input_file
+@import uk.gov.hmrc.tariffclassificationfrontend.forms.UploadAttachmentFormData
+
+@(c: Case, form : Form[_], filesFromApplicant: Seq[StoredAttachment], letterOfAuthority : Option[StoredAttachment], filesFromClassification: Seq[StoredAttachment] )(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
     @tab_heading("attachments", messages("case.menu.attachments"))
 
@@ -35,3 +50,37 @@
     @attachments_list("classification-team", filesFromClassification, showUploadedBy = true)
 
 
+
+    @helpers.form(action = uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.AttachmentsController.uploadAttachment(c.reference),
+        'enctype -> "multipart/form-data",
+        'id -> "upload-files-form") {
+
+        <div id="file-upload-heading">
+            <div class="heading-medium mt-30 mb-30">Upload new files</div>
+        </div>
+
+        <div class="form-group">
+            <fieldset>
+                <div aria-label="Information">
+                    <p>@messages("cases.attachment.upload.title")</p>
+                    <ul class="list list-bullet">
+                        <li>@messages("cases.attachment.upload.restrictionSize")</li>
+                        <li>@messages("cases.attachment.upload.typeOfFiles")</li>
+                    </ul>
+                    <p>Before you upload a file, give it a useful and descriptive filename.</p>
+                </div>
+            </fieldset>
+
+            <div class="mt-0">
+                @input_file(
+                    field = form("file-input"),
+                    label = messages("cases.attachment.upload.label"),
+                    accept = Some(".pdf,.doc,.docx,.png,.jpeg,.jpg,.txt")
+                )
+            </div>
+        </div>
+
+        <div class="section">
+            <button id="upload-file-button" class="button"> Upload File </button>
+        </div>
+    }

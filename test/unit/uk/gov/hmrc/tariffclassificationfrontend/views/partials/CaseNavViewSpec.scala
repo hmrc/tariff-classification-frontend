@@ -31,7 +31,7 @@ class CaseNavViewSpec extends ViewSpec {
 
   private val applicationDetailsURL = routes.CaseController.applicationDetails("ref").url
   private val rulingURL = routes.CaseController.rulingDetails("ref").url
-  private val attachmentsURL = routes.CaseController.attachmentsDetails("ref").url
+  private val attachmentsURL = routes.AttachmentsController.attachmentsDetails("ref").url
   private val activityURL = routes.CaseController.activityDetails("ref").url
   private val summaryURL = routes.CaseController.summary("ref").url
 

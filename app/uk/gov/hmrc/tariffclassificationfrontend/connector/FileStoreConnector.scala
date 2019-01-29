@@ -16,8 +16,15 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.connector
 
+import akka.stream.IOResult
+import akka.stream.scaladsl.{FileIO, Source}
+import akka.util.ByteString
 import com.google.inject.Inject
 import javax.inject.Singleton
+import play.api.libs.json.Json
+import play.api.libs.ws.WSClient
+import play.api.mvc.MultipartFormData
+import play.api.mvc.MultipartFormData.FilePart
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
@@ -29,7 +36,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class FileStoreConnector @Inject()(appConfig: AppConfig, http: HttpClient) {
+class FileStoreConnector @Inject()(appConfig: AppConfig, http: HttpClient, ws: WSClient) {
 
   def get(attachments: Seq[Attachment])(implicit headerCarrier: HeaderCarrier): Future[Seq[FileMetadata]] = {
     if (attachments.isEmpty) {
@@ -44,4 +51,20 @@ class FileStoreConnector @Inject()(appConfig: AppConfig, http: HttpClient) {
     http.GET[Option[FileMetadata]](s"${appConfig.fileStoreUrl}/file/${attachment.id}")
   }
 
+  def upload(fileUpload: FileUpload)
+            (implicit hc: HeaderCarrier): Future[FileMetadata] = {
+
+    val dataPart: MultipartFormData.DataPart = MultipartFormData.DataPart("publish", "true")
+
+    val filePart: MultipartFormData.Part[Source[ByteString, Future[IOResult]]] = FilePart(
+      "file",
+      fileUpload.fileName,
+      Some(fileUpload.contentType),
+      FileIO.fromPath(fileUpload.content.file.toPath)
+    )
+
+    ws.url(s"${appConfig.fileStoreUrl}/file")
+      .post(Source(List(filePart, dataPart)))
+      .map(response => Json.fromJson[FileMetadata](Json.parse(response.body)).get)
+  }
 }

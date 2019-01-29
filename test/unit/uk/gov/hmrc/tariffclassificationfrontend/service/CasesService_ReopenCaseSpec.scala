@@ -39,11 +39,12 @@ class CasesService_ReopenCaseSpec extends UnitSpec with MockitoSugar with Before
 
   private val connector = mock[BindingTariffClassificationConnector]
   private val emailService = mock[EmailService]
+  private val fileStoreService = mock[FileStoreService]
   private val audit = mock[AuditService]
   private val config = mock[AppConfig]
   private val aCase = Cases.btiCaseExample
 
-  private val service = new CasesService(config, audit, emailService, connector)
+  private val service = new CasesService(config, audit, emailService, fileStoreService, connector)
 
   override protected def afterEach(): Unit = {
     super.afterEach()

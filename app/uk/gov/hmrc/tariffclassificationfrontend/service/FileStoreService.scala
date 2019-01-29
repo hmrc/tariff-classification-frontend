@@ -21,6 +21,7 @@ import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.tariffclassificationfrontend.connector.FileStoreConnector
 import uk.gov.hmrc.tariffclassificationfrontend.models._
+import uk.gov.hmrc.tariffclassificationfrontend.models.response.FileMetadata
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -36,7 +37,7 @@ class FileStoreService @Inject()(connector: FileStoreConnector) {
         attachmentsById
           .get(file.id)
           .map(StoredAttachment(_, file))
-      } filter(_.isDefined) map (_.get)
+      } filter (_.isDefined) map (_.get)
     }
   }
 
@@ -55,6 +56,14 @@ class FileStoreService @Inject()(connector: FileStoreConnector) {
     } else {
       successful(None)
     }
+  }
+
+  def upload(fileUpload: FileUpload)(implicit hc: HeaderCarrier): Future[FileStoreAttachment] = {
+    connector.upload(fileUpload).map(toFileAttachment(fileUpload.content.file.length))
+  }
+
+  private def toFileAttachment(size: Long): FileMetadata => FileStoreAttachment = {
+    r => FileStoreAttachment(r.id, r.fileName, r.mimeType, size)
   }
 
 }

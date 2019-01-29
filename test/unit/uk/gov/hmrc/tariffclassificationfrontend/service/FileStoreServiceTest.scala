@@ -100,15 +100,6 @@ class FileStoreServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfte
     )
   }
 
-  private def anAttachmentWithId(id: String): Attachment = {
-    Attachment(
-      id = id,
-      public = true,
-      None,
-      timestamp = ZonedDateTime.ofInstant(Instant.EPOCH, ZoneOffset.UTC)
-    )
-  }
-
   private def aCase(modifiers: (Case => Case)*): Case = {
     var c = Cases.btiCaseExample
     modifiers.foreach(m => c = m(c))
@@ -131,6 +122,15 @@ class FileStoreServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfte
     c.copy(application = app)
   }
 
+  private def anAttachmentWithId(id: String): Attachment = {
+    Attachment(
+      id = id,
+      public = true,
+      None,
+      timestamp = ZonedDateTime.ofInstant(Instant.EPOCH, ZoneOffset.UTC)
+    )
+  }
+
   private def withAgentDetails(): Case => Case = c => {
     val details = AgentDetails(mock[EORIDetails], None)
     val app = c.application.asBTI.copy(agent = Some(details))
@@ -148,8 +148,7 @@ class FileStoreServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfte
       fileName = s"name-$id",
       mimeType = s"type-$id",
       url = Some(s"url-$id"),
-      scanStatus = Some(ScanStatus.READY),
-      lastUpdated = Instant.EPOCH
+      scanStatus = Some(ScanStatus.READY)
     )
   }
 

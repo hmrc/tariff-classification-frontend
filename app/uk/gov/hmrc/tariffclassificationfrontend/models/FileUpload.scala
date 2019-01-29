@@ -16,20 +16,11 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.models
 
-import java.time.ZonedDateTime
+import play.api.libs.Files.TemporaryFile
 
-case class Attachment
+case class FileUpload
 (
-  id: String,
-  public: Boolean = false,
-  operator: Option[Operator],
-  timestamp: ZonedDateTime = ZonedDateTime.now()
-)
-
-case class FileStoreAttachment
-(
-  id: String,
-  name: String,
-  mimeType: String,
-  size: Long
+  content: TemporaryFile,
+  fileName: String,
+  contentType: String
 )

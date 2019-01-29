@@ -8,7 +8,7 @@ GET         /                                    @uk.gov.hmrc.tariffclassificati
 GET         /queues                              controllers.Default.redirect(to = "/tariff-classification")
 GET         /queues/:slug                        @uk.gov.hmrc.tariffclassificationfrontend.controllers.QueuesController.queue(slug: String)
 
-GET         /cases                               controllers.Default.redirect(to = "/tariff-classification/")
+GET         /cases                              controllers.Default.redirect(to = "/tariff-classification/")
 GET         /cases/:reference                    @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.summary(reference: String)
 GET         /cases/:reference/application        @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.applicationDetails(reference: String)
 
@@ -28,7 +28,8 @@ GET         /cases/:reference/ruling             @uk.gov.hmrc.tariffclassificati
 GET         /cases/:reference/ruling/edit        @uk.gov.hmrc.tariffclassificationfrontend.controllers.RulingController.editRulingDetails(reference: String)
 POST        /cases/:reference/ruling             @uk.gov.hmrc.tariffclassificationfrontend.controllers.RulingController.updateRulingDetails(reference: String)
 
-GET        /cases/:reference/activity            @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.activityDetails(reference: String)
-POST       /cases/:reference/activity            @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.addNote(reference: String)
+GET         /cases/:reference/activity           @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.activityDetails(reference: String)
+POST        /cases/:reference/activity           @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.addNote(reference: String)
 
-GET         /cases/:reference/attachments        @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.attachmentsDetails(reference: String)
+GET         /cases/:reference/attachments        @uk.gov.hmrc.tariffclassificationfrontend.controllers.AttachmentsController.attachmentsDetails(reference: String)
+POST        /cases/:reference/attachments        @uk.gov.hmrc.tariffclassificationfrontend.controllers.AttachmentsController.uploadAttachment(reference: String)

@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.service
 
-import org.mockito.ArgumentMatchers._
+import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito._
 import org.mockito.Mockito.reset
 import org.scalatest.BeforeAndAfterEach
@@ -37,12 +37,13 @@ class CasesServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEac
   private val manyCases = mock[Seq[Case]]
   private val oneCase = mock[Option[Case]]
   private val emailService = mock[EmailService]
+  private val fileStoreService = mock[FileStoreService]
   private val queue = mock[Queue]
   private val connector = mock[BindingTariffClassificationConnector]
   private val audit = mock[AuditService]
   private val config = mock[AppConfig]
 
-  private val service = new CasesService(config, audit, emailService, connector)
+  private val service = new CasesService(config, audit, emailService, fileStoreService, connector)
 
   override protected def afterEach(): Unit = {
     super.afterEach()
@@ -81,6 +82,25 @@ class CasesServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEac
       given(connector.updateCase(refEq(oldCase))(any[HeaderCarrier])) willReturn Future.successful(updatedCase)
 
       await(service.updateCase(oldCase)) shouldBe updatedCase
+    }
+  }
+
+  "Add attachment into case" should {
+    val c = mock[Case]
+    val updatedCase = mock[Case]
+    val fileUpload = mock[FileUpload]
+    val fileStored = mock[FileStoreAttachment]
+
+    "add the given attachment into the case provided" in {
+
+      given(c.attachments) willReturn Seq.empty
+      given(fileStored.id) willReturn "file-id"
+      given(fileStoreService.upload(refEq(fileUpload))(any[HeaderCarrier])) willReturn Future.successful(fileStored)
+      given(connector.updateCase(any[Case])(any[HeaderCarrier])) willReturn  Future.successful(updatedCase)
+
+      val result = await(service.addAttachment(c, fileUpload, Operator("assignee")))
+
+      result shouldBe updatedCase
     }
   }
 

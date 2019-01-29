@@ -32,17 +32,9 @@ import scala.concurrent.Future
 
 @Singleton
 class CasesService @Inject()(appConfig: AppConfig, auditService: AuditService,
-                             emailService: EmailService, connector: BindingTariffClassificationConnector) {
-
-  private def addEvent(original: Case, updated: Case, operator: Operator, comment: Option[String] = None)
-                      (implicit hc: HeaderCarrier): Future[Unit] = {
-    val event = NewEventRequest(CaseStatusChange(original.status, updated.status, comment), operator)
-    connector.createEvent(updated, event)
-      .recover {
-        case t: Throwable => Logger.error(s"Could not create Event for case [${original.reference}] with payload [$event]", t)
-      }
-      .map(_ => ())
-  }
+                             emailService: EmailService,
+                             fileService: FileStoreService,
+                             connector: BindingTariffClassificationConnector) {
 
   def releaseCase(original: Case, queue: Queue, operator: Operator)
                  (implicit hc: HeaderCarrier): Future[Case] = {
@@ -54,6 +46,15 @@ class CasesService @Inject()(appConfig: AppConfig, auditService: AuditService,
 
   }
 
+  private def addEvent(original: Case, updated: Case, operator: Operator, comment: Option[String] = None)
+                      (implicit hc: HeaderCarrier): Future[Unit] = {
+    val event = NewEventRequest(CaseStatusChange(original.status, updated.status, comment), operator)
+    connector.createEvent(updated, event)
+      .recover {
+        case t: Throwable => Logger.error(s"Could not create Event for case [${original.reference}] with payload [$event]", t)
+      }
+      .map(_ => ())
+  }
 
   def reopenCase(original: Case, operator: Operator)
                 (implicit hc: HeaderCarrier): Future[Case] = {
@@ -122,6 +123,15 @@ class CasesService @Inject()(appConfig: AppConfig, auditService: AuditService,
 
   def updateCase(caseToUpdate: Case)(implicit hc: HeaderCarrier): Future[Case] = {
     connector.updateCase(caseToUpdate)
+  }
+
+  def addAttachment(c: Case, f: FileUpload, o: Operator)(implicit headerCarrier: HeaderCarrier): Future[Case] = {
+
+    fileService.upload(f) flatMap { fileStored: FileStoreAttachment => {
+      val attachments = c.attachments :+ Attachment(id = fileStored.id, operator = Some(o))
+      connector.updateCase(c.copy(attachments = attachments))
+    }
+    }
   }
 
 }
