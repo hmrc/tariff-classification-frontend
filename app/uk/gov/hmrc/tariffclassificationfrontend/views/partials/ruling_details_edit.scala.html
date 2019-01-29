@@ -103,14 +103,14 @@
                             <span id="edit-ruling-no_attachments" class="body-text">There are no attachments for this case.</span>
                         } else {
                             <span class="body-text">Select attachments for the ruling</span>
-                            @for(att: StoredAttachment <- attachments) {
+                            @for((att: StoredAttachment, index: Int) <- attachments.zipWithIndex) {
                                 <div class="multiple-choice">
-                                    <input id="attachments[]" name="attachments[]" type="checkbox" value="@att.id" @if(att.public){checked="checked"}/>
+                                    <input id="attachments[]" name="attachments[]" type="checkbox" value="@index" @if(att.public){checked="checked"}/>
                                     <label for="attachments[]">
                                     @if(att.url.isDefined) {
-                                        <a id="edit-ruling-file-@{att.id}" href="@att.url" target="_blank">@att.fileName</a>
+                                        <a id="edit-ruling-file-@{index}" href="@att.url" target="_blank">@att.fileName</a>
                                     } else {
-                                        <span id="edit-ruling-file-@{att.id}">@att.fileName</span>
+                                        <span id="edit-ruling-file-@{index}">@att.fileName</span>
                                     }
                                     </label>
                                 </div>

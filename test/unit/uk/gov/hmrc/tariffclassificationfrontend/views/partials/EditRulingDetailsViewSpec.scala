@@ -110,7 +110,7 @@ class EditRulingDetailsViewSpec extends ViewSpec {
 
       // Then
       doc shouldNot containElementWithID("edit-ruling-no_attachments")
-      doc should containElementWithID("edit-ruling-file-FILE_ID")
+      doc should containElementWithID("edit-ruling-file-0")
       doc should containElementWithID("attachments[]")
     }
 
@@ -207,10 +207,10 @@ class EditRulingDetailsViewSpec extends ViewSpec {
       val doc = view(ruling_details_edit(c, Seq(stored), DecisionForm.form))
 
       // Then
-      doc should containElementWithID("edit-ruling-file-FILE_ID")
-      doc.getElementById("edit-ruling-file-FILE_ID") should haveTag("a")
-      doc.getElementById("edit-ruling-file-FILE_ID") should haveAttribute("href", "url")
-      doc.getElementById("edit-ruling-file-FILE_ID") should containText("file.txt")
+      doc should containElementWithID("edit-ruling-file-0")
+      doc.getElementById("edit-ruling-file-0") should haveTag("a")
+      doc.getElementById("edit-ruling-file-0") should haveAttribute("href", "url")
+      doc.getElementById("edit-ruling-file-0") should containText("file.txt")
     }
 
     "Render as text when URL not available" in {
@@ -233,9 +233,9 @@ class EditRulingDetailsViewSpec extends ViewSpec {
       val doc = view(ruling_details_edit(c, Seq(stored), DecisionForm.form))
 
       // Then
-      doc should containElementWithID("edit-ruling-file-FILE_ID")
-      doc.getElementById("edit-ruling-file-FILE_ID") should haveTag("span")
-      doc.getElementById("edit-ruling-file-FILE_ID") should containText("file.txt")
+      doc should containElementWithID("edit-ruling-file-0")
+      doc.getElementById("edit-ruling-file-0") should haveTag("span")
+      doc.getElementById("edit-ruling-file-0") should containText("file.txt")
     }
   }
 

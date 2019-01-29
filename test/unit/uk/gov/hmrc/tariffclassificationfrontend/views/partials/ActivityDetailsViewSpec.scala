@@ -61,8 +61,8 @@ class ActivityDetailsViewSpec extends ViewSpec {
       val doc = view(activity_details(c, Seq(e), ActivityForm.form))
 
       // Then
-      doc should containElementWithID("activity-events-row-EVENT_ID-operator")
-      doc.getElementById("activity-events-row-EVENT_ID-operator") should containText("Unknown")
+      doc should containElementWithID("activity-events-row-0-operator")
+      doc.getElementById("activity-events-row-0-operator") should containText("Unknown")
     }
 
     "Render 'Note'" in {
@@ -80,13 +80,13 @@ class ActivityDetailsViewSpec extends ViewSpec {
       val doc = view(activity_details(c, Seq(e), ActivityForm.form))
 
       // Then
-      doc should containElementWithID("activity-events-row-EVENT_ID-operator")
-      doc.getElementById("activity-events-row-EVENT_ID-operator") should containText("name")
-      doc should containElementWithID("activity-events-row-EVENT_ID-content")
-      doc.getElementById("activity-events-row-EVENT_ID-content") should containText("Case note added")
-      doc.getElementById("activity-events-row-EVENT_ID-content") should containText("comment")
-      doc should containElementWithID("activity-events-row-EVENT_ID-date")
-      doc.getElementById("activity-events-row-EVENT_ID-date") should containText("01 Jan 2019")
+      doc should containElementWithID("activity-events-row-0-operator")
+      doc.getElementById("activity-events-row-0-operator") should containText("name")
+      doc should containElementWithID("activity-events-row-0-content")
+      doc.getElementById("activity-events-row-0-content") should containText("Case note added")
+      doc.getElementById("activity-events-row-0-content") should containText("comment")
+      doc should containElementWithID("activity-events-row-0-date")
+      doc.getElementById("activity-events-row-0-date") should containText("01 Jan 2019")
     }
 
     "Render 'Status Change'" in {
@@ -104,13 +104,13 @@ class ActivityDetailsViewSpec extends ViewSpec {
       val doc = view(activity_details(c, Seq(e), ActivityForm.form))
 
       // Then
-      doc should containElementWithID("activity-events-row-EVENT_ID-operator")
-      doc.getElementById("activity-events-row-EVENT_ID-operator") should containText("name")
-      doc should containElementWithID("activity-events-row-EVENT_ID-content")
-      doc.getElementById("activity-events-row-EVENT_ID-content") should containText("Status changed from open to completed")
-      doc.getElementById("activity-events-row-EVENT_ID-content") should containText("comment")
-      doc should containElementWithID("activity-events-row-EVENT_ID-date")
-      doc.getElementById("activity-events-row-EVENT_ID-date") should containText("01 Jan 2019")
+      doc should containElementWithID("activity-events-row-0-operator")
+      doc.getElementById("activity-events-row-0-operator") should containText("name")
+      doc should containElementWithID("activity-events-row-0-content")
+      doc.getElementById("activity-events-row-0-content") should containText("Status changed from open to completed")
+      doc.getElementById("activity-events-row-0-content") should containText("comment")
+      doc should containElementWithID("activity-events-row-0-date")
+      doc.getElementById("activity-events-row-0-date") should containText("01 Jan 2019")
     }
 
     "Render assigned to 'You'" in {

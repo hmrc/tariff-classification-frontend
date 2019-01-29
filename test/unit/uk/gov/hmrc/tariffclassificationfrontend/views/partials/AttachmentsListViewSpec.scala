@@ -52,11 +52,11 @@ class AttachmentsListViewSpec extends ViewSpec {
 
       // Then
       doc should containElementWithID("MODULE-table")
-      doc should containElementWithID("MODULE-row-FILE_ID")
-      doc should containElementWithID("MODULE-row-FILE_ID-title")
-      doc should containElementWithID("MODULE-row-FILE_ID-date")
-      doc.getElementById("MODULE-row-FILE_ID-title") should containText("name")
-      doc.getElementById("MODULE-row-FILE_ID-date") should containText("01 Jan 2019")
+      doc should containElementWithID("MODULE-row-0")
+      doc should containElementWithID("MODULE-row-0-title")
+      doc should containElementWithID("MODULE-row-0-date")
+      doc.getElementById("MODULE-row-0-title") should containText("name")
+      doc.getElementById("MODULE-row-0-date") should containText("01 Jan 2019")
     }
 
     "Hide 'uploaded by'" in {
@@ -82,8 +82,8 @@ class AttachmentsListViewSpec extends ViewSpec {
 
       // Then
       doc should containElementWithID("MODULE-header-uploaded_by")
-      doc should containElementWithID("MODULE-row-FILE_ID-uploaded_by")
-      doc.getElementById("MODULE-row-FILE_ID-uploaded_by") should containText("operator name")
+      doc should containElementWithID("MODULE-row-0-uploaded_by")
+      doc.getElementById("MODULE-row-0-uploaded_by") should containText("operator name")
     }
 
     "Render 'uploaded by' with unknown operator" in {
@@ -98,8 +98,8 @@ class AttachmentsListViewSpec extends ViewSpec {
 
       // Then
       doc should containElementWithID("MODULE-header-uploaded_by")
-      doc should containElementWithID("MODULE-row-FILE_ID-uploaded_by")
-      doc.getElementById("MODULE-row-FILE_ID-uploaded_by") should containText("Unknown")
+      doc should containElementWithID("MODULE-row-0-uploaded_by")
+      doc.getElementById("MODULE-row-0-uploaded_by") should containText("Unknown")
     }
 
     "Render 'uploaded by' with unknown operator name" in {
@@ -114,8 +114,8 @@ class AttachmentsListViewSpec extends ViewSpec {
 
       // Then
       doc should containElementWithID("MODULE-header-uploaded_by")
-      doc should containElementWithID("MODULE-row-FILE_ID-uploaded_by")
-      doc.getElementById("MODULE-row-FILE_ID-uploaded_by") should containText("Unknown")
+      doc should containElementWithID("MODULE-row-0-uploaded_by")
+      doc.getElementById("MODULE-row-0-uploaded_by") should containText("Unknown")
     }
 
   }
