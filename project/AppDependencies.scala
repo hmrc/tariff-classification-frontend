@@ -6,7 +6,7 @@ object AppDependencies {
   val compile = Seq(
     "uk.gov.hmrc"             %% "bootstrap-play-25"          % "4.8.0",
     "uk.gov.hmrc"             %% "play-ui"                    % "7.31.0-play-25",
-    "uk.gov.hmrc"             %% "play-json-union-formatter"  % "1.4.0"
+    "uk.gov.hmrc"             %% "play-json-union-formatter"  % "1.5.0"
   )
 
   val scope = "test, it"
@@ -22,7 +22,7 @@ object AppDependencies {
     "org.scalatestplus.play"  %% "scalatestplus-play"       % "2.0.1"         % scope,
     "uk.gov.hmrc"             %% "hmrctest"                 % "3.4.0-play-25" % scope,
     "uk.gov.hmrc"             %% "http-verbs-test"          % "1.2.0"         % scope,
-    "uk.gov.hmrc"             %% "service-integration-test" % "0.3.0"         % scope
+    "uk.gov.hmrc"             %% "service-integration-test" % "0.4.0-play-25" % scope
   )
 
 }
