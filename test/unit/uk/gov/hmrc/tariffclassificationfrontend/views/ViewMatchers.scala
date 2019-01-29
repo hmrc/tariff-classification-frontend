@@ -60,6 +60,16 @@ object ViewMatchers {
     }
   }
 
+  class ElementContainsHtmlMatcher(content: String) extends Matcher[Element] {
+    override def apply(left: Element): MatchResult = {
+      MatchResult(
+        left.html().contains(content),
+        s"Element did not contain {$content}\n${actualContentWas(left)}",
+        s"Element contained {$content}"
+      )
+    }
+  }
+
   class ElementContainsChildWithTextMatcher(tag: String, content: String) extends Matcher[Element] {
     override def apply(left: Element): MatchResult = {
       val elements = left.getElementsByTag(tag)
@@ -129,6 +139,7 @@ object ViewMatchers {
   def containElementWithID(id: String) = new ContainElementWithIDMatcher(id)
   def containElementWithTag(tag: String) = new ContainElementWithTagMatcher(tag)
   def containText(text: String) = new ElementContainsTextMatcher(text)
+  def containHtml(text: String) = new ElementContainsHtmlMatcher(text)
   def haveSize(size: Int) = new ElementsHasSizeMatcher(size)
   def haveAttribute(key: String, value: String)  = new ElementHasAttributeMatcher(key, value)
   def haveTag(tag: String)  = new ElementTagMatcher(tag)

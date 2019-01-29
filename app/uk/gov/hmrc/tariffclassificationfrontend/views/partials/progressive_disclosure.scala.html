@@ -33,7 +33,7 @@
             </span>
         </summary>
         <div id="@{id}-body">
-            @body.get
+            @Html(HtmlFormat.escape(body.get).toString.replace("\n", "<br>"))
         </div>
     </details>
 } else {
