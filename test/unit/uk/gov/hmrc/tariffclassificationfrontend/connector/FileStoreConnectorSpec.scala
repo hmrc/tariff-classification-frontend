@@ -188,8 +188,12 @@ class FileStoreConnectorSpec extends UnitSpec with WiremockTestServer with Mocki
     )
 
     val file = FileUpload(TemporaryFile("example-file.txt"), "file.txt", "text/plain")
-
     val result = await(connector.upload(file))
+
+    verify(postRequestedFor(urlEqualTo("/file"))
+      .withRequestBody(containing("file"))
+      .withRequestBody(containing("publish"))
+    )
 
     result shouldBe FileMetadata(
       id = "id",
