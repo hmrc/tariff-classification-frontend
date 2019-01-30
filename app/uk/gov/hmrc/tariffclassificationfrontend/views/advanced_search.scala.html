@@ -28,12 +28,12 @@
 
  @helper.form(action = controllers.routes.SearchController.search()) {
   @input_text(
-   field = form("traderName"),
+   field = form("trader-name"),
    label = "Trader Name"
   )
 
   <button id="advanced_search-button" class="button" type="submit">Search</button>
-  <a class="secondary-button" href="@controllers.routes.SearchController.search()">Clear</a>
+  <a class="secondary-button" href="@controllers.routes.SearchController.search()">Reset Filters</a>
  }
 
 }

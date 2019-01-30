@@ -25,7 +25,7 @@ object SearchForm {
 
   val form = Form(
     mapping(
-      "traderName" -> text
+      "trader-name" -> text
     )(SearchFormData.apply)(SearchFormData.unapply)
   )
 
