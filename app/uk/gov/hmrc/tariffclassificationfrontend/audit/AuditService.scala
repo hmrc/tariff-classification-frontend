@@ -19,13 +19,14 @@ package uk.gov.hmrc.tariffclassificationfrontend.audit
 import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.audit.DefaultAuditConnector
-import uk.gov.hmrc.tariffclassificationfrontend.audit.AuditPayloadType._
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Operator, Queue}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton
 class AuditService @Inject()(auditConnector: DefaultAuditConnector) {
+
+  import AuditPayloadType._
 
   def auditCaseReferred(oldCase: Case, updatedCase: Case, operator: Operator)
                        (implicit hc: HeaderCarrier): Unit = {
@@ -69,7 +70,7 @@ class AuditService @Inject()(auditConnector: DefaultAuditConnector) {
   }
 
   private def sendExplicitAuditEvent(auditEventType: String, auditPayload: Map[String, String])
-                                    (implicit hc: uk.gov.hmrc.http.HeaderCarrier): Unit = {
+                                    (implicit hc: HeaderCarrier): Unit = {
 
     auditConnector.sendExplicitAudit(auditType = auditEventType, detail = auditPayload)
   }
