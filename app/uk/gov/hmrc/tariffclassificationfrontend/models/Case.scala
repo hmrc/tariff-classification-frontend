@@ -32,5 +32,6 @@ case class Case
   queueId: Option[String],
   application: Application,
   decision: Option[Decision],
-  attachments: Seq[Attachment]
+  attachments: Seq[Attachment],
+  keywords: Seq[String] = Seq.empty
 )

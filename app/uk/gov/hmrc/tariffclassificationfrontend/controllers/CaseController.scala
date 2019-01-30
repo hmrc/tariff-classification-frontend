@@ -23,7 +23,7 @@ import play.api.mvc._
 import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.forms.{ActivityForm, ActivityFormData, DecisionFormMapper}
+import uk.gov.hmrc.tariffclassificationfrontend.forms._
 import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, EventsService, FileStoreService}
 import uk.gov.hmrc.tariffclassificationfrontend.views
@@ -44,7 +44,7 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
                                implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
   private lazy val activityForm: Form[ActivityFormData] = ActivityForm.form
-
+  private lazy val keywordForm: Form[KeywordFormData] = KeywordForm.form
 
   // Trader Tab
   def trader(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
@@ -85,6 +85,10 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
     })
   }
 
+  def keywordsDetails(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
+    getCaseAndRenderView(reference, CaseDetailPage.KEYWORDS, c => successful(views.html.partials.keywords_details(c, keywordForm)))
+  }
+
   def addNote(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     activityForm.bindFromRequest.fold(
       errorForm =>
@@ -99,6 +103,22 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
             routes.CaseController.activityDetails(reference))
         })
     )
+  }
+
+  def addKeyword(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
+    keywordForm.bindFromRequest.fold(
+      errorForm =>
+        getCaseAndRenderView(
+          reference, CaseDetailPage.KEYWORDS, c => successful(views.html.partials.keywords_details(c, errorForm))),
+
+      validForm =>
+        getCaseAndRenderView(reference, CaseDetailPage.KEYWORDS,
+          c => {
+            for {
+              _ <- casesService.addKeyword(c, validForm.keyword)
+              response = views.html.partials.keywords_details(c, keywordForm)
+            } yield response}
+            ))
   }
 
   private def getCaseAndRenderView(reference: String, page: CaseDetailPage, toHtml: Case => Future[Html])

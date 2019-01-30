@@ -14,14 +14,18 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.tariffclassificationfrontend.views
+package uk.gov.hmrc.tariffclassificationfrontend.forms
 
-object CaseDetailPage extends Enumeration {
-  type CaseDetailPage = Value
-  val TRADER = Value("trader")
-  val RULING = Value("ruling")
-  val APPLICATION_DETAILS = Value("application")
-  val ACTIVITY = Value("activity")
-  val ATTACHMENTS = Value("attachments")
-  val KEYWORDS = Value("keywords")
+import play.api.data.Form
+import play.api.data.Forms.{mapping, nonEmptyText}
+
+case class KeywordFormData(keyword: String)
+
+object KeywordForm {
+  val form = Form(
+    mapping(
+      "keyword" -> nonEmptyText
+    )(KeywordFormData.apply)(KeywordFormData.unapply)
+  )
+
 }

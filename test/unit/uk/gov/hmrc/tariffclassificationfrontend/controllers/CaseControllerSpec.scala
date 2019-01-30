@@ -218,4 +218,56 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
     }
   }
 
+  "Keywords Details" should {
+
+    "return 200 OK and HTML content type" in {
+      val aCase = Cases.btiCaseExample
+      given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
+
+      val result = controller.keywordsDetails(aCase.reference)(newFakeGETRequestWithCSRF(app))
+
+      status(result) shouldBe Status.OK
+      contentType(result) shouldBe Some("text/html")
+      charset(result) shouldBe Some("utf-8")
+    }
+  }
+
+  "Keywords: Add keyword" should {
+    val aCase = Cases.btiCaseExample
+
+    "add a new keyword" in {
+      val aKeyword = "Apples"
+      val aValidForm = newFakePOSTRequestWithCSRF(app, Map("keyword" -> aKeyword))
+      given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
+      given(casesService.addKeyword(refEq(aCase), refEq("Apples"))(any[HeaderCarrier])).willReturn(Future.successful(aCase))
+
+      val result = controller.addKeyword(aCase.reference)(aValidForm)
+      status(result) shouldBe Status.OK
+      contentType(result) shouldBe Some("text/html")
+      charset(result) shouldBe Some("utf-8")
+      contentAsString(result) should include("Keywords")
+    }
+
+    "displays an error when no keyword is provided" in {
+      val aValidForm = newFakePOSTRequestWithCSRF(app, Map())
+      given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
+
+      val result = controller.addKeyword(aCase.reference)(aValidForm)
+      status(result) shouldBe Status.OK
+      contentType(result) shouldBe Some("text/html")
+      charset(result) shouldBe Some("utf-8")
+      contentAsString(result) should include("This field is required")
+    }
+
+    "displays case not found message" in {
+      val aValidForm = newFakePOSTRequestWithCSRF(app, Map("keyword" -> "keyword"))
+      given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(None))
+
+      val result = controller.addKeyword(aCase.reference)(aValidForm)
+      status(result) shouldBe Status.OK
+      contentType(result) shouldBe Some("text/html")
+      charset(result) shouldBe Some("utf-8")
+      contentAsString(result) should include("We could not find a Case with reference")
+    }
+  }
 }

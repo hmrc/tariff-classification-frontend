@@ -60,7 +60,7 @@ class EventsServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEa
 
     val aNote = "This is a note"
 
-    "post a new note to the backend via the connector v2" in {
+    "post a new note to the backend via the connector" in {
       val clock = Clock.fixed(LocalDateTime.of(2018,1,1, 14,0).toInstant(ZoneOffset.UTC), ZoneId.of("UTC"))
       val operator = Operator("userId", Some("Billy Bobbins"))
       val newEventRequest = NewEventRequest(Note(Some(aNote)), operator, ZonedDateTime.now(clock))

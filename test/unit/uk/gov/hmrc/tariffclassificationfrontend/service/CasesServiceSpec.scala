@@ -28,8 +28,10 @@ import uk.gov.hmrc.tariffclassificationfrontend.audit.AuditService
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.connector.BindingTariffClassificationConnector
 import uk.gov.hmrc.tariffclassificationfrontend.models._
+import uk.gov.tariffclassificationfrontend.utils.Cases
 
 import scala.concurrent.Future
+import scala.concurrent.Future.successful
 
 class CasesServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
 
@@ -110,6 +112,18 @@ class CasesServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEac
       val result = await(service.addAttachment(c, fileUpload, Operator("assignee")))
 
       result shouldBe updatedCase
+    }
+  }
+
+  "Add keyword" should {
+
+    "post a new keyword to the backend via the connector" in {
+      val aKeyword = "Apples"
+      val aCase = Cases.btiCaseExample
+      val aCaseWithKeywords = aCase.copy(keywords = aCase.keywords :+ "APPLES")
+      given(connector.updateCase(refEq(aCaseWithKeywords))(any[HeaderCarrier])).willReturn(successful(aCaseWithKeywords))
+
+      await(service.addKeyword(aCase, aKeyword)) shouldBe aCaseWithKeywords
     }
   }
 
