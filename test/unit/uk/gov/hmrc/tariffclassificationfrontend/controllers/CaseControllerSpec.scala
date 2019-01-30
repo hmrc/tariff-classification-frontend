@@ -56,12 +56,16 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
 
   private implicit val hc = HeaderCarrier()
 
-  "Case Summary" should {
+  "Case Trader" should {
 
     "return 200 OK and HTML content type" in {
-      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(Cases.btiCaseExample)))
+      val aCase = Cases.btiCaseExample
+      val attachment = Cases.storedAttachment
 
-      val result = controller.summary("reference")(fakeRequest)
+      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(Cases.btiCaseExample)))
+      given(fileService.getLetterOfAuthority(refEq(aCase))(any[HeaderCarrier])).willReturn(Future.successful(Some(attachment)))
+
+      val result = controller.trader("reference")(fakeRequest)
 
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -71,7 +75,7 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
     "return 404 Not Found and HTML content type" in {
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(None))
 
-      val result = controller.summary("reference")(fakeRequest)
+      val result = controller.trader("reference")(fakeRequest)
 
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")

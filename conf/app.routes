@@ -9,7 +9,7 @@ GET         /queues                              controllers.Default.redirect(to
 GET         /queues/:slug                        @uk.gov.hmrc.tariffclassificationfrontend.controllers.QueuesController.queue(slug: String)
 
 GET         /cases                              controllers.Default.redirect(to = "/tariff-classification/")
-GET         /cases/:reference                    @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.summary(reference: String)
+GET         /cases/:reference                    @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.trader(reference: String)
 GET         /cases/:reference/application        @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.applicationDetails(reference: String)
 
 GET         /cases/:reference/release            @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReleaseCaseController.releaseCase(reference: String)
