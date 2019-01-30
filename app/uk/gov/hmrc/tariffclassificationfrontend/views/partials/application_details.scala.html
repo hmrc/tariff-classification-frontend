@@ -60,13 +60,7 @@
                     <p>@messages("case.application.confidential-information")</p>
                 </div>
                 <div class="column-two-thirds">
-                    <p>
-                        @if(btiApp.confidentialInformation.isDefined) {
-                            @btiApp.confidentialInformation.get
-                        }else {
-                            @messages("answer.none")
-                        }
-                    </p>
+                    <p>@btiApp.confidentialInformation.getOrElse(messages("answer.none"))</p>
                 </div>
             </div>
 
@@ -75,13 +69,7 @@
                     <p>@messages("case.application.other-information")</p>
                 </div>
                 <div class="column-two-thirds">
-                    <p>
-                    @if(btiApp.otherInformation.isDefined) {
-                        @btiApp.otherInformation.get
-                    }else {
-                        @messages("answer.none")
-                    }
-                    </p>
+                    <p>@btiApp.otherInformation.getOrElse(messages("answer.none"))</p>
                 </div>
             </div>
 
@@ -99,13 +87,7 @@
                     <p>@messages("case.application.reissue-application")</p>
                 </div>
                 <div class="column-two-thirds">
-                    <p>
-                        @if(btiApp.reissuedBTIReference.isDefined) {
-                            @btiApp.reissuedBTIReference.get
-                        }else {
-                            @messages("answer.no")
-                        }
-                    </p>
+                    <p>@btiApp.reissuedBTIReference.getOrElse(messages("answer.no"))</p>
                 </div>
             </div>
 
@@ -114,13 +96,7 @@
                     <p>@messages("case.application.related-bti-reference")</p>
                 </div>
                 <div class="column-two-thirds">
-                    <p>
-                    @if(btiApp.relatedBTIReference.isDefined) {
-                        @btiApp.relatedBTIReference.get
-                    }else{
-                        @messages("answer.no")
-                    }
-                    </p>
+                    <p>@btiApp.relatedBTIReference.getOrElse(messages("answer.no"))</p>
                 </div>
             </div>
 
@@ -129,13 +105,7 @@
                     <p>@messages("case.application.known-legal-proceedings")</p>
                 </div>
                 <div class="column-two-thirds">
-                    <p>
-                    @if(btiApp.knownLegalProceedings.isDefined) {
-                        @btiApp.knownLegalProceedings.get
-                    }else {
-                        @messages("answer.no")
-                    }
-                    </p>
+                    <p>@btiApp.knownLegalProceedings.getOrElse(messages("answer.no"))</p>
                 </div>
             </div>
 

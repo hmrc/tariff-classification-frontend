@@ -39,11 +39,11 @@ class ApplicationDetailsViewSpec extends ViewSpec {
       val doc = view(application_details(`case`, Seq.empty, None))
 
       // Then
-      doc.getElementById("app-details-reissue-application") should containText("No")
-      doc.getElementById("app-details-confidential-info") should containText("None")
-      doc.getElementById("app-details-related-reference") should containText("No")
-      doc.getElementById("app-details-legal-proceedings") should containText("No")
-      doc.getElementById("app-details-other-info") should containText("None")
+      doc.getElementById("app-details-reissue-application") should containText(messages("answer.no"))
+      doc.getElementById("app-details-confidential-info") should containText(messages("answer.none"))
+      doc.getElementById("app-details-related-reference") should containText(messages("answer.no"))
+      doc.getElementById("app-details-legal-proceedings") should containText(messages("answer.no"))
+      doc.getElementById("app-details-other-info") should containText(messages("answer.none"))
     }
 
     "Render optional fields when present" in {

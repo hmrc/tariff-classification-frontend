@@ -17,7 +17,7 @@
 package uk.gov.hmrc.tariffclassificationfrontend.views
 
 object CaseDetailPage extends Enumeration {
-  type  CaseDetailPage = Value
+  type CaseDetailPage = Value
   val TRADER = Value("trader")
   val RULING = Value("ruling")
   val APPLICATION_DETAILS = Value("application")
