@@ -27,53 +27,11 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.release_case_button
 @(c: Case,  letterOfAuth: Option[StoredAttachment])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@tab_heading("trader", "Trader details")
-
-<h3> Contact details </h3>
-
-@defining(c.application.asBTI.contact) { co: Contact =>
-
-    <div class="grid-row">
-        <div class="column-one-third">
-            <p>@messages("case.application.contact.name")</p>
-        </div>
-        <div class="column-two-thirds">
-            <p>@co.name</p>
-        </div>
-    </div>
-
-    <div class="grid-row">
-        <div class="column-one-third">
-            <p>@messages("case.application.contact.email")</p>
-        </div>
-        <div class="column-two-thirds">
-        @if(co.email.contains("@")){
-            <a id="contact-email" href="mailto:@co.email?subject=@c.application.getType application #@c.reference">@co.email</a>
-        } else {
-            <span id="contact-email">@co.email</span>
-        }
-        </div>
-    </div>
-
-    @if(co.phone.isDefined) {
-        <div class="grid-row">
-            <div class="column-one-third">
-                <p>@messages("case.application.contact.telephone")</p>
-            </div>
-            <div class="column-two-thirds">
-                <p id="contact-phone">@co.phone.get</p>
-            </div>
-        </div>
-    }
-
-}
-
+@tab_heading("trader", "Trader")
 
 @defining(c.application) { a: Application =>
     @defining(a.asBTI) { btiApp: BTIApplication =>
         @defining(btiApp.holder) { btiHolder: EORIDetails =>
-
-            <h3> Trader details </h3>
 
             <div class="grid-row">
                 <div class="column-one-third">
@@ -108,10 +66,24 @@
                 </div>
             </div>
 
+            <div class="grid-row">
+                <div class="column-one-third">
+                    <p>@messages("case.application.related-bti-reference")</p>
+                </div>
+                <div class="column-two-thirds">
+                    <p>
+                    @if(btiApp.relatedBTIReference.isDefined) {
+                        @btiApp.relatedBTIReference.get
+                    }else {
+                        No
+                    }
+                    </p>
+                </div>
+            </div>
 
             @if(btiApp.agent.isDefined) {
 
-                <h3> Agent details </h3>
+                <h3 id="agent-submitted-heading" > Agent details </h3>
 
                 @defining(btiApp.agent.get) { btiAgent: AgentDetails =>
 
@@ -170,6 +142,45 @@
             }
         }
     }
+}
+
+<h3> Contact details for this application </h3>
+
+@defining(c.application.asBTI.contact) { co: Contact =>
+
+    <div class="grid-row">
+        <div class="column-one-third">
+            <p>@messages("case.application.contact.name")</p>
+        </div>
+        <div class="column-two-thirds">
+            <p>@co.name</p>
+        </div>
+    </div>
+
+    <div class="grid-row">
+        <div class="column-one-third">
+            <p>@messages("case.application.contact.email")</p>
+        </div>
+        <div class="column-two-thirds">
+        @if(co.email.contains("@")){
+            <a id="contact-email" href="mailto:@co.email?subject=@c.application.getType application #@c.reference">@co.email</a>
+        } else {
+            <span id="contact-email">@co.email</span>
+        }
+        </div>
+    </div>
+
+@if(co.phone.isDefined) {
+    <div class="grid-row">
+        <div class="column-one-third">
+            <p>@messages("case.application.contact.telephone")</p>
+        </div>
+        <div class="column-two-thirds">
+            <p id="contact-phone">@co.phone.get</p>
+        </div>
+    </div>
+}
+
 }
 
 <div class="mt-1">

@@ -26,92 +26,7 @@
 
             @tab_heading("application", messages("case.menu.application"))
 
-            <div class="grid-row">
-                <div class="column-one-third">
-                    <p>@messages("case.application.holder.eori-number")</p>
-                </div>
-                <div class="column-two-thirds">
-                    <p>@btiHolder.eori</p>
-                </div>
-            </div>
-
-            <div class="grid-row">
-                <div class="column-one-third">
-                    <p>@messages("case.application.holder.trader-name")</p>
-                </div>
-                <div class="column-two-thirds">
-                    <p>@btiHolder.businessName</p>
-                </div>
-            </div>
-
-            <div class="grid-row">
-                <div class="column-one-third">
-                    <p>@messages("case.application.holder.address")</p>
-                </div>
-                <div class="column-two-thirds">
-                    <p>@btiHolder.addressLine1</p>
-                    <p>@btiHolder.addressLine2</p>
-                    <p>@btiHolder.addressLine3</p>
-                    <p>@btiHolder.postcode</p>
-                    <p>@btiHolder.country</p>
-                </div>
-            </div>
-
-            @if(btiApp.agent.isDefined) {
-                <hr/>
-
-                @defining(btiApp.agent.get) { btiAgent: AgentDetails =>
-                    <h4 id="agent-submitted-heading" class="heading-small">This application was submitted by an agent</h4>
-
-                    <div class="grid-row">
-                        <div class="column-one-third">
-                            <p>@messages("case.application.agent.eori-number")</p>
-                        </div>
-                        <div class="column-two-thirds">
-                            <p>@btiAgent.eoriDetails.eori</p>
-                        </div>
-                    </div>
-
-                    <div class="grid-row">
-                        <div class="column-one-third">
-                            <p>@messages("case.application.agent.trader-name")</p>
-                        </div>
-                        <div class="column-two-thirds">
-                            <p>@btiAgent.eoriDetails.businessName</p>
-                        </div>
-                    </div>
-
-                    <div class="grid-row">
-                        <div class="column-one-third">
-                            <p>@messages("case.application.agent.address")</p>
-                        </div>
-                        <div class="column-two-thirds">
-                            <p>@btiAgent.eoriDetails.addressLine1</p>
-                            <p>@btiAgent.eoriDetails.addressLine2</p>
-                            <p>@btiAgent.eoriDetails.addressLine3</p>
-                            <p>@btiAgent.eoriDetails.postcode</p>
-                            <p>@btiAgent.eoriDetails.country</p>
-                        </div>
-                    </div>
-                    @if(letterOfAuth.isDefined) {
-                        @attachment(
-                            id = "agent-letter",
-                            file = letterOfAuth.get,
-                            name = Some(messages("case.application.agent.letter-of-authorisation"))
-                        )
-                    } else {
-                        <p id="agent-letter-missing">@messages("case.application.agent.letter-of-authorisation") (Unavailable)</p>
-                    }
-                }
-            }
-
-            @if(btiApp.reissuedBTIReference.isDefined) {
-                <hr/>
-                <h4 id="re-issue-heading" class="heading-small">This application is for a re-issue for BTI reference #@btiApp.reissuedBTIReference.get</h4>
-            }
-
             @if(btiApp.envisagedCommodityCode.isDefined) {
-                <hr/>
                 <div id="app-details-envisaged-code" class="grid-row">
                     <div class="column-one-third">
                         <p>@messages("case.application.suggested-commodity-code")</p>
@@ -122,7 +37,16 @@
                 </div>
             }
 
-            <div class="grid-row">
+            <div id="app-details-goods-name" class="grid-row">
+                <div class="column-one-third">
+                    <p>@messages("case.application.goods-name")</p>
+                </div>
+                <div class="column-two-thirds">
+                    <p>@btiApp.goodName</p>
+                </div>
+            </div>
+
+            <div id="app-details-goods-description" class="grid-row">
                 <div class="column-one-third">
                     <p>@messages("case.application.goods-description")</p>
                 </div>
@@ -131,58 +55,89 @@
                 </div>
             </div>
 
-            @if(btiApp.confidentialInformation.isDefined) {
-                <div id="app-details-confidential-info" class="grid-row">
-                    <div class="column-one-third">
-                        <p>@messages("case.application.confidential-information")</p>
-                    </div>
-                    <div class="column-two-thirds">
-                        <p>@btiApp.confidentialInformation.get</p>
-                    </div>
+            <div id="app-details-confidential-info" class="grid-row">
+                <div class="column-one-third">
+                    <p>@messages("case.application.confidential-information")</p>
                 </div>
-            }
-
-            @if(btiApp.relatedBTIReference.isDefined) {
-                <div id="app-details-related-reference" class="grid-row">
-                    <div class="column-one-third">
-                        <p>@messages("case.application.related-bti-reference")</p>
-                    </div>
-                    <div class="column-two-thirds">
-                        <p>@btiApp.relatedBTIReference.get</p>
-                    </div>
+                <div class="column-two-thirds">
+                    <p>
+                        @if(btiApp.confidentialInformation.isDefined) {
+                            @btiApp.confidentialInformation.get
+                        }else {
+                            @messages("answer.none")
+                        }
+                    </p>
                 </div>
-            }
+            </div>
 
-            @if(btiApp.knownLegalProceedings.isDefined) {
-                <div id="app-details-legal-proceedings" class="grid-row">
-                    <div class="column-one-third">
-                        <p>@messages("case.application.known-legal-proceedings")</p>
-                    </div>
-                    <div class="column-two-thirds">
-                        <p>@btiApp.knownLegalProceedings.get</p>
-                    </div>
+            <div id="app-details-other-info" class="grid-row">
+                <div class="column-one-third">
+                    <p>@messages("case.application.other-information")</p>
                 </div>
-            }
-
-            @if(btiApp.otherInformation.isDefined) {
-                <div id="app-details-other-info" class="grid-row">
-                    <div class="column-one-third">
-                        <p>@messages("case.application.other-information")</p>
-                    </div>
-                    <div class="column-two-thirds">
-                        <p>@btiApp.otherInformation.get</p>
-                    </div>
+                <div class="column-two-thirds">
+                    <p>
+                    @if(btiApp.otherInformation.isDefined) {
+                        @btiApp.otherInformation.get
+                    }else {
+                        @messages("answer.none")
+                    }
+                    </p>
                 </div>
-            }
+            </div>
 
-            @defining(files.filter(_.operator.isEmpty)) { applicationFiles: Seq[StoredAttachment] =>
-                @if(applicationFiles.nonEmpty) {
-                    <hr/>
-                    <h3 id="app-details-attachments" class="heading-medium">@messages("case.application.attachments")</h3>
-                    @attachments_state_message(attachments = applicationFiles, autoRefresh = true)
-                    @attachments_list("attachments", applicationFiles)
-                }
-            }
+            <div id="app-details-sending-samples" class="grid-row">
+                <div class="column-one-third">
+                    <p>@messages("case.application.sending-samples")</p>
+                </div>
+                <div class="column-two-thirds">
+                    <p>@btiApp.sampleToBeProvided</p>
+                </div>
+            </div>
+
+            <div id="app-details-reissue-application" class="grid-row">
+                <div class="column-one-third">
+                    <p>@messages("case.application.reissue-application")</p>
+                </div>
+                <div class="column-two-thirds">
+                    <p>
+                        @if(btiApp.reissuedBTIReference.isDefined) {
+                            @btiApp.reissuedBTIReference.get
+                        }else {
+                            @messages("answer.no")
+                        }
+                    </p>
+                </div>
+            </div>
+
+            <div id="app-details-related-reference" class="grid-row">
+                <div class="column-one-third">
+                    <p>@messages("case.application.related-bti-reference")</p>
+                </div>
+                <div class="column-two-thirds">
+                    <p>
+                    @if(btiApp.relatedBTIReference.isDefined) {
+                        @btiApp.relatedBTIReference.get
+                    }else{
+                        @messages("answer.no")
+                    }
+                    </p>
+                </div>
+            </div>
+
+            <div id="app-details-legal-proceedings" class="grid-row">
+                <div class="column-one-third">
+                    <p>@messages("case.application.known-legal-proceedings")</p>
+                </div>
+                <div class="column-two-thirds">
+                    <p>
+                    @if(btiApp.knownLegalProceedings.isDefined) {
+                        @btiApp.knownLegalProceedings.get
+                    }else {
+                        @messages("answer.no")
+                    }
+                    </p>
+                </div>
+            </div>
 
             <div class="mt-1">
                 @refer_case_button(c)

@@ -20,13 +20,41 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.Contact
 import uk.gov.hmrc.tariffclassificationfrontend.models.response.ScanStatus
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewSpec
-import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.case_trader
+import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{application_details, case_trader}
 import uk.gov.tariffclassificationfrontend.utils.Cases
 import uk.gov.tariffclassificationfrontend.utils.Cases._
 
 class CaseTraderViewSpec extends ViewSpec {
 
   "Case Trader" should {
+
+    "Not render agent details when not present" in {
+      // Given
+      val `case` = aCase(
+        withReference("ref"),
+        withoutAgent()
+      )
+
+      // When
+      val doc = view(case_trader(`case`, None))
+
+      // Then
+      doc shouldNot containElementWithID("agent-submitted-heading")
+    }
+
+    "Render agent details when present" in {
+      // Given
+      val `case` = aCase(
+        withReference("ref"),
+        withAgent()
+      )
+
+      // When
+      val doc = view(case_trader(`case`, None))
+
+      // Then
+      doc should containElementWithID("agent-submitted-heading")
+    }
 
     "Render valid email with mailto link" in {
       // Given

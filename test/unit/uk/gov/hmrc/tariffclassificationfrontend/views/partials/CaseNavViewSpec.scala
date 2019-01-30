@@ -23,7 +23,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.views.{CaseDetailPage, ViewSpec}
 
 class CaseNavViewSpec extends ViewSpec {
 
-  private val application = "Application details"
+  private val application = "Application"
   private val trader = "Trader"
   private val ruling = "Ruling"
   private val attachments = "Attachments"
