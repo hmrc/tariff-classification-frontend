@@ -114,7 +114,7 @@ class CasesService @Inject()(appConfig: AppConfig, auditService: AuditService,
   }
 
   def search(search: Search)(implicit hc: HeaderCarrier): Future[Seq[Case]] = {
-    Future.successful(Seq.empty)
+    connector.search(search)
   }
 
   def getCasesByQueue(queue: Queue)(implicit hc: HeaderCarrier): Future[Seq[Case]] = {
