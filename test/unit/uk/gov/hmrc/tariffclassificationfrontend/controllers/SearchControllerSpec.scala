@@ -47,7 +47,7 @@ class SearchControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSui
     appConfig
   )
 
-  private implicit val hc = HeaderCarrier()
+  private implicit val hc: HeaderCarrier = HeaderCarrier()
 
   "Search" should {
 
