@@ -56,22 +56,39 @@ class SearchControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSui
   "Search" should {
 
     "redirect to case if searching by reference" in {
-      val result = await(controller.search(Search(reference = Some("reference")))(fakeRequest))
+      val result = await(controller.search(reference = Some("reference"))(fakeRequest))
 
       status(result) shouldBe Status.SEE_OTHER
       locationOf(result) shouldBe Some(routes.CaseController.summary("reference").url)
     }
 
-    "render results if not empty" in {
+    "not render results if empty" in {
       given(casesService.search(refEq(Search()))(any[HeaderCarrier])) willReturn Future.successful(Seq.empty)
 
-      val result = await(controller.search(Search(traderName = Some("trader")))(fakeRequest))
+      val result = await(controller.search(search = Search())(fakeRequest))
 
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
       contentAsString(result) should include("advanced_search-heading")
-      contentAsString(result) should include("advanced_search-results")
+      contentAsString(result) shouldNot include("advanced_search_results")
+    }
+
+    "render results if not empty" in {
+      // Given
+      val search = Search(traderName = Some("trader"))
+
+      given(casesService.search(refEq(search))(any[HeaderCarrier])) willReturn Future.successful(Seq.empty)
+
+      // When
+      val result = await(controller.search(search = search)(fakeRequest))
+
+      // Then
+      status(result) shouldBe Status.OK
+      contentType(result) shouldBe Some("text/html")
+      charset(result) shouldBe Some("utf-8")
+      contentAsString(result) should include("advanced_search-heading")
+      contentAsString(result) should include("advanced_search_results")
     }
 
   }

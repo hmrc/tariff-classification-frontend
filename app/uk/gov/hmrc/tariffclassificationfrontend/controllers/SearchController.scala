@@ -35,9 +35,9 @@ class SearchController @Inject()(authenticatedAction: AuthenticatedAction,
                                  val messagesApi: MessagesApi,
                                  implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
-  def search(search: Search): Action[AnyContent] = authenticatedAction.async { implicit request =>
-    if (search.reference.isDefined) {
-      successful(Redirect(routes.CaseController.summary(search.reference.get)))
+  def search(reference: Option[String] = None, search: Search = Search()): Action[AnyContent] = authenticatedAction.async { implicit request =>
+    if (reference.isDefined) {
+      successful(Redirect(routes.CaseController.summary(reference.get)))
     } else if (search.isEmpty) {
       Future.successful(Results.Ok(html.advanced_search(fillForm(search), None)))
     } else {

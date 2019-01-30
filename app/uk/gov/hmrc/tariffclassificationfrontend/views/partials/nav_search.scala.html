@@ -15,10 +15,9 @@
  *@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers
-@import uk.gov.hmrc.tariffclassificationfrontend.models.Search
 @()
 
-@helper.form(action = controllers.routes.SearchController.search(Search())) {
+@helper.form(action = controllers.routes.SearchController.search()) {
  <div id="nav-search" class="form-group nav-search">
      <label for="nav-search-box" class="form-label">Search by case reference</label>
      <div class="grid-row">
@@ -27,7 +26,7 @@
              <button type="submit"></button>
          </div>
          <div class="column-one-third">
-             <a href="@controllers.routes.SearchController.search(Search())">Advanced Search</a>
+             <a href="@controllers.routes.SearchController.search()">Advanced Search</a>
          </div>
      </div>
  </div>

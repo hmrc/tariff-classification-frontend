@@ -16,7 +16,7 @@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers
-@import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Search}
+@import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.input_text
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.advanced_search_results
@@ -28,14 +28,14 @@
  <h2 class="heading-medium">Enter search terms</h2>
  <hr class="mt-0"/>
 
- @helper.form(action = controllers.routes.SearchController.search(Search())) {
+ @helper.form(action = controllers.routes.SearchController.search()) {
   @input_text(
    field = form("traderName"),
    label = "Trader Name"
   )
 
   <button id="advanced_search-button" class="button" type="submit">Search</button>
-  <a class="secondary-button" href="@controllers.routes.SearchController.search(Search())">Reset Filters</a>
+  <a class="secondary-button" href="@controllers.routes.SearchController.search()">Reset Filters</a>
 
   @if(results.isDefined) {
     @advanced_search_results(results.get)
