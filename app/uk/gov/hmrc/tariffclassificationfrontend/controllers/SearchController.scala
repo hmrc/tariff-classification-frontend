@@ -26,6 +26,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.Search
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views.html
 
+import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
 @Singleton
@@ -37,14 +38,20 @@ class SearchController @Inject()(authenticatedAction: AuthenticatedAction,
   def search(search: Search): Action[AnyContent] = authenticatedAction.async { implicit request =>
     if (search.reference.isDefined) {
       successful(Redirect(routes.CaseController.summary(search.reference.get)))
+    } else if (search.isEmpty) {
+      Future.successful(Results.Ok(html.advanced_search(fillForm(search), None)))
     } else {
-      val form = SearchForm.form.fill(
-        SearchFormData(
-          search.traderName.getOrElse("")
-        )
-      )
-      successful(Results.Ok(html.advanced_search(form)))
+      casesService.search(search) map { results =>
+        Results.Ok(html.advanced_search(fillForm(search), Some(results)))
+      }
     }
   }
+
+  private def fillForm(search: Search) = SearchForm.form.fill(
+    SearchFormData(
+      search.traderName.getOrElse("")
+    )
+  )
+
 
 }

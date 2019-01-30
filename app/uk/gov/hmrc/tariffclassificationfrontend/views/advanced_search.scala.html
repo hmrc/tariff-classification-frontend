@@ -16,24 +16,30 @@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers
+@import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Search}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.input_text
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
-@(form: Form[_])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.advanced_search_results
+@(form: Form[_], results: Option[Seq[Case]])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None) {
- <h1 class="heading-xlarge">Advanced Search</h1>
+ <h1 id="advanced_search-heading" class="heading-xlarge">Advanced Search</h1>
 
  <h2 class="heading-medium">Enter search terms</h2>
  <hr class="mt-0"/>
 
- @helper.form(action = controllers.routes.SearchController.search()) {
+ @helper.form(action = controllers.routes.SearchController.search(Search())) {
   @input_text(
-   field = form("trader-name"),
+   field = form("traderName"),
    label = "Trader Name"
   )
 
   <button id="advanced_search-button" class="button" type="submit">Search</button>
-  <a class="secondary-button" href="@controllers.routes.SearchController.search()">Reset Filters</a>
+  <a class="secondary-button" href="@controllers.routes.SearchController.search(Search())">Reset Filters</a>
+
+  @if(results.isDefined) {
+    @advanced_search_results(results.get)
+  }
  }
 
 }

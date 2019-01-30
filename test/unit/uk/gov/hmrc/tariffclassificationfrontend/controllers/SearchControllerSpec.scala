@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
+import org.mockito.ArgumentMatchers._
+import org.mockito.BDDMockito._
 import org.scalatest.Matchers
 import org.scalatest.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
@@ -27,8 +29,10 @@ import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.models.Operator
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Operator, Search}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
+
+import scala.concurrent.Future
 
 class SearchControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSuite with MockitoSugar with ControllerCommons {
 
@@ -52,19 +56,22 @@ class SearchControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSui
   "Search" should {
 
     "redirect to case if searching by reference" in {
-      val result = await(controller.search(reference = Some("reference"))(fakeRequest))
+      val result = await(controller.search(Search(reference = Some("reference")))(fakeRequest))
 
       status(result) shouldBe Status.SEE_OTHER
       locationOf(result) shouldBe Some(routes.CaseController.summary("reference").url)
     }
 
-    "render search if not searching by reference" in {
-      val result = await(controller.search(reference = None)(fakeRequest))
+    "render results if not empty" in {
+      given(casesService.search(refEq(Search()))(any[HeaderCarrier])) willReturn Future.successful(Seq.empty)
+
+      val result = await(controller.search(Search(traderName = Some("trader")))(fakeRequest))
 
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
-      contentAsString(result) should include("Advanced Search")
+      contentAsString(result) should include("advanced_search-heading")
+      contentAsString(result) should include("advanced_search-results")
     }
 
   }
