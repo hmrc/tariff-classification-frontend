@@ -21,9 +21,9 @@
 
 <ul class="tabs__list" role="tablist">
     @case_nav_item(
-        active = page == CaseDetailPage.SUMMARY,
-        title = messages("case.menu.summary"),
-        call = uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.summary(reference)
+        active = page == CaseDetailPage.TRADER,
+        title = messages("case.menu.trader"),
+        call = uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.trader(reference)
     )
 
     @case_nav_item(

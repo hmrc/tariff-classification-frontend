@@ -17,14 +17,16 @@
 package uk.gov.hmrc.tariffclassificationfrontend.views.partials
 
 import uk.gov.hmrc.tariffclassificationfrontend.models.Contact
+import uk.gov.hmrc.tariffclassificationfrontend.models.response.ScanStatus
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewSpec
-import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.case_summary
+import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.case_trader
+import uk.gov.tariffclassificationfrontend.utils.Cases
 import uk.gov.tariffclassificationfrontend.utils.Cases._
 
-class CaseSummaryViewSpec extends ViewSpec {
+class CaseTraderViewSpec extends ViewSpec {
 
-  "Case Summary" should {
+  "Case Trader" should {
 
     "Render valid email with mailto link" in {
       // Given
@@ -34,7 +36,7 @@ class CaseSummaryViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(case_summary(`case`))
+      val doc = view(case_trader(`case`, None))
 
       // Then
       doc should containElementWithID("contact-email")
@@ -50,7 +52,7 @@ class CaseSummaryViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(case_summary(`case`))
+      val doc = view(case_trader(`case`, None))
 
       // Then
       doc should containElementWithID("contact-email")
@@ -64,7 +66,7 @@ class CaseSummaryViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(case_summary(`case`))
+      val doc = view(case_trader(`case`, None))
 
       // Then
       doc should containElementWithID("contact-phone")
@@ -78,10 +80,36 @@ class CaseSummaryViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(case_summary(`case`))
+      val doc = view(case_trader(`case`, None))
 
       // Then
       doc shouldNot containElementWithID("contact-phone")
+    }
+
+    "Render letter of Authority when present as link" in {
+      // Given
+      val `case` = aCase(
+        withReference("ref"),
+        withContact(Contact("name", "email", None))
+      )
+
+      val letterOfAuthorization = Cases.storedAttachment.copy(id = "letter-of-auth-id", url = Some("url"), scanStatus = Some(ScanStatus.READY))
+
+      // When
+      val doc = view(case_trader(`case`, Some(letterOfAuthorization)))
+
+      // Then
+      doc should containElementWithID("agent-letter-file-letter-of-auth-id")
+      doc.getElementById("agent-letter-file-letter-of-auth-id") should containText("View letter of authorisation")
+    }
+
+    "show no tag when no letter of auth is provided" in {
+
+      // Given When
+      val doc = view(case_trader(btiCaseExample, None))
+
+      // Then
+      doc shouldNot containElementWithID("agent-letter-file-letter-of-auth-id")
     }
 
   }

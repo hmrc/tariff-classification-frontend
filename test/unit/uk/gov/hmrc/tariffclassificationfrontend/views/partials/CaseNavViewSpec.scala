@@ -24,7 +24,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.views.{CaseDetailPage, ViewSpec}
 class CaseNavViewSpec extends ViewSpec {
 
   private val application = "Application details"
-  private val summary = "Summary"
+  private val trader = "Trader"
   private val ruling = "Ruling"
   private val attachments = "Attachments"
   private val activity = "Activity"
@@ -33,20 +33,20 @@ class CaseNavViewSpec extends ViewSpec {
   private val rulingURL = routes.CaseController.rulingDetails("ref").url
   private val attachmentsURL = routes.AttachmentsController.attachmentsDetails("ref").url
   private val activityURL = routes.CaseController.activityDetails("ref").url
-  private val summaryURL = routes.CaseController.summary("ref").url
+  private val traderURL = routes.CaseController.trader("ref").url
 
   "Case Heading" should {
 
-    "Render Summary" in {
+    "Render Trader" in {
       // When
-      val doc = view(case_nav(CaseDetailPage.SUMMARY, "ref"))
+      val doc = view(case_nav(CaseDetailPage.TRADER, "ref"))
 
       // Then
       val spans = doc.getElementsByTag("span")
       spans should haveSize(1)
 
       val selectedTab = spans.first()
-      selectedTab should containText(summary)
+      selectedTab should containText(trader)
       selectedTab should haveAttribute("aria-selected", "true")
 
       val anchors = doc.getElementsByTag("a")
@@ -75,8 +75,8 @@ class CaseNavViewSpec extends ViewSpec {
 
       val anchors = doc.getElementsByTag("a")
       anchors should haveSize(4)
-      anchors.get(0) should containText(summary)
-      anchors.get(0) should haveAttribute("href", summaryURL)
+      anchors.get(0) should containText(trader)
+      anchors.get(0) should haveAttribute("href", traderURL)
       anchors.get(1) should containText(ruling)
       anchors.get(1) should haveAttribute("href", rulingURL)
       anchors.get(2) should containText(attachments)
@@ -99,8 +99,8 @@ class CaseNavViewSpec extends ViewSpec {
 
       val anchors = doc.getElementsByTag("a")
       anchors should haveSize(4)
-      anchors.get(0) should containText(summary)
-      anchors.get(0) should haveAttribute("href", summaryURL)
+      anchors.get(0) should containText(trader)
+      anchors.get(0) should haveAttribute("href", traderURL)
       anchors.get(1) should containText(application)
       anchors.get(1) should haveAttribute("href", applicationDetailsURL)
       anchors.get(2) should containText(attachments)
@@ -123,8 +123,8 @@ class CaseNavViewSpec extends ViewSpec {
 
       val anchors = doc.getElementsByTag("a")
       anchors should haveSize(4)
-      anchors.get(0) should containText(summary)
-      anchors.get(0) should haveAttribute("href", summaryURL)
+      anchors.get(0) should containText(trader)
+      anchors.get(0) should haveAttribute("href", traderURL)
       anchors.get(1) should containText(application)
       anchors.get(1) should haveAttribute("href", applicationDetailsURL)
       anchors.get(2) should containText(ruling)
@@ -147,8 +147,8 @@ class CaseNavViewSpec extends ViewSpec {
 
       val anchors = doc.getElementsByTag("a")
       anchors should haveSize(4)
-      anchors.get(0) should containText(summary)
-      anchors.get(0) should haveAttribute("href", summaryURL)
+      anchors.get(0) should containText(trader)
+      anchors.get(0) should haveAttribute("href", traderURL)
       anchors.get(1) should containText(application)
       anchors.get(1) should haveAttribute("href", applicationDetailsURL)
       anchors.get(2) should containText(ruling)

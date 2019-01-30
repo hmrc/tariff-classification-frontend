@@ -46,7 +46,7 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body should include("id=\"summary-heading\"")
+      response.body should include("id=\"trader-heading\"")
     }
 
     "redirect on auth failure" in {
