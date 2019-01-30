@@ -126,11 +126,9 @@ class CasesService @Inject()(appConfig: AppConfig, auditService: AuditService,
   }
 
   def addAttachment(c: Case, f: FileUpload, o: Operator)(implicit headerCarrier: HeaderCarrier): Future[Case] = {
-
-    fileService.upload(f) flatMap { fileStored: FileStoreAttachment => {
+    fileService.upload(f) flatMap { fileStored: FileStoreAttachment =>
       val attachments = c.attachments :+ Attachment(id = fileStored.id, operator = Some(o))
       connector.updateCase(c.copy(attachments = attachments))
-    }
     }
   }
 
