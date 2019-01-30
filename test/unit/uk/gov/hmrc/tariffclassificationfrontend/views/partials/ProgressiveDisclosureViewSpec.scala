@@ -44,6 +44,14 @@ class ProgressiveDisclosureViewSpec extends ViewSpec {
       doc.getElementById("MODULE-title") should containText("summary")
       doc.getElementById("MODULE-body") should containText("body")
     }
+
+    "Newline characters are rendered as HTML breaks" in {
+      // When
+      val doc = view(progressive_disclosure("MODULE", "summary", Some("First paragraph\nSecond paragraph\nThird paragraph")))
+
+      // Then
+      doc.getElementById("MODULE-body") should containHtml("First paragraph\n<br>Second paragraph\n<br>Third paragraph")
+    }
   }
 
 }

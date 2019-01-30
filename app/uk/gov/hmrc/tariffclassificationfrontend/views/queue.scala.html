@@ -22,16 +22,13 @@
 
 @main(bodyClasses = None) {
 
+    <h1 id="queue-name" class="heading-xlarge">@queue.name Cases</h1>
+
     <div class="grid-row">
         <div class="column-one-quarter">
             @queue_nav(queues, queue.slug)
         </div>
         <div class="column-three-quarters">
-            <div class="grid-row">
-                <div class="column-full">
-                    <h1 id="queue-name" class="heading-large">@queue.name Cases</h1>
-                </div>
-            </div>
             @cases_list(cases)
         </div>
     </div>

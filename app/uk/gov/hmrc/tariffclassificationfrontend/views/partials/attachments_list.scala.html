@@ -15,7 +15,6 @@
  *@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.models.StoredAttachment
-@import uk.gov.hmrc.tariffclassificationfrontend.models.response.ScanStatus
 @import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.attachment
 @(id: String, attachments: Seq[StoredAttachment], showUploadedBy: Boolean = false)(implicit messages: Messages)
@@ -30,17 +29,17 @@
                 </tr>
             </thead>
             <tbody>
-                    @for(file: StoredAttachment <- attachments) {
-                        <tr id="@{id}-row-@{file.id}">
-                            <td id="@{id}-row-@{file.id}-title" class="w-50">
+                    @for((file: StoredAttachment, index: Int) <- attachments.zipWithIndex) {
+                        <tr id="@{id}-row-@{index}">
+                            <td id="@{id}-row-@{index}-title" class="w-50">
                                 @attachment(id, file)
                             </td>
                             @if(showUploadedBy) {
-                                <td id="@{id}-row-@{file.id}-uploaded_by">
+                                <td id="@{id}-row-@{index}-uploaded_by">
                                     @file.operator.flatMap(_.name).getOrElse("Unknown")
                                 </td>
                             }
-                            <td id="@{id}-row-@{file.id}-date" class="w-15">
+                            <td id="@{id}-row-@{index}-date" class="w-15">
                                 @Dates.format(file.timestamp)
                             </td>
                         </tr>

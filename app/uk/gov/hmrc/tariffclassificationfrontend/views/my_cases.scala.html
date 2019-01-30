@@ -22,23 +22,20 @@
 
 @main(bodyClasses = None) {
 
+    <h1 id="queue-name" class="heading-xlarge">
+    @{
+        operator
+                .name
+                .map(n => messages("cases.list.my-cases", n))
+                .getOrElse(messages("cases.menu.my-cases"))
+    }
+    </h1>
+
     <div class="grid-row">
         <div class="column-one-quarter">
             @queue_nav(queues, "my-cases")
         </div>
         <div class="column-three-quarters">
-            <div class="grid-row">
-                <div class="column-full">
-                    <h1 id="queue-name" class="heading-large">
-                    @{
-                        operator
-                                .name
-                                .map(n => messages("cases.list.my-cases", n))
-                                .getOrElse(messages("cases.menu.my-cases"))
-                    }
-                    </h1>
-                </div>
-            </div>
             @cases_list(cases)
         </div>
     </div>
