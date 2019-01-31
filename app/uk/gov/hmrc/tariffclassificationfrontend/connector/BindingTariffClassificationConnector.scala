@@ -72,7 +72,7 @@ class BindingTariffClassificationConnector @Inject()(configuration: AppConfig, c
   }
 
   def search(search: Search, sort: Sort)(implicit hc: HeaderCarrier, binder: QueryStringBindable[String]): Future[Seq[Case]] = {
-    val searchString = if(!search.isEmpty) "&" + Search.bindable.unbind("", search) else ""
+    val searchString = if(search.isDefined) "&" + Search.bindable.unbind("", search) else ""
     val sortString = Sort.bindable.unbind("sort_by", sort)
     val url = s"${configuration.bindingTariffClassificationUrl}/cases?$sortString$searchString"
     client.GET[Seq[Case]](url)
