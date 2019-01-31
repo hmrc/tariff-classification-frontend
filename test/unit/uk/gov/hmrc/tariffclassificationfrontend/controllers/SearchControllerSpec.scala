@@ -59,7 +59,7 @@ class SearchControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSui
       val result = await(controller.search(reference = Some("reference"))(fakeRequest))
 
       status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some(routes.CaseController.summary("reference").url)
+      locationOf(result) shouldBe Some(routes.CaseController.trader("reference").url)
     }
 
     "not render results if empty" in {

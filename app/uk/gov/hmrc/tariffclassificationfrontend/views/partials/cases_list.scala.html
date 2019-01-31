@@ -37,7 +37,7 @@
                     @defining(a.asBTI) { btiApp: BTIApplication =>
                         <tr id="cases_list-row-@index" class="govuk-table__row">
                             <th class="govuk-table__header" scope="row">
-                                <a id="cases_list-row-@{index}-reference" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.summary(c.reference)">@c.reference</a>
+                                <a id="cases_list-row-@{index}-reference" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.trader(c.reference)">@c.reference</a>
                             </th>
                             <td id="cases_list-row-@{index}-good_name" class="govuk-table__cell">@btiApp.goodName</td>
                             <td id="cases_list-row-@{index}-business_name" class="govuk-table__cell">@btiApp.holder.businessName</td>

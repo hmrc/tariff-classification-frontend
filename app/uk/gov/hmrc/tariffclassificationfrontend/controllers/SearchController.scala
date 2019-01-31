@@ -37,7 +37,7 @@ class SearchController @Inject()(authenticatedAction: AuthenticatedAction,
 
   def search(reference: Option[String] = None, search: Search = Search()): Action[AnyContent] = authenticatedAction.async { implicit request =>
     if (reference.isDefined) {
-      successful(Redirect(routes.CaseController.summary(reference.get)))
+      successful(Redirect(routes.CaseController.trader(reference.get)))
     } else if (search.isEmpty) {
       Future.successful(Results.Ok(html.advanced_search(fillForm(search), None)))
     } else {

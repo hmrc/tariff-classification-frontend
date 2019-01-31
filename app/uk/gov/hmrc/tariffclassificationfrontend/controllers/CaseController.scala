@@ -46,8 +46,17 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
   private lazy val activityForm: Form[ActivityFormData] = ActivityForm.form
 
 
-  def summary(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
-    getCaseAndRenderView(reference, CaseDetailPage.SUMMARY, c => successful(views.html.partials.case_summary(c)))
+  // Trader Tab
+  def trader(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
+    getCaseAndRenderView(
+      reference,
+      CaseDetailPage.TRADER,
+      c => {
+        for {
+          letter <- fileService.getLetterOfAuthority(c)
+          response = views.html.partials.case_trader(c, letter)
+        } yield response
+      })
   }
 
   def applicationDetails(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>

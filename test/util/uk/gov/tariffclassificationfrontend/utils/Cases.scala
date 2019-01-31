@@ -141,7 +141,7 @@ object Cases {
       )))
   }
 
-  def withCreatedDate(date: ZonedDateTime) : Case => Case = {
+  def withCreatedDate(date: ZonedDateTime): Case => Case = {
     _.copy(createdDate = date)
   }
 

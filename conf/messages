@@ -12,8 +12,8 @@ cases.table.type=Type
 cases.table.elapsed-days=Days Elapsed
 cases.table.empty=There are no cases in this queue.
 
-case.menu.summary=Summary
-case.menu.application=Application details
+case.menu.trader=Trader
+case.menu.application=Application
 case.menu.ruling=Ruling
 case.menu.ruling-details=Ruling details
 case.menu.attachments=Attachments
@@ -24,24 +24,31 @@ case.status=Status
 case.created-date=Date received
 case.elapsed-days=Days elapsed
 
+
 case.application.suggested-commodity-code=Suggested commodity code
 case.application.suggested-goods-description=Suggested goods description
 case.application.contact.name=Contact name
-case.application.contact.email=Email
-case.application.contact.telephone=Telephone
+case.application.contact.email=Contact email
+case.application.contact.telephone=Contact telephone
 case.application.holder.eori-number=EORI number
 case.application.holder.trader-name=Registered company name
 case.application.holder.address=Registered company address
-case.application.agent.eori-number=Agent''s EORI number
-case.application.agent.trader-name=Agent''s registered company name
-case.application.agent.address=Agent''s registered company address
+case.application.agent.eori-number=EORI number
+case.application.agent.trader-name=Registered company name
+case.application.agent.address=Registered company address
 case.application.agent.letter-of-authorisation=View letter of authorisation
 case.application.goods-description=Goods description
+case.application.goods-name=Goods name
 case.application.confidential-information=Confidential information
-case.application.related-bti-reference=Similar BTI ruling
-case.application.known-legal-proceedings=Known legal proceedings
-case.application.other-information=Other information
+case.application.related-bti-reference=Similar BTI rulings from Trader?
+case.application.known-legal-proceedings=Any legal or administration proceedings information from trader?
+case.application.other-information=Other supporting information
 case.application.attachments=Attachments
+case.application.sending-samples=Is the trader sending samples?
+case.application.reissue-application=Is the application a re-issue?
+
+answer.no=No
+answer.none=None
 
 case.decision.commodity-code=Binding commodity code
 case.decision.goods-description=Sanitised goods description
