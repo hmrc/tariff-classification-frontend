@@ -15,7 +15,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       stubFor(get(urlEqualTo("/cases/1"))
         .willReturn(aResponse()
           .withStatus(OK)
-          .withBody(CasePayloads.btiCase))
+          .withBody(CasePayloads.simpleBtiCase))
       )
 
       // When
@@ -23,7 +23,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body should include("Summary")
+      response.body should include("trader-heading")
     }
 
     "Filter by 'Trader Name'" in {
@@ -40,7 +40,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body should include("Advanced Search")
+      response.body should include("advanced_search_results")
     }
 
     "redirect on auth failure" in {
