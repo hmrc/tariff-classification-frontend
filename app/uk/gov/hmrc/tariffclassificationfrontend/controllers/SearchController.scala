@@ -27,6 +27,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.{Search, Sort}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views.html
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
