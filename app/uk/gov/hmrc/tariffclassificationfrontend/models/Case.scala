@@ -33,5 +33,5 @@ case class Case
   application: Application,
   decision: Option[Decision],
   attachments: Seq[Attachment],
-  keywords: Seq[String] = Seq.empty
+  keywords: Set[String] = Set.empty
 )

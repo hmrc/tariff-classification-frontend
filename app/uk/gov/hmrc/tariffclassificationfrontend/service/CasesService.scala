@@ -141,7 +141,7 @@ class CasesService @Inject()(appConfig: AppConfig, auditService: AuditService,
     c.keywords match {
       case keywords if keywords.contains(keyword.toUpperCase) => Future.successful(c)
       case _ =>
-        val caseToUpdate = c.copy(keywords = c.keywords :+ keyword.toUpperCase)
+        val caseToUpdate = c.copy(keywords = c.keywords + keyword.toUpperCase)
         connector.updateCase(caseToUpdate)
     }
   }
