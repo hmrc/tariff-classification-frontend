@@ -22,8 +22,7 @@ object Sort extends Enumeration {
   type Sort = Value
   val COMMODITY_CODE = Value("commodityCode")
 
-  implicit object bindable
-    extends QueryStringBindable.Parsing[Sort](
+  implicit val bindable: QueryStringBindable.Parsing[Sort] = new QueryStringBindable.Parsing[Sort](
       value =>
         Sort.values.find(_.toString == value).getOrElse(throw new IllegalArgumentException),
       sort =>
