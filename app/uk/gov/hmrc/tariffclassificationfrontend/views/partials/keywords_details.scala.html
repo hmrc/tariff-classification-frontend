@@ -36,6 +36,27 @@
             </p>
         </div>
 
+        <div>
+            <table id="keywords-table">
+                <tbody>
+                    @for((keyword: String, index: Int) <- c.keywords.toSeq.sorted.zipWithIndex) {
+                        <tr id="keywords-row-@{index}">
+                            <td id="keywords-row-@{index}-keyword" class="w-50">@keyword</td>
+
+                            <td id="keywords-row-@{index}-message" class="w-30">
+                                This is not from the main list of keywords
+                            </td>
+
+                            <td id="keywords-row-@{index}-remove"><a href="#">Remove</a></td>
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
+
+        </div>
+
+
         @form(action = uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.addKeyword(c.reference), 'class -> "form") {
 
             @CSRF.formField

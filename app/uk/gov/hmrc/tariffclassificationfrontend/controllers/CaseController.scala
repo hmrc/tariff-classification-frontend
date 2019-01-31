@@ -113,12 +113,13 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
 
       validForm =>
         getCaseAndRenderView(reference, CaseDetailPage.KEYWORDS,
-          c => {
+          c =>
             for {
-              _ <- casesService.addKeyword(c, validForm.keyword)
-              response = views.html.partials.keywords_details(c, keywordForm)
-            } yield response}
-            ))
+              updatedCase <- casesService.addKeyword(c, validForm.keyword)
+              response = views.html.partials.keywords_details(updatedCase, keywordForm)
+            } yield response
+          )
+    )
   }
 
   private def getCaseAndRenderView(reference: String, page: CaseDetailPage, toHtml: Case => Future[Html])
