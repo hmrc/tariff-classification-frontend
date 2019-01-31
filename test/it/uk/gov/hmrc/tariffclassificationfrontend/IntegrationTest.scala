@@ -42,8 +42,7 @@ trait IntegrationTest extends UnitSpec with GuiceOneServerPerSuite with Resource
     )
   }
 
-  protected def verifyNotAuthorisedFor(path : String) = {
-
+  protected def verifyNotAuthorisedFor(path : String): Unit = {
     givenAuthFailed()
 
     val response = await(ws.url(s"$frontendRoot/$path").get())
