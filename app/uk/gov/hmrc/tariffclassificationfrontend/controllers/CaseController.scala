@@ -86,16 +86,15 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
   }
 
   def keywordsDetails(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
-    getCaseAndRenderView(reference, CaseDetailPage.KEYWORDS, c => successful(views.html.partials.keywords_details(c, keywordForm)))
+    getCaseAndRenderView(reference, CaseDetailPage.KEYWORDS,
+      c => successful(views.html.partials.keywords_details(c, casesService.autoCompleteKeywords(), keywordForm)))
   }
 
   def addNote(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     activityForm.bindFromRequest.fold(
       errorForm =>
         getCaseAndRenderView(
-          reference, CaseDetailPage.ACTIVITY, c => {
-            eventsService.getEvents(c.reference).map(views.html.partials.activity_details(c, _, errorForm))
-          }),
+          reference, CaseDetailPage.ACTIVITY, c => eventsService.getEvents(c.reference).map(views.html.partials.activity_details(c, _, errorForm))),
 
       validForm =>
         getCaseAndRedirect(reference, CaseDetailPage.ACTIVITY, c => {
@@ -109,14 +108,14 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
     keywordForm.bindFromRequest.fold(
       errorForm =>
         getCaseAndRenderView(
-          reference, CaseDetailPage.KEYWORDS, c => successful(views.html.partials.keywords_details(c, errorForm))),
+          reference, CaseDetailPage.KEYWORDS, c => successful(views.html.partials.keywords_details(c, casesService.autoCompleteKeywords, errorForm))),
 
       validForm =>
         getCaseAndRenderView(reference, CaseDetailPage.KEYWORDS,
           c =>
             for {
               updatedCase <- casesService.addKeyword(c, validForm.keyword)
-              response = views.html.partials.keywords_details(updatedCase, keywordForm)
+              response = views.html.partials.keywords_details(updatedCase, casesService.autoCompleteKeywords, keywordForm)
             } yield response
           )
     )
@@ -127,7 +126,7 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
       c =>
         for {
           updatedCase <- casesService.removeKeyword(c, keyword)
-          response = views.html.partials.keywords_details(updatedCase, keywordForm)
+          response = views.html.partials.keywords_details(updatedCase, casesService.autoCompleteKeywords, keywordForm)
         } yield response
     )
   }

@@ -23,7 +23,8 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.input_text
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{progressive_disclosure, tab_heading}
 
-@(c: Case, keywordForm : Form[KeywordFormData])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.components.input_autoComplete
+@(c: Case, autoCompleteOptions: Seq[String], keywordForm : Form[KeywordFormData])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
     @tab_heading("keywords", messages("case.menu.keywords"))
 
@@ -43,11 +44,13 @@
                         <tr id="keywords-row-@{index}">
                             <td id="keywords-row-@{index}-keyword" class="w-50">@keyword</td>
 
-                            <td id="keywords-row-@{index}-message" class="w-30">
-                                This is not from the main list of keywords
+                            <td id="keywords-row-@{index}-message" class="w-40">
+                                @if(!autoCompleteOptions.contains(keyword)) {
+                                    This is not from the main list of keywords
+                                }
                             </td>
 
-                            <td id="keywords-row-@{index}-remove">
+                            <td id="keywords-row-@{index}-remove" >
                                 <a href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.removeKeyword(c.reference, keyword)">Remove</a>
                             </td>
                         </tr>
@@ -63,9 +66,10 @@
 
             @CSRF.formField
 
-            @input_text(
+            @input_autoComplete(
                 field = keywordForm("keyword"),
-                label = "Add a keyword to this case"
+                label = "Add a keyword to this case",
+                autoCompleteOptions = autoCompleteOptions
             )
 
             <div class="form-group">

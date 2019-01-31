@@ -29,6 +29,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import scala.io.Source
 
 @Singleton
 class CasesService @Inject()(appConfig: AppConfig, auditService: AuditService,
@@ -152,6 +153,11 @@ class CasesService @Inject()(appConfig: AppConfig, auditService: AuditService,
         connector.updateCase(caseToUpdate)
       case _ => Future.successful(c)
     }
+  }
+
+  def autoCompleteKeywords(): Seq[String] = {
+    val url = getClass.getClassLoader.getResource("keywords.txt")
+    (for (line <- Source.fromURL(url, "UTF-8").getLines()) yield line).toSeq
   }
 
 }
