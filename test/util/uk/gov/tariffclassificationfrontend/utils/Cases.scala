@@ -32,9 +32,11 @@ object Cases {
   val eoriAgentDetailsExample = AgentDetails(EORIDetails("eori", "agent-business-name", "line1", "line2", "line3", "postcode", "country"), Some(Attachment(UUID.randomUUID().toString, true, None, ZonedDateTime.now())))
   val contactExample = Contact("name", "email", Some("phone"))
   val btiApplicationExample = BTIApplication(eoriDetailsExample, contactExample, Some(eoriAgentDetailsExample), false, "Laptop", "Personal Computer", None, None, None, None, None, None, false, false)
+  val simpleBtiApplicationExample = BTIApplication(eoriDetailsExample, contactExample, None, false, "Laptop", "Personal Computer", None, None, None, None, None, None, false, false)
   val decision = Decision("AD12324FR", ZonedDateTime.now(), ZonedDateTime.now().plusYears(2), "justification", "good description", Seq("k1", "k2"), None, None, Some("denomination"), None)
   val liabilityApplicationExample = LiabilityOrder(eoriDetailsExample, contactExample, "status", "port", "entry number", ZonedDateTime.now())
   val btiCaseExample = Case("1", CaseStatus.OPEN, ZonedDateTime.now(), 0, None, None, None, None, btiApplicationExample, Some(decision), Seq())
+  val simpleCaseExample = Case("1", CaseStatus.OPEN, ZonedDateTime.now(), 0, None, None, None, None, simpleBtiApplicationExample, None, Seq())
   val liabilityCaseExample = Case("1", CaseStatus.OPEN, ZonedDateTime.now(), 0, None, None, None, None, liabilityApplicationExample, None, Seq())
 
   def attachment(id: String = UUID.randomUUID().toString): Attachment = {
@@ -52,6 +54,51 @@ object Cases {
 
   def withAssignee(operator: Option[Operator]): Case => Case = {
     _.copy(assignee = operator)
+  }
+
+  def withBTIDetails(offline: Boolean = false,
+                     goodName: String = "good name",
+                     goodDescription: String = "good description",
+                     confidentialInformation: Option[String] = None,
+                     otherInformation: Option[String] = None,
+                     reissuedBTIReference: Option[String] = None,
+                     relatedBTIReference: Option[String] = None,
+                     knownLegalProceedings: Option[String] = None,
+                     envisagedCommodityCode: Option[String] = None,
+                     sampleToBeProvided: Boolean = false,
+                     sampleToBeReturned: Boolean = false): Case => Case = {
+    c =>
+      c.copy(application = c.application.asBTI.copy(
+        offline = offline,
+        goodName = goodName,
+        goodDescription = goodDescription,
+        confidentialInformation = confidentialInformation,
+        otherInformation = otherInformation,
+        reissuedBTIReference = reissuedBTIReference,
+        relatedBTIReference = relatedBTIReference,
+        knownLegalProceedings = knownLegalProceedings,
+        envisagedCommodityCode = envisagedCommodityCode,
+        sampleToBeProvided = sampleToBeProvided,
+        sampleToBeReturned = sampleToBeReturned
+      ))
+  }
+
+  def withHolder(eori: String = "eori",
+                 businessName: String = "business name",
+                 addressLine1: String = "address line 1",
+                 addressLine2: String = "address line 2",
+                 addressLine3: String = "address line 3",
+                 postcode: String = "postcode",
+                 country: String = "country"): Case => Case = {
+    c => c.copy(application = c.application.asBTI.copy(holder = EORIDetails(
+      eori,
+      businessName,
+      addressLine1,
+      addressLine2,
+      addressLine3,
+      postcode,
+      country
+    )))
   }
 
   def withOptionalApplicationFields(confidentialInformation: Option[String] = None,

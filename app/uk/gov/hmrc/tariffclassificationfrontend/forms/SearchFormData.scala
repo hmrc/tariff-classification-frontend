@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,18 +12,30 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
+package uk.gov.hmrc.tariffclassificationfrontend.forms
 
-@(reference: String)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+import play.api.data.Form
+import play.api.data.Forms._
+import uk.gov.hmrc.tariffclassificationfrontend.models.Search
 
-@main(bodyClasses = None) {
+case class SearchFormData(traderName: String = "")
 
-    <h1 class="heading-large">
-        @messages("errors.case-not-found.title")
-    </h1>
-    <p>@messages("errors.case-not-found.message", reference)</p>
-    <a href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.MyCasesController.myCases()">@messages("errors.all.back")</a>
+object SearchForm {
+
+  val form = Form(
+    mapping(
+      "traderName" -> nonEmptyText
+    )(SearchFormData.apply)(SearchFormData.unapply)
+  )
+
+  def fill(search: Search): Form[SearchFormData] = {
+    SearchForm.form.fill(
+      SearchFormData(
+        search.traderName.getOrElse("")
+      )
+    )
+  }
+
 }

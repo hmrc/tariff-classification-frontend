@@ -18,11 +18,12 @@ package uk.gov.hmrc.tariffclassificationfrontend.connector
 
 import com.google.inject.Inject
 import javax.inject.Singleton
+import play.api.mvc.QueryStringBindable
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus._
+import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
 import uk.gov.hmrc.tariffclassificationfrontend.utils.JsonFormatters.{caseFormat, eventFormat, newEventRequestFormat}
 
@@ -67,6 +68,13 @@ class BindingTariffClassificationConnector @Inject()(configuration: AppConfig, c
   def findEvents(reference: String)(implicit hc: HeaderCarrier): Future[Seq[Event]] = {
     val url = s"${configuration.bindingTariffClassificationUrl}/cases/$reference/events"
     client.GET[Seq[Event]](url)
+  }
+
+  def search(search: Search, sort: Sort)(implicit hc: HeaderCarrier, binder: QueryStringBindable[String]): Future[Seq[Case]] = {
+    val searchString = if(search.isDefined) "&" + Search.bindable.unbind("", search) else ""
+    val sortString = Sort.bindable.unbind("sort_by", sort)
+    val url = s"${configuration.bindingTariffClassificationUrl}/cases?$sortString$searchString"
+    client.GET[Seq[Case]](url)
   }
 
 }

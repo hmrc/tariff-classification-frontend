@@ -1,0 +1,67 @@
+@*
+ * Copyright 2019 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
+@import uk.gov.hmrc.tariffclassificationfrontend.models.Case
+@(results: Seq[Case])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+
+<div id="advanced_search_results" class="grid-row mt-1">
+
+ <div class="column-one-quarter">
+  <h3 class="heading-medium">Filter Search</h3>
+  <hr class="mt-0"/>
+ </div>
+
+ <div class="column-three-quarters">
+  <h3 class="heading-medium">Search Results</h3>
+  <hr class="mt-0"/>
+
+  <table>
+   <thead>
+    <tr>
+     <th>Trader & description</th>
+     <th>Commodity code</th>
+    </tr>
+   </thead>
+   <tbody>
+    @for((c: Case, index: Int) <- results.filter(_.application.isBTI).zipWithIndex) {
+     <tr id="advanced_search_results-row-@index">
+
+      <td>
+       <p id="advanced_search_results-row-@{index}-business_name">@c.application.holder.businessName</p>
+       <p id="advanced_search_results-row-@{index}-description">
+        @c.application.asBTI.goodDescription
+        @if(c.application.asBTI.goodDescription.length > 50) {
+         @c.application.asBTI.goodDescription.substring(0,50)...
+        }
+       </p>
+      </td>
+
+      <td id="advanced_search_results-row-@{index}-decision_code">
+       @c.decision.map(_.bindingCommodityCode).getOrElse("N/A")
+      </td>
+
+     </tr>
+    }
+   </tbody>
+  </table>
+  @if(results.isEmpty) {
+   <p id="advanced_search_results-empty" class="mt-1">No results found</p>
+  }
+ </div>
+
+</div>
+
