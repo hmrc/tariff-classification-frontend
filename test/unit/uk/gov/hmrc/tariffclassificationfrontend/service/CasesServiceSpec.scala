@@ -77,7 +77,7 @@ class CasesServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEac
 
   "Search Cases" should {
     "retrieve connector cases" in {
-      given(connector.search(any[Search], any[Sort])(any[HeaderCarrier], any[QueryStringBindable[String]])) willReturn Future.successful(manyCases)
+      given(connector.search(any[Search], any[Sort])(any[HeaderCarrier], any[QueryStringBindable[Search]], any[QueryStringBindable[Sort]])) willReturn Future.successful(manyCases)
 
       await(service.search(Search(), Sort())) shouldBe manyCases
     }
