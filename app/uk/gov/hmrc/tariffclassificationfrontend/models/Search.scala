@@ -36,6 +36,7 @@ object Search {
 
     override def bind(key: String, params: Map[String, Seq[String]]): Option[Either[String, Search]] = {
       def param(name: String): Option[String] = stringBinder.bind(name, params).filter(_.isRight).map(_.right.get)
+
       Some(Right(Search(
         traderName = param(traderNameKey)
       )))
@@ -43,7 +44,7 @@ object Search {
 
     override def unbind(key: String, search: Search): String = {
       val bindings: Seq[Option[String]] = Seq(
-        search.traderName.map(v => stringBinder.unbind(traderNameKey, v))
+        search.traderName.map(stringBinder.unbind(traderNameKey, _))
       )
       bindings.filter(_.isDefined).map(_.get).mkString("&")
     }
