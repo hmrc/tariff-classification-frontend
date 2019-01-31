@@ -17,6 +17,7 @@
 package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
 import javax.inject.{Inject, Singleton}
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -47,7 +48,7 @@ class SearchController @Inject()(authenticatedAction: AuthenticatedAction,
     }
   }
 
-  private def fillForm(search: Search) = SearchForm.form.fill(
+  private def fillForm(search: Search): Form[SearchFormData] = SearchForm.form.fill(
     SearchFormData(
       search.traderName.getOrElse("")
     )

@@ -56,6 +56,51 @@ object Cases {
     _.copy(assignee = operator)
   }
 
+  def withBTIDetails(offline: Boolean = false,
+                     goodName: String = "good name",
+                     goodDescription: String = "good description",
+                     confidentialInformation: Option[String] = None,
+                     otherInformation: Option[String] = None,
+                     reissuedBTIReference: Option[String] = None,
+                     relatedBTIReference: Option[String] = None,
+                     knownLegalProceedings: Option[String] = None,
+                     envisagedCommodityCode: Option[String] = None,
+                     sampleToBeProvided: Boolean = false,
+                     sampleToBeReturned: Boolean = false): Case => Case = {
+    c =>
+      c.copy(application = c.application.asBTI.copy(
+        offline = offline,
+        goodName = goodName,
+        goodDescription = goodDescription,
+        confidentialInformation = confidentialInformation,
+        otherInformation = otherInformation,
+        reissuedBTIReference = reissuedBTIReference,
+        relatedBTIReference = relatedBTIReference,
+        knownLegalProceedings = knownLegalProceedings,
+        envisagedCommodityCode = envisagedCommodityCode,
+        sampleToBeProvided = sampleToBeProvided,
+        sampleToBeReturned = sampleToBeReturned
+      ))
+  }
+
+  def withHolder(eori: String = "eori",
+                 businessName: String = "business name",
+                 addressLine1: String = "address line 1",
+                 addressLine2: String = "address line 2",
+                 addressLine3: String = "address line 3",
+                 postcode: String = "postcode",
+                 country: String = "country"): Case => Case = {
+    c => c.copy(application = c.application.asBTI.copy(holder = EORIDetails(
+      eori,
+      businessName,
+      addressLine1,
+      addressLine2,
+      addressLine3,
+      postcode,
+      country
+    )))
+  }
+
   def withOptionalApplicationFields(confidentialInformation: Option[String] = None,
                                     otherInformation: Option[String] = None,
                                     reissuedBTIReference: Option[String] = None,
