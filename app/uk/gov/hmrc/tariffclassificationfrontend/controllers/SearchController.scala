@@ -40,7 +40,7 @@ class SearchController @Inject()(authenticatedAction: AuthenticatedAction,
     if (reference.isDefined) {
       successful(Redirect(routes.CaseController.trader(reference.get)))
     } else if (search.isEmpty) {
-      Future.successful(Results.Ok(html.advanced_search(SearchForm.form, None)))
+      Future.successful(Results.Ok(html.advanced_search(SearchForm.form)))
     } else {
       casesService.search(search, sort) map { results =>
         Results.Ok(html.advanced_search(SearchForm.fill(search), Some(results)))
