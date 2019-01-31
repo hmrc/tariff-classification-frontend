@@ -47,7 +47,9 @@
                                 This is not from the main list of keywords
                             </td>
 
-                            <td id="keywords-row-@{index}-remove"><a href="#">Remove</a></td>
+                            <td id="keywords-row-@{index}-remove">
+                                <a href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.removeKeyword(c.reference, keyword)">Remove</a>
+                            </td>
                         </tr>
                     }
                 </tbody>

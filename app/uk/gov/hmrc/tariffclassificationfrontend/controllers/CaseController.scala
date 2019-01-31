@@ -122,6 +122,16 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
     )
   }
 
+  def removeKeyword(reference: String, keyword: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
+    getCaseAndRenderView(reference, CaseDetailPage.KEYWORDS,
+      c =>
+        for {
+          updatedCase <- casesService.removeKeyword(c, keyword)
+          response = views.html.partials.keywords_details(updatedCase, keywordForm)
+        } yield response
+    )
+  }
+
   private def getCaseAndRenderView(reference: String, page: CaseDetailPage, toHtml: Case => Future[Html])
                                   (implicit request: Request[_]): Future[Result] = {
     casesService.getOne(reference).flatMap {

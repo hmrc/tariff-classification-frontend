@@ -135,4 +135,25 @@ class CasesServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEac
     }
   }
 
+  "Remove keyword" should {
+
+    "remove keyword from the set" in {
+      val aKeyword = "Apples"
+      val aCase = Cases.btiCaseExample
+      val aCaseWithKeyword = aCase.copy(keywords = aCase.keywords + "APPLES")
+      given(connector.updateCase(refEq(aCase))(any[HeaderCarrier])).willReturn(successful(aCase))
+
+      await(service.removeKeyword(aCaseWithKeyword, aKeyword)) shouldBe aCase
+    }
+
+    "trying to remove keyword that is not in the set leaves the set unchanged" in {
+      val aKeyword = "Oranges"
+      val aCase = Cases.btiCaseExample
+      val aCaseWithKeyword = aCase.copy(keywords = aCase.keywords + "APPLES")
+      given(connector.updateCase(refEq(aCaseWithKeyword))(any[HeaderCarrier])).willReturn(successful(aCaseWithKeyword))
+
+      await(service.removeKeyword(aCaseWithKeyword, aKeyword)) shouldBe aCaseWithKeyword
+    }
+  }
+
 }

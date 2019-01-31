@@ -270,4 +270,32 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
       contentAsString(result) should include("We could not find a Case with reference")
     }
   }
+
+  "Keywords: Remove keyword" should {
+    val aCase = Cases.btiCaseExample
+    val aKeyword = "Apples"
+
+    "remove an existing keyword" in {
+      given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
+      given(casesService.removeKeyword(refEq(aCase), refEq("Apples"))(any[HeaderCarrier])).willReturn(Future.successful(aCase))
+
+      val result = controller.removeKeyword(aCase.reference, aKeyword)(newFakeGETRequestWithCSRF(app))
+      status(result) shouldBe Status.OK
+      contentType(result) shouldBe Some("text/html")
+      charset(result) shouldBe Some("utf-8")
+      contentAsString(result) should include("Keywords")
+    }
+
+    "displays case not found message" in {
+      given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(None))
+
+      val result = controller.removeKeyword(aCase.reference, aKeyword)(newFakeGETRequestWithCSRF(app))
+      status(result) shouldBe Status.OK
+      contentType(result) shouldBe Some("text/html")
+      charset(result) shouldBe Some("utf-8")
+      contentAsString(result) should include("We could not find a Case with reference")
+    }
+
+  }
+
 }

@@ -38,3 +38,5 @@ GET         /search                              @uk.gov.hmrc.tariffclassificati
 
 GET         /cases/:reference/keywords           @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.keywordsDetails(reference: String)
 POST        /cases/:reference/keywords           @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.addKeyword(reference: String)
+# Note: Browser links cant send a DELETE so it has to be GET in this case
+GET         /cases/:reference/keywords/:keyword  @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.removeKeyword(reference: String, keyword: String)
