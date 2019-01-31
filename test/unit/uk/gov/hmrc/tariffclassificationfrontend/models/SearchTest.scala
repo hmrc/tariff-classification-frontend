@@ -30,8 +30,24 @@ class SearchTest extends UnitSpec {
 
   private val populatedQueryParam: String = "traderName=trader-name"
 
+  /**
+  * When we add fields to Search these tests shouldn't need changing, only the fields above.
+  **/
+
+  "Search" should {
+    "Return isEmpty = true" in {
+      val search = Search()
+      search.isEmpty shouldBe true
+      search.isDefined shouldBe false
+    }
+
+    "Return isEmpty = false" in {
+      populatedSearch.isEmpty shouldBe false
+      populatedSearch.isDefined shouldBe true
+    }
+  }
+
   "Search Binder" should {
-    // When we add fields to Search these tests shouldn't need changing, only the fields above.
 
     "Unbind Unpopulated Search to Query String" in {
       Search.bindable.unbind("", Search()) shouldBe ""

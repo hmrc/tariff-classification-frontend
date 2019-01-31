@@ -25,6 +25,8 @@ case class Search
   def isEmpty: Boolean = {
     traderName.isEmpty
   }
+
+  def isDefined: Boolean = !isEmpty
 }
 
 object Search {

@@ -23,7 +23,8 @@ import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.{SearchForm, SearchFormData}
-import uk.gov.hmrc.tariffclassificationfrontend.models.Search
+import uk.gov.hmrc.tariffclassificationfrontend.models.Sort.Sort
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Search, Sort}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views.html
 
@@ -36,13 +37,13 @@ class SearchController @Inject()(authenticatedAction: AuthenticatedAction,
                                  val messagesApi: MessagesApi,
                                  implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
-  def search(reference: Option[String] = None, search: Search = Search()): Action[AnyContent] = authenticatedAction.async { implicit request =>
+  def search(reference: Option[String] = None, search: Search = Search(), sort: Sort = Sort.COMMODITY_CODE): Action[AnyContent] = authenticatedAction.async { implicit request =>
     if (reference.isDefined) {
       successful(Redirect(routes.CaseController.trader(reference.get)))
     } else if (search.isEmpty) {
       Future.successful(Results.Ok(html.advanced_search(fillForm(search), None)))
     } else {
-      casesService.search(search) map { results =>
+      casesService.search(search, sort) map { results =>
         Results.Ok(html.advanced_search(fillForm(search), Some(results)))
       }
     }

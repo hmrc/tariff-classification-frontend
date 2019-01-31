@@ -29,7 +29,7 @@ import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Operator, Search}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Operator, Search, Sort}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 
 import scala.concurrent.Future
@@ -63,7 +63,7 @@ class SearchControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSui
     }
 
     "not render results if empty" in {
-      given(casesService.search(refEq(Search()))(any[HeaderCarrier])) willReturn Future.successful(Seq.empty)
+      given(casesService.search(refEq(Search()), refEq(Sort.COMMODITY_CODE))(any[HeaderCarrier])) willReturn Future.successful(Seq.empty)
 
       val result = await(controller.search(search = Search())(fakeRequest))
 
@@ -78,7 +78,7 @@ class SearchControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSui
       // Given
       val search = Search(traderName = Some("trader"))
 
-      given(casesService.search(refEq(search))(any[HeaderCarrier])) willReturn Future.successful(Seq.empty)
+      given(casesService.search(refEq(search), refEq(Sort.COMMODITY_CODE))(any[HeaderCarrier])) willReturn Future.successful(Seq.empty)
 
       // When
       val result = await(controller.search(search = search)(fakeRequest))

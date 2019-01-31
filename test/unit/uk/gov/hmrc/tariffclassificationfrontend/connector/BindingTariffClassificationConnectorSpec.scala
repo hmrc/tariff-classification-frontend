@@ -29,7 +29,7 @@ import uk.gov.hmrc.play.bootstrap.audit.DefaultAuditConnector
 import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Operator, Queue, Search}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Operator, Queue, Search, Sort}
 import uk.gov.tariffclassificationfrontend.utils._
 
 class BindingTariffClassificationConnectorSpec extends UnitSpec
@@ -147,23 +147,23 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
   "Connector 'Search'" should {
 
     "get empty cases" in {
-      stubFor(get(urlEqualTo("/cases"))
+      stubFor(get(urlEqualTo("/cases?sort_by=commodityCode"))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
           .withBody("[]"))
       )
 
-      await(connector.search(Search())) shouldBe Seq()
+      await(connector.search(Search(), Sort.COMMODITY_CODE)) shouldBe Seq()
     }
 
     "get cases" in {
-      stubFor(get(urlEqualTo("/cases?traderName=trader"))
+      stubFor(get(urlEqualTo("/cases?sort_by=commodityCode&traderName=trader"))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
           .withBody(CasePayloads.gatewayCases))
       )
 
-      await(connector.search(Search(traderName = Some("trader")))) shouldBe Seq(Cases.btiCaseExample)
+      await(connector.search(Search(traderName = Some("trader")), Sort.COMMODITY_CODE)) shouldBe Seq(Cases.btiCaseExample)
     }
   }
 

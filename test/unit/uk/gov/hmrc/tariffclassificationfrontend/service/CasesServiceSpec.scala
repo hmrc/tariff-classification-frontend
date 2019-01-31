@@ -27,6 +27,7 @@ import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.tariffclassificationfrontend.audit.AuditService
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.connector.BindingTariffClassificationConnector
+import uk.gov.hmrc.tariffclassificationfrontend.models.Sort.Sort
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 
 import scala.concurrent.Future
@@ -77,9 +78,9 @@ class CasesServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEac
 
   "Search Cases" should {
     "retrieve connector cases" in {
-      given(connector.search(any[Search])(any[HeaderCarrier], any[QueryStringBindable[String]])) willReturn Future.successful(manyCases)
+      given(connector.search(any[Search], any[Sort])(any[HeaderCarrier], any[QueryStringBindable[String]])) willReturn Future.successful(manyCases)
 
-      await(service.search(Search())) shouldBe manyCases
+      await(service.search(Search(), Sort.COMMODITY_CODE)) shouldBe manyCases
     }
   }
 
