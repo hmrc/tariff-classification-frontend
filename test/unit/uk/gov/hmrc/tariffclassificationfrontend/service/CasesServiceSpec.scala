@@ -117,13 +117,21 @@ class CasesServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEac
 
   "Add keyword" should {
 
-    "post a new keyword to the backend via the connector" in {
+    "New keywords are converted to uppercase and added to the case" in {
       val aKeyword = "Apples"
       val aCase = Cases.btiCaseExample
-      val aCaseWithKeywords = aCase.copy(keywords = aCase.keywords :+ "APPLES")
-      given(connector.updateCase(refEq(aCaseWithKeywords))(any[HeaderCarrier])).willReturn(successful(aCaseWithKeywords))
+      val aCaseWithNewKeyword = aCase.copy(keywords = aCase.keywords :+ "APPLES")
+      given(connector.updateCase(refEq(aCaseWithNewKeyword))(any[HeaderCarrier])).willReturn(successful(aCaseWithNewKeyword))
 
-      await(service.addKeyword(aCase, aKeyword)) shouldBe aCaseWithKeywords
+      await(service.addKeyword(aCase, aKeyword)) shouldBe aCaseWithNewKeyword
+    }
+
+    "New keywords that are duplicates are not added" in {
+      val aKeyword = "Apples"
+      val aCase = Cases.btiCaseExample
+      val aCaseWithExistingKeyword = aCase.copy(keywords = aCase.keywords :+ "APPLES")
+
+      await(service.addKeyword(aCaseWithExistingKeyword, aKeyword)) shouldBe aCaseWithExistingKeyword
     }
   }
 
