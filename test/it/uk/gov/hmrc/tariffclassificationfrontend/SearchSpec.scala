@@ -29,7 +29,24 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
     "Filter by 'Trader Name'" in {
       // Given
       givenAuthSuccess()
-      stubFor(get(urlEqualTo("/cases?sort_direction=desc&sort_by=commodityCode&traderName=1"))
+      stubFor(get(urlMatching("/cases?.*traderName=1.*"))
+        .willReturn(aResponse()
+          .withStatus(OK)
+          .withBody(CasePayloads.gatewayCases))
+      )
+
+      // When
+      val response = await(ws.url(s"$frontendRoot/search?traderName=1").get())
+
+      // Then
+      response.status shouldBe OK
+      response.body should include("advanced_search_results")
+    }
+
+    "Sort by default" in {
+      // Given
+      givenAuthSuccess()
+      stubFor(get(urlMatching("/cases?.*sort_direction=desc&sort_by=commodityCode.*"))
         .willReturn(aResponse()
           .withStatus(OK)
           .withBody(CasePayloads.gatewayCases))
@@ -46,7 +63,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
     "Sort by 'Commodity Code'" in {
       // Given
       givenAuthSuccess()
-      stubFor(get(urlEqualTo("/cases?sort_direction=desc&sort_by=commodityCode&traderName=1"))
+      stubFor(get(urlMatching("/cases?.*sort_direction=desc&sort_by=commodityCode.*"))
         .willReturn(aResponse()
           .withStatus(OK)
           .withBody(CasePayloads.gatewayCases))
