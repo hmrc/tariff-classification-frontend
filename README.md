@@ -34,7 +34,7 @@ This application runs on port 9581
 
 Run `sm --start TARIFF_CLASSIFICATION_FRONTEND -r`
 
-Open `http://localhost:9581/tariff-classification-frontend`
+Open `http://localhost:9581/tariff-classification`
 
 ### Testing
 
