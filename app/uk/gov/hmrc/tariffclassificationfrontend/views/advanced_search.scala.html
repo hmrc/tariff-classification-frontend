@@ -34,8 +34,8 @@
    label = "Trader Name"
   )
 
-  <button id="advanced_search-button" class="button" type="submit">Search</button>
-  <a class="secondary-button" href="@controllers.routes.SearchController.search()">Reset Filters</a>
+  <button id="advanced_search-search_button" class="button" type="submit">Search</button>
+  <a id="advanced_search-reset_button" class="secondary-button" href="@controllers.routes.SearchController.search()">Reset Filters</a>
 
   @if(results.isDefined) {
     @advanced_search_results(results.get)
