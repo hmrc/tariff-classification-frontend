@@ -17,12 +17,11 @@
 package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
 import javax.inject.{Inject, Singleton}
-import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.forms.{SearchForm, SearchFormData}
+import uk.gov.hmrc.tariffclassificationfrontend.forms.SearchForm
 import uk.gov.hmrc.tariffclassificationfrontend.models.Sort.Sort
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Search, Sort}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
@@ -41,19 +40,12 @@ class SearchController @Inject()(authenticatedAction: AuthenticatedAction,
     if (reference.isDefined) {
       successful(Redirect(routes.CaseController.trader(reference.get)))
     } else if (search.isEmpty) {
-      Future.successful(Results.Ok(html.advanced_search(fillForm(search), None)))
+      Future.successful(Results.Ok(html.advanced_search(SearchForm.form, None)))
     } else {
       casesService.search(search, sort) map { results =>
-        Results.Ok(html.advanced_search(fillForm(search), Some(results)))
+        Results.Ok(html.advanced_search(SearchForm.fill(search), Some(results)))
       }
     }
   }
-
-  private def fillForm(search: Search): Form[SearchFormData] = SearchForm.form.fill(
-    SearchFormData(
-      search.traderName.getOrElse("")
-    )
-  )
-
 
 }

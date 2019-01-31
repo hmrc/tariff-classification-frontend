@@ -18,6 +18,7 @@ package uk.gov.hmrc.tariffclassificationfrontend.forms
 
 import play.api.data.Form
 import play.api.data.Forms._
+import uk.gov.hmrc.tariffclassificationfrontend.models.Search
 
 case class SearchFormData(traderName: String = "")
 
@@ -28,5 +29,13 @@ object SearchForm {
       "traderName" -> text
     )(SearchFormData.apply)(SearchFormData.unapply)
   )
+
+  def fill(search: Search): Form[SearchFormData] = {
+    SearchForm.form.fill(
+      SearchFormData(
+        search.traderName.getOrElse("")
+      )
+    )
+  }
 
 }
