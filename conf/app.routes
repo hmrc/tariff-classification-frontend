@@ -4,11 +4,12 @@ GET         /assets/*file                        controllers.Assets.at(path="/pu
 
 GET         /unauthorized                        @uk.gov.hmrc.tariffclassificationfrontend.controllers.SecurityController.unauthorized()
 
-GET         /                                    @uk.gov.hmrc.tariffclassificationfrontend.controllers.MyCasesController.myCases()
-GET         /queues                              controllers.Default.redirect(to = "/tariff-classification")
+GET         /                                    controllers.Default.redirect(to = "/tariff-classification/queues/my-cases")
+GET         /queues                              controllers.Default.redirect(to = "/tariff-classification/queues/my-cases")
+GET         /queues/my-cases                     @uk.gov.hmrc.tariffclassificationfrontend.controllers.MyCasesController.myCases()
 GET         /queues/:slug                        @uk.gov.hmrc.tariffclassificationfrontend.controllers.QueuesController.queue(slug: String)
 
-GET         /cases                              controllers.Default.redirect(to = "/tariff-classification/")
+GET         /cases                               controllers.Default.redirect(to = "/tariff-classification/queues/my-cases")
 GET         /cases/:reference                    @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.trader(reference: String)
 GET         /cases/:reference/application        @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.applicationDetails(reference: String)
 
