@@ -26,9 +26,8 @@ class SearchTest extends UnitSpec {
   )
 
   private val populatedParams: Map[String, Seq[String]] = Map(
-    // Spaces are included intentionally to ensure values are Trimmed
-    "trader_name" -> Seq(" trader-name "),
-    "commodity_code" -> Seq(" commodity-code ")
+    "trader_name" -> Seq("trader-name"),
+    "commodity_code" -> Seq("commodity-code")
   )
 
   private val emptyParams: Map[String, Seq[String]] = Map(
@@ -71,6 +70,11 @@ class SearchTest extends UnitSpec {
 
     "Bind populated query string" in {
       Search.bindable.bind("", populatedParams) shouldBe Some(Right(populatedSearch))
+    }
+
+    "Bind populated query string with excessive spaces" in {
+      val extraSpacesParams = populatedParams.mapValues(values => values.map(value => s" $value "))
+      Search.bindable.bind("", extraSpacesParams) shouldBe Some(Right(populatedSearch))
     }
 
     "Bind unpopulated query string" in {
