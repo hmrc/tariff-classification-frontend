@@ -33,7 +33,7 @@ object Cases {
   val contactExample = Contact("name", "email", Some("phone"))
   val btiApplicationExample = BTIApplication(eoriDetailsExample, contactExample, Some(eoriAgentDetailsExample), false, "Laptop", "Personal Computer", None, None, None, None, None, None, false, false)
   val simpleBtiApplicationExample = BTIApplication(eoriDetailsExample, contactExample, None, false, "Laptop", "Personal Computer", None, None, None, None, None, None, false, false)
-  val decision = Decision("AD12324FR", ZonedDateTime.now(), ZonedDateTime.now().plusYears(2), "justification", "good description", Seq("k1", "k2"), None, None, Some("denomination"), None)
+  val decision = Decision("AD12324FR", ZonedDateTime.now(), ZonedDateTime.now().plusYears(2), "justification", "good description", None, None, Some("denomination"), None)
   val liabilityApplicationExample = LiabilityOrder(eoriDetailsExample, contactExample, "status", "port", "entry number", ZonedDateTime.now())
   val btiCaseExample = Case("1", CaseStatus.OPEN, ZonedDateTime.now(), 0, None, None, None, None, btiApplicationExample, Some(decision), Seq())
   val simpleCaseExample = Case("1", CaseStatus.OPEN, ZonedDateTime.now(), 0, None, None, None, None, simpleBtiApplicationExample, None, Seq())
@@ -167,7 +167,6 @@ object Cases {
                    effectiveEndDate: ZonedDateTime = ZonedDateTime.now(),
                    justification: String = "decision-justification",
                    goodsDescription: String = "decision-goods-description",
-                   keywords: Seq[String] = Seq.empty,
                    methodSearch: Option[String] = None,
                    methodExclusion: Option[String] = None,
                    methodCommercialDenomination: Option[String] = None,
@@ -180,7 +179,6 @@ object Cases {
         effectiveEndDate,
         justification,
         goodsDescription,
-        keywords,
         methodSearch,
         methodExclusion,
         methodCommercialDenomination,

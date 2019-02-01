@@ -14,24 +14,18 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.tariffclassificationfrontend.models
+package uk.gov.hmrc.tariffclassificationfrontend.forms
 
-import java.time.ZonedDateTime
+import play.api.data.FormError
+import uk.gov.hmrc.play.test.UnitSpec
 
-import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.CaseStatus
+class KeywordsFormTest extends UnitSpec {
 
-case class Case
-(
-  reference: String,
-  status: CaseStatus,
-  createdDate: ZonedDateTime,
-  daysElapsed: Long,
-  closedDate: Option[ZonedDateTime],
-  caseBoardsFileNumber: Option[String],
-  assignee: Option[Operator],
-  queueId: Option[String],
-  application: Application,
-  decision: Option[Decision],
-  attachments: Seq[Attachment],
-  keywords: Set[String] = Set.empty
-)
+    "validate 'keyword'" in {
+      KeywordForm.form.bindFromRequest(
+        Map(
+          "keyword" -> Seq("")
+        )
+      ).errors shouldBe Seq(FormError("keyword", "error.required"))
+    }
+}

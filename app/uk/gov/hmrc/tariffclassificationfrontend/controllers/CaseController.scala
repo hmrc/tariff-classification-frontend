@@ -23,9 +23,9 @@ import play.api.mvc._
 import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.forms.{ActivityForm, ActivityFormData, DecisionFormMapper}
+import uk.gov.hmrc.tariffclassificationfrontend.forms._
 import uk.gov.hmrc.tariffclassificationfrontend.models.Case
-import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, EventsService, FileStoreService}
+import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, EventsService, FileStoreService, KeywordsService}
 import uk.gov.hmrc.tariffclassificationfrontend.views
 import uk.gov.hmrc.tariffclassificationfrontend.views.CaseDetailPage
 import uk.gov.hmrc.tariffclassificationfrontend.views.CaseDetailPage.CaseDetailPage
@@ -37,6 +37,7 @@ import scala.concurrent.Future.successful
 @Singleton
 class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
                                casesService: CasesService,
+                               keywordsService: KeywordsService,
                                fileService: FileStoreService,
                                eventsService: EventsService,
                                mapper: DecisionFormMapper,
@@ -44,7 +45,7 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
                                implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
   private lazy val activityForm: Form[ActivityFormData] = ActivityForm.form
-
+  private lazy val keywordForm: Form[KeywordFormData] = KeywordForm.form
 
   // Trader Tab
   def trader(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
@@ -54,8 +55,7 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
       c => {
         for {
           letter <- fileService.getLetterOfAuthority(c)
-          response = views.html.partials.case_trader(c, letter)
-        } yield response
+        } yield views.html.partials.case_trader(c, letter)
       })
   }
 
@@ -67,8 +67,7 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
         for {
           attachments <- fileService.getAttachments(c)
           letter <- fileService.getLetterOfAuthority(c)
-          response = views.html.partials.application_details(c, attachments, letter)
-        } yield response
+        } yield views.html.partials.application_details(c, attachments, letter)
       }
     )
   }
@@ -85,19 +84,56 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
     })
   }
 
+  def keywordsDetails(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
+    getCaseAndRenderView(reference, CaseDetailPage.KEYWORDS,
+      c => {
+        keywordsService.autoCompleteKeywords.flatMap(autoCompleteKeywords =>
+          successful(views.html.partials.keywords_details(c, autoCompleteKeywords, keywordForm)))
+      }
+    )
+  }
+
   def addNote(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     activityForm.bindFromRequest.fold(
       errorForm =>
         getCaseAndRenderView(
-          reference, CaseDetailPage.ACTIVITY, c => {
-            eventsService.getEvents(c.reference).map(views.html.partials.activity_details(c, _, errorForm))
-          }),
+          reference, CaseDetailPage.ACTIVITY, c => eventsService.getEvents(c.reference).map(views.html.partials.activity_details(c, _, errorForm))),
 
       validForm =>
         getCaseAndRedirect(reference, CaseDetailPage.ACTIVITY, c => {
           eventsService.addNote(c, validForm.note, request.operator).map(_ =>
             routes.CaseController.activityDetails(reference))
         })
+    )
+  }
+
+  def addKeyword(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
+    keywordForm.bindFromRequest.fold(
+      errorForm =>
+        getCaseAndRenderView(
+          reference, CaseDetailPage.KEYWORDS, c => {
+            keywordsService.autoCompleteKeywords.flatMap(autoCompleteKeywords =>
+            successful(views.html.partials.keywords_details(c, autoCompleteKeywords, errorForm)))
+          }),
+
+      validForm =>
+        getCaseAndRenderView(reference, CaseDetailPage.KEYWORDS,
+          c =>
+            for {
+              updatedCase <- keywordsService.addKeyword(c, validForm.keyword)
+              autoCompleteKeywords <- keywordsService.autoCompleteKeywords
+            } yield views.html.partials.keywords_details(updatedCase, autoCompleteKeywords, keywordForm)
+          )
+    )
+  }
+
+  def removeKeyword(reference: String, keyword: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
+    getCaseAndRenderView(reference, CaseDetailPage.KEYWORDS,
+      c =>
+        for {
+          updatedCase <- keywordsService.removeKeyword(c, keyword)
+          autoCompleteKeywords <- keywordsService.autoCompleteKeywords
+        } yield views.html.partials.keywords_details(updatedCase, autoCompleteKeywords, keywordForm)
     )
   }
 

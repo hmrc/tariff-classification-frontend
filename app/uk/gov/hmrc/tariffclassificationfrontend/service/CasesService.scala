@@ -29,6 +29,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import scala.io.Source
 
 @Singleton
 class CasesService @Inject()(appConfig: AppConfig, auditService: AuditService,

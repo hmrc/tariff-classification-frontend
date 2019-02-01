@@ -28,8 +28,10 @@ import uk.gov.hmrc.tariffclassificationfrontend.audit.AuditService
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.connector.BindingTariffClassificationConnector
 import uk.gov.hmrc.tariffclassificationfrontend.models._
+import uk.gov.tariffclassificationfrontend.utils.Cases
 
 import scala.concurrent.Future
+import scala.concurrent.Future.successful
 
 class CasesServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
 

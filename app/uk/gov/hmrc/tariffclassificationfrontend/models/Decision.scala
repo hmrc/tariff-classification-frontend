@@ -25,7 +25,6 @@ case class Decision
   effectiveEndDate: ZonedDateTime,
   justification: String,
   goodsDescription: String,
-  keywords: Seq[String] = Seq.empty,
   methodSearch: Option[String] = None,
   methodExclusion: Option[String] = None,
   methodCommercialDenomination: Option[String] = None,
