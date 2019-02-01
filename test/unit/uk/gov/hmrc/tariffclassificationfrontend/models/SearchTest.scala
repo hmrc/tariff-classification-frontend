@@ -26,8 +26,9 @@ class SearchTest extends UnitSpec {
   )
 
   private val populatedParams: Map[String, Seq[String]] = Map(
-    "trader_name" -> Seq("trader-name"),
-    "commodity_code" -> Seq("commodity-code")
+    // Spaces are included intentionally to ensure values are Trimmed
+    "trader_name" -> Seq(" trader-name "),
+    "commodity_code" -> Seq(" commodity-code ")
   )
 
   private val emptyParams: Map[String, Seq[String]] = Map(

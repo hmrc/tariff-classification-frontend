@@ -37,7 +37,7 @@ object Search {
   implicit def bindable(implicit stringBinder: QueryStringBindable[String]): QueryStringBindable[Search] = new QueryStringBindable[Search] {
 
     override def bind(key: String, params: Map[String, Seq[String]]): Option[Either[String, Search]] = {
-      def param(name: String): Option[String] = stringBinder.bind(name, params).filter(_.isRight).map(_.right.get).filter(_.nonEmpty)
+      def param(name: String): Option[String] = stringBinder.bind(name, params).filter(_.isRight).map(_.right.get.trim).filter(_.nonEmpty)
 
       Some(Right(Search(
         traderName = param(traderNameKey),
