@@ -165,7 +165,7 @@
                 document.getElementById(
                         "@{field.id}"
                 ),
-                @Html(Json.toJson(autoCompleteOptions).toString)
+                @Html(Json.toJson(autoCompleteOptions.map{_.replace("'", "&apos;")}).toString)
         ));
 
 
