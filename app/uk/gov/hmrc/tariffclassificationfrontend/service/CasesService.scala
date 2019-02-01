@@ -155,7 +155,7 @@ class CasesService @Inject()(appConfig: AppConfig, auditService: AuditService,
     }
   }
 
-  def autoCompleteKeywords(): Future[Seq[String]] = {
+  def autoCompleteKeywords: Future[Seq[String]] = {
     Future {
       val url = getClass.getClassLoader.getResource("keywords.txt")
       (for (line <- Source.fromURL(url, "UTF-8").getLines()) yield line).toSeq

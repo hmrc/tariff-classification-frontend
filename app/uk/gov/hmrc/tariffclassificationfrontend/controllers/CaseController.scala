@@ -88,7 +88,7 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
   def keywordsDetails(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     getCaseAndRenderView(reference, CaseDetailPage.KEYWORDS,
       c => {
-        casesService.autoCompleteKeywords().flatMap(autoCompleteKeywords =>
+        casesService.autoCompleteKeywords.flatMap(autoCompleteKeywords =>
           successful(views.html.partials.keywords_details(c, autoCompleteKeywords, keywordForm)))
       }
     )
@@ -113,7 +113,7 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
       errorForm =>
         getCaseAndRenderView(
           reference, CaseDetailPage.KEYWORDS, c => {
-            casesService.autoCompleteKeywords().flatMap(autoCompleteKeywords =>
+            casesService.autoCompleteKeywords.flatMap(autoCompleteKeywords =>
             successful(views.html.partials.keywords_details(c, autoCompleteKeywords, errorForm)))
           }),
 
@@ -122,7 +122,7 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
           c =>
             for {
               updatedCase <- casesService.addKeyword(c, validForm.keyword)
-              autoCompleteKeywords <- casesService.autoCompleteKeywords()
+              autoCompleteKeywords <- casesService.autoCompleteKeywords
               response = views.html.partials.keywords_details(updatedCase, autoCompleteKeywords, keywordForm)
             } yield response
           )
@@ -134,7 +134,7 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
       c =>
         for {
           updatedCase <- casesService.removeKeyword(c, keyword)
-          autoCompleteKeywords <- casesService.autoCompleteKeywords()
+          autoCompleteKeywords <- casesService.autoCompleteKeywords
           response = views.html.partials.keywords_details(updatedCase, autoCompleteKeywords, keywordForm)
         } yield response
     )
