@@ -87,7 +87,11 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
 
   def keywordsDetails(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     getCaseAndRenderView(reference, CaseDetailPage.KEYWORDS,
-      c => successful(views.html.partials.keywords_details(c, casesService.autoCompleteKeywords(), keywordForm)))
+      c => {
+        casesService.autoCompleteKeywords().flatMap(autoCompleteKeywords =>
+          successful(views.html.partials.keywords_details(c, autoCompleteKeywords, keywordForm)))
+      }
+    )
   }
 
   def addNote(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
@@ -108,14 +112,18 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
     keywordForm.bindFromRequest.fold(
       errorForm =>
         getCaseAndRenderView(
-          reference, CaseDetailPage.KEYWORDS, c => successful(views.html.partials.keywords_details(c, casesService.autoCompleteKeywords, errorForm))),
+          reference, CaseDetailPage.KEYWORDS, c => {
+            casesService.autoCompleteKeywords().flatMap(autoCompleteKeywords =>
+            successful(views.html.partials.keywords_details(c, autoCompleteKeywords, errorForm)))
+          }),
 
       validForm =>
         getCaseAndRenderView(reference, CaseDetailPage.KEYWORDS,
           c =>
             for {
               updatedCase <- casesService.addKeyword(c, validForm.keyword)
-              response = views.html.partials.keywords_details(updatedCase, casesService.autoCompleteKeywords, keywordForm)
+              autoCompleteKeywords <- casesService.autoCompleteKeywords()
+              response = views.html.partials.keywords_details(updatedCase, autoCompleteKeywords, keywordForm)
             } yield response
           )
     )
@@ -126,7 +134,8 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
       c =>
         for {
           updatedCase <- casesService.removeKeyword(c, keyword)
-          response = views.html.partials.keywords_details(updatedCase, casesService.autoCompleteKeywords, keywordForm)
+          autoCompleteKeywords <- casesService.autoCompleteKeywords()
+          response = views.html.partials.keywords_details(updatedCase, autoCompleteKeywords, keywordForm)
         } yield response
     )
   }

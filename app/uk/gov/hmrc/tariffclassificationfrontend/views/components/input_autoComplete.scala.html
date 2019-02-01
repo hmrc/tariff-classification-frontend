@@ -56,7 +56,6 @@
             /*execute a function when someone writes in the text field:*/
             inp.addEventListener("input", function(e) {
                 var a, b, i, val = this.value;
-                val.toUpperCase();
                 /*close any already open lists of autocompleted values*/
                 closeAllLists();
                 if (!val || val.length < 2) { return false;}
@@ -69,8 +68,8 @@
                 this.parentNode.appendChild(a);
                 /*for each item in the array...*/
                 for (i = 0; i < arr.length; i++) {
-                    /*check if the item starts with the same letters as the text field value:*/
-                    if (arr[i].substr(0, val.length).toUpperCase() === val.toUpperCase()) {
+                    /*check if the item includes the text field value:*/
+                    if (arr[i].toUpperCase().includes(val.toUpperCase())) {
                         /*create a DIV element for each matching element:*/
                         b = document.createElement("DIV");
                         /*make the matching letters bold:*/

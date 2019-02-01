@@ -156,4 +156,11 @@ class CasesServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEac
     }
   }
 
+  "Retrieve auto complete keywords" should {
+
+    "return a list of keywords" in {
+      await(service.autoCompleteKeywords()) should contain ("ABS")
+    }
+  }
+
 }

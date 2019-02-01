@@ -54,7 +54,7 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
   private val controller = new CaseController(new SuccessfulAuthenticatedAction(operator),
                                               casesService, fileService, eventService, mapper, messageApi, appConfig)
 
-  private implicit val hc = HeaderCarrier()
+  private implicit val hc: HeaderCarrier = HeaderCarrier()
 
   "Case Trader" should {
 
@@ -223,6 +223,7 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
     "return 200 OK and HTML content type" in {
       val aCase = Cases.btiCaseExample
       given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
+      given(casesService.autoCompleteKeywords()).willReturn(Future.successful(Seq()))
 
       val result = controller.keywordsDetails(aCase.reference)(newFakeGETRequestWithCSRF(app))
 
@@ -240,6 +241,7 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
       val aValidForm = newFakePOSTRequestWithCSRF(app, Map("keyword" -> aKeyword))
       given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
       given(casesService.addKeyword(refEq(aCase), refEq("Apples"))(any[HeaderCarrier])).willReturn(Future.successful(aCase))
+      given(casesService.autoCompleteKeywords()).willReturn(Future.successful(Seq()))
 
       val result = controller.addKeyword(aCase.reference)(aValidForm)
       status(result) shouldBe Status.OK
@@ -251,6 +253,7 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
     "displays an error when no keyword is provided" in {
       val aValidForm = newFakePOSTRequestWithCSRF(app, Map())
       given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
+      given(casesService.autoCompleteKeywords()).willReturn(Future.successful(Seq()))
 
       val result = controller.addKeyword(aCase.reference)(aValidForm)
       status(result) shouldBe Status.OK
