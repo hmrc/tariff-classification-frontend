@@ -25,10 +25,10 @@ class SearchTest extends UnitSpec {
   )
 
   private val populatedParams: Map[String, Seq[String]] = Map(
-    "traderName" -> Seq("trader-name")
+    "trader_name" -> Seq("trader-name")
   )
 
-  private val populatedQueryParam: String = "traderName=trader-name"
+  private val populatedQueryParam: String = "trader_name=trader-name"
 
   /**
   * When we add fields to Search these tests shouldn't need changing, only the fields above.

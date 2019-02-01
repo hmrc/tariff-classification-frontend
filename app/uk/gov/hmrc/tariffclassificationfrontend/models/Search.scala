@@ -30,7 +30,7 @@ case class Search
 }
 
 object Search {
-  private val traderNameKey = "traderName"
+  private val traderNameKey = "trader_name"
 
   implicit def bindable(implicit stringBinder: QueryStringBindable[String]): QueryStringBindable[Search] = new QueryStringBindable[Search] {
 

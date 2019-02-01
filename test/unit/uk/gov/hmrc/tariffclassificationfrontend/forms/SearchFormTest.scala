@@ -27,16 +27,16 @@ class SearchFormTest extends UnitSpec {
       SearchForm.fill(Search(
         traderName = Some("trader")
       )).data shouldBe Map(
-        "traderName" -> "trader"
+        "trader_name" -> "trader"
       )
     }
 
     "validate 'Trader Name'" in {
       SearchForm.form.bindFromRequest(
         Map(
-          "traderName" -> Seq("")
+          "trader_name" -> Seq("")
         )
-      ).errors shouldBe Seq(FormError("traderName", "error.required"))
+      ).errors shouldBe Seq(FormError("trader_name", "error.required"))
     }
   }
 }

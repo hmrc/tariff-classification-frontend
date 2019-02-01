@@ -157,7 +157,7 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
     }
 
     "get cases" in {
-      stubFor(get(urlEqualTo("/cases?sort_direction=asc&sort_by=commodityCode&traderName=trader"))
+      stubFor(get(urlEqualTo("/cases?sort_direction=asc&sort_by=commodityCode&trader_name=trader"))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
           .withBody(CasePayloads.gatewayCases))
