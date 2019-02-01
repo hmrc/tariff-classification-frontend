@@ -35,6 +35,11 @@
    label = "Trader Name"
   )
 
+  @input_text(
+   field = form("commodity_code"),
+   label = "Commodity Code"
+  )
+
   <button id="advanced_search-search_button" class="button" type="submit">Search</button>
   <a id="advanced_search-reset_button" class="secondary-button" href="@controllers.routes.SearchController.search()">Reset Filters</a>
 

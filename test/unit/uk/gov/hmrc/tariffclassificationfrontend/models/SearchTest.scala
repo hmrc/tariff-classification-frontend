@@ -21,14 +21,21 @@ import uk.gov.hmrc.play.test.UnitSpec
 class SearchTest extends UnitSpec {
 
   private val populatedSearch = Search(
-    traderName = Some("trader-name")
+    traderName = Some("trader-name"),
+    commodityCode = Some("commodity-code")
   )
 
   private val populatedParams: Map[String, Seq[String]] = Map(
-    "trader_name" -> Seq("trader-name")
+    "trader_name" -> Seq("trader-name"),
+    "commodity_code" -> Seq("commodity-code")
   )
 
-  private val populatedQueryParam: String = "trader_name=trader-name"
+  private val emptyParams: Map[String, Seq[String]] = Map(
+    "trader_name" -> Seq(""),
+    "commodity_code" -> Seq("")
+  )
+
+  private val populatedQueryParam: String = "trader_name=trader-name&commodity_code=commodity-code"
 
   /**
   * When we add fields to Search these tests shouldn't need changing, only the fields above.
@@ -63,6 +70,10 @@ class SearchTest extends UnitSpec {
 
     "Bind populated query string" in {
       Search.bindable.bind("", populatedParams) shouldBe Some(Right(populatedSearch))
+    }
+
+    "Bind unpopulated query string" in {
+      Search.bindable.bind("", emptyParams) shouldBe Some(Right(Search()))
     }
 
   }
