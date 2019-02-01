@@ -22,7 +22,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.input_text
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{progressive_disclosure, tab_heading}
-
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.components.input_autoComplete
 @(c: Case, autoCompleteOptions: Seq[String], keywordForm : Form[KeywordFormData])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
@@ -62,7 +62,7 @@
         </div>
 
 
-        @form(action = uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.addKeyword(c.reference), 'class -> "form") {
+        @form(action = CaseController.addKeyword(c.reference), 'class -> "form") {
 
             @CSRF.formField
 
