@@ -17,43 +17,45 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.views.CaseDetailPage
 @import uk.gov.hmrc.tariffclassificationfrontend.views.CaseDetailPage.CaseDetailPage
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.case_nav_item
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.AttachmentsController
 @(page: CaseDetailPage, reference: String)(implicit request: Request[_], messages: Messages)
 
 <ul class="tabs__list" role="tablist">
     @case_nav_item(
         active = page == CaseDetailPage.TRADER,
         title = messages("case.menu.trader"),
-        call = uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.trader(reference)
+        call = CaseController.trader(reference)
     )
 
     @case_nav_item(
         active = page == CaseDetailPage.APPLICATION_DETAILS,
         title = messages("case.menu.application"),
-        call = uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.applicationDetails(reference)
+        call = CaseController.applicationDetails(reference)
     )
 
     @case_nav_item(
         active = page == CaseDetailPage.RULING,
         title = messages("case.menu.ruling"),
-        call = uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.rulingDetails(reference)
+        call = CaseController.rulingDetails(reference)
     )
 
     @case_nav_item(
         active = page == CaseDetailPage.ATTACHMENTS,
         title = messages("case.menu.attachments"),
-        call = uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.AttachmentsController.attachmentsDetails(reference)
+        call = AttachmentsController.attachmentsDetails(reference)
     )
 
     @case_nav_item(
         active = page == CaseDetailPage.ACTIVITY,
         title = messages("case.menu.activity"),
-        call = uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.activityDetails(reference)
+        call = CaseController.activityDetails(reference)
     )
 
     @case_nav_item(
         active = page == CaseDetailPage.KEYWORDS,
         title = messages("case.menu.keywords"),
-        call = uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.keywordsDetails(reference)
+        call = CaseController.keywordsDetails(reference)
     )
 </ul>
 
