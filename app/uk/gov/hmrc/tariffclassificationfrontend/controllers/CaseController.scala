@@ -25,7 +25,7 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms._
 import uk.gov.hmrc.tariffclassificationfrontend.models.Case
-import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, EventsService, FileStoreService}
+import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, EventsService, FileStoreService, KeywordsService}
 import uk.gov.hmrc.tariffclassificationfrontend.views
 import uk.gov.hmrc.tariffclassificationfrontend.views.CaseDetailPage
 import uk.gov.hmrc.tariffclassificationfrontend.views.CaseDetailPage.CaseDetailPage
@@ -37,6 +37,7 @@ import scala.concurrent.Future.successful
 @Singleton
 class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
                                casesService: CasesService,
+                               keywordsService: KeywordsService,
                                fileService: FileStoreService,
                                eventsService: EventsService,
                                mapper: DecisionFormMapper,
@@ -88,7 +89,7 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
   def keywordsDetails(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     getCaseAndRenderView(reference, CaseDetailPage.KEYWORDS,
       c => {
-        casesService.autoCompleteKeywords.flatMap(autoCompleteKeywords =>
+        keywordsService.autoCompleteKeywords.flatMap(autoCompleteKeywords =>
           successful(views.html.partials.keywords_details(c, autoCompleteKeywords, keywordForm)))
       }
     )
@@ -113,7 +114,7 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
       errorForm =>
         getCaseAndRenderView(
           reference, CaseDetailPage.KEYWORDS, c => {
-            casesService.autoCompleteKeywords.flatMap(autoCompleteKeywords =>
+            keywordsService.autoCompleteKeywords.flatMap(autoCompleteKeywords =>
             successful(views.html.partials.keywords_details(c, autoCompleteKeywords, errorForm)))
           }),
 
@@ -121,8 +122,8 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
         getCaseAndRenderView(reference, CaseDetailPage.KEYWORDS,
           c =>
             for {
-              updatedCase <- casesService.addKeyword(c, validForm.keyword)
-              autoCompleteKeywords <- casesService.autoCompleteKeywords
+              updatedCase <- keywordsService.addKeyword(c, validForm.keyword)
+              autoCompleteKeywords <- keywordsService.autoCompleteKeywords
               response = views.html.partials.keywords_details(updatedCase, autoCompleteKeywords, keywordForm)
             } yield response
           )
@@ -133,8 +134,8 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
     getCaseAndRenderView(reference, CaseDetailPage.KEYWORDS,
       c =>
         for {
-          updatedCase <- casesService.removeKeyword(c, keyword)
-          autoCompleteKeywords <- casesService.autoCompleteKeywords
+          updatedCase <- keywordsService.removeKeyword(c, keyword)
+          autoCompleteKeywords <- keywordsService.autoCompleteKeywords
           response = views.html.partials.keywords_details(updatedCase, autoCompleteKeywords, keywordForm)
         } yield response
     )

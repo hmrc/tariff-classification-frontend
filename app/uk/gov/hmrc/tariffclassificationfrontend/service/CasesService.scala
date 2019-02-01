@@ -137,29 +137,4 @@ class CasesService @Inject()(appConfig: AppConfig, auditService: AuditService,
     }
   }
 
-  def addKeyword(c: Case, keyword: String)(implicit hc: HeaderCarrier): Future[Case] = {
-    c.keywords match {
-      case keywords if keywords.contains(keyword.toUpperCase) => Future.successful(c)
-      case _ =>
-        val caseToUpdate = c.copy(keywords = c.keywords + keyword.toUpperCase)
-        connector.updateCase(caseToUpdate)
-    }
-  }
-
-  def removeKeyword(c: Case, keyword: String)(implicit hc: HeaderCarrier): Future[Case] = {
-    c.keywords match {
-      case keywords if keywords.contains(keyword.toUpperCase) =>
-        val caseToUpdate = c.copy(keywords = c.keywords - keyword.toUpperCase)
-        connector.updateCase(caseToUpdate)
-      case _ => Future.successful(c)
-    }
-  }
-
-  def autoCompleteKeywords: Future[Seq[String]] = {
-    Future {
-      val url = getClass.getClassLoader.getResource("keywords.txt")
-      (for (line <- Source.fromURL(url, "UTF-8").getLines()) yield line).toSeq
-    }
-  }
-
 }

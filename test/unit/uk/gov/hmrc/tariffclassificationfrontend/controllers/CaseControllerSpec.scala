@@ -32,7 +32,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionFormMapper
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Event, Operator}
-import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, EventsService, FileStoreService}
+import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, EventsService, FileStoreService, KeywordsService}
 import uk.gov.tariffclassificationfrontend.utils.{Cases, Events}
 
 import scala.concurrent.Future
@@ -45,6 +45,7 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
   private val messageApi = new DefaultMessagesApi(env, configuration, new DefaultLangs(configuration))
   private val appConfig = new AppConfig(configuration, env)
   private val casesService = mock[CasesService]
+  private val keywordsService = mock[KeywordsService]
   private val fileService = mock[FileStoreService]
   private val mapper = mock[DecisionFormMapper]
   private val eventService = mock[EventsService]
@@ -52,7 +53,7 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
   private val event = mock[Event]
 
   private val controller = new CaseController(new SuccessfulAuthenticatedAction(operator),
-                                              casesService, fileService, eventService, mapper, messageApi, appConfig)
+                                              casesService, keywordsService, fileService, eventService, mapper, messageApi, appConfig)
 
   private implicit val hc: HeaderCarrier = HeaderCarrier()
 
@@ -223,7 +224,7 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
     "return 200 OK and HTML content type" in {
       val aCase = Cases.btiCaseExample
       given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
-      given(casesService.autoCompleteKeywords).willReturn(Future.successful(Seq()))
+      given(keywordsService.autoCompleteKeywords).willReturn(Future.successful(Seq()))
 
       val result = controller.keywordsDetails(aCase.reference)(newFakeGETRequestWithCSRF(app))
 
@@ -240,8 +241,8 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
       val aKeyword = "Apples"
       val aValidForm = newFakePOSTRequestWithCSRF(app, Map("keyword" -> aKeyword))
       given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
-      given(casesService.addKeyword(refEq(aCase), refEq("Apples"))(any[HeaderCarrier])).willReturn(Future.successful(aCase))
-      given(casesService.autoCompleteKeywords).willReturn(Future.successful(Seq()))
+      given(keywordsService.addKeyword(refEq(aCase), refEq("Apples"))(any[HeaderCarrier])).willReturn(Future.successful(aCase))
+      given(keywordsService.autoCompleteKeywords).willReturn(Future.successful(Seq()))
 
       val result = controller.addKeyword(aCase.reference)(aValidForm)
       status(result) shouldBe Status.OK
@@ -253,7 +254,7 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
     "displays an error when no keyword is provided" in {
       val aValidForm = newFakePOSTRequestWithCSRF(app, Map())
       given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
-      given(casesService.autoCompleteKeywords).willReturn(Future.successful(Seq()))
+      given(keywordsService.autoCompleteKeywords).willReturn(Future.successful(Seq()))
 
       val result = controller.addKeyword(aCase.reference)(aValidForm)
       status(result) shouldBe Status.OK
@@ -280,7 +281,7 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
 
     "remove an existing keyword" in {
       given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
-      given(casesService.removeKeyword(refEq(aCase), refEq("Apples"))(any[HeaderCarrier])).willReturn(Future.successful(aCase))
+      given(keywordsService.removeKeyword(refEq(aCase), refEq("Apples"))(any[HeaderCarrier])).willReturn(Future.successful(aCase))
 
       val result = controller.removeKeyword(aCase.reference, aKeyword)(newFakeGETRequestWithCSRF(app))
       status(result) shouldBe Status.OK
