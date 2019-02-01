@@ -20,10 +20,11 @@ import play.api.mvc.QueryStringBindable
 
 case class Search
 (
-  traderName: Option[String] = None
+  traderName: Option[String] = None,
+  commodityCode: Option[String] = None
 ) {
   def isEmpty: Boolean = {
-    traderName.isEmpty
+    traderName.isEmpty && commodityCode.isEmpty
   }
 
   def isDefined: Boolean = !isEmpty
@@ -31,20 +32,23 @@ case class Search
 
 object Search {
   private val traderNameKey = "trader_name"
+  private val commodityCodeKey = "commodity_code"
 
   implicit def bindable(implicit stringBinder: QueryStringBindable[String]): QueryStringBindable[Search] = new QueryStringBindable[Search] {
 
     override def bind(key: String, params: Map[String, Seq[String]]): Option[Either[String, Search]] = {
-      def param(name: String): Option[String] = stringBinder.bind(name, params).filter(_.isRight).map(_.right.get)
+      def param(name: String): Option[String] = stringBinder.bind(name, params).filter(_.isRight).map(_.right.get.trim).filter(_.nonEmpty)
 
       Some(Right(Search(
-        traderName = param(traderNameKey)
+        traderName = param(traderNameKey),
+        commodityCode = param(commodityCodeKey).map(_.replaceAll(" ", ""))
       )))
     }
 
     override def unbind(key: String, search: Search): String = {
       val bindings: Seq[Option[String]] = Seq(
-        search.traderName.map(stringBinder.unbind(traderNameKey, _))
+        search.traderName.map(stringBinder.unbind(traderNameKey, _)),
+        search.commodityCode.map(stringBinder.unbind(commodityCodeKey, _))
       )
       bindings.filter(_.isDefined).map(_.get).mkString("&")
     }

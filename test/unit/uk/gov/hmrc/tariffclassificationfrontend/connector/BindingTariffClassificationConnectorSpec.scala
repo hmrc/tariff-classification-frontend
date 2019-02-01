@@ -157,13 +157,17 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
     }
 
     "get cases" in {
-      stubFor(get(urlEqualTo("/cases?sort_direction=asc&sort_by=commodity-code&trader_name=trader"))
+      stubFor(get(urlEqualTo("/cases?sort_direction=asc&sort_by=commodity-code&trader_name=trader&commodity_code=comm-code"))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
           .withBody(CasePayloads.gatewayCases))
       )
 
-      await(connector.search(Search(traderName = Some("trader")), Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE))) shouldBe Seq(Cases.btiCaseExample)
+      val search = Search(
+        traderName = Some("trader"),
+        commodityCode = Some("comm-code")
+      )
+      await(connector.search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE))) shouldBe Seq(Cases.btiCaseExample)
     }
   }
 

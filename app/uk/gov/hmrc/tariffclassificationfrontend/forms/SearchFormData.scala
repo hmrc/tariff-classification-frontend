@@ -20,20 +20,22 @@ import play.api.data.Form
 import play.api.data.Forms._
 import uk.gov.hmrc.tariffclassificationfrontend.models.Search
 
-case class SearchFormData(traderName: String = "")
+case class SearchFormData(traderName: String = "", commodityCode: String = "")
 
 object SearchForm {
 
   val form = Form(
     mapping(
-      "trader_name" -> nonEmptyText
+      "trader_name" -> text.verifying(_ => true),
+      "commodity_code" -> text.verifying(_ => true)
     )(SearchFormData.apply)(SearchFormData.unapply)
   )
 
   def fill(search: Search): Form[SearchFormData] = {
     SearchForm.form.fill(
       SearchFormData(
-        search.traderName.getOrElse("")
+        search.traderName.getOrElse(""),
+        search.commodityCode.getOrElse("")
       )
     )
   }

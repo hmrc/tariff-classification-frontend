@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.forms
 
-import play.api.data.FormError
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.tariffclassificationfrontend.models.Search
 
@@ -25,18 +24,21 @@ class SearchFormTest extends UnitSpec {
   "Search Form" should {
     "fill" in {
       SearchForm.fill(Search(
-        traderName = Some("trader")
+        traderName = Some("trader"),
+        commodityCode = Some("commodity-code")
       )).data shouldBe Map(
-        "trader_name" -> "trader"
+        "trader_name" -> "trader",
+        "commodity_code" -> "commodity-code"
       )
     }
 
-    "validate 'Trader Name'" in {
+    "allow empty fields" in {
       SearchForm.form.bindFromRequest(
         Map(
+          "commodity_code" -> Seq(""),
           "trader_name" -> Seq("")
         )
-      ).errors shouldBe Seq(FormError("trader_name", "error.required"))
+      ).errors shouldBe Seq.empty
     }
   }
 }
