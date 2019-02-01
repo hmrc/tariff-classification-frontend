@@ -46,9 +46,8 @@
     </div>
 </div>
 
+<script src="@routes.Assets.at("javascripts/auto-complete.js")" type="text/javascript"></script>
 <script>
-        var keywordFieldId = document.getElementById("@{field.id}");
-        var autoCompleteStrings = @Html(Json.toJson(autoCompleteOptions.map{_.replace("'", "&apos;")}).toString);
+        autoComplete(document.getElementById("@{field.id}"), @Html(Json.toJson(autoCompleteOptions.map{_.replace("'", "&apos;")}).toString))
 </script>
 
-<script src="@routes.Assets.at("javascripts/auto-complete.js")" type="text/javascript"></script>

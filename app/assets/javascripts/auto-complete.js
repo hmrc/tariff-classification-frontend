@@ -16,7 +16,7 @@ if (!String.prototype.includes) {
 }
 
 /* Adapted from https://www.w3schools.com/howto/howto_js_autocomplete.asp */
-(function(inp, arr) {
+var autoComplete = function(inp, arr) {
     /*the autocomplete function takes two arguments,
     the text field element and an array of possible autocompleted values:*/
     var currentFocus;
@@ -111,7 +111,4 @@ if (!String.prototype.includes) {
     document.addEventListener("click", function (e) {
         closeAllLists(e.target);
     });
-}(
-    keywordFieldId,
-    autoCompleteStrings
-));
+}
