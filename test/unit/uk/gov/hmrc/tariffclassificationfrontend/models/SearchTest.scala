@@ -76,6 +76,12 @@ class SearchTest extends UnitSpec {
       Search.bindable.bind("", emptyParams) shouldBe Some(Right(Search()))
     }
 
+    "Bind commodity_code containing spaces" in {
+      Search.bindable.bind("", Map(
+        "commodity_code" -> Seq("1 2 3")
+      )) shouldBe Some(Right(Search(commodityCode = Some("123"))))
+    }
+
   }
 
 }

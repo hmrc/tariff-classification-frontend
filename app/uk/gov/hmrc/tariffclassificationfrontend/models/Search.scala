@@ -41,7 +41,7 @@ object Search {
 
       Some(Right(Search(
         traderName = param(traderNameKey),
-        commodityCode = param(commodityCodeKey)
+        commodityCode = param(commodityCodeKey).map(_.replaceAll(" ", ""))
       )))
     }
 
