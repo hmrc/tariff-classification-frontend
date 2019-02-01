@@ -147,7 +147,7 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
   "Connector 'Search'" should {
 
     "get empty cases" in {
-      stubFor(get(urlEqualTo("/cases?sort_direction=desc&sort_by=commodityCode"))
+      stubFor(get(urlEqualTo("/cases?sort_direction=desc&sort_by=commodity-code"))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
           .withBody("[]"))
@@ -157,7 +157,7 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
     }
 
     "get cases" in {
-      stubFor(get(urlEqualTo("/cases?sort_direction=asc&sort_by=commodityCode&trader_name=trader"))
+      stubFor(get(urlEqualTo("/cases?sort_direction=asc&sort_by=commodity-code&trader_name=trader"))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
           .withBody(CasePayloads.gatewayCases))

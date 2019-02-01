@@ -46,7 +46,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
     "Sort by default" in {
       // Given
       givenAuthSuccess()
-      stubFor(get(urlMatching("/cases?.*sort_direction=desc&sort_by=commodityCode.*"))
+      stubFor(get(urlMatching("/cases?.*sort_direction=desc&sort_by=commodity-code.*"))
         .willReturn(aResponse()
           .withStatus(OK)
           .withBody(CasePayloads.gatewayCases))
@@ -63,14 +63,14 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
     "Sort by 'Commodity Code'" in {
       // Given
       givenAuthSuccess()
-      stubFor(get(urlMatching("/cases?.*sort_direction=desc&sort_by=commodityCode.*"))
+      stubFor(get(urlMatching("/cases?.*sort_direction=desc&sort_by=commodity-code.*"))
         .willReturn(aResponse()
           .withStatus(OK)
           .withBody(CasePayloads.gatewayCases))
       )
 
       // When
-      val response = await(ws.url(s"$frontendRoot/search?sort_by=commodityCode&sort_direction=desc&trader_name=1").get())
+      val response = await(ws.url(s"$frontendRoot/search?sort_by=commodity-code&sort_direction=desc&trader_name=1").get())
 
       // Then
       response.status shouldBe OK

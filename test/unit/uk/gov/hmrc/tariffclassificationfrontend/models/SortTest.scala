@@ -23,7 +23,7 @@ class SortTest extends UnitSpec {
   "SortField Binder" should {
 
     "Unbind Populated SortField to Query String" in {
-      SortField.bindable.unbind("sort_by", SortField.COMMODITY_CODE) shouldBe "sort_by=commodityCode"
+      SortField.bindable.unbind("sort_by", SortField.COMMODITY_CODE) shouldBe "sort_by=commodity-code"
     }
 
     "Bind empty query string" in {
@@ -31,7 +31,7 @@ class SortTest extends UnitSpec {
     }
 
     "Bind populated query string" in {
-      SortField.bindable.bind("sort_by", Map("sort_by" -> Seq("commodityCode"))) shouldBe Some(Right(SortField.COMMODITY_CODE))
+      SortField.bindable.bind("sort_by", Map("sort_by" -> Seq("commodity-code"))) shouldBe Some(Right(SortField.COMMODITY_CODE))
     }
 
     "Bind invalid query string" in {
@@ -66,7 +66,7 @@ class SortTest extends UnitSpec {
     val sort = Sort(SortDirection.ASCENDING, SortField.COMMODITY_CODE)
 
     "Unbind Populated SortDirection to Query String" in {
-      Sort.bindable.unbind("", sort) shouldBe "sort_direction=asc&sort_by=commodityCode"
+      Sort.bindable.unbind("", sort) shouldBe "sort_direction=asc&sort_by=commodity-code"
     }
 
     "Bind empty query string" in {
@@ -74,7 +74,7 @@ class SortTest extends UnitSpec {
     }
 
     "Bind populated query string" in {
-      Sort.bindable.bind("", Map("sort_direction" -> Seq("asc"), "sort_by" -> Seq("commodityCode"))) shouldBe Some(Right(sort))
+      Sort.bindable.bind("", Map("sort_direction" -> Seq("asc"), "sort_by" -> Seq("commodity-code"))) shouldBe Some(Right(sort))
     }
 
     "Bind invalid query string" in {

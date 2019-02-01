@@ -37,7 +37,7 @@ object SortDirection extends Enumeration {
 
 object SortField extends Enumeration {
   type SortField = Value
-  val COMMODITY_CODE = Value("commodityCode")
+  val COMMODITY_CODE = Value("commodity-code")
 
   implicit val bindable: QueryStringBindable.Parsing[SortField] = new QueryStringBindable.Parsing[SortField](
     value =>
