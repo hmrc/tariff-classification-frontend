@@ -55,8 +55,7 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
       c => {
         for {
           letter <- fileService.getLetterOfAuthority(c)
-          response = views.html.partials.case_trader(c, letter)
-        } yield response
+        } yield views.html.partials.case_trader(c, letter)
       })
   }
 
@@ -68,8 +67,7 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
         for {
           attachments <- fileService.getAttachments(c)
           letter <- fileService.getLetterOfAuthority(c)
-          response = views.html.partials.application_details(c, attachments, letter)
-        } yield response
+        } yield views.html.partials.application_details(c, attachments, letter)
       }
     )
   }
@@ -124,8 +122,7 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
             for {
               updatedCase <- keywordsService.addKeyword(c, validForm.keyword)
               autoCompleteKeywords <- keywordsService.autoCompleteKeywords
-              response = views.html.partials.keywords_details(updatedCase, autoCompleteKeywords, keywordForm)
-            } yield response
+            } yield views.html.partials.keywords_details(updatedCase, autoCompleteKeywords, keywordForm)
           )
     )
   }
@@ -136,8 +133,7 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
         for {
           updatedCase <- keywordsService.removeKeyword(c, keyword)
           autoCompleteKeywords <- keywordsService.autoCompleteKeywords
-          response = views.html.partials.keywords_details(updatedCase, autoCompleteKeywords, keywordForm)
-        } yield response
+        } yield views.html.partials.keywords_details(updatedCase, autoCompleteKeywords, keywordForm)
     )
   }
 
