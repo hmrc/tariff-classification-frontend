@@ -20,10 +20,11 @@
 @(reference: String)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None) {
-
-    <h1 class="heading-large">
-        @messages("errors.case-not-found.title")
-    </h1>
-    <p>@messages("errors.case-not-found.message", reference)</p>
-    <a href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.MyCasesController.myCases()">@messages("errors.all.back")</a>
+    <div id="case-not-found-section">
+        <h1 class="heading-large">
+            @messages("errors.case-not-found.title")
+        </h1>
+        <p>@messages("errors.case-not-found.message", reference)</p>
+        <a href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.MyCasesController.myCases()">@messages("errors.all.back")</a>
+    </div>
 }

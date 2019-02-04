@@ -89,6 +89,7 @@ class AdvancedSearchResultsViewSpec extends ViewSpec {
       // Then
       doc should containElementWithID("advanced_search_results-row-0-description")
       doc.getElementById("advanced_search_results-row-0-description") should containText("x" * 50 + "...")
+      doc.getElementById("advanced_search_results-row-0-description").text.size shouldBe 53
     }
   }
 
