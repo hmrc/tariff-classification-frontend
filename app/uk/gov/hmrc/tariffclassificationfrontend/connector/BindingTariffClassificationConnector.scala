@@ -35,7 +35,7 @@ class BindingTariffClassificationConnector @Inject()(configuration: AppConfig, c
 
   private lazy val statuses: String = Seq(NEW, OPEN, REFERRED, SUSPENDED)
     .map(_.toString)
-    .reduce( (a: String, b: String) => s"$a,$b" )
+    .reduce((a: String, b: String) => s"$a,$b")
 
   def findCase(reference: String)(implicit hc: HeaderCarrier): Future[Option[Case]] = {
     val url = s"${configuration.bindingTariffClassificationUrl}/cases/$reference"
@@ -71,7 +71,7 @@ class BindingTariffClassificationConnector @Inject()(configuration: AppConfig, c
   }
 
   def search(search: Search, sort: Sort)(implicit hc: HeaderCarrier, searchBinder: QueryStringBindable[Search], sortBinder: QueryStringBindable[Sort]): Future[Seq[Case]] = {
-    val searchString = if(search.isDefined) "&" + searchBinder.unbind("", search) else ""
+    val searchString = if (search.isDefined) "&" + searchBinder.unbind("", search) else ""
     val sortString = sortBinder.unbind("sort_by", sort)
     val url = s"${configuration.bindingTariffClassificationUrl}/cases?$sortString$searchString"
     client.GET[Seq[Case]](url)

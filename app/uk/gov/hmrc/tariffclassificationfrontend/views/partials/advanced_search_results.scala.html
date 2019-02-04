@@ -43,9 +43,11 @@
       <td>
        <p id="advanced_search_results-row-@{index}-business_name">@c.application.holder.businessName</p>
        <p id="advanced_search_results-row-@{index}-description">
-        @c.application.asBTI.goodDescription
+
         @if(c.application.asBTI.goodDescription.length > 50) {
          @c.application.asBTI.goodDescription.substring(0,50)...
+        }else{
+         @c.application.asBTI.goodDescription
         }
        </p>
       </td>
