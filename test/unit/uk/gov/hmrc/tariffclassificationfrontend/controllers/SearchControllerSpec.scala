@@ -81,7 +81,10 @@ class SearchControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSui
       given(casesService.search(refEq(search), refEq(Sort()))(any[HeaderCarrier])) willReturn Future.successful(Seq.empty)
 
       // When
-      val result = await(controller.search(search = search)(fakeRequest))
+      val request = fakeRequest.withFormUrlEncodedBody(
+        "trader_name" -> "trader", "commodity_code" -> "00"
+      )
+      val result = await(controller.search(search = search)(request))
 
       // Then
       status(result) shouldBe Status.OK
@@ -89,6 +92,24 @@ class SearchControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSui
       charset(result) shouldBe Some("utf-8")
       contentAsString(result) should include("advanced_search-heading")
       contentAsString(result) should include("advanced_search_results")
+    }
+
+    "render errors if form invalid" in {
+      // Given
+      val search = Search(traderName = Some("trader"))
+
+      given(casesService.search(refEq(search), refEq(Sort()))(any[HeaderCarrier])) willReturn Future.successful(Seq.empty)
+
+      // When
+      val request = fakeRequest.withFormUrlEncodedBody()
+      val result = await(controller.search(search = search)(request))
+
+      // Then
+      status(result) shouldBe Status.OK
+      contentType(result) shouldBe Some("text/html")
+      charset(result) shouldBe Some("utf-8")
+      contentAsString(result) should include("advanced_search-heading")
+      contentAsString(result) shouldNot include("advanced_search_results")
     }
 
   }

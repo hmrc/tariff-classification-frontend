@@ -18,7 +18,7 @@ package uk.gov.hmrc.tariffclassificationfrontend.forms
 
 import play.api.data.Form
 import play.api.data.Forms._
-import play.api.data.validation._
+import uk.gov.hmrc.tariffclassificationfrontend.forms.FormConstraints._
 
 case class DecisionFormData(bindingCommodityCode: String = "",
                             goodsDescription: String = "",
@@ -32,7 +32,7 @@ object DecisionForm {
 
   val form = Form(
     mapping(
-      "bindingCommodityCode" -> text.verifying(FormConstraints.commodityCodeConstraint),
+      "bindingCommodityCode" -> text.verifying(emptyOr(validCommodityCode)),
       "goodsDescription" -> text,
       "methodSearch" -> text,
       "justification" -> text,
@@ -43,15 +43,4 @@ object DecisionForm {
   )
 }
 
-object FormConstraints {
 
-  private val commodityCodeRegex = "[0-9]{6,22}"
-  private val commodityCodeError = "Format must be empty or numeric between 6 and 22 digits"
-
-  val commodityCodeConstraint: Constraint[String] = Constraint("constraints.commoditycode")({
-    case s: String if s.isEmpty => Valid
-    case s: String if s.matches(commodityCodeRegex) => Valid
-    case _: String => Invalid(commodityCodeError)
-  })
-
-}

@@ -18,6 +18,7 @@ package uk.gov.hmrc.tariffclassificationfrontend.forms
 
 import play.api.data.Form
 import play.api.data.Forms._
+import uk.gov.hmrc.tariffclassificationfrontend.forms.FormConstraints._
 import uk.gov.hmrc.tariffclassificationfrontend.models.Search
 
 case class SearchFormData(traderName: String = "", commodityCode: String = "")
@@ -27,7 +28,7 @@ object SearchForm {
   val form = Form(
     mapping(
       "trader_name" -> text.verifying(_ => true),
-      "commodity_code" -> text.verifying(_ => true)
+      "commodity_code" -> text.verifying(emptyOr(numeric, minLength(2)))
     )(SearchFormData.apply)(SearchFormData.unapply)
   )
 

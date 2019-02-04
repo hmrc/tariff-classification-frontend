@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.forms
 
+import play.api.data.FormError
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.tariffclassificationfrontend.models.Search
 
@@ -39,6 +40,24 @@ class SearchFormTest extends UnitSpec {
           "trader_name" -> Seq("")
         )
       ).errors shouldBe Seq.empty
+    }
+
+    "disallow short commodity code" in {
+      SearchForm.form.bindFromRequest(
+        Map(
+          "commodity_code" -> Seq("0"),
+          "trader_name" -> Seq("")
+        )
+      ).errors shouldBe Seq(FormError("commodity_code", List("Must be at least 2 characters")))
+    }
+
+    "disallow non-numerical commodity code" in {
+      SearchForm.form.bindFromRequest(
+        Map(
+          "commodity_code" -> Seq("aab"),
+          "trader_name" -> Seq("")
+        )
+      ).errors shouldBe Seq(FormError("commodity_code", List("Must be numerical")))
     }
   }
 }

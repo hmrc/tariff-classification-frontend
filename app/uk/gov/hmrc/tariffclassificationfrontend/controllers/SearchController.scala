@@ -42,9 +42,17 @@ class SearchController @Inject()(authenticatedAction: AuthenticatedAction,
     } else if (search.isEmpty) {
       Future.successful(Results.Ok(html.advanced_search(SearchForm.form)))
     } else {
-      casesService.search(search, sort) map { results =>
-        Results.Ok(html.advanced_search(SearchForm.fill(search), Some(results)))
-      }
+      SearchForm.form.bindFromRequest.fold(
+        formWithErrors => {
+          Future.successful(Results.Ok(html.advanced_search(formWithErrors, None)))
+        },
+        data => {
+          casesService.search(search, sort) map { results =>
+            Results.Ok(html.advanced_search(SearchForm.form.fill(data), Some(results)))
+          }
+        }
+      )
+
     }
   }
 

@@ -18,7 +18,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers
 @import uk.gov.hmrc.tariffclassificationfrontend.forms.SearchFormData
 @import uk.gov.hmrc.tariffclassificationfrontend.models.Case
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.input_text
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.{input_number, input_text}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.advanced_search_results
 @(form: Form[SearchFormData], results: Option[Seq[Case]] = None)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
@@ -35,7 +35,7 @@
    label = "Trader Name"
   )
 
-  @input_text(
+  @input_number(
    field = form("commodity_code"),
    label = "Commodity Code"
   )
@@ -44,7 +44,20 @@
   <a id="advanced_search-reset_button" class="secondary-button" href="@controllers.routes.SearchController.search()">Reset Filters</a>
 
   @if(results.isDefined) {
-    @advanced_search_results(results.get)
+   <div id="advanced_search-results-and-filters" class="grid-row mt-1">
+
+    <div class="column-one-quarter">
+     <h3 class="heading-medium">Filter Search</h3>
+     <hr class="mt-0"/>
+    </div>
+
+    <div class="column-three-quarters">
+     <h3 class="heading-medium">Search Results</h3>
+     <hr class="mt-0"/>
+
+     @advanced_search_results(results.get)
+    </div>
+    </div>
   }
  }
 
