@@ -35,15 +35,11 @@ object FormConstraints {
     case _: String => Invalid(s"Must be at least $length characters")
   })
 
-  def emptyOr(c: Constraint[String]*): Constraint[String] = Constraint("constraints.empty")({
-    case s: String if s.isEmpty => Valid
-    case s: String =>
-      val results = c.map(_.apply(s))
-      if(results.exists(_.isInstanceOf[Invalid])) {
-        results.filter(_.isInstanceOf[Invalid]).head
-      } else {
-        Valid
-      }
-  })
+  def emptyOr(c: Constraint[String]*): Seq[Constraint[String]] = c.map { c =>
+    Constraint[String]("constraints.empty")({
+      case s: String if s.isEmpty => Valid
+      case s: String => c.apply(s)
+    })
+  }
 
 }

@@ -28,7 +28,7 @@ object SearchForm {
   val form = Form(
     mapping(
       "trader_name" -> text.verifying(_ => true),
-      "commodity_code" -> text.verifying(emptyOr(numeric, minLength(2)))
+      "commodity_code" -> text.verifying(emptyOr(numeric, minLength(2)): _*)
     )(SearchFormData.apply)(SearchFormData.unapply)
   )
 

@@ -32,7 +32,7 @@ object DecisionForm {
 
   val form = Form(
     mapping(
-      "bindingCommodityCode" -> text.verifying(emptyOr(validCommodityCode)),
+      "bindingCommodityCode" -> text.verifying(emptyOr(validCommodityCode): _*),
       "goodsDescription" -> text,
       "methodSearch" -> text,
       "justification" -> text,
