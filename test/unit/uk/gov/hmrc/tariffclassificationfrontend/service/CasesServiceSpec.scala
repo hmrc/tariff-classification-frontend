@@ -16,22 +16,21 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.service
 
+import java.time.Clock
+
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito._
 import org.mockito.Mockito.reset
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
-import play.api.mvc.QueryStringBindable
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.tariffclassificationfrontend.audit.AuditService
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.connector.BindingTariffClassificationConnector
 import uk.gov.hmrc.tariffclassificationfrontend.models._
-import uk.gov.tariffclassificationfrontend.utils.Cases
 
 import scala.concurrent.Future
-import scala.concurrent.Future.successful
 
 class CasesServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
 
@@ -79,7 +78,7 @@ class CasesServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEac
 
   "Search Cases" should {
     "retrieve connector cases" in {
-      given(connector.search(any[Search], any[Sort])(any[HeaderCarrier], any[QueryStringBindable[Search]], any[QueryStringBindable[Sort]])) willReturn Future.successful(manyCases)
+      given(connector.search(any[Search], any[Sort])(any[HeaderCarrier], any[Clock])) willReturn Future.successful(manyCases)
 
       await(service.search(Search(), Sort())) shouldBe manyCases
     }

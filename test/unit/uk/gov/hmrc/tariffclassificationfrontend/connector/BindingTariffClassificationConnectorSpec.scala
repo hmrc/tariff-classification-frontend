@@ -16,6 +16,9 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.connector
 
+import java.net.URLEncoder
+import java.time.{Clock, LocalDate, ZoneOffset}
+
 import akka.actor.ActorSystem
 import com.github.tomakehurst.wiremock.client.WireMock._
 import org.apache.http.HttpStatus
@@ -45,7 +48,9 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
   private val client = new DefaultHttpClient(fakeApplication.configuration, auditConnector, wsClient, actorSystem)
   private val gatewayQueue = Queue("1", "gateway", "Gateway")
   private val otherQueue = Queue("2", "other", "Other")
-  private implicit val hc = HeaderCarrier()
+  private implicit val hc: HeaderCarrier = HeaderCarrier()
+  private val currentTime = LocalDate.of(2019,1,1).atStartOfDay().toInstant(ZoneOffset.UTC)
+  private implicit val clock: Clock = Clock.fixed(currentTime, ZoneOffset.UTC)
 
   private val connector = new BindingTariffClassificationConnector(configuration, client)
 
@@ -146,6 +151,8 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
 
   "Connector 'Search'" should {
 
+    def encode(value: String): String = URLEncoder.encode(value, "UTF-8")
+
     "get empty cases" in {
       stubFor(get(urlEqualTo("/cases?sort_direction=desc&sort_by=commodity-code"))
         .willReturn(aResponse()
@@ -157,7 +164,7 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
     }
 
     "get cases" in {
-      stubFor(get(urlEqualTo("/cases?sort_direction=asc&sort_by=commodity-code&trader_name=trader&commodity_code=comm-code"))
+      stubFor(get(urlEqualTo(s"/cases?sort_direction=asc&sort_by=commodity-code&trader_name=trader&commodity_code=comm-code&min_decision_end=${encode("2019-01-01T00:00:00Z")}"))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
           .withBody(CasePayloads.gatewayCases))
@@ -165,7 +172,8 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
 
       val search = Search(
         traderName = Some("trader"),
-        commodityCode = Some("comm-code")
+        commodityCode = Some("comm-code"),
+        includeInProgress = Some(true)
       )
       await(connector.search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE))) shouldBe Seq(Cases.btiCaseExample)
     }

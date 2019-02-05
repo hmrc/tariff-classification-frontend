@@ -16,29 +16,21 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.models
 
+import java.net.URLDecoder
+import java.time.{Clock, LocalDate, ZoneOffset}
+
 import uk.gov.hmrc.play.test.UnitSpec
 
 class SearchTest extends UnitSpec {
 
   private val populatedSearch = Search(
     traderName = Some("trader-name"),
-    commodityCode = Some("commodity-code")
+    commodityCode = Some("commodity-code"),
+    includeInProgress = Some(true)
   )
-
-  private val populatedParams: Map[String, Seq[String]] = Map(
-    "trader_name" -> Seq("trader-name"),
-    "commodity_code" -> Seq("commodity-code")
-  )
-
-  private val emptyParams: Map[String, Seq[String]] = Map(
-    "trader_name" -> Seq(""),
-    "commodity_code" -> Seq("")
-  )
-
-  private val populatedQueryParam: String = "trader_name=trader-name&commodity_code=commodity-code"
 
   /**
-  * When we add fields to Search these tests shouldn't need changing, only the fields above.
+  * When we add fields to Search these tests shouldn't need changing, only the field above and vals in each test suite.
   **/
 
   "Search" should {
@@ -54,37 +46,103 @@ class SearchTest extends UnitSpec {
     }
   }
 
-  "Search Binder" should {
+  "Search Front End Binder" should {
+
+    val populatedParams: Map[String, Seq[String]] = Map(
+      "trader_name" -> Seq("trader-name"),
+      "commodity_code" -> Seq("commodity-code"),
+      "include_in_progress" -> Seq("true")
+    )
+
+    val emptyParams: Map[String, Seq[String]] = Map(
+      "trader_name" -> Seq(""),
+      "commodity_code" -> Seq(""),
+      "include_in_progress" -> Seq("")
+    )
+
+    val populatedQueryParam: String =
+      "trader_name=trader-name" +
+      "&commodity_code=commodity-code" +
+      "&include_in_progress=true"
 
     "Unbind Unpopulated Search to Query String" in {
-      Search.bindable.unbind("", Search()) shouldBe ""
+      Search.frontEndBindable.unbind("", Search()) shouldBe ""
     }
 
     "Unbind Populated Search to Query String" in {
-      Search.bindable.unbind("", populatedSearch) shouldBe populatedQueryParam
+      URLDecoder.decode(Search.frontEndBindable.unbind("", populatedSearch), "UTF-8") shouldBe populatedQueryParam
     }
 
     "Bind empty query string" in {
-      Search.bindable.bind("", Map()) shouldBe Some(Right(Search()))
+      Search.frontEndBindable.bind("", Map()) shouldBe Some(Right(Search()))
     }
 
     "Bind populated query string" in {
-      Search.bindable.bind("", populatedParams) shouldBe Some(Right(populatedSearch))
+      Search.frontEndBindable.bind("", populatedParams) shouldBe Some(Right(populatedSearch))
     }
 
     "Bind populated query string with excessive spaces" in {
       val extraSpacesParams = populatedParams.mapValues(values => values.map(value => s" $value "))
-      Search.bindable.bind("", extraSpacesParams) shouldBe Some(Right(populatedSearch))
+      Search.frontEndBindable.bind("", extraSpacesParams) shouldBe Some(Right(populatedSearch))
     }
 
     "Bind unpopulated query string" in {
-      Search.bindable.bind("", emptyParams) shouldBe Some(Right(Search()))
+      Search.frontEndBindable.bind("", emptyParams) shouldBe Some(Right(Search()))
     }
 
     "Bind commodity_code containing spaces" in {
-      Search.bindable.bind("", Map(
+      Search.frontEndBindable.bind("", Map(
         "commodity_code" -> Seq("1 2 3")
       )) shouldBe Some(Right(Search(commodityCode = Some("123"))))
+    }
+
+  }
+
+  "Search Binding Tariff Classification Binder" should {
+
+    val currentTime = LocalDate.of(2019,1,1).atStartOfDay().toInstant(ZoneOffset.UTC)
+    implicit val clock: Clock = Clock.fixed(currentTime, ZoneOffset.UTC)
+
+    val populatedParams: Map[String, Seq[String]] = Map(
+      "trader_name" -> Seq("trader-name"),
+      "commodity_code" -> Seq("commodity-code"),
+      "min_decision_end" -> Seq("2019-01-01T00:00:00Z")
+    )
+
+    val emptyParams: Map[String, Seq[String]] = Map(
+      "trader_name" -> Seq(""),
+      "commodity_code" -> Seq(""),
+      "min_decision_end" -> Seq("")
+    )
+
+    val populatedQueryParam: String =
+      "trader_name=trader-name" +
+        "&commodity_code=commodity-code" +
+        "&min_decision_end=2019-01-01T00:00:00Z"
+
+    "Unbind Unpopulated Search to Query String" in {
+      Search.bindingTariffClassificationBindable.unbind("", Search()) shouldBe ""
+    }
+
+    "Unbind Populated Search to Query String" in {
+      URLDecoder.decode(Search.bindingTariffClassificationBindable.unbind("", populatedSearch), "UTF-8") shouldBe populatedQueryParam
+    }
+
+    "Bind empty query string" in {
+      Search.bindingTariffClassificationBindable.bind("", Map()) shouldBe Some(Right(Search()))
+    }
+
+    "Bind populated query string" in {
+      Search.bindingTariffClassificationBindable.bind("", populatedParams) shouldBe Some(Right(populatedSearch))
+    }
+
+    "Bind populated query string with excessive spaces" in {
+      val extraSpacesParams = populatedParams.mapValues(values => values.map(value => s" $value "))
+      Search.bindingTariffClassificationBindable.bind("", extraSpacesParams) shouldBe Some(Right(populatedSearch))
+    }
+
+    "Bind unpopulated query string" in {
+      Search.bindingTariffClassificationBindable.bind("", emptyParams) shouldBe Some(Right(Search()))
     }
 
   }

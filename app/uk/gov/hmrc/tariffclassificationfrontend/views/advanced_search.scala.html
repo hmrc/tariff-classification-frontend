@@ -18,7 +18,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers
 @import uk.gov.hmrc.tariffclassificationfrontend.forms.SearchFormData
 @import uk.gov.hmrc.tariffclassificationfrontend.models.Case
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.{input_number, input_text}
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.{input_checkbox, input_number, input_text}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.advanced_search_results
 @(form: Form[SearchFormData], results: Option[Seq[Case]] = None)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
@@ -49,12 +49,17 @@
     <div class="column-one-quarter">
      <h3 class="heading-medium">Filter Search</h3>
      <hr class="mt-0"/>
+
+     @input_checkbox(
+      field = form("include_in_progress"),
+      label = "Include In Progress",
+      submitOnChange = true
+     )
     </div>
 
     <div class="column-three-quarters">
      <h3 class="heading-medium">Search Results</h3>
      <hr class="mt-0"/>
-
      @advanced_search_results(results.get)
     </div>
     </div>

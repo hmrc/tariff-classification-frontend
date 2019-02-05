@@ -16,9 +16,10 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.connector
 
+import java.time.Clock
+
 import com.google.inject.Inject
 import javax.inject.Singleton
-import play.api.mvc.QueryStringBindable
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
@@ -70,9 +71,9 @@ class BindingTariffClassificationConnector @Inject()(configuration: AppConfig, c
     client.GET[Seq[Event]](url)
   }
 
-  def search(search: Search, sort: Sort)(implicit hc: HeaderCarrier, searchBinder: QueryStringBindable[Search], sortBinder: QueryStringBindable[Sort]): Future[Seq[Case]] = {
-    val searchString = if(search.isDefined) "&" + searchBinder.unbind("", search) else ""
-    val sortString = sortBinder.unbind("sort_by", sort)
+  def search(search: Search, sort: Sort)(implicit hc: HeaderCarrier, clock: Clock = Clock.systemUTC()): Future[Seq[Case]] = {
+    val searchString = if(search.isDefined) "&" + Search.bindingTariffClassificationBindable.unbind("", search) else ""
+    val sortString = Sort.bindable.unbind("sort_by", sort)
     val url = s"${configuration.bindingTariffClassificationUrl}/cases?$sortString$searchString"
     client.GET[Seq[Case]](url)
   }
