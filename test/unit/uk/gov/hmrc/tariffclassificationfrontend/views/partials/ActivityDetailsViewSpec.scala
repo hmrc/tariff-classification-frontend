@@ -27,7 +27,7 @@ import uk.gov.tariffclassificationfrontend.utils.Cases._
 
 class ActivityDetailsViewSpec extends ViewSpec {
 
-  private val date = ZonedDateTime.of(2019,1,1,0,0,0,0, ZoneOffset.UTC)
+  private val date = ZonedDateTime.of(2019,1,1,0,0,0,0, ZoneOffset.UTC).toInstant
 
   "Activity Details" should {
 

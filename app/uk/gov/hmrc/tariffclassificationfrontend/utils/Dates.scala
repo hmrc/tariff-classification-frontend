@@ -17,14 +17,14 @@
 package uk.gov.hmrc.tariffclassificationfrontend.utils
 
 import java.time.format.DateTimeFormatter
-import java.time.temporal.TemporalAccessor
+import java.time.{Instant, LocalDateTime, ZoneOffset}
 
 object Dates {
 
   val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd MMM yyyy")
 
-  def format(temporal: TemporalAccessor) : String = {
-    formatter.format(temporal)
+  def format(instant: Instant) : String = {
+    formatter.format(LocalDateTime.ofInstant(instant, ZoneOffset.UTC))
   }
 
 }

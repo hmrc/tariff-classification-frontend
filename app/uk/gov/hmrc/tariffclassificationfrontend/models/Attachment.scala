@@ -16,14 +16,14 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.models
 
-import java.time.ZonedDateTime
+import java.time.Instant
 
 case class Attachment
 (
   id: String,
   public: Boolean = false,
   operator: Option[Operator],
-  timestamp: ZonedDateTime = ZonedDateTime.now()
+  timestamp: Instant = Instant.now()
 )
 
 case class FileStoreAttachment

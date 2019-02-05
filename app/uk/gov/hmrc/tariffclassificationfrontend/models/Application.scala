@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.models
 
-import java.time.ZonedDateTime
+import java.time.Instant
 
 sealed trait Application {
   val `type`: String
@@ -80,7 +80,7 @@ case class LiabilityOrder
   status: String,
   port: String,
   entryNumber: String,
-  endDate: ZonedDateTime
+  endDate: Instant
 ) extends Application {
   override val `type` = "LIABILITY_ORDER"
 }

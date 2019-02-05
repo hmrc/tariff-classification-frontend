@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.models
 
-import java.time.ZonedDateTime
+import java.time.Instant
 
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.CaseStatus
 import uk.gov.hmrc.tariffclassificationfrontend.models.EventType.EventType
@@ -28,7 +28,7 @@ case class Event
   details: Details,
   operator: Operator,
   caseReference: String,
-  timestamp: ZonedDateTime = ZonedDateTime.now()
+  timestamp: Instant = Instant.now()
 )
 
 sealed trait Details {

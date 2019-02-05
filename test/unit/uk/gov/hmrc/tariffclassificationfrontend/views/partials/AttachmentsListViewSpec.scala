@@ -44,7 +44,7 @@ class AttachmentsListViewSpec extends ViewSpec {
         fileName = "name",
         url = Some("url"),
         scanStatus = Some(ScanStatus.READY),
-        timestamp = ZonedDateTime.of(2019,1,1,0,0,0,0,ZoneOffset.UTC)
+        timestamp = ZonedDateTime.of(2019,1,1,0,0,0,0,ZoneOffset.UTC).toInstant
       )
 
       // When

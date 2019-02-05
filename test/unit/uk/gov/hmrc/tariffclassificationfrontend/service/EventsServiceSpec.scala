@@ -31,7 +31,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
 import uk.gov.tariffclassificationfrontend.utils.Cases
 
 import scala.concurrent.Future
-import scala.concurrent.Future.{failed, successful}
+import scala.concurrent.Future.successful
 
 class EventsServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
 
@@ -63,7 +63,7 @@ class EventsServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEa
     "post a new note to the backend via the connector" in {
       val clock = Clock.fixed(LocalDateTime.of(2018,1,1, 14,0).toInstant(ZoneOffset.UTC), ZoneId.of("UTC"))
       val operator = Operator("userId", Some("Billy Bobbins"))
-      val newEventRequest = NewEventRequest(Note(Some(aNote)), operator, ZonedDateTime.now(clock))
+      val newEventRequest = NewEventRequest(Note(Some(aNote)), operator, Instant.now(clock))
       val event = mock[Event]
       val aCase = Cases.btiCaseExample
       given(connector.createEvent(refEq(aCase), refEq(newEventRequest))(any[HeaderCarrier]))

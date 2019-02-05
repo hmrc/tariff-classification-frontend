@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.views.partials
 
-import java.time.ZonedDateTime
+import java.time.Instant
 
 import uk.gov.hmrc.tariffclassificationfrontend.forms.{DecisionForm, DecisionFormData}
 import uk.gov.hmrc.tariffclassificationfrontend.models.response.ScanStatus
@@ -102,7 +102,7 @@ class EditRulingDetailsViewSpec extends ViewSpec {
         url = None,
         mimeType = "text/plain",
         scanStatus = Some(ScanStatus.READY),
-        timestamp = ZonedDateTime.now()
+        timestamp = Instant.now()
       )
 
       // When
@@ -127,7 +127,7 @@ class EditRulingDetailsViewSpec extends ViewSpec {
         url = None,
         mimeType = "text/plain",
         scanStatus = Some(ScanStatus.FAILED),
-        timestamp = ZonedDateTime.now()
+        timestamp = Instant.now()
       )
 
       // When
@@ -152,7 +152,7 @@ class EditRulingDetailsViewSpec extends ViewSpec {
         url = None,
         mimeType = "text/plain",
         scanStatus = Some(ScanStatus.READY),
-        timestamp = ZonedDateTime.now()
+        timestamp = Instant.now()
       )
 
       // When
@@ -176,7 +176,7 @@ class EditRulingDetailsViewSpec extends ViewSpec {
         url = None,
         mimeType = "text/plain",
         scanStatus = Some(ScanStatus.READY),
-        timestamp = ZonedDateTime.now()
+        timestamp = Instant.now()
       )
 
       // When
@@ -200,7 +200,7 @@ class EditRulingDetailsViewSpec extends ViewSpec {
         url = Some("url"),
         mimeType = "text/plain",
         scanStatus = Some(ScanStatus.READY),
-        timestamp = ZonedDateTime.now()
+        timestamp = Instant.now()
       )
 
       // When
@@ -226,7 +226,7 @@ class EditRulingDetailsViewSpec extends ViewSpec {
         url = None,
         mimeType = "text/plain",
         scanStatus = Some(ScanStatus.READY),
-        timestamp = ZonedDateTime.now()
+        timestamp = Instant.now()
       )
 
       // When

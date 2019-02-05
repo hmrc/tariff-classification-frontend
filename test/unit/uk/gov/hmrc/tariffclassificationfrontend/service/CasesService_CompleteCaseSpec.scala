@@ -174,8 +174,8 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
     }
   }
 
-  private def date(yymmdd: String): ZonedDateTime = {
-    LocalDate.parse(yymmdd).atStartOfDay(ZoneId.of("UTC"))
+  private def date(yymmdd: String): Instant = {
+    LocalDate.parse(yymmdd).atStartOfDay(ZoneId.of("UTC")).toInstant
   }
 
 }

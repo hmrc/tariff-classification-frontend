@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.views.partials
 
-import java.time.ZonedDateTime
+import java.time.Instant
 
 import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, StoredAttachment}
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
@@ -148,7 +148,7 @@ class RulingDetailsViewSpec extends ViewSpec {
         url = None,
         mimeType = "text/plain",
         scanStatus = None,
-        timestamp = ZonedDateTime.now()
+        timestamp = Instant.now()
       )
 
       // When
@@ -171,7 +171,7 @@ class RulingDetailsViewSpec extends ViewSpec {
         url = None,
         mimeType = "text/plain",
         scanStatus = None,
-        timestamp = ZonedDateTime.now()
+        timestamp = Instant.now()
       )
 
       // When

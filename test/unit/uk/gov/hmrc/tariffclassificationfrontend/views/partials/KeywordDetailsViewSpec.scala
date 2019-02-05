@@ -16,13 +16,10 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.views.partials
 
-import java.time.{ZoneOffset, ZonedDateTime}
-
 import uk.gov.hmrc.tariffclassificationfrontend.forms.KeywordForm
-import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewSpec
-import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{activity_details, keywords_details}
+import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.keywords_details
 import uk.gov.tariffclassificationfrontend.utils.Cases._
 
 class KeywordDetailsViewSpec extends ViewSpec {

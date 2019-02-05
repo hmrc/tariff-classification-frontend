@@ -79,12 +79,13 @@ class CasesService @Inject()(appConfig: AppConfig, auditService: AuditService,
 
   def completeCase(original: Case, operator: Operator, clock: Clock = Clock.systemDefaultZone())
                   (implicit hc: HeaderCarrier): Future[Case] = {
-    val startDate = LocalDate.now(clock).atStartOfDay(appConfig.zoneId)
-    val endDate = startDate.plusYears(appConfig.decisionLifetimeYears)
+    val date = LocalDate.now(clock).atStartOfDay(appConfig.zoneId)
+    val startInstant = date.toInstant
+    val endInstant = date.plusYears(appConfig.decisionLifetimeYears).toInstant
 
     val decisionUpdating: Decision = original.decision
       .getOrElse(throw new IllegalArgumentException("Cannot Complete a Case without a Decision"))
-      .copy(effectiveStartDate = Some(startDate), effectiveEndDate = Some(endDate))
+      .copy(effectiveStartDate = Some(startInstant), effectiveEndDate = Some(endInstant))
     val caseUpdating = original.copy(status = CaseStatus.COMPLETED, decision = Some(decisionUpdating))
 
     for {
