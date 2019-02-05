@@ -16,12 +16,14 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.service
 
+import java.io.File
 import java.time.Instant
 
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.given
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
+import play.api.libs.Files.TemporaryFile
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.tariffclassificationfrontend.connector.FileStoreConnector
@@ -29,6 +31,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.models.response.{FileMetadata, ScanStatus}
 import uk.gov.tariffclassificationfrontend.utils.Cases
 
+import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
 class FileStoreServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
@@ -84,6 +87,23 @@ class FileStoreServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfte
 
     "Return None for Non BTI applications" in {
       await(service.getLetterOfAuthority(Cases.liabilityCaseExample)) shouldBe None
+    }
+  }
+
+  "Service 'upload'" should {
+
+    "Return Stored Attachment" in {
+      val upload = mock[FileUpload]
+      val content = mock[TemporaryFile]
+      val file = mock[File]
+      given(upload.content) willReturn content
+      given(content.file) willReturn file
+      given(file.length()) willReturn 1
+
+      val metadata = FileMetadata(id = "id", fileName = "name", mimeType = "mimetype")
+      given(connector.upload(upload)) willReturn Future.successful(metadata)
+
+      await(service.upload(upload)) shouldBe FileStoreAttachment("id", "name", "mimetype", 1)
     }
   }
 
