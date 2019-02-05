@@ -37,7 +37,7 @@ class QueueViewSpec extends ViewSpec {
       // Then
       doc should containElementWithID("queue-navigation")
       doc should containElementWithID("queue-name")
-      doc should containElementWithID("cases-list-table")
+      doc should containElementWithID("cases_list-table")
 
       doc.getElementById("queue-name") should containText("Queue 1 Name")
       doc should containText(messages("cases.table.empty"))
@@ -54,12 +54,12 @@ class QueueViewSpec extends ViewSpec {
       // Then
       doc should containElementWithID("queue-navigation")
       doc should containElementWithID("queue-name")
-      doc should containElementWithID("cases-list-table")
+      doc should containElementWithID("cases_list-table")
 
       doc.getElementById("queue-name") should containText("Queue 1 Name")
-      doc.getElementById("cases-list-table") should containText(case1.reference)
-      doc.getElementById("cases-list-table") should containText(case1.status.toString)
-      doc.getElementById("cases-list-table") should containText(case1.application.getType)
+      doc.getElementById("cases_list-table") should containText(case1.reference)
+      doc.getElementById("cases_list-table") should containText(case1.status.toString)
+      doc.getElementById("cases_list-table") should containText(case1.application.getType)
     }
   }
 
