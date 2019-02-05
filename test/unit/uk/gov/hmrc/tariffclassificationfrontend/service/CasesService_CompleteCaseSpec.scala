@@ -49,7 +49,6 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
   private val config = mock[AppConfig]
   private val clock = Clock.fixed(LocalDateTime.of(2018, 1, 1, 14, 0).toInstant(ZoneOffset.UTC), ZoneId.of("UTC"))
   private val aCase = Cases.btiCaseExample
-  private val epoch = date("1970-01-01")
 
   private val service = new CasesService(config, audit, emailService, fileStoreService, connector)
 
@@ -62,9 +61,9 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
     "update case status to COMPLETED" in {
       // Given
       val operator: Operator = Operator("operator-id", Some("Billy Bobbins"))
-      val originalDecision = Decision("code", epoch, epoch, "justification", "goods")
+      val originalDecision = Decision("code", None, None, "justification", "goods")
       val originalCase = aCase.copy(status = CaseStatus.OPEN, decision = Some(originalDecision))
-      val updatedDecision = Decision("code", date("2018-01-01"), date("2019-01-01"), "justification", "goods")
+      val updatedDecision = Decision("code", Some(date("2018-01-01")), Some(date("2019-01-01")), "justification", "goods")
       val caseUpdated = aCase.copy(status = CaseStatus.COMPLETED, decision = Some(updatedDecision))
       val emailTemplate = EmailTemplate("plain", "html", "from", "subject", "service")
 
@@ -106,7 +105,7 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
 
     "not create event on update failure" in {
       val operator: Operator = Operator("operator-id")
-      val originalDecision = Decision("code", epoch, epoch, "justification", "goods")
+      val originalDecision = Decision("code", None, None, "justification", "goods")
       val originalCase = aCase.copy(status = CaseStatus.OPEN, decision = Some(originalDecision))
 
       given(config.decisionLifetimeYears).willReturn(1)
@@ -125,9 +124,9 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
     "succeed on event create failure" in {
       // Given
       val operator: Operator = Operator("operator-id")
-      val originalDecision = Decision("code", epoch, epoch, "justification", "goods")
+      val originalDecision = Decision("code", None, None, "justification", "goods")
       val originalCase = aCase.copy(status = CaseStatus.OPEN, decision = Some(originalDecision))
-      val updatedDecision = Decision("code", date("2018-01-01"), date("2019-01-01"), "justification", "goods")
+      val updatedDecision = Decision("code", Some(date("2018-01-01")), Some(date("2019-01-01")), "justification", "goods")
       val caseUpdated = aCase.copy(status = CaseStatus.COMPLETED, decision = Some(updatedDecision))
       val emailTemplate = EmailTemplate("plain", "html", "from", "subject", "service")
 
@@ -150,9 +149,9 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
     "succeed on email send failure" in {
       // Given
       val operator: Operator = Operator("operator-id", Some("Billy Bobbins"))
-      val originalDecision = Decision("code", epoch, epoch, "justification", "goods")
+      val originalDecision = Decision("code", None, None, "justification", "goods")
       val originalCase = aCase.copy(status = CaseStatus.OPEN, decision = Some(originalDecision))
-      val updatedDecision = Decision("code", date("2018-01-01"), date("2019-01-01"), "justification", "goods")
+      val updatedDecision = Decision("code", Some(date("2018-01-01")), Some(date("2019-01-01")), "justification", "goods")
       val caseUpdated = aCase.copy(status = CaseStatus.COMPLETED, decision = Some(updatedDecision))
 
       given(config.zoneId).willReturn(ZoneId.of("UTC"))
