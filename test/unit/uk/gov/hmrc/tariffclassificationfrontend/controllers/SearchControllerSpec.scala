@@ -101,7 +101,7 @@ class SearchControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSui
       given(casesService.search(refEq(search), refEq(Sort()))(any[HeaderCarrier])) willReturn Future.successful(Seq.empty)
 
       // When
-      val request = fakeRequest.withFormUrlEncodedBody()
+      val request = fakeRequest.withFormUrlEncodedBody("commodity_code" -> "a")
       val result = await(controller.search(search = search)(request))
 
       // Then

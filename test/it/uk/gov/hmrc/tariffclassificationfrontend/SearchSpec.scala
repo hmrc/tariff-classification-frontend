@@ -40,7 +40,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body should include("advanced_search_results")
+      response.body should include("advanced_search-results_and_filters")
     }
 
     "Filter by 'Commodity Code'" in {
@@ -53,11 +53,11 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response = await(ws.url(s"$frontendRoot/search?commodity_code=1").get())
+      val response = await(ws.url(s"$frontendRoot/search?commodity_code=11").get())
 
       // Then
       response.status shouldBe OK
-      response.body should include("advanced_search_results")
+      response.body should include("advanced_search-results_and_filters")
     }
 
     "Sort by default" in {
@@ -74,7 +74,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body should include("advanced_search_results")
+      response.body should include("advanced_search-results_and_filters")
     }
 
     "Sort by 'Commodity Code'" in {
@@ -91,7 +91,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body should include("advanced_search_results")
+      response.body should include("advanced_search-results_and_filters")
     }
 
     "redirect on auth failure" in {

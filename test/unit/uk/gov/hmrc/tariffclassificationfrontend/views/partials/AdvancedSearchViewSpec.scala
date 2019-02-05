@@ -31,7 +31,7 @@ class AdvancedSearchViewSpec extends ViewSpec {
       val doc = view(advanced_search(SearchForm.form, None))
 
       // Then
-      doc shouldNot containElementWithID("advanced_search_results")
+      doc shouldNot containElementWithID("advanced_search-results_and_filters")
     }
 
     "Render Results" in {
@@ -42,7 +42,7 @@ class AdvancedSearchViewSpec extends ViewSpec {
       val doc = view(advanced_search(SearchForm.form, Some(Seq(c))))
 
       // Then
-      doc should containElementWithID("advanced_search_results")
+      doc should containElementWithID("advanced_search-results_and_filters")
     }
   }
 

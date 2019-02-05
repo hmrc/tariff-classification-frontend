@@ -33,6 +33,12 @@ class SearchFormTest extends UnitSpec {
       )
     }
 
+    "allow missing fields" in {
+      SearchForm.form.bindFromRequest(
+        Map()
+      ).errors shouldBe Seq.empty
+    }
+
     "allow empty fields" in {
       SearchForm.form.bindFromRequest(
         Map(

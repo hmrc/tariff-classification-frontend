@@ -21,22 +21,22 @@ import play.api.data.Forms._
 import uk.gov.hmrc.tariffclassificationfrontend.forms.FormConstraints._
 import uk.gov.hmrc.tariffclassificationfrontend.models.Search
 
-case class SearchFormData(traderName: String = "", commodityCode: String = "")
+case class SearchFormData(traderName: Option[String] = None, commodityCode: Option[String] = None)
 
 object SearchForm {
 
   val form = Form(
     mapping(
-      "trader_name" -> text.verifying(_ => true),
-      "commodity_code" -> text.verifying(emptyOr(numeric, minLength(2)): _*)
+      "trader_name" -> optional(text.verifying(_ => true)),
+      "commodity_code" -> optional(text.verifying(emptyOr(numeric, minLength(2)): _*))
     )(SearchFormData.apply)(SearchFormData.unapply)
   )
 
   def fill(search: Search): Form[SearchFormData] = {
     SearchForm.form.fill(
       SearchFormData(
-        search.traderName.getOrElse(""),
-        search.commodityCode.getOrElse("")
+        search.traderName,
+        search.commodityCode
       )
     )
   }
