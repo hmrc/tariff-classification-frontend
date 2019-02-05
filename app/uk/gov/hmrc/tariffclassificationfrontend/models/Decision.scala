@@ -16,13 +16,13 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.models
 
-import java.time.ZonedDateTime
+import java.time.Instant
 
 case class Decision
 (
   bindingCommodityCode: String,
-  effectiveStartDate: Option[ZonedDateTime] = None,
-  effectiveEndDate: Option[ZonedDateTime] = None,
+  effectiveStartDate: Option[Instant] = None,
+  effectiveEndDate: Option[Instant] = None,
   justification: String,
   goodsDescription: String,
   methodSearch: Option[String] = None,

@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.models
 
-import java.time.ZonedDateTime
+import java.time.Instant
 
 import uk.gov.hmrc.tariffclassificationfrontend.models.response.FileMetadata
 import uk.gov.hmrc.tariffclassificationfrontend.models.response.ScanStatus.ScanStatus
@@ -30,7 +30,7 @@ case class StoredAttachment
   fileName: String,
   mimeType: String,
   scanStatus: Option[ScanStatus],
-  timestamp: ZonedDateTime
+  timestamp: Instant
 ) {
 
   def isImage: Boolean = {

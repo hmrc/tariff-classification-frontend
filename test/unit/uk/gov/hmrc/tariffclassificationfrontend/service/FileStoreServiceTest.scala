@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.service
 
-import java.time.{Instant, ZoneOffset, ZonedDateTime}
+import java.time.Instant
 
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.given
@@ -96,7 +96,7 @@ class FileStoreServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfte
       fileName = s"name-$id",
       mimeType = s"type-$id",
       scanStatus = Some(ScanStatus.READY),
-      timestamp = ZonedDateTime.ofInstant(Instant.EPOCH, ZoneOffset.UTC)
+      timestamp = Instant.EPOCH
     )
   }
 
@@ -111,7 +111,7 @@ class FileStoreServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfte
       id = id,
       public = true,
       None,
-      timestamp = ZonedDateTime.ofInstant(Instant.EPOCH, ZoneOffset.UTC)
+      timestamp = Instant.EPOCH
     )
     c.copy(attachments = attachments)
   }
@@ -127,7 +127,7 @@ class FileStoreServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfte
       id = id,
       public = true,
       None,
-      timestamp = ZonedDateTime.ofInstant(Instant.EPOCH, ZoneOffset.UTC)
+      timestamp = Instant.EPOCH
     )
   }
 

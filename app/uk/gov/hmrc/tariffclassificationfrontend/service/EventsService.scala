@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.service
 
-import java.time.{Clock, ZonedDateTime}
+import java.time.{Clock, Instant}
 
 import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -33,9 +33,9 @@ class EventsService @Inject()(connector: BindingTariffClassificationConnector) {
     connector.findEvents(reference)
   }
 
-  def addNote(c: Case, note: String, operator: Operator, clock: Clock = Clock.systemDefaultZone())
+  def addNote(c: Case, note: String, operator: Operator, clock: Clock = Clock.systemUTC())
              (implicit hc: HeaderCarrier): Future[Event] = {
-    val event = NewEventRequest(Note(Some(note)), operator, ZonedDateTime.now(clock))
+    val event = NewEventRequest(Note(Some(note)), operator, Instant.now(clock))
     connector.createEvent(c, event)
   }
 

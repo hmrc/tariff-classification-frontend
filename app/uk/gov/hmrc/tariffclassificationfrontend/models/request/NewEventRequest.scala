@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.models.request
 
-import java.time.ZonedDateTime
+import java.time.Instant
 
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Details, Operator}
 
@@ -24,5 +24,5 @@ case class NewEventRequest
 (
   details: Details,
   operator: Operator,
-  timestamp: ZonedDateTime = ZonedDateTime.now()
+  timestamp: Instant = Instant.now()
 )

@@ -16,7 +16,7 @@
 
 package uk.gov.tariffclassificationfrontend.utils
 
-import java.time.ZonedDateTime
+import java.time.Instant
 import java.util.UUID
 
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.CaseStatus
@@ -25,26 +25,26 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.response.ScanStatus
 
 object Cases {
 
-  val storedAttachment = StoredAttachment("id", public = true, None, Some("url"), "name", "type", Some(ScanStatus.READY), ZonedDateTime.now())
-  val storedOperatorAttachment = StoredAttachment("id", public = true, Some(Operator("0", Some("Operator Name"))), Some("url"), "name", "type", Some(ScanStatus.READY), ZonedDateTime.now())
-  val letterOfAuthority = StoredAttachment("id", public = true, None, Some("url"), "letterOfAuthority", "pdf", Some(ScanStatus.READY), ZonedDateTime.now())
+  val storedAttachment = StoredAttachment("id", public = true, None, Some("url"), "name", "type", Some(ScanStatus.READY), Instant.now())
+  val storedOperatorAttachment = StoredAttachment("id", public = true, Some(Operator("0", Some("Operator Name"))), Some("url"), "name", "type", Some(ScanStatus.READY), Instant.now())
+  val letterOfAuthority = StoredAttachment("id", public = true, None, Some("url"), "letterOfAuthority", "pdf", Some(ScanStatus.READY), Instant.now())
   val eoriDetailsExample = EORIDetails("eori", "trader-business-name", "line1", "line2", "line3", "postcode", "country")
-  val eoriAgentDetailsExample = AgentDetails(EORIDetails("eori", "agent-business-name", "line1", "line2", "line3", "postcode", "country"), Some(Attachment(UUID.randomUUID().toString, true, None, ZonedDateTime.now())))
+  val eoriAgentDetailsExample = AgentDetails(EORIDetails("eori", "agent-business-name", "line1", "line2", "line3", "postcode", "country"), Some(Attachment(UUID.randomUUID().toString, true, None, Instant.now())))
   val contactExample = Contact("name", "email", Some("phone"))
   val btiApplicationExample = BTIApplication(eoriDetailsExample, contactExample, Some(eoriAgentDetailsExample), false, "Laptop", "Personal Computer", None, None, None, None, None, None, false, false)
   val simpleBtiApplicationExample = BTIApplication(eoriDetailsExample, contactExample, None, false, "Laptop", "Personal Computer", None, None, None, None, None, None, false, false)
-  val decision = Decision("AD12324FR", Some(ZonedDateTime.now()), Some(ZonedDateTime.now().plusYears(2)), "justification", "good description", None, None, Some("denomination"), None)
-  val liabilityApplicationExample = LiabilityOrder(eoriDetailsExample, contactExample, "status", "port", "entry number", ZonedDateTime.now())
-  val btiCaseExample = Case("1", CaseStatus.OPEN, ZonedDateTime.now(), 0, None, None, None, None, btiApplicationExample, Some(decision), Seq())
-  val simpleCaseExample = Case("1", CaseStatus.OPEN, ZonedDateTime.now(), 0, None, None, None, None, simpleBtiApplicationExample, None, Seq())
-  val liabilityCaseExample = Case("1", CaseStatus.OPEN, ZonedDateTime.now(), 0, None, None, None, None, liabilityApplicationExample, None, Seq())
+  val decision = Decision("AD12324FR", Some(Instant.now()), Some(Instant.now().plusSeconds(2*3600*24*365)), "justification", "good description", None, None, Some("denomination"), None)
+  val liabilityApplicationExample = LiabilityOrder(eoriDetailsExample, contactExample, "status", "port", "entry number", Instant.now())
+  val btiCaseExample = Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, None, None, btiApplicationExample, Some(decision), Seq())
+  val simpleCaseExample = Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, None, None, simpleBtiApplicationExample, None, Seq())
+  val liabilityCaseExample = Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, None, None, liabilityApplicationExample, None, Seq())
 
   def attachment(id: String = UUID.randomUUID().toString): Attachment = {
     Attachment(
       id = id,
       public = true,
       operator = Some(Operator("0", Some("operatorName"))),
-      timestamp = ZonedDateTime.now()
+      timestamp = Instant.now()
     )
   }
 
@@ -163,8 +163,8 @@ object Cases {
   }
 
   def withDecision(bindingCommodityCode: String = "decision-commodity-code",
-                   effectiveStartDate: Option[ZonedDateTime] = Some(ZonedDateTime.now()),
-                   effectiveEndDate: Option[ZonedDateTime] = Some(ZonedDateTime.now()),
+                   effectiveStartDate: Option[Instant] = Some(Instant.now()),
+                   effectiveEndDate: Option[Instant] = Some(Instant.now()),
                    justification: String = "decision-justification",
                    goodsDescription: String = "decision-goods-description",
                    methodSearch: Option[String] = None,
@@ -186,7 +186,7 @@ object Cases {
       )))
   }
 
-  def withCreatedDate(date: ZonedDateTime): Case => Case = {
+  def withCreatedDate(date: Instant): Case => Case = {
     _.copy(createdDate = date)
   }
 

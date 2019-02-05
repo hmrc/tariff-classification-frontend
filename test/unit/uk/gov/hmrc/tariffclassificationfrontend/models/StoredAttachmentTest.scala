@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.models
 
-import java.time.{Instant, ZoneOffset, ZonedDateTime}
+import java.time.Instant
 
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.tariffclassificationfrontend.models.response.{FileMetadata, ScanStatus}
@@ -64,7 +64,7 @@ class StoredAttachmentTest extends UnitSpec {
     StoredAttachment(anAttachment, someMetadataWithType(t))
   }
 
-  private def anAttachment = Attachment(id = "id", public = true, None, timestamp = ZonedDateTime.ofInstant(Instant.EPOCH, ZoneOffset.UTC))
+  private def anAttachment = Attachment(id = "id", public = true, None, timestamp = Instant.EPOCH)
 
   private def someMetadataWithType(t: String = "text/plain") = FileMetadata(
     id = "id",
