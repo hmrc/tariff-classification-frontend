@@ -21,8 +21,8 @@ import java.time.ZonedDateTime
 case class Decision
 (
   bindingCommodityCode: String,
-  effectiveStartDate: ZonedDateTime,
-  effectiveEndDate: ZonedDateTime,
+  effectiveStartDate: Option[ZonedDateTime] = None,
+  effectiveEndDate: Option[ZonedDateTime] = None,
   justification: String,
   goodsDescription: String,
   methodSearch: Option[String] = None,

@@ -29,7 +29,6 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import scala.io.Source
 
 @Singleton
 class CasesService @Inject()(appConfig: AppConfig, auditService: AuditService,
@@ -85,7 +84,7 @@ class CasesService @Inject()(appConfig: AppConfig, auditService: AuditService,
 
     val decisionUpdating: Decision = original.decision
       .getOrElse(throw new IllegalArgumentException("Cannot Complete a Case without a Decision"))
-      .copy(effectiveStartDate = startDate, effectiveEndDate = endDate)
+      .copy(effectiveStartDate = Some(startDate), effectiveEndDate = Some(endDate))
     val caseUpdating = original.copy(status = CaseStatus.COMPLETED, decision = Some(decisionUpdating))
 
     for {

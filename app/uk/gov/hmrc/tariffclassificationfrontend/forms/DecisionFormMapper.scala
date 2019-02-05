@@ -16,8 +16,6 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.forms
 
-import java.time.ZonedDateTime
-
 import javax.inject.Singleton
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Decision}
 
@@ -66,8 +64,6 @@ class DecisionFormMapper {
 
   private def from(form: DecisionFormData): Decision = {
     Decision(
-      effectiveStartDate = ZonedDateTime.now(),
-      effectiveEndDate = ZonedDateTime.now(),
       bindingCommodityCode = form.bindingCommodityCode.toString,
       goodsDescription = form.goodsDescription,
       methodSearch = Some(form.methodSearch),
