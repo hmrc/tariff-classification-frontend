@@ -39,7 +39,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequ
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 
-class AuthenticatedActionSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
+class AuthenticatedActionSpec extends UnitSpec with MockitoSugar with ControllerCommons with BeforeAndAfterEach {
 
   private val appConfig = mock[AppConfig]
   private val config = mock[Configuration]
@@ -122,6 +122,7 @@ class AuthenticatedActionSpec extends UnitSpec with MockitoSugar with BeforeAndA
     }
 
     "Redirect to Stride Login on NoActiveSession" in {
+      given(appConfig.runningAsDev).willReturn(false)
       givenTheServiceIsRoleRestricted()
       given(connector.authorise(
         any[Predicate],
@@ -130,6 +131,20 @@ class AuthenticatedActionSpec extends UnitSpec with MockitoSugar with BeforeAndA
 
       val result: Result = await(action.invokeBlock(FakeRequest(), block))
       status(result) shouldBe Status.SEE_OTHER
+      locationOf(result) shouldBe Some("http://localhost:9041/stride/sign-in?successURL=%2F&origin=undefined")
+    }
+
+    "Redirect to Stride Login Dev on NoActiveSession" in {
+      given(appConfig.runningAsDev).willReturn(true)
+      givenTheServiceIsRoleRestricted()
+      given(connector.authorise(
+        any[Predicate],
+        any[Retrieval[Credentials ~ Name]]
+      )(any[HeaderCarrier], any[ExecutionContext])).willReturn(Future.failed(new NoActiveSession("No Session") {}))
+
+      val result: Result = await(action.invokeBlock(FakeRequest(), block))
+      status(result) shouldBe Status.SEE_OTHER
+      locationOf(result) shouldBe Some("http://localhost:9041/stride/sign-in?successURL=http%3A%2F%2F%2F&origin=undefined")
     }
 
     "Redirect to Unauthorized on AuthorizationException" in {
