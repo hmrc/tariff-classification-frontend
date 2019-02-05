@@ -19,8 +19,9 @@ package uk.gov.hmrc.tariffclassificationfrontend.forms
 import play.api.data.FormError
 import uk.gov.hmrc.play.test.UnitSpec
 
-class KeywordsFormTest extends UnitSpec {
+class KeywordFormTest extends UnitSpec {
 
+  "Keywords form " should {
     "validate 'keyword'" in {
       KeywordForm.form.bindFromRequest(
         Map(
@@ -28,4 +29,25 @@ class KeywordsFormTest extends UnitSpec {
         )
       ).errors shouldBe Seq(FormError("keyword", "error.required"))
     }
+
+    "accept a keyword" in {
+      KeywordForm.form.bindFromRequest(
+        Map(
+          "keyword" -> Seq("FOOD")
+        )
+      ).value shouldBe Some(KeywordFormData("FOOD"))
+    }
+
+    "don't allow missing fields" in {
+      KeywordForm.form.bindFromRequest(
+        Map()
+      ).errors shouldBe Seq(FormError("keyword", "error.required"))
+    }
+
+    "fill in form correctly" in {
+      val keyWordForm = KeywordForm
+      keyWordForm.form.fill(KeywordFormData("FOOD")).data shouldBe Map("keyword" -> "FOOD")
+    }
+  }
+
 }
