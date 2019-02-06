@@ -24,10 +24,10 @@ case class Search
 (
   traderName: Option[String] = None,
   commodityCode: Option[String] = None,
-  includeInProgress: Option[Boolean] = None
+  liveDecisionOnly: Option[Boolean] = None
 ) {
   def isEmpty: Boolean = {
-    traderName.isEmpty && commodityCode.isEmpty && includeInProgress.isEmpty
+    traderName.isEmpty && commodityCode.isEmpty && liveDecisionOnly.isEmpty
   }
 
   def isDefined: Boolean = !isEmpty
@@ -45,15 +45,12 @@ object Search {
 
     override def bind(key: String, params: Map[String, Seq[String]]): Option[Either[String, Search]] = {
       def param(name: String): Option[String] = stringBinder.bind(name, params).filter(_.isRight).map(_.right.get.trim).filter(_.nonEmpty)
-      def paramWithDefault(name: String, default: String): Option[String] = stringBinder.bind(name, params).filter(_.isRight).map(_.right.get.trim).map {
-        case "" => default
-        case s => s
-      }
+
 
       Some(Right(Search(
         traderName = param(traderNameKey),
         commodityCode = param(commodityCodeKey).map(_.replaceAll(" ", "")),
-        includeInProgress = paramWithDefault(includeInProgressKey, "false").flatMap(bindBoolean)
+        liveDecisionOnly = param(includeInProgressKey).flatMap(bindBoolean).map(!_)
       )))
     }
 
@@ -61,7 +58,7 @@ object Search {
       val bindings: Seq[Option[String]] = Seq(
         search.traderName.map(stringBinder.unbind(traderNameKey, _)),
         search.commodityCode.map(stringBinder.unbind(commodityCodeKey, _)),
-        search.includeInProgress.map(v => stringBinder.unbind(includeInProgressKey, s"$v"))
+        search.liveDecisionOnly.map(v => stringBinder.unbind(includeInProgressKey, s"${!v}"))
       )
       bindings.filter(_.isDefined).map(_.get).mkString("&")
     }

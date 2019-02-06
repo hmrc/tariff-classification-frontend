@@ -169,7 +169,8 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
         s"&sort_by=commodity-code" +
         s"&trader_name=trader" +
         s"&commodity_code=comm-code" +
-        s"&min_decision_end=${encode("2019-01-01T00:00:00Z")}"
+        s"&min_decision_end=${encode("2019-01-01T00:00:00Z")}" +
+        s"&status=COMPLETED"
 
       stubFor(get(urlEqualTo(url))
         .willReturn(aResponse()
@@ -180,7 +181,7 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
       val search = Search(
         traderName = Some("trader"),
         commodityCode = Some("comm-code"),
-        includeInProgress = Some(true)
+        liveDecisionOnly = Some(true)
       )
       await(connector.search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE))) shouldBe Seq(Cases.btiCaseExample)
     }
@@ -209,28 +210,41 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
       await(connector.search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE))) shouldBe Seq(Cases.btiCaseExample)
     }
 
-    "get cases filtering 'include in progress'" in {
-      stubFor(get(urlEqualTo(s"/cases?sort_direction=asc&sort_by=commodity-code&min_decision_end=${encode("2019-01-01T00:00:00Z")}"))
+    "get cases 'live only' = false" in {
+      stubFor(get(urlEqualTo(s"/cases?sort_direction=asc&sort_by=commodity-code"))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
           .withBody(CasePayloads.gatewayCases))
       )
 
       val search = Search(
-        includeInProgress = Some(true)
+        liveDecisionOnly = Some(false)
       )
       await(connector.search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE))) shouldBe Seq(Cases.btiCaseExample)
     }
 
-    "get cases 'include in progress' false" in {
-      stubFor(get(urlEqualTo(s"/cases?sort_direction=asc&sort_by=commodity-code&status=COMPLETED"))
+    "get cases 'live only' = none" in {
+      stubFor(get(urlEqualTo(s"/cases?sort_direction=asc&sort_by=commodity-code"))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
           .withBody(CasePayloads.gatewayCases))
       )
 
       val search = Search(
-        includeInProgress = Some(false)
+        liveDecisionOnly = None
+      )
+      await(connector.search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE))) shouldBe Seq(Cases.btiCaseExample)
+    }
+
+    "get cases 'live only' = true" in {
+      stubFor(get(urlEqualTo(s"/cases?sort_direction=asc&sort_by=commodity-code&min_decision_end=${encode("2019-01-01T00:00:00Z")}&status=COMPLETED"))
+        .willReturn(aResponse()
+          .withStatus(HttpStatus.SC_OK)
+          .withBody(CasePayloads.gatewayCases))
+      )
+
+      val search = Search(
+        liveDecisionOnly = Some(true)
       )
       await(connector.search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE))) shouldBe Seq(Cases.btiCaseExample)
     }

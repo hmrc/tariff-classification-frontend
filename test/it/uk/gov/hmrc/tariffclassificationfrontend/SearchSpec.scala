@@ -7,7 +7,7 @@ import uk.gov.tariffclassificationfrontend.utils.CasePayloads
 
 class SearchSpec extends IntegrationTest with MockitoSugar {
 
-  "Search" should {
+  "Search by 'Case Reference'" should {
 
     "Filter by 'Case Reference'" in {
       // Given
@@ -25,6 +25,9 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       response.status shouldBe OK
       response.body should include("trader-heading")
     }
+  }
+
+  "Search by 'Trader Name'" should {
 
     "Filter by 'Trader Name'" in {
       // Given
@@ -42,6 +45,9 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       response.status shouldBe OK
       response.body should include("advanced_search-results_and_filters")
     }
+  }
+
+  "Search by 'Commodity Code'" should {
 
     "Filter by 'Commodity Code'" in {
       // Given
@@ -59,29 +65,17 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       response.status shouldBe OK
       response.body should include("advanced_search-results_and_filters")
     }
+  }
 
-    "Filter by 'Include In Progress' = true" in {
+  "Search by 'Include In Progress'" should {
+    val dateRegex = "\\d{4}-\\d{2}-\\d{2}T\\d{2}%3A\\d{2}%3A\\d{2}(\\.\\d{3})\\\\?Z"
+
+    // Note the UI actually calls search WITHOUT the include_in_progress flag when unchecked (see similar test below)
+    "Filter Live Rulings Only when 'Include In Progress' = false" in {
       // Given
       givenAuthSuccess()
-      val dateRegex = "\\d{4}-\\d{2}-\\d{2}T\\d{2}%3A\\d{2}%3A\\d{2}(\\.\\d{3})\\\\?Z"
-      stubFor(get(urlMatching(s"/cases\\?.*min_decision_end=$dateRegex"))
-        .willReturn(aResponse()
-          .withStatus(OK)
-          .withBody(CasePayloads.gatewayCases))
-      )
 
-      // When
-      val response = await(ws.url(s"$frontendRoot/search?include_in_progress=true").get())
-
-      // Then
-      response.status shouldBe OK
-      response.body should include("advanced_search-results_and_filters")
-    }
-
-    "Filter by 'Include In Progress' = false" in {
-      // Given
-      givenAuthSuccess()
-      stubFor(get(urlMatching(s"/cases\\?.*status=COMPLETED"))
+      stubFor(get(urlMatching(s"/cases\\?.*min_decision_end=$dateRegex&status=COMPLETED"))
         .willReturn(aResponse()
           .withStatus(OK)
           .withBody(CasePayloads.gatewayCases))
@@ -95,27 +89,11 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       response.body should include("advanced_search-results_and_filters")
     }
 
-    "Filter by 'Include In Progress' blank using default" in {
+    // Note the UI actually calls search WITHOUT the include_in_progress flag when unchecked
+    "Filter Live Rulings Only when 'Include In Progress' is not present" in {
       // Given
       givenAuthSuccess()
-      stubFor(get(urlMatching(s"/cases\\?.*status=COMPLETED"))
-        .willReturn(aResponse()
-          .withStatus(OK)
-          .withBody(CasePayloads.gatewayCases))
-      )
-
-      // When
-      val response = await(ws.url(s"$frontendRoot/search?include_in_progress=").get())
-
-      // Then
-      response.status shouldBe OK
-      response.body should include("advanced_search-results_and_filters")
-    }
-
-    "Not default 'Include In Progress' when not present" in {
-      // Given
-      givenAuthSuccess()
-      stubFor(get(urlMatching(s"/cases\\?((?!status=COMPLETED).)*"))
+      stubFor(get(urlMatching(s"/cases\\?.*min_decision_end=$dateRegex&status=COMPLETED"))
         .willReturn(aResponse()
           .withStatus(OK)
           .withBody(CasePayloads.gatewayCases))
@@ -128,6 +106,26 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       response.status shouldBe OK
       response.body should include("advanced_search-results_and_filters")
     }
+
+    "Allow All Cases when 'Include In Progress' = true" in {
+      // Given
+      givenAuthSuccess()
+      stubFor(get(urlMatching(s"/cases\\?((?!status=COMPLETED).)*"))
+        .willReturn(aResponse()
+          .withStatus(OK)
+          .withBody(CasePayloads.gatewayCases))
+      )
+
+      // When
+      val response = await(ws.url(s"$frontendRoot/search?include_in_progress=true").get())
+
+      // Then
+      response.status shouldBe OK
+      response.body should include("advanced_search-results_and_filters")
+    }
+  }
+
+  "Search" should {
 
     "Sort by default" in {
       // Given

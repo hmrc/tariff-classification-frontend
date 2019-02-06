@@ -25,7 +25,7 @@ class SearchTest extends UnitSpec {
   private val populatedSearch = Search(
     traderName = Some("trader-name"),
     commodityCode = Some("commodity-code"),
-    includeInProgress = Some(true)
+    liveDecisionOnly = Some(false)
   )
 
   /**
@@ -86,19 +86,13 @@ class SearchTest extends UnitSpec {
     }
 
     "Bind unpopulated query string" in {
-      Search.binder.bind("", emptyParams) shouldBe Some(Right(Search(includeInProgress = Some(false))))
+      Search.binder.bind("", emptyParams) shouldBe Some(Right(Search()))
     }
 
     "Bind commodity_code containing spaces" in {
       Search.binder.bind("", Map(
         "commodity_code" -> Seq("1 2 3")
       )) shouldBe Some(Right(Search(commodityCode = Some("123"))))
-    }
-
-    "Bind include_in_progress with default" in {
-      Search.binder.bind("", Map(
-        "include_in_progress" -> Seq("")
-      )) shouldBe Some(Right(Search(includeInProgress = Some(false))))
     }
 
   }

@@ -47,12 +47,21 @@ class SearchController @Inject()(authenticatedAction: AuthenticatedAction,
           Future.successful(Results.Ok(html.advanced_search(formWithErrors, None)))
         },
         data => {
-          casesService.search(search, sort) map { results =>
+          val searchWithDefaults = applyDefaultFilters(search)
+          casesService.search(searchWithDefaults, sort) map { results =>
             Results.Ok(html.advanced_search(SearchForm.form.fill(data), Some(results)))
           }
         }
       )
 
+    }
+  }
+
+  private def applyDefaultFilters(search: Search): Search = {
+    if(search.liveDecisionOnly.isEmpty) {
+      search.copy(liveDecisionOnly = Some(true))
+    } else {
+      search
     }
   }
 
