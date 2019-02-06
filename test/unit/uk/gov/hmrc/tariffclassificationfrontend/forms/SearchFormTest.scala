@@ -33,7 +33,8 @@ class SearchFormTest extends UnitSpec {
       SearchForm.form.bindFromRequest(
         Map(
           "commodity_code" -> Seq(""),
-          "trader_name" -> Seq("")
+          "trader_name" -> Seq(""),
+          "live_rulings_only" -> Seq("")
         )
       ).errors shouldBe Seq.empty
     }
@@ -41,8 +42,7 @@ class SearchFormTest extends UnitSpec {
     "disallow short commodity code" in {
       SearchForm.form.bindFromRequest(
         Map(
-          "commodity_code" -> Seq("0"),
-          "trader_name" -> Seq("")
+          "commodity_code" -> Seq("0")
         )
       ).errors shouldBe Seq(FormError("commodity_code", List("Must be at least 2 characters")))
     }
@@ -50,8 +50,7 @@ class SearchFormTest extends UnitSpec {
     "disallow long commodity code" in {
       SearchForm.form.bindFromRequest(
         Map(
-          "commodity_code" -> Seq("0"*23),
-          "trader_name" -> Seq("")
+          "commodity_code" -> Seq("0" * 23)
         )
       ).errors shouldBe Seq(FormError("commodity_code", List("Must be 22 characters or less")))
     }
@@ -59,10 +58,35 @@ class SearchFormTest extends UnitSpec {
     "disallow non-numerical commodity code" in {
       SearchForm.form.bindFromRequest(
         Map(
-          "commodity_code" -> Seq("aab"),
-          "trader_name" -> Seq("")
+          "commodity_code" -> Seq("eee")
         )
       ).errors shouldBe Seq(FormError("commodity_code", List("Must be numerical")))
+    }
+
+    "maps to data" in {
+      SearchForm.form.bindFromRequest(
+        Map(
+          "commodity_code" -> Seq("00"),
+          "trader_name" -> Seq("trader-name"),
+          "live_rulings_only" -> Seq("true")
+        )
+      ).get shouldBe SearchFormData(
+        traderName = Some("trader-name"),
+        commodityCode = Some("00"),
+        liveRulingsOnly = Some(true)
+      )
+    }
+
+    "maps from data" in {
+      SearchForm.form.fill(SearchFormData(
+        traderName = Some("trader-name"),
+        commodityCode = Some("00"),
+        liveRulingsOnly = Some(true)
+      )).data shouldBe Map(
+        "trader_name" -> "trader-name",
+        "commodity_code" -> "00",
+        "live_rulings_only" -> "true"
+      )
     }
   }
 }

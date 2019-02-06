@@ -25,7 +25,7 @@ class SearchTest extends UnitSpec {
   private val populatedSearch = Search(
     traderName = Some("trader-name"),
     commodityCode = Some("commodity-code"),
-    liveDecisionOnly = Some(false)
+    liveRulingsOnly = Some(true)
   )
 
   /**
@@ -50,19 +50,19 @@ class SearchTest extends UnitSpec {
     val populatedParams: Map[String, Seq[String]] = Map(
       "trader_name" -> Seq("trader-name"),
       "commodity_code" -> Seq("commodity-code"),
-      "include_in_progress" -> Seq("true")
+      "live_rulings_only" -> Seq("true")
     )
 
     val emptyParams: Map[String, Seq[String]] = Map(
       "trader_name" -> Seq(""),
       "commodity_code" -> Seq(""),
-      "include_in_progress" -> Seq("")
+      "live_rulings_only" -> Seq("")
     )
 
     val populatedQueryParam: String =
       "trader_name=trader-name" +
       "&commodity_code=commodity-code" +
-      "&include_in_progress=true"
+      "&live_rulings_only=true"
 
     "Unbind Unpopulated Search to Query String" in {
       Search.binder.unbind("", Search()) shouldBe ""

@@ -76,7 +76,7 @@ class SearchControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSui
 
     "render results if not empty" in {
       // Given
-      val search = Search(liveDecisionOnly = Some(false))
+      val search = Search(liveRulingsOnly = Some(false))
 
       given(casesService.search(refEq(search), refEq(Sort()))(any[HeaderCarrier])) willReturn Future.successful(Seq.empty)
 
@@ -96,8 +96,8 @@ class SearchControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSui
 
     "apply default 'liveDecisionOnly'" in {
       // Given
-      val search = Search(liveDecisionOnly = None)
-      val searchWithDefaults = Search(liveDecisionOnly = Some(true))
+      val search = Search(liveRulingsOnly = None)
+      val searchWithDefaults = Search(liveRulingsOnly = Some(true))
 
       given(casesService.search(refEq(searchWithDefaults), refEq(Sort()))(any[HeaderCarrier])) willReturn Future.successful(Seq.empty)
 

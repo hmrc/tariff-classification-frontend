@@ -24,16 +24,16 @@ case class SearchFormData
 (
   traderName: Option[String] = None,
   commodityCode: Option[String] = None,
-  includeInProgress: Option[Boolean] = None
+  liveRulingsOnly: Option[Boolean] = None
 )
 
 object SearchForm {
 
-  val form = Form(
+  val form: Form[SearchFormData] = Form(
     mapping(
       "trader_name" -> optional(text.verifying(_ => true)),
       "commodity_code" -> optional(text.verifying(emptyOr(numeric, minLength(2), maxLength(22)): _*)),
-      "include_in_progress" -> optional(boolean)
+      "live_rulings_only" -> optional(boolean)
     )(SearchFormData.apply)(SearchFormData.unapply)
   )
 

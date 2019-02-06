@@ -24,10 +24,10 @@ case class Search
 (
   traderName: Option[String] = None,
   commodityCode: Option[String] = None,
-  liveDecisionOnly: Option[Boolean] = None
+  liveRulingsOnly: Option[Boolean] = None
 ) {
   def isEmpty: Boolean = {
-    traderName.isEmpty && commodityCode.isEmpty && liveDecisionOnly.isEmpty
+    traderName.isEmpty && commodityCode.isEmpty && liveRulingsOnly.isEmpty
   }
 
   def isDefined: Boolean = !isEmpty
@@ -39,7 +39,7 @@ object Search {
 
     private val traderNameKey = "trader_name"
     private val commodityCodeKey = "commodity_code"
-    private val includeInProgressKey = "include_in_progress"
+    private val liveRulingsOnlyKey = "live_rulings_only"
 
     private def bindBoolean: String => Option[Boolean] = v => Try(v.toBoolean).toOption
 
@@ -50,7 +50,7 @@ object Search {
       Some(Right(Search(
         traderName = param(traderNameKey),
         commodityCode = param(commodityCodeKey).map(_.replaceAll(" ", "")),
-        liveDecisionOnly = param(includeInProgressKey).flatMap(bindBoolean).map(!_)
+        liveRulingsOnly = param(liveRulingsOnlyKey).flatMap(bindBoolean)
       )))
     }
 
@@ -58,7 +58,7 @@ object Search {
       val bindings: Seq[Option[String]] = Seq(
         search.traderName.map(stringBinder.unbind(traderNameKey, _)),
         search.commodityCode.map(stringBinder.unbind(commodityCodeKey, _)),
-        search.liveDecisionOnly.map(v => stringBinder.unbind(includeInProgressKey, s"${!v}"))
+        search.liveRulingsOnly.map(v => stringBinder.unbind(liveRulingsOnlyKey, s"$v"))
       )
       bindings.filter(_.isDefined).map(_.get).mkString("&")
     }

@@ -67,12 +67,12 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
     }
   }
 
-  "Search by 'Include In Progress'" should {
+  "Search by 'Live Rulings Only'" should {
     val dateRegex = "\\d{4}-\\d{2}-\\d{2}T\\d{2}%3A\\d{2}%3A\\d{2}(\\.\\d{3})\\\\?Z"
     def excluding(value: String*): String = s"(${value.map(v => s"(?!$v)").mkString}.)*"
 
     // Note the UI actually calls search WITHOUT the include_in_progress flag when unchecked (see similar test below)
-    "Filter Live Rulings Only when 'Include In Progress' = false" in {
+    "Filter Live Rulings Only when 'true'" in {
       // Given
       givenAuthSuccess()
 
@@ -83,7 +83,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response = await(ws.url(s"$frontendRoot/search?include_in_progress=false").get())
+      val response = await(ws.url(s"$frontendRoot/search?live_rulings_only=true").get())
 
       // Then
       response.status shouldBe OK
@@ -91,10 +91,10 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
     }
 
     // Note the UI actually calls search WITHOUT the include_in_progress flag when unchecked
-    "Filter Live Rulings Only when 'Include In Progress' is not present" in {
+    "Filter Live Rulings Only when not present" in {
       // Given
       givenAuthSuccess()
-      stubFor(get(urlMatching(s"/cases\\?.*min_decision_end=$dateRegex&status=COMPLETED"))
+      stubFor(get(urlMatching(s"/cases\\?${excluding("status=", "min_decision_end=")}"))
         .willReturn(aResponse()
           .withStatus(OK)
           .withBody(CasePayloads.gatewayCases))
@@ -108,7 +108,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       response.body should include("advanced_search-results_and_filters")
     }
 
-    "Allow All Cases when 'Include In Progress' = true" in {
+    "Allow All Cases when 'false'" in {
       // Given
       givenAuthSuccess()
       stubFor(get(urlMatching(s"/cases\\?${excluding("status=", "min_decision_end=")}"))
@@ -118,7 +118,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response = await(ws.url(s"$frontendRoot/search?include_in_progress=true").get())
+      val response = await(ws.url(s"$frontendRoot/search?live_rulings_only=false").get())
 
       // Then
       response.status shouldBe OK

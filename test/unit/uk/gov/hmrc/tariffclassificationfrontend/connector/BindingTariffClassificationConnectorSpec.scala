@@ -181,7 +181,7 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
       val search = Search(
         traderName = Some("trader"),
         commodityCode = Some("comm-code"),
-        liveDecisionOnly = Some(true)
+        liveRulingsOnly = Some(true)
       )
       await(connector.search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE))) shouldBe Seq(Cases.btiCaseExample)
     }
@@ -218,7 +218,7 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
       )
 
       val search = Search(
-        liveDecisionOnly = Some(false)
+        liveRulingsOnly = Some(false)
       )
       await(connector.search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE))) shouldBe Seq(Cases.btiCaseExample)
     }
@@ -231,7 +231,7 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
       )
 
       val search = Search(
-        liveDecisionOnly = None
+        liveRulingsOnly = None
       )
       await(connector.search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE))) shouldBe Seq(Cases.btiCaseExample)
     }
@@ -244,7 +244,7 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
       )
 
       val search = Search(
-        liveDecisionOnly = Some(true)
+        liveRulingsOnly = Some(true)
       )
       await(connector.search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE))) shouldBe Seq(Cases.btiCaseExample)
     }
