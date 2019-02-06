@@ -91,12 +91,22 @@ object ViewMatchers {
     }
   }
 
-  class ElementHasAttributeMatcher(key: String, value: String) extends Matcher[Element] {
+  class ElementHasAttributeValueMatcher(key: String, value: String) extends Matcher[Element] {
     override def apply(left: Element): MatchResult = {
       MatchResult(
         left.attr(key) == value,
         s"Element attribute {$key} had value {${left.attr(key)}}, expected {$value}",
         s"Element attribute {$key} had value {$value}"
+      )
+    }
+  }
+
+  class ElementHasAttributeMatcher(key: String) extends Matcher[Element] {
+    override def apply(left: Element): MatchResult = {
+      MatchResult(
+        left.hasAttr(key),
+        s"Element didnt have attribute {$key}",
+        s"Element had attribute {$key}"
       )
     }
   }
@@ -141,7 +151,8 @@ object ViewMatchers {
   def containText(text: String) = new ElementContainsTextMatcher(text)
   def containHtml(text: String) = new ElementContainsHtmlMatcher(text)
   def haveSize(size: Int) = new ElementsHasSizeMatcher(size)
-  def haveAttribute(key: String, value: String)  = new ElementHasAttributeMatcher(key, value)
+  def haveAttribute(key: String, value: String)  = new ElementHasAttributeValueMatcher(key, value)
+  def haveAttribute(key: String)  = new ElementHasAttributeMatcher(key)
   def haveTag(tag: String)  = new ElementTagMatcher(tag)
   def haveChildCount(count: Int) = new ElementHasChildCountMatcher(count)
   def haveChild(tag: String) = new ChildMatcherBuilder(tag)

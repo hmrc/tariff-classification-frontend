@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.connector
 
+import java.time.{Clock, Instant}
+
 import com.google.inject.Inject
 import javax.inject.Singleton
 import play.api.mvc.QueryStringBindable
@@ -70,10 +72,18 @@ class BindingTariffClassificationConnector @Inject()(configuration: AppConfig, c
     client.GET[Seq[Event]](url)
   }
 
-  def search(search: Search, sort: Sort)(implicit hc: HeaderCarrier, searchBinder: QueryStringBindable[Search], sortBinder: QueryStringBindable[Sort]): Future[Seq[Case]] = {
-    val searchString = if(search.isDefined) "&" + searchBinder.unbind("", search) else ""
-    val sortString = sortBinder.unbind("sort_by", sort)
-    val url = s"${configuration.bindingTariffClassificationUrl}/cases?$sortString$searchString"
+  def search(search: Search, sort: Sort)(implicit hc: HeaderCarrier, clock: Clock = Clock.systemUTC(), queryBinder: QueryStringBindable[String]): Future[Seq[Case]] = {
+    // Mandatory Params
+    val params = Seq(
+      queryBinder.unbind("sort_direction", sort.direction.toString),
+      queryBinder.unbind("sort_by", sort.field.toString)
+    )
+      // Optional Params
+      .++(search.traderName.map(queryBinder.unbind("trader_name", _)))
+      .++(search.commodityCode.map(queryBinder.unbind("commodity_code", _)))
+      .++(search.liveRulingsOnly.filter(identity).map(_ => queryBinder.unbind("min_decision_end", Instant.now(clock).toString) + "&" + queryBinder.unbind("status", CaseStatus.COMPLETED.toString)))
+
+    val url = s"${configuration.bindingTariffClassificationUrl}/cases?${params.mkString("&")}"
     client.GET[Seq[Case]](url)
   }
 

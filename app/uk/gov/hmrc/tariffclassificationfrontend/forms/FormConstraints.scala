@@ -35,6 +35,11 @@ object FormConstraints {
     case _: String => Invalid(s"Must be at least $length characters")
   })
 
+  def maxLength(length: Int): Constraint[String] = Constraint("constraints.maxlength")({
+    case s: String if s.length <= length => Valid
+    case _: String => Invalid(s"Must be $length characters or less")
+  })
+
   def emptyOr(c: Constraint[String]*): Seq[Constraint[String]] = c.map { c =>
     Constraint[String]("constraints.empty")({
       case s: String if s.isEmpty => Valid

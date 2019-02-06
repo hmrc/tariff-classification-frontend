@@ -16,29 +16,20 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.models
 
+import java.net.URLDecoder
+
 import uk.gov.hmrc.play.test.UnitSpec
 
 class SearchTest extends UnitSpec {
 
   private val populatedSearch = Search(
     traderName = Some("trader-name"),
-    commodityCode = Some("commodity-code")
+    commodityCode = Some("commodity-code"),
+    liveRulingsOnly = Some(true)
   )
-
-  private val populatedParams: Map[String, Seq[String]] = Map(
-    "trader_name" -> Seq("trader-name"),
-    "commodity_code" -> Seq("commodity-code")
-  )
-
-  private val emptyParams: Map[String, Seq[String]] = Map(
-    "trader_name" -> Seq(""),
-    "commodity_code" -> Seq("")
-  )
-
-  private val populatedQueryParam: String = "trader_name=trader-name&commodity_code=commodity-code"
 
   /**
-  * When we add fields to Search these tests shouldn't need changing, only the fields above.
+  * When we add fields to Search these tests shouldn't need changing, only the field above and vals in each test suite.
   **/
 
   "Search" should {
@@ -54,35 +45,52 @@ class SearchTest extends UnitSpec {
     }
   }
 
-  "Search Binder" should {
+  "Search Front End Binder" should {
+
+    val populatedParams: Map[String, Seq[String]] = Map(
+      "trader_name" -> Seq("trader-name"),
+      "commodity_code" -> Seq("commodity-code"),
+      "live_rulings_only" -> Seq("true")
+    )
+
+    val emptyParams: Map[String, Seq[String]] = Map(
+      "trader_name" -> Seq(""),
+      "commodity_code" -> Seq(""),
+      "live_rulings_only" -> Seq("")
+    )
+
+    val populatedQueryParam: String =
+      "trader_name=trader-name" +
+      "&commodity_code=commodity-code" +
+      "&live_rulings_only=true"
 
     "Unbind Unpopulated Search to Query String" in {
-      Search.bindable.unbind("", Search()) shouldBe ""
+      Search.binder.unbind("", Search()) shouldBe ""
     }
 
     "Unbind Populated Search to Query String" in {
-      Search.bindable.unbind("", populatedSearch) shouldBe populatedQueryParam
+      URLDecoder.decode(Search.binder.unbind("", populatedSearch), "UTF-8") shouldBe populatedQueryParam
     }
 
     "Bind empty query string" in {
-      Search.bindable.bind("", Map()) shouldBe Some(Right(Search()))
+      Search.binder.bind("", Map()) shouldBe Some(Right(Search()))
     }
 
     "Bind populated query string" in {
-      Search.bindable.bind("", populatedParams) shouldBe Some(Right(populatedSearch))
+      Search.binder.bind("", populatedParams) shouldBe Some(Right(populatedSearch))
     }
 
     "Bind populated query string with excessive spaces" in {
       val extraSpacesParams = populatedParams.mapValues(values => values.map(value => s" $value "))
-      Search.bindable.bind("", extraSpacesParams) shouldBe Some(Right(populatedSearch))
+      Search.binder.bind("", extraSpacesParams) shouldBe Some(Right(populatedSearch))
     }
 
     "Bind unpopulated query string" in {
-      Search.bindable.bind("", emptyParams) shouldBe Some(Right(Search()))
+      Search.binder.bind("", emptyParams) shouldBe Some(Right(Search()))
     }
 
     "Bind commodity_code containing spaces" in {
-      Search.bindable.bind("", Map(
+      Search.binder.bind("", Map(
         "commodity_code" -> Seq("1 2 3")
       )) shouldBe Some(Right(Search(commodityCode = Some("123"))))
     }
