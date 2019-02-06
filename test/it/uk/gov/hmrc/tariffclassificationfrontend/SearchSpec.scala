@@ -71,7 +71,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
     val dateRegex = "\\d{4}-\\d{2}-\\d{2}T\\d{2}%3A\\d{2}%3A\\d{2}(\\.\\d{3})\\\\?Z"
     def excluding(value: String*): String = s"(${value.map(v => s"(?!$v)").mkString}.)*"
 
-    // Note the UI actually calls search WITHOUT the include_in_progress flag when unchecked (see similar test below)
+    // Note the UI actually calls search WITHOUT the live_rulings_only flag when unchecked (see similar test below)
     "Filter Live Rulings Only when 'true'" in {
       // Given
       givenAuthSuccess()
@@ -90,7 +90,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       response.body should include("advanced_search-results_and_filters")
     }
 
-    // Note the UI actually calls search WITHOUT the include_in_progress flag when unchecked
+    // Note the UI actually calls search WITHOUT the live_rulings_only flag when unchecked
     "Filter Live Rulings Only when not present" in {
       // Given
       givenAuthSuccess()
