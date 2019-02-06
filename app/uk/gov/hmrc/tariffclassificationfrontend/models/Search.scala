@@ -16,8 +16,6 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.models
 
-import java.time.{Clock, Instant}
-
 import play.api.mvc.QueryStringBindable
 
 import scala.util.Try
@@ -60,34 +58,6 @@ object Search {
         search.traderName.map(stringBinder.unbind(traderNameKey, _)),
         search.commodityCode.map(stringBinder.unbind(commodityCodeKey, _)),
         search.includeInProgress.map(v => stringBinder.unbind(includeInProgressKey, s"$v"))
-      )
-      bindings.filter(_.isDefined).map(_.get).mkString("&")
-    }
-  }
-
-  def bindingTariffClassificationBindable(implicit clock: Clock, stringBinder: QueryStringBindable[String]): QueryStringBindable[Search] = new QueryStringBindable[Search] {
-
-    private val traderNameKey = "trader_name"
-    private val commodityCodeKey = "commodity_code"
-    private val minDecisionEndKey = "min_decision_end"
-
-    private def bindInstant(key: String): Option[Instant] = Try(Instant.parse(key)).toOption
-
-    override def bind(key: String, params: Map[String, Seq[String]]): Option[Either[String, Search]] = {
-      def param(name: String): Option[String] = stringBinder.bind(name, params).filter(_.isRight).map(_.right.get.trim).filter(_.nonEmpty)
-
-      Some(Right(Search(
-        traderName = param(traderNameKey),
-        commodityCode = param(commodityCodeKey).map(_.replaceAll(" ", "")),
-        includeInProgress = param(minDecisionEndKey).map(_ => true)
-      )))
-    }
-
-    override def unbind(key: String, search: Search): String = {
-      val bindings: Seq[Option[String]] = Seq(
-        search.traderName.map(stringBinder.unbind(traderNameKey, _)),
-        search.commodityCode.map(stringBinder.unbind(commodityCodeKey, _)),
-        search.includeInProgress.filter(v => v).map(_ => stringBinder.unbind(minDecisionEndKey, Instant.now(clock).toString))
       )
       bindings.filter(_.isDefined).map(_.get).mkString("&")
     }
