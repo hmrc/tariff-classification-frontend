@@ -153,7 +153,7 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
 
     def encode(value: String): String = URLEncoder.encode(value, "UTF-8")
 
-    "get empty cases" in {
+    "handle no filters" in {
       stubFor(get(urlEqualTo("/cases?sort_direction=desc&sort_by=commodity-code"))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
@@ -163,8 +163,15 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
       await(connector.search(Search(), Sort())) shouldBe Seq()
     }
 
-    "get cases" in {
-      stubFor(get(urlEqualTo(s"/cases?sort_direction=asc&sort_by=commodity-code&trader_name=trader&commodity_code=comm-code&min_decision_end=${encode("2019-01-01T00:00:00Z")}&status=COMPLETED"))
+    "filter by all" in {
+      val url = s"/cases" +
+        s"?sort_direction=asc" +
+        s"&sort_by=commodity-code" +
+        s"&trader_name=trader" +
+        s"&commodity_code=comm-code" +
+        s"&min_decision_end=${encode("2019-01-01T00:00:00Z")}"
+
+      stubFor(get(urlEqualTo(url))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
           .withBody(CasePayloads.gatewayCases))
@@ -174,6 +181,56 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
         traderName = Some("trader"),
         commodityCode = Some("comm-code"),
         includeInProgress = Some(true)
+      )
+      await(connector.search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE))) shouldBe Seq(Cases.btiCaseExample)
+    }
+
+    "filter by 'trader name'" in {
+      stubFor(get(urlEqualTo(s"/cases?sort_direction=asc&sort_by=commodity-code&trader_name=trader"))
+        .willReturn(aResponse()
+          .withStatus(HttpStatus.SC_OK)
+          .withBody(CasePayloads.gatewayCases))
+      )
+
+      val search = Search(traderName = Some("trader"))
+      await(connector.search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE))) shouldBe Seq(Cases.btiCaseExample)
+    }
+
+    "filter by 'commodity code'" in {
+      stubFor(get(urlEqualTo(s"/cases?sort_direction=asc&sort_by=commodity-code&commodity_code=comm-code"))
+        .willReturn(aResponse()
+          .withStatus(HttpStatus.SC_OK)
+          .withBody(CasePayloads.gatewayCases))
+      )
+
+      val search = Search(
+        commodityCode = Some("comm-code")
+      )
+      await(connector.search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE))) shouldBe Seq(Cases.btiCaseExample)
+    }
+
+    "get cases filtering 'include in progress'" in {
+      stubFor(get(urlEqualTo(s"/cases?sort_direction=asc&sort_by=commodity-code&min_decision_end=${encode("2019-01-01T00:00:00Z")}"))
+        .willReturn(aResponse()
+          .withStatus(HttpStatus.SC_OK)
+          .withBody(CasePayloads.gatewayCases))
+      )
+
+      val search = Search(
+        includeInProgress = Some(true)
+      )
+      await(connector.search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE))) shouldBe Seq(Cases.btiCaseExample)
+    }
+
+    "get cases 'include in progress' false" in {
+      stubFor(get(urlEqualTo(s"/cases?sort_direction=asc&sort_by=commodity-code&status=COMPLETED"))
+        .willReturn(aResponse()
+          .withStatus(HttpStatus.SC_OK)
+          .withBody(CasePayloads.gatewayCases))
+      )
+
+      val search = Search(
+        includeInProgress = Some(false)
       )
       await(connector.search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE))) shouldBe Seq(Cases.btiCaseExample)
     }

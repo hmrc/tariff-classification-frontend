@@ -65,34 +65,40 @@ class SearchTest extends UnitSpec {
       "&include_in_progress=true"
 
     "Unbind Unpopulated Search to Query String" in {
-      Search.frontEndBindable.unbind("", Search()) shouldBe ""
+      Search.binder.unbind("", Search()) shouldBe ""
     }
 
     "Unbind Populated Search to Query String" in {
-      URLDecoder.decode(Search.frontEndBindable.unbind("", populatedSearch), "UTF-8") shouldBe populatedQueryParam
+      URLDecoder.decode(Search.binder.unbind("", populatedSearch), "UTF-8") shouldBe populatedQueryParam
     }
 
     "Bind empty query string" in {
-      Search.frontEndBindable.bind("", Map()) shouldBe Some(Right(Search()))
+      Search.binder.bind("", Map()) shouldBe Some(Right(Search()))
     }
 
     "Bind populated query string" in {
-      Search.frontEndBindable.bind("", populatedParams) shouldBe Some(Right(populatedSearch))
+      Search.binder.bind("", populatedParams) shouldBe Some(Right(populatedSearch))
     }
 
     "Bind populated query string with excessive spaces" in {
       val extraSpacesParams = populatedParams.mapValues(values => values.map(value => s" $value "))
-      Search.frontEndBindable.bind("", extraSpacesParams) shouldBe Some(Right(populatedSearch))
+      Search.binder.bind("", extraSpacesParams) shouldBe Some(Right(populatedSearch))
     }
 
     "Bind unpopulated query string" in {
-      Search.frontEndBindable.bind("", emptyParams) shouldBe Some(Right(Search()))
+      Search.binder.bind("", emptyParams) shouldBe Some(Right(Search(includeInProgress = Some(false))))
     }
 
     "Bind commodity_code containing spaces" in {
-      Search.frontEndBindable.bind("", Map(
+      Search.binder.bind("", Map(
         "commodity_code" -> Seq("1 2 3")
       )) shouldBe Some(Right(Search(commodityCode = Some("123"))))
+    }
+
+    "Bind include_in_progress with default" in {
+      Search.binder.bind("", Map(
+        "include_in_progress" -> Seq("")
+      )) shouldBe Some(Right(Search(includeInProgress = Some(false))))
     }
 
   }

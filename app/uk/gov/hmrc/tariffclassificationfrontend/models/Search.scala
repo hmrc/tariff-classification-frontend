@@ -35,7 +35,7 @@ case class Search
 
 object Search {
 
-  implicit def frontEndBindable(implicit stringBinder: QueryStringBindable[String]): QueryStringBindable[Search] = new QueryStringBindable[Search] {
+  implicit def binder(implicit stringBinder: QueryStringBindable[String]): QueryStringBindable[Search] = new QueryStringBindable[Search] {
 
     private val traderNameKey = "trader_name"
     private val commodityCodeKey = "commodity_code"
@@ -45,11 +45,15 @@ object Search {
 
     override def bind(key: String, params: Map[String, Seq[String]]): Option[Either[String, Search]] = {
       def param(name: String): Option[String] = stringBinder.bind(name, params).filter(_.isRight).map(_.right.get.trim).filter(_.nonEmpty)
+      def paramWithDefault(name: String, default: String): Option[String] = stringBinder.bind(name, params).filter(_.isRight).map(_.right.get.trim).map {
+        case "" => default
+        case s => s
+      }
 
       Some(Right(Search(
         traderName = param(traderNameKey),
         commodityCode = param(commodityCodeKey).map(_.replaceAll(" ", "")),
-        includeInProgress = param(includeInProgressKey).flatMap(bindBoolean)
+        includeInProgress = paramWithDefault(includeInProgressKey, "false").flatMap(bindBoolean)
       )))
     }
 
