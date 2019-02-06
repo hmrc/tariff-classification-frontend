@@ -15,7 +15,7 @@ object AppDependencies {
     "com.github.tomakehurst"  %  "wiremock"                 % "2.21.0"        % scope,
     "com.typesafe.play"       %% "play-test"                % current         % scope,
     "org.assertj"             %  "assertj-core"             % "3.11.1"        % scope,
-    "org.mockito"             %  "mockito-core"             % "2.23.4"        % scope,
+    "org.mockito"             %  "mockito-core"             % "2.24.0"        % scope,
     "org.jsoup"               %  "jsoup"                    % "1.11.3"        % scope,
     "org.pegdown"             %  "pegdown"                  % "1.6.0"         % scope,
     "org.scalatest"           %% "scalatest"                % "3.0.4"         % scope,
