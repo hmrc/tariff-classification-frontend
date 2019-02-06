@@ -76,7 +76,7 @@ class SearchControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSui
 
     "render results if not empty" in {
       // Given
-      val search = Search(traderName = Some("trader"))
+      val search = Search(liveDecisionOnly = Some(false))
 
       given(casesService.search(refEq(search), refEq(Sort()))(any[HeaderCarrier])) willReturn Future.successful(Seq.empty)
 
@@ -92,6 +92,18 @@ class SearchControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSui
       charset(result) shouldBe Some("utf-8")
       contentAsString(result) should include("advanced_search-heading")
       contentAsString(result) should include("advanced_search_results")
+    }
+
+    "apply default 'liveDecisionOnly'" in {
+      // Given
+      val search = Search(liveDecisionOnly = None)
+      val searchWithDefaults = Search(liveDecisionOnly = Some(true))
+
+      given(casesService.search(refEq(searchWithDefaults), refEq(Sort()))(any[HeaderCarrier])) willReturn Future.successful(Seq.empty)
+
+      // When
+      val request = fakeRequest.withFormUrlEncodedBody("commodity_code" -> "00")
+      await(controller.search(search = search)(request))
     }
 
     "render errors if form invalid" in {
