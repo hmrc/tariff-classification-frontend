@@ -110,7 +110,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
     "Allow All Cases when 'Include In Progress' = true" in {
       // Given
       givenAuthSuccess()
-      stubFor(get(urlMatching(s"/cases\\?((?!status=COMPLETED).)*"))
+      stubFor(get(urlMatching(s"/cases\\?((?!status=)(?!min_decision_end=).)*"))
         .willReturn(aResponse()
           .withStatus(OK)
           .withBody(CasePayloads.gatewayCases))
