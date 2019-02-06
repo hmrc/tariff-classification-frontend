@@ -73,8 +73,16 @@ class SortTest extends UnitSpec {
       Sort.bindable.bind("", Map()) shouldBe Some(Right(Sort()))
     }
 
-    "Bind populated query string" in {
+    "Bind populated query string with a sort_direction and sort_by" in {
       Sort.bindable.bind("", Map("sort_direction" -> Seq("asc"), "sort_by" -> Seq("commodity-code"))) shouldBe Some(Right(sort))
+    }
+
+    "Bind populated query string with only a sort_by" in {
+      Sort.bindable.bind("", Map("sort_by" -> Seq("commodity-code"))) shouldBe Some(Right(Sort(field = SortField.COMMODITY_CODE)))
+    }
+
+    "Bind populated query string with only a sort_direction" in {
+      Sort.bindable.bind("", Map("sort_direction" -> Seq("asc"))) shouldBe Some(Right(Sort(direction = SortDirection.ASCENDING)))
     }
 
     "Bind invalid query string" in {
