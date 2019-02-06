@@ -17,45 +17,47 @@
 package uk.gov.hmrc.tariffclassificationfrontend.views.forms.components
 
 import play.api.data.Form
-import play.api.data.Forms.{mapping, text}
+import play.api.data.Forms.{mapping, number}
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewSpec
-import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.input_checkbox
+import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.input_number
 
-class InputCheckboxViewSpec extends ViewSpec {
+class InputNumberViewSpec extends ViewSpec {
 
   "Input Checkbox" should {
-    case class FormData(text: String)
+    case class FormData(value: Int)
     val form = Form(
       mapping(
-        "field" -> text
+        "field" -> number
       )(FormData.apply)(FormData.unapply)
-    )
+    ).fill(FormData(5))
 
     "Render" in {
       // When
-      val doc = view(input_checkbox(form("field"), "Label"))
+      val doc = view(input_number(form("field"), "Label"))
 
       // Then
       doc should containElementWithTag("input")
       doc should containElementWithID("field")
-      doc.getElementById("field") should haveAttribute("type", "checkbox")
+      doc.getElementById("field") should haveAttribute("type", "number")
       doc.getElementById("field") should haveAttribute("name", "field")
-      doc.getElementById("field") should haveAttribute("value", "true")
-      doc.getElementById("field") shouldNot haveAttribute("onChange", "this.form.submit()")
+      doc.getElementById("field") should haveAttribute("value", "5")
+      doc.getElementById("field") shouldNot haveAttribute("minLength")
+      doc.getElementById("field") shouldNot haveAttribute("maxLength")
     }
 
     "Render with Optional Fields" in {
       // When
-      val doc = view(input_checkbox(form("field"), "Label", value = false, submitOnChange = true))
+      val doc = view(input_number(form("field"), "Label", maxLength = Some(10), minLength = Some(1)))
 
       // Then
       doc should containElementWithTag("input")
       doc should containElementWithID("field")
-      doc.getElementById("field") should haveAttribute("type", "checkbox")
+      doc.getElementById("field") should haveAttribute("type", "number")
       doc.getElementById("field") should haveAttribute("name", "field")
-      doc.getElementById("field") should haveAttribute("value", "false")
-      doc.getElementById("field") should haveAttribute("onChange", "this.form.submit()")
+      doc.getElementById("field") should haveAttribute("value", "5")
+      doc.getElementById("field") should haveAttribute("minLength", "1")
+      doc.getElementById("field") should haveAttribute("maxLength", "10")
     }
   }
 
