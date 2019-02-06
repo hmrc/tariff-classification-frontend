@@ -37,7 +37,9 @@
 
   @input_number(
    field = form("commodity_code"),
-   label = "Commodity Code"
+   label = "Commodity Code",
+   maxLength = Some(22),
+   minLength = Some(2)
   )
 
   <button id="advanced_search-search_button" class="button" type="submit">Search</button>
