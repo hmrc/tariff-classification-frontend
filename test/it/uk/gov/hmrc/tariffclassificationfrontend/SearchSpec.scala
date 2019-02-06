@@ -64,7 +64,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       // Given
       givenAuthSuccess()
       val dateRegex = "\\d{4}-\\d{2}-\\d{2}T\\d{2}%3A\\d{2}%3A\\d{2}(\\.\\d{3})\\\\?Z"
-      stubFor(get(urlMatching(s"/cases?.*min_decision_end=$dateRegex"))
+      stubFor(get(urlMatching(s"/cases?.*min_decision_end=$dateRegex&status=COMPLETED"))
         .willReturn(aResponse()
           .withStatus(OK)
           .withBody(CasePayloads.gatewayCases))
