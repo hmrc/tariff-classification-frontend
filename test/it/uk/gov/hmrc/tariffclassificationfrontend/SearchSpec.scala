@@ -60,6 +60,24 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       response.body should include("advanced_search-results_and_filters")
     }
 
+    "Filter by 'In Progress'" in {
+      // Given
+      givenAuthSuccess()
+      val dateRegex = "\\d{4}-\\d{2}-\\d{2}T\\d{2}%3A\\d{2}%3A\\d{2}(\\.\\d{3})\\\\?Z"
+      stubFor(get(urlMatching(s"/cases?.*min_decision_end=$dateRegex"))
+        .willReturn(aResponse()
+          .withStatus(OK)
+          .withBody(CasePayloads.gatewayCases))
+      )
+
+      // When
+      val response = await(ws.url(s"$frontendRoot/search?include_in_progress=true").get())
+
+      // Then
+      response.status shouldBe OK
+      response.body should include("advanced_search-results_and_filters")
+    }
+
     "Sort by default" in {
       // Given
       givenAuthSuccess()
