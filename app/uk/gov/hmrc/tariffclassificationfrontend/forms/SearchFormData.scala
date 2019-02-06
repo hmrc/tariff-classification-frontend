@@ -19,7 +19,6 @@ package uk.gov.hmrc.tariffclassificationfrontend.forms
 import play.api.data.Form
 import play.api.data.Forms._
 import uk.gov.hmrc.tariffclassificationfrontend.forms.FormConstraints._
-import uk.gov.hmrc.tariffclassificationfrontend.models.Search
 
 case class SearchFormData
 (
@@ -37,14 +36,5 @@ object SearchForm {
       "include_in_progress" -> optional(boolean)
     )(SearchFormData.apply)(SearchFormData.unapply)
   )
-
-  def fill(search: Search): Form[SearchFormData] = {
-    SearchForm.form.fill(
-      SearchFormData(
-        search.traderName,
-        search.commodityCode
-      )
-    )
-  }
 
 }
