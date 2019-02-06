@@ -69,6 +69,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
 
   "Search by 'Include In Progress'" should {
     val dateRegex = "\\d{4}-\\d{2}-\\d{2}T\\d{2}%3A\\d{2}%3A\\d{2}(\\.\\d{3})\\\\?Z"
+    def excluding(value: String*): String = s"(${value.map(v => s"(?!$v)").mkString}.)*"
 
     // Note the UI actually calls search WITHOUT the include_in_progress flag when unchecked (see similar test below)
     "Filter Live Rulings Only when 'Include In Progress' = false" in {
@@ -110,7 +111,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
     "Allow All Cases when 'Include In Progress' = true" in {
       // Given
       givenAuthSuccess()
-      stubFor(get(urlMatching(s"/cases\\?((?!status=)(?!min_decision_end=).)*"))
+      stubFor(get(urlMatching(s"/cases\\?${excluding("status=", "min_decision_end=")}"))
         .willReturn(aResponse()
           .withStatus(OK)
           .withBody(CasePayloads.gatewayCases))
