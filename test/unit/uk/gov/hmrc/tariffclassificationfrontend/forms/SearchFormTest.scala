@@ -47,6 +47,15 @@ class SearchFormTest extends UnitSpec {
       ).errors shouldBe Seq(FormError("commodity_code", List("Must be at least 2 characters")))
     }
 
+    "disallow long commodity code" in {
+      SearchForm.form.bindFromRequest(
+        Map(
+          "commodity_code" -> Seq("0"*23),
+          "trader_name" -> Seq("")
+        )
+      ).errors shouldBe Seq(FormError("commodity_code", List("Must be 22 characters or less")))
+    }
+
     "disallow non-numerical commodity code" in {
       SearchForm.form.bindFromRequest(
         Map(
