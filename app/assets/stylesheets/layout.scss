@@ -93,6 +93,14 @@
   width: 15%;
 }
 
+table thead th {
+  vertical-align: top;
+}
+
+table tbody td, table tbody th  {
+  vertical-align: middle;
+}
+
 
 #global-header.with-proposition .header-wrapper .header-global {
   width: 100%;
