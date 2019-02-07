@@ -67,6 +67,26 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
     }
   }
 
+  "Search by 'Keyword'" should {
+
+    "Filter by 'Keyword'" in {
+      // Given
+      givenAuthSuccess()
+      stubFor(get(urlMatching("/cases\\?.*keyword=k1&keyword=k2.*"))
+        .willReturn(aResponse()
+          .withStatus(OK)
+          .withBody(CasePayloads.gatewayCases))
+      )
+
+      // When
+      val response = await(ws.url(s"$frontendRoot/search?keyword=k1&keyword=k2").get())
+
+      // Then
+      response.status shouldBe OK
+      response.body should include("advanced_search-results_and_filters")
+    }
+  }
+
   "Search by 'Live Rulings Only'" should {
     val dateRegex = "\\d{4}-\\d{2}-\\d{2}T\\d{2}%3A\\d{2}%3A\\d{2}(\\.\\d{3})\\\\?Z"
     def excluding(value: String*): String = s"(${value.map(v => s"(?!$v)").mkString}.)*"
