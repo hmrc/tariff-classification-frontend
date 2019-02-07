@@ -16,13 +16,19 @@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.models.Case
+@import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes
 @(results: Seq[Case])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 <div id="advanced_search_results">
   <table>
    <thead>
     <tr>
-     <th>Trader & description</th>
+     <th>Reference</th>
+     <th>Trader</th>
+     <th>Ruling start date</th>
+     <th>Ruling expiry date</th>
+     <th>Status</th>
      <th>Commodity code</th>
     </tr>
    </thead>
@@ -31,15 +37,17 @@
      <tr id="advanced_search_results-row-@index">
 
       <td>
-       <p id="advanced_search_results-row-@{index}-business_name">@c.application.holder.businessName</p>
-       <p id="advanced_search_results-row-@{index}-description">
+       <a id="advanced_search_results-row-@{index}-reference" href="@routes.CaseController.trader(c.reference)">@c.reference</a>
+      </td>
 
-        @if(c.application.asBTI.goodDescription.length > 50) {
-         @c.application.asBTI.goodDescription.substring(0,50)...
-        }else{
-         @c.application.asBTI.goodDescription
-        }
-       </p>
+      <td id="advanced_search_results-row-@{index}-business_name">@c.application.holder.businessName</td>
+
+      <td id="advanced_search_results-row-@{index}-ruling_start">@c.decision.flatMap(_.effectiveStartDate).map(Dates.format).getOrElse("")</td>
+
+      <td id="advanced_search_results-row-@{index}-ruling_end">@c.decision.flatMap(_.effectiveEndDate).map(Dates.format).getOrElse("")</td>
+
+      <td>
+       <span id="advanced_search_results-row-@{index}-status" class="phase-tag bg-blue">@c.status</span>
       </td>
 
       <td id="advanced_search_results-row-@{index}-decision_code">
