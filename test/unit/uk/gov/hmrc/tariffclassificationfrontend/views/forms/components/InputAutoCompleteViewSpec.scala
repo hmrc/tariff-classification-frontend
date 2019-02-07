@@ -20,7 +20,7 @@ import play.api.data.Form
 import play.api.data.Forms.{mapping, text}
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewSpec
-import uk.gov.hmrc.tariffclassificationfrontend.views.html.components.input_autoComplete
+import uk.gov.hmrc.tariffclassificationfrontend.views.html.components.input_auto_complete
 
 class InputAutoCompleteViewSpec extends ViewSpec {
 
@@ -34,7 +34,7 @@ class InputAutoCompleteViewSpec extends ViewSpec {
 
     "Render" in {
       // When
-      val doc = view(input_autoComplete(field = form("field"), label =  "Label", autoCompleteOptions = Seq.empty))
+      val doc = view(input_auto_complete(field = form("field"), label =  "Label", autoCompleteOptions = Seq.empty))
 
       // Then
       doc should containElementWithTag("input")

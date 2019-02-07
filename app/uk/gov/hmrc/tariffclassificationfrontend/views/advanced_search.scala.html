@@ -22,7 +22,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.{input_checkbox, input_number, input_text}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.advanced_search_results
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.components.input_autoComplete
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.components.input_auto_complete
 @(form: Form[SearchFormData], results: Option[Seq[Case]] = None, keywords: Seq[String])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None) {
@@ -47,7 +47,7 @@
   <h2 class="heading-medium">Add keyword to search</h2>
   <div>
    <div class="display-inline w-50">
-    @input_autoComplete(
+    @input_auto_complete(
      field = form("keyword[0]"),
      label = "",
      formControlClass = Some("w-100"),
