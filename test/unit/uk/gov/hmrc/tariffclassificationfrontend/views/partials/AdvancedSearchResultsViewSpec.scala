@@ -16,6 +16,10 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.views.partials
 
+import java.time.{Instant, LocalDate, ZoneOffset}
+
+import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes
+import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewSpec
 import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.advanced_search_results
@@ -36,9 +40,10 @@ class AdvancedSearchResultsViewSpec extends ViewSpec {
     "Render Results with optional fields empty" in {
       // Given
       val c = aCase(
+        withReference("reference"),
+        withStatus(CaseStatus.OPEN),
         withoutDecision(),
-        withHolder(businessName = "business-name"),
-        withBTIDetails(goodDescription = "good-description")
+        withHolder(businessName = "business-name")
       )
 
       // When
@@ -47,10 +52,19 @@ class AdvancedSearchResultsViewSpec extends ViewSpec {
       // Then
       doc shouldNot containElementWithID("advanced_search_results-empty")
       doc should containElementWithID("advanced_search_results-row-0")
+      doc should containElementWithID("advanced_search_results-row-0-reference")
+      doc.getElementById("advanced_search_results-row-0-reference") should containText("reference")
+      doc.getElementById("advanced_search_results-row-0-reference") should haveTag("a")
+      doc.getElementById("advanced_search_results-row-0-reference") should haveAttribute("href", routes.CaseController.trader("reference").url)
       doc should containElementWithID("advanced_search_results-row-0-business_name")
       doc.getElementById("advanced_search_results-row-0-business_name") should containText("business-name")
-      doc should containElementWithID("advanced_search_results-row-0-description")
-      doc.getElementById("advanced_search_results-row-0-description") should containText("good-description")
+      doc should containElementWithID("advanced_search_results-row-0-status")
+      doc.getElementById("advanced_search_results-row-0-status") should containText("OPEN")
+
+      doc should containElementWithID("advanced_search_results-row-0-ruling_start")
+      doc.getElementById("advanced_search_results-row-0-ruling_start").text shouldBe empty
+      doc should containElementWithID("advanced_search_results-row-0-ruling_end")
+      doc.getElementById("advanced_search_results-row-0-ruling_end").text shouldBe empty
       doc should containElementWithID("advanced_search_results-row-0-decision_code")
       doc.getElementById("advanced_search_results-row-0-decision_code").text shouldBe empty
     }
@@ -58,9 +72,10 @@ class AdvancedSearchResultsViewSpec extends ViewSpec {
     "Render Results with optional fields present" in {
       // Given
       val c = aCase(
-        withDecision(bindingCommodityCode = "commodity-code"),
-        withHolder(businessName = "business-name"),
-        withBTIDetails(goodDescription = "good-description")
+        withReference("reference"),
+        withStatus(CaseStatus.OPEN),
+        withDecision(bindingCommodityCode = "commodity-code", effectiveStartDate = Some(instant("2019-01-01")), effectiveEndDate = Some(instant("2019-02-01"))),
+        withHolder(businessName = "business-name")
       )
 
       // When
@@ -69,28 +84,24 @@ class AdvancedSearchResultsViewSpec extends ViewSpec {
       // Then
       doc shouldNot containElementWithID("advanced_search_results-empty")
       doc should containElementWithID("advanced_search_results-row-0")
+      doc should containElementWithID("advanced_search_results-row-0-reference")
+      doc.getElementById("advanced_search_results-row-0-reference") should containText("reference")
+      doc.getElementById("advanced_search_results-row-0-reference") should haveTag("a")
+      doc.getElementById("advanced_search_results-row-0-reference") should haveAttribute("href", routes.CaseController.trader("reference").url)
       doc should containElementWithID("advanced_search_results-row-0-business_name")
       doc.getElementById("advanced_search_results-row-0-business_name") should containText("business-name")
-      doc should containElementWithID("advanced_search_results-row-0-description")
-      doc.getElementById("advanced_search_results-row-0-description") should containText("good-description")
+      doc should containElementWithID("advanced_search_results-row-0-status")
+      doc.getElementById("advanced_search_results-row-0-status") should containText("OPEN")
+
+      doc should containElementWithID("advanced_search_results-row-0-ruling_start")
+      doc.getElementById("advanced_search_results-row-0-ruling_start") should containText("01 Jan 2019")
+      doc should containElementWithID("advanced_search_results-row-0-ruling_end")
+      doc.getElementById("advanced_search_results-row-0-ruling_end") should containText("01 Feb 2019")
       doc should containElementWithID("advanced_search_results-row-0-decision_code")
       doc.getElementById("advanced_search_results-row-0-decision_code") should containText("commodity-code")
     }
 
-    "Trim long goods description" in {
-      // Given
-      val c = aCase(
-        withBTIDetails(goodDescription = "x" * 100)
-      )
-
-      // When
-      val doc = view(advanced_search_results(Seq(c)))
-
-      // Then
-      doc should containElementWithID("advanced_search_results-row-0-description")
-      doc.getElementById("advanced_search_results-row-0-description") should containText("x" * 50 + "...")
-      doc.getElementById("advanced_search_results-row-0-description").text.length shouldBe 53
-    }
+    def instant(date: String): Instant = LocalDate.parse(date).atStartOfDay().toInstant(ZoneOffset.UTC)
   }
 
 }
