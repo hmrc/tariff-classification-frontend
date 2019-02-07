@@ -2,7 +2,12 @@ var advancedSearch = {
 
     addKeyword: function() {
         var keywordInput = document.getElementById("keyword_0");
-        if(keywordInput.value && keywordInput.value.length > 0) {
+        var value = keywordInput.value.toUpperCase();
+        var selectedAlready = advancedSearch.isSelectedKeyword(value);
+
+        if(selectedAlready) {
+            keywordInput.value = "";
+        } else if(value && value.length > 0) {
             var tbody = document.getElementById("advanced_search-keywords-table_body");
             var tr_index = tbody.childElementCount + 1;
 
@@ -10,10 +15,10 @@ var advancedSearch = {
             td_keyword_input.setAttribute("type", "hidden");
             td_keyword_input.setAttribute("name", "keyword[" + tr_index + "]");
             td_keyword_input.setAttribute("id", "keyword_" + tr_index);
-            td_keyword_input.setAttribute("value", keywordInput.value);
+            td_keyword_input.setAttribute("value", value);
 
             var td_keyword_span = document.createElement("span");
-            td_keyword_span.textContent = keywordInput.value;
+            td_keyword_span.textContent = value;
 
             var td_keyword = document.createElement("td");
             td_keyword.appendChild(td_keyword_span);
@@ -44,5 +49,15 @@ var advancedSearch = {
         var row = document.getElementById("advanced_search-keywords-row-" + index);
         tbody.removeChild(row);
         document.getElementById("search_form").submit();
+    },
+    isSelectedKeyword: function(value) {
+        var tbody = document.getElementById("advanced_search-keywords-table_body");
+        var inputs = tbody.getElementsByTagName("input");
+        for(var i=0; i<inputs.length; i++) {
+            if(inputs.item(i).value === value) {
+                return true;
+            }
+        }
+        return false;
     }
 };

@@ -57,7 +57,7 @@
 
   <table id="advanced_search-keywords-table" class="mb-30">
    <tbody id="advanced_search-keywords-table_body">
-    @for(index: Int <- RepeatedMapping.indexes("keyword", form.data)) {
+    @for(index: Int <- RepeatedMapping.indexes("keyword", form.data).filter(_ > 0)) {
      @* Make sure any content changes in this table are also reflected in search-keywords.js *@
      <tr id="advanced_search-keywords-row-@{index}">
       <td>

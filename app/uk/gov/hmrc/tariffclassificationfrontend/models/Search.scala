@@ -39,7 +39,11 @@ object Search {
   implicit def binder(implicit stringBinder: QueryStringBindable[String]): QueryStringBindable[Search] = new QueryStringBindable[Search] {
 
     override def bind(string: String, requestParams: Map[String, Seq[String]]): Option[Either[String, Search]] = {
-      val filteredParams = requestParams.mapValues(_.map(_.trim).filter(_.nonEmpty))
+      val filteredParams: Map[String, Seq[String]] = requestParams
+        .mapValues(_.map(_.trim).filter(_.nonEmpty))
+        .filter {
+          case (_, value) => value.nonEmpty
+        }
       val form: Form[Search] = SearchForm.formWithoutValidation.bindFromRequest(filteredParams)
       if(form.hasErrors) {
         Some(Right(Search()))

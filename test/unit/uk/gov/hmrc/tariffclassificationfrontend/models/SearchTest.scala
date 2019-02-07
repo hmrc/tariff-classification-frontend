@@ -91,6 +91,10 @@ class SearchTest extends UnitSpec {
       Search.binder.bind("", emptyParams) shouldBe Some(Right(Search()))
     }
 
+    "Bind query string with errors" in {
+      Search.binder.bind("", Map("live_rulings_only" -> Seq("abc"))) shouldBe Some(Right(Search()))
+    }
+
   }
 
 }
