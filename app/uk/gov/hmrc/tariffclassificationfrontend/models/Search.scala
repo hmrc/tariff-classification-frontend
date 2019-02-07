@@ -16,9 +16,9 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.models
 
+import play.api.data.Form
 import play.api.mvc.QueryStringBindable
-
-import scala.util.Try
+import uk.gov.hmrc.tariffclassificationfrontend.forms.SearchForm
 
 case class Search
 (
@@ -38,41 +38,21 @@ object Search {
 
   implicit def binder(implicit stringBinder: QueryStringBindable[String]): QueryStringBindable[Search] = new QueryStringBindable[Search] {
 
-    private val traderNameKey = "trader_name"
-    private val commodityCodeKey = "commodity_code"
-    private val liveRulingsOnlyKey = "live_rulings_only"
-    private val keywordsKey = "keyword"
-
-    private def bindBoolean: String => Option[Boolean] = v => Try(v.toBoolean).toOption
-
-    override def bind(key: String, requestParams: Map[String, Seq[String]]): Option[Either[String, Search]] = {
-      def params(name: String): Option[Set[String]] = requestParams
-        .get(name)
-        .map(
-          _.map(_.trim())
-            .toSet
-            .filter(_.nonEmpty))
-        .filter(_.nonEmpty)
-
-      def param(name: String): Option[String] = params(name).map(_.head)
-
-
-      Some(Right(Search(
-        traderName = param(traderNameKey),
-        commodityCode = param(commodityCodeKey).map(_.replaceAll(" ", "")),
-        liveRulingsOnly = param(liveRulingsOnlyKey).flatMap(bindBoolean),
-        keywords = params(keywordsKey)
-      )))
+    override def bind(string: String, requestParams: Map[String, Seq[String]]): Option[Either[String, Search]] = {
+      val filteredParams = requestParams.mapValues(_.map(_.trim).filter(_.nonEmpty))
+      val form: Form[Search] = SearchForm.formWithoutValidation.bindFromRequest(filteredParams)
+      if(form.hasErrors) {
+        Some(Right(Search()))
+      } else {
+        Some(Right(form.get))
+      }
     }
 
-    override def unbind(key: String, search: Search): String = {
-      val bindings: Seq[Option[String]] = Seq(
-        search.traderName.map(stringBinder.unbind(traderNameKey, _)),
-        search.commodityCode.map(stringBinder.unbind(commodityCodeKey, _)),
-        search.liveRulingsOnly.map(v => stringBinder.unbind(liveRulingsOnlyKey, s"$v")),
-        search.keywords.map(_.map(s => stringBinder.unbind(keywordsKey, s)).mkString("&"))
-      )
-      bindings.filter(_.isDefined).map(_.get).mkString("&")
+    override def unbind(string: String, search: Search): String = {
+      val data: Map[String, String] = SearchForm.formWithoutValidation.fill(search).data
+      data.toSeq.map {
+        case (key, value) => stringBinder.unbind(key, value)
+      }.mkString("&")
     }
   }
 }

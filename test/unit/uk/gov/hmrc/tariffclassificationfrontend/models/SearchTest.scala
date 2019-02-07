@@ -46,28 +46,25 @@ class SearchTest extends UnitSpec {
     }
   }
 
-  "Search Front End Binder" should {
+  "Search Binder" should {
 
     val populatedParams: Map[String, Seq[String]] = Map(
       "trader_name" -> Seq("trader-name"),
       "commodity_code" -> Seq("commodity-code"),
       "live_rulings_only" -> Seq("true"),
-      "keyword" -> Seq("K1", "K2")
+      "keyword[0]" -> Seq("K1"),
+      "keyword[1]" -> Seq("K2")
     )
 
     val emptyParams: Map[String, Seq[String]] = Map(
       "trader_name" -> Seq(""),
       "commodity_code" -> Seq(""),
       "live_rulings_only" -> Seq(""),
-      "keyword" -> Seq("")
+      "keyword[0]" -> Seq(""),
+      "keyword[1]" -> Seq("")
     )
 
-    val populatedQueryParam: String =
-      "trader_name=trader-name" +
-      "&commodity_code=commodity-code" +
-      "&live_rulings_only=true" +
-      "&keyword=K1" +
-      "&keyword=K2"
+    val populatedQueryParam: String = "keyword[0]=K1&trader_name=trader-name&keyword[1]=K2&commodity_code=commodity-code&live_rulings_only=true"
 
     "Unbind Unpopulated Search to Query String" in {
       Search.binder.unbind("", Search()) shouldBe ""
@@ -92,12 +89,6 @@ class SearchTest extends UnitSpec {
 
     "Bind unpopulated query string" in {
       Search.binder.bind("", emptyParams) shouldBe Some(Right(Search()))
-    }
-
-    "Bind commodity_code containing spaces" in {
-      Search.binder.bind("", Map(
-        "commodity_code" -> Seq("1 2 3")
-      )) shouldBe Some(Right(Search(commodityCode = Some("123"))))
     }
 
   }

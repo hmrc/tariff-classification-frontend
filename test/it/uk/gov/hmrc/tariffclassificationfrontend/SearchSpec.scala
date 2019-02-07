@@ -79,7 +79,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response = await(ws.url(s"$frontendRoot/search?keyword=k1&keyword=k2").get())
+      val response = await(ws.url(s"$frontendRoot/search?keyword[0]=k1&keyword[1]=k2").get())
 
       // Then
       response.status shouldBe OK

@@ -18,6 +18,7 @@ package uk.gov.hmrc.tariffclassificationfrontend.forms
 
 import play.api.data.FormError
 import uk.gov.hmrc.play.test.UnitSpec
+import uk.gov.hmrc.tariffclassificationfrontend.models.Search
 
 class SearchFormTest extends UnitSpec {
 
@@ -73,7 +74,7 @@ class SearchFormTest extends UnitSpec {
           "keyword[0]" -> Seq("X"),
           "keyword[1]" -> Seq("Y")
         )
-      ).get shouldBe SearchFormData(
+      ).get shouldBe Search(
         traderName = Some("trader-name"),
         commodityCode = Some("00"),
         liveRulingsOnly = Some(true),
@@ -82,7 +83,7 @@ class SearchFormTest extends UnitSpec {
     }
 
     "maps from data" in {
-      SearchForm.form.fill(SearchFormData(
+      SearchForm.form.fill(Search(
         traderName = Some("trader-name"),
         commodityCode = Some("00"),
         liveRulingsOnly = Some(true),
