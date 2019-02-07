@@ -34,7 +34,7 @@
    </thead>
    <tbody>
     @for((c: Case, index: Int) <- results.filter(_.application.isBTI).zipWithIndex) {
-     <tr id="advanced_search_results-row-@index" style="text-align:">
+     <tr id="advanced_search_results-row-@index">
 
       <td>
        <a id="advanced_search_results-row-@{index}-reference" href="@routes.CaseController.trader(c.reference)">@c.reference</a>
