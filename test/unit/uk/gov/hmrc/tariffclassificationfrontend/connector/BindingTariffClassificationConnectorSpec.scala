@@ -170,7 +170,9 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
         s"&trader_name=trader" +
         s"&commodity_code=comm-code" +
         s"&min_decision_end=${encode("2019-01-01T00:00:00Z")}" +
-        s"&status=COMPLETED"
+        s"&status=COMPLETED" +
+        s"&keyword=K1" +
+        s"&keyword=K2"
 
       stubFor(get(urlEqualTo(url))
         .willReturn(aResponse()
@@ -181,7 +183,8 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
       val search = Search(
         traderName = Some("trader"),
         commodityCode = Some("comm-code"),
-        liveRulingsOnly = Some(true)
+        liveRulingsOnly = Some(true),
+        keywords = Some(Set("K1", "K2"))
       )
       await(connector.search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE))) shouldBe Seq(Cases.btiCaseExample)
     }
@@ -206,6 +209,19 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
 
       val search = Search(
         commodityCode = Some("comm-code")
+      )
+      await(connector.search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE))) shouldBe Seq(Cases.btiCaseExample)
+    }
+
+    "filter by 'keyword'" in {
+      stubFor(get(urlEqualTo(s"/cases?sort_direction=asc&sort_by=commodity-code&keyword=K1&keyword=K2"))
+        .willReturn(aResponse()
+          .withStatus(HttpStatus.SC_OK)
+          .withBody(CasePayloads.gatewayCases))
+      )
+
+      val search = Search(
+        keywords = Some(Set("K1", "K2"))
       )
       await(connector.search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE))) shouldBe Seq(Cases.btiCaseExample)
     }
