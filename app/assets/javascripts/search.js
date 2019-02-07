@@ -43,5 +43,6 @@ var advancedSearch = {
         var tbody = document.getElementById("advanced_search-keywords-table_body");
         var row = document.getElementById("advanced_search-keywords-row-" + index);
         tbody.removeChild(row);
+        document.getElementById("search_form").submit();
     }
 };
