@@ -62,7 +62,7 @@
      <tr id="advanced_search-keywords-row-@{index}">
       <td>
        @defining(form(s"keyword[$index]")) { field: Field =>
-        <span>@field.value</span>
+        <span id="@{field.id}-label">@field.value</span>
         <input id="@{field.id}" name="@{field.name}" type="hidden" value="@{field.value}"/>
        }
       </td>
