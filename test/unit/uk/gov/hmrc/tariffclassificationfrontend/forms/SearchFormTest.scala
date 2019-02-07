@@ -77,7 +77,7 @@ class SearchFormTest extends UnitSpec {
         traderName = Some("trader-name"),
         commodityCode = Some("00"),
         liveRulingsOnly = Some(true),
-        keywords = Some(Seq("X", "Y"))
+        keywords = Some(Set("X", "Y"))
       )
     }
 
@@ -86,7 +86,7 @@ class SearchFormTest extends UnitSpec {
         traderName = Some("trader-name"),
         commodityCode = Some("00"),
         liveRulingsOnly = Some(true),
-        keywords = Some(Seq("X", "Y"))
+        keywords = Some(Set("X", "Y"))
       )).data shouldBe Map(
         "trader_name" -> "trader-name",
         "commodity_code" -> "00",

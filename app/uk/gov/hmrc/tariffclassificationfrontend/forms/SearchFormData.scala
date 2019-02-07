@@ -25,7 +25,7 @@ case class SearchFormData
   traderName: Option[String] = None,
   commodityCode: Option[String] = None,
   liveRulingsOnly: Option[Boolean] = None,
-  keywords: Option[Seq[String]] = None
+  keywords: Option[Set[String]] = None
 )
 
 object SearchForm {
@@ -35,8 +35,10 @@ object SearchForm {
       "trader_name" -> optional(text.verifying(_ => true)),
       "commodity_code" -> optional(text.verifying(emptyOr(numeric, minLength(2), maxLength(22)): _*)),
       "live_rulings_only" -> optional(boolean),
-      "keyword" -> optional(seq(text))
+      "keyword" -> optional(set(text))
     )(SearchFormData.apply)(SearchFormData.unapply)
   )
 
 }
+
+
