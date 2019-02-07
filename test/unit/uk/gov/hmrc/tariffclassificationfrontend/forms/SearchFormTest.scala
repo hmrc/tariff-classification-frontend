@@ -34,7 +34,8 @@ class SearchFormTest extends UnitSpec {
         Map(
           "commodity_code" -> Seq(""),
           "trader_name" -> Seq(""),
-          "live_rulings_only" -> Seq("")
+          "live_rulings_only" -> Seq(""),
+          "keyword" -> Seq("")
         )
       ).errors shouldBe Seq.empty
     }
@@ -68,12 +69,15 @@ class SearchFormTest extends UnitSpec {
         Map(
           "commodity_code" -> Seq("00"),
           "trader_name" -> Seq("trader-name"),
-          "live_rulings_only" -> Seq("true")
+          "live_rulings_only" -> Seq("true"),
+          "keyword[0]" -> Seq("X"),
+          "keyword[1]" -> Seq("Y")
         )
       ).get shouldBe SearchFormData(
         traderName = Some("trader-name"),
         commodityCode = Some("00"),
-        liveRulingsOnly = Some(true)
+        liveRulingsOnly = Some(true),
+        keywords = Some(Seq("X", "Y"))
       )
     }
 
@@ -81,11 +85,14 @@ class SearchFormTest extends UnitSpec {
       SearchForm.form.fill(SearchFormData(
         traderName = Some("trader-name"),
         commodityCode = Some("00"),
-        liveRulingsOnly = Some(true)
+        liveRulingsOnly = Some(true),
+        keywords = Some(Seq("X", "Y"))
       )).data shouldBe Map(
         "trader_name" -> "trader-name",
         "commodity_code" -> "00",
-        "live_rulings_only" -> "true"
+        "live_rulings_only" -> "true",
+        "keyword[0]" -> "X",
+        "keyword[1]" -> "Y"
       )
     }
   }

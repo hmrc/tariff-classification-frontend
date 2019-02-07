@@ -30,7 +30,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Operator, Search, Sort}
-import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
+import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, KeywordsService}
 
 import scala.concurrent.Future
 
@@ -42,11 +42,13 @@ class SearchControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSui
   private val messageApi = new DefaultMessagesApi(env, configuration, new DefaultLangs(configuration))
   private val appConfig = new AppConfig(configuration, env)
   private val casesService = mock[CasesService]
+  private val keywordsService = mock[KeywordsService]
   private val operator = mock[Operator]
 
   private val controller = new SearchController(
     new SuccessfulAuthenticatedAction(operator),
     casesService,
+    keywordsService,
     messageApi,
     appConfig
   )
@@ -64,6 +66,7 @@ class SearchControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSui
 
     "not render results if empty" in {
       given(casesService.search(refEq(Search()), refEq(Sort()))(any[HeaderCarrier])) willReturn Future.successful(Seq.empty)
+      given(keywordsService.autoCompleteKeywords) willReturn Future.successful(Seq.empty[String])
 
       val result = await(controller.search(search = Search())(fakeRequest))
 
@@ -79,6 +82,7 @@ class SearchControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSui
       val search = Search(liveRulingsOnly = Some(false))
 
       given(casesService.search(refEq(search), refEq(Sort()))(any[HeaderCarrier])) willReturn Future.successful(Seq.empty)
+      given(keywordsService.autoCompleteKeywords) willReturn Future.successful(Seq.empty[String])
 
       // When
       val request = fakeRequest.withFormUrlEncodedBody(
@@ -94,23 +98,12 @@ class SearchControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSui
       contentAsString(result) should include("advanced_search_results")
     }
 
-    "apply default 'liveDecisionOnly'" in {
-      // Given
-      val search = Search(liveRulingsOnly = None)
-      val searchWithDefaults = Search(liveRulingsOnly = Some(true))
-
-      given(casesService.search(refEq(searchWithDefaults), refEq(Sort()))(any[HeaderCarrier])) willReturn Future.successful(Seq.empty)
-
-      // When
-      val request = fakeRequest.withFormUrlEncodedBody("commodity_code" -> "00")
-      await(controller.search(search = search)(request))
-    }
-
     "render errors if form invalid" in {
       // Given
       val search = Search(traderName = Some("trader"))
 
       given(casesService.search(refEq(search), refEq(Sort()))(any[HeaderCarrier])) willReturn Future.successful(Seq.empty)
+      given(keywordsService.autoCompleteKeywords) willReturn Future.successful(Seq.empty[String])
 
       // When
       val request = fakeRequest.withFormUrlEncodedBody("commodity_code" -> "a")

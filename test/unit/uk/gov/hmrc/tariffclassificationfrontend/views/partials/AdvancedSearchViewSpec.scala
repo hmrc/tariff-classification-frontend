@@ -24,11 +24,11 @@ import uk.gov.tariffclassificationfrontend.utils.Cases._
 
 class AdvancedSearchViewSpec extends ViewSpec {
 
-  "Advanced Search Results" should {
+  "Advanced Search" should {
 
     "Render No Results" in {
       // When
-      val doc = view(advanced_search(SearchForm.form, None))
+      val doc = view(advanced_search(SearchForm.form, None, Seq.empty))
 
       // Then
       doc shouldNot containElementWithID("advanced_search-results_and_filters")
@@ -39,7 +39,7 @@ class AdvancedSearchViewSpec extends ViewSpec {
       val c = aCase()
 
       // When
-      val doc = view(advanced_search(SearchForm.form, Some(Seq(c))))
+      val doc = view(advanced_search(SearchForm.form, Some(Seq(c)), Seq.empty))
 
       // Then
       doc should containElementWithID("advanced_search-results_and_filters")

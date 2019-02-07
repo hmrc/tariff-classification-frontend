@@ -24,7 +24,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.inpu
 
 class InputNumberViewSpec extends ViewSpec {
 
-  "Input Checkbox" should {
+  "Input Number" should {
     case class FormData(value: Int)
     val form = Form(
       mapping(
