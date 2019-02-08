@@ -25,8 +25,9 @@ object SearchForm {
 
   val form: Form[Search] = Form(
     mapping(
-      "trader_name" -> optional(text.verifying(_ => true)),
+      "trader_name" -> optional(text),
       "commodity_code" -> optional(text.verifying(emptyOr(numeric, minLength(2), maxLength(22)): _*)),
+      "good_description" -> optional(text),
       "live_rulings_only" -> optional(boolean),
       "keyword" -> optional(set(text))
     )(Search.apply)(Search.unapply)
@@ -36,6 +37,7 @@ object SearchForm {
     mapping(
       "trader_name" -> optional(text),
       "commodity_code" -> optional(text),
+      "good_description" -> optional(text),
       "live_rulings_only" -> optional(boolean),
       "keyword" -> optional(set(text))
     )(Search.apply)(Search.unapply)
