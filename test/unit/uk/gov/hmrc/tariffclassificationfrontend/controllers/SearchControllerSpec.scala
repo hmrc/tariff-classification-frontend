@@ -79,7 +79,7 @@ class SearchControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSui
 
     "render results if not empty" in {
       // Given
-      val search = Search(liveRulingsOnly = Some(false))
+      val search = Search(traderName = Some("trader"), commodityCode = Some("00"))
 
       given(casesService.search(refEq(search), refEq(Sort()))(any[HeaderCarrier])) willReturn Future.successful(Seq.empty)
       given(keywordsService.autoCompleteKeywords) willReturn Future.successful(Seq.empty[String])
