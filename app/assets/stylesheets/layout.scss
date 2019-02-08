@@ -93,12 +93,20 @@
   width: 15%;
 }
 
+.w-25 {
+  width: 25%;
+}
+
 table thead th {
   vertical-align: top;
 }
 
 table tbody td, table tbody th  {
   vertical-align: middle;
+}
+
+table tbody td[align="right"], table tbody th[align="right"], table thead th[align="right"] {
+  text-align: right;
 }
 
 
@@ -181,4 +189,22 @@ table tbody td, table tbody th  {
   text-transform: uppercase;
   letter-spacing: 1px;
   text-decoration: none;
+}
+
+.button-link {
+  background:none!important;
+  color:inherit;
+  border:none;
+  padding:0!important;
+  font: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+
+  &:hover, &:focus {
+    color: #2e8aca;
+  }
+
+  &:visited {
+    color: #4c2c92;
+  }
 }

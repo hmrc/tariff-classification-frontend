@@ -25,7 +25,8 @@ class SearchTest extends UnitSpec {
   private val populatedSearch = Search(
     traderName = Some("trader-name"),
     commodityCode = Some("commodity-code"),
-    liveRulingsOnly = Some(true)
+    liveRulingsOnly = Some(true),
+    keywords = Some(Set("K1", "K2"))
   )
 
   /**
@@ -39,30 +40,37 @@ class SearchTest extends UnitSpec {
       search.isDefined shouldBe false
     }
 
+    "Return isEmpty = true when liveRulingsOnly is populated" in {
+      val search = Search(liveRulingsOnly = Some(true))
+      search.isEmpty shouldBe true
+      search.isDefined shouldBe false
+    }
+
     "Return isEmpty = false" in {
       populatedSearch.isEmpty shouldBe false
       populatedSearch.isDefined shouldBe true
     }
   }
 
-  "Search Front End Binder" should {
+  "Search Binder" should {
 
     val populatedParams: Map[String, Seq[String]] = Map(
       "trader_name" -> Seq("trader-name"),
       "commodity_code" -> Seq("commodity-code"),
-      "live_rulings_only" -> Seq("true")
+      "live_rulings_only" -> Seq("true"),
+      "keyword[0]" -> Seq("K1"),
+      "keyword[1]" -> Seq("K2")
     )
 
     val emptyParams: Map[String, Seq[String]] = Map(
       "trader_name" -> Seq(""),
       "commodity_code" -> Seq(""),
-      "live_rulings_only" -> Seq("")
+      "live_rulings_only" -> Seq(""),
+      "keyword[0]" -> Seq(""),
+      "keyword[1]" -> Seq("")
     )
 
-    val populatedQueryParam: String =
-      "trader_name=trader-name" +
-      "&commodity_code=commodity-code" +
-      "&live_rulings_only=true"
+    val populatedQueryParam: String = "keyword[0]=K1&trader_name=trader-name&keyword[1]=K2&commodity_code=commodity-code&live_rulings_only=true"
 
     "Unbind Unpopulated Search to Query String" in {
       Search.binder.unbind("", Search()) shouldBe ""
@@ -89,10 +97,8 @@ class SearchTest extends UnitSpec {
       Search.binder.bind("", emptyParams) shouldBe Some(Right(Search()))
     }
 
-    "Bind commodity_code containing spaces" in {
-      Search.binder.bind("", Map(
-        "commodity_code" -> Seq("1 2 3")
-      )) shouldBe Some(Right(Search(commodityCode = Some("123"))))
+    "Bind query string with errors" in {
+      Search.binder.bind("", Map("live_rulings_only" -> Seq("abc"))) shouldBe Some(Right(Search()))
     }
 
   }

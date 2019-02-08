@@ -19,22 +19,28 @@ package uk.gov.hmrc.tariffclassificationfrontend.forms
 import play.api.data.Form
 import play.api.data.Forms._
 import uk.gov.hmrc.tariffclassificationfrontend.forms.FormConstraints._
-
-case class SearchFormData
-(
-  traderName: Option[String] = None,
-  commodityCode: Option[String] = None,
-  liveRulingsOnly: Option[Boolean] = None
-)
+import uk.gov.hmrc.tariffclassificationfrontend.models.Search
 
 object SearchForm {
 
-  val form: Form[SearchFormData] = Form(
+  val form: Form[Search] = Form(
     mapping(
       "trader_name" -> optional(text.verifying(_ => true)),
       "commodity_code" -> optional(text.verifying(emptyOr(numeric, minLength(2), maxLength(22)): _*)),
-      "live_rulings_only" -> optional(boolean)
-    )(SearchFormData.apply)(SearchFormData.unapply)
+      "live_rulings_only" -> optional(boolean),
+      "keyword" -> optional(set(text))
+    )(Search.apply)(Search.unapply)
+  )
+
+  val formWithoutValidation: Form[Search] = Form(
+    mapping(
+      "trader_name" -> optional(text),
+      "commodity_code" -> optional(text),
+      "live_rulings_only" -> optional(boolean),
+      "keyword" -> optional(set(text))
+    )(Search.apply)(Search.unapply)
   )
 
 }
+
+

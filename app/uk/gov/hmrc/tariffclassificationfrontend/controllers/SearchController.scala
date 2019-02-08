@@ -23,7 +23,7 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.SearchForm
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Search, Sort}
-import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
+import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, KeywordsService}
 import uk.gov.hmrc.tariffclassificationfrontend.views.html
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -33,6 +33,7 @@ import scala.concurrent.Future.successful
 @Singleton
 class SearchController @Inject()(authenticatedAction: AuthenticatedAction,
                                  casesService: CasesService,
+                                 keywordsService: KeywordsService,
                                  val messagesApi: MessagesApi,
                                  implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
@@ -40,20 +41,22 @@ class SearchController @Inject()(authenticatedAction: AuthenticatedAction,
     if (reference.isDefined) {
       successful(Redirect(routes.CaseController.trader(reference.get)))
     } else if (search.isEmpty) {
-      Future.successful(Results.Ok(html.advanced_search(SearchForm.form)))
+      keywordsService.autoCompleteKeywords.map { keywords =>
+        Results.Ok(html.advanced_search(SearchForm.form, None, keywords))
+      }
     } else {
-      SearchForm.form.bindFromRequest.fold(
-        formWithErrors => {
-          Future.successful(Results.Ok(html.advanced_search(formWithErrors, None)))
-        },
-        data => {
-          casesService.search(search, sort) map { results =>
-            Results.Ok(html.advanced_search(SearchForm.form.fill(data), Some(results)))
+      keywordsService.autoCompleteKeywords.flatMap(keywords => {
+        SearchForm.form.bindFromRequest.fold(
+          formWithErrors => {
+            Future.successful(Results.Ok(html.advanced_search(formWithErrors, None, keywords)))
+          },
+          data => {
+            casesService.search(search, sort) map { results =>
+              Results.Ok(html.advanced_search(SearchForm.form.fill(data), Some(results), keywords))
+            }
           }
-        }
-      )
-
+        )
+      })
     }
   }
-
 }

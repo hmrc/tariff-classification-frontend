@@ -18,6 +18,7 @@ package uk.gov.hmrc.tariffclassificationfrontend.forms
 
 import play.api.data.FormError
 import uk.gov.hmrc.play.test.UnitSpec
+import uk.gov.hmrc.tariffclassificationfrontend.models.Search
 
 class SearchFormTest extends UnitSpec {
 
@@ -34,7 +35,8 @@ class SearchFormTest extends UnitSpec {
         Map(
           "commodity_code" -> Seq(""),
           "trader_name" -> Seq(""),
-          "live_rulings_only" -> Seq("")
+          "live_rulings_only" -> Seq(""),
+          "keyword" -> Seq("")
         )
       ).errors shouldBe Seq.empty
     }
@@ -68,24 +70,30 @@ class SearchFormTest extends UnitSpec {
         Map(
           "commodity_code" -> Seq("00"),
           "trader_name" -> Seq("trader-name"),
-          "live_rulings_only" -> Seq("true")
+          "live_rulings_only" -> Seq("true"),
+          "keyword[0]" -> Seq("X"),
+          "keyword[1]" -> Seq("Y")
         )
-      ).get shouldBe SearchFormData(
+      ).get shouldBe Search(
         traderName = Some("trader-name"),
         commodityCode = Some("00"),
-        liveRulingsOnly = Some(true)
+        liveRulingsOnly = Some(true),
+        keywords = Some(Set("X", "Y"))
       )
     }
 
     "maps from data" in {
-      SearchForm.form.fill(SearchFormData(
+      SearchForm.form.fill(Search(
         traderName = Some("trader-name"),
         commodityCode = Some("00"),
-        liveRulingsOnly = Some(true)
+        liveRulingsOnly = Some(true),
+        keywords = Some(Set("X", "Y"))
       )).data shouldBe Map(
         "trader_name" -> "trader-name",
         "commodity_code" -> "00",
-        "live_rulings_only" -> "true"
+        "live_rulings_only" -> "true",
+        "keyword[0]" -> "X",
+        "keyword[1]" -> "Y"
       )
     }
   }

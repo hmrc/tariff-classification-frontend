@@ -16,12 +16,12 @@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers
-@import uk.gov.hmrc.tariffclassificationfrontend.forms.SearchFormData
-@import uk.gov.hmrc.tariffclassificationfrontend.models.Case
+@import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Search}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.{input_checkbox, input_number, input_text}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.advanced_search_results
-@(form: Form[SearchFormData], results: Option[Seq[Case]] = None)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{advanced_search_results, advanced_search_keywords}
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.components.input_auto_complete
+@(form: Form[Search], results: Option[Seq[Case]] = None, keywords: Seq[String])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None) {
  <h1 id="advanced_search-heading" class="heading-xlarge">Advanced Search</h1>
@@ -29,7 +29,7 @@
  <h2 class="heading-medium">Enter search terms</h2>
  <hr class="mt-0"/>
 
- @helper.form(action = controllers.routes.SearchController.search()) {
+ @helper.form(action = controllers.routes.SearchController.search(), 'id -> "advanced_search-form") {
   @input_text(
    field = form("trader_name"),
    label = "Trader name"
@@ -42,11 +42,18 @@
    minLength = Some(2)
   )
 
+  <h2 class="heading-medium">Add keyword to search</h2>
+  @advanced_search_keywords(form, keywords)
+
+
   <button id="advanced_search-search_button" class="button" type="submit">Search</button>
   <a id="advanced_search-reset_button" class="secondary-button" href="@controllers.routes.SearchController.search()">Search again</a>
 
   @if(results.isEmpty) {
-   @* Hack to ensure the checkbox is checked when search results aren't present *@
+   @*
+    Hack to ensure the checkbox is checked when search results aren't present
+    This is only required for form elements that are rendered when results are present and which need a default value.
+   *@
       <input type="hidden" value="true" name="live_rulings_only"/>
   }
 

@@ -29,6 +29,18 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
 
   "Search by 'Trader Name'" should {
 
+    "Do nothing when empty" in {
+      // Given
+      givenAuthSuccess()
+
+      // When
+      val response = await(ws.url(s"$frontendRoot/search?trader_name=").get())
+
+      // Then
+      response.status shouldBe OK
+      response.body shouldNot include("advanced_search-results_and_filters")
+    }
+
     "Filter by 'Trader Name'" in {
       // Given
       givenAuthSuccess()
@@ -49,6 +61,18 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
 
   "Search by 'Commodity Code'" should {
 
+    "Do nothing when empty" in {
+      // Given
+      givenAuthSuccess()
+
+      // When
+      val response = await(ws.url(s"$frontendRoot/search?commodity_code=").get())
+
+      // Then
+      response.status shouldBe OK
+      response.body shouldNot include("advanced_search-results_and_filters")
+    }
+
     "Filter by 'Commodity Code'" in {
       // Given
       givenAuthSuccess()
@@ -67,9 +91,65 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
     }
   }
 
+  "Search by 'Keyword'" should {
+
+    "Do nothing when empty" in {
+      // Given
+      givenAuthSuccess()
+
+      // When
+      val response = await(ws.url(s"$frontendRoot/search?keyword[0]=").get())
+
+      // Then
+      response.status shouldBe OK
+      response.body shouldNot include("advanced_search-results_and_filters")
+    }
+
+    "Filter by 'Keyword'" in {
+      // Given
+      givenAuthSuccess()
+      stubFor(get(urlMatching("/cases\\?.*keyword=k1&keyword=k2.*"))
+        .willReturn(aResponse()
+          .withStatus(OK)
+          .withBody(CasePayloads.gatewayCases))
+      )
+
+      // When
+      val response = await(ws.url(s"$frontendRoot/search?keyword[0]=k1&keyword[1]=k2").get())
+
+      // Then
+      response.status shouldBe OK
+      response.body should include("advanced_search-results_and_filters")
+    }
+  }
+
   "Search by 'Live Rulings Only'" should {
     val dateRegex = "\\d{4}-\\d{2}-\\d{2}T\\d{2}%3A\\d{2}%3A\\d{2}(\\.\\d{3})\\\\?Z"
     def excluding(value: String*): String = s"(${value.map(v => s"(?!$v)").mkString}.)*"
+
+    "Do nothing when empty" in {
+      // Given
+      givenAuthSuccess()
+
+      // When
+      val response = await(ws.url(s"$frontendRoot/search?live_rulings_only=").get())
+
+      // Then
+      response.status shouldBe OK
+      response.body shouldNot include("advanced_search-results_and_filters")
+    }
+
+    "Do nothing when 'Live Rulings Only' is the only parameter" in {
+      // Given
+      givenAuthSuccess()
+
+      // When
+      val response = await(ws.url(s"$frontendRoot/search?live_rulings_only=true").get())
+
+      // Then
+      response.status shouldBe OK
+      response.body shouldNot include("advanced_search-results_and_filters")
+    }
 
     // Note the UI actually calls search WITHOUT the live_rulings_only flag when unchecked (see similar test below)
     "Filter Live Rulings Only when 'true'" in {
@@ -83,7 +163,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response = await(ws.url(s"$frontendRoot/search?live_rulings_only=true").get())
+      val response = await(ws.url(s"$frontendRoot/search?trader_name=1&live_rulings_only=true").get())
 
       // Then
       response.status shouldBe OK
@@ -118,7 +198,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response = await(ws.url(s"$frontendRoot/search?live_rulings_only=false").get())
+      val response = await(ws.url(s"$frontendRoot/search?trader_name=1&live_rulings_only=false").get())
 
       // Then
       response.status shouldBe OK
