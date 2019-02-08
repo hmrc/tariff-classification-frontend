@@ -91,7 +91,7 @@ class AttachmentsController @Inject()(authenticatedAction: AuthenticatedAction,
 
     multiPartFormData.file("file-input") match {
       case Some(filePart) if filePart.filename.isEmpty => renderErrors(reference, messagesApi("cases.attachment.upload.error.mustSelect"))
-      case Some(filePart) if hasWrongContentType(filePart) => renderErrors(reference, messagesApi("cases.attachment.upload.error.fileType"))
+      case Some(filePart) if hasInvalidContentType(filePart) => renderErrors(reference, messagesApi("cases.attachment.upload.error.fileType"))
       case Some(filePart) =>
         val fileUpload = FileUpload(filePart.ref, filePart.filename, filePart.contentType.getOrElse(throw new IllegalArgumentException("Missing file type")))
         casesService.getOne(reference).flatMap {
@@ -118,7 +118,11 @@ class AttachmentsController @Inject()(authenticatedAction: AuthenticatedAction,
     )
   }
 
-  private def hasWrongContentType : MultipartFormData.FilePart[TemporaryFile] => Boolean = {
-    _.contentType.filter(appConfig.fileUploadMimeTypes).isEmpty
+  private def hasInvalidContentType: MultipartFormData.FilePart[TemporaryFile] => Boolean = { f =>
+    f.contentType match {
+      case Some(c: String) if appConfig.fileUploadMimeTypes.contains(c) => false
+      case _ => true
+    }
   }
+
 }

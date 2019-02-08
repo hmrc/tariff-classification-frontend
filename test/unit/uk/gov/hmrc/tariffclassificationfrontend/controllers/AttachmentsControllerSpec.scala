@@ -39,7 +39,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, FileStoreService}
 import uk.gov.tariffclassificationfrontend.utils.Cases
 
-import scala.concurrent.Future
+import scala.concurrent.Future.successful
 
 class AttachmentsControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSuite with MockitoSugar with ControllerCommons {
 
@@ -69,9 +69,9 @@ class AttachmentsControllerSpec extends UnitSpec with Matchers with GuiceOneAppP
 
     "return 200 OK and HTML content type" in {
       val aCase = Cases.btiCaseExample
-      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
-      given(fileService.getAttachments(refEq(aCase))(any[HeaderCarrier])).willReturn(Future.successful(Seq(Cases.storedAttachment, Cases.storedOperatorAttachment)))
-      given(fileService.getLetterOfAuthority(refEq(aCase))(any[HeaderCarrier])).willReturn(Future.successful(Some(Cases.letterOfAuthority)))
+      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(successful(Some(aCase)))
+      given(fileService.getAttachments(refEq(aCase))(any[HeaderCarrier])).willReturn(successful(Seq(Cases.storedAttachment, Cases.storedOperatorAttachment)))
+      given(fileService.getLetterOfAuthority(refEq(aCase))(any[HeaderCarrier])).willReturn(successful(Some(Cases.letterOfAuthority)))
 
       val result = await(controller.attachmentsDetails("reference")(fakeRequest))
 
@@ -92,7 +92,7 @@ class AttachmentsControllerSpec extends UnitSpec with Matchers with GuiceOneAppP
     }
 
     "return 404 Not Found and HTML content type" in {
-      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(None))
+      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(successful(None))
 
       val result = await(controller.attachmentsDetails("reference")(fakeRequest))
 
@@ -131,10 +131,10 @@ class AttachmentsControllerSpec extends UnitSpec with Matchers with GuiceOneAppP
       val postRequest = fakeRequest.withBody(Right(aMultipartFile))
       val fileUpload = FileUpload(TemporaryFile("example-file.txt"), "file.txt", "text/plain")
 
-      given(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
-      given(casesService.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(updatedCase))
-      given(casesService.addAttachment(any[Case], any[FileUpload], any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(updatedCase))
-      given(fileService.upload(refEq(fileUpload))(any[HeaderCarrier])).willReturn(Future.successful(FileStoreAttachment("id", "file-name", "type", 0)))
+      given(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).willReturn(successful(Some(aCase)))
+      given(casesService.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(updatedCase))
+      given(casesService.addAttachment(any[Case], any[FileUpload], any[Operator])(any[HeaderCarrier])).willReturn(successful(updatedCase))
+      given(fileService.upload(refEq(fileUpload))(any[HeaderCarrier])).willReturn(successful(FileStoreAttachment("id", "file-name", "type", 0)))
 
       // When
       val result: Result = await(controller.uploadAttachment(testReference)(postRequest))
@@ -144,12 +144,11 @@ class AttachmentsControllerSpec extends UnitSpec with Matchers with GuiceOneAppP
       redirectLocation(result) shouldBe Some(routes.AttachmentsController.attachmentsDetails(testReference).toString)
     }
 
-
     "show not found case page when non existing case is provided" in {
       //Given
       val postRequest = fakeRequest.withBody(Right(aMultipartFile))
 
-      given(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).willReturn(Future.successful(None))
+      given(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).willReturn(successful(None))
 
       // When
       val result: Result = await(controller.uploadAttachment(testReference)(postRequest))
@@ -194,8 +193,6 @@ class AttachmentsControllerSpec extends UnitSpec with Matchers with GuiceOneAppP
       contentAsString(result) should include("You must select a file")
     }
 
-
-
     "upload a file higher than the size permitted shows expected error" in {
       //Given
       val aCase = Cases.btiCaseExample.copy(reference = testReference)
@@ -230,17 +227,17 @@ class AttachmentsControllerSpec extends UnitSpec with Matchers with GuiceOneAppP
 
     "upload a file of valid type should reload page" in {
 
-      appConfig.fileUploadMimeTypes.foreach(mimeType =>{
+      appConfig.fileUploadMimeTypes foreach { mimeType =>
         //Given
         val aCase = Cases.btiCaseExample.copy(reference = testReference)
         val updatedCase = aCase.copy(attachments = aCase.attachments :+ Cases.attachment("anyUrl"))
 
         val postRequest = fakeRequest.withBody(Right(aMultipartFileOfType(mimeType)))
 
-        given(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
-        given(casesService.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(updatedCase))
-        given(casesService.addAttachment(any[Case], any[FileUpload], any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(updatedCase))
-        given(fileService.upload(any[FileUpload])(any[HeaderCarrier])).willReturn(Future.successful(FileStoreAttachment("id", "file-name", "type", 0)))
+        given(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).willReturn(successful(Some(aCase)))
+        given(casesService.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(updatedCase))
+        given(casesService.addAttachment(any[Case], any[FileUpload], any[Operator])(any[HeaderCarrier])).willReturn(successful(updatedCase))
+        given(fileService.upload(any[FileUpload])(any[HeaderCarrier])).willReturn(successful(FileStoreAttachment("id", "file-name", "type", 0)))
 
         // When
         val result: Result = await(controller.uploadAttachment(testReference)(postRequest))
@@ -248,7 +245,7 @@ class AttachmentsControllerSpec extends UnitSpec with Matchers with GuiceOneAppP
         // Then
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(routes.AttachmentsController.attachmentsDetails(testReference).toString)
-      })
+      }
     }
 
     "file service fails while upload show expected message" in {
@@ -259,10 +256,10 @@ class AttachmentsControllerSpec extends UnitSpec with Matchers with GuiceOneAppP
       val postRequest = fakeRequest.withBody(Right(aMultipartFile))
       val fileUpload = FileUpload(TemporaryFile("example-file.txt"), "file.txt", "text/plain")
 
-      given(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
-      given(casesService.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(updatedCase))
-      given(casesService.addAttachment(any[Case], any[FileUpload], any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(updatedCase))
-      given(fileService.upload(refEq(fileUpload))(any[HeaderCarrier])).willReturn(Future.successful(FileStoreAttachment("id", "file-name", "type", 0)))
+      given(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).willReturn(successful(Some(aCase)))
+      given(casesService.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(updatedCase))
+      given(casesService.addAttachment(any[Case], any[FileUpload], any[Operator])(any[HeaderCarrier])).willReturn(successful(updatedCase))
+      given(fileService.upload(refEq(fileUpload))(any[HeaderCarrier])).willReturn(successful(FileStoreAttachment("id", "file-name", "type", 0)))
 
       // When
       val result: Result = await(controller.uploadAttachment(testReference)(postRequest))
@@ -275,8 +272,9 @@ class AttachmentsControllerSpec extends UnitSpec with Matchers with GuiceOneAppP
   }
 
   private def givenACaseWithNoAttachmentsAndNoLetterOfAuthority(testReference: String, aCase: Case) = {
-    given(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
-    given(fileService.getAttachments(refEq(aCase))(any[HeaderCarrier])).willReturn(Future.successful(Seq.empty))
-    given(fileService.getLetterOfAuthority(refEq(aCase))(any[HeaderCarrier])).willReturn(Future.successful(None))
+    given(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).willReturn(successful(Some(aCase)))
+    given(fileService.getAttachments(refEq(aCase))(any[HeaderCarrier])).willReturn(successful(Seq.empty))
+    given(fileService.getLetterOfAuthority(refEq(aCase))(any[HeaderCarrier])).willReturn(successful(None))
   }
+
 }
