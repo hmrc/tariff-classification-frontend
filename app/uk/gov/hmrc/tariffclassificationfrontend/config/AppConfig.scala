@@ -46,6 +46,8 @@ class AppConfig @Inject()(val runModeConfiguration: Configuration, environment: 
   lazy val fileStoreUrl: String = baseUrl("binding-tariff-filestore")
   lazy val decisionLifetimeYears: Int = getInt("app.decision-lifetime-years")
   lazy val zoneId: ZoneId = ZoneId.of("UTC")
+  lazy val fileUploadMaxSize = loadConfig("fileupload.maxSize").toInt
+  lazy val fileUploadMimeTypes = loadConfig("fileupload.mimeTypes").split(",").map(_.trim).toSet
 
   def runningAsDev: Boolean = {
     runModeConfiguration
