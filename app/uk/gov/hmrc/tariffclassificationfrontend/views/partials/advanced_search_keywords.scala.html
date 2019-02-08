@@ -20,13 +20,13 @@
 
 @moveUnAddedKeywordToTable(form: Form[Search]) = @{
     form.data.get("keyword[0]").filter(_.nonEmpty).map { keyword =>
-    val indexes: Seq[Int] = RepeatedMapping.indexes("keyword", form.data)
-    val maxIndex: Int = indexes.max
-    val value = form.data("keyword[0]")
-    val updatedData = form.data
-    .+("keyword[0]" -> "")
-    .+(s"keyword[${maxIndex+1}]" -> value)
-    form.copy(data = updatedData)
+        val indexes: Seq[Int] = RepeatedMapping.indexes("keyword", form.data)
+        val maxIndex: Int = indexes.max
+        val value = form.data("keyword[0]")
+        val updatedData = form.data
+            .+("keyword[0]" -> "")
+            .+(s"keyword[${maxIndex+1}]" -> value)
+        form.copy(data = updatedData)
     } getOrElse form
 }
 
