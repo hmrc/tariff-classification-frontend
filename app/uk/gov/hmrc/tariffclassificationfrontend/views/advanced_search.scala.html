@@ -62,13 +62,13 @@
      <tr id="advanced_search-keywords-row-@{index}">
       <td>
        @defining(form(s"keyword[$index]")) { field: Field =>
-        <span id="@{field.id}-label">@field.value</span>
-        <input id="@{field.id}" name="@{field.name}" type="hidden" value="@{field.value}"/>
+        <span id="advanced_search-keywords-row-@{index}-label">@field.value</span>
+        <input id="advanced_search-keywords-row-@{index}-input" name="@{field.name}" type="hidden" value="@{field.value}"/>
        }
       </td>
 
       <td>
-       <button type="button" class="button-link" onclick="advancedSearch.removeKeyword(@index)">Remove</button>
+       <button id="advanced_search-keywords-row-@{index}-remove_button" type="button" class="button-link" onclick="advancedSearch.removeKeyword(@index)">Remove</button>
       </td>
      </tr>
     }

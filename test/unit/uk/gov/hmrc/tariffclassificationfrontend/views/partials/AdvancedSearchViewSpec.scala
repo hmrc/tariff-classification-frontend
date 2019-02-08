@@ -62,31 +62,32 @@ class AdvancedSearchViewSpec extends ViewSpec {
       val doc = view(advanced_search(SearchForm.form, Some(Seq(aCase())), Seq.empty))
 
       // Then
-      doc shouldNot containElementWithID("keyword_1")
+      doc shouldNot containElementWithID("advanced_search-keywords-row-1")
     }
 
     "Render Extra Keywords" in {
       // Given
       val form = SearchForm.form.fill(Search(
-        keywords = Some(Set("K1", "K2"))
+        keywords = Some(Set("K0","K1", "K2"))
       ))
 
       // When
       val doc = view(advanced_search(form, Some(Seq(aCase())), Seq.empty))
 
       // Then
-      doc should containElementWithID("keyword_0")
-      doc.getElementById("keyword_0") should haveTag("input")
-      doc.getElementById("keyword_0") should haveAttribute("value", "K1")
-      doc.getElementById("keyword_0") should haveAttribute("name", "keyword[0]")
+      doc should containElementWithID("advanced_search-keywords-row-1")
+      doc.getElementById("advanced_search-keywords-row-1-input") should haveTag("input")
+      doc.getElementById("advanced_search-keywords-row-1-input") should haveAttribute("value", "K1")
+      doc.getElementById("advanced_search-keywords-row-1-input") should haveAttribute("name", "keyword[1]")
+      doc should containElementWithID("advanced_search-keywords-row-1-label")
+      doc.getElementById("advanced_search-keywords-row-1-label") should containText("K1")
 
-      doc should containElementWithID("keyword_1")
-      doc.getElementById("keyword_1") should haveTag("input")
-      doc.getElementById("keyword_1") should haveAttribute("value", "K2")
-      doc.getElementById("keyword_1") should haveAttribute("name", "keyword[1]")
-
-      doc should containElementWithID("keyword_1-label")
-      doc.getElementById("keyword_1-label") should containText("K2")
+      doc should containElementWithID("advanced_search-keywords-row-2")
+      doc.getElementById("advanced_search-keywords-row-2-input") should haveTag("input")
+      doc.getElementById("advanced_search-keywords-row-2-input") should haveAttribute("value", "K2")
+      doc.getElementById("advanced_search-keywords-row-2-input") should haveAttribute("name", "keyword[2]")
+      doc should containElementWithID("advanced_search-keywords-row-2-label")
+      doc.getElementById("advanced_search-keywords-row-2-label") should containText("K2")
     }
   }
 
