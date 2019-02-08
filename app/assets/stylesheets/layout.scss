@@ -105,6 +105,10 @@ table tbody td, table tbody th  {
   vertical-align: middle;
 }
 
+table tbody td[align="right"], table tbody th[align="right"], table thead th[align="right"] {
+  text-align: right;
+}
+
 
 #global-header.with-proposition .header-wrapper .header-global {
   width: 100%;

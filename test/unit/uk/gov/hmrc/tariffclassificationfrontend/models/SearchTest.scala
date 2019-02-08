@@ -40,6 +40,12 @@ class SearchTest extends UnitSpec {
       search.isDefined shouldBe false
     }
 
+    "Return isEmpty = true when liveRulingsOnly is populated" in {
+      val search = Search(liveRulingsOnly = Some(true))
+      search.isEmpty shouldBe true
+      search.isDefined shouldBe false
+    }
+
     "Return isEmpty = false" in {
       populatedSearch.isEmpty shouldBe false
       populatedSearch.isDefined shouldBe true
