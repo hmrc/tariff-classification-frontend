@@ -82,7 +82,7 @@ class BindingTariffClassificationConnector @Inject()(configuration: AppConfig, c
       .++(search.traderName.map(queryBinder.unbind("trader_name", _)))
       .++(search.commodityCode.map(queryBinder.unbind("commodity_code", _)))
       .++(search.liveRulingsOnly.filter(identity).map(_ => queryBinder.unbind("min_decision_end", Instant.now(clock).toString) + "&" + queryBinder.unbind("status", CaseStatus.COMPLETED.toString)))
-      .++(search.keywords.map(set => set.map(queryBinder.unbind("keyword", _)).mkString("&")))
+      .++(search.keywords.map(_.map(queryBinder.unbind("keyword", _)).mkString("&")))
 
     val url = s"${configuration.bindingTariffClassificationUrl}/cases?${params.mkString("&")}"
     client.GET[Seq[Case]](url)
