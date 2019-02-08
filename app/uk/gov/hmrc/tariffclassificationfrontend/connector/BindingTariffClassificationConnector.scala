@@ -81,6 +81,7 @@ class BindingTariffClassificationConnector @Inject()(configuration: AppConfig, c
       // Optional Params
       .++(search.traderName.map(queryBinder.unbind("trader_name", _)))
       .++(search.commodityCode.map(queryBinder.unbind("commodity_code", _)))
+      .++(search.goodDescription.map(queryBinder.unbind("good_description", _)))
       .++(search.liveRulingsOnly.filter(identity).map(_ => queryBinder.unbind("min_decision_end", Instant.now(clock).toString) + "&" + queryBinder.unbind("status", CaseStatus.COMPLETED.toString)))
       .++(search.keywords.map(_.map(queryBinder.unbind("keyword", _)).mkString("&")))
 

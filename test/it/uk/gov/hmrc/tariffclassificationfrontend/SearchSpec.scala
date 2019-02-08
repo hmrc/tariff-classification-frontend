@@ -91,6 +91,38 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
     }
   }
 
+  "Search by 'Good Description'" should {
+
+    "Do nothing when empty" in {
+      // Given
+      givenAuthSuccess()
+
+      // When
+      val response = await(ws.url(s"$frontendRoot/search?good_description=").get())
+
+      // Then
+      response.status shouldBe OK
+      response.body shouldNot include("advanced_search-results_and_filters")
+    }
+
+    "Filter by 'Good Description'" in {
+      // Given
+      givenAuthSuccess()
+      stubFor(get(urlMatching("/cases\\?.*good_description=1.*"))
+        .willReturn(aResponse()
+          .withStatus(OK)
+          .withBody(CasePayloads.gatewayCases))
+      )
+
+      // When
+      val response = await(ws.url(s"$frontendRoot/search?good_description=1").get())
+
+      // Then
+      response.status shouldBe OK
+      response.body should include("advanced_search-results_and_filters")
+    }
+  }
+
   "Search by 'Keyword'" should {
 
     "Do nothing when empty" in {
