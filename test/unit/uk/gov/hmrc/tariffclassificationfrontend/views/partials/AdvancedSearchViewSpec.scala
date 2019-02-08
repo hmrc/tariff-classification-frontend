@@ -46,48 +46,9 @@ class AdvancedSearchViewSpec extends ViewSpec {
       doc should containElementWithID("advanced_search-results_and_filters")
     }
 
-    "Render Keyword Input" in {
-      // When
-      val doc = view(advanced_search(SearchForm.form, Some(Seq(aCase())), Seq.empty))
-
-      // Then
-      doc should containElementWithID("keyword_0")
-      doc.getElementById("keyword_0") should haveTag("input")
-      doc.getElementById("keyword_0") should haveAttribute("value", "")
-      doc.getElementById("keyword_0") should haveAttribute("name", "keyword[0]")
-    }
-
-    "Not render extra keywords initially" in {
-      // When
-      val doc = view(advanced_search(SearchForm.form, Some(Seq(aCase())), Seq.empty))
-
-      // Then
-      doc shouldNot containElementWithID("advanced_search-keywords-row-1")
-    }
-
-    "Render Extra Keywords" in {
-      // Given
-      val form = SearchForm.form.fill(Search(
-        keywords = Some(Set("K0","K1", "K2"))
-      ))
-
-      // When
-      val doc = view(advanced_search(form, Some(Seq(aCase())), Seq.empty))
-
-      // Then
-      doc should containElementWithID("advanced_search-keywords-row-1")
-      doc.getElementById("advanced_search-keywords-row-1-input") should haveTag("input")
-      doc.getElementById("advanced_search-keywords-row-1-input") should haveAttribute("value", "K1")
-      doc.getElementById("advanced_search-keywords-row-1-input") should haveAttribute("name", "keyword[1]")
-      doc should containElementWithID("advanced_search-keywords-row-1-label")
-      doc.getElementById("advanced_search-keywords-row-1-label") should containText("K1")
-
-      doc should containElementWithID("advanced_search-keywords-row-2")
-      doc.getElementById("advanced_search-keywords-row-2-input") should haveTag("input")
-      doc.getElementById("advanced_search-keywords-row-2-input") should haveAttribute("value", "K2")
-      doc.getElementById("advanced_search-keywords-row-2-input") should haveAttribute("name", "keyword[2]")
-      doc should containElementWithID("advanced_search-keywords-row-2-label")
-      doc.getElementById("advanced_search-keywords-row-2-label") should containText("K2")
+    "Always Render Input 'live_rulings_only'" in {
+      view(advanced_search(SearchForm.form, None, Seq.empty)) should containElementWithAttribute("name", "live_rulings_only")
+      view(advanced_search(SearchForm.form, Some(Seq(aCase())), Seq.empty)) should containElementWithAttribute("name", "live_rulings_only")
     }
   }
 
