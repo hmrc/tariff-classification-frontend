@@ -48,26 +48,28 @@
         <button class="button display-inline" type="submit">Add</button>
     </div>
 
-    @if(RepeatedMapping.indexes("keyword", form.data).exists(_ > 0)) {
-        <table id="advanced_search_keywords-table" class="mb-30">
-            <tbody id="advanced_search_keywords-table-table_body">
-            @for(index: Int <- RepeatedMapping.indexes("keyword", form.data).filter(_ > 0)) {
-                @* Make sure any content changes in this table are also reflected in search.js *@
-                <tr id="advanced_search_keywords-table-row-@{index}">
-                    <td>
-                    @defining(form(s"keyword[$index]")) { field: Field =>
-                        <span id="advanced_search_keywords-table-row-@{index}-label">@field.value</span>
-                        <input id="advanced_search_keywords-table-row-@{index}-input" name="@{field.name}" type="hidden" value="@{field.value}"/>
-                    }
-                    </td>
+    @defining(RepeatedMapping.indexes("keyword", form.data).map(idx => (idx, form.data(s"keyword[$idx]"))).filterNot(_._1 == 0)) { keywords: Seq[(Int, String)] =>
+        @if(keywords.nonEmpty) {
+            <table id="advanced_search_keywords-table" class="mb-30">
+                <tbody id="advanced_search_keywords-table-table_body">
+                @for((index: Int, keyword: String) <- keywords) {
+                    @* Make sure any content changes in this table are also reflected in search.js *@
+                    <tr id="advanced_search_keywords-table-row-@{index}">
+                        <td>
+                        @defining(form(s"keyword[$index]")) { field: Field =>
+                            <span id="advanced_search_keywords-table-row-@{index}-label">@keyword</span>
+                            <input id="advanced_search_keywords-table-row-@{index}-input" name="@{field.name}" type="hidden" value="@keyword"/>
+                        }
+                        </td>
 
-                    <td>
-                        <button id="advanced_search_keywords-table-row-@{index}-remove_button" type="button" class="button-link" onclick="advancedSearch.removeKeyword(@index)">Remove</button>
-                    </td>
-                </tr>
-            }
-            </tbody>
-        </table>
+                        <td>
+                            <button id="advanced_search_keywords-table-row-@{index}-remove_button" type="button" class="button-link" onclick="advancedSearch.removeKeyword(@index)">Remove</button>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        }
     }
 
 
