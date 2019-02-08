@@ -29,6 +29,18 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
 
   "Search by 'Trader Name'" should {
 
+    "Do nothing when empty" in {
+      // Given
+      givenAuthSuccess()
+
+      // When
+      val response = await(ws.url(s"$frontendRoot/search?trader_name=").get())
+
+      // Then
+      response.status shouldBe OK
+      response.body shouldNot include("advanced_search-results_and_filters")
+    }
+
     "Filter by 'Trader Name'" in {
       // Given
       givenAuthSuccess()
@@ -49,6 +61,18 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
 
   "Search by 'Commodity Code'" should {
 
+    "Do nothing when empty" in {
+      // Given
+      givenAuthSuccess()
+
+      // When
+      val response = await(ws.url(s"$frontendRoot/search?commodity_code=").get())
+
+      // Then
+      response.status shouldBe OK
+      response.body shouldNot include("advanced_search-results_and_filters")
+    }
+
     "Filter by 'Commodity Code'" in {
       // Given
       givenAuthSuccess()
@@ -68,6 +92,18 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
   }
 
   "Search by 'Keyword'" should {
+
+    "Do nothing when empty" in {
+      // Given
+      givenAuthSuccess()
+
+      // When
+      val response = await(ws.url(s"$frontendRoot/search?keyword[0]=").get())
+
+      // Then
+      response.status shouldBe OK
+      response.body shouldNot include("advanced_search-results_and_filters")
+    }
 
     "Filter by 'Keyword'" in {
       // Given
@@ -90,6 +126,18 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
   "Search by 'Live Rulings Only'" should {
     val dateRegex = "\\d{4}-\\d{2}-\\d{2}T\\d{2}%3A\\d{2}%3A\\d{2}(\\.\\d{3})\\\\?Z"
     def excluding(value: String*): String = s"(${value.map(v => s"(?!$v)").mkString}.)*"
+
+    "Do nothing when empty" in {
+      // Given
+      givenAuthSuccess()
+
+      // When
+      val response = await(ws.url(s"$frontendRoot/search?live_rulings_only=").get())
+
+      // Then
+      response.status shouldBe OK
+      response.body shouldNot include("advanced_search-results_and_filters")
+    }
 
     "Do nothing when 'Live Rulings Only' is the only parameter" in {
       // Given
