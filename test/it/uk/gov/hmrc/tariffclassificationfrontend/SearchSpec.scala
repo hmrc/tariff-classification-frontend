@@ -91,6 +91,18 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
     val dateRegex = "\\d{4}-\\d{2}-\\d{2}T\\d{2}%3A\\d{2}%3A\\d{2}(\\.\\d{3})\\\\?Z"
     def excluding(value: String*): String = s"(${value.map(v => s"(?!$v)").mkString}.)*"
 
+    "Do nothing when 'Live Rulings Only' is the only parameter" in {
+      // Given
+      givenAuthSuccess()
+
+      // When
+      val response = await(ws.url(s"$frontendRoot/search?live_rulings_only=true").get())
+
+      // Then
+      response.status shouldBe OK
+      response.body shouldNot include("advanced_search-results_and_filters")
+    }
+
     // Note the UI actually calls search WITHOUT the live_rulings_only flag when unchecked (see similar test below)
     "Filter Live Rulings Only when 'true'" in {
       // Given
@@ -103,7 +115,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response = await(ws.url(s"$frontendRoot/search?live_rulings_only=true").get())
+      val response = await(ws.url(s"$frontendRoot/search?trader_name=1&live_rulings_only=true").get())
 
       // Then
       response.status shouldBe OK
@@ -138,7 +150,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response = await(ws.url(s"$frontendRoot/search?live_rulings_only=false").get())
+      val response = await(ws.url(s"$frontendRoot/search?trader_name=1&live_rulings_only=false").get())
 
       // Then
       response.status shouldBe OK
