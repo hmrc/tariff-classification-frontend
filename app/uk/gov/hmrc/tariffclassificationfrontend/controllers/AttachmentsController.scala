@@ -79,12 +79,11 @@ class AttachmentsController @Inject()(authenticatedAction: AuthenticatedAction,
 
       request.body match {
         case Left(MaxSizeExceeded(_)) => renderErrors(reference, messagesApi("cases.attachment.upload.error.restrictionSize"))
-        case Right(multipartForm) => {
+        case Right(multipartForm) =>
           multipartForm match {
-            case file: MultipartFormData[TemporaryFile] if (!file.files.isEmpty) => uploadAndSave(reference, file)
+            case file: MultipartFormData[TemporaryFile] if file.files.nonEmpty => uploadAndSave(reference, file)
             case _ => renderErrors(reference, messagesApi("cases.attachment.upload.error.mustSelect"))
           }
-        }
       }
     }
 
@@ -93,7 +92,7 @@ class AttachmentsController @Inject()(authenticatedAction: AuthenticatedAction,
 
     multiPartFormData.file("file-input") match {
       case Some(filePart) if filePart.filename.isEmpty => renderErrors(reference, messagesApi("cases.attachment.upload.error.mustSelect"))
-      case Some(filePart) => {
+      case Some(filePart) =>
         val fileUpload = FileUpload(filePart.ref, filePart.filename, filePart.contentType.getOrElse(throw new IllegalArgumentException("Missing file type")))
         casesService.getOne(reference).flatMap {
           case Some(c: Case) =>
@@ -102,7 +101,6 @@ class AttachmentsController @Inject()(authenticatedAction: AuthenticatedAction,
           case _ =>
             successful(Ok(views.html.case_not_found(reference)))
         }
-      }
       case _ => renderErrors(reference, "expected type file on the form")
     }
   }

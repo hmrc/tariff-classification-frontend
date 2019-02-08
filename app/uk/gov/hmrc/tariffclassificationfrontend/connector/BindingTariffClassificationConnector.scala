@@ -72,20 +72,23 @@ class BindingTariffClassificationConnector @Inject()(configuration: AppConfig, c
     client.GET[Seq[Event]](url)
   }
 
-  def search(search: Search, sort: Sort)(implicit hc: HeaderCarrier, clock: Clock = Clock.systemUTC(), queryBinder: QueryStringBindable[String]): Future[Seq[Case]] = {
-    // Mandatory Params
-    val params = Seq(
+  def search(search: Search, sort: Sort)
+            (implicit hc: HeaderCarrier, clock: Clock = Clock.systemUTC(), queryBinder: QueryStringBindable[String]): Future[Seq[Case]] = {
+
+    val reqParams = Seq(
       queryBinder.unbind("sort_direction", sort.direction.toString),
       queryBinder.unbind("sort_by", sort.field.toString)
     )
-      // Optional Params
-      .++(search.traderName.map(queryBinder.unbind("trader_name", _)))
-      .++(search.commodityCode.map(queryBinder.unbind("commodity_code", _)))
-      .++(search.goodDescription.map(queryBinder.unbind("good_description", _)))
-      .++(search.liveRulingsOnly.filter(identity).map(_ => queryBinder.unbind("min_decision_end", Instant.now(clock).toString) + "&" + queryBinder.unbind("status", CaseStatus.COMPLETED.toString)))
-      .++(search.keywords.map(_.map(queryBinder.unbind("keyword", _)).mkString("&")))
 
-    val url = s"${configuration.bindingTariffClassificationUrl}/cases?${params.mkString("&")}"
+    val optParams = Seq(
+      search.traderName.map(queryBinder.unbind("trader_name", _)),
+      search.commodityCode.map(queryBinder.unbind("commodity_code", _)),
+      search.goodDescription.map(queryBinder.unbind("good_description", _)),
+      search.liveRulingsOnly.map(_ => queryBinder.unbind("min_decision_end", Instant.now(clock).toString) + "&" + queryBinder.unbind("status", COMPLETED.toString)),
+      search.keywords.map(_.map(queryBinder.unbind("keyword", _)).mkString("&"))
+    )
+
+    val url = s"${configuration.bindingTariffClassificationUrl}/cases?${(reqParams ++ optParams).mkString("&")}"
     client.GET[Seq[Case]](url)
   }
 

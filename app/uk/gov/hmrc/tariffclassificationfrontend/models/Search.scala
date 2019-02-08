@@ -28,6 +28,7 @@ case class Search
   liveRulingsOnly: Option[Boolean] = None,
   keywords: Option[Set[String]] = None
 ) {
+
   def isEmpty: Boolean = {
     // Live rulings only omitted intentionally as it is a post-search filter
     traderName.isEmpty && commodityCode.isEmpty && goodDescription.isEmpty && keywords.isEmpty
@@ -44,19 +45,18 @@ object Search {
       val filteredParams: Map[String, Seq[String]] = requestParams
         .mapValues(_.map(_.trim).filter(_.nonEmpty))
         .filter(_._2.nonEmpty)
+
       val form: Form[Search] = SearchForm.formWithoutValidation.bindFromRequest(filteredParams)
-      if(form.hasErrors) {
-        Some(Right(Search()))
-      } else {
-        Some(Right(form.get))
-      }
+
+      if (form.hasErrors) Some(Right(Search()))
+      else Some(Right(form.get))
     }
 
     override def unbind(string: String, search: Search): String = {
       val data: Map[String, String] = SearchForm.formWithoutValidation.fill(search).data
-      data.toSeq.map {
-        case (key, value) => stringBinder.unbind(key, value)
-      }.mkString("&")
+      data.toSeq.map(f => stringBinder.unbind(f._1, f._2)).mkString("&")
     }
+
   }
+
 }
