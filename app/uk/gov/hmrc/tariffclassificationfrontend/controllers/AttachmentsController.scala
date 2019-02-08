@@ -47,7 +47,6 @@ class AttachmentsController @Inject()(authenticatedAction: AuthenticatedAction,
                                       implicit val mat: Materializer) extends FrontendController with I18nSupport {
 
   private lazy val form: Form[UploadAttachmentFormData] = UploadAttachmentFormData.form
-  private val maxSizeMB = 100 * 1024 * 1024
 
   def attachmentsDetails(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     getCaseAndRenderView(reference, CaseDetailPage.ATTACHMENTS, c => renderView(c, form))
@@ -75,7 +74,7 @@ class AttachmentsController @Inject()(authenticatedAction: AuthenticatedAction,
   }
 
   def uploadAttachment(reference: String): Action[Either[MaxSizeExceeded, MultipartFormData[TemporaryFile]]] =
-    authenticatedAction.async(parse.maxLength(maxSizeMB, parse.multipartFormData)) { implicit request =>
+    authenticatedAction.async(parse.maxLength(appConfig.fileUploadMaxSize, parse.multipartFormData)) { implicit request =>
 
       request.body match {
         case Left(MaxSizeExceeded(_)) => renderErrors(reference, messagesApi("cases.attachment.upload.error.restrictionSize"))
@@ -92,6 +91,7 @@ class AttachmentsController @Inject()(authenticatedAction: AuthenticatedAction,
 
     multiPartFormData.file("file-input") match {
       case Some(filePart) if filePart.filename.isEmpty => renderErrors(reference, messagesApi("cases.attachment.upload.error.mustSelect"))
+      case Some(filePart) if hasInvalidContentType(filePart) => renderErrors(reference, messagesApi("cases.attachment.upload.error.fileType"))
       case Some(filePart) =>
         val fileUpload = FileUpload(filePart.ref, filePart.filename, filePart.contentType.getOrElse(throw new IllegalArgumentException("Missing file type")))
         casesService.getOne(reference).flatMap {
@@ -116,6 +116,13 @@ class AttachmentsController @Inject()(authenticatedAction: AuthenticatedAction,
         renderView(c, formWithErrors)
       }
     )
+  }
+
+  private def hasInvalidContentType: MultipartFormData.FilePart[TemporaryFile] => Boolean = { f =>
+    f.contentType match {
+      case Some(c: String) if appConfig.fileUploadMimeTypes.contains(c) => false
+      case _ => true
+    }
   }
 
 }
