@@ -37,15 +37,15 @@
 
 @defining(moveUnAddedKeywordToTable(f)) { form: Form[Search] =>
     <div id="advanced_search_keywords">
-        <div class="display-inline w-50">
+        <div class="display-inline w-75">
             @input_auto_complete(
                 field = form("keyword[0]"),
-                label = "",
+                label = "Add keyword to search",
                 formControlClass = Some("w-100"),
                 autoCompleteOptions = keywords.diff(keywordsAdded(form))
             )
         </div>
-        <button id="advanced_search-add_keyword" class="button display-inline" type="submit">Add</button>
+        <button id="advanced_search-add_keyword" class="button display-inline autocomplete-button" type="submit">Add</button>
     </div>
 
     @defining(RepeatedMapping.indexes("keyword", form.data).map(idx => (idx, form.data(s"keyword[$idx]"))).filterNot(_._1 == 0)) { keywords: Seq[(Int, String)] =>

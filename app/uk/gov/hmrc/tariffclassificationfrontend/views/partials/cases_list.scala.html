@@ -31,22 +31,20 @@
         </tr>
     </thead>
     <tbody id="cases_list-body">
-        @for((c: Case, index: Int) <- cases.zipWithIndex) {
+        @for((c: Case, index: Int) <- cases.filter(_.application.isBTI).zipWithIndex) {
             @defining(c.application) { a: Application =>
-                @if(a.isBTI) {
-                    @defining(a.asBTI) { btiApp: BTIApplication =>
-                        <tr id="cases_list-row-@index">
-                            <th scope="row">
-                                <a id="cases_list-row-@{index}-reference" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.trader(c.reference)">@c.reference</a>
-                            </th>
-                            <td id="cases_list-row-@{index}-good_name">@btiApp.goodName</td>
-                            <td id="cases_list-row-@{index}-business_name">@btiApp.holder.businessName</td>
-                            <td id="cases_list-row-@{index}-created_date">@Dates.format(c.createdDate)</td>
-                            <td id="cases_list-row-@{index}-status">@c.status</td>
-                            <td id="cases_list-row-@{index}-type">@a.getType</td>
-                            <td id="cases_list-row-@{index}-days_elapsed">@c.daysElapsed</td>
-                        </tr>
-                    }
+                @defining(a.asBTI) { btiApp: BTIApplication =>
+                    <tr id="cases_list-row-@index">
+                        <th scope="row">
+                            <a id="cases_list-row-@{index}-reference" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.trader(c.reference)">@c.reference</a>
+                        </th>
+                        <td id="cases_list-row-@{index}-good_name">@btiApp.goodName</td>
+                        <td id="cases_list-row-@{index}-business_name">@btiApp.holder.businessName</td>
+                        <td id="cases_list-row-@{index}-created_date">@Dates.format(c.createdDate)</td>
+                        <td id="cases_list-row-@{index}-status">@c.status</td>
+                        <td id="cases_list-row-@{index}-type">@a.getType</td>
+                        <td id="cases_list-row-@{index}-days_elapsed">@c.daysElapsed</td>
+                    </tr>
                 }
             }
 
@@ -54,6 +52,6 @@
     </tbody>
 </table>
 
-@if(cases.isEmpty) {
+@if(!cases.exists(_.application.isBTI)) {
     <p id="cases_list-empty">@messages("cases.table.empty")</p>
 }

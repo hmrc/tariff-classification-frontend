@@ -32,27 +32,30 @@
  @helper.form(action = controllers.routes.SearchController.search(), 'id -> "advanced_search-form") {
   @input_text(
    field = form("trader_name"),
-   label = "Trader name"
+   label = "Trader name",
+   formControlClass = Some("w-75")
   )
 
   @input_number(
    field = form("commodity_code"),
    label = "Commodity code",
+   inputClass = Some("w-75"),
    maxLength = Some(22),
    minLength = Some(2)
   )
 
-  @input_textarea(
+  @input_text(
    field = form("good_description"),
-   label = "Goods description"
+   label = "Goods description",
+   hint = Some("Searches the Ruling Goods Description and the Commercial Denomination"),
+   formControlClass = Some("w-75")
   )
 
-  <h2 class="heading-medium">Add keyword to search</h2>
   @advanced_search_keywords(form, keywords)
 
 
   <button id="advanced_search-search_button" class="button" type="submit">Search</button>
-  <a id="advanced_search-reset_button" class="secondary-button" href="@controllers.routes.SearchController.search()">Search again</a>
+  <a id="advanced_search-reset_button" class="secondary-button" href="@controllers.routes.SearchController.search()">New Search</a>
 
   @if(results.isEmpty) {
    @*
