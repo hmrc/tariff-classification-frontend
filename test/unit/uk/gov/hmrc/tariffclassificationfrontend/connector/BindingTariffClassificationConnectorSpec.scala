@@ -154,7 +154,7 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
     def encode(value: String): String = URLEncoder.encode(value, "UTF-8")
 
     "handle no filters" in {
-      stubFor(get(urlEqualTo("/cases?sort_direction=desc&sort_by=commodity-code"))
+      stubFor(get(urlEqualTo("/cases?sort_direction=asc&sort_by=commodity-code"))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
           .withBody("[]"))
