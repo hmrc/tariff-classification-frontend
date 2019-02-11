@@ -51,7 +51,7 @@ object SortField extends Enumeration {
 
 case class Sort
 (
-  direction: SortDirection = SortDirection.DESCENDING,
+  direction: SortDirection = SortDirection.ASCENDING,
   field: SortField = SortField.COMMODITY_CODE
 )
 

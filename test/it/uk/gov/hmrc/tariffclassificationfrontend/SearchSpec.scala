@@ -243,7 +243,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
     "Sort by default" in {
       // Given
       givenAuthSuccess()
-      stubFor(get(urlMatching("/cases\\?.*sort_direction=desc&sort_by=commodity-code.*"))
+      stubFor(get(urlMatching("/cases\\?.*sort_direction=asc&sort_by=commodity-code.*"))
         .willReturn(aResponse()
           .withStatus(OK)
           .withBody(CasePayloads.gatewayCases))
