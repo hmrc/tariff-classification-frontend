@@ -77,11 +77,21 @@ class CasesService @Inject()(appConfig: AppConfig, auditService: AuditService,
 
   }
 
-  def cancelRuling(original: Case, operator: Operator)
+  def cancelRuling(original: Case, operator: Operator, clock: Clock = Clock.systemDefaultZone())
                (implicit hc: HeaderCarrier): Future[Case] = {
+    val updatedEndDate = LocalDate.now(clock).atStartOfDay(appConfig.zoneId)
+
+    val decisionUpdating: Decision = original.decision
+      .getOrElse(throw new IllegalArgumentException("Cannot Cancel a Case without a Decision"))
+      .copy(effectiveEndDate = Some(updatedEndDate.toInstant))
+    val caseUpdating = original.copy(status = CaseStatus.CANCELLED, decision = Some(decisionUpdating))
+
     for {
-      updated <- connector.updateCase(original.copy(status = CaseStatus.CANCELLED))
+      // Update the case
+      updated: Case <- connector.updateCase(caseUpdating)
+      // Create the event
       _ <- addEvent(original, updated, operator)
+      // Audit
       _ = auditService.auditRulingCancelled(original, updated, operator)
     } yield updated
 
