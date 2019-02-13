@@ -37,14 +37,24 @@ class CasesService @Inject()(appConfig: AppConfig, auditService: AuditService,
                              fileService: FileStoreService,
                              connector: BindingTariffClassificationConnector) {
 
-  def updateAppealStatus(original: Case, status: Option[AppealStatus], operator: Operator): Future[Case] = ???
+  def updateAppealStatus(original: Case, status: Option[AppealStatus], operator: Operator)(implicit hc: HeaderCarrier): Future[Case] = {
+    val decision = original.decision.getOrElse(throw new IllegalArgumentException("Cannot change the Appeal status of a case without a Decision"))
+    val appeal = status.map(Appeal)
+    val updatedDecision = decision.copy(appeal = appeal)
+
+    for {
+      updated <- connector.updateCase(original.copy(decision = Some(updatedDecision)))
+      _ <- addAppealStatusChangeEvent(original, updated, operator)
+      _ = auditService.auditCaseAppealChange(original , updated, operator)
+    } yield updated
+  }
 
 
   def releaseCase(original: Case, queue: Queue, operator: Operator)
                  (implicit hc: HeaderCarrier): Future[Case] = {
     for {
       updated <- connector.updateCase(original.copy(status = CaseStatus.OPEN, queueId = Some(queue.id)))
-      _ <- addEvent(original, updated, operator)
+      _ <- addStatusChangeEvent(original, updated, operator)
       _ = auditService.auditCaseReleased(original, updated, queue, operator)
     } yield updated
 
@@ -54,7 +64,7 @@ class CasesService @Inject()(appConfig: AppConfig, auditService: AuditService,
                 (implicit hc: HeaderCarrier): Future[Case] = {
     for {
       updated <- connector.updateCase(original.copy(status = CaseStatus.OPEN))
-      _ <- addEvent(original, updated, operator)
+      _ <- addStatusChangeEvent(original, updated, operator)
       _ = auditService.auditCaseReOpen(original, updated, operator)
     } yield updated
 
@@ -65,7 +75,7 @@ class CasesService @Inject()(appConfig: AppConfig, auditService: AuditService,
                (implicit hc: HeaderCarrier): Future[Case] = {
     for {
       updated <- connector.updateCase(original.copy(status = CaseStatus.REFERRED))
-      _ <- addEvent(original, updated, operator)
+      _ <- addStatusChangeEvent(original, updated, operator)
       _ = auditService.auditCaseReferred(original, updated, operator)
     } yield updated
 
@@ -97,7 +107,7 @@ class CasesService @Inject()(appConfig: AppConfig, auditService: AuditService,
       }
 
       // Create the event
-      _ <- addEvent(original, updated, operator, Some(message))
+      _ <- addStatusChangeEvent(original, updated, operator, Some(message))
 
       // Audit
       _ = auditService.auditCaseCompleted(original, updated, operator)
@@ -131,11 +141,33 @@ class CasesService @Inject()(appConfig: AppConfig, auditService: AuditService,
     }
   }
 
-  private def addEvent(original: Case, updated: Case, operator: Operator, comment: Option[String] = None)
-  (implicit hc: HeaderCarrier): Future[Unit] = {
-    val event = NewEventRequest(CaseStatusChange(original.status, updated.status, comment), operator)
-    connector.createEvent(updated, event)
-      .recover {
+  private def addStatusChangeEvent(original: Case,
+                                   updated: Case,
+                                   operator: Operator,
+                                   comment: Option[String] = None)(implicit hc: HeaderCarrier): Future[Unit] = {
+    addEvent(
+      original,
+      updated,
+      CaseStatusChange(original.status, updated.status, comment),
+      operator
+    )
+  }
+
+  private def addAppealStatusChangeEvent(original: Case,
+                                   updated: Case,
+                                   operator: Operator,
+                                   comment: Option[String] = None)(implicit hc: HeaderCarrier): Future[Unit] = {
+    addEvent(
+      original,
+      updated,
+      AppealStatusChange(original.decision.flatMap(_.appeal).map(_.status), updated.decision.flatMap(_.appeal).map(_.status), comment),
+      operator
+    )
+  }
+
+  private def addEvent(original: Case, updated: Case, details: Details, operator: Operator)(implicit hc: HeaderCarrier): Future[Unit] = {
+    val event = NewEventRequest(details, operator)
+    connector.createEvent(updated, event).recover {
         case t: Throwable => Logger.error(s"Could not create Event for case [${original.reference}] with payload [$event]", t)
       }
       .map(_ => ())
