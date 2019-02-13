@@ -77,6 +77,16 @@ class CasesService @Inject()(appConfig: AppConfig, auditService: AuditService,
 
   }
 
+  def cancelRuling(original: Case, operator: Operator)
+               (implicit hc: HeaderCarrier): Future[Case] = {
+    for {
+      updated <- connector.updateCase(original.copy(status = CaseStatus.CANCELLED))
+      _ <- addEvent(original, updated, operator)
+      _ = auditService.auditRulingCancelled(original, updated, operator)
+    } yield updated
+
+  }
+
   def completeCase(original: Case, operator: Operator, clock: Clock = Clock.systemDefaultZone())
                   (implicit hc: HeaderCarrier): Future[Case] = {
     val date = LocalDate.now(clock).atStartOfDay(appConfig.zoneId)
