@@ -115,18 +115,18 @@
                 @reopen_case_button(c)
             </div>
 
-            <div class="mt-1">
-                 @if(c.status == CaseStatus.OPEN) {
-                     <div class="heading-medium mt-30 mb-30">Reject or suspend this case</div>
-                     <p> Reject this case if: </p>
-                     <p> The application details are invalid. This cannot be undone.</p>
-                     <p>
-                         <a id="reject-case-button" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.RejectCaseController.rejectCase(c.reference)">
-                             Reject this case
-                         </a>
-                     </p>
-                 }
-            </div>
+            @if(c.status == CaseStatus.OPEN) {
+                <div class="mt-1">
+                    <div class="heading-medium mt-30 mb-30">Reject or suspend this case</div>
+                    <p> Reject this case if: </p>
+                    <p> The application details are invalid. This cannot be undone.</p>
+                    <p>
+                        <a id="reject-case-button" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.RejectCaseController.rejectCase(c.reference)">
+                            Reject this case
+                        </a>
+                    </p>
+                </div>
+            }
         }
     }
 }
