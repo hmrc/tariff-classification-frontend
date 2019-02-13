@@ -15,8 +15,9 @@
  *@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-@import uk.gov.hmrc.tariffclassificationfrontend.models.{AgentDetails, Application, BTIApplication, Case, EORIDetails, StoredAttachment}
+@import uk.gov.hmrc.tariffclassificationfrontend.models.{AgentDetails, Application, BTIApplication, Case, EORIDetails, StoredAttachment, CaseStatus}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials._
+
 
 @(c: Case, files: Seq[StoredAttachment], letterOfAuth: Option[StoredAttachment])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
@@ -112,6 +113,19 @@
             <div class="mt-1">
                 @refer_case_button(c)
                 @reopen_case_button(c)
+            </div>
+
+            <div class="mt-1">
+                 @if(c.status == CaseStatus.OPEN) {
+                     <div class="heading-medium mt-30 mb-30">Reject or suspend this case</div>
+                     <p> Reject this case if: </p>
+                     <p> The application details are invalid. This cannot be undone.</p>
+                     <p>
+                         <a id="reject-case-button" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.RejectCaseController.rejectCase(c.reference)">
+                             Reject this case
+                         </a>
+                     </p>
+                 }
             </div>
         }
     }
