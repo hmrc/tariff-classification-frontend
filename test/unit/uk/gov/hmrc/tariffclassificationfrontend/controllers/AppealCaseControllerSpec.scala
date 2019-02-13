@@ -29,6 +29,7 @@ import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
+import uk.gov.hmrc.tariffclassificationfrontend.models.AppealStatus.AppealStatus
 import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, Operator}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.tariffclassificationfrontend.utils.Cases
@@ -49,7 +50,7 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers with GuiceOneAppPe
 
   private implicit val hc: HeaderCarrier = HeaderCarrier()
 
-  "Case Trader" should {
+  "Case Appeal" should {
 
     "return 200 OK and HTML content type - For CANCELLED Case" in {
       val aCase = Cases.btiCaseExample.copy(status = CaseStatus.CANCELLED)
@@ -92,6 +93,113 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers with GuiceOneAppPe
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(None))
 
       val result = await(controller.appealDetails("reference")(fakeRequest))
+
+      status(result) shouldBe Status.OK
+      contentType(result) shouldBe Some("text/html")
+      charset(result) shouldBe Some("utf-8")
+      contentAsString(result) should include("We could not find a Case with reference")
+    }
+
+  }
+
+  "Case Appeal - Choose Status" should {
+
+    "return 200 OK and HTML content type - For CANCELLED Case" in {
+      val aCase = Cases.btiCaseExample.copy(status = CaseStatus.CANCELLED)
+
+      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
+
+      val result = await(controller.chooseAppealStatus("reference")(newFakeGETRequestWithCSRF(app)))
+
+      status(result) shouldBe Status.OK
+      contentType(result) shouldBe Some("text/html")
+      charset(result) shouldBe Some("utf-8")
+      contentAsString(result) should include("change_appeal_status-heading")
+    }
+
+    "return 200 OK and HTML content type - For COMPLETED Case" in {
+      val aCase = Cases.btiCaseExample.copy(status = CaseStatus.COMPLETED)
+
+      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
+
+      val result = await(controller.chooseAppealStatus("reference")(newFakeGETRequestWithCSRF(app)))
+
+      status(result) shouldBe Status.OK
+      contentType(result) shouldBe Some("text/html")
+      charset(result) shouldBe Some("utf-8")
+      contentAsString(result) should include("change_appeal_status-heading")
+    }
+
+    "redirect for other status" in {
+      val aCase = Cases.btiCaseExample.copy(status = CaseStatus.OPEN)
+
+      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
+
+      val result = await(controller.chooseAppealStatus("reference")(newFakeGETRequestWithCSRF(app)))
+
+      status(result) shouldBe Status.SEE_OTHER
+      locationOf(result) shouldBe Some("/tariff-classification/cases/reference")
+    }
+
+    "return 404 Not Found and HTML content type" in {
+      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(None))
+
+      val result = await(controller.chooseAppealStatus("reference")(newFakeGETRequestWithCSRF(app)))
+
+      status(result) shouldBe Status.OK
+      contentType(result) shouldBe Some("text/html")
+      charset(result) shouldBe Some("utf-8")
+      contentAsString(result) should include("We could not find a Case with reference")
+    }
+
+  }
+
+  "Case Appeal - Submit Status" should {
+
+    "return 200 OK and HTML content type - For CANCELLED Case" in {
+      val aCase = Cases.btiCaseExample.copy(status = CaseStatus.CANCELLED)
+
+      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
+      given(casesService.updateAppealStatus(refEq(aCase), any[Option[AppealStatus]], any[Operator])).willReturn(Future.successful(aCase))
+
+      val result = await(controller.updateAppealStatus("reference")(newFakePOSTRequestWithCSRF(app)))
+
+      status(result) shouldBe Status.OK
+      contentType(result) shouldBe Some("text/html")
+      charset(result) shouldBe Some("utf-8")
+      contentAsString(result) should include("change_appeal_status-heading")
+    }
+
+    "return 200 OK and HTML content type - For COMPLETED Case" in {
+      val aCase = Cases.btiCaseExample.copy(status = CaseStatus.COMPLETED)
+
+      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
+      given(casesService.updateAppealStatus(refEq(aCase), any[Option[AppealStatus]], any[Operator])).willReturn(Future.successful(aCase))
+
+      val result = await(controller.updateAppealStatus("reference")(newFakePOSTRequestWithCSRF(app)))
+
+      status(result) shouldBe Status.OK
+      contentType(result) shouldBe Some("text/html")
+      charset(result) shouldBe Some("utf-8")
+      contentAsString(result) should include("change_appeal_status-heading")
+    }
+
+    "redirect for other status" in {
+      val aCase = Cases.btiCaseExample.copy(status = CaseStatus.OPEN)
+
+      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
+      given(casesService.updateAppealStatus(refEq(aCase), any[Option[AppealStatus]], any[Operator])).willReturn(Future.successful(aCase))
+
+      val result = await(controller.updateAppealStatus("reference")(newFakePOSTRequestWithCSRF(app)))
+
+      status(result) shouldBe Status.SEE_OTHER
+      locationOf(result) shouldBe Some("/tariff-classification/cases/reference")
+    }
+
+    "return 404 Not Found and HTML content type" in {
+      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(None))
+
+      val result = await(controller.updateAppealStatus("reference")(newFakePOSTRequestWithCSRF(app)))
 
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")

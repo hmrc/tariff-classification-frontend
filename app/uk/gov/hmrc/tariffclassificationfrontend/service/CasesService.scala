@@ -24,6 +24,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.tariffclassificationfrontend.audit.AuditService
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.connector.BindingTariffClassificationConnector
+import uk.gov.hmrc.tariffclassificationfrontend.models.AppealStatus.AppealStatus
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
 
@@ -36,6 +37,9 @@ class CasesService @Inject()(appConfig: AppConfig, auditService: AuditService,
                              fileService: FileStoreService,
                              connector: BindingTariffClassificationConnector) {
 
+  def updateAppealStatus(original: Case, status: Option[AppealStatus], operator: Operator): Future[Case] = ???
+
+
   def releaseCase(original: Case, queue: Queue, operator: Operator)
                  (implicit hc: HeaderCarrier): Future[Case] = {
     for {
@@ -44,16 +48,6 @@ class CasesService @Inject()(appConfig: AppConfig, auditService: AuditService,
       _ = auditService.auditCaseReleased(original, updated, queue, operator)
     } yield updated
 
-  }
-
-  private def addEvent(original: Case, updated: Case, operator: Operator, comment: Option[String] = None)
-                      (implicit hc: HeaderCarrier): Future[Unit] = {
-    val event = NewEventRequest(CaseStatusChange(original.status, updated.status, comment), operator)
-    connector.createEvent(updated, event)
-      .recover {
-        case t: Throwable => Logger.error(s"Could not create Event for case [${original.reference}] with payload [$event]", t)
-      }
-      .map(_ => ())
   }
 
   def reopenCase(original: Case, operator: Operator)
@@ -135,6 +129,16 @@ class CasesService @Inject()(appConfig: AppConfig, auditService: AuditService,
       val attachments = c.attachments :+ Attachment(id = fileStored.id, operator = Some(o))
       connector.updateCase(c.copy(attachments = attachments))
     }
+  }
+
+  private def addEvent(original: Case, updated: Case, operator: Operator, comment: Option[String] = None)
+  (implicit hc: HeaderCarrier): Future[Unit] = {
+    val event = NewEventRequest(CaseStatusChange(original.status, updated.status, comment), operator)
+    connector.createEvent(updated, event)
+      .recover {
+        case t: Throwable => Logger.error(s"Could not create Event for case [${original.reference}] with payload [$event]", t)
+      }
+      .map(_ => ())
   }
 
 }

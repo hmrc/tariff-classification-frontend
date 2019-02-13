@@ -20,6 +20,8 @@ import javax.inject.{Inject, Singleton}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
+import uk.gov.hmrc.tariffclassificationfrontend.forms.AppealForm
+import uk.gov.hmrc.tariffclassificationfrontend.models.AppealStatus.AppealStatus
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
@@ -43,4 +45,32 @@ class AppealCaseController @Inject()(authenticatedAction: AuthenticatedAction,
       c => successful(views.html.case_details(c, CaseDetailPage.APPEAL, views.html.partials.appeal_details(c)))
     )
   }
+
+  def chooseAppealStatus(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
+    getCaseAndRenderView(
+      reference,
+      c => successful(views.html.change_appeal_status(c, AppealForm.form))
+    )
+  }
+
+  def updateAppealStatus(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
+    AppealForm.form.bindFromRequest().fold(
+      errors => {
+        getCaseAndRenderView(
+          reference,
+          c => successful(views.html.change_appeal_status(c, errors))
+        )
+      },
+      (status: Option[AppealStatus]) => {
+        getCaseAndRenderView(
+          reference,
+          c => caseService.updateAppealStatus(c, status, request.operator).flatMap { c =>
+            successful(views.html.case_details(c, CaseDetailPage.APPEAL, views.html.partials.appeal_details(c)))
+          }
+        )
+      }
+    )
+
+  }
+
 }
