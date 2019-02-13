@@ -79,6 +79,14 @@ class AuditService @Inject()(auditConnector: DefaultAuditConnector) {
     )
   }
 
+  def auditCaseSuppressed(oldCase: Case, updatedCase: Case, operator: Operator)
+                         (implicit hc: HeaderCarrier): Unit = {
+    sendExplicitAuditEvent(
+      auditEventType = CaseSuppressed,
+      auditPayload = statusChangeAuditPayload(oldCase, updatedCase, operator)
+    )
+  }
+
   private def statusChangeAuditPayload(oldCase: Case, updatedCase: Case, operator: Operator): Map[String, String] = {
     baseAuditPayload(updatedCase, operator) + ("newStatus" -> updatedCase.status.toString) + ("previousStatus" -> oldCase.status.toString)
   }
@@ -106,4 +114,5 @@ object AuditPayloadType {
   val CaseReleased = "caseReleased"
   val CaseCompleted = "caseCompleted"
   val CaseAppealChange = "caseAppealChange"
+  val CaseSuppressed = "caseSuppressed"
 }

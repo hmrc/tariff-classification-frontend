@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.views.partials
 
-import uk.gov.hmrc.tariffclassificationfrontend.models.Contact
+import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, Contact}
 import uk.gov.hmrc.tariffclassificationfrontend.models.response.ScanStatus
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewSpec
@@ -138,6 +138,28 @@ class CaseTraderViewSpec extends ViewSpec {
 
       // Then
       doc shouldNot containElementWithID("agent-letter-file-letter-of-auth-id")
+    }
+
+    "show the suppress case section for NEW cases" in {
+      // Given
+      val case1 = Cases.btiCaseExample.copy(status = CaseStatus.NEW)
+
+      // When
+      val doc = view(case_trader(case1, None))
+
+      // Then
+      doc should containText("Releasing or suppressing a case")
+    }
+
+    "not show the suppress case section for non-NEW cases" in {
+      // Given
+      val case1 = Cases.btiCaseExample.copy(status = CaseStatus.OPEN)
+
+      // When
+      val doc = view(case_trader(case1, None))
+
+      // Then
+      doc shouldNot containText("Releasing or suppressing a case")
     }
 
   }

@@ -47,7 +47,6 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
   private lazy val activityForm: Form[ActivityFormData] = ActivityForm.form
   private lazy val keywordForm: Form[KeywordFormData] = KeywordForm.form
 
-  // Trader Tab
   def trader(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     getCaseAndRenderView(
       reference,

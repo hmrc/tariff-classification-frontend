@@ -25,6 +25,8 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.models.StoredAttachment
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.attachment
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.release_case_button
+@import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus
+
 @(c: Case,  letterOfAuth: Option[StoredAttachment])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @tab_heading("trader", "Trader")
@@ -170,19 +172,47 @@
         </div>
     </div>
 
-@if(co.phone.isDefined) {
-    <div class="grid-row">
-        <div class="column-one-third">
-            <p>@messages("case.application.contact.telephone")</p>
+    @if(co.phone.isDefined) {
+        <div class="grid-row">
+            <div class="column-one-third">
+                <p>@messages("case.application.contact.telephone")</p>
+            </div>
+            <div class="column-two-thirds">
+                <p id="contact-phone">@co.phone.get</p>
+            </div>
         </div>
-        <div class="column-two-thirds">
-            <p id="contact-phone">@co.phone.get</p>
-        </div>
-    </div>
-}
+    }
 
 }
 
-<div class="mt-1">
-    @release_case_button(c)
-</div>
+@defining(c) { c: Case =>
+    @if(c.status == CaseStatus.NEW) {
+        <h3>Releasing or suppressing a case</h3>
+
+        <p>Release this case if the applicant has included their:</p>
+
+        <ul class="list list-bullet">
+            <li>correct EORI number and address</li>
+            <li>item name and description</li>
+        </ul>
+
+        <p>If they’re an agent they should also have:</p>
+
+        <ul class="list list-bullet">
+            <li>the correct EORI number and address of the person they’re representing</li>
+            <li>a valid letter of authority</li>
+        </ul>
+
+        <p>If any of this information is missing or incorrect, suppress the case and use the contact details to notify the applicant. </p>
+
+        <h3 class="govuk-fieldset__heading">Do you want to release or suppress this case?</h3>
+
+        <p>
+            @release_case_button(c)
+        </p>
+
+        <p>
+            <a id="suppress_link" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.SuppressCaseController.suppressCase(c.reference)">Suppress</a>
+        </p>
+    }
+}
