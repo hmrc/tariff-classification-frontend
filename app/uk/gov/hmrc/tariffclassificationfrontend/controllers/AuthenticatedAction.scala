@@ -51,10 +51,10 @@ class AuthenticatedAction @Inject()(appConfig: AppConfig,
       request.headers,
       Some(request.session)
     )
-    authorise().retrieve(Retrievals.credentials and Retrievals.name) { retrieved: Credentials ~ Name =>
-      val id = retrieved.a.providerId
-      val name = retrieved.b.name
-      block(AuthenticatedRequest(Operator(id, name), request))
+    authorise().retrieve(Retrievals.credentials and Retrievals.name) {
+      case ~(credentials: Credentials, name: Name) =>
+        val id = credentials.providerId
+        block(AuthenticatedRequest(Operator(id, name.name), request))
     } recover {
       case _: NoActiveSession => toStrideLogin(
         if (appConfig.runningAsDev) s"http://${request.host}${request.uri}"
