@@ -59,7 +59,7 @@ class CasesService_SuppressCaseSpec extends UnitSpec with MockitoSugar with Befo
       val originalCase = aCase.copy(status = CaseStatus.NEW)
       val caseUpdated = aCase.copy(status = CaseStatus.SUPPRESSED)
 
-      given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
+      given(connector.updateCase(refEq(caseUpdated))(any[HeaderCarrier])).willReturn(successful(caseUpdated))
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])).willReturn(successful(mock[Event]))
 
       // When Then
@@ -77,16 +77,16 @@ class CasesService_SuppressCaseSpec extends UnitSpec with MockitoSugar with Befo
 
     "not create event on update failure" in {
       val operator: Operator = Operator("operator-id")
-      val originalCase = aCase.copy(status = CaseStatus.NEW)
+      val caseUpdated = aCase.copy(status = CaseStatus.SUPPRESSED)
 
-      given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(failed(new RuntimeException()))
+      given(connector.updateCase(refEq(caseUpdated))(any[HeaderCarrier])).willReturn(failed(new RuntimeException()))
 
       intercept[RuntimeException] {
-        await(service.suppressCase(originalCase, operator))
+        await(service.suppressCase(caseUpdated, operator))
       }
 
       verifyZeroInteractions(audit)
-      verify(connector, never()).createEvent(refEq(aCase), any[NewEventRequest])(any[HeaderCarrier])
+      verify(connector, never()).createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])
     }
 
     "succeed on event create failure" in {
@@ -95,7 +95,7 @@ class CasesService_SuppressCaseSpec extends UnitSpec with MockitoSugar with Befo
       val originalCase = aCase.copy(status = CaseStatus.NEW)
       val caseUpdated = aCase.copy(status = CaseStatus.SUPPRESSED)
 
-      given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
+      given(connector.updateCase(refEq(caseUpdated))(any[HeaderCarrier])).willReturn(successful(caseUpdated))
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])).willReturn(failed(new RuntimeException()))
 
       // When Then

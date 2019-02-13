@@ -19,7 +19,7 @@ package uk.gov.tariffclassificationfrontend.utils
 import java.time.Instant
 
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Event, Note, Operator}
+import uk.gov.hmrc.tariffclassificationfrontend.models._
 
 object Events {
   val event = Event("id", Note(Some("comment")), Operator("user-id", Some("user name")), "case-ref", Instant.now())
