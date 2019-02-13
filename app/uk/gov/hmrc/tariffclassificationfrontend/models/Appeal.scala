@@ -16,7 +16,9 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.models
 
-object CaseStatus extends Enumeration {
-  type CaseStatus = Value
-  val DRAFT, NEW, OPEN, SUPPRESSED, REFERRED, REJECTED, CANCELLED, SUSPENDED, COMPLETED, REVOKED, ANNULLED = Value
-}
+import uk.gov.hmrc.tariffclassificationfrontend.models.AppealStatus.AppealStatus
+
+case class Appeal
+(
+  status: AppealStatus
+)

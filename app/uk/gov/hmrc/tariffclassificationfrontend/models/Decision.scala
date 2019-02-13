@@ -18,6 +18,8 @@ package uk.gov.hmrc.tariffclassificationfrontend.models
 
 import java.time.Instant
 
+import uk.gov.hmrc.tariffclassificationfrontend.models.AppealStatus.AppealStatus
+
 case class Decision
 (
   bindingCommodityCode: String,
@@ -29,10 +31,4 @@ case class Decision
   methodExclusion: Option[String] = None,
   methodCommercialDenomination: Option[String] = None,
   appeal: Option[Appeal] = None
-)
-
-case class Appeal
-(
-  reviewStatus: String,
-  reviewResult: String
 )
