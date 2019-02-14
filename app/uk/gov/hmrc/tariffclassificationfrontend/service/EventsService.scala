@@ -30,7 +30,8 @@ import scala.concurrent.Future
 @Singleton
 class EventsService @Inject()(connector: BindingTariffClassificationConnector, auditService: AuditService) {
 
-  def getEvents(reference: String)(implicit hc: HeaderCarrier): Future[Seq[Event]] = {
+  def getEvents(reference: String)
+               (implicit hc: HeaderCarrier): Future[Seq[Event]] = {
     connector.findEvents(reference)
   }
 

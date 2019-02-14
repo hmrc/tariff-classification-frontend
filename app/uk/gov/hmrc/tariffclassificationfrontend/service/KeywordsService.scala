@@ -28,21 +28,23 @@ import scala.io.Source
 @Singleton
 class KeywordsService @Inject()(connector: BindingTariffClassificationConnector) {
 
-  def addKeyword(c: Case, keyword: String)(implicit hc: HeaderCarrier): Future[Case] = {
-    c.keywords match {
-      case keywords if keywords.contains(keyword.toUpperCase) => Future.successful(c)
-      case _ =>
-        val caseToUpdate = c.copy(keywords = c.keywords + keyword.toUpperCase)
-        connector.updateCase(caseToUpdate)
+  def addKeyword(c: Case, keyword: String)
+                (implicit hc: HeaderCarrier): Future[Case] = {
+    if (c.keywords.contains(keyword.toUpperCase)) {
+      Future.successful(c)
+    } else {
+      val caseToUpdate = c.copy(keywords = c.keywords + keyword.toUpperCase)
+      connector.updateCase(caseToUpdate)
     }
   }
 
-  def removeKeyword(c: Case, keyword: String)(implicit hc: HeaderCarrier): Future[Case] = {
-    c.keywords match {
-      case keywords if keywords.contains(keyword.toUpperCase) =>
-        val caseToUpdate = c.copy(keywords = c.keywords - keyword.toUpperCase)
-        connector.updateCase(caseToUpdate)
-      case _ => Future.successful(c)
+  def removeKeyword(c: Case, keyword: String)
+                   (implicit hc: HeaderCarrier): Future[Case] = {
+    if (c.keywords.contains(keyword.toUpperCase)) {
+      val caseToUpdate = c.copy(keywords = c.keywords - keyword.toUpperCase)
+      connector.updateCase(caseToUpdate)
+    } else {
+      Future.successful(c)
     }
   }
 

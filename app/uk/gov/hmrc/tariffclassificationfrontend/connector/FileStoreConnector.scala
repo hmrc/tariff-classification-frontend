@@ -67,4 +67,5 @@ class FileStoreConnector @Inject()(appConfig: AppConfig, http: HttpClient, ws: W
       .post(Source(List(filePart, dataPart)))
       .map(response => Json.fromJson[FileMetadata](Json.parse(response.body)).get)
   }
+
 }

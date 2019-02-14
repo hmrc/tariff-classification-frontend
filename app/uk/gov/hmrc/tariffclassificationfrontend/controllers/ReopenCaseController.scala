@@ -38,9 +38,10 @@ class ReopenCaseController @Inject()(authenticatedAction: AuthenticatedAction,
   override protected val caseService: CasesService = casesService
 
   override protected def redirect: String => Call = routes.CaseController.applicationDetails
-  override protected def isValidCase: Case => Boolean = c => validPreviousStatuses.contains(c.status)
 
-  private lazy val validPreviousStatuses = Seq(SUSPENDED, REFERRED)
+  override protected def isValidCase: Case => Boolean = { c: Case =>
+    c.status == SUSPENDED || c.status == REFERRED
+  }
 
   def reopenCase(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     getCaseAndRenderView(reference, c => successful(views.html.reopen_case(c)))
