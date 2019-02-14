@@ -124,7 +124,7 @@ class AuditServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEac
     "Delegate to connector" in {
       service.auditCaseSuppressed(original, updated, operator)
 
-      val payload = auditPayload(
+      val payload = caseChangeAudit(
         caseReference = "ref",
         newStatus = SUPPRESSED,
         previousStatus = NEW,
