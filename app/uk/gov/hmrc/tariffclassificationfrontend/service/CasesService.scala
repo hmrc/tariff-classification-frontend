@@ -52,7 +52,8 @@ class CasesService @Inject()(appConfig: AppConfig,
     } yield updated
   }
 
-  def updateReviewStatus(original: Case, status: Option[ReviewStatus], operator: Operator)(implicit hc: HeaderCarrier): Future[Case] = {
+  def updateReviewStatus(original: Case, status: Option[ReviewStatus], operator: Operator)
+                        (implicit hc: HeaderCarrier): Future[Case] = {
     val decision = original.decision.getOrElse(throw new IllegalArgumentException("Cannot change the Review status of a case without a Decision"))
     val review = status.map(Review)
     val updatedDecision = decision.copy(review = review)
@@ -72,7 +73,6 @@ class CasesService @Inject()(appConfig: AppConfig,
       _ <- addStatusChangeEvent(original, updated, operator)
       _ = auditService.auditCaseReleased(original, updated, queue, operator)
     } yield updated
-
   }
 
   def reopenCase(original: Case, operator: Operator)
@@ -82,9 +82,7 @@ class CasesService @Inject()(appConfig: AppConfig,
       _ <- addStatusChangeEvent(original, updated, operator)
       _ = auditService.auditCaseReOpen(original, updated, operator)
     } yield updated
-
   }
-
 
   def referCase(original: Case, operator: Operator)
                (implicit hc: HeaderCarrier): Future[Case] = {
@@ -93,7 +91,6 @@ class CasesService @Inject()(appConfig: AppConfig,
       _ <- addStatusChangeEvent(original, updated, operator)
       _ = auditService.auditCaseReferred(original, updated, operator)
     } yield updated
-
   }
 
   def rejectCase(original: Case, operator: Operator)
@@ -103,7 +100,6 @@ class CasesService @Inject()(appConfig: AppConfig,
       _ <- addStatusChangeEvent(original, updated, operator)
       _ = auditService.auditCaseRejected(original, updated, operator)
     } yield updated
-
   }
 
   def suspendCase(original: Case, operator: Operator)
@@ -113,7 +109,6 @@ class CasesService @Inject()(appConfig: AppConfig,
       _ <- addStatusChangeEvent(original, updated, operator)
       _ = auditService.auditCaseSuspended(original, updated, operator)
     } yield updated
-
   }
 
   def suppressCase(original: Case, operator: Operator)
@@ -123,7 +118,6 @@ class CasesService @Inject()(appConfig: AppConfig,
       _ <- addStatusChangeEvent(original, updated, operator)
       _ = auditService.auditCaseSuppressed(original, updated, operator)
     } yield updated
-
   }
 
   def completeCase(original: Case, operator: Operator, clock: Clock = Clock.systemDefaultZone())
@@ -176,7 +170,6 @@ class CasesService @Inject()(appConfig: AppConfig,
       // Audit
       _ = auditService.auditRulingCancelled(original, updated, operator)
     } yield updated
-
   }
 
   def getOne(reference: String)(implicit hc: HeaderCarrier): Future[Option[Case]] = {
@@ -218,28 +211,22 @@ class CasesService @Inject()(appConfig: AppConfig,
 
   private def addAppealStatusChangeEvent(original: Case, updated: Case, operator: Operator, comment: Option[String] = None)
                                         (implicit hc: HeaderCarrier): Future[Unit] = {
-
-    val details = AppealStatusChange(
-      from = original.decision.flatMap(_.appeal).map(_.status),
-      to = updated.decision.flatMap(_.appeal).map(_.status), comment
-    )
-
-    addEvent(
-      original,
-      updated,
-      details,
-      operator
-    )
+    val details = AppealStatusChange(appealStatus(original), appealStatus(updated), comment)
+    addEvent(original, updated, details, operator)
   }
 
   private def addReviewStatusChangeEvent(original: Case, updated: Case, operator: Operator, comment: Option[String] = None)
                                         (implicit hc: HeaderCarrier): Future[Unit] = {
-    addEvent(
-      original,
-      updated,
-      ReviewStatusChange(original.decision.flatMap(_.review).map(_.status), updated.decision.flatMap(_.review).map(_.status), comment),
-      operator
-    )
+    val details = ReviewStatusChange(reviewStatus(original), reviewStatus(updated), comment)
+    addEvent(original, updated, details, operator)
+  }
+
+  private def appealStatus: Case => Option[AppealStatus] = {
+    _.decision.flatMap(_.appeal).map(_.status)
+  }
+
+  private def reviewStatus: Case => Option[ReviewStatus] = {
+    _.decision.flatMap(_.review).map(_.status)
   }
 
   private def addEvent(original: Case, updated: Case, details: Details, operator: Operator)
