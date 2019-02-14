@@ -170,7 +170,8 @@ object Cases {
                    methodSearch: Option[String] = None,
                    methodExclusion: Option[String] = None,
                    methodCommercialDenomination: Option[String] = None,
-                   appeal: Option[Appeal] = None
+                   appeal: Option[Appeal] = None,
+                   review: Option[Review] = None
                   ): Case => Case = {
     _.copy(decision = Some(
       Decision(
@@ -182,7 +183,8 @@ object Cases {
         methodSearch,
         methodExclusion,
         methodCommercialDenomination,
-        appeal
+        appeal,
+        review
       )))
   }
 

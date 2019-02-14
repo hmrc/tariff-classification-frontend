@@ -16,18 +16,17 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.models
 
-import java.time.Instant
+object ReviewStatus extends Enumeration {
+  type ReviewStatus = Value
+  val IN_PROGRESS, UPHELD, OVERTURNED = Value
 
-case class Decision
-(
-  bindingCommodityCode: String,
-  effectiveStartDate: Option[Instant] = None,
-  effectiveEndDate: Option[Instant] = None,
-  justification: String,
-  goodsDescription: String,
-  methodSearch: Option[String] = None,
-  methodExclusion: Option[String] = None,
-  methodCommercialDenomination: Option[String] = None,
-  appeal: Option[Appeal] = None,
-  review: Option[Review] = None
-)
+  def format(status: Option[ReviewStatus]): String = {
+    status match {
+      case Some(IN_PROGRESS) => "Under review"
+      case Some(UPHELD) => "Review upheld"
+      case Some(OVERTURNED) => "Review overturned"
+      case None => "None"
+      case _ => ???
+    }
+  }
+}

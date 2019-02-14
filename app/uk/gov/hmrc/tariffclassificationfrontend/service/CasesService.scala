@@ -25,6 +25,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.audit.AuditService
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.connector.BindingTariffClassificationConnector
 import uk.gov.hmrc.tariffclassificationfrontend.models.AppealStatus.AppealStatus
+import uk.gov.hmrc.tariffclassificationfrontend.models.ReviewStatus.ReviewStatus
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
 
@@ -48,6 +49,18 @@ class CasesService @Inject()(appConfig: AppConfig,
       updated <- connector.updateCase(original.copy(decision = Some(updatedDecision)))
       _ <- addAppealStatusChangeEvent(original, updated, operator)
       _ = auditService.auditCaseAppealChange(original , updated, operator)
+    } yield updated
+  }
+
+  def updateReviewStatus(original: Case, status: Option[ReviewStatus], operator: Operator)(implicit hc: HeaderCarrier): Future[Case] = {
+    val decision = original.decision.getOrElse(throw new IllegalArgumentException("Cannot change the Review status of a case without a Decision"))
+    val review = status.map(Review)
+    val updatedDecision = decision.copy(review = review)
+
+    for {
+      updated <- connector.updateCase(original.copy(decision = Some(updatedDecision)))
+      _ <- addReviewStatusChangeEvent(original, updated, operator)
+      _ = auditService.auditCaseReviewChange(original , updated, operator)
     } yield updated
   }
 
@@ -199,6 +212,18 @@ class CasesService @Inject()(appConfig: AppConfig,
       original,
       updated,
       AppealStatusChange(original.decision.flatMap(_.appeal).map(_.status), updated.decision.flatMap(_.appeal).map(_.status), comment),
+      operator
+    )
+  }
+
+  private def addReviewStatusChangeEvent(original: Case,
+                                         updated: Case,
+                                         operator: Operator,
+                                         comment: Option[String] = None)(implicit hc: HeaderCarrier): Future[Unit] = {
+    addEvent(
+      original,
+      updated,
+      ReviewStatusChange(original.decision.flatMap(_.review).map(_.status), updated.decision.flatMap(_.review).map(_.status), comment),
       operator
     )
   }
