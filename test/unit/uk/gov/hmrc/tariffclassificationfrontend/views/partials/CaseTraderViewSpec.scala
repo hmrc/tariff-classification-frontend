@@ -148,7 +148,7 @@ class CaseTraderViewSpec extends ViewSpec {
       val doc = view(case_trader(case1, None))
 
       // Then
-      doc should containText("Releasing or suppressing a case")
+      doc should containElementWithID("release-suppress-case-heading")
     }
 
     "not show the suppress case section for non-NEW cases" in {
@@ -159,7 +159,7 @@ class CaseTraderViewSpec extends ViewSpec {
       val doc = view(case_trader(case1, None))
 
       // Then
-      doc shouldNot containText("Releasing or suppressing a case")
+      doc shouldNot containElementWithID("release-suppress-case-heading")
     }
 
   }
