@@ -221,7 +221,7 @@ class AuditServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEac
         previousStatus = Some(ReviewStatus.IN_PROGRESS),
         operatorId = operator.id
       )
-      verify(connector).sendExplicitAudit(refEq("caseREviewChange"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+      verify(connector).sendExplicitAudit(refEq("caseReviewChange"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
     }
   }
 
@@ -248,7 +248,7 @@ class AuditServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEac
       "caseReference" -> caseReference,
       "operatorId" -> operatorId,
       "newReviewStatus" -> newStatus.map(_.toString).getOrElse("None"),
-      "previousREviewStatus" -> previousStatus.map(_.toString).getOrElse("None")
+      "previousReviewStatus" -> previousStatus.map(_.toString).getOrElse("None")
     )
   }
 

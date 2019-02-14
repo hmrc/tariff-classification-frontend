@@ -113,6 +113,54 @@ class ActivityDetailsViewSpec extends ViewSpec {
       doc.getElementById("activity-events-row-0-date") should containText("01 Jan 2019")
     }
 
+    "Render 'Appeal Change'" in {
+      // Given
+      val c = aCase()
+      val e = Event(
+        id = "EVENT_ID",
+        details = AppealStatusChange(from = None, to = Some(AppealStatus.IN_PROGRESS), comment = Some("comment")),
+        operator = Operator("id", Some("name")),
+        caseReference = "ref",
+        timestamp = date
+      )
+
+      // When
+      val doc = view(activity_details(c, Seq(e), ActivityForm.form))
+
+      // Then
+      doc should containElementWithID("activity-events-row-0-operator")
+      doc.getElementById("activity-events-row-0-operator") should containText("name")
+      doc should containElementWithID("activity-events-row-0-content")
+      doc.getElementById("activity-events-row-0-content") should containText("Appeal status changed from None to Under appeal")
+      doc.getElementById("activity-events-row-0-content") should containText("comment")
+      doc should containElementWithID("activity-events-row-0-date")
+      doc.getElementById("activity-events-row-0-date") should containText("01 Jan 2019")
+    }
+
+    "Render 'Review Change'" in {
+      // Given
+      val c = aCase()
+      val e = Event(
+        id = "EVENT_ID",
+        details = ReviewStatusChange(from = None, to = Some(ReviewStatus.IN_PROGRESS), comment = Some("comment")),
+        operator = Operator("id", Some("name")),
+        caseReference = "ref",
+        timestamp = date
+      )
+
+      // When
+      val doc = view(activity_details(c, Seq(e), ActivityForm.form))
+
+      // Then
+      doc should containElementWithID("activity-events-row-0-operator")
+      doc.getElementById("activity-events-row-0-operator") should containText("name")
+      doc should containElementWithID("activity-events-row-0-content")
+      doc.getElementById("activity-events-row-0-content") should containText("Review status changed from None to Under review")
+      doc.getElementById("activity-events-row-0-content") should containText("comment")
+      doc should containElementWithID("activity-events-row-0-date")
+      doc.getElementById("activity-events-row-0-date") should containText("01 Jan 2019")
+    }
+
     "Render assigned to 'You'" in {
       // Given
       val c = aCase(
