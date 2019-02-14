@@ -65,30 +65,32 @@
                 <td id="activity-events-row-@{index}-operator" class="activity-cell">@event.operator.name.getOrElse("Unknown")</td>
 
                 <td id="activity-events-row-@{index}-content" class="activity-cell-desc">
-                    @event.details.`type` match {
-                        case EventType.NOTE => {
-                            @progressive_disclosure(
-                                id = s"activity-events-row-$index",
-                                summary = "Case note added",
-                                body = event.details.comment
-                            )
-                        }
-                        case EventType.CASE_STATUS_CHANGE => {
-                            @progressive_disclosure(
-                                id = s"activity-events-row-$index",
-                                summary = s"Status changed from ${event.details.asInstanceOf[CaseStatusChange].from.toString.toLowerCase} to ${event.details.asInstanceOf[CaseStatusChange].to.toString.toLowerCase}",
-                                body = event.details.comment
-                            )
-                        }
-                        case EventType.APPEAL_STATUS_CHANGE => {
-                            @progressive_disclosure(
-                                id = s"activity-events-row-$index",
-                                summary = s"Appeal status changed from ${AppealStatus.format(event.details.asInstanceOf[AppealStatusChange].from)} to ${AppealStatus.format(event.details.asInstanceOf[AppealStatusChange].to)}",
-                                body = event.details.comment
-                            )
-                        }
-                        case _ => {
-                            @{throw new IllegalArgumentException(s"Unhandled Event Type [${event.details.`type`}]")}
+                    @{
+                        event.details.`type` match {
+                            case EventType.NOTE => {
+                                progressive_disclosure(
+                                    id = s"activity-events-row-$index",
+                                    summary = "Case note added",
+                                    body = event.details.comment
+                                )
+                            }
+                            case EventType.CASE_STATUS_CHANGE => {
+                                progressive_disclosure(
+                                    id = s"activity-events-row-$index",
+                                    summary = s"Status changed from ${event.details.asInstanceOf[CaseStatusChange].from.toString.toLowerCase} to ${event.details.asInstanceOf[CaseStatusChange].to.toString.toLowerCase}",
+                                    body = event.details.comment
+                                )
+                            }
+                            case EventType.APPEAL_STATUS_CHANGE => {
+                                progressive_disclosure(
+                                    id = s"activity-events-row-$index",
+                                    summary = s"Appeal status changed from ${AppealStatus.format(event.details.asInstanceOf[AppealStatusChange].from)} to ${AppealStatus.format(event.details.asInstanceOf[AppealStatusChange].to)}",
+                                    body = event.details.comment
+                                )
+                            }
+                            case _ => {
+                                throw new IllegalArgumentException(s"Unhandled Event Type [${event.details.`type`}]")
+                            }
                         }
                     }
                 </td>
