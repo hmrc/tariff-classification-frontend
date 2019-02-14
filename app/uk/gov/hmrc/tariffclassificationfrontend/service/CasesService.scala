@@ -32,7 +32,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class CasesService @Inject()(appConfig: AppConfig, auditService: AuditService,
+class CasesService @Inject()(appConfig: AppConfig,
+                             auditService: AuditService,
                              emailService: EmailService,
                              fileService: FileStoreService,
                              connector: BindingTariffClassificationConnector) {
