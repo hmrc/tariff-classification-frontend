@@ -134,7 +134,7 @@ class AuditServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEac
     }
   }
 
-  "Service 'audit case reopen' when a case is referred" should {
+  "Service 'audit case reopened' when a case is referred" should {
     val original = btiCaseExample.copy(reference = "ref", status = REFERRED)
     val updated = btiCaseExample.copy(reference = "ref", status = OPEN)
     val operator = Operator("operator-id")
@@ -146,6 +146,24 @@ class AuditServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEac
         caseReference = "ref",
         newStatus = OPEN,
         previousStatus = REFERRED,
+        operatorId = operator.id
+      )
+      verify(connector).sendExplicitAudit(refEq("caseReopened"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+    }
+  }
+
+  "Service 'audit case reopened' when a case is suspended" should {
+    val original = btiCaseExample.copy(reference = "ref", status = SUSPENDED)
+    val updated = btiCaseExample.copy(reference = "ref", status = OPEN)
+    val operator = Operator("operator-id")
+
+    "Delegate to connector" in {
+      service.auditCaseReOpen(original, updated, operator)
+
+      val payload = caseChangeAudit(
+        caseReference = "ref",
+        newStatus = OPEN,
+        previousStatus = SUSPENDED,
         operatorId = operator.id
       )
       verify(connector).sendExplicitAudit(refEq("caseReopened"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
@@ -167,24 +185,6 @@ class AuditServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEac
         operatorId = operator.id
       )
       verify(connector).sendExplicitAudit(refEq("caseAppealChange"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
-    }
-  }
-
-  "Service 'audit case reopen' when a case is suspended" should {
-    val original = btiCaseExample.copy(reference = "ref", status = SUSPENDED)
-    val updated = btiCaseExample.copy(reference = "ref", status = OPEN)
-    val operator = Operator("operator-id")
-
-    "Delegate to connector" in {
-      service.auditCaseReOpen(original, updated, operator)
-
-      val payload = caseChangeAudit(
-        caseReference = "ref",
-        newStatus = OPEN,
-        previousStatus = SUSPENDED,
-        operatorId = operator.id
-      )
-      verify(connector).sendExplicitAudit(refEq("caseReopened"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
     }
   }
 
