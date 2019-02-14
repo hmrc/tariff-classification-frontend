@@ -18,8 +18,10 @@ package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito._
-import org.scalatest.Matchers
+import org.mockito.Mockito
+import org.mockito.Mockito.{never, verify}
 import org.scalatest.mockito.MockitoSugar
+import org.scalatest.{BeforeAndAfterEach, Matchers}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status
 import play.api.i18n.{DefaultLangs, DefaultMessagesApi}
@@ -30,13 +32,13 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models.AppealStatus.AppealStatus
-import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, Operator}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{AppealStatus, Case, CaseStatus, Operator}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.tariffclassificationfrontend.utils.Cases
 
 import scala.concurrent.Future
 
-class AppealCaseControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSuite with MockitoSugar with ControllerCommons {
+class AppealCaseControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSuite with MockitoSugar with ControllerCommons with BeforeAndAfterEach {
 
   private val fakeRequest = FakeRequest()
   private val env = Environment.simple()
@@ -49,6 +51,11 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers with GuiceOneAppPe
   private val controller = new AppealCaseController(new SuccessfulAuthenticatedAction(operator), casesService, messageApi, appConfig)
 
   private implicit val hc: HeaderCarrier = HeaderCarrier()
+
+  override def afterEach(): Unit = {
+    super.afterEach()
+    Mockito.reset(casesService)
+  }
 
   "Case Appeal" should {
 
@@ -156,32 +163,32 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers with GuiceOneAppPe
 
   "Case Appeal - Submit Status" should {
 
-    "return 200 OK and HTML content type - For CANCELLED Case" in {
+    "update & redirect - For CANCELLED Case" in {
       val aCase = Cases.btiCaseExample.copy(status = CaseStatus.CANCELLED)
 
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
       given(casesService.updateAppealStatus(refEq(aCase), any[Option[AppealStatus]], any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(aCase))
 
-      val result = await(controller.updateAppealStatus("reference")(newFakePOSTRequestWithCSRF(app)))
+      val result = await(controller.updateAppealStatus("reference")(newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("status" -> "IN_PROGRESS")))
 
-      status(result) shouldBe Status.OK
-      contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
-      contentAsString(result) should include("change_appeal_status-heading")
+      verify(casesService).updateAppealStatus(refEq(aCase), refEq(Some(AppealStatus.IN_PROGRESS)), any[Operator])(any[HeaderCarrier])
+
+      status(result) shouldBe Status.SEE_OTHER
+      locationOf(result) shouldBe Some("/tariff-classification/cases/1/appeal")
     }
 
-    "return 200 OK and HTML content type - For COMPLETED Case" in {
+    "update & redirect - For COMPLETED Case" in {
       val aCase = Cases.btiCaseExample.copy(status = CaseStatus.COMPLETED)
 
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
       given(casesService.updateAppealStatus(refEq(aCase), any[Option[AppealStatus]], any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(aCase))
 
-      val result = await(controller.updateAppealStatus("reference")(newFakePOSTRequestWithCSRF(app)))
+      val result = await(controller.updateAppealStatus("reference")(newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("status" -> "IN_PROGRESS")))
 
-      status(result) shouldBe Status.OK
-      contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
-      contentAsString(result) should include("change_appeal_status-heading")
+      verify(casesService).updateAppealStatus(refEq(aCase), refEq(Some(AppealStatus.IN_PROGRESS)), any[Operator])(any[HeaderCarrier])
+
+      status(result) shouldBe Status.SEE_OTHER
+      locationOf(result) shouldBe Some("/tariff-classification/cases/1/appeal")
     }
 
     "redirect for unchanged status" in {
@@ -190,6 +197,8 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers with GuiceOneAppPe
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
 
       val result = await(controller.updateAppealStatus("reference")(newFakePOSTRequestWithCSRF(app)))
+
+      verify(casesService, never()).updateAppealStatus(any[Case], any[Option[AppealStatus]], any[Operator])(any[HeaderCarrier])
 
       status(result) shouldBe Status.SEE_OTHER
       locationOf(result) shouldBe Some("/tariff-classification/cases/reference")
@@ -202,6 +211,8 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers with GuiceOneAppPe
       given(casesService.updateAppealStatus(refEq(aCase), any[Option[AppealStatus]], any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(aCase))
 
       val result = await(controller.updateAppealStatus("reference")(newFakePOSTRequestWithCSRF(app)))
+
+      verify(casesService, never()).updateAppealStatus(any[Case], any[Option[AppealStatus]], any[Operator])(any[HeaderCarrier])
 
       status(result) shouldBe Status.SEE_OTHER
       locationOf(result) shouldBe Some("/tariff-classification/cases/reference")

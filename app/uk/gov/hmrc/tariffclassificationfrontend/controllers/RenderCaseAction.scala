@@ -35,6 +35,7 @@ trait RenderCaseAction extends FrontendController with I18nSupport {
   protected val caseService: CasesService
 
   protected def redirect: String => Call
+
   protected def isValidCase: Case => Boolean
 
   protected def getCaseAndRenderView(caseReference: String, toHtml: Case => Future[HtmlFormat.Appendable])
@@ -42,6 +43,17 @@ trait RenderCaseAction extends FrontendController with I18nSupport {
 
     caseService.getOne(caseReference).flatMap {
       case Some(c: Case) if isValidCase(c) => toHtml(c).map(Ok(_))
+      case Some(_) => successful(Redirect(redirect(caseReference)))
+      case _ => successful(Ok(views.html.case_not_found(caseReference)))
+    }
+  }
+
+  protected def getCaseAndRespond(caseReference: String,
+                                  toResult: Case => Future[Result])
+                                 (implicit request: Request[_]): Future[Result] = {
+
+    caseService.getOne(caseReference).flatMap {
+      case Some(c: Case) if isValidCase(c) => toResult(c)
       case Some(_) => successful(Redirect(redirect(caseReference)))
       case _ => successful(Ok(views.html.case_not_found(caseReference)))
     }
