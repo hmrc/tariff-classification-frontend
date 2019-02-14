@@ -91,6 +91,16 @@ class CasesService @Inject()(appConfig: AppConfig, auditService: AuditService,
 
   }
 
+  def suspendCase(original: Case, operator: Operator)
+                (implicit hc: HeaderCarrier): Future[Case] = {
+    for {
+      updated <- connector.updateCase(original.copy(status = CaseStatus.SUSPENDED))
+      _ <- addStatusChangeEvent(original, updated, operator)
+      _ = auditService.auditCaseSuspended(original, updated, operator)
+    } yield updated
+
+  }
+
   def suppressCase(original: Case, operator: Operator)
                (implicit hc: HeaderCarrier): Future[Case] = {
     for {
