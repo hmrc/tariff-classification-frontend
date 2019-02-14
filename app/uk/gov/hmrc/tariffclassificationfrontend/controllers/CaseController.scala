@@ -119,7 +119,7 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
         getCaseAndRenderView(reference, CaseDetailPage.KEYWORDS,
           c =>
             for {
-              updatedCase <- keywordsService.addKeyword(c, validForm.keyword)
+              updatedCase <- keywordsService.addKeyword(c, validForm.keyword, request.operator)
               autoCompleteKeywords <- keywordsService.autoCompleteKeywords
             } yield views.html.partials.keywords_details(updatedCase, autoCompleteKeywords, keywordForm)
           )
@@ -130,7 +130,7 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
     getCaseAndRenderView(reference, CaseDetailPage.KEYWORDS,
       c =>
         for {
-          updatedCase <- keywordsService.removeKeyword(c, keyword)
+          updatedCase <- keywordsService.removeKeyword(c, keyword, request.operator)
           autoCompleteKeywords <- keywordsService.autoCompleteKeywords
         } yield views.html.partials.keywords_details(updatedCase, autoCompleteKeywords, keywordForm)
     )
