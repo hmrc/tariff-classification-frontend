@@ -16,8 +16,8 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.views.partials
 
-import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus
-import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
+import uk.gov.hmrc.tariffclassificationfrontend.models._
+import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers.{containElementWithID, _}
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewSpec
 import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.case_heading
 import uk.gov.tariffclassificationfrontend.utils.Cases._
@@ -41,6 +41,48 @@ class CaseHeadingViewSpec extends ViewSpec {
       doc.getElementById("case-reference") should containText("Case ref")
       doc should containElementWithID("case-status")
       doc.getElementById("case-status") should containText("OPEN")
+    }
+
+    "Render without Optional Statuses" in {
+      // Given
+      val c = aCase(
+        withoutDecision()
+      )
+
+      // When
+      val doc = view(case_heading(c))
+
+      // Then
+      doc shouldNot containElementWithID("appeal-status")
+      doc shouldNot containElementWithID("review-status")
+    }
+
+    "Render with 'Appeal Status'" in {
+      // Given
+      val c = aCase(
+        withDecision(appeal = Some(Appeal(AppealStatus.ALLOWED)))
+      )
+
+      // When
+      val doc = view(case_heading(c))
+
+      // Then
+      doc should containElementWithID("appeal-status")
+      doc.getElementById("appeal-status") should containText("Appeal allowed")
+    }
+
+    "Render with 'Review Status'" in {
+      // Given
+      val c = aCase(
+        withDecision(review = Some(Review(ReviewStatus.UPHELD)))
+      )
+
+      // When
+      val doc = view(case_heading(c))
+
+      // Then
+      doc should containElementWithID("review-status")
+      doc.getElementById("review-status") should containText("Review upheld")
     }
 
   }

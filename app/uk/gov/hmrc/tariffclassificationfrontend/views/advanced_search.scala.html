@@ -17,10 +17,9 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Search}
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.{input_checkbox, input_number, input_text, input_textarea}
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.{input_checkbox, input_number, input_text}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{advanced_search_results, advanced_search_keywords}
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.components.input_auto_complete
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{advanced_search_keywords, advanced_search_results}
 @(form: Form[Search], results: Option[Seq[Case]] = None, keywords: Seq[String])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None) {
@@ -79,12 +78,15 @@
      )
     </div>
 
-    <div class="column-three-quarters">
-     <h3 class="heading-medium" id="advanced_search-results_heading">Showing @{results.get.size} @if(results.get.size == 1){case}@if(results.get.size != 1){cases}</h3>
-     <hr class="mt-0"/>
-     @advanced_search_results(results.get)
-    </div>
-    </div>
+    @defining(results.get.filter(_.application.isBTI)) { searchResults: Seq[Case] =>
+     <div class="column-three-quarters">
+      <h3 class="heading-medium" id="advanced_search-results_heading">Showing @{searchResults.size} @if(searchResults.size == 1){case}@if(searchResults.size != 1){cases}</h3>
+      <hr class="mt-0"/>
+      @advanced_search_results(searchResults)
+     </div>
+    }
+
+   </div>
   }
  }
 

@@ -15,9 +15,11 @@
  *@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-@import uk.gov.hmrc.tariffclassificationfrontend.models.Case
-@import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes
+@import uk.gov.hmrc.tariffclassificationfrontend.models.AppealStatus.AppealStatus
+@import uk.gov.hmrc.tariffclassificationfrontend.models.{AppealStatus, Case, ReviewStatus}
+@import uk.gov.hmrc.tariffclassificationfrontend.models.ReviewStatus.ReviewStatus
+@import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
 @(results: Seq[Case])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 <div id="advanced_search_results">
@@ -33,7 +35,7 @@
     </tr>
    </thead>
    <tbody>
-    @for((c: Case, index: Int) <- results.filter(_.application.isBTI).zipWithIndex) {
+    @for((c: Case, index: Int) <- results.zipWithIndex) {
      <tr id="advanced_search_results-row-@index">
 
       <td>
@@ -47,7 +49,19 @@
       <td id="advanced_search_results-row-@{index}-ruling_end">@c.decision.flatMap(_.effectiveEndDate).map(Dates.format).getOrElse("")</td>
 
       <td>
-       <span id="advanced_search_results-row-@{index}-status" class="phase-tag bg-blue">@c.status</span>
+       <div id="advanced_search_results-row-@{index}-status" class="phase-tag bg-blue">@c.status</div>
+
+       @defining(c.decision.flatMap(_.review).map(_.status)) { status: Option[ReviewStatus] =>
+        @if(status.isDefined) {
+         <div id ="advanced_search_results-row-@{index}-review_status" class="phase-tag bg-red">@ReviewStatus.format(status)</div>
+        }
+       }
+
+       @defining(c.decision.flatMap(_.appeal).map(_.status)) { status: Option[AppealStatus] =>
+        @if(status.isDefined) {
+         <div id ="advanced_search_results-row-@{index}-appeal_status" class="phase-tag bg-red">@AppealStatus.format(status)</div>
+        }
+       }
       </td>
 
       <td id="advanced_search_results-row-@{index}-decision_code">
