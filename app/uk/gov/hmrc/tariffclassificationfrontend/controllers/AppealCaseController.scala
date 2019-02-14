@@ -64,13 +64,21 @@ class AppealCaseController @Inject()(authenticatedAction: AuthenticatedAction,
       (status: Option[AppealStatus]) => {
         getCaseAndRenderView(
           reference,
-          c => caseService.updateAppealStatus(c, status, request.operator).flatMap { c =>
+          c => if (statusIsUnchanged(c, status)) {
             successful(views.html.case_details(c, CaseDetailPage.APPEAL, views.html.partials.appeal_details(c)))
+          } else {
+            caseService.updateAppealStatus(c, status, request.operator).flatMap { c =>
+              successful(views.html.case_details(c, CaseDetailPage.APPEAL, views.html.partials.appeal_details(c)))
+            }
           }
         )
       }
     )
 
+  }
+
+  private def statusIsUnchanged(c: Case, status: Option[AppealStatus]): Boolean = {
+    c.decision.flatMap(_.appeal).map(_.status) == status
   }
 
 }

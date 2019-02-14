@@ -22,6 +22,8 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.input_textarea
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{progressive_disclosure, tab_heading}
+@import uk.gov.hmrc.tariffclassificationfrontend.models.AppealStatusChange
+@import uk.gov.hmrc.tariffclassificationfrontend.models.AppealStatus
 @(c: Case, events: Seq[Event], activityForm : Form[ActivityFormData])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
     @tab_heading("activity", messages("case.menu.activity"))
@@ -63,19 +65,31 @@
                 <td id="activity-events-row-@{index}-operator" class="activity-cell">@event.operator.name.getOrElse("Unknown")</td>
 
                 <td id="activity-events-row-@{index}-content" class="activity-cell-desc">
-                    @if(event.details.`type` == EventType.NOTE) {
-                        @progressive_disclosure(
-                            id = s"activity-events-row-$index",
-                            summary = "Case note added",
-                            body = event.details.comment
-                        )
-                    }
-                    @if(event.details.`type` == EventType.CASE_STATUS_CHANGE) {
-                        @progressive_disclosure(
-                            id = s"activity-events-row-$index",
-                            summary = s"Status changed from ${event.details.asInstanceOf[CaseStatusChange].from.toString.toLowerCase} to ${event.details.asInstanceOf[CaseStatusChange].to.toString.toLowerCase}",
-                            body = event.details.comment
-                        )
+                    @event.details.`type` match {
+                        case EventType.NOTE => {
+                            @progressive_disclosure(
+                                id = s"activity-events-row-$index",
+                                summary = "Case note added",
+                                body = event.details.comment
+                            )
+                        }
+                        case EventType.CASE_STATUS_CHANGE => {
+                            @progressive_disclosure(
+                                id = s"activity-events-row-$index",
+                                summary = s"Status changed from ${event.details.asInstanceOf[CaseStatusChange].from.toString.toLowerCase} to ${event.details.asInstanceOf[CaseStatusChange].to.toString.toLowerCase}",
+                                body = event.details.comment
+                            )
+                        }
+                        case EventType.APPEAL_STATUS_CHANGE => {
+                            @progressive_disclosure(
+                                id = s"activity-events-row-$index",
+                                summary = s"Appeal status changed from ${AppealStatus.format(event.details.asInstanceOf[AppealStatusChange].from)} to ${AppealStatus.format(event.details.asInstanceOf[AppealStatusChange].to)}",
+                                body = event.details.comment
+                            )
+                        }
+                        case _ => {
+                            @{throw new IllegalArgumentException(s"Unhandled Event Type [${event.details.`type`}]")}
+                        }
                     }
                 </td>
 

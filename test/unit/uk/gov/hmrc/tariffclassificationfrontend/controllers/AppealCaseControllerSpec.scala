@@ -184,6 +184,17 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers with GuiceOneAppPe
       contentAsString(result) should include("change_appeal_status-heading")
     }
 
+    "redirect for unchanged status" in {
+      val aCase = Cases.btiCaseExample.copy(decision = None)
+
+      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
+
+      val result = await(controller.updateAppealStatus("reference")(newFakePOSTRequestWithCSRF(app)))
+
+      status(result) shouldBe Status.SEE_OTHER
+      locationOf(result) shouldBe Some("/tariff-classification/cases/reference")
+    }
+
     "redirect for other status" in {
       val aCase = Cases.btiCaseExample.copy(status = CaseStatus.OPEN)
 
