@@ -20,11 +20,12 @@ import java.time._
 
 import org.mockito.ArgumentMatchers._
 import org.mockito.BDDMockito._
-import org.mockito.Mockito.reset
+import org.mockito.Mockito.{reset, verify, verifyNoMoreInteractions}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
+import uk.gov.hmrc.tariffclassificationfrontend.audit.AuditService
 import uk.gov.hmrc.tariffclassificationfrontend.connector.BindingTariffClassificationConnector
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
@@ -38,9 +39,10 @@ class EventsServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEa
   private implicit val hc: HeaderCarrier = HeaderCarrier()
 
   private val connector = mock[BindingTariffClassificationConnector]
+  private val auditService = mock[AuditService]
   private val manyEvents = mock[Seq[Event]]
 
-  private val service = new EventsService(connector)
+  private val service = new EventsService(connector, auditService)
 
   override protected def afterEach(): Unit = {
     super.afterEach()
@@ -66,10 +68,14 @@ class EventsServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEa
       val newEventRequest = NewEventRequest(Note(Some(aNote)), operator, Instant.now(clock))
       val event = mock[Event]
       val aCase = Cases.btiCaseExample
+
       given(connector.createEvent(refEq(aCase), refEq(newEventRequest))(any[HeaderCarrier]))
         .willReturn(successful(event))
 
       await(service.addNote(aCase, aNote, operator, clock)) shouldBe event
+
+      verify(auditService).auditNote(refEq(aCase), refEq(aNote), refEq(operator))(any[HeaderCarrier])
+      verifyNoMoreInteractions(auditService)
     }
 
   }

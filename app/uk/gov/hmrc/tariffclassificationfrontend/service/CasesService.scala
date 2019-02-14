@@ -201,12 +201,8 @@ class CasesService @Inject()(appConfig: AppConfig,
 
   private def addStatusChangeEvent(original: Case, updated: Case, operator: Operator, comment: Option[String] = None)
                                   (implicit hc: HeaderCarrier): Future[Unit] = {
-    addEvent(
-      original,
-      updated,
-      CaseStatusChange(original.status, updated.status, comment),
-      operator
-    )
+    val details = CaseStatusChange(original.status, updated.status, comment)
+    addEvent(original, updated, details, operator)
   }
 
   private def addAppealStatusChangeEvent(original: Case, updated: Case, operator: Operator, comment: Option[String] = None)

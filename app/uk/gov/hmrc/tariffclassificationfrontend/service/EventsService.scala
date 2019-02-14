@@ -20,6 +20,7 @@ import java.time.{Clock, Instant}
 
 import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.tariffclassificationfrontend.audit.AuditService
 import uk.gov.hmrc.tariffclassificationfrontend.connector.BindingTariffClassificationConnector
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
@@ -27,7 +28,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
 import scala.concurrent.Future
 
 @Singleton
-class EventsService @Inject()(connector: BindingTariffClassificationConnector) {
+class EventsService @Inject()(connector: BindingTariffClassificationConnector, auditService: AuditService) {
 
   def getEvents(reference: String)(implicit hc: HeaderCarrier): Future[Seq[Event]] = {
     connector.findEvents(reference)
@@ -36,6 +37,7 @@ class EventsService @Inject()(connector: BindingTariffClassificationConnector) {
   def addNote(c: Case, note: String, operator: Operator, clock: Clock = Clock.systemUTC())
              (implicit hc: HeaderCarrier): Future[Event] = {
     val event = NewEventRequest(Note(Some(note)), operator, Instant.now(clock))
+    auditService.auditNote(c, note, operator)
     connector.createEvent(c, event)
   }
 
