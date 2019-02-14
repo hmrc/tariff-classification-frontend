@@ -14,15 +14,19 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.tariffclassificationfrontend.views
+package uk.gov.hmrc.tariffclassificationfrontend.models
 
-object CaseDetailPage extends Enumeration {
-  type CaseDetailPage = Value
-  val TRADER = Value("trader")
-  val RULING = Value("ruling")
-  val APPLICATION_DETAILS = Value("application")
-  val ACTIVITY = Value("activity")
-  val ATTACHMENTS = Value("attachments")
-  val KEYWORDS = Value("keywords")
-  val APPEAL = Value("appeal")
+object AppealStatus extends Enumeration {
+  type AppealStatus = Value
+  val IN_PROGRESS, ALLOWED, DISMISSED = Value
+
+  def format(status: Option[AppealStatus]): String = {
+    status match {
+      case Some(IN_PROGRESS) => "Under appeal"
+      case Some(ALLOWED) => "Appeal allowed"
+      case Some(DISMISSED) => "Appeal dismissed"
+      case None => "None"
+      case _ => ???
+    }
+  }
 }

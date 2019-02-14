@@ -16,12 +16,17 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.views.partials
 
+import org.mockito.BDDMockito.given
+import org.mockito.Mockito
+import org.scalatest.BeforeAndAfterEach
+import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus}
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
 import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.case_nav
 import uk.gov.hmrc.tariffclassificationfrontend.views.{CaseDetailPage, ViewSpec}
 
-class CaseNavViewSpec extends ViewSpec {
+class CaseNavViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterEach {
 
   private val application = "Application"
   private val trader = "Trader"
@@ -29,6 +34,7 @@ class CaseNavViewSpec extends ViewSpec {
   private val attachments = "Attachments"
   private val activity = "Activity"
   private val keywords = "Keywords"
+  private val appeal = "Appeal"
 
   private val applicationDetailsURL = routes.CaseController.applicationDetails("ref").url
   private val rulingURL = routes.CaseController.rulingDetails("ref").url
@@ -37,11 +43,21 @@ class CaseNavViewSpec extends ViewSpec {
   private val traderURL = routes.CaseController.trader("ref").url
   private val keywordsURL = routes.CaseController.keywordsDetails("ref").url
 
+  private val `case` = mock[Case]
+
+  override protected def afterEach(): Unit = {
+    super.afterEach()
+    Mockito.reset(`case`)
+  }
+
   "Case Heading" should {
 
     "Render Trader" in {
+      // Given
+      given(`case`.reference) willReturn "ref"
+
       // When
-      val doc = view(case_nav(CaseDetailPage.TRADER, "ref"))
+      val doc = view(case_nav(CaseDetailPage.TRADER, `case`))
 
       // Then
       val spans = doc.getElementsByTag("span")
@@ -66,8 +82,11 @@ class CaseNavViewSpec extends ViewSpec {
     }
 
     "Render Application Details" in {
+      // Given
+      given(`case`.reference) willReturn "ref"
+
       // When
-      val doc = view(case_nav(CaseDetailPage.APPLICATION_DETAILS, "ref"))
+      val doc = view(case_nav(CaseDetailPage.APPLICATION_DETAILS, `case`))
 
       // Then
       val spans = doc.getElementsByTag("span")
@@ -93,8 +112,11 @@ class CaseNavViewSpec extends ViewSpec {
     }
 
     "Render Ruling Details" in {
+      // Given
+      given(`case`.reference) willReturn "ref"
+
       // When
-      val doc = view(case_nav(CaseDetailPage.RULING, "ref"))
+      val doc = view(case_nav(CaseDetailPage.RULING, `case`))
 
       // Then
       val spans = doc.getElementsByTag("span")
@@ -119,8 +141,11 @@ class CaseNavViewSpec extends ViewSpec {
     }
 
     "Render Attachments" in {
+      // Given
+      given(`case`.reference) willReturn "ref"
+
       // When
-      val doc = view(case_nav(CaseDetailPage.ATTACHMENTS, "ref"))
+      val doc = view(case_nav(CaseDetailPage.ATTACHMENTS, `case`))
 
       // Then
       val spans = doc.getElementsByTag("span")
@@ -145,8 +170,11 @@ class CaseNavViewSpec extends ViewSpec {
     }
 
     "Render Activity" in {
+      // Given
+      given(`case`.reference) willReturn "ref"
+
       // When
-      val doc = view(case_nav(CaseDetailPage.ACTIVITY, "ref"))
+      val doc = view(case_nav(CaseDetailPage.ACTIVITY, `case`))
 
       // Then
       val spans = doc.getElementsByTag("span")
@@ -169,6 +197,97 @@ class CaseNavViewSpec extends ViewSpec {
       anchors.get(4) should containText(keywords)
       anchors.get(4) should haveAttribute("href", keywordsURL)
     }
-  }
 
+    "Render Appeal for COMPLETE Cases" in {
+      // Given
+      given(`case`.reference) willReturn "ref"
+      given(`case`.status) willReturn CaseStatus.COMPLETED
+
+      // When
+      val doc = view(case_nav(CaseDetailPage.APPEAL, `case`))
+
+      // Then
+      val spans = doc.getElementsByTag("span")
+      spans should haveSize(1)
+
+      val selectedTab = spans.first()
+      selectedTab should containText(appeal)
+      selectedTab should haveAttribute("aria-selected", "true")
+
+      val anchors = doc.getElementsByTag("a")
+      anchors should haveSize(6)
+      anchors.get(0) should containText(trader)
+      anchors.get(0) should haveAttribute("href", traderURL)
+      anchors.get(1) should containText(application)
+      anchors.get(1) should haveAttribute("href", applicationDetailsURL)
+      anchors.get(2) should containText(ruling)
+      anchors.get(2) should haveAttribute("href", rulingURL)
+      anchors.get(3) should containText(attachments)
+      anchors.get(3) should haveAttribute("href", attachmentsURL)
+      anchors.get(4) should containText(activity)
+      anchors.get(4) should haveAttribute("href", activityURL)
+      anchors.get(5) should containText(keywords)
+      anchors.get(5) should haveAttribute("href", keywordsURL)
+    }
+
+    "Render Appeal for CANCELLED Cases" in {
+      // Given
+      given(`case`.reference) willReturn "ref"
+      given(`case`.status) willReturn CaseStatus.CANCELLED
+
+      // When
+      val doc = view(case_nav(CaseDetailPage.APPEAL, `case`))
+
+      // Then
+      val spans = doc.getElementsByTag("span")
+      spans should haveSize(1)
+
+      val selectedTab = spans.first()
+      selectedTab should containText(appeal)
+      selectedTab should haveAttribute("aria-selected", "true")
+
+      val anchors = doc.getElementsByTag("a")
+      anchors should haveSize(6)
+      anchors.get(0) should containText(trader)
+      anchors.get(0) should haveAttribute("href", traderURL)
+      anchors.get(1) should containText(application)
+      anchors.get(1) should haveAttribute("href", applicationDetailsURL)
+      anchors.get(2) should containText(ruling)
+      anchors.get(2) should haveAttribute("href", rulingURL)
+      anchors.get(3) should containText(attachments)
+      anchors.get(3) should haveAttribute("href", attachmentsURL)
+      anchors.get(4) should containText(activity)
+      anchors.get(4) should haveAttribute("href", activityURL)
+      anchors.get(5) should containText(keywords)
+      anchors.get(5) should haveAttribute("href", keywordsURL)
+    }
+
+    "Not render Appeal for other Statuses" in {
+      // Given
+      given(`case`.reference) willReturn "ref"
+      given(`case`.status) willReturn CaseStatus.OPEN
+
+      // When
+      val doc = view(case_nav(CaseDetailPage.APPEAL, `case`))
+
+      // Then
+      val spans = doc.getElementsByTag("span")
+      spans should haveSize(0)
+
+      val anchors = doc.getElementsByTag("a")
+      anchors should haveSize(6)
+      anchors.get(0) should containText(trader)
+      anchors.get(0) should haveAttribute("href", traderURL)
+      anchors.get(1) should containText(application)
+      anchors.get(1) should haveAttribute("href", applicationDetailsURL)
+      anchors.get(2) should containText(ruling)
+      anchors.get(2) should haveAttribute("href", rulingURL)
+      anchors.get(3) should containText(attachments)
+      anchors.get(3) should haveAttribute("href", attachmentsURL)
+      anchors.get(4) should containText(activity)
+      anchors.get(4) should haveAttribute("href", activityURL)
+      anchors.get(5) should containText(keywords)
+      anchors.get(5) should haveAttribute("href", keywordsURL)
+    }
+  }
 }

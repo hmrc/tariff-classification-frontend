@@ -26,6 +26,7 @@ object JsonFormatters {
 
   implicit val operator: OFormat[Operator] = Json.format[Operator]
   implicit val scanStatusFormat: Format[ScanStatus.Value] = EnumJson.format(ScanStatus)
+  implicit val appealStatusFormat: Format[AppealStatus.Value] = EnumJson.format(AppealStatus)
   implicit val caseStatusFormat: Format[CaseStatus.Value] = EnumJson.format(CaseStatus)
   implicit val attachmentFormat: OFormat[Attachment] = Json.format[Attachment]
   implicit val appealFormat: OFormat[Appeal] = Json.format[Appeal]
@@ -40,12 +41,13 @@ object JsonFormatters {
     .and[LiabilityOrder]("LIABILITY_ORDER")
     .format
   implicit val caseFormat: OFormat[Case] = Json.format[Case]
-  implicit val statusFormat: OFormat[Status] = Json.format[Status]
   implicit val formatCaseStatusChange: OFormat[CaseStatusChange] = Json.format[CaseStatusChange]
+  implicit val formatAppealStatusChange: OFormat[AppealStatusChange] = Json.format[AppealStatusChange]
   implicit val formatNote: OFormat[Note] = Json.format[Note]
   implicit val fileMetaDataFormat: OFormat[FileMetadata] = Json.format[FileMetadata]
   implicit val formatEventDetail: Format[Details] = Union.from[Details]("type")
     .and[CaseStatusChange](EventType.CASE_STATUS_CHANGE.toString)
+    .and[AppealStatusChange](EventType.APPEAL_STATUS_CHANGE.toString)
     .and[Note](EventType.NOTE.toString)
     .format
 

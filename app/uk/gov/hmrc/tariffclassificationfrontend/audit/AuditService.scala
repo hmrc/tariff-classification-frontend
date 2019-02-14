@@ -36,6 +36,14 @@ class AuditService @Inject()(auditConnector: DefaultAuditConnector) {
     )
   }
 
+  def auditCaseRejected(oldCase: Case, updatedCase: Case, operator: Operator)
+                       (implicit hc: HeaderCarrier): Unit = {
+    sendExplicitAuditEvent(
+      auditEventType = CaseRejected,
+      auditPayload = statusChangeAuditPayload(oldCase, updatedCase, operator)
+    )
+  }
+
   def auditCaseReOpen(oldCase: Case, updatedCase: Case, operator: Operator)
                      (implicit hc: HeaderCarrier): Unit = {
     sendExplicitAuditEvent(
@@ -60,6 +68,17 @@ class AuditService @Inject()(auditConnector: DefaultAuditConnector) {
     )
   }
 
+  def auditCaseAppealChange(oldCase: Case, updatedCase: Case, operator: Operator)
+                           (implicit hc: HeaderCarrier): Unit = {
+    sendExplicitAuditEvent(
+      auditEventType = CaseAppealChange,
+      auditPayload = baseAuditPayload(updatedCase, operator) + (
+        "newAppealStatus" -> updatedCase.decision.flatMap(_.appeal).map(_.status.toString).getOrElse("None"),
+        "previousAppealStatus" -> oldCase.decision.flatMap(_.appeal).map(_.status.toString).getOrElse("None")
+      )
+    )
+  }
+
   def auditRulingCancelled(oldCase: Case, updatedCase: Case, operator: Operator)
                           (implicit hc: HeaderCarrier): Unit = {
     sendExplicitAuditEvent(
@@ -69,10 +88,12 @@ class AuditService @Inject()(auditConnector: DefaultAuditConnector) {
   }
 
   private def statusChangeAuditPayload(oldCase: Case, updatedCase: Case, operator: Operator): Map[String, String] = {
+    baseAuditPayload(updatedCase, operator) + ("newStatus" -> updatedCase.status.toString) + ("previousStatus" -> oldCase.status.toString)
+  }
+
+  private def baseAuditPayload(c: Case, operator: Operator): Map[String, String] = {
     Map(
-      "caseReference" -> updatedCase.reference,
-      "newStatus" -> updatedCase.status.toString,
-      "previousStatus" -> oldCase.status.toString,
+      "caseReference" -> c.reference,
       "operatorId" -> operator.id
     )
   }
@@ -89,7 +110,9 @@ object AuditPayloadType {
 
   val CaseReopen = "caseReopened"
   val CaseReferred = "caseReferred"
+  val CaseRejected = "caseRejected"
   val CaseReleased = "caseReleased"
   val CaseCompleted = "caseCompleted"
+  val CaseAppealChange = "caseAppealChange"
   val RulingCancelled = "rulingCancelled"
 }
