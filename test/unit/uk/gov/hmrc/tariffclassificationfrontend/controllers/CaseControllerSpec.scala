@@ -241,7 +241,7 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
       val aKeyword = "Apples"
       val aValidForm = newFakePOSTRequestWithCSRF(app, Map("keyword" -> aKeyword))
       given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
-      given(keywordsService.addKeyword(refEq(aCase), refEq("Apples"))(any[HeaderCarrier])).willReturn(Future.successful(aCase))
+      given(keywordsService.addKeyword(refEq(aCase), refEq("Apples"), refEq(operator))(any[HeaderCarrier])).willReturn(Future.successful(aCase))
       given(keywordsService.autoCompleteKeywords).willReturn(Future.successful(Seq()))
 
       val result = controller.addKeyword(aCase.reference)(aValidForm)
@@ -281,7 +281,7 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
 
     "remove an existing keyword" in {
       given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
-      given(keywordsService.removeKeyword(refEq(aCase), refEq("Apples"))(any[HeaderCarrier])).willReturn(Future.successful(aCase))
+      given(keywordsService.removeKeyword(refEq(aCase), refEq("Apples"), refEq(operator))(any[HeaderCarrier])).willReturn(Future.successful(aCase))
 
       val result = controller.removeKeyword(aCase.reference, aKeyword)(newFakeGETRequestWithCSRF(app))
       status(result) shouldBe Status.OK

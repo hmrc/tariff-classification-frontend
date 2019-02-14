@@ -25,6 +25,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.connector.BindingTariffClassific
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
@@ -38,8 +39,11 @@ class EventsService @Inject()(connector: BindingTariffClassificationConnector, a
   def addNote(c: Case, note: String, operator: Operator, clock: Clock = Clock.systemUTC())
              (implicit hc: HeaderCarrier): Future[Event] = {
     val event = NewEventRequest(Note(Some(note)), operator, Instant.now(clock))
-    auditService.auditNote(c, note, operator)
-    connector.createEvent(c, event)
+
+    connector.createEvent(c, event).map { e =>
+      auditService.auditNote(c, note, operator)
+      e
+    }
   }
 
 }

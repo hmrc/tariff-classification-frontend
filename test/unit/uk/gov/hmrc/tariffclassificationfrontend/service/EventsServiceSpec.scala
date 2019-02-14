@@ -20,7 +20,7 @@ import java.time._
 
 import org.mockito.ArgumentMatchers._
 import org.mockito.BDDMockito._
-import org.mockito.Mockito.{reset, verify, verifyNoMoreInteractions}
+import org.mockito.Mockito.{reset, verify, verifyNoMoreInteractions, verifyZeroInteractions}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.http.HeaderCarrier
@@ -32,7 +32,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
 import uk.gov.tariffclassificationfrontend.utils.Cases
 
 import scala.concurrent.Future
-import scala.concurrent.Future.successful
+import scala.concurrent.Future.{failed, successful}
 
 class EventsServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
 
@@ -58,17 +58,14 @@ class EventsServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEa
   }
 
   "Add Note" should {
-    val operator = mock[Operator]
-
     val aNote = "This is a note"
+    val clock = Clock.fixed(LocalDateTime.of(2018,1,1, 14,0).toInstant(ZoneOffset.UTC), ZoneId.of("UTC"))
+    val operator = Operator("userId", Some("Billy Bobbins"))
+    val newEventRequest = NewEventRequest(Note(Some(aNote)), operator, Instant.now(clock))
+    val event = mock[Event]
+    val aCase = Cases.btiCaseExample
 
     "post a new note to the backend via the connector" in {
-      val clock = Clock.fixed(LocalDateTime.of(2018,1,1, 14,0).toInstant(ZoneOffset.UTC), ZoneId.of("UTC"))
-      val operator = Operator("userId", Some("Billy Bobbins"))
-      val newEventRequest = NewEventRequest(Note(Some(aNote)), operator, Instant.now(clock))
-      val event = mock[Event]
-      val aCase = Cases.btiCaseExample
-
       given(connector.createEvent(refEq(aCase), refEq(newEventRequest))(any[HeaderCarrier]))
         .willReturn(successful(event))
 
@@ -78,6 +75,16 @@ class EventsServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEa
       verifyNoMoreInteractions(auditService)
     }
 
+    "propagate the error if the connector fails" in {
+      given(connector.createEvent(refEq(aCase), refEq(newEventRequest))(any[HeaderCarrier]))
+        .willReturn(failed(new IllegalStateException))
+
+      intercept[IllegalStateException] {
+        await(service.addNote(aCase, aNote, operator, clock))
+      }
+
+      verifyZeroInteractions(auditService)
+    }
   }
 
 }
