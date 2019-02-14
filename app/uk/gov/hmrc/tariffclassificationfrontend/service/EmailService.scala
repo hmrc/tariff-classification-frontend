@@ -38,7 +38,7 @@ class EmailService @Inject()(connector: EmailConnector) {
       CaseCompletedEmailParameters(c.application.contact.name, c.reference, c.application.asBTI.goodName)
     )
 
-    connector.send(email).flatMap ( _ => connector.generate(email) )
+    connector.send(email) flatMap ( _ => connector.generate(email) )
   }
 
 }

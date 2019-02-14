@@ -31,27 +31,27 @@ class KeywordsService @Inject()(connector: BindingTariffClassificationConnector,
 
   def addKeyword(c: Case, keyword: String, operator: Operator)
                 (implicit hc: HeaderCarrier): Future[Case] = {
-    c.keywords match {
-      case keywords if keywords.contains(keyword.toUpperCase) => Future.successful(c)
-      case _ =>
-        val caseToUpdate = c.copy(keywords = c.keywords + keyword.toUpperCase)
-        connector.updateCase(caseToUpdate) map { updated: Case =>
-          auditService.auditCaseKeywordAdded(updated, keyword, operator)
-          updated
-        }
+    if (keywords.contains(keyword.toUpperCase)) {
+      Future.successful(c)
+    } else {
+      val caseToUpdate = c.copy(keywords = c.keywords + keyword.toUpperCase)
+      connector.updateCase(caseToUpdate) map { updated: Case =>
+        auditService.auditCaseKeywordAdded(updated, keyword, operator)
+        updated
+      }
     }
   }
 
   def removeKeyword(c: Case, keyword: String, operator: Operator)
                    (implicit hc: HeaderCarrier): Future[Case] = {
-    c.keywords match {
-      case keywords if keywords.contains(keyword.toUpperCase) =>
-        val caseToUpdate = c.copy(keywords = c.keywords - keyword.toUpperCase)
-        connector.updateCase(caseToUpdate) map { updated: Case =>
-          auditService.auditCaseKeywordRemoved(updated, keyword, operator)
-          updated
-        }
-      case _ => Future.successful(c)
+    if (c.keywords.contains(keyword.toUpperCase)) {
+      val caseToUpdate = c.copy(keywords = c.keywords - keyword.toUpperCase)
+      connector.updateCase(caseToUpdate) map { updated: Case =>
+        auditService.auditCaseKeywordRemoved(updated, keyword, operator)
+        updated
+      }
+    } else {
+      Future.successful(c)
     }
   }
 

@@ -228,10 +228,9 @@ class CasesService @Inject()(appConfig: AppConfig,
   private def addEvent(original: Case, updated: Case, details: Details, operator: Operator)
                       (implicit hc: HeaderCarrier): Future[Unit] = {
     val event = NewEventRequest(details, operator)
-    connector.createEvent(updated, event).recover {
-        case t: Throwable => Logger.error(s"Could not create Event for case [${original.reference}] with payload [$event]", t)
-      }
-      .map(_ => ())
+    connector.createEvent(updated, event) recover {
+      case t: Throwable => Logger.error(s"Could not create Event for case [${original.reference}] with payload [$event]", t)
+    } map ( _ => () )
   }
 
 }
