@@ -44,6 +44,14 @@ class AuditService @Inject()(auditConnector: DefaultAuditConnector) {
     )
   }
 
+  def auditCaseSuspended(oldCase: Case, updatedCase: Case, operator: Operator)
+                        (implicit hc: HeaderCarrier): Unit = {
+    sendExplicitAuditEvent(
+      auditEventType = CaseSuspended,
+      auditPayload = statusChangeAuditPayload(oldCase, updatedCase, operator)
+    )
+  }
+
   def auditCaseReOpen(oldCase: Case, updatedCase: Case, operator: Operator)
                      (implicit hc: HeaderCarrier): Unit = {
     sendExplicitAuditEvent(
@@ -140,6 +148,7 @@ object AuditPayloadType {
   val CaseReopened = "caseReopened"
   val CaseReferred = "caseReferred"
   val CaseRejected = "caseRejected"
+  val CaseSuspended = "caseSuspended"
   val CaseReleased = "caseReleased"
   val CaseCompleted = "caseCompleted"
   val CaseAppealChange = "caseAppealChange"

@@ -106,6 +106,16 @@ class CasesService @Inject()(appConfig: AppConfig,
 
   }
 
+  def suspendCase(original: Case, operator: Operator)
+                 (implicit hc: HeaderCarrier): Future[Case] = {
+    for {
+      updated <- connector.updateCase(original.copy(status = CaseStatus.SUSPENDED))
+      _ <- addStatusChangeEvent(original, updated, operator)
+      _ = auditService.auditCaseSuspended(original, updated, operator)
+    } yield updated
+
+  }
+
   def suppressCase(original: Case, operator: Operator)
                   (implicit hc: HeaderCarrier): Future[Case] = {
     for {
@@ -208,10 +218,16 @@ class CasesService @Inject()(appConfig: AppConfig,
 
   private def addAppealStatusChangeEvent(original: Case, updated: Case, operator: Operator, comment: Option[String] = None)
                                         (implicit hc: HeaderCarrier): Future[Unit] = {
+
+    val details = AppealStatusChange(
+      from = original.decision.flatMap(_.appeal).map(_.status),
+      to = updated.decision.flatMap(_.appeal).map(_.status), comment
+    )
+
     addEvent(
       original,
       updated,
-      AppealStatusChange(original.decision.flatMap(_.appeal).map(_.status), updated.decision.flatMap(_.appeal).map(_.status), comment),
+      details,
       operator
     )
   }
