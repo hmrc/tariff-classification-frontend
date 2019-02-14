@@ -23,7 +23,8 @@ import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.audit.DefaultAuditConnector
 import uk.gov.hmrc.play.test.UnitSpec
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Operator, Queue}
+import uk.gov.hmrc.tariffclassificationfrontend.models.AppealStatus.AppealStatus
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Appeal, AppealStatus, Operator, Queue}
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus._
 import uk.gov.tariffclassificationfrontend.utils.Cases._
 
@@ -50,7 +51,7 @@ class AuditServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEac
     "Delegate to connector" in {
       service.auditCaseReleased(original, updated, queue, operator)
 
-      val payload = auditPayload(
+      val payload = caseChangeAudit(
         caseReference = "ref",
         newStatus = OPEN,
         previousStatus = NEW,
@@ -69,7 +70,7 @@ class AuditServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEac
     "Delegate to connector" in {
       service.auditCaseCompleted(original, updated, operator)
 
-      val payload = auditPayload(
+      val payload = caseChangeAudit(
         caseReference = "ref",
         newStatus = COMPLETED,
         previousStatus = OPEN,
@@ -87,7 +88,7 @@ class AuditServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEac
     "Delegate to connector" in {
       service.auditCaseReferred(original, updated, operator)
 
-      val payload = auditPayload(
+      val payload = caseChangeAudit(
         caseReference = "ref",
         newStatus = REFERRED,
         previousStatus = OPEN,
@@ -106,13 +107,31 @@ class AuditServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEac
     "Delegate to connector" in {
       service.auditCaseReOpen(original, updated, operator)
 
-      val payload = auditPayload(
+      val payload = caseChangeAudit(
         caseReference = "ref",
         newStatus = OPEN,
         previousStatus = REFERRED,
         operatorId = operator.id
       )
       verify(connector).sendExplicitAudit(refEq("caseReopened"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+    }
+  }
+
+  "Service 'audit case appeal change'" should {
+    val original = aCase(withReference("ref"), withDecision(appeal = Some(Appeal(AppealStatus.IN_PROGRESS))))
+    val updated = aCase(withReference("ref"), withoutDecision())
+    val operator = Operator("operator-id")
+
+    "Delegate to connector" in {
+      service.auditCaseAppealChange(original, updated, operator)
+
+      val payload = appealChangeAudit(
+        caseReference = "ref",
+        newStatus = None,
+        previousStatus = Some(AppealStatus.IN_PROGRESS),
+        operatorId = operator.id
+      )
+      verify(connector).sendExplicitAudit(refEq("caseAppealChange"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
     }
   }
 
@@ -124,7 +143,7 @@ class AuditServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEac
     "Delegate to connector" in {
       service.auditCaseReOpen(original, updated, operator)
 
-      val payload = auditPayload(
+      val payload = caseChangeAudit(
         caseReference = "ref",
         newStatus = OPEN,
         previousStatus = SUSPENDED,
@@ -134,12 +153,21 @@ class AuditServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEac
     }
   }
 
-  private def auditPayload(caseReference: String, newStatus: CaseStatus, previousStatus: CaseStatus, operatorId: String): Map[String, String] = {
+  private def caseChangeAudit(caseReference: String, newStatus: CaseStatus, previousStatus: CaseStatus, operatorId: String): Map[String, String] = {
     Map[String, String](
       "caseReference" -> caseReference,
+      "operatorId" -> operatorId,
       "newStatus" -> newStatus.toString,
-      "previousStatus" -> previousStatus.toString,
-      "operatorId" -> operatorId
+      "previousStatus" -> previousStatus.toString
+    )
+  }
+
+  private def appealChangeAudit(caseReference: String, newStatus: Option[AppealStatus], previousStatus: Option[AppealStatus], operatorId: String): Map[String, String] = {
+    Map[String, String](
+      "caseReference" -> caseReference,
+      "operatorId" -> operatorId,
+      "newAppealStatus" -> newStatus.map(_.toString).getOrElse("None"),
+      "previousAppealStatus" -> previousStatus.map(_.toString).getOrElse("None")
     )
   }
 

@@ -14,15 +14,11 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.tariffclassificationfrontend.views
+package uk.gov.hmrc.tariffclassificationfrontend.models
 
-object CaseDetailPage extends Enumeration {
-  type CaseDetailPage = Value
-  val TRADER = Value("trader")
-  val RULING = Value("ruling")
-  val APPLICATION_DETAILS = Value("application")
-  val ACTIVITY = Value("activity")
-  val ATTACHMENTS = Value("attachments")
-  val KEYWORDS = Value("keywords")
-  val APPEAL = Value("appeal")
-}
+import uk.gov.hmrc.tariffclassificationfrontend.models.AppealStatus.AppealStatus
+
+case class Appeal
+(
+  status: AppealStatus
+)
