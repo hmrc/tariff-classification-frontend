@@ -95,7 +95,7 @@ class AuditService @Inject()(auditConnector: DefaultAuditConnector) {
   def auditNote(c: Case, note: String, operator: Operator)
                (implicit hc: HeaderCarrier): Unit = {
     sendExplicitAuditEvent(
-      auditEventType = Note,
+      auditEventType = CaseNote,
       auditPayload = baseAuditPayload(c, operator) + ("note" -> note)
     )
   }
@@ -162,6 +162,6 @@ object AuditPayloadType {
   val RulingCancelled = "rulingCancelled"
   val CaseAppealChange = "caseAppealChange"
   val CaseReviewChange = "caseReviewChange"
-  val Note = "caseNote"
+  val CaseNote = "caseNote"
 
 }
