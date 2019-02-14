@@ -31,7 +31,7 @@ class KeywordsService @Inject()(connector: BindingTariffClassificationConnector,
 
   def addKeyword(c: Case, keyword: String, operator: Operator)
                 (implicit hc: HeaderCarrier): Future[Case] = {
-    if (keywords.contains(keyword.toUpperCase)) {
+    if (c.keywords.contains(keyword.toUpperCase)) {
       Future.successful(c)
     } else {
       val caseToUpdate = c.copy(keywords = c.keywords + keyword.toUpperCase)
