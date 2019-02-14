@@ -59,4 +59,5 @@ class SearchController @Inject()(authenticatedAction: AuthenticatedAction,
       })
     }
   }
+
 }

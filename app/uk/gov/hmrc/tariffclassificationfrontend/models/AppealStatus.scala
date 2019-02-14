@@ -25,8 +25,9 @@ object AppealStatus extends Enumeration {
       case Some(IN_PROGRESS) => "Under appeal"
       case Some(ALLOWED) => "Appeal allowed"
       case Some(DISMISSED) => "Appeal dismissed"
+      case Some(s) => throw new IllegalArgumentException(s"Unexpected status: $s")
       case None => "None"
-      case _ => ???
     }
   }
+
 }

@@ -14,20 +14,6 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.tariffclassificationfrontend.models
+package uk.gov.hmrc.tariffclassificationfrontend.views.forms.components
 
-import java.time.Instant
-
-case class Decision
-(
-  bindingCommodityCode: String,
-  effectiveStartDate: Option[Instant] = None,
-  effectiveEndDate: Option[Instant] = None,
-  justification: String,
-  goodsDescription: String,
-  methodSearch: Option[String] = None,
-  methodExclusion: Option[String] = None,
-  methodCommercialDenomination: Option[String] = None,
-  appeal: Option[Appeal] = None,
-  review: Option[Review] = None
-)
+case class RadioOption(value: String, label: String)

@@ -25,7 +25,8 @@ import uk.gov.hmrc.play.bootstrap.audit.DefaultAuditConnector
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.tariffclassificationfrontend.models.AppealStatus.AppealStatus
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus._
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Appeal, AppealStatus, Operator, Queue}
+import uk.gov.hmrc.tariffclassificationfrontend.models.ReviewStatus.ReviewStatus
+import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus => _, _}
 import uk.gov.tariffclassificationfrontend.utils.Cases._
 
 import scala.concurrent.ExecutionContext
@@ -77,6 +78,24 @@ class AuditServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEac
         operatorId = operator.id
       )
       verify(connector).sendExplicitAudit(refEq("caseCompleted"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+    }
+  }
+
+  "Service 'audit cancel ruling'" should {
+    val original = btiCaseExample.copy(reference = "ref", status = COMPLETED)
+    val updated = btiCaseExample.copy(reference = "ref", status = CANCELLED)
+    val operator = Operator("operator-id")
+
+    "Delegate to connector" in {
+      service.auditRulingCancelled(original, updated, operator)
+
+      val payload = caseChangeAudit(
+        caseReference = "ref",
+        newStatus = CANCELLED,
+        previousStatus = COMPLETED,
+        operatorId = operator.id
+      )
+      verify(connector).sendExplicitAudit(refEq("rulingCancelled"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
     }
   }
 
@@ -152,7 +171,7 @@ class AuditServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEac
     }
   }
 
-  "Service 'audit case reopen' when a case is referred" should {
+  "Service 'audit case reopened' when a case is referred" should {
     val original = btiCaseExample.copy(reference = "ref", status = REFERRED)
     val updated = btiCaseExample.copy(reference = "ref", status = OPEN)
     val operator = Operator("operator-id")
@@ -164,6 +183,24 @@ class AuditServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEac
         caseReference = "ref",
         newStatus = OPEN,
         previousStatus = REFERRED,
+        operatorId = operator.id
+      )
+      verify(connector).sendExplicitAudit(refEq("caseReopened"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+    }
+  }
+
+  "Service 'audit case reopened' when a case is suspended" should {
+    val original = btiCaseExample.copy(reference = "ref", status = SUSPENDED)
+    val updated = btiCaseExample.copy(reference = "ref", status = OPEN)
+    val operator = Operator("operator-id")
+
+    "Delegate to connector" in {
+      service.auditCaseReOpen(original, updated, operator)
+
+      val payload = caseChangeAudit(
+        caseReference = "ref",
+        newStatus = OPEN,
+        previousStatus = SUSPENDED,
         operatorId = operator.id
       )
       verify(connector).sendExplicitAudit(refEq("caseReopened"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
@@ -188,21 +225,21 @@ class AuditServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEac
     }
   }
 
-  "Service 'audit case reopen' when a case is suspended" should {
-    val original = btiCaseExample.copy(reference = "ref", status = SUSPENDED)
-    val updated = btiCaseExample.copy(reference = "ref", status = OPEN)
+  "Service 'audit case review change'" should {
+    val original = aCase(withReference("ref"), withDecision(review = Some(Review(ReviewStatus.IN_PROGRESS))))
+    val updated = aCase(withReference("ref"), withoutDecision())
     val operator = Operator("operator-id")
 
     "Delegate to connector" in {
-      service.auditCaseReOpen(original, updated, operator)
+      service.auditCaseReviewChange(original, updated, operator)
 
-      val payload = caseChangeAudit(
+      val payload = reviewChangeAudit(
         caseReference = "ref",
-        newStatus = OPEN,
-        previousStatus = SUSPENDED,
+        newStatus = None,
+        previousStatus = Some(ReviewStatus.IN_PROGRESS),
         operatorId = operator.id
       )
-      verify(connector).sendExplicitAudit(refEq("caseReopened"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+      verify(connector).sendExplicitAudit(refEq("caseReviewChange"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
     }
   }
 
@@ -221,6 +258,15 @@ class AuditServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEac
       "operatorId" -> operatorId,
       "newAppealStatus" -> newStatus.map(_.toString).getOrElse("None"),
       "previousAppealStatus" -> previousStatus.map(_.toString).getOrElse("None")
+    )
+  }
+
+  private def reviewChangeAudit(caseReference: String, newStatus: Option[ReviewStatus], previousStatus: Option[ReviewStatus], operatorId: String): Map[String, String] = {
+    Map[String, String](
+      "caseReference" -> caseReference,
+      "operatorId" -> operatorId,
+      "newReviewStatus" -> newStatus.map(_.toString).getOrElse("None"),
+      "previousReviewStatus" -> previousStatus.map(_.toString).getOrElse("None")
     )
   }
 

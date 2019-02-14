@@ -20,60 +20,52 @@ import javax.inject.{Inject, Singleton}
 import play.api.i18n.MessagesApi
 import play.api.mvc._
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.forms.AppealForm
-import uk.gov.hmrc.tariffclassificationfrontend.models.AppealStatus.AppealStatus
-import uk.gov.hmrc.tariffclassificationfrontend.models.Case
-import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.{CANCELLED, COMPLETED}
+import uk.gov.hmrc.tariffclassificationfrontend.forms.ReviewForm
+import uk.gov.hmrc.tariffclassificationfrontend.models.ReviewStatus.ReviewStatus
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
-import uk.gov.hmrc.tariffclassificationfrontend.views.CaseDetailPage
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future.successful
 
 @Singleton
-class AppealCaseController @Inject()(authenticatedAction: AuthenticatedAction,
+class ReviewCaseController @Inject()(authenticatedAction: AuthenticatedAction,
                                      override val caseService: CasesService,
                                      override val messagesApi: MessagesApi,
                                      override implicit val config: AppConfig) extends RenderCaseAction {
 
   override protected def redirect: String => Call = routes.CaseController.trader
-  override protected def isValidCase: Case => Boolean = c => validPreviousStatuses.contains(c.status)
-  private lazy val validPreviousStatuses = Seq(COMPLETED, CANCELLED)
 
-  def appealDetails(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
+  override protected def isValidCase: Case => Boolean = c => Set(CaseStatus.COMPLETED, CaseStatus.CANCELLED).contains(c.status)
+
+  def chooseReviewStatus(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     getCaseAndRenderView(
       reference,
-      c => successful(views.html.case_details(c, CaseDetailPage.APPEAL, views.html.partials.appeal_details(c)))
+      c => successful(views.html.change_review_status(c, ReviewForm.form.fill(c.decision.flatMap(_.review).map(_.status))))
     )
   }
 
-  def chooseAppealStatus(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
-    getCaseAndRenderView(
-      reference,
-      c => successful(views.html.change_appeal_status(c, AppealForm.form.fill(c.decision.flatMap(_.appeal).map(_.status))))
-    )
-  }
-
-  def updateAppealStatus(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
-    AppealForm.form.bindFromRequest().fold(
+  def updateReviewStatus(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
+    ReviewForm.form.bindFromRequest().fold(
       errors => {
         getCaseAndRenderView(
           reference,
-          c => successful(views.html.change_appeal_status(c, errors))
+          c => successful(views.html.change_review_status(c, errors))
         )
       },
-      (status: Option[AppealStatus]) => {
+      (status: Option[ReviewStatus]) => {
         getCaseAndRespond(
           reference,
           c => {
             if(statusHasChanged(c, status)) {
-              caseService.updateAppealStatus(c, status, request.operator).flatMap { c =>
+              caseService.updateReviewStatus(c, status, request.operator).flatMap { c =>
                 successful(Redirect(routes.AppealCaseController.appealDetails(c.reference)))
               }
             } else {
               successful(Redirect(routes.AppealCaseController.appealDetails(c.reference)))
             }
+
           }
         )
       }
@@ -81,7 +73,7 @@ class AppealCaseController @Inject()(authenticatedAction: AuthenticatedAction,
 
   }
 
-  private def statusHasChanged(c: Case, status: Option[AppealStatus]): Boolean = {
+  private def statusHasChanged(c: Case, status: Option[ReviewStatus]): Boolean = {
     c.decision.flatMap(_.appeal).map(_.status) != status
   }
 

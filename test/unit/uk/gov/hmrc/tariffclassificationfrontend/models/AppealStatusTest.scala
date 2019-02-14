@@ -21,6 +21,7 @@ import uk.gov.hmrc.play.test.UnitSpec
 class AppealStatusTest extends UnitSpec {
 
   "Appeal format" should {
+
     "format 'In Progress'" in {
       AppealStatus.format(Some(AppealStatus.IN_PROGRESS)) shouldBe "Under appeal"
     }
@@ -36,6 +37,7 @@ class AppealStatusTest extends UnitSpec {
     "format 'none'" in {
       AppealStatus.format(None) shouldBe "None"
     }
+
   }
 
 }

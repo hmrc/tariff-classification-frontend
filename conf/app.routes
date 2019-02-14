@@ -37,6 +37,8 @@ POST        /cases/:reference/complete           @uk.gov.hmrc.tariffclassificati
 GET         /cases/:reference/ruling             @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.rulingDetails(reference: String)
 GET         /cases/:reference/ruling/edit        @uk.gov.hmrc.tariffclassificationfrontend.controllers.RulingController.editRulingDetails(reference: String)
 POST        /cases/:reference/ruling             @uk.gov.hmrc.tariffclassificationfrontend.controllers.RulingController.updateRulingDetails(reference: String)
+GET         /cases/:reference/ruling/cancel      @uk.gov.hmrc.tariffclassificationfrontend.controllers.CancelRulingController.cancelRuling(reference: String)
+POST        /cases/:reference/ruling/cancel      @uk.gov.hmrc.tariffclassificationfrontend.controllers.CancelRulingController.confirmCancelRuling(reference: String)
 
 GET         /cases/:reference/activity           @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.activityDetails(reference: String)
 POST        /cases/:reference/activity           @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.addNote(reference: String)
@@ -48,8 +50,12 @@ GET         /cases/:reference/keywords           @uk.gov.hmrc.tariffclassificati
 POST        /cases/:reference/keywords           @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.addKeyword(reference: String)
 
 GET         /cases/:reference/appeal             @uk.gov.hmrc.tariffclassificationfrontend.controllers.AppealCaseController.appealDetails(reference: String)
+
 GET         /cases/:reference/appeal/status      @uk.gov.hmrc.tariffclassificationfrontend.controllers.AppealCaseController.chooseAppealStatus(reference: String)
 POST        /cases/:reference/appeal/status      @uk.gov.hmrc.tariffclassificationfrontend.controllers.AppealCaseController.updateAppealStatus(reference: String)
+
+GET         /cases/:reference/review/status      @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReviewCaseController.chooseReviewStatus(reference: String)
+POST        /cases/:reference/review/status      @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReviewCaseController.updateReviewStatus(reference: String)
 
 GET         /search                              @uk.gov.hmrc.tariffclassificationfrontend.controllers.SearchController.search(reference: Option[String] ?= None, search: uk.gov.hmrc.tariffclassificationfrontend.models.Search ?= uk.gov.hmrc.tariffclassificationfrontend.models.Search(), sort: uk.gov.hmrc.tariffclassificationfrontend.models.Sort ?= uk.gov.hmrc.tariffclassificationfrontend.models.Sort())
 
