@@ -17,36 +17,19 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, ReviewStatus}
+@import uk.gov.hmrc.tariffclassificationfrontend.views.forms.components.RadioOption
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.input_radiogroup
 @(c: Case, field: Field)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 
 @helper.form(action = routes.ReviewCaseController.updateReviewStatus(c.reference), 'id -> "review_status_form") {
     @helper.CSRF.formField
-
-    <div class="form-group @if(field.hasErrors){form-group-error}">
-        <fieldset>
-            <legend>
-                <h3 class="heading-small">Review status</h3>
-                @field.errors.map { error =>
-                    <span class="error-message" id="error-message-@{field.id}-input">@messages(error.message, error.args: _*)</span>
-                }
-            </legend>
-
-            <div class="multiple-choice">
-                <input id="review_status_form-none" type="radio" name="status" value="">
-                <label for="review_status_form-none">None</label>
-            </div>
-
-            @for(status: ReviewStatus.Value <- ReviewStatus.values) {
-                <div class="multiple-choice">
-                    <input id="review_status_form-@{status.toString.toLowerCase}" type="radio" name="status" value="@status">
-                    <label for="review_status_form-@{status.toString.toLowerCase}">@ReviewStatus.format(Some(status))</label>
-                </div>
-            }
-
-        </fieldset>
-    </div>
-
+    @input_radiogroup(
+        field = field,
+        options = ReviewStatus.values.map(s => RadioOption(s.toString, ReviewStatus.format(Some(s)))).toSeq,
+        allowNone = true,
+        id = "review_status_form"
+    )
     <div>
         <button id="review_status_form-submit" class="button" type="submit">Save</button>
         <a id="review_status_form-cancel" class="secondary-button" href="@routes.AppealCaseController.appealDetails(c.reference)">Cancel</a>
