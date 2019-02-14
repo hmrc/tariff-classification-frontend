@@ -98,6 +98,25 @@ class AuditServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEac
     }
   }
 
+  "Service 'audit case rejected'" should {
+    val original = btiCaseExample.copy(reference = "ref", status = OPEN)
+    val updated = btiCaseExample.copy(reference = "ref", status = REJECTED)
+    val operator = Operator("operator-id")
+
+    "Delegate to connector" in {
+      service.auditCaseRejected(original, updated, operator)
+
+      val payload = auditPayload(
+        caseReference = "ref",
+        newStatus = REJECTED,
+        previousStatus = OPEN,
+        operatorId = operator.id
+      )
+      verify(connector).sendExplicitAudit(refEq("caseRejected"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+    }
+  }
+
+
 
   "Service 'audit case reopen' when a case is referred" should {
     val original = btiCaseExample.copy(reference = "ref", status = REFERRED)

@@ -15,8 +15,9 @@
  *@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-@import uk.gov.hmrc.tariffclassificationfrontend.models.{AgentDetails, Application, BTIApplication, Case, EORIDetails, StoredAttachment}
+@import uk.gov.hmrc.tariffclassificationfrontend.models.{AgentDetails, Application, BTIApplication, Case, EORIDetails, StoredAttachment, CaseStatus}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials._
+
 
 @(c: Case, files: Seq[StoredAttachment], letterOfAuth: Option[StoredAttachment])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
@@ -113,6 +114,8 @@
                 @refer_case_button(c)
                 @reopen_case_button(c)
             </div>
+
+            @reject_suspend_section(c)
         }
     }
 }
