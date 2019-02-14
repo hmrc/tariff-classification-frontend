@@ -73,10 +73,14 @@ class AuditService @Inject()(auditConnector: DefaultAuditConnector) {
     sendExplicitAuditEvent(
       auditEventType = CaseAppealChange,
       auditPayload = baseAuditPayload(updatedCase, operator) + (
-        "newAppealStatus" -> updatedCase.decision.flatMap(_.appeal).map(_.status.toString).getOrElse("None"),
-        "previousAppealStatus" -> oldCase.decision.flatMap(_.appeal).map(_.status.toString).getOrElse("None")
+        "newAppealStatus" -> appealStatus(updatedCase),
+        "previousAppealStatus" -> appealStatus(oldCase)
       )
     )
+  }
+
+  private def appealStatus(c: Case): String = {
+    c.decision.flatMap(_.appeal).map(_.status.toString).getOrElse("None")
   }
 
   def auditCaseSuppressed(oldCase: Case, updatedCase: Case, operator: Operator)
