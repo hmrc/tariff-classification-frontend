@@ -37,14 +37,7 @@
      Appeal status
     </th>
     <td id="appeal_details-appeal_status">
-      @{
-       c.decision.flatMap(_.appeal).map(_.status) match {
-        case Some(AppealStatus.IN_PROGRESS) => "Under appeal"
-        case Some(AppealStatus.ALLOWED) => "Appeal allowed"
-        case Some(AppealStatus.DISMISSED) => "Appeal dismissed"
-        case None => "None"
-       }
-      }
+      @AppealStatus.format(c.decision.flatMap(_.appeal).map(_.status))
     </td>
     <td>
      <a id="appeal_details-appeal_status-change" href="@routes.AppealCaseController.chooseAppealStatus(c.reference)">Change</a>

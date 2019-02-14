@@ -160,7 +160,7 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers with GuiceOneAppPe
       val aCase = Cases.btiCaseExample.copy(status = CaseStatus.CANCELLED)
 
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
-      given(casesService.updateAppealStatus(refEq(aCase), any[Option[AppealStatus]], any[Operator])).willReturn(Future.successful(aCase))
+      given(casesService.updateAppealStatus(refEq(aCase), any[Option[AppealStatus]], any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(aCase))
 
       val result = await(controller.updateAppealStatus("reference")(newFakePOSTRequestWithCSRF(app)))
 
@@ -174,7 +174,7 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers with GuiceOneAppPe
       val aCase = Cases.btiCaseExample.copy(status = CaseStatus.COMPLETED)
 
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
-      given(casesService.updateAppealStatus(refEq(aCase), any[Option[AppealStatus]], any[Operator])).willReturn(Future.successful(aCase))
+      given(casesService.updateAppealStatus(refEq(aCase), any[Option[AppealStatus]], any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(aCase))
 
       val result = await(controller.updateAppealStatus("reference")(newFakePOSTRequestWithCSRF(app)))
 
@@ -199,7 +199,7 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers with GuiceOneAppPe
       val aCase = Cases.btiCaseExample.copy(status = CaseStatus.OPEN)
 
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
-      given(casesService.updateAppealStatus(refEq(aCase), any[Option[AppealStatus]], any[Operator])).willReturn(Future.successful(aCase))
+      given(casesService.updateAppealStatus(refEq(aCase), any[Option[AppealStatus]], any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(aCase))
 
       val result = await(controller.updateAppealStatus("reference")(newFakePOSTRequestWithCSRF(app)))
 

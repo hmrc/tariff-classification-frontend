@@ -156,9 +156,9 @@ class AuditServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEac
   private def caseChangeAudit(caseReference: String, newStatus: CaseStatus, previousStatus: CaseStatus, operatorId: String): Map[String, String] = {
     Map[String, String](
       "caseReference" -> caseReference,
+      "operatorId" -> operatorId,
       "newStatus" -> newStatus.toString,
-      "previousStatus" -> previousStatus.toString,
-      "operatorId" -> operatorId
+      "previousStatus" -> previousStatus.toString
     )
   }
 
