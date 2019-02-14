@@ -61,7 +61,7 @@ class AuditService @Inject()(auditConnector: DefaultAuditConnector) {
   }
 
   def auditRulingCancelled(oldCase: Case, updatedCase: Case, operator: Operator)
-                       (implicit hc: HeaderCarrier): Unit = {
+                          (implicit hc: HeaderCarrier): Unit = {
     sendExplicitAuditEvent(
       auditEventType = RulingCancelled,
       auditPayload = statusChangeAuditPayload(oldCase, updatedCase, operator)
