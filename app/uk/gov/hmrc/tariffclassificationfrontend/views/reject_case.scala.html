@@ -30,7 +30,7 @@
         <div class="column-full">
             <h3 class="heading-large mt-0">Reject this case</h3>
 
-            <p> Before you reject this case, <a href="#">add a note</a> explaining why you’re rejecting it. </p>
+            <p> Before you reject this case, <a href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.activityDetails(c.reference)">add a note</a> explaining why you’re rejecting it. </p>
             <p> The days elapsed count will stop at @(c.daysElapsed).</p>
 
             @helper.form(action = uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.RejectCaseController.confirmRejectCase(c.reference), 'id -> "reject-case") {
