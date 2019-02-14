@@ -45,7 +45,7 @@ class AuditService @Inject()(auditConnector: DefaultAuditConnector) {
   }
 
   def auditCaseSuspended(oldCase: Case, updatedCase: Case, operator: Operator)
-                       (implicit hc: HeaderCarrier): Unit = {
+                        (implicit hc: HeaderCarrier): Unit = {
     sendExplicitAuditEvent(
       auditEventType = CaseSuspended,
       auditPayload = statusChangeAuditPayload(oldCase, updatedCase, operator)
@@ -96,7 +96,10 @@ class AuditService @Inject()(auditConnector: DefaultAuditConnector) {
   }
 
   private def statusChangeAuditPayload(oldCase: Case, updatedCase: Case, operator: Operator): Map[String, String] = {
-    baseAuditPayload(updatedCase, operator) + ("newStatus" -> updatedCase.status.toString) + ("previousStatus" -> oldCase.status.toString)
+    baseAuditPayload(updatedCase, operator) + (
+      "newStatus" -> updatedCase.status.toString,
+      "previousStatus" -> oldCase.status.toString
+    )
   }
 
   private def baseAuditPayload(c: Case, operator: Operator): Map[String, String] = {
