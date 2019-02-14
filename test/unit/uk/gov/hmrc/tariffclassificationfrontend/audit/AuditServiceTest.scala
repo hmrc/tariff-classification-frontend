@@ -38,6 +38,8 @@ class AuditServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEac
 
   private val service = new AuditService(connector)
 
+  private val operator = Operator("operator-id")
+
   override protected def afterEach(): Unit = {
     super.afterEach()
     reset(connector)
@@ -47,7 +49,6 @@ class AuditServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEac
     val original = btiCaseExample.copy(reference = "ref", status = NEW)
     val updated = btiCaseExample.copy(reference = "ref", status = OPEN)
     val queue = Queue("queue-id", "queue-slug", "queue-name")
-    val operator = Operator("operator-id")
 
     "Delegate to connector" in {
       service.auditCaseReleased(original, updated, queue, operator)
@@ -66,7 +67,6 @@ class AuditServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEac
   "Service 'audit case completed'" should {
     val original = btiCaseExample.copy(reference = "ref", status = OPEN)
     val updated = btiCaseExample.copy(reference = "ref", status = COMPLETED)
-    val operator = Operator("operator-id")
 
     "Delegate to connector" in {
       service.auditCaseCompleted(original, updated, operator)
@@ -84,7 +84,6 @@ class AuditServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEac
   "Service 'audit cancel ruling'" should {
     val original = btiCaseExample.copy(reference = "ref", status = COMPLETED)
     val updated = btiCaseExample.copy(reference = "ref", status = CANCELLED)
-    val operator = Operator("operator-id")
 
     "Delegate to connector" in {
       service.auditRulingCancelled(original, updated, operator)
@@ -102,7 +101,6 @@ class AuditServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEac
   "Service 'audit case referred'" should {
     val original = btiCaseExample.copy(reference = "ref", status = OPEN)
     val updated = btiCaseExample.copy(reference = "ref", status = REFERRED)
-    val operator = Operator("operator-id")
 
     "Delegate to connector" in {
       service.auditCaseReferred(original, updated, operator)
@@ -120,7 +118,6 @@ class AuditServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEac
   "Service 'audit case rejected'" should {
     val original = btiCaseExample.copy(reference = "ref", status = OPEN)
     val updated = btiCaseExample.copy(reference = "ref", status = REJECTED)
-    val operator = Operator("operator-id")
 
     "Delegate to connector" in {
       service.auditCaseRejected(original, updated, operator)
@@ -138,7 +135,6 @@ class AuditServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEac
   "Service 'audit case suspended'" should {
     val original = btiCaseExample.copy(reference = "ref", status = OPEN)
     val updated = btiCaseExample.copy(reference = "ref", status = SUSPENDED)
-    val operator = Operator("operator-id")
 
     "Delegate to connector" in {
       service.auditCaseSuspended(original, updated, operator)
@@ -156,7 +152,6 @@ class AuditServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEac
   "Service 'audit case suppressed'" should {
     val original = btiCaseExample.copy(reference = "ref", status = NEW)
     val updated = btiCaseExample.copy(reference = "ref", status = SUPPRESSED)
-    val operator = Operator("operator-id")
 
     "Delegate to connector" in {
       service.auditCaseSuppressed(original, updated, operator)
@@ -174,7 +169,6 @@ class AuditServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEac
   "Service 'audit case reopened' when a case is referred" should {
     val original = btiCaseExample.copy(reference = "ref", status = REFERRED)
     val updated = btiCaseExample.copy(reference = "ref", status = OPEN)
-    val operator = Operator("operator-id")
 
     "Delegate to connector" in {
       service.auditCaseReOpen(original, updated, operator)
@@ -192,7 +186,6 @@ class AuditServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEac
   "Service 'audit case reopened' when a case is suspended" should {
     val original = btiCaseExample.copy(reference = "ref", status = SUSPENDED)
     val updated = btiCaseExample.copy(reference = "ref", status = OPEN)
-    val operator = Operator("operator-id")
 
     "Delegate to connector" in {
       service.auditCaseReOpen(original, updated, operator)
@@ -210,7 +203,6 @@ class AuditServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEac
   "Service 'audit case appeal change'" should {
     val original = aCase(withReference("ref"), withDecision(appeal = Some(Appeal(AppealStatus.IN_PROGRESS))))
     val updated = aCase(withReference("ref"), withoutDecision())
-    val operator = Operator("operator-id")
 
     "Delegate to connector" in {
       service.auditCaseAppealChange(original, updated, operator)
@@ -228,7 +220,6 @@ class AuditServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEac
   "Service 'audit case review change'" should {
     val original = aCase(withReference("ref"), withDecision(review = Some(Review(ReviewStatus.IN_PROGRESS))))
     val updated = aCase(withReference("ref"), withoutDecision())
-    val operator = Operator("operator-id")
 
     "Delegate to connector" in {
       service.auditCaseReviewChange(original, updated, operator)
@@ -240,6 +231,22 @@ class AuditServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEac
         operatorId = operator.id
       )
       verify(connector).sendExplicitAudit(refEq("caseReviewChange"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+    }
+  }
+
+  "Service 'audit note'" should {
+    val c = btiCaseExample.copy(reference = "ref", status = OPEN)
+    val comment = "this is my note"
+
+    "Delegate to connector" in {
+      service.auditNote(c, comment, operator)
+
+      val payload = Map(
+        "caseReference" -> c.reference,
+        "operatorId" -> operator.id,
+        "note" -> comment
+      )
+      verify(connector).sendExplicitAudit(refEq("caseNote"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
     }
   }
 
