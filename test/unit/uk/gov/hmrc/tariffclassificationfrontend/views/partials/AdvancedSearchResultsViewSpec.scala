@@ -19,7 +19,7 @@ package uk.gov.hmrc.tariffclassificationfrontend.views.partials
 import java.time.{Instant, LocalDate, ZoneOffset}
 
 import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes
-import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus
+import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewSpec
 import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.advanced_search_results
@@ -61,6 +61,9 @@ class AdvancedSearchResultsViewSpec extends ViewSpec {
       doc should containElementWithID("advanced_search_results-row-0-status")
       doc.getElementById("advanced_search_results-row-0-status") should containText("OPEN")
 
+      doc shouldNot containElementWithID("advanced_search_results-row-0-appeal_status")
+      doc shouldNot containElementWithID("advanced_search_results-row-0-review_status")
+
       doc should containElementWithID("advanced_search_results-row-0-ruling_start")
       doc.getElementById("advanced_search_results-row-0-ruling_start").text shouldBe empty
       doc should containElementWithID("advanced_search_results-row-0-ruling_end")
@@ -74,7 +77,13 @@ class AdvancedSearchResultsViewSpec extends ViewSpec {
       val c = aCase(
         withReference("reference"),
         withStatus(CaseStatus.OPEN),
-        withDecision(bindingCommodityCode = "commodity-code", effectiveStartDate = Some(instant("2019-01-01")), effectiveEndDate = Some(instant("2019-02-01"))),
+        withDecision(
+          bindingCommodityCode = "commodity-code",
+          effectiveStartDate = Some(instant("2019-01-01")),
+          effectiveEndDate = Some(instant("2019-02-01")),
+          appeal = Some(Appeal(AppealStatus.IN_PROGRESS)),
+          review = Some(Review(ReviewStatus.IN_PROGRESS))
+        ),
         withHolder(businessName = "business-name")
       )
 
@@ -92,6 +101,11 @@ class AdvancedSearchResultsViewSpec extends ViewSpec {
       doc.getElementById("advanced_search_results-row-0-business_name") should containText("business-name")
       doc should containElementWithID("advanced_search_results-row-0-status")
       doc.getElementById("advanced_search_results-row-0-status") should containText("OPEN")
+
+      doc should containElementWithID("advanced_search_results-row-0-appeal_status")
+      doc.getElementById("advanced_search_results-row-0-appeal_status") should containText("Under appeal")
+      doc should containElementWithID("advanced_search_results-row-0-review_status")
+      doc.getElementById("advanced_search_results-row-0-review_status") should containText("Under review")
 
       doc should containElementWithID("advanced_search_results-row-0-ruling_start")
       doc.getElementById("advanced_search_results-row-0-ruling_start") should containText("01 Jan 2019")
