@@ -216,10 +216,8 @@ class CasesService @Inject()(appConfig: AppConfig,
     )
   }
 
-  private def addReviewStatusChangeEvent(original: Case,
-                                         updated: Case,
-                                         operator: Operator,
-                                         comment: Option[String] = None)(implicit hc: HeaderCarrier): Future[Unit] = {
+  private def addReviewStatusChangeEvent(original: Case, updated: Case, operator: Operator, comment: Option[String] = None)
+                                        (implicit hc: HeaderCarrier): Future[Unit] = {
     addEvent(
       original,
       updated,
