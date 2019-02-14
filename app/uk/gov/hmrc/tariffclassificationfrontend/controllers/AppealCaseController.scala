@@ -22,7 +22,8 @@ import play.api.mvc._
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.AppealForm
 import uk.gov.hmrc.tariffclassificationfrontend.models.AppealStatus.AppealStatus
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus}
+import uk.gov.hmrc.tariffclassificationfrontend.models.Case
+import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.{CANCELLED, COMPLETED}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
 import uk.gov.hmrc.tariffclassificationfrontend.views.CaseDetailPage
@@ -37,8 +38,8 @@ class AppealCaseController @Inject()(authenticatedAction: AuthenticatedAction,
                                      override implicit val config: AppConfig) extends RenderCaseAction {
 
   override protected def redirect: String => Call = routes.CaseController.trader
-
-  override protected def isValidCase: Case => Boolean = c => Set(CaseStatus.COMPLETED, CaseStatus.CANCELLED).contains(c.status)
+  override protected def isValidCase: Case => Boolean = c => validPreviousStatuses.contains(c.status)
+  private lazy val validPreviousStatuses = Seq(COMPLETED, CANCELLED)
 
   def appealDetails(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     getCaseAndRenderView(
@@ -73,7 +74,6 @@ class AppealCaseController @Inject()(authenticatedAction: AuthenticatedAction,
             } else {
               successful(Redirect(routes.AppealCaseController.appealDetails(c.reference)))
             }
-
           }
         )
       }
