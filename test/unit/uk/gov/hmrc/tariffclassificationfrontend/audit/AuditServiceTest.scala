@@ -24,8 +24,8 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.audit.DefaultAuditConnector
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.tariffclassificationfrontend.models.AppealStatus.AppealStatus
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Appeal, AppealStatus, Operator, Queue}
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus._
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Appeal, AppealStatus, Operator, Queue}
 import uk.gov.tariffclassificationfrontend.utils.Cases._
 
 import scala.concurrent.ExecutionContext
@@ -106,7 +106,7 @@ class AuditServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEac
     "Delegate to connector" in {
       service.auditCaseRejected(original, updated, operator)
 
-      val payload = auditPayload(
+      val payload = caseChangeAudit(
         caseReference = "ref",
         newStatus = REJECTED,
         previousStatus = OPEN,
@@ -115,7 +115,6 @@ class AuditServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEac
       verify(connector).sendExplicitAudit(refEq("caseRejected"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
     }
   }
-
 
 
   "Service 'audit case reopen' when a case is referred" should {
