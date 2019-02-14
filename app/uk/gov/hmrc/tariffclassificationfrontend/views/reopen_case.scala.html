@@ -30,9 +30,9 @@
         <div class="column-full">
             <h3 class="heading-large mt-0">Reopen this case</h3>
 
-            <p>Before you reopen this case,  <a href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.activityDetails(c.reference)">add a note</a> explaining why you’re reopening it.</p>
+            <p>Before you reopen this case, add a note explaining why you’re reopening it.</p>
             <p>You can also  <a href="#">attach</a> any relevant documentation.</p>
-            <p>The days elapsed count will resume from @(c.daysElapsed).</p>
+            <p>The days elapsed count will resume from <span id="days-elapsed">@(c.daysElapsed)</span>.</p>
 
             @helper.form(action = uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.ReopenCaseController.confirmReopenCase(c.reference), 'id -> "reopen-case") {
                 @helper.CSRF.formField
