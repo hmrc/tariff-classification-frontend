@@ -133,14 +133,13 @@ class AuditService @Inject()(auditConnector: DefaultAuditConnector) {
     auditConnector.sendExplicitAudit(auditType = auditEventType, detail = auditPayload)
   }
 
-  private def appealStatus(c: Case): String = {
-    c.decision.flatMap(_.appeal).map(_.status.toString).getOrElse("None")
+  private def appealStatus: Case => String = {
+    _.decision.flatMap(_.appeal).map(_.status.toString).getOrElse("None")
   }
 
-  private def reviewStatus(c: Case): String = {
-    c.decision.flatMap(_.review).map(_.status.toString).getOrElse("None")
+  private def reviewStatus: Case => String = {
+    _.decision.flatMap(_.review).map(_.status.toString).getOrElse("None")
   }
-
 }
 
 object AuditPayloadType {
