@@ -42,7 +42,7 @@ class ReviewCaseController @Inject()(authenticatedAction: AuthenticatedAction,
   def chooseReviewStatus(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     getCaseAndRenderView(
       reference,
-      c => successful(views.html.change_review_status(c, ReviewForm.form))
+      c => successful(views.html.change_review_status(c, ReviewForm.form.fill(c.decision.flatMap(_.review).map(_.status))))
     )
   }
 

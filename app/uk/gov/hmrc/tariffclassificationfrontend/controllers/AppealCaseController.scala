@@ -51,7 +51,7 @@ class AppealCaseController @Inject()(authenticatedAction: AuthenticatedAction,
   def chooseAppealStatus(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     getCaseAndRenderView(
       reference,
-      c => successful(views.html.change_appeal_status(c, AppealForm.form))
+      c => successful(views.html.change_appeal_status(c, AppealForm.form.fill(c.decision.flatMap(_.appeal).map(_.status))))
     )
   }
 
