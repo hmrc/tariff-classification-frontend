@@ -250,12 +250,46 @@ class AuditServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEac
     }
   }
 
+  "Service 'audit case keyword added'" should {
+    val c = btiCaseExample.copy(reference = "ref", status = COMPLETED)
+    val keyword = "PHONE"
+
+    "Delegate to connector" in {
+      service.auditCaseKeywordAdded(c, keyword, operator)
+
+      val payload = caseKeywordAudit(c.reference, keyword, operator.id)
+
+      verify(connector).sendExplicitAudit(refEq("caseKeywordAdded"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+    }
+  }
+
+  "Service 'audit case keyword removed'" should {
+    val c = btiCaseExample.copy(reference = "ref", status = COMPLETED)
+    val keyword = "PHONE"
+
+    "Delegate to connector" in {
+      service.auditCaseKeywordRemoved(c, keyword, operator)
+
+      val payload = caseKeywordAudit(c.reference, keyword, operator.id)
+
+      verify(connector).sendExplicitAudit(refEq("caseKeywordRemoved"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+    }
+  }
+
   private def caseChangeAudit(caseReference: String, newStatus: CaseStatus, previousStatus: CaseStatus, operatorId: String): Map[String, String] = {
     Map[String, String](
       "caseReference" -> caseReference,
       "operatorId" -> operatorId,
       "newStatus" -> newStatus.toString,
       "previousStatus" -> previousStatus.toString
+    )
+  }
+
+  private def caseKeywordAudit(caseReference: String, keyword: String, operatorId: String): Map[String, String] = {
+    Map[String, String](
+      "caseReference" -> caseReference,
+      "operatorId" -> operatorId,
+      "keyword" -> keyword
     )
   }
 
