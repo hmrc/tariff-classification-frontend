@@ -17,7 +17,7 @@
 package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
 import javax.inject.{Inject, Singleton}
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.MessagesApi
 import play.api.mvc._
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.AppealForm
@@ -33,7 +33,7 @@ import scala.concurrent.Future.successful
 class AppealCaseController @Inject()(authenticatedAction: AuthenticatedAction,
                                      override val caseService: CasesService,
                                      override val messagesApi: MessagesApi,
-                                     override implicit val config: AppConfig) extends RenderCaseAction with I18nSupport {
+                                     override implicit val config: AppConfig) extends RenderCaseAction {
 
   override protected def redirect: String => Call = routes.CaseController.trader
 
