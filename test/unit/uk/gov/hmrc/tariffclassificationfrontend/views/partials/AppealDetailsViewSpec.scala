@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.views.partials
 
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Appeal, AppealStatus}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Appeal, AppealStatus, Review, ReviewStatus}
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewSpec
 import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.appeal_details
@@ -72,6 +72,54 @@ class AppealDetailsViewSpec extends ViewSpec {
       // Then
       doc should containElementWithID("appeal_details-appeal_status")
       doc.getElementById("appeal_details-appeal_status") should containText("Under appeal")
+    }
+
+    "Render - Without Review" in {
+      // Given
+      val c = aCase(withDecision(review = None))
+
+      // When
+      val doc = view(appeal_details(c))
+
+      // Then
+      doc should containElementWithID("appeal_details-review_status")
+      doc.getElementById("appeal_details-review_status") should containText("None")
+    }
+
+    "Render - With 'Review Upheld'" in {
+      // Given
+      val c = aCase(withDecision(review = Some(Review(ReviewStatus.UPHELD))))
+
+      // When
+      val doc = view(appeal_details(c))
+
+      // Then
+      doc should containElementWithID("appeal_details-review_status")
+      doc.getElementById("appeal_details-review_status") should containText("Review upheld")
+    }
+
+    "Render - With 'Review Overturned'" in {
+      // Given
+      val c = aCase(withDecision(review = Some(Review(ReviewStatus.OVERTURNED))))
+
+      // When
+      val doc = view(appeal_details(c))
+
+      // Then
+      doc should containElementWithID("appeal_details-review_status")
+      doc.getElementById("appeal_details-review_status") should containText("Review overturned")
+    }
+
+    "Render - With 'Under Review'" in {
+      // Given
+      val c = aCase(withDecision(review = Some(Review(ReviewStatus.IN_PROGRESS))))
+
+      // When
+      val doc = view(appeal_details(c))
+
+      // Then
+      doc should containElementWithID("appeal_details-review_status")
+      doc.getElementById("appeal_details-review_status") should containText("Under review")
     }
   }
 

@@ -16,18 +16,26 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.models
 
-import java.time.Instant
+import uk.gov.hmrc.play.test.UnitSpec
 
-case class Decision
-(
-  bindingCommodityCode: String,
-  effectiveStartDate: Option[Instant] = None,
-  effectiveEndDate: Option[Instant] = None,
-  justification: String,
-  goodsDescription: String,
-  methodSearch: Option[String] = None,
-  methodExclusion: Option[String] = None,
-  methodCommercialDenomination: Option[String] = None,
-  appeal: Option[Appeal] = None,
-  review: Option[Review] = None
-)
+class ReviewStatusTest extends UnitSpec {
+
+  "Review format" should {
+    "format 'In Progress'" in {
+      ReviewStatus.format(Some(ReviewStatus.IN_PROGRESS)) shouldBe "Under review"
+    }
+
+    "format 'allowed'" in {
+      ReviewStatus.format(Some(ReviewStatus.UPHELD)) shouldBe "Review upheld"
+    }
+
+    "format 'dismissed'" in {
+      ReviewStatus.format(Some(ReviewStatus.OVERTURNED)) shouldBe "Review overturned"
+    }
+
+    "format 'none'" in {
+      ReviewStatus.format(None) shouldBe "None"
+    }
+  }
+
+}

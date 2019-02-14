@@ -16,18 +16,10 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.models
 
-import java.time.Instant
+import uk.gov.hmrc.tariffclassificationfrontend.models.ReviewStatus.ReviewStatus
 
-case class Decision
+
+case class Review
 (
-  bindingCommodityCode: String,
-  effectiveStartDate: Option[Instant] = None,
-  effectiveEndDate: Option[Instant] = None,
-  justification: String,
-  goodsDescription: String,
-  methodSearch: Option[String] = None,
-  methodExclusion: Option[String] = None,
-  methodCommercialDenomination: Option[String] = None,
-  appeal: Option[Appeal] = None,
-  review: Option[Review] = None
+  status: ReviewStatus
 )
