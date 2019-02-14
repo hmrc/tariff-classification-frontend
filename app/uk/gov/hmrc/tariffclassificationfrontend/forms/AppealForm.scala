@@ -25,7 +25,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.AppealStatus.AppealStatus
 
 object AppealForm {
 
-  def oneOf(values: AppealStatus.ValueSet): Constraint[String] = Constraint("constraints.appeal-status") {
+  private def oneOf(values: AppealStatus.ValueSet): Constraint[String] = Constraint("constraints.appeal-status") {
     case s: String if AppealStatus.values.exists(_.toString == s) => Valid
     case _ => Invalid(s"Must be one of [${values.toSeq.mkString(", ")}]")
   }
