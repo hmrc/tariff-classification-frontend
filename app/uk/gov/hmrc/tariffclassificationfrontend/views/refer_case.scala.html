@@ -30,8 +30,8 @@
         <div class="column-full">
             <h3 class="heading-large mt-0">Refer this case</h3>
 
-            <p> Before you refer this case, <a href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.activityDetails(c.reference)">add a note</a> explaining why you’re referring it. </p>
-            <p>The days elapsed count will pause at @(c.daysElapsed).</p>
+            <p> Before you refer this case, add a note explaining why you’re referring it. </p>
+            <p>The days elapsed count will pause at <span id="days-elapsed">@(c.daysElapsed)</span>.</p>
 
             @helper.form(action = uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.ReferCaseController.confirmReferCase(c.reference), 'id -> "refer-case") {
                 @helper.CSRF.formField
