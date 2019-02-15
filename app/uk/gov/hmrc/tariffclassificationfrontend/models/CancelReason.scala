@@ -16,17 +16,23 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.models
 
+import uk.gov.hmrc.tariffclassificationfrontend.models.AppealStatus.{ALLOWED, DISMISSED, IN_PROGRESS}
+
 object CancelReason extends Enumeration {
   type CancelReason = Value
 
-  // TODO decide how to represent reasons on the UI and add the remaining reasons
-  val ANNULLED, INVALIDATED = Value
+  val ANNULLED, INVALIDATED_CODE_CHANGE, INVALIDATED_EU_MEASURE, INVALIDATED_NATIONAL_MEASURE,
+  INVALIDATED_WRONG_CLASSIFICATION, INVALIDATED_OTHER = Value
 
-  def format(status: Option[CancelReason]): String = {
-    status match {
-      case Some(ANNULLED) => "Annulled"
-      case Some(INVALIDATED) => "Invalidated"
-      case Some(s) => throw new IllegalArgumentException(s"Unexpected reason: $s")
+  def format(reason: Option[CancelReason]): String = {
+    reason match {
+      case Some(ANNULLED) => "Annulled (55)"
+      case Some(INVALIDATED_CODE_CHANGE) => "Invalidated due to nomenclature code changes (61)"
+      case Some(INVALIDATED_EU_MEASURE) => "Invalidated due to EU measure (62)"
+      case Some(INVALIDATED_NATIONAL_MEASURE) => "Invalidated due to national legal measure (63)"
+      case Some(INVALIDATED_WRONG_CLASSIFICATION) => "Invalidated due to incorrect classification (64)"
+      case Some(INVALIDATED_OTHER) => "Invalidated due to other reasons (65)"
+      case Some(r) => throw new IllegalArgumentException(s"Unexpected reason: $r")
       case None => "None"
     }
   }

@@ -45,14 +45,8 @@ class CancelRulingController @Inject()(authenticatedAction: AuthenticatedAction,
   override protected def isValidCase: Case => Boolean = _.status == COMPLETED
 
   def cancelRuling(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
-    getCaseAndRenderView(
-      reference,
-      c => {
-        val existingReason = c.decision.flatMap(_.cancelReason)
-        val form = CancelRulingForm.form.fill(existingReason)
-        successful(views.html.cancel_ruling(c, form))
-      }
-    )
+    getCaseAndRenderView(reference,
+      c => successful(views.html.cancel_ruling(c, CancelRulingForm.form)))
   }
 
   def confirmCancelRuling(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
@@ -64,15 +58,9 @@ class CancelRulingController @Inject()(authenticatedAction: AuthenticatedAction,
           c => successful(views.html.cancel_ruling(c, errors))
         )
       },
-      (reason: Option[CancelReason]) => {
-        getCaseAndRenderView(
-          reference,
-          c => {
-            // TODO - pass reason to service to persist
-            println(s"reason was $reason")
-            caseService.cancelRuling(c, request.operator).map(views.html.confirm_cancel_ruling(_))
-          }
-        )
+      (reason: CancelReason) => {
+        getCaseAndRenderView(reference,
+          c => caseService.cancelRuling(c, reason, request.operator).map(views.html.confirm_cancel_ruling(_)))
       }
     )
   }
