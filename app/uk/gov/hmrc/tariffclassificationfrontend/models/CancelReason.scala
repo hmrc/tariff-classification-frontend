@@ -16,21 +16,18 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.models
 
-import java.time.Instant
+object CancelReason extends Enumeration {
+  type CancelReason = Value
 
-import uk.gov.hmrc.tariffclassificationfrontend.models.CancelReason.CancelReason
+  // TODO decide how to represent reasons on the UI and add the remaining reasons
+  val ANNULLED, INVALIDATED = Value
 
-case class Decision
-(
-  bindingCommodityCode: String,
-  effectiveStartDate: Option[Instant] = None,
-  effectiveEndDate: Option[Instant] = None,
-  justification: String,
-  goodsDescription: String,
-  methodSearch: Option[String] = None,
-  methodExclusion: Option[String] = None,
-  methodCommercialDenomination: Option[String] = None,
-  appeal: Option[Appeal] = None,
-  review: Option[Review] = None,
-  cancelReason: Option[CancelReason] = None
-)
+  def format(status: Option[CancelReason]): String = {
+    status match {
+      case Some(ANNULLED) => "Annulled"
+      case Some(INVALIDATED) => "Invalidated"
+      case Some(s) => throw new IllegalArgumentException(s"Unexpected reason: $s")
+      case None => "None"
+    }
+  }
+}
