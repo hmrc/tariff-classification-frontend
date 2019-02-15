@@ -18,7 +18,6 @@ package uk.gov.hmrc.tariffclassificationfrontend.models
 
 import uk.gov.hmrc.tariffclassificationfrontend.models.ReviewStatus.ReviewStatus
 
-
 case class Review
 (
   status: ReviewStatus
