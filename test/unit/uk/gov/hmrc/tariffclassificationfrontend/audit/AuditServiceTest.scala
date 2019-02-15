@@ -171,7 +171,7 @@ class AuditServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEac
     val updated = btiCaseExample.copy(reference = "ref", status = OPEN)
 
     "Delegate to connector" in {
-      service.auditCaseReOpen(original, updated, operator)
+      service.auditCaseReOpened(original, updated, operator)
 
       val payload = caseChangeAudit(
         caseReference = "ref",
@@ -188,7 +188,7 @@ class AuditServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEac
     val updated = btiCaseExample.copy(reference = "ref", status = OPEN)
 
     "Delegate to connector" in {
-      service.auditCaseReOpen(original, updated, operator)
+      service.auditCaseReOpened(original, updated, operator)
 
       val payload = caseChangeAudit(
         caseReference = "ref",

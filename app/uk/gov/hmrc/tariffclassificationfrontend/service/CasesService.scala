@@ -80,7 +80,7 @@ class CasesService @Inject()(appConfig: AppConfig,
     for {
       updated <- connector.updateCase(original.copy(status = CaseStatus.OPEN))
       _ <- addStatusChangeEvent(original, updated, operator)
-      _ = auditService.auditCaseReOpen(original, updated, operator)
+      _ = auditService.auditCaseReOpened(original, updated, operator)
     } yield updated
   }
 
