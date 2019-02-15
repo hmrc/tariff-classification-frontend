@@ -84,7 +84,8 @@ class CasesService_CancelRulingSpec extends UnitSpec with MockitoSugar with Befo
 
       val eventCreated = theEventCreatedFor(connector, caseUpdated)
       eventCreated.operator shouldBe Operator("operator-id", Some("Billy Bobbins"))
-      eventCreated.details shouldBe CaseStatusChange(CaseStatus.COMPLETED, CaseStatus.CANCELLED)
+
+      eventCreated.details shouldBe CaseStatusChange(CaseStatus.COMPLETED, CaseStatus.CANCELLED, Some(CancelReason.format(CancelReason.ANNULLED)))
     }
 
     "reject case without a decision" in {

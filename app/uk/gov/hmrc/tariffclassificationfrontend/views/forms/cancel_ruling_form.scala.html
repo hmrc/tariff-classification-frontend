@@ -26,7 +26,7 @@
     @helper.CSRF.formField
     @input_radiogroup(
         field = field,
-        options = CancelReason.values.toSeq.sorted.map(s => RadioOption(s.toString, CancelReason.format(Some(s)))),
+        options = CancelReason.values.toSeq.sorted.map(s => RadioOption(s.toString, CancelReason.format(s))),
         id = "cancel_reason_form",
         heading = "Reason for cancellation"
     )

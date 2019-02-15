@@ -24,27 +24,27 @@ class CancelReasonTest extends UnitSpec {
 
   "Review format" should {
     "format 'Annulled'" in {
-      CancelReason.format(Some(CancelReason.ANNULLED)) shouldBe "Annulled (55)"
+      CancelReason.format(CancelReason.ANNULLED) shouldBe "Annulled (55)"
     }
 
     "format 'Invalidated Code Change'" in {
-      CancelReason.format(Some(CancelReason.INVALIDATED_CODE_CHANGE)) shouldBe "Invalidated due to nomenclature code changes (61)"
+      CancelReason.format(CancelReason.INVALIDATED_CODE_CHANGE) shouldBe "Invalidated due to nomenclature code changes (61)"
     }
 
     "format 'Invalidated EU Measure'" in {
-      CancelReason.format(Some(CancelReason.INVALIDATED_EU_MEASURE)) shouldBe "Invalidated due to EU measure (62)"
+      CancelReason.format(CancelReason.INVALIDATED_EU_MEASURE) shouldBe "Invalidated due to EU measure (62)"
     }
 
     "format 'Invalidated National Measure'" in {
-      CancelReason.format(Some(CancelReason.INVALIDATED_NATIONAL_MEASURE)) shouldBe "Invalidated due to national legal measure (63)"
+      CancelReason.format(CancelReason.INVALIDATED_NATIONAL_MEASURE) shouldBe "Invalidated due to national legal measure (63)"
     }
 
     "format 'Invalidated Wrong Classification'" in {
-      CancelReason.format(Some(CancelReason.INVALIDATED_WRONG_CLASSIFICATION)) shouldBe "Invalidated due to incorrect classification (64)"
+      CancelReason.format(CancelReason.INVALIDATED_WRONG_CLASSIFICATION) shouldBe "Invalidated due to incorrect classification (64)"
     }
 
     "format 'Invalidated Other'" in {
-      CancelReason.format(Some(CancelReason.INVALIDATED_OTHER)) shouldBe "Invalidated due to other reasons (65)"
+      CancelReason.format(CancelReason.INVALIDATED_OTHER) shouldBe "Invalidated due to other reasons (65)"
     }
   }
 

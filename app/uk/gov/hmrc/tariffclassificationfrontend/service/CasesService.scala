@@ -171,7 +171,7 @@ class CasesService @Inject()(appConfig: AppConfig,
       // Update the case
       updated: Case <- connector.updateCase(caseUpdating)
       // Create the event
-      _ <- addStatusChangeEvent(original, updated, operator)
+      _ <- addStatusChangeEvent(original, updated, operator, comment = Some(CancelReason.format(reason)))
       // Audit
       _ = auditService.auditRulingCancelled(original, updated, operator)
     } yield updated

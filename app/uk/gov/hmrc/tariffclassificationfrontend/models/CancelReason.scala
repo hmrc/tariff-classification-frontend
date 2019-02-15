@@ -24,16 +24,15 @@ object CancelReason extends Enumeration {
   val ANNULLED, INVALIDATED_CODE_CHANGE, INVALIDATED_EU_MEASURE, INVALIDATED_NATIONAL_MEASURE,
   INVALIDATED_WRONG_CLASSIFICATION, INVALIDATED_OTHER = Value
 
-  def format(reason: Option[CancelReason]): String = {
+  def format(reason: CancelReason): String = {
     reason match {
-      case Some(ANNULLED) => "Annulled (55)"
-      case Some(INVALIDATED_CODE_CHANGE) => "Invalidated due to nomenclature code changes (61)"
-      case Some(INVALIDATED_EU_MEASURE) => "Invalidated due to EU measure (62)"
-      case Some(INVALIDATED_NATIONAL_MEASURE) => "Invalidated due to national legal measure (63)"
-      case Some(INVALIDATED_WRONG_CLASSIFICATION) => "Invalidated due to incorrect classification (64)"
-      case Some(INVALIDATED_OTHER) => "Invalidated due to other reasons (65)"
-      case Some(r) => throw new IllegalArgumentException(s"Unexpected reason: $r")
-      case None => "None"
+      case ANNULLED => "Annulled (55)"
+      case INVALIDATED_CODE_CHANGE => "Invalidated due to nomenclature code changes (61)"
+      case INVALIDATED_EU_MEASURE => "Invalidated due to EU measure (62)"
+      case INVALIDATED_NATIONAL_MEASURE => "Invalidated due to national legal measure (63)"
+      case INVALIDATED_WRONG_CLASSIFICATION => "Invalidated due to incorrect classification (64)"
+      case INVALIDATED_OTHER => "Invalidated due to other reasons (65)"
+      case unknown => throw new IllegalArgumentException(s"Unexpected reason: $unknown")
     }
   }
 }
