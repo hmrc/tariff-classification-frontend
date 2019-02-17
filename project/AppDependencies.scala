@@ -20,7 +20,7 @@ object AppDependencies {
     "org.scalatest"           %% "scalatest"                % "3.0.4"         % scope,
     "org.scalatestplus.play"  %% "scalatestplus-play"       % "2.0.1"         % scope,
     "uk.gov.hmrc"             %% "hmrctest"                 % "3.5.0-play-25" % scope,
-    "uk.gov.hmrc"             %% "http-verbs-test"          % "1.2.0"         % scope,
+    "uk.gov.hmrc"             %% "http-verbs-test"          % "1.3.0"         % scope,
     "uk.gov.hmrc"             %% "service-integration-test" % "0.5.0-play-25" % scope
   )
 
