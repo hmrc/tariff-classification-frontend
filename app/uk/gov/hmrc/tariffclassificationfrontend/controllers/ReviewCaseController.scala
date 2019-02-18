@@ -17,63 +17,47 @@
 package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
 import javax.inject.{Inject, Singleton}
+import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc._
+import play.twirl.api.Html
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.ReviewForm
-import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.{CANCELLED, COMPLETED}
 import uk.gov.hmrc.tariffclassificationfrontend.models.ReviewStatus.ReviewStatus
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Operator}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future.successful
+import scala.concurrent.Future
 
 @Singleton
-class ReviewCaseController @Inject()(authenticatedAction: AuthenticatedAction,
+class ReviewCaseController @Inject()(override val authenticatedAction: AuthenticatedAction,
                                      override val caseService: CasesService,
                                      override val messagesApi: MessagesApi,
-                                     override implicit val config: AppConfig) extends RenderCaseAction {
+                                     override implicit val config: AppConfig) extends StatusChangeAction[Option[ReviewStatus]] {
 
   override protected def redirect: String => Call = routes.CaseController.trader
 
-  override protected def isValidCase: Case => Boolean = c => (c.status == COMPLETED || c.status == CANCELLED) && c.decision.isDefined
-
-  def chooseStatus(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
-    getCaseAndRenderView(
-      reference,
-      c => successful(views.html.change_review_status(c, ReviewForm.form.fill(c.decision.flatMap(_.review).map(_.status))))
-    )
+  override protected def isValidCase: Case => Boolean = { c: Case =>
+    (c.status == COMPLETED || c.status == CANCELLED) && c.decision.isDefined
   }
 
-  def updateStatus(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
-    ReviewForm.form.bindFromRequest().fold(
-      errors => {
-        getCaseAndRenderView(
-          reference,
-          c => successful(views.html.change_review_status(c, errors))
-        )
-      },
-      (status: Option[ReviewStatus]) => {
-        getCaseAndRespond(
-          reference,
-          c => {
-            if (statusHasChanged(c, status)) {
-              caseService.updateReviewStatus(c, status, request.operator).flatMap { c =>
-                successful(Redirect(routes.AppealCaseController.appealDetails(c.reference)))
-              }
-            } else {
-              successful(Redirect(routes.AppealCaseController.appealDetails(c.reference)))
-            }
-          }
-        )
-      }
-    )
+  override protected val form: Form[Option[ReviewStatus]] = ReviewForm.form
+
+  override protected def status(c: Case): Option[ReviewStatus] = c.decision.flatMap(_.review).map(_.status)
+
+  override protected def chooseStatusView(c: Case, preFilledForm: Form[Option[ReviewStatus]])
+                                         (implicit request: Request[_]): Html = {
+    views.html.change_review_status(c, preFilledForm)
   }
 
-  private def statusHasChanged(c: Case, status: Option[ReviewStatus]): Boolean = {
-    c.decision.flatMap(_.appeal).map(_.status) != status
+  override protected def update(c: Case, status: Option[ReviewStatus], operator: Operator)
+                               (implicit hc: HeaderCarrier): Future[Case] = {
+    caseService.updateReviewStatus(c, status, operator)
   }
+
+  override protected def onSuccessRedirect(reference: String): Call = routes.AppealCaseController.appealDetails(reference)
 
 }
