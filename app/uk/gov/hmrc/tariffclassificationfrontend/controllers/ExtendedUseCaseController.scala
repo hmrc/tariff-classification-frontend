@@ -64,12 +64,10 @@ class ExtendedUseCaseController @Inject()(authenticatedAction: AuthenticatedActi
             } else {
               successful(Redirect(routes.AppealCaseController.appealDetails(c.reference)))
             }
-
           }
         )
       }
     )
-
   }
 
   private def statusHasChanged(c: Case, status: Boolean): Boolean = {

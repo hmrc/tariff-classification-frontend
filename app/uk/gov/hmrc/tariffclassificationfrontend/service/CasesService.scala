@@ -39,7 +39,8 @@ class CasesService @Inject()(appConfig: AppConfig,
                              fileService: FileStoreService,
                              connector: BindingTariffClassificationConnector) {
 
-  def updateExtendedUseStatus(original: Case, status: Boolean, operator: Operator)(implicit hc: HeaderCarrier): Future[Case] = {
+  def updateExtendedUseStatus(original: Case, status: Boolean, operator: Operator)
+                             (implicit hc: HeaderCarrier): Future[Case] = {
     val decision = original.decision.getOrElse(throw new IllegalArgumentException("Cannot change the Extended Use status of a case without a Decision"))
     val cancellation = decision.cancellation.getOrElse(throw new IllegalArgumentException("Cannot change the Extended Use status of a case without a Cancellation"))
     val updatedDecision = decision.copy(cancellation = Some(cancellation.copy(applicationForExtendedUse = status)))
@@ -225,13 +226,13 @@ class CasesService @Inject()(appConfig: AppConfig,
   }
 
   private def addReviewStatusChangeEvent(original: Case, updated: Case, operator: Operator, comment: Option[String] = None)
-                                         (implicit hc: HeaderCarrier): Future[Unit] = {
+                                        (implicit hc: HeaderCarrier): Future[Unit] = {
     val details = ReviewStatusChange(reviewStatus(original), reviewStatus(updated), comment)
     addEvent(original, updated, details, operator)
   }
 
   private def addExtendedUseStatusChangeEvent(original: Case, updated: Case, operator: Operator, comment: Option[String] = None)
-                                        (implicit hc: HeaderCarrier): Future[Unit] = {
+                                             (implicit hc: HeaderCarrier): Future[Unit] = {
     val details = ExtendedUseStatusChange(extendedUseStatus(original), extendedUseStatus(updated), comment)
     addEvent(original, updated, details, operator)
   }
