@@ -107,7 +107,7 @@ class ExtendedUseCaseControllerSpec extends UnitSpec with Matchers with GuiceOne
   "Case Extended Use - Submit Status" should {
 
     "update & redirect - For CANCELLED Case" in {
-      val c = aCase(withStatus(CaseStatus.CANCELLED), withDecision(cancellation = Some(Cancellation(applicationForExtendedUse = true))))
+      val c = aCase(withReference("reference"), withStatus(CaseStatus.CANCELLED), withDecision(cancellation = Some(Cancellation(applicationForExtendedUse = true))))
 
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(c)))
       given(casesService.updateExtendedUseStatus(refEq(c), any[Boolean], any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(c))
@@ -117,7 +117,7 @@ class ExtendedUseCaseControllerSpec extends UnitSpec with Matchers with GuiceOne
       verify(casesService).updateExtendedUseStatus(refEq(c), refEq(false), any[Operator])(any[HeaderCarrier])
 
       status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/tariff-classification/cases/1/appeal")
+      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/appeal")
     }
 
     "redirect for unchanged status" in {
