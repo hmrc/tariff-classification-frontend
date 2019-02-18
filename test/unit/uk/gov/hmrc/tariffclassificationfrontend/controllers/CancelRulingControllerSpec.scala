@@ -111,7 +111,7 @@ class CancelRulingControllerSpec extends WordSpec with Matchers with UnitSpec
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result) shouldBe Some("utf-8")
-      bodyOf(result) should include("This case has been cancelled")
+      bodyOf(result) should include("The ruling has been cancelled")
     }
 
     "display required field when failing to submit reason" in {
