@@ -24,7 +24,8 @@ import play.twirl.api.Html
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.BooleanForm
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus, Operator}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Operator}
+import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.CANCELLED
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
@@ -38,15 +39,23 @@ class ExtendedUseCaseController @Inject()(override val authenticatedAction: Auth
 
   override protected def redirect: String => Call = routes.CaseController.trader
 
-  override protected def isValidCase: Case => Boolean = c => CaseStatus.CANCELLED == c.status && c.decision.flatMap(_.cancellation).isDefined
+  override protected def isValidCase: Case => Boolean = { c: Case =>
+    c.status == CANCELLED && c.decision.flatMap(_.cancellation).isDefined
+  }
 
   override protected val form: Form[Boolean] = BooleanForm.form
 
   override protected def status(c: Case): Boolean = c.decision.flatMap(_.cancellation).exists(_.applicationForExtendedUse)
 
-  override protected def chooseStatusView(c: Case, preFilledForm: Form[Boolean])(implicit request: Request[_]): Html = views.html.change_extended_use_status(c, preFilledForm)
+  override protected def chooseStatusView(c: Case, preFilledForm: Form[Boolean])
+                                         (implicit request: Request[_]): Html = {
+    views.html.change_extended_use_status(c, preFilledForm)
+  }
 
-  override protected def update(c: Case, status: Boolean, operator: Operator)(implicit hc: HeaderCarrier): Future[Case] = caseService.updateExtendedUseStatus(c, status, operator)
+  override protected def update(c: Case, status: Boolean, operator: Operator)
+                               (implicit hc: HeaderCarrier): Future[Case] = {
+    caseService.updateExtendedUseStatus(c, status, operator)
+  }
 
   override protected def onSuccessRedirect(reference: String): Call = routes.AppealCaseController.appealDetails(reference)
 

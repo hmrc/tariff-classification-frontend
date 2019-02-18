@@ -42,15 +42,23 @@ class AppealCaseController @Inject()(override val authenticatedAction: Authentic
 
   override protected def redirect: String => Call = routes.CaseController.trader
 
-  override protected def isValidCase: Case => Boolean = c => (c.status == COMPLETED || c.status == CANCELLED) && c.decision.isDefined
+  override protected def isValidCase: Case => Boolean = { c: Case =>
+    (c.status == COMPLETED || c.status == CANCELLED) && c.decision.isDefined
+  }
 
   override protected val form: Form[Option[AppealStatus]] = AppealForm.form
 
   override protected def status(c: Case): Option[AppealStatus] = c.decision.flatMap(_.appeal).map(_.status)
 
-  override protected def chooseStatusView(c: Case, preFilledForm: Form[Option[AppealStatus]])(implicit request: Request[_]): Html = views.html.change_appeal_status(c, preFilledForm)
+  override protected def chooseStatusView(c: Case, preFilledForm: Form[Option[AppealStatus]])
+                                         (implicit request: Request[_]): Html = {
+    views.html.change_appeal_status(c, preFilledForm)
+  }
 
-  override protected def update(c: Case, status: Option[AppealStatus], operator: Operator)(implicit hc: HeaderCarrier): Future[Case] = caseService.updateAppealStatus(c, status, operator)
+  override protected def update(c: Case, status: Option[AppealStatus], operator: Operator)
+                               (implicit hc: HeaderCarrier): Future[Case] = {
+    caseService.updateAppealStatus(c, status, operator)
+  }
 
   override protected def onSuccessRedirect(reference: String): Call = routes.AppealCaseController.appealDetails(reference)
 
