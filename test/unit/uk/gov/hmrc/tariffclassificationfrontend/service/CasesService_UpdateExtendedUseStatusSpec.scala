@@ -28,7 +28,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.connector.BindingTariffClassificationConnector
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
-import uk.gov.tariffclassificationfrontend.utils.Cases
+import uk.gov.tariffclassificationfrontend.utils.Cases._
 
 import scala.concurrent.Future.{failed, successful}
 
@@ -41,7 +41,6 @@ class CasesService_UpdateExtendedUseStatusSpec extends UnitSpec with MockitoSuga
   private val fileStoreService = mock[FileStoreService]
   private val audit = mock[AuditService]
   private val config = mock[AppConfig]
-  private val aCase = Cases.btiCaseExample
 
   private val service = new CasesService(config, audit, emailService, fileStoreService, connector)
 
@@ -56,8 +55,8 @@ class CasesService_UpdateExtendedUseStatusSpec extends UnitSpec with MockitoSuga
     "update case 'extended use' status" in {
       // Given
       val operator: Operator = Operator("operator-id", None)
-      val originalCase = aCase.copy(decision = Some(decision.copy(applicationForExtendedUse = true)))
-      val caseUpdated = aCase.copy(decision = Some(decision.copy(applicationForExtendedUse = false)))
+      val originalCase = aCase(withDecision(cancellation = Some(Cancellation(applicationForExtendedUse = true))))
+      val caseUpdated = aCase(withDecision(cancellation = Some(Cancellation(applicationForExtendedUse = false))))
 
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])).willReturn(successful(mock[Event]))
@@ -68,7 +67,7 @@ class CasesService_UpdateExtendedUseStatusSpec extends UnitSpec with MockitoSuga
       verify(audit).auditCaseExtendedUseChange(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
 
       val caseUpdating = theCaseUpdating(connector)
-      caseUpdating.decision.map(_.applicationForExtendedUse) shouldBe Some(false)
+      caseUpdating.decision.flatMap(_.cancellation).map(_.applicationForExtendedUse) shouldBe Some(false)
 
       val eventCreated = theEventCreatedFor(connector, caseUpdated)
       eventCreated.operator shouldBe Operator("operator-id")
@@ -77,7 +76,20 @@ class CasesService_UpdateExtendedUseStatusSpec extends UnitSpec with MockitoSuga
 
     "throw exception on missing decision" in {
       val operator: Operator = Operator("operator-id")
-      val originalCase = aCase.copy(decision = None)
+      val originalCase = aCase(withoutDecision())
+
+
+      intercept[RuntimeException] {
+        await(service.updateExtendedUseStatus(originalCase, status = false, operator))
+      }
+
+      verifyZeroInteractions(audit)
+      verifyZeroInteractions(connector)
+    }
+
+    "throw exception on missing cancellation" in {
+      val operator: Operator = Operator("operator-id")
+      val originalCase = aCase(withDecision(cancellation = None))
 
 
       intercept[RuntimeException] {
@@ -90,7 +102,7 @@ class CasesService_UpdateExtendedUseStatusSpec extends UnitSpec with MockitoSuga
 
     "not create event on update failure" in {
       val operator: Operator = Operator("operator-id")
-      val originalCase = aCase.copy(decision = Some(decision.copy(applicationForExtendedUse = true)))
+      val originalCase = aCase(withDecision(cancellation = Some(Cancellation(applicationForExtendedUse = true))))
 
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(failed(new RuntimeException()))
 
@@ -99,14 +111,14 @@ class CasesService_UpdateExtendedUseStatusSpec extends UnitSpec with MockitoSuga
       }
 
       verifyZeroInteractions(audit)
-      verify(connector, never()).createEvent(refEq(aCase), any[NewEventRequest])(any[HeaderCarrier])
+      verify(connector, never()).createEvent(refEq(originalCase), any[NewEventRequest])(any[HeaderCarrier])
     }
 
     "succeed on event create failure" in {
       // Given
       val operator: Operator = Operator("operator-id")
-      val originalCase = aCase.copy(decision = Some(decision.copy(applicationForExtendedUse = false)))
-      val caseUpdated = aCase.copy(decision = Some(decision.copy(applicationForExtendedUse = true)))
+      val originalCase = aCase(withDecision(cancellation = Some(Cancellation(applicationForExtendedUse = false))))
+      val caseUpdated = aCase(withDecision(cancellation = Some(Cancellation(applicationForExtendedUse = true))))
 
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])).willReturn(failed(new RuntimeException()))
@@ -117,7 +129,7 @@ class CasesService_UpdateExtendedUseStatusSpec extends UnitSpec with MockitoSuga
       verify(audit).auditCaseExtendedUseChange(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
 
       val caseUpdating = theCaseUpdating(connector)
-      caseUpdating.decision.map(_.applicationForExtendedUse) shouldBe Some(true)
+      caseUpdating.decision.flatMap(_.cancellation).map(_.applicationForExtendedUse) shouldBe Some(true)
     }
   }
 

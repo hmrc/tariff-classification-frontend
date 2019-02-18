@@ -30,7 +30,7 @@ import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus, Operator}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Cancellation, Case, CaseStatus, Operator}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.tariffclassificationfrontend.utils.Cases._
 
@@ -57,7 +57,7 @@ class ExtendedUseCaseControllerSpec extends UnitSpec with Matchers with GuiceOne
   "Case Extended Use - Choose Status" should {
 
     "return 200 OK and HTML content type - For CANCELLED Case" in {
-      val c = aCase(withStatus(CaseStatus.CANCELLED), withDecision())
+      val c = aCase(withStatus(CaseStatus.CANCELLED), withDecision(cancellation = Some(Cancellation())))
 
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(c)))
 
@@ -69,8 +69,8 @@ class ExtendedUseCaseControllerSpec extends UnitSpec with Matchers with GuiceOne
       contentAsString(result) should include("change_extended_use_status-heading")
     }
 
-    "redirect for case without decision" in {
-      val c = aCase(withStatus(CaseStatus.CANCELLED), withoutDecision())
+    "redirect for case without cancellation reason" in {
+      val c = aCase(withStatus(CaseStatus.CANCELLED), withDecision(cancellation = None))
 
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(c)))
 
@@ -107,7 +107,7 @@ class ExtendedUseCaseControllerSpec extends UnitSpec with Matchers with GuiceOne
   "Case Extended Use - Submit Status" should {
 
     "update & redirect - For CANCELLED Case" in {
-      val c = aCase(withStatus(CaseStatus.CANCELLED), withDecision(applicationForExtendedUse = true))
+      val c = aCase(withStatus(CaseStatus.CANCELLED), withDecision(cancellation = Some(Cancellation(applicationForExtendedUse = true))))
 
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(c)))
       given(casesService.updateExtendedUseStatus(refEq(c), any[Boolean], any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(c))
@@ -121,7 +121,7 @@ class ExtendedUseCaseControllerSpec extends UnitSpec with Matchers with GuiceOne
     }
 
     "redirect for unchanged status" in {
-      val c = aCase(withReference("reference"), withStatus(CaseStatus.CANCELLED), withDecision(applicationForExtendedUse = true))
+      val c = aCase(withReference("reference"), withStatus(CaseStatus.CANCELLED), withDecision(cancellation = Some(Cancellation(applicationForExtendedUse = true))))
 
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(c)))
 
@@ -133,8 +133,8 @@ class ExtendedUseCaseControllerSpec extends UnitSpec with Matchers with GuiceOne
       locationOf(result) shouldBe Some("/tariff-classification/cases/reference/appeal")
     }
 
-    "redirect for case without decision" in {
-      val c = aCase(withStatus(CaseStatus.CANCELLED), withoutDecision())
+    "redirect for case without cancellation reason" in {
+      val c = aCase(withStatus(CaseStatus.CANCELLED), withDecision(cancellation = None))
 
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(c)))
 
@@ -147,7 +147,7 @@ class ExtendedUseCaseControllerSpec extends UnitSpec with Matchers with GuiceOne
     }
 
     "redirect for other status" in {
-      val c = aCase(withStatus(CaseStatus.OPEN), withDecision(applicationForExtendedUse = true))
+      val c = aCase(withStatus(CaseStatus.OPEN), withDecision(cancellation = Some(Cancellation(applicationForExtendedUse = true))))
 
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(c)))
 

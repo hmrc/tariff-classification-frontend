@@ -36,12 +36,12 @@ class ExtendedUseCaseController @Inject()(authenticatedAction: AuthenticatedActi
 
   override protected def redirect: String => Call = routes.CaseController.trader
 
-  override protected def isValidCase: Case => Boolean = c => CaseStatus.CANCELLED == c.status && c.decision.isDefined
+  override protected def isValidCase: Case => Boolean = c => CaseStatus.CANCELLED == c.status && c.decision.flatMap(_.cancellation).isDefined
 
   def chooseStatus(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     getCaseAndRenderView(
       reference,
-      c => successful(views.html.change_extended_use_status(c, BooleanForm.form.fill(c.decision.map(_.applicationForExtendedUse).get)))
+      c => successful(views.html.change_extended_use_status(c, BooleanForm.form.fill(c.decision.flatMap(_.cancellation).map(_.applicationForExtendedUse).get)))
     )
   }
 
@@ -73,7 +73,7 @@ class ExtendedUseCaseController @Inject()(authenticatedAction: AuthenticatedActi
   }
 
   private def statusHasChanged(c: Case, status: Boolean): Boolean = {
-    !c.decision.map(_.applicationForExtendedUse).contains(status)
+    !c.decision.flatMap(_.cancellation).map(_.applicationForExtendedUse).contains(status)
   }
 
 }

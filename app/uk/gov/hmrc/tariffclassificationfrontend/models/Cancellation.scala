@@ -16,19 +16,7 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.models
 
-import java.time.Instant
-
-case class Decision
+case class Cancellation
 (
-  bindingCommodityCode: String,
-  effectiveStartDate: Option[Instant] = None,
-  effectiveEndDate: Option[Instant] = None,
-  justification: String,
-  goodsDescription: String,
-  methodSearch: Option[String] = None,
-  methodExclusion: Option[String] = None,
-  methodCommercialDenomination: Option[String] = None,
-  appeal: Option[Appeal] = None,
-  review: Option[Review] = None,
-  cancellation: Option[Cancellation] = None
+  applicationForExtendedUse: Boolean = false
 )

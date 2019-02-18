@@ -41,7 +41,8 @@ class CasesService @Inject()(appConfig: AppConfig,
 
   def updateExtendedUseStatus(original: Case, status: Boolean, operator: Operator)(implicit hc: HeaderCarrier): Future[Case] = {
     val decision = original.decision.getOrElse(throw new IllegalArgumentException("Cannot change the Extended Use status of a case without a Decision"))
-    val updatedDecision = decision.copy(applicationForExtendedUse = status)
+    val cancellation = decision.cancellation.getOrElse(throw new IllegalArgumentException("Cannot change the Extended Use status of a case without a Cancellation"))
+    val updatedDecision = decision.copy(cancellation = Some(cancellation.copy(applicationForExtendedUse = status)))
 
     for {
       updated <- connector.updateCase(original.copy(decision = Some(updatedDecision)))
@@ -244,7 +245,7 @@ class CasesService @Inject()(appConfig: AppConfig,
   }
 
   private def extendedUseStatus: Case => Boolean = {
-    _.decision.map(_.applicationForExtendedUse).get
+    _.decision.flatMap(_.cancellation).map(_.applicationForExtendedUse).get
   }
 
   private def addEvent(original: Case, updated: Case, details: Details, operator: Operator)

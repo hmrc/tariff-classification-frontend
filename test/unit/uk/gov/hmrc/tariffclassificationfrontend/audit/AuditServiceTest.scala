@@ -235,7 +235,7 @@ class AuditServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEac
   }
 
   "Service 'audit extended use change'" should {
-    val original = aCase(withReference("ref"), withDecision(applicationForExtendedUse = true))
+    val original = aCase(withReference("ref"), withDecision(cancellation = Some(Cancellation(applicationForExtendedUse = true))))
     val updated = aCase(withReference("ref"), withoutDecision())
     val operator = Operator("operator-id")
 

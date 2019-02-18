@@ -181,7 +181,7 @@ class AuditService @Inject()(auditConnector: DefaultAuditConnector) {
   }
 
   private def extendedUseStatus: Case => String = {
-    _.decision.exists(_.applicationForExtendedUse).toString
+    _.decision.flatMap(_.cancellation).exists(_.applicationForExtendedUse).toString
   }
 }
 
