@@ -15,7 +15,7 @@ trait StatusUpdateController[T] extends RenderCaseAction {
 
   protected val form: Form[T]
 
-  protected def status(c: Case):  Option[T]
+  protected def status(c: Case): T
 
   protected def chooseView(c: Case, preFilledForm: Form[T])(implicit request: Request[_]): Html
 
@@ -26,7 +26,7 @@ trait StatusUpdateController[T] extends RenderCaseAction {
   def chooseStatus(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     getCaseAndRenderView(
       reference,
-      c => successful(chooseView(c, status(c).map(form.fill).getOrElse(form)))
+      c => successful(chooseView(c, form.fill(status(c))))
     )
   }
 
@@ -58,7 +58,7 @@ trait StatusUpdateController[T] extends RenderCaseAction {
   }
 
   private def statusHasChanged(c: Case, updated: T): Boolean = {
-    !status(c).contains(updated)
+    status(c) != updated
   }
 
 }
