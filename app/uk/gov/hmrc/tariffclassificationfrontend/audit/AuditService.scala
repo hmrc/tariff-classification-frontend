@@ -205,9 +205,9 @@ object AuditPayloadType {
   val CaseReleased = "caseReleased"
   val CaseCompleted = "caseCompleted"
   val CaseSuppressed = "caseSuppressed"
-  val CaseExtendedUseChange = "caseExtendedUseChange"
   val RulingCancelled = "rulingCancelled"
 
+  val CaseExtendedUseChange = "caseExtendedUseChange"
   val CaseAppealChange = "caseAppealChange"
   val CaseReviewChange = "caseReviewChange"
 

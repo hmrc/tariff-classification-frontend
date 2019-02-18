@@ -17,63 +17,46 @@
 package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
 import javax.inject.{Inject, Singleton}
+import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc._
+import play.twirl.api.Html
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.BooleanForm
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Operator}
+import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.CANCELLED
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future.successful
+import scala.concurrent.Future
 
 @Singleton
-class ExtendedUseCaseController @Inject()(authenticatedAction: AuthenticatedAction,
+class ExtendedUseCaseController @Inject()(override val authenticatedAction: AuthenticatedAction,
                                           override val caseService: CasesService,
                                           override val messagesApi: MessagesApi,
-                                          override implicit val config: AppConfig) extends RenderCaseAction {
+                                          override implicit val config: AppConfig) extends StatusChangeAction[Boolean] {
 
   override protected def redirect: String => Call = routes.CaseController.trader
 
-  override protected def isValidCase: Case => Boolean = c => CaseStatus.CANCELLED == c.status && c.decision.flatMap(_.cancellation).isDefined
-
-  def chooseStatus(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
-    getCaseAndRenderView(
-      reference,
-      c => successful(views.html.change_extended_use_status(c, BooleanForm.form.fill(c.decision.flatMap(_.cancellation).map(_.applicationForExtendedUse).get)))
-    )
+  override protected def isValidCase: Case => Boolean = { c: Case =>
+    c.status == CANCELLED && c.decision.flatMap(_.cancellation).isDefined
   }
 
-  def updateStatus(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
-    BooleanForm.form.bindFromRequest().fold(
-      errors => {
-        getCaseAndRenderView(
-          reference,
-          c => successful(views.html.change_extended_use_status(c, errors))
-        )
-      },
-      (status: Boolean) => {
-        getCaseAndRespond(
-          reference,
-          c => {
-            if(statusHasChanged(c, status)) {
-              caseService.updateExtendedUseStatus(c, status, request.operator).flatMap { c =>
-                successful(Redirect(routes.AppealCaseController.appealDetails(c.reference)))
-              }
-            } else {
-              successful(Redirect(routes.AppealCaseController.appealDetails(c.reference)))
-            }
+  override protected val form: Form[Boolean] = BooleanForm.form
 
-          }
-        )
-      }
-    )
+  override protected def status(c: Case): Boolean = c.decision.flatMap(_.cancellation).exists(_.applicationForExtendedUse)
 
+  override protected def chooseStatusView(c: Case, preFilledForm: Form[Boolean])
+                                         (implicit request: Request[_]): Html = {
+    views.html.change_extended_use_status(c, preFilledForm)
   }
 
-  private def statusHasChanged(c: Case, status: Boolean): Boolean = {
-    !c.decision.flatMap(_.cancellation).map(_.applicationForExtendedUse).contains(status)
+  override protected def update(c: Case, status: Boolean, operator: Operator)
+                               (implicit hc: HeaderCarrier): Future[Case] = {
+    caseService.updateExtendedUseStatus(c, status, operator)
   }
+
+  override protected def onSuccessRedirect(reference: String): Call = routes.AppealCaseController.appealDetails(reference)
 
 }

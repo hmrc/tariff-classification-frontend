@@ -186,7 +186,7 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers with GuiceOneAppPe
   "Case Appeal - Submit Status" should {
 
     "update & redirect - For CANCELLED Case" in {
-      val c = aCase(withStatus(CaseStatus.CANCELLED), withDecision())
+      val c = aCase(withReference("reference"), withStatus(CaseStatus.CANCELLED), withDecision())
 
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(c)))
       given(casesService.updateAppealStatus(refEq(c), any[Option[AppealStatus]], any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(c))
@@ -196,11 +196,11 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers with GuiceOneAppPe
       verify(casesService).updateAppealStatus(refEq(c), refEq(Some(AppealStatus.IN_PROGRESS)), any[Operator])(any[HeaderCarrier])
 
       status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/tariff-classification/cases/1/appeal")
+      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/appeal")
     }
 
     "update & redirect - For COMPLETED Case" in {
-      val c = aCase(withStatus(CaseStatus.COMPLETED), withDecision())
+      val c = aCase(withReference("reference"), withStatus(CaseStatus.COMPLETED), withDecision())
 
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(c)))
       given(casesService.updateAppealStatus(refEq(c), any[Option[AppealStatus]], any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(c))
@@ -210,7 +210,7 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers with GuiceOneAppPe
       verify(casesService).updateAppealStatus(refEq(c), refEq(Some(AppealStatus.IN_PROGRESS)), any[Operator])(any[HeaderCarrier])
 
       status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/tariff-classification/cases/1/appeal")
+      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/appeal")
     }
 
     "redirect for unchanged status" in {
