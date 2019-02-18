@@ -52,8 +52,8 @@ class AuditService @Inject()(auditConnector: DefaultAuditConnector) {
     )
   }
 
-  def auditCaseReOpen(oldCase: Case, updatedCase: Case, operator: Operator)
-                     (implicit hc: HeaderCarrier): Unit = {
+  def auditCaseReOpened(oldCase: Case, updatedCase: Case, operator: Operator)
+                       (implicit hc: HeaderCarrier): Unit = {
     sendExplicitAuditEvent(
       auditEventType = CaseReopened,
       auditPayload = statusChangeAuditPayload(oldCase, updatedCase, operator)
@@ -89,6 +89,30 @@ class AuditService @Inject()(auditConnector: DefaultAuditConnector) {
     sendExplicitAuditEvent(
       auditEventType = RulingCancelled,
       auditPayload = statusChangeAuditPayload(oldCase, updatedCase, operator)
+    )
+  }
+
+  def auditNote(c: Case, note: String, operator: Operator)
+               (implicit hc: HeaderCarrier): Unit = {
+    sendExplicitAuditEvent(
+      auditEventType = CaseNote,
+      auditPayload = baseAuditPayload(c, operator) + ("note" -> note)
+    )
+  }
+
+  def auditCaseKeywordAdded(c: Case, keyword: String, operator: Operator)
+                           (implicit hc: HeaderCarrier): Unit = {
+    sendExplicitAuditEvent(
+      auditEventType = CaseKeywordAdded,
+      auditPayload = keywordAuditPayload(c, keyword, operator)
+    )
+  }
+
+  def auditCaseKeywordRemoved(c: Case, keyword: String, operator: Operator)
+                             (implicit hc: HeaderCarrier): Unit = {
+    sendExplicitAuditEvent(
+      auditEventType = CaseKeywordRemoved,
+      auditPayload = keywordAuditPayload(c, keyword, operator)
     )
   }
 
@@ -132,6 +156,10 @@ class AuditService @Inject()(auditConnector: DefaultAuditConnector) {
     )
   }
 
+  private def keywordAuditPayload(c: Case, keyword: String, operator: Operator): Map[String, String] = {
+    baseAuditPayload(c, operator) + ("keyword" -> keyword)
+  }
+
   private def baseAuditPayload(c: Case, operator: Operator): Map[String, String] = {
     Map(
       "caseReference" -> c.reference,
@@ -159,15 +187,22 @@ class AuditService @Inject()(auditConnector: DefaultAuditConnector) {
 
 object AuditPayloadType {
 
+  val CaseNote = "caseNote"
+
+  val CaseKeywordAdded = "caseKeywordAdded"
+  val CaseKeywordRemoved = "caseKeywordRemoved"
+
   val CaseReopened = "caseReopened"
   val CaseReferred = "caseReferred"
   val CaseRejected = "caseRejected"
   val CaseSuspended = "caseSuspended"
   val CaseReleased = "caseReleased"
   val CaseCompleted = "caseCompleted"
-  val CaseAppealChange = "caseAppealChange"
-  val CaseReviewChange = "caseReviewChange"
   val CaseSuppressed = "caseSuppressed"
   val CaseExtendedUseChange = "caseExtendedUseChange"
   val RulingCancelled = "rulingCancelled"
+
+  val CaseAppealChange = "caseAppealChange"
+  val CaseReviewChange = "caseReviewChange"
+
 }

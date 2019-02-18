@@ -78,6 +78,7 @@ object Sort {
         SortDirection.bindable.unbind(sort_direction, sort.direction),
         SortField.bindable.unbind(sort_field, sort.field)
       )
+
       bindings.mkString("&")
     }
   }

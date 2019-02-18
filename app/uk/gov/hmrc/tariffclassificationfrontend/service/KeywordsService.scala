@@ -18,6 +18,7 @@ package uk.gov.hmrc.tariffclassificationfrontend.service
 
 import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.tariffclassificationfrontend.audit.AuditService
 import uk.gov.hmrc.tariffclassificationfrontend.connector.BindingTariffClassificationConnector
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 
@@ -26,23 +27,31 @@ import scala.concurrent.Future
 import scala.io.Source
 
 @Singleton
-class KeywordsService @Inject()(connector: BindingTariffClassificationConnector) {
+class KeywordsService @Inject()(connector: BindingTariffClassificationConnector, auditService: AuditService) {
 
-  def addKeyword(c: Case, keyword: String)(implicit hc: HeaderCarrier): Future[Case] = {
-    c.keywords match {
-      case keywords if keywords.contains(keyword.toUpperCase) => Future.successful(c)
-      case _ =>
-        val caseToUpdate = c.copy(keywords = c.keywords + keyword.toUpperCase)
-        connector.updateCase(caseToUpdate)
+  def addKeyword(c: Case, keyword: String, operator: Operator)
+                (implicit hc: HeaderCarrier): Future[Case] = {
+    if (c.keywords.contains(keyword.toUpperCase)) {
+      Future.successful(c)
+    } else {
+      val caseToUpdate = c.copy(keywords = c.keywords + keyword.toUpperCase)
+      connector.updateCase(caseToUpdate) map { updated: Case =>
+        auditService.auditCaseKeywordAdded(updated, keyword, operator)
+        updated
+      }
     }
   }
 
-  def removeKeyword(c: Case, keyword: String)(implicit hc: HeaderCarrier): Future[Case] = {
-    c.keywords match {
-      case keywords if keywords.contains(keyword.toUpperCase) =>
-        val caseToUpdate = c.copy(keywords = c.keywords - keyword.toUpperCase)
-        connector.updateCase(caseToUpdate)
-      case _ => Future.successful(c)
+  def removeKeyword(c: Case, keyword: String, operator: Operator)
+                   (implicit hc: HeaderCarrier): Future[Case] = {
+    if (c.keywords.contains(keyword.toUpperCase)) {
+      val caseToUpdate = c.copy(keywords = c.keywords - keyword.toUpperCase)
+      connector.updateCase(caseToUpdate) map { updated: Case =>
+        auditService.auditCaseKeywordRemoved(updated, keyword, operator)
+        updated
+      }
+    } else {
+      Future.successful(c)
     }
   }
 

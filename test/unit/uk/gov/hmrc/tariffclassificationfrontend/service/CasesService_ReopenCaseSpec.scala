@@ -91,7 +91,7 @@ class CasesService_ReopenCaseSpec extends UnitSpec with MockitoSugar with Before
       // When Then
       await(service.reopenCase(originalCase, operator)) shouldBe caseUpdated
 
-      verify(audit).auditCaseReOpen(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
+      verify(audit).auditCaseReOpened(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
 
       val caseUpdating = theCaseUpdating(connector)
       caseUpdating.status shouldBe updatedStatus
@@ -126,7 +126,7 @@ class CasesService_ReopenCaseSpec extends UnitSpec with MockitoSugar with Before
       // When Then
       await(service.reopenCase(originalCase, operator)) shouldBe caseUpdated
 
-      verify(audit).auditCaseReOpen(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
+      verify(audit).auditCaseReOpened(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
 
       val caseUpdating = theCaseUpdating(connector)
       caseUpdating.status shouldBe updatedStatus

@@ -38,7 +38,9 @@ class CompleteCaseController @Inject()(authenticatedAction: AuthenticatedAction,
   override protected val caseService: CasesService = casesService
 
   override protected def redirect: String => Call = routes.CaseController.rulingDetails
-  override protected def isValidCase: Case => Boolean = c => c.status == OPEN && c.decision.isDefined
+  override protected def isValidCase: Case => Boolean = { c: Case =>
+    c.status == OPEN && c.decision.isDefined
+  }
 
   def completeCase(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     getCaseAndRenderView(reference, c => successful(views.html.complete_case(c)))

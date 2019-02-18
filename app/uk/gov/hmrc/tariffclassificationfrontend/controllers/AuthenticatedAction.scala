@@ -23,7 +23,6 @@ import play.api.{Configuration, Environment}
 import uk.gov.hmrc.auth.core.AuthProvider.PrivilegedApplication
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name, Retrievals, ~}
-import uk.gov.hmrc.auth.core.syntax.retrieved
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
@@ -44,7 +43,7 @@ class AuthenticatedAction @Inject()(appConfig: AppConfig,
     with AuthorisedFunctions
     with AuthRedirects {
 
-  private lazy val enrolment: Option[Enrolment] = appConfig.authEnrolment.map(Enrolment(_))
+  private lazy val enrolment: Option[Enrolment] = appConfig.authEnrolment map (Enrolment(_))
 
   override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(
@@ -62,7 +61,6 @@ class AuthenticatedAction @Inject()(appConfig: AppConfig,
       )
       case _: AuthorisationException => Redirect(routes.SecurityController.unauthorized())
     }
-
   }
 
   private def authorise(): AuthorisedFunction = {

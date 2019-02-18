@@ -92,7 +92,7 @@ class CasesService @Inject()(appConfig: AppConfig,
     for {
       updated <- connector.updateCase(original.copy(status = CaseStatus.OPEN))
       _ <- addStatusChangeEvent(original, updated, operator)
-      _ = auditService.auditCaseReOpen(original, updated, operator)
+      _ = auditService.auditCaseReOpened(original, updated, operator)
     } yield updated
   }
 
@@ -213,12 +213,8 @@ class CasesService @Inject()(appConfig: AppConfig,
 
   private def addStatusChangeEvent(original: Case, updated: Case, operator: Operator, comment: Option[String] = None)
                                   (implicit hc: HeaderCarrier): Future[Unit] = {
-    addEvent(
-      original,
-      updated,
-      CaseStatusChange(original.status, updated.status, comment),
-      operator
-    )
+    val details = CaseStatusChange(original.status, updated.status, comment)
+    addEvent(original, updated, details, operator)
   }
 
   private def addAppealStatusChangeEvent(original: Case, updated: Case, operator: Operator, comment: Option[String] = None)
@@ -254,10 +250,9 @@ class CasesService @Inject()(appConfig: AppConfig,
   private def addEvent(original: Case, updated: Case, details: Details, operator: Operator)
                       (implicit hc: HeaderCarrier): Future[Unit] = {
     val event = NewEventRequest(details, operator)
-    connector.createEvent(updated, event).recover {
-        case t: Throwable => Logger.error(s"Could not create Event for case [${original.reference}] with payload [$event]", t)
-      }
-      .map(_ => ())
+    connector.createEvent(updated, event) recover {
+      case t: Throwable => Logger.error(s"Could not create Event for case [${original.reference}] with payload [$event]", t)
+    } map ( _ => () )
   }
 
 }

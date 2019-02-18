@@ -38,8 +38,10 @@ class AppealCaseController @Inject()(authenticatedAction: AuthenticatedAction,
                                      override implicit val config: AppConfig) extends RenderCaseAction {
 
   override protected def redirect: String => Call = routes.CaseController.trader
-  override protected def isValidCase: Case => Boolean = c => validPreviousStatuses.contains(c.status)
-  private lazy val validPreviousStatuses = Seq(COMPLETED, CANCELLED)
+
+  override protected def isValidCase: Case => Boolean = { c: Case =>
+    c.status == COMPLETED || c.status == CANCELLED
+  }
 
   def appealDetails(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     getCaseAndRenderView(
@@ -67,7 +69,7 @@ class AppealCaseController @Inject()(authenticatedAction: AuthenticatedAction,
         getCaseAndRespond(
           reference,
           c => {
-            if(statusHasChanged(c, status)) {
+            if (statusHasChanged(c, status)) {
               caseService.updateAppealStatus(c, status, request.operator).flatMap { c =>
                 successful(Redirect(routes.AppealCaseController.appealDetails(c.reference)))
               }
@@ -78,7 +80,6 @@ class AppealCaseController @Inject()(authenticatedAction: AuthenticatedAction,
         )
       }
     )
-
   }
 
   private def statusHasChanged(c: Case, status: Option[AppealStatus]): Boolean = {
