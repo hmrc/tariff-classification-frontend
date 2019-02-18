@@ -15,12 +15,14 @@
  *@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-@import uk.gov.hmrc.tariffclassificationfrontend.models.CancelReason.CancelReason
-@import uk.gov.hmrc.tariffclassificationfrontend.models.Case
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.cancel_ruling_form
+@import uk.gov.hmrc.tariffclassificationfrontend.forms.ReleaseCaseForm
+@import uk.gov.hmrc.tariffclassificationfrontend.models.{BTIApplication, Case, Queue}
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.release_case_form
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.case_heading
-@(c: Case, form: Form[CancelReason])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@import views.html.helper.{CSRF, form}
+
+@(c: Case)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None) {
 
@@ -45,7 +47,11 @@
                 <li><a href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.AttachmentsController.attachmentsDetails(c.reference)">attach</a>  any relevant documentation to the case</li>
             </ul>
 
-            @cancel_ruling_form(c, form("reason"))
+            @form(action = uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CancelRulingController.confirmCancelRuling(c.reference), 'class -> "form") {
+                @CSRF.formField
+                <button class="button" id="cancel-ruling-button" type="submit">Cancel ruling</button>
+                <a class="secondary-button" id="cancel-button" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.rulingDetails(c.reference)">Cancel</a>
+            }
 
         </div>
     </div>
