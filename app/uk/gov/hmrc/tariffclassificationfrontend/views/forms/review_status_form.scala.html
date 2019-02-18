@@ -24,6 +24,7 @@
 
 @helper.form(action = routes.ReviewCaseController.updateStatus(c.reference), 'id -> "review_status_form") {
     @helper.CSRF.formField
+    <h3 class="heading-small">Review status</h3>
     @input_radiogroup(
         field = field,
         options = ReviewStatus.values.map(s => RadioOption(s.toString, ReviewStatus.format(Some(s)))).toSeq,

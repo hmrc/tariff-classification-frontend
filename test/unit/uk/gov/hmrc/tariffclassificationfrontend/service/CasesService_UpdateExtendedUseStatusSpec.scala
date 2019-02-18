@@ -55,8 +55,8 @@ class CasesService_UpdateExtendedUseStatusSpec extends UnitSpec with MockitoSuga
     "update case 'extended use' status" in {
       // Given
       val operator: Operator = Operator("operator-id", None)
-      val originalCase = aCase(withDecision(cancellation = Some(Cancellation(applicationForExtendedUse = true))))
-      val caseUpdated = aCase(withDecision(cancellation = Some(Cancellation(applicationForExtendedUse = false))))
+      val originalCase = aCase(withDecision(cancellation = Some(Cancellation(reason=CancelReason.ANNULLED, applicationForExtendedUse = true))))
+      val caseUpdated = aCase(withDecision(cancellation = Some(Cancellation(reason=CancelReason.ANNULLED, applicationForExtendedUse = false))))
 
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])).willReturn(successful(mock[Event]))
@@ -102,7 +102,7 @@ class CasesService_UpdateExtendedUseStatusSpec extends UnitSpec with MockitoSuga
 
     "not create event on update failure" in {
       val operator: Operator = Operator("operator-id")
-      val originalCase = aCase(withDecision(cancellation = Some(Cancellation(applicationForExtendedUse = true))))
+      val originalCase = aCase(withDecision(cancellation = Some(Cancellation(reason=CancelReason.ANNULLED, applicationForExtendedUse = true))))
 
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(failed(new RuntimeException()))
 
@@ -117,8 +117,8 @@ class CasesService_UpdateExtendedUseStatusSpec extends UnitSpec with MockitoSuga
     "succeed on event create failure" in {
       // Given
       val operator: Operator = Operator("operator-id")
-      val originalCase = aCase(withDecision(cancellation = Some(Cancellation(applicationForExtendedUse = false))))
-      val caseUpdated = aCase(withDecision(cancellation = Some(Cancellation(applicationForExtendedUse = true))))
+      val originalCase = aCase(withDecision(cancellation = Some(Cancellation(reason=CancelReason.ANNULLED, applicationForExtendedUse = false))))
+      val caseUpdated = aCase(withDecision(cancellation = Some(Cancellation(reason=CancelReason.ANNULLED, applicationForExtendedUse = true))))
 
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])).willReturn(failed(new RuntimeException()))

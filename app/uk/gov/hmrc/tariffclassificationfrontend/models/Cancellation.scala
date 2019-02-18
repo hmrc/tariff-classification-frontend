@@ -16,7 +16,10 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.models
 
+import uk.gov.hmrc.tariffclassificationfrontend.models.CancelReason.CancelReason
+
 case class Cancellation
 (
+  reason: CancelReason,
   applicationForExtendedUse: Boolean = false
 )

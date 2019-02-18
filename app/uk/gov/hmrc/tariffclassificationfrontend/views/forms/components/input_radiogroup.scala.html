@@ -28,7 +28,6 @@
 <div class="form-group @if(field.hasErrors){form-group-error}">
     <fieldset>
         <legend>
-            <h3 class="heading-small">Review status</h3>
             @field.errors.map { error =>
                 <span class="error-message" id="error-message-@{field.id}-input">@messages(error.message, error.args: _*)</span>
             }
