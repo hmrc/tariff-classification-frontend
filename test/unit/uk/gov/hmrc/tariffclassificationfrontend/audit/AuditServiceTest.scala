@@ -24,6 +24,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.audit.DefaultAuditConnector
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.tariffclassificationfrontend.models.AppealStatus.AppealStatus
+import uk.gov.hmrc.tariffclassificationfrontend.models.CancelReason.CancelReason
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus._
 import uk.gov.hmrc.tariffclassificationfrontend.models.ReviewStatus.ReviewStatus
 import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus => _, _}
@@ -82,16 +83,16 @@ class AuditServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEac
   }
 
   "Service 'audit cancel ruling'" should {
-    val original = btiCaseExample.copy(reference = "ref", status = COMPLETED)
-    val updated = btiCaseExample.copy(reference = "ref", status = CANCELLED)
+    val original = aCase(withReference("ref"), withStatus(COMPLETED))
+    val updated = aCase(withReference("ref"), withStatus(CANCELLED),
+      withDecision(cancellation = Some(Cancellation(CancelReason.ANNULLED, applicationForExtendedUse = true))))
 
     "Delegate to connector" in {
       service.auditRulingCancelled(original, updated, operator)
 
-      val payload = caseChangeAudit(
+      val payload = caseCancelAudit(
         caseReference = "ref",
-        newStatus = CANCELLED,
-        previousStatus = COMPLETED,
+        cancelReason = CancelReason.ANNULLED,
         operatorId = operator.id
       )
       verify(connector).sendExplicitAudit(refEq("rulingCancelled"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
@@ -300,6 +301,16 @@ class AuditServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEac
       "operatorId" -> operatorId,
       "newStatus" -> newStatus.toString,
       "previousStatus" -> previousStatus.toString
+    )
+  }
+
+  private def caseCancelAudit(caseReference: String, cancelReason: CancelReason, operatorId: String): Map[String, String] = {
+    Map[String, String](
+      "caseReference" -> caseReference,
+      "operatorId" -> operatorId,
+      "newStatus" -> "CANCELLED",
+      "previousStatus" -> "COMPLETED",
+      "cancelReason" -> cancelReason.toString
     )
   }
 

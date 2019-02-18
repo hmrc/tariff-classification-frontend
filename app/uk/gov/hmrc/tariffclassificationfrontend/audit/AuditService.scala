@@ -89,6 +89,7 @@ class AuditService @Inject()(auditConnector: DefaultAuditConnector) {
     sendExplicitAuditEvent(
       auditEventType = RulingCancelled,
       auditPayload = statusChangeAuditPayload(oldCase, updatedCase, operator)
+        + ("cancelReason" -> cancelReason(updatedCase))
     )
   }
 
@@ -183,6 +184,11 @@ class AuditService @Inject()(auditConnector: DefaultAuditConnector) {
   private def extendedUseStatus: Case => String = {
     _.decision.flatMap(_.cancellation).exists(_.applicationForExtendedUse).toString
   }
+
+  private def cancelReason: Case => String = {
+    _.decision.flatMap(_.cancellation).map(_.reason.toString).getOrElse("None")
+  }
+
 }
 
 object AuditPayloadType {
