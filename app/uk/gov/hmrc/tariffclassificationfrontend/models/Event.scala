@@ -35,48 +35,59 @@ case class Event
 
 sealed trait Details {
   val `type`: EventType
+}
+
+sealed trait StatusChange[T] extends Details {
+  val from: T
+  val to: T
   val comment: Option[String]
 }
 
 case class CaseStatusChange
 (
-  from: CaseStatus,
-  to: CaseStatus,
+  override val from: CaseStatus,
+  override val to: CaseStatus,
   override val comment: Option[String] = None
-
-) extends Details {
+) extends StatusChange[CaseStatus] {
   override val `type`: EventType.Value = EventType.CASE_STATUS_CHANGE
 }
 
 case class AppealStatusChange
 (
-  from: Option[AppealStatus],
-  to: Option[AppealStatus],
+  override val from: Option[AppealStatus],
+  override val to: Option[AppealStatus],
   override val comment: Option[String] = None
-
-) extends Details {
+) extends StatusChange[Option[AppealStatus]] {
   override val `type`: EventType.Value = EventType.APPEAL_STATUS_CHANGE
 }
 
 case class ReviewStatusChange
 (
-  from: Option[ReviewStatus],
-  to: Option[ReviewStatus],
+  override val from: Option[ReviewStatus],
+  override val to: Option[ReviewStatus],
   override val comment: Option[String] = None
-
-) extends Details {
+) extends StatusChange[Option[ReviewStatus]] {
   override val `type`: EventType.Value = EventType.REVIEW_STATUS_CHANGE
+}
+
+case class ExtendedUseStatusChange
+(
+  override val from: Boolean,
+  override val to: Boolean,
+  override val comment: Option[String] = None
+) extends StatusChange[Boolean] {
+  override val `type`: EventType.Value = EventType.EXTENDED_USE_STATUS_CHANGE
 }
 
 case class Note
 (
-  override val comment: Option[String]
-
+  comment: String
 ) extends Details {
   override val `type`: EventType.Value = EventType.NOTE
 }
 
+
 object EventType extends Enumeration {
   type EventType = Value
-  val CASE_STATUS_CHANGE, APPEAL_STATUS_CHANGE, REVIEW_STATUS_CHANGE, NOTE = Value
+  val CASE_STATUS_CHANGE, APPEAL_STATUS_CHANGE, REVIEW_STATUS_CHANGE, EXTENDED_USE_STATUS_CHANGE, NOTE = Value
 }

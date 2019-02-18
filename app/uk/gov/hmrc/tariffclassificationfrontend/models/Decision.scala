@@ -29,5 +29,6 @@ case class Decision
   methodExclusion: Option[String] = None,
   methodCommercialDenomination: Option[String] = None,
   appeal: Option[Appeal] = None,
-  review: Option[Review] = None
+  review: Option[Review] = None,
+  cancellation: Option[Cancellation] = None
 )

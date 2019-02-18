@@ -14,15 +14,9 @@
  * limitations under the License.
  */
 
-package uk.gov.tariffclassificationfrontend.utils
+package uk.gov.hmrc.tariffclassificationfrontend.models
 
-import java.time.Instant
-
-import uk.gov.hmrc.tariffclassificationfrontend.models._
-import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
-
-object Events {
-  val event = Event("id", Note("comment"), Operator("user-id", Some("user name")), "case-ref", Instant.now())
-  val eventRequest = NewEventRequest(Note("comment"), Operator("user-id", Some("user name")), Instant.now())
-  val events: Seq[Event] = Seq(event)
-}
+case class Cancellation
+(
+  applicationForExtendedUse: Boolean = false
+)
