@@ -9,7 +9,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Operator}
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
-trait StatusUpdateController[T] extends RenderCaseAction {
+trait StatusChangeAction[T] extends RenderCaseAction {
 
   protected val authenticatedAction: AuthenticatedAction
 

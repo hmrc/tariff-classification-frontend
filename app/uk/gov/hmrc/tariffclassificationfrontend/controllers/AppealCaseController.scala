@@ -38,7 +38,7 @@ import scala.concurrent.Future.successful
 class AppealCaseController @Inject()(override val authenticatedAction: AuthenticatedAction,
                                      override val caseService: CasesService,
                                      override val messagesApi: MessagesApi,
-                                     override implicit val config: AppConfig) extends StatusUpdateController[Option[AppealStatus]] {
+                                     override implicit val config: AppConfig) extends StatusChangeAction[Option[AppealStatus]] {
 
   override protected def redirect: String => Call = routes.CaseController.trader
 
