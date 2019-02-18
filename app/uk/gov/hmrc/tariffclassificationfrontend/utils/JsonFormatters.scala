@@ -33,6 +33,7 @@ object JsonFormatters {
   implicit val attachmentFormat: OFormat[Attachment] = Json.format[Attachment]
   implicit val appealFormat: OFormat[Appeal] = Json.format[Appeal]
   implicit val reviewFormat: OFormat[Review] = Json.format[Review]
+  implicit val cancellationFormat: OFormat[Cancellation] = Json.format[Cancellation]
   implicit val contactFormat: OFormat[Contact] = Json.format[Contact]
   implicit val eoriDetailsFormat: OFormat[EORIDetails] = Json.format[EORIDetails]
   implicit val decisionFormat: OFormat[Decision] = Json.format[Decision]

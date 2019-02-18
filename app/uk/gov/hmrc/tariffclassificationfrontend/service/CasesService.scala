@@ -163,7 +163,7 @@ class CasesService @Inject()(appConfig: AppConfig,
       .getOrElse(throw new IllegalArgumentException("Cannot Cancel a Case without a Decision"))
       .copy(
         effectiveEndDate = Some(updatedEndDate.toInstant),
-        cancelReason = Some(reason)
+        cancellation = Some(Cancellation(reason = reason))
       )
     val caseUpdating = original.copy(status = CaseStatus.CANCELLED, decision = Some(decisionUpdating))
 
