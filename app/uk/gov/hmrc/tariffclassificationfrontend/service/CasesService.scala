@@ -39,6 +39,18 @@ class CasesService @Inject()(appConfig: AppConfig,
                              fileService: FileStoreService,
                              connector: BindingTariffClassificationConnector) {
 
+  def updateExtendedUseStatus(original: Case, status: Boolean, operator: Operator)(implicit hc: HeaderCarrier): Future[Case] = {
+    val decision = original.decision.getOrElse(throw new IllegalArgumentException("Cannot change the Extended Use status of a case without a Decision"))
+    val updatedDecision = decision.copy(applicationForExtendedUse = status)
+
+    for {
+      updated <- connector.updateCase(original.copy(decision = Some(updatedDecision)))
+      _ <- addExtendedUseStatusChangeEvent(original, updated, operator)
+      _ = auditService.auditCaseExtendedUseChange(original , updated, operator)
+    } yield updated
+  }
+
+
   def updateAppealStatus(original: Case, status: Option[AppealStatus], operator: Operator)
                         (implicit hc: HeaderCarrier): Future[Case] = {
     val decision = original.decision.getOrElse(throw new IllegalArgumentException("Cannot change the Appeal status of a case without a Decision"))
@@ -216,8 +228,14 @@ class CasesService @Inject()(appConfig: AppConfig,
   }
 
   private def addReviewStatusChangeEvent(original: Case, updated: Case, operator: Operator, comment: Option[String] = None)
-                                        (implicit hc: HeaderCarrier): Future[Unit] = {
+                                         (implicit hc: HeaderCarrier): Future[Unit] = {
     val details = ReviewStatusChange(reviewStatus(original), reviewStatus(updated), comment)
+    addEvent(original, updated, details, operator)
+  }
+
+  private def addExtendedUseStatusChangeEvent(original: Case, updated: Case, operator: Operator, comment: Option[String] = None)
+                                        (implicit hc: HeaderCarrier): Future[Unit] = {
+    val details = ExtendedUseStatusChange(extendedUseStatus(original), extendedUseStatus(updated), comment)
     addEvent(original, updated, details, operator)
   }
 
@@ -227,6 +245,10 @@ class CasesService @Inject()(appConfig: AppConfig,
 
   private def reviewStatus: Case => Option[ReviewStatus] = {
     _.decision.flatMap(_.review).map(_.status)
+  }
+
+  private def extendedUseStatus: Case => Boolean = {
+    _.decision.map(_.applicationForExtendedUse).get
   }
 
   private def addEvent(original: Case, updated: Case, details: Details, operator: Operator)

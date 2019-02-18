@@ -20,60 +20,51 @@ import javax.inject.{Inject, Singleton}
 import play.api.i18n.MessagesApi
 import play.api.mvc._
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.forms.AppealForm
-import uk.gov.hmrc.tariffclassificationfrontend.models.AppealStatus.AppealStatus
-import uk.gov.hmrc.tariffclassificationfrontend.models.Case
-import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.{CANCELLED, COMPLETED}
+import uk.gov.hmrc.tariffclassificationfrontend.forms.BooleanForm
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
-import uk.gov.hmrc.tariffclassificationfrontend.views.CaseDetailPage
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future.successful
 
 @Singleton
-class AppealCaseController @Inject()(authenticatedAction: AuthenticatedAction,
-                                     override val caseService: CasesService,
-                                     override val messagesApi: MessagesApi,
-                                     override implicit val config: AppConfig) extends RenderCaseAction {
+class ExtendedUseCaseController @Inject()(authenticatedAction: AuthenticatedAction,
+                                          override val caseService: CasesService,
+                                          override val messagesApi: MessagesApi,
+                                          override implicit val config: AppConfig) extends RenderCaseAction {
 
   override protected def redirect: String => Call = routes.CaseController.trader
-  override protected def isValidCase: Case => Boolean = c => validPreviousStatuses.contains(c.status)
-  private lazy val validPreviousStatuses = Seq(COMPLETED, CANCELLED)
 
-  def appealDetails(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
-    getCaseAndRenderView(
-      reference,
-      c => successful(views.html.case_details(c, CaseDetailPage.APPEAL, views.html.partials.appeal_details(c)))
-    )
-  }
+  override protected def isValidCase: Case => Boolean = c => CaseStatus.CANCELLED == c.status && c.decision.isDefined
 
   def chooseStatus(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     getCaseAndRenderView(
       reference,
-      c => successful(views.html.change_appeal_status(c, AppealForm.form.fill(c.decision.flatMap(_.appeal).map(_.status))))
+      c => successful(views.html.change_extended_use_status(c, BooleanForm.form.fill(c.decision.map(_.applicationForExtendedUse).get)))
     )
   }
 
   def updateStatus(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
-    AppealForm.form.bindFromRequest().fold(
+    BooleanForm.form.bindFromRequest().fold(
       errors => {
         getCaseAndRenderView(
           reference,
-          c => successful(views.html.change_appeal_status(c, errors))
+          c => successful(views.html.change_extended_use_status(c, errors))
         )
       },
-      (status: Option[AppealStatus]) => {
+      (status: Boolean) => {
         getCaseAndRespond(
           reference,
           c => {
             if(statusHasChanged(c, status)) {
-              caseService.updateAppealStatus(c, status, request.operator).flatMap { c =>
+              caseService.updateExtendedUseStatus(c, status, request.operator).flatMap { c =>
                 successful(Redirect(routes.AppealCaseController.appealDetails(c.reference)))
               }
             } else {
               successful(Redirect(routes.AppealCaseController.appealDetails(c.reference)))
             }
+
           }
         )
       }
@@ -81,8 +72,8 @@ class AppealCaseController @Inject()(authenticatedAction: AuthenticatedAction,
 
   }
 
-  private def statusHasChanged(c: Case, status: Option[AppealStatus]): Boolean = {
-    c.decision.flatMap(_.appeal).map(_.status) != status
+  private def statusHasChanged(c: Case, status: Boolean): Boolean = {
+    !c.decision.map(_.applicationForExtendedUse).contains(status)
   }
 
 }

@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package uk.gov.tariffclassificationfrontend.utils
+package uk.gov.hmrc.tariffclassificationfrontend.forms
 
-import java.time.Instant
+import play.api.data.Forms._
+import play.api.data.{Form, Forms}
 
-import uk.gov.hmrc.tariffclassificationfrontend.models._
-import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
+object BooleanForm {
 
-object Events {
-  val event = Event("id", Note("comment"), Operator("user-id", Some("user name")), "case-ref", Instant.now())
-  val eventRequest = NewEventRequest(Note("comment"), Operator("user-id", Some("user name")), Instant.now())
-  val events: Seq[Event] = Seq(event)
+  val form: Form[Boolean] = Form[Boolean](Forms.mapping[Boolean, Boolean](
+    "state" -> boolean
+  )(identity)(Some(_)))
+
 }

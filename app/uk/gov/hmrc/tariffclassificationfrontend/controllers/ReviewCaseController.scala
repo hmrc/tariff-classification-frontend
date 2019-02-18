@@ -39,14 +39,14 @@ class ReviewCaseController @Inject()(authenticatedAction: AuthenticatedAction,
 
   override protected def isValidCase: Case => Boolean = c => Set(CaseStatus.COMPLETED, CaseStatus.CANCELLED).contains(c.status)
 
-  def chooseReviewStatus(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
+  def chooseStatus(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     getCaseAndRenderView(
       reference,
       c => successful(views.html.change_review_status(c, ReviewForm.form.fill(c.decision.flatMap(_.review).map(_.status))))
     )
   }
 
-  def updateReviewStatus(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
+  def updateStatus(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     ReviewForm.form.bindFromRequest().fold(
       errors => {
         getCaseAndRenderView(

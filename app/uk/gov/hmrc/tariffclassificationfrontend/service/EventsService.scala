@@ -35,7 +35,7 @@ class EventsService @Inject()(connector: BindingTariffClassificationConnector) {
 
   def addNote(c: Case, note: String, operator: Operator, clock: Clock = Clock.systemUTC())
              (implicit hc: HeaderCarrier): Future[Event] = {
-    val event = NewEventRequest(Note(Some(note)), operator, Instant.now(clock))
+    val event = NewEventRequest(Note(note), operator, Instant.now(clock))
     connector.createEvent(c, event)
   }
 

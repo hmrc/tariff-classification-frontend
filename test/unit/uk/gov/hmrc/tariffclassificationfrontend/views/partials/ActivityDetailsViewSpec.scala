@@ -52,7 +52,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
       val c = aCase()
       val e = Event(
         id = "EVENT_ID",
-        details = Note(Some("comment")),
+        details = Note("comment"),
         operator = Operator("id", None),
         caseReference = "ref"
       )
@@ -70,7 +70,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
       val c = aCase()
       val e = Event(
         id = "EVENT_ID",
-        details = Note(Some("comment")),
+        details = Note("comment"),
         operator = Operator("id", Some("name")),
         caseReference = "ref",
         timestamp = date
@@ -156,6 +156,30 @@ class ActivityDetailsViewSpec extends ViewSpec {
       doc.getElementById("activity-events-row-0-operator") should containText("name")
       doc should containElementWithID("activity-events-row-0-content")
       doc.getElementById("activity-events-row-0-content") should containText("Review status changed from None to Under review")
+      doc.getElementById("activity-events-row-0-content") should containText("comment")
+      doc should containElementWithID("activity-events-row-0-date")
+      doc.getElementById("activity-events-row-0-date") should containText("01 Jan 2019")
+    }
+
+    "Render 'Extended Use Change'" in {
+      // Given
+      val c = aCase()
+      val e = Event(
+        id = "EVENT_ID",
+        details = ExtendedUseStatusChange(from = false, to = true, comment = Some("comment")),
+        operator = Operator("id", Some("name")),
+        caseReference = "ref",
+        timestamp = date
+      )
+
+      // When
+      val doc = view(activity_details(c, Seq(e), ActivityForm.form))
+
+      // Then
+      doc should containElementWithID("activity-events-row-0-operator")
+      doc.getElementById("activity-events-row-0-operator") should containText("name")
+      doc should containElementWithID("activity-events-row-0-content")
+      doc.getElementById("activity-events-row-0-content") should containText("Application for extended use status changed from No to Yes")
       doc.getElementById("activity-events-row-0-content") should containText("comment")
       doc should containElementWithID("activity-events-row-0-date")
       doc.getElementById("activity-events-row-0-date") should containText("01 Jan 2019")
