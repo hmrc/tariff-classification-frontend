@@ -31,7 +31,7 @@ import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.models.{CancelReason, CaseStatus, Operator}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, Operator}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.tariffclassificationfrontend.utils.Cases
 
@@ -103,28 +103,14 @@ class CancelRulingControllerSpec extends WordSpec with Matchers with UnitSpec
 
     "return OK and HTML content type" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusCOMPLETED)))
-      when(casesService.cancelRuling(refEq(caseWithStatusCOMPLETED), refEq(CancelReason.ANNULLED), refEq(operator), any[Clock])
-      (any[HeaderCarrier])).thenReturn(successful(caseWithStatusCANCELLED))
-
-      val result: Result = await(controller.confirmCancelRuling("reference")(newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("reason" -> "ANNULLED")))
-
-      status(result) shouldBe Status.OK
-      contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
-      charsetOf(result) shouldBe Some("utf-8")
-      bodyOf(result) should include("This case has been cancelled")
-    }
-
-    "display required field when failing to submit reason" in {
-      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusCOMPLETED)))
-      when(casesService.cancelRuling(refEq(caseWithStatusCOMPLETED), refEq(CancelReason.ANNULLED), refEq(operator), any[Clock])
-      (any[HeaderCarrier])).thenReturn(successful(caseWithStatusCANCELLED))
+      when(casesService.cancelRuling(refEq(caseWithStatusCOMPLETED), refEq(operator), any[Clock])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusCANCELLED))
 
       val result: Result = await(controller.confirmCancelRuling("reference")(newFakePOSTRequestWithCSRF(app)))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result) shouldBe Some("utf-8")
-      bodyOf(result) should include("This field is required")
+      bodyOf(result) should include("This case has been cancelled")
     }
 
     "redirect to Application Details for non COMPLETED statuses" in {
