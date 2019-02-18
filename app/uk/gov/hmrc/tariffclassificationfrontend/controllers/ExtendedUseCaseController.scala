@@ -44,7 +44,7 @@ class ExtendedUseCaseController @Inject()(override val authenticatedAction: Auth
 
   override protected def status(c: Case): Boolean = c.decision.flatMap(_.cancellation).exists(_.applicationForExtendedUse)
 
-  override protected def chooseView(c: Case, preFilledForm: Form[Boolean])(implicit request: Request[_]): Html = views.html.change_extended_use_status(c, preFilledForm)
+  override protected def chooseStatusView(c: Case, preFilledForm: Form[Boolean])(implicit request: Request[_]): Html = views.html.change_extended_use_status(c, preFilledForm)
 
   override protected def update(c: Case, status: Boolean, operator: Operator)(implicit hc: HeaderCarrier): Future[Case] = caseService.updateExtendedUseStatus(c, status, operator)
 

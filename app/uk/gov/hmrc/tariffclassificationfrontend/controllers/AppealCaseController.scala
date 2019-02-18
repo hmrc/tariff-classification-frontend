@@ -48,7 +48,7 @@ class AppealCaseController @Inject()(override val authenticatedAction: Authentic
 
   override protected def status(c: Case): Option[AppealStatus] = c.decision.flatMap(_.appeal).map(_.status)
 
-  override protected def chooseView(c: Case, preFilledForm: Form[Option[AppealStatus]])(implicit request: Request[_]): Html = views.html.change_appeal_status(c, preFilledForm)
+  override protected def chooseStatusView(c: Case, preFilledForm: Form[Option[AppealStatus]])(implicit request: Request[_]): Html = views.html.change_appeal_status(c, preFilledForm)
 
   override protected def update(c: Case, status: Option[AppealStatus], operator: Operator)(implicit hc: HeaderCarrier): Future[Case] = caseService.updateAppealStatus(c, status, operator)
 

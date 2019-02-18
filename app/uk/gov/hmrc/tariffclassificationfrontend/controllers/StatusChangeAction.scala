@@ -17,7 +17,7 @@ trait StatusChangeAction[T] extends RenderCaseAction {
 
   protected def status(c: Case): T
 
-  protected def chooseView(c: Case, preFilledForm: Form[T])(implicit request: Request[_]): Html
+  protected def chooseStatusView(c: Case, preFilledForm: Form[T])(implicit request: Request[_]): Html
 
   protected def update(c: Case, status: T, operator: Operator)(implicit hc: HeaderCarrier): Future[Case]
 
@@ -26,7 +26,7 @@ trait StatusChangeAction[T] extends RenderCaseAction {
   def chooseStatus(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     getCaseAndRenderView(
       reference,
-      c => successful(chooseView(c, form.fill(status(c))))
+      c => successful(chooseStatusView(c, form.fill(status(c))))
     )
   }
 
@@ -35,7 +35,7 @@ trait StatusChangeAction[T] extends RenderCaseAction {
       errors => {
         getCaseAndRenderView(
           reference,
-          c => successful(chooseView(c, errors))
+          c => successful(chooseStatusView(c, errors))
         )
       },
       (status: T) => {
