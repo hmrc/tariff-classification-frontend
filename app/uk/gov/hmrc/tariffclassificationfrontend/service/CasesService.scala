@@ -25,6 +25,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.audit.AuditService
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.connector.BindingTariffClassificationConnector
 import uk.gov.hmrc.tariffclassificationfrontend.models.AppealStatus.AppealStatus
+import uk.gov.hmrc.tariffclassificationfrontend.models.CancelReason.CancelReason
 import uk.gov.hmrc.tariffclassificationfrontend.models.ReviewStatus.ReviewStatus
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
@@ -48,7 +49,7 @@ class CasesService @Inject()(appConfig: AppConfig,
     for {
       updated <- connector.updateCase(original.copy(decision = Some(updatedDecision)))
       _ <- addAppealStatusChangeEvent(original, updated, operator)
-      _ = auditService.auditCaseAppealChange(original , updated, operator)
+      _ = auditService.auditCaseAppealChange(original, updated, operator)
     } yield updated
   }
 
@@ -61,7 +62,7 @@ class CasesService @Inject()(appConfig: AppConfig,
     for {
       updated <- connector.updateCase(original.copy(decision = Some(updatedDecision)))
       _ <- addReviewStatusChangeEvent(original, updated, operator)
-      _ = auditService.auditCaseReviewChange(original , updated, operator)
+      _ = auditService.auditCaseReviewChange(original, updated, operator)
     } yield updated
   }
 
@@ -153,20 +154,24 @@ class CasesService @Inject()(appConfig: AppConfig,
     } yield updated
   }
 
-  def cancelRuling(original: Case, operator: Operator, clock: Clock = Clock.systemDefaultZone())
+  def cancelRuling(original: Case, reason: CancelReason,
+                   operator: Operator, clock: Clock = Clock.systemDefaultZone())
                   (implicit hc: HeaderCarrier): Future[Case] = {
     val updatedEndDate = LocalDate.now(clock).atStartOfDay(appConfig.zoneId)
 
     val decisionUpdating: Decision = original.decision
       .getOrElse(throw new IllegalArgumentException("Cannot Cancel a Case without a Decision"))
-      .copy(effectiveEndDate = Some(updatedEndDate.toInstant))
+      .copy(
+        effectiveEndDate = Some(updatedEndDate.toInstant),
+        cancelReason = Some(reason)
+      )
     val caseUpdating = original.copy(status = CaseStatus.CANCELLED, decision = Some(decisionUpdating))
 
     for {
       // Update the case
       updated: Case <- connector.updateCase(caseUpdating)
       // Create the event
-      _ <- addStatusChangeEvent(original, updated, operator)
+      _ <- addStatusChangeEvent(original, updated, operator, comment = Some(CancelReason.format(reason)))
       // Audit
       _ = auditService.auditRulingCancelled(original, updated, operator)
     } yield updated
@@ -230,7 +235,7 @@ class CasesService @Inject()(appConfig: AppConfig,
     val event = NewEventRequest(details, operator)
     connector.createEvent(updated, event) recover {
       case t: Throwable => Logger.error(s"Could not create Event for case [${original.reference}] with payload [$event]", t)
-    } map ( _ => () )
+    } map (_ => ())
   }
 
 }
