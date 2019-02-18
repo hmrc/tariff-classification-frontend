@@ -88,8 +88,7 @@ class AuditService @Inject()(auditConnector: DefaultAuditConnector) {
                           (implicit hc: HeaderCarrier): Unit = {
     sendExplicitAuditEvent(
       auditEventType = RulingCancelled,
-      auditPayload = statusChangeAuditPayload(oldCase, updatedCase, operator)
-        + ("cancelReason" -> cancelReason(updatedCase))
+      auditPayload = statusChangeAuditPayload(oldCase, updatedCase, operator) + ("cancelReason" -> cancelReason(updatedCase))
     )
   }
 
