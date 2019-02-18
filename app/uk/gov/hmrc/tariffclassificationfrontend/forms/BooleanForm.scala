@@ -14,12 +14,15 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.tariffclassificationfrontend.models
+package uk.gov.hmrc.tariffclassificationfrontend.forms
 
-import uk.gov.hmrc.tariffclassificationfrontend.models.CancelReason.CancelReason
+import play.api.data.Forms._
+import play.api.data.{Form, Forms}
 
-case class Cancellation
-(
-  reason: CancelReason,
-  applicationForExtendedUse: Boolean = false
-)
+object BooleanForm {
+
+  val form: Form[Boolean] = Form[Boolean](Forms.mapping[Boolean, Boolean](
+    "state" -> boolean
+  )(identity)(Some(_)))
+
+}

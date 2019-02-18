@@ -18,11 +18,11 @@ package uk.gov.tariffclassificationfrontend.utils
 
 import java.time.Instant
 
-import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
 import uk.gov.hmrc.tariffclassificationfrontend.models._
+import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
 
 object Events {
-  val event = Event("id", Note(Some("comment")), Operator("user-id", Some("user name")), "case-ref", Instant.now())
-  val eventRequest = NewEventRequest(Note(Some("comment")), Operator("user-id", Some("user name")), Instant.now())
+  val event = Event("id", Note("comment"), Operator("user-id", Some("user name")), "case-ref", Instant.now())
+  val eventRequest = NewEventRequest(Note("comment"), Operator("user-id", Some("user name")), Instant.now())
   val events: Seq[Event] = Seq(event)
 }

@@ -39,9 +39,7 @@ class AppealCaseController @Inject()(authenticatedAction: AuthenticatedAction,
 
   override protected def redirect: String => Call = routes.CaseController.trader
 
-  override protected def isValidCase: Case => Boolean = { c: Case =>
-    c.status == COMPLETED || c.status == CANCELLED
-  }
+  override protected def isValidCase: Case => Boolean = c => (c.status == COMPLETED || c.status == CANCELLED) && c.decision.isDefined
 
   def appealDetails(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     getCaseAndRenderView(
@@ -50,14 +48,14 @@ class AppealCaseController @Inject()(authenticatedAction: AuthenticatedAction,
     )
   }
 
-  def chooseAppealStatus(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
+  def chooseStatus(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     getCaseAndRenderView(
       reference,
       c => successful(views.html.change_appeal_status(c, AppealForm.form.fill(c.decision.flatMap(_.appeal).map(_.status))))
     )
   }
 
-  def updateAppealStatus(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
+  def updateStatus(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     AppealForm.form.bindFromRequest().fold(
       errors => {
         getCaseAndRenderView(

@@ -234,6 +234,24 @@ class AuditServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEac
     }
   }
 
+  "Service 'audit extended use change'" should {
+    val original = aCase(withReference("ref"), withDecision(cancellation = Some(Cancellation(applicationForExtendedUse = true))))
+    val updated = aCase(withReference("ref"), withoutDecision())
+    val operator = Operator("operator-id")
+
+    "Delegate to connector" in {
+      service.auditCaseExtendedUseChange(original, updated, operator)
+
+      val payload = extendedUseChangeAudit(
+        caseReference = "ref",
+        newStatus = false,
+        previousStatus = true,
+        operatorId = operator.id
+      )
+      verify(connector).sendExplicitAudit(refEq("caseExtendedUseChange"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+    }
+  }
+
   "Service 'audit note'" should {
     val c = btiCaseExample.copy(reference = "ref", status = OPEN)
     val comment = "this is my note"
@@ -308,6 +326,15 @@ class AuditServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEac
       "operatorId" -> operatorId,
       "newReviewStatus" -> newStatus.map(_.toString).getOrElse("None"),
       "previousReviewStatus" -> previousStatus.map(_.toString).getOrElse("None")
+    )
+  }
+
+  private def extendedUseChangeAudit(caseReference: String, newStatus: Boolean, previousStatus: Boolean, operatorId: String): Map[String, String] = {
+    Map[String, String](
+      "caseReference" -> caseReference,
+      "operatorId" -> operatorId,
+      "newExtendedUseStatus" -> newStatus.toString,
+      "previousExtendedUseStatus" -> previousStatus.toString
     )
   }
 

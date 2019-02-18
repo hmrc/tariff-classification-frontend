@@ -30,14 +30,13 @@ import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.models.ReviewStatus.ReviewStatus
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus, Operator, ReviewStatus}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Cancellation, Case, CaseStatus, Operator}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
-import uk.gov.tariffclassificationfrontend.utils.Cases.{aCase, _}
+import uk.gov.tariffclassificationfrontend.utils.Cases._
 
 import scala.concurrent.Future
 
-class ReviewCaseControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSuite with MockitoSugar with ControllerCommons with BeforeAndAfterEach {
+class ExtendedUseCaseControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSuite with MockitoSugar with ControllerCommons with BeforeAndAfterEach {
 
   private val env = Environment.simple()
   private val configuration = Configuration.load(env)
@@ -46,7 +45,7 @@ class ReviewCaseControllerSpec extends UnitSpec with Matchers with GuiceOneAppPe
   private val casesService = mock[CasesService]
   private val operator = mock[Operator]
 
-  private val controller = new ReviewCaseController(new SuccessfulAuthenticatedAction(operator), casesService, messageApi, appConfig)
+  private val controller = new ExtendedUseCaseController(new SuccessfulAuthenticatedAction(operator), casesService, messageApi, appConfig)
 
   private implicit val hc: HeaderCarrier = HeaderCarrier()
 
@@ -55,10 +54,10 @@ class ReviewCaseControllerSpec extends UnitSpec with Matchers with GuiceOneAppPe
     Mockito.reset(casesService)
   }
 
-  "Case Review - Choose Status" should {
+  "Case Extended Use - Choose Status" should {
 
     "return 200 OK and HTML content type - For CANCELLED Case" in {
-      val c = aCase(withStatus(CaseStatus.CANCELLED), withDecision())
+      val c = aCase(withStatus(CaseStatus.CANCELLED), withDecision(cancellation = Some(Cancellation())))
 
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(c)))
 
@@ -67,24 +66,11 @@ class ReviewCaseControllerSpec extends UnitSpec with Matchers with GuiceOneAppPe
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
-      contentAsString(result) should include("change_review_status-heading")
+      contentAsString(result) should include("change_extended_use_status-heading")
     }
 
-    "return 200 OK and HTML content type - For COMPLETED Case" in {
-      val c = aCase(withStatus(CaseStatus.COMPLETED), withDecision())
-
-      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(c)))
-
-      val result = await(controller.chooseStatus("reference")(newFakeGETRequestWithCSRF(app)))
-
-      status(result) shouldBe Status.OK
-      contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
-      contentAsString(result) should include("change_review_status-heading")
-    }
-
-    "redirect for other status" in {
-      val c = aCase(withStatus(CaseStatus.OPEN), withDecision())
+    "redirect for case without cancellation reason" in {
+      val c = aCase(withStatus(CaseStatus.CANCELLED), withDecision(cancellation = None))
 
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(c)))
 
@@ -94,8 +80,8 @@ class ReviewCaseControllerSpec extends UnitSpec with Matchers with GuiceOneAppPe
       locationOf(result) shouldBe Some("/tariff-classification/cases/reference")
     }
 
-    "redirect for no decision" in {
-      val c = aCase(withStatus(CaseStatus.CANCELLED), withoutDecision())
+    "redirect for other status" in {
+      val c = aCase(withStatus(CaseStatus.COMPLETED), withDecision())
 
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(c)))
 
@@ -118,72 +104,56 @@ class ReviewCaseControllerSpec extends UnitSpec with Matchers with GuiceOneAppPe
 
   }
 
-  "Case Review - Submit Status" should {
+  "Case Extended Use - Submit Status" should {
 
     "update & redirect - For CANCELLED Case" in {
-      val c = aCase(withStatus(CaseStatus.CANCELLED), withDecision())
+      val c = aCase(withStatus(CaseStatus.CANCELLED), withDecision(cancellation = Some(Cancellation(applicationForExtendedUse = true))))
 
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(c)))
-      given(casesService.updateReviewStatus(refEq(c), any[Option[ReviewStatus]], any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(c))
+      given(casesService.updateExtendedUseStatus(refEq(c), any[Boolean], any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(c))
 
-      val result = await(controller.updateStatus("reference")(newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("status" -> "IN_PROGRESS")))
+      val result = await(controller.updateStatus("reference")(newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("state" -> "false")))
 
-      verify(casesService).updateReviewStatus(refEq(c), refEq(Some(ReviewStatus.IN_PROGRESS)), any[Operator])(any[HeaderCarrier])
-
-      status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/tariff-classification/cases/1/appeal")
-    }
-
-    "update & redirect - For COMPLETED Case" in {
-      val c = aCase(withStatus(CaseStatus.COMPLETED), withDecision())
-
-      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(c)))
-      given(casesService.updateReviewStatus(refEq(c), any[Option[ReviewStatus]], any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(c))
-
-      val result = await(controller.updateStatus("reference")(newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("status" -> "IN_PROGRESS")))
-
-      verify(casesService).updateReviewStatus(refEq(c), refEq(Some(ReviewStatus.IN_PROGRESS)), any[Operator])(any[HeaderCarrier])
+      verify(casesService).updateExtendedUseStatus(refEq(c), refEq(false), any[Operator])(any[HeaderCarrier])
 
       status(result) shouldBe Status.SEE_OTHER
       locationOf(result) shouldBe Some("/tariff-classification/cases/1/appeal")
     }
 
     "redirect for unchanged status" in {
-      val c = aCase(withReference("reference"), withStatus(CaseStatus.CANCELLED), withDecision())
+      val c = aCase(withReference("reference"), withStatus(CaseStatus.CANCELLED), withDecision(cancellation = Some(Cancellation(applicationForExtendedUse = true))))
 
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(c)))
 
-      val result = await(controller.updateStatus("reference")(newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("status" -> "")))
+      val result = await(controller.updateStatus("reference")(newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("state" -> "true")))
 
-      verify(casesService, never()).updateReviewStatus(any[Case], any[Option[ReviewStatus]], any[Operator])(any[HeaderCarrier])
+      verify(casesService, never()).updateExtendedUseStatus(any[Case], any[Boolean], any[Operator])(any[HeaderCarrier])
 
       status(result) shouldBe Status.SEE_OTHER
       locationOf(result) shouldBe Some("/tariff-classification/cases/reference/appeal")
     }
 
-    "redirect for other status" in {
-      val c = aCase(withStatus(CaseStatus.OPEN), withDecision())
+    "redirect for case without cancellation reason" in {
+      val c = aCase(withStatus(CaseStatus.CANCELLED), withDecision(cancellation = None))
 
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(c)))
-      given(casesService.updateReviewStatus(refEq(c), any[Option[ReviewStatus]], any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(c))
 
-      val result = await(controller.updateStatus("reference")(newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("status" -> "IN_PROGRESS")))
+      val result = await(controller.updateStatus("reference")(newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("state" -> "true")))
 
-      verify(casesService, never()).updateReviewStatus(any[Case], any[Option[ReviewStatus]], any[Operator])(any[HeaderCarrier])
+      verify(casesService, never()).updateExtendedUseStatus(any[Case], any[Boolean], any[Operator])(any[HeaderCarrier])
 
       status(result) shouldBe Status.SEE_OTHER
       locationOf(result) shouldBe Some("/tariff-classification/cases/reference")
     }
 
-    "redirect for no decision" in {
-      val c = aCase(withStatus(CaseStatus.COMPLETED), withoutDecision())
+    "redirect for other status" in {
+      val c = aCase(withStatus(CaseStatus.OPEN), withDecision(cancellation = Some(Cancellation(applicationForExtendedUse = true))))
 
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(c)))
-      given(casesService.updateReviewStatus(refEq(c), any[Option[ReviewStatus]], any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(c))
 
-      val result = await(controller.updateStatus("reference")(newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("status" -> "IN_PROGRESS")))
+      val result = await(controller.updateStatus("reference")(newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("state" -> "false")))
 
-      verify(casesService, never()).updateReviewStatus(any[Case], any[Option[ReviewStatus]], any[Operator])(any[HeaderCarrier])
+      verify(casesService, never()).updateExtendedUseStatus(any[Case], any[Boolean], any[Operator])(any[HeaderCarrier])
 
       status(result) shouldBe Status.SEE_OTHER
       locationOf(result) shouldBe Some("/tariff-classification/cases/reference")
@@ -192,7 +162,7 @@ class ReviewCaseControllerSpec extends UnitSpec with Matchers with GuiceOneAppPe
     "return 404 Not Found and HTML content type" in {
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(None))
 
-      val result = await(controller.updateStatus("reference")(newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("status" -> "IN_PROGRESS")))
+      val result = await(controller.updateStatus("reference")(newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("state" -> "true")))
 
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
