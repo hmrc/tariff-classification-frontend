@@ -74,18 +74,16 @@ class CasesService_CancelRulingSpec extends UnitSpec with MockitoSugar with Befo
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])).willReturn(successful(mock[Event]))
 
       // When Then
-      await(service.cancelRuling(originalCase, CancelReason.ANNULLED, operator, clock)) shouldBe caseUpdated
+      await(service.cancelRuling(originalCase, operator, clock)) shouldBe caseUpdated
 
       verify(audit).auditRulingCancelled(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
 
       val caseUpdating = theCaseUpdating(connector)
       caseUpdating.status shouldBe CaseStatus.CANCELLED
-      caseUpdating.decision.get.cancelReason shouldBe Some(CancelReason.ANNULLED)
 
       val eventCreated = theEventCreatedFor(connector, caseUpdated)
       eventCreated.operator shouldBe Operator("operator-id", Some("Billy Bobbins"))
-
-      eventCreated.details shouldBe CaseStatusChange(CaseStatus.COMPLETED, CaseStatus.CANCELLED, Some(CancelReason.format(CancelReason.ANNULLED)))
+      eventCreated.details shouldBe CaseStatusChange(CaseStatus.COMPLETED, CaseStatus.CANCELLED)
     }
 
     "reject case without a decision" in {
@@ -96,7 +94,7 @@ class CasesService_CancelRulingSpec extends UnitSpec with MockitoSugar with Befo
 
       // When Then
       intercept[IllegalArgumentException] {
-        await(service.cancelRuling(originalCase, CancelReason.ANNULLED, operator))
+        await(service.cancelRuling(originalCase, operator))
       }
 
       verifyZeroInteractions(audit)
@@ -112,7 +110,7 @@ class CasesService_CancelRulingSpec extends UnitSpec with MockitoSugar with Befo
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(failed(new RuntimeException("Failed to update the Case")))
 
       intercept[RuntimeException] {
-        await(service.cancelRuling(originalCase, CancelReason.ANNULLED, operator))
+        await(service.cancelRuling(originalCase, operator))
       }
 
       verifyZeroInteractions(audit)
@@ -132,7 +130,7 @@ class CasesService_CancelRulingSpec extends UnitSpec with MockitoSugar with Befo
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])).willReturn(failed(new RuntimeException("Failed to create Event")))
 
       // When Then
-      await(service.cancelRuling(originalCase, CancelReason.ANNULLED, operator)) shouldBe caseUpdated
+      await(service.cancelRuling(originalCase, operator)) shouldBe caseUpdated
 
       verify(audit).auditRulingCancelled(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
 

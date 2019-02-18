@@ -20,11 +20,8 @@ import javax.inject.{Inject, Singleton}
 import play.api.i18n.MessagesApi
 import play.api.mvc._
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.forms.{CancelRulingForm, ReviewForm}
-import uk.gov.hmrc.tariffclassificationfrontend.models.CancelReason.CancelReason
 import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.COMPLETED
-import uk.gov.hmrc.tariffclassificationfrontend.models.ReviewStatus.ReviewStatus
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
@@ -41,28 +38,14 @@ class CancelRulingController @Inject()(authenticatedAction: AuthenticatedAction,
   override protected val caseService: CasesService = casesService
 
   override protected def redirect: String => Call = routes.CaseController.applicationDetails
-
   override protected def isValidCase: Case => Boolean = _.status == COMPLETED
 
   def cancelRuling(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
-    getCaseAndRenderView(reference,
-      c => successful(views.html.cancel_ruling(c, CancelRulingForm.form)))
+    getCaseAndRenderView(reference, c => successful(views.html.cancel_ruling(c)))
   }
 
   def confirmCancelRuling(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
-
-    CancelRulingForm.form.bindFromRequest().fold(
-      errors => {
-        getCaseAndRenderView(
-          reference,
-          c => successful(views.html.cancel_ruling(c, errors))
-        )
-      },
-      (reason: CancelReason) => {
-        getCaseAndRenderView(reference,
-          c => caseService.cancelRuling(c, reason, request.operator).map(views.html.confirm_cancel_ruling(_)))
-      }
-    )
+    getCaseAndRenderView(reference, casesService.cancelRuling(_, request.operator).map(views.html.confirm_cancel_ruling(_)))
   }
 
 }
