@@ -16,8 +16,6 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.models
 
-import uk.gov.hmrc.tariffclassificationfrontend.models.AppealStatus.{ALLOWED, DISMISSED, IN_PROGRESS}
-
 object CancelReason extends Enumeration {
   type CancelReason = Value
 

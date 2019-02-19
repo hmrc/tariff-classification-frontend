@@ -28,6 +28,8 @@ class AuditService @Inject()(auditConnector: DefaultAuditConnector) {
 
   import AuditPayloadType._
 
+  private lazy val undefined = "None"
+
   def auditCaseReferred(oldCase: Case, updatedCase: Case, operator: Operator)
                        (implicit hc: HeaderCarrier): Unit = {
     sendExplicitAuditEvent(
@@ -173,19 +175,19 @@ class AuditService @Inject()(auditConnector: DefaultAuditConnector) {
   }
 
   private def appealStatus: Case => String = {
-    _.decision.flatMap(_.appeal).map(_.status.toString).getOrElse("None")
+    _.decision.flatMap(_.appeal).map(_.status.toString).getOrElse(undefined)
   }
 
   private def reviewStatus: Case => String = {
-    _.decision.flatMap(_.review).map(_.status.toString).getOrElse("None")
+    _.decision.flatMap(_.review).map(_.status.toString).getOrElse(undefined)
+  }
+
+  private def cancelReason: Case => String = {
+    _.decision.flatMap(_.cancellation).map(_.reason.toString).getOrElse(undefined)
   }
 
   private def extendedUseStatus: Case => String = {
     _.decision.flatMap(_.cancellation).exists(_.applicationForExtendedUse).toString
-  }
-
-  private def cancelReason: Case => String = {
-    _.decision.flatMap(_.cancellation).map(_.reason.toString).getOrElse("None")
   }
 
 }
