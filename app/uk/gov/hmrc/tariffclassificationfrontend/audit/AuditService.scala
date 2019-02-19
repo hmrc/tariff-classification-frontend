@@ -175,15 +175,15 @@ class AuditService @Inject()(auditConnector: DefaultAuditConnector) {
   }
 
   private def appealStatus: Case => String = {
-    _.decision.flatMap(_.appeal).map(_.status.toString).getOrElse(undefined)
+    _.decision flatMap(_.appeal) map(_.status.toString) getOrElse undefined
   }
 
   private def reviewStatus: Case => String = {
-    _.decision.flatMap(_.review).map(_.status.toString).getOrElse(undefined)
+    _.decision flatMap(_.review) map(_.status.toString) getOrElse undefined
   }
 
   private def cancelReason: Case => String = {
-    _.decision.flatMap(_.cancellation).map(_.reason.toString).getOrElse(undefined)
+    _.decision flatMap(_.cancellation) map(_.reason.toString) getOrElse undefined
   }
 
   private def extendedUseStatus: Case => String = {
