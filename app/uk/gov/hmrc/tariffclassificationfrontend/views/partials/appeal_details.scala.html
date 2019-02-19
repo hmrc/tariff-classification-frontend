@@ -29,17 +29,17 @@
   <tbody>
 
    <tr>
-    <th class="bold">Review status</th>
-    <td id="appeal_details-review_status">@ReviewStatus.format(c.decision.flatMap(_.review).map(_.status))</td>
-    <td>
+    <th class="bold w-40">Review status</th>
+    <td id="appeal_details-review_status" class="w-30">@ReviewStatus.format(c.decision.flatMap(_.review).map(_.status))</td>
+    <td class="w-30">
      <a id="appeal_details-review_status-change" href="@routes.ReviewCaseController.chooseStatus(c.reference)">Change</a>
     </td>
    </tr>
 
    <tr>
-    <th class="bold">Appeal status</th>
-    <td id="appeal_details-appeal_status">@AppealStatus.format(c.decision.flatMap(_.appeal).map(_.status))</td>
-    <td>
+    <th class="bold w-40">Appeal status</th>
+    <td id="appeal_details-appeal_status" class="w-30">@AppealStatus.format(c.decision.flatMap(_.appeal).map(_.status))</td>
+    <td class="w-30">
      <a id="appeal_details-appeal_status-change" href="@routes.AppealCaseController.chooseStatus(c.reference)">Change</a>
     </td>
    </tr>
@@ -56,15 +56,15 @@
     <tbody>
 
      <tr>
-      <th class="bold">Application for extended use</th>
-      <td id="appeal_details-extended_use_status">
+      <th class="bold w-40">Application for extended use</th>
+      <td id="appeal_details-extended_use_status" class="w-30">
        @if(c.decision.flatMap(_.cancellation).exists(_.applicationForExtendedUse)) {
         Yes
        } else {
         No
        }
       </td>
-      <td>
+      <td class="w-30">
        <a id="appeal_details-extended_use-change" href="@routes.ExtendedUseCaseController.chooseStatus(c.reference)">Change</a>
       </td>
      </tr>
