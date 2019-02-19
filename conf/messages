@@ -65,11 +65,11 @@ case.decision.before-you-complete=Before you complete this case
 case.decision.constrain.commodity-code=Binding commodity code
 case.decision.constrain.goods-description=Sanitised goods description
 case.decision.constrain.justification=Justification
-case.decision.constrain.searches-performed=Searches performed
 
 case.decision.error.methodSearch=Searches performed
 case.decision.error.justification=Justification
-
+case.decision.error.bindingCommodityCode=Binding commodity code
+case.decision.error.goodsDescription=Sanitised goods description
 
 case.activity.assigned-to = Currently assigned to
 

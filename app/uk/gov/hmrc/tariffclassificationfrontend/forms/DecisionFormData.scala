@@ -45,7 +45,7 @@ object DecisionForm {
 
   val mandatoryFieldsForm: Form[DecisionFormData] = Form(
     mapping(
-      "bindingCommodityCode" -> text.verifying(emptyOr(validCommodityCode): _*),
+      "bindingCommodityCode" -> nonEmptyText,   // needs to also check 'validCommodityCode'
       "goodsDescription" -> nonEmptyText,
       "methodSearch" -> nonEmptyText,
       "justification" -> nonEmptyText,

@@ -103,15 +103,9 @@
     <h2 class="heading-medium">@messages("case.decision.before-you-complete")</h2>
     <p>To complete this case, you need to fill in these fields:</p>
     <ul class="list list-bullet">
-
-        @for(error <- decision.get.errors){
+        @for(error <- decision.get.errors) {
             <li><span id="constrain-@error.key">@messages("case.decision.error." + error.key)</span></li>
         }
-
-        @*<li><span id="constrain-commodity-code">@messages("case.decision.constrain.commodity-code")</span></li>*@
-        @*<li><span id="constrain-commodity-code">@messages("case.decision.constrain.goods-description")</span></li>*@
-        @*<li><span id="constrain-commodity-code">@messages("case.decision.constrain.justification")</span></li>*@
-        @*<li><span id="constrain-commodity-code">@messages("case.decision.constrain.searches-performed")</span></li>*@
     </ul>
 
     @complete_case_button(c)
