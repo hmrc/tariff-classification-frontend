@@ -24,7 +24,7 @@ import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms._
-import uk.gov.hmrc.tariffclassificationfrontend.models.Case
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Decision}
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, EventsService, FileStoreService, KeywordsService}
 import uk.gov.hmrc.tariffclassificationfrontend.views
 import uk.gov.hmrc.tariffclassificationfrontend.views.CaseDetailPage
@@ -72,8 +72,16 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
   }
 
   def rulingDetails(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
+
     getCaseAndRenderView(reference, CaseDetailPage.RULING, c => {
-      fileService.getAttachments(c).map(views.html.partials.ruling_details(c, _))
+
+      val form = c.decision
+        .map(DecisionForm.mapFrom)
+        .map(DecisionForm.mandatoryFieldsForm.bindFromRequest)
+
+      fileService
+        .getAttachments(c)
+        .map(views.html.partials.ruling_details(c, form, _))
     })
   }
 
@@ -112,7 +120,7 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
         getCaseAndRenderView(
           reference, CaseDetailPage.KEYWORDS, c => {
             keywordsService.autoCompleteKeywords.flatMap(autoCompleteKeywords =>
-            successful(views.html.partials.keywords_details(c, autoCompleteKeywords, errorForm)))
+              successful(views.html.partials.keywords_details(c, autoCompleteKeywords, errorForm)))
           }),
 
       validForm =>
@@ -122,7 +130,7 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
               updatedCase <- keywordsService.addKeyword(c, validForm.keyword, request.operator)
               autoCompleteKeywords <- keywordsService.autoCompleteKeywords
             } yield views.html.partials.keywords_details(updatedCase, autoCompleteKeywords, keywordForm)
-          )
+        )
     )
   }
 

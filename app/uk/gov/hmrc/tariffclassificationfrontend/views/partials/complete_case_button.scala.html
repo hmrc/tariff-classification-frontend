@@ -15,10 +15,15 @@
  *@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus}
+@import uk.gov.hmrc.tariffclassificationfrontend.views.helpers.DecisionHelper
 @(c: Case, classes: Seq[String] = Seq.empty)
 
 @if(c.status == CaseStatus.OPEN) {
-    <a id="complete-case-button" class="button @classes.mkString(" ")" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CompleteCaseController.completeCase(c.reference)">
-        Complete Case
-    </a>
+    @if(DecisionHelper.hasValidDecision(c)) {
+        <a id="complete-case-button" class="button @classes.mkString(" ")" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CompleteCaseController.completeCase(c.reference)">
+            Complete Case
+        </a>
+    } else {
+        <a id="complete-case-button-disabled" disabled="disabled" class="button @classes.mkString(" ")" > Complete Case </a>
+    }
 }

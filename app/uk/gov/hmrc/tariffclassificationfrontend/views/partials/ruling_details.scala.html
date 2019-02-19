@@ -17,44 +17,21 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{BTIApplication, Case, CaseStatus, Decision, StoredAttachment}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{attachments_list, complete_case_button, tab_heading, cancel_ruling_section}
-@(c: Case, files: Seq[StoredAttachment])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionFormData
+
+@(c: Case, decision: Option[Form[DecisionFormData]], files: Seq[StoredAttachment])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @defining(c.application.asBTI) { btiApp: BTIApplication =>
 
     @tab_heading("ruling", messages("case.menu.ruling"))
 
-    <h5 class="heading-small">@messages("case.menu.application")</h5>
-
-    <!-- TODO: DIT-289 - the following 2 rows contain data related to the application data, we should use a HTML arrow that hides them by default (see prototype) -->
-
-    <div class="grid-row">
-        <div id="application_envisagedCommodityCode" class="column-one-third">
-            <p>@messages("case.application.suggested-commodity-code")</p>
-        </div>
-        <div class="column-two-thirds">
-            <p id="envisagedCommodityCodeValue">@{btiApp.envisagedCommodityCode.getOrElse("")}</p>
-        </div>
-    </div>
-
-
-    <div class="grid-row">
-        <div id="application_goodDescription" class="column-one-third">
-            <p>@messages("case.application.suggested-goods-description")</p>
-        </div>
-        <div class="column-two-thirds">
-            <p id="application_goodDescriptionValue">@{btiApp.goodDescription}</p>
-        </div>
-    </div>
-
-
-    <hr class="mt-0"/>
     <div class="grid-row">
         <div class="column-one-third">
-            <h5 class="heading-small">@messages("case.menu.ruling-details")</h5>
+            <h3 class="heading-small">@messages("case.menu.ruling-details")</h3>
         </div>
         @if(c.status == CaseStatus.OPEN) {
-            <div id="ruling_edit_details" class="column-two-thirds text-right mt-1">
-                <a id="ruling_edit" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.RulingController.editRulingDetails(c.reference)">Edit</a>
+            <div id="ruling_edit_details" class="column-two-thirds text-right mt-1 pt-5">
+                <a id="ruling_edit" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.RulingController.editRulingDetails(c.reference)">Edit ruling details</a>
             </div>
         }
     </div>
@@ -115,16 +92,29 @@
                     <p id="ruling_exclusionsValue">@d.methodExclusion.getOrElse("")</p>
                 </div>
             </div>
-
-            <hr class="mt-0"/>
-
-            <h3 class="heading-medium">@messages("case.decision.attachments")</h3>
-            @attachments_list("attachments", files.filter(_.public))
-            @complete_case_button(c)
-            @cancel_ruling_section(c)
         }
     } else {
         <p id="no-ruling-information">@messages("case.decision.empty")</p>
     }
+
+    <h3 class="heading-medium">@messages("case.decision.attachments")</h3>
+    @attachments_list("attachments", files.filter(_.public))
+
+    <h2 class="heading-medium">@messages("case.decision.before-you-complete")</h2>
+    <p>To complete this case, you need to fill in these fields:</p>
+    <ul class="list list-bullet">
+
+        @for(error <- decision.get.errors){
+            <li><span id="constrain-@error.key">@messages("case.decision.error." + error.key)</span></li>
+        }
+
+        @*<li><span id="constrain-commodity-code">@messages("case.decision.constrain.commodity-code")</span></li>*@
+        @*<li><span id="constrain-commodity-code">@messages("case.decision.constrain.goods-description")</span></li>*@
+        @*<li><span id="constrain-commodity-code">@messages("case.decision.constrain.justification")</span></li>*@
+        @*<li><span id="constrain-commodity-code">@messages("case.decision.constrain.searches-performed")</span></li>*@
+    </ul>
+
+    @complete_case_button(c)
+    @cancel_ruling_section(c)
 }
 
