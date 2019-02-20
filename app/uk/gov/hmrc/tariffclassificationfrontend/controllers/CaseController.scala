@@ -75,9 +75,7 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
 
     getCaseAndRenderView(reference, CaseDetailPage.RULING, c => {
 
-      val form = c.decision
-        .map(DecisionForm.mapFrom)
-        .map(DecisionForm.mandatoryFieldsForm.bindFromRequest)
+      val form = DecisionForm.bindFrom(c.decision)
 
       fileService
         .getAttachments(c)

@@ -62,14 +62,10 @@ case.decision.attachments=Files to attach to the ruling
 case.decision.empty=There is no ruling information associated to this case.
 
 case.decision.before-you-complete=Before you complete this case
-case.decision.constrain.commodity-code=Binding commodity code
-case.decision.constrain.goods-description=Sanitised goods description
+case.decision.constrain.methodSearch=Searches performed
 case.decision.constrain.justification=Justification
-
-case.decision.error.methodSearch=Searches performed
-case.decision.error.justification=Justification
-case.decision.error.bindingCommodityCode=Binding commodity code
-case.decision.error.goodsDescription=Sanitised goods description
+case.decision.constrain.bindingCommodityCode=Binding commodity code
+case.decision.constrain.goodsDescription=Sanitised goods description
 
 case.activity.assigned-to = Currently assigned to
 

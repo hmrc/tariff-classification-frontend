@@ -55,7 +55,12 @@ object DecisionForm {
     )(DecisionFormData.apply)(DecisionFormData.unapply)
   )
 
-  def mapFrom(d: Decision): Map[String, Seq[String]] = {
+  def bindFrom : Option[Decision] => Option[Form[DecisionFormData]] = { decision =>
+    decision.map(mapFrom)
+      .map(mandatoryFieldsForm.bindFromRequest(_))
+  }
+
+  private def mapFrom(d: Decision): Map[String, Seq[String]] = {
     Map(
       "bindingCommodityCode" -> Seq(d.bindingCommodityCode),
       "goodsDescription" -> Seq(d.goodsDescription),

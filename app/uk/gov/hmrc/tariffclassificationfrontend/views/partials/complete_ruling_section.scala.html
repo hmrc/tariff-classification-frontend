@@ -16,14 +16,25 @@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.helpers.DecisionHelper
-@(c: Case, classes: Seq[String] = Seq.empty)
+@import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionFormData
+@(c: Case, decisionForm : Option[Form[DecisionFormData]],  classes: Seq[String] = Seq.empty)(implicit messages: Messages)
 
 @if(c.status == CaseStatus.OPEN) {
-    @if(DecisionHelper.hasValidDecision(c)) {
+
+    @if(decisionForm.map(_.errors.size).exists(_ > 0)) {
+        <h2 class="heading-medium">@messages("case.decision.before-you-complete")</h2>
+        <p>To complete this case, you need to fill in these fields:</p>
+        <ul class="list list-bullet">
+        @for(error <- decisionForm.get.errors) {
+            <li><span id="constrain-@error.key">@messages("case.decision.constrain." + error.key)</span></li>
+        }
+        </ul>
+
+        <a id="complete-case-button-disabled" disabled="disabled" class="button @classes.mkString(" ")" >
+            Complete Case </a>
+    } else {
         <a id="complete-case-button" class="button @classes.mkString(" ")" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CompleteCaseController.completeCase(c.reference)">
             Complete Case
         </a>
-    } else {
-        <a id="complete-case-button-disabled" disabled="disabled" class="button @classes.mkString(" ")" > Complete Case </a>
     }
 }

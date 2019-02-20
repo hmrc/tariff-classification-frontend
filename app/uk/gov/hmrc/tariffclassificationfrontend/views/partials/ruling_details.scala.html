@@ -16,10 +16,10 @@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{BTIApplication, Case, CaseStatus, Decision, StoredAttachment}
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{attachments_list, complete_case_button, tab_heading, cancel_ruling_section}
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{attachments_list, tab_heading, cancel_ruling_section,complete_ruling_section}
 @import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionFormData
 
-@(c: Case, decision: Option[Form[DecisionFormData]], files: Seq[StoredAttachment])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(c: Case, decisionForm: Option[Form[DecisionFormData]], files: Seq[StoredAttachment])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @defining(c.application.asBTI) { btiApp: BTIApplication =>
 
@@ -100,15 +100,7 @@
     <h3 class="heading-medium">@messages("case.decision.attachments")</h3>
     @attachments_list("attachments", files.filter(_.public))
 
-    <h2 class="heading-medium">@messages("case.decision.before-you-complete")</h2>
-    <p>To complete this case, you need to fill in these fields:</p>
-    <ul class="list list-bullet">
-        @for(error <- decision.get.errors) {
-            <li><span id="constrain-@error.key">@messages("case.decision.error." + error.key)</span></li>
-        }
-    </ul>
+    @complete_ruling_section(c, decisionForm)
 
-    @complete_case_button(c)
     @cancel_ruling_section(c)
 }
-
