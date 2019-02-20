@@ -45,7 +45,7 @@ class RejectCaseController @Inject()(authenticatedAction: AuthenticatedAction,
   }
 
   def confirmRejectCase(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
-    getCaseAndRenderView(reference, casesService.rejectCase(_, request.operator).map(views.html.confirm_with_contact_details(_, "Rejected")))
+    getCaseAndRenderView(reference, casesService.rejectCase(_, request.operator).map(views.html.confirm_with_contact_details(_, "rejected")))
   }
 
 }
