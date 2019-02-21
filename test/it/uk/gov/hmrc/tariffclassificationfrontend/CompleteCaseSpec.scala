@@ -54,7 +54,7 @@ class CompleteCaseSpec extends IntegrationTest with MockitoSugar {
 
       response.body should include("id=\"complete-case-button\"")
       response.body should include("disabled=\"disabled\"")
-      response.body should include("Complete Case")
+      response.body should include("Complete case")
 
     }
 

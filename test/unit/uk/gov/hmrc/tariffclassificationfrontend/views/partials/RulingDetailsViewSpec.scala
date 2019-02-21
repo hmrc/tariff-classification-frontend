@@ -28,6 +28,34 @@ class RulingDetailsViewSpec extends ViewSpec {
 
   "Ruling Details" should {
 
+
+    "Render Optional Application Fields" in {
+      // Given
+      val c = aCase(
+        withOptionalApplicationFields(envisagedCommodityCode = Some("envisaged code"))
+      )
+
+      // When
+      val doc = view(ruling_details(c, None, Seq.empty))
+
+      // Then
+      doc should containElementWithID("envisagedCommodityCodeValue")
+      doc.getElementById("envisagedCommodityCodeValue") should containText("envisaged code")
+    }
+
+    "Render Optional Application Fields when empty" in {
+      // Given
+      val c = aCase(
+        withOptionalApplicationFields(envisagedCommodityCode = None)
+      )
+
+      // When
+      val doc = view(ruling_details(c, None, Seq.empty))
+
+      // Then
+      doc should containElementWithID("envisagedCommodityCodeValue")
+    }
+
     "Render 'Edit' button for OPEN cases" in {
       // Given
       val c = aCase(withReference("ref"), withStatus(CaseStatus.OPEN))
