@@ -27,58 +27,58 @@ class CommodityCodeServiceSpec extends UnitSpec with MockitoSugar with BeforeAnd
   "Commodity code service" should {
 
     "find codes 10 characters in length" in {
-      await(service.checkIfCodeExists("0409000000")) shouldBe true
-      await(service.checkIfCodeExists("0409000000 ")) shouldBe true
+      service.checkIfCodeExists("0409000000") shouldBe true
+      service.checkIfCodeExists("0409000000 ") shouldBe true
     }
 
     "find codes 9 characters in length" in {
-      await(service.checkIfCodeExists("040900000")) shouldBe true
-      await(service.checkIfCodeExists("040900000 ")) shouldBe true
+      service.checkIfCodeExists("040900000") shouldBe true
+      service.checkIfCodeExists("040900000 ") shouldBe true
     }
 
     "find codes 8 characters in length" in {
-      await(service.checkIfCodeExists("04090000")) shouldBe true
-      await(service.checkIfCodeExists("04090000 ")) shouldBe true
+      service.checkIfCodeExists("04090000") shouldBe true
+      service.checkIfCodeExists("04090000 ") shouldBe true
     }
 
     "find codes 7 characters in length" in {
-      await(service.checkIfCodeExists("0409000")) shouldBe true
-      await(service.checkIfCodeExists("0409000 ")) shouldBe true
+      service.checkIfCodeExists("0409000") shouldBe true
+      service.checkIfCodeExists("0409000 ") shouldBe true
     }
 
     "find codes 6 characters in length" in {
-      await(service.checkIfCodeExists("040900")) shouldBe true
-      await(service.checkIfCodeExists("040900 ")) shouldBe true
+      service.checkIfCodeExists("040900") shouldBe true
+      service.checkIfCodeExists("040900 ") shouldBe true
     }
 
     "find codes 5 characters in length" in {
-      await(service.checkIfCodeExists("04090")) shouldBe true
-      await(service.checkIfCodeExists("04090 ")) shouldBe true
+      service.checkIfCodeExists("04090") shouldBe true
+      service.checkIfCodeExists("04090 ") shouldBe true
     }
 
     "find codes 4 characters in length" in {
-      await(service.checkIfCodeExists("0409")) shouldBe true
-      await(service.checkIfCodeExists("0409 ")) shouldBe true
+      service.checkIfCodeExists("0409") shouldBe true
+      service.checkIfCodeExists("0409 ") shouldBe true
     }
 
     "find codes longer than 10 characters" in {
-      await(service.checkIfCodeExists("0409000000123456789")) shouldBe true
-      await(service.checkIfCodeExists("0409000000123456789 ")) shouldBe true
+      service.checkIfCodeExists("0409000000123456789") shouldBe true
+      service.checkIfCodeExists("0409000000123456789 ") shouldBe true
     }
 
     "not find codes that are missing form the file" in {
-      await(service.checkIfCodeExists("9999999999")) shouldBe false
-      await(service.checkIfCodeExists("9999999999 ")) shouldBe false
+      service.checkIfCodeExists("9999999999") shouldBe false
+      service.checkIfCodeExists("9999999999 ") shouldBe false
     }
 
     "not find codes from single digit chapters that are missing the leading zero" in {
-      await(service.checkIfCodeExists("409")) shouldBe false
-      await(service.checkIfCodeExists("409 ")) shouldBe false
+      service.checkIfCodeExists("409") shouldBe false
+      service.checkIfCodeExists("409 ") shouldBe false
     }
 
     "not find codes enter in pairs-of-digits format" in {
-      await(service.checkIfCodeExists("04 09 00 00 00")) shouldBe false
-      await(service.checkIfCodeExists("04 09 00 00 00 ")) shouldBe false
+      service.checkIfCodeExists("04 09 00 00 00") shouldBe false
+      service.checkIfCodeExists("04 09 00 00 00 ") shouldBe false
     }
   }
 

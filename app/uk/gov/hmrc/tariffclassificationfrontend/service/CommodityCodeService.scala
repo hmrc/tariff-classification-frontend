@@ -26,13 +26,13 @@ class CommodityCodeService () {
 
   val padLimit = 10
 
-  def checkIfCodeExists(commodityCode: String): Future[Boolean] = {
+  def checkIfCodeExists(commodityCode: String): Boolean = {
     val canonicalCode = commodityCode match {
       case code if code.length > padLimit => code.substring(0, padLimit)
       case _ => commodityCode.trim.padTo(padLimit, "0").mkString
     }
 
-    Future.successful(commodityCodesFromFile.contains(canonicalCode))
+    commodityCodesFromFile.contains(canonicalCode)
   }
 
   lazy val commodityCodesFromFile: Seq[String] = {
