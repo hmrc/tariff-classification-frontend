@@ -20,6 +20,7 @@ import javax.inject.{Inject, Singleton}
 import play.api.i18n.MessagesApi
 import play.api.mvc._
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
+import uk.gov.hmrc.tariffclassificationfrontend.forms.{DecisionForm, DecisionFormData}
 import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.OPEN
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
@@ -39,7 +40,11 @@ class CompleteCaseController @Inject()(authenticatedAction: AuthenticatedAction,
 
   override protected def redirect: String => Call = routes.CaseController.rulingDetails
   override protected def isValidCase: Case => Boolean = { c: Case =>
-    c.status == OPEN && c.decision.isDefined
+    c.status == OPEN && hasValidDecision(c)
+  }
+
+  private def hasValidDecision(c:Case) : Boolean = {
+    DecisionForm.bindFrom(c.decision).map(_.errors.size).contains(0)
   }
 
   def completeCase(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
