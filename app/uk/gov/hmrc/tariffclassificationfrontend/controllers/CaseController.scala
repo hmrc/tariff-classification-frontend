@@ -24,7 +24,7 @@ import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms._
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Decision}
+import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, EventsService, FileStoreService, KeywordsService}
 import uk.gov.hmrc.tariffclassificationfrontend.views
 import uk.gov.hmrc.tariffclassificationfrontend.views.CaseDetailPage
@@ -45,7 +45,7 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
                                implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
   private lazy val activityForm: Form[ActivityFormData] = ActivityForm.form
-  private lazy val keywordForm: Form[KeywordFormData] = KeywordForm.form
+  private lazy val keywordForm: Form[String] = KeywordForm.form
 
   def trader(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     getCaseAndRenderView(
@@ -121,11 +121,11 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
               successful(views.html.partials.keywords_details(c, autoCompleteKeywords, errorForm)))
           }),
 
-      validForm =>
+      keyword =>
         getCaseAndRenderView(reference, CaseDetailPage.KEYWORDS,
           c =>
             for {
-              updatedCase <- keywordsService.addKeyword(c, validForm.keyword, request.operator)
+              updatedCase <- keywordsService.addKeyword(c, keyword, request.operator)
               autoCompleteKeywords <- keywordsService.autoCompleteKeywords
             } yield views.html.partials.keywords_details(updatedCase, autoCompleteKeywords, keywordForm)
         )

@@ -19,12 +19,13 @@ package uk.gov.hmrc.tariffclassificationfrontend.forms
 import play.api.data.Form
 import play.api.data.Forms._
 
-case class ReleaseCaseForm(queue: String)
 
 object ReleaseCaseForm {
 
-  val form = Form(
-    mapping("queue" -> text)(ReleaseCaseForm.apply)(ReleaseCaseForm.unapply)
+  val form: Form[String] = Form(
+    mapping(
+      "queue" -> text
+    )(identity)(Some(_))
   )
 
 }

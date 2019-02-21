@@ -31,7 +31,7 @@ case class DecisionFormData(bindingCommodityCode: String = "",
 
 object DecisionForm {
 
-  val form = Form(
+  val form: Form[DecisionFormData] = Form[DecisionFormData](
     mapping(
       "bindingCommodityCode" -> text.verifying(emptyOr(validCommodityCode): _*),
       "goodsDescription" -> text,

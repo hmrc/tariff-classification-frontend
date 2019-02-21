@@ -39,7 +39,7 @@ class ReleaseCaseController @Inject()(authenticatedAction: AuthenticatedAction,
                                       val messagesApi: MessagesApi,
                                       implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
-  private lazy val releaseCaseForm: Form[ReleaseCaseForm] = ReleaseCaseForm.form
+  private lazy val releaseCaseForm: Form[String] = ReleaseCaseForm.form
 
   def releaseCase(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     getCaseAndRenderView(reference, c => successful(views.html.release_case(c, releaseCaseForm, queueService.getNonGateway)))
@@ -47,13 +47,13 @@ class ReleaseCaseController @Inject()(authenticatedAction: AuthenticatedAction,
 
   def releaseCaseToQueue(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
 
-    def onInvalidForm(formWithErrors: Form[ReleaseCaseForm]): Future[Result] = {
+    def onInvalidForm(formWithErrors: Form[String]): Future[Result] = {
       getCaseAndRenderView(reference, c => successful(views.html.release_case(c, formWithErrors, queueService.getNonGateway)))
     }
 
-    def onValidForm(validForm: ReleaseCaseForm): Future[Result] = {
-      queueService.getOneBySlug(validForm.queue) match {
-        case None => successful(Ok(views.html.resource_not_found(s"Queue ${validForm.queue}")))
+    def onValidForm(queueSlug: String): Future[Result] = {
+      queueService.getOneBySlug(queueSlug) match {
+        case None => successful(Ok(views.html.resource_not_found(s"Queue $queueSlug")))
         case Some(q: Queue) =>
           getCaseAndRenderView(reference, casesService.releaseCase(_, q, request.operator).map { c: Case =>
             views.html.confirm_release_case(c, q)

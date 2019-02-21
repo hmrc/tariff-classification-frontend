@@ -26,7 +26,7 @@ import play.twirl.api.Html
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.forms.UploadAttachmentFormData
+import uk.gov.hmrc.tariffclassificationfrontend.forms.UploadAttachmentForm
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, FileStoreService}
@@ -46,13 +46,13 @@ class AttachmentsController @Inject()(authenticatedAction: AuthenticatedAction,
                                       implicit val appConfig: AppConfig,
                                       implicit val mat: Materializer) extends FrontendController with I18nSupport {
 
-  private lazy val form: Form[UploadAttachmentFormData] = UploadAttachmentFormData.form
+  private lazy val form: Form[String] = UploadAttachmentForm.form
 
   def attachmentsDetails(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     getCaseAndRenderView(reference, CaseDetailPage.ATTACHMENTS, c => renderView(c, form))
   }
 
-  private def renderView(c: Case, uploadForm: Form[_])
+  private def renderView(c: Case, uploadForm: Form[String])
                         (implicit hc: HeaderCarrier, request: Request[_]): Future[Html] = {
 
     for {
