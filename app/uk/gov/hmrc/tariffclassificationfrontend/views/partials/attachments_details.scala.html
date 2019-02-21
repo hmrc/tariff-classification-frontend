@@ -14,24 +14,13 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-@import uk.gov.hmrc.tariffclassificationfrontend.models.{BTIApplication, Case, CaseStatus, Decision, Event, StoredAttachment}
-@import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
-@import uk.gov.hmrc.tariffclassificationfrontend.models.{EventType, CaseStatusChange}
-
-@import java.util.Optional
-
 @import uk.gov.hmrc.play.views.html.helpers
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.attachments_list
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.tab_heading
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.attachments_state_message
-
-@import views.html.helper.form
-@import play.filters.csrf.CSRF
+@import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
+@import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, StoredAttachment}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.components.input_file
-@import uk.gov.hmrc.tariffclassificationfrontend.forms.UploadAttachmentFormData
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{attachments_list, attachments_state_message, tab_heading}
 
-@(c: Case, form : Form[_], filesFromApplicant: Seq[StoredAttachment], letterOfAuthority : Option[StoredAttachment], filesFromClassification: Seq[StoredAttachment] )(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(c: Case, form : Form[String], filesFromApplicant: Seq[StoredAttachment], letterOfAuthority : Option[StoredAttachment], filesFromClassification: Seq[StoredAttachment] )(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
     @tab_heading("attachments", messages("case.menu.attachments"))
 

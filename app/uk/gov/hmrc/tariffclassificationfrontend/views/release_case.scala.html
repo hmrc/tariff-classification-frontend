@@ -15,12 +15,11 @@
  *@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-@import uk.gov.hmrc.tariffclassificationfrontend.forms.ReleaseCaseForm
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{BTIApplication, Case, Queue}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.release_case_form
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.case_heading
-@(c: Case, form: Form[ReleaseCaseForm], queues: Seq[Queue])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(c: Case, form: Form[String], queues: Seq[Queue])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None) {
     @defining(c.application.asBTI) { btiApp: BTIApplication =>

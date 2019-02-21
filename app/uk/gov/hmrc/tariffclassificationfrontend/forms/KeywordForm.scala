@@ -17,15 +17,13 @@
 package uk.gov.hmrc.tariffclassificationfrontend.forms
 
 import play.api.data.Form
-import play.api.data.Forms.{mapping, _}
+import play.api.data.Forms.{mapping, nonEmptyText}
 
-case class UploadAttachmentFormData(fileInput: String)
-
-object UploadAttachmentFormData {
-  val form = Form(
+object KeywordForm {
+  val form: Form[String] = Form(
     mapping(
-      "file-input" -> text
-    )(UploadAttachmentFormData.apply)(UploadAttachmentFormData.unapply)
+      "keyword" -> nonEmptyText
+    )(identity)(Some(_))
   )
 
 }
