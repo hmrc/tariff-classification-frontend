@@ -49,7 +49,7 @@ class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   private val operator = mock[Operator]
 
   private val completeDecision = Decision(
-    bindingCommodityCode = "123456789",
+    bindingCommodityCode = "040900",
     justification = "justification-content",
     goodsDescription = "goods-description",
     methodSearch = Some("method-to-search"))

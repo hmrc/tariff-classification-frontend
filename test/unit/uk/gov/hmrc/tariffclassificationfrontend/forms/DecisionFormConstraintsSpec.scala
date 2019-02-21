@@ -22,7 +22,8 @@ import uk.gov.hmrc.play.test.UnitSpec
 
 class DecisionFormConstraintsSpec extends UnitSpec {
 
-  private val commodityCodeErrorMessage = "Format must be empty or numeric between 6 and 22 digits"
+  private val commodityCodeLengthErrorMessage = "Format must be empty or numeric between 6 and 22 digits"
+  private val commodityCodeUKTariffErrorMessage = "This commodity code is not in the UK Trade Tariff"
   private val decisionForm: Form[DecisionFormData] = DecisionForm.form
   private val bindingCommodityCodeElementId = "bindingCommodityCode"
 
@@ -33,31 +34,31 @@ class DecisionFormConstraintsSpec extends UnitSpec {
     }
 
     "pass if the commodity code value contains between 6 and 22 digits" in {
-      assertNoErrors("1234567890")
+      assertNoErrors("0409000000")
     }
 
     "pass if the commodity code value contains 6 digits" in {
-      assertNoErrors("123456")
+      assertNoErrors("040900")
     }
 
     "pass if the commodity code value contains 22 digits" in {
-      assertNoErrors("1234567891234567890000")
+      assertNoErrors("0409000000234567890000")
     }
 
     "fail if the commodity code value contains more than 22 digits" in {
-      assertOnlyOneError("12345678901234567890123")
+      assertOnlyOneError("04090000002345678901234", Seq(commodityCodeLengthErrorMessage))
     }
 
     "fail if the commodity code value contains less than 6 digits" in {
-      assertOnlyOneError("12345")
+      assertOnlyOneError("04090", Seq(commodityCodeLengthErrorMessage))
     }
 
     "fail if the commodity code value contains non numeric characters" in {
-      assertOnlyOneError("12345Q")
+      assertOnlyOneError("12345Q", Seq(commodityCodeLengthErrorMessage, commodityCodeUKTariffErrorMessage))
     }
 
     "fail if the commodity code value contains special characters"  in {
-      assertOnlyOneError("12345!")
+      assertOnlyOneError("12345!", Seq(commodityCodeLengthErrorMessage, commodityCodeUKTariffErrorMessage))
     }
 
   }
@@ -71,9 +72,9 @@ class DecisionFormConstraintsSpec extends UnitSpec {
     errors shouldBe Seq.empty
   }
 
-  private def assertOnlyOneError(commodityCodeValue: String): Unit = {
+  private def assertOnlyOneError(commodityCodeValue: String, errorMessages: Seq[String]): Unit = {
     val errors = decisionForm.bind(commodityCodeJsValue(commodityCodeValue)).errors(bindingCommodityCodeElementId)
-    errors.map(_.message) shouldBe Seq(commodityCodeErrorMessage)
+    errors.map(_.message) shouldBe errorMessages
   }
 
 }
