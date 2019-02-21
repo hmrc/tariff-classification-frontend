@@ -45,7 +45,7 @@ class SuspendCaseController @Inject()(authenticatedAction: AuthenticatedAction,
   }
 
   def confirmSuspendCase(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
-    getCaseAndRenderView(reference, casesService.suspendCase(_, request.operator).map(views.html.confirm_suspend_case(_)))
+    getCaseAndRenderView(reference, casesService.suspendCase(_, request.operator).map(views.html.confirm_with_contact_details(_, "suspended")))
   }
 
 }

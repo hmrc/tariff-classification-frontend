@@ -19,6 +19,7 @@ package uk.gov.hmrc.tariffclassificationfrontend.forms
 import play.api.data.Form
 import play.api.data.Forms._
 import uk.gov.hmrc.tariffclassificationfrontend.forms.FormConstraints._
+import uk.gov.hmrc.tariffclassificationfrontend.models.Decision
 
 case class DecisionFormData(bindingCommodityCode: String = "",
                             goodsDescription: String = "",
@@ -41,6 +42,34 @@ object DecisionForm {
       "attachments" -> seq(text)
     )(DecisionFormData.apply)(DecisionFormData.unapply)
   )
+
+  val mandatoryFieldsForm: Form[DecisionFormData] = Form(
+    mapping(
+      "bindingCommodityCode" -> nonEmptyText,
+      "goodsDescription" -> nonEmptyText,
+      "methodSearch" -> nonEmptyText,
+      "justification" -> nonEmptyText,
+      "methodCommercialDenomination" -> text,
+      "methodExclusion" -> text,
+      "attachments" -> seq(text)
+    )(DecisionFormData.apply)(DecisionFormData.unapply)
+  )
+
+  def bindFrom: Option[Decision] => Option[Form[DecisionFormData]] = { decision =>
+    decision.map(mapFrom)
+      .map(mandatoryFieldsForm.fillAndValidate)
+  }
+
+  private def mapFrom(d: Decision): DecisionFormData = {
+    DecisionFormData(bindingCommodityCode = d.bindingCommodityCode,
+      goodsDescription = d.goodsDescription,
+      methodSearch = d.methodSearch.getOrElse(""),
+      justification = d.justification,
+      methodCommercialDenomination = d.methodCommercialDenomination.getOrElse(""),
+      methodExclusion = d.methodExclusion.getOrElse(""),
+      attachments = Seq.empty
+    )
+  }
 }
 
 

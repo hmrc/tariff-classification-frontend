@@ -67,11 +67,14 @@ class RulingController @Inject()(authenticatedAction: AuthenticatedAction,
 
       validForm =>
         getCaseAndRenderView(reference, menuTitle, c => {
-          casesService.updateCase(mapper.mergeFormIntoCase(c, validForm)).flatMap { updated =>
-            fileStoreService
-              .getAttachments(updated)
-              .map(views.html.partials.ruling_details(updated, _))
-          }
+          casesService
+            .updateCase(mapper.mergeFormIntoCase(c, validForm))
+            .flatMap { updated =>
+              val form = DecisionForm.bindFrom(updated.decision)
+              fileStoreService
+                .getAttachments(updated)
+                .map(views.html.partials.ruling_details(updated, form, _))
+            }
         })
     )
   }

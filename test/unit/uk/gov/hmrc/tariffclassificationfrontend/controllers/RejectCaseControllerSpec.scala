@@ -48,7 +48,7 @@ class RejectCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
   private val caseWithStatusNEW = Cases.btiCaseExample.copy(status = CaseStatus.NEW)
   private val caseWithStatusOPEN = Cases.btiCaseExample.copy(status = CaseStatus.OPEN)
-  private val caseWithStatusREFERRED = Cases.btiCaseExample.copy(status = CaseStatus.REFERRED)
+  private val caseWithStatusREJECTED = Cases.btiCaseExample.copy(status = CaseStatus.REJECTED)
 
   private implicit val mat: Materializer = app.materializer
   private implicit val hc: HeaderCarrier = HeaderCarrier()
@@ -101,7 +101,7 @@ class RejectCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
     "return OK and HTML content type" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusOPEN)))
-      when(casesService.rejectCase(refEq(caseWithStatusOPEN), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREFERRED))
+      when(casesService.rejectCase(refEq(caseWithStatusOPEN), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREJECTED))
 
       val result: Result = await(controller.confirmRejectCase("reference")(newFakePOSTRequestWithCSRF(app)))
 
