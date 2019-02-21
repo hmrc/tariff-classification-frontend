@@ -25,6 +25,30 @@
 
     @tab_heading("ruling", messages("case.menu.ruling"))
 
+    <h3 class="heading-small">@messages("case.menu.application")</h3>
+
+    <div class="grid-row">
+        <div id="application_envisagedCommodityCode" class="column-one-third">
+            <p>@messages("case.application.suggested-commodity-code")</p>
+        </div>
+        <div class="column-two-thirds">
+            <p id="envisagedCommodityCodeValue">@{btiApp.envisagedCommodityCode.getOrElse("")}</p>
+        </div>
+    </div>
+
+
+    <div class="grid-row">
+        <div id="application_goodDescription" class="column-one-third">
+            <p>@messages("case.application.suggested-goods-description")</p>
+        </div>
+        <div class="column-two-thirds">
+            <p id="application_goodDescriptionValue">@{btiApp.goodDescription}</p>
+        </div>
+    </div>
+
+
+    <hr class="mt-0"/>
+
     <div class="grid-row">
         <div class="column-one-third">
             <h3 class="heading-small">@messages("case.menu.ruling-details")</h3>

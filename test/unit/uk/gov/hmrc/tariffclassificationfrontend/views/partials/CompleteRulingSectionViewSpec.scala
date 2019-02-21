@@ -44,15 +44,15 @@ class CompleteRulingSectionViewSpec extends ViewSpec {
                 "methodCommercialDenomination" -> Seq.empty,
                 "methodExclusion" -> Seq.empty,
                 "attachments" -> Seq.empty
-                )
               )
+            )
             )
           )
         )
 
       // Then
-      doc should containElementWithID("complete-case-button-disabled")
-      doc shouldNot containElementWithID("complete-case-button")
+      doc should containElementWithAttribute("disabled", "disabled")
+      doc should containElementWithID("complete-case-button")
     }
 
     "render with enabled button for OPEN case with complete decision" in {

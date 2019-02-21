@@ -31,14 +31,8 @@
                 }
                 </ul>
             }
-            <a id="complete-case-button"  class="button @classes.mkString(" ")"
-                @if(hasErrors) {
-                    disabled="disabled"
-                }else{
-                    href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CompleteCaseController.completeCase(c.reference)"
-                }
-            >
-                Complete Case
+            <a id="complete-case-button"  class="button @classes.mkString(" ")"  @if(hasErrors) { disabled="disabled" }else{ href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CompleteCaseController.completeCase(c.reference)"}>
+                Complete case
             </a>
         }
     </div>
