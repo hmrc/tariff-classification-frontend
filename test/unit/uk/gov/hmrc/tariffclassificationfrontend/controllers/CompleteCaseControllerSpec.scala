@@ -31,8 +31,9 @@ import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
+import uk.gov.hmrc.tariffclassificationfrontend.forms.{CommodityCodeConstraints, DecisionForm}
 import uk.gov.hmrc.tariffclassificationfrontend.models._
-import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
+import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, CommodityCodeService}
 import uk.gov.tariffclassificationfrontend.utils.Cases
 
 import scala.concurrent.Future.{failed, successful}
@@ -47,6 +48,7 @@ class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   private val appConfig = new AppConfig(configuration, env)
   private val casesService = mock[CasesService]
   private val operator = mock[Operator]
+  private val decisionForm = new DecisionForm(new CommodityCodeConstraints(new CommodityCodeService))
 
   private val completeDecision = Decision(
     bindingCommodityCode = "040900",
@@ -64,7 +66,7 @@ class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   private implicit val mat: Materializer = app.materializer
   private implicit val hc: HeaderCarrier = HeaderCarrier()
 
-  private val controller = new CompleteCaseController(new SuccessfulAuthenticatedAction(operator), casesService, messageApi, appConfig)
+  private val controller = new CompleteCaseController(new SuccessfulAuthenticatedAction(operator), casesService, decisionForm, messageApi, appConfig)
 
   override def afterEach(): Unit = {
     super.afterEach()

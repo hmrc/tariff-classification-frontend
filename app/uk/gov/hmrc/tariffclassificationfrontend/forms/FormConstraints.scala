@@ -22,18 +22,13 @@ import play.api.data.format.Formatter
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CommodityCodeService
 
-object FormConstraints extends CommodityCodeService {
+object FormConstraints {
 
   def enum[T <: Enumeration](implicit f: Formatter[T]): Mapping[T] = of[T]
 
   val validCommodityCode: Constraint[String] = Constraint("constraints.commoditycode")({
     case s: String if s.matches("[0-9]{6,22}") && (s.length % 2 == 0) => Valid
     case _: String => Invalid("Format must be empty or numeric between 6 and 22 digits with an even number of digits")
-  })
-
-  val commodityCodeExistsInUKTradeTariff: Constraint[String] = Constraint("constraints.commodityCodeExists")({
-    case s: String if this.checkIfCodeExists(s) => Valid
-    case _: String => Invalid("This commodity code is not in the UK Trade Tariff")
   })
 
   val numeric: Constraint[String] = Constraint("constraints.non-numeric")({

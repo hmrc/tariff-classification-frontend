@@ -18,7 +18,6 @@ package uk.gov.hmrc.tariffclassificationfrontend.service
 
 import javax.inject.Singleton
 
-import scala.concurrent.Future
 import scala.io.Source
 
 @Singleton

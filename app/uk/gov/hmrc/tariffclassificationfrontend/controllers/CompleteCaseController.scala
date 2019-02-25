@@ -32,6 +32,7 @@ import scala.concurrent.Future.successful
 @Singleton
 class CompleteCaseController @Inject()(authenticatedAction: AuthenticatedAction,
                                        casesService: CasesService,
+                                       decisionForm: DecisionForm,
                                        val messagesApi: MessagesApi,
                                        implicit val appConfig: AppConfig) extends RenderCaseAction {
 
@@ -44,7 +45,7 @@ class CompleteCaseController @Inject()(authenticatedAction: AuthenticatedAction,
     c.status == OPEN && hasValidDecision(c)
   }
 
-  private def hasValidDecision(c: Case): Boolean = DecisionForm.bindFrom(c.decision).map(_.errors).exists(_.isEmpty)
+  private def hasValidDecision(c: Case): Boolean = decisionForm.bindFrom(c.decision).map(_.errors).exists(_.isEmpty)
 
   def completeCase(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     getCaseAndRenderView(reference, c => successful(views.html.complete_case(c)))

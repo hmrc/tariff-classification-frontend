@@ -29,9 +29,9 @@ import play.api.test.Helpers._
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.forms.{DecisionFormData, DecisionFormMapper}
+import uk.gov.hmrc.tariffclassificationfrontend.forms.{CommodityCodeConstraints, DecisionForm, DecisionFormData, DecisionFormMapper}
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus}
-import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, FileStoreService}
+import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, CommodityCodeService, FileStoreService}
 import uk.gov.tariffclassificationfrontend.utils.Cases
 
 import scala.concurrent.Future
@@ -45,10 +45,11 @@ class RulingControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSui
   private val casesService = mock[CasesService]
   private val fileService = mock[FileStoreService]
   private val mapper = mock[DecisionFormMapper]
+  private val decisionForm = new DecisionForm(new CommodityCodeConstraints(new CommodityCodeService))
 
   private implicit val hc = HeaderCarrier()
 
-  private val controller = new RulingController(new SuccessfulAuthenticatedAction, casesService, fileService, mapper, messageApi, appConfig)
+  private val controller = new RulingController(new SuccessfulAuthenticatedAction, casesService, fileService, mapper, decisionForm, messageApi, appConfig)
 
   override protected def afterEach(): Unit = {
     super.afterEach()

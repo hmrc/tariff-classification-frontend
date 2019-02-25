@@ -41,6 +41,7 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
                                fileService: FileStoreService,
                                eventsService: EventsService,
                                mapper: DecisionFormMapper,
+                               decisionForm: DecisionForm,
                                val messagesApi: MessagesApi,
                                implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
@@ -75,7 +76,7 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
 
     getCaseAndRenderView(reference, CaseDetailPage.RULING, c => {
 
-      val form = DecisionForm.bindFrom(c.decision)
+      val form = decisionForm.bindFrom(c.decision)
 
       fileService
         .getAttachments(c)

@@ -30,9 +30,9 @@ import play.api.test.Helpers._
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionFormMapper
+import uk.gov.hmrc.tariffclassificationfrontend.forms.{CommodityCodeConstraints, DecisionForm, DecisionFormMapper}
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Event, Operator}
-import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, EventsService, FileStoreService, KeywordsService}
+import uk.gov.hmrc.tariffclassificationfrontend.service._
 import uk.gov.tariffclassificationfrontend.utils.{Cases, Events}
 
 import scala.concurrent.Future
@@ -51,9 +51,10 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
   private val eventService = mock[EventsService]
   private val operator = mock[Operator]
   private val event = mock[Event]
+  private val decisionForm = new DecisionForm(new CommodityCodeConstraints(new CommodityCodeService))
 
   private val controller = new CaseController(new SuccessfulAuthenticatedAction(operator),
-                                              casesService, keywordsService, fileService, eventService, mapper, messageApi, appConfig)
+                                              casesService, keywordsService, fileService, eventService, mapper, decisionForm, messageApi, appConfig)
 
   private implicit val hc: HeaderCarrier = HeaderCarrier()
 

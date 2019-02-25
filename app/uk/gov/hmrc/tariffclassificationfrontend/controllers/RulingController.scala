@@ -39,24 +39,23 @@ class RulingController @Inject()(authenticatedAction: AuthenticatedAction,
                                  casesService: CasesService,
                                  fileStoreService: FileStoreService,
                                  mapper: DecisionFormMapper,
+                                 decisionForm: DecisionForm,
                                  val messagesApi: MessagesApi,
                                  implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
-
-  private lazy val decisionForm: Form[DecisionFormData] = DecisionForm.form
 
   private lazy val menuTitle = CaseDetailPage.RULING
 
   def editRulingDetails(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     getCaseAndRenderView(reference, menuTitle, c => {
       val formData = mapper.caseToDecisionFormData(c)
-      val df = decisionForm.fill(formData)
+      val df = decisionForm.form.fill(formData)
 
       fileStoreService.getAttachments(c).map(views.html.partials.ruling_details_edit(c, _, df))
     })
   }
 
   def updateRulingDetails(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
-    decisionForm.bindFromRequest.fold(
+    decisionForm.form.bindFromRequest.fold(
       errorForm =>
         getCaseAndRenderView(
           reference,
@@ -70,7 +69,7 @@ class RulingController @Inject()(authenticatedAction: AuthenticatedAction,
           casesService
             .updateCase(mapper.mergeFormIntoCase(c, validForm))
             .flatMap { updated =>
-              val form = DecisionForm.bindFrom(updated.decision)
+              val form = decisionForm.bindFrom(updated.decision)
               fileStoreService
                 .getAttachments(updated)
                 .map(views.html.partials.ruling_details(updated, form, _))

@@ -16,15 +16,15 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.forms
 
-import play.api.data.Form
 import play.api.libs.json.{JsObject, JsString, JsValue}
 import uk.gov.hmrc.play.test.UnitSpec
+import uk.gov.hmrc.tariffclassificationfrontend.service.CommodityCodeService
 
 class DecisionFormConstraintsSpec extends UnitSpec {
 
+  private val decisionForm = new DecisionForm(new CommodityCodeConstraints(new CommodityCodeService))
   private val commodityCodeLengthErrorMessage = "Format must be empty or numeric between 6 and 22 digits with an even number of digits"
   private val commodityCodeUKTariffErrorMessage = "This commodity code is not in the UK Trade Tariff"
-  private val decisionForm: Form[DecisionFormData] = DecisionForm.form
   private val bindingCommodityCodeElementId = "bindingCommodityCode"
 
   "DecisionForm validation" should {
@@ -72,12 +72,12 @@ class DecisionFormConstraintsSpec extends UnitSpec {
   }
 
   private def assertNoErrors(commodityCodeValue: String): Unit = {
-    val errors = decisionForm.bind(commodityCodeJsValue(commodityCodeValue)).errors(bindingCommodityCodeElementId)
+    val errors = decisionForm.form.bind(commodityCodeJsValue(commodityCodeValue)).errors(bindingCommodityCodeElementId)
     errors shouldBe Seq.empty
   }
 
   private def assertOnlyOneError(commodityCodeValue: String, errorMessages: Seq[String]): Unit = {
-    val errors = decisionForm.bind(commodityCodeJsValue(commodityCodeValue)).errors(bindingCommodityCodeElementId)
+    val errors = decisionForm.form.bind(commodityCodeJsValue(commodityCodeValue)).errors(bindingCommodityCodeElementId)
     errors.map(_.message) shouldBe errorMessages
   }
 

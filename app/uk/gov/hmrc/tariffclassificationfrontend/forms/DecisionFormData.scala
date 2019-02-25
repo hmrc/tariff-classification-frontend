@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.forms
 
+import javax.inject.Inject
 import play.api.data.Form
 import play.api.data.Forms._
 import uk.gov.hmrc.tariffclassificationfrontend.forms.FormConstraints._
@@ -29,11 +30,11 @@ case class DecisionFormData(bindingCommodityCode: String = "",
                             methodExclusion: String = "",
                             attachments: Seq[String] = Seq.empty)
 
-object DecisionForm {
+class DecisionForm @Inject()(commodityCodeConstraints: CommodityCodeConstraints) {
 
   val form: Form[DecisionFormData] = Form[DecisionFormData](
     mapping(
-      "bindingCommodityCode" -> text.verifying(emptyOr(validCommodityCode, commodityCodeExistsInUKTradeTariff): _*),
+      "bindingCommodityCode" -> text.verifying(emptyOr(validCommodityCode, commodityCodeConstraints.commodityCodeExistsInUKTradeTariff): _*),
       "goodsDescription" -> text,
       "methodSearch" -> text,
       "justification" -> text,
@@ -45,7 +46,7 @@ object DecisionForm {
 
   val mandatoryFieldsForm: Form[DecisionFormData] = Form(
     mapping(
-      "bindingCommodityCode" -> text.verifying(commodityCodeExistsInUKTradeTariff),
+      "bindingCommodityCode" -> text.verifying(commodityCodeConstraints.commodityCodeExistsInUKTradeTariff),
       "goodsDescription" -> nonEmptyText,
       "methodSearch" -> nonEmptyText,
       "justification" -> nonEmptyText,
