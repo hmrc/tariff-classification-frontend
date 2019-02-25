@@ -22,7 +22,7 @@ import uk.gov.hmrc.play.test.UnitSpec
 
 class DecisionFormConstraintsSpec extends UnitSpec {
 
-  private val commodityCodeLengthErrorMessage = "Format must be empty or numeric between 6 and 22 digits"
+  private val commodityCodeLengthErrorMessage = "Format must be empty or numeric between 6 and 22 digits with an even number of digits"
   private val commodityCodeUKTariffErrorMessage = "This commodity code is not in the UK Trade Tariff"
   private val decisionForm: Form[DecisionFormData] = DecisionForm.form
   private val bindingCommodityCodeElementId = "bindingCommodityCode"
@@ -33,7 +33,7 @@ class DecisionFormConstraintsSpec extends UnitSpec {
       assertNoErrors("")
     }
 
-    "pass if the commodity code value contains between 6 and 22 digits" in {
+    "pass if the commodity code value contains between 6 and 22 digits and has an even number of digits" in {
       assertNoErrors("0409000000")
     }
 
@@ -46,11 +46,11 @@ class DecisionFormConstraintsSpec extends UnitSpec {
     }
 
     "fail if the commodity code value contains more than 22 digits" in {
-      assertOnlyOneError("04090000002345678901234", Seq(commodityCodeLengthErrorMessage))
+      assertOnlyOneError("040900000023456789012345", Seq(commodityCodeLengthErrorMessage))
     }
 
     "fail if the commodity code value contains less than 6 digits" in {
-      assertOnlyOneError("04090", Seq(commodityCodeLengthErrorMessage))
+      assertOnlyOneError("0409", Seq(commodityCodeLengthErrorMessage))
     }
 
     "fail if the commodity code value contains non numeric characters" in {
@@ -59,6 +59,10 @@ class DecisionFormConstraintsSpec extends UnitSpec {
 
     "fail if the commodity code value contains special characters"  in {
       assertOnlyOneError("12345!", Seq(commodityCodeLengthErrorMessage, commodityCodeUKTariffErrorMessage))
+    }
+
+    "fail if the commodity code value contains an odd number of digits"  in {
+      assertOnlyOneError("1234567", Seq(commodityCodeLengthErrorMessage, commodityCodeUKTariffErrorMessage))
     }
 
   }

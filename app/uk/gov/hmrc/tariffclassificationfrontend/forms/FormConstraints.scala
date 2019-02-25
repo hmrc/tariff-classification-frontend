@@ -27,8 +27,8 @@ object FormConstraints extends CommodityCodeService {
   def enum[T <: Enumeration](implicit f: Formatter[T]): Mapping[T] = of[T]
 
   val validCommodityCode: Constraint[String] = Constraint("constraints.commoditycode")({
-    case s: String if s.matches("[0-9]{6,22}") => Valid
-    case _: String => Invalid("Format must be empty or numeric between 6 and 22 digits")
+    case s: String if s.matches("[0-9]{6,22}") && (s.length % 2 == 0) => Valid
+    case _: String => Invalid("Format must be empty or numeric between 6 and 22 digits with an even number of digits")
   })
 
   val commodityCodeExistsInUKTradeTariff: Constraint[String] = Constraint("constraints.commodityCodeExists")({
