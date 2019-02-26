@@ -51,7 +51,8 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
   private val eventService = mock[EventsService]
   private val operator = mock[Operator]
   private val event = mock[Event]
-  private val decisionForm = new DecisionForm(new CommodityCodeConstraints(new CommodityCodeService))
+  private val commodityCodeService = mock[CommodityCodeService]
+  private val decisionForm = new DecisionForm(new CommodityCodeConstraints(commodityCodeService))
 
   private val controller = new CaseController(new SuccessfulAuthenticatedAction(operator),
                                               casesService, keywordsService, fileService, eventService, mapper, decisionForm, messageApi, appConfig)

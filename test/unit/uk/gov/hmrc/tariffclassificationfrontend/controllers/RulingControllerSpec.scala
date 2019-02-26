@@ -45,7 +45,8 @@ class RulingControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSui
   private val casesService = mock[CasesService]
   private val fileService = mock[FileStoreService]
   private val mapper = mock[DecisionFormMapper]
-  private val decisionForm = new DecisionForm(new CommodityCodeConstraints(new CommodityCodeService))
+  private val commodityCodeService = mock[CommodityCodeService]
+  private val decisionForm = new DecisionForm(new CommodityCodeConstraints(commodityCodeService))
 
   private implicit val hc = HeaderCarrier()
 
