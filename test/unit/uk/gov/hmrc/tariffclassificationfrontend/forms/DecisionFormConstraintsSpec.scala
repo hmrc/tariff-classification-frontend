@@ -16,18 +16,24 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.forms
 
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import org.scalatest.mockito.MockitoSugar
 import play.api.libs.json.{JsObject, JsString, JsValue}
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.tariffclassificationfrontend.service.CommodityCodeService
 
-class DecisionFormConstraintsSpec extends UnitSpec {
+class DecisionFormConstraintsSpec extends UnitSpec with MockitoSugar {
 
-  private val decisionForm = new DecisionForm(new CommodityCodeConstraints(new CommodityCodeService))
+  private val commodityCodeService = mock[CommodityCodeService]
+  private val decisionForm = new DecisionForm(new CommodityCodeConstraints(commodityCodeService))
   private val commodityCodeLengthErrorMessage = "Format must be empty or numeric between 6 and 22 digits with an even number of digits"
   private val commodityCodeUKTariffErrorMessage = "This commodity code is not in the UK Trade Tariff"
   private val bindingCommodityCodeElementId = "bindingCommodityCode"
 
   "DecisionForm validation" should {
+
+    when(commodityCodeService.checkIfCodeExists(any())).thenReturn(true)
 
     "pass if the commodity code is empty" in {
       assertNoErrors("")
@@ -54,15 +60,15 @@ class DecisionFormConstraintsSpec extends UnitSpec {
     }
 
     "fail if the commodity code value contains non numeric characters" in {
-      assertOnlyOneError("12345Q", Seq(commodityCodeLengthErrorMessage, commodityCodeUKTariffErrorMessage))
+      assertOnlyOneError("12345Q", Seq(commodityCodeLengthErrorMessage))
     }
 
     "fail if the commodity code value contains special characters"  in {
-      assertOnlyOneError("12345!", Seq(commodityCodeLengthErrorMessage, commodityCodeUKTariffErrorMessage))
+      assertOnlyOneError("12345!", Seq(commodityCodeLengthErrorMessage))
     }
 
     "fail if the commodity code value contains an odd number of digits"  in {
-      assertOnlyOneError("1234567", Seq(commodityCodeLengthErrorMessage, commodityCodeUKTariffErrorMessage))
+      assertOnlyOneError("1234567", Seq(commodityCodeLengthErrorMessage))
     }
 
   }
