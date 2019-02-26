@@ -31,32 +31,7 @@ class CommodityCodeServiceSpec extends UnitSpec with MockitoSugar with BeforeAnd
       service.checkIfCodeExists("0409000000 ") shouldBe true
     }
 
-    "find codes 9 characters in length" in {
-      service.checkIfCodeExists("040900000") shouldBe true
-      service.checkIfCodeExists("040900000 ") shouldBe true
-    }
-
-    "find codes 8 characters in length" in {
-      service.checkIfCodeExists("04090000") shouldBe true
-      service.checkIfCodeExists("04090000 ") shouldBe true
-    }
-
-    "find codes 7 characters in length" in {
-      service.checkIfCodeExists("0409000") shouldBe true
-      service.checkIfCodeExists("0409000 ") shouldBe true
-    }
-
-    "find codes 6 characters in length" in {
-      service.checkIfCodeExists("040900") shouldBe true
-      service.checkIfCodeExists("040900 ") shouldBe true
-    }
-
-    "find codes 5 characters in length" in {
-      service.checkIfCodeExists("04090") shouldBe true
-      service.checkIfCodeExists("04090 ") shouldBe true
-    }
-
-    "find codes 4 characters in length" in {
+    "find codes less than 10 characters in length" in {
       service.checkIfCodeExists("0409") shouldBe true
       service.checkIfCodeExists("0409 ") shouldBe true
     }
