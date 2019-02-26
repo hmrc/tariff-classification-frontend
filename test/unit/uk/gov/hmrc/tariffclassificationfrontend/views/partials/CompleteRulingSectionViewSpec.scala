@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.views.partials
 
+import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.tariffclassificationfrontend.forms._
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus
 import uk.gov.hmrc.tariffclassificationfrontend.service.CommodityCodeService
@@ -24,9 +25,10 @@ import uk.gov.hmrc.tariffclassificationfrontend.views.ViewSpec
 import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.complete_ruling_section
 import uk.gov.tariffclassificationfrontend.utils.Cases
 
-class CompleteRulingSectionViewSpec extends ViewSpec {
+class CompleteRulingSectionViewSpec extends ViewSpec with MockitoSugar {
 
-  private val decisionForm = new DecisionForm(new CommodityCodeConstraints(new CommodityCodeService))
+  private val commodityCodeService = mock[CommodityCodeService]
+  private val decisionForm = new DecisionForm(new CommodityCodeConstraints(commodityCodeService))
 
   "Complete ruling section" should {
 
