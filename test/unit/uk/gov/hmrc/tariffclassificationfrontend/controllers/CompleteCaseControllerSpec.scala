@@ -31,8 +31,9 @@ import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
+import uk.gov.hmrc.tariffclassificationfrontend.forms.{CommodityCodeConstraints, DecisionForm}
 import uk.gov.hmrc.tariffclassificationfrontend.models._
-import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
+import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, CommodityCodeService}
 import uk.gov.tariffclassificationfrontend.utils.Cases
 
 import scala.concurrent.Future.{failed, successful}
@@ -47,9 +48,11 @@ class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   private val appConfig = new AppConfig(configuration, env)
   private val casesService = mock[CasesService]
   private val operator = mock[Operator]
+  private val commodityCodeService = mock[CommodityCodeService]
+  private val decisionForm = new DecisionForm(new CommodityCodeConstraints(commodityCodeService))
 
   private val completeDecision = Decision(
-    bindingCommodityCode = "123456789",
+    bindingCommodityCode = "040900",
     justification = "justification-content",
     goodsDescription = "goods-description",
     methodSearch = Some("method-to-search"))
@@ -64,7 +67,7 @@ class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   private implicit val mat: Materializer = app.materializer
   private implicit val hc: HeaderCarrier = HeaderCarrier()
 
-  private val controller = new CompleteCaseController(new SuccessfulAuthenticatedAction(operator), casesService, messageApi, appConfig)
+  private val controller = new CompleteCaseController(new SuccessfulAuthenticatedAction(operator), casesService, decisionForm, messageApi, appConfig)
 
   override def afterEach(): Unit = {
     super.afterEach()
@@ -72,6 +75,8 @@ class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   }
 
   "Complete Case" should {
+
+    when(commodityCodeService.checkIfCodeExists(any())).thenReturn(true)
 
     "return OK and HTML content type" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(validCaseWithStatusOPEN)))

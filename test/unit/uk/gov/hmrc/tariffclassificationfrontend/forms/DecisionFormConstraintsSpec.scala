@@ -16,48 +16,59 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.forms
 
-import play.api.data.Form
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import org.scalatest.mockito.MockitoSugar
 import play.api.libs.json.{JsObject, JsString, JsValue}
 import uk.gov.hmrc.play.test.UnitSpec
+import uk.gov.hmrc.tariffclassificationfrontend.service.CommodityCodeService
 
-class DecisionFormConstraintsSpec extends UnitSpec {
+class DecisionFormConstraintsSpec extends UnitSpec with MockitoSugar {
 
-  private val commodityCodeErrorMessage = "Format must be empty or numeric between 6 and 22 digits"
-  private val decisionForm: Form[DecisionFormData] = DecisionForm.form
+  private val commodityCodeService = mock[CommodityCodeService]
+  private val decisionForm = new DecisionForm(new CommodityCodeConstraints(commodityCodeService))
+  private val commodityCodeLengthErrorMessage = "Format must be empty or numeric between 6 and 22 digits with an even number of digits"
+  private val commodityCodeUKTariffErrorMessage = "This commodity code is not in the UK Trade Tariff"
   private val bindingCommodityCodeElementId = "bindingCommodityCode"
 
   "DecisionForm validation" should {
+
+    when(commodityCodeService.checkIfCodeExists(any())).thenReturn(true)
 
     "pass if the commodity code is empty" in {
       assertNoErrors("")
     }
 
-    "pass if the commodity code value contains between 6 and 22 digits" in {
-      assertNoErrors("1234567890")
+    "pass if the commodity code value contains between 6 and 22 digits and has an even number of digits" in {
+      assertNoErrors("0409000000")
     }
 
     "pass if the commodity code value contains 6 digits" in {
-      assertNoErrors("123456")
+      assertNoErrors("040900")
     }
 
     "pass if the commodity code value contains 22 digits" in {
-      assertNoErrors("1234567891234567890000")
+      assertNoErrors("0409000000234567890000")
     }
 
     "fail if the commodity code value contains more than 22 digits" in {
-      assertOnlyOneError("12345678901234567890123")
+      assertOnlyOneError("040900000023456789012345", Seq(commodityCodeLengthErrorMessage))
     }
 
     "fail if the commodity code value contains less than 6 digits" in {
-      assertOnlyOneError("12345")
+      assertOnlyOneError("0409", Seq(commodityCodeLengthErrorMessage))
     }
 
     "fail if the commodity code value contains non numeric characters" in {
-      assertOnlyOneError("12345Q")
+      assertOnlyOneError("12345Q", Seq(commodityCodeLengthErrorMessage))
     }
 
     "fail if the commodity code value contains special characters"  in {
-      assertOnlyOneError("12345!")
+      assertOnlyOneError("12345!", Seq(commodityCodeLengthErrorMessage))
+    }
+
+    "fail if the commodity code value contains an odd number of digits"  in {
+      assertOnlyOneError("1234567", Seq(commodityCodeLengthErrorMessage))
     }
 
   }
@@ -67,13 +78,13 @@ class DecisionFormConstraintsSpec extends UnitSpec {
   }
 
   private def assertNoErrors(commodityCodeValue: String): Unit = {
-    val errors = decisionForm.bind(commodityCodeJsValue(commodityCodeValue)).errors(bindingCommodityCodeElementId)
+    val errors = decisionForm.form.bind(commodityCodeJsValue(commodityCodeValue)).errors(bindingCommodityCodeElementId)
     errors shouldBe Seq.empty
   }
 
-  private def assertOnlyOneError(commodityCodeValue: String): Unit = {
-    val errors = decisionForm.bind(commodityCodeJsValue(commodityCodeValue)).errors(bindingCommodityCodeElementId)
-    errors.map(_.message) shouldBe Seq(commodityCodeErrorMessage)
+  private def assertOnlyOneError(commodityCodeValue: String, errorMessages: Seq[String]): Unit = {
+    val errors = decisionForm.form.bind(commodityCodeJsValue(commodityCodeValue)).errors(bindingCommodityCodeElementId)
+    errors.map(_.message) shouldBe errorMessages
   }
 
 }
