@@ -54,8 +54,8 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
 
   private val connector = new BindingTariffClassificationConnector(configuration, client)
 
-  override protected def beforeEach(): Unit = {
-    super.beforeEach()
+  override def beforeAll(): Unit = {
+    super.beforeAll()
 
     given(configuration.bindingTariffClassificationUrl).willReturn(getUrl)
   }
