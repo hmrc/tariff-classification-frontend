@@ -73,7 +73,7 @@ class SearchTest extends UnitSpec {
       "keyword[1]" -> Seq("")
     )
 
-    val populatedQueryParam: String = "keyword[0]=K1&trader_name=trader-name&keyword[1]=K2&commodity_code=commodity-code&decision_details=decision-details&live_rulings_only=true"
+    val populatedQueryParam: String = "keyword[0]=K1&decision_details=decision-details&trader_name=trader-name&keyword[1]=K2&commodity_code=commodity-code&live_rulings_only=true"
 
     "Unbind Unpopulated Search to Query String" in {
       Search.binder.unbind("", Search()) shouldBe ""
