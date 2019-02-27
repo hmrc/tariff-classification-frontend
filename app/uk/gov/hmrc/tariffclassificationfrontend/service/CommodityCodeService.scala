@@ -23,7 +23,7 @@ import scala.io.Source
 @Singleton
 class CommodityCodeService () {
 
-  val padLimit = 10
+  private val padLimit = 10
 
   def checkIfCodeExists(commodityCode: String): Boolean = {
     val canonicalCode = commodityCode match {
