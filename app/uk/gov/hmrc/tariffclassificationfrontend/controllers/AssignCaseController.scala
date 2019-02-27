@@ -26,6 +26,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
 @Singleton
@@ -44,7 +45,14 @@ class AssignCaseController @Inject()(authenticatedAction: AuthenticatedAction,
   }
 
   def post(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
-    getCaseAndRespond(reference, c => caseService.assignCase(c, request.operator).map(c => Redirect(routes.CaseController.trader(reference))))
+    def respond: Case => Future[Result] = {
+      case c: Case if c.assignee.isEmpty =>
+        caseService.assignCase(c, request.operator).map(c => Redirect(routes.CaseController.trader(reference)))
+      case _ =>
+        successful(Redirect(routes.AssignCaseController.get(reference)))
+    }
+
+    getCaseAndRespond(reference, respond)
   }
 
 }

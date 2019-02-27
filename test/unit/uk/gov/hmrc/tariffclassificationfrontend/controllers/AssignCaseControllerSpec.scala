@@ -146,6 +146,18 @@ class AssignCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       locationOf(result) shouldBe Some(routes.CaseController.trader("reference").url)
     }
 
+    "redirect to Assign for cases already assigned" in {
+      val aCaseAssignedToSelf = aCase(withQueue("1"), withAssignee(Some(Operator("other-id"))))
+      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(aCaseAssignedToSelf)))
+
+      val result: Result = await(controller.post("reference")(newFakePOSTRequestWithCSRF(app)))
+
+      status(result) shouldBe Status.SEE_OTHER
+      contentTypeOf(result) shouldBe None
+      charsetOf(result) shouldBe None
+      locationOf(result) shouldBe Some(routes.AssignCaseController.get("reference").url)
+    }
+
     "return Not Found and HTML content type on missing Case" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(None))
 
