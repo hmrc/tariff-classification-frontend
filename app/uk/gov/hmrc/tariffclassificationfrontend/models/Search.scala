@@ -24,14 +24,14 @@ case class Search
 (
   traderName: Option[String] = None,
   commodityCode: Option[String] = None,
-  goodDescription: Option[String] = None,
+  decisionDetails: Option[String] = None,
   liveRulingsOnly: Option[Boolean] = None,
   keywords: Option[Set[String]] = None
 ) {
 
   def isEmpty: Boolean = {
     // Live rulings only omitted intentionally as it is a post-search filter
-    traderName.isEmpty && commodityCode.isEmpty && goodDescription.isEmpty && keywords.isEmpty
+    traderName.isEmpty && commodityCode.isEmpty && decisionDetails.isEmpty && keywords.isEmpty
   }
 
   def isDefined: Boolean = !isEmpty
