@@ -98,7 +98,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       givenAuthSuccess()
 
       // When
-      val response = await(ws.url(s"$frontendRoot/search?good_description=").get())
+      val response = await(ws.url(s"$frontendRoot/search?decision_details=").get())
 
       // Then
       response.status shouldBe OK
@@ -108,14 +108,14 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
     "Filter by 'Good Description'" in {
       // Given
       givenAuthSuccess()
-      stubFor(get(urlMatching("/cases\\?.*good_description=1.*"))
+      stubFor(get(urlMatching("/cases\\?.*decision_details=1.*"))
         .willReturn(aResponse()
           .withStatus(OK)
           .withBody(CasePayloads.gatewayCases))
       )
 
       // When
-      val response = await(ws.url(s"$frontendRoot/search?good_description=1").get())
+      val response = await(ws.url(s"$frontendRoot/search?decision_details=1").get())
 
       // Then
       response.status shouldBe OK
