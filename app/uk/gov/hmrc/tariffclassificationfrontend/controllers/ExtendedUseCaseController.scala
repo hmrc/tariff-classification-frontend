@@ -24,8 +24,9 @@ import play.twirl.api.Html
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.BooleanForm
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Operator}
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.CANCELLED
+import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Operator}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
@@ -39,9 +40,7 @@ class ExtendedUseCaseController @Inject()(override val authenticatedAction: Auth
 
   override protected def redirect: String => Call = routes.CaseController.trader
 
-  override protected def isValidCase: Case => Boolean = { c: Case =>
-    c.status == CANCELLED && c.decision.flatMap(_.cancellation).isDefined
-  }
+  override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = c.status == CANCELLED && c.decision.flatMap(_.cancellation).isDefined
 
   override protected val form: Form[Boolean] = BooleanForm.form
 

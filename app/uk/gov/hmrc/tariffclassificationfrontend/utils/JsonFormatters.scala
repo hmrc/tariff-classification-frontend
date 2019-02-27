@@ -49,6 +49,7 @@ object JsonFormatters {
   implicit val formatAppealStatusChange: OFormat[AppealStatusChange] = Json.format[AppealStatusChange]
   implicit val formatReviewStatusChange: OFormat[ReviewStatusChange] = Json.format[ReviewStatusChange]
   implicit val formatExtendedUseStatusChange: OFormat[ExtendedUseStatusChange] = Json.format[ExtendedUseStatusChange]
+  implicit val formatAssignmentChange: OFormat[AssignmentChange] = Json.format[AssignmentChange]
   implicit val formatNote: OFormat[Note] = Json.format[Note]
   implicit val fileMetaDataFormat: OFormat[FileMetadata] = Json.format[FileMetadata]
   implicit val formatEventDetail: Format[Details] = Union.from[Details]("type")
@@ -56,6 +57,7 @@ object JsonFormatters {
     .and[AppealStatusChange](EventType.APPEAL_STATUS_CHANGE.toString)
     .and[ReviewStatusChange](EventType.REVIEW_STATUS_CHANGE.toString)
     .and[ExtendedUseStatusChange](EventType.EXTENDED_USE_STATUS_CHANGE.toString)
+    .and[AssignmentChange](EventType.ASSIGNMENT_CHANGE.toString)
     .and[Note](EventType.NOTE.toString)
     .format
 

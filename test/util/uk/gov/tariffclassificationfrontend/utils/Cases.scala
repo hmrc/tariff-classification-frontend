@@ -56,6 +56,14 @@ object Cases {
     _.copy(assignee = operator)
   }
 
+  def withQueue(queue: String): Case => Case = {
+    _.copy(queueId = Some(queue))
+  }
+
+  def withoutQueue(): Case => Case = {
+    _.copy(queueId = None)
+  }
+
   def withBTIDetails(offline: Boolean = false,
                      goodName: String = "good name",
                      goodDescription: String = "good description",

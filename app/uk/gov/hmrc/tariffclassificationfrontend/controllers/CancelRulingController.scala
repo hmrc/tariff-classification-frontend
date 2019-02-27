@@ -20,11 +20,11 @@ import javax.inject.{Inject, Singleton}
 import play.api.i18n.MessagesApi
 import play.api.mvc._
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.forms.{CancelRulingForm, ReviewForm}
+import uk.gov.hmrc.tariffclassificationfrontend.forms.CancelRulingForm
 import uk.gov.hmrc.tariffclassificationfrontend.models.CancelReason.CancelReason
 import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.COMPLETED
-import uk.gov.hmrc.tariffclassificationfrontend.models.ReviewStatus.ReviewStatus
+import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
@@ -42,7 +42,7 @@ class CancelRulingController @Inject()(authenticatedAction: AuthenticatedAction,
 
   override protected def redirect: String => Call = routes.CaseController.applicationDetails
 
-  override protected def isValidCase: Case => Boolean = _.status == COMPLETED
+  override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = c.status == COMPLETED
 
   def cancelRuling(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     getCaseAndRenderView(reference,
