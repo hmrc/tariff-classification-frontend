@@ -56,6 +56,14 @@ object Cases {
     _.copy(assignee = operator)
   }
 
+  def withoutAssignee(): Case => Case = {
+    _.copy(assignee = None)
+  }
+
+  def withDaysElapsed(elapsed: Int): Case => Case = {
+    _.copy(daysElapsed = elapsed)
+  }
+
   def withQueue(queue: String): Case => Case = {
     _.copy(queueId = Some(queue))
   }
