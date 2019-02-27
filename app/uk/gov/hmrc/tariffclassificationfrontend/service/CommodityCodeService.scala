@@ -23,21 +23,20 @@ import scala.io.Source
 @Singleton
 class CommodityCodeService () {
 
-  private val padLimit = 10
+  private lazy val padLimit = 10
 
   def checkIfCodeExists(commodityCode: String): Boolean = {
-    val canonicalCode = commodityCode match {
-      case code if code.length > padLimit => code.substring(0, padLimit)
-      case _ => commodityCode.trim.padTo(padLimit, "0").mkString
+    val canonicalCode: String = {
+      if (commodityCode.length > padLimit) commodityCode.substring(0, padLimit)
+      else commodityCode.trim.padTo(padLimit, "0").mkString
     }
 
     commodityCodesFromFile.contains(canonicalCode)
   }
 
-  lazy val commodityCodesFromFile: Seq[String] = {
-      val url = getClass.getClassLoader.getResource("commodityCodes.txt")
-      (for (line <- Source.fromURL(url, "UTF-8").getLines()) yield line).toSeq
+  private lazy val commodityCodesFromFile: Seq[String] = {
+    val url = getClass.getClassLoader.getResource("commodityCodes.txt")
+    (for (line <- Source.fromURL(url, "UTF-8").getLines()) yield line).toSeq
   }
-
 
 }
