@@ -30,7 +30,7 @@
 
         <h3 id="assign_case-heading" class="heading-large mt-0">
             @if(c.assignee.isDefined) {
-                <span id="assign_case-assigned_heading">This case is already assigned to @{assignee(c.assignee.get)}. </span>
+                <span id="assign_case-assigned_heading">This case is already assigned to @{assignee(c.assignee.get)}</span>
             }
             @if(c.assignee.isEmpty) {
                 <span id="assign_case-unassigned_heading">This case is unassigned. Do you want to take ownership?</span>
@@ -38,7 +38,7 @@
         </h3>
 
         @if(c.assignee.isEmpty) {
-            <p>This will add the case to your <a href="@routes.MyCasesController.myCases()">My Cases</a> list</p>
+            <p>This will add the case to your my cases list</p>
 
             @form(action = routes.AssignCaseController.post(c.reference), 'class -> "form") {
                 @CSRF.formField
@@ -46,8 +46,8 @@
                 <a class="secondary-button" id="assign_case-continue_button" href="@routes.CaseController.trader(c.reference)">No, view only</a>
             }
         } else {
-            <a id="assign_case-continue_button" href="@routes.CaseController.trader(c.reference)">Continue to Case</a>
-            <a class="ml-1" id="assign_case-back_to_my_cases" href="@routes.MyCasesController.myCases()">Back to My Cases</a>
+            <p><a id="assign_case-continue_button" href="@routes.CaseController.trader(c.reference)">View the case</a></p>
+            <p><a id="assign_case-back_to_my_cases" href="@routes.MyCasesController.myCases()">Back to my cases</a></p>
         }
 
 
