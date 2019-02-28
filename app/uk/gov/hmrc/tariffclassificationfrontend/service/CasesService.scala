@@ -81,7 +81,7 @@ class CasesService @Inject()(appConfig: AppConfig,
   }
 
   def assignCase(original: Case, operator: Operator)
-                  (implicit hc: HeaderCarrier): Future[Case] = {
+                (implicit hc: HeaderCarrier): Future[Case] = {
     for {
       updated <- connector.updateCase(original.copy(assignee = Some(operator)))
       _ <- addAssignmentChangeEvent(original, updated, operator)
@@ -245,7 +245,7 @@ class CasesService @Inject()(appConfig: AppConfig,
   }
 
   private def addAssignmentChangeEvent(original: Case, updated: Case, operator: Operator, comment: Option[String] = None)
-                                        (implicit hc: HeaderCarrier): Future[Unit] = {
+                                      (implicit hc: HeaderCarrier): Future[Unit] = {
     val details = AssignmentChange(original.assignee, updated.assignee, comment)
     addEvent(original, updated, details, operator)
   }
