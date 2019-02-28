@@ -35,10 +35,15 @@ class AssignCaseController @Inject()(authenticatedAction: AuthenticatedAction,
                                      val messagesApi: MessagesApi,
                                      override implicit val config: AppConfig) extends RenderCaseAction {
 
-
   override protected def redirect: String => Call = routes.CaseController.trader
 
-  override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = c.queueId.isDefined && !c.assignee.map(_.id).contains(request.operator.id)
+  override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = {
+    (c.queueId, c.assignee) match {
+      case (Some(_), None) => true
+      case (Some(_), Some(operator)) if request.operator.id != operator.id => true
+      case _ => false
+    }
+  }
 
   def get(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     getCaseAndRenderView(reference, c => successful(views.html.assign_case(c)))
