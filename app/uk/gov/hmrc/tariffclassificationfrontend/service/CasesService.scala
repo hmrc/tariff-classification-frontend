@@ -80,6 +80,14 @@ class CasesService @Inject()(appConfig: AppConfig,
     } yield updated
   }
 
+  def assignCase(original: Case, operator: Operator)
+                (implicit hc: HeaderCarrier): Future[Case] = {
+    for {
+      updated <- connector.updateCase(original.copy(assignee = Some(operator)))
+      _ <- addAssignmentChangeEvent(original, updated, operator)
+      _ = auditService.auditCaseAssigned(updated, operator)
+    } yield updated
+  }
 
   def releaseCase(original: Case, queue: Queue, operator: Operator)
                  (implicit hc: HeaderCarrier): Future[Case] = {
@@ -233,6 +241,12 @@ class CasesService @Inject()(appConfig: AppConfig,
   private def addReviewStatusChangeEvent(original: Case, updated: Case, operator: Operator, comment: Option[String] = None)
                                         (implicit hc: HeaderCarrier): Future[Unit] = {
     val details = ReviewStatusChange(reviewStatus(original), reviewStatus(updated), comment)
+    addEvent(original, updated, details, operator)
+  }
+
+  private def addAssignmentChangeEvent(original: Case, updated: Case, operator: Operator, comment: Option[String] = None)
+                                      (implicit hc: HeaderCarrier): Future[Unit] = {
+    val details = AssignmentChange(original.assignee, updated.assignee, comment)
     addEvent(original, updated, details, operator)
   }
 

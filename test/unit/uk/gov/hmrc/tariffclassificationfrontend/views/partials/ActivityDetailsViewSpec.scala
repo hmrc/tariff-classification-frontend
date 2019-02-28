@@ -185,6 +185,104 @@ class ActivityDetailsViewSpec extends ViewSpec {
       doc.getElementById("activity-events-row-0-date") should containText("01 Jan 2019")
     }
 
+    "Render 'Assignment Change'" in {
+      // Given
+      val c = aCase()
+      val e = Event(
+        id = "EVENT_ID",
+        details = AssignmentChange(from = None, to = None, comment = Some("comment")),
+        operator = Operator("id", Some("name")),
+        caseReference = "ref",
+        timestamp = date
+      )
+
+      // When
+      val doc = view(activity_details(c, Seq(e), ActivityForm.form))
+
+      // Then
+      doc should containElementWithID("activity-events-row-0-operator")
+      doc.getElementById("activity-events-row-0-operator") should containText("name")
+      doc.getElementById("activity-events-row-0-content") should containText("comment")
+      doc should containElementWithID("activity-events-row-0-date")
+      doc.getElementById("activity-events-row-0-date") should containText("01 Jan 2019")
+    }
+
+    "Render 'Assignment Change' from Some to Some" in {
+      // Given
+      val c = aCase()
+      val e = Event(
+        id = "EVENT_ID",
+        details = AssignmentChange(from = Some(Operator("from", Some("FROM"))), to = Some(Operator("to", Some("TO"))), comment = Some("comment")),
+        operator = Operator("id", Some("name")),
+        caseReference = "ref",
+        timestamp = date
+      )
+
+      // When
+      val doc = view(activity_details(c, Seq(e), ActivityForm.form))
+
+      // Then
+      doc should containElementWithID("activity-events-row-0-content")
+      doc.getElementById("activity-events-row-0-content") should containText("Case reassigned from FROM to TO")
+    }
+
+    "Render 'Assignment Change' from Some to None" in {
+      // Given
+      val c = aCase()
+      val e = Event(
+        id = "EVENT_ID",
+        details = AssignmentChange(from = Some(Operator("from", Some("FROM"))), to = None, comment = Some("comment")),
+        operator = Operator("id", Some("name")),
+        caseReference = "ref",
+        timestamp = date
+      )
+
+      // When
+      val doc = view(activity_details(c, Seq(e), ActivityForm.form))
+
+      // Then
+      doc should containElementWithID("activity-events-row-0-content")
+      doc.getElementById("activity-events-row-0-content") should containText("Case unassigned from FROM")
+    }
+
+    "Render 'Assignment Change' from None to Some" in {
+      // Given
+      val c = aCase()
+      val e = Event(
+        id = "EVENT_ID",
+        details = AssignmentChange(from = None, to = Some(Operator("to", Some("TO"))), comment = Some("comment")),
+        operator = Operator("id", Some("name")),
+        caseReference = "ref",
+        timestamp = date
+      )
+
+      // When
+      val doc = view(activity_details(c, Seq(e), ActivityForm.form))
+
+      // Then
+      doc should containElementWithID("activity-events-row-0-content")
+      doc.getElementById("activity-events-row-0-content") should containText("Case assigned to TO")
+    }
+
+    "Render 'Assignment Change' from None to None" in {
+      // Given
+      val c = aCase()
+      val e = Event(
+        id = "EVENT_ID",
+        details = AssignmentChange(from = None, to = None, comment = Some("comment")),
+        operator = Operator("id", Some("name")),
+        caseReference = "ref",
+        timestamp = date
+      )
+
+      // When
+      val doc = view(activity_details(c, Seq(e), ActivityForm.form))
+
+      // Then
+      doc should containElementWithID("activity-events-row-0-content")
+      doc.getElementById("activity-events-row-0-content") should containText("Case unassigned")
+    }
+
     "Render assigned to 'You'" in {
       // Given
       val c = aCase(

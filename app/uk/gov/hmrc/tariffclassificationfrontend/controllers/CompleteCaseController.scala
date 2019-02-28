@@ -23,6 +23,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionForm
 import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.OPEN
+import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
@@ -41,9 +42,7 @@ class CompleteCaseController @Inject()(authenticatedAction: AuthenticatedAction,
 
   override protected def redirect: String => Call = routes.CaseController.rulingDetails
 
-  override protected def isValidCase: Case => Boolean = { c: Case =>
-    c.status == OPEN && hasValidDecision(c)
-  }
+  override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = c.status == OPEN && hasValidDecision(c)
 
   private def hasValidDecision(c: Case): Boolean = decisionForm.bindFrom(c.decision).map(_.errors).exists(_.isEmpty)
 

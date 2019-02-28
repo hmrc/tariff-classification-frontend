@@ -1,0 +1,55 @@
+@*
+ * Copyright 2019 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes
+@import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
+@import uk.gov.hmrc.tariffclassificationfrontend.models.{BTIApplication, Case}
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{assignee, case_heading}
+@import views.html.helper.{CSRF, form}
+@(c: Case)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+
+@main(bodyClasses = None) {
+    @defining(c.application.asBTI) { btiApp: BTIApplication =>
+
+        @case_heading(c)
+
+        <h3 id="assign_case-heading" class="heading-large mt-0">
+            @if(c.assignee.isDefined) {
+                <span id="assign_case-assigned_heading">This case is already assigned to @{assignee(c.assignee.get)}. </span>
+            }
+            @if(c.assignee.isEmpty) {
+                <span id="assign_case-unassigned_heading">This case is unassigned. Do you want to take ownership?</span>
+            }
+        </h3>
+
+        @if(c.assignee.isEmpty) {
+            <p>This will add the case to your <a href="@routes.MyCasesController.myCases()">My Cases</a> list</p>
+
+            @form(action = routes.AssignCaseController.post(c.reference), 'class -> "form") {
+                @CSRF.formField
+                <button class="button" id="assign_case-assign_button" type="submit">Yes, take ownership</button>
+                <a class="secondary-button" id="assign_case-continue_button" href="@routes.CaseController.trader(c.reference)">No, view only</a>
+            }
+        } else {
+            <a id="assign_case-continue_button" href="@routes.CaseController.trader(c.reference)">Continue to Case</a>
+            <a class="ml-1" id="assign_case-back_to_my_cases" href="@routes.MyCasesController.myCases()">Back to My Cases</a>
+        }
+
+
+    }
+}
