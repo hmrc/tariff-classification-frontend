@@ -90,7 +90,7 @@ class AuditService @Inject()(auditConnector: DefaultAuditConnector) {
                        (implicit hc: HeaderCarrier): Unit = {
     sendExplicitAuditEvent(
       auditEventType = CaseAssigned,
-      auditPayload = baseAuditPayload(c, operator) + ("assigneeId" -> operator.id)
+      auditPayload = baseAuditPayload(c, operator) + ("assigneeId" -> c.assignee.map(_.id).getOrElse("None"))
     )
   }
 
