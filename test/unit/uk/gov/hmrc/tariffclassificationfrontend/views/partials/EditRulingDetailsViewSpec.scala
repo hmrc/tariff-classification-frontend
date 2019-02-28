@@ -18,15 +18,19 @@ package uk.gov.hmrc.tariffclassificationfrontend.views.partials
 
 import java.time.Instant
 
-import uk.gov.hmrc.tariffclassificationfrontend.forms.{DecisionForm, DecisionFormData}
+import uk.gov.hmrc.tariffclassificationfrontend.forms.{CommodityCodeConstraints, DecisionForm, DecisionFormData}
 import uk.gov.hmrc.tariffclassificationfrontend.models.response.ScanStatus
 import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, StoredAttachment}
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewSpec
 import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.ruling_details_edit
 import uk.gov.tariffclassificationfrontend.utils.Cases._
+import org.scalatest.mockito.MockitoSugar
 
-class EditRulingDetailsViewSpec extends ViewSpec {
+class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
+
+  private val commodityCodeConstraints = mock[CommodityCodeConstraints]
+  private val decisionForm = new DecisionForm(commodityCodeConstraints)
 
   "Edit Ruling Details" should {
 
@@ -37,7 +41,7 @@ class EditRulingDetailsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(ruling_details_edit(c, Seq.empty, DecisionForm.form))
+      val doc = view(ruling_details_edit(c, Seq.empty, decisionForm.form))
 
       // Then
       doc should containElementWithID("envisagedCommodityCodeValue")
@@ -51,7 +55,7 @@ class EditRulingDetailsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(ruling_details_edit(c, Seq.empty, DecisionForm.form))
+      val doc = view(ruling_details_edit(c, Seq.empty, decisionForm.form))
 
       // Then
       doc should containElementWithID("envisagedCommodityCodeValue")
@@ -72,7 +76,7 @@ class EditRulingDetailsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(ruling_details_edit(c, Seq.empty, DecisionForm.form.fill(formData)))
+      val doc = view(ruling_details_edit(c, Seq.empty, decisionForm.form.fill(formData)))
 
       // Then
       doc should containElementWithID("bindingCommodityCode")
@@ -106,7 +110,7 @@ class EditRulingDetailsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(ruling_details_edit(c, Seq(stored), DecisionForm.form))
+      val doc = view(ruling_details_edit(c, Seq(stored), decisionForm.form))
 
       // Then
       doc shouldNot containElementWithID("edit-ruling-no_attachments")
@@ -131,7 +135,7 @@ class EditRulingDetailsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(ruling_details_edit(c, Seq(stored), DecisionForm.form))
+      val doc = view(ruling_details_edit(c, Seq(stored), decisionForm.form))
 
       // Then
       doc should containElementWithID("edit-ruling-no_attachments")
@@ -156,7 +160,7 @@ class EditRulingDetailsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(ruling_details_edit(c, Seq(stored), DecisionForm.form))
+      val doc = view(ruling_details_edit(c, Seq(stored), decisionForm.form))
 
       // Then
       doc should containElementWithID("attachments[]")
@@ -180,7 +184,7 @@ class EditRulingDetailsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(ruling_details_edit(c, Seq(stored), DecisionForm.form))
+      val doc = view(ruling_details_edit(c, Seq(stored), decisionForm.form))
 
       // Then
       doc should containElementWithID("attachments[]")
@@ -204,7 +208,7 @@ class EditRulingDetailsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(ruling_details_edit(c, Seq(stored), DecisionForm.form))
+      val doc = view(ruling_details_edit(c, Seq(stored), decisionForm.form))
 
       // Then
       doc should containElementWithID("edit-ruling-file-0")
@@ -230,7 +234,7 @@ class EditRulingDetailsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(ruling_details_edit(c, Seq(stored), DecisionForm.form))
+      val doc = view(ruling_details_edit(c, Seq(stored), decisionForm.form))
 
       // Then
       doc should containElementWithID("edit-ruling-file-0")

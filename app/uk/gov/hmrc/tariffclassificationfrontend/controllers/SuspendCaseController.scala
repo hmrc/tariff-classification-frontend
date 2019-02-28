@@ -22,6 +22,7 @@ import play.api.mvc._
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.OPEN
+import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
@@ -38,14 +39,14 @@ class SuspendCaseController @Inject()(authenticatedAction: AuthenticatedAction,
   override protected val caseService: CasesService = casesService
 
   override protected def redirect: String => Call = routes.CaseController.applicationDetails
-  override protected def isValidCase: Case => Boolean = _.status == OPEN
+  override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = c.status == OPEN
 
   def suspendCase(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     getCaseAndRenderView(reference, c => successful(views.html.suspend_case(c)))
   }
 
   def confirmSuspendCase(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
-    getCaseAndRenderView(reference, casesService.suspendCase(_, request.operator).map(views.html.confirm_suspend_case(_)))
+    getCaseAndRenderView(reference, casesService.suspendCase(_, request.operator).map(views.html.confirm_with_contact_details(_, "suspended")))
   }
 
 }

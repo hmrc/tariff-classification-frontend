@@ -17,14 +17,12 @@
 package uk.gov.hmrc.tariffclassificationfrontend.forms
 
 import play.api.data.Form
-import play.api.data.Forms._
+import play.api.data.Forms.{mapping, nonEmptyText}
 
-
-object ReleaseCaseForm {
-
+object KeywordForm {
   val form: Form[String] = Form(
     mapping(
-      "queue" -> text
+      "keyword" -> nonEmptyText
     )(identity)(Some(_))
   )
 

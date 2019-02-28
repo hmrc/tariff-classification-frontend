@@ -19,18 +19,18 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials._
 
-@(c: Case)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(c: Case, statusChanged : String)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None) {
     @case_heading(c)
 
     <div class="grid-row">
         <div class="column-full">
-            <h3 class="heading-large mt-0">This case has been rejected</h3>
+            <h3 class="heading-large mt-0">This case has been @statusChanged</h3>
 
             <p class="heading-medium mt-0"> Ensure the applicant has been notified</p>
 
-            <div class="grid-row">
+            <div id="app-details-sending-samples" class="grid-row">
                 <div class="column-one-third">
                     <p>Contact name</p>
                 </div>
@@ -38,7 +38,7 @@
                     <p id="contact-name">@c.application.contact.name</p>
                 </div>
             </div>
-            <div class="grid-row">
+            <div id="app-details-sending-samples" class="grid-row">
                 <div class="column-one-third">
                     <p>Contact email</p>
                 </div>
@@ -46,7 +46,7 @@
                     <p id="contact-email">@c.application.contact.email</p>
                 </div>
             </div>
-            <div class="grid-row">
+            <div id="app-details-sending-samples" class="grid-row">
                 <div class="column-one-third">
                     <p>Contact telephone</p>
                 </div>

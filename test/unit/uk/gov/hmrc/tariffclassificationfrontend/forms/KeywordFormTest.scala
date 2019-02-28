@@ -35,7 +35,7 @@ class KeywordFormTest extends UnitSpec {
         Map(
           "keyword" -> Seq("FOOD")
         )
-      ).value shouldBe Some(KeywordFormData("FOOD"))
+      ).value shouldBe Some("FOOD")
     }
 
     "don't allow missing fields" in {
@@ -46,7 +46,7 @@ class KeywordFormTest extends UnitSpec {
 
     "fill in form correctly" in {
       val keyWordForm = KeywordForm
-      keyWordForm.form.fill(KeywordFormData("FOOD")).data shouldBe Map("keyword" -> "FOOD")
+      keyWordForm.form.fill("FOOD").data shouldBe Map("keyword" -> "FOOD")
     }
   }
 

@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,13 +12,17 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus}
-@(c: Case, classes: Seq[String] = Seq.empty)
+package uk.gov.hmrc.tariffclassificationfrontend.forms
 
-@if(c.status == CaseStatus.OPEN) {
-    <a id="complete-case-button" class="button @classes.mkString(" ")" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CompleteCaseController.completeCase(c.reference)">
-        Complete Case
-    </a>
+import play.api.data.Form
+import play.api.data.Forms._
+
+object UploadAttachmentForm {
+  val form: Form[String] = Form(
+    mapping(
+      "file-input" -> text
+    )(identity)(Some(_))
+  )
 }

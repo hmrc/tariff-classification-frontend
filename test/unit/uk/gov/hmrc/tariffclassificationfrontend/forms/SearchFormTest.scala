@@ -35,7 +35,7 @@ class SearchFormTest extends UnitSpec {
         Map(
           "commodity_code" -> Seq(""),
           "trader_name" -> Seq(""),
-          "good_description" -> Seq(""),
+          "decision_details" -> Seq(""),
           "live_rulings_only" -> Seq(""),
           "keyword" -> Seq("")
         )
@@ -71,7 +71,7 @@ class SearchFormTest extends UnitSpec {
         Map(
           "commodity_code" -> Seq("00"),
           "trader_name" -> Seq("trader-name"),
-          "good_description" -> Seq("good-description"),
+          "decision_details" -> Seq("decision-details"),
           "live_rulings_only" -> Seq("true"),
           "keyword[0]" -> Seq("X"),
           "keyword[1]" -> Seq("Y")
@@ -79,7 +79,7 @@ class SearchFormTest extends UnitSpec {
       ).get shouldBe Search(
         traderName = Some("trader-name"),
         commodityCode = Some("00"),
-        goodDescription = Some("good-description"),
+        decisionDetails = Some("decision-details"),
         liveRulingsOnly = Some(true),
         keywords = Some(Set("X", "Y"))
       )
@@ -89,13 +89,13 @@ class SearchFormTest extends UnitSpec {
       SearchForm.form.fill(Search(
         traderName = Some("trader-name"),
         commodityCode = Some("00"),
-        goodDescription = Some("good-description"),
+        decisionDetails = Some("decision-details"),
         liveRulingsOnly = Some(true),
         keywords = Some(Set("X", "Y"))
       )).data shouldBe Map(
         "trader_name" -> "trader-name",
         "commodity_code" -> "00",
-        "good_description" -> "good-description",
+        "decision_details" -> "decision-details",
         "live_rulings_only" -> "true",
         "keyword[0]" -> "X",
         "keyword[1]" -> "Y"

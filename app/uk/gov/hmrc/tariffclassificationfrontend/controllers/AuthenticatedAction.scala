@@ -46,10 +46,12 @@ class AuthenticatedAction @Inject()(appConfig: AppConfig,
   private lazy val enrolment: Option[Enrolment] = appConfig.authEnrolment map (Enrolment(_))
 
   override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] = {
+
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(
       request.headers,
       Some(request.session)
     )
+
     authorise().retrieve(Retrievals.credentials and Retrievals.name) {
       case ~(credentials: Credentials, name: Name) =>
         val id = credentials.providerId

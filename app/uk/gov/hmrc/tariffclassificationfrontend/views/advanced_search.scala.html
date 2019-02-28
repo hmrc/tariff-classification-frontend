@@ -17,7 +17,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Search}
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.{input_checkbox, input_number, input_text}
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.{input_checkbox, input_text}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{advanced_search_keywords, advanced_search_results}
 @(form: Form[Search], results: Option[Seq[Case]] = None, keywords: Seq[String])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
@@ -35,18 +35,16 @@
    formControlClass = Some("w-75")
   )
 
-  @input_number(
+  @input_text(
    field = form("commodity_code"),
    label = "Commodity code",
-   inputClass = Some("w-75"),
-   maxLength = Some(22),
-   minLength = Some(2)
+   formControlClass = Some("w-75")
   )
 
   @input_text(
-   field = form("good_description"),
-   label = "Goods description",
-   hint = Some("Searches the Ruling Goods Description and the Commercial Denomination"),
+   field = form("decision_details"),
+   label = "Ruling details",
+   hint = Some("Search the goods description, justification and the commercial denomination"),
    formControlClass = Some("w-75")
   )
 

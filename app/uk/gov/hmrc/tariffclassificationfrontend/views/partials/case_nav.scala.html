@@ -36,12 +36,6 @@
     )
 
     @case_nav_item(
-        active = page == CaseDetailPage.RULING,
-        title = messages("case.menu.ruling"),
-        call = routes.CaseController.rulingDetails(c.reference)
-    )
-
-    @case_nav_item(
         active = page == CaseDetailPage.ATTACHMENTS,
         title = messages("case.menu.attachments"),
         call = routes.AttachmentsController.attachmentsDetails(c.reference)
@@ -57,6 +51,12 @@
         active = page == CaseDetailPage.KEYWORDS,
         title = messages("case.menu.keywords"),
         call = routes.CaseController.keywordsDetails(c.reference)
+    )
+
+    @case_nav_item(
+        active = page == CaseDetailPage.RULING,
+        title = messages("case.menu.ruling"),
+        call = routes.CaseController.rulingDetails(c.reference)
     )
 
     @if(Set(CaseStatus.COMPLETED, CaseStatus.CANCELLED).contains(c.status)) {

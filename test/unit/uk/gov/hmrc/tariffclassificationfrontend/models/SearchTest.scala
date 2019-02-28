@@ -25,7 +25,7 @@ class SearchTest extends UnitSpec {
   private val populatedSearch = Search(
     traderName = Some("trader-name"),
     commodityCode = Some("commodity-code"),
-    goodDescription = Some("good-description"),
+    decisionDetails = Some("decision-details"),
     liveRulingsOnly = Some(true),
     keywords = Some(Set("K1", "K2"))
   )
@@ -58,7 +58,7 @@ class SearchTest extends UnitSpec {
     val populatedParams: Map[String, Seq[String]] = Map(
       "trader_name" -> Seq("trader-name"),
       "commodity_code" -> Seq("commodity-code"),
-      "good_description" -> Seq("good-description"),
+      "decision_details" -> Seq("decision-details"),
       "live_rulings_only" -> Seq("true"),
       "keyword[0]" -> Seq("K1"),
       "keyword[1]" -> Seq("K2")
@@ -67,13 +67,13 @@ class SearchTest extends UnitSpec {
     val emptyParams: Map[String, Seq[String]] = Map(
       "trader_name" -> Seq(""),
       "commodity_code" -> Seq(""),
-      "good_description" -> Seq(""),
+      "decision_details" -> Seq(""),
       "live_rulings_only" -> Seq(""),
       "keyword[0]" -> Seq(""),
       "keyword[1]" -> Seq("")
     )
 
-    val populatedQueryParam: String = "keyword[0]=K1&trader_name=trader-name&keyword[1]=K2&commodity_code=commodity-code&good_description=good-description&live_rulings_only=true"
+    val populatedQueryParam: String = "keyword[0]=K1&decision_details=decision-details&trader_name=trader-name&keyword[1]=K2&commodity_code=commodity-code&live_rulings_only=true"
 
     "Unbind Unpopulated Search to Query String" in {
       Search.binder.unbind("", Search()) shouldBe ""

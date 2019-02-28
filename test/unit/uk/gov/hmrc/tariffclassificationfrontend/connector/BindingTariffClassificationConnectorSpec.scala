@@ -54,8 +54,8 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
 
   private val connector = new BindingTariffClassificationConnector(configuration, client)
 
-  override protected def beforeEach(): Unit = {
-    super.beforeEach()
+  override def beforeAll(): Unit = {
+    super.beforeAll()
 
     given(configuration.bindingTariffClassificationUrl).willReturn(getUrl)
   }
@@ -169,7 +169,7 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
         s"&sort_by=commodity-code" +
         s"&trader_name=trader" +
         s"&commodity_code=comm-code" +
-        s"&good_description=good-description" +
+        s"&decision_details=decision-details" +
         s"&min_decision_end=${encode("2019-01-01T00:00:00Z")}" +
         s"&status=COMPLETED" +
         s"&keyword=K1" +
@@ -184,7 +184,7 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
       val search = Search(
         traderName = Some("trader"),
         commodityCode = Some("comm-code"),
-        goodDescription = Some("good-description"),
+        decisionDetails = Some("decision-details"),
         liveRulingsOnly = Some(true),
         keywords = Some(Set("K1", "K2"))
       )
@@ -215,15 +215,15 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
       await(connector.search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE))) shouldBe Seq(Cases.btiCaseExample)
     }
 
-    "filter by 'good_description'" in {
-      stubFor(get(urlEqualTo(s"/cases?sort_direction=asc&sort_by=commodity-code&good_description=good-description"))
+    "filter by 'decision_details'" in {
+      stubFor(get(urlEqualTo(s"/cases?sort_direction=asc&sort_by=commodity-code&decision_details=decision-details"))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
           .withBody(CasePayloads.gatewayCases))
       )
 
       val search = Search(
-        goodDescription = Some("good-description")
+        decisionDetails = Some("decision-details")
       )
       await(connector.search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE))) shouldBe Seq(Cases.btiCaseExample)
     }

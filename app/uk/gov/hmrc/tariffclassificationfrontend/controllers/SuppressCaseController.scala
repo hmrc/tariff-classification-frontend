@@ -22,6 +22,7 @@ import play.api.mvc._
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.NEW
+import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
@@ -38,14 +39,14 @@ class SuppressCaseController @Inject()(authenticatedAction: AuthenticatedAction,
   override protected val caseService: CasesService = casesService
 
   override protected def redirect: String => Call = routes.CaseController.applicationDetails
-  override protected def isValidCase: Case => Boolean = _.status == NEW
+  override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = c.status == NEW
 
   def suppressCase(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     getCaseAndRenderView(reference, c => successful(views.html.suppress_case(c)))
   }
 
   def confirmSuppressCase(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
-    getCaseAndRenderView(reference, casesService.suppressCase(_, request.operator).map(views.html.confirm_suppress_case(_)))
+    getCaseAndRenderView(reference, casesService.suppressCase(_, request.operator).map(views.html.confirm_with_contact_details(_, "suppressed")))
   }
 
 }

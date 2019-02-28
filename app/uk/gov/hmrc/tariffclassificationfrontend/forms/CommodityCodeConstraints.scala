@@ -16,16 +16,15 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.forms
 
-import play.api.data.Form
-import play.api.data.Forms.{mapping, nonEmptyText}
+import javax.inject.Inject
+import play.api.data.validation.{Constraint, Invalid, Valid}
+import uk.gov.hmrc.tariffclassificationfrontend.service.CommodityCodeService
 
-case class KeywordFormData(keyword: String)
+class CommodityCodeConstraints @Inject()(commodityCodeService: CommodityCodeService) {
 
-object KeywordForm {
-  val form = Form(
-    mapping(
-      "keyword" -> nonEmptyText
-    )(KeywordFormData.apply)(KeywordFormData.unapply)
-  )
+  val commodityCodeExistsInUKTradeTariff: Constraint[String] = Constraint("constraints.commodityCodeExists")({
+    case s: String if commodityCodeService.checkIfCodeExists(s) => Valid
+    case _: String => Invalid("This commodity code is not in the UK Trade Tariff")
+  })
 
 }

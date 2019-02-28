@@ -41,11 +41,12 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
                                fileService: FileStoreService,
                                eventsService: EventsService,
                                mapper: DecisionFormMapper,
+                               decisionForm: DecisionForm,
                                val messagesApi: MessagesApi,
                                implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
   private lazy val activityForm: Form[ActivityFormData] = ActivityForm.form
-  private lazy val keywordForm: Form[KeywordFormData] = KeywordForm.form
+  private lazy val keywordForm: Form[String] = KeywordForm.form
 
   def trader(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     getCaseAndRenderView(
@@ -72,8 +73,14 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
   }
 
   def rulingDetails(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
+
     getCaseAndRenderView(reference, CaseDetailPage.RULING, c => {
-      fileService.getAttachments(c).map(views.html.partials.ruling_details(c, _))
+
+      val form = decisionForm.bindFrom(c.decision)
+
+      fileService
+        .getAttachments(c)
+        .map(views.html.partials.ruling_details(c, form, _))
     })
   }
 
@@ -112,17 +119,17 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
         getCaseAndRenderView(
           reference, CaseDetailPage.KEYWORDS, c => {
             keywordsService.autoCompleteKeywords.flatMap(autoCompleteKeywords =>
-            successful(views.html.partials.keywords_details(c, autoCompleteKeywords, errorForm)))
+              successful(views.html.partials.keywords_details(c, autoCompleteKeywords, errorForm)))
           }),
 
-      validForm =>
+      keyword =>
         getCaseAndRenderView(reference, CaseDetailPage.KEYWORDS,
           c =>
             for {
-              updatedCase <- keywordsService.addKeyword(c, validForm.keyword, request.operator)
+              updatedCase <- keywordsService.addKeyword(c, keyword, request.operator)
               autoCompleteKeywords <- keywordsService.autoCompleteKeywords
             } yield views.html.partials.keywords_details(updatedCase, autoCompleteKeywords, keywordForm)
-          )
+        )
     )
   }
 

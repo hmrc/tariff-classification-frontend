@@ -26,15 +26,14 @@ import org.scalatest.{BeforeAndAfterEach, Matchers, WordSpec}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.{MimeTypes, Status}
 import play.api.i18n.{DefaultLangs, DefaultMessagesApi}
-import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded, Result}
-import play.api.test.{FakeHeaders, FakeRequest}
+import play.api.mvc.Result
 import play.api.{Configuration, Environment}
-import play.filters.csrf.CSRF.{Token, TokenProvider}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, Operator}
-import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
+import uk.gov.hmrc.tariffclassificationfrontend.forms.{CommodityCodeConstraints, DecisionForm}
+import uk.gov.hmrc.tariffclassificationfrontend.models._
+import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, CommodityCodeService}
 import uk.gov.tariffclassificationfrontend.utils.Cases
 
 import scala.concurrent.Future.{failed, successful}
@@ -49,15 +48,26 @@ class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   private val appConfig = new AppConfig(configuration, env)
   private val casesService = mock[CasesService]
   private val operator = mock[Operator]
+  private val commodityCodeService = mock[CommodityCodeService]
+  private val decisionForm = new DecisionForm(new CommodityCodeConstraints(commodityCodeService))
 
-  private val caseWithStatusOPEN = Cases.btiCaseExample.copy(status = CaseStatus.OPEN)
+  private val completeDecision = Decision(
+    bindingCommodityCode = "040900",
+    justification = "justification-content",
+    goodsDescription = "goods-description",
+    methodSearch = Some("method-to-search"))
+
+  private val inCompleteDecision = Decision(bindingCommodityCode = "", justification = "", goodsDescription = "")
+
+  private val validCaseWithStatusOPEN = Cases.btiCaseExample.copy(status = CaseStatus.OPEN, decision = Some(completeDecision))
   private val caseWithStatusCOMPLETED = Cases.btiCaseExample.copy(status = CaseStatus.COMPLETED)
   private val caseWithoutDecision = Cases.btiCaseExample.copy(status = CaseStatus.OPEN, decision = None)
+  private val caseWithoutIncompleteDecision = Cases.btiCaseExample.copy(status = CaseStatus.OPEN, decision = Some(inCompleteDecision))
 
   private implicit val mat: Materializer = app.materializer
   private implicit val hc: HeaderCarrier = HeaderCarrier()
 
-  private val controller = new CompleteCaseController(new SuccessfulAuthenticatedAction(operator), casesService, messageApi, appConfig)
+  private val controller = new CompleteCaseController(new SuccessfulAuthenticatedAction(operator), casesService, decisionForm, messageApi, appConfig)
 
   override def afterEach(): Unit = {
     super.afterEach()
@@ -66,8 +76,10 @@ class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
   "Complete Case" should {
 
+    when(commodityCodeService.checkIfCodeExists(any())).thenReturn(true)
+
     "return OK and HTML content type" in {
-      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusOPEN)))
+      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(validCaseWithStatusOPEN)))
 
       val result: Result = await(controller.completeCase("reference")(newFakeGETRequestWithCSRF(app)))
 
@@ -115,8 +127,8 @@ class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   "Confirm Complete Case" should {
 
     "return OK and HTML content type" in {
-      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusOPEN)))
-      when(casesService.completeCase(refEq(caseWithStatusOPEN), refEq(operator), any[Clock])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusCOMPLETED))
+      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(validCaseWithStatusOPEN)))
+      when(casesService.completeCase(refEq(validCaseWithStatusOPEN), refEq(operator), any[Clock])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusCOMPLETED))
 
       val result: Result = await(controller.confirmCompleteCase("reference")(newFakePOSTRequestWithCSRF(app)))
 
@@ -129,7 +141,7 @@ class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     "redirect to Application Details for non OPEN statuses" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusCOMPLETED)))
 
-      val result: Result= await(controller.confirmCompleteCase("reference")(newFakePOSTRequestWithCSRF(app)))
+      val result: Result = await(controller.confirmCompleteCase("reference")(newFakePOSTRequestWithCSRF(app)))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
@@ -140,7 +152,18 @@ class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     "redirect to Application Details for case without decision" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithoutDecision)))
 
-      val result: Result= await(controller.confirmCompleteCase("reference")(newFakePOSTRequestWithCSRF(app)))
+      val result: Result = await(controller.confirmCompleteCase("reference")(newFakePOSTRequestWithCSRF(app)))
+
+      status(result) shouldBe Status.SEE_OTHER
+      contentTypeOf(result) shouldBe None
+      charsetOf(result) shouldBe None
+      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/ruling")
+    }
+
+    "redirect to Application Details for case with incomplete decision" in {
+      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithoutIncompleteDecision)))
+
+      val result: Result = await(controller.confirmCompleteCase("reference")(newFakePOSTRequestWithCSRF(app)))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None

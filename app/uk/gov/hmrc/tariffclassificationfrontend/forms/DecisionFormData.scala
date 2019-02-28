@@ -16,9 +16,11 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.forms
 
+import javax.inject.Inject
 import play.api.data.Form
 import play.api.data.Forms._
 import uk.gov.hmrc.tariffclassificationfrontend.forms.FormConstraints._
+import uk.gov.hmrc.tariffclassificationfrontend.models.Decision
 
 case class DecisionFormData(bindingCommodityCode: String = "",
                             goodsDescription: String = "",
@@ -28,11 +30,11 @@ case class DecisionFormData(bindingCommodityCode: String = "",
                             methodExclusion: String = "",
                             attachments: Seq[String] = Seq.empty)
 
-object DecisionForm {
+class DecisionForm @Inject()(commodityCodeConstraints: CommodityCodeConstraints) {
 
-  val form = Form(
+  val form: Form[DecisionFormData] = Form[DecisionFormData](
     mapping(
-      "bindingCommodityCode" -> text.verifying(emptyOr(validCommodityCode): _*),
+      "bindingCommodityCode" -> text.verifying(emptyOr(validCommodityCode, commodityCodeConstraints.commodityCodeExistsInUKTradeTariff): _*),
       "goodsDescription" -> text,
       "methodSearch" -> text,
       "justification" -> text,
@@ -41,6 +43,34 @@ object DecisionForm {
       "attachments" -> seq(text)
     )(DecisionFormData.apply)(DecisionFormData.unapply)
   )
+
+  val mandatoryFieldsForm: Form[DecisionFormData] = Form(
+    mapping(
+      "bindingCommodityCode" -> nonEmptyText,
+      "goodsDescription" -> nonEmptyText,
+      "methodSearch" -> nonEmptyText,
+      "justification" -> nonEmptyText,
+      "methodCommercialDenomination" -> text,
+      "methodExclusion" -> text,
+      "attachments" -> seq(text)
+    )(DecisionFormData.apply)(DecisionFormData.unapply)
+  )
+
+  def bindFrom: Option[Decision] => Option[Form[DecisionFormData]] = { decision =>
+    decision.map(mapFrom)
+      .map(mandatoryFieldsForm.fillAndValidate)
+  }
+
+  private def mapFrom(d: Decision): DecisionFormData = {
+    DecisionFormData(bindingCommodityCode = d.bindingCommodityCode,
+      goodsDescription = d.goodsDescription,
+      methodSearch = d.methodSearch.getOrElse(""),
+      justification = d.justification,
+      methodCommercialDenomination = d.methodCommercialDenomination.getOrElse(""),
+      methodExclusion = d.methodExclusion.getOrElse(""),
+      attachments = Seq.empty
+    )
+  }
 }
 
 

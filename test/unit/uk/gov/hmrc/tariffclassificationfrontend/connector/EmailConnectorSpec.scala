@@ -47,8 +47,8 @@ class EmailConnectorSpec extends UnitSpec
 
   private val connector = new EmailConnector(configuration, client)
 
-  override protected def beforeEach(): Unit = {
-    super.beforeEach()
+  override def beforeAll(): Unit = {
+    super.beforeAll()
 
     given(configuration.emailUrl).willReturn(getUrl)
     given(configuration.emailRendererUrl).willReturn(getUrl)

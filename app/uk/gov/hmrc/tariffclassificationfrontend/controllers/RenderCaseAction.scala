@@ -22,6 +22,7 @@ import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models.Case
+import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
@@ -36,13 +37,13 @@ trait RenderCaseAction extends FrontendController with I18nSupport {
 
   protected def redirect: String => Call
 
-  protected def isValidCase: Case => Boolean
+  protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean
 
   protected def getCaseAndRenderView(caseReference: String, toHtml: Case => Future[HtmlFormat.Appendable])
-                                    (implicit request: Request[_]): Future[Result] = {
+                                    (implicit request: AuthenticatedRequest[_]): Future[Result] = {
 
     caseService.getOne(caseReference).flatMap {
-      case Some(c: Case) if isValidCase(c) => toHtml(c).map(Ok(_))
+      case Some(c: Case) if isValidCase(c)(request) => toHtml(c).map(Ok(_))
       case Some(_) => successful(Redirect(redirect(caseReference)))
       case _ => successful(Ok(views.html.case_not_found(caseReference)))
     }
@@ -50,10 +51,10 @@ trait RenderCaseAction extends FrontendController with I18nSupport {
 
   protected def getCaseAndRespond(caseReference: String,
                                   toResult: Case => Future[Result])
-                                 (implicit request: Request[_]): Future[Result] = {
+                                 (implicit request: AuthenticatedRequest[_]): Future[Result] = {
 
     caseService.getOne(caseReference).flatMap {
-      case Some(c: Case) if isValidCase(c) => toResult(c)
+      case Some(c: Case) if isValidCase(c)(request) => toResult(c)
       case Some(_) => successful(Redirect(redirect(caseReference)))
       case _ => successful(Ok(views.html.case_not_found(caseReference)))
     }

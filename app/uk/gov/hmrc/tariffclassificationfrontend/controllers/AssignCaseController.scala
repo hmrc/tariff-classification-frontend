@@ -21,33 +21,43 @@ import play.api.i18n.MessagesApi
 import play.api.mvc._
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models.Case
-import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus._
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
 @Singleton
-class ReopenCaseController @Inject()(authenticatedAction: AuthenticatedAction,
-                                     casesService: CasesService,
+class AssignCaseController @Inject()(authenticatedAction: AuthenticatedAction,
+                                     override val caseService: CasesService,
                                      val messagesApi: MessagesApi,
-                                     implicit val appConfig: AppConfig) extends RenderCaseAction {
+                                     override implicit val config: AppConfig) extends RenderCaseAction {
 
-  override protected val config: AppConfig = appConfig
-  override protected val caseService: CasesService = casesService
+  override protected def redirect: String => Call = routes.CaseController.trader
 
-  override protected def redirect: String => Call = routes.CaseController.applicationDetails
-
-  override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = c.status == SUSPENDED || c.status == REFERRED
-
-  def reopenCase(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
-    getCaseAndRenderView(reference, c => successful(views.html.reopen_case(c)))
+  override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = {
+    (c.queueId, c.assignee) match {
+      case (Some(_), None) => true
+      case (Some(_), Some(operator)) if request.operator.id != operator.id => true
+      case _ => false
+    }
   }
 
-  def confirmReopenCase(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
-    getCaseAndRenderView(reference, casesService.reopenCase(_, request.operator).map(views.html.confirm_reopen_case(_)))
+  def get(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
+    getCaseAndRenderView(reference, c => successful(views.html.assign_case(c)))
+  }
+
+  def post(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
+    def respond: Case => Future[Result] = {
+      case c: Case if c.assignee.isEmpty =>
+        caseService.assignCase(c, request.operator).map(c => Redirect(routes.CaseController.trader(reference)))
+      case _ =>
+        successful(Redirect(routes.AssignCaseController.get(reference)))
+    }
+
+    getCaseAndRespond(reference, respond)
   }
 
 }

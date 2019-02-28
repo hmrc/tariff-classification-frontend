@@ -33,7 +33,7 @@ object Cases {
   val contactExample = Contact("name", "email", Some("phone"))
   val btiApplicationExample = BTIApplication(eoriDetailsExample, contactExample, Some(eoriAgentDetailsExample), false, "Laptop", "Personal Computer", None, None, None, None, None, None, false, false)
   val simpleBtiApplicationExample = BTIApplication(eoriDetailsExample, contactExample, None, false, "Laptop", "Personal Computer", None, None, None, None, None, None, false, false)
-  val decision = Decision("AD12324FR", Some(Instant.now()), Some(Instant.now().plusSeconds(2*3600*24*365)), "justification", "good description", None, None, Some("denomination"), None)
+  val decision = Decision("040900", Some(Instant.now()), Some(Instant.now().plusSeconds(2*3600*24*365)), "justification", "good description", None, None, Some("denomination"), None)
   val liabilityApplicationExample = LiabilityOrder(eoriDetailsExample, contactExample, "status", "port", "entry number", Instant.now())
   val btiCaseExample = Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, None, None, btiApplicationExample, Some(decision), Seq())
   val simpleCaseExample = Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, None, None, simpleBtiApplicationExample, None, Seq())
@@ -54,6 +54,22 @@ object Cases {
 
   def withAssignee(operator: Option[Operator]): Case => Case = {
     _.copy(assignee = operator)
+  }
+
+  def withoutAssignee(): Case => Case = {
+    _.copy(assignee = None)
+  }
+
+  def withDaysElapsed(elapsed: Int): Case => Case = {
+    _.copy(daysElapsed = elapsed)
+  }
+
+  def withQueue(queue: String): Case => Case = {
+    _.copy(queueId = Some(queue))
+  }
+
+  def withoutQueue(): Case => Case = {
+    _.copy(queueId = None)
   }
 
   def withBTIDetails(offline: Boolean = false,

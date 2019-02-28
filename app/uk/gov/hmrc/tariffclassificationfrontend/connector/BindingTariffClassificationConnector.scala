@@ -83,7 +83,7 @@ class BindingTariffClassificationConnector @Inject()(appConfig: AppConfig, clien
     val optParams = Seq(
       search.traderName.map(qb.unbind("trader_name", _)),
       search.commodityCode.map(qb.unbind("commodity_code", _)),
-      search.goodDescription.map(qb.unbind("good_description", _)),
+      search.decisionDetails.map(qb.unbind("decision_details", _)),
       search.liveRulingsOnly.filter(identity).map(_ => qb.unbind("min_decision_end", Instant.now(clock).toString) + "&" + qb.unbind("status", COMPLETED.toString)),
       search.keywords.map(_.map(qb.unbind("keyword", _)).mkString("&"))
     ).filter(_.isDefined).map(_.get)
