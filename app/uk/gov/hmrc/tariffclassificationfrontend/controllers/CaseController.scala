@@ -24,7 +24,7 @@ import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms._
-import uk.gov.hmrc.tariffclassificationfrontend.models.Case
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, NoPagination}
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, EventsService, FileStoreService, KeywordsService}
 import uk.gov.hmrc.tariffclassificationfrontend.views
 import uk.gov.hmrc.tariffclassificationfrontend.views.CaseDetailPage
@@ -86,7 +86,7 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
 
   def activityDetails(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     getCaseAndRenderView(reference, CaseDetailPage.ACTIVITY, c => {
-      eventsService.getEvents(c.reference).map(views.html.partials.activity_details(c, _, activityForm))
+      eventsService.getEvents(c.reference, NoPagination()).map(views.html.partials.activity_details(c, _, activityForm))
     })
   }
 
@@ -103,7 +103,7 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
     activityForm.bindFromRequest.fold(
       errorForm =>
         getCaseAndRenderView(
-          reference, CaseDetailPage.ACTIVITY, c => eventsService.getEvents(c.reference).map(views.html.partials.activity_details(c, _, errorForm))),
+          reference, CaseDetailPage.ACTIVITY, c => eventsService.getEvents(c.reference, NoPagination()).map(views.html.partials.activity_details(c, _, errorForm))),
 
       validForm =>
         getCaseAndRedirect(reference, CaseDetailPage.ACTIVITY, c => {

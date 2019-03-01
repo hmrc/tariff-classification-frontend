@@ -29,7 +29,7 @@ import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.models.Queue
+import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, QueuesService}
 
 import scala.concurrent.Future
@@ -51,7 +51,7 @@ class QueuesControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSui
   "Queue" should {
 
     "return 200 OK and HTML content type when Queue is found" in {
-      given(casesService.getCasesByQueue(refEq(queue))(any[HeaderCarrier])).willReturn(Future.successful(Seq.empty))
+      given(casesService.getCasesByQueue(refEq(queue), refEq(NoPagination()))(any[HeaderCarrier])).willReturn(Future.successful(Paged.empty[Case]))
       given(queuesService.getOneBySlug("slug")).willReturn(Some(queue))
       given(queuesService.getAll).willReturn(Seq(queue))
 
@@ -63,7 +63,7 @@ class QueuesControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSui
     }
 
     "return 200 OK and HTML content type when Queue is not found" in {
-      given(casesService.getCasesByQueue(refEq(queue))(any[HeaderCarrier])).willReturn(Future.successful(Seq.empty))
+      given(casesService.getCasesByQueue(refEq(queue), refEq(NoPagination()))(any[HeaderCarrier])).willReturn(Future.successful(Paged.empty[Case]))
       given(queuesService.getOneBySlug("slug")).willReturn(None)
       given(queuesService.getAll).willReturn(Seq(queue))
 

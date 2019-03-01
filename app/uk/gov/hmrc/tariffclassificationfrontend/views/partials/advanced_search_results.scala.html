@@ -17,10 +17,10 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes
 @import uk.gov.hmrc.tariffclassificationfrontend.models.AppealStatus.AppealStatus
-@import uk.gov.hmrc.tariffclassificationfrontend.models.{AppealStatus, Case, ReviewStatus}
 @import uk.gov.hmrc.tariffclassificationfrontend.models.ReviewStatus.ReviewStatus
+@import uk.gov.hmrc.tariffclassificationfrontend.models.{AppealStatus, Case, Paged, ReviewStatus}
 @import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
-@(results: Seq[Case])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(results: Paged[Case])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 <div id="advanced_search_results">
   <table>
@@ -35,7 +35,7 @@
     </tr>
    </thead>
    <tbody>
-    @for((c: Case, index: Int) <- results.zipWithIndex) {
+    @for((c: Case, index: Int) <- results.results.zipWithIndex) {
      <tr id="advanced_search_results-row-@index">
 
       <td>

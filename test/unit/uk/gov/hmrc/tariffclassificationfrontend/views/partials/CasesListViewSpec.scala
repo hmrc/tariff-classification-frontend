@@ -20,7 +20,7 @@ import java.time.{LocalDate, ZoneOffset}
 
 import org.scalatest.BeforeAndAfterEach
 import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes
-import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus, Paged}
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewSpec
 import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.cases_list
@@ -38,7 +38,7 @@ class CasesListViewSpec extends ViewSpec with BeforeAndAfterEach {
       // Given
 
       // When
-      val doc = view(cases_list(Seq.empty))
+      val doc = view(cases_list(Paged.empty[Case]))
 
       // Then
       doc should containElementWithID("cases_list-empty")
@@ -56,7 +56,7 @@ class CasesListViewSpec extends ViewSpec with BeforeAndAfterEach {
       )
 
       // When
-      val doc = view(cases_list(Seq(c)))
+      val doc = view(cases_list(Paged(Seq(c))))
 
       // Then
       doc shouldNot containElementWithID("cases_list-empty")
@@ -85,7 +85,7 @@ class CasesListViewSpec extends ViewSpec with BeforeAndAfterEach {
       )
 
       // When
-      val doc = view(cases_list(Seq(c)))
+      val doc = view(cases_list(Paged(Seq(c))))
 
       // Then
       doc should containElementWithID("cases_list-row-0-reference")
@@ -101,7 +101,7 @@ class CasesListViewSpec extends ViewSpec with BeforeAndAfterEach {
       )
 
       // When
-      val doc = view(cases_list(Seq(c)))
+      val doc = view(cases_list(Paged(Seq(c))))
 
       // Then
       doc should containElementWithID("cases_list-row-0-reference")
@@ -116,7 +116,7 @@ class CasesListViewSpec extends ViewSpec with BeforeAndAfterEach {
       )
 
       // When
-      val doc = view(cases_list(Seq(c)))
+      val doc = view(cases_list(Paged(Seq(c))))
 
       // Then
       doc should containElementWithID("cases_list-row-0-reference")

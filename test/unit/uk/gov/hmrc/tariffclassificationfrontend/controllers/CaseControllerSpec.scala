@@ -31,7 +31,7 @@ import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.{CommodityCodeConstraints, DecisionForm, DecisionFormMapper}
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Event, Operator}
+import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.service._
 import uk.gov.tariffclassificationfrontend.utils.{Cases, Events}
 
@@ -150,7 +150,7 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
     "return 200 OK and HTML content type" in {
       val aCase = Cases.btiCaseExample
       given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
-      given(eventService.getEvents(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(Events.events))
+      given(eventService.getEvents(refEq(aCase.reference), refEq(NoPagination()))(any[HeaderCarrier])) willReturn Future.successful(Paged(Events.events))
 
       val result = controller.activityDetails(aCase.reference)(newFakeGETRequestWithCSRF(app))
 
@@ -162,7 +162,7 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
     "return 200 OK and HTML content type when no Events are present" in {
       val aCase = Cases.btiCaseExample
       given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
-      given(eventService.getEvents(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(Seq()))
+      given(eventService.getEvents(refEq(aCase.reference), refEq(NoPagination()))(any[HeaderCarrier])) willReturn Future.successful(Paged.empty[Event])
 
       val result = controller.activityDetails(aCase.reference)(newFakeGETRequestWithCSRF(app))
 
@@ -189,9 +189,8 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
     "add a new note when a case note is provided" in {
       val aNote = "This is a note"
       val aValidForm = newFakePOSTRequestWithCSRF(app, Map("note" -> aNote))
-      given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
-      given(eventService.addNote(refEq(aCase), refEq(aNote), refEq(operator), any[Clock])(any[HeaderCarrier]))
-        .willReturn(Future.successful(event))
+      given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])) willReturn Future.successful(Some(aCase))
+      given(eventService.addNote(refEq(aCase), refEq(aNote), refEq(operator), any[Clock])(any[HeaderCarrier])) willReturn Future.successful(event)
 
       val result = await(controller.addNote(aCase.reference)(aValidForm))
       locationOf(result) shouldBe Some("/tariff-classification/cases/1/activity")
@@ -199,8 +198,8 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
 
     "displays an error when no case note is provided" in {
       val aValidForm = newFakePOSTRequestWithCSRF(app, Map())
-      given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
-      given(eventService.getEvents(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(Seq()))
+      given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])) willReturn Future.successful(Some(aCase))
+      given(eventService.getEvents(refEq(aCase.reference), refEq(NoPagination()))(any[HeaderCarrier])) willReturn Future.successful(Paged.empty[Event])
 
       val result = controller.addNote(aCase.reference)(aValidForm)
       status(result) shouldBe Status.OK

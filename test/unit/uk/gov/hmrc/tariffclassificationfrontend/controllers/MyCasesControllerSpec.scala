@@ -30,7 +30,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Operator, Queue}
+import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, QueuesService}
 
 import scala.concurrent.Future
@@ -52,7 +52,7 @@ class MyCasesControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSu
   "My Cases" should {
 
     "return 200 OK and HTML content type" in {
-      given(casesService.getCasesByAssignee(refEq(models.Operator("0", Some("name"))))(any[HeaderCarrier])).willReturn(Future.successful(Seq.empty))
+      given(casesService.getCasesByAssignee(refEq(models.Operator("0", Some("name"))), refEq(NoPagination()))(any[HeaderCarrier])).willReturn(Future.successful(Paged.empty[Case]))
       given(queuesService.getAll).willReturn(Seq(queue))
 
       val result = await(controller.myCases()(fakeRequest))

@@ -48,6 +48,7 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
   private val client = new DefaultHttpClient(fakeApplication.configuration, auditConnector, wsClient, actorSystem)
   private val gatewayQueue = Queue("1", "gateway", "Gateway")
   private val otherQueue = Queue("2", "other", "Other")
+  private val pagination = SearchPagination(1, 2)
   private implicit val hc: HeaderCarrier = HeaderCarrier()
   private val currentTime = LocalDate.of(2019,1,1).atStartOfDay().toInstant(ZoneOffset.UTC)
   private implicit val clock: Clock = Clock.fixed(currentTime, ZoneOffset.UTC)
@@ -63,43 +64,43 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
   "Connector 'Get Cases By Queue'" should {
 
     "get empty cases in 'gateway' queue" in {
-      stubFor(get(urlEqualTo("/cases?queue_id=none&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort_by=days-elapsed&sort_direction=desc"))
+      stubFor(get(urlEqualTo("/cases?application_type=BTI&queue_id=none&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort_by=days-elapsed&sort_direction=desc&page=1&page_size=2"))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
-          .withBody("[]"))
+          .withBody(CasePayloads.pagedEmpty))
       )
 
-      await(connector.findCasesByQueue(gatewayQueue)) shouldBe Seq()
+      await(connector.findCasesByQueue(gatewayQueue, pagination)) shouldBe Paged.empty[Case]
     }
 
     "get cases in 'gateway' queue" in {
-      stubFor(get(urlEqualTo("/cases?queue_id=none&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort_by=days-elapsed&sort_direction=desc"))
+      stubFor(get(urlEqualTo("/cases?application_type=BTI&queue_id=none&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort_by=days-elapsed&sort_direction=desc&page=1&page_size=2"))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
-          .withBody(CasePayloads.gatewayCases))
+          .withBody(CasePayloads.pagedGatewayCases))
       )
 
-      await(connector.findCasesByQueue(gatewayQueue)) shouldBe Seq(Cases.btiCaseExample)
+      await(connector.findCasesByQueue(gatewayQueue, pagination)) shouldBe Paged(Seq(Cases.btiCaseExample))
     }
 
     "get empty cases in 'other' queue" in {
-      stubFor(get(urlEqualTo("/cases?queue_id=2&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort_by=days-elapsed&sort_direction=desc"))
+      stubFor(get(urlEqualTo("/cases?application_type=BTI&queue_id=2&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort_by=days-elapsed&sort_direction=desc&page=1&page_size=2"))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
-          .withBody("[]"))
+          .withBody(CasePayloads.pagedEmpty))
       )
 
-      await(connector.findCasesByQueue(otherQueue)) shouldBe Seq()
+      await(connector.findCasesByQueue(otherQueue, pagination)) shouldBe Paged.empty[Case]
     }
 
     "get cases in 'other' queue" in {
-      stubFor(get(urlEqualTo("/cases?queue_id=2&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort_by=days-elapsed&sort_direction=desc"))
+      stubFor(get(urlEqualTo("/cases?application_type=BTI&queue_id=2&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort_by=days-elapsed&sort_direction=desc&page=1&page_size=2"))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
-          .withBody(CasePayloads.gatewayCases))
+          .withBody(CasePayloads.pagedGatewayCases))
       )
 
-      await(connector.findCasesByQueue(otherQueue)) shouldBe Seq(Cases.btiCaseExample)
+      await(connector.findCasesByQueue(otherQueue, pagination)) shouldBe Paged(Seq(Cases.btiCaseExample))
     }
   }
 
@@ -129,23 +130,23 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
   "Connector 'Get Cases By Assignee'" should {
 
     "get empty cases" in {
-      stubFor(get(urlEqualTo("/cases?assignee_id=assignee&status=NEW,OPEN,REFERRED,SUSPENDED&sort_by=days-elapsed&sort_direction=desc"))
+      stubFor(get(urlEqualTo("/cases?application_type=BTI&assignee_id=assignee&status=NEW,OPEN,REFERRED,SUSPENDED&sort_by=days-elapsed&sort_direction=desc&page=1&page_size=2"))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
-          .withBody("[]"))
+          .withBody(CasePayloads.pagedEmpty))
       )
 
-      await(connector.findCasesByAssignee(Operator("assignee"))) shouldBe Seq()
+      await(connector.findCasesByAssignee(Operator("assignee"), pagination)) shouldBe Paged.empty[Case]
     }
 
     "get cases" in {
-      stubFor(get(urlEqualTo("/cases?assignee_id=assignee&status=NEW,OPEN,REFERRED,SUSPENDED&sort_by=days-elapsed&sort_direction=desc"))
+      stubFor(get(urlEqualTo("/cases?application_type=BTI&assignee_id=assignee&status=NEW,OPEN,REFERRED,SUSPENDED&sort_by=days-elapsed&sort_direction=desc&page=1&page_size=2"))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
-          .withBody(CasePayloads.gatewayCases))
+          .withBody(CasePayloads.pagedGatewayCases))
       )
 
-      await(connector.findCasesByAssignee(Operator("assignee"))) shouldBe Seq(Cases.btiCaseExample)
+      await(connector.findCasesByAssignee(Operator("assignee"), pagination)) shouldBe Paged(Seq(Cases.btiCaseExample))
     }
   }
 
@@ -154,18 +155,19 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
     def encode(value: String): String = URLEncoder.encode(value, "UTF-8")
 
     "handle no filters" in {
-      stubFor(get(urlEqualTo("/cases?sort_direction=asc&sort_by=commodity-code"))
+      stubFor(get(urlEqualTo("/cases?application_type=BTI&sort_direction=asc&sort_by=commodity-code&page=1&page_size=2"))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
-          .withBody("[]"))
+          .withBody(CasePayloads.pagedEmpty))
       )
 
-      await(connector.search(Search(), Sort())) shouldBe Seq()
+      await(connector.search(Search(), Sort(), pagination)) shouldBe Paged.empty[Case]
     }
 
     "filter by all" in {
       val url = s"/cases" +
-        s"?sort_direction=asc" +
+        s"?application_type=BTI" +
+        s"&sort_direction=asc" +
         s"&sort_by=commodity-code" +
         s"&trader_name=trader" +
         s"&commodity_code=comm-code" +
@@ -173,12 +175,14 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
         s"&min_decision_end=${encode("2019-01-01T00:00:00Z")}" +
         s"&status=COMPLETED" +
         s"&keyword=K1" +
-        s"&keyword=K2"
+        s"&keyword=K2" +
+        s"&page=1" +
+        s"&page_size=2"
 
       stubFor(get(urlEqualTo(url))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
-          .withBody(CasePayloads.gatewayCases))
+          .withBody(CasePayloads.pagedGatewayCases))
       )
 
       val search = Search(
@@ -188,96 +192,96 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
         liveRulingsOnly = Some(true),
         keywords = Some(Set("K1", "K2"))
       )
-      await(connector.search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE))) shouldBe Seq(Cases.btiCaseExample)
+      await(connector.search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE), pagination)) shouldBe Paged(Seq(Cases.btiCaseExample))
     }
 
     "filter by 'trader name'" in {
-      stubFor(get(urlEqualTo(s"/cases?sort_direction=asc&sort_by=commodity-code&trader_name=trader"))
+      stubFor(get(urlEqualTo(s"/cases?application_type=BTI&sort_direction=asc&sort_by=commodity-code&trader_name=trader&page=1&page_size=2"))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
-          .withBody(CasePayloads.gatewayCases))
+          .withBody(CasePayloads.pagedGatewayCases))
       )
 
       val search = Search(traderName = Some("trader"))
-      await(connector.search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE))) shouldBe Seq(Cases.btiCaseExample)
+      await(connector.search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE), pagination)) shouldBe Paged(Seq(Cases.btiCaseExample))
     }
 
     "filter by 'commodity code'" in {
-      stubFor(get(urlEqualTo(s"/cases?sort_direction=asc&sort_by=commodity-code&commodity_code=comm-code"))
+      stubFor(get(urlEqualTo(s"/cases?application_type=BTI&sort_direction=asc&sort_by=commodity-code&commodity_code=comm-code&page=1&page_size=2"))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
-          .withBody(CasePayloads.gatewayCases))
+          .withBody(CasePayloads.pagedGatewayCases))
       )
 
       val search = Search(
         commodityCode = Some("comm-code")
       )
-      await(connector.search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE))) shouldBe Seq(Cases.btiCaseExample)
+      await(connector.search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE), pagination)) shouldBe Paged(Seq(Cases.btiCaseExample))
     }
 
     "filter by 'decision_details'" in {
-      stubFor(get(urlEqualTo(s"/cases?sort_direction=asc&sort_by=commodity-code&decision_details=decision-details"))
+      stubFor(get(urlEqualTo(s"/cases?application_type=BTI&sort_direction=asc&sort_by=commodity-code&decision_details=decision-details&page=1&page_size=2"))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
-          .withBody(CasePayloads.gatewayCases))
+          .withBody(CasePayloads.pagedGatewayCases))
       )
 
       val search = Search(
         decisionDetails = Some("decision-details")
       )
-      await(connector.search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE))) shouldBe Seq(Cases.btiCaseExample)
+      await(connector.search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE), pagination)) shouldBe Paged(Seq(Cases.btiCaseExample))
     }
 
     "filter by 'keyword'" in {
-      stubFor(get(urlEqualTo(s"/cases?sort_direction=asc&sort_by=commodity-code&keyword=K1&keyword=K2"))
+      stubFor(get(urlEqualTo(s"/cases?application_type=BTI&sort_direction=asc&sort_by=commodity-code&keyword=K1&keyword=K2&page=1&page_size=2"))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
-          .withBody(CasePayloads.gatewayCases))
+          .withBody(CasePayloads.pagedGatewayCases))
       )
 
       val search = Search(
         keywords = Some(Set("K1", "K2"))
       )
-      await(connector.search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE))) shouldBe Seq(Cases.btiCaseExample)
+      await(connector.search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE), pagination)) shouldBe Paged(Seq(Cases.btiCaseExample))
     }
 
     "get cases 'live only' = false" in {
-      stubFor(get(urlEqualTo(s"/cases?sort_direction=asc&sort_by=commodity-code"))
+      stubFor(get(urlEqualTo(s"/cases?application_type=BTI&sort_direction=asc&sort_by=commodity-code&page=1&page_size=2"))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
-          .withBody(CasePayloads.gatewayCases))
+          .withBody(CasePayloads.pagedGatewayCases))
       )
 
       val search = Search(
         liveRulingsOnly = Some(false)
       )
-      await(connector.search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE))) shouldBe Seq(Cases.btiCaseExample)
+      await(connector.search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE), pagination)) shouldBe Paged(Seq(Cases.btiCaseExample))
     }
 
     "get cases 'live only' = none" in {
-      stubFor(get(urlEqualTo(s"/cases?sort_direction=asc&sort_by=commodity-code"))
+      stubFor(get(urlEqualTo(s"/cases?application_type=BTI&sort_direction=asc&sort_by=commodity-code&page=1&page_size=2"))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
-          .withBody(CasePayloads.gatewayCases))
+          .withBody(CasePayloads.pagedGatewayCases))
       )
 
       val search = Search(
         liveRulingsOnly = None
       )
-      await(connector.search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE))) shouldBe Seq(Cases.btiCaseExample)
+      await(connector.search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE), pagination)) shouldBe Paged(Seq(Cases.btiCaseExample))
     }
 
     "get cases 'live only' = true" in {
-      stubFor(get(urlEqualTo(s"/cases?sort_direction=asc&sort_by=commodity-code&min_decision_end=${encode("2019-01-01T00:00:00Z")}&status=COMPLETED"))
+      stubFor(get(urlEqualTo(s"/cases?application_type=BTI&sort_direction=asc&sort_by=commodity-code&min_decision_end=${encode("2019-01-01T00:00:00Z")}&status=COMPLETED&page=1&page_size=2"))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
-          .withBody(CasePayloads.gatewayCases))
+          .withBody(CasePayloads.pagedGatewayCases))
       )
 
       val search = Search(
         liveRulingsOnly = Some(true)
       )
-      await(connector.search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE))) shouldBe Seq(Cases.btiCaseExample)
+      await(connector.search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE), pagination)) shouldBe Paged(Seq(Cases.btiCaseExample))
     }
   }
 
@@ -363,23 +367,23 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
 
     "return a list of Events for this case" in {
 
-      stubFor(get(urlEqualTo(s"/cases/$ref/events"))
+      stubFor(get(urlEqualTo(s"/cases/$ref/events&page=1&page_size=2"))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
-          .withBody(EventPayloads.events))
+          .withBody(EventPayloads.pagedEvents))
       )
 
-      await(connector.findEvents(ref)) shouldBe Events.events
+      await(connector.findEvents(ref, pagination)) shouldBe Paged(Events.events)
     }
 
     "returns empty list when case ref not found" in {
-      stubFor(get(urlEqualTo(s"/cases/$ref/events"))
+      stubFor(get(urlEqualTo(s"/cases/$ref/events&page=1&page_size=2"))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
-          .withBody("[]"))
+          .withBody(EventPayloads.pagedEmpty))
       )
 
-      await(connector.findEvents(ref)) shouldBe Seq()
+      await(connector.findEvents(ref, pagination)) shouldBe Paged.empty[Event]
     }
   }
 

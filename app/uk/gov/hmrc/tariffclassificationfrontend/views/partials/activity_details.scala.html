@@ -18,11 +18,11 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.forms.ActivityFormData
 @import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
-@import uk.gov.hmrc.tariffclassificationfrontend.models.{AppealStatus, AppealStatusChange, AssignmentChange, Case, CaseStatusChange, Event, EventType, ExtendedUseStatusChange, Note, Operator, ReviewStatus, ReviewStatusChange}
+@import uk.gov.hmrc.tariffclassificationfrontend.models.{AppealStatus, AppealStatusChange, AssignmentChange, Case, CaseStatusChange, Event, EventType, ExtendedUseStatusChange, Note, Operator, Paged, ReviewStatus, ReviewStatusChange}
 @import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.input_textarea
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{assignee, progressive_disclosure, tab_heading}
-@(c: Case, events: Seq[Event], activityForm : Form[ActivityFormData])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(c: Case, events: Paged[Event], activityForm : Form[ActivityFormData])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
     @tab_heading("activity", messages("case.menu.activity"))
 
@@ -47,7 +47,6 @@
         </div>
 
     </div>
-
     <table id="activity-events">
         <thead>
             <tr>
@@ -58,7 +57,7 @@
             </tr>
         </thead>
         <tbody>
-        @for((event: Event, index: Int) <- events.zipWithIndex) {
+        @for((event: Event, index: Int) <- events.results.zipWithIndex) {
             <tr id="activity-events-row-@{index}">
                 <td id="activity-events-row-@{index}-operator" class="activity-cell">@event.operator.name.getOrElse("Unknown")</td>
 
