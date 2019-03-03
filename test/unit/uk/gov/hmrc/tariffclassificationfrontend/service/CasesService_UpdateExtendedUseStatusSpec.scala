@@ -25,7 +25,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.tariffclassificationfrontend.audit.AuditService
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.connector.BindingTariffClassificationConnector
+import uk.gov.hmrc.tariffclassificationfrontend.connector.{BindingTariffClassificationConnector, RulingConnector}
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
 import uk.gov.tariffclassificationfrontend.utils.Cases._
@@ -37,12 +37,13 @@ class CasesService_UpdateExtendedUseStatusSpec extends UnitSpec with MockitoSuga
   private implicit val hc: HeaderCarrier = HeaderCarrier()
 
   private val connector = mock[BindingTariffClassificationConnector]
+  private val rulingConnector = mock[RulingConnector]
   private val emailService = mock[EmailService]
   private val fileStoreService = mock[FileStoreService]
   private val audit = mock[AuditService]
   private val config = mock[AppConfig]
 
-  private val service = new CasesService(config, audit, emailService, fileStoreService, connector)
+  private val service = new CasesService(config, audit, emailService, fileStoreService, connector, rulingConnector)
 
   override protected def afterEach(): Unit = {
     super.afterEach()

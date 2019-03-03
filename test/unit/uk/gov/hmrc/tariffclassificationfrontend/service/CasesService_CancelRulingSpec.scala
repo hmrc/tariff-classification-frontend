@@ -27,7 +27,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.tariffclassificationfrontend.audit.AuditService
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.connector.BindingTariffClassificationConnector
+import uk.gov.hmrc.tariffclassificationfrontend.connector.{BindingTariffClassificationConnector, RulingConnector}
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
 import uk.gov.tariffclassificationfrontend.utils.Cases
@@ -43,6 +43,7 @@ class CasesService_CancelRulingSpec extends UnitSpec with MockitoSugar with Befo
   private val oneCase = mock[Option[Case]]
   private val queue = mock[Queue]
   private val connector = mock[BindingTariffClassificationConnector]
+  private val rulingConnector = mock[RulingConnector]
   private val emailService = mock[EmailService]
   private val fileStoreService = mock[FileStoreService]
   private val audit = mock[AuditService]
@@ -50,7 +51,7 @@ class CasesService_CancelRulingSpec extends UnitSpec with MockitoSugar with Befo
   private val clock = Clock.fixed(LocalDateTime.of(2018, 1, 1, 14, 0).toInstant(ZoneOffset.UTC), ZoneId.of("UTC"))
   private val aCase = Cases.btiCaseExample
 
-  private val service = new CasesService(config, audit, emailService, fileStoreService, connector)
+  private val service = new CasesService(config, audit, emailService, fileStoreService, connector, rulingConnector)
 
   override protected def afterEach(): Unit = {
     super.afterEach()
@@ -72,6 +73,7 @@ class CasesService_CancelRulingSpec extends UnitSpec with MockitoSugar with Befo
       given(config.zoneId).willReturn(ZoneId.of("UTC"))
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])).willReturn(successful(mock[Event]))
+      given(rulingConnector.notify(refEq(originalCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(()))
 
       // When Then
       await(service.cancelRuling(originalCase, CancelReason.ANNULLED, operator, clock)) shouldBe caseUpdated
@@ -130,6 +132,7 @@ class CasesService_CancelRulingSpec extends UnitSpec with MockitoSugar with Befo
       given(config.zoneId).willReturn(ZoneId.of("UTC"))
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])).willReturn(failed(new RuntimeException("Failed to create Event")))
+      given(rulingConnector.notify(refEq(originalCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(()))
 
       // When Then
       await(service.cancelRuling(originalCase, CancelReason.ANNULLED, operator)) shouldBe caseUpdated
@@ -138,6 +141,34 @@ class CasesService_CancelRulingSpec extends UnitSpec with MockitoSugar with Befo
 
       val caseUpdating = theCaseUpdating(connector)
       caseUpdating.status shouldBe CaseStatus.CANCELLED
+    }
+
+    "succeed on ruling store notify failure" in {
+      // Given
+      val operator: Operator = Operator("operator-id", Some("Billy Bobbins"))
+      val originalDecision = Decision("code", Some(date("2018-01-01")), Some(date("2021-01-01")), "justification", "goods")
+      val originalCase = aCase.copy(status = CaseStatus.COMPLETED, decision = Some(originalDecision))
+      val updatedDecision = originalDecision.copy(effectiveEndDate = Some(date("2019-01-01")))
+      val caseUpdated = aCase.copy(status = CaseStatus.CANCELLED, decision = Some(updatedDecision))
+
+      given(config.zoneId).willReturn(ZoneId.of("UTC"))
+      given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
+      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])).willReturn(successful(mock[Event]))
+      given(rulingConnector.notify(refEq(originalCase.reference))(any[HeaderCarrier])).willReturn(Future.failed(new RuntimeException("Failed to notify the Ruling Store")))
+
+      // When Then
+      await(service.cancelRuling(originalCase, CancelReason.ANNULLED, operator, clock)) shouldBe caseUpdated
+
+      verify(audit).auditRulingCancelled(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
+
+      val caseUpdating = theCaseUpdating(connector)
+      caseUpdating.status shouldBe CaseStatus.CANCELLED
+      caseUpdating.decision.get.cancellation shouldBe Some(Cancellation(CancelReason.ANNULLED))
+
+      val eventCreated = theEventCreatedFor(connector, caseUpdated)
+      eventCreated.operator shouldBe Operator("operator-id", Some("Billy Bobbins"))
+
+      eventCreated.details shouldBe CaseStatusChange(CaseStatus.COMPLETED, CaseStatus.CANCELLED, Some(CancelReason.format(CancelReason.ANNULLED)))
     }
 
   }
