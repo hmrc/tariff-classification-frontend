@@ -17,7 +17,7 @@
 package uk.gov.hmrc.tariffclassificationfrontend.connector
 
 import javax.inject.{Inject, Singleton}
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, HttpReads}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 
@@ -29,7 +29,8 @@ class RulingConnector @Inject()(configuration: AppConfig,
                                 http: HttpClient) {
 
   def notify(id: String)(implicit hc: HeaderCarrier): Future[Unit] = {
-    http.POSTEmpty(s"${configuration.rulingUrl}/ruling/$id/notify").map(_ => ())
+    val authenticatedHeaders: HeaderCarrier = hc.withExtraHeaders("X-Api-Token" -> configuration.apiToken)
+    http.POSTEmpty(s"${configuration.rulingUrl}/binding-tariff-rulings/ruling/$id")(HttpReads.readRaw, authenticatedHeaders, global).map(_ => ())
   }
 
 }

@@ -45,9 +45,11 @@ class RulingConnectorTest extends UnitSpec with WithFakeApplication with Wiremoc
 
     "POST to the Ruling Store" in {
       given(config.rulingUrl).willReturn(wireMockUrl)
+      given(config.apiToken).willReturn("auth")
 
       stubFor(
-        post("/ruling/id/notify")
+        post("/binding-tariff-rulings/ruling/id")
+          .withHeader("X-Api-Token", equalTo("auth"))
           .willReturn(
             aResponse()
               .withStatus(Status.ACCEPTED)
@@ -56,7 +58,7 @@ class RulingConnectorTest extends UnitSpec with WithFakeApplication with Wiremoc
 
       await(connector.notify("id"))
 
-      verify(postRequestedFor(urlEqualTo("/ruling/id/notify")))
+      verify(postRequestedFor(urlEqualTo("/binding-tariff-rulings/ruling/id")).withHeader("X-Api-Token", equalTo("auth")))
     }
   }
 
