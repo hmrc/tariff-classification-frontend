@@ -144,21 +144,25 @@
 
     </table>
 
-    <p></p>
-    <h3 class="heading-medium activity-inline-label">@messages("case.activity.assigned-to"):</h3>
-    <span id="activity-events-assignee">
-    @{
-        if(c.assignee.map(_.id).contains(request.operator.id)) {
-            "You"
-        } else if(c.assignee.flatMap(_.name).isDefined) {
-            c.assignee.get.name.get
-        } else if(c.assignee.isDefined) {
-            s"PID ${c.assignee.get.id}"
-        } else {
-            "This case is currently unassigned"
+    <div class="grid-row mt-2">
+        <span class="column-one-third bold">@messages("case.activity.assigned-to")</span>
+        <span id="activity-events-assignee" class="column-two-thirds">
+        @{
+            if(c.assignee.map(_.id).contains(request.operator.id)) {
+                "You"
+            } else if(c.assignee.flatMap(_.name).isDefined) {
+                c.assignee.get.name.get
+            } else if(c.assignee.isDefined) {
+                s"PID ${c.assignee.get.id}"
+            } else {
+                "This case is currently unassigned"
+            }
         }
-    }
-    </span>
+        </span>
+    </div>
+
+
+
 
 
 

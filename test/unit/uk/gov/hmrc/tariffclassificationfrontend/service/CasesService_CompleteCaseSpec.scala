@@ -27,7 +27,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.tariffclassificationfrontend.audit.AuditService
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.connector.BindingTariffClassificationConnector
+import uk.gov.hmrc.tariffclassificationfrontend.connector.{BindingTariffClassificationConnector, RulingConnector}
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
 import uk.gov.tariffclassificationfrontend.utils.Cases
@@ -43,6 +43,7 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
   private val oneCase = mock[Option[Case]]
   private val queue = mock[Queue]
   private val connector = mock[BindingTariffClassificationConnector]
+  private val rulingConnector = mock[RulingConnector]
   private val emailService = mock[EmailService]
   private val fileStoreService = mock[FileStoreService]
   private val audit = mock[AuditService]
@@ -50,7 +51,7 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
   private val clock = Clock.fixed(LocalDateTime.of(2018, 1, 1, 14, 0).toInstant(ZoneOffset.UTC), ZoneId.of("UTC"))
   private val aCase = Cases.btiCaseExample
 
-  private val service = new CasesService(config, audit, emailService, fileStoreService, connector)
+  private val service = new CasesService(config, audit, emailService, fileStoreService, connector, rulingConnector)
 
   override protected def afterEach(): Unit = {
     super.afterEach()
@@ -72,6 +73,7 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])).willReturn(successful(mock[Event]))
       given(emailService.sendCaseCompleteEmail(refEq(caseUpdated))(any[HeaderCarrier])).willReturn(Future.successful(emailTemplate))
+      given(rulingConnector.notify(refEq(originalCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(()))
 
       // When Then
       await(service.completeCase(originalCase, operator, clock)) shouldBe caseUpdated
@@ -135,6 +137,7 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])).willReturn(failed(new RuntimeException("Failed to create Event")))
       given(emailService.sendCaseCompleteEmail(refEq(caseUpdated))(any[HeaderCarrier])).willReturn(Future.successful(emailTemplate))
+      given(rulingConnector.notify(refEq(originalCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(()))
 
       // When Then
       await(service.completeCase(originalCase, operator)) shouldBe caseUpdated
@@ -171,6 +174,36 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
       val eventCreated = theEventCreatedFor(connector, caseUpdated)
       eventCreated.operator shouldBe Operator("operator-id", Some("Billy Bobbins"))
       eventCreated.details shouldBe CaseStatusChange(CaseStatus.OPEN, CaseStatus.COMPLETED, Some("Attempted to send an email to the applicant which failed"))
+    }
+
+    "suceed on ruling notify failure" in {
+      // Given
+      val operator: Operator = Operator("operator-id", Some("Billy Bobbins"))
+      val originalDecision = Decision("code", None, None, "justification", "goods")
+      val originalCase = aCase.copy(status = CaseStatus.OPEN, decision = Some(originalDecision))
+      val updatedDecision = Decision("code", Some(date("2018-01-01")), Some(date("2019-01-01")), "justification", "goods")
+      val caseUpdated = aCase.copy(status = CaseStatus.COMPLETED, decision = Some(updatedDecision))
+      val emailTemplate = EmailTemplate("plain", "html", "from", "subject", "service")
+
+      given(config.zoneId).willReturn(ZoneId.of("UTC"))
+      given(config.decisionLifetimeYears).willReturn(1)
+      given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
+      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])).willReturn(successful(mock[Event]))
+      given(emailService.sendCaseCompleteEmail(refEq(caseUpdated))(any[HeaderCarrier])).willReturn(Future.successful(emailTemplate))
+      given(rulingConnector.notify(refEq(originalCase.reference))(any[HeaderCarrier])).willReturn(Future.failed(new RuntimeException("Failed to notify ruling store")))
+
+      // When Then
+      await(service.completeCase(originalCase, operator, clock)) shouldBe caseUpdated
+
+      verify(audit).auditCaseCompleted(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
+      verify(emailService).sendCaseCompleteEmail(refEq(caseUpdated))(any[HeaderCarrier])
+
+      val caseUpdating = theCaseUpdating(connector)
+      caseUpdating.status shouldBe CaseStatus.COMPLETED
+
+      val eventCreated = theEventCreatedFor(connector, caseUpdated)
+      eventCreated.operator shouldBe Operator("operator-id", Some("Billy Bobbins"))
+      eventCreated.details shouldBe CaseStatusChange(CaseStatus.OPEN, CaseStatus.COMPLETED, Some("The applicant was sent an Email:\n- Subject: subject\n- Body: plain"))
     }
   }
 

@@ -21,15 +21,14 @@ import javax.inject.Singleton
 import scala.io.Source
 
 @Singleton
-class CommodityCodeService () {
+class CommodityCodeService() {
 
   private lazy val padLimit = 10
 
   def checkIfCodeExists(commodityCode: String): Boolean = {
-    val canonicalCode: String = {
+    val canonicalCode: String =
       if (commodityCode.length > padLimit) commodityCode.substring(0, padLimit)
       else commodityCode.trim.padTo(padLimit, "0").mkString
-    }
 
     commodityCodesFromFile.contains(canonicalCode)
   }

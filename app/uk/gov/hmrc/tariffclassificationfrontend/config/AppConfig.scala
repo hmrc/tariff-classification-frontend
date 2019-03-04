@@ -41,6 +41,7 @@ class AppConfig @Inject()(val runModeConfiguration: Configuration, environment: 
   lazy val reportAProblemPartialUrl = s"$contactHost/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
   lazy val reportAProblemNonJSUrl = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
   lazy val bindingTariffClassificationUrl: String = baseUrl("binding-tariff-classification")
+  lazy val rulingUrl: String = baseUrl("binding-tariff-ruling-frontend")
   lazy val emailUrl: String = baseUrl("email")
   lazy val emailRendererUrl: String = baseUrl("hmrc-email-renderer")
   lazy val fileStoreUrl: String = baseUrl("binding-tariff-filestore")

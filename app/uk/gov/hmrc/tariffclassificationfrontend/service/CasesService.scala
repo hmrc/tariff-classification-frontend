@@ -23,7 +23,7 @@ import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.tariffclassificationfrontend.audit.AuditService
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.connector.BindingTariffClassificationConnector
+import uk.gov.hmrc.tariffclassificationfrontend.connector.{BindingTariffClassificationConnector, RulingConnector}
 import uk.gov.hmrc.tariffclassificationfrontend.models.AppealStatus.AppealStatus
 import uk.gov.hmrc.tariffclassificationfrontend.models.CancelReason.CancelReason
 import uk.gov.hmrc.tariffclassificationfrontend.models.ReviewStatus.ReviewStatus
@@ -38,7 +38,8 @@ class CasesService @Inject()(appConfig: AppConfig,
                              auditService: AuditService,
                              emailService: EmailService,
                              fileService: FileStoreService,
-                             connector: BindingTariffClassificationConnector) {
+                             connector: BindingTariffClassificationConnector,
+                             rulingConnector: RulingConnector) {
 
   def updateExtendedUseStatus(original: Case, status: Boolean, operator: Operator)
                              (implicit hc: HeaderCarrier): Future[Case] = {
@@ -173,6 +174,9 @@ class CasesService @Inject()(appConfig: AppConfig,
 
       // Audit
       _ = auditService.auditCaseCompleted(original, updated, operator)
+
+      // Notify the Ruling store
+      _ = rulingConnector.notify(original.reference) recover loggingARulingErrorFor(original.reference)
     } yield updated
   }
 
@@ -196,6 +200,9 @@ class CasesService @Inject()(appConfig: AppConfig,
       _ <- addStatusChangeEvent(original, updated, operator, comment = Some(CancelReason.format(reason)))
       // Audit
       _ = auditService.auditRulingCancelled(original, updated, operator)
+
+      // Notify the Ruling store
+      _ = rulingConnector.notify(original.reference) recover loggingARulingErrorFor(original.reference)
     } yield updated
   }
 
@@ -274,6 +281,10 @@ class CasesService @Inject()(appConfig: AppConfig,
     connector.createEvent(updated, event) recover {
       case t: Throwable => Logger.error(s"Could not create Event for case [${original.reference}] with payload [$event]", t)
     } map (_ => ())
+  }
+
+  private def loggingARulingErrorFor(reference: String): PartialFunction[Throwable, Unit] = {
+    case t: Throwable => Logger.error(s"Failed to notify the ruling store for case $reference", t)
   }
 
 }

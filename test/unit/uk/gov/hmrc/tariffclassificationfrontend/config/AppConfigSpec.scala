@@ -62,6 +62,13 @@ class AppConfigSpec extends UnitSpec with MockitoSugar {
       ).bindingTariffClassificationUrl shouldBe "http://host:123"
     }
 
+    "Build local Ruling Base URL" in {
+      appConfig(
+        "microservice.services.binding-tariff-ruling-frontend.host" -> "host",
+        "microservice.services.binding-tariff-ruling-frontend.port" -> "123"
+      ).rulingUrl shouldBe "http://host:123"
+    }
+
     "Build local Email URL" in {
       appConfig(
         "microservice.services.email.host" -> "host",
