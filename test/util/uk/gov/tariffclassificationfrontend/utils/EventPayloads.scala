@@ -17,8 +17,8 @@
 package uk.gov.tariffclassificationfrontend.utils
 
 import play.api.libs.json.Json
-import uk.gov.hmrc.tariffclassificationfrontend.models.Event
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Event, NoPagination, Paged}
 import uk.gov.hmrc.tariffclassificationfrontend.utils.JsonFormatters.{eventFormat, newEventRequestFormat}
 
 object EventPayloads {
@@ -26,6 +26,8 @@ object EventPayloads {
   val event: String = jsonOf(Events.event)
   val eventRequest: String = jsonOf(Events.eventRequest)
   val events: String = jsonOf(Events.events)
+  val pagedEvents: String = jsonOf(Paged(Events.events, NoPagination(), 1))
+  val pagedEmpty: String = jsonOf(Paged.empty[Event])
 
   def jsonOf(obj: Event): String = {
     Json.toJson(obj).toString()
@@ -36,6 +38,10 @@ object EventPayloads {
   }
 
   def jsonOf(obj: Seq[Event]): String = {
+    Json.toJson(obj).toString()
+  }
+
+  def jsonOf(obj: Paged[Event]): String = {
     Json.toJson(obj).toString()
   }
 

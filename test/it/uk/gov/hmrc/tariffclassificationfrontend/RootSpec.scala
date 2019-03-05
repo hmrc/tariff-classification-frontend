@@ -3,6 +3,7 @@ package uk.gov.hmrc.tariffclassificationfrontend
 import com.github.tomakehurst.wiremock.client.WireMock._
 import org.scalatest.mockito.MockitoSugar
 import play.api.test.Helpers._
+import uk.gov.hmrc.tariffclassificationfrontend.models.Pagination
 import uk.gov.tariffclassificationfrontend.utils.CasePayloads
 
 
@@ -13,10 +14,10 @@ class RootSpec extends IntegrationTest with MockitoSugar {
     "return status 200 and redirect to My Cases" in {
       // Given
       givenAuthSuccess()
-      stubFor(get(urlEqualTo("/cases?assignee_id=123&status=NEW,OPEN,REFERRED,SUSPENDED&sort_by=days-elapsed&sort_direction=desc"))
+      stubFor(get(urlEqualTo(s"/cases?application_type=BTI&assignee_id=123&status=NEW,OPEN,REFERRED,SUSPENDED&sort_by=days-elapsed&sort_direction=desc&page=1&page_size=${Pagination.unlimited}"))
         .willReturn(aResponse()
           .withStatus(OK)
-          .withBody(CasePayloads.gatewayCases))
+          .withBody(CasePayloads.pagedGatewayCases))
       )
 
       // When

@@ -3,6 +3,7 @@ package uk.gov.hmrc.tariffclassificationfrontend
 import com.github.tomakehurst.wiremock.client.WireMock._
 import org.scalatest.mockito.MockitoSugar
 import play.api.test.Helpers._
+import uk.gov.hmrc.tariffclassificationfrontend.models.Pagination
 import uk.gov.tariffclassificationfrontend.utils.{CasePayloads, EventPayloads}
 
 class CaseSpec extends IntegrationTest with MockitoSugar {
@@ -127,10 +128,10 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
           .withBody(CasePayloads.btiCase))
       )
       givenAuthSuccess()
-      stubFor(get(urlEqualTo("/cases/1/events"))
+      stubFor(get(urlEqualTo(s"/cases/1/events?page=1&page_size=${Pagination.unlimited}"))
         .willReturn(aResponse()
           .withStatus(OK)
-          .withBody(EventPayloads.events))
+          .withBody(EventPayloads.pagedEvents))
       )
       // When
       val response = await(ws.url(s"$frontendRoot/cases/1/activity").get())

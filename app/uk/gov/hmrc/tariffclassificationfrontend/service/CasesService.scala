@@ -210,16 +210,16 @@ class CasesService @Inject()(appConfig: AppConfig,
     connector.findCase(reference)
   }
 
-  def search(search: Search, sort: Sort)(implicit hc: HeaderCarrier): Future[Seq[Case]] = {
-    connector.search(search, sort)
+  def search(search: Search, sort: Sort, pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[Case]] = {
+    connector.search(search, sort, pagination)
   }
 
-  def getCasesByQueue(queue: Queue)(implicit hc: HeaderCarrier): Future[Seq[Case]] = {
-    connector.findCasesByQueue(queue)
+  def getCasesByQueue(queue: Queue, pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[Case]] = {
+    connector.findCasesByQueue(queue, pagination)
   }
 
-  def getCasesByAssignee(assignee: Operator)(implicit hc: HeaderCarrier): Future[Seq[Case]] = {
-    connector.findCasesByAssignee(assignee)
+  def getCasesByAssignee(assignee: Operator, pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[Case]] = {
+    connector.findCasesByAssignee(assignee, pagination)
   }
 
   def updateCase(caseToUpdate: Case)(implicit hc: HeaderCarrier): Future[Case] = {

@@ -31,9 +31,9 @@ import scala.concurrent.Future
 @Singleton
 class EventsService @Inject()(connector: BindingTariffClassificationConnector, auditService: AuditService) {
 
-  def getEvents(reference: String)
-               (implicit hc: HeaderCarrier): Future[Seq[Event]] = {
-    connector.findEvents(reference)
+  def getEvents(reference: String, pagination: Pagination)
+               (implicit hc: HeaderCarrier): Future[Paged[Event]] = {
+    connector.findEvents(reference, pagination)
   }
 
   def addNote(c: Case, note: String, operator: Operator, clock: Clock = Clock.systemUTC())

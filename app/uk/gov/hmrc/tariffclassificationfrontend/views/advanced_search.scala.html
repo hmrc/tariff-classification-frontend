@@ -16,11 +16,11 @@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers
-@import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Search}
+@import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Paged, Search}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.{input_checkbox, input_text}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{advanced_search_keywords, advanced_search_results}
-@(form: Form[Search], results: Option[Seq[Case]] = None, keywords: Seq[String])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{advanced_search_keywords, advanced_search_results, pagination}
+@(form: Form[Search], results: Option[Paged[Case]] = None, keywords: Seq[String])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None) {
  <h1 id="advanced_search-heading" class="heading-xlarge">Advanced Search</h1>
@@ -62,7 +62,7 @@
       <input type="hidden" value="true" name="live_rulings_only"/>
   }
 
-  @if(results.isDefined) {
+  @if(results.isDefined && !form.hasErrors) {
    <div id="advanced_search-results_and_filters" class="grid-row mt-1">
 
     <div class="column-one-quarter">
@@ -76,14 +76,33 @@
      )
     </div>
 
-    @defining(results.get.filter(_.application.isBTI)) { searchResults: Seq[Case] =>
+
+    @defining(results.get) { searchResults: Paged[Case] =>
      <div class="column-three-quarters">
-      <h3 class="heading-medium" id="advanced_search-results_heading">Showing @{searchResults.size} @if(searchResults.size == 1){case}@if(searchResults.size != 1){cases}</h3>
-      <hr class="mt-0"/>
+      @pagination(
+       id = "advanced_search-pagination_top",
+       singularName = "case",
+       pluralName = "cases",
+       pager = searchResults,
+       counterClass = Some("heading-medium"),
+       linksClass = Some("mt-45"),
+       onChange = page => controllers.routes.SearchController.search(search = form.get, page = page)
+      )
+
+     <hr class="mt-0"/>
+
       @advanced_search_results(searchResults)
+
+      @pagination(
+       id = "advanced_search-pagination_bottom",
+       singularName = "case",
+       pluralName = "cases",
+       pager = searchResults,
+       containerClass = Some("mt-30"),
+       onChange = page => controllers.routes.SearchController.search(search = form.get, page = page)
+      )
      </div>
     }
-
    </div>
   }
  }

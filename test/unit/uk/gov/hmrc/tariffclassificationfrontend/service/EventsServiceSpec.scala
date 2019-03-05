@@ -40,20 +40,21 @@ class EventsServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEa
 
   private val connector = mock[BindingTariffClassificationConnector]
   private val auditService = mock[AuditService]
-  private val manyEvents = mock[Seq[Event]]
+  private val event = mock[Event]
+  private val manyEvents = Seq(event)
 
   private val service = new EventsService(connector, auditService)
 
   override protected def afterEach(): Unit = {
     super.afterEach()
-    reset(connector, manyEvents)
+    reset(connector, event)
   }
 
   "Get Events by reference" should {
     "retrieve a list of events" in {
-      given(connector.findEvents("reference")) willReturn Future.successful(manyEvents)
+      given(connector.findEvents("reference", NoPagination())) willReturn Future.successful(Paged(manyEvents))
 
-      await(service.getEvents("reference")) shouldBe manyEvents
+      await(service.getEvents("reference", NoPagination())) shouldBe Paged(manyEvents)
     }
   }
 

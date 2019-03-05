@@ -37,11 +37,13 @@ class CasesServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEac
 
   private implicit val hc: HeaderCarrier = HeaderCarrier()
 
-  private val manyCases = mock[Seq[Case]]
-  private val oneCase = mock[Option[Case]]
+  private val c = mock[Case]
+  private val manyCases = Seq(c)
+  private val oneCase = Some(c)
   private val emailService = mock[EmailService]
   private val fileStoreService = mock[FileStoreService]
   private val queue = mock[Queue]
+  private val pagination = mock[Pagination]
   private val connector = mock[BindingTariffClassificationConnector]
   private val rulingConnector = mock[RulingConnector]
   private val audit = mock[AuditService]
@@ -51,22 +53,22 @@ class CasesServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEac
 
   override protected def afterEach(): Unit = {
     super.afterEach()
-    reset(connector, audit, queue, oneCase, manyCases, config)
+    reset(connector, audit, queue, c, config)
   }
 
   "Get Cases 'By Queue'" should {
     "retrieve connector cases" in {
-      given(connector.findCasesByQueue(queue)) willReturn Future.successful(manyCases)
+      given(connector.findCasesByQueue(any[Queue], any[Pagination])(any[HeaderCarrier])) willReturn Future.successful(Paged(manyCases))
 
-      await(service.getCasesByQueue(queue)) shouldBe manyCases
+      await(service.getCasesByQueue(queue, pagination)) shouldBe Paged(manyCases)
     }
   }
 
   "Get Cases 'By Assignee'" should {
     "retrieve connector cases" in {
-      given(connector.findCasesByAssignee(Operator("assignee"))) willReturn Future.successful(manyCases)
+      given(connector.findCasesByAssignee(refEq(Operator("assignee")), refEq(pagination))(any[HeaderCarrier])) willReturn Future.successful(Paged(manyCases))
 
-      await(service.getCasesByAssignee(Operator("assignee"))) shouldBe manyCases
+      await(service.getCasesByAssignee(Operator("assignee"), pagination)) shouldBe Paged(manyCases)
     }
   }
 
@@ -80,9 +82,9 @@ class CasesServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEac
 
   "Search Cases" should {
     "retrieve connector cases" in {
-      given(connector.search(any[Search], any[Sort])(any[HeaderCarrier], any[Clock], any[QueryStringBindable[String]])) willReturn Future.successful(manyCases)
+      given(connector.search(any[Search], any[Sort], any[Pagination])(any[HeaderCarrier], any[Clock], any[QueryStringBindable[String]])) willReturn Future.successful(Paged(manyCases))
 
-      await(service.search(Search(), Sort())) shouldBe manyCases
+      await(service.search(Search(), Sort(), pagination)) shouldBe Paged(manyCases)
     }
   }
 

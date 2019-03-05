@@ -17,7 +17,7 @@
 package uk.gov.hmrc.tariffclassificationfrontend.views.partials
 
 import uk.gov.hmrc.tariffclassificationfrontend.forms.SearchForm
-import uk.gov.hmrc.tariffclassificationfrontend.models.Search
+import uk.gov.hmrc.tariffclassificationfrontend.models.Paged
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewSpec
 import uk.gov.hmrc.tariffclassificationfrontend.views.html.advanced_search
@@ -36,11 +36,8 @@ class AdvancedSearchViewSpec extends ViewSpec {
     }
 
     "Render Results" in {
-      // Given
-      val c = aCase()
-
       // When
-      val doc = view(advanced_search(SearchForm.form, Some(Seq(c)), Seq.empty))
+      val doc = view(advanced_search(SearchForm.form, Some(Paged(Seq(aCase()))), Seq.empty))
 
       // Then
       doc should containElementWithID("advanced_search-results_and_filters")
@@ -48,7 +45,7 @@ class AdvancedSearchViewSpec extends ViewSpec {
 
     "Always Render Input 'live_rulings_only'" in {
       view(advanced_search(SearchForm.form, None, Seq.empty)) should containElementWithAttribute("name", "live_rulings_only")
-      view(advanced_search(SearchForm.form, Some(Seq(aCase())), Seq.empty)) should containElementWithAttribute("name", "live_rulings_only")
+      view(advanced_search(SearchForm.form, Some(Paged(Seq(aCase()))), Seq.empty)) should containElementWithAttribute("name", "live_rulings_only")
     }
   }
 

@@ -31,7 +31,7 @@ class AdvancedSearchResultsViewSpec extends ViewSpec {
 
     "Render No Results" in {
       // When
-      val doc = view(advanced_search_results(Seq.empty))
+      val doc = view(advanced_search_results(Paged.empty[Case]))
 
       // Then
       doc should containElementWithID("advanced_search_results-empty")
@@ -47,7 +47,7 @@ class AdvancedSearchResultsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(advanced_search_results(Seq(c)))
+      val doc = view(advanced_search_results(Paged(Seq(c))))
 
       // Then
       doc shouldNot containElementWithID("advanced_search_results-empty")
@@ -88,7 +88,7 @@ class AdvancedSearchResultsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(advanced_search_results(Seq(c)))
+      val doc = view(advanced_search_results(Paged(Seq(c))))
 
       // Then
       doc shouldNot containElementWithID("advanced_search_results-empty")
