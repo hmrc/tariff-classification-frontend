@@ -367,7 +367,7 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
 
     "return a list of Events for this case" in {
 
-      stubFor(get(urlEqualTo(s"/cases/$ref/events&page=1&page_size=2"))
+      stubFor(get(urlEqualTo(s"/cases/$ref/events?page=1&page_size=2"))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
           .withBody(EventPayloads.pagedEvents))
@@ -377,7 +377,7 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
     }
 
     "returns empty list when case ref not found" in {
-      stubFor(get(urlEqualTo(s"/cases/$ref/events&page=1&page_size=2"))
+      stubFor(get(urlEqualTo(s"/cases/$ref/events?page=1&page_size=2"))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
           .withBody(EventPayloads.pagedEmpty))

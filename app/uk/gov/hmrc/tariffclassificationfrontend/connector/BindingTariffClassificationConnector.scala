@@ -68,7 +68,7 @@ class BindingTariffClassificationConnector @Inject()(appConfig: AppConfig, clien
   }
 
   def findEvents(reference: String, pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[Event]] = {
-    val url = s"${appConfig.bindingTariffClassificationUrl}/cases/$reference/events&page=${pagination.page}&page_size=${pagination.pageSize}"
+    val url = s"${appConfig.bindingTariffClassificationUrl}/cases/$reference/events?page=${pagination.page}&page_size=${pagination.pageSize}"
     client.GET[Paged[Event]](url)
   }
 

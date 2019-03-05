@@ -53,8 +53,8 @@ class PaginationViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
       ))
 
       // Then
-      doc should containElementWithID("ID-pagination-none")
-      doc shouldNot containElementWithID("ID-pagination-some")
+      doc should containElementWithID("ID-none")
+      doc shouldNot containElementWithID("ID-some")
     }
 
     "Render 1 page" in {
@@ -66,24 +66,24 @@ class PaginationViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
       ))
 
       // Then
-      doc should containElementWithID("ID-pagination-some")
-      doc shouldNot containElementWithID("ID-pagination-none")
+      doc should containElementWithID("ID-some")
+      doc shouldNot containElementWithID("ID-none")
 
-      doc should containElementWithID("ID-pagination-start")
-      doc.getElementById("ID-pagination-start") should containText("1")
-      doc should containElementWithID("ID-pagination-end")
-      doc.getElementById("ID-pagination-end") should containText("2")
-      doc should containElementWithID("ID-pagination-total")
-      doc.getElementById("ID-pagination-total") should containText("2")
+      doc should containElementWithID("ID-start")
+      doc.getElementById("ID-start") should containText("1")
+      doc should containElementWithID("ID-end")
+      doc.getElementById("ID-end") should containText("2")
+      doc should containElementWithID("ID-total")
+      doc.getElementById("ID-total") should containText("2")
 
-      doc shouldNot containElementWithID("ID-pagination-page_back")
-      doc shouldNot containElementWithID("ID-pagination-page_next")
+      doc shouldNot containElementWithID("ID-page_back")
+      doc shouldNot containElementWithID("ID-page_next")
 
-      doc shouldNot containElementWithID("ID-pagination-page_2")
-      doc shouldNot containElementWithID("ID-pagination-page_3")
-      doc shouldNot containElementWithID("ID-pagination-page_4")
-      doc shouldNot containElementWithID("ID-pagination-page_5")
-      doc shouldNot containElementWithID("ID-pagination-page_6")
+      doc shouldNot containElementWithID("ID-page_2")
+      doc shouldNot containElementWithID("ID-page_3")
+      doc shouldNot containElementWithID("ID-page_4")
+      doc shouldNot containElementWithID("ID-page_5")
+      doc shouldNot containElementWithID("ID-page_6")
     }
 
     "Render 1 partially full page" in {
@@ -95,24 +95,24 @@ class PaginationViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
       ))
 
       // Then
-      doc should containElementWithID("ID-pagination-some")
-      doc shouldNot containElementWithID("ID-pagination-none")
+      doc should containElementWithID("ID-some")
+      doc shouldNot containElementWithID("ID-none")
 
-      doc should containElementWithID("ID-pagination-start")
-      doc.getElementById("ID-pagination-start") should containText("1")
-      doc should containElementWithID("ID-pagination-end")
-      doc.getElementById("ID-pagination-end") should containText("1")
-      doc should containElementWithID("ID-pagination-total")
-      doc.getElementById("ID-pagination-total") should containText("1")
+      doc should containElementWithID("ID-start")
+      doc.getElementById("ID-start") should containText("1")
+      doc should containElementWithID("ID-end")
+      doc.getElementById("ID-end") should containText("1")
+      doc should containElementWithID("ID-total")
+      doc.getElementById("ID-total") should containText("1")
 
-      doc shouldNot containElementWithID("ID-pagination-page_back")
-      doc shouldNot containElementWithID("ID-pagination-page_next")
+      doc shouldNot containElementWithID("ID-page_back")
+      doc shouldNot containElementWithID("ID-page_next")
 
-      doc shouldNot containElementWithID("ID-pagination-page_2")
-      doc shouldNot containElementWithID("ID-pagination-page_3")
-      doc shouldNot containElementWithID("ID-pagination-page_4")
-      doc shouldNot containElementWithID("ID-pagination-page_5")
-      doc shouldNot containElementWithID("ID-pagination-page_6")
+      doc shouldNot containElementWithID("ID-page_2")
+      doc shouldNot containElementWithID("ID-page_3")
+      doc shouldNot containElementWithID("ID-page_4")
+      doc shouldNot containElementWithID("ID-page_5")
+      doc shouldNot containElementWithID("ID-page_6")
     }
 
     "Render 2 pages" in {
@@ -124,26 +124,26 @@ class PaginationViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
       ))
 
       // Then
-      doc should containElementWithID("ID-pagination-some")
-      doc shouldNot containElementWithID("ID-pagination-none")
+      doc should containElementWithID("ID-some")
+      doc shouldNot containElementWithID("ID-none")
 
-      doc should containElementWithID("ID-pagination-start")
-      doc.getElementById("ID-pagination-start") should containText("1")
-      doc should containElementWithID("ID-pagination-end")
-      doc.getElementById("ID-pagination-end") should containText("1")
-      doc should containElementWithID("ID-pagination-total")
-      doc.getElementById("ID-pagination-total") should containText("2")
+      doc should containElementWithID("ID-start")
+      doc.getElementById("ID-start") should containText("1")
+      doc should containElementWithID("ID-end")
+      doc.getElementById("ID-end") should containText("1")
+      doc should containElementWithID("ID-total")
+      doc.getElementById("ID-total") should containText("2")
 
-      doc shouldNot containElementWithID("ID-pagination-page_back")
-      doc should containElementWithID("ID-pagination-page_next")
-      doc.getElementById("ID-pagination-page_next") should haveAttribute("href", "/page=2")
+      doc shouldNot containElementWithID("ID-page_back")
+      doc should containElementWithID("ID-page_next")
+      doc.getElementById("ID-page_next") should haveAttribute("href", "/page=2")
 
-      doc should containElementWithID("ID-pagination-page_2")
-      doc.getElementById("ID-pagination-page_2") should haveAttribute("href", "/page=2")
-      doc shouldNot containElementWithID("ID-pagination-page_3")
-      doc shouldNot containElementWithID("ID-pagination-page_4")
-      doc shouldNot containElementWithID("ID-pagination-page_5")
-      doc shouldNot containElementWithID("ID-pagination-page_6")
+      doc should containElementWithID("ID-page_2")
+      doc.getElementById("ID-page_2") should haveAttribute("href", "/page=2")
+      doc shouldNot containElementWithID("ID-page_3")
+      doc shouldNot containElementWithID("ID-page_4")
+      doc shouldNot containElementWithID("ID-page_5")
+      doc shouldNot containElementWithID("ID-page_6")
     }
 
     "Render 3 pages" in {
@@ -155,27 +155,27 @@ class PaginationViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
       ))
 
       // Then
-      doc should containElementWithID("ID-pagination-some")
-      doc shouldNot containElementWithID("ID-pagination-none")
+      doc should containElementWithID("ID-some")
+      doc shouldNot containElementWithID("ID-none")
 
-      doc should containElementWithID("ID-pagination-start")
-      doc.getElementById("ID-pagination-start") should containText("1")
-      doc should containElementWithID("ID-pagination-end")
-      doc.getElementById("ID-pagination-end") should containText("1")
-      doc should containElementWithID("ID-pagination-total")
-      doc.getElementById("ID-pagination-total") should containText("3")
+      doc should containElementWithID("ID-start")
+      doc.getElementById("ID-start") should containText("1")
+      doc should containElementWithID("ID-end")
+      doc.getElementById("ID-end") should containText("1")
+      doc should containElementWithID("ID-total")
+      doc.getElementById("ID-total") should containText("3")
 
-      doc shouldNot containElementWithID("ID-pagination-page_back")
-      doc should containElementWithID("ID-pagination-page_next")
-      doc.getElementById("ID-pagination-page_next") should haveAttribute("href", "/page=2")
+      doc shouldNot containElementWithID("ID-page_back")
+      doc should containElementWithID("ID-page_next")
+      doc.getElementById("ID-page_next") should haveAttribute("href", "/page=2")
 
-      doc should containElementWithID("ID-pagination-page_2")
-      doc.getElementById("ID-pagination-page_2") should haveAttribute("href", "/page=2")
-      doc should containElementWithID("ID-pagination-page_3")
-      doc.getElementById("ID-pagination-page_3") should haveAttribute("href", "/page=3")
-      doc shouldNot containElementWithID("ID-pagination-page_4")
-      doc shouldNot containElementWithID("ID-pagination-page_5")
-      doc shouldNot containElementWithID("ID-pagination-page_6")
+      doc should containElementWithID("ID-page_2")
+      doc.getElementById("ID-page_2") should haveAttribute("href", "/page=2")
+      doc should containElementWithID("ID-page_3")
+      doc.getElementById("ID-page_3") should haveAttribute("href", "/page=3")
+      doc shouldNot containElementWithID("ID-page_4")
+      doc shouldNot containElementWithID("ID-page_5")
+      doc shouldNot containElementWithID("ID-page_6")
     }
 
     "Render 4 pages" in {
@@ -187,28 +187,28 @@ class PaginationViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
       ))
 
       // Then
-      doc should containElementWithID("ID-pagination-some")
-      doc shouldNot containElementWithID("ID-pagination-none")
+      doc should containElementWithID("ID-some")
+      doc shouldNot containElementWithID("ID-none")
 
-      doc should containElementWithID("ID-pagination-start")
-      doc.getElementById("ID-pagination-start") should containText("1")
-      doc should containElementWithID("ID-pagination-end")
-      doc.getElementById("ID-pagination-end") should containText("1")
-      doc should containElementWithID("ID-pagination-total")
-      doc.getElementById("ID-pagination-total") should containText("4")
+      doc should containElementWithID("ID-start")
+      doc.getElementById("ID-start") should containText("1")
+      doc should containElementWithID("ID-end")
+      doc.getElementById("ID-end") should containText("1")
+      doc should containElementWithID("ID-total")
+      doc.getElementById("ID-total") should containText("4")
 
-      doc shouldNot containElementWithID("ID-pagination-page_back")
-      doc should containElementWithID("ID-pagination-page_next")
-      doc.getElementById("ID-pagination-page_next") should haveAttribute("href", "/page=2")
+      doc shouldNot containElementWithID("ID-page_back")
+      doc should containElementWithID("ID-page_next")
+      doc.getElementById("ID-page_next") should haveAttribute("href", "/page=2")
 
-      doc should containElementWithID("ID-pagination-page_2")
-      doc.getElementById("ID-pagination-page_2") should haveAttribute("href", "/page=2")
-      doc should containElementWithID("ID-pagination-page_3")
-      doc.getElementById("ID-pagination-page_3") should haveAttribute("href", "/page=3")
-      doc should containElementWithID("ID-pagination-page_4")
-      doc.getElementById("ID-pagination-page_4") should haveAttribute("href", "/page=4")
-      doc shouldNot containElementWithID("ID-pagination-page_5")
-      doc shouldNot containElementWithID("ID-pagination-page_6")
+      doc should containElementWithID("ID-page_2")
+      doc.getElementById("ID-page_2") should haveAttribute("href", "/page=2")
+      doc should containElementWithID("ID-page_3")
+      doc.getElementById("ID-page_3") should haveAttribute("href", "/page=3")
+      doc should containElementWithID("ID-page_4")
+      doc.getElementById("ID-page_4") should haveAttribute("href", "/page=4")
+      doc shouldNot containElementWithID("ID-page_5")
+      doc shouldNot containElementWithID("ID-page_6")
     }
 
     "Render 5 pages" in {
@@ -220,29 +220,29 @@ class PaginationViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
       ))
 
       // Then
-      doc should containElementWithID("ID-pagination-some")
-      doc shouldNot containElementWithID("ID-pagination-none")
+      doc should containElementWithID("ID-some")
+      doc shouldNot containElementWithID("ID-none")
 
-      doc should containElementWithID("ID-pagination-start")
-      doc.getElementById("ID-pagination-start") should containText("1")
-      doc should containElementWithID("ID-pagination-end")
-      doc.getElementById("ID-pagination-end") should containText("1")
-      doc should containElementWithID("ID-pagination-total")
-      doc.getElementById("ID-pagination-total") should containText("5")
+      doc should containElementWithID("ID-start")
+      doc.getElementById("ID-start") should containText("1")
+      doc should containElementWithID("ID-end")
+      doc.getElementById("ID-end") should containText("1")
+      doc should containElementWithID("ID-total")
+      doc.getElementById("ID-total") should containText("5")
 
-      doc shouldNot containElementWithID("ID-pagination-page_back")
-      doc should containElementWithID("ID-pagination-page_next")
-      doc.getElementById("ID-pagination-page_next") should haveAttribute("href", "/page=2")
+      doc shouldNot containElementWithID("ID-page_back")
+      doc should containElementWithID("ID-page_next")
+      doc.getElementById("ID-page_next") should haveAttribute("href", "/page=2")
 
-      doc should containElementWithID("ID-pagination-page_2")
-      doc.getElementById("ID-pagination-page_2") should haveAttribute("href", "/page=2")
-      doc should containElementWithID("ID-pagination-page_3")
-      doc.getElementById("ID-pagination-page_3") should haveAttribute("href", "/page=3")
-      doc should containElementWithID("ID-pagination-page_4")
-      doc.getElementById("ID-pagination-page_4") should haveAttribute("href", "/page=4")
-      doc should containElementWithID("ID-pagination-page_5")
-      doc.getElementById("ID-pagination-page_5") should haveAttribute("href", "/page=5")
-      doc shouldNot containElementWithID("ID-pagination-page_6")
+      doc should containElementWithID("ID-page_2")
+      doc.getElementById("ID-page_2") should haveAttribute("href", "/page=2")
+      doc should containElementWithID("ID-page_3")
+      doc.getElementById("ID-page_3") should haveAttribute("href", "/page=3")
+      doc should containElementWithID("ID-page_4")
+      doc.getElementById("ID-page_4") should haveAttribute("href", "/page=4")
+      doc should containElementWithID("ID-page_5")
+      doc.getElementById("ID-page_5") should haveAttribute("href", "/page=5")
+      doc shouldNot containElementWithID("ID-page_6")
     }
 
     "Render more pages" in {
@@ -254,30 +254,30 @@ class PaginationViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
       ))
 
       // Then
-      doc should containElementWithID("ID-pagination-some")
-      doc shouldNot containElementWithID("ID-pagination-none")
+      doc should containElementWithID("ID-some")
+      doc shouldNot containElementWithID("ID-none")
 
-      doc should containElementWithID("ID-pagination-start")
-      doc.getElementById("ID-pagination-start") should containText("1")
-      doc should containElementWithID("ID-pagination-end")
-      doc.getElementById("ID-pagination-end") should containText("1")
-      doc should containElementWithID("ID-pagination-total")
-      doc.getElementById("ID-pagination-total") should containText("100")
+      doc should containElementWithID("ID-start")
+      doc.getElementById("ID-start") should containText("1")
+      doc should containElementWithID("ID-end")
+      doc.getElementById("ID-end") should containText("1")
+      doc should containElementWithID("ID-total")
+      doc.getElementById("ID-total") should containText("100")
 
-      doc shouldNot containElementWithID("ID-pagination-page_back")
-      doc should containElementWithID("ID-pagination-page_next")
-      doc.getElementById("ID-pagination-page_next") should haveAttribute("href", "/page=2")
+      doc shouldNot containElementWithID("ID-page_back")
+      doc should containElementWithID("ID-page_next")
+      doc.getElementById("ID-page_next") should haveAttribute("href", "/page=2")
 
-      doc should containElementWithID("ID-pagination-page_2")
-      doc.getElementById("ID-pagination-page_2") should haveAttribute("href", "/page=2")
-      doc should containElementWithID("ID-pagination-page_3")
-      doc.getElementById("ID-pagination-page_3") should haveAttribute("href", "/page=3")
-      doc should containElementWithID("ID-pagination-page_4")
-      doc.getElementById("ID-pagination-page_4") should haveAttribute("href", "/page=4")
-      doc should containElementWithID("ID-pagination-page_5")
-      doc.getElementById("ID-pagination-page_5") should haveAttribute("href", "/page=5")
+      doc should containElementWithID("ID-page_2")
+      doc.getElementById("ID-page_2") should haveAttribute("href", "/page=2")
+      doc should containElementWithID("ID-page_3")
+      doc.getElementById("ID-page_3") should haveAttribute("href", "/page=3")
+      doc should containElementWithID("ID-page_4")
+      doc.getElementById("ID-page_4") should haveAttribute("href", "/page=4")
+      doc should containElementWithID("ID-page_5")
+      doc.getElementById("ID-page_5") should haveAttribute("href", "/page=5")
 
-      doc shouldNot containElementWithID("ID-pagination-page_6")
+      doc shouldNot containElementWithID("ID-page_6")
     }
 
     "Render 1 previous page" in {
@@ -289,26 +289,26 @@ class PaginationViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
       ))
 
       // Then
-      doc should containElementWithID("ID-pagination-some")
-      doc shouldNot containElementWithID("ID-pagination-none")
+      doc should containElementWithID("ID-some")
+      doc shouldNot containElementWithID("ID-none")
 
-      doc should containElementWithID("ID-pagination-start")
-      doc.getElementById("ID-pagination-start") should containText("2")
-      doc should containElementWithID("ID-pagination-end")
-      doc.getElementById("ID-pagination-end") should containText("2")
-      doc should containElementWithID("ID-pagination-total")
-      doc.getElementById("ID-pagination-total") should containText("2")
+      doc should containElementWithID("ID-start")
+      doc.getElementById("ID-start") should containText("2")
+      doc should containElementWithID("ID-end")
+      doc.getElementById("ID-end") should containText("2")
+      doc should containElementWithID("ID-total")
+      doc.getElementById("ID-total") should containText("2")
 
-      doc should containElementWithID("ID-pagination-page_back")
-      doc.getElementById("ID-pagination-page_back") should haveAttribute("href", "/page=1")
-      doc shouldNot containElementWithID("ID-pagination-page_next")
+      doc should containElementWithID("ID-page_back")
+      doc.getElementById("ID-page_back") should haveAttribute("href", "/page=1")
+      doc shouldNot containElementWithID("ID-page_next")
 
-      doc should containElementWithID("ID-pagination-page_1")
-      doc shouldNot containElementWithID("ID-pagination-page_2")
-      doc shouldNot containElementWithID("ID-pagination-page_3")
-      doc shouldNot containElementWithID("ID-pagination-page_4")
-      doc shouldNot containElementWithID("ID-pagination-page_5")
-      doc shouldNot containElementWithID("ID-pagination-page_6")
+      doc should containElementWithID("ID-page_1")
+      doc shouldNot containElementWithID("ID-page_2")
+      doc shouldNot containElementWithID("ID-page_3")
+      doc shouldNot containElementWithID("ID-page_4")
+      doc shouldNot containElementWithID("ID-page_5")
+      doc shouldNot containElementWithID("ID-page_6")
     }
 
 

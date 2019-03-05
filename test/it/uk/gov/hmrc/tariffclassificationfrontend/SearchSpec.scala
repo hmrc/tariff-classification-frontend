@@ -47,7 +47,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       stubFor(get(urlMatching("/cases\\?.*trader_name=1.*"))
         .willReturn(aResponse()
           .withStatus(OK)
-          .withBody(CasePayloads.gatewayCases))
+          .withBody(CasePayloads.pagedGatewayCases))
       )
 
       // When
@@ -79,7 +79,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       stubFor(get(urlMatching("/cases\\?.*commodity_code=1.*"))
         .willReturn(aResponse()
           .withStatus(OK)
-          .withBody(CasePayloads.gatewayCases))
+          .withBody(CasePayloads.pagedGatewayCases))
       )
 
       // When
@@ -111,7 +111,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       stubFor(get(urlMatching("/cases\\?.*decision_details=1.*"))
         .willReturn(aResponse()
           .withStatus(OK)
-          .withBody(CasePayloads.gatewayCases))
+          .withBody(CasePayloads.pagedGatewayCases))
       )
 
       // When
@@ -143,7 +143,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       stubFor(get(urlMatching("/cases\\?.*keyword=k1&keyword=k2.*"))
         .willReturn(aResponse()
           .withStatus(OK)
-          .withBody(CasePayloads.gatewayCases))
+          .withBody(CasePayloads.pagedGatewayCases))
       )
 
       // When
@@ -191,7 +191,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       stubFor(get(urlMatching(s"/cases\\?.*min_decision_end=$dateRegex&status=COMPLETED"))
         .willReturn(aResponse()
           .withStatus(OK)
-          .withBody(CasePayloads.gatewayCases))
+          .withBody(CasePayloads.pagedGatewayCases))
       )
 
       // When
@@ -209,7 +209,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       stubFor(get(urlMatching(s"/cases\\?${excluding("status=", "min_decision_end=")}"))
         .willReturn(aResponse()
           .withStatus(OK)
-          .withBody(CasePayloads.gatewayCases))
+          .withBody(CasePayloads.pagedGatewayCases))
       )
 
       // When
@@ -226,7 +226,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       stubFor(get(urlMatching(s"/cases\\?${excluding("status=", "min_decision_end=")}"))
         .willReturn(aResponse()
           .withStatus(OK)
-          .withBody(CasePayloads.gatewayCases))
+          .withBody(CasePayloads.pagedGatewayCases))
       )
 
       // When
@@ -246,7 +246,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       stubFor(get(urlMatching("/cases\\?.*sort_direction=asc&sort_by=commodity-code.*"))
         .willReturn(aResponse()
           .withStatus(OK)
-          .withBody(CasePayloads.gatewayCases))
+          .withBody(CasePayloads.pagedGatewayCases))
       )
 
       // When
@@ -263,7 +263,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       stubFor(get(urlMatching("/cases\\?.*sort_direction=desc&sort_by=commodity-code.*"))
         .willReturn(aResponse()
           .withStatus(OK)
-          .withBody(CasePayloads.gatewayCases))
+          .withBody(CasePayloads.pagedGatewayCases))
       )
 
       // When
