@@ -35,7 +35,7 @@
      <span>Showing</span>
      <span id="@id-total" class="bold">@{pager.resultCount}</span>
      <span>
-     @if(pager.results.size == 1){
+     @if(pager.resultCount == 1){
       @singularName
      } else {
       @pluralName
@@ -51,7 +51,7 @@
      <span>of</span>
      <span id="@id-total" class="bold">@{pager.resultCount}</span>
      <span>
-     @if(pager.results.size == 1){
+     @if(pager.resultCount == 1){
       @singularName
      } else {
       @pluralName
