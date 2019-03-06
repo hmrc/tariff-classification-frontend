@@ -67,7 +67,7 @@
 
     <div class="column-one-quarter">
      <h3 class="heading-medium">Filter search</h3>
-     <hr class="mt-0"/>
+     <hr class="mt-30"/>
 
      @input_checkbox(
       field = form("live_rulings_only"),
@@ -79,17 +79,19 @@
 
     @defining(results.get) { searchResults: Paged[Case] =>
      <div class="column-three-quarters">
+
+      <h3 class="heading-medium">Search results</h3>
+
       @pagination(
        id = "advanced_search-pagination_top",
        singularName = "case",
        pluralName = "cases",
        pager = searchResults,
-       counterClass = Some("heading-medium"),
-       linksClass = Some("mt-45"),
+       containerClass = Some("mb-1"),
        onChange = page => controllers.routes.SearchController.search(search = form.get, page = page)
       )
 
-     <hr class="mt-0"/>
+      <hr class="mt-0"/>
 
       @advanced_search_results(searchResults)
 
@@ -101,6 +103,7 @@
        containerClass = Some("mt-30"),
        onChange = page => controllers.routes.SearchController.search(search = form.get, page = page)
       )
+
      </div>
     }
    </div>
