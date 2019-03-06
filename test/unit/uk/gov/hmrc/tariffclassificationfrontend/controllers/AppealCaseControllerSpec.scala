@@ -22,14 +22,13 @@ import org.mockito.Mockito
 import org.mockito.Mockito.{never, verify}
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterEach, Matchers}
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status
 import play.api.i18n.{DefaultLangs, DefaultMessagesApi}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.test.UnitSpec
+import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models.AppealStatus.AppealStatus
 import uk.gov.hmrc.tariffclassificationfrontend.models.{AppealStatus, Case, CaseStatus, Operator}
@@ -38,7 +37,7 @@ import uk.gov.tariffclassificationfrontend.utils.Cases._
 
 import scala.concurrent.Future
 
-class AppealCaseControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSuite with MockitoSugar with ControllerCommons with BeforeAndAfterEach {
+class AppealCaseControllerSpec extends UnitSpec with Matchers with WithFakeApplication with MockitoSugar with ControllerCommons with BeforeAndAfterEach {
 
   private val fakeRequest = FakeRequest()
   private val env = Environment.simple()
@@ -127,7 +126,7 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers with GuiceOneAppPe
 
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(c)))
 
-      val result = await(controller.chooseStatus("reference")(newFakeGETRequestWithCSRF(app)))
+      val result = await(controller.chooseStatus("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -140,7 +139,7 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers with GuiceOneAppPe
 
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(c)))
 
-      val result = await(controller.chooseStatus("reference")(newFakeGETRequestWithCSRF(app)))
+      val result = await(controller.chooseStatus("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -153,7 +152,7 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers with GuiceOneAppPe
 
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(c)))
 
-      val result = await(controller.chooseStatus("reference")(newFakeGETRequestWithCSRF(app)))
+      val result = await(controller.chooseStatus("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
       locationOf(result) shouldBe Some("/tariff-classification/cases/reference")
@@ -164,7 +163,7 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers with GuiceOneAppPe
 
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(c)))
 
-      val result = await(controller.chooseStatus("reference")(newFakeGETRequestWithCSRF(app)))
+      val result = await(controller.chooseStatus("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
       locationOf(result) shouldBe Some("/tariff-classification/cases/reference")
@@ -173,7 +172,7 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers with GuiceOneAppPe
     "return 404 Not Found and HTML content type" in {
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(None))
 
-      val result = await(controller.chooseStatus("reference")(newFakeGETRequestWithCSRF(app)))
+      val result = await(controller.chooseStatus("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -191,7 +190,7 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers with GuiceOneAppPe
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(c)))
       given(casesService.updateAppealStatus(refEq(c), any[Option[AppealStatus]], any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(c))
 
-      val result = await(controller.updateStatus("reference")(newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("status" -> "IN_PROGRESS")))
+      val result = await(controller.updateStatus("reference")(newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("status" -> "IN_PROGRESS")))
 
       verify(casesService).updateAppealStatus(refEq(c), refEq(Some(AppealStatus.IN_PROGRESS)), any[Operator])(any[HeaderCarrier])
 
@@ -205,7 +204,7 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers with GuiceOneAppPe
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(c)))
       given(casesService.updateAppealStatus(refEq(c), any[Option[AppealStatus]], any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(c))
 
-      val result = await(controller.updateStatus("reference")(newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("status" -> "IN_PROGRESS")))
+      val result = await(controller.updateStatus("reference")(newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("status" -> "IN_PROGRESS")))
 
       verify(casesService).updateAppealStatus(refEq(c), refEq(Some(AppealStatus.IN_PROGRESS)), any[Operator])(any[HeaderCarrier])
 
@@ -218,7 +217,7 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers with GuiceOneAppPe
 
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(c)))
 
-      val result = await(controller.updateStatus("reference")(newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("status" -> "")))
+      val result = await(controller.updateStatus("reference")(newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("status" -> "")))
 
       verify(casesService, never()).updateAppealStatus(any[Case], any[Option[AppealStatus]], any[Operator])(any[HeaderCarrier])
 
@@ -232,7 +231,7 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers with GuiceOneAppPe
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(c)))
       given(casesService.updateAppealStatus(refEq(c), any[Option[AppealStatus]], any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(c))
 
-      val result = await(controller.updateStatus("reference")(newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("status" -> "IN_PROGRESS")))
+      val result = await(controller.updateStatus("reference")(newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("status" -> "IN_PROGRESS")))
 
       verify(casesService, never()).updateAppealStatus(any[Case], any[Option[AppealStatus]], any[Operator])(any[HeaderCarrier])
 
@@ -246,7 +245,7 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers with GuiceOneAppPe
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(c)))
       given(casesService.updateAppealStatus(refEq(c), any[Option[AppealStatus]], any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(c))
 
-      val result = await(controller.updateStatus("reference")(newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("status" -> "IN_PROGRESS")))
+      val result = await(controller.updateStatus("reference")(newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("status" -> "IN_PROGRESS")))
 
       verify(casesService, never()).updateAppealStatus(any[Case], any[Option[AppealStatus]], any[Operator])(any[HeaderCarrier])
 
@@ -257,7 +256,7 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers with GuiceOneAppPe
     "return 404 Not Found and HTML content type" in {
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(None))
 
-      val result = await(controller.updateStatus("reference")(newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("status" -> "IN_PROGRESS")))
+      val result = await(controller.updateStatus("reference")(newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("status" -> "IN_PROGRESS")))
 
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")

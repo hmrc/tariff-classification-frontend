@@ -21,15 +21,13 @@ import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterEach, Matchers, WordSpec}
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.{MimeTypes, Status}
 import play.api.i18n.{DefaultLangs, DefaultMessagesApi}
-import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded, Result}
-import play.api.test.{FakeHeaders, FakeRequest}
+import play.api.mvc.{AnyContentAsFormUrlEncoded, Result}
+import play.api.test.FakeRequest
 import play.api.{Configuration, Environment}
-import play.filters.csrf.CSRF.{Token, TokenProvider}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.test.UnitSpec
+import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, Operator, Queue}
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, QueuesService}
@@ -38,7 +36,7 @@ import uk.gov.tariffclassificationfrontend.utils.Cases
 import scala.concurrent.Future.{failed, successful}
 
 class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
-  with GuiceOneAppPerSuite with MockitoSugar with BeforeAndAfterEach with ControllerCommons{
+  with WithFakeApplication with MockitoSugar with BeforeAndAfterEach with ControllerCommons {
 
   private val env = Environment.simple()
 
@@ -53,10 +51,12 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   private val caseWithStatusNEW = Cases.btiCaseExample.copy(status = CaseStatus.NEW)
   private val caseWithStatusOPEN = Cases.btiCaseExample.copy(status = CaseStatus.OPEN)
 
-  private implicit val mat: Materializer = app.materializer
+  private implicit val mat: Materializer = fakeApplication.materializer
   private implicit val hc: HeaderCarrier = HeaderCarrier()
 
-  private val controller = new ReleaseCaseController(new SuccessfulAuthenticatedAction(operator), casesService, queueService, messageApi, appConfig)
+  private val controller = new ReleaseCaseController(
+    new SuccessfulAuthenticatedAction(operator), casesService, queueService, messageApi, appConfig
+  )
 
   override def afterEach(): Unit = {
     super.afterEach()
@@ -69,7 +69,7 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusNEW)))
       when(queueService.getNonGateway).thenReturn(Seq.empty)
 
-      val result: Result = await(controller.releaseCase("reference")(newFakeGETRequestWithCSRF(app)))
+      val result: Result = await(controller.releaseCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -81,7 +81,7 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusOPEN)))
       when(queueService.getNonGateway).thenReturn(Seq.empty)
 
-      val result: Result = await(controller.releaseCase("reference")(newFakeGETRequestWithCSRF(app)))
+      val result: Result = await(controller.releaseCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
@@ -93,7 +93,7 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(None))
       when(queueService.getNonGateway).thenReturn(Seq.empty)
 
-      val result: Result = await(controller.releaseCase("reference")(newFakeGETRequestWithCSRF(app)))
+      val result: Result = await(controller.releaseCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -124,7 +124,7 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       when(queueService.getNonGateway).thenReturn(Seq.empty)
       when(casesService.releaseCase(refEq(caseWithStatusNEW), any[Queue], refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusOPEN))
 
-      val result: Result = await(controller.releaseCaseToQueue("reference")(newFakePOSTRequestWithCSRF(app)))
+      val result: Result = await(controller.releaseCaseToQueue("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -182,7 +182,7 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   }
 
   private def requestWithQueue(queue : String) : FakeRequest[AnyContentAsFormUrlEncoded] = {
-    newFakePOSTRequestWithCSRF(app, Map("queue" -> queue))
+    newFakePOSTRequestWithCSRF(fakeApplication, Map("queue" -> queue))
   }
 
 }

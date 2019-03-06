@@ -22,13 +22,13 @@ import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito._
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{Matchers, WordSpec}
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status
 import play.api.i18n.{DefaultLangs, DefaultMessagesApi}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.test.WithFakeApplication
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.{CommodityCodeConstraints, DecisionForm, DecisionFormMapper}
 import uk.gov.hmrc.tariffclassificationfrontend.models._
@@ -37,7 +37,7 @@ import uk.gov.tariffclassificationfrontend.utils.{Cases, Events}
 
 import scala.concurrent.Future
 
-class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite with MockitoSugar with ControllerCommons {
+class CaseControllerSpec extends WordSpec with Matchers with WithFakeApplication with MockitoSugar with ControllerCommons {
 
   private val fakeRequest = FakeRequest()
   private val env = Environment.simple()
@@ -152,7 +152,7 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
       given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
       given(eventService.getEvents(refEq(aCase.reference), refEq(NoPagination()))(any[HeaderCarrier])) willReturn Future.successful(Paged(Events.events))
 
-      val result = controller.activityDetails(aCase.reference)(newFakeGETRequestWithCSRF(app))
+      val result = controller.activityDetails(aCase.reference)(newFakeGETRequestWithCSRF(fakeApplication))
 
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -164,7 +164,7 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
       given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
       given(eventService.getEvents(refEq(aCase.reference), refEq(NoPagination()))(any[HeaderCarrier])) willReturn Future.successful(Paged.empty[Event])
 
-      val result = controller.activityDetails(aCase.reference)(newFakeGETRequestWithCSRF(app))
+      val result = controller.activityDetails(aCase.reference)(newFakeGETRequestWithCSRF(fakeApplication))
 
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -188,7 +188,7 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
 
     "add a new note when a case note is provided" in {
       val aNote = "This is a note"
-      val aValidForm = newFakePOSTRequestWithCSRF(app, Map("note" -> aNote))
+      val aValidForm = newFakePOSTRequestWithCSRF(fakeApplication, Map("note" -> aNote))
       given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])) willReturn Future.successful(Some(aCase))
       given(eventService.addNote(refEq(aCase), refEq(aNote), refEq(operator), any[Clock])(any[HeaderCarrier])) willReturn Future.successful(event)
 
@@ -197,7 +197,7 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
     }
 
     "displays an error when no case note is provided" in {
-      val aValidForm = newFakePOSTRequestWithCSRF(app, Map())
+      val aValidForm = newFakePOSTRequestWithCSRF(fakeApplication, Map())
       given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])) willReturn Future.successful(Some(aCase))
       given(eventService.getEvents(refEq(aCase.reference), refEq(NoPagination()))(any[HeaderCarrier])) willReturn Future.successful(Paged.empty[Event])
 
@@ -209,7 +209,7 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
     }
 
     "displays case not found message" in {
-      val aValidForm = newFakePOSTRequestWithCSRF(app, Map("note" -> "note"))
+      val aValidForm = newFakePOSTRequestWithCSRF(fakeApplication, Map("note" -> "note"))
       given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(None))
 
       val result = controller.addNote(aCase.reference)(aValidForm)
@@ -227,7 +227,7 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
       given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
       given(keywordsService.autoCompleteKeywords).willReturn(Future.successful(Seq()))
 
-      val result = controller.keywordsDetails(aCase.reference)(newFakeGETRequestWithCSRF(app))
+      val result = controller.keywordsDetails(aCase.reference)(newFakeGETRequestWithCSRF(fakeApplication))
 
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -240,7 +240,7 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
 
     "add a new keyword" in {
       val aKeyword = "Apples"
-      val aValidForm = newFakePOSTRequestWithCSRF(app, Map("keyword" -> aKeyword))
+      val aValidForm = newFakePOSTRequestWithCSRF(fakeApplication, Map("keyword" -> aKeyword))
       given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
       given(keywordsService.addKeyword(refEq(aCase), refEq("Apples"), refEq(operator))(any[HeaderCarrier])).willReturn(Future.successful(aCase))
       given(keywordsService.autoCompleteKeywords).willReturn(Future.successful(Seq()))
@@ -253,7 +253,7 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
     }
 
     "displays an error when no keyword is provided" in {
-      val aValidForm = newFakePOSTRequestWithCSRF(app, Map())
+      val aValidForm = newFakePOSTRequestWithCSRF(fakeApplication, Map())
       given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
       given(keywordsService.autoCompleteKeywords).willReturn(Future.successful(Seq()))
 
@@ -265,7 +265,7 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
     }
 
     "displays case not found message" in {
-      val aValidForm = newFakePOSTRequestWithCSRF(app, Map("keyword" -> "keyword"))
+      val aValidForm = newFakePOSTRequestWithCSRF(fakeApplication, Map("keyword" -> "keyword"))
       given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(None))
 
       val result = controller.addKeyword(aCase.reference)(aValidForm)
@@ -284,7 +284,7 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
       given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
       given(keywordsService.removeKeyword(refEq(aCase), refEq("Apples"), refEq(operator))(any[HeaderCarrier])).willReturn(Future.successful(aCase))
 
-      val result = controller.removeKeyword(aCase.reference, aKeyword)(newFakeGETRequestWithCSRF(app))
+      val result = controller.removeKeyword(aCase.reference, aKeyword)(newFakeGETRequestWithCSRF(fakeApplication))
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
@@ -294,7 +294,7 @@ class CaseControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite
     "displays case not found message" in {
       given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(None))
 
-      val result = controller.removeKeyword(aCase.reference, aKeyword)(newFakeGETRequestWithCSRF(app))
+      val result = controller.removeKeyword(aCase.reference, aKeyword)(newFakeGETRequestWithCSRF(fakeApplication))
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
