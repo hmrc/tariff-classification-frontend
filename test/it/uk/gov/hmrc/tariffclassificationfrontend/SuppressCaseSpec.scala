@@ -29,7 +29,7 @@ class SuppressCaseSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response: WSResponse = await(ws.url(s"$frontendRoot/cases/1/suppress").get())
+      val response: WSResponse = await(ws.url(s"$baseUrl/cases/1/suppress").get())
 
       // Then
       response.status shouldBe OK
@@ -41,7 +41,7 @@ class SuppressCaseSpec extends IntegrationTest with MockitoSugar {
       givenAuthFailed()
 
       // When
-      val response: WSResponse = await(ws.url(s"$frontendRoot/cases/1/suppress").get())
+      val response: WSResponse = await(ws.url(s"$baseUrl/cases/1/suppress").get())
 
       // Then
       response.status shouldBe OK

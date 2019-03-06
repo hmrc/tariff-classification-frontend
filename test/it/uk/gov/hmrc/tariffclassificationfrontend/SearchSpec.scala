@@ -19,7 +19,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response = await(ws.url(s"$frontendRoot/search?reference=1").get())
+      val response = await(ws.url(s"$baseUrl/search?reference=1").get())
 
       // Then
       response.status shouldBe OK
@@ -34,7 +34,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       givenAuthSuccess()
 
       // When
-      val response = await(ws.url(s"$frontendRoot/search?trader_name=").get())
+      val response = await(ws.url(s"$baseUrl/search?trader_name=").get())
 
       // Then
       response.status shouldBe OK
@@ -51,7 +51,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response = await(ws.url(s"$frontendRoot/search?trader_name=1").get())
+      val response = await(ws.url(s"$baseUrl/search?trader_name=1").get())
 
       // Then
       response.status shouldBe OK
@@ -66,7 +66,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       givenAuthSuccess()
 
       // When
-      val response = await(ws.url(s"$frontendRoot/search?commodity_code=").get())
+      val response = await(ws.url(s"$baseUrl/search?commodity_code=").get())
 
       // Then
       response.status shouldBe OK
@@ -83,7 +83,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response = await(ws.url(s"$frontendRoot/search?commodity_code=11").get())
+      val response = await(ws.url(s"$baseUrl/search?commodity_code=11").get())
 
       // Then
       response.status shouldBe OK
@@ -98,7 +98,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       givenAuthSuccess()
 
       // When
-      val response = await(ws.url(s"$frontendRoot/search?decision_details=").get())
+      val response = await(ws.url(s"$baseUrl/search?decision_details=").get())
 
       // Then
       response.status shouldBe OK
@@ -115,7 +115,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response = await(ws.url(s"$frontendRoot/search?decision_details=1").get())
+      val response = await(ws.url(s"$baseUrl/search?decision_details=1").get())
 
       // Then
       response.status shouldBe OK
@@ -130,7 +130,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       givenAuthSuccess()
 
       // When
-      val response = await(ws.url(s"$frontendRoot/search?keyword[0]=").get())
+      val response = await(ws.url(s"$baseUrl/search?keyword[0]=").get())
 
       // Then
       response.status shouldBe OK
@@ -147,7 +147,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response = await(ws.url(s"$frontendRoot/search?keyword[0]=k1&keyword[1]=k2").get())
+      val response = await(ws.url(s"$baseUrl/search?keyword[0]=k1&keyword[1]=k2").get())
 
       // Then
       response.status shouldBe OK
@@ -164,7 +164,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       givenAuthSuccess()
 
       // When
-      val response = await(ws.url(s"$frontendRoot/search?live_rulings_only=").get())
+      val response = await(ws.url(s"$baseUrl/search?live_rulings_only=").get())
 
       // Then
       response.status shouldBe OK
@@ -176,7 +176,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       givenAuthSuccess()
 
       // When
-      val response = await(ws.url(s"$frontendRoot/search?live_rulings_only=true").get())
+      val response = await(ws.url(s"$baseUrl/search?live_rulings_only=true").get())
 
       // Then
       response.status shouldBe OK
@@ -195,7 +195,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response = await(ws.url(s"$frontendRoot/search?trader_name=1&live_rulings_only=true").get())
+      val response = await(ws.url(s"$baseUrl/search?trader_name=1&live_rulings_only=true").get())
 
       // Then
       response.status shouldBe OK
@@ -213,7 +213,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response = await(ws.url(s"$frontendRoot/search?trader_name=1").get())
+      val response = await(ws.url(s"$baseUrl/search?trader_name=1").get())
 
       // Then
       response.status shouldBe OK
@@ -230,7 +230,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response = await(ws.url(s"$frontendRoot/search?trader_name=1&live_rulings_only=false").get())
+      val response = await(ws.url(s"$baseUrl/search?trader_name=1&live_rulings_only=false").get())
 
       // Then
       response.status shouldBe OK
@@ -250,7 +250,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response = await(ws.url(s"$frontendRoot/search?trader_name=1").get())
+      val response = await(ws.url(s"$baseUrl/search?trader_name=1").get())
 
       // Then
       response.status shouldBe OK
@@ -267,7 +267,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response = await(ws.url(s"$frontendRoot/search?sort_by=commodity-code&sort_direction=desc&trader_name=1").get())
+      val response = await(ws.url(s"$baseUrl/search?sort_by=commodity-code&sort_direction=desc&trader_name=1").get())
 
       // Then
       response.status shouldBe OK

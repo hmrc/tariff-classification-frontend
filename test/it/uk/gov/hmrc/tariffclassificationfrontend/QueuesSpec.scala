@@ -20,7 +20,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response = await(ws.url(s"$frontendRoot/queues").get())
+      val response = await(ws.url(s"$baseUrl/queues").get())
 
       // Then
       response.status shouldBe OK
@@ -32,7 +32,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar {
       givenAuthFailed()
 
       // When
-      val response = await(ws.url(s"$frontendRoot/queues").get())
+      val response = await(ws.url(s"$baseUrl/queues").get())
 
       // Then
       response.status shouldBe OK
@@ -52,7 +52,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar {
         )
 
       // When
-      val response = await(ws.url(s"$frontendRoot/queues/gateway").get())
+      val response = await(ws.url(s"$baseUrl/queues/gateway").get())
 
       // Then
       response.status shouldBe OK
@@ -64,7 +64,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar {
       givenAuthFailed()
 
       // When
-      val response = await(ws.url(s"$frontendRoot/queues/gateway").get())
+      val response = await(ws.url(s"$baseUrl/queues/gateway").get())
 
       // Then
       response.status shouldBe OK
@@ -84,7 +84,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response = await(ws.url(s"$frontendRoot/queues/act").get())
+      val response = await(ws.url(s"$baseUrl/queues/act").get())
 
       // Then
       response.status shouldBe OK
@@ -96,7 +96,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar {
       givenAuthFailed()
 
       // When
-      val response = await(ws.url(s"$frontendRoot/queues/gateway").get())
+      val response = await(ws.url(s"$baseUrl/queues/gateway").get())
 
       // Then
       response.status shouldBe OK
@@ -116,7 +116,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response = await(ws.url(s"$frontendRoot/queues/cap").get())
+      val response = await(ws.url(s"$baseUrl/queues/cap").get())
 
       // Then
       response.status shouldBe OK
@@ -128,7 +128,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar {
       givenAuthFailed()
 
       // When
-      val response = await(ws.url(s"$frontendRoot/queues/gateway").get())
+      val response = await(ws.url(s"$baseUrl/queues/gateway").get())
 
       // Then
       response.status shouldBe OK
@@ -148,7 +148,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response = await(ws.url(s"$frontendRoot/queues/cars").get())
+      val response = await(ws.url(s"$baseUrl/queues/cars").get())
 
       // Then
       response.status shouldBe OK
@@ -160,7 +160,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar {
       givenAuthFailed()
 
       // When
-      val response = await(ws.url(s"$frontendRoot/queues/cars").get())
+      val response = await(ws.url(s"$baseUrl/queues/cars").get())
 
       // Then
       response.status shouldBe OK
@@ -180,7 +180,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response = await(ws.url(s"$frontendRoot/queues/elm").get())
+      val response = await(ws.url(s"$baseUrl/queues/elm").get())
 
       // Then
       response.status shouldBe OK
@@ -192,7 +192,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar {
       givenAuthFailed()
 
       // When
-      val response = await(ws.url(s"$frontendRoot/queues/elm").get())
+      val response = await(ws.url(s"$baseUrl/queues/elm").get())
 
       // Then
       response.status shouldBe OK

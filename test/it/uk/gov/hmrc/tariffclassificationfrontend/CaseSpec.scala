@@ -19,7 +19,7 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response = await(ws.url(s"$frontendRoot/cases/1").get())
+      val response = await(ws.url(s"$baseUrl/cases/1").get())
 
       // Then
       response.status shouldBe OK
@@ -43,7 +43,7 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response = await(ws.url(s"$frontendRoot/cases/1").get())
+      val response = await(ws.url(s"$baseUrl/cases/1").get())
 
       // Then
       response.status shouldBe OK
@@ -74,7 +74,7 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response = await(ws.url(s"$frontendRoot/cases/1/application").get())
+      val response = await(ws.url(s"$baseUrl/cases/1/application").get())
 
       // Then
       response.status shouldBe OK
@@ -105,7 +105,7 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response = await(ws.url(s"$frontendRoot/cases/1/ruling").get())
+      val response = await(ws.url(s"$baseUrl/cases/1/ruling").get())
 
       // Then
       response.status shouldBe OK
@@ -134,7 +134,7 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
           .withBody(EventPayloads.pagedEvents))
       )
       // When
-      val response = await(ws.url(s"$frontendRoot/cases/1/activity").get())
+      val response = await(ws.url(s"$baseUrl/cases/1/activity").get())
 
       // Then
       response.status shouldBe OK
@@ -166,7 +166,7 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response = await(ws.url(s"$frontendRoot/cases/1/attachments").get())
+      val response = await(ws.url(s"$baseUrl/cases/1/attachments").get())
 
       // Then
       response.status shouldBe OK

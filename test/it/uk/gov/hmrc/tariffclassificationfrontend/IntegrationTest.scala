@@ -19,9 +19,9 @@ trait IntegrationTest extends UnitSpec with GuiceOneServerPerSuite with Resource
     ))
     .build()
 
-  protected val ws = fakeApplication().injector.instanceOf[WSClient]
-  protected val frontendRoot = s"http://localhost:$port/tariff-classification"
-  protected val filestoreRoot = s"http://localhost:$port"
+  protected val ws: WSClient = app.injector.instanceOf[WSClient]
+
+  protected val baseUrl = s"http://localhost:$port/tariff-classification"
 
   protected def givenAuthSuccess(): Unit = {
     stubFor(post(urlEqualTo("/auth/authorise"))
@@ -45,7 +45,7 @@ trait IntegrationTest extends UnitSpec with GuiceOneServerPerSuite with Resource
   protected def verifyNotAuthorisedFor(path : String): Unit = {
     givenAuthFailed()
 
-    val response = await(ws.url(s"$frontendRoot/$path").get())
+    val response = await(ws.url(s"$baseUrl/$path").get())
 
     response.status shouldBe OK
     response.body should include("You are not authorised to access this page.")
