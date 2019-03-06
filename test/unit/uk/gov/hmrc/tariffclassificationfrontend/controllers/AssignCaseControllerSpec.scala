@@ -21,13 +21,12 @@ import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterEach, Matchers, WordSpec}
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.{MimeTypes, Status}
 import play.api.i18n.{DefaultLangs, DefaultMessagesApi}
 import play.api.mvc.Result
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.test.UnitSpec
+import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
@@ -36,7 +35,7 @@ import uk.gov.tariffclassificationfrontend.utils.Cases._
 import scala.concurrent.Future.{failed, successful}
 
 class AssignCaseControllerSpec extends WordSpec with Matchers with UnitSpec
-  with GuiceOneAppPerSuite with MockitoSugar with BeforeAndAfterEach with ControllerCommons {
+  with WithFakeApplication with MockitoSugar with BeforeAndAfterEach with ControllerCommons {
 
   private val env = Environment.simple()
 
@@ -46,7 +45,7 @@ class AssignCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   private val casesService = mock[CasesService]
   private val operator = Operator("id")
 
-  private implicit val mat: Materializer = app.materializer
+  private implicit val mat: Materializer = fakeApplication.materializer
   private implicit val hc: HeaderCarrier = HeaderCarrier()
 
   private val controller = new AssignCaseController(new SuccessfulAuthenticatedAction(operator), casesService, messageApi, appConfig)
@@ -62,7 +61,7 @@ class AssignCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       val aCaseWithQueue = aCase(withQueue("1"))
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(aCaseWithQueue)))
 
-      val result: Result = await(controller.get("reference")(newFakeGETRequestWithCSRF(app)))
+      val result: Result = await(controller.get("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -74,7 +73,7 @@ class AssignCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       val aCaseWithoutQueue = aCase(withoutQueue())
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(aCaseWithoutQueue)))
 
-      val result: Result = await(controller.get("reference")(newFakeGETRequestWithCSRF(app)))
+      val result: Result = await(controller.get("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
@@ -86,7 +85,7 @@ class AssignCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       val aCaseAssignedToSelf = aCase(withQueue("1"), withAssignee(Some(operator)))
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(aCaseAssignedToSelf)))
 
-      val result: Result = await(controller.get("reference")(newFakeGETRequestWithCSRF(app)))
+      val result: Result = await(controller.get("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
@@ -97,7 +96,7 @@ class AssignCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     "return Not Found and HTML content type" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(None))
 
-      val result: Result = await(controller.get("reference")(newFakeGETRequestWithCSRF(app)))
+      val result: Result = await(controller.get("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -114,7 +113,7 @@ class AssignCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(aCaseWithQueue)))
       when(casesService.assignCase(refEq(aCaseWithQueue), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(aCaseWithQueue))
 
-      val result: Result = await(controller.post("reference")(newFakePOSTRequestWithCSRF(app)))
+      val result: Result = await(controller.post("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
@@ -126,7 +125,7 @@ class AssignCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       val aCaseWithoutQueue = aCase(withoutQueue())
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(aCaseWithoutQueue)))
 
-      val result: Result = await(controller.post("reference")(newFakePOSTRequestWithCSRF(app)))
+      val result: Result = await(controller.post("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
@@ -138,7 +137,7 @@ class AssignCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       val aCaseAssignedToSelf = aCase(withQueue("1"), withAssignee(Some(operator)))
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(aCaseAssignedToSelf)))
 
-      val result: Result = await(controller.post("reference")(newFakePOSTRequestWithCSRF(app)))
+      val result: Result = await(controller.post("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
@@ -150,7 +149,7 @@ class AssignCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       val aCaseAssignedToSelf = aCase(withQueue("1"), withAssignee(Some(Operator("other-id"))))
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(aCaseAssignedToSelf)))
 
-      val result: Result = await(controller.post("reference")(newFakePOSTRequestWithCSRF(app)))
+      val result: Result = await(controller.post("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
@@ -161,7 +160,7 @@ class AssignCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     "return Not Found and HTML content type on missing Case" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(None))
 
-      val result: Result = await(controller.post("reference")(newFakePOSTRequestWithCSRF(app)))
+      val result: Result = await(controller.post("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -175,7 +174,7 @@ class AssignCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(failed(error))
 
       val caught = intercept[error.type] {
-        await(controller.post("reference")(newFakePOSTRequestWithCSRF(app)))
+        await(controller.post("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
       }
       caught shouldBe error
     }

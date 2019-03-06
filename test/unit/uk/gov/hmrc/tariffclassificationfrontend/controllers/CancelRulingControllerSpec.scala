@@ -23,13 +23,12 @@ import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterEach, Matchers, WordSpec}
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.{MimeTypes, Status}
 import play.api.i18n.{DefaultLangs, DefaultMessagesApi}
 import play.api.mvc.Result
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.test.UnitSpec
+import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models.{CancelReason, CaseStatus, Operator}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
@@ -38,7 +37,7 @@ import uk.gov.tariffclassificationfrontend.utils.Cases
 import scala.concurrent.Future.{failed, successful}
 
 class CancelRulingControllerSpec extends WordSpec with Matchers with UnitSpec
-  with GuiceOneAppPerSuite with MockitoSugar with BeforeAndAfterEach with ControllerCommons {
+  with WithFakeApplication with MockitoSugar with BeforeAndAfterEach with ControllerCommons {
 
   private val env = Environment.simple()
 
@@ -52,7 +51,7 @@ class CancelRulingControllerSpec extends WordSpec with Matchers with UnitSpec
   private val caseWithStatusCOMPLETED = Cases.btiCaseExample.copy(status = CaseStatus.COMPLETED)
   private val caseWithStatusCANCELLED = Cases.btiCaseExample.copy(status = CaseStatus.CANCELLED)
 
-  private implicit val mat: Materializer = app.materializer
+  private implicit val mat: Materializer = fakeApplication.materializer
   private implicit val hc: HeaderCarrier = HeaderCarrier()
 
   private val controller = new CancelRulingController(new SuccessfulAuthenticatedAction(operator), casesService, messageApi, appConfig)
@@ -67,7 +66,7 @@ class CancelRulingControllerSpec extends WordSpec with Matchers with UnitSpec
     "return OK and HTML content type" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusCOMPLETED)))
 
-      val result: Result = await(controller.cancelRuling("reference")(newFakeGETRequestWithCSRF(app)))
+      val result: Result = await(controller.cancelRuling("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -78,7 +77,7 @@ class CancelRulingControllerSpec extends WordSpec with Matchers with UnitSpec
     "redirect to Application Details for non COMPLETED statuses" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusOPEN)))
 
-      val result: Result = await(controller.cancelRuling("reference")(newFakeGETRequestWithCSRF(app)))
+      val result: Result = await(controller.cancelRuling("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
@@ -89,7 +88,7 @@ class CancelRulingControllerSpec extends WordSpec with Matchers with UnitSpec
     "return Not Found and HTML content type" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(None))
 
-      val result: Result = await(controller.cancelRuling("reference")(newFakeGETRequestWithCSRF(app)))
+      val result: Result = await(controller.cancelRuling("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -106,7 +105,7 @@ class CancelRulingControllerSpec extends WordSpec with Matchers with UnitSpec
       when(casesService.cancelRuling(refEq(caseWithStatusCOMPLETED), refEq(CancelReason.ANNULLED), refEq(operator), any[Clock])
       (any[HeaderCarrier])).thenReturn(successful(caseWithStatusCANCELLED))
 
-      val result: Result = await(controller.confirmCancelRuling("reference")(newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("reason" -> "ANNULLED")))
+      val result: Result = await(controller.confirmCancelRuling("reference")(newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("reason" -> "ANNULLED")))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -119,7 +118,7 @@ class CancelRulingControllerSpec extends WordSpec with Matchers with UnitSpec
       when(casesService.cancelRuling(refEq(caseWithStatusCOMPLETED), refEq(CancelReason.ANNULLED), refEq(operator), any[Clock])
       (any[HeaderCarrier])).thenReturn(successful(caseWithStatusCANCELLED))
 
-      val result: Result = await(controller.confirmCancelRuling("reference")(newFakePOSTRequestWithCSRF(app)))
+      val result: Result = await(controller.confirmCancelRuling("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -130,7 +129,7 @@ class CancelRulingControllerSpec extends WordSpec with Matchers with UnitSpec
     "redirect to Application Details for non COMPLETED statuses" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusOPEN)))
 
-      val result: Result = await(controller.confirmCancelRuling("reference")(newFakePOSTRequestWithCSRF(app)))
+      val result: Result = await(controller.confirmCancelRuling("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
@@ -140,7 +139,7 @@ class CancelRulingControllerSpec extends WordSpec with Matchers with UnitSpec
 
     "return Not Found and HTML content type on missing Case" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(None))
-      val result: Result = await(controller.confirmCancelRuling("reference")(newFakePOSTRequestWithCSRF(app)))
+      val result: Result = await(controller.confirmCancelRuling("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -154,7 +153,7 @@ class CancelRulingControllerSpec extends WordSpec with Matchers with UnitSpec
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(failed(error))
 
       val caught = intercept[error.type] {
-        await(controller.confirmCancelRuling("reference")(newFakePOSTRequestWithCSRF(app)))
+        await(controller.confirmCancelRuling("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
       }
       caught shouldBe error
     }

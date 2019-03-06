@@ -22,13 +22,12 @@ import org.mockito.Mockito
 import org.mockito.Mockito.{never, verify}
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterEach, Matchers}
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status
 import play.api.i18n.{DefaultLangs, DefaultMessagesApi}
 import play.api.test.Helpers._
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.test.UnitSpec
+import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
@@ -36,7 +35,7 @@ import uk.gov.tariffclassificationfrontend.utils.Cases._
 
 import scala.concurrent.Future
 
-class ExtendedUseCaseControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSuite with MockitoSugar with ControllerCommons with BeforeAndAfterEach {
+class ExtendedUseCaseControllerSpec extends UnitSpec with Matchers with WithFakeApplication with MockitoSugar with ControllerCommons with BeforeAndAfterEach {
 
   private val env = Environment.simple()
   private val configuration = Configuration.load(env)
@@ -61,7 +60,7 @@ class ExtendedUseCaseControllerSpec extends UnitSpec with Matchers with GuiceOne
 
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(c)))
 
-      val result = await(controller.chooseStatus("reference")(newFakeGETRequestWithCSRF(app)))
+      val result = await(controller.chooseStatus("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -74,7 +73,7 @@ class ExtendedUseCaseControllerSpec extends UnitSpec with Matchers with GuiceOne
 
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(c)))
 
-      val result = await(controller.chooseStatus("reference")(newFakeGETRequestWithCSRF(app)))
+      val result = await(controller.chooseStatus("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
       locationOf(result) shouldBe Some("/tariff-classification/cases/reference")
@@ -85,7 +84,7 @@ class ExtendedUseCaseControllerSpec extends UnitSpec with Matchers with GuiceOne
 
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(c)))
 
-      val result = await(controller.chooseStatus("reference")(newFakeGETRequestWithCSRF(app)))
+      val result = await(controller.chooseStatus("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
       locationOf(result) shouldBe Some("/tariff-classification/cases/reference")
@@ -94,7 +93,7 @@ class ExtendedUseCaseControllerSpec extends UnitSpec with Matchers with GuiceOne
     "return 404 Not Found and HTML content type" in {
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(None))
 
-      val result = await(controller.chooseStatus("reference")(newFakeGETRequestWithCSRF(app)))
+      val result = await(controller.chooseStatus("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -112,7 +111,7 @@ class ExtendedUseCaseControllerSpec extends UnitSpec with Matchers with GuiceOne
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(c)))
       given(casesService.updateExtendedUseStatus(refEq(c), any[Boolean], any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(c))
 
-      val result = await(controller.updateStatus("reference")(newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("state" -> "false")))
+      val result = await(controller.updateStatus("reference")(newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("state" -> "false")))
 
       verify(casesService).updateExtendedUseStatus(refEq(c), refEq(false), any[Operator])(any[HeaderCarrier])
 
@@ -125,7 +124,7 @@ class ExtendedUseCaseControllerSpec extends UnitSpec with Matchers with GuiceOne
 
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(c)))
 
-      val result = await(controller.updateStatus("reference")(newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("state" -> "true")))
+      val result = await(controller.updateStatus("reference")(newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("state" -> "true")))
 
       verify(casesService, never()).updateExtendedUseStatus(any[Case], any[Boolean], any[Operator])(any[HeaderCarrier])
 
@@ -138,7 +137,7 @@ class ExtendedUseCaseControllerSpec extends UnitSpec with Matchers with GuiceOne
 
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(c)))
 
-      val result = await(controller.updateStatus("reference")(newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("state" -> "true")))
+      val result = await(controller.updateStatus("reference")(newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("state" -> "true")))
 
       verify(casesService, never()).updateExtendedUseStatus(any[Case], any[Boolean], any[Operator])(any[HeaderCarrier])
 
@@ -151,7 +150,7 @@ class ExtendedUseCaseControllerSpec extends UnitSpec with Matchers with GuiceOne
 
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(c)))
 
-      val result = await(controller.updateStatus("reference")(newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("state" -> "false")))
+      val result = await(controller.updateStatus("reference")(newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("state" -> "false")))
 
       verify(casesService, never()).updateExtendedUseStatus(any[Case], any[Boolean], any[Operator])(any[HeaderCarrier])
 
@@ -162,7 +161,7 @@ class ExtendedUseCaseControllerSpec extends UnitSpec with Matchers with GuiceOne
     "return 404 Not Found and HTML content type" in {
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(None))
 
-      val result = await(controller.updateStatus("reference")(newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("state" -> "true")))
+      val result = await(controller.updateStatus("reference")(newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("state" -> "true")))
 
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
