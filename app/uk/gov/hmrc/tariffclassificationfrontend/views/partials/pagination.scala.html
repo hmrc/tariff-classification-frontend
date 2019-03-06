@@ -30,21 +30,35 @@
 
  <div class="column-one-half">
   @if(pager.nonEmpty) {
-   <div id="@id-some" class="@counterClass.getOrElse("")">
-    <span>Showing</span>
-    <span id="@id-start">@{(pager.pageIndex-1) * pager.pageSize + 1}</span>
-    <span>-</span>
-    <span id="@id-end">@{(pager.pageIndex-1) * pager.pageSize + pager.size}</span>
-    <span>of</span>
-    <span id="@id-total" class="bold">@{pager.resultCount}</span>
-    <span>
+   @if(pager.pageCount == 1) {
+    <div id="@id-one" class="@counterClass.getOrElse("")">
+     <span>Showing</span>
+     <span id="@id-total" class="bold">@{pager.resultCount}</span>
+     <span>
      @if(pager.results.size == 1){
       @singularName
      } else {
       @pluralName
      }
-    </span>
-   </div>
+     </span>
+    </div>
+   } else {
+    <div id="@id-some" class="@counterClass.getOrElse("")">
+     <span>Showing</span>
+     <span id="@id-start">@{(pager.pageIndex-1) * pager.pageSize + 1}</span>
+     <span>-</span>
+     <span id="@id-end">@{(pager.pageIndex-1) * pager.pageSize + pager.size}</span>
+     <span>of</span>
+     <span id="@id-total" class="bold">@{pager.resultCount}</span>
+     <span>
+     @if(pager.results.size == 1){
+      @singularName
+     } else {
+      @pluralName
+     }
+     </span>
+    </div>
+   }
   } else {
    <div id="@id-none">
     <span>Showing</span>
@@ -54,7 +68,8 @@
 
  </div>
 
- <div id="@id-links" class="column-one-half align-right @linksClass.getOrElse("")">
+ @if(pager.pageCount > 1) {
+  <div id="@id-links" class="column-one-half align-right @linksClass.getOrElse("")">
   @defining(pager.pageCount) { pageCount: Int =>
    @* Previous Page *@
    @if(pager.pageIndex > 1) {
@@ -64,9 +79,9 @@
    @* Surrounding 5 Pages *@
    @for(pageIndex <- PaginationUtil.surroundingPages(pager.pageIndex, pager.pageCount, 5)) {
     @if(pageIndex == pager.pageIndex) {
-        <span id="@id-page_current" class="mx-5">@pageIndex</span>
+     <span id="@id-page_current" class="mx-5">@pageIndex</span>
     } else {
-        <a id="@id-page_@pageIndex" class="mx-5" href="@onChange(pageIndex)">@pageIndex</a>
+     <a id="@id-page_@pageIndex" class="mx-5" href="@onChange(pageIndex)">@pageIndex</a>
     }
    }
 
@@ -76,5 +91,6 @@
    }
 
   }
- </div>
+  </div>
+ }
 </div>

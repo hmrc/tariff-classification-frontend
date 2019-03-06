@@ -66,13 +66,12 @@ class PaginationViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
       ))
 
       // Then
-      doc should containElementWithID("ID-some")
+      doc should containElementWithID("ID-one")
+      doc shouldNot containElementWithID("ID-some")
       doc shouldNot containElementWithID("ID-none")
 
-      doc should containElementWithID("ID-start")
-      doc.getElementById("ID-start") should containText("1")
-      doc should containElementWithID("ID-end")
-      doc.getElementById("ID-end") should containText("2")
+      doc shouldNot containElementWithID("ID-start")
+      doc shouldNot containElementWithID("ID-end")
       doc should containElementWithID("ID-total")
       doc.getElementById("ID-total") should containText("2")
 
@@ -95,13 +94,12 @@ class PaginationViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
       ))
 
       // Then
-      doc should containElementWithID("ID-some")
+      doc should containElementWithID("ID-one")
+      doc shouldNot containElementWithID("ID-some")
       doc shouldNot containElementWithID("ID-none")
 
-      doc should containElementWithID("ID-start")
-      doc.getElementById("ID-start") should containText("1")
-      doc should containElementWithID("ID-end")
-      doc.getElementById("ID-end") should containText("1")
+      doc shouldNot containElementWithID("ID-start")
+      doc shouldNot containElementWithID("ID-end")
       doc should containElementWithID("ID-total")
       doc.getElementById("ID-total") should containText("1")
 
