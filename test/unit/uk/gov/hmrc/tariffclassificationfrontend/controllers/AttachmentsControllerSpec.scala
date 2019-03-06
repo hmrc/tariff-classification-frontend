@@ -24,7 +24,6 @@ import org.scalatest.mockito.MockitoSugar
 import play.api
 import play.api.http.Status
 import play.api.i18n.{DefaultLangs, DefaultMessagesApi}
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.Files.TemporaryFile
 import play.api.mvc.MultipartFormData.FilePart
 import play.api.mvc.{Call, MaxSizeExceeded, MultipartFormData, Result}
@@ -46,7 +45,7 @@ class AttachmentsControllerSpec extends UnitSpec with Matchers with WithFakeAppl
 
   private val fakeRequest = FakeRequest(onwardRoute)
 
-  private implicit def application: api.Application = new GuiceApplicationBuilder().build()
+  private implicit def application: api.Application = fakeApplication
   private implicit val mtrlzr: Materializer = application.injector.instanceOf[Materializer]
 
   private val env = Environment.simple()

@@ -36,7 +36,8 @@ import uk.gov.tariffclassificationfrontend.utils.Cases
 
 import scala.concurrent.Future
 
-class RulingControllerSpec extends WordSpec with Matchers with WithFakeApplication with MockitoSugar with BeforeAndAfterEach with ControllerCommons {
+class RulingControllerSpec extends WordSpec with Matchers with WithFakeApplication
+  with MockitoSugar with BeforeAndAfterEach with ControllerCommons {
 
   private val env = Environment.simple()
   private val configuration = Configuration.load(env)
@@ -50,7 +51,9 @@ class RulingControllerSpec extends WordSpec with Matchers with WithFakeApplicati
 
   private implicit val hc = HeaderCarrier()
 
-  private val controller = new RulingController(new SuccessfulAuthenticatedAction, casesService, fileService, mapper, decisionForm, messageApi, appConfig)
+  private val controller = new RulingController(
+    new SuccessfulAuthenticatedAction, casesService, fileService, mapper, decisionForm, messageApi, appConfig
+  )
 
   override protected def afterEach(): Unit = {
     super.afterEach()

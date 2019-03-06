@@ -36,7 +36,7 @@ import uk.gov.tariffclassificationfrontend.utils.Cases
 import scala.concurrent.Future.{failed, successful}
 
 class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
-  with WithFakeApplication with MockitoSugar with BeforeAndAfterEach with ControllerCommons{
+  with WithFakeApplication with MockitoSugar with BeforeAndAfterEach with ControllerCommons {
 
   private val env = Environment.simple()
 
@@ -54,7 +54,9 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   private implicit val mat: Materializer = fakeApplication.materializer
   private implicit val hc: HeaderCarrier = HeaderCarrier()
 
-  private val controller = new ReleaseCaseController(new SuccessfulAuthenticatedAction(operator), casesService, queueService, messageApi, appConfig)
+  private val controller = new ReleaseCaseController(
+    new SuccessfulAuthenticatedAction(operator), casesService, queueService, messageApi, appConfig
+  )
 
   override def afterEach(): Unit = {
     super.afterEach()
