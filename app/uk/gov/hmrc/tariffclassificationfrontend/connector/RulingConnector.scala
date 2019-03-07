@@ -17,7 +17,7 @@
 package uk.gov.hmrc.tariffclassificationfrontend.connector
 
 import javax.inject.{Inject, Singleton}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpReads}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 
@@ -27,8 +27,9 @@ import scala.concurrent.Future
 @Singleton
 class RulingConnector @Inject()(configuration: AppConfig, http: HttpClient) extends WithAuth {
 
-  def notify(id: String)(implicit hc: HeaderCarrier): Future[Unit] = {
-    http.POSTEmpty(s"${configuration.rulingUrl}/binding-tariff-rulings/ruling/$id")(HttpReads.readRaw, withAuth(configuration), global).map(_ => ())
+  def notify(id: String, hc: HeaderCarrier): Future[Unit] = {
+    implicit val headerCarrier: HeaderCarrier = withAuth(configuration, hc)
+    http.POSTEmpty(s"${configuration.rulingUrl}/binding-tariff-rulings/ruling/$id").map(_ => ())
   }
 
 }

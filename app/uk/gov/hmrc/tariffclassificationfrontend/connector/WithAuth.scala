@@ -23,7 +23,7 @@ trait WithAuth {
 
   protected val authTokenHeaderName = "X-Api-Token"
 
-  protected def withAuth(config: AppConfig)(implicit hc: HeaderCarrier): HeaderCarrier = {
+  protected def withAuth(config: AppConfig, hc: HeaderCarrier): HeaderCarrier = {
     hc.headers.toMap.get(authTokenHeaderName) match {
       case Some(_) => hc
       case _ => hc.withExtraHeaders(authTokenHeaderName -> config.apiToken)

@@ -176,7 +176,7 @@ class CasesService @Inject()(appConfig: AppConfig,
       _ = auditService.auditCaseCompleted(original, updated, operator)
 
       // Notify the Ruling store
-      _ = rulingConnector.notify(original.reference) recover loggingARulingErrorFor(original.reference)
+      _ = rulingConnector.notify(original.reference, hc) recover loggingARulingErrorFor(original.reference)
     } yield updated
   }
 
@@ -202,7 +202,7 @@ class CasesService @Inject()(appConfig: AppConfig,
       _ = auditService.auditRulingCancelled(original, updated, operator)
 
       // Notify the Ruling store
-      _ = rulingConnector.notify(original.reference) recover loggingARulingErrorFor(original.reference)
+      _ = rulingConnector.notify(original.reference, hc) recover loggingARulingErrorFor(original.reference)
     } yield updated
   }
 
