@@ -32,7 +32,7 @@ class FileStoreService @Inject()(connector: FileStoreConnector) {
 
   def getAttachments(c: Case)(implicit hc: HeaderCarrier): Future[Seq[StoredAttachment]] = {
     val attachmentsById: Map[String, Attachment] = c.attachments.map(a => a.id -> a).toMap
-    connector.get(c.attachments) map { files =>
+    connector.get(c.attachments, hc) map { files =>
       files map { file =>
         attachmentsById
           .get(file.id)
@@ -46,7 +46,7 @@ class FileStoreService @Inject()(connector: FileStoreConnector) {
       c.application.asBTI.agent.flatMap(_.letterOfAuthorisation) match {
         case Some(attachment: Attachment) =>
           connector
-            .get(attachment)
+            .get(attachment, hc)
             .map { file =>
               Logger.warn(s"Agent Letter of Authority was present on Case [${c.reference}] but it didn't exist in the FileStore")
               file.map(StoredAttachment(attachment, _))
@@ -59,7 +59,7 @@ class FileStoreService @Inject()(connector: FileStoreConnector) {
   }
 
   def upload(fileUpload: FileUpload)(implicit hc: HeaderCarrier): Future[FileStoreAttachment] = {
-    connector.upload(fileUpload).map(toFileAttachment(fileUpload.content.file.length))
+    connector.upload(fileUpload, hc).map(toFileAttachment(fileUpload.content.file.length))
   }
 
   private def toFileAttachment(size: Long): FileMetadata => FileStoreAttachment = {

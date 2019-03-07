@@ -36,23 +36,24 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class FileStoreConnector @Inject()(appConfig: AppConfig, http: HttpClient, ws: WSClient) {
+class FileStoreConnector @Inject()(appConfig: AppConfig, http: HttpClient, ws: WSClient) extends WithAuth {
 
-  def get(attachments: Seq[Attachment])(implicit headerCarrier: HeaderCarrier): Future[Seq[FileMetadata]] = {
+  def get(attachments: Seq[Attachment], hc: HeaderCarrier): Future[Seq[FileMetadata]] = {
     if (attachments.isEmpty) {
       Future.successful(Seq.empty)
     } else {
       val query = s"?${attachments.map(att => s"id=${att.id}").mkString("&")}"
+      implicit val headerCarrier: HeaderCarrier = withAuth(appConfig, hc)
       http.GET[Seq[FileMetadata]](s"${appConfig.fileStoreUrl}/file$query")
     }
   }
 
-  def get(attachment: Attachment)(implicit headerCarrier: HeaderCarrier): Future[Option[FileMetadata]] = {
+  def get(attachment: Attachment, hc: HeaderCarrier): Future[Option[FileMetadata]] = {
+    implicit val headerCarrier: HeaderCarrier = withAuth(appConfig, hc)
     http.GET[Option[FileMetadata]](s"${appConfig.fileStoreUrl}/file/${attachment.id}")
   }
 
-  def upload(fileUpload: FileUpload)
-            (implicit hc: HeaderCarrier): Future[FileMetadata] = {
+  def upload(fileUpload: FileUpload, hc: HeaderCarrier): Future[FileMetadata] = {
 
     val dataPart: MultipartFormData.DataPart = MultipartFormData.DataPart("publish", "true")
 
@@ -64,6 +65,7 @@ class FileStoreConnector @Inject()(appConfig: AppConfig, http: HttpClient, ws: W
     )
 
     ws.url(s"${appConfig.fileStoreUrl}/file")
+      .withHeaders(withAuth(appConfig, hc).headers: _*)
       .post(Source(List(filePart, dataPart)))
       .map(response => Json.fromJson[FileMetadata](Json.parse(response.body)).get)
   }
