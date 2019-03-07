@@ -16,19 +16,18 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.connector
 
-import javax.inject.{Inject, Singleton}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpReads}
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+trait WithAuth {
 
-@Singleton
-class RulingConnector @Inject()(configuration: AppConfig, http: HttpClient) extends WithAuth {
+  protected val authTokenHeaderName = "X-Api-Token"
 
-  def notify(id: String)(implicit hc: HeaderCarrier): Future[Unit] = {
-    http.POSTEmpty(s"${configuration.rulingUrl}/binding-tariff-rulings/ruling/$id")(HttpReads.readRaw, withAuth(configuration), global).map(_ => ())
+  protected def withAuth(config: AppConfig)(implicit hc: HeaderCarrier): HeaderCarrier = {
+    hc.headers.toMap.get(authTokenHeaderName) match {
+      case Some(_) => hc
+      case _ => hc.withExtraHeaders(authTokenHeaderName -> config.apiToken)
+    }
   }
 
 }
