@@ -16,30 +16,17 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.connector
 
-import akka.actor.ActorSystem
 import com.github.tomakehurst.wiremock.client.WireMock._
 import org.mockito.BDDMockito.given
-import org.scalatest.mockito.MockitoSugar
-import play.api.Environment
 import play.api.http.Status
-import play.api.libs.ws.WSClient
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.audit.DefaultAuditConnector
-import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.tariffclassificationfrontend.utils.{ResourceFiles, WiremockTestServer}
 
-class RulingConnectorTest extends UnitSpec with WithFakeApplication with WiremockTestServer with MockitoSugar with ResourceFiles {
+
+class RulingConnectorTest extends ConnectorTest {
 
   private val config = mock[AppConfig]
-  private val wsClient: WSClient = fakeApplication.injector.instanceOf[WSClient]
-  private val auditConnector = new DefaultAuditConnector(fakeApplication.configuration, fakeApplication.injector.instanceOf[Environment])
-  private val actorSystem = ActorSystem.create("test")
-  private val realConfig: AppConfig = fakeApplication.injector.instanceOf[AppConfig]
-  private val hmrcWsClient = new AuthenticatedHttpClient(realConfig, auditConnector, wsClient, actorSystem)
-  private implicit val headers: HeaderCarrier = HeaderCarrier()
 
-  private val connector = new RulingConnector(config, hmrcWsClient)
+  private val connector = new RulingConnector(config, authenticatedWSClient)
 
   "Connector Publish" should {
 
