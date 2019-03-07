@@ -24,8 +24,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class RulingConnector @Inject()(configuration: AppConfig,
-                                http: AuthenticatedHttpClient) {
+class RulingConnector @Inject()(configuration: AppConfig, http: AuthenticatedHttpClient) {
 
   def notify(id: String)(implicit hc: HeaderCarrier): Future[Unit] = {
     http.POSTEmpty(s"${configuration.rulingUrl}/binding-tariff-rulings/ruling/$id").map(_ => ())

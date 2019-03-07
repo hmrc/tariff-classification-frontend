@@ -17,22 +17,15 @@
 package uk.gov.hmrc.tariffclassificationfrontend.connector
 
 import com.github.tomakehurst.wiremock.client.WireMock._
-import org.mockito.BDDMockito.given
 import play.api.http.Status
-import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-
 
 class RulingConnectorTest extends ConnectorTest {
 
-  private val config = mock[AppConfig]
-
-  private val connector = new RulingConnector(config, authenticatedWSClient)
+  private val connector = new RulingConnector(appConfig, authenticatedHttpClient)
 
   "Connector Publish" should {
 
     "POST to the Ruling Store" in {
-      given(config.rulingUrl).willReturn(wireMockUrl)
-
       stubFor(
         post("/binding-tariff-rulings/ruling/id")
           .willReturn(
@@ -41,7 +34,7 @@ class RulingConnectorTest extends ConnectorTest {
           )
       )
 
-      await(connector.notify("id"))
+      await(connector.notify("id")) shouldBe ((): Unit)
 
       verify(
         postRequestedFor(urlEqualTo("/binding-tariff-rulings/ruling/id"))

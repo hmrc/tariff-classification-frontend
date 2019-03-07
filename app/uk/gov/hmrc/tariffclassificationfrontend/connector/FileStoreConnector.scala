@@ -26,7 +26,6 @@ import play.api.libs.ws.WSClient
 import play.api.mvc.MultipartFormData
 import play.api.mvc.MultipartFormData.FilePart
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.models.response.FileMetadata
@@ -36,7 +35,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class FileStoreConnector @Inject()(appConfig: AppConfig, http: HttpClient, ws: WSClient) {
+class FileStoreConnector @Inject()(appConfig: AppConfig, http: AuthenticatedHttpClient, ws: WSClient) {
 
   def get(attachments: Seq[Attachment])(implicit headerCarrier: HeaderCarrier): Future[Seq[FileMetadata]] = {
     if (attachments.isEmpty) {
@@ -64,6 +63,7 @@ class FileStoreConnector @Inject()(appConfig: AppConfig, http: HttpClient, ws: W
     )
 
     ws.url(s"${appConfig.fileStoreUrl}/file")
+      .withHeaders(http.addAuth(appConfig, hc).headers: _*)
       .post(Source(List(filePart, dataPart)))
       .map(response => Json.fromJson[FileMetadata](Json.parse(response.body)).get)
   }

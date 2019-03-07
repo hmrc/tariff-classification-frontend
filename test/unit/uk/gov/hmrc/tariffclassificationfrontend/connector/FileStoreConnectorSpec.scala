@@ -16,45 +16,16 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.connector
 
-import java.time.{LocalDate, ZoneOffset}
-
-import akka.actor.ActorSystem
 import com.github.tomakehurst.wiremock.client.WireMock._
 import org.mockito.BDDMockito.given
-import org.scalatest.BeforeAndAfterEach
-import org.scalatest.mockito.MockitoSugar
-import play.api.Environment
 import play.api.http.Status
 import play.api.libs.Files.TemporaryFile
-import play.api.libs.ws.WSClient
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.audit.DefaultAuditConnector
-import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
-import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
-import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models.response.{FileMetadata, ScanStatus}
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Attachment, FileUpload}
-import uk.gov.tariffclassificationfrontend.utils.{ResourceFiles, WiremockTestServer}
 
-class FileStoreConnectorSpec extends UnitSpec with WiremockTestServer with MockitoSugar with WithFakeApplication with BeforeAndAfterEach with ResourceFiles {
+class FileStoreConnectorSpec extends ConnectorTest {
 
-  private val config = mock[AppConfig]
-  private implicit val headers: HeaderCarrier = HeaderCarrier()
-
-
-  private val wsClient: WSClient = fakeApplication.injector.instanceOf[WSClient]
-  private val auditConnector = new DefaultAuditConnector(fakeApplication.configuration, fakeApplication.injector.instanceOf[Environment])
-  private val HMRCWSClient = new DefaultHttpClient(fakeApplication.configuration, auditConnector, wsClient, ActorSystem("test"))
-
-  private val instance = LocalDate.of(2019, 1, 1).atStartOfDay().toInstant(ZoneOffset.UTC)
-
-  private val connector = new FileStoreConnector(config, HMRCWSClient, wsClient)
-
-  override protected def beforeEach(): Unit = {
-    super.beforeEach()
-    given(config.fileStoreUrl) willReturn wireMockUrl
-  }
-
+  private val connector = new FileStoreConnector(appConfig, authenticatedHttpClient, wsClient)
 
   "Connector 'GET' one" should {
     "handle 404" in {
@@ -67,6 +38,11 @@ class FileStoreConnectorSpec extends UnitSpec with WiremockTestServer with Mocki
       )
 
       await(connector.get(att)) shouldBe None
+
+      verify(
+        getRequestedFor(urlEqualTo("/file/id"))
+          .withHeader("X-Api-Token", equalTo(realConfig.apiToken))
+      )
     }
 
     "handle response with mandatory fields only" in {
@@ -91,6 +67,11 @@ class FileStoreConnectorSpec extends UnitSpec with WiremockTestServer with Mocki
           scanStatus = None
         )
       )
+
+      verify(
+        getRequestedFor(urlEqualTo("/file/id"))
+          .withHeader("X-Api-Token", equalTo(realConfig.apiToken))
+      )
     }
 
     "handle response with optional fields" in {
@@ -114,6 +95,11 @@ class FileStoreConnectorSpec extends UnitSpec with WiremockTestServer with Mocki
           url = Some("url"),
           scanStatus = Some(ScanStatus.READY)
         )
+      )
+
+      verify(
+        getRequestedFor(urlEqualTo("/file/id"))
+          .withHeader("X-Api-Token", equalTo(realConfig.apiToken))
       )
     }
   }
@@ -148,6 +134,11 @@ class FileStoreConnectorSpec extends UnitSpec with WiremockTestServer with Mocki
           scanStatus = None
         )
       )
+
+      verify(
+        getRequestedFor(urlEqualTo("/file?id=id1&id=id2"))
+          .withHeader("X-Api-Token", equalTo(realConfig.apiToken))
+      )
     }
 
     "handle response with optional fields" in {
@@ -174,6 +165,11 @@ class FileStoreConnectorSpec extends UnitSpec with WiremockTestServer with Mocki
           scanStatus = Some(ScanStatus.READY)
         )
       )
+
+      verify(
+        getRequestedFor(urlEqualTo("/file?id=id1&id=id2"))
+          .withHeader("X-Api-Token", equalTo(realConfig.apiToken))
+      )
     }
   }
 
@@ -190,9 +186,12 @@ class FileStoreConnectorSpec extends UnitSpec with WiremockTestServer with Mocki
     val file = FileUpload(TemporaryFile("example-file.txt"), "file.txt", "text/plain")
     val result = await(connector.upload(file))
 
-    verify(postRequestedFor(urlEqualTo("/file"))
-      .withRequestBody(containing("file"))
-      .withRequestBody(containing("publish"))
+    verify(
+      postRequestedFor(
+        urlEqualTo("/file"))
+        .withHeader("X-Api-Token", equalTo(fakeAuthToken))
+        .withRequestBody(containing("file"))
+        .withRequestBody(containing("publish"))
     )
 
     result shouldBe FileMetadata(
