@@ -64,8 +64,6 @@ class AdvancedSearchResultsViewSpec extends ViewSpec {
       doc shouldNot containElementWithID("advanced_search_results-row-0-appeal_status")
       doc shouldNot containElementWithID("advanced_search_results-row-0-review_status")
 
-      doc should containElementWithID("advanced_search_results-row-0-ruling_start")
-      doc.getElementById("advanced_search_results-row-0-ruling_start").text shouldBe empty
       doc should containElementWithID("advanced_search_results-row-0-ruling_end")
       doc.getElementById("advanced_search_results-row-0-ruling_end").text shouldBe empty
       doc should containElementWithID("advanced_search_results-row-0-decision_code")
@@ -107,8 +105,6 @@ class AdvancedSearchResultsViewSpec extends ViewSpec {
       doc should containElementWithID("advanced_search_results-row-0-review_status")
       doc.getElementById("advanced_search_results-row-0-review_status") should containText("Under review")
 
-      doc should containElementWithID("advanced_search_results-row-0-ruling_start")
-      doc.getElementById("advanced_search_results-row-0-ruling_start") should containText("01 Jan 2019")
       doc should containElementWithID("advanced_search_results-row-0-ruling_end")
       doc.getElementById("advanced_search_results-row-0-ruling_end") should containText("01 Feb 2019")
       doc should containElementWithID("advanced_search_results-row-0-decision_code")

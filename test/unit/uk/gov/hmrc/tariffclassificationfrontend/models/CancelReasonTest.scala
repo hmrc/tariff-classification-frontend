@@ -16,9 +16,7 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.models
 
-import play.api.libs.json.JsValue
 import uk.gov.hmrc.play.test.UnitSpec
-import uk.gov.hmrc.tariffclassificationfrontend.utils.JsonFormatters
 
 class CancelReasonTest extends UnitSpec {
 

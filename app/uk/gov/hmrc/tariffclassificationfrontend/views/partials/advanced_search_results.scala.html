@@ -17,64 +17,82 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes
 @import uk.gov.hmrc.tariffclassificationfrontend.models.AppealStatus.AppealStatus
+@import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.CaseStatus
 @import uk.gov.hmrc.tariffclassificationfrontend.models.ReviewStatus.ReviewStatus
-@import uk.gov.hmrc.tariffclassificationfrontend.models.{AppealStatus, Case, Paged, ReviewStatus}
+@import uk.gov.hmrc.tariffclassificationfrontend.models.{AppealStatus, CancelReason, Case, CaseStatus, Paged, ReviewStatus}
 @import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
 @(results: Paged[Case])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 <div id="advanced_search_results">
-  <table>
-   <thead>
-    <tr>
-     <th>Reference</th>
-     <th>Trader</th>
-     <th>Ruling start date</th>
-     <th>Ruling expiry date</th>
-     <th>Status</th>
-     <th>Commodity code</th>
-    </tr>
-   </thead>
-   <tbody>
-    @for((c: Case, index: Int) <- results.results.zipWithIndex) {
-     <tr id="advanced_search_results-row-@index">
+  @for((c: Case, index: Int) <- results.results.zipWithIndex) {
+   <div id="advanced_search_results-row-@index" class="advanced_search_results--row">
 
-      <td>
+    <div class="grid-row">
+     <div class="column-one-half">
+      @*Reference*@
+      <div>
        <a id="advanced_search_results-row-@{index}-reference" href="@routes.CaseController.trader(c.reference)">@c.reference</a>
-      </td>
+      </div>
 
-      <td id="advanced_search_results-row-@{index}-business_name">@c.application.holder.businessName</td>
+      @*Trader*@
+      <div>
+       <span class="bold">Trader:</span>
+       <span id="advanced_search_results-row-@{index}-business_name">@c.application.holder.businessName</span>
+      </div>
 
-      <td id="advanced_search_results-row-@{index}-ruling_start">@c.decision.flatMap(_.effectiveStartDate).map(Dates.format).getOrElse("")</td>
+      @*Expiry*@
+      <div>
+       <span class="bold">Expiry date:</span>
+       <span id="advanced_search_results-row-@{index}-ruling_end">@c.decision.flatMap(_.effectiveEndDate).map(Dates.format).getOrElse("TBC")</span>
+      </div>
+     </div>
 
-      <td id="advanced_search_results-row-@{index}-ruling_end">@c.decision.flatMap(_.effectiveEndDate).map(Dates.format).getOrElse("")</td>
+     <div class="column-one-half align-right">
+      @*Commodity Code*@
+      <div>
+       <span class="bold">Commodity code:</span>
+       <span id="advanced_search_results-row-@{index}-decision_code">
+        @c.decision.map(_.bindingCommodityCode).getOrElse("TBC")
+       </span>
+      </div>
 
-      <td>
-       <div id="advanced_search_results-row-@{index}-status" class="phase-tag bg-blue">@c.status</div>
-
+      @*Status*@
+      <div>
+       <span class="bold">Status:</span>
+       <span id="advanced_search_results-row-@{index}-status" class="phase-tag bg-blue">
+       @c.status match {
+        case CaseStatus.CANCELLED if c.decision.exists(_.cancellation.isDefined) => {
+         CANCELLED @{c.decision.flatMap(_.cancellation).map(c => CancelReason.code(c.reason)).get}
+        }
+        case s : CaseStatus => {@s}
+       }
+       </span>
        @defining(c.decision.flatMap(_.review).map(_.status)) { status: Option[ReviewStatus] =>
         @if(status.isDefined) {
-         <div id ="advanced_search_results-row-@{index}-review_status" class="phase-tag bg-red">@ReviewStatus.format(status)</div>
+         <span id ="advanced_search_results-row-@{index}-review_status" class="phase-tag bg-red">@ReviewStatus.format(status)</span>
         }
        }
 
        @defining(c.decision.flatMap(_.appeal).map(_.status)) { status: Option[AppealStatus] =>
         @if(status.isDefined) {
-         <div id ="advanced_search_results-row-@{index}-appeal_status" class="phase-tag bg-red">@AppealStatus.format(status)</div>
+         <span id ="advanced_search_results-row-@{index}-appeal_status" class="phase-tag bg-red">@AppealStatus.format(status)</span>
         }
        }
-      </td>
+      </div>
+     </div>
+    </div>
 
-      <td id="advanced_search_results-row-@{index}-decision_code">
-       @c.decision.map(_.bindingCommodityCode).getOrElse("")
-      </td>
+    @*Keywords*@
+    <div>
+     <span class="bold">Keywords:</span>
+     <span id="advanced_search_results-row-@{index}-keywords">@c.keywords.mkString(", ")</span>
+    </div>
 
-     </tr>
-    }
-   </tbody>
-  </table>
+   </div>
+  }
+
   @if(results.isEmpty) {
    <p id="advanced_search_results-empty" class="mt-1">No results found</p>
   }
-
 </div>
 

@@ -24,13 +24,22 @@ object CancelReason extends Enumeration {
 
   def format(reason: CancelReason): String = {
     reason match {
-      case ANNULLED => "Annulled (55)"
-      case INVALIDATED_CODE_CHANGE => "Invalidated due to nomenclature code changes (61)"
-      case INVALIDATED_EU_MEASURE => "Invalidated due to EU measure (62)"
-      case INVALIDATED_NATIONAL_MEASURE => "Invalidated due to national legal measure (63)"
-      case INVALIDATED_WRONG_CLASSIFICATION => "Invalidated due to incorrect classification (64)"
-      case INVALIDATED_OTHER => "Invalidated due to other reasons (65)"
+      case ANNULLED => s"Annulled (${code(ANNULLED)})"
+      case INVALIDATED_CODE_CHANGE => s"Invalidated due to nomenclature code changes (${code(INVALIDATED_CODE_CHANGE)})"
+      case INVALIDATED_EU_MEASURE => s"Invalidated due to EU measure (${code(INVALIDATED_EU_MEASURE)})"
+      case INVALIDATED_NATIONAL_MEASURE => s"Invalidated due to national legal measure (${code(INVALIDATED_NATIONAL_MEASURE)})"
+      case INVALIDATED_WRONG_CLASSIFICATION => s"Invalidated due to incorrect classification (${code(INVALIDATED_WRONG_CLASSIFICATION)})"
+      case INVALIDATED_OTHER => s"Invalidated due to other reasons (${code(INVALIDATED_OTHER)})"
       case unknown => throw new IllegalArgumentException(s"Unexpected reason: $unknown")
     }
+  }
+
+  def code(reason: CancelReason): Int = reason match {
+    case ANNULLED => 55
+    case INVALIDATED_CODE_CHANGE => 61
+    case INVALIDATED_EU_MEASURE => 62
+    case INVALIDATED_NATIONAL_MEASURE => 63
+    case INVALIDATED_WRONG_CLASSIFICATION => 64
+    case INVALIDATED_OTHER => 65
   }
 }
