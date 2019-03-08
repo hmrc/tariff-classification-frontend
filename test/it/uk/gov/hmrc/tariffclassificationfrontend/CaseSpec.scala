@@ -3,10 +3,13 @@ package uk.gov.hmrc.tariffclassificationfrontend
 import com.github.tomakehurst.wiremock.client.WireMock._
 import org.scalatest.mockito.MockitoSugar
 import play.api.test.Helpers._
-import uk.gov.hmrc.tariffclassificationfrontend.models.Pagination
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Pagination}
+import uk.gov.tariffclassificationfrontend.utils.Cases._
 import uk.gov.tariffclassificationfrontend.utils.{CasePayloads, EventPayloads}
 
 class CaseSpec extends IntegrationTest with MockitoSugar {
+
+  private val c: Case = aCase(withReference("1"), withoutAgent())
 
   "Unknown Case" should {
 
@@ -39,7 +42,7 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
       stubFor(get(urlEqualTo("/cases/1"))
         .willReturn(aResponse()
           .withStatus(OK)
-          .withBody(CasePayloads.btiCase))
+          .withBody(CasePayloads.jsonOf(c)))
       )
 
       // When
@@ -63,7 +66,7 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
       stubFor(get(urlEqualTo("/cases/1"))
         .willReturn(aResponse()
           .withStatus(OK)
-          .withBody(CasePayloads.btiCase))
+          .withBody(CasePayloads.jsonOf(c)))
       )
       stubFor(post(urlEqualTo("/file?id="))
         .willReturn(
@@ -94,7 +97,7 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
       stubFor(get(urlEqualTo("/cases/1"))
         .willReturn(aResponse()
           .withStatus(OK)
-          .withBody(CasePayloads.btiCase))
+          .withBody(CasePayloads.jsonOf(c)))
       )
       stubFor(post(urlEqualTo("/file?id="))
         .willReturn(
@@ -125,7 +128,7 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
       stubFor(get(urlEqualTo("/cases/1"))
         .willReturn(aResponse()
           .withStatus(OK)
-          .withBody(CasePayloads.btiCase))
+          .withBody(CasePayloads.jsonOf(c)))
       )
       givenAuthSuccess()
       stubFor(get(urlEqualTo(s"/cases/1/events?page=1&page_size=${Pagination.unlimited}"))
@@ -155,7 +158,7 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
       stubFor(get(urlEqualTo("/cases/1"))
         .willReturn(aResponse()
           .withStatus(OK)
-          .withBody(CasePayloads.btiCase))
+          .withBody(CasePayloads.jsonOf(c)))
       )
       stubFor(post(urlEqualTo("/file?id="))
         .willReturn(
