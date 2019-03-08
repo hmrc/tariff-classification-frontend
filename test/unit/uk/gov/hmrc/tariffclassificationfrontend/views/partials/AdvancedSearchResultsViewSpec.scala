@@ -20,6 +20,7 @@ import java.time.{Instant, LocalDate, ZoneOffset}
 
 import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes
 import uk.gov.hmrc.tariffclassificationfrontend.models._
+import uk.gov.hmrc.tariffclassificationfrontend.models.response.ScanStatus
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewSpec
 import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.advanced_search_results
@@ -31,7 +32,7 @@ class AdvancedSearchResultsViewSpec extends ViewSpec {
 
     "Render No Results" in {
       // When
-      val doc = view(advanced_search_results(Paged.empty[Case]))
+      val doc = view(advanced_search_results(Paged.empty[SearchResult]))
 
       // Then
       doc should containElementWithID("advanced_search_results-empty")
@@ -46,8 +47,10 @@ class AdvancedSearchResultsViewSpec extends ViewSpec {
         withHolder(businessName = "business-name")
       )
 
+      val searchResult = SearchResult(c, Seq.empty)
+
       // When
-      val doc = view(advanced_search_results(Paged(Seq(c))))
+      val doc = view(advanced_search_results(Paged(Seq(searchResult))))
 
       // Then
       doc shouldNot containElementWithID("advanced_search_results-empty")
@@ -63,11 +66,12 @@ class AdvancedSearchResultsViewSpec extends ViewSpec {
 
       doc shouldNot containElementWithID("advanced_search_results-row-0-appeal_status")
       doc shouldNot containElementWithID("advanced_search_results-row-0-review_status")
+      doc shouldNot containElementWithID("advanced_search_results-row-0-attachments")
 
       doc should containElementWithID("advanced_search_results-row-0-ruling_end")
-      doc.getElementById("advanced_search_results-row-0-ruling_end").text shouldBe empty
+      doc.getElementById("advanced_search_results-row-0-ruling_end").text shouldBe "TBC"
       doc should containElementWithID("advanced_search_results-row-0-decision_code")
-      doc.getElementById("advanced_search_results-row-0-decision_code").text shouldBe empty
+      doc.getElementById("advanced_search_results-row-0-decision_code").text shouldBe "TBC"
     }
 
     "Render Results with optional fields present" in {
@@ -85,8 +89,21 @@ class AdvancedSearchResultsViewSpec extends ViewSpec {
         withHolder(businessName = "business-name")
       )
 
+      val storedAttachment = StoredAttachment(
+        "id",
+        public = true,
+        operator = None,
+        url = Some("url"),
+        fileName = "filename",
+        mimeType = "image/png",
+        scanStatus = Some(ScanStatus.READY),
+        timestamp = Instant.now()
+      )
+
+      val searchResult = SearchResult(c, Seq(storedAttachment))
+
       // When
-      val doc = view(advanced_search_results(Paged(Seq(c))))
+      val doc = view(advanced_search_results(Paged(Seq(searchResult))))
 
       // Then
       doc shouldNot containElementWithID("advanced_search_results-empty")
@@ -105,13 +122,159 @@ class AdvancedSearchResultsViewSpec extends ViewSpec {
       doc should containElementWithID("advanced_search_results-row-0-review_status")
       doc.getElementById("advanced_search_results-row-0-review_status") should containText("Under review")
 
+      doc should containElementWithID("advanced_search_results-row-0-attachments")
+      doc should containElementWithID("advanced_search_results-row-0-attachments-0")
+      doc.getElementById("advanced_search_results-row-0-attachments-0") should haveTag("img")
+      doc.getElementById("advanced_search_results-row-0-attachments-0") should haveAttribute("src", "url")
+      doc.getElementById("advanced_search_results-row-0-attachments-0") should haveAttribute("alt", "filename")
+
       doc should containElementWithID("advanced_search_results-row-0-ruling_end")
       doc.getElementById("advanced_search_results-row-0-ruling_end") should containText("01 Feb 2019")
       doc should containElementWithID("advanced_search_results-row-0-decision_code")
       doc.getElementById("advanced_search_results-row-0-decision_code") should containText("commodity-code")
     }
-
-    def instant(date: String): Instant = LocalDate.parse(date).atStartOfDay().toInstant(ZoneOffset.UTC)
   }
+
+  "Not render non image types" in {
+    // Given
+    val c = aCase(
+      withReference("reference"),
+      withStatus(CaseStatus.OPEN),
+      withDecision(
+        bindingCommodityCode = "commodity-code",
+        effectiveStartDate = Some(instant("2019-01-01")),
+        effectiveEndDate = Some(instant("2019-02-01")),
+        appeal = Some(Appeal(AppealStatus.IN_PROGRESS)),
+        review = Some(Review(ReviewStatus.IN_PROGRESS))
+      ),
+      withHolder(businessName = "business-name")
+    )
+
+    val storedAttachment = StoredAttachment(
+      "id",
+      public = true,
+      operator = None,
+      url = Some("url"),
+      fileName = "filename",
+      mimeType = "text/plain",
+      scanStatus = Some(ScanStatus.READY),
+      timestamp = Instant.now()
+    )
+
+    val searchResult = SearchResult(c, Seq(storedAttachment))
+
+    // When
+    val doc = view(advanced_search_results(Paged(Seq(searchResult))))
+
+    // Then
+    doc shouldNot containElementWithID("advanced_search_results-row-0-attachments")
+  }
+
+  "Not render images without URL" in {
+    // Given
+    val c = aCase(
+      withReference("reference"),
+      withStatus(CaseStatus.OPEN),
+      withDecision(
+        bindingCommodityCode = "commodity-code",
+        effectiveStartDate = Some(instant("2019-01-01")),
+        effectiveEndDate = Some(instant("2019-02-01")),
+        appeal = Some(Appeal(AppealStatus.IN_PROGRESS)),
+        review = Some(Review(ReviewStatus.IN_PROGRESS))
+      ),
+      withHolder(businessName = "business-name")
+    )
+
+    val storedAttachment = StoredAttachment(
+      "id",
+      public = true,
+      operator = None,
+      url = None,
+      fileName = "filename",
+      mimeType = "image/png",
+      scanStatus = Some(ScanStatus.READY),
+      timestamp = Instant.now()
+    )
+
+    val searchResult = SearchResult(c, Seq(storedAttachment))
+
+    // When
+    val doc = view(advanced_search_results(Paged(Seq(searchResult))))
+
+    // Then
+    doc shouldNot containElementWithID("advanced_search_results-row-0-attachments")
+  }
+
+  "Not render un-scanned images" in {
+    // Given
+    val c = aCase(
+      withReference("reference"),
+      withStatus(CaseStatus.OPEN),
+      withDecision(
+        bindingCommodityCode = "commodity-code",
+        effectiveStartDate = Some(instant("2019-01-01")),
+        effectiveEndDate = Some(instant("2019-02-01")),
+        appeal = Some(Appeal(AppealStatus.IN_PROGRESS)),
+        review = Some(Review(ReviewStatus.IN_PROGRESS))
+      ),
+      withHolder(businessName = "business-name")
+    )
+
+    val storedAttachment = StoredAttachment(
+      "id",
+      public = true,
+      operator = None,
+      url = Some("url"),
+      fileName = "filename",
+      mimeType = "text/plain",
+      scanStatus = None,
+      timestamp = Instant.now()
+    )
+
+    val searchResult = SearchResult(c, Seq(storedAttachment))
+
+    // When
+    val doc = view(advanced_search_results(Paged(Seq(searchResult))))
+
+    // Then
+    doc shouldNot containElementWithID("advanced_search_results-row-0-attachments")
+  }
+
+  "Not render quarantined images" in {
+    // Given
+    val c = aCase(
+      withReference("reference"),
+      withStatus(CaseStatus.OPEN),
+      withDecision(
+        bindingCommodityCode = "commodity-code",
+        effectiveStartDate = Some(instant("2019-01-01")),
+        effectiveEndDate = Some(instant("2019-02-01")),
+        appeal = Some(Appeal(AppealStatus.IN_PROGRESS)),
+        review = Some(Review(ReviewStatus.IN_PROGRESS))
+      ),
+      withHolder(businessName = "business-name")
+    )
+
+    val storedAttachment = StoredAttachment(
+      "id",
+      public = true,
+      operator = None,
+      url = Some("url"),
+      fileName = "filename",
+      mimeType = "text/plain",
+      scanStatus = Some(ScanStatus.FAILED),
+      timestamp = Instant.now()
+    )
+
+    val searchResult = SearchResult(c, Seq(storedAttachment))
+
+    // When
+    val doc = view(advanced_search_results(Paged(Seq(searchResult))))
+
+    // Then
+    doc shouldNot containElementWithID("advanced_search_results-row-0-attachments")
+  }
+
+  def instant(date: String): Instant = LocalDate.parse(date).atStartOfDay().toInstant(ZoneOffset.UTC)
 
 }

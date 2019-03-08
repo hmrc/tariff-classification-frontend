@@ -23,8 +23,9 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.SearchForm
 import uk.gov.hmrc.tariffclassificationfrontend.models._
-import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, KeywordsService}
+import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, FileStoreService, KeywordsService}
 import uk.gov.hmrc.tariffclassificationfrontend.views.html
+import uk.gov.hmrc.tariffclassificationfrontend.views.partials.SearchResult
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -34,6 +35,7 @@ import scala.concurrent.Future.successful
 class SearchController @Inject()(authenticatedAction: AuthenticatedAction,
                                  casesService: CasesService,
                                  keywordsService: KeywordsService,
+                                 fileStoreService: FileStoreService,
                                  val messagesApi: MessagesApi,
                                  implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
@@ -50,11 +52,11 @@ class SearchController @Inject()(authenticatedAction: AuthenticatedAction,
           formWithErrors => {
             Future.successful(Results.Ok(html.advanced_search(formWithErrors, None, keywords)))
           },
-          data => {
-            casesService.search(search, sort, SearchPagination(page)) map { results: Paged[Case] =>
-              Results.Ok(html.advanced_search(SearchForm.form.fill(data), Some(results), keywords))
-            }
-          }
+          data => for {
+            cases: Paged[Case] <- casesService.search(search, sort, SearchPagination(page))
+            attachments: Map[Case, Seq[StoredAttachment]] <- fileStoreService.getAttachments(cases.results)
+            results: Paged[SearchResult] = cases.map(c => SearchResult(c, attachments.getOrElse(c, Seq.empty)))
+          } yield Results.Ok(html.advanced_search(SearchForm.form.fill(data), Some(results), keywords))
         )
       })
     }

@@ -16,11 +16,12 @@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers
-@import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Paged, Search}
+@import uk.gov.hmrc.tariffclassificationfrontend.models.{Paged, Search}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.{input_checkbox, input_text}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{advanced_search_keywords, advanced_search_results, pagination}
-@(form: Form[Search], results: Option[Paged[Case]] = None, keywords: Seq[String])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@import uk.gov.hmrc.tariffclassificationfrontend.views.partials.SearchResult
+@(form: Form[Search], results: Option[Paged[SearchResult]] = None, keywords: Seq[String])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None) {
  <h1 id="advanced_search-heading" class="heading-xlarge">Advanced Search</h1>
@@ -88,7 +89,7 @@
      </div>
 
 
-     @defining(results.get) { searchResults: Paged[Case] =>
+     @defining(results.get) { searchResults: Paged[SearchResult] =>
       <div class="column-three-quarters">
 
        @pagination(

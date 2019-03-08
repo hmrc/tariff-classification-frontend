@@ -32,12 +32,31 @@ class FileStoreService @Inject()(connector: FileStoreConnector) {
 
   def getAttachments(c: Case)(implicit hc: HeaderCarrier): Future[Seq[StoredAttachment]] = {
     val attachmentsById: Map[String, Attachment] = c.attachments.map(a => a.id -> a).toMap
-    connector.get(c.attachments) map { files =>
-      files map { file =>
+    connector.get(c.attachments) map {
+      _ map { file =>
         attachmentsById
           .get(file.id)
           .map(StoredAttachment(_, file))
       } filter (_.isDefined) map (_.get)
+    }
+  }
+
+  def getAttachments(cases: Seq[Case])(implicit hc: HeaderCarrier): Future[Map[Case, Seq[StoredAttachment]]] = {
+    val caseByFileId: Map[String, Case] = cases.foldLeft(Map[String, Case]())((existing, c) => existing ++ c.attachments.map(_.id -> c))
+    val attachmentsById: Map[String, Attachment] = cases.flatMap(_.attachments).map(a => a.id -> a).toMap
+
+    connector.get(cases.flatMap(_.attachments)) map { files =>
+      val group: Map[Case, Seq[StoredAttachment]] = files.map { file =>
+        caseByFileId.get(file.id) -> attachmentsById.get(file.id).map(StoredAttachment(_, file))
+      } filter {
+        case (c: Option[Case], att: Option[StoredAttachment]) => c.isDefined && att.isDefined
+      } map {
+        case (c: Option[Case], att: Option[StoredAttachment]) => (c.get, att.get)
+      } groupBy(_._1) map {
+        case (c: Case, seq: Seq[(Case, StoredAttachment)]) => (c, seq.map(_._2))
+      }
+      val missing = cases.filterNot(group.contains)
+      group ++ missing.map(_ -> Seq.empty)
     }
   }
 
