@@ -17,7 +17,7 @@
 package uk.gov.hmrc.tariffclassificationfrontend.connector
 
 import akka.actor.ActorSystem
-import org.mockito.Mockito
+import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.mockito.MockitoSugar
 import play.api.Environment
@@ -29,7 +29,7 @@ import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.tariffclassificationfrontend.utils.{ResourceFiles, WiremockTestServer}
 
-abstract class ConnectorTest extends UnitSpec with WithFakeApplication
+trait ConnectorTest extends UnitSpec with WithFakeApplication
   with WiremockTestServer with MockitoSugar with ResourceFiles
   with BeforeAndAfterAll {
 
@@ -53,14 +53,14 @@ abstract class ConnectorTest extends UnitSpec with WithFakeApplication
   override def beforeAll(): Unit = {
     super.beforeAll()
 
-    Mockito.when(appConfig.fileStoreUrl) thenReturn getUrl
-    Mockito.when(appConfig.bindingTariffClassificationUrl) thenReturn getUrl
-    Mockito.when(appConfig.rulingUrl) thenReturn getUrl
+    when(appConfig.fileStoreUrl) thenReturn getUrl
+    when(appConfig.bindingTariffClassificationUrl) thenReturn getUrl
+    when(appConfig.rulingUrl) thenReturn getUrl
 
-    Mockito.when(appConfig.emailUrl) thenReturn getUrl
-    Mockito.when(appConfig.emailRendererUrl) thenReturn getUrl
+    when(appConfig.emailUrl) thenReturn getUrl
+    when(appConfig.emailRendererUrl) thenReturn getUrl
 
-    Mockito.when(appConfig.apiToken) thenReturn fakeAuthToken
+    when(appConfig.apiToken) thenReturn fakeAuthToken
   }
 
 }
