@@ -31,14 +31,7 @@ import scala.concurrent.Future.successful
 class FileStoreService @Inject()(connector: FileStoreConnector) {
 
   def getAttachments(c: Case)(implicit hc: HeaderCarrier): Future[Seq[StoredAttachment]] = {
-    val attachmentsById: Map[String, Attachment] = c.attachments.map(a => a.id -> a).toMap
-    connector.get(c.attachments) map {
-      _ map { file =>
-        attachmentsById
-          .get(file.id)
-          .map(StoredAttachment(_, file))
-      } filter (_.isDefined) map (_.get)
-    }
+    getAttachments(Seq(c)).map(group => group.getOrElse(c, Seq.empty))
   }
 
   def getAttachments(cases: Seq[Case])(implicit hc: HeaderCarrier): Future[Map[Case, Seq[StoredAttachment]]] = {
