@@ -1,4 +1,5 @@
 @import "colours";
+@import "variables";
 
 .nav-search {
   input[type=text] {
@@ -28,6 +29,34 @@
 
 }
 
-//table {
-//  table-layout: fixed;
-//}
+.advanced_search {
+  &--filters_container {
+    border: 5px solid $gray;
+  }
+
+  &--filters {
+    padding: 10px
+  }
+
+  &--filters_heading {
+    background-color: $gray;
+    font-weight: bold;
+    font-size: 1.17em;
+    padding: $spacer $spacer (2 * $spacer);
+
+  }
+
+  &_results {
+    &--row {
+      border-bottom: 1px solid $gray;
+      margin-bottom: $spacer;
+      padding-top: $spacer;
+      padding-bottom: (2 * $spacer);
+      line-height: (3 * $spacer);
+    }
+
+    &--thumbnail {
+      max-height: 80px;
+    }
+  }
+}

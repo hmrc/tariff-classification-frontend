@@ -31,14 +31,32 @@ import scala.concurrent.Future.successful
 class FileStoreService @Inject()(connector: FileStoreConnector) {
 
   def getAttachments(c: Case)(implicit hc: HeaderCarrier): Future[Seq[StoredAttachment]] = {
-    val attachmentsById: Map[String, Attachment] = c.attachments.map(a => a.id -> a).toMap
-    connector.get(c.attachments) map { files =>
-      files map { file =>
-        attachmentsById
-          .get(file.id)
-          .map(StoredAttachment(_, file))
-      } filter (_.isDefined) map (_.get)
+    getAttachments(Seq(c)).map(group => group.getOrElse(c, Seq.empty))
+  }
+
+  def getAttachments(cases: Seq[Case])(implicit hc: HeaderCarrier): Future[Map[Case, Seq[StoredAttachment]]] = {
+    val caseByFileId: Map[String, Case] = cases.foldLeft(Map[String, Case]())((existing, c) => existing ++ c.attachments.map(_.id -> c))
+    val attachmentsById: Map[String, Attachment] = cases.flatMap(_.attachments).map(a => a.id -> a).toMap
+
+    def groupingByCase: Seq[FileMetadata] => Map[Case, Seq[StoredAttachment]] = { files =>
+        val group: Map[Case, Seq[StoredAttachment]] = files.map { file =>
+          caseByFileId.get(file.id) -> attachmentsById.get(file.id).map(StoredAttachment(_, file))
+        } filter {
+          // Select only attachments where the File is linked to a Case & Attachment
+          case (c: Option[Case], att: Option[StoredAttachment]) => c.isDefined && att.isDefined
+        } map {
+          case (c: Option[Case], att: Option[StoredAttachment]) => (c.get, att.get)
+        } groupBy (_._1) map {
+          case (c: Case, seq: Seq[(Case, StoredAttachment)]) => (c, seq.map(_._2))
+        }
+
+        // The Map currently only contains Cases which have >=1 attachments.
+        // Add in the cases with 0 attachments
+        val missing = cases.filterNot(group.contains)
+        group ++ missing.map(_ -> Seq.empty)
     }
+
+    connector.get(cases.flatMap(_.attachments)) map groupingByCase
   }
 
   def getLetterOfAuthority(c: Case)(implicit hc: HeaderCarrier): Future[Option[StoredAttachment]] = {

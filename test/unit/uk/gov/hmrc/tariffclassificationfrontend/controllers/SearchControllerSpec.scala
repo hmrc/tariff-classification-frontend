@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
+import java.time.Instant
+
 import org.mockito.ArgumentMatchers.{refEq, _}
 import org.mockito.BDDMockito._
 import org.scalatest.Matchers
@@ -29,7 +31,8 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models._
-import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, KeywordsService}
+import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, FileStoreService, KeywordsService}
+import uk.gov.tariffclassificationfrontend.utils.Cases._
 
 import scala.concurrent.Future
 
@@ -41,6 +44,7 @@ class SearchControllerSpec extends UnitSpec with Matchers with WithFakeApplicati
   private val messageApi = new DefaultMessagesApi(env, configuration, new DefaultLangs(configuration))
   private val appConfig = new AppConfig(configuration, env)
   private val casesService = mock[CasesService]
+  private val fileStoreService = mock[FileStoreService]
   private val keywordsService = mock[KeywordsService]
   private val operator = mock[Operator]
 
@@ -48,6 +52,7 @@ class SearchControllerSpec extends UnitSpec with Matchers with WithFakeApplicati
     new SuccessfulAuthenticatedAction(operator),
     casesService,
     keywordsService,
+    fileStoreService,
     messageApi,
     appConfig
   )
@@ -65,6 +70,7 @@ class SearchControllerSpec extends UnitSpec with Matchers with WithFakeApplicati
 
     "not render results if empty" in {
       given(casesService.search(refEq(Search()), refEq(Sort()), refEq(SearchPagination(2)))(any[HeaderCarrier])) willReturn Future.successful(Paged.empty[Case])
+      given(fileStoreService.getAttachments(refEq(Seq.empty))(any[HeaderCarrier])) willReturn Future.successful(Map.empty[Case, Seq[StoredAttachment]])
       given(keywordsService.autoCompleteKeywords) willReturn Future.successful(Seq.empty[String])
 
       val result = await(controller.search(search = Search(), page = 2)(fakeRequest))
@@ -79,8 +85,11 @@ class SearchControllerSpec extends UnitSpec with Matchers with WithFakeApplicati
     "render results if not empty" in {
       // Given
       val search = Search(traderName = Some("trader"), commodityCode = Some("00"))
+      val c = aCase()
+      val attachment = StoredAttachment("id", true, None, None, "file", "image/png", None, Instant.now())
 
-      given(casesService.search(refEq(search), refEq(Sort()), refEq(SearchPagination(2)))(any[HeaderCarrier])) willReturn Future.successful(Paged.empty[Case])
+      given(casesService.search(refEq(search), refEq(Sort()), refEq(SearchPagination(2)))(any[HeaderCarrier])) willReturn Future.successful(Paged(Seq(c)))
+      given(fileStoreService.getAttachments(refEq(Seq(c)))(any[HeaderCarrier])) willReturn Future.successful(Map(c -> Seq(attachment)))
       given(keywordsService.autoCompleteKeywords) willReturn Future.successful(Seq.empty[String])
 
       // When
@@ -101,7 +110,6 @@ class SearchControllerSpec extends UnitSpec with Matchers with WithFakeApplicati
       // Given
       val search = Search(traderName = Some("trader"))
 
-      given(casesService.search(refEq(search), refEq(Sort()), refEq(SearchPagination(2)))(any[HeaderCarrier])) willReturn Future.successful(Paged.empty[Case])
       given(keywordsService.autoCompleteKeywords) willReturn Future.successful(Seq.empty[String])
 
       // When

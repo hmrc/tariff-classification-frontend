@@ -37,7 +37,7 @@ class AdvancedSearchViewSpec extends ViewSpec {
 
     "Render Results" in {
       // When
-      val doc = view(advanced_search(SearchForm.form, Some(Paged(Seq(aCase()))), Seq.empty))
+      val doc = view(advanced_search(SearchForm.form, Some(Paged(Seq(SearchResult(aCase(), Seq.empty)))), Seq.empty))
 
       // Then
       doc should containElementWithID("advanced_search-results_and_filters")
@@ -45,7 +45,7 @@ class AdvancedSearchViewSpec extends ViewSpec {
 
     "Always Render Input 'live_rulings_only'" in {
       view(advanced_search(SearchForm.form, None, Seq.empty)) should containElementWithAttribute("name", "live_rulings_only")
-      view(advanced_search(SearchForm.form, Some(Paged(Seq(aCase()))), Seq.empty)) should containElementWithAttribute("name", "live_rulings_only")
+      view(advanced_search(SearchForm.form, Some(Paged(Seq(SearchResult(aCase(), Seq.empty)))), Seq.empty)) should containElementWithAttribute("name", "live_rulings_only")
     }
   }
 

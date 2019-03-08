@@ -30,6 +30,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.connector.FileStoreConnector
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.models.response.{FileMetadata, ScanStatus}
 import uk.gov.tariffclassificationfrontend.utils.Cases
+import uk.gov.tariffclassificationfrontend.utils.Cases._
 
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
@@ -40,7 +41,37 @@ class FileStoreServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfte
   private val connector = mock[FileStoreConnector]
   private val service = new FileStoreService(connector)
 
-  "Service 'getAttachments'" should {
+  "Service 'getAttachments' by Cases" should {
+
+    "Return Stored Attachments" in {
+
+      val c1 = aCase(withReference("c1"), withAnAttachmentWithId("1"), withAnAttachmentWithId("2"))
+      val c2 = aCase(withReference("c2"), withAnAttachmentWithId("3"))
+      givenFileStoreReturnsAttachments(someMetadataWithId("1"), someMetadataWithId("2"), someMetadataWithId("3"))
+
+      await(service.getAttachments(Seq(c1, c2))) shouldBe Map(
+        c1 -> Seq(aStoredAttachmentWithId("1"), aStoredAttachmentWithId("2")),
+        c2 -> Seq(aStoredAttachmentWithId("3"))
+      )
+    }
+
+    "Filter missing Attachments" in {
+      val c1 = aCase(withReference("c1"), withAnAttachmentWithId("1"), withAnAttachmentWithId("2"))
+      val c2 = aCase(withReference("c2"), withAnAttachmentWithId("3"))
+      givenFileStoreReturnsNoAttachments()
+
+      await(service.getAttachments(Seq(c1, c2))) shouldBe Map(c1 -> Seq.empty, c2 -> Seq.empty)
+    }
+
+    "Ignore extra Attachments" in {
+      val c = aCase()
+      givenFileStoreReturnsAttachments(someMetadataWithId("1"))
+
+      await(service.getAttachments(Seq(c))) shouldBe Map(c -> Seq.empty)
+    }
+  }
+
+  "Service 'getAttachments' by Case" should {
 
     "Return Stored Attachments" in {
       val c = aCase(withAnAttachmentWithId("1"))
