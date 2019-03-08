@@ -49,6 +49,9 @@ class FileStoreService @Inject()(connector: FileStoreConnector) {
         } groupBy (_._1) map {
           case (c: Case, seq: Seq[(Case, StoredAttachment)]) => (c, seq.map(_._2))
         }
+
+        // The Map currently only contains Cases which have >=1 attachments.
+        // Add in the cases with 0 attachments
         val missing = cases.filterNot(group.contains)
         group ++ missing.map(_ -> Seq.empty)
     }
