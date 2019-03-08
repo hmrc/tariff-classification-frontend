@@ -63,7 +63,8 @@ class FileStoreConnector @Inject()(appConfig: AppConfig, http: AuthenticatedHttp
     )
 
     ws.url(s"${appConfig.fileStoreUrl}/file")
-      .withHeaders(http.addAuth(appConfig, hc).headers: _*)
+      .withHeaders( hc.headers: _* )
+      .withHeaders( http.authHeaders(appConfig) )
       .post(Source(List(filePart, dataPart)))
       .map(response => Json.fromJson[FileMetadata](Json.parse(response.body)).get)
   }

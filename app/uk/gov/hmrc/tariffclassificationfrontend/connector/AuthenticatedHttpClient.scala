@@ -17,7 +17,7 @@
 package uk.gov.hmrc.tariffclassificationfrontend.connector
 
 import akka.actor.ActorSystem
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import play.api.libs.json.Writes
 import play.api.libs.ws.WSClient
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
@@ -27,6 +27,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 
 import scala.concurrent.Future
 
+@Singleton
 class AuthenticatedHttpClient @Inject()(auditConnector: AuditConnector, wsClient: WSClient, actorSystem: ActorSystem)
                                        (implicit val config: AppConfig)
   extends DefaultHttpClient(config.runModeConfiguration, auditConnector, wsClient, actorSystem)
@@ -81,8 +82,12 @@ trait InjectAuthHeader {
   def addAuth(implicit config: AppConfig, hc: HeaderCarrier): HeaderCarrier = {
     hc.headers.toMap.get(headerName) match {
       case Some(_) => hc
-      case _ => hc.withExtraHeaders(headerName -> config.apiToken)
+      case _ => hc.withExtraHeaders(authHeaders)
     }
+  }
+
+  def authHeaders(implicit config: AppConfig ): (String, String) = {
+    headerName -> config.apiToken
   }
 
 }
