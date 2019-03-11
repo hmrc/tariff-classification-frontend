@@ -16,56 +16,37 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.connector
 
-import akka.actor.ActorSystem
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.matching.EqualToJsonPattern
 import org.apache.http.HttpStatus
-import org.mockito.BDDMockito._
-import org.scalatest.mockito.MockitoSugar
-import play.api.Environment
 import play.api.libs.json.{Format, OFormat}
-import play.api.libs.ws.WSClient
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.audit.DefaultAuditConnector
-import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
-import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
-import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.utils.JsonFormatters
-import uk.gov.tariffclassificationfrontend.utils.{ResourceFiles, WiremockTestServer}
 
-class EmailConnectorSpec extends UnitSpec
-  with WiremockTestServer with MockitoSugar with WithFakeApplication with ResourceFiles {
+class EmailConnectorSpec extends ConnectorTest {
 
-  private implicit val hc: HeaderCarrier = HeaderCarrier()
-  private val configuration = mock[AppConfig]
-  private val actorSystem: ActorSystem = ActorSystem("test")
-  private val wsClient: WSClient = fakeApplication.injector.instanceOf[WSClient]
-  private val auditConnector = new DefaultAuditConnector(fakeApplication.configuration, fakeApplication.injector.instanceOf[Environment])
-  private val client = new DefaultHttpClient(fakeApplication.configuration, auditConnector, wsClient, actorSystem)
   private val email = CaseCompletedEmail(Seq("user@domain.com"), CaseCompletedEmailParameters("name", "case-ref", "item-name"))
 
-  private val connector = new EmailConnector(configuration, client)
-
-  override def beforeAll(): Unit = {
-    super.beforeAll()
-
-    given(configuration.emailUrl).willReturn(getUrl)
-    given(configuration.emailRendererUrl).willReturn(getUrl)
-  }
+  private val connector = new EmailConnector(appConfig, standardHttpClient)
 
   "Connector 'Send'" should {
     implicit val format: Format[Email[_]] = JsonFormatters.emailFormat
 
     "POST Email payload" in {
       stubFor(post(urlEqualTo("/hmrc/email"))
-          .withRequestBody(new EqualToJsonPattern(fromResource("completion_email-request.json"), true, false))
+        .withRequestBody(new EqualToJsonPattern(fromResource("completion_email-request.json"), true, false))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_ACCEPTED))
       )
 
-      await(connector.send(email))
+      await(connector.send(email)) shouldBe ((): Unit)
+
+      verify(
+        postRequestedFor(urlEqualTo("/hmrc/email"))
+          .withoutHeader("X-Api-Token")
+      )
     }
+
   }
 
   "Connector 'Generate'" should {
@@ -75,11 +56,16 @@ class EmailConnectorSpec extends UnitSpec
       stubFor(post(urlEqualTo(s"/templates/${EmailType.COMPLETE}"))
         .withRequestBody(new EqualToJsonPattern(fromResource("parameters_email-request.json"), true, false))
         .willReturn(aResponse()
-            .withBody(fromResource("email_template-response.json"))
+          .withBody(fromResource("email_template-response.json"))
           .withStatus(HttpStatus.SC_OK))
       )
 
       await(connector.generate(email)) shouldBe EmailTemplate("text", "html", "from", "subject", "service")
+
+      verify(
+        postRequestedFor(urlEqualTo(s"/templates/${EmailType.COMPLETE}"))
+          .withoutHeader("X-Api-Token")
+      )
     }
   }
 

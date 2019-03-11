@@ -9,7 +9,8 @@ import play.api.test.Helpers.{OK, UNAUTHORIZED}
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.tariffclassificationfrontend.utils.{ResourceFiles, WiremockTestServer}
 
-trait IntegrationTest extends UnitSpec with GuiceOneServerPerSuite with ResourceFiles with WiremockTestServer {
+trait IntegrationTest extends UnitSpec with GuiceOneServerPerSuite
+  with ResourceFiles with WiremockTestServer {
 
   override def fakeApplication(): Application = new GuiceApplicationBuilder()
     .configure(Map(

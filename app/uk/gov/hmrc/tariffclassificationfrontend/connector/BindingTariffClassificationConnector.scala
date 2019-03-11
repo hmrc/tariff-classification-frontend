@@ -22,7 +22,6 @@ import com.google.inject.Inject
 import javax.inject.Singleton
 import play.api.mvc.QueryStringBindable
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus._
 import uk.gov.hmrc.tariffclassificationfrontend.models._
@@ -33,7 +32,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class BindingTariffClassificationConnector @Inject()(appConfig: AppConfig, client: HttpClient) {
+class BindingTariffClassificationConnector @Inject()(appConfig: AppConfig, client: AuthenticatedHttpClient) {
 
   private lazy val statuses: String = Seq(NEW, OPEN, REFERRED, SUSPENDED)
     .map(_.toString)

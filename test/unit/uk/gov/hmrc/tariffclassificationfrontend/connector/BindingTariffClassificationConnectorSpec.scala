@@ -19,88 +19,93 @@ package uk.gov.hmrc.tariffclassificationfrontend.connector
 import java.net.URLEncoder
 import java.time.{Clock, LocalDate, ZoneOffset}
 
-import akka.actor.ActorSystem
 import com.github.tomakehurst.wiremock.client.WireMock._
 import org.apache.http.HttpStatus
-import org.mockito.BDDMockito._
-import org.scalatest.mockito.MockitoSugar
-import play.api.Environment
 import play.api.libs.json.Json
-import play.api.libs.ws.WSClient
-import uk.gov.hmrc.http.{HeaderCarrier, NotFoundException}
-import uk.gov.hmrc.play.bootstrap.audit.DefaultAuditConnector
-import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
-import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
-import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
+import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.tariffclassificationfrontend.utils._
 
-class BindingTariffClassificationConnectorSpec extends UnitSpec
-  with WiremockTestServer with MockitoSugar with WithFakeApplication {
+class BindingTariffClassificationConnectorSpec extends ConnectorTest {
 
   import uk.gov.hmrc.tariffclassificationfrontend.utils.JsonFormatters.{caseFormat, eventFormat, newEventRequestFormat}
 
-  private val configuration = mock[AppConfig]
-
-  private val actorSystem = ActorSystem("test")
-  private val wsClient: WSClient = fakeApplication.injector.instanceOf[WSClient]
-  private val auditConnector = new DefaultAuditConnector(fakeApplication.configuration, fakeApplication.injector.instanceOf[Environment])
-  private val client = new DefaultHttpClient(fakeApplication.configuration, auditConnector, wsClient, actorSystem)
   private val gatewayQueue = Queue("1", "gateway", "Gateway")
   private val otherQueue = Queue("2", "other", "Other")
   private val pagination = SearchPagination(1, 2)
-  private implicit val hc: HeaderCarrier = HeaderCarrier()
   private val currentTime = LocalDate.of(2019,1,1).atStartOfDay().toInstant(ZoneOffset.UTC)
   private implicit val clock: Clock = Clock.fixed(currentTime, ZoneOffset.UTC)
 
-  private val connector = new BindingTariffClassificationConnector(configuration, client)
-
-  override def beforeAll(): Unit = {
-    super.beforeAll()
-
-    given(configuration.bindingTariffClassificationUrl).willReturn(getUrl)
-  }
+  private val connector = new BindingTariffClassificationConnector(appConfig, authenticatedHttpClient)
 
   "Connector 'Get Cases By Queue'" should {
 
     "get empty cases in 'gateway' queue" in {
-      stubFor(get(urlEqualTo("/cases?application_type=BTI&queue_id=none&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort_by=days-elapsed&sort_direction=desc&page=1&page_size=2"))
+      val url = "/cases?application_type=BTI&queue_id=none&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort_by=days-elapsed&sort_direction=desc&page=1&page_size=2"
+
+      stubFor(get(urlEqualTo(url))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
           .withBody(CasePayloads.pagedEmpty))
       )
 
       await(connector.findCasesByQueue(gatewayQueue, pagination)) shouldBe Paged.empty[Case]
+
+      verify(
+        getRequestedFor(urlEqualTo(url))
+          .withHeader("X-Api-Token", equalTo(realConfig.apiToken))
+      )
     }
 
     "get cases in 'gateway' queue" in {
-      stubFor(get(urlEqualTo("/cases?application_type=BTI&queue_id=none&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort_by=days-elapsed&sort_direction=desc&page=1&page_size=2"))
+      val url = "/cases?application_type=BTI&queue_id=none&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort_by=days-elapsed&sort_direction=desc&page=1&page_size=2"
+
+      stubFor(get(urlEqualTo(url))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
           .withBody(CasePayloads.pagedGatewayCases))
       )
 
       await(connector.findCasesByQueue(gatewayQueue, pagination)) shouldBe Paged(Seq(Cases.btiCaseExample))
+
+      verify(
+        getRequestedFor(urlEqualTo(url))
+          .withHeader("X-Api-Token", equalTo(realConfig.apiToken))
+      )
     }
 
     "get empty cases in 'other' queue" in {
-      stubFor(get(urlEqualTo("/cases?application_type=BTI&queue_id=2&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort_by=days-elapsed&sort_direction=desc&page=1&page_size=2"))
+      val url = "/cases?application_type=BTI&queue_id=2&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort_by=days-elapsed&sort_direction=desc&page=1&page_size=2"
+
+      stubFor(get(urlEqualTo(url))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
           .withBody(CasePayloads.pagedEmpty))
       )
 
       await(connector.findCasesByQueue(otherQueue, pagination)) shouldBe Paged.empty[Case]
+
+      verify(
+        getRequestedFor(urlEqualTo(url))
+          .withHeader("X-Api-Token", equalTo(realConfig.apiToken))
+      )
     }
 
     "get cases in 'other' queue" in {
-      stubFor(get(urlEqualTo("/cases?application_type=BTI&queue_id=2&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort_by=days-elapsed&sort_direction=desc&page=1&page_size=2"))
+      val url = "/cases?application_type=BTI&queue_id=2&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort_by=days-elapsed&sort_direction=desc&page=1&page_size=2"
+
+      stubFor(get(urlEqualTo(url))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
           .withBody(CasePayloads.pagedGatewayCases))
       )
 
       await(connector.findCasesByQueue(otherQueue, pagination)) shouldBe Paged(Seq(Cases.btiCaseExample))
+
+      verify(
+        getRequestedFor(urlEqualTo(url))
+          .withHeader("X-Api-Token", equalTo(realConfig.apiToken))
+      )
     }
   }
 
@@ -113,6 +118,11 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
       )
 
       await(connector.findCase("id")) shouldBe None
+
+      verify(
+        getRequestedFor(urlEqualTo("/cases/id"))
+          .withHeader("X-Api-Token", equalTo(realConfig.apiToken))
+      )
     }
 
     "get a case" in {
@@ -123,6 +133,11 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
       )
 
       await(connector.findCase("id")) shouldBe Some(Cases.btiCaseExample)
+
+      verify(
+        getRequestedFor(urlEqualTo("/cases/id"))
+          .withHeader("X-Api-Token", equalTo(realConfig.apiToken))
+      )
     }
 
   }
@@ -130,23 +145,37 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
   "Connector 'Get Cases By Assignee'" should {
 
     "get empty cases" in {
-      stubFor(get(urlEqualTo("/cases?application_type=BTI&assignee_id=assignee&status=NEW,OPEN,REFERRED,SUSPENDED&sort_by=days-elapsed&sort_direction=desc&page=1&page_size=2"))
+      val url = "/cases?application_type=BTI&assignee_id=assignee&status=NEW,OPEN,REFERRED,SUSPENDED&sort_by=days-elapsed&sort_direction=desc&page=1&page_size=2"
+
+      stubFor(get(urlEqualTo(url))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
           .withBody(CasePayloads.pagedEmpty))
       )
 
       await(connector.findCasesByAssignee(Operator("assignee"), pagination)) shouldBe Paged.empty[Case]
+
+      verify(
+        getRequestedFor(urlEqualTo(url))
+          .withHeader("X-Api-Token", equalTo(realConfig.apiToken))
+      )
     }
 
     "get cases" in {
-      stubFor(get(urlEqualTo("/cases?application_type=BTI&assignee_id=assignee&status=NEW,OPEN,REFERRED,SUSPENDED&sort_by=days-elapsed&sort_direction=desc&page=1&page_size=2"))
+      val url = "/cases?application_type=BTI&assignee_id=assignee&status=NEW,OPEN,REFERRED,SUSPENDED&sort_by=days-elapsed&sort_direction=desc&page=1&page_size=2"
+
+      stubFor(get(urlEqualTo(url))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
           .withBody(CasePayloads.pagedGatewayCases))
       )
 
       await(connector.findCasesByAssignee(Operator("assignee"), pagination)) shouldBe Paged(Seq(Cases.btiCaseExample))
+
+      verify(
+        getRequestedFor(urlEqualTo(url))
+          .withHeader("X-Api-Token", equalTo(realConfig.apiToken))
+      )
     }
   }
 
@@ -155,13 +184,20 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
     def encode(value: String): String = URLEncoder.encode(value, "UTF-8")
 
     "handle no filters" in {
-      stubFor(get(urlEqualTo("/cases?application_type=BTI&sort_direction=asc&sort_by=commodity-code&page=1&page_size=2"))
+      val url = "/cases?application_type=BTI&sort_direction=asc&sort_by=commodity-code&page=1&page_size=2"
+
+      stubFor(get(urlEqualTo(url))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
           .withBody(CasePayloads.pagedEmpty))
       )
 
       await(connector.search(Search(), Sort(), pagination)) shouldBe Paged.empty[Case]
+
+      verify(
+        getRequestedFor(urlEqualTo(url))
+          .withHeader("X-Api-Token", equalTo(realConfig.apiToken))
+      )
     }
 
     "filter by all" in {
@@ -192,22 +228,38 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
         liveRulingsOnly = Some(true),
         keywords = Some(Set("K1", "K2"))
       )
+
       await(connector.search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE), pagination)) shouldBe Paged(Seq(Cases.btiCaseExample))
+
+      verify(
+        getRequestedFor(urlEqualTo(url))
+          .withHeader("X-Api-Token", equalTo(realConfig.apiToken))
+      )
     }
 
     "filter by 'trader name'" in {
-      stubFor(get(urlEqualTo(s"/cases?application_type=BTI&sort_direction=asc&sort_by=commodity-code&trader_name=trader&page=1&page_size=2"))
+      val url = "/cases?application_type=BTI&sort_direction=asc&sort_by=commodity-code&trader_name=trader&page=1&page_size=2"
+
+      stubFor(get(urlEqualTo(url))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
           .withBody(CasePayloads.pagedGatewayCases))
       )
 
       val search = Search(traderName = Some("trader"))
+
       await(connector.search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE), pagination)) shouldBe Paged(Seq(Cases.btiCaseExample))
+
+      verify(
+        getRequestedFor(urlEqualTo(url))
+          .withHeader("X-Api-Token", equalTo(realConfig.apiToken))
+      )
     }
 
     "filter by 'commodity code'" in {
-      stubFor(get(urlEqualTo(s"/cases?application_type=BTI&sort_direction=asc&sort_by=commodity-code&commodity_code=comm-code&page=1&page_size=2"))
+      val url = "/cases?application_type=BTI&sort_direction=asc&sort_by=commodity-code&commodity_code=comm-code&page=1&page_size=2"
+
+      stubFor(get(urlEqualTo(url))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
           .withBody(CasePayloads.pagedGatewayCases))
@@ -216,11 +268,19 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
       val search = Search(
         commodityCode = Some("comm-code")
       )
+
       await(connector.search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE), pagination)) shouldBe Paged(Seq(Cases.btiCaseExample))
+
+      verify(
+        getRequestedFor(urlEqualTo(url))
+          .withHeader("X-Api-Token", equalTo(realConfig.apiToken))
+      )
     }
 
     "filter by 'decision_details'" in {
-      stubFor(get(urlEqualTo(s"/cases?application_type=BTI&sort_direction=asc&sort_by=commodity-code&decision_details=decision-details&page=1&page_size=2"))
+      val url = s"/cases?application_type=BTI&sort_direction=asc&sort_by=commodity-code&decision_details=decision-details&page=1&page_size=2"
+
+      stubFor(get(urlEqualTo(url))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
           .withBody(CasePayloads.pagedGatewayCases))
@@ -229,11 +289,19 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
       val search = Search(
         decisionDetails = Some("decision-details")
       )
+
       await(connector.search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE), pagination)) shouldBe Paged(Seq(Cases.btiCaseExample))
+
+      verify(
+        getRequestedFor(urlEqualTo(url))
+          .withHeader("X-Api-Token", equalTo(realConfig.apiToken))
+      )
     }
 
     "filter by 'keyword'" in {
-      stubFor(get(urlEqualTo(s"/cases?application_type=BTI&sort_direction=asc&sort_by=commodity-code&keyword=K1&keyword=K2&page=1&page_size=2"))
+      val url = "/cases?application_type=BTI&sort_direction=asc&sort_by=commodity-code&keyword=K1&keyword=K2&page=1&page_size=2"
+
+      stubFor(get(urlEqualTo(url))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
           .withBody(CasePayloads.pagedGatewayCases))
@@ -242,11 +310,19 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
       val search = Search(
         keywords = Some(Set("K1", "K2"))
       )
+
       await(connector.search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE), pagination)) shouldBe Paged(Seq(Cases.btiCaseExample))
+
+      verify(
+        getRequestedFor(urlEqualTo(url))
+          .withHeader("X-Api-Token", equalTo(realConfig.apiToken))
+      )
     }
 
     "get cases 'live only' = false" in {
-      stubFor(get(urlEqualTo(s"/cases?application_type=BTI&sort_direction=asc&sort_by=commodity-code&page=1&page_size=2"))
+      val url = "/cases?application_type=BTI&sort_direction=asc&sort_by=commodity-code&page=1&page_size=2"
+
+      stubFor(get(urlEqualTo(url))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
           .withBody(CasePayloads.pagedGatewayCases))
@@ -255,11 +331,19 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
       val search = Search(
         liveRulingsOnly = Some(false)
       )
+
       await(connector.search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE), pagination)) shouldBe Paged(Seq(Cases.btiCaseExample))
+
+      verify(
+        getRequestedFor(urlEqualTo(url))
+          .withHeader("X-Api-Token", equalTo(realConfig.apiToken))
+      )
     }
 
     "get cases 'live only' = none" in {
-      stubFor(get(urlEqualTo(s"/cases?application_type=BTI&sort_direction=asc&sort_by=commodity-code&page=1&page_size=2"))
+      val url = "/cases?application_type=BTI&sort_direction=asc&sort_by=commodity-code&page=1&page_size=2"
+
+      stubFor(get(urlEqualTo(url))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
           .withBody(CasePayloads.pagedGatewayCases))
@@ -268,11 +352,19 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
       val search = Search(
         liveRulingsOnly = None
       )
+
       await(connector.search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE), pagination)) shouldBe Paged(Seq(Cases.btiCaseExample))
+
+      verify(
+        getRequestedFor(urlEqualTo(url))
+          .withHeader("X-Api-Token", equalTo(realConfig.apiToken))
+      )
     }
 
     "get cases 'live only' = true" in {
-      stubFor(get(urlEqualTo(s"/cases?application_type=BTI&sort_direction=asc&sort_by=commodity-code&min_decision_end=${encode("2019-01-01T00:00:00Z")}&status=COMPLETED&page=1&page_size=2"))
+      val url = s"/cases?application_type=BTI&sort_direction=asc&sort_by=commodity-code&min_decision_end=${encode("2019-01-01T00:00:00Z")}&status=COMPLETED&page=1&page_size=2"
+
+      stubFor(get(urlEqualTo(url))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
           .withBody(CasePayloads.pagedGatewayCases))
@@ -281,7 +373,13 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
       val search = Search(
         liveRulingsOnly = Some(true)
       )
+
       await(connector.search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE), pagination)) shouldBe Paged(Seq(Cases.btiCaseExample))
+
+      verify(
+        getRequestedFor(urlEqualTo(url))
+          .withHeader("X-Api-Token", equalTo(realConfig.apiToken))
+      )
     }
   }
 
@@ -301,6 +399,11 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
       )
 
       await(connector.updateCase(validCase)) shouldBe validCase
+
+      verify(
+        putRequestedFor(urlEqualTo(s"/cases/$ref"))
+          .withHeader("X-Api-Token", equalTo(realConfig.apiToken))
+      )
     }
 
     "update with an unknown case reference" in {
@@ -318,6 +421,11 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
       intercept[NotFoundException] {
         await(connector.updateCase(unknownCase))
       }
+
+      verify(
+        putRequestedFor(urlEqualTo(s"/cases/$unknownRef"))
+          .withHeader("X-Api-Token", equalTo(realConfig.apiToken))
+      )
     }
   }
 
@@ -340,6 +448,11 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
       )
 
       await(connector.createEvent(validCase, validEventRequest)) shouldBe validEvent
+
+      verify(
+        postRequestedFor(urlEqualTo(s"/cases/$ref/events"))
+          .withHeader("X-Api-Token", equalTo(realConfig.apiToken))
+      )
     }
 
     "create event with an unknown case reference" in {
@@ -358,6 +471,11 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
       intercept[NotFoundException] {
         await(connector.createEvent(validCase, validEventRequest))
       }
+
+      verify(
+        postRequestedFor(urlEqualTo(s"/cases/$ref/events"))
+          .withHeader("X-Api-Token", equalTo(realConfig.apiToken))
+      )
     }
 
   }
@@ -374,6 +492,11 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
       )
 
       await(connector.findEvents(ref, pagination)) shouldBe Paged(Events.events)
+
+      verify(
+        getRequestedFor(urlEqualTo(s"/cases/$ref/events?page=1&page_size=2"))
+          .withHeader("X-Api-Token", equalTo(realConfig.apiToken))
+      )
     }
 
     "returns empty list when case ref not found" in {
@@ -384,6 +507,11 @@ class BindingTariffClassificationConnectorSpec extends UnitSpec
       )
 
       await(connector.findEvents(ref, pagination)) shouldBe Paged.empty[Event]
+
+      verify(
+        getRequestedFor(urlEqualTo(s"/cases/$ref/events?page=1&page_size=2"))
+          .withHeader("X-Api-Token", equalTo(realConfig.apiToken))
+      )
     }
   }
 
