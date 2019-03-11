@@ -71,6 +71,10 @@ class DecisionFormConstraintsSpec extends UnitSpec with MockitoSugar {
       assertOnlyOneError("1234567", Seq(commodityCodeLengthErrorMessage))
     }
 
+    "fail if the commodity code value " in {
+      when(commodityCodeService.checkIfCodeExists(any())).thenReturn(false)
+      assertOnlyOneError("999999", Seq(commodityCodeUKTariffErrorMessage))
+    }
   }
 
   private def commodityCodeJsValue(value: String): JsValue = {

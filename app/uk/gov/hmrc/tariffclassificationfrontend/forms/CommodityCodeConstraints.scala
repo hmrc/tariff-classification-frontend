@@ -16,10 +16,11 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.forms
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CommodityCodeService
 
+@Singleton
 class CommodityCodeConstraints @Inject()(commodityCodeService: CommodityCodeService) {
 
   val commodityCodeExistsInUKTradeTariff: Constraint[String] = Constraint("constraints.commodityCodeExists")({
