@@ -32,8 +32,6 @@ object Paged {
 
   def empty[T]: Paged[T] = Paged[T](Seq.empty, NoPagination(), 0)
 
-  def empty[T](pagination: Pagination): Paged[T] = Paged[T](Seq.empty, pagination, 0)
-
   def apply[T](results: Seq[T], pagination: Pagination, resultCount: Int): Paged[T] = Paged(results, pagination.page, pagination.pageSize, resultCount)
 
   def apply[T](results: Seq[T]): Paged[T] = Paged(results, NoPagination(), results.size)
