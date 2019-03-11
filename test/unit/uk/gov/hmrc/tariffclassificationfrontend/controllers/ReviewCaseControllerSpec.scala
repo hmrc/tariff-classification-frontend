@@ -30,13 +30,14 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models.ReviewStatus.ReviewStatus
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus, Operator, ReviewStatus}
+import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
-import uk.gov.tariffclassificationfrontend.utils.Cases.{aCase, _}
+import uk.gov.tariffclassificationfrontend.utils.Cases._
 
 import scala.concurrent.Future
 
-class ReviewCaseControllerSpec extends UnitSpec with Matchers with WithFakeApplication with MockitoSugar with ControllerCommons with BeforeAndAfterEach {
+class ReviewCaseControllerSpec extends UnitSpec with Matchers with WithFakeApplication
+  with MockitoSugar with ControllerCommons with BeforeAndAfterEach {
 
   private val env = Environment.simple()
   private val configuration = Configuration.load(env)
@@ -45,7 +46,9 @@ class ReviewCaseControllerSpec extends UnitSpec with Matchers with WithFakeAppli
   private val casesService = mock[CasesService]
   private val operator = mock[Operator]
 
-  private val controller = new ReviewCaseController(new SuccessfulAuthenticatedAction(operator), casesService, messageApi, appConfig)
+  private val controller = new ReviewCaseController(
+    new SuccessfulAuthenticatedAction(operator), casesService, messageApi, appConfig
+  )
 
   private implicit val hc: HeaderCarrier = HeaderCarrier()
 
@@ -57,7 +60,7 @@ class ReviewCaseControllerSpec extends UnitSpec with Matchers with WithFakeAppli
   "Case Review - Choose Status" should {
 
     "return 200 OK and HTML content type - For CANCELLED Case" in {
-      val c = aCase(withStatus(CaseStatus.CANCELLED), withDecision())
+      val c = aCase(withStatus(CaseStatus.CANCELLED), withDecision(review = Some(Review(ReviewStatus.OVERTURNED))))
 
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(c)))
 

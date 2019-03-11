@@ -35,7 +35,8 @@ import uk.gov.tariffclassificationfrontend.utils.Cases._
 
 import scala.concurrent.Future
 
-class ExtendedUseCaseControllerSpec extends UnitSpec with Matchers with WithFakeApplication with MockitoSugar with ControllerCommons with BeforeAndAfterEach {
+class ExtendedUseCaseControllerSpec extends UnitSpec with Matchers
+  with WithFakeApplication with MockitoSugar with ControllerCommons with BeforeAndAfterEach {
 
   private val env = Environment.simple()
   private val configuration = Configuration.load(env)
@@ -44,7 +45,9 @@ class ExtendedUseCaseControllerSpec extends UnitSpec with Matchers with WithFake
   private val casesService = mock[CasesService]
   private val operator = mock[Operator]
 
-  private val controller = new ExtendedUseCaseController(new SuccessfulAuthenticatedAction(operator), casesService, messageApi, appConfig)
+  private val controller = new ExtendedUseCaseController(
+    new SuccessfulAuthenticatedAction(operator), casesService, messageApi, appConfig
+  )
 
   private implicit val hc: HeaderCarrier = HeaderCarrier()
 
