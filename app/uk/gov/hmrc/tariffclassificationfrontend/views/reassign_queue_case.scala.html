@@ -29,7 +29,7 @@
         <div class="grid-row">
             <div class="column-full">
                 <h3 class="heading-large mt-0">Move this case back to a queue</h3>
-                <p> This case was previously assigned to the @actualQueue.getOrElse("") queue </p>
+                <p> This case was previously assigned to the <span id="previous-queue">@actualQueue.getOrElse("")</span> queue </p>
 
                 @release_case_form(c, form("queue"), queues)
 
