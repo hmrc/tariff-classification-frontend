@@ -25,7 +25,7 @@ class CommodityCodeConstraints @Inject()(commodityCodeService: CommodityCodeServ
 
   val commodityCodeExistsInUKTradeTariff: Constraint[String] = Constraint("constraints.commodityCodeExists")({
     case s: String if commodityCodeService.checkIfCodeExists(s) => Valid
-    case _: String => Invalid("This commodity code is not in the UK Trade Tariff")
+    case _: String => Invalid("This commodity code is not a valid code in the UK Trade Tariff")
   })
 
 }
