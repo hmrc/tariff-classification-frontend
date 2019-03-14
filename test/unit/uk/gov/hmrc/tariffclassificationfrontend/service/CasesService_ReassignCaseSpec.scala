@@ -55,11 +55,11 @@ class CasesService_ReassignCaseSpec extends UnitSpec with MockitoSugar with Befo
   }
 
   "Reassign Case" should {
-    "update case queue_id and status to NEW" in {
+    "update case queue_id and status to OPEN" in {
       // Given
       val operator: Operator = Operator("operator-id", Some("Billy Bobbins"))
-      val originalCase = aCase.copy(status = CaseStatus.NEW)
-      val caseUpdated = aCase.copy(status = CaseStatus.OPEN, queueId = Some("queue_id"))
+      val originalCase = aCase.copy(status = CaseStatus.OPEN)
+      val caseUpdated = aCase.copy(queueId = Some("queue_id"))
 
       given(queue.id).willReturn("queue_id")
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
@@ -68,15 +68,11 @@ class CasesService_ReassignCaseSpec extends UnitSpec with MockitoSugar with Befo
       // When Then
       await(service.reassignCase(originalCase, queue, operator)) shouldBe caseUpdated
 
-      verify(audit).auditCaseReleased(refEq(originalCase), refEq(caseUpdated), refEq(queue), refEq(operator))(any[HeaderCarrier])
+      verify(audit).auditQueueAssigned(refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
 
       val caseUpdating = theCaseUpdating(connector)
       caseUpdating.status shouldBe CaseStatus.OPEN
       caseUpdating.queueId shouldBe Some("queue_id")
-
-      val eventCreated = theEventCreatedFor(connector, caseUpdated)
-      eventCreated.operator shouldBe Operator("operator-id", Some("Billy Bobbins"))
-      eventCreated.details shouldBe CaseStatusChange(CaseStatus.NEW, CaseStatus.OPEN)
     }
 
     "not create event on update failure" in {
