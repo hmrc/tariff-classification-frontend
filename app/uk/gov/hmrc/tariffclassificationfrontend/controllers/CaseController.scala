@@ -87,7 +87,7 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
 
   def activityDetails(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     getCaseAndRenderView(reference, CaseDetailPage.ACTIVITY, c => {
-      val queue = queuesService.queueForId(c.queueId.getOrElse("unknown"))
+      val queue = queuesService.getOneById(c.queueId.getOrElse("unknown"))
       eventsService.getEvents(c.reference, NoPagination()).map(views.html.partials.activity_details(c, _, activityForm, queue))
     })
   }
@@ -106,7 +106,7 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
       errorForm =>
         getCaseAndRenderView(
           reference, CaseDetailPage.ACTIVITY, c => {
-            val queue = queuesService.queueForId(c.queueId.getOrElse("unknown"))
+            val queue = queuesService.getOneById(c.queueId.getOrElse("unknown"))
             eventsService.getEvents(c.reference, NoPagination()).map(views.html.partials.activity_details(c, _, errorForm, queue))
           }
         ),

@@ -25,10 +25,6 @@ class QueuesService {
 
   def getAll: Seq[Queue] = Seq(gateway, act, cap, cars, elm)
 
-  def queueForId(id: String): Option[Queue] = {
-    getAll.find(q => q.id == id)
-  }
-
   def getNonGateway: Seq[Queue] = getAll filterNot (_ == gateway)
 
   def getOneBySlug(slug: String): Option[Queue] = {
