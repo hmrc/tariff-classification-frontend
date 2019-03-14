@@ -67,7 +67,8 @@ case.decision.constrain.justification=Justification
 case.decision.constrain.bindingCommodityCode=Binding commodity code
 case.decision.constrain.goodsDescription=Sanitised goods description
 
-case.activity.assigned-to = Currently assigned to
+case.activity.assigned-to = Currently assigned to:
+case.activity.assigned-queue = Currently in:
 
 case.attachment.table.empty = There are no attachments
 case.attachment.heading.applicant = Attached by applicant
