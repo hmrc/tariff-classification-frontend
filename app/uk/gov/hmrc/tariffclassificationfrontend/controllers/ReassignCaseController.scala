@@ -65,7 +65,7 @@ class ReassignCaseController @Inject()(authenticatedAction: AuthenticatedAction,
         case Some(q: Queue) =>
           getCaseAndRenderView(
             reference,
-            caseService.releaseCase(_, q, request.operator).map { c: Case =>
+            caseService.reassignCase(_, q, request.operator).map { c: Case =>
             views.html.confirm_release_case(c, q)
           })
       }

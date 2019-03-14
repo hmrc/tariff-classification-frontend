@@ -14,15 +14,12 @@
  * limitations under the License.
  *@
 
-@import helper._
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-@import uk.gov.hmrc.tariffclassificationfrontend.forms.ActivityFormData
 @import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
-@import uk.gov.hmrc.tariffclassificationfrontend.models.{AppealStatus, AppealStatusChange, AssignmentChange, Case, CaseStatusChange, Event, EventType, ExtendedUseStatusChange, Note, Operator, Paged, ReviewStatus, ReviewStatusChange}
+@import uk.gov.hmrc.tariffclassificationfrontend.models.{AppealStatus, AppealStatusChange, AssignmentChange, Case, CaseStatusChange, Event, EventType, ExtendedUseStatusChange, Note, Operator, Paged, QueueChange, ReviewStatus, ReviewStatusChange}
 @import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.input_textarea
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{assignee, progressive_disclosure, tab_heading}
-@(c: Case, events: Paged[Event])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{assignee, progressive_disclosure}
+@(c: Case, events: Paged[Event], queueMap : Map[String,String])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 <table id="activity-events">
     <thead>
@@ -98,6 +95,14 @@
                             progressive_disclosure(
                                 id = s"activity-events-row-$index",
                                 summary = summary,
+                                body = body.comment
+                            )
+                        }
+                        case EventType.QUEUE_CHANGE => {
+                            val body = event.details.asInstanceOf[QueueChange]
+                            progressive_disclosure(
+                                id = s"activity-events-row-$index",
+                                summary = s" ${assignee(event.operator)} reassigned this case to the ${body.to.map(queueMap).getOrElse("NOT_DEFINED")} ",
                                 body = body.comment
                             )
                         }

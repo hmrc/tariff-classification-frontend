@@ -70,15 +70,6 @@ case class ReviewStatusChange
   override val `type`: EventType.Value = EventType.REVIEW_STATUS_CHANGE
 }
 
-case class ReassignCase
-(
-  override val from: Option[Queue],
-  override val to: Option[Queue],
-  override val comment: Option[String] = None
-) extends FieldChange[Option[Queue]] {
-  override val `type`: EventType.Value = EventType.REASSIGN_QUEUE_CHANGE
-}
-
 case class ExtendedUseStatusChange
 (
   override val from: Boolean,
@@ -97,6 +88,16 @@ case class AssignmentChange
   override val `type`: EventType.Value = EventType.ASSIGNMENT_CHANGE
 }
 
+case class QueueChange
+(
+  override val from: Option[String],
+  override val to: Option[String],
+  override val comment: Option[String] = None
+) extends FieldChange[Option[String]] {
+  override val `type`: EventType.Value = EventType.QUEUE_CHANGE
+}
+
+
 case class Note
 (
   comment: String
@@ -107,5 +108,5 @@ case class Note
 
 object EventType extends Enumeration {
   type EventType = Value
-  val CASE_STATUS_CHANGE, APPEAL_STATUS_CHANGE, REVIEW_STATUS_CHANGE, EXTENDED_USE_STATUS_CHANGE, ASSIGNMENT_CHANGE, REASSIGN_QUEUE_CHANGE, NOTE = Value
+  val CASE_STATUS_CHANGE, APPEAL_STATUS_CHANGE, REVIEW_STATUS_CHANGE, EXTENDED_USE_STATUS_CHANGE, ASSIGNMENT_CHANGE, QUEUE_CHANGE, NOTE = Value
 }

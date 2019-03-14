@@ -94,8 +94,8 @@ class CasesService @Inject()(appConfig: AppConfig,
                  (implicit hc: HeaderCarrier): Future[Case] = {
     for { //TODO : Work in progress
       updated <- connector.updateCase(original.copy(queueId = Some(queue.id), assignee = None))
-      _ <- addStatusChangeEvent(original, updated, operator)
-      _ = auditService.auditCaseReleased(original, updated, queue, operator)
+      _ <- addReassignChangeEvent(original, updated, operator)
+     // _ = auditService.auditCaseReleased(original, updated, queue, operator)
     } yield updated
   }
 
@@ -245,6 +245,12 @@ class CasesService @Inject()(appConfig: AppConfig,
   private def addStatusChangeEvent(original: Case, updated: Case, operator: Operator, comment: Option[String] = None)
                                   (implicit hc: HeaderCarrier): Future[Unit] = {
     val details = CaseStatusChange(original.status, updated.status, comment)
+    addEvent(original, updated, details, operator)
+  }
+
+  private def addReassignChangeEvent(original: Case, updated: Case, operator: Operator, comment: Option[String] = None)
+                                  (implicit hc: HeaderCarrier): Future[Unit] = {
+    val details = QueueChange(original.queueId, updated.queueId, comment)
     addEvent(original, updated, details, operator)
   }
 
