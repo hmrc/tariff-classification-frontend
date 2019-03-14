@@ -17,13 +17,13 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.models.Operator
 @import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
-@(operator: Operator, firstWord : Boolean = false)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(operator: Operator, capitalise : Boolean = false)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 @{
  if(operator.id == request.operator.id) {
-      if (firstWord) "You" else "you"
+      if (capitalise) "You" else "you"
  } else if(operator.name.isDefined) {
   operator.name.get
  } else {
-  s"PID${operator.id}"
+  s"PID ${operator.id}"
  }
 }
