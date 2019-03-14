@@ -23,7 +23,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.input_textarea
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{assignee, progressive_disclosure, tab_heading}
 @import uk.gov.hmrc.tariffclassificationfrontend.models.Queues
-@(c: Case, events: Paged[Event], activityForm : Form[ActivityFormData])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(c: Case, events: Paged[Event], activityForm : Form[ActivityFormData], queueName: String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
     @tab_heading("activity", messages("case.menu.activity"))
 
@@ -168,9 +168,9 @@
                 <span id="activity-events-assigned-queue">
                 @{
                     if(c.queueId.isDefined) {
-                        Queues.queueNames(c.queueId.get)
+                        queueName
                     } else {
-                        "Gateway"
+                        messages("case.activity.no-queue-assigned")
                     }
                 }
                 </span>
