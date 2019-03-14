@@ -46,15 +46,17 @@ class ReassignCaseController @Inject()(authenticatedAction: AuthenticatedAction,
 
   private lazy val form: Form[String] = ReleaseCaseForm.form
 
+  private val queueAssigned : Case => Option[String] = c => c.queueId.flatMap(queueService.getOneById).map(_.name)
+
   def showAvailableQueues(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     getCaseAndRenderView(reference,
-      c => successful(views.html.reassign_queue_case(c, form, queueService.getNonGateway, c.queueId.flatMap(queueService.getOneById).map(_.name))))
+      c => successful(views.html.reassign_queue_case(c, form, queueService.getNonGateway, queueAssigned(c))))
   }
 
   def reassignCase(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
 
     def onInvalidForm(formWithErrors: Form[String]): Future[Result] = {
-      getCaseAndRenderView(reference, c => successful(views.html.release_case(c, formWithErrors, queueService.getNonGateway)))
+      getCaseAndRenderView(reference, c => successful(views.html.reassign_queue_case(c, formWithErrors, queueService.getNonGateway, queueAssigned(c))))
     }
 
     def onValidForm(queueSlug: String): Future[Result] = {

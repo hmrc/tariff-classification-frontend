@@ -35,15 +35,15 @@
                 <h3 class="heading-large mt-0">Move this case back to a queue</h3>
                 <p> This case was previously assigned to the <span id="previous-queue">@actualQueue.getOrElse("")</span> queue </p>
 
-                @select_queue_form(form("queue"), queues, "reassign-queue-id", ReassignCaseController.reassignCase(c.reference))
-            </div>
+                @select_queue_form(
+                    form("queue"),
+                    queues,
+                    "reassign-case",
+                    ReassignCaseController.reassignCase(c.reference),
+                    CaseController.activityDetails(c.reference)
+                )
 
-            <div>
-                <button class="button" id="move-back-to-queue-button" type="submit">Move back to queue</button>
-                <a class="secondary-button" id="cancel-button" href="@CaseController.activityDetails(c.reference)">Cancel</a>
             </div>
         </div>
-
-
     }
 }

@@ -88,3 +88,7 @@ errors.case-not-found.message=We could not find a Case with reference: {0}
 errors.all.back=Back Home
 
 errors.resource-not-found.title={0} not found.
+
+
+release-case.submit.button = Release Case
+reassign-case.submit.button = Move back to queue
