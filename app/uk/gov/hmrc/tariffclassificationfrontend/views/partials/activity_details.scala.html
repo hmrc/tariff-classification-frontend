@@ -23,7 +23,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.input_textarea
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{assignee, progressive_disclosure, tab_heading}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.activity_details_events_table
-@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes
+@import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus._
 
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.ReassignCaseController
 @(c: Case, events: Paged[Event], activityForm : Form[ActivityFormData])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
@@ -68,7 +68,10 @@
             }
         }
         </span>
-        <span class="column-one-third mt-1"> <a id="reassign-queue-link" href="@ReassignCaseController.showAvailableQueues(c.reference)">Move this case back to a queue </a> </span>
+        @if(reassignCaseStatuses.contains(c.status)) {
+            <span class="column-one-third mt-1"> <a id="reassign-queue-link" href="@ReassignCaseController.showAvailableQueues(c.reference)>
+                Move this case back to a queue </a> </span>
+        }
     </div>
 
 
