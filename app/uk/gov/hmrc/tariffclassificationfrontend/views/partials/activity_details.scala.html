@@ -24,6 +24,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{assignee, progressive_disclosure, tab_heading}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.activity_details_events_table
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes
+@import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus._
 
 @(c: Case, events: Paged[Event], activityForm : Form[ActivityFormData])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
@@ -67,7 +68,10 @@
             }
         }
         </span>
-        <span class="column-one-third mt-1"> <a id="reassign-queue-link" href="@routes.AssignQueueController.get(c.reference)">Move this case back to a queue </a> </span>
+        @if(Set(OPEN, REFERRED, SUSPENDED).contains(c.status)) {
+            <span class="column-one-third mt-1"> <a id="reassign-queue-link" href="@routes.AssignQueueController.get(c.reference)">
+                Move this case back to a queue </a> </span>
+        }
     </div>
 
 
