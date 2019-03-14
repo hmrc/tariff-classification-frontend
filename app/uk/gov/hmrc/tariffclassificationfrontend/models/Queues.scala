@@ -22,13 +22,4 @@ object Queues {
   val cap = Queue("3", "cap", "CAP")
   val cars = Queue("4", "cars", "Cars")
   val elm = Queue("5", "elm", "ELM")
-
-  val queueNames: Map[String, String] = Map(
-    gateway.id -> gateway.name,
-    act.id -> act.name,
-    cap.id -> cap.name,
-    cars.id -> cars.name,
-    elm.id -> elm.name
-  )
-
 }

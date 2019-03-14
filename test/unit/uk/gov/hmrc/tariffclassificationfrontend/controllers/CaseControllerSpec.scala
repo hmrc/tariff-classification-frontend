@@ -49,13 +49,14 @@ class CaseControllerSpec extends WordSpec with Matchers with WithFakeApplication
   private val fileService = mock[FileStoreService]
   private val mapper = mock[DecisionFormMapper]
   private val eventService = mock[EventsService]
+  private val queueService = mock[QueuesService]
   private val operator = mock[Operator]
   private val event = mock[Event]
   private val commodityCodeService = mock[CommodityCodeService]
   private val decisionForm = new DecisionForm(new CommodityCodeConstraints(commodityCodeService))
 
   private val controller = new CaseController(new SuccessfulAuthenticatedAction(operator),
-                                              casesService, keywordsService, fileService, eventService, mapper, decisionForm, messageApi, appConfig)
+                                              casesService, keywordsService, fileService, eventService, queueService, mapper, decisionForm, messageApi, appConfig)
 
   private implicit val hc: HeaderCarrier = HeaderCarrier()
 

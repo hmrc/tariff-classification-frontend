@@ -35,4 +35,6 @@ class QueuesService {
     getAll.find(_.id == id)
   }
 
+  def queueNamesMap = getAll.map(q => q.id -> q.name).toMap
+
 }
