@@ -28,7 +28,7 @@ class DecisionFormConstraintsSpec extends UnitSpec with MockitoSugar {
   private val commodityCodeService = mock[CommodityCodeService]
   private val decisionForm = new DecisionForm(new CommodityCodeConstraints(commodityCodeService))
   private val commodityCodeLengthErrorMessage = "Format must be empty or numeric between 6 and 22 digits with an even number of digits"
-  private val commodityCodeUKTariffErrorMessage = "This commodity code is not in the UK Trade Tariff"
+  private val commodityCodeUKTariffErrorMessage = "This commodity code is not a valid code in the UK Trade Tariff"
   private val bindingCommodityCodeElementId = "bindingCommodityCode"
 
   "DecisionForm validation" should {

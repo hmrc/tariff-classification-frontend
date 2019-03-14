@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Contact}
 @import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.tab_heading
@@ -27,7 +26,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.release_case_button
 @import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus
 
-@(c: Case,  letterOfAuth: Option[StoredAttachment])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(c: Case,  letterOfAuth: Option[StoredAttachment])(implicit request: Request[_], messages: Messages)
 
 @tab_heading("trader", "Trader")
 
@@ -60,9 +59,9 @@
                 <div class="column-two-thirds">
                     <p>
                         @btiHolder.addressLine1 @if(!btiHolder.addressLine1.isEmpty) {<br>}
-                        @btiHolder.addressLine2  @if(!btiHolder.addressLine2.isEmpty) {<br>}
-                        @btiHolder.addressLine3  @if(!btiHolder.addressLine3.isEmpty) {<br>}
-                        @btiHolder.postcode  @if(!btiHolder.postcode.isEmpty) {<br>}
+                        @btiHolder.addressLine2 @if(!btiHolder.addressLine2.isEmpty) {<br>}
+                        @btiHolder.addressLine3 @if(!btiHolder.addressLine3.isEmpty) {<br>}
+                        @btiHolder.postcode     @if(!btiHolder.postcode.isEmpty)     {<br>}
                         @btiHolder.country
                     </p>
                 </div>
