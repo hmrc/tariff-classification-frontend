@@ -65,7 +65,6 @@ class ReassignCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
   "Reassign Case" should {
 
-
     "return OK and HTML content type" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusOPEN)))
       when(queueService.getNonGateway).thenReturn(Seq.empty)
@@ -119,6 +118,22 @@ class ReassignCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result) shouldBe Some("utf-8")
       bodyOf(result) should include("This case has been moved to the SOME_QUEUE queue")
+    }
+
+    "show error message when no option is selected" in {
+      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusOPEN)))
+      when(queueService.getOneBySlug("queue")).thenReturn(Some(queue))
+      when(queueService.getNonGateway).thenReturn(Seq.empty)
+      when(queue.name).thenReturn(("SOME_QUEUE"))
+      when(queueService.getOneById(any())).thenReturn(None)
+      when(casesService.reassignCase(refEq(caseWithStatusOPEN), any[Queue], refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusOPEN))
+
+      val result: Result = await(controller.reassignCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
+
+      status(result) shouldBe Status.OK
+      contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
+      charsetOf(result) shouldBe Some("utf-8")
+      bodyOf(result) should include("This field is required")
     }
 
     "redirect to Application Details for non  OPEN, REFERRED or SUSPENDED statuses" in {
