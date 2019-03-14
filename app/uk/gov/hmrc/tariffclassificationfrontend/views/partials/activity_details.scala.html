@@ -25,6 +25,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.activity_details_events_table
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes
 
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.ReassignCaseController
 @(c: Case, events: Paged[Event], activityForm : Form[ActivityFormData])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
     @tab_heading("activity", messages("case.menu.activity"))
@@ -67,7 +68,7 @@
             }
         }
         </span>
-        <span class="column-one-third mt-1"> <a id="reassign-queue-link" href="@routes.AssignQueueController.get(c.reference)">Move this case back to a queue </a> </span>
+        <span class="column-one-third mt-1"> <a id="reassign-queue-link" href="@ReassignCaseController.showAvailableQueues(c.reference)">Move this case back to a queue </a> </span>
     </div>
 
 

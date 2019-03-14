@@ -32,11 +32,11 @@ import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
 @Singleton
-class AssignQueueController @Inject()(authenticatedAction: AuthenticatedAction,
-                                      override val caseService: CasesService,
-                                      queueService: QueuesService,
-                                      val messagesApi: MessagesApi,
-                                      override implicit val config: AppConfig) extends RenderCaseAction {
+class ReassignCaseController @Inject()(authenticatedAction: AuthenticatedAction,
+                                       override val caseService: CasesService,
+                                       queueService: QueuesService,
+                                       val messagesApi: MessagesApi,
+                                       override implicit val config: AppConfig) extends RenderCaseAction {
 
   override protected def redirect: String => Call = routes.CaseController.applicationDetails
 
@@ -46,12 +46,12 @@ class AssignQueueController @Inject()(authenticatedAction: AuthenticatedAction,
 
   private lazy val form: Form[String] = ReleaseCaseForm.form
 
-  def get(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
+  def showAvailableQueues(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     getCaseAndRenderView(reference,
       c => successful(views.html.reassign_queue_case(c, form, queueService.getNonGateway, c.queueId.flatMap(queueService.getOneById).map(_.name))))
   }
 
-  def post(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
+  def reassignCase(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
 
     def onInvalidForm(formWithErrors: Form[String]): Future[Result] = {
       getCaseAndRenderView(reference, c => successful(views.html.release_case(c, formWithErrors, queueService.getNonGateway)))
