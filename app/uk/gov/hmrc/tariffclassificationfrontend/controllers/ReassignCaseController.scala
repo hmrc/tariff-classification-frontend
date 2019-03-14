@@ -40,9 +40,8 @@ class ReassignCaseController @Inject()(authenticatedAction: AuthenticatedAction,
 
   override protected def redirect: String => Call = routes.CaseController.applicationDetails
 
-  override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = {
-    c.assignee.isDefined && reassignCaseStatuses.contains(c.status)
-  }
+  override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = c.assignee.isDefined && reassignCaseStatuses.contains(c.status)
+
 
   private lazy val form: Form[String] = ReleaseCaseForm.form
 
@@ -66,7 +65,7 @@ class ReassignCaseController @Inject()(authenticatedAction: AuthenticatedAction,
           getCaseAndRenderView(
             reference,
             caseService.reassignCase(_, q, request.operator).map { c: Case =>
-            views.html.confirm_release_case(c, q)
+            views.html.confirm_reassign_case(c, q)
           })
       }
     }

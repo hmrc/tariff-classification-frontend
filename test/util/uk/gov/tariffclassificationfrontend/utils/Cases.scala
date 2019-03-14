@@ -38,6 +38,7 @@ object Cases {
   val btiCaseExample = Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, None, None, btiApplicationExample, Some(decision), Seq())
   val simpleCaseExample = Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, None, None, simpleBtiApplicationExample, None, Seq())
   val liabilityCaseExample = Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, None, None, liabilityApplicationExample, None, Seq())
+  val caseQueueExample = Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, None, Some("1"), btiApplicationExample, Some(decision), Seq())
 
   def attachment(id: String = UUID.randomUUID().toString): Attachment = {
     Attachment(

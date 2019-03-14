@@ -102,7 +102,7 @@
                             val body = event.details.asInstanceOf[QueueChange]
                             progressive_disclosure(
                                 id = s"activity-events-row-$index",
-                                summary = s" ${assignee(event.operator, true)} reassigned this case to the ${body.to.map(queueMap).getOrElse("NOT_DEFINED")} queue",
+                                summary = s" ${assignee(event.operator, true)} moved this case to the ${body.to.map(queueMap).getOrElse("NOT_DEFINED")} queue",
                                 body = body.comment
                             )
                         }
