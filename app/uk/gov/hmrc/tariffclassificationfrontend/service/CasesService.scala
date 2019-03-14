@@ -90,6 +90,15 @@ class CasesService @Inject()(appConfig: AppConfig,
     } yield updated
   }
 
+  def reassignQueueCase(original: Case, queue: Queue, operator: Operator)
+                 (implicit hc: HeaderCarrier): Future[Case] = {
+    for { //TODO : Work in progress
+      updated <- connector.updateCase(original.copy(queueId = Some(queue.id), assignee = None))
+      _ <- addStatusChangeEvent(original, updated, operator)
+      _ = auditService.auditCaseReleased(original, updated, queue, operator)
+    } yield updated
+  }
+
   def releaseCase(original: Case, queue: Queue, operator: Operator)
                  (implicit hc: HeaderCarrier): Future[Case] = {
     for {

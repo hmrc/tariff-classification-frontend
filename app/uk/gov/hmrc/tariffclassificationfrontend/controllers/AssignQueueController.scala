@@ -22,12 +22,13 @@ import play.api.i18n.MessagesApi
 import play.api.mvc._
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.ReleaseCaseForm
-import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus._
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Queue}
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, QueuesService}
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
+import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
 @Singleton
@@ -48,6 +49,27 @@ class AssignQueueController @Inject()(authenticatedAction: AuthenticatedAction,
   def get(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     getCaseAndRenderView(reference,
       c => successful(views.html.reassign_queue_case(c, form, queueService.getNonGateway, c.queueId.flatMap(queueService.getOneById).map(_.name))))
+  }
+
+  def post(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
+
+    def onInvalidForm(formWithErrors: Form[String]): Future[Result] = {
+      getCaseAndRenderView(reference, c => successful(views.html.release_case(c, formWithErrors, queueService.getNonGateway)))
+    }
+
+    def onValidForm(queueSlug: String): Future[Result] = {
+      queueService.getOneBySlug(queueSlug) match {
+        case None => successful(Ok(views.html.resource_not_found(s"Queue $queueSlug")))
+        case Some(q: Queue) =>
+          getCaseAndRenderView(
+            reference,
+            caseService.releaseCase(_, q, request.operator).map { c: Case =>
+            views.html.confirm_release_case(c, q)
+          })
+      }
+    }
+
+    form.bindFromRequest.fold(onInvalidForm, onValidForm)
   }
 
 }
