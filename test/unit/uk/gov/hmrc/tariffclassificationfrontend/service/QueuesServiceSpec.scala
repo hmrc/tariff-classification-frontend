@@ -61,22 +61,22 @@ class QueuesServiceSpec extends UnitSpec {
 
   "Get queue name" should {
     "return the queue name Gateway" in {
-      service.queueNameForId("1") shouldBe "Gateway"
+      service.queueForId("1").get.name shouldBe "Gateway"
     }
     "return the queue name ACT" in {
-      service.queueNameForId("2") shouldBe "ACT"
+      service.queueForId("2").get.name shouldBe "ACT"
     }
     "return the queue name CAP" in {
-      service.queueNameForId("3") shouldBe "CAP"
+      service.queueForId("3").get.name shouldBe "CAP"
     }
     "return the queue name Cars" in {
-      service.queueNameForId("4") shouldBe "Cars"
+      service.queueForId("4").get.name shouldBe "Cars"
     }
     "return the queue name ELM" in {
-      service.queueNameForId("5") shouldBe "ELM"
+      service.queueForId("5").get.name shouldBe "ELM"
     }
     "return the queue name unknown" in {
-      service.queueNameForId("unknown") shouldBe "unknown"
+      service.queueForId("99") shouldBe None
     }
   }
 
