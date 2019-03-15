@@ -20,21 +20,22 @@ import javax.inject.Singleton
 import uk.gov.hmrc.tariffclassificationfrontend.models.Queue
 import uk.gov.hmrc.tariffclassificationfrontend.models.Queues._
 
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
+
 @Singleton
 class QueuesService {
 
-  def getAll: Seq[Queue] = Seq(gateway, act, cap, cars, elm)
+  def getAll: Future[Seq[Queue]] = Future.successful(Seq(gateway, act, cap, cars, elm))
 
-  def getNonGateway: Seq[Queue] = getAll filterNot (_ == gateway)
+  def getNonGateway: Future[Seq[Queue]] = getAll map(_.filterNot (_ == gateway))
 
-  def getOneBySlug(slug: String): Option[Queue] = {
-    getAll.find(_.slug == slug)
+  def getOneBySlug(slug: String): Future[Option[Queue]] = {
+    getAll.map(_.find(_.slug == slug))
   }
 
-  def getOneById(id: String): Option[Queue] = {
-    getAll.find(_.id == id)
+  def getOneById(id: String): Future[Option[Queue]] = {
+    getAll.map(_.find(_.id == id))
   }
-
-  def queueNamesMap: Map[String, String] = getAll.map(q => q.id -> q.name).toMap
 
 }

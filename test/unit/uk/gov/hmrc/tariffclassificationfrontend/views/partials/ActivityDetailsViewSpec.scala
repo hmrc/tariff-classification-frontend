@@ -28,7 +28,7 @@ import uk.gov.tariffclassificationfrontend.utils.Cases._
 class ActivityDetailsViewSpec extends ViewSpec {
 
   private val date = ZonedDateTime.of(2019,1,1,0,0,0,0, ZoneOffset.UTC).toInstant
-  private val queueNames = Map("1" -> "TEST")
+  private val queues = Seq(Queue(id = "1", slug = "test", name = "TEST"))
 
   "Activity Details" should {
 
@@ -39,7 +39,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(activity_details(c, Paged.empty[Event], ActivityForm.form, queueNames))
+      val doc = view(activity_details(c, Paged.empty[Event], ActivityForm.form, queues))
 
       // Then
       doc should containElementWithID("activity-events-row-application_submitted")
@@ -59,7 +59,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(activity_details(c, Paged(Seq(e)), ActivityForm.form, queueNames))
+      val doc = view(activity_details(c, Paged(Seq(e)), ActivityForm.form, queues))
 
       // Then
       doc should containElementWithID("activity-events-row-0-operator")
@@ -78,7 +78,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(activity_details(c, Paged(Seq(e)), ActivityForm.form, queueNames))
+      val doc = view(activity_details(c, Paged(Seq(e)), ActivityForm.form, queues))
 
       // Then
       doc should containElementWithID("activity-events-row-0-operator")
@@ -102,7 +102,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(activity_details(c, Paged(Seq(e)), ActivityForm.form, queueNames))
+      val doc = view(activity_details(c, Paged(Seq(e)), ActivityForm.form, queues))
 
       // Then
       doc should containElementWithID("activity-events-row-0-operator")
@@ -126,7 +126,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(activity_details(c, Paged(Seq(e)), ActivityForm.form, queueNames))
+      val doc = view(activity_details(c, Paged(Seq(e)), ActivityForm.form, queues))
 
       // Then
       doc should containElementWithID("activity-events-row-0-operator")
@@ -150,7 +150,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(activity_details(c, Paged(Seq(e)), ActivityForm.form, queueNames))
+      val doc = view(activity_details(c, Paged(Seq(e)), ActivityForm.form, queues))
 
       // Then
       doc should containElementWithID("activity-events-row-0-operator")
@@ -174,7 +174,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(activity_details(c, Paged(Seq(e)), ActivityForm.form, queueNames))
+      val doc = view(activity_details(c, Paged(Seq(e)), ActivityForm.form, queues))
 
       // Then
       doc should containElementWithID("activity-events-row-0-operator")
@@ -198,7 +198,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(activity_details(c, Paged(Seq(e)), ActivityForm.form, queueNames))
+      val doc = view(activity_details(c, Paged(Seq(e)), ActivityForm.form, queues))
 
       // Then
       doc should containElementWithID("activity-events-row-0-operator")
@@ -220,7 +220,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(activity_details(c, Paged(Seq(e)), ActivityForm.form, queueNames))
+      val doc = view(activity_details(c, Paged(Seq(e)), ActivityForm.form, queues))
 
       // Then
       doc should containElementWithID("activity-events-row-0-content")
@@ -239,7 +239,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(activity_details(c, Paged(Seq(e)), ActivityForm.form, queueNames))
+      val doc = view(activity_details(c, Paged(Seq(e)), ActivityForm.form, queues))
 
       // Then
       doc should containElementWithID("activity-events-row-0-content")
@@ -258,7 +258,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(activity_details(c, Paged(Seq(e)), ActivityForm.form, queueNames))
+      val doc = view(activity_details(c, Paged(Seq(e)), ActivityForm.form, queues))
 
       // Then
       doc should containElementWithID("activity-events-row-0-content")
@@ -277,7 +277,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(activity_details(c, Paged(Seq(e)), ActivityForm.form, queueNames))
+      val doc = view(activity_details(c, Paged(Seq(e)), ActivityForm.form, queues))
 
       // Then
       doc should containElementWithID("activity-events-row-0-content")
@@ -291,7 +291,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(activity_details(c, Paged.empty[Event], ActivityForm.form, queueNames))
+      val doc = view(activity_details(c, Paged.empty[Event], ActivityForm.form, queues))
 
       // Then
       doc should containElementWithID("activity-events-assignee")
@@ -306,7 +306,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(activity_details(c, Paged.empty[Event], ActivityForm.form, queueNames))
+      val doc = view(activity_details(c, Paged.empty[Event], ActivityForm.form, queues))
 
       // Then
       doc should containElementWithID("activity-events-assignee")
@@ -321,7 +321,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(activity_details(c, Paged.empty[Event], ActivityForm.form, queueNames))
+      val doc = view(activity_details(c, Paged.empty[Event], ActivityForm.form, queues))
 
       // Then
       doc should containElementWithID("activity-events-assignee")
@@ -337,7 +337,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(activity_details(c, Paged.empty[Event], ActivityForm.form, queueNames))
+      val doc = view(activity_details(c, Paged.empty[Event], ActivityForm.form, queues))
 
       // Then
       doc should containElementWithID("activity-events-assigned-queue")
@@ -352,7 +352,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(activity_details(c, Paged.empty[Event], ActivityForm.form, queueNames))
+      val doc = view(activity_details(c, Paged.empty[Event], ActivityForm.form, queues))
 
       // Then
       doc should containElementWithID("activity-events-assigned-queue")
@@ -368,7 +368,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(activity_details(c, Paged.empty[Event], ActivityForm.form, queueNames))
+      val doc = view(activity_details(c, Paged.empty[Event], ActivityForm.form, queues))
 
       // Then
       doc should containElementWithID("activity-events-assigned-queue")
@@ -388,7 +388,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(activity_details(c, Paged(Seq(e)), ActivityForm.form, queueNames))
+      val doc = view(activity_details(c, Paged(Seq(e)), ActivityForm.form, queues))
 
       // Then
       doc should containElementWithID("activity-events-row-0-content")

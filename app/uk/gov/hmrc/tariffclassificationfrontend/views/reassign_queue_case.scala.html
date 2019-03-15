@@ -15,15 +15,13 @@
  *@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.{CaseController, ReassignCaseController}
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{BTIApplication, Case, Queue}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.select_queue_form
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.case_heading
-@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController
 
-@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.ReassignCaseController
-
-@(c: Case, form: Form[String], queues: Seq[Queue], actualQueue: Option[String])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(c: Case, form: Form[String], queues: Seq[Queue], actualQueue: Option[Queue])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None) {
     @defining(c.application.asBTI) { btiApp: BTIApplication =>
@@ -33,7 +31,7 @@
         <div class="grid-row">
             <div class="column-full">
                 <h3 class="heading-large mt-0">Move this case back to a queue</h3>
-                <p> This case was previously assigned to the <span id="previous-queue">@actualQueue.getOrElse("")</span> queue </p>
+                <p> This case was previously assigned to the <span id="previous-queue">@actualQueue.map(_.name).getOrElse("")</span> queue </p>
 
                 @select_queue_form(
                     form("queue"),
