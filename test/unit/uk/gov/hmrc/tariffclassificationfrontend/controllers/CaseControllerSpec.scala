@@ -152,6 +152,7 @@ class CaseControllerSpec extends WordSpec with Matchers with WithFakeApplication
       val aCase = Cases.btiCaseExample
       given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
       given(eventService.getEvents(refEq(aCase.reference), refEq(NoPagination()))(any[HeaderCarrier])) willReturn Future.successful(Paged(Events.events))
+      given(queueService.getAll) willReturn Future.successful(Seq.empty)
 
       val result = controller.activityDetails(aCase.reference)(newFakeGETRequestWithCSRF(fakeApplication))
 
@@ -164,6 +165,7 @@ class CaseControllerSpec extends WordSpec with Matchers with WithFakeApplication
       val aCase = Cases.btiCaseExample
       given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
       given(eventService.getEvents(refEq(aCase.reference), refEq(NoPagination()))(any[HeaderCarrier])) willReturn Future.successful(Paged.empty[Event])
+      given(queueService.getAll) willReturn Future.successful(Seq.empty)
 
       val result = controller.activityDetails(aCase.reference)(newFakeGETRequestWithCSRF(fakeApplication))
 
@@ -201,6 +203,7 @@ class CaseControllerSpec extends WordSpec with Matchers with WithFakeApplication
       val aValidForm = newFakePOSTRequestWithCSRF(fakeApplication, Map())
       given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])) willReturn Future.successful(Some(aCase))
       given(eventService.getEvents(refEq(aCase.reference), refEq(NoPagination()))(any[HeaderCarrier])) willReturn Future.successful(Paged.empty[Event])
+      given(queueService.getAll) willReturn Future.successful(Seq.empty)
 
       val result = controller.addNote(aCase.reference)(aValidForm)
       status(result) shouldBe Status.OK
