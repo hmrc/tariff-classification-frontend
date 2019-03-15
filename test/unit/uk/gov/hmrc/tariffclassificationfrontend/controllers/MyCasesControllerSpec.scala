@@ -52,7 +52,7 @@ class MyCasesControllerSpec extends UnitSpec with Matchers with WithFakeApplicat
 
     "return 200 OK and HTML content type" in {
       given(casesService.getCasesByAssignee(refEq(models.Operator("0", Some("name"))), refEq(NoPagination()))(any[HeaderCarrier])).willReturn(Future.successful(Paged.empty[Case]))
-      given(queuesService.getAll).willReturn(Seq(queue))
+      given(queuesService.getAll).willReturn(Future.successful(Seq(queue)))
 
       val result = await(controller.myCases()(fakeRequest))
       status(result) shouldBe Status.OK

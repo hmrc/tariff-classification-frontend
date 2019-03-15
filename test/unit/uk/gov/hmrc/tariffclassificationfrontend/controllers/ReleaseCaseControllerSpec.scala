@@ -67,7 +67,7 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
     "return OK and HTML content type" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusNEW)))
-      when(queueService.getNonGateway).thenReturn(Seq.empty)
+      when(queueService.getNonGateway).thenReturn(successful(Seq.empty))
 
       val result: Result = await(controller.releaseCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
@@ -79,7 +79,7 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
     "redirect to Application Details for non NEW statuses" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusOPEN)))
-      when(queueService.getNonGateway).thenReturn(Seq.empty)
+      when(queueService.getNonGateway).thenReturn(successful(Seq.empty))
 
       val result: Result = await(controller.releaseCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
@@ -91,7 +91,7 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
     "return Not Found and HTML content type" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(None))
-      when(queueService.getNonGateway).thenReturn(Seq.empty)
+      when(queueService.getNonGateway).thenReturn(successful(Seq.empty))
 
       val result: Result = await(controller.releaseCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
@@ -107,7 +107,7 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
     "return OK and HTML content type" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusNEW)))
-      when(queueService.getOneBySlug("queue")).thenReturn(Some(queue))
+      when(queueService.getOneBySlug("queue")).thenReturn(successful(Some(queue)))
       when(casesService.releaseCase(refEq(caseWithStatusNEW), any[Queue], refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusOPEN))
 
       val result: Result = await(controller.releaseCaseToQueue("reference")(requestWithQueue("queue")))
@@ -120,8 +120,8 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
     "redirect back to case on Form Error" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusNEW)))
-      when(queueService.getOneBySlug("queue")).thenReturn(Some(queue))
-      when(queueService.getNonGateway).thenReturn(Seq.empty)
+      when(queueService.getOneBySlug("queue")).thenReturn(successful(Some(queue)))
+      when(queueService.getNonGateway).thenReturn(successful(Seq.empty))
       when(casesService.releaseCase(refEq(caseWithStatusNEW), any[Queue], refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusOPEN))
 
       val result: Result = await(controller.releaseCaseToQueue("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
@@ -134,7 +134,7 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
     "redirect to Application Details for non NEW statuses" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusOPEN)))
-      when(queueService.getOneBySlug("queue")).thenReturn(Some(queue))
+      when(queueService.getOneBySlug("queue")).thenReturn(successful(Some(queue)))
 
       val result: Result= await(controller.releaseCaseToQueue("reference")(requestWithQueue("queue")))
 
@@ -146,7 +146,7 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
     "return Not Found and HTML content type on missing Case" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(None))
-      when(queueService.getOneBySlug("queue")).thenReturn(Some(queue))
+      when(queueService.getOneBySlug("queue")).thenReturn(successful(Some(queue)))
 
       val result: Result = await(controller.releaseCaseToQueue("reference")(requestWithQueue("queue")))
 
@@ -158,7 +158,7 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
     "return Not Found and HTML content type on missing Queue" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusNEW)))
-      when(queueService.getOneBySlug("queue")).thenReturn(None)
+      when(queueService.getOneBySlug("queue")).thenReturn(successful(None))
 
       val result: Result = await(controller.releaseCaseToQueue("reference")(requestWithQueue("queue")))
 
@@ -172,7 +172,7 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       val error = new IllegalStateException("expected error")
 
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(failed(error))
-      when(queueService.getOneBySlug("queue")).thenReturn(Some(queue))
+      when(queueService.getOneBySlug("queue")).thenReturn(successful(Some(queue)))
 
       val caught = intercept[error.type] {
         await(controller.releaseCaseToQueue("reference")(requestWithQueue("queue")))

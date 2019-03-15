@@ -28,6 +28,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Queue}
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, QueuesService}
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
@@ -45,28 +46,35 @@ class ReassignCaseController @Inject()(authenticatedAction: AuthenticatedAction,
 
   private lazy val form: Form[String] = ReleaseCaseForm.form
 
-  private val queueAssigned : Case => Option[String] = c => c.queueId.flatMap(queueService.getOneById).map(_.name)
-
   def showAvailableQueues(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
-    getCaseAndRenderView(reference,
-      c => successful(views.html.reassign_queue_case(c, form, queueService.getNonGateway, queueAssigned(c))))
+    getCaseAndRenderView(reference, c =>
+      for {
+        queues <- queueService.getNonGateway
+        assignedQueue <- c.queueId.map(id => queueService.getOneById(id)).getOrElse(Future.successful(None))
+      } yield views.html.reassign_queue_case(c, form, queues, assignedQueue)
+    )
   }
 
   def reassignCase(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
 
     def onInvalidForm(formWithErrors: Form[String]): Future[Result] = {
-      getCaseAndRenderView(reference, c => successful(views.html.reassign_queue_case(c, formWithErrors, queueService.getNonGateway, queueAssigned(c))))
+      getCaseAndRenderView(reference, c =>
+        for {
+          queues <- queueService.getNonGateway
+          assignedQueue <- c.queueId.map(id => queueService.getOneById(id)).getOrElse(Future.successful(None))
+        } yield views.html.reassign_queue_case(c, formWithErrors, queues, assignedQueue)
+      )
     }
 
     def onValidForm(queueSlug: String): Future[Result] = {
-      queueService.getOneBySlug(queueSlug) match {
+      queueService.getOneBySlug(queueSlug) flatMap {
         case None => successful(Ok(views.html.resource_not_found(s"Queue $queueSlug")))
         case Some(q: Queue) =>
           getCaseAndRenderView(
             reference,
             caseService.reassignCase(_, q, request.operator).map { c: Case =>
-            views.html.confirm_reassign_case(c, q)
-          })
+              views.html.confirm_reassign_case(c, q)
+            })
       }
     }
 

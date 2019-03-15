@@ -36,11 +36,14 @@ class QueuesController @Inject()(authenticatedAction: AuthenticatedAction,
                                  implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
   def queue(slug: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
-    queuesService.getOneBySlug(slug) match {
-      case None => Future.successful(Ok(views.html.resource_not_found()))
-      case Some(q: Queue) => casesService.getCasesByQueue(q, NoPagination()).map { cases: Paged[Case] =>
-        Ok(views.html.queue(queuesService.getAll, q, cases))
-      }
+    queuesService.getOneBySlug(slug) flatMap {
+      case None =>
+        Future.successful(Ok(views.html.resource_not_found()))
+      case Some(q: Queue) =>
+        for {
+          cases <- casesService.getCasesByQueue(q, NoPagination())
+          queues <- queuesService.getAll
+        } yield Ok(views.html.queue(queues, q, cases))
     }
   }
 

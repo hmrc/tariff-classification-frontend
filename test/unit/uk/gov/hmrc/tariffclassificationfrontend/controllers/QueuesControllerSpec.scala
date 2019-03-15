@@ -51,8 +51,8 @@ class QueuesControllerSpec extends UnitSpec with Matchers with WithFakeApplicati
 
     "return 200 OK and HTML content type when Queue is found" in {
       given(casesService.getCasesByQueue(refEq(queue), refEq(NoPagination()))(any[HeaderCarrier])).willReturn(Future.successful(Paged.empty[Case]))
-      given(queuesService.getOneBySlug("slug")).willReturn(Some(queue))
-      given(queuesService.getAll).willReturn(Seq(queue))
+      given(queuesService.getOneBySlug("slug")).willReturn(Future.successful(Some(queue)))
+      given(queuesService.getAll).willReturn(Future.successful(Seq(queue)))
 
       val result = await(controller.queue("slug")(fakeRequest))
       status(result) shouldBe Status.OK
@@ -63,8 +63,8 @@ class QueuesControllerSpec extends UnitSpec with Matchers with WithFakeApplicati
 
     "return 200 OK and HTML content type when Queue is not found" in {
       given(casesService.getCasesByQueue(refEq(queue), refEq(NoPagination()))(any[HeaderCarrier])).willReturn(Future.successful(Paged.empty[Case]))
-      given(queuesService.getOneBySlug("slug")).willReturn(None)
-      given(queuesService.getAll).willReturn(Seq(queue))
+      given(queuesService.getOneBySlug("slug")).willReturn(Future.successful(None))
+      given(queuesService.getAll).willReturn(Future.successful(Seq(queue)))
 
       val result = await(controller.queue("slug")(fakeRequest))
       status(result) shouldBe Status.OK

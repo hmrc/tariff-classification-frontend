@@ -21,7 +21,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, NoPagination, Paged}
+import uk.gov.hmrc.tariffclassificationfrontend.models.NoPagination
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, QueuesService}
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
@@ -35,9 +35,10 @@ class MyCasesController @Inject()(authenticatedAction: AuthenticatedAction,
                                   implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
   def myCases(): Action[AnyContent] = authenticatedAction.async { implicit request =>
-    casesService.getCasesByAssignee(request.operator, NoPagination()).map { cases: Paged[Case] =>
-      Ok(views.html.my_cases(queuesService.getAll, cases, request.operator))
-    }
+    for {
+      cases <-casesService.getCasesByAssignee(request.operator, NoPagination())
+      queues <- queuesService.getAll
+    } yield Ok(views.html.my_cases(queues, cases, request.operator))
   }
 
 }

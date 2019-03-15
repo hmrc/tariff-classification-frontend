@@ -24,8 +24,8 @@ import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms._
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, NoPagination, Queues}
-import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, EventsService, FileStoreService, KeywordsService, QueuesService}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, NoPagination}
+import uk.gov.hmrc.tariffclassificationfrontend.service._
 import uk.gov.hmrc.tariffclassificationfrontend.views
 import uk.gov.hmrc.tariffclassificationfrontend.views.CaseDetailPage
 import uk.gov.hmrc.tariffclassificationfrontend.views.CaseDetailPage.CaseDetailPage
@@ -48,7 +48,6 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
 
   private lazy val activityForm: Form[ActivityFormData] = ActivityForm.form
   private lazy val keywordForm: Form[String] = KeywordForm.form
-  private lazy val queueNamesMap: Map[String, String] = queuesService.queueNamesMap
 
   def trader(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     getCaseAndRenderView(
@@ -75,11 +74,8 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
   }
 
   def rulingDetails(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
-
     getCaseAndRenderView(reference, CaseDetailPage.RULING, c => {
-
       val form = decisionForm.bindFrom(c.decision)
-
       fileService
         .getAttachments(c)
         .map(views.html.partials.ruling_details(c, form, _))
@@ -87,9 +83,14 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
   }
 
   def activityDetails(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
-    getCaseAndRenderView(reference, CaseDetailPage.ACTIVITY, c => {
-      eventsService.getEvents(c.reference, NoPagination()).map(views.html.partials.activity_details(c, _, activityForm, queueNamesMap))
-    })
+    getCaseAndRenderView(
+      reference,
+      CaseDetailPage.ACTIVITY,
+      c => for {
+        events <- eventsService.getEvents(c.reference, NoPagination())
+        queues <- queuesService.getAll
+      } yield views.html.partials.activity_details(c, events, activityForm, queues)
+    )
   }
 
   def keywordsDetails(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
@@ -102,17 +103,26 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
   }
 
   def addNote(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
-    activityForm.bindFromRequest.fold(
-      errorForm =>
-        getCaseAndRenderView(
-          reference, CaseDetailPage.ACTIVITY, c => eventsService.getEvents(c.reference, NoPagination()).map(views.html.partials.activity_details(c, _, errorForm, queueNamesMap))),
+    def onError: Form[ActivityFormData] => Future[Result] = errorForm => {
+      getCaseAndRenderView(
+        reference,
+        CaseDetailPage.ACTIVITY,
+        c => for {
+          events <- eventsService.getEvents(c.reference, NoPagination())
+          queues <- queuesService.getAll
+        } yield views.html.partials.activity_details(c, events, errorForm, queues)
+      )
+    }
 
-      validForm =>
-        getCaseAndRedirect(reference, CaseDetailPage.ACTIVITY, c => {
+    def onSuccess: ActivityFormData => Future[Result] = validForm => {
+      getCaseAndRedirect(
+        reference, CaseDetailPage.ACTIVITY, c => {
           eventsService.addNote(c, validForm.note, request.operator).map(_ =>
             routes.CaseController.activityDetails(reference))
         })
-    )
+    }
+
+    activityForm.bindFromRequest.fold(onError, onSuccess)
   }
 
   def addKeyword(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
