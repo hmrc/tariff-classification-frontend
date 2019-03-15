@@ -28,7 +28,6 @@ class RulingDetailsViewSpec extends ViewSpec {
 
   "Ruling Details" should {
 
-
     "Render Optional Application Fields" in {
       // Given
       val c = aCase(
@@ -180,6 +179,28 @@ class RulingDetailsViewSpec extends ViewSpec {
 
       // Then
       doc shouldNot containElementWithID("attachments-file-FILE_ID")
+    }
+
+    "Render Boards File Number" in {
+      // Given
+      val c = aCase().copy(caseBoardsFileNumber = Some("file 123"))
+      // When
+      val doc = view(ruling_details(c, None, Seq.empty))
+
+      // Then
+      val boardFileNumber = doc.getElementById("boards-file-number")
+      boardFileNumber.text() shouldBe "Boards file number: file 123"
+    }
+
+    "Render Boards File Number even if not present" in {
+      // Given
+      val c = aCase()
+      // When
+      val doc = view(ruling_details(c, None, Seq.empty))
+
+      // Then
+      val boardFileNumber = doc.getElementById("boards-file-number")
+      boardFileNumber.text() shouldBe "Boards file number: None"
     }
   }
 
