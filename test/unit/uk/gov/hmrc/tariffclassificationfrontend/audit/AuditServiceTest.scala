@@ -51,7 +51,7 @@ class AuditServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEac
     "Delegate to connector" in {
       val c = btiCaseExample.copy(reference = "ref", status = OPEN, assignee = Some(Operator("assignee-id")))
 
-      service.auditCaseAssigned(c, operator)
+      service.auditOperatorAssigned(c, operator)
 
       val payload = Map[String, String](
         "caseReference" -> "ref",
@@ -65,7 +65,7 @@ class AuditServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEac
     "Delegate to connector - when assignee empty" in {
       val c = btiCaseExample.copy(reference = "ref", status = OPEN, assignee = None)
 
-      service.auditCaseAssigned(c, operator)
+      service.auditOperatorAssigned(c, operator)
 
       val payload = Map[String, String](
         "caseReference" -> "ref",
@@ -109,7 +109,7 @@ class AuditServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEac
         "queueId" -> "queue-id"
       )
 
-      verify(connector).sendExplicitAudit(refEq("queueReassign"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+      verify(connector).sendExplicitAudit(refEq("queueReassigned"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
     }
   }
 

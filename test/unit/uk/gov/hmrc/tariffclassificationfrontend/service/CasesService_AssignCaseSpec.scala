@@ -67,7 +67,7 @@ class CasesService_AssignCaseSpec extends UnitSpec with MockitoSugar with Before
       await(service.assignCase(originalCase, operator)) shouldBe caseUpdated
 
       // Then
-      verify(audit).auditCaseAssigned(refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
+      verify(audit).auditOperatorAssigned(refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
 
       val caseUpdating = theCaseUpdating(connector)
       caseUpdating.assignee shouldBe Some(operator)
@@ -103,7 +103,7 @@ class CasesService_AssignCaseSpec extends UnitSpec with MockitoSugar with Before
       // When Then
       await(service.assignCase(originalCase, operator)) shouldBe caseUpdated
 
-      verify(audit).auditCaseAssigned(refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
+      verify(audit).auditOperatorAssigned(refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
 
       val caseUpdating = theCaseUpdating(connector)
       caseUpdating.assignee shouldBe Some(operator)

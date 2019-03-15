@@ -74,7 +74,7 @@ class AuditService @Inject()(auditConnector: DefaultAuditConnector) {
                         (implicit hc: HeaderCarrier): Unit = {
 
     sendExplicitAuditEvent(
-      auditEventType = CaseReassign,
+      auditEventType = QueueReassigned,
       auditPayload = baseAuditPayload(c, operator)
         + ("queueId" -> c.queueId.getOrElse(throw new IllegalArgumentException("queue must be provided")))
     )
@@ -96,8 +96,8 @@ class AuditService @Inject()(auditConnector: DefaultAuditConnector) {
     )
   }
 
-  def auditCaseAssigned(c: Case, operator: Operator)
-                       (implicit hc: HeaderCarrier): Unit = {
+  def auditOperatorAssigned(c: Case, operator: Operator)
+                           (implicit hc: HeaderCarrier): Unit = {
     sendExplicitAuditEvent(
       auditEventType = CaseAssigned,
       auditPayload = baseAuditPayload(c, operator) + ("assigneeId" -> c.assignee.map(_.id).getOrElse("None"))
@@ -223,7 +223,7 @@ object AuditPayloadType {
   val CaseRejected = "caseRejected"
   val CaseSuspended = "caseSuspended"
   val CaseReleased = "caseReleased"
-  val CaseReassign = "queueReassign"
+  val QueueReassigned = "queueReassigned"
   val CaseCompleted = "caseCompleted"
   val CaseSuppressed = "caseSuppressed"
   val RulingCancelled = "rulingCancelled"

@@ -86,18 +86,19 @@ class CasesService @Inject()(appConfig: AppConfig,
     for {
       updated <- connector.updateCase(original.copy(assignee = Some(operator)))
       _ <- addAssignmentChangeEvent(original, updated, operator)
-      _ = auditService.auditCaseAssigned(updated, operator)
+      _ = auditService.auditOperatorAssigned(updated, operator)
     } yield updated
   }
 
   def reassignCase(original: Case, queue: Queue, operator: Operator)
-                 (implicit hc: HeaderCarrier): Future[Case] = {
-    for { //TODO : Work in progress
-      updated <- connector.updateCase(original.copy(queueId = Some(queue.id), assignee = None))
+                  (implicit hc: HeaderCarrier): Future[ Case ] = {
+    for {
+      updated <- connector.updateCase(
+        original.copy(queueId = Some(queue.id), assignee = None))
       _ <- addQueueChangeEvent(original, updated, operator)
       _ <- addAssignmentChangeEvent(original, updated, operator)
       _ = auditService.auditQueueAssigned(updated, operator)
-      _ = auditService.auditCaseAssigned(updated, operator)
+      _ = auditService.auditOperatorAssigned(updated, operator)
     } yield updated
   }
 
