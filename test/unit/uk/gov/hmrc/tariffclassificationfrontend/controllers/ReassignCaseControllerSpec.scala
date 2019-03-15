@@ -109,6 +109,7 @@ class ReassignCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     "return OK and HTML content type" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusOPEN)))
       when(queueService.getOneBySlug("queue")).thenReturn(Some(queue))
+      when(queueService.getOneById("1")).thenReturn(Some(queue))
       when(queue.name).thenReturn(("SOME_QUEUE"))
       when(casesService.reassignCase(refEq(caseWithStatusOPEN), any[Queue], refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusOPEN))
 

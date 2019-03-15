@@ -25,8 +25,7 @@ object ReviewStatus extends Enumeration {
       case Some(IN_PROGRESS) => "Under review"
       case Some(UPHELD) => "Review upheld"
       case Some(OVERTURNED) => "Review overturned"
-      case Some(s) => throw new IllegalArgumentException(s"Unexpected status: $s")
-      case None => "None"
+      case _ => "None"
     }
   }
 }

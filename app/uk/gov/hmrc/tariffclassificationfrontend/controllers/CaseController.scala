@@ -25,7 +25,7 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms._
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, NoPagination, Queues}
-import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, EventsService, FileStoreService, KeywordsService}
+import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, EventsService, FileStoreService, KeywordsService, QueuesService}
 import uk.gov.hmrc.tariffclassificationfrontend.views
 import uk.gov.hmrc.tariffclassificationfrontend.views.CaseDetailPage
 import uk.gov.hmrc.tariffclassificationfrontend.views.CaseDetailPage.CaseDetailPage
@@ -40,6 +40,7 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
                                keywordsService: KeywordsService,
                                fileService: FileStoreService,
                                eventsService: EventsService,
+                               queuesService: QueuesService,
                                mapper: DecisionFormMapper,
                                decisionForm: DecisionForm,
                                val messagesApi: MessagesApi,
@@ -47,6 +48,7 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
 
   private lazy val activityForm: Form[ActivityFormData] = ActivityForm.form
   private lazy val keywordForm: Form[String] = KeywordForm.form
+  private lazy val queueNamesMap: Map[String, String] = queuesService.queueNamesMap
 
   def trader(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     getCaseAndRenderView(
@@ -86,7 +88,7 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
 
   def activityDetails(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     getCaseAndRenderView(reference, CaseDetailPage.ACTIVITY, c => {
-      eventsService.getEvents(c.reference, NoPagination()).map(views.html.partials.activity_details(c, _, activityForm, Queues.queueNames))
+      eventsService.getEvents(c.reference, NoPagination()).map(views.html.partials.activity_details(c, _, activityForm, queueNamesMap))
     })
   }
 
@@ -103,7 +105,7 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
     activityForm.bindFromRequest.fold(
       errorForm =>
         getCaseAndRenderView(
-          reference, CaseDetailPage.ACTIVITY, c => eventsService.getEvents(c.reference, NoPagination()).map(views.html.partials.activity_details(c, _, errorForm, Queues.queueNames))),
+          reference, CaseDetailPage.ACTIVITY, c => eventsService.getEvents(c.reference, NoPagination()).map(views.html.partials.activity_details(c, _, errorForm, queueNamesMap))),
 
       validForm =>
         getCaseAndRedirect(reference, CaseDetailPage.ACTIVITY, c => {
