@@ -41,7 +41,9 @@ class ReviewCaseController @Inject()(override val authenticatedAction: Authentic
 
   override protected def redirect: String => Call = routes.CaseController.trader
 
-  override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = (c.status == COMPLETED || c.status == CANCELLED) && c.decision.isDefined
+  override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = {
+    (c.status == COMPLETED || c.status == CANCELLED) && c.decision.isDefined
+  }
 
   override protected val form: Form[Option[ReviewStatus]] = ReviewForm.form
 

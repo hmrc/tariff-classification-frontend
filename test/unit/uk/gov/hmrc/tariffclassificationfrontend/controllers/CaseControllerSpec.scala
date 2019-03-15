@@ -35,7 +35,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.service._
 import uk.gov.tariffclassificationfrontend.utils.{Cases, Events}
 
-import scala.concurrent.Future
+import scala.concurrent.Future.successful
 
 class CaseControllerSpec extends WordSpec with Matchers with WithFakeApplication with MockitoSugar with ControllerCommons {
 
@@ -55,8 +55,12 @@ class CaseControllerSpec extends WordSpec with Matchers with WithFakeApplication
   private val commodityCodeService = mock[CommodityCodeService]
   private val decisionForm = new DecisionForm(new CommodityCodeConstraints(commodityCodeService))
 
-  private val controller = new CaseController(new SuccessfulAuthenticatedAction(operator),
-                                              casesService, keywordsService, fileService, eventService, queueService, mapper, decisionForm, messageApi, appConfig)
+  private val controller = new CaseController(
+    new SuccessfulAuthenticatedAction(operator),
+    casesService, keywordsService, fileService,
+    eventService, queueService, mapper,
+    decisionForm, messageApi, appConfig
+  )
 
   private implicit val hc: HeaderCarrier = HeaderCarrier()
 
@@ -66,8 +70,8 @@ class CaseControllerSpec extends WordSpec with Matchers with WithFakeApplication
       val aCase = Cases.btiCaseExample
       val attachment = Cases.storedAttachment
 
-      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(Cases.btiCaseExample)))
-      given(fileService.getLetterOfAuthority(refEq(aCase))(any[HeaderCarrier])).willReturn(Future.successful(Some(attachment)))
+      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(successful(Some(Cases.btiCaseExample)))
+      given(fileService.getLetterOfAuthority(refEq(aCase))(any[HeaderCarrier])).willReturn(successful(Some(attachment)))
 
       val result = controller.trader("reference")(fakeRequest)
 
@@ -77,7 +81,7 @@ class CaseControllerSpec extends WordSpec with Matchers with WithFakeApplication
     }
 
     "return 404 Not Found and HTML content type" in {
-      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(None))
+      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(successful(None))
 
       val result = controller.trader("reference")(fakeRequest)
 
@@ -94,9 +98,9 @@ class CaseControllerSpec extends WordSpec with Matchers with WithFakeApplication
     val attachment = Cases.storedAttachment
 
     "return 200 OK and HTML content type" in {
-      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
-      given(fileService.getAttachments(refEq(aCase))(any[HeaderCarrier])).willReturn(Future.successful(Seq(attachment)))
-      given(fileService.getLetterOfAuthority(refEq(aCase))(any[HeaderCarrier])).willReturn(Future.successful(Some(attachment)))
+      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(successful(Some(aCase)))
+      given(fileService.getAttachments(refEq(aCase))(any[HeaderCarrier])).willReturn(successful(Seq(attachment)))
+      given(fileService.getLetterOfAuthority(refEq(aCase))(any[HeaderCarrier])).willReturn(successful(Some(attachment)))
 
       val result = controller.applicationDetails("reference")(fakeRequest)
 
@@ -106,7 +110,7 @@ class CaseControllerSpec extends WordSpec with Matchers with WithFakeApplication
     }
 
     "return 404 Not Found and HTML content type" in {
-      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(None))
+      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(successful(None))
 
       val result = controller.applicationDetails("reference")(fakeRequest)
 
@@ -123,8 +127,8 @@ class CaseControllerSpec extends WordSpec with Matchers with WithFakeApplication
     "return 200 OK and HTML content type" in {
       val aCase = Cases.btiCaseExample
       val attachment = Cases.storedAttachment
-      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
-      given(fileService.getAttachments(refEq(aCase))(any[HeaderCarrier])).willReturn(Future.successful(Seq(attachment)))
+      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(successful(Some(aCase)))
+      given(fileService.getAttachments(refEq(aCase))(any[HeaderCarrier])).willReturn(successful(Seq(attachment)))
 
       val result = controller.rulingDetails("reference")(fakeRequest)
 
@@ -134,7 +138,7 @@ class CaseControllerSpec extends WordSpec with Matchers with WithFakeApplication
     }
 
     "return 404 Not Found and HTML content type" in {
-      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(None))
+      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(successful(None))
 
       val result = controller.rulingDetails("reference")(fakeRequest)
 
@@ -150,9 +154,9 @@ class CaseControllerSpec extends WordSpec with Matchers with WithFakeApplication
 
     "return 200 OK and HTML content type" in {
       val aCase = Cases.btiCaseExample
-      given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
-      given(eventService.getEvents(refEq(aCase.reference), refEq(NoPagination()))(any[HeaderCarrier])) willReturn Future.successful(Paged(Events.events))
-      given(queueService.getAll) willReturn Future.successful(Seq.empty)
+      given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(successful(Some(aCase)))
+      given(eventService.getEvents(refEq(aCase.reference), refEq(NoPagination()))(any[HeaderCarrier])) willReturn successful(Paged(Events.events))
+      given(queueService.getAll) willReturn successful(Seq.empty)
 
       val result = controller.activityDetails(aCase.reference)(newFakeGETRequestWithCSRF(fakeApplication))
 
@@ -163,9 +167,9 @@ class CaseControllerSpec extends WordSpec with Matchers with WithFakeApplication
 
     "return 200 OK and HTML content type when no Events are present" in {
       val aCase = Cases.btiCaseExample
-      given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
-      given(eventService.getEvents(refEq(aCase.reference), refEq(NoPagination()))(any[HeaderCarrier])) willReturn Future.successful(Paged.empty[Event])
-      given(queueService.getAll) willReturn Future.successful(Seq.empty)
+      given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(successful(Some(aCase)))
+      given(eventService.getEvents(refEq(aCase.reference), refEq(NoPagination()))(any[HeaderCarrier])) willReturn successful(Paged.empty[Event])
+      given(queueService.getAll) willReturn successful(Seq.empty)
 
       val result = controller.activityDetails(aCase.reference)(newFakeGETRequestWithCSRF(fakeApplication))
 
@@ -175,7 +179,7 @@ class CaseControllerSpec extends WordSpec with Matchers with WithFakeApplication
     }
 
     "return 404 Not Found and HTML content type" in {
-      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(None))
+      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(successful(None))
 
       val result = controller.activityDetails("reference")(fakeRequest)
 
@@ -192,8 +196,8 @@ class CaseControllerSpec extends WordSpec with Matchers with WithFakeApplication
     "add a new note when a case note is provided" in {
       val aNote = "This is a note"
       val aValidForm = newFakePOSTRequestWithCSRF(fakeApplication, Map("note" -> aNote))
-      given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])) willReturn Future.successful(Some(aCase))
-      given(eventService.addNote(refEq(aCase), refEq(aNote), refEq(operator), any[Clock])(any[HeaderCarrier])) willReturn Future.successful(event)
+      given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])) willReturn successful(Some(aCase))
+      given(eventService.addNote(refEq(aCase), refEq(aNote), refEq(operator), any[Clock])(any[HeaderCarrier])) willReturn successful(event)
 
       val result = await(controller.addNote(aCase.reference)(aValidForm))
       locationOf(result) shouldBe Some("/tariff-classification/cases/1/activity")
@@ -201,9 +205,9 @@ class CaseControllerSpec extends WordSpec with Matchers with WithFakeApplication
 
     "displays an error when no case note is provided" in {
       val aValidForm = newFakePOSTRequestWithCSRF(fakeApplication, Map())
-      given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])) willReturn Future.successful(Some(aCase))
-      given(eventService.getEvents(refEq(aCase.reference), refEq(NoPagination()))(any[HeaderCarrier])) willReturn Future.successful(Paged.empty[Event])
-      given(queueService.getAll) willReturn Future.successful(Seq.empty)
+      given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])) willReturn successful(Some(aCase))
+      given(eventService.getEvents(refEq(aCase.reference), refEq(NoPagination()))(any[HeaderCarrier])) willReturn successful(Paged.empty[Event])
+      given(queueService.getAll) willReturn successful(Seq.empty)
 
       val result = controller.addNote(aCase.reference)(aValidForm)
       status(result) shouldBe Status.OK
@@ -214,7 +218,7 @@ class CaseControllerSpec extends WordSpec with Matchers with WithFakeApplication
 
     "displays case not found message" in {
       val aValidForm = newFakePOSTRequestWithCSRF(fakeApplication, Map("note" -> "note"))
-      given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(None))
+      given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(successful(None))
 
       val result = controller.addNote(aCase.reference)(aValidForm)
       status(result) shouldBe Status.OK
@@ -228,8 +232,8 @@ class CaseControllerSpec extends WordSpec with Matchers with WithFakeApplication
 
     "return 200 OK and HTML content type" in {
       val aCase = Cases.btiCaseExample
-      given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
-      given(keywordsService.autoCompleteKeywords).willReturn(Future.successful(Seq()))
+      given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(successful(Some(aCase)))
+      given(keywordsService.autoCompleteKeywords).willReturn(successful(Seq()))
 
       val result = controller.keywordsDetails(aCase.reference)(newFakeGETRequestWithCSRF(fakeApplication))
 
@@ -245,9 +249,9 @@ class CaseControllerSpec extends WordSpec with Matchers with WithFakeApplication
     "add a new keyword" in {
       val aKeyword = "Apples"
       val aValidForm = newFakePOSTRequestWithCSRF(fakeApplication, Map("keyword" -> aKeyword))
-      given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
-      given(keywordsService.addKeyword(refEq(aCase), refEq("Apples"), refEq(operator))(any[HeaderCarrier])).willReturn(Future.successful(aCase))
-      given(keywordsService.autoCompleteKeywords).willReturn(Future.successful(Seq()))
+      given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(successful(Some(aCase)))
+      given(keywordsService.addKeyword(refEq(aCase), refEq("Apples"), refEq(operator))(any[HeaderCarrier])).willReturn(successful(aCase))
+      given(keywordsService.autoCompleteKeywords).willReturn(successful(Seq()))
 
       val result = controller.addKeyword(aCase.reference)(aValidForm)
       status(result) shouldBe Status.OK
@@ -258,8 +262,8 @@ class CaseControllerSpec extends WordSpec with Matchers with WithFakeApplication
 
     "displays an error when no keyword is provided" in {
       val aValidForm = newFakePOSTRequestWithCSRF(fakeApplication, Map())
-      given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
-      given(keywordsService.autoCompleteKeywords).willReturn(Future.successful(Seq()))
+      given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(successful(Some(aCase)))
+      given(keywordsService.autoCompleteKeywords).willReturn(successful(Seq()))
 
       val result = controller.addKeyword(aCase.reference)(aValidForm)
       status(result) shouldBe Status.OK
@@ -270,7 +274,7 @@ class CaseControllerSpec extends WordSpec with Matchers with WithFakeApplication
 
     "displays case not found message" in {
       val aValidForm = newFakePOSTRequestWithCSRF(fakeApplication, Map("keyword" -> "keyword"))
-      given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(None))
+      given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(successful(None))
 
       val result = controller.addKeyword(aCase.reference)(aValidForm)
       status(result) shouldBe Status.OK
@@ -285,8 +289,8 @@ class CaseControllerSpec extends WordSpec with Matchers with WithFakeApplication
     val aKeyword = "Apples"
 
     "remove an existing keyword" in {
-      given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(Some(aCase)))
-      given(keywordsService.removeKeyword(refEq(aCase), refEq("Apples"), refEq(operator))(any[HeaderCarrier])).willReturn(Future.successful(aCase))
+      given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(successful(Some(aCase)))
+      given(keywordsService.removeKeyword(refEq(aCase), refEq("Apples"), refEq(operator))(any[HeaderCarrier])).willReturn(successful(aCase))
 
       val result = controller.removeKeyword(aCase.reference, aKeyword)(newFakeGETRequestWithCSRF(fakeApplication))
       status(result) shouldBe Status.OK
@@ -296,7 +300,7 @@ class CaseControllerSpec extends WordSpec with Matchers with WithFakeApplication
     }
 
     "displays case not found message" in {
-      given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(None))
+      given(casesService.getOne(refEq(aCase.reference))(any[HeaderCarrier])).willReturn(successful(None))
 
       val result = controller.removeKeyword(aCase.reference, aKeyword)(newFakeGETRequestWithCSRF(fakeApplication))
       status(result) shouldBe Status.OK

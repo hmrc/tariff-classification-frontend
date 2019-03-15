@@ -40,7 +40,9 @@ class ExtendedUseCaseController @Inject()(override val authenticatedAction: Auth
 
   override protected def redirect: String => Call = routes.CaseController.trader
 
-  override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = c.status == CANCELLED && c.decision.flatMap(_.cancellation).isDefined
+  override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = {
+    c.status == CANCELLED && c.decision.flatMap(_.cancellation).isDefined
+  }
 
   override protected val form: Form[Boolean] = BooleanForm.form
 
