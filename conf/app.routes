@@ -19,6 +19,9 @@ POST        /cases/:reference/release            @uk.gov.hmrc.tariffclassificati
 GET         /cases/:reference/assign             @uk.gov.hmrc.tariffclassificationfrontend.controllers.AssignCaseController.get(reference: String)
 POST        /cases/:reference/assign             @uk.gov.hmrc.tariffclassificationfrontend.controllers.AssignCaseController.post(reference: String)
 
+GET         /cases/:reference/reassign-case      @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReassignCaseController.showAvailableQueues(reference: String)
+POST        /cases/:reference/reassign-case      @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReassignCaseController.reassignCase(reference: String)
+
 GET         /cases/:reference/refer              @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReferCaseController.referCase(reference: String)
 POST        /cases/:reference/refer              @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReferCaseController.confirmReferCase(reference: String)
 

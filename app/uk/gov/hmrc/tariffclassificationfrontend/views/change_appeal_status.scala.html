@@ -15,14 +15,12 @@
  *@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-@import uk.gov.hmrc.tariffclassificationfrontend.forms.ReleaseCaseForm
-@import uk.gov.hmrc.tariffclassificationfrontend.models.{BTIApplication, Case, Queue}
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.release_case_form
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes
+@import uk.gov.hmrc.tariffclassificationfrontend.models.AppealStatus.AppealStatus
+@import uk.gov.hmrc.tariffclassificationfrontend.models.Case
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.appeal_status_form
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.case_heading
-@import uk.gov.hmrc.tariffclassificationfrontend.models.AppealStatus.AppealStatus
-@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.appeal_status_form
 @(c: Case, form: Form[Option[AppealStatus]])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None) {

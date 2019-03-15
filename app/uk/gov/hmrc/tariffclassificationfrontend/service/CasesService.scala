@@ -50,7 +50,7 @@ class CasesService @Inject()(appConfig: AppConfig,
     for {
       updated <- connector.updateCase(original.copy(decision = Some(updatedDecision)))
       _ <- addExtendedUseStatusChangeEvent(original, updated, operator)
-      _ = auditService.auditCaseExtendedUseChange(original , updated, operator)
+      _ = auditService.auditCaseExtendedUseChange(original, updated, operator)
     } yield updated
   }
 
@@ -86,7 +86,19 @@ class CasesService @Inject()(appConfig: AppConfig,
     for {
       updated <- connector.updateCase(original.copy(assignee = Some(operator)))
       _ <- addAssignmentChangeEvent(original, updated, operator)
-      _ = auditService.auditCaseAssigned(updated, operator)
+      _ = auditService.auditOperatorAssigned(updated, operator)
+    } yield updated
+  }
+
+  def reassignCase(original: Case, queue: Queue, operator: Operator)
+                  (implicit hc: HeaderCarrier): Future[Case] = {
+    for {
+      updated <- connector.updateCase(
+        original.copy(queueId = Some(queue.id), assignee = None))
+      _ <- addQueueChangeEvent(original, updated, operator)
+      _ <- addAssignmentChangeEvent(original, updated, operator)
+      _ = auditService.auditQueueAssigned(updated, operator)
+      _ = auditService.auditOperatorAssigned(updated, operator)
     } yield updated
   }
 
@@ -236,6 +248,12 @@ class CasesService @Inject()(appConfig: AppConfig,
   private def addStatusChangeEvent(original: Case, updated: Case, operator: Operator, comment: Option[String] = None)
                                   (implicit hc: HeaderCarrier): Future[Unit] = {
     val details = CaseStatusChange(original.status, updated.status, comment)
+    addEvent(original, updated, details, operator)
+  }
+
+  private def addQueueChangeEvent(original: Case, updated: Case, operator: Operator, comment: Option[String] = None)
+                                 (implicit hc: HeaderCarrier): Future[Unit] = {
+    val details = QueueChange(original.queueId, updated.queueId, comment)
     addEvent(original, updated, details, operator)
   }
 

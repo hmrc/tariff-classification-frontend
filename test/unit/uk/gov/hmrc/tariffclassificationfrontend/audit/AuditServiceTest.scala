@@ -51,7 +51,7 @@ class AuditServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEac
     "Delegate to connector" in {
       val c = btiCaseExample.copy(reference = "ref", status = OPEN, assignee = Some(Operator("assignee-id")))
 
-      service.auditCaseAssigned(c, operator)
+      service.auditOperatorAssigned(c, operator)
 
       val payload = Map[String, String](
         "caseReference" -> "ref",
@@ -65,7 +65,7 @@ class AuditServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEac
     "Delegate to connector - when assignee empty" in {
       val c = btiCaseExample.copy(reference = "ref", status = OPEN, assignee = None)
 
-      service.auditCaseAssigned(c, operator)
+      service.auditOperatorAssigned(c, operator)
 
       val payload = Map[String, String](
         "caseReference" -> "ref",
@@ -93,6 +93,23 @@ class AuditServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEac
       ) + ("queue" -> queue.name)
 
       verify(connector).sendExplicitAudit(refEq("caseReleased"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+    }
+  }
+
+  "Service 'audit queue assigned'" should {
+
+    "Delegate to connector" in {
+      val c = btiCaseExample.copy(reference = "ref", status = OPEN, queueId = Some("queue-id"), assignee = Some(Operator("assignee-id")))
+
+      service.auditQueueAssigned(c, operator)
+
+      val payload = Map[String, String](
+        "caseReference" -> "ref",
+        "operatorId" -> operator.id,
+        "queueId" -> "queue-id"
+      )
+
+      verify(connector).sendExplicitAudit(refEq("queueReassigned"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
     }
   }
 

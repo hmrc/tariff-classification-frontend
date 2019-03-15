@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.service
 
-import org.mockito.ArgumentMatchers.{refEq, _}
+import org.mockito.ArgumentMatchers._
 import org.mockito.BDDMockito._
 import org.mockito.Mockito.{never, reset, verify, verifyZeroInteractions}
 import org.scalatest.BeforeAndAfterEach
@@ -32,12 +32,13 @@ import uk.gov.tariffclassificationfrontend.utils.Cases
 
 import scala.concurrent.Future.{failed, successful}
 
-class CasesService_AssignCaseSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach with ConnectorCaptor {
+class CasesService_ReassignCaseSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach with ConnectorCaptor {
 
   private implicit val hc: HeaderCarrier = HeaderCarrier()
 
   private val manyCases = mock[Seq[Case]]
   private val oneCase = mock[Option[Case]]
+  private val queue = mock[Queue]
   private val connector = mock[BindingTariffClassificationConnector]
   private val rulingConnector = mock[RulingConnector]
   private val emailService = mock[EmailService]
@@ -50,41 +51,39 @@ class CasesService_AssignCaseSpec extends UnitSpec with MockitoSugar with Before
 
   override protected def afterEach(): Unit = {
     super.afterEach()
-    reset(connector, audit, oneCase, manyCases, config)
+    reset(connector, audit, queue, oneCase, manyCases, config)
   }
 
-  "Assign a Case" should {
-    "update case status to REFERRED" in {
+  "Reassign Case" should {
+    "update case queue_id and status to OPEN" in {
       // Given
       val operator: Operator = Operator("operator-id", Some("Billy Bobbins"))
-      val originalCase = aCase.copy(assignee = None)
-      val caseUpdated = aCase.copy(assignee = Some(operator))
+      val originalCase = aCase.copy(status = CaseStatus.OPEN)
+      val caseUpdated = aCase.copy(queueId = Some("queue_id"))
 
+      given(queue.id).willReturn("queue_id")
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])).willReturn(successful(mock[Event]))
 
-      // When
-      await(service.assignCase(originalCase, operator)) shouldBe caseUpdated
+      // When Then
+      await(service.reassignCase(originalCase, queue, operator)) shouldBe caseUpdated
 
-      // Then
-      verify(audit).auditOperatorAssigned(refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
+      verify(audit).auditQueueAssigned(refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
 
       val caseUpdating = theCaseUpdating(connector)
-      caseUpdating.assignee shouldBe Some(operator)
-
-      val eventCreated = theEventCreatedFor(connector, caseUpdated)
-      eventCreated.operator shouldBe Operator("operator-id", Some("Billy Bobbins"))
-      eventCreated.details shouldBe AssignmentChange(None, Some(operator))
+      caseUpdating.status shouldBe CaseStatus.OPEN
+      caseUpdating.queueId shouldBe Some("queue_id")
     }
 
     "not create event on update failure" in {
       val operator: Operator = Operator("operator-id")
-      val originalCase = aCase.copy(assignee = None)
+      val originalCase = aCase.copy(status = CaseStatus.NEW)
 
+      given(queue.id).willReturn("queue_id")
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(failed(new RuntimeException()))
 
       intercept[RuntimeException] {
-        await(service.assignCase(originalCase, operator))
+        await(service.releaseCase(originalCase, queue, operator))
       }
 
       verifyZeroInteractions(audit)
@@ -94,20 +93,21 @@ class CasesService_AssignCaseSpec extends UnitSpec with MockitoSugar with Before
     "succeed on event create failure" in {
       // Given
       val operator: Operator = Operator("operator-id")
-      val originalCase = aCase.copy(assignee = None)
-      val caseUpdated = aCase.copy(assignee = Some(operator))
+      val originalCase = aCase.copy(status = CaseStatus.NEW)
+      val caseUpdated = aCase.copy(status = CaseStatus.OPEN, queueId = Some("queue_id"))
 
+      given(queue.id).willReturn("queue_id")
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])).willReturn(failed(new RuntimeException()))
 
       // When Then
-      await(service.assignCase(originalCase, operator)) shouldBe caseUpdated
+      await(service.releaseCase(originalCase, queue, operator)) shouldBe caseUpdated
 
-      verify(audit).auditOperatorAssigned(refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
+      verify(audit).auditCaseReleased(refEq(originalCase), refEq(caseUpdated), refEq(queue), refEq(operator))(any[HeaderCarrier])
 
       val caseUpdating = theCaseUpdating(connector)
-      caseUpdating.assignee shouldBe Some(operator)
-
+      caseUpdating.status shouldBe CaseStatus.OPEN
+      caseUpdating.queueId shouldBe Some("queue_id")
     }
   }
 
