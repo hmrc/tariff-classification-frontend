@@ -284,7 +284,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
       doc.getElementById("activity-events-row-0-content") should containText("Case unassigned")
     }
 
-    "Render assigned to 'You'" in {
+    "Render assigned to 'you'" in {
       // Given
       val c = aCase(
         withAssignee(Some(authenticatedOperator))
@@ -295,7 +295,8 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       // Then
       doc should containElementWithID("activity-events-assignee")
-      doc.getElementById("activity-events-assignee") should containText("You")
+      doc.getElementById("activity-events-assignee").text() shouldBe "you"
+      doc.getElementById("activity-events-assignee-label").text() shouldBe "Currently assigned to:"
     }
 
     "Render assigned to name" in {
@@ -309,7 +310,8 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       // Then
       doc should containElementWithID("activity-events-assignee")
-      doc.getElementById("activity-events-assignee") should containText("name")
+      doc.getElementById("activity-events-assignee").text() shouldBe "name"
+      doc.getElementById("activity-events-assignee-label").text() shouldBe "Currently assigned to:"
     }
 
     "Render assigned to PID" in {
@@ -323,10 +325,27 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       // Then
       doc should containElementWithID("activity-events-assignee")
-      doc.getElementById("activity-events-assignee") should containText("PID id")
+      doc.getElementById("activity-events-assignee").text() shouldBe "PID id"
+      doc.getElementById("activity-events-assignee-label").text() shouldBe "Currently assigned to:"
     }
 
-    "Render 'Unassigned'" in {
+    "Render currently in 'TEST'" in {
+      // Given
+      val c = aCase(
+        withAssignee(None),
+        withQueue("1")
+      )
+
+      // When
+      val doc = view(activity_details(c, Paged.empty[Event], ActivityForm.form, queueNames))
+
+      // Then
+      doc should containElementWithID("activity-events-assigned-queue")
+      doc.getElementById("activity-events-assigned-queue").text() shouldBe "TEST"
+      doc.getElementById("activity-events-assigned-queue-label").text() shouldBe "Currently in:"
+    }
+
+    "Render currently in 'Gateway'" in {
       // Given
       val c = aCase(
         withAssignee(None)
@@ -336,8 +355,25 @@ class ActivityDetailsViewSpec extends ViewSpec {
       val doc = view(activity_details(c, Paged.empty[Event], ActivityForm.form, queueNames))
 
       // Then
-      doc should containElementWithID("activity-events-assignee")
-      doc.getElementById("activity-events-assignee") should containText("unassigned")
+      doc should containElementWithID("activity-events-assigned-queue")
+      doc.getElementById("activity-events-assigned-queue").text() shouldBe "Gateway"
+      doc.getElementById("activity-events-assigned-queue-label").text() shouldBe "Currently in:"
+    }
+
+    "Render currently in 'unknown'" in {
+      // Given
+      val c = aCase(
+        withAssignee(None),
+        withQueue("99")
+      )
+
+      // When
+      val doc = view(activity_details(c, Paged.empty[Event], ActivityForm.form, queueNames))
+
+      // Then
+      doc should containElementWithID("activity-events-assigned-queue")
+      doc.getElementById("activity-events-assigned-queue").text() shouldBe "unknown"
+      doc.getElementById("activity-events-assigned-queue-label").text() shouldBe "Currently in:"
     }
 
     "Render 'Queue Change' from Some to Some" in {
