@@ -19,6 +19,7 @@ package uk.gov.hmrc.tariffclassificationfrontend.views.partials
 import java.time.{ZoneOffset, ZonedDateTime}
 
 import uk.gov.hmrc.tariffclassificationfrontend.forms.ActivityForm
+import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus._
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewSpec
@@ -95,7 +96,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
       val c = aCase()
       val e = Event(
         id = "EVENT_ID",
-        details = CaseStatusChange(from = CaseStatus.OPEN, to = CaseStatus.COMPLETED, comment = Some("comment")),
+        details = CaseStatusChange(from = OPEN, to = CaseStatus.COMPLETED, comment = Some("comment")),
         operator = Operator("id", Some("name")),
         caseReference = "ref",
         timestamp = date
@@ -393,6 +394,52 @@ class ActivityDetailsViewSpec extends ViewSpec {
       // Then
       doc should containElementWithID("activity-events-row-0-content")
       doc.getElementById("activity-events-row-0-content") should containText("Name moved this case to the TEST queue")
+    }
+
+    "Render 'Reassign Link' When Case is in valid state" in {
+
+      Set(OPEN, REFERRED, SUSPENDED).foreach(status => {
+        // Given
+        val c = aCase(
+          withAssignee(Some(Operator("id"))),
+          withStatus(status)
+        )
+        // When
+        val doc = view(activity_details(c, Paged(Seq.empty), ActivityForm.form, queueNames))
+
+        // Then
+        doc should containElementWithID("reassign-queue-link")
+      })
+    }
+
+    "Not Render 'Reassign Link' When Case is in invalid state" in {
+
+      Set(NEW, COMPLETED, CANCELLED).foreach(status => {
+        // Given
+        val c = aCase(
+          withAssignee(Some(Operator("id"))),
+          withStatus(status)
+        )
+        // When
+        val doc = view(activity_details(c, Paged(Seq.empty), ActivityForm.form, queueNames))
+
+        // Then
+        doc shouldNot containElementWithID("reassign-queue-link")
+      })
+    }
+
+    "Not Render 'Reassign Link' When Case is not assigned" in {
+
+        // Given
+        val c = aCase(
+          withAssignee(None),
+          withStatus(OPEN)
+        )
+        // When
+        val doc = view(activity_details(c, Paged(Seq.empty), ActivityForm.form, queueNames))
+
+        // Then
+        doc shouldNot containElementWithID("reassign-queue-link")
     }
   }
 
