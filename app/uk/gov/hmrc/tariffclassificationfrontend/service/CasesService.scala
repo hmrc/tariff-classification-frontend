@@ -50,7 +50,7 @@ class CasesService @Inject()(appConfig: AppConfig,
     for {
       updated <- connector.updateCase(original.copy(decision = Some(updatedDecision)))
       _ <- addExtendedUseStatusChangeEvent(original, updated, operator)
-      _ = auditService.auditCaseExtendedUseChange(original , updated, operator)
+      _ = auditService.auditCaseExtendedUseChange(original, updated, operator)
     } yield updated
   }
 
@@ -91,7 +91,7 @@ class CasesService @Inject()(appConfig: AppConfig,
   }
 
   def reassignCase(original: Case, queue: Queue, operator: Operator)
-                  (implicit hc: HeaderCarrier): Future[ Case ] = {
+                  (implicit hc: HeaderCarrier): Future[Case] = {
     for {
       updated <- connector.updateCase(
         original.copy(queueId = Some(queue.id), assignee = None))
@@ -252,7 +252,7 @@ class CasesService @Inject()(appConfig: AppConfig,
   }
 
   private def addQueueChangeEvent(original: Case, updated: Case, operator: Operator, comment: Option[String] = None)
-                                  (implicit hc: HeaderCarrier): Future[Unit] = {
+                                 (implicit hc: HeaderCarrier): Future[Unit] = {
     val details = QueueChange(original.queueId, updated.queueId, comment)
     addEvent(original, updated, details, operator)
   }
