@@ -25,7 +25,7 @@ object ReviewStatus extends Enumeration {
       case Some(IN_PROGRESS) => "Under review"
       case Some(UPHELD) => "Review upheld"
       case Some(OVERTURNED) => "Review overturned"
-      case None => "None"
+      case _ => "None"
     }
   }
 }

@@ -25,7 +25,7 @@ object AppealStatus extends Enumeration {
       case Some(IN_PROGRESS) => "Under appeal"
       case Some(ALLOWED) => "Appeal allowed"
       case Some(DISMISSED) => "Appeal dismissed"
-      case None => "None"
+      case _ => "None"
     }
   }
 
