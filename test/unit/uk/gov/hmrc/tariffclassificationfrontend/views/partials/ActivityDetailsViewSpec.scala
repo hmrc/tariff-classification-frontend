@@ -284,7 +284,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
       doc.getElementById("activity-events-row-0-content") should containText("Case unassigned")
     }
 
-    "Render assigned to 'you'" in {
+    "Render assigned to 'You'" in {
       // Given
       val c = aCase(
         withAssignee(Some(authenticatedOperator))
@@ -295,7 +295,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       // Then
       doc should containElementWithID("activity-events-assignee")
-      doc.getElementById("activity-events-assignee").text() shouldBe "you"
+      doc.getElementById("activity-events-assignee").text() shouldBe "You"
       doc.getElementById("activity-events-assignee-label").text() shouldBe "Currently assigned to:"
     }
 
