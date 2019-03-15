@@ -25,7 +25,7 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms._
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, NoPagination}
-import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, EventsService, FileStoreService, KeywordsService}
+import uk.gov.hmrc.tariffclassificationfrontend.service._
 import uk.gov.hmrc.tariffclassificationfrontend.views
 import uk.gov.hmrc.tariffclassificationfrontend.views.CaseDetailPage
 import uk.gov.hmrc.tariffclassificationfrontend.views.CaseDetailPage.CaseDetailPage
@@ -37,6 +37,7 @@ import scala.concurrent.Future.successful
 @Singleton
 class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
                                casesService: CasesService,
+                               queuesService: QueuesService,
                                keywordsService: KeywordsService,
                                fileService: FileStoreService,
                                eventsService: EventsService,
@@ -86,7 +87,8 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
 
   def activityDetails(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     getCaseAndRenderView(reference, CaseDetailPage.ACTIVITY, c => {
-      eventsService.getEvents(c.reference, NoPagination()).map(views.html.partials.activity_details(c, _, activityForm))
+      val queue = queuesService.getOneById(c.queueId.getOrElse("unknown"))
+      eventsService.getEvents(c.reference, NoPagination()).map(views.html.partials.activity_details(c, _, activityForm, queue))
     })
   }
 
@@ -103,7 +105,11 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
     activityForm.bindFromRequest.fold(
       errorForm =>
         getCaseAndRenderView(
-          reference, CaseDetailPage.ACTIVITY, c => eventsService.getEvents(c.reference, NoPagination()).map(views.html.partials.activity_details(c, _, errorForm))),
+          reference, CaseDetailPage.ACTIVITY, c => {
+            val queue = queuesService.getOneById(c.queueId.getOrElse("unknown"))
+            eventsService.getEvents(c.reference, NoPagination()).map(views.html.partials.activity_details(c, _, errorForm, queue))
+          }
+        ),
 
       validForm =>
         getCaseAndRedirect(reference, CaseDetailPage.ACTIVITY, c => {

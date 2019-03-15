@@ -22,7 +22,9 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.input_textarea
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{assignee, progressive_disclosure, tab_heading}
-@(c: Case, events: Paged[Event], activityForm : Form[ActivityFormData])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@import uk.gov.hmrc.tariffclassificationfrontend.models.Queues
+@import uk.gov.hmrc.tariffclassificationfrontend.models.Queue
+@(c: Case, events: Paged[Event], activityForm : Form[ActivityFormData], queue: Option[Queue])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
     @tab_heading("activity", messages("case.menu.activity"))
 
@@ -144,18 +146,28 @@
     </table>
 
     <div class="grid-row mt-2">
-        <span class="column-one-third bold">@messages("case.activity.assigned-to")</span>
-        <span id="activity-events-assignee" class="column-two-thirds">
-        @{
-            if(c.assignee.map(_.id).contains(request.operator.id)) {
-                "You"
-            } else if(c.assignee.flatMap(_.name).isDefined) {
-                c.assignee.get.name.get
-            } else if(c.assignee.isDefined) {
-                s"PID ${c.assignee.get.id}"
+        <div class="column-full">
+            @if(c.assignee.isDefined) {
+                <span id="activity-events-assignee-label">
+                    @messages("case.activity.assigned-to")
+                </span>
+                <span id="activity-events-assignee">
+                    @assignee(c.assignee.get)
+                </span>
             } else {
-                "This case is currently unassigned"
+                <span id="activity-events-assigned-queue-label">
+                    @messages("case.activity.assigned-queue")
+                </span>
+                <span id="activity-events-assigned-queue">
+                @{
+                    if(c.queueId.isDefined) {
+                        queue.map(_.name).getOrElse("unknown")
+                    } else {
+                        messages("case.activity.no-queue-assigned")
+                    }
+                }
+                </span>
             }
-        }
-        </span>
+
+        </div>
     </div>

@@ -23,7 +23,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewSpec
 import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.activity_details
-import uk.gov.tariffclassificationfrontend.utils.Cases._
+import uk.gov.tariffclassificationfrontend.utils.Cases.{withQueue, _}
 
 class ActivityDetailsViewSpec extends ViewSpec {
 
@@ -38,7 +38,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(activity_details(c, Paged.empty[Event], ActivityForm.form))
+      val doc = view(activity_details(c, Paged.empty[Event], ActivityForm.form, Some(Queues.act)))
 
       // Then
       doc should containElementWithID("activity-events-row-application_submitted")
@@ -58,7 +58,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(activity_details(c, Paged(Seq(e)), ActivityForm.form))
+      val doc = view(activity_details(c, Paged(Seq(e)), ActivityForm.form, Some(Queues.act)))
 
       // Then
       doc should containElementWithID("activity-events-row-0-operator")
@@ -77,7 +77,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(activity_details(c, Paged(Seq(e)), ActivityForm.form))
+      val doc = view(activity_details(c, Paged(Seq(e)), ActivityForm.form, Some(Queues.act)))
 
       // Then
       doc should containElementWithID("activity-events-row-0-operator")
@@ -101,7 +101,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(activity_details(c, Paged(Seq(e)), ActivityForm.form))
+      val doc = view(activity_details(c, Paged(Seq(e)), ActivityForm.form, Some(Queues.act)))
 
       // Then
       doc should containElementWithID("activity-events-row-0-operator")
@@ -125,7 +125,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(activity_details(c, Paged(Seq(e)), ActivityForm.form))
+      val doc = view(activity_details(c, Paged(Seq(e)), ActivityForm.form, Some(Queues.act)))
 
       // Then
       doc should containElementWithID("activity-events-row-0-operator")
@@ -149,7 +149,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(activity_details(c, Paged(Seq(e)), ActivityForm.form))
+      val doc = view(activity_details(c, Paged(Seq(e)), ActivityForm.form, Some(Queues.act)))
 
       // Then
       doc should containElementWithID("activity-events-row-0-operator")
@@ -173,7 +173,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(activity_details(c, Paged(Seq(e)), ActivityForm.form))
+      val doc = view(activity_details(c, Paged(Seq(e)), ActivityForm.form, Some(Queues.act)))
 
       // Then
       doc should containElementWithID("activity-events-row-0-operator")
@@ -197,7 +197,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(activity_details(c, Paged(Seq(e)), ActivityForm.form))
+      val doc = view(activity_details(c, Paged(Seq(e)), ActivityForm.form, Some(Queues.act)))
 
       // Then
       doc should containElementWithID("activity-events-row-0-operator")
@@ -219,7 +219,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(activity_details(c, Paged(Seq(e)), ActivityForm.form))
+      val doc = view(activity_details(c, Paged(Seq(e)), ActivityForm.form, Some(Queues.act)))
 
       // Then
       doc should containElementWithID("activity-events-row-0-content")
@@ -238,7 +238,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(activity_details(c, Paged(Seq(e)), ActivityForm.form))
+      val doc = view(activity_details(c, Paged(Seq(e)), ActivityForm.form, Some(Queues.act)))
 
       // Then
       doc should containElementWithID("activity-events-row-0-content")
@@ -257,7 +257,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(activity_details(c, Paged(Seq(e)), ActivityForm.form))
+      val doc = view(activity_details(c, Paged(Seq(e)), ActivityForm.form, Some(Queues.act)))
 
       // Then
       doc should containElementWithID("activity-events-row-0-content")
@@ -276,25 +276,26 @@ class ActivityDetailsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(activity_details(c, Paged(Seq(e)), ActivityForm.form))
+      val doc = view(activity_details(c, Paged(Seq(e)), ActivityForm.form, Some(Queues.act)))
 
       // Then
       doc should containElementWithID("activity-events-row-0-content")
       doc.getElementById("activity-events-row-0-content") should containText("Case unassigned")
     }
 
-    "Render assigned to 'You'" in {
+    "Render assigned to 'you'" in {
       // Given
       val c = aCase(
         withAssignee(Some(authenticatedOperator))
       )
 
       // When
-      val doc = view(activity_details(c, Paged.empty[Event], ActivityForm.form))
+      val doc = view(activity_details(c, Paged.empty[Event], ActivityForm.form, Some(Queues.act)))
 
       // Then
       doc should containElementWithID("activity-events-assignee")
-      doc.getElementById("activity-events-assignee") should containText("You")
+      doc.getElementById("activity-events-assignee").text() shouldBe "you"
+      doc.getElementById("activity-events-assignee-label").text() shouldBe "Currently assigned to:"
     }
 
     "Render assigned to name" in {
@@ -304,11 +305,12 @@ class ActivityDetailsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(activity_details(c, Paged.empty[Event], ActivityForm.form))
+      val doc = view(activity_details(c, Paged.empty[Event], ActivityForm.form, Some(Queues.act)))
 
       // Then
       doc should containElementWithID("activity-events-assignee")
-      doc.getElementById("activity-events-assignee") should containText("name")
+      doc.getElementById("activity-events-assignee").text() shouldBe "name"
+      doc.getElementById("activity-events-assignee-label").text() shouldBe "Currently assigned to:"
     }
 
     "Render assigned to PID" in {
@@ -318,26 +320,61 @@ class ActivityDetailsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(activity_details(c, Paged.empty[Event], ActivityForm.form))
+      val doc = view(activity_details(c, Paged.empty[Event], ActivityForm.form, Some(Queues.act)))
 
       // Then
       doc should containElementWithID("activity-events-assignee")
-      doc.getElementById("activity-events-assignee") should containText("PID id")
+      doc.getElementById("activity-events-assignee").text() shouldBe "PID id"
+      doc.getElementById("activity-events-assignee-label").text() shouldBe "Currently assigned to:"
     }
 
-    "Render 'Unassigned'" in {
+    "Render currently in 'ACT'" in {
+      // Given
+      val c = aCase(
+        withAssignee(None),
+        withQueue(Queues.act.id)
+      )
+
+      // When
+      val doc = view(activity_details(c, Paged.empty[Event], ActivityForm.form, Some(Queues.act)))
+
+      // Then
+      doc should containElementWithID("activity-events-assigned-queue")
+      doc.getElementById("activity-events-assigned-queue").text() shouldBe "ACT"
+      doc.getElementById("activity-events-assigned-queue-label").text() shouldBe "Currently in:"
+    }
+
+    "Render currently in 'Gateway'" in {
       // Given
       val c = aCase(
         withAssignee(None)
       )
 
       // When
-      val doc = view(activity_details(c, Paged.empty[Event], ActivityForm.form))
+      val doc = view(activity_details(c, Paged.empty[Event], ActivityForm.form, Some(Queues.gateway)))
 
       // Then
-      doc should containElementWithID("activity-events-assignee")
-      doc.getElementById("activity-events-assignee") should containText("unassigned")
+      doc should containElementWithID("activity-events-assigned-queue")
+      doc.getElementById("activity-events-assigned-queue").text() shouldBe "Gateway"
+      doc.getElementById("activity-events-assigned-queue-label").text() shouldBe "Currently in:"
     }
+
+    "Render currently in 'unknown'" in {
+      // Given
+      val c = aCase(
+        withAssignee(None),
+        withQueue("99")
+      )
+
+      // When
+      val doc = view(activity_details(c, Paged.empty[Event], ActivityForm.form, None))
+
+      // Then
+      doc should containElementWithID("activity-events-assigned-queue")
+      doc.getElementById("activity-events-assigned-queue").text() shouldBe "unknown"
+      doc.getElementById("activity-events-assigned-queue-label").text() shouldBe "Currently in:"
+    }
+
   }
 
 }
