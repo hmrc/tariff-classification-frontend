@@ -74,11 +74,8 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
   }
 
   def rulingDetails(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
-
     getCaseAndRenderView(reference, CaseDetailPage.RULING, c => {
-
       val form = decisionForm.bindFrom(c.decision)
-
       fileService
         .getAttachments(c)
         .map(views.html.partials.ruling_details(c, form, _))
@@ -124,7 +121,6 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
             routes.CaseController.activityDetails(reference))
         })
     }
-
 
     activityForm.bindFromRequest.fold(onError, onSuccess)
   }
