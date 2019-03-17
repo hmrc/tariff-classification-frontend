@@ -16,6 +16,20 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.models
 
-case class Operator(id: String, name: Option[String] = None){
-  def safeName: String = name.getOrElse(s"PID ${id}")
+import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.OPEN
+
+case class AssignedCases(name: String, openCases: Seq[Case], otherCases: Seq[Case])
+
+
+object AssignedCases {
+  def apply(cases: Seq[Case], assigneeId: Option[String]): Option[AssignedCases] = {
+    assigneeId.map(id => build(id, cases))
+  }
+
+  private def build(opId: String, cases: Seq[Case]) = {
+    val opCases = cases.filter(c => c.assignee.exists(op=>op.id==opId))
+    val name = opCases.headOption.flatMap(c => c.assignee.flatMap(a => a.name)).getOrElse("")
+    val part = opCases.partition(_.status == OPEN)
+    AssignedCases(name, part._1, part._2)
+  }
 }

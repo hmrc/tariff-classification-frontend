@@ -16,6 +16,19 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.models
 
-case class Operator(id: String, name: Option[String] = None){
-  def safeName: String = name.getOrElse(s"PID ${id}")
+case class AssigneeCount(op: Operator, count: Int) {
+  def name: String = op.safeName
+  def firstName: String = name.split(" ").head
+  def lastName: String = name.split(" ").last
+}
+
+object AssigneeCount{
+
+  def apply(cases: Seq[Case]): Seq[AssigneeCount] = {
+    cases
+      .filter(_.assignee.isDefined)
+      .groupBy(c => c.assignee.get).map(x => AssigneeCount(x._1, x._2.size))
+      .toSeq
+      .sortBy(a =>(a.lastName, a.firstName))
+  }
 }

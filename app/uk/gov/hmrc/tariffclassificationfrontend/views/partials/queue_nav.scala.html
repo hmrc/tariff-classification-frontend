@@ -27,9 +27,9 @@
                 <a class="side-nav__link" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.QueuesController.queue(q.slug)">@messages("cases.menu.queue-cases", q.name)</a>
             </li>
         }
-        <!--<li class="side-nav__list @if(section == "search-cases") { side-nav__list&#45;&#45;selected }">-->
-            <!--<a class="side-nav__link" href="#">Search Cases</a>-->
-        <!--</li>-->
+        <li class="side-nav__list @if(section == "assigned-cases") { side-nav__list--selected }">
+            <a class="side-nav__link" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.AssignedCasesController.assignedCases(None)">@messages("cases.menu.assigned-cases")</a>
+        </li>
     </ul>
     <br>
 </div>
