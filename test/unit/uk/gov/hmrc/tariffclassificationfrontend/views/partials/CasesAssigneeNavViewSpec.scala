@@ -16,279 +16,72 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.views.partials
 
-import org.mockito.BDDMockito.given
-import org.mockito.Mockito
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus}
+import uk.gov.hmrc.tariffclassificationfrontend.models.Operator
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
 import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.cases_assignee_nav
-import uk.gov.hmrc.tariffclassificationfrontend.views.{CaseDetailPage, ViewSpec}
+import uk.gov.hmrc.tariffclassificationfrontend.views.{AssigneeCount, ViewSpec}
 
 class CasesAssigneeNavViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterEach {
 
-  private val application = "Application"
-  private val trader = "Trader"
-  private val ruling = "Ruling"
-  private val attachments = "Attachments"
-  private val activity = "Activity"
-  private val keywords = "Keywords"
-  private val appeal = "Appeal"
-
-  private val applicationDetailsURL = routes.CaseController.applicationDetails("ref").url
-  private val rulingURL = routes.CaseController.rulingDetails("ref").url
-  private val attachmentsURL = routes.AttachmentsController.attachmentsDetails("ref").url
-  private val activityURL = routes.CaseController.activityDetails("ref").url
-  private val traderURL = routes.CaseController.trader("ref").url
-  private val keywordsURL = routes.CaseController.keywordsDetails("ref").url
-
-  private val `case` = mock[Case]
+  private def assigedCasesURL(id: String) = routes.AssignedCasesController.assignedCases(Some(id)).url
 
   override protected def afterEach(): Unit = {
     super.afterEach()
-    Mockito.reset(`case`)
   }
 
-  "Case Heading" should {
+  "Cases Assignee Nav" should {
 
-    "Render Trader" in {
+    "Render empty assignees" in {
       // Given
-      given(`case`.reference) willReturn "ref"
+      val assignees = Seq.empty
 
       // When
-      val doc = view(case_nav(CaseDetailPage.TRADER, `case`))
+      val doc = view(cases_assignee_nav(assignees, None))
 
       // Then
-      val spans = doc.getElementsByTag("span")
-      spans should haveSize(1)
-
-      val selectedTab = spans.first()
-      selectedTab should containText(trader)
-      selectedTab should haveAttribute("aria-selected", "true")
-
-      val anchors = doc.getElementsByTag("a")
-      anchors should haveSize(5)
-      anchors.get(0) should containText(application)
-      anchors.get(0) should haveAttribute("href", applicationDetailsURL)
-      anchors.get(1) should containText(attachments)
-      anchors.get(1) should haveAttribute("href", attachmentsURL)
-      anchors.get(2) should containText(activity)
-      anchors.get(2) should haveAttribute("href", activityURL)
-      anchors.get(3) should containText(keywords)
-      anchors.get(3) should haveAttribute("href", keywordsURL)
-      anchors.get(4) should containText(ruling)
-      anchors.get(4) should haveAttribute("href", rulingURL)
-
+      doc should containElementWithID("assignees_list-empty")
     }
 
-    "Render Application Details" in {
+    "Render assignees with none selected" in {
       // Given
-      given(`case`.reference) willReturn "ref"
+      val op = Operator("1", Some("Test User"))
+      val assignees = Seq(AssigneeCount(op, 1))
 
       // When
-      val doc = view(case_nav(CaseDetailPage.APPLICATION_DETAILS, `case`))
+      val doc = view(cases_assignee_nav(assignees, None))
 
       // Then
-      val spans = doc.getElementsByTag("span")
-      spans should haveSize(1)
-
-      val selectedTab = spans.first()
-      selectedTab should containText(application)
-      selectedTab should haveAttribute("aria-selected", "true")
-
       val anchors = doc.getElementsByTag("a")
-      anchors should haveSize(5)
-      anchors.get(0) should containText(trader)
-      anchors.get(0) should haveAttribute("href", traderURL)
-      anchors.get(1) should containText(attachments)
-      anchors.get(1) should haveAttribute("href", attachmentsURL)
-      anchors.get(2) should containText(activity)
-      anchors.get(2) should haveAttribute("href", activityURL)
-      anchors.get(3) should containText(keywords)
-      anchors.get(3) should haveAttribute("href", keywordsURL)
-      anchors.get(4) should containText(ruling)
-      anchors.get(4) should haveAttribute("href", rulingURL)
-
+      anchors should haveSize(1)
+      anchors.get(0) should containText("Test User (1)")
+      anchors.get(0) should haveAttribute("href", assigedCasesURL("1"))
     }
 
-    "Render Ruling Details" in {
+    "Render assignees with one selected" in {
       // Given
-      given(`case`.reference) willReturn "ref"
+      val op1 = Operator("1", Some("Test User 1"))
+      val op2 = Operator("2", Some("Test User 2"))
+      val assignees = Seq(AssigneeCount(op1, 1), AssigneeCount(op2, 2))
 
       // When
-      val doc = view(case_nav(CaseDetailPage.RULING, `case`))
+      val doc = view(cases_assignee_nav(assignees, Some("1")))
 
       // Then
-      val spans = doc.getElementsByTag("span")
-      spans should haveSize(1)
-
-      val selectedTab = spans.first()
-      selectedTab should containText(ruling)
-      selectedTab should haveAttribute("aria-selected", "true")
-
       val anchors = doc.getElementsByTag("a")
-      anchors should haveSize(5)
-      anchors.get(0) should containText(trader)
-      anchors.get(0) should haveAttribute("href", traderURL)
-      anchors.get(1) should containText(application)
-      anchors.get(1) should haveAttribute("href", applicationDetailsURL)
-      anchors.get(2) should containText(attachments)
-      anchors.get(2) should haveAttribute("href", attachmentsURL)
-      anchors.get(3) should containText(activity)
-      anchors.get(3) should haveAttribute("href", activityURL)
-      anchors.get(4) should containText(keywords)
-      anchors.get(4) should haveAttribute("href", keywordsURL)
-    }
+      anchors should haveSize(2)
+      anchors.get(0) should containText("Test User 1 (1)")
+      anchors.get(0) should haveAttribute("href", assigedCasesURL("1"))
 
-    "Render Attachments" in {
-      // Given
-      given(`case`.reference) willReturn "ref"
+      anchors.get(1) should containText("Test User 2 (2)")
+      anchors.get(1) should haveAttribute("href", assigedCasesURL("2"))
 
-      // When
-      val doc = view(case_nav(CaseDetailPage.ATTACHMENTS, `case`))
-
-      // Then
-      val spans = doc.getElementsByTag("span")
-      spans should haveSize(1)
-
-      val selectedTab = spans.first()
-      selectedTab should containText(attachments)
-      selectedTab should haveAttribute("aria-selected", "true")
-
-      val anchors = doc.getElementsByTag("a")
-      anchors should haveSize(5)
-      anchors.get(0) should containText(trader)
-      anchors.get(0) should haveAttribute("href", traderURL)
-      anchors.get(1) should containText(application)
-      anchors.get(1) should haveAttribute("href", applicationDetailsURL)
-      anchors.get(2) should containText(activity)
-      anchors.get(2) should haveAttribute("href", activityURL)
-      anchors.get(3) should containText(keywords)
-      anchors.get(3) should haveAttribute("href", keywordsURL)
-      anchors.get(4) should containText(ruling)
-      anchors.get(4) should haveAttribute("href", rulingURL)
-    }
-
-    "Render Activity" in {
-      // Given
-      given(`case`.reference) willReturn "ref"
-
-      // When
-      val doc = view(case_nav(CaseDetailPage.ACTIVITY, `case`))
-
-      // Then
-      val spans = doc.getElementsByTag("span")
-      spans should haveSize(1)
-
-      val selectedTab = spans.first()
-      selectedTab should containText(activity)
-      selectedTab should haveAttribute("aria-selected", "true")
-
-      val anchors = doc.getElementsByTag("a")
-      anchors should haveSize(5)
-      anchors.get(0) should containText(trader)
-      anchors.get(0) should haveAttribute("href", traderURL)
-      anchors.get(1) should containText(application)
-      anchors.get(1) should haveAttribute("href", applicationDetailsURL)
-      anchors.get(2) should containText(attachments)
-      anchors.get(2) should haveAttribute("href", attachmentsURL)
-      anchors.get(3) should containText(keywords)
-      anchors.get(3) should haveAttribute("href", keywordsURL)
-      anchors.get(4) should containText(ruling)
-      anchors.get(4) should haveAttribute("href", rulingURL)
-    }
-
-    "Render Appeal for COMPLETE Cases" in {
-      // Given
-      given(`case`.reference) willReturn "ref"
-      given(`case`.status) willReturn CaseStatus.COMPLETED
-
-      // When
-      val doc = view(case_nav(CaseDetailPage.APPEAL, `case`))
-
-      // Then
-      val spans = doc.getElementsByTag("span")
-      spans should haveSize(1)
-
-      val selectedTab = spans.first()
-      selectedTab should containText(appeal)
-      selectedTab should haveAttribute("aria-selected", "true")
-
-      val anchors = doc.getElementsByTag("a")
-      anchors should haveSize(6)
-      anchors.get(0) should containText(trader)
-      anchors.get(0) should haveAttribute("href", traderURL)
-      anchors.get(1) should containText(application)
-      anchors.get(1) should haveAttribute("href", applicationDetailsURL)
-      anchors.get(2) should containText(attachments)
-      anchors.get(2) should haveAttribute("href", attachmentsURL)
-      anchors.get(3) should containText(activity)
-      anchors.get(3) should haveAttribute("href", activityURL)
-      anchors.get(4) should containText(keywords)
-      anchors.get(4) should haveAttribute("href", keywordsURL)
-      anchors.get(5) should containText(ruling)
-      anchors.get(5) should haveAttribute("href", rulingURL)
-    }
-
-    "Render Appeal for CANCELLED Cases" in {
-      // Given
-      given(`case`.reference) willReturn "ref"
-      given(`case`.status) willReturn CaseStatus.CANCELLED
-
-      // When
-      val doc = view(case_nav(CaseDetailPage.APPEAL, `case`))
-
-      // Then
-      val spans = doc.getElementsByTag("span")
-      spans should haveSize(1)
-
-      val selectedTab = spans.first()
-      selectedTab should containText(appeal)
-      selectedTab should haveAttribute("aria-selected", "true")
-
-      val anchors = doc.getElementsByTag("a")
-      anchors should haveSize(6)
-      anchors.get(0) should containText(trader)
-      anchors.get(0) should haveAttribute("href", traderURL)
-      anchors.get(1) should containText(application)
-      anchors.get(1) should haveAttribute("href", applicationDetailsURL)
-      anchors.get(2) should containText(attachments)
-      anchors.get(2) should haveAttribute("href", attachmentsURL)
-      anchors.get(3) should containText(activity)
-      anchors.get(3) should haveAttribute("href", activityURL)
-      anchors.get(4) should containText(keywords)
-      anchors.get(4) should haveAttribute("href", keywordsURL)
-      anchors.get(5) should containText(ruling)
-      anchors.get(5) should haveAttribute("href", rulingURL)
-    }
-
-    "Not render Appeal for other Statuses" in {
-      // Given
-      given(`case`.reference) willReturn "ref"
-      given(`case`.status) willReturn CaseStatus.OPEN
-
-      // When
-      val doc = view(case_nav(CaseDetailPage.APPEAL, `case`))
-
-      // Then
-      val spans = doc.getElementsByTag("span")
-      spans should haveSize(0)
-
-      val anchors = doc.getElementsByTag("a")
-      anchors should haveSize(6)
-      anchors.get(0) should containText(trader)
-      anchors.get(0) should haveAttribute("href", traderURL)
-      anchors.get(1) should containText(application)
-      anchors.get(1) should haveAttribute("href", applicationDetailsURL)
-      anchors.get(2) should containText(attachments)
-      anchors.get(2) should haveAttribute("href", attachmentsURL)
-      anchors.get(3) should containText(activity)
-      anchors.get(3) should haveAttribute("href", activityURL)
-      anchors.get(4) should containText(keywords)
-      anchors.get(4) should haveAttribute("href", keywordsURL)
-      anchors.get(5) should containText(ruling)
-      anchors.get(5) should haveAttribute("href", rulingURL)
+      val listItems = doc.getElementsByTag("li")
+      listItems should haveSize(2)
+      listItems.get(0) should haveAttribute("class", "side-nav__list side-nav__list--selected")
+      listItems.get(1) should haveAttribute("class", "side-nav__list")
     }
   }
 }
