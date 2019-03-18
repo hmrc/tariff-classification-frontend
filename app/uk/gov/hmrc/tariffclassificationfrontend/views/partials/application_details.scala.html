@@ -25,7 +25,12 @@
     @defining(a.asBTI) { btiApp: BTIApplication =>
         @defining(btiApp.holder) { btiHolder: EORIDetails =>
 
-            @tab_heading("application", messages("case.menu.application"))
+            <div class="grid-row">
+                @tab_heading("application", messages("case.menu.application"),  Some("column-one-third"))
+                <div id="print-tag" class="column-two-thirds text-right mt-1 pt-5">
+                    <a id="print-application" href="javascript:print('tab-content')"> Print application details</a>
+                </div>
+            </div>
 
             @if(btiApp.envisagedCommodityCode.isDefined) {
                 <div id="app-details-envisaged-code" class="grid-row">
@@ -119,3 +124,17 @@
         }
     }
 }
+
+
+<script src="@routes.Assets.at("javascripts/print.js")" type="text/javascript"></script>
+<script>
+        function print(id, header){
+            window.printJS({
+                printable: id ,
+                targetStyles : ['*'],
+                ignoreElements : ['print-tag'],
+                header: header,
+                type: 'html'
+            })
+        }
+</script>
