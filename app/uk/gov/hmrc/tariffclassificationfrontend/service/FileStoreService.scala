@@ -50,6 +50,12 @@ class FileStoreService @Inject()(connector: FileStoreConnector) {
           case (c: Case, seq: Seq[(Case, StoredAttachment)]) => (c, seq.map(_._2))
         }
 
+        // Log an error for any attachments which arent in the response
+        val idsFound: Set[String] = group.flatMap(_._2).map(_.id).toSet
+        attachmentsById.keys.filterNot(idsFound.contains).foreach { id =>
+          Logger.error(s"Published file [$id] was not found in the Filestore")
+        }
+
         // The Map currently only contains Cases which have >=1 attachments.
         // Add in the cases with 0 attachments
         val missing = cases.filterNot(group.contains)
@@ -66,7 +72,7 @@ class FileStoreService @Inject()(connector: FileStoreConnector) {
           connector
             .get(attachment)
             .map { file =>
-              Logger.warn(s"Agent Letter of Authority was present on Case [${c.reference}] but it didn't exist in the FileStore")
+              Logger.error(s"Agent Letter of Authority was present on Case [${c.reference}] but it didn't exist in the FileStore")
               file.map(StoredAttachment(attachment, _))
             }
         case _ => successful(None)
