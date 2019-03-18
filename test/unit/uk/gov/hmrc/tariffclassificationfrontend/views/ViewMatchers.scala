@@ -23,17 +23,25 @@ import org.scalatest.matchers._
 object ViewMatchers {
 
   private def actualContentWas(node: Element): String = {
-    s"\nActual content was:\n${node.html}\n"
+    if(node == null) {
+      "Element did not exist"
+    } else {
+      s"\nActual content was:\n${node.html}\n"
+    }
   }
 
   private def actualContentWas(node: Elements): String = {
-    s"\nActual content was:\n${node.html}\n"
+    if(node == null) {
+      "Elements did not exist"
+    } else {
+      s"\nActual content was:\n${node.html}\n"
+    }
   }
 
   class ContainElementWithIDMatcher(id: String) extends Matcher[Element] {
     override def apply(left: Element): MatchResult = {
       MatchResult(
-        left.getElementById(id) != null,
+        left != null && left.getElementById(id) != null,
         s"Document did not contain element with ID {$id}\n${actualContentWas(left)}",
         s"Document contained an element with ID {$id}"
       )
@@ -43,7 +51,7 @@ object ViewMatchers {
   class ContainElementWithAttribute(key: String, value: String) extends Matcher[Element] {
     override def apply(left: Element): MatchResult = {
       MatchResult(
-        !left.getElementsByAttributeValue(key, value).isEmpty,
+        left != null && !left.getElementsByAttributeValue(key, value).isEmpty,
         s"Document did not contain element with Attribute {$key=$value}\n${actualContentWas(left)}",
         s"Document contained an element with Attribute {$key=$value}"
       )
@@ -53,7 +61,7 @@ object ViewMatchers {
   class ContainElementWithTagMatcher(tag: String) extends Matcher[Element] {
     override def apply(left: Element): MatchResult = {
       MatchResult(
-        !left.getElementsByTag(tag).isEmpty,
+        left != null && !left.getElementsByTag(tag).isEmpty,
         s"Document did not contain element with Tag {$tag}\n${actualContentWas(left)}",
         s"Document contained an element with Tag {$tag}"
       )
@@ -63,7 +71,7 @@ object ViewMatchers {
   class ElementContainsTextMatcher(content: String) extends Matcher[Element] {
     override def apply(left: Element): MatchResult = {
       MatchResult(
-        left.text().contains(content),
+        left != null && left.text().contains(content),
         s"Element did not contain {$content}\n${actualContentWas(left)}",
         s"Element contained {$content}"
       )
@@ -73,7 +81,7 @@ object ViewMatchers {
   class ElementContainsHtmlMatcher(content: String) extends Matcher[Element] {
     override def apply(left: Element): MatchResult = {
       MatchResult(
-        left.html().contains(content),
+        left != null && left.html().contains(content),
         s"Element did not contain {$content}\n${actualContentWas(left)}",
         s"Element contained {$content}"
       )
@@ -84,7 +92,7 @@ object ViewMatchers {
     override def apply(left: Element): MatchResult = {
       val elements = left.getElementsByTag(tag)
       MatchResult(
-        elements.text().contains(content),
+        left != null && elements.text().contains(content),
         s"Element did not contain text {$content}\n${actualContentWas(elements)}",
         s"Element contained text {$content}"
       )
@@ -94,7 +102,7 @@ object ViewMatchers {
   class ElementContainsChildWithAttributeMatcher(tag: String, key: String, value: String) extends Matcher[Element] {
     override def apply(left: Element): MatchResult = {
       MatchResult(
-        left.getElementsByTag(tag).attr(key) == value,
+        left != null && left.getElementsByTag(tag).attr(key) == value,
         s"Element attribute {$key} had value {${left.attr(key)}}, expected {$value}",
         s"Element attribute {$key} had value {$value}"
       )
@@ -104,7 +112,7 @@ object ViewMatchers {
   class ElementHasAttributeValueMatcher(key: String, value: String) extends Matcher[Element] {
     override def apply(left: Element): MatchResult = {
       MatchResult(
-        left.attr(key) == value,
+        left != null && left.attr(key) == value,
         s"Element attribute {$key} had value {${left.attr(key)}}, expected {$value}",
         s"Element attribute {$key} had value {$value}"
       )
@@ -114,7 +122,7 @@ object ViewMatchers {
   class ElementHasAttributeMatcher(key: String) extends Matcher[Element] {
     override def apply(left: Element): MatchResult = {
       MatchResult(
-        left.hasAttr(key),
+        left != null && left.hasAttr(key),
         s"Element didnt have attribute {$key}",
         s"Element had attribute {$key}"
       )
@@ -124,7 +132,7 @@ object ViewMatchers {
   class ElementHasChildCountMatcher(count: Int) extends Matcher[Element] {
     override def apply(left: Element): MatchResult = {
       MatchResult(
-        left.children().size() == count,
+        left != null && left.children().size() == count,
         s"Element had child count {${left.children().size()}}, expected {$count}",
         s"Element had child count {$count}"
       )
@@ -134,7 +142,7 @@ object ViewMatchers {
   class ElementsHasSizeMatcher(size: Int) extends Matcher[Elements] {
     override def apply(left: Elements): MatchResult = {
       MatchResult(
-        left.size() == size,
+        left != null && left.size() == size,
         s"Elements had size {${left.size()}}, expected {$size}",
         s"Elements had size {$size}"
       )
@@ -144,7 +152,7 @@ object ViewMatchers {
   class ElementTagMatcher(tag: String) extends Matcher[Element] {
     override def apply(left: Element): MatchResult = {
       MatchResult(
-        left.tagName() == tag,
+        left != null && left.tagName() == tag,
         s"Elements had tag {${left.tagName()}}, expected {$tag}",
         s"Elements had tag {$tag}"
       )

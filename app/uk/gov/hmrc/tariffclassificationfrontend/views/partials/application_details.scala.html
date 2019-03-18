@@ -89,20 +89,22 @@
                 </div>
             </div>
 
-            <div id="app-details-return-samples" class="grid-row">
-                <div class="column-one-third">
-                    <p>@messages("case.application.return-samples")</p>
+            @if(btiApp.sampleToBeProvided) {
+                <div id="app-details-returning-samples" class="grid-row">
+                    <div class="column-one-third">
+                        <p>@messages("case.application.returning-samples")</p>
+                    </div>
+                    <div class="column-two-thirds">
+                        <p>
+                        @if(btiApp.sampleToBeReturned){
+                            @messages("answer.yes")
+                        } else {
+                            @messages("answer.no")
+                        }
+                        </p>
+                    </div>
                 </div>
-                <div class="column-two-thirds">
-                    <p>
-                    @if(btiApp.sampleToBeReturned){
-                        @messages("answer.yes")
-                    } else {
-                        @messages("answer.no")
-                    }
-                    </p>
-                </div>
-            </div>
+            }
 
             <div id="app-details-reissue-application" class="grid-row">
                 <div class="column-one-third">
