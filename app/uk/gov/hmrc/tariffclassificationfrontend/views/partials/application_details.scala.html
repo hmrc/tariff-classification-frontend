@@ -15,7 +15,7 @@
  *@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-@import uk.gov.hmrc.tariffclassificationfrontend.models.{AgentDetails, Application, BTIApplication, Case, EORIDetails, StoredAttachment, CaseStatus}
+@import uk.gov.hmrc.tariffclassificationfrontend.models.{Application, BTIApplication, Case, EORIDetails, StoredAttachment}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials._
 
 
@@ -79,7 +79,28 @@
                     <p>@messages("case.application.sending-samples")</p>
                 </div>
                 <div class="column-two-thirds">
-                    <p>@btiApp.sampleToBeProvided</p>
+                    <p>
+                    @if(btiApp.sampleToBeProvided){
+                        @messages("answer.yes")
+                    } else {
+                        @messages("answer.no")
+                    }
+                    </p>
+                </div>
+            </div>
+
+            <div id="app-details-return-samples" class="grid-row">
+                <div class="column-one-third">
+                    <p>@messages("case.application.return-samples")</p>
+                </div>
+                <div class="column-two-thirds">
+                    <p>
+                    @if(btiApp.sampleToBeReturned){
+                        @messages("answer.yes")
+                    } else {
+                        @messages("answer.no")
+                    }
+                    </p>
                 </div>
             </div>
 
