@@ -98,16 +98,32 @@ class SuppressCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
   "Confirm Suppress a Case" should {
 
-    "return OK and HTML content type" in {
+    "return OK and HTML content type when operator indicates that applicant has been contacted" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusNEW)))
       when(casesService.suppressCase(refEq(caseWithStatusNEW), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusSUPRRESSED))
 
-      val result: Result = await(controller.confirmSuppressCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("state" -> "true")))
+      val result: Result =
+        await(controller.confirmSuppressCase("reference")
+             (newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("state" -> "true")))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result) shouldBe Some("utf-8")
       bodyOf(result) should include("This case has been suppressed")
+    }
+
+    "return OK and HTML content type when operator indicates that applicant has not been contacted" in {
+      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusNEW)))
+      when(casesService.suppressCase(refEq(caseWithStatusNEW), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusSUPRRESSED))
+
+      val result: Result =
+        await(controller.confirmSuppressCase("reference")
+             (newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("state" -> "false")))
+
+      status(result) shouldBe Status.OK
+      contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
+      charsetOf(result) shouldBe Some("utf-8")
+      bodyOf(result) should include("You must contact the applicant and attach a copy of the email to this case before you suppress it")
     }
 
     "redirect to Application Details for non NEW statuses" in {
