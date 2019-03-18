@@ -23,7 +23,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.models.AgentDetails
 @import uk.gov.hmrc.tariffclassificationfrontend.models.StoredAttachment
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.attachment
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.contactDetails
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.contact_details
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.release_case_button
 @import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus
 
@@ -146,7 +146,7 @@
     }
 }
 
-@contactDetails(c)
+@contact_details(c)
 
 @defining(c) { c: Case =>
     @if(c.status == CaseStatus.NEW) {

@@ -69,7 +69,7 @@ class SuppressCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result) shouldBe Some("utf-8")
-      bodyOf(result) should include("Suppress this case")
+      bodyOf(result) should include("Contact the applicant and attach a copy of the email before you suppress this case")
     }
 
     "redirect to Application Details for non NEW statuses" in {
@@ -102,7 +102,7 @@ class SuppressCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusNEW)))
       when(casesService.suppressCase(refEq(caseWithStatusNEW), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusSUPRRESSED))
 
-      val result: Result = await(controller.confirmSuppressCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
+      val result: Result = await(controller.confirmSuppressCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("state" -> "true")))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
