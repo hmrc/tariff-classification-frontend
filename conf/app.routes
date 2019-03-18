@@ -7,7 +7,7 @@ GET         /unauthorized                        @uk.gov.hmrc.tariffclassificati
 GET         /                                    controllers.Default.redirect(to = uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.MyCasesController.myCases.url)
 GET         /queues                              controllers.Default.redirect(to = uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.MyCasesController.myCases.url)
 GET         /queues/my-cases                     @uk.gov.hmrc.tariffclassificationfrontend.controllers.MyCasesController.myCases()
-GET         /queues/assigned                     @uk.gov.hmrc.tariffclassificationfrontend.controllers.AssignedCasesController.assignedCases(id: Option[String] ?= None)
+GET         /queues/assigned                     @uk.gov.hmrc.tariffclassificationfrontend.controllers.AssignedCasesController.assignedCases(operatorId: Option[String] ?= None)
 GET         /queues/:slug                        @uk.gov.hmrc.tariffclassificationfrontend.controllers.QueuesController.queue(slug: String)
 
 GET         /cases                               controllers.Default.redirect(to = uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.MyCasesController.myCases.url)

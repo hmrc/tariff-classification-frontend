@@ -34,11 +34,11 @@ class AssignedCasesController @Inject()(authenticatedAction: AuthenticatedAction
                                         val messagesApi: MessagesApi,
                                         implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
-  def assignedCases(id: Option[String]): Action[AnyContent] = authenticatedAction.async { implicit request =>
+  def assignedCases(operatorId: Option[String]): Action[AnyContent] = authenticatedAction.async { implicit request =>
     for {
       cases <-casesService.getAssignedCases(NoPagination())
       queues <- queuesService.getAll
-    } yield Ok(views.html.assigned_cases(queues, cases.results, id))
+    } yield Ok(views.html.assigned_cases(queues, cases.results, operatorId))
   }
 
 }
