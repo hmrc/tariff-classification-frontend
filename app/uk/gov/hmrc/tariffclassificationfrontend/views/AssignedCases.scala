@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.tariffclassificationfrontend.models
+package uk.gov.hmrc.tariffclassificationfrontend.views
 
+import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.OPEN
 
 case class AssignedCases(name: String, openCases: Seq[Case], otherCases: Seq[Case])
@@ -27,9 +28,9 @@ object AssignedCases {
   }
 
   private def build(opId: String, cases: Seq[Case]) = {
-    val opCases = cases.filter(c => c.assignee.exists(op=>op.id==opId))
-    val name = opCases.headOption.flatMap(c => c.assignee.flatMap(a => a.name)).getOrElse("")
-    val part = opCases.partition(_.status == OPEN)
-    AssignedCases(name, part._1, part._2)
+    val opCases = cases.filter(_.assignee.exists(_.id==opId))
+    val name = opCases.headOption.flatMap(_.assignee.flatMap(_.name)).getOrElse("")
+    val (openCases, otherCases) = opCases.partition(_.status == OPEN)
+    AssignedCases(name, openCases, otherCases)
   }
 }

@@ -37,7 +37,7 @@ class AssignedCasesController @Inject()(authenticatedAction: AuthenticatedAction
   def assignedCases(operatorId: Option[String]): Action[AnyContent] = authenticatedAction.async { implicit request =>
 
     for {
-      cases <-casesService.getAssignedCases(NoPagination())
+      cases <- casesService.getAssignedCases(NoPagination())
       queues <- queuesService.getAll
     } yield Ok(views.html.assigned_cases(queues, cases.results, operatorId))
   }

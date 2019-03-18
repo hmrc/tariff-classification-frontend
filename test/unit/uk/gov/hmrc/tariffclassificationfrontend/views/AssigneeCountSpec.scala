@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.tariffclassificationfrontend.models
+package uk.gov.hmrc.tariffclassificationfrontend.views
 
 import uk.gov.hmrc.play.test.UnitSpec
+import uk.gov.hmrc.tariffclassificationfrontend.models.Operator
 import uk.gov.tariffclassificationfrontend.utils.Cases.{aCase, withAssignee}
 
 class AssigneeCountSpec extends UnitSpec {

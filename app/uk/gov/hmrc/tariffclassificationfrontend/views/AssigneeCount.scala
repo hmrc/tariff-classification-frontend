@@ -14,12 +14,15 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.tariffclassificationfrontend.models
+package uk.gov.hmrc.tariffclassificationfrontend.views
+
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Operator}
 
 case class AssigneeCount(op: Operator, count: Int) {
+  private lazy val splitName = name.split(" ")
   def name: String = op.safeName
-  def firstName: String = name.split(" ").head
-  def lastName: String = name.split(" ").last
+  def firstName: String = splitName.head
+  def lastName: String = splitName.last
 }
 
 object AssigneeCount{
