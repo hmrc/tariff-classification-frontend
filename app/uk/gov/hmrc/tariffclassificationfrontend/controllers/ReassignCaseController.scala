@@ -53,7 +53,7 @@ class ReassignCaseController @Inject()(authenticatedAction: AuthenticatedAction,
       for {
         queues <- queueService.getNonGateway
         assignedQueue <- c.queueId.map(queueService.getOneById).getOrElse(successful(None))
-      } yield views.html.reassign_queue_case(c, f, queues, assignedQueue, request.uri)
+      } yield views.html.reassign_queue_case(c, f, queues, assignedQueue)
     )
   }
 
