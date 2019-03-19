@@ -41,13 +41,17 @@ class MyCasesViewSpec extends ViewSpec {
       doc should containElementWithID("queue-name")
       doc should containElementWithID("nav-menu-queue-queue1_name")
       doc should containElementWithID("nav-menu-queue-queue2_name")
+
       doc should containElementWithID("cases_list-table")
 
       doc should containElementWithID("nav-menu-my-cases")
+
       doc should containElementWithID("nav-menu-assigned-cases")
 
       doc.getElementById("queue-name") should containText(s"Cases for ${operator.name.get}")
       doc should containText(messages("cases.table.empty"))
+
+      doc should not (containElementWithID("cases_list-row-0-reference"))
     }
 
     "render with a list of cases" in {
@@ -63,15 +67,19 @@ class MyCasesViewSpec extends ViewSpec {
       doc should containElementWithID("queue-name")
       doc should containElementWithID("nav-menu-queue-queue1_name")
       doc should containElementWithID("nav-menu-queue-queue2_name")
+
       doc should containElementWithID("cases_list-table")
 
       doc should containElementWithID("nav-menu-my-cases")
+
       doc should containElementWithID("nav-menu-assigned-cases")
 
       doc.getElementById("queue-name") should containText(s"Cases for ${operator.name.get}")
       doc.getElementById("cases_list-table") should containText(case1.reference)
       doc.getElementById("cases_list-table") should containText(case1.status.toString)
       doc.getElementById("cases_list-table") should containText(case1.application.getType)
+
+      doc should containElementWithID("cases_list-row-0-reference")
     }
   }
 

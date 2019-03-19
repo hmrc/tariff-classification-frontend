@@ -41,14 +41,16 @@ class AssignedCasesViewSpec extends ViewSpec {
       doc should containElementWithID("queue-name")
       doc should containElementWithID("nav-menu-queue-queue1_name")
       doc should containElementWithID("nav-menu-queue-queue2_name")
+
       doc should not(containElementWithID("cases_list-table"))
 
       doc should containElementWithID("assignee-navigation")
+
       doc should containElementWithID("assignees_list-empty")
 
       doc should containElementWithID("nav-menu-my-cases")
-      doc should containElementWithID("nav-menu-assigned-cases")
 
+      doc should containElementWithID("nav-menu-assigned-cases")
       doc should containText(messages("cases.summary.assignee.empty"))
     }
 
@@ -65,14 +67,13 @@ class AssignedCasesViewSpec extends ViewSpec {
       doc should containElementWithID("queue-name")
       doc should containElementWithID("nav-menu-queue-queue1_name")
       doc should containElementWithID("nav-menu-queue-queue2_name")
-      doc should not(containElementWithID("cases_list-table"))
 
-      doc should containElementWithID("assignee-navigation")
-      doc should not(containElementWithID("assignees_list-empty"))
+      doc should not(containElementWithID("cases_list-table"))
 
       doc should containElementWithID("nav-menu-my-cases")
 
       doc should containElementWithID("assignee-navigation")
+      doc should not(containElementWithID("assignees_list-empty"))
       doc should containElementWithID("nav-menu-assigned-cases")
       doc should containElementWithID("nav-menu-assignee-444")
 
