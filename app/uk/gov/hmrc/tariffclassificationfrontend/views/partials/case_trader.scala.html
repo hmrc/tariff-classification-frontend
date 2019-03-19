@@ -26,9 +26,16 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.release_case_button
 @import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus
 
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.print_tab
 @(c: Case,  letterOfAuth: Option[StoredAttachment])(implicit request: Request[_], messages: Messages)
 
-@tab_heading("trader", "Trader")
+<div class="grid-row">
+    @tab_heading("trader","Trader",  Some("column-one-third"))
+    @print_tab(
+        linkText = "Print trader details",
+        linkClasses = Some("column-two-thirds text-right mt-1 pt-5")
+    )
+</div>
 
 @defining(c.application) { a: Application =>
     @defining(a.asBTI) { btiApp: BTIApplication =>

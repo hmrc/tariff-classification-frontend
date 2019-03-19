@@ -35,7 +35,6 @@ case class Event
 
 sealed trait Details {
   val `type`: EventType
-  def summary: String
 }
 
 sealed trait FieldChange[T] extends Details {
@@ -51,7 +50,6 @@ case class CaseStatusChange
   override val comment: Option[String] = None
 ) extends FieldChange[CaseStatus] {
   override val `type`: EventType.Value = EventType.CASE_STATUS_CHANGE
-  override def summary: String = s"Status changed from ${from.toString.toLowerCase} to ${to.toString.toLowerCase}"
 }
 
 case class AppealStatusChange
@@ -61,7 +59,6 @@ case class AppealStatusChange
   override val comment: Option[String] = None
 ) extends FieldChange[Option[AppealStatus]] {
   override val `type`: EventType.Value = EventType.APPEAL_STATUS_CHANGE
-  override def summary: String = s"Appeal status changed from ${AppealStatus.format(from)} to ${AppealStatus.format(to)}"
 }
 
 case class ReviewStatusChange
@@ -71,7 +68,6 @@ case class ReviewStatusChange
   override val comment: Option[String] = None
 ) extends FieldChange[Option[ReviewStatus]] {
   override val `type`: EventType.Value = EventType.REVIEW_STATUS_CHANGE
-  override def summary: String = s"Review status changed from ${ReviewStatus.format(from)} to ${ReviewStatus.format(to)}"
 }
 
 case class ExtendedUseStatusChange
@@ -81,7 +77,6 @@ case class ExtendedUseStatusChange
   override val comment: Option[String] = None
 ) extends FieldChange[Boolean] {
   override val `type`: EventType.Value = EventType.EXTENDED_USE_STATUS_CHANGE
-  override def summary: String = s"Application for extended use status changed from $from to $to"
 }
 
 case class AssignmentChange
@@ -91,16 +86,6 @@ case class AssignmentChange
   override val comment: Option[String] = None
 ) extends FieldChange[Option[Operator]] {
   override val `type`: EventType.Value = EventType.ASSIGNMENT_CHANGE
-  override def summary: String = (from, to) match {
-    case (Some(from: Operator), Some(to: Operator)) =>
-      s"Case reassigned from $from to $to"
-    case (None, Some(to: Operator)) =>
-      s"Case assigned to $to"
-    case (Some(from: Operator), None) =>
-      s"Case unassigned from $from"
-    case _ =>
-      "Case unassigned from unknown operator"
-  }
 }
 
 case class QueueChange
@@ -110,15 +95,14 @@ case class QueueChange
   override val comment: Option[String] = None
 ) extends FieldChange[Option[String]] {
   override val `type`: EventType.Value = EventType.QUEUE_CHANGE
-  override def summary: String = s"Reassigned this case to the $to queue"
 }
+
 
 case class Note
 (
   comment: String
 ) extends Details {
   override val `type`: EventType.Value = EventType.NOTE
-  override def summary: String = "Case note added"
 }
 
 

@@ -16,21 +16,20 @@
 
 @import play.api.libs.json.Json
 
-@(linkText: String, printingTag: String = "tab-content", linkClasses: Option[String] = None, ignore: Seq[String] = Seq.empty)
+@(linkText: String, printTag: String = "tab-content", linkClasses: Option[String] = None, ignore: Seq[String] = Seq.empty)
 
 <div class="@if(linkClasses.isDefined){@linkClasses.get}">
-    <a id="print-link" href="javascript:print('@printingTag')"> @linkText</a>
+    <a id="print-link" href="javascript:print('@printTag')"> @linkText</a>
 </div>
 
 <script src="@routes.Assets.at("javascripts/print.js")" type="text/javascript"></script>
 <script>
-
         function print(id){
             window.printJS({
                 printable: id ,
                 targetStyles : ['*'],
                 ignoreElements : ['print-link', @Html(ignore.map( word => ''' + word + ''').mkString(","))],
-                type: 'html'
+                type: 'html',
             })
         }
 </script>
