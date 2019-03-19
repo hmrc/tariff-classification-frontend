@@ -181,6 +181,19 @@ class RulingDetailsViewSpec extends ViewSpec {
       // Then
       doc shouldNot containElementWithID("attachments-file-FILE_ID")
     }
+
+    "completed cases shows link to print the decision" in {
+      // Given
+      val c = aCase(
+        withDecision()
+      ).copy(status = CaseStatus.COMPLETED)
+      // WhenS
+      val doc = view(ruling_details(c, None, Seq.empty))
+
+      // Then
+      doc should containElementWithID("print-section")
+      doc should containElementWithID("print-link")
+    }
   }
 
 }
