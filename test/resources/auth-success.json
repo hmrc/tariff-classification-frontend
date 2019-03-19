@@ -5,5 +5,12 @@
   },
   "name": {
     "name": "Forename Surname"
-  }
+  },
+  "allEnrolments": [
+    {
+      "key": "classification",
+      "identifiers": [],
+      "state": "state"
+    }
+  ]
 }
