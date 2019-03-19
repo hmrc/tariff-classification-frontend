@@ -8,9 +8,9 @@ case.summary.assignee = {0} ({1})
 cases.summary.assignee.empty=There are no cases assigned.
 
 cases.table.reference=Reference
-cases.table.goods-name=Item Name
+cases.table.goods-name=Item name
 cases.table.trader-name=Trader
-cases.table.created-date=Date Received
+cases.table.created-date=Date received
 cases.table.status=Status
 cases.table.type=Type
 cases.table.elapsed-days=Days elapsed
