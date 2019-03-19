@@ -8,7 +8,7 @@
   },
   "allEnrolments": [
     {
-      "key": "classification",
+      "key": "classification-manager",
       "identifiers": [],
       "state": "state"
     }
