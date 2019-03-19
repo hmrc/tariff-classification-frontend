@@ -16,13 +16,15 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.views
 
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Paged, Queue}
-import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers.{containElementWithID, _}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Operator, Paged, Queue}
+import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
 import uk.gov.tariffclassificationfrontend.utils.Cases
 
-class QueueViewSpec extends ViewSpec {
+class MyCasesViewSpec extends ViewSpec {
 
-  "Queue View" should {
+  private val operator = Operator("111", Some("king arthur"))
+
+  "My Cases View" should {
     val queue1 = Queue("1", "queue1_name", "Queue 1 Name")
     val queue2 = Queue("2", "queue2_name", "Queue 2 Name")
     val case1 = Cases.btiCaseExample
@@ -32,7 +34,7 @@ class QueueViewSpec extends ViewSpec {
       val queues = Seq(queue1, queue2)
 
       // When
-      val doc = view(html.queue(queues, queue1, Paged.empty[Case]))
+      val doc = view(html.my_cases(queues, Paged.empty[Case], operator))
 
       // Then
       doc should containElementWithID("queue-navigation")
@@ -44,7 +46,7 @@ class QueueViewSpec extends ViewSpec {
       doc should containElementWithID("nav-menu-my-cases")
       doc should containElementWithID("nav-menu-assigned-cases")
 
-      doc.getElementById("queue-name") should containText("Queue 1 Name Cases")
+      doc.getElementById("queue-name") should containText(s"Cases for ${operator.name.get}")
       doc should containText(messages("cases.table.empty"))
     }
 
@@ -54,7 +56,7 @@ class QueueViewSpec extends ViewSpec {
       val cases = Seq(case1)
 
       // When
-      val doc = view(html.queue(queues, queue1, Paged(cases)))
+      val doc = view(html.my_cases(queues, Paged(cases), operator))
 
       // Then
       doc should containElementWithID("queue-navigation")
@@ -66,7 +68,7 @@ class QueueViewSpec extends ViewSpec {
       doc should containElementWithID("nav-menu-my-cases")
       doc should containElementWithID("nav-menu-assigned-cases")
 
-      doc.getElementById("queue-name") should containText("Queue 1 Name")
+      doc.getElementById("queue-name") should containText(s"Cases for ${operator.name.get}")
       doc.getElementById("cases_list-table") should containText(case1.reference)
       doc.getElementById("cases_list-table") should containText(case1.status.toString)
       doc.getElementById("cases_list-table") should containText(case1.application.getType)
