@@ -19,6 +19,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials._
 
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.QueuesController
 @(c: Case)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None) {
@@ -30,7 +31,7 @@
 
             <div class="heading-medium mt-45">Next Steps</div>
 
-            <p>Go back to <a href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.QueuesController.queue("gateway")">@messages("cases.menu.gateway-cases")</a></p>
+            <p>Go back to <a href="@QueuesController.queue("gateway")">@messages("cases.menu.gateway-cases")</a></p>
 
         </div>
     </div>
