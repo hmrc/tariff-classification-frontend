@@ -18,6 +18,9 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{BTIApplication, Case, CaseStatus, Decision, StoredAttachment}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{attachments_list, tab_heading, cancel_ruling_section,complete_ruling_section}
 @import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionFormData
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.RulingController
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.print_tab
 
 @(c: Case, decisionForm: Option[Form[DecisionFormData]], files: Seq[StoredAttachment])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
@@ -55,8 +58,14 @@
         </div>
         @if(c.status == CaseStatus.OPEN) {
             <div id="ruling_edit_details" class="column-two-thirds text-right mt-1 pt-5">
-                <a id="ruling_edit" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.RulingController.editRulingDetails(c.reference)">Edit ruling details</a>
+                <a id="ruling_edit" href="@RulingController.editRulingDetails(c.reference)">Edit ruling details</a>
             </div>
+        }else{
+            @print_tab(
+                linkText = "Print ruling details",
+                linkClasses = Some("column-two-thirds text-right mt-1 pt-5"),
+                ignore = List("ruling-buttons")
+            )
         }
     </div>
 
@@ -124,7 +133,8 @@
     <h3 class="heading-medium">@messages("case.decision.attachments")</h3>
     @attachments_list("attachments", files.filter(_.public))
 
-    @complete_ruling_section(c, decisionForm)
-
-    @cancel_ruling_section(c)
+    <div id="ruling-buttons">
+        @complete_ruling_section(c, decisionForm)
+        @cancel_ruling_section(c)
+    </div>
 }

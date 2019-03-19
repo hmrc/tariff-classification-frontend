@@ -17,8 +17,6 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{AgentDetails, Application, BTIApplication, Case, EORIDetails, StoredAttachment, CaseStatus}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials._
-
-
 @(c: Case, files: Seq[StoredAttachment], letterOfAuth: Option[StoredAttachment])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @defining(c.application) { a: Application =>
@@ -27,9 +25,11 @@
 
             <div class="grid-row">
                 @tab_heading("application", messages("case.menu.application"),  Some("column-one-third"))
-                <div id="print-tag" class="column-two-thirds text-right mt-1 pt-5">
-                    <a id="print-application" href="javascript:print('tab-content')"> Print application details</a>
-                </div>
+                @print_tab(
+                    linkText = "Print application details",
+                    linkClasses = Some("column-two-thirds text-right mt-1 pt-5"),
+                    ignore = List("ruling-buttons")
+                )
             </div>
 
             @if(btiApp.envisagedCommodityCode.isDefined) {
@@ -124,17 +124,3 @@
         }
     }
 }
-
-
-<script src="@routes.Assets.at("javascripts/print.js")" type="text/javascript"></script>
-<script>
-        function print(id, header){
-            window.printJS({
-                printable: id ,
-                targetStyles : ['*'],
-                ignoreElements : ['print-tag'],
-                header: header,
-                type: 'html'
-            })
-        }
-</script>
