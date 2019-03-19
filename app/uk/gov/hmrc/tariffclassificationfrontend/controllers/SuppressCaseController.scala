@@ -17,9 +17,11 @@
 package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
 import javax.inject.{Inject, Singleton}
+import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc._
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
+import uk.gov.hmrc.tariffclassificationfrontend.forms.MandatoryBooleanForm
 import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.NEW
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
@@ -35,6 +37,8 @@ class SuppressCaseController @Inject()(authenticatedAction: AuthenticatedAction,
                                        val messagesApi: MessagesApi,
                                        implicit val appConfig: AppConfig) extends RenderCaseAction {
 
+  private val form: Form[Boolean] = MandatoryBooleanForm.form("suppress_case")
+
   override protected val config: AppConfig = appConfig
   override protected val caseService: CasesService = casesService
 
@@ -42,11 +46,24 @@ class SuppressCaseController @Inject()(authenticatedAction: AuthenticatedAction,
   override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = c.status == NEW
 
   def suppressCase(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
-    getCaseAndRenderView(reference, c => successful(views.html.suppress_case(c)))
+    getCaseAndRenderView(reference, c => successful(views.html.suppress_case(c, form)))
   }
 
   def confirmSuppressCase(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
-    getCaseAndRenderView(reference, casesService.suppressCase(_, request.operator).map(views.html.confirm_with_contact_details(_, "suppressed")))
+
+    form.bindFromRequest().fold(
+      errors => {
+        getCaseAndRenderView(
+          reference,
+          c => successful(views.html.suppress_case(c, errors))
+        )
+      },
+      {
+        case true => getCaseAndRenderView(reference, casesService.suppressCase(_, request.operator).map(views.html.confirm_supressed_case(_)))
+        case _ => getCaseAndRenderView(reference, c => successful(views.html.supressed_case_error(c)))
+      }
+    )
+
   }
 
 }
