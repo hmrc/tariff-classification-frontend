@@ -41,14 +41,19 @@ class ReleaseCaseController @Inject()(authenticatedAction: AuthenticatedAction,
 
   private lazy val releaseCaseForm: Form[String] = ReleaseCaseForm.form
 
+  private def releaseCase(f: Form[String], caseRef: String)
+                         (implicit request: Request[_]): Future[Result] = {
+    getCaseAndRenderView(caseRef, c => queueService.getNonGateway.map(views.html.release_case(c, f, _)))
+  }
+
   def releaseCase(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
-    getCaseAndRenderView(reference, c => queueService.getNonGateway.map(views.html.release_case(c, releaseCaseForm, _)))
+    releaseCase(releaseCaseForm, reference)
   }
 
   def releaseCaseToQueue(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
 
     def onInvalidForm(formWithErrors: Form[String]): Future[Result] = {
-      getCaseAndRenderView(reference, c => queueService.getNonGateway.map(views.html.release_case(c, formWithErrors, _)))
+      releaseCase(formWithErrors, reference)
     }
 
     def onValidForm(queueSlug: String): Future[Result] = {

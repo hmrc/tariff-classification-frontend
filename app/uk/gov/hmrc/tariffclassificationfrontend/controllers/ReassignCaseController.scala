@@ -47,24 +47,24 @@ class ReassignCaseController @Inject()(authenticatedAction: AuthenticatedAction,
 
   private lazy val form: Form[String] = ReleaseCaseForm.form
 
-  def showAvailableQueues(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
-    getCaseAndRenderView(reference, c =>
+  private def reassignToQueue(f: Form[String], caseRef: String)
+                             (implicit request: AuthenticatedRequest[_]): Future[Result] = {
+    getCaseAndRenderView(caseRef, c =>
       for {
         queues <- queueService.getNonGateway
-        assignedQueue <- c.queueId.map(id => queueService.getOneById(id)).getOrElse(Future.successful(None))
-      } yield views.html.reassign_queue_case(c, form, queues, assignedQueue)
+        assignedQueue <- c.queueId.map(queueService.getOneById).getOrElse(successful(None))
+      } yield views.html.reassign_queue_case(c, f, queues, assignedQueue, request.uri)
     )
+  }
+
+  def showAvailableQueues(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
+    reassignToQueue(form, reference)
   }
 
   def reassignCase(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
 
     def onInvalidForm(formWithErrors: Form[String]): Future[Result] = {
-      getCaseAndRenderView(reference, c =>
-        for {
-          queues <- queueService.getNonGateway
-          assignedQueue <- c.queueId.map(id => queueService.getOneById(id)).getOrElse(Future.successful(None))
-        } yield views.html.reassign_queue_case(c, formWithErrors, queues, assignedQueue)
-      )
+      reassignToQueue(formWithErrors, reference)
     }
 
     def onValidForm(queueSlug: String): Future[Result] = {
@@ -73,9 +73,8 @@ class ReassignCaseController @Inject()(authenticatedAction: AuthenticatedAction,
         case Some(q: Queue) =>
           getCaseAndRenderView(
             reference,
-            caseService.reassignCase(_, q, request.operator).map { c: Case =>
-              views.html.confirm_reassign_case(c, q)
-            })
+            caseService.reassignCase(_, q, request.operator).map(views.html.confirm_reassign_case(_, q))
+          )
       }
     }
 

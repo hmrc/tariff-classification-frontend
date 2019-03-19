@@ -74,7 +74,9 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
   }
 
   def rulingDetails(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
-    getCaseAndRenderView(reference, CaseDetailPage.RULING, c => {
+    getCaseAndRenderView(
+      reference,
+      CaseDetailPage.RULING, c => {
       val form = decisionForm.bindFrom(c.decision)
       fileService
         .getAttachments(c)
@@ -94,7 +96,9 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
   }
 
   def keywordsDetails(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
-    getCaseAndRenderView(reference, CaseDetailPage.KEYWORDS,
+    getCaseAndRenderView(
+      reference,
+      CaseDetailPage.KEYWORDS,
       c => {
         keywordsService.autoCompleteKeywords.flatMap(autoCompleteKeywords =>
           successful(views.html.partials.keywords_details(c, autoCompleteKeywords, keywordForm)))
@@ -133,25 +137,24 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
             keywordsService.autoCompleteKeywords.flatMap(autoCompleteKeywords =>
               successful(views.html.partials.keywords_details(c, autoCompleteKeywords, errorForm)))
           }),
-
       keyword =>
-        getCaseAndRenderView(reference, CaseDetailPage.KEYWORDS,
-          c =>
-            for {
-              updatedCase <- keywordsService.addKeyword(c, keyword, request.operator)
-              autoCompleteKeywords <- keywordsService.autoCompleteKeywords
-            } yield views.html.partials.keywords_details(updatedCase, autoCompleteKeywords, keywordForm)
+        getCaseAndRenderView(
+          reference,
+          CaseDetailPage.KEYWORDS,
+          for {
+            updatedCase <- keywordsService.addKeyword(_, keyword, request.operator)
+            autoCompleteKeywords <- keywordsService.autoCompleteKeywords
+          } yield views.html.partials.keywords_details(updatedCase, autoCompleteKeywords, keywordForm)
         )
     )
   }
 
   def removeKeyword(reference: String, keyword: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     getCaseAndRenderView(reference, CaseDetailPage.KEYWORDS,
-      c =>
-        for {
-          updatedCase <- keywordsService.removeKeyword(c, keyword, request.operator)
-          autoCompleteKeywords <- keywordsService.autoCompleteKeywords
-        } yield views.html.partials.keywords_details(updatedCase, autoCompleteKeywords, keywordForm)
+      for {
+        updatedCase <- keywordsService.removeKeyword(_, keyword, request.operator)
+        autoCompleteKeywords <- keywordsService.autoCompleteKeywords
+      } yield views.html.partials.keywords_details(updatedCase, autoCompleteKeywords, keywordForm)
     )
   }
 
