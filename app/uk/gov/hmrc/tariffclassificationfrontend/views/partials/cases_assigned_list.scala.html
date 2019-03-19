@@ -24,7 +24,7 @@
     @defining(cases.get) { assignedCases: AssignedCases =>
         <h3 class="heading-small">Assigned to @assignedCases.name</h3>
         @cases_assigned_table("Cases on hand", assignedCases.openCases, "open")
-        @cases_assigned_table("Other cases", assignedCases.otherCases, "other")
+        @cases_assigned_table("Suspended and referred cases", assignedCases.otherCases, "other")
     }
 } else {
     <p id="assignees_list-empty">@messages("cases.summary.assignee.empty")</p>
