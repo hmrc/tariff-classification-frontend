@@ -48,18 +48,17 @@
     </thead>
     <tbody>
         @for((event: Event, index: Int) <- events.results.zipWithIndex) {
-                <tr id="activity-events-row-@{index}">
+                <tr>
                     <td style="width: 30%;">
                         @event.operator.name.getOrElse("")
                         <span style="display:block"> @Dates.format(event.timestamp) </span>
                     </td>
                     <td>
                         @activity_event_format(
-                                      event = event
-                                    , index = index
-                                    , queues = queues
-                                    , openDetails = true
-                        )
+                                    event = event,
+                                    index = index,
+                                    queues = queues,
+                                    openDetails = true)
                     </td>
                 </tr>
         }
