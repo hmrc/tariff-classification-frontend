@@ -26,6 +26,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, QueuesSer
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 @Singleton
 class AssignedCasesController @Inject()(authenticatedAction: AuthenticatedAction,
@@ -35,11 +36,14 @@ class AssignedCasesController @Inject()(authenticatedAction: AuthenticatedAction
                                         implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
   def assignedCases(operatorId: Option[String]): Action[AnyContent] = authenticatedAction.async { implicit request =>
-
-    for {
-      cases <- casesService.getAssignedCases(NoPagination())
-      queues <- queuesService.getAll
-    } yield Ok(views.html.assigned_cases(queues, cases.results, operatorId))
+    if(request.operator.manager) {
+      for {
+        cases <- casesService.getAssignedCases(NoPagination())
+        queues <- queuesService.getAll
+      } yield Ok(views.html.assigned_cases(queues, cases.results, operatorId))
+    } else {
+      Future.successful(Redirect(routes.SecurityController.unauthorized()))
+    }
   }
 
 }

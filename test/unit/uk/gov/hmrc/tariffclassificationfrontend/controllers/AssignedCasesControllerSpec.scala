@@ -47,15 +47,23 @@ class AssignedCasesControllerSpec extends UnitSpec with Matchers with WithFakeAp
   private implicit val hc: HeaderCarrier = HeaderCarrier()
   private val assignedCase = btiCaseExample.copy(assignee = Some(Operator("1", Some("Test User"))))
 
-  private val controller = new AssignedCasesController(new SuccessfulAuthenticatedAction, casesService, queuesService, messageApi, appConfig)
+  private def controller(operator: Operator) = new AssignedCasesController(new SuccessfulAuthenticatedAction(operator), casesService, queuesService, messageApi, appConfig)
 
   "Assigned Cases" should {
+    val asTeamMember = Operator("id")
+    val asTeamManager = Operator("id", manager = true)
+
+    "redirect to unauthorised if not a manager" in {
+      val result = await(controller(asTeamMember).assignedCases(None)(fakeRequest))
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(routes.SecurityController.unauthorized().url)
+    }
 
     "return 200 OK and HTML content type when no cases returned" in {
       given(casesService.getAssignedCases(refEq(NoPagination()))(any[HeaderCarrier])).willReturn(Future.successful(Paged.empty[Case]))
       given(queuesService.getAll).willReturn(Future.successful(Seq(queue)))
 
-      val result = await(controller.assignedCases(None)(fakeRequest))
+      val result = await(controller(asTeamManager).assignedCases(None)(fakeRequest))
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
@@ -66,7 +74,7 @@ class AssignedCasesControllerSpec extends UnitSpec with Matchers with WithFakeAp
       given(casesService.getAssignedCases(refEq(NoPagination()))(any[HeaderCarrier])).willReturn(Future.successful(Paged(Seq(assignedCase))))
       given(queuesService.getAll).willReturn(Future.successful(Seq(queue)))
 
-      val result = await(controller.assignedCases(Some("1"))(fakeRequest))
+      val result = await(controller(asTeamManager).assignedCases(Some("1"))(fakeRequest))
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
