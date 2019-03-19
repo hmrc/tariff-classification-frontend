@@ -23,6 +23,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.models.AgentDetails
 @import uk.gov.hmrc.tariffclassificationfrontend.models.StoredAttachment
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.attachment
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.contact_details
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.release_case_button
 @import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus
 
@@ -152,44 +153,7 @@
     }
 }
 
-<h3> Contact details for this application </h3>
-
-@defining(c.application.asBTI.contact) { co: Contact =>
-
-    <div class="grid-row">
-        <div class="column-one-third">
-            <p>@messages("case.application.contact.name")</p>
-        </div>
-        <div class="column-two-thirds">
-            <p>@co.name</p>
-        </div>
-    </div>
-
-    <div class="grid-row">
-        <div class="column-one-third">
-            <p>@messages("case.application.contact.email")</p>
-        </div>
-        <div class="column-two-thirds">
-        @if(co.email.contains("@")){
-            <a id="contact-email" href="mailto:@co.email?subject=@c.application.getType application #@c.reference">@co.email</a>
-        } else {
-            <span id="contact-email">@co.email</span>
-        }
-        </div>
-    </div>
-
-    @if(co.phone.isDefined) {
-        <div class="grid-row">
-            <div class="column-one-third">
-                <p>@messages("case.application.contact.telephone")</p>
-            </div>
-            <div class="column-two-thirds">
-                <p id="contact-phone">@co.phone.get</p>
-            </div>
-        </div>
-    }
-
-}
+@contact_details(c)
 
 @defining(c) { c: Case =>
     @if(c.status == CaseStatus.NEW) {
@@ -209,7 +173,11 @@
             <li>a valid letter of authority</li>
         </ul>
 
-        <p>If any of this information is missing or incorrect, suppress the case and use the contact details to notify the applicant. </p>
+        <p>
+            Suppress this case if this information is missing or incorrect. You must contact the applicant and upload
+            the email to the attachments tab before you choose to suppress this case. The case cannot be reopened once
+            it has been suppressed.
+        </p>
 
         <h3 class="govuk-fieldset__heading">Do you want to release or suppress this case?</h3>
 

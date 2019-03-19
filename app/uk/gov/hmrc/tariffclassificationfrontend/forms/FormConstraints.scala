@@ -53,4 +53,9 @@ object FormConstraints {
     })
   }
 
+  def defined[T](key: String): Constraint[Option[T]] = Constraint {
+    case option: Option[T] if option.isDefined => Valid
+    case _ => Invalid(key)
+  }
+
 }

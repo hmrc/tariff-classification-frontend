@@ -28,7 +28,7 @@ class CommodityCodeService() {
   def checkIfCodeExists(commodityCode: String): Boolean = {
     val canonicalCode: String =
       if (commodityCode.length > padLimit) commodityCode.substring(0, padLimit)
-      else commodityCode.trim.padTo(padLimit, "0").mkString
+      else commodityCode.trim.padTo[Char, String](padLimit, '0').mkString
 
     commodityCodesFromFile.contains(canonicalCode)
   }

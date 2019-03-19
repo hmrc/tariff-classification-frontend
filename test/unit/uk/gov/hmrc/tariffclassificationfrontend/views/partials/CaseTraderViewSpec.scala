@@ -56,64 +56,6 @@ class CaseTraderViewSpec extends ViewSpec {
       doc should containElementWithID("agent-submitted-heading")
     }
 
-    "Render valid email with mailto link" in {
-      // Given
-      val `case` = aCase(
-        withReference("ref"),
-        withContact(Contact("name", "email@email.com", None))
-      )
-
-      // When
-      val doc = view(case_trader(`case`, None))
-
-      // Then
-      doc should containElementWithID("contact-email")
-      doc.getElementById("contact-email") should haveTag("a")
-      doc.getElementById("contact-email") should haveAttribute("href", "mailto:email@email.com?subject=BTI application #ref")
-    }
-
-    "Render invalid email as text" in {
-      // Given
-      val `case` = aCase(
-        withReference("ref"),
-        withContact(Contact("name", "email", None))
-      )
-
-      // When
-      val doc = view(case_trader(`case`, None))
-
-      // Then
-      doc should containElementWithID("contact-email")
-      doc.getElementById("contact-email") should haveTag("span")
-    }
-
-    "Render valid phone" in {
-      // Given
-      val `case` = aCase(
-        withContact(Contact("name", "email@email.com", Some("1234")))
-      )
-
-      // When
-      val doc = view(case_trader(`case`, None))
-
-      // Then
-      doc should containElementWithID("contact-phone")
-      doc.getElementById("contact-phone") should containText("1234")
-    }
-
-    "Not render missing phone" in {
-      // Given
-      val `case` = aCase(
-        withContact(Contact("name", "email@email.com", None))
-      )
-
-      // When
-      val doc = view(case_trader(`case`, None))
-
-      // Then
-      doc shouldNot containElementWithID("contact-phone")
-    }
-
     "Render letter of Authority when present as link" in {
       // Given
       val `case` = aCase(
