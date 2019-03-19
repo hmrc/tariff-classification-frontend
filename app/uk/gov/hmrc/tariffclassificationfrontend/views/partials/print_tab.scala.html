@@ -18,8 +18,8 @@
 
 @(linkText: String, printingTag: String = "tab-content", linkClasses: Option[String] = None, ignore: Seq[String] = Seq.empty)
 
-<div id="print-link" class="@if(linkClasses.isDefined){@linkClasses.get}">
-    <a id="print-application" href="javascript:print('@printingTag')"> @linkText</a>
+<div class="@if(linkClasses.isDefined){@linkClasses.get}">
+    <a id="print-link" href="javascript:print('@printingTag')"> @linkText</a>
 </div>
 
 <script src="@routes.Assets.at("javascripts/print.js")" type="text/javascript"></script>
