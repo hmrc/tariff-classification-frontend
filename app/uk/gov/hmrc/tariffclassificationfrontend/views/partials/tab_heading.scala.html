@@ -14,8 +14,8 @@
  * limitations under the License.
  *@
 
-@(tab: String, heading: String, addedClasses: Option[String] = None)
+@(tab: String, heading: String, divClasses: Option[String] = None)
 
 <div id="@tab-heading">
-    <div class="heading-large mt-0 mb-30 @if(addedClasses.isDefined){ @addedClasses.get }">@heading</div>
+    <div class="heading-large mt-0 mb-30 @if(divClasses.isDefined){ @divClasses.get }">@heading</div>
 </div>
