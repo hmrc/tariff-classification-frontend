@@ -17,5 +17,5 @@
 package uk.gov.hmrc.tariffclassificationfrontend.models
 
 case class Operator(id: String, name: Option[String] = None){
-  def safeName: String = name.getOrElse(s"PID ${id}")
+  def safeName: String = name.getOrElse(s"PID $id")
 }

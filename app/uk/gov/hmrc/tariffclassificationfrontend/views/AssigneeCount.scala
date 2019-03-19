@@ -20,6 +20,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Operator}
 
 case class AssigneeCount(op: Operator, count: Int) {
   private lazy val splitName = name.split(" ")
+
   def name: String = op.safeName
   def firstName: String = splitName.head
   def lastName: String = splitName.last
@@ -30,8 +31,10 @@ object AssigneeCount{
   def apply(cases: Seq[Case]): Seq[AssigneeCount] = {
     cases
       .filter(_.assignee.isDefined)
-      .groupBy(c => c.assignee.get).map(x => AssigneeCount(x._1, x._2.size))
+      .groupBy[Operator](_.assignee.getOrElse(throw new IllegalStateException("Operator not found")))
+      .map { case (op, cases) => AssigneeCount(op, cases.size) }
       .toSeq
-      .sortBy(a =>(a.lastName, a.firstName))
+      .sortBy( a => (a.lastName, a.firstName) )
   }
+
 }
