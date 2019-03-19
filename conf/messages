@@ -96,4 +96,4 @@ errors.resource-not-found.title={0} not found.
 release-case.submit.button = Release Case
 reassign-case.submit.button = Move back to queue
 
-supress_case.form.state.required = Please select an option
+suppress_case.form.state.required = Select yes if you have contacted the applicant
