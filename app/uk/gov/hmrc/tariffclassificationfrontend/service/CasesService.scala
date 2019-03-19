@@ -234,6 +234,10 @@ class CasesService @Inject()(appConfig: AppConfig,
     connector.findCasesByAssignee(assignee, pagination)
   }
 
+  def getAssignedCases(pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[Case]] = {
+    connector.findAssignedCases(pagination)
+  }
+
   def updateCase(caseToUpdate: Case)(implicit hc: HeaderCarrier): Future[Case] = {
     connector.updateCase(caseToUpdate)
   }

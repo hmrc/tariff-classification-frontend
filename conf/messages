@@ -2,15 +2,20 @@ cases.menu.my-cases=My cases
 cases.menu.gateway-cases=Gateway cases
 cases.menu.queue-cases={0} cases
 cases.list.my-cases=Cases for {0}
+cases.menu.assigned-cases=Assigned cases
+cases.heading.assigned-cases=Assigned Cases
+case.summary.assignee = {0} ({1})
+cases.summary.assignee.empty=There are no cases assigned.
 
 cases.table.reference=Reference
-cases.table.goods-name=Item Name
+cases.table.goods-name=Item name
 cases.table.trader-name=Trader
-cases.table.created-date=Date Received
+cases.table.created-date=Date received
 cases.table.status=Status
 cases.table.type=Type
-cases.table.elapsed-days=Days Elapsed
+cases.table.elapsed-days=Days elapsed
 cases.table.empty=There are no cases in this queue.
+cases.table.move=Move to a queue
 
 case.menu.trader=Trader
 case.menu.application=Application

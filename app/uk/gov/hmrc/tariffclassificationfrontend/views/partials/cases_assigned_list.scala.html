@@ -14,14 +14,18 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-@import uk.gov.hmrc.tariffclassificationfrontend.models.Operator
+@import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 @import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
-@(operator: Operator, capitalise : Boolean = false)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
-@{
- if(operator.id == request.operator.id) {
-      if (capitalise) "You" else "you"
- } else {
-  operator.safeName
- }
+@import uk.gov.hmrc.tariffclassificationfrontend.views.AssignedCases
+
+@(cases: Option[AssignedCases])(implicit request: AuthenticatedRequest[_], messages: Messages)
+
+@if(cases.isDefined) {
+    @defining(cases.get) { assignedCases: AssignedCases =>
+        <h3 class="heading-small">Assigned to @assignedCases.name</h3>
+        @cases_assigned_table("Cases on hand", assignedCases.openCases, "open")
+        @cases_assigned_table("Suspended and referred cases", assignedCases.otherCases, "other")
+    }
+} else {
+    <p id="assignees_list-empty">@messages("cases.summary.assignee.empty")</p>
 }

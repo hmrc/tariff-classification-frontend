@@ -38,7 +38,7 @@
                     queues,
                     "reassign-case",
                     ReassignCaseController.reassignCase(c.reference),
-                    CaseController.activityDetails(c.reference)
+                    request.headers.get("Referer").getOrElse(CaseController.applicationDetails(c.reference).url)
                 )
 
             </div>
