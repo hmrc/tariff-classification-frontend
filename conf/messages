@@ -47,9 +47,11 @@ case.application.known-legal-proceedings=Any legal or administration proceedings
 case.application.other-information=Other supporting information
 case.application.attachments=Attachments
 case.application.sending-samples=Is the trader sending samples?
+case.application.returning-samples=Does the trader require samples returning?
 case.application.reissue-application=Is the application a re-issue?
 
 answer.no=No
+answer.yes=Yes
 answer.none=None
 
 case.decision.commodity-code=Binding commodity code
