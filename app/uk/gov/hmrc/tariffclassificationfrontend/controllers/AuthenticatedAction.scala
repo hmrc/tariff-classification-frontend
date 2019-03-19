@@ -43,7 +43,8 @@ class AuthenticatedAction @Inject()(appConfig: AppConfig,
     with AuthorisedFunctions
     with AuthRedirects {
 
-  private lazy val enrolment: Option[Enrolment] = appConfig.authEnrolment map (Enrolment(_))
+  private lazy val teamEnrolment: String = appConfig.teamEnrolment
+  private lazy val managerEnrolment: String = appConfig.managerEnrolment
 
   override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] = {
 
@@ -52,23 +53,21 @@ class AuthenticatedAction @Inject()(appConfig: AppConfig,
       Some(request.session)
     )
 
-    authorise().retrieve(Retrievals.credentials and Retrievals.name) {
-      case ~(credentials: Credentials, name: Name) =>
+    authorised((Enrolment(teamEnrolment) or Enrolment(managerEnrolment)) and AuthProviders(PrivilegedApplication)).retrieve(Retrievals.credentials and Retrievals.name and Retrievals.allEnrolments) {
+      case (credentials: Credentials) ~ (name: Name) ~ (roles: Enrolments) =>
         val id = credentials.providerId
-        block(AuthenticatedRequest(Operator(id, name.name), request))
+        val operator = Operator(
+          id,
+          name.name,
+          manager = roles.enrolments.map(_.key).contains(managerEnrolment)
+        )
+        block(AuthenticatedRequest(operator, request))
     } recover {
       case _: NoActiveSession => toStrideLogin(
         if (appConfig.runningAsDev) s"http://${request.host}${request.uri}"
         else s"${request.uri}"
       )
       case _: AuthorisationException => Redirect(routes.SecurityController.unauthorized())
-    }
-  }
-
-  private def authorise(): AuthorisedFunction = {
-    enrolment match {
-      case Some(e) => authorised(e and AuthProviders(PrivilegedApplication))
-      case _ => authorised(AuthProviders(PrivilegedApplication))
     }
   }
 

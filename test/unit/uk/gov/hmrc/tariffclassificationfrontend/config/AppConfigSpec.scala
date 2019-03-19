@@ -83,9 +83,12 @@ class AppConfigSpec extends UnitSpec with MockitoSugar {
       ).emailRendererUrl shouldBe "http://host:123"
     }
 
-    "Build auth enrolment" in {
-      appConfig("auth.enrolment" -> "classification").authEnrolment shouldBe Some("classification")
-      appConfig("auth.enrolment" -> "").authEnrolment shouldBe None
+    "Build team enrolment" in {
+      appConfig("auth.enrolments.team" -> "classification").teamEnrolment shouldBe "classification"
+    }
+
+    "Build manager enrolment" in {
+      appConfig("auth.enrolments.manager" -> "classification").managerEnrolment shouldBe "classification"
     }
 
     "Builds runningAsDev from config override" in {
