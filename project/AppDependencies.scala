@@ -12,9 +12,9 @@ object AppDependencies {
   val scope = "test, it"
 
   val test = Seq(
-    "com.github.tomakehurst"  %  "wiremock"                 % "2.21.0"        % scope,
+    "com.github.tomakehurst"  %  "wiremock"                 % "2.22.0"        % scope,
     "com.typesafe.play"       %% "play-test"                % current         % scope,
-    "org.mockito"             %  "mockito-core"             % "2.25.0"        % scope,
+    "org.mockito"             %  "mockito-core"             % "2.25.1"        % scope,
     "org.jsoup"               %  "jsoup"                    % "1.11.3"        % scope,
     "org.pegdown"             %  "pegdown"                  % "1.6.0"         % scope,
     "org.scalatest"           %% "scalatest"                % "3.0.4"         % scope,
