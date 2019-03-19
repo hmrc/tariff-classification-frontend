@@ -23,19 +23,14 @@ import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
 import uk.gov.hmrc.tariffclassificationfrontend.views.html.reopen_case
 import uk.gov.tariffclassificationfrontend.utils.Cases._
 
-class ReopenCaseViewSpec extends ViewSpec with BeforeAndAfterEach {
-
-  override protected def afterEach(): Unit = {
-    super.afterEach()
-  }
+class ReopenCaseViewSpec extends ViewSpec {
 
   "Reopen Case" should {
 
     "Render link to attachments" in {
       // Given
       val c = aCase(
-        withReference("REF"),
-        withoutAssignee()
+        withReference("REF")
       )
 
       // When
