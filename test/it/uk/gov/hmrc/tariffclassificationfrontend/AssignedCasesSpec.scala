@@ -44,7 +44,7 @@ class AssignedCasesSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body should include("<h3 class=\"heading-small\">Assigned to Test User</h3>")
+      response.body should include("<h2 class=\"heading-small\">Assigned to Test User</h2>")
     }
 
     "redirect on auth failure" in {
