@@ -35,12 +35,10 @@ import scala.concurrent.Future
 class BindingTariffClassificationConnector @Inject()(appConfig: AppConfig, client: AuthenticatedHttpClient) {
 
   private lazy val statuses: String = Set(NEW, OPEN, REFERRED, SUSPENDED)
-    .map(_.toString)
-    .reduce( (a: String, b: String) => s"$a,$b" )
+    .map(_.toString).mkString(",")
 
   private lazy val liveStatuses: String = Set( OPEN, REFERRED, SUSPENDED)
-    .map(_.toString)
-    .reduce( (a: String, b: String) => s"$a,$b" )
+    .map(_.toString).mkString(",")
 
   def findCase(reference: String)(implicit hc: HeaderCarrier): Future[Option[Case]] = {
     val url = s"${appConfig.bindingTariffClassificationUrl}/cases/$reference"
