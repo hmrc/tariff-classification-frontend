@@ -16,14 +16,13 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.views
 
-import org.scalatest.BeforeAndAfterEach
 import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes
 import uk.gov.hmrc.tariffclassificationfrontend.models.Operator
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
 import uk.gov.hmrc.tariffclassificationfrontend.views.html.assign_case
 import uk.gov.tariffclassificationfrontend.utils.Cases._
 
-class AssignCaseViewSpec extends ViewSpec with BeforeAndAfterEach {
+class AssignCaseViewSpec extends ViewSpec {
 
   "Assign Case" should {
 

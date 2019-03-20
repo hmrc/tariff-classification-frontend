@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.views.partials
 
-import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes
 import uk.gov.hmrc.tariffclassificationfrontend.models.Operator
@@ -24,13 +23,9 @@ import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
 import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.cases_assignee_nav
 import uk.gov.hmrc.tariffclassificationfrontend.views.{AssigneeCount, ViewSpec}
 
-class CasesAssigneeNavViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterEach {
+class CasesAssigneeNavViewSpec extends ViewSpec with MockitoSugar {
 
   private def assigedCasesURL(id: String) = routes.AssignedCasesController.assignedCases(Some(id)).url
-
-  override protected def afterEach(): Unit = {
-    super.afterEach()
-  }
 
   "Cases Assignee Nav" should {
 
