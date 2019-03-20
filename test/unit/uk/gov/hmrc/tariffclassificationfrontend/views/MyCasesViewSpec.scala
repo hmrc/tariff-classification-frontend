@@ -46,8 +46,6 @@ class MyCasesViewSpec extends ViewSpec {
 
       doc should containElementWithID("nav-menu-my-cases")
 
-      doc should containElementWithID("nav-menu-assigned-cases")
-
       doc.getElementById("queue-name") should containText(s"Cases for ${operator.name.get}")
       doc should containText(messages("cases.table.empty"))
 
@@ -71,8 +69,6 @@ class MyCasesViewSpec extends ViewSpec {
       doc should containElementWithID("cases_list-table")
 
       doc should containElementWithID("nav-menu-my-cases")
-
-      doc should containElementWithID("nav-menu-assigned-cases")
 
       doc.getElementById("queue-name") should containText(s"Cases for ${operator.name.get}")
       doc.getElementById("cases_list-table") should containText(case1.reference)

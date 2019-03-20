@@ -44,8 +44,6 @@ class QueueViewSpec extends ViewSpec {
 
       doc should containElementWithID("nav-menu-my-cases")
 
-      doc should containElementWithID("nav-menu-assigned-cases")
-
       doc.getElementById("queue-name") should containText("Queue 1 Name Cases")
       doc should containText(messages("cases.table.empty"))
     }
@@ -67,8 +65,6 @@ class QueueViewSpec extends ViewSpec {
       doc should containElementWithID("cases_list-table")
 
       doc should containElementWithID("nav-menu-my-cases")
-
-      doc should containElementWithID("nav-menu-assigned-cases")
 
       doc.getElementById("queue-name") should containText("Queue 1 Name")
       doc.getElementById("cases_list-table") should containText(case1.reference)

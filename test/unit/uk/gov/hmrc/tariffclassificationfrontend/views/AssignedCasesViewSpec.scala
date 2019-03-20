@@ -49,8 +49,6 @@ class AssignedCasesViewSpec extends ViewSpec {
       doc should containElementWithID("assignees_list-empty")
 
       doc should containElementWithID("nav-menu-my-cases")
-
-      doc should containElementWithID("nav-menu-assigned-cases")
       doc should containText(messages("cases.summary.assignee.empty"))
     }
 
@@ -74,7 +72,6 @@ class AssignedCasesViewSpec extends ViewSpec {
 
       doc should containElementWithID("assignee-navigation")
       doc should not(containElementWithID("assignees_list-empty"))
-      doc should containElementWithID("nav-menu-assigned-cases")
       doc should containElementWithID("nav-menu-assignee-444")
 
       doc should not(containText(messages("cases.summary.assignee.empty")))
