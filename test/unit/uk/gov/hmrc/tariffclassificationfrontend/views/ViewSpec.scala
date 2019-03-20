@@ -46,4 +46,5 @@ abstract class ViewSpec extends UnitSpec with WithFakeApplication {
   protected def view(html: Html): Document = {
     Jsoup.parse(html.toString())
   }
+
 }
