@@ -16,7 +16,7 @@
 
 @import play.api.libs.json.Json
 
-@(linkText: String, printTag: String = "tab-content", linkClasses: Option[String] = None, ignore: Seq[String] = Seq.empty)
+@(linkText: String, printTag: String = "case_details-tab_content", linkClasses: Option[String] = None, ignore: Seq[String] = Seq.empty)
 
 <div id="print-section" class="@if(linkClasses.isDefined){@linkClasses.get}">
     <a id="print-link" href="javascript:print('@printTag')"> @linkText</a>

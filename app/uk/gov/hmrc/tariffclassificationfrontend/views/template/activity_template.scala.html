@@ -49,7 +49,7 @@
     <tbody>
         @for((event: Event, index: Int) <- events.results.zipWithIndex) {
                 <tr>
-                    <td style="width: 30%;">
+                    <td style="width: 30%;vertical-align: top;">
                         @event.operator.name.getOrElse("")
                         <span style="display:block"> @Dates.format(event.timestamp) </span>
                     </td>
