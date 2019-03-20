@@ -41,7 +41,7 @@ class AssignedCasesController @Inject()(authenticated: AuthenticatedAction,
     showAssignedCases()
   }
 
-  def assignedCasesFor(assigneeId: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
+  def assignedCasesFor(assigneeId: String): Action[AnyContent] = (authenticated andThen verifiedManager).async { implicit request =>
     showAssignedCases(Some(assigneeId))
   }
 
