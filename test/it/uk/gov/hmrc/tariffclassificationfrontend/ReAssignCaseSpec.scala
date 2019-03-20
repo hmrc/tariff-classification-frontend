@@ -40,8 +40,18 @@ class ReAssignCaseSpec extends IntegrationTest with MockitoSugar {
       response.status shouldBe OK
       response.body should include("<h3 class=\"heading-large mt-0\">Move this case back to a queue</h3>")
     }
-  }
 
-  // TODO: add more scenarios
+    "redirect on auth failure" in {
+      // Given
+      givenAuthFailed()
+
+      // When
+      val response: WSResponse = await(ws.url(s"$baseUrl/cases/1/reassign-case").get())
+
+      // Then
+      response.status shouldBe OK
+      response.body should include("You are not authorised to access this page.")
+    }
+  }
 
 }
