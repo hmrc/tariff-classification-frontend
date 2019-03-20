@@ -69,17 +69,6 @@ class AssignedCasesControllerSpec extends UnitSpec with Matchers with WithFakeAp
       charset(result) shouldBe Some("utf-8")
       contentAsString(result) should include ("Assigned Cases")
     }
-
-    "return 200 OK and HTML content type when case is returned" in {
-      given(casesService.getAssignedCases(refEq(NoPagination()))(any[HeaderCarrier])).willReturn(Future.successful(Paged(Seq(assignedCase))))
-      given(queuesService.getAll).willReturn(Future.successful(Seq(queue)))
-
-      val result = await(controller(asTeamManager).assignedCases()(fakeRequest))
-      status(result) shouldBe Status.OK
-      contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
-      contentAsString(result) should include ("Assigned to Test User")
-    }
   }
 
   "Assigned Cases by Operator" should {

@@ -70,7 +70,7 @@ class ReassignCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       when(queueService.getNonGateway).thenReturn(successful(Seq.empty))
       when(queueService.getOneById(any())).thenReturn(successful(None))
 
-      val result: Result = await(controller.showAvailableQueues("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+      val result: Result = await(controller.showAvailableQueues("reference", "origin")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -82,7 +82,7 @@ class ReassignCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusNEW)))
       when(queueService.getNonGateway).thenReturn(successful(Seq.empty))
 
-      val result: Result = await(controller.showAvailableQueues("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+      val result: Result = await(controller.showAvailableQueues("reference", "origin")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
@@ -94,7 +94,7 @@ class ReassignCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(None))
       when(queueService.getNonGateway).thenReturn(successful(Seq.empty))
 
-      val result: Result = await(controller.showAvailableQueues("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+      val result: Result = await(controller.showAvailableQueues("reference", "origin")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -113,7 +113,7 @@ class ReassignCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       when(queue.name).thenReturn(("SOME_QUEUE"))
       when(casesService.reassignCase(refEq(caseWithStatusOPEN), any[Queue], refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusOPEN))
 
-      val result: Result = await(controller.reassignCase("reference")(requestWithQueue("queue")))
+      val result: Result = await(controller.reassignCase("reference", "origin")(requestWithQueue("queue")))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -129,7 +129,7 @@ class ReassignCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       when(queueService.getOneById(any())).thenReturn(successful(None))
       when(casesService.reassignCase(refEq(caseWithStatusOPEN), any[Queue], refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusOPEN))
 
-      val result: Result = await(controller.reassignCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
+      val result: Result = await(controller.reassignCase("reference", "origin")(newFakePOSTRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -141,7 +141,7 @@ class ReassignCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusNEW)))
       when(queueService.getOneBySlug("queue")).thenReturn(successful(Some(queue)))
 
-      val result: Result= await(controller.reassignCase("reference")(requestWithQueue("queue")))
+      val result: Result= await(controller.reassignCase("reference", "origin")(requestWithQueue("queue")))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
@@ -153,7 +153,7 @@ class ReassignCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(None))
       when(queueService.getOneBySlug("queue")).thenReturn(successful(Some(queue)))
 
-      val result: Result = await(controller.reassignCase("reference")(requestWithQueue("queue")))
+      val result: Result = await(controller.reassignCase("reference", "origin")(requestWithQueue("queue")))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -165,7 +165,7 @@ class ReassignCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusNEW)))
       when(queueService.getOneBySlug("queue")).thenReturn(successful(None))
 
-      val result: Result = await(controller.reassignCase("reference")(requestWithQueue("queue")))
+      val result: Result = await(controller.reassignCase("reference", "origin")(requestWithQueue("queue")))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -180,7 +180,7 @@ class ReassignCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       when(queueService.getOneBySlug("queue")).thenReturn(successful(Some(queue)))
 
       val caught = intercept[error.type] {
-        await(controller.reassignCase("reference")(requestWithQueue("queue")))
+        await(controller.reassignCase("reference", "origin")(requestWithQueue("queue")))
       }
       caught shouldBe error
     }
