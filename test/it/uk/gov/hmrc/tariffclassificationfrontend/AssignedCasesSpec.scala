@@ -41,7 +41,7 @@ class AssignedCasesSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response: WSResponse = await(ws.url(s"$baseUrl/queues/assigned?operatorId=1").get())
+      val response: WSResponse = await(ws.url(s"$baseUrl/queues/assigned/1").get())
 
       // Then
       response.status shouldBe OK
