@@ -14,6 +14,7 @@
  * limitations under the License.
  *@
 
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CompleteCaseController
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus}
 @import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionFormData
 @(c: Case, decisionForm : Option[Form[DecisionFormData]], classes: Seq[String] = Seq.empty)(implicit messages: Messages)
@@ -31,7 +32,7 @@
                 }
                 </ul>
             }
-            <a id="complete-case-button"  class="button @classes.mkString(" ")"  @if(hasErrors) { disabled="disabled" }else{ href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CompleteCaseController.completeCase(c.reference)"}>
+            <a id="complete-case-button"  class="button @classes.mkString(" ")"  @if(hasErrors) { disabled="disabled" }else{ href="@CompleteCaseController.completeCase(c.reference)"}>
                 Complete case
             </a>
         }

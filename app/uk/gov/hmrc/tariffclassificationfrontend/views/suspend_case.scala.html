@@ -14,6 +14,7 @@
  * limitations under the License.
  *@
 
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.SuspendCaseController
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
@@ -32,7 +33,7 @@
             <p> Before you suspend this case, add a note explaining why you’re suspending it. </p>
             <p> The days elapsed count will stop at <span id="days-elapsed">@(c.daysElapsed)</span>.</p>
 
-            @helper.form(action = uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.SuspendCaseController.confirmSuspendCase(c.reference), 'id -> "suspend-case") {
+            @helper.form(action = SuspendCaseController.confirmSuspendCase(c.reference), 'id -> "suspend-case") {
                 @helper.CSRF.formField
 
                 <div>

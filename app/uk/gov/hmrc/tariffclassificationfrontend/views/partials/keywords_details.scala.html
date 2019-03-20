@@ -15,6 +15,7 @@
  *@
 
 @import helper._
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes
 @import uk.gov.hmrc.tariffclassificationfrontend.models.Case
@@ -48,7 +49,7 @@
                             </td>
 
                             <td id="keywords-row-@{index}-remove" >
-                                <a id="keywords-row-@{index}-remove-link" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.removeKeyword(c.reference, keyword)">Remove</a>
+                                <a id="keywords-row-@{index}-remove-link" href="@CaseController.removeKeyword(c.reference, keyword)">Remove</a>
                             </td>
                         </tr>
                     }
