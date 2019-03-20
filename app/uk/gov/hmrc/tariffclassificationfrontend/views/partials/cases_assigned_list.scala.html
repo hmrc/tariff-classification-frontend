@@ -22,7 +22,7 @@
 
 @if(cases.isDefined) {
     @defining(cases.get) { assignedCases: AssignedCases =>
-        <h3 class="heading-small">Assigned to @assignedCases.name</h3>
+        <h2 class="heading-small">Assigned to @assignedCases.name</h2>
         @cases_assigned_table("Cases on hand", assignedCases.openCases, "open")
         @cases_assigned_table("Suspended and referred cases", assignedCases.otherCases, "other")
     }
