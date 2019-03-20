@@ -26,7 +26,7 @@
 @main(bodyClasses = None) {
  <h1 id="advanced_search-heading" class="heading-xlarge">Advanced Search</h1>
 
- <h2 class="heading-medium">Enter search terms</h2>
+ <h2 class="heading-large">Enter search terms</h2>
  <hr class="mt-0"/>
 
  @helper.form(action = controllers.routes.SearchController.search(), 'id -> "advanced_search-form") {
@@ -66,7 +66,7 @@
   @if(results.isDefined && !form.hasErrors) {
    <div id="advanced_search-results_and_filters" class="mt-3">
 
-    <h3 class="heading-large">Search Results</h3>
+    <h2 class="heading-large">Search Results</h2>
 
     <div class="grid-row">
      <div class="column-one-quarter">

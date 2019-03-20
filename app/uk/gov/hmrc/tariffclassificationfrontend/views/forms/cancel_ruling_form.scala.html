@@ -24,7 +24,7 @@
 
 @helper.form(action = routes.CancelRulingController.confirmCancelRuling(c.reference), 'id -> "cancel_reason_form") {
     @helper.CSRF.formField
-    <h3 class="heading-small">Reason for cancellation</h3>
+    <h4 class="heading-small">Reason for cancellation</h4>
     @input_radiogroup(
         field = field,
         options = CancelReason.values.toSeq.sorted.map(s => RadioOption(s.toString, CancelReason.format(s))),

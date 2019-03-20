@@ -85,7 +85,7 @@
 
             @if(btiApp.agent.isDefined) {
 
-                <h3 id="agent-submitted-heading" > Agent details </h3>
+                <h3 class="heading-medium" id="agent-submitted-heading" > Agent details </h3>
 
                 @defining(btiApp.agent.get) { btiAgent: AgentDetails =>
 
@@ -150,7 +150,7 @@
 
 @defining(c) { c: Case =>
     @if(c.status == CaseStatus.NEW) {
-        <h3 id="release-suppress-case-heading">Releasing or suppressing a case</h3>
+        <h3 class="heading-medium" id="release-suppress-case-heading">Releasing or suppressing a case</h3>
 
         <p>Release this case if the applicant has included their:</p>
 

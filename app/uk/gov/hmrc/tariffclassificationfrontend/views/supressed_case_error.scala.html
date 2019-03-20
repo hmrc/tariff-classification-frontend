@@ -31,15 +31,13 @@
 
     <div class="grid-row">
         <div class="column-full">
-            <h3 class="heading-large mt-0">You must contact the applicant and attach a copy of the email to this case before you suppress it</h3>
+            <h2 class="heading-large mt-0">You must contact the applicant and attach a copy of the email to this case before you suppress it</h2>
 
             @contact_details(c)
 
-            <div class="heading-medium mt-45">Next Steps</div>
+            <h3 class="heading-medium mt-45">Next Steps</h3>
 
             <p>Go to <a href="@AttachmentsController.attachmentsDetails(c.reference)">case attachments</a>.</p>
-
-
         </div>
     </div>
 }

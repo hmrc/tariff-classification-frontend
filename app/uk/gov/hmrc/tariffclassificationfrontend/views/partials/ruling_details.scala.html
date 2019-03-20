@@ -29,7 +29,7 @@
         <p id="boards-file-number" class="column-full">Boards file number: @{c.caseBoardsFileNumber.getOrElse("None")}</p>
     </div>
 
-    <h3 class="heading-small">@messages("case.menu.application")</h3>
+    <h3 class="heading-medium  mt-1">@messages("case.menu.application")</h3>
 
     <div class="grid-row">
         <div id="application_envisagedCommodityCode" class="column-one-third">
@@ -55,7 +55,7 @@
 
     <div class="grid-row">
         <div class="column-one-third">
-            <h3 class="heading-small">@messages("case.menu.ruling-details")</h3>
+            <h3 class="heading-medium  mt-1">@messages("case.menu.ruling-details")</h3>
         </div>
         @if(c.status == CaseStatus.OPEN) {
             <div id="ruling_edit_details" class="column-two-thirds text-right mt-1 pt-5">

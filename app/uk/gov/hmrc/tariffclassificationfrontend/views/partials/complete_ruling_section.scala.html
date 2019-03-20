@@ -23,7 +23,7 @@
     <div id="complete-case-section">
         @defining(decisionForm.map(_.errors.size).exists(_ > 0)) { hasErrors : Boolean =>
             @if(hasErrors) {
-                <h2 class="heading-medium">@messages("case.decision.before-you-complete")</h2>
+                <h3 class="heading-medium">@messages("case.decision.before-you-complete")</h3>
                 <p>To complete this case, you need to fill in these fields:</p>
                 <ul class="list list-bullet">
                 @for(error <- decisionForm.get.errors) {
