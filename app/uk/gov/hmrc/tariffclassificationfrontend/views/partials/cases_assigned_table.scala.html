@@ -41,7 +41,7 @@
                 <td id="cases_list-@{id}-row-@{index}-status">@c.status</td>
                 <td id="cases_list-@{id}-row-@{index}-days_elapsed">@c.daysElapsed</td>
                 <th scope="row">
-                    <a id="cases_list-@{id}-row-@{index}-move" href="@ReassignCaseController.showAvailableQueues(c.reference)">Move</a>
+                    <a id="cases_list-@{id}-row-@{index}-move" href="@ReassignCaseController.showAvailableQueues(c.reference, request.uri)">Move</a>
                 </th>
             </tr>
         }

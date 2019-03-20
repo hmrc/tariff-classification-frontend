@@ -22,10 +22,12 @@ import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models.NoPagination
+import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, QueuesService}
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 @Singleton
 class AssignedCasesController @Inject()(authenticated: AuthenticatedAction,
@@ -35,11 +37,20 @@ class AssignedCasesController @Inject()(authenticated: AuthenticatedAction,
                                         val messagesApi: MessagesApi,
                                         implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
-  def assignedCases(operatorId: Option[String]): Action[AnyContent] = (authenticated andThen verifiedManager).async { implicit request =>
+  def assignedCases(): Action[AnyContent] = (authenticated andThen verifiedManager).async { implicit request =>
+    showAssignedCases()
+  }
+
+  def assignedCasesFor(assigneeId: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
+    showAssignedCases(Some(assigneeId))
+  }
+
+  private def showAssignedCases(assigneeId: Option[String] = None)
+                               (implicit request: AuthenticatedRequest[_]): Future[Result] = {
     for {
       cases <- casesService.getAssignedCases(NoPagination())
       queues <- queuesService.getAll
-    } yield Ok(views.html.assigned_cases(queues, cases.results, operatorId))
+    } yield Ok(views.html.assigned_cases(queues, cases.results, assigneeId))
   }
 
 }
