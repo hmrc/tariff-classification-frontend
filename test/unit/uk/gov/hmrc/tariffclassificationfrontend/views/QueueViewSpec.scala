@@ -17,7 +17,7 @@
 package uk.gov.hmrc.tariffclassificationfrontend.views
 
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Paged, Queue}
-import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers.{containElementWithID, _}
+import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
 import uk.gov.tariffclassificationfrontend.utils.Cases
 
 class QueueViewSpec extends ViewSpec {

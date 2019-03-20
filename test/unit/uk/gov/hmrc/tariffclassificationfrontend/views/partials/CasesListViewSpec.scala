@@ -18,7 +18,6 @@ package uk.gov.hmrc.tariffclassificationfrontend.views.partials
 
 import java.time.{LocalDate, ZoneOffset}
 
-import org.scalatest.BeforeAndAfterEach
 import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus, Paged}
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
@@ -26,11 +25,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.views.ViewSpec
 import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.cases_list
 import uk.gov.tariffclassificationfrontend.utils.Cases._
 
-class CasesListViewSpec extends ViewSpec with BeforeAndAfterEach {
-
-  override protected def afterEach(): Unit = {
-    super.afterEach()
-  }
+class CasesListViewSpec extends ViewSpec {
 
   "Cases List" should {
 

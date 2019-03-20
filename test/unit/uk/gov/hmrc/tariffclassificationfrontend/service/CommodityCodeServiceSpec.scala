@@ -16,11 +16,10 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.service
 
-import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.play.test.UnitSpec
 
-class CommodityCodeServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
+class CommodityCodeServiceSpec extends UnitSpec with MockitoSugar {
 
   private val service = new CommodityCodeService()
 
