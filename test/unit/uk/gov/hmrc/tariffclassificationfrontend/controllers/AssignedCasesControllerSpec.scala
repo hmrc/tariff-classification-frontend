@@ -47,7 +47,7 @@ class AssignedCasesControllerSpec extends UnitSpec with Matchers with WithFakeAp
   private implicit val hc: HeaderCarrier = HeaderCarrier()
   private val assignedCase = btiCaseExample.copy(assignee = Some(Operator("1", Some("Test User"))))
 
-  private def controller(operator: Operator) = new AssignedCasesController(new SuccessfulAuthenticatedAction(operator), casesService, queuesService, messageApi, appConfig)
+  private def controller(operator: Operator) = new AssignedCasesController(new SuccessfulAuthenticatedAction(operator), new AuthenticatedManagerAction(), casesService, queuesService, messageApi, appConfig)
 
   "Assigned Cases" should {
     val asTeamMember = Operator("id")

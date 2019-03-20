@@ -20,6 +20,7 @@ case class Operator
 (
  id: String,
  name: Option[String] = None,
- manager: Boolean = false){
+ manager: Boolean = false
+){
   def safeName: String = name.getOrElse(s"PID $id")
 }
