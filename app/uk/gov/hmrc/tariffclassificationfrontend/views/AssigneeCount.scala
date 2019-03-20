@@ -32,7 +32,7 @@ object AssigneeCount{
     cases
       .filter(_.assignee.isDefined)
       .groupBy[Operator](_.assignee.getOrElse(throw new IllegalStateException("Operator not found")))
-      .map { case (op, cases) => AssigneeCount(op, cases.size) }
+      .map { case (op, opCases) => AssigneeCount(op, opCases.size) }
       .toSeq
       .sortBy( a => (a.lastName, a.firstName) )
   }

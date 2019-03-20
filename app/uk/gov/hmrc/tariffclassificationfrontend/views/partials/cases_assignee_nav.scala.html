@@ -27,7 +27,7 @@
     <ul>
         @for(a <- assignees) {
             <li class="side-nav__list@if(assigneeId.exists(_ == a.op.id)) { side-nav__list--selected}">
-                <a id="nav-menu-assignee-@a.op.id" class="side-nav__link" href="@AssignedCasesController.assignedCases(Some(a.op.id))">@messages("case.summary.assignee", a.name, a.count)</a>
+                <a id="nav-menu-assignee-@a.op.id" class="side-nav__link" href="@AssignedCasesController.assignedCasesFor(a.op.id)">@messages("case.summary.assignee", a.name, a.count)</a>
             </li>
         }
     </ul>
