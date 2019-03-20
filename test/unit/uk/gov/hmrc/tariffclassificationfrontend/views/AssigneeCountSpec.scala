@@ -90,7 +90,8 @@ class AssigneeCountSpec extends UnitSpec {
         aCase(withAssignee(Some(op3))),
         aCase(withAssignee(Some(op3))),
         aCase(withAssignee(Some(op3))),
-        aCase(withAssignee(None))
+        aCase(withAssignee(None)),
+        aCase()
       )
 
       val summaries = AssigneeCount.apply(cases)
