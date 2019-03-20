@@ -16,23 +16,25 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.views
 
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Paged, Queue}
-import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers.{containElementWithID, _}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Operator, Queue}
+import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers.{containElementWithID, containText}
 import uk.gov.tariffclassificationfrontend.utils.Cases
 
-class QueueViewSpec extends ViewSpec {
+class AssignedCasesViewSpec extends ViewSpec {
 
-  "Queue View" should {
+  private val assigneeId = Some("pippo")
+
+  "Assigned Cases View" should {
     val queue1 = Queue("1", "queue1_name", "Queue 1 Name")
     val queue2 = Queue("2", "queue2_name", "Queue 2 Name")
     val case1 = Cases.btiCaseExample
 
-    "render empty list of cases" in {
+    "render empty list of users" in {
       // Given
       val queues = Seq(queue1, queue2)
 
       // When
-      val doc = view(html.queue(queues, queue1, Paged.empty[Case]))
+      val doc = view(html.assigned_cases(queues, Seq.empty[Case], assigneeId))
 
       // Then
       doc should containElementWithID("queue-navigation")
@@ -40,23 +42,25 @@ class QueueViewSpec extends ViewSpec {
       doc should containElementWithID("nav-menu-queue-queue1_name")
       doc should containElementWithID("nav-menu-queue-queue2_name")
 
-      doc should containElementWithID("cases_list-table")
+      doc should not(containElementWithID("cases_list-table"))
+
+      doc should containElementWithID("assignee-navigation")
+
+      doc should containElementWithID("assignees_list-empty")
 
       doc should containElementWithID("nav-menu-my-cases")
 
       doc should containElementWithID("nav-menu-assigned-cases")
-
-      doc.getElementById("queue-name") should containText("Queue 1 Name Cases")
-      doc should containText(messages("cases.table.empty"))
+      doc should containText(messages("cases.summary.assignee.empty"))
     }
 
-    "render with a list of cases" in {
+    "render with a list of users " in {
       // Given
       val queues = Seq(queue1, queue2)
-      val cases = Seq(case1)
+      val cases = Seq(case1.copy(assignee = Some(Operator("444", assigneeId))))
 
       // When
-      val doc = view(html.queue(queues, queue1, Paged(cases)))
+      val doc = view(html.assigned_cases(queues, cases, assigneeId))
 
       // Then
       doc should containElementWithID("queue-navigation")
@@ -64,16 +68,16 @@ class QueueViewSpec extends ViewSpec {
       doc should containElementWithID("nav-menu-queue-queue1_name")
       doc should containElementWithID("nav-menu-queue-queue2_name")
 
-      doc should containElementWithID("cases_list-table")
+      doc should not(containElementWithID("cases_list-table"))
 
       doc should containElementWithID("nav-menu-my-cases")
 
+      doc should containElementWithID("assignee-navigation")
+      doc should not(containElementWithID("assignees_list-empty"))
       doc should containElementWithID("nav-menu-assigned-cases")
+      doc should containElementWithID("nav-menu-assignee-444")
 
-      doc.getElementById("queue-name") should containText("Queue 1 Name")
-      doc.getElementById("cases_list-table") should containText(case1.reference)
-      doc.getElementById("cases_list-table") should containText(case1.status.toString)
-      doc.getElementById("cases_list-table") should containText(case1.application.getType)
+      doc should not(containText(messages("cases.summary.assignee.empty")))
     }
   }
 

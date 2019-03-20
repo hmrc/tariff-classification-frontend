@@ -3,14 +3,20 @@ package uk.gov.hmrc.tariffclassificationfrontend
 import com.github.tomakehurst.wiremock.client.WireMock._
 import org.scalatest.mockito.MockitoSugar
 import play.api.libs.ws.WSResponse
-import play.api.test.Helpers._
-import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus
+import play.api.test.Helpers.{CREATED, OK}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, Operator}
 import uk.gov.tariffclassificationfrontend.utils.{CasePayloads, Cases, EventPayloads}
 
-class RejectCaseSpec extends IntegrationTest with MockitoSugar {
+class ReAssignCaseSpec extends IntegrationTest with MockitoSugar {
 
-  "Case Reject" should {
-    val caseWithStatusOPEN = CasePayloads.jsonOf(Cases.btiCaseExample.copy(status = CaseStatus.OPEN))
+  "Re-Assign Case" should {
+    val operator = Operator("1", Some("arthur"))
+    val caseWithStatusOPEN = CasePayloads.jsonOf(Cases.btiCaseExample
+      .copy(
+        status = CaseStatus.OPEN,
+        assignee = Some(operator)
+      )
+    )
     val event = EventPayloads.event
 
     "return status 200" in {
@@ -28,11 +34,11 @@ class RejectCaseSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response: WSResponse = await(ws.url(s"$baseUrl/cases/1/reject").get())
+      val response: WSResponse = await(ws.url(s"$baseUrl/cases/1/reassign-case").get())
 
       // Then
       response.status shouldBe OK
-      response.body should include("<h3 class=\"heading-large mt-0\">Reject this case</h3>")
+      response.body should include("<h3 class=\"heading-large mt-0\">Move this case back to a queue</h3>")
     }
 
     "redirect on auth failure" in {
@@ -40,7 +46,7 @@ class RejectCaseSpec extends IntegrationTest with MockitoSugar {
       givenAuthFailed()
 
       // When
-      val response: WSResponse = await(ws.url(s"$baseUrl/cases/1/reject").get())
+      val response: WSResponse = await(ws.url(s"$baseUrl/cases/1/reassign-case").get())
 
       // Then
       response.status shouldBe OK

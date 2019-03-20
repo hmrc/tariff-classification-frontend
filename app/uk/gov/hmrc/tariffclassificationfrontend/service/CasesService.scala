@@ -94,7 +94,8 @@ class CasesService @Inject()(appConfig: AppConfig,
                   (implicit hc: HeaderCarrier): Future[Case] = {
     for {
       updated <- connector.updateCase(
-        original.copy(queueId = Some(queue.id), assignee = None))
+        original.copy(queueId = Some(queue.id), assignee = None)
+      )
       _ <- addQueueChangeEvent(original, updated, operator)
       _ <- addAssignmentChangeEvent(original, updated, operator)
       _ = auditService.auditQueueAssigned(updated, operator)

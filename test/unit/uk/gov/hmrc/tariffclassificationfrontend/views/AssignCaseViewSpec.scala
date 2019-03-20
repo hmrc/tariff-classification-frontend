@@ -25,10 +25,6 @@ import uk.gov.tariffclassificationfrontend.utils.Cases._
 
 class AssignCaseViewSpec extends ViewSpec with BeforeAndAfterEach {
 
-  override protected def afterEach(): Unit = {
-    super.afterEach()
-  }
-
   "Assign Case" should {
 
     "Render link to assign - when currently unassigned" in {

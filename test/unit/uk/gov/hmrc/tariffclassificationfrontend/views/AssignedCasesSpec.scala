@@ -18,11 +18,10 @@ package uk.gov.hmrc.tariffclassificationfrontend.views
 
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus._
-import uk.gov.hmrc.tariffclassificationfrontend.models.Operator
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Operator}
 import uk.gov.tariffclassificationfrontend.utils.Cases._
 
 class AssignedCasesSpec extends UnitSpec {
-
 
   "AssignedCases" should {
     "create for missing operator" in {
@@ -61,7 +60,7 @@ class AssignedCasesSpec extends UnitSpec {
     }
   }
 
-  private def buildCaseFor(op: String, status: CaseStatus) = {
+  private def buildCaseFor(op: String, status: CaseStatus): Case = {
     aCase(
       withStatus(status),
       withAssignee(Some(Operator(op, Some("Test User"))))

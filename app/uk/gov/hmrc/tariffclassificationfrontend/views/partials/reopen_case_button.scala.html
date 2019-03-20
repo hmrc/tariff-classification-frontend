@@ -14,11 +14,12 @@
  * limitations under the License.
  *@
 
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.ReopenCaseController
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus}
 @(c: Case)
 
 @if(c.status == CaseStatus.SUSPENDED || c.status == CaseStatus.REFERRED) {
-    <a id="reopen-case-button" class="button" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.ReopenCaseController.reopenCase(c.reference)">
+    <a id="reopen-case-button" class="button" href="@ReopenCaseController.reopenCase(c.reference)">
         Reopen case
     </a>
 }

@@ -17,12 +17,13 @@
 package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
 import javax.inject.{Inject, Singleton}
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Request, Result}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.forms.{DecisionForm, DecisionFormMapper}
+import uk.gov.hmrc.tariffclassificationfrontend.forms.{DecisionForm, DecisionFormData, DecisionFormMapper}
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus}
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, FileStoreService}
 import uk.gov.hmrc.tariffclassificationfrontend.views
@@ -44,12 +45,17 @@ class RulingController @Inject()(authenticatedAction: AuthenticatedAction,
 
   private lazy val menuTitle = CaseDetailPage.RULING
 
+  private def editRuling(f: Form[DecisionFormData], c: Case)
+                        (implicit request: Request[_]): Future[HtmlFormat.Appendable] = {
+    fileStoreService.getAttachments(c).map(views.html.partials.ruling_details_edit(c, _, f))
+  }
+
   def editRulingDetails(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     getCaseAndRenderView(reference, menuTitle, c => {
       val formData = mapper.caseToDecisionFormData(c)
       val df = decisionForm.form.fill(formData)
 
-      fileStoreService.getAttachments(c).map(views.html.partials.ruling_details_edit(c, _, df))
+      editRuling(df, c)
     })
   }
 
@@ -59,8 +65,7 @@ class RulingController @Inject()(authenticatedAction: AuthenticatedAction,
         getCaseAndRenderView(
           reference,
           menuTitle,
-          c => fileStoreService.getAttachments(c)
-            .map(views.html.partials.ruling_details_edit(c, _, errorForm))
+          c => editRuling(errorForm, c)
         ),
 
       validForm =>
