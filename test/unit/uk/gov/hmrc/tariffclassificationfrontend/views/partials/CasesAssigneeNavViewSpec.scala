@@ -25,7 +25,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.views.{AssigneeCount, ViewSpec}
 
 class CasesAssigneeNavViewSpec extends ViewSpec with MockitoSugar {
 
-  private def assigedCasesURL(id: String) = routes.AssignedCasesController.assignedCases(Some(id)).url
+  private def assignedCasesURL(id: String) = routes.AssignedCasesController.assignedCases(Some(id)).url
 
   "Cases Assignee Nav" should {
 
@@ -52,7 +52,7 @@ class CasesAssigneeNavViewSpec extends ViewSpec with MockitoSugar {
       val anchors = doc.getElementsByTag("a")
       anchors should haveSize(1)
       anchors.get(0) should containText("Test User (1)")
-      anchors.get(0) should haveAttribute("href", assigedCasesURL("1"))
+      anchors.get(0) should haveAttribute("href", assignedCasesURL("1"))
     }
 
     "Render assignees with one selected" in {
@@ -68,10 +68,10 @@ class CasesAssigneeNavViewSpec extends ViewSpec with MockitoSugar {
       val anchors = doc.getElementsByTag("a")
       anchors should haveSize(2)
       anchors.get(0) should containText("Test User 1 (1)")
-      anchors.get(0) should haveAttribute("href", assigedCasesURL("1"))
+      anchors.get(0) should haveAttribute("href", assignedCasesURL("1"))
 
       anchors.get(1) should containText("Test User 2 (2)")
-      anchors.get(1) should haveAttribute("href", assigedCasesURL("2"))
+      anchors.get(1) should haveAttribute("href", assignedCasesURL("2"))
 
       val listItems = doc.getElementsByTag("li")
       listItems should haveSize(2)
