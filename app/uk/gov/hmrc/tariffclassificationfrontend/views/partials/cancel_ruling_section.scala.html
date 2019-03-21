@@ -14,6 +14,7 @@
  * limitations under the License.
  *@
 
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CancelRulingController
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus}
 @(c: Case)(implicit messages: Messages)
 
@@ -25,7 +26,7 @@
     <p>This ruling may be cancelled if the binding commodity code changes or expires, or if the applicant provided incorrect information.</p>
     <p>If the binding commodity code has changed, you may need to issue a revised ruling.</p>
 
-    <a id="cancel-ruling-button" class="button" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CancelRulingController.cancelRuling(c.reference)">
+    <a id="cancel-ruling-button" class="button" href="@CancelRulingController.cancelRuling(c.reference)">
         Cancel ruling
     </a>
 }

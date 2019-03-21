@@ -14,6 +14,7 @@
  * limitations under the License.
  *@
 
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.AttachmentsController
 @import uk.gov.hmrc.play.views.html.helpers
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, StoredAttachment}
@@ -39,7 +40,7 @@
 
 
 
-    @helpers.form(action = uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.AttachmentsController.uploadAttachment(c.reference),
+    @helpers.form(action = AttachmentsController.uploadAttachment(c.reference),
         'enctype -> "multipart/form-data",
         'id -> "upload-files-form") {
 

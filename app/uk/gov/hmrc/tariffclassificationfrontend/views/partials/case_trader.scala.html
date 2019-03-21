@@ -14,6 +14,7 @@
  * limitations under the License.
  *@
 
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.SuppressCaseController
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Contact}
 @import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.tab_heading
@@ -179,7 +180,7 @@
         </p>
 
         <p>
-            <a id="suppress_link" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.SuppressCaseController.suppressCase(c.reference)">Suppress</a>
+            <a id="suppress_link" href="@SuppressCaseController.suppressCase(c.reference)">Suppress</a>
         </p>
     }
 }

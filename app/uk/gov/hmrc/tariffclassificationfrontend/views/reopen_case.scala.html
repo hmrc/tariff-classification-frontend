@@ -14,11 +14,11 @@
  * limitations under the License.
  *@
 
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.{AttachmentsController, CaseController, ReopenCaseController}
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.case_heading
-@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.AttachmentsController
 @(c: Case)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None) {
@@ -33,11 +33,11 @@
             <p>You can also  <a id="reopen-case-attachments-link" href="@AttachmentsController.attachmentsDetails(c.reference)">attach</a> any relevant documentation.</p>
             <p>The days elapsed count will resume from <span id="days-elapsed">@(c.daysElapsed)</span>.</p>
 
-            @helper.form(action = uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.ReopenCaseController.confirmReopenCase(c.reference), 'id -> "reopen-case") {
+            @helper.form(action = ReopenCaseController.confirmReopenCase(c.reference), 'id -> "reopen-case") {
                 @helper.CSRF.formField
                 <div>
                     <button class="button" id="reopen-case-button" type="submit">Reopen case</button>
-                    <a class="secondary-button" id="reopen-case-cancel-button" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.applicationDetails(c.reference)"> Cancel</a>
+                    <a class="secondary-button" id="reopen-case-cancel-button" href="@CaseController.applicationDetails(c.reference)"> Cancel</a>
                 </div>
             }
         </div>

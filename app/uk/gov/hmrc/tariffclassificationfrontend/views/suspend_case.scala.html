@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.SuspendCaseController
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.{CaseController, SuspendCaseController}
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
@@ -38,7 +38,7 @@
 
                 <div>
                     <button class="button" id="suspend-case-button" type="submit">Suspend case</button>
-                    <a class="secondary-button" id="suspend-case-cancel-button" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.applicationDetails(c.reference)">Cancel</a>
+                    <a class="secondary-button" id="suspend-case-cancel-button" href="@CaseController.applicationDetails(c.reference)">Cancel</a>
                 </div>
             }
         </div>
