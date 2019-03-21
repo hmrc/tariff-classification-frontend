@@ -21,20 +21,15 @@
 @if(c.status == CaseStatus.OPEN) {
     <div id="reject-suspend-section" class="mt-1">
         <h3 class="heading-medium mt-30 mb-30">Reject or suspend this case</h3>
-        <p> Reject this case if: </p>
-        <p> The application details are invalid. This cannot be undone.</p>
+
         <p>
-            <a id="reject-case-button" href="@controllers.routes.RejectCaseController.rejectCase(c.reference)">
-                Reject this case
-            </a>
+            <a id="reject-case-button" href="@controllers.routes.RejectCaseController.rejectCase(c.reference)">Reject this case</a>
+            if the case details are invalid. Once it has been rejected, it cannot be reopened.
         </p>
 
-        <p>  Suspend this case if: </p>
-        <p>  The commodity code that you want to assign to the ruling is changing. The case can be re-opened. </p>
         <p>
-            <a id="suspend-case-button" href="@controllers.routes.SuspendCaseController.suspendCase(c.reference)">
-                Suspend this case
-            </a>
+            <a id="suspend-case-button" href="@controllers.routes.SuspendCaseController.suspendCase(c.reference)">Suspend this case</a>
+            if the commodity code that you want to assign to the ruling is changing.  The case can be reopened.
         </p>
     </div>
 }

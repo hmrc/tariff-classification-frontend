@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.{CaseController, ReferCaseController}
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
@@ -23,7 +22,8 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.views.forms.components.RadioOption
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.input_radiogroup
 
-@(c: Case, form: Form[Boolean])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.AttachmentsController
+@(c: Case)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None) {
 
@@ -31,26 +31,13 @@
 
     <div class="grid-row">
         <div class="column-full">
-            <h2 class="heading-large mt-0">Contact the applicant and attach a copy of the email before you refer this case</h2>
+            <h2 class="heading-large mt-0">You must contact the applicant and attach a copy of the email to this case before you refer it</h2>
 
             @contact_details(c)
 
-            <h3 class="heading-medium mt-0">Have you contacted the applicant and attached the email to this case?</h3>
+            <h3 class="heading-medium mt-45">Next Steps</h3>
 
-            @helper.form(action = ReferCaseController.confirmReferCase(c.reference), 'id -> "refer-case") {
-                @helper.CSRF.formField
-
-                @input_radiogroup(
-                    field = form("state"),
-                    options = Seq(RadioOption("true", "Yes"), RadioOption("false", "No")),
-                    id = "refer-case-contacted_applicant"
-                )
-
-                <div>
-                    <button class="button" id="refer-case-button" type="submit">Refer case</button>
-                    <a class="secondary-button" id="refer-case-cancel-button" href="@CaseController.applicationDetails(c.reference)">Cancel</a>
-                </div>
-            }
+            <p>Go to <a href="@AttachmentsController.attachmentsDetails(c.reference)">case attachments</a>.</p>
         </div>
     </div>
 }
