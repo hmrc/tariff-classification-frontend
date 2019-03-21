@@ -45,4 +45,5 @@ class EventsService @Inject()(connector: BindingTariffClassificationConnector, a
       e
     }
   }
+
 }

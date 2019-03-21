@@ -40,7 +40,7 @@ class ReassignCaseController @Inject()(authenticatedAction: AuthenticatedAction,
                                        override implicit val config: AppConfig) extends RenderCaseAction {
 
   override protected def redirect: String => Call = {
-    // in case this is called from the "assigned cases" journey, we should redirect to `/queue/assigned/:opId`
+    // in case this is called from the "assigned cases" journey, we should redirect to `/queue/assigned/:assigneeId`
     routes.CaseController.applicationDetails
   }
 
