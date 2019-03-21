@@ -37,7 +37,7 @@ class RejectCaseController @Inject()(authenticatedAction: AuthenticatedAction,
                                      val messagesApi: MessagesApi,
                                      implicit val appConfig: AppConfig) extends RenderCaseAction {
 
-  private val form: Form[Boolean] = MandatoryBooleanForm.form("suppress_case")
+  private val form: Form[Boolean] = MandatoryBooleanForm.form("reject_case")
 
   override protected val config: AppConfig = appConfig
   override protected val caseService: CasesService = casesService
@@ -58,7 +58,7 @@ class RejectCaseController @Inject()(authenticatedAction: AuthenticatedAction,
         )
       },
       {
-        case true => getCaseAndRenderView(reference, casesService.rejectCase(_, request.operator).map(views.html.confirm_status_changed(_, "rejected")))
+        case true => getCaseAndRenderView(reference, casesService.rejectCase(_, request.operator).map(views.html.confirm_rejected(_)))
         case _ => getCaseAndRenderView(reference, c => successful(views.html.reject_case_error(c)))
       }
     )

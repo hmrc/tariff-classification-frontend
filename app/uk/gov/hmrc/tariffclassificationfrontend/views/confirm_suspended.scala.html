@@ -15,10 +15,10 @@
  *@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.MyCasesController
-@import uk.gov.hmrc.tariffclassificationfrontend.models.Case
+@import uk.gov.hmrc.tariffclassificationfrontend.models.{BTIApplication, Case}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{days_elapsed_paused, confirmation_next_steps, case_heading}
+
 @(c: Case)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None) {
@@ -26,7 +26,7 @@
 
     <div class="grid-row">
         <div class="column-full">
-            <h2 class="heading-large mt-0">This case has been referred</h2>
+            <h2 class="heading-large mt-0">This case has been suspended</h2>
 
             @days_elapsed_paused(c)
 

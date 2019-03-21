@@ -37,7 +37,7 @@ class ReferCaseController @Inject()(authenticatedAction: AuthenticatedAction,
                                     val messagesApi: MessagesApi,
                                     implicit val appConfig: AppConfig) extends RenderCaseAction {
 
-  private val form: Form[Boolean] = MandatoryBooleanForm.form("suppress_case")
+  private val form: Form[Boolean] = MandatoryBooleanForm.form("refer_case")
 
   override protected val config: AppConfig = appConfig
   override protected val caseService: CasesService = casesService
