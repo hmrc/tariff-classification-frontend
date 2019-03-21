@@ -33,9 +33,9 @@
 
         <div class="grid-row">
             <div class="column-full">
-                <h3 class="heading-large mt-0">This case has been moved to the @queue.name queue</h3>
+                <h2 class="heading-large mt-0">This case has been moved to the @queue.name queue</h2>
                 <p>The case status is still @c.status.toString.toLowerCase.</p>
-                <div class="heading-medium mt-0">Next Steps</div>
+                <h3 class="heading-medium mt-0">Next Steps</h3>
 
                 @if(originUrl.matches(".*/tariff-classification/cases/[0-9]+/activity.*")) {
                     <p>Go to <a href="@MyCasesController.myCases()">@messages("cases.menu.my-cases")</a>.</p>

@@ -21,44 +21,46 @@
 
 @(cases: Paged[Case])(implicit request: AuthenticatedRequest[_], messages: Messages)
 
-<table id="cases_list-table">
-    <thead>
-        <tr>
-            <th scope="col">@messages("cases.table.reference")</th>
-            <th scope="col">@messages("cases.table.goods-name")</th>
-            <th scope="col">@messages("cases.table.trader-name")</th>
-            <th scope="col">@messages("cases.table.created-date")</th>
-            <th scope="col">@messages("cases.table.status")</th>
-            <th scope="col">@messages("cases.table.type")</th>
-            <th scope="col">@messages("cases.table.elapsed-days")</th>
-        </tr>
-    </thead>
-    <tbody id="cases_list-body">
-        @for((c: Case, index: Int) <- cases.results.zipWithIndex) {
-            @defining(c.application) { a: Application =>
-                @defining(a.asBTI) { btiApp: BTIApplication =>
-                    <tr id="cases_list-row-@index">
-                        <th scope="row">
-                            @if(c.queueId.isDefined && !c.assignee.map(_.id).contains(request.operator.id)) {
-                                <a id="cases_list-row-@{index}-reference" href="@AssignCaseController.get(c.reference)">@c.reference</a>
-                            } else {
-                                <a id="cases_list-row-@{index}-reference" href="@CaseController.trader(c.reference)">@c.reference</a>
-                            }
-                        </th>
-                        <td id="cases_list-row-@{index}-good_name">@btiApp.goodName</td>
-                        <td id="cases_list-row-@{index}-business_name">@btiApp.holder.businessName</td>
-                        <td id="cases_list-row-@{index}-created_date">@Dates.format(c.createdDate)</td>
-                        <td id="cases_list-row-@{index}-status">@c.status</td>
-                        <td id="cases_list-row-@{index}-type">@a.getType</td>
-                        <td id="cases_list-row-@{index}-days_elapsed">@c.daysElapsed</td>
-                    </tr>
-                }
-            }
-
-        }
-    </tbody>
-</table>
-
 @if(cases.isEmpty) {
-    <p id="cases_list-empty">@messages("cases.table.empty")</p>
+    <div class="mt-3">
+        <p id="cases_list-empty">@messages("cases.table.empty")</p>
+    </div>
+}else{
+    <table id="cases_list-table">
+        <thead>
+            <tr>
+                <th scope="col">@messages("cases.table.reference")</th>
+                <th scope="col">@messages("cases.table.goods-name")</th>
+                <th scope="col">@messages("cases.table.trader-name")</th>
+                <th scope="col">@messages("cases.table.created-date")</th>
+                <th scope="col">@messages("cases.table.status")</th>
+                <th scope="col">@messages("cases.table.type")</th>
+                <th scope="col">@messages("cases.table.elapsed-days")</th>
+            </tr>
+        </thead>
+        <tbody id="cases_list-body">
+            @for((c: Case, index: Int) <- cases.results.zipWithIndex) {
+                @defining(c.application) { a: Application =>
+                    @defining(a.asBTI) { btiApp: BTIApplication =>
+                        <tr id="cases_list-row-@index">
+                            <th scope="row">
+                                @if(c.queueId.isDefined && !c.assignee.map(_.id).contains(request.operator.id)) {
+                                    <a id="cases_list-row-@{index}-reference" href="@AssignCaseController.get(c.reference)">@c.reference</a>
+                                } else {
+                                    <a id="cases_list-row-@{index}-reference" href="@CaseController.trader(c.reference)">@c.reference</a>
+                                }
+                            </th>
+                            <td id="cases_list-row-@{index}-good_name">@btiApp.goodName</td>
+                            <td id="cases_list-row-@{index}-business_name">@btiApp.holder.businessName</td>
+                            <td id="cases_list-row-@{index}-created_date">@Dates.format(c.createdDate)</td>
+                            <td id="cases_list-row-@{index}-status">@c.status</td>
+                            <td id="cases_list-row-@{index}-type">@a.getType</td>
+                            <td id="cases_list-row-@{index}-days_elapsed">@c.daysElapsed</td>
+                        </tr>
+                    }
+                }
+
+            }
+        </tbody>
+    </table>
 }

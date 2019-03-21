@@ -22,9 +22,9 @@
 
 @main(bodyClasses = None) {
     <div id="case-not-found-section">
-        <h1 class="heading-large">
+        <h2 class="heading-large">
             @messages("errors.case-not-found.title")
-        </h1>
+        </h2>
         <p>@messages("errors.case-not-found.message", reference)</p>
         <a href="@MyCasesController.myCases()">@messages("errors.all.back")</a>
     </div>

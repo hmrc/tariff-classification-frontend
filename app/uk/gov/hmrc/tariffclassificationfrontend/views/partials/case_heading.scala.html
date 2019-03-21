@@ -22,7 +22,7 @@
 <div id="case-heading" class="case-heading mt-1 mb-2">
     <span id="case-reference" class="case-reference">Case @{c.reference}</span>
     <h1 class="heading-xlarge case-title">@messages("case.title", c.application.getType, c.application.holder.businessName)</h1>
-    <span id ="case-status" class="phase-tag bg-blue">@c.status</span>
+    <span id ="case-status" class="phase-tag bg-blue">  <div class="hidden"> case status </div> @c.status </span>
 
     @defining(c.decision.flatMap(_.review).map(_.status)) { status: Option[ReviewStatus] =>
       @if(status.isDefined) {

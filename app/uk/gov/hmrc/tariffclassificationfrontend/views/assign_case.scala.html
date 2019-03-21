@@ -28,14 +28,14 @@
 
         @case_heading(c)
 
-        <h3 id="assign_case-heading" class="heading-large mt-0">
+        <h2 id="assign_case-heading" class="heading-large mt-0">
             @if(c.assignee.isDefined) {
                 <span id="assign_case-assigned_heading">This case is already assigned to @{assignee(c.assignee.get)}</span>
             }
             @if(c.assignee.isEmpty) {
                 <span id="assign_case-unassigned_heading">This case is unassigned. Do you want to take ownership?</span>
             }
-        </h3>
+        </h2>
 
         @if(c.assignee.isEmpty) {
             <p>This will add the case to your my cases list</p>

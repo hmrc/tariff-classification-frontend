@@ -27,15 +27,15 @@
 
     @attachments_state_message(attachments = filesFromApplicant ++ filesFromClassification)
 
-    <h3 id="applicant-heading">@messages(s"case.attachment.heading.applicant")</h3>
+    <h3 class="heading-medium" id="applicant-heading">@messages(s"case.attachment.heading.applicant")</h3>
     @attachments_list("applicant", filesFromApplicant)
 
     @if(letterOfAuthority.isDefined) {
-        <h3 id="letter-of-auth-heading">@messages(s"case.attachment.heading.letter-of-auth")</h3>
+        <h3 class="heading-medium" id="letter-of-auth-heading">@messages(s"case.attachment.heading.letter-of-auth")</h3>
         @attachments_list("letter-of-auth", Seq(letterOfAuthority.get))
     }
 
-    <h3 id="classification-team-heading">@messages(s"case.attachment.heading.classification-team")</h3>
+    <h3 class="heading-medium" id="classification-team-heading">@messages(s"case.attachment.heading.classification-team")</h3>
     @attachments_list("classification-team", filesFromClassification, showUploadedBy = true)
 
 
@@ -45,7 +45,7 @@
         'id -> "upload-files-form") {
 
         <div id="file-upload-heading">
-            <div class="heading-medium mt-30 mb-30">Upload new files</div>
+            <h3 class="heading-medium mt-30 mb-30">Upload new files</h3>
         </div>
 
         <div class="form-group">

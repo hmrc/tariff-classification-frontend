@@ -22,8 +22,8 @@
 
 @main(bodyClasses = None) {
 
-    <h1 class="heading-large">
+    <h2 class="heading-large">
         @messages("errors.resource-not-found.title", resource)
-    </h1>
+    </h2>
     <a href="@QueuesController.queue("gateway")">@messages("errors.all.back")</a>
 }
