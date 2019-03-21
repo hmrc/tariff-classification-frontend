@@ -38,7 +38,7 @@ class ReAssignCaseSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body should include("<h3 class=\"heading-large mt-0\">Move this case back to a queue</h3>")
+      response.body should include("Move this case back to a queue")
     }
 
     "redirect on auth failure" in {

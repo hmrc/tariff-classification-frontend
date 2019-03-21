@@ -34,7 +34,7 @@ class ReopenCaseSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body should include("<h3 class=\"heading-large mt-0\">Reopen this case</h3>")
+      response.body should include("Reopen this case")
     }
 
     "return status 200 when status is suspended" in {

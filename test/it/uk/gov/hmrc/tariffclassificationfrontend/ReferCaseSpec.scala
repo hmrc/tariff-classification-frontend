@@ -33,7 +33,7 @@ class ReferCaseSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body should include("<h3 class=\"heading-large mt-0\">Refer this case</h3>")
+      response.body should include("Refer this case")
     }
 
     "redirect on auth failure" in {

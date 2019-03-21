@@ -33,8 +33,8 @@ class CompleteCaseSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body should include("<h3 class=\"heading-large mt-0\">Complete this case</h3>")
-      response.body should not include ("disabled=disabled")
+      response.body should include("Complete this case")
+      response.body should not include "disabled=disabled"
     }
 
     "return disabled complete button when no complete deicision" in {

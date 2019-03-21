@@ -43,16 +43,6 @@ class AuthenticatedHttpClient @Inject()(auditConnector: AuditConnector, wsClient
     super.doPost(url, body, headers)(rds, addAuth)
   }
 
-  override def doFormPost(url: String, body: Map[String, Seq[String]])
-                         (implicit hc: HeaderCarrier): Future[HttpResponse] = {
-    super.doFormPost(url, body)(addAuth)
-  }
-
-  override def doPostString(url: String, body: String, headers: Seq[(String, String)])
-                           (implicit hc: HeaderCarrier): Future[HttpResponse] = {
-    super.doPostString(url, body, headers)(addAuth)
-  }
-
   override def doEmptyPost[A](url: String)
                              (implicit hc: HeaderCarrier): Future[HttpResponse] = {
     super.doEmptyPost(url)(addAuth)
@@ -62,17 +52,6 @@ class AuthenticatedHttpClient @Inject()(auditConnector: AuditConnector, wsClient
                        (implicit rds: Writes[A], hc: HeaderCarrier): Future[HttpResponse] = {
     super.doPut(url, body)(rds, addAuth)
   }
-
-  override def doDelete(url: String)
-                       (implicit hc: HeaderCarrier): Future[HttpResponse] = {
-    super.doDelete(url)(addAuth)
-  }
-
-  override def doPatch[A](url: String, body: A)
-                         (implicit rds: Writes[A], hc: HeaderCarrier): Future[HttpResponse] = {
-    super.doPatch(url, body)(rds, addAuth)
-  }
-
 }
 
 trait InjectAuthHeader {

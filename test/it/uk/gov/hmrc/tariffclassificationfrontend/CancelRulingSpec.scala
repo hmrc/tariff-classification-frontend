@@ -33,7 +33,7 @@ class CancelRulingSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body should include("<h3 class=\"heading-large mt-0\">Cancel the ruling</h3>")
+      response.body should include("Cancel the ruling")
     }
 
     "redirect on auth failure" in {
