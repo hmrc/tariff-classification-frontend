@@ -14,6 +14,7 @@
  * limitations under the License.
  *@
 
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.{CaseController, ReferCaseController}
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
@@ -31,11 +32,11 @@
             <p> Before you refer this case, add a note explaining why you’re referring it. </p>
             <p>The days elapsed count will pause at <span id="days-elapsed">@(c.daysElapsed)</span>.</p>
 
-            @helper.form(action = uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.ReferCaseController.confirmReferCase(c.reference), 'id -> "refer-case") {
+            @helper.form(action = ReferCaseController.confirmReferCase(c.reference), 'id -> "refer-case") {
                 @helper.CSRF.formField
                 <div>
                     <button class="button" id="refer-case-button" type="submit">Refer case</button>
-                    <a class="secondary-button" id="refer-case-cancel-button" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.applicationDetails(c.reference)">Cancel</a>
+                    <a class="secondary-button" id="refer-case-cancel-button" href="@CaseController.applicationDetails(c.reference)">Cancel</a>
                 </div>
             }
         </div>

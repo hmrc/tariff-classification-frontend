@@ -14,6 +14,7 @@
  * limitations under the License.
  *@
 
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.AttachmentsController
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.models.CancelReason.CancelReason
 @import uk.gov.hmrc.tariffclassificationfrontend.models.Case
@@ -40,7 +41,7 @@
             <p>Before you cancel the ruling:</p>
             <ul class="list list-bullet">
                 <li>notify the holder</li>
-                <li><a href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.AttachmentsController.attachmentsDetails(c.reference)">attach</a>  any relevant documentation to the case</li>
+                <li><a href="@AttachmentsController.attachmentsDetails(c.reference)">attach</a>  any relevant documentation to the case</li>
             </ul>
 
             @cancel_ruling_form(c, form("reason"))

@@ -15,6 +15,7 @@
  *@
 
 @import helper._
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.RulingController
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController
 @import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionFormData
@@ -64,7 +65,7 @@
 
         <hr class="mt-0"/>
 
-        @form(action = uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.RulingController.updateRulingDetails(c.reference), 'class -> "form") {
+        @form(action = RulingController.updateRulingDetails(c.reference), 'class -> "form") {
 
             @CSRF.formField
 
