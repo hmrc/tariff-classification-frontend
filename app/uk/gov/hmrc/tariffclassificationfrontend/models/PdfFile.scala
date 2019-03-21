@@ -14,21 +14,8 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.tariffclassificationfrontend.utils
+package uk.gov.hmrc.tariffclassificationfrontend.models
 
-import java.time.format.DateTimeFormatter
-import java.time.{Instant, LocalDateTime, ZoneOffset}
+case class PdfFile(content: Array[Byte], contentType: String = "application/pdf")
 
-object Dates {
 
-  val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd MMM yyyy")
-
-  def format(instant: Instant) : String = {
-    formatter.format(LocalDateTime.ofInstant(instant, ZoneOffset.UTC))
-  }
-
-  def format(instant: Option[Instant]) : String = {
-    instant.map(format).getOrElse("None")
-  }
-
-}

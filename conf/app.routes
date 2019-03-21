@@ -1,11 +1,11 @@
 # microservice specific routes
 
-GET         /assets/*file                        controllers.Assets.at(path="/public", file)
+GET         /assets/*file                         controllers.Assets.at(path="/public", file)
 
 GET         /unauthorized                        @uk.gov.hmrc.tariffclassificationfrontend.controllers.SecurityController.unauthorized()
 
-GET         /                                    controllers.Default.redirect(to = uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.MyCasesController.myCases.url)
-GET         /queues                              controllers.Default.redirect(to = uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.MyCasesController.myCases.url)
+GET         /                                     controllers.Default.redirect(to = uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.MyCasesController.myCases.url)
+GET         /queues                               controllers.Default.redirect(to = uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.MyCasesController.myCases.url)
 GET         /queues/my-cases                     @uk.gov.hmrc.tariffclassificationfrontend.controllers.MyCasesController.myCases()
 GET         /queues/assigned                     @uk.gov.hmrc.tariffclassificationfrontend.controllers.AssignedCasesController.assignedCases()
 GET         /queues/assigned/:assigneeId         @uk.gov.hmrc.tariffclassificationfrontend.controllers.AssignedCasesController.assignedCasesFor(assigneeId: String)
@@ -72,3 +72,5 @@ GET         /search                              @uk.gov.hmrc.tariffclassificati
 
 # Note: Browser links cant send a DELETE so it has to be GET in this case
 GET         /cases/:reference/keywords/:keyword  @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.removeKeyword(reference: String, keyword: String)
+
+GET         /pdf/ruling/:reference               @uk.gov.hmrc.tariffclassificationfrontend.controllers.PdfDownloadController.rulingPdf(reference: String)
