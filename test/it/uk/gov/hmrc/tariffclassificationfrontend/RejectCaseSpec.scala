@@ -32,7 +32,7 @@ class RejectCaseSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body should include("<h3 class=\"heading-large mt-0\">Reject this case</h3>")
+      response.body should include("Reject this case")
     }
 
     "redirect on auth failure" in {
