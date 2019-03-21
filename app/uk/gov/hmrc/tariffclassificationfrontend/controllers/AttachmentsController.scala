@@ -49,7 +49,7 @@ class AttachmentsController @Inject()(authenticatedAction: AuthenticatedAction,
   private lazy val form: Form[String] = UploadAttachmentForm.form
 
   def attachmentsDetails(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
-    getCaseAndRenderView(reference, CaseDetailPage.ATTACHMENTS, c => renderView(c, form))
+    getCaseAndRenderView(reference, CaseDetailPage.ATTACHMENTS, renderView(_, form))
   }
 
   private def renderView(c: Case, uploadForm: Form[String])

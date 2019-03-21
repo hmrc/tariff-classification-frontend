@@ -22,15 +22,17 @@ import play.api.mvc.{ActionRefiner, Result}
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 
 import scala.concurrent.Future
+import scala.concurrent.Future.successful
 
 @Singleton
 class AuthenticatedManagerAction @Inject()()
-  extends ActionRefiner[AuthenticatedRequest, AuthenticatedRequest]{
+  extends ActionRefiner[AuthenticatedRequest, AuthenticatedRequest] {
+
   override protected def refine[A](request: AuthenticatedRequest[A]): Future[Either[Result, AuthenticatedRequest[A]]] = {
-    if(request.operator.manager) {
-      Future.successful(Right(request))
+    if (request.operator.manager) {
+      successful(Right(request))
     } else {
-      Future.successful(Left(Redirect(routes.SecurityController.unauthorized())))
+      successful(Left(Redirect(routes.SecurityController.unauthorized())))
     }
   }
 }
