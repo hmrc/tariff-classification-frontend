@@ -515,4 +515,26 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest {
     }
   }
 
+  "Connector 'Get Assigned Cases'" should {
+
+    "get assigned cases " in {
+      val url = "/cases?application_type=BTI&assignee_id=some&status=OPEN,REFERRED,SUSPENDED&sort_by=days-elapsed&sort_direction=desc&page=1&page_size=2"
+
+      stubFor(get(urlEqualTo(url))
+        .willReturn(aResponse()
+          .withStatus(HttpStatus.SC_OK)
+          .withBody(CasePayloads.pagedGatewayCases))
+      )
+
+      await(connector.findAssignedCases(pagination)) shouldBe Paged(Seq(Cases.btiCaseExample))
+
+      verify(
+        getRequestedFor(urlEqualTo(url))
+          .withHeader("X-Api-Token", equalTo(realConfig.apiToken))
+      )
+    }
+
+  }
+
+
 }

@@ -7,7 +7,6 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus
 import uk.gov.tariffclassificationfrontend.utils.{CasePayloads, Cases, EventPayloads}
 
-
 class RejectCaseSpec extends IntegrationTest with MockitoSugar {
 
   "Case Reject" should {

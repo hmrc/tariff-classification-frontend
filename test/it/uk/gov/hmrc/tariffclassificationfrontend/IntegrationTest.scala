@@ -13,6 +13,7 @@ trait IntegrationTest extends UnitSpec with GuiceOneServerPerSuite
   with ResourceFiles with WiremockTestServer {
 
   override def fakeApplication(): Application = new GuiceApplicationBuilder()
+    .disable[com.kenshoo.play.metrics.PlayModule]
     .configure(Map(
       "microservice.services.binding-tariff-classification.port" -> wirePort,
       "microservice.services.binding-tariff-filestore.port" -> wirePort,

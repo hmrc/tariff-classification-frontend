@@ -14,6 +14,7 @@
  * limitations under the License.
  *@
 
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.QueuesController
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
 
@@ -24,5 +25,5 @@
     <h2 class="heading-large">
         @messages("errors.resource-not-found.title", resource)
     </h2>
-    <a href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.QueuesController.queue("gateway")">@messages("errors.all.back")</a>
+    <a href="@QueuesController.queue("gateway")">@messages("errors.all.back")</a>
 }

@@ -16,6 +16,7 @@
 
 @import helper._
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController
 @import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionFormData
 @import uk.gov.hmrc.tariffclassificationfrontend.models.response.ScanStatus
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{BTIApplication, Case, StoredAttachment}
@@ -128,7 +129,7 @@
 
            <div class="form-group">
                 <button id="submit" class="button" type="submit">Save changes</button>
-                <a href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.rulingDetails(c.reference)" class="secondary-button" id="cancel-button">Cancel</a>
+                <a href="@CaseController.rulingDetails(c.reference)" class="secondary-button" id="cancel-button">Cancel</a>
             </div>
         }
     </div>

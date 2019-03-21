@@ -26,7 +26,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, QueuesSer
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.Future.successful
 
 @Singleton
 class QueuesController @Inject()(authenticatedAction: AuthenticatedAction,
@@ -37,8 +37,7 @@ class QueuesController @Inject()(authenticatedAction: AuthenticatedAction,
 
   def queue(slug: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     queuesService.getOneBySlug(slug) flatMap {
-      case None =>
-        Future.successful(Ok(views.html.resource_not_found()))
+      case None => successful(Ok(views.html.resource_not_found()))
       case Some(q: Queue) =>
         for {
           cases <- casesService.getCasesByQueue(q, NoPagination())

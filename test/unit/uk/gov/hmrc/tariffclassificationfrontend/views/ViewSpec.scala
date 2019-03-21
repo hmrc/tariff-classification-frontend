@@ -39,11 +39,14 @@ abstract class ViewSpec extends UnitSpec with WithFakeApplication {
 
   private val request = FakeRequest("GET", "/", FakeHeaders(), AnyContentAsEmpty, tags = csrfTags)
   protected val authenticatedOperator = Operator("operator-id")
+  protected val authenticatedManager = Operator("operator-id", manager = true)
   implicit val authenticatedFakeRequest: AuthenticatedRequest[AnyContentAsEmpty.type] = AuthenticatedRequest(authenticatedOperator, request)
+  protected val authenticatedManagerFakeRequest: AuthenticatedRequest[AnyContentAsEmpty.type] = AuthenticatedRequest(authenticatedManager, request)
 
   implicit val messages: Messages = injector.instanceOf[MessagesApi].preferred(authenticatedFakeRequest)
 
   protected def view(html: Html): Document = {
     Jsoup.parse(html.toString())
   }
+
 }

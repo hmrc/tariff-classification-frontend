@@ -14,6 +14,7 @@
  * limitations under the License.
  *@
 
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{BTIApplication, Case}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
@@ -39,7 +40,7 @@
                 @form(action = uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CompleteCaseController.confirmCompleteCase(c.reference), 'class -> "form") {
                     @CSRF.formField
                     <button class="button" id="complete-case-button" type="submit">Complete and publish case</button>
-                    <a class="secondary-button" id="cancel-button" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.rulingDetails(c.reference)">Cancel</a>
+                    <a class="secondary-button" id="cancel-button" href="@CaseController.rulingDetails(c.reference)">Cancel</a>
                 }
 
             </div>

@@ -33,12 +33,14 @@ class PaginationViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
   private val goToPage: Int => Call = mock[Int => Call]
 
   override def beforeEach(): Unit = {
+
     def returnThePage: Answer[Call] = {
       new Answer[Call] {
         override def answer(invocation: InvocationOnMock): Call = Call(method = "GET", url = "/page=" + invocation.getArgument(0))
       }
     }
 
+    super.beforeEach()
     given(goToPage.apply(ArgumentMatchers.any[Int])) will returnThePage
   }
 

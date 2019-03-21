@@ -94,7 +94,8 @@ class CasesService @Inject()(appConfig: AppConfig,
                   (implicit hc: HeaderCarrier): Future[Case] = {
     for {
       updated <- connector.updateCase(
-        original.copy(queueId = Some(queue.id), assignee = None))
+        original.copy(queueId = Some(queue.id), assignee = None)
+      )
       _ <- addQueueChangeEvent(original, updated, operator)
       _ <- addAssignmentChangeEvent(original, updated, operator)
       _ = auditService.auditQueueAssigned(updated, operator)
@@ -232,6 +233,10 @@ class CasesService @Inject()(appConfig: AppConfig,
 
   def getCasesByAssignee(assignee: Operator, pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[Case]] = {
     connector.findCasesByAssignee(assignee, pagination)
+  }
+
+  def getAssignedCases(pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[Case]] = {
+    connector.findAssignedCases(pagination)
   }
 
   def updateCase(caseToUpdate: Case)(implicit hc: HeaderCarrier): Future[Case] = {

@@ -14,6 +14,7 @@
  * limitations under the License.
  *@
 
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus}
 @(c: Case)
 
@@ -23,7 +24,7 @@
         <p> Reject this case if: </p>
         <p> The application details are invalid. This cannot be undone.</p>
         <p>
-            <a id="reject-case-button" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.RejectCaseController.rejectCase(c.reference)">
+            <a id="reject-case-button" href="@controllers.routes.RejectCaseController.rejectCase(c.reference)">
                 Reject this case
             </a>
         </p>
@@ -31,7 +32,7 @@
         <p>  Suspend this case if: </p>
         <p>  The commodity code that you want to assign to the ruling is changing. The case can be re-opened. </p>
         <p>
-            <a id="suspend-case-button" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.SuspendCaseController.suspendCase(c.reference)">
+            <a id="suspend-case-button" href="@controllers.routes.SuspendCaseController.suspendCase(c.reference)">
                 Suspend this case
             </a>
         </p>

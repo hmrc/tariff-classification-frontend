@@ -55,6 +55,8 @@ class AuthenticatedActionSpec extends UnitSpec with MockitoSugar with Controller
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
+    given(appConfig.teamEnrolment).willReturn("team-enrolment")
+    given(appConfig.managerEnrolment).willReturn("manager-enrolment")
     given(environment.mode).willReturn(Mode.Dev)
     given(config.getString(any[String], any[Option[Set[String]]])).willReturn(None)
   }
@@ -62,7 +64,6 @@ class AuthenticatedActionSpec extends UnitSpec with MockitoSugar with Controller
   "Invoke Block" should {
 
     "Invoke block on success" in {
-      givenTheServiceIsRoleRestricted()
       givenAuthSuccess()
       givenTheBlockExecutesSuccessfully()
 
@@ -71,22 +72,10 @@ class AuthenticatedActionSpec extends UnitSpec with MockitoSugar with Controller
       val operator = theAuthenticatedRequest().operator
       operator.id shouldBe "id"
       operator.name shouldBe Some("full name")
-    }
-
-    "Invoke block on success when role not required/configured" in {
-      givenTheServiceIsNotRoleRestricted()
-      givenAuthSuccessWithoutRole()
-      givenTheBlockExecutesSuccessfully()
-
-      await(action.invokeBlock(FakeRequest(), block)) shouldBe result
-
-      val operator = theAuthenticatedRequest().operator
-      operator.id shouldBe "id"
-      operator.name shouldBe Some("full name")
+      operator.manager shouldBe false
     }
 
     "Invoke block on success with missing name" in {
-      givenTheServiceIsRoleRestricted()
       givenAuthSuccess(name = Name(None, None))
       givenTheBlockExecutesSuccessfully()
 
@@ -95,10 +84,22 @@ class AuthenticatedActionSpec extends UnitSpec with MockitoSugar with Controller
       val operator = theAuthenticatedRequest().operator
       operator.id shouldBe "id"
       operator.name shouldBe None
+      operator.manager shouldBe false
+    }
+
+    "Invoke block on success as manager" in {
+      givenAuthSuccess(manager = true)
+      givenTheBlockExecutesSuccessfully()
+
+      await(action.invokeBlock(FakeRequest(), block)) shouldBe result
+
+      val operator = theAuthenticatedRequest().operator
+      operator.id shouldBe "id"
+      operator.name shouldBe Some("full name")
+      operator.manager shouldBe true
     }
 
     "Allow invocation exceptions to propagate" in {
-      givenTheServiceIsRoleRestricted()
       val exception = new RuntimeException("Exception")
       givenAuthSuccess(name = Name(None, None))
       givenTheBlockThrowsAnError(exception)
@@ -109,7 +110,6 @@ class AuthenticatedActionSpec extends UnitSpec with MockitoSugar with Controller
     }
 
     "Allow unknown exceptions to propagate" in {
-      givenTheServiceIsRoleRestricted()
       val exception = new RuntimeException("Exception")
       given(connector.authorise(
         any[Predicate],
@@ -123,7 +123,6 @@ class AuthenticatedActionSpec extends UnitSpec with MockitoSugar with Controller
 
     "Redirect to Stride Login on NoActiveSession" in {
       given(appConfig.runningAsDev).willReturn(false)
-      givenTheServiceIsRoleRestricted()
       given(connector.authorise(
         any[Predicate],
         any[Retrieval[Credentials ~ Name]]
@@ -136,7 +135,6 @@ class AuthenticatedActionSpec extends UnitSpec with MockitoSugar with Controller
 
     "Redirect to Stride Login Dev on NoActiveSession" in {
       given(appConfig.runningAsDev).willReturn(true)
-      givenTheServiceIsRoleRestricted()
       given(connector.authorise(
         any[Predicate],
         any[Retrieval[Credentials ~ Name]]
@@ -148,7 +146,6 @@ class AuthenticatedActionSpec extends UnitSpec with MockitoSugar with Controller
     }
 
     "Redirect to Unauthorized on AuthorizationException" in {
-      givenTheServiceIsRoleRestricted()
       given(connector.authorise(
         any[Predicate],
         any[Retrieval[Credentials ~ Name]]
@@ -169,17 +166,11 @@ class AuthenticatedActionSpec extends UnitSpec with MockitoSugar with Controller
     captor.getValue
   }
 
-  private def givenAuthSuccess(id: String = "id", name: Name = Name(Some("full name"), Some("surname"))): Unit = {
-    val predicate: Predicate = Enrolment("enrolment") and AuthProviders(PrivilegedApplication)
-    val retrieval: Retrieval[Credentials ~ Name] = Retrievals.credentials and Retrievals.name
-    val value: Credentials ~ Name = new ~(Credentials(id, "type"), name)
-    given(connector.authorise(refEq(predicate), refEq(retrieval))(any[HeaderCarrier], refEq(global))).willReturn(Future.successful(value))
-  }
-
-  private def givenAuthSuccessWithoutRole(id: String = "id", name: Name = Name(Some("full name"), Some("surname"))): Unit = {
-    val predicate: Predicate = AuthProviders(PrivilegedApplication)
-    val retrieval: Retrieval[Credentials ~ Name] = Retrievals.credentials and Retrievals.name
-    val value: Credentials ~ Name = new ~(Credentials(id, "type"), name)
+  private def givenAuthSuccess(id: String = "id", name: Name = Name(Some("full name"), Some("surname")), manager: Boolean = false): Unit = {
+    val predicate: Predicate = (Enrolment("team-enrolment") or Enrolment("manager-enrolment")) and AuthProviders(PrivilegedApplication)
+    val retrieval: Retrieval[Credentials ~ Name ~ Enrolments] = Retrievals.credentials and Retrievals.name and Retrievals.allEnrolments
+    val enrolments: Set[Enrolment] = if(manager) Set(Enrolment("manager-enrolment")) else Set.empty
+    val value: Credentials ~ Name ~ Enrolments = new ~(new ~(Credentials(id, "type"), name), Enrolments(enrolments))
     given(connector.authorise(refEq(predicate), refEq(retrieval))(any[HeaderCarrier], refEq(global))).willReturn(Future.successful(value))
   }
 
@@ -191,12 +182,5 @@ class AuthenticatedActionSpec extends UnitSpec with MockitoSugar with Controller
     given(block.apply(any[AuthenticatedRequest[AnyContent]])).willThrow(e)
   }
 
-  private def givenTheServiceIsRoleRestricted(): Unit = {
-    given(appConfig.authEnrolment).willReturn(Some("enrolment"))
-  }
-
-  private def givenTheServiceIsNotRoleRestricted(): Unit = {
-    given(appConfig.authEnrolment).willReturn(None)
-  }
 
 }

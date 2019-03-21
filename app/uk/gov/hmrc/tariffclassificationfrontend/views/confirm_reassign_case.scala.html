@@ -14,11 +14,17 @@
  * limitations under the License.
  *@
 
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.{AssignedCasesController, MyCasesController}
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{BTIApplication, Case, Queue}
+@import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials._
-@(c: Case, queue: Queue)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+
+@import scala.util.matching.Regex
+
+@(c: Case, queue: Queue, originUrl: String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+
 
 @main(bodyClasses = None) {
     @defining(c.application.asBTI) { btiApp: BTIApplication =>
@@ -30,7 +36,21 @@
                 <h2 class="heading-large mt-0">This case has been moved to the @queue.name queue</h2>
                 <p>The case status is still @c.status.toString.toLowerCase.</p>
                 <h3 class="heading-medium mt-0">Next Steps</h3>
-                <p>Go to  <a href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.MyCasesController.myCases()">@messages("cases.menu.my-cases")</a>.</p>
+
+                @if(originUrl.matches(".*/tariff-classification/cases/[0-9]+/activity.*")) {
+                    <p>Go to <a href="@MyCasesController.myCases()">@messages("cases.menu.my-cases")</a>.</p>
+                } else {
+                    @defining(".*/tariff-classification/queues/assigned/([0-9]+).*".r) { casesAssignedToUrlRegex: Regex =>
+                        @defining(casesAssignedToUrlRegex.findFirstMatchIn(originUrl)) { matched: Option[Regex.Match] =>
+                            @if(matched.isDefined) {
+                                <p>Go to <a href="@AssignedCasesController.assignedCasesFor(matched.get.group(1))">cases assigned to @request.operator.safeName</a>.</p>
+                            } else {
+                                <p></p>
+                            }
+                        }
+                    }
+                }
+
             </div>
         </div>
     }

@@ -1,0 +1,45 @@
+@*
+ * Copyright 2019 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
+@import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
+@import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Queue}
+@import uk.gov.hmrc.tariffclassificationfrontend.views.{AssignedCases, AssigneeCount}
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials._
+
+@(queues: Seq[Queue], cases: Seq[Case], assigneeId: Option[String])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+
+@main(bodyClasses = None) {
+
+    <h1 id="queue-name" class="heading-xlarge">@messages("cases.heading.assigned-cases")</h1>
+
+    @nav_search()
+
+    <div class="grid-row">
+        <div class="column-one-quarter">
+            @queue_nav(queues, "assigned-cases")
+        </div>
+        <div class="column-three-quarters">
+            <div class="column-one-third px-0">
+                @cases_assignee_nav(AssigneeCount.apply(cases), assigneeId)
+            </div>
+            <div class="column-two-thirds">
+                @cases_assigned_list(AssignedCases.apply(cases, assigneeId))
+            </div>
+        </div>
+    </div>
+}

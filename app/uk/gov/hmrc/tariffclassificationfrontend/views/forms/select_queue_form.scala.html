@@ -16,7 +16,7 @@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.models.Queue
 
-@(field: Field, queues: Seq[Queue], id: String, postAction: Call, cancelAction: Call)(implicit request: Request[_], messages: Messages)
+@(field: Field, queues: Seq[Queue], id: String, postAction: Call, cancelUrl: String)(implicit request: Request[_], messages: Messages)
 
 @helper.form(action = postAction, 'id -> s"$id-form") {
     @helper.CSRF.formField
@@ -41,6 +41,6 @@
 
     <div>
         <button class="button" id="@id-button" type="submit"> @messages(s"$id.submit.button") </button>
-        <a class="secondary-button" id="cancel-button" href="@cancelAction">Cancel</a>
+        <a class="secondary-button" id="cancel-button" href="@cancelUrl">Cancel</a>
     </div>
 }

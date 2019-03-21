@@ -57,7 +57,8 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
         for {
           letter <- fileService.getLetterOfAuthority(c)
         } yield views.html.partials.case_trader(c, letter)
-      })
+      }
+    )
   }
 
   def applicationDetails(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
@@ -74,12 +75,16 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
   }
 
   def rulingDetails(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
-    getCaseAndRenderView(reference, CaseDetailPage.RULING, c => {
-      val form = decisionForm.bindFrom(c.decision)
-      fileService
-        .getAttachments(c)
-        .map(views.html.partials.ruling_details(c, form, _))
-    })
+    getCaseAndRenderView(
+      reference,
+      CaseDetailPage.RULING,
+      c => {
+        val form = decisionForm.bindFrom(c.decision)
+        fileService
+          .getAttachments(c)
+          .map(views.html.partials.ruling_details(c, form, _))
+      }
+    )
   }
 
   def activityDetails(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
@@ -94,10 +99,13 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
   }
 
   def keywordsDetails(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
-    getCaseAndRenderView(reference, CaseDetailPage.KEYWORDS,
+    getCaseAndRenderView(
+      reference,
+      CaseDetailPage.KEYWORDS,
       c => {
         keywordsService.autoCompleteKeywords.flatMap(autoCompleteKeywords =>
-          successful(views.html.partials.keywords_details(c, autoCompleteKeywords, keywordForm)))
+          successful(views.html.partials.keywords_details(c, autoCompleteKeywords, keywordForm))
+        )
       }
     )
   }
@@ -116,10 +124,14 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
 
     def onSuccess: ActivityFormData => Future[Result] = validForm => {
       getCaseAndRedirect(
-        reference, CaseDetailPage.ACTIVITY, c => {
+        reference,
+        CaseDetailPage.ACTIVITY,
+        c => {
           eventsService.addNote(c, validForm.note, request.operator).map(_ =>
-            routes.CaseController.activityDetails(reference))
-        })
+            routes.CaseController.activityDetails(reference)
+          )
+        }
+      )
     }
 
     activityForm.bindFromRequest.fold(onError, onSuccess)
@@ -129,11 +141,13 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
     keywordForm.bindFromRequest.fold(
       errorForm =>
         getCaseAndRenderView(
-          reference, CaseDetailPage.KEYWORDS, c => {
+          reference,
+          CaseDetailPage.KEYWORDS,
+          c => {
             keywordsService.autoCompleteKeywords.flatMap(autoCompleteKeywords =>
               successful(views.html.partials.keywords_details(c, autoCompleteKeywords, errorForm)))
-          }),
-
+          }
+        ),
       keyword =>
         getCaseAndRenderView(reference, CaseDetailPage.KEYWORDS,
           c =>
