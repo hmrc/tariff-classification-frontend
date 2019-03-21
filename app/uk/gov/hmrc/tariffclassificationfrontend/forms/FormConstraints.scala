@@ -16,15 +16,9 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.forms
 
-import play.api.data.Forms.of
-import play.api.data.Mapping
-import play.api.data.format.Formatter
 import play.api.data.validation.{Constraint, Invalid, Valid}
-import uk.gov.hmrc.tariffclassificationfrontend.service.CommodityCodeService
 
 object FormConstraints {
-
-  def enum[T <: Enumeration](implicit f: Formatter[T]): Mapping[T] = of[T]
 
   val validCommodityCode: Constraint[String] = Constraint("constraints.commoditycode")({
     case s: String if s.matches("[0-9]{6,22}") && (s.length % 2 == 0) => Valid
