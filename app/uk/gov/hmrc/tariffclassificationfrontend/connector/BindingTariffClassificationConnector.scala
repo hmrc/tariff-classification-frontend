@@ -34,9 +34,11 @@ import scala.concurrent.Future
 @Singleton
 class BindingTariffClassificationConnector @Inject()(appConfig: AppConfig, client: AuthenticatedHttpClient) {
 
-  private lazy val statuses: String = Seq(NEW, OPEN, REFERRED, SUSPENDED)
-    .map(_.toString)
-    .reduce( (a: String, b: String) => s"$a,$b" )
+  private lazy val statuses: String = Set(NEW, OPEN, REFERRED, SUSPENDED)
+    .map(_.toString).mkString(",")
+
+  private lazy val liveStatuses: String = Set( OPEN, REFERRED, SUSPENDED)
+    .map(_.toString).mkString(",")
 
   def findCase(reference: String)(implicit hc: HeaderCarrier): Future[Option[Case]] = {
     val url = s"${appConfig.bindingTariffClassificationUrl}/cases/$reference"
@@ -52,6 +54,12 @@ class BindingTariffClassificationConnector @Inject()(appConfig: AppConfig, clien
 
   def findCasesByAssignee(assignee: Operator, pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[Case]] = {
     val queryString = s"application_type=BTI&assignee_id=${assignee.id}&status=$statuses&sort_by=days-elapsed&sort_direction=desc&page=${pagination.page}&page_size=${pagination.pageSize}"
+    val url = s"${appConfig.bindingTariffClassificationUrl}/cases?$queryString"
+    client.GET[Paged[Case]](url)
+  }
+
+  def findAssignedCases(pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[Case]] = {
+    val queryString = s"application_type=BTI&assignee_id=some&status=$liveStatuses&sort_by=days-elapsed&sort_direction=desc&page=${pagination.page}&page_size=${pagination.pageSize}"
     val url = s"${appConfig.bindingTariffClassificationUrl}/cases?$queryString"
     client.GET[Paged[Case]](url)
   }

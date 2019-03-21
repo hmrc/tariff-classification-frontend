@@ -17,6 +17,7 @@
 package uk.gov.hmrc.tariffclassificationfrontend.utils
 
 import play.api.libs.json._
+import play.json.extra.Jsonx
 import uk.gov.hmrc.play.json.Union
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
 import uk.gov.hmrc.tariffclassificationfrontend.models.response.{FileMetadata, ScanStatus}
@@ -24,7 +25,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, _}
 
 object JsonFormatters {
 
-  implicit val operator: OFormat[Operator] = Json.format[Operator]
+  implicit val operator: Format[Operator] = Jsonx.formatCaseClass[Operator]
   implicit val scanStatusFormat: Format[ScanStatus.Value] = EnumJson.format(ScanStatus)
   implicit val appealStatusFormat: Format[AppealStatus.Value] = EnumJson.format(AppealStatus)
   implicit val reviewStatusFormat: Format[ReviewStatus.Value] = EnumJson.format(ReviewStatus)

@@ -14,6 +14,7 @@
  * limitations under the License.
  *@
 
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.{CaseController, RejectCaseController}
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
@@ -32,12 +33,12 @@
             <p> Before you reject this case, add a note explaining why you’re rejecting it. </p>
             <p>The days elapsed count will stop at <span id="days-elapsed">@(c.daysElapsed)</span>.</p>
 
-            @helper.form(action = uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.RejectCaseController.confirmRejectCase(c.reference), 'id -> "reject-case") {
+            @helper.form(action = RejectCaseController.confirmRejectCase(c.reference), 'id -> "reject-case") {
                 @helper.CSRF.formField
 
                 <div>
                     <button class="button" id="reject-case-button" type="submit">Reject case</button>
-                    <a class="secondary-button" id="reject-case-cancel-button" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.applicationDetails(c.reference)">Cancel</a>
+                    <a class="secondary-button" id="reject-case-cancel-button" href="@CaseController.applicationDetails(c.reference)">Cancel</a>
                 </div>
             }
         </div>

@@ -110,10 +110,10 @@ class AttachmentsController @Inject()(authenticatedAction: AuthenticatedAction,
     getCaseAndRenderView(
       reference,
       CaseDetailPage.ATTACHMENTS,
-      c => {
+      {
         val errors = Seq(FormError("file-input", errorMessage))
         val formWithErrors = form.copy(errors = errors)
-        renderView(c, formWithErrors)
+        renderView(_, formWithErrors)
       }
     )
   }

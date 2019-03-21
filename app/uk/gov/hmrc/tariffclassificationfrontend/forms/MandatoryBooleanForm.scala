@@ -17,9 +17,10 @@
 package uk.gov.hmrc.tariffclassificationfrontend.forms
 
 import play.api.data.Forms._
-import play.api.data.{Form, Forms}
+import play.api.data.Form
 
 import uk.gov.hmrc.tariffclassificationfrontend.forms.FormConstraints.defined
+
 object MandatoryBooleanForm {
 
   def form(key: String = "errors"): Form[Boolean] = Form[Boolean] (

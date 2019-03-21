@@ -19,7 +19,6 @@ package uk.gov.hmrc.tariffclassificationfrontend.config
 import java.time.ZoneId
 
 import javax.inject.{Inject, Singleton}
-import org.apache.commons.lang3.StringUtils.isNoneBlank
 import play.api.Mode.Mode
 import play.api.{Configuration, Environment, Mode}
 import uk.gov.hmrc.play.config.ServicesConfig
@@ -37,7 +36,8 @@ class AppConfig @Inject()(val runModeConfiguration: Configuration, environment: 
   lazy val assetsPrefix: String = loadConfig("assets.url") + loadConfig("assets.version")
   lazy val analyticsToken: String = loadConfig("google-analytics.token")
   lazy val analyticsHost: String = loadConfig("google-analytics.host")
-  lazy val authEnrolment: Option[String] = Some(loadConfig("auth.enrolment")).filter(isNoneBlank(_))
+  lazy val teamEnrolment: String = loadConfig("auth.enrolments.team")
+  lazy val managerEnrolment: String = loadConfig("auth.enrolments.manager")
   lazy val reportAProblemPartialUrl = s"$contactHost/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
   lazy val reportAProblemNonJSUrl = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
   lazy val bindingTariffClassificationUrl: String = baseUrl("binding-tariff-classification")

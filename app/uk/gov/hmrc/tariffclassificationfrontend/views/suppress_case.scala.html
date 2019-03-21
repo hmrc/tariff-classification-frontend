@@ -15,6 +15,7 @@
  *@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.SuppressCaseController
 @import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.case_heading
@@ -37,7 +38,7 @@
 
             <h3 class="heading-medium mt-0">Have you contacted the applicant and attached the email to this case?</h3>
 
-            @helper.form(action = uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.SuppressCaseController.confirmSuppressCase(c.reference), 'id -> "suppress-case") {
+            @helper.form(action = SuppressCaseController.confirmSuppressCase(c.reference), 'id -> "suppress-case") {
                 @helper.CSRF.formField
 
                 @input_radiogroup(

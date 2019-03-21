@@ -14,9 +14,11 @@
  * limitations under the License.
  *@
 
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.{AssignCaseController, CaseController}
 @import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{Application, BTIApplication, Case, Paged}
 @import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
+
 @(cases: Paged[Case])(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 <table id="cases_list-table">
@@ -38,9 +40,9 @@
                     <tr id="cases_list-row-@index">
                         <th scope="row">
                             @if(c.queueId.isDefined && !c.assignee.map(_.id).contains(request.operator.id)) {
-                                <a id="cases_list-row-@{index}-reference" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.AssignCaseController.get(c.reference)">@c.reference</a>
+                                <a id="cases_list-row-@{index}-reference" href="@AssignCaseController.get(c.reference)">@c.reference</a>
                             } else {
-                                <a id="cases_list-row-@{index}-reference" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.trader(c.reference)">@c.reference</a>
+                                <a id="cases_list-row-@{index}-reference" href="@CaseController.trader(c.reference)">@c.reference</a>
                             }
                         </th>
                         <td id="cases_list-row-@{index}-good_name">@btiApp.goodName</td>

@@ -21,9 +21,7 @@
 @{
  if(operator.id == request.operator.id) {
       if (capitalise) "You" else "you"
- } else if(operator.name.isDefined) {
-  operator.name.get
  } else {
-  s"PID ${operator.id}"
+  operator.safeName
  }
 }
