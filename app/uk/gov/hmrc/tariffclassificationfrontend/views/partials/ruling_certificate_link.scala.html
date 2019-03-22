@@ -19,7 +19,9 @@
 
 @(c: Case)(implicit messages: Messages)
 
-@if(c.status == CaseStatus.COMPLETED || c.status == CaseStatus.CANCELLED) {
+@validStatus = @{ Seq(CaseStatus.COMPLETED, CaseStatus.CANCELLED)}
+
+@if(validStatus.contains(c.status) && c.decision.isDefined) {
     <div id="ruling-certificate">
         <h3 class="heading-medium  mt-1">@messages("case.decision.ruling.certificate.title")</h3>
         <a  id="ruling-certificate-link" target="_blank" href="@PdfDownloadController.rulingPdf(c.reference)"> @messages("case.decision.ruling.certificate.link") </a>
