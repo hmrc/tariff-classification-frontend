@@ -35,7 +35,7 @@
 
             @contact_details(c)
 
-            <h3 class="heading-medium mt-0">Have you contacted the applicant and attached the email to this case?</h3>
+            <h3 class="heading-medium mt-0">Have you contacted the applicant and attached a copy of the email to this case?</h3>
 
             @helper.form(action = ReferCaseController.confirmReferCase(c.reference), 'id -> "refer-case") {
                 @helper.CSRF.formField
