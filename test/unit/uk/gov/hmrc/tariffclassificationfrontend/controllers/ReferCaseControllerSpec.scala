@@ -112,6 +112,20 @@ class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       bodyOf(result) should include("This case has been referred")
     }
 
+    "return OK and HTML content type for reject error page" in {
+      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusOPEN)))
+      when(casesService.referCase(refEq(caseWithStatusOPEN), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREFERRED))
+
+      val result: Result = await(controller.confirmReferCase("reference")
+                                (newFakePOSTRequestWithCSRF(fakeApplication)
+                                  .withFormUrlEncodedBody("state" -> "false")))
+
+      status(result) shouldBe Status.OK
+      contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
+      charsetOf(result) shouldBe Some("utf-8")
+      bodyOf(result) should include("You must contact the applicant")
+    }
+
     "redirect to Application Details for non OPEN statuses" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusNEW)))
 
