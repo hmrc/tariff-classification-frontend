@@ -98,7 +98,7 @@ class CasesService @Inject()(appConfig: AppConfig,
       )
       _ <- addQueueChangeEvent(original, updated, operator)
       _ <- addAssignmentChangeEvent(original, updated, operator)
-      _ = auditService.auditQueueAssigned(updated, operator)
+      _ = auditService.auditQueueReassigned(updated, operator, queue)
       _ = auditService.auditOperatorAssigned(updated, operator)
     } yield updated
   }
