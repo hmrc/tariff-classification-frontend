@@ -16,8 +16,62 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.connector
 
+import com.github.tomakehurst.wiremock.client.WireMock._
+import play.api.http.Status
+import play.twirl.api.Html
+import uk.gov.hmrc.tariffclassificationfrontend.models.PdfFile
+
 class PdfGeneratorServiceConnectorSpec extends ConnectorTest {
 
-  // TODO
+  private val pdfTemplate = mock[Html]
+
+  private val connector = new PdfGeneratorServiceConnector(appConfig, wsClient)
+
+  "Connector" should {
+
+    "Generate Pdf" in {
+      val expectedContent = "Some content".getBytes
+      stubFor(
+        post("/pdf-generator-service/generate")
+          .willReturn(
+            aResponse()
+              .withStatus(Status.OK)
+              .withBody(expectedContent)
+          )
+      )
+
+      val response: PdfFile = await(connector.generatePdf(pdfTemplate))
+
+      response.contentType shouldBe "application/pdf"
+      response.content shouldBe expectedContent
+
+      verify(
+        postRequestedFor(urlEqualTo("/pdf-generator-service/generate"))
+          .withoutHeader("X-Api-Token")
+      )
+    }
+
+    "throw exception when call fails" in {
+
+      stubFor(
+        post("/pdf-generator-service/generate")
+          .willReturn(
+            aResponse()
+              .withStatus(Status.SERVICE_UNAVAILABLE)
+          )
+      )
+
+      val caught: Exception = intercept[Exception] {
+        await(connector.generatePdf(pdfTemplate))
+      }
+
+      caught.getMessage contains "Error calling PdfGeneratorService"
+
+      verify(
+        postRequestedFor(urlEqualTo("/pdf-generator-service/generate"))
+          .withoutHeader("X-Api-Token")
+      )
+    }
+  }
 
 }

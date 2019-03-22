@@ -59,6 +59,7 @@ trait ConnectorTest extends UnitSpec with WithFakeApplication
 
     when(appConfig.emailUrl) thenReturn getUrl
     when(appConfig.emailRendererUrl) thenReturn getUrl
+    when(appConfig.pdfGeneratorUrl) thenReturn getUrl
 
     when(appConfig.apiToken) thenReturn fakeAuthToken
   }
