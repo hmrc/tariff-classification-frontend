@@ -53,10 +53,7 @@ class ReferCaseController @Inject()(authenticatedAction: AuthenticatedAction,
 
     form.bindFromRequest().fold(
       errors => {
-        getCaseAndRenderView(
-          reference,
-          c => successful(views.html.refer_case(c, errors))
-        )
+        getCaseAndRenderView(reference, c => successful(views.html.refer_case(c, errors)))
       },
       {
         case true => getCaseAndRenderView(reference, casesService.referCase(_, request.operator).map(views.html.confirm_refer_case(_)))

@@ -52,10 +52,7 @@ class RejectCaseController @Inject()(authenticatedAction: AuthenticatedAction,
   def confirmRejectCase(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     form.bindFromRequest().fold(
       errors => {
-        getCaseAndRenderView(
-          reference,
-          c => successful(views.html.reject_case(c, errors))
-        )
+        getCaseAndRenderView(reference, c => successful(views.html.reject_case(c, errors)))
       },
       {
         case true => getCaseAndRenderView(reference, casesService.rejectCase(_, request.operator).map(views.html.confirm_rejected(_)))
