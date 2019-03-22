@@ -21,7 +21,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
 @import java.time.Instant
 
-@(appConfig: AppConfig, c: Case, d: Decision)(implicit request: Request[_], messages: Messages)
+@(c: Case)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @createLink(path: String)(implicit req: play.api.mvc.Request[_]) = @{
     val protocol = if(req.secure) "https" else "http"
@@ -89,44 +89,48 @@
                     @c.application.holder.eori
                 </p>
             </div>
-            <div id="section-ruling" class="box">
-                <h2>@messages("pdf.ruling.section.ruling.heading")</h2>
-                <p>
-                    <span class="section-label">@messages("pdf.ruling.section.ruling.commodityCode.label"):</span>
-                    @d.bindingCommodityCode
-                </p>
-                <p>
-                    <span class="section-label">@messages("pdf.ruling.section.ruling.rulingReference.label"):</span>
-                    @messages("caseReference.format", c.reference)
-                </p>
-                <p>
-                    <span class="section-label">@messages("pdf.ruling.section.ruling.validFrom.label"):</span>
-                    @Dates.format(d.effectiveStartDate)
-                </p>
-                <p>
-                    <span class="section-label">@messages("pdf.ruling.section.ruling.validTo.label"):</span>
-                    @Dates.format(d.effectiveEndDate)
-                </p>
-            </div>
 
-            <div id="section-goods" class="box">
-                <p class="section-label">@messages("pdf.ruling.section.ruling.description.label")</p>
-                <p>@d.goodsDescription</p>
-            </div>
+            @if(c.decision.isDefined){
+                @defining(c.decision.get) { d: Decision =>
+                    <div id="section-ruling" class="box">
+                        <h2>@messages("pdf.ruling.section.ruling.heading")</h2>
+                        <p>
+                            <span class="section-label">@messages("pdf.ruling.section.ruling.commodityCode.label"):</span>
+                            @d.bindingCommodityCode
+                        </p>
+                        <p>
+                            <span class="section-label">@messages("pdf.ruling.section.ruling.rulingReference.label"):</span>
+                            @messages("caseReference.format", c.reference)
+                        </p>
+                        <p>
+                            <span class="section-label">@messages("pdf.ruling.section.ruling.validFrom.label"):</span>
+                            @Dates.format(d.effectiveStartDate)
+                        </p>
+                        <p>
+                            <span class="section-label">@messages("pdf.ruling.section.ruling.validTo.label"):</span>
+                            @Dates.format(d.effectiveEndDate)
+                        </p>
+                    </div>
 
-            <div id="section-commercial" class="box">
-                <p>
-                    <span class="section-label">@messages("pdf.ruling.section.ruling.commercialDenomination.label")</span>
-                    <span>@messages("pdf.ruling.section.ruling.commercialDenomination.sublabel")</span>
-                </p>
-                <p>@d.methodCommercialDenomination.getOrElse("")</p>
-            </div>
+                    <div id="section-goods" class="box">
+                        <p class="section-label">@messages("pdf.ruling.section.ruling.description.label")</p>
+                        <p>@d.goodsDescription</p>
+                    </div>
 
-            <div id="section-justification" class="box">
-                <p class="section-label">@messages("pdf.ruling.section.ruling.justification.label")</p>
-                <p>@d.justification</p>
-            </div>
+                    <div id="section-commercial" class="box">
+                        <p>
+                            <span class="section-label">@messages("pdf.ruling.section.ruling.commercialDenomination.label")</span>
+                            <span>@messages("pdf.ruling.section.ruling.commercialDenomination.sublabel")</span>
+                        </p>
+                        <p>@d.methodCommercialDenomination.getOrElse("")</p>
+                    </div>
 
+                    <div id="section-justification" class="box">
+                        <p class="section-label">@messages("pdf.ruling.section.ruling.justification.label")</p>
+                        <p>@d.justification</p>
+                    </div>
+                }
+            }
             <br/><br/>
             <div id="section-legal" class="box">
                 <p class="section-label">@messages("pdf.ruling.section.ruling.legalInformation.label")</p>

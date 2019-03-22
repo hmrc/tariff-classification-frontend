@@ -74,3 +74,4 @@ GET         /search                              @uk.gov.hmrc.tariffclassificati
 GET         /cases/:reference/keywords/:keyword  @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.removeKeyword(reference: String, keyword: String)
 
 GET         /pdf/ruling/:reference               @uk.gov.hmrc.tariffclassificationfrontend.controllers.PdfDownloadController.rulingPdf(reference: String)
+GET         /pdf/application/:reference          @uk.gov.hmrc.tariffclassificationfrontend.controllers.PdfDownloadController.applicationPdf(reference: String)

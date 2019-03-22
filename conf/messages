@@ -55,6 +55,9 @@ case.application.sending-samples=Is the trader sending samples?
 case.application.returning-samples=Does the trader require samples returning?
 case.application.reissue-application=Is the application a re-issue?
 
+case.application.submitted.title=Application submitted
+case.application.submitted.link=Application submitted for this BTI
+
 answer.no=No
 answer.yes=Yes
 answer.none=None
@@ -129,3 +132,43 @@ pdf.ruling.section.ruling.justification.label = Justification
 pdf.ruling.section.ruling.legalInformation.label = Legal information about this ruling
 pdf.ruling.section.ruling.legalInformation.text = This ruling is valid for 3 years and has been issued under the authority of HM Revenue & Customs. The information provided in the application will be stored on a UK database this includes photographs, brochures and images. The holder details and commercial denomination information shown in this ruling will not be published on the UK public rulings website. Information about the item that was not marked as confidential in the application may have been used as part of the published ruling. The holder has the right to appeal against this Binding Tariff Information ruling.
 pdf.ruling.created.label = File created
+
+pdf.application.title = Application for a goods classification ruling
+pdf.application.submitted = Application submitted on
+pdf.application.reference = Application reference number
+pdf.application.section.applicant.heading = Applicant details
+pdf.application.section.applicant.eori = EORI number
+pdf.application.section.applicant.companyName = Registered company name
+pdf.application.section.applicant.companyAddress = Registered company address
+pdf.application.section.applicant.contactDetails = Applicant contact details
+pdf.application.section.applyingFor.heading = Applying for
+pdf.application.section.applyingFor.eori = EORI number
+pdf.application.section.applyingFor.companyName = Registered company name
+pdf.application.section.applyingFor.companyAddress = Registered company address
+pdf.application.section.applicationType.heading = Application type
+pdf.application.section.applicationType.newApplication = New
+pdf.application.section.applicationType.reIssue = BTI re-issue
+pdf.application.section.aboutItem.heading = Information about your item
+pdf.application.section.aboutItem.confidentialInfo = Confidential information
+pdf.application.section.aboutItem.description = Item description
+pdf.application.section.aboutItem.uploadeDocuments = Uploaded documents
+pdf.application.section.aboutItem.sampleProvided = Are you providing a sample?
+pdf.application.section.aboutItem.sampleReturned = Should the sample be returned?
+pdf.application.section.aboutItem.similarRuling = Are you aware of a similar BTI ruling?
+pdf.application.section.aboutItem.similarRuling.BTIRef = BTI reference number
+pdf.application.section.aboutItem.legalProblems = Are you aware of any problems with the item’s classification?
+pdf.application.section.aboutItem.legalProblems.details = Legal problems
+pdf.application.section.other.heading = Other supporting information
+pdf.application.section.other.label = Other information to support your application
+pdf.application.footer.whatHappensNext.heading = What happens next
+pdf.application.footer.whatHappensNext.html = <p>The classification team will issue your Binding Tariff Information ruling by email within 30 days unless you:</p><ul><li>are sending samples</li><li>are asked for more information to support your application</li></ul><p>You can find out the status of your application by signing into your account through GOV.UK Binding Tariff Information (Notice 600).</p>
+pdf.application.footer.sendingSamples.heading = Sending samples
+pdf.application.footer.sendingSamples.html = <p>You must label your sample with the application reference number (GB@c.reference).</p><p>If you are sending samples the application will not be processed until they have been received.</p><p>Get more information about samples on GOV.UK Binding Tariff Information (Notice 600).</p>
+pdf.application.footer.sendingSamplesTo.heading = Send your samples to
+pdf.application.footer.sendingSamples.address = HM Revenue and Customs<br> Tariff Classification Service<br> 10th Floor SE<br> Alexander House<br> 21 Victoria Avenue<br> Southend-on-Sea<br> Essex<br> SS99 1AA
+
+caseReference.format = {0}
+site.no = No
+site.yes = Yes
+site.none = None
+

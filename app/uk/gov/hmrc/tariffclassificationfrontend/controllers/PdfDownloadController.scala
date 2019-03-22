@@ -23,30 +23,39 @@ import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models.Case
-import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, PdfService}
-import uk.gov.hmrc.tariffclassificationfrontend.views.html.templates.ruling
+import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, FileStoreService, PdfService}
+import uk.gov.hmrc.tariffclassificationfrontend.views.html.templates.{application_template, ruling_template}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class PdfDownloadController @Inject()(appConfig: AppConfig,
+class PdfDownloadController @Inject()(implicit appConfig: AppConfig,
                                       authenticatedAction: AuthenticatedAction,
                                       override val messagesApi: MessagesApi,
                                       pdfService: PdfService,
+                                      filestore: FileStoreService,
                                       caseService: CasesService
                                      ) extends FrontendController with I18nSupport {
 
-  def rulingPdf(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
+
+  def rulingPdf(reference: String): Action[ AnyContent ] = authenticatedAction.async { implicit request =>
     caseService.getOne(reference) flatMap {
-      case Some(c: Case) if c.decision.isDefined => generatePdf(
-        // TODO: c.decision is inside c
-        ruling(appConfig, c, c.decision.getOrElse(throw new IllegalStateException("Missing decision"))), s"BTIRuling$reference.pdf"
-      )
-//      case _ => // TODO
+      case Some(c: Case) if c.decision.isDefined =>
+        generatePdf(ruling_template(c), s"BTIRuling$reference.pdf")
+      case _ => throw new RuntimeException("ruling pdf generation fails")
     }
   }
 
-  private def generatePdf(htmlContent: Html, filename: String): Future[Result] = {
+  def applicationPdf(reference: String): Action[ AnyContent ] = authenticatedAction.async { implicit request =>
+    caseService.getOne(reference) flatMap {
+      case Some(c: Case) if c.decision.isDefined => generatePdf(
+        application_template(c, Seq.empty), s"BTIRuling$reference.pdf"
+      )
+      case _ => throw new RuntimeException("ruling pdf generation fails")
+    }
+  }
+
+  private def generatePdf(htmlContent: Html, filename: String): Future[ Result ] = {
     pdfService.generatePdf(htmlContent) map { pdfFile =>
       Results.Ok(pdfFile.content)
         .as(pdfFile.contentType)
