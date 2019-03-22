@@ -23,6 +23,12 @@
 
 @(appConfig: AppConfig, c: Case, d: Decision)(implicit request: Request[_], messages: Messages)
 
+@createLink(path: String)(implicit req: play.api.mvc.Request[_]) = @{
+    val protocol = if(req.secure) "https" else "http"
+    s"$protocol://${req.host}${routes.Assets.at("images/hmrc-logo.jpg")}"
+}
+
+
 <html>
     <head>
         <style>
@@ -50,8 +56,9 @@
     <body>
         <div class="centered-content">
 
-            <img src=@routes.Assets.at("images/hmrc-logo.jpg")">
-            <h1 class="title">@messages("pdf.ruling.title")</h1>
+            <img src="@createLink("images/hmrc-logo.jpg")">
+
+            <h1 class="title"> @messages("pdf.ruling.title") </h1>
 
             <div class="box">
                 <p>
