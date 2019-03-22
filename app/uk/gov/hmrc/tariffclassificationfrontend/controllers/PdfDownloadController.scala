@@ -24,39 +24,40 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, FileStoreService, PdfService}
+import uk.gov.hmrc.tariffclassificationfrontend.views
 import uk.gov.hmrc.tariffclassificationfrontend.views.html.templates.{application_template, ruling_template}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import scala.concurrent.Future.successful
 
-class PdfDownloadController @Inject()(implicit appConfig: AppConfig,
-                                      authenticatedAction: AuthenticatedAction,
+class PdfDownloadController @Inject()(authenticatedAction: AuthenticatedAction,
                                       override val messagesApi: MessagesApi,
                                       pdfService: PdfService,
                                       fileStore: FileStoreService,
                                       caseService: CasesService
-                                     ) extends FrontendController with I18nSupport {
+                                     )(implicit appConfig: AppConfig) extends FrontendController with I18nSupport {
 
 
-  def rulingPdf(reference: String): Action[ AnyContent ] = authenticatedAction.async { implicit request =>
+  def rulingPdf(reference: String) = authenticatedAction.async { implicit request =>
     caseService.getOne(reference) flatMap {
-      case Some(c: Case) if c.decision.isDefined =>
-        generatePdf(ruling_template(c), s"BTIRuling_$reference.pdf")
-      case _ => throw new RuntimeException("ruling pdf generation fails")
+      case Some(c: Case) if c.decision.isDefined => generatePdf(ruling_template(c), s"BTIRuling_$reference.pdf")
+      case Some(c: Case) if c.decision.isEmpty => successful(Redirect(routes.CaseController.rulingDetails(reference)))
+      case _ => successful(Ok(views.html.case_not_found(reference)))
     }
   }
 
-  def applicationPdf(reference: String): Action[ AnyContent ] = authenticatedAction.async { implicit request =>
+  def applicationPdf(reference: String) = authenticatedAction.async { implicit request =>
     caseService.getOne(reference) flatMap {
       case Some(c: Case) =>
         fileStore.getAttachments(c).flatMap { files =>
           generatePdf(application_template(c, files), s"BTIApplication_$reference.pdf")
         }
-      case _ => throw new RuntimeException("application pdf generation fails")
+      case _ => successful(Ok(views.html.case_not_found(reference)))
     }
   }
 
-  private def generatePdf(htmlContent: Html, filename: String): Future[ Result ] = {
+  private def generatePdf(htmlContent: Html, filename: String): Future[Result] = {
     pdfService.generatePdf(htmlContent) map { pdfFile =>
       Results.Ok(pdfFile.content)
         .as(pdfFile.contentType)
