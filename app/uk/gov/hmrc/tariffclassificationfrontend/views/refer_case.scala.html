@@ -38,7 +38,7 @@
             @helper.form(action = ReferCaseController.confirmReferCase(c.reference), 'id -> "refer-case") {
                 @helper.CSRF.formField
 
-                @input_yes_no(form, "refer-case_contacted-applicant")
+                @input_yes_no(form("state"), "refer-case_contacted-applicant")
 
                 <div>
                     <button class="button" id="refer-case-button" type="submit">Refer this case</button>

@@ -39,7 +39,7 @@
             @helper.form(action = SuspendCaseController.confirmSuspendCase(c.reference), 'id -> "suspend-case") {
                 @helper.CSRF.formField
 
-                @input_yes_no(form, "suspend-case_contacted-applicant")
+                @input_yes_no(form("state"), "suspend-case_contacted-applicant")
 
                 <div>
                     <button class="button" id="suspend-case-button" type="submit">Suspend this case</button>

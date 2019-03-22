@@ -38,7 +38,7 @@
             @helper.form(action = SuppressCaseController.confirmSuppressCase(c.reference), 'id -> "suppress-case") {
                 @helper.CSRF.formField
 
-                @input_yes_no(form, "suppress-case_contacted-applicant")
+                @input_yes_no(form("state"), "suppress-case_contacted-applicant")
 
                 <p>
                 This case cannot be re-opened once it has been suppressed.

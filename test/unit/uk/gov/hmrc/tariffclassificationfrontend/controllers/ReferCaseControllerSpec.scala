@@ -102,7 +102,9 @@ class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusOPEN)))
       when(casesService.referCase(refEq(caseWithStatusOPEN), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREFERRED))
 
-      val result: Result = await(controller.confirmReferCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
+      val result: Result = await(controller.confirmReferCase("reference")
+                                (newFakePOSTRequestWithCSRF(fakeApplication)
+                                  .withFormUrlEncodedBody("state" -> "true")))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)

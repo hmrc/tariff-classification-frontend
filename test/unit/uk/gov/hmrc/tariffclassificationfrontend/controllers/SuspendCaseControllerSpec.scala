@@ -102,7 +102,9 @@ class SuspendCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusOPEN)))
       when(casesService.suspendCase(refEq(caseWithStatusOPEN), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusSUSPENDED))
 
-      val result: Result = await(controller.confirmSuspendCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
+      val result: Result = await(controller.confirmSuspendCase("reference")
+                                (newFakePOSTRequestWithCSRF(fakeApplication)
+                                  .withFormUrlEncodedBody("state" -> "true")))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -113,7 +115,9 @@ class SuspendCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     "redirect to Application Details for non OPEN statuses" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusNEW)))
 
-      val result: Result = await(controller.confirmSuspendCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
+      val result: Result = await(controller.confirmSuspendCase("reference")
+                                (newFakePOSTRequestWithCSRF(fakeApplication)
+                                  .withFormUrlEncodedBody("state" -> "true")))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None

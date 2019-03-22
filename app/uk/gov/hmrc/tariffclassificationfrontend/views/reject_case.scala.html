@@ -38,7 +38,7 @@
             @helper.form(action = RejectCaseController.confirmRejectCase(c.reference), 'id -> "reject-case") {
                 @helper.CSRF.formField
 
-                @input_yes_no(form, "reject-case_contacted-applicant")
+                @input_yes_no(form("state"), "reject-case_contacted-applicant")
 
                 <div>
                     <button class="button" id="reject-case-button" type="submit">Reject this case</button>
