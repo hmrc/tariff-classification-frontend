@@ -48,9 +48,10 @@ class PdfDownloadController @Inject()(implicit appConfig: AppConfig,
 
   def applicationPdf(reference: String): Action[ AnyContent ] = authenticatedAction.async { implicit request =>
     caseService.getOne(reference) flatMap {
-      case Some(c: Case) => generatePdf(
-        application_template(c, Seq.empty), s"BTIRuling$reference.pdf"
-      )
+      case Some(c: Case) =>
+        filestore.getAttachments(c).flatMap { files =>
+          generatePdf(application_template(c, files), s"BTIApplication$reference.pdf")
+        }
       case _ => throw new RuntimeException("application pdf generation fails")
     }
   }
