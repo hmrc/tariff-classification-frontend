@@ -33,7 +33,7 @@ class PdfDownloadController @Inject()(implicit appConfig: AppConfig,
                                       authenticatedAction: AuthenticatedAction,
                                       override val messagesApi: MessagesApi,
                                       pdfService: PdfService,
-                                      filestore: FileStoreService,
+                                      fileStore: FileStoreService,
                                       caseService: CasesService
                                      ) extends FrontendController with I18nSupport {
 
@@ -41,7 +41,7 @@ class PdfDownloadController @Inject()(implicit appConfig: AppConfig,
   def rulingPdf(reference: String): Action[ AnyContent ] = authenticatedAction.async { implicit request =>
     caseService.getOne(reference) flatMap {
       case Some(c: Case) if c.decision.isDefined =>
-        generatePdf(ruling_template(c), s"BTIRuling$reference.pdf")
+        generatePdf(ruling_template(c), s"BTIRuling_$reference.pdf")
       case _ => throw new RuntimeException("ruling pdf generation fails")
     }
   }
@@ -49,8 +49,8 @@ class PdfDownloadController @Inject()(implicit appConfig: AppConfig,
   def applicationPdf(reference: String): Action[ AnyContent ] = authenticatedAction.async { implicit request =>
     caseService.getOne(reference) flatMap {
       case Some(c: Case) =>
-        filestore.getAttachments(c).flatMap { files =>
-          generatePdf(application_template(c, files), s"BTIApplication$reference.pdf")
+        fileStore.getAttachments(c).flatMap { files =>
+          generatePdf(application_template(c, files), s"BTIApplication_$reference.pdf")
         }
       case _ => throw new RuntimeException("application pdf generation fails")
     }
