@@ -17,19 +17,18 @@
 package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
 import javax.inject.{Inject, Singleton}
-import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.SearchForm
 import uk.gov.hmrc.tariffclassificationfrontend.models._
-import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, FileStoreService, KeywordsService}
 import uk.gov.hmrc.tariffclassificationfrontend.views.html
 import uk.gov.hmrc.tariffclassificationfrontend.views.partials.SearchResult
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
 @Singleton
@@ -40,35 +39,27 @@ class SearchController @Inject()(authenticatedAction: AuthenticatedAction,
                                  val messagesApi: MessagesApi,
                                  implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
-  def search(reference: Option[String] = None,
-             search: Search = Search(),
-             sort: Sort = Sort(),
-             page: Int): Action[AnyContent] = authenticatedAction.async { implicit request =>
-
+  def search(reference: Option[String] = None, search: Search = Search(), sort: Sort = Sort(), page: Int): Action[AnyContent] = authenticatedAction.async { implicit request =>
     if (reference.isDefined) {
       successful(Redirect(routes.CaseController.trader(reference.get)))
     } else if (search.isEmpty) {
       keywordsService.autoCompleteKeywords.map { keywords: Seq[String] =>
-        show(SearchForm.form, None, keywords)
+        Results.Ok(html.advanced_search(SearchForm.form, None, keywords))
       }
     } else {
-      keywordsService.autoCompleteKeywords.flatMap { keywords: Seq[String] =>
+      keywordsService.autoCompleteKeywords.flatMap(keywords => {
         SearchForm.form.bindFromRequest.fold(
-          formWithErrors => successful(show(formWithErrors, None, keywords)),
+          formWithErrors => {
+            Future.successful(Results.Ok(html.advanced_search(formWithErrors, None, keywords)))
+          },
           data => for {
             cases: Paged[Case] <- casesService.search(search, sort, SearchPagination(page))
             attachments: Map[Case, Seq[StoredAttachment]] <- fileStoreService.getAttachments(cases.results)
             results: Paged[SearchResult] = cases.map(c => SearchResult(c, attachments.getOrElse(c, Seq.empty)))
-          } yield show(SearchForm.form.fill(data), Some(results), keywords)
+          } yield Results.Ok(html.advanced_search(SearchForm.form.fill(data), Some(results), keywords))
         )
-      }
+      })
     }
-
-  }
-
-  private def show(f: Form[Search], results: Option[Paged[SearchResult]], keywords: Seq[String])
-                  (implicit request: AuthenticatedRequest[AnyContent]): Result = {
-    Results.Ok(html.advanced_search(SearchForm.form, results, keywords))
   }
 
 }
