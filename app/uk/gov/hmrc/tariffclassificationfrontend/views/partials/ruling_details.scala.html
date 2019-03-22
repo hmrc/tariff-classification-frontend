@@ -20,6 +20,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{attachments_list, tab_heading, cancel_ruling_section,complete_ruling_section}
 @import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionFormData
 
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.ruling_certificate_link
 @(c: Case, decisionForm: Option[Form[DecisionFormData]], files: Seq[StoredAttachment])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @defining(c.application.asBTI) { btiApp: BTIApplication =>
@@ -126,14 +127,10 @@
         <p id="no-ruling-information">@messages("case.decision.empty")</p>
     }
 
-    <!-- TO BE REVIEWED -->
-    <!-- only if decision is defined -->
-    <a id="ruling-download-link" target="_blank" href="@PdfDownloadController.rulingPdf(c.reference)">DOWNLOAD PDF RULING</a>
+    @ruling_certificate_link(c)
 
-    <h3 class="heading-medium">@messages("case.decision.attachments")</h3>
-    @attachments_list("attachments", files.filter(_.public))
-
-    @complete_ruling_section(c, decisionForm)
-
-    @cancel_ruling_section(c)
+    <div class="mt-3" id="ruling-actions">
+        @complete_ruling_section(c, decisionForm)
+        @cancel_ruling_section(c)
+    </div>
 }
