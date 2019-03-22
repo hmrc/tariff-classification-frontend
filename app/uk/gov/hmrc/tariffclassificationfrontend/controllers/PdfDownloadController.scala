@@ -48,10 +48,10 @@ class PdfDownloadController @Inject()(implicit appConfig: AppConfig,
 
   def applicationPdf(reference: String): Action[ AnyContent ] = authenticatedAction.async { implicit request =>
     caseService.getOne(reference) flatMap {
-      case Some(c: Case) if c.decision.isDefined => generatePdf(
+      case Some(c: Case) => generatePdf(
         application_template(c, Seq.empty), s"BTIRuling$reference.pdf"
       )
-      case _ => throw new RuntimeException("ruling pdf generation fails")
+      case _ => throw new RuntimeException("application pdf generation fails")
     }
   }
 
