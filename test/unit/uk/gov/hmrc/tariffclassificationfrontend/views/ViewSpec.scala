@@ -17,7 +17,8 @@
 package uk.gov.hmrc.tariffclassificationfrontend.views
 
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
+import org.scalatest.Assertion
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.{FakeHeaders, FakeRequest}
@@ -48,5 +49,18 @@ abstract class ViewSpec extends UnitSpec with WithFakeApplication {
   protected def view(html: Html): Document = {
     Jsoup.parse(html.toString())
   }
+
+  def asDocument(html: Html): Document = Jsoup.parse(html.toString())
+
+  def assertRenderedById(doc: Document, id: String): Assertion = {
+    assert(doc.getElementById(id) != null, "\n\nElement " + id + " was not rendered on the page.\n")
+  }
+
+  def assertNotRenderedById(doc: Document, id: String): Assertion = {
+    assert(doc.getElementById(id) == null, "\n\nElement " + id + " was rendered on the page.\n")
+  }
+
+  def assertElementHasText(element: Element, text: String): Assertion = assert(element.text.contains(text),
+    "\n\ntext " + text + " was not rendered in the element.\n")
 
 }
