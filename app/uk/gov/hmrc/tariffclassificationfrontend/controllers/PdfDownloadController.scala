@@ -39,7 +39,7 @@ class PdfDownloadController @Inject()(authenticatedAction: AuthenticatedAction,
                                      )(implicit appConfig: AppConfig) extends FrontendController with I18nSupport {
 
 
-  def rulingPdf(reference: String) = authenticatedAction.async { implicit request =>
+  def rulingPdf(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     caseService.getOne(reference) flatMap {
       case Some(c: Case) if c.decision.isDefined => generatePdf(ruling_template(c), s"BTIRuling_$reference.pdf")
       case Some(c: Case) if c.decision.isEmpty => successful(Redirect(routes.CaseController.rulingDetails(reference)))
@@ -47,7 +47,7 @@ class PdfDownloadController @Inject()(authenticatedAction: AuthenticatedAction,
     }
   }
 
-  def applicationPdf(reference: String) = authenticatedAction.async { implicit request =>
+  def applicationPdf(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     caseService.getOne(reference) flatMap {
       case Some(c: Case) =>
         fileStore.getAttachments(c).flatMap { files =>
