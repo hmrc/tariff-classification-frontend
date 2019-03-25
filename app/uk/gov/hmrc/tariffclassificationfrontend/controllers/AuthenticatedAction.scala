@@ -53,7 +53,7 @@ class AuthenticatedAction @Inject()(appConfig: AppConfig,
       Some(request.session)
     )
 
-    authorised((Enrolment(teamEnrolment) or Enrolment(managerEnrolment)) and AuthProviders(PrivilegedApplication)).retrieve(Retrievals.credentials and Retrievals.name and Retrievals.allEnrolments) {
+    authorised(Enrolment(teamEnrolment) and AuthProviders(PrivilegedApplication)).retrieve(Retrievals.credentials and Retrievals.name and Retrievals.allEnrolments) {
       case (credentials: Credentials) ~ (name: Name) ~ (roles: Enrolments) =>
         val id = credentials.providerId
         val operator = Operator(
