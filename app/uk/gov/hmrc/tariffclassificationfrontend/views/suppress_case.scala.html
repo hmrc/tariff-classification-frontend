@@ -41,11 +41,11 @@
                 @input_yes_no(form("state"), "suppress-case_contacted-applicant")
 
                 <p>
-                This case cannot be re-opened once it has been suppressed.
+                This case cannot be reopened once it has been suppressed.
                 </p>
 
                 <div>
-                    <button class="button" id="suppress-case-button" type="submit">Suppress case</button>
+                    <button class="button" id="suppress-case-button" type="submit">Suppress this case</button>
                     <a class="secondary-button" id="suppress-case-cancel-button" href="@CaseController.trader(c.reference)">Cancel</a>
                 </div>
             }
