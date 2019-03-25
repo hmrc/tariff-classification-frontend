@@ -18,7 +18,7 @@ package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
 import java.time.Instant
 
-import org.mockito.ArgumentMatchers.{refEq, _}
+import org.mockito.ArgumentMatchers._
 import org.mockito.BDDMockito._
 import org.scalatest.Matchers
 import org.scalatest.mockito.MockitoSugar
@@ -86,7 +86,7 @@ class SearchControllerSpec extends UnitSpec with Matchers with WithFakeApplicati
       // Given
       val search = Search(traderName = Some("trader"), commodityCode = Some("00"))
       val c = aCase()
-      val attachment = StoredAttachment("id", true, None, None, "file", "image/png", None, Instant.now())
+      val attachment = StoredAttachment("id", public = true, None, None, "file", "image/png", None, Instant.now())
 
       given(casesService.search(refEq(search), refEq(Sort()), refEq(SearchPagination(2)))(any[HeaderCarrier])) willReturn Future.successful(Paged(Seq(c)))
       given(fileStoreService.getAttachments(refEq(Seq(c)))(any[HeaderCarrier])) willReturn Future.successful(Map(c -> Seq(attachment)))

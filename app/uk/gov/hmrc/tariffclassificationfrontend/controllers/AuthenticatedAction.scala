@@ -19,7 +19,7 @@ package uk.gov.hmrc.tariffclassificationfrontend.controllers
 import javax.inject.{Inject, Singleton}
 import play.api.mvc.Results._
 import play.api.mvc.{ActionBuilder, Request, Result}
-import play.api.{Configuration, Environment}
+import play.api.{Configuration, Environment, Logger}
 import uk.gov.hmrc.auth.core.AuthProvider.PrivilegedApplication
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name, Retrievals, ~}
@@ -45,16 +45,21 @@ class AuthenticatedAction @Inject()(appConfig: AppConfig,
 
   private lazy val teamEnrolment: String = appConfig.teamEnrolment
   private lazy val managerEnrolment: String = appConfig.managerEnrolment
+  private lazy val checkEnrolment: Boolean = appConfig.checkEnrolment
+
+  private val uncheckedPredicate = AuthProviders(PrivilegedApplication)
+  private val checkedPredicate = (Enrolment(teamEnrolment) or Enrolment(managerEnrolment)) and uncheckedPredicate
+  private val predicate = if(checkEnrolment) checkedPredicate else uncheckedPredicate
 
   override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] = {
-
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(
       request.headers,
       Some(request.session)
     )
 
-    authorised((Enrolment(teamEnrolment) or Enrolment(managerEnrolment)) and AuthProviders(PrivilegedApplication)).retrieve(Retrievals.credentials and Retrievals.name and Retrievals.allEnrolments) {
+    authorised(predicate).retrieve(Retrievals.credentials and Retrievals.name and Retrievals.allEnrolments) {
       case (credentials: Credentials) ~ (name: Name) ~ (roles: Enrolments) =>
+        Logger.info(s"User Authenticated with id [${credentials.providerId}], roles [${roles.enrolments.map(_.key).mkString(",")}]")
         val id = credentials.providerId
         val operator = Operator(
           id,
@@ -67,7 +72,9 @@ class AuthenticatedAction @Inject()(appConfig: AppConfig,
         if (appConfig.runningAsDev) s"http://${request.host}${request.uri}"
         else s"${request.uri}"
       )
-      case _: AuthorisationException => Redirect(routes.SecurityController.unauthorized())
+      case e: AuthorisationException =>
+        Logger.info("Auth Failed", e)
+        Redirect(routes.SecurityController.unauthorized())
     }
   }
 

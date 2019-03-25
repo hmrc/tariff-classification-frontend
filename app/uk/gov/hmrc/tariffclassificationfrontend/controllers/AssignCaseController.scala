@@ -50,9 +50,10 @@ class AssignCaseController @Inject()(authenticatedAction: AuthenticatedAction,
   }
 
   def post(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
+
     def respond: Case => Future[Result] = {
       case c: Case if c.assignee.isEmpty =>
-        caseService.assignCase(c, request.operator).map(c => Redirect(routes.CaseController.trader(reference)))
+        caseService.assignCase(c, request.operator).map(_ => Redirect(routes.CaseController.trader(reference)))
       case _ =>
         successful(Redirect(routes.AssignCaseController.get(reference)))
     }

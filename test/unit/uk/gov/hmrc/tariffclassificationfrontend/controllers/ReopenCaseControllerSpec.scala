@@ -61,43 +61,6 @@ class ReopenCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     reset(casesService)
   }
 
-  "Reopen Case" should {
-
-    "return OK and HTML content type" in {
-      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusREFERRED)))
-
-      val result: Result = await(controller.reopenCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
-
-      status(result) shouldBe Status.OK
-      contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
-      charsetOf(result) shouldBe Some("utf-8")
-      bodyOf(result) should include("Reopen this case")
-    }
-
-    "redirect to Application Details for non REFERRED or SUSPENDED statuses" in {
-      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusNEW)))
-
-      val result: Result = await(controller.reopenCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
-
-      status(result) shouldBe Status.SEE_OTHER
-      contentTypeOf(result) shouldBe None
-      charsetOf(result) shouldBe None
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/application")
-    }
-
-    "return Not Found and HTML content type" in {
-      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(None))
-
-      val result: Result = await(controller.reopenCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
-
-      status(result) shouldBe Status.OK
-      contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
-      charsetOf(result) shouldBe Some("utf-8")
-      bodyOf(result) should include("We could not find a Case with reference")
-    }
-
-  }
-
   "Confirm Reopen a Case" should {
 
     "return OK and HTML content type" in {
@@ -109,7 +72,7 @@ class ReopenCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result) shouldBe Some("utf-8")
-      bodyOf(result) should include("This case has been reopen")
+      bodyOf(result) should include("This case has been reopened")
     }
 
 

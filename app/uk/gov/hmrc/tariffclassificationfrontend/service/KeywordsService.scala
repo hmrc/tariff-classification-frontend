@@ -24,6 +24,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.models._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import scala.concurrent.Future.successful
 import scala.io.Source
 
 @Singleton
@@ -32,7 +33,7 @@ class KeywordsService @Inject()(connector: BindingTariffClassificationConnector,
   def addKeyword(c: Case, keyword: String, operator: Operator)
                 (implicit hc: HeaderCarrier): Future[Case] = {
     if (c.keywords.contains(keyword.toUpperCase)) {
-      Future.successful(c)
+      successful(c)
     } else {
       val caseToUpdate = c.copy(keywords = c.keywords + keyword.toUpperCase)
       connector.updateCase(caseToUpdate) map { updated: Case =>
@@ -51,7 +52,7 @@ class KeywordsService @Inject()(connector: BindingTariffClassificationConnector,
         updated
       }
     } else {
-      Future.successful(c)
+      successful(c)
     }
   }
 

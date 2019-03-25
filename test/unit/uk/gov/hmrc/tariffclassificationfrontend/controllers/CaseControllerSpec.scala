@@ -30,7 +30,7 @@ import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.WithFakeApplication
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.forms.{CommodityCodeConstraints, DecisionForm, DecisionFormMapper}
+import uk.gov.hmrc.tariffclassificationfrontend.forms.{CommodityCodeConstraints, DecisionForm}
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.service._
 import uk.gov.tariffclassificationfrontend.utils.{Cases, Events}
@@ -47,7 +47,6 @@ class CaseControllerSpec extends WordSpec with Matchers with WithFakeApplication
   private val casesService = mock[CasesService]
   private val keywordsService = mock[KeywordsService]
   private val fileService = mock[FileStoreService]
-  private val mapper = mock[DecisionFormMapper]
   private val eventService = mock[EventsService]
   private val queueService = mock[QueuesService]
   private val operator = mock[Operator]
@@ -58,7 +57,7 @@ class CaseControllerSpec extends WordSpec with Matchers with WithFakeApplication
   private val controller = new CaseController(
     new SuccessfulAuthenticatedAction(operator),
     casesService, keywordsService, fileService,
-    eventService, queueService, mapper,
+    eventService, queueService,
     decisionForm, messageApi, appConfig
   )
 

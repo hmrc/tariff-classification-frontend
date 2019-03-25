@@ -34,7 +34,7 @@ class ReopenCaseButtonViewSpec extends ViewSpec {
 
       // Then
       doc should containElementWithID("reopen-case-button")
-      doc.getElementById("reopen-case-button") should haveAttribute("href", "/tariff-classification/cases/1/reopen")
+      doc.getElementById("reopen-case") should haveAttribute("action", "/tariff-classification/cases/1/reopen")
     }
 
     "render button for REFERRED case" in {
@@ -45,7 +45,7 @@ class ReopenCaseButtonViewSpec extends ViewSpec {
 
       // Then
       doc should containElementWithID("reopen-case-button")
-      doc.getElementById("reopen-case-button") should haveAttribute("href", "/tariff-classification/cases/1/reopen")
+      doc.getElementById("reopen-case") should haveAttribute("action", "/tariff-classification/cases/1/reopen")
     }
 
     "not render button for other case status" in {

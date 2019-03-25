@@ -70,13 +70,12 @@ class AuditService @Inject()(auditConnector: DefaultAuditConnector) {
     )
   }
 
-  def auditQueueAssigned(c: Case, operator: Operator)
-                        (implicit hc: HeaderCarrier): Unit = {
+  def auditQueueReassigned(c: Case, operator: Operator, queue: Queue)
+                          (implicit hc: HeaderCarrier): Unit = {
 
     sendExplicitAuditEvent(
       auditEventType = QueueReassigned,
-      auditPayload = baseAuditPayload(c, operator)
-        + ("queueId" -> c.queueId.getOrElse(throw new IllegalArgumentException("queue must be provided")))
+      auditPayload = baseAuditPayload(c, operator) + ("queue" -> queue.name)
     )
   }
 

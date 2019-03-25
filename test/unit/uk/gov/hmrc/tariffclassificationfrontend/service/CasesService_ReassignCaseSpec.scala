@@ -68,7 +68,7 @@ class CasesService_ReassignCaseSpec extends UnitSpec with MockitoSugar with Befo
       // When Then
       await(service.reassignCase(originalCase, queue, operator)) shouldBe caseUpdated
 
-      verify(audit).auditQueueAssigned(refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
+      verify(audit).auditQueueReassigned(refEq(caseUpdated), refEq(operator), refEq(queue))(any[HeaderCarrier])
 
       val caseUpdating = theCaseUpdating(connector)
       caseUpdating.status shouldBe CaseStatus.OPEN

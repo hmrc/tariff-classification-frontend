@@ -42,9 +42,13 @@ class CompleteCaseController @Inject()(authenticatedAction: AuthenticatedAction,
 
   override protected def redirect: String => Call = routes.CaseController.rulingDetails
 
-  override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = c.status == OPEN && hasValidDecision(c)
+  override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = {
+    c.status == OPEN && hasValidDecision(c)
+  }
 
-  private def hasValidDecision(c: Case): Boolean = decisionForm.bindFrom(c.decision).map(_.errors).exists(_.isEmpty)
+  private def hasValidDecision(c: Case): Boolean = {
+    decisionForm.bindFrom(c.decision).map(_.errors).exists(_.isEmpty)
+  }
 
   def completeCase(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     getCaseAndRenderView(reference, c => successful(views.html.complete_case(c)))

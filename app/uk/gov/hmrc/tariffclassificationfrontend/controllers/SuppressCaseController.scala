@@ -29,6 +29,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
 @Singleton
@@ -45,19 +46,19 @@ class SuppressCaseController @Inject()(authenticatedAction: AuthenticatedAction,
   override protected def redirect: String => Call = routes.CaseController.applicationDetails
   override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = c.status == NEW
 
+  private def showCase(reference: String, f: Form[Boolean])
+                      (implicit request: AuthenticatedRequest[AnyContent]): Future[Result] = {
+    getCaseAndRenderView(reference, c => successful(views.html.suppress_case(c, f)))
+  }
+
   def suppressCase(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
-    getCaseAndRenderView(reference, c => successful(views.html.suppress_case(c, form)))
+    showCase(reference, form)
   }
 
   def confirmSuppressCase(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
 
     form.bindFromRequest().fold(
-      errors => {
-        getCaseAndRenderView(
-          reference,
-          c => successful(views.html.suppress_case(c, errors))
-        )
-      },
+      errors => showCase(reference, errors),
       {
         case true => getCaseAndRenderView(reference, casesService.suppressCase(_, request.operator).map(views.html.confirm_supressed_case(_)))
         case _ => getCaseAndRenderView(reference, c => successful(views.html.supressed_case_error(c)))
