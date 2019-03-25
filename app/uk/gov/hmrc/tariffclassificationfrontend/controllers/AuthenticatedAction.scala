@@ -19,7 +19,7 @@ package uk.gov.hmrc.tariffclassificationfrontend.controllers
 import javax.inject.{Inject, Singleton}
 import play.api.mvc.Results._
 import play.api.mvc.{ActionBuilder, Request, Result}
-import play.api.{Configuration, Environment}
+import play.api.{Configuration, Environment, Logger}
 import uk.gov.hmrc.auth.core.AuthProvider.PrivilegedApplication
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name, Retrievals, ~}
@@ -67,7 +67,9 @@ class AuthenticatedAction @Inject()(appConfig: AppConfig,
         if (appConfig.runningAsDev) s"http://${request.host}${request.uri}"
         else s"${request.uri}"
       )
-      case _: AuthorisationException => Redirect(routes.SecurityController.unauthorized())
+      case e: AuthorisationException =>
+        Logger.info("Auth Failed", e)
+        Redirect(routes.SecurityController.unauthorized())
     }
   }
 
