@@ -36,5 +36,4 @@ object AppealForm {
 
   val form: Form[Option[AppealStatus]] = Form[Option[AppealStatus]](mapping)
 
-
 }

@@ -20,6 +20,7 @@ import java.time.Instant
 
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.tariffclassificationfrontend.models.response.{FileMetadata, ScanStatus}
+import uk.gov.tariffclassificationfrontend.utils.Cases
 
 class StoredAttachmentTest extends UnitSpec {
 
@@ -57,6 +58,16 @@ class StoredAttachmentTest extends UnitSpec {
         mimeType = metadata.mimeType,
         scanStatus = metadata.scanStatus
       )
+    }
+
+    "fail when try to combine with different attachments" in {
+      val attachment = anAttachment
+      val metadata = someMetadataWithType("type").copy(id="another-id")
+
+      val caught = intercept[IllegalArgumentException] {
+        StoredAttachment(attachment, metadata)
+      }
+      caught.getMessage shouldBe "requirement failed: Cannot combine different attachments"
     }
   }
 

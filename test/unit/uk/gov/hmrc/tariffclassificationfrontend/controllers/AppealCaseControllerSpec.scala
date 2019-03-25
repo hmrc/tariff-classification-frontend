@@ -256,6 +256,20 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers
       locationOf(result) shouldBe Some("/tariff-classification/cases/reference")
     }
 
+    "when error form redirects to main case page" in {
+      val c = aCase(withStatus(CaseStatus.COMPLETED), withoutDecision())
+
+      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(c)))
+
+      val result = await(controller.updateStatus("reference")(newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("status" -> "WRONG_STATUS")))
+
+      verify(casesService, never()).updateAppealStatus(any[Case], any[Option[AppealStatus]], any[Operator])(any[HeaderCarrier])
+
+      status(result) shouldBe Status.SEE_OTHER
+      contentAsString(result) shouldBe ""
+      locationOf(result) shouldBe Some("/tariff-classification/cases/reference")
+    }
+
     "return 404 Not Found and HTML content type" in {
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(None))
 
