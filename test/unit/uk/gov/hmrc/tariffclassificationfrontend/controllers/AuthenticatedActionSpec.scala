@@ -57,6 +57,7 @@ class AuthenticatedActionSpec extends UnitSpec with MockitoSugar with Controller
     super.beforeEach()
     given(appConfig.teamEnrolment).willReturn("team-enrolment")
     given(appConfig.managerEnrolment).willReturn("manager-enrolment")
+    given(appConfig.checkEnrolment).willReturn(true)
     given(environment.mode).willReturn(Mode.Dev)
     given(config.getString(any[String], any[Option[Set[String]]])).willReturn(None)
   }

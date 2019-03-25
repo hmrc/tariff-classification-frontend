@@ -45,16 +45,21 @@ class AuthenticatedAction @Inject()(appConfig: AppConfig,
 
   private lazy val teamEnrolment: String = appConfig.teamEnrolment
   private lazy val managerEnrolment: String = appConfig.managerEnrolment
+  private lazy val checkEnrolment: Boolean = appConfig.checkEnrolment
+
+  private val uncheckedPredicate = AuthProviders(PrivilegedApplication)
+  private val checkedPredicate = (Enrolment(teamEnrolment) or Enrolment(managerEnrolment)) and uncheckedPredicate
+  private val predicate = if(checkEnrolment) checkedPredicate else uncheckedPredicate
 
   override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] = {
-
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(
       request.headers,
       Some(request.session)
     )
 
-    authorised((Enrolment(teamEnrolment) or Enrolment(managerEnrolment)) and AuthProviders(PrivilegedApplication)).retrieve(Retrievals.credentials and Retrievals.name and Retrievals.allEnrolments) {
+    authorised(predicate).retrieve(Retrievals.credentials and Retrievals.name and Retrievals.allEnrolments) {
       case (credentials: Credentials) ~ (name: Name) ~ (roles: Enrolments) =>
+        Logger.info(s"User Authenticated with id [${credentials.providerId}], roles [${roles.enrolments.map(_.key).mkString(",")}]")
         val id = credentials.providerId
         val operator = Operator(
           id,

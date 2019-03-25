@@ -91,6 +91,10 @@ class AppConfigSpec extends UnitSpec with MockitoSugar {
       appConfig("auth.enrolments.manager" -> "classification").managerEnrolment shouldBe "classification"
     }
 
+    "Build enrolment flag" in {
+      appConfig("auth.enrolments.enabled" -> "true").checkEnrolment shouldBe true
+    }
+
     "Builds runningAsDev from config override" in {
       appConfig("run.mode" -> "Dev").runningAsDev shouldBe true
       appConfig("run.mode" -> "Prod").runningAsDev shouldBe false
