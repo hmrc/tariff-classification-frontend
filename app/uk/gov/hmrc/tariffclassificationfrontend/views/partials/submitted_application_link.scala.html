@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,23 +12,13 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package uk.gov.hmrc.tariffclassificationfrontend.utils
+@import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus}
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.PdfDownloadController
 
-import java.time.format.DateTimeFormatter
-import java.time.{Instant, LocalDateTime, ZoneOffset}
+@(c: Case)(implicit messages: Messages)
 
-object Dates {
-
-  val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd MMM yyyy")
-
-  def format(instant: Instant) : String = {
-    formatter.format(LocalDateTime.ofInstant(instant, ZoneOffset.UTC))
-  }
-
-  def format(instant: Option[Instant]) : String = {
-    instant.map(format).getOrElse("None")
-  }
-
-}
+<div id="submitted-application" class="mb-3">
+    <a  id="submitted-application-link" target="_blank" href="@PdfDownloadController.applicationPdf(c.reference)"> @messages("case.application.submitted.link") </a>
+</div>

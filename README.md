@@ -21,6 +21,8 @@ The Front End for the internal Operator Service for reviewing & determining BTI 
 6) Start Email `sm --start EMAIL -r`
 7) Start Mailgun Stub `sm --start MAILGUN_STUB -r`
 8) Start Email Renderer `sm --start HMRC_EMAIL_RENDERER -r`
+9) Start [Pdf Generator Service](https://github.com/hmrc/pdf-generator-service)
+ `sm --start PDF_GENERATOR_SERVICE -r` (Requires first installing dependencies - see link)
 
 Finally Run `sbt run` to boot the app
 

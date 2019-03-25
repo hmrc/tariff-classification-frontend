@@ -14,21 +14,20 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.tariffclassificationfrontend.utils
+package uk.gov.hmrc.tariffclassificationfrontend.service
 
-import java.time.format.DateTimeFormatter
-import java.time.{Instant, LocalDateTime, ZoneOffset}
+import javax.inject.{Inject, Singleton}
+import play.twirl.api.Html
+import uk.gov.hmrc.tariffclassificationfrontend.connector.PdfGeneratorServiceConnector
+import uk.gov.hmrc.tariffclassificationfrontend.models._
 
-object Dates {
+import scala.concurrent.Future
 
-  val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd MMM yyyy")
+@Singleton
+class PdfService @Inject()(connector: PdfGeneratorServiceConnector) {
 
-  def format(instant: Instant) : String = {
-    formatter.format(LocalDateTime.ofInstant(instant, ZoneOffset.UTC))
-  }
-
-  def format(instant: Option[Instant]) : String = {
-    instant.map(format).getOrElse("None")
+  def generatePdf(htmlContent: Html): Future[PdfFile] = {
+    connector.generatePdf(htmlContent)
   }
 
 }

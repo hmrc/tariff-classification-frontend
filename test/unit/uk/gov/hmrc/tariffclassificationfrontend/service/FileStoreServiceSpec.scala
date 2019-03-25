@@ -35,7 +35,7 @@ import uk.gov.tariffclassificationfrontend.utils.Cases._
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
-class FileStoreServiceTest extends UnitSpec with MockitoSugar {
+class FileStoreServiceSpec extends UnitSpec with MockitoSugar {
 
   private implicit val hc: HeaderCarrier = HeaderCarrier()
   private val connector = mock[FileStoreConnector]

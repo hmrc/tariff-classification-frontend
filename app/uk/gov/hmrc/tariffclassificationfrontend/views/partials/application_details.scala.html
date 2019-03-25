@@ -27,6 +27,8 @@
 
             @tab_heading("application", messages("case.menu.application"))
 
+            @submitted_application_link(c)
+
             @if(btiApp.envisagedCommodityCode.isDefined) {
                 <div id="app-details-envisaged-code" class="grid-row">
                     <div class="column-one-third">

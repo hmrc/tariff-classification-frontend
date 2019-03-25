@@ -28,7 +28,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.models._
 
 import scala.concurrent.Future.successful
 
-class EmailServiceTest extends UnitSpec with MockitoSugar {
+class EmailServiceSpec extends UnitSpec with MockitoSugar {
 
   private implicit val hc: HeaderCarrier = HeaderCarrier()
   private val connector = mock[EmailConnector]

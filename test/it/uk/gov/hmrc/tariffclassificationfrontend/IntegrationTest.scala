@@ -17,7 +17,8 @@ trait IntegrationTest extends UnitSpec with GuiceOneServerPerSuite
     .configure(Map(
       "microservice.services.binding-tariff-classification.port" -> wirePort,
       "microservice.services.binding-tariff-filestore.port" -> wirePort,
-      "microservice.services.auth.port" -> wirePort
+      "microservice.services.auth.port" -> wirePort,
+      "microservice.services.pdf-generator-service.port" -> wirePort
     ))
     .build()
 
