@@ -127,10 +127,9 @@ class PdfDownloadControllerSpec extends UnitSpec with MockitoSugar with Controll
 
       val result = await(controller.rulingPdf(caseWithDecision.reference)(fakeRequest))
 
-      status(result) shouldBe Status.SEE_OTHER
-      contentTypeOf(result) shouldBe None
-      charsetOf(result) shouldBe None
-      locationOf(result) shouldBe Some("/tariff-classification/cases/1/ruling")
+      status(result) shouldBe Status.OK
+      locationOf(result) shouldBe None
+      contentAsString(result) should include("We could not find a ruling with case reference")
     }
 
     "error when case not found" in {

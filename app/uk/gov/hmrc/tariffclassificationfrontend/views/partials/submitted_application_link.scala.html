@@ -19,7 +19,6 @@
 
 @(c: Case)(implicit messages: Messages)
 
-    <div id="submitted-application" class="mb-3">
-        @*<h3 class="heading-medium  mt-1">@messages("case.application.submitted.title")</h3>*@
-        <a  id="submitted-application-link" target="_blank" href="@PdfDownloadController.applicationPdf(c.reference)"> @messages("case.application.submitted.link") </a>
-    </div>
+<div id="submitted-application" class="mb-3">
+    <a  id="submitted-application-link" target="_blank" href="@PdfDownloadController.applicationPdf(c.reference)"> @messages("case.application.submitted.link") </a>
+</div>

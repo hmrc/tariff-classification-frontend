@@ -56,7 +56,7 @@ case.application.returning-samples=Does the trader require samples returning?
 case.application.reissue-application=Is the application a re-issue?
 
 case.application.submitted.title=Application submitted
-case.application.submitted.link=Application submitted for this BTI
+case.application.submitted.link=View and print a PDF of the original application
 
 answer.no=No
 answer.yes=Yes
@@ -77,7 +77,7 @@ case.decision.constrain.justification=Justification
 case.decision.constrain.bindingCommodityCode=Binding commodity code
 case.decision.constrain.goodsDescription=Sanitised goods description
 
-case.decision.ruling.certificate.link=Ruling certificate for this BTI
+case.decision.ruling.certificate.link=View and print a PDF of the ruling
 case.decision.ruling.certificate.title=Ruling certificate
 
 case.activity.assigned-to = Currently assigned to:
