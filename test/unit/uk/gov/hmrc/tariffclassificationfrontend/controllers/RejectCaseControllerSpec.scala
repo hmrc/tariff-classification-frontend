@@ -102,12 +102,28 @@ class RejectCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusOPEN)))
       when(casesService.rejectCase(refEq(caseWithStatusOPEN), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREJECTED))
 
-      val result: Result = await(controller.confirmRejectCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
+      val result: Result = await(controller.confirmRejectCase("reference")
+                                (newFakePOSTRequestWithCSRF(fakeApplication)
+                                  .withFormUrlEncodedBody("state" -> "true")))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result) shouldBe Some("utf-8")
       bodyOf(result) should include("This case has been rejected")
+    }
+
+    "return OK and HTML content type for reject error page" in {
+      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusOPEN)))
+      when(casesService.rejectCase(refEq(caseWithStatusOPEN), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREJECTED))
+
+      val result: Result = await(controller.confirmRejectCase("reference")
+                                (newFakePOSTRequestWithCSRF(fakeApplication)
+                                  .withFormUrlEncodedBody("state" -> "false")))
+
+      status(result) shouldBe Status.OK
+      contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
+      charsetOf(result) shouldBe Some("utf-8")
+      bodyOf(result) should include("You must contact the applicant")
     }
 
     "redirect to Application Details for non OPEN statuses" in {

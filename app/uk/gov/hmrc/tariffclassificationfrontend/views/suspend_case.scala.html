@@ -18,9 +18,11 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.case_heading
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{case_heading, contact_details}
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.input_yes_no
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController
-@(c: Case)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+
+@(c: Case, form: Form[Boolean])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None) {
 
@@ -28,16 +30,19 @@
 
     <div class="grid-row">
         <div class="column-full">
-            <h2 class="heading-large mt-0">Suspend this case</h2>
+            <h2 class="heading-large mt-0">Contact the applicant and attach a copy of the email before you suspend this case</h2>
 
-            <p> Before you suspend this case, add a note explaining why you’re suspending it. </p>
-            <p> The days elapsed count will stop at <span id="days-elapsed">@(c.daysElapsed)</span>.</p>
+            @contact_details(c)
+
+            <h3 class="heading-medium mt-0">Have you contacted the applicant and attached a copy of the email to this case?</h3>
 
             @helper.form(action = SuspendCaseController.confirmSuspendCase(c.reference), 'id -> "suspend-case") {
                 @helper.CSRF.formField
 
+                @input_yes_no(form("state"), "suspend-case_contacted-applicant")
+
                 <div>
-                    <button class="button" id="suspend-case-button" type="submit">Suspend case</button>
+                    <button class="button" id="suspend-case-button" type="submit">Suspend this case</button>
                     <a class="secondary-button" id="suspend-case-cancel-button" href="@CaseController.applicationDetails(c.reference)">Cancel</a>
                 </div>
             }

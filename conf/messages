@@ -104,3 +104,6 @@ release-case.submit.button = Release Case
 reassign-case.submit.button = Move back to queue
 
 suppress_case.form.state.required = Select yes if you have contacted the applicant
+reject_case.form.state.required = Select yes if you have contacted the applicant
+refer_case.form.state.required = Select yes if you have contacted the applicant
+suspend_case.form.state.required = Select yes if you have contacted the applicant
