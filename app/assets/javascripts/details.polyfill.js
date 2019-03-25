@@ -238,3 +238,5 @@
     }
     global.GOVUK = GOVUK
 })(window)
+
+GOVUK.details.init()
