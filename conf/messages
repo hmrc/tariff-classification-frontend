@@ -103,6 +103,9 @@ errors.case-not-found.title=Case not found
 errors.case-not-found.message=We could not find a Case with reference: {0}
 errors.all.back=Back Home
 
+errors.ruling-not-found.title=Ruling not found
+errors.ruling-not-found.message=We could not find a ruling with case reference: {0}
+
 errors.resource-not-found.title={0} not found.
 
 
