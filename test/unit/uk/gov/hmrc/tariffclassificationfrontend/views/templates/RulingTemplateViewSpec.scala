@@ -17,6 +17,7 @@
 package uk.gov.hmrc.tariffclassificationfrontend.views.templates
 
 import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
+import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers.containText
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewSpec
 import uk.gov.hmrc.tariffclassificationfrontend.views.html.templates.ruling_template
 import uk.gov.tariffclassificationfrontend.utils.Cases
@@ -27,7 +28,7 @@ class RulingTemplateViewSpec extends ViewSpec {
   private val rulingCase = Cases.btiCaseExample
   private val holder = rulingCase.application.holder
   private val ruling = rulingCase.decision.getOrElse(throw new Exception("Bad test data"))
-  private val doc = asDocument(ruling_template(rulingCase)(authenticatedFakeRequest, messages, appConfig))
+  private val doc = view(ruling_template(rulingCase)(authenticatedFakeRequest, messages, appConfig))
 
   "Ruling pdf holder section" must {
 
@@ -98,8 +99,8 @@ class RulingTemplateViewSpec extends ViewSpec {
     }
   }
 
-  private def assertSectionContains(sectionId: String, text: String) = {
-    assertElementHasText(doc.getElementById(sectionId), text)
+  private def assertSectionContains(id: String, text: String) = {
+    doc.getElementById(id) should containText(text)
   }
 
 }
