@@ -167,7 +167,7 @@ class AuthenticatedActionSpec extends UnitSpec with MockitoSugar with Controller
   }
 
   private def givenAuthSuccess(id: String = "id", name: Name = Name(Some("full name"), Some("surname")), manager: Boolean = false): Unit = {
-    val predicate: Predicate = Enrolment("team-enrolment") and AuthProviders(PrivilegedApplication)
+    val predicate: Predicate = (Enrolment("team-enrolment") or Enrolment("manager-enrolment")) and AuthProviders(PrivilegedApplication)
     val retrieval: Retrieval[Credentials ~ Name ~ Enrolments] = Retrievals.credentials and Retrievals.name and Retrievals.allEnrolments
     val enrolments: Set[Enrolment] = if(manager) Set(Enrolment("manager-enrolment")) else Set.empty
     val value: Credentials ~ Name ~ Enrolments = new ~(new ~(Credentials(id, "type"), name), Enrolments(enrolments))
