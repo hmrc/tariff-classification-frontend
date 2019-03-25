@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.views.forms.components
 
-import play.api.data.Form
+import play.api.data.{Form, FormError}
 import play.api.data.Forms.{mapping, number}
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewSpec
@@ -26,11 +26,14 @@ class InputNumberViewSpec extends ViewSpec {
 
   "Input Number" should {
     case class FormData(value: Int)
-    val form = Form(
+
+    lazy val form = Form(
       mapping(
         "field" -> number
       )(FormData.apply)(FormData.unapply)
     ).fill(FormData(5))
+
+    lazy val emptyForm = Map[String, String]()
 
     "Render" in {
       // When
@@ -48,16 +51,28 @@ class InputNumberViewSpec extends ViewSpec {
 
     "Render with Optional Fields" in {
       // When
-      val doc = view(input_number(form("field"), "Label", maxLength = Some(10), minLength = Some(1)))
+      val doc = view(input_number(form("field"), "Label", hint = Some("some-hint") , maxLength = Some(10), minLength = Some(1)))
 
       // Then
       doc should containElementWithTag("input")
+      doc should containElementWithID("field")
       doc should containElementWithID("field")
       doc.getElementById("field") should haveAttribute("type", "number")
       doc.getElementById("field") should haveAttribute("name", "field")
       doc.getElementById("field") should haveAttribute("value", "5")
       doc.getElementById("field") should haveAttribute("minLength", "1")
       doc.getElementById("field") should haveAttribute("maxLength", "10")
+    }
+
+
+    "Render with error field" in {
+      // When
+      val  formWithError = form.bind(emptyForm).apply("field")
+
+      val doc = view(input_number(formWithError, "Label"))
+
+      // Then
+      doc should containElementWithID("error-message-field-input")
     }
   }
 
