@@ -26,11 +26,7 @@
 @defining(c.application.asBTI) { btiApp: BTIApplication =>
 
     @tab_heading("ruling", messages("case.menu.ruling"))
-
-    <div class="grid-row">
-        <p id="boards-file-number" class="column-full">Boards file number: @{c.caseBoardsFileNumber.getOrElse("None")}</p>
-    </div>
-
+    
     <h3 class="heading-medium  mt-1">@messages("case.menu.application")</h3>
 
     <div class="grid-row">
