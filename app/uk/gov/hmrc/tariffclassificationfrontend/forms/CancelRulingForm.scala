@@ -33,7 +33,6 @@ object CancelRulingForm {
     "reason" -> text.verifying(oneOf(CancelReason.values))
   )(v => CancelReason.values.find(_.toString == v).get)(r => Some(r.toString))
 
-  val form: Form[CancelReason] = Form[CancelReason](mapping)
-
+  lazy val form: Form[CancelReason] = Form[CancelReason](mapping)
 
 }

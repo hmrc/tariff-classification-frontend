@@ -45,7 +45,7 @@ class CancelRulingController @Inject()(authenticatedAction: AuthenticatedAction,
   override protected def redirect: String => Call = routes.CaseController.applicationDetails
 
   override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = {
-    c.status == COMPLETED
+    c.status == COMPLETED && c.rulingHasNotExpired
   }
 
   private def cancelRuling(f: Form[CancelReason], caseRef: String)

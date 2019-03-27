@@ -54,7 +54,9 @@ class CancelRulingControllerSpec extends WordSpec with Matchers with UnitSpec
   private implicit val mat: Materializer = fakeApplication.materializer
   private implicit val hc: HeaderCarrier = HeaderCarrier()
 
-  private val controller = new CancelRulingController(new SuccessfulAuthenticatedAction(operator), casesService, messageApi, appConfig)
+  private val controller = new CancelRulingController(
+    new SuccessfulAuthenticatedAction(operator), casesService, messageApi, appConfig
+  )
 
   override def afterEach(): Unit = {
     super.afterEach()
@@ -76,6 +78,17 @@ class CancelRulingControllerSpec extends WordSpec with Matchers with UnitSpec
 
     "redirect to Application Details for non COMPLETED statuses" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusOPEN)))
+
+      val result: Result = await(controller.cancelRuling("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+
+      status(result) shouldBe Status.SEE_OTHER
+      contentTypeOf(result) shouldBe None
+      charsetOf(result) shouldBe None
+      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/application")
+    }
+
+    "redirect to Application Details for expired rulings" in {
+      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(Cases.btiCaseWithExpiredRuling)))
 
       val result: Result = await(controller.cancelRuling("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
@@ -128,6 +141,17 @@ class CancelRulingControllerSpec extends WordSpec with Matchers with UnitSpec
 
     "redirect to Application Details for non COMPLETED statuses" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusOPEN)))
+
+      val result: Result = await(controller.confirmCancelRuling("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
+
+      status(result) shouldBe Status.SEE_OTHER
+      contentTypeOf(result) shouldBe None
+      charsetOf(result) shouldBe None
+      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/application")
+    }
+
+    "redirect to Application Details for expired rulings" in {
+      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(Cases.btiCaseWithExpiredRuling)))
 
       val result: Result = await(controller.confirmCancelRuling("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
 

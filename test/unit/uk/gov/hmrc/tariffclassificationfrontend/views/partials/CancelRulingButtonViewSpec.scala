@@ -24,15 +24,15 @@ import uk.gov.tariffclassificationfrontend.utils.Cases
 
 class CancelRulingButtonViewSpec extends ViewSpec {
 
-  val cancelButtonId = "cancel-ruling-button"
+  private lazy val cancelButtonId = "cancel-ruling-button"
 
   "Cancel Ruling Button" should {
 
     "render button for OPEN case" in {
-      val case1 = Cases.btiCaseExample.copy(status = CaseStatus.COMPLETED)
+      val c = Cases.btiCaseExample.copy(status = CaseStatus.COMPLETED)
 
       // When
-      val doc = view(cancel_ruling_section(case1))
+      val doc = view(cancel_ruling_section(c))
 
       // Then
       doc should containElementWithID(cancelButtonId)
@@ -40,10 +40,20 @@ class CancelRulingButtonViewSpec extends ViewSpec {
     }
 
     "not render button for other case status" in {
-      val case1 = Cases.btiCaseExample.copy(status = CaseStatus.OPEN)
+      val c = Cases.btiCaseExample.copy(status = CaseStatus.OPEN)
 
       // When
-      val doc = view(cancel_ruling_section(case1))
+      val doc = view(cancel_ruling_section(c))
+
+      // Then
+      doc shouldNot containElementWithID(cancelButtonId)
+    }
+
+    "not render button for expired rulings" in {
+      val c = Cases.btiCaseWithExpiredRuling
+
+      // When
+      val doc = view(cancel_ruling_section(c))
 
       // Then
       doc shouldNot containElementWithID(cancelButtonId)
