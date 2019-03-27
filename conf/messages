@@ -48,6 +48,7 @@ case.application.goods-description=Goods description
 case.application.goods-name=Goods name
 case.application.confidential-information=Confidential information
 case.application.related-bti-reference=Similar BTI rulings from Trader?
+case.application.boards-file-number=Boards file number
 case.application.known-legal-proceedings=Any legal or administration proceedings information from trader?
 case.application.other-information=Other supporting information
 case.application.attachments=Attachments

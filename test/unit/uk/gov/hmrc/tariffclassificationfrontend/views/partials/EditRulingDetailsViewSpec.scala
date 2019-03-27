@@ -240,28 +240,5 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
       doc.getElementById("edit-ruling-file-0") should haveTag("span")
       doc.getElementById("edit-ruling-file-0") should containText("file.txt")
     }
-
-    "Render Boards File Number" in {
-      // Given
-      val c = aCase().copy(caseBoardsFileNumber = Some("file 123"))
-      // When
-      val doc = view(ruling_details_edit(c, Seq.empty, decisionForm.form))
-
-      // Then
-      val boardFileNumber = doc.getElementById("boards-file-number")
-      boardFileNumber.text() shouldBe "Boards file number: file 123"
-    }
-
-    "Render Boards File Number even if not present" in {
-      // Given
-      val c = aCase()
-      // When
-      val doc = view(ruling_details_edit(c, Seq.empty, decisionForm.form))
-
-      // Then
-      val boardFileNumber = doc.getElementById("boards-file-number")
-      boardFileNumber.text() shouldBe "Boards file number: None"
-    }
   }
-
 }
