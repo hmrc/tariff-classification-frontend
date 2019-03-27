@@ -44,7 +44,9 @@ class CancelRulingController @Inject()(authenticatedAction: AuthenticatedAction,
 
   override protected def redirect: String => Call = routes.CaseController.applicationDetails
 
-  override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = c.status == COMPLETED
+  override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = {
+    c.status == COMPLETED
+  }
 
   private def cancelRuling(f: Form[CancelReason], caseRef: String)
                           (implicit request: AuthenticatedRequest[_]): Future[Result] = {
@@ -56,13 +58,13 @@ class CancelRulingController @Inject()(authenticatedAction: AuthenticatedAction,
   }
 
   def confirmCancelRuling(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
-
     CancelRulingForm.form.bindFromRequest().fold(
       cancelRuling(_, reference),
-      (reason: CancelReason) => {
-        getCaseAndRenderView(reference,
-          c => caseService.cancelRuling(c, reason, request.operator).map(views.html.confirm_cancel_ruling(_)))
-      }
+      (reason: CancelReason) =>
+        getCaseAndRenderView(
+          reference,
+          caseService.cancelRuling(_, reason, request.operator).map(views.html.confirm_cancel_ruling(_))
+        )
     )
   }
 
