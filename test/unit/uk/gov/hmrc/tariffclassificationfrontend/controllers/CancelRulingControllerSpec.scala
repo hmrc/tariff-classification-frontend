@@ -51,6 +51,7 @@ class CancelRulingControllerSpec extends WordSpec with Matchers with UnitSpec
   private val caseWithStatusCOMPLETED = Cases.btiCaseExample.copy(status = CaseStatus.COMPLETED)
   private val caseWithStatusCANCELLED = Cases.btiCaseExample.copy(status = CaseStatus.CANCELLED)
 
+  private val rulingDetailsUrl = "/tariff-classification/cases/reference/ruling"
   private implicit val mat: Materializer = fakeApplication.materializer
   private implicit val hc: HeaderCarrier = HeaderCarrier()
 
@@ -84,7 +85,7 @@ class CancelRulingControllerSpec extends WordSpec with Matchers with UnitSpec
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
       charsetOf(result) shouldBe None
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/application")
+      locationOf(result) shouldBe Some(rulingDetailsUrl)
     }
 
     "redirect to Application Details for expired rulings" in {
@@ -95,7 +96,7 @@ class CancelRulingControllerSpec extends WordSpec with Matchers with UnitSpec
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
       charsetOf(result) shouldBe None
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/application")
+      locationOf(result) shouldBe Some(rulingDetailsUrl)
     }
 
     "return Not Found and HTML content type" in {
@@ -147,7 +148,7 @@ class CancelRulingControllerSpec extends WordSpec with Matchers with UnitSpec
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
       charsetOf(result) shouldBe None
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/application")
+      locationOf(result) shouldBe Some(rulingDetailsUrl)
     }
 
     "redirect to Application Details for expired rulings" in {
@@ -158,7 +159,7 @@ class CancelRulingControllerSpec extends WordSpec with Matchers with UnitSpec
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
       charsetOf(result) shouldBe None
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/application")
+      locationOf(result) shouldBe Some(rulingDetailsUrl)
     }
 
     "return Not Found and HTML content type on missing Case" in {
