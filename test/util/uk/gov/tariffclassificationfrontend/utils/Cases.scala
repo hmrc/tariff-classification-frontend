@@ -17,6 +17,7 @@
 package uk.gov.tariffclassificationfrontend.utils
 
 import java.time.Instant
+import java.time.temporal.ChronoUnit
 import java.util.UUID
 
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.CaseStatus
@@ -29,10 +30,10 @@ object Cases {
   val storedOperatorAttachment = StoredAttachment("id", public = true, Some(Operator("0", Some("Operator Name"))), Some("url"), "name", "type", Some(ScanStatus.READY), Instant.now())
   val letterOfAuthority = StoredAttachment("id", public = true, None, Some("url"), "letterOfAuthority", "pdf", Some(ScanStatus.READY), Instant.now())
   val eoriDetailsExample = EORIDetails("eori", "trader-business-name", "line1", "line2", "line3", "postcode", "country")
-  val eoriAgentDetailsExample = AgentDetails(EORIDetails("eori", "agent-business-name", "line1", "line2", "line3", "postcode", "country"), Some(Attachment("letter-id", true, None, Instant.now())))
+  val eoriAgentDetailsExample = AgentDetails(EORIDetails("eori", "agent-business-name", "line1", "line2", "line3", "postcode", "country"), Some(Attachment("letter-id", public = true, None, Instant.now())))
   val contactExample = Contact("name", "email", Some("phone"))
-  val btiApplicationExample = BTIApplication(eoriDetailsExample, contactExample, Some(eoriAgentDetailsExample), false, "Laptop", "Personal Computer", None, None, None, None, None, None, false, false)
-  val simpleBtiApplicationExample = BTIApplication(eoriDetailsExample, contactExample, None, false, "Laptop", "Personal Computer", None, None, None, None, None, None, false, false)
+  val btiApplicationExample = BTIApplication(eoriDetailsExample, contactExample, Some(eoriAgentDetailsExample), offline = false, "Laptop", "Personal Computer", None, None, None, None, None, None, sampleToBeProvided = false, sampleToBeReturned = false)
+  val simpleBtiApplicationExample = BTIApplication(eoriDetailsExample, contactExample, None, offline = false, "Laptop", "Personal Computer", None, None, None, None, None, None, sampleToBeProvided = false, sampleToBeReturned = false)
   val decision = Decision("040900", Some(Instant.now()), Some(Instant.now().plusSeconds(2*3600*24*365)), "justification", "good description", None, None, Some("denomination"), None)
   val liabilityApplicationExample = LiabilityOrder(eoriDetailsExample, contactExample, "status", "port", "entry number", Instant.now())
   val btiCaseExample = Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, None, None, btiApplicationExample, Some(decision), Seq())
@@ -40,6 +41,11 @@ object Cases {
   val liabilityCaseExample = Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, None, None, liabilityApplicationExample, None, Seq())
   val caseQueueExample = Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, None, Some("1"), btiApplicationExample, Some(decision), Seq())
   val caseAssignedExample = Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, Some(Operator("1", Some("Test User"))), Some("1"), btiApplicationExample, Some(decision), Seq())
+  val expiredRuling = decision.copy(
+    effectiveStartDate = Some(Instant.now().plus(-20, ChronoUnit.DAYS)),
+    effectiveEndDate = Some(Instant.now().plus(-10, ChronoUnit.DAYS))
+  )
+  val btiCaseWithExpiredRuling = btiCaseExample.copy(status = CaseStatus.COMPLETED, decision = Some(expiredRuling))
 
   def attachment(id: String = UUID.randomUUID().toString): Attachment = {
     Attachment(

@@ -51,10 +51,13 @@ class CancelRulingControllerSpec extends WordSpec with Matchers with UnitSpec
   private val caseWithStatusCOMPLETED = Cases.btiCaseExample.copy(status = CaseStatus.COMPLETED)
   private val caseWithStatusCANCELLED = Cases.btiCaseExample.copy(status = CaseStatus.CANCELLED)
 
+  private val rulingDetailsUrl = "/tariff-classification/cases/reference/ruling"
   private implicit val mat: Materializer = fakeApplication.materializer
   private implicit val hc: HeaderCarrier = HeaderCarrier()
 
-  private val controller = new CancelRulingController(new SuccessfulAuthenticatedAction(operator), casesService, messageApi, appConfig)
+  private val controller = new CancelRulingController(
+    new SuccessfulAuthenticatedAction(operator), casesService, messageApi, appConfig
+  )
 
   override def afterEach(): Unit = {
     super.afterEach()
@@ -74,7 +77,7 @@ class CancelRulingControllerSpec extends WordSpec with Matchers with UnitSpec
       bodyOf(result) should include("Cancel the ruling")
     }
 
-    "redirect to Application Details for non COMPLETED statuses" in {
+    "redirect to Ruling Details for non COMPLETED statuses" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusOPEN)))
 
       val result: Result = await(controller.cancelRuling("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
@@ -82,7 +85,18 @@ class CancelRulingControllerSpec extends WordSpec with Matchers with UnitSpec
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
       charsetOf(result) shouldBe None
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/application")
+      locationOf(result) shouldBe Some(rulingDetailsUrl)
+    }
+
+    "redirect to Ruling Details for expired rulings" in {
+      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(Cases.btiCaseWithExpiredRuling)))
+
+      val result: Result = await(controller.cancelRuling("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+
+      status(result) shouldBe Status.SEE_OTHER
+      contentTypeOf(result) shouldBe None
+      charsetOf(result) shouldBe None
+      locationOf(result) shouldBe Some(rulingDetailsUrl)
     }
 
     "return Not Found and HTML content type" in {
@@ -126,7 +140,7 @@ class CancelRulingControllerSpec extends WordSpec with Matchers with UnitSpec
       bodyOf(result) should include("This field is required")
     }
 
-    "redirect to Application Details for non COMPLETED statuses" in {
+    "redirect to Ruling Details for non COMPLETED statuses" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusOPEN)))
 
       val result: Result = await(controller.confirmCancelRuling("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
@@ -134,7 +148,18 @@ class CancelRulingControllerSpec extends WordSpec with Matchers with UnitSpec
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
       charsetOf(result) shouldBe None
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/application")
+      locationOf(result) shouldBe Some(rulingDetailsUrl)
+    }
+
+    "redirect to Ruling Details for expired rulings" in {
+      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(Cases.btiCaseWithExpiredRuling)))
+
+      val result: Result = await(controller.confirmCancelRuling("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
+
+      status(result) shouldBe Status.SEE_OTHER
+      contentTypeOf(result) shouldBe None
+      charsetOf(result) shouldBe None
+      locationOf(result) shouldBe Some(rulingDetailsUrl)
     }
 
     "return Not Found and HTML content type on missing Case" in {

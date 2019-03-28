@@ -34,4 +34,7 @@ case class Case
   decision: Option[Decision],
   attachments: Seq[Attachment],
   keywords: Set[String] = Set.empty
-)
+) {
+
+  def rulingHasNotExpired: Boolean = decision.flatMap(_.effectiveEndDate).exists(_.compareTo(Instant.now) >= 0)
+}
