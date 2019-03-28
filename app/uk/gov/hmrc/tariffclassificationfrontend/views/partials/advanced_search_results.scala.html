@@ -22,9 +22,9 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{AppealStatus, CancelReason, Case, CaseStatus, Paged, ReviewStatus}
 @import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
 @import uk.gov.hmrc.tariffclassificationfrontend.models.StoredAttachment
-@import uk.gov.hmrc.tariffclassificationfrontend.views.partials.statuses._
 @import uk.gov.hmrc.tariffclassificationfrontend.views.partials.SearchResult
 @import uk.gov.hmrc.tariffclassificationfrontend.models.response.ScanStatus
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.statuses._
 @(results: Paged[SearchResult])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 <div id="advanced_search_results">
