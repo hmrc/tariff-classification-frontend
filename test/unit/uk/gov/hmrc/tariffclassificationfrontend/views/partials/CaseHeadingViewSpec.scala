@@ -41,6 +41,7 @@ class CaseHeadingViewSpec extends ViewSpec {
       doc.getElementById("case-reference") should containText("Case ref")
       doc should containElementWithID("case-status")
       doc.getElementById("case-status") should containText("OPEN")
+      doc shouldNot containElementWithID("back-link")
     }
 
     "Render without Optional Statuses" in {
@@ -83,6 +84,17 @@ class CaseHeadingViewSpec extends ViewSpec {
       // Then
       doc should containElementWithID("review-status")
       doc.getElementById("review-status") should containText("Review upheld")
+    }
+
+    "Render with back link" in {
+      // Given
+      val c = aCase()
+
+      // When
+      val doc = view(case_heading(c, displayBackLink = true))
+
+      // Then
+      doc should containElementWithID("back-link")
     }
 
   }

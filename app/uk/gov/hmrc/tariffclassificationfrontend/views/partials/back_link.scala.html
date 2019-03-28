@@ -20,7 +20,7 @@
 
  @if(displayBackLink) {
   <div>
-   <a class="link-back mt-0" href="@request.session.get("back-link").getOrElse(routes.MyCasesController.myCases())">
+   <a id="back-link" class="link-back mt-0" href="@request.session.get("back-link").getOrElse(routes.MyCasesController.myCases())">
     Back to @request.session.get("back-link-name").getOrElse("my cases")
    </a>
   </div>
