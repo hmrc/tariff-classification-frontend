@@ -37,7 +37,7 @@ case class Case
   keywords: Set[String] = Set.empty
 ) {
 
-  def rulingHasExpired(implicit appConfig: AppConfig): Boolean = {
+  def hasExpiredRuling(implicit appConfig: AppConfig): Boolean = {
     val currentTime = Instant.now(appConfig.clock)
     decision.flatMap(_.effectiveEndDate).exists(_.isBefore(currentTime))
   }

@@ -40,26 +40,26 @@ class CaseTest extends UnitSpec with MockitoSugar with BeforeAndAfterAll {
     when(appConfig.clock).thenReturn(clockWithFixedTime)
   }
 
-  "Case 'rulingHasExpired'" should {
+  "Case 'hasExpiredRuling'" should {
 
     "return false for cases without a decision" in {
-      caseWithRuling(None).rulingHasExpired shouldBe false
+      caseWithRuling(None).hasExpiredRuling shouldBe false
     }
 
     "return false when 'effectiveEndDate' is not defined" in {
-      caseWithRuling(Some(rulingWithEffectiveEndDate(None))).rulingHasExpired shouldBe false
+      caseWithRuling(Some(rulingWithEffectiveEndDate(None))).hasExpiredRuling shouldBe false
     }
 
     "return true when 'effectiveEndDate' is a past time" in {
-      caseWithRuling(Some(rulingWithEffectiveEndDate(Some(pastTime)))).rulingHasExpired shouldBe true
+      caseWithRuling(Some(rulingWithEffectiveEndDate(Some(pastTime)))).hasExpiredRuling shouldBe true
     }
 
     "return false when 'effectiveEndDate' is the current time" in {
-      caseWithRuling(Some(rulingWithEffectiveEndDate(Some(currentTime)))).rulingHasExpired shouldBe false
+      caseWithRuling(Some(rulingWithEffectiveEndDate(Some(currentTime)))).hasExpiredRuling shouldBe false
     }
 
     "return false when 'effectiveEndDate' is a future time" in {
-      caseWithRuling(Some(rulingWithEffectiveEndDate(Some(futureTime)))).rulingHasExpired shouldBe false
+      caseWithRuling(Some(rulingWithEffectiveEndDate(Some(futureTime)))).hasExpiredRuling shouldBe false
     }
   }
 
