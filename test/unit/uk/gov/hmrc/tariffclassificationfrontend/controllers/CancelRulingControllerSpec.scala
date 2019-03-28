@@ -77,7 +77,7 @@ class CancelRulingControllerSpec extends WordSpec with Matchers with UnitSpec
       bodyOf(result) should include("Cancel the ruling")
     }
 
-    "redirect to Application Details for non COMPLETED statuses" in {
+    "redirect to Ruling Details for non COMPLETED statuses" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusOPEN)))
 
       val result: Result = await(controller.cancelRuling("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
@@ -88,7 +88,7 @@ class CancelRulingControllerSpec extends WordSpec with Matchers with UnitSpec
       locationOf(result) shouldBe Some(rulingDetailsUrl)
     }
 
-    "redirect to Application Details for expired rulings" in {
+    "redirect to Ruling Details for expired rulings" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(Cases.btiCaseWithExpiredRuling)))
 
       val result: Result = await(controller.cancelRuling("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
@@ -140,7 +140,7 @@ class CancelRulingControllerSpec extends WordSpec with Matchers with UnitSpec
       bodyOf(result) should include("This field is required")
     }
 
-    "redirect to Application Details for non COMPLETED statuses" in {
+    "redirect to Ruling Details for non COMPLETED statuses" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusOPEN)))
 
       val result: Result = await(controller.confirmCancelRuling("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
@@ -151,7 +151,7 @@ class CancelRulingControllerSpec extends WordSpec with Matchers with UnitSpec
       locationOf(result) shouldBe Some(rulingDetailsUrl)
     }
 
-    "redirect to Application Details for expired rulings" in {
+    "redirect to Ruling Details for expired rulings" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(Cases.btiCaseWithExpiredRuling)))
 
       val result: Result = await(controller.confirmCancelRuling("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
