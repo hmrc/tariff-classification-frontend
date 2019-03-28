@@ -57,6 +57,8 @@ class SearchController @Inject()(authenticatedAction: AuthenticatedAction,
             attachments: Map[Case, Seq[StoredAttachment]] <- fileStoreService.getAttachments(cases.results)
             results: Paged[SearchResult] = cases.map(c => SearchResult(c, attachments.getOrElse(c, Seq.empty)))
           } yield Results.Ok(html.advanced_search(SearchForm.form.fill(data), Some(results), keywords))
+                            .addingToSession(("back-link-name", "search results"),
+                              ("back-link", routes.SearchController.search(None, search, sort, page).url))
         )
       })
     }

@@ -51,6 +51,9 @@ class AssignedCasesController @Inject()(authenticated: AuthenticatedAction,
       cases <- casesService.getAssignedCases(NoPagination())
       queues <- queuesService.getAll
     } yield Ok(views.html.assigned_cases(queues, cases.results, assigneeId))
+              .addingToSession(("back-link-name", "assigned cases"),
+                               ("back-link", routes.AssignedCasesController.assignedCases().url))
+
   }
 
 }

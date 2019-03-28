@@ -39,6 +39,8 @@ class MyCasesController @Inject()(authenticatedAction: AuthenticatedAction,
       cases <- casesService.getCasesByAssignee(request.operator, NoPagination())
       queues <- queuesService.getAll
     } yield Ok(views.html.my_cases(queues, cases, request.operator))
+              .addingToSession(("back-link-name", "my cases"),
+                               ("back-link", routes.MyCasesController.myCases().url))
   }
 
 }

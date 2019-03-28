@@ -24,7 +24,7 @@
 @main(bodyClasses = None) {
     @defining(c.application.asBTI) { btiApp: BTIApplication =>
 
-        @case_heading(c)
+        @case_heading(c, displayBackLink = true)
 
         <div class="tabs">
             @case_nav(page, c)
