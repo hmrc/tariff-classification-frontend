@@ -18,41 +18,57 @@ package uk.gov.hmrc.tariffclassificationfrontend.models
 
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.tariffclassificationfrontend.utils.Cases
-import java.time.Instant
+import java.time.{Clock, Instant, ZoneOffset}
 
-import org.scalatest.Assertion
+import org.mockito.Mockito.when
+import org.scalatest.BeforeAndAfterAll
+import org.scalatest.mockito.MockitoSugar
+import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 
-class CaseTest extends UnitSpec {
+class CaseTest extends UnitSpec with MockitoSugar with BeforeAndAfterAll {
 
-  "Case 'rulingHasNotExpired'" should {
+  private implicit val appConfig: AppConfig = mock[AppConfig]
+
+  private val pastTime = Instant.parse("2010-01-01T01:01:00Z")
+  private val currentTime = Instant.parse("2010-01-01T01:01:01Z")
+  private val futureTime = Instant.parse("2010-01-01T01:01:02Z")
+
+  private val clockWithFixedTime = Clock.fixed(currentTime, ZoneOffset.UTC)
+
+  override protected def beforeAll(): Unit = {
+    super.beforeAll()
+    when(appConfig.clock).thenReturn(clockWithFixedTime)
+  }
+
+  "Case 'rulingHasExpired'" should {
 
     "return false for cases without a decision" in {
-      assertRulingHasExpired(None, expectedResult = false)
+      caseWithRuling(None).rulingHasExpired shouldBe false
     }
 
     "return false when 'effectiveEndDate' is not defined" in {
-      val dec = Cases.decision.copy(effectiveEndDate = None)
-
-      assertRulingHasExpired(Some(dec), expectedResult = false)
+      caseWithRuling(Some(rulingWithEffectiveEndDate(None))).rulingHasExpired shouldBe false
     }
 
     "return false when 'effectiveEndDate' is before the current time" in {
-      val endDate = Instant.now().plusSeconds(-10)
-      val dec = Cases.decision.copy(effectiveEndDate = Some(endDate))
+      caseWithRuling(Some(rulingWithEffectiveEndDate(Some(pastTime)))).rulingHasExpired shouldBe false
+    }
 
-      assertRulingHasExpired(Some(dec), expectedResult = false)
+    "return false when 'effectiveEndDate' is equal to the current time" in {
+      caseWithRuling(Some(rulingWithEffectiveEndDate(Some(currentTime)))).rulingHasExpired shouldBe false
     }
 
     "return true when 'effectiveEndDate' is after the current time" in {
-      val endDate = Instant.now().plusSeconds(10)
-      val dec = Cases.decision.copy(effectiveEndDate = Some(endDate))
-
-      assertRulingHasExpired(Some(dec), expectedResult = true)
+      caseWithRuling(Some(rulingWithEffectiveEndDate(Some(futureTime)))).rulingHasExpired shouldBe true
     }
   }
 
-  private def assertRulingHasExpired(dec: Option[Decision], expectedResult: Boolean): Assertion = {
-    Cases.btiCaseExample.copy(decision = dec).rulingHasNotExpired shouldBe expectedResult
+  private def rulingWithEffectiveEndDate(date: Option[Instant]): Decision = {
+    Cases.decision.copy(effectiveEndDate = date)
+  }
+
+  private def caseWithRuling(d: Option[Decision]): Case = {
+    Cases.btiCaseExample.copy(decision = d)
   }
 
 }

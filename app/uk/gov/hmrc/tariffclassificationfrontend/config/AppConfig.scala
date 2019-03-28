@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.config
 
-import java.time.ZoneId
+import java.time.{Clock, ZoneId}
 
 import javax.inject.{Inject, Singleton}
 import play.api.Mode.Mode
@@ -47,11 +47,13 @@ class AppConfig @Inject()(val runModeConfiguration: Configuration, environment: 
   lazy val emailRendererUrl: String = baseUrl("hmrc-email-renderer")
   lazy val fileStoreUrl: String = baseUrl("binding-tariff-filestore")
   lazy val decisionLifetimeYears: Int = getInt("app.decision-lifetime-years")
-  lazy val zoneId: ZoneId = ZoneId.of("UTC")
   lazy val fileUploadMaxSize: Int = loadConfig("fileupload.maxSize").toInt
   lazy val fileUploadMimeTypes: Set[String] = loadConfig("fileupload.mimeTypes").split(",").map(_.trim).toSet
   lazy val apiToken: String = loadConfig("auth.api-token")
   lazy val pdfGeneratorUrl: String = baseUrl("pdf-generator-service")
+
+  lazy val zoneId: ZoneId = ZoneId.of("UTC")
+  lazy val clock: Clock = Clock.system(zoneId)
 
   def runningAsDev: Boolean = {
     runModeConfiguration

@@ -18,6 +18,7 @@ package uk.gov.hmrc.tariffclassificationfrontend.models
 
 import java.time.Instant
 
+import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.CaseStatus
 
 case class Case
@@ -36,5 +37,9 @@ case class Case
   keywords: Set[String] = Set.empty
 ) {
 
-  def rulingHasNotExpired: Boolean = decision.flatMap(_.effectiveEndDate).exists(_.compareTo(Instant.now) >= 0)
+  def rulingHasExpired(implicit appConfig: AppConfig): Boolean = {
+    val currentTime = Instant.now(appConfig.clock)
+    decision.flatMap(_.effectiveEndDate).exists(_.isBefore(currentTime))
+  }
+
 }
