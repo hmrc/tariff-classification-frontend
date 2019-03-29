@@ -42,7 +42,7 @@ class QueuesControllerSpec extends UnitSpec with Matchers with WithFakeApplicati
   private val appConfig = new AppConfig(configuration, env)
   private val casesService = mock[CasesService]
   private val queuesService = mock[QueuesService]
-  private val queue = Queue("0", "queue", "Queue Name")
+  private val queue = Queue("0", "queue", "Queue Name", "queue name")
   private implicit val hc = HeaderCarrier()
 
   private val controller = new QueuesController(new SuccessfulAuthenticatedAction, casesService, queuesService, messageApi, appConfig)
@@ -59,8 +59,10 @@ class QueuesControllerSpec extends UnitSpec with Matchers with WithFakeApplicati
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
       contentAsString(result) should include ("Queue Name")
-      session(result).get(SessionKeys.backLinkLabel) shouldBe Some("Queue Name cases")
-      session(result).get(SessionKeys.backLinkUrl) shouldBe Some("/tariff-classification/queues/queue")
+      session(result).get(SessionKeys.backToQueuesLinkLabel) shouldBe Some("queue name cases")
+      session(result).get(SessionKeys.backToQueuesLinkUrl) shouldBe Some("/tariff-classification/queues/queue")
+      session(result).get(SessionKeys.backToSearchResultsLinkLabel) shouldBe None
+      session(result).get(SessionKeys.backToSearchResultsLinkUrl) shouldBe None
     }
 
     "return 200 OK and HTML content type when Queue is not found" in {

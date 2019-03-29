@@ -17,6 +17,8 @@
 package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
 object SessionKeys {
-  val backLinkUrl = "back-link-url"
-  val backLinkLabel = "back-link-label"
+  val backToQueuesLinkUrl = "back-to-queues-link-url"
+  val backToQueuesLinkLabel = "back-to-queues-link-label"
+  val backToSearchResultsLinkUrl = "back-to-search-results-link-url"
+  val backToSearchResultsLinkLabel = "back-to-search-results-link-label"
 }

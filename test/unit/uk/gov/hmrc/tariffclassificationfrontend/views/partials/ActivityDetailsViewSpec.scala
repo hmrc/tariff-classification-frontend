@@ -28,7 +28,7 @@ import uk.gov.tariffclassificationfrontend.utils.Cases._
 class ActivityDetailsViewSpec extends ViewSpec {
 
   private val date = ZonedDateTime.of(2019,1,1,0,0,0,0, ZoneOffset.UTC).toInstant
-  private val queues = Seq(Queue(id = "1", slug = "test", name = "TEST"))
+  private val queues = Seq(Queue(id = "1", slug = "test", name = "TEST", label = "test"))
 
   "Activity Details" should {
 

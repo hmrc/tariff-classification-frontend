@@ -17,7 +17,8 @@
 package uk.gov.hmrc.tariffclassificationfrontend.views.partials
 
 import play.api.test.FakeRequest
-import uk.gov.hmrc.tariffclassificationfrontend.controllers.SessionKeys.{backLinkLabel, backLinkUrl}
+import uk.gov.hmrc.tariffclassificationfrontend.controllers.SessionKeys
+import uk.gov.hmrc.tariffclassificationfrontend.controllers.SessionKeys.{backToQueuesLinkLabel, backToQueuesLinkUrl}
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewSpec
 import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.back_link
@@ -28,11 +29,11 @@ class BackLinkViewSpec extends ViewSpec {
 
     "render back link with details from session" in {
       // Given
-      val requestWithSessionData = FakeRequest().withSession((backLinkUrl, "url"),
-                                                             (backLinkLabel, "somewhere nice"))
+      val requestWithSessionData = FakeRequest().withSession((backToQueuesLinkUrl, "url"),
+                                                             (backToQueuesLinkLabel, "somewhere nice"))
 
       // When
-      val doc = view(back_link(displayBackLink = true)(requestWithSessionData))
+      val doc = view(back_link(displayBackLink = true, SessionKeys.backToQueuesLinkUrl, SessionKeys.backToQueuesLinkLabel)(requestWithSessionData))
 
       // Then
       doc should containElementWithID("back-link")
@@ -43,7 +44,7 @@ class BackLinkViewSpec extends ViewSpec {
 
     "render back link with default details if session does not contain details" in {
       // When
-      val doc = view(back_link(displayBackLink = true))
+      val doc = view(back_link(displayBackLink = true, SessionKeys.backToQueuesLinkUrl, SessionKeys.backToQueuesLinkLabel))
 
       // Then
       doc should containElementWithID("back-link")
@@ -54,7 +55,7 @@ class BackLinkViewSpec extends ViewSpec {
 
     "do not render back link when not called for" in {
       // When
-      val doc = view(back_link())
+      val doc = view(back_link(displayBackLink = false, SessionKeys.backToQueuesLinkUrl, SessionKeys.backToQueuesLinkLabel))
 
       // Then
       doc shouldNot  containElementWithID("back-link")

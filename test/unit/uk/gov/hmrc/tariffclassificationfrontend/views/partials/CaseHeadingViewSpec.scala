@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.views.partials
 
+import play.api.test.FakeRequest
+import uk.gov.hmrc.tariffclassificationfrontend.controllers.SessionKeys._
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers.{containElementWithID, _}
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewSpec
@@ -86,15 +88,31 @@ class CaseHeadingViewSpec extends ViewSpec {
       doc.getElementById("review-status") should containText("Review upheld")
     }
 
-    "Render with back link" in {
+    "Render with queues back link" in {
       // Given
       val c = aCase()
+      val requestWithSessionData = FakeRequest().withSession((backToQueuesLinkUrl, "url"), (backToQueuesLinkLabel, "some cases"))
+
 
       // When
-      val doc = view(case_heading(c, displayBackLink = true))
+      val doc = view(case_heading(c, displayBackLink = true)(messages, requestWithSessionData))
 
       // Then
       doc should containElementWithID("back-link")
+      doc.getElementById("back-link") should containText("some cases")
+    }
+
+    "Render with search results back link" in {
+      // Given
+      val c = aCase()
+      val requestWithSessionData = FakeRequest().withSession((backToSearchResultsLinkUrl, "url"), (backToSearchResultsLinkLabel, "some search results"))
+
+      // When
+      val doc = view(case_heading(c, displayBackLink = true)(messages, requestWithSessionData))
+
+      // Then
+      doc should containElementWithID("back-link")
+      doc.getElementById("back-link") should containText("some search results")
     }
 
   }

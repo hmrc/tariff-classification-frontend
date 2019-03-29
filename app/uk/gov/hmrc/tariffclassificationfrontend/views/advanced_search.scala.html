@@ -16,6 +16,7 @@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.SessionKeys
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{Paged, Search}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.{input_checkbox, input_text}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
@@ -25,7 +26,7 @@
 
 @main(bodyClasses = None) {
 
- @back_link(displayBackLink = true)
+ @back_link(displayBackLink = true, SessionKeys.backToQueuesLinkUrl, SessionKeys.backToQueuesLinkLabel)
 
  <h1 id="advanced_search-heading" class="heading-xlarge">Advanced search</h1>
 
