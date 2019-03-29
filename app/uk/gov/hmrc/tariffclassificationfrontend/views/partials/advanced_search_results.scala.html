@@ -14,6 +14,7 @@
  * limitations under the License.
  *@
 
+@import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes
 @import uk.gov.hmrc.tariffclassificationfrontend.models.AppealStatus.AppealStatus
 @import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.CaseStatus
@@ -24,7 +25,8 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.views.partials.SearchResult
 @import uk.gov.hmrc.tariffclassificationfrontend.models.response.ScanStatus
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.thumbnail
-@(results: Paged[SearchResult])(implicit request: Request[_], messages: Messages)
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.statuses._
+@(results: Paged[SearchResult])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 <div id="advanced_search_results">
   @for((result: SearchResult, index: Int) <- results.results.zipWithIndex) {
@@ -62,25 +64,9 @@
       @*Status*@
       <div>
        <span class="bold">Status:</span>
-       <span id="advanced_search_results-row-@{index}-status" class="phase-tag bg-blue">
-       @result.c.status match {
-        case CaseStatus.CANCELLED if result.c.decision.exists(_.cancellation.isDefined) => {
-         CANCELLED - @{result.c.decision.flatMap(_.cancellation).map(c => CancelReason.code(c.reason)).get}
-        }
-        case s : CaseStatus => {@s}
-       }
-       </span>
-       @defining(result.c.decision.flatMap(_.review).map(_.status)) { status: Option[ReviewStatus] =>
-        @if(status.isDefined) {
-         <span id ="advanced_search_results-row-@{index}-review_status" class="phase-tag bg-red">@ReviewStatus.format(status)</span>
-        }
-       }
-
-       @defining(result.c.decision.flatMap(_.appeal).map(_.status)) { status: Option[AppealStatus] =>
-        @if(status.isDefined) {
-         <span id ="advanced_search_results-row-@{index}-appeal_status" class="phase-tag bg-red">@AppealStatus.format(status)</span>
-        }
-       }
+       @case_status(result.c, s"advanced_search_results-row-${index}-status")
+       @review_status(result.c, s"advanced_search_results-row-${index}-review_status")
+       @appeal_status(result.c, s"advanced_search_results-row-${index}-appeal_status")
       </div>
      </div>
     </div>
@@ -109,4 +95,3 @@
    <p id="advanced_search_results-empty" class="mt-1">No results found</p>
   }
 </div>
-
