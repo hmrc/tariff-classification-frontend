@@ -25,7 +25,7 @@
         case CaseStatus.CANCELLED if c.decision.exists(_.cancellation.isDefined) => {
             CANCELLED - @{c.decision.flatMap(_.cancellation).map(c => CancelReason.code(c.reason)).get}
         }
-        case CaseStatus.COMPLETED if c.rulingHasExpired => {
+        case CaseStatus.COMPLETED if c.hasExpiredRuling => {
             EXPIRED
         }
         case s : CaseStatus => {@s}

@@ -19,7 +19,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus}
 @(c: Case)(implicit messages: Messages, appConfig: AppConfig)
 
-@if(c.status == CaseStatus.COMPLETED && !c.rulingHasExpired) {
+@if(c.status == CaseStatus.COMPLETED && !c.hasExpiredRuling) {
 
     <h3 class="heading-medium">Cancel this ruling</h3>
 
