@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.config
 
-import java.time.ZoneId
+import java.time.Clock
 
 import org.scalatest.mockito.MockitoSugar
 import play.api.{Configuration, Environment, Mode}
@@ -118,8 +118,8 @@ class AppConfigSpec extends UnitSpec with MockitoSugar {
       appConfig("app.decision-lifetime-years" -> "1").decisionLifetimeYears shouldBe 1
     }
 
-    "Build ZoneId" in {
-      appConfig().zoneId shouldBe ZoneId.of("UTC")
+    "Build Clock" in {
+      appConfig().clock shouldBe Clock.systemUTC()
     }
 
     "Build API Token" in {

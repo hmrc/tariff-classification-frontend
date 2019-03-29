@@ -53,6 +53,12 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
 
   private val service = new CasesService(config, audit, emailService, fileStoreService, connector, rulingConnector)
 
+  override protected def beforeEach(): Unit = {
+    super.beforeEach()
+
+    given(config.clock).willReturn(clock)
+  }
+
   override protected def afterEach(): Unit = {
     super.afterEach()
     reset(connector, audit, queue, oneCase, manyCases, config, emailService)
@@ -68,7 +74,6 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
       val caseUpdated = aCase.copy(status = CaseStatus.COMPLETED, decision = Some(updatedDecision))
       val emailTemplate = EmailTemplate("plain", "html", "from", "subject", "service")
 
-      given(config.zoneId).willReturn(ZoneId.of("UTC"))
       given(config.decisionLifetimeYears).willReturn(1)
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])).willReturn(successful(mock[Event]))
@@ -76,7 +81,7 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
       given(rulingConnector.notify(refEq(originalCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(()))
 
       // When Then
-      await(service.completeCase(originalCase, operator, clock)) shouldBe caseUpdated
+      await(service.completeCase(originalCase, operator)) shouldBe caseUpdated
 
       verify(audit).auditCaseCompleted(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
       verify(emailService).sendCaseCompleteEmail(refEq(caseUpdated))(any[HeaderCarrier])
@@ -93,7 +98,6 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
       // Given
       val operator: Operator = Operator("operator-id")
       val originalCase = aCase.copy(status = CaseStatus.OPEN, decision = None)
-      given(config.zoneId).willReturn(ZoneId.of("UTC"))
 
       // When Then
       intercept[IllegalArgumentException] {
@@ -132,7 +136,6 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
       val caseUpdated = aCase.copy(status = CaseStatus.COMPLETED, decision = Some(updatedDecision))
       val emailTemplate = EmailTemplate("plain", "html", "from", "subject", "service")
 
-      given(config.zoneId).willReturn(ZoneId.of("UTC"))
       given(config.decisionLifetimeYears).willReturn(1)
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])).willReturn(failed(new RuntimeException("Failed to create Event")))
@@ -157,7 +160,6 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
       val updatedDecision = Decision("code", Some(date("2018-01-01")), Some(date("2019-01-01")), "justification", "goods")
       val caseUpdated = aCase.copy(status = CaseStatus.COMPLETED, decision = Some(updatedDecision))
 
-      given(config.zoneId).willReturn(ZoneId.of("UTC"))
       given(config.decisionLifetimeYears).willReturn(1)
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])).willReturn(successful(mock[Event]))
@@ -185,7 +187,6 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
       val caseUpdated = aCase.copy(status = CaseStatus.COMPLETED, decision = Some(updatedDecision))
       val emailTemplate = EmailTemplate("plain", "html", "from", "subject", "service")
 
-      given(config.zoneId).willReturn(ZoneId.of("UTC"))
       given(config.decisionLifetimeYears).willReturn(1)
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])).willReturn(successful(mock[Event]))
@@ -193,7 +194,7 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
       given(rulingConnector.notify(refEq(originalCase.reference))(any[HeaderCarrier])).willReturn(Future.failed(new RuntimeException("Failed to notify ruling store")))
 
       // When Then
-      await(service.completeCase(originalCase, operator, clock)) shouldBe caseUpdated
+      await(service.completeCase(originalCase, operator)) shouldBe caseUpdated
 
       verify(audit).auditCaseCompleted(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
       verify(emailService).sendCaseCompleteEmail(refEq(caseUpdated))(any[HeaderCarrier])

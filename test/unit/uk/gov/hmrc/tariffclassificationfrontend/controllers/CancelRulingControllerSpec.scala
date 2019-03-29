@@ -16,8 +16,6 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
-import java.time.Clock
-
 import akka.stream.Materializer
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.Mockito._
@@ -116,7 +114,7 @@ class CancelRulingControllerSpec extends WordSpec with Matchers with UnitSpec
 
     "return OK and HTML content type" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusCOMPLETED)))
-      when(casesService.cancelRuling(refEq(caseWithStatusCOMPLETED), refEq(CancelReason.ANNULLED), refEq(operator), any[Clock])
+      when(casesService.cancelRuling(refEq(caseWithStatusCOMPLETED), refEq(CancelReason.ANNULLED), refEq(operator))
       (any[HeaderCarrier])).thenReturn(successful(caseWithStatusCANCELLED))
 
       val result: Result = await(controller.confirmCancelRuling("reference")(newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("reason" -> "ANNULLED")))
@@ -129,7 +127,7 @@ class CancelRulingControllerSpec extends WordSpec with Matchers with UnitSpec
 
     "display required field when failing to submit reason" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusCOMPLETED)))
-      when(casesService.cancelRuling(refEq(caseWithStatusCOMPLETED), refEq(CancelReason.ANNULLED), refEq(operator), any[Clock])
+      when(casesService.cancelRuling(refEq(caseWithStatusCOMPLETED), refEq(CancelReason.ANNULLED), refEq(operator))
       (any[HeaderCarrier])).thenReturn(successful(caseWithStatusCANCELLED))
 
       val result: Result = await(controller.confirmCancelRuling("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
