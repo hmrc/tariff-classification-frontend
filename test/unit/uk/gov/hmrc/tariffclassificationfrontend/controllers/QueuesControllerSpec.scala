@@ -59,6 +59,8 @@ class QueuesControllerSpec extends UnitSpec with Matchers with WithFakeApplicati
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
       contentAsString(result) should include ("Queue Name")
+      session(result).get(SessionKeys.backLinkLabel) shouldBe Some("Queue Name cases")
+      session(result).get(SessionKeys.backLinkUrl) shouldBe Some("/tariff-classification/queues/queue")
     }
 
     "return 200 OK and HTML content type when Queue is not found" in {

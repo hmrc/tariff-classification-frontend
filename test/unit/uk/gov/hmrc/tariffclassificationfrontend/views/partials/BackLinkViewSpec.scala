@@ -17,6 +17,7 @@
 package uk.gov.hmrc.tariffclassificationfrontend.views.partials
 
 import play.api.test.FakeRequest
+import uk.gov.hmrc.tariffclassificationfrontend.controllers.SessionKeys.{backLinkLabel, backLinkUrl}
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewSpec
 import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.back_link
@@ -27,8 +28,8 @@ class BackLinkViewSpec extends ViewSpec {
 
     "render back link with details from session" in {
       // Given
-      val requestWithSessionData = FakeRequest().withSession(("back-link", "url"),
-                                                             ("back-link-name", "somewhere nice"))
+      val requestWithSessionData = FakeRequest().withSession((backLinkUrl, "url"),
+                                                             (backLinkLabel, "somewhere nice"))
 
       // When
       val doc = view(back_link(displayBackLink = true)(requestWithSessionData))

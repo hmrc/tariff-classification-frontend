@@ -16,12 +16,15 @@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes
 
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.SessionKeys
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.SessionKeys.backLinkLabel
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.SessionKeys.backLinkUrl
 @(displayBackLink: Boolean = false)(implicit request: Request[_])
 
  @if(displayBackLink) {
   <div>
-   <a id="back-link" class="link-back mt-0" href="@request.session.get("back-link").getOrElse(routes.MyCasesController.myCases())">
-    Back to @request.session.get("back-link-name").getOrElse("my cases")
+   <a id="back-link" class="link-back mt-0" href="@request.session.get(backLinkUrl).getOrElse(routes.MyCasesController.myCases())">
+    Back to @request.session.get(backLinkLabel).getOrElse("my cases")
    </a>
   </div>
  }

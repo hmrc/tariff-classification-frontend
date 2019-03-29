@@ -21,6 +21,8 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
+import uk.gov.hmrc.tariffclassificationfrontend.controllers.SessionKeys.{backLinkLabel, backLinkUrl}
+import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.SearchController
 import uk.gov.hmrc.tariffclassificationfrontend.forms.SearchForm
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, FileStoreService, KeywordsService}
@@ -39,7 +41,9 @@ class SearchController @Inject()(authenticatedAction: AuthenticatedAction,
                                  val messagesApi: MessagesApi,
                                  implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
-  def search(reference: Option[String] = None, search: Search = Search(), sort: Sort = Sort(), page: Int): Action[AnyContent] = authenticatedAction.async { implicit request =>
+  def search(reference: Option[String] = None, search: Search = Search(), sort: Sort = Sort(), page: Int):
+    Action[AnyContent] = authenticatedAction.async { implicit request =>
+
     if (reference.isDefined) {
       successful(Redirect(routes.CaseController.trader(reference.get)))
     } else if (search.isEmpty) {
@@ -57,8 +61,8 @@ class SearchController @Inject()(authenticatedAction: AuthenticatedAction,
             attachments: Map[Case, Seq[StoredAttachment]] <- fileStoreService.getAttachments(cases.results)
             results: Paged[SearchResult] = cases.map(c => SearchResult(c, attachments.getOrElse(c, Seq.empty)))
           } yield Results.Ok(html.advanced_search(SearchForm.form.fill(data), Some(results), keywords))
-                            .addingToSession(("back-link-name", "search results"),
-                              ("back-link", routes.SearchController.search(None, search, sort, page).url))
+                            .addingToSession((backLinkLabel, "search results"),
+                                             (backLinkUrl, SearchController.search(None, search, sort, page).url))
         )
       })
     }

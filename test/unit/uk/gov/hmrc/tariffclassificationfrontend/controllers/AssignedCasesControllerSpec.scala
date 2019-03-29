@@ -68,6 +68,8 @@ class AssignedCasesControllerSpec extends UnitSpec with Matchers with WithFakeAp
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
       contentAsString(result) should include ("Assigned Cases")
+      session(result).get(SessionKeys.backLinkLabel) shouldBe Some("assigned cases")
+      session(result).get(SessionKeys.backLinkUrl) shouldBe Some("/tariff-classification/queues/assigned")
     }
   }
 

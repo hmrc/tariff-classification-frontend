@@ -21,6 +21,8 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
+import uk.gov.hmrc.tariffclassificationfrontend.controllers.SessionKeys.{backLinkLabel, backLinkUrl}
+import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.AssignedCasesController
 import uk.gov.hmrc.tariffclassificationfrontend.models.NoPagination
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, QueuesService}
@@ -51,8 +53,8 @@ class AssignedCasesController @Inject()(authenticated: AuthenticatedAction,
       cases <- casesService.getAssignedCases(NoPagination())
       queues <- queuesService.getAll
     } yield Ok(views.html.assigned_cases(queues, cases.results, assigneeId))
-              .addingToSession(("back-link-name", "assigned cases"),
-                               ("back-link", routes.AssignedCasesController.assignedCases().url))
+              .addingToSession((backLinkLabel, "assigned cases"),
+                               (backLinkUrl, AssignedCasesController.assignedCases().url))
 
   }
 
