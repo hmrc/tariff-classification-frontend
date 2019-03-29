@@ -16,8 +16,6 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
-import java.time.Clock
-
 import akka.stream.Materializer
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.Mockito._
@@ -127,7 +125,7 @@ class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
     "return OK and HTML content type" in {
       when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(validCaseWithStatusOPEN)))
-      when(casesService.completeCase(refEq(validCaseWithStatusOPEN), refEq(operator), any[Clock])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusCOMPLETED))
+      when(casesService.completeCase(refEq(validCaseWithStatusOPEN), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusCOMPLETED))
 
       val result: Result = await(controller.confirmCompleteCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
 

@@ -40,27 +40,72 @@ class CaseTest extends UnitSpec with MockitoSugar with BeforeAndAfterAll {
     when(appConfig.clock).thenReturn(clockWithFixedTime)
   }
 
-  "Case 'hasExpiredRuling'" should {
+  "hasExpiredRuling()'" should {
 
     "return false for cases without a decision" in {
-      caseWithRuling(None).hasExpiredRuling shouldBe false
+      val c = caseWithRuling(None)
+
+      c.hasExpiredRuling shouldBe false
     }
 
     "return false when 'effectiveEndDate' is not defined" in {
-      caseWithRuling(Some(rulingWithEffectiveEndDate(None))).hasExpiredRuling shouldBe false
+      val c = caseWithRuling(Some(rulingWithEffectiveEndDate(None)))
+
+      c.hasExpiredRuling shouldBe false
     }
 
     "return true when 'effectiveEndDate' is a past time" in {
-      caseWithRuling(Some(rulingWithEffectiveEndDate(Some(pastTime)))).hasExpiredRuling shouldBe true
+      val c = caseWithRuling(Some(rulingWithEffectiveEndDate(Some(pastTime))))
+
+      c.hasExpiredRuling shouldBe true
     }
 
     "return false when 'effectiveEndDate' is the current time" in {
-      caseWithRuling(Some(rulingWithEffectiveEndDate(Some(currentTime)))).hasExpiredRuling shouldBe false
+      val c = caseWithRuling(Some(rulingWithEffectiveEndDate(Some(currentTime))))
+
+      c.hasExpiredRuling shouldBe false
     }
 
     "return false when 'effectiveEndDate' is a future time" in {
-      caseWithRuling(Some(rulingWithEffectiveEndDate(Some(futureTime)))).hasExpiredRuling shouldBe false
+      val c = caseWithRuling(Some(rulingWithEffectiveEndDate(Some(futureTime))))
+
+      c.hasExpiredRuling shouldBe false
     }
+
+  }
+
+  "hasLiveRuling()'" should {
+
+    "return false for cases without a decision" in {
+      val c = caseWithRuling(None)
+
+      c.hasLiveRuling shouldBe false
+    }
+
+    "return false when 'effectiveEndDate' is not defined" in {
+      val c = caseWithRuling(Some(rulingWithEffectiveEndDate(None)))
+
+      c.hasLiveRuling shouldBe false
+    }
+
+    "return false when 'effectiveEndDate' is a past time" in {
+      val c = caseWithRuling(Some(rulingWithEffectiveEndDate(Some(pastTime))))
+
+      c.hasLiveRuling shouldBe false
+    }
+
+    "return true when 'effectiveEndDate' is the current time" in {
+      val c = caseWithRuling(Some(rulingWithEffectiveEndDate(Some(currentTime))))
+
+      c.hasLiveRuling shouldBe true
+    }
+
+    "return true when 'effectiveEndDate' is a future time" in {
+      val c = caseWithRuling(Some(rulingWithEffectiveEndDate(Some(futureTime))))
+
+      c.hasLiveRuling shouldBe true
+    }
+
   }
 
   private def rulingWithEffectiveEndDate(date: Option[Instant]): Decision = {

@@ -52,8 +52,7 @@ class AppConfig @Inject()(val runModeConfiguration: Configuration, environment: 
   lazy val apiToken: String = loadConfig("auth.api-token")
   lazy val pdfGeneratorUrl: String = baseUrl("pdf-generator-service")
 
-  lazy val zoneId: ZoneId = ZoneId.of("UTC")
-  lazy val clock: Clock = Clock.system(zoneId)
+  lazy val clock: Clock = Clock.systemUTC()
 
   def runningAsDev: Boolean = {
     runModeConfiguration
