@@ -129,13 +129,11 @@
                                 <p></p>
                             </div>
                             <div class="column-two-thirds">
-                                <p>
-                                    @attachment(
-                                        id = "agent-letter",
-                                        file = letterOfAuth.get,
-                                        name = Some(messages("case.application.agent.letter-of-authorisation"))
-                                    )
-                                </p>
+                                @attachment(
+                                    id = "agent-letter",
+                                    file = letterOfAuth.get,
+                                    name = Some(messages("case.application.agent.letter-of-authorisation"))
+                                )
                             </div>
                         </div>
                     } else {
