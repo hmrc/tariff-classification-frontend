@@ -94,6 +94,10 @@ class AssignedCasesControllerSpec extends UnitSpec with Matchers with WithFakeAp
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
       contentAsString(result) should include ("Assigned Cases")
+      session(result).get(SessionKeys.backToQueuesLinkLabel) shouldBe Some("Assigned cases")
+      session(result).get(SessionKeys.backToQueuesLinkUrl) shouldBe Some("/tariff-classification/queues/assigned/1")
+      session(result).get(SessionKeys.backToSearchResultsLinkLabel) shouldBe None
+      session(result).get(SessionKeys.backToSearchResultsLinkUrl) shouldBe None
     }
 
     "return 200 OK and HTML content type when case is returned" in {
@@ -105,6 +109,9 @@ class AssignedCasesControllerSpec extends UnitSpec with Matchers with WithFakeAp
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
       contentAsString(result) should include ("Assigned to Test User")
+      session(result).get(SessionKeys.backToQueuesLinkUrl) shouldBe Some("/tariff-classification/queues/assigned/1")
+      session(result).get(SessionKeys.backToSearchResultsLinkLabel) shouldBe None
+      session(result).get(SessionKeys.backToSearchResultsLinkUrl) shouldBe None
     }
   }
 
