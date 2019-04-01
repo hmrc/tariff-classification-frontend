@@ -49,17 +49,14 @@
         </div>
 
         <div class="form-group">
-            <fieldset>
-                <div aria-label="Information">
-                    <p>@messages("cases.attachment.upload.title")</p>
-                    <ul class="list list-bullet">
-                        <li>@messages("cases.attachment.upload.restrictionSize")</li>
-                        <li>@messages("cases.attachment.upload.typeOfFiles")</li>
-                    </ul>
-                    <p>Before you upload a file, give it a useful and descriptive filename.</p>
-                </div>
-            </fieldset>
-
+            <div aria-label="Information">
+                <p>@messages("cases.attachment.upload.title")</p>
+                <ul class="list list-bullet">
+                    <li>@messages("cases.attachment.upload.restrictionSize")</li>
+                    <li>@messages("cases.attachment.upload.typeOfFiles")</li>
+                </ul>
+                <p>Before you upload a file, give it a useful and descriptive filename.</p>
+            </div>
             <div class="mt-0">
                 @input_file(
                     field = form("file-input"),
