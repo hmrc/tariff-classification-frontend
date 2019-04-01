@@ -24,7 +24,7 @@
     <div class="form-group @if(field.hasErrors){form-group-error}">
         <fieldset>
             <legend>
-                <h4 class="heading-small">Choose a queue</h4>
+                <span class="heading-small mb-2">Choose a queue</span>
                 @field.errors.map { error =>
                     <span class="error-message" id="error-message-@{field.id}-input">@messages(error.message, error.args: _*)</span>
                 }
