@@ -33,7 +33,7 @@ class BackLinkViewSpec extends ViewSpec {
                                                              (backToQueuesLinkLabel, "somewhere nice"))
 
       // When
-      val doc = view(back_link(displayBackLink = true, SessionKeys.backToQueuesLinkUrl, SessionKeys.backToQueuesLinkLabel)(requestWithSessionData))
+      val doc = view(back_link(displayBackLink = true, SessionKeys.backToQueuesLinkUrl, SessionKeys.backToQueuesLinkLabel)(requestWithSessionData, messages))
 
       // Then
       doc should containElementWithID("back-link")
@@ -50,7 +50,7 @@ class BackLinkViewSpec extends ViewSpec {
       doc should containElementWithID("back-link")
       doc.getElementById("back-link") should haveTag("a")
       doc.getElementById("back-link") should haveAttribute("href", "/tariff-classification/queues/my-cases")
-      doc.getElementById("back-link") should containText("Back to my cases")
+      doc.getElementById("back-link") should containText("Back to My cases")
     }
 
     "do not render back link when not called for" in {

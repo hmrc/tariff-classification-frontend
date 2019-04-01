@@ -43,7 +43,7 @@ class MyCasesControllerSpec extends UnitSpec with Matchers with WithFakeApplicat
   private val appConfig = new AppConfig(configuration, env)
   private val casesService = mock[CasesService]
   private val queuesService = mock[QueuesService]
-  private val queue = Queue("0", "queue", "Queue Name", "queue name")
+  private val queue = Queue("0", "queue", "Queue Name")
   private implicit val hc = HeaderCarrier()
 
   private val controller = new MyCasesController(new SuccessfulAuthenticatedAction, casesService, queuesService, messageApi, appConfig)
@@ -58,7 +58,7 @@ class MyCasesControllerSpec extends UnitSpec with Matchers with WithFakeApplicat
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
-      session(result).get(SessionKeys.backToQueuesLinkLabel) shouldBe Some("my cases")
+      session(result).get(SessionKeys.backToQueuesLinkLabel) shouldBe Some("My cases")
       session(result).get(SessionKeys.backToQueuesLinkUrl) shouldBe Some("/tariff-classification/queues/my-cases")
       session(result).get(SessionKeys.backToSearchResultsLinkLabel) shouldBe None
       session(result).get(SessionKeys.backToSearchResultsLinkUrl) shouldBe None

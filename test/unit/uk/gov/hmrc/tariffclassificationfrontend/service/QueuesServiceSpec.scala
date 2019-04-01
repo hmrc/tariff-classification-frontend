@@ -40,7 +40,7 @@ class QueuesServiceSpec extends UnitSpec {
   "Get Queue By Slug" should {
 
     "find relevant queue" in {
-      await(service.getOneBySlug("gateway")) shouldBe Some(Queue("1", "gateway", "Gateway", "gateway"))
+      await(service.getOneBySlug("gateway")) shouldBe Some(Queue("1", "gateway", "Gateway"))
     }
 
     "not find unknown queue" in {
@@ -51,7 +51,7 @@ class QueuesServiceSpec extends UnitSpec {
   "Get Queue By Id" should {
 
     "find relevant queue" in {
-      await(service.getOneById("1")) shouldBe Some(Queue("1", "gateway", "Gateway", "gateway"))
+      await(service.getOneById("1")) shouldBe Some(Queue("1", "gateway", "Gateway"))
     }
 
     "not find unknown queue" in {

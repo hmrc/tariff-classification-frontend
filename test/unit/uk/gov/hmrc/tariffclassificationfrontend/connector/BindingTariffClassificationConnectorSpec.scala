@@ -30,8 +30,8 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest {
 
   import uk.gov.hmrc.tariffclassificationfrontend.utils.JsonFormatters.{caseFormat, eventFormat, newEventRequestFormat}
 
-  private val gatewayQueue = Queue("1", "gateway", "Gateway", "gateway")
-  private val otherQueue = Queue("2", "other", "Other", "other")
+  private val gatewayQueue = Queue("1", "gateway", "Gateway")
+  private val otherQueue = Queue("2", "other", "Other")
   private val pagination = SearchPagination(1, 2)
   private val currentTime = LocalDate.of(2019,1,1).atStartOfDay().toInstant(ZoneOffset.UTC)
   private implicit val clock: Clock = Clock.fixed(currentTime, ZoneOffset.UTC)

@@ -16,4 +16,4 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.models
 
-case class Queue(id: String, slug: String, name: String, label: String)
+case class Queue(id: String, slug: String, name: String)

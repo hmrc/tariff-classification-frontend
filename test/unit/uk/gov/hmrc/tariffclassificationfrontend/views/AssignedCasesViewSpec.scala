@@ -25,8 +25,8 @@ class AssignedCasesViewSpec extends ViewSpec {
   private val assigneeId = Some("pippo")
 
   "Assigned Cases View" should {
-    val queue1 = Queue("1", "queue1_name", "Queue 1 Name", "queue 1 name")
-    val queue2 = Queue("2", "queue2_name", "Queue 2 Name", "queue 2 name")
+    val queue1 = Queue("1", "queue1_name", "Queue 1 Name")
+    val queue2 = Queue("2", "queue2_name", "Queue 2 Name")
     val case1 = Cases.btiCaseExample
 
     "render empty list of users" in {

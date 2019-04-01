@@ -53,7 +53,7 @@ class AssignedCasesController @Inject()(authenticated: AuthenticatedAction,
       cases <- casesService.getAssignedCases(NoPagination())
       queues <- queuesService.getAll
     } yield Ok(views.html.assigned_cases(queues, cases.results, assigneeId))
-              .addingToSession((backToQueuesLinkLabel, "assigned cases"), (backToQueuesLinkUrl, AssignedCasesController.assignedCases().url))
+              .addingToSession((backToQueuesLinkLabel, messagesApi("cases.menu.assigned-cases")), (backToQueuesLinkUrl, AssignedCasesController.assignedCases().url))
               .removingFromSession(backToSearchResultsLinkLabel, backToSearchResultsLinkUrl)
 
   }

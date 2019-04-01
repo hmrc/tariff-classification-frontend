@@ -80,7 +80,7 @@ class AuditServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEac
   "Service 'audit case released'" should {
     val original = btiCaseExample.copy(reference = "ref", status = NEW)
     val updated = btiCaseExample.copy(reference = "ref", status = OPEN)
-    val queue = Queue("queue-id", "queue-slug", "queue-name", "queue-label")
+    val queue = Queue("queue-id", "queue-slug", "queue-name")
 
     "Delegate to connector" in {
       service.auditCaseReleased(original, updated, queue, operator)
@@ -98,7 +98,7 @@ class AuditServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEac
 
   "Service 'audit queue assigned'" should {
 
-    val q = Queue("queue-id", "queue-slug", "queue-name", "queue-label")
+    val q = Queue("queue-id", "queue-slug", "queue-name")
 
     "Delegate to connector" in {
       val c = btiCaseExample.copy(reference = "ref", status = OPEN, queueId = Some(q.id), assignee = Some(Operator("assignee-id")))

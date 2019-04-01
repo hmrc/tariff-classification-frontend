@@ -43,7 +43,7 @@ class AssignedCasesControllerSpec extends UnitSpec with Matchers with WithFakeAp
   private val appConfig = new AppConfig(configuration, env)
   private val casesService = mock[CasesService]
   private val queuesService = mock[QueuesService]
-  private val queue = Queue("0", "queue", "Queue Name", "queue name")
+  private val queue = Queue("0", "queue", "Queue Name")
   private implicit val hc: HeaderCarrier = HeaderCarrier()
   private val assignedCase = btiCaseExample.copy(assignee = Some(Operator("1", Some("Test User"))))
 
@@ -68,7 +68,7 @@ class AssignedCasesControllerSpec extends UnitSpec with Matchers with WithFakeAp
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
       contentAsString(result) should include ("Assigned Cases")
-      session(result).get(SessionKeys.backToQueuesLinkLabel) shouldBe Some("assigned cases")
+      session(result).get(SessionKeys.backToQueuesLinkLabel) shouldBe Some("Assigned cases")
       session(result).get(SessionKeys.backToQueuesLinkUrl) shouldBe Some("/tariff-classification/queues/assigned")
       session(result).get(SessionKeys.backToSearchResultsLinkLabel) shouldBe None
       session(result).get(SessionKeys.backToSearchResultsLinkUrl) shouldBe None

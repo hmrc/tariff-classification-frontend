@@ -17,9 +17,9 @@
 package uk.gov.hmrc.tariffclassificationfrontend.models
 
 object Queues {
-  val gateway = Queue("1", "gateway", "Gateway", "gateway")
-  val act = Queue("2", "act", "ACT", "ACT")
-  val cap = Queue("3", "cap", "CAP", "CAP")
-  val cars = Queue("4", "cars", "Cars", "cars")
-  val elm = Queue("5", "elm", "ELM", "ELM")
+  val gateway = Queue("1", "gateway", "Gateway")
+  val act = Queue("2", "act", "ACT")
+  val cap = Queue("3", "cap", "CAP")
+  val cars = Queue("4", "cars", "Cars")
+  val elm = Queue("5", "elm", "ELM")
 }
