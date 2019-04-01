@@ -14,12 +14,12 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController
-@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.ReassignCaseController
+@import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.{CaseController, ReassignCaseController}
 @import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 @import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
-
-@(title: String, cases: Seq[Case], id: String)(implicit request: AuthenticatedRequest[_], messages: Messages)
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.statuses.case_status
+@(title: String, cases: Seq[Case], id: String)(implicit request: AuthenticatedRequest[_], appConfig: AppConfig, messages: Messages)
 
 @if(cases.nonEmpty) {
     <h3 class="heading-small">@title</h3>
@@ -38,7 +38,7 @@
                 <th scope="row">
                     <a id="cases_list-@{id}-row-@{index}-reference" href="@CaseController.trader(c.reference)">@c.reference</a>
                 </th>
-                <td id="cases_list-@{id}-row-@{index}-status">@c.status</td>
+                <td>@case_status(c, s"cases_list-$id-row-$index-status")</td>
                 <td id="cases_list-@{id}-row-@{index}-days_elapsed">@c.daysElapsed</td>
                 <th scope="row">
                     <a id="cases_list-@{id}-row-@{index}-move" href="@ReassignCaseController.showAvailableQueues(c.reference, request.uri)">Move</a>
