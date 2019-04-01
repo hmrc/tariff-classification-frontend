@@ -36,7 +36,8 @@
             @CSRF.formField
             @input_textarea(
                 field = activityForm("note"),
-                label = "Add case note"
+                label = "Add case note",
+                autofocus = true
             )
             <div class="form-group">
                 <button id="add-note-submit" class="button" type="submit">Add note</button>

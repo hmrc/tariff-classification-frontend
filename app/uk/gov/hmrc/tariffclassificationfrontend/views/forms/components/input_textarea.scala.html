@@ -20,7 +20,8 @@ label: String,
 secondaryLabel: Option[String] = None,
 inputClass: Option[String] = None,
 labelClass: Option[String] = None,
-hint: Option[String] = None
+hint: Option[String] = None,
+autofocus : Boolean = false
 )(implicit messages: Messages)
 
 <div class="form-group @if(field.hasErrors){form-group-error}">
@@ -40,6 +41,7 @@ hint: Option[String] = None
             name="@{field.id}"
             aria-describedby="error-message-@{field.id}-input"
             rows="5"
+            @if(autofocus){autofocus}
     >@{field.value}</textarea>
 
 </div>

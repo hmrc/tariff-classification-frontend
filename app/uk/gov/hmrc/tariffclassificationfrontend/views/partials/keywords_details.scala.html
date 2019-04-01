@@ -49,7 +49,7 @@
                             </td>
 
                             <td id="keywords-row-@{index}-remove" >
-                                <a id="keywords-row-@{index}-remove-link" href="@CaseController.removeKeyword(c.reference, keyword)">Remove</a>
+                                <a id="keywords-row-@{index}-remove-link" aria-label="remove @keyword" href="@CaseController.removeKeyword(c.reference, keyword)">Remove</a>
                             </td>
                         </tr>
                     }
@@ -63,22 +63,19 @@
         @form(action = routes.CaseController.addKeyword(c.reference), 'class -> "form") {
 
             @CSRF.formField
-
             @input_auto_complete(
                 field = keywordForm("keyword"),
                 label = "Add a keyword to this case",
                 autoCompleteOptions = autoCompleteOptions,
-                formControlClass = Some("w-100")
+                formControlClass = Some("w-100"),
+                autofocus = true
             )
+
+            <p>To suggest a new keyword contact the classification team manager.</p>
 
             <div class="form-group">
                 <button id="keyword_details-add_keyword" class="button" type="submit">Add keyword</button>
             </div>
-
-            <div>
-                To suggest a new keyword contact the classification team manager.
-            </div>
-
         }
         </div>
 
