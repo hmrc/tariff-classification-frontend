@@ -28,25 +28,26 @@
     @tab_heading("ruling", messages("case.menu.ruling"))
     
     <h3 class="heading-medium  mt-1">@messages("case.menu.application")</h3>
-
-    <div class="grid-row">
-        <div id="application_envisagedCommodityCode" class="column-one-third">
-            <p>@messages("case.application.suggested-commodity-code")</p>
+    <dl class="dl-mb-2">
+        @if(btiApp.envisagedCommodityCode.isDefined) {
+            <div class="grid-row">
+                <dt id="application_envisagedCommodityCode" class="column-one-third">
+                     @messages("case.application.suggested-commodity-code")
+                </dt>
+                <dd class="column-two-thirds">
+                    <span id="envisagedCommodityCodeValue">@btiApp.envisagedCommodityCode.get</span>
+                </dd>
+            </div>
+        }
+        <div class="grid-row">
+            <dt id="application_goodDescription" class="column-one-third">
+                @messages("case.application.suggested-goods-description")
+            </dt>
+            <dd class="column-two-thirds">
+                <span id="application_goodDescriptionValue">@{btiApp.goodDescription}</span>
+            </dd>
         </div>
-        <div class="column-two-thirds">
-            <p id="envisagedCommodityCodeValue">@{btiApp.envisagedCommodityCode.getOrElse("No suggested commodity code")}</p>
-        </div>
-    </div>
-
-
-    <div class="grid-row">
-        <div id="application_goodDescription" class="column-one-third">
-            <p>@messages("case.application.suggested-goods-description")</p>
-        </div>
-        <div class="column-two-thirds">
-            <p id="application_goodDescriptionValue">@{btiApp.goodDescription}</p>
-        </div>
-    </div>
+    </dl>
 
     <div class="full-line mb-2"></div>
 
@@ -63,63 +64,64 @@
 
     @if(c.decision.isDefined) {
         @defining(c.decision.get) { d: Decision =>
+            <dl class="dl-mb-2">
+                <div class="grid-row">
+                    <dt id="ruling_bindingCommodityCode" class="column-one-third">
+                        @messages("case.decision.commodity-code")
+                    </dt>
+                    <dd class="column-two-thirds">
+                        <span id="ruling_bindingCommodityCodeValue">@d.bindingCommodityCode</span>
+                    </dd>
+                </div>
 
-            <div class="grid-row">
-                <div id="ruling_bindingCommodityCode" class="column-one-third">
-                    <p>@messages("case.decision.commodity-code")</p>
+                <div class="grid-row">
+                    <dt id="ruling_sanitisedGoodDescription" class="column-one-third">
+                        @messages("case.decision.goods-description")
+                    </dt>
+                    <dd class="column-two-thirds">
+                        <span id="ruling_sanitisedGoodDescriptionValue">@d.goodsDescription</span>
+                    </dd>
                 </div>
-                <div class="column-two-thirds">
-                    <p id="ruling_bindingCommodityCodeValue">@d.bindingCommodityCode</p>
-                </div>
-            </div>
 
-            <div class="grid-row">
-                <div id="ruling_sanitisedGoodDescription" class="column-one-third">
-                    <p>@messages("case.decision.goods-description")</p>
+                <div class="grid-row">
+                    <dt id="ruling_justification" class="column-one-third">
+                        @messages("case.decision.justification")
+                    </dt>
+                    <dd class="column-two-thirds">
+                        <span id="ruling_justificationValue">@d.justification</span>
+                    </dd>
                 </div>
-                <div class="column-two-thirds">
-                    <p id="ruling_sanitisedGoodDescriptionValue">@d.goodsDescription</p>
-                </div>
-            </div>
 
-            <div class="grid-row">
-                <div id="ruling_justification" class="column-one-third">
-                    <p>@messages("case.decision.justification")</p>
+                <div class="grid-row">
+                    <dt id="ruling_searches" class="column-one-third">
+                        @messages("case.decision.method-search")
+                    </dt>
+                    <dd class="column-two-thirds">
+                        <span id="ruling_searchesValue">@d.methodSearch.getOrElse("")</span>
+                    </dd>
                 </div>
-                <div class="column-two-thirds">
-                    <p id="ruling_justificationValue">@d.justification</p>
-                </div>
-            </div>
 
-            <div class="grid-row">
-                <div id="ruling_searches" class="column-one-third">
-                    <p>@messages("case.decision.method-search")</p>
+                <div class="grid-row">
+                    <dt id="ruling_methodCommercialDenomination" class="column-one-third">
+                        @messages("case.decision.method-commercial-denomination")
+                    </dt>
+                    <dd class="column-two-thirds">
+                        <span id="ruling_methodCommercialDenominationValue">@d.methodCommercialDenomination.getOrElse("")</span>
+                    </dd>
                 </div>
-                <div class="column-two-thirds">
-                    <p id="ruling_searchesValue">@d.methodSearch.getOrElse("")</p>
-                </div>
-            </div>
 
-            <div class="grid-row">
-                <div id="ruling_methodCommercialDenomination" class="column-one-third">
-                    <p>@messages("case.decision.method-commercial-denomination")</p>
+                <div class="grid-row">
+                    <dt id="ruling_exclusions" class="column-one-third">
+                        @messages("case.decision.method-exclusion")
+                    </dt>
+                    <dd class="column-two-thirds">
+                        <span id="ruling_exclusionsValue">@d.methodExclusion.getOrElse("")</span>
+                    </dd>
                 </div>
-                <div class="column-two-thirds">
-                    <p id="ruling_methodCommercialDenominationValue">@d.methodCommercialDenomination.getOrElse("")</p>
-                </div>
-            </div>
-
-            <div class="grid-row">
-                <div id="ruling_exclusions" class="column-one-third">
-                    <p>@messages("case.decision.method-exclusion")</p>
-                </div>
-                <div class="column-two-thirds">
-                    <p id="ruling_exclusionsValue">@d.methodExclusion.getOrElse("")</p>
-                </div>
-            </div>
+            </dl>
         }
     } else {
-        <p id="no-ruling-information">@messages("case.decision.empty")</p>
+        <span id="no-ruling-information">@messages("case.decision.empty")</span>
     }
 
     <h3 class="heading-medium">@messages("case.decision.attachments")</h3>

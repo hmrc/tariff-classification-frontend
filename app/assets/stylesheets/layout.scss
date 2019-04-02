@@ -289,3 +289,10 @@ table tbody td[align="right"], table tbody th[align="right"], table thead th[ali
     border-bottom: 1px solid #bfc1c3;
     width:100%;
 }
+
+.dl-mb-2 {
+  dt,
+  dd {
+    margin-bottom: (2 * $spacer);
+  }
+}

@@ -22,40 +22,40 @@
 <h3 class="heading-medium mt-30"> Contact details for this application </h3>
 
 @defining(c.application.asBTI.contact) { co: Contact =>
+    <dl class="dl-mb-2">
+        <div class="grid-row">
+            <dt class="column-one-third">
+                @messages("case.application.contact.name")
+            </dt>
+            <dd class="column-two-thirds">
+                <span id="contact-name">@co.name</span>
+            </dd>
+        </div>
 
- <div class="grid-row">
-  <div class="column-one-third">
-   <p>@messages("case.application.contact.name")</p>
-  </div>
-  <div class="column-two-thirds">
-   <p id="contact-name">@co.name</p>
-  </div>
- </div>
+        <div class="grid-row">
+            <dt class="column-one-third">
+                @messages("case.application.contact.email")
+            </dt>
+            <dd class="column-two-thirds">
+            @if(co.email.contains("@")){
+                <a id="contact-email" href="mailto:@co.email?subject=@c.application.getType application #@c.reference">@co.email</a>
+            } else {
+                <span id="contact-email">@co.email</span>
+            }
+            </dd>
+        </div>
 
- <div class="grid-row">
-  <div class="column-one-third">
-   <p>@messages("case.application.contact.email")</p>
-  </div>
-  <div class="column-two-thirds">
-  @if(co.email.contains("@")){
-   <a id="contact-email" href="mailto:@co.email?subject=@c.application.getType application #@c.reference">@co.email</a>
-  } else {
-   <span id="contact-email">@co.email</span>
-  }
-  </div>
- </div>
-
-@if(co.phone.isDefined) {
- <div class="grid-row">
-  <div class="column-one-third">
-   <p>@messages("case.application.contact.telephone")</p>
-  </div>
-  <div class="column-two-thirds">
-   <p id="contact-telephone">@co.phone.get</p>
-  </div>
- </div>
-}
-
+        @if(co.phone.isDefined) {
+            <div class="grid-row">
+                <dt class="column-one-third">
+                    @messages("case.application.contact.telephone")
+                </dt>
+                <dd class="column-two-thirds">
+                    <span id="contact-telephone">@co.phone.get</span>
+                </dd>
+            </div>
+        }
+    </dl>
 }
 
 
