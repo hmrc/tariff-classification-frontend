@@ -52,10 +52,10 @@
 
     <div class="grid-row">
         <div class="column-one-third">
-            <h3 class="heading-medium  mt-1">@messages("case.menu.ruling-details")</h3>
+            <h3 class="heading-medium mt-0">@messages("case.menu.ruling-details")</h3>
         </div>
         @if(c.status == CaseStatus.OPEN) {
-            <div id="ruling_edit_details" class="column-two-thirds text-right mt-1 pt-5">
+            <div id="ruling_edit_details" class="column-two-thirds pt-2">
                 <a id="ruling_edit" href="@RulingController.editRulingDetails(c.reference)">Edit ruling details</a>
             </div>
         }
