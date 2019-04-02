@@ -202,6 +202,10 @@ table tbody td[align="right"], table tbody th[align="right"], table thead th[ali
   text-align: right
 }
 
+.word-break {
+  word-break: break-all;
+}
+
 .secondary-button {
   position: relative;
   display: inline-block;
