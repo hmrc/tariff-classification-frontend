@@ -94,7 +94,7 @@ class CaseHeadingViewSpec extends ViewSpec {
       val requestWithSessionData = FakeRequest().withSession((backToQueuesLinkUrl, "url"), (backToQueuesLinkLabel, "some cases"))
 
       // When
-      val doc = view(case_heading(c, displayBackLink = true)(messages, requestWithSessionData))
+      val doc = view(case_heading(c, displayBackLink = true)(messages, appConfig, requestWithSessionData))
 
       // Then
       doc should containElementWithID("back-link")
@@ -109,7 +109,7 @@ class CaseHeadingViewSpec extends ViewSpec {
                      .withSession((backToQueuesLinkUrl, "url"), (backToQueuesLinkLabel, "some cases"))
 
       // When
-      val doc = view(case_heading(c, displayBackLink = true)(messages, requestWithSessionData))
+      val doc = view(case_heading(c, displayBackLink = true)(messages, appConfig, requestWithSessionData))
 
       // Then
       doc should containElementWithID("back-link")
@@ -122,7 +122,7 @@ class CaseHeadingViewSpec extends ViewSpec {
       val requestWithoutSessionData = FakeRequest()
 
       // When
-      val doc = view(case_heading(c, displayBackLink = true)(messages, requestWithoutSessionData))
+      val doc = view(case_heading(c, displayBackLink = true)(messages, appConfig, requestWithoutSessionData))
 
       // Then
       doc should containElementWithID("back-link")
