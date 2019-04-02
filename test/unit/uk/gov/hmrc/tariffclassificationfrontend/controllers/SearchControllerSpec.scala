@@ -104,6 +104,8 @@ class SearchControllerSpec extends UnitSpec with Matchers with WithFakeApplicati
       charset(result) shouldBe Some("utf-8")
       contentAsString(result) should include("advanced_search-heading")
       contentAsString(result) should include("advanced_search_results")
+      session(result).get(SessionKeys.backToSearchResultsLinkLabel) shouldBe Some("search results")
+      session(result).get(SessionKeys.backToSearchResultsLinkUrl) shouldBe Some("/tariff-classification/search?trader_name=trader&commodity_code=00&page=2")
     }
 
     "render errors if form invalid" in {
