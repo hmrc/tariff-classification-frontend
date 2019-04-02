@@ -48,10 +48,19 @@ class CasesService_CancelRulingSpec extends UnitSpec with MockitoSugar with Befo
   private val fileStoreService = mock[FileStoreService]
   private val audit = mock[AuditService]
   private val config = mock[AppConfig]
-  private val clock = Clock.fixed(LocalDateTime.of(2018, 1, 1, 14, 0).toInstant(ZoneOffset.UTC), ZoneId.of("UTC"))
+  private val clock = Clock.fixed(
+    LocalDateTime.of(2018, 1, 1, 14, 0).toInstant(ZoneOffset.UTC),
+    ZoneId.of("UTC")
+  )
   private val aCase = Cases.btiCaseExample
 
   private val service = new CasesService(config, audit, emailService, fileStoreService, connector, rulingConnector)
+
+  override protected def beforeEach(): Unit = {
+    super.beforeEach()
+
+    given(config.clock).willReturn(clock)
+  }
 
   override protected def afterEach(): Unit = {
     super.afterEach()
@@ -70,13 +79,12 @@ class CasesService_CancelRulingSpec extends UnitSpec with MockitoSugar with Befo
       val updatedDecision = originalDecision.copy(effectiveEndDate = Some(date("2019-01-01")))
       val caseUpdated = aCase.copy(status = CaseStatus.CANCELLED, decision = Some(updatedDecision))
 
-      given(config.zoneId).willReturn(ZoneId.of("UTC"))
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])).willReturn(successful(mock[Event]))
       given(rulingConnector.notify(refEq(originalCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(()))
 
       // When Then
-      await(service.cancelRuling(originalCase, CancelReason.ANNULLED, operator, clock)) shouldBe caseUpdated
+      await(service.cancelRuling(originalCase, CancelReason.ANNULLED, operator)) shouldBe caseUpdated
 
       verify(audit).auditRulingCancelled(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
 
@@ -94,7 +102,6 @@ class CasesService_CancelRulingSpec extends UnitSpec with MockitoSugar with Befo
       // Given
       val operator: Operator = Operator("operator-id")
       val originalCase = aCase.copy(status = CaseStatus.COMPLETED, decision = None)
-      given(config.zoneId).willReturn(ZoneId.of("UTC"))
 
       // When Then
       intercept[IllegalArgumentException] {
@@ -110,7 +117,6 @@ class CasesService_CancelRulingSpec extends UnitSpec with MockitoSugar with Befo
       val originalDecision = Decision("code", Some(date("2018-01-01")), Some(date("2021-01-01")), "justification", "goods")
       val originalCase = aCase.copy(status = CaseStatus.COMPLETED, decision = Some(originalDecision))
 
-      given(config.zoneId).willReturn(ZoneId.of("UTC"))
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(failed(new RuntimeException("Failed to update the Case")))
 
       intercept[RuntimeException] {
@@ -129,7 +135,6 @@ class CasesService_CancelRulingSpec extends UnitSpec with MockitoSugar with Befo
       val updatedDecision = originalDecision.copy(effectiveEndDate = Some(date("2019-01-01")))
       val caseUpdated = aCase.copy(status = CaseStatus.CANCELLED, decision = Some(updatedDecision))
 
-      given(config.zoneId).willReturn(ZoneId.of("UTC"))
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])).willReturn(failed(new RuntimeException("Failed to create Event")))
       given(rulingConnector.notify(refEq(originalCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(()))
@@ -151,13 +156,12 @@ class CasesService_CancelRulingSpec extends UnitSpec with MockitoSugar with Befo
       val updatedDecision = originalDecision.copy(effectiveEndDate = Some(date("2019-01-01")))
       val caseUpdated = aCase.copy(status = CaseStatus.CANCELLED, decision = Some(updatedDecision))
 
-      given(config.zoneId).willReturn(ZoneId.of("UTC"))
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])).willReturn(successful(mock[Event]))
       given(rulingConnector.notify(refEq(originalCase.reference))(any[HeaderCarrier])).willReturn(Future.failed(new RuntimeException("Failed to notify the Ruling Store")))
 
       // When Then
-      await(service.cancelRuling(originalCase, CancelReason.ANNULLED, operator, clock)) shouldBe caseUpdated
+      await(service.cancelRuling(originalCase, CancelReason.ANNULLED, operator)) shouldBe caseUpdated
 
       verify(audit).auditRulingCancelled(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
 

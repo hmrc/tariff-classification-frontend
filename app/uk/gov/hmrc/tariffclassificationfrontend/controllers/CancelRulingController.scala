@@ -42,10 +42,10 @@ class CancelRulingController @Inject()(authenticatedAction: AuthenticatedAction,
   override protected val config: AppConfig = appConfig
   override protected val caseService: CasesService = casesService
 
-  override protected def redirect: String => Call = routes.CaseController.applicationDetails
+  override protected def redirect: String => Call = routes.CaseController.rulingDetails
 
   override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = {
-    c.status == COMPLETED
+    c.status == COMPLETED && c.hasLiveRuling
   }
 
   private def cancelRuling(f: Form[CancelReason], caseRef: String)

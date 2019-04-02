@@ -104,6 +104,30 @@ class CaseTraderViewSpec extends ViewSpec {
       doc shouldNot containElementWithID("release-suppress-case-heading")
     }
 
+    "render boards file number when present" in {
+      // Given
+      val c = aCase().copy(caseBoardsFileNumber = Some("file 123"))
+
+      // When
+      val doc = view(case_trader(c, None))
+
+      // Then
+      val boardFileNumber = doc.getElementById("boards-file-number")
+      boardFileNumber.text() shouldBe "file 123"
+    }
+
+    "not show boards file number when not present" in {
+      // Given
+      val c = aCase()
+
+      // When
+      val doc = view(case_trader(c, None))
+
+      // Then
+      doc shouldNot containElementWithID("boards-file-number-label")
+      doc shouldNot containElementWithID("boards-file-number")
+    }
+
   }
 
 }

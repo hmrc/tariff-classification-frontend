@@ -84,7 +84,18 @@
                 </div>
             </div>
 
-            @if(btiApp.agent.isDefined) {
+        @if(c.caseBoardsFileNumber.isDefined) {
+            <div class="grid-row">
+                <div class="column-one-third">
+                    <p id="boards-file-number-label">@messages("case.application.boards-file-number")</p>
+                </div>
+                <div class="column-two-thirds">
+                    <p id="boards-file-number">@{c.caseBoardsFileNumber.get}</p>
+                </div>
+            </div>
+        }
+
+        @if(btiApp.agent.isDefined) {
 
                 <h3 class="heading-medium" id="agent-submitted-heading" > Agent details </h3>
 

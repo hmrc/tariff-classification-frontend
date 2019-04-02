@@ -157,9 +157,9 @@ class CasesService @Inject()(appConfig: AppConfig,
     } yield updated
   }
 
-  def completeCase(original: Case, operator: Operator, clock: Clock = Clock.systemDefaultZone())
+  def completeCase(original: Case, operator: Operator)
                   (implicit hc: HeaderCarrier): Future[Case] = {
-    val date = LocalDate.now(clock).atStartOfDay(appConfig.zoneId)
+    val date = LocalDate.now(appConfig.clock).atStartOfDay(appConfig.clock.getZone)
     val startInstant = date.toInstant
     val endInstant = date.plusYears(appConfig.decisionLifetimeYears).toInstant
 
@@ -193,10 +193,9 @@ class CasesService @Inject()(appConfig: AppConfig,
     } yield updated
   }
 
-  def cancelRuling(original: Case, reason: CancelReason,
-                   operator: Operator, clock: Clock = Clock.systemDefaultZone())
+  def cancelRuling(original: Case, reason: CancelReason, operator: Operator)
                   (implicit hc: HeaderCarrier): Future[Case] = {
-    val updatedEndDate = LocalDate.now(clock).atStartOfDay(appConfig.zoneId)
+    val updatedEndDate = LocalDate.now(appConfig.clock).atStartOfDay(appConfig.clock.getZone)
 
     val decisionUpdating: Decision = original.decision
       .getOrElse(throw new IllegalArgumentException("Cannot Cancel a Case without a Decision"))
