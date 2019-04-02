@@ -49,7 +49,7 @@ class KeywordDetailsViewSpec extends ViewSpec {
       doc should containElementWithID("keywords-heading")
       doc should containElementWithID("keywords-row-0-keyword")
       doc.getElementById("keywords-row-0-message") should containText("")
-      doc.getElementById("keywords-row-1-message") should containText("This is not from the main list of keywords")
+      doc.getElementById("keywords-row-1-message") should containText("Keyword is not from the list")
     }
   }
 }

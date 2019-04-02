@@ -33,7 +33,7 @@ class ReleaseCaseSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body should include("Release this Case for Classification")
+      response.body should include("Release this case for classification")
     }
 
     "redirect on auth failure" in {

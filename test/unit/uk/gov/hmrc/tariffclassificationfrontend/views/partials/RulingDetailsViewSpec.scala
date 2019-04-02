@@ -52,7 +52,7 @@ class RulingDetailsViewSpec extends ViewSpec {
       val doc = view(ruling_details(c, None, Seq.empty))
 
       // Then
-      doc should containElementWithID("envisagedCommodityCodeValue")
+      doc shouldNot containElementWithID("envisagedCommodityCodeValue")
     }
 
     "Render 'Edit' button for OPEN cases" in {

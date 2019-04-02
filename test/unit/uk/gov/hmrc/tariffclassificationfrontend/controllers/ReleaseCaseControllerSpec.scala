@@ -74,7 +74,7 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result) shouldBe Some("utf-8")
-      bodyOf(result) should include("Release this Case for Classification")
+      bodyOf(result) should include("Release this case for classification")
     }
 
     "redirect to Application Details for non NEW statuses" in {
@@ -129,7 +129,7 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result) shouldBe Some("utf-8")
-      bodyOf(result) should include("Release this Case for Classification")
+      bodyOf(result) should include("Release this case for classification")
     }
 
     "redirect to Application Details for non NEW statuses" in {
