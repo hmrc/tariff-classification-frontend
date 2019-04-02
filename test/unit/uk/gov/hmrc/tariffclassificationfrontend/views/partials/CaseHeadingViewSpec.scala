@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.views.partials
 
+import play.api.test.FakeRequest
+import uk.gov.hmrc.tariffclassificationfrontend.controllers.SessionKeys._
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers.{containElementWithID, _}
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewSpec
@@ -41,6 +43,7 @@ class CaseHeadingViewSpec extends ViewSpec {
       doc.getElementById("case-reference") should containText("Case ref")
       doc should containElementWithID("case-status")
       doc.getElementById("case-status") should containText("OPEN")
+      doc shouldNot containElementWithID("back-link")
     }
 
     "Render without Optional Statuses" in {
@@ -83,6 +86,47 @@ class CaseHeadingViewSpec extends ViewSpec {
       // Then
       doc should containElementWithID("review-status")
       doc.getElementById("review-status") should containText("Review upheld")
+    }
+
+    "Render with queues back link" in {
+      // Given
+      val c = aCase()
+      val requestWithSessionData = FakeRequest().withSession((backToQueuesLinkUrl, "url"), (backToQueuesLinkLabel, "some cases"))
+
+      // When
+      val doc = view(case_heading(c, displayBackLink = true)(messages, requestWithSessionData))
+
+      // Then
+      doc should containElementWithID("back-link")
+      doc.getElementById("back-link") should containText("some cases")
+    }
+
+    "Render with search results back link" in {
+      // Given
+      val c = aCase()
+      val requestWithSessionData =
+        FakeRequest().withSession((backToSearchResultsLinkUrl, "url"), (backToSearchResultsLinkLabel, "some search results"))
+                     .withSession((backToQueuesLinkUrl, "url"), (backToQueuesLinkLabel, "some cases"))
+
+      // When
+      val doc = view(case_heading(c, displayBackLink = true)(messages, requestWithSessionData))
+
+      // Then
+      doc should containElementWithID("back-link")
+      doc.getElementById("back-link") should containText("some search results")
+    }
+
+    "Render My case back link when session is empty" in {
+      // Given
+      val c = aCase()
+      val requestWithoutSessionData = FakeRequest()
+
+      // When
+      val doc = view(case_heading(c, displayBackLink = true)(messages, requestWithoutSessionData))
+
+      // Then
+      doc should containElementWithID("back-link")
+      doc.getElementById("back-link") should containText("My cases")
     }
 
   }

@@ -16,15 +16,19 @@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.SessionKeys
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{Paged, Search}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.{input_checkbox, input_text}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{advanced_search_keywords, advanced_search_results, pagination}
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{advanced_search_keywords, advanced_search_results, pagination, back_link}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.partials.SearchResult
 @(form: Form[Search], results: Option[Paged[SearchResult]] = None, keywords: Seq[String])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None) {
- <h1 id="advanced_search-heading" class="heading-xlarge">Advanced Search</h1>
+
+ @back_link(displayBackLink = true, SessionKeys.backToQueuesLinkUrl, SessionKeys.backToQueuesLinkLabel)
+
+ <h1 id="advanced_search-heading" class="heading-xlarge">Advanced search</h1>
 
  <h2 class="heading-large">Enter search terms</h2>
  <hr class="mt-0"/>
@@ -53,7 +57,7 @@
 
 
   <button id="advanced_search-search_button" class="button" type="submit">Search</button>
-  <a id="advanced_search-reset_button" class="secondary-button" href="@controllers.routes.SearchController.search()">New Search</a>
+  <a id="advanced_search-reset_button" class="secondary-button" href="@controllers.routes.SearchController.search()">New search</a>
 
   @if(results.isEmpty) {
    @*
