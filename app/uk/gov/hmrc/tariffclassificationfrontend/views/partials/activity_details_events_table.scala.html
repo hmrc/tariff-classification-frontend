@@ -40,11 +40,9 @@
                     event.details.`type` match {
                         case EventType.NOTE => {
                             val body = event.details.asInstanceOf[Note]
-                            progressive_disclosure(
-                                id = s"activity-events-row-$index",
-                                summary = "Case note added",
-                                body = Some(body.comment)
-                            )
+                            <div id={s"activity-events-row-${index}-body"}>
+                                <span class="pre-wrap">{body.comment}</span>
+                            </div>
                         }
                         case EventType.CASE_STATUS_CHANGE => {
                             val body = event.details.asInstanceOf[CaseStatusChange]
