@@ -23,7 +23,8 @@
         formControlClass: Option[String] = None,
         hint: Option[String] = None,
         labelClass: Option[String] = None,
-        autoCompleteOptions: Seq[String]
+        autoCompleteOptions: Seq[String],
+        autofocus : Boolean = false
 )(implicit messages: Messages)
 
 <div class="form-group @if(field.hasErrors){form-group-error}">
@@ -45,6 +46,7 @@
         name="@{field.name}"
         value="@{field.value}"
         @if(field.hasErrors){aria-describedby="error-message-@{field.id}-input"}
+        @if(autofocus){ autofocus }
         />
     </div>
 </div>

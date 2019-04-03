@@ -112,6 +112,10 @@
   margin-bottom: 30px;
 }
 
+.pt-2 {
+  padding-top: 2px;
+}
+
 .pt-5 {
   padding-top: 5px;
 }
@@ -198,6 +202,10 @@ table tbody td[align="right"], table tbody th[align="right"], table thead th[ali
   text-align: right
 }
 
+.word-break {
+  word-break: break-all;
+}
+
 .secondary-button {
   position: relative;
   display: inline-block;
@@ -270,5 +278,20 @@ table tbody td[align="right"], table tbody th[align="right"], table thead th[ali
 
   &:visited {
     color: #4c2c92;
+  }
+}
+
+.full-width{
+  width:100%;
+}
+
+.border-bottom{
+  border-bottom: 1px solid #bfc1c3;
+}
+
+.dl-mb-2 {
+  dt,
+  dd {
+    margin-bottom: (2 * $spacer);
   }
 }

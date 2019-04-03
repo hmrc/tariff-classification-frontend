@@ -31,28 +31,27 @@
 
         <div class="grid-row">
             <div class="column-full">
-                <h2 class="heading-large mt-0">Release this Case for Classification</h2>
-                <hr class="mt-0"/>
-
-                <div class="grid-row">
-                    <div id="application_envisagedCommodityCode" class="column-one-third">
-                        <p>@messages("case.application.suggested-commodity-code")</p>
+                <h2 class="heading-large mt-0">Release this case for classification</h2>
+                <dl class="dl-mb-2">
+                    @if(btiApp.envisagedCommodityCode.isDefined){
+                        <div class="grid-row">
+                            <dt id="application_envisagedCommodityCode" class="column-one-third">
+                                @messages("case.application.suggested-commodity-code")
+                            </dt>
+                            <dd class="column-two-thirds">
+                                <span id="envisagedCommodityCodeValue">@{btiApp.envisagedCommodityCode.get}</span>
+                            </dd>
+                        </div>
+                    }
+                    <div class="grid-row">
+                        <dt id="application_goodDescription" class="column-one-third">
+                            @messages("case.application.suggested-goods-description")
+                        </dt>
+                        <dd class="column-two-thirds">
+                            <span id="application_goodDescriptionValue">@{btiApp.goodDescription}</span>
+                        </dd>
                     </div>
-                    <div class="column-two-thirds">
-                        <p id="envisagedCommodityCodeValue">@{btiApp.envisagedCommodityCode.getOrElse("")}</p>
-                    </div>
-                </div>
-
-
-                <div class="grid-row">
-                    <div id="application_goodDescription" class="column-one-third">
-                        <p>@messages("case.application.suggested-goods-description")</p>
-                    </div>
-                    <div class="column-two-thirds">
-                        <p id="application_goodDescriptionValue">@{btiApp.goodDescription}</p>
-                    </div>
-                </div>
-
+                </dl>
                 @select_queue_form(
                     form("queue"),
                     queues,

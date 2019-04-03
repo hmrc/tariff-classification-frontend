@@ -35,50 +35,43 @@
             </p>
         </div>
 
-        <div>
-            <table id="keywords-table">
-                <tbody>
-                    @for((keyword: String, index: Int) <- c.keywords.toSeq.sorted.zipWithIndex) {
-                        <tr id="keywords-row-@{index}">
-                            <td id="keywords-row-@{index}-keyword" class="w-50">@keyword</td>
+        <div id="keywords-table">
+            @for((keyword: String, index: Int) <- c.keywords.toSeq.sorted.zipWithIndex) {
+                <div class="grid-row mt-1 mb-1">
+                    <div id="keywords-row-@{index}-keyword" class="column-one-third word-break">@keyword</div>
+                    <div id="keywords-row-@{index}-message" class="column-one-third">
+                        @if(!autoCompleteOptions.contains(keyword)) {
+                            Keyword is not from the list
+                        }else{
+                            &nbsp;
+                        }
+                    </div>
+                    <div id="keywords-row-@{index}-remove" class="column-one-third right">
+                        <a id="keywords-row-@{index}-remove-link" aria-label="remove @keyword" href="@CaseController.removeKeyword(c.reference, keyword)">Remove</a>
+                    </div>
 
-                            <td id="keywords-row-@{index}-message" class="w-40">
-                                @if(!autoCompleteOptions.contains(keyword)) {
-                                    This is not from the main list of keywords
-                                }
-                            </td>
-
-                            <td id="keywords-row-@{index}-remove" >
-                                <a id="keywords-row-@{index}-remove-link" href="@CaseController.removeKeyword(c.reference, keyword)">Remove</a>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-
-            </table>
-
+                </div>
+                <hr class="mt-0 mb-0"/>
+            }
         </div>
 
 
-        @form(action = routes.CaseController.addKeyword(c.reference), 'class -> "form") {
+        @form(action = routes.CaseController.addKeyword(c.reference), 'class -> "form mt-3") {
 
             @CSRF.formField
-
             @input_auto_complete(
                 field = keywordForm("keyword"),
                 label = "Add a keyword to this case",
                 autoCompleteOptions = autoCompleteOptions,
-                formControlClass = Some("w-100")
+                formControlClass = Some("w-100"),
+                autofocus = true
             )
+
+            <p>To suggest a new keyword contact the classification team manager.</p>
 
             <div class="form-group">
                 <button id="keyword_details-add_keyword" class="button" type="submit">Add keyword</button>
             </div>
-
-            <div>
-                To suggest a new keyword contact the classification team manager.
-            </div>
-
         }
         </div>
 
