@@ -31,10 +31,6 @@
   font-weight: bold;
 }
 
-.normal-weight {
-  font-weight: bold;
-}
-
 .mt-0 {
   margin-top: 0;
 }
@@ -285,9 +281,12 @@ table tbody td[align="right"], table tbody th[align="right"], table thead th[ali
   }
 }
 
-.full-line {
-    border-bottom: 1px solid #bfc1c3;
-    width:100%;
+.full-width{
+  width:100%;
+}
+
+.border-bottom{
+  border-bottom: 1px solid #bfc1c3;
 }
 
 .dl-mb-2 {

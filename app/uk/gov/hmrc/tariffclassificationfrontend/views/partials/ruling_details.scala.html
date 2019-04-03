@@ -49,17 +49,18 @@
         </div>
     </dl>
 
-    <div class="full-line mb-2"></div>
+    <div class="full-width border-bottom mb-2"></div>
 
     <div class="grid-row">
         <div class="column-one-third">
             <h3 class="heading-medium mt-0">@messages("case.menu.ruling-details")</h3>
+            @if(c.status == CaseStatus.OPEN) {
+                <div id="ruling_edit_details" class="mb-2">
+                    <a id="ruling_edit" href="@RulingController.editRulingDetails(c.reference)">Edit ruling details</a>
+                </div>
+            }
         </div>
-        @if(c.status == CaseStatus.OPEN) {
-            <div id="ruling_edit_details" class="column-two-thirds pt-2">
-                <a id="ruling_edit" href="@RulingController.editRulingDetails(c.reference)">Edit ruling details</a>
-            </div>
-        }
+
     </div>
 
     @if(c.decision.isDefined) {
