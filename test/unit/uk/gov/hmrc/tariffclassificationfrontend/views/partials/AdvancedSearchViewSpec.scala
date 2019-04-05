@@ -25,11 +25,13 @@ import uk.gov.tariffclassificationfrontend.utils.Cases._
 
 class AdvancedSearchViewSpec extends ViewSpec {
 
+  private val defaultTab = "details"
+
   "Advanced Search" should {
 
     "Render No Results" in {
       // When
-      val doc = view(advanced_search(SearchForm.form, None, Seq.empty))
+      val doc = view(advanced_search(SearchForm.form, None, Seq.empty, defaultTab))
 
       // Then
       doc shouldNot containElementWithID("advanced_search-results_and_filters")
@@ -37,15 +39,15 @@ class AdvancedSearchViewSpec extends ViewSpec {
 
     "Render Results" in {
       // When
-      val doc = view(advanced_search(SearchForm.form, Some(Paged(Seq(SearchResult(aCase(), Seq.empty)))), Seq.empty))
+      val doc = view(advanced_search(SearchForm.form, Some(Paged(Seq(SearchResult(aCase(), Seq.empty)))), Seq.empty, defaultTab))
 
       // Then
       doc should containElementWithID("advanced_search-results_and_filters")
     }
 
     "Always Render Input 'live_rulings_only'" in {
-      view(advanced_search(SearchForm.form, None, Seq.empty)) should containElementWithAttribute("name", "live_rulings_only")
-      view(advanced_search(SearchForm.form, Some(Paged(Seq(SearchResult(aCase(), Seq.empty)))), Seq.empty)) should containElementWithAttribute("name", "live_rulings_only")
+      view(advanced_search(SearchForm.form, None, Seq.empty, defaultTab)) should containElementWithAttribute("name", "live_rulings_only")
+      view(advanced_search(SearchForm.form, Some(Paged(Seq(SearchResult(aCase(), Seq.empty)))), Seq.empty, defaultTab)) should containElementWithAttribute("name", "live_rulings_only")
     }
   }
 
