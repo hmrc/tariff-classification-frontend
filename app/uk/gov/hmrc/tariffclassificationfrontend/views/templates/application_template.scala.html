@@ -75,6 +75,9 @@
                     font-size: 10px;
                     text-align: right;
                 }
+                .pre-wrap {
+                    white-space: pre-wrap;
+                }
         </style>
 
     </head>
@@ -154,7 +157,7 @@
                         <tr>
                         @if(application.reissuedBTIReference.isDefined) {
                             <td>@messages("pdf.application.section.applicationType.reIssue")</td>
-                            <td id="application.reissuedBTIReference">@application.reissuedBTIReference.get</td>
+                            <td id="application.reissuedBTIReference"><span class="pre-wrap">@application.reissuedBTIReference.get</span></td>
                         } else {
                             <td>@messages("pdf.application.section.applicationType.newApplication")</td>
                         }
@@ -167,13 +170,13 @@
                             <td>@messages("pdf.application.section.aboutItem.description")</td>
                             <td id="application.goods.details">
                                 @application.goodName <br/>
-                                @application.goodDescription
+                                <span class="pre-wrap">@application.goodDescription</span>
                             </td>
                         </tr>
                         <tr>
                             <td>@messages("pdf.application.section.aboutItem.confidentialInfo")</td>
                             <td id="application.confidentialInformation">@if(application.confidentialInformation.isDefined) {
-                                @application.confidentialInformation.get
+                                <span class="pre-wrap">@application.confidentialInformation.get</span>
                             } else {
                                 @messages("site.no")
                             }</td>
@@ -216,7 +219,7 @@
                         @if(application.relatedBTIReference.isDefined) {
                             <tr>
                                 <td>@messages("pdf.application.section.aboutItem.similarRuling.BTIRef")</td>
-                                <td id="application.relatedBTIReference">@application.relatedBTIReference.get</td>
+                                <td id="application.relatedBTIReference"><span class="pre-wrap">@application.relatedBTIReference.get</span></td>
                             </tr>
                         }
                         <tr>
@@ -230,7 +233,7 @@
                         @if(application.knownLegalProceedings.isDefined) {
                             <tr>
                                 <td>@messages("pdf.application.section.aboutItem.legalProblems.details")</td>
-                                <td id="application.knownLegalProceedings">@application.knownLegalProceedings.get</td>
+                                <td id="application.knownLegalProceedings"><span class="pre-wrap">@application.knownLegalProceedings.get</span></td>
                             </tr>
                         }
                     </table>
@@ -240,7 +243,7 @@
                         <tr>
                             <td>@messages("pdf.application.section.other.label")</td>
                             <td id="application.otherInformation">@if(application.otherInformation.isDefined) {
-                                @application.otherInformation.get
+                                <span class="pre-wrap">@application.otherInformation.get</span>
                             } else {
                                 @messages("site.none")
                             }</td>
@@ -267,10 +270,6 @@
                 </address>
             </div>
 
-            <br/>
-            <div id="footer.createdTimestamp" class="timestamp">
-                <span>@messages("pdf.ruling.created.label"): @Instant.now()</span>
-            </div>
         </div>
 
     </body>
