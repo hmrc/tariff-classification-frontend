@@ -17,7 +17,7 @@ cases.table.elapsed-days=Days elapsed
 cases.table.empty=There are no cases in this queue.
 cases.table.move=Move to a queue
 
-case.menu.trader=Trader
+case.menu.trader=Applicant
 case.menu.application=Application
 case.menu.ruling=Ruling
 case.menu.ruling-details=Ruling details

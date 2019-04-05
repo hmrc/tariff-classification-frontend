@@ -30,12 +30,13 @@
 
 @(c: Case,  letterOfAuth: Option[StoredAttachment])(implicit request: Request[_], messages: Messages)
 
-@tab_heading("trader", "Trader")
+@tab_heading("trader", "Applicant")
 
 @defining(c.application) { a: Application =>
     @defining(a.asBTI) { btiApp: BTIApplication =>
         @defining(btiApp.holder) { btiHolder: EORIDetails =>
             <dl class="dl-mb-2">
+                <h3 class="heading-medium" id="trader-submitted-heading">Trader</h3>
                 <div class="grid-row">
                     <dt class="column-one-third">
                         @messages("case.application.holder.eori-number")
@@ -69,35 +70,10 @@
                     </dd>
                 </div>
 
-                <div class="grid-row">
-                    <dt class="column-one-third">
-                        @messages("case.application.related-bti-reference")
-                    </dt>
-                    <dd class="column-two-thirds">
-
-                        @if(btiApp.relatedBTIReference.isDefined) {
-                            @btiApp.relatedBTIReference.get
-                        }else {
-                            No
-                        }
-
-                    </dd>
-                </div>
-
-                @if(c.caseBoardsFileNumber.isDefined) {
-                    <div class="grid-row">
-                        <dt class="column-one-third">
-                            <p id="boards-file-number-label">@messages("case.application.boards-file-number")
-                        </dt>
-                        <dd class="column-two-thirds">
-                            <p id="boards-file-number">@{c.caseBoardsFileNumber.get}
-                        </dd>
-                    </div>
-                }
         </dl>
         @if(btiApp.agent.isDefined) {
-
-                <h3 class="heading-medium" id="agent-submitted-heading" > Agent details </h3>
+            <dl class="dl-mb-2">
+                <h3 class="heading-medium" id="agent-submitted-heading">Agent</h3>
 
                 @defining(btiApp.agent.get) { btiAgent: AgentDetails =>
 
@@ -147,6 +123,7 @@
                         </div>
                     }
                 }
+            </dl>
             }
         }
     }
@@ -154,38 +131,46 @@
 
 @contact_details(c)
 
+@if(c.caseBoardsFileNumber.isDefined) {
+    <div class="grid-row mt-30">
+        <dt class="column-one-third">
+            <p id="boards-file-number-label" >@messages("case.application.boards-file-number")</p>
+        </dt>
+        <dd class="column-two-thirds">
+            <p id="boards-file-number">@{c.caseBoardsFileNumber.get}</p>
+        </dd>
+    </div>
+}
+
+
 @defining(c) { c: Case =>
     @if(c.status == CaseStatus.NEW) {
-        <h3 class="heading-medium" id="release-suppress-case-heading">Releasing or suppressing a case</h3>
+        <h3 class="heading-medium" id="release-suppress-case-heading">Release or suppress this case</h3>
 
-        <p>Release this case if the applicant has included their:</p>
+        <details role="group">
+            <summary role="button">
+                <span id="release-suppress-help-title">When to release or suppress a case</span>
+            </summary>
+            <div id="release-suppress-help-body" class="panel panel-border">
+                <p>Release this case if the applicant has included their: </p>
+                <ul class="list list-bullet">
+                    <li>correct EORI number and address</li>
+                    <li>item name and description</li>
+                </ul>
+                <p>If they're an agent they should also have:</p>
+                <ul class="list list-bullet">
+                    <li>the correct EORI number and address of the person they're representing </li>
+                    <li>a valid letter of authority</li>
+                </ul>
+                <p>If any of this information is missing or incorrect, suppress this case.</p>
+            </div>
+        </details>
 
-        <ul class="list list-bullet">
-            <li>correct EORI number and address</li>
-            <li>item name and description</li>
-        </ul>
+        <p class="mt-30">@release_case_button(c)</p>
 
-        <p>If they’re an agent they should also have:</p>
-
-        <ul class="list list-bullet">
-            <li>the correct EORI number and address of the person they’re representing</li>
-            <li>a valid letter of authority</li>
-        </ul>
-
-        <p>
-            Suppress this case if this information is missing or incorrect. You must contact the applicant and upload
-            the email to the attachments tab before you choose to suppress this case. The case cannot be reopened once
-            it has been suppressed.
-        </p>
-
-        <h3 class="heading-medium">Do you want to release or suppress this case?</h3>
-
-        <p>
-            @release_case_button(c)
-        </p>
-
-        <p>
-            <a id="suppress_link" href="@SuppressCaseController.suppressCase(c.reference)">Suppress</a>
+        <p class="mt-30">
+            <a id="suppress_link" href="@SuppressCaseController.suppressCase(c.reference)">Suppress this case</a>
+            after you have emailed the applicant and attached a copy of the email.
         </p>
     }
 }

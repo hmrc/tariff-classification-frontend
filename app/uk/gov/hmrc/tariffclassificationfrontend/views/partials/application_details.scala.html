@@ -135,6 +135,21 @@
                     </dd>
                 </div>
 
+                <div class="grid-row">
+                    <dt class="column-one-third">
+                    @messages("case.application.related-bti-reference")
+                    </dt>
+                    <dd class="column-two-thirds">
+
+                    @if(btiApp.relatedBTIReference.isDefined) {
+                        @btiApp.relatedBTIReference.get
+                    }else {
+                        No
+                    }
+
+                    </dd>
+                </div>
+
             </dl>
             <div class="mt-1">
                 @refer_case_button(c)
