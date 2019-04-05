@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.connector
 
-import java.time.{Clock, Instant}
+import java.time.Clock
 
 import com.google.inject.Inject
 import javax.inject.Singleton
@@ -91,8 +91,8 @@ class BindingTariffClassificationConnector @Inject()(appConfig: AppConfig, clien
       search.traderName.map(qb.unbind("trader_name", _)),
       search.commodityCode.map(qb.unbind("commodity_code", _)),
       search.decisionDetails.map(qb.unbind("decision_details", _)),
-      search.liveRulingsOnly.filter(identity).map(_ => qb.unbind("min_decision_end", Instant.now(clock).toString) + "&" + qb.unbind("status", COMPLETED.toString)),
-      search.keywords.map(_.map(qb.unbind("keyword", _)).mkString("&"))
+      search.status.map(_.map(s => qb.unbind("status", s.toString)).mkString("&")),
+      search.keywords.map(_.map(k => qb.unbind("keyword", k)).mkString("&"))
     ).filter(_.isDefined).map(_.get)
 
     val url = s"${appConfig.bindingTariffClassificationUrl}/cases?application_type=BTI&${(reqParams ++ optParams).mkString("&")}&page=${pagination.page}&page_size=${pagination.pageSize}"

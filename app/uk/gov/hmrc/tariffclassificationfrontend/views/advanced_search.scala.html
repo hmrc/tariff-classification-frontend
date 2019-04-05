@@ -17,12 +17,18 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers.SessionKeys
-@import uk.gov.hmrc.tariffclassificationfrontend.models.{Paged, Search}
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.{input_checkbox, input_text}
+@import uk.gov.hmrc.tariffclassificationfrontend.models.PseudoCaseStatus.PseudoCaseStatus
+@import uk.gov.hmrc.tariffclassificationfrontend.models.{Paged, PseudoCaseStatus, Search}
+@import uk.gov.hmrc.tariffclassificationfrontend.views.forms.components.CheckOption
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.{input_checkbox_group, input_text}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{advanced_search_keywords, advanced_search_results, pagination, back_link}
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{advanced_search_keywords, advanced_search_results, back_link, pagination}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.partials.SearchResult
 @(form: Form[Search], results: Option[Paged[SearchResult]] = None, keywords: Seq[String])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+
+@formHasStatus(status: PseudoCaseStatus) = @{
+ form.value.flatMap(_.status).exists(_.contains(status))
+}
 
 @main(bodyClasses = None) {
 
@@ -64,7 +70,8 @@
     Hack to ensure the checkbox is checked when search results aren't present
     This is only required for form elements that are rendered when results are present and which need a default value.
    *@
-      <input type="hidden" value="true" name="live_rulings_only"/>
+      <input type="hidden" value="OPEN" name="status[0]"/>
+      <input type="hidden" value="LIVE" name="status[1]"/>
   }
 
   @if(results.isDefined && !form.hasErrors) {
@@ -78,18 +85,25 @@
 
       <div class="advanced_search--filters_container">
        <div class="advanced_search--filters_heading">
-        Cases to include
+        Filter by case status
        </div>
        <div class="advanced_search--filters">
-       @input_checkbox(
-        field = form("live_rulings_only"),
-        label = "Live rulings only",
-        submitOnChange = true
-       )
+        @input_checkbox_group(
+         field = form("status"),
+         options = Seq(
+          CheckOption("Open", PseudoCaseStatus.OPEN.toString, checked = formHasStatus(PseudoCaseStatus.OPEN)),
+          CheckOption("Completed", PseudoCaseStatus.LIVE.toString, checked = formHasStatus(PseudoCaseStatus.LIVE)),
+          CheckOption("Expired", PseudoCaseStatus.EXPIRED.toString, checked = formHasStatus(PseudoCaseStatus.EXPIRED)),
+          CheckOption("Cancelled", PseudoCaseStatus.CANCELLED.toString, checked = formHasStatus(PseudoCaseStatus.CANCELLED)),
+          CheckOption("New", PseudoCaseStatus.NEW.toString, checked = formHasStatus(PseudoCaseStatus.NEW)),
+          CheckOption("Referred", PseudoCaseStatus.REFERRED.toString, checked = formHasStatus(PseudoCaseStatus.REFERRED)),
+          CheckOption("Suspended", PseudoCaseStatus.SUSPENDED.toString, checked = formHasStatus(PseudoCaseStatus.SUSPENDED)),
+          CheckOption("Rejected", PseudoCaseStatus.REJECTED.toString, checked = formHasStatus(PseudoCaseStatus.REJECTED)),
+          CheckOption("Suppressed", PseudoCaseStatus.SUPPRESSED.toString, checked = formHasStatus(PseudoCaseStatus.SUPPRESSED))
+         )
+        )
        </div>
       </div>
-
-
      </div>
 
 

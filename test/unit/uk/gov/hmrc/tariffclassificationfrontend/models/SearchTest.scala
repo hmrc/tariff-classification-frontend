@@ -26,13 +26,13 @@ class SearchTest extends UnitSpec {
     traderName = Some("trader-name"),
     commodityCode = Some("commodity-code"),
     decisionDetails = Some("decision-details"),
-    liveRulingsOnly = Some(true),
+    status = Some(Set(PseudoCaseStatus.OPEN, PseudoCaseStatus.LIVE)),
     keywords = Some(Set("K1", "K2"))
   )
 
   /**
-  * When we add fields to Search these tests shouldn't need changing, only the field above and vals in each test suite.
-  **/
+    * When we add fields to Search these tests shouldn't need changing, only the field above and vals in each test suite.
+    **/
 
   "Search" should {
     "Return isEmpty = true" in {
@@ -41,8 +41,8 @@ class SearchTest extends UnitSpec {
       search.isDefined shouldBe false
     }
 
-    "Return isEmpty = true when liveRulingsOnly is populated" in {
-      val search = Search(liveRulingsOnly = Some(true))
+    "Return isEmpty = true when status is populated" in {
+      val search = Search(status = Some(Set(PseudoCaseStatus.OPEN, PseudoCaseStatus.LIVE)))
       search.isEmpty shouldBe true
       search.isDefined shouldBe false
     }
@@ -59,7 +59,8 @@ class SearchTest extends UnitSpec {
       "trader_name" -> Seq("trader-name"),
       "commodity_code" -> Seq("commodity-code"),
       "decision_details" -> Seq("decision-details"),
-      "live_rulings_only" -> Seq("true"),
+      "status[0]" -> Seq("OPEN"),
+      "status[1]" -> Seq("LIVE"),
       "keyword[0]" -> Seq("K1"),
       "keyword[1]" -> Seq("K2")
     )
@@ -68,19 +69,27 @@ class SearchTest extends UnitSpec {
       "trader_name" -> Seq(""),
       "commodity_code" -> Seq(""),
       "decision_details" -> Seq(""),
-      "live_rulings_only" -> Seq(""),
+      "status" -> Seq(""),
       "keyword[0]" -> Seq(""),
       "keyword[1]" -> Seq("")
     )
 
-    val populatedQueryParam: String = "keyword[0]=K1&decision_details=decision-details&trader_name=trader-name&keyword[1]=K2&commodity_code=commodity-code&live_rulings_only=true"
+    val populatedQueryParam: Set[String] = Set(
+      "decision_details=decision-details",
+      "trader_name=trader-name",
+      "commodity_code=commodity-code",
+      "status[0]=OPEN",
+      "status[1]=LIVE",
+      "keyword[0]=K1",
+      "keyword[1]=K2"
+    )
 
     "Unbind Unpopulated Search to Query String" in {
       Search.binder.unbind("", Search()) shouldBe ""
     }
 
     "Unbind Populated Search to Query String" in {
-      URLDecoder.decode(Search.binder.unbind("", populatedSearch), "UTF-8") shouldBe populatedQueryParam
+      URLDecoder.decode(Search.binder.unbind("", populatedSearch), "UTF-8").split("&").toSet shouldBe populatedQueryParam
     }
 
     "Bind empty query string" in {
