@@ -48,7 +48,7 @@
                         <td id="advanced_search_results-row-@{index}-ruling_end">
                             @result.c.decision.flatMap(_.effectiveEndDate).map(Dates.format).getOrElse("TBC")
                         </td>
-                        <td  id="advanced_search_results-row-@{index}-status">
+                        <td  id="advanced_search_results-row-@{index}-statuses">
                            @case_status(result.c, s"advanced_search_results-row-${index}-status")
                            @review_status(result.c, s"advanced_search_results-row-${index}-review_status")
                            @appeal_status(result.c, s"advanced_search_results-row-${index}-appeal_status")
