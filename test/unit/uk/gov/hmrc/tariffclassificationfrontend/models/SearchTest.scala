@@ -69,7 +69,8 @@ class SearchTest extends UnitSpec {
       "trader_name" -> Seq(""),
       "commodity_code" -> Seq(""),
       "decision_details" -> Seq(""),
-      "status" -> Seq(""),
+      "status[0]" -> Seq(""),
+      "status[1]" -> Seq(""),
       "keyword[0]" -> Seq(""),
       "keyword[1]" -> Seq("")
     )
