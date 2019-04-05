@@ -29,69 +29,67 @@
 @(results: Paged[SearchResult])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 <div id="advanced_search_results">
-  @for((result: SearchResult, index: Int) <- results.results.zipWithIndex) {
-   <div id="advanced_search_results-row-@index" class="advanced_search_results--row">
+    @for((result: SearchResult, index: Int) <- results.results.zipWithIndex) {
+        <div id="advanced_search_results-row-@index" class="advanced_search_results--row">
 
-    <div class="grid-row">
-     <div class="column-one-half">
-      @*Reference*@
-      <div>
-       <a id="advanced_search_results-row-@{index}-reference" href="@routes.CaseController.trader(result.c.reference)">@result.c.reference</a>
-      </div>
+            <div class="grid-row">
+                <div class="column-one-half">
+                @*Reference*@
+                <div>
+                    <a id="advanced_search_results-row-@{index}-reference" href="@routes.CaseController.trader(result.c.reference)">@result.c.reference</a>
+                </div>
+                @*Trader*@
+                <div>
+                    <span class="bold">Trader:</span>
+                    <span id="advanced_search_results-row-@{index}-business_name">@result.c.application.holder.businessName</span>
+                </div>
+                @*Expiry*@
+                <div>
+                    <span class="bold">Expiry date:</span>
+                    <span id="advanced_search_results-row-@{index}-ruling_end">@result.c.decision.flatMap(_.effectiveEndDate).map(Dates.format).getOrElse("TBC")</span>
+                </div>
+                </div>
 
-      @*Trader*@
-      <div>
-       <span class="bold">Trader:</span>
-       <span id="advanced_search_results-row-@{index}-business_name">@result.c.application.holder.businessName</span>
-      </div>
+                <div class="column-one-half align-right">
+                @*Commodity Code*@
+                <div>
+                    <span class="bold">Commodity code:</span>
+                    <span id="advanced_search_results-row-@{index}-decision_code">
+                    @result.c.decision.map(_.bindingCommodityCode).getOrElse("TBC")
+                    </span>
+                </div>
 
-      @*Expiry*@
-      <div>
-       <span class="bold">Expiry date:</span>
-       <span id="advanced_search_results-row-@{index}-ruling_end">@result.c.decision.flatMap(_.effectiveEndDate).map(Dates.format).getOrElse("TBC")</span>
-      </div>
-     </div>
+                @*Status*@
+                <div>
+                    <span class="bold">Status:</span>
+                    @case_status(result.c, s"advanced_search_results-row-${index}-status")
+                    @review_status(result.c, s"advanced_search_results-row-${index}-review_status")
+                    @appeal_status(result.c, s"advanced_search_results-row-${index}-appeal_status")
+                </div>
+                </div>
+            </div>
 
-     <div class="column-one-half align-right">
-      @*Commodity Code*@
-      <div>
-       <span class="bold">Commodity code:</span>
-       <span id="advanced_search_results-row-@{index}-decision_code">
-        @result.c.decision.map(_.bindingCommodityCode).getOrElse("TBC")
-       </span>
-      </div>
+            @*Keywords*@
+            <div>
+                <span class="bold">Keywords:</span>
+                <span id="advanced_search_results-row-@{index}-keywords">@result.c.keywords.mkString(", ")</span>
+            </div>
 
-      @*Status*@
-      <div>
-       <span class="bold">Status:</span>
-       @case_status(result.c, s"advanced_search_results-row-${index}-status")
-       @review_status(result.c, s"advanced_search_results-row-${index}-review_status")
-       @appeal_status(result.c, s"advanced_search_results-row-${index}-appeal_status")
-      </div>
-     </div>
-    </div>
+            @*Attached Images*@
+            @defining(result.attachments.filter(att => att.scanStatus.contains(ScanStatus.READY) && att.url.isDefined && att.isImage)) { attachments: Seq[StoredAttachment] =>
+                @if(attachments.nonEmpty) {
+                    <div id="advanced_search_results-row-@{index}-attachments" class="mt-1">
+                    @for((attachment: StoredAttachment, attIndex: Int) <- attachments.zipWithIndex) {
+                        @thumbnail(s"advanced_search_results-row-$index-attachments-$attIndex", result.c.reference ,  attachment)
+                    }
+                    </div>
+                }
+            }
 
-    @*Keywords*@
-    <div>
-     <span class="bold">Keywords:</span>
-     <span id="advanced_search_results-row-@{index}-keywords">@result.c.keywords.mkString(", ")</span>
-    </div>
-
-    @*Attached Images*@
-    @defining(result.attachments.filter(att => att.scanStatus.contains(ScanStatus.READY) && att.url.isDefined && att.isImage)) { attachments: Seq[StoredAttachment] =>
-     @if(attachments.nonEmpty) {
-      <div id="advanced_search_results-row-@{index}-attachments" class="mt-1">
-       @for((attachment: StoredAttachment, attIndex: Int) <- attachments.zipWithIndex) {
-        @thumbnail(s"advanced_search_results-row-$index-attachments-$attIndex", attachment)
-       }
-      </div>
-     }
+        </div>
     }
 
-   </div>
-  }
-
-  @if(results.isEmpty) {
-   <p id="advanced_search_results-empty" class="mt-1">No results found</p>
-  }
+    @if(results.isEmpty) {
+        <p id="advanced_search_results-empty" class="mt-1">No results found</p>
+    }
 </div>

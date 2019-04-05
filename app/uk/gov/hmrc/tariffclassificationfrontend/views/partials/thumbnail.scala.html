@@ -14,9 +14,18 @@
  * limitations under the License.
  *@
 
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes
 @import uk.gov.hmrc.tariffclassificationfrontend.models.StoredAttachment
-@(id: String, attachment: StoredAttachment)(implicit messages: Messages)
 
-<a id="@{id}-link" target="_blank" href="@attachment.url">
-    <img id="@id" src="@attachment.url" class="advanced_search_results--thumbnail" alt="@attachment.fileName" title="@attachment.fileName"/>
-</a>
+@(id: String, caseReference : String, attachment: StoredAttachment, figureClass: Option[String] = None)(implicit messages: Messages)
+
+<figure id="thumbnail-@id" class="search-results--thumbnail_wrapper @figureClass.getOrElse("")">
+    <div class="search-results--thumbnail_image">
+        <a id="@{id}-link" target="_blank" href="@attachment.url">
+            <img id="@id" src="@attachment.url" alt="@attachment.fileName" title="@attachment.fileName"/>
+        </a>
+    </div>
+    <figcaption class="search-results--thumbnail_text">
+        <a id="search-images-@id-text" href="@routes.CaseController.trader(caseReference)" target="_blank">@caseReference</a>
+    </figcaption>
+</figure>
