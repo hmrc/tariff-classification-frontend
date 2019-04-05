@@ -16,16 +16,12 @@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes
-@import uk.gov.hmrc.tariffclassificationfrontend.models.AppealStatus.AppealStatus
-@import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.CaseStatus
-@import uk.gov.hmrc.tariffclassificationfrontend.models.ReviewStatus.ReviewStatus
-@import uk.gov.hmrc.tariffclassificationfrontend.models.{AppealStatus, CancelReason, Case, CaseStatus, Paged, ReviewStatus}
-@import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
-@import uk.gov.hmrc.tariffclassificationfrontend.models.StoredAttachment
-@import uk.gov.hmrc.tariffclassificationfrontend.views.partials.SearchResult
+@import uk.gov.hmrc.tariffclassificationfrontend.models.{Paged, StoredAttachment}
 @import uk.gov.hmrc.tariffclassificationfrontend.models.response.ScanStatus
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.thumbnail
+@import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.statuses._
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.thumbnail
+@import uk.gov.hmrc.tariffclassificationfrontend.views.partials.SearchResult
 @(results: Paged[SearchResult])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 <div id="advanced_search_results">
@@ -92,6 +88,6 @@
   }
 
   @if(results.isEmpty) {
-   <p id="advanced_search_results-empty" class="mt-1">No results found</p>
+   <p id="advanced_search_results-empty" class="mt-3">No results found</p>
   }
 </div>
