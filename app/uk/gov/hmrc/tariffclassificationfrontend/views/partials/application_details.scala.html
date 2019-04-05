@@ -54,7 +54,7 @@
                         @messages("case.application.goods-description")
                     </dt>
                     <dd class="column-two-thirds">
-                        @btiApp.goodDescription
+                        <span class="pre-wrap">@btiApp.goodDescription</span>
                     </dd>
                 </div>
 
@@ -63,7 +63,7 @@
                         @messages("case.application.confidential-information")
                     </dt>
                     <dd class="column-two-thirds">
-                        @btiApp.confidentialInformation.getOrElse(messages("answer.none"))
+                        <span class="pre-wrap">@btiApp.confidentialInformation.getOrElse(messages("answer.none"))</span>
                     </dd>
                 </div>
 
@@ -72,7 +72,7 @@
                         @messages("case.application.other-information")
                     </dt>
                     <dd class="column-two-thirds">
-                        @btiApp.otherInformation.getOrElse(messages("answer.none"))
+                        <span class="pre-wrap">@btiApp.otherInformation.getOrElse(messages("answer.none"))</span>
                     </dd>
                 </div>
 
@@ -113,7 +113,7 @@
                         @messages("case.application.reissue-application")
                     </dt>
                     <dd class="column-two-thirds">
-                        @btiApp.reissuedBTIReference.getOrElse(messages("answer.no"))
+                        <span class="pre-wrap">@btiApp.reissuedBTIReference.getOrElse(messages("answer.no"))</span>
                     </dd>
                 </div>
 
@@ -122,7 +122,7 @@
                         @messages("case.application.related-bti-reference")
                     </dt>
                     <dd class="column-two-thirds">
-                        @btiApp.relatedBTIReference.getOrElse(messages("answer.no"))
+                        <span class="pre-wrap">@btiApp.relatedBTIReference.getOrElse(messages("answer.no"))</span>
                     </dd>
                 </div>
 
@@ -131,7 +131,7 @@
                         @messages("case.application.known-legal-proceedings")
                     </dt>
                     <dd class="column-two-thirds">
-                        @btiApp.knownLegalProceedings.getOrElse(messages("answer.no"))
+                        <span class="pre-wrap">@btiApp.knownLegalProceedings.getOrElse(messages("answer.no"))</span>
                     </dd>
                 </div>
 

@@ -43,7 +43,7 @@ class ThumbnailViewSpec extends ViewSpec  {
       )
 
       // When
-      val doc = view(thumbnail("some-id", storedAttachment))
+      val doc = view(thumbnail("some-id", "some-case-reference", storedAttachment))
 
       // Then
       doc should containElementWithID("some-id")

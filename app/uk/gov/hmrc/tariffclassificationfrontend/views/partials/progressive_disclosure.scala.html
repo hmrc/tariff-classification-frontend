@@ -33,7 +33,7 @@
             </span>
         </summary>
         <div id="@{id}-body">
-            @Html(HtmlFormat.escape(body.get).toString.replace("\n", "<br>"))
+            <span class="pre-wrap">@{body.get}</span>
         </div>
     </details>
 } else {
