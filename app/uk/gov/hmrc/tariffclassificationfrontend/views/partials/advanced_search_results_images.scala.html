@@ -15,13 +15,13 @@
  *@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-@import uk.gov.hmrc.tariffclassificationfrontend.models.{Paged, StoredAttachment}
 @import uk.gov.hmrc.tariffclassificationfrontend.models.response.ScanStatus
+@import uk.gov.hmrc.tariffclassificationfrontend.models.{Paged, StoredAttachment}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.thumbnail
 @import uk.gov.hmrc.tariffclassificationfrontend.views.partials.SearchResult
 @(results: Paged[SearchResult])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@if(results.results.map(_.attachments.nonEmpty).isEmpty) {
+@if(results.results.flatMap(_.attachments).isEmpty) {
     <p id="advanced_search_results-empty" class="mt-1">No images found</p>
 }else{
     <div class="grid-row">

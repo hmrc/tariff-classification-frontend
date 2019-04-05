@@ -23,10 +23,10 @@
     <div class="tabs">
         <ul class="tabs__list" role="tablist">
             <li class="tabs__list-item" role="tab" onclick="advanced_search.openTab('details')">
-                <span class="tabs__tab" id="tab-details" @if(selectedTab == "details") {aria-selected="true"}>Details</span>
+                <span class="tabs__tab" id="tab-details">Details</span>
             </li>
             <li class="tabs__list-item" role="tab" onclick="advanced_search.openTab('images')">
-                <span class="tabs__tab" id="tab-images" @if(selectedTab == "images") {aria-selected="true"}>Images</span>
+                <span class="tabs__tab" id="tab-images">Images</span>
             </li>
         </ul>
 
@@ -39,6 +39,8 @@
             </div>
         </div>
     </div>
+
+    <input type="hidden" id="selected_tab" name="selectedTab">
 
     <script>
         advanced_search = (function() {
@@ -57,14 +59,22 @@
                 }
             }
 
+            function selectedTab(tabName) {
+                document.getElementById("selected_tab").value = tabName
+            }
+
             return {
                 init: function() {
                     hideAllContentTabs();
+                    selectedTab("@selectedTab");
+                    document.getElementById("tab-@selectedTab").setAttribute("aria-selected", true);
                     document.getElementById("content-tab-@selectedTab").style.display = "block";
+
                 },
                 openTab: function(tabName) {
                     hideAllContentTabs();
                     hideAllSelectedTab();
+                    selectedTab(tabName)
                     document.getElementById("content-tab-" + tabName).style.display = "block";
                     document.getElementById("tab-" + tabName).setAttribute("aria-selected", true);
                 }

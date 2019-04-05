@@ -41,27 +41,27 @@ class SearchController @Inject()(authenticatedAction: AuthenticatedAction,
                                  val messagesApi: MessagesApi,
                                  implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
-  def search(reference: Option[String] = None, search: Search = Search(), sort: Sort = Sort(), page: Int):
+  def search(selectedTab: String, reference: Option[String] = None, search: Search = Search(), sort: Sort = Sort(), page: Int):
     Action[AnyContent] = authenticatedAction.async { implicit request =>
 
     if (reference.isDefined) {
       successful(Redirect(routes.CaseController.trader(reference.get)))
     } else if (search.isEmpty) {
       keywordsService.autoCompleteKeywords.map { keywords: Seq[String] =>
-        Results.Ok(html.advanced_search(SearchForm.form, None, keywords))
+        Results.Ok(html.advanced_search(SearchForm.form, None, keywords, selectedTab))
       }
     } else {
       keywordsService.autoCompleteKeywords.flatMap(keywords => {
         SearchForm.form.bindFromRequest.fold(
           formWithErrors => {
-            Future.successful(Results.Ok(html.advanced_search(formWithErrors, None, keywords)))
+            Future.successful(Results.Ok(html.advanced_search(formWithErrors, None, keywords, selectedTab)))
           },
           data => for {
             cases: Paged[Case] <- casesService.search(search, sort, SearchPagination(page))
             attachments: Map[Case, Seq[StoredAttachment]] <- fileStoreService.getAttachments(cases.results)
             results: Paged[SearchResult] = cases.map(c => SearchResult(c, attachments.getOrElse(c, Seq.empty)))
-          } yield Results.Ok(html.advanced_search(SearchForm.form.fill(data), Some(results), keywords))
-                            .addingToSession((backToSearchResultsLinkLabel, "search results"), (backToSearchResultsLinkUrl, SearchController.search(None, search, sort, page).url))
+          } yield Results.Ok(html.advanced_search(SearchForm.form.fill(data), Some(results), keywords, selectedTab))
+                            .addingToSession((backToSearchResultsLinkLabel, "search results"), (backToSearchResultsLinkUrl, SearchController.search(selectedTab, None, search, sort, page).url))
         )
       })
     }
