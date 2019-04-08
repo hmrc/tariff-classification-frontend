@@ -31,7 +31,7 @@
                 <tr>
                     <th>Reference</th>
                     <th>Trader</th>
-                    <th>End date</th>
+                    <th>Expiry date</th>
                     <th>Status</th>
                     <th>Commodity code</th>
                 </tr>
@@ -46,7 +46,7 @@
                             @result.c.application.holder.businessName
                         </td>
                         <td id="advanced_search_results-row-@{index}-ruling_end">
-                            @result.c.decision.flatMap(_.effectiveEndDate).map(Dates.format).getOrElse("TBC")
+                            @result.c.decision.flatMap(_.effectiveEndDate).map(Dates.format).getOrElse("")
                         </td>
                         <td  id="advanced_search_results-row-@{index}-statuses">
                            @case_status(result.c, s"advanced_search_results-row-${index}-status")
@@ -54,7 +54,7 @@
                            @appeal_status(result.c, s"advanced_search_results-row-${index}-appeal_status")
                         </td>
                          <td  id="advanced_search_results-row-@{index}-decision_code">
-                             @result.c.decision.map(_.bindingCommodityCode).getOrElse("TBC")
+                             @result.c.decision.map(_.bindingCommodityCode).getOrElse("")
                          </td>
                     </tr>
                 }

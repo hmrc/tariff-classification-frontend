@@ -39,7 +39,8 @@
  <h2 class="heading-large">Enter search terms</h2>
  <hr class="mt-0"/>
 
- @helper.form(action = controllers.routes.SearchController.search(selectedTab), 'id -> "advanced_search-form") {
+ @helper.form(action = controllers.routes.SearchController.search(selectedTab).withFragment("advanced_search_keywords"),
+  'id -> "advanced_search-form") {
   @input_text(
    field = form("trader_name"),
    label = "Trader name",
@@ -77,15 +78,14 @@
   @if(results.isDefined && !form.hasErrors) {
    <div id="advanced_search-results_and_filters" class="mt-3">
 
-    <h2 class="heading-large">Search Results</h2>
+    <h2 class="heading-large">Search results</h2>
 
     <div class="grid-row">
      <div class="column-one-quarter">
-      <p>Filter your results:</p>
 
       <div class="advanced_search--filters_container">
        <div class="advanced_search--filters_heading">
-        Filter by case status
+        Filter by status
        </div>
        <div class="advanced_search--filters">
         @input_checkbox_group(
@@ -117,7 +117,8 @@
         pluralName = "cases",
         pager = searchResults,
         containerClass = Some("mb-2"),
-        onChange = page => controllers.routes.SearchController.search(selectedTab, search = form.get, page = page)
+        linksClass = Some("mb-2"),
+        onChange = page => controllers.routes.SearchController.search(selectedTab, search = form.get, page = page).withFragment("advanced_search_keywords")
        )
 
        @advanced_search_results_tabs(searchResults, selectedTab)
@@ -128,8 +129,11 @@
         pluralName = "cases",
         pager = searchResults,
         containerClass = Some("mt-2"),
-        onChange = page => controllers.routes.SearchController.search(selectedTab, search = form.get, page = page)
+        linksClass = Some("mt-2"),
+        onChange = page => controllers.routes.SearchController.search(selectedTab, search = form.get, page = page).withFragment("advanced_search_keywords")
        )
+
+       <a href="#advanced_search_keywords">Back to top</a>
 
       </div>
      }
