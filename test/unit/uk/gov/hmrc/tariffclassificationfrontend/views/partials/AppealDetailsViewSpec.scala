@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.views.partials
 
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Appeal, AppealStatus, Review, ReviewStatus}
+import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewSpec
 import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.appeal_details
@@ -84,6 +84,21 @@ class AppealDetailsViewSpec extends ViewSpec {
       // Then
       doc should containElementWithID("appeal_details-review_status")
       doc.getElementById("appeal_details-review_status") should containText("None")
+    }
+
+    "Render - With A Cancel Reason" in {
+      // Given
+      val c = aCase(
+        withStatus(CaseStatus.CANCELLED),
+        withDecision(cancellation = Some(Cancellation(reason = CancelReason.ANNULLED,  applicationForExtendedUse = true)))
+      )
+
+      // When
+      val doc = view(appeal_details(c))
+
+      // Then
+      doc should containElementWithID("appeal_details-extended_use_status")
+      doc.getElementById("appeal_details-extended_use_status") should containText("Yes")
     }
 
     "Render - With 'Review Upheld'" in {

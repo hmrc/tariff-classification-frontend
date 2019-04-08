@@ -11,7 +11,8 @@ import uk.gov.tariffclassificationfrontend.utils.{CasePayloads, Cases, EventPayl
 class ReleaseCaseSpec extends IntegrationTest with MockitoSugar {
 
   "Case Release" should {
-    val caseWithStatusNEW = CasePayloads.jsonOf(Cases.btiCaseExample.copy(status = CaseStatus.NEW))
+    val caseWithStatusNEW = CasePayloads.jsonOf(Cases.btiCaseExample.copy(status = CaseStatus.NEW,
+      application = Cases.btiApplicationExample.copy(envisagedCommodityCode = Some("01234567890"))))
     val event = EventPayloads.event
 
     "return status 200" in {
