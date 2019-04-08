@@ -18,7 +18,7 @@ package uk.gov.hmrc.tariffclassificationfrontend.forms
 
 import play.api.data.FormError
 import uk.gov.hmrc.play.test.UnitSpec
-import uk.gov.hmrc.tariffclassificationfrontend.models.Search
+import uk.gov.hmrc.tariffclassificationfrontend.models.{PseudoCaseStatus, Search}
 
 class SearchFormTest extends UnitSpec {
 
@@ -36,8 +36,8 @@ class SearchFormTest extends UnitSpec {
           "commodity_code" -> Seq(""),
           "trader_name" -> Seq(""),
           "decision_details" -> Seq(""),
-          "live_rulings_only" -> Seq(""),
-          "keyword" -> Seq("")
+          "status[0]" -> Seq(""),
+          "keyword[0]" -> Seq("")
         )
       ).errors shouldBe Seq.empty
     }
@@ -72,7 +72,8 @@ class SearchFormTest extends UnitSpec {
           "commodity_code" -> Seq("00"),
           "trader_name" -> Seq("trader-name"),
           "decision_details" -> Seq("decision-details"),
-          "live_rulings_only" -> Seq("true"),
+          "status[0]" -> Seq("OPEN"),
+          "status[1]" -> Seq("LIVE"),
           "keyword[0]" -> Seq("X"),
           "keyword[1]" -> Seq("Y")
         )
@@ -80,7 +81,7 @@ class SearchFormTest extends UnitSpec {
         traderName = Some("trader-name"),
         commodityCode = Some("00"),
         decisionDetails = Some("decision-details"),
-        liveRulingsOnly = Some(true),
+        status = Some(Set(PseudoCaseStatus.OPEN, PseudoCaseStatus.LIVE)),
         keywords = Some(Set("X", "Y"))
       )
     }
@@ -90,13 +91,14 @@ class SearchFormTest extends UnitSpec {
         traderName = Some("trader-name"),
         commodityCode = Some("00"),
         decisionDetails = Some("decision-details"),
-        liveRulingsOnly = Some(true),
+        status = Some(Set(PseudoCaseStatus.OPEN, PseudoCaseStatus.LIVE)),
         keywords = Some(Set("X", "Y"))
       )).data shouldBe Map(
         "trader_name" -> "trader-name",
         "commodity_code" -> "00",
         "decision_details" -> "decision-details",
-        "live_rulings_only" -> "true",
+        "status[0]" -> "OPEN",
+        "status[1]" -> "LIVE",
         "keyword[0]" -> "X",
         "keyword[1]" -> "Y"
       )

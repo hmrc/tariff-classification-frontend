@@ -45,9 +45,11 @@ class AdvancedSearchViewSpec extends ViewSpec {
       doc should containElementWithID("advanced_search-results_and_filters")
     }
 
-    "Always Render Input 'live_rulings_only'" in {
-      view(advanced_search(SearchForm.form, None, Seq.empty, defaultTab)) should containElementWithAttribute("name", "live_rulings_only")
-      view(advanced_search(SearchForm.form, Some(Paged(Seq(SearchResult(aCase(), Seq.empty)))), Seq.empty, defaultTab)) should containElementWithAttribute("name", "live_rulings_only")
+    "Always Render Input 'status'" in {
+      view(advanced_search(SearchForm.form, None, Seq.empty, defaultTab)) should containElementWithAttribute("name", "status[0]")
+      view(advanced_search(SearchForm.form, None, Seq.empty, defaultTab)) should containElementWithAttribute("name", "status[1]")
+      view(advanced_search(SearchForm.form, Some(Paged(Seq(SearchResult(aCase(), Seq.empty)))), Seq.empty, defaultTab)) should containElementWithAttribute("name", "status[0]")
+      view(advanced_search(SearchForm.form, Some(Paged(Seq(SearchResult(aCase(), Seq.empty)))), Seq.empty, defaultTab)) should containElementWithAttribute("name", "status[1]")
     }
   }
 

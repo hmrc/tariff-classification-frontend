@@ -46,7 +46,7 @@
                 @*Expiry*@
                 <div>
                     <span class="bold">Expiry date:</span>
-                    <span id="advanced_search_results-row-@{index}-ruling_end">@result.c.decision.flatMap(_.effectiveEndDate).map(Dates.format).getOrElse("TBC")</span>
+                    <span id="advanced_search_results-row-@{index}-ruling_end">@result.c.decision.flatMap(_.effectiveEndDate).map(Dates.format).getOrElse("")</span>
                 </div>
                 </div>
 
@@ -55,7 +55,7 @@
                 <div>
                     <span class="bold">Commodity code:</span>
                     <span id="advanced_search_results-row-@{index}-decision_code">
-                    @result.c.decision.map(_.bindingCommodityCode).getOrElse("TBC")
+                    @result.c.decision.map(_.bindingCommodityCode).getOrElse("")
                     </span>
                 </div>
 

@@ -16,30 +16,39 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.forms
 
-import play.api.data.Form
 import play.api.data.Forms._
+import play.api.data.{Form, Mapping}
 import uk.gov.hmrc.tariffclassificationfrontend.forms.FormConstraints._
-import uk.gov.hmrc.tariffclassificationfrontend.models.Search
+import uk.gov.hmrc.tariffclassificationfrontend.models.PseudoCaseStatus.PseudoCaseStatus
+import uk.gov.hmrc.tariffclassificationfrontend.models.{PseudoCaseStatus, Search}
+
+import scala.util.Try
 
 object SearchForm {
 
+  private def textTransformingTo[A](reader: String => A, writer: A => String): Mapping[A] = {
+    nonEmptyText
+      .verifying("Invalid entry", s => Try(reader(s)).isSuccess)
+      .transform[A](reader, writer)
+  }
+
   val form: Form[Search] = Form(
     mapping(
-      "trader_name" -> optional(text),
-      "commodity_code" -> optional(text.verifying(emptyOr(numeric, minLength(2), maxLength(22)): _*)),
-      "decision_details" -> optional(text),
-      "live_rulings_only" -> optional(boolean),
-      "keyword" -> optional(set(text))
+      "trader_name" -> optional[String](text),
+      "commodity_code" -> optional[String](text.verifying(emptyOr(numeric, minLength(2), maxLength(22)): _*)),
+      "decision_details" -> optional[String](text),
+      "status" -> optional[Set[PseudoCaseStatus]](set(textTransformingTo(PseudoCaseStatus.withName, _.toString))),
+      "keyword" -> optional[Set[String]](set(text))
     )(Search.apply)(Search.unapply)
   )
 
   val formWithoutValidation: Form[Search] = Form(
     mapping(
-      "trader_name" -> optional(text),
-      "commodity_code" -> optional(text),
-      "decision_details" -> optional(text),
-      "live_rulings_only" -> optional(boolean),
-      "keyword" -> optional(set(text))
+      "trader_name" -> optional[String](text),
+      "commodity_code" -> optional[String](text),
+      "decision_details" -> optional[String](text),
+      "status" -> optional[Set[PseudoCaseStatus]](set(textTransformingTo(PseudoCaseStatus.withName, _.toString))),
+      "keyword" -> optional[Set[String]](set(text))
     )(Search.apply)(Search.unapply)
   )
 
