@@ -92,7 +92,8 @@ case.decision.constrain.justification=Justification
 case.decision.constrain.bindingCommodityCode=Binding commodity code
 case.decision.constrain.goodsDescription=Sanitised goods description
 
-case.decision.ruling.certificate.link=View and print a PDF of the ruling
+case.decision.ruling.certificate.content=If this case is under review or appeal
+case.decision.ruling.certificate.link=view and print a PDF of the ruling.
 case.decision.ruling.certificate.title=Ruling certificate
 
 case.activity.assigned-to = Currently assigned to:
