@@ -32,6 +32,7 @@ import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, FileStoreService, KeywordsService}
+import uk.gov.hmrc.tariffclassificationfrontend.views.SearchTab
 import uk.gov.tariffclassificationfrontend.utils.Cases._
 
 import scala.concurrent.Future
@@ -48,7 +49,7 @@ class SearchControllerSpec extends UnitSpec with Matchers with WithFakeApplicati
   private val keywordsService = mock[KeywordsService]
   private val operator = mock[Operator]
 
-  private val defaultTab = "details"
+  private val defaultTab = SearchTab.DETAILS
 
   private val controller = new SearchController(
     new SuccessfulAuthenticatedAction(operator),

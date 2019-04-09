@@ -18,67 +18,31 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.models.Paged
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{advanced_search_results_images, advanced_search_results_table}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.partials.SearchResult
-@(results: Paged[SearchResult], selectedTab : String)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@import uk.gov.hmrc.tariffclassificationfrontend.views.SearchTab
+@import uk.gov.hmrc.tariffclassificationfrontend.views.SearchTab._
+@(results: Paged[SearchResult], selectedTab : SearchTab, onChange: SearchTab => Call)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
     <div class="tabs">
         <ul class="tabs__list" role="tablist">
-            <li class="tabs__list-item" role="tab" onclick="advanced_search.openTab('details')">
-                <span class="tabs__tab" id="tab-details">Details</span>
+            <li class="tabs__list-item" role="tab">
+                <span class="tabs__tab" id="tab-details" @if(selectedTab == DETAILS){aria-selected="true"}> <a href="@onChange(DETAILS)">Details</a></span>
             </li>
-            <li class="tabs__list-item" role="tab" onclick="advanced_search.openTab('images')">
-                <span class="tabs__tab" id="tab-images">Images</span>
+            <li class="tabs__list-item" role="tab">
+                <span class="tabs__tab" id="tab-images"  @if(selectedTab == IMAGES){aria-selected="true"}><a href="@onChange(IMAGES)">Images</a></span>
             </li>
         </ul>
 
         <div class="tabs__panel">
-            <div class="tabs__panel__content" id="content-tab-details">
-                @advanced_search_results_table(results)
-             </div>
-            <div class="tabs__panel__content" id="content-tab-images">
-                @advanced_search_results_images(results)
+            <div class="tabs__panel__content" id="content-tab-@selectedTab">
+                @if(selectedTab == DETAILS){
+                    @advanced_search_results_table(results)
+                }
+                @if(selectedTab == IMAGES){
+                    @advanced_search_results_images(results)
+                }
             </div>
         </div>
     </div>
 
-    <input type="hidden" id="selected_tab" name="selectedTab">
+    <input type="hidden" id="selected_tab" name="selectedTab" value="@selectedTab">
 
-    <script>
-        advanced_search = (function() {
-
-            function hideAllContentTabs() {
-                var tabcontent = document.getElementsByClassName("tabs__panel__content");
-                for (i = 0; i < tabcontent.length; i++) {
-                    tabcontent[i].style.display = "none";
-                }
-            }
-
-            function hideAllSelectedTab() {
-                var tablinks = document.getElementsByClassName("tabs__tab");
-                for (i = 0; i < tablinks.length; i++) {
-                    tablinks[i].setAttribute("aria-selected", false);
-                }
-            }
-
-            function selectedTab(tabName) {
-                document.getElementById("selected_tab").value = tabName
-            }
-
-            return {
-                init: function() {
-                    hideAllContentTabs();
-                    selectedTab("@selectedTab");
-                    document.getElementById("tab-@selectedTab").setAttribute("aria-selected", true);
-                    document.getElementById("content-tab-@selectedTab").style.display = "block";
-
-                },
-                openTab: function(tabName) {
-                    hideAllContentTabs();
-                    hideAllSelectedTab();
-                    selectedTab(tabName)
-                    document.getElementById("content-tab-" + tabName).style.display = "block";
-                    document.getElementById("tab-" + tabName).setAttribute("aria-selected", true);
-                }
-            };
-        })();
-        advanced_search.init()
-    </script>
