@@ -69,7 +69,7 @@
 
                 <h3 class="heading-medium" id="trader-submitted-heading">Application type</h3>
 
-                <div id="app-details-reissue-application" class="grid-row">
+                <div id="app-details-reissue-application-type" class="grid-row">
                     <dt class="column-one-third">
                         @messages("case.application.reissue-application")
                     </dt>
@@ -79,7 +79,7 @@
                 </div>
 
                 @if(btiApp.reissuedBTIReference.isDefined) {
-                    <div id="app-details-reissued-reference" class="grid-row">
+                    <div id="app-details-reissue-application-reference" class="grid-row">
                         <dt class="column-one-third">
                             @messages("case.application.renewal-reference-number")
                         </dt>
@@ -124,7 +124,7 @@
 
                 <h3 class="heading-medium" id="trader-submitted-heading">Additional information</h3>
 
-                <div id="app-details-supporting-information" class="grid-row">
+                <div id="app-details-other-info" class="grid-row">
                     <dt class="column-one-third">
                         @messages("case.application.supporting-information")
                     </dt>
@@ -134,7 +134,7 @@
                 </div>
 
                 @if(btiApp.relatedBTIReference.isDefined){
-                    <div id="app-details-supporting-information" class="grid-row">
+                    <div id="app-details-related-reference" class="grid-row">
                         <dt class="column-one-third">
                             @messages("case.application.similar-bti-ruling")
                         </dt>
