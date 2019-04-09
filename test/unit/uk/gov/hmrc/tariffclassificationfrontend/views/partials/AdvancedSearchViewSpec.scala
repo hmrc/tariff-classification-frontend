@@ -20,13 +20,13 @@ import play.api.libs.json.JsValue
 import uk.gov.hmrc.tariffclassificationfrontend.forms.SearchForm
 import uk.gov.hmrc.tariffclassificationfrontend.models.Paged
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
-import uk.gov.hmrc.tariffclassificationfrontend.views.ViewSpec
+import uk.gov.hmrc.tariffclassificationfrontend.views.{SearchTab, ViewSpec}
 import uk.gov.hmrc.tariffclassificationfrontend.views.html.advanced_search
 import uk.gov.tariffclassificationfrontend.utils.Cases._
 
 class AdvancedSearchViewSpec extends ViewSpec {
 
-  private val defaultTab = "details"
+  private val defaultTab = SearchTab.DETAILS
   private val form = SearchForm.form.bind(Map("any" -> "any"))
 
   "Advanced Search" should {
