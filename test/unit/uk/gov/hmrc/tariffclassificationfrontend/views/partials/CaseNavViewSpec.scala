@@ -28,8 +28,8 @@ import uk.gov.hmrc.tariffclassificationfrontend.views.{CaseDetailPage, ViewSpec}
 
 class CaseNavViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterEach {
 
-  private val application = "Application"
-  private val trader = "Trader"
+  private val application = "Item"
+  private val trader = "Applicant"
   private val ruling = "Ruling"
   private val attachments = "Attachments"
   private val activity = "Activity"

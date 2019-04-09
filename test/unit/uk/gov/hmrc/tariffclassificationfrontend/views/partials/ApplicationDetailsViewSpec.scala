@@ -29,13 +29,13 @@ class ApplicationDetailsViewSpec extends ViewSpec {
 
     "render sample to be returned when sample provided" in {
       // Given
-      val `case` = aCase(
+      val caseWithSample = aCase(
         withBTIDetails(sampleToBeProvided = true, sampleToBeReturned = true),
         withoutAttachments()
       )
 
       // When
-      val doc = view(application_details(`case`, Seq.empty, None))
+      val doc = view(application_details(caseWithSample, Seq.empty, None))
 
       // Then
       doc.getElementById("app-details-sending-samples") should containText(messages("answer.yes"))

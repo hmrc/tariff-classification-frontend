@@ -17,7 +17,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{Application, BTIApplication, Case, EORIDetails, StoredAttachment}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials._
-
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.AttachmentsController
 
 @(c: Case, files: Seq[StoredAttachment], letterOfAuth: Option[StoredAttachment])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
@@ -25,10 +25,37 @@
     @defining(a.asBTI) { btiApp: BTIApplication =>
         @defining(btiApp.holder) { btiHolder: EORIDetails =>
 
-            @tab_heading("application", messages("case.menu.application"))
+            @tab_heading("application", messages("case.menu.application-details"))
 
-            @submitted_application_link(c)
             <dl class="dl-mb-2">
+
+                <div id="app-details-goods-name" class="grid-row">
+                    <dt class="column-one-third">
+                        @messages("case.item.name")
+                    </dt>
+                    <dd class="column-two-thirds">
+                        @btiApp.goodName
+                    </dd>
+                </div>
+
+                <div id="app-details-goods-description" class="grid-row">
+                    <dt class="column-one-third">
+                        @messages("case.item.description")
+                    </dt>
+                    <dd class="column-two-thirds">
+                        <span class="pre-wrap">@btiApp.goodDescription</span>
+                    </dd>
+                </div>
+
+                <div id="app-details-confidential-info" class="grid-row">
+                    <dt class="column-one-third">
+                        @messages("case.item.confidential-information")
+                    </dt>
+                    <dd class="column-two-thirds">
+                        <span class="pre-wrap">@btiApp.confidentialInformation.getOrElse(messages("answer.none"))</span>
+                    </dd>
+                </div>
+
                 @if(btiApp.envisagedCommodityCode.isDefined) {
                     <div id="app-details-envisaged-code" class="grid-row">
                         <dt class="column-one-third">
@@ -40,91 +67,82 @@
                     </div>
                 }
 
-                <div id="app-details-goods-name" class="grid-row">
-                    <dt class="column-one-third">
-                        @messages("case.application.goods-name")
-                    </dt>
-                    <dd class="column-two-thirds">
-                        @btiApp.goodName
-                    </dd>
-                </div>
-
-                <div id="app-details-goods-description" class="grid-row">
-                    <dt class="column-one-third">
-                        @messages("case.application.goods-description")
-                    </dt>
-                    <dd class="column-two-thirds">
-                        <span class="pre-wrap">@btiApp.goodDescription</span>
-                    </dd>
-                </div>
-
-                <div id="app-details-confidential-info" class="grid-row">
-                    <dt class="column-one-third">
-                        @messages("case.application.confidential-information")
-                    </dt>
-                    <dd class="column-two-thirds">
-                        <span class="pre-wrap">@btiApp.confidentialInformation.getOrElse(messages("answer.none"))</span>
-                    </dd>
-                </div>
-
-                <div id="app-details-other-info" class="grid-row">
-                    <dt class="column-one-third">
-                        @messages("case.application.other-information")
-                    </dt>
-                    <dd class="column-two-thirds">
-                        <span class="pre-wrap">@btiApp.otherInformation.getOrElse(messages("answer.none"))</span>
-                    </dd>
-                </div>
-
-                <div id="app-details-sending-samples" class="grid-row">
-                    <dt class="column-one-third">
-                        @messages("case.application.sending-samples")
-                    </dt>
-                    <dd class="column-two-thirds">
-
-                        @if(btiApp.sampleToBeProvided){
-                            @messages("answer.yes")
-                        } else {
-                            @messages("answer.no")
-                        }
-
-                    </dd>
-                </div>
-
-                @if(btiApp.sampleToBeProvided) {
-                    <div id="app-details-returning-samples" class="grid-row">
-                        <dt class="column-one-third">
-                            @messages("case.application.returning-samples")
-                        </dt>
-                        <dd class="column-two-thirds">
-
-                            @if(btiApp.sampleToBeReturned){
-                                @messages("answer.yes")
-                            } else {
-                                @messages("answer.no")
-                            }
-
-                        </dd>
-                    </div>
-                }
+                <h3 class="heading-medium" id="trader-submitted-heading">Application type</h3>
 
                 <div id="app-details-reissue-application" class="grid-row">
                     <dt class="column-one-third">
                         @messages("case.application.reissue-application")
                     </dt>
                     <dd class="column-two-thirds">
-                        <span class="pre-wrap">@btiApp.reissuedBTIReference.getOrElse(messages("answer.no"))</span>
+                        @if(btiApp.reissuedBTIReference.isDefined){ @messages("case.bti.renewal") }else{ @messages("case.bti.new") }
                     </dd>
                 </div>
 
-                <div id="app-details-related-reference" class="grid-row">
+                @if(btiApp.reissuedBTIReference.isDefined) {
+                    <div id="app-details-reissued-reference" class="grid-row">
+                        <dt class="column-one-third">
+                            @messages("case.application.renewal-reference-number")
+                        </dt>
+                        <dd class="column-two-thirds">
+                            @btiApp.reissuedBTIReference.get
+                        </dd>
+                    </div>
+                }
+
+                <h3 class="heading-medium" id="trader-submitted-heading">Samples and attachments</h3>
+
+                <div id="app-details-sending-samples" class="grid-row">
                     <dt class="column-one-third">
-                        @messages("case.application.related-bti-reference")
+                        @messages("case.application.provide-samples")
                     </dt>
                     <dd class="column-two-thirds">
-                        <span class="pre-wrap">@btiApp.relatedBTIReference.getOrElse(messages("answer.no"))</span>
+                        @if(btiApp.sampleToBeProvided){ @messages("answer.yes") } else { @messages("answer.no")}
                     </dd>
                 </div>
+
+                @if(btiApp.sampleToBeProvided){
+                    <div id="app-details-returning-samples" class="grid-row">
+                        <dt class="column-one-third">
+                            @messages("case.application.returning-samples")
+                        </dt>
+                        <dd class="column-two-thirds">
+                            @if(btiApp.sampleToBeReturned){ @messages("answer.yes") } else { @messages("answer.no")}
+                        </dd>
+                    </div>
+                }
+
+                <div id="app-details-attachments" class="grid-row">
+                    <dt class="column-one-third">
+                        @messages("case.application.has-attachments")
+                    </dt>
+                    <dd class="column-two-thirds">
+                        @if(c.attachments.exists(_.operator.isEmpty)){
+                            Yes, <a href="@AttachmentsController.attachmentsDetails(c.reference)"> view attached douments </a>
+                        } else { @messages("answer.no")}
+                    </dd>
+                </div>
+
+                <h3 class="heading-medium" id="trader-submitted-heading">Additional information</h3>
+
+                <div id="app-details-supporting-information" class="grid-row">
+                    <dt class="column-one-third">
+                        @messages("case.application.supporting-information")
+                    </dt>
+                    <dd class="column-two-thirds">
+                        <span class="pre-wrap">@btiApp.otherInformation.getOrElse(messages("answer.none"))</span>
+                    </dd>
+                </div>
+
+                @if(btiApp.relatedBTIReference.isDefined){
+                    <div id="app-details-supporting-information" class="grid-row">
+                        <dt class="column-one-third">
+                            @messages("case.application.similar-bti-ruling")
+                        </dt>
+                        <dd class="column-two-thirds">
+                            @btiApp.relatedBTIReference
+                        </dd>
+                    </div>
+                }
 
                 <div id="app-details-legal-proceedings" class="grid-row">
                     <dt class="column-one-third">
@@ -134,22 +152,6 @@
                         <span class="pre-wrap">@btiApp.knownLegalProceedings.getOrElse(messages("answer.no"))</span>
                     </dd>
                 </div>
-
-                <div class="grid-row">
-                    <dt class="column-one-third">
-                    @messages("case.application.related-bti-reference")
-                    </dt>
-                    <dd class="column-two-thirds">
-
-                    @if(btiApp.relatedBTIReference.isDefined) {
-                        @btiApp.relatedBTIReference.get
-                    }else {
-                        No
-                    }
-
-                    </dd>
-                </div>
-
             </dl>
             <div class="mt-1">
                 @refer_case_button(c)
@@ -157,6 +159,8 @@
             </div>
 
             @reject_suspend_section(c)
+
+            @submitted_application_link(c)
         }
     }
 }
