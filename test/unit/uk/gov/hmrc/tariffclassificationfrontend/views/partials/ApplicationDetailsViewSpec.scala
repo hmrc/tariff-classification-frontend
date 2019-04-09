@@ -68,7 +68,7 @@ class ApplicationDetailsViewSpec extends ViewSpec {
       val doc = view(application_details(`case`, Seq.empty, None))
 
       // Then
-      doc.getElementById("app-details-reissue-application") should containText(messages("case.bti.new"))
+      doc.getElementById("app-details-reissue-application-type") should containText(messages("case.bti.new"))
       doc.getElementById("app-details-confidential-info") should containText(messages("answer.none"))
       doc.getElementById("app-details-related-reference") should be (null)
       doc.getElementById("app-details-legal-proceedings") should containText(messages("answer.no"))
