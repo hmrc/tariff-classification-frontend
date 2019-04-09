@@ -19,13 +19,14 @@ package uk.gov.hmrc.tariffclassificationfrontend.models
 import play.api.data.Form
 import play.api.mvc.QueryStringBindable
 import uk.gov.hmrc.tariffclassificationfrontend.forms.SearchForm
+import uk.gov.hmrc.tariffclassificationfrontend.models.PseudoCaseStatus.PseudoCaseStatus
 
 case class Search
 (
   traderName: Option[String] = None,
   commodityCode: Option[String] = None,
   decisionDetails: Option[String] = None,
-  liveRulingsOnly: Option[Boolean] = None,
+  status: Option[Set[PseudoCaseStatus]] = None,
   keywords: Option[Set[String]] = None
 ) {
 

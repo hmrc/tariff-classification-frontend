@@ -69,9 +69,9 @@ class AdvancedSearchResultsViewSpec extends ViewSpec {
       doc shouldNot containElementWithID("advanced_search_results-row-0-attachments")
 
       doc should containElementWithID("advanced_search_results-row-0-ruling_end")
-      doc.getElementById("advanced_search_results-row-0-ruling_end").text shouldBe "TBC"
+      doc.getElementById("advanced_search_results-row-0-ruling_end").text shouldBe ""
       doc should containElementWithID("advanced_search_results-row-0-decision_code")
-      doc.getElementById("advanced_search_results-row-0-decision_code").text shouldBe "TBC"
+      doc.getElementById("advanced_search_results-row-0-decision_code").text shouldBe ""
     }
 
     "Render Results with optional fields present" in {

@@ -240,5 +240,29 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
       doc.getElementById("edit-ruling-file-0") should haveTag("span")
       doc.getElementById("edit-ruling-file-0") should containText("file.txt")
     }
+
+    "Render with commodity code autocomplete disabled" in {
+      // Given
+      val c = aCase(
+        withStatus(CaseStatus.OPEN)
+      )
+      val formData = DecisionFormData(
+        bindingCommodityCode = "commodity code",
+        justification = "justification",
+        goodsDescription = "goods description",
+        methodSearch = "method search",
+        methodExclusion = "method exclusion",
+        methodCommercialDenomination = "commercial denomination"
+      )
+
+      // When
+      val doc = view(ruling_details_edit(c, Seq.empty, decisionForm.form.fill(formData)))
+
+      // Then
+      doc should containElementWithID("bindingCommodityCode")
+      val commodityCodeInputField = doc.getElementById("bindingCommodityCode")
+      commodityCodeInputField should haveAttribute("value", "commodity code")
+      commodityCodeInputField should haveAttribute("autocomplete", "off")
+    }
   }
 }

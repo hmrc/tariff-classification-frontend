@@ -32,6 +32,7 @@ import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, FileStoreService, KeywordsService}
+import uk.gov.hmrc.tariffclassificationfrontend.views.SearchTab
 import uk.gov.tariffclassificationfrontend.utils.Cases._
 
 import scala.concurrent.Future
@@ -48,6 +49,8 @@ class SearchControllerSpec extends UnitSpec with Matchers with WithFakeApplicati
   private val keywordsService = mock[KeywordsService]
   private val operator = mock[Operator]
 
+  private val defaultTab = SearchTab.DETAILS
+
   private val controller = new SearchController(
     new SuccessfulAuthenticatedAction(operator),
     casesService,
@@ -62,7 +65,7 @@ class SearchControllerSpec extends UnitSpec with Matchers with WithFakeApplicati
   "Search" should {
 
     "redirect to case if searching by reference" in {
-      val result = await(controller.search(reference = Some("reference"), page = 2)(fakeRequest))
+      val result = await(controller.search(defaultTab, reference = Some("reference"), page = 2)(fakeRequest))
 
       status(result) shouldBe Status.SEE_OTHER
       locationOf(result) shouldBe Some(routes.CaseController.trader("reference").url)
@@ -73,7 +76,7 @@ class SearchControllerSpec extends UnitSpec with Matchers with WithFakeApplicati
       given(fileStoreService.getAttachments(refEq(Seq.empty))(any[HeaderCarrier])) willReturn Future.successful(Map.empty[Case, Seq[StoredAttachment]])
       given(keywordsService.autoCompleteKeywords) willReturn Future.successful(Seq.empty[String])
 
-      val result = await(controller.search(search = Search(), page = 2)(fakeRequest))
+      val result = await(controller.search(defaultTab, search = Search(), page = 2)(fakeRequest))
 
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -96,7 +99,7 @@ class SearchControllerSpec extends UnitSpec with Matchers with WithFakeApplicati
       val request = fakeRequest.withFormUrlEncodedBody(
         "trader_name" -> "trader", "commodity_code" -> "00"
       )
-      val result = await(controller.search(search = search, page = 2)(request))
+      val result = await(controller.search(defaultTab, search = search, page = 2)(request))
 
       // Then
       status(result) shouldBe Status.OK
@@ -105,7 +108,7 @@ class SearchControllerSpec extends UnitSpec with Matchers with WithFakeApplicati
       contentAsString(result) should include("advanced_search-heading")
       contentAsString(result) should include("advanced_search_results")
       session(result).get(SessionKeys.backToSearchResultsLinkLabel) shouldBe Some("search results")
-      session(result).get(SessionKeys.backToSearchResultsLinkUrl) shouldBe Some("/tariff-classification/search?trader_name=trader&commodity_code=00&page=2")
+      session(result).get(SessionKeys.backToSearchResultsLinkUrl) shouldBe Some("/tariff-classification/search?trader_name=trader&commodity_code=00&page=2#advanced_search_keywords")
     }
 
     "render errors if form invalid" in {
@@ -116,7 +119,7 @@ class SearchControllerSpec extends UnitSpec with Matchers with WithFakeApplicati
 
       // When
       val request = fakeRequest.withFormUrlEncodedBody("commodity_code" -> "a")
-      val result = await(controller.search(search = search, page = 2)(request))
+      val result = await(controller.search(defaultTab, search = search, page = 2)(request))
 
       // Then
       status(result) shouldBe Status.OK

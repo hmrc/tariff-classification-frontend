@@ -208,8 +208,8 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest {
         s"&trader_name=trader" +
         s"&commodity_code=comm-code" +
         s"&decision_details=decision-details" +
-        s"&min_decision_end=${encode("2019-01-01T00:00:00Z")}" +
-        s"&status=COMPLETED" +
+        s"&status=OPEN" +
+        s"&status=LIVE" +
         s"&keyword=K1" +
         s"&keyword=K2" +
         s"&page=1" +
@@ -225,7 +225,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest {
         traderName = Some("trader"),
         commodityCode = Some("comm-code"),
         decisionDetails = Some("decision-details"),
-        liveRulingsOnly = Some(true),
+        status = Some(Set(PseudoCaseStatus.OPEN, PseudoCaseStatus.LIVE)),
         keywords = Some(Set("K1", "K2"))
       )
 
@@ -319,8 +319,8 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest {
       )
     }
 
-    "get cases 'live only' = false" in {
-      val url = "/cases?application_type=BTI&sort_direction=asc&sort_by=commodity-code&page=1&page_size=2"
+    "get cases by 'status'" in {
+      val url = s"/cases?application_type=BTI&sort_direction=asc&sort_by=commodity-code&status=OPEN&status=LIVE&page=1&page_size=2"
 
       stubFor(get(urlEqualTo(url))
         .willReturn(aResponse()
@@ -329,49 +329,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest {
       )
 
       val search = Search(
-        liveRulingsOnly = Some(false)
-      )
-
-      await(connector.search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE), pagination)) shouldBe Paged(Seq(Cases.btiCaseExample))
-
-      verify(
-        getRequestedFor(urlEqualTo(url))
-          .withHeader("X-Api-Token", equalTo(realConfig.apiToken))
-      )
-    }
-
-    "get cases 'live only' = none" in {
-      val url = "/cases?application_type=BTI&sort_direction=asc&sort_by=commodity-code&page=1&page_size=2"
-
-      stubFor(get(urlEqualTo(url))
-        .willReturn(aResponse()
-          .withStatus(HttpStatus.SC_OK)
-          .withBody(CasePayloads.pagedGatewayCases))
-      )
-
-      val search = Search(
-        liveRulingsOnly = None
-      )
-
-      await(connector.search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE), pagination)) shouldBe Paged(Seq(Cases.btiCaseExample))
-
-      verify(
-        getRequestedFor(urlEqualTo(url))
-          .withHeader("X-Api-Token", equalTo(realConfig.apiToken))
-      )
-    }
-
-    "get cases 'live only' = true" in {
-      val url = s"/cases?application_type=BTI&sort_direction=asc&sort_by=commodity-code&min_decision_end=${encode("2019-01-01T00:00:00Z")}&status=COMPLETED&page=1&page_size=2"
-
-      stubFor(get(urlEqualTo(url))
-        .willReturn(aResponse()
-          .withStatus(HttpStatus.SC_OK)
-          .withBody(CasePayloads.pagedGatewayCases))
-      )
-
-      val search = Search(
-        liveRulingsOnly = Some(true)
+        status = Some(Set(PseudoCaseStatus.OPEN, PseudoCaseStatus.LIVE))
       )
 
       await(connector.search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE), pagination)) shouldBe Paged(Seq(Cases.btiCaseExample))
