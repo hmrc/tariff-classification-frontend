@@ -121,7 +121,10 @@
         onChange = page => controllers.routes.SearchController.search(selectedTab, search = form.get, page = page).withFragment("advanced_search_keywords")
        )
 
-       @advanced_search_results_tabs(searchResults, selectedTab)
+       @advanced_search_results_tabs(
+           searchResults,
+           selectedTab,
+           onChange = selectedTab => controllers.routes.SearchController.search(selectedTab = selectedTab, search = form.get, page = results.map(_.pageIndex).getOrElse(1)).withFragment("advanced_search_keywords"))
 
        @pagination(
         id = "advanced_search-pagination_bottom",
