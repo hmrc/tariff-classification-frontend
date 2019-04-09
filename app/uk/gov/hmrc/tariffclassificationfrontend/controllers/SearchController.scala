@@ -26,6 +26,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.SearchControl
 import uk.gov.hmrc.tariffclassificationfrontend.forms.SearchForm
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, FileStoreService, KeywordsService}
+import uk.gov.hmrc.tariffclassificationfrontend.views.SearchTab.SearchTab
 import uk.gov.hmrc.tariffclassificationfrontend.views.html
 import uk.gov.hmrc.tariffclassificationfrontend.views.partials.SearchResult
 
@@ -41,7 +42,7 @@ class SearchController @Inject()(authenticatedAction: AuthenticatedAction,
                                  val messagesApi: MessagesApi,
                                  implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
-  def search(selectedTab: String, reference: Option[String] = None, search: Search = Search(), sort: Sort = Sort(), page: Int):
+  def search(selectedTab: SearchTab, reference: Option[String] = None, search: Search = Search(), sort: Sort = Sort(), page: Int):
     Action[AnyContent] = authenticatedAction.async { implicit request =>
 
     if (reference.isDefined) {

@@ -18,24 +18,26 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.models.Paged
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{advanced_search_results_images, advanced_search_results_table}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.partials.SearchResult
-@(results: Paged[SearchResult], selectedTab : String, onChange: String => Call)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@import uk.gov.hmrc.tariffclassificationfrontend.views.SearchTab
+@import uk.gov.hmrc.tariffclassificationfrontend.views.SearchTab._
+@(results: Paged[SearchResult], selectedTab : SearchTab, onChange: SearchTab => Call)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
     <div class="tabs">
         <ul class="tabs__list" role="tablist">
             <li class="tabs__list-item" role="tab">
-                <span class="tabs__tab" id="tab-details" @if(selectedTab=="details"){aria-selected="true"}> <a href="@onChange("details")">Details</a></span>
+                <span class="tabs__tab" id="tab-details" @if(selectedTab == DETAILS){aria-selected="true"}> <a href="@onChange(DETAILS)">Details</a></span>
             </li>
             <li class="tabs__list-item" role="tab">
-                <span class="tabs__tab" id="tab-images"  @if(selectedTab=="images"){aria-selected="true"}><a href="@onChange("images")">Images</a></span>
+                <span class="tabs__tab" id="tab-images"  @if(selectedTab == IMAGES){aria-selected="true"}><a href="@onChange(IMAGES)">Images</a></span>
             </li>
         </ul>
 
         <div class="tabs__panel">
             <div class="tabs__panel__content" id="content-tab-@selectedTab">
-                @if(selectedTab=="details"){
+                @if(selectedTab == DETAILS){
                     @advanced_search_results_table(results)
                 }
-                @if(selectedTab=="images"){
+                @if(selectedTab == IMAGES){
                     @advanced_search_results_images(results)
                 }
             </div>

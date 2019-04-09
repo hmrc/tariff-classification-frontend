@@ -67,7 +67,7 @@ POST        /cases/:reference/review/status      @uk.gov.hmrc.tariffclassificati
 GET         /cases/:reference/extended-use/status      @uk.gov.hmrc.tariffclassificationfrontend.controllers.ExtendedUseCaseController.chooseStatus(reference: String)
 POST        /cases/:reference/extended-use/status      @uk.gov.hmrc.tariffclassificationfrontend.controllers.ExtendedUseCaseController.updateStatus(reference: String)
 
-GET         /search                              @uk.gov.hmrc.tariffclassificationfrontend.controllers.SearchController.search(selectedTab: String ?= "details", reference: Option[String] ?= None, search: uk.gov.hmrc.tariffclassificationfrontend.models.Search ?= uk.gov.hmrc.tariffclassificationfrontend.models.Search(), sort: uk.gov.hmrc.tariffclassificationfrontend.models.Sort ?= uk.gov.hmrc.tariffclassificationfrontend.models.Sort(), page: Int ?= 1)
+GET         /search                              @uk.gov.hmrc.tariffclassificationfrontend.controllers.SearchController.search(selectedTab: uk.gov.hmrc.tariffclassificationfrontend.views.SearchTab.SearchTab ?= uk.gov.hmrc.tariffclassificationfrontend.views.SearchTab.DETAILS, reference: Option[String] ?= None, search: uk.gov.hmrc.tariffclassificationfrontend.models.Search ?= uk.gov.hmrc.tariffclassificationfrontend.models.Search(), sort: uk.gov.hmrc.tariffclassificationfrontend.models.Sort ?= uk.gov.hmrc.tariffclassificationfrontend.models.Sort(), page: Int ?= 1)
 
 # Note: Browser links cant send a DELETE so it has to be GET in this case
 GET         /cases/:reference/keywords/:keyword  @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.removeKeyword(reference: String, keyword: String)
