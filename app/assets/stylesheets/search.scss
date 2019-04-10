@@ -62,29 +62,31 @@
   &--thumbnail {
 
     &_wrapper {
+      display: inline-block;
       height: 8em;
-      position: relative;
       margin-bottom: 2em;
+      position: relative;
     }
 
     &_image {
       height: 100%;
       
       img {
-        width: 6em;
-        max-height: 97%;
         display: block;
-        position: absolute;
+        max-height: 100%;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
+        position: absolute;
+        width: 6em;
       }
     }
 
     &_text {
-      font-size: 1.6rem;
-      text-align: center;
       float: none;
+      font-size: 1.6rem;
+      padding-top: 0.5em;
+      text-align: center;
     }
   }
 }
