@@ -27,7 +27,6 @@ case class Case
   status: CaseStatus,
   createdDate: Instant,
   daysElapsed: Long,
-  closedDate: Option[Instant],
   caseBoardsFileNumber: Option[String],
   assignee: Option[Operator],
   queueId: Option[String],

@@ -36,11 +36,11 @@ object Cases {
   val simpleBtiApplicationExample = BTIApplication(eoriDetailsExample, contactExample, None, offline = false, "Laptop", "Personal Computer", None, None, None, None, None, None, sampleToBeProvided = false, sampleToBeReturned = false)
   val decision = Decision("040900", Some(Instant.now()), Some(Instant.now().plusSeconds(2*3600*24*365)), "justification", "good description", None, None, Some("denomination"), None)
   val liabilityApplicationExample = LiabilityOrder(eoriDetailsExample, contactExample, "status", "port", "entry number", Instant.now())
-  val btiCaseExample = Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, None, None, btiApplicationExample, Some(decision), Seq())
-  val simpleCaseExample = Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, None, None, simpleBtiApplicationExample, None, Seq())
-  val liabilityCaseExample = Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, None, None, liabilityApplicationExample, None, Seq())
-  val caseQueueExample = Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, None, Some("1"), btiApplicationExample, Some(decision), Seq())
-  val caseAssignedExample = Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, Some(Operator("1", Some("Test User"))), Some("1"), btiApplicationExample, Some(decision), Seq())
+  val btiCaseExample = Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, None, btiApplicationExample, Some(decision), Seq())
+  val simpleCaseExample = Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, None, simpleBtiApplicationExample, None, Seq())
+  val liabilityCaseExample = Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, None, liabilityApplicationExample, None, Seq())
+  val caseQueueExample = Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, Some("1"), btiApplicationExample, Some(decision), Seq())
+  val caseAssignedExample = Case("1", CaseStatus.OPEN, Instant.now(), 0, None, Some(Operator("1", Some("Test User"))), Some("1"), btiApplicationExample, Some(decision), Seq())
   val expiredRuling = decision.copy(
     effectiveStartDate = Some(Instant.now().plus(-20, ChronoUnit.DAYS)),
     effectiveEndDate = Some(Instant.now().plus(-10, ChronoUnit.DAYS))
