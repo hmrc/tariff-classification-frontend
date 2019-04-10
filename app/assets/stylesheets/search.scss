@@ -63,26 +63,30 @@
 
     &_wrapper {
       display: inline-block;
-      margin: 10px auto;
-      height: 130px;
+      height: 8em;
+      margin-bottom: 2em;
+      position: relative;
     }
 
     &_image {
-      height: 80%;
-
-      a {
-        vertical-align: middle;
-      }
-
+      height: 100%;
+      
       img {
-        width: 100px;
-        height: auto;
+        display: block;
+        max-height: 100%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        position: absolute;
+        width: 6em;
       }
     }
 
     &_text {
-      font-size: 1.6rem;
       float: none;
+      font-size: 1.6rem;
+      padding-top: 0.5em;
+      text-align: center;
     }
   }
 }
