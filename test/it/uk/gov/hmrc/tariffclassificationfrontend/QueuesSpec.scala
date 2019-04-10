@@ -56,7 +56,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body should include("<h1 id=\"queue-name\" class=\"heading-xlarge\">Gateway Cases</h1>")
+      response.body should include("Gateway cases")
     }
 
     "redirect on auth failure" in {
@@ -88,7 +88,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body should include("<h1 id=\"queue-name\" class=\"heading-xlarge\">ACT Cases</h1>")
+      response.body should include("ACT cases")
     }
 
     "redirect on auth failure" in {
@@ -120,7 +120,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body should include("<h1 id=\"queue-name\" class=\"heading-xlarge\">CAP Cases</h1>")
+      response.body should include("CAP cases")
     }
 
     "redirect on auth failure" in {
@@ -152,7 +152,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body should include("<h1 id=\"queue-name\" class=\"heading-xlarge\">Cars Cases</h1>")
+      response.body should include("Cars cases")
     }
 
     "redirect on auth failure" in {
@@ -184,7 +184,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body should include("<h1 id=\"queue-name\" class=\"heading-xlarge\">ELM Cases</h1>")
+      response.body should include("ELM cases")
     }
 
     "redirect on auth failure" in {

@@ -29,13 +29,13 @@ class ApplicationDetailsViewSpec extends ViewSpec {
 
     "render sample to be returned when sample provided" in {
       // Given
-      val `case` = aCase(
+      val caseWithSample = aCase(
         withBTIDetails(sampleToBeProvided = true, sampleToBeReturned = true),
         withoutAttachments()
       )
 
       // When
-      val doc = view(application_details(`case`, Seq.empty, None))
+      val doc = view(application_details(caseWithSample, Seq.empty, None))
 
       // Then
       doc.getElementById("app-details-sending-samples") should containText(messages("answer.yes"))
@@ -68,9 +68,9 @@ class ApplicationDetailsViewSpec extends ViewSpec {
       val doc = view(application_details(`case`, Seq.empty, None))
 
       // Then
-      doc.getElementById("app-details-reissue-application") should containText(messages("answer.no"))
+      doc.getElementById("app-details-reissue-application-type") should containText(messages("case.bti.new"))
       doc.getElementById("app-details-confidential-info") should containText(messages("answer.none"))
-      doc.getElementById("app-details-related-reference") should containText(messages("answer.no"))
+      doc.getElementById("app-details-related-reference") should be (null)
       doc.getElementById("app-details-legal-proceedings") should containText(messages("answer.no"))
       doc.getElementById("app-details-other-info") should containText(messages("answer.none"))
     }
@@ -94,8 +94,10 @@ class ApplicationDetailsViewSpec extends ViewSpec {
       val doc = view(application_details(`case`, Seq(storedAttachment), None))
 
       // Then
-      doc should containElementWithID("app-details-reissue-application")
-      doc.getElementById("app-details-reissue-application") should containText("reissued bti")
+      doc should containElementWithID("app-details-reissue-application-type")
+      doc.getElementById("app-details-reissue-application-type") should containText(messages("case.bti.renewal"))
+      doc should containElementWithID("app-details-reissue-application-reference")
+      doc.getElementById("app-details-reissue-application-reference") should containText("reissued bti")
       doc should containElementWithID("app-details-envisaged-code")
       doc.getElementById("app-details-envisaged-code") should containText("envisaged code")
       doc should containElementWithID("app-details-confidential-info")
