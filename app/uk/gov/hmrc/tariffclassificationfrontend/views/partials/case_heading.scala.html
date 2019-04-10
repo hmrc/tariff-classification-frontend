@@ -36,8 +36,11 @@
 
     <h1 class="heading-xlarge case-title">@messages("case.title", c.application.getType, c.application.holder.businessName)</h1>
 
- @case_status(c, "case-status")
- @review_status(c, "review-status")
- @appeal_status(c, "appeal-status")
+    <div id="case-status-section">
+        <span class="visuallyhidden">case status</span>
+        @case_status(c, "case-status")
+        @review_status(c, "review-status")
+        @appeal_status(c, "appeal-status")
+    </div>
 
 </div>
