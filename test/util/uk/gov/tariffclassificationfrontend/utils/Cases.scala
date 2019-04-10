@@ -32,8 +32,8 @@ object Cases {
   val eoriDetailsExample = EORIDetails("eori", "trader-business-name", "line1", "line2", "line3", "postcode", "country")
   val eoriAgentDetailsExample = AgentDetails(EORIDetails("eori", "agent-business-name", "line1", "line2", "line3", "postcode", "country"), Some(Attachment("letter-id", public = true, None, Instant.now())))
   val contactExample = Contact("name", "email", Some("phone"))
-  val btiApplicationExample = BTIApplication(eoriDetailsExample, contactExample, Some(eoriAgentDetailsExample), offline = false, "Laptop", "Personal Computer", None, None, None, None, None, None, sampleToBeProvided = false, sampleToBeReturned = false)
-  val simpleBtiApplicationExample = BTIApplication(eoriDetailsExample, contactExample, None, offline = false, "Laptop", "Personal Computer", None, None, None, None, None, None, sampleToBeProvided = false, sampleToBeReturned = false)
+  val btiApplicationExample = BTIApplication(eoriDetailsExample, contactExample, Some(eoriAgentDetailsExample), offline = false, "Laptop", "Personal Computer", None, None, None, None, None, None, None, sampleToBeProvided = false, sampleToBeReturned = false)
+  val simpleBtiApplicationExample = BTIApplication(eoriDetailsExample, contactExample, None, offline = false, "Laptop", "Personal Computer", None, None, None, None, None, None, None, sampleToBeProvided = false, sampleToBeReturned = false)
   val decision = Decision("040900", Some(Instant.now()), Some(Instant.now().plusSeconds(2*3600*24*365)), "justification", "good description", None, None, Some("denomination"), None)
   val liabilityApplicationExample = LiabilityOrder(eoriDetailsExample, contactExample, "status", "port", "entry number", Instant.now())
   val btiCaseExample = Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, None, btiApplicationExample, Some(decision), Seq())
@@ -89,6 +89,7 @@ object Cases {
                      relatedBTIReference: Option[String] = None,
                      knownLegalProceedings: Option[String] = None,
                      envisagedCommodityCode: Option[String] = None,
+                     importOrExport: Option[String] = None,
                      sampleToBeProvided: Boolean = false,
                      sampleToBeReturned: Boolean = false): Case => Case = { c =>
     c.copy(application = c.application.asBTI.copy(
@@ -101,6 +102,7 @@ object Cases {
       relatedBTIReference = relatedBTIReference,
       knownLegalProceedings = knownLegalProceedings,
       envisagedCommodityCode = envisagedCommodityCode,
+      importOrExport = importOrExport,
       sampleToBeProvided = sampleToBeProvided,
       sampleToBeReturned = sampleToBeReturned
     ))
@@ -129,7 +131,8 @@ object Cases {
                                     reissuedBTIReference: Option[String] = None,
                                     relatedBTIReference: Option[String] = None,
                                     knownLegalProceedings: Option[String] = None,
-                                    envisagedCommodityCode: Option[String] = None): Case => Case = { c =>
+                                    envisagedCommodityCode: Option[String] = None,
+                                    importOrExport: Option[String] = None): Case => Case = { c =>
     c.copy(
       application = c.application.asBTI.copy(
         confidentialInformation = confidentialInformation,
@@ -137,7 +140,8 @@ object Cases {
         reissuedBTIReference = reissuedBTIReference,
         relatedBTIReference = relatedBTIReference,
         knownLegalProceedings = knownLegalProceedings,
-        envisagedCommodityCode = envisagedCommodityCode
+        envisagedCommodityCode = envisagedCommodityCode,
+        importOrExport = importOrExport
       )
     )
   }

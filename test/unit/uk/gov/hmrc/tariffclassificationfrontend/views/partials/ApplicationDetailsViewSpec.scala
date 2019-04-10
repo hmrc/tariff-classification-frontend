@@ -57,6 +57,16 @@ class ApplicationDetailsViewSpec extends ViewSpec {
       doc shouldNot containElementWithID("app-details-returning-samples")
     }
 
+    "not render import/export when value not provided" in {
+      // Given
+      val `case` = aCase(withBTIDetails(importOrExport = None))
+      // When
+      val doc = view(application_details(`case`, Seq.empty, None))
+
+      // Then
+      doc shouldNot containElementWithID("app-details-import-or-export")
+    }
+
     "render default negative text on optional fields when not present" in {
       // Given
       val `case` = aCase(
@@ -84,7 +94,8 @@ class ApplicationDetailsViewSpec extends ViewSpec {
           reissuedBTIReference = Some("reissued bti"),
           relatedBTIReference = Some("related bti"),
           knownLegalProceedings = Some("legal proceedings"),
-          envisagedCommodityCode = Some("envisaged code")
+          envisagedCommodityCode = Some("envisaged code"),
+          importOrExport = Some("Import")
         ),
         withAttachment(attachment("FILE_ID"))
       )
@@ -108,6 +119,8 @@ class ApplicationDetailsViewSpec extends ViewSpec {
       doc.getElementById("app-details-legal-proceedings") should containText("legal proceedings")
       doc should containElementWithID("app-details-other-info")
       doc.getElementById("app-details-other-info") should containText("other info")
+      doc should containElementWithID("app-details-import-or-export")
+      doc.getElementById("app-details-import-or-export") should containText("Import")
     }
 
   }

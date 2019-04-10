@@ -56,6 +56,7 @@ case class BTIApplication
   goodName: String,
   goodDescription: String,
   confidentialInformation: Option[String],
+  importOrExport: Option[String] = None,
   otherInformation: Option[String],
   reissuedBTIReference: Option[String],
   relatedBTIReference: Option[String],
