@@ -67,16 +67,14 @@
                     </div>
                 }
 
-                @if(btiApp.importOrExport.isDefined) {
-                    <div id="app-details-import-or-export" class="grid-row">
-                        <dt class="column-one-third">
-                        @messages("case.application.importOrExport")
-                        </dt>
-                        <dd class="column-two-thirds">
-                        @btiApp.importOrExport.get.toLowerCase.capitalize
-                        </dd>
-                    </div>
-                }
+                <div id="app-details-import-or-export" class="grid-row">
+                    <dt class="column-one-third">
+                    @messages("case.application.importOrExport")
+                    </dt>
+                    <dd class="column-two-thirds">
+                    @btiApp.importOrExport.getOrElse(messages("site.unknown")).toLowerCase.capitalize
+                    </dd>
+                </div>
 
                 <h3 class="heading-medium" id="trader-submitted-heading">Application type</h3>
 

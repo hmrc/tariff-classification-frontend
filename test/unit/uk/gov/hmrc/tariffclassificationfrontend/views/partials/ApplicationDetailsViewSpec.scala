@@ -57,16 +57,6 @@ class ApplicationDetailsViewSpec extends ViewSpec {
       doc shouldNot containElementWithID("app-details-returning-samples")
     }
 
-    "not render import/export when value not provided" in {
-      // Given
-      val `case` = aCase(withBTIDetails(importOrExport = None))
-      // When
-      val doc = view(application_details(`case`, Seq.empty, None))
-
-      // Then
-      doc shouldNot containElementWithID("app-details-import-or-export")
-    }
-
     "render default negative text on optional fields when not present" in {
       // Given
       val `case` = aCase(
@@ -83,6 +73,7 @@ class ApplicationDetailsViewSpec extends ViewSpec {
       doc.getElementById("app-details-related-reference") should be (null)
       doc.getElementById("app-details-legal-proceedings") should containText(messages("answer.no"))
       doc.getElementById("app-details-other-info") should containText(messages("answer.none"))
+      doc.getElementById("app-details-import-or-export") should containText (messages("site.unknown"))
     }
 
     "Render optional fields when present" in {
