@@ -73,6 +73,7 @@ class ApplicationDetailsViewSpec extends ViewSpec {
       doc.getElementById("app-details-related-reference") should be (null)
       doc.getElementById("app-details-legal-proceedings") should containText(messages("answer.no"))
       doc.getElementById("app-details-other-info") should containText(messages("answer.none"))
+      doc.getElementById("app-details-import-or-export") should containText (messages("site.unknown"))
     }
 
     "Render optional fields when present" in {
@@ -84,7 +85,8 @@ class ApplicationDetailsViewSpec extends ViewSpec {
           reissuedBTIReference = Some("reissued bti"),
           relatedBTIReference = Some("related bti"),
           knownLegalProceedings = Some("legal proceedings"),
-          envisagedCommodityCode = Some("envisaged code")
+          envisagedCommodityCode = Some("envisaged code"),
+          importOrExport = Some("Import")
         ),
         withAttachment(attachment("FILE_ID"))
       )
@@ -108,6 +110,8 @@ class ApplicationDetailsViewSpec extends ViewSpec {
       doc.getElementById("app-details-legal-proceedings") should containText("legal proceedings")
       doc should containElementWithID("app-details-other-info")
       doc.getElementById("app-details-other-info") should containText("other info")
+      doc should containElementWithID("app-details-import-or-export")
+      doc.getElementById("app-details-import-or-export") should containText("Import")
     }
 
   }
