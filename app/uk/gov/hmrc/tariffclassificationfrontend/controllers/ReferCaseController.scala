@@ -32,7 +32,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future.successful
 
 @Singleton
-class ReferCaseController @Inject()(authenticatedAction: AuthenticatedAction,
+class ReferCaseController @Inject()(actions: AuthenticatedControllerActions,
                                     casesService: CasesService,
                                     val messagesApi: MessagesApi,
                                     implicit val appConfig: AppConfig) extends RenderCaseAction {
@@ -45,11 +45,11 @@ class ReferCaseController @Inject()(authenticatedAction: AuthenticatedAction,
   override protected def redirect: String => Call = routes.CaseController.applicationDetails
   override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = c.status == OPEN
 
-  def referCase(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
+  def referCase(reference: String): Action[AnyContent] = actions.authenticated.async { implicit request =>
     getCaseAndRenderView(reference, c => successful(views.html.refer_case(c, form)))
   }
 
-  def confirmReferCase(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
+  def confirmReferCase(reference: String): Action[AnyContent] = actions.authenticated.async { implicit request =>
 
     form.bindFromRequest().fold(
       errors => {

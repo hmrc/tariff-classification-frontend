@@ -15,13 +15,14 @@
  *@
 
 @import helper._
-@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController
 @import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 @import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.components.input_auto_complete
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.tab_heading
+
 @(c: Case, autoCompleteOptions: Seq[String], keywordForm : Form[String])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
     @tab_heading("keywords", messages("case.menu.keywords"))
@@ -45,10 +46,11 @@
                             &nbsp;
                         }
                     </div>
-                    <div id="keywords-row-@{index}-remove" class="column-one-third right">
-                        <a id="keywords-row-@{index}-remove-link" aria-label="remove @keyword" href="@CaseController.removeKeyword(c.reference, keyword)">Remove</a>
-                    </div>
-
+                    @if(request.hasWritePermission) {
+                        <div id="keywords-row-@{index}-remove" class="column-one-third right">
+                            <a id="keywords-row-@{index}-remove-link" aria-label="remove @keyword" href="@CaseController.removeKeyword(c.reference, keyword)">Remove</a>
+                        </div>
+                    }
                 </div>
                 <hr class="mt-0 mb-0"/>
             }
@@ -70,11 +72,10 @@
             <p>To suggest a new keyword contact the classification team manager.</p>
 
             <div class="form-group">
-                <button id="keyword_details-add_keyword" class="button" type="submit">Add keyword</button>
+                <button id="keyword_details-add_keyword" class="button" type="submit" @if(request.hasReadOnlyPermission){ disabled="disabled"}>Add keyword</button>
             </div>
         }
         </div>
-
     </div>
 
 

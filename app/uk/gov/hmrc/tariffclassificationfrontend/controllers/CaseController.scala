@@ -36,7 +36,8 @@ import scala.concurrent.Future.successful
 
 @Singleton
 class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
-                               casesService: CasesService,
+                               actions: AuthenticatedControllerActions,
+                               implicit val casesService: CasesService,
                                keywordsService: KeywordsService,
                                fileService: FileStoreService,
                                eventsService: EventsService,
@@ -60,7 +61,7 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
     )
   }
 
-  def applicationDetails(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
+  def applicationDetails(reference: String): Action[AnyContent] = actions.readOnly.async { implicit request =>
     getCaseAndRenderView(
       reference,
       APPLICATION_DETAILS,
@@ -86,7 +87,8 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
     )
   }
 
-  def activityDetails(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
+  def activityDetails(reference: String): Action[AnyContent] = (authenticatedAction).async { implicit request =>
+
     getCaseAndRenderView(
       reference,
       ACTIVITY,
@@ -127,15 +129,16 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
     } yield views.html.partials.activity_details(c, events, f, queues)
   }
 
-  def keywordsDetails(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
+  def keywordsDetails(reference: String): Action[AnyContent] = actions.readOnly.async { implicit request =>
     getCaseAndRenderView(
       reference,
       KEYWORDS,
-      showKeywords(_, keywordForm)
+      showKeywords(_, keywordForm),
+      request.c
     )
   }
 
-  def addKeyword(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
+  def addKeyword(reference: String): Action[AnyContent] = actions.authenticated.async { implicit request =>
     keywordForm.bindFromRequest.fold(
       errorForm =>
         getCaseAndRenderView(
@@ -152,7 +155,7 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
     )
   }
 
-  def removeKeyword(reference: String, keyword: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
+  def removeKeyword(reference: String, keyword: String): Action[AnyContent] = actions.authenticated.async { implicit request =>
     getCaseAndRenderView(
       reference,
       KEYWORDS,
@@ -180,18 +183,41 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
 
   private def getCaseAndRenderView(reference: String, page: CaseDetailPage, toHtml: Case => Future[Html])
                                   (implicit request: Request[_]): Future[Result] = {
+
     casesService.getOne(reference).flatMap {
       case Some(c: Case) => toHtml(c).map(html => Ok(views.html.case_details(c, page, html)))
       case _ => successful(Ok(views.html.case_not_found(reference)))
     }
   }
 
+  private def getCaseAndRenderView(reference: String, page: CaseDetailPage, toHtml: Case => Future[Html], foundCase: Option[Case])
+                                  (implicit request: Request[_]): Future[Result] = {
+
+    foundCase match {
+      case Some(c) => toHtml(c).map(html => Ok(views.html.case_details(c, page, html)))
+      case _ => successful(Ok(views.html.case_not_found(reference)))
+    }
+  }
+
+
   private def getCaseAndRedirect(reference: String, page: CaseDetailPage, toHtml: Case => Future[Call])
-                                (implicit request: Request[_]): Future[Result] = {
+                                   (implicit request: Request[_]): Future[Result] = {
     casesService.getOne(reference).flatMap {
       case Some(c: Case) => toHtml(c).map(_ => Redirect(routes.CaseController.activityDetails(reference)))
       case _ => successful(Ok(views.html.case_not_found(reference)))
     }
+  }
+
+  private def getCaseAndRedirect(reference: String, page: CaseDetailPage, toHtml: Case => Future[Call], foundCase: Option[Case])
+                                (implicit request: Request[_]): Future[Result] = {
+    foundCase match {
+      case Some(c: Case) => toHtml(c).map(_ => Redirect(routes.CaseController.activityDetails(reference)))
+      case _ => successful(Ok(views.html.case_not_found(reference)))
+    }
+  }
+
+  def caseNotFound(reference : String): Action[AnyContent] = Action.async { implicit request =>
+    successful(Ok(views.html.case_not_found(reference)))
   }
 
 }
