@@ -25,7 +25,7 @@ class AuthenticatedControllerActions @Inject()(authoriseCaseAction: AuthoriseCas
                                                readOnlyCaseAction: ReadOnlyCaseAction,
                                                authenticatedAction: AuthenticatedAction){
 
-  val authenticated: ActionBuilder[AuthenticatedRequest] = authenticatedAction andThen authoriseCaseAction
+  val authorised: ActionBuilder[AuthenticatedRequest] = authenticatedAction andThen authoriseCaseAction
   val readOnly: ActionBuilder[AuthenticatedCaseRequest] = authenticatedAction andThen readOnlyCaseAction
 
 }

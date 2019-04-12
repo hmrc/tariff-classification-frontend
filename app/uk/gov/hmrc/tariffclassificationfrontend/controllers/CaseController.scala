@@ -138,7 +138,7 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
     )
   }
 
-  def addKeyword(reference: String): Action[AnyContent] = actions.authenticated.async { implicit request =>
+  def addKeyword(reference: String): Action[AnyContent] = actions.authorised.async { implicit request =>
     keywordForm.bindFromRequest.fold(
       errorForm =>
         getCaseAndRenderView(
@@ -155,7 +155,7 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
     )
   }
 
-  def removeKeyword(reference: String, keyword: String): Action[AnyContent] = actions.authenticated.async { implicit request =>
+  def removeKeyword(reference: String, keyword: String): Action[AnyContent] = actions.authorised.async { implicit request =>
     getCaseAndRenderView(
       reference,
       KEYWORDS,

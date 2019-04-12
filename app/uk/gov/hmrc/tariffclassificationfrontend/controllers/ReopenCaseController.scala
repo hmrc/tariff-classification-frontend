@@ -42,7 +42,7 @@ class ReopenCaseController @Inject()(actions: AuthenticatedControllerActions,
 
   override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = c.status == SUSPENDED || c.status == REFERRED
 
-  def confirmReopenCase(reference: String): Action[AnyContent] = actions.authenticated.async { implicit request =>
+  def confirmReopenCase(reference: String): Action[AnyContent] = actions.authorised.async { implicit request =>
     getCaseAndRenderView(reference, casesService.reopenCase(_, request.operator).map(views.html.confirm_reopen_case(_)))
   }
 
