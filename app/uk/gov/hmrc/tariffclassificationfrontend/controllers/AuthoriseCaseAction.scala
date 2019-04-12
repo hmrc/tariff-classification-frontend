@@ -43,6 +43,7 @@ case class AuthoriseCaseAction @Inject()(casesService: CasesService)
 
     casesService.getOne(reference).flatMap {
       case Some(c: Case) if isOwner(c, request) || request.operator.manager => writeAccess(request, c)
+      //TODO : create a trait with ReadOnly - are nearly identical less this line
       case Some(c: Case) => successful(Left(Redirect(routes.SecurityController.unauthorized())))
       case _ => successful(Left(Redirect(routes.CaseController.caseNotFound(reference))))
     }
