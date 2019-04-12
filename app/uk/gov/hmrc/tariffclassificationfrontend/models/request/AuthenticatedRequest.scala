@@ -17,6 +17,26 @@
 package uk.gov.hmrc.tariffclassificationfrontend.models.request
 
 import play.api.mvc.{Request, WrappedRequest}
-import uk.gov.hmrc.tariffclassificationfrontend.models.Operator
+import uk.gov.hmrc.tariffclassificationfrontend.models.request.AccessType.{AccessType, READ_WRITE}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Operator}
 
-case class AuthenticatedRequest[A](operator: Operator, request: Request[A]) extends WrappedRequest[A](request)
+class AuthenticatedRequest[A](_operator: Operator, _request: Request[A], _accessType: AccessType = READ_WRITE)
+                  extends WrappedRequest[A](_request) {
+
+  val operator : Operator = _operator
+  val request  : Request[A] = _request
+
+  val hasWritePermission: Boolean = _accessType == AccessType.READ_WRITE
+  val hasReadOnlyPermission: Boolean = _accessType == AccessType.READ_ONLY
+}
+
+class AuthenticatedCaseRequest[A](operator: Operator, request: Request[A], accessType: AccessType, _c: Option[Case])
+                  extends AuthenticatedRequest[A] (operator , request, accessType){
+
+  val c : Option[Case] = _c
+}
+
+object AccessType extends Enumeration {
+  type AccessType = Value
+  val READ_ONLY, READ_WRITE  = Value
+}

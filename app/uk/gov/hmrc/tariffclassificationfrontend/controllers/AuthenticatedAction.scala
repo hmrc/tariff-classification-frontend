@@ -66,7 +66,7 @@ class AuthenticatedAction @Inject()(appConfig: AppConfig,
           name.name,
           manager = roles.enrolments.map(_.key).contains(managerEnrolment)
         )
-        block(AuthenticatedRequest(operator, request))
+        block(new AuthenticatedRequest(operator, request))
     } recover {
       case _: NoActiveSession => toStrideLogin(
         if (appConfig.runningAsDev) s"http://${request.host}${request.uri}"

@@ -3,6 +3,7 @@
 GET         /assets/*file                         controllers.Assets.at(path="/public", file)
 
 GET         /unauthorized                        @uk.gov.hmrc.tariffclassificationfrontend.controllers.SecurityController.unauthorized()
+GET         /case-not-found                           @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.caseNotFound(reference: String)
 
 GET         /                                     controllers.Default.redirect(to = uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.MyCasesController.myCases.url)
 GET         /queues                               controllers.Default.redirect(to = uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.MyCasesController.myCases.url)
