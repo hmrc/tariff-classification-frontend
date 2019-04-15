@@ -52,8 +52,8 @@ trait CommonCaseAction {
 
   implicit val casesService : CasesService
 
-  def checkCasePermissions[ A ](request: AuthenticatedRequest[A], onDeniedPermission: Case => Either[Result, AuthenticatedCaseRequest[A]])
-                      : Future[Either[Result,AuthenticatedCaseRequest[A]] ] = {
+  def checkCasePermissions[A](request: AuthenticatedRequest[A], onDeniedPermission: Case => Either[Result, AuthenticatedCaseRequest[A]])
+                      : Future[Either[Result,AuthenticatedCaseRequest[A]]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(
       request.headers,
       Some(request.session)
