@@ -52,7 +52,7 @@ trait CommonCaseAction {
 
   implicit val casesService : CasesService
 
-  def checkCasePermissions[ A ](request: AuthenticatedRequest[A], onFailure: Case => Either[Result, AuthenticatedCaseRequest[A]])
+  def checkCasePermissions[ A ](request: AuthenticatedRequest[A], onDeniedPermission: Case => Either[Result, AuthenticatedCaseRequest[A]])
                       : Future[Either[Result,AuthenticatedCaseRequest[A]] ] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(
       request.headers,
@@ -62,8 +62,8 @@ trait CommonCaseAction {
     val reference = extractCaseReference(request.request)
 
     casesService.getOne(reference).flatMap {
-      case Some(c: Case) if isOwner(c, request.operator) || request.operator.manager => successful(Right(authCaseRequest(request, c, AccessType.READ_WRITE)))
-      case Some(c: Case) => successful(onFailure(c))
+      case Some(c: Case) if hasWritePermissions(c, request.operator) => successful(Right(authCaseRequest(request, c, AccessType.READ_WRITE)))
+      case Some(c: Case) => successful(onDeniedPermission(c))
       case _ => successful(Left(Redirect(routes.CaseController.caseNotFound(reference))))
     }
   }
@@ -80,6 +80,9 @@ trait CommonCaseAction {
       _c = Some(c))
   }
 
-  private def isOwner[A] : (Case,  Operator) => Boolean = { (c, operator) => c.assignee.exists(_.id == operator.id)}
+  private def hasWritePermissions[A] : (Case,  Operator) => Boolean = { (c, operator) =>
+    operator.manager ||  c.assignee.exists(_.id == operator.id)
+
+  }
 
 }
