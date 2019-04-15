@@ -83,5 +83,3 @@ trait CommonCaseAction {
   private def isOwner[A] : (Case,  Operator) => Boolean = { (c, operator) => c.assignee.exists(_.id == operator.id)}
 
 }
-
-

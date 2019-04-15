@@ -35,7 +35,7 @@ import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
 @Singleton
-class RulingController @Inject()(authenticatedAction: AuthenticatedAction,
+class RulingController @Inject()(actions: AuthenticatedControllerActions,
                                  casesService: CasesService,
                                  fileStoreService: FileStoreService,
                                  mapper: DecisionFormMapper,
@@ -50,7 +50,7 @@ class RulingController @Inject()(authenticatedAction: AuthenticatedAction,
     fileStoreService.getAttachments(c).map(views.html.partials.ruling_details_edit(c, _, f))
   }
 
-  def editRulingDetails(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
+  def editRulingDetails(reference: String): Action[AnyContent] = actions.authorised.async { implicit request =>
     getCaseAndRenderView(reference, menuTitle, c => {
       val formData = mapper.caseToDecisionFormData(c)
       val df = decisionForm.form.fill(formData)
@@ -59,7 +59,7 @@ class RulingController @Inject()(authenticatedAction: AuthenticatedAction,
     })
   }
 
-  def updateRulingDetails(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
+  def updateRulingDetails(reference: String): Action[AnyContent] = actions.authorised.async { implicit request =>
     decisionForm.form.bindFromRequest.fold(
       errorForm =>
         getCaseAndRenderView(

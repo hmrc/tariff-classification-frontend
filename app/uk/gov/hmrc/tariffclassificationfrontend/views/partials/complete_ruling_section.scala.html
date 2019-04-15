@@ -17,10 +17,10 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CompleteCaseController
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus}
 @import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionFormData
-@(c: Case, decisionForm : Option[Form[DecisionFormData]], classes: Seq[String] = Seq.empty)(implicit messages: Messages)
+@import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
+@(c: Case, decisionForm : Option[Form[DecisionFormData]], classes: Seq[String] = Seq.empty)(implicit  request: AuthenticatedRequest[_], messages: Messages)
 
 @if(c.decision.isDefined && c.status == CaseStatus.OPEN) {
-
     <div id="complete-case-section">
         @defining(decisionForm.map(_.errors.size).exists(_ > 0)) { hasErrors : Boolean =>
             @if(hasErrors) {

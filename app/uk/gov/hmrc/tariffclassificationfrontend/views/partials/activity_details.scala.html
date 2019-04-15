@@ -74,7 +74,11 @@
             }
         </div>
 
-        @if(c.assignee.isDefined && reassignCaseStatuses.contains(c.status)){
-            <span class="column-one-third mt-1"> <a id="reassign-queue-link" href="@ReassignCaseController.showAvailableQueues(c.reference, request.uri)"> Move this case back to a queue </a> </span>
+        @if(request.hasWritePermission && c.assignee.isDefined && reassignCaseStatuses.contains(c.status)){
+            <span class="column-one-third mt-1">
+                <a id="reassign-queue-link" href="@ReassignCaseController.showAvailableQueues(c.reference, request.uri)">
+                        Move this case back to a queue
+                </a>
+            </span>
         }
     </div>

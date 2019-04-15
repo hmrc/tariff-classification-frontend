@@ -73,7 +73,7 @@ class CaseController @Inject()(actions: AuthenticatedControllerActions,
     )
   }
 
-  def rulingDetails(reference: String): Action[AnyContent] = actions.authenticated.async { implicit request =>
+  def rulingDetails(reference: String): Action[AnyContent] = actions.authReadOnly.async { implicit request =>
     getCaseAndRenderView(
       reference,
       RULING,
@@ -86,7 +86,7 @@ class CaseController @Inject()(actions: AuthenticatedControllerActions,
     )
   }
 
-  def activityDetails(reference: String): Action[AnyContent] = actions.authenticated.async { implicit request =>
+  def activityDetails(reference: String): Action[AnyContent] = actions.authReadOnly.async { implicit request =>
 
     getCaseAndRenderView(
       reference,

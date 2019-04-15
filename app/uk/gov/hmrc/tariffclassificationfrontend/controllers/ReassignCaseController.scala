@@ -33,7 +33,7 @@ import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
 @Singleton
-class ReassignCaseController @Inject()(authenticatedAction: AuthenticatedAction,
+class ReassignCaseController @Inject()(actions: AuthenticatedControllerActions,
                                        override val caseService: CasesService,
                                        queueService: QueuesService,
                                        val messagesApi: MessagesApi,
@@ -60,11 +60,11 @@ class ReassignCaseController @Inject()(authenticatedAction: AuthenticatedAction,
     )
   }
 
-  def showAvailableQueues(reference: String, origin: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
+  def showAvailableQueues(reference: String, origin: String): Action[AnyContent] = actions.authorised.async { implicit request =>
     reassignToQueue(form, reference, origin)
   }
 
-  def reassignCase(reference: String, origin: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
+  def reassignCase(reference: String, origin: String): Action[AnyContent] = actions.authorised.async { implicit request =>
 
     def onInvalidForm(formWithErrors: Form[String]): Future[Result] = {
       reassignToQueue(formWithErrors, reference, origin)
