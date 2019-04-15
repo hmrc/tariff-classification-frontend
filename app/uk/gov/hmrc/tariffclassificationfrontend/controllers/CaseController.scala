@@ -35,8 +35,7 @@ import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
 @Singleton
-class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
-                               actions: AuthenticatedControllerActions,
+class CaseController @Inject()(actions: AuthenticatedControllerActions,
                                implicit val casesService: CasesService,
                                keywordsService: KeywordsService,
                                fileService: FileStoreService,
@@ -49,7 +48,7 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
   private lazy val activityForm: Form[ActivityFormData] = ActivityForm.form
   private lazy val keywordForm: Form[String] = KeywordForm.form
 
-  def trader(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
+  def trader(reference: String): Action[AnyContent] = actions.authenticated.async { implicit request =>
     getCaseAndRenderView(
       reference,
       TRADER,
@@ -61,7 +60,7 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
     )
   }
 
-  def applicationDetails(reference: String): Action[AnyContent] = actions.readOnly.async { implicit request =>
+  def applicationDetails(reference: String): Action[AnyContent] = actions.authReadOnly.async { implicit request =>
     getCaseAndRenderView(
       reference,
       APPLICATION_DETAILS,
@@ -74,7 +73,7 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
     )
   }
 
-  def rulingDetails(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
+  def rulingDetails(reference: String): Action[AnyContent] = actions.authenticated.async { implicit request =>
     getCaseAndRenderView(
       reference,
       RULING,
@@ -87,7 +86,7 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
     )
   }
 
-  def activityDetails(reference: String): Action[AnyContent] = (authenticatedAction).async { implicit request =>
+  def activityDetails(reference: String): Action[AnyContent] = actions.authenticated.async { implicit request =>
 
     getCaseAndRenderView(
       reference,
@@ -96,7 +95,7 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
     )
   }
 
-  def addNote(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
+  def addNote(reference: String): Action[AnyContent] = actions.authenticated.async { implicit request =>
 
     def onError: Form[ActivityFormData] => Future[Result] = errorForm => {
       getCaseAndRenderView(
@@ -129,7 +128,7 @@ class CaseController @Inject()(authenticatedAction: AuthenticatedAction,
     } yield views.html.partials.activity_details(c, events, f, queues)
   }
 
-  def keywordsDetails(reference: String): Action[AnyContent] = actions.readOnly.async { implicit request =>
+  def keywordsDetails(reference: String): Action[AnyContent] = actions.authReadOnly.async { implicit request =>
     getCaseAndRenderView(
       reference,
       KEYWORDS,

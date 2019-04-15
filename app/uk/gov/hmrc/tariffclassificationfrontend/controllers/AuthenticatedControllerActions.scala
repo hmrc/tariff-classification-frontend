@@ -18,14 +18,13 @@ package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
 import javax.inject.{Inject, Singleton}
 import play.api.mvc.ActionBuilder
-import uk.gov.hmrc.tariffclassificationfrontend.models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
+import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedCaseRequest
 
 @Singleton
-class AuthenticatedControllerActions @Inject()(authoriseCaseAction: AuthoriseCaseAction,
-                                               readOnlyCaseAction: ReadOnlyCaseAction,
-                                               authenticatedAction: AuthenticatedAction){
+case class AuthenticatedControllerActions @Inject()(authoriseCase: AuthoriseCaseAction,
+                                                    readOnlyCase: ReadOnlyCaseAction,
+                                                    authenticated: AuthenticatedAction){
 
-  val authorised: ActionBuilder[AuthenticatedRequest] = authenticatedAction andThen authoriseCaseAction
-  val readOnly: ActionBuilder[AuthenticatedCaseRequest] = authenticatedAction andThen readOnlyCaseAction
-
+  val authorised: ActionBuilder[AuthenticatedCaseRequest] = authenticated andThen authoriseCase
+  val authReadOnly: ActionBuilder[AuthenticatedCaseRequest] = authenticated andThen readOnlyCase
 }
