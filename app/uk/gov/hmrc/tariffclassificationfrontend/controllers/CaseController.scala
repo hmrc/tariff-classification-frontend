@@ -35,7 +35,7 @@ import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
 @Singleton
-class CaseController @Inject()(actions: AuthenticatedControllerActions,
+class CaseController @Inject()(actions: RequestActions,
                                implicit val casesService: CasesService,
                                keywordsService: KeywordsService,
                                fileService: FileStoreService,

@@ -32,7 +32,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future.successful
 
 @Singleton
-class RejectCaseController @Inject()(actions: AuthenticatedControllerActions,
+class RejectCaseController @Inject()(actions: RequestActions,
                                      casesService: CasesService,
                                      val messagesApi: MessagesApi,
                                      implicit val appConfig: AppConfig) extends RenderCaseAction {

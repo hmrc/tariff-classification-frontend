@@ -33,7 +33,7 @@ import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
 @Singleton
-class ReassignCaseController @Inject()(actions: AuthenticatedControllerActions,
+class ReassignCaseController @Inject()(actions: RequestActions,
                                        override val caseService: CasesService,
                                        queueService: QueuesService,
                                        val messagesApi: MessagesApi,

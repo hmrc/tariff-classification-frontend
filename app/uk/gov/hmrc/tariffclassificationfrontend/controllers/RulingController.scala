@@ -35,7 +35,7 @@ import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
 @Singleton
-class RulingController @Inject()(actions: AuthenticatedControllerActions,
+class RulingController @Inject()(actions: RequestActions,
                                  casesService: CasesService,
                                  fileStoreService: FileStoreService,
                                  mapper: DecisionFormMapper,

@@ -21,9 +21,9 @@ import play.api.mvc.ActionBuilder
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedCaseRequest
 
 @Singleton
-case class AuthenticatedControllerActions @Inject()(authoriseCase: AuthoriseCaseAction,
-                                                    readOnlyCase: ReadOnlyCaseAction,
-                                                    authenticated: AuthenticatedAction){
+case class RequestActions @Inject()(authoriseCase: AuthoriseCaseAction,
+                                    readOnlyCase: ReadOnlyCaseAction,
+                                    authenticated: AuthenticatedAction){
 
   val authorised: ActionBuilder[AuthenticatedCaseRequest] = authenticated andThen authoriseCase
   val authReadOnly: ActionBuilder[AuthenticatedCaseRequest] = authenticated andThen readOnlyCase

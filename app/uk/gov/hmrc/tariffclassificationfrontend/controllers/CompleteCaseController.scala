@@ -31,7 +31,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future.successful
 
 @Singleton
-class CompleteCaseController @Inject()(actions: AuthenticatedControllerActions,
+class CompleteCaseController @Inject()(actions: RequestActions,
                                        casesService: CasesService,
                                        decisionForm: DecisionForm,
                                        val messagesApi: MessagesApi,
