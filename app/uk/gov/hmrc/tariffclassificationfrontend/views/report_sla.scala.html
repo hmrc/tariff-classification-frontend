@@ -16,11 +16,11 @@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes
-@import uk.gov.hmrc.tariffclassificationfrontend.models.{InstantRange, Queue, ReportResult}
 @import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
+@import uk.gov.hmrc.tariffclassificationfrontend.models.{InstantRange, Queue, ReportResult}
 @import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
-@import uk.gov.hmrc.tariffclassificationfrontend.views.{Histogram, HistogramBucket, HistogramBucketInterval, Report}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
+@import uk.gov.hmrc.tariffclassificationfrontend.views.{Histogram, HistogramBucket, HistogramBucketInterval, Report}
 @(filter: InstantRange, results: Seq[ReportResult], queues: Seq[Queue])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None) {
@@ -79,13 +79,13 @@
                     <th>@queue.name</th>
                    @if(group.isEmpty) {
                        @for(_ <- 1 to intervals.size) {
-                            <td>-</td>
-                            <td>-</td>
+                            <td>0</td>
+                            <td>0</td>
                        }
                    } else {
                     @for(interval <- intervals) {
                         <td>
-                            @group.get(interval).map(_.count.toString).getOrElse("-")
+                            @group.get(interval).map(_.count).getOrElse(0)
                         </td>
                         <td>
                         @{
@@ -102,7 +102,7 @@
                     }
                    }
                    <td>
-                    @results.find(_.group.exists(_ == queue.id)).map(_.value.size.toString).getOrElse("-")
+                    @results.find(_.group.exists(_ == queue.id)).map(_.value.size).getOrElse(0)
                    </td>
                 </tr>
 
