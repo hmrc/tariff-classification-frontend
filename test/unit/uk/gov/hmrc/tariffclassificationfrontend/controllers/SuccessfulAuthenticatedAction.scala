@@ -48,7 +48,7 @@ class SuccessfulAuthorisedAction(operator: Operator = Operator("0", Some("name")
   }
 }
 
-class SuccessfulReadOnlyAction(operator: Operator = Operator("0", Some("name")), accessType: AccessType = READ_WRITE) extends ReadOnlyCaseAction(
+class SuccessfulReadOnlyAction(operator: Operator = Operator("0", Some("name")), accessType: AccessType = READ_WRITE) extends CheckPermissionsAction(
   casesService = mock(classOf[CasesService])) {
 
   override def refine[A](request: AuthenticatedRequest[A]): Future[Either[Result, AuthenticatedCaseRequest[A]]] = {

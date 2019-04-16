@@ -18,12 +18,12 @@ package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
 import javax.inject.{Inject, Singleton}
 import play.api.mvc.Results._
-import play.api.mvc.{ActionRefiner, Request, Result}
+import play.api.mvc.{ActionFilter, ActionRefiner, Result}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
-import uk.gov.hmrc.tariffclassificationfrontend.models.request.AccessType.AccessType
+import uk.gov.hmrc.tariffclassificationfrontend.models.Case
+import uk.gov.hmrc.tariffclassificationfrontend.models.request.AccessType._
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.{AccessType, AuthenticatedCaseRequest, AuthenticatedRequest}
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Operator}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -31,61 +31,67 @@ import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
 @Singleton
-class ReadOnlyCaseAction @Inject()(override val casesService: CasesService)
-  extends ActionRefiner[AuthenticatedRequest, AuthenticatedCaseRequest]
-    with CommonCaseAction {
+class CheckPermissionsAction @Inject()
+  extends ActionRefiner[AuthenticatedCaseRequest, AuthenticatedCaseRequest] {
 
-  override protected def refine[A](request: AuthenticatedRequest[A]):
+  override protected def refine[A](request: AuthenticatedCaseRequest[A]):
                 Future[Either[Result, AuthenticatedCaseRequest[A]]] = {
-    checkCasePermissions(request, c => Right(authCaseRequest(request, c, AccessType.READ_ONLY)))
+
+    if (request.c.isAssignedTo(request.operator)) {
+      authCaseRequest(request, READ_WRITE)
+    }else{
+      authCaseRequest(request, READ_ONLY)
+    }
+  }
+
+  private def authCaseRequest[A](request: AuthenticatedCaseRequest[A], accessType: AccessType)= {
+    successful(Right(new AuthenticatedCaseRequest(
+      operator = request.operator,
+      request = request,
+      accessType = accessType,
+      _c = request.c)))
   }
 }
 
 @Singleton
-class AuthoriseCaseAction @Inject()(override val casesService: CasesService)
-  extends ActionRefiner[AuthenticatedRequest, AuthenticatedCaseRequest]  with CommonCaseAction  {
+class AuthoriseCaseFilterAction @Inject()
+  extends ActionFilter[AuthenticatedCaseRequest]{
 
-  override protected def refine[A](request: AuthenticatedRequest[A]):
-  Future[Either[Result, AuthenticatedCaseRequest[A]]] = {
-    checkCasePermissions(request, _ => Left(Redirect(routes.SecurityController.unauthorized())))
+  override protected def filter[A](request: AuthenticatedCaseRequest[A]): Future[Option[Result]] = {
+    val result =
+      if (isAuthorized(request))
+        None
+      else
+        Some(Redirect(routes.SecurityController.unauthorized()))
+
+    successful(result)
+  }
+
+  private def isAuthorized[ A ](request: AuthenticatedCaseRequest[ A ]) = {
+    request.c.isAssignedTo(request.operator) || request.operator.manager
   }
 }
 
-trait CommonCaseAction {
+@Singleton
+class VerifyCaseExistsActionFactory @Inject()(implicit casesService: CasesService) {
 
-  implicit val casesService : CasesService
+  def apply(reference: String): ActionRefiner[AuthenticatedRequest, AuthenticatedCaseRequest] =
+    new ActionRefiner[AuthenticatedRequest, AuthenticatedCaseRequest] {
+      override protected def refine[A](request: AuthenticatedRequest[A]): Future[Either[Result, AuthenticatedCaseRequest[A]]] = {
+        implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
-  def checkCasePermissions[A](request: AuthenticatedRequest[A], onDeniedPermission: Case => Either[Result, AuthenticatedCaseRequest[A]])
-                      : Future[Either[Result,AuthenticatedCaseRequest[A]]] = {
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(
-      request.headers,
-      Some(request.session)
-    )
-
-    val reference = extractCaseReference(request.request)
-
-    casesService.getOne(reference).flatMap {
-      case Some(c: Case) if hasWritePermissions(c, request.operator) => successful(Right(authCaseRequest(request, c, AccessType.READ_WRITE)))
-      case Some(c: Case) => successful(onDeniedPermission(c))
-      case _ => successful(Left(Redirect(routes.CaseController.caseNotFound(reference))))
+        casesService.getOne(reference).flatMap {
+          case Some(c: Case) =>
+            successful(
+              Right(
+                new AuthenticatedCaseRequest(
+                  operator = request.operator,
+                  request = request,
+                  _c = c)
+              )
+            )
+          case _ => successful(Left(Redirect(routes.CaseController.caseNotFound(reference))))
+        }
+      }
     }
-  }
-
-  private def extractCaseReference[A]: Request[_] => String = { r =>
-    r.uri.split("/").filter(_.length > 2)(2)
-  }
-
-  def authCaseRequest[A](request: AuthenticatedRequest[A], c: Case, accessType: AccessType): AuthenticatedCaseRequest[A] = {
-    new AuthenticatedCaseRequest(
-      operator = request.operator,
-      request = request,
-      accessType = accessType,
-      _c = Some(c))
-  }
-
-  private def hasWritePermissions[A] : (Case,  Operator) => Boolean = { (c, operator) =>
-    operator.manager ||  c.assignee.exists(_.id == operator.id)
-
-  }
-
 }

@@ -31,7 +31,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future.successful
 
 @Singleton
-class CompleteCaseController @Inject()(actions: RequestActions,
+class CompleteCaseController @Inject()(verify: RequestActions,
                                        casesService: CasesService,
                                        decisionForm: DecisionForm,
                                        val messagesApi: MessagesApi,
@@ -50,11 +50,11 @@ class CompleteCaseController @Inject()(actions: RequestActions,
     decisionForm.bindFrom(c.decision).map(_.errors).exists(_.isEmpty)
   }
 
-  def completeCase(reference: String): Action[AnyContent] = actions.authorised.async { implicit request =>
+  def completeCase(reference: String): Action[AnyContent] =  verify.caseExistsAndWriteAccess(reference).async { implicit request =>
     getCaseAndRenderView(reference, c => successful(views.html.complete_case(c)))
   }
 
-  def confirmCompleteCase(reference: String): Action[AnyContent] = actions.authorised.async { implicit request =>
+  def confirmCompleteCase(reference: String): Action[AnyContent] = verify.caseExistsAndWriteAccess(reference).async { implicit request =>
     getCaseAndRenderView(reference, casesService.completeCase(_, request.operator).map(views.html.confirm_complete_case(_)))
   }
 

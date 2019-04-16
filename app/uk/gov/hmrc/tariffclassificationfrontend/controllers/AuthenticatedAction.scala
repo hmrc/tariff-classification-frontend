@@ -28,7 +28,7 @@ import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.connector.StrideAuthConnector
-import uk.gov.hmrc.tariffclassificationfrontend.models.Operator
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Operator, Role}
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -64,7 +64,10 @@ class AuthenticatedAction @Inject()(appConfig: AppConfig,
         val operator = Operator(
           id,
           name.name,
-          manager = roles.enrolments.map(_.key).contains(managerEnrolment)
+          role = roles.enrolments.map(_.key) match {
+            case e if e.contains(managerEnrolment) => Role.CLASSIFICATION_MANAGER
+            case _ => Role.CLASSIFICATION_OFFICER
+          }
         )
         block(new AuthenticatedRequest(operator, request))
     } recover {
