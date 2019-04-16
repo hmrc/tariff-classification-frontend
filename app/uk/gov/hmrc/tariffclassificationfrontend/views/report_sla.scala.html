@@ -51,7 +51,7 @@
     )) { intervals: Seq[HistogramBucketInterval] =>
         <table>
         <thead>
-            <tr>
+            <tr id="report_sla-table-intervals">
                 <td></td>
                 @for((interval, index) <- intervals.zipWithIndex) {
                     <th colspan="2" id="report_sla-table-interval_@index">
@@ -77,11 +77,11 @@
                @defining(histogram.getBuckets(Some(queue.id))) { group: Map[HistogramBucketInterval, HistogramBucket] =>
                    <tr id="report_sla-table-queue_@{queue.slug}">
                     <th id="report_sla-table-queue_@{queue.slug}-name">@queue.name</th>
-                    @for(interval <- intervals) {
-                        <td id="report_sla-table-queue_@{queue.slug}-count">
+                    @for((interval, index) <- intervals.zipWithIndex) {
+                        <td id="report_sla-table-queue_@{queue.slug}-interval_@index-count">
                             @group.get(interval).map(_.count).getOrElse(0)
                         </td>
-                        <td id="report_sla-table-queue_@{queue.slug}-percent">
+                        <td id="report_sla-table-queue_@{queue.slug}-interval_@index-percent">
                         @{
                             Math.round(group
                                     .get(interval)
