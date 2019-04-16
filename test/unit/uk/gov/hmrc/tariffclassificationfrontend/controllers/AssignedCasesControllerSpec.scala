@@ -51,7 +51,7 @@ class AssignedCasesControllerSpec extends UnitSpec with Matchers with WithFakeAp
 
   "Assigned Cases" should {
     val asTeamMember = Operator("id")
-    val asTeamManager = Operator("id", manager = true)
+    val asTeamManager = Operator("id", role = Role.CLASSIFICATION_MANAGER)
 
     "redirect to unauthorised if not a manager" in {
       val result = await(controller(asTeamMember).assignedCases()(fakeRequest))
@@ -77,7 +77,7 @@ class AssignedCasesControllerSpec extends UnitSpec with Matchers with WithFakeAp
 
   "Assigned Cases by Operator" should {
     val asTeamMember = Operator("id")
-    val asTeamManager = Operator("id", manager = true)
+    val asTeamManager = Operator("id", role = Role.CLASSIFICATION_MANAGER)
 
     "redirect to unauthorised if not a manager" in {
       val result = await(controller(asTeamMember).assignedCasesFor("1")(fakeRequest))

@@ -27,7 +27,7 @@ import play.api.{Configuration, Environment, Mode}
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.connector.StrideAuthConnector
-import uk.gov.hmrc.tariffclassificationfrontend.models.Operator
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Operator, Role}
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 
 import scala.concurrent.Future
@@ -59,7 +59,7 @@ class AuthenticatedManagerSpec extends UnitSpec with MockitoSugar with Controlle
 
     "Invoke block when manager" in {
       given(block.apply(any[AuthenticatedRequest[_]])) willReturn Future.successful(result)
-      val request = new AuthenticatedRequest(Operator("id", None, manager = true), FakeRequest())
+      val request = new AuthenticatedRequest(Operator("id", None, role = Role.CLASSIFICATION_MANAGER), FakeRequest())
       await(action.invokeBlock(request, block)) shouldBe result
     }
 

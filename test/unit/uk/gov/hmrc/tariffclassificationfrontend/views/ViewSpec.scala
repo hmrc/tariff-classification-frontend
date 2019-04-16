@@ -25,7 +25,7 @@ import play.filters.csrf.CSRF.{Token, TokenProvider}
 import play.twirl.api.Html
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.models.Operator
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Operator, Role}
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 
 abstract class ViewSpec extends UnitSpec with WithFakeApplication {
@@ -39,7 +39,7 @@ abstract class ViewSpec extends UnitSpec with WithFakeApplication {
 
   private val request = FakeRequest("GET", "/", FakeHeaders(), AnyContentAsEmpty, tags = csrfTags)
   protected val authenticatedOperator = Operator("operator-id")
-  protected val authenticatedManager = Operator("operator-id", manager = true)
+  protected val authenticatedManager = Operator("operator-id", role = Role.CLASSIFICATION_MANAGER)
   implicit val authenticatedFakeRequest: AuthenticatedRequest[AnyContentAsEmpty.type] = new AuthenticatedRequest(authenticatedOperator, request)
   protected val authenticatedManagerFakeRequest: AuthenticatedRequest[AnyContentAsEmpty.type] = new AuthenticatedRequest(authenticatedManager, request)
 

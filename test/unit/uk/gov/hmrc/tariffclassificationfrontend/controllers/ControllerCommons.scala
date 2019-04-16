@@ -26,10 +26,11 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.Operator
 trait ControllerCommons {
 
   protected def requestActions(operator: Operator): RequestActions = {
-    RequestActions(
+    new RequestActions(
       new SuccessfulAuthorisedAction(operator),
       new SuccessfulReadOnlyAction(operator),
-      new SuccessfulAuthenticatedAction(operator)
+      new SuccessfulAuthenticatedAction(operator),
+      null
     )
   }
 

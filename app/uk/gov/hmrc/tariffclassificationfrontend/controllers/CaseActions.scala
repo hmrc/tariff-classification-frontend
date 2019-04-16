@@ -31,7 +31,7 @@ import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
 @Singleton
-class CheckPermissionsAction @Inject()
+class CheckPermissionsAction
   extends ActionRefiner[AuthenticatedCaseRequest, AuthenticatedCaseRequest] {
 
   override protected def refine[A](request: AuthenticatedCaseRequest[A]):
@@ -54,7 +54,7 @@ class CheckPermissionsAction @Inject()
 }
 
 @Singleton
-class AuthoriseCaseFilterAction @Inject()
+class AuthoriseCaseFilterAction
   extends ActionFilter[AuthenticatedCaseRequest]{
 
   override protected def filter[A](request: AuthenticatedCaseRequest[A]): Future[Option[Result]] = {
@@ -73,7 +73,7 @@ class AuthoriseCaseFilterAction @Inject()
 }
 
 @Singleton
-class VerifyCaseExistsActionFactory @Inject()(implicit casesService: CasesService) {
+class VerifyCaseExistsActionFactory @Inject()(casesService: CasesService) {
 
   def apply(reference: String): ActionRefiner[AuthenticatedRequest, AuthenticatedCaseRequest] =
     new ActionRefiner[AuthenticatedRequest, AuthenticatedCaseRequest] {

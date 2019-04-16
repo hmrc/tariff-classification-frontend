@@ -25,6 +25,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.Operator
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.AccessType._
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
+import uk.gov.tariffclassificationfrontend.utils.Cases
 
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
@@ -40,28 +41,27 @@ class SuccessfulAuthenticatedAction(operator: Operator = Operator("0", Some("nam
   }
 }
 
-class SuccessfulAuthorisedAction(operator: Operator = Operator("0", Some("name")), accessType: AccessType = READ_WRITE) extends AuthoriseCaseAction(
-  casesService = mock(classOf[CasesService])) {
+class SuccessfulAuthorisedAction(operator: Operator = Operator("0", Some("name")), accessType: AccessType = READ_WRITE) extends AuthoriseCaseFilterAction {
 
-  override def refine[A](request: AuthenticatedRequest[A]): Future[Either[Result, AuthenticatedCaseRequest[A]]] = {
-    successful(Right(new AuthenticatedCaseRequest(operator, request, accessType, None)))
+  protected override def filter[A](request: AuthenticatedCaseRequest[A]): Future[Option[Result]] = successful(None)
+}
+
+class SuccessfulReadOnlyAction(operator: Operator = Operator("0", Some("name")), accessType: AccessType = READ_WRITE) extends CheckPermissionsAction{
+
+  override def refine[A](request: AuthenticatedCaseRequest[A]): Future[Either[Result, AuthenticatedCaseRequest[A]]] = {
+    successful(Right(new AuthenticatedCaseRequest(operator, request, accessType, Cases.btiCaseExample)))
   }
 }
 
-class SuccessfulReadOnlyAction(operator: Operator = Operator("0", Some("name")), accessType: AccessType = READ_WRITE) extends CheckPermissionsAction(
-  casesService = mock(classOf[CasesService])) {
 
-  override def refine[A](request: AuthenticatedRequest[A]): Future[Either[Result, AuthenticatedCaseRequest[A]]] = {
-    successful(Right(new AuthenticatedCaseRequest(operator, request, accessType, None)))
-  }
-}
 
 
 class SuccessfulRequestActions(operator: Operator)
   extends RequestActions(
     new SuccessfulAuthorisedAction(operator),
     new SuccessfulReadOnlyAction(operator),
-    new SuccessfulAuthenticatedAction(operator)
+    new SuccessfulAuthenticatedAction(operator),
+    null
   ){
 
 }
