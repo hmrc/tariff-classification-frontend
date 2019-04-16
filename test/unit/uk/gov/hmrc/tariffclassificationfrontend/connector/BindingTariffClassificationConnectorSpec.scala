@@ -509,7 +509,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest {
     val result = ReportResult(Some("queue-id"), Seq(1))
 
     "GET report " in {
-      val url = "/report?report_field=queue-id"
+      val url = "/report?min_decision_start=1970-01-01T00%3A00%3A00Z&max_decision_start=1970-01-01T00%3A00%3A01Z&report_group=queue-id&report_field=days-elapsed"
 
       stubFor(get(urlEqualTo(url))
         .willReturn(
