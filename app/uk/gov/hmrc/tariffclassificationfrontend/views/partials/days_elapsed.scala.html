@@ -14,12 +14,8 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-@import uk.gov.hmrc.tariffclassificationfrontend.models.Operator
-@import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
-@import uk.gov.hmrc.tariffclassificationfrontend.models.Case
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.days_elapsed
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.SessionKeys
+@(daysElapsed: Long, id: String = "days-elapsed")
 
-@(c: Case)
-
-<p>The days elapsed count has paused at @days_elapsed(c.daysElapsed). </p>
+ <span id="@id" @if(daysElapsed >= 30) {class="extra-bold"}>@daysElapsed</span>

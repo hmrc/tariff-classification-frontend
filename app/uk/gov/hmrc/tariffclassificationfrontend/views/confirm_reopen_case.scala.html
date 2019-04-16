@@ -20,6 +20,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials._
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.AttachmentsController
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.days_elapsed
 
 @(c: Case)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
@@ -30,7 +31,7 @@
         <div class="column-full">
             <h2 class="heading-large mt-0">This case has been reopened</h2>
 
-            <p>The days elapsed count will resume from <span id="days-elapsed">@(c.daysElapsed)</span>. </p>
+            <p>The days elapsed count will resume from @days_elapsed(c.daysElapsed). </p>
 
             <h3 class="heading-medium">Next steps</h3>
             <p>

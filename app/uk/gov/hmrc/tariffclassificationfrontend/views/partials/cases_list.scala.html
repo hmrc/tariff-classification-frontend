@@ -20,6 +20,8 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{Application, BTIApplication, Case, Paged}
 @import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.statuses.case_status
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.days_elapsed
+
 @(cases: Paged[Case])(implicit request: AuthenticatedRequest[_], appConfig: AppConfig, messages: Messages)
 
 @if(cases.isEmpty) {
@@ -56,7 +58,7 @@
                             <td id="cases_list-row-@{index}-created_date">@Dates.format(c.createdDate)</td>
                             <td>@case_status(c, s"cases_list-row-$index-status")</td>
                             <td id="cases_list-row-@{index}-type">@a.getType</td>
-                            <td id="cases_list-row-@{index}-days_elapsed">@c.daysElapsed</td>
+                            <td>@days_elapsed(c.daysElapsed, s"cases_list-row-$index-days_elapsed")</td>
                         </tr>
                     }
                 }
