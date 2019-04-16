@@ -21,7 +21,7 @@ import java.time.Clock
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito._
 import org.scalatest.mockito.MockitoSugar
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.{BeforeAndAfterEach, Matchers, WordSpec}
 import play.api.http.Status
 import play.api.i18n.{DefaultLangs, DefaultMessagesApi}
 import play.api.test.FakeRequest
@@ -37,7 +37,7 @@ import uk.gov.tariffclassificationfrontend.utils.{Cases, Events}
 
 import scala.concurrent.Future.successful
 
-class CaseControllerSpec extends WordSpec with Matchers with WithFakeApplication with MockitoSugar with ControllerCommons {
+class CaseControllerSpec extends WordSpec with Matchers with WithFakeApplication with MockitoSugar with ControllerCommons{
 
   private val fakeRequest = FakeRequest()
   private val env = Environment.simple()
@@ -55,7 +55,7 @@ class CaseControllerSpec extends WordSpec with Matchers with WithFakeApplication
   private val decisionForm = new DecisionForm(new CommodityCodeConstraints(commodityCodeService))
 
   private val controller = new CaseController(
-    new SuccessfulAuthenticatedAction(operator),
+    new SuccessfulRequestActions(operator),
     casesService, keywordsService, fileService,
     eventService, queueService,
     decisionForm, messageApi, appConfig

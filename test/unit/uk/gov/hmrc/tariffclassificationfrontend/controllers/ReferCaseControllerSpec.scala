@@ -52,7 +52,7 @@ class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   private implicit val mat: Materializer = fakeApplication.materializer
   private implicit val hc: HeaderCarrier = HeaderCarrier()
 
-  private val controller = new ReferCaseController(new SuccessfulAuthenticatedAction(operator), casesService, messageApi, appConfig)
+  private val controller = new ReferCaseController(new SuccessfulRequestActions(operator), casesService, messageApi, appConfig)
 
   override def afterEach(): Unit = {
     super.afterEach()

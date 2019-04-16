@@ -30,7 +30,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.WithFakeApplication
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.{CommodityCodeConstraints, DecisionForm, DecisionFormData, DecisionFormMapper}
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus, Operator}
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, CommodityCodeService, FileStoreService}
 import uk.gov.tariffclassificationfrontend.utils.Cases
 
@@ -47,12 +47,13 @@ class RulingControllerSpec extends WordSpec with Matchers with WithFakeApplicati
   private val fileService = mock[FileStoreService]
   private val mapper = mock[DecisionFormMapper]
   private val commodityCodeService = mock[CommodityCodeService]
+  private val operator = mock[Operator]
   private val decisionForm = new DecisionForm(new CommodityCodeConstraints(commodityCodeService))
 
   private implicit val hc = HeaderCarrier()
 
   private val controller = new RulingController(
-    new SuccessfulAuthenticatedAction, casesService, fileService, mapper, decisionForm, messageApi, appConfig
+    new SuccessfulRequestActions(operator), casesService, fileService, mapper, decisionForm, messageApi, appConfig
   )
 
   override protected def afterEach(): Unit = {

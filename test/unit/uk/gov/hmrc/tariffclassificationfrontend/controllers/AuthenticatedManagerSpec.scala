@@ -59,18 +59,15 @@ class AuthenticatedManagerSpec extends UnitSpec with MockitoSugar with Controlle
 
     "Invoke block when manager" in {
       given(block.apply(any[AuthenticatedRequest[_]])) willReturn Future.successful(result)
-      val request = AuthenticatedRequest(Operator("id", None, manager = true), FakeRequest())
+      val request = new AuthenticatedRequest(Operator("id", None, manager = true), FakeRequest())
       await(action.invokeBlock(request, block)) shouldBe result
     }
 
     "Redirect when not manager" in {
-      val request = AuthenticatedRequest(Operator("id", None), FakeRequest())
+      val request = new AuthenticatedRequest(Operator("id", None), FakeRequest())
       await(action.invokeBlock(request, block)) shouldBe Results.SeeOther(routes.SecurityController.unauthorized().url)
     }
 
-
-
   }
-
 
 }

@@ -55,7 +55,7 @@ class ReassignCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   private implicit val hc: HeaderCarrier = HeaderCarrier()
 
   private val controller = new ReassignCaseController(
-    new SuccessfulAuthenticatedAction(operator), casesService, queueService, messageApi, appConfig
+    new SuccessfulRequestActions(operator), casesService, queueService, messageApi, appConfig
   )
 
   override def afterEach(): Unit = {

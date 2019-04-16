@@ -25,6 +25,6 @@ case class RequestActions @Inject()(authoriseCase: AuthoriseCaseAction,
                                     readOnlyCase: ReadOnlyCaseAction,
                                     authenticated: AuthenticatedAction){
 
-  val authorised: ActionBuilder[AuthenticatedCaseRequest] = authenticated andThen authoriseCase
-  val authReadOnly: ActionBuilder[AuthenticatedCaseRequest] = authenticated andThen readOnlyCase
+  def authorised: ActionBuilder[AuthenticatedCaseRequest] = authenticated andThen authoriseCase
+  def authReadOnly: ActionBuilder[AuthenticatedCaseRequest] = authenticated andThen readOnlyCase
 }

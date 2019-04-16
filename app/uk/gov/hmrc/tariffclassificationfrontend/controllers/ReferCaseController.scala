@@ -46,7 +46,11 @@ class ReferCaseController @Inject()(actions: RequestActions,
   override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = c.status == OPEN
 
   def referCase(reference: String): Action[AnyContent] = actions.authorised.async { implicit request =>
-    getCaseAndRenderView(reference, c => successful(views.html.refer_case(c, form)))
+    getCaseAndRenderView(
+      reference,
+       c =>
+         successful(views.html.refer_case(c, form))
+    )
   }
 
   def confirmReferCase(reference: String): Action[AnyContent] = actions.authorised.async { implicit request =>

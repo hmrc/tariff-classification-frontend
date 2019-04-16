@@ -31,8 +31,10 @@ import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
 @Singleton
-case class ReadOnlyCaseAction @Inject()(casesService: CasesService)
-  extends ActionRefiner[AuthenticatedRequest, AuthenticatedCaseRequest] with CommonCaseAction {
+class ReadOnlyCaseAction @Inject()(override val casesService: CasesService)
+  extends ActionRefiner[AuthenticatedRequest, AuthenticatedCaseRequest]
+    with CommonCaseAction {
+
   override protected def refine[A](request: AuthenticatedRequest[A]):
                 Future[Either[Result, AuthenticatedCaseRequest[A]]] = {
     checkCasePermissions(request, c => Right(authCaseRequest(request, c, AccessType.READ_ONLY)))
@@ -40,8 +42,9 @@ case class ReadOnlyCaseAction @Inject()(casesService: CasesService)
 }
 
 @Singleton
-case class AuthoriseCaseAction @Inject()(casesService: CasesService)
+class AuthoriseCaseAction @Inject()(override val casesService: CasesService)
   extends ActionRefiner[AuthenticatedRequest, AuthenticatedCaseRequest]  with CommonCaseAction  {
+
   override protected def refine[A](request: AuthenticatedRequest[A]):
   Future[Either[Result, AuthenticatedCaseRequest[A]]] = {
     checkCasePermissions(request, _ => Left(Redirect(routes.SecurityController.unauthorized())))

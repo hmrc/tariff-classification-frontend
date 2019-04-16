@@ -64,7 +64,7 @@ class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   private implicit val mat: Materializer = fakeApplication.materializer
   private implicit val hc: HeaderCarrier = HeaderCarrier()
 
-  private val controller = new CompleteCaseController(new SuccessfulAuthenticatedAction(operator), casesService, decisionForm, messageApi, appConfig)
+  private val controller = new CompleteCaseController(new SuccessfulRequestActions(operator), casesService, decisionForm, messageApi, appConfig)
 
   override def afterEach(): Unit = {
     super.afterEach()
