@@ -36,12 +36,12 @@ class HistogramTest extends UnitSpec {
         ReportResult(group = None, value = Seq(0, 1, 2, 3, 4, 5))
       )
 
-      Histogram.calculate(data, buckets) shouldBe Seq(
-        HistogramGroup(None, Map(
-          interval1 -> HistogramBucket(Seq(0,1)),
-          interval2 -> HistogramBucket(Seq(2,3)),
-          interval3 -> HistogramBucket(Seq(4,5))
-        ))
+      Histogram.calculate(data, buckets) shouldBe Histogram(
+        Map[(Option[String], HistogramBucketInterval), HistogramBucket](
+          ((None, interval1), HistogramBucket(Seq(0,1))),
+          ((None, interval2), HistogramBucket(Seq(2,3))),
+          ((None, interval3), HistogramBucket(Seq(4,5)))
+        )
       )
     }
   }

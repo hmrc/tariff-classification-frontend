@@ -18,8 +18,6 @@ package uk.gov.hmrc.tariffclassificationfrontend.views
 
 import uk.gov.hmrc.tariffclassificationfrontend.models.ReportResult
 
-case class HistogramGroup(name: Option[String], buckets: Map[HistogramBucketInterval, HistogramBucket])
-
 case class HistogramBucket(data: Seq[Int]) {
   def count: Int = data.size
 }
@@ -28,17 +26,41 @@ case class HistogramBucketInterval(lower: Option[Int], upper: Option[Int]) {
   def contains(value: Int): Boolean = !lower.exists(_ >  value) && !upper.exists(_ < value)
 }
 
-object Histogram {
-  def calculate(results: Seq[ReportResult], intervals: Seq[HistogramBucketInterval]): Seq[HistogramGroup] = {
-    results map { result: ReportResult =>
-      HistogramGroup(
-        name = result.group,
-        buckets = intervals.map { interval =>
-          (interval, HistogramBucket(result.value.filter(interval.contains)))
-        }.toMap
-      )
-    }
+case class Histogram(map: Map[(Option[String], HistogramBucketInterval), HistogramBucket]) {
+
+  def getBucket(group: Option[String], interval: HistogramBucketInterval): Option[HistogramBucket] = {
+    map.get((group, interval))
   }
+
+  def getBuckets(group: Option[String]): Map[HistogramBucketInterval, HistogramBucket] = {
+    val matchingKeys: Set[(Option[String], HistogramBucketInterval)] = map.keys.filter(_._1 == group).toSet
+    map.filter(e => matchingKeys.contains(e._1)).map(e => (e._1._2, e._2))
+  }
+
+  def getBuckets(interval: HistogramBucketInterval): Map[Option[String], HistogramBucket] = {
+    val matchingKeys: Set[(Option[String], HistogramBucketInterval)] = map.keys.filter(_._2 == interval).toSet
+    map.filter(e => matchingKeys.contains(e._1)).map(e => (e._1._1, e._2))
+  }
+
+  def filterByGroup(f: Option[String] => Boolean): Histogram = {
+    val matchingKeys: Set[(Option[String], HistogramBucketInterval)] = map.keys.filter(key => f(key._1)).toSet
+    Histogram(map.filter(e => matchingKeys.contains(e._1)))
+  }
+
+  def filterByInterval(f: HistogramBucketInterval => Boolean): Histogram = {
+    val matchingKeys: Set[(Option[String], HistogramBucketInterval)] = map.keys.filter(key => f(key._2)).toSet
+    Histogram(map.filter(e => matchingKeys.contains(e._1)))
+  }
+}
+
+object Histogram {
+  def calculate(results: Seq[ReportResult], intervals: Seq[HistogramBucketInterval]): Histogram = Histogram(
+    results flatMap { result: ReportResult =>
+      intervals.map { interval =>
+        ((result.group, interval), HistogramBucket(result.value.filter(interval.contains)))
+      }
+    } toMap
+  )
 }
 
 object HistogramBucketInterval {
