@@ -31,11 +31,11 @@
     <h1 class="heading-large" id="report_sla-heading">SLA Report</h1>
 
     <p>
-        From: <span>@Dates.format(filter.min)</span>
+        From: <span id="report_sla-from_date">@Dates.format(filter.min)</span>
     </p>
 
     <p>
-        To: <span>@Dates.format(filter.max)</span>
+        To: <span id="report_sla-to_date">@Dates.format(filter.max)</span>
     </p>
 
     <p>This table shows the number of completed cases with days elapsed in the relevant buckets below broken down by Queue.</p>
@@ -53,8 +53,8 @@
         <thead>
             <tr>
                 <td></td>
-                @for(interval <- intervals) {
-                    <th colspan="2">
+                @for((interval, index) <- intervals.zipWithIndex) {
+                    <th colspan="2" id="report_sla-table-interval_@index">
                         @interval.lower.getOrElse("<")
                         @if(interval.lower.isDefined && interval.upper.isDefined){-}
                         @interval.upper.getOrElse("+")
@@ -75,19 +75,13 @@
         @defining(Histogram.calculate(results, intervals).filterByGroup(_.isDefined)) { histogram: Histogram =>
            @for(queue <- queues) {
                @defining(histogram.getBuckets(Some(queue.id))) { group: Map[HistogramBucketInterval, HistogramBucket] =>
-                   <tr>
-                    <th>@queue.name</th>
-                   @if(group.isEmpty) {
-                       @for(_ <- 1 to intervals.size) {
-                            <td>0</td>
-                            <td>0</td>
-                       }
-                   } else {
+                   <tr id="report_sla-table-queue_@{queue.slug}">
+                    <th id="report_sla-table-queue_@{queue.slug}-name">@queue.name</th>
                     @for(interval <- intervals) {
-                        <td>
+                        <td id="report_sla-table-queue_@{queue.slug}-count">
                             @group.get(interval).map(_.count).getOrElse(0)
                         </td>
-                        <td>
+                        <td id="report_sla-table-queue_@{queue.slug}-percent">
                         @{
                             Math.round(group
                                     .get(interval)
@@ -100,23 +94,22 @@
                         }
                         </td>
                     }
-                   }
-                   <td>
+                   <td id="report_sla-table-queue_@{queue.slug}-total">
                     @results.find(_.group.exists(_ == queue.id)).map(_.value.size).getOrElse(0)
                    </td>
                 </tr>
 
                }
             }
-            <tr>
+            <tr id="report_sla-table-totals">
                 <th>Totals</th>
-                @for(interval <- intervals) {
-                    <td>
+                @for((interval, index) <- intervals.zipWithIndex) {
+                    <td id="report_sla-table-totals-interval_@index-count">
                         @queues.map(q => histogram.getBucket(Some(q.id), interval).map(_.count).getOrElse(0)).sum
                     </td>
                     <td></td>
                 }
-                <td>
+                <td id="report_sla-table-totals-total">
                     @queues.flatMap(q => histogram.getBuckets(Some(q.id)).map(_._2.count)).sum
                 </td>
             </tr>
