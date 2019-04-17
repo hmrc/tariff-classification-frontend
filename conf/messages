@@ -128,6 +128,8 @@ errors.ruling-not-found.message=We could not find a ruling with case reference: 
 
 errors.resource-not-found.title={0} not found.
 
+errors.summary.title=Error
+
 
 release-case.submit.button = Release Case
 reassign-case.submit.button = Move back to queue
