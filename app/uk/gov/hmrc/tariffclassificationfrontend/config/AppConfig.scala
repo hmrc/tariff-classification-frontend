@@ -51,6 +51,7 @@ class AppConfig @Inject()(val runModeConfiguration: Configuration, environment: 
   lazy val fileUploadMimeTypes: Set[String] = loadConfig("fileupload.mimeTypes").split(",").map(_.trim).toSet
   lazy val apiToken: String = loadConfig("auth.api-token")
   lazy val pdfGeneratorUrl: String = baseUrl("pdf-generator-service")
+  lazy val activeDaysElapsedSlaLimit: Int = getInt("app.active-days-elapsed-sla-limit")
 
   lazy val clock: Clock = Clock.systemUTC()
 
