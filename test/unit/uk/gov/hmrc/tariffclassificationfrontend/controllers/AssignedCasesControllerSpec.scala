@@ -67,7 +67,7 @@ class AssignedCasesControllerSpec extends UnitSpec with Matchers with WithFakeAp
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
-      contentAsString(result) should include ("Assigned Cases")
+      contentAsString(result) should include ("Assigned cases")
       session(result).get(SessionKeys.backToQueuesLinkLabel) shouldBe Some("Assigned cases")
       session(result).get(SessionKeys.backToQueuesLinkUrl) shouldBe Some("/tariff-classification/queues/assigned")
       session(result).get(SessionKeys.backToSearchResultsLinkLabel) shouldBe None
@@ -93,7 +93,7 @@ class AssignedCasesControllerSpec extends UnitSpec with Matchers with WithFakeAp
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
-      contentAsString(result) should include ("Assigned Cases")
+      contentAsString(result) should include ("Assigned cases")
       session(result).get(SessionKeys.backToQueuesLinkLabel) shouldBe Some("Assigned cases")
       session(result).get(SessionKeys.backToQueuesLinkUrl) shouldBe Some("/tariff-classification/queues/assigned/1")
       session(result).get(SessionKeys.backToSearchResultsLinkLabel) shouldBe None

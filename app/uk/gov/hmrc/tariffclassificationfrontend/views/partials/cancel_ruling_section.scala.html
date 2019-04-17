@@ -21,12 +21,12 @@
 
 @if(c.status == CaseStatus.COMPLETED && !c.hasExpiredRuling) {
 
-    <h3 class="heading-medium">Cancel this ruling</h3>
+    <h3 class="heading-medium mt-1">Cancel this ruling</h3>
 
     <p>This ruling may be cancelled if the binding commodity code changes or expires, or if the applicant provided incorrect information.</p>
     <p>If the binding commodity code has changed, you may need to issue a revised ruling.</p>
 
     <a id="cancel-ruling-button" class="button" href="@CancelRulingController.cancelRuling(c.reference)">
-        Cancel ruling
+        Cancel this ruling
     </a>
 }

@@ -30,7 +30,7 @@
 
         @tab_heading("ruling", messages("case.menu.ruling"))
 
-        <h4 class="heading-small">@messages("case.menu.application")</h4>
+        <h4 class="heading-small">@messages("case.menu.application-details")</h4>
 
         <hr class="mt-0"/>
 
@@ -100,12 +100,11 @@
                 <fieldset>
 
                     <h3 class="heading-medium">@messages("case.decision.attachments")</h3>
-
                     @defining(files.filter(_.scanStatus.contains(ScanStatus.READY))) { attachments: Seq[StoredAttachment] =>
                         @if(attachments.isEmpty) {
                             <span id="edit-ruling-no_attachments" class="body-text">There are no attachments for this case.</span>
                         } else {
-                            <span class="body-text">Select attachments for the ruling</span>
+                            <span class="body-text">All files selected will be published on GOV.UK in the 'Find Binding Tariff Information rulings' search.</span>
                             @for((att: StoredAttachment, index: Int) <- attachments.zipWithIndex) {
                                 <div class="multiple-choice">
                                     <input id="attachments[]" name="attachments[]" type="checkbox" value="@att.id" @if(att.public){checked="checked"}/>
@@ -127,7 +126,7 @@
 
            <div class="form-group">
                 <button id="submit" class="button" type="submit">Save changes</button>
-                <a href="@CaseController.rulingDetails(c.reference)" class="secondary-button" id="cancel-button">Cancel</a>
+                <a href="@CaseController.rulingDetails(c.reference)" class="secondary-button" id="cancel-button">Cancel changes</a>
             </div>
         }
     </div>

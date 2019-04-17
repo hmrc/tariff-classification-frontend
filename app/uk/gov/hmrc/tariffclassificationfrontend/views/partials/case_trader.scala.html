@@ -30,162 +30,147 @@
 
 @(c: Case,  letterOfAuth: Option[StoredAttachment])(implicit request: Request[_], messages: Messages)
 
-@tab_heading("trader", "Trader")
+    @tab_heading("trader", "Applicant")
 
-@defining(c.application) { a: Application =>
-    @defining(a.asBTI) { btiApp: BTIApplication =>
-        @defining(btiApp.holder) { btiHolder: EORIDetails =>
-            <dl class="dl-mb-2">
-                <div class="grid-row">
-                    <dt class="column-one-third">
-                        @messages("case.application.holder.eori-number")
-                    </dt>
-                    <dd class="column-two-thirds">
-                        @btiHolder.eori
-                    </dd>
-                </div>
+    @defining(c.application) { a: Application =>
+        @defining(a.asBTI) { btiApp: BTIApplication =>
+            @defining(btiApp.holder) { btiHolder: EORIDetails =>
+                <dl class="dl-mb-2">
+                    <h3 class="heading-medium" id="trader-submitted-heading">Trader</h3>
+                    <div class="grid-row">
+                        <dt class="column-one-third">
+                            @messages("case.application.holder.eori-number")
+                        </dt>
+                        <dd class="column-two-thirds">
+                            @btiHolder.eori
+                        </dd>
+                    </div>
 
-                <div class="grid-row">
-                    <dt class="column-one-third">
-                        @messages("case.application.holder.trader-name")
-                    </dt>
-                    <dd class="column-two-thirds">
-                        @btiHolder.businessName
-                    </dd>
-                </div>
+                    <div class="grid-row">
+                        <dt class="column-one-third">
+                            @messages("case.application.holder.trader-name")
+                        </dt>
+                        <dd class="column-two-thirds">
+                            @btiHolder.businessName
+                        </dd>
+                    </div>
 
-                <div class="grid-row">
-                    <dt class="column-one-third">
-                        @messages("case.application.holder.address")
-                    </dt>
-                    <dd class="column-two-thirds">
+                    <div class="grid-row">
+                        <dt class="column-one-third">
+                            @messages("case.application.holder.address")
+                        </dt>
+                        <dd class="column-two-thirds">
 
-                            @btiHolder.addressLine1 @if(!btiHolder.addressLine1.isEmpty) {<br>}
-                            @btiHolder.addressLine2 @if(!btiHolder.addressLine2.isEmpty) {<br>}
-                            @btiHolder.addressLine3 @if(!btiHolder.addressLine3.isEmpty) {<br>}
-                            @btiHolder.postcode     @if(!btiHolder.postcode.isEmpty)     {<br>}
-                            @btiHolder.country
+                                @btiHolder.addressLine1 @if(!btiHolder.addressLine1.isEmpty) {<br>}
+                                @btiHolder.addressLine2 @if(!btiHolder.addressLine2.isEmpty) {<br>}
+                                @btiHolder.addressLine3 @if(!btiHolder.addressLine3.isEmpty) {<br>}
+                                @btiHolder.postcode     @if(!btiHolder.postcode.isEmpty)     {<br>}
+                                @btiHolder.country
 
-                    </dd>
-                </div>
+                        </dd>
+                    </div>
 
-                <div class="grid-row">
-                    <dt class="column-one-third">
-                        @messages("case.application.related-bti-reference")
-                    </dt>
-                    <dd class="column-two-thirds">
+                </dl>
+                @if(btiApp.agent.isDefined) {
+                    <dl class="dl-mb-2">
+                        <h3 class="heading-medium" id="agent-submitted-heading">Agent</h3>
 
-                        @if(btiApp.relatedBTIReference.isDefined) {
-                            @btiApp.relatedBTIReference.get
-                        }else {
-                            No
+                        @defining(btiApp.agent.get) { btiAgent: AgentDetails =>
+
+                            <div class="grid-row">
+                                <dt class="column-one-third">
+                                    @messages("case.application.agent.eori-number")
+                                </dt>
+                                <dd class="column-two-thirds">
+                                    @btiAgent.eoriDetails.eori
+                                </dd>
+                            </div>
+
+                            <div class="grid-row">
+                                <dt class="column-one-third">
+                                    @messages("case.application.agent.trader-name")
+                                </dt>
+                                <dd class="column-two-thirds">
+                                    @btiAgent.eoriDetails.businessName
+                                </dd>
+                            </div>
+
+                            <div class="grid-row">
+                                <dt class="column-one-third">
+                                    @messages("case.application.agent.address")
+                                </dt>
+                                <dd class="column-two-thirds">
+                                    @btiAgent.eoriDetails.addressLine1 @if(!btiAgent.eoriDetails.addressLine1.isEmpty) {<br>}
+                                    @btiAgent.eoriDetails.addressLine2  @if(!btiAgent.eoriDetails.addressLine2.isEmpty) {<br>}
+                                    @btiAgent.eoriDetails.addressLine3  @if(!btiAgent.eoriDetails.addressLine3.isEmpty) {<br>}
+                                    @btiAgent.eoriDetails.postcode  @if(!btiAgent.eoriDetails.postcode.isEmpty) {<br>}
+                                    @btiAgent.eoriDetails.country
+                                </dd>
+                            </div>
+
+                            @if(letterOfAuth.isDefined) {
+                                <div class="grid-row">
+                                    <dt class="column-one-third">
+
+                                    </dt>
+                                    <dd class="column-two-thirds">
+                                        @attachment(
+                                            id = "agent-letter",
+                                            file = letterOfAuth.get,
+                                            name = Some(messages("case.application.agent.letter-of-authorisation"))
+                                        )
+                                    </dd>
+                                </div>
+                            }
                         }
-
-                    </dd>
-                </div>
-
-                @if(c.caseBoardsFileNumber.isDefined) {
-                    <div class="grid-row">
-                        <dt class="column-one-third">
-                            <p id="boards-file-number-label">@messages("case.application.boards-file-number")
-                        </dt>
-                        <dd class="column-two-thirds">
-                            <p id="boards-file-number">@{c.caseBoardsFileNumber.get}
-                        </dd>
-                    </div>
-                }
-        </dl>
-        @if(btiApp.agent.isDefined) {
-
-                <h3 class="heading-medium" id="agent-submitted-heading" > Agent details </h3>
-
-                @defining(btiApp.agent.get) { btiAgent: AgentDetails =>
-
-                    <div class="grid-row">
-                        <dt class="column-one-third">
-                            @messages("case.application.agent.eori-number")
-                        </dt>
-                        <dd class="column-two-thirds">
-                            @btiAgent.eoriDetails.eori
-                        </dd>
-                    </div>
-
-                    <div class="grid-row">
-                        <dt class="column-one-third">
-                            @messages("case.application.agent.trader-name")
-                        </dt>
-                        <dd class="column-two-thirds">
-                            @btiAgent.eoriDetails.businessName
-                        </dd>
-                    </div>
-
-                    <div class="grid-row">
-                        <dt class="column-one-third">
-                            @messages("case.application.agent.address")
-                        </dt>
-                        <dd class="column-two-thirds">
-                            @btiAgent.eoriDetails.addressLine1 @if(!btiAgent.eoriDetails.addressLine1.isEmpty) {<br>}
-                            @btiAgent.eoriDetails.addressLine2  @if(!btiAgent.eoriDetails.addressLine2.isEmpty) {<br>}
-                            @btiAgent.eoriDetails.addressLine3  @if(!btiAgent.eoriDetails.addressLine3.isEmpty) {<br>}
-                            @btiAgent.eoriDetails.postcode  @if(!btiAgent.eoriDetails.postcode.isEmpty) {<br>}
-                            @btiAgent.eoriDetails.country
-                        </dd>
-                    </div>
-
-                    @if(letterOfAuth.isDefined) {
-                        <div class="grid-row">
-                            <dt class="column-one-third">
-
-                            </dt>
-                            <dd class="column-two-thirds">
-                                @attachment(
-                                    id = "agent-letter",
-                                    file = letterOfAuth.get,
-                                    name = Some(messages("case.application.agent.letter-of-authorisation"))
-                                )
-                            </dd>
-                        </div>
-                    }
+                    </dl>
                 }
             }
         }
     }
-}
 
-@contact_details(c)
+    @contact_details(c)
 
-@defining(c) { c: Case =>
-    @if(c.status == CaseStatus.NEW) {
-        <h3 class="heading-medium" id="release-suppress-case-heading">Releasing or suppressing a case</h3>
-
-        <p>Release this case if the applicant has included their:</p>
-
-        <ul class="list list-bullet">
-            <li>correct EORI number and address</li>
-            <li>item name and description</li>
-        </ul>
-
-        <p>If they’re an agent they should also have:</p>
-
-        <ul class="list list-bullet">
-            <li>the correct EORI number and address of the person they’re representing</li>
-            <li>a valid letter of authority</li>
-        </ul>
-
-        <p>
-            Suppress this case if this information is missing or incorrect. You must contact the applicant and upload
-            the email to the attachments tab before you choose to suppress this case. The case cannot be reopened once
-            it has been suppressed.
-        </p>
-
-        <h3 class="heading-medium">Do you want to release or suppress this case?</h3>
-
-        <p>
-            @release_case_button(c)
-        </p>
-
-        <p>
-            <a id="suppress_link" href="@SuppressCaseController.suppressCase(c.reference)">Suppress</a>
-        </p>
+    @if(c.caseBoardsFileNumber.isDefined) {
+        <div class="grid-row mt-30">
+            <dt class="column-one-third">
+                <p id="boards-file-number-label">@messages("case.application.boards-file-number")</p>
+            </dt>
+            <dd class="column-two-thirds">
+                <p id="boards-file-number">@{c.caseBoardsFileNumber.get}</p>
+            </dd>
+        </div>
     }
-}
+
+
+    @defining(c) { c: Case =>
+        @if(c.status == CaseStatus.NEW) {
+            <h3 class="heading-medium" id="release-suppress-case-heading">Release or suppress this case</h3>
+
+            <details role="group">
+                <summary role="button">
+                    <span id="release-suppress-help-title">When to release or suppress a case</span>
+                </summary>
+                <div id="release-suppress-help-body" class="panel panel-border">
+                    <p>Release this case if the applicant has included their: </p>
+                    <ul class="list list-bullet">
+                        <li>correct EORI number and address</li>
+                        <li>item name and description</li>
+                    </ul>
+                    <p>If they're an agent they should also have:</p>
+                    <ul class="list list-bullet">
+                        <li>the correct EORI number and address of the person they're representing </li>
+                        <li>a valid letter of authority</li>
+                    </ul>
+                    <p>If any of this information is missing or incorrect, suppress this case.</p>
+                </div>
+            </details>
+
+            <p class="mt-30">@release_case_button(c)</p>
+
+            <p class="mt-30">
+                <a id="suppress_link" href="@SuppressCaseController.suppressCase(c.reference)">Suppress this case</a>
+                after you have emailed the applicant and attached a copy of the email.
+            </p>
+        }
+    }

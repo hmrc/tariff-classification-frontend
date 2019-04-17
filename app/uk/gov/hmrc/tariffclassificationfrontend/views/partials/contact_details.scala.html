@@ -19,7 +19,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 
 @(c: Case)(implicit  messages: Messages)
-<h3 class="heading-medium mt-30"> Contact details for this application </h3>
+<h3 class="heading-medium mt-30">Contact details</h3>
 
 @defining(c.application.asBTI.contact) { co: Contact =>
     <dl class="dl-mb-2">

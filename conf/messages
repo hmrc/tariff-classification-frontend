@@ -3,14 +3,15 @@ cases.menu.gateway-cases=Gateway cases
 cases.menu.queue-cases={0} cases
 cases.list.my-cases=Cases for {0}
 cases.menu.assigned-cases=Assigned cases
-cases.heading.assigned-cases=Assigned Cases
+
+cases.heading.assigned-cases=Assigned cases
 cases.heading.reports=Choose a report
 cases.menu.reports=Reports
 case.summary.assignee = {0} ({1})
 cases.summary.assignee.empty=There are no cases assigned.
 
 cases.table.reference=Reference
-cases.table.goods-name=Item name
+cases.table.goods-name=Item
 cases.table.trader-name=Trader
 cases.table.created-date=Date received
 cases.table.status=Status
@@ -19,8 +20,8 @@ cases.table.elapsed-days=Days elapsed
 cases.table.empty=There are no cases in this queue.
 cases.table.move=Move to a queue
 
-case.menu.trader=Trader
-case.menu.application=Application
+case.menu.trader=Applicant
+case.menu.application-details=Item
 case.menu.ruling=Ruling
 case.menu.ruling-details=Ruling details
 case.menu.attachments=Attachments
@@ -33,9 +34,9 @@ case.status=Status
 case.created-date=Date received
 case.elapsed-days=Days elapsed
 
-
 case.application.suggested-commodity-code=Suggested commodity code
-case.application.suggested-goods-description=Suggested goods description
+case.application.importOrExport=Import or export
+case.application.suggested-goods-description=Suggested item description
 case.application.contact.name=Contact name
 case.application.contact.email=Contact email
 case.application.contact.telephone=Contact telephone
@@ -49,14 +50,26 @@ case.application.agent.letter-of-authorisation=View letter of authorisation
 case.application.goods-description=Goods description
 case.application.goods-name=Goods name
 case.application.confidential-information=Confidential information
-case.application.related-bti-reference=Similar BTI rulings from Trader?
 case.application.boards-file-number=Boards file number
 case.application.known-legal-proceedings=Any legal or administration proceedings information from trader?
 case.application.other-information=Other supporting information
 case.application.attachments=Attachments
+case.application.provide-samples=Is the applicant sending a sample?
+case.application.returning-samples=Does the applicant want the sample returned?
+case.application.reissue-application=Is this a new application or a renewal?
+case.application.renewal-reference-number=Renewal reference number
+case.application.supporting-information=Supporting information
+case.application.similar-bti-ruling=Is the applicant aware of any similar BTI rulings?
 case.application.sending-samples=Is the trader sending samples?
-case.application.returning-samples=Does the trader require samples returning?
-case.application.reissue-application=Is the application a re-issue?
+case.application.has-attachments=Has the applicant attached any documents?
+
+case.item.name=Item name
+case.item.description=Description
+case.item.confidential-information=Confidential information
+case.item.suggested-commodity-code=Suggested commodity code
+
+case.bti.renewal=Renewal
+case.bti.new=New
 
 case.application.submitted.title=Application submitted
 case.application.submitted.link=View and print a PDF of the original application
@@ -65,13 +78,16 @@ answer.no=No
 answer.yes=Yes
 answer.none=None
 
+
+case.decision.application.title=Information from the applicant
+
 case.decision.commodity-code=Binding commodity code
 case.decision.goods-description=Sanitised goods description
 case.decision.justification=Justification
 case.decision.method-search=Searches performed
 case.decision.method-commercial-denomination=Commercial denomination and additional information
 case.decision.method-exclusion=Exclusions/inclusions
-case.decision.attachments=Files to attach to the ruling
+case.decision.attachments=Select files to attach to the ruling
 case.decision.empty=There is no ruling information associated to this case.
 
 case.decision.before-you-complete=Before you complete this case
@@ -80,7 +96,8 @@ case.decision.constrain.justification=Justification
 case.decision.constrain.bindingCommodityCode=Binding commodity code
 case.decision.constrain.goodsDescription=Sanitised goods description
 
-case.decision.ruling.certificate.link=View and print a PDF of the ruling
+case.decision.ruling.certificate.content=If this case is under review or appeal
+case.decision.ruling.certificate.link=view and print a PDF of the ruling.
 case.decision.ruling.certificate.title=Ruling certificate
 
 case.activity.assigned-to = Currently assigned to:
@@ -158,8 +175,12 @@ pdf.application.section.applicationType.heading = Application type
 pdf.application.section.applicationType.newApplication = New
 pdf.application.section.applicationType.reIssue = BTI re-issue
 pdf.application.section.aboutItem.heading = Information about your item
-pdf.application.section.aboutItem.confidentialInfo = Confidential information
 pdf.application.section.aboutItem.description = Item description
+pdf.application.section.aboutItem.confidentialInfo = Confidential information
+pdf.application.section.aboutItem.suggestedCommodityCode = Suggested commodity code
+pdf.application.section.aboutItem.importOrExport = Is the item going to be imported or exported?
+pdf.application.section.aboutItem.import = Imported
+pdf.application.section.aboutItem.export = Exported
 pdf.application.section.aboutItem.uploadeDocuments = Uploaded documents
 pdf.application.section.aboutItem.sampleProvided = Are you providing a sample?
 pdf.application.section.aboutItem.sampleReturned = Should the sample be returned?
@@ -180,4 +201,5 @@ caseReference.format = {0}
 site.no = No
 site.yes = Yes
 site.none = None
+site.unknown = Unknown
 

@@ -27,7 +27,6 @@
     @tab_heading("keywords", messages("case.menu.keywords"))
 
     <div class="grid-row">
-
         <div class="column-full">
         <div>
             <p>
@@ -61,7 +60,8 @@
             @CSRF.formField
             @input_auto_complete(
                 field = keywordForm("keyword"),
-                label = "Add a keyword to this case",
+                label = "Search for or enter a keyword",
+                hint = Some("Start typing and select a keyword if it appears in the list. To add a keyword that is not in the list, type it in full."),
                 autoCompleteOptions = autoCompleteOptions,
                 formControlClass = Some("w-100"),
                 autofocus = true
