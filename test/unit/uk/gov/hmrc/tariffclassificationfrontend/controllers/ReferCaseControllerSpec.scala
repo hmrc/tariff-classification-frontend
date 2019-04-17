@@ -34,7 +34,7 @@ import uk.gov.tariffclassificationfrontend.utils.Cases
 
 import scala.concurrent.Future.{failed, successful}
 
-class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
+class ReferCaseContrilollerSpec extends WordSpec with Matchers with UnitSpec
   with WithFakeApplication with MockitoSugar with BeforeAndAfterEach with ControllerCommons {
 
   private val env = Environment.simple()
@@ -103,8 +103,8 @@ class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       when(casesService.referCase(refEq(caseWithStatusOPEN), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREFERRED))
 
       val result: Result = await(controller.confirmReferCase("reference")
-                                (newFakePOSTRequestWithCSRF(fakeApplication)
-                                  .withFormUrlEncodedBody("state" -> "true")))
+      (newFakePOSTRequestWithCSRF(fakeApplication)
+        .withFormUrlEncodedBody("state" -> "true")))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -117,8 +117,8 @@ class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       when(casesService.referCase(refEq(caseWithStatusOPEN), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREFERRED))
 
       val result: Result = await(controller.confirmReferCase("reference")
-                                (newFakePOSTRequestWithCSRF(fakeApplication)
-                                  .withFormUrlEncodedBody("state" -> "false")))
+      (newFakePOSTRequestWithCSRF(fakeApplication)
+        .withFormUrlEncodedBody("state" -> "false")))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)

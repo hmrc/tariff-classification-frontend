@@ -17,21 +17,19 @@
 package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
 import javax.inject.{Inject, Singleton}
-import play.api.mvc.ActionBuilder
-import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedCaseRequest
+import play.api.mvc.{ActionBuilder, ActionRefiner}
+import uk.gov.hmrc.tariffclassificationfrontend.models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
 
 @Singleton
 class RequestActions @Inject()(authoriseCase: AuthoriseCaseFilterAction,
-                               _checkPermissionsAction: CheckPermissionsAction,
-                               _authenticated: AuthenticatedAction,
-                               verifyCaseExistsActionFactory: VerifyCaseExistsActionFactory){
+                               checkPermissionsAction: CheckPermissionsAction,
+                               authenticated: AuthenticatedAction,
+                               verifyCaseExistsActionFactory: VerifyCaseExistsActionFactory) {
 
-  def caseExistsAndWriteAccess(reference: String): ActionBuilder[AuthenticatedCaseRequest] = _authenticated andThen caseExists(reference) andThen authoriseCase
-  def caseExistsAndApplyPermissions(reference: String): ActionBuilder[AuthenticatedCaseRequest] = _authenticated andThen caseExists(reference) andThen  _checkPermissionsAction
+  def caseExistsAndWriteAccess(reference: String): ActionBuilder[AuthenticatedCaseRequest] = authenticated andThen caseExists(reference) andThen authoriseCase
 
+  def caseExistsAndCheckPermissions(reference: String): ActionBuilder[AuthenticatedCaseRequest] = authenticated andThen caseExists(reference) andThen checkPermissionsAction
 
-  def caseExists(reference: String) = verifyCaseExistsActionFactory.apply(reference)
-  def authenticated: AuthenticatedAction = _authenticated
-  def checkPermissions = _checkPermissionsAction
+  private def caseExists(reference: String): ActionRefiner[AuthenticatedRequest, AuthenticatedCaseRequest] = verifyCaseExistsActionFactory.apply(reference)
 
 }

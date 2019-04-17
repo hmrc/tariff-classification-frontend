@@ -23,7 +23,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.AccessType._
-import uk.gov.hmrc.tariffclassificationfrontend.models.request.{AccessType, AuthenticatedCaseRequest, AuthenticatedRequest}
+import uk.gov.hmrc.tariffclassificationfrontend.models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -35,16 +35,16 @@ class CheckPermissionsAction
   extends ActionRefiner[AuthenticatedCaseRequest, AuthenticatedCaseRequest] {
 
   override protected def refine[A](request: AuthenticatedCaseRequest[A]):
-                Future[Either[Result, AuthenticatedCaseRequest[A]]] = {
+  Future[Either[Result, AuthenticatedCaseRequest[A]]] = {
 
     if (request.c.isAssignedTo(request.operator)) {
       authCaseRequest(request, READ_WRITE)
-    }else{
+    } else {
       authCaseRequest(request, READ_ONLY)
     }
   }
 
-  private def authCaseRequest[A](request: AuthenticatedCaseRequest[A], accessType: AccessType)= {
+  private def authCaseRequest[A](request: AuthenticatedCaseRequest[A], accessType: AccessType) = {
     successful(Right(new AuthenticatedCaseRequest(
       operator = request.operator,
       request = request,
@@ -55,7 +55,7 @@ class CheckPermissionsAction
 
 @Singleton
 class AuthoriseCaseFilterAction
-  extends ActionFilter[AuthenticatedCaseRequest]{
+  extends ActionFilter[AuthenticatedCaseRequest] {
 
   override protected def filter[A](request: AuthenticatedCaseRequest[A]): Future[Option[Result]] = {
     val result =
@@ -67,7 +67,7 @@ class AuthoriseCaseFilterAction
     successful(result)
   }
 
-  private def isAuthorized[ A ](request: AuthenticatedCaseRequest[ A ]) = {
+  private def isAuthorized[A](request: AuthenticatedCaseRequest[A]) = {
     request.c.isAssignedTo(request.operator) || request.operator.manager
   }
 }

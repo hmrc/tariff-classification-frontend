@@ -51,5 +51,43 @@ class KeywordDetailsViewSpec extends ViewSpec {
       doc.getElementById("keywords-row-0-message") should containText("")
       doc.getElementById("keywords-row-1-message") should containText("Keyword is not from the list")
     }
+
+
+    "Render a case with keywords with READ_ONLY permissions" in {
+      // Given
+      val c = aCase().copy(keywords = Set("APPLES", "CARS"))
+
+      // When
+      val doc = view(keywords_details(c, Seq("APPLES", "TOYS"), KeywordForm.form)(readOnlyRequest, messages, appConfig))
+
+      // Then
+      doc should containElementWithID("keywords-heading")
+      doc should containElementWithID("keywords-row-0-keyword")
+      doc.getElementById("keywords-row-0-message") should containText("")
+      doc.getElementById("keywords-row-1-message") should containText("Keyword is not from the list")
+
+      doc shouldNot containElementWithID("keywords-row-0-remove")
+      doc shouldNot containElementWithID("keyword_details-add_keyword")
+
+    }
+
+    "Render a case with keywords with READ_WRITE permissions" in {
+      // Given
+      val c = aCase().copy(keywords = Set("APPLES", "CARS"))
+
+      // When
+      val doc = view(keywords_details(c, Seq("APPLES", "TOYS"), KeywordForm.form)(readWriteRequest, messages, appConfig))
+
+      // Then
+      doc should containElementWithID("keywords-heading")
+      doc should containElementWithID("keywords-row-0-keyword")
+      doc.getElementById("keywords-row-0-message") should containText("")
+      doc.getElementById("keywords-row-1-message") should containText("Keyword is not from the list")
+
+      doc should containElementWithID("keywords-row-0-remove")
+      doc should containElementWithID("keyword_details-add_keyword")
+
+
+    }
   }
 }

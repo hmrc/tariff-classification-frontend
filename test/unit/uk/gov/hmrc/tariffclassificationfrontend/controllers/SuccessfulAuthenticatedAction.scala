@@ -17,7 +17,7 @@
 package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
 import org.mockito.Mockito.mock
-import play.api.mvc.{Request, Result}
+import play.api.mvc.{ActionRefiner, Request, Result}
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.connector.StrideAuthConnector
@@ -42,26 +42,36 @@ class SuccessfulAuthenticatedAction(operator: Operator = Operator("0", Some("nam
 }
 
 class SuccessfulAuthorisedAction(operator: Operator = Operator("0", Some("name")), accessType: AccessType = READ_WRITE) extends AuthoriseCaseFilterAction {
-
   protected override def filter[A](request: AuthenticatedCaseRequest[A]): Future[Option[Result]] = successful(None)
 }
 
-class SuccessfulReadOnlyAction(operator: Operator = Operator("0", Some("name")), accessType: AccessType = READ_WRITE) extends CheckPermissionsAction{
-
+class SuccessfulReadOnlyAction(operator: Operator = Operator("0", Some("name")), accessType: AccessType = READ_WRITE) extends CheckPermissionsAction {
   override def refine[A](request: AuthenticatedCaseRequest[A]): Future[Either[Result, AuthenticatedCaseRequest[A]]] = {
     successful(Right(new AuthenticatedCaseRequest(operator, request, accessType, Cases.btiCaseExample)))
   }
 }
 
+class ExistingCaseActionFactory(reference: String) extends VerifyCaseExistsActionFactory(casesService = mock(classOf[CasesService])) {
+
+  override def apply(reference: String): ActionRefiner[AuthenticatedRequest, AuthenticatedCaseRequest] = {
+    new ActionRefiner[AuthenticatedRequest, AuthenticatedCaseRequest] {
+      override protected def refine[A](request: AuthenticatedRequest[A]): Future[Either[Result, AuthenticatedCaseRequest[A]]] = {
+        successful(
+          Right(new AuthenticatedCaseRequest(operator = request.operator, request = request, _c = Cases.btiCaseExample)
+          )
+        )
+      }
+    }
+  }
+}
 
 
-
-class SuccessfulRequestActions(operator: Operator)
+class SuccessfulRequestActions(operator: Operator, reference: String = "test-reference")
   extends RequestActions(
     new SuccessfulAuthorisedAction(operator),
     new SuccessfulReadOnlyAction(operator),
     new SuccessfulAuthenticatedAction(operator),
-    null
-  ){
+    new ExistingCaseActionFactory(reference)
+  ) {
 
 }

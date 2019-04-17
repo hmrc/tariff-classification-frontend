@@ -27,7 +27,7 @@ import uk.gov.tariffclassificationfrontend.utils.Cases._
 
 class ActivityDetailsViewSpec extends ViewSpec {
 
-  private val date = ZonedDateTime.of(2019,1,1,0,0,0,0, ZoneOffset.UTC).toInstant
+  private val date = ZonedDateTime.of(2019, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC).toInstant
   private val queues = Seq(Queue(id = "1", slug = "test", name = "TEST"))
 
   "Activity Details" should {
@@ -428,16 +428,51 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
     "Not Render 'Reassign Link' When Case is not assigned" in {
 
+      // Given
+      val c = aCase(
+        withAssignee(None),
+        withStatus(CaseStatus.OPEN)
+      )
+      // When
+      val doc = view(activity_details(c, Paged(Seq.empty), ActivityForm.form, queues))
+
+      // Then
+      doc shouldNot containElementWithID("reassign-queue-link")
+    }
+
+    "Not render 'Reassign Link' when valid state but permissions as ReadOnly " in {
+
+      Set(CaseStatus.OPEN, CaseStatus.REFERRED, CaseStatus.SUSPENDED).foreach(status => {
         // Given
         val c = aCase(
-          withAssignee(None),
-          withStatus(CaseStatus.OPEN)
+          withAssignee(Some(Operator("id"))),
+          withStatus(status)
         )
+
         // When
-        val doc = view(activity_details(c, Paged(Seq.empty), ActivityForm.form, queues))
+        val doc = view(activity_details(c, Paged(Seq.empty), ActivityForm.form, queues)(readOnlyRequest, messages, appConfig))
 
         // Then
         doc shouldNot containElementWithID("reassign-queue-link")
+      })
+    }
+
+    "Render 'Reassign Link' when valid state and permissions are ReadWrite " in {
+
+      Set(CaseStatus.OPEN, CaseStatus.REFERRED, CaseStatus.SUSPENDED).foreach(status => {
+        // Given
+        val c = aCase(
+          withAssignee(Some(Operator("id"))),
+          withStatus(status)
+        )
+
+        // When
+        val doc = view(activity_details(c, Paged(Seq.empty), ActivityForm.form, queues)(readWriteRequest, messages, appConfig))
+
+        // Then
+        doc should containElementWithID("reassign-queue-link")
+      })
+
     }
   }
 

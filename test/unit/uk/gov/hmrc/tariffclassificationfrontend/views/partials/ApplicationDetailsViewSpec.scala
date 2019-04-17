@@ -70,10 +70,10 @@ class ApplicationDetailsViewSpec extends ViewSpec {
       // Then
       doc.getElementById("app-details-reissue-application-type") should containText(messages("case.bti.new"))
       doc.getElementById("app-details-confidential-info") should containText(messages("answer.none"))
-      doc.getElementById("app-details-related-reference") should be (null)
+      doc.getElementById("app-details-related-reference") should be(null)
       doc.getElementById("app-details-legal-proceedings") should containText(messages("answer.no"))
       doc.getElementById("app-details-other-info") should containText(messages("answer.none"))
-      doc.getElementById("app-details-import-or-export") should containText (messages("site.unknown"))
+      doc.getElementById("app-details-import-or-export") should containText(messages("site.unknown"))
     }
 
     "Render optional fields when present" in {
@@ -114,6 +114,57 @@ class ApplicationDetailsViewSpec extends ViewSpec {
       doc.getElementById("app-details-import-or-export") should containText("Import")
     }
 
+
+    "Hide refer, reject and suspend action when a user have no write permissions" in {
+      // Given
+      val `case` = aCase(
+        withOptionalApplicationFields(),
+        withoutAttachments()
+      )
+
+      // When
+      val doc = view(application_details(`case`, Seq.empty, None)(readOnlyRequest, messages, appConfig))
+
+      // Then
+      doc shouldNot containElementWithID("refer-case-button")
+      doc shouldNot containElementWithID("reject-case-button")
+      doc shouldNot containElementWithID("suspend-case-button")
+
+
+    }
+
+    "refer, reject and suspend action available for read write permissions" in {
+      // Given
+      val `case` = aCase(
+        withOptionalApplicationFields(),
+        withoutAttachments()
+      )
+
+      // When
+      val doc = view(application_details(`case`, Seq.empty, None)(readWriteRequest, messages, appConfig))
+
+      // Then
+      doc should containElementWithID("refer-case-button")
+      doc should containElementWithID("reject-case-button")
+      doc should containElementWithID("suspend-case-button")
+    }
+
+
+    "refer, reject and suspend action always available for Managers" in {
+      // Given
+      val `case` = aCase(
+        withOptionalApplicationFields(),
+        withoutAttachments()
+      )
+
+      // When
+      val doc = view(application_details(`case`, Seq.empty, None)(authenticatedManagerFakeRequest, messages, appConfig))
+
+      // Then
+      doc should containElementWithID("refer-case-button")
+      doc should containElementWithID("reject-case-button")
+      doc should containElementWithID("suspend-case-button")
+    }
   }
 
 }
