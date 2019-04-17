@@ -17,7 +17,7 @@
 package uk.gov.tariffclassificationfrontend.utils
 
 import java.time.Instant
-import java.time.temporal.ChronoUnit
+import java.time.temporal.ChronoUnit.DAYS
 import java.util.UUID
 
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.CaseStatus
@@ -42,8 +42,8 @@ object Cases {
   val caseQueueExample = Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, Some("1"), btiApplicationExample, Some(decision), Seq())
   val caseAssignedExample = Case("1", CaseStatus.OPEN, Instant.now(), 0, None, Some(Operator("1", Some("Test User"))), Some("1"), btiApplicationExample, Some(decision), Seq())
   val expiredRuling = decision.copy(
-    effectiveStartDate = Some(Instant.now().plus(-20, ChronoUnit.DAYS)),
-    effectiveEndDate = Some(Instant.now().plus(-10, ChronoUnit.DAYS))
+    effectiveStartDate = Some(Instant.now().plus(-20, DAYS)),
+    effectiveEndDate = Some(Instant.now().plus(-10, DAYS))
   )
   val btiCaseWithExpiredRuling = btiCaseExample.copy(status = CaseStatus.COMPLETED, decision = Some(expiredRuling))
 
@@ -189,7 +189,7 @@ object Cases {
 
   def withDecision(bindingCommodityCode: String = "decision-commodity-code",
                    effectiveStartDate: Option[Instant] = Some(Instant.now()),
-                   effectiveEndDate: Option[Instant] = Some(Instant.now()),
+                   effectiveEndDate: Option[Instant] = Some(Instant.now().plus(30, DAYS)),
                    justification: String = "decision-justification",
                    goodsDescription: String = "decision-goods-description",
                    methodSearch: Option[String] = None,

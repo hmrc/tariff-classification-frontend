@@ -4,7 +4,7 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import org.scalatest.mockito.MockitoSugar
 import play.api.libs.ws.WSResponse
 import play.api.test.Helpers._
-import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, Decision}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, Decision, Operator, Role}
 import uk.gov.tariffclassificationfrontend.utils.{CasePayloads, Cases, EventPayloads}
 
 
@@ -12,16 +12,15 @@ class CompleteCaseSpec extends IntegrationTest with MockitoSugar {
 
   "Case Complete with decision" should {
 
+    val owner = Some(Operator("111", role = Role.CLASSIFICATION_OFFICER))
     val completeDecision = Decision(bindingCommodityCode = "040900", justification = "justification-content",
       goodsDescription = "goods-description", methodSearch = Some("method-to-search"))
     val inCompleteDecision = Decision(bindingCommodityCode = "", justification = "", goodsDescription = "")
-    val caseWithStatusOPEN = CasePayloads.jsonOf(Cases.btiCaseExample.copy(status = CaseStatus.OPEN, decision = Some(completeDecision)))
-    val caseIncompleteWithStatusOPEN = CasePayloads.jsonOf(Cases.btiCaseExample.copy(status = CaseStatus.OPEN, decision = Some(inCompleteDecision)))
+    val caseWithStatusOPEN = CasePayloads.jsonOf(Cases.btiCaseExample.copy(status = CaseStatus.OPEN, decision = Some(completeDecision), assignee = owner))
+    val caseIncompleteWithStatusOPEN = CasePayloads.jsonOf(Cases.btiCaseExample.copy(status = CaseStatus.OPEN, decision = Some(inCompleteDecision), assignee = owner))
     val event = EventPayloads.event
 
-    "return status 200" in {
-      // Given
-      givenAuthSuccess()
+    def shouldSucceed = {
       stubFor(get(urlEqualTo("/cases/1"))
         .willReturn(aResponse()
           .withStatus(OK)
@@ -35,6 +34,17 @@ class CompleteCaseSpec extends IntegrationTest with MockitoSugar {
       response.status shouldBe OK
       response.body should include("Complete this case")
       response.body should not include "disabled=disabled"
+    }
+
+    "return status 200 for manager" in {
+      // Given
+      givenAuthSuccess("manager")
+      shouldSucceed
+    }
+
+    "return status 200 for team member" in {
+      givenAuthSuccess("team")
+      shouldSucceed
     }
 
     "return disabled complete button when no complete deicision" in {
@@ -61,7 +71,16 @@ class CompleteCaseSpec extends IntegrationTest with MockitoSugar {
     "redirect on auth failure" in {
       // Given
       givenAuthFailed()
+      shouldFail
+    }
 
+    "redirect for non case owner" in {
+      // Given
+      givenAuthSuccess("another team member")
+      shouldFail
+    }
+
+    def shouldFail = {
       // When
       val response: WSResponse = await(ws.url(s"http://localhost:$port/tariff-classification/cases/1/complete").get())
 
