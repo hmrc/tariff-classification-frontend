@@ -168,7 +168,7 @@ class CaseController @Inject()(verify: RequestActions,
     toHtml(c).map(html => Ok(views.html.case_details(c, page, html)))
   }
 
-  def addKeyword(reference: String): Action[AnyContent] = verify.caseExistsAndWriteAccess(reference).async { implicit request =>
+  def addKeyword(reference: String): Action[AnyContent] = verify.caseExistsAndFilterByAuthorisation(reference).async { implicit request =>
     keywordForm.bindFromRequest.fold(
       errorForm =>
         getCaseAndRenderView(
@@ -194,7 +194,7 @@ class CaseController @Inject()(verify: RequestActions,
     } yield views.html.partials.keywords_details(updatedCase, autoCompleteKeywords, keywordForm)
   }
 
-  def removeKeyword(reference: String, keyword: String): Action[AnyContent] = verify.caseExistsAndWriteAccess(reference).async { implicit request =>
+  def removeKeyword(reference: String, keyword: String): Action[AnyContent] = verify.caseExistsAndFilterByAuthorisation(reference).async { implicit request =>
     getCaseAndRenderView(
       reference,
       KEYWORDS,

@@ -45,7 +45,7 @@ class ReferCaseController @Inject()(verify: RequestActions,
   override protected def redirect: String => Call = routes.CaseController.applicationDetails
   override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = c.status == OPEN
 
-  def referCase(reference: String): Action[AnyContent] =verify.caseExistsAndWriteAccess(reference).async { implicit request =>
+  def referCase(reference: String): Action[AnyContent] =verify.caseExistsAndFilterByAuthorisation(reference).async { implicit request =>
     getCaseAndRenderView(
       reference,
        c =>
@@ -53,7 +53,7 @@ class ReferCaseController @Inject()(verify: RequestActions,
     )
   }
 
-  def confirmReferCase(reference: String): Action[AnyContent] =verify.caseExistsAndWriteAccess(reference).async { implicit request =>
+  def confirmReferCase(reference: String): Action[AnyContent] =verify.caseExistsAndFilterByAuthorisation(reference).async { implicit request =>
 
     form.bindFromRequest().fold(
       errors => {

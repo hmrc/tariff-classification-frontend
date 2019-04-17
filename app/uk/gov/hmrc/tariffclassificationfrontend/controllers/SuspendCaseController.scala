@@ -45,11 +45,11 @@ class SuspendCaseController @Inject()(verify: RequestActions,
   override protected def redirect: String => Call = routes.CaseController.applicationDetails
   override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = c.status == OPEN
 
-  def suspendCase(reference: String): Action[AnyContent] =verify.caseExistsAndWriteAccess(reference).async { implicit request =>
+  def suspendCase(reference: String): Action[AnyContent] =verify.caseExistsAndFilterByAuthorisation(reference).async { implicit request =>
     getCaseAndRenderView(reference, c => successful(views.html.suspend_case(c, form)))
   }
 
-  def confirmSuspendCase(reference: String): Action[AnyContent] =verify.caseExistsAndWriteAccess(reference).async { implicit request =>
+  def confirmSuspendCase(reference: String): Action[AnyContent] =verify.caseExistsAndFilterByAuthorisation(reference).async { implicit request =>
     form.bindFromRequest().fold(
       errors => {
         getCaseAndRenderView(reference, c => successful(views.html.suspend_case(c, errors)))

@@ -41,7 +41,7 @@ class SuccessfulAuthenticatedAction(operator: Operator = Operator("0", Some("nam
   }
 }
 
-class SuccessfulAuthorisedAction(operator: Operator = Operator("0", Some("name")), accessType: AccessType = READ_WRITE) extends AuthoriseCaseFilterAction {
+class SuccessfulAuthorisedAction(operator: Operator = Operator("0", Some("name")), accessType: AccessType = READ_WRITE) extends AuthoriseFilterAction {
   protected override def filter[A](request: AuthenticatedCaseRequest[A]): Future[Option[Result]] = successful(None)
 }
 

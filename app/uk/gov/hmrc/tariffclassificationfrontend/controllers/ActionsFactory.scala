@@ -54,7 +54,7 @@ class CheckPermissionsAction
 }
 
 @Singleton
-class AuthoriseCaseFilterAction
+class AuthoriseFilterAction
   extends ActionFilter[AuthenticatedCaseRequest] {
 
   override protected def filter[A](request: AuthenticatedCaseRequest[A]): Future[Option[Result]] = {

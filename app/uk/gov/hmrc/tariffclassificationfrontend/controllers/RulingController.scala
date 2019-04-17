@@ -50,7 +50,7 @@ class RulingController @Inject()(verify: RequestActions,
     fileStoreService.getAttachments(c).map(views.html.partials.ruling_details_edit(c, _, f))
   }
 
-  def editRulingDetails(reference: String): Action[AnyContent]= verify.caseExistsAndWriteAccess(reference).async { implicit request =>
+  def editRulingDetails(reference: String): Action[AnyContent]= verify.caseExistsAndFilterByAuthorisation(reference).async { implicit request =>
     getCaseAndRenderView(reference, menuTitle, c => {
       val formData = mapper.caseToDecisionFormData(c)
       val df = decisionForm.form.fill(formData)
@@ -59,7 +59,7 @@ class RulingController @Inject()(verify: RequestActions,
     })
   }
 
-  def updateRulingDetails(reference: String): Action[AnyContent]= verify.caseExistsAndWriteAccess(reference).async { implicit request =>
+  def updateRulingDetails(reference: String): Action[AnyContent]= verify.caseExistsAndFilterByAuthorisation(reference).async { implicit request =>
     decisionForm.form.bindFromRequest.fold(
       errorForm =>
         getCaseAndRenderView(

@@ -21,15 +21,15 @@ import play.api.mvc.{ActionBuilder, ActionRefiner}
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
 
 @Singleton
-class RequestActions @Inject()(authoriseCase: AuthoriseCaseFilterAction,
+class RequestActions @Inject()(authoriseFilter: AuthoriseFilterAction,
                                checkPermissionsAction: CheckPermissionsAction,
-                               authenticated: AuthenticatedAction,
-                               verifyCaseExistsActionFactory: VerifyCaseExistsActionFactory) {
+                               authenticatedAction: AuthenticatedAction,
+                               caseExistsActionFactory: VerifyCaseExistsActionFactory) {
 
-  def caseExistsAndWriteAccess(reference: String): ActionBuilder[AuthenticatedCaseRequest] = authenticated andThen caseExists(reference) andThen authoriseCase
+  def caseExistsAndFilterByAuthorisation(reference: String): ActionBuilder[AuthenticatedCaseRequest] = authenticatedAction andThen caseExists(reference) andThen authoriseFilter
 
-  def caseExistsAndCheckPermissions(reference: String): ActionBuilder[AuthenticatedCaseRequest] = authenticated andThen caseExists(reference) andThen checkPermissionsAction
+  def caseExistsAndCheckPermissions(reference: String): ActionBuilder[AuthenticatedCaseRequest] = authenticatedAction andThen caseExists(reference) andThen checkPermissionsAction
 
-  private def caseExists(reference: String): ActionRefiner[AuthenticatedRequest, AuthenticatedCaseRequest] = verifyCaseExistsActionFactory.apply(reference)
+  private def caseExists(reference: String): ActionRefiner[AuthenticatedRequest, AuthenticatedCaseRequest] = caseExistsActionFactory.apply(reference)
 
 }
