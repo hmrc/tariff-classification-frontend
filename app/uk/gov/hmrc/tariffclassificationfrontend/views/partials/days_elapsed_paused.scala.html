@@ -20,6 +20,6 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.days_elapsed
 
-@(c: Case)
+@(c: Case)(implicit appConfig: AppConfig)
 
 <p>The days elapsed count has paused at @days_elapsed(c.daysElapsed). </p>

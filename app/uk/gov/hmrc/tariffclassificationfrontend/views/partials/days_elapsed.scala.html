@@ -16,6 +16,8 @@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers.SessionKeys
-@(daysElapsed: Long, id: String = "days-elapsed")
+@import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 
- <span id="@id" @if(daysElapsed >= 30) {class="extra-bold"}>@daysElapsed</span>
+@(daysElapsed: Long, id: String = "days-elapsed")(implicit appConfig: AppConfig)
+
+ <span id="@id" @if(daysElapsed >= appConfig.activeDaysElapsedSlaLimit) {class="extra-bold"}>@daysElapsed</span>
