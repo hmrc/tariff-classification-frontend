@@ -143,11 +143,17 @@ class ReportSLAViewSpec extends ViewSpec {
       // Then
       doc should containElementWithID("report_sla-table-totals")
       doc.getElementById("report_sla-table-totals-interval_0-count") should containText("0")
+      doc.getElementById("report_sla-table-totals-interval_0-percent") should containText("0")
       doc.getElementById("report_sla-table-totals-interval_1-count") should containText("0")
+      doc.getElementById("report_sla-table-totals-interval_1-percent") should containText("0")
       doc.getElementById("report_sla-table-totals-interval_2-count") should containText("0")
+      doc.getElementById("report_sla-table-totals-interval_2-percent") should containText("0")
       doc.getElementById("report_sla-table-totals-interval_3-count") should containText("0")
+      doc.getElementById("report_sla-table-totals-interval_3-percent") should containText("0")
       doc.getElementById("report_sla-table-totals-interval_4-count") should containText("0")
+      doc.getElementById("report_sla-table-totals-interval_4-percent") should containText("0")
       doc.getElementById("report_sla-table-totals-interval_5-count") should containText("0")
+      doc.getElementById("report_sla-table-totals-interval_5-percent") should containText("0")
       doc.getElementById("report_sla-table-totals-total") should containText("0")
     }
 
@@ -164,11 +170,17 @@ class ReportSLAViewSpec extends ViewSpec {
       // Then
       doc should containElementWithID("report_sla-table-totals")
       doc.getElementById("report_sla-table-totals-interval_0-count") should containText("2")
+      doc.getElementById("report_sla-table-totals-interval_0-percent") should containText("17")
       doc.getElementById("report_sla-table-totals-interval_1-count") should containText("2")
+      doc.getElementById("report_sla-table-totals-interval_1-percent") should containText("17")
       doc.getElementById("report_sla-table-totals-interval_2-count") should containText("2")
+      doc.getElementById("report_sla-table-totals-interval_2-percent") should containText("17")
       doc.getElementById("report_sla-table-totals-interval_3-count") should containText("2")
+      doc.getElementById("report_sla-table-totals-interval_3-percent") should containText("17")
       doc.getElementById("report_sla-table-totals-interval_4-count") should containText("2")
+      doc.getElementById("report_sla-table-totals-interval_4-percent") should containText("17")
       doc.getElementById("report_sla-table-totals-interval_5-count") should containText("2")
+      doc.getElementById("report_sla-table-totals-interval_5-percent") should containText("17")
       doc.getElementById("report_sla-table-totals-total") should containText("12")
     }
   }
