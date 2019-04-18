@@ -33,10 +33,10 @@ class AttachmentViewSpec extends ViewSpec {
       val doc = view(attachment("MODULE", stored))
 
       // Then
-      doc should containElementWithID("MODULE-file-FILE_ID")
-      doc should containElementWithID("MODULE-file-FILE_ID-status")
-      doc.getElementById("MODULE-file-FILE_ID") should haveChild("span").containingText("name")
-      doc.getElementById("MODULE-file-FILE_ID-status") should containText("Processing")
+      doc should containElementWithID("MODULE-file")
+      doc should containElementWithID("MODULE-file-status")
+      doc.getElementById("MODULE-file") should haveChild("span").containingText("name")
+      doc.getElementById("MODULE-file-status") should containText("Processing")
     }
 
     "Render Quarantined attachment" in {
@@ -46,10 +46,10 @@ class AttachmentViewSpec extends ViewSpec {
       val doc = view(attachment("MODULE", stored))
 
       // Then
-      doc should containElementWithID("MODULE-file-FILE_ID")
-      doc should containElementWithID("MODULE-file-FILE_ID-status")
-      doc.getElementById("MODULE-file-FILE_ID") should haveChild("span").containingText("name")
-      doc.getElementById("MODULE-file-FILE_ID-status") should containText("Failed")
+      doc should containElementWithID("MODULE-file")
+      doc should containElementWithID("MODULE-file-status")
+      doc.getElementById("MODULE-file") should haveChild("span").containingText("name")
+      doc.getElementById("MODULE-file-status") should containText("Failed")
     }
 
     "Render Safe attachment without URL" in {
@@ -59,10 +59,10 @@ class AttachmentViewSpec extends ViewSpec {
       val doc = view(attachment("MODULE", stored))
 
       // Then
-      doc should containElementWithID("MODULE-file-FILE_ID")
-      doc should containElementWithID("MODULE-file-FILE_ID-status")
-      doc.getElementById("MODULE-file-FILE_ID") should haveChild("span").containingText("name")
-      doc.getElementById("MODULE-file-FILE_ID-status") should containText("Failed")
+      doc should containElementWithID("MODULE-file")
+      doc should containElementWithID("MODULE-file-status")
+      doc.getElementById("MODULE-file") should haveChild("span").containingText("name")
+      doc.getElementById("MODULE-file-status") should containText("Failed")
     }
 
     "Render Safe attachment" in {
@@ -72,10 +72,10 @@ class AttachmentViewSpec extends ViewSpec {
       val doc = view(attachment("MODULE", stored))
 
       // Then
-      doc should containElementWithID("MODULE-file-FILE_ID")
-      doc shouldNot containElementWithID("MODULE-file-FILE_ID-status")
+      doc should containElementWithID("MODULE-file")
+      doc shouldNot containElementWithID("MODULE-file-status")
 
-      val anchor = doc.getElementById("MODULE-file-FILE_ID")
+      val anchor = doc.getElementById("MODULE-file")
       anchor should haveChild("a").containingText("name")
       anchor should haveChild("a").withAttribute("href", "url")
     }
