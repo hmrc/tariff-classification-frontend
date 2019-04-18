@@ -37,28 +37,28 @@ class RejectCaseController @Inject()(verify: RequestActions,
                                      val messagesApi: MessagesApi,
                                      implicit val appConfig: AppConfig) extends RenderCaseAction {
 
-  private val form: Form[Boolean] = MandatoryBooleanForm.form("reject_case")
-
   override protected val config: AppConfig = appConfig
   override protected val caseService: CasesService = casesService
+  private val form: Form[Boolean] = MandatoryBooleanForm.form("reject_case")
 
-  override protected def redirect: String => Call = routes.CaseController.applicationDetails
-  override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = c.status == OPEN
-
-  def rejectCase(reference: String): Action[AnyContent] =verify.caseExistsAndFilterByAuthorisation(reference).async { implicit request =>
-    getCaseAndRenderView(reference, c => successful(views.html.reject_case(c, form)))
+  def rejectCase(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.caseExists(reference) andThen verify.mustHaveWritePermission).async { implicit request =>
+    getCaseAndRenderView(c => successful(views.html.reject_case(c, form)))
   }
 
-  def confirmRejectCase(reference: String): Action[AnyContent] =verify.caseExistsAndFilterByAuthorisation(reference).async { implicit request =>
+  def confirmRejectCase(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.caseExists(reference) andThen verify.mustHaveWritePermission).async { implicit request =>
     form.bindFromRequest().fold(
       errors => {
-        getCaseAndRenderView(reference, c => successful(views.html.reject_case(c, errors)))
+        getCaseAndRenderView(c => successful(views.html.reject_case(c, errors)))
       },
       {
-        case true => getCaseAndRenderView(reference, casesService.rejectCase(_, request.operator).map(views.html.confirm_rejected(_)))
-        case _ => getCaseAndRenderView(reference, c => successful(views.html.reject_case_error(c)))
+        case true => getCaseAndRenderView(casesService.rejectCase(_, request.operator).map(views.html.confirm_rejected(_)))
+        case _ => getCaseAndRenderView(c => successful(views.html.reject_case_error(c)))
       }
     )
   }
+
+  override protected def redirect: String => Call = routes.CaseController.applicationDetails
+
+  override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = c.status == OPEN
 
 }

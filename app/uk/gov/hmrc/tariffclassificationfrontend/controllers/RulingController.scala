@@ -24,6 +24,7 @@ import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.{DecisionForm, DecisionFormData, DecisionFormMapper}
+import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedCaseRequest
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus}
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, FileStoreService}
 import uk.gov.hmrc.tariffclassificationfrontend.views
@@ -45,31 +46,38 @@ class RulingController @Inject()(verify: RequestActions,
 
   private lazy val menuTitle = CaseDetailPage.RULING
 
+  def editRulingDetails(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.caseExists(reference) andThen verify.mustHaveWritePermission).async { implicit request =>
+    getCaseAndRenderView(menuTitle, c => {
+      val formData = mapper.caseToDecisionFormData(c)
+      val df = decisionForm.form.fill(formData)
+      editRuling(df, c)
+    })
+  }
+
   private def editRuling(f: Form[DecisionFormData], c: Case)
                         (implicit request: Request[_]): Future[HtmlFormat.Appendable] = {
     fileStoreService.getAttachments(c).map(views.html.partials.ruling_details_edit(c, _, f))
   }
 
-  def editRulingDetails(reference: String): Action[AnyContent]= verify.caseExistsAndFilterByAuthorisation(reference).async { implicit request =>
-    getCaseAndRenderView(reference, menuTitle, c => {
-      val formData = mapper.caseToDecisionFormData(c)
-      val df = decisionForm.form.fill(formData)
-
-      editRuling(df, c)
-    })
+  private def getCaseAndRenderView(page: CaseDetailPage, toHtml: Case => Future[HtmlFormat.Appendable])
+                                  (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
+    if (request.`case`.status == CaseStatus.OPEN){
+      toHtml(request.`case`).map(html => Ok(views.html.case_details(request.`case`, page, html)))
+    }else{
+      successful(Redirect(routes.CaseController.rulingDetails(request.`case`.reference)))
+    }
   }
 
-  def updateRulingDetails(reference: String): Action[AnyContent]= verify.caseExistsAndFilterByAuthorisation(reference).async { implicit request =>
+  def updateRulingDetails(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.caseExists(reference) andThen verify.mustHaveWritePermission).async { implicit request =>
     decisionForm.form.bindFromRequest.fold(
       errorForm =>
         getCaseAndRenderView(
-          reference,
           menuTitle,
           c => editRuling(errorForm, c)
         ),
 
       validForm =>
-        getCaseAndRenderView(reference, menuTitle, c => {
+        getCaseAndRenderView(menuTitle, c => {
           casesService
             .updateCase(mapper.mergeFormIntoCase(c, validForm))
             .flatMap { updated =>
@@ -80,15 +88,6 @@ class RulingController @Inject()(verify: RequestActions,
             }
         })
     )
-  }
-
-  private def getCaseAndRenderView(reference: String, page: CaseDetailPage, toHtml: Case => Future[HtmlFormat.Appendable])
-                                  (implicit request: Request[_]): Future[Result] = {
-    casesService.getOne(reference).flatMap {
-      case Some(c: Case) if c.status == CaseStatus.OPEN => toHtml(c).map(html => Ok(views.html.case_details(c, page, html)))
-      case Some(_) => successful(Redirect(routes.CaseController.rulingDetails(reference)))
-      case _ => successful(Ok(views.html.case_not_found(reference)))
-    }
   }
 
 }

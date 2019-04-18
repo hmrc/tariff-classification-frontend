@@ -40,6 +40,14 @@ class CompleteCaseController @Inject()(verify: RequestActions,
   override protected val config: AppConfig = appConfig
   override protected val caseService: CasesService = casesService
 
+  def completeCase(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.caseExists(reference) andThen verify.mustHaveWritePermission).async { implicit request =>
+    getCaseAndRenderView(c => successful(views.html.complete_case(c)))
+  }
+
+  def confirmCompleteCase(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.caseExists(reference) andThen verify.mustHaveWritePermission).async { implicit request =>
+    getCaseAndRenderView(casesService.completeCase(_, request.operator).map(views.html.confirm_complete_case(_)))
+  }
+
   override protected def redirect: String => Call = routes.CaseController.rulingDetails
 
   override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = {
@@ -48,14 +56,6 @@ class CompleteCaseController @Inject()(verify: RequestActions,
 
   private def hasValidDecision(c: Case): Boolean = {
     decisionForm.bindFrom(c.decision).map(_.errors).exists(_.isEmpty)
-  }
-
-  def completeCase(reference: String): Action[AnyContent] =  verify.caseExistsAndFilterByAuthorisation(reference).async { implicit request =>
-    getCaseAndRenderView(reference, c => successful(views.html.complete_case(c)))
-  }
-
-  def confirmCompleteCase(reference: String): Action[AnyContent] = verify.caseExistsAndFilterByAuthorisation(reference).async { implicit request =>
-    getCaseAndRenderView(reference, casesService.completeCase(_, request.operator).map(views.html.confirm_complete_case(_)))
   }
 
 }

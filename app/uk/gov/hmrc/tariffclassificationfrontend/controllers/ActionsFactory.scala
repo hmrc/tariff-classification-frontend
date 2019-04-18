@@ -37,7 +37,7 @@ class CheckPermissionsAction
   override protected def refine[A](request: AuthenticatedCaseRequest[A]):
   Future[Either[Result, AuthenticatedCaseRequest[A]]] = {
 
-    if (request.c.isAssignedTo(request.operator)) {
+    if (request.`case`.isAssignedTo(request.operator)) {
       authCaseRequest(request, READ_WRITE)
     } else {
       authCaseRequest(request, READ_ONLY)
@@ -49,12 +49,12 @@ class CheckPermissionsAction
       operator = request.operator,
       request = request,
       accessType = accessType,
-      _c = request.c)))
+      requestedCase = request.`case`)))
   }
 }
 
 @Singleton
-class AuthoriseFilterAction
+class MustHaveWritePermissionAction
   extends ActionFilter[AuthenticatedCaseRequest] {
 
   override protected def filter[A](request: AuthenticatedCaseRequest[A]): Future[Option[Result]] = {
@@ -68,7 +68,7 @@ class AuthoriseFilterAction
   }
 
   private def isAuthorized[A](request: AuthenticatedCaseRequest[A]) = {
-    request.c.isAssignedTo(request.operator) || request.operator.manager
+    request.`case`.isAssignedTo(request.operator) || request.operator.manager
   }
 }
 
@@ -87,7 +87,7 @@ class VerifyCaseExistsActionFactory @Inject()(casesService: CasesService) {
                 new AuthenticatedCaseRequest(
                   operator = request.operator,
                   request = request,
-                  _c = c)
+                  requestedCase = c)
               )
             )
           case _ => successful(Left(Redirect(routes.CaseController.caseNotFound(reference))))

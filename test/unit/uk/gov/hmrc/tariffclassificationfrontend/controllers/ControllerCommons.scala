@@ -27,8 +27,8 @@ trait ControllerCommons {
 
   protected def requestActions(operator: Operator): RequestActions = {
     new RequestActions(
-      new SuccessfulAuthorisedAction(operator),
-      new SuccessfulReadOnlyAction(operator),
+      new SuccessfulMustHaveWritePermissionAction(operator),
+      new SuccessfulCheckPermissionsAction(operator),
       new SuccessfulAuthenticatedAction(operator),
       null
     )

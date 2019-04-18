@@ -21,20 +21,28 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.request.AccessType.{Acces
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Operator}
 
 class AuthenticatedRequest[A](_operator: Operator, _request: Request[A], _accessType: AccessType = READ_WRITE)
-                  extends WrappedRequest[A](_request) {
+  extends WrappedRequest[A](_request) {
 
-  val operator : Operator = _operator
-  val request  : Request[A] = _request
+  val operator: Operator = _operator
+  val request: Request[A] = _request
 
   val hasWritePermission: Boolean = _accessType == AccessType.READ_WRITE || operator.manager
 }
 
-class AuthenticatedCaseRequest[A](operator: Operator, request: Request[A], accessType: AccessType = READ_WRITE, _c: Case)
-                  extends AuthenticatedRequest[A] (operator , request, accessType){
-  val c : Case = _c
+object AuthenticatedRequest {
+  def apply[A](_operator: Operator, _request: Request[A], _accessType: AccessType = READ_WRITE) = new AuthenticatedRequest(_operator, _request, _accessType)
+}
+
+class AuthenticatedCaseRequest[A](operator: Operator, request: Request[A], accessType: AccessType = READ_WRITE, requestedCase: Case)
+  extends AuthenticatedRequest[A](operator, request, accessType) {
+  val `case`: Case = requestedCase
 }
 
 object AccessType extends Enumeration {
   type AccessType = Value
-  val READ_ONLY, READ_WRITE  = Value
+  val READ_ONLY, READ_WRITE = Value
 }
+
+
+
+
