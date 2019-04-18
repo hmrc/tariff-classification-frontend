@@ -23,7 +23,7 @@ import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterEach, Matchers, WordSpec}
 import play.api.http.{MimeTypes, Status}
 import play.api.i18n.{DefaultLangs, DefaultMessagesApi}
-import play.api.mvc.Result
+import play.api.mvc.{ActionRefiner, Result}
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
@@ -52,7 +52,15 @@ class SuspendCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   private implicit val mat: Materializer = fakeApplication.materializer
   private implicit val hc: HeaderCarrier = HeaderCarrier()
 
-  private val controller = new SuspendCaseController(new SuccessfulRequestActions(operator), casesService, messageApi, appConfig)
+  private val requestActions = mock[SuccessfulRequestActions]
+
+  private val controller = new SuspendCaseController(requestActions, casesService, messageApi, appConfig)
+
+  override def beforeEach(): Unit = {
+    when(requestActions.authenticate).thenReturn(new SuccessfulAuthenticatedAction(operator))
+    when(requestActions.setPermissions).thenReturn( new SuccessfulCheckPermissionsAction(operator))
+    when(requestActions.mustHaveWritePermission).thenReturn(new SuccessfulMustHaveWritePermissionAction((operator)))
+  }
 
   override def afterEach(): Unit = {
     super.afterEach()
@@ -73,7 +81,11 @@ class SuspendCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     }
 
     "redirect to Application Details for non OPEN statuses" in {
-      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusNEW)))
+
+      //TODO : How to test this onee
+
+
+      when(requestActions.caseExists(refEq("reference"))).thenReturn())
 
       val result: Result = await(controller.suspendCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
