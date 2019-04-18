@@ -21,9 +21,22 @@
 
 
 @if(file.scanStatus.contains(ScanStatus.READY) && file.url.isDefined) {
-    <a id="@{id}-file-@{file.id}" href="@file.url" target="_blank">
-        @name.getOrElse(file.fileName)
-    </a>
+    @if(file.isImage){
+        <div>
+            <a id="@{id}-file-@{file.id}-img-link" href="@file.url" target="_blank">
+                <img class="attachment-img" id="@{id}-file-@{file.id}-img" src="@file.url" alt="@file.fileName" title="@file.fileName"/>
+            </a>
+        </div>
+        <div>
+            <a id="@{id}-file-@{file.id}" href="@file.url" target="_blank">
+                @name.getOrElse(file.fileName)
+            </a>
+        </div>
+    } else {
+        <a id="@{id}-file-@{file.id}" href="@file.url" target="_blank">
+            @name.getOrElse(file.fileName)
+        </a>
+    }
 } else {
     <div>
         <span id="@{id}-file-@{file.id}">@name.getOrElse(file.fileName)</span>
