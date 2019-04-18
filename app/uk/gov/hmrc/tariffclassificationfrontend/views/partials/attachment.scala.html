@@ -27,11 +27,6 @@
                 <img class="attachment-img" id="@{id}-file-@{file.id}-img" src="@file.url" alt="@file.fileName" title="@file.fileName"/>
             </a>
         </div>
-        <div>
-            <a id="@{id}-file-@{file.id}" href="@file.url" target="_blank">
-                @name.getOrElse(file.fileName)
-            </a>
-        </div>
     } else {
         <a id="@{id}-file-@{file.id}" href="@file.url" target="_blank">
             @name.getOrElse(file.fileName)

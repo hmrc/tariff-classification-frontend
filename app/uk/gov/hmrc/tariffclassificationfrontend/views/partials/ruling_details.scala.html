@@ -125,7 +125,7 @@
         <span id="no-ruling-information">@messages("case.decision.empty")</span>
     }
 
-    <h3 class="heading-medium">@messages("case.decision.attachments")</h3>
+    <h3 class="heading-medium">@messages("case.decision.attachments.ruling")</h3>
     @attachments_list("attachments", files.filter(_.public))
 
     @ruling_certificate_link(c)
