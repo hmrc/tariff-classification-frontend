@@ -30,9 +30,7 @@
 
         @tab_heading("ruling", messages("case.menu.ruling"))
 
-        <h4 class="heading-small">@messages("case.menu.application-details")</h4>
-
-        <hr class="mt-0"/>
+        <h3 class="heading-medium mb-1">@messages("case.decision.information-applicant")</h3>
 
         <div class="grid-row">
             <div id="application_envisagedCommodityCode" class="column-one-third">
@@ -52,14 +50,12 @@
             </div>
         </div>
 
-
-        <div class="grid-row">
-            <div class="column-one-third">
-                <h4 class="heading-small">@messages("case.menu.ruling-details")</h4>
-            </div>
-        </div>
-
         <hr class="mt-0"/>
+
+        <h2 class="heading-large mt-0 mb-3"> @messages("case.decision.edit-ruling")</h2>
+
+        <h3 class="heading-medium mt-0">@messages("case.decision.ruling-details")</h3>
+
 
         @form(action = RulingController.updateRulingDetails(c.reference), 'class -> "form") {
 
@@ -68,22 +64,26 @@
             @input_text(
                 field = decisionForm("bindingCommodityCode"),
                 label = messages("case.decision.commodity-code"),
+                hint = Some(messages("case.decision.hint.published-content")),
                 disableAutoComplete = true
             )
 
             @input_textarea(
                 field = decisionForm("goodsDescription"),
-                label = messages("case.decision.goods-description")
-            )
-
-            @input_textarea(
-                field = decisionForm("methodSearch"),
-                label = messages("case.decision.method-search")
+                label = messages("case.decision.goods-description"),
+                hint = Some(messages("case.decision.hint.published-content"))
             )
 
             @input_textarea(
                 field = decisionForm("justification"),
-                label = messages("case.decision.justification")
+                label = messages("case.decision.justification"),
+                hint = Some(messages("case.decision.hint.published-content"))
+            )
+
+            @input_textarea(
+                field = decisionForm("methodSearch"),
+                label = messages("case.decision.method-search"),
+                hint = Some(messages("case.decision.hint.published-content"))
             )
 
             @input_textarea(

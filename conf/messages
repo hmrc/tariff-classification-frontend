@@ -77,21 +77,29 @@ answer.none=None
 
 
 case.decision.application.title=Information from the applicant
+case.decision.information-applicant=Information from the applicant
+
+case.decision.edit-ruling=Edit ruling
+case.decision.ruling-details=Ruling details to be published
+
 
 case.decision.commodity-code=Binding commodity code
-case.decision.goods-description=Sanitised goods description
-case.decision.justification=Justification
+case.decision.goods-description=Item description
+case.decision.justification=Legal justification
 case.decision.method-search=Searches performed
 case.decision.method-commercial-denomination=Commercial denomination and additional information
-case.decision.method-exclusion=Exclusions/inclusions
+case.decision.method-exclusion=Exclusions and inclusions
 case.decision.attachments=Select files to attach to the ruling
 case.decision.empty=There is no ruling information associated to this case.
+
+case.decision.hint.published-content=This will be published on the public rulings website.
+
 
 case.decision.before-you-complete=Before you complete this case
 case.decision.constrain.methodSearch=Searches performed
 case.decision.constrain.justification=Justification
 case.decision.constrain.bindingCommodityCode=Binding commodity code
-case.decision.constrain.goodsDescription=Sanitised goods description
+case.decision.constrain.goodsDescription=Item description
 
 case.decision.ruling.certificate.content=If this case is under review or appeal
 case.decision.ruling.certificate.link=view and print a PDF of the ruling.
@@ -113,6 +121,9 @@ cases.attachment.upload.label = Upload a file
 cases.attachment.upload.error.restrictionSize = Your file will not upload because it''s bigger than 10MB
 cases.attachment.upload.error.mustSelect = You must select a file
 cases.attachment.upload.error.fileType = Your document will not upload because it''s not a valid file type
+
+
+
 
 events.table.empty=There are no events for this case
 

@@ -35,10 +35,8 @@
 
  @back_link(displayBackLink = true, SessionKeys.backToQueuesLinkUrl, SessionKeys.backToQueuesLinkLabel)
 
- <h1 id="advanced_search-heading" class="heading-xlarge">Advanced search</h1>
-
- <h2 class="heading-large">Enter search terms</h2>
- <hr class="mt-0"/>
+ <h1 id="advanced_search-heading" class="heading-xlarge mb-3">Advanced search</h1>
+ <p>To narrow your search, enter multiple search terms.<p>
 
  @helper.form(action = controllers.routes.SearchController.search().withFragment("advanced_search_keywords"),
   'id -> "advanced_search-form") {
@@ -51,6 +49,7 @@
   @input_text(
    field = form("commodity_code"),
    label = "Commodity code",
+   hint = Some("Search by 2 digits or more"),
    formControlClass = Some("w-75")
   )
 
@@ -62,7 +61,6 @@
   )
 
   @advanced_search_keywords(form, keywords)
-
 
   <button id="advanced_search-search_button" class="button" type="submit">Search</button>
   <a id="advanced_search-reset_button" class="secondary-button" href="@controllers.routes.SearchController.search()">New search</a>
@@ -132,7 +130,7 @@
         singularName = "case",
         pluralName = "cases",
         pager = searchResults,
-        containerClass = Some("mt-2"),
+        containerClass = Some("mt-2 mb-1"),
         linksClass = Some("mt-2"),
         onChange = page => controllers.routes.SearchController.search(selectedTab, search = form.get, page = page).withFragment("advanced_search_keywords")
        )

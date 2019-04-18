@@ -35,44 +35,48 @@
             .map(index => form.data(s"keyword[$index]"))
 }
 
-@defining(moveUnAddedKeywordToTable(f)) { form: Form[Search] =>
-    <div id="advanced_search_keywords">
-        <div class="display-inline w-75">
-            @input_auto_complete(
-                field = form("keyword[0]"),
-                label = "Add keyword to search",
-                formControlClass = Some("w-100"),
-                autoCompleteOptions = keywords.diff(keywordsAdded(form))
-            )
-        </div>
-        <button id="advanced_search-add_keyword" class="button display-inline autocomplete-button" type="submit">Add</button>
-    </div>
+ <div><p class="mb-1">Add a keyword to your search</p></div>
+ <div class="boxed mb-3">
+     <div class="boxed-content">
+        @defining(moveUnAddedKeywordToTable(f)) { form: Form[Search] =>
+            <div id="advanced_search_keywords">
+                <div class="display-inline w-75">
+                    @input_auto_complete(
+                        field = form("keyword[0]"),
+                        label = "Search keyword",
+                        hint = Some("Add keywords to narrow your search, remove keywords to broaden results"),
+                        formControlClass = Some("w-100"),
+                        autoCompleteOptions = keywords.diff(keywordsAdded(form))
+                    )
+                </div>
+                <button id="advanced_search-add_keyword" class="button display-inline autocomplete-button" type="submit">Add to search</button>
+            </div>
 
-    @defining(RepeatedMapping.indexes("keyword", form.data).map(idx => (idx, form.data(s"keyword[$idx]"))).filterNot(_._1 == 0)) { keywords: Seq[(Int, String)] =>
-        @if(keywords.nonEmpty) {
-            <table id="advanced_search_keywords-table" class="mb-30">
-                <tbody id="advanced_search_keywords-table-table_body">
-                @for((index: Int, keyword: String) <- keywords) {
-                    @* Make sure any content changes in this table are also reflected in search.js *@
-                    <tr id="advanced_search_keywords-table-row-@{index}">
-                        <td>
-                        @defining(form(s"keyword[$index]")) { field: Field =>
-                            <span id="advanced_search_keywords-table-row-@{index}-label">@keyword</span>
-                            <input id="advanced_search_keywords-table-row-@{index}-input" name="@{field.name}" type="hidden" value="@keyword"/>
-                        }
-                        </td>
+        @defining(RepeatedMapping.indexes("keyword", form.data).map(idx => (idx, form.data(s"keyword[$idx]"))).filterNot(_._1 == 0)) { keywords: Seq[(Int, String)] =>
+            @if(keywords.nonEmpty) {
+                <table id="advanced_search_keywords-table" class="mb-30">
+                    <tbody id="advanced_search_keywords-table-table_body">
+                    @for((index: Int, keyword: String) <- keywords) {
+                        @* Make sure any content changes in this table are also reflected in search.js *@
+                        <tr id="advanced_search_keywords-table-row-@{index}">
+                            <td>
+                            @defining(form(s"keyword[$index]")) { field: Field =>
+                                <span id="advanced_search_keywords-table-row-@{index}-label">@keyword</span>
+                                <input id="advanced_search_keywords-table-row-@{index}-input" name="@{field.name}" type="hidden" value="@keyword"/>
+                            }
+                            </td>
 
-                        <td align="right">
-                            <button id="advanced_search_keywords-table-row-@{index}-remove_button" type="button" class="button-link" onclick="advancedSearch.removeKeyword(@index)">Remove</button>
-                        </td>
-                    </tr>
-                }
-                </tbody>
-            </table>
+                            <td align="right">
+                                <button id="advanced_search_keywords-table-row-@{index}-remove_button" type="button" class="button-link" onclick="advancedSearch.removeKeyword(@index)">Remove</button>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            }
         }
-    }
-
-
+    </div>
+</div>
 }
 
 <script src="@routes.Assets.at("javascripts/search.js")" type="text/javascript"></script>
