@@ -45,12 +45,7 @@ class RulingController @Inject()(verify: RequestActions,
 
   private lazy val menuTitle = CaseDetailPage.RULING
 
-  private def editRuling(f: Form[DecisionFormData], c: Case)
-                        (implicit request: Request[_]): Future[HtmlFormat.Appendable] = {
-    fileStoreService.getAttachments(c).map(views.html.partials.ruling_details_edit(c, _, f))
-  }
-
-  def editRulingDetails(reference: String): Action[AnyContent]= verify.caseExistsAndFilterByAuthorisation(reference).async { implicit request =>
+  def editRulingDetails(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.caseExists(reference) andThen verify.mustHaveWritePermission).async { implicit request =>
     getCaseAndRenderView(reference, menuTitle, c => {
       val formData = mapper.caseToDecisionFormData(c)
       val df = decisionForm.form.fill(formData)
@@ -59,7 +54,21 @@ class RulingController @Inject()(verify: RequestActions,
     })
   }
 
-  def updateRulingDetails(reference: String): Action[AnyContent]= verify.caseExistsAndFilterByAuthorisation(reference).async { implicit request =>
+  private def editRuling(f: Form[DecisionFormData], c: Case)
+                        (implicit request: Request[_]): Future[HtmlFormat.Appendable] = {
+    fileStoreService.getAttachments(c).map(views.html.partials.ruling_details_edit(c, _, f))
+  }
+
+  private def getCaseAndRenderView(reference: String, page: CaseDetailPage, toHtml: Case => Future[HtmlFormat.Appendable])
+                                  (implicit request: Request[_]): Future[Result] = {
+    casesService.getOne(reference).flatMap {
+      case Some(c: Case) if c.status == CaseStatus.OPEN => toHtml(c).map(html => Ok(views.html.case_details(c, page, html)))
+      case Some(_) => successful(Redirect(routes.CaseController.rulingDetails(reference)))
+      case _ => successful(Ok(views.html.case_not_found(reference)))
+    }
+  }
+
+  def updateRulingDetails(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.caseExists(reference) andThen verify.mustHaveWritePermission).async { implicit request =>
     decisionForm.form.bindFromRequest.fold(
       errorForm =>
         getCaseAndRenderView(
@@ -80,15 +89,6 @@ class RulingController @Inject()(verify: RequestActions,
             }
         })
     )
-  }
-
-  private def getCaseAndRenderView(reference: String, page: CaseDetailPage, toHtml: Case => Future[HtmlFormat.Appendable])
-                                  (implicit request: Request[_]): Future[Result] = {
-    casesService.getOne(reference).flatMap {
-      case Some(c: Case) if c.status == CaseStatus.OPEN => toHtml(c).map(html => Ok(views.html.case_details(c, page, html)))
-      case Some(_) => successful(Redirect(routes.CaseController.rulingDetails(reference)))
-      case _ => successful(Ok(views.html.case_not_found(reference)))
-    }
   }
 
 }

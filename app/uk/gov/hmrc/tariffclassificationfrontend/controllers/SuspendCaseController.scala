@@ -37,19 +37,15 @@ class SuspendCaseController @Inject()(verify: RequestActions,
                                       val messagesApi: MessagesApi,
                                       implicit val appConfig: AppConfig) extends RenderCaseAction {
 
-  private val form: Form[Boolean] = MandatoryBooleanForm.form("suspend_case")
-
   override protected val config: AppConfig = appConfig
   override protected val caseService: CasesService = casesService
+  private val form: Form[Boolean] = MandatoryBooleanForm.form("suspend_case")
 
-  override protected def redirect: String => Call = routes.CaseController.applicationDetails
-  override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = c.status == OPEN
-
-  def suspendCase(reference: String): Action[AnyContent] =verify.caseExistsAndFilterByAuthorisation(reference).async { implicit request =>
+  def suspendCase(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.caseExists(reference) andThen verify.mustHaveWritePermission).async { implicit request =>
     getCaseAndRenderView(reference, c => successful(views.html.suspend_case(c, form)))
   }
 
-  def confirmSuspendCase(reference: String): Action[AnyContent] =verify.caseExistsAndFilterByAuthorisation(reference).async { implicit request =>
+  def confirmSuspendCase(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.caseExists(reference) andThen verify.mustHaveWritePermission).async { implicit request =>
     form.bindFromRequest().fold(
       errors => {
         getCaseAndRenderView(reference, c => successful(views.html.suspend_case(c, errors)))
@@ -60,5 +56,9 @@ class SuspendCaseController @Inject()(verify: RequestActions,
       }
     )
   }
+
+  override protected def redirect: String => Call = routes.CaseController.applicationDetails
+
+  override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = c.status == OPEN
 
 }

@@ -39,32 +39,13 @@ class ReassignCaseController @Inject()(verify: RequestActions,
                                        val messagesApi: MessagesApi,
                                        override implicit val config: AppConfig) extends RenderCaseAction {
 
-  override protected def redirect: String => Call = {
-    // in case this is called from the "assigned cases" journey, we should redirect to `/queue/assigned/:assigneeId`
-    routes.CaseController.applicationDetails
-  }
-
-  override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = {
-    c.assignee.isDefined && reassignCaseStatuses.contains(c.status)
-  }
-
   private lazy val form: Form[String] = ReleaseCaseForm.form
 
-  private def reassignToQueue(f: Form[String], caseRef: String, origin: String)
-                             (implicit request: AuthenticatedRequest[_]): Future[Result] = {
-    getCaseAndRenderView(caseRef, c =>
-      for {
-        queues <- queueService.getNonGateway
-        assignedQueue <- c.queueId.map(queueService.getOneById).getOrElse(successful(None))
-      } yield views.html.reassign_queue_case(c, f, queues, assignedQueue, origin)
-    )
-  }
-
-  def showAvailableQueues(reference: String, origin: String): Action[AnyContent] = verify.caseExistsAndFilterByAuthorisation(reference).async { implicit request =>
+  def showAvailableQueues(reference: String, origin: String): Action[AnyContent] = (verify.authenticate andThen verify.caseExists(reference) andThen verify.mustHaveWritePermission).async { implicit request =>
     reassignToQueue(form, reference, origin)
   }
 
-  def reassignCase(reference: String, origin: String): Action[AnyContent] = verify.caseExistsAndFilterByAuthorisation(reference).async { implicit request =>
+  def reassignCase(reference: String, origin: String): Action[AnyContent] = (verify.authenticate andThen verify.caseExists(reference) andThen verify.mustHaveWritePermission).async { implicit request =>
 
     def onInvalidForm(formWithErrors: Form[String]): Future[Result] = {
       reassignToQueue(formWithErrors, reference, origin)
@@ -82,6 +63,25 @@ class ReassignCaseController @Inject()(verify: RequestActions,
     }
 
     form.bindFromRequest.fold(onInvalidForm, onValidForm)
+  }
+
+  private def reassignToQueue(f: Form[String], caseRef: String, origin: String)
+                             (implicit request: AuthenticatedRequest[_]): Future[Result] = {
+    getCaseAndRenderView(caseRef, c =>
+      for {
+        queues <- queueService.getNonGateway
+        assignedQueue <- c.queueId.map(queueService.getOneById).getOrElse(successful(None))
+      } yield views.html.reassign_queue_case(c, f, queues, assignedQueue, origin)
+    )
+  }
+
+  override protected def redirect: String => Call = {
+    // in case this is called from the "assigned cases" journey, we should redirect to `/queue/assigned/:assigneeId`
+    routes.CaseController.applicationDetails
+  }
+
+  override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = {
+    c.assignee.isDefined && reassignCaseStatuses.contains(c.status)
   }
 
 }

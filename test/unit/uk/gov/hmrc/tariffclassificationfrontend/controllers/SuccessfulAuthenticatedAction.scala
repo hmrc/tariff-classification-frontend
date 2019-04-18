@@ -41,7 +41,7 @@ class SuccessfulAuthenticatedAction(operator: Operator = Operator("0", Some("nam
   }
 }
 
-class SuccessfulAuthorisedAction(operator: Operator = Operator("0", Some("name")), accessType: AccessType = READ_WRITE) extends AuthoriseFilterAction {
+class SuccessfulAuthorisedAction(operator: Operator = Operator("0", Some("name")), accessType: AccessType = READ_WRITE) extends MustHaveWritePermissionAction {
   protected override def filter[A](request: AuthenticatedCaseRequest[A]): Future[Option[Result]] = successful(None)
 }
 
@@ -57,7 +57,7 @@ class ExistingCaseActionFactory(reference: String) extends VerifyCaseExistsActio
     new ActionRefiner[AuthenticatedRequest, AuthenticatedCaseRequest] {
       override protected def refine[A](request: AuthenticatedRequest[A]): Future[Either[Result, AuthenticatedCaseRequest[A]]] = {
         successful(
-          Right(new AuthenticatedCaseRequest(operator = request.operator, request = request, _c = Cases.btiCaseExample)
+          Right(new AuthenticatedCaseRequest(operator = request.operator, request = request, requestedCase = Cases.btiCaseExample)
           )
         )
       }
