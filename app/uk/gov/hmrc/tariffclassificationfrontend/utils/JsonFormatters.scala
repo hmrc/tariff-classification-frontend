@@ -25,6 +25,12 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, _}
 
 object JsonFormatters {
 
+  implicit val reportField: Format[CaseReportField.Value] = EnumJson.format(CaseReportField)
+  implicit val reportGroup: Format[CaseReportGroup.Value] = EnumJson.format(CaseReportGroup)
+  implicit val reportResult: Format[ReportResult] = Json.format[ReportResult]
+  implicit val instantRange: Format[InstantRange] = Json.format[InstantRange]
+  implicit val caseReportFilter: Format[CaseReportFilter] = Json.format[CaseReportFilter]
+  implicit val caseReport: Format[CaseReport] = Json.format[CaseReport]
   implicit val operator: Format[Operator] = Jsonx.formatCaseClass[Operator]
   implicit val scanStatusFormat: Format[ScanStatus.Value] = EnumJson.format(ScanStatus)
   implicit val appealStatusFormat: Format[AppealStatus.Value] = EnumJson.format(AppealStatus)
