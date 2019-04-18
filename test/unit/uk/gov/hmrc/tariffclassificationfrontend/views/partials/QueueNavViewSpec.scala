@@ -48,5 +48,25 @@ class QueueNavViewSpec extends ViewSpec with BeforeAndAfterEach {
       // Then
       doc should containElementWithID("nav-menu-assigned-cases")
     }
+
+    "Not render reports if unauthorised" in {
+      // Given
+
+      // When
+      val doc = view(queue_nav(Seq.empty, ""))
+
+      // Then
+      doc shouldNot containElementWithID("nav-menu-reports")
+    }
+
+    "Render reports if authorised" in {
+      // Given
+
+      // When
+      val doc = view(queue_nav(Seq.empty, "")(authenticatedManagerFakeRequest, messages))
+
+      // Then
+      doc should containElementWithID("nav-menu-reports")
+    }
   }
 }

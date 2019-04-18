@@ -113,8 +113,8 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
 
       // Then
       doc shouldNot containElementWithID("edit-ruling-no_attachments")
-      doc should containElementWithID("edit-ruling-file-0")
-      doc should containElementWithID("attachments[]")
+      doc should containElementWithID("attachments-row-0-file")
+      doc should containElementWithID("attachments[0]")
     }
 
     "Not render unsafe attachments" in {
@@ -138,8 +138,8 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
 
       // Then
       doc should containElementWithID("edit-ruling-no_attachments")
-      doc shouldNot containElementWithID("edit-ruling-file-FILE_ID")
-      doc shouldNot containElementWithID("attachments[]")
+      doc shouldNot containElementWithID("attachments-row-0-file-FILE_ID")
+      doc shouldNot containElementWithID("attachments[0]")
     }
 
     "Render attachments pre-selected when 'public'" in {
@@ -162,8 +162,8 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
       val doc = view(ruling_details_edit(c, Seq(stored), decisionForm.form))
 
       // Then
-      doc should containElementWithID("attachments[]")
-      doc.getElementById("attachments[]") should haveAttribute("checked", "checked")
+      doc should containElementWithID("attachments[0]")
+      doc.getElementById("attachments[0]") should haveAttribute("checked", "checked")
     }
 
     "Render attachments not pre-selected when not 'public'" in {
@@ -186,8 +186,8 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
       val doc = view(ruling_details_edit(c, Seq(stored), decisionForm.form))
 
       // Then
-      doc should containElementWithID("attachments[]")
-      doc.getElementById("attachments[]") shouldNot haveAttribute("checked", "checked")
+      doc should containElementWithID("attachments[0]")
+      doc.getElementById("attachments[0]") shouldNot haveAttribute("checked", "checked")
     }
 
     "Render as link when URL available" in {
@@ -210,10 +210,10 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
       val doc = view(ruling_details_edit(c, Seq(stored), decisionForm.form))
 
       // Then
-      doc should containElementWithID("edit-ruling-file-0")
-      doc.getElementById("edit-ruling-file-0") should haveTag("a")
-      doc.getElementById("edit-ruling-file-0") should haveAttribute("href", "url")
-      doc.getElementById("edit-ruling-file-0") should containText("file.txt")
+      doc should containElementWithID("attachments-row-0-file")
+      doc.getElementById("attachments-row-0-file") should haveTag("a")
+      doc.getElementById("attachments-row-0-file") should haveAttribute("href", "url")
+      doc.getElementById("attachments-row-0-file") should containText("file.txt")
     }
 
     "Render as text when URL not available" in {
@@ -236,9 +236,9 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
       val doc = view(ruling_details_edit(c, Seq(stored), decisionForm.form))
 
       // Then
-      doc should containElementWithID("edit-ruling-file-0")
-      doc.getElementById("edit-ruling-file-0") should haveTag("span")
-      doc.getElementById("edit-ruling-file-0") should containText("file.txt")
+      doc should containElementWithID("attachments-row-0-file")
+      doc.getElementById("attachments-row-0-file") should haveTag("span")
+      doc.getElementById("attachments-row-0-file") should containText("file.txt")
     }
 
     "Render with commodity code autocomplete disabled" in {

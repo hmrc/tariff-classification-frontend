@@ -100,6 +100,14 @@
   margin-right: (3 * $spacer);
 }
 
+.mt-4 {
+  margin-top: (4 * $spacer);
+}
+
+.mb-4 {
+  margin-bottom: (4 * $spacer);
+}
+
 .ml-5 {
   margin-left: 5px;
 }
@@ -126,6 +134,14 @@
 
 .pr-0 {
   padding-right: 0;
+}
+
+.pr-5 {
+  padding-right: 5px;
+}
+
+.pr-15 {
+  padding-right: 15px;
 }
 
 .px-0 {
@@ -165,6 +181,14 @@
   text-align: right;
 }
 
+.text-right {
+  text-align: right
+}
+
+.text-center {
+  text-align: center;
+}
+
 table thead th {
   vertical-align: top;
 }
@@ -196,10 +220,6 @@ table tbody td[align="right"], table tbody th[align="right"], table thead th[ali
   display: block;
   max-width: 960px;
   margin: 0 auto;
-}
-
-.text-right {
-  text-align: right
 }
 
 .word-break {
@@ -281,12 +301,32 @@ table tbody td[align="right"], table tbody th[align="right"], table thead th[ali
   }
 }
 
-.full-width{
+.full-width {
   width:100%;
 }
 
-.border-bottom{
+.border-bottom {
   border-bottom: 1px solid #bfc1c3;
+}
+
+.border-left {
+  border-left: 1px solid #bfc1c3;
+}
+
+.border-right {
+  border-right: 1px solid #bfc1c3;
+}
+
+td.border-left, th.border-left {
+  padding-left: 10px;
+}
+
+td.border-right, th.border-right {
+  padding-right: 10px;
+}
+
+table tbody tr th {
+  font-weight: bold;
 }
 
 .dl-mb-2 {
@@ -294,4 +334,8 @@ table tbody td[align="right"], table tbody th[align="right"], table thead th[ali
   dd {
     margin-bottom: (2 * $spacer);
   }
+}
+
+.attachment-img {
+  width: 6em;
 }

@@ -17,7 +17,7 @@
 package uk.gov.hmrc.tariffclassificationfrontend.connector
 
 import java.net.URLEncoder
-import java.time.{Clock, LocalDate, ZoneOffset}
+import java.time.{Clock, Instant, LocalDate, ZoneOffset}
 
 import com.github.tomakehurst.wiremock.client.WireMock._
 import org.apache.http.HttpStatus
@@ -28,7 +28,7 @@ import uk.gov.tariffclassificationfrontend.utils._
 
 class BindingTariffClassificationConnectorSpec extends ConnectorTest {
 
-  import uk.gov.hmrc.tariffclassificationfrontend.utils.JsonFormatters.{caseFormat, eventFormat, newEventRequestFormat}
+  import uk.gov.hmrc.tariffclassificationfrontend.utils.JsonFormatters._
 
   private val gatewayQueue = Queue("1", "gateway", "Gateway")
   private val otherQueue = Queue("2", "other", "Other")
@@ -485,6 +485,41 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest {
       )
 
       await(connector.findAssignedCases(pagination)) shouldBe Paged(Seq(Cases.btiCaseExample))
+
+      verify(
+        getRequestedFor(urlEqualTo(url))
+          .withHeader("X-Api-Token", equalTo(realConfig.apiToken))
+      )
+    }
+
+  }
+
+  "Connector 'Generate Report'" should {
+    val report = CaseReport(
+      filter = CaseReportFilter(
+        decisionStartDate = Some(InstantRange(
+          min = Instant.EPOCH,
+          max = Instant.EPOCH.plusSeconds(1)
+        ))
+      ),
+      group = CaseReportGroup.QUEUE,
+      field = CaseReportField.DAYS_ELAPSED
+    )
+
+    val result = ReportResult(Some("queue-id"), Seq(1))
+
+    "GET report " in {
+      val url = "/report?min_decision_start=1970-01-01T00%3A00%3A00Z&max_decision_start=1970-01-01T00%3A00%3A01Z&report_group=queue-id&report_field=days-elapsed"
+
+      stubFor(get(urlEqualTo(url))
+        .willReturn(
+          aResponse()
+          .withStatus(HttpStatus.SC_OK)
+          .withBody(Json.toJson(Seq(result)).toString)
+        )
+      )
+
+      await(connector.generateReport(report)) shouldBe Seq(result)
 
       verify(
         getRequestedFor(urlEqualTo(url))

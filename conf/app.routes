@@ -12,6 +12,10 @@ GET         /queues/assigned                     @uk.gov.hmrc.tariffclassificati
 GET         /queues/assigned/:assigneeId         @uk.gov.hmrc.tariffclassificationfrontend.controllers.AssignedCasesController.assignedCasesFor(assigneeId: String)
 GET         /queues/:slug                        @uk.gov.hmrc.tariffclassificationfrontend.controllers.QueuesController.queue(slug: String)
 
+GET         /reports                             @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReportingController.getReports
+GET         /reports/:name                       @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReportingController.getReportCriteria(name: String)
+POST        /reports/:name                       @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReportingController.getReport(name: String)
+
 GET         /cases                               controllers.Default.redirect(to = uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.MyCasesController.myCases.url)
 GET         /cases/:reference                    @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.trader(reference: String)
 GET         /cases/:reference/application        @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.applicationDetails(reference: String)

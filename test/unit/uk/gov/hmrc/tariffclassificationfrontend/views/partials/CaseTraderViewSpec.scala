@@ -69,8 +69,8 @@ class CaseTraderViewSpec extends ViewSpec {
       val doc = view(case_trader(`case`, Some(letterOfAuthorization)))
 
       // Then
-      doc should containElementWithID("agent-letter-file-letter-of-auth-id")
-      doc.getElementById("agent-letter-file-letter-of-auth-id") should containText("View letter of authorisation")
+      doc should containElementWithID("agent-letter-file")
+      doc.getElementById("agent-letter-file") should containText("View letter of authorisation")
     }
 
     "show no tag when no letter of auth is provided" in {
