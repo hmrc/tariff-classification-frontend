@@ -113,7 +113,7 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
 
       // Then
       doc shouldNot containElementWithID("edit-ruling-no_attachments")
-      doc should containElementWithID("attachments-row-0-file-FILE_ID")
+      doc should containElementWithID("attachments-row-0-file")
       doc should containElementWithID("attachments[0]")
     }
 
@@ -210,10 +210,10 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
       val doc = view(ruling_details_edit(c, Seq(stored), decisionForm.form))
 
       // Then
-      doc should containElementWithID("attachments-row-0-file-FILE_ID")
-      doc.getElementById("attachments-row-0-file-FILE_ID") should haveTag("a")
-      doc.getElementById("attachments-row-0-file-FILE_ID") should haveAttribute("href", "url")
-      doc.getElementById("attachments-row-0-file-FILE_ID") should containText("file.txt")
+      doc should containElementWithID("attachments-row-0-file")
+      doc.getElementById("attachments-row-0-file") should haveTag("a")
+      doc.getElementById("attachments-row-0-file") should haveAttribute("href", "url")
+      doc.getElementById("attachments-row-0-file") should containText("file.txt")
     }
 
     "Render as text when URL not available" in {
@@ -236,9 +236,9 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
       val doc = view(ruling_details_edit(c, Seq(stored), decisionForm.form))
 
       // Then
-      doc should containElementWithID("attachments-row-0-file-FILE_ID")
-      doc.getElementById("attachments-row-0-file-FILE_ID") should haveTag("span")
-      doc.getElementById("attachments-row-0-file-FILE_ID") should containText("file.txt")
+      doc should containElementWithID("attachments-row-0-file")
+      doc.getElementById("attachments-row-0-file") should haveTag("span")
+      doc.getElementById("attachments-row-0-file") should containText("file.txt")
     }
 
     "Render with commodity code autocomplete disabled" in {
