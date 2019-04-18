@@ -21,6 +21,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
 @import uk.gov.hmrc.tariffclassificationfrontend.views.{Histogram, HistogramBucket, HistogramBucketInterval, Report}
+@import uk.gov.hmrc.tariffclassificationfrontend.views.SLAReport
 @(filter: InstantRange, results: Seq[ReportResult], queues: Seq[Queue])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None) {
@@ -82,52 +83,36 @@
             </tr>
         </thead>
         <tbody>
-        @defining(Histogram.calculate(results, intervals).filterByGroup(_.isDefined)) { histogram: Histogram =>
+        @defining(new SLAReport(Histogram.calculate(results, intervals).filterByGroup(_.exists(queues.map(_.id).contains(_))))) { report: SLAReport =>
            @for(queue <- queues) {
-               @defining(histogram.getBuckets(Some(queue.id))) { group: Map[HistogramBucketInterval, HistogramBucket] =>
                    <tr id="report_sla-table-queue_@{queue.slug}">
                     <th id="report_sla-table-queue_@{queue.slug}-name">@queue.name</th>
                     @for((interval, index) <- intervals.zipWithIndex) {
                         <td class="border-left" id="report_sla-table-queue_@{queue.slug}-interval_@index-count">
-                            @group.get(interval).map(_.count).getOrElse(0)
+                            @report.totalCountFor(queue, interval)
                         </td>
                         <td class="border-right" id="report_sla-table-queue_@{queue.slug}-interval_@index-percent">
-                        @{
-                            Math.round(group
-                                    .get(interval)
-                                    .map(100 * _.count.toDouble)
-                                    .getOrElse(0.0) /
-                                    results.find(_.group.exists(_ == queue.id))
-                                            .map(_.value.size.toDouble)
-                                            .getOrElse(1.0)
-                                    )
-                        }
+                            @report.totalPercentFor(queue, interval)
                         </td>
                     }
                    <th class="border-left" id="report_sla-table-queue_@{queue.slug}-total">
-                    @results.find(_.group.exists(_ == queue.id)).map(_.value.size).getOrElse(0)
+                    @report.totalCountFor(queue)
                    </th>
                 </tr>
-
-               }
             }
             <tr id="report_sla-table-totals">
                 <th>Totals</th>
-                @defining(queues.flatMap(q => histogram.getBuckets(Some(q.id)).map(_._2.count)).sum) { totalCompleted: Int =>
                     @for((interval, index) <- intervals.zipWithIndex) {
-                        @defining(queues.map(q => histogram.getBucket(Some(q.id), interval).map(_.count).getOrElse(0)).sum) { totalCompletedInInterval: Int =>
-                            <th class="border-left" id="report_sla-table-totals-interval_@index-count">
-                                @totalCompletedInInterval
-                            </th>
-                            <th class="border-right" id="report_sla-table-totals-interval_@index-percent">
-                                @{Math.round(100 * totalCompletedInInterval.toDouble / totalCompleted.toDouble)}
-                            </th>
-                        }
+                        <th class="border-left" id="report_sla-table-totals-interval_@index-count">
+                            @report.totalCountFor(interval)
+                        </th>
+                        <th class="border-right" id="report_sla-table-totals-interval_@index-percent">
+                            @report.totalPercentFor(interval)
+                        </th>
                     }
                 <th class="border-left" id="report_sla-table-totals-total">
-                    @totalCompleted
+                    @report.totalCount
                 </th>
-                }
             </tr>
         }
         </tbody>
