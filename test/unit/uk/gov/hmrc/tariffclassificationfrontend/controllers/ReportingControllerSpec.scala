@@ -33,7 +33,7 @@ import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.InstantRangeForm
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
-import uk.gov.hmrc.tariffclassificationfrontend.models.{InstantRange, Operator, Queue, ReportResult}
+import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.service._
 import uk.gov.hmrc.tariffclassificationfrontend.views
 import uk.gov.hmrc.tariffclassificationfrontend.views.{Report, SelectedReport}
@@ -49,15 +49,15 @@ class ReportingControllerSpec extends UnitSpec with Matchers with WithFakeApplic
   private val appConfig = new AppConfig(configuration, env)
   private val reportingService = mock[ReportingService]
   private val queueService = mock[QueuesService]
-  private val manager = Operator("id", manager = true)
-  private val nonManager = Operator("id", manager = false)
+  private val manager = Operator("id", role = Role.CLASSIFICATION_MANAGER)
+  private val nonManager = Operator("id", role = Role.CLASSIFICATION_OFFICER)
   private implicit val hc: HeaderCarrier = HeaderCarrier()
 
   private def controller(operator: Operator) = new ReportingController(
     new SuccessfulAuthenticatedAction(operator), new AuthenticatedManagerAction(), reportingService, queueService, messageApi, appConfig
   )
 
-  private def request[A](operator: Operator, request: Request[A]) = AuthenticatedRequest(operator, request)
+  private def request[A](operator: Operator, request: Request[A]) = new AuthenticatedRequest(operator, request)
 
   override protected def afterEach(): Unit = {
     super.afterEach()
