@@ -23,7 +23,7 @@ import play.api.mvc._
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.ReleaseCaseForm
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus._
-import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
+import uk.gov.hmrc.tariffclassificationfrontend.models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Queue}
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, QueuesService}
 import uk.gov.hmrc.tariffclassificationfrontend.views
@@ -56,7 +56,6 @@ class ReassignCaseController @Inject()(verify: RequestActions,
         case None => successful(Ok(views.html.resource_not_found(s"Queue $queueSlug")))
         case Some(q: Queue) =>
           getCaseAndRenderView(
-            reference,
             caseService.reassignCase(_, q, request.operator).map(views.html.confirm_reassign_case(_, q, origin))
           )
       }
@@ -66,8 +65,8 @@ class ReassignCaseController @Inject()(verify: RequestActions,
   }
 
   private def reassignToQueue(f: Form[String], caseRef: String, origin: String)
-                             (implicit request: AuthenticatedRequest[_]): Future[Result] = {
-    getCaseAndRenderView(caseRef, c =>
+                             (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
+    getCaseAndRenderView(c =>
       for {
         queues <- queueService.getNonGateway
         assignedQueue <- c.queueId.map(queueService.getOneById).getOrElse(successful(None))

@@ -38,7 +38,7 @@ class ReopenCaseController @Inject()(verify: RequestActions,
   override protected val caseService: CasesService = casesService
 
   def confirmReopenCase(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.caseExists(reference) andThen verify.mustHaveWritePermission).async { implicit request =>
-    getCaseAndRenderView(reference, casesService.reopenCase(_, request.operator).map(views.html.confirm_reopen_case(_)))
+    getCaseAndRenderView(casesService.reopenCase(_, request.operator).map(views.html.confirm_reopen_case(_)))
   }
 
   override protected def redirect: String => Call = routes.CaseController.applicationDetails

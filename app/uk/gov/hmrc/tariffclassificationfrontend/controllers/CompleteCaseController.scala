@@ -41,11 +41,11 @@ class CompleteCaseController @Inject()(verify: RequestActions,
   override protected val caseService: CasesService = casesService
 
   def completeCase(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.caseExists(reference) andThen verify.mustHaveWritePermission).async { implicit request =>
-    getCaseAndRenderView(reference, c => successful(views.html.complete_case(c)))
+    getCaseAndRenderView(c => successful(views.html.complete_case(c)))
   }
 
   def confirmCompleteCase(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.caseExists(reference) andThen verify.mustHaveWritePermission).async { implicit request =>
-    getCaseAndRenderView(reference, casesService.completeCase(_, request.operator).map(views.html.confirm_complete_case(_)))
+    getCaseAndRenderView(casesService.completeCase(_, request.operator).map(views.html.confirm_complete_case(_)))
   }
 
   override protected def redirect: String => Call = routes.CaseController.rulingDetails
