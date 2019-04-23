@@ -86,6 +86,8 @@
                 hint = Some(messages("case.decision.hint.published-content"))
             )
 
+            <h3 class="heading-medium mb-2">@messages("case.decision.information-not-published")</h3>
+
             @input_textarea(
                 field = decisionForm("methodCommercialDenomination"),
                 label = messages("case.decision.method-commercial-denomination")
@@ -112,7 +114,6 @@
 
                 </fieldset>
             </div>
-
 
            <div class="form-group">
                 <button id="submit" class="button" type="submit">Save changes</button>
