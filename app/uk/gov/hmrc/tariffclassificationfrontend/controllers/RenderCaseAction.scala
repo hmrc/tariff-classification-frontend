@@ -49,12 +49,12 @@ trait RenderCaseAction extends FrontendController with I18nSupport {
     }
   }
 
-  protected def getCaseAndRenderView(toHtml: Case => Future[HtmlFormat.Appendable])
-                                    (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
+  protected def validateAndRenderView(toHtml: Case => Future[HtmlFormat.Appendable])
+                                     (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
 
-    if (isValidCase(request.`case`)(request)){
+    if (isValidCase(request.`case`)(request)) {
       toHtml(request.`case`).map(Ok(_))
-    }else{
+    } else {
       successful(Redirect(redirect(request.`case`.reference)))
     }
   }
@@ -71,12 +71,12 @@ trait RenderCaseAction extends FrontendController with I18nSupport {
   }
 
 
-  protected def getCaseAndRespond(toResult: Case => Future[Result])
-                                 (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
+  protected def validateAndRespond(toResult: Case => Future[Result])
+                                  (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
 
-    if (isValidCase(request.`case`)(request)){
+    if (isValidCase(request.`case`)(request)) {
       toResult(request.`case`)
-    }else{
+    } else {
       successful(Redirect(redirect(request.`case`.reference)))
     }
   }

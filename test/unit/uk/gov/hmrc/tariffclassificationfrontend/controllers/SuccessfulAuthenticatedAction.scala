@@ -17,13 +17,14 @@
 package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
 import org.mockito.Mockito.mock
+import play.api.i18n.MessagesApi
 import play.api.mvc.{ActionRefiner, Request, Result}
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.connector.StrideAuthConnector
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Operator}
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.AccessType._
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Operator}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.tariffclassificationfrontend.utils.Cases
 
@@ -51,7 +52,8 @@ class SuccessfulCheckPermissionsAction(operator: Operator = Operator("0", Some("
   }
 }
 
-class ExistingCaseActionFactory(reference: String, requestCase : Case = Cases.btiCaseExample) extends VerifyCaseExistsActionFactory(casesService = mock(classOf[CasesService])) {
+class ExistingCaseActionFactory(reference: String, requestCase: Case)
+  extends VerifyCaseExistsActionFactory(casesService = mock(classOf[CasesService]))(mock(classOf[MessagesApi]), mock(classOf[AppConfig])) {
 
   override def apply(reference: String): ActionRefiner[AuthenticatedRequest, AuthenticatedCaseRequest] = {
     new ActionRefiner[AuthenticatedRequest, AuthenticatedCaseRequest] {
@@ -66,12 +68,12 @@ class ExistingCaseActionFactory(reference: String, requestCase : Case = Cases.bt
 }
 
 
-class SuccessfulRequestActions(operator: Operator, reference: String = "test-reference", requestedCase : Case)
+class SuccessfulRequestActions(operator: Operator, reference: String = "test-reference", c: Case = Cases.btiCaseExample)
   extends RequestActions(
     new SuccessfulMustHaveWritePermissionAction(operator),
     new SuccessfulCheckPermissionsAction(operator),
     new SuccessfulAuthenticatedAction(operator),
-    new ExistingCaseActionFactory(reference, requestedCase)
+    new ExistingCaseActionFactory(reference, c)
   ) {
 
 }

@@ -55,7 +55,7 @@ class ReassignCaseController @Inject()(verify: RequestActions,
       queueService.getOneBySlug(queueSlug) flatMap {
         case None => successful(Ok(views.html.resource_not_found(s"Queue $queueSlug")))
         case Some(q: Queue) =>
-          getCaseAndRenderView(
+          validateAndRenderView(
             caseService.reassignCase(_, q, request.operator).map(views.html.confirm_reassign_case(_, q, origin))
           )
       }
@@ -66,7 +66,7 @@ class ReassignCaseController @Inject()(verify: RequestActions,
 
   private def reassignToQueue(f: Form[String], caseRef: String, origin: String)
                              (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
-    getCaseAndRenderView(c =>
+    validateAndRenderView(c =>
       for {
         queues <- queueService.getNonGateway
         assignedQueue <- c.queueId.map(queueService.getOneById).getOrElse(successful(None))

@@ -52,25 +52,25 @@ class RulingControllerSpec extends WordSpec with Matchers with WithFakeApplicati
 
   private implicit val hc = HeaderCarrier()
 
-  private val controller = new RulingController(
-    new SuccessfulRequestActions(operator), casesService, fileService, mapper, decisionForm, messageApi, appConfig
-  )
-
   override protected def afterEach(): Unit = {
     super.afterEach()
     Mockito.reset(casesService)
   }
 
+  private def controller(c: Case) = new RulingController(
+    new SuccessfulRequestActions(operator, c = c), casesService, fileService, mapper, decisionForm, messageApi, appConfig
+  )
+
   "Edit Ruling" should {
-    val caseWithStatusNEW = Cases.btiCaseExample.copy(status = CaseStatus.NEW)
-    val caseWithStatusOPEN = Cases.btiCaseExample.copy(status = CaseStatus.OPEN)
+    val caseWithStatusNEW = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.NEW)
+    val caseWithStatusOPEN = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.OPEN)
     val attachment = Cases.storedAttachment
 
     "return OK and HTML content type" in {
-      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(caseWithStatusOPEN)))
+
       given(fileService.getAttachments(refEq(caseWithStatusOPEN))(any[HeaderCarrier])).willReturn(Future.successful(Seq(attachment)))
 
-      val result = controller.editRulingDetails("reference")(newFakeGETRequestWithCSRF(fakeApplication))
+      val result = controller(caseWithStatusOPEN).editRulingDetails("reference")(newFakeGETRequestWithCSRF(fakeApplication))
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
@@ -78,31 +78,19 @@ class RulingControllerSpec extends WordSpec with Matchers with WithFakeApplicati
     }
 
     "redirect to Ruling for non OPEN Statuses" in {
-      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(caseWithStatusNEW)))
 
-      val result = controller.editRulingDetails("reference")(newFakeGETRequestWithCSRF(fakeApplication))
+      val result = controller(caseWithStatusNEW).editRulingDetails("reference")(newFakeGETRequestWithCSRF(fakeApplication))
       status(result) shouldBe Status.SEE_OTHER
       contentType(result) shouldBe None
       charset(result) shouldBe None
       redirectLocation(result) shouldBe Some("/tariff-classification/cases/reference/ruling")
     }
-
-    "return Not Found and HTML content type" in {
-      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(None))
-
-      val result = controller.editRulingDetails("reference")(newFakeGETRequestWithCSRF(fakeApplication))
-      status(result) shouldBe Status.OK
-      contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
-      contentAsString(result) should include("We could not find a Case with reference")
-    }
-
   }
 
   "Update Ruling" should {
-    val caseWithStatusNEW = Cases.btiCaseExample.copy(status = CaseStatus.NEW)
-    val caseWithStatusOPEN = Cases.btiCaseExample.copy(status = CaseStatus.OPEN)
-    val updatedCase = Cases.btiCaseExample.copy(status = CaseStatus.OPEN)
+    val caseWithStatusNEW = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.NEW)
+    val caseWithStatusOPEN = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.OPEN)
+    val updatedCase = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.OPEN)
     val attachment = Cases.storedAttachment
 
     val aValidForm = newFakePOSTRequestWithCSRF(fakeApplication, Map(
@@ -116,11 +104,11 @@ class RulingControllerSpec extends WordSpec with Matchers with WithFakeApplicati
     )
 
     "return OK and HTML content type" in {
-      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(caseWithStatusOPEN)))
+
       given(casesService.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(updatedCase))
       given(fileService.getAttachments(refEq(updatedCase))(any[HeaderCarrier])).willReturn(Future.successful(Seq(attachment)))
 
-      val result = controller.updateRulingDetails("reference")(aValidForm)
+      val result = controller(caseWithStatusOPEN).updateRulingDetails("reference")(aValidForm)
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
@@ -129,10 +117,9 @@ class RulingControllerSpec extends WordSpec with Matchers with WithFakeApplicati
     }
 
     "redirect back to edit ruling on Form Error" in {
-      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(caseWithStatusOPEN)))
       given(fileService.getAttachments(refEq(caseWithStatusOPEN))(any[HeaderCarrier])).willReturn(Future.successful(Seq(attachment)))
 
-      val result = controller.updateRulingDetails("reference")(newFakePOSTRequestWithCSRF(fakeApplication))
+      val result = controller(caseWithStatusOPEN).updateRulingDetails("reference")(newFakePOSTRequestWithCSRF(fakeApplication))
       verify(casesService, never()).updateCase(any[Case])(any[HeaderCarrier])
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -141,26 +128,14 @@ class RulingControllerSpec extends WordSpec with Matchers with WithFakeApplicati
     }
 
     "redirect to Ruling for non OPEN Statuses" in {
-      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(caseWithStatusNEW)))
       given(mapper.mergeFormIntoCase(any[Case], any[DecisionFormData])).willReturn(caseWithStatusNEW)
 
-      val result = controller.updateRulingDetails("reference")(aValidForm)
+      val result = controller(caseWithStatusNEW).updateRulingDetails("reference")(aValidForm)
       verify(casesService, never()).updateCase(any[Case])(any[HeaderCarrier])
       status(result) shouldBe Status.SEE_OTHER
       contentType(result) shouldBe None
       charset(result) shouldBe None
       redirectLocation(result) shouldBe Some("/tariff-classification/cases/reference/ruling")
     }
-
-    "return Not Found and HTML content type on missing Case" in {
-      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(None))
-
-      val result = controller.updateRulingDetails("reference")(aValidForm)
-      status(result) shouldBe Status.OK
-      contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
-      contentAsString(result) should include("We could not find a Case with reference")
-    }
-
   }
 }

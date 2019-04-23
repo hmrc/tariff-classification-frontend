@@ -31,5 +31,4 @@ class RequestActions @Inject()(mustHaveWritePermissionAction: MustHaveWritePermi
   val authenticate = authenticatedAction
 
   def caseExists(reference: String): ActionRefiner[AuthenticatedRequest, AuthenticatedCaseRequest] = caseExistsActionFactory.apply(reference)
-
 }

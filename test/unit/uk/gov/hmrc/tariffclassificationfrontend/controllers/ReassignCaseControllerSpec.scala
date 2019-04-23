@@ -29,11 +29,11 @@ import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, Operator, Queue}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus, Operator, Queue}
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, QueuesService}
 import uk.gov.tariffclassificationfrontend.utils.Cases
 
-import scala.concurrent.Future.{failed, successful}
+import scala.concurrent.Future.successful
 
 class ReassignCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   with WithFakeApplication with MockitoSugar with BeforeAndAfterEach with ControllerCommons {
@@ -48,29 +48,30 @@ class ReassignCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   private val queue = mock[Queue]
   private val operator = mock[Operator]
 
-  private val caseWithStatusNEW = Cases.caseQueueExample.copy(status = CaseStatus.NEW)
-  private val caseWithStatusOPEN = Cases.caseQueueExample.copy(status = CaseStatus.OPEN, assignee = Some(Operator("12345", Some("Operator Test"))))
+  private val caseWithStatusNEW = Cases.caseQueueExample.copy(reference = "reference", status = CaseStatus.NEW)
+  private val caseWithStatusOPEN = Cases.caseQueueExample.copy(reference = "reference", status = CaseStatus.OPEN, assignee = Some(Operator("12345", Some("Operator Test"))))
 
   private implicit val mat: Materializer = fakeApplication.materializer
   private implicit val hc: HeaderCarrier = HeaderCarrier()
-
-  private val controller = new ReassignCaseController(
-    new SuccessfulRequestActions(operator), casesService, queueService, messageApi, appConfig
-  )
 
   override def afterEach(): Unit = {
     super.afterEach()
     reset(casesService)
   }
 
+  private def controller(requestCase: Case): ReassignCaseController = {
+    new ReassignCaseController(
+      new SuccessfulRequestActions(operator, c = requestCase), casesService, queueService, messageApi, appConfig
+    )
+  }
+
   "Reassign Case" should {
 
     "return OK and HTML content type" in {
-      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusOPEN)))
       when(queueService.getNonGateway).thenReturn(successful(Seq.empty))
       when(queueService.getOneById(any())).thenReturn(successful(None))
 
-      val result: Result = await(controller.showAvailableQueues("reference", "origin")(newFakeGETRequestWithCSRF(fakeApplication)))
+      val result: Result = await(controller(caseWithStatusOPEN).showAvailableQueues("reference", "origin")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -79,41 +80,28 @@ class ReassignCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     }
 
     "redirect to Application Details for non OPEN, REFERRED or SUSPENDED statuses" in {
-      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusNEW)))
+
       when(queueService.getNonGateway).thenReturn(successful(Seq.empty))
 
-      val result: Result = await(controller.showAvailableQueues("reference", "origin")(newFakeGETRequestWithCSRF(fakeApplication)))
+      val result: Result = await(controller(caseWithStatusNEW).showAvailableQueues("reference", "origin")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
       charsetOf(result) shouldBe None
       locationOf(result) shouldBe Some("/tariff-classification/cases/reference/application")
     }
-
-    "return Not Found and HTML content type" in {
-      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(None))
-      when(queueService.getNonGateway).thenReturn(successful(Seq.empty))
-
-      val result: Result = await(controller.showAvailableQueues("reference", "origin")(newFakeGETRequestWithCSRF(fakeApplication)))
-
-      status(result) shouldBe Status.OK
-      contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
-      charsetOf(result) shouldBe Some("utf-8")
-      bodyOf(result) should include("We could not find a Case with reference")
-    }
-
   }
 
   "Reassign Case To Queue" should {
 
     "return OK and HTML content type" in {
-      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusOPEN)))
+
       when(queueService.getOneBySlug("queue")).thenReturn(successful(Some(queue)))
       when(queueService.getOneById("1")).thenReturn(successful(Some(queue)))
-      when(queue.name).thenReturn(("SOME_QUEUE"))
+      when(queue.name).thenReturn("SOME_QUEUE")
       when(casesService.reassignCase(refEq(caseWithStatusOPEN), any[Queue], refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusOPEN))
 
-      val result: Result = await(controller.reassignCase("reference", "origin")(requestWithQueue("queue")))
+      val result: Result = await(controller(caseWithStatusOPEN).reassignCase("reference", "origin")(requestWithQueue("queue")))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -122,14 +110,14 @@ class ReassignCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     }
 
     "show error message when no option is selected" in {
-      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusOPEN)))
+
       when(queueService.getOneBySlug("queue")).thenReturn(successful(Some(queue)))
       when(queueService.getNonGateway).thenReturn(successful(Seq.empty))
-      when(queue.name).thenReturn(("SOME_QUEUE"))
+      when(queue.name).thenReturn("SOME_QUEUE")
       when(queueService.getOneById(any())).thenReturn(successful(None))
       when(casesService.reassignCase(refEq(caseWithStatusOPEN), any[Queue], refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusOPEN))
 
-      val result: Result = await(controller.reassignCase("reference", "origin")(newFakePOSTRequestWithCSRF(fakeApplication)))
+      val result: Result = await(controller(caseWithStatusOPEN).reassignCase("reference", "origin")(newFakePOSTRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -138,10 +126,9 @@ class ReassignCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     }
 
     "redirect to Application Details for non  OPEN, REFERRED or SUSPENDED statuses" in {
-      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusNEW)))
       when(queueService.getOneBySlug("queue")).thenReturn(successful(Some(queue)))
 
-      val result: Result= await(controller.reassignCase("reference", "origin")(requestWithQueue("queue")))
+      val result: Result = await(controller(caseWithStatusNEW).reassignCase("reference", "origin")(requestWithQueue("queue")))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
@@ -149,23 +136,10 @@ class ReassignCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       locationOf(result) shouldBe Some("/tariff-classification/cases/reference/application")
     }
 
-    "return Not Found and HTML content type on missing Case" in {
-      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(None))
-      when(queueService.getOneBySlug("queue")).thenReturn(successful(Some(queue)))
-
-      val result: Result = await(controller.reassignCase("reference", "origin")(requestWithQueue("queue")))
-
-      status(result) shouldBe Status.OK
-      contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
-      charsetOf(result) shouldBe Some("utf-8")
-      bodyOf(result) should include("We could not find a Case with reference")
-    }
-
     "return Not Found and HTML content type on missing Queue" in {
-      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusNEW)))
       when(queueService.getOneBySlug("queue")).thenReturn(successful(None))
 
-      val result: Result = await(controller.reassignCase("reference", "origin")(requestWithQueue("queue")))
+      val result: Result = await(controller(caseWithStatusNEW).reassignCase("reference", "origin")(requestWithQueue("queue")))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -173,20 +147,9 @@ class ReassignCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       bodyOf(result) should include("Queue queue not found")
     }
 
-    "propagate the error in case the CaseService fails to release the case" in {
-      val error = new IllegalStateException("expected error")
-
-      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(failed(error))
-      when(queueService.getOneBySlug("queue")).thenReturn(successful(Some(queue)))
-
-      val caught = intercept[error.type] {
-        await(controller.reassignCase("reference", "origin")(requestWithQueue("queue")))
-      }
-      caught shouldBe error
-    }
   }
 
-  private def requestWithQueue(queue : String) : FakeRequest[AnyContentAsFormUrlEncoded] = {
+  private def requestWithQueue(queue: String): FakeRequest[AnyContentAsFormUrlEncoded] = {
     newFakePOSTRequestWithCSRF(fakeApplication, Map("queue" -> queue))
   }
 

@@ -17,14 +17,17 @@
 package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
 import javax.inject.{Inject, Singleton}
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results._
 import play.api.mvc.{ActionFilter, ActionRefiner, Result}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
+import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.AccessType._
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
+import uk.gov.hmrc.tariffclassificationfrontend.views
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -67,18 +70,19 @@ class MustHaveWritePermissionAction
     successful(result)
   }
 
-  private def isAuthorized[A](request: AuthenticatedCaseRequest[A]) = {
+  private def isAuthorized[A](request: AuthenticatedCaseRequest[A]): Boolean = {
     request.`case`.isAssignedTo(request.operator) || request.operator.manager
   }
 }
 
 @Singleton
-class VerifyCaseExistsActionFactory @Inject()(casesService: CasesService) {
+class VerifyCaseExistsActionFactory @Inject()(casesService: CasesService)(implicit val messagesApi: MessagesApi, appConfig: AppConfig) extends I18nSupport {
 
   def apply(reference: String): ActionRefiner[AuthenticatedRequest, AuthenticatedCaseRequest] =
     new ActionRefiner[AuthenticatedRequest, AuthenticatedCaseRequest] {
       override protected def refine[A](request: AuthenticatedRequest[A]): Future[Either[Result, AuthenticatedCaseRequest[A]]] = {
         implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
+        implicit val r = request
 
         casesService.getOne(reference).flatMap {
           case Some(c: Case) =>
@@ -90,7 +94,7 @@ class VerifyCaseExistsActionFactory @Inject()(casesService: CasesService) {
                   requestedCase = c)
               )
             )
-          case _ => successful(Left(Redirect(routes.CaseController.caseNotFound(reference))))
+          case _ => successful(Left(NotFound(views.html.case_not_found(reference))))
         }
       }
     }

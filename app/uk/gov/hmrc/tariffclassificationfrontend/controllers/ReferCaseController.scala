@@ -42,7 +42,7 @@ class ReferCaseController @Inject()(verify: RequestActions,
   private val form: Form[Boolean] = MandatoryBooleanForm.form("refer_case")
 
   def referCase(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.caseExists(reference) andThen verify.mustHaveWritePermission).async { implicit request =>
-    getCaseAndRenderView(
+    validateAndRenderView(
       c =>
         successful(views.html.refer_case(c, form))
     )
@@ -52,11 +52,11 @@ class ReferCaseController @Inject()(verify: RequestActions,
 
     form.bindFromRequest().fold(
       errors => {
-        getCaseAndRenderView(c => successful(views.html.refer_case(c, errors)))
+        validateAndRenderView(c => successful(views.html.refer_case(c, errors)))
       },
       {
-        case true => getCaseAndRenderView(casesService.referCase(_, request.operator).map(views.html.confirm_refer_case(_)))
-        case _ => getCaseAndRenderView(c => successful(views.html.refer_case_error(c)))
+        case true => validateAndRenderView(casesService.referCase(_, request.operator).map(views.html.confirm_refer_case(_)))
+        case _ => validateAndRenderView(c => successful(views.html.refer_case_error(c)))
       }
     )
   }

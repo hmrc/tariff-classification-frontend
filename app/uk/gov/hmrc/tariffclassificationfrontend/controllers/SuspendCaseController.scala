@@ -42,17 +42,17 @@ class SuspendCaseController @Inject()(verify: RequestActions,
   private val form: Form[Boolean] = MandatoryBooleanForm.form("suspend_case")
 
   def suspendCase(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.caseExists(reference) andThen verify.mustHaveWritePermission).async { implicit request =>
-    getCaseAndRenderView(c => successful(views.html.suspend_case(c, form)))
+    validateAndRenderView(c => successful(views.html.suspend_case(c, form)))
   }
 
   def confirmSuspendCase(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.caseExists(reference) andThen verify.mustHaveWritePermission).async { implicit request =>
     form.bindFromRequest().fold(
       errors => {
-        getCaseAndRenderView(c => successful(views.html.suspend_case(c, errors)))
+        validateAndRenderView(c => successful(views.html.suspend_case(c, errors)))
       },
       {
-        case true => getCaseAndRenderView(casesService.suspendCase(_, request.operator).map(views.html.confirm_suspended(_)))
-        case _ => getCaseAndRenderView(c => successful(views.html.suspend_case_error(c)))
+        case true => validateAndRenderView(casesService.suspendCase(_, request.operator).map(views.html.confirm_suspended(_)))
+        case _ => validateAndRenderView(c => successful(views.html.suspend_case_error(c)))
       }
     )
   }
