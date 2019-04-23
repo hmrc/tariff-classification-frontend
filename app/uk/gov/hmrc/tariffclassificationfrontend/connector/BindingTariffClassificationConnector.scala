@@ -26,7 +26,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus._
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
-import uk.gov.hmrc.tariffclassificationfrontend.utils.JsonFormatters.{caseFormat, eventFormat, newEventRequestFormat}
+import uk.gov.hmrc.tariffclassificationfrontend.utils.JsonFormatters._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -97,6 +97,11 @@ class BindingTariffClassificationConnector @Inject()(appConfig: AppConfig, clien
 
     val url = s"${appConfig.bindingTariffClassificationUrl}/cases?application_type=BTI&${(reqParams ++ optParams).mkString("&")}&page=${pagination.page}&page_size=${pagination.pageSize}"
     client.GET[Paged[Case]](url)
+  }
+
+  def generateReport(report: CaseReport)(implicit hc: HeaderCarrier): Future[Seq[ReportResult]] = {
+    val url = s"${appConfig.bindingTariffClassificationUrl}/report?${CaseReport.bindable.unbind("", report)}"
+    client.GET[Seq[ReportResult]](url)
   }
 
 }

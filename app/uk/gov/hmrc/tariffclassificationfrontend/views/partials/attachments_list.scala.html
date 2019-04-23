@@ -17,26 +17,39 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.models.StoredAttachment
 @import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.attachment
-@(id: String, attachments: Seq[StoredAttachment], showUploadedBy: Boolean = false)(implicit messages: Messages)
+@(id: String, attachments: Seq[StoredAttachment], showUploadedBy: Boolean = false, showSelect: Boolean = false)(implicit messages: Messages)
 
     @if(attachments.nonEmpty){
         <table id="@{id}-table">
             <thead>
                 <tr>
-                    <th scope="col">File name</th>
+                    <th scope="col">File</th>
                     @if(showUploadedBy) {<th id="@{id}-header-uploaded_by" scope="col">Uploaded by</th>}
+                    @if(showSelect) {<th id="@{id}-header-select" scope="col">Publish</th>}
                     <th class="attachment-table-date" scope="col">Date</th>
                 </tr>
             </thead>
             <tbody>
                     @for((file: StoredAttachment, index: Int) <- attachments.zipWithIndex) {
                         <tr id="@{id}-row-@{index}">
-                            <td id="@{id}-row-@{index}-title" class="w-50">
-                                @attachment(id, file)
+                            <td id="@{id}-row-@{index}-title" >
+                                @attachment(s"$id-row-$index", file)
                             </td>
                             @if(showUploadedBy) {
                                 <td id="@{id}-row-@{index}-uploaded_by">
                                     @file.operator.flatMap(_.name).getOrElse("Unknown")
+                                </td>
+                            }
+                            @if(showSelect) {
+                                <td>
+                                    <div class="form-group">
+                                        <fieldset>
+                                            <div class="multiple-choice">
+                                                <input id="attachments[@{index}]" name="attachments[@{index}]" type="checkbox" value="@file.id" @if(file.public){checked="checked"}/>
+                                                <label for="attachments[@{index}]"></label>
+                                            </div>
+                                        </fieldset>
+                                    </div>
                                 </td>
                             }
                             <td id="@{id}-row-@{index}-date" class="w-15">

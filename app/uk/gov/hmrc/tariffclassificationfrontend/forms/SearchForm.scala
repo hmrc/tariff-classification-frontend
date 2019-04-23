@@ -16,21 +16,14 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.forms
 
+import play.api.data.Form
 import play.api.data.Forms._
-import play.api.data.{Form, Mapping}
 import uk.gov.hmrc.tariffclassificationfrontend.forms.FormConstraints._
+import uk.gov.hmrc.tariffclassificationfrontend.forms.FormUtils._
 import uk.gov.hmrc.tariffclassificationfrontend.models.PseudoCaseStatus.PseudoCaseStatus
 import uk.gov.hmrc.tariffclassificationfrontend.models.{PseudoCaseStatus, Search}
 
-import scala.util.Try
-
 object SearchForm {
-
-  private def textTransformingTo[A](reader: String => A, writer: A => String): Mapping[A] = {
-    nonEmptyText
-      .verifying("Invalid entry", s => Try(reader(s)).isSuccess)
-      .transform[A](reader, writer)
-  }
 
   val form: Form[Search] = Form(
     mapping(

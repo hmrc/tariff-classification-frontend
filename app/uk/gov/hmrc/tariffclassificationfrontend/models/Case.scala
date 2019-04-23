@@ -48,4 +48,8 @@ case class Case
     hasRuling && !hasExpiredRuling
   }
 
+  def isAssignedTo(operator : Operator): Boolean = {
+    assignee.exists(_.id == operator.id)
+  }
+
 }

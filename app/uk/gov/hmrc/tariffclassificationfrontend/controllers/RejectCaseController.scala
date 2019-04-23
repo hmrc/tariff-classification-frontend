@@ -32,33 +32,33 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future.successful
 
 @Singleton
-class RejectCaseController @Inject()(authenticatedAction: AuthenticatedAction,
+class RejectCaseController @Inject()(verify: RequestActions,
                                      casesService: CasesService,
                                      val messagesApi: MessagesApi,
                                      implicit val appConfig: AppConfig) extends RenderCaseAction {
 
-  private val form: Form[Boolean] = MandatoryBooleanForm.form("reject_case")
-
   override protected val config: AppConfig = appConfig
   override protected val caseService: CasesService = casesService
+  private val form: Form[Boolean] = MandatoryBooleanForm.form("reject_case")
 
-  override protected def redirect: String => Call = routes.CaseController.applicationDetails
-  override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = c.status == OPEN
-
-  def rejectCase(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
-    getCaseAndRenderView(reference, c => successful(views.html.reject_case(c, form)))
+  def rejectCase(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.caseExists(reference) andThen verify.mustHaveWritePermission).async { implicit request =>
+    validateAndRenderView(c => successful(views.html.reject_case(c, form)))
   }
 
-  def confirmRejectCase(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
+  def confirmRejectCase(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.caseExists(reference) andThen verify.mustHaveWritePermission).async { implicit request =>
     form.bindFromRequest().fold(
       errors => {
-        getCaseAndRenderView(reference, c => successful(views.html.reject_case(c, errors)))
+        validateAndRenderView(c => successful(views.html.reject_case(c, errors)))
       },
       {
-        case true => getCaseAndRenderView(reference, casesService.rejectCase(_, request.operator).map(views.html.confirm_rejected(_)))
-        case _ => getCaseAndRenderView(reference, c => successful(views.html.reject_case_error(c)))
+        case true => validateAndRenderView(casesService.rejectCase(_, request.operator).map(views.html.confirm_rejected(_)))
+        case _ => validateAndRenderView(c => successful(views.html.reject_case_error(c)))
       }
     )
   }
+
+  override protected def redirect: String => Call = routes.CaseController.applicationDetails
+
+  override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = c.status == OPEN
 
 }

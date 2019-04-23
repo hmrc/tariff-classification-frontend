@@ -3,7 +3,10 @@ cases.menu.gateway-cases=Gateway cases
 cases.menu.queue-cases={0} cases
 cases.list.my-cases=Cases for {0}
 cases.menu.assigned-cases=Assigned cases
+
 cases.heading.assigned-cases=Assigned cases
+cases.heading.reports=Choose a report
+cases.menu.reports=Reports
 case.summary.assignee = {0} ({1})
 cases.summary.assignee.empty=There are no cases assigned.
 
@@ -90,6 +93,7 @@ case.decision.method-search=Searches performed
 case.decision.method-commercial-denomination=Commercial denomination and additional information
 case.decision.method-exclusion=Exclusions and inclusions
 case.decision.attachments=Select files to attach to the ruling
+case.decision.attachments.ruling=Files attached to the ruling
 case.decision.empty=There is no ruling information associated to this case.
 
 case.decision.hint.published-content=This will be published on the public rulings website.
@@ -135,6 +139,8 @@ errors.ruling-not-found.title=Ruling not found
 errors.ruling-not-found.message=We could not find a ruling with case reference: {0}
 
 errors.resource-not-found.title={0} not found.
+
+errors.summary.title=Error
 
 
 release-case.submit.button = Release Case

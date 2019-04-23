@@ -33,7 +33,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus, Operat
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.tariffclassificationfrontend.utils.Cases
 
-import scala.concurrent.Future.{failed, successful}
+import scala.concurrent.Future.successful
 
 class ReopenCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   with WithFakeApplication with MockitoSugar with BeforeAndAfterEach with ControllerCommons {
@@ -46,28 +46,25 @@ class ReopenCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   private val casesService = mock[CasesService]
   private val operator = mock[Operator]
 
-  private val caseWithStatusNEW = Cases.btiCaseExample.copy(status = CaseStatus.NEW)
-  private val caseWithStatusOPEN = Cases.btiCaseExample.copy(status = CaseStatus.OPEN)
-  private val caseWithStatusREFERRED = Cases.btiCaseExample.copy(status = CaseStatus.REFERRED)
-  private val caseWithStatusSUSPENDED = Cases.btiCaseExample.copy(status = CaseStatus.SUSPENDED)
+  private val caseWithStatusOPEN = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.OPEN)
+  private val caseWithStatusREFERRED = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.REFERRED)
 
   private implicit val mat: Materializer = fakeApplication.materializer
   private implicit val hc: HeaderCarrier = HeaderCarrier()
-
-  private val controller = new ReopenCaseController(new SuccessfulAuthenticatedAction(operator), casesService, messageApi, appConfig)
 
   override def afterEach(): Unit = {
     super.afterEach()
     reset(casesService)
   }
 
+  private def controller(c: Case) = new ReopenCaseController(new SuccessfulRequestActions(operator, c = c), casesService, messageApi, appConfig)
+
   "Confirm Reopen a Case" should {
 
     "return OK and HTML content type" in {
-      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusREFERRED)))
       when(casesService.reopenCase(refEq(caseWithStatusREFERRED), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusOPEN))
 
-      val result: Result = await(controller.confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
+      val result: Result = await(controller(caseWithStatusREFERRED).confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -79,10 +76,10 @@ class ReopenCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     def doNotRedirectWith(allowedStatus: CaseStatus*): Unit = {
 
       for (s <- CaseStatus.values) {
-        val statusCase = Cases.btiCaseExample.copy(status = s)
-        when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(statusCase)))
+        val statusCase = Cases.btiCaseExample.copy(reference = "reference", status = s)
+
         when(casesService.reopenCase(any[Case], refEq(operator))(any[HeaderCarrier])).thenReturn(successful(statusCase))
-        val result: Result = await(controller.confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
+        val result: Result = await(controller(statusCase).confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
         if (allowedStatus.contains(s)) {
           withClue(s"Status $s must be redirected") {
             status(result) shouldBe Status.OK
@@ -98,30 +95,8 @@ class ReopenCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       }
     }
 
-
     "redirect to Application Details for non REFERRED or SUSPENDED statuses" in {
       doNotRedirectWith(CaseStatus.REFERRED, CaseStatus.SUSPENDED)
-    }
-
-    "return Not Found and HTML content type on missing Case" in {
-      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(None))
-      val result: Result = await(controller.confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
-
-      status(result) shouldBe Status.OK
-      contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
-      charsetOf(result) shouldBe Some("utf-8")
-      bodyOf(result) should include("We could not find a Case with reference")
-    }
-
-    "propagate the error in case the CaseService fails to release the case" in {
-      val error = new IllegalStateException("expected error")
-
-      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(failed(error))
-
-      val caught = intercept[error.type] {
-        await(controller.confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
-      }
-      caught shouldBe error
     }
   }
 }

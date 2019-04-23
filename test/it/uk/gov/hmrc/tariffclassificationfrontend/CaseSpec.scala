@@ -25,7 +25,7 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
       val response = await(ws.url(s"$baseUrl/cases/1").get())
 
       // Then
-      response.status shouldBe OK
+      response.status shouldBe NOT_FOUND
       response.body should include("Case not found")
     }
 

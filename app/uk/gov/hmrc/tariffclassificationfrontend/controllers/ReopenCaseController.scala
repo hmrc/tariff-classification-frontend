@@ -27,10 +27,9 @@ import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future.successful
 
 @Singleton
-class ReopenCaseController @Inject()(authenticatedAction: AuthenticatedAction,
+class ReopenCaseController @Inject()(verify: RequestActions,
                                      casesService: CasesService,
                                      val messagesApi: MessagesApi,
                                      implicit val appConfig: AppConfig) extends RenderCaseAction {
@@ -38,12 +37,12 @@ class ReopenCaseController @Inject()(authenticatedAction: AuthenticatedAction,
   override protected val config: AppConfig = appConfig
   override protected val caseService: CasesService = casesService
 
+  def confirmReopenCase(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.caseExists(reference) andThen verify.mustHaveWritePermission).async { implicit request =>
+    validateAndRenderView(casesService.reopenCase(_, request.operator).map(views.html.confirm_reopen_case(_)))
+  }
+
   override protected def redirect: String => Call = routes.CaseController.applicationDetails
 
   override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = c.status == SUSPENDED || c.status == REFERRED
-
-  def confirmReopenCase(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
-    getCaseAndRenderView(reference, casesService.reopenCase(_, request.operator).map(views.html.confirm_reopen_case(_)))
-  }
 
 }

@@ -33,6 +33,10 @@
             <li class="side-nav__list @if(section == "assigned-cases") { side-nav__list--selected }">
                 <a id="nav-menu-assigned-cases" class="side-nav__link" href="@controllers.routes.AssignedCasesController.assignedCases()">@messages("cases.menu.assigned-cases")</a>
             </li>
+
+            <li class="side-nav__list @if(section == "reports") { side-nav__list--selected }">
+                <a id="nav-menu-reports" class="side-nav__link" href="@controllers.routes.ReportingController.getReports()">@messages("cases.menu.reports")</a>
+            </li>
         }
     </ul>
     <br>

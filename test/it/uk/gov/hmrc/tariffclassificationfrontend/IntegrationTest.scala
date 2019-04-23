@@ -26,12 +26,19 @@ trait IntegrationTest extends UnitSpec with GuiceOneServerPerSuite
 
   protected val baseUrl = s"http://localhost:$port/tariff-classification"
 
-  protected def givenAuthSuccess(): Unit = {
+  protected def givenAuthSuccess(role: String = "manager"): Unit = {
+
+    val resource = role match {
+      case "manager" => "auth-success-manager.json"
+      case "team" => "auth-success-team-member.json"
+      case _ => "auth-success-another-team-member.json"
+    }
+
     stubFor(post(urlEqualTo("/auth/authorise"))
       .willReturn(
         aResponse()
           .withStatus(OK)
-          .withBody(fromResource("auth-success.json"))
+          .withBody(fromResource(resource))
       )
     )
   }

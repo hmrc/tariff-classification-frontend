@@ -83,6 +83,30 @@ class RulingDetailsViewSpec extends ViewSpec {
       doc shouldNot containElementWithID("ruling_edit")
     }
 
+    "Not render 'Edit' button for READ_ONLY users" in {
+      // Given
+      val c = aCase(withReference("ref"), withStatus(CaseStatus.OPEN))
+
+      // When
+      val doc = view(ruling_details(c, None, Seq.empty)(readOnlyRequest, messages, appConfig))
+
+      // Then
+      doc shouldNot containElementWithID("ruling_edit_details")
+      doc shouldNot containElementWithID("ruling_edit")
+    }
+
+    "Render 'Edit' button for READ_WRITE users with OPEN status" in {
+      // Given
+      val c = aCase(withReference("ref"), withStatus(CaseStatus.OPEN))
+
+      // When
+      val doc = view(ruling_details(c, None, Seq.empty)(readWriteRequest, messages, appConfig))
+
+      // Then
+      doc should containElementWithID("ruling_edit_details")
+      doc should containElementWithID("ruling_edit")
+    }
+
     "Not render Decision details if not present" in {
       // Given
       val c = aCase(withoutDecision())
@@ -135,6 +159,39 @@ class RulingDetailsViewSpec extends ViewSpec {
       doc should containElementWithID("complete-case-button")
     }
 
+    "Render Decision details without Complete button for READ_ONLY users" in {
+      // Given
+      val c = aCase(
+        withStatus(CaseStatus.OPEN),
+        withDecision(
+          bindingCommodityCode = "commodity code",
+          justification = "justification",
+          goodsDescription = "goods description",
+          methodSearch = Some("method search"),
+          methodExclusion = Some("method exclusion"),
+          methodCommercialDenomination = Some("commercial denomination")
+        )
+      )
+
+      // When
+      val doc = view(ruling_details(c, None, Seq.empty)(readOnlyRequest, messages, appConfig))
+
+      // Then
+      doc should containElementWithID("ruling_bindingCommodityCodeValue")
+      doc.getElementById("ruling_bindingCommodityCodeValue") should containText("commodity code")
+      doc should containElementWithID("ruling_sanitisedGoodDescriptionValue")
+      doc.getElementById("ruling_sanitisedGoodDescriptionValue") should containText("goods description")
+      doc should containElementWithID("ruling_justificationValue")
+      doc.getElementById("ruling_justificationValue") should containText("justification")
+      doc should containElementWithID("ruling_searchesValue")
+      doc.getElementById("ruling_searchesValue") should containText("method search")
+      doc should containElementWithID("ruling_methodCommercialDenominationValue")
+      doc.getElementById("ruling_methodCommercialDenominationValue") should containText("commercial denomination")
+      doc should containElementWithID("ruling_exclusionsValue")
+      doc.getElementById("ruling_exclusionsValue") should containText("method exclusion")
+      doc shouldNot containElementWithID("complete-case-button")
+    }
+
     "Render 'public' attachments" in {
       // Given
       val c = aCase(
@@ -155,7 +212,7 @@ class RulingDetailsViewSpec extends ViewSpec {
       val doc = view(ruling_details(c, None, Seq(stored)))
 
       // Then
-      doc should containElementWithID("attachments-file-FILE_ID")
+      doc should containElementWithID("attachments-row-0-file")
     }
 
     "Not render 'non public' attachments" in {
