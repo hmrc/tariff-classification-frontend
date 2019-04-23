@@ -1,0 +1,16 @@
+{
+  "credentials": {
+    "providerId": "111",
+    "providerType": "PrivilegedApplication"
+  },
+  "name": {
+    "name": "Forename Surname"
+  },
+  "allEnrolments": [
+    {
+      "key": "classification",
+      "identifiers": [],
+      "state": "state"
+    }
+  ]
+}

@@ -22,7 +22,7 @@ import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models.Case
-import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
+import uk.gov.hmrc.tariffclassificationfrontend.models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
@@ -49,6 +49,16 @@ trait RenderCaseAction extends FrontendController with I18nSupport {
     }
   }
 
+  protected def validateAndRenderView(toHtml: Case => Future[HtmlFormat.Appendable])
+                                     (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
+
+    if (isValidCase(request.`case`)(request)) {
+      toHtml(request.`case`).map(Ok(_))
+    } else {
+      successful(Redirect(redirect(request.`case`.reference)))
+    }
+  }
+
   protected def getCaseAndRespond(caseReference: String,
                                   toResult: Case => Future[Result])
                                  (implicit request: AuthenticatedRequest[_]): Future[Result] = {
@@ -57,6 +67,17 @@ trait RenderCaseAction extends FrontendController with I18nSupport {
       case Some(c: Case) if isValidCase(c)(request) => toResult(c)
       case Some(_) => successful(Redirect(redirect(caseReference)))
       case _ => successful(Ok(views.html.case_not_found(caseReference)))
+    }
+  }
+
+
+  protected def validateAndRespond(toResult: Case => Future[Result])
+                                  (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
+
+    if (isValidCase(request.`case`)(request)) {
+      toResult(request.`case`)
+    } else {
+      successful(Redirect(redirect(request.`case`.reference)))
     }
   }
 

@@ -17,14 +17,19 @@
 package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
 import org.mockito.Mockito.mock
-import play.api.mvc.{Request, Result}
+import play.api.i18n.MessagesApi
+import play.api.mvc.{ActionRefiner, Request, Result}
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.connector.StrideAuthConnector
-import uk.gov.hmrc.tariffclassificationfrontend.models.Operator
-import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
+import uk.gov.hmrc.tariffclassificationfrontend.models.request.AccessType._
+import uk.gov.hmrc.tariffclassificationfrontend.models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Operator}
+import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
+import uk.gov.tariffclassificationfrontend.utils.Cases
 
 import scala.concurrent.Future
+import scala.concurrent.Future.successful
 
 class SuccessfulAuthenticatedAction(operator: Operator = Operator("0", Some("name"))) extends AuthenticatedAction(
   appConfig = mock(classOf[AppConfig]),
@@ -33,6 +38,42 @@ class SuccessfulAuthenticatedAction(operator: Operator = Operator("0", Some("nam
   authConnector = mock(classOf[StrideAuthConnector])) {
 
   override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] = {
-    block(AuthenticatedRequest(operator, request))
+    block(new AuthenticatedRequest(operator, request))
   }
+}
+
+class SuccessfulMustHaveWritePermissionAction(operator: Operator = Operator("0", Some("name")), accessType: AccessType = READ_WRITE) extends MustHaveWritePermissionAction {
+  protected override def filter[A](request: AuthenticatedCaseRequest[A]): Future[Option[Result]] = successful(None)
+}
+
+class SuccessfulCheckPermissionsAction(operator: Operator = Operator("0", Some("name")), accessType: AccessType = READ_WRITE) extends CheckPermissionsAction {
+  override def refine[A](request: AuthenticatedCaseRequest[A]): Future[Either[Result, AuthenticatedCaseRequest[A]]] = {
+    successful(Right(new AuthenticatedCaseRequest(operator, request, accessType, Cases.btiCaseExample)))
+  }
+}
+
+class ExistingCaseActionFactory(reference: String, requestCase: Case)
+  extends VerifyCaseExistsActionFactory(casesService = mock(classOf[CasesService]))(mock(classOf[MessagesApi]), mock(classOf[AppConfig])) {
+
+  override def apply(reference: String): ActionRefiner[AuthenticatedRequest, AuthenticatedCaseRequest] = {
+    new ActionRefiner[AuthenticatedRequest, AuthenticatedCaseRequest] {
+      override protected def refine[A](request: AuthenticatedRequest[A]): Future[Either[Result, AuthenticatedCaseRequest[A]]] = {
+        successful(
+          Right(new AuthenticatedCaseRequest(operator = request.operator, request = request, requestedCase = requestCase)
+          )
+        )
+      }
+    }
+  }
+}
+
+
+class SuccessfulRequestActions(operator: Operator, reference: String = "test-reference", c: Case = Cases.btiCaseExample)
+  extends RequestActions(
+    new SuccessfulMustHaveWritePermissionAction(operator),
+    new SuccessfulCheckPermissionsAction(operator),
+    new SuccessfulAuthenticatedAction(operator),
+    new ExistingCaseActionFactory(reference, c)
+  ) {
+
 }

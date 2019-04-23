@@ -31,7 +31,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future.successful
 
 @Singleton
-class CompleteCaseController @Inject()(authenticatedAction: AuthenticatedAction,
+class CompleteCaseController @Inject()(verify: RequestActions,
                                        casesService: CasesService,
                                        decisionForm: DecisionForm,
                                        val messagesApi: MessagesApi,
@@ -39,6 +39,14 @@ class CompleteCaseController @Inject()(authenticatedAction: AuthenticatedAction,
 
   override protected val config: AppConfig = appConfig
   override protected val caseService: CasesService = casesService
+
+  def completeCase(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.caseExists(reference) andThen verify.mustHaveWritePermission).async { implicit request =>
+    validateAndRenderView(c => successful(views.html.complete_case(c)))
+  }
+
+  def confirmCompleteCase(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.caseExists(reference) andThen verify.mustHaveWritePermission).async { implicit request =>
+    validateAndRenderView(casesService.completeCase(_, request.operator).map(views.html.confirm_complete_case(_)))
+  }
 
   override protected def redirect: String => Call = routes.CaseController.rulingDetails
 
@@ -48,14 +56,6 @@ class CompleteCaseController @Inject()(authenticatedAction: AuthenticatedAction,
 
   private def hasValidDecision(c: Case): Boolean = {
     decisionForm.bindFrom(c.decision).map(_.errors).exists(_.isEmpty)
-  }
-
-  def completeCase(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
-    getCaseAndRenderView(reference, c => successful(views.html.complete_case(c)))
-  }
-
-  def confirmCompleteCase(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
-    getCaseAndRenderView(reference, casesService.completeCase(_, request.operator).map(views.html.confirm_complete_case(_)))
   }
 
 }

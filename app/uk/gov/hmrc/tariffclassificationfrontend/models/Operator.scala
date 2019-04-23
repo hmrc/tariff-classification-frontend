@@ -16,11 +16,21 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.models
 
+import uk.gov.hmrc.tariffclassificationfrontend.models.Role.Role
+
 case class Operator
 (
  id: String,
  name: Option[String] = None,
- manager: Boolean = false
+ role: Role = Role.CLASSIFICATION_OFFICER
 ){
+
+  def manager: Boolean = role == Role.CLASSIFICATION_MANAGER
   def safeName: String = name.getOrElse(s"PID $id")
+
+}
+
+object Role extends Enumeration {
+  type Role = Value
+  val CLASSIFICATION_OFFICER, CLASSIFICATION_MANAGER = Value
 }
