@@ -212,7 +212,7 @@ class RulingDetailsViewSpec extends ViewSpec {
       val doc = view(ruling_details(c, None, Seq(stored)))
 
       // Then
-      doc should containElementWithID("attachments-file-FILE_ID")
+      doc should containElementWithID("attachments-row-0-file")
     }
 
     "Not render 'non public' attachments" in {
