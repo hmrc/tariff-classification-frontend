@@ -120,6 +120,10 @@
   margin-bottom: 30px;
 }
 
+.pt-1 {
+  padding-top: $spacer;
+}
+
 .pt-2 {
   padding-top: 2px;
 }
@@ -193,7 +197,7 @@ table thead th {
   vertical-align: top;
 }
 
-table tbody td, table tbody th  {
+table tbody td, table tbody th {
   vertical-align: middle;
 }
 
@@ -284,10 +288,10 @@ table tbody td[align="right"], table tbody th[align="right"], table thead th[ali
 }
 
 .button-link {
-  background:none!important;
-  color:inherit;
-  border:none;
-  padding:0!important;
+  background: none !important;
+  color: inherit;
+  border: none;
+  padding: 0 !important;
   font: inherit;
   cursor: pointer;
   text-decoration: underline;
@@ -301,8 +305,18 @@ table tbody td[align="right"], table tbody th[align="right"], table thead th[ali
   }
 }
 
+.boxed {
+  border: 1px solid #bfc1c3;
+  float: left;
+  width: 100%;
+}
+
+.boxed-content {
+  padding: 30px 20px 30px 20px;
+}
+
 .full-width {
-  width:100%;
+  width: 100%;
 }
 
 .border-bottom {

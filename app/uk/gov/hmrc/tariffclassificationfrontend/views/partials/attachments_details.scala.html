@@ -66,6 +66,15 @@
                     </div>
                 </details>
             </div>
+            <fieldset>
+                <div aria-label="Information">
+                    <p>@messages("cases.attachment.upload.title")</p>
+                    <ul class="list list-bullet">
+                        <li>@messages("cases.attachment.upload.restrictionSize")</li>
+                        <li>@messages("cases.attachment.upload.typeOfFiles")</li>
+                    </ul>
+                </div>
+            </fieldset>
             <div class="mt-0">
                 @input_file(
                     field = form("file-input"),
