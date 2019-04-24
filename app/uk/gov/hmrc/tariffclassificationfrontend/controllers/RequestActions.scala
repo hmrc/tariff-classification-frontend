@@ -18,6 +18,7 @@ package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
 import javax.inject.{Inject, Singleton}
 import play.api.mvc.{ActionFilter, ActionFunction}
+import uk.gov.hmrc.tariffclassificationfrontend.models.Permission
 import uk.gov.hmrc.tariffclassificationfrontend.models.Permission.Permission
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
 
@@ -29,6 +30,6 @@ class RequestActions @Inject()(checkPermissionsAction: CheckPermissionsAction,
 
   val authenticate: AuthenticatedAction = authenticatedAction
 
-  def casePermissions(reference: String): ActionFunction[AuthenticatedRequest, AuthenticatedCaseRequest] = caseExistsActionFactory.apply(reference) andThen checkPermissionsAction
+  def casePermissions(reference: String): ActionFunction[AuthenticatedRequest, AuthenticatedCaseRequest] =  caseExistsActionFactory.apply(reference) andThen checkPermissionsAction andThen mustHave(Permission.VIEW_CASES)
   def mustHave(permission: Permission): ActionFilter[AuthenticatedCaseRequest] = mustHavePermissionActionFactory.apply(permission)
 }
