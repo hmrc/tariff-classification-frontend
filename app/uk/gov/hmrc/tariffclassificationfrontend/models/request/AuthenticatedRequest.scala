@@ -17,32 +17,23 @@
 package uk.gov.hmrc.tariffclassificationfrontend.models.request
 
 import play.api.mvc.{Request, WrappedRequest}
-import uk.gov.hmrc.tariffclassificationfrontend.models.request.AccessType.{AccessType, READ_WRITE}
+import uk.gov.hmrc.tariffclassificationfrontend.models.Permission.Permission
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Operator}
 
-class AuthenticatedRequest[A](_operator: Operator, _request: Request[A], _accessType: AccessType = READ_WRITE)
+class AuthenticatedRequest[A](_operator: Operator, _request: Request[A])
   extends WrappedRequest[A](_request) {
 
   val operator: Operator = _operator
   val request: Request[A] = _request
 
-  val hasWritePermission: Boolean = _accessType == AccessType.READ_WRITE || operator.manager
+  def hasPermission(permission: Permission): Boolean = _operator.hasPermission(permission)
 }
 
 object AuthenticatedRequest {
-  def apply[A](_operator: Operator, _request: Request[A], _accessType: AccessType = READ_WRITE) = new AuthenticatedRequest(_operator, _request, _accessType)
+  def apply[A](_operator: Operator, _request: Request[A]) = new AuthenticatedRequest(_operator, _request)
 }
 
-class AuthenticatedCaseRequest[A](operator: Operator, request: Request[A], accessType: AccessType = READ_WRITE, requestedCase: Case)
-  extends AuthenticatedRequest[A](operator, request, accessType) {
+class AuthenticatedCaseRequest[A](operator: Operator, request: Request[A], requestedCase: Case)
+  extends AuthenticatedRequest[A](operator, request) {
   val `case`: Case = requestedCase
 }
-
-object AccessType extends Enumeration {
-  type AccessType = Value
-  val READ_ONLY, READ_WRITE = Value
-}
-
-
-
-

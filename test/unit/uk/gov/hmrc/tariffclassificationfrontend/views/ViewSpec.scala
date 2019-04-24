@@ -25,8 +25,8 @@ import play.filters.csrf.CSRF.{Token, TokenProvider}
 import play.twirl.api.Html
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
+import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Operator, Role}
-import uk.gov.hmrc.tariffclassificationfrontend.models.request.{AccessType, AuthenticatedRequest}
 
 abstract class ViewSpec extends UnitSpec with WithFakeApplication  {
 
@@ -45,8 +45,8 @@ abstract class ViewSpec extends UnitSpec with WithFakeApplication  {
 
   val authenticatedManagerFakeRequest: AuthenticatedRequest[AnyContentAsEmpty.type] = new AuthenticatedRequest(authenticatedManager, request)
 
-  val readOnlyRequest = new AuthenticatedRequest(authenticatedOperator, request, AccessType.READ_ONLY)
-  val readWriteRequest = new AuthenticatedRequest(authenticatedOperator, request, AccessType.READ_WRITE)
+  val readOnlyRequest = new AuthenticatedRequest(authenticatedOperator, request)
+  val readWriteRequest = new AuthenticatedRequest(authenticatedOperator, request)
 
   implicit val authenticatedFakeRequest: AuthenticatedRequest[AnyContentAsEmpty.type] = new AuthenticatedRequest(authenticatedOperator, request)
   implicit val messages: Messages = injector.instanceOf[MessagesApi].preferred(authenticatedFakeRequest)

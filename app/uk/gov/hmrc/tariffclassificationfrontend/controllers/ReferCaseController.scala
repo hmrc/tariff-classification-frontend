@@ -22,7 +22,7 @@ import play.api.i18n.MessagesApi
 import play.api.mvc._
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.MandatoryBooleanForm
-import uk.gov.hmrc.tariffclassificationfrontend.models.Case
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Permission}
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.OPEN
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
@@ -41,14 +41,14 @@ class ReferCaseController @Inject()(verify: RequestActions,
   override protected val caseService: CasesService = casesService
   private val form: Form[Boolean] = MandatoryBooleanForm.form("refer_case")
 
-  def referCase(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.caseExists(reference) andThen verify.mustHaveWritePermission).async { implicit request =>
+  def referCase(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.REFER)).async { implicit request =>
     validateAndRenderView(
       c =>
         successful(views.html.refer_case(c, form))
     )
   }
 
-  def confirmReferCase(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.caseExists(reference) andThen verify.mustHaveWritePermission).async { implicit request =>
+  def confirmReferCase(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.casePermissions(reference)andThen verify.mustHave(Permission.REFER)).async { implicit request =>
 
     form.bindFromRequest().fold(
       errors => {

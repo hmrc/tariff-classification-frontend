@@ -16,18 +16,22 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.models
 
+import uk.gov.hmrc.tariffclassificationfrontend.models.Permission.Permission
 import uk.gov.hmrc.tariffclassificationfrontend.models.Role.Role
 
 case class Operator
 (
  id: String,
  name: Option[String] = None,
- role: Role = Role.CLASSIFICATION_OFFICER
+ role: Role = Role.CLASSIFICATION_OFFICER,
+ permissions: Set[Permission] = Set.empty
+
 ){
 
   def manager: Boolean = role == Role.CLASSIFICATION_MANAGER
   def safeName: String = name.getOrElse(s"PID $id")
-
+  def hasPermission(permission: Permission): Boolean = permissions.contains(permission)
+  def addPermissions(additionlPermisions: Set[Permission]): Operator = this.copy(permissions = permissions ++ additionlPermisions)
 }
 
 object Role extends Enumeration {

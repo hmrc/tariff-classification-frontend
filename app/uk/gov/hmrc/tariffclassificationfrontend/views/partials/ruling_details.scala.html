@@ -22,6 +22,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.ruling_certificate_link
 @import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 
+@import uk.gov.hmrc.tariffclassificationfrontend.models.Permission
 @(c: Case, decisionForm: Option[Form[DecisionFormData]], files: Seq[StoredAttachment])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @defining(c.application.asBTI) { btiApp: BTIApplication =>
@@ -55,7 +56,7 @@
     <div class="grid-row">
         <div class="column-one-third">
             <h3 class="heading-medium mt-0">@messages("case.menu.ruling-details")</h3>
-            @if(c.status == CaseStatus.OPEN && request.hasWritePermission) {
+            @if(c.status == CaseStatus.OPEN && request.hasPermission(Permission.EDIT_RULING) ) {
                 <div id="ruling_edit_details" class="mb-2">
                     <a id="ruling_edit" href="@RulingController.editRulingDetails(c.reference)">Edit ruling details</a>
                 </div>
@@ -132,7 +133,7 @@
     @ruling_certificate_link(c)
 
     <div class="mt-3" id="ruling-actions">
-         @if(request.hasWritePermission) {
+         @if(request.hasPermission(Permission.COMPLETE)) {
              @complete_ruling_section(c, decisionForm)
          }
         @cancel_ruling_section(c)

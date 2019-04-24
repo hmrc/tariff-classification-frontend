@@ -21,7 +21,7 @@ import play.api.i18n.MessagesApi
 import play.api.mvc._
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionForm
-import uk.gov.hmrc.tariffclassificationfrontend.models.Case
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Permission}
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.OPEN
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
@@ -40,11 +40,11 @@ class CompleteCaseController @Inject()(verify: RequestActions,
   override protected val config: AppConfig = appConfig
   override protected val caseService: CasesService = casesService
 
-  def completeCase(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.caseExists(reference) andThen verify.mustHaveWritePermission).async { implicit request =>
+  def completeCase(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.COMPLETE)).async { implicit request =>
     validateAndRenderView(c => successful(views.html.complete_case(c)))
   }
 
-  def confirmCompleteCase(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.caseExists(reference) andThen verify.mustHaveWritePermission).async { implicit request =>
+  def confirmCompleteCase(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.COMPLETE)).async { implicit request =>
     validateAndRenderView(casesService.completeCase(_, request.operator).map(views.html.confirm_complete_case(_)))
   }
 

@@ -20,7 +20,7 @@ import javax.inject.{Inject, Singleton}
 import play.api.i18n.MessagesApi
 import play.api.mvc._
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.models.Case
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Permission}
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus._
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
@@ -37,7 +37,7 @@ class ReopenCaseController @Inject()(verify: RequestActions,
   override protected val config: AppConfig = appConfig
   override protected val caseService: CasesService = casesService
 
-  def confirmReopenCase(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.caseExists(reference) andThen verify.mustHaveWritePermission).async { implicit request =>
+  def confirmReopenCase(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.OPEN)).async { implicit request =>
     validateAndRenderView(casesService.reopenCase(_, request.operator).map(views.html.confirm_reopen_case(_)))
   }
 
