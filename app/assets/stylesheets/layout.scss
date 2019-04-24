@@ -197,7 +197,7 @@ table thead th {
   vertical-align: top;
 }
 
-table tbody td, table tbody th  {
+table tbody td, table tbody th {
   vertical-align: middle;
 }
 
@@ -288,10 +288,10 @@ table tbody td[align="right"], table tbody th[align="right"], table thead th[ali
 }
 
 .button-link {
-  background:none!important;
-  color:inherit;
-  border:none;
-  padding:0!important;
+  background: none !important;
+  color: inherit;
+  border: none;
+  padding: 0 !important;
   font: inherit;
   cursor: pointer;
   text-decoration: underline;
@@ -311,15 +311,15 @@ table tbody td[align="right"], table tbody th[align="right"], table thead th[ali
   width: 100%;
 }
 
-.boxed-content{
+.boxed-content {
   padding: 30px 20px 30px 20px;
 }
 
-.full-width{
-  width:100%;
+.full-width {
+  width: 100%;
 }
 
-.border-bottom{
+.border-bottom {
   border-bottom: 1px solid #bfc1c3;
 }
 
