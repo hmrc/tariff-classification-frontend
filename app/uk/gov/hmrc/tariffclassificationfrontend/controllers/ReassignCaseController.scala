@@ -23,7 +23,7 @@ import play.api.mvc._
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.ReleaseCaseForm
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus._
-import uk.gov.hmrc.tariffclassificationfrontend.models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
+import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Permission, Queue}
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, QueuesService}
 import uk.gov.hmrc.tariffclassificationfrontend.views
@@ -65,7 +65,7 @@ class ReassignCaseController @Inject()(verify: RequestActions,
   }
 
   private def reassignToQueue(f: Form[String], caseRef: String, origin: String)
-                             (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
+                             (implicit request: AuthenticatedRequest[_]): Future[Result] = {
     validateAndRenderView(c =>
       for {
         queues <- queueService.getNonGateway

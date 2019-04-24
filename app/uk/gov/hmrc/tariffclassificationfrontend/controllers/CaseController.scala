@@ -24,7 +24,7 @@ import play.twirl.api.{Html, HtmlFormat}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms._
-import uk.gov.hmrc.tariffclassificationfrontend.models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
+import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, NoPagination, Operator, Permission}
 import uk.gov.hmrc.tariffclassificationfrontend.service._
 import uk.gov.hmrc.tariffclassificationfrontend.views
@@ -59,6 +59,16 @@ class CaseController @Inject()(verify: RequestActions,
     )
   }
 
+  private def validateAndRenderView(page: CaseDetailPage, toHtml: Case => Future[Html])
+                                   (implicit request: AuthenticatedRequest[_]): Future[Result] = {
+
+    //TODO: what if is empty?
+
+    request.c match {
+      case Some(c) => toHtml(c).map(html => Ok(views.html.case_details(c, page, html)))
+    }
+  }
+
   def applicationDetails(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.casePermissions(reference)).async { implicit request =>
     validateAndRenderView(
       APPLICATION_DETAILS,
@@ -83,18 +93,20 @@ class CaseController @Inject()(verify: RequestActions,
     )
   }
 
-  private def validateAndRenderView(page: CaseDetailPage, toHtml: Case => Future[Html])
-                                   (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
-
-    toHtml(request.`case`).map(html => Ok(views.html.case_details(request.`case`, page, html)))
-  }
-
   def activityDetails(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.casePermissions(reference)).async { implicit request =>
 
     validateAndRenderView(
       ACTIVITY,
       showActivity(_, activityForm)
     )
+  }
+
+  private def showActivity(c: Case, f: Form[ActivityFormData])
+                          (implicit request: AuthenticatedRequest[AnyContent]): Future[HtmlFormat.Appendable] = {
+    for {
+      events <- eventsService.getEvents(c.reference, NoPagination())
+      queues <- queuesService.getAll
+    } yield views.html.partials.activity_details(c, events, f, queues)
   }
 
   def addNote(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.casePermissions(reference)).async { implicit request =>
@@ -121,18 +133,14 @@ class CaseController @Inject()(verify: RequestActions,
     activityForm.bindFromRequest.fold(onError, onSuccess)
   }
 
-  private def showActivity(c: Case, f: Form[ActivityFormData])
-                          (implicit request: AuthenticatedRequest[AnyContent]): Future[HtmlFormat.Appendable] = {
-    for {
-      events <- eventsService.getEvents(c.reference, NoPagination())
-      queues <- queuesService.getAll
-    } yield views.html.partials.activity_details(c, events, f, queues)
-  }
-
   private def validateAndRedirect(reference: String, page: CaseDetailPage, toHtml: Case => Future[Call])
-                                 (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
+                                 (implicit request: AuthenticatedRequest[_]): Future[Result] = {
 
-    toHtml(request.`case`).map(_ => Redirect(routes.CaseController.activityDetails(reference)))
+    //TODO: what if is empty?
+
+    request.c match {
+      case Some(c) => toHtml(c).map(_ => Redirect(routes.CaseController.activityDetails(reference)))
+    }
   }
 
   def keywordsDetails(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.casePermissions(reference)).async { implicit request =>
@@ -140,7 +148,7 @@ class CaseController @Inject()(verify: RequestActions,
       reference,
       KEYWORDS,
       showKeywords(_, keywordForm),
-      request.`case`
+      request.c.get //TODO: check
     )
   }
 
@@ -148,13 +156,6 @@ class CaseController @Inject()(verify: RequestActions,
                                    (implicit request: Request[_]): Future[Result] = {
 
     toHtml(c).map(html => Ok(views.html.case_details(c, page, html)))
-  }
-
-  private def showKeywords(c: Case, f: Form[String])
-                          (implicit request: AuthenticatedRequest[AnyContent]): Future[HtmlFormat.Appendable] = {
-    keywordsService.autoCompleteKeywords.map { keywords: Seq[String] =>
-      views.html.partials.keywords_details(c, keywords, f)
-    }
   }
 
   def addKeyword(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.KEYWORDS)).async { implicit request =>
@@ -172,11 +173,11 @@ class CaseController @Inject()(verify: RequestActions,
     )
   }
 
-  def removeKeyword(reference: String, keyword: String): Action[AnyContent] = (verify.authenticate andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.KEYWORDS)).async { implicit request =>
-    validateAndRenderView(
-      KEYWORDS,
-      updateKeywords(_, keyword)(keywordsService.removeKeyword)
-    )
+  private def showKeywords(c: Case, f: Form[String])
+                          (implicit request: AuthenticatedRequest[AnyContent]): Future[HtmlFormat.Appendable] = {
+    keywordsService.autoCompleteKeywords.map { keywords: Seq[String] =>
+      views.html.partials.keywords_details(c, keywords, f)
+    }
   }
 
   private def updateKeywords(c: Case, keyword: Keyword)
@@ -186,5 +187,12 @@ class CaseController @Inject()(verify: RequestActions,
       updatedCase <- updateKeywords(c, keyword, request.operator)
       autoCompleteKeywords <- keywordsService.autoCompleteKeywords
     } yield views.html.partials.keywords_details(updatedCase, autoCompleteKeywords, keywordForm)
+  }
+
+  def removeKeyword(reference: String, keyword: String): Action[AnyContent] = (verify.authenticate andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.KEYWORDS)).async { implicit request =>
+    validateAndRenderView(
+      KEYWORDS,
+      updateKeywords(_, keyword)(keywordsService.removeKeyword)
+    )
   }
 }
