@@ -4,7 +4,7 @@ GET         /assets/*file                                controllers.Assets.at(p
 
 GET         /unauthorized                                @uk.gov.hmrc.tariffclassificationfrontend.controllers.SecurityController.unauthorized()
 
-GET         /                                            controllers.Default.redirect(to = uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.MyCasesController.myCases.url)
+GET         /                                            @uk.gov.hmrc.tariffclassificationfrontend.controllers.IndexController.get()
 GET         /queues                                      controllers.Default.redirect(to = uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.MyCasesController.myCases.url)
 GET         /queues/my-cases                             @uk.gov.hmrc.tariffclassificationfrontend.controllers.MyCasesController.myCases()
 GET         /queues/assigned                             @uk.gov.hmrc.tariffclassificationfrontend.controllers.AssignedCasesController.assignedCases()
