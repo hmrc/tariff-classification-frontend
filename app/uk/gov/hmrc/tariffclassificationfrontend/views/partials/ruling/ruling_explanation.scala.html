@@ -35,7 +35,7 @@
             @if(d.explanation.exists(_.trim.nonEmpty)) {
                 <p class="mt-0">Commodity code for your item: @d.bindingCommodityCode</p>
 
-                <p id="holder_informationValue">@d.explanation</p>
+                <p id="holder_informationValue" class="pre-wrap">@d.explanation</p>
 
                 <p>
                     In reaching this decision I have followed the legal procedure for Tariff Classification as
