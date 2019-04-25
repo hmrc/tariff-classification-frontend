@@ -51,7 +51,7 @@ class RulingExplanationViewSpec extends ViewSpec {
       val doc = view(ruling_explanation(c))
 
       // Then
-      doc shouldNot containElementWithID("holder-explanation")
+      doc shouldNot containElementWithID("holder_explanationValue")
     }
 
     "hide the `Holder explanation` field value when the decision has no explanation" in {
@@ -63,7 +63,7 @@ class RulingExplanationViewSpec extends ViewSpec {
       val doc = view(ruling_explanation(c))
 
       // Then
-      doc shouldNot containElementWithID("holder-explanation")
+      doc shouldNot containElementWithID("holder_explanationValue")
     }
 
     "show the `Holder explanation` field value when the decision has an explanation" in {
@@ -79,7 +79,7 @@ class RulingExplanationViewSpec extends ViewSpec {
 
       // Then
       doc should containElementWithID("information-for-holder")
-      doc should containElementWithID("holder-explanation")
+      doc should containElementWithID("holder_explanationValue")
       doc.getElementById("binding-commodity-code") should containText("decision-commodity-code")
     }
 

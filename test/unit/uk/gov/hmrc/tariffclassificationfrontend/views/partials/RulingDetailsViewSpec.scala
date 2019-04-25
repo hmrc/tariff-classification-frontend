@@ -116,7 +116,7 @@ class RulingDetailsViewSpec extends ViewSpec {
 
       // Then
       doc shouldNot containElementWithID("ruling_bindingCommodityCode")
-      doc shouldNot containElementWithID("ruling_sanitisedGoodDescription")
+      doc shouldNot containElementWithID("ruling_itemDescription")
       doc shouldNot containElementWithID("ruling_justification")
       doc shouldNot containElementWithID("ruling_searches")
       doc shouldNot containElementWithID("ruling_methodCommercialDenomination")
@@ -146,8 +146,8 @@ class RulingDetailsViewSpec extends ViewSpec {
       // Then
       doc should containElementWithID("ruling_bindingCommodityCodeValue")
       doc.getElementById("ruling_bindingCommodityCodeValue") should containText("commodity code")
-      doc should containElementWithID("ruling_sanitisedGoodDescriptionValue")
-      doc.getElementById("ruling_sanitisedGoodDescriptionValue") should containText("goods description")
+      doc should containElementWithID("ruling_itemDescriptionValue")
+      doc.getElementById("ruling_itemDescriptionValue") should containText("goods description")
       doc should containElementWithID("ruling_justificationValue")
       doc.getElementById("ruling_justificationValue") should containText("justification")
       doc should containElementWithID("ruling_searchesValue")
@@ -179,8 +179,8 @@ class RulingDetailsViewSpec extends ViewSpec {
       // Then
       doc should containElementWithID("ruling_bindingCommodityCodeValue")
       doc.getElementById("ruling_bindingCommodityCodeValue") should containText("commodity code")
-      doc should containElementWithID("ruling_sanitisedGoodDescriptionValue")
-      doc.getElementById("ruling_sanitisedGoodDescriptionValue") should containText("goods description")
+      doc should containElementWithID("ruling_itemDescriptionValue")
+      doc.getElementById("ruling_itemDescriptionValue") should containText("goods description")
       doc should containElementWithID("ruling_justificationValue")
       doc.getElementById("ruling_justificationValue") should containText("justification")
       doc should containElementWithID("ruling_searchesValue")
