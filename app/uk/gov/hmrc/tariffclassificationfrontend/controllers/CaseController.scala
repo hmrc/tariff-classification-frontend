@@ -105,7 +105,7 @@ class CaseController @Inject()(verify: RequestActions,
     } yield views.html.partials.activity_details(c, events, f, queues)
   }
 
-  def addNote(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.casePermissions(reference)).async { implicit request =>
+  def addNote(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.ADD_NOTE)).async { implicit request =>
 
     def onError: Form[ActivityFormData] => Future[Result] = errorForm => {
       validateAndRenderView(

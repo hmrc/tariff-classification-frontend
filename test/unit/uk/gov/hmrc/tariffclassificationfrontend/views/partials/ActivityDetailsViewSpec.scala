@@ -32,7 +32,8 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
   "Activity Details" should {
 
-    val requestWithMoveCase = requestWithPermissions(Permission.MOVE_CASE_BACK_TO_QUEUE)
+    val requestWithMoveCasePermission = requestWithPermissions(Permission.MOVE_CASE_BACK_TO_QUEUE)
+    val requestWithAddNotePermission = requestWithPermissions(Permission.ADD_NOTE)
 
     "Render empty events - showing 'Application Submitted'" in {
       // Given
@@ -67,6 +68,43 @@ class ActivityDetailsViewSpec extends ViewSpec {
       doc should containElementWithID("activity-events-row-0-operator")
       doc.getElementById("activity-events-row-0-operator") should containText("Unknown")
     }
+
+    "Render 'Add Note' when user has permission" in {
+      // Given
+      val c = aCase()
+      val e = Event(
+        id = "EVENT_ID",
+        details = Note("comment"),
+        operator = Operator("id", Some("name")),
+        caseReference = "ref",
+        timestamp = date
+      )
+
+      // When
+      val doc = view(activity_details(c, Paged(Seq(e)), ActivityForm.form, queues)(requestWithAddNotePermission , messages, appConfig))
+
+      // Then
+      doc should containElementWithID("add-note-submit")
+    }
+
+    "Not Render 'Add Note' when user has no permissions" in {
+      // Given
+      val c = aCase()
+      val e = Event(
+        id = "EVENT_ID",
+        details = Note("comment"),
+        operator = Operator("id", Some("name")),
+        caseReference = "ref",
+        timestamp = date
+      )
+
+      // When
+      val doc = view(activity_details(c, Paged(Seq(e)), ActivityForm.form, queues)(operatorRequest , messages, appConfig))
+
+      // Then
+      doc shouldNot containElementWithID("add-note-submit")
+    }
+
 
     "Render 'Note'" in {
       // Given
@@ -405,7 +443,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
           withStatus(status)
         )
         // When
-        val doc = view(activity_details(c, Paged(Seq.empty), ActivityForm.form, queues)(requestWithMoveCase, messages, appConfig))
+        val doc = view(activity_details(c, Paged(Seq.empty), ActivityForm.form, queues)(requestWithMoveCasePermission, messages, appConfig))
 
         // Then
         doc shouldNot containElementWithID("reassign-queue-link")
@@ -453,7 +491,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
         )
 
         // When
-        val doc = view(activity_details(c, Paged(Seq.empty), ActivityForm.form, queues)(requestWithMoveCase, messages, appConfig))
+        val doc = view(activity_details(c, Paged(Seq.empty), ActivityForm.form, queues)(requestWithMoveCasePermission, messages, appConfig))
 
         // Then
         doc should containElementWithID("reassign-queue-link")

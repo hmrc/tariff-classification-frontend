@@ -27,24 +27,26 @@
 
     @tab_heading("activity", messages("case.menu.activity"))
 
-    <div class="grid-row">
+    @if(request.hasPermission(Permission.ADD_NOTE)) {
+        <div class="grid-row">
 
-        <div class="column-full">
+            <div class="column-full">
 
-        @form(action = CaseController.addNote(c.reference), 'class -> "form") {
-            @CSRF.formField
-            @input_textarea(
-                field = activityForm("note"),
-                label = "Add case note",
-                hint = Some("Add short, descriptive notes to record case activity. For example, 'A sample of one trainer has been received and sent to the lab for testing.'"),
-                autofocus = true
-            )
-            <div class="form-group">
-                <button id="add-note-submit" class="button" type="submit">Add note to activity timeline</button>
+            @form(action = CaseController.addNote(c.reference), 'class -> "form") {
+                @CSRF.formField
+                @input_textarea(
+                    field = activityForm("note"),
+                    label = "Add case note",
+                    hint = Some("Add short, descriptive notes to record case activity. For example, 'A sample of one trainer has been received and sent to the lab for testing.'"),
+                    autofocus = true
+                )
+                <div class="form-group">
+                    <button id="add-note-submit" class="button" type="submit">Add note to activity timeline</button>
+                </div>
+            }
             </div>
-        }
         </div>
-    </div>
+    }
 
     @activity_details_events_table(c, events, queues)
 

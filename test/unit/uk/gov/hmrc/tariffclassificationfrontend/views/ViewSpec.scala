@@ -30,15 +30,18 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequ
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Operator, Role}
 
 abstract class ViewSpec extends UnitSpec with WithFakeApplication {
-  val request = FakeRequest("GET", "/", FakeHeaders(), AnyContentAsEmpty, tags = csrfTags)
 
   implicit val appConfig: AppConfig = injector.instanceOf[AppConfig]
-  val authenticatedManagerFakeRequest: AuthenticatedRequest[AnyContentAsEmpty.type] = new AuthenticatedRequest(authenticatedManager, request)
-  val operatorRequest = new AuthenticatedRequest(authenticatedOperator, request)
+
   protected val authenticatedOperator = Operator("operator-id")
   protected val authenticatedManager = Operator("operator-id", role = Role.CLASSIFICATION_MANAGER)
+
   private val tokenProvider: TokenProvider = fakeApplication.injector.instanceOf[TokenProvider]
   private val csrfTags = Map(Token.NameRequestTag -> "csrfToken", Token.RequestTag -> tokenProvider.generateToken)
+
+  val request = FakeRequest("GET", "/", FakeHeaders(), AnyContentAsEmpty, tags = csrfTags)
+  val operatorRequest = new AuthenticatedRequest(authenticatedOperator, request)
+  val authenticatedManagerFakeRequest: AuthenticatedRequest[AnyContentAsEmpty.type] = new AuthenticatedRequest(authenticatedManager, request)
 
   def requestWithPermissions(permissions: Permission*): AuthenticatedRequest[AnyContentAsEmpty.type] = {
     val operator = authenticatedOperator.copy(permissions = permissions.toSet)
