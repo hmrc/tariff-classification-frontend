@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.views.partials
 
+import uk.gov.hmrc.tariffclassificationfrontend.models.Permission
 import uk.gov.hmrc.tariffclassificationfrontend.models.response.ScanStatus
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewSpec
@@ -123,7 +124,7 @@ class ApplicationDetailsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(application_details(`case`, Seq.empty, None)(readOnlyRequest, messages, appConfig))
+      val doc = view(application_details(`case`, Seq.empty, None)(operatorRequest, messages, appConfig))
 
       // Then
       doc shouldNot containElementWithID("refer-case-button")
@@ -140,8 +141,10 @@ class ApplicationDetailsViewSpec extends ViewSpec {
         withoutAttachments()
       )
 
+      val request = requestWithPermissions(Permission.REFER_CASE, Permission.REJECT_CASE, Permission.SUSPEND_CASE)
+
       // When
-      val doc = view(application_details(`case`, Seq.empty, None)(readWriteRequest, messages, appConfig))
+      val doc = view(application_details(`case`, Seq.empty, None)(request, messages, appConfig))
 
       // Then
       doc should containElementWithID("refer-case-button")
@@ -149,22 +152,6 @@ class ApplicationDetailsViewSpec extends ViewSpec {
       doc should containElementWithID("suspend-case-button")
     }
 
-
-    "refer, reject and suspend action always available for Managers" in {
-      // Given
-      val `case` = aCase(
-        withOptionalApplicationFields(),
-        withoutAttachments()
-      )
-
-      // When
-      val doc = view(application_details(`case`, Seq.empty, None)(authenticatedManagerFakeRequest, messages, appConfig))
-
-      // Then
-      doc should containElementWithID("refer-case-button")
-      doc should containElementWithID("reject-case-button")
-      doc should containElementWithID("suspend-case-button")
-    }
   }
 
 }

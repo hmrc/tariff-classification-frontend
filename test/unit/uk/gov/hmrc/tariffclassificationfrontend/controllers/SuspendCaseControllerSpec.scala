@@ -72,8 +72,9 @@ class SuspendCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     }
 
     "redirect to Application Details for non OPEN statuses" in {
+      val con = controller(caseWithStatusNEW)
 
-      val result: Result = await(controller(caseWithStatusNEW).suspendCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+      val result: Result = await(con.suspendCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None

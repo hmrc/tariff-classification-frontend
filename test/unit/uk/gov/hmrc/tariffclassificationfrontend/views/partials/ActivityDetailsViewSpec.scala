@@ -32,6 +32,8 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
   "Activity Details" should {
 
+    val requestWithMoveCase = requestWithPermissions(Permission.MOVE_CASE_BACK_TO_QUEUE)
+
     "Render empty events - showing 'Application Submitted'" in {
       // Given
       val c = aCase(
@@ -394,22 +396,6 @@ class ActivityDetailsViewSpec extends ViewSpec {
       doc.getElementById("activity-events-row-0-content") should containText("Name moved this case to the TEST queue")
     }
 
-    "Render 'Reassign Link' When Case is in valid state" in {
-
-      Set(CaseStatus.OPEN, CaseStatus.REFERRED, CaseStatus.SUSPENDED).foreach(status => {
-        // Given
-        val c = aCase(
-          withAssignee(Some(Operator("id"))),
-          withStatus(status)
-        )
-        // When
-        val doc = view(activity_details(c, Paged(Seq.empty), ActivityForm.form, queues))
-
-        // Then
-        doc should containElementWithID("reassign-queue-link")
-      })
-    }
-
     "Not Render 'Reassign Link' When Case is in invalid state" in {
 
       Set(CaseStatus.NEW, CaseStatus.COMPLETED, CaseStatus.CANCELLED).foreach(status => {
@@ -419,7 +405,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
           withStatus(status)
         )
         // When
-        val doc = view(activity_details(c, Paged(Seq.empty), ActivityForm.form, queues))
+        val doc = view(activity_details(c, Paged(Seq.empty), ActivityForm.form, queues)(requestWithMoveCase, messages, appConfig))
 
         // Then
         doc shouldNot containElementWithID("reassign-queue-link")
@@ -440,7 +426,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
       doc shouldNot containElementWithID("reassign-queue-link")
     }
 
-    "Not render 'Reassign Link' when valid state but permissions as ReadOnly " in {
+    "Not render 'Reassign Link' when valid state but no permissions " in {
 
       Set(CaseStatus.OPEN, CaseStatus.REFERRED, CaseStatus.SUSPENDED).foreach(status => {
         // Given
@@ -450,14 +436,14 @@ class ActivityDetailsViewSpec extends ViewSpec {
         )
 
         // When
-        val doc = view(activity_details(c, Paged(Seq.empty), ActivityForm.form, queues)(readOnlyRequest, messages, appConfig))
+        val doc = view(activity_details(c, Paged(Seq.empty), ActivityForm.form, queues)(operatorRequest, messages, appConfig))
 
         // Then
         doc shouldNot containElementWithID("reassign-queue-link")
       })
     }
 
-    "Render 'Reassign Link' when valid state and permissions are ReadWrite " in {
+    "Render 'Reassign Link' when valid state and permissions are MOVE_CASE_BACK_TO_QUEUE " in {
 
       Set(CaseStatus.OPEN, CaseStatus.REFERRED, CaseStatus.SUSPENDED).foreach(status => {
         // Given
@@ -467,7 +453,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
         )
 
         // When
-        val doc = view(activity_details(c, Paged(Seq.empty), ActivityForm.form, queues)(readWriteRequest, messages, appConfig))
+        val doc = view(activity_details(c, Paged(Seq.empty), ActivityForm.form, queues)(requestWithMoveCase, messages, appConfig))
 
         // Then
         doc should containElementWithID("reassign-queue-link")
@@ -475,5 +461,6 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
     }
   }
+
 
 }

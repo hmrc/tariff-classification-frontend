@@ -24,7 +24,7 @@ import play.twirl.api.{Html, HtmlFormat}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms._
-import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
+import uk.gov.hmrc.tariffclassificationfrontend.models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, NoPagination, Operator, Permission}
 import uk.gov.hmrc.tariffclassificationfrontend.service._
 import uk.gov.hmrc.tariffclassificationfrontend.views
@@ -59,16 +59,6 @@ class CaseController @Inject()(verify: RequestActions,
     )
   }
 
-  private def validateAndRenderView(page: CaseDetailPage, toHtml: Case => Future[Html])
-                                   (implicit request: AuthenticatedRequest[_]): Future[Result] = {
-
-    //TODO: what if is empty?
-
-    request.c match {
-      case Some(c) => toHtml(c).map(html => Ok(views.html.case_details(c, page, html)))
-    }
-  }
-
   def applicationDetails(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.casePermissions(reference)).async { implicit request =>
     validateAndRenderView(
       APPLICATION_DETAILS,
@@ -99,6 +89,12 @@ class CaseController @Inject()(verify: RequestActions,
       ACTIVITY,
       showActivity(_, activityForm)
     )
+  }
+
+  private def validateAndRenderView(page: CaseDetailPage, toHtml: Case => Future[Html])
+                                   (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
+
+    toHtml(request.`case`).map(html => Ok(views.html.case_details(request.`case`, page, html)))
   }
 
   private def showActivity(c: Case, f: Form[ActivityFormData])
@@ -134,13 +130,9 @@ class CaseController @Inject()(verify: RequestActions,
   }
 
   private def validateAndRedirect(reference: String, page: CaseDetailPage, toHtml: Case => Future[Call])
-                                 (implicit request: AuthenticatedRequest[_]): Future[Result] = {
+                                 (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
 
-    //TODO: what if is empty?
-
-    request.c match {
-      case Some(c) => toHtml(c).map(_ => Redirect(routes.CaseController.activityDetails(reference)))
-    }
+    toHtml(request.`case`).map(_ => Redirect(routes.CaseController.activityDetails(reference)))
   }
 
   def keywordsDetails(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.casePermissions(reference)).async { implicit request =>
@@ -148,7 +140,7 @@ class CaseController @Inject()(verify: RequestActions,
       reference,
       KEYWORDS,
       showKeywords(_, keywordForm),
-      request.c.get //TODO: check
+      request.`case`
     )
   }
 
@@ -180,6 +172,13 @@ class CaseController @Inject()(verify: RequestActions,
     }
   }
 
+  def removeKeyword(reference: String, keyword: String): Action[AnyContent] = (verify.authenticate andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.KEYWORDS)).async { implicit request: AuthenticatedCaseRequest[AnyContent] =>
+    validateAndRenderView(
+      KEYWORDS,
+      updateKeywords(_, keyword)(keywordsService.removeKeyword)
+    )
+  }
+
   private def updateKeywords(c: Case, keyword: Keyword)
                             (updateKeywords: (Case, Keyword, Operator) => Future[Case])
                             (implicit request: AuthenticatedRequest[AnyContent]): Future[HtmlFormat.Appendable] = {
@@ -187,12 +186,5 @@ class CaseController @Inject()(verify: RequestActions,
       updatedCase <- updateKeywords(c, keyword, request.operator)
       autoCompleteKeywords <- keywordsService.autoCompleteKeywords
     } yield views.html.partials.keywords_details(updatedCase, autoCompleteKeywords, keywordForm)
-  }
-
-  def removeKeyword(reference: String, keyword: String): Action[AnyContent] = (verify.authenticate andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.KEYWORDS)).async { implicit request =>
-    validateAndRenderView(
-      KEYWORDS,
-      updateKeywords(_, keyword)(keywordsService.removeKeyword)
-    )
   }
 }

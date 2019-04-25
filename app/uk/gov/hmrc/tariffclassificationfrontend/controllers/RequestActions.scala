@@ -20,7 +20,7 @@ import javax.inject.{Inject, Singleton}
 import play.api.mvc.{ActionFilter, ActionFunction}
 import uk.gov.hmrc.tariffclassificationfrontend.models.Permission
 import uk.gov.hmrc.tariffclassificationfrontend.models.Permission.Permission
-import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
+import uk.gov.hmrc.tariffclassificationfrontend.models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
 
 @Singleton
 class RequestActions @Inject()(checkPermissionsAction: CheckPermissionsAction,
@@ -30,7 +30,7 @@ class RequestActions @Inject()(checkPermissionsAction: CheckPermissionsAction,
 
   val authenticate: AuthenticatedAction = authenticatedAction
 
-  def casePermissions(reference: String): ActionFunction[AuthenticatedRequest, AuthenticatedRequest] = mustHave(Permission.VIEW_CASES) andThen caseExistsActionFactory.apply(reference) andThen checkPermissionsAction
+  def casePermissions(reference: String): ActionFunction[AuthenticatedRequest, AuthenticatedCaseRequest] = mustHave(Permission.VIEW_CASES) andThen caseExistsActionFactory.apply(reference) andThen checkPermissionsAction
 
-  def mustHave(permission: Permission): ActionFilter[AuthenticatedRequest] = mustHavePermissionActionFactory.apply(permission)
+  def mustHave[B[C] <: AuthenticatedRequest[C]](permission: Permission): ActionFilter[B] = mustHavePermissionActionFactory.apply[B](permission)
 }

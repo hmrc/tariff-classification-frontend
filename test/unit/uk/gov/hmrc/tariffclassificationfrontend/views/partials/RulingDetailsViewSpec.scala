@@ -18,7 +18,7 @@ package uk.gov.hmrc.tariffclassificationfrontend.views.partials
 
 import java.time.Instant
 
-import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, StoredAttachment}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, Permission, StoredAttachment}
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewSpec
 import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.ruling_details
@@ -27,6 +27,9 @@ import uk.gov.tariffclassificationfrontend.utils.Cases._
 class RulingDetailsViewSpec extends ViewSpec {
 
   "Ruling Details" should {
+
+    val requestWithEditRulingPermissions = requestWithPermissions(Permission.EDIT_RULING)
+    val requestWithCompleteCasePermissions = requestWithPermissions(Permission.COMPLETE_CASE)
 
     "Render Optional Application Fields" in {
       // Given
@@ -55,12 +58,12 @@ class RulingDetailsViewSpec extends ViewSpec {
       doc shouldNot containElementWithID("envisagedCommodityCodeValue")
     }
 
-    "Render 'Edit' button for OPEN cases" in {
+    "Render 'Edit' button for EDIT_RULING users with OPEN cases" in {
       // Given
       val c = aCase(withReference("ref"), withStatus(CaseStatus.OPEN))
 
       // When
-      val doc = view(ruling_details(c, None, Seq.empty))
+      val doc = view(ruling_details(c, None, Seq.empty)(requestWithEditRulingPermissions, messages, appConfig))
 
       // Then
       doc should containElementWithID("ruling_edit_details")
@@ -76,7 +79,7 @@ class RulingDetailsViewSpec extends ViewSpec {
       val c = aCase(withReference("ref"), withStatus(CaseStatus.NEW))
 
       // When
-      val doc = view(ruling_details(c, None, Seq.empty))
+      val doc = view(ruling_details(c, None, Seq.empty)(requestWithEditRulingPermissions, messages, appConfig))
 
       // Then
       doc shouldNot containElementWithID("ruling_edit_details")
@@ -88,23 +91,11 @@ class RulingDetailsViewSpec extends ViewSpec {
       val c = aCase(withReference("ref"), withStatus(CaseStatus.OPEN))
 
       // When
-      val doc = view(ruling_details(c, None, Seq.empty)(readOnlyRequest, messages, appConfig))
+      val doc = view(ruling_details(c, None, Seq.empty)(operatorRequest, messages, appConfig))
 
       // Then
       doc shouldNot containElementWithID("ruling_edit_details")
       doc shouldNot containElementWithID("ruling_edit")
-    }
-
-    "Render 'Edit' button for READ_WRITE users with OPEN status" in {
-      // Given
-      val c = aCase(withReference("ref"), withStatus(CaseStatus.OPEN))
-
-      // When
-      val doc = view(ruling_details(c, None, Seq.empty)(readWriteRequest, messages, appConfig))
-
-      // Then
-      doc should containElementWithID("ruling_edit_details")
-      doc should containElementWithID("ruling_edit")
     }
 
     "Not render Decision details if not present" in {
@@ -126,7 +117,7 @@ class RulingDetailsViewSpec extends ViewSpec {
       doc should containElementWithID("no-ruling-information")
     }
 
-    "Render Decision details" in {
+    "Render Decision details with COMPLETE_CASE permission" in {
       // Given
       val c = aCase(
         withStatus(CaseStatus.OPEN),
@@ -141,7 +132,7 @@ class RulingDetailsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(ruling_details(c, None, Seq.empty))
+      val doc = view(ruling_details(c, None, Seq.empty)(requestWithCompleteCasePermissions, messages, appConfig))
 
       // Then
       doc should containElementWithID("ruling_bindingCommodityCodeValue")
@@ -174,7 +165,7 @@ class RulingDetailsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(ruling_details(c, None, Seq.empty)(readOnlyRequest, messages, appConfig))
+      val doc = view(ruling_details(c, None, Seq.empty)(operatorRequest, messages, appConfig))
 
       // Then
       doc should containElementWithID("ruling_bindingCommodityCodeValue")

@@ -22,7 +22,7 @@ import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models.Case
-import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
+import uk.gov.hmrc.tariffclassificationfrontend.models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
@@ -50,14 +50,13 @@ trait RenderCaseAction extends FrontendController with I18nSupport {
   }
 
   protected def validateAndRenderView(toHtml: Case => Future[HtmlFormat.Appendable])
-                                     (implicit request: AuthenticatedRequest[_]): Future[Result] = {
+                                     (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
 
-    request.c match {
-      case Some(c) if isValidCase(c) => toHtml(c).map(Ok(_))
-      case Some(c) => successful(Redirect(redirect(c.reference)))
-      //TODO: ???
+    if (isValidCase(request.`case`)(request)) {
+      toHtml(request.`case`).map(Ok(_))
+    } else {
+      successful(Redirect(redirect(request.`case`.reference)))
     }
-
   }
 
   protected def getCaseAndRespond(caseReference: String,
@@ -73,12 +72,12 @@ trait RenderCaseAction extends FrontendController with I18nSupport {
 
 
   protected def validateAndRespond(toResult: Case => Future[Result])
-                                  (implicit request: AuthenticatedRequest[_]): Future[Result] = {
+                                  (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
 
-    request.c match {
-      case Some(c) if isValidCase(c) => toResult(c)
-      case Some(c) => successful(Redirect(redirect(c.reference)))
-      //TODO: ???
+    if (isValidCase(request.`case`)(request)) {
+      toResult(request.`case`)
+    } else {
+      successful(Redirect(redirect(request.`case`.reference)))
     }
   }
 

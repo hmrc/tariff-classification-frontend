@@ -18,11 +18,11 @@ package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
 import org.mockito.Mockito.mock
 import play.api.i18n.MessagesApi
-import play.api.mvc.{ActionRefiner, Request, Result}
+import play.api.mvc.{ActionFilter, ActionRefiner, Request, Result}
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.connector.StrideAuthConnector
-
+import uk.gov.hmrc.tariffclassificationfrontend.models.Permission.Permission
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Operator}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
@@ -44,7 +44,7 @@ class SuccessfulAuthenticatedAction(operator: Operator = Operator("0", Some("nam
 
 class SuccessfulCheckPermissionsAction(operator: Operator = Operator("0", Some("name"))) extends CheckPermissionsAction {
   override def refine[A](request: AuthenticatedCaseRequest[A]): Future[Either[Result, AuthenticatedCaseRequest[A]]] = {
-    successful(Right(new AuthenticatedCaseRequest(operator, request, Cases.btiCaseExample)))
+    successful(Right(new AuthenticatedCaseRequest(operator, request, request.`case`)))
   }
 }
 
@@ -63,13 +63,23 @@ class ExistingCaseActionFactory(reference: String, requestCase: Case)
   }
 }
 
+class HaveRightPermissionsActionFactory extends MustHavePermissionActionFactory {
+  override def apply[B[C] <: AuthenticatedRequest[_]](permission: Permission): ActionFilter[B] = {
+    new ActionFilter[B] {
+      override protected def filter[A](request: B[A]): Future[Option[Result]] = {
+        successful(None)
+      }
+    }
+  }
+}
 
-class SuccessfulRequestActions(operator: Operator, reference: String = "test-reference", c: Case = Cases.btiCaseExample)
+
+class SuccessfulRequestActions(operator: Operator, c: Case = Cases.btiCaseExample, reference: String = "test-reference")
   extends RequestActions(
     new SuccessfulCheckPermissionsAction(operator),
     new SuccessfulAuthenticatedAction(operator),
     new ExistingCaseActionFactory(reference, c),
-    null
+    new HaveRightPermissionsActionFactory
   ) {
 
 }

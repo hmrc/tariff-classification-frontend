@@ -25,28 +25,25 @@ import play.filters.csrf.CSRF.{Token, TokenProvider}
 import play.twirl.api.Html
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
+import uk.gov.hmrc.tariffclassificationfrontend.models.Permission.Permission
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Operator, Role}
 
-abstract class ViewSpec extends UnitSpec with WithFakeApplication  {
-
-  private def injector = fakeApplication.injector
+abstract class ViewSpec extends UnitSpec with WithFakeApplication {
+  val request = FakeRequest("GET", "/", FakeHeaders(), AnyContentAsEmpty, tags = csrfTags)
 
   implicit val appConfig: AppConfig = injector.instanceOf[AppConfig]
-
+  val authenticatedManagerFakeRequest: AuthenticatedRequest[AnyContentAsEmpty.type] = new AuthenticatedRequest(authenticatedManager, request)
+  val operatorRequest = new AuthenticatedRequest(authenticatedOperator, request)
+  protected val authenticatedOperator = Operator("operator-id")
+  protected val authenticatedManager = Operator("operator-id", role = Role.CLASSIFICATION_MANAGER)
   private val tokenProvider: TokenProvider = fakeApplication.injector.instanceOf[TokenProvider]
   private val csrfTags = Map(Token.NameRequestTag -> "csrfToken", Token.RequestTag -> tokenProvider.generateToken)
 
-
-  val request = FakeRequest("GET", "/", FakeHeaders(), AnyContentAsEmpty, tags = csrfTags)
-
-  protected val authenticatedOperator = Operator("operator-id")
-  protected val authenticatedManager = Operator("operator-id", role = Role.CLASSIFICATION_MANAGER)
-
-  val authenticatedManagerFakeRequest: AuthenticatedRequest[AnyContentAsEmpty.type] = new AuthenticatedRequest(authenticatedManager, request)
-
-  val readOnlyRequest = new AuthenticatedRequest(authenticatedOperator, request)
-  val readWriteRequest = new AuthenticatedRequest(authenticatedOperator, request)
+  def requestWithPermissions(permissions: Permission*): AuthenticatedRequest[AnyContentAsEmpty.type] = {
+    val operator = authenticatedOperator.copy(permissions = permissions.toSet)
+    new AuthenticatedRequest(operator, request)
+  }
 
   implicit val authenticatedFakeRequest: AuthenticatedRequest[AnyContentAsEmpty.type] = new AuthenticatedRequest(authenticatedOperator, request)
   implicit val messages: Messages = injector.instanceOf[MessagesApi].preferred(authenticatedFakeRequest)
@@ -54,4 +51,6 @@ abstract class ViewSpec extends UnitSpec with WithFakeApplication  {
   protected def view(html: Html): Document = {
     Jsoup.parse(html.toString())
   }
+
+  private def injector = fakeApplication.injector
 }
