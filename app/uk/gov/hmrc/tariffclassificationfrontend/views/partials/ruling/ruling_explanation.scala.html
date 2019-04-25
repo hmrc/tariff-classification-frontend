@@ -33,7 +33,16 @@
             </dt>
             <dd class="column-two-thirds">
             @if(d.explanation.exists(_.trim.nonEmpty)) {
-                <p class="mt-0">Commodity code for your item: <span id="binding-commodity-code">@d.bindingCommodityCode</span></p>
+                <p class="mt-0">Commodity code for your item:
+                    <span id="binding-commodity-code">
+                        @{
+                            d.bindingCommodityCode match {
+                                case "" => messages("case.decision.explanation.commodityCode")
+                                case _ => d.bindingCommodityCode
+                            }
+                        }
+                    </span>
+                </p>
 
                 <p id="holder-explanation" class="pre-wrap">@d.explanation</p>
 

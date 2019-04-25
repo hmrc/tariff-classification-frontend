@@ -80,11 +80,25 @@ class RulingExplanationViewSpec extends ViewSpec {
       // Then
       doc should containElementWithID("information-for-holder")
       doc should containElementWithID("holder-explanation")
+      doc.getElementById("binding-commodity-code") should containText("decision-commodity-code")
     }
 
 
+    "show a message when the commodity code is blank" in {
+      val c = aCase(
+        withStatus(CaseStatus.OPEN),
+        withDecision(
+          explanation = Some("An explanation"),
+          bindingCommodityCode = ""
+        )
+      )
 
+      // When
+      val doc = view(ruling_explanation(c))
 
+      // Then
+      doc.getElementById("binding-commodity-code") should containText(messages("case.decision.explanation.commodityCode"))
+    }
 
   }
 }
