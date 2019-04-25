@@ -25,15 +25,17 @@ import play.api.http.{MimeTypes, Status}
 import play.api.i18n.{DefaultLangs, DefaultMessagesApi}
 import play.api.mvc.{AnyContentAsFormUrlEncoded, Result}
 import play.api.test.FakeRequest
+import play.api.test.Helpers.{redirectLocation, _}
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus, Operator, Queue}
+import uk.gov.hmrc.tariffclassificationfrontend.models.Permission.Permission
+import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, QueuesService}
 import uk.gov.tariffclassificationfrontend.utils.Cases
 
-import scala.concurrent.Future.{failed, successful}
+import scala.concurrent.Future.successful
 
 class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   with WithFakeApplication with MockitoSugar with BeforeAndAfterEach with ControllerCommons {
@@ -54,8 +56,12 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   private implicit val mat: Materializer = fakeApplication.materializer
   private implicit val hc: HeaderCarrier = HeaderCarrier()
 
-  private def controller(requestCase: Case = caseWithStatusNEW) = new ReleaseCaseController(
+  private def controller(requestCase: Case) = new ReleaseCaseController(
     new SuccessfulRequestActions(operator, c = requestCase), casesService, queueService, messageApi, appConfig
+  )
+
+  private def controller(requestCase: Case, permission: Set[Permission]) = new ReleaseCaseController(
+    new RequestActionsWithPermissions(permission, c = requestCase), casesService, queueService, messageApi, appConfig
   )
 
   override def afterEach(): Unit = {
@@ -85,6 +91,23 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       contentTypeOf(result) shouldBe None
       charsetOf(result) shouldBe None
       locationOf(result) shouldBe Some("/tariff-classification/cases/reference/application")
+    }
+
+    "return OK when user has right permissions" in {
+      when(queueService.getNonGateway).thenReturn(successful(Seq.empty))
+
+      val result: Result = await(controller(caseWithStatusNEW, Set(Permission.RELEASE_CASE))
+        .releaseCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+
+      status(result) shouldBe Status.OK
+    }
+
+
+    "redirect unauthorised when does not have right permissions" in {
+      val result: Result = await(controller(caseWithStatusNEW, Set.empty).releaseCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result).get should include("unauthorized")
     }
 
   }
@@ -119,7 +142,7 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     "redirect to Application Details for non NEW statuses" in {
       when(queueService.getOneBySlug("queue")).thenReturn(successful(Some(queue)))
 
-      val result: Result= await(controller(caseWithStatusOPEN).releaseCaseToQueue("reference")(requestWithQueue("queue")))
+      val result: Result = await(controller(caseWithStatusOPEN).releaseCaseToQueue("reference")(requestWithQueue("queue")))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
@@ -127,9 +150,26 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       locationOf(result) shouldBe Some("/tariff-classification/cases/reference/application")
     }
 
+    "return OK when user has right permissions" in {
+      when(queueService.getOneBySlug("queue")).thenReturn(successful(Some(queue)))
+      when(casesService.releaseCase(any[Case], any[Queue], any[Operator])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusOPEN))
+
+      val result: Result = await(controller(caseWithStatusNEW, Set(Permission.RELEASE_CASE)).releaseCaseToQueue("reference")(requestWithQueue("queue")))
+
+      status(result) shouldBe Status.OK
+    }
+
+
+    "redirect unauthorised when does not have right permissions" in {
+      val result: Result = await(controller(caseWithStatusNEW, Set.empty).releaseCaseToQueue("reference")(requestWithQueue("queue")))
+
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result).get should include("unauthorized")
+    }
+
   }
 
-  private def requestWithQueue(queue : String) : FakeRequest[AnyContentAsFormUrlEncoded] = {
+  private def requestWithQueue(queue: String): FakeRequest[AnyContentAsFormUrlEncoded] = {
     newFakePOSTRequestWithCSRF(fakeApplication, Map("queue" -> queue))
   }
 

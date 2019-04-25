@@ -28,7 +28,7 @@ import scala.concurrent.Future.successful
 
 trait StatusChangeAction[T] extends RenderCaseAction {
 
-  protected val authenticatedAction: AuthenticatedAction
+  protected val verify: RequestActions
 
   protected val form: Form[T]
 
@@ -40,14 +40,14 @@ trait StatusChangeAction[T] extends RenderCaseAction {
 
   protected def onSuccessRedirect(reference: String): Call
 
-  def chooseStatus(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
+  def chooseStatus(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.casePermissions(reference)).async { implicit request =>
     getCaseAndRenderView(
       reference,
       c => successful(chooseStatusView(c, form.fill(status(c))))
     )
   }
 
-  def updateStatus(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
+  def updateStatus(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.casePermissions(reference)).async { implicit request =>
     form.bindFromRequest().fold(
       errors => {
         getCaseAndRenderView(

@@ -47,11 +47,13 @@ class ReleaseCaseController @Inject()(verify: RequestActions,
     getCaseAndRenderView(caseRef, c => queueService.getNonGateway.map(views.html.release_case(c, f, _)))
   }
 
-  def releaseCase(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.casePermissions(reference)).async { implicit request =>
+  def releaseCase(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.casePermissions(reference) andThen
+    verify.mustHave(Permission.RELEASE_CASE)).async { implicit request =>
     releaseCase(releaseCaseForm, reference)
   }
 
-  def releaseCaseToQueue(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.RELEASE_CASE)).async { implicit request =>
+  def releaseCaseToQueue(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.casePermissions(reference) andThen
+    verify.mustHave(Permission.RELEASE_CASE)).async { implicit request =>
 
     def onInvalidForm(formWithErrors: Form[String]): Future[Result] = {
       releaseCase(formWithErrors, reference)

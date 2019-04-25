@@ -28,11 +28,11 @@ import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, Operator}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus, Operator}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.tariffclassificationfrontend.utils.Cases
 
-import scala.concurrent.Future.{failed, successful}
+import scala.concurrent.Future.successful
 
 class SuppressCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   with WithFakeApplication with MockitoSugar with BeforeAndAfterEach with ControllerCommons {
@@ -52,7 +52,9 @@ class SuppressCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   private implicit val mat: Materializer = fakeApplication.materializer
   private implicit val hc: HeaderCarrier = HeaderCarrier()
 
-  private val controller = new SuppressCaseController(new SuccessfulAuthenticatedAction(operator), casesService, messageApi, appConfig)
+  private def controller(requestCase: Case = caseWithStatusNEW) = new SuppressCaseController(
+    new SuccessfulRequestActions(operator, c = requestCase), casesService, messageApi, appConfig
+  )
 
   override def afterEach(): Unit = {
     super.afterEach()
@@ -62,9 +64,7 @@ class SuppressCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   "Suppress Case" should {
 
     "return OK and HTML content type" in {
-      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusNEW)))
-
-      val result: Result = await(controller.suppressCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+      val result: Result = await(controller(caseWithStatusNEW).suppressCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -73,9 +73,7 @@ class SuppressCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     }
 
     "redirect to Application Details for non NEW statuses" in {
-      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusOPEN)))
-
-      val result: Result = await(controller.suppressCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+      val result: Result = await(controller(caseWithStatusOPEN).suppressCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
@@ -83,27 +81,15 @@ class SuppressCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       locationOf(result) shouldBe Some("/tariff-classification/cases/reference/application")
     }
 
-    "return Not Found and HTML content type" in {
-      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(None))
-
-      val result: Result = await(controller.suppressCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
-
-      status(result) shouldBe Status.OK
-      contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
-      charsetOf(result) shouldBe Some("utf-8")
-      bodyOf(result) should include("We could not find a Case with reference")
-    }
-
   }
 
   "Confirm Suppress a Case" should {
 
     "return OK and HTML content type when operator indicates that applicant has been contacted" in {
-      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusNEW)))
       when(casesService.suppressCase(refEq(caseWithStatusNEW), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusSUPRRESSED))
 
       val result: Result =
-        await(controller.confirmSuppressCase("reference")
+        await(controller(caseWithStatusNEW).confirmSuppressCase("reference")
              (newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("state" -> "true")))
 
       status(result) shouldBe Status.OK
@@ -113,11 +99,10 @@ class SuppressCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     }
 
     "return OK and HTML content type when operator indicates that applicant has not been contacted" in {
-      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusNEW)))
       when(casesService.suppressCase(refEq(caseWithStatusNEW), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusSUPRRESSED))
 
       val result: Result =
-        await(controller.confirmSuppressCase("reference")
+        await(controller(caseWithStatusNEW).confirmSuppressCase("reference")
              (newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("state" -> "false")))
 
       status(result) shouldBe Status.OK
@@ -127,9 +112,7 @@ class SuppressCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     }
 
     "redirect to Application Details for non NEW statuses" in {
-      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusOPEN)))
-
-      val result: Result = await(controller.confirmSuppressCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
+      val result: Result = await(controller(caseWithStatusOPEN).confirmSuppressCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
@@ -137,26 +120,6 @@ class SuppressCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       locationOf(result) shouldBe Some("/tariff-classification/cases/reference/application")
     }
 
-    "return Not Found and HTML content type on missing Case" in {
-      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(None))
-      val result: Result = await(controller.confirmSuppressCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
-
-      status(result) shouldBe Status.OK
-      contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
-      charsetOf(result) shouldBe Some("utf-8")
-      bodyOf(result) should include("We could not find a Case with reference")
-    }
-
-    "propagate the error in case the CaseService fails to release the case" in {
-      val error = new IllegalStateException("expected error")
-
-      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(failed(error))
-
-      val caught = intercept[error.type] {
-        await(controller.confirmSuppressCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
-      }
-      caught shouldBe error
-    }
   }
 
 }

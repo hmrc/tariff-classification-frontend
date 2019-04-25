@@ -30,7 +30,7 @@ import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
 @Singleton
-class AssignCaseController @Inject()(authenticatedAction: AuthenticatedAction,
+class AssignCaseController @Inject()(verify: RequestActions,
                                      override val caseService: CasesService,
                                      val messagesApi: MessagesApi,
                                      override implicit val config: AppConfig) extends RenderCaseAction {
@@ -45,11 +45,11 @@ class AssignCaseController @Inject()(authenticatedAction: AuthenticatedAction,
     }
   }
 
-  def get(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
+  def get(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.casePermissions(reference)).async { implicit request =>
     getCaseAndRenderView(reference, c => successful(views.html.assign_case(c)))
   }
 
-  def post(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
+  def post(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.casePermissions(reference)).async { implicit request =>
 
     def respond: Case => Future[Result] = {
       case c: Case if c.assignee.isEmpty =>

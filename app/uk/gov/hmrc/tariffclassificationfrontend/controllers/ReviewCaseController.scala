@@ -34,7 +34,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.views
 import scala.concurrent.Future
 
 @Singleton
-class ReviewCaseController @Inject()(override val authenticatedAction: AuthenticatedAction,
+class ReviewCaseController @Inject()(override val verify: RequestActions,
                                      override val caseService: CasesService,
                                      override val messagesApi: MessagesApi,
                                      override implicit val config: AppConfig) extends StatusChangeAction[Option[ReviewStatus]] {

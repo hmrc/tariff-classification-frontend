@@ -48,8 +48,8 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers
   private val casesService = mock[CasesService]
   private val operator = mock[Operator]
 
-  private val controller = new AppealCaseController(
-    new SuccessfulAuthenticatedAction(operator), casesService, messageApi, appConfig
+  private def controller(requestCase: Case) = new AppealCaseController(
+    new SuccessfulRequestActions(operator, c = requestCase), casesService, messageApi, appConfig
   )
 
   private implicit val hc: HeaderCarrier = HeaderCarrier()
@@ -64,9 +64,7 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers
     "return 200 OK and HTML content type - For CANCELLED Case" in {
       val c = aCase(withStatus(CaseStatus.CANCELLED), withDecision())
 
-      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(c)))
-
-      val result = await(controller.appealDetails("reference")(fakeRequest))
+      val result = await(controller(c).appealDetails("reference")(fakeRequest))
 
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -77,9 +75,7 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers
     "return 200 OK and HTML content type - For COMPLETED Case" in {
       val c = aCase(withStatus(CaseStatus.COMPLETED), withDecision())
 
-      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(c)))
-
-      val result = await(controller.appealDetails("reference")(fakeRequest))
+      val result = await(controller(c).appealDetails("reference")(fakeRequest))
 
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -90,9 +86,7 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers
     "redirect for other status" in {
       val c = aCase(withStatus(CaseStatus.OPEN), withDecision())
 
-      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(c)))
-
-      val result = await(controller.appealDetails("reference")(fakeRequest))
+      val result = await(controller(c).appealDetails("reference")(fakeRequest))
 
       status(result) shouldBe Status.SEE_OTHER
       locationOf(result) shouldBe Some("/tariff-classification/cases/reference")
@@ -101,23 +95,10 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers
     "redirect for no decision" in {
       val c = aCase(withStatus(CaseStatus.COMPLETED), withoutDecision())
 
-      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(c)))
-
-      val result = await(controller.appealDetails("reference")(fakeRequest))
+      val result = await(controller(c).appealDetails("reference")(fakeRequest))
 
       status(result) shouldBe Status.SEE_OTHER
       locationOf(result) shouldBe Some("/tariff-classification/cases/reference")
-    }
-
-    "return 404 Not Found and HTML content type" in {
-      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(None))
-
-      val result = await(controller.appealDetails("reference")(fakeRequest))
-
-      status(result) shouldBe Status.OK
-      contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
-      contentAsString(result) should include("We could not find a Case with reference")
     }
 
   }
@@ -127,9 +108,7 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers
     "return 200 OK and HTML content type - For CANCELLED Case" in {
       val c = aCase(withStatus(CaseStatus.CANCELLED), withDecision(appeal = Some(Appeal(AppealStatus.IN_PROGRESS))))
 
-      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(c)))
-
-      val result = await(controller.chooseStatus("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+      val result = await(controller(c).chooseStatus("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -140,9 +119,7 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers
     "return 200 OK and HTML content type - For COMPLETED Case" in {
       val c = aCase(withStatus(CaseStatus.COMPLETED), withDecision())
 
-      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(c)))
-
-      val result = await(controller.chooseStatus("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+      val result = await(controller(c).chooseStatus("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -153,9 +130,7 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers
     "redirect for other status" in {
       val c = aCase(withStatus(CaseStatus.OPEN), withDecision())
 
-      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(c)))
-
-      val result = await(controller.chooseStatus("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+      val result = await(controller(c).chooseStatus("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
       locationOf(result) shouldBe Some("/tariff-classification/cases/reference")
@@ -164,23 +139,10 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers
     "redirect for no decision" in {
       val c = aCase(withStatus(CaseStatus.COMPLETED), withoutDecision())
 
-      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(c)))
-
-      val result = await(controller.chooseStatus("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+      val result = await(controller(c).chooseStatus("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
       locationOf(result) shouldBe Some("/tariff-classification/cases/reference")
-    }
-
-    "return 404 Not Found and HTML content type" in {
-      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(None))
-
-      val result = await(controller.chooseStatus("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
-
-      status(result) shouldBe Status.OK
-      contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
-      contentAsString(result) should include("We could not find a Case with reference")
     }
 
   }
@@ -190,10 +152,9 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers
     "update & redirect - For CANCELLED Case" in {
       val c = aCase(withReference("reference"), withStatus(CaseStatus.CANCELLED), withDecision())
 
-      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(c)))
       given(casesService.updateAppealStatus(refEq(c), any[Option[AppealStatus]], any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(c))
 
-      val result = await(controller.updateStatus("reference")(newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("status" -> "IN_PROGRESS")))
+      val result = await(controller(c).updateStatus("reference")(newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("status" -> "IN_PROGRESS")))
 
       verify(casesService).updateAppealStatus(refEq(c), refEq(Some(AppealStatus.IN_PROGRESS)), any[Operator])(any[HeaderCarrier])
 
@@ -204,10 +165,9 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers
     "update & redirect - For COMPLETED Case" in {
       val c = aCase(withReference("reference"), withStatus(CaseStatus.COMPLETED), withDecision())
 
-      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(c)))
       given(casesService.updateAppealStatus(refEq(c), any[Option[AppealStatus]], any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(c))
 
-      val result = await(controller.updateStatus("reference")(newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("status" -> "IN_PROGRESS")))
+      val result = await(controller(c).updateStatus("reference")(newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("status" -> "IN_PROGRESS")))
 
       verify(casesService).updateAppealStatus(refEq(c), refEq(Some(AppealStatus.IN_PROGRESS)), any[Operator])(any[HeaderCarrier])
 
@@ -218,9 +178,7 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers
     "redirect for unchanged status" in {
       val c = aCase(withReference("reference"), withStatus(CaseStatus.CANCELLED), withDecision(appeal = None))
 
-      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(c)))
-
-      val result = await(controller.updateStatus("reference")(newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("status" -> "")))
+      val result = await(controller(c).updateStatus("reference")(newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("status" -> "")))
 
       verify(casesService, never()).updateAppealStatus(any[Case], any[Option[AppealStatus]], any[Operator])(any[HeaderCarrier])
 
@@ -231,10 +189,9 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers
     "redirect for other status" in {
       val c = aCase(withStatus(CaseStatus.OPEN), withDecision())
 
-      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(c)))
       given(casesService.updateAppealStatus(refEq(c), any[Option[AppealStatus]], any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(c))
 
-      val result = await(controller.updateStatus("reference")(newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("status" -> "IN_PROGRESS")))
+      val result = await(controller(c).updateStatus("reference")(newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("status" -> "IN_PROGRESS")))
 
       verify(casesService, never()).updateAppealStatus(any[Case], any[Option[AppealStatus]], any[Operator])(any[HeaderCarrier])
 
@@ -245,10 +202,9 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers
     "redirect for no decision" in {
       val c = aCase(withStatus(CaseStatus.COMPLETED), withoutDecision())
 
-      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(c)))
       given(casesService.updateAppealStatus(refEq(c), any[Option[AppealStatus]], any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(c))
 
-      val result = await(controller.updateStatus("reference")(newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("status" -> "IN_PROGRESS")))
+      val result = await(controller(c).updateStatus("reference")(newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("status" -> "IN_PROGRESS")))
 
       verify(casesService, never()).updateAppealStatus(any[Case], any[Option[AppealStatus]], any[Operator])(any[HeaderCarrier])
 
@@ -259,26 +215,14 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers
     "when error form redirects to main case page" in {
       val c = aCase(withStatus(CaseStatus.COMPLETED), withoutDecision())
 
-      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(Some(c)))
-
-      val result = await(controller.updateStatus("reference")(newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("status" -> "WRONG_STATUS")))
+      val result = await(controller(c).updateStatus("reference")(newFakePOSTRequestWithCSRF(fakeApplication)
+        .withFormUrlEncodedBody("status" -> "WRONG_STATUS")))
 
       verify(casesService, never()).updateAppealStatus(any[Case], any[Option[AppealStatus]], any[Operator])(any[HeaderCarrier])
 
       status(result) shouldBe Status.SEE_OTHER
       contentAsString(result) shouldBe ""
       locationOf(result) shouldBe Some("/tariff-classification/cases/reference")
-    }
-
-    "return 404 Not Found and HTML content type" in {
-      given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(Future.successful(None))
-
-      val result = await(controller.updateStatus("reference")(newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("status" -> "IN_PROGRESS")))
-
-      status(result) shouldBe Status.OK
-      contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
-      contentAsString(result) should include("We could not find a Case with reference")
     }
 
   }
