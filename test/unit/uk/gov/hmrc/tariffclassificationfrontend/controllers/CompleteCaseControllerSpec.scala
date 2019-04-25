@@ -52,7 +52,8 @@ class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     bindingCommodityCode = "040900",
     justification = "justification-content",
     goodsDescription = "goods-description",
-    methodSearch = Some("method-to-search"))
+    methodSearch = Some("method-to-search"),
+    explanation = Some("explanation"))
 
   private val inCompleteDecision = Decision(bindingCommodityCode = "", justification = "", goodsDescription = "")
 
