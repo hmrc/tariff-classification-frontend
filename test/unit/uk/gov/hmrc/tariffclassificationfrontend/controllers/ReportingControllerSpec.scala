@@ -121,7 +121,7 @@ class ReportingControllerSpec extends UnitSpec with Matchers with WithFakeApplic
       contentAsString(result) shouldBe views.html.reports(
         Seq.empty,
         Some(SelectedReport(
-          Report.SLA,
+          Report.REFERRAL,
           views.html.partials.reports.referral_report_criteria(InstantRangeForm.form)(req, messageApi.preferred(req), appConfig))
         ))(req, messageApi.preferred(req), appConfig).toString()
     }
@@ -173,7 +173,7 @@ class ReportingControllerSpec extends UnitSpec with Matchers with WithFakeApplic
 
     "Return OK for Referral Report" in {
       given(queueService.getNonGateway) willReturn Future.successful(Seq.empty[Queue])
-      given(reportingService.getSLAReport(refEq(range))(any[HeaderCarrier])) willReturn Future.successful(Seq.empty[ReportResult])
+      given(reportingService.getReferralReport(refEq(range))(any[HeaderCarrier])) willReturn Future.successful(Seq.empty[ReportResult])
 
       val req: AuthenticatedRequest[AnyContent] = request(
         manager,

@@ -106,7 +106,7 @@ class ReportingController @Inject()(authenticated: AuthenticatedAction,
       filter =>
         for {
           queues <- queuesService.getNonGateway
-          results <- reportingService.getSLAReport(filter)
+          results <- reportingService.getReferralReport(filter)
         } yield Ok(views.html.report_referral(filter, results, queues))
     )
   }
