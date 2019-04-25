@@ -59,7 +59,9 @@ class DecisionFormMapper {
       methodSearch = Some(form.methodSearch),
       justification = form.justification,
       methodCommercialDenomination = Some(form.methodCommercialDenomination),
-      methodExclusion = Some(form.methodExclusion))
+      methodExclusion = Some(form.methodExclusion),
+      explanation = Some(form.explanation)
+    )
   }
 
   private def from(form: DecisionFormData): Decision = {
@@ -69,7 +71,9 @@ class DecisionFormMapper {
       methodSearch = Some(form.methodSearch),
       justification = form.justification,
       methodCommercialDenomination = Some(form.methodCommercialDenomination),
-      methodExclusion = Some(form.methodExclusion))
+      methodExclusion = Some(form.methodExclusion),
+      explanation = Some(form.explanation)
+    )
   }
 
 }
