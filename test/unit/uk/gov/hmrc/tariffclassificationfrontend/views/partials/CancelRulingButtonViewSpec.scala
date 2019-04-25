@@ -19,7 +19,7 @@ package uk.gov.hmrc.tariffclassificationfrontend.views.partials
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewSpec
-import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.cancel_ruling_section
+import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.ruling.cancel_ruling_section
 import uk.gov.tariffclassificationfrontend.utils.Cases
 
 class CancelRulingButtonViewSpec extends ViewSpec {

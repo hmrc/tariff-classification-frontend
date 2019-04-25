@@ -17,9 +17,9 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.{PdfDownloadController, RulingController}
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{BTIApplication, Case, CaseStatus, Decision, StoredAttachment}
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{attachments_list, tab_heading, cancel_ruling_section, complete_ruling_section}
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{attachments_list, tab_heading}
 @import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionFormData
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.ruling_certificate_link
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.ruling.{ruling_certificate_link, complete_ruling_section}
 @import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 
 @(c: Case)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)

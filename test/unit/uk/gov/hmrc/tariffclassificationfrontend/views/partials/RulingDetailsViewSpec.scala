@@ -21,7 +21,7 @@ import java.time.Instant
 import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, StoredAttachment}
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewSpec
-import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.ruling_details
+import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.ruling.ruling_details
 import uk.gov.tariffclassificationfrontend.utils.Cases._
 
 class RulingDetailsViewSpec extends ViewSpec {
