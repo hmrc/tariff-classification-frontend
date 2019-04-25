@@ -77,7 +77,7 @@ class ReportSLAViewSpec extends ViewSpec {
 
       doc should containElementWithID(s"report_sla-table-queue_${queue2.slug}")
       doc.getElementById(s"report_sla-table-queue_${queue2.slug}-name") should containText(queue2.name)
-      doc.getElementById(s"report_sla-table-queue_${queue1.slug}-interval_0-count") should containText("0")
+      doc.getElementById(s"report_sla-table-queue_${queue2.slug}-interval_0-count") should containText("0")
       doc.getElementById(s"report_sla-table-queue_${queue2.slug}-interval_0-percent") should containText("0")
       doc.getElementById(s"report_sla-table-queue_${queue2.slug}-interval_1-count") should containText("0")
       doc.getElementById(s"report_sla-table-queue_${queue2.slug}-interval_1-percent") should containText("0")
@@ -121,7 +121,7 @@ class ReportSLAViewSpec extends ViewSpec {
 
       doc should containElementWithID(s"report_sla-table-queue_${queue2.slug}")
       doc.getElementById(s"report_sla-table-queue_${queue2.slug}-name") should containText(queue2.name)
-      doc.getElementById(s"report_sla-table-queue_${queue1.slug}-interval_0-count") should containText("1")
+      doc.getElementById(s"report_sla-table-queue_${queue2.slug}-interval_0-count") should containText("1")
       doc.getElementById(s"report_sla-table-queue_${queue2.slug}-interval_0-percent") should containText("17")
       doc.getElementById(s"report_sla-table-queue_${queue2.slug}-interval_1-count") should containText("1")
       doc.getElementById(s"report_sla-table-queue_${queue2.slug}-interval_1-percent") should containText("17")
