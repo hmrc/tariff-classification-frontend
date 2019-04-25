@@ -44,7 +44,7 @@ class CaseReportTest extends UnitSpec {
     "max_decision_start" -> Seq("1970-01-01T00:00:01Z"),
     "min_referral_date" -> Seq("1970-01-01T00:00:00Z"),
     "max_referral_date" -> Seq("1970-01-01T00:00:01Z"),
-    "report_field" -> Seq("days-elapsed"),
+    "report_field" -> Seq("active-days-elapsed"),
     "report_group" -> Seq("queue-id")
   )
 
@@ -60,7 +60,7 @@ class CaseReportTest extends UnitSpec {
           "min_referral_date=1970-01-01T00:00:00Z&" +
           "max_referral_date=1970-01-01T00:00:01Z&" +
           "report_group=queue-id&" +
-          "report_field=days-elapsed"
+          "report_field=active-days-elapsed"
       URLDecoder.decode(CaseReport.bindable.unbind("", report), "UTF-8") shouldBe populatedQueryParam
     }
 
