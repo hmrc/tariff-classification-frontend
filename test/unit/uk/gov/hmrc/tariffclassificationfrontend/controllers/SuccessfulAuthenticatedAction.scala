@@ -24,21 +24,21 @@ import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.connector.StrideAuthConnector
 import uk.gov.hmrc.tariffclassificationfrontend.models.Permission.Permission
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Operator}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Operator, Permission}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.tariffclassificationfrontend.utils.Cases
 
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
-class SuccessfulAuthenticatedAction(operator: Operator = Operator("0", Some("name"))) extends AuthenticatedAction(
+class SuccessfulAuthenticatedAction(operator: Operator = Operator("0", Some("name")), permissions : Set[Permission] = Set.empty) extends AuthenticatedAction(
   appConfig = mock(classOf[AppConfig]),
   config = mock(classOf[Configuration]),
   env = mock(classOf[Environment]),
   authConnector = mock(classOf[StrideAuthConnector])) {
 
   override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] = {
-    block(new AuthenticatedRequest(operator, request))
+    block(new AuthenticatedRequest(operator.copy(permissions = permissions), request))
   }
 }
 
@@ -80,6 +80,14 @@ class SuccessfulRequestActions(operator: Operator, c: Case = Cases.btiCaseExampl
     new SuccessfulAuthenticatedAction(operator),
     new ExistingCaseActionFactory(reference, c),
     new HaveRightPermissionsActionFactory
-  ) {
+  ) {}
 
-}
+
+
+class RequestActionsWithPermissions(permissions : Set[Permission], reference: String = "test-reference",  c: Case = Cases.btiCaseExample)
+  extends RequestActions(
+    new CheckPermissionsAction,
+    new SuccessfulAuthenticatedAction(permissions = permissions ++ Set(Permission.VIEW_CASES)),
+    new ExistingCaseActionFactory(reference, c),
+    new MustHavePermissionActionFactory
+  ) {}

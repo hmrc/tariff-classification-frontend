@@ -31,6 +31,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.WithFakeApplication
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.{CommodityCodeConstraints, DecisionForm}
+import uk.gov.hmrc.tariffclassificationfrontend.models.Permission.Permission
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.service._
 import uk.gov.tariffclassificationfrontend.utils.{Cases, Events}
@@ -60,6 +61,13 @@ class CaseControllerSpec extends WordSpec with Matchers with WithFakeApplication
     decisionForm, messageApi, appConfig
   )
 
+
+  private def controller(c: Case, permission: Set[Permission]) = new CaseController(
+    new RequestActionsWithPermissions(permission, c = c),
+    mock[CasesService], keywordsService, fileService,
+    eventService, queueService,
+    decisionForm, messageApi, appConfig
+  )
 
   private implicit val hc: HeaderCarrier = HeaderCarrier()
 
@@ -124,6 +132,29 @@ class CaseControllerSpec extends WordSpec with Matchers with WithFakeApplication
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
+    }
+
+    "add note return expected view when has right permissions" in {
+
+      val aCase  = Cases.btiCaseExample
+      given(eventService.getEvents(refEq(aCase.reference), refEq(NoPagination()))(any[HeaderCarrier])) willReturn successful(Paged(Events.events))
+      given(queueService.getAll) willReturn successful(Seq.empty)
+
+      val result = controller(aCase,Set(Permission.ADD_NOTE)).addNote(aCase.reference)(newFakeGETRequestWithCSRF(fakeApplication))
+
+      status(result) shouldBe Status.OK
+    }
+
+    "redirect unauthorised when does not have right permissions" in {
+
+      val aCase  = Cases.btiCaseExample
+      given(eventService.getEvents(refEq(aCase.reference), refEq(NoPagination()))(any[HeaderCarrier])) willReturn successful(Paged(Events.events))
+      given(queueService.getAll) willReturn successful(Seq.empty)
+
+      val result = controller(aCase, Set.empty).addNote(aCase.reference)(newFakeGETRequestWithCSRF(fakeApplication))
+
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result).get should include ("unauthorized")
     }
 
     "return 200 OK and HTML content type when no Events are present" in {
