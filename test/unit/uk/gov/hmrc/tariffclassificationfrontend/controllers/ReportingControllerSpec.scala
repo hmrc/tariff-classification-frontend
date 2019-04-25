@@ -32,8 +32,8 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.InstantRangeForm
-import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 import uk.gov.hmrc.tariffclassificationfrontend.models._
+import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 import uk.gov.hmrc.tariffclassificationfrontend.service._
 import uk.gov.hmrc.tariffclassificationfrontend.views
 import uk.gov.hmrc.tariffclassificationfrontend.views.{Report, SelectedReport}
@@ -104,7 +104,25 @@ class ReportingControllerSpec extends UnitSpec with Matchers with WithFakeApplic
         Seq.empty,
         Some(SelectedReport(
           Report.SLA,
-          views.html.partials.reports.sla_criteria(InstantRangeForm.form)(req, messageApi.preferred(req), appConfig))
+          views.html.partials.reports.sla_report_criteria(InstantRangeForm.form)(req, messageApi.preferred(req), appConfig))
+        ))(req, messageApi.preferred(req), appConfig).toString()
+    }
+
+    "Return OK for Referral Report" in {
+      given(queueService.getAll) willReturn Future.successful(Seq.empty)
+
+      val req: AuthenticatedRequest[AnyContent] = request(manager, newFakeGETRequestWithCSRF(fakeApplication))
+      val result = await(controller(manager).getReportCriteria(Report.REFERRAL.toString)(req.request))
+
+      status(result) shouldBe Status.OK
+      contentType(result) shouldBe Some("text/html")
+      charset(result) shouldBe Some("utf-8")
+
+      contentAsString(result) shouldBe views.html.reports(
+        Seq.empty,
+        Some(SelectedReport(
+          Report.SLA,
+          views.html.partials.reports.referral_report_criteria(InstantRangeForm.form)(req, messageApi.preferred(req), appConfig))
         ))(req, messageApi.preferred(req), appConfig).toString()
     }
 
@@ -153,6 +171,27 @@ class ReportingControllerSpec extends UnitSpec with Matchers with WithFakeApplic
       contentAsString(result) shouldBe views.html.report_sla(range, Seq.empty[ReportResult], Seq.empty[Queue])(req, messageApi.preferred(req), appConfig).toString()
     }
 
+    "Return OK for Referral Report" in {
+      given(queueService.getNonGateway) willReturn Future.successful(Seq.empty[Queue])
+      given(reportingService.getSLAReport(refEq(range))(any[HeaderCarrier])) willReturn Future.successful(Seq.empty[ReportResult])
+
+      val req: AuthenticatedRequest[AnyContent] = request(
+        manager,
+        newFakeGETRequestWithCSRF(fakeApplication)
+          .withFormUrlEncodedBody(
+            "min.day" -> "1", "min.month" -> "1", "min.year" -> "1970",
+            "max.day" -> "2", "max.month" -> "1", "max.year" -> "1970"
+          )
+      )
+      val result = await(controller(manager).getReport(Report.REFERRAL.toString)(req.request))
+
+      status(result) shouldBe Status.OK
+      contentType(result) shouldBe Some("text/html")
+      charset(result) shouldBe Some("utf-8")
+
+      contentAsString(result) shouldBe views.html.report_referral(range, Seq.empty[ReportResult], Seq.empty[Queue])(req, messageApi.preferred(req), appConfig).toString()
+    }
+
     "Return Bad Request for missing params" in {
       given(queueService.getAll) willReturn Future.successful(Seq.empty)
 
@@ -167,7 +206,7 @@ class ReportingControllerSpec extends UnitSpec with Matchers with WithFakeApplic
         Seq.empty,
         Some(SelectedReport(
           Report.SLA,
-          views.html.partials.reports.sla_criteria(InstantRangeForm.form.bind(Map[String, String]()))(req, messageApi.preferred(req), appConfig))
+          views.html.partials.reports.sla_report_criteria(InstantRangeForm.form.bind(Map[String, String]()))(req, messageApi.preferred(req), appConfig))
         ))(req, messageApi.preferred(req), appConfig).toString()
     }
 

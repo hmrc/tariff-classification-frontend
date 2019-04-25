@@ -48,12 +48,14 @@ class ReportingController @Inject()(authenticated: AuthenticatedAction,
   def getReportCriteria(name: String): Action[AnyContent] = (authenticated andThen verifiedManager).async { implicit request =>
     handleNotFound(name) {
       case Report.SLA => getSLAReportCriteria
+      case Report.REFERRAL => getReferralReportCriteria
     }
   }
 
   def getReport(name: String): Action[AnyContent] = (authenticated andThen verifiedManager).async { implicit request =>
     handleNotFound(name) {
       case Report.SLA => getSLAReport
+      case Report.REFERRAL => getReferralReport
     }
   }
 
@@ -64,7 +66,19 @@ class ReportingController @Inject()(authenticated: AuthenticatedAction,
       queues,
       Some(SelectedReport(
         Report.SLA,
-        views.html.partials.reports.sla_criteria(InstantRangeForm.form))
+        views.html.partials.reports.sla_report_criteria(InstantRangeForm.form))
+      ))
+    )
+  }
+
+  private def getReferralReportCriteria(implicit request: AuthenticatedRequest[_]): Future[Result] = {
+    for {
+      queues <- queuesService.getAll
+    } yield Ok(views.html.reports(
+      queues,
+      Some(SelectedReport(
+        Report.REFERRAL,
+        views.html.partials.reports.referral_report_criteria(InstantRangeForm.form))
       ))
     )
   }
@@ -74,12 +88,26 @@ class ReportingController @Inject()(authenticated: AuthenticatedAction,
       formWithErrors =>
         for {
           queues <- queuesService.getAll
-        } yield Ok(views.html.reports(queues, Some(SelectedReport(Report.SLA, views.html.partials.reports.sla_criteria(formWithErrors))))),
+        } yield Ok(views.html.reports(queues, Some(SelectedReport(Report.SLA, views.html.partials.reports.sla_report_criteria(formWithErrors))))),
       filter =>
         for {
           queues <- queuesService.getNonGateway
           results <- reportingService.getSLAReport(filter)
         } yield Ok(views.html.report_sla(filter, results, queues))
+    )
+  }
+
+  private def getReferralReport(implicit request: AuthenticatedRequest[_]): Future[Result] = {
+    InstantRangeForm.form.bindFromRequest.fold(
+      formWithErrors =>
+        for {
+          queues <- queuesService.getAll
+        } yield Ok(views.html.reports(queues, Some(SelectedReport(Report.REFERRAL, views.html.partials.reports.referral_report_criteria(formWithErrors))))),
+      filter =>
+        for {
+          queues <- queuesService.getNonGateway
+          results <- reportingService.getSLAReport(filter)
+        } yield Ok(views.html.report_referral(filter, results, queues))
     )
   }
 

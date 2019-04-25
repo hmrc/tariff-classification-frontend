@@ -20,6 +20,7 @@ import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers._
 import org.mockito.BDDMockito._
 import org.mockito.Mockito._
+import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
@@ -28,11 +29,16 @@ import uk.gov.hmrc.tariffclassificationfrontend.models._
 
 import scala.concurrent.Future
 
-class ReportingServiceTest extends UnitSpec with MockitoSugar {
+class ReportingServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
 
   private implicit val hc: HeaderCarrier = HeaderCarrier()
   private val connector = mock[BindingTariffClassificationConnector]
   private val service = new ReportingService(connector)
+
+  override def afterEach(): Unit = {
+    super.afterEach()
+    reset(connector)
+  }
 
   "Reporting Service" should {
     "Build & Request SLA Report" in {
@@ -46,7 +52,22 @@ class ReportingServiceTest extends UnitSpec with MockitoSugar {
           decisionStartDate = Some(dateRange)
         ),
         group = CaseReportGroup.QUEUE,
-        field = CaseReportField.DAYS_ELAPSED
+        field = CaseReportField.ACTIVE_DAYS_ELAPSED
+      )
+    }
+
+    "Build & Request Referral Report" in {
+      val dateRange = mock[InstantRange]
+      given(connector.generateReport(any[CaseReport])(any[HeaderCarrier])) willReturn Future.successful(Seq.empty[ReportResult])
+
+      await(service.getReferralReport(dateRange)) shouldBe Seq.empty[ReportResult]
+
+      theReport shouldBe CaseReport(
+        filter = CaseReportFilter(
+          referralDate = Some(dateRange)
+        ),
+        group = CaseReportGroup.QUEUE,
+        field = CaseReportField.REFERRED_DAYS_ELAPSED
       )
     }
 

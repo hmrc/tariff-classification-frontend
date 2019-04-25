@@ -14,13 +14,17 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.tariffclassificationfrontend.models
+package uk.gov.hmrc.tariffclassificationfrontend.views
 
-case class ReportResult
-(
-  group: Option[String],
-  value: Seq[Int]
-) {
-  def size: Int = value.size
-  def average: Double = value.sum.toDouble / size
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Queue, ReportResult}
+
+class ReferralReport(results: Seq[ReportResult]) {
+
+  lazy val count: Int = results.map(_.size).sum
+
+  lazy val average: Int = Math.round(results.flatMap(_.value).sum.toDouble / count).toInt
+
+  def countFor(queue: Queue): Int = results.find(_.group.contains(queue.id)).map(_.size).getOrElse(0)
+
+  def averageFor(queue: Queue): Int = Math.round(results.find(_.group.contains(queue.id)).map(_.average).getOrElse(0.0)).toInt
 }

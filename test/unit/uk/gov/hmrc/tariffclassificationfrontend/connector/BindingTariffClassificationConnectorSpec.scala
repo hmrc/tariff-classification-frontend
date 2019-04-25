@@ -503,7 +503,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest {
         ))
       ),
       group = CaseReportGroup.QUEUE,
-      field = CaseReportField.DAYS_ELAPSED
+      field = CaseReportField.ACTIVE_DAYS_ELAPSED
     )
 
     val result = ReportResult(Some("queue-id"), Seq(1))

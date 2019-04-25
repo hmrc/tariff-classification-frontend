@@ -19,4 +19,5 @@ package uk.gov.hmrc.tariffclassificationfrontend.views
 object Report extends Enumeration {
   type Report = Value
   val SLA = Value("SLA Report")
+  val REFERRAL = Value("Referral Report")
 }
