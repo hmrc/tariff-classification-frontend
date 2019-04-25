@@ -102,7 +102,6 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       status(result) shouldBe Status.OK
     }
 
-
     "redirect unauthorised when does not have right permissions" in {
       val result: Result = await(controller(caseWithStatusNEW, Set.empty).releaseCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 

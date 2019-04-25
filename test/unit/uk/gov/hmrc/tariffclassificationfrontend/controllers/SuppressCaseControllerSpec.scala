@@ -141,6 +141,23 @@ class SuppressCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       locationOf(result) shouldBe Some("/tariff-classification/cases/reference/application")
     }
 
+    "return OK when user has right permissions" in {
+      when(casesService.suppressCase(refEq(caseWithStatusNEW), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusSUPRRESSED))
+
+      val result: Result = await(controller(caseWithStatusNEW, Set(Permission.SUPPRESS_CASE))
+        .confirmSuppressCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+
+      status(result) shouldBe Status.OK
+    }
+
+
+    "redirect unauthorised when does not have right permissions" in {
+      val result: Result = await(controller(caseWithStatusNEW, Set.empty).confirmSuppressCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result).get should include("unauthorized")
+    }
+
   }
 
 }
