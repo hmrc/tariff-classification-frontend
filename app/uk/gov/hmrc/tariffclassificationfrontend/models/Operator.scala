@@ -30,7 +30,11 @@ case class Operator
 
   def manager: Boolean = role == Role.CLASSIFICATION_MANAGER
   def safeName: String = name.getOrElse(s"PID $id")
-  def hasPermission(permission: Permission): Boolean = permissions.contains(permission)
+
+  // TODO depricate?
+  def hasPermission(permission: Permission): Boolean = hasPermissions(Set(permission))
+  def hasPermissions(permSubSet: Set[Permission]): Boolean = permSubSet.subsetOf(permissions)
+
   def addPermissions(additionlPermisions: Set[Permission]): Operator = this.copy(permissions = permissions ++ additionlPermisions)
 }
 

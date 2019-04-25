@@ -26,7 +26,7 @@ class AuthenticatedRequest[A](_operator: Operator, _request: Request[A])
   val operator: Operator = _operator
   val request: Request[A] = _request
 
-  def hasPermission(permission: Permission): Boolean = _operator.hasPermission(permission)
+  def hasPermission(permission: Permission*): Boolean = _operator.hasPermissions(permission.toSet)
 }
 
 object AuthenticatedRequest {
