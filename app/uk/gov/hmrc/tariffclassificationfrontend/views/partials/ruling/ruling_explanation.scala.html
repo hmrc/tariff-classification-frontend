@@ -27,15 +27,15 @@
 @if(c.decision.isDefined) {
     @defining(c.decision.get) { d: Decision =>
         <h3 class="heading-medium">@messages("case.decision.holder.information")</h3>
-        <div class="grid-row">
-            <dt id="holder_information" class="column-one-third">
-            @messages("case.decision.explanation")
+        <div class="grid-row" id="information-for-holder">
+            <dt class="column-one-third">
+                @messages("case.decision.explanation")
             </dt>
             <dd class="column-two-thirds">
             @if(d.explanation.exists(_.trim.nonEmpty)) {
-                <p class="mt-0">Commodity code for your item: @d.bindingCommodityCode</p>
+                <p class="mt-0">Commodity code for your item: <span id="binding-commodity-code">@d.bindingCommodityCode</span></p>
 
-                <p id="holder_informationValue" class="pre-wrap">@d.explanation</p>
+                <p id="holder-explanation" class="pre-wrap">@d.explanation</p>
 
                 <p>
                     In reaching this decision I have followed the legal procedure for Tariff Classification as
