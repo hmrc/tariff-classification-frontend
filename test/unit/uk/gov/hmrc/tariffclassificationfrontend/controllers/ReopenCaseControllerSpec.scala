@@ -24,12 +24,14 @@ import org.scalatest.{BeforeAndAfterEach, Matchers, WordSpec}
 import play.api.http.{MimeTypes, Status}
 import play.api.i18n.{DefaultLangs, DefaultMessagesApi}
 import play.api.mvc.Result
+import play.api.test.Helpers.{redirectLocation, _}
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.CaseStatus
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus, Operator}
+import uk.gov.hmrc.tariffclassificationfrontend.models.Permission.Permission
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus, Operator, Permission}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.tariffclassificationfrontend.utils.Cases
 
@@ -57,7 +59,12 @@ class ReopenCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     reset(casesService)
   }
 
-  private def controller(c: Case) = new ReopenCaseController(new SuccessfulRequestActions(operator, c = c), casesService, messageApi, appConfig)
+  private def controller(c: Case) = new ReopenCaseController(
+    new SuccessfulRequestActions(operator, c = c), casesService, messageApi, appConfig)
+
+  private def controller(requestCase: Case, permission: Set[Permission]) = new ReopenCaseController(
+    new RequestActionsWithPermissions(permission, c = requestCase), casesService, messageApi, appConfig)
+
 
   "Confirm Reopen a Case" should {
 
@@ -97,6 +104,22 @@ class ReopenCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
     "redirect to Application Details for non REFERRED or SUSPENDED statuses" in {
       doNotRedirectWith(CaseStatus.REFERRED, CaseStatus.SUSPENDED)
+    }
+
+    "return OK when user has right permissions" in {
+      when(casesService.reopenCase(any[Case], any[Operator])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusOPEN))
+
+      val result: Result = await(controller(caseWithStatusREFERRED, Set(Permission.OPEN_CASE))
+        .confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
+
+      status(result) shouldBe Status.OK
+    }
+
+    "redirect unauthorised when does not have right permissions" in {
+      val result: Result = await(controller(caseWithStatusREFERRED, Set.empty).confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
+
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result).get should include("unauthorized")
     }
   }
 }

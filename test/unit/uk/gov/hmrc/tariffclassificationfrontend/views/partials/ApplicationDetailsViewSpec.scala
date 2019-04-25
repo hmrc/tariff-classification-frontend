@@ -46,7 +46,7 @@ class ApplicationDetailsViewSpec extends ViewSpec {
     "not render sample to be returned when sample not provided" in {
       // Given
       val `case` = aCase(
-        withBTIDetails(sampleToBeProvided = false, sampleToBeReturned = true),
+        withBTIDetails(sampleToBeReturned = true),
         withoutAttachments()
       )
 
@@ -71,7 +71,7 @@ class ApplicationDetailsViewSpec extends ViewSpec {
       // Then
       doc.getElementById("app-details-reissue-application-type") should containText(messages("case.bti.new"))
       doc.getElementById("app-details-confidential-info") should containText(messages("answer.none"))
-      doc.getElementById("app-details-related-reference") should be(null)
+      doc shouldNot containElementWithID("app-details-related-reference")
       doc.getElementById("app-details-legal-proceedings") should containText(messages("answer.no"))
       doc.getElementById("app-details-other-info") should containText(messages("answer.none"))
       doc.getElementById("app-details-import-or-export") should containText(messages("site.unknown"))
@@ -116,7 +116,7 @@ class ApplicationDetailsViewSpec extends ViewSpec {
     }
 
 
-    "Hide refer, reject and suspend action when a user have no write permissions" in {
+    "Hide refer, reject and suspend action when a user have no permissions" in {
       // Given
       val `case` = aCase(
         withOptionalApplicationFields(),
@@ -134,7 +134,7 @@ class ApplicationDetailsViewSpec extends ViewSpec {
 
     }
 
-    "refer, reject and suspend action available for read write permissions" in {
+    "refer, reject and suspend action available for user with permissions" in {
       // Given
       val `case` = aCase(
         withOptionalApplicationFields(),
