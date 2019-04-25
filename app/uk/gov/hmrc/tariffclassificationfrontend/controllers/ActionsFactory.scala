@@ -24,8 +24,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models.Permission.Permission
-
-import uk.gov.hmrc.tariffclassificationfrontend.models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
+import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Permission}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
@@ -36,12 +35,12 @@ import scala.concurrent.Future.successful
 
 @Singleton
 class CheckPermissionsAction
-  extends ActionRefiner[AuthenticatedCaseRequest, AuthenticatedCaseRequest] {
+  extends ActionRefiner[AuthenticatedRequest, AuthenticatedRequest] {
 
-  override protected def refine[A](request: AuthenticatedCaseRequest[A]):
-  Future[Either[Result, AuthenticatedCaseRequest[A]]] = {
+  override protected def refine[A](request: AuthenticatedRequest[A]):
+  Future[Either[Result, AuthenticatedRequest[A]]] = {
 
-    if (request.`case`.isAssignedTo(request.operator)) {
+    if (request.c.exists(_.isAssignedTo(request.operator))) {
       // add case owner permissions
       authCaseRequest(request, Permission.teamCaseOwnerPermissions)
     } else {
@@ -50,20 +49,21 @@ class CheckPermissionsAction
     }
   }
 
-  private def authCaseRequest[A](request: AuthenticatedCaseRequest[A], additionalPermissions: Set[Permission]) = {
-    successful(Right(new AuthenticatedCaseRequest(
+  //TODO: try to remove his function
+  private def authCaseRequest[A](request: AuthenticatedRequest[A], additionalPermissions: Set[Permission]) = {
+    successful(Right(new AuthenticatedRequest(
       operator = request.operator.addPermissions(additionalPermissions),
       request = request,
-      requestedCase = request.`case`)))
+      c = request.c)))
   }
 }
 
 @Singleton
 class VerifyCaseExistsActionFactory @Inject()(casesService: CasesService)(implicit val messagesApi: MessagesApi, appConfig: AppConfig) extends I18nSupport {
 
-  def apply(reference: String): ActionRefiner[AuthenticatedRequest, AuthenticatedCaseRequest] =
-    new ActionRefiner[AuthenticatedRequest, AuthenticatedCaseRequest] {
-      override protected def refine[A](request: AuthenticatedRequest[A]): Future[Either[Result, AuthenticatedCaseRequest[A]]] = {
+  def apply(reference: String): ActionRefiner[AuthenticatedRequest, AuthenticatedRequest] =
+    new ActionRefiner[AuthenticatedRequest, AuthenticatedRequest] {
+      override protected def refine[A](request: AuthenticatedRequest[A]): Future[Either[Result, AuthenticatedRequest[A]]] = {
         implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
         implicit val r: AuthenticatedRequest[A] = request
 
@@ -71,10 +71,10 @@ class VerifyCaseExistsActionFactory @Inject()(casesService: CasesService)(implic
           case Some(c: Case) =>
             successful(
               Right(
-                new AuthenticatedCaseRequest(
+                new AuthenticatedRequest(
                   operator = request.operator,
                   request = request,
-                  requestedCase = c)
+                  c = Some(c))
               )
             )
           case _ => successful(Left(NotFound(views.html.case_not_found(reference))))
@@ -86,9 +86,9 @@ class VerifyCaseExistsActionFactory @Inject()(casesService: CasesService)(implic
 @Singleton
 class MustHavePermissionActionFactory {
 
-  def apply(permission: Permission): ActionFilter[AuthenticatedCaseRequest] =
-    new ActionFilter[AuthenticatedCaseRequest] {
-      override protected def filter[A](request: AuthenticatedCaseRequest[A]): Future[Option[Result]] = {
+  def apply(permission: Permission): ActionFilter[AuthenticatedRequest] =
+    new ActionFilter[AuthenticatedRequest] {
+      override protected def filter[A](request: AuthenticatedRequest[A]): Future[Option[Result]] = {
         request.operator match {
           case o if o.hasPermission(permission) => successful(None)
           case _ => successful(Some(Redirect(routes.SecurityController.unauthorized())))

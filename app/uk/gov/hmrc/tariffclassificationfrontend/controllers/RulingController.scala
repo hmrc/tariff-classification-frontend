@@ -24,7 +24,7 @@ import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.{DecisionForm, DecisionFormData, DecisionFormMapper}
-import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedCaseRequest
+import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus, Permission}
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, FileStoreService}
 import uk.gov.hmrc.tariffclassificationfrontend.views
@@ -60,11 +60,14 @@ class RulingController @Inject()(verify: RequestActions,
   }
 
   private def getCaseAndRenderView(page: CaseDetailPage, toHtml: Case => Future[HtmlFormat.Appendable])
-                                  (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
-    if (request.`case`.status == CaseStatus.OPEN){
-      toHtml(request.`case`).map(html => Ok(views.html.case_details(request.`case`, page, html)))
-    }else{
-      successful(Redirect(routes.CaseController.rulingDetails(request.`case`.reference)))
+                                  (implicit request: AuthenticatedRequest[_]): Future[Result] = {
+
+    //TODO : mmmmmmmmmmm
+
+    request.c match {
+      case Some(c) if c.status == CaseStatus.OPEN => toHtml(c).map(html => Ok(views.html.case_details(c, page, html)))
+      case Some(c) => successful(Redirect(routes.CaseController.rulingDetails(c.reference)))
+
     }
   }
 
