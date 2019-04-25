@@ -198,6 +198,7 @@ class CaseControllerSpec extends WordSpec with Matchers with WithFakeApplication
     "displays an error when no keyword is provided" in {
       val aValidForm = newFakePOSTRequestWithCSRF(fakeApplication, Map())
       given(keywordsService.autoCompleteKeywords).willReturn(successful(Seq()))
+      given(operator.hasPermission(refEq(Permission.KEYWORDS))).willReturn(true)
 
       val result = controller(aCase).addKeyword(aCase.reference)(aValidForm)
       status(result) shouldBe Status.OK
