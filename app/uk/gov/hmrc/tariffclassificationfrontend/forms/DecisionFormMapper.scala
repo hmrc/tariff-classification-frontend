@@ -45,7 +45,8 @@ class DecisionFormMapper {
         d.justification,
         d.methodCommercialDenomination.getOrElse(""),
         d.methodExclusion.getOrElse(""),
-        Seq.empty // TODO : So far this field is only used to read from the FE
+        Seq.empty, // TODO : So far this field is only used to read from the FE
+        d.explanation.getOrElse("")
       )
     }
 

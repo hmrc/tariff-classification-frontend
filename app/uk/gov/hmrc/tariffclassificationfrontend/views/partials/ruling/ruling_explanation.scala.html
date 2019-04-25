@@ -32,7 +32,7 @@
             @messages("case.decision.explanation")
             </dt>
             <dd class="column-two-thirds">
-            @if(d.explanation.isDefined) {
+            @if(d.explanation.exists(_.trim.nonEmpty)) {
                 <p class="mt-0">Commodity code for your item: @d.bindingCommodityCode</p>
 
                 <p id="holder_informationValue">@d.explanation</p>

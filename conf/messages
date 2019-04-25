@@ -110,7 +110,7 @@ case.decision.ruling.certificate.link=view and print a PDF of the ruling.
 case.decision.ruling.certificate.title=Ruling certificate
 
 case.decision.holder.information=Information for the BTI holder
-case.decision.explanation=Holder Explanation
+case.decision.explanation=Holder explanation
 case.decision.explanation.label=Explanation for holder
 case.decision.explanation.hint=Explain how you came to your decision using clear language.
 
