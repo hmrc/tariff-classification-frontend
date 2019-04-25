@@ -49,7 +49,7 @@ class AuthenticatedAction @Inject()(appConfig: AppConfig,
   private lazy val checkEnrolment: Boolean = appConfig.checkEnrolment
 
   private val uncheckedPredicate = AuthProviders(PrivilegedApplication)
-  private val checkedPredicate = (Enrolment(teamEnrolment) or Enrolment(managerEnrolment)) and uncheckedPredicate
+  private val checkedPredicate = (Enrolment(teamEnrolment) or Enrolment(managerEnrolment) or Enrolment(readOnlyEnrolment)) and uncheckedPredicate
   private val predicate = if (checkEnrolment) checkedPredicate else uncheckedPredicate
 
   override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] = {

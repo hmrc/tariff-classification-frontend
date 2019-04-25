@@ -46,6 +46,7 @@ object Permission extends Enumeration {
     role match {
       case Role.CLASSIFICATION_OFFICER => teamBasicPermisions
       case Role.CLASSIFICATION_MANAGER => managerPermissions
+      case Role.READ_ONLY => readOnlyPermissions
     }
   }
 }
