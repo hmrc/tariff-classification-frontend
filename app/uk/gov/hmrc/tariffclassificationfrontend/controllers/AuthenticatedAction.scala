@@ -45,6 +45,7 @@ class AuthenticatedAction @Inject()(appConfig: AppConfig,
 
   private lazy val teamEnrolment: String = appConfig.teamEnrolment
   private lazy val managerEnrolment: String = appConfig.managerEnrolment
+  private lazy val readOnlyEnrolment: String = appConfig.readOnlyEnrolment
   private lazy val checkEnrolment: Boolean = appConfig.checkEnrolment
 
   private val uncheckedPredicate = AuthProviders(PrivilegedApplication)
@@ -63,7 +64,8 @@ class AuthenticatedAction @Inject()(appConfig: AppConfig,
         val id = credentials.providerId
         val role = roles.enrolments.map(_.key) match {
           case e if e.contains(managerEnrolment) => Role.CLASSIFICATION_MANAGER
-          case _ => Role.CLASSIFICATION_OFFICER
+          case e if e.contains(teamEnrolment) => Role.CLASSIFICATION_OFFICER
+          case _ => Role.READ_ONLY
         }
         val operator = Operator(
           id,
