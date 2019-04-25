@@ -139,16 +139,22 @@ class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     }
 
     "return OK when user has right permissions" in {
-      when(casesService.referCase(refEq(caseWithStatusOPEN), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREFERRED))
+      when(casesService.referCase(any[Case], any[Operator])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREFERRED))
 
       val result: Result = await(controller(caseWithStatusOPEN, Set(Permission.REFER_CASE))
-        .confirmReferCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+        .confirmReferCase("reference")
+        (newFakePOSTRequestWithCSRF(fakeApplication)
+          .withFormUrlEncodedBody("state" -> "true")))
+
 
       status(result) shouldBe Status.OK
     }
 
     "redirect unauthorised when does not have right permissions" in {
-      val result: Result = await(controller(caseWithStatusNEW, Set.empty).confirmReferCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+      val result: Result = await(controller(caseWithStatusNEW, Set.empty)
+        .confirmReferCase("reference")
+        (newFakePOSTRequestWithCSRF(fakeApplication)
+          .withFormUrlEncodedBody("state" -> "true")))
 
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
