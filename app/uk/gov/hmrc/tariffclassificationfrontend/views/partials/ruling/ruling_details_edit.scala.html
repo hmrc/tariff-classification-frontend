@@ -104,7 +104,7 @@
                     <h3 class="heading-medium">@messages("case.decision.attachments")</h3>
                     @defining(files.filter(_.scanStatus.contains(ScanStatus.READY))) { attachments: Seq[StoredAttachment] =>
                         @if(attachments.isEmpty) {
-                            <span id="edit-ruling-no_attachments" class="body-text">There are no attachments for this case.</span>
+                            <span id="edit-ruling-no_attachments" class="body-text mb-0">There are no attachments for this case.</span>
                         } else {
                             <span class="body-text">All files selected will be published on GOV.UK in the 'Find Binding Tariff Information rulings' search.</span>
 
@@ -115,7 +115,18 @@
                 </fieldset>
             </div>
 
-           <div class="form-group">
+            <div class="form-group">
+                <h3 class="heading-medium">@messages("case.decision.holder.information")</h3>
+
+                @input_textarea(
+                    field = decisionForm("explanation"),
+                    label = messages("case.decision.explanation.label"),
+                    hint = Some(messages("case.decision.explanation.hint"))
+                )
+
+            </div>
+
+            <div class="form-group">
                 <button id="submit" class="button" type="submit">Save changes</button>
                 <a href="@CaseController.rulingDetails(c.reference)" class="secondary-button" id="cancel-button">Cancel changes</a>
             </div>

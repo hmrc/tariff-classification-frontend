@@ -56,7 +56,7 @@ class RulingController @Inject()(verify: RequestActions,
 
   private def editRuling(f: Form[DecisionFormData], c: Case)
                         (implicit request: Request[_]): Future[HtmlFormat.Appendable] = {
-    fileStoreService.getAttachments(c).map(views.html.partials.ruling_details_edit(c, _, f))
+    fileStoreService.getAttachments(c).map(views.html.partials.ruling.ruling_details_edit(c, _, f))
   }
 
   private def getCaseAndRenderView(page: CaseDetailPage, toHtml: Case => Future[HtmlFormat.Appendable])
@@ -84,7 +84,7 @@ class RulingController @Inject()(verify: RequestActions,
               val form = decisionForm.bindFrom(updated.decision)
               fileStoreService
                 .getAttachments(updated)
-                .map(views.html.partials.ruling_details(updated, form, _))
+                .map(views.html.partials.ruling.ruling_details(updated, form, _))
             }
         })
     )

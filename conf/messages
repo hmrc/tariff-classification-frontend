@@ -103,10 +103,16 @@ case.decision.constrain.methodSearch=Searches performed
 case.decision.constrain.justification=Justification
 case.decision.constrain.bindingCommodityCode=Binding commodity code
 case.decision.constrain.goodsDescription=Item description
+case.decision.constrain.explanation=Explanation for holder
 
 case.decision.ruling.certificate.content=If this case is under review or appeal
 case.decision.ruling.certificate.link=view and print a PDF of the ruling.
 case.decision.ruling.certificate.title=Ruling certificate
+
+case.decision.holder.information=Information for the BTI holder
+case.decision.explanation.label=Explanation for holder
+case.decision.explanation.hint=Explain how you came to your decision using clear language.
+case.decision.explanation.commodityCode=Not yet entered
 
 case.activity.assigned-to = Currently assigned to:
 case.activity.assigned-queue = Currently in:

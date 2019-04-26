@@ -13,8 +13,12 @@ class CompleteCaseSpec extends IntegrationTest with MockitoSugar {
   "Case Complete with decision" should {
 
     val owner = Some(Operator("111", role = Role.CLASSIFICATION_OFFICER))
-    val completeDecision = Decision(bindingCommodityCode = "040900", justification = "justification-content",
-      goodsDescription = "goods-description", methodSearch = Some("method-to-search"))
+    val completeDecision = Decision(
+      bindingCommodityCode = "040900",
+      justification = "justification-content",
+      goodsDescription = "goods-description",
+      methodSearch = Some("method-to-search"),
+      explanation = Some("explanation"))
     val inCompleteDecision = Decision(bindingCommodityCode = "", justification = "", goodsDescription = "")
     val caseWithStatusOPEN = CasePayloads.jsonOf(Cases.btiCaseExample.copy(status = CaseStatus.OPEN, decision = Some(completeDecision), assignee = owner))
     val caseIncompleteWithStatusOPEN = CasePayloads.jsonOf(Cases.btiCaseExample.copy(status = CaseStatus.OPEN, decision = Some(inCompleteDecision), assignee = owner))

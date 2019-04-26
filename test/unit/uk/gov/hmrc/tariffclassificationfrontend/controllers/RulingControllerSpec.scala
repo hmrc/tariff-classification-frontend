@@ -122,7 +122,8 @@ class RulingControllerSpec extends WordSpec with Matchers with WithFakeApplicati
       "justification" -> "",
       "methodCommercialDenomination" -> "",
       "methodExclusion" -> "",
-      "attachments" -> "[]")
+      "attachments" -> "[]",
+      "explanation" -> "")
     )
 
     "return OK and HTML content type" in {

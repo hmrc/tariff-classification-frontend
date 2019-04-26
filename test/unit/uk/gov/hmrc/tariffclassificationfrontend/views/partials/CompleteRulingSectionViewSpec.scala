@@ -22,7 +22,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus
 import uk.gov.hmrc.tariffclassificationfrontend.service.CommodityCodeService
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewSpec
-import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.complete_ruling_section
+import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.ruling.complete_ruling_section
 import uk.gov.tariffclassificationfrontend.utils.Cases
 
 class CompleteRulingSectionViewSpec extends ViewSpec with MockitoSugar {
