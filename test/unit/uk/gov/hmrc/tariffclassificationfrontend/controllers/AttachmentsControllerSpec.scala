@@ -33,6 +33,7 @@ import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
+import uk.gov.hmrc.tariffclassificationfrontend.models.Permission.Permission
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, FileStoreService}
 import uk.gov.tariffclassificationfrontend.utils.Cases
@@ -52,9 +53,14 @@ class AttachmentsControllerSpec extends UnitSpec with Matchers with WithFakeAppl
   private val casesService = mock[CasesService]
   private val fileService = mock[FileStoreService]
   private val operator = mock[Operator]
+
+
   private val controller = new AttachmentsController(
     new SuccessfulRequestActions(operator, c = Cases.btiCaseExample), casesService, fileService, messageApi, appConfig, mtrlzr
   )
+  private def controller(requestCase: Case, permission: Set[Permission]) = new AttachmentsController(
+    new RequestActionsWithPermissions(permission, c = requestCase), casesService, fileService, messageApi, appConfig, mtrlzr)
+
 
   private def onwardRoute = Call("POST", "/foo")
 
@@ -69,7 +75,7 @@ class AttachmentsControllerSpec extends UnitSpec with Matchers with WithFakeAppl
       given(fileService.getAttachments(refEq(aCase))(any[HeaderCarrier])).willReturn(successful(Seq(Cases.storedAttachment, Cases.storedOperatorAttachment)))
       given(fileService.getLetterOfAuthority(refEq(aCase))(any[HeaderCarrier])).willReturn(successful(Some(Cases.letterOfAuthority)))
 
-      val result = await(controller.attachmentsDetails("reference")(fakeRequest))
+      val result = await(controller(aCase,Set(Permission.ADD_ATTACHMENT)).attachmentsDetails("reference")(fakeRequest))
 
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -80,7 +86,7 @@ class AttachmentsControllerSpec extends UnitSpec with Matchers with WithFakeAppl
       val aCase = Cases.btiCaseExample
       givenACaseWithNoAttachmentsAndNoLetterOfAuthority("reference", aCase)
 
-      val result = await(controller.attachmentsDetails("reference")(fakeRequest))
+      val result = await(controller(aCase,Set(Permission.ADD_ATTACHMENT)).attachmentsDetails("reference")(fakeRequest))
 
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -166,7 +172,7 @@ class AttachmentsControllerSpec extends UnitSpec with Matchers with WithFakeAppl
       givenACaseWithNoAttachmentsAndNoLetterOfAuthority(testReference, aCase)
 
       // When
-      val result: Result = await(controller.uploadAttachment(testReference)(postRequest))
+      val result: Result = await(controller(aCase, Set(Permission.ADD_ATTACHMENT)).uploadAttachment(testReference)(postRequest))
 
       // Then
       status(result) shouldBe OK
@@ -182,7 +188,7 @@ class AttachmentsControllerSpec extends UnitSpec with Matchers with WithFakeAppl
       givenACaseWithNoAttachmentsAndNoLetterOfAuthority(testReference, aCase)
 
       // When
-      val result: Result = await(controller.uploadAttachment(testReference)(postRequest))
+      val result: Result = await(controller(aCase, Set(Permission.ADD_ATTACHMENT)).uploadAttachment(testReference)(postRequest))
 
       // Then
       status(result) shouldBe OK
@@ -198,7 +204,7 @@ class AttachmentsControllerSpec extends UnitSpec with Matchers with WithFakeAppl
       givenACaseWithNoAttachmentsAndNoLetterOfAuthority(testReference, aCase)
 
       // When
-      val result = await(controller.uploadAttachment(testReference)(postRequest))
+      val result = await(controller(aCase, Set(Permission.ADD_ATTACHMENT)).uploadAttachment(testReference)(postRequest))
 
       // Then
       status(result) shouldBe OK
@@ -214,7 +220,7 @@ class AttachmentsControllerSpec extends UnitSpec with Matchers with WithFakeAppl
       givenACaseWithNoAttachmentsAndNoLetterOfAuthority(testReference, aCase)
 
       // When
-      val result = await(controller.uploadAttachment(testReference)(postRequest))
+      val result = await(controller(aCase, Set(Permission.ADD_ATTACHMENT)).uploadAttachment(testReference)(postRequest))
 
       // Then
       status(result) shouldBe OK

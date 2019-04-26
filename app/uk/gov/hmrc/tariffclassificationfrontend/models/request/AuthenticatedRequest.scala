@@ -20,13 +20,17 @@ import play.api.mvc.{Request, WrappedRequest}
 import uk.gov.hmrc.tariffclassificationfrontend.models.Permission.Permission
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Operator}
 
-class AuthenticatedRequest[A](_operator: Operator, _request: Request[A])
-  extends WrappedRequest[A](_request) {
-
-  val operator: Operator = _operator
+abstract class OperatorRequest[A](_operator: Operator, _request: Request[A]) extends WrappedRequest[A](_request){
+  val operator: Operator
   val request: Request[A] = _request
 
   def hasPermission(permission: Permission*): Boolean = _operator.hasPermissions(permission.toSet)
+}
+
+class AuthenticatedRequest[A](_operator: Operator, _request: Request[A])
+  extends OperatorRequest[A](_operator, _request){
+
+  val operator: Operator = _operator
 }
 
 object AuthenticatedRequest {

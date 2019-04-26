@@ -53,7 +53,7 @@ class AttachmentsController @Inject()(verify: RequestActions,
   }
 
   private def renderView(c: Case, uploadForm: Form[String])
-                        (implicit hc: HeaderCarrier, request: Request[_]): Future[Html] = {
+                        (implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[Html] = {
 
     for {
       attachments <- fileService.getAttachments(c)
@@ -66,7 +66,7 @@ class AttachmentsController @Inject()(verify: RequestActions,
   }
 
   private def getCaseAndRenderView(reference: String, page: CaseDetailPage, toHtml: Case => Future[Html])
-                                  (implicit request: Request[_]): Future[Result] = {
+                                  (implicit request: AuthenticatedRequest[_]): Future[Result] = {
     casesService.getOne(reference).flatMap {
       case Some(c: Case) => toHtml(c).map(html => Ok(views.html.case_details(c, page, html)))
       case _ => successful(Ok(views.html.case_not_found(reference)))
@@ -109,7 +109,7 @@ class AttachmentsController @Inject()(verify: RequestActions,
   }
 
   private def renderErrors(reference: String, errorMessage: String)
-                          (implicit hc: HeaderCarrier, req: Request[_]): Future[Result] = {
+                          (implicit hc: HeaderCarrier, req: AuthenticatedRequest[_]): Future[Result] = {
     getCaseAndRenderView(
       reference,
       CaseDetailPage.ATTACHMENTS,
