@@ -28,7 +28,8 @@ case class DecisionFormData(bindingCommodityCode: String = "",
                             justification: String = "",
                             methodCommercialDenomination: String = "",
                             methodExclusion: String = "",
-                            attachments: Seq[String] = Seq.empty)
+                            attachments: Seq[String] = Seq.empty,
+                            explanation: String = "")
 
 class DecisionForm @Inject()(commodityCodeConstraints: CommodityCodeConstraints) {
 
@@ -40,7 +41,8 @@ class DecisionForm @Inject()(commodityCodeConstraints: CommodityCodeConstraints)
       "justification" -> text,
       "methodCommercialDenomination" -> text,
       "methodExclusion" -> text,
-      "attachments" -> seq(text)
+      "attachments" -> seq(text),
+      "explanation" -> text
     )(DecisionFormData.apply)(DecisionFormData.unapply)
   )
 
@@ -52,7 +54,8 @@ class DecisionForm @Inject()(commodityCodeConstraints: CommodityCodeConstraints)
       "justification" -> nonEmptyText,
       "methodCommercialDenomination" -> text,
       "methodExclusion" -> text,
-      "attachments" -> seq(text)
+      "attachments" -> seq(text),
+      "explanation" -> nonEmptyText
     )(DecisionFormData.apply)(DecisionFormData.unapply)
   )
 
@@ -68,7 +71,8 @@ class DecisionForm @Inject()(commodityCodeConstraints: CommodityCodeConstraints)
       justification = d.justification,
       methodCommercialDenomination = d.methodCommercialDenomination.getOrElse(""),
       methodExclusion = d.methodExclusion.getOrElse(""),
-      attachments = Seq.empty
+      attachments = Seq.empty,
+      explanation = d.explanation.getOrElse("")
     )
   }
 }

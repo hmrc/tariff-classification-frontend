@@ -78,7 +78,7 @@ class CaseController @Inject()(verify: RequestActions,
         val form = decisionForm.bindFrom(c.decision)
         fileService
           .getAttachments(c)
-          .map(views.html.partials.ruling_details(c, form, _))
+          .map(views.html.partials.ruling.ruling_details(c, form, _))
       }
     )
   }
