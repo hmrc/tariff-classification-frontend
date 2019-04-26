@@ -133,6 +133,8 @@
          @if(request.hasPermission(Permission.COMPLETE_CASE)) {
              @complete_ruling_section(c, decisionForm)
          }
-        @cancel_ruling_section(c)
+        @if(request.hasPermission(Permission.CANCEL_CASE)) {
+            @cancel_ruling_section(c)
+        }
     </div>
 }

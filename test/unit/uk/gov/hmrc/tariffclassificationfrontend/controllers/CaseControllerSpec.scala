@@ -134,29 +134,6 @@ class CaseControllerSpec extends WordSpec with Matchers with WithFakeApplication
       charset(result) shouldBe Some("utf-8")
     }
 
-    "add note return expected view when has right permissions" in {
-
-      val aCase  = Cases.btiCaseExample
-      given(eventService.getEvents(refEq(aCase.reference), refEq(NoPagination()))(any[HeaderCarrier])) willReturn successful(Paged(Events.events))
-      given(queueService.getAll) willReturn successful(Seq.empty)
-
-      val result = controller(aCase,Set(Permission.ADD_NOTE)).addNote(aCase.reference)(newFakeGETRequestWithCSRF(fakeApplication))
-
-      status(result) shouldBe Status.OK
-    }
-
-    "redirect unauthorised when does not have right permissions" in {
-
-      val aCase  = Cases.btiCaseExample
-      given(eventService.getEvents(refEq(aCase.reference), refEq(NoPagination()))(any[HeaderCarrier])) willReturn successful(Paged(Events.events))
-      given(queueService.getAll) willReturn successful(Seq.empty)
-
-      val result = controller(aCase, Set.empty).addNote(aCase.reference)(newFakeGETRequestWithCSRF(fakeApplication))
-
-      status(result) shouldBe Status.SEE_OTHER
-      redirectLocation(result).get should include ("unauthorized")
-    }
-
     "return 200 OK and HTML content type when no Events are present" in {
       val aCase = Cases.btiCaseExample
       given(eventService.getEvents(refEq(aCase.reference), refEq(NoPagination()))(any[HeaderCarrier])) willReturn successful(Paged.empty[Event])
@@ -188,11 +165,34 @@ class CaseControllerSpec extends WordSpec with Matchers with WithFakeApplication
       given(eventService.getEvents(refEq(aCase.reference), refEq(NoPagination()))(any[HeaderCarrier])) willReturn successful(Paged.empty[Event])
       given(queueService.getAll) willReturn successful(Seq.empty)
 
-      val result = controller(aCase).addNote(aCase.reference)(aValidForm)
+      val result = controller(aCase, Set(Permission.ADD_NOTE)).addNote(aCase.reference)(aValidForm)
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
       contentAsString(result) should include("This field is required")
+    }
+
+    "add note return expected view when has right permissions" in {
+
+      val aCase  = Cases.btiCaseExample
+      given(eventService.getEvents(refEq(aCase.reference), refEq(NoPagination()))(any[HeaderCarrier])) willReturn successful(Paged(Events.events))
+      given(queueService.getAll) willReturn successful(Seq.empty)
+
+      val result = controller(aCase,Set(Permission.ADD_NOTE)).addNote(aCase.reference)(newFakeGETRequestWithCSRF(fakeApplication))
+
+      status(result) shouldBe Status.OK
+    }
+
+    "redirect unauthorised when does not have right permissions" in {
+
+      val aCase  = Cases.btiCaseExample
+      given(eventService.getEvents(refEq(aCase.reference), refEq(NoPagination()))(any[HeaderCarrier])) willReturn successful(Paged(Events.events))
+      given(queueService.getAll) willReturn successful(Seq.empty)
+
+      val result = controller(aCase, Set.empty).addNote(aCase.reference)(newFakeGETRequestWithCSRF(fakeApplication))
+
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result).get should include ("unauthorized")
     }
   }
 
@@ -237,6 +237,25 @@ class CaseControllerSpec extends WordSpec with Matchers with WithFakeApplication
       charset(result) shouldBe Some("utf-8")
       contentAsString(result) should include("This field is required")
     }
+
+    "return OK when user has right permissions" in {
+      val aKeyword = "Apples"
+      val aValidForm = newFakePOSTRequestWithCSRF(fakeApplication, Map("keyword" -> aKeyword))
+      given(keywordsService.addKeyword(any[Case], any[String], any[Operator])(any[HeaderCarrier])).willReturn(successful(aCase))
+      given(keywordsService.autoCompleteKeywords).willReturn(successful(Seq()))
+
+      val result = controller(aCase, Set(Permission.KEYWORDS)).addKeyword(aCase.reference)(aValidForm)
+
+      status(result) shouldBe Status.OK
+    }
+
+    "redirect unauthorised when does not have right permissions" in {
+      val aValidForm = newFakePOSTRequestWithCSRF(fakeApplication, Map())
+      val result = controller(aCase, Set.empty).addKeyword(aCase.reference)(aValidForm)
+
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result).get should include("unauthorized")
+    }
   }
 
   "Keywords: Remove keyword" should {
@@ -251,6 +270,21 @@ class CaseControllerSpec extends WordSpec with Matchers with WithFakeApplication
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
       contentAsString(result) should include("Keywords")
+    }
+
+    "return OK when user has right permissions" in {
+      given(keywordsService.removeKeyword(any[Case], any[String], any[Operator])(any[HeaderCarrier])).willReturn(successful(aCase))
+
+      val result = controller(aCase, Set(Permission.KEYWORDS)).removeKeyword(aCase.reference, aKeyword)(newFakeGETRequestWithCSRF(fakeApplication))
+
+      status(result) shouldBe Status.OK
+    }
+
+    "redirect unauthorised when does not have right permissions" in {
+      val result = controller(aCase, Set.empty).removeKeyword(aCase.reference, aKeyword)(newFakeGETRequestWithCSRF(fakeApplication))
+
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result).get should include("unauthorized")
     }
   }
 

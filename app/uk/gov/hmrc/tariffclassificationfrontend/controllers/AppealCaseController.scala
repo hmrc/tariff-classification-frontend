@@ -36,7 +36,7 @@ import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
 @Singleton
-class AppealCaseController @Inject()(override val authenticatedAction: AuthenticatedAction,
+class AppealCaseController @Inject()(override val verify: RequestActions,
                                      override val caseService: CasesService,
                                      override val messagesApi: MessagesApi,
                                      override implicit val config: AppConfig) extends StatusChangeAction[Option[AppealStatus]] {
@@ -63,7 +63,7 @@ class AppealCaseController @Inject()(override val authenticatedAction: Authentic
 
   override protected def onSuccessRedirect(reference: String): Call = routes.AppealCaseController.appealDetails(reference)
 
-  def appealDetails(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
+  def appealDetails(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.casePermissions(reference)).async { implicit request =>
     getCaseAndRenderView(
       reference,
       c => successful(views.html.case_details(c, CaseDetailPage.APPEAL, views.html.partials.appeal_details(c)))

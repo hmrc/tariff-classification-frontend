@@ -69,5 +69,17 @@ class KeywordDetailsViewSpec extends ViewSpec {
       doc should containElementWithID("keywords-row-0-remove")
       doc should containElementWithID("keyword_details-add_keyword")
     }
+
+    "Render a case with keywords without KEYWORDS permissions" in {
+      // Given
+      val c = aCase().copy(keywords = Set("APPLES", "CARS"))
+
+      // When
+      val doc = view(keywords_details(c, Seq("APPLES", "TOYS"), KeywordForm.form)(operatorRequest, messages, appConfig))
+
+      // Then
+      doc shouldNot containElementWithID("keywords-row-0-remove")
+      doc shouldNot containElementWithID("keyword_details-add_keyword")
+    }
   }
 }
