@@ -1,0 +1,16 @@
+{
+  "credentials": {
+    "providerId": "123",
+    "providerType": "PrivilegedApplication"
+  },
+  "name": {
+    "name": "Forename Surname"
+  },
+  "allEnrolments": [
+    {
+      "key": "classification-read-only",
+      "identifiers": [],
+      "state": "state"
+    }
+  ]
+}
