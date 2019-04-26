@@ -28,9 +28,6 @@ class RulingDetailsViewSpec extends ViewSpec {
 
   "Ruling Details" should {
 
-    val requestWithEditRulingPermissions = requestWithPermissions(Permission.EDIT_RULING)
-    val requestWithCompleteCasePermissions = requestWithPermissions(Permission.COMPLETE_CASE)
-
     "Render Optional Application Fields" in {
       // Given
       val c = aCase(
@@ -63,7 +60,7 @@ class RulingDetailsViewSpec extends ViewSpec {
       val c = aCase(withReference("ref"), withStatus(CaseStatus.OPEN))
 
       // When
-      val doc = view(ruling_details(c, None, Seq.empty)(requestWithEditRulingPermissions, messages, appConfig))
+      val doc = view(ruling_details(c, None, Seq.empty)(requestWithPermissions(Permission.EDIT_RULING), messages, appConfig))
 
       // Then
       doc should containElementWithID("ruling_edit_details")
@@ -79,7 +76,7 @@ class RulingDetailsViewSpec extends ViewSpec {
       val c = aCase(withReference("ref"), withStatus(CaseStatus.NEW))
 
       // When
-      val doc = view(ruling_details(c, None, Seq.empty)(requestWithEditRulingPermissions, messages, appConfig))
+      val doc = view(ruling_details(c, None, Seq.empty)(requestWithPermissions(Permission.EDIT_RULING), messages, appConfig))
 
       // Then
       doc shouldNot containElementWithID("ruling_edit_details")
@@ -132,7 +129,7 @@ class RulingDetailsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(ruling_details(c, None, Seq.empty)(requestWithCompleteCasePermissions, messages, appConfig))
+      val doc = view(ruling_details(c, None, Seq.empty)(requestWithPermissions(Permission.COMPLETE_CASE), messages, appConfig))
 
       // Then
       doc should containElementWithID("ruling_bindingCommodityCodeValue")
@@ -182,6 +179,36 @@ class RulingDetailsViewSpec extends ViewSpec {
       doc.getElementById("ruling_exclusionsValue") should containText("method exclusion")
       doc shouldNot containElementWithID("complete-case-button")
     }
+
+
+    "Render Cancel Ruling when user has CANCEL_CASE permission" in {
+      // Given
+      val c = aCase(withReference("ref"),
+        withStatus(CaseStatus.COMPLETED),
+        withDecision()
+      )
+
+      // When
+      val doc = view(ruling_details(c, None, Seq.empty)(requestWithPermissions(Permission.CANCEL_CASE), messages, appConfig))
+
+      // Then
+      doc should containElementWithID("cancel-ruling-button")
+    }
+
+    "Not Render Cancel Ruling when user does not have CANCEL_CASE permission" in {
+      // Given
+      val c = aCase(withReference("ref"),
+        withStatus(CaseStatus.COMPLETED),
+        withDecision()
+      )
+
+      // When
+      val doc = view(ruling_details(c, None, Seq.empty)(operatorRequest, messages, appConfig))
+
+      // Then
+      doc shouldNot containElementWithID("cancel-ruling-button")
+    }
+
 
     "Render 'public' attachments" in {
       // Given

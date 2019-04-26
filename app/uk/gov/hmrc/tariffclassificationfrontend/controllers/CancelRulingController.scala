@@ -23,7 +23,7 @@ import play.api.mvc._
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.CancelRulingForm
 import uk.gov.hmrc.tariffclassificationfrontend.models.CancelReason.CancelReason
-import uk.gov.hmrc.tariffclassificationfrontend.models.Case
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Permission}
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.COMPLETED
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
@@ -53,11 +53,13 @@ class CancelRulingController @Inject()(verify: RequestActions,
     getCaseAndRenderView(caseRef, c => successful(views.html.cancel_ruling(c, f)))
   }
 
-  def cancelRuling(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.casePermissions(reference)).async { implicit request =>
+  def cancelRuling(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.casePermissions(reference) andThen
+    verify.mustHave(Permission.CANCEL_CASE)).async { implicit request =>
     cancelRuling(CancelRulingForm.form, reference)
   }
 
-  def confirmCancelRuling(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.casePermissions(reference)).async { implicit request =>
+  def confirmCancelRuling(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.casePermissions(reference) andThen
+    verify.mustHave(Permission.CANCEL_CASE)).async { implicit request =>
     CancelRulingForm.form.bindFromRequest().fold(
       cancelRuling(_, reference),
       (reason: CancelReason) =>
