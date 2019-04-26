@@ -44,7 +44,7 @@ class QueueNavViewSpec extends ViewSpec with BeforeAndAfterEach {
       // Given
 
       // When
-      val doc = view(queue_nav(Seq.empty, "")(authenticatedManagerFakeRequest, messages))
+      val doc = view(queue_nav(Seq.empty, "")(requestWithPermissions(Permission.VIEW_ASSIGNED_CASES), messages))
 
       // Then
       doc should containElementWithID("nav-menu-assigned-cases")

@@ -30,7 +30,7 @@
                 <a id="nav-menu-queue-@q.slug" class="side-nav__link" href="@controllers.routes.QueuesController.queue(q.slug)">@messages("cases.menu.queue-cases", q.name)</a>
             </li>
         }
-        @if(request.operator.manager) {
+        @if(request.hasPermission(Permission.VIEW_ASSIGNED_CASES)) {
             <li class="side-nav__list @if(section == "assigned-cases") { side-nav__list--selected }">
                 <a id="nav-menu-assigned-cases" class="side-nav__link" href="@controllers.routes.AssignedCasesController.assignedCases()">@messages("cases.menu.assigned-cases")</a>
             </li>

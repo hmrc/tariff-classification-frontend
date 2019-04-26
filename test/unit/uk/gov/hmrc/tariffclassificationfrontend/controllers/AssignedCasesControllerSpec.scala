@@ -28,6 +28,8 @@ import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
+import uk.gov.hmrc.tariffclassificationfrontend.models
+import uk.gov.hmrc.tariffclassificationfrontend.models.Permission.Permission
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, QueuesService}
 import uk.gov.tariffclassificationfrontend.utils.Cases.btiCaseExample
@@ -47,14 +49,16 @@ class AssignedCasesControllerSpec extends UnitSpec with Matchers with WithFakeAp
   private implicit val hc: HeaderCarrier = HeaderCarrier()
   private val assignedCase = btiCaseExample.copy(assignee = Some(Operator("1", Some("Test User"))))
 
-  private def controller(operator: Operator) = new AssignedCasesController(new SuccessfulAuthenticatedAction(operator), new AuthenticatedManagerAction(), casesService, queuesService, messageApi, appConfig)
+  private val requiredPermissions: Set[models.Permission.Value] = Set(Permission.VIEW_ASSIGNED_CASES)
+  private val noPermissions: Set[models.Permission.Value] = Set.empty
+
+  private def controller(permission: Set[Permission]) = new AssignedCasesController(
+    new RequestActionsWithPermissions(permission), casesService, queuesService, messageApi, appConfig
+  )
 
   "Assigned Cases" should {
-    val asTeamMember = Operator("id")
-    val asTeamManager = Operator("id", role = Role.CLASSIFICATION_MANAGER)
-
     "redirect to unauthorised if not a manager" in {
-      val result = await(controller(asTeamMember).assignedCases()(fakeRequest))
+      val result = await(controller(noPermissions).assignedCases()(fakeRequest))
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.SecurityController.unauthorized().url)
     }
@@ -63,7 +67,7 @@ class AssignedCasesControllerSpec extends UnitSpec with Matchers with WithFakeAp
       given(casesService.getAssignedCases(refEq(NoPagination()))(any[HeaderCarrier])).willReturn(Future.successful(Paged.empty[Case]))
       given(queuesService.getAll).willReturn(Future.successful(Seq(queue)))
 
-      val result = await(controller(asTeamManager).assignedCases()(fakeRequest))
+      val result = await(controller(requiredPermissions).assignedCases()(fakeRequest))
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
@@ -76,11 +80,9 @@ class AssignedCasesControllerSpec extends UnitSpec with Matchers with WithFakeAp
   }
 
   "Assigned Cases by Operator" should {
-    val asTeamMember = Operator("id")
-    val asTeamManager = Operator("id", role = Role.CLASSIFICATION_MANAGER)
 
     "redirect to unauthorised if not a manager" in {
-      val result = await(controller(asTeamMember).assignedCasesFor("1")(fakeRequest))
+      val result = await(controller(noPermissions).assignedCasesFor("1")(fakeRequest))
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.SecurityController.unauthorized().url)
     }
@@ -89,7 +91,7 @@ class AssignedCasesControllerSpec extends UnitSpec with Matchers with WithFakeAp
       given(casesService.getAssignedCases(refEq(NoPagination()))(any[HeaderCarrier])).willReturn(Future.successful(Paged.empty[Case]))
       given(queuesService.getAll).willReturn(Future.successful(Seq(queue)))
 
-      val result = await(controller(asTeamManager).assignedCasesFor("1")(fakeRequest))
+      val result = await(controller(requiredPermissions).assignedCasesFor("1")(fakeRequest))
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
@@ -104,7 +106,7 @@ class AssignedCasesControllerSpec extends UnitSpec with Matchers with WithFakeAp
       given(casesService.getAssignedCases(refEq(NoPagination()))(any[HeaderCarrier])).willReturn(Future.successful(Paged(Seq(assignedCase))))
       given(queuesService.getAll).willReturn(Future.successful(Seq(queue)))
 
-      val result = await(controller(asTeamManager).assignedCasesFor("1")(fakeRequest))
+      val result = await(controller(requiredPermissions).assignedCasesFor("1")(fakeRequest))
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
