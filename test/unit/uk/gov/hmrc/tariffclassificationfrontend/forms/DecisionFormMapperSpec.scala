@@ -86,6 +86,7 @@ class DecisionFormMapperSpec extends UnitSpec {
       result.methodExclusion shouldBe empty
       result.methodCommercialDenomination shouldBe empty
       result.attachments shouldBe Seq.empty
+      result.explanation shouldBe empty
     }
 
   }
@@ -97,6 +98,7 @@ class DecisionFormMapperSpec extends UnitSpec {
     decision.methodSearch.getOrElse("") shouldBe form.methodSearch
     decision.methodExclusion.getOrElse("") shouldBe form.methodExclusion
     decision.methodCommercialDenomination.getOrElse("") shouldBe form.methodCommercialDenomination
+    decision.explanation.getOrElse("") shouldBe form.explanation
   }
 
 }

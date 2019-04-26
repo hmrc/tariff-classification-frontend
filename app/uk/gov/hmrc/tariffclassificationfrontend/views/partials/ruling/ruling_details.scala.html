@@ -17,9 +17,9 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.{PdfDownloadController, RulingController}
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{BTIApplication, Case, CaseStatus, Decision, StoredAttachment}
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{attachments_list, tab_heading, cancel_ruling_section,complete_ruling_section}
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{attachments_list, tab_heading}
 @import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionFormData
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.ruling_certificate_link
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.ruling.{ruling_explanation, ruling_certificate_link, cancel_ruling_section, complete_ruling_section}
 @import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 
 @(c: Case, decisionForm: Option[Form[DecisionFormData]], files: Seq[StoredAttachment])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
@@ -77,11 +77,11 @@
                 </div>
 
                 <div class="grid-row">
-                    <dt id="ruling_sanitisedGoodDescription" class="column-one-third">
+                    <dt id="ruling_itemDescription" class="column-one-third">
                         @messages("case.decision.goods-description")
                     </dt>
                     <dd class="column-two-thirds">
-                        <span id="ruling_sanitisedGoodDescriptionValue">@d.goodsDescription</span>
+                        <span id="ruling_itemDescriptionValue" class="pre-wrap">@d.goodsDescription</span>
                     </dd>
                 </div>
 
@@ -90,7 +90,7 @@
                         @messages("case.decision.justification")
                     </dt>
                     <dd class="column-two-thirds">
-                        <span id="ruling_justificationValue">@d.justification</span>
+                        <span id="ruling_justificationValue" class="pre-wrap">@d.justification</span>
                     </dd>
                 </div>
 
@@ -99,7 +99,7 @@
                         @messages("case.decision.method-search")
                     </dt>
                     <dd class="column-two-thirds">
-                        <span id="ruling_searchesValue">@d.methodSearch.getOrElse("")</span>
+                        <span id="ruling_searchesValue" class="pre-wrap">@d.methodSearch.getOrElse("")</span>
                     </dd>
                 </div>
 
@@ -108,7 +108,7 @@
                         @messages("case.decision.method-commercial-denomination")
                     </dt>
                     <dd class="column-two-thirds">
-                        <span id="ruling_methodCommercialDenominationValue">@d.methodCommercialDenomination.getOrElse("")</span>
+                        <span id="ruling_methodCommercialDenominationValue" class="pre-wrap">@d.methodCommercialDenomination.getOrElse("")</span>
                     </dd>
                 </div>
 
@@ -117,7 +117,7 @@
                         @messages("case.decision.method-exclusion")
                     </dt>
                     <dd class="column-two-thirds">
-                        <span id="ruling_exclusionsValue">@d.methodExclusion.getOrElse("")</span>
+                        <span id="ruling_exclusionsValue" class="pre-wrap">@d.methodExclusion.getOrElse("")</span>
                     </dd>
                 </div>
             </dl>
@@ -128,6 +128,8 @@
 
     <h3 class="heading-medium">@messages("case.decision.attachments.ruling")</h3>
     @attachments_list("attachments", files.filter(_.public))
+
+    @ruling_explanation(c)
 
     @ruling_certificate_link(c)
 

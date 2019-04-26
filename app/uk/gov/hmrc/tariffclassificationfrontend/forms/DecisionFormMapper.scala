@@ -45,7 +45,8 @@ class DecisionFormMapper {
         d.justification,
         d.methodCommercialDenomination.getOrElse(""),
         d.methodExclusion.getOrElse(""),
-        Seq.empty // TODO : So far this field is only used to read from the FE
+        Seq.empty, // TODO : So far this field is only used to read from the FE
+        d.explanation.getOrElse("")
       )
     }
 
@@ -59,7 +60,9 @@ class DecisionFormMapper {
       methodSearch = Some(form.methodSearch),
       justification = form.justification,
       methodCommercialDenomination = Some(form.methodCommercialDenomination),
-      methodExclusion = Some(form.methodExclusion))
+      methodExclusion = Some(form.methodExclusion),
+      explanation = Some(form.explanation)
+    )
   }
 
   private def from(form: DecisionFormData): Decision = {
@@ -69,7 +72,9 @@ class DecisionFormMapper {
       methodSearch = Some(form.methodSearch),
       justification = form.justification,
       methodCommercialDenomination = Some(form.methodCommercialDenomination),
-      methodExclusion = Some(form.methodExclusion))
+      methodExclusion = Some(form.methodExclusion),
+      explanation = Some(form.explanation)
+    )
   }
 
 }
