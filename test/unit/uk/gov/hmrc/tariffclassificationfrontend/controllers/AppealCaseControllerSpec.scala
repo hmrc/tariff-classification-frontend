@@ -31,6 +31,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models.AppealStatus.AppealStatus
+import uk.gov.hmrc.tariffclassificationfrontend.models.Permission.Permission
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.tariffclassificationfrontend.utils.Cases._
@@ -50,6 +51,10 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers
 
   private def controller(requestCase: Case) = new AppealCaseController(
     new SuccessfulRequestActions(operator, c = requestCase), casesService, messageApi, appConfig
+  )
+
+  private def controller(requestCase: Case, permission: Set[Permission]) = new AppealCaseController(
+    new RequestActionsWithPermissions(permission, c = requestCase), casesService, messageApi, appConfig
   )
 
   private implicit val hc: HeaderCarrier = HeaderCarrier()
@@ -145,6 +150,22 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers
       locationOf(result) shouldBe Some("/tariff-classification/cases/reference")
     }
 
+    "return OK when user has right permissions" in {
+      val c = aCase(withStatus(CaseStatus.COMPLETED), withDecision())
+
+      val result = await(controller(c, Set(Permission.APPEAL_CASE)).chooseStatus("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+
+      status(result) shouldBe Status.OK
+    }
+
+    "redirect unauthorised when does not have right permissions" in {
+      val c = aCase(withStatus(CaseStatus.COMPLETED), withDecision())
+
+      val result = await(controller(c, Set.empty).chooseStatus("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result).get should include("unauthorized")
+    }
   }
 
   "Case Appeal - Submit Status" should {
@@ -223,6 +244,28 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers
       status(result) shouldBe Status.SEE_OTHER
       contentAsString(result) shouldBe ""
       locationOf(result) shouldBe Some("/tariff-classification/cases/reference")
+    }
+
+    "return OK when user has right permissions" in {
+      val c = aCase(withReference("reference"), withStatus(CaseStatus.COMPLETED), withDecision())
+
+      given(casesService.updateAppealStatus(any[Case], any[Option[AppealStatus]], any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(c))
+
+      val result = await(controller(c, Set(Permission.APPEAL_CASE)).updateStatus("reference")
+      (newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("status" -> "IN_PROGRESS")))
+
+      status(result) shouldBe Status.SEE_OTHER
+      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/appeal")
+    }
+
+    "redirect unauthorised when does not have right permissions" in {
+      val c = aCase(withReference("reference"), withStatus(CaseStatus.COMPLETED), withDecision())
+
+      val result = await(controller(c, Set.empty).updateStatus("reference")
+      (newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("status" -> "IN_PROGRESS")))
+
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result).get should include("unauthorized")
     }
 
   }

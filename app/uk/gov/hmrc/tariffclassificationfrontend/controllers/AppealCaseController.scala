@@ -27,7 +27,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.forms.AppealForm
 import uk.gov.hmrc.tariffclassificationfrontend.models.AppealStatus.AppealStatus
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.{CANCELLED, COMPLETED}
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Operator}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Operator, Permission}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
 import uk.gov.hmrc.tariffclassificationfrontend.views.CaseDetailPage
@@ -40,6 +40,8 @@ class AppealCaseController @Inject()(override val verify: RequestActions,
                                      override val caseService: CasesService,
                                      override val messagesApi: MessagesApi,
                                      override implicit val config: AppConfig) extends StatusChangeAction[Option[AppealStatus]] {
+
+  override protected val requiredPermission: Permission.Value = Permission.APPEAL_CASE
 
   override protected def redirect: String => Call = routes.CaseController.trader
 

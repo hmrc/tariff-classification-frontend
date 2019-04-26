@@ -20,6 +20,7 @@ import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, Call, Request}
 import play.twirl.api.Html
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.tariffclassificationfrontend.models.Permission.Permission
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Operator}
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -40,14 +41,18 @@ trait StatusChangeAction[T] extends RenderCaseAction {
 
   protected def onSuccessRedirect(reference: String): Call
 
-  def chooseStatus(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.casePermissions(reference)).async { implicit request =>
+  protected val requiredPermission: Permission
+
+  def chooseStatus(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.casePermissions(reference) andThen
+    verify.mustHave(requiredPermission)).async { implicit request =>
     getCaseAndRenderView(
       reference,
       c => successful(chooseStatusView(c, form.fill(status(c))))
     )
   }
 
-  def updateStatus(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.casePermissions(reference)).async { implicit request =>
+  def updateStatus(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.casePermissions(reference) andThen
+    verify.mustHave(requiredPermission)).async { implicit request =>
     form.bindFromRequest().fold(
       errors => {
         getCaseAndRenderView(

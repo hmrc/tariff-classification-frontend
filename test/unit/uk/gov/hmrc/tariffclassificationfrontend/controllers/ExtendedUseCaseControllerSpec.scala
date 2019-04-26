@@ -29,6 +29,7 @@ import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
+import uk.gov.hmrc.tariffclassificationfrontend.models.Permission.Permission
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.tariffclassificationfrontend.utils.Cases._
@@ -47,6 +48,10 @@ class ExtendedUseCaseControllerSpec extends UnitSpec with Matchers
 
   private def controller(requestCase: Case) = new ExtendedUseCaseController(
     new SuccessfulRequestActions(operator, c = requestCase), casesService, messageApi, appConfig
+  )
+
+  private def controller(requestCase: Case, permission: Set[Permission]) = new ExtendedUseCaseController(
+    new RequestActionsWithPermissions(permission, c = requestCase), casesService, messageApi, appConfig
   )
 
   private implicit val hc: HeaderCarrier = HeaderCarrier()
@@ -85,6 +90,23 @@ class ExtendedUseCaseControllerSpec extends UnitSpec with Matchers
 
       status(result) shouldBe Status.SEE_OTHER
       locationOf(result) shouldBe Some("/tariff-classification/cases/reference")
+    }
+
+    "return OK when user has right permissions" in {
+      val c = aCase(withStatus(CaseStatus.CANCELLED), withDecision(cancellation = Some(Cancellation(CancelReason.ANNULLED))))
+
+      val result = await(controller(c, Set(Permission.EXTENDED_USE)).chooseStatus("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+
+      status(result) shouldBe Status.OK
+    }
+
+    "redirect unauthorised when does not have right permissions" in {
+      val c = aCase(withStatus(CaseStatus.CANCELLED), withDecision(cancellation = Some(Cancellation(CancelReason.ANNULLED))))
+
+      val result = await(controller(c, Set.empty).chooseStatus("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result).get should include("unauthorized")
     }
 
   }
@@ -137,6 +159,30 @@ class ExtendedUseCaseControllerSpec extends UnitSpec with Matchers
 
       status(result) shouldBe Status.SEE_OTHER
       locationOf(result) shouldBe Some("/tariff-classification/cases/reference")
+    }
+
+    "return OK when user has right permissions" in {
+      val c = aCase(withReference("reference"), withStatus(CaseStatus.CANCELLED),
+        withDecision(cancellation = Some(Cancellation(CancelReason.ANNULLED, applicationForExtendedUse = true))))
+
+      given(casesService.updateExtendedUseStatus(refEq(c), any[Boolean], any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(c))
+
+      val result = await(controller(c, Set(Permission.EXTENDED_USE))
+        .updateStatus("reference")(newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("state" -> "false")))
+
+      status(result) shouldBe Status.SEE_OTHER
+      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/appeal")
+    }
+
+    "redirect unauthorised when does not have right permissions" in {
+      val c = aCase(withReference("reference"), withStatus(CaseStatus.CANCELLED),
+        withDecision(cancellation = Some(Cancellation(CancelReason.ANNULLED, applicationForExtendedUse = true))))
+
+      val result = await(controller(c, Set.empty)
+        .updateStatus("reference")(newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("state" -> "false")))
+
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result).get should include("unauthorized")
     }
 
   }

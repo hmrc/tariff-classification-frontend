@@ -62,8 +62,8 @@ class CancelRulingControllerSpec extends WordSpec with Matchers with UnitSpec
   )
 
   private def controller(requestCase: Case, permission: Set[Permission]) = new CancelRulingController(
-    new RequestActionsWithPermissions(permission, c = requestCase), casesService, messageApi, appConfig)
-
+    new RequestActionsWithPermissions(permission, c = requestCase), casesService, messageApi, appConfig
+  )
 
   override def afterEach(): Unit = {
     super.afterEach()
