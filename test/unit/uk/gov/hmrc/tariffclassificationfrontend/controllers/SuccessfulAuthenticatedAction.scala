@@ -23,7 +23,7 @@ import play.api.{Configuration, Environment}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.connector.StrideAuthConnector
 import uk.gov.hmrc.tariffclassificationfrontend.models.Permission.Permission
-import uk.gov.hmrc.tariffclassificationfrontend.models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
+import uk.gov.hmrc.tariffclassificationfrontend.models.request.{AuthenticatedCaseRequest, AuthenticatedRequest, OperatorRequest}
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Operator, Permission}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.tariffclassificationfrontend.utils.Cases
@@ -64,7 +64,7 @@ class ExistingCaseActionFactory(reference: String, requestCase: Case)
 }
 
 class HaveRightPermissionsActionFactory extends MustHavePermissionActionFactory {
-  override def apply[B[C] <: AuthenticatedRequest[_]](permission: Permission): ActionFilter[B] = {
+  override def apply[B[C] <: OperatorRequest[_]](permission: Permission): ActionFilter[B] = {
     new ActionFilter[B] {
       override protected def filter[A](request: B[A]): Future[Option[Result]] = {
         successful(None)
