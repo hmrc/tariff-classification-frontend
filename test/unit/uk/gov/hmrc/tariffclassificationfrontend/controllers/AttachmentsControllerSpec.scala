@@ -40,25 +40,23 @@ import uk.gov.tariffclassificationfrontend.utils.Cases
 import scala.concurrent.Future.successful
 
 class AttachmentsControllerSpec extends UnitSpec with Matchers with WithFakeApplication with MockitoSugar with ControllerCommons {
-
-  private def onwardRoute = Call("POST", "/foo")
-
   private val fakeRequest = FakeRequest(onwardRoute)
+  private val env = Environment.simple()
 
   private implicit def application: api.Application = fakeApplication
-  private implicit val mtrlzr: Materializer = application.injector.instanceOf[Materializer]
 
-  private val env = Environment.simple()
+  private implicit val mtrlzr: Materializer = application.injector.instanceOf[Materializer]
   private val configuration = Configuration.load(env)
   private val messageApi = new DefaultMessagesApi(env, configuration, new DefaultLangs(configuration))
   private val appConfig = new AppConfig(configuration, env)
   private val casesService = mock[CasesService]
   private val fileService = mock[FileStoreService]
   private val operator = mock[Operator]
-
   private val controller = new AttachmentsController(
-    new SuccessfulAuthenticatedAction(operator), casesService, fileService, messageApi, appConfig, mtrlzr
+    new SuccessfulRequestActions(operator, c = Cases.btiCaseExample), casesService, fileService, messageApi, appConfig, mtrlzr
   )
+
+  private def onwardRoute = Call("POST", "/foo")
 
   private implicit val hc: HeaderCarrier = HeaderCarrier()
 
@@ -200,7 +198,7 @@ class AttachmentsControllerSpec extends UnitSpec with Matchers with WithFakeAppl
       givenACaseWithNoAttachmentsAndNoLetterOfAuthority(testReference, aCase)
 
       // When
-      val result  = await(controller.uploadAttachment(testReference)(postRequest))
+      val result = await(controller.uploadAttachment(testReference)(postRequest))
 
       // Then
       status(result) shouldBe OK
@@ -216,7 +214,7 @@ class AttachmentsControllerSpec extends UnitSpec with Matchers with WithFakeAppl
       givenACaseWithNoAttachmentsAndNoLetterOfAuthority(testReference, aCase)
 
       // When
-      val result  = await(controller.uploadAttachment(testReference)(postRequest))
+      val result = await(controller.uploadAttachment(testReference)(postRequest))
 
       // Then
       status(result) shouldBe OK
