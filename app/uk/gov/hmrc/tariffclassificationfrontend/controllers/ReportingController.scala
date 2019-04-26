@@ -22,6 +22,7 @@ import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.InstantRangeForm
+import uk.gov.hmrc.tariffclassificationfrontend.models.Permission
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 import uk.gov.hmrc.tariffclassificationfrontend.service.{QueuesService, ReportingService}
 import uk.gov.hmrc.tariffclassificationfrontend.views
@@ -32,26 +33,28 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class ReportingController @Inject()(authenticated: AuthenticatedAction,
-                                    verifiedManager: AuthenticatedManagerAction,
+class ReportingController @Inject()(verify: RequestActions,
                                     reportingService: ReportingService,
                                     queuesService: QueuesService,
                                     val messagesApi: MessagesApi,
                                     implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
-  def getReports: Action[AnyContent] = (authenticated andThen verifiedManager).async { implicit request =>
+  def getReports: Action[AnyContent] = (verify.authenticate andThen verify.mustHave[AuthenticatedRequest](Permission.VIEW_REPORTS))
+    .async { implicit request =>
     for {
       queues <- queuesService.getAll
     } yield Ok(views.html.reports(queues, None))
   }
 
-  def getReportCriteria(name: String): Action[AnyContent] = (authenticated andThen verifiedManager).async { implicit request =>
+  def getReportCriteria(name: String): Action[AnyContent] = (verify.authenticate andThen verify.mustHave[AuthenticatedRequest](Permission.VIEW_REPORTS))
+    .async { implicit request =>
     handleNotFound(name) {
       case Report.SLA => getSLAReportCriteria
     }
   }
 
-  def getReport(name: String): Action[AnyContent] = (authenticated andThen verifiedManager).async { implicit request =>
+  def getReport(name: String): Action[AnyContent] = (verify.authenticate andThen verify.mustHave[AuthenticatedRequest](Permission.VIEW_REPORTS))
+    .async { implicit request =>
     handleNotFound(name) {
       case Report.SLA => getSLAReport
     }
