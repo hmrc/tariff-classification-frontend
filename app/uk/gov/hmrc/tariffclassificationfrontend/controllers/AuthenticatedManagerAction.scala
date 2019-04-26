@@ -24,6 +24,8 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequ
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
+//TODO - this action will no longer be required
+
 @Singleton
 class AuthenticatedManagerAction @Inject()()
   extends ActionRefiner[AuthenticatedRequest, AuthenticatedRequest] {
