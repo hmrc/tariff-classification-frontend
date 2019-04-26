@@ -49,8 +49,8 @@ class BackLinkViewSpec extends ViewSpec {
       // Then
       doc should containElementWithID("back-link")
       doc.getElementById("back-link") should haveTag("a")
-      doc.getElementById("back-link") should haveAttribute("href", "/tariff-classification/queues/my-cases")
-      doc.getElementById("back-link") should containText("Back to My cases")
+      doc.getElementById("back-link") should haveAttribute("href", "/tariff-classification")
+      doc.getElementById("back-link") should containText(messages("errors.all.back"))
     }
 
     "do not render back link when not called for" in {
