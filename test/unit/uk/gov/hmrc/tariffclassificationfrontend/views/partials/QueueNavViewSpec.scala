@@ -17,6 +17,7 @@
 package uk.gov.hmrc.tariffclassificationfrontend.views.partials
 
 import org.scalatest.BeforeAndAfterEach
+import uk.gov.hmrc.tariffclassificationfrontend.models.Permission
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewSpec
 import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.queue_nav
@@ -43,7 +44,7 @@ class QueueNavViewSpec extends ViewSpec with BeforeAndAfterEach {
       // Given
 
       // When
-      val doc = view(queue_nav(Seq.empty, "")(authenticatedManagerFakeRequest, messages))
+      val doc = view(queue_nav(Seq.empty, "")(requestWithPermissions(Permission.VIEW_ASSIGNED_CASES), messages))
 
       // Then
       doc should containElementWithID("nav-menu-assigned-cases")
@@ -63,7 +64,7 @@ class QueueNavViewSpec extends ViewSpec with BeforeAndAfterEach {
       // Given
 
       // When
-      val doc = view(queue_nav(Seq.empty, "")(authenticatedManagerFakeRequest, messages))
+      val doc = view(queue_nav(Seq.empty, "")(requestWithPermissions(Permission.VIEW_REPORTS), messages))
 
       // Then
       doc should containElementWithID("nav-menu-reports")
