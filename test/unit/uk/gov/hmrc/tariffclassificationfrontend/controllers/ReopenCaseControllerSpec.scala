@@ -109,7 +109,7 @@ class ReopenCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     "return OK when user has right permissions" in {
       when(casesService.reopenCase(any[Case], any[Operator])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusOPEN))
 
-      val result: Result = await(controller(caseWithStatusREFERRED, Set(Permission.OPEN_CASE))
+      val result: Result = await(controller(caseWithStatusREFERRED, Set(Permission.REOPEN_CASE))
         .confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.OK

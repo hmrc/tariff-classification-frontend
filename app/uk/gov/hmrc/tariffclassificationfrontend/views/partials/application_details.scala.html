@@ -166,7 +166,7 @@
 
                 <div class="mt-1">
                     @if(request.hasPermission(Permission.REFER_CASE)) {@refer_case_button(c)}
-                    @if(request.hasPermission(Permission.OPEN_CASE)) {@reopen_case_button(c)}
+                    @if(request.hasPermission(Permission.REOPEN_CASE)) {@reopen_case_button(c)}
                 </div>
                 @if(request.hasPermission(Permission.SUSPEND_CASE)) {@reject_suspend_section(c)}
 
