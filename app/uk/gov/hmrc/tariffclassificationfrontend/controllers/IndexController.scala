@@ -21,6 +21,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
+import uk.gov.hmrc.tariffclassificationfrontend.controllers.SessionKeys.{backToQueuesLinkLabel, backToQueuesLinkUrl, backToSearchResultsLinkLabel, backToSearchResultsLinkUrl}
 import uk.gov.hmrc.tariffclassificationfrontend.models.Role
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 import uk.gov.hmrc.tariffclassificationfrontend.views.html.read_only_home
@@ -36,6 +37,8 @@ class IndexController @Inject()(authenticate: AuthenticatedAction,
         Redirect(routes.MyCasesController.myCases())
       case _ =>
         Ok(read_only_home())
+          .addingToSession((backToQueuesLinkLabel, "Search"), (backToQueuesLinkUrl, routes.IndexController.get().url))
+          .removingFromSession(backToSearchResultsLinkLabel, backToSearchResultsLinkUrl)
     }
   }
 

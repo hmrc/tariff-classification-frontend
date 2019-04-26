@@ -31,6 +31,8 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.{Operator, Role}
 
 abstract class ViewSpec extends UnitSpec with WithFakeApplication {
 
+  private def injector = fakeApplication.injector
+
   implicit val appConfig: AppConfig = injector.instanceOf[AppConfig]
 
   protected val authenticatedOperator = Operator("operator-id")
@@ -55,5 +57,4 @@ abstract class ViewSpec extends UnitSpec with WithFakeApplication {
     Jsoup.parse(html.toString())
   }
 
-  private def injector = fakeApplication.injector
 }
