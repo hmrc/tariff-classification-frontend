@@ -20,7 +20,7 @@
  @if(displayBackLink) {
   <div>
    <a id="back-link" class="link-back mt-0" href="@request.session.get(backLinkUrl).getOrElse(routes.IndexController.get())">
-    Back to @request.session.get(backLinkLabel).getOrElse(messages("errors.all.back"))
+    @request.session.get(backLinkLabel).map(l => s"Back to $l").getOrElse(messages("errors.all.back"))
    </a>
   </div>
  }
