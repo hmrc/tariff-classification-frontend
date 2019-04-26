@@ -31,6 +31,7 @@ trait IntegrationTest extends UnitSpec with GuiceOneServerPerSuite
     val resource = role match {
       case "manager" => "auth-success-manager.json"
       case "team" => "auth-success-team-member.json"
+      case "read-only" => "auth-success-read-only.json"
       case _ => "auth-success-another-team-member.json"
     }
 
