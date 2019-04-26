@@ -16,13 +16,12 @@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.RulingController
-@import uk.gov.hmrc.tariffclassificationfrontend.models.{BTIApplication, Case, CaseStatus, Decision, StoredAttachment}
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{attachments_list, tab_heading}
 @import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionFormData
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.ruling.{ruling_explanation, ruling_certificate_link, cancel_ruling_section, complete_ruling_section}
 @import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{BTIApplication, Case, CaseStatus, Decision, Permission, StoredAttachment}
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials._
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.ruling.{cancel_ruling_section, complete_ruling_section, ruling_certificate_link, ruling_explanation}
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{attachments_list, tab_heading}
+
 @(c: Case, decisionForm: Option[Form[DecisionFormData]], files: Seq[StoredAttachment])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @defining(c.application.asBTI) { btiApp: BTIApplication =>
