@@ -24,7 +24,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models.Permission.Permission
-import uk.gov.hmrc.tariffclassificationfrontend.models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
+import uk.gov.hmrc.tariffclassificationfrontend.models.request.{AuthenticatedCaseRequest, AuthenticatedRequest, OperatorRequest}
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Permission}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
@@ -85,7 +85,7 @@ class VerifyCaseExistsActionFactory @Inject()(casesService: CasesService)(implic
 @Singleton
 class MustHavePermissionActionFactory {
 
-  def apply[B[C] <: AuthenticatedRequest[C]](permission: Permission): ActionFilter[B] =
+  def apply[B[C] <: OperatorRequest[C]](permission: Permission): ActionFilter[B] =
     new ActionFilter[B] {
       override protected def filter[A](request: B[A]): Future[Option[Result]] = {
         request.operator match {

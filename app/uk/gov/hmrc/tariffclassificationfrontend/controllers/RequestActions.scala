@@ -20,7 +20,7 @@ import javax.inject.{Inject, Singleton}
 import play.api.mvc.ActionFunction
 import uk.gov.hmrc.tariffclassificationfrontend.models.Permission
 import uk.gov.hmrc.tariffclassificationfrontend.models.Permission.Permission
-import uk.gov.hmrc.tariffclassificationfrontend.models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
+import uk.gov.hmrc.tariffclassificationfrontend.models.request.{AuthenticatedCaseRequest, AuthenticatedRequest, OperatorRequest}
 
 @Singleton
 class RequestActions @Inject()(checkPermissionsAction: CheckPermissionsAction,
@@ -33,6 +33,5 @@ class RequestActions @Inject()(checkPermissionsAction: CheckPermissionsAction,
   def casePermissions(reference: String): ActionFunction[AuthenticatedRequest, AuthenticatedCaseRequest] =
     mustHave(Permission.VIEW_CASES) andThen caseExistsActionFactory.apply(reference) andThen checkPermissionsAction
 
-  def mustHave[B[C] <: AuthenticatedRequest[C]](permission: Permission): ActionFunction[B, B] = mustHavePermissionActionFactory.apply[B](permission)
-
+  def mustHave[B[A] <: OperatorRequest[A]](permission: Permission): ActionFunction[B, B] = mustHavePermissionActionFactory[B](permission)
 }
