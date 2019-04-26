@@ -45,7 +45,7 @@
                                 &nbsp;
                             }
                         </div>
-                        @if(request.operator.hasPermission(Permission.KEYWORDS)) {
+                        @if(request.hasPermission(Permission.KEYWORDS)) {
                             <div id="keywords-row-@{index}-remove" class="column-one-third text-right">
                                 <a id="keywords-row-@{index}-remove-link" aria-label="remove @keyword" href="@CaseController.removeKeyword(c.reference, keyword)">Remove</a>
                             </div>
@@ -55,7 +55,7 @@
                 }
             </div>
 
-            @if(request.operator.hasPermission(Permission.KEYWORDS)) {
+            @if(request.hasPermission(Permission.KEYWORDS)) {
                 @form(action = routes.CaseController.addKeyword(c.reference), 'class -> "form mt-3") {
 
                     @CSRF.formField

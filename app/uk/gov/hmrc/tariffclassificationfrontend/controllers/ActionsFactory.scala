@@ -88,8 +88,8 @@ class MustHavePermissionActionFactory {
   def apply[B[C] <: OperatorRequest[C]](permission: Permission): ActionFilter[B] =
     new ActionFilter[B] {
       override protected def filter[A](request: B[A]): Future[Option[Result]] = {
-        request.operator match {
-          case o if o.hasPermission(permission) => successful(None)
+        request match {
+          case r if r.hasPermission(permission) => successful(None)
           case _ => successful(Some(Redirect(routes.SecurityController.unauthorized())))
         }
       }
