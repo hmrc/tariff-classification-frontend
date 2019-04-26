@@ -23,20 +23,20 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.controllers.SessionKeys._
 import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.MyCasesController
-import uk.gov.hmrc.tariffclassificationfrontend.models.NoPagination
+import uk.gov.hmrc.tariffclassificationfrontend.models.{NoPagination, Permission}
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, QueuesService}
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton
-class MyCasesController @Inject()(authenticatedAction: AuthenticatedAction,
+class MyCasesController @Inject()(verify: RequestActions,
                                   casesService: CasesService,
                                   queuesService: QueuesService,
                                   val messagesApi: MessagesApi,
                                   implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
-  def myCases(): Action[AnyContent] = authenticatedAction.async { implicit request =>
+  def myCases(): Action[AnyContent] = (verify.authenticate andThen verify.mustHave(Permission.VIEW_MY_CASES)).async { implicit request =>
     for {
       cases <- casesService.getCasesByAssignee(request.operator, NoPagination())
       queues <- queuesService.getAll
