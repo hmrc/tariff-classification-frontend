@@ -50,6 +50,10 @@ class IndexControllerSpec extends UnitSpec with Matchers with WithFakeApplicatio
 
       status(result) shouldBe OK
       bodyOf(result) should include("read_only_home-heading")
+      session(result).get(SessionKeys.backToQueuesLinkLabel) shouldBe Some("Search")
+      session(result).get(SessionKeys.backToQueuesLinkUrl) shouldBe Some("/tariff-classification")
+      session(result).get(SessionKeys.backToSearchResultsLinkLabel) shouldBe None
+      session(result).get(SessionKeys.backToSearchResultsLinkUrl) shouldBe None
     }
 
     "Redirect for Officer role" in {
