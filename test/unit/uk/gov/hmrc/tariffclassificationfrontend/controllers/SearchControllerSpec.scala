@@ -30,6 +30,7 @@ import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
+import uk.gov.hmrc.tariffclassificationfrontend.models.Permission.Permission
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, FileStoreService, KeywordsService}
 import uk.gov.hmrc.tariffclassificationfrontend.views.SearchTab
@@ -51,14 +52,13 @@ class SearchControllerSpec extends UnitSpec with Matchers with WithFakeApplicati
 
   private val defaultTab = SearchTab.DETAILS
 
-  private val controller = new SearchController(
-    new SuccessfulAuthenticatedAction(operator),
-    casesService,
-    keywordsService,
-    fileStoreService,
-    messageApi,
-    appConfig
+  private def controller = new SearchController(
+    new SuccessfulRequestActions(operator), casesService, keywordsService, fileStoreService, messageApi, appConfig
   )
+
+  private def controller(permission: Set[Permission]) = new SearchController(
+    new RequestActionsWithPermissions(permission), casesService, keywordsService, fileStoreService, messageApi, appConfig)
+
 
   private implicit val hc: HeaderCarrier = HeaderCarrier()
 
@@ -108,7 +108,8 @@ class SearchControllerSpec extends UnitSpec with Matchers with WithFakeApplicati
       contentAsString(result) should include("advanced_search-heading")
       contentAsString(result) should include("advanced_search_results")
       session(result).get(SessionKeys.backToSearchResultsLinkLabel) shouldBe Some("search results")
-      session(result).get(SessionKeys.backToSearchResultsLinkUrl) shouldBe Some("/tariff-classification/search?trader_name=trader&commodity_code=00&page=2#advanced_search_keywords")
+      session(result).get(SessionKeys.backToSearchResultsLinkUrl) shouldBe
+        Some("/tariff-classification/search?trader_name=trader&commodity_code=00&page=2#advanced_search_keywords")
     }
 
     "render errors if form invalid" in {
@@ -127,6 +128,37 @@ class SearchControllerSpec extends UnitSpec with Matchers with WithFakeApplicati
       charset(result) shouldBe Some("utf-8")
       contentAsString(result) should include("advanced_search-heading")
       contentAsString(result) shouldNot include("advanced_search_results")
+    }
+
+    "return OK when user has right permissions" in {
+      // Given
+      val search = Search(traderName = Some("trader"), commodityCode = Some("00"))
+      val c = aCase()
+      val attachment = StoredAttachment("id", public = true, None, None, "file", "image/png", None, Instant.now())
+
+      given(casesService.search(refEq(search), refEq(Sort()), refEq(SearchPagination(2)))(any[HeaderCarrier])) willReturn Future.successful(Paged(Seq(c)))
+      given(fileStoreService.getAttachments(refEq(Seq(c)))(any[HeaderCarrier])) willReturn Future.successful(Map(c -> Seq(attachment)))
+      given(keywordsService.autoCompleteKeywords) willReturn Future.successful(Seq.empty[String])
+
+      // When
+      val request = fakeRequest.withFormUrlEncodedBody(
+        "trader_name" -> "trader", "commodity_code" -> "00"
+      )
+      val result = await(controller(Set(Permission.ADVANCED_SEARCH)).search(defaultTab, search = search, page = 2)(request))
+
+      // Then
+      status(result) shouldBe Status.OK
+    }
+
+    "redirect unauthorised when does not have right permissions" in {
+      val search = Search(traderName = Some("trader"), commodityCode = Some("00"))
+      val request = fakeRequest.withFormUrlEncodedBody(
+        "trader_name" -> "trader", "commodity_code" -> "00"
+      )
+      val result = await(controller(Set.empty).search(defaultTab, search = search, page = 2)(request))
+
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result).get should include("unauthorized")
     }
 
   }
