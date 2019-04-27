@@ -39,21 +39,21 @@ class ReportingController @Inject()(verify: RequestActions,
                                     val messagesApi: MessagesApi,
                                     implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
-  def getReports: Action[AnyContent] = (verify.authenticate andThen verify.mustHave(Permission.VIEW_REPORTS))
+  def getReports: Action[AnyContent] = (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS))
     .async { implicit request =>
     for {
       queues <- queuesService.getAll
     } yield Ok(views.html.reports(queues, None))
   }
 
-  def getReportCriteria(name: String): Action[AnyContent] = (verify.authenticate andThen verify.mustHave(Permission.VIEW_REPORTS))
+  def getReportCriteria(name: String): Action[AnyContent] = (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS))
     .async { implicit request =>
     handleNotFound(name) {
       case Report.SLA => getSLAReportCriteria
     }
   }
 
-  def getReport(name: String): Action[AnyContent] = (verify.authenticate andThen verify.mustHave(Permission.VIEW_REPORTS))
+  def getReport(name: String): Action[AnyContent] = (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS))
     .async { implicit request =>
     handleNotFound(name) {
       case Report.SLA => getSLAReport

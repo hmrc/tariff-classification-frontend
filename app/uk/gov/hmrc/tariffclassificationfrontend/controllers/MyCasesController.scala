@@ -36,7 +36,7 @@ class MyCasesController @Inject()(verify: RequestActions,
                                   val messagesApi: MessagesApi,
                                   implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
-  def myCases(): Action[AnyContent] = (verify.authenticate andThen verify.mustHave(Permission.VIEW_MY_CASES)).async { implicit request =>
+  def myCases(): Action[AnyContent] = (verify.authenticated andThen verify.mustHave(Permission.VIEW_MY_CASES)).async { implicit request =>
     for {
       cases <- casesService.getCasesByAssignee(request.operator, NoPagination())
       queues <- queuesService.getAll

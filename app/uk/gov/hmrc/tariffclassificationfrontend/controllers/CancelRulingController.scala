@@ -53,12 +53,12 @@ class CancelRulingController @Inject()(verify: RequestActions,
     getCaseAndRenderView(caseRef, c => successful(views.html.cancel_ruling(c, f)))
   }
 
-  def cancelRuling(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.casePermissions(reference) andThen
+  def cancelRuling(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen
     verify.mustHave(Permission.CANCEL_CASE)).async { implicit request =>
     cancelRuling(CancelRulingForm.form, reference)
   }
 
-  def confirmCancelRuling(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.casePermissions(reference) andThen
+  def confirmCancelRuling(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen
     verify.mustHave(Permission.CANCEL_CASE)).async { implicit request =>
     CancelRulingForm.form.bindFromRequest().fold(
       cancelRuling(_, reference),

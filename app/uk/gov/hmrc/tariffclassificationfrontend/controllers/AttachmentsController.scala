@@ -48,7 +48,7 @@ class AttachmentsController @Inject()(verify: RequestActions,
 
   private lazy val form: Form[String] = UploadAttachmentForm.form
 
-  def attachmentsDetails(reference: String): Action[AnyContent] = verify.authenticate.async { implicit request =>
+  def attachmentsDetails(reference: String): Action[AnyContent] = verify.authenticated.async { implicit request =>
     getCaseAndRenderView(reference, CaseDetailPage.ATTACHMENTS, renderView(_, form))
   }
 
@@ -74,7 +74,7 @@ class AttachmentsController @Inject()(verify: RequestActions,
   }
 
   def uploadAttachment(reference: String): Action[Either[MaxSizeExceeded, MultipartFormData[TemporaryFile]]] =
-    (verify.authenticate andThen verify.mustHave(Permission.ADD_ATTACHMENT))
+    (verify.authenticated andThen verify.mustHave(Permission.ADD_ATTACHMENT))
       .async(parse.maxLength(appConfig.fileUploadMaxSize, parse.multipartFormData)) {
 
         implicit request =>

@@ -43,7 +43,7 @@ class SearchController @Inject()(verify: RequestActions,
                                  implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
   def search(selectedTab: SearchTab, reference: Option[String] = None, search: Search = Search(), sort: Sort = Sort(), page: Int):
-    Action[AnyContent] = (verify.authenticate andThen verify.mustHave(Permission.ADVANCED_SEARCH)).async { implicit request =>
+    Action[AnyContent] = (verify.authenticated andThen verify.mustHave(Permission.ADVANCED_SEARCH)).async { implicit request =>
 
     if (reference.isDefined) {
       successful(Redirect(routes.CaseController.trader(reference.get)))

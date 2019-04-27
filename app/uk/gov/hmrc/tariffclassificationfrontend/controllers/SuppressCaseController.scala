@@ -51,12 +51,12 @@ class SuppressCaseController @Inject()(verify: RequestActions,
     getCaseAndRenderView(reference, c => successful(views.html.suppress_case(c, f)))
   }
 
-  def suppressCase(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.casePermissions(reference) andThen
+  def suppressCase(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen
     verify.mustHave(Permission.SUPPRESS_CASE)).async { implicit request =>
     showCase(reference, form)
   }
 
-  def confirmSuppressCase(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.casePermissions(reference) andThen
+  def confirmSuppressCase(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen
     verify.mustHave(Permission.SUPPRESS_CASE)).async { implicit request =>
 
     form.bindFromRequest().fold(

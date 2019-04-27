@@ -41,11 +41,11 @@ class SuspendCaseController @Inject()(verify: RequestActions,
   override protected val caseService: CasesService = casesService
   private val form: Form[Boolean] = MandatoryBooleanForm.form("suspend_case")
 
-  def suspendCase(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.SUSPEND_CASE)).async { implicit request =>
+  def suspendCase(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.SUSPEND_CASE)).async { implicit request =>
     validateAndRenderView(c => successful(views.html.suspend_case(c, form)))
   }
 
-  def confirmSuspendCase(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.SUSPEND_CASE)).async { implicit request =>
+  def confirmSuspendCase(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.SUSPEND_CASE)).async { implicit request =>
     form.bindFromRequest().fold(
       errors => {
         validateAndRenderView(c => successful(views.html.suspend_case(c, errors)))

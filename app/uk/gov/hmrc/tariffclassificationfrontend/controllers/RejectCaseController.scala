@@ -41,11 +41,11 @@ class RejectCaseController @Inject()(verify: RequestActions,
   override protected val caseService: CasesService = casesService
   private val form: Form[Boolean] = MandatoryBooleanForm.form("reject_case")
 
-  def rejectCase(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.REJECT_CASE)).async { implicit request =>
+  def rejectCase(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.REJECT_CASE)).async { implicit request =>
     validateAndRenderView(c => successful(views.html.reject_case(c, form)))
   }
 
-  def confirmRejectCase(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.REJECT_CASE)).async { implicit request =>
+  def confirmRejectCase(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.REJECT_CASE)).async { implicit request =>
     form.bindFromRequest().fold(
       errors => {
         validateAndRenderView(c => successful(views.html.reject_case(c, errors)))

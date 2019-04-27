@@ -28,7 +28,7 @@ class RequestActions @Inject()(checkPermissionsAction: CheckPermissionsAction,
                                caseExistsActionFactory: VerifyCaseExistsActionFactory,
                                mustHavePermissionActionFactory: MustHavePermissionActionFactory) {
 
-  val authenticate: AuthenticatedAction = authenticatedAction
+  val authenticated: AuthenticatedAction = authenticatedAction
 
   def casePermissions(reference: String): ActionFunction[AuthenticatedRequest, AuthenticatedCaseRequest] =
     mustHave(Permission.VIEW_CASES) andThen caseExistsActionFactory(reference) andThen checkPermissionsAction

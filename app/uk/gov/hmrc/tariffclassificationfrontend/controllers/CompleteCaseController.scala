@@ -40,11 +40,11 @@ class CompleteCaseController @Inject()(verify: RequestActions,
   override protected val config: AppConfig = appConfig
   override protected val caseService: CasesService = casesService
 
-  def completeCase(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.COMPLETE_CASE)).async { implicit request =>
+  def completeCase(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.COMPLETE_CASE)).async { implicit request =>
     validateAndRenderView(c => successful(views.html.complete_case(c)))
   }
 
-  def confirmCompleteCase(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.COMPLETE_CASE)).async { implicit request =>
+  def confirmCompleteCase(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.COMPLETE_CASE)).async { implicit request =>
     validateAndRenderView(casesService.completeCase(_, request.operator).map(views.html.confirm_complete_case(_)))
   }
 

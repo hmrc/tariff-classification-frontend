@@ -41,7 +41,7 @@ class ReferCaseController @Inject()(verify: RequestActions,
   override protected val caseService: CasesService = casesService
   private val form: Form[Boolean] = MandatoryBooleanForm.form("refer_case")
 
-  def referCase(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.casePermissions(reference) andThen
+  def referCase(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen
     verify.mustHave(Permission.REFER_CASE)).async { implicit request =>
     validateAndRenderView(
       c =>
@@ -49,7 +49,7 @@ class ReferCaseController @Inject()(verify: RequestActions,
     )
   }
 
-  def confirmReferCase(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.casePermissions(reference) andThen
+  def confirmReferCase(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen
     verify.mustHave(Permission.REFER_CASE)).async { implicit request =>
 
     form.bindFromRequest().fold(

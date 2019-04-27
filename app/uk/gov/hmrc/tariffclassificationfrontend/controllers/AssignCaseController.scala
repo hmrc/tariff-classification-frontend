@@ -35,11 +35,11 @@ class AssignCaseController @Inject()(verify: RequestActions,
                                      val messagesApi: MessagesApi,
                                      override implicit val config: AppConfig) extends RenderCaseAction {
 
-  def get(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.ASSIGN_CASE)).async { implicit request =>
+  def get(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.ASSIGN_CASE)).async { implicit request =>
     getCaseAndRenderView(reference, c => successful(views.html.assign_case(c)))
   }
 
-  def post(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.ASSIGN_CASE)).async { implicit request =>
+  def post(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.ASSIGN_CASE)).async { implicit request =>
 
     def respond: Case => Future[Result] = {
       case c: Case if c.assignee.isEmpty =>

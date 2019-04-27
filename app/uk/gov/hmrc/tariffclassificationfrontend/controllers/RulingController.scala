@@ -46,7 +46,7 @@ class RulingController @Inject()(verify: RequestActions,
 
   private lazy val menuTitle = CaseDetailPage.RULING
 
-  def editRulingDetails(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.EDIT_RULING)).async { implicit request =>
+  def editRulingDetails(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.EDIT_RULING)).async { implicit request =>
     getCaseAndRenderView(menuTitle, c => {
       val formData = mapper.caseToDecisionFormData(c)
       val df = decisionForm.form.fill(formData)
@@ -68,7 +68,7 @@ class RulingController @Inject()(verify: RequestActions,
     }
   }
 
-  def updateRulingDetails(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.EDIT_RULING)).async { implicit request =>
+  def updateRulingDetails(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.EDIT_RULING)).async { implicit request =>
     decisionForm.form.bindFromRequest.fold(
       errorForm =>
         getCaseAndRenderView(

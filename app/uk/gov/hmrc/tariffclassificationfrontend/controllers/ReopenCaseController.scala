@@ -37,7 +37,7 @@ class ReopenCaseController @Inject()(verify: RequestActions,
   override protected val config: AppConfig = appConfig
   override protected val caseService: CasesService = casesService
 
-  def confirmReopenCase(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.REOPEN_CASE)).async { implicit request =>
+  def confirmReopenCase(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.REOPEN_CASE)).async { implicit request =>
     validateAndRenderView(casesService.reopenCase(_, request.operator).map(views.html.confirm_reopen_case(_)))
   }
 

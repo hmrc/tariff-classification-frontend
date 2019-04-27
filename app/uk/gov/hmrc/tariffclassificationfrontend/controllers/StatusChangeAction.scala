@@ -43,7 +43,7 @@ trait StatusChangeAction[T] extends RenderCaseAction {
 
   protected val requiredPermission: Permission
 
-  def chooseStatus(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.casePermissions(reference) andThen
+  def chooseStatus(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen
     verify.mustHave(requiredPermission)).async { implicit request =>
     getCaseAndRenderView(
       reference,
@@ -51,7 +51,7 @@ trait StatusChangeAction[T] extends RenderCaseAction {
     )
   }
 
-  def updateStatus(reference: String): Action[AnyContent] = (verify.authenticate andThen verify.casePermissions(reference) andThen
+  def updateStatus(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen
     verify.mustHave(requiredPermission)).async { implicit request =>
     form.bindFromRequest().fold(
       errors => {
