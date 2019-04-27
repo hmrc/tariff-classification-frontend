@@ -61,7 +61,6 @@ class CaseControllerSpec extends WordSpec with Matchers with WithFakeApplication
     decisionForm, messageApi, appConfig
   )
 
-
   private def controller(c: Case, permission: Set[Permission]) = new CaseController(
     new RequestActionsWithPermissions(permission, c = c),
     mock[CasesService], keywordsService, fileService,
@@ -172,8 +171,7 @@ class CaseControllerSpec extends WordSpec with Matchers with WithFakeApplication
       contentAsString(result) should include("This field is required")
     }
 
-    "add note return expected view when has right permissions" in {
-
+    "return OK when user has right permissions" in {
       val aCase  = Cases.btiCaseExample
       given(eventService.getEvents(refEq(aCase.reference), refEq(NoPagination()))(any[HeaderCarrier])) willReturn successful(Paged(Events.events))
       given(queueService.getAll) willReturn successful(Seq.empty)
@@ -184,10 +182,7 @@ class CaseControllerSpec extends WordSpec with Matchers with WithFakeApplication
     }
 
     "redirect unauthorised when does not have right permissions" in {
-
       val aCase  = Cases.btiCaseExample
-      given(eventService.getEvents(refEq(aCase.reference), refEq(NoPagination()))(any[HeaderCarrier])) willReturn successful(Paged(Events.events))
-      given(queueService.getAll) willReturn successful(Seq.empty)
 
       val result = controller(aCase, Set.empty).addNote(aCase.reference)(newFakeGETRequestWithCSRF(fakeApplication))
 
