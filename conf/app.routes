@@ -15,7 +15,7 @@ GET         /reports                                     @uk.gov.hmrc.tariffclas
 GET         /reports/:name                               @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReportingController.getReportCriteria(name: String)
 POST        /reports/:name                               @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReportingController.getReport(name: String)
 
-GET         /cases                                       controllers.Default.redirect(to = uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.MyCasesController.myCases.url)
+GET         /cases                                       controllers.Default.redirect(to = uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.IndexController.get.url)
 GET         /cases/:reference                            @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.trader(reference: String)
 GET         /cases/:reference/application                @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.applicationDetails(reference: String)
 
