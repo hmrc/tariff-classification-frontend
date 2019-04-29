@@ -23,9 +23,9 @@ import play.api.mvc._
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.CancelRulingForm
 import uk.gov.hmrc.tariffclassificationfrontend.models.CancelReason.CancelReason
-import uk.gov.hmrc.tariffclassificationfrontend.models.Case
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Permission}
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.COMPLETED
-import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
+import uk.gov.hmrc.tariffclassificationfrontend.models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
@@ -34,7 +34,7 @@ import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
 @Singleton
-class CancelRulingController @Inject()(authenticatedAction: AuthenticatedAction,
+class CancelRulingController @Inject()(verify: RequestActions,
                                        casesService: CasesService,
                                        val messagesApi: MessagesApi,
                                        implicit val appConfig: AppConfig) extends RenderCaseAction {
@@ -49,15 +49,17 @@ class CancelRulingController @Inject()(authenticatedAction: AuthenticatedAction,
   }
 
   private def cancelRuling(f: Form[CancelReason], caseRef: String)
-                          (implicit request: AuthenticatedRequest[_]): Future[Result] = {
+                          (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
     getCaseAndRenderView(caseRef, c => successful(views.html.cancel_ruling(c, f)))
   }
 
-  def cancelRuling(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
+  def cancelRuling(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen
+    verify.mustHave(Permission.CANCEL_CASE)).async { implicit request =>
     cancelRuling(CancelRulingForm.form, reference)
   }
 
-  def confirmCancelRuling(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
+  def confirmCancelRuling(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen
+    verify.mustHave(Permission.CANCEL_CASE)).async { implicit request =>
     CancelRulingForm.form.bindFromRequest().fold(
       cancelRuling(_, reference),
       (reason: CancelReason) =>

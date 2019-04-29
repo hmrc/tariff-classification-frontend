@@ -136,6 +136,66 @@ class AppealDetailsViewSpec extends ViewSpec {
       doc should containElementWithID("appeal_details-review_status")
       doc.getElementById("appeal_details-review_status") should containText("Under review")
     }
+
+    "Render Review Status Change if user has permission REVIEW_CASE" in {
+      // Given
+      val c = aCase(withDecision())
+
+      // When
+      val doc = view(appeal_details(c)(requestWithPermissions(Permission.REVIEW_CASE), messages, appConfig))
+
+      doc should containElementWithID("appeal_details-review_status-change")
+    }
+
+    "Not render Review Status Change if user does not have permission" in {
+      // Given
+      val c = aCase(withDecision())
+
+      // When
+      val doc = view(appeal_details(c)(operatorRequest, messages, appConfig))
+
+      doc shouldNot containElementWithID("appeal_details-review_status-change")
+    }
+
+    "Render Appeal Status Change if user has permission APPEAL_CASE" in {
+      // Given
+      val c = aCase(withDecision())
+
+      // When
+      val doc = view(appeal_details(c)(requestWithPermissions(Permission.APPEAL_CASE), messages, appConfig))
+
+      doc should containElementWithID("appeal_details-appeal_status-change")
+    }
+
+    "Not render Appeal Status Change if user does not have permission" in {
+      // Given
+      val c = aCase(withDecision())
+
+      // When
+      val doc = view(appeal_details(c)(operatorRequest, messages, appConfig))
+
+      doc shouldNot containElementWithID("appeal_details-appeal_status-change")
+    }
+
+    "Render Extended Use Change if user has permission APPEAL_CASE" in {
+      // Given
+      val c = aCase(withDecision(), withStatus(CaseStatus.CANCELLED))
+
+      // When
+      val doc = view(appeal_details(c)(requestWithPermissions(Permission.EXTENDED_USE), messages, appConfig))
+
+      doc should containElementWithID("appeal_details-extended_use-change")
+    }
+
+    "Not render Extended Use Change if user does not have permission" in {
+      // Given
+      val c = aCase(withDecision(), withStatus(CaseStatus.CANCELLED))
+
+      // When
+      val doc = view(appeal_details(c)(operatorRequest, messages, appConfig))
+
+      doc shouldNot containElementWithID("appeal_details-extended_use-change")
+    }
   }
 
 }

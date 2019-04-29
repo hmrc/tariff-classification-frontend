@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.views
 
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Operator, Paged, Queue}
+import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
 import uk.gov.tariffclassificationfrontend.utils.Cases
 
@@ -34,7 +34,7 @@ class MyCasesViewSpec extends ViewSpec {
       val queues = Seq(queue1, queue2)
 
       // When
-      val doc = view(html.my_cases(queues, Paged.empty[Case], operator))
+      val doc = view(html.my_cases(queues, Paged.empty[Case], operator)(request = requestWithPermissions(Permission.VIEW_QUEUE_CASES, Permission.VIEW_MY_CASES), messages, appConfig))
 
       // Then
       doc should containElementWithID("queue-navigation")
@@ -49,7 +49,7 @@ class MyCasesViewSpec extends ViewSpec {
       doc.getElementById("queue-name") should containText(s"Cases for ${operator.name.get}")
       doc should containText(messages("cases.table.empty"))
 
-      doc should not (containElementWithID("cases_list-row-0-reference"))
+      doc should not(containElementWithID("cases_list-row-0-reference"))
     }
 
     "render with a list of cases" in {
@@ -58,7 +58,7 @@ class MyCasesViewSpec extends ViewSpec {
       val cases = Seq(case1)
 
       // When
-      val doc = view(html.my_cases(queues, Paged(cases), operator))
+      val doc = view(html.my_cases(queues, Paged(cases), operator)(request = requestWithPermissions(Permission.VIEW_QUEUE_CASES, Permission.VIEW_MY_CASES), messages, appConfig))
 
       // Then
       doc should containElementWithID("queue-navigation")

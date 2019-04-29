@@ -14,18 +14,18 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.MyCasesController
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.IndexController
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
 
 @(reference: String)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None) {
     <div id="case-not-found-section">
-        <h2 class="heading-large">
+        <h1 class="heading-large">
             @messages("errors.case-not-found.title")
-        </h2>
+        </h1>
         <p>@messages("errors.case-not-found.message", reference)</p>
-        <a href="@MyCasesController.myCases()">@messages("errors.all.back")</a>
+        <a href="@IndexController.get()">@messages("errors.all.back")</a>
     </div>
 }

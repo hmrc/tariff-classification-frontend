@@ -23,7 +23,7 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.controllers.SessionKeys._
 import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.AssignedCasesController
-import uk.gov.hmrc.tariffclassificationfrontend.models.NoPagination
+import uk.gov.hmrc.tariffclassificationfrontend.models.{NoPagination, Permission}
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, QueuesService}
 import uk.gov.hmrc.tariffclassificationfrontend.views
@@ -32,18 +32,19 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class AssignedCasesController @Inject()(authenticated: AuthenticatedAction,
-                                        verifiedManager: AuthenticatedManagerAction,
+class AssignedCasesController @Inject()(verify: RequestActions,
                                         casesService: CasesService,
                                         queuesService: QueuesService,
                                         val messagesApi: MessagesApi,
                                         implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
-  def assignedCases(): Action[AnyContent] = (authenticated andThen verifiedManager).async { implicit request =>
+  def assignedCases(): Action[AnyContent] = (verify.authenticated andThen verify.mustHave(Permission.VIEW_ASSIGNED_CASES))
+    .async { implicit request =>
     showAssignedCases()
   }
 
-  def assignedCasesFor(assigneeId: String): Action[AnyContent] = (authenticated andThen verifiedManager).async { implicit request =>
+  def assignedCasesFor(assigneeId: String): Action[AnyContent] = (verify.authenticated andThen verify.mustHave(Permission.VIEW_ASSIGNED_CASES))
+    .async { implicit request =>
     showAssignedCases(Some(assigneeId))
   }
 

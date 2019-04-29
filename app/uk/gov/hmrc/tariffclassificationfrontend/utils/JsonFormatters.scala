@@ -19,6 +19,7 @@ package uk.gov.hmrc.tariffclassificationfrontend.utils
 import play.api.libs.json._
 import play.json.extra.Jsonx
 import uk.gov.hmrc.play.json.Union
+import uk.gov.hmrc.tariffclassificationfrontend.models.Permission.Permission
 import uk.gov.hmrc.tariffclassificationfrontend.models.Role.Role
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
 import uk.gov.hmrc.tariffclassificationfrontend.models.response.{FileMetadata, ScanStatus}
@@ -27,6 +28,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, _}
 object JsonFormatters {
 
   implicit val role: Format[Role] =  EnumJson.format(Role)
+  implicit val permission: Format[Permission] =  EnumJson.format(Permission)
   implicit val reportField: Format[CaseReportField.Value] = EnumJson.format(CaseReportField)
   implicit val reportGroup: Format[CaseReportGroup.Value] = EnumJson.format(CaseReportGroup)
   implicit val reportResult: Format[ReportResult] = Json.format[ReportResult]

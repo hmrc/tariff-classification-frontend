@@ -21,18 +21,8 @@ import play.api.http.HeaderNames.LOCATION
 import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded, Result}
 import play.api.test.{FakeHeaders, FakeRequest}
 import play.filters.csrf.CSRF.{Token, TokenProvider}
-import uk.gov.hmrc.tariffclassificationfrontend.models.Operator
 
 trait ControllerCommons {
-
-  protected def requestActions(operator: Operator): RequestActions = {
-    new RequestActions(
-      new SuccessfulMustHaveWritePermissionAction(operator),
-      new SuccessfulCheckPermissionsAction(operator),
-      new SuccessfulAuthenticatedAction(operator),
-      null
-    )
-  }
 
   protected def locationOf(result: Result): Option[String] = {
     result.header.headers.get(LOCATION)

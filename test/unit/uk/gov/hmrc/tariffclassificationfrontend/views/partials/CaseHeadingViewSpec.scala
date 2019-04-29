@@ -116,7 +116,7 @@ class CaseHeadingViewSpec extends ViewSpec {
       doc.getElementById("back-link") should containText("some search results")
     }
 
-    "Render My case back link when session is empty" in {
+    "Render back link when session is empty" in {
       // Given
       val c = aCase()
       val requestWithoutSessionData = FakeRequest()
@@ -126,7 +126,7 @@ class CaseHeadingViewSpec extends ViewSpec {
 
       // Then
       doc should containElementWithID("back-link")
-      doc.getElementById("back-link") should containText("My cases")
+      doc.getElementById("back-link") should containText("Back Home")
     }
 
   }

@@ -22,9 +22,9 @@ import play.api.i18n.MessagesApi
 import play.api.mvc._
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.MandatoryBooleanForm
-import uk.gov.hmrc.tariffclassificationfrontend.models.Case
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Permission}
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.NEW
-import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
+import uk.gov.hmrc.tariffclassificationfrontend.models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
@@ -33,7 +33,7 @@ import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
 @Singleton
-class SuppressCaseController @Inject()(authenticatedAction: AuthenticatedAction,
+class SuppressCaseController @Inject()(verify: RequestActions,
                                        casesService: CasesService,
                                        val messagesApi: MessagesApi,
                                        implicit val appConfig: AppConfig) extends RenderCaseAction {
@@ -47,15 +47,17 @@ class SuppressCaseController @Inject()(authenticatedAction: AuthenticatedAction,
   override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = c.status == NEW
 
   private def showCase(reference: String, f: Form[Boolean])
-                      (implicit request: AuthenticatedRequest[AnyContent]): Future[Result] = {
+                      (implicit request: AuthenticatedCaseRequest[AnyContent]): Future[Result] = {
     getCaseAndRenderView(reference, c => successful(views.html.suppress_case(c, f)))
   }
 
-  def suppressCase(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
+  def suppressCase(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen
+    verify.mustHave(Permission.SUPPRESS_CASE)).async { implicit request =>
     showCase(reference, form)
   }
 
-  def confirmSuppressCase(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
+  def confirmSuppressCase(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen
+    verify.mustHave(Permission.SUPPRESS_CASE)).async { implicit request =>
 
     form.bindFromRequest().fold(
       errors => showCase(reference, errors),

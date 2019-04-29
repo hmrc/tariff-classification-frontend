@@ -24,11 +24,13 @@ import org.scalatest.{BeforeAndAfterEach, Matchers, WordSpec}
 import play.api.http.{MimeTypes, Status}
 import play.api.i18n.{DefaultLangs, DefaultMessagesApi}
 import play.api.mvc.Result
+import play.api.test.Helpers.{redirectLocation, _}
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus, Operator}
+import uk.gov.hmrc.tariffclassificationfrontend.models.Permission.Permission
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus, Operator, Permission}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.tariffclassificationfrontend.utils.Cases
 
@@ -57,7 +59,12 @@ class SuspendCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     reset(casesService)
   }
 
-  private def controller(c: Case) = new SuspendCaseController(new SuccessfulRequestActions(operator, c = c), casesService, messageApi, appConfig)
+  private def controller(c: Case) = new SuspendCaseController(
+    new SuccessfulRequestActions(operator, c = c), casesService, messageApi, appConfig)
+
+  private def controller(requestCase: Case, permission: Set[Permission]) = new SuspendCaseController(
+    new RequestActionsWithPermissions(permission, c = requestCase), casesService, messageApi, appConfig)
+
 
   "Suspend Case" should {
 
@@ -72,8 +79,9 @@ class SuspendCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     }
 
     "redirect to Application Details for non OPEN statuses" in {
+      val con = controller(caseWithStatusNEW)
 
-      val result: Result = await(controller(caseWithStatusNEW).suspendCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+      val result: Result = await(con.suspendCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
@@ -81,6 +89,20 @@ class SuspendCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       locationOf(result) shouldBe Some("/tariff-classification/cases/reference/application")
     }
 
+    "return OK when user has right permissions" in {
+      val result: Result = await(controller(caseWithStatusOPEN, Set(Permission.SUSPEND_CASE))
+        .suspendCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+
+      status(result) shouldBe Status.OK
+    }
+
+    "redirect unauthorised when does not have right permissions" in {
+      val result: Result = await(controller(caseWithStatusNEW, Set.empty)
+        .suspendCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result).get should include("unauthorized")
+    }
   }
 
   "Confirm Suspend a Case" should {
@@ -121,6 +143,27 @@ class SuspendCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       contentTypeOf(result) shouldBe None
       charsetOf(result) shouldBe None
       locationOf(result) shouldBe Some("/tariff-classification/cases/reference/application")
+    }
+
+    "return OK when user has right permissions" in {
+      when(casesService.suspendCase(any[Case], any[Operator])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusSUSPENDED))
+
+      val result: Result = await(controller(caseWithStatusOPEN, Set(Permission.SUSPEND_CASE))
+        .confirmSuspendCase("reference")
+        (newFakePOSTRequestWithCSRF(fakeApplication)
+          .withFormUrlEncodedBody("state" -> "true")))
+
+      status(result) shouldBe Status.OK
+    }
+
+    "redirect unauthorised when does not have right permissions" in {
+      val result: Result = await(controller(caseWithStatusNEW, Set.empty)
+        .confirmSuspendCase("reference")
+        (newFakePOSTRequestWithCSRF(fakeApplication)
+          .withFormUrlEncodedBody("state" -> "true")))
+
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result).get should include("unauthorized")
     }
   }
 

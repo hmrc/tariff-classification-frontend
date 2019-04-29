@@ -17,9 +17,8 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.AttachmentsController
 @import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
-@import uk.gov.hmrc.tariffclassificationfrontend.models.{Application, BTIApplication, Case, EORIDetails, StoredAttachment}
+@import uk.gov.hmrc.tariffclassificationfrontend.models.{Application, BTIApplication, Case, EORIDetails, Permission, StoredAttachment}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials._
-
 @(c: Case, files: Seq[StoredAttachment], letterOfAuth: Option[StoredAttachment])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @defining(c.application) { a: Application =>
@@ -164,14 +163,12 @@
                 </div>
             </dl>
 
-            @if(request.hasWritePermission) {
-                <div class="mt-1">
-                    @refer_case_button(c)
-                    @reopen_case_button(c)
-                </div>
 
-                @reject_suspend_section(c)
-            }
+                <div class="mt-1">
+                    @if(request.hasPermission(Permission.REFER_CASE)) {@refer_case_button(c)}
+                    @if(request.hasPermission(Permission.REOPEN_CASE)) {@reopen_case_button(c)}
+                </div>
+                @if(request.hasPermission(Permission.SUSPEND_CASE)) {@reject_suspend_section(c)}
 
             <div class="mt-3">
                 @submitted_application_link(c)

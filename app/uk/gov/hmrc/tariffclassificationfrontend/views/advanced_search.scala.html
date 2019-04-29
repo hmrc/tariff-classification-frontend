@@ -28,121 +28,121 @@
 @(form: Form[Search], results: Option[Paged[SearchResult]] = None, keywords: Seq[String], selectedTab: SearchTab)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @formHasStatus(status: PseudoCaseStatus) = @{
- form.value.flatMap(_.status).exists(_.contains(status))
+    form.value.flatMap(_.status).exists(_.contains(status))
 }
 
 @main(bodyClasses = None) {
 
- @back_link(displayBackLink = true, SessionKeys.backToQueuesLinkUrl, SessionKeys.backToQueuesLinkLabel)
+    @back_link(displayBackLink = true, SessionKeys.backToQueuesLinkUrl, SessionKeys.backToQueuesLinkLabel)
 
- <h1 id="advanced_search-heading" class="heading-xlarge mb-3">Advanced search</h1>
- <p>To narrow your search, enter multiple search terms.<p>
+    <h1 id="advanced_search-heading" class="heading-xlarge mb-3">Advanced search</h1>
+    <p>To narrow your search, enter multiple search terms.<p>
 
- @helper.form(action = controllers.routes.SearchController.search().withFragment("advanced_search_keywords"),
-  'id -> "advanced_search-form") {
-  @input_text(
-   field = form("trader_name"),
-   label = "Trader name",
-   formControlClass = Some("w-75")
-  )
-
-  @input_text(
-   field = form("commodity_code"),
-   label = "Commodity code",
-   hint = Some("Search by 2 digits or more"),
-   formControlClass = Some("w-75")
-  )
-
-  @input_text(
-   field = form("decision_details"),
-   label = "Ruling details",
-   hint = Some("Search the goods description, justification and the commercial denomination"),
-   formControlClass = Some("w-75")
-  )
-
-  @advanced_search_keywords(form, keywords)
-
-  <button id="advanced_search-search_button" class="button" type="submit">Search</button>
-  <a id="advanced_search-reset_button" class="secondary-button" href="@controllers.routes.SearchController.search()">New search</a>
-
-  @if(results.isEmpty) {
-   @*
-    Hack to ensure the checkbox is checked when search results aren't present
-    This is only required for form elements that are rendered when results are present and which need a default value.
-   *@
-      <input type="hidden" value="OPEN" name="status[0]"/>
-      <input type="hidden" value="LIVE" name="status[1]"/>
-  }
-
-  @if(results.isDefined && !form.hasErrors) {
-   <div id="advanced_search-results_and_filters" class="mt-3">
-
-    <h2 class="heading-large">Search results</h2>
-
-    <div class="grid-row">
-     <div class="column-one-quarter">
-
-      <div class="advanced_search--filters_container">
-       <div class="advanced_search--filters_heading">
-        Filter by status
-       </div>
-       <div class="advanced_search--filters">
-        @input_checkbox_group(
-         field = form("status"),
-         options = Seq(
-          CheckOption("Open", PseudoCaseStatus.OPEN.toString, checked = formHasStatus(PseudoCaseStatus.OPEN)),
-          CheckOption("Completed", PseudoCaseStatus.LIVE.toString, checked = formHasStatus(PseudoCaseStatus.LIVE)),
-          CheckOption("Expired", PseudoCaseStatus.EXPIRED.toString, checked = formHasStatus(PseudoCaseStatus.EXPIRED)),
-          CheckOption("Cancelled", PseudoCaseStatus.CANCELLED.toString, checked = formHasStatus(PseudoCaseStatus.CANCELLED)),
-          CheckOption("New", PseudoCaseStatus.NEW.toString, checked = formHasStatus(PseudoCaseStatus.NEW)),
-          CheckOption("Referred", PseudoCaseStatus.REFERRED.toString, checked = formHasStatus(PseudoCaseStatus.REFERRED)),
-          CheckOption("Suspended", PseudoCaseStatus.SUSPENDED.toString, checked = formHasStatus(PseudoCaseStatus.SUSPENDED)),
-          CheckOption("Rejected", PseudoCaseStatus.REJECTED.toString, checked = formHasStatus(PseudoCaseStatus.REJECTED)),
-          CheckOption("Suppressed", PseudoCaseStatus.SUPPRESSED.toString, checked = formHasStatus(PseudoCaseStatus.SUPPRESSED))
-         ),
-         submitOnChange = true
+    @helper.form(action = controllers.routes.SearchController.search().withFragment("advanced_search_keywords"),
+        'id -> "advanced_search-form") {
+        @input_text(
+            field = form("trader_name"),
+            label = "Trader name",
+            formControlClass = Some("w-75")
         )
-       </div>
-      </div>
-     </div>
+
+        @input_text(
+            field = form("commodity_code"),
+            label = "Commodity code",
+            hint = Some("Search by 2 digits or more"),
+            formControlClass = Some("w-75")
+        )
+
+        @input_text(
+            field = form("decision_details"),
+            label = "Ruling details",
+            hint = Some("Search the goods description, justification and the commercial denomination"),
+            formControlClass = Some("w-75")
+        )
+
+        @advanced_search_keywords(form, keywords)
+
+        <button id="advanced_search-search_button" class="button" type="submit">Search</button>
+        <a id="advanced_search-reset_button" class="secondary-button" href="@controllers.routes.SearchController.search()">New search</a>
+
+        @if(results.isEmpty) {
+            @*
+            Hack to ensure the checkbox is checked when search results aren't present
+            This is only required for form elements that are rendered when results are present and which need a default value.
+            *@
+            <input type="hidden" value="OPEN" name="status[0]"/>
+            <input type="hidden" value="LIVE" name="status[1]"/>
+        }
+
+        @if(results.isDefined && !form.hasErrors) {
+            <div id="advanced_search-results_and_filters" class="mt-3">
+
+                <h2 class="heading-large">Search results</h2>
+
+                <div class="grid-row">
+                    <div class="column-one-quarter">
+
+                        <div class="advanced_search--filters_container">
+                            <div class="advanced_search--filters_heading">
+                                Filter by status
+                            </div>
+                            <div class="advanced_search--filters">
+                            @input_checkbox_group(
+                                field = form("status"),
+                                options = Seq(
+                                    CheckOption("Open", PseudoCaseStatus.OPEN.toString, checked = formHasStatus(PseudoCaseStatus.OPEN)),
+                                    CheckOption("Completed", PseudoCaseStatus.LIVE.toString, checked = formHasStatus(PseudoCaseStatus.LIVE)),
+                                    CheckOption("Expired", PseudoCaseStatus.EXPIRED.toString, checked = formHasStatus(PseudoCaseStatus.EXPIRED)),
+                                    CheckOption("Cancelled", PseudoCaseStatus.CANCELLED.toString, checked = formHasStatus(PseudoCaseStatus.CANCELLED)),
+                                    CheckOption("New", PseudoCaseStatus.NEW.toString, checked = formHasStatus(PseudoCaseStatus.NEW)),
+                                    CheckOption("Referred", PseudoCaseStatus.REFERRED.toString, checked = formHasStatus(PseudoCaseStatus.REFERRED)),
+                                    CheckOption("Suspended", PseudoCaseStatus.SUSPENDED.toString, checked = formHasStatus(PseudoCaseStatus.SUSPENDED)),
+                                    CheckOption("Rejected", PseudoCaseStatus.REJECTED.toString, checked = formHasStatus(PseudoCaseStatus.REJECTED)),
+                                    CheckOption("Suppressed", PseudoCaseStatus.SUPPRESSED.toString, checked = formHasStatus(PseudoCaseStatus.SUPPRESSED))
+                                ),
+                                submitOnChange = true
+                            )
+                            </div>
+                        </div>
+                    </div>
 
 
-     @defining(results.get) { searchResults: Paged[SearchResult] =>
-      <div class="column-three-quarters">
+                    @defining(results.get) { searchResults: Paged[SearchResult] =>
+                        <div class="column-three-quarters">
 
-       @pagination(
-        id = "advanced_search-pagination_top",
-        singularName = "case",
-        pluralName = "cases",
-        pager = searchResults,
-        containerClass = Some("mb-2"),
-        linksClass = Some("mb-2"),
-        onChange = page => controllers.routes.SearchController.search(selectedTab, search = form.get, page = page).withFragment("advanced_search_keywords")
-       )
+                            @pagination(
+                                id = "advanced_search-pagination_top",
+                                singularName = "case",
+                                pluralName = "cases",
+                                pager = searchResults,
+                                containerClass = Some("mb-2"),
+                                linksClass = Some("mb-2"),
+                                onChange = page => controllers.routes.SearchController.search(selectedTab, search = form.get, page = page).withFragment("advanced_search_keywords")
+                            )
 
-       @advanced_search_results_tabs(
-           searchResults,
-           selectedTab,
-           onChange = selected => controllers.routes.SearchController.search(selected, search = form.get, page = searchResults.pageIndex).withFragment("advanced_search_keywords"))
+                            @advanced_search_results_tabs(
+                                searchResults,
+                                selectedTab,
+                                onChange = selected => controllers.routes.SearchController.search(selected, search = form.get, page = searchResults.pageIndex).withFragment("advanced_search_keywords"))
 
-       @pagination(
-        id = "advanced_search-pagination_bottom",
-        singularName = "case",
-        pluralName = "cases",
-        pager = searchResults,
-        containerClass = Some("mt-2 mb-1"),
-        linksClass = Some("mt-2"),
-        onChange = page => controllers.routes.SearchController.search(selectedTab, search = form.get, page = page).withFragment("advanced_search_keywords")
-       )
+                            @pagination(
+                                id = "advanced_search-pagination_bottom",
+                                singularName = "case",
+                                pluralName = "cases",
+                                pager = searchResults,
+                                containerClass = Some("mt-2 mb-1"),
+                                linksClass = Some("mt-2"),
+                                onChange = page => controllers.routes.SearchController.search(selectedTab, search = form.get, page = page).withFragment("advanced_search_keywords")
+                            )
 
-       <a href="#advanced_search_keywords">Back to top</a>
+                            <a href="#advanced_search_keywords">Back to top</a>
 
-      </div>
-     }
-    </div>
+                        </div>
+                    }
+                </div>
 
-   </div>
-  }
- }
+            </div>
+        }
+    }
 
 }

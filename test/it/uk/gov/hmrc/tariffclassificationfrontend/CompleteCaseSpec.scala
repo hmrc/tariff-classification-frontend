@@ -40,10 +40,31 @@ class CompleteCaseSpec extends IntegrationTest with MockitoSugar {
       response.body should not include "disabled=disabled"
     }
 
+    def shouldNotSucceed = {
+      stubFor(get(urlEqualTo("/cases/1"))
+        .willReturn(aResponse()
+          .withStatus(OK)
+          .withBody(caseWithStatusOPEN))
+      )
+
+      // When
+      val response: WSResponse = await(ws.url(s"http://localhost:$port/tariff-classification/cases/1/complete").get())
+
+      // Then
+      response.status shouldBe OK
+      response.body should include("You are not authorised to access this page")
+    }
+
     "return status 200 for manager" in {
       // Given
       givenAuthSuccess("manager")
       shouldSucceed
+    }
+
+    "return status 200 for read only" in {
+      // Given
+      givenAuthSuccess("read-only")
+      shouldNotSucceed
     }
 
     "return status 200 for team member" in {

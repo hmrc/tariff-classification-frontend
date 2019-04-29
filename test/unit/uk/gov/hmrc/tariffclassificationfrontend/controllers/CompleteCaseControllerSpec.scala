@@ -24,11 +24,13 @@ import org.scalatest.{BeforeAndAfterEach, Matchers, WordSpec}
 import play.api.http.{MimeTypes, Status}
 import play.api.i18n.{DefaultLangs, DefaultMessagesApi}
 import play.api.mvc.Result
+import play.api.test.Helpers.{redirectLocation, _}
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.{CommodityCodeConstraints, DecisionForm}
+import uk.gov.hmrc.tariffclassificationfrontend.models.Permission.Permission
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, CommodityCodeService}
 import uk.gov.tariffclassificationfrontend.utils.Cases
@@ -74,6 +76,10 @@ class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     new CompleteCaseController(new SuccessfulRequestActions(operator, c = requestCase), casesService, decisionForm, messageApi, appConfig)
   }
 
+  private def controller(requestCase: Case, permission: Set[Permission]) = new CompleteCaseController(
+    new RequestActionsWithPermissions(permission, c = requestCase), casesService, decisionForm, messageApi, appConfig)
+
+
   "Complete Case" should {
 
     when(commodityCodeService.checkIfCodeExists(any())).thenReturn(true)
@@ -89,8 +95,6 @@ class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     }
 
     "redirect to Application Details for non OPEN statuses" in {
-      //when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusCOMPLETED)))
-
       val result: Result = await(getController(caseWithStatusCOMPLETED).completeCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
@@ -100,8 +104,6 @@ class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     }
 
     "redirect to Application Details for cases without a decision" in {
-      //when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithoutDecision)))
-
       val result: Result = await(getController(caseWithoutDecision).completeCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
@@ -109,12 +111,26 @@ class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       charsetOf(result) shouldBe None
       locationOf(result) shouldBe Some("/tariff-classification/cases/reference/ruling")
     }
+
+    "return OK when user has right permissions" in {
+      val result: Result = await(controller(validCaseWithStatusOPEN, Set(Permission.COMPLETE_CASE))
+        .completeCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+
+      status(result) shouldBe Status.OK
+    }
+
+    "redirect unauthorised when does not have right permissions" in {
+      val result: Result = await(controller(validCaseWithStatusOPEN, Set.empty)
+          .completeCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result).get should include("unauthorized")
+    }
   }
 
   "Confirm Complete Case" should {
 
     "return OK and HTML content type" in {
-      //when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(validCaseWithStatusOPEN)))
       when(casesService.completeCase(refEq(validCaseWithStatusOPEN), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusCOMPLETED))
 
       val result: Result = await(getController(validCaseWithStatusOPEN).confirmCompleteCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
@@ -126,8 +142,6 @@ class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     }
 
     "redirect to Application Details for non OPEN statuses" in {
-      //when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithStatusCOMPLETED)))
-
       val result: Result = await(getController(caseWithStatusCOMPLETED).confirmCompleteCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
@@ -147,14 +161,29 @@ class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     }
 
     "redirect to Application Details for case with incomplete decision" in {
-      when(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).thenReturn(successful(Some(caseWithoutIncompleteDecision)))
-
       val result: Result = await(getController(caseWithoutIncompleteDecision).confirmCompleteCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
       charsetOf(result) shouldBe None
       locationOf(result) shouldBe Some("/tariff-classification/cases/reference/ruling")
+    }
+
+    "return OK when user has right permissions" in {
+      when(casesService.completeCase(any[Case], any[Operator])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusCOMPLETED))
+
+      val result: Result = await(controller(validCaseWithStatusOPEN, Set(Permission.COMPLETE_CASE))
+        .confirmCompleteCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
+
+      status(result) shouldBe Status.OK
+    }
+
+    "redirect unauthorised when does not have right permissions" in {
+      val result: Result = await(controller(validCaseWithStatusOPEN, Set.empty)
+        .confirmCompleteCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
+
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result).get should include("unauthorized")
     }
   }
 

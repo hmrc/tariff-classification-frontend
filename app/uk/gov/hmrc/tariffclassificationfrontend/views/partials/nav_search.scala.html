@@ -15,20 +15,24 @@
  *@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers
-@()
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.search_box
+@import uk.gov.hmrc.tariffclassificationfrontend.models.Permission
+@import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
+@()(implicit request: AuthenticatedRequest[_])
 
-@helper.form(action = controllers.routes.SearchController.search()) {
- <div id="nav_search" class="form-group nav-search">
-     <label for="nav_search-box" class="form-label">Search by case reference</label>
-     <div class="grid-row">
+<div id="nav_search" class="form-group nav-search">
+ <div class="grid-row">
+     @if(request.hasPermission(Permission.SEARCH)) {
          <div class="column-one-third">
-             <input id="nav_search-box" class="form-control" name="reference" value="" alt="search" type="text" placeholder="Enter full case reference">
-             <button id="nav_search-button" type="submit"> <div class="hidden">search for case reference</div> </button>
+         @search_box()
          </div>
-         <div class="column-one-third">
+     }
+     @if(request.hasPermission(Permission.ADVANCED_SEARCH)) {
+         <div class="column-one-third pt-4rem">
              <a href="@controllers.routes.SearchController.search()">Advanced search</a>
          </div>
-     </div>
+     }
  </div>
-}
+</div>
+
 

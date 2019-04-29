@@ -23,9 +23,9 @@ import play.api.mvc.{ActionFilter, ActionRefiner, Result}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.models.Case
-import uk.gov.hmrc.tariffclassificationfrontend.models.request.AccessType._
-import uk.gov.hmrc.tariffclassificationfrontend.models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
+import uk.gov.hmrc.tariffclassificationfrontend.models.Permission.Permission
+import uk.gov.hmrc.tariffclassificationfrontend.models.request.{AuthenticatedCaseRequest, AuthenticatedRequest, OperatorRequest}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Permission}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
@@ -41,37 +41,19 @@ class CheckPermissionsAction
   Future[Either[Result, AuthenticatedCaseRequest[A]]] = {
 
     if (request.`case`.isAssignedTo(request.operator)) {
-      authCaseRequest(request, READ_WRITE)
+      // add case owner permissions
+      authCaseRequest(request, Permission.teamCaseOwnerPermissions)
     } else {
-      authCaseRequest(request, READ_ONLY)
+      // nothing extra to add
+      authCaseRequest(request, Set.empty)
     }
   }
 
-  private def authCaseRequest[A](request: AuthenticatedCaseRequest[A], accessType: AccessType) = {
+  private def authCaseRequest[A](request: AuthenticatedCaseRequest[A], additionalPermissions: Set[Permission]) = {
     successful(Right(new AuthenticatedCaseRequest(
-      operator = request.operator,
+      operator = request.operator.addPermissions(additionalPermissions),
       request = request,
-      accessType = accessType,
       requestedCase = request.`case`)))
-  }
-}
-
-@Singleton
-class MustHaveWritePermissionAction
-  extends ActionFilter[AuthenticatedCaseRequest] {
-
-  override protected def filter[A](request: AuthenticatedCaseRequest[A]): Future[Option[Result]] = {
-    val result =
-      if (isAuthorized(request))
-        None
-      else
-        Some(Redirect(routes.SecurityController.unauthorized()))
-
-    successful(result)
-  }
-
-  private def isAuthorized[A](request: AuthenticatedCaseRequest[A]): Boolean = {
-    request.`case`.isAssignedTo(request.operator) || request.operator.manager
   }
 }
 
@@ -82,7 +64,7 @@ class VerifyCaseExistsActionFactory @Inject()(casesService: CasesService)(implic
     new ActionRefiner[AuthenticatedRequest, AuthenticatedCaseRequest] {
       override protected def refine[A](request: AuthenticatedRequest[A]): Future[Either[Result, AuthenticatedCaseRequest[A]]] = {
         implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
-        implicit val r = request
+        implicit val r: AuthenticatedRequest[A] = request
 
         casesService.getOne(reference).flatMap {
           case Some(c: Case) =>
@@ -95,6 +77,20 @@ class VerifyCaseExistsActionFactory @Inject()(casesService: CasesService)(implic
               )
             )
           case _ => successful(Left(NotFound(views.html.case_not_found(reference))))
+        }
+      }
+    }
+}
+
+@Singleton
+class MustHavePermissionActionFactory {
+
+  def apply[B[C] <: OperatorRequest[C]](permission: Permission): ActionFilter[B] =
+    new ActionFilter[B] {
+      override protected def filter[A](request: B[A]): Future[Option[Result]] = {
+        request match {
+          case r if r.hasPermission(permission) => successful(None)
+          case _ => successful(Some(Redirect(routes.SecurityController.unauthorized())))
         }
       }
     }

@@ -28,6 +28,7 @@ import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
+import uk.gov.hmrc.tariffclassificationfrontend.models.Permission.Permission
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, QueuesService}
 
@@ -43,18 +44,26 @@ class QueuesControllerSpec extends UnitSpec with Matchers with WithFakeApplicati
   private val casesService = mock[CasesService]
   private val queuesService = mock[QueuesService]
   private val queue = Queue("0", "queue", "Queue Name")
-  private implicit val hc = HeaderCarrier()
+  private implicit val hc: HeaderCarrier = HeaderCarrier()
 
-  private val controller = new QueuesController(new SuccessfulAuthenticatedAction, casesService, queuesService, messageApi, appConfig)
+  private def controller(permission: Set[Permission]) = new QueuesController(
+    new RequestActionsWithPermissions(permission), casesService, queuesService, messageApi, appConfig
+  )
 
   "Queue" should {
+
+    "redirect to unauthorised if no permission" in {
+      val result = await(controller(Set.empty).queue("slug")(fakeRequest))
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(routes.SecurityController.unauthorized().url)
+    }
 
     "return 200 OK and HTML content type when Queue is found" in {
       given(casesService.getCasesByQueue(refEq(queue), refEq(NoPagination()))(any[HeaderCarrier])).willReturn(Future.successful(Paged.empty[Case]))
       given(queuesService.getOneBySlug("slug")).willReturn(Future.successful(Some(queue)))
       given(queuesService.getAll).willReturn(Future.successful(Seq(queue)))
 
-      val result = await(controller.queue("slug")(fakeRequest))
+      val result = await(controller(Set(Permission.VIEW_QUEUE_CASES)).queue("slug")(fakeRequest))
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
@@ -70,7 +79,7 @@ class QueuesControllerSpec extends UnitSpec with Matchers with WithFakeApplicati
       given(queuesService.getOneBySlug("slug")).willReturn(Future.successful(None))
       given(queuesService.getAll).willReturn(Future.successful(Seq(queue)))
 
-      val result = await(controller.queue("slug")(fakeRequest))
+      val result = await(controller(Set(Permission.VIEW_QUEUE_CASES)).queue("slug")(fakeRequest))
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")

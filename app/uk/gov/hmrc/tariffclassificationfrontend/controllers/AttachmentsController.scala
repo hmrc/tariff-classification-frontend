@@ -39,7 +39,7 @@ import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
 @Singleton
-class AttachmentsController @Inject()(authenticatedAction: AuthenticatedAction,
+class AttachmentsController @Inject()(verify: RequestActions,
                                       casesService: CasesService,
                                       fileService: FileStoreService,
                                       val messagesApi: MessagesApi,
@@ -48,12 +48,12 @@ class AttachmentsController @Inject()(authenticatedAction: AuthenticatedAction,
 
   private lazy val form: Form[String] = UploadAttachmentForm.form
 
-  def attachmentsDetails(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
+  def attachmentsDetails(reference: String): Action[AnyContent] = verify.authenticated.async { implicit request =>
     getCaseAndRenderView(reference, CaseDetailPage.ATTACHMENTS, renderView(_, form))
   }
 
   private def renderView(c: Case, uploadForm: Form[String])
-                        (implicit hc: HeaderCarrier, request: Request[_]): Future[Html] = {
+                        (implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[Html] = {
 
     for {
       attachments <- fileService.getAttachments(c)
@@ -66,7 +66,7 @@ class AttachmentsController @Inject()(authenticatedAction: AuthenticatedAction,
   }
 
   private def getCaseAndRenderView(reference: String, page: CaseDetailPage, toHtml: Case => Future[Html])
-                                  (implicit request: Request[_]): Future[Result] = {
+                                  (implicit request: AuthenticatedRequest[_]): Future[Result] = {
     casesService.getOne(reference).flatMap {
       case Some(c: Case) => toHtml(c).map(html => Ok(views.html.case_details(c, page, html)))
       case _ => successful(Ok(views.html.case_not_found(reference)))
@@ -74,17 +74,20 @@ class AttachmentsController @Inject()(authenticatedAction: AuthenticatedAction,
   }
 
   def uploadAttachment(reference: String): Action[Either[MaxSizeExceeded, MultipartFormData[TemporaryFile]]] =
-    authenticatedAction.async(parse.maxLength(appConfig.fileUploadMaxSize, parse.multipartFormData)) { implicit request =>
+    (verify.authenticated andThen verify.mustHave(Permission.ADD_ATTACHMENT))
+      .async(parse.maxLength(appConfig.fileUploadMaxSize, parse.multipartFormData)) {
 
-      request.body match {
-        case Left(MaxSizeExceeded(_)) => renderErrors(reference, messagesApi("cases.attachment.upload.error.restrictionSize"))
-        case Right(multipartForm) =>
-          multipartForm match {
-            case file: MultipartFormData[TemporaryFile] if file.files.nonEmpty => uploadAndSave(reference, file)
-            case _ => renderErrors(reference, messagesApi("cases.attachment.upload.error.mustSelect"))
+        implicit request =>
+
+          request.body match {
+            case Left(MaxSizeExceeded(_)) => renderErrors(reference, messagesApi("cases.attachment.upload.error.restrictionSize"))
+            case Right(multipartForm) =>
+              multipartForm match {
+                case file: MultipartFormData[TemporaryFile] if file.files.nonEmpty => uploadAndSave(reference, file)
+                case _ => renderErrors(reference, messagesApi("cases.attachment.upload.error.mustSelect"))
+              }
           }
       }
-    }
 
   private def uploadAndSave(reference: String, multiPartFormData: MultipartFormData[TemporaryFile])
                            (implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]) = {
@@ -106,7 +109,7 @@ class AttachmentsController @Inject()(authenticatedAction: AuthenticatedAction,
   }
 
   private def renderErrors(reference: String, errorMessage: String)
-                          (implicit hc: HeaderCarrier, req: Request[_]): Future[Result] = {
+                          (implicit hc: HeaderCarrier, req: AuthenticatedRequest[_]): Future[Result] = {
     getCaseAndRenderView(
       reference,
       CaseDetailPage.ATTACHMENTS,
