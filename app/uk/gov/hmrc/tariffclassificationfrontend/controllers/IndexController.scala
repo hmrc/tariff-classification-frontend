@@ -37,7 +37,7 @@ class IndexController @Inject()(authenticate: AuthenticatedAction,
         Redirect(routes.MyCasesController.myCases())
       case _ =>
         Ok(read_only_home())
-          .addingToSession((backToQueuesLinkLabel, "Search"), (backToQueuesLinkUrl, routes.IndexController.get().url))
+          .addingToSession((backToQueuesLinkLabel, ""), (backToQueuesLinkUrl, routes.IndexController.get().url))
           .removingFromSession(backToSearchResultsLinkLabel, backToSearchResultsLinkUrl)
     }
   }

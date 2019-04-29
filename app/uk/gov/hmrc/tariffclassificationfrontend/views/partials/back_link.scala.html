@@ -17,10 +17,10 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes
 @(displayBackLink: Boolean = false, backLinkUrl: String, backLinkLabel: String)(implicit request: Request[_], messages: Messages)
 
- @if(displayBackLink) {
-  <div>
-   <a id="back-link" class="link-back mt-0" href="@request.session.get(backLinkUrl).getOrElse(routes.IndexController.get())">
-    @request.session.get(backLinkLabel).map(l => s"Back to $l").getOrElse(messages("errors.all.back"))
-   </a>
-  </div>
- }
+    @if(displayBackLink) {
+        <div>
+            <a id="back-link" class="link-back mt-0" href="@request.session.get(backLinkUrl).getOrElse(routes.IndexController.get())">
+            @request.session.get(backLinkLabel).map(l =>  if(l.isEmpty) "Back" else s"Back to $l").getOrElse(messages("errors.all.back"))
+            </a>
+        </div>
+    }
