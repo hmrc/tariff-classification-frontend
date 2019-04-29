@@ -323,7 +323,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
       doc.getElementById("activity-events-row-0-content") should containText("Case unassigned")
     }
 
-    "Render assigned to 'You'" in {
+    "Not render assigned information if does not have right permissions" in {
       // Given
       val c = aCase(
         withAssignee(Some(authenticatedOperator))
@@ -331,6 +331,20 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       // When
       val doc = view(activity_details(c, Paged.empty[Event], ActivityForm.form, queues))
+
+      // Then
+      doc shouldNot containElementWithID("activity-events-assignee")
+      doc shouldNot containElementWithID("activity-events-assignee-label")
+    }
+
+    "Render assigned to 'You'" in {
+      // Given
+      val c = aCase(
+        withAssignee(Some(authenticatedOperator))
+      )
+
+      // When
+      val doc = view(activity_details(c, Paged.empty[Event], ActivityForm.form, queues)(request = requestWithPermissions(Permission.VIEW_CASE_ASSIGNEE), messages, appConfig))
 
       // Then
       doc should containElementWithID("activity-events-assignee")
@@ -345,7 +359,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(activity_details(c, Paged.empty[Event], ActivityForm.form, queues))
+      val doc = view(activity_details(c, Paged.empty[Event], ActivityForm.form, queues)(request = requestWithPermissions(Permission.VIEW_CASE_ASSIGNEE), messages, appConfig))
 
       // Then
       doc should containElementWithID("activity-events-assignee")
@@ -360,7 +374,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(activity_details(c, Paged.empty[Event], ActivityForm.form, queues))
+      val doc = view(activity_details(c, Paged.empty[Event], ActivityForm.form, queues)(request = requestWithPermissions(Permission.VIEW_CASE_ASSIGNEE), messages, appConfig))
 
       // Then
       doc should containElementWithID("activity-events-assignee")
@@ -376,7 +390,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(activity_details(c, Paged.empty[Event], ActivityForm.form, queues))
+      val doc = view(activity_details(c, Paged.empty[Event], ActivityForm.form, queues)(request = requestWithPermissions(Permission.VIEW_CASE_ASSIGNEE), messages, appConfig))
 
       // Then
       doc should containElementWithID("activity-events-assigned-queue")
@@ -391,7 +405,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(activity_details(c, Paged.empty[Event], ActivityForm.form, queues))
+      val doc = view(activity_details(c, Paged.empty[Event], ActivityForm.form, queues)(request = requestWithPermissions(Permission.VIEW_CASE_ASSIGNEE), messages, appConfig))
 
       // Then
       doc should containElementWithID("activity-events-assigned-queue")
@@ -407,7 +421,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(activity_details(c, Paged.empty[Event], ActivityForm.form, queues))
+      val doc = view(activity_details(c, Paged.empty[Event], ActivityForm.form, queues)(request = requestWithPermissions(Permission.VIEW_CASE_ASSIGNEE), messages, appConfig))
 
       // Then
       doc should containElementWithID("activity-events-assigned-queue")
