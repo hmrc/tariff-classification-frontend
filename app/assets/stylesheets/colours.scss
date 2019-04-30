@@ -3,6 +3,7 @@ $blue: #005EA5;
 $white: #FFF;
 $black: #0b0c0c;
 $gray: #dee0e2;
+$gray-dark: #6F777B;
 
 
 .text-red {
@@ -27,4 +28,8 @@ $gray: #dee0e2;
 
 .bg-gray {
   background-color: $gray;
+}
+
+.bg-gray--dark {
+  background-color: $gray-dark;
 }

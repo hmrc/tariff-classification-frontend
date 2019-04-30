@@ -68,6 +68,16 @@ object ViewMatchers {
     }
   }
 
+  class ElementHasClassMatcher(clazz: String) extends Matcher[Element] {
+    override def apply(left: Element): MatchResult = {
+      MatchResult(
+        left != null && left.classNames().contains(clazz),
+        s"Element did not have class {$clazz}\n${actualContentWas(left)}",
+        s"Element had class {$clazz}"
+      )
+    }
+  }
+
   class ElementContainsTextMatcher(content: String) extends Matcher[Element] {
     override def apply(left: Element): MatchResult = {
       MatchResult(
@@ -168,6 +178,7 @@ object ViewMatchers {
   def containElementWithAttribute(key: String, value: String) = new ContainElementWithAttribute(key, value)
   def containElementWithTag(tag: String) = new ContainElementWithTagMatcher(tag)
   def containText(text: String) = new ElementContainsTextMatcher(text)
+  def haveClass(text: String) = new ElementHasClassMatcher(text)
   def containHtml(text: String) = new ElementContainsHtmlMatcher(text)
   def haveSize(size: Int) = new ElementsHasSizeMatcher(size)
   def haveAttribute(key: String, value: String)  = new ElementHasAttributeValueMatcher(key, value)

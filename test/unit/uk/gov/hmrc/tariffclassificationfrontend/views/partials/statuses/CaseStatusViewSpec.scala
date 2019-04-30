@@ -16,8 +16,9 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.views.partials.statuses
 
-import uk.gov.hmrc.tariffclassificationfrontend.models.{CancelReason, Cancellation}
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.CANCELLED
+import uk.gov.hmrc.tariffclassificationfrontend.models.{CancelReason, Cancellation}
+import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewSpec
 import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.statuses.case_status
 import uk.gov.tariffclassificationfrontend.utils.Cases
@@ -27,17 +28,32 @@ class CaseStatusViewSpec extends ViewSpec {
 
   "Case Status" should {
 
+    "render CANCELLED without the reason code" in {
+      // When
+      val c = aCase(
+        withStatus(CANCELLED),
+        withDecision(cancellation = None)
+      )
+
+      val doc = view(case_status(c, "id"))
+
+      // Then
+      doc.text() shouldBe "CANCELLED"
+      doc.getElementById("id") should haveClass("bg-gray--dark")
+    }
+
     "render CANCELLED and the reason code" in {
       // When
       val c = aCase(
         withStatus(CANCELLED),
-        withDecision(cancellation = Some(Cancellation(CancelReason.ANNULLED, applicationForExtendedUse = true)))
+        withDecision(cancellation = Some(Cancellation(CancelReason.ANNULLED)))
       )
 
       val doc = view(case_status(c, "id"))
 
       // Then
       doc.text() shouldBe "CANCELLED - 55"
+      doc.getElementById("id") should haveClass("bg-gray--dark")
     }
 
     "render EXPIRED for expired rulings" in {
@@ -46,6 +62,7 @@ class CaseStatusViewSpec extends ViewSpec {
 
       // Then
       doc.text() shouldBe "EXPIRED"
+      doc.getElementById("id") should haveClass("bg-gray--dark")
     }
 
     "render the case status" in {
@@ -54,6 +71,7 @@ class CaseStatusViewSpec extends ViewSpec {
 
       // Then
       doc.text() shouldBe "OPEN"
+      doc.getElementById("id") should haveClass("bg-blue")
     }
 
   }
