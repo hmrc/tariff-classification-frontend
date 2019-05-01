@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.views
 
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Paged, Queue}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Paged, Permission, Queue}
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
 import uk.gov.tariffclassificationfrontend.utils.Cases
 
@@ -32,7 +32,7 @@ class QueueViewSpec extends ViewSpec {
       val queues = Seq(queue1, queue2)
 
       // When
-      val doc = view(html.queue(queues, queue1, Paged.empty[Case]))
+      val doc = view(html.queue(queues, queue1, Paged.empty[Case])(request = requestWithPermissions(Permission.VIEW_QUEUE_CASES, Permission.VIEW_MY_CASES), messages, appConfig))
 
       // Then
       doc should containElementWithID("queue-navigation")
@@ -54,7 +54,7 @@ class QueueViewSpec extends ViewSpec {
       val cases = Seq(case1)
 
       // When
-      val doc = view(html.queue(queues, queue1, Paged(cases)))
+      val doc = view(html.queue(queues, queue1, Paged(cases))(request = requestWithPermissions(Permission.VIEW_QUEUE_CASES, Permission.VIEW_MY_CASES), messages, appConfig))
 
       // Then
       doc should containElementWithID("queue-navigation")

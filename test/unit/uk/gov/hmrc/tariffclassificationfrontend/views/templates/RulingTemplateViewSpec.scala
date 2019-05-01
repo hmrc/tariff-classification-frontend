@@ -28,7 +28,7 @@ class RulingTemplateViewSpec extends ViewSpec {
   private val rulingCase = Cases.btiCaseExample
   private val holder = rulingCase.application.holder
   private val ruling = rulingCase.decision.getOrElse(throw new Exception("Bad test data"))
-  private val doc = view(ruling_template(rulingCase)(authenticatedFakeRequest, messages, appConfig))
+  private val doc = view(ruling_template(rulingCase, ruling)(authenticatedFakeRequest, messages, appConfig))
 
   "Ruling pdf holder section" must {
 

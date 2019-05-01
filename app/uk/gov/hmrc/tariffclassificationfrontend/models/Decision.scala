@@ -30,5 +30,6 @@ case class Decision
   methodCommercialDenomination: Option[String] = None,
   appeal: Option[Appeal] = None,
   review: Option[Review] = None,
-  cancellation: Option[Cancellation] = None
+  cancellation: Option[Cancellation] = None,
+  explanation: Option[String] = None
 )

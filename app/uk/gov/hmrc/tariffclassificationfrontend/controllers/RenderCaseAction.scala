@@ -24,7 +24,6 @@ import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
-import uk.gov.hmrc.tariffclassificationfrontend.views
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -40,12 +39,11 @@ trait RenderCaseAction extends FrontendController with I18nSupport {
   protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean
 
   protected def getCaseAndRenderView(caseReference: String, toHtml: Case => Future[HtmlFormat.Appendable])
-                                    (implicit request: AuthenticatedRequest[_]): Future[Result] = {
+                                    (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
 
-    caseService.getOne(caseReference).flatMap {
-      case Some(c: Case) if isValidCase(c)(request) => toHtml(c).map(Ok(_))
-      case Some(_) => successful(Redirect(redirect(caseReference)))
-      case _ => successful(Ok(views.html.case_not_found(caseReference)))
+    request.`case` match {
+      case c: Case if isValidCase(c)(request) => toHtml(c).map(Ok(_))
+      case _ => successful(Redirect(redirect(caseReference)))
     }
   }
 
@@ -61,12 +59,11 @@ trait RenderCaseAction extends FrontendController with I18nSupport {
 
   protected def getCaseAndRespond(caseReference: String,
                                   toResult: Case => Future[Result])
-                                 (implicit request: AuthenticatedRequest[_]): Future[Result] = {
+                                 (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
 
-    caseService.getOne(caseReference).flatMap {
-      case Some(c: Case) if isValidCase(c)(request) => toResult(c)
-      case Some(_) => successful(Redirect(redirect(caseReference)))
-      case _ => successful(Ok(views.html.case_not_found(caseReference)))
+    request.`case` match {
+      case c: Case if isValidCase(c)(request) => toResult(c)
+      case _ => successful(Redirect(redirect(caseReference)))
     }
   }
 

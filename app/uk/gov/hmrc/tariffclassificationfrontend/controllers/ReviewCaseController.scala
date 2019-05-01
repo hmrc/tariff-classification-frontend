@@ -27,17 +27,19 @@ import uk.gov.hmrc.tariffclassificationfrontend.forms.ReviewForm
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.{CANCELLED, COMPLETED}
 import uk.gov.hmrc.tariffclassificationfrontend.models.ReviewStatus.ReviewStatus
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Operator}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Operator, Permission}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
 import scala.concurrent.Future
 
 @Singleton
-class ReviewCaseController @Inject()(override val authenticatedAction: AuthenticatedAction,
+class ReviewCaseController @Inject()(override val verify: RequestActions,
                                      override val caseService: CasesService,
                                      override val messagesApi: MessagesApi,
                                      override implicit val config: AppConfig) extends StatusChangeAction[Option[ReviewStatus]] {
+
+  override protected val requiredPermission: Permission.Value = Permission.REVIEW_CASE
 
   override protected def redirect: String => Call = routes.CaseController.trader
 

@@ -16,15 +16,17 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.views.partials
 
-import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, Contact}
 import uk.gov.hmrc.tariffclassificationfrontend.models.response.ScanStatus
+import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, Contact, Permission}
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewSpec
-import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{application_details, case_trader}
+import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.case_trader
 import uk.gov.tariffclassificationfrontend.utils.Cases
 import uk.gov.tariffclassificationfrontend.utils.Cases._
 
 class CaseTraderViewSpec extends ViewSpec {
+
+  val requestWithReleaseAndSuppressPermission = requestWithPermissions(Permission.RELEASE_CASE, Permission.SUPPRESS_CASE)
 
   "Case Trader" should {
 
@@ -82,15 +84,26 @@ class CaseTraderViewSpec extends ViewSpec {
       doc shouldNot containElementWithID("agent-letter-file-letter-of-auth-id")
     }
 
-    "show the suppress case section for NEW cases" in {
+    "show the suppress case section for NEW cases with correct permissions" in {
       // Given
       val case1 = Cases.btiCaseExample.copy(status = CaseStatus.NEW)
 
       // When
-      val doc = view(case_trader(case1, None))
+      val doc = view(case_trader(case1, None)(requestWithReleaseAndSuppressPermission, messages))
 
       // Then
       doc should containElementWithID("release-suppress-case-heading")
+    }
+
+    "not show the suppress case section for NEW cases with incorrect permissions" in {
+      // Given
+      val case1 = Cases.btiCaseExample.copy(status = CaseStatus.NEW)
+
+      // When
+      val doc = view(case_trader(case1, None)(operatorRequest, messages))
+
+      // Then
+      doc shouldNot containElementWithID("release-suppress-case-heading")
     }
 
     "not show the suppress case section for non-NEW cases" in {
@@ -98,7 +111,7 @@ class CaseTraderViewSpec extends ViewSpec {
       val case1 = Cases.btiCaseExample.copy(status = CaseStatus.OPEN)
 
       // When
-      val doc = view(case_trader(case1, None))
+      val doc = view(case_trader(case1, None)(requestWithReleaseAndSuppressPermission, messages))
 
       // Then
       doc shouldNot containElementWithID("release-suppress-case-heading")

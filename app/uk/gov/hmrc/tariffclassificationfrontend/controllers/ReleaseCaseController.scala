@@ -24,7 +24,8 @@ import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.ReleaseCaseForm
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus, Queue}
+import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedCaseRequest
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus, Permission, Queue}
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, QueuesService}
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
@@ -33,7 +34,7 @@ import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
 @Singleton
-class ReleaseCaseController @Inject()(authenticatedAction: AuthenticatedAction,
+class ReleaseCaseController @Inject()(verify: RequestActions,
                                       casesService: CasesService,
                                       queueService: QueuesService,
                                       val messagesApi: MessagesApi,
@@ -42,15 +43,17 @@ class ReleaseCaseController @Inject()(authenticatedAction: AuthenticatedAction,
   private lazy val releaseCaseForm: Form[String] = ReleaseCaseForm.form
 
   private def releaseCase(f: Form[String], caseRef: String)
-                         (implicit request: Request[_]): Future[Result] = {
+                         (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
     getCaseAndRenderView(caseRef, c => queueService.getNonGateway.map(views.html.release_case(c, f, _)))
   }
 
-  def releaseCase(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
+  def releaseCase(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen
+    verify.mustHave(Permission.RELEASE_CASE)).async { implicit request =>
     releaseCase(releaseCaseForm, reference)
   }
 
-  def releaseCaseToQueue(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
+  def releaseCaseToQueue(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen
+    verify.mustHave(Permission.RELEASE_CASE)).async { implicit request =>
 
     def onInvalidForm(formWithErrors: Form[String]): Future[Result] = {
       releaseCase(formWithErrors, reference)
@@ -70,11 +73,10 @@ class ReleaseCaseController @Inject()(authenticatedAction: AuthenticatedAction,
   }
 
   private def getCaseAndRenderView(reference: String, toHtml: Case => Future[HtmlFormat.Appendable])
-                                  (implicit request: Request[_]): Future[Result] = {
-    casesService.getOne(reference).flatMap {
-      case Some(c: Case) if c.status == CaseStatus.NEW => toHtml(c).map(Ok(_))
-      case Some(_) => successful(Redirect(routes.CaseController.applicationDetails(reference)))
-      case _ => successful(Ok(views.html.case_not_found(reference)))
+                                  (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
+    request.`case` match {
+      case c: Case if c.status == CaseStatus.NEW => toHtml(c).map(Ok(_))
+      case _ => successful(Redirect(routes.CaseController.applicationDetails(reference)))
     }
   }
 

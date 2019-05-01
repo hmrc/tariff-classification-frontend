@@ -26,17 +26,19 @@ import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.BooleanForm
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.CANCELLED
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Operator}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Operator, Permission}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
 import scala.concurrent.Future
 
 @Singleton
-class ExtendedUseCaseController @Inject()(override val authenticatedAction: AuthenticatedAction,
+class ExtendedUseCaseController @Inject()(override val verify: RequestActions,
                                           override val caseService: CasesService,
                                           override val messagesApi: MessagesApi,
                                           override implicit val config: AppConfig) extends StatusChangeAction[Boolean] {
+
+  override protected val requiredPermission: Permission.Value = Permission.EXTENDED_USE
 
   override protected def redirect: String => Call = routes.CaseController.trader
 

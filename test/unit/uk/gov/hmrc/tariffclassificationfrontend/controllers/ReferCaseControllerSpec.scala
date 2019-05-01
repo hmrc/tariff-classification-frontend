@@ -24,17 +24,19 @@ import org.scalatest.{BeforeAndAfterEach, Matchers, WordSpec}
 import play.api.http.{MimeTypes, Status}
 import play.api.i18n.{DefaultLangs, DefaultMessagesApi}
 import play.api.mvc.Result
+import play.api.test.Helpers.{redirectLocation, _}
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus, Operator}
+import uk.gov.hmrc.tariffclassificationfrontend.models.Permission.Permission
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus, Operator, Permission}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.tariffclassificationfrontend.utils.Cases
 
 import scala.concurrent.Future.successful
 
-class ReferCaseContrilollerSpec extends WordSpec with Matchers with UnitSpec
+class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   with WithFakeApplication with MockitoSugar with BeforeAndAfterEach with ControllerCommons {
 
   private val env = Environment.simple()
@@ -57,9 +59,11 @@ class ReferCaseContrilollerSpec extends WordSpec with Matchers with UnitSpec
     reset(casesService)
   }
 
-  private def controller(requestedCase: Case) =
-    new ReferCaseController(new SuccessfulRequestActions(operator, c = requestedCase),
-      casesService, messageApi, appConfig)
+  private def controller(requestedCase: Case) = new ReferCaseController(
+    new SuccessfulRequestActions(operator, c = requestedCase), casesService, messageApi, appConfig)
+
+  private def controller(requestCase: Case, permission: Set[Permission]) = new ReferCaseController(
+    new RequestActionsWithPermissions(permission, c = requestCase), casesService, messageApi, appConfig)
 
   "Refer Case" should {
 
@@ -79,6 +83,20 @@ class ReferCaseContrilollerSpec extends WordSpec with Matchers with UnitSpec
       contentTypeOf(result) shouldBe None
       charsetOf(result) shouldBe None
       locationOf(result) shouldBe Some("/tariff-classification/cases/reference/application")
+    }
+
+    "return OK when user has right permissions" in {
+      val result: Result = await(controller(caseWithStatusOPEN, Set(Permission.REFER_CASE))
+        .referCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+
+      status(result) shouldBe Status.OK
+    }
+
+    "redirect unauthorised when does not have right permissions" in {
+      val result: Result = await(controller(caseWithStatusNEW, Set.empty).referCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result).get should include("unauthorized")
     }
 
   }
@@ -118,6 +136,28 @@ class ReferCaseContrilollerSpec extends WordSpec with Matchers with UnitSpec
       contentTypeOf(result) shouldBe None
       charsetOf(result) shouldBe None
       locationOf(result) shouldBe Some("/tariff-classification/cases/reference/application")
+    }
+
+    "return OK when user has right permissions" in {
+      when(casesService.referCase(any[Case], any[Operator])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREFERRED))
+
+      val result: Result = await(controller(caseWithStatusOPEN, Set(Permission.REFER_CASE))
+        .confirmReferCase("reference")
+        (newFakePOSTRequestWithCSRF(fakeApplication)
+          .withFormUrlEncodedBody("state" -> "true")))
+
+
+      status(result) shouldBe Status.OK
+    }
+
+    "redirect unauthorised when does not have right permissions" in {
+      val result: Result = await(controller(caseWithStatusNEW, Set.empty)
+        .confirmReferCase("reference")
+        (newFakePOSTRequestWithCSRF(fakeApplication)
+          .withFormUrlEncodedBody("state" -> "true")))
+
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result).get should include("unauthorized")
     }
 
   }

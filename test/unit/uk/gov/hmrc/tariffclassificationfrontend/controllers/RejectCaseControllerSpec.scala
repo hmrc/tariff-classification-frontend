@@ -24,11 +24,13 @@ import org.scalatest.{BeforeAndAfterEach, Matchers, WordSpec}
 import play.api.http.{MimeTypes, Status}
 import play.api.i18n.{DefaultLangs, DefaultMessagesApi}
 import play.api.mvc.Result
+import play.api.test.Helpers.{redirectLocation, _}
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus, Operator}
+import uk.gov.hmrc.tariffclassificationfrontend.models.Permission.Permission
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus, Operator, Permission}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.tariffclassificationfrontend.utils.Cases
 
@@ -57,7 +59,12 @@ class RejectCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     reset(casesService)
   }
 
-  private def controller(c: Case) = new RejectCaseController(new SuccessfulRequestActions(operator, c = c), casesService, messageApi, appConfig)
+  private def controller(c: Case) = new RejectCaseController(
+    new SuccessfulRequestActions(operator, c = c), casesService, messageApi, appConfig)
+
+  private def controller(requestCase: Case, permission: Set[Permission]) = new RejectCaseController(
+    new RequestActionsWithPermissions(permission, c = requestCase), casesService, messageApi, appConfig)
+
 
   "Reject Case" should {
 
@@ -81,6 +88,20 @@ class RejectCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       locationOf(result) shouldBe Some("/tariff-classification/cases/reference/application")
     }
 
+    "return OK when user has right permissions" in {
+      val result: Result = await(controller(caseWithStatusOPEN, Set(Permission.REJECT_CASE))
+        .rejectCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+
+      status(result) shouldBe Status.OK
+    }
+
+    "redirect unauthorised when does not have right permissions" in {
+      val result: Result = await(controller(caseWithStatusNEW, Set.empty)
+        .rejectCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result).get should include("unauthorized")
+    }
   }
 
   "Confirm Reject a Case" should {
@@ -119,6 +140,27 @@ class RejectCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       contentTypeOf(result) shouldBe None
       charsetOf(result) shouldBe None
       locationOf(result) shouldBe Some("/tariff-classification/cases/reference/application")
+    }
+
+    "return OK when user has right permissions" in {
+      when(casesService.rejectCase(any[Case], any[Operator])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREJECTED))
+
+      val result: Result = await(controller(caseWithStatusOPEN, Set(Permission.REJECT_CASE))
+        .confirmRejectCase("reference")
+        (newFakePOSTRequestWithCSRF(fakeApplication)
+          .withFormUrlEncodedBody("state" -> "false")))
+
+      status(result) shouldBe Status.OK
+    }
+
+    "redirect unauthorised when does not have right permissions" in {
+      val result: Result = await(controller(caseWithStatusOPEN, Set.empty)
+        .confirmRejectCase("reference")
+        (newFakePOSTRequestWithCSRF(fakeApplication)
+          .withFormUrlEncodedBody("state" -> "false")))
+
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result).get should include("unauthorized")
     }
   }
 

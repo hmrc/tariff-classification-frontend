@@ -71,9 +71,12 @@ class FileStoreService @Inject()(connector: FileStoreConnector) {
         case Some(attachment: Attachment) =>
           connector
             .get(attachment)
-            .map { file =>
-              Logger.error(s"Agent Letter of Authority [${attachment.id}] was present on Case [${c.reference}] but it didn't exist in the FileStore")
-              file.map(StoredAttachment(attachment, _))
+            .map {
+              case Some(file) =>
+                Some(StoredAttachment(attachment, file))
+              case None =>
+                Logger.error(s"Agent Letter of Authority [${attachment.id}] was present on Case [${c.reference}] but it didn't exist in the FileStore")
+                None
             }
         case _ => successful(None)
       }

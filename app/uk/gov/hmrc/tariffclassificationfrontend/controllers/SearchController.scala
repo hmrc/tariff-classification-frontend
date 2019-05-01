@@ -35,7 +35,7 @@ import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
 @Singleton
-class SearchController @Inject()(authenticatedAction: AuthenticatedAction,
+class SearchController @Inject()(verify: RequestActions,
                                  casesService: CasesService,
                                  keywordsService: KeywordsService,
                                  fileStoreService: FileStoreService,
@@ -43,7 +43,7 @@ class SearchController @Inject()(authenticatedAction: AuthenticatedAction,
                                  implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
   def search(selectedTab: SearchTab, reference: Option[String] = None, search: Search = Search(), sort: Sort = Sort(), page: Int):
-    Action[AnyContent] = authenticatedAction.async { implicit request =>
+    Action[AnyContent] = (verify.authenticated andThen verify.mustHave(Permission.ADVANCED_SEARCH)).async { implicit request =>
 
     if (reference.isDefined) {
       successful(Redirect(routes.CaseController.trader(reference.get)))
@@ -62,7 +62,8 @@ class SearchController @Inject()(authenticatedAction: AuthenticatedAction,
             attachments: Map[Case, Seq[StoredAttachment]] <- fileStoreService.getAttachments(cases.results)
             results: Paged[SearchResult] = cases.map(c => SearchResult(c, attachments.getOrElse(c, Seq.empty)))
           } yield Results.Ok(html.advanced_search(SearchForm.form.fill(data), Some(results), keywords, selectedTab))
-                            .addingToSession((backToSearchResultsLinkLabel, "search results"), (backToSearchResultsLinkUrl, s"${SearchController.search(selectedTab, None, search, sort, page).url}#advanced_search_keywords"))
+                            .addingToSession((backToSearchResultsLinkLabel, "search results"), (backToSearchResultsLinkUrl,
+                              s"${SearchController.search(selectedTab, None, search, sort, page).url}#advanced_search_keywords"))
         )
       })
     }

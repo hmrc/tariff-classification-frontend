@@ -24,7 +24,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.ReleaseCaseForm
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus._
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Queue}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Permission, Queue}
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, QueuesService}
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
@@ -41,11 +41,21 @@ class ReassignCaseController @Inject()(verify: RequestActions,
 
   private lazy val form: Form[String] = ReleaseCaseForm.form
 
-  def showAvailableQueues(reference: String, origin: String): Action[AnyContent] = (verify.authenticate andThen verify.caseExists(reference) andThen verify.mustHaveWritePermission).async { implicit request =>
+  def showAvailableQueues(reference: String, origin: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.MOVE_CASE_BACK_TO_QUEUE)).async { implicit request =>
     reassignToQueue(form, reference, origin)
   }
 
-  def reassignCase(reference: String, origin: String): Action[AnyContent] = (verify.authenticate andThen verify.caseExists(reference) andThen verify.mustHaveWritePermission).async { implicit request =>
+  private def reassignToQueue(f: Form[String], caseRef: String, origin: String)
+                             (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
+    validateAndRenderView(c =>
+      for {
+        queues <- queueService.getNonGateway
+        assignedQueue <- c.queueId.map(queueService.getOneById).getOrElse(successful(None))
+      } yield views.html.reassign_queue_case(c, f, queues, assignedQueue, origin)
+    )
+  }
+
+  def reassignCase(reference: String, origin: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.MOVE_CASE_BACK_TO_QUEUE)).async { implicit request =>
 
     def onInvalidForm(formWithErrors: Form[String]): Future[Result] = {
       reassignToQueue(formWithErrors, reference, origin)
@@ -62,16 +72,6 @@ class ReassignCaseController @Inject()(verify: RequestActions,
     }
 
     form.bindFromRequest.fold(onInvalidForm, onValidForm)
-  }
-
-  private def reassignToQueue(f: Form[String], caseRef: String, origin: String)
-                             (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
-    validateAndRenderView(c =>
-      for {
-        queues <- queueService.getNonGateway
-        assignedQueue <- c.queueId.map(queueService.getOneById).getOrElse(successful(None))
-      } yield views.html.reassign_queue_case(c, f, queues, assignedQueue, origin)
-    )
   }
 
   override protected def redirect: String => Call = {

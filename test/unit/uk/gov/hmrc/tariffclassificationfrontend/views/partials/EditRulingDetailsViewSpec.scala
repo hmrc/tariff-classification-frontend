@@ -23,7 +23,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.response.ScanStatus
 import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, StoredAttachment}
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewSpec
-import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.ruling_details_edit
+import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.ruling.ruling_details_edit
 import uk.gov.tariffclassificationfrontend.utils.Cases._
 import org.scalatest.mockito.MockitoSugar
 

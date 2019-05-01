@@ -17,18 +17,21 @@
 package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
 import javax.inject.{Inject, Singleton}
-import play.api.mvc.ActionRefiner
-import uk.gov.hmrc.tariffclassificationfrontend.models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
+import play.api.mvc.ActionFunction
+import uk.gov.hmrc.tariffclassificationfrontend.models.Permission
+import uk.gov.hmrc.tariffclassificationfrontend.models.Permission.Permission
+import uk.gov.hmrc.tariffclassificationfrontend.models.request.{AuthenticatedCaseRequest, AuthenticatedRequest, OperatorRequest}
 
 @Singleton
-class RequestActions @Inject()(mustHaveWritePermissionAction: MustHaveWritePermissionAction,
-                               checkPermissionsAction: CheckPermissionsAction,
+class RequestActions @Inject()(checkPermissionsAction: CheckPermissionsAction,
                                authenticatedAction: AuthenticatedAction,
-                               caseExistsActionFactory: VerifyCaseExistsActionFactory) {
+                               caseExistsActionFactory: VerifyCaseExistsActionFactory,
+                               mustHavePermissionActionFactory: MustHavePermissionActionFactory) {
 
-  val mustHaveWritePermission = mustHaveWritePermissionAction
-  val setPermissions = checkPermissionsAction
-  val authenticate = authenticatedAction
+  val authenticated: AuthenticatedAction = authenticatedAction
 
-  def caseExists(reference: String): ActionRefiner[AuthenticatedRequest, AuthenticatedCaseRequest] = caseExistsActionFactory.apply(reference)
+  def casePermissions(reference: String): ActionFunction[AuthenticatedRequest, AuthenticatedCaseRequest] =
+    mustHave(Permission.VIEW_CASES) andThen caseExistsActionFactory(reference) andThen checkPermissionsAction
+
+  def mustHave[B[A] <: OperatorRequest[A]](permission: Permission): ActionFunction[B, B] = mustHavePermissionActionFactory[B](permission)
 }

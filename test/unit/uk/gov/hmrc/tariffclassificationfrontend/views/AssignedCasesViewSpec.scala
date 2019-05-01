@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.views
 
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Operator, Queue}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Operator, Permission, Queue}
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers.{containElementWithID, containText}
 import uk.gov.tariffclassificationfrontend.utils.Cases
 
@@ -34,20 +34,16 @@ class AssignedCasesViewSpec extends ViewSpec {
       val queues = Seq(queue1, queue2)
 
       // When
-      val doc = view(html.assigned_cases(queues, Seq.empty[Case], assigneeId))
+      val doc = view(html.assigned_cases(queues, Seq.empty[Case], assigneeId)(request = requestWithPermissions(Permission.VIEW_QUEUE_CASES, Permission.VIEW_MY_CASES), messages, appConfig))
 
       // Then
       doc should containElementWithID("queue-navigation")
       doc should containElementWithID("queue-name")
       doc should containElementWithID("nav-menu-queue-queue1_name")
       doc should containElementWithID("nav-menu-queue-queue2_name")
-
       doc should not(containElementWithID("cases_list-table"))
-
       doc should containElementWithID("assignee-navigation")
-
       doc should containElementWithID("assignees_list-empty")
-
       doc should containElementWithID("nav-menu-my-cases")
       doc should containText(messages("cases.summary.assignee.empty"))
     }
@@ -58,22 +54,18 @@ class AssignedCasesViewSpec extends ViewSpec {
       val cases = Seq(case1.copy(assignee = Some(Operator("444", assigneeId))))
 
       // When
-      val doc = view(html.assigned_cases(queues, cases, assigneeId))
+      val doc = view(html.assigned_cases(queues, cases, assigneeId)(request = requestWithPermissions(Permission.VIEW_QUEUE_CASES, Permission.VIEW_MY_CASES), messages, appConfig))
 
       // Then
       doc should containElementWithID("queue-navigation")
       doc should containElementWithID("queue-name")
       doc should containElementWithID("nav-menu-queue-queue1_name")
       doc should containElementWithID("nav-menu-queue-queue2_name")
-
       doc should not(containElementWithID("cases_list-table"))
-
       doc should containElementWithID("nav-menu-my-cases")
-
       doc should containElementWithID("assignee-navigation")
       doc should not(containElementWithID("assignees_list-empty"))
       doc should containElementWithID("nav-menu-assignee-444")
-
       doc should not(containText(messages("cases.summary.assignee.empty")))
     }
   }

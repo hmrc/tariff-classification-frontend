@@ -27,7 +27,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.forms.AppealForm
 import uk.gov.hmrc.tariffclassificationfrontend.models.AppealStatus.AppealStatus
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.{CANCELLED, COMPLETED}
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Operator}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Operator, Permission}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
 import uk.gov.hmrc.tariffclassificationfrontend.views.CaseDetailPage
@@ -36,10 +36,12 @@ import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
 @Singleton
-class AppealCaseController @Inject()(override val authenticatedAction: AuthenticatedAction,
+class AppealCaseController @Inject()(override val verify: RequestActions,
                                      override val caseService: CasesService,
                                      override val messagesApi: MessagesApi,
                                      override implicit val config: AppConfig) extends StatusChangeAction[Option[AppealStatus]] {
+
+  override protected val requiredPermission: Permission.Value = Permission.APPEAL_CASE
 
   override protected def redirect: String => Call = routes.CaseController.trader
 
@@ -63,7 +65,7 @@ class AppealCaseController @Inject()(override val authenticatedAction: Authentic
 
   override protected def onSuccessRedirect(reference: String): Call = routes.AppealCaseController.appealDetails(reference)
 
-  def appealDetails(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
+  def appealDetails(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
     getCaseAndRenderView(
       reference,
       c => successful(views.html.case_details(c, CaseDetailPage.APPEAL, views.html.partials.appeal_details(c)))

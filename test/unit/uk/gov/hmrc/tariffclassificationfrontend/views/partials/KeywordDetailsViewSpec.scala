@@ -17,6 +17,7 @@
 package uk.gov.hmrc.tariffclassificationfrontend.views.partials
 
 import uk.gov.hmrc.tariffclassificationfrontend.forms.KeywordForm
+import uk.gov.hmrc.tariffclassificationfrontend.models.Permission
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewSpec
 import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.keywords_details
@@ -52,31 +53,12 @@ class KeywordDetailsViewSpec extends ViewSpec {
       doc.getElementById("keywords-row-1-message") should containText("Keyword is not from the list")
     }
 
-
-    "Render a case with keywords with READ_ONLY permissions" in {
+    "Render a case with keywords with KEYWORDS permissions" in {
       // Given
       val c = aCase().copy(keywords = Set("APPLES", "CARS"))
 
       // When
-      val doc = view(keywords_details(c, Seq("APPLES", "TOYS"), KeywordForm.form)(readOnlyRequest, messages, appConfig))
-
-      // Then
-      doc should containElementWithID("keywords-heading")
-      doc should containElementWithID("keywords-row-0-keyword")
-      doc.getElementById("keywords-row-0-message") should containText("")
-      doc.getElementById("keywords-row-1-message") should containText("Keyword is not from the list")
-
-      doc shouldNot containElementWithID("keywords-row-0-remove")
-      doc shouldNot containElementWithID("keyword_details-add_keyword")
-
-    }
-
-    "Render a case with keywords with READ_WRITE permissions" in {
-      // Given
-      val c = aCase().copy(keywords = Set("APPLES", "CARS"))
-
-      // When
-      val doc = view(keywords_details(c, Seq("APPLES", "TOYS"), KeywordForm.form)(readWriteRequest, messages, appConfig))
+      val doc = view(keywords_details(c, Seq("APPLES", "TOYS"), KeywordForm.form)(requestWithPermissions(Permission.KEYWORDS), messages, appConfig))
 
       // Then
       doc should containElementWithID("keywords-heading")
@@ -86,8 +68,18 @@ class KeywordDetailsViewSpec extends ViewSpec {
 
       doc should containElementWithID("keywords-row-0-remove")
       doc should containElementWithID("keyword_details-add_keyword")
+    }
 
+    "Render a case with keywords without KEYWORDS permissions" in {
+      // Given
+      val c = aCase().copy(keywords = Set("APPLES", "CARS"))
 
+      // When
+      val doc = view(keywords_details(c, Seq("APPLES", "TOYS"), KeywordForm.form)(operatorRequest, messages, appConfig))
+
+      // Then
+      doc shouldNot containElementWithID("keywords-row-0-remove")
+      doc shouldNot containElementWithID("keyword_details-add_keyword")
     }
   }
 }

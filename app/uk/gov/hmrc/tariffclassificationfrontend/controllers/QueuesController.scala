@@ -31,13 +31,13 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future.successful
 
 @Singleton
-class QueuesController @Inject()(authenticatedAction: AuthenticatedAction,
+class QueuesController @Inject()(verify: RequestActions,
                                  casesService: CasesService,
                                  queuesService: QueuesService,
                                  val messagesApi: MessagesApi,
                                  implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
-  def queue(slug: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
+  def queue(slug: String): Action[AnyContent] = (verify.authenticated andThen verify.mustHave(Permission.VIEW_QUEUE_CASES)).async { implicit request =>
     queuesService.getOneBySlug(slug) flatMap {
       case None => successful(Ok(views.html.resource_not_found()))
       case Some(q: Queue) =>

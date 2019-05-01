@@ -29,7 +29,7 @@ import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.connector.StrideAuthConnector
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Operator, Role}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Operator, Permission, Role}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -45,10 +45,11 @@ class AuthenticatedAction @Inject()(appConfig: AppConfig,
 
   private lazy val teamEnrolment: String = appConfig.teamEnrolment
   private lazy val managerEnrolment: String = appConfig.managerEnrolment
+  private lazy val readOnlyEnrolment: String = appConfig.readOnlyEnrolment
   private lazy val checkEnrolment: Boolean = appConfig.checkEnrolment
 
   private val uncheckedPredicate = AuthProviders(PrivilegedApplication)
-  private val checkedPredicate = (Enrolment(teamEnrolment) or Enrolment(managerEnrolment)) and uncheckedPredicate
+  private val checkedPredicate = (Enrolment(teamEnrolment) or Enrolment(managerEnrolment) or Enrolment(readOnlyEnrolment)) and uncheckedPredicate
   private val predicate = if (checkEnrolment) checkedPredicate else uncheckedPredicate
 
   override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] = {
@@ -61,13 +62,16 @@ class AuthenticatedAction @Inject()(appConfig: AppConfig,
       case (credentials: Credentials) ~ (name: Name) ~ (roles: Enrolments) =>
         Logger.info(s"User Authenticated with id [${credentials.providerId}], roles [${roles.enrolments.map(_.key).mkString(",")}]")
         val id = credentials.providerId
+        val role = roles.enrolments.map(_.key) match {
+          case e if e.contains(managerEnrolment) => Role.CLASSIFICATION_MANAGER
+          case e if e.contains(teamEnrolment) => Role.CLASSIFICATION_OFFICER
+          case _ => Role.READ_ONLY
+        }
         val operator = Operator(
           id,
           name.name,
-          role = roles.enrolments.map(_.key) match {
-            case e if e.contains(managerEnrolment) => Role.CLASSIFICATION_MANAGER
-            case _ => Role.CLASSIFICATION_OFFICER
-          }
+          role = role,
+          permissions = Permission.roleBasedPermissions(role)
         )
         block(AuthenticatedRequest(operator, request))
     } recover {

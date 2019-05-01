@@ -24,13 +24,14 @@ import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterEach, Matchers, WordSpec}
 import play.api.http.Status
 import play.api.i18n.{DefaultLangs, DefaultMessagesApi}
-import play.api.test.Helpers._
+import play.api.test.Helpers.{redirectLocation, _}
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.WithFakeApplication
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.{CommodityCodeConstraints, DecisionForm, DecisionFormData, DecisionFormMapper}
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus, Operator}
+import uk.gov.hmrc.tariffclassificationfrontend.models.Permission.Permission
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus, Operator, Permission}
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, CommodityCodeService, FileStoreService}
 import uk.gov.tariffclassificationfrontend.utils.Cases
 
@@ -50,7 +51,7 @@ class RulingControllerSpec extends WordSpec with Matchers with WithFakeApplicati
   private val operator = mock[Operator]
   private val decisionForm = new DecisionForm(new CommodityCodeConstraints(commodityCodeService))
 
-  private implicit val hc = HeaderCarrier()
+  private implicit val hc: HeaderCarrier = HeaderCarrier()
 
   override protected def afterEach(): Unit = {
     super.afterEach()
@@ -60,6 +61,10 @@ class RulingControllerSpec extends WordSpec with Matchers with WithFakeApplicati
   private def controller(c: Case) = new RulingController(
     new SuccessfulRequestActions(operator, c = c), casesService, fileService, mapper, decisionForm, messageApi, appConfig
   )
+
+  private def controller(requestCase: Case, permission: Set[Permission]) = new RulingController(
+    new RequestActionsWithPermissions(permission, c = requestCase), casesService, fileService, mapper, decisionForm, messageApi, appConfig)
+
 
   "Edit Ruling" should {
     val caseWithStatusNEW = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.NEW)
@@ -85,6 +90,23 @@ class RulingControllerSpec extends WordSpec with Matchers with WithFakeApplicati
       charset(result) shouldBe None
       redirectLocation(result) shouldBe Some("/tariff-classification/cases/reference/ruling")
     }
+
+    "return OK when user has right permissions" in {
+      given(fileService.getAttachments(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(Seq(attachment)))
+
+      val result = controller(caseWithStatusOPEN, Set(Permission.EDIT_RULING))
+        .editRulingDetails("reference")(newFakeGETRequestWithCSRF(fakeApplication))
+
+      status(result) shouldBe Status.OK
+    }
+
+    "redirect unauthorised when does not have right permissions" in {
+      val result = controller(caseWithStatusOPEN, Set.empty)
+        .editRulingDetails("reference")(newFakeGETRequestWithCSRF(fakeApplication))
+
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result).get should include("unauthorized")
+    }
   }
 
   "Update Ruling" should {
@@ -100,7 +122,8 @@ class RulingControllerSpec extends WordSpec with Matchers with WithFakeApplicati
       "justification" -> "",
       "methodCommercialDenomination" -> "",
       "methodExclusion" -> "",
-      "attachments" -> "[]")
+      "attachments" -> "[]",
+      "explanation" -> "")
     )
 
     "return OK and HTML content type" in {
@@ -136,6 +159,22 @@ class RulingControllerSpec extends WordSpec with Matchers with WithFakeApplicati
       contentType(result) shouldBe None
       charset(result) shouldBe None
       redirectLocation(result) shouldBe Some("/tariff-classification/cases/reference/ruling")
+    }
+
+    "return OK when user has right permissions" in {
+      given(casesService.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(updatedCase))
+      given(fileService.getAttachments(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(Seq(attachment)))
+
+      val result = controller(caseWithStatusOPEN, Set(Permission.EDIT_RULING)).updateRulingDetails("reference")(aValidForm)
+
+      status(result) shouldBe Status.OK
+    }
+
+    "redirect unauthorised when does not have right permissions" in {
+      val result = controller(caseWithStatusOPEN, Set.empty).updateRulingDetails("reference")(aValidForm)
+
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result).get should include("unauthorized")
     }
   }
 }

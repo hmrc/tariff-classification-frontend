@@ -36,8 +36,9 @@ class AppConfig @Inject()(val runModeConfiguration: Configuration, environment: 
   lazy val assetsPrefix: String = loadConfig("assets.url") + loadConfig("assets.version")
   lazy val analyticsToken: String = loadConfig("google-analytics.token")
   lazy val analyticsHost: String = loadConfig("google-analytics.host")
-  lazy val teamEnrolment: String = loadConfig("auth.enrolments.team")
   lazy val managerEnrolment: String = loadConfig("auth.enrolments.manager")
+  lazy val teamEnrolment: String = loadConfig("auth.enrolments.team")
+  lazy val readOnlyEnrolment: String = loadConfig("auth.enrolments.read-only")
   lazy val checkEnrolment: Boolean = loadConfig("auth.enrolments.enabled").toBoolean
   lazy val reportAProblemPartialUrl = s"$contactHost/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
   lazy val reportAProblemNonJSUrl = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"

@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.views.partials
 
+import uk.gov.hmrc.tariffclassificationfrontend.models.Permission
 import uk.gov.hmrc.tariffclassificationfrontend.models.response.ScanStatus
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewSpec
@@ -45,7 +46,7 @@ class ApplicationDetailsViewSpec extends ViewSpec {
     "not render sample to be returned when sample not provided" in {
       // Given
       val `case` = aCase(
-        withBTIDetails(sampleToBeProvided = false, sampleToBeReturned = true),
+        withBTIDetails(sampleToBeReturned = true),
         withoutAttachments()
       )
 
@@ -70,7 +71,7 @@ class ApplicationDetailsViewSpec extends ViewSpec {
       // Then
       doc.getElementById("app-details-reissue-application-type") should containText(messages("case.bti.new"))
       doc.getElementById("app-details-confidential-info") should containText(messages("answer.none"))
-      doc.getElementById("app-details-related-reference") should be(null)
+      doc shouldNot containElementWithID("app-details-related-reference")
       doc.getElementById("app-details-legal-proceedings") should containText(messages("answer.no"))
       doc.getElementById("app-details-other-info") should containText(messages("answer.none"))
       doc.getElementById("app-details-import-or-export") should containText(messages("site.unknown"))
@@ -115,7 +116,7 @@ class ApplicationDetailsViewSpec extends ViewSpec {
     }
 
 
-    "Hide refer, reject and suspend action when a user have no write permissions" in {
+    "Hide refer, reject and suspend action when a user have no permissions" in {
       // Given
       val `case` = aCase(
         withOptionalApplicationFields(),
@@ -123,7 +124,7 @@ class ApplicationDetailsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(application_details(`case`, Seq.empty, None)(readOnlyRequest, messages, appConfig))
+      val doc = view(application_details(`case`, Seq.empty, None)(operatorRequest, messages, appConfig))
 
       // Then
       doc shouldNot containElementWithID("refer-case-button")
@@ -133,15 +134,17 @@ class ApplicationDetailsViewSpec extends ViewSpec {
 
     }
 
-    "refer, reject and suspend action available for read write permissions" in {
+    "refer, reject and suspend action available for user with permissions" in {
       // Given
       val `case` = aCase(
         withOptionalApplicationFields(),
         withoutAttachments()
       )
 
+      val request = requestWithPermissions(Permission.REFER_CASE, Permission.REJECT_CASE, Permission.SUSPEND_CASE)
+
       // When
-      val doc = view(application_details(`case`, Seq.empty, None)(readWriteRequest, messages, appConfig))
+      val doc = view(application_details(`case`, Seq.empty, None)(request, messages, appConfig))
 
       // Then
       doc should containElementWithID("refer-case-button")
@@ -149,22 +152,6 @@ class ApplicationDetailsViewSpec extends ViewSpec {
       doc should containElementWithID("suspend-case-button")
     }
 
-
-    "refer, reject and suspend action always available for Managers" in {
-      // Given
-      val `case` = aCase(
-        withOptionalApplicationFields(),
-        withoutAttachments()
-      )
-
-      // When
-      val doc = view(application_details(`case`, Seq.empty, None)(authenticatedManagerFakeRequest, messages, appConfig))
-
-      // Then
-      doc should containElementWithID("refer-case-button")
-      doc should containElementWithID("reject-case-button")
-      doc should containElementWithID("suspend-case-button")
-    }
   }
 
 }
