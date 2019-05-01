@@ -28,7 +28,6 @@
             @tab_heading("application", messages("case.menu.application-details"))
 
             <dl class="dl-mb-2">
-
                 <div id="app-details-goods-name" class="grid-row">
                     <dt class="column-one-third">
                         @messages("case.item.name")
@@ -37,7 +36,6 @@
                         @btiApp.goodName
                     </dd>
                 </div>
-
                 <div id="app-details-goods-description" class="grid-row">
                     <dt class="column-one-third">
                         @messages("case.item.description")
@@ -46,7 +44,6 @@
                         <span class="pre-wrap">@btiApp.goodDescription</span>
                     </dd>
                 </div>
-
                 <div id="app-details-confidential-info" class="grid-row">
                     <dt class="column-one-third">
                         @messages("case.item.confidential-information")
@@ -163,12 +160,12 @@
                 </div>
             </dl>
 
+            <div class="mt-1">
+                @if(request.hasPermission(Permission.REFER_CASE)) {@refer_case_button(c)}
+                @if(request.hasPermission(Permission.REOPEN_CASE)) {@reopen_case_button(c)}
+            </div>
 
-                <div class="mt-1">
-                    @if(request.hasPermission(Permission.REFER_CASE)) {@refer_case_button(c)}
-                    @if(request.hasPermission(Permission.REOPEN_CASE)) {@reopen_case_button(c)}
-                </div>
-                @if(request.hasPermission(Permission.SUSPEND_CASE)) {@reject_suspend_section(c)}
+            @if(request.hasPermission(Permission.SUSPEND_CASE)) {@reject_suspend_section(c)}
 
             <div class="mt-3">
                 @submitted_application_link(c)
