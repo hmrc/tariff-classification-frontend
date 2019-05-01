@@ -72,7 +72,7 @@
                     @messages("case.application.importOrExport")
                     </dt>
                     <dd class="column-two-thirds">
-                    @btiApp.importOrExport.getOrElse(messages("site.unknown")).toLowerCase.capitalize
+                    @btiApp.importOrExport.getOrElse(messages("site.unknown")).toString.toLowerCase.capitalize
                     </dd>
                 </div>
 
