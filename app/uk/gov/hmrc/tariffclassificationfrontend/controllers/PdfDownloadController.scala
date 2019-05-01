@@ -48,13 +48,13 @@ class PdfDownloadController @Inject()(authenticatedAction: AuthenticatedAction,
   }
 
   def applicationPdf(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
-    caseService.getOne(reference) flatMap {
-      case Some(c: Case) => {
-        fileStore.getAttachments(c).flatMap(files =>
-          fileStore.getLetterOfAuthority(c).flatMap(letter =>
-            generatePdf(application_template(c, files, letter), s"BTIApplication_$reference.pdf")
-          )
-        )
+    caseService.getOne(reference).flatMap {
+      case Some(c) => {
+        for {
+          attachments <- fileStore.getAttachments(c)
+          letter <- fileStore.getLetterOfAuthority(c)
+          pdf <-  generatePdf(application_template(c, attachments, letter), s"BTIConfirmation$reference.pdf")
+        } yield pdf
       }
       case _ => successful(Ok(views.html.case_not_found(reference)))
     }

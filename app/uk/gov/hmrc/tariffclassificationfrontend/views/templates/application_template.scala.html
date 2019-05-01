@@ -147,26 +147,26 @@
             @if(c.application.asBTI.agent.isDefined) {
                 @defining(c.application.asBTI.agent.get) { agent: AgentDetails =>
                     @sectionHeading("pdf.application.section.applyingFor.heading")
-                <table>
-                    <tr>
-                        <td>@messages("pdf.application.section.applyingFor.details")</td>
-                        <td id="agentDetails.eoriDetails.address">
-                            @agent.eoriDetails.eori <br/>
-                            @agent.eoriDetails.businessName <br/>
-                            @agent.eoriDetails.addressLine1 <br/>
-                            @agent.eoriDetails.addressLine2 <br/>
-                            @agent.eoriDetails.addressLine3 <br/>
-                            @agent.eoriDetails.postcode <br/>
-                            @agent.eoriDetails.country
-                        </td>
-                    </tr>
-                    <tr>
-                        <td> Written authorisation </td>
-                        <td id="agentDetails.letterOfAuthority">
-                        @if(letterOfAuthority.isDefined){@letterOfAuthority.get.fileName}
-                </td>
-                </tr>
-                </table>
+                    <table>
+                        <tr>
+                            <td>@messages("pdf.application.section.applyingFor.details")</td>
+                            <td id="agentDetails.eoriDetails.address">
+                                @agent.eoriDetails.eori <br/>
+                                @agent.eoriDetails.businessName <br/>
+                                @agent.eoriDetails.addressLine1 <br/>
+                                @agent.eoriDetails.addressLine2 <br/>
+                                @agent.eoriDetails.addressLine3 <br/>
+                                @agent.eoriDetails.postcode <br/>
+                                @agent.eoriDetails.country
+                            </td>
+                        </tr>
+                        <tr>
+                            <td> Written authorisation </td>
+                            <td id="agentDetails.letterOfAuthority">
+                                 @if(letterOfAuthority.isDefined){@letterOfAuthority.get.fileName}
+                            </td>
+                         </tr>
+                    </table>
                 }
             }
 
