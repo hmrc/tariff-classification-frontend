@@ -16,44 +16,81 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.service
 
+import java.time.{Clock, Instant, LocalDateTime, ZoneOffset}
+
+import org.mockito.BDDMockito._
+import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.play.test.UnitSpec
+import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
+import uk.gov.hmrc.tariffclassificationfrontend.models.CommodityCode
 
-class CommodityCodeServiceSpec extends UnitSpec with MockitoSugar {
+class CommodityCodeServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
 
-  private val service = new CommodityCodeService()
+  private val config = mock[AppConfig]
+
+  private def service = new CommodityCodeService(config)
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    given(config.clock) willReturn Clock.fixed(Instant.EPOCH, ZoneOffset.UTC)
+  }
 
   "Commodity code service" should {
 
+    "not find non-leaf codes" in {
+      given(config.runningAsDev) willReturn true
+      service.find("0300000000").isDefined shouldBe false
+    }
+
     "find codes 10 characters in length" in {
-      service.checkIfCodeExists("0409000000") shouldBe true
-      service.checkIfCodeExists("0409000000 ") shouldBe true
+      given(config.runningAsDev) willReturn true
+      service.find("0200000000").isDefined shouldBe true
+      service.find(" 0200000000 ").isDefined shouldBe true
     }
 
     "find codes less than 10 characters in length" in {
-      service.checkIfCodeExists("0409") shouldBe true
-      service.checkIfCodeExists("0409 ") shouldBe true
+      given(config.runningAsDev) willReturn true
+      service.find("0200").isDefined shouldBe true
+      service.find(" 0200 ").isDefined shouldBe true
     }
 
     "find codes longer than 10 characters" in {
-      service.checkIfCodeExists("0409000000123456789") shouldBe true
-      service.checkIfCodeExists("0409000000123456789 ") shouldBe true
+      given(config.runningAsDev) willReturn true
+      service.find("0200000000123456789").isDefined shouldBe true
+      service.find(" 0200000000123456789 ").isDefined shouldBe true
+    }
+
+    "not find codes from single digit chapters that are missing the leading zero" when {
+      "using production dataset" in {
+        given(config.runningAsDev) willReturn false
+        service.find("409").isDefined shouldBe false
+        service.find(" 409 ").isDefined shouldBe false
+      }
+    }
+
+    "not find codes enter in pairs-of-digits format" when {
+      "using production dataset" in {
+        given(config.runningAsDev) willReturn false
+        service.find("04 09 00 00 00").isDefined shouldBe false
+        service.find("04 09 00 00 00 ").isDefined shouldBe false
+      }
     }
 
     "not find codes that are missing form the file" in {
-      service.checkIfCodeExists("9999999999") shouldBe false
-      service.checkIfCodeExists("9999999999 ") shouldBe false
+      given(config.runningAsDev) willReturn true
+      service.find("9999999999").isDefined shouldBe false
+      service.find("9999999999 ").isDefined shouldBe false
     }
 
-    "not find codes from single digit chapters that are missing the leading zero" in {
-      service.checkIfCodeExists("409") shouldBe false
-      service.checkIfCodeExists("409 ") shouldBe false
+    "find commodity codes with optional end dates" in {
+      given(config.runningAsDev) willReturn true
+      service.find("0100000000") shouldBe Some(CommodityCode("0100000000", Some("2019-01-01T00:00:00")))
+      service.find("0200000000") shouldBe Some(CommodityCode("0200000000", None))
     }
 
-    "not find codes enter in pairs-of-digits format" in {
-      service.checkIfCodeExists("04 09 00 00 00") shouldBe false
-      service.checkIfCodeExists("04 09 00 00 00 ") shouldBe false
-    }
+    implicit def str2instant: String => Instant = LocalDateTime.parse(_).toInstant(ZoneOffset.UTC)
+
   }
 
 }

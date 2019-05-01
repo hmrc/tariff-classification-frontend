@@ -24,7 +24,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.service.CommodityCodeService
 class CommodityCodeConstraints @Inject()(commodityCodeService: CommodityCodeService) {
 
   val commodityCodeExistsInUKTradeTariff: Constraint[String] = Constraint("constraints.commodityCodeExists")({
-    case s: String if commodityCodeService.checkIfCodeExists(s) => Valid
+    case s: String if commodityCodeService.find(s).isDefined => Valid
     case _: String => Invalid("This commodity code is not a valid code in the UK Trade Tariff")
   })
 
