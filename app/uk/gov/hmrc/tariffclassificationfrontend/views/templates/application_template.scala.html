@@ -17,6 +17,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{AgentDetails, BTIApplication, Case, StoredAttachment}
 @import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
+@import uk.gov.hmrc.tariffclassificationfrontend.models.ImportExport
 @(c: Case, attachments: Seq[StoredAttachment], letterOfAuthority : Option[StoredAttachment] = None)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @createLink(path: String)(implicit req: play.api.mvc.Request[_]) = @{
@@ -163,7 +164,7 @@
                         <tr>
                             <td> Written authorisation </td>
                             <td id="agentDetails.letterOfAuthority">
-                                 @if(letterOfAuthority.isDefined){@letterOfAuthority.get.fileName}
+                                @letterOfAuthority.map(_.fileName)
                             </td>
                          </tr>
                     </table>
@@ -216,11 +217,11 @@
                     <tr>
                         <td>@messages("pdf.application.section.aboutItem.importOrExport")</td>
                         <td id="application.importOrExport">
-                        @{application.importOrExport match {
-                            case Some("IMPORT") => messages("pdf.application.section.aboutItem.import")
-                            case Some("EXPORT") => messages("pdf.application.section.aboutItem.export")
-                            case _ => messages("site.unknown")
-                        }}
+                            @{application.importOrExport match {
+                                case Some(ImportExport.IMPORT) => messages("pdf.application.section.aboutItem.import")
+                                case Some(ImportExport.EXPORT) => messages("pdf.application.section.aboutItem.export")
+                                case _ => messages("site.unknown")
+                            }}
                         </td>
                     </tr>
                     <tr>
