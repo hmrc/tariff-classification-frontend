@@ -14,17 +14,24 @@
  * limitations under the License.
  *@
 
+@import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CompleteCaseController
-@import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus}
 @import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionFormData
 @import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
-@(c: Case, decisionForm : Option[Form[DecisionFormData]], classes: Seq[String] = Seq.empty)(implicit  request: AuthenticatedRequest[_], messages: Messages)
+@import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus, CommodityCode}
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.ruling.ruling_commodity_code_expiry_section
+@(c: Case, decisionForm : Option[Form[DecisionFormData]], classes: Seq[String] = Seq.empty, commodityCode: Option[CommodityCode])(implicit  request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @if(c.decision.isDefined && c.status == CaseStatus.OPEN) {
     <div id="complete-case-section">
         @defining(decisionForm.map(_.errors.size).exists(_ > 0)) { hasErrors : Boolean =>
-            @if(hasErrors) {
+            @if(hasErrors || commodityCode.flatMap(_.expiry).isDefined) {
                 <h3 class="heading-medium">@messages("case.decision.before-you-complete")</h3>
+
+                @ruling_commodity_code_expiry_section(c, commodityCode)
+            }
+
+            @if(hasErrors) {
                 <p>To complete this case, you need to fill in these fields:</p>
                 <ul class="list list-bullet">
                 @for(error <- decisionForm.get.errors) {

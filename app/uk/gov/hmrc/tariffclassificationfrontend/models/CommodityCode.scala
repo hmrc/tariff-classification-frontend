@@ -24,4 +24,5 @@ case class CommodityCode
   expiry: Option[Instant] = None
 ) {
   def isExpired(implicit clock: Clock): Boolean = expiry.exists(_.isBefore(clock.instant()))
+  def isLive(implicit clock: Clock): Boolean = !isExpired
 }

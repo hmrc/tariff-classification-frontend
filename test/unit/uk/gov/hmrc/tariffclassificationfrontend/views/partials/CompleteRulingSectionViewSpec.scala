@@ -17,8 +17,9 @@
 package uk.gov.hmrc.tariffclassificationfrontend.views.partials
 
 import org.scalatest.mockito.MockitoSugar
+import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms._
-import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus
+import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, CommodityCode}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CommodityCodeService
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewSpec
@@ -28,7 +29,7 @@ import uk.gov.tariffclassificationfrontend.utils.Cases
 class CompleteRulingSectionViewSpec extends ViewSpec with MockitoSugar {
 
   private val commodityCodeService = mock[CommodityCodeService]
-  private val decisionForm = new DecisionForm(new CommodityCodeConstraints(commodityCodeService))
+  private val decisionForm = new DecisionForm(new CommodityCodeConstraints(commodityCodeService, mock[AppConfig]))
 
   "Complete ruling section" should {
 
@@ -51,7 +52,8 @@ class CompleteRulingSectionViewSpec extends ViewSpec with MockitoSugar {
                 "attachments" -> Seq.empty
               )
             )
-            )
+            ),
+            commodityCode = Some(CommodityCode("lorum ipsum"))
           )
         )
 
@@ -65,7 +67,7 @@ class CompleteRulingSectionViewSpec extends ViewSpec with MockitoSugar {
       val mandatoryFieldForm = Some(decisionForm.mandatoryFieldsForm)
 
       // When
-      val doc = view(complete_ruling_section(case1, mandatoryFieldForm))
+      val doc = view(complete_ruling_section(c = case1, decisionForm = mandatoryFieldForm, commodityCode = Some(CommodityCode("lorum ipsum"))))
 
       // Then
       doc shouldNot containElementWithID("complete-case-button-disabled")
@@ -77,7 +79,7 @@ class CompleteRulingSectionViewSpec extends ViewSpec with MockitoSugar {
       val case1 = Cases.btiCaseExample.copy(status = CaseStatus.CANCELLED)
 
       // When
-      val doc = view(complete_ruling_section(case1, None))
+      val doc = view(complete_ruling_section(c = case1, decisionForm = None, commodityCode = Some(CommodityCode("lorum ipsum"))))
 
       // Then
       doc shouldNot containElementWithID("complete-case-button-disabled")
@@ -89,7 +91,7 @@ class CompleteRulingSectionViewSpec extends ViewSpec with MockitoSugar {
       val c = Cases.btiCaseExample.copy(decision = None)
 
       // When
-      val doc = view(complete_ruling_section(c, None))
+      val doc = view(complete_ruling_section(c = c, decisionForm = None, commodityCode = Some(CommodityCode("lorum ipsum"))))
 
       // Then
       doc shouldNot containElementWithID("complete-case-button-disabled")

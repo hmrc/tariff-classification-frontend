@@ -35,7 +35,7 @@ class RulingDetailsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(ruling_details(c, None, Seq.empty))
+      val doc = view(ruling_details(c, None, Seq.empty, None))
 
       // Then
       doc should containElementWithID("envisagedCommodityCodeValue")
@@ -49,7 +49,7 @@ class RulingDetailsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(ruling_details(c, None, Seq.empty))
+      val doc = view(ruling_details(c, None, Seq.empty, None))
 
       // Then
       doc shouldNot containElementWithID("envisagedCommodityCodeValue")
@@ -60,7 +60,7 @@ class RulingDetailsViewSpec extends ViewSpec {
       val c = aCase(withReference("ref"), withStatus(CaseStatus.OPEN))
 
       // When
-      val doc = view(ruling_details(c, None, Seq.empty)(requestWithPermissions(Permission.EDIT_RULING), messages, appConfig))
+      val doc = view(ruling_details(c, None, Seq.empty, None)(requestWithPermissions(Permission.EDIT_RULING), messages, appConfig))
 
       // Then
       doc should containElementWithID("ruling_edit_details")
@@ -76,7 +76,7 @@ class RulingDetailsViewSpec extends ViewSpec {
       val c = aCase(withReference("ref"), withStatus(CaseStatus.NEW))
 
       // When
-      val doc = view(ruling_details(c, None, Seq.empty)(requestWithPermissions(Permission.EDIT_RULING), messages, appConfig))
+      val doc = view(ruling_details(c, None, Seq.empty, None)(requestWithPermissions(Permission.EDIT_RULING), messages, appConfig))
 
       // Then
       doc shouldNot containElementWithID("ruling_edit_details")
@@ -88,7 +88,7 @@ class RulingDetailsViewSpec extends ViewSpec {
       val c = aCase(withReference("ref"), withStatus(CaseStatus.OPEN))
 
       // When
-      val doc = view(ruling_details(c, None, Seq.empty)(operatorRequest, messages, appConfig))
+      val doc = view(ruling_details(c, None, Seq.empty, None)(operatorRequest, messages, appConfig))
 
       // Then
       doc shouldNot containElementWithID("ruling_edit_details")
@@ -100,7 +100,7 @@ class RulingDetailsViewSpec extends ViewSpec {
       val c = aCase(withoutDecision())
 
       // When
-      val doc = view(ruling_details(c, None, Seq.empty))
+      val doc = view(ruling_details(c, None, Seq.empty, None))
 
       // Then
       doc shouldNot containElementWithID("ruling_bindingCommodityCode")
@@ -129,7 +129,7 @@ class RulingDetailsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(ruling_details(c, None, Seq.empty)(requestWithPermissions(Permission.COMPLETE_CASE), messages, appConfig))
+      val doc = view(ruling_details(c, None, Seq.empty, None)(requestWithPermissions(Permission.COMPLETE_CASE), messages, appConfig))
 
       // Then
       doc should containElementWithID("ruling_bindingCommodityCodeValue")
@@ -162,7 +162,7 @@ class RulingDetailsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(ruling_details(c, None, Seq.empty)(operatorRequest, messages, appConfig))
+      val doc = view(ruling_details(c, None, Seq.empty, None)(operatorRequest, messages, appConfig))
 
       // Then
       doc should containElementWithID("ruling_bindingCommodityCodeValue")
@@ -189,7 +189,7 @@ class RulingDetailsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(ruling_details(c, None, Seq.empty)(requestWithPermissions(Permission.CANCEL_CASE), messages, appConfig))
+      val doc = view(ruling_details(c, None, Seq.empty, None)(requestWithPermissions(Permission.CANCEL_CASE), messages, appConfig))
 
       // Then
       doc should containElementWithID("cancel-ruling-button")
@@ -203,7 +203,7 @@ class RulingDetailsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(ruling_details(c, None, Seq.empty)(operatorRequest, messages, appConfig))
+      val doc = view(ruling_details(c, None, Seq.empty, None)(operatorRequest, messages, appConfig))
 
       // Then
       doc shouldNot containElementWithID("cancel-ruling-button")
@@ -227,7 +227,7 @@ class RulingDetailsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(ruling_details(c, None, Seq(stored)))
+      val doc = view(ruling_details(c, None, Seq(stored), None))
 
       // Then
       doc should containElementWithID("attachments-row-0-file")
@@ -250,7 +250,7 @@ class RulingDetailsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(ruling_details(c, None, Seq(stored)))
+      val doc = view(ruling_details(c, None, Seq(stored), None))
 
       // Then
       doc shouldNot containElementWithID("attachments-file-FILE_ID")

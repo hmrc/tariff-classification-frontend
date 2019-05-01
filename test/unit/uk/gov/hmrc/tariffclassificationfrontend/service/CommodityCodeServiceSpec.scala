@@ -40,25 +40,25 @@ class CommodityCodeServiceSpec extends UnitSpec with MockitoSugar with BeforeAnd
 
     "not find non-leaf codes" in {
       given(config.runningAsDev) willReturn true
-      service.find("0300000000").isDefined shouldBe false
+      service.find("0400000000").isDefined shouldBe false
     }
 
     "find codes 10 characters in length" in {
       given(config.runningAsDev) willReturn true
-      service.find("0200000000").isDefined shouldBe true
-      service.find(" 0200000000 ").isDefined shouldBe true
+      service.find("0300000000").isDefined shouldBe true
+      service.find(" 0300000000 ").isDefined shouldBe true
     }
 
     "find codes less than 10 characters in length" in {
       given(config.runningAsDev) willReturn true
-      service.find("0200").isDefined shouldBe true
-      service.find(" 0200 ").isDefined shouldBe true
+      service.find("0300").isDefined shouldBe true
+      service.find(" 0300 ").isDefined shouldBe true
     }
 
     "find codes longer than 10 characters" in {
       given(config.runningAsDev) willReturn true
-      service.find("0200000000123456789").isDefined shouldBe true
-      service.find(" 0200000000123456789 ").isDefined shouldBe true
+      service.find("0300000000123456789").isDefined shouldBe true
+      service.find(" 0300000000123456789 ").isDefined shouldBe true
     }
 
     "not find codes from single digit chapters that are missing the leading zero" when {
@@ -86,7 +86,8 @@ class CommodityCodeServiceSpec extends UnitSpec with MockitoSugar with BeforeAnd
     "find commodity codes with optional end dates" in {
       given(config.runningAsDev) willReturn true
       service.find("0100000000") shouldBe Some(CommodityCode("0100000000", Some("2019-01-01T00:00:00")))
-      service.find("0200000000") shouldBe Some(CommodityCode("0200000000", None))
+      service.find("0200000000") shouldBe Some(CommodityCode("0200000000", Some("3000-01-01T00:00:00")))
+      service.find("0300000000") shouldBe Some(CommodityCode("0300000000", None))
     }
 
     implicit def str2instant: String => Instant = LocalDateTime.parse(_).toInstant(ZoneOffset.UTC)

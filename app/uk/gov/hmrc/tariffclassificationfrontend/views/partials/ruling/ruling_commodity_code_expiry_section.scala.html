@@ -1,0 +1,50 @@
+@*
+ * Copyright 2019 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
+@import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CommodityCode}
+@import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
+@import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
+@(c: Case, commodityCode: Option[CommodityCode])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+
+@if(commodityCode.flatMap(_.expiry).isDefined) {
+    <div id="ruling_commodity_code_expiry_section">
+        <div class="notice">
+            <i class="icon icon-important">
+                <span class="visually-hidden">Warning</span>
+            </i>
+            <strong class="bold-small">
+                <span id="ruling_commodity_code_expiry_section-warning">Commodity code @c.decision.get.bindingCommodityCode </span>
+                @if(commodityCode.exists(_.isExpired(appConfig.clock))) {
+                    <span>Expired </span>
+                } else {
+                    <span>Expires </span>
+                }
+                <span>on @Dates.format(commodityCode.flatMap(_.expiry).get)</span>
+            </strong>
+        </div>
+        <p id="ruling_commodity_code_expiry_section-message" class="mt-30">
+            <span>Contact the trader to inform them the commodity code </span>
+            @if(commodityCode.exists(_.isExpired(appConfig.clock))) {
+                <span>has expired </span>
+            } else {
+                <span>will expire </span>
+            }
+            <span>on @Dates.format(commodityCode.flatMap(_.expiry).get). </span>
+            <span>The BTI ruling is no longer valid after this date.</span>
+        </p>
+    </div>
+}

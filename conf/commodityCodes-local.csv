@@ -1,4 +1,5 @@
 "goods_nomenclature_sid";"goods_nomenclature_item_id";"producline_suffix";"validity_start_date";"validity_end_date";"description";"number_indents";"goods_nomenclature_description_period_sid";"desc_validity_start_date";"desc_validity_end_date";"nice_description";"hs_chapter";"hs_section";"node";"leaf";"significant_digits"
 27623;"0100000000";"80";"1971-12-31 00:00:00";"2019-01-01 00:00:00";"LIVE ANIMALS";0;30963;"1971-12-31 00:00:00";"";" LIVE ANIMALS";"01";1;"01";"1";2
-27623;"0200000000";"80";"1971-12-31 00:00:00";"";"LIVE ANIMALS";0;30963;"1971-12-31 00:00:00";"";" LIVE ANIMALS";"01";1;"01";"1";2
-27623;"0300000000";"80";"1971-12-31 00:00:00";"";"LIVE ANIMALS";0;30963;"1971-12-31 00:00:00";"";" LIVE ANIMALS";"01";1;"01";"0";2
+27623;"0200000000";"80";"1971-12-31 00:00:00";"3000-01-01 00:00:00";"LIVE ANIMALS";0;30963;"1971-12-31 00:00:00";"";" LIVE ANIMALS";"01";1;"01";"1";2
+27623;"0300000000";"80";"1971-12-31 00:00:00";"";"LIVE ANIMALS";0;30963;"1971-12-31 00:00:00";"";" LIVE ANIMALS";"01";1;"01";"1";2
+27623;"0400000000";"80";"1971-12-31 00:00:00";"";"LIVE ANIMALS";0;30963;"1971-12-31 00:00:00";"";" LIVE ANIMALS";"01";1;"01";"0";2

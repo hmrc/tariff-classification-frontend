@@ -49,7 +49,7 @@ class RulingControllerSpec extends UnitSpec with Matchers with WithFakeApplicati
   private val mapper = mock[DecisionFormMapper]
   private val commodityCodeService = mock[CommodityCodeService]
   private val operator = mock[Operator]
-  private val decisionForm = new DecisionForm(new CommodityCodeConstraints(commodityCodeService))
+  private val decisionForm = new DecisionForm(new CommodityCodeConstraints(commodityCodeService, appConfig))
 
   private implicit val hc: HeaderCarrier = HeaderCarrier()
 

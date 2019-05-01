@@ -16,16 +16,24 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.forms
 
+import java.time.Clock
+
 import javax.inject.{Inject, Singleton}
 import play.api.data.validation.{Constraint, Invalid, Valid}
+import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.service.CommodityCodeService
 
 @Singleton
-class CommodityCodeConstraints @Inject()(commodityCodeService: CommodityCodeService) {
+class CommodityCodeConstraints @Inject()(commodityCodeService: CommodityCodeService, appConfig: AppConfig) {
+  private implicit val clock: Clock = appConfig.clock
 
   val commodityCodeExistsInUKTradeTariff: Constraint[String] = Constraint("constraints.commodityCodeExists")({
-    case s: String if commodityCodeService.find(s).isDefined => Valid
-    case _: String => Invalid("This commodity code is not a valid code in the UK Trade Tariff")
+    case s: String if commodityCodeService.find(s).exists(_.isLive) =>
+      Valid
+    case s: String if commodityCodeService.find(s).exists(_.isExpired) =>
+      Invalid("This commodity code has expired")
+    case _: String =>
+      Invalid("This commodity code is not a valid code in the UK Trade Tariff")
   })
 
 }

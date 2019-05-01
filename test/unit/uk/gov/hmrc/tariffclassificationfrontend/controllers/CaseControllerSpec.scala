@@ -52,19 +52,19 @@ class CaseControllerSpec extends WordSpec with Matchers with WithFakeApplication
   private val operator = mock[Operator]
   private val event = mock[Event]
   private val commodityCodeService = mock[CommodityCodeService]
-  private val decisionForm = new DecisionForm(new CommodityCodeConstraints(commodityCodeService))
+  private val decisionForm = new DecisionForm(new CommodityCodeConstraints(commodityCodeService, appConfig))
 
   private def controller(c: Case) = new CaseController(
     new SuccessfulRequestActions(operator, c = c),
     mock[CasesService], keywordsService, fileService,
-    eventService, queueService,
+    eventService, queueService, commodityCodeService,
     decisionForm, messageApi, appConfig
   )
 
   private def controller(c: Case, permission: Set[Permission]) = new CaseController(
     new RequestActionsWithPermissions(permission, c = c),
     mock[CasesService], keywordsService, fileService,
-    eventService, queueService,
+    eventService, queueService, commodityCodeService,
     decisionForm, messageApi, appConfig
   )
 
