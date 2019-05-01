@@ -21,13 +21,13 @@ import org.mockito.BDDMockito._
 import org.mockito.Mockito
 import org.mockito.Mockito.{never, verify}
 import org.scalatest.mockito.MockitoSugar
-import org.scalatest.{BeforeAndAfterEach, Matchers, WordSpec}
+import org.scalatest.{BeforeAndAfterEach, Matchers}
 import play.api.http.Status
 import play.api.i18n.{DefaultLangs, DefaultMessagesApi}
 import play.api.test.Helpers.{redirectLocation, _}
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.test.WithFakeApplication
+import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.{CommodityCodeConstraints, DecisionForm, DecisionFormData, DecisionFormMapper}
 import uk.gov.hmrc.tariffclassificationfrontend.models.Permission.Permission
@@ -37,7 +37,7 @@ import uk.gov.tariffclassificationfrontend.utils.Cases
 
 import scala.concurrent.Future
 
-class RulingControllerSpec extends WordSpec with Matchers with WithFakeApplication
+class RulingControllerSpec extends UnitSpec with Matchers with WithFakeApplication
   with MockitoSugar with BeforeAndAfterEach with ControllerCommons {
 
   private val env = Environment.simple()
@@ -126,17 +126,14 @@ class RulingControllerSpec extends WordSpec with Matchers with WithFakeApplicati
       "explanation" -> "")
     )
 
-    "return OK and HTML content type" in {
-
+    "update and redirect for permitted user" in {
       given(casesService.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(updatedCase))
       given(fileService.getAttachments(refEq(updatedCase))(any[HeaderCarrier])).willReturn(Future.successful(Seq(attachment)))
 
-      val result = controller(caseWithStatusOPEN).updateRulingDetails("reference")(aValidForm)
-      status(result) shouldBe Status.OK
-      contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
-      contentAsString(result) should include("Ruling")
-      contentAsString(result) shouldNot include("<form")
+      val result = await(controller(caseWithStatusOPEN).updateRulingDetails("reference")(aValidForm))
+      verify(casesService).updateCase(any[Case])(any[HeaderCarrier])
+      status(result) shouldBe Status.SEE_OTHER
+      locationOf(result) shouldBe Some(routes.CaseController.rulingDetails("reference").url)
     }
 
     "redirect back to edit ruling on Form Error" in {
@@ -159,15 +156,6 @@ class RulingControllerSpec extends WordSpec with Matchers with WithFakeApplicati
       contentType(result) shouldBe None
       charset(result) shouldBe None
       redirectLocation(result) shouldBe Some("/tariff-classification/cases/reference/ruling")
-    }
-
-    "return OK when user has right permissions" in {
-      given(casesService.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(updatedCase))
-      given(fileService.getAttachments(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(Seq(attachment)))
-
-      val result = controller(caseWithStatusOPEN, Set(Permission.EDIT_RULING)).updateRulingDetails("reference")(aValidForm)
-
-      status(result) shouldBe Status.OK
     }
 
     "redirect unauthorised when does not have right permissions" in {
