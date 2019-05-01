@@ -72,6 +72,10 @@ class PdfDownloadControllerSpec extends UnitSpec with MockitoSugar with Controll
     when(fileService.getAttachments(any[Case])(any[HeaderCarrier])).thenReturn(successful(Seq.empty))
   }
 
+  private def givenCaseWithoutLetterOfAuth(): Unit = {
+    when(fileService.getLetterOfAuthority(any[Case])(any[HeaderCarrier])).thenReturn(successful(None))
+  }
+
   private def givenValidGeneratedPdf(): Unit = {
     when(pdfService.generatePdf(any[Html])).thenReturn(successful(expectedResult))
   }
@@ -86,6 +90,7 @@ class PdfDownloadControllerSpec extends UnitSpec with MockitoSugar with Controll
     "return expected pdf" in {
       givenCompletedCase()
       givenCaseWithoutAttachments()
+      givenCaseWithoutLetterOfAuth()
       givenValidGeneratedPdf()
 
       val result: Result = await(controller.applicationPdf(caseWithDecision.reference)(fakeRequest))

@@ -21,6 +21,7 @@ import java.time.temporal.ChronoUnit.DAYS
 import java.util.UUID
 
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.CaseStatus
+import uk.gov.hmrc.tariffclassificationfrontend.models.ImportExport.ImportExport
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.models.response.ScanStatus
 
@@ -89,7 +90,7 @@ object Cases {
                      relatedBTIReference: Option[String] = None,
                      knownLegalProceedings: Option[String] = None,
                      envisagedCommodityCode: Option[String] = None,
-                     importOrExport: Option[String] = None,
+                     importOrExport: Option[ImportExport] = None,
                      sampleToBeProvided: Boolean = false,
                      sampleToBeReturned: Boolean = false): Case => Case = { c =>
     c.copy(application = c.application.asBTI.copy(
@@ -132,7 +133,7 @@ object Cases {
                                     relatedBTIReference: Option[String] = None,
                                     knownLegalProceedings: Option[String] = None,
                                     envisagedCommodityCode: Option[String] = None,
-                                    importOrExport: Option[String] = None): Case => Case = { c =>
+                                    importOrExport: Option[ImportExport] = None): Case => Case = { c =>
     c.copy(
       application = c.application.asBTI.copy(
         confidentialInformation = confidentialInformation,

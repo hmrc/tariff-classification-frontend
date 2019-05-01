@@ -17,6 +17,7 @@
 package uk.gov.hmrc.tariffclassificationfrontend.models
 
 import java.time.Instant
+import uk.gov.hmrc.tariffclassificationfrontend.models.ImportExport.ImportExport
 
 sealed trait Application {
   val `type`: String
@@ -56,7 +57,7 @@ case class BTIApplication
   goodName: String,
   goodDescription: String,
   confidentialInformation: Option[String],
-  importOrExport: Option[String] = None,
+  importOrExport: Option[ImportExport] = None,
   otherInformation: Option[String],
   reissuedBTIReference: Option[String],
   relatedBTIReference: Option[String],
