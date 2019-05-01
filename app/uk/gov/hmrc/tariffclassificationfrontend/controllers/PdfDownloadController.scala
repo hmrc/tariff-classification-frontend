@@ -41,7 +41,7 @@ class PdfDownloadController @Inject()(authenticatedAction: AuthenticatedAction,
 
   def rulingPdf(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     caseService.getOne(reference) flatMap {
-      case Some(c: Case) if c.decision.isDefined => generatePdf(ruling_template(c), s"BTIRuling_$reference.pdf")
+      case Some(c: Case) if c.decision.isDefined => generatePdf(ruling_template(c, c.decision.get), s"BTIRuling_$reference.pdf")
       case Some(c: Case) if c.decision.isEmpty =>  successful(Ok(views.html.ruling_not_found(reference)))
       case _ => successful(Ok(views.html.case_not_found(reference)))
     }
