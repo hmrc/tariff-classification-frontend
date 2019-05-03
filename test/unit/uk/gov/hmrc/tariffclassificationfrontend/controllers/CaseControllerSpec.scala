@@ -18,7 +18,7 @@ package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
 import java.time.Clock
 
-import org.mockito.ArgumentMatchers.{any, refEq}
+import org.mockito.ArgumentMatchers.{any, anyString, refEq}
 import org.mockito.BDDMockito._
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{Matchers, WordSpec}
@@ -109,6 +109,7 @@ class CaseControllerSpec extends WordSpec with Matchers with WithFakeApplication
       val aCase = Cases.btiCaseExample
       val attachment = Cases.storedAttachment
       given(fileService.getAttachments(refEq(aCase))(any[HeaderCarrier])).willReturn(successful(Seq(attachment)))
+      given(commodityCodeService.find(anyString())).willReturn(None)
 
       val result = controller(aCase).rulingDetails("reference")(fakeRequest)
 

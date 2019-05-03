@@ -15,8 +15,8 @@
  *@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-@import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CommodityCode}
 @import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
+@import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CommodityCode}
 @import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
 @(c: Case, commodityCode: Option[CommodityCode])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
@@ -26,12 +26,12 @@
             <i class="icon icon-important">
                 <span class="visually-hidden">Warning</span>
             </i>
-            <strong class="bold-small">
-                <span id="ruling_commodity_code_expiry_section-warning">Commodity code @c.decision.get.bindingCommodityCode </span>
+            <strong id="ruling_commodity_code_expiry_section-warning" class="bold-small">
+                <span>Commodity code @c.decision.get.bindingCommodityCode </span>
                 @if(commodityCode.exists(_.isExpired(appConfig.clock))) {
-                    <span>Expired </span>
+                    <span id="ruling_commodity_code_expiry_section-warning_expired">Expired </span>
                 } else {
-                    <span>Expires </span>
+                    <span id="ruling_commodity_code_expiry_section-warning_expiring">Expires </span>
                 }
                 <span>on @Dates.format(commodityCode.flatMap(_.expiry).get)</span>
             </strong>
@@ -39,9 +39,9 @@
         <p id="ruling_commodity_code_expiry_section-message" class="mt-30">
             <span>Contact the trader to inform them the commodity code </span>
             @if(commodityCode.exists(_.isExpired(appConfig.clock))) {
-                <span>has expired </span>
+                <span id="ruling_commodity_code_expiry_section-message_expired">has expired </span>
             } else {
-                <span>will expire </span>
+                <span id="ruling_commodity_code_expiry_section-message_expiring">will expire </span>
             }
             <span>on @Dates.format(commodityCode.flatMap(_.expiry).get). </span>
             <span>The BTI ruling is no longer valid after this date.</span>

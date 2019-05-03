@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.views.partials
 
+import org.mockito.ArgumentMatchers._
+import org.mockito.BDDMockito._
 import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms._
@@ -34,6 +36,7 @@ class CompleteRulingSectionViewSpec extends ViewSpec with MockitoSugar {
   "Complete ruling section" should {
 
     "render with disabled button for OPEN case with incomplete decision" in {
+      given(commodityCodeService.find(anyString())).willReturn(None)
       val case1 = Cases.btiCaseExample.copy(status = CaseStatus.OPEN)
 
       // When

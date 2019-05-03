@@ -44,8 +44,7 @@ class CommodityCodeService @Inject()(appConfig: AppConfig) {
   }
 
   private val commodityCodesFromFile: Seq[CommodityCode] = {
-    val path = if(appConfig.runningAsDev) "commodityCodes-local.csv" else "commodityCodes.csv"
-    val url = getClass.getClassLoader.getResource(path)
+    val url = getClass.getClassLoader.getResource(appConfig.commodityCodePath)
     val lines = Source.fromURL(url, "UTF-8").getLines()
 
     val byHeader: Map[String, Int] = split(lines.next()).zipWithIndex.toMap
