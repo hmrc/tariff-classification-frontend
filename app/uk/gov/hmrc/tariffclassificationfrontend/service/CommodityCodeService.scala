@@ -43,7 +43,7 @@ class CommodityCodeService @Inject()(appConfig: AppConfig) {
     else trimmed.padTo[Char, String](padLimit, '0').mkString
   }
 
-  private val commodityCodesFromFile: Seq[CommodityCode] = {
+  private lazy val commodityCodesFromFile: Seq[CommodityCode] = {
     val url = getClass.getClassLoader.getResource(appConfig.commodityCodePath)
     val lines = Source.fromURL(url, "UTF-8").getLines()
 
