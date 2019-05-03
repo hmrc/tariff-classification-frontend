@@ -76,11 +76,11 @@
                         @if(commodityCode.flatMap(_.expiry).isDefined) {
                             <span id="ruling_bindingCommodityCodeValue_expiry" class="bold">
                                 @if(commodityCode.exists(_.isExpired(appConfig.clock))) {
-                                    <span id="ruling_bindingCommodityCodeValue_expired">Expired</span>
+                                    <span id="ruling_bindingCommodityCodeValue_expired">invalid from </span>
                                 } else {
-                                    <span id="ruling_bindingCommodityCodeValue_expiring">Expires</span>
+                                    <span id="ruling_bindingCommodityCodeValue_expiring">valid until </span>
                                 }
-                                <span>on @Dates.format(commodityCode.flatMap(_.expiry).get)</span>
+                                <span>@Dates.format(commodityCode.flatMap(_.expiry).get)</span>
                             </span>
                         }
                     </dd>

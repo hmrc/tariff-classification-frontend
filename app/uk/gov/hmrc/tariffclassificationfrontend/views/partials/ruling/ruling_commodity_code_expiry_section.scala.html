@@ -29,11 +29,11 @@
             <strong id="ruling_commodity_code_expiry_section-warning" class="bold-small">
                 <span>Commodity code @c.decision.get.bindingCommodityCode </span>
                 @if(commodityCode.exists(_.isExpired(appConfig.clock))) {
-                    <span id="ruling_commodity_code_expiry_section-warning_expired">expired </span>
+                    <span id="ruling_commodity_code_expiry_section-warning_expired">invalid from </span>
                 } else {
-                    <span id="ruling_commodity_code_expiry_section-warning_expiring">expires </span>
+                    <span id="ruling_commodity_code_expiry_section-warning_expiring">is valid until </span>
                 }
-                <span>on @Dates.format(commodityCode.flatMap(_.expiry).get)</span>
+                <span>@Dates.format(commodityCode.flatMap(_.expiry).get)</span>
             </strong>
         </div>
         @if(c.status != CaseStatus.CANCELLED) {
