@@ -14,7 +14,7 @@ class CompleteCaseSpec extends IntegrationTest with MockitoSugar {
 
     val owner = Some(Operator("111", role = Role.CLASSIFICATION_OFFICER))
     val completeDecision = Decision(
-      bindingCommodityCode = "040900",
+      bindingCommodityCode = "0300000000",
       justification = "justification-content",
       goodsDescription = "goods-description",
       methodSearch = Some("method-to-search"),
