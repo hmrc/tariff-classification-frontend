@@ -187,6 +187,23 @@ class RulingDetailsViewSpec extends ViewSpec {
         // Then
         doc should containElementWithID("ruling_commodity_code_expiry_section")
       }
+
+      "case is CANCELLED without reason" in {
+        // Given
+        val c = aCase(
+          withStatus(CaseStatus.CANCELLED),
+          withDecision(
+            bindingCommodityCode = "commodity code"
+          )
+        )
+        val commodityCode = CommodityCode("commodity code", Some(Instant.now.minusSeconds(60)))
+
+        // When
+        val doc = view(ruling_details(c, None, Seq.empty, Some(commodityCode))(requestWithPermissions(Permission.COMPLETE_CASE), messages, appConfig))
+
+        // Then
+        doc should containElementWithID("ruling_commodity_code_expiry_section")
+      }
     }
 
     "Not render commodity code expiration section" when {
@@ -199,24 +216,6 @@ class RulingDetailsViewSpec extends ViewSpec {
           )
         )
         val commodityCode = CommodityCode("commodity code", None)
-
-        // When
-        val doc = view(ruling_details(c, None, Seq.empty, Some(commodityCode))(requestWithPermissions(Permission.COMPLETE_CASE), messages, appConfig))
-
-        // Then
-        doc shouldNot containElementWithID("ruling_commodity_code_expiry_section")
-      }
-
-      "case is CANCELLED and cancellation reason is INVALIDATED_CODE_CHANGE" in {
-        // Given
-        val c = aCase(
-          withStatus(CaseStatus.CANCELLED),
-          withDecision(
-            bindingCommodityCode = "commodity code",
-            cancellation = Some(Cancellation(reason = CancelReason.INVALIDATED_CODE_CHANGE))
-          )
-        )
-        val commodityCode = CommodityCode("commodity code", Some(Instant.now.minusSeconds(60)))
 
         // When
         val doc = view(ruling_details(c, None, Seq.empty, Some(commodityCode))(requestWithPermissions(Permission.COMPLETE_CASE), messages, appConfig))

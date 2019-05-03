@@ -18,7 +18,7 @@ package uk.gov.hmrc.tariffclassificationfrontend.views.partials.ruling
 
 import java.time.Instant
 
-import uk.gov.hmrc.tariffclassificationfrontend.models.CommodityCode
+import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, CommodityCode}
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewSpec
 import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.ruling.ruling_commodity_code_expiry_section
@@ -26,7 +26,7 @@ import uk.gov.tariffclassificationfrontend.utils.Cases._
 
 class RulingCommodityCodeExpirySectionViewSpec extends ViewSpec {
 
-  "Ruling explanation" should {
+  "Ruling Expiry Section" should {
 
     "render nothing" when {
       "commodity code is none" in {
@@ -75,6 +75,20 @@ class RulingCommodityCodeExpirySectionViewSpec extends ViewSpec {
         doc should containElementWithID("ruling_commodity_code_expiry_section")
         doc should containElementWithID("ruling_commodity_code_expiry_section-warning_expiring")
         doc should containElementWithID("ruling_commodity_code_expiry_section-message_expiring")
+      }
+    }
+
+    "not render expiration message" when {
+      "case is CANCELLED" in {
+        val c = aCase(withStatus(CaseStatus.CANCELLED), withDecision(bindingCommodityCode = "123"))
+
+        // When
+        val doc = view(ruling_commodity_code_expiry_section(c, Some(CommodityCode("123", Some(Instant.now.minusSeconds(60))))))
+
+        // Then
+        doc should containElementWithID("ruling_commodity_code_expiry_section")
+        doc should containElementWithID("ruling_commodity_code_expiry_section-warning_expired")
+        doc shouldNot containElementWithID("ruling_commodity_code_expiry_section-message_expired")
       }
     }
 

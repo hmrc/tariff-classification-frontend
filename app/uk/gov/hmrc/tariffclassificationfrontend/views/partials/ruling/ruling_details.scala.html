@@ -18,7 +18,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.RulingController
 @import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionFormData
 @import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
-@import uk.gov.hmrc.tariffclassificationfrontend.models.{BTIApplication, CancelReason, Case, CaseStatus, CommodityCode, Decision, Permission, StoredAttachment}
+@import uk.gov.hmrc.tariffclassificationfrontend.models.{BTIApplication, Case, CaseStatus, CommodityCode, Decision, Permission, StoredAttachment}
 @import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.ruling._
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{attachments_list, tab_heading}
@@ -141,7 +141,7 @@
 
     @ruling_explanation(c)
 
-    @if(c.status == CaseStatus.COMPLETED || c.status == CaseStatus.CANCELLED && c.decision.flatMap(_.cancellation).exists(_.reason != CancelReason.INVALIDATED_CODE_CHANGE)) {
+    @if(c.status == CaseStatus.COMPLETED || c.status == CaseStatus.CANCELLED) {
         @ruling_commodity_code_expiry_section(c, commodityCode)
     }
 
