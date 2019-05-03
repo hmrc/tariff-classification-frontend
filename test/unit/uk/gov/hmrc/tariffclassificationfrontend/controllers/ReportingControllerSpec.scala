@@ -115,8 +115,8 @@ class ReportingControllerSpec extends UnitSpec with Matchers with WithFakeApplic
     "Return OK for Referral Report" in {
       given(queueService.getAll) willReturn Future.successful(Seq.empty)
 
-      val req: AuthenticatedRequest[AnyContent] = request(manager, newFakeGETRequestWithCSRF(fakeApplication))
-      val result = await(controller(manager).getReportCriteria(Report.REFERRAL.toString)(req.request))
+      val req: AuthenticatedRequest[AnyContent] = request(operator, newFakeGETRequestWithCSRF(fakeApplication))
+      val result = await(controller(requiredPermissions).getReportCriteria(Report.REFERRAL.toString)(req.request))
 
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -184,14 +184,14 @@ class ReportingControllerSpec extends UnitSpec with Matchers with WithFakeApplic
       given(reportingService.getReferralReport(refEq(range))(any[HeaderCarrier])) willReturn Future.successful(Seq.empty[ReportResult])
 
       val req: AuthenticatedRequest[AnyContent] = request(
-        manager,
+        operator,
         newFakeGETRequestWithCSRF(fakeApplication)
           .withFormUrlEncodedBody(
             "min.day" -> "1", "min.month" -> "1", "min.year" -> "1970",
             "max.day" -> "2", "max.month" -> "1", "max.year" -> "1970"
           )
       )
-      val result = await(controller(manager).getReport(Report.REFERRAL.toString)(req.request))
+      val result = await(controller(requiredPermissions).getReport(Report.REFERRAL.toString)(req.request))
 
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
