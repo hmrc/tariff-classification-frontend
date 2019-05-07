@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.views.partials
 
-import uk.gov.hmrc.tariffclassificationfrontend.models.Permission
+import uk.gov.hmrc.tariffclassificationfrontend.models.{ImportExport, Permission}
 import uk.gov.hmrc.tariffclassificationfrontend.models.response.ScanStatus
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewSpec
@@ -87,7 +87,7 @@ class ApplicationDetailsViewSpec extends ViewSpec {
           relatedBTIReference = Some("related bti"),
           knownLegalProceedings = Some("legal proceedings"),
           envisagedCommodityCode = Some("envisaged code"),
-          importOrExport = Some("Import")
+          importOrExport = Some(ImportExport.IMPORT)
         ),
         withAttachment(attachment("FILE_ID"))
       )

@@ -33,7 +33,20 @@ class ReportingService @Inject()(connector: BindingTariffClassificationConnector
         decisionStartDate = Some(decisionStartDate)
       ),
       group = CaseReportGroup.QUEUE,
-      field = CaseReportField.DAYS_ELAPSED
+      field = CaseReportField.ACTIVE_DAYS_ELAPSED
+    )
+
+    connector.generateReport(report)
+  }
+
+  def getReferralReport(referralDate: InstantRange)
+                  (implicit hc: HeaderCarrier): Future[Seq[ReportResult]] = {
+    val report = CaseReport(
+      filter = CaseReportFilter(
+        referralDate = Some(referralDate)
+      ),
+      group = CaseReportGroup.QUEUE,
+      field = CaseReportField.REFERRED_DAYS_ELAPSED
     )
 
     connector.generateReport(report)

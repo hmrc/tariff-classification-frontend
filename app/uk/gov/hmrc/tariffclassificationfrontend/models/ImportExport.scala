@@ -16,11 +16,7 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.models
 
-case class ReportResult
-(
-  group: Option[String],
-  value: Seq[Int]
-) {
-  def size: Int = value.size
-  def average: Double = value.sum.toDouble / size
+object ImportExport extends Enumeration {
+  type ImportExport = Value
+  val IMPORT, EXPORT = Value
 }

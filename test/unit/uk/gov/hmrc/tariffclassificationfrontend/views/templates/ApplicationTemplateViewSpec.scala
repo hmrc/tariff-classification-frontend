@@ -41,19 +41,12 @@ class ApplicationTemplateViewSpec extends ViewSpec {
     "contain the details for an agent" in {
       val doc = view(createView(caseWithAgent, Seq.empty))
       containsCommonSections(doc)
-      doc.getElementById("pdf.application.section.applyingFor.heading") should containText("Applying for")
+      doc.getElementById("pdf.application.section.applyingFor.heading") should containText("Details of the business, organisation or individual you represent")
     }
 
     "contain the details for re-issued BTI" in {
       val doc = view(createView(caseWithoutAgent.copy(application = Cases.btiApplicationExample.copy(reissuedBTIReference = Some("REISSUE1234"))), Seq.empty))
       doc.getElementById("application.reissuedBTIReference").text() shouldBe "REISSUE1234"
-    }
-
-    "contain the details for confidential information" in {
-      val doc = view(createView(caseWithoutAgent.copy(application = Cases.btiApplicationExample.copy(
-        confidentialInformation = Some("Confidential information"))), Seq.empty))
-
-      doc.getElementById("application.confidentialInformation").text() shouldBe "Confidential information"
     }
 
     "contain the details for uploaded files" in {
@@ -89,11 +82,10 @@ class ApplicationTemplateViewSpec extends ViewSpec {
   }
 
   private def containsCommonSections(doc: Document) = {
-    doc.getElementById("application.submitted").text() shouldBe s"Application submitted on: ${Dates.format(Cases.btiCaseExample.createdDate)}"
-    doc.getElementById("application.casereference").text() shouldBe s"Application reference number: ${Cases.btiCaseExample.reference}"
+    doc.getElementById("application.submitted").text() shouldBe s"${Dates.format(Cases.btiCaseExample.createdDate)}"
+    doc.getElementById("application.casereference").text() shouldBe s"${Cases.btiCaseExample.reference}"
 
     doc should containElementWithID("pdf.application.section.applicant.heading")
-    doc should containElementWithID("pdf.application.section.applicationType.heading")
     doc should containElementWithID("pdf.application.section.aboutItem.heading")
     doc should containElementWithID("pdf.application.section.other.heading")
   }

@@ -29,16 +29,22 @@ class CaseReportTest extends UnitSpec {
       decisionStartDate = Some(InstantRange(
         min = Instant.EPOCH,
         max  = Instant.EPOCH.plusSeconds(1)
+      )),
+      referralDate = Some(InstantRange(
+        min = Instant.EPOCH,
+        max  = Instant.EPOCH.plusSeconds(1)
       ))
     ),
-    field = CaseReportField.DAYS_ELAPSED,
+    field = CaseReportField.ACTIVE_DAYS_ELAPSED,
     group = CaseReportGroup.QUEUE
   )
 
   private val params: Map[String, Seq[String]] = Map(
     "min_decision_start" -> Seq("1970-01-01T00:00:00Z"),
     "max_decision_start" -> Seq("1970-01-01T00:00:01Z"),
-    "report_field" -> Seq("days-elapsed"),
+    "min_referral_date" -> Seq("1970-01-01T00:00:00Z"),
+    "max_referral_date" -> Seq("1970-01-01T00:00:01Z"),
+    "report_field" -> Seq("active-days-elapsed"),
     "report_group" -> Seq("queue-id")
   )
 
@@ -49,7 +55,12 @@ class CaseReportTest extends UnitSpec {
 
     "Unbind Populated Search to Query String" in {
       val populatedQueryParam: String =
-        "min_decision_start=1970-01-01T00:00:00Z&max_decision_start=1970-01-01T00:00:01Z&report_group=queue-id&report_field=days-elapsed"
+        "min_decision_start=1970-01-01T00:00:00Z&" +
+          "max_decision_start=1970-01-01T00:00:01Z&" +
+          "min_referral_date=1970-01-01T00:00:00Z&" +
+          "max_referral_date=1970-01-01T00:00:01Z&" +
+          "report_group=queue-id&" +
+          "report_field=active-days-elapsed"
       URLDecoder.decode(CaseReport.bindable.unbind("", report), "UTF-8") shouldBe populatedQueryParam
     }
 
