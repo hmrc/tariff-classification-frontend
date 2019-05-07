@@ -141,11 +141,11 @@
 
     @ruling_explanation(c)
 
-    @if(c.status == CaseStatus.COMPLETED || c.status == CaseStatus.CANCELLED) {
-        @ruling_commodity_code_expiry_section(c, commodityCode)
-    }
-
     @ruling_certificate_link(c)
+
+    @if(c.status == CaseStatus.COMPLETED || c.status == CaseStatus.CANCELLED) {
+        @ruling_commodity_code_expiry_section(c, commodityCode, clazz = "mt-3")
+    }
 
     <div class="mt-3" id="ruling-actions">
          @if(request.hasPermission(Permission.COMPLETE_CASE)) {

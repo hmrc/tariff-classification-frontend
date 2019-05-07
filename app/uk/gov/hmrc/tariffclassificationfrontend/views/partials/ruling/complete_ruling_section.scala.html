@@ -28,7 +28,7 @@
             @if(hasErrors || commodityCode.flatMap(_.expiry).isDefined) {
                 <h3 class="heading-medium">@messages("case.decision.before-you-complete")</h3>
 
-                @ruling_commodity_code_expiry_section(c, commodityCode)
+                @ruling_commodity_code_expiry_section(c, commodityCode,  clazz = "mb-3")
             }
 
             @if(hasErrors) {
