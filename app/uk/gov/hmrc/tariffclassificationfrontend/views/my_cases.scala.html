@@ -19,7 +19,11 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Operator, Paged, Queue}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{cases_list, nav_search, queue_nav}
+@import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus
 @(queues: Seq[Queue], cases: Paged[Case], operator: Operator)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+
+@openCases = @{ cases.copy(results =   cases.results.filter(_.status == CaseStatus.OPEN)) }
+@nonOpenCases = @{ cases.copy(results = cases.results.filter(_.status != CaseStatus.OPEN)) }
 
 @main(bodyClasses = None) {
 
@@ -39,7 +43,12 @@
             @queue_nav(queues, "my-cases")
         </div>
         <div class="column-three-quarters">
-            @cases_list(cases)
+            <h2 class="heading-medium mt-1">Cases on-hand</h2>
+            @cases_list(openCases, "cases_list")
+        </div>
+        <div class="column-three-quarters mt-4 float-right">
+            <h2 class="heading-medium mt-1"> Referred cases </h2>
+            @cases_list(nonOpenCases, "referred_list")
         </div>
     </div>
 }
