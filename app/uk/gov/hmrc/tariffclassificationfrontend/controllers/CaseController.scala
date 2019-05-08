@@ -40,6 +40,7 @@ class CaseController @Inject()(verify: RequestActions,
                                fileService: FileStoreService,
                                eventsService: EventsService,
                                queuesService: QueuesService,
+                               commodityCodeService: CommodityCodeService,
                                decisionForm: DecisionForm,
                                val messagesApi: MessagesApi,
                                implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
@@ -74,12 +75,10 @@ class CaseController @Inject()(verify: RequestActions,
   def rulingDetails(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
     validateAndRenderView(
       RULING,
-      c => {
-        val form = decisionForm.bindFrom(c.decision)
-        fileService
-          .getAttachments(c)
-          .map(views.html.partials.ruling.ruling_details(c, form, _))
-      }
+      c => for {
+        attachments <- fileService.getAttachments(c)
+        commodityCode = c.decision.map(_.bindingCommodityCode).flatMap(commodityCodeService.find)
+      } yield views.html.partials.ruling.ruling_details(c, decisionForm.bindFrom(c.decision), attachments, commodityCode)
     )
   }
 
@@ -89,20 +88,6 @@ class CaseController @Inject()(verify: RequestActions,
       ACTIVITY,
       showActivity(_, activityForm)
     )
-  }
-
-  private def validateAndRenderView(page: CaseDetailPage, toHtml: Case => Future[Html])
-                                   (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
-
-    toHtml(request.`case`).map(html => Ok(views.html.case_details(request.`case`, page, html)))
-  }
-
-  private def showActivity(c: Case, f: Form[ActivityFormData])
-                          (implicit request: AuthenticatedRequest[AnyContent]): Future[HtmlFormat.Appendable] = {
-    for {
-      events <- eventsService.getEvents(c.reference, NoPagination())
-      queues <- queuesService.getAll
-    } yield views.html.partials.activity_details(c, events, f, queues)
   }
 
   def addNote(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.ADD_NOTE)).async { implicit request =>
@@ -129,12 +114,6 @@ class CaseController @Inject()(verify: RequestActions,
     activityForm.bindFromRequest.fold(onError, onSuccess)
   }
 
-  private def validateAndRedirect(reference: String, page: CaseDetailPage, toHtml: Case => Future[Call])
-                                 (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
-
-    toHtml(request.`case`).map(_ => Redirect(routes.CaseController.activityDetails(reference)))
-  }
-
   def keywordsDetails(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
     validateAndRenderView(
       reference,
@@ -142,12 +121,6 @@ class CaseController @Inject()(verify: RequestActions,
       showKeywords(_, keywordForm),
       request.`case`
     )
-  }
-
-  private def validateAndRenderView(reference: String, page: CaseDetailPage, toHtml: Case => Future[Html], c: Case)
-                                   (implicit request: Request[_]): Future[Result] = {
-
-    toHtml(c).map(html => Ok(views.html.case_details(c, page, html)))
   }
 
   def addKeyword(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.KEYWORDS)).async { implicit request =>
@@ -165,13 +138,6 @@ class CaseController @Inject()(verify: RequestActions,
     )
   }
 
-  private def showKeywords(c: Case, f: Form[String])
-                          (implicit request: AuthenticatedRequest[AnyContent]): Future[HtmlFormat.Appendable] = {
-    keywordsService.autoCompleteKeywords.map { keywords: Seq[String] =>
-      views.html.partials.keywords_details(c, keywords, f)
-    }
-  }
-
   def removeKeyword(reference: String, keyword: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.KEYWORDS)).async { implicit request: AuthenticatedCaseRequest[AnyContent] =>
     validateAndRenderView(
       KEYWORDS,
@@ -186,5 +152,38 @@ class CaseController @Inject()(verify: RequestActions,
       updatedCase <- updateKeywords(c, keyword, request.operator)
       autoCompleteKeywords <- keywordsService.autoCompleteKeywords
     } yield views.html.partials.keywords_details(updatedCase, autoCompleteKeywords, keywordForm)
+  }
+
+  private def showKeywords(c: Case, f: Form[String])
+                          (implicit request: AuthenticatedRequest[AnyContent]): Future[HtmlFormat.Appendable] = {
+    keywordsService.autoCompleteKeywords.map { keywords: Seq[String] =>
+      views.html.partials.keywords_details(c, keywords, f)
+    }
+  }
+
+  private def validateAndRenderView(reference: String, page: CaseDetailPage, toHtml: Case => Future[Html], c: Case)
+                                   (implicit request: Request[_]): Future[Result] = {
+
+    toHtml(c).map(html => Ok(views.html.case_details(c, page, html)))
+  }
+
+  private def validateAndRenderView(page: CaseDetailPage, toHtml: Case => Future[Html])
+                                   (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
+
+    toHtml(request.`case`).map(html => Ok(views.html.case_details(request.`case`, page, html)))
+  }
+
+  private def validateAndRedirect(reference: String, page: CaseDetailPage, toHtml: Case => Future[Call])
+                                 (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
+
+    toHtml(request.`case`).map(_ => Redirect(routes.CaseController.activityDetails(reference)))
+  }
+
+  private def showActivity(c: Case, f: Form[ActivityFormData])
+                          (implicit request: AuthenticatedRequest[AnyContent]): Future[HtmlFormat.Appendable] = {
+    for {
+      events <- eventsService.getEvents(c.reference, NoPagination())
+      queues <- queuesService.getAll
+    } yield views.html.partials.activity_details(c, events, f, queues)
   }
 }

@@ -126,6 +126,10 @@ class AppConfigSpec extends UnitSpec with MockitoSugar {
       appConfig("auth.api-token" -> "token").apiToken shouldBe "token"
     }
 
+    "Build Commodity Code Path" in {
+      appConfig("app.commodity-code-path" -> "path.csv").commodityCodePath shouldBe "path.csv"
+    }
+
     "build 'filestore' url" in {
       appConfig(
         "microservice.services.binding-tariff-filestore.protocol" -> "https",

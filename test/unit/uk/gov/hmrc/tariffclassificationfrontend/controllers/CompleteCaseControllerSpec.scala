@@ -48,7 +48,7 @@ class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   private val casesService = mock[CasesService]
   private val operator = mock[Operator]
   private val commodityCodeService = mock[CommodityCodeService]
-  private val decisionForm = new DecisionForm(new CommodityCodeConstraints(commodityCodeService))
+  private val decisionForm = new DecisionForm(new CommodityCodeConstraints(commodityCodeService, appConfig))
 
   private val completeDecision = Decision(
     bindingCommodityCode = "040900",
@@ -82,7 +82,7 @@ class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
   "Complete Case" should {
 
-    when(commodityCodeService.checkIfCodeExists(any())).thenReturn(true)
+    when(commodityCodeService.find(any())).thenReturn(Some(CommodityCode("code")))
 
     "return OK and HTML content type" in {
 

@@ -19,7 +19,7 @@ package uk.gov.hmrc.tariffclassificationfrontend.controllers
 import javax.inject.{Inject, Singleton}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Request, Result}
+import play.api.mvc._
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
@@ -50,12 +50,27 @@ class RulingController @Inject()(verify: RequestActions,
     getCaseAndRenderView(menuTitle, c => {
       val formData = mapper.caseToDecisionFormData(c)
       val df = decisionForm.form.fill(formData)
-      editRuling(df, c)
+      editRulingView(df, c)
     })
   }
 
-  private def editRuling(f: Form[DecisionFormData], c: Case)
-                        (implicit request: Request[_]): Future[HtmlFormat.Appendable] = {
+  def updateRulingDetails(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.EDIT_RULING)).async { implicit request =>
+    decisionForm.form.bindFromRequest.fold(
+      errorForm =>
+        getCaseAndRenderView(
+          menuTitle,
+          c => editRulingView(errorForm, c)
+        ),
+
+      validForm =>
+        getCaseAndRedirect(menuTitle, c => for {
+          update <- casesService.updateCase(mapper.mergeFormIntoCase(c, validForm))
+        } yield routes.CaseController.rulingDetails(update.reference)
+        )
+    )
+  }
+
+  private def editRulingView(f: Form[DecisionFormData], c: Case)(implicit request: Request[_]): Future[HtmlFormat.Appendable] = {
     fileStoreService.getAttachments(c).map(views.html.partials.ruling.ruling_details_edit(c, _, f))
   }
 
@@ -68,26 +83,13 @@ class RulingController @Inject()(verify: RequestActions,
     }
   }
 
-  def updateRulingDetails(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.EDIT_RULING)).async { implicit request =>
-    decisionForm.form.bindFromRequest.fold(
-      errorForm =>
-        getCaseAndRenderView(
-          menuTitle,
-          c => editRuling(errorForm, c)
-        ),
-
-      validForm =>
-        getCaseAndRenderView(menuTitle, c => {
-          casesService
-            .updateCase(mapper.mergeFormIntoCase(c, validForm))
-            .flatMap { updated =>
-              val form = decisionForm.bindFrom(updated.decision)
-              fileStoreService
-                .getAttachments(updated)
-                .map(views.html.partials.ruling.ruling_details(updated, form, _))
-            }
-        })
-    )
+  private def getCaseAndRedirect(page: CaseDetailPage, toResult: Case => Future[Call])
+                                (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
+    if (request.`case`.status == CaseStatus.OPEN) {
+      toResult(request.`case`).map(Redirect)
+    } else {
+      successful(Redirect(routes.CaseController.rulingDetails(request.`case`.reference)))
+    }
   }
 
 }

@@ -21,19 +21,21 @@ import org.mockito.Mockito.when
 import org.scalatest.mockito.MockitoSugar
 import play.api.libs.json.{JsObject, JsString, JsValue}
 import uk.gov.hmrc.play.test.UnitSpec
+import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
+import uk.gov.hmrc.tariffclassificationfrontend.models.CommodityCode
 import uk.gov.hmrc.tariffclassificationfrontend.service.CommodityCodeService
 
 class DecisionFormConstraintsSpec extends UnitSpec with MockitoSugar {
 
   private val commodityCodeService = mock[CommodityCodeService]
-  private val decisionForm = new DecisionForm(new CommodityCodeConstraints(commodityCodeService))
+  private val decisionForm = new DecisionForm(new CommodityCodeConstraints(commodityCodeService, mock[AppConfig]))
   private val commodityCodeLengthErrorMessage = "Format must be empty or numeric between 6 and 22 digits with an even number of digits"
   private val commodityCodeUKTariffErrorMessage = "This commodity code is not a valid code in the UK Trade Tariff"
   private val bindingCommodityCodeElementId = "bindingCommodityCode"
 
   "DecisionForm validation" should {
 
-    when(commodityCodeService.checkIfCodeExists(any())).thenReturn(true)
+    when(commodityCodeService.find(any())).thenReturn(Some(CommodityCode("code")))
 
     "pass if the commodity code is empty" in {
       assertNoErrors("")
@@ -72,7 +74,7 @@ class DecisionFormConstraintsSpec extends UnitSpec with MockitoSugar {
     }
 
     "fail if the commodity code value " in {
-      when(commodityCodeService.checkIfCodeExists(any())).thenReturn(false)
+      when(commodityCodeService.find(any())).thenReturn(None)
       assertOnlyOneError("999999", Seq(commodityCodeUKTariffErrorMessage))
     }
   }

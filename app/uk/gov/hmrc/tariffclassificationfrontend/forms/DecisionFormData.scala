@@ -48,7 +48,7 @@ class DecisionForm @Inject()(commodityCodeConstraints: CommodityCodeConstraints)
 
   val mandatoryFieldsForm: Form[DecisionFormData] = Form(
     mapping(
-      "bindingCommodityCode" -> nonEmptyText,
+      "bindingCommodityCode" -> nonEmptyText.verifying(commodityCodeConstraints.commodityCodeExistsInUKTradeTariff),
       "goodsDescription" -> nonEmptyText,
       "methodSearch" -> nonEmptyText,
       "justification" -> nonEmptyText,
@@ -59,8 +59,8 @@ class DecisionForm @Inject()(commodityCodeConstraints: CommodityCodeConstraints)
     )(DecisionFormData.apply)(DecisionFormData.unapply)
   )
 
-  def bindFrom: Option[Decision] => Option[Form[DecisionFormData]] = { decision =>
-    decision.map(mapFrom)
+  def bindFrom: Option[Decision] => Option[Form[DecisionFormData]] = {
+    _.map(mapFrom)
       .map(mandatoryFieldsForm.fillAndValidate)
   }
 

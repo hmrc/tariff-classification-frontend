@@ -18,7 +18,7 @@ package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
 import java.time.Clock
 
-import org.mockito.ArgumentMatchers.{any, refEq}
+import org.mockito.ArgumentMatchers.{any, anyString, refEq}
 import org.mockito.BDDMockito._
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{Matchers, WordSpec}
@@ -52,19 +52,19 @@ class CaseControllerSpec extends WordSpec with Matchers with WithFakeApplication
   private val operator = mock[Operator]
   private val event = mock[Event]
   private val commodityCodeService = mock[CommodityCodeService]
-  private val decisionForm = new DecisionForm(new CommodityCodeConstraints(commodityCodeService))
+  private val decisionForm = new DecisionForm(new CommodityCodeConstraints(commodityCodeService, appConfig))
 
   private def controller(c: Case) = new CaseController(
     new SuccessfulRequestActions(operator, c = c),
     mock[CasesService], keywordsService, fileService,
-    eventService, queueService,
+    eventService, queueService, commodityCodeService,
     decisionForm, messageApi, appConfig
   )
 
   private def controller(c: Case, permission: Set[Permission]) = new CaseController(
     new RequestActionsWithPermissions(permission, c = c),
     mock[CasesService], keywordsService, fileService,
-    eventService, queueService,
+    eventService, queueService, commodityCodeService,
     decisionForm, messageApi, appConfig
   )
 
@@ -109,6 +109,7 @@ class CaseControllerSpec extends WordSpec with Matchers with WithFakeApplication
       val aCase = Cases.btiCaseExample
       val attachment = Cases.storedAttachment
       given(fileService.getAttachments(refEq(aCase))(any[HeaderCarrier])).willReturn(successful(Seq(attachment)))
+      given(commodityCodeService.find(anyString())).willReturn(None)
 
       val result = controller(aCase).rulingDetails("reference")(fakeRequest)
 

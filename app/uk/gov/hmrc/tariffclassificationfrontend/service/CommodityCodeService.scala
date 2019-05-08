@@ -16,26 +16,56 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.service
 
-import javax.inject.Singleton
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+
+import javax.inject.{Inject, Singleton}
+import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
+import uk.gov.hmrc.tariffclassificationfrontend.models.CommodityCode
 
 import scala.io.Source
 
 @Singleton
-class CommodityCodeService() {
+class CommodityCodeService @Inject()(appConfig: AppConfig) {
 
+  private lazy val dateTimeFormatter = DateTimeFormatter.ofPattern("yyy-MM-dd HH:mm:ss")
   private lazy val padLimit = 10
 
-  def checkIfCodeExists(commodityCode: String): Boolean = {
-    val canonicalCode: String =
-      if (commodityCode.length > padLimit) commodityCode.substring(0, padLimit)
-      else commodityCode.trim.padTo[Char, String](padLimit, '0').mkString
+  def find(commodityCode: String): Option[CommodityCode] = {
+    val canonicalCode: String = padTo10Digits(commodityCode)
 
-    commodityCodesFromFile.contains(canonicalCode)
+    commodityCodesFromFile.find(_.code == canonicalCode)
   }
 
-  private lazy val commodityCodesFromFile: Seq[String] = {
-    val url = getClass.getClassLoader.getResource("commodityCodes.txt")
-    (for (line <- Source.fromURL(url, "UTF-8").getLines()) yield line).toSeq
+  private def padTo10Digits(input: String): String = {
+    val trimmed = input.trim
+    if (trimmed.length > padLimit) trimmed.substring(0, padLimit)
+    else trimmed.padTo[Char, String](padLimit, '0').mkString
+  }
+
+  private lazy val commodityCodesFromFile: Seq[CommodityCode] = {
+    val url = getClass.getClassLoader.getResource(appConfig.commodityCodePath)
+    val lines = Source.fromURL(url, "UTF-8").getLines()
+
+    val byHeader: Map[String, Int] = split(lines.next()).zipWithIndex.toMap
+
+    lines
+      .map(split)
+      .filter(columns => columns(byHeader("leaf")) == "1")
+      .map { columns =>
+        val commodityCode = columns(byHeader("goods_nomenclature_item_id"))
+        val expiry = columns(byHeader("validity_end_date"))
+        if(expiry.nonEmpty) {
+          val date = LocalDateTime.parse(expiry, dateTimeFormatter).atZone(appConfig.clock.getZone).toInstant
+          CommodityCode(commodityCode, Some(date))
+        } else {
+          CommodityCode(commodityCode)
+        }
+      }.toSeq
+  }
+
+  private def split(string: String): Array[String] = {
+    string.split(";").map(_.replaceAll("\"", ""))
   }
 
 }

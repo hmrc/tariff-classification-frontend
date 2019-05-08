@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.config
 
-import java.time.{Clock, ZoneId}
+import java.time.Clock
 
 import javax.inject.{Inject, Singleton}
 import play.api.Mode.Mode
@@ -53,6 +53,7 @@ class AppConfig @Inject()(val runModeConfiguration: Configuration, environment: 
   lazy val apiToken: String = loadConfig("auth.api-token")
   lazy val pdfGeneratorUrl: String = baseUrl("pdf-generator-service")
   lazy val activeDaysElapsedSlaLimit: Int = getInt("app.active-days-elapsed-sla-limit")
+  lazy val commodityCodePath: String = loadConfig("app.commodity-code-path")
 
   lazy val clock: Clock = Clock.systemUTC()
 

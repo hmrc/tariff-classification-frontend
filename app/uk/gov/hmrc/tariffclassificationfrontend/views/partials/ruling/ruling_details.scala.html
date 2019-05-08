@@ -18,11 +18,11 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.RulingController
 @import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionFormData
 @import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
-@import uk.gov.hmrc.tariffclassificationfrontend.models.{BTIApplication, Case, CaseStatus, Decision, Permission, StoredAttachment}
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.ruling.{cancel_ruling_section, complete_ruling_section, ruling_certificate_link, ruling_explanation}
+@import uk.gov.hmrc.tariffclassificationfrontend.models.{BTIApplication, Case, CaseStatus, CommodityCode, Decision, Permission, StoredAttachment}
+@import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.ruling._
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{attachments_list, tab_heading}
-
-@(c: Case, decisionForm: Option[Form[DecisionFormData]], files: Seq[StoredAttachment])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(c: Case, decisionForm: Option[Form[DecisionFormData]], files: Seq[StoredAttachment], commodityCode: Option[CommodityCode])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @defining(c.application.asBTI) { btiApp: BTIApplication =>
 
@@ -73,6 +73,16 @@
                     </dt>
                     <dd class="column-two-thirds">
                         <span id="ruling_bindingCommodityCodeValue">@d.bindingCommodityCode</span>
+                        @if(commodityCode.flatMap(_.expiry).isDefined) {
+                            <span id="ruling_bindingCommodityCodeValue_expiry" class="bold">
+                                @if(commodityCode.exists(_.isExpired(appConfig.clock))) {
+                                    <span id="ruling_bindingCommodityCodeValue_expired">invalid from </span>
+                                } else {
+                                    <span id="ruling_bindingCommodityCodeValue_expiring">valid until </span>
+                                }
+                                <span>@Dates.format(commodityCode.flatMap(_.expiry).get)</span>
+                            </span>
+                        }
                     </dd>
                 </div>
 
@@ -133,9 +143,13 @@
 
     @ruling_certificate_link(c)
 
+    @if(c.status == CaseStatus.COMPLETED || c.status == CaseStatus.CANCELLED) {
+        @ruling_commodity_code_expiry_section(c, commodityCode, clazz = "mt-3")
+    }
+
     <div class="mt-3" id="ruling-actions">
          @if(request.hasPermission(Permission.COMPLETE_CASE)) {
-             @complete_ruling_section(c, decisionForm)
+             @complete_ruling_section(c, decisionForm = decisionForm, commodityCode = commodityCode)
          }
         @if(request.hasPermission(Permission.CANCEL_CASE)) {
             @cancel_ruling_section(c)
