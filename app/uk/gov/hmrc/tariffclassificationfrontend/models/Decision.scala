@@ -18,6 +18,8 @@ package uk.gov.hmrc.tariffclassificationfrontend.models
 
 import java.time.Instant
 
+import uk.gov.hmrc.tariffclassificationfrontend.models.AppealType.AppealType
+
 case class Decision
 (
   bindingCommodityCode: String,
@@ -28,8 +30,10 @@ case class Decision
   methodSearch: Option[String] = None,
   methodExclusion: Option[String] = None,
   methodCommercialDenomination: Option[String] = None,
-  appeal: Option[Appeal] = None,
+  appeal: Seq[Appeal] = Seq.empty,
   review: Option[Review] = None,
   cancellation: Option[Cancellation] = None,
   explanation: Option[String] = None
-)
+) {
+  def appeal(`type`: AppealType): Option[Appeal] = appeal.find(_.`type` == `type`)
+}

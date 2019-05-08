@@ -39,6 +39,7 @@ object JsonFormatters {
   implicit val operator: Format[Operator] = Jsonx.formatCaseClass[Operator]
   implicit val scanStatusFormat: Format[ScanStatus.Value] = EnumJson.format(ScanStatus)
   implicit val appealStatusFormat: Format[AppealStatus.Value] = EnumJson.format(AppealStatus)
+  implicit val appealTypeFormat: Format[AppealType.Value] = EnumJson.format(AppealType)
   implicit val reviewStatusFormat: Format[ReviewStatus.Value] = EnumJson.format(ReviewStatus)
   implicit val cancelReasonFormat: Format[CancelReason.Value] = EnumJson.format(CancelReason)
   implicit val caseStatusFormat: Format[CaseStatus.Value] = EnumJson.format(CaseStatus)
