@@ -22,6 +22,7 @@ cases.table.move=Move to a queue
 
 case.menu.trader=Applicant
 case.menu.application-details=Item
+case.menu.sample-details=Sample
 case.menu.ruling=Ruling
 case.menu.ruling-details=Ruling details
 case.menu.attachments=Attachments
@@ -34,6 +35,8 @@ case.status=Status
 case.created-date=Date received
 case.elapsed-days=Days elapsed
 
+case.application.type=Application type
+case.application.additional-information=Additional information
 case.application.suggested-commodity-code=Suggested commodity code
 case.application.importOrExport=Import or export
 case.application.suggested-goods-description=Suggested item description
@@ -54,6 +57,7 @@ case.application.boards-file-number=Boards file number
 case.application.known-legal-proceedings=Any legal or administration proceedings information from trader?
 case.application.other-information=Other supporting information
 case.application.attachments=Attachments
+case.application.sample-info-from-applicant=Information from the applicant
 case.application.provide-samples=Is the applicant sending a sample?
 case.application.returning-samples=Does the applicant want the sample returned?
 case.application.reissue-application=Is this a new application or a renewal?

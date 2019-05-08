@@ -73,7 +73,7 @@
                     </dd>
                 </div>
 
-                <h3 class="heading-medium" id="trader-submitted-heading">Application type</h3>
+                <h3 class="heading-medium" id="trader-submitted-heading">@messages("case.application.type")</h3>
 
                 <div id="app-details-reissue-application-type" class="grid-row">
                     <dt class="column-one-third">
@@ -95,27 +95,7 @@
                     </div>
                 }
 
-                <h3 class="heading-medium" id="trader-submitted-heading">Samples and attachments</h3>
-
-                <div id="app-details-sending-samples" class="grid-row">
-                    <dt class="column-one-third">
-                        @messages("case.application.provide-samples")
-                    </dt>
-                    <dd class="column-two-thirds">
-                        @if(btiApp.sampleToBeProvided){ @messages("answer.yes") } else { @messages("answer.no")}
-                    </dd>
-                </div>
-
-                @if(btiApp.sampleToBeProvided){
-                    <div id="app-details-returning-samples" class="grid-row">
-                        <dt class="column-one-third">
-                            @messages("case.application.returning-samples")
-                        </dt>
-                        <dd class="column-two-thirds">
-                            @if(btiApp.sampleToBeReturned){ @messages("answer.yes") } else { @messages("answer.no")}
-                        </dd>
-                    </div>
-                }
+                <h3 class="heading-medium" id="trader-submitted-heading">@messages("case.application.attachments")</h3>
 
                 <div id="app-details-attachments" class="grid-row">
                     <dt class="column-one-third">
@@ -128,7 +108,7 @@
                     </dd>
                 </div>
 
-                <h3 class="heading-medium" id="trader-submitted-heading">Additional information</h3>
+                <h3 class="heading-medium" id="trader-submitted-heading">@messages("case.application.additional-information")</h3>
 
                 <div id="app-details-other-info" class="grid-row">
                     <dt class="column-one-third">

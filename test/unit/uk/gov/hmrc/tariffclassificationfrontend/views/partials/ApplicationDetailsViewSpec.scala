@@ -28,36 +28,6 @@ class ApplicationDetailsViewSpec extends ViewSpec {
 
   "Application Details" should {
 
-    "render sample to be returned when sample provided" in {
-      // Given
-      val caseWithSample = aCase(
-        withBTIDetails(sampleToBeProvided = true, sampleToBeReturned = true),
-        withoutAttachments()
-      )
-
-      // When
-      val doc = view(application_details(caseWithSample, Seq.empty, None))
-
-      // Then
-      doc.getElementById("app-details-sending-samples") should containText(messages("answer.yes"))
-      doc.getElementById("app-details-returning-samples") should containText(messages("answer.yes"))
-    }
-
-    "not render sample to be returned when sample not provided" in {
-      // Given
-      val `case` = aCase(
-        withBTIDetails(sampleToBeReturned = true),
-        withoutAttachments()
-      )
-
-      // When
-      val doc = view(application_details(`case`, Seq.empty, None))
-
-      // Then
-      doc.getElementById("app-details-sending-samples") should containText(messages("answer.no"))
-      doc shouldNot containElementWithID("app-details-returning-samples")
-    }
-
     "render default negative text on optional fields when not present" in {
       // Given
       val `case` = aCase(
