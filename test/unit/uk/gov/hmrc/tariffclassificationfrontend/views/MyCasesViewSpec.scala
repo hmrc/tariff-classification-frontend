@@ -87,7 +87,7 @@ class MyCasesViewSpec extends ViewSpec {
     "render with a list of cases and refered cases" in {
       // Given
       val queues = Seq(queue1, queue2)
-      val cases = Seq(openCase,referedCase, suspendedCase)
+      val cases = Seq(openCase, referedCase, suspendedCase)
 
       // When
       val doc: Document = view(html.my_cases(queues, Paged(cases), operator)(request = requestWithPermissions(Permission.VIEW_QUEUE_CASES, Permission.VIEW_MY_CASES), messages, appConfig))
@@ -104,15 +104,15 @@ class MyCasesViewSpec extends ViewSpec {
 
       doc.getElementById("queue-name") should containText(s"Cases for ${operator.name.get}")
 
-      containsCase(doc,"cases_list-table", openCase)
-      containsCase(doc,"referred_list-table", referedCase)
-      containsCase(doc,"referred_list-table", suspendedCase)
+      containsCase(doc, "cases_list-table", openCase)
+      containsCase(doc, "referred_list-table", referedCase)
+      containsCase(doc, "referred_list-table", suspendedCase)
     }
 
-    def containsCase (doc: Document, tableId : String, c: Case) = {
-      doc.getElementById(tableId ) should containText(c.reference)
-      doc.getElementById(tableId ) should containText(c.status.toString)
-      doc.getElementById(tableId ) should containText(c.application.getType)
+    def containsCase(doc: Document, tableId: String, c: Case) = {
+      doc.getElementById(tableId) should containText(c.reference)
+      doc.getElementById(tableId) should containText(c.status.toString)
+      doc.getElementById(tableId) should containText(c.application.getType)
 
     }
   }
