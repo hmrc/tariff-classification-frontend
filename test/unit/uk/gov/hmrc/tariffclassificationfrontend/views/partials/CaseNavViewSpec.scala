@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.views.partials
 
+import org.jsoup.select.Elements
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito
 import org.scalatest.BeforeAndAfterEach
@@ -47,9 +48,27 @@ class CaseNavViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterEach
 
   private val `case` = mock[Case]
 
+  private val tabOrder : Seq[String] = Seq(trader, application, sample, attachments, activity, keywords, ruling, appeal)
+  private val urlOrder : Seq[String] = Seq(traderURL, applicationDetailsURL, sampleDetailsURL, attachmentsURL, activityURL, keywordsURL, rulingURL)
+  private val tabWithUrl : Seq[(String,String)] = tabOrder.zip(urlOrder)
+
   override protected def afterEach(): Unit = {
     super.afterEach()
     Mockito.reset(`case`)
+  }
+
+  def tabsWithLinksShouldBeActiveExceptGiven(anchors : Elements, exceptTab : String): Unit = {
+
+    val filteredIndexed =  tabWithUrl.filter( entry => entry._1 != exceptTab).zipWithIndex
+
+    filteredIndexed
+      .foreach(entry => {
+      anchors.get(entry._2) should containText(entry._1._1)
+      anchors.get(entry._2) should haveAttribute("href", entry._1._2)
+    })
+
+
+
   }
 
   "Case Heading" should {
@@ -75,18 +94,8 @@ class CaseNavViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterEach
       val anchors = doc.getElementsByTag("a")
       anchors should haveSize(expectedTabAnchors)
 
-      anchors.get(0) should containText(application)
-      anchors.get(0) should haveAttribute("href", applicationDetailsURL)
-      anchors.get(1) should containText(sample)
-      anchors.get(1) should haveAttribute("href", sampleDetailsURL)
-      anchors.get(2) should containText(attachments)
-      anchors.get(2) should haveAttribute("href", attachmentsURL)
-      anchors.get(3) should containText(activity)
-      anchors.get(3) should haveAttribute("href", activityURL)
-      anchors.get(4) should containText(keywords)
-      anchors.get(4) should haveAttribute("href", keywordsURL)
-      anchors.get(5) should containText(ruling)
-      anchors.get(5) should haveAttribute("href", rulingURL)
+      tabsWithLinksShouldBeActiveExceptGiven(anchors, trader)
+
     }
 
     "Render Application Details" in {
@@ -107,18 +116,7 @@ class CaseNavViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterEach
       val anchors = doc.getElementsByTag("a")
       anchors should haveSize(expectedTabAnchors)
 
-      anchors.get(0) should containText(trader)
-      anchors.get(0) should haveAttribute("href", traderURL)
-      anchors.get(1) should containText(sample)
-      anchors.get(1) should haveAttribute("href", sampleDetailsURL)
-      anchors.get(2) should containText(attachments)
-      anchors.get(2) should haveAttribute("href", attachmentsURL)
-      anchors.get(3) should containText(activity)
-      anchors.get(3) should haveAttribute("href", activityURL)
-      anchors.get(4) should containText(keywords)
-      anchors.get(4) should haveAttribute("href", keywordsURL)
-      anchors.get(5) should containText(ruling)
-      anchors.get(5) should haveAttribute("href", rulingURL)
+      tabsWithLinksShouldBeActiveExceptGiven(anchors, application)
     }
 
     "Render Sample Details" in {
@@ -139,18 +137,8 @@ class CaseNavViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterEach
       val anchors = doc.getElementsByTag("a")
       anchors should haveSize(expectedTabAnchors)
 
-      anchors.get(0) should containText(trader)
-      anchors.get(0) should haveAttribute("href", traderURL)
-      anchors.get(1) should containText(application)
-      anchors.get(1) should haveAttribute("href", applicationDetailsURL)
-      anchors.get(2) should containText(attachments)
-      anchors.get(2) should haveAttribute("href", attachmentsURL)
-      anchors.get(3) should containText(activity)
-      anchors.get(3) should haveAttribute("href", activityURL)
-      anchors.get(4) should containText(keywords)
-      anchors.get(4) should haveAttribute("href", keywordsURL)
-      anchors.get(5) should containText(ruling)
-      anchors.get(5) should haveAttribute("href", rulingURL)
+      tabsWithLinksShouldBeActiveExceptGiven(anchors, sample)
+
     }
 
     "Render Ruling Details" in {
@@ -171,18 +159,7 @@ class CaseNavViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterEach
       val anchors = doc.getElementsByTag("a")
       anchors should haveSize(expectedTabAnchors)
 
-      anchors.get(0) should containText(trader)
-      anchors.get(0) should haveAttribute("href", traderURL)
-      anchors.get(1) should containText(application)
-      anchors.get(1) should haveAttribute("href", applicationDetailsURL)
-      anchors.get(2) should containText(sample)
-      anchors.get(2) should haveAttribute("href", sampleDetailsURL)
-      anchors.get(3) should containText(attachments)
-      anchors.get(3) should haveAttribute("href", attachmentsURL)
-      anchors.get(4) should containText(activity)
-      anchors.get(4) should haveAttribute("href", activityURL)
-      anchors.get(5) should containText(keywords)
-      anchors.get(5) should haveAttribute("href", keywordsURL)
+      tabsWithLinksShouldBeActiveExceptGiven(anchors, ruling)
     }
 
     "Render Attachments" in {
@@ -203,18 +180,7 @@ class CaseNavViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterEach
       val anchors = doc.getElementsByTag("a")
       anchors should haveSize(expectedTabAnchors)
 
-      anchors.get(0) should containText(trader)
-      anchors.get(0) should haveAttribute("href", traderURL)
-      anchors.get(1) should containText(application)
-      anchors.get(1) should haveAttribute("href", applicationDetailsURL)
-      anchors.get(2) should containText(sample)
-      anchors.get(2) should haveAttribute("href", sampleDetailsURL)
-      anchors.get(3) should containText(activity)
-      anchors.get(3) should haveAttribute("href", activityURL)
-      anchors.get(4) should containText(keywords)
-      anchors.get(4) should haveAttribute("href", keywordsURL)
-      anchors.get(5) should containText(ruling)
-      anchors.get(5) should haveAttribute("href", rulingURL)
+      tabsWithLinksShouldBeActiveExceptGiven(anchors, attachments)
     }
 
     "Render Activity" in {
@@ -235,18 +201,7 @@ class CaseNavViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterEach
       val anchors = doc.getElementsByTag("a")
       anchors should haveSize(expectedTabAnchors)
 
-      anchors.get(0) should containText(trader)
-      anchors.get(0) should haveAttribute("href", traderURL)
-      anchors.get(1) should containText(application)
-      anchors.get(1) should haveAttribute("href", applicationDetailsURL)
-      anchors.get(2) should containText(sample)
-      anchors.get(2) should haveAttribute("href", sampleDetailsURL)
-      anchors.get(3) should containText(attachments)
-      anchors.get(3) should haveAttribute("href", attachmentsURL)
-      anchors.get(4) should containText(keywords)
-      anchors.get(4) should haveAttribute("href", keywordsURL)
-      anchors.get(5) should containText(ruling)
-      anchors.get(5) should haveAttribute("href", rulingURL)
+      tabsWithLinksShouldBeActiveExceptGiven(anchors, activity)
     }
 
     "Render Appeal for COMPLETE Cases" in {
@@ -268,20 +223,7 @@ class CaseNavViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterEach
       val anchors = doc.getElementsByTag("a")
       anchors should haveSize(expectedTabAnchorsForCompletedCases)
 
-      anchors.get(0) should containText(trader)
-      anchors.get(0) should haveAttribute("href", traderURL)
-      anchors.get(1) should containText(application)
-      anchors.get(1) should haveAttribute("href", applicationDetailsURL)
-      anchors.get(2) should containText(sample)
-      anchors.get(2) should haveAttribute("href", sampleDetailsURL)
-      anchors.get(3) should containText(attachments)
-      anchors.get(3) should haveAttribute("href", attachmentsURL)
-      anchors.get(4) should containText(activity)
-      anchors.get(4) should haveAttribute("href", activityURL)
-      anchors.get(5) should containText(keywords)
-      anchors.get(5) should haveAttribute("href", keywordsURL)
-      anchors.get(6) should containText(ruling)
-      anchors.get(6) should haveAttribute("href", rulingURL)
+      tabsWithLinksShouldBeActiveExceptGiven(anchors, appeal)
     }
 
     "Render Appeal for CANCELLED Cases" in {
@@ -303,20 +245,7 @@ class CaseNavViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterEach
       val anchors = doc.getElementsByTag("a")
       anchors should haveSize(expectedTabAnchorsForCompletedCases)
 
-      anchors.get(0) should containText(trader)
-      anchors.get(0) should haveAttribute("href", traderURL)
-      anchors.get(1) should containText(application)
-      anchors.get(1) should haveAttribute("href", applicationDetailsURL)
-      anchors.get(2) should containText(sample)
-      anchors.get(2) should haveAttribute("href", sampleDetailsURL)
-      anchors.get(3) should containText(attachments)
-      anchors.get(3) should haveAttribute("href", attachmentsURL)
-      anchors.get(4) should containText(activity)
-      anchors.get(4) should haveAttribute("href", activityURL)
-      anchors.get(5) should containText(keywords)
-      anchors.get(5) should haveAttribute("href", keywordsURL)
-      anchors.get(6) should containText(ruling)
-      anchors.get(6) should haveAttribute("href", rulingURL)
+      tabsWithLinksShouldBeActiveExceptGiven(anchors, appeal)
     }
 
     "Not render Appeal for other Statuses" in {
@@ -334,20 +263,7 @@ class CaseNavViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterEach
       val anchors = doc.getElementsByTag("a")
       anchors should haveSize(expectedTabAnchorsForCompletedCases)
 
-      anchors.get(0) should containText(trader)
-      anchors.get(0) should haveAttribute("href", traderURL)
-      anchors.get(1) should containText(application)
-      anchors.get(1) should haveAttribute("href", applicationDetailsURL)
-      anchors.get(2) should containText(sample)
-      anchors.get(2) should haveAttribute("href", sampleDetailsURL)
-      anchors.get(3) should containText(attachments)
-      anchors.get(3) should haveAttribute("href", attachmentsURL)
-      anchors.get(4) should containText(activity)
-      anchors.get(4) should haveAttribute("href", activityURL)
-      anchors.get(5) should containText(keywords)
-      anchors.get(5) should haveAttribute("href", keywordsURL)
-      anchors.get(6) should containText(ruling)
-      anchors.get(6) should haveAttribute("href", rulingURL)
+      tabsWithLinksShouldBeActiveExceptGiven(anchors, appeal)
     }
   }
 }
