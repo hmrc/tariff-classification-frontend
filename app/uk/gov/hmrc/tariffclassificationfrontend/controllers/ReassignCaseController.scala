@@ -41,7 +41,8 @@ class ReassignCaseController @Inject()(verify: RequestActions,
 
   private lazy val form: Form[String] = ReleaseCaseForm.form
 
-  def showAvailableQueues(reference: String, origin: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.MOVE_CASE_BACK_TO_QUEUE)).async { implicit request =>
+  def showAvailableQueues(reference: String, origin: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)
+    andThen verify.mustHave(Permission.MOVE_CASE_BACK_TO_QUEUE)).async { implicit request =>
     reassignToQueue(form, reference, origin)
   }
 
@@ -55,7 +56,8 @@ class ReassignCaseController @Inject()(verify: RequestActions,
     )
   }
 
-  def reassignCase(reference: String, origin: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.MOVE_CASE_BACK_TO_QUEUE)).async { implicit request =>
+  def reassignCase(reference: String, origin: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)
+    andThen verify.mustHave(Permission.MOVE_CASE_BACK_TO_QUEUE)).async { implicit request =>
 
     def onInvalidForm(formWithErrors: Form[String]): Future[Result] = {
       reassignToQueue(formWithErrors, reference, origin)
@@ -80,7 +82,7 @@ class ReassignCaseController @Inject()(verify: RequestActions,
   }
 
   override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = {
-    c.assignee.isDefined && reassignCaseStatuses.contains(c.status)
+    reassignCaseStatuses.contains(c.status)
   }
 
 }
