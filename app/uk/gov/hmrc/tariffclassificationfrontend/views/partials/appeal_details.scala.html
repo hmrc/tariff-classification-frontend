@@ -47,7 +47,9 @@
    </table>
  }
 
- <a id="appeal_details-add_new" class="button" href="@routes.AppealCaseController.chooseType(c.reference)">Add a review or appeal</a>
+ @if(request.hasPermission(Permission.APPEAL_CASE)) {
+  <a id="appeal_details-add_new" class="button" href="@routes.AppealCaseController.chooseType(c.reference)">Add a review or appeal</a>
+ }
 
  @if(c.status == CaseStatus.CANCELLED) {
   <div id="appeal_details-extended_use" class="mt-5">

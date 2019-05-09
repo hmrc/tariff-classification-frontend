@@ -93,7 +93,27 @@ class AppealDetailsViewSpec extends ViewSpec {
       doc.getElementById("appeal_details-extended_use_status") should containText("Yes")
     }
 
-    "Render Extended Use Change if user has permission APPEAL_CASE" in {
+    "Render Add Appeal if user has permission APPEAL_CASE" in {
+      // Given
+      val c = aCase(withDecision(), withStatus(CaseStatus.CANCELLED))
+
+      // When
+      val doc = view(appeal_details(c)(requestWithPermissions(Permission.APPEAL_CASE), messages, appConfig))
+
+      doc should containElementWithID("appeal_details-add_new")
+    }
+
+    "Not render Add Appeal if user does not have permission" in {
+      // Given
+      val c = aCase(withDecision(), withStatus(CaseStatus.CANCELLED))
+
+      // When
+      val doc = view(appeal_details(c)(operatorRequest, messages, appConfig))
+
+      doc shouldNot containElementWithID("appeal_details-add_new")
+    }
+
+    "Render Extended Use Change if user has permission EXTENDED_USE" in {
       // Given
       val c = aCase(withDecision(), withStatus(CaseStatus.CANCELLED))
 
