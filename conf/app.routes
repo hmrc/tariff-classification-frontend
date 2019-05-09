@@ -67,6 +67,9 @@ GET         /cases/:reference/appeal                     @uk.gov.hmrc.tariffclas
 GET         /cases/:reference/appeal/status              @uk.gov.hmrc.tariffclassificationfrontend.controllers.AppealCaseController.chooseStatus(reference: String)
 POST        /cases/:reference/appeal/status              @uk.gov.hmrc.tariffclassificationfrontend.controllers.AppealCaseController.updateStatus(reference: String)
 
+GET         /cases/:reference/sample/status              @uk.gov.hmrc.tariffclassificationfrontend.controllers.SampleController.chooseStatus(reference: String)
+POST        /cases/:reference/sample/status              @uk.gov.hmrc.tariffclassificationfrontend.controllers.SampleController.updateStatus(reference: String)
+
 GET         /cases/:reference/review/status              @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReviewCaseController.chooseStatus(reference: String)
 POST        /cases/:reference/review/status              @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReviewCaseController.updateStatus(reference: String)
 

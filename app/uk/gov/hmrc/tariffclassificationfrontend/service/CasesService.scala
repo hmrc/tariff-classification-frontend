@@ -27,12 +27,14 @@ import uk.gov.hmrc.tariffclassificationfrontend.connector.{BindingTariffClassifi
 import uk.gov.hmrc.tariffclassificationfrontend.models.AppealStatus.AppealStatus
 import uk.gov.hmrc.tariffclassificationfrontend.models.CancelReason.CancelReason
 import uk.gov.hmrc.tariffclassificationfrontend.models.ReviewStatus.ReviewStatus
+import uk.gov.hmrc.tariffclassificationfrontend.models.SampleStatus.SampleStatus
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
+//noinspection ScalaStyle
 @Singleton
 class CasesService @Inject()(appConfig: AppConfig,
                              auditService: AuditService,
@@ -65,6 +67,16 @@ class CasesService @Inject()(appConfig: AppConfig,
       updated <- connector.updateCase(original.copy(decision = Some(updatedDecision)))
       _ <- addAppealStatusChangeEvent(original, updated, operator)
       _ = auditService.auditCaseAppealChange(original, updated, operator)
+    } yield updated
+  }
+
+  def updateSampleStatus(original: Case, status: Option[SampleStatus], operator: Operator)
+                        (implicit hc: HeaderCarrier): Future[Case] = {
+
+    for {
+      updated <- connector.updateCase(original.copy(sampleStatus = status.get))
+      _ <- addSampleStatusChangeEvent(original, updated, operator)
+      //_ = auditService.auditSampleStatusChange(original, updated, operator)
     } yield updated
   }
 
@@ -255,6 +267,12 @@ class CasesService @Inject()(appConfig: AppConfig,
     addEvent(original, updated, details, operator)
   }
 
+  private def addSampleStatusChangeEvent(original: Case, updated: Case, operator: Operator, comment: Option[String] = None)
+                                        (implicit hc: HeaderCarrier): Future[Unit] = {
+    val details = SampleStatusChange(original.sampleStatus, updated.sampleStatus, comment)
+    addEvent(original, updated, details, operator)
+  }
+
   private def addQueueChangeEvent(original: Case, updated: Case, operator: Operator, comment: Option[String] = None)
                                  (implicit hc: HeaderCarrier): Future[Unit] = {
     val details = QueueChange(original.queueId, updated.queueId, comment)
@@ -292,6 +310,7 @@ class CasesService @Inject()(appConfig: AppConfig,
   private def reviewStatus: Case => Option[ReviewStatus] = {
     _.decision.flatMap(_.review).map(_.status)
   }
+
 
   private def extendedUseStatus: Case => Boolean = {
     _.decision.flatMap(_.cancellation).map(_.applicationForExtendedUse).get

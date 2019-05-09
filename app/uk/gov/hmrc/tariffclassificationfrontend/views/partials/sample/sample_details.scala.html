@@ -17,7 +17,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.AttachmentsController
 @import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
-@import uk.gov.hmrc.tariffclassificationfrontend.models.{Application, BTIApplication, Case, EORIDetails, Permission, StoredAttachment}
+@import uk.gov.hmrc.tariffclassificationfrontend.models.{Application, BTIApplication, Case, EORIDetails, Permission, StoredAttachment, SampleStatus}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials._
 @(c: Case)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
@@ -51,6 +51,17 @@
                         </dd>
                     </div>
                 }
+
+                <h3 class="heading-medium" id="sample-status-heading">@messages("case.sample.sample-status-header")</h3>
+
+                <div id="sample-status" class="grid-row">
+                    <dt class="column-one-third">
+                        @SampleStatus.format(Some(c.sampleStatus))
+                    </dt>
+                    <dd class="column-two-thirds">
+                        <a href="sample/status">@messages("case.sample.change-sample-status")</a>
+                    </dd>
+                </div>
 
             </dl>
 

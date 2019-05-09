@@ -146,6 +146,17 @@ class AuditService @Inject()(auditConnector: DefaultAuditConnector) {
     )
   }
 
+//  def auditSampleStatusChange(oldCase: Case, updatedCase: Case, operator: Operator)
+//                           (implicit hc: HeaderCarrier): Unit = {
+//    sendExplicitAuditEvent(
+//      auditEventType = CaseSampleStatusChange,
+//      auditPayload = baseAuditPayload(updatedCase, operator) + (
+//        "newSampleStatus" -> updatedCase.sampleStatus,
+//        "previousSampleStatus" -> oldCase.sampleStatus
+//      )
+//    )
+//  }
+
   def auditCaseReviewChange(oldCase: Case, updatedCase: Case, operator: Operator)
                            (implicit hc: HeaderCarrier): Unit = {
     sendExplicitAuditEvent(
@@ -230,5 +241,6 @@ object AuditPayloadType {
   val CaseExtendedUseChange = "caseExtendedUseChange"
   val CaseAppealChange = "caseAppealChange"
   val CaseReviewChange = "caseReviewChange"
+  val CaseSampleStatusChange = "caseSampleStatusChange"
 
 }

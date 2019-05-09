@@ -20,11 +20,13 @@ import java.time.Instant
 
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.CaseStatus
+import uk.gov.hmrc.tariffclassificationfrontend.models.SampleStatus.SampleStatus
 
 case class Case
 (
   reference: String,
   status: CaseStatus,
+  sampleStatus: SampleStatus,
   createdDate: Instant,
   daysElapsed: Long,
   caseBoardsFileNumber: Option[String],
