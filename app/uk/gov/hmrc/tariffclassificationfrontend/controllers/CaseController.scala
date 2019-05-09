@@ -32,6 +32,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.views.CaseDetailPage._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import scala.concurrent.Future.successful
 
 @Singleton
 class CaseController @Inject()(verify: RequestActions,
@@ -69,6 +70,13 @@ class CaseController @Inject()(verify: RequestActions,
           letter <- fileService.getLetterOfAuthority(c)
         } yield views.html.partials.application_details(c, attachments, letter)
       }
+    )
+  }
+
+  def sampleDetails(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
+    validateAndRenderView(
+      SAMPLE_DETAILS,
+      c => successful(views.html.partials.sample.sample_details(c))
     )
   }
 
