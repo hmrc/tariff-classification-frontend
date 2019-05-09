@@ -118,8 +118,6 @@ class AdvancedSearchResultsViewSpec extends ViewSpec {
 
       doc should containElementWithID("advanced_search_results-row-0-appeal_status")
       doc.getElementById("advanced_search_results-row-0-appeal_status") should containText("Under appeal")
-      doc should containElementWithID("advanced_search_results-row-0-review_status")
-      doc.getElementById("advanced_search_results-row-0-review_status") should containText("Under review")
 
       doc should containElementWithID("advanced_search_results-row-0-attachments")
       doc should containElementWithID("advanced_search_results-row-0-attachments-0")

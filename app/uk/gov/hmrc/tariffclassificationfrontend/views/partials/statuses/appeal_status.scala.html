@@ -23,9 +23,9 @@
  @if(status.nonEmpty) {
   <span id="@id" class="phase-tag bg-red">
    @status match {
-    case s if status.contains(AppealStatus.IN_PROGRESS) => {Under Appeal}
-    case s if status.contains(AppealStatus.ALLOWED) => {Appeal Allowed}
-    case s if status.contains(AppealStatus.DISMISSED) => {Appeal Dismissed}
+    case s if status.contains(AppealStatus.IN_PROGRESS) => {Under appeal}
+    case s if status.contains(AppealStatus.ALLOWED) => {Appeal allowed}
+    case s if status.contains(AppealStatus.DISMISSED) => {Appeal dismissed}
    }
   </span>
  }

@@ -57,7 +57,6 @@ class CaseHeadingViewSpec extends ViewSpec {
 
       // Then
       doc shouldNot containElementWithID("appeal-status")
-      doc shouldNot containElementWithID("review-status")
     }
 
     "Render with 'Appeal Status'" in {

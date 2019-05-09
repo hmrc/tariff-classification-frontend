@@ -54,10 +54,10 @@
                         }
                         case EventType.APPEAL_ADDED => {
                             val body = event.details.asInstanceOf[AppealAdded]
-                            if(body.`type` == AppealType.REVIEW) {
+                            if(body.appealType == AppealType.REVIEW) {
                                 progressive_disclosure(
                                     id = s"activity-events-row-$index",
-                                    summary = s"Review Added with status ${AppealStatus.formatReview(body.appealStatus)}",
+                                    summary = s"Review added with status ${AppealStatus.formatReview(body.appealStatus)}",
                                     body = body.comment
                                 )
                             } else {
