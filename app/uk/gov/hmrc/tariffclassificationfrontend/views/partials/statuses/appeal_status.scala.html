@@ -18,9 +18,16 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{AppealStatus, Case}
 @(c: Case, id: String)
 
+@defining(c.decision.map(_.appeal).getOrElse(Seq.empty).map(_.status)) { status: Seq[AppealStatus] =>
 
-@defining(c.decision.flatMap(_.appeal).map(_.status)) { status: Option[AppealStatus] =>
-    @if(status.isDefined) {
-        <span id="@id" class="phase-tag bg-red">@AppealStatus.format(status)</span>
-    }
+ @if(status.nonEmpty) {
+  <span id="@id" class="phase-tag bg-red">
+   @status match {
+    case s if status.contains(AppealStatus.IN_PROGRESS) => {Under Appeal}
+    case s if status.contains(AppealStatus.ALLOWED) => {Appeal Allowed}
+    case s if status.contains(AppealStatus.DISMISSED) => {Appeal Dismissed}
+   }
+  </span>
+ }
+
 }

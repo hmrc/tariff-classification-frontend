@@ -40,12 +40,10 @@ object JsonFormatters {
   implicit val scanStatusFormat: Format[ScanStatus.Value] = EnumJson.format(ScanStatus)
   implicit val appealStatusFormat: Format[AppealStatus.Value] = EnumJson.format(AppealStatus)
   implicit val appealTypeFormat: Format[AppealType.Value] = EnumJson.format(AppealType)
-  implicit val reviewStatusFormat: Format[ReviewStatus.Value] = EnumJson.format(ReviewStatus)
   implicit val cancelReasonFormat: Format[CancelReason.Value] = EnumJson.format(CancelReason)
   implicit val caseStatusFormat: Format[CaseStatus.Value] = EnumJson.format(CaseStatus)
   implicit val attachmentFormat: OFormat[Attachment] = Json.format[Attachment]
   implicit val appealFormat: OFormat[Appeal] = Json.format[Appeal]
-  implicit val reviewFormat: OFormat[Review] = Json.format[Review]
   implicit val cancellationFormat: OFormat[Cancellation] = Json.format[Cancellation]
   implicit val contactFormat: OFormat[Contact] = Json.format[Contact]
   implicit val eoriDetailsFormat: OFormat[EORIDetails] = Json.format[EORIDetails]
@@ -60,7 +58,7 @@ object JsonFormatters {
   implicit val caseFormat: OFormat[Case] = Json.format[Case]
   implicit val formatCaseStatusChange: OFormat[CaseStatusChange] = Json.format[CaseStatusChange]
   implicit val formatAppealStatusChange: OFormat[AppealStatusChange] = Json.format[AppealStatusChange]
-  implicit val formatReviewStatusChange: OFormat[ReviewStatusChange] = Json.format[ReviewStatusChange]
+  implicit val formatAppealAdded: OFormat[AppealAdded] = Json.format[AppealAdded]
   implicit val formatExtendedUseStatusChange: OFormat[ExtendedUseStatusChange] = Json.format[ExtendedUseStatusChange]
   implicit val formatAssignmentChange: OFormat[AssignmentChange] = Json.format[AssignmentChange]
   implicit val formatQueueChange: OFormat[QueueChange] = Json.format[QueueChange]
@@ -69,7 +67,7 @@ object JsonFormatters {
   implicit val formatEventDetail: Format[Details] = Union.from[Details]("type")
     .and[CaseStatusChange](EventType.CASE_STATUS_CHANGE.toString)
     .and[AppealStatusChange](EventType.APPEAL_STATUS_CHANGE.toString)
-    .and[ReviewStatusChange](EventType.REVIEW_STATUS_CHANGE.toString)
+    .and[AppealAdded](EventType.REVIEW_STATUS_CHANGE.toString)
     .and[ExtendedUseStatusChange](EventType.EXTENDED_USE_STATUS_CHANGE.toString)
     .and[AssignmentChange](EventType.ASSIGNMENT_CHANGE.toString)
     .and[QueueChange](EventType.QUEUE_CHANGE.toString)

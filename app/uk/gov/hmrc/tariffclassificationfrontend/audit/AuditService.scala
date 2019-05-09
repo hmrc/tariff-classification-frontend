@@ -19,7 +19,7 @@ package uk.gov.hmrc.tariffclassificationfrontend.audit
 import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.audit.DefaultAuditConnector
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Operator, Queue}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Appeal, Case, Operator, Queue}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -135,24 +135,13 @@ class AuditService @Inject()(auditConnector: DefaultAuditConnector) {
     )
   }
 
-  def auditCaseAppealChange(oldCase: Case, updatedCase: Case, operator: Operator)
+  def auditCaseAppealAdded(c: Case, appeal: Appeal, operator: Operator)
                            (implicit hc: HeaderCarrier): Unit = {
     sendExplicitAuditEvent(
       auditEventType = CaseAppealChange,
-      auditPayload = baseAuditPayload(updatedCase, operator) + (
-        "newAppealStatus" -> appealStatus(updatedCase),
-        "previousAppealStatus" -> appealStatus(oldCase)
-      )
-    )
-  }
-
-  def auditCaseReviewChange(oldCase: Case, updatedCase: Case, operator: Operator)
-                           (implicit hc: HeaderCarrier): Unit = {
-    sendExplicitAuditEvent(
-      auditEventType = CaseReviewChange,
-      auditPayload = baseAuditPayload(updatedCase, operator) + (
-        "newReviewStatus" -> reviewStatus(updatedCase),
-        "previousReviewStatus" -> reviewStatus(oldCase)
+      auditPayload = baseAuditPayload(c, operator) + (
+        "appealType" -> appeal.`type`.toString,
+        "appealStatus" -> appeal.status.toString
       )
     )
   }
@@ -189,14 +178,6 @@ class AuditService @Inject()(auditConnector: DefaultAuditConnector) {
   private def sendExplicitAuditEvent(auditEventType: String, auditPayload: Map[String, String])
                                     (implicit hc: HeaderCarrier): Unit = {
     auditConnector.sendExplicitAudit(auditType = auditEventType, detail = auditPayload)
-  }
-
-  private def appealStatus: Case => String = {
-    _.decision flatMap(_.appeal) map(_.status.toString) getOrElse undefined
-  }
-
-  private def reviewStatus: Case => String = {
-    _.decision flatMap(_.review) map(_.status.toString) getOrElse undefined
   }
 
   private def cancelReason: Case => String = {

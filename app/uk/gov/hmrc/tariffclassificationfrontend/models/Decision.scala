@@ -31,7 +31,6 @@ case class Decision
   methodExclusion: Option[String] = None,
   methodCommercialDenomination: Option[String] = None,
   appeal: Seq[Appeal] = Seq.empty,
-  review: Option[Review] = None,
   cancellation: Option[Cancellation] = None,
   explanation: Option[String] = None
 ) {
