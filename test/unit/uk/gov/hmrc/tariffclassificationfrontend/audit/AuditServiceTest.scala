@@ -23,10 +23,8 @@ import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.audit.DefaultAuditConnector
 import uk.gov.hmrc.play.test.UnitSpec
-import uk.gov.hmrc.tariffclassificationfrontend.models.AppealStatus.AppealStatus
 import uk.gov.hmrc.tariffclassificationfrontend.models.CancelReason.CancelReason
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus._
-import uk.gov.hmrc.tariffclassificationfrontend.models.ReviewStatus.ReviewStatus
 import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus => _, _}
 import uk.gov.tariffclassificationfrontend.utils.Cases._
 
@@ -251,37 +249,19 @@ class AuditServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEac
     }
   }
 
-  "Service 'audit case appeal change'" should {
-    val original = aCase(withReference("ref"), withDecision(appeal = Some(Appeal(AppealStatus.IN_PROGRESS))))
-    val updated = aCase(withReference("ref"), withoutDecision())
+  "Service 'audit case appeal added'" should {
+    val original = aCase(withReference("ref"))
+    val appeal = Appeal(id = "id", status = AppealStatus.IN_PROGRESS, `type` = AppealType.REVIEW)
 
     "Delegate to connector" in {
-      service.auditCaseAppealChange(original, updated, operator)
+      service.auditCaseAppealAdded(original, appeal, operator)
 
       val payload = appealChangeAudit(
         caseReference = "ref",
-        newStatus = None,
-        previousStatus = Some(AppealStatus.IN_PROGRESS),
+        appeal = appeal,
         operatorId = operator.id
       )
-      verify(connector).sendExplicitAudit(refEq("caseAppealChange"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
-    }
-  }
-
-  "Service 'audit case review change'" should {
-    val original = aCase(withReference("ref"), withDecision(review = Some(Review(ReviewStatus.IN_PROGRESS))))
-    val updated = aCase(withReference("ref"), withoutDecision())
-
-    "Delegate to connector" in {
-      service.auditCaseReviewChange(original, updated, operator)
-
-      val payload = reviewChangeAudit(
-        caseReference = "ref",
-        newStatus = None,
-        previousStatus = Some(ReviewStatus.IN_PROGRESS),
-        operatorId = operator.id
-      )
-      verify(connector).sendExplicitAudit(refEq("caseReviewChange"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+      verify(connector).sendExplicitAudit(refEq("caseAppealAdded"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
     }
   }
 
@@ -372,21 +352,12 @@ class AuditServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEac
     )
   }
 
-  private def appealChangeAudit(caseReference: String, newStatus: Option[AppealStatus], previousStatus: Option[AppealStatus], operatorId: String): Map[String, String] = {
+  private def appealChangeAudit(caseReference: String, appeal: Appeal, operatorId: String): Map[String, String] = {
     Map[String, String](
       "caseReference" -> caseReference,
       "operatorId" -> operatorId,
-      "newAppealStatus" -> newStatus.map(_.toString).getOrElse("None"),
-      "previousAppealStatus" -> previousStatus.map(_.toString).getOrElse("None")
-    )
-  }
-
-  private def reviewChangeAudit(caseReference: String, newStatus: Option[ReviewStatus], previousStatus: Option[ReviewStatus], operatorId: String): Map[String, String] = {
-    Map[String, String](
-      "caseReference" -> caseReference,
-      "operatorId" -> operatorId,
-      "newReviewStatus" -> newStatus.map(_.toString).getOrElse("None"),
-      "previousReviewStatus" -> previousStatus.map(_.toString).getOrElse("None")
+      "appealType" -> appeal.`type`.toString,
+      "appealStatus" -> appeal.status.toString
     )
   }
 

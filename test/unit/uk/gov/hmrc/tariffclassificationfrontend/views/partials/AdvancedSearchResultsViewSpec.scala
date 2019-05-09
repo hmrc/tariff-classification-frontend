@@ -83,8 +83,7 @@ class AdvancedSearchResultsViewSpec extends ViewSpec {
           bindingCommodityCode = "commodity-code",
           effectiveStartDate = Some(instant("2019-01-01")),
           effectiveEndDate = Some(instant("2019-02-01")),
-          appeal = Some(Appeal(AppealStatus.IN_PROGRESS)),
-          review = Some(Review(ReviewStatus.IN_PROGRESS))
+          appeal = Seq(Appeal("id", AppealStatus.IN_PROGRESS, AppealType.APPEAL_TIER_1))
         ),
         withHolder(businessName = "business-name")
       )
@@ -149,8 +148,7 @@ class AdvancedSearchResultsViewSpec extends ViewSpec {
         bindingCommodityCode = "commodity-code",
         effectiveStartDate = Some(instant("2019-01-01")),
         effectiveEndDate = Some(instant("2019-02-01")),
-        appeal = Some(Appeal(AppealStatus.IN_PROGRESS)),
-        review = Some(Review(ReviewStatus.IN_PROGRESS))
+        appeal = Seq(Appeal("id", AppealStatus.IN_PROGRESS, AppealType.APPEAL_TIER_1))
       ),
       withHolder(businessName = "business-name")
     )
@@ -184,8 +182,7 @@ class AdvancedSearchResultsViewSpec extends ViewSpec {
         bindingCommodityCode = "commodity-code",
         effectiveStartDate = Some(instant("2019-01-01")),
         effectiveEndDate = Some(instant("2019-02-01")),
-        appeal = Some(Appeal(AppealStatus.IN_PROGRESS)),
-        review = Some(Review(ReviewStatus.IN_PROGRESS))
+        appeal = Seq(Appeal("id", AppealStatus.IN_PROGRESS, AppealType.APPEAL_TIER_1))
       ),
       withHolder(businessName = "business-name")
     )
@@ -219,8 +216,7 @@ class AdvancedSearchResultsViewSpec extends ViewSpec {
         bindingCommodityCode = "commodity-code",
         effectiveStartDate = Some(instant("2019-01-01")),
         effectiveEndDate = Some(instant("2019-02-01")),
-        appeal = Some(Appeal(AppealStatus.IN_PROGRESS)),
-        review = Some(Review(ReviewStatus.IN_PROGRESS))
+        appeal = Seq(Appeal("id", AppealStatus.IN_PROGRESS, AppealType.APPEAL_TIER_1))
       ),
       withHolder(businessName = "business-name")
     )
@@ -254,8 +250,7 @@ class AdvancedSearchResultsViewSpec extends ViewSpec {
         bindingCommodityCode = "commodity-code",
         effectiveStartDate = Some(instant("2019-01-01")),
         effectiveEndDate = Some(instant("2019-02-01")),
-        appeal = Some(Appeal(AppealStatus.IN_PROGRESS)),
-        review = Some(Review(ReviewStatus.IN_PROGRESS))
+        appeal = Seq(Appeal("id", AppealStatus.IN_PROGRESS, AppealType.APPEAL_TIER_1))
       ),
       withHolder(businessName = "business-name")
     )

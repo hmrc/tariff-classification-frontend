@@ -28,7 +28,7 @@ class AppealDetailsViewSpec extends ViewSpec {
 
     "Render - Without Appeal" in {
       // Given
-      val c = aCase(withDecision(appeal = None))
+      val c = aCase(withDecision(appeal = Seq.empty))
 
       // When
       val doc = view(appeal_details(c))
@@ -40,7 +40,7 @@ class AppealDetailsViewSpec extends ViewSpec {
 
     "Render - With 'Appeal Allowed'" in {
       // Given
-      val c = aCase(withDecision(appeal = Some(Appeal(AppealStatus.ALLOWED))))
+      val c = aCase(withDecision(appeal = Seq(Appeal("id", AppealStatus.ALLOWED, AppealType.APPEAL_TIER_1))))
 
       // When
       val doc = view(appeal_details(c))
@@ -52,7 +52,7 @@ class AppealDetailsViewSpec extends ViewSpec {
 
     "Render - With 'Appeal Dismissed'" in {
       // Given
-      val c = aCase(withDecision(appeal = Some(Appeal(AppealStatus.DISMISSED))))
+      val c = aCase(withDecision(appeal = Seq(Appeal("id", AppealStatus.DISMISSED, AppealType.APPEAL_TIER_1))))
 
       // When
       val doc = view(appeal_details(c))
@@ -64,7 +64,7 @@ class AppealDetailsViewSpec extends ViewSpec {
 
     "Render - With 'Under Appeal'" in {
       // Given
-      val c = aCase(withDecision(appeal = Some(Appeal(AppealStatus.IN_PROGRESS))))
+      val c = aCase(withDecision(appeal = Seq(Appeal("id", AppealStatus.IN_PROGRESS, AppealType.APPEAL_TIER_1))))
 
       // When
       val doc = view(appeal_details(c))
@@ -72,18 +72,6 @@ class AppealDetailsViewSpec extends ViewSpec {
       // Then
       doc should containElementWithID("appeal_details-appeal_status")
       doc.getElementById("appeal_details-appeal_status") should containText("Under appeal")
-    }
-
-    "Render - Without Review" in {
-      // Given
-      val c = aCase(withDecision(review = None))
-
-      // When
-      val doc = view(appeal_details(c))
-
-      // Then
-      doc should containElementWithID("appeal_details-review_status")
-      doc.getElementById("appeal_details-review_status") should containText("None")
     }
 
     "Render - With A Cancel Reason" in {
@@ -99,62 +87,6 @@ class AppealDetailsViewSpec extends ViewSpec {
       // Then
       doc should containElementWithID("appeal_details-extended_use_status")
       doc.getElementById("appeal_details-extended_use_status") should containText("Yes")
-    }
-
-    "Render - With 'Review Upheld'" in {
-      // Given
-      val c = aCase(withDecision(review = Some(Review(ReviewStatus.UPHELD))))
-
-      // When
-      val doc = view(appeal_details(c))
-
-      // Then
-      doc should containElementWithID("appeal_details-review_status")
-      doc.getElementById("appeal_details-review_status") should containText("Review upheld")
-    }
-
-    "Render - With 'Review Overturned'" in {
-      // Given
-      val c = aCase(withDecision(review = Some(Review(ReviewStatus.OVERTURNED))))
-
-      // When
-      val doc = view(appeal_details(c))
-
-      // Then
-      doc should containElementWithID("appeal_details-review_status")
-      doc.getElementById("appeal_details-review_status") should containText("Review overturned")
-    }
-
-    "Render - With 'Under Review'" in {
-      // Given
-      val c = aCase(withDecision(review = Some(Review(ReviewStatus.IN_PROGRESS))))
-
-      // When
-      val doc = view(appeal_details(c))
-
-      // Then
-      doc should containElementWithID("appeal_details-review_status")
-      doc.getElementById("appeal_details-review_status") should containText("Under review")
-    }
-
-    "Render Review Status Change if user has permission REVIEW_CASE" in {
-      // Given
-      val c = aCase(withDecision())
-
-      // When
-      val doc = view(appeal_details(c)(requestWithPermissions(Permission.REVIEW_CASE), messages, appConfig))
-
-      doc should containElementWithID("appeal_details-review_status-change")
-    }
-
-    "Not render Review Status Change if user does not have permission" in {
-      // Given
-      val c = aCase(withDecision())
-
-      // When
-      val doc = view(appeal_details(c)(operatorRequest, messages, appConfig))
-
-      doc shouldNot containElementWithID("appeal_details-review_status-change")
     }
 
     "Render Appeal Status Change if user has permission APPEAL_CASE" in {

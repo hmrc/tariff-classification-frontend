@@ -63,7 +63,7 @@ class CaseHeadingViewSpec extends ViewSpec {
     "Render with 'Appeal Status'" in {
       // Given
       val c = aCase(
-        withDecision(appeal = Some(Appeal(AppealStatus.ALLOWED)))
+        withDecision(appeal = Seq(Appeal("id", AppealStatus.ALLOWED, AppealType.APPEAL_TIER_1)))
       )
 
       // When
@@ -72,20 +72,6 @@ class CaseHeadingViewSpec extends ViewSpec {
       // Then
       doc should containElementWithID("appeal-status")
       doc.getElementById("appeal-status") should containText("Appeal allowed")
-    }
-
-    "Render with 'Review Status'" in {
-      // Given
-      val c = aCase(
-        withDecision(review = Some(Review(ReviewStatus.UPHELD)))
-      )
-
-      // When
-      val doc = view(case_heading(c))
-
-      // Then
-      doc should containElementWithID("review-status")
-      doc.getElementById("review-status") should containText("Review upheld")
     }
 
     "Render with queues back link" in {

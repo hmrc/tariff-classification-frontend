@@ -65,7 +65,7 @@ class CasesService @Inject()(appConfig: AppConfig,
     for {
       updated <- connector.updateCase(original.copy(decision = Some(decision.copy(appeal = decision.appeal :+ appeal))))
       _ <- addAppealAddedEvent(original, updated, appeal, operator)
-      _ = auditService.auditCaseAppealAdded(original, appeal, operator)
+      _ = auditService.auditCaseAppealAdded(updated, appeal, operator)
     } yield updated
   }
 
