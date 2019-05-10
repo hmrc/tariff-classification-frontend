@@ -140,6 +140,7 @@ case.sample.change-sample-status=Change sample status
 case.sample.status.change-status-header=Change sample status
 case.sample.status.change-status-confirm=Confirm and change status
 case.sample.status.change-status-cancel=Cancel and return to case
+case.sample.status.none-selected=Select a sample status
 
 events.table.empty=There are no events for this case
 

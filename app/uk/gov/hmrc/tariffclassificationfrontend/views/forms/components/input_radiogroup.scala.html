@@ -23,14 +23,15 @@
         hint: Option[String] = None,
         labelClass: Option[String] = None,
         id: String = "radio_option_group",
-        preSelect : Boolean = true
+        preSelect : Boolean = true,
+        customErrorMessage : Option[String] = None
 )(implicit messages: Messages)
 
 <div class="form-group @if(field.hasErrors){form-group-error}">
     <fieldset>
         <legend>
             @field.errors.map { error =>
-                <span class="error-message" id="error-message-@{field.id}-input">@messages(error.message, error.args: _*)</span>
+                <span class="error-message" id="error-message-@{field.id}-input">@if(customErrorMessage.nonEmpty){ @customErrorMessage.get } else { @messages(error.message, error.args: _*)}</span>
             }
             </legend>
 
