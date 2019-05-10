@@ -22,7 +22,8 @@
         inputClass: Option[String] = None,
         hint: Option[String] = None,
         labelClass: Option[String] = None,
-        id: String = "radio_option_group"
+        id: String = "radio_option_group",
+        preSelect : Boolean = true
 )(implicit messages: Messages)
 
 <div class="form-group @if(field.hasErrors){form-group-error}">
@@ -35,7 +36,7 @@
 
         @if(allowNone) {
             <div class="multiple-choice">
-                <input id="@id-none" type="radio" name="@{field.name}" value="" @if(field.value.isEmpty || field.value.contains("")){checked="checked"}>
+                <input id="@id-none" type="radio" name="@{field.name}" value="" @if((field.value.isEmpty || field.value.contains("")) && preSelect){checked="checked"}>
                 <label id="@id-none-label" for="@id-none">None</label>
             </div>
         }
@@ -43,7 +44,7 @@
         @for(option: RadioOption <- options) {
             @defining(option.value.replace(" ", "_")) { optionId: String =>
                 <div class="multiple-choice">
-                    <input id="@id-@optionId" type="radio" name="@{field.name}" value="@option.value" @if(field.value.contains(option.value)){checked="checked"}>
+                    <input id="@id-@optionId" type="radio" name="@{field.name}" value="@option.value" @if(field.value.contains(option.value) && preSelect){checked="checked"}>
                     <label id="@id-@optionId-label" for="@id-@optionId">@option.label</label>
                 </div>
             }

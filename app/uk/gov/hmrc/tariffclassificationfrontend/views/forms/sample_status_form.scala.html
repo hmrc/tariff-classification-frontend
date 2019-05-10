@@ -27,9 +27,10 @@
     @helper.CSRF.formField
     @input_radiogroup(
         field = field,
-        options = SampleStatus.values.toList.sorted.map(s => RadioOption(s.toString, SampleStatus.format(Some(s)))).toSeq,
+        options = SampleStatus.values.toList.sorted.map(s => RadioOption(s.toString, SampleStatus.format(Some(s)))),
         allowNone = true,
-        id = "sample_status_form"
+        id = "sample_status_form",
+        preSelect = false
     )
     <div>
         <button id="sample_status_form-submit" class="button" type="submit">@messages("case.sample.status.change-status-confirm")</button>
