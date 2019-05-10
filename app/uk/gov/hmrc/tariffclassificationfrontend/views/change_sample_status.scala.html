@@ -15,13 +15,11 @@
  *@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes
 @import uk.gov.hmrc.tariffclassificationfrontend.models.Case
-@import uk.gov.hmrc.tariffclassificationfrontend.models.ReviewStatus.ReviewStatus
+@import uk.gov.hmrc.tariffclassificationfrontend.models.SampleStatus.SampleStatus
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.sample_status_form
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.case_heading
-@import uk.gov.hmrc.tariffclassificationfrontend.models.SampleStatus.SampleStatus
 @(c: Case, form: Form[Option[SampleStatus]])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None) {

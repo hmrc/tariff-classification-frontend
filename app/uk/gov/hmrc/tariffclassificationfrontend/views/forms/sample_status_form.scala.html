@@ -27,7 +27,7 @@
     @helper.CSRF.formField
     @input_radiogroup(
         field = field,
-        options = SampleStatus.values.map(s => RadioOption(s.toString, SampleStatus.format(Some(s)))).toSeq,
+        options = SampleStatus.values.toList.sorted.map(s => RadioOption(s.toString, SampleStatus.format(Some(s)))).toSeq,
         allowNone = true,
         id = "sample_status_form"
     )
