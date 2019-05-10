@@ -45,7 +45,7 @@ class SampleController @Inject()(override val verify: RequestActions,
   override protected def redirect: String => Call = routes.CaseController.trader
 
   override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = {
-    true //TODO: Can this be done any time?
+    true //No constraints on when the case is valid
   }
 
   override protected val form: Form[Option[SampleStatus]] = SampleStatusForm.form
