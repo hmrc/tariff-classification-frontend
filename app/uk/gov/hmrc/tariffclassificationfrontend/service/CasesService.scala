@@ -74,7 +74,7 @@ class CasesService @Inject()(appConfig: AppConfig,
                         (implicit hc: HeaderCarrier): Future[Case] = {
 
     for {
-      updated <- connector.updateCase(original.copy(sampleStatus = status.get))
+      updated <- connector.updateCase(original.copy(sampleStatus = status))
       _ <- addSampleStatusChangeEvent(original, updated, operator)
       //_ = auditService.auditSampleStatusChange(original, updated, operator)
     } yield updated

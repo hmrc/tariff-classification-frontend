@@ -57,7 +57,7 @@
                             val body = event.details.asInstanceOf[SampleStatusChange]
                             progressive_disclosure(
                                 id = s"activity-events-row-$index",
-                                summary = s"Sample Status changed from ${SampleStatus.format(Some(body.from))} to ${SampleStatus.format(Some(body.to))}",
+                                summary = s"Sample Status changed from ${SampleStatus.format(body.from)} to ${SampleStatus.format(body.to)}",
                                 body = body.comment
                             )
                         }

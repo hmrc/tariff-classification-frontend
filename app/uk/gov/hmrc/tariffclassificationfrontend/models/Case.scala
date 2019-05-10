@@ -26,7 +26,7 @@ case class Case
 (
   reference: String,
   status: CaseStatus,
-  sampleStatus: SampleStatus,
+  sampleStatus: Option[SampleStatus] = None,
   createdDate: Instant,
   daysElapsed: Long,
   caseBoardsFileNumber: Option[String],

@@ -40,7 +40,7 @@ class SampleController @Inject()(override val verify: RequestActions,
                                   override val messagesApi: MessagesApi,
                                   override implicit val config: AppConfig) extends StatusChangeAction[Option[SampleStatus]] {
 
-  override protected val requiredPermission: Permission.Value = Permission.CHANGE_SAMPLE_STATUS
+  override protected val requiredPermission: Permission.Value = Permission.EDIT_SAMPLE
 
   override protected def redirect: String => Call = routes.CaseController.trader
 
@@ -50,7 +50,7 @@ class SampleController @Inject()(override val verify: RequestActions,
 
   override protected val form: Form[Option[SampleStatus]] = SampleStatusForm.form
 
-  override protected def status(c: Case): Option[SampleStatus] = Some(c.sampleStatus)
+  override protected def status(c: Case): Option[SampleStatus] = c.sampleStatus
 
   override protected def chooseStatusView(c: Case, preFilledForm: Form[Option[SampleStatus]])
                                          (implicit request: Request[_]): Html = {

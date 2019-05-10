@@ -18,19 +18,21 @@ package uk.gov.hmrc.tariffclassificationfrontend.models
 
 object SampleStatus extends Enumeration {
   type SampleStatus = Value
-  val NONE, AWAITING, MOVED_TO_ACT, MOVED_TO_ELM, SENT_TO_LAB, STORAGE, RETURNED, COURIER, DESTROYED = Value
+  val AWAITING, MOVED_TO_ACT, MOVED_TO_ELM, SENT_FOR_ANALYSIS, SENT_TO_APPEALS, STORAGE, RETURNED_APPLICANT,
+  RETURNED_PORT_OFFICER, RETURNED_COURIER, DESTROYED = Value
 
   def format(status: Option[SampleStatus]): String = {
     status match {
-      case Some(NONE) => "None"
       case Some(AWAITING) => "Awaiting sample"
       case Some(MOVED_TO_ACT) => "Moved to ACT"
       case Some(MOVED_TO_ELM) => "Moved to ELM"
-      case Some(SENT_TO_LAB) => "Sent to lab"
-      case Some(STORAGE) => "Sent to storage"
-      case Some(RETURNED) => "Returned to trader"
-      case Some(COURIER) => "Returned to courier"
-      case Some(DESTROYED) => "Sample destroyed"
+      case Some(SENT_FOR_ANALYSIS) => "Sent for analysis"
+      case Some(SENT_TO_APPEALS) => "Sent to review and appeals team"
+      case Some(STORAGE) => "Moved to storage"
+      case Some(RETURNED_APPLICANT) => "Returned to applicant"
+      case Some(RETURNED_PORT_OFFICER) => "Returned to port officer"
+      case Some(RETURNED_COURIER) => "Returned by courier"
+      case Some(DESTROYED) => "Destroyed"
       case _ => "None"
     }
   }

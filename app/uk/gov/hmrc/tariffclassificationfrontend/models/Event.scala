@@ -108,10 +108,10 @@ case class Note
 
 case class SampleStatusChange
 (
-  override val from: SampleStatus,
-  override val to: SampleStatus,
+  override val from: Option[SampleStatus],
+  override val to: Option[SampleStatus],
   override val comment: Option[String] = None
-) extends FieldChange[SampleStatus] {
+) extends FieldChange[Option[SampleStatus]] {
   override val `type`: EventType.Value = EventType.SAMPLE_STATUS_CHANGE
 }
 
