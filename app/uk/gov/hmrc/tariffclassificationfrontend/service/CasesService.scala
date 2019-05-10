@@ -34,7 +34,6 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-//noinspection ScalaStyle
 @Singleton
 class CasesService @Inject()(appConfig: AppConfig,
                              auditService: AuditService,
@@ -76,7 +75,7 @@ class CasesService @Inject()(appConfig: AppConfig,
     for {
       updated <- connector.updateCase(original.copy(sampleStatus = status))
       _ <- addSampleStatusChangeEvent(original, updated, operator)
-      //_ = auditService.auditSampleStatusChange(original, updated, operator)
+      _ = auditService.auditSampleStatusChange(original, updated, operator)
     } yield updated
   }
 
