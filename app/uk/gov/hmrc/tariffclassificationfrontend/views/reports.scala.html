@@ -19,10 +19,10 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.models.Queue
 @import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 @import uk.gov.hmrc.tariffclassificationfrontend.views.Report.Report
-@import uk.gov.hmrc.tariffclassificationfrontend.views.{Report, SelectedReport}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials._
-@(queues: Seq[Queue], report: Option[SelectedReport] = None)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@import uk.gov.hmrc.tariffclassificationfrontend.views.{Report, SelectedReport}
+@(queues: Seq[Queue], report: Option[SelectedReport] = None, caseCountByQueue: Map[String, Int] )(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None) {
 
@@ -32,7 +32,7 @@
 
     <div class="grid-row">
         <div class="column-one-quarter">
-            @queue_nav(queues, "reports")
+            @queue_nav(queues, "reports", caseCountByQueue)
         </div>
         <div class="column-three-quarters">
             <div class="column-one-third px-0">

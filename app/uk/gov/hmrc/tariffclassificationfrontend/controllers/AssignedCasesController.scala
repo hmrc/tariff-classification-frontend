@@ -23,8 +23,8 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.controllers.SessionKeys._
 import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.AssignedCasesController
-import uk.gov.hmrc.tariffclassificationfrontend.models.{NoPagination, Permission}
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
+import uk.gov.hmrc.tariffclassificationfrontend.models.{NoPagination, Permission}
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, QueuesService}
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
@@ -40,20 +40,21 @@ class AssignedCasesController @Inject()(verify: RequestActions,
 
   def assignedCases(): Action[AnyContent] = (verify.authenticated andThen verify.mustHave(Permission.VIEW_ASSIGNED_CASES))
     .async { implicit request =>
-    showAssignedCases()
-  }
+      showAssignedCases()
+    }
 
   def assignedCasesFor(assigneeId: String): Action[AnyContent] = (verify.authenticated andThen verify.mustHave(Permission.VIEW_ASSIGNED_CASES))
     .async { implicit request =>
-    showAssignedCases(Some(assigneeId))
-  }
+      showAssignedCases(Some(assigneeId))
+    }
 
   private def showAssignedCases(assigneeId: Option[String] = None)
                                (implicit request: AuthenticatedRequest[_]): Future[Result] = {
     for {
       cases <- casesService.getAssignedCases(NoPagination())
       queues <- queuesService.getAll
-    } yield Ok(views.html.assigned_cases(queues, cases.results, assigneeId))
+      counting <- casesService.countCasesByQueue(request.operator)
+    } yield Ok(views.html.assigned_cases(queues, cases.results, assigneeId, counting))
               .addingToSession((backToQueuesLinkLabel, messagesApi("cases.menu.assigned-cases")),
                                (backToQueuesLinkUrl, assigneeId.map(AssignedCasesController.assignedCasesFor(_).url)
                                                                .getOrElse(AssignedCasesController.assignedCases().url)))

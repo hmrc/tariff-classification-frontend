@@ -37,7 +37,7 @@ class BindingTariffClassificationConnector @Inject()(appConfig: AppConfig, clien
   private lazy val statuses: String = Set(NEW, OPEN, REFERRED, SUSPENDED)
     .map(_.toString).mkString(",")
 
-  private lazy val liveStatuses: String = Set( OPEN, REFERRED, SUSPENDED)
+  private lazy val liveStatuses: String = Set(OPEN, REFERRED, SUSPENDED)
     .map(_.toString).mkString(",")
 
   def findCase(reference: String)(implicit hc: HeaderCarrier): Future[Option[Case]] = {

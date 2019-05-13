@@ -17,8 +17,9 @@
 package uk.gov.tariffclassificationfrontend.utils
 
 import play.api.libs.json.Json
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, NoPagination, Paged}
-import uk.gov.hmrc.tariffclassificationfrontend.utils.JsonFormatters.caseFormat
+import uk.gov.hmrc.tariffclassificationfrontend.models._
+import uk.gov.hmrc.tariffclassificationfrontend.utils.JsonFormatters.{caseFormat, reportResult}
+
 
 object CasePayloads {
 
@@ -27,7 +28,13 @@ object CasePayloads {
   val gatewayCases: String = jsonOf(Seq(Cases.btiCaseExample))
   val pagedGatewayCases: String = jsonOf(Paged(Seq(Cases.btiCaseExample), NoPagination(), 1))
   val pagedAssignedCases: String = jsonOf(Paged(Seq(Cases.caseAssignedExample), NoPagination(), 1))
+  val report: String = jsonOfReport(Seq(ReportResult(Some("test-report"), Seq(1,2))))
+  val reportEmpty: String = jsonOfReport(Seq.empty)
   val pagedEmpty: String = jsonOf(Paged.empty[Case])
+
+  def jsonOfReport(obj: Seq[ReportResult]): String = {
+    Json.toJson(obj).toString()
+  }
 
   def jsonOf(obj: Case): String = {
     Json.toJson(obj).toString()

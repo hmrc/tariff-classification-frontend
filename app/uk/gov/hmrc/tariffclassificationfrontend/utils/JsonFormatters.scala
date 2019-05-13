@@ -56,6 +56,7 @@ object JsonFormatters {
     .and[BTIApplication]("BTI")
     .and[LiabilityOrder]("LIABILITY_ORDER")
     .format
+
   implicit val caseFormat: OFormat[Case] = Json.format[Case]
   implicit val formatCaseStatusChange: OFormat[CaseStatusChange] = Json.format[CaseStatusChange]
   implicit val formatAppealStatusChange: OFormat[AppealStatusChange] = Json.format[AppealStatusChange]

@@ -24,7 +24,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.InstantRangeForm
 import uk.gov.hmrc.tariffclassificationfrontend.models.Permission
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
-import uk.gov.hmrc.tariffclassificationfrontend.service.{QueuesService, ReportingService}
+import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, QueuesService, ReportingService}
 import uk.gov.hmrc.tariffclassificationfrontend.views
 import uk.gov.hmrc.tariffclassificationfrontend.views.Report.Report
 import uk.gov.hmrc.tariffclassificationfrontend.views.{Report, SelectedReport}
@@ -36,62 +36,73 @@ import scala.concurrent.Future
 class ReportingController @Inject()(verify: RequestActions,
                                     reportingService: ReportingService,
                                     queuesService: QueuesService,
+                                    casesService: CasesService,
                                     val messagesApi: MessagesApi,
                                     implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
   def getReports: Action[AnyContent] = (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS))
     .async { implicit request =>
-    for {
-      queues <- queuesService.getAll
-    } yield Ok(views.html.reports(queues, None))
-  }
+      for {
+        queues <- queuesService.getAll
+        counting <- casesService.countCasesByQueue(request.operator)
+      } yield Ok(views.html.reports(queues, None, counting))
+    }
 
   def getReportCriteria(name: String): Action[AnyContent] = (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS))
     .async { implicit request =>
-    handleNotFound(name) {
-      case Report.SLA => getSLAReportCriteria
-      case Report.REFERRAL => getReferralReportCriteria
+      handleNotFound(name) {
+        case Report.SLA => getSLAReportCriteria
+        case Report.REFERRAL => getReferralReportCriteria
+      }
     }
-  }
-
-  def getReport(name: String): Action[AnyContent] = (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS))
-    .async { implicit request =>
-    handleNotFound(name) {
-      case Report.SLA => getSLAReport
-      case Report.REFERRAL => getReferralReport
-    }
-  }
 
   private def getSLAReportCriteria(implicit request: AuthenticatedRequest[_]): Future[Result] = {
     for {
       queues <- queuesService.getAll
+      counting <- casesService.countCasesByQueue(request.operator)
     } yield Ok(views.html.reports(
       queues,
       Some(SelectedReport(
         Report.SLA,
         views.html.partials.reports.sla_report_criteria(InstantRangeForm.form))
-      ))
+      ),
+      counting)
     )
   }
 
   private def getReferralReportCriteria(implicit request: AuthenticatedRequest[_]): Future[Result] = {
     for {
       queues <- queuesService.getAll
+      counting <- casesService.countCasesByQueue(request.operator)
     } yield Ok(views.html.reports(
       queues,
       Some(SelectedReport(
         Report.REFERRAL,
         views.html.partials.reports.referral_report_criteria(InstantRangeForm.form))
-      ))
+      ), counting)
     )
   }
+
+  private def handleNotFound(name: String)(onFound: Report => Future[Result]): Future[Result] = Report.values.find(_.toString == name) match {
+    case Some(report) => onFound(report)
+    case None => Future.successful(Redirect(routes.ReportingController.getReports()))
+  }
+
+  def getReport(name: String): Action[AnyContent] = (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS))
+    .async { implicit request =>
+      handleNotFound(name) {
+        case Report.SLA => getSLAReport
+        case Report.REFERRAL => getReferralReport
+      }
+    }
 
   private def getSLAReport(implicit request: AuthenticatedRequest[_]): Future[Result] = {
     InstantRangeForm.form.bindFromRequest.fold(
       formWithErrors =>
         for {
           queues <- queuesService.getAll
-        } yield Ok(views.html.reports(queues, Some(SelectedReport(Report.SLA, views.html.partials.reports.sla_report_criteria(formWithErrors))))),
+          counting <- casesService.countCasesByQueue(request.operator)
+        } yield Ok(views.html.reports(queues, Some(SelectedReport(Report.SLA, views.html.partials.reports.sla_report_criteria(formWithErrors))), counting)),
       filter =>
         for {
           queues <- queuesService.getNonGateway
@@ -105,18 +116,14 @@ class ReportingController @Inject()(verify: RequestActions,
       formWithErrors =>
         for {
           queues <- queuesService.getAll
-        } yield Ok(views.html.reports(queues, Some(SelectedReport(Report.REFERRAL, views.html.partials.reports.referral_report_criteria(formWithErrors))))),
+          counting <- casesService.countCasesByQueue(request.operator)
+        } yield Ok(views.html.reports(queues, Some(SelectedReport(Report.REFERRAL, views.html.partials.reports.referral_report_criteria(formWithErrors))), counting)),
       filter =>
         for {
           queues <- queuesService.getNonGateway
           results <- reportingService.getReferralReport(filter)
         } yield Ok(views.html.report_referral(filter, results, queues))
     )
-  }
-
-  private def handleNotFound(name: String)(onFound: Report => Future[Result]): Future[Result] = Report.values.find(_.toString == name) match {
-    case Some(report) => onFound(report)
-    case None => Future.successful(Redirect(routes.ReportingController.getReports()))
   }
 
 

@@ -34,7 +34,7 @@ class MyCasesViewSpec extends ViewSpec {
       val queues = Seq(queue1, queue2)
 
       // When
-      val doc = view(html.my_cases(queues, Paged.empty[Case], operator)(request = requestWithPermissions(Permission.VIEW_QUEUE_CASES, Permission.VIEW_MY_CASES), messages, appConfig))
+      val doc = view(html.my_cases(queues, Paged.empty[Case], operator, Map.empty)(request = requestWithPermissions(Permission.VIEW_QUEUE_CASES, Permission.VIEW_MY_CASES), messages, appConfig))
 
       // Then
       doc should containElementWithID("queue-navigation")
@@ -58,7 +58,7 @@ class MyCasesViewSpec extends ViewSpec {
       val cases = Seq(case1)
 
       // When
-      val doc = view(html.my_cases(queues, Paged(cases), operator)(request = requestWithPermissions(Permission.VIEW_QUEUE_CASES, Permission.VIEW_MY_CASES), messages, appConfig))
+      val doc = view(html.my_cases(queues, Paged(cases), operator, Map.empty)(request = requestWithPermissions(Permission.VIEW_QUEUE_CASES, Permission.VIEW_MY_CASES), messages, appConfig))
 
       // Then
       doc should containElementWithID("queue-navigation")

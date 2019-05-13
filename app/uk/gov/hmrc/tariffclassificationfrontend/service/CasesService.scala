@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.service
 
-import java.time.{Clock, LocalDate}
+import java.time.LocalDate
 
 import javax.inject.{Inject, Singleton}
 import play.api.Logger
@@ -38,6 +38,7 @@ class CasesService @Inject()(appConfig: AppConfig,
                              auditService: AuditService,
                              emailService: EmailService,
                              fileService: FileStoreService,
+                             reportingService: ReportingService,
                              connector: BindingTariffClassificationConnector,
                              rulingConnector: RulingConnector) {
 
@@ -228,6 +229,15 @@ class CasesService @Inject()(appConfig: AppConfig,
 
   def getCasesByQueue(queue: Queue, pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[Case]] = {
     connector.findCasesByQueue(queue, pagination)
+  }
+
+  def countCasesByQueue(operator: Operator)(implicit hc: HeaderCarrier): Future[Map[String, Int]] = {
+    for {
+      countMyCases <- getCasesByAssignee(operator, NoPagination())
+      countByQueue <- reportingService.getQueueReport
+    } yield countByQueue.map(r => (
+          r.group.getOrElse(Queues.gateway.id), r.value.size)).toMap ++
+          Map("my-cases" -> countMyCases.size)
   }
 
   def getCasesByAssignee(assignee: Operator, pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[Case]] = {

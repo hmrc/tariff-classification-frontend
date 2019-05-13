@@ -20,6 +20,12 @@ class RootSpec extends IntegrationTest with MockitoSugar {
           .withBody(CasePayloads.pagedGatewayCases))
       )
 
+      stubFor(get(urlEqualTo("/report?status=NEW&status=OPEN&status=REFERRED&status=SUSPENDED&assignee_id=none&report_group=queue-id&report_field=active-days-elapsed"))
+        .willReturn(aResponse()
+          .withStatus(OK)
+          .withBody(CasePayloads.report))
+      )
+
       // When
       val response = await(ws.url(s"$baseUrl").get())
 
