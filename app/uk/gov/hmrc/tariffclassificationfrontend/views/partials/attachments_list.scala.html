@@ -21,7 +21,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.attachment
 @import uk.gov.hmrc.tariffclassificationfrontend.models.Case
-@(id: String, attachments: Seq[StoredAttachment], showUploadedBy: Boolean = false, showSelect: Boolean = false, c: Option[Case] = None)(implicit request: AuthenticatedRequest[_], messages: Messages)
+@(id: String, attachments: Seq[StoredAttachment], showUploadedBy: Boolean = false, showSelect: Boolean = false, showRemoval: Boolean = false, caseRef: Option[String] = None)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
     @if(attachments.nonEmpty){
         <table id="@{id}-table">
@@ -64,12 +64,11 @@
                                 @Dates.format(file.timestamp)
                             </td>
 
-                            @if(c.isDefined &&
-                                c.get.assignee.isDefined &&
-                                request.hasPermission(Permission.REMOVE_ATTACHMENTS) &&
-                                request.operator.id == c.get.assignee.get.id) {
+                            @if(showRemoval &&
+                                caseRef.isDefined &&
+                                request.hasPermission(Permission.REMOVE_ATTACHMENTS)) {
                                 <td id="@{id}-row-@{index}-remove">
-                                    <a href="@AttachmentsController.removeAttachment(c.get.reference, file.id, file.fileName)">Remove</a>
+                                    <a href="@AttachmentsController.removeAttachment(caseRef.get, file.id, file.fileName)">Remove</a>
                                 </td>
                             }
                         </tr>
