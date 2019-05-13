@@ -44,8 +44,8 @@ class ReportingController @Inject()(verify: RequestActions,
     .async { implicit request =>
       for {
         queues <- queuesService.getAll
-        counting <- casesService.countCasesByQueue(request.operator)
-      } yield Ok(views.html.reports(queues, None, counting))
+        caseCountByQueue <- casesService.countCasesByQueue(request.operator)
+      } yield Ok(views.html.reports(queues, None, caseCountByQueue))
     }
 
   def getReportCriteria(name: String): Action[AnyContent] = (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS))
@@ -59,27 +59,27 @@ class ReportingController @Inject()(verify: RequestActions,
   private def getSLAReportCriteria(implicit request: AuthenticatedRequest[_]): Future[Result] = {
     for {
       queues <- queuesService.getAll
-      counting <- casesService.countCasesByQueue(request.operator)
+      caseCountByQueue <- casesService.countCasesByQueue(request.operator)
     } yield Ok(views.html.reports(
       queues,
       Some(SelectedReport(
         Report.SLA,
         views.html.partials.reports.sla_report_criteria(InstantRangeForm.form))
       ),
-      counting)
+      caseCountByQueue)
     )
   }
 
   private def getReferralReportCriteria(implicit request: AuthenticatedRequest[_]): Future[Result] = {
     for {
       queues <- queuesService.getAll
-      counting <- casesService.countCasesByQueue(request.operator)
+      caseCountByQueue <- casesService.countCasesByQueue(request.operator)
     } yield Ok(views.html.reports(
       queues,
       Some(SelectedReport(
         Report.REFERRAL,
         views.html.partials.reports.referral_report_criteria(InstantRangeForm.form))
-      ), counting)
+      ), caseCountByQueue)
     )
   }
 
@@ -101,8 +101,8 @@ class ReportingController @Inject()(verify: RequestActions,
       formWithErrors =>
         for {
           queues <- queuesService.getAll
-          counting <- casesService.countCasesByQueue(request.operator)
-        } yield Ok(views.html.reports(queues, Some(SelectedReport(Report.SLA, views.html.partials.reports.sla_report_criteria(formWithErrors))), counting)),
+          caseCountByQueue <- casesService.countCasesByQueue(request.operator)
+        } yield Ok(views.html.reports(queues, Some(SelectedReport(Report.SLA, views.html.partials.reports.sla_report_criteria(formWithErrors))), caseCountByQueue)),
       filter =>
         for {
           queues <- queuesService.getNonGateway
@@ -116,8 +116,8 @@ class ReportingController @Inject()(verify: RequestActions,
       formWithErrors =>
         for {
           queues <- queuesService.getAll
-          counting <- casesService.countCasesByQueue(request.operator)
-        } yield Ok(views.html.reports(queues, Some(SelectedReport(Report.REFERRAL, views.html.partials.reports.referral_report_criteria(formWithErrors))), counting)),
+          caseCountByQueue <- casesService.countCasesByQueue(request.operator)
+        } yield Ok(views.html.reports(queues, Some(SelectedReport(Report.REFERRAL, views.html.partials.reports.referral_report_criteria(formWithErrors))), caseCountByQueue)),
       filter =>
         for {
           queues <- queuesService.getNonGateway

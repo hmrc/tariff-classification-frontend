@@ -44,8 +44,8 @@ class QueuesController @Inject()(verify: RequestActions,
         for {
           cases <- casesService.getCasesByQueue(q, NoPagination())
           queues <- queuesService.getAll
-          counting <- casesService.countCasesByQueue(request.operator)
-        } yield Ok(views.html.queue(queues, q, counting, cases))
+          caseCountByQueue <- casesService.countCasesByQueue(request.operator)
+        } yield Ok(views.html.queue(queues, q, caseCountByQueue, cases))
           .addingToSession((backToQueuesLinkLabel, s"${q.name} cases"), (backToQueuesLinkUrl, QueuesController.queue(q.slug).url))
           .removingFromSession(backToSearchResultsLinkLabel, backToSearchResultsLinkUrl)
     }

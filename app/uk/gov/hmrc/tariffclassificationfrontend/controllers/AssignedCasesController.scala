@@ -53,8 +53,8 @@ class AssignedCasesController @Inject()(verify: RequestActions,
     for {
       cases <- casesService.getAssignedCases(NoPagination())
       queues <- queuesService.getAll
-      counting <- casesService.countCasesByQueue(request.operator)
-    } yield Ok(views.html.assigned_cases(queues, cases.results, assigneeId, counting))
+      caseCountByQueue <- casesService.countCasesByQueue(request.operator)
+    } yield Ok(views.html.assigned_cases(queues, cases.results, assigneeId, caseCountByQueue))
               .addingToSession((backToQueuesLinkLabel, messagesApi("cases.menu.assigned-cases")),
                                (backToQueuesLinkUrl, assigneeId.map(AssignedCasesController.assignedCasesFor(_).url)
                                                                .getOrElse(AssignedCasesController.assignedCases().url)))
