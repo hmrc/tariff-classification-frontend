@@ -26,7 +26,6 @@ case class Case
 (
   reference: String,
   status: CaseStatus,
-  sampleStatus: Option[SampleStatus] = None,
   createdDate: Instant,
   daysElapsed: Long,
   caseBoardsFileNumber: Option[String],
@@ -35,7 +34,8 @@ case class Case
   application: Application,
   decision: Option[Decision],
   attachments: Seq[Attachment],
-  keywords: Set[String] = Set.empty
+  keywords: Set[String] = Set.empty,
+  sampleStatus: Option[SampleStatus] = None
 ) {
 
   private def hasRuling: Boolean = {
