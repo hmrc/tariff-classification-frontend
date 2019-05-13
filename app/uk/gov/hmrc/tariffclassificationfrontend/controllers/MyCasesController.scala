@@ -41,8 +41,9 @@ class MyCasesController @Inject()(verify: RequestActions,
       cases <- casesService.getCasesByAssignee(request.operator, NoPagination())
       queues: Seq[Queue] <- queuesService.getAll
       countQueues: Map[String, Int] <- casesService.countCasesByQueue(request.operator)
-    } yield Ok(views.html.my_cases(queues, cases, request.operator, countQueues))
+    } yield Ok(views.html.my_cases(queues, cases.results, request.operator, countQueues))
          .addingToSession((backToQueuesLinkLabel, messagesApi("cases.menu.my-cases")), (backToQueuesLinkUrl, MyCasesController.myCases().url))
          .removingFromSession(backToSearchResultsLinkLabel, backToSearchResultsLinkUrl)
   }
+
 }

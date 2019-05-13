@@ -19,6 +19,8 @@ GET         /cases                                       controllers.Default.red
 GET         /cases/:reference                            @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.trader(reference: String)
 GET         /cases/:reference/application                @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.applicationDetails(reference: String)
 
+GET         /cases/:reference/sample                     @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.sampleDetails(reference: String)
+
 GET         /cases/:reference/release                    @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReleaseCaseController.releaseCase(reference: String)
 POST        /cases/:reference/release                    @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReleaseCaseController.releaseCaseToQueue(reference: String)
 

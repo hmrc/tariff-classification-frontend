@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.views
 
+import org.jsoup.nodes.Document
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
 import uk.gov.tariffclassificationfrontend.utils.Cases
@@ -27,14 +28,17 @@ class MyCasesViewSpec extends ViewSpec {
   "My Cases View" should {
     val queue1 = Queue("1", "queue1_name", "Queue 1 Name")
     val queue2 = Queue("2", "queue2_name", "Queue 2 Name")
-    val case1 = Cases.btiCaseExample
+    val openCase = Cases.btiCaseExample.copy(status = CaseStatus.OPEN)
+    val referredCase = Cases.btiCaseExample.copy(status = CaseStatus.REFERRED)
+    val suspendedCase = Cases.btiCaseExample.copy(status = CaseStatus.SUSPENDED)
+
 
     "render empty list of cases" in {
       // Given
       val queues = Seq(queue1, queue2)
 
       // When
-      val doc = view(html.my_cases(queues, Paged.empty[Case], operator, Map.empty)(request = requestWithPermissions(Permission.VIEW_QUEUE_CASES, Permission.VIEW_MY_CASES), messages, appConfig))
+      val doc = view(html.my_cases(queues, Seq.empty, operator, Map.empty)(request = requestWithPermissions(Permission.VIEW_QUEUE_CASES, Permission.VIEW_MY_CASES), messages, appConfig))
 
       // Then
       doc should containElementWithID("queue-navigation")
@@ -49,16 +53,18 @@ class MyCasesViewSpec extends ViewSpec {
       doc.getElementById("queue-name") should containText(s"Cases for ${operator.name.get}")
       doc should containText(messages("cases.table.empty"))
 
-      doc should not(containElementWithID("cases_list-row-0-reference"))
+      doc should not(containElementWithID("cases_list-table"))
+      doc should not(containElementWithID("referred_list-table"))
     }
+
 
     "render with a list of cases" in {
       // Given
       val queues = Seq(queue1, queue2)
-      val cases = Seq(case1)
+      val cases = Seq(openCase)
 
       // When
-      val doc = view(html.my_cases(queues, Paged(cases), operator, Map.empty)(request = requestWithPermissions(Permission.VIEW_QUEUE_CASES, Permission.VIEW_MY_CASES), messages, appConfig))
+      val doc = view(html.my_cases(queues, cases, operator, Map.empty)(request = requestWithPermissions(Permission.VIEW_QUEUE_CASES, Permission.VIEW_MY_CASES), messages, appConfig))
 
       // Then
       doc should containElementWithID("queue-navigation")
@@ -71,11 +77,43 @@ class MyCasesViewSpec extends ViewSpec {
       doc should containElementWithID("nav-menu-my-cases")
 
       doc.getElementById("queue-name") should containText(s"Cases for ${operator.name.get}")
-      doc.getElementById("cases_list-table") should containText(case1.reference)
-      doc.getElementById("cases_list-table") should containText(case1.status.toString)
-      doc.getElementById("cases_list-table") should containText(case1.application.getType)
+      doc.getElementById("cases_list-table") should containText(openCase.reference)
+      doc.getElementById("cases_list-table") should containText(openCase.status.toString)
+      doc.getElementById("cases_list-table") should containText(openCase.application.getType)
 
       doc should containElementWithID("cases_list-row-0-reference")
+    }
+
+    "render with a list of cases and refered cases" in {
+      // Given
+      val queues = Seq(queue1, queue2)
+      val cases = Seq(openCase, referredCase, suspendedCase)
+
+      // When
+      val doc: Document = view(html.my_cases(queues, cases, operator)(request = requestWithPermissions(Permission.VIEW_QUEUE_CASES, Permission.VIEW_MY_CASES), messages, appConfig))
+
+      // Then
+      doc should containElementWithID("queue-navigation")
+      doc should containElementWithID("queue-name")
+      doc should containElementWithID("nav-menu-queue-queue1_name")
+      doc should containElementWithID("nav-menu-queue-queue2_name")
+
+      doc should containElementWithID("cases_list-table")
+
+      doc should containElementWithID("nav-menu-my-cases")
+
+      doc.getElementById("queue-name") should containText(s"Cases for ${operator.name.get}")
+
+      containsCase(doc, "cases_list-table", openCase)
+      containsCase(doc, "referred_list-table", referredCase)
+      containsCase(doc, "referred_list-table", suspendedCase)
+    }
+
+    def containsCase(doc: Document, tableId: String, c: Case) = {
+      doc.getElementById(tableId) should containText(c.reference)
+      doc.getElementById(tableId) should containText(c.status.toString)
+      doc.getElementById(tableId) should containText(c.application.getType)
+
     }
   }
 

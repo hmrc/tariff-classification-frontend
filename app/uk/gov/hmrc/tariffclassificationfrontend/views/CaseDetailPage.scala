@@ -21,6 +21,7 @@ object CaseDetailPage extends Enumeration {
   val TRADER = Value("trader")
   val RULING = Value("ruling")
   val APPLICATION_DETAILS = Value("application")
+  val SAMPLE_DETAILS = Value("sample")
   val ACTIVITY = Value("activity")
   val ATTACHMENTS = Value("attachments")
   val KEYWORDS = Value("keywords")
