@@ -253,7 +253,6 @@ class CasesService @Inject()(appConfig: AppConfig,
   def removeAttachment(c: Case, fileId: String)(implicit headerCarrier: HeaderCarrier): Future[Case] = {
     fileService.removeAttachment(fileId) flatMap {_ =>
       connector.updateCase(c.copy(attachments = c.attachments.filter(_.id != fileId)))
-      successful(c)
     }
   }
 
