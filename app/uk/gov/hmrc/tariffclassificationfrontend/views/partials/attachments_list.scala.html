@@ -14,12 +14,14 @@
  * limitations under the License.
  *@
 
+@import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
+@import uk.gov.hmrc.tariffclassificationfrontend.models.Permission
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.AttachmentsController
 @import uk.gov.hmrc.tariffclassificationfrontend.models.StoredAttachment
 @import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.attachment
 @import uk.gov.hmrc.tariffclassificationfrontend.models.Case
-@(id: String, attachments: Seq[StoredAttachment], showUploadedBy: Boolean = false, showSelect: Boolean = false, caseReference: Option[String] = None)(implicit messages: Messages)
+@(id: String, attachments: Seq[StoredAttachment], showUploadedBy: Boolean = false, showSelect: Boolean = false, c: Option[Case] = None)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
     @if(attachments.nonEmpty){
         <table id="@{id}-table">
@@ -29,7 +31,7 @@
                     @if(showUploadedBy) {<th id="@{id}-header-uploaded_by" scope="col">Uploaded by</th>}
                     @if(showSelect) {<th id="@{id}-header-select" scope="col">Publish</th>}
                     <th class="attachment-table-date" scope="col">Date</th>
-                    @if(caseReference.isDefined) {<th></th>}
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -38,11 +40,13 @@
                             <td id="@{id}-row-@{index}-title" >
                                 @attachment(s"$id-row-$index", file)
                             </td>
+
                             @if(showUploadedBy) {
                                 <td id="@{id}-row-@{index}-uploaded_by">
                                     @file.operator.flatMap(_.name).getOrElse("Unknown")
                                 </td>
                             }
+
                             @if(showSelect) {
                                 <td>
                                     <div class="form-group">
@@ -55,11 +59,18 @@
                                     </div>
                                 </td>
                             }
+
                             <td id="@{id}-row-@{index}-date" class="w-15">
                                 @Dates.format(file.timestamp)
                             </td>
-                            @if(caseReference.isDefined) {
-                                <td id="@{id}-row-@{index}-remove"><a href="@AttachmentsController.removeAttachment(caseReference.get, file.id, file.fileName)">Remove</a></td>
+
+                            @if(c.isDefined &&
+                                c.get.assignee.isDefined &&
+                                request.hasPermission(Permission.REMOVE_ATTACHMENTS) &&
+                                request.operator.id == c.get.assignee.get.id) {
+                                <td id="@{id}-row-@{index}-remove">
+                                    <a href="@AttachmentsController.removeAttachment(c.get.reference, file.id, file.fileName)">Remove</a>
+                                </td>
                             }
                         </tr>
                     }

@@ -38,7 +38,7 @@
     }
 
     <h3 class="heading-medium" id="classification-team-heading">@messages(s"case.attachment.heading.classification-team")</h3>
-    @attachments_list("classification-team", filesFromClassification, showUploadedBy = true, showSelect = false, Some(c.reference))
+    @attachments_list("classification-team", filesFromClassification, showUploadedBy = true, showSelect = false, Some(c))
 
     @if(request.hasPermission(Permission.ADD_ATTACHMENT)) {
         @helpers.form(action = AttachmentsController.uploadAttachment(c.reference),
