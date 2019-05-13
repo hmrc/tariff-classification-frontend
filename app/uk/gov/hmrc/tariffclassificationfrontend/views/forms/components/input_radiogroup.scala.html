@@ -31,7 +31,7 @@
     <fieldset>
         <legend>
             @field.errors.map { error =>
-                <span class="error-message" id="error-message-@{field.id}-input">@if(customErrorMessage.nonEmpty){ @customErrorMessage.get } else { @messages(error.message, error.args: _*)}</span>
+                <span class="error-message" id="error-message-@{field.id}-input">@customErrorMessage.getOrElse( messages(error.message, error.args: _*))</span>
             }
             </legend>
 
