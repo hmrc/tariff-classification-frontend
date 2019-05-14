@@ -208,10 +208,8 @@ class AuditService @Inject()(auditConnector: DefaultAuditConnector) {
 object AuditPayloadType {
 
   val CaseNote = "caseNote"
-
   val CaseKeywordAdded = "caseKeywordAdded"
   val CaseKeywordRemoved = "caseKeywordRemoved"
-
   val CaseAssigned = "caseAssigned"
   val CaseReopened = "caseReopened"
   val CaseReferred = "caseReferred"
@@ -222,7 +220,6 @@ object AuditPayloadType {
   val CaseCompleted = "caseCompleted"
   val CaseSuppressed = "caseSuppressed"
   val RulingCancelled = "rulingCancelled"
-
   val CaseExtendedUseChange = "caseExtendedUseChange"
   val CaseAppealAdded = "caseAppealAdded"
   val CaseReviewChange = "caseReviewChange"
