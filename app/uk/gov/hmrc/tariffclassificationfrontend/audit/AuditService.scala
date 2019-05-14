@@ -19,7 +19,7 @@ package uk.gov.hmrc.tariffclassificationfrontend.audit
 import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.audit.DefaultAuditConnector
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Operator, Queue}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Appeal, Case, Operator, Queue}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -135,24 +135,24 @@ class AuditService @Inject()(auditConnector: DefaultAuditConnector) {
     )
   }
 
-  def auditCaseAppealChange(oldCase: Case, updatedCase: Case, operator: Operator)
+  def auditCaseAppealAdded(c: Case, appeal: Appeal, operator: Operator)
                            (implicit hc: HeaderCarrier): Unit = {
     sendExplicitAuditEvent(
-      auditEventType = CaseAppealChange,
-      auditPayload = baseAuditPayload(updatedCase, operator) + (
-        "newAppealStatus" -> appealStatus(updatedCase),
-        "previousAppealStatus" -> appealStatus(oldCase)
+      auditEventType = CaseAppealAdded,
+      auditPayload = baseAuditPayload(c, operator) + (
+        "appealType" -> appeal.`type`.toString,
+        "appealStatus" -> appeal.status.toString
       )
     )
   }
 
-  def auditCaseReviewChange(oldCase: Case, updatedCase: Case, operator: Operator)
-                           (implicit hc: HeaderCarrier): Unit = {
+  def auditSampleStatusChange(oldCase: Case, updatedCase: Case, operator: Operator)
+                             (implicit hc: HeaderCarrier): Unit = {
     sendExplicitAuditEvent(
-      auditEventType = CaseReviewChange,
+      auditEventType = CaseSampleStatusChange,
       auditPayload = baseAuditPayload(updatedCase, operator) + (
-        "newReviewStatus" -> reviewStatus(updatedCase),
-        "previousReviewStatus" -> reviewStatus(oldCase)
+        "newSampleStatus" -> sampleStatus(updatedCase),
+        "previousSampleStatus" -> sampleStatus(oldCase)
       )
     )
   }
@@ -191,14 +191,6 @@ class AuditService @Inject()(auditConnector: DefaultAuditConnector) {
     auditConnector.sendExplicitAudit(auditType = auditEventType, detail = auditPayload)
   }
 
-  private def appealStatus: Case => String = {
-    _.decision flatMap(_.appeal) map(_.status.toString) getOrElse undefined
-  }
-
-  private def reviewStatus: Case => String = {
-    _.decision flatMap(_.review) map(_.status.toString) getOrElse undefined
-  }
-
   private def cancelReason: Case => String = {
     _.decision flatMap(_.cancellation) map(_.reason.toString) getOrElse undefined
   }
@@ -207,15 +199,17 @@ class AuditService @Inject()(auditConnector: DefaultAuditConnector) {
     _.decision.flatMap(_.cancellation).exists(_.applicationForExtendedUse).toString
   }
 
+  private def sampleStatus: Case => String = {
+    _.sampleStatus map(_.toString) getOrElse undefined
+  }
+
 }
 
 object AuditPayloadType {
 
   val CaseNote = "caseNote"
-
   val CaseKeywordAdded = "caseKeywordAdded"
   val CaseKeywordRemoved = "caseKeywordRemoved"
-
   val CaseAssigned = "caseAssigned"
   val CaseReopened = "caseReopened"
   val CaseReferred = "caseReferred"
@@ -226,9 +220,9 @@ object AuditPayloadType {
   val CaseCompleted = "caseCompleted"
   val CaseSuppressed = "caseSuppressed"
   val RulingCancelled = "rulingCancelled"
-
   val CaseExtendedUseChange = "caseExtendedUseChange"
-  val CaseAppealChange = "caseAppealChange"
+  val CaseAppealAdded = "caseAppealAdded"
   val CaseReviewChange = "caseReviewChange"
+  val CaseSampleStatusChange = "caseSampleStatusChange"
 
 }

@@ -23,21 +23,31 @@ class AppealStatusTest extends UnitSpec {
   "Appeal format" should {
 
     "format 'In Progress'" in {
-      AppealStatus.format(Some(AppealStatus.IN_PROGRESS)) shouldBe "Under appeal"
+      AppealStatus.formatAppeal(AppealStatus.IN_PROGRESS) shouldBe "Under appeal"
     }
 
     "format 'allowed'" in {
-      AppealStatus.format(Some(AppealStatus.ALLOWED)) shouldBe "Appeal allowed"
+      AppealStatus.formatAppeal(AppealStatus.ALLOWED) shouldBe "Appeal allowed"
     }
 
     "format 'dismissed'" in {
-      AppealStatus.format(Some(AppealStatus.DISMISSED)) shouldBe "Appeal dismissed"
+      AppealStatus.formatAppeal(AppealStatus.DISMISSED) shouldBe "Appeal dismissed"
+    }
+  }
+
+  "Review format" should {
+
+    "format 'In Progress'" in {
+      AppealStatus.formatReview(AppealStatus.IN_PROGRESS) shouldBe "Under review"
     }
 
-    "format 'none'" in {
-      AppealStatus.format(None) shouldBe "None"
+    "format 'allowed'" in {
+      AppealStatus.formatReview(AppealStatus.ALLOWED) shouldBe "Review upheld"
     }
 
+    "format 'dismissed'" in {
+      AppealStatus.formatReview(AppealStatus.DISMISSED) shouldBe "Review overturned"
+    }
   }
 
 }

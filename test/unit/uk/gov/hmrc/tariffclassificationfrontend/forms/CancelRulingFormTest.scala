@@ -17,7 +17,7 @@
 package uk.gov.hmrc.tariffclassificationfrontend.forms
 
 import uk.gov.hmrc.play.test.UnitSpec
-import uk.gov.hmrc.tariffclassificationfrontend.models.{CancelReason, ReviewStatus}
+import uk.gov.hmrc.tariffclassificationfrontend.models.CancelReason
 
 class CancelRulingFormTest extends UnitSpec {
 

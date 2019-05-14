@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.views.partials.sample
 
+import uk.gov.hmrc.tariffclassificationfrontend.models.SampleStatus
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewSpec
 import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.sample.sample_details
@@ -53,6 +54,33 @@ class SampleDetailsViewSpec extends ViewSpec {
       // Then
       doc.getElementById("app-details-sending-samples") should containText(messages("answer.no"))
       doc shouldNot containElementWithID("app-details-returning-samples")
+    }
+
+    "render sample status details when present on case" in {
+      // Given
+      val caseWithSample = aCase(
+        withSampleStatus(Some(SampleStatus.AWAITING)),
+        withBTIDetails(sampleToBeProvided = true, sampleToBeReturned = true),
+        withoutAttachments()
+      )
+
+      // When
+      val doc = view(sample_details(caseWithSample))
+
+      doc.getElementById("sample-status-value") should containText(SampleStatus.format(Some(SampleStatus.AWAITING)))
+    }
+
+    "render sample status details of None when not present on case" in {
+      // Given
+      val caseWithSample = aCase(
+        withBTIDetails(sampleToBeProvided = false, sampleToBeReturned = false),
+        withoutAttachments()
+      )
+
+      // When
+      val doc = view(sample_details(caseWithSample))
+
+      doc.getElementById("sample-status-value") should containText(SampleStatus.format(None))
     }
 
   }

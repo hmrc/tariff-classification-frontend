@@ -17,6 +17,7 @@
 package uk.gov.hmrc.tariffclassificationfrontend.service
 
 import java.time.LocalDate
+import java.util.UUID
 
 import javax.inject.{Inject, Singleton}
 import play.api.Logger
@@ -25,8 +26,9 @@ import uk.gov.hmrc.tariffclassificationfrontend.audit.AuditService
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.connector.{BindingTariffClassificationConnector, RulingConnector}
 import uk.gov.hmrc.tariffclassificationfrontend.models.AppealStatus.AppealStatus
+import uk.gov.hmrc.tariffclassificationfrontend.models.AppealType.AppealType
 import uk.gov.hmrc.tariffclassificationfrontend.models.CancelReason.CancelReason
-import uk.gov.hmrc.tariffclassificationfrontend.models.ReviewStatus.ReviewStatus
+import uk.gov.hmrc.tariffclassificationfrontend.models.SampleStatus.SampleStatus
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
 
@@ -55,32 +57,30 @@ class CasesService @Inject()(appConfig: AppConfig,
     } yield updated
   }
 
-
-  def updateAppealStatus(original: Case, status: Option[AppealStatus], operator: Operator)
-                        (implicit hc: HeaderCarrier): Future[Case] = {
-    val decision = original.decision.getOrElse(throw new IllegalArgumentException("Cannot change the Appeal status of a case without a Decision"))
-    val appeal = status.map(Appeal)
-    val updatedDecision = decision.copy(appeal = appeal)
-
+  def addAppeal(original: Case, appealType: AppealType, appealStatus: AppealStatus, operator: Operator)(implicit hc: HeaderCarrier): Future[Case] = {
+    val decision = original.decision.getOrElse(throw new IllegalArgumentException("Cannot change the Appeal state of a case without a Decision"))
+    val appeal = Appeal(
+      id = UUID.randomUUID().toString,
+      status = appealStatus,
+      `type` = appealType
+    )
     for {
-      updated <- connector.updateCase(original.copy(decision = Some(updatedDecision)))
-      _ <- addAppealStatusChangeEvent(original, updated, operator)
-      _ = auditService.auditCaseAppealChange(original, updated, operator)
+      updated <- connector.updateCase(original.copy(decision = Some(decision.copy(appeal = decision.appeal :+ appeal))))
+      _ <- addAppealAddedEvent(original, updated, appeal, operator)
+      _ = auditService.auditCaseAppealAdded(updated, appeal, operator)
     } yield updated
   }
 
-  def updateReviewStatus(original: Case, status: Option[ReviewStatus], operator: Operator)
+  def updateSampleStatus(original: Case, status: Option[SampleStatus], operator: Operator)
                         (implicit hc: HeaderCarrier): Future[Case] = {
-    val decision = original.decision.getOrElse(throw new IllegalArgumentException("Cannot change the Review status of a case without a Decision"))
-    val review = status.map(Review)
-    val updatedDecision = decision.copy(review = review)
 
     for {
-      updated <- connector.updateCase(original.copy(decision = Some(updatedDecision)))
-      _ <- addReviewStatusChangeEvent(original, updated, operator)
-      _ = auditService.auditCaseReviewChange(original, updated, operator)
+      updated <- connector.updateCase(original.copy(sampleStatus = status))
+      _ <- addSampleStatusChangeEvent(original, updated, operator)
+      _ = auditService.auditSampleStatusChange(original, updated, operator)
     } yield updated
   }
+
 
   def assignCase(original: Case, operator: Operator)
                 (implicit hc: HeaderCarrier): Future[Case] = {
@@ -265,21 +265,21 @@ class CasesService @Inject()(appConfig: AppConfig,
     addEvent(original, updated, details, operator)
   }
 
+  private def addSampleStatusChangeEvent(original: Case, updated: Case, operator: Operator, comment: Option[String] = None)
+                                        (implicit hc: HeaderCarrier): Future[Unit] = {
+    val details = SampleStatusChange(original.sampleStatus, updated.sampleStatus, comment)
+    addEvent(original, updated, details, operator)
+  }
+
   private def addQueueChangeEvent(original: Case, updated: Case, operator: Operator, comment: Option[String] = None)
                                  (implicit hc: HeaderCarrier): Future[Unit] = {
     val details = QueueChange(original.queueId, updated.queueId, comment)
     addEvent(original, updated, details, operator)
   }
 
-  private def addAppealStatusChangeEvent(original: Case, updated: Case, operator: Operator, comment: Option[String] = None)
+  private def addAppealAddedEvent(original: Case, updated: Case, appeal: Appeal, operator: Operator, comment: Option[String] = None)
                                         (implicit hc: HeaderCarrier): Future[Unit] = {
-    val details = AppealStatusChange(appealStatus(original), appealStatus(updated), comment)
-    addEvent(original, updated, details, operator)
-  }
-
-  private def addReviewStatusChangeEvent(original: Case, updated: Case, operator: Operator, comment: Option[String] = None)
-                                        (implicit hc: HeaderCarrier): Future[Unit] = {
-    val details = ReviewStatusChange(reviewStatus(original), reviewStatus(updated), comment)
+    val details = AppealAdded(appeal.`type`, appeal.status, comment)
     addEvent(original, updated, details, operator)
   }
 
@@ -293,14 +293,6 @@ class CasesService @Inject()(appConfig: AppConfig,
                                              (implicit hc: HeaderCarrier): Future[Unit] = {
     val details = ExtendedUseStatusChange(extendedUseStatus(original), extendedUseStatus(updated), comment)
     addEvent(original, updated, details, operator)
-  }
-
-  private def appealStatus: Case => Option[AppealStatus] = {
-    _.decision.flatMap(_.appeal).map(_.status)
-  }
-
-  private def reviewStatus: Case => Option[ReviewStatus] = {
-    _.decision.flatMap(_.review).map(_.status)
   }
 
   private def extendedUseStatus: Case => Boolean = {
