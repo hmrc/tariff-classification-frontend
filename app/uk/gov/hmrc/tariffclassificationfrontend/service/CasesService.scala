@@ -284,9 +284,6 @@ class CasesService @Inject()(appConfig: AppConfig,
     val details = ExtendedUseStatusChange(extendedUseStatus(original), extendedUseStatus(updated), comment)
     addEvent(original, updated, details, operator)
   }
-  private def appealStatus: Case => Option[AppealStatus] = {
-    _.decision.flatMap(_.appeal).map(_.status)
-  }
 
   private def extendedUseStatus: Case => Boolean = {
     _.decision.flatMap(_.cancellation).map(_.applicationForExtendedUse).get
