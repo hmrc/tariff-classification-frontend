@@ -108,6 +108,10 @@
   margin-bottom: (4 * $spacer);
 }
 
+.mt-5 {
+  margin-top: (5 * $spacer);
+}
+
 .ml-5 {
   margin-left: 5px;
 }
@@ -325,6 +329,10 @@ table tbody td[align="right"], table tbody th[align="right"], table thead th[ali
 
 .border-bottom {
   border-bottom: 1px solid #bfc1c3;
+}
+
+.border-top {
+  border-top: 1px solid #bfc1c3;
 }
 
 .border-left {

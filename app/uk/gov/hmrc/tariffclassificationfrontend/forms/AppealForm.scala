@@ -16,24 +16,24 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.forms
 
-import play.api.data.Forms._
-import play.api.data.validation.{Constraint, Invalid, Valid}
 import play.api.data.{Form, Forms, Mapping}
-import uk.gov.hmrc.tariffclassificationfrontend.forms.FormConstraints._
-import uk.gov.hmrc.tariffclassificationfrontend.models.AppealStatus
+import uk.gov.hmrc.tariffclassificationfrontend.forms.FormUtils.textTransformingTo
 import uk.gov.hmrc.tariffclassificationfrontend.models.AppealStatus.AppealStatus
+import uk.gov.hmrc.tariffclassificationfrontend.models.AppealType.AppealType
+import uk.gov.hmrc.tariffclassificationfrontend.models.{AppealStatus, AppealType}
 
 object AppealForm {
 
-  private def oneOf(values: AppealStatus.ValueSet): Constraint[String] = Constraint("constraints.appeal-status") {
-    case s: String if AppealStatus.values.exists(_.toString == s) => Valid
-    case _ => Invalid(s"Must be one of [${values.toSeq.mkString(", ")}]")
-  }
+  private val appealStatusMapping: Mapping[AppealStatus] = Forms.mapping[AppealStatus, AppealStatus](
+    "status" -> textTransformingTo(AppealStatus.withName, _.toString)
+  )(identity)(Some(_))
 
-  private val mapping: Mapping[Option[AppealStatus]] = Forms.mapping[Option[AppealStatus], String](
-    "status" -> text.verifying(emptyOr(oneOf(AppealStatus.values)): _*)
-  )(v => AppealStatus.values.find(_.toString == v))(_.map(_.toString))
+  val appealStatusForm: Form[AppealStatus] = Form[AppealStatus](appealStatusMapping)
 
-  val form: Form[Option[AppealStatus]] = Form[Option[AppealStatus]](mapping)
+  private val appealTypeMapping: Mapping[AppealType] = Forms.mapping[AppealType, AppealType](
+    "type" -> textTransformingTo(AppealType.withName, _.toString)
+  )(identity)(Some(_))
+
+  val appealTypeForm: Form[AppealType] = Form[AppealType](appealTypeMapping)
 
 }

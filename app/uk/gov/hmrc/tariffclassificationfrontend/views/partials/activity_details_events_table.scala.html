@@ -16,7 +16,7 @@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
-@import uk.gov.hmrc.tariffclassificationfrontend.models.{AppealStatus, AppealStatusChange, AssignmentChange, Case, CaseStatusChange, Event, EventType, ExtendedUseStatusChange, Note, Operator, Paged, Queue, QueueChange, ReviewStatus, ReviewStatusChange}
+@import uk.gov.hmrc.tariffclassificationfrontend.models.{AppealAdded, AppealStatus, AppealType, AssignmentChange, Case, CaseStatusChange, Event, EventType, ExtendedUseStatusChange, Note, Operator, Paged, Queue, QueueChange}
 @import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{assignee, progressive_disclosure}
 @(c: Case, events: Paged[Event], queues: Seq[Queue])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
@@ -52,21 +52,21 @@
                                 body = body.comment
                             )
                         }
-                        case EventType.APPEAL_STATUS_CHANGE => {
-                            val body = event.details.asInstanceOf[AppealStatusChange]
-                            progressive_disclosure(
-                                id = s"activity-events-row-$index",
-                                summary = s"Appeal status changed from ${AppealStatus.format(body.from)} to ${AppealStatus.format(body.to)}",
-                                body = body.comment
-                            )
-                        }
-                        case EventType.REVIEW_STATUS_CHANGE => {
-                            val body = event.details.asInstanceOf[ReviewStatusChange]
-                            progressive_disclosure(
-                                id = s"activity-events-row-$index",
-                                summary = s"Review status changed from ${ReviewStatus.format(body.from)} to ${ReviewStatus.format(body.to)}",
-                                body = body.comment
-                            )
+                        case EventType.APPEAL_ADDED => {
+                            val body = event.details.asInstanceOf[AppealAdded]
+                            if(body.appealType == AppealType.REVIEW) {
+                                progressive_disclosure(
+                                    id = s"activity-events-row-$index",
+                                    summary = s"Review added with status ${AppealStatus.formatReview(body.appealStatus)}",
+                                    body = body.comment
+                                )
+                            } else {
+                                progressive_disclosure(
+                                    id = s"activity-events-row-$index",
+                                    summary = s"Appeal added with type ${AppealType.format(body.appealType)} and status ${AppealStatus.formatAppeal(body.appealStatus)}",
+                                    body = body.comment
+                                )
+                            }
                         }
                         case EventType.EXTENDED_USE_STATUS_CHANGE => {
                             val body = event.details.asInstanceOf[ExtendedUseStatusChange]
