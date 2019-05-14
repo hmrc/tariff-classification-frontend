@@ -55,7 +55,7 @@ class AttachmentsController @Inject()(verify: RequestActions,
 
   private val removeAttachmentForm: Form[Boolean] = MandatoryBooleanForm.form("remove_attachment")
 
-  def attachmentsDetails(reference: String): Action[AnyContent] = verify.authenticated.async { implicit request =>
+  def attachmentsDetails(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
     getCaseAndRenderView(reference, CaseDetailPage.ATTACHMENTS, renderView(_, form))
   }
 
