@@ -19,7 +19,7 @@ package uk.gov.hmrc.tariffclassificationfrontend.controllers
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito._
 import org.mockito.Mockito
-import org.mockito.Mockito.{never, verify}
+import org.mockito.Mockito.verify
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterEach, Matchers}
 import play.api.http.Status
@@ -31,6 +31,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models.AppealStatus.AppealStatus
+import uk.gov.hmrc.tariffclassificationfrontend.models.AppealType.AppealType
 import uk.gov.hmrc.tariffclassificationfrontend.models.Permission.Permission
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
@@ -64,210 +65,232 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers
     Mockito.reset(casesService)
   }
 
-  "Case Appeal" should {
+  "Case Appeal Details" should {
+    "Return 200" when {
+      for (s <- Seq(CaseStatus.COMPLETED, CaseStatus.CANCELLED)) {
+        s"Case has status $s" in {
+          val c = aCase(withStatus(s), withDecision())
 
-    "return 200 OK and HTML content type - For CANCELLED Case" in {
-      val c = aCase(withStatus(CaseStatus.CANCELLED), withDecision())
+          val result = await(controller(c).appealDetails(c.reference)(fakeRequest))
 
-      val result = await(controller(c).appealDetails("reference")(fakeRequest))
+          status(result) shouldBe Status.OK
+          contentType(result) shouldBe Some("text/html")
+          charset(result) shouldBe Some("utf-8")
+          contentAsString(result) should include("appeal-heading")
+        }
+      }
 
-      status(result) shouldBe Status.OK
-      contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
-      contentAsString(result) should include("appeal-heading")
     }
 
-    "return 200 OK and HTML content type - For COMPLETED Case" in {
-      val c = aCase(withStatus(CaseStatus.COMPLETED), withDecision())
+    "Redirect" when {
+      "Case has no decision" in {
+        val c = aCase(withStatus(CaseStatus.COMPLETED), withoutDecision())
 
-      val result = await(controller(c).appealDetails("reference")(fakeRequest))
+        val result = await(controller(c).appealDetails(c.reference)(fakeRequest))
 
-      status(result) shouldBe Status.OK
-      contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
-      contentAsString(result) should include("appeal-heading")
-    }
+        status(result) shouldBe Status.SEE_OTHER
+        locationOf(result) shouldBe Some(routes.CaseController.trader(c.reference).url)
 
-    "redirect for other status" in {
-      val c = aCase(withStatus(CaseStatus.OPEN), withDecision())
+      }
 
-      val result = await(controller(c).appealDetails("reference")(fakeRequest))
+      for (s <- CaseStatus.values.filter(s => s != CaseStatus.CANCELLED && s != CaseStatus.COMPLETED)) {
+        s"Case has status $s" in {
+          val c = aCase(withStatus(s), withDecision())
 
-      status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference")
-    }
+          val result = await(controller(c).appealDetails(c.reference)(fakeRequest))
 
-    "redirect for no decision" in {
-      val c = aCase(withStatus(CaseStatus.COMPLETED), withoutDecision())
-
-      val result = await(controller(c).appealDetails("reference")(fakeRequest))
-
-      status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference")
-    }
-
-  }
-
-  "Case Appeal - Choose Status" should {
-
-    "return 200 OK and HTML content type - For CANCELLED Case" in {
-      val c = aCase(withStatus(CaseStatus.CANCELLED), withDecision(appeal = Some(Appeal(AppealStatus.IN_PROGRESS))))
-
-      val result = await(controller(c).chooseStatus("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
-
-      status(result) shouldBe Status.OK
-      contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
-      contentAsString(result) should include("change_appeal_status-heading")
-    }
-
-    "return 200 OK and HTML content type - For COMPLETED Case" in {
-      val c = aCase(withStatus(CaseStatus.COMPLETED), withDecision())
-
-      val result = await(controller(c).chooseStatus("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
-
-      status(result) shouldBe Status.OK
-      contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
-      contentAsString(result) should include("change_appeal_status-heading")
-    }
-
-    "redirect for other status" in {
-      val c = aCase(withStatus(CaseStatus.OPEN), withDecision())
-
-      val result = await(controller(c).chooseStatus("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
-
-      status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference")
-    }
-
-    "redirect for no decision" in {
-      val c = aCase(withStatus(CaseStatus.COMPLETED), withoutDecision())
-
-      val result = await(controller(c).chooseStatus("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
-
-      status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference")
-    }
-
-    "return OK when user has right permissions" in {
-      val c = aCase(withStatus(CaseStatus.COMPLETED), withDecision())
-
-      val result = await(controller(c, Set(Permission.APPEAL_CASE)).chooseStatus("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
-
-      status(result) shouldBe Status.OK
-    }
-
-    "redirect unauthorised when does not have right permissions" in {
-      val c = aCase(withStatus(CaseStatus.COMPLETED), withDecision())
-
-      val result = await(controller(c, Set.empty).chooseStatus("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
-
-      status(result) shouldBe Status.SEE_OTHER
-      redirectLocation(result).get should include("unauthorized")
+          status(result) shouldBe Status.SEE_OTHER
+          locationOf(result) shouldBe Some(routes.CaseController.trader(c.reference).url)
+        }
+      }
     }
   }
 
-  "Case Appeal - Submit Status" should {
+  "Case Choose Type" should {
+    "Return 200" when {
+      for (s <- Seq(CaseStatus.COMPLETED, CaseStatus.CANCELLED)) {
+        s"Case has status $s" in {
+          val c = aCase(withStatus(s), withDecision())
 
-    "update & redirect - For CANCELLED Case" in {
-      val c = aCase(withReference("reference"), withStatus(CaseStatus.CANCELLED), withDecision())
+          val request = newFakeGETRequestWithCSRF(fakeApplication)
+          val result = await(controller(c).chooseType(c.reference)(request))
 
-      given(casesService.updateAppealStatus(refEq(c), any[Option[AppealStatus]], any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(c))
+          status(result) shouldBe Status.OK
+          contentType(result) shouldBe Some("text/html")
+          charset(result) shouldBe Some("utf-8")
+          contentAsString(result) should include("appeal_choose_type")
+        }
+      }
 
-      val result = await(controller(c).updateStatus("reference")(newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("status" -> "IN_PROGRESS")))
-
-      verify(casesService).updateAppealStatus(refEq(c), refEq(Some(AppealStatus.IN_PROGRESS)), any[Operator])(any[HeaderCarrier])
-
-      status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/appeal")
     }
 
-    "update & redirect - For COMPLETED Case" in {
-      val c = aCase(withReference("reference"), withStatus(CaseStatus.COMPLETED), withDecision())
+    "Redirect" when {
+      "Case has no decision" in {
+        val c = aCase(withStatus(CaseStatus.COMPLETED), withoutDecision())
 
-      given(casesService.updateAppealStatus(refEq(c), any[Option[AppealStatus]], any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(c))
+        val request = newFakeGETRequestWithCSRF(fakeApplication)
+        val result = await(controller(c).chooseType(c.reference)(request))
 
-      val result = await(controller(c).updateStatus("reference")(newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("status" -> "IN_PROGRESS")))
+        status(result) shouldBe Status.SEE_OTHER
+        locationOf(result) shouldBe Some(routes.CaseController.trader(c.reference).url)
 
-      verify(casesService).updateAppealStatus(refEq(c), refEq(Some(AppealStatus.IN_PROGRESS)), any[Operator])(any[HeaderCarrier])
+      }
 
-      status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/appeal")
+      for (s <- CaseStatus.values.filter(s => s != CaseStatus.CANCELLED && s != CaseStatus.COMPLETED)) {
+        s"Case has status $s" in {
+          val c = aCase(withStatus(s), withDecision())
+
+          val request = newFakeGETRequestWithCSRF(fakeApplication)
+          val result = await(controller(c).chooseType(c.reference)(request))
+
+          status(result) shouldBe Status.SEE_OTHER
+          locationOf(result) shouldBe Some(routes.CaseController.trader(c.reference).url)
+        }
+      }
+    }
+  }
+
+  "Case Confirm Type" should {
+    "Redirect to Next Stage" when {
+      for (s <- Seq(CaseStatus.COMPLETED, CaseStatus.CANCELLED)) {
+        s"Case has status $s" in {
+          val c = aCase(withStatus(s), withDecision())
+
+          val request = newFakePOSTRequestWithCSRF(fakeApplication, Map("type" -> AppealType.REVIEW.toString))
+          val result = await(controller(c).confirmType(c.reference)(request))
+
+          status(result) shouldBe Status.SEE_OTHER
+          locationOf(result) shouldBe Some(routes.AppealCaseController.chooseStatus(c.reference, AppealType.REVIEW.toString).url)
+        }
+      }
     }
 
-    "redirect for unchanged status" in {
-      val c = aCase(withReference("reference"), withStatus(CaseStatus.CANCELLED), withDecision(appeal = None))
+    "Render Form errors" in {
+      val c = aCase(withStatus(CaseStatus.COMPLETED), withDecision())
 
-      val result = await(controller(c).updateStatus("reference")(newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("status" -> "")))
+      val request = newFakePOSTRequestWithCSRF(fakeApplication, Map())
+      val result = await(controller(c).confirmType(c.reference)(request))
 
-      verify(casesService, never()).updateAppealStatus(any[Case], any[Option[AppealStatus]], any[Operator])(any[HeaderCarrier])
-
-      status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/appeal")
+      status(result) shouldBe Status.OK
     }
 
-    "redirect for other status" in {
-      val c = aCase(withStatus(CaseStatus.OPEN), withDecision())
+    "Redirect" when {
+      "Case has no decision" in {
+        val c = aCase(withStatus(CaseStatus.COMPLETED), withoutDecision())
 
-      given(casesService.updateAppealStatus(refEq(c), any[Option[AppealStatus]], any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(c))
+        val result = await(controller(c).confirmType(c.reference)(fakeRequest))
 
-      val result = await(controller(c).updateStatus("reference")(newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("status" -> "IN_PROGRESS")))
+        status(result) shouldBe Status.SEE_OTHER
+        locationOf(result) shouldBe Some(routes.CaseController.trader(c.reference).url)
 
-      verify(casesService, never()).updateAppealStatus(any[Case], any[Option[AppealStatus]], any[Operator])(any[HeaderCarrier])
+      }
 
-      status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference")
+      for (s <- CaseStatus.values.filter(s => s != CaseStatus.CANCELLED && s != CaseStatus.COMPLETED)) {
+        s"Case has status $s" in {
+          val c = aCase(withStatus(s), withDecision())
+
+          val result = await(controller(c).confirmType(c.reference)(fakeRequest))
+
+          status(result) shouldBe Status.SEE_OTHER
+          locationOf(result) shouldBe Some(routes.CaseController.trader(c.reference).url)
+        }
+      }
+    }
+  }
+
+  "Case Choose Status" should {
+    "Return 200" when {
+      for (s <- Seq(CaseStatus.COMPLETED, CaseStatus.CANCELLED)) {
+        s"Case has status $s" in {
+          val c = aCase(withStatus(s), withDecision())
+
+          val request = newFakeGETRequestWithCSRF(fakeApplication)
+          val result = await(controller(c).chooseStatus(c.reference, AppealType.REVIEW.toString)(request))
+
+          status(result) shouldBe Status.OK
+          contentType(result) shouldBe Some("text/html")
+          charset(result) shouldBe Some("utf-8")
+          contentAsString(result) should include("appeal_choose_status")
+        }
+      }
+
     }
 
-    "redirect for no decision" in {
-      val c = aCase(withStatus(CaseStatus.COMPLETED), withoutDecision())
+    "Redirect" when {
+      "Case has no decision" in {
+        val c = aCase(withStatus(CaseStatus.COMPLETED), withoutDecision())
 
-      given(casesService.updateAppealStatus(refEq(c), any[Option[AppealStatus]], any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(c))
+        val request = newFakeGETRequestWithCSRF(fakeApplication)
+        val result = await(controller(c).chooseStatus(c.reference, AppealType.REVIEW.toString)(request))
 
-      val result = await(controller(c).updateStatus("reference")(newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("status" -> "IN_PROGRESS")))
+        status(result) shouldBe Status.SEE_OTHER
+        locationOf(result) shouldBe Some(routes.CaseController.trader(c.reference).url)
 
-      verify(casesService, never()).updateAppealStatus(any[Case], any[Option[AppealStatus]], any[Operator])(any[HeaderCarrier])
+      }
 
-      status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference")
+      for (s <- CaseStatus.values.filter(s => s != CaseStatus.CANCELLED && s != CaseStatus.COMPLETED)) {
+        s"Case has status $s" in {
+          val c = aCase(withStatus(s), withDecision())
+
+          val request = newFakeGETRequestWithCSRF(fakeApplication)
+          val result = await(controller(c).chooseStatus(c.reference, AppealType.REVIEW.toString)(request))
+
+          status(result) shouldBe Status.SEE_OTHER
+          locationOf(result) shouldBe Some(routes.CaseController.trader(c.reference).url)
+        }
+      }
+    }
+  }
+
+  "Case Confirm Status" should {
+    "Redirect to Appeal View" when {
+      for (s <- Seq(CaseStatus.COMPLETED, CaseStatus.CANCELLED)) {
+        s"Case has status $s" in {
+          val c = aCase(withStatus(s), withDecision())
+          given(casesService.addAppeal(any[Case], any[AppealType], any[AppealStatus], any[Operator])(any[HeaderCarrier])) willReturn Future.successful(c)
+
+          val request = newFakePOSTRequestWithCSRF(fakeApplication, Map("status" -> AppealStatus.ALLOWED.toString))
+          val result = await(controller(c).confirmStatus(c.reference, AppealType.REVIEW.toString)(request))
+
+          status(result) shouldBe Status.SEE_OTHER
+          locationOf(result) shouldBe Some(routes.AppealCaseController.appealDetails(c.reference).url)
+
+          verify(casesService).addAppeal(refEq(c), refEq(AppealType.REVIEW), refEq(AppealStatus.ALLOWED), refEq(operator))(any[HeaderCarrier])
+        }
+      }
     }
 
-    "when error form redirects to main case page" in {
-      val c = aCase(withStatus(CaseStatus.COMPLETED), withoutDecision())
+    "Render Form errors" in {
+      val c = aCase(withStatus(CaseStatus.COMPLETED), withDecision())
 
-      val result = await(controller(c).updateStatus("reference")(newFakePOSTRequestWithCSRF(fakeApplication)
-        .withFormUrlEncodedBody("status" -> "WRONG_STATUS")))
+      val request = newFakePOSTRequestWithCSRF(fakeApplication, Map())
+      val result = await(controller(c).confirmStatus(c.reference, AppealType.REVIEW.toString)(request))
 
-      verify(casesService, never()).updateAppealStatus(any[Case], any[Option[AppealStatus]], any[Operator])(any[HeaderCarrier])
-
-      status(result) shouldBe Status.SEE_OTHER
-      contentAsString(result) shouldBe ""
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference")
+      status(result) shouldBe Status.OK
     }
 
-    "return OK when user has right permissions" in {
-      val c = aCase(withReference("reference"), withStatus(CaseStatus.COMPLETED), withDecision())
+    "Redirect" when {
+      "Case has no decision" in {
+        val c = aCase(withStatus(CaseStatus.COMPLETED), withoutDecision())
 
-      given(casesService.updateAppealStatus(any[Case], any[Option[AppealStatus]], any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(c))
+        val result = await(controller(c).confirmStatus(c.reference, AppealType.REVIEW.toString)(fakeRequest))
 
-      val result = await(controller(c, Set(Permission.APPEAL_CASE)).updateStatus("reference")
-      (newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("status" -> "IN_PROGRESS")))
+        status(result) shouldBe Status.SEE_OTHER
+        locationOf(result) shouldBe Some(routes.CaseController.trader(c.reference).url)
 
-      status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/appeal")
+      }
+
+      for (s <- CaseStatus.values.filter(s => s != CaseStatus.CANCELLED && s != CaseStatus.COMPLETED)) {
+        s"Case has status $s" in {
+          val c = aCase(withStatus(s), withDecision())
+
+          val result = await(controller(c).confirmStatus(c.reference, AppealType.REVIEW.toString)(fakeRequest))
+
+          status(result) shouldBe Status.SEE_OTHER
+          locationOf(result) shouldBe Some(routes.CaseController.trader(c.reference).url)
+        }
+      }
     }
-
-    "redirect unauthorised when does not have right permissions" in {
-      val c = aCase(withReference("reference"), withStatus(CaseStatus.COMPLETED), withDecision())
-
-      val result = await(controller(c, Set.empty).updateStatus("reference")
-      (newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("status" -> "IN_PROGRESS")))
-
-      status(result) shouldBe Status.SEE_OTHER
-      redirectLocation(result).get should include("unauthorized")
-    }
-
   }
 
 }

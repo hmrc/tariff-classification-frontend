@@ -16,10 +16,20 @@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
-@import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Operator, Paged, Queue}
+@import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus, Operator, Paged, Queue}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{cases_list, nav_search, queue_nav}
-@(queues: Seq[Queue], cases: Paged[Case], operator: Operator)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(queues: Seq[Queue], cases: Seq[Case], operator: Operator)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+
+@referredStatuses = @{
+    Seq(CaseStatus.REFERRED, CaseStatus.SUSPENDED)
+}
+@nonReferredCases = @{
+    Paged[Case](cases.filter(c => !referredStatuses.contains(c.status)))
+}
+@referredCases = @{
+    Paged[Case](cases.filter(c => referredStatuses.contains(c.status)))
+}
 
 @main(bodyClasses = None) {
 
@@ -39,7 +49,12 @@
             @queue_nav(queues, "my-cases")
         </div>
         <div class="column-three-quarters">
-            @cases_list(cases)
+            <h2 class="heading-medium mt-1">Cases on-hand</h2>
+            @cases_list(nonReferredCases, "cases_list")
+        </div>
+        <div class="column-three-quarters mt-4 float-right">
+            <h2 class="heading-medium mt-1"> Referred cases </h2>
+            @cases_list(referredCases, "referred_list")
         </div>
     </div>
 }

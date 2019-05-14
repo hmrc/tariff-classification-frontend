@@ -40,7 +40,7 @@ class MyCasesController @Inject()(verify: RequestActions,
     for {
       cases <- casesService.getCasesByAssignee(request.operator, NoPagination())
       queues <- queuesService.getAll
-    } yield Ok(views.html.my_cases(queues, cases, request.operator))
+    } yield Ok(views.html.my_cases(queues, cases.results, request.operator))
               .addingToSession((backToQueuesLinkLabel, messagesApi("cases.menu.my-cases")), (backToQueuesLinkUrl, MyCasesController.myCases().url))
               .removingFromSession(backToSearchResultsLinkLabel, backToSearchResultsLinkUrl)
   }

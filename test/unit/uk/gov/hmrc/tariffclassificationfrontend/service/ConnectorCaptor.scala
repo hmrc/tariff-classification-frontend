@@ -26,6 +26,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
 
 trait ConnectorCaptor {
 
+
   protected def theEventCreatedFor(connector: BindingTariffClassificationConnector, c: Case): NewEventRequest = {
     val captor: ArgumentCaptor[NewEventRequest] = ArgumentCaptor.forClass(classOf[NewEventRequest])
     verify(connector).createEvent(refEq(c), captor.capture())(any[HeaderCarrier])

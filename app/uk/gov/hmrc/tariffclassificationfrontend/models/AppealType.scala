@@ -16,26 +16,19 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.models
 
-import uk.gov.hmrc.play.test.UnitSpec
-
-class ReviewStatusTest extends UnitSpec {
-
-  "Review format" should {
-    "format 'In Progress'" in {
-      ReviewStatus.format(Some(ReviewStatus.IN_PROGRESS)) shouldBe "Under review"
-    }
-
-    "format 'allowed'" in {
-      ReviewStatus.format(Some(ReviewStatus.UPHELD)) shouldBe "Review upheld"
-    }
-
-    "format 'dismissed'" in {
-      ReviewStatus.format(Some(ReviewStatus.OVERTURNED)) shouldBe "Review overturned"
-    }
-
-    "format 'none'" in {
-      ReviewStatus.format(None) shouldBe "None"
-    }
+object AppealType extends Enumeration {
+  def format(value: AppealType): String = value match {
+    case REVIEW => "Review"
+    case APPEAL_TIER_1 => "Appeal tier 1"
+    case APPEAL_TIER_2 => "Appeal tier 2"
+    case COURT_OF_APPEALS => "Court of appeals"
+    case SUPREME_COURT => "Supreme Court"
   }
 
+  type AppealType = Value
+  val REVIEW  = Value(1)
+  val APPEAL_TIER_1 = Value(2)
+  val APPEAL_TIER_2 = Value(3)
+  val COURT_OF_APPEALS = Value(4)
+  val SUPREME_COURT = Value(5)
 }

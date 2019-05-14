@@ -16,35 +16,78 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.views.partials.statuses
 
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Appeal, AppealStatus}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Appeal, AppealStatus, AppealType}
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewSpec
 import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.statuses.appeal_status
-import uk.gov.tariffclassificationfrontend.utils.Cases
 import uk.gov.tariffclassificationfrontend.utils.Cases.{aCase, withDecision, withReference}
 
 class AppealStatusViewSpec extends ViewSpec {
 
   "Appeal Status" should {
 
-    "render the appeal status if it is defined" in {
-      // When
+    "render nothing for no appeals" in {
+      //  Given
       val c = aCase(
         withReference("ref"),
-        withDecision(appeal = Some(Appeal(AppealStatus.DISMISSED)))
+        withDecision(appeal = Seq.empty)
       )
 
+      // When
+      val doc = view(appeal_status(c, "id"))
+
+      // Then
+      doc.text() shouldBe ""
+    }
+
+    "render under appeal" in {
+      // Given
+      val c = aCase(
+        withReference("ref"),
+        withDecision(appeal = Seq(
+          Appeal("id", AppealStatus.IN_PROGRESS, AppealType.APPEAL_TIER_1),
+          Appeal("id", AppealStatus.ALLOWED, AppealType.APPEAL_TIER_1),
+          Appeal("id", AppealStatus.DISMISSED, AppealType.APPEAL_TIER_1)
+        ))
+      )
+
+      // When
+      val doc = view(appeal_status(c, "id"))
+
+      // Then
+      doc.text() shouldBe "Under appeal"
+    }
+
+    "render appeal allowed" in {
+      // Given
+      val c = aCase(
+        withReference("ref"),
+        withDecision(appeal = Seq(
+          Appeal("id", AppealStatus.ALLOWED, AppealType.APPEAL_TIER_1),
+          Appeal("id", AppealStatus.DISMISSED, AppealType.APPEAL_TIER_1)
+        ))
+      )
+
+      // When
+      val doc = view(appeal_status(c, "id"))
+
+      // Then
+      doc.text() shouldBe "Appeal allowed"
+    }
+
+    "render appeal dismissed" in {
+      // Given
+      val c = aCase(
+        withReference("ref"),
+        withDecision(appeal = Seq(
+          Appeal("id", AppealStatus.DISMISSED, AppealType.APPEAL_TIER_1)
+        ))
+      )
+
+      // When
       val doc = view(appeal_status(c, "id"))
 
       // Then
       doc.text() shouldBe "Appeal dismissed"
-    }
-
-    "not render the appeal status if it is not defined" in {
-      // When
-      val doc = view(appeal_status(Cases.btiCaseExample, "id"))
-
-      // Then
-      doc.text() shouldBe ""
     }
 
   }
