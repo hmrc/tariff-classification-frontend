@@ -66,29 +66,7 @@ class SampleControllerSpec extends UnitSpec with Matchers
 
   "Sample controller" should {
 
-    "return 200 OK and HTML content type - For CANCELLED Case" in {
-      val c = aCase(withStatus(CaseStatus.CANCELLED), withDecision())
-
-      val result = await(controller(c).sampleDetails("reference")(fakeRequest))
-
-      status(result) shouldBe Status.OK
-      contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
-      contentAsString(result) should include("sample-status-heading")
-    }
-
-    "return 200 OK and HTML content type - For COMPLETED Case" in {
-      val c = aCase(withStatus(CaseStatus.COMPLETED), withDecision())
-
-      val result = await(controller(c).sampleDetails("reference")(fakeRequest))
-
-      status(result) shouldBe Status.OK
-      contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
-      contentAsString(result) should include("sample-status-heading")
-    }
-
-    "return 200 OK and HTML content type - For OPEN Case" in {
+    "return 200 OK and HTML content type - When retrieving samples for case" in {
       val c = aCase(withStatus(CaseStatus.OPEN), withDecision())
 
       val result = await(controller(c).sampleDetails("reference")(fakeRequest))
@@ -103,29 +81,7 @@ class SampleControllerSpec extends UnitSpec with Matchers
 
   "Sample - Choose Status" should {
 
-    "return 200 OK and HTML content type - For CANCELLED Case" in {
-      val c = aCase(withStatus(CaseStatus.CANCELLED), withDecision(appeal = Some(Appeal(AppealStatus.IN_PROGRESS))))
-
-      val result = await(controller(c).chooseStatus("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
-
-      status(result) shouldBe Status.OK
-      contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
-      contentAsString(result) should include("change_sample_status-heading")
-    }
-
-    "return 200 OK and HTML content type - For COMPLETED Case" in {
-      val c = aCase(withStatus(CaseStatus.COMPLETED), withDecision())
-
-      val result = await(controller(c).chooseStatus("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
-
-      status(result) shouldBe Status.OK
-      contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
-      contentAsString(result) should include("change_sample_status-heading")
-    }
-
-    "return 200 OK and HTML content type - For OPEN Case" in {
+    "return 200 OK and HTML content type - For Case" in {
       val c = aCase(withStatus(CaseStatus.OPEN), withDecision())
 
       val result = await(controller(c).chooseStatus("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
@@ -154,36 +110,10 @@ class SampleControllerSpec extends UnitSpec with Matchers
     }
   }
 
-  "Case Appeal - Submit Status" should {
+  "Sample - Submit Status" should {
 
-    "update & redirect - For CANCELLED Case" in {
-      val c = aCase(withReference("reference"), withStatus(CaseStatus.CANCELLED), withDecision())
-
-      given(casesService.updateSampleStatus(refEq(c), any[Option[SampleStatus]], any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(c))
-
-      val result = await(controller(c).updateStatus("reference")(newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("status" -> "DESTROYED")))
-
-      verify(casesService).updateSampleStatus(refEq(c), refEq(Some(SampleStatus.DESTROYED)), any[Operator])(any[HeaderCarrier])
-
-      status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/sample")
-    }
-
-    "update & redirect - For COMPLETED Case" in {
-      val c = aCase(withReference("reference"), withStatus(CaseStatus.COMPLETED), withDecision())
-
-      given(casesService.updateSampleStatus(refEq(c), any[Option[SampleStatus]], any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(c))
-
-      val result = await(controller(c).updateStatus("reference")(newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("status" -> "DESTROYED")))
-
-      verify(casesService).updateSampleStatus(refEq(c), refEq(Some(SampleStatus.DESTROYED)), any[Operator])(any[HeaderCarrier])
-
-      status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/sample")
-    }
-
-    "update & redirect - For OPEN Case" in {
-      val c = aCase(withReference("reference"), withStatus(CaseStatus.OPEN), withDecision())
+    "update & redirect - For Case" in {
+      val c = aCase(withReference("reference"), withDecision())
 
       given(casesService.updateSampleStatus(refEq(c), any[Option[SampleStatus]], any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(c))
 
