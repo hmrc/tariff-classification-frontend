@@ -23,13 +23,13 @@
     <ul>
         @if(request.hasPermission(Permission.VIEW_MY_CASES)) {
             <li class="side-nav__list @if(section == "my-cases") { side-nav__list--selected }">
-                <a id="nav-menu-my-cases" class="side-nav__link" href="@controllers.routes.MyCasesController.myCases()">@messages("cases.menu.my-cases") <span id="case-count-my-cases">(@caseCountByQueue.getOrElse("my-cases", "0"))</span> </a>
+                <a id="nav-menu-my-cases" class="side-nav__link" href="@controllers.routes.MyCasesController.myCases()">@messages("cases.menu.my-cases") (<span id="case-count-my-cases">@caseCountByQueue.getOrElse("my-cases", "0")</span>)</a>
             </li>
         }
         @if(request.hasPermission(Permission.VIEW_QUEUE_CASES)) {
             @for(q <- queues) {
                 <li class="side-nav__list @if(section == q.slug) { side-nav__list--selected }">
-                    <a id="nav-menu-queue-@q.slug" class="side-nav__link" href="@controllers.routes.QueuesController.queue(q.slug)">@messages("cases.menu.queue-cases", q.name)<span id="case-count-@q.slug"> (@caseCountByQueue.getOrElse(q.id, "0"))</span> </a>
+                    <a id="nav-menu-queue-@q.slug" class="side-nav__link" href="@controllers.routes.QueuesController.queue(q.slug)">@messages("cases.menu.queue-cases", q.name) (<span id="case-count-@q.slug">@caseCountByQueue.getOrElse(q.id, "0")</span>)</a>
                 </li>
             }
         }
