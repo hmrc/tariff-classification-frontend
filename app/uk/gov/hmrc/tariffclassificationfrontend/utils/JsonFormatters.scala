@@ -39,6 +39,7 @@ object JsonFormatters {
   implicit val operator: Format[Operator] = Jsonx.formatCaseClass[Operator]
   implicit val scanStatusFormat: Format[ScanStatus.Value] = EnumJson.format(ScanStatus)
   implicit val appealStatusFormat: Format[AppealStatus.Value] = EnumJson.format(AppealStatus)
+  implicit val sampleStatusFormat: Format[SampleStatus.Value] = EnumJson.format(SampleStatus)
   implicit val appealTypeFormat: Format[AppealType.Value] = EnumJson.format(AppealType)
   implicit val cancelReasonFormat: Format[CancelReason.Value] = EnumJson.format(CancelReason)
   implicit val caseStatusFormat: Format[CaseStatus.Value] = EnumJson.format(CaseStatus)
@@ -58,6 +59,7 @@ object JsonFormatters {
   implicit val caseFormat: OFormat[Case] = Json.format[Case]
   implicit val formatCaseStatusChange: OFormat[CaseStatusChange] = Json.format[CaseStatusChange]
   implicit val formatAppealStatusChange: OFormat[AppealStatusChange] = Json.format[AppealStatusChange]
+  implicit val formatSampleStatusChange: OFormat[SampleStatusChange] = Json.format[SampleStatusChange]
   implicit val formatAppealAdded: OFormat[AppealAdded] = Json.format[AppealAdded]
   implicit val formatExtendedUseStatusChange: OFormat[ExtendedUseStatusChange] = Json.format[ExtendedUseStatusChange]
   implicit val formatAssignmentChange: OFormat[AssignmentChange] = Json.format[AssignmentChange]
@@ -67,6 +69,7 @@ object JsonFormatters {
   implicit val formatEventDetail: Format[Details] = Union.from[Details]("type")
     .and[CaseStatusChange](EventType.CASE_STATUS_CHANGE.toString)
     .and[AppealStatusChange](EventType.APPEAL_STATUS_CHANGE.toString)
+    .and[SampleStatusChange](EventType.SAMPLE_STATUS_CHANGE.toString)
     .and[AppealAdded](EventType.APPEAL_ADDED.toString)
     .and[ExtendedUseStatusChange](EventType.EXTENDED_USE_STATUS_CHANGE.toString)
     .and[AssignmentChange](EventType.ASSIGNMENT_CHANGE.toString)

@@ -146,6 +146,17 @@ class AuditService @Inject()(auditConnector: DefaultAuditConnector) {
     )
   }
 
+  def auditSampleStatusChange(oldCase: Case, updatedCase: Case, operator: Operator)
+                             (implicit hc: HeaderCarrier): Unit = {
+    sendExplicitAuditEvent(
+      auditEventType = CaseSampleStatusChange,
+      auditPayload = baseAuditPayload(updatedCase, operator) + (
+        "newSampleStatus" -> sampleStatus(updatedCase),
+        "previousSampleStatus" -> sampleStatus(oldCase)
+      )
+    )
+  }
+
   def auditCaseExtendedUseChange(oldCase: Case, updatedCase: Case, operator: Operator)
                                 (implicit hc: HeaderCarrier): Unit = {
     sendExplicitAuditEvent(
@@ -188,6 +199,10 @@ class AuditService @Inject()(auditConnector: DefaultAuditConnector) {
     _.decision.flatMap(_.cancellation).exists(_.applicationForExtendedUse).toString
   }
 
+  private def sampleStatus: Case => String = {
+    _.sampleStatus map(_.toString) getOrElse undefined
+  }
+
 }
 
 object AuditPayloadType {
@@ -211,5 +226,6 @@ object AuditPayloadType {
   val CaseExtendedUseChange = "caseExtendedUseChange"
   val CaseAppealAdded = "caseAppealAdded"
   val CaseReviewChange = "caseReviewChange"
+  val CaseSampleStatusChange = "caseSampleStatusChange"
 
 }
