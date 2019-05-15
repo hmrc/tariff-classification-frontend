@@ -68,7 +68,7 @@
                                 caseRef.isDefined &&
                                 request.hasPermission(Permission.REMOVE_ATTACHMENTS)) {
                                 <td id="@{id}-row-@{index}-remove">
-                                    <a href="@AttachmentsController.removeAttachment(caseRef.get, file.id, file.fileName)">Remove</a>
+                                    <a  id="@{id}-row-@{index}-remove-link" href="@AttachmentsController.removeAttachment(caseRef.get, file.id, file.fileName)">Remove</a>
                                 </td>
                             }
                         </tr>
