@@ -23,7 +23,8 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{BTIApplication, Case, StoredAttachment}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.{input_text, input_textarea}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{attachments_list, tab_heading}
-@(c: Case, files: Seq[StoredAttachment], decisionForm : Form[DecisionFormData])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
+@(c: Case, files: Seq[StoredAttachment], decisionForm : Form[DecisionFormData])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @defining(c.application.asBTI) { btiApp: BTIApplication =>
     <div class="form-group">

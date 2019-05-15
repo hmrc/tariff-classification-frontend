@@ -162,6 +162,7 @@ reassign-case.submit.button = Move back to queue
 suppress_case.form.state.required = Select yes if you have contacted the applicant
 reject_case.form.state.required = Select yes if you have contacted the applicant
 refer_case.form.state.required = Select yes if you have contacted the applicant
+remove_attachment.form.state.required = Select yes if you want to remove the attachment
 suspend_case.form.state.required = Select yes if you have contacted the applicant
 
 pdf.ruling.title = Binding Tariff Information ruling

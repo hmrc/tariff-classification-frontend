@@ -34,6 +34,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import scala.concurrent.Future.successful
 
 @Singleton
 class CasesService @Inject()(appConfig: AppConfig,
@@ -257,6 +258,12 @@ class CasesService @Inject()(appConfig: AppConfig,
     fileService.upload(f) flatMap { fileStored: FileStoreAttachment =>
       val attachments = c.attachments :+ Attachment(id = fileStored.id, operator = Some(o))
       connector.updateCase(c.copy(attachments = attachments))
+    }
+  }
+
+  def removeAttachment(c: Case, fileId: String)(implicit headerCarrier: HeaderCarrier): Future[Case] = {
+    fileService.removeAttachment(fileId) flatMap {_ =>
+      connector.updateCase(c.copy(attachments = c.attachments.filter(_.id != fileId)))
     }
   }
 

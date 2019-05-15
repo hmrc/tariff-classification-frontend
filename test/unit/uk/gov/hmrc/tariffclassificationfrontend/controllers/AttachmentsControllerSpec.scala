@@ -19,6 +19,7 @@ package uk.gov.hmrc.tariffclassificationfrontend.controllers
 import akka.stream.Materializer
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito._
+import org.mockito.Mockito.when
 import org.scalatest.Matchers
 import org.scalatest.mockito.MockitoSugar
 import play.api
@@ -54,18 +55,16 @@ class AttachmentsControllerSpec extends UnitSpec with Matchers with WithFakeAppl
   private val fileService = mock[FileStoreService]
   private val operator = mock[Operator]
 
-
   private val controller = new AttachmentsController(
     new SuccessfulRequestActions(operator, c = Cases.btiCaseExample), casesService, fileService, messageApi, appConfig, mtrlzr
   )
+
   private def controller(requestCase: Case, permission: Set[Permission]) = new AttachmentsController(
     new RequestActionsWithPermissions(permission, c = requestCase), casesService, fileService, messageApi, appConfig, mtrlzr)
-
 
   private def onwardRoute = Call("POST", "/foo")
 
   private implicit val hc: HeaderCarrier = HeaderCarrier()
-
 
   "Attachments Details" should {
 
@@ -269,6 +268,64 @@ class AttachmentsControllerSpec extends UnitSpec with Matchers with WithFakeAppl
       // Then
       status(result) shouldBe SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.AttachmentsController.attachmentsDetails(testReference).toString)
+    }
+
+  }
+
+  "Remove attachment" should {
+
+    val aCase = Cases.btiCaseExample
+
+    "return OK when user has correct permissions" in {
+      val result: Result = await(controller(aCase, Set(Permission.REMOVE_ATTACHMENTS))
+        .removeAttachment(aCase.reference, "reference", "some-file.jpg")(newFakeGETRequestWithCSRF(fakeApplication)))
+
+      status(result) shouldBe Status.OK
+      contentAsString(result) should include("Are you sure you want to remove some-file.jpg from this case?")
+    }
+
+    "redirect unauthorised when does not have correct permissions" in {
+      val result: Result = await(controller(aCase, Set.empty)
+        .removeAttachment(aCase.reference, "reference", "some-file.jpg")(newFakeGETRequestWithCSRF(fakeApplication)))
+
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result).get should include("unauthorized")
+    }
+  }
+
+  "Confirm Remove Attachment" should {
+
+    val aCase = Cases.btiCaseExample
+
+    "redirect to attachments tab when user selects `yes`" in {
+      when(casesService.removeAttachment(any[Case], any[String])(any[HeaderCarrier])).thenReturn(successful(aCase))
+
+      val result: Result = await(controller(aCase, Set(Permission.REMOVE_ATTACHMENTS))
+        .confirmRemoveAttachment(aCase.reference, "fileId", "some-file.jpg")
+        (newFakePOSTRequestWithCSRF(fakeApplication)
+          .withFormUrlEncodedBody("state" -> "true")))
+
+      redirectLocation(result) shouldBe Some("/tariff-classification/cases/1/attachments")
+    }
+
+    "redirect to attachments tab when user selects `no`" in {
+      val result: Result = await(controller(aCase, Set(Permission.REMOVE_ATTACHMENTS))
+        .confirmRemoveAttachment(aCase.reference, "reference", "some-file.jpg")
+        (newFakePOSTRequestWithCSRF(fakeApplication)
+          .withFormUrlEncodedBody("state" -> "false")))
+
+      redirectLocation(result) shouldBe Some("/tariff-classification/cases/1/attachments")
+    }
+
+    "redirect back to confirm remove view on form error" in {
+      when(casesService.removeAttachment(any[Case], any[String])(any[HeaderCarrier])).thenReturn(successful(aCase))
+
+      val result: Result = await(controller(aCase, Set(Permission.REMOVE_ATTACHMENTS))
+        .confirmRemoveAttachment(aCase.reference, "fileId", "some-file.jpg")
+        (newFakePOSTRequestWithCSRF(fakeApplication)))
+
+      status(result) shouldBe Status.OK
+      contentAsString(result) should include("Select yes if you want to remove the attachment")
     }
 
   }

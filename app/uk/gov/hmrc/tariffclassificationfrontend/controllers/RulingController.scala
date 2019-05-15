@@ -30,7 +30,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, FileStore
 import uk.gov.hmrc.tariffclassificationfrontend.views
 import uk.gov.hmrc.tariffclassificationfrontend.views.CaseDetailPage
 import uk.gov.hmrc.tariffclassificationfrontend.views.CaseDetailPage.CaseDetailPage
-
+import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
@@ -70,7 +70,7 @@ class RulingController @Inject()(verify: RequestActions,
     )
   }
 
-  private def editRulingView(f: Form[DecisionFormData], c: Case)(implicit request: Request[_]): Future[HtmlFormat.Appendable] = {
+  private def editRulingView(f: Form[DecisionFormData], c: Case)(implicit request: AuthenticatedRequest[_]): Future[HtmlFormat.Appendable] = {
     fileStoreService.getAttachments(c).map(views.html.partials.ruling.ruling_details_edit(c, _, f))
   }
 

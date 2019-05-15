@@ -18,8 +18,8 @@ package uk.gov.hmrc.tariffclassificationfrontend.views.partials
 
 import java.time.{ZoneOffset, ZonedDateTime}
 
-import uk.gov.hmrc.tariffclassificationfrontend.models.Operator
 import uk.gov.hmrc.tariffclassificationfrontend.models.response.ScanStatus
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Operator, Permission}
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewSpec
 import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.attachments_list
@@ -117,6 +117,37 @@ class AttachmentsListViewSpec extends ViewSpec {
       doc should containElementWithID("MODULE-row-0-uploaded_by")
       doc.getElementById("MODULE-row-0-uploaded_by") should containText("Unknown")
     }
+
+    "Render show remove link when user has permission " in {
+      val attachment = Cases.storedAttachment.copy(
+        id = "FILE_ID",
+        fileName = "name",
+        operator = Some(Operator("id", Some("operator name")))
+      )
+
+      // When
+      val doc = view(attachments_list("MODULE", Seq(attachment), showRemoval = true, caseRef = Some("case-ref"))
+        (requestWithPermissions(Permission.REMOVE_ATTACHMENTS), messages))
+
+      // Then
+      doc should containElementWithID("MODULE-row-0-remove")
+      doc.getElementById("MODULE-row-0-remove") should containText("Remove")
+    }
+
+    "Do not render show remove link when user does not have permission " in {
+      val attachment = Cases.storedAttachment.copy(
+        id = "FILE_ID",
+        fileName = "name",
+        operator = Some(Operator("id", Some("operator name")))
+      )
+
+      // When
+      val doc = view(attachments_list("MODULE", Seq(attachment), showRemoval = true, caseRef = Some("case-ref")))
+
+      // Then
+      doc shouldNot containElementWithID("MODULE-row-0-remove")
+    }
+
 
   }
 
