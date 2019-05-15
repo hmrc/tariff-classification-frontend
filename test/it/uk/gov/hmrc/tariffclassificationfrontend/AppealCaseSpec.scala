@@ -95,16 +95,16 @@ class AppealCaseSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response: WSResponse = await(ws.url(s"http://localhost:$port/tariff-classification/cases/1/appeal/status").get())
+      val response: WSResponse = await(ws.url(s"http://localhost:$port/tariff-classification/cases/1/new-appeal").get())
 
       // Then
       response.status shouldBe OK
-      response.body should include("id=\"change_appeal_status-heading\"")
+      response.body should include("id=\"appeal_choose_type-heading\"")
     }
 
     def shouldFail = {
       // When
-      val response: WSResponse = await(ws.url(s"http://localhost:$port/tariff-classification/cases/1/appeal/status").get())
+      val response: WSResponse = await(ws.url(s"http://localhost:$port/tariff-classification/cases/1/new-appeal").get())
 
       // Then
       response.status shouldBe OK

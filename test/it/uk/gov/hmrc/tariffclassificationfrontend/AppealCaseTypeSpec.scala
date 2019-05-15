@@ -4,12 +4,12 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import org.scalatest.mockito.MockitoSugar
 import play.api.libs.ws.WSResponse
 import play.api.test.Helpers._
-import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, Operator, Role}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{AppealType, CaseStatus, Operator, Role}
 import uk.gov.tariffclassificationfrontend.utils.Cases.{aCase, withDecision}
 import uk.gov.tariffclassificationfrontend.utils.{CasePayloads, Cases}
 
 
-class ReviewCaseSpec extends IntegrationTest with MockitoSugar {
+class AppealCaseTypeSpec extends IntegrationTest with MockitoSugar {
 
   val owner = Some(Operator("111", role = Role.CLASSIFICATION_OFFICER))
   val caseWithStatusCOMPLETE = CasePayloads.jsonOf(aCase(withDecision()).copy(assignee = owner, status = CaseStatus.COMPLETED))
@@ -39,7 +39,7 @@ class ReviewCaseSpec extends IntegrationTest with MockitoSugar {
 
     def shouldFail = {
       // When
-      val response: WSResponse = await(ws.url(s"http://localhost:$port/tariff-classification/cases/1/review/status").get())
+      val response: WSResponse = await(ws.url(s"http://localhost:$port/tariff-classification/cases/1/new-appeal/ANY").get())
 
       // Then
       response.status shouldBe OK
@@ -53,13 +53,14 @@ class ReviewCaseSpec extends IntegrationTest with MockitoSugar {
           .withBody(caseWithStatusCOMPLETE))
       )
 
-      // When
-      val response: WSResponse = await(ws.url(s"http://localhost:$port/tariff-classification/cases/1/review/status").get())
+      AppealType.values.foreach { appealType =>
+        // When
+        val response: WSResponse = await(ws.url(s"http://localhost:$port/tariff-classification/cases/1/new-appeal/$appealType").get())
 
-      // Then
-      response.status shouldBe OK
-      response.body should include("id=\"change_review_status-heading\"")
+        // Then
+        response.status shouldBe OK
+        response.body should include("id=\"appeal_choose_status-heading\"")
+      }
     }
   }
-
 }

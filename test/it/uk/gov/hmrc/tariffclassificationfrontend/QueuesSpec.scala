@@ -19,6 +19,12 @@ class QueuesSpec extends IntegrationTest with MockitoSugar {
           .withBody(CasePayloads.pagedGatewayCases))
       )
 
+      stubFor(get(urlEqualTo("/report?status=NEW&status=OPEN&status=REFERRED&status=SUSPENDED&assignee_id=none&report_group=queue-id&report_field=active-days-elapsed"))
+        .willReturn(aResponse()
+          .withStatus(OK)
+          .withBody(CasePayloads.report))
+      )
+
       // When
       val response = await(ws.url(s"$baseUrl/queues").get())
 
@@ -45,11 +51,20 @@ class QueuesSpec extends IntegrationTest with MockitoSugar {
     "return status 200" in {
       // Given
       givenAuthSuccess()
+
+
       stubFor(get(urlEqualTo(s"/cases?application_type=BTI&queue_id=none&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort_by=days-elapsed&sort_direction=desc&page=1&page_size=${Pagination.unlimited}"))
         .willReturn(aResponse()
           .withStatus(OK)
           .withBody(CasePayloads.pagedGatewayCases))
         )
+
+      stubFor(get(urlEqualTo("/report?status=NEW&status=OPEN&status=REFERRED&status=SUSPENDED&assignee_id=none&report_group=queue-id&report_field=active-days-elapsed"))
+        .willReturn(aResponse()
+          .withStatus(OK)
+          .withBody(CasePayloads.report))
+      )
+
 
       // When
       val response = await(ws.url(s"$baseUrl/queues/gateway").get())
@@ -81,6 +96,12 @@ class QueuesSpec extends IntegrationTest with MockitoSugar {
         .willReturn(aResponse()
           .withStatus(OK)
           .withBody(CasePayloads.pagedGatewayCases))
+      )
+
+      stubFor(get(urlEqualTo("/report?status=NEW&status=OPEN&status=REFERRED&status=SUSPENDED&assignee_id=none&report_group=queue-id&report_field=active-days-elapsed"))
+        .willReturn(aResponse()
+          .withStatus(OK)
+          .withBody(CasePayloads.report))
       )
 
       // When
@@ -115,6 +136,12 @@ class QueuesSpec extends IntegrationTest with MockitoSugar {
           .withBody(CasePayloads.pagedGatewayCases))
       )
 
+      stubFor(get(urlEqualTo("/report?status=NEW&status=OPEN&status=REFERRED&status=SUSPENDED&assignee_id=none&report_group=queue-id&report_field=active-days-elapsed"))
+        .willReturn(aResponse()
+          .withStatus(OK)
+          .withBody(CasePayloads.report))
+      )
+
       // When
       val response = await(ws.url(s"$baseUrl/queues/cap").get())
 
@@ -147,6 +174,12 @@ class QueuesSpec extends IntegrationTest with MockitoSugar {
           .withBody(CasePayloads.pagedGatewayCases))
       )
 
+      stubFor(get(urlEqualTo("/report?status=NEW&status=OPEN&status=REFERRED&status=SUSPENDED&assignee_id=none&report_group=queue-id&report_field=active-days-elapsed"))
+        .willReturn(aResponse()
+          .withStatus(OK)
+          .withBody(CasePayloads.report))
+      )
+
       // When
       val response = await(ws.url(s"$baseUrl/queues/cars").get())
 
@@ -177,6 +210,12 @@ class QueuesSpec extends IntegrationTest with MockitoSugar {
         .willReturn(aResponse()
           .withStatus(OK)
           .withBody(CasePayloads.pagedGatewayCases))
+      )
+
+      stubFor(get(urlEqualTo("/report?status=NEW&status=OPEN&status=REFERRED&status=SUSPENDED&assignee_id=none&report_group=queue-id&report_field=active-days-elapsed"))
+        .willReturn(aResponse()
+          .withStatus(OK)
+          .withBody(CasePayloads.report))
       )
 
       // When

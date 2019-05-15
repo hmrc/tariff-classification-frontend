@@ -66,6 +66,18 @@ class InputRadioGroupViewSpec extends ViewSpec {
       doc.getElementById("ID-none") should haveAttribute("checked", "checked")
     }
 
+    "Render 'None' - Not Preselected when Field is Blank but preselect is set to false" in {
+      // Given
+      val filledForm = form.fill(FormData(""))
+
+      // When
+      val doc = view(input_radiogroup(id = "ID", field = filledForm("field"), options = Seq.empty, allowNone = true, preSelect = false))
+
+      // Then
+      doc should containElementWithID("ID-none")
+      doc.getElementById("ID-none") shouldNot haveAttribute("checked", "checked")
+    }
+
     "Render 'None' - Unselected when Field is Set" in {
       // Given
       val filledForm = form.fill(FormData("value"))

@@ -20,6 +20,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus, CommodityCode}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.ruling.ruling_commodity_code_expiry_section
+@import scala.collection.mutable.LinkedHashSet
 @(c: Case, decisionForm : Option[Form[DecisionFormData]], classes: Seq[String] = Seq.empty, commodityCode: Option[CommodityCode])(implicit  request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @if(c.decision.isDefined && c.status == CaseStatus.OPEN) {
@@ -34,8 +35,8 @@
             @if(hasErrors) {
                 <p>To complete this case, you need to fill in these fields:</p>
                 <ul class="list list-bullet">
-                @for(error <- decisionForm.get.errors) {
-                    <li><span id="constrain-@error.key">@messages("case.decision.constrain." + error.key)</span></li>
+                @for(error: String <- LinkedHashSet(decisionForm.get.errors.map(_.key): _*)) {
+                    <li><span id="constrain-@error">@messages("case.decision.constrain." + error)</span></li>
                 }
                 </ul>
             }

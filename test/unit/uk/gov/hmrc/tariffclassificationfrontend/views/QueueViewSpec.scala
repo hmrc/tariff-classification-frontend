@@ -32,7 +32,7 @@ class QueueViewSpec extends ViewSpec {
       val queues = Seq(queue1, queue2)
 
       // When
-      val doc = view(html.queue(queues, queue1, Paged.empty[Case])(request = requestWithPermissions(Permission.VIEW_QUEUE_CASES, Permission.VIEW_MY_CASES), messages, appConfig))
+      val doc = view(html.queue(queues, queue1, Map.empty, Paged.empty[Case])(request = requestWithPermissions(Permission.VIEW_QUEUE_CASES, Permission.VIEW_MY_CASES), messages, appConfig))
 
       // Then
       doc should containElementWithID("queue-navigation")
@@ -54,7 +54,7 @@ class QueueViewSpec extends ViewSpec {
       val cases = Seq(case1)
 
       // When
-      val doc = view(html.queue(queues, queue1, Paged(cases))(request = requestWithPermissions(Permission.VIEW_QUEUE_CASES, Permission.VIEW_MY_CASES), messages, appConfig))
+      val doc = view(html.queue(queues, queue1, Map.empty, Paged(cases))(request = requestWithPermissions(Permission.VIEW_QUEUE_CASES, Permission.VIEW_MY_CASES), messages, appConfig))
 
       // Then
       doc should containElementWithID("queue-navigation")

@@ -20,21 +20,20 @@ import play.api.data.Forms._
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import play.api.data.{Form, Forms, Mapping}
 import uk.gov.hmrc.tariffclassificationfrontend.forms.FormConstraints._
-import uk.gov.hmrc.tariffclassificationfrontend.models.ReviewStatus
-import uk.gov.hmrc.tariffclassificationfrontend.models.ReviewStatus.ReviewStatus
+import uk.gov.hmrc.tariffclassificationfrontend.models.SampleStatus.SampleStatus
+import uk.gov.hmrc.tariffclassificationfrontend.models.SampleStatus
 
-object ReviewForm {
+object SampleStatusForm {
 
-  private def oneOf(values: ReviewStatus.ValueSet): Constraint[String] = Constraint("constraints.review-status") {
-    case s: String if ReviewStatus.values.exists(_.toString == s) => Valid
+  private def oneOf(values: SampleStatus.ValueSet): Constraint[String] = Constraint("constraints.sample-status") {
+    case s: String if SampleStatus.values.exists(_.toString == s) => Valid
     case _ => Invalid(s"Must be one of [${values.toSeq.mkString(", ")}]")
   }
 
-  private val mapping: Mapping[Option[ReviewStatus]] = Forms.mapping[Option[ReviewStatus], String](
-    "status" -> text.verifying(emptyOr(oneOf(ReviewStatus.values)): _*)
-  )(v => ReviewStatus.values.find(_.toString == v))(_.map(_.toString))
+  private val mapping: Mapping[Option[SampleStatus]] = Forms.mapping[Option[SampleStatus], String](
+    "status" -> text.verifying(emptyOr(oneOf(SampleStatus.values)): _*)
+  )(v => SampleStatus.values.find(_.toString == v))(_.map(_.toString))
 
-  val form: Form[Option[ReviewStatus]] = Form[Option[ReviewStatus]](mapping)
-
+  val form: Form[Option[SampleStatus]] = Form[Option[SampleStatus]](mapping)
 
 }

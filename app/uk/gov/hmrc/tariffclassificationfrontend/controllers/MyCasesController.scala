@@ -23,7 +23,7 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.controllers.SessionKeys._
 import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.MyCasesController
-import uk.gov.hmrc.tariffclassificationfrontend.models.{NoPagination, Permission}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{NoPagination, Permission, Queue}
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, QueuesService}
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
@@ -39,10 +39,11 @@ class MyCasesController @Inject()(verify: RequestActions,
   def myCases(): Action[AnyContent] = (verify.authenticated andThen verify.mustHave(Permission.VIEW_MY_CASES)).async { implicit request =>
     for {
       cases <- casesService.getCasesByAssignee(request.operator, NoPagination())
-      queues <- queuesService.getAll
-    } yield Ok(views.html.my_cases(queues, cases, request.operator))
-              .addingToSession((backToQueuesLinkLabel, messagesApi("cases.menu.my-cases")), (backToQueuesLinkUrl, MyCasesController.myCases().url))
-              .removingFromSession(backToSearchResultsLinkLabel, backToSearchResultsLinkUrl)
+      queues: Seq[Queue] <- queuesService.getAll
+      countQueues: Map[String, Int] <- casesService.countCasesByQueue(request.operator)
+    } yield Ok(views.html.my_cases(queues, cases.results, request.operator, countQueues))
+         .addingToSession((backToQueuesLinkLabel, messagesApi("cases.menu.my-cases")), (backToQueuesLinkUrl, MyCasesController.myCases().url))
+         .removingFromSession(backToSearchResultsLinkLabel, backToSearchResultsLinkUrl)
   }
 
 }

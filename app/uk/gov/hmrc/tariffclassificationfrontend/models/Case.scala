@@ -20,6 +20,7 @@ import java.time.Instant
 
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.CaseStatus
+import uk.gov.hmrc.tariffclassificationfrontend.models.SampleStatus.SampleStatus
 
 case class Case
 (
@@ -33,7 +34,8 @@ case class Case
   application: Application,
   decision: Option[Decision],
   attachments: Seq[Attachment],
-  keywords: Set[String] = Set.empty
+  keywords: Set[String] = Set.empty,
+  sampleStatus: Option[SampleStatus] = None
 ) {
 
   private def hasRuling: Boolean = {
