@@ -19,6 +19,7 @@ package uk.gov.hmrc.tariffclassificationfrontend.service
 import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.tariffclassificationfrontend.connector.BindingTariffClassificationConnector
+import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.{NEW, OPEN, REFERRED, SUSPENDED}
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 
 import scala.concurrent.Future
@@ -27,7 +28,7 @@ import scala.concurrent.Future
 class ReportingService @Inject()(connector: BindingTariffClassificationConnector) {
 
   def getSLAReport(decisionStartDate: InstantRange)
-               (implicit hc: HeaderCarrier): Future[Seq[ReportResult]] = {
+                  (implicit hc: HeaderCarrier): Future[Seq[ReportResult]] = {
     val report = CaseReport(
       filter = CaseReportFilter(
         decisionStartDate = Some(decisionStartDate)
@@ -39,8 +40,19 @@ class ReportingService @Inject()(connector: BindingTariffClassificationConnector
     connector.generateReport(report)
   }
 
+  def getQueueReport(implicit hc: HeaderCarrier): Future[Seq[ReportResult]] = {
+    val statuses = Set(NEW, OPEN, REFERRED, SUSPENDED).map(_.toString)
+
+    val report = CaseReport(
+      filter = CaseReportFilter(status = Some(statuses), assigneeId = Some("none")),
+      group = CaseReportGroup.QUEUE,
+      field = CaseReportField.ACTIVE_DAYS_ELAPSED
+    )
+    connector.generateReport(report)
+  }
+
   def getReferralReport(referralDate: InstantRange)
-                  (implicit hc: HeaderCarrier): Future[Seq[ReportResult]] = {
+                       (implicit hc: HeaderCarrier): Future[Seq[ReportResult]] = {
     val report = CaseReport(
       filter = CaseReportFilter(
         referralDate = Some(referralDate)

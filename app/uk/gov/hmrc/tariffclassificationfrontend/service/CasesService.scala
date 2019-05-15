@@ -40,6 +40,7 @@ class CasesService @Inject()(appConfig: AppConfig,
                              auditService: AuditService,
                              emailService: EmailService,
                              fileService: FileStoreService,
+                             reportingService: ReportingService,
                              connector: BindingTariffClassificationConnector,
                              rulingConnector: RulingConnector) {
 
@@ -228,6 +229,16 @@ class CasesService @Inject()(appConfig: AppConfig,
 
   def getCasesByQueue(queue: Queue, pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[Case]] = {
     connector.findCasesByQueue(queue, pagination)
+  }
+
+  def countCasesByQueue(operator: Operator)(implicit hc: HeaderCarrier): Future[Map[String, Int]] = {
+    for {
+      countMyCases <- getCasesByAssignee(operator, NoPagination())
+      countByQueue <- reportingService.getQueueReport
+      casesByQueueAndMyCases = countByQueue.map(report => (
+        report.group.getOrElse(Queues.gateway.id), report.value.size))
+        .toMap + ("my-cases" -> countMyCases.size)
+    } yield casesByQueueAndMyCases
   }
 
   def getCasesByAssignee(assignee: Operator, pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[Case]] = {
