@@ -235,9 +235,10 @@ class CasesService @Inject()(appConfig: AppConfig,
     for {
       countMyCases <- getCasesByAssignee(operator, NoPagination())
       countByQueue <- reportingService.getQueueReport
-    } yield countByQueue.map(r => (
-          r.group.getOrElse(Queues.gateway.id), r.value.size)).toMap ++
-          Map("my-cases" -> countMyCases.size)
+      casesByQueueAndMyCases = countByQueue.map(report => (
+        report.group.getOrElse(Queues.gateway.id), report.value.size))
+        .toMap + ("my-cases" -> countMyCases.size)
+    } yield casesByQueueAndMyCases
   }
 
   def getCasesByAssignee(assignee: Operator, pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[Case]] = {
