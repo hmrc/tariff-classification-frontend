@@ -57,14 +57,16 @@ class AppealCaseController @Inject()(verify: RequestActions,
     )
   }
 
-  def chooseType(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.APPEAL_CASE)).async { implicit request =>
+  def chooseType(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)
+    andThen verify.mustHave(Permission.APPEAL_CASE)).async { implicit request =>
     getCaseAndRenderView(
       reference,
       c => successful(views.html.appeal_choose_type(c, typeForm))
     )
   }
 
-  def confirmType(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.APPEAL_CASE)).async { implicit request =>
+  def confirmType(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)
+    andThen verify.mustHave(Permission.APPEAL_CASE)).async { implicit request =>
     getCaseAndRespond(
       reference,
       `case` => typeForm.bindFromRequest().fold(
@@ -74,7 +76,8 @@ class AppealCaseController @Inject()(verify: RequestActions,
     )
   }
 
-  def chooseStatus(reference: String, appealType: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.APPEAL_CASE)).async { implicit request =>
+  def chooseStatus(reference: String, appealType: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)
+    andThen verify.mustHave(Permission.APPEAL_CASE)).async { implicit request =>
     val appealTypeFound = AppealType.withName(appealType)
     getCaseAndRenderView(
       reference,
@@ -83,7 +86,8 @@ class AppealCaseController @Inject()(verify: RequestActions,
     )
   }
 
-  def changeStatus(reference: String, appealId: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.APPEAL_CASE)).async { implicit request =>
+  def changeStatus(reference: String, appealId: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)
+    andThen verify.mustHave(Permission.APPEAL_CASE)).async { implicit request =>
     getCaseAndRenderView(
       reference,
       c => {
@@ -95,27 +99,31 @@ class AppealCaseController @Inject()(verify: RequestActions,
     )
   }
 
-  def confirmStatus(reference: String, appealType: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.APPEAL_CASE)).async { implicit request =>
+  def confirmStatus(reference: String, appealType: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)
+    andThen verify.mustHave(Permission.APPEAL_CASE)).async { implicit request =>
     val appealTypeFound = AppealType.withName(appealType)
     getCaseAndRespond(
       reference,
       `case` => statusForm.bindFromRequest().fold(
         formWithErrors => successful(Ok(views.html.appeal_choose_status(`case`, appealTypeFound, formWithErrors))),
-        appealStatus => caseService.addAppeal(`case`, appealTypeFound, appealStatus, request.operator).map( _ => Redirect(routes.AppealCaseController.appealDetails(reference)))
+        appealStatus => caseService.addAppeal(`case`, appealTypeFound, appealStatus, request.operator)
+          .map( _ => Redirect(routes.AppealCaseController.appealDetails(reference)))
       )
     )
   }
 
-  def confirmChangeStatus(reference: String, appealId: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.APPEAL_CASE)).async { implicit request =>
+  def confirmChangeStatus(reference: String, appealId: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)
+    andThen verify.mustHave(Permission.APPEAL_CASE)).async { implicit request =>
     getCaseAndRespond(
       reference,
       `case` => {
         `case`.findAppeal(appealId) match {
           case Some(appeal) => statusForm.bindFromRequest().fold(
             formWithErrors => successful(Ok(views.html.appeal_change_status(`case`, appeal, formWithErrors))),
-            appealStatus => caseService.updateAppealStatus(`case`, appeal, appealStatus, request.operator).map( _ => Redirect(routes.AppealCaseController.appealDetails(reference)))
+            appealStatus => caseService.updateAppealStatus(`case`, appeal, appealStatus, request.operator)
+                .map( _ => Redirect(routes.AppealCaseController.appealDetails(reference)))
           )
-          case None => successful(Ok(views.html.case_details(`case`, CaseDetailPage.APPEAL, views.html.partials.appeal.appeal_details(`case`))))
+          case None => successful(Redirect(redirect(request.`case`.reference)))
         }
       }
     )

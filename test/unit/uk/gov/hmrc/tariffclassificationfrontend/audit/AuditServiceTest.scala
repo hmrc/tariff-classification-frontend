@@ -23,6 +23,7 @@ import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.audit.DefaultAuditConnector
 import uk.gov.hmrc.play.test.UnitSpec
+import uk.gov.hmrc.tariffclassificationfrontend.models.AppealStatus.AppealStatus
 import uk.gov.hmrc.tariffclassificationfrontend.models.CancelReason.CancelReason
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus._
 import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus => _, _}
@@ -256,12 +257,30 @@ class AuditServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEac
     "Delegate to connector" in {
       service.auditCaseAppealAdded(original, appeal, operator)
 
-      val payload = appealChangeAudit(
+      val payload = appealAddAudit(
         caseReference = "ref",
         appeal = appeal,
         operatorId = operator.id
       )
       verify(connector).sendExplicitAudit(refEq("caseAppealAdded"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+    }
+  }
+
+  "Service 'audit case appeal status changed'" should {
+    val original = aCase(withReference("ref"))
+    val appeal = Appeal(id = "id", status = AppealStatus.IN_PROGRESS, `type` = AppealType.REVIEW)
+    val newStatus = AppealStatus.DISMISSED
+
+    "Delegate to connector" in {
+      service.auditCaseAppealStatusChange(original, appeal, newStatus, operator)
+
+      val payload = appealStatusChangeAudit(
+        caseReference = "ref",
+        appeal = appeal,
+        newStatus = newStatus,
+        operatorId = operator.id
+      )
+      verify(connector).sendExplicitAudit(refEq("caseAppealStatusChange"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
     }
   }
 
@@ -352,12 +371,22 @@ class AuditServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEac
     )
   }
 
-  private def appealChangeAudit(caseReference: String, appeal: Appeal, operatorId: String): Map[String, String] = {
+  private def appealAddAudit(caseReference: String, appeal: Appeal, operatorId: String): Map[String, String] = {
     Map[String, String](
       "caseReference" -> caseReference,
       "operatorId" -> operatorId,
       "appealType" -> appeal.`type`.toString,
       "appealStatus" -> appeal.status.toString
+    )
+  }
+
+  private def appealStatusChangeAudit(caseReference: String, appeal: Appeal, newStatus: AppealStatus, operatorId: String): Map[String, String] = {
+    Map[String, String](
+      "caseReference" -> caseReference,
+      "operatorId" -> operatorId,
+      "appealType" -> appeal.`type`.toString,
+      "previousAppealStatus" -> appeal.status.toString,
+      "newAppealStatus" -> newStatus.toString
     )
   }
 
