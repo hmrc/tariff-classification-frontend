@@ -40,12 +40,19 @@
 
             <td id="sample-status-events-row-@{index}-content" class="sample-status-cell-desc">
                 @{
-                    val body = event.details.asInstanceOf[SampleStatusChange]
-                    progressive_disclosure(
-                        id = s"sample-status-events-row-$index",
-                        summary = SampleStatus.format(body.to),
-                        body = body.comment
-                )
+                    event.details.`type` match {
+                        case EventType.SAMPLE_STATUS_CHANGE => {
+                            val body = event.details.asInstanceOf[SampleStatusChange]
+                            progressive_disclosure(
+                                id = s"sample-status-events-row-$index",
+                                summary = SampleStatus.format(body.to),
+                                body = body.comment
+                            )
+                        }
+                        case _ => {
+                            throw new IllegalArgumentException(s"Unhandled Event Type [${event.details.`type`}]")
+                        }
+                    }
                 }
             </td>
 
