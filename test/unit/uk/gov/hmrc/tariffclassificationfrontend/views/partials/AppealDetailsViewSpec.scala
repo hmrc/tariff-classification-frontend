@@ -113,6 +113,26 @@ class AppealDetailsViewSpec extends ViewSpec {
       doc shouldNot containElementWithID("appeal_details-add_new")
     }
 
+    "Render Change Appeal Status if user has permission APPEAL_CASE" in {
+      // Given
+      val c = aCase(withDecision(appeal = Seq(Appeal("id", AppealStatus.ALLOWED, AppealType.APPEAL_TIER_1))), withStatus(CaseStatus.CANCELLED))
+
+      // When
+      val doc = view(appeal_details(c)(requestWithPermissions(Permission.APPEAL_CASE), messages, appConfig))
+
+      doc should containElementWithID("change-status-0")
+    }
+
+    "Not render Change Appeal Status if user does not have permission" in {
+      // Given
+      val c = aCase(withDecision(appeal = Seq(Appeal("id", AppealStatus.ALLOWED, AppealType.APPEAL_TIER_1))), withStatus(CaseStatus.CANCELLED))
+
+      // When
+      val doc = view(appeal_details(c)(operatorRequest, messages, appConfig))
+
+      doc shouldNot containElementWithID("change-status-0")
+    }
+
     "Render Extended Use Change if user has permission EXTENDED_USE" in {
       // Given
       val c = aCase(withDecision(), withStatus(CaseStatus.CANCELLED))

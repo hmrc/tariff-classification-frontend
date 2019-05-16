@@ -41,10 +41,11 @@ class CasesService_AddAppealSpec extends UnitSpec with MockitoSugar with BeforeA
   private val rulingConnector = mock[RulingConnector]
   private val emailService = mock[EmailService]
   private val fileStoreService = mock[FileStoreService]
+  private val reportingService = mock[ReportingService]
   private val audit = mock[AuditService]
   private val config = mock[AppConfig]
 
-  private val service = new CasesService(config, audit, emailService, fileStoreService, connector, rulingConnector)
+  private val service = new CasesService(config, audit, emailService, fileStoreService, reportingService, connector, rulingConnector)
 
   override protected def afterEach(): Unit = {
     super.afterEach()

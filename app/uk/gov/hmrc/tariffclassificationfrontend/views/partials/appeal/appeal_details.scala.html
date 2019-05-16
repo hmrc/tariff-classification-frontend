@@ -39,7 +39,9 @@
         }
        </td>
        <td class="w-30">
+       @if(request.hasPermission(Permission.APPEAL_CASE)) {
          <a id="change-status-@{index}" aria-label="change-status-@{index}" href="@routes.AppealCaseController.changeStatus(c.reference, appeal.id)">Change</a>
+        }
        </td>
       </tr>
      }
