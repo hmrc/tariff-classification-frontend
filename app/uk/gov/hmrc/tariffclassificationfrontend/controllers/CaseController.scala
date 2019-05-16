@@ -21,11 +21,12 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import play.twirl.api.{Html, HtmlFormat}
+import uk.gov.hmrc.play.audit.model.EventTypes
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms._
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, NoPagination, Operator, Permission}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, EventType, NoPagination, Operator, Permission}
 import uk.gov.hmrc.tariffclassificationfrontend.service._
 import uk.gov.hmrc.tariffclassificationfrontend.views
 import uk.gov.hmrc.tariffclassificationfrontend.views.CaseDetailPage._
@@ -76,7 +77,11 @@ class CaseController @Inject()(verify: RequestActions,
   def sampleDetails(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
     validateAndRenderView(
       SAMPLE_DETAILS,
-      c => successful(views.html.partials.sample.sample_details(c))
+      c => {
+        for {
+          events <- eventsService.getFilteredEvents(c.reference, NoPagination(),Some(Set(EventType.SAMPLE_STATUS_CHANGE)))
+        } yield views.html.partials.sample.sample_details(c,events)
+      }
     )
   }
 
@@ -190,7 +195,7 @@ class CaseController @Inject()(verify: RequestActions,
   private def showActivity(c: Case, f: Form[ActivityFormData])
                           (implicit request: AuthenticatedRequest[AnyContent]): Future[HtmlFormat.Appendable] = {
     for {
-      events <- eventsService.getEvents(c.reference, NoPagination())
+      events <- eventsService.getFilteredEvents(c.reference, NoPagination(),Some(EventType.values.diff(Set(EventType.SAMPLE_STATUS_CHANGE))))
       queues <- queuesService.getAll
     } yield views.html.partials.activity_details(c, events, f, queues)
   }

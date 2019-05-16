@@ -19,7 +19,7 @@ package uk.gov.hmrc.tariffclassificationfrontend.controllers
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito._
 import org.mockito.Mockito
-import org.mockito.Mockito.{never, verify}
+import org.mockito.Mockito.{never, verify,when}
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterEach, Matchers}
 import play.api.http.Status
@@ -30,10 +30,11 @@ import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
+import uk.gov.hmrc.tariffclassificationfrontend.models.EventType.EventType
 import uk.gov.hmrc.tariffclassificationfrontend.models.Permission.Permission
 import uk.gov.hmrc.tariffclassificationfrontend.models.SampleStatus.SampleStatus
 import uk.gov.hmrc.tariffclassificationfrontend.models._
-import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
+import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, EventsService}
 import uk.gov.tariffclassificationfrontend.utils.Cases._
 
 import scala.concurrent.Future
@@ -47,14 +48,15 @@ class SampleControllerSpec extends UnitSpec with Matchers
   private val messageApi = new DefaultMessagesApi(env, configuration, new DefaultLangs(configuration))
   private val appConfig = new AppConfig(configuration, env)
   private val casesService = mock[CasesService]
+  private val eventsService = mock[EventsService]
   private val operator = mock[Operator]
 
   private def controller(requestCase: Case) = new SampleController(
-    new SuccessfulRequestActions(operator, c = requestCase), casesService, messageApi, appConfig
+    new SuccessfulRequestActions(operator, c = requestCase), casesService, eventsService, messageApi, appConfig
   )
 
   private def controller(requestCase: Case, permission: Set[Permission]) = new SampleController(
-    new RequestActionsWithPermissions(permission, c = requestCase), casesService, messageApi, appConfig
+    new RequestActionsWithPermissions(permission, c = requestCase), casesService, eventsService, messageApi, appConfig
   )
 
   private implicit val hc: HeaderCarrier = HeaderCarrier()
@@ -67,6 +69,10 @@ class SampleControllerSpec extends UnitSpec with Matchers
   "Sample controller" should {
 
     "return 200 OK and HTML content type - When retrieving samples for case" in {
+
+      when(eventsService.getFilteredEvents(any[String],any[Pagination],any[Option[Set[EventType]]])(any[HeaderCarrier]))
+        .thenReturn(Future.successful(Paged.empty[Event]))
+
       val c = aCase(withStatus(CaseStatus.OPEN), withDecision())
 
       val result = await(controller(c).sampleDetails("reference")(fakeRequest))
@@ -75,6 +81,8 @@ class SampleControllerSpec extends UnitSpec with Matchers
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
       contentAsString(result) should include("sample-status-heading")
+
+      verify(eventsService).getFilteredEvents(refEq(c.reference),refEq(NoPagination()),refEq(Some(Set(EventType.SAMPLE_STATUS_CHANGE))))(any[HeaderCarrier])
     }
 
   }

@@ -24,6 +24,7 @@ import play.api.mvc.QueryStringBindable
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus._
+import uk.gov.hmrc.tariffclassificationfrontend.models.EventType.EventType
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
 import uk.gov.hmrc.tariffclassificationfrontend.utils.JsonFormatters._
@@ -75,7 +76,14 @@ class BindingTariffClassificationConnector @Inject()(appConfig: AppConfig, clien
   }
 
   def findEvents(reference: String, pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[Event]] = {
-    val url = s"${appConfig.bindingTariffClassificationUrl}/cases/$reference/events?page=${pagination.page}&page_size=${pagination.pageSize}"
+    findFilteredEvents(reference,pagination, Set.empty)
+  }
+
+  def findFilteredEvents(reference: String, pagination: Pagination, onlyEventTypes: Set[EventType])(implicit hc: HeaderCarrier): Future[Paged[Event]] = {
+
+    val searchParam = s"case_reference=$reference" + onlyEventTypes.map(o => s"&type=$o").mkString("")
+
+    val url = s"${appConfig.bindingTariffClassificationUrl}/events?${searchParam}&page=${pagination.page}&page_size=${pagination.pageSize}"
     client.GET[Paged[Event]](url)
   }
 

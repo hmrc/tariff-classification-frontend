@@ -22,6 +22,7 @@ import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.tariffclassificationfrontend.audit.AuditService
 import uk.gov.hmrc.tariffclassificationfrontend.connector.BindingTariffClassificationConnector
+import uk.gov.hmrc.tariffclassificationfrontend.models.EventType.EventType
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
 
@@ -33,7 +34,12 @@ class EventsService @Inject()(connector: BindingTariffClassificationConnector, a
 
   def getEvents(reference: String, pagination: Pagination)
                (implicit hc: HeaderCarrier): Future[Paged[Event]] = {
-    connector.findEvents(reference, pagination)
+    getFilteredEvents(reference, pagination, None)
+  }
+
+  def getFilteredEvents(reference: String, pagination: Pagination, onlyEventTypes : Option[Set[EventType]])
+               (implicit hc: HeaderCarrier): Future[Paged[Event]] = {
+    connector.findFilteredEvents(reference, pagination, onlyEventTypes.getOrElse(Set.empty))
   }
 
   def addNote(c: Case, note: String, operator: Operator, clock: Clock = Clock.systemUTC())

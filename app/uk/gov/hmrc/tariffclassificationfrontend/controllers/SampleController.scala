@@ -24,10 +24,10 @@ import play.twirl.api.Html
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.SampleStatusForm
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Operator, Permission}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Event, EventType, NoPagination, Operator, Paged, Permission}
 import uk.gov.hmrc.tariffclassificationfrontend.models.SampleStatus.SampleStatus
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
-import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
+import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, EventsService}
 import uk.gov.hmrc.tariffclassificationfrontend.views
 import uk.gov.hmrc.tariffclassificationfrontend.views.CaseDetailPage
 
@@ -37,6 +37,7 @@ import scala.concurrent.Future.successful
 @Singleton
 class SampleController @Inject()(override val verify: RequestActions,
                                   override val caseService: CasesService,
+                                  eventsService: EventsService,
                                   override val messagesApi: MessagesApi,
                                   override implicit val config: AppConfig) extends StatusChangeAction[Option[SampleStatus]] {
 
@@ -75,7 +76,11 @@ class SampleController @Inject()(override val verify: RequestActions,
   def sampleDetails(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
     getCaseAndRenderView(
       reference,
-      c => successful(views.html.case_details(c, CaseDetailPage.SAMPLE_DETAILS, views.html.partials.sample.sample_details(c)))
+      c => {
+        for {
+          events <- eventsService.getFilteredEvents(c.reference, NoPagination(),Some(Set(EventType.SAMPLE_STATUS_CHANGE)))
+        } yield views.html.case_details(c, CaseDetailPage.SAMPLE_DETAILS, views.html.partials.sample.sample_details(c, events))
+      }
     )
   }
 }
