@@ -89,6 +89,10 @@ class FileStoreService @Inject()(connector: FileStoreConnector) {
     connector.upload(fileUpload).map(toFileAttachment(fileUpload.content.file.length))
   }
 
+  def removeAttachment(fileId: String)(implicit hc: HeaderCarrier): Future[Unit] = {
+    connector.delete(fileId)
+  }
+
   private def toFileAttachment(size: Long): FileMetadata => FileStoreAttachment = {
     r => FileStoreAttachment(r.id, r.fileName, r.mimeType, size)
   }

@@ -31,7 +31,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.connector.{BindingTariffClassificationConnector, RulingConnector}
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 
-import scala.concurrent.Future
+import scala.concurrent.Future.successful
 
 class CasesServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
 
@@ -42,6 +42,7 @@ class CasesServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEac
   private val oneCase = Some(c)
   private val emailService = mock[EmailService]
   private val fileStoreService = mock[FileStoreService]
+  private val reportingService = mock[ReportingService]
   private val queue = mock[Queue]
   private val pagination = mock[Pagination]
   private val connector = mock[BindingTariffClassificationConnector]
@@ -49,7 +50,7 @@ class CasesServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEac
   private val audit = mock[AuditService]
   private val config = mock[AppConfig]
 
-  private val service = new CasesService(config, audit, emailService, fileStoreService, connector, rulingConnector)
+  private val service = new CasesService(config, audit, emailService, fileStoreService, reportingService, connector, rulingConnector)
 
   override protected def afterEach(): Unit = {
     super.afterEach()
@@ -58,7 +59,7 @@ class CasesServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEac
 
   "Get Cases 'By Queue'" should {
     "retrieve connector cases" in {
-      given(connector.findCasesByQueue(any[Queue], any[Pagination])(any[HeaderCarrier])) willReturn Future.successful(Paged(manyCases))
+      given(connector.findCasesByQueue(any[Queue], any[Pagination])(any[HeaderCarrier])) willReturn successful(Paged(manyCases))
 
       await(service.getCasesByQueue(queue, pagination)) shouldBe Paged(manyCases)
     }
@@ -66,7 +67,7 @@ class CasesServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEac
 
   "Get Cases 'By Assignee'" should {
     "retrieve connector cases" in {
-      given(connector.findCasesByAssignee(refEq(Operator("assignee")), refEq(pagination))(any[HeaderCarrier])) willReturn Future.successful(Paged(manyCases))
+      given(connector.findCasesByAssignee(refEq(Operator("assignee")), refEq(pagination))(any[HeaderCarrier])) willReturn successful(Paged(manyCases))
 
       await(service.getCasesByAssignee(Operator("assignee"), pagination)) shouldBe Paged(manyCases)
     }
@@ -74,7 +75,7 @@ class CasesServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEac
 
   "Get One Case 'By Reference'" should {
     "retrieve connector case" in {
-      given(connector.findCase("reference")) willReturn Future.successful(oneCase)
+      given(connector.findCase("reference")) willReturn successful(oneCase)
 
       await(service.getOne("reference")) shouldBe oneCase
     }
@@ -82,7 +83,7 @@ class CasesServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEac
 
   "Search Cases" should {
     "retrieve connector cases" in {
-      given(connector.search(any[Search], any[Sort], any[Pagination])(any[HeaderCarrier], any[Clock], any[QueryStringBindable[String]])) willReturn Future.successful(Paged(manyCases))
+      given(connector.search(any[Search], any[Sort], any[Pagination])(any[HeaderCarrier], any[Clock], any[QueryStringBindable[String]])) willReturn successful(Paged(manyCases))
 
       await(service.search(Search(), Sort(), pagination)) shouldBe Paged(manyCases)
     }
@@ -93,7 +94,7 @@ class CasesServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEac
     val updatedCase = mock[Case]
 
     "delegate to connector" in {
-      given(connector.updateCase(refEq(oldCase))(any[HeaderCarrier])) willReturn Future.successful(updatedCase)
+      given(connector.updateCase(refEq(oldCase))(any[HeaderCarrier])) willReturn successful(updatedCase)
 
       await(service.updateCase(oldCase)) shouldBe updatedCase
     }
@@ -109,10 +110,26 @@ class CasesServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEac
 
       given(c.attachments) willReturn Seq.empty
       given(fileStored.id) willReturn "file-id"
-      given(fileStoreService.upload(refEq(fileUpload))(any[HeaderCarrier])) willReturn Future.successful(fileStored)
-      given(connector.updateCase(any[Case])(any[HeaderCarrier])) willReturn  Future.successful(updatedCase)
+      given(fileStoreService.upload(refEq(fileUpload))(any[HeaderCarrier])) willReturn successful(fileStored)
+      given(connector.updateCase(any[Case])(any[HeaderCarrier])) willReturn  successful(updatedCase)
 
       val result = await(service.addAttachment(c, fileUpload, Operator("assignee")))
+
+      result shouldBe updatedCase
+    }
+  }
+
+  "Remove attachment from case" should {
+    val oldCase = mock[Case]
+    val updatedCase = mock[Case]
+    val attachment = mock[Attachment]
+
+    "remove the given attachment from the case provided" in {
+      given(oldCase.attachments) willReturn Seq(attachment)
+      given(fileStoreService.removeAttachment(refEq("file-id"))(any[HeaderCarrier])) willReturn successful()
+      given(connector.updateCase(any[Case])(any[HeaderCarrier])) willReturn successful(updatedCase)
+
+      val result = await(service.removeAttachment(oldCase, "file-id"))
 
       result shouldBe updatedCase
     }

@@ -50,6 +50,7 @@ class ReportingControllerSpec extends UnitSpec with Matchers with WithFakeApplic
   private val appConfig = new AppConfig(configuration, env)
   private val reportingService = mock[ReportingService]
   private val queueService = mock[QueuesService]
+  private val casesService = mock[CasesService]
   private implicit val hc: HeaderCarrier = HeaderCarrier()
   private val operator = mock[Operator]
   private val requiredPermissions: Set[Permission] = Set(Permission.VIEW_REPORTS)
@@ -61,7 +62,7 @@ class ReportingControllerSpec extends UnitSpec with Matchers with WithFakeApplic
   }
 
   private def controller(permission: Set[Permission]) = new ReportingController(
-    new RequestActionsWithPermissions(permission), reportingService, queueService, messageApi, appConfig
+    new RequestActionsWithPermissions(permission), reportingService, queueService, casesService,  messageApi, appConfig
   )
 
   private def request[A](operator: Operator, request: Request[A]) = new AuthenticatedRequest(operator, request)
@@ -69,6 +70,7 @@ class ReportingControllerSpec extends UnitSpec with Matchers with WithFakeApplic
   "GET Reports" should {
     "Return OK" in {
       given(queueService.getAll) willReturn Future.successful(Seq.empty)
+      given(casesService.countCasesByQueue(any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(Map.empty[String, Int]))
       given(operator.hasPermissions(requiredPermissions)) willReturn true
 
       val req: AuthenticatedRequest[AnyContent] = request(operator, newFakeGETRequestWithCSRF(fakeApplication))
@@ -78,7 +80,7 @@ class ReportingControllerSpec extends UnitSpec with Matchers with WithFakeApplic
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
-      contentAsString(result) shouldBe views.html.reports(Seq.empty, None)(req, messageApi.preferred(req), appConfig).toString()
+      contentAsString(result) shouldBe views.html.reports(Seq.empty, None, Map.empty)(req, messageApi.preferred(req), appConfig).toString()
     }
 
     "Return Forbidden for Non-Manager" in {
@@ -95,6 +97,7 @@ class ReportingControllerSpec extends UnitSpec with Matchers with WithFakeApplic
   "GET Report Criteria" should {
     "Return OK for SLA Report" in {
       given(queueService.getAll) willReturn Future.successful(Seq.empty)
+      given(casesService.countCasesByQueue(any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(Map.empty[String, Int]))
       given(operator.hasPermissions(requiredPermissions)) willReturn true
 
       val req: AuthenticatedRequest[AnyContent] = request(operator, newFakeGETRequestWithCSRF(fakeApplication))
@@ -109,11 +112,13 @@ class ReportingControllerSpec extends UnitSpec with Matchers with WithFakeApplic
         Some(SelectedReport(
           Report.SLA,
           views.html.partials.reports.sla_report_criteria(InstantRangeForm.form)(req, messageApi.preferred(req), appConfig))
-        ))(req, messageApi.preferred(req), appConfig).toString()
+        ),
+        Map.empty)(req, messageApi.preferred(req), appConfig).toString()
     }
 
     "Return OK for Referral Report" in {
       given(queueService.getAll) willReturn Future.successful(Seq.empty)
+      given(casesService.countCasesByQueue(any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(Map.empty[String, Int]))
 
       val req: AuthenticatedRequest[AnyContent] = request(operator, newFakeGETRequestWithCSRF(fakeApplication))
       val result = await(controller(requiredPermissions).getReportCriteria(Report.REFERRAL.toString)(req.request))
@@ -127,7 +132,7 @@ class ReportingControllerSpec extends UnitSpec with Matchers with WithFakeApplic
         Some(SelectedReport(
           Report.REFERRAL,
           views.html.partials.reports.referral_report_criteria(InstantRangeForm.form)(req, messageApi.preferred(req), appConfig))
-        ))(req, messageApi.preferred(req), appConfig).toString()
+        ), Map.empty)(req, messageApi.preferred(req), appConfig).toString()
     }
 
     "Redirect to Reports for Not Found" in {
@@ -181,6 +186,7 @@ class ReportingControllerSpec extends UnitSpec with Matchers with WithFakeApplic
 
     "Return OK for Referral Report" in {
       given(queueService.getNonGateway) willReturn Future.successful(Seq.empty[Queue])
+      given(casesService.countCasesByQueue(any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(Map.empty[String, Int]))
       given(reportingService.getReferralReport(refEq(range))(any[HeaderCarrier])) willReturn Future.successful(Seq.empty[ReportResult])
 
       val req: AuthenticatedRequest[AnyContent] = request(
@@ -216,7 +222,8 @@ class ReportingControllerSpec extends UnitSpec with Matchers with WithFakeApplic
         Some(SelectedReport(
           Report.SLA,
           views.html.partials.reports.sla_report_criteria(InstantRangeForm.form.bind(Map[String, String]()))(req, messageApi.preferred(req), appConfig))
-        ))(req, messageApi.preferred(req), appConfig).toString()
+        ),
+        Map.empty)(req, messageApi.preferred(req), appConfig).toString()
     }
 
     "Redirect to Reports for Not Found" in {

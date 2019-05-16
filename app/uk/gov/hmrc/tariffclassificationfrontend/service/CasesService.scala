@@ -34,12 +34,14 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import scala.concurrent.Future.successful
 
 @Singleton
 class CasesService @Inject()(appConfig: AppConfig,
                              auditService: AuditService,
                              emailService: EmailService,
                              fileService: FileStoreService,
+                             reportingService: ReportingService,
                              connector: BindingTariffClassificationConnector,
                              rulingConnector: RulingConnector) {
 
@@ -246,6 +248,16 @@ class CasesService @Inject()(appConfig: AppConfig,
     connector.findCasesByQueue(queue, pagination)
   }
 
+  def countCasesByQueue(operator: Operator)(implicit hc: HeaderCarrier): Future[Map[String, Int]] = {
+    for {
+      countMyCases <- getCasesByAssignee(operator, NoPagination())
+      countByQueue <- reportingService.getQueueReport
+      casesByQueueAndMyCases = countByQueue.map(report => (
+        report.group.getOrElse(Queues.gateway.id), report.value.size))
+        .toMap + ("my-cases" -> countMyCases.size)
+    } yield casesByQueueAndMyCases
+  }
+
   def getCasesByAssignee(assignee: Operator, pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[Case]] = {
     connector.findCasesByAssignee(assignee, pagination)
   }
@@ -262,6 +274,12 @@ class CasesService @Inject()(appConfig: AppConfig,
     fileService.upload(f) flatMap { fileStored: FileStoreAttachment =>
       val attachments = c.attachments :+ Attachment(id = fileStored.id, operator = Some(o))
       connector.updateCase(c.copy(attachments = attachments))
+    }
+  }
+
+  def removeAttachment(c: Case, fileId: String)(implicit headerCarrier: HeaderCarrier): Future[Case] = {
+    fileService.removeAttachment(fileId) flatMap {_ =>
+      connector.updateCase(c.copy(attachments = c.attachments.filter(_.id != fileId)))
     }
   }
 

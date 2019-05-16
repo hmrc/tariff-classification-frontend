@@ -19,7 +19,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Paged, Queue}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{cases_list, nav_search, queue_nav}
-@(queues: Seq[Queue], queue: Queue, cases: Paged[Case])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(queues: Seq[Queue], queue: Queue, caseCountByQueue: Map[String, Int], cases: Paged[Case])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None) {
 
@@ -29,7 +29,7 @@
 
     <div class="grid-row">
         <div class="column-one-quarter">
-            @queue_nav(queues, queue.slug)
+            @queue_nav(queues, queue.slug, caseCountByQueue)
         </div>
         <div class="column-three-quarters">
             @cases_list(cases)

@@ -201,4 +201,22 @@ class FileStoreConnectorSpec extends ConnectorTest {
     )
   }
 
+  "Delete" in {
+    stubFor(
+      delete("/file/fileId")
+        .willReturn(
+          aResponse()
+            .withStatus(Status.OK)
+        )
+    )
+
+    await(connector.delete("fileId"))
+
+    verify(
+      deleteRequestedFor(
+        urlEqualTo("/file/fileId"))
+        .withHeader("X-Api-Token", equalTo(realConfig.apiToken))
+    )
+  }
+
 }

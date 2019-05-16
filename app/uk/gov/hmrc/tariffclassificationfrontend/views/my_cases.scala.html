@@ -19,7 +19,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus, Operator, Paged, Queue}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{cases_list, nav_search, queue_nav}
-@(queues: Seq[Queue], cases: Seq[Case], operator: Operator)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(queues: Seq[Queue], cases: Seq[Case], operator: Operator, caseCountByQueue: Map[String, Int])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @referredStatuses = @{
     Seq(CaseStatus.REFERRED, CaseStatus.SUSPENDED)
@@ -46,7 +46,7 @@
 
     <div class="grid-row">
         <div class="column-one-quarter">
-            @queue_nav(queues, "my-cases")
+            @queue_nav(queues, "my-cases", caseCountByQueue)
         </div>
         <div class="column-three-quarters">
             <h2 class="heading-medium mt-1">Cases on-hand</h2>

@@ -69,4 +69,8 @@ class FileStoreConnector @Inject()(appConfig: AppConfig, http: AuthenticatedHttp
       .map(response => Json.fromJson[FileMetadata](Json.parse(response.body)).get)
   }
 
+  def delete(fileId: String)(implicit hc: HeaderCarrier): Future[Unit] = {
+    http.DELETE(s"${appConfig.fileStoreUrl}/file/$fileId").map(_ => ())
+  }
+
 }

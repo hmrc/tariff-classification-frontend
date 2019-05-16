@@ -21,27 +21,35 @@ import play.api.mvc.QueryStringBindable
 case class CaseReportFilter
 (
   decisionStartDate: Option[InstantRange] = None,
-  referralDate: Option[InstantRange] = None
+  referralDate: Option[InstantRange] = None,
+  status: Option[Set[String]] = None,
+  assigneeId: Option[String] = None
 )
 
 object CaseReportFilter {
 
   val decisionStartKey = "decision_start"
   val referralDateKey = "referral_date"
+  val statusKey = "status"
+  val assigneeIdKey = "assignee_id"
 
-  implicit def binder(implicit rangeBinder: QueryStringBindable[InstantRange]): QueryStringBindable[CaseReportFilter] = new QueryStringBindable[CaseReportFilter] {
+  implicit def binder(implicit rangeBinder: QueryStringBindable[InstantRange], stringBinder: QueryStringBindable[String]): QueryStringBindable[CaseReportFilter] = new QueryStringBindable[CaseReportFilter] {
 
     override def bind(key: String, requestParams: Map[String, Seq[String]]): Option[Either[String, CaseReportFilter]] = {
       implicit val rp: Map[String, Seq[String]] = requestParams
 
       val decisionStart: Option[InstantRange] = rangeBinder.bind(decisionStartKey, requestParams).filter(_.isRight).map(_.right.get)
       val referralDate: Option[InstantRange] = rangeBinder.bind(referralDateKey, requestParams).filter(_.isRight).map(_.right.get)
+      val status: Option[Set[String]] = params(statusKey)
+      val assigneeId: Option[String] = param(assigneeIdKey)
 
       Some(
         Right(
           CaseReportFilter(
             decisionStart,
-            referralDate
+            referralDate,
+            status,
+            assigneeId
           )
         )
       )
@@ -50,10 +58,19 @@ object CaseReportFilter {
     override def unbind(key: String, filter: CaseReportFilter): String = {
       Seq(
         filter.decisionStartDate.map(r => rangeBinder.unbind(decisionStartKey, r)),
-        filter.referralDate.map(r => rangeBinder.unbind(referralDateKey, r))
+        filter.referralDate.map(r => rangeBinder.unbind(referralDateKey, r)),
+        filter.status.map(_.map(r => stringBinder.unbind(statusKey, r)).mkString("&")),
+        filter.assigneeId.map(r => stringBinder.unbind(assigneeIdKey, r))
       ).filter(_.isDefined).map(_.get).mkString("&")
 
     }
+
+    def params(name: String)(implicit requestParams: Map[String, Seq[String]]): Option[Set[String]] = {
+      requestParams.get(name).map(_.flatMap(_.split(",")).toSet).filterNot(_.exists(_.isEmpty))
+    }
+
+    def param(name: String)(implicit requestParams: Map[String, Seq[String]]): Option[String] = {
+      params(name).map(_.head)
+    }
   }
 }
-

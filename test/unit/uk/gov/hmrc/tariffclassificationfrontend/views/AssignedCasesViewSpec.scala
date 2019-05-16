@@ -34,7 +34,7 @@ class AssignedCasesViewSpec extends ViewSpec {
       val queues = Seq(queue1, queue2)
 
       // When
-      val doc = view(html.assigned_cases(queues, Seq.empty[Case], assigneeId)(request = requestWithPermissions(Permission.VIEW_QUEUE_CASES, Permission.VIEW_MY_CASES), messages, appConfig))
+      val doc = view(html.assigned_cases(queues, Seq.empty[Case], assigneeId, Map.empty)(request = requestWithPermissions(Permission.VIEW_QUEUE_CASES, Permission.VIEW_MY_CASES), messages, appConfig))
 
       // Then
       doc should containElementWithID("queue-navigation")
@@ -54,7 +54,7 @@ class AssignedCasesViewSpec extends ViewSpec {
       val cases = Seq(case1.copy(assignee = Some(Operator("444", assigneeId))))
 
       // When
-      val doc = view(html.assigned_cases(queues, cases, assigneeId)(request = requestWithPermissions(Permission.VIEW_QUEUE_CASES, Permission.VIEW_MY_CASES), messages, appConfig))
+      val doc = view(html.assigned_cases(queues, cases, assigneeId, Map.empty)(request = requestWithPermissions(Permission.VIEW_QUEUE_CASES, Permission.VIEW_MY_CASES), messages, appConfig))
 
       // Then
       doc should containElementWithID("queue-navigation")

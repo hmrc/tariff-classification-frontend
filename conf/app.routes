@@ -58,6 +58,8 @@ POST        /cases/:reference/activity                   @uk.gov.hmrc.tariffclas
 
 GET         /cases/:reference/attachments                @uk.gov.hmrc.tariffclassificationfrontend.controllers.AttachmentsController.attachmentsDetails(reference: String)
 POST        /cases/:reference/attachments                @uk.gov.hmrc.tariffclassificationfrontend.controllers.AttachmentsController.uploadAttachment(reference: String)
+GET         /cases/:reference/attachments/remove         @uk.gov.hmrc.tariffclassificationfrontend.controllers.AttachmentsController.removeAttachment(reference: String, fileId: String, fileName: String)
+POST        /cases/:reference/attachments/remove         @uk.gov.hmrc.tariffclassificationfrontend.controllers.AttachmentsController.confirmRemoveAttachment(reference: String, fileId: String, fileName: String)
 
 GET         /cases/:reference/keywords                   @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.keywordsDetails(reference: String)
 POST        /cases/:reference/keywords                   @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.addKeyword(reference: String)

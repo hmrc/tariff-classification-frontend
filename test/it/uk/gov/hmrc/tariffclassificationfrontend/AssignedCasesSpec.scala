@@ -12,6 +12,11 @@ class AssignedCasesSpec extends IntegrationTest with MockitoSugar {
   private val testCasesServiceUrl = "/cases?application_type=BTI&assignee_id=some&status=OPEN,REFERRED,SUSPENDED" +
     s"&sort_by=days-elapsed&sort_direction=desc&page=1&page_size=${Pagination.unlimited}"
 
+  private val testReportServiceUrl = "/report?status=NEW&status=OPEN&status=REFERRED&status=SUSPENDED&assignee_id=none&report_group=queue-id&report_field=active-days-elapsed"
+
+  private val testMyCasesServiceUrl = "/cases?application_type=BTI&assignee_id=123&status=NEW,OPEN,REFERRED,SUSPENDED&sort_by=days-elapsed&sort_direction=desc&page=1&page_size=2147483647"
+
+
   "Assigned Cases" should {
 
     "return status 200 for get all assigned cases" in {
@@ -22,13 +27,23 @@ class AssignedCasesSpec extends IntegrationTest with MockitoSugar {
           .withStatus(OK)
           .withBody(CasePayloads.pagedEmpty))
       )
+      stubFor(get(urlEqualTo(testMyCasesServiceUrl))
+        .willReturn(aResponse()
+          .withStatus(OK)
+          .withBody(CasePayloads.pagedEmpty))
+      )
+      stubFor(get(urlEqualTo(testReportServiceUrl))
+        .willReturn(aResponse()
+        .withStatus(OK)
+        .withBody(CasePayloads.reportEmpty))
+      )
 
       // When
       val response: WSResponse = await(ws.url(s"$baseUrl/queues/assigned").get())
 
       // Then
       response.status shouldBe OK
-      response.body should include("<p id=\"assignees_list-empty\">There are no cases assigned.</p>")
+      response.body should include("There are no cases assigned.")
     }
 
     "return status 200 for get assigned cases for operator" in {

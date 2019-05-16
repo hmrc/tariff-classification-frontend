@@ -52,6 +52,12 @@ class AuthenticatedHttpClient @Inject()(auditConnector: AuditConnector, wsClient
                        (implicit rds: Writes[A], hc: HeaderCarrier): Future[HttpResponse] = {
     super.doPut(url, body)(rds, addAuth)
   }
+
+  override def doDelete(url: String)
+                       (implicit hc: HeaderCarrier): Future[HttpResponse] = {
+    super.doDelete(url)(addAuth)
+  }
+
 }
 
 trait InjectAuthHeader {

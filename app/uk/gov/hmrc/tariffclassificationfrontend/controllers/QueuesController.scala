@@ -44,9 +44,10 @@ class QueuesController @Inject()(verify: RequestActions,
         for {
           cases <- casesService.getCasesByQueue(q, NoPagination())
           queues <- queuesService.getAll
-        } yield Ok(views.html.queue(queues, q, cases))
-                  .addingToSession((backToQueuesLinkLabel, s"${q.name} cases"), (backToQueuesLinkUrl, QueuesController.queue(q.slug).url))
-                  .removingFromSession(backToSearchResultsLinkLabel, backToSearchResultsLinkUrl)
+          caseCountByQueue <- casesService.countCasesByQueue(request.operator)
+        } yield Ok(views.html.queue(queues, q, caseCountByQueue, cases))
+          .addingToSession((backToQueuesLinkLabel, s"${q.name} cases"), (backToQueuesLinkUrl, QueuesController.queue(q.slug).url))
+          .removingFromSession(backToSearchResultsLinkLabel, backToSearchResultsLinkUrl)
     }
   }
 

@@ -26,7 +26,7 @@ import play.twirl.api.Html
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.forms.UploadAttachmentForm
+import uk.gov.hmrc.tariffclassificationfrontend.forms.{MandatoryBooleanForm, UploadAttachmentForm}
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, FileStoreService}
@@ -44,13 +44,46 @@ class AttachmentsController @Inject()(verify: RequestActions,
                                       fileService: FileStoreService,
                                       val messagesApi: MessagesApi,
                                       implicit val appConfig: AppConfig,
-                                      implicit val mat: Materializer) extends FrontendController with I18nSupport {
+                                      implicit val mat: Materializer) extends RenderCaseAction with I18nSupport {
 
   private lazy val form: Form[String] = UploadAttachmentForm.form
 
-  def attachmentsDetails(reference: String): Action[AnyContent] = verify.authenticated.async { implicit request =>
+  override protected val config: AppConfig = appConfig
+  override protected val caseService: CasesService = casesService
+  override protected def redirect: String => Call = routes.AttachmentsController.attachmentsDetails
+  override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = true
+
+  private val removeAttachmentForm: Form[Boolean] = MandatoryBooleanForm.form("remove_attachment")
+
+  def attachmentsDetails(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
     getCaseAndRenderView(reference, CaseDetailPage.ATTACHMENTS, renderView(_, form))
   }
+
+  def removeAttachment(reference: String, fileId: String, fileName: String): Action[AnyContent] =
+    (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.REMOVE_ATTACHMENTS)).async { implicit request =>
+    validateAndRenderView(
+      c =>
+        successful(views.html.remove_attachment(c, removeAttachmentForm, fileId, fileName))
+    )
+  }
+
+  def confirmRemoveAttachment(reference: String, fileId: String, fileName: String): Action[AnyContent] =
+    (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.REMOVE_ATTACHMENTS)).async { implicit request =>
+      removeAttachmentForm.bindFromRequest().fold(
+        errors => {
+          validateAndRenderView(c => successful(views.html.remove_attachment(c, errors, fileId, fileName)))
+        },
+        {
+          case true => {
+            getCaseAndRespond(reference,
+              caseService.removeAttachment(_, fileId)
+                .map(_ => Redirect(routes.AttachmentsController.attachmentsDetails(reference))))
+          }
+          case _ => successful(Redirect(routes.AttachmentsController.attachmentsDetails(reference)))
+        }
+      )
+
+    }
 
   private def renderView(c: Case, uploadForm: Form[String])
                         (implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[Html] = {
