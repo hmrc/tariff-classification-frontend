@@ -53,7 +53,7 @@ class EventsServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEa
 
   "Get Events by reference" should {
     "retrieve a list of events" in {
-      given(connector.findFilteredEvents("reference", NoPagination(), None)) willReturn Future.successful(Paged(manyEvents))
+      given(connector.findFilteredEvents("reference", NoPagination(), Set.empty)) willReturn Future.successful(Paged(manyEvents))
 
       await(service.getEvents("reference", NoPagination())) shouldBe Paged(manyEvents)
     }
@@ -66,7 +66,7 @@ class EventsServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEa
 
       // When
       given(connector.findFilteredEvents("reference", NoPagination(),
-        Some(Set(EventType.SAMPLE_STATUS_CHANGE)))) willReturn Future.successful(Paged(filteredEvents,NoPagination(),1))
+        Set(EventType.SAMPLE_STATUS_CHANGE))) willReturn Future.successful(Paged(filteredEvents,NoPagination(),1))
 
       await(service.getFilteredEvents("reference", NoPagination(),Some(Set(EventType.SAMPLE_STATUS_CHANGE)))) shouldBe Paged(filteredEvents,NoPagination(),1)
     }

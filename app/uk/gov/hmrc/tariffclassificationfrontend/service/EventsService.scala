@@ -39,7 +39,7 @@ class EventsService @Inject()(connector: BindingTariffClassificationConnector, a
 
   def getFilteredEvents(reference: String, pagination: Pagination, onlyEventTypes : Option[Set[EventType]])
                (implicit hc: HeaderCarrier): Future[Paged[Event]] = {
-    connector.findFilteredEvents(reference, pagination, onlyEventTypes)
+    connector.findFilteredEvents(reference, pagination, onlyEventTypes.getOrElse(Set.empty))
   }
 
   def addNote(c: Case, note: String, operator: Operator, clock: Clock = Clock.systemUTC())

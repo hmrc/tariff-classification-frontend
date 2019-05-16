@@ -76,17 +76,14 @@ class BindingTariffClassificationConnector @Inject()(appConfig: AppConfig, clien
   }
 
   def findEvents(reference: String, pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[Event]] = {
-    findFilteredEvents(reference,pagination, None)
+    findFilteredEvents(reference,pagination, Set.empty)
   }
 
-  def findFilteredEvents(reference: String, pagination: Pagination, onlyEventTypes: Option[Set[EventType]])(implicit hc: HeaderCarrier): Future[Paged[Event]] = {
+  def findFilteredEvents(reference: String, pagination: Pagination, onlyEventTypes: Set[EventType])(implicit hc: HeaderCarrier): Future[Paged[Event]] = {
 
-    val searchParam = onlyEventTypes match {
-      case Some(only) => s"case_reference=$reference${only.mkString("&type=","&type=","&")}"
-      case None => s"case_reference=$reference&"
-    }
+    val searchParam = s"case_reference=$reference" + onlyEventTypes.map(o => s"&type=$o").mkString("")
 
-    val url = s"${appConfig.bindingTariffClassificationUrl}/events?${searchParam}page=${pagination.page}&page_size=${pagination.pageSize}"
+    val url = s"${appConfig.bindingTariffClassificationUrl}/events?${searchParam}&page=${pagination.page}&page_size=${pagination.pageSize}"
     client.GET[Paged[Event]](url)
   }
 

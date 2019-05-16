@@ -465,7 +465,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest {
           .withBody(EventPayloads.pagedEvents))
       )
 
-      await(connector.findFilteredEvents(ref, pagination, Some(Set(EventType.SAMPLE_STATUS_CHANGE)))) shouldBe Paged(Events.events)
+      await(connector.findFilteredEvents(ref, pagination, Set(EventType.SAMPLE_STATUS_CHANGE))) shouldBe Paged(Events.events)
 
       verify(
         getRequestedFor(urlEqualTo(s"/events?case_reference=$ref&type=SAMPLE_STATUS_CHANGE&page=1&page_size=2"))
