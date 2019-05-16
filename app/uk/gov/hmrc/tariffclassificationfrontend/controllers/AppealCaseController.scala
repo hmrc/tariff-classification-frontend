@@ -31,6 +31,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
 import uk.gov.hmrc.tariffclassificationfrontend.views.CaseDetailPage
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
@@ -52,7 +53,7 @@ class AppealCaseController @Inject()(verify: RequestActions,
   def appealDetails(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
     getCaseAndRenderView(
       reference,
-      c => successful(views.html.case_details(c, CaseDetailPage.APPEAL, views.html.partials.appeal_details(c)))
+      c => successful(views.html.case_details(c, CaseDetailPage.APPEAL, views.html.partials.appeal.appeal_details(c)))
     )
   }
 
@@ -78,7 +79,19 @@ class AppealCaseController @Inject()(verify: RequestActions,
     getCaseAndRenderView(
       reference,
       c =>
-        successful(views.html.appeal_choose_status(c, appealTypeFound,  statusForm))
+        successful(views.html.appeal_choose_status(c, appealTypeFound, statusForm))
+    )
+  }
+
+  def changeStatus(reference: String, appealId: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.APPEAL_CASE)).async { implicit request =>
+    getCaseAndRenderView(
+      reference,
+      c => {
+        c.findAppeal(appealId) match {
+          case Some(appeal) => successful(views.html.appeal_change_status(c, appeal, statusForm))
+          case None => successful(views.html.case_details(c, CaseDetailPage.APPEAL, views.html.partials.appeal.appeal_details(c)))
+        }
+      }
     )
   }
 
@@ -88,10 +101,24 @@ class AppealCaseController @Inject()(verify: RequestActions,
       reference,
       `case` => statusForm.bindFromRequest().fold(
         formWithErrors => successful(Ok(views.html.appeal_choose_status(`case`, appealTypeFound, formWithErrors))),
-        appealStatus => caseService.addAppeal(`case`, appealTypeFound, appealStatus, request.operator) map { _ =>
-          Redirect(routes.AppealCaseController.appealDetails(reference))
-        }
+        appealStatus => caseService.addAppeal(`case`, appealTypeFound, appealStatus, request.operator).map( _ => Redirect(routes.AppealCaseController.appealDetails(reference)))
       )
     )
   }
+
+  def confirmChangeStatus(reference: String, appealId: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.APPEAL_CASE)).async { implicit request =>
+    getCaseAndRespond(
+      reference,
+      `case` => {
+        `case`.findAppeal(appealId) match {
+          case Some(appeal) => statusForm.bindFromRequest().fold(
+            formWithErrors => successful(Ok(views.html.appeal_change_status(`case`, appeal, formWithErrors))),
+            appealStatus => caseService.updateAppealStatus(`case`, appeal, appealStatus, request.operator).map( _ => Redirect(routes.AppealCaseController.appealDetails(reference)))
+          )
+          case None => successful(Ok(views.html.case_details(`case`, CaseDetailPage.APPEAL, views.html.partials.appeal.appeal_details(`case`))))
+        }
+      }
+    )
+  }
+
 }

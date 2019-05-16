@@ -28,7 +28,7 @@
  @defining(c.decision.map(_.appeal).getOrElse(Seq.empty)) { appeals: Seq[Appeal] =>
    <table>
     <tbody>
-     @for(appeal <- appeals.sortWith((a, b) => a.`type`.id < b.`type`.id)) {
+     @for((appeal: Appeal, index: Int) <- appeals.sortWith((a, b) => a.`type`.id < b.`type`.id).zipWithIndex) {
       <tr id="appeal_details-@{appeal.`type`}" class="grid-row mb-2">
        <th id="appeal_details-@{appeal.`type`}-type" class="bold w-40">@AppealType.format(appeal.`type`) status</th>
        <td id="appeal_details-@{appeal.`type`}-status" class=" w-30">
@@ -39,7 +39,7 @@
         }
        </td>
        <td class="w-30">
-
+         <a id="change-status-@{index}" aria-label="change-status-@{index}" href="@routes.AppealCaseController.changeStatus(c.reference, appeal.id)">Change</a>
        </td>
       </tr>
      }
