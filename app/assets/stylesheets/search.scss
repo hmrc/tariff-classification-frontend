@@ -30,7 +30,11 @@
   }
 
   &--filters {
-    padding: 10px
+    padding-bottom: 10px;
+  }
+
+  &--filters-checkbox {
+    margin-left: 10px;
   }
 
   &--filters_heading {
@@ -38,7 +42,8 @@
     font-weight: bold;
     font-size: 1.17em;
     padding: $spacer $spacer $spacer;
-
+    width: 100%;
+    margin-bottom: 10px;
   }
 }
 

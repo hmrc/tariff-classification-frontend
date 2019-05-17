@@ -83,9 +83,6 @@
                     <div class="column-one-quarter">
 
                         <div class="advanced_search--filters_container">
-                            <div class="advanced_search--filters_heading">
-                                Filter by status
-                            </div>
                             <div class="advanced_search--filters">
                             @input_checkbox_group(
                                 field = form("status"),
@@ -100,8 +97,9 @@
                                     CheckOption("Rejected", PseudoCaseStatus.REJECTED.toString, checked = formHasStatus(PseudoCaseStatus.REJECTED)),
                                     CheckOption("Suppressed", PseudoCaseStatus.SUPPRESSED.toString, checked = formHasStatus(PseudoCaseStatus.SUPPRESSED))
                                 ),
-                                hint = Some("Choose a filter"),
-                                submitOnChange = true
+                                legend = Some("Filter by status"),
+                                submitOnChange = true,
+                                divClass = Some("advanced_search--filters-checkbox")
                             )
                             </div>
                         </div>
