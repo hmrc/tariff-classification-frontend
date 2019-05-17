@@ -28,9 +28,5 @@
 @(appealType: AppealType)
 
 <h2 id="appeal_choose_status-heading" class="heading-large">
- Choose
- <span id="appeal_choose_status-heading_type">
-  @if(appealType == AppealType.REVIEW) {review} else {appeal}
- </span>
- status for this ruling
+ Choose status for this @if(appealType == AppealType.REVIEW) {review} else {appeal}
 </h2>
