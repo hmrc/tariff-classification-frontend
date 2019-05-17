@@ -50,8 +50,12 @@ case class Case
     hasRuling && !hasExpiredRuling
   }
 
-  def isAssignedTo(operator : Operator): Boolean = {
+  def isAssignedTo(operator: Operator): Boolean = {
     assignee.exists(_.id == operator.id)
+  }
+
+  def findAppeal(appealId: String): Option[Appeal] = {
+    decision.flatMap(d => d.appeal.find(a => a.id.equals(appealId)))
   }
 
 }

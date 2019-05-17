@@ -108,6 +108,30 @@ class CaseTest extends UnitSpec with MockitoSugar with BeforeAndAfterAll {
 
   }
 
+  "findAppeal()" should {
+
+    "return appeal when valid id presented" in {
+      val appeal = Appeal("12345", AppealStatus.ALLOWED, AppealType.APPEAL_TIER_1)
+      val c = caseWithAppeal(appeal)
+
+      c.findAppeal("12345") shouldBe Some(appeal)
+    }
+
+    "return none when invalid id presented" in {
+      val appeal = Appeal("12345", AppealStatus.ALLOWED, AppealType.APPEAL_TIER_1)
+      val c = caseWithAppeal(appeal)
+
+      c.findAppeal("99999") shouldBe None
+    }
+
+    "return none when no appeals" in {
+      val appeal = Appeal("12345", AppealStatus.ALLOWED, AppealType.APPEAL_TIER_1)
+      val c = Cases.btiCaseExample
+
+      c.findAppeal("99999") shouldBe None
+    }
+  }
+
   private def rulingWithEffectiveEndDate(date: Option[Instant]): Decision = {
     Cases.decision.copy(effectiveEndDate = date)
   }
@@ -116,4 +140,7 @@ class CaseTest extends UnitSpec with MockitoSugar with BeforeAndAfterAll {
     Cases.btiCaseExample.copy(decision = d)
   }
 
+  private def caseWithAppeal(appeal: Appeal): Case = {
+    Cases.btiCaseExample.copy(decision = Some(Cases.decision.copy(appeal = Seq(appeal))))
+  }
 }
