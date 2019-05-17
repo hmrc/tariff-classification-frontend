@@ -169,7 +169,7 @@ class CaseControllerSpec extends WordSpec with Matchers with WithFakeApplication
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
-      contentAsString(result) should include("This field is required")
+      contentAsString(result) should include("Enter a case note")
     }
 
     "return OK when user has right permissions" in {
@@ -232,7 +232,7 @@ class CaseControllerSpec extends WordSpec with Matchers with WithFakeApplication
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
-      contentAsString(result) should include("This field is required")
+      contentAsString(result) should include("Enter a keyword")
     }
 
     "return OK when user has right permissions" in {
