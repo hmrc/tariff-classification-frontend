@@ -201,6 +201,30 @@ class ActivityDetailsViewSpec extends ViewSpec {
       doc.getElementById("activity-events-row-0-date") should containText("01 Jan 2019")
     }
 
+    "Render 'Appeal Status Changed'" in {
+      // Given
+      val c = aCase(withDecision(appeal = Seq(Appeal("id", AppealStatus.ALLOWED, AppealType.APPEAL_TIER_1))), withStatus(CaseStatus.COMPLETED))
+      val e = Event(
+        id = "EVENT_ID",
+        details = AppealStatusChange(appealType = AppealType.APPEAL_TIER_1, from = AppealStatus.IN_PROGRESS, to = AppealStatus.ALLOWED, comment = Some("comment")),
+        operator = Operator("id", Some("name")),
+        caseReference = "ref",
+        timestamp = date
+      )
+
+      // When
+      val doc = view(activity_details(c, Paged(Seq(e)), ActivityForm.form, queues))
+
+      // Then
+      doc should containElementWithID("activity-events-row-0-operator")
+      doc.getElementById("activity-events-row-0-operator") should containText("name")
+      doc should containElementWithID("activity-events-row-0-content")
+      doc.getElementById("activity-events-row-0-content") should containText("Appeal tier 1 status changed from Under appeal to Appeal allowed")
+      doc.getElementById("activity-events-row-0-content") should containText("comment")
+      doc should containElementWithID("activity-events-row-0-date")
+      doc.getElementById("activity-events-row-0-date") should containText("01 Jan 2019")
+    }
+
     "Render 'Extended Use Change'" in {
       // Given
       val c = aCase()
