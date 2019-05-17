@@ -443,7 +443,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest {
 
     "return a list of Events for this case" in {
 
-      stubFor(get(urlEqualTo(s"/cases/$ref/events?page=1&page_size=2"))
+      stubFor(get(urlEqualTo(s"/events?case_reference=$ref&page=1&page_size=2"))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
           .withBody(EventPayloads.pagedEvents))
@@ -452,13 +452,29 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest {
       await(connector.findEvents(ref, pagination)) shouldBe Paged(Events.events)
 
       verify(
-        getRequestedFor(urlEqualTo(s"/cases/$ref/events?page=1&page_size=2"))
+        getRequestedFor(urlEqualTo(s"/events?case_reference=$ref&page=1&page_size=2"))
+          .withHeader("X-Api-Token", equalTo(realConfig.apiToken))
+      )
+    }
+
+    "return a filtered list of Events for this case" in {
+
+      stubFor(get(urlEqualTo(s"/events?case_reference=$ref&type=SAMPLE_STATUS_CHANGE&page=1&page_size=2"))
+        .willReturn(aResponse()
+          .withStatus(HttpStatus.SC_OK)
+          .withBody(EventPayloads.pagedEvents))
+      )
+
+      await(connector.findFilteredEvents(ref, pagination, Set(EventType.SAMPLE_STATUS_CHANGE))) shouldBe Paged(Events.events)
+
+      verify(
+        getRequestedFor(urlEqualTo(s"/events?case_reference=$ref&type=SAMPLE_STATUS_CHANGE&page=1&page_size=2"))
           .withHeader("X-Api-Token", equalTo(realConfig.apiToken))
       )
     }
 
     "returns empty list when case ref not found" in {
-      stubFor(get(urlEqualTo(s"/cases/$ref/events?page=1&page_size=2"))
+      stubFor(get(urlEqualTo(s"/events?case_reference=$ref&page=1&page_size=2"))
         .willReturn(aResponse()
           .withStatus(HttpStatus.SC_OK)
           .withBody(EventPayloads.pagedEmpty))
@@ -467,7 +483,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest {
       await(connector.findEvents(ref, pagination)) shouldBe Paged.empty[Event]
 
       verify(
-        getRequestedFor(urlEqualTo(s"/cases/$ref/events?page=1&page_size=2"))
+        getRequestedFor(urlEqualTo(s"/events?case_reference=$ref&page=1&page_size=2"))
           .withHeader("X-Api-Token", equalTo(realConfig.apiToken))
       )
     }

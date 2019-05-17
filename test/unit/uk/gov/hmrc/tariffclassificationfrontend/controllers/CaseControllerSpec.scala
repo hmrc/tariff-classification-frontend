@@ -21,6 +21,7 @@ import java.time.Clock
 import org.mockito.ArgumentMatchers.{any, anyString, refEq}
 import org.mockito.BDDMockito._
 import org.scalatest.mockito.MockitoSugar
+import org.mockito.Mockito.{ verify}
 import org.scalatest.{Matchers, WordSpec}
 import play.api.http.Status
 import play.api.i18n.{DefaultLangs, DefaultMessagesApi}
@@ -31,6 +32,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.WithFakeApplication
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.{CommodityCodeConstraints, DecisionForm}
+import uk.gov.hmrc.tariffclassificationfrontend.models.EventType.EventType
 import uk.gov.hmrc.tariffclassificationfrontend.models.Permission.Permission
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.service._
@@ -120,11 +122,33 @@ class CaseControllerSpec extends WordSpec with Matchers with WithFakeApplication
 
   }
 
+  "Sample Details" should {
+
+    "return 200 OK and HTML content type" in {
+      val aCase = Cases.btiCaseExample
+
+      given(eventService.getFilteredEvents(refEq(aCase.reference), refEq(NoPagination()),
+        any[Option[Set[EventType]]])(any[HeaderCarrier])) willReturn successful(Paged.empty[Event])
+
+      val result = controller(aCase).sampleDetails(aCase.reference)(newFakeGETRequestWithCSRF(fakeApplication))
+
+      status(result) shouldBe Status.OK
+      contentType(result) shouldBe Some("text/html")
+      charset(result) shouldBe Some("utf-8")
+
+      verify(eventService).getFilteredEvents(refEq(aCase.reference),refEq(NoPagination()),
+        refEq(Some(Set(EventType.SAMPLE_STATUS_CHANGE))))(any[HeaderCarrier])
+    }
+  }
+
   "Activity Details" should {
 
     "return 200 OK and HTML content type" in {
       val aCase = Cases.btiCaseExample
-      given(eventService.getEvents(refEq(aCase.reference), refEq(NoPagination()))(any[HeaderCarrier])) willReturn successful(Paged(Events.events))
+
+      given(eventService.getFilteredEvents(refEq(aCase.reference), refEq(NoPagination()),
+          any[Option[Set[EventType]]])(any[HeaderCarrier])) willReturn successful(Paged(Events.events))
+
       given(queueService.getAll) willReturn successful(Seq.empty)
 
       val result = controller(aCase).activityDetails(aCase.reference)(newFakeGETRequestWithCSRF(fakeApplication))
@@ -132,11 +156,17 @@ class CaseControllerSpec extends WordSpec with Matchers with WithFakeApplication
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
+
+      verify(eventService).getFilteredEvents(refEq(aCase.reference),refEq(NoPagination()),
+        refEq(Some(Set(EventType.CASE_STATUS_CHANGE, EventType.APPEAL_STATUS_CHANGE, EventType.APPEAL_ADDED, EventType.EXTENDED_USE_STATUS_CHANGE,
+          EventType.ASSIGNMENT_CHANGE, EventType.QUEUE_CHANGE, EventType.NOTE))))(any[HeaderCarrier])
     }
 
     "return 200 OK and HTML content type when no Events are present" in {
       val aCase = Cases.btiCaseExample
-      given(eventService.getEvents(refEq(aCase.reference), refEq(NoPagination()))(any[HeaderCarrier])) willReturn successful(Paged.empty[Event])
+
+      given(eventService.getFilteredEvents(refEq(aCase.reference), refEq(NoPagination()),
+        any[Option[Set[EventType]]])(any[HeaderCarrier])) willReturn successful(Paged.empty[Event])
       given(queueService.getAll) willReturn successful(Seq.empty)
 
       val result = controller(aCase).activityDetails(aCase.reference)(newFakeGETRequestWithCSRF(fakeApplication))

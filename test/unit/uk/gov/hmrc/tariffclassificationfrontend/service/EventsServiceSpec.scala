@@ -29,6 +29,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.audit.AuditService
 import uk.gov.hmrc.tariffclassificationfrontend.connector.BindingTariffClassificationConnector
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
+import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.sample.sample_details
 import uk.gov.tariffclassificationfrontend.utils.Cases
 
 import scala.concurrent.Future
@@ -52,9 +53,22 @@ class EventsServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEa
 
   "Get Events by reference" should {
     "retrieve a list of events" in {
-      given(connector.findEvents("reference", NoPagination())) willReturn Future.successful(Paged(manyEvents))
+      given(connector.findFilteredEvents("reference", NoPagination(), Set.empty)) willReturn Future.successful(Paged(manyEvents))
 
       await(service.getEvents("reference", NoPagination())) shouldBe Paged(manyEvents)
+    }
+  }
+
+  "Get Filtered Events by reference" should {
+    "retrieve a list of events" in {
+
+      val filteredEvents : Seq[Event] = Seq(Event("1",SampleStatusChange(Some(SampleStatus.AWAITING), Some(SampleStatus.DESTROYED), None),Operator("1"),"1"))
+
+      // When
+      given(connector.findFilteredEvents("reference", NoPagination(),
+        Set(EventType.SAMPLE_STATUS_CHANGE))) willReturn Future.successful(Paged(filteredEvents,NoPagination(),1))
+
+      await(service.getFilteredEvents("reference", NoPagination(),Some(Set(EventType.SAMPLE_STATUS_CHANGE)))) shouldBe Paged(filteredEvents,NoPagination(),1)
     }
   }
 
