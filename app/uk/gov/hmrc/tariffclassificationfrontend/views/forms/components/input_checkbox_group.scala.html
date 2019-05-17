@@ -18,6 +18,7 @@
 @(
         field: Field,
         options: Iterable[CheckOption],
+        hint: Option[String] = None,
         inputClass: Option[String] = None,
         labelClass: Option[String] = None,
         submitOnChange: Boolean = false
@@ -26,6 +27,10 @@
 <div class="form-group @if(field.hasErrors){form-group-error}">
 
     <fieldset>
+        <legend class="form-hint">
+            @hint
+        </legend>
+
         @for((option: CheckOption, index: Int) <- options.zipWithIndex) {
             <div class="multiple-choice">
                 @defining(s"${field.id}-$index") { id: String =>
