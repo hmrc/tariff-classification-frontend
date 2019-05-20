@@ -52,12 +52,18 @@
                                     <div class="form-group">
                                         <fieldset>
                                             <div class="multiple-choice">
-                                                <input id="attachments[@{index}]" name="attachments[@{index}]" type="checkbox" value="@file.id" @if(file.public){checked="checked"}/>
+                                                <input id="attachments[@{index}]"
+                                                        name="attachments[@{index}]"
+                                                        type="checkbox"
+                                                        value="@file.id"
+                                                        aria-label="publish @file.fileName on GOV.UK"
+                                                        @if(file.public) {checked="checked"}/>
                                                 <label for="attachments[@{index}]"></label>
                                             </div>
                                         </fieldset>
                                     </div>
                                 </td>
+
                             }
 
                             <td id="@{id}-row-@{index}-date" class="w-15">
