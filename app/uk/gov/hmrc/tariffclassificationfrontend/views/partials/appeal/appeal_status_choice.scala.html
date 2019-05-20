@@ -27,26 +27,9 @@
 
 @(appealType: AppealType, form: Form[AppealStatus])(implicit messages: Messages)
 
-@if(appealType == AppealType.REVIEW) {
- <h4 class="heading-small">Review status</h4>
- @input_radiogroup(
-  field = form("status"),
-  options = Seq(
-   AppealStatus.IN_PROGRESS,
-   AppealStatus.ALLOWED,
-   AppealStatus.DISMISSED
-  ).map(s => RadioOption(s.toString, AppealStatus.formatReview(s))),
-  id = "appeal_status"
- )
-} else {
- <h4 class="heading-small">Appeal status</h4>
- @input_radiogroup(
-  field = form("status"),
-  options = Seq(
-   AppealStatus.IN_PROGRESS,
-   AppealStatus.ALLOWED,
-   AppealStatus.DISMISSED
-  ).map(s => RadioOption(s.toString, AppealStatus.formatAppeal(s))),
-  id = "appeal_status"
- )
-}
+<h3 class="heading-small">@{s"${AppealType.heading(appealType)} status"}</h3>
+@input_radiogroup(
+ field = form("status"),
+ options = AppealStatus.formatOptions(appealType),
+ id = "appeal_status"
+)

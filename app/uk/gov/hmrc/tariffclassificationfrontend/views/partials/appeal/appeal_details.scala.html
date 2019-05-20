@@ -32,11 +32,7 @@
       <tr id="appeal_details-@{appeal.`type`}" class="grid-row mb-2">
        <th id="appeal_details-@{appeal.`type`}-type" class="bold w-40">@AppealType.format(appeal.`type`) status</th>
        <td id="appeal_details-@{appeal.`type`}-status" class=" w-30">
-        @if(appeal.`type` == AppealType.REVIEW) {
-         @AppealStatus.formatReview(appeal.status)
-        }  else {
-         @AppealStatus.formatAppeal(appeal.status)
-        }
+        @AppealStatus.format(appeal.`type`, appeal.status)
        </td>
        <td class="w-30">
        @if(request.hasPermission(Permission.APPEAL_CASE)) {

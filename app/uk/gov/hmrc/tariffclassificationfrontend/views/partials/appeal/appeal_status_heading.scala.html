@@ -28,5 +28,5 @@
 @(appealType: AppealType)
 
 <h2 id="appeal_choose_status-heading" class="heading-large">
- Choose status for this @if(appealType == AppealType.REVIEW) {review} else {appeal}
+ Choose status for this @AppealType.heading(appealType).toLowerCase
 </h2>
