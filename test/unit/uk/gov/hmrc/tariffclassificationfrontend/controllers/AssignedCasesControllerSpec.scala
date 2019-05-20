@@ -83,7 +83,7 @@ class AssignedCasesControllerSpec extends UnitSpec with Matchers with WithFakeAp
   "Assigned Cases by Operator" should {
 
     "redirect to unauthorised if not a manager" in {
-      val result = await(controller(noPermissions).assignedCasesFor("1")(fakeRequest))
+      val result = await(controller(noPermissions).assignedCasesFor("1",0)(fakeRequest))
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.SecurityController.unauthorized().url)
     }
@@ -93,7 +93,7 @@ class AssignedCasesControllerSpec extends UnitSpec with Matchers with WithFakeAp
       given(casesService.countCasesByQueue(any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(Map.empty[String, Int]))
       given(queuesService.getAll).willReturn(Future.successful(Seq(queue)))
 
-      val result = await(controller(requiredPermissions).assignedCasesFor("1")(fakeRequest))
+      val result = await(controller(requiredPermissions).assignedCasesFor("1",0)(fakeRequest))
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
@@ -108,7 +108,7 @@ class AssignedCasesControllerSpec extends UnitSpec with Matchers with WithFakeAp
       given(casesService.getAssignedCases(refEq(NoPagination()))(any[HeaderCarrier])).willReturn(Future.successful(Paged(Seq(assignedCase))))
       given(queuesService.getAll).willReturn(Future.successful(Seq(queue)))
 
-      val result = await(controller(requiredPermissions).assignedCasesFor("1")(fakeRequest))
+      val result = await(controller(requiredPermissions).assignedCasesFor("1",0)(fakeRequest))
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")

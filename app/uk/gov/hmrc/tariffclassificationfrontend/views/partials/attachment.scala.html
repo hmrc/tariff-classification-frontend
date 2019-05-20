@@ -17,18 +17,18 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.models.StoredAttachment
 @import uk.gov.hmrc.tariffclassificationfrontend.models.response.ScanStatus
 @import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
-@(id: String, file: StoredAttachment, name: Option[String] = None)(implicit messages: Messages)
+@(id: String, file: StoredAttachment, name: Option[String] = None, useTabIndex : Option[Int] = None)(implicit messages: Messages)
 
 
 @if(file.scanStatus.contains(ScanStatus.READY) && file.url.isDefined) {
     @if(file.isImage){
         <div>
-            <a id="@{id}-file" href="@file.url" target="_blank">
+            <a @if(useTabIndex.isDefined){ tabindex="@{useTabIndex.get}" } id="@{id}-file" href="@file.url" target="_blank">
                 <img class="attachment-img" id="@{id}-file-img" src="@file.url" alt="@file.fileName" title="@file.fileName"/>
             </a>
         </div>
     } else {
-        <a id="@{id}-file" href="@file.url" target="_blank">
+        <a @if(useTabIndex.isDefined){ tabindex="@{useTabIndex.get}" } id="@{id}-file" href="@file.url" target="_blank">
             @name.getOrElse(file.fileName)
         </a>
     }

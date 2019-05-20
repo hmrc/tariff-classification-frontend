@@ -17,7 +17,8 @@
 @(
         field: Field,
         label: String,
-        accept: Option[String] = None
+        accept: Option[String] = None,
+        useTabIndex : Option[Int] = None
 )(implicit messages: Messages)
 
 <div class="form-group @if(field.hasErrors){form-group-error}">
@@ -32,6 +33,7 @@
         type="file"
         id="@{field.id}"
         name="@{field.name}"
+        @if(useTabIndex.isDefined){tabindex="@{useTabIndex.get}"}
         @if(accept.isDefined) { accept="@{accept.get}" }
         @if(field.hasErrors){  aria-describedby="error-message-@{field.id}-input" }
         />

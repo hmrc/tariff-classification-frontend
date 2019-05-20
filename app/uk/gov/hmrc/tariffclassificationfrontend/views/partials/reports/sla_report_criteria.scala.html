@@ -22,7 +22,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.input_date
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.error_summary
 @import views.html.helper.CSRF
-@(form: Form[InstantRange])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(form: Form[InstantRange], startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 <h3 id="sla_criteria-heading" class="heading-small">SLA Report Criteria</h3>
 
@@ -36,16 +36,18 @@
   dayField = form("min.day"),
   monthField = form("min.month"),
   yearField = form("min.year"),
-  legend = "From date"
+  legend = "From date",
+  startAtTabIndex = Some(startAtTabIndex)
  )
 
  @input_date(
   dayField = form("max.day"),
   monthField = form("max.month"),
   yearField = form("max.year"),
-  legend = "To date"
+  legend = "To date",
+  startAtTabIndex = Some(startAtTabIndex+4)
  )
 
- <button id="sla_criteria-submit" class="button" type="submit">Generate report</button>
+ <button tabindex="@{startAtTabIndex+10}" id="sla_criteria-submit" class="button" type="submit">Generate report</button>
 
 }

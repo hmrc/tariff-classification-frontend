@@ -23,22 +23,23 @@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 @import uk.gov.hmrc.tariffclassificationfrontend.models.Permission
-@(c: Case, form : Form[String], filesFromApplicant: Seq[StoredAttachment], letterOfAuthority : Option[StoredAttachment], filesFromClassification: Seq[StoredAttachment] )(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(c: Case, form : Form[String], filesFromApplicant: Seq[StoredAttachment], letterOfAuthority : Option[StoredAttachment],
+        filesFromClassification: Seq[StoredAttachment], startAtTabIndex : Int = 0 )(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
     @tab_heading("attachments", messages("case.menu.attachments"))
 
     @attachments_state_message(attachments = filesFromApplicant ++ filesFromClassification)
 
     <h3 class="heading-medium" id="applicant-heading">@messages(s"case.attachment.heading.applicant")</h3>
-    @attachments_list("applicant", filesFromApplicant)
+    @attachments_list("applicant", filesFromApplicant, startAtTabIndex = Some(startAtTabIndex))
 
     @if(letterOfAuthority.isDefined) {
         <h3 class="heading-medium" id="letter-of-auth-heading">@messages(s"case.attachment.heading.letter-of-auth")</h3>
-        @attachments_list("letter-of-auth", Seq(letterOfAuthority.get))
+        @attachments_list("letter-of-auth", Seq(letterOfAuthority.get), startAtTabIndex = Some(startAtTabIndex+30))
     }
 
     <h3 class="heading-medium" id="classification-team-heading">@messages(s"case.attachment.heading.classification-team")</h3>
-    @attachments_list("classification-team", filesFromClassification, showUploadedBy = true, showSelect = false, showRemoval = true, Some(c.reference))
+    @attachments_list("classification-team", filesFromClassification, showUploadedBy = true, showSelect = false, showRemoval = true, Some(c.reference), startAtTabIndex = Some(startAtTabIndex+31))
 
     @if(request.hasPermission(Permission.ADD_ATTACHMENT)) {
         @helpers.form(action = AttachmentsController.uploadAttachment(c.reference),
@@ -52,8 +53,8 @@
             <div class="form-group">
                 <div aria-label="Information">
                     <p>Before you upload a file, give it a useful and descriptive filename.</p>
-                    <details role="group" class="mb-2">
-                        <summary role="button">
+                    <details tabindex="@{startAtTabIndex+100}" role="group" class="mb-2">
+                        <summary tabindex="@{startAtTabIndex+100}" role="button">
                             <span id="release-suppress-help-title">How to save an email as a PDF</span>
                         </summary>
                         <div id="release-suppress-help-body" class="panel panel-border">
@@ -80,13 +81,14 @@
                 @input_file(
                     field = form("file-input"),
                     label = messages("cases.attachment.upload.label"),
-                    accept = Some(".pdf,.doc,.docx,.png,.jpeg,.jpg,.txt")
+                    accept = Some(".pdf,.doc,.docx,.png,.jpeg,.jpg,.txt"),
+                    useTabIndex = Some(startAtTabIndex+101)
                 )
                 </div>
             </div>
 
             <div class="section">
-                <button id="upload-file-button" class="button">Upload</button>
+                <button tabindex="@{startAtTabIndex+102}" id="upload-file-button" class="button">Upload</button>
             </div>
         }
     }

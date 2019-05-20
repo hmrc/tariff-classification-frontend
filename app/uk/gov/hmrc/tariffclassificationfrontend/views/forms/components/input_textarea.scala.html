@@ -22,7 +22,8 @@ inputClass: Option[String] = None,
 labelClass: Option[String] = None,
 hintClass: Option[String] = None,
 hint: Option[String] = None,
-autofocus : Boolean = false
+autofocus : Boolean = false,
+        tabIndex : Option[Int] = None
 )(implicit messages: Messages)
 
 <div class="form-group @if(field.hasErrors){form-group-error}">
@@ -43,6 +44,7 @@ autofocus : Boolean = false
             aria-describedby="error-message-@{field.id}-input"
             rows="5"
             @if(autofocus){autofocus}
+            @if(tabIndex.isDefined){ tabindex="@{tabIndex.get}" }
     >@{field.value}</textarea>
 
 </div>

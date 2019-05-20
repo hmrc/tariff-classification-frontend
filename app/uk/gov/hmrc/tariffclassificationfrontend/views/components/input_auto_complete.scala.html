@@ -24,7 +24,8 @@
         hint: Option[String] = None,
         labelClass: Option[String] = None,
         autoCompleteOptions: Seq[String],
-        autofocus : Boolean = false
+        autofocus : Boolean = false,
+        useTabIndex : Option[Int] = None
 )(implicit messages: Messages)
 
 <div class="form-group @if(field.hasErrors){form-group-error}">
@@ -45,6 +46,7 @@
         id="@{field.id}"
         name="@{field.name}"
         value="@{field.value}"
+        @if(useTabIndex.isDefined){tabindex="@{useTabIndex.get}"}
         @if(field.hasErrors){aria-describedby="error-message-@{field.id}-input"}
         @if(autofocus){ autofocus }
         />

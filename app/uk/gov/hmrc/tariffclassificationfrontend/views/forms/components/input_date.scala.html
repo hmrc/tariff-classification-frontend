@@ -22,10 +22,11 @@
         inputClass: Option[String] = None,
         hint: Option[String] = None,
         labelClass: Option[String] = None,
-        formControlClass: Option[String] = None
+        formControlClass: Option[String] = None,
+        startAtTabIndex : Option[Int] = None
 )(implicit messages: Messages)
 
-@input_date_component(field: Field, label: String) = {
+@input_date_component(field: Field, label: String, tabIndex : Option[Int]) = {
     <div class="w-30 pr-15 display-inline">
         <label class="form-label" for="@{field.id}">
             <span class="bold">@label</span>
@@ -39,6 +40,9 @@
             name="@{field.name}"
             value="@{field.value}"
                 @if(field.hasErrors){aria-describedby="error-message-@{field.id}-input"}
+                @if(tabIndex.isDefined) {
+                    tabindex="@tabIndex.get"
+                }
             />
         </div>
     </div>
@@ -60,9 +64,9 @@
             <span class="error-message" id="error-message-date-input">The date must be valid</span>
         }
 
-        @input_date_component(dayField, "Day")
-        @input_date_component(monthField, "Month")
-        @input_date_component(yearField, "Year")
+        @input_date_component(dayField, "Day",startAtTabIndex.map(v => v+1))
+        @input_date_component(monthField, "Month",startAtTabIndex.map(v => v+2))
+        @input_date_component(yearField, "Year",startAtTabIndex.map(v => v+3))
 
     </fieldset>
 </div>

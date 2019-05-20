@@ -48,15 +48,15 @@ class ReportingController @Inject()(verify: RequestActions,
       } yield Ok(views.html.reports(queues, None, caseCountByQueue))
     }
 
-  def getReportCriteria(name: String): Action[AnyContent] = (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS))
+  def getReportCriteria(name: String, startAtTabIndex : Int): Action[AnyContent] = (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS))
     .async { implicit request =>
       handleNotFound(name) {
-        case Report.SLA => getSLAReportCriteria
-        case Report.REFERRAL => getReferralReportCriteria
+        case Report.SLA => getSLAReportCriteria(startAtTabIndex)
+        case Report.REFERRAL => getReferralReportCriteria(startAtTabIndex)
       }
     }
 
-  private def getSLAReportCriteria(implicit request: AuthenticatedRequest[_]): Future[Result] = {
+  private def getSLAReportCriteria(startAtTabIndex : Int)(implicit request: AuthenticatedRequest[_]): Future[Result] = {
     for {
       queues <- queuesService.getAll
       caseCountByQueue <- casesService.countCasesByQueue(request.operator)
@@ -64,13 +64,13 @@ class ReportingController @Inject()(verify: RequestActions,
       queues,
       Some(SelectedReport(
         Report.SLA,
-        views.html.partials.reports.sla_report_criteria(InstantRangeForm.form))
+        views.html.partials.reports.sla_report_criteria(InstantRangeForm.form,startAtTabIndex))
       ),
       caseCountByQueue)
     )
   }
 
-  private def getReferralReportCriteria(implicit request: AuthenticatedRequest[_]): Future[Result] = {
+  private def getReferralReportCriteria(startAtTabIndex : Int)(implicit request: AuthenticatedRequest[_]): Future[Result] = {
     for {
       queues <- queuesService.getAll
       caseCountByQueue <- casesService.countCasesByQueue(request.operator)
@@ -78,7 +78,7 @@ class ReportingController @Inject()(verify: RequestActions,
       queues,
       Some(SelectedReport(
         Report.REFERRAL,
-        views.html.partials.reports.referral_report_criteria(InstantRangeForm.form))
+        views.html.partials.reports.referral_report_criteria(InstantRangeForm.form,startAtTabIndex))
       ), caseCountByQueue)
     )
   }

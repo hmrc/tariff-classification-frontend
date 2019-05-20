@@ -101,7 +101,7 @@ class ReportingControllerSpec extends UnitSpec with Matchers with WithFakeApplic
       given(operator.hasPermissions(requiredPermissions)) willReturn true
 
       val req: AuthenticatedRequest[AnyContent] = request(operator, newFakeGETRequestWithCSRF(fakeApplication))
-      val result = await(controller(requiredPermissions).getReportCriteria(Report.SLA.toString)(req.request))
+      val result = await(controller(requiredPermissions).getReportCriteria(Report.SLA.toString,0)(req.request))
 
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -121,7 +121,7 @@ class ReportingControllerSpec extends UnitSpec with Matchers with WithFakeApplic
       given(casesService.countCasesByQueue(any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(Map.empty[String, Int]))
 
       val req: AuthenticatedRequest[AnyContent] = request(operator, newFakeGETRequestWithCSRF(fakeApplication))
-      val result = await(controller(requiredPermissions).getReportCriteria(Report.REFERRAL.toString)(req.request))
+      val result = await(controller(requiredPermissions).getReportCriteria(Report.REFERRAL.toString,0)(req.request))
 
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -139,7 +139,7 @@ class ReportingControllerSpec extends UnitSpec with Matchers with WithFakeApplic
       given(operator.hasPermissions(requiredPermissions)) willReturn true
 
       val req: AuthenticatedRequest[AnyContent] = request(operator, newFakeGETRequestWithCSRF(fakeApplication))
-      val result = await(controller(requiredPermissions).getReportCriteria("xyz")(req.request))
+      val result = await(controller(requiredPermissions).getReportCriteria("xyz",0)(req.request))
 
       status(result) shouldBe Status.SEE_OTHER
       locationOf(result) shouldBe Some("/tariff-classification/reports")
@@ -149,7 +149,7 @@ class ReportingControllerSpec extends UnitSpec with Matchers with WithFakeApplic
       given(queueService.getAll) willReturn Future.successful(Seq.empty)
 
       val req: AuthenticatedRequest[AnyContent] = request(operator, newFakeGETRequestWithCSRF(fakeApplication))
-      val result = await(controller(noPermissions).getReportCriteria(Report.SLA.toString)(req.request))
+      val result = await(controller(noPermissions).getReportCriteria(Report.SLA.toString,0)(req.request))
 
       status(result) shouldBe Status.SEE_OTHER
       locationOf(result) shouldBe Some(routes.SecurityController.unauthorized().url)

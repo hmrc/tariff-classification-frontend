@@ -25,7 +25,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.views.{AssigneeCount, ViewSpec}
 
 class CasesAssigneeNavViewSpec extends ViewSpec with MockitoSugar {
 
-  private def assignedCasesURL(id: String) = routes.AssignedCasesController.assignedCasesFor(id).url
+  private def assignedCasesURL(id: String) = routes.AssignedCasesController.assignedCasesFor(id,0).url
 
   "Cases Assignee Nav" should {
 

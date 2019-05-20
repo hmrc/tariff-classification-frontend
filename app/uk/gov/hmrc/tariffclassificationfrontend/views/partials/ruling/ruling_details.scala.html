@@ -22,7 +22,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.ruling._
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{attachments_list, tab_heading}
-@(c: Case, decisionForm: Option[Form[DecisionFormData]], files: Seq[StoredAttachment], commodityCode: Option[CommodityCode])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(c: Case, decisionForm: Option[Form[DecisionFormData]], files: Seq[StoredAttachment], commodityCode: Option[CommodityCode], startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @defining(c.application.asBTI) { btiApp: BTIApplication =>
 
@@ -57,7 +57,7 @@
             <h3 class="heading-medium mt-0">@messages("case.menu.ruling-details")</h3>
             @if(c.status == CaseStatus.OPEN && request.hasPermission(Permission.EDIT_RULING) ) {
                 <div id="ruling_edit_details" class="mb-2">
-                    <a id="ruling_edit" href="@RulingController.editRulingDetails(c.reference)">Edit ruling details</a>
+                    <a tabindex="@{startAtTabIndex+1}" id="ruling_edit" href="@RulingController.editRulingDetails(c.reference)">Edit ruling details</a>
                 </div>
             }
         </div>
@@ -137,11 +137,11 @@
     }
 
     <h3 class="heading-medium">@messages("case.decision.attachments.ruling")</h3>
-    @attachments_list("attachments", files.filter(_.public))
+    @attachments_list("attachments", files.filter(_.public),startAtTabIndex = Some(startAtTabIndex+2))
 
-    @ruling_explanation(c)
+    @ruling_explanation(c,Some(startAtTabIndex+50))
 
-    @ruling_certificate_link(c)
+    @ruling_certificate_link(c,Some(startAtTabIndex+51))
 
     @if(c.status == CaseStatus.COMPLETED || c.status == CaseStatus.CANCELLED) {
         @ruling_commodity_code_expiry_section(c, commodityCode, clazz = "mt-3")
@@ -149,10 +149,10 @@
 
     <div class="mt-3" id="ruling-actions">
          @if(request.hasPermission(Permission.COMPLETE_CASE)) {
-             @complete_ruling_section(c, decisionForm = decisionForm, commodityCode = commodityCode)
+             @complete_ruling_section(c, decisionForm = decisionForm, commodityCode = commodityCode,useTabIndex = Some(startAtTabIndex+52))
          }
         @if(request.hasPermission(Permission.CANCEL_CASE)) {
-            @cancel_ruling_section(c)
+            @cancel_ruling_section(c,Some(startAtTabIndex+53))
         }
     </div>
 }

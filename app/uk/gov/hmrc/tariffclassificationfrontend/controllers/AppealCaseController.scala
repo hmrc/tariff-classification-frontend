@@ -43,6 +43,8 @@ class AppealCaseController @Inject()(verify: RequestActions,
   private val typeForm: Form[AppealType] = AppealForm.appealTypeForm
   private val statusForm: Form[AppealStatus] = AppealForm.appealStatusForm
 
+  private val startTabIndexForAppeals = 8000;
+
   override protected def redirect: String => Call = routes.CaseController.trader
 
   override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = {
@@ -52,7 +54,7 @@ class AppealCaseController @Inject()(verify: RequestActions,
   def appealDetails(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
     getCaseAndRenderView(
       reference,
-      c => successful(views.html.case_details(c, CaseDetailPage.APPEAL, views.html.partials.appeal_details(c)))
+      c => successful(views.html.case_details(c, CaseDetailPage.APPEAL, views.html.partials.appeal_details(c,startTabIndexForAppeals), activeTab = Some("tab-item-Appeals")))
     )
   }
 

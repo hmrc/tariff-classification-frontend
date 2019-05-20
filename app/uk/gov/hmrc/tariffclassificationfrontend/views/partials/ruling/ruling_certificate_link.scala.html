@@ -17,7 +17,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus}
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.PdfDownloadController
 
-@(c: Case)(implicit messages: Messages)
+@(c: Case, useTabIndex : Option[Int] = None)(implicit messages: Messages)
 
 @validStatus = @{ Seq(CaseStatus.COMPLETED, CaseStatus.CANCELLED)}
 
@@ -25,6 +25,6 @@
     <div id="ruling-certificate">
         <h3 class="heading-medium  mt-1">@messages("case.decision.ruling.certificate.title")</h3>
         @messages("case.decision.ruling.certificate.content"),
-        <a  id="ruling-certificate-link" target="_blank" href="@PdfDownloadController.rulingPdf(c.reference)"> @messages("case.decision.ruling.certificate.link") </a>
+        <a @if(useTabIndex.isDefined){tabindex="@{useTabIndex.get}"} id="ruling-certificate-link" target="_blank" href="@PdfDownloadController.rulingPdf(c.reference)"> @messages("case.decision.ruling.certificate.link") </a>
     </div>
 }

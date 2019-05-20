@@ -26,50 +26,58 @@
     @case_nav_item(
         active = page == CaseDetailPage.TRADER,
         title = messages("case.menu.trader"),
-        call = routes.CaseController.trader(c.reference)
+        call = routes.CaseController.trader(c.reference),
+        tabIndex = "1000"
     )
 
     @case_nav_item(
         active = page == CaseDetailPage.APPLICATION_DETAILS,
         title = messages("case.menu.application-details"),
-        call = routes.CaseController.applicationDetails(c.reference)
+        call = routes.CaseController.applicationDetails(c.reference),
+        tabIndex = "2000"
     )
 
     @case_nav_item(
         active = page == CaseDetailPage.SAMPLE_DETAILS,
         title = messages("case.menu.sample-details"),
-        call = routes.CaseController.sampleDetails(c.reference)
+        call = routes.CaseController.sampleDetails(c.reference),
+        tabIndex = "3000"
     )
 
     @case_nav_item(
         active = page == CaseDetailPage.ATTACHMENTS,
         title = messages("case.menu.attachments"),
-        call = routes.AttachmentsController.attachmentsDetails(c.reference)
+        call = routes.AttachmentsController.attachmentsDetails(c.reference),
+        tabIndex = "4000"
     )
 
     @case_nav_item(
         active = page == CaseDetailPage.ACTIVITY,
         title = messages("case.menu.activity"),
-        call = routes.CaseController.activityDetails(c.reference)
+        call = routes.CaseController.activityDetails(c.reference),
+        tabIndex = "5000"
     )
 
     @case_nav_item(
         active = page == CaseDetailPage.KEYWORDS,
         title = messages("case.menu.keywords"),
-        call = routes.CaseController.keywordsDetails(c.reference)
+        call = routes.CaseController.keywordsDetails(c.reference),
+        tabIndex = "6000"
     )
 
     @case_nav_item(
         active = page == CaseDetailPage.RULING,
         title = messages("case.menu.ruling"),
-        call = routes.CaseController.rulingDetails(c.reference)
+        call = routes.CaseController.rulingDetails(c.reference),
+        tabIndex = "7000"
     )
 
     @if(Set(CaseStatus.COMPLETED, CaseStatus.CANCELLED).contains(c.status)) {
         @case_nav_item(
             active = page == CaseDetailPage.APPEAL,
             title = messages("case.menu.appeal"),
-            call = routes.AppealCaseController.appealDetails(c.reference)
+            call = routes.AppealCaseController.appealDetails(c.reference),
+            tabIndex = "8000"
         )
     }
 

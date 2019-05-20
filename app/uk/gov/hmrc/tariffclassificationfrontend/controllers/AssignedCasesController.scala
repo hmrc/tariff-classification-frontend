@@ -43,20 +43,20 @@ class AssignedCasesController @Inject()(verify: RequestActions,
       showAssignedCases()
     }
 
-  def assignedCasesFor(assigneeId: String): Action[AnyContent] = (verify.authenticated andThen verify.mustHave(Permission.VIEW_ASSIGNED_CASES))
+  def assignedCasesFor(assigneeId: String, startAtTabIndex : Int): Action[AnyContent] = (verify.authenticated andThen verify.mustHave(Permission.VIEW_ASSIGNED_CASES))
     .async { implicit request =>
-      showAssignedCases(Some(assigneeId))
+      showAssignedCases(Some(assigneeId),startAtTabIndex = startAtTabIndex)
     }
 
-  private def showAssignedCases(assigneeId: Option[String] = None)
+  private def showAssignedCases(assigneeId: Option[String] = None, startAtTabIndex : Int = 0)
                                (implicit request: AuthenticatedRequest[_]): Future[Result] = {
     for {
       cases <- casesService.getAssignedCases(NoPagination())
       queues <- queuesService.getAll
       caseCountByQueue <- casesService.countCasesByQueue(request.operator)
-    } yield Ok(views.html.assigned_cases(queues, cases.results, assigneeId, caseCountByQueue))
+    } yield Ok(views.html.assigned_cases(queues, cases.results, assigneeId, caseCountByQueue, startAtTabIndex))
               .addingToSession((backToQueuesLinkLabel, messagesApi("cases.menu.assigned-cases")),
-                               (backToQueuesLinkUrl, assigneeId.map(AssignedCasesController.assignedCasesFor(_).url)
+                               (backToQueuesLinkUrl, assigneeId.map(AssignedCasesController.assignedCasesFor(_,startAtTabIndex).url)
                                                                .getOrElse(AssignedCasesController.assignedCases().url)))
               .removingFromSession(backToSearchResultsLinkLabel, backToSearchResultsLinkUrl)
 

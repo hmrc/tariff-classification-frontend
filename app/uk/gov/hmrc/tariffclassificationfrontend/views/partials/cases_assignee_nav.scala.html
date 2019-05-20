@@ -25,10 +25,12 @@
 <div id="assignee-navigation" class="side-nav" role="navigation" aria-labelledby="nav" style="margin-top: 30px">
     <h3 class="heading-small">Assigned cases</h3>
     <ul>
-        @for(a <- assignees) {
-            <li class="side-nav__list@if(assigneeId.exists(_ == a.op.id)) { side-nav__list--selected}">
-                <a id="nav-menu-assignee-@a.op.id" class="side-nav__link" href="@AssignedCasesController.assignedCasesFor(a.op.id)">@messages("case.summary.assignee", a.name, a.count)</a>
-            </li>
+        @for((a, index) <- assignees.zipWithIndex) {
+            @defining(6000+((index+1)*30)) { startingIndex =>
+                <li class="side-nav__list@if(assigneeId.exists(_ == a.op.id)) { side-nav__list--selected}">
+                    <a tabindex="@startingIndex" id="nav-menu-assignee-@a.op.id" class="side-nav__link" href="@AssignedCasesController.assignedCasesFor(a.op.id, startingIndex)">@messages("case.summary.assignee", a.name, a.count)</a>
+                </li>
+            }
         }
     </ul>
 
