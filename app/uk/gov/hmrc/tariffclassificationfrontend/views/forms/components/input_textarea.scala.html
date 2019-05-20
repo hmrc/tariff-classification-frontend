@@ -22,7 +22,8 @@ inputClass: Option[String] = None,
 labelClass: Option[String] = None,
 hintClass: Option[String] = None,
 hint: Option[String] = None,
-autofocus : Boolean = false
+autofocus : Boolean = false,
+customErrorMessage : Option[String] = None
 )(implicit messages: Messages)
 
 <div class="form-group @if(field.hasErrors){form-group-error}">
@@ -32,7 +33,7 @@ autofocus : Boolean = false
         <span class="form-hint">@hint</span>
         }
         @field.errors.map { error =>
-        <span class="error-message" id="error-message-@{field.id}-input">@messages(error.message, error.args: _*)</span>
+        <span class="error-message" id="error-message-@{field.id}-input">@customErrorMessage.getOrElse( messages(error.message, error.args: _*))</span>
         }
     </label>
 
