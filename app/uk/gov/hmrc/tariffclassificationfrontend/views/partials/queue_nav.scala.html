@@ -35,12 +35,12 @@
         }
         @if(request.hasPermission(Permission.VIEW_ASSIGNED_CASES)) {
             <li class="side-nav__list @if(section == "assigned-cases") { side-nav__list--selected }">
-                <a tabindex="6000" id="nav-menu-assigned-cases" class="side-nav__link" href="@controllers.routes.AssignedCasesController.assignedCases()">@messages("cases.menu.assigned-cases")</a>
+                <a tabindex="7000" id="nav-menu-assigned-cases" class="side-nav__link" href="@controllers.routes.AssignedCasesController.assignedCases()">@messages("cases.menu.assigned-cases")</a>
             </li>
         }
         @if(request.hasPermission(Permission.VIEW_REPORTS)) {
             <li  class="side-nav__list @if(section == "reports") { side-nav__list--selected }">
-                <a tabindex="7000"id="nav-menu-reports" class="side-nav__link" href="@controllers.routes.ReportingController.getReports()">@messages("cases.menu.reports")</a>
+                <a tabindex="8000"id="nav-menu-reports" class="side-nav__link" href="@controllers.routes.ReportingController.getReports()">@messages("cases.menu.reports")</a>
             </li>
         }
     </ul>

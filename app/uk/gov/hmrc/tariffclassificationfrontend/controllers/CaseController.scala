@@ -57,7 +57,7 @@ class CaseController @Inject()(verify: RequestActions,
       c => {
         for {
           letter <- fileService.getLetterOfAuthority(c)
-        } yield views.html.partials.case_trader(c, letter,pagesWithStartTabIndexes(TRADER))
+        } yield views.html.partials.case_trader(c, letter, pagesWithStartTabIndexes(TRADER))
       },
       "tab-item-Applicant"
     )
@@ -70,7 +70,7 @@ class CaseController @Inject()(verify: RequestActions,
         for {
           attachments <- fileService.getAttachments(c)
           letter <- fileService.getLetterOfAuthority(c)
-        } yield views.html.partials.application_details(c, attachments, letter,pagesWithStartTabIndexes(APPLICATION_DETAILS))
+        } yield views.html.partials.application_details(c, attachments, letter, pagesWithStartTabIndexes(APPLICATION_DETAILS))
       },
       "tab-item-Item"
     )
@@ -82,7 +82,7 @@ class CaseController @Inject()(verify: RequestActions,
       c => {
         for {
           events <- eventsService.getFilteredEvents(c.reference, NoPagination(),Some(Set(EventType.SAMPLE_STATUS_CHANGE)))
-        } yield views.html.partials.sample.sample_details(c,events,pagesWithStartTabIndexes(SAMPLE_DETAILS))
+        } yield views.html.partials.sample.sample_details(c,events, pagesWithStartTabIndexes(SAMPLE_DETAILS))
       },
       "tab-item-Sample"
     )
@@ -94,7 +94,7 @@ class CaseController @Inject()(verify: RequestActions,
       c => for {
         attachments <- fileService.getAttachments(c)
         commodityCode = c.decision.map(_.bindingCommodityCode).flatMap(commodityCodeService.find)
-      } yield views.html.partials.ruling.ruling_details(c, decisionForm.bindFrom(c.decision), attachments, commodityCode,pagesWithStartTabIndexes(RULING)),
+      } yield views.html.partials.ruling.ruling_details(c, decisionForm.bindFrom(c.decision), attachments, commodityCode, pagesWithStartTabIndexes(RULING)),
       "tab-item-Ruling"
     )
   }
@@ -207,6 +207,6 @@ class CaseController @Inject()(verify: RequestActions,
     for {
       events <- eventsService.getFilteredEvents(c.reference, NoPagination(),Some(EventType.values.diff(Set(EventType.SAMPLE_STATUS_CHANGE))))
       queues <- queuesService.getAll
-    } yield views.html.partials.activity_details(c, events, f, queues,pagesWithStartTabIndexes(ACTIVITY))
+    } yield views.html.partials.activity_details(c, events, f, queues, pagesWithStartTabIndexes(ACTIVITY))
   }
 }

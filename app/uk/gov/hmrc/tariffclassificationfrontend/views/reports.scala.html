@@ -41,7 +41,7 @@
                     <h3 class="heading-small">@messages("cases.heading.reports")</h3>
                     <ul>
                     @for((r: Report, index) <- Report.values.zipWithIndex) {
-                        @defining(7000+(index+1)+(200*index)) { startAtTabIndex =>
+                        @defining(8000+(index+1)+(200*index)) { startAtTabIndex =>
                             <li class="side-nav__list@if(report.exists(_.report == r)) { side-nav__list--selected}">
                                 <a tabindex="@startAtTabIndex" id="nav-menu-report-@r" class="side-nav__link" href="@routes.ReportingController.getReportCriteria(r.toString, startAtTabIndex)">@r.toString</a>
                             </li>

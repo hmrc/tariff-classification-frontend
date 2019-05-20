@@ -26,7 +26,7 @@
     <h3 class="heading-small">Assigned cases</h3>
     <ul>
         @for((a, index) <- assignees.zipWithIndex) {
-            @defining(6000+((index+1)*30)) { startingIndex =>
+            @defining(7000+((index+1)*30)) { startingIndex =>
                 <li class="side-nav__list@if(assigneeId.exists(_ == a.op.id)) { side-nav__list--selected}">
                     <a tabindex="@startingIndex" id="nav-menu-assignee-@a.op.id" class="side-nav__link" href="@AssignedCasesController.assignedCasesFor(a.op.id, startingIndex)">@messages("case.summary.assignee", a.name, a.count)</a>
                 </li>

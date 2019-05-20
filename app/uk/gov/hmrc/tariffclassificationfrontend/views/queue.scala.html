@@ -32,7 +32,7 @@
             @queue_nav(queues, queue.slug, caseCountByQueue)
         </div>
         <div class="column-three-quarters">
-            @cases_list(cases, offset = queues.indexOf(queue)+2)
+            @cases_list(cases, startAtTabIndex = ((queues.indexOf(queue)+2)*1000))
         </div>
     </div>
 }
