@@ -17,36 +17,95 @@
 package uk.gov.hmrc.tariffclassificationfrontend.models
 
 import uk.gov.hmrc.play.test.UnitSpec
+import uk.gov.hmrc.tariffclassificationfrontend.models.AppealStatus.{ALLOWED, DISMISSED, IN_PROGRESS}
+import uk.gov.hmrc.tariffclassificationfrontend.models.AppealType.{ADR, APPEAL_TIER_1, REVIEW}
 
 class AppealStatusTest extends UnitSpec {
 
   "Appeal format" should {
 
     "format 'In Progress'" in {
-      AppealStatus.formatAppeal(AppealStatus.IN_PROGRESS) shouldBe "Under appeal"
+      AppealStatus.formatAppeal(IN_PROGRESS) shouldBe "Under appeal"
     }
 
     "format 'allowed'" in {
-      AppealStatus.formatAppeal(AppealStatus.ALLOWED) shouldBe "Appeal allowed"
+      AppealStatus.formatAppeal(ALLOWED) shouldBe "Appeal allowed"
     }
 
     "format 'dismissed'" in {
-      AppealStatus.formatAppeal(AppealStatus.DISMISSED) shouldBe "Appeal dismissed"
+      AppealStatus.formatAppeal(DISMISSED) shouldBe "Appeal dismissed"
     }
   }
 
   "Review format" should {
 
     "format 'In Progress'" in {
-      AppealStatus.formatReview(AppealStatus.IN_PROGRESS) shouldBe "Under review"
+      AppealStatus.formatReview(IN_PROGRESS) shouldBe "Under review"
     }
 
     "format 'allowed'" in {
-      AppealStatus.formatReview(AppealStatus.ALLOWED) shouldBe "Review upheld"
+      AppealStatus.formatReview(ALLOWED) shouldBe "Review upheld"
     }
 
     "format 'dismissed'" in {
-      AppealStatus.formatReview(AppealStatus.DISMISSED) shouldBe "Review overturned"
+      AppealStatus.formatReview(DISMISSED) shouldBe "Review overturned"
+    }
+  }
+
+  "Dispute format" should {
+
+    "format 'In Progress'" in {
+      AppealStatus.formatDispute(IN_PROGRESS) shouldBe "Under mediation"
+    }
+
+    "format 'allowed'" in {
+      AppealStatus.formatDispute(ALLOWED) shouldBe "Completed"
+    }
+
+    "format 'dismissed'" in {
+      AppealStatus.formatDispute(DISMISSED) shouldBe "Completed"
+    }
+  }
+
+  "Format" should {
+
+    "format 'ADR''" in {
+      AppealStatus.format(ADR, IN_PROGRESS) shouldBe "Under mediation"
+      AppealStatus.format(ADR, ALLOWED) shouldBe "Completed"
+      AppealStatus.format(ADR, DISMISSED ) shouldBe "Completed"
+    }
+
+    "format 'Review''" in {
+      AppealStatus.format(REVIEW, IN_PROGRESS) shouldBe "Under review"
+      AppealStatus.format(REVIEW, ALLOWED) shouldBe "Review upheld"
+      AppealStatus.format(REVIEW, DISMISSED ) shouldBe "Review overturned"
+    }
+
+    "format 'Appeal''" in {
+      AppealStatus.format(APPEAL_TIER_1, IN_PROGRESS) shouldBe "Under appeal"
+      AppealStatus.format(APPEAL_TIER_1, ALLOWED) shouldBe "Appeal allowed"
+      AppealStatus.format(APPEAL_TIER_1, DISMISSED ) shouldBe "Appeal dismissed"
+    }
+  }
+
+  "Appeal" should {
+
+    "should allow all statuses" in {
+      AppealStatus.validFor(APPEAL_TIER_1) shouldBe Seq(IN_PROGRESS, ALLOWED, DISMISSED)
+    }
+  }
+
+  "Review" should {
+
+    "should allow all statuses" in {
+      AppealStatus.validFor(REVIEW) shouldBe Seq(IN_PROGRESS, ALLOWED, DISMISSED)
+    }
+  }
+
+  "ADR" should {
+
+    "should allow restricted statuses" in {
+      AppealStatus.validFor(ADR) shouldBe Seq(IN_PROGRESS, ALLOWED)
     }
   }
 

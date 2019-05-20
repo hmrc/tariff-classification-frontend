@@ -30,7 +30,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequ
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, EventsService}
 import uk.gov.hmrc.tariffclassificationfrontend.views
 import uk.gov.hmrc.tariffclassificationfrontend.views.CaseDetailPage
-
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
 

@@ -30,6 +30,6 @@
 <h3 class="heading-small">@{s"${AppealType.heading(appealType)} status"}</h3>
 @input_radiogroup(
  field = form("status"),
- options = AppealStatus.formatOptions(appealType),
+ options = AppealStatus.validFor(appealType).map(appealStatus => RadioOption(appealStatus.toString, AppealStatus.format(appealType, appealStatus))),
  id = "appeal_status"
 )

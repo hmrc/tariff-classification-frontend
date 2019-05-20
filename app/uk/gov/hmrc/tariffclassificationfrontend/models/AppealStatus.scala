@@ -17,7 +17,6 @@
 package uk.gov.hmrc.tariffclassificationfrontend.models
 
 import uk.gov.hmrc.tariffclassificationfrontend.models.AppealType.AppealType
-import uk.gov.hmrc.tariffclassificationfrontend.views.forms.components.RadioOption
 
 object AppealStatus extends Enumeration {
   type AppealStatus = Value
@@ -47,10 +46,10 @@ object AppealStatus extends Enumeration {
     case DISMISSED => "Completed"
   }
 
-  def formatOptions(appealType: AppealType): Seq[RadioOption] = appealType match {
-    case AppealType.REVIEW => Seq(AppealStatus.IN_PROGRESS,AppealStatus.ALLOWED,AppealStatus.DISMISSED).map(s => RadioOption(s.toString, AppealStatus.formatReview(s)))
-    case AppealType.ADR => Seq(AppealStatus.IN_PROGRESS,AppealStatus.ALLOWED).map(s => RadioOption(s.toString, AppealStatus.formatDispute(s)))
-    case _ => Seq(AppealStatus.IN_PROGRESS,AppealStatus.ALLOWED,AppealStatus.DISMISSED).map(s => RadioOption(s.toString, AppealStatus.formatAppeal(s)))
+  def validFor(appealType: AppealType): Seq[AppealStatus] = appealType match {
+    case AppealType.REVIEW => Seq(AppealStatus.IN_PROGRESS,AppealStatus.ALLOWED,AppealStatus.DISMISSED)
+    case AppealType.ADR => Seq(AppealStatus.IN_PROGRESS,AppealStatus.ALLOWED)
+    case _ => Seq(AppealStatus.IN_PROGRESS,AppealStatus.ALLOWED,AppealStatus.DISMISSED)
   }
 
 }
