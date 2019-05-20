@@ -149,8 +149,8 @@
         @if(c.status == CaseStatus.NEW && request.hasPermission(Permission.RELEASE_CASE, Permission.SUPPRESS_CASE)) {
             <h3 class="heading-medium" id="release-suppress-case-heading">Release or suppress this case</h3>
 
-            <details role="group">
-                <summary role="button">
+            <details tabindex="@{startAtTabIndex+2}" role="group">
+                <summary tabindex="@{startAtTabIndex+2}" role="button">
                     <span id="release-suppress-help-title">When to release or suppress a case</span>
                 </summary>
                 <div id="release-suppress-help-body" class="panel panel-border">
@@ -168,10 +168,10 @@
                 </div>
             </details>
 
-            <p class="mt-30">@release_case_button(c,Some(startAtTabIndex+2))</p>
+            <p class="mt-30">@release_case_button(c,Some(startAtTabIndex+3))</p>
 
             <p class="mt-30">
-                <a tabindex="@{startAtTabIndex+3}" id="suppress_link" href="@SuppressCaseController.suppressCase(c.reference)">Suppress this case</a>
+                <a tabindex="@{startAtTabIndex+4}" id="suppress_link" href="@SuppressCaseController.suppressCase(c.reference)">Suppress this case</a>
                 after you have emailed the applicant and attached a copy of the email.
             </p>
         }
