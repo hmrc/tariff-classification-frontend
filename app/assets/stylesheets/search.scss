@@ -30,7 +30,11 @@
   }
 
   &--filters {
-    padding: 10px
+    padding-bottom: 10px;
+  }
+
+  &--filters-checkbox {
+    margin-left: 10px;
   }
 
   &--filters_heading {
@@ -38,7 +42,9 @@
     font-weight: bold;
     font-size: 1.17em;
     padding: $spacer $spacer $spacer;
-
+    width: 100%;
+    margin-bottom: 10px;
+    display: block;
   }
 }
 
@@ -65,7 +71,7 @@
 
     &_image {
       height: 100%;
-      
+
       img {
         display: block;
         max-height: 100%;
@@ -106,4 +112,8 @@
     float: left;
     width: 20%;
   }
+}
+
+.image-anchor:focus img {
+  border: 3px solid #ffbf47;
 }

@@ -27,14 +27,13 @@ import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.tariffclassificationfrontend.audit.AuditService
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.connector.{BindingTariffClassificationConnector, RulingConnector}
-import uk.gov.hmrc.tariffclassificationfrontend.models.AppealStatus.AppealStatus
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
 import uk.gov.tariffclassificationfrontend.utils.Cases._
 
 import scala.concurrent.Future.{failed, successful}
 
-class CasesService_UpdateAppealStatusSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach with ConnectorCaptor {
+class CasesService_AddAppealSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach with ConnectorCaptor {
 
   private implicit val hc: HeaderCarrier = HeaderCarrier()
 
@@ -53,22 +52,23 @@ class CasesService_UpdateAppealStatusSpec extends UnitSpec with MockitoSugar wit
     reset(connector, audit, config)
   }
 
-  "Update Appeal Status" should {
+  "Add Appeal" should {
     "throw exception on missing decision" in {
       val operator: Operator = Operator("operator-id")
       val originalCase = aCase(withoutDecision())
 
+
       intercept[RuntimeException] {
-        await(service.updateAppealStatus(originalCase, Appeal("id", AppealStatus.IN_PROGRESS, AppealType.REVIEW), AppealStatus.ALLOWED, operator))
+        await(service.addAppeal(originalCase, AppealType.REVIEW, AppealStatus.ALLOWED, operator))
       }
 
       verifyZeroInteractions(audit)
       verifyZeroInteractions(connector)
     }
 
-    "update appeal status" in {
+    "update case with new appeal" in {
       // Given
-      val existingAppeal = Appeal("id", AppealStatus.IN_PROGRESS, AppealType.REVIEW)
+      val existingAppeal = mock[Appeal]
       val operator: Operator = Operator("operator-id", None)
       val originalCase = aCase(withDecision(appeal = Seq(existingAppeal)))
       val caseUpdated = mock[Case]
@@ -77,21 +77,23 @@ class CasesService_UpdateAppealStatusSpec extends UnitSpec with MockitoSugar wit
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])).willReturn(successful(mock[Event]))
 
       // When Then
-      await(service.updateAppealStatus(originalCase, existingAppeal, AppealStatus.ALLOWED, operator)) shouldBe caseUpdated
+      await(service.addAppeal(originalCase, AppealType.REVIEW, AppealStatus.ALLOWED, operator)) shouldBe caseUpdated
 
-      verify(audit).auditCaseAppealStatusChange(refEq(caseUpdated), any[Appeal], any[AppealStatus], refEq(operator))(any[HeaderCarrier])
+      verify(audit).auditCaseAppealAdded(refEq(caseUpdated), any[Appeal], refEq(operator))(any[HeaderCarrier])
 
       val caseUpdating = theCaseUpdating(connector)
       val appealsUpdated = caseUpdating.decision.map(_.appeal).getOrElse(Seq.empty)
-      appealsUpdated should have(size(1))
+      appealsUpdated should have(size(2))
+      appealsUpdated should contain(existingAppeal)
       appealsUpdated.exists(a => a.status == AppealStatus.ALLOWED && a.`type` ==  AppealType.REVIEW) shouldBe true
 
       val eventCreated = theEventCreatedFor(connector, caseUpdated)
       eventCreated.operator shouldBe Operator("operator-id")
-      eventCreated.details shouldBe AppealStatusChange(appealType = AppealType.REVIEW, from = AppealStatus.IN_PROGRESS, to = AppealStatus.ALLOWED)
+      eventCreated.details shouldBe AppealAdded(appealType = AppealType.REVIEW, appealStatus = AppealStatus.ALLOWED)
 
-      val appealStatusAudited = theAppealStatusChangeAudited()
-      appealStatusAudited shouldBe AppealStatus.ALLOWED
+      val appealAudited = theAppealAudited()
+      appealAudited.`type` shouldBe AppealType.REVIEW
+      appealAudited.status shouldBe AppealStatus.ALLOWED
     }
 
     "not create event on update failure" in {
@@ -101,7 +103,7 @@ class CasesService_UpdateAppealStatusSpec extends UnitSpec with MockitoSugar wit
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(failed(new RuntimeException()))
 
       intercept[RuntimeException] {
-        await(service.updateAppealStatus(originalCase, Appeal("id", AppealStatus.IN_PROGRESS, AppealType.REVIEW), AppealStatus.ALLOWED, operator))
+        await(service.addAppeal(originalCase, AppealType.APPEAL_TIER_1, AppealStatus.ALLOWED, operator))
       }
 
       verifyZeroInteractions(audit)
@@ -110,32 +112,32 @@ class CasesService_UpdateAppealStatusSpec extends UnitSpec with MockitoSugar wit
 
     "succeed on event create failure" in {
       // Given
-      val existingAppeal = Appeal("id", AppealStatus.IN_PROGRESS, AppealType.SUPREME_COURT)
       val operator: Operator = Operator("operator-id")
-      val originalCase = aCase(withDecision(appeal = Seq(existingAppeal)))
+      val originalCase = aCase(withDecision())
       val caseUpdated = mock[Case]
 
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])).willReturn(failed(new RuntimeException()))
 
       // When Then
-      await(service.updateAppealStatus(originalCase, existingAppeal, AppealStatus.DISMISSED, operator)) shouldBe caseUpdated
+      await(service.addAppeal(originalCase, AppealType.APPEAL_TIER_1, AppealStatus.DISMISSED, operator)) shouldBe caseUpdated
 
-      verify(audit).auditCaseAppealStatusChange(refEq(caseUpdated), any[Appeal], any[AppealStatus], refEq(operator))(any[HeaderCarrier])
+      verify(audit).auditCaseAppealAdded(refEq(caseUpdated), any[Appeal], refEq(operator))(any[HeaderCarrier])
 
       val caseUpdating = theCaseUpdating(connector)
       val appealsUpdated = caseUpdating.decision.map(_.appeal).getOrElse(Seq.empty)
       appealsUpdated should have(size(1))
-      appealsUpdated.exists(a => a.status == AppealStatus.DISMISSED && a.`type` ==  AppealType.SUPREME_COURT) shouldBe true
+      appealsUpdated.exists(a => a.status == AppealStatus.DISMISSED && a.`type` ==  AppealType.APPEAL_TIER_1) shouldBe true
 
-      val appealStatusAudited = theAppealStatusChangeAudited()
-      appealStatusAudited shouldBe AppealStatus.DISMISSED
+      val appealAudited = theAppealAudited()
+      appealAudited.`type` shouldBe AppealType.APPEAL_TIER_1
+      appealAudited.status shouldBe AppealStatus.DISMISSED
     }
   }
 
-  private def theAppealStatusChangeAudited(): AppealStatus = {
-    val captor: ArgumentCaptor[AppealStatus] = ArgumentCaptor.forClass(classOf[AppealStatus])
-    verify(audit).auditCaseAppealStatusChange(any[Case], any[Appeal], captor.capture(), any[Operator])(any[HeaderCarrier])
+  private def theAppealAudited(): Appeal = {
+    val captor: ArgumentCaptor[Appeal] = ArgumentCaptor.forClass(classOf[Appeal])
+    verify(audit).auditCaseAppealAdded(any[Case], captor.capture(), any[Operator])(any[HeaderCarrier])
     captor.getValue
   }
 

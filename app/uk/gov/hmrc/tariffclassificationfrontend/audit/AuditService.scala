@@ -19,6 +19,7 @@ package uk.gov.hmrc.tariffclassificationfrontend.audit
 import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.audit.DefaultAuditConnector
+import uk.gov.hmrc.tariffclassificationfrontend.models.AppealStatus.AppealStatus
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Appeal, Case, Operator, Queue}
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -146,6 +147,18 @@ class AuditService @Inject()(auditConnector: DefaultAuditConnector) {
     )
   }
 
+  def auditCaseAppealStatusChange(c: Case, appeal: Appeal, newAppealStatus: AppealStatus, operator: Operator)
+                          (implicit hc: HeaderCarrier): Unit = {
+    sendExplicitAuditEvent(
+      auditEventType = CaseAppealStatusChange,
+      auditPayload = baseAuditPayload(c, operator) + (
+        "appealType" -> appeal.`type`.toString,
+        "newAppealStatus" -> newAppealStatus.toString,
+        "previousAppealStatus" -> appeal.status.toString
+      )
+    )
+  }
+
   def auditSampleStatusChange(oldCase: Case, updatedCase: Case, operator: Operator)
                              (implicit hc: HeaderCarrier): Unit = {
     sendExplicitAuditEvent(
@@ -222,7 +235,7 @@ object AuditPayloadType {
   val RulingCancelled = "rulingCancelled"
   val CaseExtendedUseChange = "caseExtendedUseChange"
   val CaseAppealAdded = "caseAppealAdded"
-  val CaseReviewChange = "caseReviewChange"
+  val CaseAppealStatusChange = "caseAppealStatusChange"
   val CaseSampleStatusChange = "caseSampleStatusChange"
 
 }

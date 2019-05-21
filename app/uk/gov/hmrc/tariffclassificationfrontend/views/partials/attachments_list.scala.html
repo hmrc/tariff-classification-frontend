@@ -53,12 +53,21 @@
                                     <div class="form-group">
                                         <fieldset>
                                             <div class="multiple-choice">
-                                                <input @if(startAtTabIndex.isDefined){tabindex="@{startAtTabIndex.get+1+(1*index)}"} id="attachments[@{index}]" name="attachments[@{index}]" type="checkbox" value="@file.id" @if(file.public){checked="checked"}/>
+
+                                                <input @if(startAtTabIndex.isDefined){tabindex="@{startAtTabIndex.get+1+(1*index)}"}
+                                                        id="attachments[@{index}]"
+                                                        name="attachments[@{index}]"
+                                                        type="checkbox"
+                                                        value="@file.id"
+                                                        aria-label="publish @file.fileName on GOV.UK"
+                                                        @if(file.public) {checked="checked"}/>
+
                                                 <label for="attachments[@{index}]"></label>
                                             </div>
                                         </fieldset>
                                     </div>
                                 </td>
+
                             }
 
                             <td id="@{id}-row-@{index}-date" class="w-15">

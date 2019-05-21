@@ -25,7 +25,8 @@
         labelClass: Option[String] = None,
         autoCompleteOptions: Seq[String],
         autofocus : Boolean = false,
-        useTabIndex : Option[Int] = None
+        useTabIndex : Option[Int] = None,
+        customErrorMessage : Option[String] = None
 )(implicit messages: Messages)
 
 <div class="form-group @if(field.hasErrors){form-group-error}">
@@ -35,7 +36,7 @@
             <span class="form-hint">@hint</span>
         }
         @field.errors.map { error =>
-            <span class="error-message" id="error-message-@{field.id}-input">@messages(error.message, error.args: _*)</span>
+            <span class="error-message" id="error-message-@{field.id}-input">@customErrorMessage.getOrElse( messages(error.message, error.args: _*))</span>
         }
     </label>
     <div class="form-control-wrapper autocomplete @formControlClass">

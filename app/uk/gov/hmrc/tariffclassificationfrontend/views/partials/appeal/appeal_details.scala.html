@@ -28,7 +28,7 @@
  @defining(c.decision.map(_.appeal).getOrElse(Seq.empty)) { appeals: Seq[Appeal] =>
    <table>
     <tbody>
-     @for(appeal <- appeals.sortWith((a, b) => a.`type`.id < b.`type`.id)) {
+     @for((appeal: Appeal, index: Int) <- appeals.sortWith((a, b) => a.`type`.id < b.`type`.id).zipWithIndex) {
       <tr id="appeal_details-@{appeal.`type`}" class="grid-row mb-2">
        <th id="appeal_details-@{appeal.`type`}-type" class="bold w-40">@AppealType.format(appeal.`type`) status</th>
        <td id="appeal_details-@{appeal.`type`}-status" class=" w-30">
@@ -39,7 +39,9 @@
         }
        </td>
        <td class="w-30">
-
+       @if(request.hasPermission(Permission.APPEAL_CASE)) {
+         <a tabindex="@{startTabIndex+1+index}" id="change-status-@{index}" aria-label="change-status-@{index}" href="@routes.AppealCaseController.changeStatus(c.reference, appeal.id)">Change</a>
+        }
        </td>
       </tr>
      }
@@ -48,7 +50,7 @@
  }
 
  @if(request.hasPermission(Permission.APPEAL_CASE)) {
-  <a tabindex="@{startTabIndex+1}" id="appeal_details-add_new" class="button" href="@routes.AppealCaseController.chooseType(c.reference)">Add a review or appeal</a>
+  <a tabindex="@{startTabIndex+50}" id="appeal_details-add_new" class="button" href="@routes.AppealCaseController.chooseType(c.reference)">Add a review or appeal</a>
  }
 
  @if(c.status == CaseStatus.CANCELLED) {
@@ -70,7 +72,7 @@
       </td>
       <td class="w-30">
       @if(request.hasPermission(Permission.EXTENDED_USE)) {
-          <a tabindex="@{startTabIndex+2}" id="appeal_details-extended_use-change" href="@routes.ExtendedUseCaseController.chooseStatus(c.reference)">
+          <a tabindex="@{startTabIndex+51}" id="appeal_details-extended_use-change" href="@routes.ExtendedUseCaseController.chooseStatus(c.reference)">
               Change
           </a>
       }

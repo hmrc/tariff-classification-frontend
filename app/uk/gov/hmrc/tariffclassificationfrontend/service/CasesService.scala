@@ -72,6 +72,22 @@ class CasesService @Inject()(appConfig: AppConfig,
     } yield updated
   }
 
+  def updateAppealStatus(original: Case, existingAppeal: Appeal, appealStatus: AppealStatus, operator: Operator)(implicit hc: HeaderCarrier): Future[Case] = {
+    val decision = original.decision.getOrElse(throw new IllegalArgumentException("Cannot change the Appeal state of a case without a Decision"))
+
+
+    val newAppeals: Seq[Appeal] = decision.appeal.map {
+      case appeal: Appeal if appeal.equals(existingAppeal) => appeal.copy(status = appealStatus)
+      case other: Appeal => other
+    }
+
+    for {
+      updated <- connector.updateCase(original.copy(decision = Some(decision.copy(appeal = newAppeals))))
+      _ <- addAppealStatusChangedEvent(original, updated, existingAppeal, appealStatus, operator)
+      _ = auditService.auditCaseAppealStatusChange(updated, existingAppeal, appealStatus, operator)
+    } yield updated
+  }
+
   def updateSampleStatus(original: Case, status: Option[SampleStatus], operator: Operator)
                         (implicit hc: HeaderCarrier): Future[Case] = {
 
@@ -288,6 +304,12 @@ class CasesService @Inject()(appConfig: AppConfig,
   private def addAppealAddedEvent(original: Case, updated: Case, appeal: Appeal, operator: Operator, comment: Option[String] = None)
                                         (implicit hc: HeaderCarrier): Future[Unit] = {
     val details = AppealAdded(appeal.`type`, appeal.status, comment)
+    addEvent(original, updated, details, operator)
+  }
+
+  private def addAppealStatusChangedEvent(original: Case, updated: Case, appeal: Appeal, newStatus: AppealStatus, operator: Operator, comment: Option[String] = None)
+                                 (implicit hc: HeaderCarrier): Future[Unit] = {
+    val details = AppealStatusChange(appeal.`type`, appeal.status, newStatus, comment)
     addEvent(original, updated, details, operator)
   }
 

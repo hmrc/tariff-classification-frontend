@@ -124,6 +124,12 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers
 
     }
 
+    "Redirect to unauthorised if no permissions" in {
+      val result = await(controller(aCase(), Set.empty).chooseType("")(newFakeGETRequestWithCSRF(fakeApplication)))
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(routes.SecurityController.unauthorized().url)
+    }
+
     "Redirect" when {
       "Case has no decision" in {
         val c = aCase(withStatus(CaseStatus.COMPLETED), withoutDecision())
@@ -163,6 +169,12 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers
           locationOf(result) shouldBe Some(routes.AppealCaseController.chooseStatus(c.reference, AppealType.REVIEW.toString).url)
         }
       }
+    }
+
+    "Redirect to unauthorised if no permissions" in {
+      val result = await(controller(aCase(), Set.empty).confirmType("")(newFakeGETRequestWithCSRF(fakeApplication)))
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(routes.SecurityController.unauthorized().url)
     }
 
     "Render Form errors" in {
@@ -216,6 +228,12 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers
 
     }
 
+    "Redirect to unauthorised if no permissions" in {
+      val result = await(controller(aCase(), Set.empty).chooseStatus("", "")(newFakeGETRequestWithCSRF(fakeApplication)))
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(routes.SecurityController.unauthorized().url)
+    }
+
     "Redirect" when {
       "Case has no decision" in {
         val c = aCase(withStatus(CaseStatus.COMPLETED), withoutDecision())
@@ -260,6 +278,12 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers
       }
     }
 
+    "Redirect to unauthorised if no permissions" in {
+      val result = await(controller(aCase(), Set.empty).confirmStatus("", "")(newFakeGETRequestWithCSRF(fakeApplication)))
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(routes.SecurityController.unauthorized().url)
+    }
+
     "Render Form errors" in {
       val c = aCase(withStatus(CaseStatus.COMPLETED), withDecision())
 
@@ -285,6 +309,127 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers
           val c = aCase(withStatus(s), withDecision())
 
           val result = await(controller(c).confirmStatus(c.reference, AppealType.REVIEW.toString)(fakeRequest))
+
+          status(result) shouldBe Status.SEE_OTHER
+          locationOf(result) shouldBe Some(routes.CaseController.trader(c.reference).url)
+        }
+      }
+    }
+  }
+
+  "Case Change Status" should {
+    "Return 200" when {
+      for (s <- Seq(CaseStatus.COMPLETED, CaseStatus.CANCELLED)) {
+        s"Case has status $s" in {
+          val appeal = Appeal("appeal-id", AppealStatus.IN_PROGRESS, AppealType.SUPREME_COURT)
+          val c = aCase(withStatus(s), withDecision(appeal = Seq(appeal)))
+
+          val request = newFakeGETRequestWithCSRF(fakeApplication)
+          val result = await(controller(c).changeStatus(c.reference, "appeal-id")(request))
+
+          status(result) shouldBe Status.OK
+          contentType(result) shouldBe Some("text/html")
+          charset(result) shouldBe Some("utf-8")
+          contentAsString(result) should include("appeal_choose_status")
+        }
+      }
+
+    }
+
+    "Redirect to unauthorised if no permissions" in {
+      val result = await(controller(aCase(), Set.empty).changeStatus("", "")(newFakeGETRequestWithCSRF(fakeApplication)))
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(routes.SecurityController.unauthorized().url)
+    }
+
+    "Redirect" when {
+      "Case has no decision" in {
+        val c = aCase(withStatus(CaseStatus.COMPLETED), withoutDecision())
+
+        val request = newFakeGETRequestWithCSRF(fakeApplication)
+        val result = await(controller(c).changeStatus(c.reference, "some-id")(request))
+
+        status(result) shouldBe Status.SEE_OTHER
+        locationOf(result) shouldBe Some(routes.CaseController.trader(c.reference).url)
+
+      }
+
+      for (s <- CaseStatus.values.filter(s => s != CaseStatus.CANCELLED && s != CaseStatus.COMPLETED)) {
+        s"Case has status $s" in {
+          val c = aCase(withStatus(s), withDecision())
+
+          val request = newFakeGETRequestWithCSRF(fakeApplication)
+          val result = await(controller(c).changeStatus(c.reference, "some-id")(request))
+
+          status(result) shouldBe Status.SEE_OTHER
+          locationOf(result) shouldBe Some(routes.CaseController.trader(c.reference).url)
+        }
+      }
+    }
+  }
+
+  "Case Confirm Change Status" should {
+    "Redirect to Appeal View" when {
+      for (s <- Seq(CaseStatus.COMPLETED, CaseStatus.CANCELLED)) {
+        s"Case has status $s" in {
+          val appeal = Appeal("appeal-id", AppealStatus.IN_PROGRESS, AppealType.SUPREME_COURT)
+          val c = aCase(withStatus(s), withDecision(appeal = Seq(appeal)))
+          given(casesService.updateAppealStatus(any[Case], any[Appeal], any[AppealStatus], any[Operator])(any[HeaderCarrier])) willReturn Future.successful(c)
+
+          val request = newFakePOSTRequestWithCSRF(fakeApplication, Map("status" -> AppealStatus.ALLOWED.toString))
+          val result = await(controller(c).confirmChangeStatus(c.reference, "appeal-id")(request))
+
+          status(result) shouldBe Status.SEE_OTHER
+          locationOf(result) shouldBe Some(routes.AppealCaseController.appealDetails(c.reference).url)
+
+          verify(casesService).updateAppealStatus(refEq(c), refEq(appeal), refEq(AppealStatus.ALLOWED), refEq(operator))(any[HeaderCarrier])
+        }
+      }
+    }
+
+    "Redirect to unauthorised if no permissions" in {
+      val result = await(controller(aCase(), Set.empty).confirmChangeStatus("", "")(newFakeGETRequestWithCSRF(fakeApplication)))
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(routes.SecurityController.unauthorized().url)
+    }
+
+    "Render Form errors" in {
+      val appeal = Appeal("appeal-id", AppealStatus.IN_PROGRESS, AppealType.SUPREME_COURT)
+      val c = aCase(withStatus(CaseStatus.COMPLETED), withDecision(appeal = Seq(appeal)))
+
+      val request = newFakePOSTRequestWithCSRF(fakeApplication, Map())
+      val result = await(controller(c).confirmChangeStatus(c.reference, "appeal-id")(request))
+
+      status(result) shouldBe Status.OK
+    }
+
+    "Redirect" when {
+      "Case has no decision" in {
+        val c = aCase(withStatus(CaseStatus.COMPLETED), withoutDecision())
+
+        val result = await(controller(c).confirmChangeStatus(c.reference, "some-id")(fakeRequest))
+
+        status(result) shouldBe Status.SEE_OTHER
+        locationOf(result) shouldBe Some(routes.CaseController.trader(c.reference).url)
+
+      }
+
+      "Case does not have appeal with id" in {
+        val appeal = Appeal("appeal-id", AppealStatus.IN_PROGRESS, AppealType.SUPREME_COURT)
+        val c = aCase(withStatus(CaseStatus.COMPLETED), withDecision(appeal = Seq(appeal)))
+
+        val result = await(controller(c).confirmChangeStatus(c.reference, "some-id")(fakeRequest))
+
+        status(result) shouldBe Status.SEE_OTHER
+        locationOf(result) shouldBe Some(routes.CaseController.trader(c.reference).url)
+
+      }
+
+      for (s <- CaseStatus.values.filter(s => s != CaseStatus.CANCELLED && s != CaseStatus.COMPLETED)) {
+        s"Case has status $s" in {
+          val c = aCase(withStatus(s), withDecision())
+
+          val result = await(controller(c).confirmChangeStatus(c.reference, "some-id")(fakeRequest))
 
           status(result) shouldBe Status.SEE_OTHER
           locationOf(result) shouldBe Some(routes.CaseController.trader(c.reference).url)

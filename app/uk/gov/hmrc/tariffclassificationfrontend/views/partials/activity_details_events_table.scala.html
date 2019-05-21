@@ -68,6 +68,22 @@
                                 )
                             }
                         }
+                        case EventType.APPEAL_STATUS_CHANGE => {
+                            val body = event.details.asInstanceOf[AppealStatusChange]
+                            if(body.appealType == AppealType.REVIEW) {
+                                progressive_disclosure(
+                                    id = s"activity-events-row-$index",
+                                    summary = s"Review status changed from ${AppealStatus.formatReview(body.from)} to ${AppealStatus.formatReview(body.to)}",
+                                    body = body.comment
+                                )
+                            } else {
+                                progressive_disclosure(
+                                    id = s"activity-events-row-$index",
+                                    summary = s"${AppealType.format(body.appealType)} status changed from ${AppealStatus.formatAppeal(body.from)} to ${AppealStatus.formatAppeal(body.to)}",
+                                    body = body.comment
+                                )
+                            }
+                        }
                         case EventType.EXTENDED_USE_STATUS_CHANGE => {
                             val body = event.details.asInstanceOf[ExtendedUseStatusChange]
                             val from = if(body.from) "Yes" else "No"
