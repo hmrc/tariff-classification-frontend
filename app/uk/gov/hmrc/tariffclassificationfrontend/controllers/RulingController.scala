@@ -46,6 +46,8 @@ class RulingController @Inject()(verify: RequestActions,
 
   private lazy val menuTitle = CaseDetailPage.RULING
 
+  private val rulingDetailsStartTabIndex = 7000
+
   def editRulingDetails(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.EDIT_RULING)).async { implicit request =>
     getCaseAndRenderView(menuTitle, c => {
       val formData = mapper.caseToDecisionFormData(c)
@@ -71,13 +73,13 @@ class RulingController @Inject()(verify: RequestActions,
   }
 
   private def editRulingView(f: Form[DecisionFormData], c: Case)(implicit request: AuthenticatedRequest[_]): Future[HtmlFormat.Appendable] = {
-    fileStoreService.getAttachments(c).map(views.html.partials.ruling.ruling_details_edit(c, _, f))
+    fileStoreService.getAttachments(c).map(views.html.partials.ruling.ruling_details_edit(c, _, f, startAtTabIndex = Some(rulingDetailsStartTabIndex)))
   }
 
   private def getCaseAndRenderView(page: CaseDetailPage, toHtml: Case => Future[HtmlFormat.Appendable])
                                   (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
     if (request.`case`.status == CaseStatus.OPEN) {
-      toHtml(request.`case`).map(html => Ok(views.html.case_details(request.`case`, page, html)))
+      toHtml(request.`case`).map(html => Ok(views.html.case_details(request.`case`, page, html, activeTab = Some("tab-item-Ruling"))))
     } else {
       successful(Redirect(routes.CaseController.rulingDetails(request.`case`.reference)))
     }

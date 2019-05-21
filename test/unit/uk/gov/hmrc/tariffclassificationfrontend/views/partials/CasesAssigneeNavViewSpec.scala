@@ -52,7 +52,7 @@ class CasesAssigneeNavViewSpec extends ViewSpec with MockitoSugar {
       val anchors = doc.getElementsByTag("a")
       anchors should haveSize(1)
       anchors.get(0) should containText("Test User (1)")
-      anchors.get(0) should haveAttribute("href", assignedCasesURL("1", 6030))
+      anchors.get(0) should haveAttribute("href", assignedCasesURL("1", 7030))
     }
 
     "Render assignees with one selected" in {
@@ -68,10 +68,10 @@ class CasesAssigneeNavViewSpec extends ViewSpec with MockitoSugar {
       val anchors = doc.getElementsByTag("a")
       anchors should haveSize(2)
       anchors.get(0) should containText("Test User 1 (1)")
-      anchors.get(0) should haveAttribute("href", assignedCasesURL("1",6030))
+      anchors.get(0) should haveAttribute("href", assignedCasesURL("1",7030))
 
       anchors.get(1) should containText("Test User 2 (2)")
-      anchors.get(1) should haveAttribute("href", assignedCasesURL("2",6060))
+      anchors.get(1) should haveAttribute("href", assignedCasesURL("2",7060))
 
       val listItems = doc.getElementsByTag("li")
       listItems should haveSize(2)
