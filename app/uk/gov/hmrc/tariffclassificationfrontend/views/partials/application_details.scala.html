@@ -19,7 +19,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{Application, BTIApplication, Case, EORIDetails, Permission, StoredAttachment}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials._
-@(c: Case, files: Seq[StoredAttachment], letterOfAuth: Option[StoredAttachment])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(c: Case, files: Seq[StoredAttachment], letterOfAuth: Option[StoredAttachment], startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @defining(c.application) { a: Application =>
     @defining(a.asBTI) { btiApp: BTIApplication =>
@@ -103,7 +103,7 @@
                     </dt>
                     <dd class="column-two-thirds">
                         @if(c.attachments.exists(_.operator.isEmpty)){
-                            Yes, <a href="@AttachmentsController.attachmentsDetails(c.reference)"> view attached documents </a>
+                            Yes, <a tabindex="@{startAtTabIndex+1}" href="@AttachmentsController.attachmentsDetails(c.reference)"> view attached documents </a>
                         } else { @messages("answer.no")}
                     </dd>
                 </div>
@@ -141,14 +141,14 @@
             </dl>
 
             <div class="mt-1">
-                @if(request.hasPermission(Permission.REFER_CASE)) {@refer_case_button(c)}
-                @if(request.hasPermission(Permission.REOPEN_CASE)) {@reopen_case_button(c)}
+                @if(request.hasPermission(Permission.REFER_CASE)) {@refer_case_button(c, Some(startAtTabIndex+2))}
+                @if(request.hasPermission(Permission.REOPEN_CASE)) {@reopen_case_button(c, Some(startAtTabIndex+4))}
             </div>
 
-            @if(request.hasPermission(Permission.SUSPEND_CASE)) {@reject_suspend_section(c)}
+            @if(request.hasPermission(Permission.SUSPEND_CASE)) {@reject_suspend_section(c, Some(startAtTabIndex+5))}
 
             <div class="mt-3">
-                @submitted_application_link(c)
+                @submitted_application_link(c, Some(startAtTabIndex+7))
             </div>
         }
     }

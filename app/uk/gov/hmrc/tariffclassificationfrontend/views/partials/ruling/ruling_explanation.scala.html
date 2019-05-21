@@ -22,7 +22,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.ruling.{ruling_certificate_link, complete_ruling_section}
 @import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 
-@(c: Case)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(c: Case, useTabIndex : Option[Int] = None)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @if(c.decision.isDefined) {
     @defining(c.decision.get) { d: Decision =>
@@ -53,7 +53,7 @@
 
                 <p>
                     Get more information about classification in the guide
-                    <a href="https://www.gov.uk/guidance/apply-for-a-binding-tariff-information-decision-notice-600">
+                    <a @if(useTabIndex.isDefined){tabindex="@{useTabIndex.get}"} href="https://www.gov.uk/guidance/apply-for-a-binding-tariff-information-decision-notice-600">
                         Apply for a Binding Tariff Information (BTI) ruling (Notice 600)
                     </a>
                 </p>

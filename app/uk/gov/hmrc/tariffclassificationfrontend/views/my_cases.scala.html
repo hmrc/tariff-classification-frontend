@@ -31,7 +31,7 @@
     Paged[Case](cases.filter(c => referredStatuses.contains(c.status)))
 }
 
-@main(bodyClasses = None) {
+@main(bodyClasses = None, scriptElem = Some(Html("<script>document.getElementById('nav-menu-my-cases').focus();</script>"))) {
 
     <h1 id="queue-name" class="heading-xlarge">
     @{
@@ -50,11 +50,11 @@
         </div>
         <div class="column-three-quarters">
             <h2 class="heading-medium mt-1">Cases on-hand</h2>
-            @cases_list(nonReferredCases, "cases_list")
+            @cases_list(nonReferredCases, "cases_list",1001)
         </div>
         <div class="column-three-quarters mt-4 float-right">
             <h2 class="heading-medium mt-1"> Referred cases </h2>
-            @cases_list(referredCases, "referred_list")
+            @cases_list(referredCases, "referred_list",1501)
         </div>
     </div>
 }

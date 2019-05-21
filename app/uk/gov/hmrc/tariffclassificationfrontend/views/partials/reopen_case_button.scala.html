@@ -16,14 +16,14 @@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.ReopenCaseController
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus}
-@(c: Case)(implicit request: Request[_])
+@(c: Case, useTabIndex : Option[Int] = None)(implicit request: Request[_])
 
 @if(c.status == CaseStatus.SUSPENDED || c.status == CaseStatus.REFERRED) {
 
  @helper.form(action = ReopenCaseController.confirmReopenCase(c.reference), 'id -> "reopen-case") {
   @helper.CSRF.formField
   <div>
-   <button class="button" id="reopen-case-button" type="submit">Reopen this case</button>
+   <button @if(useTabIndex.isDefined){ tabindex="@{useTabIndex.get}" } class="button" id="reopen-case-button" type="submit">Reopen this case</button>
   </div>
  }
 }

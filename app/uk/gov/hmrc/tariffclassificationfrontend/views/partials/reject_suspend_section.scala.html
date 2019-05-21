@@ -16,19 +16,19 @@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus}
-@(c: Case)
+@(c: Case, useTabIndex : Option[Int] = None)
 
 @if(c.status == CaseStatus.OPEN) {
     <div id="reject-suspend-section" class="mt-1">
         <h3 class="heading-medium mt-30 mb-30">Reject or suspend this case</h3>
 
         <p>
-            <a id="reject-case-button" href="@controllers.routes.RejectCaseController.rejectCase(c.reference)">Reject this case</a>
+            <a @if(useTabIndex.isDefined){ tabindex="@{useTabIndex.get}" } id="reject-case-button" href="@controllers.routes.RejectCaseController.rejectCase(c.reference)">Reject this case</a>
             if the case details are invalid. Once it has been rejected, it cannot be reopened.
         </p>
 
         <p>
-            <a id="suspend-case-button" href="@controllers.routes.SuspendCaseController.suspendCase(c.reference)">Suspend this case</a>
+            <a @if(useTabIndex.isDefined){ tabindex="@{useTabIndex.get +1}" } id="suspend-case-button" href="@controllers.routes.SuspendCaseController.suspendCase(c.reference)">Suspend this case</a>
             if the commodity code that you want to assign to the ruling is changing.  The case can be reopened.
         </p>
     </div>

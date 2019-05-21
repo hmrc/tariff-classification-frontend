@@ -32,7 +32,7 @@ class CasesAssignedListViewSpec extends ViewSpec {
       val assignedCases = None
 
       // When
-      val doc = view(cases_assigned_list(assignedCases))
+      val doc = view(cases_assigned_list(assignedCases,0))
 
       // Then
       doc should containElementWithID("assignees_list-empty")
@@ -55,7 +55,7 @@ class CasesAssignedListViewSpec extends ViewSpec {
       val assignedCases = Some(AssignedCases("User Name", Seq(openCase), Seq(referredCase)))
 
       // When
-      val doc = view(cases_assigned_list(assignedCases))
+      val doc = view(cases_assigned_list(assignedCases,0))
 
       // Then
       doc shouldNot containElementWithID("assignees_list-empty")

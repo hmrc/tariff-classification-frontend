@@ -25,9 +25,11 @@
 @(filter: InstantRange, results: Seq[ReportResult], queues: Seq[Queue])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None) {
-    <a id="back-link" class="link-back mt-0" href="@routes.ReportingController.getReportCriteria(Report.SLA.toString)">
-        Back to reports
-    </a>
+    @defining(8001) { defaultStartingTabIndexForCriteria =>
+        <a id="back-link" class="link-back mt-0" href="@routes.ReportingController.getReportCriteria(Report.SLA.toString,defaultStartingTabIndexForCriteria)">
+            Back to reports
+        </a>
+    }
 
     <h1 class="heading-large" id="report_sla-heading">SLA Report</h1>
 

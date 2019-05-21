@@ -18,7 +18,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Contact}
 @import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 
-@(c: Case)(implicit  messages: Messages)
+@(c: Case, useTabIndex : Option[Int] = None)(implicit  messages: Messages)
 <h3 class="heading-medium mt-30">Contact details</h3>
 
 @defining(c.application.asBTI.contact) { co: Contact =>
@@ -38,7 +38,7 @@
             </dt>
             <dd class="column-two-thirds">
             @if(co.email.contains("@")){
-                <a id="contact-email" href="mailto:@co.email?subject=@c.application.getType application #@c.reference">@co.email</a>
+                <a @if(useTabIndex.isDefined){ tabindex="@{useTabIndex.get}" } id="contact-email" href="mailto:@co.email?subject=@c.application.getType application #@c.reference">@co.email</a>
             } else {
                 <span id="contact-email">@co.email</span>
             }

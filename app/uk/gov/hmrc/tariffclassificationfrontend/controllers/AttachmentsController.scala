@@ -53,6 +53,9 @@ class AttachmentsController @Inject()(verify: RequestActions,
   override protected def redirect: String => Call = routes.AttachmentsController.attachmentsDetails
   override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = true
 
+
+  private val tabStartIndexForAttachments = 4000
+
   private val removeAttachmentForm: Form[Boolean] = MandatoryBooleanForm.form("remove_attachment")
 
   def attachmentsDetails(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
@@ -93,7 +96,7 @@ class AttachmentsController @Inject()(verify: RequestActions,
       letter <- fileService.getLetterOfAuthority(c)
     } yield {
       val (applicantFiles, nonApplicantFiles) = attachments.partition(_.operator.isEmpty)
-      views.html.partials.attachments_details(c, uploadForm, applicantFiles, letter, nonApplicantFiles)
+      views.html.partials.attachments_details(c, uploadForm, applicantFiles, letter, nonApplicantFiles, tabStartIndexForAttachments)
     }
 
   }
@@ -101,7 +104,7 @@ class AttachmentsController @Inject()(verify: RequestActions,
   private def getCaseAndRenderView(reference: String, page: CaseDetailPage, toHtml: Case => Future[Html])
                                   (implicit request: AuthenticatedRequest[_]): Future[Result] = {
     casesService.getOne(reference).flatMap {
-      case Some(c: Case) => toHtml(c).map(html => Ok(views.html.case_details(c, page, html)))
+      case Some(c: Case) => toHtml(c).map(html => Ok(views.html.case_details(c, page, html, Some("tab-item-Attachments"))))
       case _ => successful(Ok(views.html.case_not_found(reference)))
     }
   }

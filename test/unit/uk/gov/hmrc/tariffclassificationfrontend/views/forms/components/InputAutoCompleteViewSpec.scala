@@ -34,7 +34,7 @@ class InputAutoCompleteViewSpec extends ViewSpec {
 
     "Render" in {
       // When
-      val doc = view(input_auto_complete(field = form("field"), label =  "Label", autoCompleteOptions = Seq.empty))
+      val doc = view(input_auto_complete(field = form("field"), label =  "Label", autoCompleteOptions = Seq.empty, useTabIndex = Some(100)))
 
       // Then
       doc should containElementWithTag("input")
@@ -42,6 +42,7 @@ class InputAutoCompleteViewSpec extends ViewSpec {
       doc.getElementById("field") should haveAttribute("type", "text")
       doc.getElementById("field") should haveAttribute("name", "field")
       doc.getElementById("field") should haveAttribute("value", "v")
+      doc.getElementById("field") should haveAttribute("tabindex", "100")
     }
   }
 

@@ -25,6 +25,7 @@
         labelClass: Option[String] = None,
         autoCompleteOptions: Seq[String],
         autofocus : Boolean = false,
+        useTabIndex : Option[Int] = None,
         customErrorMessage : Option[String] = None
 )(implicit messages: Messages)
 
@@ -46,6 +47,7 @@
         id="@{field.id}"
         name="@{field.name}"
         value="@{field.value}"
+        @if(useTabIndex.isDefined){tabindex="@{useTabIndex.get}"}
         @if(field.hasErrors){aria-describedby="error-message-@{field.id}-input"}
         @if(autofocus){ autofocus }
         />

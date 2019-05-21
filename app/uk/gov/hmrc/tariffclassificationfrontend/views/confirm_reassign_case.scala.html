@@ -43,7 +43,7 @@
                     @defining(".*/tariff-classification/queues/assigned/([0-9]+).*".r) { casesAssignedToUrlRegex: Regex =>
                         @defining(casesAssignedToUrlRegex.findFirstMatchIn(originUrl)) { matched: Option[Regex.Match] =>
                             @if(matched.isDefined) {
-                                <p>Go to <a href="@AssignedCasesController.assignedCasesFor(matched.get.group(1))">Assigned cases</a>.</p>
+                                <p>Go to <a href="@AssignedCasesController.assignedCasesFor(matched.get.group(1),0)">Assigned cases</a>.</p>
                             } else {
                                 <p></p>
                             }

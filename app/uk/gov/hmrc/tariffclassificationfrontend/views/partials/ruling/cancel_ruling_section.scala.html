@@ -17,7 +17,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CancelRulingController
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus}
-@(c: Case)(implicit messages: Messages, appConfig: AppConfig)
+@(c: Case, useTabIndex : Option[Int] = None)(implicit messages: Messages, appConfig: AppConfig)
 
 @if(c.status == CaseStatus.COMPLETED && !c.hasExpiredRuling) {
 
@@ -26,7 +26,7 @@
     <p>This ruling may be cancelled if the binding commodity code changes or expires, or if the applicant provided incorrect information.</p>
     <p>If the binding commodity code has changed, you may need to issue a revised ruling.</p>
 
-    <a id="cancel-ruling-button" class="button" href="@CancelRulingController.cancelRuling(c.reference)">
+    <a @if(useTabIndex.isDefined){tabindex="@{useTabIndex.get}"} id="cancel-ruling-button" class="button" href="@CancelRulingController.cancelRuling(c.reference)">
         Cancel this ruling
     </a>
 }

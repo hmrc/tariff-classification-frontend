@@ -22,7 +22,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Permission}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.components.input_auto_complete
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.tab_heading
-@(c: Case, autoCompleteOptions: Seq[String], keywordForm : Form[String])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(c: Case, autoCompleteOptions: Seq[String], keywordForm : Form[String], startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
     @tab_heading("keywords", messages("case.menu.keywords"))
 
@@ -50,7 +50,7 @@
                         </div>
                         @if(request.hasPermission(Permission.KEYWORDS)) {
                             <div id="keywords-row-@{index}-remove" class="column-one-third text-right">
-                                <a id="keywords-row-@{index}-remove-link" aria-label="remove @keyword" href="@CaseController.removeKeyword(c.reference, keyword)">Remove</a>
+                                <a tabindex="@{startAtTabIndex+1+index}" id="keywords-row-@{index}-remove-link" aria-label="remove @keyword" href="@CaseController.removeKeyword(c.reference, keyword)">Remove</a>
                             </div>
                         }
                     </div>
@@ -68,14 +68,14 @@
                         hint = Some("Start typing and select a keyword if it appears in the list. To add a keyword that is not in the list, type it in full."),
                         autoCompleteOptions = autoCompleteOptions,
                         formControlClass = Some("w-100"),
-                        autofocus = true,
+                        useTabIndex = Some(startAtTabIndex+50),
                         customErrorMessage = Some("Enter a keyword")
                     )
 
                     <p>To suggest a new keyword contact the classification team manager.</p>
 
                     <div class="form-group">
-                        <button id="keyword_details-add_keyword" class="button" type="submit">Add keyword</button>
+                        <button tabindex="@{startAtTabIndex+51}" id="keyword_details-add_keyword" class="button" type="submit">Add keyword</button>
                     </div>
                 }
 

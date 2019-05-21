@@ -16,10 +16,10 @@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus}
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.ReleaseCaseController
-@(c: Case)
+@(c: Case, useTabIndex : Option[Int] = None)
 
 @if(c.status == CaseStatus.NEW) {
-    <a id="release-case-button" class="button" role="button" href="@ReleaseCaseController.releaseCase(c.reference)">
+    <a @if(useTabIndex.isDefined){ tabindex="@{useTabIndex.get}" } id="release-case-button" class="button" role="button" href="@ReleaseCaseController.releaseCase(c.reference)">
         Release this case
     </a>
 }

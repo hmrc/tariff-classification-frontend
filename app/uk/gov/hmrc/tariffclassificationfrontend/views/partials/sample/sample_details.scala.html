@@ -19,7 +19,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{Application, BTIApplication, Case, EORIDetails, Event, Paged, Permission, SampleStatus}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials._
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.sample.sample_status_events_table
-@(c: Case, events: Paged[Event])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(c: Case, events: Paged[Event], startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @defining(c.application) { a: Application =>
     @defining(a.asBTI) { btiApp: BTIApplication =>
@@ -60,7 +60,7 @@
                     </dt>
                     @if(request.hasPermission(Permission.EDIT_SAMPLE)){
                     <dd class="column-two-thirds" id="change-sample-status">
-                        <a href="sample/status">@messages("case.sample.change-sample-status")</a>
+                        <a tabindex="@startAtTabIndex" href="sample/status">@messages("case.sample.change-sample-status")</a>
                     </dd>
                     }
                 </div>

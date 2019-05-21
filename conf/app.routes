@@ -8,11 +8,11 @@ GET         /                                            @uk.gov.hmrc.tariffclas
 GET         /queues                                      controllers.Default.redirect(to = uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.MyCasesController.myCases.url)
 GET         /queues/my-cases                             @uk.gov.hmrc.tariffclassificationfrontend.controllers.MyCasesController.myCases()
 GET         /queues/assigned                             @uk.gov.hmrc.tariffclassificationfrontend.controllers.AssignedCasesController.assignedCases()
-GET         /queues/assigned/:assigneeId                 @uk.gov.hmrc.tariffclassificationfrontend.controllers.AssignedCasesController.assignedCasesFor(assigneeId: String)
+GET         /queues/assigned/:assigneeId/:tabIndex       @uk.gov.hmrc.tariffclassificationfrontend.controllers.AssignedCasesController.assignedCasesFor(assigneeId: String, tabIndex : Int)
 GET         /queues/:slug                                @uk.gov.hmrc.tariffclassificationfrontend.controllers.QueuesController.queue(slug: String)
 
 GET         /reports                                     @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReportingController.getReports
-GET         /reports/:name                               @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReportingController.getReportCriteria(name: String)
+GET         /reports/:name/:tabIndex                     @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReportingController.getReportCriteria(name: String, tabIndex : Int)
 POST        /reports/:name                               @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReportingController.getReport(name: String)
 
 GET         /cases                                       controllers.Default.redirect(to = uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.IndexController.get.url)
