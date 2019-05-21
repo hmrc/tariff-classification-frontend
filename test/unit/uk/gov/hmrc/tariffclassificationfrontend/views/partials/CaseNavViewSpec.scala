@@ -75,6 +75,7 @@ class CaseNavViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterEach
 
     val expectedTabAnchors = 6
     val expectedTabAnchorsForCompletedCases = 7
+    val expectedTotalTabIndexes = 8
 
     "Render Trader" in {
       // Given
@@ -264,6 +265,21 @@ class CaseNavViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterEach
       anchors should haveSize(expectedTabAnchorsForCompletedCases)
 
       tabsWithLinksShouldBeActiveExceptGiven(anchors, appeal)
+    }
+
+    "Render tabindexes for all tabs" in {
+      // Given
+      given(`case`.reference) willReturn "ref"
+      given(`case`.status) willReturn CaseStatus.COMPLETED //so we can see all tabs
+
+      // When
+      val doc = view(case_nav(CaseDetailPage.APPEAL, `case`))
+
+      // Then
+      val indexedElements = doc.getElementsByAttribute("tabindex")
+
+      indexedElements should haveSize(expectedTotalTabIndexes)
+
     }
   }
 }
