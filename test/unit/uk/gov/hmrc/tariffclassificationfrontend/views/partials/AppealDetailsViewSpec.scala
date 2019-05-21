@@ -47,9 +47,9 @@ class AppealDetailsViewSpec extends ViewSpec {
       val doc = view(appeal_details(c))
 
       // Then
-      doc should containElementWithID("appeal_details-APPEAL_TIER_1")
-      doc.getElementById("appeal_details-APPEAL_TIER_1-type") should containText("Appeal tier 1 status")
-      doc.getElementById("appeal_details-APPEAL_TIER_1-status") should containText("Appeal allowed")
+      doc should containElementWithID("appeal_details-0")
+      doc.getElementById("appeal_details-0-type") should containText("Appeal tier 1 status")
+      doc.getElementById("appeal_details-0-status") should containText("Appeal allowed")
     }
 
     "Render - With 'Appeal Dismissed'" in {
@@ -60,9 +60,9 @@ class AppealDetailsViewSpec extends ViewSpec {
       val doc = view(appeal_details(c))
 
       // Then
-      doc should containElementWithID("appeal_details-APPEAL_TIER_1")
-      doc.getElementById("appeal_details-APPEAL_TIER_1-type") should containText("Appeal tier 1 status")
-      doc.getElementById("appeal_details-APPEAL_TIER_1-status") should containText("Appeal dismissed")
+      doc should containElementWithID("appeal_details-0")
+      doc.getElementById("appeal_details-0-type") should containText("Appeal tier 1 status")
+      doc.getElementById("appeal_details-0-status") should containText("Appeal dismissed")
     }
 
     "Render - With 'Under Appeal'" in {
@@ -73,9 +73,9 @@ class AppealDetailsViewSpec extends ViewSpec {
       val doc = view(appeal_details(c))
 
       // Then
-      doc should containElementWithID("appeal_details-APPEAL_TIER_1")
-      doc.getElementById("appeal_details-APPEAL_TIER_1-type") should containText("Appeal tier 1 status")
-      doc.getElementById("appeal_details-APPEAL_TIER_1-status") should containText("Under appeal")
+      doc should containElementWithID("appeal_details-0")
+      doc.getElementById("appeal_details-0-type") should containText("Appeal tier 1 status")
+      doc.getElementById("appeal_details-0-status") should containText("Under appeal")
     }
 
     "Render - With A Cancel Reason" in {
@@ -120,7 +120,7 @@ class AppealDetailsViewSpec extends ViewSpec {
       // When
       val doc = view(appeal_details(c)(requestWithPermissions(Permission.APPEAL_CASE), messages, appConfig))
 
-      doc should containElementWithID("change-status-0")
+      doc should containElementWithID("appeal_details-0-change-status")
     }
 
     "Not render Change Appeal Status if user does not have permission" in {

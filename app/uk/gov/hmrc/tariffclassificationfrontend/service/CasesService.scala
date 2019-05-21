@@ -75,7 +75,6 @@ class CasesService @Inject()(appConfig: AppConfig,
   def updateAppealStatus(original: Case, existingAppeal: Appeal, appealStatus: AppealStatus, operator: Operator)(implicit hc: HeaderCarrier): Future[Case] = {
     val decision = original.decision.getOrElse(throw new IllegalArgumentException("Cannot change the Appeal state of a case without a Decision"))
 
-
     val newAppeals: Seq[Appeal] = decision.appeal.map {
       case appeal: Appeal if appeal.equals(existingAppeal) => appeal.copy(status = appealStatus)
       case other: Appeal => other

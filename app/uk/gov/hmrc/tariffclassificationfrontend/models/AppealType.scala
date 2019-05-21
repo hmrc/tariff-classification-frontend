@@ -18,6 +18,7 @@ package uk.gov.hmrc.tariffclassificationfrontend.models
 
 object AppealType extends Enumeration {
   def format(value: AppealType): String = value match {
+    case ADR => "Alternative Dispute Resolution (ADR)"
     case REVIEW => "Review"
     case APPEAL_TIER_1 => "Appeal tier 1"
     case APPEAL_TIER_2 => "Appeal tier 2"
@@ -25,10 +26,12 @@ object AppealType extends Enumeration {
     case SUPREME_COURT => "Supreme Court"
   }
 
+  def heading(value: AppealType): String = value match {
+    case ADR => "Dispute"
+    case REVIEW => "Review"
+    case _ => "Appeal"
+  }
+
   type AppealType = Value
-  val REVIEW  = Value(1)
-  val APPEAL_TIER_1 = Value(2)
-  val APPEAL_TIER_2 = Value(3)
-  val COURT_OF_APPEALS = Value(4)
-  val SUPREME_COURT = Value(5)
+  val ADR, REVIEW, APPEAL_TIER_1, APPEAL_TIER_2, COURT_OF_APPEALS, SUPREME_COURT = Value
 }
