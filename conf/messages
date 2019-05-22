@@ -240,3 +240,16 @@ site.no = No
 site.yes = Yes
 site.none = None
 site.unknown = Unknown
+
+page.title.trader=Applicant details
+page.title.application=Item information
+page.title.sample=Sample details
+page.title.attachments=Case attachments
+page.title.activity=Case activity
+page.title.keywords=Keywords
+page.title.ruling=Ruling details
+page.title.edit.ruling=Edit ruling details
+page.title.appeal=Appeal details
+page.title.advanced.search=Advanced search
+page.title.advanced.search.results=Advanced search results
+page.title.advanced.search.image.results=Advanced search image results

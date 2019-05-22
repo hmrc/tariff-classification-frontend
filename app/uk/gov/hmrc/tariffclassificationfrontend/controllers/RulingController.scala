@@ -45,11 +45,12 @@ class RulingController @Inject()(verify: RequestActions,
                                  implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
   private lazy val menuTitle = CaseDetailPage.RULING
+  private lazy val editMenuTitle = CaseDetailPage.EDIT_RULING
 
   private val rulingDetailsStartTabIndex = 7000
 
   def editRulingDetails(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.EDIT_RULING)).async { implicit request =>
-    getCaseAndRenderView(menuTitle, c => {
+    getCaseAndRenderView(editMenuTitle, c => {
       val formData = mapper.caseToDecisionFormData(c)
       val df = decisionForm.form.fill(formData)
       editRulingView(df, c)

@@ -66,7 +66,7 @@
     )
 
     @case_nav_item(
-        active = page == CaseDetailPage.RULING,
+        active = page == CaseDetailPage.RULING || page == CaseDetailPage.EDIT_RULING ,
         title = messages("case.menu.ruling"),
         call = routes.CaseController.rulingDetails(c.reference),
         tabIndex = "7000"
