@@ -149,7 +149,10 @@
                 // Set tabIndex so the summary is keyboard accessible for non-native elements
                 // http://www.saliences.com/browserBugs/tabIndex.html
                 if (!GOVUK.details.NATIVE_DETAILS) {
-                    details.__summary.tabIndex = 0
+                    if (typeof details.__summary.tabIndex === 'undefined') {
+                        // the variable is undefined, so set to 0, otherwise we can just use existing
+                        details.__summary.tabIndex = 0
+                    }
                 }
 
                 // Detect initial open state
