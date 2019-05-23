@@ -18,13 +18,11 @@ package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
 import javax.inject.{Inject, Singleton}
 import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.MessagesApi
 import play.api.mvc._
-import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.ReleaseCaseForm
-import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedCaseRequest
+import uk.gov.hmrc.tariffclassificationfrontend.models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus, Permission, Queue}
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, QueuesService}
 import uk.gov.hmrc.tariffclassificationfrontend.views
@@ -38,8 +36,10 @@ class ReleaseCaseController @Inject()(verify: RequestActions,
                                       casesService: CasesService,
                                       queueService: QueuesService,
                                       val messagesApi: MessagesApi,
-                                      implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
+                                      implicit val appConfig: AppConfig) extends RenderCaseAction {
 
+  override protected val config: AppConfig = appConfig
+  override protected val caseService: CasesService = casesService
   private lazy val releaseCaseForm: Form[String] = ReleaseCaseForm.form
 
   private def releaseCase(f: Form[String], caseRef: String)
@@ -63,21 +63,32 @@ class ReleaseCaseController @Inject()(verify: RequestActions,
       queueService.getOneBySlug(queueSlug) flatMap {
         case None => successful(Ok(views.html.resource_not_found(s"Queue $queueSlug")))
         case Some(q: Queue) =>
-          getCaseAndRenderView(reference, casesService.releaseCase(_, q, request.operator).map { c: Case =>
-            views.html.confirm_release_case(c, q)
+          validateAndRedirect(
+            casesService.releaseCase(_, q, request.operator).map { c: Case =>
+              routes.ReleaseCaseController.confirmReleaseCase(c.reference)
           })
       }
     }
-
     releaseCaseForm.bindFromRequest.fold(onInvalidForm, onValidForm)
   }
 
-  private def getCaseAndRenderView(reference: String, toHtml: Case => Future[HtmlFormat.Appendable])
-                                  (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
-    request.`case` match {
-      case c: Case if c.status == CaseStatus.NEW => toHtml(c).map(Ok(_))
-      case _ => successful(Redirect(routes.CaseController.applicationDetails(reference)))
+  def confirmReleaseCase(reference: String): Action[AnyContent] =
+    (verify.authenticated
+      andThen verify.casePermissions(reference)
+      andThen verify.mustHave(Permission.RELEASE_CASE)).async { implicit request =>
+
+      renderView(
+        c => c.status == CaseStatus.OPEN,
+        c => c.queueId match {
+          case Some(id) => queueService.getOneById(id) flatMap  {
+              case Some(queue) => successful(views.html.confirm_release_case (c, queue.name))
+          }
+        }
+      )
     }
-  }
+
+  override protected def redirect: String => Call = routes.CaseController.applicationDetails
+
+  override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = c.status == CaseStatus.NEW
 
 }

@@ -23,6 +23,7 @@ GET         /cases/:reference/sample                     @uk.gov.hmrc.tariffclas
 
 GET         /cases/:reference/release                    @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReleaseCaseController.releaseCase(reference: String)
 POST        /cases/:reference/release                    @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReleaseCaseController.releaseCaseToQueue(reference: String)
+GET         /cases/:reference/release/confirmation       @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReleaseCaseController.confirmReleaseCase(reference: String)
 
 GET         /cases/:reference/assign                     @uk.gov.hmrc.tariffclassificationfrontend.controllers.AssignCaseController.get(reference: String)
 POST        /cases/:reference/assign                     @uk.gov.hmrc.tariffclassificationfrontend.controllers.AssignCaseController.post(reference: String)
@@ -38,7 +39,8 @@ POST        /cases/:reference/reject                     @uk.gov.hmrc.tariffclas
 
 GET         /cases/:reference/suspend                    @uk.gov.hmrc.tariffclassificationfrontend.controllers.SuspendCaseController.getSuspendCase(reference: String)
 POST        /cases/:reference/suspend                    @uk.gov.hmrc.tariffclassificationfrontend.controllers.SuspendCaseController.postSuspendCase(reference: String)
-GET         /cases/:reference/suspend/confirm            @uk.gov.hmrc.tariffclassificationfrontend.controllers.SuspendCaseController.confirmSuspendCase(reference: String)
+GET         /cases/:reference/suspend/confirmation       @uk.gov.hmrc.tariffclassificationfrontend.controllers.SuspendCaseController.confirmSuspendCase(reference: String)
+GET         /cases/:reference/suspend/contact-info       @uk.gov.hmrc.tariffclassificationfrontend.controllers.SuspendCaseController.showContactInformation(reference: String)
 
 GET         /cases/:reference/suppress                   @uk.gov.hmrc.tariffclassificationfrontend.controllers.SuppressCaseController.suppressCase(reference: String)
 POST        /cases/:reference/suppress                   @uk.gov.hmrc.tariffclassificationfrontend.controllers.SuppressCaseController.confirmSuppressCase(reference: String)

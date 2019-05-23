@@ -56,7 +56,7 @@ class SuspendCaseController @Inject()(verify: RequestActions,
             routes.SuspendCaseController.confirmSuspendCase(c.reference)
           )
         )
-        case _ => validateAndRenderView(c => successful(views.html.suspend_case_error(c)))
+        case _ => validateAndRedirect(c => successful(routes.SuspendCaseController.showContactInformation(c.reference)))
       }
     )
   }
@@ -65,7 +65,14 @@ class SuspendCaseController @Inject()(verify: RequestActions,
     (verify.authenticated
       andThen verify.casePermissions(reference)
       andThen verify.mustHave(Permission.SUSPEND_CASE)).async { implicit request =>
-      renderView(c => c.status == SUSPENDED, c => views.html.confirm_suspended(c))
+      renderView(c => c.status == SUSPENDED, c => successful(views.html.confirm_suspended(c)))
+    }
+
+  def showContactInformation(reference: String): Action[AnyContent] =
+    (verify.authenticated
+      andThen verify.casePermissions(reference)
+      andThen verify.mustHave(Permission.SUSPEND_CASE)).async { implicit request =>
+      renderView(c => c.status == OPEN, c => successful(views.html.suspend_case_error(c)))
     }
 
   override protected def redirect: String => Call = routes.CaseController.applicationDetails

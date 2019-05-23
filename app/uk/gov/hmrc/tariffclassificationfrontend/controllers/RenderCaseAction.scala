@@ -70,14 +70,15 @@ trait RenderCaseAction extends FrontendController with I18nSupport {
     }
   }
 
-  protected def renderView(valid: Case => Boolean, toHtml: Case => HtmlFormat.Appendable)
-                                     (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
+  protected def renderView(valid: Case => Boolean, toHtml: Case => Future[HtmlFormat.Appendable])
+                          (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
     if (valid(request.`case`)) {
-      successful(Ok(toHtml(request.`case`)))
+      toHtml(request.`case`).map(Ok(_))
     } else {
       defaultRedirect()
     }
   }
+
 
   protected def getCaseAndRespond(caseReference: String,
                                   toResult: Case => Future[Result])
