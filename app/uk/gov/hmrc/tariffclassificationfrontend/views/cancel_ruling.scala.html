@@ -23,7 +23,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.case_heading
 @(c: Case, form: Form[CancelReason])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.cancel.ruling"))) {
 
     @case_heading(c)
 

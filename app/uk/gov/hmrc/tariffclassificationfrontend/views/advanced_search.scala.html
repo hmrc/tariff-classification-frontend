@@ -31,7 +31,7 @@
     form.value.flatMap(_.status).exists(_.contains(status))
 }
 
-@main(bodyClasses = None) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.advanced.search"))) {
 
     @back_link(displayBackLink = true, SessionKeys.backToQueuesLinkUrl, SessionKeys.backToQueuesLinkLabel)
 
