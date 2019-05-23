@@ -28,7 +28,7 @@
         </p>
 
         <p>
-            <a @if(useTabIndex.isDefined){ tabindex="@{useTabIndex.get +1}" } id="suspend-case-button" href="@controllers.routes.SuspendCaseController.suspendCase(c.reference)">Suspend this case</a>
+            <a @if(useTabIndex.isDefined){ tabindex="@{useTabIndex.get +1}" } id="suspend-case-button" href="@controllers.routes.SuspendCaseController.getSuspendCase(c.reference)">Suspend this case</a>
             if the commodity code that you want to assign to the ruling is changing.  The case can be reopened.
         </p>
     </div>

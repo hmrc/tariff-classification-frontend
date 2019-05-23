@@ -31,6 +31,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
 import uk.gov.hmrc.tariffclassificationfrontend.views.CaseDetailPage
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
@@ -43,7 +44,7 @@ class AppealCaseController @Inject()(verify: RequestActions,
   private val typeForm: Form[AppealType] = AppealForm.appealTypeForm
   private val statusForm: Form[AppealStatus] = AppealForm.appealStatusForm
 
-  private val startTabIndexForAppeals = 8000;
+  private val startTabIndexForAppeals = 8000
 
   override protected def redirect: String => Call = routes.CaseController.trader
 
@@ -54,7 +55,7 @@ class AppealCaseController @Inject()(verify: RequestActions,
   def appealDetails(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
     getCaseAndRenderView(
       reference,
-      c => successful(views.html.case_details(c, CaseDetailPage.APPEAL, views.html.partials.appeal.appeal_details(c,startTabIndexForAppeals), activeTab = Some("tab-item-Appeals")))
+      c => successful(views.html.case_details(c, CaseDetailPage.APPEAL, views.html.partials.appeal.appeal_details(c, startTabIndexForAppeals), activeTab = Some("tab-item-Appeals")))
     )
   }
 
@@ -108,7 +109,7 @@ class AppealCaseController @Inject()(verify: RequestActions,
       `case` => statusForm.bindFromRequest().fold(
         formWithErrors => successful(Ok(views.html.appeal_choose_status(`case`, appealTypeFound, formWithErrors))),
         appealStatus => caseService.addAppeal(`case`, appealTypeFound, appealStatus, request.operator)
-          .map( _ => Redirect(routes.AppealCaseController.appealDetails(reference)))
+          .map(_ => Redirect(routes.AppealCaseController.appealDetails(reference)))
       )
     )
   }
@@ -122,7 +123,7 @@ class AppealCaseController @Inject()(verify: RequestActions,
           case Some(appeal) => statusForm.bindFromRequest().fold(
             formWithErrors => successful(Ok(views.html.appeal_change_status(`case`, appeal, formWithErrors))),
             appealStatus => caseService.updateAppealStatus(`case`, appeal, appealStatus, request.operator)
-                .map( _ => Redirect(routes.AppealCaseController.appealDetails(reference)))
+              .map(_ => Redirect(routes.AppealCaseController.appealDetails(reference)))
           )
           case None => successful(Redirect(redirect(request.`case`.reference)))
         }

@@ -36,8 +36,9 @@ POST        /cases/:reference/refer                      @uk.gov.hmrc.tariffclas
 GET         /cases/:reference/reject                     @uk.gov.hmrc.tariffclassificationfrontend.controllers.RejectCaseController.rejectCase(reference: String)
 POST        /cases/:reference/reject                     @uk.gov.hmrc.tariffclassificationfrontend.controllers.RejectCaseController.confirmRejectCase(reference: String)
 
-GET         /cases/:reference/suspend                    @uk.gov.hmrc.tariffclassificationfrontend.controllers.SuspendCaseController.suspendCase(reference: String)
-POST        /cases/:reference/suspend                    @uk.gov.hmrc.tariffclassificationfrontend.controllers.SuspendCaseController.confirmSuspendCase(reference: String)
+GET         /cases/:reference/suspend                    @uk.gov.hmrc.tariffclassificationfrontend.controllers.SuspendCaseController.getSuspendCase(reference: String)
+POST        /cases/:reference/suspend                    @uk.gov.hmrc.tariffclassificationfrontend.controllers.SuspendCaseController.postSuspendCase(reference: String)
+GET         /cases/:reference/suspend/confirm            @uk.gov.hmrc.tariffclassificationfrontend.controllers.SuspendCaseController.confirmSuspendCase(reference: String)
 
 GET         /cases/:reference/suppress                   @uk.gov.hmrc.tariffclassificationfrontend.controllers.SuppressCaseController.suppressCase(reference: String)
 POST        /cases/:reference/suppress                   @uk.gov.hmrc.tariffclassificationfrontend.controllers.SuppressCaseController.confirmSuppressCase(reference: String)

@@ -36,7 +36,7 @@
 
             <h3 class="heading-medium mt-0">Have you contacted the applicant and attached a copy of the email to this case?</h3>
 
-            @helper.form(action = SuspendCaseController.confirmSuspendCase(c.reference), 'id -> "suspend-case") {
+            @helper.form(action = SuspendCaseController.postSuspendCase(c.reference), 'id -> "suspend-case") {
                 @helper.CSRF.formField
 
                 @input_yes_no(form("state"), "suspend-case_contacted-applicant")

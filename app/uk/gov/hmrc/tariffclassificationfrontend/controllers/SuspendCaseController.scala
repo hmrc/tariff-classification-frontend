@@ -22,7 +22,7 @@ import play.api.i18n.MessagesApi
 import play.api.mvc._
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.MandatoryBooleanForm
-import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.OPEN
+import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.{OPEN, SUSPENDED}
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Permission}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
@@ -41,24 +41,34 @@ class SuspendCaseController @Inject()(verify: RequestActions,
   override protected val caseService: CasesService = casesService
   private val form: Form[Boolean] = MandatoryBooleanForm.form("suspend_case")
 
-  def suspendCase(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.SUSPEND_CASE)).async { implicit request =>
+  def getSuspendCase(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.SUSPEND_CASE)).async { implicit request =>
     validateAndRenderView(c => successful(views.html.suspend_case(c, form)))
   }
 
-  def confirmSuspendCase(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.SUSPEND_CASE)).async { implicit request =>
+  def postSuspendCase(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.SUSPEND_CASE)).async { implicit request =>
     form.bindFromRequest().fold(
       errors => {
         validateAndRenderView(c => successful(views.html.suspend_case(c, errors)))
       },
       {
-        case true => validateAndRenderView(casesService.suspendCase(_, request.operator).map(views.html.confirm_suspended(_)))
+        case true => validateAndRedirect(
+          casesService.suspendCase(_, request.operator).map(c =>
+            routes.SuspendCaseController.confirmSuspendCase(c.reference)
+          )
+        )
         case _ => validateAndRenderView(c => successful(views.html.suspend_case_error(c)))
       }
     )
   }
 
+  def confirmSuspendCase(reference: String): Action[AnyContent] =
+    (verify.authenticated
+      andThen verify.casePermissions(reference)
+      andThen verify.mustHave(Permission.SUSPEND_CASE)).async { implicit request =>
+      renderView(c => c.status == SUSPENDED, c => views.html.confirm_suspended(c))
+    }
+
   override protected def redirect: String => Call = routes.CaseController.applicationDetails
 
   override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = c.status == OPEN
-
 }
