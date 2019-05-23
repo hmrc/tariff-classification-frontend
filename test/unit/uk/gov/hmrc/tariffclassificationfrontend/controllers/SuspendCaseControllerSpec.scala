@@ -105,7 +105,7 @@ class SuspendCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     }
   }
 
-  "Confirm Suspend a Case" should {
+  "Post Confirm Suspend a Case" should {
 
     "return OK and HTML content type" in {
       when(casesService.suspendCase(refEq(caseWithStatusOPEN), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusSUSPENDED))
@@ -114,10 +114,8 @@ class SuspendCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       (newFakePOSTRequestWithCSRF(fakeApplication)
         .withFormUrlEncodedBody("state" -> "true")))
 
-      status(result) shouldBe Status.OK
-      contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
-      charsetOf(result) shouldBe Some("utf-8")
-      bodyOf(result) should include("This case has been suspended")
+      status(result) shouldBe Status.SEE_OTHER
+      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/suspend/confirm")
     }
 
     "return OK and HTML content type for reject error page" in {
@@ -153,7 +151,7 @@ class SuspendCaseControllerSpec extends WordSpec with Matchers with UnitSpec
         (newFakePOSTRequestWithCSRF(fakeApplication)
           .withFormUrlEncodedBody("state" -> "true")))
 
-      status(result) shouldBe Status.OK
+      status(result) shouldBe Status.SEE_OTHER
     }
 
     "redirect unauthorised when does not have right permissions" in {
@@ -165,6 +163,37 @@ class SuspendCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
     }
+  }
+
+  "View Confirm page for a suspended case" should {
+
+    "return OK and HTML content type" in {
+      when(casesService.suspendCase(refEq(caseWithStatusSUSPENDED), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusSUSPENDED))
+
+      val result: Result = await(controller(caseWithStatusSUSPENDED).confirmSuspendCase("reference")
+      (newFakePOSTRequestWithCSRF(fakeApplication)
+        .withFormUrlEncodedBody("state" -> "true")))
+
+      status(result) shouldBe Status.OK
+      contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
+      charsetOf(result) shouldBe Some("utf-8")
+      bodyOf(result) should include("This case has been suspended")
+    }
+
+    "redirect to a default page if the status is not right" in {
+      when(casesService.suspendCase(refEq(caseWithStatusOPEN), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusSUSPENDED))
+
+      val result: Result = await(controller(caseWithStatusOPEN).confirmSuspendCase("reference")
+      (newFakePOSTRequestWithCSRF(fakeApplication)
+        .withFormUrlEncodedBody("state" -> "true")))
+
+      status(result) shouldBe Status.SEE_OTHER
+      contentTypeOf(result) shouldBe None
+      charsetOf(result) shouldBe None
+      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/application")
+    }
+
+
   }
 
 }
