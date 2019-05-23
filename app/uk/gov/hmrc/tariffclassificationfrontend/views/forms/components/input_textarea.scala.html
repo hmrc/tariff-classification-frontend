@@ -37,14 +37,14 @@ customErrorMessage : Option[String] = None
     }
 
     @field.errors.map { error =>
-        <span class="error-message" id="error-message-@{field.id}-input">@customErrorMessage.getOrElse( messages(error.message, error.args: _*))</span>
+        <span class="error-message" id="@{field.id}-error">@customErrorMessage.getOrElse( messages(error.message, error.args: _*))</span>
     }
 
     <textarea
             class="form-control w-100 @inputClass"
             id="@{field.id}"
             name="@{field.id}"
-            aria-describedby="@{field.id}-hint"
+            aria-describedby="@{field.id}-hint @{field.id}-error"
             rows="5"
             @if(autofocus){autofocus}
             @if(tabIndex.isDefined){ tabindex="@{tabIndex.get}" }>

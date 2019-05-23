@@ -39,7 +39,7 @@
     }
 
     @field.errors.map { error =>
-        <span class="error-message" id="error-message-@{field.id}-input">@customErrorMessage.getOrElse( messages(error.message, error.args: _*))</span>
+        <span class="error-message" id="@{field.id}-error">@customErrorMessage.getOrElse( messages(error.message, error.args: _*))</span>
     }
 
     <div class="form-control-wrapper autocomplete @formControlClass">
@@ -51,7 +51,7 @@
         name="@{field.name}"
         value="@{field.value}"
         @if(useTabIndex.isDefined){tabindex="@{useTabIndex.get}"}
-        aria-describedby="@{field.id}-hint"
+        aria-describedby="@{field.id}-hint @{field.id}-error"
         @if(autofocus){ autofocus }
         />
     </div>
