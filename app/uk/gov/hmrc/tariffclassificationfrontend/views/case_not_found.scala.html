@@ -20,7 +20,7 @@
 
 @(reference: String)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.case.not.found"))) {
     <div id="case-not-found-section">
         <h1 class="heading-large">
             @messages("errors.case-not-found.title")

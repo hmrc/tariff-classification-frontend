@@ -24,7 +24,7 @@
 
 @(c: Case, form: Form[Boolean])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.suspend.case"))) {
 
     @case_heading(c)
 

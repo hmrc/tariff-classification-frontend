@@ -24,7 +24,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController
 @(c: Case, form: Form[String], queues: Seq[Queue])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.release.case"))) {
     @defining(c.application.asBTI) { btiApp: BTIApplication =>
 
         @case_heading(c)

@@ -29,7 +29,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.appeal.appeal_status_submit
 @(c: Case, appeal: Appeal, form: Form[AppealStatus])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.change.appeal.status"))) {
 
   @case_heading(c)
 

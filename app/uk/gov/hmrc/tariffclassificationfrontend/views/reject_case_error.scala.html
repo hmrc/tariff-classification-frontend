@@ -25,7 +25,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.AttachmentsController
 @(c: Case)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.reject.case.error"))) {
 
     @case_heading(c)
 

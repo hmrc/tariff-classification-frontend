@@ -20,7 +20,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials._
 @(c: Case)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.case.completed"))) {
     @defining(c.application.asBTI) { btiApp: BTIApplication =>
 
         @case_heading(c)
