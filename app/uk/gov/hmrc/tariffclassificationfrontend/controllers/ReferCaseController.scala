@@ -22,7 +22,7 @@ import play.api.i18n.MessagesApi
 import play.api.mvc._
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.MandatoryBooleanForm
-import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.OPEN
+import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus._
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Permission}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
@@ -41,7 +41,7 @@ class ReferCaseController @Inject()(verify: RequestActions,
   override protected val caseService: CasesService = casesService
   private val form: Form[Boolean] = MandatoryBooleanForm.form("refer_case")
 
-  def referCase(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen
+  def getReferCase(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen
     verify.mustHave(Permission.REFER_CASE)).async { implicit request =>
     validateAndRenderView(
       c =>
@@ -49,7 +49,7 @@ class ReferCaseController @Inject()(verify: RequestActions,
     )
   }
 
-  def confirmReferCase(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen
+  def postReferCase(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen
     verify.mustHave(Permission.REFER_CASE)).async { implicit request =>
 
     form.bindFromRequest().fold(
@@ -57,11 +57,25 @@ class ReferCaseController @Inject()(verify: RequestActions,
         validateAndRenderView(c => successful(views.html.refer_case(c, errors)))
       },
       {
-        case true => validateAndRenderView(casesService.referCase(_, request.operator).map(views.html.confirm_refer_case(_)))
-        case _ => validateAndRenderView(c => successful(views.html.refer_case_error(c)))
+        case true => validateAndRedirect(casesService.referCase(_, request.operator).map(c => routes.ReferCaseController.confirmReferCase(c.reference)))
+        case _ => validateAndRedirect(c => successful(routes.ReferCaseController.showContactInformation(c.reference)))
       }
     )
   }
+
+  def confirmReferCase(reference: String): Action[AnyContent] =
+    (verify.authenticated
+      andThen verify.casePermissions(reference)
+      andThen verify.mustHave(Permission.REFER_CASE)).async { implicit request =>
+      renderView(c => c.status == REFERRED, c => successful(views.html.confirm_refer_case(c)))
+    }
+
+  def showContactInformation(reference: String): Action[AnyContent] =
+    (verify.authenticated
+      andThen verify.casePermissions(reference)
+      andThen verify.mustHave(Permission.REFER_CASE)).async { implicit request =>
+      renderView(c => c.status == OPEN, c => successful(views.html.refer_case_error(c)))
+    }
 
   override protected def redirect: String => Call = routes.CaseController.applicationDetails
 
