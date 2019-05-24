@@ -189,11 +189,7 @@ class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   "View Confirm page for a complete case" should {
 
     "return OK and HTML content type" in {
-      when(casesService.completeCase(refEq(caseWithStatusCOMPLETED), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusCOMPLETED))
-
-      val result: Result = await(getController(caseWithStatusCOMPLETED).confirmCompleteCase("reference")
-      (newFakePOSTRequestWithCSRF(fakeApplication)
-        .withFormUrlEncodedBody("state" -> "true")))
+      val result: Result = await(getController(caseWithStatusCOMPLETED).confirmCompleteCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -202,11 +198,7 @@ class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     }
 
     "redirect to a default page if the status is not right" in {
-      when(casesService.completeCase(refEq(validCaseWithStatusOPEN), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(validCaseWithStatusOPEN))
-
-      val result: Result = await(getController(validCaseWithStatusOPEN).confirmCompleteCase("reference")
-      (newFakePOSTRequestWithCSRF(fakeApplication)
-        .withFormUrlEncodedBody("state" -> "true")))
+      val result: Result = await(getController(validCaseWithStatusOPEN).confirmCompleteCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None

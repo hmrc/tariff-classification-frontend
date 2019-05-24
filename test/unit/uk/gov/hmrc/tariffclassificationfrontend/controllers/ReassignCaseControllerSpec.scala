@@ -126,10 +126,8 @@ class ReassignCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
       val result: Result = await(controller(caseWithStatusOPEN).reassignCase("reference", "origin")(requestWithQueue("queue")))
 
-      status(result) shouldBe Status.OK
-      contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
-      charsetOf(result) shouldBe Some("utf-8")
-      bodyOf(result) should include("This case has been moved to the SOME_QUEUE queue")
+      status(result) shouldBe Status.SEE_OTHER
+      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/reassign-case/confirmation?origin=origin")
     }
 
     "show error message when no option is selected" in {
@@ -179,7 +177,8 @@ class ReassignCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       val result: Result = await(controller(caseWithStatusOPEN, Set(Permission.MOVE_CASE_BACK_TO_QUEUE))
         .reassignCase("reference", "origin")(requestWithQueue("queue")))
 
-      status(result) shouldBe Status.OK
+      status(result) shouldBe Status.SEE_OTHER
+      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/reassign-case/confirmation?origin=origin")
     }
 
     "redirect unauthorised when does not have right permissions" in {
@@ -188,6 +187,42 @@ class ReassignCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
+    }
+  }
+
+  "View Confirm page for a reassign case queue" should {
+
+    val caseWithQueue = caseWithStatusOPEN.copy(queueId = Some("1"))
+    val caseWithoutQueue = caseWithStatusOPEN.copy(queueId = None)
+
+    "return OK and HTML content type" in {
+      when(queueService.getOneById(refEq("1"))).thenReturn(successful(Some(Queue("1", "SLUG", "NAME"))))
+      val result: Result = await(controller(caseWithQueue).confirmReassignCase("reference", "origin")(newFakeGETRequestWithCSRF(fakeApplication)))
+
+      status(result) shouldBe Status.OK
+      bodyOf(result) should include("This case has been moved to the NAME queue")
+    }
+
+    "return resource not found when the queue is not found" in {
+      when(queueService.getOneById(refEq("1"))).thenReturn(successful(None))
+      val result: Result = await(controller(caseWithQueue).confirmReassignCase("reference", "origin")(newFakeGETRequestWithCSRF(fakeApplication)))
+
+      status(result) shouldBe Status.OK
+      bodyOf(result) should include("Case Queue not found")
+    }
+
+    "return resource not found when the case have no queue assign" in {
+      val result: Result = await(controller(caseWithoutQueue).confirmReassignCase("reference", "origin")(newFakeGETRequestWithCSRF(fakeApplication)))
+
+      status(result) shouldBe Status.OK
+      bodyOf(result) should include("Case Queue not found")
+    }
+
+    "redirect to a default page if the status is not right" in {
+      val result: Result = await(controller(caseWithStatusNEW).confirmReassignCase("reference", "origin")(newFakeGETRequestWithCSRF(fakeApplication)))
+
+      status(result) shouldBe Status.SEE_OTHER
+      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/application")
     }
   }
 

@@ -172,46 +172,32 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     val caseWithoutQueue = caseWithStatusOPEN.copy(queueId = None)
 
     "return OK and HTML content type" in {
-      when(casesService.suspendCase(refEq(caseWithQueue), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithQueue))
       when(queueService.getOneById(refEq("1"))).thenReturn(successful(Some(Queue("1", "SLUG", "NAME"))))
 
-      val result: Result = await(controller(caseWithQueue).confirmReleaseCase("reference")
-      (newFakePOSTRequestWithCSRF(fakeApplication)
-        .withFormUrlEncodedBody("state" -> "true")))
+      val result: Result = await(controller(caseWithQueue).confirmReleaseCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.OK
       bodyOf(result) should include("This case has been released")
     }
 
     "return resource not found when the queue is not found" in {
-      when(casesService.suspendCase(refEq(caseWithQueue), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithQueue))
       when(queueService.getOneById(refEq("1"))).thenReturn(successful(None))
 
-      val result: Result = await(controller(caseWithQueue).confirmReleaseCase("reference")
-      (newFakePOSTRequestWithCSRF(fakeApplication)
-        .withFormUrlEncodedBody("state" -> "true")))
+      val result: Result = await(controller(caseWithQueue).confirmReleaseCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.OK
       bodyOf(result) should include("Case Queue not found")
     }
 
     "return resource not found when the case have no queue assign" in {
-      when(casesService.suspendCase(refEq(caseWithoutQueue), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithoutQueue))
-
-      val result: Result = await(controller(caseWithoutQueue).confirmReleaseCase("reference")
-      (newFakePOSTRequestWithCSRF(fakeApplication)
-        .withFormUrlEncodedBody("state" -> "true")))
+      val result: Result = await(controller(caseWithoutQueue).confirmReleaseCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.OK
       bodyOf(result) should include("Case Queue not found")
     }
 
     "redirect to a default page if the status is not right" in {
-      when(casesService.suspendCase(refEq(caseWithStatusNEW), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusNEW))
-
-      val result: Result = await(controller(caseWithStatusNEW).confirmReleaseCase("1")
-      (newFakePOSTRequestWithCSRF(fakeApplication)
-        .withFormUrlEncodedBody("state" -> "true")))
+      val result: Result = await(controller(caseWithStatusNEW).confirmReleaseCase("1")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None

@@ -170,9 +170,7 @@ class SuspendCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     "return OK and HTML content type" in {
       when(casesService.suspendCase(refEq(caseWithStatusSUSPENDED), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusSUSPENDED))
 
-      val result: Result = await(controller(caseWithStatusSUSPENDED).confirmSuspendCase("reference")
-      (newFakePOSTRequestWithCSRF(fakeApplication)
-        .withFormUrlEncodedBody("state" -> "true")))
+      val result: Result = await(controller(caseWithStatusSUSPENDED).confirmSuspendCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -183,9 +181,7 @@ class SuspendCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     "redirect to a default page if the status is not right" in {
       when(casesService.suspendCase(refEq(caseWithStatusOPEN), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusSUSPENDED))
 
-      val result: Result = await(controller(caseWithStatusOPEN).confirmSuspendCase("reference")
-      (newFakePOSTRequestWithCSRF(fakeApplication)
-        .withFormUrlEncodedBody("state" -> "true")))
+      val result: Result = await(controller(caseWithStatusOPEN).confirmSuspendCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None

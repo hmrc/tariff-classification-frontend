@@ -24,7 +24,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.ReleaseCaseForm
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus._
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Permission, Queue}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus, Permission, Queue}
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, QueuesService}
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
@@ -67,14 +67,35 @@ class ReassignCaseController @Inject()(verify: RequestActions,
       queueService.getOneBySlug(queueSlug) flatMap {
         case None => successful(Ok(views.html.resource_not_found(s"Queue $queueSlug")))
         case Some(q: Queue) =>
-          validateAndRenderView(
-            caseService.reassignCase(_, q, request.operator).map(views.html.confirm_reassign_case(_, q, origin))
+          validateAndRedirect(
+            caseService.reassignCase(_, q, request.operator)
+              .map( _ => routes.ReassignCaseController.confirmReassignCase(reference, origin))
           )
       }
     }
 
     form.bindFromRequest.fold(onInvalidForm, onValidForm)
   }
+
+  def confirmReassignCase(reference: String, origin: String): Action[AnyContent] =
+    (verify.authenticated
+      andThen verify.casePermissions(reference)
+      andThen verify.mustHave(Permission.MOVE_CASE_BACK_TO_QUEUE)).async { implicit request =>
+
+      def queueNotFound(implicit request: AuthenticatedCaseRequest[_]) = {
+        successful(views.html.resource_not_found(s"Case Queue"))
+      }
+
+      renderView(
+        c => reassignCaseStatuses.contains(c.status),
+        c => c.queueId.map(
+          id => queueService.getOneById(id) flatMap {
+            case Some(queue) => successful(views.html.confirm_reassign_case(c, queue, origin))
+            case None => queueNotFound
+          }).getOrElse(queueNotFound)
+      )
+    }
+
 
   override protected def redirect: String => Call = {
     // in case this is called from the "assigned cases" journey, we should redirect to `/queue/assigned/:assigneeId`

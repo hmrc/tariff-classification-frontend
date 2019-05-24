@@ -192,9 +192,7 @@ class RejectCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   "View contact info page for a case that was not rejected" should {
 
     "return OK and HTML content type" in {
-     val result: Result = await(controller(caseWithStatusOPEN).showContactInformation("reference")
-      (newFakePOSTRequestWithCSRF(fakeApplication)
-        .withFormUrlEncodedBody("state" -> "false")))
+     val result: Result = await(controller(caseWithStatusOPEN).showContactInformation("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -203,9 +201,7 @@ class RejectCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     }
 
     "redirect to a default page if the status is not right" in {
-      val result: Result = await(controller(caseWithStatusREJECTED).showContactInformation("reference")
-      (newFakePOSTRequestWithCSRF(fakeApplication)
-        .withFormUrlEncodedBody("state" -> "false")))
+      val result: Result = await(controller(caseWithStatusREJECTED).showContactInformation("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
