@@ -50,6 +50,7 @@ trait RenderCaseAction extends FrontendController with I18nSupport {
   protected def defaultRedirect(reference : Option[String] = None) (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
     successful(Redirect(redirect(reference.getOrElse(request.`case`.reference))))
   }
+
   protected def validateAndRedirect(toHtml: Case => Future[Call])
                                      (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
 

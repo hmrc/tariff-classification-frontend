@@ -22,7 +22,7 @@ import play.api.i18n.MessagesApi
 import play.api.mvc._
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.MandatoryBooleanForm
-import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.OPEN
+import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus._
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Permission}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
@@ -41,21 +41,41 @@ class RejectCaseController @Inject()(verify: RequestActions,
   override protected val caseService: CasesService = casesService
   private val form: Form[Boolean] = MandatoryBooleanForm.form("reject_case")
 
-  def rejectCase(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.REJECT_CASE)).async { implicit request =>
+  def getRejectCase(reference: String): Action[AnyContent] = (verify.authenticated
+    andThen verify.casePermissions(reference)
+    andThen verify.mustHave(Permission.REJECT_CASE)).async { implicit request =>
     validateAndRenderView(c => successful(views.html.reject_case(c, form)))
   }
 
-  def confirmRejectCase(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.REJECT_CASE)).async { implicit request =>
+  def postRejectCase(reference: String): Action[AnyContent] = (verify.authenticated
+    andThen verify.casePermissions(reference)
+    andThen verify.mustHave(Permission.REJECT_CASE)).async { implicit request =>
+
     form.bindFromRequest().fold(
       errors => {
         validateAndRenderView(c => successful(views.html.reject_case(c, errors)))
       },
       {
-        case true => validateAndRenderView(casesService.rejectCase(_, request.operator).map(views.html.confirm_rejected(_)))
-        case _ => validateAndRenderView(c => successful(views.html.reject_case_error(c)))
+        case true => validateAndRedirect(casesService.rejectCase(_, request.operator)
+                      .map( c => routes.RejectCaseController.confirmRejectCase(c.reference)))
+        case _ => validateAndRedirect(c => successful(routes.RejectCaseController.showContactInformation(c.reference)))
       }
     )
   }
+
+  def confirmRejectCase(reference: String): Action[AnyContent] =
+    (verify.authenticated
+      andThen verify.casePermissions(reference)
+      andThen verify.mustHave(Permission.REJECT_CASE)).async { implicit request =>
+      renderView(c => c.status == REJECTED, c => successful(views.html.confirm_rejected(c)))
+    }
+
+  def showContactInformation(reference: String): Action[AnyContent] =
+    (verify.authenticated
+      andThen verify.casePermissions(reference)
+      andThen verify.mustHave(Permission.REJECT_CASE)).async { implicit request =>
+      renderView(c => c.status == OPEN, c => successful(views.html.reject_case_error(c)))
+    }
 
   override protected def redirect: String => Call = routes.CaseController.applicationDetails
 

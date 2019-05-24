@@ -36,7 +36,7 @@
             </ul>
         </div>
     </details>
-    <a @if(useTabIndex.isDefined){ tabindex="@{useTabIndex.get + 1}"} id="refer-case-button" class="button" href="@ReferCaseController.referCase(c.reference)">
+    <a @if(useTabIndex.isDefined){ tabindex="@{useTabIndex.get + 1}"} id="refer-case-button" class="button" href="@ReferCaseController.getReferCase(c.reference)">
         Refer this case
     </a>
 }
