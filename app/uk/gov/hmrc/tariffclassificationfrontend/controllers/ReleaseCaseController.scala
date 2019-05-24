@@ -75,20 +75,25 @@ class ReleaseCaseController @Inject()(verify: RequestActions,
   def confirmReleaseCase(reference: String): Action[AnyContent] =
     (verify.authenticated
       andThen verify.casePermissions(reference)
-      andThen verify.mustHave(Permission.RELEASE_CASE)).async { implicit request =>
+      andThen verify.mustHave(Permission.RELEASE_CASE)).async {
+      implicit request =>
 
-      renderView(
-        c => c.status == CaseStatus.OPEN,
-        c => c.queueId match {
-          case Some(id) => queueService.getOneById(id) flatMap  {
-              case Some(queue) => successful(views.html.confirm_release_case (c, queue.name))
-          }
+        def queueNotFound (implicit request: AuthenticatedCaseRequest[_]) = {
+          successful(views.html.resource_not_found(s"Case Queue"))
         }
+
+
+        renderView(
+        c => c.status == CaseStatus.OPEN,
+        c => c.queueId.map(
+          id => queueService.getOneById(id) flatMap {
+            case Some(queue) => successful(views.html.confirm_release_case(c, queue.name))
+            case None => queueNotFound
+        }).getOrElse(queueNotFound)
       )
     }
 
   override protected def redirect: String => Call = routes.CaseController.applicationDetails
 
   override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = c.status == CaseStatus.NEW
-
 }
