@@ -115,20 +115,18 @@ class SuspendCaseControllerSpec extends WordSpec with Matchers with UnitSpec
         .withFormUrlEncodedBody("state" -> "true")))
 
       status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/suspend/confirm")
+      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/suspend/confirmation")
     }
 
-    "return OK and HTML content type for reject error page" in {
+    "redirect to contact info page when select No from the form" in {
       when(casesService.suspendCase(refEq(caseWithStatusOPEN), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusSUSPENDED))
 
       val result: Result = await(controller(caseWithStatusOPEN).postSuspendCase("reference")
       (newFakePOSTRequestWithCSRF(fakeApplication)
         .withFormUrlEncodedBody("state" -> "false")))
 
-      status(result) shouldBe Status.OK
-      contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
-      charsetOf(result) shouldBe Some("utf-8")
-      bodyOf(result) should include("You must contact the applicant")
+      status(result) shouldBe Status.SEE_OTHER
+      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/suspend/contact-info")
     }
 
     "redirect to Application Details for non OPEN statuses" in {
