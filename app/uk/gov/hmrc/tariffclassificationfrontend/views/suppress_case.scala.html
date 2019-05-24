@@ -35,7 +35,7 @@
 
             <h3 class="heading-medium mt-0">Have you contacted the applicant and attached a copy of the email to this case?</h3>
 
-            @helper.form(action = SuppressCaseController.confirmSuppressCase(c.reference), 'id -> "suppress-case") {
+            @helper.form(action = SuppressCaseController.postSuppressCase(c.reference), 'id -> "suppress-case") {
                 @helper.CSRF.formField
 
                 @input_yes_no(form("state"), "suppress-case_contacted-applicant")

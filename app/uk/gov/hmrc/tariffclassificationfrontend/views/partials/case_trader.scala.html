@@ -171,7 +171,7 @@
             <p class="mt-30">@release_case_button(c,Some(startAtTabIndex+3))</p>
 
             <p class="mt-30">
-                <a tabindex="@{startAtTabIndex+4}" id="suppress_link" href="@SuppressCaseController.suppressCase(c.reference)">Suppress this case</a>
+                <a tabindex="@{startAtTabIndex+4}" id="suppress_link" href="@SuppressCaseController.getSuppressCase(c.reference)">Suppress this case</a>
                 after you have emailed the applicant and attached a copy of the email.
             </p>
         }
