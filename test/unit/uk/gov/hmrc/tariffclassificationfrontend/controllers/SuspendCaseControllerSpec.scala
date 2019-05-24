@@ -186,8 +186,31 @@ class SuspendCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       charsetOf(result) shouldBe None
       locationOf(result) shouldBe Some("/tariff-classification/cases/reference/application")
     }
+  }
 
+  "View contact information page for a suspended case" should {
 
+    "return OK and HTML content type" in {
+      when(casesService.suspendCase(refEq(caseWithStatusOPEN), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusOPEN))
+
+      val result: Result = await(controller(caseWithStatusOPEN).showContactInformation("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+
+      status(result) shouldBe Status.OK
+      contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
+      charsetOf(result) shouldBe Some("utf-8")
+      bodyOf(result) should include("Contact details")
+    }
+
+    "redirect to a default page if the status is not right" in {
+      when(casesService.suspendCase(refEq(caseWithStatusSUSPENDED), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusSUSPENDED))
+
+      val result: Result = await(controller(caseWithStatusSUSPENDED).showContactInformation("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+
+      status(result) shouldBe Status.SEE_OTHER
+      contentTypeOf(result) shouldBe None
+      charsetOf(result) shouldBe None
+      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/application")
+    }
   }
 
 }

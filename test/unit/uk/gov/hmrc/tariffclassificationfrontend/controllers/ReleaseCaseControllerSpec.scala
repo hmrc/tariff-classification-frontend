@@ -123,6 +123,17 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       locationOf(result) shouldBe Some("/tariff-classification/cases/reference/release/confirmation")
     }
 
+    "redirect to resource not found when the queue specified is not recognised" in {
+      when(queueService.getOneBySlug("queue")).thenReturn(successful(None))
+
+      val result: Result = await(controller(caseWithStatusNEW).releaseCaseToQueue("reference")(requestWithQueue("queue")))
+
+      status(result) shouldBe Status.OK
+      contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
+      charsetOf(result) shouldBe Some("utf-8")
+      bodyOf(result) should include("Queue queue not found")
+    }
+
     "redirect back to case on Form Error" in {
       when(queueService.getOneBySlug("queue")).thenReturn(successful(Some(queue)))
       when(queueService.getNonGateway).thenReturn(successful(Seq.empty))
