@@ -26,7 +26,7 @@
 @(c: Case, queue: Queue, originUrl: String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 
-@main(bodyClasses = None) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.case.moved"))) {
     @defining(c.application.asBTI) { btiApp: BTIApplication =>
 
         @case_heading(c)

@@ -30,23 +30,26 @@ customErrorMessage : Option[String] = None
 <div class="form-group @if(field.hasErrors){form-group-error}">
     <label class="form-label" for="@{field.id}">
         <span class="@labelClass">@label</span>
-        @hint.map { hint =>
-        <span class="form-hint">@hint</span>
-        }
-        @field.errors.map { error =>
-        <span class="error-message" id="error-message-@{field.id}-input">@customErrorMessage.getOrElse( messages(error.message, error.args: _*))</span>
-        }
     </label>
+
+    @hint.map { hint =>
+        <span class="form-hint" id="@{field.id}-hint">@hint</span>
+    }
+
+    @field.errors.map { error =>
+        <span class="error-message" id="@{field.id}-error">@customErrorMessage.getOrElse( messages(error.message, error.args: _*))</span>
+    }
 
     <textarea
             class="form-control w-100 @inputClass"
             id="@{field.id}"
             name="@{field.id}"
-            aria-describedby="error-message-@{field.id}-input"
+            aria-describedby="@{field.id}-hint @{field.id}-error"
             rows="5"
             @if(autofocus){autofocus}
-            @if(tabIndex.isDefined){ tabindex="@{tabIndex.get}" }
-    >@{field.value}</textarea>
+            @if(tabIndex.isDefined){ tabindex="@{tabIndex.get}" }>
+        @{field.value}
+    </textarea>
 
 </div>
 

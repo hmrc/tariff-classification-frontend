@@ -23,7 +23,7 @@
 
 @(c: Case, form: Form[Boolean], fileId: String, fileName: String)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.remove.attachment"))) {
 
     @case_heading(c)
 

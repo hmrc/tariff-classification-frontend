@@ -23,7 +23,7 @@
 @import views.html.helper.{CSRF, form}
 @(c: Case)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.take.ownership"))) {
     @defining(c.application.asBTI) { btiApp: BTIApplication =>
 
         @case_heading(c)
