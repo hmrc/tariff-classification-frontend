@@ -47,9 +47,8 @@ customErrorMessage : Option[String] = None
             aria-describedby="@{field.id}-hint @{field.id}-error"
             rows="5"
             @if(autofocus){autofocus}
-            @if(tabIndex.isDefined){ tabindex="@{tabIndex.get}" }>
-        @{field.value}
-    </textarea>
+            @if(tabIndex.isDefined){ tabindex="@{tabIndex.get}" }
+    >@{field.value}</textarea>
 
 </div>
 
