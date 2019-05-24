@@ -80,7 +80,7 @@ class ReassignCaseController @Inject()(verify: RequestActions,
   def confirmReassignCase(reference: String, origin: String): Action[AnyContent] =
     (verify.authenticated
       andThen verify.casePermissions(reference)
-      andThen verify.mustHave(Permission.MOVE_CASE_BACK_TO_QUEUE)).async { implicit request =>
+      andThen verify.mustHave(Permission.ASSIGN_CASE)).async { implicit request =>
 
       def queueNotFound(implicit request: AuthenticatedCaseRequest[_]) = {
         successful(views.html.resource_not_found(s"Case Queue"))
