@@ -24,7 +24,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.ReleaseCaseForm
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus._
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus, Permission, Queue}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Permission, Queue}
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, QueuesService}
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
@@ -69,7 +69,7 @@ class ReassignCaseController @Inject()(verify: RequestActions,
         case Some(q: Queue) =>
           validateAndRedirect(
             caseService.reassignCase(_, q, request.operator)
-              .map( _ => routes.ReassignCaseController.confirmReassignCase(reference, origin))
+              .map(_ => routes.ReassignCaseController.confirmReassignCase(reference, origin))
           )
       }
     }
@@ -95,7 +95,6 @@ class ReassignCaseController @Inject()(verify: RequestActions,
           }).getOrElse(queueNotFound)
       )
     }
-
 
   override protected def redirect: String => Call = {
     // in case this is called from the "assigned cases" journey, we should redirect to `/queue/assigned/:assigneeId`

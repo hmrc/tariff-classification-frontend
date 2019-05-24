@@ -205,8 +205,6 @@ class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       charsetOf(result) shouldBe None
       locationOf(result) shouldBe Some("/tariff-classification/cases/reference/ruling")
     }
-
-
   }
 
 }

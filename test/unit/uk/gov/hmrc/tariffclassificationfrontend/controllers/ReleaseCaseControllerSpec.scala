@@ -215,12 +215,9 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       charsetOf(result) shouldBe None
       locationOf(result) shouldBe Some("/tariff-classification/cases/1/application")
     }
-
-
   }
 
   private def requestWithQueue(queue: String): FakeRequest[AnyContentAsFormUrlEncoded] = {
     newFakePOSTRequestWithCSRF(fakeApplication, Map("queue" -> queue))
   }
-
 }

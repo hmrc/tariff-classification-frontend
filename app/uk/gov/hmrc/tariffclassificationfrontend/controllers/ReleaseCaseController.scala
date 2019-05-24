@@ -47,11 +47,6 @@ class ReleaseCaseController @Inject()(verify: RequestActions,
     releaseCase(releaseCaseForm, reference)
   }
 
-  private def releaseCase(f: Form[String], caseRef: String)
-                         (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
-    getCaseAndRenderView(caseRef, c => queueService.getNonGateway.map(views.html.release_case(c, f, _)))
-  }
-
   def releaseCaseToQueue(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen
     verify.mustHave(Permission.RELEASE_CASE)).async { implicit request =>
 
@@ -73,6 +68,11 @@ class ReleaseCaseController @Inject()(verify: RequestActions,
     releaseCaseForm.bindFromRequest.fold(onInvalidForm, onValidForm)
   }
 
+  private def releaseCase(f: Form[String], caseRef: String)
+                         (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
+    getCaseAndRenderView(caseRef, c => queueService.getNonGateway.map(views.html.release_case(c, f, _)))
+  }
+
   def confirmReleaseCase(reference: String): Action[AnyContent] =
     (verify.authenticated
       andThen verify.casePermissions(reference)
@@ -82,7 +82,6 @@ class ReleaseCaseController @Inject()(verify: RequestActions,
         def queueNotFound(implicit request: AuthenticatedCaseRequest[_]) = {
           successful(views.html.resource_not_found(s"Case Queue"))
         }
-
 
         renderView(
           c => c.status == CaseStatus.OPEN,
