@@ -70,7 +70,7 @@ class SuppressCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   "Suppress Case" should {
 
     "return OK and HTML content type" in {
-      val result: Result = await(controller(caseWithStatusNEW).suppressCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+      val result: Result = await(controller(caseWithStatusNEW).getSuppressCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -79,7 +79,7 @@ class SuppressCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     }
 
     "redirect to Application Details for non NEW statuses" in {
-      val result: Result = await(controller(caseWithStatusOPEN).suppressCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+      val result: Result = await(controller(caseWithStatusOPEN).getSuppressCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
@@ -89,14 +89,14 @@ class SuppressCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
     "return OK when user has right permissions" in {
       val result: Result = await(controller(caseWithStatusNEW, Set(Permission.SUPPRESS_CASE))
-        .suppressCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+        .getSuppressCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.OK
     }
 
 
     "redirect unauthorised when does not have right permissions" in {
-      val result: Result = await(controller(caseWithStatusNEW, Set.empty).suppressCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+      val result: Result = await(controller(caseWithStatusNEW, Set.empty).getSuppressCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
@@ -106,34 +106,30 @@ class SuppressCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
   "Confirm Suppress a Case" should {
 
-    "return OK and HTML content type when operator indicates that applicant has been contacted" in {
+    "redirect to confirmation when operator indicates that applicant has been contacted" in {
       when(casesService.suppressCase(refEq(caseWithStatusNEW), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusSUPRRESSED))
 
       val result: Result =
-        await(controller(caseWithStatusNEW).confirmSuppressCase("reference")
+        await(controller(caseWithStatusNEW).postSuppressCase("reference")
              (newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("state" -> "true")))
 
-      status(result) shouldBe Status.OK
-      contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
-      charsetOf(result) shouldBe Some("utf-8")
-      bodyOf(result) should include("This case has been suppressed")
+      status(result) shouldBe Status.SEE_OTHER
+      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/suppress/confirmation")
     }
 
-    "return OK and HTML content type when operator indicates that applicant has not been contacted" in {
+    "redirect to contact info when operator indicates that applicant has not been contacted" in {
       when(casesService.suppressCase(refEq(caseWithStatusNEW), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusSUPRRESSED))
 
       val result: Result =
-        await(controller(caseWithStatusNEW).confirmSuppressCase("reference")
+        await(controller(caseWithStatusNEW).postSuppressCase("reference")
              (newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("state" -> "false")))
 
-      status(result) shouldBe Status.OK
-      contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
-      charsetOf(result) shouldBe Some("utf-8")
-      bodyOf(result) should include("You must contact the applicant and attach a copy of the email to this case before you suppress it")
+      status(result) shouldBe Status.SEE_OTHER
+      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/suppress/contact-info")
     }
 
     "redirect to Application Details for non NEW statuses" in {
-      val result: Result = await(controller(caseWithStatusOPEN).confirmSuppressCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
+      val result: Result = await(controller(caseWithStatusOPEN).postSuppressCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
@@ -145,22 +141,72 @@ class SuppressCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       when(casesService.suppressCase(any[Case], any[Operator])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusSUPRRESSED))
 
       val result: Result = await(controller(caseWithStatusNEW, Set(Permission.SUPPRESS_CASE))
-        .confirmSuppressCase("reference")
+        .postSuppressCase("reference")
         (newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("state" -> "true")))
 
-      status(result) shouldBe Status.OK
+      status(result) shouldBe Status.SEE_OTHER
     }
 
 
     "redirect unauthorised when does not have right permissions" in {
       val result: Result = await(controller(caseWithStatusNEW, Set.empty)
-        .confirmSuppressCase("reference")
+        .postSuppressCase("reference")
         (newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("state" -> "true")))
 
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
     }
 
+  }
+
+  "View Confirm page for a suppressed case" should {
+
+    "return OK and HTML content type" in {
+      when(casesService.suppressCase(refEq(caseWithStatusSUPRRESSED), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusSUPRRESSED))
+
+      val result: Result = await(controller(caseWithStatusSUPRRESSED).confirmSuppressCase("reference")
+      (newFakePOSTRequestWithCSRF(fakeApplication)
+        .withFormUrlEncodedBody("state" -> "true")))
+
+      status(result) shouldBe Status.OK
+      contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
+      charsetOf(result) shouldBe Some("utf-8")
+      bodyOf(result) should include("This case has been suppressed")
+    }
+
+    "redirect to a default page if the status is not right" in {
+      when(casesService.suppressCase(refEq(caseWithStatusOPEN), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusSUPRRESSED))
+
+      val result: Result = await(controller(caseWithStatusOPEN).confirmSuppressCase("reference")
+      (newFakePOSTRequestWithCSRF(fakeApplication)
+        .withFormUrlEncodedBody("state" -> "true")))
+
+      status(result) shouldBe Status.SEE_OTHER
+      contentTypeOf(result) shouldBe None
+      charsetOf(result) shouldBe None
+      locationOf(result) shouldBe Some("/tariff-classification/cases/1/application")
+    }
+  }
+
+  "View contact info page for a case that was not suppressed" should {
+
+    "return OK and HTML content type" in {
+      val result: Result = await(controller(caseWithStatusNEW).showContactInformation("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+
+      status(result) shouldBe Status.OK
+      contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
+      charsetOf(result) shouldBe Some("utf-8")
+      bodyOf(result) should include("You must contact the applicant and attach a copy of the email to this case before you suppress it")
+    }
+
+    "redirect to a default page if the status is not right" in {
+      val result: Result = await(controller(caseWithStatusSUPRRESSED).showContactInformation("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+
+      status(result) shouldBe Status.SEE_OTHER
+      contentTypeOf(result) shouldBe None
+      charsetOf(result) shouldBe None
+      locationOf(result) shouldBe Some("/tariff-classification/cases/1/application")
+    }
   }
 
 }
