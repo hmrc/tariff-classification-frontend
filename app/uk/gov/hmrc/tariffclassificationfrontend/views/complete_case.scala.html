@@ -36,7 +36,7 @@
                 <p>The ruling will also be published on the public rulings website.</p>
                 <p>An email will be automatically sent to the applicant, notifying them of the publication of the ruling.</p>
 
-                @form(action = CompleteCaseController.confirmCompleteCase(c.reference), 'class -> "form") {
+                @form(action = CompleteCaseController.postCompleteCase(c.reference), 'class -> "form") {
                     @CSRF.formField
                     <button class="button" id="complete-case-button" type="submit">Complete and publish case</button>
                     <a class="secondary-button" id="cancel-button" href="@CaseController.rulingDetails(c.reference)">Cancel</a>

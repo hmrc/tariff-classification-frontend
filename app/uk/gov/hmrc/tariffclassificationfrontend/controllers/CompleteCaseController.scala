@@ -23,7 +23,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionForm
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.OPEN
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Permission}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus, Permission}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
@@ -44,9 +44,17 @@ class CompleteCaseController @Inject()(verify: RequestActions,
     validateAndRenderView(c => successful(views.html.complete_case(c)))
   }
 
-  def confirmCompleteCase(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.COMPLETE_CASE)).async { implicit request =>
-    validateAndRenderView(casesService.completeCase(_, request.operator).map(views.html.confirm_complete_case(_)))
+  def postCompleteCase(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.COMPLETE_CASE)).async { implicit request =>
+    validateAndRedirect(casesService.completeCase(_, request.operator)
+      .map(c => routes.CompleteCaseController.confirmCompleteCase(c.reference)))
   }
+
+  def confirmCompleteCase(reference: String): Action[AnyContent] =
+    (verify.authenticated
+      andThen verify.casePermissions(reference)
+      andThen verify.mustHave(Permission.COMPLETE_CASE)).async { implicit request =>
+      renderView(c => c.status == CaseStatus.COMPLETED, c => successful(views.html.confirm_complete_case(c)))
+    }
 
   override protected def redirect: String => Call = routes.CaseController.rulingDetails
 

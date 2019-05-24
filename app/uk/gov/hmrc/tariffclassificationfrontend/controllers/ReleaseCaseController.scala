@@ -38,18 +38,18 @@ class ReleaseCaseController @Inject()(verify: RequestActions,
                                       val messagesApi: MessagesApi,
                                       implicit val appConfig: AppConfig) extends RenderCaseAction {
 
+  private lazy val releaseCaseForm: Form[String] = ReleaseCaseForm.form
   override protected val config: AppConfig = appConfig
   override protected val caseService: CasesService = casesService
-  private lazy val releaseCaseForm: Form[String] = ReleaseCaseForm.form
-
-  private def releaseCase(f: Form[String], caseRef: String)
-                         (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
-    getCaseAndRenderView(caseRef, c => queueService.getNonGateway.map(views.html.release_case(c, f, _)))
-  }
 
   def releaseCase(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen
     verify.mustHave(Permission.RELEASE_CASE)).async { implicit request =>
     releaseCase(releaseCaseForm, reference)
+  }
+
+  private def releaseCase(f: Form[String], caseRef: String)
+                         (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
+    getCaseAndRenderView(caseRef, c => queueService.getNonGateway.map(views.html.release_case(c, f, _)))
   }
 
   def releaseCaseToQueue(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen
@@ -64,11 +64,12 @@ class ReleaseCaseController @Inject()(verify: RequestActions,
         case None => successful(Ok(views.html.resource_not_found(s"Queue $queueSlug")))
         case Some(q: Queue) =>
           validateAndRedirect(
-            casesService.releaseCase(_, q, request.operator).map { c: Case =>
-              routes.ReleaseCaseController.confirmReleaseCase(c.reference)
-          })
+            casesService.releaseCase(_, q, request.operator).map { _ =>
+              routes.ReleaseCaseController.confirmReleaseCase(reference)
+            })
       }
     }
+
     releaseCaseForm.bindFromRequest.fold(onInvalidForm, onValidForm)
   }
 
@@ -78,19 +79,19 @@ class ReleaseCaseController @Inject()(verify: RequestActions,
       andThen verify.mustHave(Permission.RELEASE_CASE)).async {
       implicit request =>
 
-        def queueNotFound (implicit request: AuthenticatedCaseRequest[_]) = {
+        def queueNotFound(implicit request: AuthenticatedCaseRequest[_]) = {
           successful(views.html.resource_not_found(s"Case Queue"))
         }
 
 
         renderView(
-        c => c.status == CaseStatus.OPEN,
-        c => c.queueId.map(
-          id => queueService.getOneById(id) flatMap {
-            case Some(queue) => successful(views.html.confirm_release_case(c, queue.name))
-            case None => queueNotFound
-        }).getOrElse(queueNotFound)
-      )
+          c => c.status == CaseStatus.OPEN,
+          c => c.queueId.map(
+            id => queueService.getOneById(id) flatMap {
+              case Some(queue) => successful(views.html.confirm_release_case(c, queue.name))
+              case None => queueNotFound
+            }).getOrElse(queueNotFound)
+        )
     }
 
   override protected def redirect: String => Call = routes.CaseController.applicationDetails
