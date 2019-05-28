@@ -70,7 +70,7 @@ class RejectCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
     "return OK and HTML content type" in {
 
-      val result: Result = await(controller(caseWithStatusOPEN).rejectCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+      val result: Result = await(controller(caseWithStatusOPEN).getRejectCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -80,7 +80,7 @@ class RejectCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
     "redirect to Application Details for non OPEN statuses" in {
 
-      val result: Result = await(controller(caseWithStatusNEW).rejectCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+      val result: Result = await(controller(caseWithStatusNEW).getRejectCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
@@ -90,46 +90,42 @@ class RejectCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
     "return OK when user has right permissions" in {
       val result: Result = await(controller(caseWithStatusOPEN, Set(Permission.REJECT_CASE))
-        .rejectCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+        .getRejectCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.OK
     }
 
     "redirect unauthorised when does not have right permissions" in {
       val result: Result = await(controller(caseWithStatusNEW, Set.empty)
-        .rejectCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+        .getRejectCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
     }
   }
 
-  "Confirm Reject a Case" should {
+  "Post Confirm Reject a Case" should {
 
-    "return OK and HTML content type" in {
+    "return redirect to confirm page for positive case" in {
       when(casesService.rejectCase(refEq(caseWithStatusOPEN), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREJECTED))
 
-      val result: Result = await(controller(caseWithStatusOPEN).confirmRejectCase("reference")
+      val result: Result = await(controller(caseWithStatusOPEN).postRejectCase("reference")
       (newFakePOSTRequestWithCSRF(fakeApplication)
         .withFormUrlEncodedBody("state" -> "true")))
 
-      status(result) shouldBe Status.OK
-      contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
-      charsetOf(result) shouldBe Some("utf-8")
-      bodyOf(result) should include("This case has been rejected")
+      status(result) shouldBe Status.SEE_OTHER
+      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/reject/confirmation")
     }
 
-    "return OK and HTML content type for reject error page" in {
+    "return redirect to reject error page for negative case" in {
       when(casesService.rejectCase(refEq(caseWithStatusOPEN), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREJECTED))
 
-      val result: Result = await(controller(caseWithStatusOPEN).confirmRejectCase("reference")
+      val result: Result = await(controller(caseWithStatusOPEN).postRejectCase("reference")
       (newFakePOSTRequestWithCSRF(fakeApplication)
         .withFormUrlEncodedBody("state" -> "false")))
 
-      status(result) shouldBe Status.OK
-      contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
-      charsetOf(result) shouldBe Some("utf-8")
-      bodyOf(result) should include("You must contact the applicant")
+      status(result) shouldBe Status.SEE_OTHER
+      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/reject/contact-info")
     }
 
     "redirect to Application Details for non OPEN statuses" in {
@@ -142,7 +138,7 @@ class RejectCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       locationOf(result) shouldBe Some("/tariff-classification/cases/reference/application")
     }
 
-    "return OK when user has right permissions" in {
+    "return SEE_OTHER when user has right permissions" in {
       when(casesService.rejectCase(any[Case], any[Operator])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREJECTED))
 
       val result: Result = await(controller(caseWithStatusOPEN, Set(Permission.REJECT_CASE))
@@ -150,7 +146,7 @@ class RejectCaseControllerSpec extends WordSpec with Matchers with UnitSpec
         (newFakePOSTRequestWithCSRF(fakeApplication)
           .withFormUrlEncodedBody("state" -> "false")))
 
-      status(result) shouldBe Status.OK
+      status(result) shouldBe Status.SEE_OTHER
     }
 
     "redirect unauthorised when does not have right permissions" in {
@@ -161,6 +157,56 @@ class RejectCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
+    }
+  }
+
+  "View Confirm page for a rejected case" should {
+
+    "return OK and HTML content type" in {
+      when(casesService.suspendCase(refEq(caseWithStatusREJECTED), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREJECTED))
+
+      val result: Result = await(controller(caseWithStatusREJECTED).confirmRejectCase("reference")
+      (newFakePOSTRequestWithCSRF(fakeApplication)
+        .withFormUrlEncodedBody("state" -> "true")))
+
+      status(result) shouldBe Status.OK
+      contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
+      charsetOf(result) shouldBe Some("utf-8")
+      bodyOf(result) should include("This case has been rejected")
+    }
+
+    "redirect to a default page if the status is not right" in {
+      when(casesService.suspendCase(refEq(caseWithStatusOPEN), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREJECTED))
+
+      val result: Result = await(controller(caseWithStatusOPEN).confirmRejectCase("reference")
+      (newFakePOSTRequestWithCSRF(fakeApplication)
+        .withFormUrlEncodedBody("state" -> "true")))
+
+      status(result) shouldBe Status.SEE_OTHER
+      contentTypeOf(result) shouldBe None
+      charsetOf(result) shouldBe None
+      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/application")
+    }
+  }
+
+  "View contact info page for a case that was not rejected" should {
+
+    "return OK and HTML content type" in {
+     val result: Result = await(controller(caseWithStatusOPEN).showContactInformation("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+
+      status(result) shouldBe Status.OK
+      contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
+      charsetOf(result) shouldBe Some("utf-8")
+      bodyOf(result) should include("You must contact the applicant")
+    }
+
+    "redirect to a default page if the status is not right" in {
+      val result: Result = await(controller(caseWithStatusREJECTED).showContactInformation("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+
+      status(result) shouldBe Status.SEE_OTHER
+      contentTypeOf(result) shouldBe None
+      charsetOf(result) shouldBe None
+      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/application")
     }
   }
 

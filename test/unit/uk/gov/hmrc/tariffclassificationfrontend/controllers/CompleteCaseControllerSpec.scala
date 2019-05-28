@@ -121,7 +121,7 @@ class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
     "redirect unauthorised when does not have right permissions" in {
       val result: Result = await(controller(validCaseWithStatusOPEN, Set.empty)
-          .completeCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+        .completeCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
@@ -133,16 +133,14 @@ class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     "return OK and HTML content type" in {
       when(casesService.completeCase(refEq(validCaseWithStatusOPEN), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusCOMPLETED))
 
-      val result: Result = await(getController(validCaseWithStatusOPEN).confirmCompleteCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
+      val result: Result = await(getController(validCaseWithStatusOPEN).postCompleteCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
 
-      status(result) shouldBe Status.OK
-      contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
-      charsetOf(result) shouldBe Some("utf-8")
-      bodyOf(result) should include("This case has been completed")
+      status(result) shouldBe Status.SEE_OTHER
+      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/complete/confirmation")
     }
 
     "redirect to Application Details for non OPEN statuses" in {
-      val result: Result = await(getController(caseWithStatusCOMPLETED).confirmCompleteCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
+      val result: Result = await(getController(caseWithStatusCOMPLETED).postCompleteCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
@@ -152,7 +150,7 @@ class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
     "redirect to Application Details for case without decision" in {
 
-      val result: Result = await(getController(caseWithoutDecision).confirmCompleteCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
+      val result: Result = await(getController(caseWithoutDecision).postCompleteCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
@@ -161,7 +159,7 @@ class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     }
 
     "redirect to Application Details for case with incomplete decision" in {
-      val result: Result = await(getController(caseWithoutIncompleteDecision).confirmCompleteCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
+      val result: Result = await(getController(caseWithoutIncompleteDecision).postCompleteCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
@@ -173,17 +171,39 @@ class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       when(casesService.completeCase(any[Case], any[Operator])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusCOMPLETED))
 
       val result: Result = await(controller(validCaseWithStatusOPEN, Set(Permission.COMPLETE_CASE))
-        .confirmCompleteCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
+        .postCompleteCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
 
-      status(result) shouldBe Status.OK
+      status(result) shouldBe Status.SEE_OTHER
+      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/complete/confirmation")
     }
 
     "redirect unauthorised when does not have right permissions" in {
       val result: Result = await(controller(validCaseWithStatusOPEN, Set.empty)
-        .confirmCompleteCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
+        .postCompleteCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
+    }
+  }
+
+  "View Confirm page for a complete case" should {
+
+    "return OK and HTML content type" in {
+      val result: Result = await(getController(caseWithStatusCOMPLETED).confirmCompleteCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+
+      status(result) shouldBe Status.OK
+      contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
+      charsetOf(result) shouldBe Some("utf-8")
+      bodyOf(result) should include("This case has been completed")
+    }
+
+    "redirect to a default page if the status is not right" in {
+      val result: Result = await(getController(validCaseWithStatusOPEN).confirmCompleteCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+
+      status(result) shouldBe Status.SEE_OTHER
+      contentTypeOf(result) shouldBe None
+      charsetOf(result) shouldBe None
+      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/ruling")
     }
   }
 

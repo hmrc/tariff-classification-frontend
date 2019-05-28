@@ -23,7 +23,7 @@ import play.api.mvc._
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.MandatoryBooleanForm
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Permission}
-import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.NEW
+import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.{NEW,SUPPRESSED}
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
@@ -51,22 +51,36 @@ class SuppressCaseController @Inject()(verify: RequestActions,
     getCaseAndRenderView(reference, c => successful(views.html.suppress_case(c, f)))
   }
 
-  def suppressCase(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen
+  def getSuppressCase(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen
     verify.mustHave(Permission.SUPPRESS_CASE)).async { implicit request =>
     showCase(reference, form)
   }
 
-  def confirmSuppressCase(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen
+  def postSuppressCase(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen
     verify.mustHave(Permission.SUPPRESS_CASE)).async { implicit request =>
 
     form.bindFromRequest().fold(
       errors => showCase(reference, errors),
       {
-        case true => getCaseAndRenderView(reference, casesService.suppressCase(_, request.operator).map(views.html.confirm_supressed_case(_)))
-        case _ => getCaseAndRenderView(reference, c => successful(views.html.supressed_case_error(c)))
+        case true => validateAndRedirect(casesService.suppressCase(_, request.operator).map(c => routes.SuppressCaseController.confirmSuppressCase(reference)))
+        case _ => validateAndRedirect(c => successful(routes.SuppressCaseController.showContactInformation(reference)))
       }
     )
 
   }
+
+  def confirmSuppressCase(reference: String): Action[AnyContent] =
+    (verify.authenticated
+      andThen verify.casePermissions(reference)
+      andThen verify.mustHave(Permission.SUPPRESS_CASE)).async { implicit request =>
+      renderView(c => c.status == SUPPRESSED, c => successful(views.html.confirm_supressed_case(c)))
+    }
+
+  def showContactInformation(reference: String): Action[AnyContent] =
+    (verify.authenticated
+      andThen verify.casePermissions(reference)
+      andThen verify.mustHave(Permission.SUPPRESS_CASE)).async { implicit request =>
+      renderView(c => c.status == NEW, c => successful(views.html.supressed_case_error(c)))
+    }
 
 }

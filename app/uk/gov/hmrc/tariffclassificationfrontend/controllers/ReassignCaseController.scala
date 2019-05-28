@@ -67,14 +67,34 @@ class ReassignCaseController @Inject()(verify: RequestActions,
       queueService.getOneBySlug(queueSlug) flatMap {
         case None => successful(Ok(views.html.resource_not_found(s"Queue $queueSlug")))
         case Some(q: Queue) =>
-          validateAndRenderView(
-            caseService.reassignCase(_, q, request.operator).map(views.html.confirm_reassign_case(_, q, origin))
+          validateAndRedirect(
+            caseService.reassignCase(_, q, request.operator)
+              .map(_ => routes.ReassignCaseController.confirmReassignCase(reference, origin))
           )
       }
     }
 
     form.bindFromRequest.fold(onInvalidForm, onValidForm)
   }
+
+  def confirmReassignCase(reference: String, origin: String): Action[AnyContent] =
+    (verify.authenticated
+      andThen verify.casePermissions(reference)
+      andThen verify.mustHave(Permission.ASSIGN_CASE)).async { implicit request =>
+
+      def queueNotFound(implicit request: AuthenticatedCaseRequest[_]) = {
+        successful(views.html.resource_not_found(s"Case Queue"))
+      }
+
+      renderView(
+        c => reassignCaseStatuses.contains(c.status),
+        c => c.queueId.map(
+          id => queueService.getOneById(id) flatMap {
+            case Some(queue) => successful(views.html.confirm_reassign_case(c, queue, origin))
+            case None => queueNotFound
+          }).getOrElse(queueNotFound)
+      )
+    }
 
   override protected def redirect: String => Call = {
     // in case this is called from the "assigned cases" journey, we should redirect to `/queue/assigned/:assigneeId`

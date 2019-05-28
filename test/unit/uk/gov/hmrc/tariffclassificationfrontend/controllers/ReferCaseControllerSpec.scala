@@ -68,7 +68,7 @@ class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   "Refer Case" should {
 
     "return OK and HTML content type" in {
-      val result: Result = await(controller(caseWithStatusOPEN).referCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+      val result: Result = await(controller(caseWithStatusOPEN).getReferCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -77,7 +77,7 @@ class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     }
 
     "redirect to Application Details for non OPEN statuses" in {
-      val result: Result = await(controller(caseWithStatusNEW).referCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+      val result: Result = await(controller(caseWithStatusNEW).getReferCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
@@ -87,13 +87,13 @@ class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
     "return OK when user has right permissions" in {
       val result: Result = await(controller(caseWithStatusOPEN, Set(Permission.REFER_CASE))
-        .referCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+        .getReferCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.OK
     }
 
     "redirect unauthorised when does not have right permissions" in {
-      val result: Result = await(controller(caseWithStatusNEW, Set.empty).referCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+      val result: Result = await(controller(caseWithStatusNEW, Set.empty).getReferCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
@@ -103,10 +103,67 @@ class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
   "Confirm Refer a Case" should {
 
-    "return OK and HTML content type" in {
+    "redirect to confirmation page for positive case" in {
       when(casesService.referCase(refEq(caseWithStatusOPEN), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREFERRED))
 
-      val result: Result = await(controller(caseWithStatusOPEN).confirmReferCase("reference")
+      val result: Result = await(controller(caseWithStatusOPEN).postReferCase("reference")
+      (newFakePOSTRequestWithCSRF(fakeApplication)
+        .withFormUrlEncodedBody("state" -> "true")))
+
+      status(result) shouldBe Status.SEE_OTHER
+      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/refer/confirmation")
+    }
+
+    "redirect to contact info page for negative case" in {
+      when(casesService.referCase(refEq(caseWithStatusOPEN), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREFERRED))
+
+      val result: Result = await(controller(caseWithStatusOPEN).postReferCase("reference")
+      (newFakePOSTRequestWithCSRF(fakeApplication)
+        .withFormUrlEncodedBody("state" -> "false")))
+
+      status(result) shouldBe Status.SEE_OTHER
+      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/refer/contact-info")
+    }
+
+    "redirect to Application Details for non OPEN statuses" in {
+      val result: Result = await(controller(caseWithStatusNEW).postReferCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
+
+      status(result) shouldBe Status.SEE_OTHER
+      contentTypeOf(result) shouldBe None
+      charsetOf(result) shouldBe None
+      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/application")
+    }
+
+    "return SEE_OTHER when user has right permissions" in {
+      when(casesService.referCase(any[Case], any[Operator])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREFERRED))
+
+      val result: Result = await(controller(caseWithStatusOPEN, Set(Permission.REFER_CASE))
+        .postReferCase("reference")
+        (newFakePOSTRequestWithCSRF(fakeApplication)
+          .withFormUrlEncodedBody("state" -> "true")))
+
+
+      status(result) shouldBe Status.SEE_OTHER
+    }
+
+    "redirect unauthorised when does not have right permissions" in {
+      val result: Result = await(controller(caseWithStatusNEW, Set.empty)
+        .postReferCase("reference")
+        (newFakePOSTRequestWithCSRF(fakeApplication)
+          .withFormUrlEncodedBody("state" -> "true")))
+
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result).get should include("unauthorized")
+    }
+
+  }
+
+  "View Confirm page for a referred case" should {
+
+    "return OK and HTML content type" in {
+      when(casesService.referCase(refEq(caseWithStatusREFERRED), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREFERRED))
+
+      val result: Result = await(controller(caseWithStatusREFERRED).confirmReferCase("reference")
       (newFakePOSTRequestWithCSRF(fakeApplication)
         .withFormUrlEncodedBody("state" -> "true")))
 
@@ -116,12 +173,24 @@ class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       bodyOf(result) should include("This case has been referred")
     }
 
-    "return OK and HTML content type for reject error page" in {
+    "redirect to a default page if the status is not right" in {
       when(casesService.referCase(refEq(caseWithStatusOPEN), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREFERRED))
 
       val result: Result = await(controller(caseWithStatusOPEN).confirmReferCase("reference")
       (newFakePOSTRequestWithCSRF(fakeApplication)
-        .withFormUrlEncodedBody("state" -> "false")))
+        .withFormUrlEncodedBody("state" -> "true")))
+
+      status(result) shouldBe Status.SEE_OTHER
+      contentTypeOf(result) shouldBe None
+      charsetOf(result) shouldBe None
+      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/application")
+    }
+  }
+
+  "View contact info page for a case that was not referred" should {
+
+    "return OK and HTML content type" in {
+      val result: Result = await(controller(caseWithStatusOPEN).showContactInformation("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -129,37 +198,14 @@ class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       bodyOf(result) should include("You must contact the applicant")
     }
 
-    "redirect to Application Details for non OPEN statuses" in {
-      val result: Result = await(controller(caseWithStatusNEW).confirmReferCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
+    "redirect to a default page if the status is not right" in {
+      val result: Result = await(controller(caseWithStatusREFERRED).showContactInformation("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
       charsetOf(result) shouldBe None
       locationOf(result) shouldBe Some("/tariff-classification/cases/reference/application")
     }
-
-    "return OK when user has right permissions" in {
-      when(casesService.referCase(any[Case], any[Operator])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREFERRED))
-
-      val result: Result = await(controller(caseWithStatusOPEN, Set(Permission.REFER_CASE))
-        .confirmReferCase("reference")
-        (newFakePOSTRequestWithCSRF(fakeApplication)
-          .withFormUrlEncodedBody("state" -> "true")))
-
-
-      status(result) shouldBe Status.OK
-    }
-
-    "redirect unauthorised when does not have right permissions" in {
-      val result: Result = await(controller(caseWithStatusNEW, Set.empty)
-        .confirmReferCase("reference")
-        (newFakePOSTRequestWithCSRF(fakeApplication)
-          .withFormUrlEncodedBody("state" -> "true")))
-
-      status(result) shouldBe Status.SEE_OTHER
-      redirectLocation(result).get should include("unauthorized")
-    }
-
   }
 
 }

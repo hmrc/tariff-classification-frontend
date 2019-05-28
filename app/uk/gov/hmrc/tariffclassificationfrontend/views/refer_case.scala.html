@@ -35,7 +35,7 @@
 
             <h3 class="heading-medium mt-0">Have you contacted the applicant and attached a copy of the email to this case?</h3>
 
-            @helper.form(action = ReferCaseController.confirmReferCase(c.reference), 'id -> "refer-case") {
+            @helper.form(action = ReferCaseController.postReferCase(c.reference), 'id -> "refer-case") {
                 @helper.CSRF.formField
 
                 @input_yes_no(form("state"), "refer-case_contacted-applicant")

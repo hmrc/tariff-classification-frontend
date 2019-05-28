@@ -47,15 +47,39 @@ trait RenderCaseAction extends FrontendController with I18nSupport {
     }
   }
 
+  protected def defaultRedirect(reference : Option[String] = None) (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
+    successful(Redirect(redirect(reference.getOrElse(request.`case`.reference))))
+  }
+
+  protected def validateAndRedirect(toHtml: Case => Future[Call])
+                                     (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
+
+    if (isValidCase(request.`case`)(request)) {
+      toHtml(request.`case`).map(Redirect)
+    } else {
+      defaultRedirect()
+    }
+  }
+
   protected def validateAndRenderView(toHtml: Case => Future[HtmlFormat.Appendable])
                                      (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
 
     if (isValidCase(request.`case`)(request)) {
       toHtml(request.`case`).map(Ok(_))
     } else {
-      successful(Redirect(redirect(request.`case`.reference)))
+      defaultRedirect()
     }
   }
+
+  protected def renderView(valid: Case => Boolean, toHtml: Case => Future[HtmlFormat.Appendable])
+                          (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
+    if (valid(request.`case`)) {
+      toHtml(request.`case`).map(Ok(_))
+    } else {
+      defaultRedirect()
+    }
+  }
+
 
   protected def getCaseAndRespond(caseReference: String,
                                   toResult: Case => Future[Result])
@@ -63,7 +87,7 @@ trait RenderCaseAction extends FrontendController with I18nSupport {
 
     request.`case` match {
       case c: Case if isValidCase(c)(request) => toResult(c)
-      case _ => successful(Redirect(redirect(caseReference)))
+      case _ => defaultRedirect(Some(caseReference))
     }
   }
 
@@ -74,7 +98,7 @@ trait RenderCaseAction extends FrontendController with I18nSupport {
     if (isValidCase(request.`case`)(request)) {
       toResult(request.`case`)
     } else {
-      successful(Redirect(redirect(request.`case`.reference)))
+      defaultRedirect()
     }
   }
 

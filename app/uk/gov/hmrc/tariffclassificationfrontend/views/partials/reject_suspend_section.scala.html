@@ -23,12 +23,12 @@
         <h3 class="heading-medium mt-30 mb-30">Reject or suspend this case</h3>
 
         <p>
-            <a @if(useTabIndex.isDefined){ tabindex="@{useTabIndex.get}" } id="reject-case-button" href="@controllers.routes.RejectCaseController.rejectCase(c.reference)">Reject this case</a>
+            <a @if(useTabIndex.isDefined){ tabindex="@{useTabIndex.get}" } id="reject-case-button" href="@controllers.routes.RejectCaseController.getRejectCase(c.reference)">Reject this case</a>
             if the case details are invalid. Once it has been rejected, it cannot be reopened.
         </p>
 
         <p>
-            <a @if(useTabIndex.isDefined){ tabindex="@{useTabIndex.get +1}" } id="suspend-case-button" href="@controllers.routes.SuspendCaseController.suspendCase(c.reference)">Suspend this case</a>
+            <a @if(useTabIndex.isDefined){ tabindex="@{useTabIndex.get +1}" } id="suspend-case-button" href="@controllers.routes.SuspendCaseController.getSuspendCase(c.reference)">Suspend this case</a>
             if the commodity code that you want to assign to the ruling is changing.  The case can be reopened.
         </p>
     </div>
