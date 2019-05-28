@@ -49,12 +49,13 @@ class ThumbnailViewSpec extends ViewSpec  {
       doc should containElementWithID("some-id")
       doc.getElementById("some-id") should haveTag("img")
       doc.getElementById("some-id") should haveAttribute("src", "some/file/url")
-      doc.getElementById("some-id") should haveAttribute("alt", "the-file-name.png")
+      doc.getElementById("some-id") should haveAttribute("alt", "Image the-file-name.png for case some-case-reference")
       doc.getElementById("some-id") should haveAttribute("title", "the-file-name.png")
 
       doc should containElementWithID("some-id-link")
       doc.getElementById("some-id-link") should haveAttribute("href", "some/file/url")
       doc.getElementById("some-id-link") should haveAttribute("target", "_blank")
+      doc.getElementById("some-id-link") should haveAttribute("aria-label", "View case some-case-reference")
 
     }
   }
