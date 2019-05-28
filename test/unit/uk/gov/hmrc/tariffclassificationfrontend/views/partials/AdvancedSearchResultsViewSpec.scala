@@ -123,7 +123,7 @@ class AdvancedSearchResultsViewSpec extends ViewSpec {
       doc should containElementWithID("advanced_search_results-row-0-attachments-0")
       doc.getElementById("advanced_search_results-row-0-attachments-0") should haveTag("img")
       doc.getElementById("advanced_search_results-row-0-attachments-0") should haveAttribute("src", "url")
-      doc.getElementById("advanced_search_results-row-0-attachments-0") should haveAttribute("alt", "filename")
+      doc.getElementById("advanced_search_results-row-0-attachments-0") should haveAttribute("alt", "Image filename for case reference")
       doc.getElementById("advanced_search_results-row-0-attachments-0") should haveAttribute("title", "filename")
 
       doc should containElementWithID("advanced_search_results-row-0-attachments-0-link")
