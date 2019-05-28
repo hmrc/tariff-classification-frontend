@@ -42,18 +42,20 @@
         <div id="advanced_search_keywords">
             <div class="display-inline w-75">
                 <label class="form-label" for="keyword_0">
-                    <span class="">Search keyword</span>
+                    <span>Search keyword</span>
                 </label>
                 <span class="form-hint" id="keyword_0-hint">Add keywords to narrow your search, remove keywords to broaden results</span>
             </div>
-            <div class="display-inline w-75">
+            <div class="w-75 left display-inline">
                 @input_auto_complete(
                     field = form("keyword[0]"),
                     formControlClass = Some("w-100"),
                     autoCompleteOptions = keywords.diff(keywordsAdded(form))
                 )
             </div>
-            <button id="advanced_search-add_keyword" class="button display-inline" type="submit">Add to search</button>
+            <button id="advanced_search-add_keyword" class="button left ml-1" type="submit">
+                Add to search
+            </button>
         </div>
 
     @defining(RepeatedMapping.indexes("keyword", form.data).map(idx => (idx, form.data(s"keyword[$idx]"))).filterNot(_._1 == 0)) { keywords: Seq[(Int, String)] =>
