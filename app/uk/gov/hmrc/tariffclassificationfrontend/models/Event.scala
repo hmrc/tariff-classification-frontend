@@ -51,7 +51,8 @@ case class CaseStatusChange
 (
   override val from: CaseStatus,
   override val to: CaseStatus,
-  override val comment: Option[String] = None
+  override val comment: Option[String] = None,
+  attachmentId: Option[String] = None
 ) extends FieldChange[CaseStatus] {
   override val `type`: EventType.Value = EventType.CASE_STATUS_CHANGE
 }
