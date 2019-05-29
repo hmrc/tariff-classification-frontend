@@ -31,7 +31,7 @@
         <div class="column-full">
             <h2 class="heading-large mt-0">Change the status of this case to: Suppressed</h2>
 
-            @helper.form(action = SuppressCaseController.postSuppressCase(c.reference), 'id -> "suppress-case") {
+            @helper.form(action = SuppressCaseController.postSuppressCase(c.reference), 'id -> "suppress-case", 'enctype -> "multipart/form-data") {
                 @helper.CSRF.formField
 
                 <h3 id="suppress_case-heading" class="heading-medium mt-4 mb-30">Add a note</h3>
