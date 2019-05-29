@@ -61,7 +61,7 @@ class RejectCaseController @Inject()(verify: RequestActions,
   def postRejectCase(reference: String): Action[MultipartFormData[Files.TemporaryFile]] = (verify.authenticated andThen verify.casePermissions(reference) andThen
     verify.mustHave(Permission.REJECT_CASE)).async(parse.multipartFormData) { implicit request: AuthenticatedCaseRequest[MultipartFormData[Files.TemporaryFile]] =>
     // Get the file from the request (filename check ensures it has been selected)
-    request.body.file("file-input").filter(_.filename.nonEmpty) match {
+    request.body.file("file-input").filter(_.filename.nonEmpty).filter(_.contentType.isDefined) match {
       case Some(file) =>
         form.bindFromRequest().fold(
           errors =>
@@ -74,7 +74,7 @@ class RejectCaseController @Inject()(verify: RequestActions,
 
       case None =>
         def getCaseAndRenderErrors(form: Form[String]): Future[Result] = getCaseAndRenderView(reference,
-          c => successful(views.html.reject_case(c, form.withError("input-file", "You must upload an email"))))
+          c => successful(views.html.reject_case(c, form.withError("file-input", "You must upload an email"))))
 
         form.bindFromRequest().fold(
           errors => getCaseAndRenderErrors(errors),
