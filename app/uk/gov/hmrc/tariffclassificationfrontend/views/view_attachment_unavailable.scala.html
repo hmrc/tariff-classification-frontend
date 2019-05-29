@@ -20,19 +20,19 @@
 
 @(fileSubmitted: Option[FileMetadata])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("view.attachment.unavailabe.title"))) {
- <h1 class="heading-xlarge mb-3" id="attachment-heading">@messages("view.attachment.unavailabe.heading")</h1>
+@main(bodyClasses = None, customTitle = Some(messages("view.attachment.unavailable.title"))) {
+ <h1 class="heading-xlarge mb-3" id="attachment-heading">@messages("view.attachment.unavailable.heading")</h1>
 
  @if(fileSubmitted.flatMap(_.scanStatus).contains(ScanStatus.FAILED)) {
-  <p id="attachment-scan_failed">@messages("view.attachment.unavailabe.content.failedToProcess")</p>
+  <p id="attachment-scan_failed">@messages("view.attachment.unavailable.content.failedToProcess")</p>
  }
 
  @if(fileSubmitted.exists(_.scanStatus.isEmpty)) {
-  <p id="attachment-processing">@messages("view.attachment.unavailabe.content.stillProcessing")</p>
+  <p id="attachment-processing">@messages("view.attachment.unavailable.content.stillProcessing")</p>
  }
 
  @if(fileSubmitted.isEmpty) {
-  <p id="attachment-not_found">@messages("view.attachment.unavailabe.content.doesNotExist")</p>
+  <p id="attachment-not_found">@messages("view.attachment.unavailable.content.doesNotExist")</p>
  }
 
 }

@@ -22,7 +22,7 @@ import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models.Permission
-import uk.gov.hmrc.tariffclassificationfrontend.models.response.{FileMetadata, ScanStatus}
+import uk.gov.hmrc.tariffclassificationfrontend.models.response.FileMetadata
 import uk.gov.hmrc.tariffclassificationfrontend.service.FileStoreService
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
@@ -37,7 +37,7 @@ class ViewAttachmentController @Inject()(verify: RequestActions,
   def get(id: String): Action[AnyContent] = (verify.authenticated andThen verify.mustHave(Permission.VIEW_CASES)).async
   { implicit request: Request[AnyContent] =>
     fileService.getFileMetadata(id) map {
-      case Some(fileSubmitted: FileMetadata) if fileSubmitted.url.isDefined && fileSubmitted.scanStatus.contains(ScanStatus.READY) =>
+      case Some(fileSubmitted: FileMetadata) if fileSubmitted.url.isDefined =>
         Redirect(Call(method = "GET", url = fileSubmitted.url.get))
       case fileSubmitted: Option[FileMetadata] =>
         Ok(views.html.view_attachment_unavailable(fileSubmitted))

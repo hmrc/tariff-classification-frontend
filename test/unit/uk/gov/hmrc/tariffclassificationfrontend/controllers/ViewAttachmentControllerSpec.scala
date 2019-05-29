@@ -66,8 +66,8 @@ class ViewAttachmentControllerSpec extends WordSpec with Matchers with UnitSpec
     given(fileService.getFileMetadata(refEq("id"))(any[HeaderCarrier])) willReturn Future.successful(fileMetadata)
 
   private val fileReady = FileMetadata("id", "file", "type", Some("url"), Some(ScanStatus.READY))
-  private val fileFailed = FileMetadata("id", "file", "type", Some("url"), Some(ScanStatus.FAILED))
-  private val fileProcessing = FileMetadata("id", "file", "type", Some("url"), None)
+  private val fileFailed = FileMetadata("id", "file", "type", None, Some(ScanStatus.FAILED))
+  private val fileProcessing = FileMetadata("id", "file", "type", None, None)
 
 
   "View Attachment 'GET" should {
