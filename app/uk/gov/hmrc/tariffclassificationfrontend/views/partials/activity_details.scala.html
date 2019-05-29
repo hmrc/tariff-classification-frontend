@@ -23,7 +23,10 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Event, Paged, Permission, Queue}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.input_textarea
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{activity_details_events_table, assignee, tab_heading}
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.error_summary
 @(c: Case, events: Paged[Event], activityForm: Form[ActivityFormData], queues: Seq[Queue], startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+
+    @error_summary(activityForm.errors, Some(startAtTabIndex))
 
     @tab_heading("activity", messages("case.menu.activity"))
 
@@ -38,11 +41,11 @@
                     field = activityForm("note"),
                     label = "Add case note",
                     hint = Some("Add short, descriptive notes to record case activity. For example, 'A sample of one trainer has been received and sent to the lab for testing.'"),
-                    tabIndex = Some(startAtTabIndex+1),
-                    customErrorMessage = Some("Enter a case note")
+                    tabIndex = Some(startAtTabIndex+10),
+                    customErrorMessage = Some(messages("error.case.note"))
                 )
                 <div class="form-group">
-                    <button tabindex="@{startAtTabIndex+2}" id="add-note-submit" class="button" type="submit">Add note to activity timeline</button>
+                    <button tabindex="@{startAtTabIndex+11}" id="add-note-submit" class="button" type="submit">Add note to activity timeline</button>
                 </div>
             }
             </div>
@@ -79,7 +82,7 @@
         }
         @if(request.hasPermission(Permission.MOVE_CASE_BACK_TO_QUEUE) && reassignCaseStatuses.contains(c.status)){
             <span class="column-one-third mt-1">
-                <a tabindex="@{startAtTabIndex+3}" id="reassign-queue-link" href="@ReassignCaseController.showAvailableQueues(c.reference, request.uri)">
+                <a tabindex="@{startAtTabIndex+13}" id="reassign-queue-link" href="@ReassignCaseController.showAvailableQueues(c.reference, request.uri)">
                         Move this case back to a queue
                 </a>
             </span>

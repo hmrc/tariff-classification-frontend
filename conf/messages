@@ -1,5 +1,6 @@
 error.summary.title = There is a problem
 
+
 cases.menu.my-cases=My cases
 cases.menu.gateway-cases=Gateway cases
 cases.menu.queue-cases={0} cases
@@ -155,7 +156,7 @@ errors.ruling-not-found.message=We could not find a ruling with case reference: 
 
 errors.resource-not-found.title={0} not found.
 
-errors.summary.title=Error
+error.case.note = Enter a case note
 
 
 release-case.submit.button = Release Case
