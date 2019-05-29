@@ -108,10 +108,6 @@ class CaseController @Inject()(verify: RequestActions,
     )
   }
 
-  private def withError[T](form : Form[T], errorKey: String, errorMessage: String): Form[T] = {
-    form.copy(errors = Seq(FormError(errorKey, errorMessage)))
-  }
-
   def addNote(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.ADD_NOTE)).async { implicit request =>
 
     def onError: Form[ActivityFormData] => Future[Result] = errorForm => {
@@ -219,4 +215,9 @@ class CaseController @Inject()(verify: RequestActions,
       queues <- queuesService.getAll
     } yield views.html.partials.activity_details(c, events, f, queues, pagesWithStartTabIndexes(ACTIVITY))
   }
+
+  private def withError[T](form : Form[T], errorKey: String, errorMessage: String): Form[T] = {
+    form.copy(errors = Seq(FormError(errorKey, errorMessage)))
+  }
+
 }
