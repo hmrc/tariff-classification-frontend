@@ -20,6 +20,7 @@ import javax.inject.{Inject, Singleton}
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.libs.Files
+import play.api.libs.Files.TemporaryFile
 import play.api.mvc._
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.AddNoteForm
@@ -62,7 +63,7 @@ class RejectCaseController @Inject()(verify: RequestActions,
     verify.mustHave(Permission.REJECT_CASE)).async(parse.multipartFormData) { implicit request: AuthenticatedCaseRequest[MultipartFormData[Files.TemporaryFile]] =>
     // Get the file from the request (filename check ensures it has been selected)
     request.body.file("file-input").filter(_.filename.nonEmpty).filter(_.contentType.isDefined) match {
-      case Some(file) =>
+      case Some(file) if hasValidContentType(file) =>
         form.bindFromRequest().fold(
           errors =>
             getCaseAndRenderView(reference, c => successful(views.html.reject_case(c, errors))),
@@ -71,15 +72,28 @@ class RejectCaseController @Inject()(verify: RequestActions,
             validateAndRedirect(casesService.rejectCase(_, fileUpload, note, request.operator).map(c => routes.RejectCaseController.confirmRejectCase(reference)))
           }
         )
-
+      case Some(_) =>
+        form.bindFromRequest().fold(
+          errors => getCaseAndRenderErrors(errors, reference, messagesApi("status.change.upload.error.fileType")),
+          note => getCaseAndRenderErrors(form.fill(note), reference, messagesApi("status.change.upload.error.fileType"))
+        )
       case None =>
-        def getCaseAndRenderErrors(form: Form[String]): Future[Result] = getCaseAndRenderView(reference,
-          c => successful(views.html.reject_case(c, form.withError("file-input", "You must upload an email"))))
 
         form.bindFromRequest().fold(
-          errors => getCaseAndRenderErrors(errors),
-          note => getCaseAndRenderErrors(form.fill(note))
+          errors => getCaseAndRenderErrors(errors, reference, messagesApi("status.change.upload.error.mustSelect")),
+          note => getCaseAndRenderErrors(form.fill(note), reference, messagesApi("status.change.upload.error.mustSelect"))
         )
+    }
+  }
+
+  private def getCaseAndRenderErrors(form: Form[String], reference : String, specificProblem : String)
+                                    (implicit request: AuthenticatedCaseRequest[MultipartFormData[Files.TemporaryFile]]): Future[Result] =
+    getCaseAndRenderView(reference, c => successful(views.html.reject_case(c, form.withError("file-input", specificProblem))))
+
+  private def hasValidContentType: MultipartFormData.FilePart[TemporaryFile] => Boolean = { f =>
+    f.contentType match {
+      case Some(c: String) if appConfig.fileUploadMimeTypes.contains(c) => true
+      case _ => false
     }
   }
 

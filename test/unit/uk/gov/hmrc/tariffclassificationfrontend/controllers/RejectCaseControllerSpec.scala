@@ -78,6 +78,12 @@ class RejectCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     MultipartFormData[TemporaryFile](dataParts =params.toMap, files = Seq(filePart), badParts = Seq.empty)
   }
 
+  def aMultipartFileOfType(mimeType: String): MultipartFormData[TemporaryFile] = {
+    val file = TemporaryFile("example-file")
+    val filePart = FilePart[TemporaryFile](key = "file-input", "example-file", contentType = Some(mimeType), ref = file)
+    MultipartFormData[TemporaryFile](dataParts = Map(), files = Seq(filePart), badParts = Seq.empty)
+  }
+
   "Reject Case" should {
 
     "return OK and HTML content type" in {
@@ -131,6 +137,14 @@ class RejectCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     "return to form on missing file" in {
       val result: Result = await(controller(caseWithStatusOPEN).postRejectCase("reference")
       (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aEmptyMultipartFileWithParams())))
+
+      status(result) shouldBe Status.OK
+      bodyOf(result) should include("Change the status of this case to: Reject")
+    }
+
+    "return to form on wrong type of file" in {
+      val result: Result = await(controller(caseWithStatusOPEN).postRejectCase("reference")
+      (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileOfType("audio/mpeg"))))
 
       status(result) shouldBe Status.OK
       bodyOf(result) should include("Change the status of this case to: Reject")
