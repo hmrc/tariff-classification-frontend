@@ -58,7 +58,7 @@ class RejectCaseController @Inject()(verify: RequestActions,
       {
         case true => validateAndRedirect(casesService.rejectCase(_, request.operator)
                       .map( c => routes.RejectCaseController.confirmRejectCase(c.reference)))
-        case _ => validateAndRedirect(c => successful(routes.RejectCaseController.showContactInformation(c.reference)))
+        case _ => validateAndRedirect(c => successful(routes.RejectCaseController.confirmRejectCase(c.reference)))
       }
     )
   }
@@ -70,12 +70,6 @@ class RejectCaseController @Inject()(verify: RequestActions,
       renderView(c => c.status == REJECTED, c => successful(views.html.confirm_rejected(c)))
     }
 
-  def showContactInformation(reference: String): Action[AnyContent] =
-    (verify.authenticated
-      andThen verify.casePermissions(reference)
-      andThen verify.mustHave(Permission.REJECT_CASE)).async { implicit request =>
-      renderView(c => c.status == OPEN, c => successful(views.html.reject_case_error(c)))
-    }
 
   override protected def redirect: String => Call = routes.CaseController.applicationDetails
 
