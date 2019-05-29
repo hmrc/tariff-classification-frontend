@@ -139,7 +139,7 @@ class RejectCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aEmptyMultipartFileWithParams())))
 
       status(result) shouldBe Status.OK
-      bodyOf(result) should include("Change the status of this case to: Reject")
+      bodyOf(result) should include("Change the status of this case to: Rejected")
     }
 
     "return to form on wrong type of file" in {
@@ -147,7 +147,7 @@ class RejectCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileOfType("audio/mpeg"))))
 
       status(result) shouldBe Status.OK
-      bodyOf(result) should include("Change the status of this case to: Reject")
+      bodyOf(result) should include("Change the status of this case to: Rejected")
     }
 
     "return to form on missing form field" in {
@@ -155,7 +155,7 @@ class RejectCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileWithParams())))
 
       status(result) shouldBe Status.OK
-      bodyOf(result) should include("Change the status of this case to: Reject")
+      bodyOf(result) should include("Change the status of this case to: Rejected")
     }
 
     "redirect to Application Details for non OPEN statuses" in {
