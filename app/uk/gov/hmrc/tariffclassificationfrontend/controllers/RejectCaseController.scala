@@ -30,6 +30,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
 //noinspection ScalaStyle
@@ -72,15 +73,12 @@ class RejectCaseController @Inject()(verify: RequestActions,
         )
 
       case None =>
+        def getCaseAndRenderErrors(form: Form[String]): Future[Result] = getCaseAndRenderView(reference,
+          c => successful(views.html.reject_case(c, form.withError("input-file", "You must upload an email"))))
+
         form.bindFromRequest().fold(
-          errors => {
-            val formWithErrors = errors.withError("file-input", "You must upload an email")
-            getCaseAndRenderView(reference, c => successful(views.html.reject_case(c, formWithErrors)))
-          },
-          note => {
-            val formWithErrors = form.fill(note).withError("file-input", "You must upload an email")
-            getCaseAndRenderView(reference, c => successful(views.html.reject_case(c, formWithErrors)))
-          }
+          errors => getCaseAndRenderErrors(errors),
+          note => getCaseAndRenderErrors(form.fill(note))
         )
     }
   }
