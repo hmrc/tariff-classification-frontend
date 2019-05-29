@@ -29,7 +29,9 @@
         @back_link(displayBackLink, SessionKeys.backToQueuesLinkUrl, SessionKeys.backToQueuesLinkLabel)
     }
 
-    <span id="case-reference" class="case-reference">Case @{c.reference}</span>
+    <div id="case-reference" class="case-reference">
+        Case <a href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController.trader(c.reference)">@{c.reference}</a>
+    </div>
 
     <h1 class="heading-xlarge case-title">@messages("case.title", c.application.getType, c.application.holder.businessName)</h1>
 
