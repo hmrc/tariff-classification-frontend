@@ -88,7 +88,7 @@ class CasesService_SuppressCaseSpec extends UnitSpec with MockitoSugar with Befo
       eventCreated.details shouldBe CaseStatusChange(CaseStatus.NEW, CaseStatus.SUPPRESSED)
     }
 
-    "update update on attachment upload failure" in {
+    "fail to update on attachment upload failure" in {
       // Given
       val fileUpload = mock[FileUpload]
       val operator: Operator = Operator("operator-id", Some("Billy Bobbins"))
@@ -99,7 +99,7 @@ class CasesService_SuppressCaseSpec extends UnitSpec with MockitoSugar with Befo
       // When Then
       intercept[RuntimeException] {
         await(service.suppressCase(originalCase, fileUpload, "note", operator))
-      }
+      }.getMessage shouldBe "Error"
     }
 
     "not create event on update failure" in {
