@@ -21,7 +21,6 @@ import java.time.Instant
 
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.given
-import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import play.api.libs.Files.TemporaryFile
 import uk.gov.hmrc.http.HeaderCarrier
@@ -138,6 +137,15 @@ class FileStoreServiceSpec extends UnitSpec with MockitoSugar {
     }
   }
 
+  "Service Get FileMetadata" should {
+    val file = mock[FileMetadata]
+
+    "Delegate to Connector" in {
+      given(connector.get("id")) willReturn Future.successful(Some(file))
+      await(service.getFileMetadata("id")) shouldBe Some(file)
+    }
+  }
+
   private def aStoredAttachmentWithId(id: String): StoredAttachment = {
     StoredAttachment(
       id = id,
@@ -205,7 +213,7 @@ class FileStoreServiceSpec extends UnitSpec with MockitoSugar {
 
   private def givenFileStoreReturnsNoAttachments(): Unit = {
     given(connector.get(any[Seq[Attachment]])(any[HeaderCarrier])) willReturn successful(Seq.empty)
-    given(connector.get(any[Attachment])(any[HeaderCarrier])) willReturn successful(None)
+    given(connector.get(any[String])(any[HeaderCarrier])) willReturn successful(None)
   }
 
   private def givenFileStoreReturnsAttachments(attachments: FileMetadata*): Unit = {
@@ -213,7 +221,7 @@ class FileStoreServiceSpec extends UnitSpec with MockitoSugar {
   }
 
   private def givenFileStoreReturnsAttachment(attachment: FileMetadata): Unit = {
-    given(connector.get(any[Attachment])(any[HeaderCarrier])) willReturn successful(Some(attachment))
+    given(connector.get(any[String])(any[HeaderCarrier])) willReturn successful(Some(attachment))
   }
 
 }
