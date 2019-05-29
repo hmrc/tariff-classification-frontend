@@ -17,6 +17,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.{CaseController, SuppressCaseController}
 @import uk.gov.hmrc.tariffclassificationfrontend.models.Case
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.components.{confirm_or_cancel_buttons, warning}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.input_textarea
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{case_heading, status_change_upload}
@@ -44,19 +45,17 @@
 
                 @status_change_upload(form("email"), "suppressing")
 
-                <div class="notice">
-                    <i class="icon icon-important">
-                        <span class="visually-hidden">Warning</span>
-                    </i>
-                    <strong class="bold-small">
-                        This case cannot be reopened once it has been suppressed.
-                    </strong>
-                </div>
+                @warning(
+                    "This case cannot be reopened once it has been suppressed.",
+                    containerClass = "mb-4"
+                )
 
-                <div class="mt-4">
-                    <button class="button" id="suppress-case-button" type="submit">Confirm status change</button>
-                    <a class="secondary-button" id="suppress-case-cancel-button" href="@CaseController.trader(c.reference)">Cancel and return to case</a>
-                </div>
+                @confirm_or_cancel_buttons(
+                    id = "suppress_case",
+                    confirmText = "Confirm status change",
+                    cancelText = "Cancel and return to case",
+                    cancelHref = CaseController.trader(c.reference)
+                )
             }
         </div>
     </div>
