@@ -23,14 +23,16 @@ import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterEach, Matchers, WordSpec}
 import play.api.http.{MimeTypes, Status}
 import play.api.i18n.{DefaultLangs, DefaultMessagesApi}
-import play.api.mvc.Result
+import play.api.libs.Files.TemporaryFile
+import play.api.mvc.MultipartFormData.FilePart
+import play.api.mvc.{MultipartFormData, Result}
 import play.api.test.Helpers.{redirectLocation, _}
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models.Permission.Permission
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus, Operator, Permission}
+import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.tariffclassificationfrontend.utils.Cases
 
@@ -65,6 +67,16 @@ class RejectCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   private def controller(requestCase: Case, permission: Set[Permission]) = new RejectCaseController(
     new RequestActionsWithPermissions(permission, c = requestCase), casesService, messageApi, appConfig)
 
+  private def aMultipartFileWithParams(params: (String, Seq[String])*): MultipartFormData[TemporaryFile] = {
+    val file = TemporaryFile("example-file.txt")
+    val filePart = FilePart[TemporaryFile](key = "file-input", "file.txt", contentType = Some("text/plain"), ref = file)
+    MultipartFormData[TemporaryFile](dataParts = params.toMap, files = Seq(filePart), badParts = Seq.empty)
+  }
+
+  def aEmptyMultipartFileWithParams(params: (String, Seq[String])*): MultipartFormData[TemporaryFile] = {
+    val filePart = FilePart[TemporaryFile](key = "file-input", "", contentType = Some("text/plain"), ref = TemporaryFile("example-file.txt"))
+    MultipartFormData[TemporaryFile](dataParts =params.toMap, files = Seq(filePart), badParts = Seq.empty)
+  }
 
   "Reject Case" should {
 
@@ -106,26 +118,30 @@ class RejectCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
   "Post Confirm Reject a Case" should {
 
-    "return redirect to confirm page for positive case" in {
-      when(casesService.rejectCase(refEq(caseWithStatusOPEN), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREJECTED))
+    "redirect to confirmation page when data filled in" in {
+      when(casesService.rejectCase(refEq(caseWithStatusOPEN), any[FileUpload], any[String], refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREJECTED))
 
       val result: Result = await(controller(caseWithStatusOPEN).postRejectCase("reference")
-      (newFakePOSTRequestWithCSRF(fakeApplication)
-        .withFormUrlEncodedBody("state" -> "true")))
+      (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileWithParams("note" -> Seq("some-note")))))
 
       status(result) shouldBe Status.SEE_OTHER
       locationOf(result) shouldBe Some("/tariff-classification/cases/reference/reject/confirmation")
     }
 
-    "return redirect to reject error page for negative case" in {
-      when(casesService.rejectCase(refEq(caseWithStatusOPEN), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREJECTED))
-
+    "return to form on missing file" in {
       val result: Result = await(controller(caseWithStatusOPEN).postRejectCase("reference")
-      (newFakePOSTRequestWithCSRF(fakeApplication)
-        .withFormUrlEncodedBody("state" -> "false")))
+      (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aEmptyMultipartFileWithParams())))
 
-      status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/reject/contact-info")
+      status(result) shouldBe Status.OK
+      bodyOf(result) should include("Change the status of this case to: Reject")
+    }
+
+    "return to form on missing form field" in {
+      val result: Result = await(controller(caseWithStatusOPEN).postRejectCase("reference")
+      (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileWithParams())))
+
+      status(result) shouldBe Status.OK
+      bodyOf(result) should include("Change the status of this case to: Reject")
     }
 
     "redirect to Application Details for non OPEN statuses" in {
@@ -139,7 +155,7 @@ class RejectCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     }
 
     "return SEE_OTHER when user has right permissions" in {
-      when(casesService.rejectCase(any[Case], any[Operator])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREJECTED))
+      when(casesService.rejectCase(any[Case], any[FileUpload], any[String], any[Operator])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREJECTED))
 
       val result: Result = await(controller(caseWithStatusOPEN, Set(Permission.REJECT_CASE))
         .confirmRejectCase("reference")
@@ -181,27 +197,6 @@ class RejectCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       val result: Result = await(controller(caseWithStatusOPEN).confirmRejectCase("reference")
       (newFakePOSTRequestWithCSRF(fakeApplication)
         .withFormUrlEncodedBody("state" -> "true")))
-
-      status(result) shouldBe Status.SEE_OTHER
-      contentTypeOf(result) shouldBe None
-      charsetOf(result) shouldBe None
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/application")
-    }
-  }
-
-  "View contact info page for a case that was not rejected" should {
-
-    "return OK and HTML content type" in {
-     val result: Result = await(controller(caseWithStatusOPEN).showContactInformation("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
-
-      status(result) shouldBe Status.OK
-      contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
-      charsetOf(result) shouldBe Some("utf-8")
-      bodyOf(result) should include("You must contact the applicant")
-    }
-
-    "redirect to a default page if the status is not right" in {
-      val result: Result = await(controller(caseWithStatusREJECTED).showContactInformation("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
