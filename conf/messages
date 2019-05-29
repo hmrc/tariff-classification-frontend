@@ -282,3 +282,10 @@ page.title.choose.appeal.type=Choose appeal type
 page.title.extended.use=Extended use of this ruling
 page.title.ruling.not.found=Ruling not found
 page.title.case.queues=Tariff classification case queues
+
+
+view.attachment.unavailabe.title=Attachment unavailable
+view.attachment.unavailabe.heading = Attachment is unavailable
+view.attachment.unavailabe.content.failedToProcess = File failed to process. This could be because a virus was found.
+view.attachment.unavailabe.content.stillProcessing = File is still processing. It should be available in the next few minutes.
+view.attachment.unavailabe.content.doesNotExist = File does not exist.
