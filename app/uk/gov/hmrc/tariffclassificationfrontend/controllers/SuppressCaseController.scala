@@ -69,7 +69,7 @@ class SuppressCaseController @Inject()(verify: RequestActions,
       case None => {
         def getCaseAndRenderErrors(form: Form[String]): Future[Result] = getCaseAndRenderView(
           reference,
-          c => successful(views.html.suppress_case(c, form.withError("email", "You must upload an email")))
+          c => successful(views.html.suppress_case(c, form.withError("email", "Attach the email you have sent to the contact")))
         )
 
         form.bindFromRequest().fold(
