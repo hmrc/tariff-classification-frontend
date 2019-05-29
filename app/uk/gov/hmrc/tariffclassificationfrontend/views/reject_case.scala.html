@@ -32,8 +32,9 @@
         <div class="column-full">
             <h2 class="heading-large mt-0">Change the status of this case to: Reject</h2>
 
-            @helper.form(action = RejectCaseController.postRejectCase(c.reference), 'id -> "reject-case") {
-                @helper.CSRF.formField
+            @helper.form(action = RejectCaseController.postRejectCase(c.reference),
+            'enctype -> "multipart/form-data",
+            'id -> "reject-case") {
 
                 <div id="add-a-note-heading">
                     <h3 class="heading-medium mt-30 mb-30">Add a note</h3>
@@ -47,6 +48,15 @@
                 )
 
                 @status_change_upload(form("file-input"), "rejecting")
+
+                <div class="reopen-warning-notice">
+                    <i class="icon icon-important">
+                        <span class="visually-hidden">Warning</span>
+                    </i>
+                    <strong id="reject-warning-text" class="bold-small">
+                        <span>This case cannot be reopened after it has been rejected.</span>
+                    </strong>
+                </div>
 
                 <div>
                     <button class="button" id="reject-case-button" type="submit">Confirm status change</button>
