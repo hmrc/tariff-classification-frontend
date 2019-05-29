@@ -8,7 +8,7 @@ import uk.gov.tariffclassificationfrontend.utils.{CasePayloads, Cases}
 
 class PdfGenerationSpec extends IntegrationTest {
 
-  private val c = CasePayloads.jsonOf(Cases.simpleCaseExample.copy(status = CaseStatus.COMPLETED))
+  private val c = CasePayloads.jsonOf(Cases.btiCaseExample.copy(status = CaseStatus.COMPLETED))
   private val caseRef = 12
   private val pdfGeneratorServiceUrl = "/pdf-generator-service/generate"
 
