@@ -43,7 +43,7 @@
                             <a id="advanced_search_results-row-@{index}-reference" href="@routes.CaseController.trader(result.c.reference)">@result.c.reference</a>
                         </td>
                         <td id="advanced_search_results-row-@{index}-business_name">
-                            @result.c.application.holder.businessName
+                            @result.c.application.businessName
                         </td>
                         <td id="advanced_search_results-row-@{index}-ruling_end">
                             @result.c.decision.flatMap(_.effectiveEndDate).map(Dates.format).getOrElse("")

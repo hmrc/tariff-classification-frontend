@@ -21,7 +21,6 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.ImportExport.ImportExport
 
 sealed trait Application {
   val `type`: String
-  val holder: EORIDetails
   val contact: Contact
 
   def asBTI: BTIApplication = {
@@ -40,6 +39,13 @@ sealed trait Application {
     this.isInstanceOf[LiabilityOrder]
   }
 
+  def businessName: String = {
+    `type` match {
+      case "BTI" => asBTI.holder.businessName
+      case "LIABILITY_ORDER" => asLiabilityOrder.traderName
+    }
+  }
+
   def getType: String = {
     `type` match {
       case "BTI" => "BTI"
@@ -50,7 +56,7 @@ sealed trait Application {
 
 case class BTIApplication
 (
-  override val holder: EORIDetails,
+  holder: EORIDetails,
   override val contact: Contact,
   agent: Option[AgentDetails] = None,
   offline: Boolean,
@@ -77,12 +83,12 @@ case class AgentDetails
 
 case class LiabilityOrder
 (
-  override val holder: EORIDetails,
   override val contact: Contact,
   status: String,
-  port: String,
-  entryNumber: String,
-  endDate: Instant
+  traderName: String,
+  goodName: Option[String],
+  entryDate: Option[Instant] = None,
+  entryNumber: Option[String] = None
 ) extends Application {
   override val `type` = "LIABILITY_ORDER"
 }

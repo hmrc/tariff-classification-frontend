@@ -26,7 +26,7 @@ import uk.gov.tariffclassificationfrontend.utils.Cases
 class RulingTemplateViewSpec extends ViewSpec {
 
   private val rulingCase = Cases.btiCaseExample
-  private val holder = rulingCase.application.holder
+  private val holder = rulingCase.application.asBTI.holder
   private val ruling = rulingCase.decision.getOrElse(throw new Exception("Bad test data"))
   private val doc = view(ruling_template(rulingCase, ruling)(authenticatedFakeRequest, messages, appConfig))
 

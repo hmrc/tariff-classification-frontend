@@ -23,18 +23,16 @@
 
 @main(bodyClasses = None, scriptElem = activeTab.map( x => (Html(s"<script>document.getElementById('$x').focus();</script>"))),
     customTitle = Some(messages(s"page.title.${page.toString}"))) {
-    @defining(c.application.asBTI) { btiApp: BTIApplication =>
 
-        @case_heading(c, displayBackLink = true)
+    @case_heading(c, displayBackLink = true)
 
-        <div class="tabs">
-            @case_nav(page, c)
+    <div class="tabs">
+        @case_nav(page, c)
 
-            <div class="tabs__panel">
-                <div class="tabs__panel__content">
-                   @view
-                </div>
+        <div class="tabs__panel">
+            <div class="tabs__panel__content">
+               @view
             </div>
         </div>
-    }
+    </div>
 }
