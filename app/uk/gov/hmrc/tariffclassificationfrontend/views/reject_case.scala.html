@@ -22,7 +22,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.case_heading
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.statuses.status_change_upload
 
-@(c: Case, form: Form[Boolean])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(c: Case, form: Form[String])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("page.title.reject.case"))) {
 
@@ -35,6 +35,8 @@
             @helper.form(action = RejectCaseController.postRejectCase(c.reference),
             'enctype -> "multipart/form-data",
             'id -> "reject-case") {
+
+                @helper.CSRF.formField
 
                 <div id="add-a-note-heading">
                     <h3 class="heading-medium mt-30 mb-30">Add a note</h3>

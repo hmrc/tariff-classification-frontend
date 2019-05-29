@@ -19,18 +19,20 @@ package uk.gov.hmrc.tariffclassificationfrontend.controllers
 import javax.inject.{Inject, Singleton}
 import play.api.data.Form
 import play.api.i18n.MessagesApi
+import play.api.libs.Files
 import play.api.mvc._
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.forms.MandatoryBooleanForm
+import uk.gov.hmrc.tariffclassificationfrontend.forms.AddNoteForm
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus._
-import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Permission}
+import uk.gov.hmrc.tariffclassificationfrontend.models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, FileUpload, Permission}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future.successful
 
+//noinspection ScalaStyle
 @Singleton
 class RejectCaseController @Inject()(verify: RequestActions,
                                      casesService: CasesService,
@@ -39,7 +41,7 @@ class RejectCaseController @Inject()(verify: RequestActions,
 
   override protected val config: AppConfig = appConfig
   override protected val caseService: CasesService = casesService
-  private val form: Form[Boolean] = MandatoryBooleanForm.form("reject_case")
+  private val form: Form[String] = AddNoteForm.form
 
   def getRejectCase(reference: String): Action[AnyContent] = (verify.authenticated
     andThen verify.casePermissions(reference)
@@ -47,21 +49,6 @@ class RejectCaseController @Inject()(verify: RequestActions,
     validateAndRenderView(c => successful(views.html.reject_case(c, form)))
   }
 
-  def postRejectCase(reference: String): Action[AnyContent] = (verify.authenticated
-    andThen verify.casePermissions(reference)
-    andThen verify.mustHave(Permission.REJECT_CASE)).async { implicit request =>
-
-    form.bindFromRequest().fold(
-      errors => {
-        validateAndRenderView(c => successful(views.html.reject_case(c, errors)))
-      },
-      {
-        case true => validateAndRedirect(casesService.rejectCase(_, request.operator)
-                      .map( c => routes.RejectCaseController.confirmRejectCase(c.reference)))
-        case _ => validateAndRedirect(c => successful(routes.RejectCaseController.confirmRejectCase(c.reference)))
-      }
-    )
-  }
 
   def confirmRejectCase(reference: String): Action[AnyContent] =
     (verify.authenticated
@@ -70,6 +57,33 @@ class RejectCaseController @Inject()(verify: RequestActions,
       renderView(c => c.status == REJECTED, c => successful(views.html.confirm_rejected(c)))
     }
 
+  def postRejectCase(reference: String): Action[MultipartFormData[Files.TemporaryFile]] = (verify.authenticated andThen verify.casePermissions(reference) andThen
+    verify.mustHave(Permission.REJECT_CASE)).async(parse.multipartFormData) { implicit request: AuthenticatedCaseRequest[MultipartFormData[Files.TemporaryFile]] =>
+    // Get the file from the request (filename check ensures it has been selected)
+    request.body.file("file-input").filter(_.filename.nonEmpty) match {
+      case Some(file) =>
+        form.bindFromRequest().fold(
+          errors =>
+            getCaseAndRenderView(reference, c => successful(views.html.reject_case(c, errors))),
+          note => {
+            val fileUpload = FileUpload(file.ref, file.filename, file.contentType.get)
+            validateAndRedirect(casesService.rejectCase(_, fileUpload, note, request.operator).map(c => routes.RejectCaseController.confirmRejectCase(reference)))
+          }
+        )
+
+      case None =>
+        form.bindFromRequest().fold(
+          errors => {
+            val formWithErrors = errors.withError("file-input", "You must upload an email")
+            getCaseAndRenderView(reference, c => successful(views.html.reject_case(c, formWithErrors)))
+          },
+          note => {
+            val formWithErrors = form.fill(note).withError("file-input", "You must upload an email")
+            getCaseAndRenderView(reference, c => successful(views.html.reject_case(c, formWithErrors)))
+          }
+        )
+    }
+  }
 
   override protected def redirect: String => Call = routes.CaseController.applicationDetails
 
