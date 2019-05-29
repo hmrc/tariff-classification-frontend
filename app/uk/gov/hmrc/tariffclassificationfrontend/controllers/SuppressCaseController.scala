@@ -51,7 +51,7 @@ class SuppressCaseController @Inject()(verify: RequestActions,
     getCaseAndRenderView(reference, c => successful(views.html.suppress_case(c, form)))
   }
 
-  def postSuppressCase(reference: String): Action[AnyContent] =
+  def postSuppressCase(reference: String): Action[MultipartFormData[Files.TemporaryFile]] =
     (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.SUPPRESS_CASE))
       .async(parse.multipartFormData) { implicit request: AuthenticatedCaseRequest[MultipartFormData[Files.TemporaryFile]] =>
 
