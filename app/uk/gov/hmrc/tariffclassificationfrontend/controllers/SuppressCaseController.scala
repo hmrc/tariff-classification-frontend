@@ -25,7 +25,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.AddNoteForm
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.{NEW, SUPPRESSED}
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Permission}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, FileUpload, Permission}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
@@ -55,13 +55,15 @@ class SuppressCaseController @Inject()(verify: RequestActions,
     (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.SUPPRESS_CASE))
       .async(parse.multipartFormData) { implicit request: AuthenticatedCaseRequest[MultipartFormData[Files.TemporaryFile]] =>
 
-    request.body.file("email").filter(_.filename.nonEmpty) match {
+    request.body.file("email").filter(_.filename.nonEmpty).filter(_.contentType.isDefined) match {
       case Some(file) =>
         form.bindFromRequest().fold(
           errors =>
             getCaseAndRenderView(reference, c => successful(views.html.suppress_case(c, errors))),
-          note =>
-            validateAndRedirect(casesService.suppressCase(_, request.operator).map(c => routes.SuppressCaseController.confirmSuppressCase(reference)))
+          note => {
+            val upload = FileUpload(file.ref, file.filename, file.contentType.get)
+            validateAndRedirect(casesService.suppressCase(_, upload, note, request.operator).map(c => routes.SuppressCaseController.confirmSuppressCase(c.reference)))
+          }
         )
       case None =>
         form.bindFromRequest().fold(
