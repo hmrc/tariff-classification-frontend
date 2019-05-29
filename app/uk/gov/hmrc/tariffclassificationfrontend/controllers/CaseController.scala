@@ -116,7 +116,7 @@ class CaseController @Inject()(verify: RequestActions,
 
     def onError: Form[ActivityFormData] => Future[Result] = errorForm => {
 
-      val formWithErrors = withError(errorForm, "note", messagesApi("error.case.note"))
+      val formWithErrors = withError(errorForm, "note", messagesApi("error.empty.note"))
 
       validateAndRenderView(
         ACTIVITY,
@@ -152,12 +152,15 @@ class CaseController @Inject()(verify: RequestActions,
 
   def addKeyword(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.KEYWORDS)).async { implicit request =>
     keywordForm.bindFromRequest.fold(
-      errorForm =>
+      errorForm => {
+        val formWithErrors = withError(errorForm, "keyword", messagesApi("error.empty.keyword"))
+
         validateAndRenderView(
           KEYWORDS,
-          showKeywords(_, errorForm),
+          showKeywords(_, formWithErrors),
           "tab-item-Keywords"
-        ),
+        )
+      },
       keyword =>
         validateAndRenderView(
           KEYWORDS,

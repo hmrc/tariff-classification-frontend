@@ -42,7 +42,7 @@
                     label = "Add case note",
                     hint = Some("Add short, descriptive notes to record case activity. For example, 'A sample of one trainer has been received and sent to the lab for testing.'"),
                     tabIndex = Some(startAtTabIndex+10),
-                    customErrorMessage = Some(messages("error.case.note"))
+                    customErrorMessage = Some(messages("error.empty.note"))
                 )
                 <div class="form-group">
                     <button tabindex="@{startAtTabIndex+11}" id="add-note-submit" class="button" type="submit">Add note to activity timeline</button>
