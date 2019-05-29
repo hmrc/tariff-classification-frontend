@@ -19,7 +19,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.input_textarea
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.case_heading
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{case_heading, status_change_upload}
 @(c: Case, form: Form[String])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("page.title.suppress.case"))) {
@@ -33,9 +33,7 @@
             @helper.form(action = SuppressCaseController.postSuppressCase(c.reference), 'id -> "suppress-case") {
                 @helper.CSRF.formField
 
-                <div id="suppress_case-heading">
-                    <h3 class="heading-medium mt-30 mb-30">Add a note</h3>
-                </div>
+                <h3 id="suppress_case-heading" class="heading-medium mt-4 mb-30">Add a note</h3>
 
                 @input_textarea(
                     field = form("note"),
@@ -44,7 +42,7 @@
                     customErrorMessage = Some("Add a note giving details of why you are suppressing this case")
                 )
 
-                @status_change_upload(form("file-input"), "rejecting")
+                @status_change_upload(form("email"), "suppressing")
 
                 <div class="notice">
                     <i class="icon icon-important">
@@ -55,7 +53,7 @@
                     </strong>
                 </div>
 
-                <div>
+                <div class="mt-4">
                     <button class="button" id="suppress-case-button" type="submit">Confirm status change</button>
                     <a class="secondary-button" id="suppress-case-cancel-button" href="@CaseController.trader(c.reference)">Cancel and return to case</a>
                 </div>
