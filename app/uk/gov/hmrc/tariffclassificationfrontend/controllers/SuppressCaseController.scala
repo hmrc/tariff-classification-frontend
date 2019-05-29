@@ -19,17 +19,17 @@ package uk.gov.hmrc.tariffclassificationfrontend.controllers
 import javax.inject.{Inject, Singleton}
 import play.api.data.Form
 import play.api.i18n.MessagesApi
+import play.api.libs.Files
 import play.api.mvc._
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.forms.MandatoryBooleanForm
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Permission}
-import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.{NEW,SUPPRESSED}
+import uk.gov.hmrc.tariffclassificationfrontend.forms.AddNoteForm
+import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.{NEW, SUPPRESSED}
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Permission}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
 @Singleton
@@ -38,7 +38,7 @@ class SuppressCaseController @Inject()(verify: RequestActions,
                                        val messagesApi: MessagesApi,
                                        implicit val appConfig: AppConfig) extends RenderCaseAction {
 
-  private val form: Form[Boolean] = MandatoryBooleanForm.form("suppress_case")
+  private val form: Form[String] = AddNoteForm.form
 
   override protected val config: AppConfig = appConfig
   override protected val caseService: CasesService = casesService
@@ -46,27 +46,35 @@ class SuppressCaseController @Inject()(verify: RequestActions,
   override protected def redirect: String => Call = routes.CaseController.applicationDetails
   override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = c.status == NEW
 
-  private def showCase(reference: String, f: Form[Boolean])
-                      (implicit request: AuthenticatedCaseRequest[AnyContent]): Future[Result] = {
-    getCaseAndRenderView(reference, c => successful(views.html.suppress_case(c, f)))
-  }
-
   def getSuppressCase(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen
     verify.mustHave(Permission.SUPPRESS_CASE)).async { implicit request =>
-    showCase(reference, form)
+    getCaseAndRenderView(reference, c => successful(views.html.suppress_case(c, form)))
   }
 
-  def postSuppressCase(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen
-    verify.mustHave(Permission.SUPPRESS_CASE)).async { implicit request =>
+  def postSuppressCase(reference: String): Action[AnyContent] =
+    (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.SUPPRESS_CASE))
+      .async(parse.multipartFormData) { implicit request: AuthenticatedCaseRequest[MultipartFormData[Files.TemporaryFile]] =>
 
-    form.bindFromRequest().fold(
-      errors => showCase(reference, errors),
-      {
-        case true => validateAndRedirect(casesService.suppressCase(_, request.operator).map(c => routes.SuppressCaseController.confirmSuppressCase(reference)))
-        case _ => validateAndRedirect(c => successful(routes.SuppressCaseController.showContactInformation(reference)))
-      }
-    )
-
+    request.body.file("email").filter(_.filename.nonEmpty) match {
+      case Some(file) =>
+        form.bindFromRequest().fold(
+          errors =>
+            getCaseAndRenderView(reference, c => successful(views.html.suppress_case(c, errors))),
+          note =>
+            validateAndRedirect(casesService.suppressCase(_, request.operator).map(c => routes.SuppressCaseController.confirmSuppressCase(reference)))
+        )
+      case None =>
+        form.bindFromRequest().fold(
+          errors => {
+            val formWithErrors = errors.withError("email", "You must upload an email")
+            getCaseAndRenderView(reference, c => successful(views.html.suppress_case(c, formWithErrors)))
+          },
+          note => {
+            val formWithErrors = form.fill(note).withError("email", "You must upload an email")
+            getCaseAndRenderView(reference, c => successful(views.html.suppress_case(c, formWithErrors)))
+          }
+        )
+    }
   }
 
   def confirmSuppressCase(reference: String): Action[AnyContent] =

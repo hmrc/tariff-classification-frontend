@@ -15,13 +15,12 @@
  *@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.SuppressCaseController
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.{CaseController, SuppressCaseController}
 @import uk.gov.hmrc.tariffclassificationfrontend.models.Case
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.input_textarea
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{contact_details, case_heading}
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.input_yes_no
-@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController
-@(c: Case, form: Form[Boolean])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.case_heading
+@(c: Case, form: Form[String])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("page.title.suppress.case"))) {
 
@@ -29,24 +28,36 @@
 
     <div class="grid-row">
         <div class="column-full">
-            <h2 class="heading-large mt-0">Contact the applicant and attach a copy of the email before you suppress this case</h2>
-
-            @contact_details(c)
-
-            <h3 class="heading-medium mt-0">Have you contacted the applicant and attached a copy of the email to this case?</h3>
+            <h2 class="heading-large mt-0">Change the status of this case to: Suppressed</h2>
 
             @helper.form(action = SuppressCaseController.postSuppressCase(c.reference), 'id -> "suppress-case") {
                 @helper.CSRF.formField
 
-                @input_yes_no(form("state"), "suppress-case_contacted-applicant")
+                <div id="suppress_case-heading">
+                    <h3 class="heading-medium mt-30 mb-30">Add a note</h3>
+                </div>
 
-                <p>
-                This case cannot be reopened once it has been suppressed.
-                </p>
+                @input_textarea(
+                    field = form("note"),
+                    label = "",
+                    hint = Some("Give details of why you are suppressing this case. Keep the note clear and concise."),
+                    customErrorMessage = Some("Add a note giving details of why you are suppressing this case")
+                )
+
+                @status_change_upload(form("file-input"), "rejecting")
+
+                <div class="notice">
+                    <i class="icon icon-important">
+                        <span class="visually-hidden">Warning</span>
+                    </i>
+                    <strong class="bold-small">
+                        This case cannot be reopened once it has been suppressed.
+                    </strong>
+                </div>
 
                 <div>
-                    <button class="button" id="suppress-case-button" type="submit">Suppress this case</button>
-                    <a class="secondary-button" id="suppress-case-cancel-button" href="@CaseController.trader(c.reference)">Cancel</a>
+                    <button class="button" id="suppress-case-button" type="submit">Confirm status change</button>
+                    <a class="secondary-button" id="suppress-case-cancel-button" href="@CaseController.trader(c.reference)">Cancel and return to case</a>
                 </div>
             }
         </div>
