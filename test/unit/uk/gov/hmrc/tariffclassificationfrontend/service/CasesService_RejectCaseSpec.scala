@@ -88,11 +88,11 @@ class CasesService_RejectCaseSpec extends UnitSpec with MockitoSugar with Before
       eventCreated.details shouldBe CaseStatusChange(CaseStatus.OPEN, CaseStatus.REJECTED, Some("note"), Some("id"))
     }
 
-    "update update on attachment upload failure" in {
+    "generate an exception on attachment upload failure" in {
       // Given
       val fileUpload = mock[FileUpload]
       val operator: Operator = Operator("operator-id", Some("Billy Bobbins"))
-      val originalCase = aCase.copy(status = CaseStatus.NEW)
+      val originalCase = aCase.copy(status = CaseStatus.OPEN)
 
       given(fileStoreService.upload(fileUpload)).willReturn(failed(new RuntimeException("Error")))
 
@@ -100,6 +100,10 @@ class CasesService_RejectCaseSpec extends UnitSpec with MockitoSugar with Before
       intercept[RuntimeException] {
         await(service.rejectCase(originalCase, fileUpload, "note", operator))
       }
+
+      verifyZeroInteractions(connector)
+      verifyZeroInteractions(audit)
+
     }
 
     "not create event on update failure" in {
