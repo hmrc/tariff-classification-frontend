@@ -30,6 +30,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
 @Singleton
@@ -65,17 +66,17 @@ class SuppressCaseController @Inject()(verify: RequestActions,
             validateAndRedirect(casesService.suppressCase(_, upload, note, request.operator).map(c => routes.SuppressCaseController.confirmSuppressCase(c.reference)))
           }
         )
-      case None =>
-        form.bindFromRequest().fold(
-          errors => {
-            val formWithErrors = errors.withError("email", "You must upload an email")
-            getCaseAndRenderView(reference, c => successful(views.html.suppress_case(c, formWithErrors)))
-          },
-          note => {
-            val formWithErrors = form.fill(note).withError("email", "You must upload an email")
-            getCaseAndRenderView(reference, c => successful(views.html.suppress_case(c, formWithErrors)))
-          }
+      case None => {
+        def getCaseAndRenderErrors(form: Form[String]): Future[Result] = getCaseAndRenderView(
+          reference,
+          c => successful(views.html.suppress_case(c, form.withError("email", "You must upload an email")))
         )
+
+        form.bindFromRequest().fold(
+          errors => getCaseAndRenderErrors(errors),
+          note => getCaseAndRenderErrors(form.fill(note))
+        )
+      }
     }
   }
 
