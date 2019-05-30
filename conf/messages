@@ -1,3 +1,5 @@
+error.summary.title = There is a problem
+
 cases.menu.my-cases=My cases
 cases.menu.gateway-cases=Gateway cases
 cases.menu.queue-cases={0} cases
@@ -155,12 +157,17 @@ errors.resource-not-found.title={0} not found.
 
 errors.summary.title=Error
 
+error.empty.note = Enter a case note
+error.empty.keyword = Enter a keyword
+
 status.change.upload.title=You can upload:
 status.change.upload.label=Upload a file
 status.change.upload.restrictionSize=a maximum file size of 10MB
+status.change.upload.error.restrictionSize=Your file will not upload because it''s bigger than 10MB
 status.change.upload.typeOfFiles=pdf, doc, docx, png, jpg, jpeg and txt files
 status.change.upload.error.mustSelect=Attach the email you have sent to the contact
 status.change.upload.error.fileType = Your document will not upload because it''s not a valid file type
+
 
 release-case.submit.button = Release Case
 reassign-case.submit.button = Move back to queue

@@ -17,15 +17,15 @@
 package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
 import javax.inject.{Inject, Singleton}
-import play.api.data.Form
+import play.api.data.{Form, FormError}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import play.twirl.api.{Html, HtmlFormat}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms._
-import uk.gov.hmrc.tariffclassificationfrontend.models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
 import uk.gov.hmrc.tariffclassificationfrontend.models._
+import uk.gov.hmrc.tariffclassificationfrontend.models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
 import uk.gov.hmrc.tariffclassificationfrontend.service._
 import uk.gov.hmrc.tariffclassificationfrontend.views
 import uk.gov.hmrc.tariffclassificationfrontend.views.CaseDetailPage._
@@ -48,7 +48,7 @@ class CaseController @Inject()(verify: RequestActions,
   private type Keyword = String
   private lazy val activityForm: Form[ActivityFormData] = ActivityForm.form
   private lazy val keywordForm: Form[String] = KeywordForm.form
-  private val pagesWithStartTabIndexes : Map[CaseDetailPage,Int] = Map(TRADER -> 1000, APPLICATION_DETAILS -> 2000, SAMPLE_DETAILS -> 3000, ATTACHMENTS -> 4000,
+  private val pagesWithStartTabIndexes: Map[CaseDetailPage, Int] = Map(TRADER -> 1000, APPLICATION_DETAILS -> 2000, SAMPLE_DETAILS -> 3000, ATTACHMENTS -> 4000,
     ACTIVITY -> 5000, KEYWORDS -> 6000, RULING -> 7000, APPEAL -> 8000)
 
   def trader(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
@@ -81,8 +81,8 @@ class CaseController @Inject()(verify: RequestActions,
       SAMPLE_DETAILS,
       c => {
         for {
-          events <- eventsService.getFilteredEvents(c.reference, NoPagination(),Some(Set(EventType.SAMPLE_STATUS_CHANGE)))
-        } yield views.html.partials.sample.sample_details(c,events, pagesWithStartTabIndexes(SAMPLE_DETAILS))
+          events <- eventsService.getFilteredEvents(c.reference, NoPagination(), Some(Set(EventType.SAMPLE_STATUS_CHANGE)))
+        } yield views.html.partials.sample.sample_details(c, events, pagesWithStartTabIndexes(SAMPLE_DETAILS))
       },
       "tab-item-Sample"
     )
@@ -111,9 +111,12 @@ class CaseController @Inject()(verify: RequestActions,
   def addNote(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.ADD_NOTE)).async { implicit request =>
 
     def onError: Form[ActivityFormData] => Future[Result] = errorForm => {
+
+      val formWithErrors = withError(errorForm, "note", messagesApi("error.empty.note"))
+
       validateAndRenderView(
         ACTIVITY,
-        showActivity(_, errorForm),
+        showActivity(_, formWithErrors),
         "tab-item-Activity"
       )
     }
@@ -145,12 +148,15 @@ class CaseController @Inject()(verify: RequestActions,
 
   def addKeyword(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.KEYWORDS)).async { implicit request =>
     keywordForm.bindFromRequest.fold(
-      errorForm =>
+      errorForm => {
+        val formWithErrors = withError(errorForm, "keyword", messagesApi("error.empty.keyword"))
+
         validateAndRenderView(
           KEYWORDS,
-          showKeywords(_, errorForm),
+          showKeywords(_, formWithErrors),
           "tab-item-Keywords"
-        ),
+        )
+      },
       keyword =>
         validateAndRenderView(
           KEYWORDS,
@@ -184,13 +190,13 @@ class CaseController @Inject()(verify: RequestActions,
     }
   }
 
-  private def validateAndRenderView(reference: String, page: CaseDetailPage, toHtml: Case => Future[Html], c: Case, activeTabId :String)
+  private def validateAndRenderView(reference: String, page: CaseDetailPage, toHtml: Case => Future[Html], c: Case, activeTabId: String)
                                    (implicit request: Request[_]): Future[Result] = {
 
-    toHtml(c).map(html => Ok(views.html.case_details(c, page, html,Some(activeTabId))))
+    toHtml(c).map(html => Ok(views.html.case_details(c, page, html, Some(activeTabId))))
   }
 
-  private def validateAndRenderView(page: CaseDetailPage, toHtml: Case => Future[Html], activeTabId :String)
+  private def validateAndRenderView(page: CaseDetailPage, toHtml: Case => Future[Html], activeTabId: String)
                                    (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
 
     toHtml(request.`case`).map(html => Ok(views.html.case_details(request.`case`, page, html, Some(activeTabId))))
@@ -205,8 +211,13 @@ class CaseController @Inject()(verify: RequestActions,
   private def showActivity(c: Case, f: Form[ActivityFormData])
                           (implicit request: AuthenticatedRequest[AnyContent]): Future[HtmlFormat.Appendable] = {
     for {
-      events <- eventsService.getFilteredEvents(c.reference, NoPagination(),Some(EventType.values.diff(Set(EventType.SAMPLE_STATUS_CHANGE))))
+      events <- eventsService.getFilteredEvents(c.reference, NoPagination(), Some(EventType.values.diff(Set(EventType.SAMPLE_STATUS_CHANGE))))
       queues <- queuesService.getAll
     } yield views.html.partials.activity_details(c, events, f, queues, pagesWithStartTabIndexes(ACTIVITY))
   }
+
+  private def withError[T](form : Form[T], errorKey: String, errorMessage: String): Form[T] = {
+    form.copy(errors = Seq(FormError(errorKey, errorMessage)))
+  }
+
 }

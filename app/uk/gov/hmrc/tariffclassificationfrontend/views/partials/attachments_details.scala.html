@@ -19,19 +19,21 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, StoredAttachment}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.components.input_file
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{attachments_list, attachments_state_message, tab_heading}
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{attachments_list, attachments_state_message, tab_heading,error_summary}
 
 @import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 @import uk.gov.hmrc.tariffclassificationfrontend.models.Permission
 @(c: Case, form : Form[String], filesFromApplicant: Seq[StoredAttachment], letterOfAuthority : Option[StoredAttachment],
         filesFromClassification: Seq[StoredAttachment], startAtTabIndex : Int = 0 )(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
+    @error_summary(form.errors, Some(startAtTabIndex))
+
     @tab_heading("attachments", messages("case.menu.attachments"))
 
     @attachments_state_message(attachments = filesFromApplicant ++ filesFromClassification)
 
     <h3 class="heading-medium" id="applicant-heading">@messages(s"case.attachment.heading.applicant")</h3>
-    @attachments_list("applicant", filesFromApplicant, startAtTabIndex = Some(startAtTabIndex))
+    @attachments_list("applicant", filesFromApplicant, startAtTabIndex = Some(startAtTabIndex+10))
 
     @if(letterOfAuthority.isDefined) {
         <h3 class="heading-medium" id="letter-of-auth-heading">@messages(s"case.attachment.heading.letter-of-auth")</h3>

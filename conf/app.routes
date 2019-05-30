@@ -40,7 +40,6 @@ GET         /cases/:reference/refer/contact-info                @uk.gov.hmrc.tar
 GET         /cases/:reference/reject                            @uk.gov.hmrc.tariffclassificationfrontend.controllers.RejectCaseController.getRejectCase(reference: String)
 POST        /cases/:reference/reject                            @uk.gov.hmrc.tariffclassificationfrontend.controllers.RejectCaseController.postRejectCase(reference: String)
 GET         /cases/:reference/reject/confirmation               @uk.gov.hmrc.tariffclassificationfrontend.controllers.RejectCaseController.confirmRejectCase(reference: String)
-GET         /cases/:reference/reject/contact-info               @uk.gov.hmrc.tariffclassificationfrontend.controllers.RejectCaseController.showContactInformation(reference: String)
 
 GET         /cases/:reference/suspend                           @uk.gov.hmrc.tariffclassificationfrontend.controllers.SuspendCaseController.getSuspendCase(reference: String)
 POST        /cases/:reference/suspend                           @uk.gov.hmrc.tariffclassificationfrontend.controllers.SuspendCaseController.postSuspendCase(reference: String)

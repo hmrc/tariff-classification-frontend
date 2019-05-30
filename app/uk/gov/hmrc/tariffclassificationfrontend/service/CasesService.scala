@@ -146,11 +146,13 @@ class CasesService @Inject()(appConfig: AppConfig,
     } yield updated
   }
 
-  def rejectCase(original: Case, operator: Operator)
+  def rejectCase(original: Case, f: FileUpload, note: String, operator: Operator)
                 (implicit hc: HeaderCarrier): Future[Case] = {
     for {
-      updated <- connector.updateCase(original.copy(status = CaseStatus.REJECTED))
-      _ <- addStatusChangeEvent(original, updated, operator)
+      fileStored <- fileService.upload(fileUpload = f)
+      attachment = Attachment(id = fileStored.id, operator = Some(operator))
+      updated <- connector.updateCase(original.addAttachment(attachment).copy(status = CaseStatus.REJECTED))
+      _ <- addStatusChangeEvent(original, updated, operator, Some(note), Some(attachment))
       _ = auditService.auditCaseRejected(original, updated, operator)
     } yield updated
   }
@@ -286,12 +288,12 @@ class CasesService @Inject()(appConfig: AppConfig,
   }
 
   private def addStatusChangeEvent(original: Case,
-                                    updated: Case,
-                                    operator: Operator,
-                                    comment: Option[String] = None,
+                                   updated: Case,
+                                   operator: Operator,
+                                   comment: Option[String] = None,
                                    attachment: Option[Attachment] = None)
                                   (implicit hc: HeaderCarrier): Future[Unit] = {
-    val details = CaseStatusChange(from = original.status, to = updated.status, comment = comment, attachmentId = attachment.map(_.id))
+    val details = CaseStatusChange(from = original.status, to = updated.status, comment = comment, attachmentId = attachment.map(_.id) )
     addEvent(original, updated, details, operator)
   }
 
