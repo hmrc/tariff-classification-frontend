@@ -28,7 +28,7 @@
 
 @(c: Case, form: Form[AppealType])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("page.title.choose.appeal.type")), scriptElem = Some(setInitialFocus(None))) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.choose.appeal.type")), scriptElem = Some(setInitialFocus())) {
 
   @error_summary(form.errors)
 
