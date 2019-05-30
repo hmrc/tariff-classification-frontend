@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
+import java.io.File
+
 import akka.stream.Materializer
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.Mockito._
@@ -56,6 +58,8 @@ class RejectCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   private implicit val mat: Materializer = fakeApplication.materializer
   private implicit val hc: HeaderCarrier = HeaderCarrier()
 
+  private val largeFileSize :Long = 16485760
+
   override def afterEach(): Unit = {
     super.afterEach()
     reset(casesService)
@@ -81,6 +85,15 @@ class RejectCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   def aMultipartFileOfType(mimeType: String): MultipartFormData[TemporaryFile] = {
     val file = TemporaryFile("example-file")
     val filePart = FilePart[TemporaryFile](key = "file-input", "example-file", contentType = Some(mimeType), ref = file)
+    MultipartFormData[TemporaryFile](dataParts = Map(), files = Seq(filePart), badParts = Seq.empty)
+  }
+
+  def aMultipartFileOfLargeSize: MultipartFormData[TemporaryFile] = {
+    val file = mock[TemporaryFile]
+    val innerFile: File = mock[File]
+    when(file.file).thenReturn(innerFile)
+    when(innerFile.length()).thenReturn(largeFileSize)
+    val filePart = FilePart[TemporaryFile](key = "file-input", "example-file", contentType = Some("text/plain"), ref = file)
     MultipartFormData[TemporaryFile](dataParts = Map(), files = Seq(filePart), badParts = Seq.empty)
   }
 
@@ -145,6 +158,14 @@ class RejectCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     "return to form on wrong type of file" in {
       val result: Result = await(controller(caseWithStatusOPEN).postRejectCase("reference")
       (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileOfType("audio/mpeg"))))
+
+      status(result) shouldBe Status.OK
+      bodyOf(result) should include("Change the status of this case to: Rejected")
+    }
+
+    "return to form on file size too large" in {
+      val result: Result = await(controller(caseWithStatusOPEN).postRejectCase("reference")
+      (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileOfLargeSize)))
 
       status(result) shouldBe Status.OK
       bodyOf(result) should include("Change the status of this case to: Rejected")

@@ -66,10 +66,18 @@ class RejectCaseController @Inject()(verify: RequestActions,
       case Some(file) if hasValidContentType(file) =>
         form.bindFromRequest().fold(
           errors =>
-            getCaseAndRenderView(reference, c => successful(views.html.reject_case(c, errors))),
+            if (isCorrectlySized(file)) {
+              getCaseAndRenderView(reference, c => successful(views.html.reject_case(c, errors)))
+            } else {
+              getCaseAndRenderErrors(errors, reference, messagesApi("status.change.upload.error.restrictionSize"))
+            },
           note => {
-            val fileUpload = FileUpload(file.ref, file.filename, file.contentType.get)
-            validateAndRedirect(casesService.rejectCase(_, fileUpload, note, request.operator).map(c => routes.RejectCaseController.confirmRejectCase(reference)))
+            if (isCorrectlySized(file)) {
+              val fileUpload = FileUpload(file.ref, file.filename, file.contentType.get)
+              validateAndRedirect(casesService.rejectCase(_, fileUpload, note, request.operator).map(c => routes.RejectCaseController.confirmRejectCase(reference)))
+            } else {
+              getCaseAndRenderErrors(form.fill(note), reference, messagesApi("status.change.upload.error.restrictionSize"))
+            }
           }
         )
       case Some(_) =>
@@ -95,6 +103,10 @@ class RejectCaseController @Inject()(verify: RequestActions,
       case Some(c: String) if appConfig.fileUploadMimeTypes.contains(c) => true
       case _ => false
     }
+  }
+
+  private def isCorrectlySized: MultipartFormData.FilePart[TemporaryFile] => Boolean = { f =>
+    f.ref.file.length.<=(appConfig.fileUploadMaxSize)
   }
 
   override protected def redirect: String => Call = routes.CaseController.applicationDetails
