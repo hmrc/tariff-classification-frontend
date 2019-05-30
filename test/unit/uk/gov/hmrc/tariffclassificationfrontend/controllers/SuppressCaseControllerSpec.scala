@@ -23,14 +23,16 @@ import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterEach, Matchers, WordSpec}
 import play.api.http.{MimeTypes, Status}
 import play.api.i18n.{DefaultLangs, DefaultMessagesApi}
-import play.api.mvc.Result
+import play.api.libs.Files.TemporaryFile
+import play.api.mvc.MultipartFormData.FilePart
+import play.api.mvc.{MultipartFormData, Result}
 import play.api.test.Helpers.{redirectLocation, _}
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models.Permission.Permission
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus, Operator, Permission}
+import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.tariffclassificationfrontend.utils.Cases
 
@@ -47,9 +49,9 @@ class SuppressCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   private val casesService = mock[CasesService]
   private val operator = mock[Operator]
 
-  private val caseWithStatusNEW = Cases.btiCaseExample.copy(status = CaseStatus.NEW)
-  private val caseWithStatusOPEN = Cases.btiCaseExample.copy(status = CaseStatus.OPEN)
-  private val caseWithStatusSUPRRESSED = Cases.btiCaseExample.copy(status = CaseStatus.SUPPRESSED)
+  private val caseWithStatusNEW = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.NEW)
+  private val caseWithStatusOPEN = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.OPEN)
+  private val caseWithStatusSUPRRESSED = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.SUPPRESSED)
 
   private implicit val mat: Materializer = fakeApplication.materializer
   private implicit val hc: HeaderCarrier = HeaderCarrier()
@@ -75,7 +77,7 @@ class SuppressCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result) shouldBe Some("utf-8")
-      bodyOf(result) should include("Contact the applicant and attach a copy of the email before you suppress this case")
+      bodyOf(result) should include("Change the status of this case to: Suppressed")
     }
 
     "redirect to Application Details for non NEW statuses" in {
@@ -106,30 +108,57 @@ class SuppressCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
   "Confirm Suppress a Case" should {
 
-    "redirect to confirmation when operator indicates that applicant has been contacted" in {
-      when(casesService.suppressCase(refEq(caseWithStatusNEW), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusSUPRRESSED))
+    def aMultipartFileWithParams(contentType: String, params: (String, Seq[String])*): MultipartFormData[TemporaryFile] = {
+      val file = TemporaryFile("example-file.txt")
+      val filePart = FilePart[TemporaryFile](key = "email", "file.txt", contentType = Some(contentType), ref = file)
+      MultipartFormData[TemporaryFile](dataParts = params.toMap, files = Seq(filePart), badParts = Seq.empty)
+    }
+
+    def anEmptyMultipartFileWithParams(params: (String, Seq[String])*): MultipartFormData[TemporaryFile] = {
+      val filePart = FilePart[TemporaryFile](key = "email", "", contentType = Some("text/plain"), ref = TemporaryFile("example-file.txt"))
+      MultipartFormData[TemporaryFile](dataParts = params.toMap, files = Seq(filePart), badParts = Seq.empty)
+    }
+
+    "redirect to confirmation" in {
+      when(casesService.suppressCase(refEq(caseWithStatusNEW), any[FileUpload], refEq("some-note"), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusSUPRRESSED))
 
       val result: Result =
         await(controller(caseWithStatusNEW).postSuppressCase("reference")
-             (newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("state" -> "true")))
+             (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileWithParams("text/plain", "note" -> Seq("some-note")))))
 
       status(result) shouldBe Status.SEE_OTHER
       locationOf(result) shouldBe Some("/tariff-classification/cases/reference/suppress/confirmation")
     }
 
-    "redirect to contact info when operator indicates that applicant has not been contacted" in {
-      when(casesService.suppressCase(refEq(caseWithStatusNEW), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusSUPRRESSED))
-
+    "return to form on missing file" in {
       val result: Result =
         await(controller(caseWithStatusNEW).postSuppressCase("reference")
-             (newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("state" -> "false")))
+        (newFakePOSTRequestWithCSRF(fakeApplication).withBody(anEmptyMultipartFileWithParams())))
 
-      status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/suppress/contact-info")
+      status(result) shouldBe Status.OK
+      bodyOf(result) should include("Change the status of this case to: Suppressed")
+    }
+
+    "return to form on missing form field" in {
+      val result: Result =
+        await(controller(caseWithStatusNEW).postSuppressCase("reference")
+        (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileWithParams("text/plain"))))
+
+      status(result) shouldBe Status.OK
+      bodyOf(result) should include("Change the status of this case to: Suppressed")
+    }
+
+    "return to form on invalid file type" in {
+      val result: Result =
+        await(controller(caseWithStatusNEW).postSuppressCase("reference")
+        (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileWithParams("audio/mpeg", "note" -> Seq("some-note")))))
+
+      status(result) shouldBe Status.OK
+      bodyOf(result) should include("Change the status of this case to: Suppressed")
     }
 
     "redirect to Application Details for non NEW statuses" in {
-      val result: Result = await(controller(caseWithStatusOPEN).postSuppressCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
+      val result: Result = await(controller(caseWithStatusOPEN).postSuppressCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileWithParams("text/plain"))))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
@@ -137,21 +166,10 @@ class SuppressCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       locationOf(result) shouldBe Some("/tariff-classification/cases/reference/application")
     }
 
-    "return OK when user has right permissions" in {
-      when(casesService.suppressCase(any[Case], any[Operator])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusSUPRRESSED))
-
-      val result: Result = await(controller(caseWithStatusNEW, Set(Permission.SUPPRESS_CASE))
-        .postSuppressCase("reference")
-        (newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("state" -> "true")))
-
-      status(result) shouldBe Status.SEE_OTHER
-    }
-
-
     "redirect unauthorised when does not have right permissions" in {
       val result: Result = await(controller(caseWithStatusNEW, Set.empty)
         .postSuppressCase("reference")
-        (newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("state" -> "true")))
+        (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileWithParams("text/plain"))))
 
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
@@ -162,8 +180,6 @@ class SuppressCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   "View Confirm page for a suppressed case" should {
 
     "return OK and HTML content type" in {
-      when(casesService.suppressCase(refEq(caseWithStatusSUPRRESSED), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusSUPRRESSED))
-
       val result: Result = await(controller(caseWithStatusSUPRRESSED).confirmSuppressCase("reference")
       (newFakePOSTRequestWithCSRF(fakeApplication)
         .withFormUrlEncodedBody("state" -> "true")))
@@ -175,37 +191,13 @@ class SuppressCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     }
 
     "redirect to a default page if the status is not right" in {
-      when(casesService.suppressCase(refEq(caseWithStatusOPEN), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusSUPRRESSED))
-
       val result: Result = await(controller(caseWithStatusOPEN).confirmSuppressCase("reference")
-      (newFakePOSTRequestWithCSRF(fakeApplication)
-        .withFormUrlEncodedBody("state" -> "true")))
+      (newFakePOSTRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
       charsetOf(result) shouldBe None
-      locationOf(result) shouldBe Some("/tariff-classification/cases/1/application")
-    }
-  }
-
-  "View contact info page for a case that was not suppressed" should {
-
-    "return OK and HTML content type" in {
-      val result: Result = await(controller(caseWithStatusNEW).showContactInformation("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
-
-      status(result) shouldBe Status.OK
-      contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
-      charsetOf(result) shouldBe Some("utf-8")
-      bodyOf(result) should include("You must contact the applicant and attach a copy of the email to this case before you suppress it")
-    }
-
-    "redirect to a default page if the status is not right" in {
-      val result: Result = await(controller(caseWithStatusSUPRRESSED).showContactInformation("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
-
-      status(result) shouldBe Status.SEE_OTHER
-      contentTypeOf(result) shouldBe None
-      charsetOf(result) shouldBe None
-      locationOf(result) shouldBe Some("/tariff-classification/cases/1/application")
+      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/application")
     }
   }
 

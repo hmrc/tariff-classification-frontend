@@ -30,6 +30,8 @@ import scala.concurrent.Future.successful
 @Singleton
 class FileStoreService @Inject()(connector: FileStoreConnector) {
 
+  def getFileMetadata(id: String)(implicit hc: HeaderCarrier): Future[Option[FileMetadata]] = connector.get(id)
+
   def getAttachments(c: Case)(implicit hc: HeaderCarrier): Future[Seq[StoredAttachment]] = {
     getAttachments(Seq(c)).map(group => group.getOrElse(c, Seq.empty))
   }
@@ -70,7 +72,7 @@ class FileStoreService @Inject()(connector: FileStoreConnector) {
       c.application.asBTI.agent.flatMap(_.letterOfAuthorisation) match {
         case Some(attachment: Attachment) =>
           connector
-            .get(attachment)
+            .get(attachment.id)
             .map {
               case Some(file) =>
                 Some(StoredAttachment(attachment, file))

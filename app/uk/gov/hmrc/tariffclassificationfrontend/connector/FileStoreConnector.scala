@@ -46,8 +46,8 @@ class FileStoreConnector @Inject()(appConfig: AppConfig, http: AuthenticatedHttp
     }
   }
 
-  def get(attachment: Attachment)(implicit headerCarrier: HeaderCarrier): Future[Option[FileMetadata]] = {
-    http.GET[Option[FileMetadata]](s"${appConfig.fileStoreUrl}/file/${attachment.id}")
+  def get(attachmentId: String)(implicit headerCarrier: HeaderCarrier): Future[Option[FileMetadata]] = {
+    http.GET[Option[FileMetadata]](s"${appConfig.fileStoreUrl}/file/$attachmentId")
   }
 
   def upload(fileUpload: FileUpload)

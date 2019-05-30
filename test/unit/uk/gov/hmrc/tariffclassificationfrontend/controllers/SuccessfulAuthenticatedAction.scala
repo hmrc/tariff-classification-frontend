@@ -84,10 +84,10 @@ class SuccessfulRequestActions(operator: Operator, c: Case = Cases.btiCaseExampl
 
 
 
-class RequestActionsWithPermissions(permissions : Set[Permission], reference: String = "test-reference",  c: Case = Cases.btiCaseExample)
+class RequestActionsWithPermissions(permissions : Set[Permission], addViewCasePermission: Boolean = true, reference: String = "test-reference",  c: Case = Cases.btiCaseExample)
   extends RequestActions(
     new CheckPermissionsAction,
-    new SuccessfulAuthenticatedAction(permissions = permissions ++ Set(Permission.VIEW_CASES)),
+    new SuccessfulAuthenticatedAction(permissions = if(addViewCasePermission) permissions ++ Set(Permission.VIEW_CASES) else permissions),
     new ExistingCaseActionFactory(reference, c),
     new MustHavePermissionActionFactory
   ) {}

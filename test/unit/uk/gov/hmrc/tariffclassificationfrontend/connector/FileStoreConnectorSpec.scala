@@ -25,32 +25,33 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.{Attachment, FileUpload}
 
 class FileStoreConnectorSpec extends ConnectorTest {
 
+  private val attachmentId = "id"
   private val connector = new FileStoreConnector(appConfig, authenticatedHttpClient, wsClient)
 
   "Connector 'GET' one" should {
     "handle 404" in {
       val att = mock[Attachment]
-      given(att.id) willReturn "id"
+      given(att.id) willReturn attachmentId
 
       stubFor(
         get("/file/id")
           .willReturn(aResponse().withStatus(Status.NOT_FOUND))
       )
 
-      await(connector.get(att)) shouldBe None
+      await(connector.get(attachmentId)) shouldBe None
 
       verify(
-        getRequestedFor(urlEqualTo("/file/id"))
+        getRequestedFor(urlEqualTo(s"/file/$attachmentId"))
           .withHeader("X-Api-Token", equalTo(realConfig.apiToken))
       )
     }
 
     "handle response with mandatory fields only" in {
       val att = mock[Attachment]
-      given(att.id) willReturn "id"
+      given(att.id) willReturn attachmentId
 
       stubFor(
-        get("/file/id")
+        get(s"/file/$attachmentId")
           .willReturn(
             aResponse()
               .withStatus(Status.OK)
@@ -58,9 +59,9 @@ class FileStoreConnectorSpec extends ConnectorTest {
           )
       )
 
-      await(connector.get(att)) shouldBe Some(
+      await(connector.get(attachmentId)) shouldBe Some(
         FileMetadata(
-          id = "id",
+          id = attachmentId,
           fileName = "name",
           mimeType = "text/plain",
           url = None,
@@ -69,17 +70,17 @@ class FileStoreConnectorSpec extends ConnectorTest {
       )
 
       verify(
-        getRequestedFor(urlEqualTo("/file/id"))
+        getRequestedFor(urlEqualTo(s"/file/$attachmentId"))
           .withHeader("X-Api-Token", equalTo(realConfig.apiToken))
       )
     }
 
     "handle response with optional fields" in {
       val att = mock[Attachment]
-      given(att.id) willReturn "id"
+      given(att.id) willReturn attachmentId
 
       stubFor(
-        get("/file/id")
+        get(s"/file/$attachmentId")
           .willReturn(
             aResponse()
               .withStatus(Status.OK)
@@ -87,9 +88,9 @@ class FileStoreConnectorSpec extends ConnectorTest {
           )
       )
 
-      await(connector.get(att)) shouldBe Some(
+      await(connector.get(attachmentId)) shouldBe Some(
         FileMetadata(
-          id = "id",
+          id = attachmentId,
           fileName = "name",
           mimeType = "text/plain",
           url = Some("url"),
@@ -98,7 +99,7 @@ class FileStoreConnectorSpec extends ConnectorTest {
       )
 
       verify(
-        getRequestedFor(urlEqualTo("/file/id"))
+        getRequestedFor(urlEqualTo(s"/file/$attachmentId"))
           .withHeader("X-Api-Token", equalTo(realConfig.apiToken))
       )
     }
