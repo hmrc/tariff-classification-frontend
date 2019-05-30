@@ -157,10 +157,12 @@ class CasesService @Inject()(appConfig: AppConfig,
     } yield updated
   }
 
-  def suspendCase(original: Case, operator: Operator)
+  def suspendCase(original: Case, fileUpload: FileUpload, note: String, operator: Operator)
                  (implicit hc: HeaderCarrier): Future[Case] = {
     for {
-      updated <- connector.updateCase(original.copy(status = CaseStatus.SUSPENDED))
+      fileStored <- fileService.upload(fileUpload)
+      attachment = Attachment(id = fileStored.id, operator = Some(operator))
+      updated <- connector.updateCase(original.addAttachment(attachment).copy(status = CaseStatus.SUSPENDED))
       _ <- addStatusChangeEvent(original, updated, operator)
       _ = auditService.auditCaseSuspended(original, updated, operator)
     } yield updated
@@ -168,7 +170,6 @@ class CasesService @Inject()(appConfig: AppConfig,
 
   def suppressCase(original: Case, fileUpload: FileUpload, note: String, operator: Operator)
                   (implicit hc: HeaderCarrier): Future[Case] = {
-
     for {
       fileStored <- fileService.upload(fileUpload)
       attachment = Attachment(id = fileStored.id, operator = Some(operator))

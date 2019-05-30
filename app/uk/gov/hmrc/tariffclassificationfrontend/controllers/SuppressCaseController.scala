@@ -37,7 +37,7 @@ import scala.concurrent.Future.successful
 class SuppressCaseController @Inject()(verify: RequestActions,
                                        casesService: CasesService,
                                        val messagesApi: MessagesApi,
-                                       override implicit val appConfig: AppConfig) extends RenderCaseAction with ExtractableFile {
+                                       implicit val appConfig: AppConfig) extends RenderCaseAction with ExtractableFile {
 
   private val form: Form[String] = AddNoteForm.form
 
