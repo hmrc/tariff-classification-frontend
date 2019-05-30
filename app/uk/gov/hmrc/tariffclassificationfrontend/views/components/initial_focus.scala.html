@@ -21,8 +21,8 @@
         if (hasErrors) {
             hasErrors.focus();
         } else {
-            @focusOnThisElement.map(element =>
-                s"document.getElementById('$element').focus();"
-            )
+            @if(focusOnThisElement.isDefined){
+                document.getElementById("@focusOnThisElement").focus();
+            }
         }
 </script>

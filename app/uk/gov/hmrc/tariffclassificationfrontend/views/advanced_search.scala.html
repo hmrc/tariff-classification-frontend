@@ -26,14 +26,14 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{advanced_search_keywords, advanced_search_results_tabs, back_link, pagination}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.partials.SearchResult
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.error_summary
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.components.setInitialFocus
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.components.initial_focus
 @(form: Form[Search], results: Option[Paged[SearchResult]] = None, keywords: Seq[String], selectedTab: SearchTab)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @formHasStatus(status: PseudoCaseStatus) = @{
     form.value.flatMap(_.status).exists(_.contains(status))
 }
 
-@main(bodyClasses = None, customTitle = Some(messages("page.title.advanced.search")), scriptElem = Some(setInitialFocus())) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.advanced.search")), scriptElem = Some(initial_focus())) {
 
     @back_link(displayBackLink = true, SessionKeys.backToQueuesLinkUrl, SessionKeys.backToQueuesLinkLabel)
 

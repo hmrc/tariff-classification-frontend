@@ -25,8 +25,7 @@ object FormMappings{
   def text(errorKey: String = "error.required"): FieldMapping[String] =
     of(stringFormatter(errorKey))
 
-  private[mappings] def stringFormatter(errorKey: String): Formatter[String] = new Formatter[String] {
-
+  private def stringFormatter(errorKey: String): Formatter[String] = new Formatter[String] {
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] =
       data.get(key) match {
         case None | Some("") => Left(Seq(FormError(key, errorKey)))
