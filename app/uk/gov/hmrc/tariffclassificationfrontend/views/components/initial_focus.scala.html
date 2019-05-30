@@ -17,12 +17,12 @@
 @(focusOnThisElement: Option[String] = None)
 
 <script>
-        var hasErrors = document.getElementById("error-summary");
-        if (hasErrors) {
-            hasErrors.focus();
-        } else {
-            @if(focusOnThisElement.isDefined){
-                document.getElementById("@focusOnThisElement").focus();
-            }
+    var hasErrors = document.getElementById("error-summary");
+    if (hasErrors) {
+        hasErrors.focus();
+    } else {
+        @if(focusOnThisElement.isDefined){
+             document.getElementById("@focusOnThisElement").focus();
         }
+    }
 </script>
