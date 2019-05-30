@@ -19,7 +19,7 @@ package uk.gov.hmrc.tariffclassificationfrontend.forms
 import play.api.data.Forms._
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import play.api.data.{Form, Forms, Mapping}
-import uk.gov.hmrc.tariffclassificationfrontend.models.CancelReason
+import uk.gov.hmrc.tariffclassificationfrontend.models.{CancelReason, CancelRuling}
 import uk.gov.hmrc.tariffclassificationfrontend.models.CancelReason.CancelReason
 
 object CancelRulingForm {
@@ -29,10 +29,14 @@ object CancelRulingForm {
     case _ => Invalid(s"Must be one of [${values.toSeq.mkString(", ")}]")
   }
 
-  private val mapping: Mapping[CancelReason] = Forms.mapping[CancelReason, String](
-    "reason" -> text.verifying(oneOf(CancelReason.values))
-  )(v => CancelReason.values.find(_.toString == v).get)(r => Some(r.toString))
+//  private val mapping: Mapping[CancelRuling] = Form(mapping[CancelRuling, String](
+//    "reason" -> text.verifying(oneOf(CancelReason.values)),
+//    "note" -> nonEmptyText
+//  )(v => CancelReason.values.find(_.toString == v).get)(r => Some(r.toString))
 
-  lazy val form: Form[CancelReason] = Form[CancelReason](mapping)
-
+  lazy val form: Form[CancelRuling] = Form(mapping(
+    "reason" -> text.verifying(oneOf(CancelReason.values)),
+    "note" -> nonEmptyText
+  )(CancelRuling.apply)(CancelRuling.unapply)
+  )
 }

@@ -35,6 +35,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
+//noinspection ScalaStyle
 @Singleton
 class CasesService @Inject()(appConfig: AppConfig,
                              auditService: AuditService,
@@ -214,7 +215,7 @@ class CasesService @Inject()(appConfig: AppConfig,
     } yield updated
   }
 
-  def cancelRuling(original: Case, reason: CancelReason, operator: Operator)
+  def cancelRuling(original: Case, reason: CancelReason, f: FileUpload, note: String, operator: Operator)
                   (implicit hc: HeaderCarrier): Future[Case] = {
     val updatedEndDate = LocalDate.now(appConfig.clock).atStartOfDay(appConfig.clock.getZone)
 
@@ -224,13 +225,16 @@ class CasesService @Inject()(appConfig: AppConfig,
         effectiveEndDate = Some(updatedEndDate.toInstant),
         cancellation = Some(Cancellation(reason = reason))
       )
-    val caseUpdating = original.copy(status = CaseStatus.CANCELLED, decision = Some(decisionUpdating))
 
     for {
+      // Store file
+      fileStored <- fileService.upload(fileUpload = f)
+      // Create attachment
+      attachment = Attachment(id = fileStored.id, operator = Some(operator))
       // Update the case
-      updated: Case <- connector.updateCase(caseUpdating)
+      updated: Case <- connector.updateCase( original.addAttachment(attachment).copy(status = CaseStatus.CANCELLED, decision = Some(decisionUpdating)))
       // Create the event
-      _ <- addStatusChangeEvent(original, updated, operator, comment = Some(CancelReason.format(reason)))
+      _ <- addStatusChangeEvent(original, updated, operator, comment = Some(s"${CancelReason.format(reason)}\r\n$note"), Some(attachment))
       // Audit
       _ = auditService.auditRulingCancelled(original, updated, operator)
 
