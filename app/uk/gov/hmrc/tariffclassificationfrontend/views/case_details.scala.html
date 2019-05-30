@@ -34,7 +34,7 @@
          |</script>
          |
        """.stripMargin
-    )
+    ).getOrElse("")
 }
 
 @main(bodyClasses = None, scriptElem = Some(Html(script.toString)),
