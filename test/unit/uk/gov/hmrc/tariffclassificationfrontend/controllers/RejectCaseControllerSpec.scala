@@ -214,8 +214,6 @@ class RejectCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   "View Confirm page for a rejected case" should {
 
     "return OK and HTML content type" in {
-      when(casesService.rejectCase(refEq(caseWithStatusREJECTED), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREJECTED))
-
       val result: Result = await(controller(caseWithStatusREJECTED).confirmRejectCase("reference")
       (newFakePOSTRequestWithCSRF(fakeApplication)
         .withFormUrlEncodedBody("state" -> "true")))
@@ -227,8 +225,6 @@ class RejectCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     }
 
     "redirect to a default page if the status is not right" in {
-      when(casesService.rejectCase(refEq(caseWithStatusOPEN), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREJECTED))
-
       val result: Result = await(controller(caseWithStatusOPEN).confirmRejectCase("reference")
       (newFakePOSTRequestWithCSRF(fakeApplication)
         .withFormUrlEncodedBody("state" -> "true")))
