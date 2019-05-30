@@ -26,7 +26,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.AddNoteForm
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus._
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, FileUpload, Permission}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Permission}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
@@ -34,12 +34,11 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
-//noinspection ScalaStyle
 @Singleton
 class RejectCaseController @Inject()(verify: RequestActions,
                                      casesService: CasesService,
                                      val messagesApi: MessagesApi,
-                                     implicit val appConfig: AppConfig) extends RenderCaseAction {
+                                     implicit val appConfig: AppConfig) extends RenderCaseAction with ExtractableFile {
 
   override protected val config: AppConfig = appConfig
   override protected val caseService: CasesService = casesService
@@ -61,53 +60,48 @@ class RejectCaseController @Inject()(verify: RequestActions,
 
   def postRejectCase(reference: String): Action[MultipartFormData[Files.TemporaryFile]] = (verify.authenticated andThen verify.casePermissions(reference) andThen
     verify.mustHave(Permission.REJECT_CASE)).async(parse.multipartFormData) { implicit request: AuthenticatedCaseRequest[MultipartFormData[Files.TemporaryFile]] =>
-    // Get the file from the request (filename check ensures it has been selected)
-    request.body.file("file-input").filter(_.filename.nonEmpty).filter(_.contentType.isDefined) match {
-      case Some(file) if hasValidContentType(file) =>
+
+    extractFile(key = "file-input")(
+      onFileValid = validFile => {
         form.bindFromRequest().fold(
-          errors =>
-            if (isCorrectlySized(file)) {
-              getCaseAndRenderView(reference, c => successful(views.html.reject_case(c, errors)))
-            } else {
-              getCaseAndRenderErrors(errors, reference, messagesApi("status.change.upload.error.restrictionSize"))
-            },
+          formWithErrors =>
+            getCaseAndRenderView(reference, c => successful(views.html.reject_case(c, formWithErrors))),
           note => {
-            if (isCorrectlySized(file)) {
-              val fileUpload = FileUpload(file.ref, file.filename, file.contentType.get)
-              validateAndRedirect(casesService.rejectCase(_, fileUpload, note, request.operator).map(c => routes.RejectCaseController.confirmRejectCase(reference)))
-            } else {
-              getCaseAndRenderErrors(form.fill(note), reference, messagesApi("status.change.upload.error.restrictionSize"))
-            }
+            validateAndRedirect(casesService.rejectCase(_, validFile, note, request.operator).map(c => routes.RejectCaseController.confirmRejectCase(c.reference)))
           }
         )
-      case Some(_) =>
-        form.bindFromRequest().fold(
-          errors => getCaseAndRenderErrors(errors, reference, messagesApi("status.change.upload.error.fileType")),
-          note => getCaseAndRenderErrors(form.fill(note), reference, messagesApi("status.change.upload.error.fileType"))
-        )
-      case None =>
+      },
 
+      onFileTooLarge = () => {
+        val error = messagesApi("status.change.upload.error.restrictionSize")
         form.bindFromRequest().fold(
-          errors => getCaseAndRenderErrors(errors, reference, messagesApi("status.change.upload.error.mustSelect")),
-          note => getCaseAndRenderErrors(form.fill(note), reference, messagesApi("status.change.upload.error.mustSelect"))
+          formWithErrors => getCaseAndRenderErrors(reference, formWithErrors, error),
+          note => getCaseAndRenderErrors(reference, form.fill(note), error)
         )
-    }
+      },
+
+      onFileInvalidType = () => {
+        val error = messagesApi("status.change.upload.error.fileType")
+        form.bindFromRequest().fold(
+          formWithErrors => getCaseAndRenderErrors(reference, formWithErrors, error),
+          note => getCaseAndRenderErrors(reference, form.fill(note), error)
+        )
+      },
+
+      onFileMissing = () => {
+        val error = messagesApi("status.change.upload.error.mustSelect")
+        form.bindFromRequest().fold(
+          formWithErrors => getCaseAndRenderErrors(reference, formWithErrors, error),
+          note => getCaseAndRenderErrors(reference, form.fill(note), error))
+
+      }
+    )
   }
 
-  private def getCaseAndRenderErrors(form: Form[String], reference : String, specificProblem : String)
+  private def getCaseAndRenderErrors(reference : String, form: Form[String],  specificProblem : String)
                                     (implicit request: AuthenticatedCaseRequest[MultipartFormData[Files.TemporaryFile]]): Future[Result] =
     getCaseAndRenderView(reference, c => successful(views.html.reject_case(c, form.withError("file-input", specificProblem))))
 
-  private def hasValidContentType: MultipartFormData.FilePart[TemporaryFile] => Boolean = { f =>
-    f.contentType match {
-      case Some(c: String) if appConfig.fileUploadMimeTypes.contains(c) => true
-      case _ => false
-    }
-  }
-
-  private def isCorrectlySized: MultipartFormData.FilePart[TemporaryFile] => Boolean = { f =>
-    f.ref.file.length.<=(appConfig.fileUploadMaxSize)
-  }
 
   override protected def redirect: String => Call = routes.CaseController.applicationDetails
 
