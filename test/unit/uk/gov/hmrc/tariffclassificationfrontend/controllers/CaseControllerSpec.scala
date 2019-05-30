@@ -199,6 +199,7 @@ class CaseControllerSpec extends WordSpec with Matchers with WithFakeApplication
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
+      contentAsString(result) should include("error-summary")
       contentAsString(result) should include("Enter a case note")
     }
 
@@ -262,6 +263,7 @@ class CaseControllerSpec extends WordSpec with Matchers with WithFakeApplication
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
+      contentAsString(result) should include("error-summary")
       contentAsString(result) should include("Enter a keyword")
     }
 

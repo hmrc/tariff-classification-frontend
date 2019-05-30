@@ -58,4 +58,6 @@ case class Case
     decision.flatMap(d => d.appeal.find(a => a.id.equals(appealId)))
   }
 
+  def addAttachment(attachment: Attachment): Case = this.copy(attachments = this.attachments :+ attachment)
+
 }

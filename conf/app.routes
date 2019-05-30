@@ -40,7 +40,6 @@ GET         /cases/:reference/refer/contact-info                @uk.gov.hmrc.tar
 GET         /cases/:reference/reject                            @uk.gov.hmrc.tariffclassificationfrontend.controllers.RejectCaseController.getRejectCase(reference: String)
 POST        /cases/:reference/reject                            @uk.gov.hmrc.tariffclassificationfrontend.controllers.RejectCaseController.postRejectCase(reference: String)
 GET         /cases/:reference/reject/confirmation               @uk.gov.hmrc.tariffclassificationfrontend.controllers.RejectCaseController.confirmRejectCase(reference: String)
-GET         /cases/:reference/reject/contact-info               @uk.gov.hmrc.tariffclassificationfrontend.controllers.RejectCaseController.showContactInformation(reference: String)
 
 GET         /cases/:reference/suspend                           @uk.gov.hmrc.tariffclassificationfrontend.controllers.SuspendCaseController.getSuspendCase(reference: String)
 POST        /cases/:reference/suspend                           @uk.gov.hmrc.tariffclassificationfrontend.controllers.SuspendCaseController.postSuspendCase(reference: String)
@@ -51,7 +50,6 @@ GET         /cases/:reference/suspend/contact-info              @uk.gov.hmrc.tar
 GET         /cases/:reference/suppress                          @uk.gov.hmrc.tariffclassificationfrontend.controllers.SuppressCaseController.getSuppressCase(reference: String)
 POST        /cases/:reference/suppress                          @uk.gov.hmrc.tariffclassificationfrontend.controllers.SuppressCaseController.postSuppressCase(reference: String)
 GET         /cases/:reference/suppress/confirmation             @uk.gov.hmrc.tariffclassificationfrontend.controllers.SuppressCaseController.confirmSuppressCase(reference: String)
-GET         /cases/:reference/suppress/contact-info             @uk.gov.hmrc.tariffclassificationfrontend.controllers.SuppressCaseController.showContactInformation(reference: String)
 
 POST        /cases/:reference/reopen                            @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReopenCaseController.confirmReopenCase(reference: String)
 
@@ -100,3 +98,5 @@ GET         /cases/:reference/keywords/:keyword                 @uk.gov.hmrc.tar
 
 GET         /pdf/ruling/:reference                              @uk.gov.hmrc.tariffclassificationfrontend.controllers.PdfDownloadController.rulingPdf(reference: String)
 GET         /pdf/application/:reference                         @uk.gov.hmrc.tariffclassificationfrontend.controllers.PdfDownloadController.applicationPdf(reference: String)
+
+GET         /attachment/:id                                     @uk.gov.hmrc.tariffclassificationfrontend.controllers.ViewAttachmentController.get(id: String)
