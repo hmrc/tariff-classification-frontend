@@ -33,7 +33,7 @@ class SuppressCaseSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body should include("Contact the applicant and attach a copy of the email before you suppress this case")
+      response.body should include("Change the status of this case to: Suppressed")
     }
 
     "redirect on auth failure" in {
