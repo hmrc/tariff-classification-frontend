@@ -14,14 +14,15 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.{CaseController, RejectCaseController}
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.{RejectCaseController,CaseController}
 @import uk.gov.hmrc.tariffclassificationfrontend.models.Case
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.input_textarea
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{contact_details, case_heading}
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.input_yes_no
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.case_heading
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.statuses.status_change_upload
 
-@(c: Case, form: Form[Boolean])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(c: Case, form: Form[String])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("page.title.reject.case"))) {
 
@@ -29,20 +30,39 @@
 
     <div class="grid-row">
         <div class="column-full">
-            <h2 class="heading-large mt-0">Contact the applicant and attach a copy of the email before you reject this case</h2>
+            <h2 class="heading-large mt-0">Change the status of this case to: Rejected</h2>
 
-            @contact_details(c)
+            @helper.form(action = RejectCaseController.postRejectCase(c.reference),
+            'enctype -> "multipart/form-data",
+            'id -> "reject-case") {
 
-            <h3 class="heading-medium mt-0">Have you contacted the applicant and attached a copy of the email to this case?</h3>
-
-            @helper.form(action = RejectCaseController.postRejectCase(c.reference), 'id -> "reject-case") {
                 @helper.CSRF.formField
 
-                @input_yes_no(form("state"), "reject-case_contacted-applicant")
+                <div id="add-a-note-heading">
+                    <h3 class="heading-medium mt-30 mb-30">Add a note</h3>
+                </div>
+
+                @input_textarea(
+                    field = form("note"),
+                    label = "",
+                    hint = Some("Give details of why you are rejecting this case. Keep the note clear and concise."),
+                    customErrorMessage = Some("Add a note giving details of why you are rejecting this case")
+                )
+
+                @status_change_upload(form("file-input"), "rejecting")
+
+                <div class="reopen-warning-notice">
+                    <i class="icon icon-important">
+                        <span class="visually-hidden">Warning</span>
+                    </i>
+                    <strong id="reject-warning-text" class="bold-small">
+                        <span>This case cannot be reopened after it has been rejected.</span>
+                    </strong>
+                </div>
 
                 <div>
-                    <button class="button" id="reject-case-button" type="submit">Reject this case</button>
-                    <a class="secondary-button" id="reject-case-cancel-button" href="@CaseController.applicationDetails(c.reference)">Cancel</a>
+                    <button class="button" id="reject-case-button" type="submit">Confirm status change</button>
+                    <a class="secondary-button" id="reject-case-cancel-button" href="@CaseController.applicationDetails(c.reference)">Cancel and return to case</a>
                 </div>
             }
         </div>

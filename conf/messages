@@ -163,6 +163,7 @@ error.empty.keyword = Enter a keyword
 status.change.upload.title=You can upload:
 status.change.upload.label=Upload a file
 status.change.upload.restrictionSize=a maximum file size of 10MB
+status.change.upload.error.restrictionSize=Your file will not upload because it''s bigger than 10MB
 status.change.upload.typeOfFiles=pdf, doc, docx, png, jpg, jpeg and txt files
 status.change.upload.error.mustSelect=Attach the email you have sent to the contact
 status.change.upload.error.fileType = Your document will not upload because it''s not a valid file type
