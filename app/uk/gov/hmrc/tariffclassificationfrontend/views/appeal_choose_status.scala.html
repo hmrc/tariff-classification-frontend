@@ -31,7 +31,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.components.initial_focus
 @(c: Case, appealType: AppealType, form: Form[AppealStatus])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("page.title.choose.appeal.status")), scriptElem = Some(initial_focus(None))) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.choose.appeal.status")), scriptElem = Some(initial_focus())) {
 
   @error_summary(form.errors)
 
