@@ -17,12 +17,13 @@
 package uk.gov.hmrc.tariffclassificationfrontend.forms
 
 import play.api.data.Form
-import play.api.data.Forms.{mapping, nonEmptyText}
+import play.api.data.Forms.mapping
+import uk.gov.hmrc.tariffclassificationfrontend.forms.mappings.FormMappings._
 
 object KeywordForm {
   val form: Form[String] = Form(
     mapping(
-      "keyword" -> nonEmptyText
+      "keyword" -> text("error.empty.keyword")
     )(identity)(Some(_))
   )
 
