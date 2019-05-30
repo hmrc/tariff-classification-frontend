@@ -25,15 +25,19 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{advanced_search_keywords, advanced_search_results_tabs, back_link, pagination}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.partials.SearchResult
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.error_summary
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.components.setInitialFocus
 @(form: Form[Search], results: Option[Paged[SearchResult]] = None, keywords: Seq[String], selectedTab: SearchTab)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @formHasStatus(status: PseudoCaseStatus) = @{
     form.value.flatMap(_.status).exists(_.contains(status))
 }
 
-@main(bodyClasses = None, customTitle = Some(messages("page.title.advanced.search"))) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.advanced.search")), scriptElem = Some(setInitialFocus())) {
 
     @back_link(displayBackLink = true, SessionKeys.backToQueuesLinkUrl, SessionKeys.backToQueuesLinkLabel)
+
+    @error_summary(form.errors)
 
     <h1 id="advanced_search-heading" class="heading-xlarge mb-3">Advanced search</h1>
     <p>To narrow your search, enter multiple search terms.<p>
