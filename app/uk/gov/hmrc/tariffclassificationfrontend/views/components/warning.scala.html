@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,21 +12,15 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package uk.gov.hmrc.tariffclassificationfrontend.forms
+@(message: String, containerClass: String = "")
 
-import play.api.data.Form
-import play.api.data.Forms._
-
-
-object AddNoteForm {
-
-  val form: Form[String] = Form(
-    mapping(
-      "note" -> nonEmptyText
-    )(identity)(Some(_))
-  )
-
-}
-
+<div class="notice @containerClass">
+    <i class="icon icon-important">
+        <span class="visually-hidden">Warning</span>
+    </i>
+    <strong class="bold-small">
+        @message
+    </strong>
+</div>

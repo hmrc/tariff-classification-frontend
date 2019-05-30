@@ -275,6 +275,11 @@ table tbody td[align="right"], table tbody th[align="right"], table thead th[ali
     line-height: 1.11111;
     color: #6f777b;
     margin-bottom: 5px;
+
+    a, a:visited, a:active, a:hover {
+      text-decoration: none;
+      color: inherit;
+    }
   }
 
   .case-title {
@@ -368,4 +373,8 @@ table tbody tr th {
 
 .attachment-img {
   width: 6em;
+}
+
+.left {
+  float: left;
 }

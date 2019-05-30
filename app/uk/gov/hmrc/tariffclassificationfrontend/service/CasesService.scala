@@ -34,9 +34,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import scala.concurrent.Future.successful
 
-//noinspection ScalaStyle
 @Singleton
 class CasesService @Inject()(appConfig: AppConfig,
                              auditService: AuditService,
@@ -168,10 +166,13 @@ class CasesService @Inject()(appConfig: AppConfig,
     } yield updated
   }
 
-  def suppressCase(original: Case, operator: Operator)
+  def suppressCase(original: Case, fileUpload: FileUpload, note: String, operator: Operator)
                   (implicit hc: HeaderCarrier): Future[Case] = {
+
     for {
-      updated <- connector.updateCase(original.copy(status = CaseStatus.SUPPRESSED))
+      fileStored <- fileService.upload(fileUpload)
+      attachment = Attachment(id = fileStored.id, operator = Some(operator))
+      updated <- connector.updateCase(original.addAttachment(attachment).copy(status = CaseStatus.SUPPRESSED))
       _ <- addStatusChangeEvent(original, updated, operator)
       _ = auditService.auditCaseSuppressed(original, updated, operator)
     } yield updated

@@ -15,13 +15,14 @@
  *@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.SuppressCaseController
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.{CaseController, SuppressCaseController}
 @import uk.gov.hmrc.tariffclassificationfrontend.models.Case
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.components.{confirm_or_cancel_buttons, warning}
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.input_textarea
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{contact_details, case_heading}
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.input_yes_no
-@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController
-@(c: Case, form: Form[Boolean])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.case_heading
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.statuses.status_change_upload
+@(c: Case, form: Form[String])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("page.title.suppress.case"))) {
 
@@ -29,25 +30,33 @@
 
     <div class="grid-row">
         <div class="column-full">
-            <h2 class="heading-large mt-0">Contact the applicant and attach a copy of the email before you suppress this case</h2>
+            <h2 class="heading-large mt-0">Change the status of this case to: Suppressed</h2>
 
-            @contact_details(c)
-
-            <h3 class="heading-medium mt-0">Have you contacted the applicant and attached a copy of the email to this case?</h3>
-
-            @helper.form(action = SuppressCaseController.postSuppressCase(c.reference), 'id -> "suppress-case") {
+            @helper.form(action = SuppressCaseController.postSuppressCase(c.reference), 'id -> "suppress-case", 'enctype -> "multipart/form-data") {
                 @helper.CSRF.formField
 
-                @input_yes_no(form("state"), "suppress-case_contacted-applicant")
+                <h3 id="suppress_case-heading" class="heading-medium mt-4 mb-30">Add a note</h3>
 
-                <p>
-                This case cannot be reopened once it has been suppressed.
-                </p>
+                @input_textarea(
+                    field = form("note"),
+                    label = "",
+                    hint = Some("Give details of why you are suppressing this case. Keep the note clear and concise."),
+                    customErrorMessage = Some("Add a note giving details of why you are suppressing this case")
+                )
 
-                <div>
-                    <button class="button" id="suppress-case-button" type="submit">Suppress this case</button>
-                    <a class="secondary-button" id="suppress-case-cancel-button" href="@CaseController.trader(c.reference)">Cancel</a>
-                </div>
+                @status_change_upload(form("email"), "suppressing")
+
+                @warning(
+                    "This case cannot be reopened once it has been suppressed.",
+                    containerClass = "mb-4"
+                )
+
+                @confirm_or_cancel_buttons(
+                    id = "suppress_case",
+                    confirmText = "Confirm status change",
+                    cancelText = "Cancel and return to case",
+                    cancelHref = CaseController.trader(c.reference)
+                )
             }
         </div>
     </div>
