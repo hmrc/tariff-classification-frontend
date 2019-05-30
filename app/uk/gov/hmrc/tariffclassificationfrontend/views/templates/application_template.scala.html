@@ -29,6 +29,8 @@
     <h2 id=@headerId>@messages(headerId)</h2>
 }
 
+@defining(c.application.asBTI) { btiApp: BTIApplication =>
+
 <html>
     <head>
         <style>
@@ -109,32 +111,32 @@
             <table>
                 <tr>
                     <td>EORI number</td>
-                    <td id="application.holder.eori">@c.application.holder.eori</td>
+                    <td id="application.holder.eori">@btiApp.holder.eori</td>
                 </tr>
                 <tr>
                     <td>@messages("pdf.application.section.applicant.companyDetails")</td>
                     <td id="application.holder.businessName">
-                        @c.application.holder.businessName <br/>
-                        @c.application.holder.addressLine1 <br/>
-                        @c.application.holder.addressLine2 <br/>
-                        @c.application.holder.addressLine3 <br/>
-                        @c.application.holder.postcode <br/>
-                        @c.application.holder.country
+                        @btiApp.holder.businessName <br/>
+                        @btiApp.holder.addressLine1 <br/>
+                        @btiApp.holder.addressLine2 <br/>
+                        @btiApp.holder.addressLine3 <br/>
+                        @btiApp.holder.postcode <br/>
+                        @btiApp.holder.country
 
                     </td>
                 </tr>
                 <tr>
                     <td>@messages("pdf.application.section.applicant.contactDetails")</td>
                     <td id="application.contact.details">
-                        @c.application.contact.name <br/>
-                        @c.application.contact.email <br/>
-                        @c.application.contact.phone
+                        @btiApp.contact.name <br/>
+                        @btiApp.contact.email <br/>
+                        @btiApp.contact.phone
                     </td>
                 </tr>
                 <tr>
                     <td>@messages("pdf.application.section.applyingFor")</td>
                     <td id="application.contact.details">
-                    @if(c.application.asBTI.agent.isDefined){
+                    @if(btiApp.agent.isDefined){
                         @messages("pdf.application.section.whichBestDescribesYou.businessRepresentative")
                     }else{
                         @messages("pdf.application.section.whichBestDescribesYou.businessOwner")
@@ -143,8 +145,8 @@
                 </tr>
             </table>
 
-            @if(c.application.asBTI.agent.isDefined) {
-                @defining(c.application.asBTI.agent.get) { agent: AgentDetails =>
+            @if(btiApp.agent.isDefined) {
+                @defining(btiApp.agent.get) { agent: AgentDetails =>
                     @sectionHeading("pdf.application.section.applyingFor.heading")
                     <table>
                         <tr>
@@ -169,148 +171,146 @@
                 }
             }
 
-            @defining(c.application.asBTI) { application: BTIApplication =>
+            @sectionHeading("pdf.application.section.aboutItem.heading")
+            <table>
 
-                @sectionHeading("pdf.application.section.aboutItem.heading")
-                <table>
-
-                    <tr>
-                        <td>@messages("pdf.application.section.applicationType")</td>
-                        <td id="application.applicationType">
-                        @if(application.reissuedBTIReference.isDefined){
-                            @messages("pdf.application.section.applicationType.renewalApplication")
-                        }else{
-                            @messages("pdf.application.section.applicationType.newApplication")
-                        }
-                        </td>
-                    </tr>
-
-                    @if(application.reissuedBTIReference.isDefined){
-                        <tr>
-                            <td>@messages("pdf.application.section.applicationType.reIssue")</td>
-                            <td id="application.reissuedBTIReference">
-                                @application.reissuedBTIReference <br/>
-                            </td>
-                        </tr>
+                <tr>
+                    <td>@messages("pdf.application.section.applicationType")</td>
+                    <td id="application.applicationType">
+                    @if(btiApp.reissuedBTIReference.isDefined){
+                        @messages("pdf.application.section.applicationType.renewalApplication")
+                    }else{
+                        @messages("pdf.application.section.applicationType.newApplication")
                     }
-                    <tr>
-                        <td>@messages("pdf.application.section.aboutItem.description")</td>
-                        <td id="application.goods.details">
-                            @application.goodName <br/>
-                            <span class="pre-wrap">@application.goodDescription</span><br/>
-                            @if(application.confidentialInformation.isDefined) {
-                                <span class="pre-wrap">@application.confidentialInformation.get</span>
-                            }
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>@messages("pdf.application.section.aboutItem.uploadeDocuments")</td>
-                        <td id="application.attachments">@if(attachments.isEmpty) {@messages("site.none")} else {
-                            @for(row <- attachments) {
-                                @row.fileName <br/>
-                            }
-                        }
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>@messages("pdf.application.section.aboutItem.importOrExport")</td>
-                        <td id="application.importOrExport">
-                            @{application.importOrExport match {
-                                case Some(ImportExport.IMPORT) => messages("pdf.application.section.aboutItem.import")
-                                case Some(ImportExport.EXPORT) => messages("pdf.application.section.aboutItem.export")
-                                case _ => messages("site.unknown")
-                            }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>@messages("pdf.application.section.aboutItem.suggestedCommodityCode")</td>
-                        <td id="application.suggestedCommodityCode.question">
-                        @if(application.envisagedCommodityCode.isDefined){
-                            @messages("site.yes")
-                        }else{
-                            @messages("site.no")
-                        }
-                        </td>
-                    </tr>
+                    </td>
+                </tr>
 
-                    @if(application.envisagedCommodityCode.isDefined) {
-                        <tr>
-                            <td>@messages("pdf.application.section.aboutItem.envisagedCommodityCode")</td>
-                            <td id="application.suggestedCommodityCode">
-                                <span class="pre-wrap">@application.envisagedCommodityCode.get</span>
-                            </td>
-                        </tr>
+                @if(btiApp.reissuedBTIReference.isDefined){
+                    <tr>
+                        <td>@messages("pdf.application.section.applicationType.reIssue")</td>
+                        <td id="application.reissuedBTIReference">
+                            @btiApp.reissuedBTIReference <br/>
+                        </td>
+                    </tr>
+                }
+                <tr>
+                    <td>@messages("pdf.application.section.aboutItem.description")</td>
+                    <td id="application.goods.details">
+                        @btiApp.goodName <br/>
+                        <span class="pre-wrap">@btiApp.goodDescription</span><br/>
+                        @if(btiApp.confidentialInformation.isDefined) {
+                            <span class="pre-wrap">@btiApp.confidentialInformation.get</span>
+                        }
+                    </td>
+                </tr>
+                <tr>
+                    <td>@messages("pdf.application.section.aboutItem.uploadeDocuments")</td>
+                    <td id="application.attachments">@if(attachments.isEmpty) {@messages("site.none")} else {
+                        @for(row <- attachments) {
+                            @row.fileName <br/>
+                        }
                     }
+                    </td>
+                </tr>
+                <tr>
+                    <td>@messages("pdf.application.section.aboutItem.importOrExport")</td>
+                    <td id="application.importOrExport">
+                        @{btiApp.importOrExport match {
+                            case Some(ImportExport.IMPORT) => messages("pdf.application.section.aboutItem.import")
+                            case Some(ImportExport.EXPORT) => messages("pdf.application.section.aboutItem.export")
+                            case _ => messages("site.unknown")
+                        }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>@messages("pdf.application.section.aboutItem.suggestedCommodityCode")</td>
+                    <td id="application.suggestedCommodityCode.question">
+                    @if(btiApp.envisagedCommodityCode.isDefined){
+                        @messages("site.yes")
+                    }else{
+                        @messages("site.no")
+                    }
+                    </td>
+                </tr>
 
+                @if(btiApp.envisagedCommodityCode.isDefined) {
                     <tr>
-                        <td>@messages("pdf.application.section.aboutItem.sampleProvided")</td>
-                        <td id="application.sampleToBeProvided">@if(application.sampleToBeProvided) {
+                        <td>@messages("pdf.application.section.aboutItem.envisagedCommodityCode")</td>
+                        <td id="application.suggestedCommodityCode">
+                            <span class="pre-wrap">@btiApp.envisagedCommodityCode.get</span>
+                        </td>
+                    </tr>
+                }
+
+                <tr>
+                    <td>@messages("pdf.application.section.aboutItem.sampleProvided")</td>
+                    <td id="application.sampleToBeProvided">@if(btiApp.sampleToBeProvided) {
+                        @messages("site.yes")
+                    } else {
+                        @messages("site.no")
+                    }</td>
+                </tr>
+
+                @if(btiApp.sampleToBeProvided) {
+                    <tr>
+                        <td>@messages("pdf.application.section.aboutItem.sampleReturned")</td>
+                        <td id="application.sampleToBeReturned">@if(btiApp.sampleToBeReturned) {
                             @messages("site.yes")
                         } else {
                             @messages("site.no")
                         }</td>
                     </tr>
+                }
 
-                    @if(application.sampleToBeProvided) {
-                        <tr>
-                            <td>@messages("pdf.application.section.aboutItem.sampleReturned")</td>
-                            <td id="application.sampleToBeReturned">@if(application.sampleToBeReturned) {
-                                @messages("site.yes")
-                            } else {
-                                @messages("site.no")
-                            }</td>
-                        </tr>
-                    }
+                <tr>
+                    <td>@messages("pdf.application.section.aboutItem.similarRuling")</td>
+                    <td id="application.relatedBTIReference.defined">@if(btiApp.relatedBTIReference.isDefined) {
+                        @messages("site.yes")
+                    } else {
+                        @messages("site.no")
+                    }</td>
+                </tr>
 
+                @if(btiApp.relatedBTIReference.isDefined) {
                     <tr>
-                        <td>@messages("pdf.application.section.aboutItem.similarRuling")</td>
-                        <td id="application.relatedBTIReference.defined">@if(application.relatedBTIReference.isDefined) {
-                            @messages("site.yes")
-                        } else {
-                            @messages("site.no")
-                        }</td>
+                        <td>@messages("pdf.application.section.aboutItem.similarRuling.BTIRef")</td>
+                        <td id="application.relatedBTIReference"><span class="pre-wrap">@btiApp.relatedBTIReference.get</span></td>
                     </tr>
+                }
 
-                    @if(application.relatedBTIReference.isDefined) {
-                        <tr>
-                            <td>@messages("pdf.application.section.aboutItem.similarRuling.BTIRef")</td>
-                            <td id="application.relatedBTIReference"><span class="pre-wrap">@application.relatedBTIReference.get</span></td>
-                        </tr>
-                    }
+                <tr>
+                    <td>@messages("pdf.application.section.aboutItem.legalProblems")</td>
+                    <td id="application.knownLegalProceedings.defined">@if(btiApp.knownLegalProceedings.isDefined) {
+                        @messages("site.yes")
+                    } else {
+                        @messages("site.no")
+                    }</td>
+                </tr>
 
+                @if(btiApp.knownLegalProceedings.isDefined) {
                     <tr>
-                        <td>@messages("pdf.application.section.aboutItem.legalProblems")</td>
-                        <td id="application.knownLegalProceedings.defined">@if(application.knownLegalProceedings.isDefined) {
-                            @messages("site.yes")
-                        } else {
-                            @messages("site.no")
-                        }</td>
+                        <td>@messages("pdf.application.section.aboutItem.legalProblems.details")</td>
+                        <td id="application.knownLegalProceedings"><span class="pre-wrap">@btiApp.knownLegalProceedings.get</span></td>
                     </tr>
+                }
+            </table>
 
-                    @if(application.knownLegalProceedings.isDefined) {
-                        <tr>
-                            <td>@messages("pdf.application.section.aboutItem.legalProblems.details")</td>
-                            <td id="application.knownLegalProceedings"><span class="pre-wrap">@application.knownLegalProceedings.get</span></td>
-                        </tr>
-                    }
-                </table>
-
-                @sectionHeading("pdf.application.section.other.heading")
-                <table>
+            @sectionHeading("pdf.application.section.other.heading")
+            <table>
+                <tr>
+                    <td>@messages("pdf.application.section.other.haveOtherInformation")</td>
+                    <td id="application.otherInformation.question">
+                        @if(btiApp.otherInformation.isDefined) { @messages("site.yes") } else { @messages("site.no")}
+                    </td>
+                </tr>
+                @if(btiApp.otherInformation.isDefined) {
                     <tr>
-                        <td>@messages("pdf.application.section.other.haveOtherInformation")</td>
-                        <td id="application.otherInformation.question">
-                            @if(application.otherInformation.isDefined) { @messages("site.yes") } else { @messages("site.no")}
-                        </td>
+                        <td>@messages("pdf.application.section.other.supportingInformation")</td>
+                        <td id="application.otherInformation"><span class="pre-wrap">@btiApp.otherInformation.get</span></td>
                     </tr>
-                    @if(application.otherInformation.isDefined) {
-                        <tr>
-                            <td>@messages("pdf.application.section.other.supportingInformation")</td>
-                            <td id="application.otherInformation"><span class="pre-wrap">@application.otherInformation.get</span></td>
-                        </tr>
-                    }
-                </table>
-            }
+                }
+            </table>
+
 
             <br/>
 
@@ -336,3 +336,5 @@
     </body>
 
 </html>
+
+}
