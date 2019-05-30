@@ -57,57 +57,87 @@ class CasesService_SuspendCaseSpec extends UnitSpec with MockitoSugar with Befor
   "Suspend a Case" should {
     "update case status to SUSPENDED" in {
       // Given
+      val existingAttachment = mock[Attachment]
+
+      val fileUpload = mock[FileUpload]
+      val fileUploaded = FileStoreAttachment("id", "email", "application/pdf", 0)
       val operator: Operator = Operator("operator-id", Some("Billy Bobbins"))
-      val originalCase = aCase.copy(status = CaseStatus.OPEN)
+      val originalCase = aCase.copy(status = CaseStatus.NEW, attachments = Seq(existingAttachment))
       val caseUpdated = aCase.copy(status = CaseStatus.SUSPENDED)
 
+      given(fileStoreService.upload(fileUpload)).willReturn(successful(fileUploaded))
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])).willReturn(successful(mock[Event]))
 
       // When Then
-      await(service.suspendCase(originalCase, operator)) shouldBe caseUpdated
+      await(service.suspendCase(originalCase, fileUpload, "note", operator)) shouldBe caseUpdated
 
       verify(audit).auditCaseSuspended(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
 
       val caseUpdating = theCaseUpdating(connector)
       caseUpdating.status shouldBe CaseStatus.SUSPENDED
+      caseUpdating.attachments should have(size(2))
+
+      val attachmentUpdating = caseUpdating.attachments.find(_.id == "id")
+      attachmentUpdating.map(_.id) shouldBe Some("id")
+      attachmentUpdating.map(_.public) shouldBe Some(false)
+      attachmentUpdating.flatMap(_.operator) shouldBe Some(operator)
 
       val eventCreated = theEventCreatedFor(connector, caseUpdated)
       eventCreated.operator shouldBe Operator("operator-id", Some("Billy Bobbins"))
-      eventCreated.details shouldBe CaseStatusChange(CaseStatus.OPEN, CaseStatus.SUSPENDED)
+      eventCreated.details shouldBe CaseStatusChange(CaseStatus.NEW, CaseStatus.SUSPENDED)
+    }
+
+    "fail to update on attachment upload failure" in {
+      // Given
+      val fileUpload = mock[FileUpload]
+      val operator: Operator = Operator("operator-id", Some("Billy Bobbins"))
+      val originalCase = aCase.copy(status = CaseStatus.NEW)
+
+      given(fileStoreService.upload(fileUpload)).willReturn(failed(new RuntimeException("Error")))
+
+      // When Then
+      intercept[RuntimeException] {
+        await(service.suspendCase(originalCase, fileUpload, "note", operator))
+      }.getMessage shouldBe "Error"
     }
 
     "not create event on update failure" in {
+      val fileUpload = mock[FileUpload]
+      val fileUploaded = FileStoreAttachment("id", "email", "application/pdf", 0)
       val operator: Operator = Operator("operator-id")
-      val originalCase = aCase.copy(status = CaseStatus.OPEN)
+      val caseUpdated = aCase.copy(status = CaseStatus.SUSPENDED)
 
-      given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(failed(new RuntimeException()))
+      given(fileStoreService.upload(fileUpload)).willReturn(successful(fileUploaded))
+      given(connector.updateCase(refEq(caseUpdated))(any[HeaderCarrier])).willReturn(failed(new RuntimeException()))
 
       intercept[RuntimeException] {
-        await(service.suspendCase(originalCase, operator))
+        await(service.suspendCase(caseUpdated, fileUpload, "note", operator))
       }
 
       verifyZeroInteractions(audit)
-      verify(connector, never()).createEvent(refEq(aCase), any[NewEventRequest])(any[HeaderCarrier])
+      verify(connector, never()).createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])
     }
 
     "succeed on event create failure" in {
       // Given
+      val fileUpload = mock[FileUpload]
+      val fileUploaded = FileStoreAttachment("id", "email", "application/pdf", 0)
       val operator: Operator = Operator("operator-id")
-      val originalCase = aCase.copy(status = CaseStatus.OPEN)
+      val originalCase = aCase.copy(status = CaseStatus.NEW)
       val caseUpdated = aCase.copy(status = CaseStatus.SUSPENDED)
 
+      given(fileStoreService.upload(fileUpload)).willReturn(successful(fileUploaded))
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])).willReturn(failed(new RuntimeException()))
 
       // When Then
-      await(service.suspendCase(originalCase, operator)) shouldBe caseUpdated
+      await(service.suspendCase(originalCase, fileUpload, "note", operator)) shouldBe caseUpdated
 
       verify(audit).auditCaseSuspended(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
 
       val caseUpdating = theCaseUpdating(connector)
       caseUpdating.status shouldBe CaseStatus.SUSPENDED
-
     }
   }
 

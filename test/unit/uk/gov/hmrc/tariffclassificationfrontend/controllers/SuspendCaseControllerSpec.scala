@@ -23,14 +23,16 @@ import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterEach, Matchers, WordSpec}
 import play.api.http.{MimeTypes, Status}
 import play.api.i18n.{DefaultLangs, DefaultMessagesApi}
-import play.api.mvc.Result
+import play.api.libs.Files.TemporaryFile
+import play.api.mvc.MultipartFormData.FilePart
+import play.api.mvc.{MultipartFormData, Result}
 import play.api.test.Helpers.{redirectLocation, _}
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models.Permission.Permission
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus, Operator, Permission}
+import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.tariffclassificationfrontend.utils.Cases
 
@@ -107,33 +109,57 @@ class SuspendCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
   "Post Confirm Suspend a Case" should {
 
-    "return OK and HTML content type" in {
-      when(casesService.suspendCase(refEq(caseWithStatusOPEN), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusSUSPENDED))
+    def aMultipartFileWithParams(contentType: String, params: (String, Seq[String])*): MultipartFormData[TemporaryFile] = {
+      val file = TemporaryFile("example-file.txt")
+      val filePart = FilePart[TemporaryFile](key = "email", "file.txt", contentType = Some(contentType), ref = file)
+      MultipartFormData[TemporaryFile](dataParts = params.toMap, files = Seq(filePart), badParts = Seq.empty)
+    }
 
-      val result: Result = await(controller(caseWithStatusOPEN).postSuspendCase("reference")
-      (newFakePOSTRequestWithCSRF(fakeApplication)
-        .withFormUrlEncodedBody("state" -> "true")))
+    def anEmptyMultipartFileWithParams(params: (String, Seq[String])*): MultipartFormData[TemporaryFile] = {
+      val filePart = FilePart[TemporaryFile](key = "email", "", contentType = Some("text/plain"), ref = TemporaryFile("example-file.txt"))
+      MultipartFormData[TemporaryFile](dataParts = params.toMap, files = Seq(filePart), badParts = Seq.empty)
+    }
+
+    "redirect to confirmation" in {
+      when(casesService.suspendCase(refEq(caseWithStatusOPEN), any[FileUpload], refEq("some-note"), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusSUSPENDED))
+
+      val result: Result =
+        await(controller(caseWithStatusOPEN).postSuspendCase("reference")
+        (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileWithParams("text/plain", "note" -> Seq("some-note")))))
 
       status(result) shouldBe Status.SEE_OTHER
       locationOf(result) shouldBe Some("/tariff-classification/cases/reference/suspend/confirmation")
     }
 
-    "redirect to contact info page when select No from the form" in {
-      when(casesService.suspendCase(refEq(caseWithStatusOPEN), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusSUSPENDED))
+    "return to form on missing file" in {
+      val result: Result =
+        await(controller(caseWithStatusOPEN).postSuspendCase("reference")
+        (newFakePOSTRequestWithCSRF(fakeApplication).withBody(anEmptyMultipartFileWithParams())))
 
-      val result: Result = await(controller(caseWithStatusOPEN).postSuspendCase("reference")
-      (newFakePOSTRequestWithCSRF(fakeApplication)
-        .withFormUrlEncodedBody("state" -> "false")))
+      status(result) shouldBe Status.OK
+      bodyOf(result) should include("Change the status of this case to: Suspended")
+    }
 
-      status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/suspend/contact-info")
+    "return to form on missing form field" in {
+      val result: Result =
+        await(controller(caseWithStatusOPEN).postSuspendCase("reference")
+        (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileWithParams("text/plain"))))
+
+      status(result) shouldBe Status.OK
+      bodyOf(result) should include("Change the status of this case to: Suspended")
+    }
+
+    "return to form on invalid file type" in {
+      val result: Result =
+        await(controller(caseWithStatusOPEN).postSuspendCase("reference")
+        (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileWithParams("audio/mpeg", "note" -> Seq("some-note")))))
+
+      status(result) shouldBe Status.OK
+      bodyOf(result) should include("Change the status of this case to: Suspended")
     }
 
     "redirect to Application Details for non OPEN statuses" in {
-
-      val result: Result = await(controller(caseWithStatusNEW).postSuspendCase("reference")
-      (newFakePOSTRequestWithCSRF(fakeApplication)
-        .withFormUrlEncodedBody("state" -> "true")))
+      val result: Result = await(controller(caseWithStatusNEW).postSuspendCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileWithParams("text/plain"))))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
@@ -141,22 +167,10 @@ class SuspendCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       locationOf(result) shouldBe Some("/tariff-classification/cases/reference/application")
     }
 
-    "return OK when user has right permissions" in {
-      when(casesService.suspendCase(any[Case], any[Operator])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusSUSPENDED))
-
-      val result: Result = await(controller(caseWithStatusOPEN, Set(Permission.SUSPEND_CASE))
-        .postSuspendCase("reference")
-        (newFakePOSTRequestWithCSRF(fakeApplication)
-          .withFormUrlEncodedBody("state" -> "true")))
-
-      status(result) shouldBe Status.SEE_OTHER
-    }
-
     "redirect unauthorised when does not have right permissions" in {
-      val result: Result = await(controller(caseWithStatusNEW, Set.empty)
+      val result: Result = await(controller(caseWithStatusOPEN, Set.empty)
         .postSuspendCase("reference")
-        (newFakePOSTRequestWithCSRF(fakeApplication)
-          .withFormUrlEncodedBody("state" -> "true")))
+        (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileWithParams("text/plain"))))
 
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
@@ -166,9 +180,9 @@ class SuspendCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   "View Confirm page for a suspended case" should {
 
     "return OK and HTML content type" in {
-      when(casesService.suspendCase(refEq(caseWithStatusSUSPENDED), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusSUSPENDED))
-
-      val result: Result = await(controller(caseWithStatusSUSPENDED).confirmSuspendCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+      val result: Result = await(controller(caseWithStatusSUSPENDED).confirmSuspendCase("reference")
+      (newFakePOSTRequestWithCSRF(fakeApplication)
+        .withFormUrlEncodedBody("state" -> "true")))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -177,34 +191,8 @@ class SuspendCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     }
 
     "redirect to a default page if the status is not right" in {
-      when(casesService.suspendCase(refEq(caseWithStatusOPEN), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusSUSPENDED))
-
-      val result: Result = await(controller(caseWithStatusOPEN).confirmSuspendCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
-
-      status(result) shouldBe Status.SEE_OTHER
-      contentTypeOf(result) shouldBe None
-      charsetOf(result) shouldBe None
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/application")
-    }
-  }
-
-  "View contact information page for a suspended case" should {
-
-    "return OK and HTML content type" in {
-      when(casesService.suspendCase(refEq(caseWithStatusOPEN), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusOPEN))
-
-      val result: Result = await(controller(caseWithStatusOPEN).showContactInformation("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
-
-      status(result) shouldBe Status.OK
-      contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
-      charsetOf(result) shouldBe Some("utf-8")
-      bodyOf(result) should include("Contact details")
-    }
-
-    "redirect to a default page if the status is not right" in {
-      when(casesService.suspendCase(refEq(caseWithStatusSUSPENDED), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusSUSPENDED))
-
-      val result: Result = await(controller(caseWithStatusSUSPENDED).showContactInformation("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+      val result: Result = await(controller(caseWithStatusOPEN).confirmSuspendCase("reference")
+      (newFakePOSTRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
