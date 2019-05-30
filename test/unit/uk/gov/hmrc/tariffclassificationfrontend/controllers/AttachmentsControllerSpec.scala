@@ -175,6 +175,7 @@ class AttachmentsControllerSpec extends UnitSpec with Matchers with WithFakeAppl
 
       // Then
       status(result) shouldBe OK
+      contentAsString(result) should include("error-summary")
       contentAsString(result) should include("You must select a file")
     }
 

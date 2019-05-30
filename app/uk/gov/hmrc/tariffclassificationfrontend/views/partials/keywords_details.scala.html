@@ -22,7 +22,10 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Permission}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.components.input_auto_complete
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.tab_heading
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.error_summary
 @(c: Case, autoCompleteOptions: Seq[String], keywordForm : Form[String], startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+
+    @error_summary(keywordForm.errors, Some(startAtTabIndex))
 
     @tab_heading("keywords", messages("case.menu.keywords"))
 
@@ -50,7 +53,7 @@
                         </div>
                         @if(request.hasPermission(Permission.KEYWORDS)) {
                             <div id="keywords-row-@{index}-remove" class="column-one-third text-right">
-                                <a tabindex="@{startAtTabIndex+1+index}" id="keywords-row-@{index}-remove-link" aria-label="remove @keyword" href="@CaseController.removeKeyword(c.reference, keyword)">Remove</a>
+                                <a tabindex="@{startAtTabIndex+10+index}" id="keywords-row-@{index}-remove-link" aria-label="remove @keyword" href="@CaseController.removeKeyword(c.reference, keyword)">Remove</a>
                             </div>
                         }
                     </div>
@@ -69,7 +72,7 @@
                         autoCompleteOptions = autoCompleteOptions,
                         formControlClass = Some("w-100"),
                         useTabIndex = Some(startAtTabIndex+50),
-                        customErrorMessage = Some("Enter a keyword")
+                        customErrorMessage = Some(messages("error.empty.keyword"))
                     )
 
                     <p>To suggest a new keyword contact the classification team manager.</p>
