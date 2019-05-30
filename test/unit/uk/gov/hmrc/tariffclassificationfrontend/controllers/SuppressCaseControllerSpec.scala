@@ -108,9 +108,9 @@ class SuppressCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
   "Confirm Suppress a Case" should {
 
-    def aMultipartFileWithParams(params: (String, Seq[String])*): MultipartFormData[TemporaryFile] = {
+    def aMultipartFileWithParams(contentType: String, params: (String, Seq[String])*): MultipartFormData[TemporaryFile] = {
       val file = TemporaryFile("example-file.txt")
-      val filePart = FilePart[TemporaryFile](key = "email", "file.txt", contentType = Some("text/plain"), ref = file)
+      val filePart = FilePart[TemporaryFile](key = "email", "file.txt", contentType = Some(contentType), ref = file)
       MultipartFormData[TemporaryFile](dataParts = params.toMap, files = Seq(filePart), badParts = Seq.empty)
     }
 
@@ -124,7 +124,7 @@ class SuppressCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
       val result: Result =
         await(controller(caseWithStatusNEW).postSuppressCase("reference")
-             (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileWithParams("note" -> Seq("some-note")))))
+             (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileWithParams("text/plain", "note" -> Seq("some-note")))))
 
       status(result) shouldBe Status.SEE_OTHER
       locationOf(result) shouldBe Some("/tariff-classification/cases/reference/suppress/confirmation")
@@ -142,14 +142,23 @@ class SuppressCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     "return to form on missing form field" in {
       val result: Result =
         await(controller(caseWithStatusNEW).postSuppressCase("reference")
-        (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileWithParams())))
+        (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileWithParams("text/plain"))))
+
+      status(result) shouldBe Status.OK
+      bodyOf(result) should include("Change the status of this case to: Suppressed")
+    }
+
+    "return to form on invalid file type" in {
+      val result: Result =
+        await(controller(caseWithStatusNEW).postSuppressCase("reference")
+        (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileWithParams("audio/mpeg", "note" -> Seq("some-note")))))
 
       status(result) shouldBe Status.OK
       bodyOf(result) should include("Change the status of this case to: Suppressed")
     }
 
     "redirect to Application Details for non NEW statuses" in {
-      val result: Result = await(controller(caseWithStatusOPEN).postSuppressCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileWithParams())))
+      val result: Result = await(controller(caseWithStatusOPEN).postSuppressCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileWithParams("text/plain"))))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
@@ -160,7 +169,7 @@ class SuppressCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     "redirect unauthorised when does not have right permissions" in {
       val result: Result = await(controller(caseWithStatusNEW, Set.empty)
         .postSuppressCase("reference")
-        (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileWithParams())))
+        (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileWithParams("text/plain"))))
 
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
