@@ -16,7 +16,7 @@
 
 @(errors: Seq[FormError], startAtTabIndex : Option[Int] = None)(implicit messages: Messages)
 @if(errors.nonEmpty) {
-    <div class="error-summary error-summary--show" id="error-summary" role="group" aria-labelledby="error-summary-heading" tabindex="@startAtTabIndex.map(index => index + 1).getOrElse("-1")">
+    <div class="error-summary error-summary--show" id="error-summary" role="group" aria-labelledby="error-summary-heading" tabindex="@startAtTabIndex.map(index => index + 1)">
 
         <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
             @messages("error.summary.title")

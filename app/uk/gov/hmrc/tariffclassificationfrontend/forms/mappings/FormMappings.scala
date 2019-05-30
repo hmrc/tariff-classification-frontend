@@ -20,12 +20,10 @@ import play.api.data.{FieldMapping, FormError}
 import play.api.data.Forms.of
 import play.api.data.format.Formatter
 
-
 object FormMappings{
 
   def text(errorKey: String = "error.required"): FieldMapping[String] =
     of(stringFormatter(errorKey))
-
 
   private[mappings] def stringFormatter(errorKey: String): Formatter[String] = new Formatter[String] {
 
