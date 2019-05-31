@@ -106,7 +106,6 @@ class ActivityDetailsViewSpec extends ViewSpec {
       doc shouldNot containElementWithID("add-note-submit")
     }
 
-
     "Render 'Note'" in {
       // Given
       val c = aCase()
