@@ -38,7 +38,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body shouldNot include("id=advanced_search-results_and_filters")
+      response.body shouldNot include("id=\"advanced_search-results_and_filters\"")
     }
 
 
