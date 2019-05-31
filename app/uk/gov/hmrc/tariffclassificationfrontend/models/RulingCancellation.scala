@@ -18,4 +18,4 @@ package uk.gov.hmrc.tariffclassificationfrontend.models
 
 import uk.gov.hmrc.tariffclassificationfrontend.models.CancelReason.CancelReason
 
-case class CancelRuling(cancelReason: String, note: String)
+case class RulingCancellation(cancelReason: String, note: String)

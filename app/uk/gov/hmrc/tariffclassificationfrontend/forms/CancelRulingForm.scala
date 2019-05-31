@@ -19,7 +19,7 @@ package uk.gov.hmrc.tariffclassificationfrontend.forms
 import play.api.data.Forms._
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import play.api.data.{Form, Forms, Mapping}
-import uk.gov.hmrc.tariffclassificationfrontend.models.{CancelReason, CancelRuling}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{CancelReason, RulingCancellation}
 import uk.gov.hmrc.tariffclassificationfrontend.models.CancelReason.CancelReason
 
 object CancelRulingForm {
@@ -34,9 +34,9 @@ object CancelRulingForm {
 //    "note" -> nonEmptyText
 //  )(v => CancelReason.values.find(_.toString == v).get)(r => Some(r.toString))
 
-  lazy val form: Form[CancelRuling] = Form(mapping(
+  lazy val form: Form[RulingCancellation] = Form(mapping(
     "reason" -> text.verifying(oneOf(CancelReason.values)),
     "note" -> nonEmptyText
-  )(CancelRuling.apply)(CancelRuling.unapply)
+  )(RulingCancellation.apply)(RulingCancellation.unapply)
   )
 }
