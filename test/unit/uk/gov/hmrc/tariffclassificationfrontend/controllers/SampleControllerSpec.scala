@@ -140,10 +140,8 @@ class SampleControllerSpec extends UnitSpec with Matchers
 
       verify(casesService, never()).updateSampleStatus(any[Case], any[Option[SampleStatus]], any[Operator])(any[HeaderCarrier])
 
-      status(result) shouldBe Status.OK
-      contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
-      contentAsString(result) should include("error-summary")
+      status(result) shouldBe Status.SEE_OTHER
+      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/sample")
     }
 
     "when error form re-displays with error message" in {

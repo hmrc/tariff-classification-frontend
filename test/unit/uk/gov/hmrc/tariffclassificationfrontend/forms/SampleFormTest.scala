@@ -31,7 +31,7 @@ class SampleStatusFormTest extends UnitSpec {
     "Bind blank" in {
       val form = SampleStatusForm.form.bindFromRequest(Map("status" -> Seq("")))
 
-      form.hasErrors shouldBe true
+      form.hasErrors shouldBe false
     }
 
     "Bind valid enum" in {
@@ -62,5 +62,7 @@ class SampleStatusFormTest extends UnitSpec {
       form.data shouldBe Map("status" -> "AWAITING")
     }
   }
+
+
 
 }

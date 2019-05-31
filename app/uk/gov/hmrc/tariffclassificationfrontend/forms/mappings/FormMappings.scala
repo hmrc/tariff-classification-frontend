@@ -16,23 +16,34 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.forms.mappings
 
-import play.api.data.{FieldMapping, FormError}
 import play.api.data.Forms.of
 import play.api.data.format.Formatter
+import play.api.data.{FieldMapping, FormError}
 
-object FormMappings{
+object FormMappings {
 
-  def text(errorKey: String = "error.required"): FieldMapping[String] =
-    of(stringFormatter(errorKey))
+  def fieldNonEmpty(errorKey: String = "error.required"): FieldMapping[String] =
+    of(new Formatter[String] {
+      override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] =
+        data.get(key) match {
+          case None  => Left(Seq(FormError(key, errorKey)))
+          case Some(s) => Right(s)
+        }
 
-  private def stringFormatter(errorKey: String): Formatter[String] = new Formatter[String] {
-    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] =
-      data.get(key) match {
-        case None | Some("") => Left(Seq(FormError(key, errorKey)))
-        case Some(s) => Right(s)
-      }
+      override def unbind(key: String, value: String): Map[String, String] =
+        Map(key -> value)
+    })
 
-    override def unbind(key: String, value: String): Map[String, String] =
-      Map(key -> value)
-  }
+  def textNonEmpty(errorKey: String = "error.required"): FieldMapping[String] =
+    of(new Formatter[String] {
+      override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] =
+        data.get(key) match {
+          case None | Some("") => Left(Seq(FormError(key, errorKey)))
+          case Some(s) => Right(s)
+        }
+
+      override def unbind(key: String, value: String): Map[String, String] =
+        Map(key -> value)
+    })
+
 }
