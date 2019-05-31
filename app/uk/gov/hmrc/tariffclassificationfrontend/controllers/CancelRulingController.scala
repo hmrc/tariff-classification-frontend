@@ -25,7 +25,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.CancelRulingForm
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.{CANCELLED, COMPLETED}
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
-import uk.gov.hmrc.tariffclassificationfrontend.models.{CancelReason, CancelRuling, Case, Permission}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{CancelReason, RulingCancellation, Case, Permission}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
@@ -50,7 +50,7 @@ class CancelRulingController @Inject()(verify: RequestActions,
     c.status == COMPLETED && c.hasLiveRuling
   }
 
-  private def cancelRuling(f: Form[CancelRuling], caseRef: String)
+  private def cancelRuling(f: Form[RulingCancellation], caseRef: String)
                           (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
     getCaseAndRenderView(caseRef, c => successful(views.html.cancel_ruling(c, f)))
   }
@@ -76,9 +76,9 @@ class CancelRulingController @Inject()(verify: RequestActions,
         CancelRulingForm.form.bindFromRequest().fold(
           formWithErrors =>
             getCaseAndRenderView(reference, c => successful(views.html.cancel_ruling(c, formWithErrors))),
-          note => {
-            validateAndRedirect(casesService.cancelRuling(_, CancelReason.withName(note.cancelReason),
-              validFile, note.note, request.operator).map(c => routes.CancelRulingController.confirmCancelRuling(c.reference)))
+          rulingCancellation => {
+            validateAndRedirect(casesService.cancelRuling(_, CancelReason.withName(rulingCancellation.cancelReason),
+              validFile, rulingCancellation.note, request.operator).map(c => routes.CancelRulingController.confirmCancelRuling(c.reference)))
           }
         )
       },
@@ -87,7 +87,7 @@ class CancelRulingController @Inject()(verify: RequestActions,
         val error = messagesApi("status.change.upload.error.restrictionSize")
         CancelRulingForm.form.bindFromRequest().fold(
           formWithErrors => getCaseAndRenderErrors(reference, formWithErrors, error),
-          note => getCaseAndRenderErrors(reference, CancelRulingForm.form.fill(note), error)
+          rulingCancellation => getCaseAndRenderErrors(reference, CancelRulingForm.form.fill(rulingCancellation), error)
         )
       },
 
@@ -95,7 +95,7 @@ class CancelRulingController @Inject()(verify: RequestActions,
         val error = messagesApi("status.change.upload.error.fileType")
         CancelRulingForm.form.bindFromRequest().fold(
           formWithErrors => getCaseAndRenderErrors(reference, formWithErrors, error),
-          note => getCaseAndRenderErrors(reference, CancelRulingForm.form.fill(note), error)
+          rulingCancellation => getCaseAndRenderErrors(reference, CancelRulingForm.form.fill(rulingCancellation), error)
         )
       },
 
@@ -103,13 +103,13 @@ class CancelRulingController @Inject()(verify: RequestActions,
         val error = messagesApi("status.change.upload.error.mustSelect")
         CancelRulingForm.form.bindFromRequest().fold(
           formWithErrors => getCaseAndRenderErrors(reference, formWithErrors, error),
-          note => getCaseAndRenderErrors(reference, CancelRulingForm.form.fill(note), error))
+          rulingCancellation => getCaseAndRenderErrors(reference, CancelRulingForm.form.fill(rulingCancellation), error))
 
       }
     )
   }
 
-  private def getCaseAndRenderErrors(reference : String, form: Form[CancelRuling],  specificProblem : String)
+  private def getCaseAndRenderErrors(reference : String, form: Form[RulingCancellation], specificProblem : String)
                                     (implicit request: AuthenticatedCaseRequest[MultipartFormData[Files.TemporaryFile]]): Future[Result] =
     getCaseAndRenderView(reference, c => successful(views.html.cancel_ruling(c, form.withError("email", specificProblem))))
 
