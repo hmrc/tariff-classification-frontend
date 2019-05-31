@@ -38,8 +38,10 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body shouldNot include("advanced_search-results_and_filters")
+      response.body shouldNot include("id=advanced_search-results_and_filters")
     }
+
+
 
     "Filter by 'Trader Name'" in {
       // Given
@@ -55,7 +57,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body should include("advanced_search-results_and_filters")
+      response.body should include("id=\"advanced_search-results_and_filters\"")
     }
   }
 
@@ -70,7 +72,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body shouldNot include("advanced_search-results_and_filters")
+      response.body shouldNot include("id=\"advanced_search-results_and_filters\"")
     }
 
     "Filter by 'Commodity Code'" in {
@@ -87,7 +89,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body should include("advanced_search-results_and_filters")
+      response.body should include("id=\"advanced_search-results_and_filters\"")
     }
   }
 
@@ -102,7 +104,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body shouldNot include("advanced_search-results_and_filters")
+      response.body shouldNot include("id=\"advanced_search-results_and_filters\"")
     }
 
     "Filter by 'Good Description'" in {
@@ -119,7 +121,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body should include("advanced_search-results_and_filters")
+      response.body should include("id=\"advanced_search-results_and_filters\"")
     }
   }
 
@@ -134,7 +136,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body shouldNot include("advanced_search-results_and_filters")
+      response.body shouldNot include("id=\"advanced_search-results_and_filters\"")
     }
 
     "Filter by 'Keyword'" in {
@@ -151,7 +153,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body should include("advanced_search-results_and_filters")
+      response.body should include("id=\"advanced_search-results_and_filters\"")
     }
   }
 
@@ -168,7 +170,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body shouldNot include("advanced_search-results_and_filters")
+      response.body shouldNot include("id=\"advanced_search-results_and_filters\"")
     }
 
     "Do nothing when 'Live Rulings Only' is the only parameter" in {
@@ -180,7 +182,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body shouldNot include("advanced_search-results_and_filters")
+      response.body shouldNot include("id=\"advanced_search-results_and_filters\"")
     }
 
     // Note the UI actually calls search WITHOUT the live_rulings_only flag when unchecked (see similar test below)
@@ -199,7 +201,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body should include("advanced_search-results_and_filters")
+      response.body should include("id=\"advanced_search-results_and_filters\"")
     }
 
     // Note the UI actually calls search WITHOUT the live_rulings_only flag when unchecked
@@ -217,7 +219,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body should include("advanced_search-results_and_filters")
+      response.body should include("id=\"advanced_search-results_and_filters\"")
     }
 
     "Allow All Cases when 'false'" in {
@@ -234,7 +236,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body should include("advanced_search-results_and_filters")
+      response.body should include("id=\"advanced_search-results_and_filters\"")
     }
   }
 
@@ -254,7 +256,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body should include("advanced_search-results_and_filters")
+      response.body should include("id=\"advanced_search-results_and_filters\"")
     }
 
     "Sort by 'Commodity Code'" in {
@@ -271,7 +273,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body should include("advanced_search-results_and_filters")
+      response.body should include("id=\"advanced_search-results_and_filters\"")
     }
 
     "redirect on auth failure" in {
