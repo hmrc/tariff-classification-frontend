@@ -34,7 +34,7 @@
  }
 
  @if(body.attachmentId.isDefined) {
-  <a id="activity-events-row-@index-email_link" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.ViewAttachmentController.get(body.attachmentId.get)">
+  <a id="activity-events-row-@index-email_link" target="_blank" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.ViewAttachmentController.get(body.attachmentId.get)">
    View attached email
   </a>
  }
