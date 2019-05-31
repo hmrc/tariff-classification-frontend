@@ -20,4 +20,9 @@ object ReferralReason extends Enumeration {
   type ReferralReason = Value
 
   val REQUEST_SAMPLE, REQUEST_MORE_INFO = Value
+
+  def format(reason: ReferralReason): String = reason match {
+    case REQUEST_SAMPLE => "To request a sample"
+    case REQUEST_MORE_INFO => "To request more information"
+  }
 }

@@ -18,6 +18,7 @@ package uk.gov.hmrc.tariffclassificationfrontend.views.partials
 
 import java.time.{ZoneOffset, ZonedDateTime}
 
+import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes
 import uk.gov.hmrc.tariffclassificationfrontend.forms.ActivityForm
 import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, _}
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
@@ -106,7 +107,6 @@ class ActivityDetailsViewSpec extends ViewSpec {
       doc shouldNot containElementWithID("add-note-submit")
     }
 
-
     "Render 'Note'" in {
       // Given
       val c = aCase()
@@ -135,7 +135,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
       val c = aCase()
       val e = Event(
         id = "EVENT_ID",
-        details = CaseStatusChange(from = CaseStatus.OPEN, to = CaseStatus.COMPLETED, comment = Some("comment")),
+        details = CaseStatusChange(from = CaseStatus.OPEN, to = CaseStatus.COMPLETED, comment = Some("comment"), attachmentId = Some("att-id")),
         operator = Operator("id", Some("name")),
         caseReference = "ref",
         timestamp = date
@@ -149,7 +149,70 @@ class ActivityDetailsViewSpec extends ViewSpec {
       doc.getElementById("activity-events-row-0-operator") should containText("name")
       doc should containElementWithID("activity-events-row-0-content")
       doc.getElementById("activity-events-row-0-content") should containText("Status changed from open to completed")
-      doc.getElementById("activity-events-row-0-content") should containText("comment")
+      doc should containElementWithID("activity-events-row-0-comment")
+      doc.getElementById("activity-events-row-0-comment") should containText("comment")
+      doc should containElementWithID("activity-events-row-0-email_link")
+      doc.getElementById("activity-events-row-0-email_link") should haveAttribute("href", routes.ViewAttachmentController.get("att-id").url)
+      doc should containElementWithID("activity-events-row-0-date")
+      doc.getElementById("activity-events-row-0-date") should containText("01 Jan 2019")
+    }
+
+    "Render 'Cancellation Status Change'" in {
+      // Given
+      val c = aCase()
+      val e = Event(
+        id = "EVENT_ID",
+        details = CancellationCaseStatusChange(from = CaseStatus.OPEN, comment = Some("comment"), attachmentId = Some("att-id"), reason = CancelReason.INVALIDATED_CODE_CHANGE),
+        operator = Operator("id", Some("name")),
+        caseReference = "ref",
+        timestamp = date
+      )
+
+      // When
+      val doc = view(activity_details(c, Paged(Seq(e)), ActivityForm.form, queues))
+
+      // Then
+      doc should containElementWithID("activity-events-row-0-operator")
+      doc.getElementById("activity-events-row-0-operator") should containText("name")
+      doc should containElementWithID("activity-events-row-0-content")
+      doc.getElementById("activity-events-row-0-content") should containText("Status changed from open to cancelled")
+      doc should containElementWithID("activity-events-row-0-comment")
+      doc.getElementById("activity-events-row-0-comment") should containText("comment")
+      doc should containElementWithID("activity-events-row-0-reason")
+      doc.getElementById("activity-events-row-0-reason") should containText(CancelReason.format(CancelReason.INVALIDATED_CODE_CHANGE))
+      doc should containElementWithID("activity-events-row-0-email_link")
+      doc.getElementById("activity-events-row-0-email_link") should haveAttribute("href", routes.ViewAttachmentController.get("att-id").url)
+      doc should containElementWithID("activity-events-row-0-date")
+      doc.getElementById("activity-events-row-0-date") should containText("01 Jan 2019")
+    }
+
+    "Render 'Referral Status Change'" in {
+      // Given
+      val c = aCase()
+      val e = Event(
+        id = "EVENT_ID",
+        details = ReferralCaseStatusChange(from = CaseStatus.OPEN, comment = Some("comment"), attachmentId = Some("att-id"), referredTo = "Applicant", reason = Seq(ReferralReason.REQUEST_SAMPLE, ReferralReason.REQUEST_MORE_INFO)),
+        operator = Operator("id", Some("name")),
+        caseReference = "ref",
+        timestamp = date
+      )
+
+      // When
+      val doc = view(activity_details(c, Paged(Seq(e)), ActivityForm.form, queues))
+
+      // Then
+      doc should containElementWithID("activity-events-row-0-operator")
+      doc.getElementById("activity-events-row-0-operator") should containText("name")
+      doc should containElementWithID("activity-events-row-0-content")
+      doc.getElementById("activity-events-row-0-content") should containText("Status changed from open to referred")
+      doc should containElementWithID("activity-events-row-0-comment")
+      doc.getElementById("activity-events-row-0-comment") should containText("comment")
+      doc should containElementWithID("activity-events-row-0-reason_0")
+      doc.getElementById("activity-events-row-0-reason_0") should containText(ReferralReason.format(ReferralReason.REQUEST_SAMPLE))
+      doc should containElementWithID("activity-events-row-0-reason_1")
+      doc.getElementById("activity-events-row-0-reason_1") should containText(ReferralReason.format(ReferralReason.REQUEST_MORE_INFO))
+      doc should containElementWithID("activity-events-row-0-email_link")
+      doc.getElementById("activity-events-row-0-email_link") should haveAttribute("href", routes.ViewAttachmentController.get("att-id").url)
       doc should containElementWithID("activity-events-row-0-date")
       doc.getElementById("activity-events-row-0-date") should containText("01 Jan 2019")
     }
