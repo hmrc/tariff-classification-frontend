@@ -42,7 +42,7 @@
     <h1 id="advanced_search-heading" class="heading-xlarge mb-3">Advanced search</h1>
     <p>To narrow your search, enter multiple search terms.<p>
 
-    @helper.form(action = controllers.routes.SearchController.search().withFragment("advanced_search_keywords"),
+    @helper.form(action = controllers.routes.SearchController.search().withFragment("advanced_search-results_and_filters"),
         'id -> "advanced_search-form") {
         @input_text(
             field = form("trader_name"),
