@@ -24,20 +24,20 @@
 @content(body: ReferralCaseStatusChange) = {
  <p>
   <span class="bold">Referred to:</span>
-  <span class="pre-wrap">@body.referredTo</span>
+  <span id="activity-events-row-@index-referred_to" class="pre-wrap">@body.referredTo</span>
  </p>
 
- @for(reason: ReferralReason <- body.reason) {
+ @for((reason: ReferralReason, reasonIndex: Int) <- body.reason.zipWithIndex) {
   <p>
    <span class="bold">Reason:</span>
-   <span class="pre-wrap">@ReferralReason.format(reason)</span>
+   <span id="activity-events-row-@index-reason_@reasonIndex" class="pre-wrap">@ReferralReason.format(reason)</span>
   </p>
  }
 
  @if(body.comment.isDefined) {
   <p>
    <span class="bold">Note:</span>
-   <span class="pre-wrap">@body.comment</span>
+   <span id="activity-events-row-@index-comment" class="pre-wrap">@body.comment</span>
   </p>
  }
 

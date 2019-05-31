@@ -134,7 +134,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
       val c = aCase()
       val e = Event(
         id = "EVENT_ID",
-        details = CaseStatusChange(from = CaseStatus.OPEN, to = CaseStatus.COMPLETED, comment = Some("comment")),
+        details = CaseStatusChange(from = CaseStatus.OPEN, to = CaseStatus.COMPLETED, comment = Some("comment"), attachmentId = Some("att-id")),
         operator = Operator("id", Some("name")),
         caseReference = "ref",
         timestamp = date

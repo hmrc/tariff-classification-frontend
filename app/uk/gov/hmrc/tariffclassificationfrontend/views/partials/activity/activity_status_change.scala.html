@@ -24,7 +24,7 @@
  @if(body.comment.isDefined) {
   <p>
    <span class="bold">Note:</span>
-   <span class="pre-wrap">@body.comment</span>
+   <span id="activity-events-row-@index-comment" class="pre-wrap">@body.comment</span>
   </p>
  }
  @if(body.attachmentId.isDefined) {
