@@ -16,17 +16,14 @@
 
 @(errors: Seq[FormError], startAtTabIndex : Option[Int] = None)(implicit messages: Messages)
 @if(errors.nonEmpty) {
-    <div class="error-summary error-summary--show" id="error-summary" role="group" aria-labelledby="error-summary-heading" tabindex="@startAtTabIndex.map(index => index + 1)">
-
+    <div class="error-summary error-summary--show" id="error-summary" role="group" aria-labelledby="error-summary-heading" tabindex="@startAtTabIndex.map(index => index + 1).getOrElse("0")">
         <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
             @messages("error.summary.title")
         </h2>
-
         <ul role="list" class="error-summary-list">
             @for((error: FormError, index: Int) <- errors.zipWithIndex) {
                 <li><a href="#@{error.key}" tabindex="@startAtTabIndex.map(x => x+2+index)">@messages(error.message, error.args:_*)</a></li>
             }
         </ul>
-
     </div>
 }

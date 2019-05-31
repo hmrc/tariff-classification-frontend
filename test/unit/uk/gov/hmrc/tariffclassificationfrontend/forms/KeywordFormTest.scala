@@ -27,7 +27,7 @@ class KeywordFormTest extends UnitSpec {
         Map(
           "keyword" -> Seq("")
         )
-      ).errors shouldBe Seq(FormError("keyword", "error.required"))
+      ).errors shouldBe Seq(FormError("keyword", "error.empty.keyword"))
     }
 
     "accept a keyword" in {
@@ -41,7 +41,7 @@ class KeywordFormTest extends UnitSpec {
     "don't allow missing fields" in {
       KeywordForm.form.bindFromRequest(
         Map()
-      ).errors shouldBe Seq(FormError("keyword", "error.required"))
+      ).errors shouldBe Seq(FormError("keyword", "error.empty.keyword"))
     }
 
     "fill in form correctly" in {

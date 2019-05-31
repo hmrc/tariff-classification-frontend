@@ -159,6 +159,7 @@ errors.summary.title=Error
 
 error.empty.note = Enter a case note
 error.empty.keyword = Enter a keyword
+error.empty.sample.status = Select a sample status
 
 status.change.upload.title=You can upload:
 status.change.upload.label=Upload a file
