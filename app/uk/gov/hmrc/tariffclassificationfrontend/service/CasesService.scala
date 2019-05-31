@@ -215,7 +215,7 @@ class CasesService @Inject()(appConfig: AppConfig,
     } yield updated
   }
 
-  def cancelRuling(original: Case, reason: CancelReason, operator: Operator)
+  def cancelRuling(original: Case, reason: CancelReason, f: FileUpload, note: String, operator: Operator)
                   (implicit hc: HeaderCarrier): Future[Case] = {
     val updatedEndDate = LocalDate.now(appConfig.clock).atStartOfDay(appConfig.clock.getZone)
 
@@ -225,13 +225,16 @@ class CasesService @Inject()(appConfig: AppConfig,
         effectiveEndDate = Some(updatedEndDate.toInstant),
         cancellation = Some(Cancellation(reason = reason))
       )
-    val caseUpdating = original.copy(status = CaseStatus.CANCELLED, decision = Some(decisionUpdating))
 
     for {
+      // Store file
+      fileStored <- fileService.upload(fileUpload = f)
+      // Create attachment
+      attachment = Attachment(id = fileStored.id, operator = Some(operator))
       // Update the case
-      updated: Case <- connector.updateCase(caseUpdating)
+      updated: Case <- connector.updateCase( original.addAttachment(attachment).copy(status = CaseStatus.CANCELLED, decision = Some(decisionUpdating)))
       // Create the event
-      _ <- addStatusChangeEvent(original, updated, operator, comment = Some(CancelReason.format(reason)))
+      _ <- addCancelStatusChangeEvent(original, updated, operator, Some(note), reason, Some(attachment))
       // Audit
       _ = auditService.auditRulingCancelled(original, updated, operator)
 
@@ -294,6 +297,17 @@ class CasesService @Inject()(appConfig: AppConfig,
                                    attachment: Option[Attachment] = None)
                                   (implicit hc: HeaderCarrier): Future[Unit] = {
     val details = CaseStatusChange(from = original.status, to = updated.status, comment = comment, attachmentId = attachment.map(_.id) )
+    addEvent(original, updated, details, operator)
+  }
+
+  private def addCancelStatusChangeEvent(original: Case,
+                                         updated: Case,
+                                         operator: Operator,
+                                         comment: Option[String],
+                                         reason: CancelReason,
+                                         attachment: Option[Attachment] = None)
+                                        (implicit hc: HeaderCarrier): Future[Unit] = {
+    val details = CancellationCaseStatusChange(from = original.status, reason = reason, comment = comment, attachmentId = attachment.map(_.id) )
     addEvent(original, updated, details, operator)
   }
 
