@@ -29,10 +29,8 @@
   </p>
  }
 
- <p>
-  <span class="bold">Email sent to applicant:</span>
-  <span id="activity-events-row-@index-email" class="pre-wrap">@body.email</span>
- </p>
+ <p class="bold">Email sent to applicant:</p>
+ <p id="activity-events-row-@index-email" class="pre-wrap">@body.email</p>
 }
 
 @defining(event.details.asInstanceOf[CompletedCaseStatusChange]) { body: CompletedCaseStatusChange =>

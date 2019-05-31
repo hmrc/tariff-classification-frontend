@@ -93,7 +93,7 @@ case class CompletedCaseStatusChange
   email: String
 ) extends FieldChange[CaseStatus] {
   override val to: CaseStatus = CaseStatus.COMPLETED
-  override val `type`: EventType.Value = EventType.CASE_REFERRAL
+  override val `type`: EventType.Value = EventType.CASE_COMPLETED
 }
 
 case class AppealAdded
