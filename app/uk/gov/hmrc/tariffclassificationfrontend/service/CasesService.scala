@@ -163,7 +163,7 @@ class CasesService @Inject()(appConfig: AppConfig,
       fileStored <- fileService.upload(fileUpload)
       attachment = Attachment(id = fileStored.id, operator = Some(operator))
       updated <- connector.updateCase(original.addAttachment(attachment).copy(status = CaseStatus.SUSPENDED))
-      _ <- addStatusChangeEvent(original, updated, operator, Some(note))
+      _ <- addStatusChangeEvent(original, updated, operator, Some(note), Some(attachment))
       _ = auditService.auditCaseSuspended(original, updated, operator)
     } yield updated
   }
@@ -174,7 +174,7 @@ class CasesService @Inject()(appConfig: AppConfig,
       fileStored <- fileService.upload(fileUpload)
       attachment = Attachment(id = fileStored.id, operator = Some(operator))
       updated <- connector.updateCase(original.addAttachment(attachment).copy(status = CaseStatus.SUPPRESSED))
-      _ <- addStatusChangeEvent(original, updated, operator, Some(note))
+      _ <- addStatusChangeEvent(original, updated, operator, Some(note), Some(attachment))
       _ = auditService.auditCaseSuppressed(original, updated, operator)
     } yield updated
   }
