@@ -158,8 +158,7 @@ class CaseControllerSpec extends WordSpec with Matchers with WithFakeApplication
       charset(result) shouldBe Some("utf-8")
 
       verify(eventService).getFilteredEvents(refEq(aCase.reference),refEq(NoPagination()),
-        refEq(Some(Set(EventType.CASE_STATUS_CHANGE, EventType.APPEAL_STATUS_CHANGE, EventType.APPEAL_ADDED, EventType.EXTENDED_USE_STATUS_CHANGE,
-          EventType.ASSIGNMENT_CHANGE, EventType.QUEUE_CHANGE, EventType.NOTE))))(any[HeaderCarrier])
+        refEq(Some(EventType.values.diff(Set(EventType.SAMPLE_STATUS_CHANGE)))))(any[HeaderCarrier])
     }
 
     "return 200 OK and HTML content type when no Events are present" in {
