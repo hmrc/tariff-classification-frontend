@@ -34,7 +34,6 @@ import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
 
-//noinspection ScalaStyle
 @Singleton
 class CancelRulingController @Inject()(verify: RequestActions,
                                        casesService: CasesService,
@@ -64,7 +63,7 @@ class CancelRulingController @Inject()(verify: RequestActions,
   def confirmCancelRuling(reference: String): Action[AnyContent] =
     (verify.authenticated
       andThen verify.casePermissions(reference)
-      andThen verify.mustHave(Permission.REJECT_CASE)).async { implicit request =>
+      andThen verify.mustHave(Permission.CANCEL_CASE)).async { implicit request =>
       renderView(c => c.status == CANCELLED , c => successful(views.html.confirm_cancel_ruling(c)))
     }
 
