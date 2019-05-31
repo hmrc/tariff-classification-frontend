@@ -20,8 +20,10 @@ import java.time.Instant
 
 import uk.gov.hmrc.tariffclassificationfrontend.models.AppealStatus.AppealStatus
 import uk.gov.hmrc.tariffclassificationfrontend.models.AppealType.AppealType
+import uk.gov.hmrc.tariffclassificationfrontend.models.CancelReason.CancelReason
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.CaseStatus
 import uk.gov.hmrc.tariffclassificationfrontend.models.EventType.EventType
+import uk.gov.hmrc.tariffclassificationfrontend.models.ReferralReason.ReferralReason
 import uk.gov.hmrc.tariffclassificationfrontend.models.SampleStatus.SampleStatus
 
 
@@ -42,6 +44,10 @@ sealed trait OptionalComment {
   val comment: Option[String]
 }
 
+sealed trait OptionalAttachment {
+  val attachmentId: Option[String]
+}
+
 sealed trait FieldChange[T] extends Details with OptionalComment {
   val from: T
   val to: T
@@ -52,9 +58,32 @@ case class CaseStatusChange
   override val from: CaseStatus,
   override val to: CaseStatus,
   override val comment: Option[String] = None,
-  attachmentId: Option[String] = None
-) extends FieldChange[CaseStatus] {
+  override val attachmentId: Option[String] = None
+) extends FieldChange[CaseStatus] with OptionalAttachment {
   override val `type`: EventType.Value = EventType.CASE_STATUS_CHANGE
+}
+
+case class CancellationCaseStatusChange
+(
+  override val from: CaseStatus,
+  override val comment: Option[String] = None,
+  override val attachmentId: Option[String] = None,
+  reason: CancelReason
+) extends FieldChange[CaseStatus] with OptionalAttachment {
+  override val to: CaseStatus = CaseStatus.CANCELLED
+  override val `type`: EventType.Value = EventType.CASE_CANCELLATION
+}
+
+case class ReferralCaseStatusChange
+(
+  override val from: CaseStatus,
+  override val comment: Option[String] = None,
+  override val attachmentId: Option[String] = None,
+  referredTo: String,
+  reason: Seq[ReferralReason]
+) extends FieldChange[CaseStatus] with OptionalAttachment {
+  override val to: CaseStatus = CaseStatus.REFERRED
+  override val `type`: EventType.Value = EventType.CASE_REFERRAL
 }
 
 case class AppealAdded
@@ -120,8 +149,17 @@ case class SampleStatusChange
   override val `type`: EventType.Value = EventType.SAMPLE_STATUS_CHANGE
 }
 
-
 object EventType extends Enumeration {
   type EventType = Value
-  val CASE_STATUS_CHANGE, APPEAL_STATUS_CHANGE, APPEAL_ADDED, EXTENDED_USE_STATUS_CHANGE, ASSIGNMENT_CHANGE, QUEUE_CHANGE, NOTE, SAMPLE_STATUS_CHANGE = Value
+  val CASE_STATUS_CHANGE = Value
+  val CASE_REFERRAL = Value
+  val CASE_CANCELLATION = Value
+  val APPEAL_STATUS_CHANGE = Value
+  val APPEAL_ADDED = Value
+  val EXTENDED_USE_STATUS_CHANGE = Value
+  val ASSIGNMENT_CHANGE = Value
+  val QUEUE_CHANGE = Value
+  val NOTE = Value
+  val SAMPLE_STATUS_CHANGE = Value
 }
+
