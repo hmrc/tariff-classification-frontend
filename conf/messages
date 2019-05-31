@@ -169,6 +169,8 @@ status.change.upload.typeOfFiles=pdf, doc, docx, png, jpg, jpeg and txt files
 status.change.upload.error.mustSelect=Attach the email you have sent to the contact
 status.change.upload.error.fileType = Your document will not upload because it''s not a valid file type
 
+status.change.cancel.reason.error=Select a reason for cancelling this case
+
 
 release-case.submit.button = Release Case
 reassign-case.submit.button = Move back to queue

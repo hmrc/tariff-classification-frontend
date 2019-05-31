@@ -123,7 +123,7 @@ class CasesService @Inject()(appConfig: AppConfig,
                  (implicit hc: HeaderCarrier): Future[Case] = {
     for {
       updated <- connector.updateCase(original.copy(status = CaseStatus.OPEN, queueId = Some(queue.id)))
-      _ <- addStatusChangeEvent(original, updated, operator)
+      _ <- addStatusChangeEvent(original, updated, operator, None)
       _ = auditService.auditCaseReleased(original, updated, queue, operator)
     } yield updated
   }
@@ -132,7 +132,7 @@ class CasesService @Inject()(appConfig: AppConfig,
                 (implicit hc: HeaderCarrier): Future[Case] = {
     for {
       updated <- connector.updateCase(original.copy(status = CaseStatus.OPEN))
-      _ <- addStatusChangeEvent(original, updated, operator)
+      _ <- addStatusChangeEvent(original, updated, operator, None)
       _ = auditService.auditCaseReOpened(original, updated, operator)
     } yield updated
   }
@@ -141,7 +141,7 @@ class CasesService @Inject()(appConfig: AppConfig,
                (implicit hc: HeaderCarrier): Future[Case] = {
     for {
       updated <- connector.updateCase(original.copy(status = CaseStatus.REFERRED))
-      _ <- addStatusChangeEvent(original, updated, operator)
+      _ <- addStatusChangeEvent(original, updated, operator, None)
       _ = auditService.auditCaseReferred(original, updated, operator)
     } yield updated
   }
@@ -157,23 +157,24 @@ class CasesService @Inject()(appConfig: AppConfig,
     } yield updated
   }
 
-  def suspendCase(original: Case, operator: Operator)
+  def suspendCase(original: Case, fileUpload: FileUpload, note: String, operator: Operator)
                  (implicit hc: HeaderCarrier): Future[Case] = {
     for {
-      updated <- connector.updateCase(original.copy(status = CaseStatus.SUSPENDED))
-      _ <- addStatusChangeEvent(original, updated, operator)
+      fileStored <- fileService.upload(fileUpload)
+      attachment = Attachment(id = fileStored.id, operator = Some(operator))
+      updated <- connector.updateCase(original.addAttachment(attachment).copy(status = CaseStatus.SUSPENDED))
+      _ <- addStatusChangeEvent(original, updated, operator, Some(note))
       _ = auditService.auditCaseSuspended(original, updated, operator)
     } yield updated
   }
 
   def suppressCase(original: Case, fileUpload: FileUpload, note: String, operator: Operator)
                   (implicit hc: HeaderCarrier): Future[Case] = {
-
     for {
       fileStored <- fileService.upload(fileUpload)
       attachment = Attachment(id = fileStored.id, operator = Some(operator))
       updated <- connector.updateCase(original.addAttachment(attachment).copy(status = CaseStatus.SUPPRESSED))
-      _ <- addStatusChangeEvent(original, updated, operator)
+      _ <- addStatusChangeEvent(original, updated, operator, Some(note))
       _ = auditService.auditCaseSuppressed(original, updated, operator)
     } yield updated
   }
@@ -214,7 +215,7 @@ class CasesService @Inject()(appConfig: AppConfig,
     } yield updated
   }
 
-  def cancelRuling(original: Case, reason: CancelReason, operator: Operator)
+  def cancelRuling(original: Case, reason: CancelReason, f: FileUpload, note: String, operator: Operator)
                   (implicit hc: HeaderCarrier): Future[Case] = {
     val updatedEndDate = LocalDate.now(appConfig.clock).atStartOfDay(appConfig.clock.getZone)
 
@@ -224,13 +225,16 @@ class CasesService @Inject()(appConfig: AppConfig,
         effectiveEndDate = Some(updatedEndDate.toInstant),
         cancellation = Some(Cancellation(reason = reason))
       )
-    val caseUpdating = original.copy(status = CaseStatus.CANCELLED, decision = Some(decisionUpdating))
 
     for {
+      // Store file
+      fileStored <- fileService.upload(fileUpload = f)
+      // Create attachment
+      attachment = Attachment(id = fileStored.id, operator = Some(operator))
       // Update the case
-      updated: Case <- connector.updateCase(caseUpdating)
+      updated: Case <- connector.updateCase( original.addAttachment(attachment).copy(status = CaseStatus.CANCELLED, decision = Some(decisionUpdating)))
       // Create the event
-      _ <- addStatusChangeEvent(original, updated, operator, comment = Some(CancelReason.format(reason)))
+      _ <- addCancelStatusChangeEvent(original, updated, operator, Some(note), reason, Some(attachment))
       // Audit
       _ = auditService.auditRulingCancelled(original, updated, operator)
 
@@ -289,10 +293,21 @@ class CasesService @Inject()(appConfig: AppConfig,
   private def addStatusChangeEvent(original: Case,
                                    updated: Case,
                                    operator: Operator,
-                                   comment: Option[String] = None,
+                                   comment: Option[String],
                                    attachment: Option[Attachment] = None)
                                   (implicit hc: HeaderCarrier): Future[Unit] = {
     val details = CaseStatusChange(from = original.status, to = updated.status, comment = comment, attachmentId = attachment.map(_.id) )
+    addEvent(original, updated, details, operator)
+  }
+
+  private def addCancelStatusChangeEvent(original: Case,
+                                         updated: Case,
+                                         operator: Operator,
+                                         comment: Option[String],
+                                         reason: CancelReason,
+                                         attachment: Option[Attachment] = None)
+                                        (implicit hc: HeaderCarrier): Future[Unit] = {
+    val details = CancellationCaseStatusChange(from = original.status, reason = reason, comment = comment, attachmentId = attachment.map(_.id) )
     addEvent(original, updated, details, operator)
   }
 

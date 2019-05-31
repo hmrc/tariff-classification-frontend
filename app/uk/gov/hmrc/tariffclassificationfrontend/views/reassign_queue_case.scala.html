@@ -24,24 +24,22 @@
 @(c: Case, form: Form[String], queues: Seq[Queue], actualQueue: Option[Queue], originUrl: String)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("page.title.move.case"))) {
-    @defining(c.application.asBTI) { btiApp: BTIApplication =>
 
-        @case_heading(c)
+    @case_heading(c)
 
-        <div class="grid-row">
-            <div class="column-full">
-                <h2 class="heading-large mt-0">Move this case back to a queue</h2>
-                <p> This case was previously assigned to the <span id="previous-queue">@actualQueue.map(_.name).getOrElse("")</span> queue </p>
+    <div class="grid-row">
+        <div class="column-full">
+            <h2 class="heading-large mt-0">Move this case back to a queue</h2>
+            <p> This case was previously assigned to the <span id="previous-queue">@actualQueue.map(_.name).getOrElse("")</span> queue </p>
 
-                @select_queue_form(
-                    form("queue"),
-                    queues,
-                    "reassign-case",
-                    ReassignCaseController.reassignCase(c.reference, originUrl),
-                    originUrl
-                )
+            @select_queue_form(
+                form("queue"),
+                queues,
+                "reassign-case",
+                ReassignCaseController.reassignCase(c.reference, originUrl),
+                originUrl
+            )
 
-            </div>
         </div>
-    }
+    </div>
 }

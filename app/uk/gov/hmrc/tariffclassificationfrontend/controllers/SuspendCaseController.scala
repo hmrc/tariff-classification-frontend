@@ -19,60 +19,82 @@ package uk.gov.hmrc.tariffclassificationfrontend.controllers
 import javax.inject.{Inject, Singleton}
 import play.api.data.Form
 import play.api.i18n.MessagesApi
+import play.api.libs.Files
 import play.api.mvc._
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.forms.MandatoryBooleanForm
+import uk.gov.hmrc.tariffclassificationfrontend.forms.AddNoteForm
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.{OPEN, SUSPENDED}
-import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
+import uk.gov.hmrc.tariffclassificationfrontend.models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Permission}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
 @Singleton
 class SuspendCaseController @Inject()(verify: RequestActions,
                                       casesService: CasesService,
                                       val messagesApi: MessagesApi,
-                                      implicit val appConfig: AppConfig) extends RenderCaseAction {
+                                      implicit val appConfig: AppConfig) extends RenderCaseAction with ExtractableFile {
 
   override protected val config: AppConfig = appConfig
   override protected val caseService: CasesService = casesService
-  private val form: Form[Boolean] = MandatoryBooleanForm.form("suspend_case")
+  private val form: Form[String] = AddNoteForm.form
 
   def getSuspendCase(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.SUSPEND_CASE)).async { implicit request =>
     validateAndRenderView(c => successful(views.html.suspend_case(c, form)))
   }
 
-  def postSuspendCase(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.SUSPEND_CASE)).async { implicit request =>
-    form.bindFromRequest().fold(
-      errors => {
-        validateAndRenderView(c => successful(views.html.suspend_case(c, errors)))
-      },
-      {
-        case true => validateAndRedirect(
-          casesService.suspendCase(_, request.operator).map(c =>
-            routes.SuspendCaseController.confirmSuspendCase(c.reference)
-          )
+  def postSuspendCase(reference: String): Action[MultipartFormData[Files.TemporaryFile]] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.SUSPEND_CASE)).async(parse.multipartFormData) { implicit request =>
+    extractFile(key = "email")(
+      onFileValid = validFile => {
+        form.bindFromRequest().fold(
+          formWithErrors =>
+            getCaseAndRenderView(reference, c => successful(views.html.suspend_case(c, formWithErrors))),
+          note => {
+            validateAndRedirect(casesService.suspendCase(_, validFile, note, request.operator).map(c => routes.SuspendCaseController.confirmSuspendCase(c.reference)))
+          }
         )
-        case _ => validateAndRedirect(c => successful(routes.SuspendCaseController.showContactInformation(c.reference)))
+      },
+
+      onFileTooLarge = () => {
+        val error = messagesApi("status.change.upload.error.restrictionSize")
+        form.bindFromRequest().fold(
+          formWithErrors => getCaseAndRenderEmailError(reference, formWithErrors, error),
+          note => getCaseAndRenderEmailError(reference, form.fill(note), error)
+        )
+      },
+
+      onFileInvalidType = () => {
+        val error = messagesApi("status.change.upload.error.fileType")
+        form.bindFromRequest().fold(
+          formWithErrors => getCaseAndRenderEmailError(reference, formWithErrors, error),
+          note => getCaseAndRenderEmailError(reference, form.fill(note), error)
+        )
+      },
+
+      onFileMissing = () => {
+        val error = messagesApi("status.change.upload.error.mustSelect")
+        form.bindFromRequest().fold(
+          formWithErrors => getCaseAndRenderEmailError(reference, formWithErrors, error),
+          note => getCaseAndRenderEmailError(reference, form.fill(note), error))
+
       }
     )
   }
+
+  private def getCaseAndRenderEmailError(reference: String, form: Form[String], error: String)(implicit request: AuthenticatedCaseRequest[_]): Future[Result] = getCaseAndRenderView(
+    reference,
+    c => successful(views.html.suspend_case(c, form.withError("email", error)))
+  )
 
   def confirmSuspendCase(reference: String): Action[AnyContent] =
     (verify.authenticated
       andThen verify.casePermissions(reference)
       andThen verify.mustHave(Permission.SUSPEND_CASE)).async { implicit request =>
       renderView(c => c.status == SUSPENDED, c => successful(views.html.confirm_suspended(c)))
-    }
-
-  def showContactInformation(reference: String): Action[AnyContent] =
-    (verify.authenticated
-      andThen verify.casePermissions(reference)
-      andThen verify.mustHave(Permission.SUSPEND_CASE)).async { implicit request =>
-      renderView(c => c.status == OPEN, c => successful(views.html.suspend_case_error(c)))
     }
 
   override protected def redirect: String => Call = routes.CaseController.applicationDetails

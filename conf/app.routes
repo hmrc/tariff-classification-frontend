@@ -44,7 +44,6 @@ GET         /cases/:reference/reject/confirmation               @uk.gov.hmrc.tar
 GET         /cases/:reference/suspend                           @uk.gov.hmrc.tariffclassificationfrontend.controllers.SuspendCaseController.getSuspendCase(reference: String)
 POST        /cases/:reference/suspend                           @uk.gov.hmrc.tariffclassificationfrontend.controllers.SuspendCaseController.postSuspendCase(reference: String)
 GET         /cases/:reference/suspend/confirmation              @uk.gov.hmrc.tariffclassificationfrontend.controllers.SuspendCaseController.confirmSuspendCase(reference: String)
-GET         /cases/:reference/suspend/contact-info              @uk.gov.hmrc.tariffclassificationfrontend.controllers.SuspendCaseController.showContactInformation(reference: String)
 
 
 GET         /cases/:reference/suppress                          @uk.gov.hmrc.tariffclassificationfrontend.controllers.SuppressCaseController.getSuppressCase(reference: String)
@@ -60,8 +59,9 @@ GET         /cases/:reference/complete/confirmation             @uk.gov.hmrc.tar
 GET         /cases/:reference/ruling                            @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.rulingDetails(reference: String)
 GET         /cases/:reference/ruling/edit                       @uk.gov.hmrc.tariffclassificationfrontend.controllers.RulingController.editRulingDetails(reference: String)
 POST        /cases/:reference/ruling                            @uk.gov.hmrc.tariffclassificationfrontend.controllers.RulingController.updateRulingDetails(reference: String)
-GET         /cases/:reference/ruling/cancel                     @uk.gov.hmrc.tariffclassificationfrontend.controllers.CancelRulingController.cancelRuling(reference: String)
-POST        /cases/:reference/ruling/cancel                     @uk.gov.hmrc.tariffclassificationfrontend.controllers.CancelRulingController.confirmCancelRuling(reference: String)
+GET         /cases/:reference/ruling/cancel                     @uk.gov.hmrc.tariffclassificationfrontend.controllers.CancelRulingController.getCancelRuling(reference: String)
+POST        /cases/:reference/ruling/cancel                     @uk.gov.hmrc.tariffclassificationfrontend.controllers.CancelRulingController.postCancelRuling(reference: String)
+GET         /cases/:reference/ruling/cancel/confirmation        @uk.gov.hmrc.tariffclassificationfrontend.controllers.CancelRulingController.confirmCancelRuling(reference: String)
 
 GET         /cases/:reference/activity                          @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.activityDetails(reference: String)
 POST        /cases/:reference/activity                          @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.addNote(reference: String)
