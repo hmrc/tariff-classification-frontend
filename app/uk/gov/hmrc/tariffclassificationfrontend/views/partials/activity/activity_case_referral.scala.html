@@ -14,10 +14,11 @@
  * limitations under the License.
  *@
 
-@@import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
+@import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.models.ReferralReason.ReferralReason
 @import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{Event, ReferralCaseStatusChange, ReferralReason}
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.progressive_disclosure
 @(index: Int, event: Event)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @content(body: ReferralCaseStatusChange) = {
