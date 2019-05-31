@@ -15,13 +15,13 @@
  *@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.{RejectCaseController,CaseController}
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.{CaseController, RejectCaseController}
 @import uk.gov.hmrc.tariffclassificationfrontend.models.Case
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.components.{confirm_or_cancel_buttons, warning}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.input_textarea
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.case_heading
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.statuses.status_change_upload
-
 @(c: Case, form: Form[String])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("page.title.reject.case"))) {
@@ -34,13 +34,11 @@
 
             @helper.form(action = RejectCaseController.postRejectCase(c.reference),
             'enctype -> "multipart/form-data",
-            'id -> "reject-case") {
+            'id -> "reject_case") {
 
                 @helper.CSRF.formField
 
-                <div id="add-a-note-heading">
-                    <h3 class="heading-medium mt-30 mb-30">Add a note</h3>
-                </div>
+                <h3 id="reject_case-heading" class="heading-medium mt-30 mb-30">Add a note</h3>
 
                 @input_textarea(
                     field = form("note"),
@@ -51,19 +49,17 @@
 
                 @status_change_upload(form("file-input"), "rejecting")
 
-                <div class="reopen-warning-notice">
-                    <i class="icon icon-important">
-                        <span class="visually-hidden">Warning</span>
-                    </i>
-                    <strong id="reject-warning-text" class="bold-small">
-                        <span>This case cannot be reopened after it has been rejected.</span>
-                    </strong>
-                </div>
+                @warning(
+                    "This case cannot be reopened after it has been rejected.",
+                    containerClass = "mb-4"
+                )
 
-                <div>
-                    <button class="button" id="reject-case-button" type="submit">Confirm status change</button>
-                    <a class="secondary-button" id="reject-case-cancel-button" href="@CaseController.applicationDetails(c.reference)">Cancel and return to case</a>
-                </div>
+                @confirm_or_cancel_buttons(
+                    id = "reject_case",
+                    confirmText = "Confirm status change",
+                    cancelText = "Cancel and return to case",
+                    cancelHref = CaseController.applicationDetails(c.reference)
+                )
             }
         </div>
     </div>

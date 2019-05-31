@@ -44,7 +44,6 @@ GET         /cases/:reference/reject/confirmation               @uk.gov.hmrc.tar
 GET         /cases/:reference/suspend                           @uk.gov.hmrc.tariffclassificationfrontend.controllers.SuspendCaseController.getSuspendCase(reference: String)
 POST        /cases/:reference/suspend                           @uk.gov.hmrc.tariffclassificationfrontend.controllers.SuspendCaseController.postSuspendCase(reference: String)
 GET         /cases/:reference/suspend/confirmation              @uk.gov.hmrc.tariffclassificationfrontend.controllers.SuspendCaseController.confirmSuspendCase(reference: String)
-GET         /cases/:reference/suspend/contact-info              @uk.gov.hmrc.tariffclassificationfrontend.controllers.SuspendCaseController.showContactInformation(reference: String)
 
 
 GET         /cases/:reference/suppress                          @uk.gov.hmrc.tariffclassificationfrontend.controllers.SuppressCaseController.getSuppressCase(reference: String)

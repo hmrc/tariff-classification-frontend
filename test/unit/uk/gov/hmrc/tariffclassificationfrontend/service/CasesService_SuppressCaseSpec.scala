@@ -85,7 +85,7 @@ class CasesService_SuppressCaseSpec extends UnitSpec with MockitoSugar with Befo
 
       val eventCreated = theEventCreatedFor(connector, caseUpdated)
       eventCreated.operator shouldBe Operator("operator-id", Some("Billy Bobbins"))
-      eventCreated.details shouldBe CaseStatusChange(CaseStatus.NEW, CaseStatus.SUPPRESSED)
+      eventCreated.details shouldBe CaseStatusChange(CaseStatus.NEW, CaseStatus.SUPPRESSED, Some("note"))
     }
 
     "fail to update on attachment upload failure" in {
