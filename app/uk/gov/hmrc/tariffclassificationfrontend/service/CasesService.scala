@@ -234,7 +234,7 @@ class CasesService @Inject()(appConfig: AppConfig,
       // Update the case
       updated: Case <- connector.updateCase( original.addAttachment(attachment).copy(status = CaseStatus.CANCELLED, decision = Some(decisionUpdating)))
       // Create the event
-      _ <- addStatusChangeEvent(original, updated, operator, comment = Some(s"${CancelReason.format(reason)}\r\n$note"), Some(attachment))
+      _ <- addCancelStatusChangeEvent(original, updated, operator, Some(note), reason, Some(attachment))
       // Audit
       _ = auditService.auditRulingCancelled(original, updated, operator)
 
@@ -297,6 +297,17 @@ class CasesService @Inject()(appConfig: AppConfig,
                                    attachment: Option[Attachment] = None)
                                   (implicit hc: HeaderCarrier): Future[Unit] = {
     val details = CaseStatusChange(from = original.status, to = updated.status, comment = comment, attachmentId = attachment.map(_.id) )
+    addEvent(original, updated, details, operator)
+  }
+
+  private def addCancelStatusChangeEvent(original: Case,
+                                         updated: Case,
+                                         operator: Operator,
+                                         comment: Option[String],
+                                         reason: CancelReason,
+                                         attachment: Option[Attachment] = None)
+                                        (implicit hc: HeaderCarrier): Future[Unit] = {
+    val details = CancellationCaseStatusChange(from = original.status, reason = reason, comment = comment, attachmentId = attachment.map(_.id) )
     addEvent(original, updated, details, operator)
   }
 
