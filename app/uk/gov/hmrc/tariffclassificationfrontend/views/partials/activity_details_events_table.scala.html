@@ -15,9 +15,10 @@
  *@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-@import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 @import uk.gov.hmrc.tariffclassificationfrontend.models._
+@import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 @import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.activity.{activity_case_cancellation, activity_case_referral, activity_status_change,  activity_case_completed}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{assignee, progressive_disclosure}
 @(c: Case, events: Paged[Event], queues: Seq[Queue])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
@@ -41,16 +42,20 @@
                         case EventType.NOTE => {
                             val body = event.details.asInstanceOf[Note]
                             <div id={s"activity-events-row-${index}-body"}>
-                                <span class="pre-wrap">{body.comment}</span>
+                                <span id={s"activity-events-row-${index}-comment"} class="pre-wrap">{body.comment}</span>
                             </div>
                         }
                         case EventType.CASE_STATUS_CHANGE => {
-                            val body = event.details.asInstanceOf[CaseStatusChange]
-                            progressive_disclosure(
-                                id = s"activity-events-row-$index",
-                                summary = s"Status changed from ${body.from.toString.toLowerCase} to ${body.to.toString.toLowerCase}",
-                                body = body.comment
-                            )
+                            activity_status_change(index, event)
+                        }
+                        case EventType.CASE_CANCELLATION => {
+                            activity_case_cancellation(index, event)
+                        }
+                        case EventType.CASE_REFERRAL => {
+                            activity_case_referral(index, event)
+                        }
+                        case EventType.CASE_COMPLETED => {
+                            activity_case_completed(index, event)
                         }
                         case EventType.APPEAL_ADDED => {
                             val body = event.details.asInstanceOf[AppealAdded]
@@ -58,13 +63,13 @@
                                 progressive_disclosure(
                                     id = s"activity-events-row-$index",
                                     summary = s"Review added with status ${AppealStatus.formatReview(body.appealStatus)}",
-                                    body = body.comment
+                                    body = body.comment.map(Html(_))
                                 )
                             } else {
                                 progressive_disclosure(
                                     id = s"activity-events-row-$index",
                                     summary = s"Appeal added with type ${AppealType.format(body.appealType)} and status ${AppealStatus.formatAppeal(body.appealStatus)}",
-                                    body = body.comment
+                                    body = body.comment.map(Html(_))
                                 )
                             }
                         }
@@ -74,13 +79,13 @@
                                 progressive_disclosure(
                                     id = s"activity-events-row-$index",
                                     summary = s"Review status changed from ${AppealStatus.formatReview(body.from)} to ${AppealStatus.formatReview(body.to)}",
-                                    body = body.comment
+                                    body = body.comment.map(Html(_))
                                 )
                             } else {
                                 progressive_disclosure(
                                     id = s"activity-events-row-$index",
                                     summary = s"${AppealType.format(body.appealType)} status changed from ${AppealStatus.formatAppeal(body.from)} to ${AppealStatus.formatAppeal(body.to)}",
-                                    body = body.comment
+                                    body = body.comment.map(Html(_))
                                 )
                             }
                         }
@@ -91,7 +96,7 @@
                             progressive_disclosure(
                                 id = s"activity-events-row-$index",
                                 summary = s"Application for extended use status changed from ${from} to ${to}",
-                                body = body.comment
+                                body = body.comment.map(Html(_))
                             )
                         }
                         case EventType.ASSIGNMENT_CHANGE => {
@@ -109,7 +114,7 @@
                             progressive_disclosure(
                                 id = s"activity-events-row-$index",
                                 summary = summary,
-                                body = body.comment
+                                body = body.comment.map(Html(_))
                             )
                         }
                         case EventType.QUEUE_CHANGE => {
@@ -117,7 +122,7 @@
                             progressive_disclosure(
                                 id = s"activity-events-row-$index",
                                 summary = s" ${assignee(event.operator, true)} moved this case to the ${body.to.flatMap(to => queues.find(to == _.id)).map(_.name).getOrElse("unknown")} queue",
-                                body = body.comment
+                                body = body.comment.map(Html(_))
                             )
                         }
                         case _ => {

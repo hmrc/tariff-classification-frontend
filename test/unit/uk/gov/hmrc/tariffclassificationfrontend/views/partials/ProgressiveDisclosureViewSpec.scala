@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.views.partials
 
+import play.twirl.api.Html
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewSpec
 import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.progressive_disclosure
@@ -36,7 +37,7 @@ class ProgressiveDisclosureViewSpec extends ViewSpec {
 
     "Render drop down when body present" in {
       // When
-      val doc = view(progressive_disclosure("MODULE", "summary", Some("body")))
+      val doc = view(progressive_disclosure("MODULE", "summary", Some(Html("body"))))
 
       // Then
       doc should containElementWithID("MODULE-title")

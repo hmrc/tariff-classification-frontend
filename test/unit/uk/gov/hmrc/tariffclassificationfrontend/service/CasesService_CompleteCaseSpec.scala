@@ -92,7 +92,7 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
 
       val eventCreated = theEventCreatedFor(connector, caseUpdated)
       eventCreated.operator shouldBe Operator("operator-id", Some("Billy Bobbins"))
-      eventCreated.details shouldBe CaseStatusChange(CaseStatus.OPEN, CaseStatus.COMPLETED, Some("The applicant was sent an Email:\n- Subject: subject\n- Body: plain"))
+      eventCreated.details shouldBe CompletedCaseStatusChange(CaseStatus.OPEN, None, "- Subject: subject\n- Body: plain")
     }
 
     "reject case without a decision" in {
@@ -176,7 +176,7 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
 
       val eventCreated = theEventCreatedFor(connector, caseUpdated)
       eventCreated.operator shouldBe Operator("operator-id", Some("Billy Bobbins"))
-      eventCreated.details shouldBe CaseStatusChange(CaseStatus.OPEN, CaseStatus.COMPLETED, Some("Attempted to send an email to the applicant which failed"))
+      eventCreated.details shouldBe CompletedCaseStatusChange(CaseStatus.OPEN, None, "Attempted to send an email to the applicant which failed")
     }
 
     "suceed on ruling notify failure" in {
@@ -205,7 +205,7 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
 
       val eventCreated = theEventCreatedFor(connector, caseUpdated)
       eventCreated.operator shouldBe Operator("operator-id", Some("Billy Bobbins"))
-      eventCreated.details shouldBe CaseStatusChange(CaseStatus.OPEN, CaseStatus.COMPLETED, Some("The applicant was sent an Email:\n- Subject: subject\n- Body: plain"))
+      eventCreated.details shouldBe CompletedCaseStatusChange(CaseStatus.OPEN,None, "- Subject: subject\n- Body: plain")
     }
   }
 
