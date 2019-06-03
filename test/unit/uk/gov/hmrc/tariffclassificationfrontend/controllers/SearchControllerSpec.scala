@@ -127,6 +127,7 @@ class SearchControllerSpec extends UnitSpec with Matchers with WithFakeApplicati
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
       contentAsString(result) should include("advanced_search-heading")
+      contentAsString(result) should include("error-summary")
       contentAsString(result) shouldNot include("advanced_search_results")
     }
 

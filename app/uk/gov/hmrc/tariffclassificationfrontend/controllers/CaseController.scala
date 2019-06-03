@@ -111,12 +111,9 @@ class CaseController @Inject()(verify: RequestActions,
   def addNote(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.ADD_NOTE)).async { implicit request =>
 
     def onError: Form[ActivityFormData] => Future[Result] = errorForm => {
-
-      val formWithErrors = withError(errorForm, "note", messagesApi("error.empty.note"))
-
       validateAndRenderView(
         ACTIVITY,
-        showActivity(_, formWithErrors),
+        showActivity(_, errorForm),
         "tab-item-Activity"
       )
     }
@@ -149,11 +146,9 @@ class CaseController @Inject()(verify: RequestActions,
   def addKeyword(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.KEYWORDS)).async { implicit request =>
     keywordForm.bindFromRequest.fold(
       errorForm => {
-        val formWithErrors = withError(errorForm, "keyword", messagesApi("error.empty.keyword"))
-
         validateAndRenderView(
           KEYWORDS,
-          showKeywords(_, formWithErrors),
+          showKeywords(_, errorForm),
           "tab-item-Keywords"
         )
       },
@@ -214,10 +209,6 @@ class CaseController @Inject()(verify: RequestActions,
       events <- eventsService.getFilteredEvents(c.reference, NoPagination(), Some(EventType.values.diff(Set(EventType.SAMPLE_STATUS_CHANGE))))
       queues <- queuesService.getAll
     } yield views.html.partials.activity_details(c, events, f, queues, pagesWithStartTabIndexes(ACTIVITY))
-  }
-
-  private def withError[T](form : Form[T], errorKey: String, errorMessage: String): Form[T] = {
-    form.copy(errors = Seq(FormError(errorKey, errorMessage)))
   }
 
 }

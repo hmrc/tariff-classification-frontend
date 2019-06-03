@@ -16,12 +16,12 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.forms
 
-import play.api.data.Forms._
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import play.api.data.{Form, Forms, Mapping}
 import uk.gov.hmrc.tariffclassificationfrontend.forms.FormConstraints._
-import uk.gov.hmrc.tariffclassificationfrontend.models.SampleStatus.SampleStatus
+import uk.gov.hmrc.tariffclassificationfrontend.forms.mappings.FormMappings._
 import uk.gov.hmrc.tariffclassificationfrontend.models.SampleStatus
+import uk.gov.hmrc.tariffclassificationfrontend.models.SampleStatus.SampleStatus
 
 object SampleStatusForm {
 
@@ -31,7 +31,7 @@ object SampleStatusForm {
   }
 
   private val mapping: Mapping[Option[SampleStatus]] = Forms.mapping[Option[SampleStatus], String](
-    "status" -> text.verifying(emptyOr(oneOf(SampleStatus.values)): _*)
+    "status" -> fieldNonEmpty("error.empty.sample.status").verifying(emptyOr(oneOf(SampleStatus.values)): _*)
   )(v => SampleStatus.values.find(_.toString == v))(_.map(_.toString))
 
   val form: Form[Option[SampleStatus]] = Form[Option[SampleStatus]](mapping)

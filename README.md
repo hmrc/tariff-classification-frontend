@@ -21,10 +21,9 @@ The Front End for the internal Operator Service for reviewing & determining BTI 
 6) Start Email `sm --start EMAIL -r`
 7) Start Mailgun Stub `sm --start MAILGUN_STUB -r`
 8) Start Email Renderer `sm --start HMRC_EMAIL_RENDERER -r`
-9) Start [Pdf Generator Service](https://github.com/hmrc/pdf-generator-service)
- `sm --start PDF_GENERATOR_SERVICE -r` (Requires first installing dependencies - see link)
+9) Start Pdf Generator Service `sm --start PDF_GENERATOR_SERVICE -r` (Requires first installing dependencies - see [below](#pdf-generator-service))
 
-Finally Run `sbt run` to boot the app
+Finally Run `sbt run"` to boot the app
 
 Open `http://localhost:9000/tariff-classification-frontend`
  
@@ -37,6 +36,13 @@ This application runs on port 9581
 Run `sm --start TARIFF_CLASSIFICATION_FRONTEND -r`
 
 Open `http://localhost:9581/tariff-classification`
+
+### PDF Generator Service
+This service requires the installation of some dependencies before it can be run using Service Manager.  See [Pdf Generator Service](https://github.com/hmrc/pdf-generator-service).
+
+Running PDF Generator Service locally on Mac OSX (currently) requires running an older version.  
+
+Run `sm --start PDF_GENERATOR_SERVICE -r 1.20.0`
 
 ### Testing
 

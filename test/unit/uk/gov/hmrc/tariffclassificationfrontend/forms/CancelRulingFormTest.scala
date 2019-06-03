@@ -17,7 +17,7 @@
 package uk.gov.hmrc.tariffclassificationfrontend.forms
 
 import uk.gov.hmrc.play.test.UnitSpec
-import uk.gov.hmrc.tariffclassificationfrontend.models.CancelReason
+import uk.gov.hmrc.tariffclassificationfrontend.models.{CancelReason, RulingCancellation}
 
 class CancelRulingFormTest extends UnitSpec {
 
@@ -34,8 +34,8 @@ class CancelRulingFormTest extends UnitSpec {
       form.hasErrors shouldBe true
     }
 
-    "Bind valid enum should succeed" in {
-      val form = CancelRulingForm.form.bindFromRequest(Map("reason" -> Seq(CancelReason.ANNULLED.toString)))
+    "Bind valid enum and note should succeed" in {
+      val form = CancelRulingForm.form.bindFromRequest(Map("reason" -> Seq(CancelReason.ANNULLED.toString),"note" -> Seq("hi")))
 
       form.hasErrors shouldBe false
     }
@@ -50,10 +50,10 @@ class CancelRulingFormTest extends UnitSpec {
   "Fill" should {
 
     "populate value" in {
-      val form = CancelRulingForm.form.fill(CancelReason.INVALIDATED_WRONG_CLASSIFICATION)
+      val form = CancelRulingForm.form.fill(RulingCancellation(CancelReason.INVALIDATED_WRONG_CLASSIFICATION.toString, "some note text"))
 
       form.hasErrors shouldBe false
-      form.data shouldBe Map("reason" -> "INVALIDATED_WRONG_CLASSIFICATION")
+      form.data shouldBe Map("reason" -> "INVALIDATED_WRONG_CLASSIFICATION", "note" -> "some note text")
     }
   }
 

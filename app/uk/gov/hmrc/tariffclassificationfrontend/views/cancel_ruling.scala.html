@@ -14,14 +14,17 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.AttachmentsController
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.{CaseController,CancelRulingController}
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-@import uk.gov.hmrc.tariffclassificationfrontend.models.CancelReason.CancelReason
-@import uk.gov.hmrc.tariffclassificationfrontend.models.Case
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.cancel_ruling_form
+@import uk.gov.hmrc.tariffclassificationfrontend.models.RulingCancellation
+@import uk.gov.hmrc.tariffclassificationfrontend.models.{CancelReason, Case}
+@import uk.gov.hmrc.tariffclassificationfrontend.views.forms.components.RadioOption
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.components.{confirm_or_cancel_buttons, warning}
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.{input_textarea, input_radiogroup}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.case_heading
-@(c: Case, form: Form[CancelReason])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.statuses.status_change_upload
+@(c: Case, form: Form[RulingCancellation])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("page.title.cancel.ruling"))) {
 
@@ -29,23 +32,42 @@
 
     <div class="grid-row" id="div-cancel-ruling">
         <div class="column-full">
-            <h2 class="heading-large mt-0">Cancel the ruling</h2>
+            <h2 class="heading-large mt-0">Change the status of this case to: Cancelled</h2>
 
-            <p>Cancelling this ruling will:</p>
-            <ul class="list list-bullet">
-                <li>set the case status to Cancelled</li>
-                <li>remove the ruling from the public rulings website</li>
-                <li>set the expiry date of the ruling to today's date</li>
-            </ul>
+            @helper.form(action = CancelRulingController.postCancelRuling(c.reference), 'id -> "cancel_ruling", 'enctype -> "multipart/form-data") {
+                @helper.CSRF.formField
 
-            <p>Before you cancel the ruling:</p>
-            <ul class="list list-bullet">
-                <li>notify the holder</li>
-                <li><a href="@AttachmentsController.attachmentsDetails(c.reference)">attach</a>  any relevant documentation to the case</li>
-            </ul>
+                <h4 class="heading-medium mt-4 mb-30">Reason for cancellation</h4>
+                @input_radiogroup(
+                    field = form("reason"),
+                    options = CancelReason.values.toSeq.sorted.map(s => RadioOption(s.toString, CancelReason.format(s))),
+                    id = "reason",
+                    customErrorMessage = Some(messages("status.change.cancel.reason.error"))
+                )
 
-            @cancel_ruling_form(c, form("reason"))
+                <h3 id="cancel_ruling-heading" class="heading-medium mt-4 mb-30">Add a note</h3>
 
+                @input_textarea(
+                    field = form("note"),
+                    label = "",
+                    hint = Some("Give details of why you are cancelling this case. Keep the note clear and concise."),
+                    customErrorMessage = Some("Add a note giving details of why you are cancelling this case")
+                )
+
+                @status_change_upload(form("email"), "cancelling")
+
+                @warning(
+                    "Cancelling this BTI ruling cannot be reversed.",
+                    containerClass = "mb-4"
+                )
+
+                @confirm_or_cancel_buttons(
+                    id = "cancel_ruling",
+                    confirmText = "Confirm status change",
+                    cancelText = "Cancel and return to case",
+                    cancelHref = CaseController.rulingDetails(c.reference)
+                )
+    }
         </div>
     </div>
 }

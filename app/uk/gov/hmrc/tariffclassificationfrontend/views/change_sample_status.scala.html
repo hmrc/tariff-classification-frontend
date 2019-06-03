@@ -20,9 +20,13 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.sample_status_form
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.case_heading
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.error_summary
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.components.initial_focus
 @(c: Case, form: Form[Option[SampleStatus]])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("page.title.change.sample.status"))) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.change.sample.status")), scriptElem = Some(initial_focus())) {
+
+    @error_summary(form.errors)
 
     @case_heading(c)
 

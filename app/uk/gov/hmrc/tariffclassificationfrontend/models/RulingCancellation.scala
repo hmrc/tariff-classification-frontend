@@ -14,17 +14,6 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.tariffclassificationfrontend.forms
+package uk.gov.hmrc.tariffclassificationfrontend.models
 
-import play.api.data.Form
-import play.api.data.Forms._
-import uk.gov.hmrc.tariffclassificationfrontend.forms.mappings.FormMappings
-
-object KeywordForm {
-  val form: Form[String] = Form(
-    mapping(
-      "keyword" -> FormMappings.textNonEmpty("error.empty.keyword")
-    )(identity)(Some(_))
-  )
-
-}
+case class RulingCancellation(cancelReason: String, note: String)

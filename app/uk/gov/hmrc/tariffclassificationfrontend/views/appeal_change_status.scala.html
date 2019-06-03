@@ -27,21 +27,23 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.appeal.appeal_status_heading
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.appeal.appeal_status_choice
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.appeal.appeal_status_submit
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.components.initial_focus
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.error_summary
 @(c: Case, appeal: Appeal, form: Form[AppealStatus])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("page.title.change.appeal.status"))) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.change.appeal.status")), scriptElem = Some(initial_focus())) {
 
-  @case_heading(c)
+    @error_summary(form.errors)
 
-  @appeal_status_heading(appeal.`type`)
+    @case_heading(c)
 
-  @helper.form(action = routes.AppealCaseController.confirmChangeStatus(c.reference, appeal.id), 'id -> "appeal_status_form") {
-   @helper.CSRF.formField
+    @appeal_status_heading(appeal.`type`)
 
-   @appeal_status_choice(appeal.`type`, form)
+    @helper.form(action = routes.AppealCaseController.confirmChangeStatus(c.reference, appeal.id), 'id -> "appeal_status_form") {
+        @helper.CSRF.formField
 
-   @appeal_status_submit(c.reference)
+        @appeal_status_choice(appeal.`type`, form)
 
- }
-
+        @appeal_status_submit(c.reference)
+    }
 }
