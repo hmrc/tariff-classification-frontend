@@ -22,10 +22,14 @@
         inputClass: Option[String] = None,
         divClass: Option[String] = None,
         labelClass: Option[String] = None,
-        submitOnChange: Boolean = false
+        submitOnChange: Boolean = false,
+        customGroupClasses : Option[String] = None,
+        customGroupId : Option[String] = None
 )(implicit messages: Messages)
 
-<div class="form-group @if(field.hasErrors){form-group-error}">
+<div class="form-group @customGroupClasses.getOrElse("")
+    @if(field.hasErrors){form-group-error}"
+    @{customGroupId.map(x => s"id=$x").getOrElse("")}>
 
     <fieldset>
         <legend class="advanced_search--filters_heading">

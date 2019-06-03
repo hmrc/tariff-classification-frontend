@@ -23,14 +23,24 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.{input_textarea, input_radiogroup, input_checkbox_group, input_text}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.statuses.status_change_upload
 @import uk.gov.hmrc.tariffclassificationfrontend.models.CaseReferral
-@import uk.gov.hmrc.tariffclassificationfrontend.views.forms.components.RadioOption
+@import uk.gov.hmrc.tariffclassificationfrontend.views.forms.components.{CheckOption, RadioOption}
 @(c: Case, form: Form[CaseReferral])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+
+@inputtextcontent() = {
+        @input_text(label = "Give details of who you are referring this case to", field = form("other"), inputClass = Some("w-50"),
+        customGroupClasses = Some("panel panel-border-narrow js-hidden innertext"), customGroupId = Some("other-detail"))
+}
+
+@inputcheckboxgroupcontent() = {
+    @input_checkbox_group(field = form("reason"),
+        legend = Some("Why are you referring this case?"),
+        options = Seq(("SAMPLE", "To request a sample"),("INFORMATION", "To request more information")).map(x => CheckOption(x._2, x._1)),
+        customGroupClasses = Some("panel panel-border-narrow js-hidden"), customGroupId = Some("reason-detail"))
+}
 
 @main(bodyClasses = None, customTitle = Some(messages("page.title.refer.case"))) {
 
-    @*    @inputtextcontent() = {
-    @*        @input_text(label = "Give details of who you are referring this case to", field = form("other"), customGroupClasses = Some("panel panel-border-narrow js-hidden"), customGroupId = Some("other-detail"))
-    @*    } *@
+
 
     @case_heading(c)
 
@@ -41,59 +51,14 @@
             @helper.form(action = ReferCaseController.postReferCase(c.reference), 'id -> "refer_case", 'enctype -> "multipart/form-data") {
                 @helper.CSRF.formField
 
-@*                @input_radiogroup(*@
-@*                    field = form("referredTo"),*@
-@*                    options = Seq(("APPLICANT","Applicant (the main contact for this case)",Some("reason-detail")),*@
-@*                        ("LAB","Laboratory analyst", None, None),*@
-@*                        ("OTHER", "Other", Some("other-detail"),*@
-@*                Some(Html(*@
-@*                @input_text(label = "Give details of who you are referring this case to", field = form("other"), customGroupClasses = Some("panel panel-border-narrow js-hidden"), customGroupId = Some("other-detail"))))*@
-@*                )*@
-@*                )*@
-@*                .map(x => RadioOption(x._1, x._2, x._3, x._4)),*@
-@*                    id = "referred_to-group"*@
-@*                )*@
-
                 <h3 id="refer_case-refer_heading" class="heading-medium mt-4 mb-30">Who are you referring this case to?</h3>
-                <div class="form-group ">
-                    <fieldset>
-                        <legend>
-
-                        </legend>
-
-                        <div class="multiple-choice" data-target="reason-detail">
-                            <input id="referred_to-group-Applicant_(the_main_contact_for_this_case)" type="radio" name="referredTo" value="Applicant (the main contact for this case)" >
-                            <label id="referred_to-group-Applicant_(the_main_contact_for_this_case)-label" for="referred_to-group-Applicant_(the_main_contact_for_this_case)">Applicant (the main contact for this case)</label>
-                        </div>
-                        <div class="panel panel-border-narrow js-hidden" id="reason-detail">
-                            <label class="form-label" for="reason-sample">To request a sample</label>
-                            <input name="reason" type="checkbox" id="reason-sample" value="sample">
-                            <label class="form-label" for="reason-information">To request more information</label>
-                            <input name="reason" type="checkbox" id="reason-information" value="information">
-                        </div>
-
-
-                        <div class="multiple-choice">
-                            <input id="referred_to-group-Laboratory_analyst" type="radio" name="referredTo" value="Laboratory analyst" >
-                            <label id="referred_to-group-Laboratory_analyst-label" for="referred_to-group-Laboratory_analyst">Laboratory analyst</label>
-                        </div>
-
-
-
-                        <div class="multiple-choice" data-target="other-detail">
-                            <input id="referred_to-group-Other" type="radio" name="referredTo" value="Other" >
-                            <label id="referred_to-group-Other-label" for="referred_to-group-Other">Other</label>
-                        </div>
-                        <div class="panel panel-border-narrow js-hidden" id="other-detail">
-                            <label class="form-label" for="other-detail-text">Give details of who you are referring this case to</label>
-                            <input class="form-control" name="other-detail-text" type="text" id="other-detail-text">
-                        </div>
-
-
-
-                    </fieldset>
-                </div>
-
+                @input_radiogroup(
+                    field = form("referredTo"),
+                    options = Seq(("APPLICANT","Applicant (the main contact for this case)",Some("reason-detail"), Some(inputcheckboxgroupcontent())),
+                        ("LAB","Laboratory analyst", None, None),
+                        ("OTHER", "Other", Some("other-detail"),Some(inputtextcontent()) )).map(x => RadioOption(x._1, x._2, x._3, x._4)),
+                id = "referred_to-group"
+                )
 
                 <h3 id="refer_case-heading" class="heading-medium mt-4 mb-30">Add a note</h3>
 

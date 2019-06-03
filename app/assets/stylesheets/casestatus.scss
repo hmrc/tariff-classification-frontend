@@ -7,3 +7,29 @@
   vertical-align: middle;
   margin-right: 10px;
 }
+
+.form-group .advanced_search--filters_heading {
+  background: none;
+}
+
+fieldset .form-group > fieldset > .multiple-choice {
+  margin-left: 10px;
+}
+
+fieldset .form-group > fieldset > .multiple-choice span {
+  font-weight: normal;
+}
+
+fieldset .form-group > fieldset {
+  margin-left: 20px;
+  margin-top: -20px !important;
+}
+
+fieldset .form-group.innertext .form-label {
+  margin-left: 30px;
+  margin-top: -20px !important;
+}
+
+fieldset .form-group.innertext .form-control-wrapper {
+  margin-left: 30px;
+}

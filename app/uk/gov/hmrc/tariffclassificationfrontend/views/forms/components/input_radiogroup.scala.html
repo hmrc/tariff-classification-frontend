@@ -48,7 +48,10 @@
                     <input id="@id-@optionId" type="radio" name="@{field.name}" value="@option.value" @if(field.value.contains(option.value) && preSelect){checked="checked"}>
                     <label id="@id-@optionId-label" for="@id-@optionId">@option.label</label>
                 </div>
-              @{option.customHtml.getOrElse("")}
+                    @if(option.customHtml.isDefined) {
+                        @option.customHtml.get
+                    }
+
             }
         }
 
