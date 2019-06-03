@@ -23,7 +23,7 @@ The Front End for the internal Operator Service for reviewing & determining BTI 
 8) Start Email Renderer `sm --start HMRC_EMAIL_RENDERER -r`
 9) Start Pdf Generator Service `sm --start PDF_GENERATOR_SERVICE -r` (Requires first installing dependencies - see [below](#pdf-generator-service))
 
-Finally Run `sbt "run 9581"` to boot the app
+Finally Run `sbt run"` to boot the app
 
 Open `http://localhost:9000/tariff-classification-frontend`
  
