@@ -42,7 +42,7 @@
                         case EventType.NOTE => {
                             val body = event.details.asInstanceOf[Note]
                             <div id={s"activity-events-row-${index}-body"}>
-                                <span class="pre-wrap">{body.comment}</span>
+                                <span id={s"activity-events-row-${index}-comment"} class="pre-wrap">{body.comment}</span>
                             </div>
                         }
                         case EventType.CASE_STATUS_CHANGE => {
