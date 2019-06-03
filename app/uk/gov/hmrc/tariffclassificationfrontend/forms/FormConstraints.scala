@@ -20,24 +20,14 @@ import play.api.data.validation.{Constraint, Invalid, Valid}
 
 object FormConstraints {
 
-  val validCommodityCode: Constraint[String] = Constraint("constraints.commoditycode")({
+  val validCommodityCodeDecision: Constraint[String] = Constraint("constraints.commoditycode")({
     case s: String if s.matches("[0-9]{6,22}") && (s.length % 2 == 0) => Valid
-    case _: String => Invalid("Format must be empty or numeric between 6 and 22 digits with an even number of digits")
+    case _: String => Invalid("Commodity code must be empty or numeric between 6 and 22 digits with an even number of digits")
   })
 
-  val numeric: Constraint[String] = Constraint("constraints.non-numeric")({
-    case s: String if s forall Character.isDigit => Valid
-    case _ => Invalid("Must be numerical")
-  })
-
-  def minLength(length: Int): Constraint[String] = Constraint("constraints.minlength")({
-    case s: String if s.length >= length => Valid
-    case _: String => Invalid(s"Must be at least $length characters")
-  })
-
-  def maxLength(length: Int): Constraint[String] = Constraint("constraints.maxlength")({
-    case s: String if s.length <= length => Valid
-    case _: String => Invalid(s"Must be $length characters or less")
+  val validCommodityCodeSearch: Constraint[String] = Constraint("constraints.commoditycode")({
+    case s: String if s.matches("[0-9]{2,22}")  => Valid
+    case _: String => Invalid("Commodity code must be empty or numeric between 2 and 22 digits")
   })
 
   def emptyOr(c: Constraint[String]*): Seq[Constraint[String]] = c.map { c =>

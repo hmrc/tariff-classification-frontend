@@ -25,13 +25,13 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.{AppealStatus, AppealType
 object AppealForm {
 
   private val appealStatusMapping: Mapping[AppealStatus] = Forms.mapping[AppealStatus, AppealStatus](
-    "status" -> textTransformingTo(AppealStatus.withName, _.toString)
+    "status" -> textTransformingTo(AppealStatus.withName, _.toString, "error.empty.appealStatus")
   )(identity)(Some(_))
 
   val appealStatusForm: Form[AppealStatus] = Form[AppealStatus](appealStatusMapping)
 
   private val appealTypeMapping: Mapping[AppealType] = Forms.mapping[AppealType, AppealType](
-    "type" -> textTransformingTo(AppealType.withName, _.toString)
+    "type" -> textTransformingTo(AppealType.withName, _.toString, "error.empty.appealType")
   )(identity)(Some(_))
 
   val appealTypeForm: Form[AppealType] = Form[AppealType](appealTypeMapping)

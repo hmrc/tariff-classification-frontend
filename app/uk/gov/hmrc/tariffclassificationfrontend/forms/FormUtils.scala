@@ -16,15 +16,15 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.forms
 
-import play.api.data.Forms.nonEmptyText
 import play.api.data.Mapping
+import uk.gov.hmrc.tariffclassificationfrontend.forms.mappings.FormMappings.fieldNonEmpty
 
 import scala.util.Try
 
 object FormUtils {
 
-  def textTransformingTo[A](reader: String => A, writer: A => String): Mapping[A] = {
-    nonEmptyText
+  def textTransformingTo[A](reader: String => A, writer: A => String, errorKey: String = "error.empty.default"): Mapping[A] = {
+    fieldNonEmpty(errorKey)
       .verifying("Invalid entry", s => Try(reader(s)).isSuccess)
       .transform[A](reader, writer)
   }

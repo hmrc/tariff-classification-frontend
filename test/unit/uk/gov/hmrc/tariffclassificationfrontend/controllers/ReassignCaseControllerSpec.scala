@@ -143,7 +143,7 @@ class ReassignCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result) shouldBe Some("utf-8")
-      bodyOf(result) should include("This field is required")
+      bodyOf(result) should include("Select a queue to release this case")
     }
 
     "redirect to Application Details for non  OPEN, REFERRED or SUSPENDED statuses" in {
