@@ -28,6 +28,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.connector.{BindingTariffClassifi
 import uk.gov.hmrc.tariffclassificationfrontend.models.AppealStatus.AppealStatus
 import uk.gov.hmrc.tariffclassificationfrontend.models.AppealType.AppealType
 import uk.gov.hmrc.tariffclassificationfrontend.models.CancelReason.CancelReason
+import uk.gov.hmrc.tariffclassificationfrontend.models.ReferralReason.ReferralReason
 import uk.gov.hmrc.tariffclassificationfrontend.models.SampleStatus.SampleStatus
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
@@ -35,6 +36,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
+//noinspection ScalaStyle
 @Singleton
 class CasesService @Inject()(appConfig: AppConfig,
                              auditService: AuditService,
@@ -137,11 +139,13 @@ class CasesService @Inject()(appConfig: AppConfig,
     } yield updated
   }
 
-  def referCase(original: Case, operator: Operator)
+  def referCase(original: Case, referredTo : String, reason: Seq[ReferralReason], f: FileUpload, note: String, operator: Operator)
                (implicit hc: HeaderCarrier): Future[Case] = {
     for {
-      updated <- connector.updateCase(original.copy(status = CaseStatus.REFERRED))
-      _ <- addStatusChangeEvent(original, updated, operator, None)
+      fileStored <- fileService.upload(fileUpload = f)
+      attachment = Attachment(id = fileStored.id, operator = Some(operator))
+      updated <- connector.updateCase(original.addAttachment(attachment).copy(status = CaseStatus.REFERRED))
+      _ <- addReferStatusChangeEvent(original, updated, operator, Some(note), referredTo, reason)
       _ = auditService.auditCaseReferred(original, updated, operator)
     } yield updated
   }
@@ -308,6 +312,18 @@ class CasesService @Inject()(appConfig: AppConfig,
                                          attachment: Option[Attachment] = None)
                                         (implicit hc: HeaderCarrier): Future[Unit] = {
     val details = CancellationCaseStatusChange(from = original.status, reason = reason, comment = comment, attachmentId = attachment.map(_.id) )
+    addEvent(original, updated, details, operator)
+  }
+
+  private def addReferStatusChangeEvent(original: Case,
+                                         updated: Case,
+                                         operator: Operator,
+                                         comment: Option[String],
+                                         referredTo: String,
+                                         reason: Seq[ReferralReason],
+                                         attachment: Option[Attachment] = None)
+                                        (implicit hc: HeaderCarrier): Future[Unit] = {
+    val details = ReferralCaseStatusChange(from = original.status, comment = comment, attachmentId = attachment.map(_.id), referredTo = referredTo, reason = reason )
     addEvent(original, updated, details, operator)
   }
 

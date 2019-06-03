@@ -35,7 +35,6 @@ GET         /cases/:reference/reassign-case/confirmation        @uk.gov.hmrc.tar
 GET         /cases/:reference/refer                             @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReferCaseController.getReferCase(reference: String)
 POST        /cases/:reference/refer                             @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReferCaseController.postReferCase(reference: String)
 GET         /cases/:reference/refer/confirmation                @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReferCaseController.confirmReferCase(reference: String)
-GET         /cases/:reference/refer/contact-info                @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReferCaseController.showContactInformation(reference: String)
 
 GET         /cases/:reference/reject                            @uk.gov.hmrc.tariffclassificationfrontend.controllers.RejectCaseController.getRejectCase(reference: String)
 POST        /cases/:reference/reject                            @uk.gov.hmrc.tariffclassificationfrontend.controllers.RejectCaseController.postRejectCase(reference: String)

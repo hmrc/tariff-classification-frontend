@@ -44,10 +44,11 @@
 
         @for(option: RadioOption <- options) {
             @defining(option.value.replace(" ", "_")) { optionId: String =>
-                <div class="multiple-choice">
+                <div class="multiple-choice" @{option.dataTarget.map(dt => s"data-target=$dt").getOrElse("")}>
                     <input id="@id-@optionId" type="radio" name="@{field.name}" value="@option.value" @if(field.value.contains(option.value) && preSelect){checked="checked"}>
                     <label id="@id-@optionId-label" for="@id-@optionId">@option.label</label>
                 </div>
+              @{option.customHtml.getOrElse("")}
             }
         }
 
