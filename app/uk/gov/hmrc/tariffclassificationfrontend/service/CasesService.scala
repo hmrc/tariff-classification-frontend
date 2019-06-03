@@ -163,7 +163,7 @@ class CasesService @Inject()(appConfig: AppConfig,
       fileStored <- fileService.upload(fileUpload)
       attachment = Attachment(id = fileStored.id, operator = Some(operator))
       updated <- connector.updateCase(original.addAttachment(attachment).copy(status = CaseStatus.SUSPENDED))
-      _ <- addStatusChangeEvent(original, updated, operator, Some(note))
+      _ <- addStatusChangeEvent(original, updated, operator, Some(note), Some(attachment))
       _ = auditService.auditCaseSuspended(original, updated, operator)
     } yield updated
   }
@@ -174,7 +174,7 @@ class CasesService @Inject()(appConfig: AppConfig,
       fileStored <- fileService.upload(fileUpload)
       attachment = Attachment(id = fileStored.id, operator = Some(operator))
       updated <- connector.updateCase(original.addAttachment(attachment).copy(status = CaseStatus.SUPPRESSED))
-      _ <- addStatusChangeEvent(original, updated, operator, Some(note))
+      _ <- addStatusChangeEvent(original, updated, operator, Some(note), Some(attachment))
       _ = auditService.auditCaseSuppressed(original, updated, operator)
     } yield updated
   }
@@ -197,7 +197,7 @@ class CasesService @Inject()(appConfig: AppConfig,
       // Send the email
       message <- emailService.sendCaseCompleteEmail(updated)
         .map { email: EmailTemplate =>
-          s"The applicant was sent an Email:\n- Subject: ${email.subject}\n- Body: ${email.plain}"
+          s"- Subject: ${email.subject}\n- Body: ${email.plain}"
         } recover {
         case t: Throwable =>
           Logger.error("Failed to send email", t)
@@ -205,7 +205,7 @@ class CasesService @Inject()(appConfig: AppConfig,
       }
 
       // Create the event
-      _ <- addStatusChangeEvent(original, updated, operator, Some(message))
+      _ <- addCompletedEvent(original, updated, operator, None, message)
 
       // Audit
       _ = auditService.auditCaseCompleted(original, updated, operator)
@@ -290,13 +290,23 @@ class CasesService @Inject()(appConfig: AppConfig,
     }
   }
 
+  private def addCompletedEvent(original: Case,
+                                   updated: Case,
+                                   operator: Operator,
+                                   comment: Option[String],
+                                    email: String)
+                                  (implicit hc: HeaderCarrier): Future[Unit] = {
+    val details = CompletedCaseStatusChange(from = original.status, comment = comment, email = email)
+    addEvent(original, updated, details, operator)
+  }
+
   private def addStatusChangeEvent(original: Case,
                                    updated: Case,
                                    operator: Operator,
                                    comment: Option[String],
                                    attachment: Option[Attachment] = None)
                                   (implicit hc: HeaderCarrier): Future[Unit] = {
-    val details = CaseStatusChange(from = original.status, to = updated.status, comment = comment, attachmentId = attachment.map(_.id) )
+    val details = CaseStatusChange(from = original.status, to = updated.status, comment = comment, attachmentId = attachment.map(_.id))
     addEvent(original, updated, details, operator)
   }
 

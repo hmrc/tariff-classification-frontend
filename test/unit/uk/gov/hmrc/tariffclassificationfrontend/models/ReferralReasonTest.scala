@@ -16,13 +16,15 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.models
 
-object ReferralReason extends Enumeration {
-  type ReferralReason = Value
+import uk.gov.hmrc.play.test.UnitSpec
 
-  val REQUEST_SAMPLE, REQUEST_MORE_INFO = Value
+class ReferralReasonTest extends UnitSpec {
 
-  def format(reason: ReferralReason): String = reason match {
-    case REQUEST_SAMPLE => "To request a sample"
-    case REQUEST_MORE_INFO => "To request more information"
+  "format" should {
+    "render to String" in {
+      ReferralReason.format(ReferralReason.REQUEST_MORE_INFO) shouldBe "To request more information"
+      ReferralReason.format(ReferralReason.REQUEST_SAMPLE) shouldBe "To request a sample"
+    }
   }
+
 }
