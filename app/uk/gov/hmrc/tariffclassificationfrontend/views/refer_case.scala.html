@@ -21,9 +21,12 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{case_heading, contact_details}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.input_yes_no
 
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.error_summary
 @(c: Case, form: Form[Boolean])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("page.title.refer.case"))) {
+
+    @error_summary(form)
 
     @case_heading(c)
 
