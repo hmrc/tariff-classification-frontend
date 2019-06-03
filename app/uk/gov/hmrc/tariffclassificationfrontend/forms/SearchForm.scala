@@ -28,7 +28,7 @@ object SearchForm {
   val form: Form[Search] = Form(
     mapping(
       "trader_name" -> optional[String](text),
-      "commodity_code" -> optional[String](text.verifying(emptyOr(numeric, minLength(2), maxLength(22)): _*)),
+      "commodity_code" -> optional[String](text.verifying(emptyOr(validCommodityCodeSearch): _*)),
       "decision_details" -> optional[String](text),
       "status" -> optional[Set[PseudoCaseStatus]](set(textTransformingTo(PseudoCaseStatus.withName, _.toString))),
       "keyword" -> optional[Set[String]](set(text))

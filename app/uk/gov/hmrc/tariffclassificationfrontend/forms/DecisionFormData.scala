@@ -35,7 +35,7 @@ class DecisionForm @Inject()(commodityCodeConstraints: CommodityCodeConstraints)
 
   val form: Form[DecisionFormData] = Form[DecisionFormData](
     mapping(
-      "bindingCommodityCode" -> text.verifying(emptyOr(validCommodityCode, commodityCodeConstraints.commodityCodeExistsInUKTradeTariff): _*),
+      "bindingCommodityCode" -> text.verifying(emptyOr(validCommodityCodeDecision, commodityCodeConstraints.commodityCodeExistsInUKTradeTariff): _*),
       "goodsDescription" -> text,
       "methodSearch" -> text,
       "justification" -> text,

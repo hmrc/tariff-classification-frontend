@@ -22,6 +22,8 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.{PseudoCaseStatus, Search
 
 class SearchFormTest extends UnitSpec {
 
+  private val commodityCodeError = "Commodity code must be empty or numeric between 2 and 22 digits"
+
   "Search Form" should {
 
     "allow missing fields" in {
@@ -47,7 +49,7 @@ class SearchFormTest extends UnitSpec {
         Map(
           "commodity_code" -> Seq("0")
         )
-      ).errors shouldBe Seq(FormError("commodity_code", List("Must be at least 2 characters")))
+      ).errors shouldBe Seq(FormError("commodity_code", List(commodityCodeError)))
     }
 
     "disallow long commodity code" in {
@@ -55,7 +57,7 @@ class SearchFormTest extends UnitSpec {
         Map(
           "commodity_code" -> Seq("0" * 23)
         )
-      ).errors shouldBe Seq(FormError("commodity_code", List("Must be 22 characters or less")))
+      ).errors shouldBe Seq(FormError("commodity_code", List(commodityCodeError)))
     }
 
     "disallow non-numerical commodity code" in {
@@ -63,7 +65,7 @@ class SearchFormTest extends UnitSpec {
         Map(
           "commodity_code" -> Seq("eee")
         )
-      ).errors shouldBe Seq(FormError("commodity_code", List("Must be numerical")))
+      ).errors shouldBe Seq(FormError("commodity_code", List(commodityCodeError)))
     }
 
     "maps to data" in {

@@ -18,13 +18,14 @@ package uk.gov.hmrc.tariffclassificationfrontend.forms
 
 import play.api.data.Form
 import play.api.data.Forms._
+import uk.gov.hmrc.tariffclassificationfrontend.forms.mappings.FormMappings.fieldNonEmpty
 
 
 object ReleaseCaseForm {
 
   val form: Form[String] = Form(
     mapping(
-      "queue" -> text
+      "queue" -> fieldNonEmpty("error.empty.queue")
     )(identity)(Some(_))
   )
 
