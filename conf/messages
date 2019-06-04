@@ -162,6 +162,7 @@ error.empty.keyword = Enter a keyword
 error.empty.sample.status = Select a sample status
 
 error.empty.refer.note = Add a note giving details of why you are referring this case
+error.empty.refer.to=Select who you are referring this case to
 
 status.change.upload.title=You can upload:
 status.change.upload.label=Upload a file

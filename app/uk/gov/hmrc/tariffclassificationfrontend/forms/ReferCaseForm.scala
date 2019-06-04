@@ -25,7 +25,7 @@ object ReferCaseForm {
 
 
   lazy val form: Form[CaseReferral] = Form(mapping(
-    "referredTo" -> nonEmptyText,
+    "referredTo" -> textNonEmpty("error.empty.refer.to"),
     "reasons" -> list(text),
     "note" -> textNonEmpty("error.empty.refer.note"),
     "referManually" -> optional(text)
