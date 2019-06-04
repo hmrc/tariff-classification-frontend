@@ -95,7 +95,7 @@ class ReferCaseController @Inject()(verify: RequestActions,
 
   private def checkReasonIsSelected: PartialFunction[Form[CaseReferral], Form[CaseReferral]] = {
     case f if f.data.get("referredTo").contains("Applicant") && (f.data.get("reasons[0]").isEmpty && f.data.get("reasons[1]").isEmpty) =>
-      f.withError("reasons", "Select a reason you are referring this case")
+      f.withError("reasons", "Select why you are referring this case")
     case f => f
   }
 

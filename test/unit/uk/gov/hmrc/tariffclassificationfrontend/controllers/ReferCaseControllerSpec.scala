@@ -170,7 +170,7 @@ class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result) shouldBe Some("utf-8")
-      bodyOf(result) should include("Select a reason you are referring this case")
+      bodyOf(result) should include("Select why you are referring this case")
     }
 
     "display required field when failing to submit referManually detail when referred to is OTHER" in {
