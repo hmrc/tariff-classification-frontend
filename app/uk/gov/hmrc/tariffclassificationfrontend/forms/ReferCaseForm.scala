@@ -28,37 +28,12 @@ object ReferCaseForm {
     case _ => Invalid(s"Must be one of [${values.toSeq.mkString(", ")}]")
   }
 
-  private def validateOther(referredTo : String, other: String): Boolean = {
-    referredTo match {
-      case "OTHER" if other.nonEmpty => true
-      case "OTHER" => false
-      case _ => true
-    }
-  }
-
-  private def validateReason(referredTo: String, reason: String): Boolean = {
-    referredTo match {
-      case "APPLICANT" if reason.nonEmpty => true
-      case "OTHER" => false
-      case _ => true
-    }
-  }
 
   lazy val form: Form[CaseReferral] = Form(mapping(
     "referredTo" -> nonEmptyText,
-    "reason" -> text,
+    "reasons" -> list(text),
     "note" -> nonEmptyText,
     "other" -> text
-  )(CaseReferral.apply)(CaseReferral.unapply).verifying(
-    "If OTHER is selected as referred to, the other field must be populated",
-    constraint = fields =>
-      fields match {
-        case caseReferral => validateOther(caseReferral.referredTo, caseReferral.other)
-      }
-  ).verifying("If applicant is selected as referred to, there must be at least one reason",
-    fields =>
-      fields match {
-        case caseReferral => validateReason(caseReferral.referredTo, caseReferral.reason)
-      })
+  )(CaseReferral.apply)(CaseReferral.unapply)
   )
 }

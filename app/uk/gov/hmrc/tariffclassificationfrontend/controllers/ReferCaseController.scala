@@ -60,9 +60,11 @@ class ReferCaseController @Inject()(verify: RequestActions,
   def postReferCase(reference: String): Action[MultipartFormData[Files.TemporaryFile]] = (verify.authenticated andThen verify.casePermissions(reference) andThen
     verify.mustHave(Permission.REFER_CASE)).async(parse.multipartFormData) { implicit request: AuthenticatedCaseRequest[MultipartFormData[Files.TemporaryFile]] =>
 
+    val myForm = addErrorsToForm(ReferCaseForm.form.bindFromRequest())
+
     extractFile(key = "email")(
       onFileValid = validFile => {
-        ReferCaseForm.form.bindFromRequest().fold(
+        myForm.fold(
           formWithErrors =>
             getCaseAndRenderView(reference, c => successful(views.html.refer_case(c, formWithErrors))),
           referral => {
@@ -74,28 +76,41 @@ class ReferCaseController @Inject()(verify: RequestActions,
 
       onFileTooLarge = () => {
         val error = messagesApi("status.change.upload.error.restrictionSize")
-        ReferCaseForm.form.bindFromRequest().fold(
+        myForm.fold(
           formWithErrors => getCaseAndRenderErrors(reference, formWithErrors, error),
-          referral => getCaseAndRenderErrors(reference, ReferCaseForm.form.fill(referral), error)
+          referral => getCaseAndRenderErrors(reference, myForm.fill(referral), error)
         )
       },
 
       onFileInvalidType = () => {
         val error = messagesApi("status.change.upload.error.fileType")
-        ReferCaseForm.form.bindFromRequest().fold(
+        myForm.fold(
           formWithErrors => getCaseAndRenderErrors(reference, formWithErrors, error),
-          referral => getCaseAndRenderErrors(reference, ReferCaseForm.form.fill(referral), error)
+          referral => getCaseAndRenderErrors(reference, myForm.fill(referral), error)
         )
       },
 
       onFileMissing = () => {
         val error = messagesApi("status.change.upload.error.mustSelect")
-        ReferCaseForm.form.bindFromRequest().fold(
+        myForm.fold(
           formWithErrors => getCaseAndRenderErrors(reference, formWithErrors, error),
-          referral => getCaseAndRenderErrors(reference, ReferCaseForm.form.fill(referral), error))
+          referral => getCaseAndRenderErrors(reference, myForm.fill(referral), error))
 
       }
     )
+  }
+
+  private def addErrorsToForm(f: Form[CaseReferral]): Form[CaseReferral] = {
+    var form = f
+    if(f.data.get("referredTo").get == "APPLICANT" && (f.data.get("reasons[0]").isEmpty && f.data.get("reasons[1]").isEmpty)) {
+      form = f.withError("reasons","Select a reason you are referring this case")
+    }
+
+    if(f.data.get("referredTo").get == "OTHER" && f.data.get("other").getOrElse("").trim.isEmpty) {
+      form = f.withError("other","Enter who you are referring this case to")
+    }
+
+    form
   }
 
   private def getCaseAndRenderErrors(reference : String, form: Form[CaseReferral], specificProblem : String)
