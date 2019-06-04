@@ -145,7 +145,7 @@ class CasesService @Inject()(appConfig: AppConfig,
       fileStored <- fileService.upload(fileUpload = f)
       attachment = Attachment(id = fileStored.id, operator = Some(operator))
       updated <- connector.updateCase(original.addAttachment(attachment).copy(status = CaseStatus.REFERRED))
-      _ <- addReferStatusChangeEvent(original, updated, operator, Some(note), referredTo, reason)
+      _ <- addReferStatusChangeEvent(original, updated, operator, Some(note), referredTo, reason, Some(attachment))
       _ = auditService.auditCaseReferred(original, updated, operator)
     } yield updated
   }
