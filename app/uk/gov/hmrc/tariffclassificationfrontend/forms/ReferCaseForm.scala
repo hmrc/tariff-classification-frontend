@@ -18,21 +18,16 @@ package uk.gov.hmrc.tariffclassificationfrontend.forms
 
 import play.api.data.Form
 import play.api.data.Forms._
-import play.api.data.validation.{Constraint, Invalid, Valid}
-import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseReferral, ReferralReason}
+import uk.gov.hmrc.tariffclassificationfrontend.forms.mappings.FormMappings.textNonEmpty
+import uk.gov.hmrc.tariffclassificationfrontend.models.CaseReferral
 
 object ReferCaseForm {
-
-  private def oneOf(values: ReferralReason.ValueSet): Constraint[String] = Constraint("constraints.referral-reason") {
-    case s: String if ReferralReason.values.exists(_.toString == s) => Valid
-    case _ => Invalid(s"Must be one of [${values.toSeq.mkString(", ")}]")
-  }
 
 
   lazy val form: Form[CaseReferral] = Form(mapping(
     "referredTo" -> nonEmptyText,
     "reasons" -> list(text),
-    "note" -> nonEmptyText,
+    "note" -> textNonEmpty("error.empty.refer.note"),
     "other" -> text
   )(CaseReferral.apply)(CaseReferral.unapply)
   )

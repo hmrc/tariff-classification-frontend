@@ -22,10 +22,10 @@ import play.api.i18n.MessagesApi
 import play.api.libs.Files
 import play.api.mvc._
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.forms.{CancelRulingForm, MandatoryBooleanForm, ReferCaseForm}
+import uk.gov.hmrc.tariffclassificationfrontend.forms.ReferCaseForm
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus._
+import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
-import uk.gov.hmrc.tariffclassificationfrontend.models.{CancelReason, Case, CaseReferral, Permission, RulingCancellation}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
@@ -60,7 +60,21 @@ class ReferCaseController @Inject()(verify: RequestActions,
   def postReferCase(reference: String): Action[MultipartFormData[Files.TemporaryFile]] = (verify.authenticated andThen verify.casePermissions(reference) andThen
     verify.mustHave(Permission.REFER_CASE)).async(parse.multipartFormData) { implicit request: AuthenticatedCaseRequest[MultipartFormData[Files.TemporaryFile]] =>
 
-    val myForm = addErrorsToForm(ReferCaseForm.form.bindFromRequest())
+    val myForm = (checkReasonIsSelected andThen checkedOtherCommentNotEmpty) (ReferCaseForm.form.bindFromRequest())
+
+    def foldForm(error: String): Future[Result] = {
+      myForm.fold(
+        formWithErrors => getCaseAndRenderErrors(reference, formWithErrors, error),
+        referral => getCaseAndRenderErrors(reference, myForm.fill(referral), error)
+      )
+    }
+
+    def whoIsReferredTo: CaseReferral => String = { c =>
+      c.referredTo.toLowerCase match {
+        case "other" => c.referredTo
+        case referred => referred
+      }
+    }
 
     extractFile(key = "email")(
       onFileValid = validFile => {
@@ -68,52 +82,30 @@ class ReferCaseController @Inject()(verify: RequestActions,
           formWithErrors =>
             getCaseAndRenderView(reference, c => successful(views.html.refer_case(c, formWithErrors))),
           referral => {
-            validateAndRedirect(casesService.referCase(_, referral.referredTo, Seq.empty, validFile,
+            validateAndRedirect(casesService.referCase(_, whoIsReferredTo(referral), referral.reasons.map(ReferralReason.withName), validFile,
               referral.note, request.operator).map(c => routes.ReferCaseController.confirmReferCase(c.reference)))
           }
         )
       },
-
-      onFileTooLarge = () => {
-        val error = messagesApi("status.change.upload.error.restrictionSize")
-        myForm.fold(
-          formWithErrors => getCaseAndRenderErrors(reference, formWithErrors, error),
-          referral => getCaseAndRenderErrors(reference, myForm.fill(referral), error)
-        )
-      },
-
-      onFileInvalidType = () => {
-        val error = messagesApi("status.change.upload.error.fileType")
-        myForm.fold(
-          formWithErrors => getCaseAndRenderErrors(reference, formWithErrors, error),
-          referral => getCaseAndRenderErrors(reference, myForm.fill(referral), error)
-        )
-      },
-
-      onFileMissing = () => {
-        val error = messagesApi("status.change.upload.error.mustSelect")
-        myForm.fold(
-          formWithErrors => getCaseAndRenderErrors(reference, formWithErrors, error),
-          referral => getCaseAndRenderErrors(reference, myForm.fill(referral), error))
-
-      }
+      onFileTooLarge = () => foldForm(messagesApi("status.change.upload.error.restrictionSize")),
+      onFileInvalidType = () => foldForm(messagesApi("status.change.upload.error.fileType")),
+      onFileMissing = () => foldForm(messagesApi("status.change.upload.error.mustSelect"))
     )
   }
 
-  private def addErrorsToForm(f: Form[CaseReferral]): Form[CaseReferral] = {
-    var form = f
-    if(f.data.get("referredTo").get == "APPLICANT" && (f.data.get("reasons[0]").isEmpty && f.data.get("reasons[1]").isEmpty)) {
-      form = f.withError("reasons","Select a reason you are referring this case")
-    }
-
-    if(f.data.get("referredTo").get == "OTHER" && f.data.get("other").getOrElse("").trim.isEmpty) {
-      form = f.withError("other","Enter who you are referring this case to")
-    }
-
-    form
+  private def checkReasonIsSelected: PartialFunction[Form[CaseReferral], Form[CaseReferral]] = {
+    case f if f.data("referredTo") == "Applicant" && (f.data.get("reasons[0]").isEmpty && f.data.get("reasons[1]").isEmpty) =>
+      f.withError("reasons", "Select a reason you are referring this case")
+    case f => f
   }
 
-  private def getCaseAndRenderErrors(reference : String, form: Form[CaseReferral], specificProblem : String)
+  private def checkedOtherCommentNotEmpty: PartialFunction[Form[CaseReferral], Form[CaseReferral]] = {
+    case f if f.data("referredTo") == "Other" && f.data("other").trim.isEmpty =>
+      f.withError("other", "Enter who you are referring this case to")
+    case f => f
+  }
+
+  private def getCaseAndRenderErrors(reference: String, form: Form[CaseReferral], specificProblem: String)
                                     (implicit request: AuthenticatedCaseRequest[MultipartFormData[Files.TemporaryFile]]): Future[Result] =
     getCaseAndRenderView(reference, c => successful(views.html.refer_case(c, form.withError("email", specificProblem))))
 
