@@ -70,8 +70,8 @@ class ReferCaseController @Inject()(verify: RequestActions,
     }
 
     def whoIsReferredTo: CaseReferral => String = { c =>
-      c.referredTo.toLowerCase match {
-        case "other" => c.referManually.getOrElse(c.referredTo)
+      c.referredTo match {
+        case "Other" => c.referManually.getOrElse(c.referredTo)
         case referredTo => referredTo
       }
     }
