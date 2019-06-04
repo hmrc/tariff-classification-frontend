@@ -71,8 +71,8 @@ class ReferCaseController @Inject()(verify: RequestActions,
 
     def whoIsReferredTo: CaseReferral => String = { c =>
       c.referredTo.toLowerCase match {
-        case "other" => c.referredTo
-        case referred => referred
+        case "other" => c.referManually.getOrElse(c.referredTo)
+        case referredTo => referredTo
       }
     }
 
@@ -94,14 +94,14 @@ class ReferCaseController @Inject()(verify: RequestActions,
   }
 
   private def checkReasonIsSelected: PartialFunction[Form[CaseReferral], Form[CaseReferral]] = {
-    case f if f.data("referredTo") == "Applicant" && (f.data.get("reasons[0]").isEmpty && f.data.get("reasons[1]").isEmpty) =>
+    case f if f.data.get("referredTo").contains("Applicant") && (f.data.get("reasons[0]").isEmpty && f.data.get("reasons[1]").isEmpty) =>
       f.withError("reasons", "Select a reason you are referring this case")
     case f => f
   }
 
   private def checkedOtherCommentNotEmpty: PartialFunction[Form[CaseReferral], Form[CaseReferral]] = {
-    case f if f.data("referredTo") == "Other" && f.data("other").trim.isEmpty =>
-      f.withError("other", "Enter who you are referring this case to")
+    case f if f.data.get("referredTo").contains("Other") && f.data.getOrElse("referManually", "").isEmpty =>
+      f.withError("referManually", "Enter who you are referring this case to")
     case f => f
   }
 

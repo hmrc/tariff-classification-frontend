@@ -29,7 +29,7 @@
 @(c: Case, form: Form[CaseReferral])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @inputTextContent() = {
-        @input_text(label = "Give details of who you are referring this case to", field = form("other"), inputClass = Some("w-50"),
+        @input_text(label = "Give details of who you are referring this case to", field = form("referManually"), inputClass = Some("w-50"),
         customGroupClasses = Some("panel panel-border-narrow js-hidden pl-44"), customGroupId = Some("other-detail"))
 }
 
@@ -68,7 +68,7 @@
                             Some(inputCheckboxGroupContent(isChecked(form("reasons[0]").value,form("reasons[1]").value, ReferralReason.REQUEST_SAMPLE.toString),
                                 isChecked(form("reasons[0]").value,form("reasons[1]").value, ReferralReason.REQUEST_MORE_INFO.toString)))),
                         RadioOption("Laboratory analyst","Laboratory analyst", None, None),
-                        RadioOption("Other", "Other", Some("other-detail"),Some(inputTextContent()) )
+                        RadioOption("Other", "Other", Some("other-detail"),Some(inputTextContent()))
                     ),
                 id = "referred_to-group"
                 )

@@ -28,7 +28,7 @@ object ReferCaseForm {
     "referredTo" -> nonEmptyText,
     "reasons" -> list(text),
     "note" -> textNonEmpty("error.empty.refer.note"),
-    "other" -> text
+    "referManually" -> optional(text)
   )(CaseReferral.apply)(CaseReferral.unapply)
   )
 }
