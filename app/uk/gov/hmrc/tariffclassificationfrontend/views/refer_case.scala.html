@@ -60,9 +60,10 @@
             @helper.form(action = ReferCaseController.postReferCase(c.reference), 'id -> "refer_case", 'enctype -> "multipart/form-data") {
                 @helper.CSRF.formField
 
-                <h3 id="refer_case-refer_heading" class="heading-medium mt-4 mb-30">Who are you referring this case to?</h3>
                 @input_radiogroup(
                     field = form("referredTo"),
+                    label = Some("Who are you referring this case to?"),
+                    labelClass = Some ("heading-medium mt-1"),
                     options = Seq(
                         RadioOption("Applicant","Applicant (the main contact for this case)",Some("reason-detail"),
                             Some(inputCheckboxGroupContent(isChecked(form("reasons[0]").value,form("reasons[1]").value, ReferralReason.REQUEST_SAMPLE.toString),
@@ -70,14 +71,13 @@
                         RadioOption("Laboratory analyst","Laboratory analyst", None, None),
                         RadioOption("Other", "Other", Some("other-detail"),Some(inputTextContent()))
                     ),
-                id = "referred_to-group"
+                    id = "referred_to-group"
                 )
-
-                <h3 id="refer_case-heading" class="heading-medium mt-4 mb-30">Add a note</h3>
 
                 @input_textarea(
                     field = form("note"),
-                    label = "",
+                    label = "Add a note",
+                    labelClass = Some("heading-medium"),
                     hint = Some("Explain why you are making this referral. If this referral is to a 'laboratory analyst' or 'other', give contact details. Keep the note clear and concise.")
                 )
 

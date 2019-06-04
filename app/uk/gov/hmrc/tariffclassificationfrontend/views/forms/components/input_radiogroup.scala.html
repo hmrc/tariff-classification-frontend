@@ -21,6 +21,7 @@
         allowNone: Boolean = false,
         inputClass: Option[String] = None,
         hint: Option[String] = None,
+        label : Option[String] = None,
         labelClass: Option[String] = None,
         id: String = "radio_option_group",
         preSelect : Boolean = true,
@@ -29,10 +30,12 @@
 
 <div class="form-group @if(field.hasErrors){form-group-error}">
     <fieldset>
-        <legend>
-            @field.errors.map { error =>
-                <span class="error-message" id="error-message-@{field.id}-input">@customErrorMessage.getOrElse( messages(error.message, error.args: _*))</span>
-            }
+
+            <legend>
+                <span class="@labelClass">@label</span>
+                @field.errors.map { error =>
+                    <span class="error-message" id="error-message-@{field.id}-input">@customErrorMessage.getOrElse( messages(error.message, error.args: _*))</span>
+                }
             </legend>
 
         @if(allowNone) {
