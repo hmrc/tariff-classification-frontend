@@ -16,4 +16,4 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.models
 
-case class CaseReferral(referredTo: String, reason: String, note: String, other: String)
+case class CaseReferral(referredTo: String, reasons: List[String], note: String, other: String)

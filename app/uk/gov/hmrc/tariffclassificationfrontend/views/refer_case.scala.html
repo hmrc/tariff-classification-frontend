@@ -22,25 +22,34 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.components.{confirm_or_cancel_buttons, warning}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.{input_textarea, input_radiogroup, input_checkbox_group, input_text}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.statuses.status_change_upload
-@import uk.gov.hmrc.tariffclassificationfrontend.models.CaseReferral
+@import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseReferral, ReferralReason}
+@import uk.gov.hmrc.tariffclassificationfrontend.models.ReferralReason._
 @import uk.gov.hmrc.tariffclassificationfrontend.views.forms.components.{CheckOption, RadioOption}
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.error_summary
 @(c: Case, form: Form[CaseReferral])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@inputtextcontent() = {
+@inputTextContent() = {
         @input_text(label = "Give details of who you are referring this case to", field = form("other"), inputClass = Some("w-50"),
-        customGroupClasses = Some("panel panel-border-narrow js-hidden innertext"), customGroupId = Some("other-detail"))
+        customGroupClasses = Some("panel panel-border-narrow js-hidden pl-44"), customGroupId = Some("other-detail"))
 }
 
-@inputcheckboxgroupcontent() = {
-    @input_checkbox_group(field = form("reason"),
+@isChecked(f1: Option[String], f2: Option[String], matchText: String) = @{
+    matchText == f1.getOrElse("") || matchText == f2.getOrElse("")
+}
+
+@inputCheckboxGroupContent(sampleChecked: Boolean, infoChecked: Boolean) = {
+    @input_checkbox_group(field = form("reasons"),
         legend = Some("Why are you referring this case?"),
-        options = Seq(("SAMPLE", "To request a sample"),("INFORMATION", "To request more information")).map(x => CheckOption(x._2, x._1)),
+        options = Seq(
+            CheckOption(label = "To request a sample", value = ReferralReason.REQUEST_SAMPLE.toString, checked = sampleChecked),
+            CheckOption(label = "To request more information", value =  ReferralReason.REQUEST_MORE_INFO.toString, infoChecked)
+        ),
         customGroupClasses = Some("panel panel-border-narrow js-hidden"), customGroupId = Some("reason-detail"))
 }
 
 @main(bodyClasses = None, customTitle = Some(messages("page.title.refer.case"))) {
 
-
+    @error_summary(form.errors)
 
     @case_heading(c)
 
@@ -54,9 +63,13 @@
                 <h3 id="refer_case-refer_heading" class="heading-medium mt-4 mb-30">Who are you referring this case to?</h3>
                 @input_radiogroup(
                     field = form("referredTo"),
-                    options = Seq(("APPLICANT","Applicant (the main contact for this case)",Some("reason-detail"), Some(inputcheckboxgroupcontent())),
-                        ("LAB","Laboratory analyst", None, None),
-                        ("OTHER", "Other", Some("other-detail"),Some(inputtextcontent()) )).map(x => RadioOption(x._1, x._2, x._3, x._4)),
+                    options = Seq(
+                        RadioOption("Applicant","Applicant (the main contact for this case)",Some("reason-detail"),
+                            Some(inputCheckboxGroupContent(isChecked(form("reasons[0]").value,form("reasons[1]").value, ReferralReason.REQUEST_SAMPLE.toString),
+                                isChecked(form("reasons[0]").value,form("reasons[1]").value, ReferralReason.REQUEST_MORE_INFO.toString)))),
+                        RadioOption("Laboratory analyst","Laboratory analyst", None, None),
+                        RadioOption("Other", "Other", Some("other-detail"),Some(inputTextContent()) )
+                    ),
                 id = "referred_to-group"
                 )
 
@@ -65,8 +78,7 @@
                 @input_textarea(
                     field = form("note"),
                     label = "",
-                    hint = Some("Explain why you are making this referral. If this referral is to a 'laboratory analyst' or 'other', give contact details. Keep the note clear and concise."),
-                    customErrorMessage = Some("Add a note giving details of why you are referring this case")
+                    hint = Some("Explain why you are making this referral. If this referral is to a 'laboratory analyst' or 'other', give contact details. Keep the note clear and concise.")
                 )
 
                 @status_change_upload(form("email"), "referring")
