@@ -17,7 +17,7 @@
 package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
 import javax.inject.{Inject, Singleton}
-import play.api.data.Form
+import play.api.data.{Form, FormError}
 import play.api.i18n.MessagesApi
 import play.api.libs.Files
 import play.api.mvc._
@@ -103,13 +103,13 @@ class ReferCaseController @Inject()(verify: RequestActions,
 
   private def checkReasonIsSelected: PartialFunction[Form[CaseReferral], Form[CaseReferral]] = {
     case f if f.data.get("referredTo").contains("Applicant") && (f.data.get("reasons[0]").isEmpty && f.data.get("reasons[1]").isEmpty) =>
-      f.withError("reasons", "Select why you are referring this case")
+      Form(f.mapping, f.data, FormError("reasons","Select why you are referring this case") +: f.errors, f.value)
     case f => f
   }
 
   private def checkedOtherCommentNotEmpty: PartialFunction[Form[CaseReferral], Form[CaseReferral]] = {
     case f if f.data.get("referredTo").contains("Other") && f.data.getOrElse("referManually", "").isEmpty =>
-      f.withError("referManually", "Enter who you are referring this case to")
+      Form(f.mapping, f.data, FormError("referManually","Enter who you are referring this case to") +: f.errors, f.value)
     case f => f
   }
 
