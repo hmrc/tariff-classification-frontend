@@ -362,8 +362,10 @@ class CasesService @Inject()(appConfig: AppConfig,
 
   private def addAssignmentChangeEvent(original: Case, updated: Case, operator: Operator, comment: Option[String] = None)
                                       (implicit hc: HeaderCarrier): Future[Unit] = {
-    val details = AssignmentChange(original.assignee, updated.assignee, comment)
-    addEvent(original, updated, details, operator)
+    (original.assignee, updated.assignee) match {
+      case (None, None) => Future.successful(())
+      case _ => addEvent(original, updated, AssignmentChange(original.assignee, updated.assignee, comment), operator)
+    }
   }
 
   private def addExtendedUseStatusChangeEvent(original: Case, updated: Case, operator: Operator, comment: Option[String] = None)
