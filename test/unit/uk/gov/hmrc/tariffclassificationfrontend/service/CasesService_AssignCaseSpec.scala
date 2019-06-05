@@ -108,7 +108,21 @@ class CasesService_AssignCaseSpec extends UnitSpec with MockitoSugar with Before
 
       val caseUpdating = theCaseUpdating(connector)
       caseUpdating.assignee shouldBe Some(operator)
+    }
 
+    "do not create an event when there is no assignee on either of the cases" in {
+      // Given
+      val operator: Operator = Operator("operator-id")
+      val originalCase = aCase.copy(assignee = None)
+      val caseUpdated = aCase.copy(assignee = None)
+
+      given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
+
+      // When
+      await(service.assignCase(originalCase, operator))
+
+      // Then
+      verify(connector, never()).createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])
     }
   }
 
