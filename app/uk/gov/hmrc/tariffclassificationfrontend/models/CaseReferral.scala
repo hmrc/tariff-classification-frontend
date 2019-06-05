@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,26 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@(id: String, summary: String, body: Option[Html] = None, open: Boolean = false, useTabIndex: Option[Int] = None)
+package uk.gov.hmrc.tariffclassificationfrontend.models
 
-@if(body.isDefined) {
-    <details role="group" @if(open){open} @if(useTabIndex.isDefined){ tabindex="@{useTabIndex.get}"}>
-        <summary role="button" @if(useTabIndex.isDefined){ tabindex="@{useTabIndex.get}"}>
-            <span id="@{id}-title">
-                @summary
-            </span>
-        </summary>
-        <div id="@{id}-body">
-            @{body.get}
-        </div>
-    </details>
-} else {
-    <div id="@{id}-title">
-        @summary
-    </div>
-}
-
-
-
+case class CaseReferral(referredTo: String, reasons: List[String], note: String, referManually: Option[String])

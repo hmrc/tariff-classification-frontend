@@ -178,6 +178,9 @@ error.empty.appealType = Select Alternative Dispute Resolution, review or a leve
 error.empty.appealStatus = Select status to continue
 
 
+error.empty.refer.note = Add a note giving details of why you are referring this case
+error.empty.refer.to=Select who you are referring this case to
+
 status.change.upload.title=You can upload:
 status.change.upload.label=Upload a file
 status.change.upload.restrictionSize=a maximum file size of 10MB

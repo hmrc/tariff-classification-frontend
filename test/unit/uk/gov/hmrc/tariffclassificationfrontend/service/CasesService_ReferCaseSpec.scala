@@ -57,34 +57,50 @@ class CasesService_ReferCaseSpec extends UnitSpec with MockitoSugar with BeforeA
   "Refer a Case" should {
     "update case status to REFERRED" in {
       // Given
+      val fileUpload = mock[FileUpload]
+      val fileUploaded = FileStoreAttachment("id", "email", "application/pdf", 0)
+
       val operator: Operator = Operator("operator-id", Some("Billy Bobbins"))
       val originalCase = aCase.copy(status = CaseStatus.OPEN)
       val caseUpdated = aCase.copy(status = CaseStatus.REFERRED)
 
+      given(fileStoreService.upload(fileUpload)).willReturn(successful(fileUploaded))
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])).willReturn(successful(mock[Event]))
 
+      //referCase(original: Case, referredTo : String, reason: Seq[ReferralReason], f: FileUpload, note: String, operator: Operator)
       // When Then
-      await(service.referCase(originalCase, operator)) shouldBe caseUpdated
+      await(service.referCase(originalCase, "APPLICANT", Seq(ReferralReason.REQUEST_SAMPLE), fileUpload, "note", operator)) shouldBe caseUpdated
 
       verify(audit).auditCaseReferred(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
 
       val caseUpdating = theCaseUpdating(connector)
       caseUpdating.status shouldBe CaseStatus.REFERRED
+      caseUpdating.attachments should have(size(1))
+
+      val attachmentUpdating = caseUpdating.attachments.find(_.id == "id")
+      attachmentUpdating.map(_.id) shouldBe Some("id")
+      attachmentUpdating.map(_.public) shouldBe Some(false)
+      attachmentUpdating.flatMap(_.operator) shouldBe Some(operator)
 
       val eventCreated = theEventCreatedFor(connector, caseUpdated)
       eventCreated.operator shouldBe Operator("operator-id", Some("Billy Bobbins"))
-      eventCreated.details shouldBe CaseStatusChange(CaseStatus.OPEN, CaseStatus.REFERRED)
+
+      eventCreated.details shouldBe ReferralCaseStatusChange(CaseStatus.OPEN, Some("note"), Some("id"), "APPLICANT",  Seq(ReferralReason.REQUEST_SAMPLE))
     }
 
     "not create event on update failure" in {
+      val fileUpload = mock[FileUpload]
+      val fileUploaded = FileStoreAttachment("id", "email", "application/pdf", 0)
+
       val operator: Operator = Operator("operator-id")
       val originalCase = aCase.copy(status = CaseStatus.OPEN)
 
+      given(fileStoreService.upload(fileUpload)).willReturn(successful(fileUploaded))
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(failed(new RuntimeException()))
 
       intercept[RuntimeException] {
-        await(service.referCase(originalCase, operator))
+        await(service.referCase(originalCase, "APPLICANT", Seq(ReferralReason.REQUEST_SAMPLE), fileUpload, "note", operator))
       }
 
       verifyZeroInteractions(audit)
@@ -93,15 +109,19 @@ class CasesService_ReferCaseSpec extends UnitSpec with MockitoSugar with BeforeA
 
     "succeed on event create failure" in {
       // Given
+      val fileUpload = mock[FileUpload]
+      val fileUploaded = FileStoreAttachment("id", "email", "application/pdf", 0)
+
       val operator: Operator = Operator("operator-id")
       val originalCase = aCase.copy(status = CaseStatus.OPEN)
       val caseUpdated = aCase.copy(status = CaseStatus.REFERRED)
 
+      given(fileStoreService.upload(fileUpload)).willReturn(successful(fileUploaded))
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])).willReturn(failed(new RuntimeException()))
 
       // When Then
-      await(service.referCase(originalCase, operator)) shouldBe caseUpdated
+      await(service.referCase(originalCase, "APPLICANT", Seq(ReferralReason.REQUEST_SAMPLE), fileUpload, "note", operator)) shouldBe caseUpdated
 
       verify(audit).auditCaseReferred(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
 
