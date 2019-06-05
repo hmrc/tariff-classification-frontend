@@ -24,6 +24,7 @@ import play.api.mvc._
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.ReferCaseForm
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus._
+import uk.gov.hmrc.tariffclassificationfrontend.models.ReferralReason.ReferralReason
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
@@ -76,13 +77,20 @@ class ReferCaseController @Inject()(verify: RequestActions,
       }
     }
 
+    def sanityCheckReasons: CaseReferral => Seq[ReferralReason] = { c =>
+      c.referredTo match {
+        case "Applicant" => c.reasons.map(ReferralReason.withName)
+        case _ => Seq.empty
+      }
+    }
+
     extractFile(key = "email")(
       onFileValid = validFile => {
         myForm.fold(
           formWithErrors =>
             getCaseAndRenderView(reference, c => successful(views.html.refer_case(c, formWithErrors))),
           referral => {
-            validateAndRedirect(casesService.referCase(_, whoIsReferredTo(referral), referral.reasons.map(ReferralReason.withName), validFile,
+            validateAndRedirect(casesService.referCase(_, whoIsReferredTo(referral), sanityCheckReasons(referral), validFile,
               referral.note, request.operator).map(c => routes.ReferCaseController.confirmReferCase(c.reference)))
           }
         )

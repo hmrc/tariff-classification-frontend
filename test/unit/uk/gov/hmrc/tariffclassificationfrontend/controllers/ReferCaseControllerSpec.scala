@@ -19,6 +19,7 @@ package uk.gov.hmrc.tariffclassificationfrontend.controllers
 import java.io.File
 
 import akka.stream.Materializer
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
@@ -157,10 +158,10 @@ class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result) shouldBe Some("utf-8")
-      bodyOf(result) should include("This field is required")
+      bodyOf(result) should include("Select who you are referring this case to")
     }
 
-    "display required field when failing to submit reason when referred to is APPLICANT" in {
+    "display required field when failing to submit reason when referred to is Applicant" in {
       when(casesService.referCase(refEq(caseWithStatusOPEN), any[String],any[Seq[ReferralReason]],any[FileUpload],
         any[String], refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREFERRED))
 
@@ -173,7 +174,7 @@ class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       bodyOf(result) should include("Select why you are referring this case")
     }
 
-    "display required field when failing to submit referManually detail when referred to is OTHER" in {
+    "display required field when failing to submit referManually detail when referred to is Other" in {
       when(casesService.referCase(refEq(caseWithStatusOPEN), any[String],any[Seq[ReferralReason]],any[FileUpload],
         any[String], refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREFERRED))
 
@@ -184,6 +185,19 @@ class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result) shouldBe Some("utf-8")
       bodyOf(result) should include("Enter who you are referring this case to")
+    }
+
+    "remove reasons when referred to is set to Lab Analyst" in {
+      val captor = ArgumentCaptor.forClass(classOf[Seq[ReferralReason]])
+      when(casesService.referCase(refEq(caseWithStatusOPEN), any[String],captor.capture(),any[FileUpload],
+        any[String], refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREFERRED))
+
+      val result: Result = await(controller(caseWithStatusOPEN).postReferCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)
+        .withBody(aMultipartFileWithParams("referredTo" -> Seq("Lab Analyst"), "reasons[0]" -> Seq(ReferralReason.REQUEST_SAMPLE.toString),
+          "reasons[1]" -> Seq(ReferralReason.REQUEST_MORE_INFO.toString), "note" -> Seq("some-note")))))
+
+      assert(captor.getValue == Seq.empty)
+      status(result) shouldBe Status.SEE_OTHER
     }
 
     "display required field when failing to submit a note" in {
