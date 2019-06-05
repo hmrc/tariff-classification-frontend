@@ -19,7 +19,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 @import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.progressive_disclosure
-@(c: Case, events: Paged[Event])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(c: Case, events: Paged[Event], startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 <h3 class="heading-medium" id="sample-status-events-heading">Sample activity</h3>
 
@@ -45,7 +45,8 @@
                             progressive_disclosure(
                                 id = s"sample-status-events-row-$index",
                                 summary = s"Sample status changed from ${SampleStatus.format(body.from, false)} to ${SampleStatus.format(body.to, false)}",
-                                body = body.comment.map(Html(_))
+                                body = body.comment.map(Html(_)),
+                                useTabIndex = Some(startAtTabIndex + (index*2))
                             )
                         }
                         case EventType.SAMPLE_RETURN_CHANGE => {
@@ -53,8 +54,8 @@
                             progressive_disclosure(
                                 id = s"sample-status-events-row-$index",
                                 summary = s"‘Return requested sample’ changed from ${SampleReturn.format(body.from).toLowerCase} to ${SampleReturn.format(body.to).toLowerCase}",
-
-                                body = body.comment.map(Html(_))
+                                body = body.comment.map(Html(_)),
+                                useTabIndex = Some(startAtTabIndex + (index*2))
                             )
                         }
                         case _ => {
