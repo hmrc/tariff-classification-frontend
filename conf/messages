@@ -144,6 +144,17 @@ case.sample.status.change-status-confirm=Confirm and change status
 case.sample.status.change-status-cancel=Cancel and return to case
 case.sample.status.none-selected=Select a sample status
 
+case.sample.request.heading=Sample request details
+case.sample.request.operator=Sample request by {0}
+case.sample.request.return=Does the sample need to be returned?
+case.sample.request.change=Change
+
+case.sample.change-sample-return=Change sample return
+case.sample.return.change-return-header=Does the applicant want the sample returned?
+case.sample.return.change-return-confirm=Confirm and change return
+case.sample.return.change-return-cancel=Cancel and return to case
+case.sample.return.none-selected=Select a sample return
+
 events.table.empty=There are no events for this case
 
 errors.case-not-found.title=Case not found
@@ -161,6 +172,7 @@ error.empty.default = This field is required
 error.empty.note = Enter a case note
 error.empty.keyword = Enter a keyword
 error.empty.sample.status = Select a sample status
+error.empty.sample.return = Select a return option
 error.empty.queue = Select a queue to release this case
 error.empty.appealType = Select Alternative Dispute Resolution, review or a level of appeal to continue
 error.empty.appealStatus = Select status to continue
@@ -279,6 +291,7 @@ page.title.case.reopened=Case reopened
 page.title.suspend.case=Suspend this case
 page.title.case.suspended=Case suspended
 page.title.change.sample.status=Change sample status
+page.title.change.sample.return=Change sample return
 page.title.reject.case=Reject this case
 page.title.case.rejected=Case rejected
 page.title.release.case=Release this case

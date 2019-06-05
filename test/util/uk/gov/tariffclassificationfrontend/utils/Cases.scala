@@ -22,6 +22,7 @@ import java.util.UUID
 
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.CaseStatus
 import uk.gov.hmrc.tariffclassificationfrontend.models.ImportExport.ImportExport
+import uk.gov.hmrc.tariffclassificationfrontend.models.SampleReturn.SampleReturn
 import uk.gov.hmrc.tariffclassificationfrontend.models.SampleStatus.SampleStatus
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.models.response.ScanStatus
@@ -62,8 +63,12 @@ object Cases {
     withModifier.foldLeft(btiCaseExample)((current: Case, modifier) => modifier.apply(current))
   }
 
-  def withSampleStatus(sampleStatus : Option[SampleStatus]): Case => Case = {
-    _.copy(sampleStatus = sampleStatus)
+  def withSampleStatus(sampleStatus : Option[SampleStatus]): Case => Case = { c =>
+    c.copy(sample = c.sample.copy(status = sampleStatus))
+  }
+
+  def withSampleRequested(operator: Option[Operator], returnStatus : Option[SampleReturn]): Case => Case = { c =>
+    c.copy(sample = c.sample.copy(requestedBy = operator, returnStatus = returnStatus))
   }
 
   def withAssignee(operator: Option[Operator]): Case => Case = {

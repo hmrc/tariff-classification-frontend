@@ -23,24 +23,21 @@ import play.api.mvc.{Action, AnyContent, Call, Request}
 import play.twirl.api.Html
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.forms.SampleStatusForm
-import uk.gov.hmrc.tariffclassificationfrontend.models.SampleStatus.SampleStatus
-import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
+import uk.gov.hmrc.tariffclassificationfrontend.forms.SampleReturnForm
+import uk.gov.hmrc.tariffclassificationfrontend.models.SampleReturn.SampleReturn
 import uk.gov.hmrc.tariffclassificationfrontend.models._
-import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, EventsService}
+import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
+import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
-import uk.gov.hmrc.tariffclassificationfrontend.views.CaseDetailPage
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
 @Singleton
-class SampleController @Inject()(override val verify: RequestActions,
-                                  override val caseService: CasesService,
-                                  eventsService: EventsService,
-                                  override val messagesApi: MessagesApi,
-                                  override implicit val config: AppConfig) extends StatusChangeAction[Option[SampleStatus]] {
+class SampleReturnController @Inject()(override val verify: RequestActions,
+                                       override val caseService: CasesService,
+                                       override val messagesApi: MessagesApi,
+                                       override implicit val config: AppConfig) extends StatusChangeAction[Option[SampleReturn]] {
 
   override protected val requiredPermission: Permission.Value = Permission.EDIT_SAMPLE
 
@@ -50,13 +47,13 @@ class SampleController @Inject()(override val verify: RequestActions,
     true //No constraints on when the case is valid
   }
 
-  override protected val form: Form[Option[SampleStatus]] = SampleStatusForm.form
+  override protected val form: Form[Option[SampleReturn]] = SampleReturnForm.form
 
-  override protected def status(c: Case): Option[SampleStatus] = c.sample.status
+  override protected def status(c: Case): Option[SampleReturn] = c.sample.returnStatus
 
-  override protected def chooseStatusView(c: Case, notFilledForm: Form[Option[SampleStatus]])
+  override protected def chooseStatusView(c: Case, notFilledForm: Form[Option[SampleReturn]])
                                          (implicit request: Request[_]): Html = {
-    views.html.change_sample_status(c, notFilledForm)
+    views.html.change_sample_return(c, notFilledForm)
   }
 
   override def chooseStatus(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen
@@ -67,21 +64,11 @@ class SampleController @Inject()(override val verify: RequestActions,
     )
   }
 
-  override protected def update(c: Case, status: Option[SampleStatus], operator: Operator)
+  override protected def update(c: Case, status: Option[SampleReturn], operator: Operator)
                                (implicit hc: HeaderCarrier): Future[Case] = {
-    caseService.updateSampleStatus(c, status, operator)
+    caseService.updateSampleReturn(c, status, operator)
   }
 
   override protected def onSuccessRedirect(reference: String): Call = routes.CaseController.sampleDetails(reference)
 
-  def sampleDetails(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
-    getCaseAndRenderView(
-      reference,
-      c => {
-        for {
-          events <- eventsService.getFilteredEvents(c.reference, NoPagination(),Some(Set(EventType.SAMPLE_STATUS_CHANGE)))
-        } yield views.html.case_details(c, CaseDetailPage.SAMPLE_DETAILS, views.html.partials.sample.sample_details(c, events))
-      }
-    )
-  }
 }

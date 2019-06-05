@@ -57,8 +57,8 @@ class CasesService_UpdateSampleStatusSpec extends UnitSpec with MockitoSugar wit
     "update case sample status to None" in {
       // Given
       val operator: Operator = Operator("operator-id", None)
-      val originalCase = aCase.copy(sampleStatus = Some(SampleStatus.MOVED_TO_ACT))
-      val caseUpdated = aCase.copy(sampleStatus = None)
+      val originalCase = aCase.copy(sample = aCase.sample.copy(status = Some(SampleStatus.MOVED_TO_ACT)))
+      val caseUpdated = aCase.copy(sample = aCase.sample.copy(status = None))
 
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])).willReturn(successful(mock[Event]))
@@ -69,7 +69,7 @@ class CasesService_UpdateSampleStatusSpec extends UnitSpec with MockitoSugar wit
       verify(audit).auditSampleStatusChange(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
 
       val caseUpdating = theCaseUpdating(connector)
-      caseUpdating.sampleStatus shouldBe None
+      caseUpdating.sample.status shouldBe None
 
       val eventCreated = theEventCreatedFor(connector, caseUpdated)
       eventCreated.operator shouldBe Operator("operator-id")
@@ -79,8 +79,8 @@ class CasesService_UpdateSampleStatusSpec extends UnitSpec with MockitoSugar wit
     "update case sample status from None" in {
       // Given
       val operator: Operator = Operator("operator-id", None)
-      val originalCase = aCase.copy(sampleStatus = None)
-      val caseUpdated = aCase.copy(sampleStatus = Some(SampleStatus.DESTROYED))
+      val originalCase = aCase.copy(sample = aCase.sample.copy(status = None))
+      val caseUpdated = aCase.copy(sample = aCase.sample.copy(status = Some(SampleStatus.DESTROYED)))
 
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])).willReturn(successful(mock[Event]))
@@ -91,7 +91,7 @@ class CasesService_UpdateSampleStatusSpec extends UnitSpec with MockitoSugar wit
       verify(audit).auditSampleStatusChange(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
 
       val caseUpdating = theCaseUpdating(connector)
-      caseUpdating.sampleStatus shouldBe Some(SampleStatus.DESTROYED)
+      caseUpdating.sample.status shouldBe Some(SampleStatus.DESTROYED)
 
       val eventCreated = theEventCreatedFor(connector, caseUpdated)
       eventCreated.operator shouldBe Operator("operator-id")
@@ -100,7 +100,7 @@ class CasesService_UpdateSampleStatusSpec extends UnitSpec with MockitoSugar wit
 
     "not create event on update failure" in {
       val operator: Operator = Operator("operator-id")
-      val originalCase = aCase.copy(sampleStatus = Some(SampleStatus.MOVED_TO_ELM))
+      val originalCase = aCase.copy(sample = aCase.sample.copy(status = Some(SampleStatus.MOVED_TO_ELM)))
 
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(failed(new RuntimeException()))
 
@@ -115,8 +115,8 @@ class CasesService_UpdateSampleStatusSpec extends UnitSpec with MockitoSugar wit
     "succeed on event create failure" in {
       // Given
       val operator: Operator = Operator("operator-id")
-      val originalCase = aCase.copy(sampleStatus = None)
-      val caseUpdated = aCase.copy(sampleStatus = None)
+      val originalCase = aCase.copy(sample = Sample())
+      val caseUpdated = aCase.copy(sample = Sample())
 
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])).willReturn(failed(new RuntimeException()))
@@ -127,7 +127,7 @@ class CasesService_UpdateSampleStatusSpec extends UnitSpec with MockitoSugar wit
       verify(audit).auditSampleStatusChange(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
 
       val caseUpdating = theCaseUpdating(connector)
-      caseUpdating.sampleStatus shouldBe None
+      caseUpdating.sample.status shouldBe None
     }
   }
 

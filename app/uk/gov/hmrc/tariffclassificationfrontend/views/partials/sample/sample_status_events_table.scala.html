@@ -27,7 +27,7 @@
     <thead>
         <tr>
             <th scope="col">Name</th>
-            <th scope="col">Status</th>
+            <th scope="col">Description</th>
             <th scope="col">Date</th>
 
         </tr>
@@ -44,7 +44,16 @@
                             val body = event.details.asInstanceOf[SampleStatusChange]
                             progressive_disclosure(
                                 id = s"sample-status-events-row-$index",
-                                summary = SampleStatus.format(body.to),
+                                summary = s"Sample status changed from ${SampleStatus.format(body.from, false)} to ${SampleStatus.format(body.to, false)}",
+                                body = body.comment.map(Html(_))
+                            )
+                        }
+                        case EventType.SAMPLE_RETURN_CHANGE => {
+                            val body = event.details.asInstanceOf[SampleReturnChange]
+                            progressive_disclosure(
+                                id = s"sample-status-events-row-$index",
+                                summary = s"‘Return requested sample’ changed from ${SampleReturn.format(body.from).toLowerCase} to ${SampleReturn.format(body.to).toLowerCase}",
+
                                 body = body.comment.map(Html(_))
                             )
                         }

@@ -28,6 +28,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.connector.{BindingTariffClassifi
 import uk.gov.hmrc.tariffclassificationfrontend.models.AppealStatus.AppealStatus
 import uk.gov.hmrc.tariffclassificationfrontend.models.AppealType.AppealType
 import uk.gov.hmrc.tariffclassificationfrontend.models.CancelReason.CancelReason
+import uk.gov.hmrc.tariffclassificationfrontend.models.SampleReturn.SampleReturn
 import uk.gov.hmrc.tariffclassificationfrontend.models.SampleStatus.SampleStatus
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
@@ -88,11 +89,19 @@ class CasesService @Inject()(appConfig: AppConfig,
 
   def updateSampleStatus(original: Case, status: Option[SampleStatus], operator: Operator)
                         (implicit hc: HeaderCarrier): Future[Case] = {
-
     for {
-      updated <- connector.updateCase(original.copy(sampleStatus = status))
+      updated <- connector.updateCase(original.copy(sample = original.sample.copy(status = status)))
       _ <- addSampleStatusChangeEvent(original, updated, operator)
       _ = auditService.auditSampleStatusChange(original, updated, operator)
+    } yield updated
+  }
+
+  def updateSampleReturn(original: Case, status: Option[SampleReturn], operator: Operator)
+                        (implicit hc: HeaderCarrier): Future[Case] = {
+    for {
+      updated <- connector.updateCase(original.copy(sample = original.sample.copy(returnStatus = status)))
+      _ <- addSampleReturnChangeEvent(original, updated, operator)
+      _ = auditService.auditSampleReturnChange(original, updated, operator)
     } yield updated
   }
 
@@ -322,8 +331,14 @@ class CasesService @Inject()(appConfig: AppConfig,
   }
 
   private def addSampleStatusChangeEvent(original: Case, updated: Case, operator: Operator, comment: Option[String] = None)
+                                           (implicit hc: HeaderCarrier): Future[Unit] = {
+    val details = SampleStatusChange(original.sample.status, updated.sample.status, comment)
+    addEvent(original, updated, details, operator)
+  }
+
+  private def addSampleReturnChangeEvent(original: Case, updated: Case, operator: Operator, comment: Option[String] = None)
                                         (implicit hc: HeaderCarrier): Future[Unit] = {
-    val details = SampleStatusChange(original.sampleStatus, updated.sampleStatus, comment)
+    val details = SampleReturnChange(original.sample.returnStatus, updated.sample.returnStatus, comment)
     addEvent(original, updated, details, operator)
   }
 
