@@ -71,6 +71,20 @@ class SearchControllerSpec extends UnitSpec with Matchers with WithFakeApplicati
       locationOf(result) shouldBe Some(routes.CaseController.trader("reference").url)
     }
 
+    "redirect to case if searching by reference with padding" in {
+      val result = await(controller.search(defaultTab, reference = Some(" reference "), page = 2)(fakeRequest))
+
+      status(result) shouldBe Status.SEE_OTHER
+      locationOf(result) shouldBe Some(routes.CaseController.trader("reference").url)
+    }
+
+    "redirect to default page if reference is empty" in {
+      val result = await(controller.search(defaultTab, reference = Some(" "), page = 2)(fakeRequest))
+
+      status(result) shouldBe Status.SEE_OTHER
+      locationOf(result) shouldBe Some(routes.IndexController.get().url)
+    }
+
     "not render results if empty" in {
       given(casesService.search(refEq(Search()), refEq(Sort()), refEq(SearchPagination(2)))(any[HeaderCarrier])) willReturn Future.successful(Paged.empty[Case])
       given(fileStoreService.getAttachments(refEq(Seq.empty))(any[HeaderCarrier])) willReturn Future.successful(Map.empty[Case, Seq[StoredAttachment]])
