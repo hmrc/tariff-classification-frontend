@@ -217,6 +217,33 @@ class ActivityDetailsViewSpec extends ViewSpec {
       doc.getElementById("activity-events-row-0-date") should containText("01 Jan 2019")
     }
 
+    "Render 'Completed Status Change'" in {
+      // Given
+      val c = aCase()
+      val e = Event(
+        id = "EVENT_ID",
+        details = CompletedCaseStatusChange(from = CaseStatus.OPEN, comment = Some("comment"), email = "some email"),
+        operator = Operator("id", Some("name")),
+        caseReference = "ref",
+        timestamp = date
+      )
+
+      // When
+      val doc = view(activity_details(c, Paged(Seq(e)), ActivityForm.form, queues))
+
+      // Then
+      doc should containElementWithID("activity-events-row-0-operator")
+      doc.getElementById("activity-events-row-0-operator") should containText("name")
+      doc should containElementWithID("activity-events-row-0-content")
+      doc.getElementById("activity-events-row-0-content") should containText("Status changed from open to completed")
+      doc should containElementWithID("activity-events-row-0-comment")
+      doc.getElementById("activity-events-row-0-comment") should containText("comment")
+      doc should containElementWithID("activity-events-row-0-email")
+      doc.getElementById("activity-events-row-0-email") should containText("some email")
+      doc should containElementWithID("activity-events-row-0-date")
+      doc.getElementById("activity-events-row-0-date") should containText("01 Jan 2019")
+    }
+
     "Render 'Appeal Added'" in {
       // Given
       val c = aCase()

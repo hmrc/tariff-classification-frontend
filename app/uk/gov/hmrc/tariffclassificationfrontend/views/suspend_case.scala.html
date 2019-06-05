@@ -22,9 +22,12 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.case_heading
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.statuses.status_change_upload
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.error_summary
 @(c: Case, form: Form[String])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("page.title.suspend.case"))) {
+
+    @error_summary(form)
 
     @case_heading(c)
 

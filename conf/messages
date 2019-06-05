@@ -157,9 +157,14 @@ errors.resource-not-found.title={0} not found.
 
 errors.summary.title=Error
 
+error.empty.default = This field is required
 error.empty.note = Enter a case note
 error.empty.keyword = Enter a keyword
 error.empty.sample.status = Select a sample status
+error.empty.queue = Select a queue to release this case
+error.empty.appealType = Select Alternative Dispute Resolution, review or a level of appeal to continue
+error.empty.appealStatus = Select status to continue
+
 
 error.empty.refer.note = Add a note giving details of why you are referring this case
 error.empty.refer.to=Select who you are referring this case to

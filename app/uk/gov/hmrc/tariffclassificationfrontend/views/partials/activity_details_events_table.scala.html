@@ -18,7 +18,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.models._
 @import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 @import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.activity.{activity_case_cancellation, activity_case_referral, activity_status_change}
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.activity.{activity_case_cancellation, activity_case_referral, activity_status_change, activity_case_completed}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{assignee, progressive_disclosure}
 @(c: Case, events: Paged[Event], queues: Seq[Queue])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
@@ -42,7 +42,7 @@
                         case EventType.NOTE => {
                             val body = event.details.asInstanceOf[Note]
                             <div id={s"activity-events-row-${index}-body"}>
-                                <span class="pre-wrap">{body.comment}</span>
+                                <span id={s"activity-events-row-${index}-comment"} class="pre-wrap">{body.comment}</span>
                             </div>
                         }
                         case EventType.CASE_STATUS_CHANGE => {
@@ -53,6 +53,9 @@
                         }
                         case EventType.CASE_REFERRAL => {
                             activity_case_referral(index, event)
+                        }
+                        case EventType.CASE_COMPLETED => {
+                            activity_case_completed(index, event)
                         }
                         case EventType.APPEAL_ADDED => {
                             val body = event.details.asInstanceOf[AppealAdded]
