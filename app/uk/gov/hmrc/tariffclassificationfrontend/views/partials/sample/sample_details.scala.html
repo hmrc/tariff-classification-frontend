@@ -57,7 +57,7 @@
                     <h3 class="heading-medium" id="sample-requested-heading">@messages("case.sample.request.heading")</h3>
 
                     <div id="sample-requested-by" class="grid-row">
-                        <dt class="column-one-third">
+                        <dt id="sample-requested-by-value" class="column-one-third">
                         @messages("case.sample.request.operator", c.sample.requestedBy.flatMap(_.name).getOrElse("Unknown"))
                         </dt>
                     </div>
@@ -65,11 +65,11 @@
                         <dt class="column-one-third">
                         @messages("case.sample.request.return")
                         </dt>
-                        <dd class="column-one-third">
+                        <dd id="sample-requested-return-value" class="column-one-third">
                             @SampleReturn.format(c.sample.returnStatus)
                         </dd>
                         <dd class="column-one-third">
-                            <a tabindex="@startAtTabIndex" href="sample/return-status">@messages("case.sample.request.change")</a>
+                            <a id="sample-requested-return-change" tabindex="@startAtTabIndex" href="sample/return-status">@messages("case.sample.request.change")</a>
                         </dd>
                     </div>
                 }
