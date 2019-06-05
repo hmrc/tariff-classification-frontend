@@ -52,7 +52,9 @@
                     <label id="@id-@optionId-label" for="@id-@optionId">@option.label</label>
                 </div>
                     @if(option.customHtml.isDefined) {
+                        <div class="form-group panel panel-border-narrow js-hidden" id="@{option.dataTarget.get}" aria-hidden="false">
                         @option.customHtml.get
+                        </div>
                     }
 
             }

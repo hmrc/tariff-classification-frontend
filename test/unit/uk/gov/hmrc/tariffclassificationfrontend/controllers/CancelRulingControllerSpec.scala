@@ -82,18 +82,18 @@ class CancelRulingControllerSpec extends WordSpec with Matchers with UnitSpec
     MultipartFormData[TemporaryFile](dataParts = params.toMap, files = Seq(filePart), badParts = Seq.empty)
   }
 
-  def aEmptyMultipartFileWithParams(params: (String, Seq[String])*): MultipartFormData[TemporaryFile] = {
+  private def aEmptyMultipartFileWithParams(params: (String, Seq[String])*): MultipartFormData[TemporaryFile] = {
     val filePart = FilePart[TemporaryFile](key = "email", "", contentType = Some("text/plain"), ref = TemporaryFile("example-file.txt"))
     MultipartFormData[TemporaryFile](dataParts =params.toMap, files = Seq(filePart), badParts = Seq.empty)
   }
 
-  def aMultipartFileOfType(mimeType: String): MultipartFormData[TemporaryFile] = {
+  private def aMultipartFileOfType(mimeType: String): MultipartFormData[TemporaryFile] = {
     val file = TemporaryFile("example-file")
     val filePart = FilePart[TemporaryFile](key = "email", "example-file", contentType = Some(mimeType), ref = file)
     MultipartFormData[TemporaryFile](dataParts = Map(), files = Seq(filePart), badParts = Seq.empty)
   }
 
-  def aMultipartFileOfLargeSize: MultipartFormData[TemporaryFile] = {
+  private def aMultipartFileOfLargeSize: MultipartFormData[TemporaryFile] = {
     val file = mock[TemporaryFile]
     val innerFile: File = mock[File]
     when(file.file).thenReturn(innerFile)

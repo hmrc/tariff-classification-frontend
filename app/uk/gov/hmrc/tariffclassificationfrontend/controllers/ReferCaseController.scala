@@ -63,7 +63,7 @@ class ReferCaseController @Inject()(verify: RequestActions,
 
     val myForm = (checkReasonIsSelected andThen checkedOtherCommentNotEmpty) (ReferCaseForm.form.bindFromRequest())
 
-    def foldForm(error: String): Future[Result] = {
+    def failWithFormError(error: String): Future[Result] = {
       myForm.fold(
         formWithErrors => getCaseAndRenderErrors(reference, formWithErrors, error),
         referral => getCaseAndRenderErrors(reference, myForm.fill(referral), error)
@@ -95,9 +95,9 @@ class ReferCaseController @Inject()(verify: RequestActions,
           }
         )
       },
-      onFileTooLarge = () => foldForm(messagesApi("status.change.upload.error.restrictionSize")),
-      onFileInvalidType = () => foldForm(messagesApi("status.change.upload.error.fileType")),
-      onFileMissing = () => foldForm(messagesApi("status.change.upload.error.mustSelect"))
+      onFileTooLarge = () => failWithFormError(messagesApi("status.change.upload.error.restrictionSize")),
+      onFileInvalidType = () => failWithFormError(messagesApi("status.change.upload.error.fileType")),
+      onFileMissing = () => failWithFormError(messagesApi("status.change.upload.error.mustSelect"))
     )
   }
 
