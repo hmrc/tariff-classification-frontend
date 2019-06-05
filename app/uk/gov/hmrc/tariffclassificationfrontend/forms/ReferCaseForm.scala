@@ -14,8 +14,21 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.tariffclassificationfrontend.views.forms.components
+package uk.gov.hmrc.tariffclassificationfrontend.forms
 
-import play.twirl.api.Html
+import play.api.data.Form
+import play.api.data.Forms._
+import uk.gov.hmrc.tariffclassificationfrontend.forms.mappings.FormMappings.textNonEmpty
+import uk.gov.hmrc.tariffclassificationfrontend.models.CaseReferral
 
-case class RadioOption(value: String, label: String, dataTarget: Option[String] = None, customHtml: Option[Html] = None)
+object ReferCaseForm {
+
+
+  lazy val form: Form[CaseReferral] = Form(mapping(
+    "referredTo" -> textNonEmpty("error.empty.refer.to"),
+    "reasons" -> list(text),
+    "note" -> textNonEmpty("error.empty.refer.note"),
+    "referManually" -> optional(text)
+  )(CaseReferral.apply)(CaseReferral.unapply)
+  )
+}

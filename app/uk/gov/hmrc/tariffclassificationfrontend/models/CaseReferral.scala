@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.tariffclassificationfrontend.views.forms.components
+package uk.gov.hmrc.tariffclassificationfrontend.models
 
-import play.twirl.api.Html
-
-case class RadioOption(value: String, label: String, dataTarget: Option[String] = None, customHtml: Option[Html] = None)
+case class CaseReferral(referredTo: String, reasons: List[String], note: String, referManually: Option[String])

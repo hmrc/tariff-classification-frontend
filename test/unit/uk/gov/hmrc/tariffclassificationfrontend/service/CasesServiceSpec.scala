@@ -126,7 +126,7 @@ class CasesServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEac
 
     "remove the given attachment from the case provided" in {
       given(oldCase.attachments) willReturn Seq(attachment)
-      given(fileStoreService.removeAttachment(refEq("file-id"))(any[HeaderCarrier])) willReturn successful()
+      given(fileStoreService.removeAttachment(refEq("file-id"))(any[HeaderCarrier])) willReturn successful(())
       given(connector.updateCase(any[Case])(any[HeaderCarrier])) willReturn successful(updatedCase)
 
       val result = await(service.removeAttachment(oldCase, "file-id"))

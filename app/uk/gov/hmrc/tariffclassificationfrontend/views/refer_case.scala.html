@@ -19,35 +19,78 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{case_heading, contact_details}
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.input_yes_no
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.components.{confirm_or_cancel_buttons, warning}
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.{input_textarea, input_radiogroup, input_checkbox_group, input_text}
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.statuses.status_change_upload
+@import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseReferral, ReferralReason}
+@import uk.gov.hmrc.tariffclassificationfrontend.models.ReferralReason._
+@import uk.gov.hmrc.tariffclassificationfrontend.views.forms.components.{CheckOption, RadioOption}
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.error_summary
+@(c: Case, form: Form[CaseReferral])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.error_summary
-@(c: Case, form: Form[Boolean])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@inputTextContent() = {
+        @input_text(label = "Give details of who you are referring this case to", field = form("referManually"), inputClass = Some("w-50"),
+        customGroupClasses = Some("pl-15"))
+}
+
+@isChecked(f1: Option[String], f2: Option[String], matchText: String) = @{
+    matchText == f1.getOrElse("") || matchText == f2.getOrElse("")
+}
+
+@inputCheckboxGroupContent(sampleChecked: Boolean, infoChecked: Boolean) = {
+    @input_checkbox_group(field = form("reasons"),
+        legend = Some("Why are you referring this case?"),
+        options = Seq(
+            CheckOption(label = "To request a sample", value = ReferralReason.REQUEST_SAMPLE.toString, checked = sampleChecked),
+            CheckOption(label = "To request more information", value =  ReferralReason.REQUEST_MORE_INFO.toString, infoChecked)
+        )
+    )
+}
 
 @main(bodyClasses = None, customTitle = Some(messages("page.title.refer.case"))) {
 
-    @error_summary(form)
+    @error_summary(form.errors)
 
     @case_heading(c)
 
     <div class="grid-row">
         <div class="column-full">
-            <h2 class="heading-large mt-0">Contact the applicant and attach a copy of the email before you refer this case</h2>
+            <h2 class="heading-large mt-0">Change the status of this case to: Referred</h2>
 
-            @contact_details(c)
-
-            <h3 class="heading-medium mt-0">Have you contacted the applicant and attached a copy of the email to this case?</h3>
-
-            @helper.form(action = ReferCaseController.postReferCase(c.reference), 'id -> "refer-case") {
+            @helper.form(action = ReferCaseController.postReferCase(c.reference), 'id -> "refer_case", 'enctype -> "multipart/form-data") {
                 @helper.CSRF.formField
 
-                @input_yes_no(form("state"), "refer-case_contacted-applicant")
+                @input_radiogroup(
+                    field = form("referredTo"),
+                    label = Some("Who are you referring this case to?"),
+                    labelClass = Some ("heading-medium mt-1"),
+                    options = Seq(
+                        RadioOption("Applicant","Applicant (the main contact for this case)",Some("reason-detail"),
+                            Some(inputCheckboxGroupContent(isChecked(form("reasons[0]").value,form("reasons[1]").value, ReferralReason.REQUEST_SAMPLE.toString),
+                                isChecked(form("reasons[0]").value,form("reasons[1]").value, ReferralReason.REQUEST_MORE_INFO.toString)))),
+                        RadioOption("Laboratory analyst","Laboratory analyst", None, None),
+                        RadioOption("Other", "Other", Some("other-detail"),Some(inputTextContent()))
+                    ),
+                    id = "referred_to-group"
+                )
 
-                <div>
-                    <button class="button" id="refer-case-button" type="submit">Refer this case</button>
-                    <a class="secondary-button" id="refer-case-cancel-button" href="@CaseController.applicationDetails(c.reference)">Cancel</a>
-                </div>
+                @input_textarea(
+                    field = form("note"),
+                    label = "Add a note",
+                    labelClass = Some("heading-medium"),
+                    hint = Some("Explain why you are making this referral. If this referral is to a 'laboratory analyst' or 'other', give contact details. Keep the note clear and concise.")
+                )
+
+                @status_change_upload(form("email"), "referring")
+
+                @confirm_or_cancel_buttons(
+                    id = "refer_case",
+                    confirmText = "Confirm status change",
+                    cancelText = "Cancel and return to case",
+                    cancelHref = CaseController.applicationDetails(c.reference)
+                )
             }
+
         </div>
     </div>
 }

@@ -23,10 +23,12 @@
         hintClass: Option[String] = None,
         formControlClass: Option[String] = None,
         disableAutoComplete: Boolean = false,
-        customErrorMessage : Option[String] = None
+        customErrorMessage : Option[String] = None,
+        customGroupClasses : Option[String] = None
 )(implicit messages: Messages)
 
-<div class="form-group @if(field.hasErrors){form-group-error}">
+<div class="form-group @customGroupClasses.getOrElse("")
+    @if(field.hasErrors){form-group-error}">
     <label class="form-label" for="@{field.id}">
         <span class="@if(labelClass.nonEmpty){@labelClass}">@label</span>
     </label>
