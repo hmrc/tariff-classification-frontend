@@ -19,7 +19,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.models.Event
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.progressive_disclosure
 @import uk.gov.hmrc.tariffclassificationfrontend.models.CompletedCaseStatusChange
-@(index: Int, event: Event)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(index: Int, event: Event, useTabIndex: Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @content(body: CompletedCaseStatusChange) = {
  @if(body.comment.isDefined) {
@@ -37,6 +37,7 @@
  @progressive_disclosure(
   id = s"activity-events-row-$index",
   summary = s"Status changed from ${body.from.toString.toLowerCase} to ${body.to.toString.toLowerCase}",
-  body = Some(content(body))
+  body = Some(content(body)),
+  useTabIndex = Some(useTabIndex)
  )
 }
