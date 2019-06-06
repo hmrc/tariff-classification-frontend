@@ -48,13 +48,12 @@
                     customErrorMessage = Some(messages("status.change.cancel.reason.error"))
                 )
 
-                <h3 id="cancel_ruling-heading" class="heading-medium mt-4 mb-30">Add a note</h3>
-
                 @input_textarea(
                     field = form("note"),
-                    label = "",
+                    label = "Add a note",
+                    labelClass = Some("heading-medium"),
                     hint = Some("Give details of why you are cancelling this case. Keep the note clear and concise."),
-                    customErrorMessage = Some("Add a note giving details of why you are cancelling this case")
+                    customErrorMessage = Some(messages("error.empty.cancel.note"))
                 )
 
                 @status_change_upload(form("email"), "cancelling")

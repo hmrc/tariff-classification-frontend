@@ -42,7 +42,7 @@ class RejectCaseController @Inject()(verify: RequestActions,
 
   override protected val config: AppConfig = appConfig
   override protected val caseService: CasesService = casesService
-  private val form: Form[String] = AddNoteForm.form
+  private val form: Form[String] = AddNoteForm.getForm("error.empty.reject.note")
 
   def getRejectCase(reference: String): Action[AnyContent] = (verify.authenticated
     andThen verify.casePermissions(reference)

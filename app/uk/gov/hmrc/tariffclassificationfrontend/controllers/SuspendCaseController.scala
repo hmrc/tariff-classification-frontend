@@ -41,7 +41,7 @@ class SuspendCaseController @Inject()(verify: RequestActions,
 
   override protected val config: AppConfig = appConfig
   override protected val caseService: CasesService = casesService
-  private val form: Form[String] = AddNoteForm.form
+  private val form: Form[String] = AddNoteForm.getForm("error.empty.suspend.note")
 
   def getSuspendCase(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.SUSPEND_CASE)).async { implicit request =>
     validateAndRenderView(c => successful(views.html.suspend_case(c, form)))

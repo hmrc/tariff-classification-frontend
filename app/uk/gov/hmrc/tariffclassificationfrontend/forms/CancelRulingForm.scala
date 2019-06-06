@@ -19,6 +19,7 @@ package uk.gov.hmrc.tariffclassificationfrontend.forms
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.data.validation.{Constraint, Invalid, Valid}
+import uk.gov.hmrc.tariffclassificationfrontend.forms.mappings.FormMappings.textNonEmpty
 import uk.gov.hmrc.tariffclassificationfrontend.models.{CancelReason, RulingCancellation}
 
 object CancelRulingForm {
@@ -30,7 +31,7 @@ object CancelRulingForm {
 
   lazy val form: Form[RulingCancellation] = Form(mapping(
     "reason" -> text.verifying(oneOf(CancelReason.values)),
-    "note" -> nonEmptyText
+    "note" -> textNonEmpty("error.empty.cancel.note")
   )(RulingCancellation.apply)(RulingCancellation.unapply)
   )
 }

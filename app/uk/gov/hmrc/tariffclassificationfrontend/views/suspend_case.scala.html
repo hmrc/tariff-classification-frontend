@@ -38,13 +38,12 @@
             @helper.form(action = SuspendCaseController.postSuspendCase(c.reference), 'id -> "suspend_case", 'enctype -> "multipart/form-data") {
                 @helper.CSRF.formField
 
-                <h3 id="suspend_case-heading" class="heading-medium mt-4 mb-30">Add a note</h3>
-
                 @input_textarea(
                     field = form("note"),
-                    label = "",
+                    label = "Add a note",
+                    labelClass = Some("heading-medium"),
                     hint = Some("Give details of why you are suspending this case. Keep the note clear and concise."),
-                    customErrorMessage = Some("Add a note giving details of why you are suspending this case")
+                    customErrorMessage = Some(messages("error.empty.suspend.note"))
                 )
 
                 @status_change_upload(form("email"), "suspending")

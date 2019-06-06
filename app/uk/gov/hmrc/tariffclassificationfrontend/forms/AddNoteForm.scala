@@ -18,15 +18,18 @@ package uk.gov.hmrc.tariffclassificationfrontend.forms
 
 import play.api.data.Form
 import play.api.data.Forms._
+import uk.gov.hmrc.tariffclassificationfrontend.forms.mappings.FormMappings.textNonEmpty
 
 
 object AddNoteForm {
 
-  val form: Form[String] = Form(
-    mapping(
-      "note" -> nonEmptyText
-    )(identity)(Some(_))
-  )
+  def getForm(errorKey: String) : Form[String] = {
+    Form(
+      mapping(
+        "note" -> textNonEmpty(errorKey)
+      )(identity)(Some(_))
+    )
+  }
 
 }
 
