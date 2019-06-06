@@ -72,7 +72,7 @@ class SampleReturnControllerSpec extends UnitSpec with Matchers
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
-      contentAsString(result) should include("change_sample_return-heading")
+      contentAsString(result) should include("Change sample return")
     }
 
     "return OK when user has right permissions" in {
