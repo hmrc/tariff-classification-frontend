@@ -24,12 +24,12 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.case_heading
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.statuses.status_change_upload
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.error_summary
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.error_summary
 @(c: Case, form: Form[RulingCancellation])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("page.title.cancel.ruling"))) {
 
-    @error_summary(form)
+    @error_summary(form.errors)
 
     @case_heading(c)
 
@@ -40,21 +40,22 @@
             @helper.form(action = CancelRulingController.postCancelRuling(c.reference), 'id -> "cancel_ruling", 'enctype -> "multipart/form-data") {
                 @helper.CSRF.formField
 
-                <h4 class="heading-medium mt-4 mb-30">Reason for cancellation</h4>
                 @input_radiogroup(
                     field = form("reason"),
                     options = CancelReason.values.toSeq.sorted.map(s => RadioOption(s.toString, CancelReason.format(s))),
                     id = "reason",
-                    customErrorMessage = Some(messages("status.change.cancel.reason.error"))
+                    label = Some("Reason for cancellation"),
+                    labelClass = Some("heading-medium"),
+                    customErrorMessage = Some(messages("status.change.cancel.reason.error")),
+                    customGroupId = Some("reason")
                 )
-
-                <h3 id="cancel_ruling-heading" class="heading-medium mt-4 mb-30">Add a note</h3>
 
                 @input_textarea(
                     field = form("note"),
-                    label = "",
+                    label = "Add a note",
+                    labelClass = Some("heading-medium"),
                     hint = Some("Give details of why you are cancelling this case. Keep the note clear and concise."),
-                    customErrorMessage = Some("Add a note giving details of why you are cancelling this case")
+                    customErrorMessage = Some(messages("error.empty.cancel.note"))
                 )
 
                 @status_change_upload(form("email"), "cancelling")

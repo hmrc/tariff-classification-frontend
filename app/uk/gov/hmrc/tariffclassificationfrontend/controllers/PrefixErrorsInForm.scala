@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,20 +12,15 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@(form: Form[_])(implicit messages: Messages)
+package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
-@if(form.hasErrors) {
- <div id="sla_criteria-errors" class="error-summary" role="alert" aria-labelledby="sla_criteria-error" tabindex="-1">
-  <h2 class="heading-medium error-summary-heading" id="sla_criteria-error">
-  @messages("errors.summary.title")
-  </h2>
-  <ul role="list" class="error-summary-list">
-  @for(error <- form.errors) {
-   <li><a href="#@{error.key}">@messages(error.message, error.args:_*)</a></li>
+import play.api.data.{Form, FormError}
+
+trait PrefixErrorsInForm[T] {
+
+  def prefixErrorInForm(f: Form[T], error: FormError) : Form[T] = {
+    Form(f.mapping, f.data, error +: f.errors, f.value)
   }
-  </ul>
- </div>
 }
-

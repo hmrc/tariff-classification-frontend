@@ -43,7 +43,8 @@
         options = Seq(
             CheckOption(label = "To request a sample", value = ReferralReason.REQUEST_SAMPLE.toString, checked = sampleChecked),
             CheckOption(label = "To request more information", value =  ReferralReason.REQUEST_MORE_INFO.toString, infoChecked)
-        )
+        ),
+        customGroupId = Some("reasons")
     )
 }
 
@@ -71,7 +72,8 @@
                         RadioOption("Laboratory analyst","Laboratory analyst", None, None),
                         RadioOption("Other", "Other", Some("other-detail"),Some(inputTextContent()))
                     ),
-                    id = "referred_to-group"
+                    id = "referred_to-group",
+                    customGroupId = Some("referredTo")
                 )
 
                 @input_textarea(
