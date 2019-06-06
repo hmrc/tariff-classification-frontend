@@ -39,7 +39,7 @@ class SuppressCaseController @Inject()(verify: RequestActions,
                                        val messagesApi: MessagesApi,
                                        implicit val appConfig: AppConfig) extends RenderCaseAction with ExtractableFile {
 
-  private val form: Form[String] = AddNoteForm.getForm("error.empty.suppress.note")
+  private val form: Form[String] = AddNoteForm.getForm("suppress")
 
   override protected val config: AppConfig = appConfig
   override protected val caseService: CasesService = casesService

@@ -23,10 +23,10 @@ import uk.gov.hmrc.tariffclassificationfrontend.forms.mappings.FormMappings.text
 
 object AddNoteForm {
 
-  def getForm(errorKey: String) : Form[String] = {
+  def getForm(performingStatusChange: String) : Form[String] = {
     Form(
       mapping(
-        "note" -> textNonEmpty(errorKey)
+        "note" -> textNonEmpty(s"error.empty.${performingStatusChange}.note")
       )(identity)(Some(_))
     )
   }
