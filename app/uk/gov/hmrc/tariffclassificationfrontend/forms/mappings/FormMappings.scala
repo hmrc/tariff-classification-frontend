@@ -46,4 +46,17 @@ object FormMappings {
         Map(key -> value)
     })
 
+  def oneOf(errorKey: String = "error.required", enumeration: Enumeration): FieldMapping[String] =
+    of(new Formatter[String] {
+      override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] =
+        data.get(key) match {
+          case None | Some("") => Left(Seq(FormError(key, errorKey)))
+          case Some(s) if enumeration.values.exists(_.toString == s) => Right(s)
+          case _ => Left(Seq(FormError(key, errorKey)))
+        }
+
+      override def unbind(key: String, value: String): Map[String, String] =
+        Map(key -> value)
+    })
+
 }

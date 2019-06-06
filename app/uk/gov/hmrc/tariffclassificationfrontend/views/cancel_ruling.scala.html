@@ -46,7 +46,8 @@
                     id = "reason",
                     label = Some("Reason for cancellation"),
                     labelClass = Some("heading-medium"),
-                    customErrorMessage = Some(messages("status.change.cancel.reason.error"))
+                    customErrorMessage = Some(messages("status.change.cancel.reason.error")),
+                    customGroupId = Some("reason")
                 )
 
                 @input_textarea(
