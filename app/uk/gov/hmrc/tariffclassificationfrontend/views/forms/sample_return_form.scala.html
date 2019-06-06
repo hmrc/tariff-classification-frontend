@@ -29,7 +29,9 @@
         field = field,
         options = Seq(SampleReturn.YES, SampleReturn.NO).map(s => RadioOption(s.toString, SampleReturn.format(Some(s)))),
         id = "sample_return_form",
-        preSelect = false
+        preSelect = false,
+        label = Some(messages("case.sample.return.change-return-header")),
+        labelClass = Some ("heading-large")
     )
     <div>
         <button id="sample_return_form-submit" class="button" type="submit">@messages("case.sample.return.change-return-confirm")</button>
