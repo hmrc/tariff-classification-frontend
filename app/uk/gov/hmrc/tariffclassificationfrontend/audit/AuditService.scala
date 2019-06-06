@@ -170,6 +170,17 @@ class AuditService @Inject()(auditConnector: DefaultAuditConnector) {
     )
   }
 
+  def auditSampleReturnChange(oldCase: Case, updatedCase: Case, operator: Operator)
+                             (implicit hc: HeaderCarrier): Unit = {
+    sendExplicitAuditEvent(
+      auditEventType = CaseSampleReturnChange,
+      auditPayload = baseAuditPayload(updatedCase, operator) + (
+        "newSampleReturn" -> sampleReturn(updatedCase),
+        "previousSampleReturn" -> sampleReturn(oldCase)
+      )
+    )
+  }
+
   def auditCaseExtendedUseChange(oldCase: Case, updatedCase: Case, operator: Operator)
                                 (implicit hc: HeaderCarrier): Unit = {
     sendExplicitAuditEvent(
@@ -213,29 +224,33 @@ class AuditService @Inject()(auditConnector: DefaultAuditConnector) {
   }
 
   private def sampleStatus: Case => String = {
-    _.sampleStatus map(_.toString) getOrElse undefined
+    _.sample.status map(_.toString) getOrElse undefined
   }
 
+  private def sampleReturn: Case => String = {
+    _.sample.returnStatus map(_.toString) getOrElse undefined
+  }
 }
 
 object AuditPayloadType {
 
-  val CaseNote = "caseNote"
-  val CaseKeywordAdded = "caseKeywordAdded"
-  val CaseKeywordRemoved = "caseKeywordRemoved"
+  val CaseReleased = "caseReleased"
   val CaseAssigned = "caseAssigned"
-  val CaseReopened = "caseReopened"
+  val CaseCompleted = "caseCompleted"
   val CaseReferred = "caseReferred"
+  val CaseReopened = "caseReopened"
   val CaseRejected = "caseRejected"
   val CaseSuspended = "caseSuspended"
-  val CaseReleased = "caseReleased"
-  val QueueReassigned = "queueReassigned"
-  val CaseCompleted = "caseCompleted"
   val CaseSuppressed = "caseSuppressed"
+  val QueueReassigned = "queueReassigned"
   val RulingCancelled = "rulingCancelled"
-  val CaseExtendedUseChange = "caseExtendedUseChange"
+  val CaseKeywordAdded = "caseKeywordAdded"
+  val CaseKeywordRemoved = "caseKeywordRemoved"
   val CaseAppealAdded = "caseAppealAdded"
   val CaseAppealStatusChange = "caseAppealStatusChange"
+  val CaseExtendedUseChange = "caseExtendedUseChange"
+  val CaseNote = "caseNote"
   val CaseSampleStatusChange = "caseSampleStatusChange"
+  val CaseSampleReturnChange = "caseSampleReturnChange"
 
 }

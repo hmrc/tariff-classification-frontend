@@ -20,8 +20,8 @@ import java.time.Clock
 
 import org.mockito.ArgumentMatchers.{any, anyString, refEq}
 import org.mockito.BDDMockito._
+import org.mockito.Mockito.verify
 import org.scalatest.mockito.MockitoSugar
-import org.mockito.Mockito.{ verify}
 import org.scalatest.{Matchers, WordSpec}
 import play.api.http.Status
 import play.api.i18n.{DefaultLangs, DefaultMessagesApi}
@@ -137,7 +137,7 @@ class CaseControllerSpec extends WordSpec with Matchers with WithFakeApplication
       charset(result) shouldBe Some("utf-8")
 
       verify(eventService).getFilteredEvents(refEq(aCase.reference),refEq(NoPagination()),
-        refEq(Some(Set(EventType.SAMPLE_STATUS_CHANGE))))(any[HeaderCarrier])
+        refEq(Some(Set(EventType.SAMPLE_STATUS_CHANGE, EventType.SAMPLE_RETURN_CHANGE))))(any[HeaderCarrier])
     }
   }
 
@@ -158,7 +158,7 @@ class CaseControllerSpec extends WordSpec with Matchers with WithFakeApplication
       charset(result) shouldBe Some("utf-8")
 
       verify(eventService).getFilteredEvents(refEq(aCase.reference),refEq(NoPagination()),
-        refEq(Some(EventType.values.diff(Set(EventType.SAMPLE_STATUS_CHANGE)))))(any[HeaderCarrier])
+        refEq(Some(EventType.values.diff(Set(EventType.SAMPLE_STATUS_CHANGE, EventType.SAMPLE_RETURN_CHANGE)))))(any[HeaderCarrier])
     }
 
     "return 200 OK and HTML content type when no Events are present" in {
