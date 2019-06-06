@@ -46,7 +46,10 @@ class SearchController @Inject()(verify: RequestActions,
     Action[AnyContent] = (verify.authenticated andThen verify.mustHave(Permission.ADVANCED_SEARCH)).async { implicit request =>
 
     if (reference.isDefined) {
-      successful(Redirect(routes.CaseController.trader(reference.get)))
+      reference match {
+        case Some(ref) if ref.trim.nonEmpty => successful(Redirect(routes.CaseController.trader(ref.trim)))
+        case _ => successful(Redirect(routes.IndexController.get()))
+      }
     } else if (search.isEmpty) {
       keywordsService.autoCompleteKeywords.map { keywords: Seq[String] =>
         Results.Ok(html.advanced_search(SearchForm.form, None, keywords, selectedTab))
