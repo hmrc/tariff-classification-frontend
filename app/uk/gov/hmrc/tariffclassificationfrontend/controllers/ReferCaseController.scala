@@ -38,7 +38,7 @@ import scala.concurrent.Future.successful
 class ReferCaseController @Inject()(verify: RequestActions,
                                     casesService: CasesService,
                                     val messagesApi: MessagesApi,
-                                    implicit val appConfig: AppConfig) extends RenderCaseAction with ExtractableFile {
+                                    implicit val appConfig: AppConfig) extends RenderCaseAction with ExtractableFile with PrefixErrorsInForm[CaseReferral] {
 
   override protected val config: AppConfig = appConfig
   override protected val caseService: CasesService = casesService
@@ -103,13 +103,13 @@ class ReferCaseController @Inject()(verify: RequestActions,
 
   private def checkReasonIsSelected: PartialFunction[Form[CaseReferral], Form[CaseReferral]] = {
     case f if f.data.get("referredTo").contains("Applicant") && (f.data.get("reasons[0]").isEmpty && f.data.get("reasons[1]").isEmpty) =>
-      Form(f.mapping, f.data, FormError("reasons","Select why you are referring this case") +: f.errors, f.value)
+      prefixErrorInForm(f,  FormError("reasons","Select why you are referring this case"))
     case f => f
   }
 
   private def checkedOtherCommentNotEmpty: PartialFunction[Form[CaseReferral], Form[CaseReferral]] = {
     case f if f.data.get("referredTo").contains("Other") && f.data.getOrElse("referManually", "").isEmpty =>
-      Form(f.mapping, f.data, FormError("referManually","Enter who you are referring this case to") +: f.errors, f.value)
+      prefixErrorInForm(f,  FormError("referManually","Enter who you are referring this case to"))
     case f => f
   }
 
