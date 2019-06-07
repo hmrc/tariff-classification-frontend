@@ -95,7 +95,7 @@ case class LiabilityOrder
   override val contact: Contact,
   status: LiabilityStatus,
   traderName: String,
-  goodName: Option[String],
+  goodName: Option[String] = None,
   entryDate: Option[Instant] = None,
   entryNumber: Option[String] = None
 ) extends Application {
@@ -122,5 +122,5 @@ case class Contact
 (
   name: String,
   email: String,
-  phone: Option[String]
+  phone: Option[String] = None
 )

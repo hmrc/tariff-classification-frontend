@@ -25,7 +25,6 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.LiabilityStatus.Liability
 
 object LiabilityForm {
 
-
   private val form2Liability: (String, LiabilityStatus) => LiabilityOrder = {
     case (traderName, status) =>
       LiabilityOrder(Contact("", "", None), status, traderName, None, None, None)
