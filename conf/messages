@@ -176,6 +176,8 @@ error.empty.sample.return = Select a return option
 error.empty.queue = Select a queue to release this case
 error.empty.appealType = Select Alternative Dispute Resolution, review or a level of appeal to continue
 error.empty.appealStatus = Select status to continue
+error.empty.liability-status = Select a status to continue
+error.empty.trader-name = Enter a Trader Name
 
 error.empty.cancel.note=Add a note giving details of why you are cancelling this case
 error.empty.reject.note=Add a note giving details of why you are rejecting this case
@@ -322,6 +324,7 @@ page.title.choose.appeal.type=Choose appeal type
 page.title.extended.use=Extended use of this ruling
 page.title.ruling.not.found=Ruling not found
 page.title.case.queues=Tariff classification case queues
+page.title.create_liability=New liability
 
 
 view.attachment.unavailable.title=Attachment unavailable

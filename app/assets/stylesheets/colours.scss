@@ -33,3 +33,13 @@ $gray-dark: #6F777B;
 .bg-gray--dark {
   background-color: $gray-dark;
 }
+
+a.button-gray, button.button-gray, .button-gray:visited {
+  background-color: $gray;
+  color: $black;
+
+  &:hover, &:focus {
+    background-color: $gray-dark;
+    color: $black;
+  }
+}

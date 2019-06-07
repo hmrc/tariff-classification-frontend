@@ -40,7 +40,7 @@ class ExtendedUseCaseController @Inject()(override val verify: RequestActions,
 
   override protected val requiredPermission: Permission.Value = Permission.EXTENDED_USE
 
-  override protected def redirect: String => Call = routes.CaseController.trader
+  override protected def redirect: String => Call = routes.CaseController.get
 
   override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = {
     c.status == CANCELLED && c.decision.flatMap(_.cancellation).isDefined

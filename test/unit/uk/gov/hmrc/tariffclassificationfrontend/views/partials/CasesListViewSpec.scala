@@ -84,7 +84,7 @@ class CasesListViewSpec extends ViewSpec {
 
       // Then
       doc should containElementWithID("cases_list-row-0-reference")
-      doc.getElementById("cases_list-row-0-reference") should haveAttribute("href", routes.CaseController.trader("REF").url)
+      doc.getElementById("cases_list-row-0-reference") should haveAttribute("href", routes.CaseController.get("REF").url)
     }
 
     "Render some - with link to 'take ownership' - when assigned to a queue and no operator" in {
@@ -115,7 +115,7 @@ class CasesListViewSpec extends ViewSpec {
 
       // Then
       doc should containElementWithID("cases_list-row-0-reference")
-      doc.getElementById("cases_list-row-0-reference") should haveAttribute("href", routes.CaseController.trader("REF").url)
+      doc.getElementById("cases_list-row-0-reference") should haveAttribute("href", routes.CaseController.get("REF").url)
     }
   }
 }

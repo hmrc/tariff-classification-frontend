@@ -67,7 +67,7 @@ class CasesAssignedListViewSpec extends ViewSpec {
       doc.getElementById("cases_list-open-row-0-status") should containText("OPEN")
       doc should containElementWithID("cases_list-open-row-0-days_elapsed")
       doc.getElementById("cases_list-open-row-0-days_elapsed") should containText("2")
-      doc.getElementById("cases_list-open-row-0-reference") should haveAttribute("href", routes.CaseController.trader("REF1").url)
+      doc.getElementById("cases_list-open-row-0-reference") should haveAttribute("href", routes.CaseController.get("REF1").url)
       doc.getElementById("cases_list-open-row-0-move") should haveAttribute("href", routes.ReassignCaseController.showAvailableQueues("REF1", "/").url)
 
       doc should containElementWithID("cases_list-other-row-0")
@@ -77,7 +77,7 @@ class CasesAssignedListViewSpec extends ViewSpec {
       doc.getElementById("cases_list-other-row-0-status") should containText("REFERRED")
       doc should containElementWithID("cases_list-other-row-0-days_elapsed")
       doc.getElementById("cases_list-other-row-0-days_elapsed") should containText("1")
-      doc.getElementById("cases_list-other-row-0-reference") should haveAttribute("href", routes.CaseController.trader("REF2").url)
+      doc.getElementById("cases_list-other-row-0-reference") should haveAttribute("href", routes.CaseController.get("REF2").url)
       doc.getElementById("cases_list-other-row-0-move") should haveAttribute("href", routes.ReassignCaseController.showAvailableQueues("REF2", "/").url)
     }
   }

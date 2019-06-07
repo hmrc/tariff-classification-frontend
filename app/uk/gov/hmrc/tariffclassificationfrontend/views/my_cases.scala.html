@@ -18,7 +18,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus, Operator, Paged, Queue}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{cases_list, nav_search, queue_nav}
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{cases_list, nav_search, queue_nav, create_liability_button}
 @(queues: Seq[Queue], cases: Seq[Case], operator: Operator, caseCountByQueue: Map[String, Int])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @referredStatuses = @{
@@ -45,7 +45,9 @@
 
     @nav_search()
 
-    <div class="grid-row">
+    @create_liability_button()
+
+    <div class="grid-row mt-3">
         <div class="column-one-quarter">
             @queue_nav(queues, "my-cases", caseCountByQueue)
         </div>

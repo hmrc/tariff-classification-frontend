@@ -43,7 +43,7 @@ class AssignCaseController @Inject()(verify: RequestActions,
 
     def respond: Case => Future[Result] = {
       case c: Case if c.assignee.isEmpty =>
-        caseService.assignCase(c, request.operator).map(_ => Redirect(routes.CaseController.trader(reference)))
+        caseService.assignCase(c, request.operator).map(_ => Redirect(routes.CaseController.get(reference)))
       case _ =>
         successful(Redirect(routes.AssignCaseController.get(reference)))
     }
@@ -51,7 +51,7 @@ class AssignCaseController @Inject()(verify: RequestActions,
     getCaseAndRespond(reference, respond)
   }
 
-  override protected def redirect: String => Call = routes.CaseController.trader
+  override protected def redirect: String => Call = routes.CaseController.get
 
   override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = {
     (c.queueId, c.assignee) match {

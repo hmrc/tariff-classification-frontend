@@ -387,6 +387,31 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest {
     }
   }
 
+  "Connector 'Create Case'" should {
+
+    "create valid case" in {
+      val application = Cases.btiApplicationExample
+      val validCase = Cases.btiCaseExample
+      val request = Json.toJson(NewCaseRequest(application)).toString()
+      val response = Json.toJson(validCase).toString()
+
+      stubFor(post(urlEqualTo(s"/cases"))
+        .withRequestBody(equalToJson(request))
+        .willReturn(aResponse()
+          .withStatus(HttpStatus.SC_CREATED)
+          .withBody(response)
+        )
+      )
+
+      await(connector.createCase(application)) shouldBe validCase
+
+      verify(
+        postRequestedFor(urlEqualTo(s"/cases"))
+          .withHeader("X-Api-Token", equalTo(realConfig.apiToken))
+      )
+    }
+  }
+
   "Connector 'Create Event'" should {
 
     "create event" in {
