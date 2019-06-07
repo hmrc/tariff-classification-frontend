@@ -44,7 +44,6 @@ class LiabilityController @Inject()(verify: RequestActions,
                                     implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
   private lazy val menuTitle = CaseDetailPage.LIABILITY
-  private lazy val editMenuTitle = CaseDetailPage.EDIT_RULING
 
   private val startTabIndex = 11000
 
@@ -61,20 +60,7 @@ class LiabilityController @Inject()(verify: RequestActions,
 
   private def getCaseAndRenderView(page: CaseDetailPage, toHtml: Case => Future[HtmlFormat.Appendable])
                                   (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
-    if (request.`case`.status == CaseStatus.OPEN) {
-      toHtml(request.`case`).map(html => Ok(views.html.case_details(request.`case`, page, html, activeTab = Some("tab-item-Liability"))))
-    } else {
-      successful(Redirect(routes.CaseController.rulingDetails(request.`case`.reference)))
-    }
-  }
-
-  private def getCaseAndRedirect(page: CaseDetailPage, toResult: Case => Future[Call])
-                                (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
-    if (request.`case`.status == CaseStatus.OPEN) {
-      toResult(request.`case`).map(Redirect)
-    } else {
-      successful(Redirect(routes.CaseController.rulingDetails(request.`case`.reference)))
-    }
+    toHtml(request.`case`).map(html => Ok(views.html.case_details(request.`case`, page, html, activeTab = Some("tab-item-Liability"))))
   }
 
 }
