@@ -71,10 +71,6 @@ object Cases {
     _.copy(application = liabilityApplicationExample)
   }
 
-  def withSampleStatus(sampleStatus : Option[SampleStatus]): Case => Case = {
-    _.copy(sampleStatus = sampleStatus)
-  }
-
   def withSampleStatus(sampleStatus : Option[SampleStatus]): Case => Case = { c =>
     c.copy(sample = c.sample.copy(status = sampleStatus))
   }
