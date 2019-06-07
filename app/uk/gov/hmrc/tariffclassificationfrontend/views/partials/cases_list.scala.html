@@ -50,7 +50,7 @@
                                 @if(c.queueId.isDefined && !c.assignee.map(_.id).contains(request.operator.id)) {
                                     <a tabindex="@{startAtTabIndex+index}" id="@{id}-row-@{index}-reference" href="@AssignCaseController.get(c.reference)">@c.reference</a>
                                 } else {
-                                    <a tabindex="@{startAtTabIndex+index}" id="@{id}-row-@{index}-reference" href="@CaseController.trader(c.reference)">@c.reference</a>
+                                    <a tabindex="@{startAtTabIndex+index}" id="@{id}-row-@{index}-reference" href="@CaseController.get(c.reference)">@c.reference</a>
                                 }
                             </th>
                             <td id="@{id}-row-@{index}-good_name">@btiApp.goodName</td>

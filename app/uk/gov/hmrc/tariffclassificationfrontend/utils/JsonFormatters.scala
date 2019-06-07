@@ -19,15 +19,17 @@ package uk.gov.hmrc.tariffclassificationfrontend.utils
 import play.api.libs.json._
 import play.json.extra.Jsonx
 import uk.gov.hmrc.play.json.Union
+import uk.gov.hmrc.tariffclassificationfrontend.models.LiabilityStatus.LiabilityStatus
 import uk.gov.hmrc.tariffclassificationfrontend.models.Permission.Permission
 import uk.gov.hmrc.tariffclassificationfrontend.models.Role.Role
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
 import uk.gov.hmrc.tariffclassificationfrontend.models.response.{FileMetadata, ScanStatus}
-import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, _}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, LiabilityStatus, _}
 
 object JsonFormatters {
 
   implicit val role: Format[Role] = EnumJson.format(Role)
+  implicit val liabilityStatus: Format[LiabilityStatus] = EnumJson.format(LiabilityStatus)
   implicit val permission: Format[Permission] = EnumJson.format(Permission)
   implicit val formatReferralReason: Format[ReferralReason.Value] = EnumJson.format(ReferralReason)
   implicit val reportField: Format[CaseReportField.Value] = EnumJson.format(CaseReportField)
@@ -54,11 +56,12 @@ object JsonFormatters {
   implicit val liabilityOrderFormat: OFormat[LiabilityOrder] = Json.format[LiabilityOrder]
   implicit val btiApplicationFormat: OFormat[BTIApplication] = Json.format[BTIApplication]
   implicit val applicationFormat: Format[Application] = Union.from[Application]("type")
-    .and[BTIApplication]("BTI")
-    .and[LiabilityOrder]("LIABILITY_ORDER")
+    .and[BTIApplication](ApplicationType.BTI.toString)
+    .and[LiabilityOrder](ApplicationType.LIABILITY_ORDER.toString)
     .format
 
   implicit val caseFormat: OFormat[Case] = Json.format[Case]
+  implicit val newCaseFormat: OFormat[NewCaseRequest] = Json.format[NewCaseRequest]
   implicit val formatCaseStatusChange: OFormat[CaseStatusChange] = Json.format[CaseStatusChange]
   implicit val formatCancellationCaseStatusChange: OFormat[CancellationCaseStatusChange] = Json.format[CancellationCaseStatusChange]
   implicit val formatReferralCaseStatusChange: OFormat[ReferralCaseStatusChange] = Json.format[ReferralCaseStatusChange]

@@ -100,6 +100,17 @@ class CasesServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEac
     }
   }
 
+  "Create Case" should {
+    val application = mock[Application]
+    val createdCase = mock[Case]
+
+    "delegate to connector" in {
+      given(connector.createCase(refEq(application))(any[HeaderCarrier])) willReturn successful(createdCase)
+
+      await(service.createCase(application)) shouldBe createdCase
+    }
+  }
+
   "Add attachment into case" should {
     val c = mock[Case]
     val updatedCase = mock[Case]

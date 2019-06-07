@@ -43,10 +43,10 @@
             @form(action = routes.AssignCaseController.post(c.reference), 'class -> "form") {
                 @CSRF.formField
                 <button class="button" id="assign_case-assign_button" type="submit">Yes, take ownership</button>
-                <a class="secondary-button" id="assign_case-continue_button" href="@routes.CaseController.trader(c.reference)">No, view only</a>
+                <a class="secondary-button" id="assign_case-continue_button" href="@routes.CaseController.get(c.reference)">No, view only</a>
             }
         } else {
-            <p><a id="assign_case-continue_button" href="@routes.CaseController.trader(c.reference)">View the case</a></p>
+            <p><a id="assign_case-continue_button" href="@routes.CaseController.get(c.reference)">View the case</a></p>
             <p><a id="assign_case-back_to_my_cases" href="@routes.MyCasesController.myCases()">Back to my cases</a></p>
         }
 

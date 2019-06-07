@@ -164,6 +164,8 @@ error.empty.sample.status = Select a sample status
 error.empty.queue = Select a queue to release this case
 error.empty.appealType = Select Alternative Dispute Resolution, review or a level of appeal to continue
 error.empty.appealStatus = Select status to continue
+error.empty.liability-status = Select a status to continue
+error.empty.trader-name = Enter a Trader Name
 
 
 status.change.upload.title=You can upload:

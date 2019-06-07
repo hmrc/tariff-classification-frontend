@@ -20,27 +20,28 @@ import java.time.Clock
 
 import org.mockito.ArgumentMatchers.{any, anyString, refEq}
 import org.mockito.BDDMockito._
+import org.mockito.Mockito.verify
+import org.scalatest.Matchers
 import org.scalatest.mockito.MockitoSugar
-import org.mockito.Mockito.{ verify}
-import org.scalatest.{Matchers, WordSpec}
 import play.api.http.Status
 import play.api.i18n.{DefaultLangs, DefaultMessagesApi}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.test.WithFakeApplication
+import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.{CommodityCodeConstraints, DecisionForm}
 import uk.gov.hmrc.tariffclassificationfrontend.models.EventType.EventType
 import uk.gov.hmrc.tariffclassificationfrontend.models.Permission.Permission
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.service._
+import uk.gov.tariffclassificationfrontend.utils.Cases._
 import uk.gov.tariffclassificationfrontend.utils.{Cases, Events}
 
 import scala.concurrent.Future.successful
 
-class CaseControllerSpec extends WordSpec with Matchers with WithFakeApplication with MockitoSugar with ControllerCommons {
+class CaseControllerSpec extends UnitSpec with Matchers with WithFakeApplication with MockitoSugar with ControllerCommons {
 
   private val fakeRequest = FakeRequest()
   private val env = Environment.simple()
@@ -71,6 +72,26 @@ class CaseControllerSpec extends WordSpec with Matchers with WithFakeApplication
   )
 
   private implicit val hc: HeaderCarrier = HeaderCarrier()
+
+  "Case Index" should {
+    "redirect to default tab" when {
+      "case is a BTI" in {
+        val c = aCase(withReference("reference"), withBTIApplication)
+        val result = await(controller(c).get("reference")(fakeRequest))
+
+        status(result) shouldBe Status.SEE_OTHER
+        locationOf(result) shouldBe Some(routes.CaseController.trader("reference"))
+      }
+
+      "case is a Liability" in {
+        val c = aCase(withReference("reference"), withLiabilityOrderApplication)
+        val result = controller(c).get("reference")(fakeRequest)
+
+        status(result) shouldBe Status.SEE_OTHER
+        locationOf(result) shouldBe Some(routes.CaseController.activityDetails("reference"))
+      }
+    }
+  }
 
   "Case Trader" should {
 

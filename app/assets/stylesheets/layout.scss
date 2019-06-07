@@ -378,3 +378,11 @@ table tbody tr th {
 .left {
   float: left;
 }
+
+.button-arrow {
+  background-image: url(/tariff-classification/assets/images/icon-pointer.png);
+  background-size: 30px 19px;
+  background-repeat: no-repeat;
+  background-position: 100% 50%;
+  padding-right: 40px;
+}

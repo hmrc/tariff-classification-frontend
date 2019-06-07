@@ -40,7 +40,7 @@
                 @for((result: SearchResult, index: Int) <- results.results.zipWithIndex) {
                     <tr>
                         <td id="advanced_search_results-row-@{index}-reference">
-                            <a id="advanced_search_results-row-@{index}-reference" href="@routes.CaseController.trader(result.c.reference)">@result.c.reference</a>
+                            <a id="advanced_search_results-row-@{index}-reference" href="@routes.CaseController.get(result.c.reference)">@result.c.reference</a>
                         </td>
                         <td id="advanced_search_results-row-@{index}-business_name">
                             @result.c.application.businessName
