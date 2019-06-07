@@ -80,7 +80,7 @@ class CaseControllerSpec extends UnitSpec with Matchers with WithFakeApplication
         val result = await(controller(c).get("reference")(fakeRequest))
 
         status(result) shouldBe Status.SEE_OTHER
-        locationOf(result) shouldBe Some(routes.CaseController.trader("reference"))
+        locationOf(result) shouldBe Some(routes.CaseController.trader("reference").url)
       }
 
       "case is a Liability" in {
@@ -88,7 +88,7 @@ class CaseControllerSpec extends UnitSpec with Matchers with WithFakeApplication
         val result = controller(c).get("reference")(fakeRequest)
 
         status(result) shouldBe Status.SEE_OTHER
-        locationOf(result) shouldBe Some(routes.CaseController.activityDetails("reference"))
+        locationOf(result) shouldBe Some(routes.CaseController.activityDetails("reference").url)
       }
     }
   }
