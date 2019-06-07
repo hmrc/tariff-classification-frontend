@@ -43,6 +43,10 @@ sealed trait Application {
     this.isInstanceOf[LiabilityOrder]
   }
 
+  def isLiveLiabilityOrder: Boolean = {
+    isLiabilityOrder && asLiabilityOrder.status == LiabilityStatus.LIVE
+  }
+
   def businessName: String = {
     `type` match {
       case ApplicationType.BTI => asBTI.holder.businessName
