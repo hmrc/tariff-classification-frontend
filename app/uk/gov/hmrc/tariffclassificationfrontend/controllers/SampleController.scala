@@ -44,7 +44,7 @@ class SampleController @Inject()(override val verify: RequestActions,
 
   override protected val requiredPermission: Permission.Value = Permission.EDIT_SAMPLE
 
-  override protected def redirect: String => Call = routes.CaseController.trader
+  override protected def redirect: String => Call = routes.CaseController.get
 
   override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = {
     true //No constraints on when the case is valid

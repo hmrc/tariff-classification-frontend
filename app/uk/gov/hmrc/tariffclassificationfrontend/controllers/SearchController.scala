@@ -47,7 +47,7 @@ class SearchController @Inject()(verify: RequestActions,
 
     if (reference.isDefined) {
       reference match {
-        case Some(ref) if ref.trim.nonEmpty => successful(Redirect(routes.CaseController.trader(ref.trim)))
+        case Some(ref) if ref.trim.nonEmpty => successful(Redirect(routes.CaseController.get(ref.trim)))
         case _ => successful(Redirect(routes.IndexController.get()))
       }
     } else if (search.isEmpty) {

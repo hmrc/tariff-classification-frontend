@@ -17,10 +17,14 @@
 package uk.gov.hmrc.tariffclassificationfrontend.models
 
 import java.time.Instant
+
+import uk.gov.hmrc.tariffclassificationfrontend.models
+import uk.gov.hmrc.tariffclassificationfrontend.models.ApplicationType.ApplicationType
 import uk.gov.hmrc.tariffclassificationfrontend.models.ImportExport.ImportExport
+import uk.gov.hmrc.tariffclassificationfrontend.models.LiabilityStatus.LiabilityStatus
 
 sealed trait Application {
-  val `type`: String
+  val `type`: ApplicationType
   val contact: Contact
 
   def asBTI: BTIApplication = {
@@ -41,17 +45,22 @@ sealed trait Application {
 
   def businessName: String = {
     `type` match {
-      case "BTI" => asBTI.holder.businessName
-      case "LIABILITY_ORDER" => asLiabilityOrder.traderName
+      case ApplicationType.BTI => asBTI.holder.businessName
+      case ApplicationType.LIABILITY_ORDER => asLiabilityOrder.traderName
     }
   }
 
   def getType: String = {
     `type` match {
-      case "BTI" => "BTI"
-      case "LIABILITY_ORDER" => "Liability Order"
+      case ApplicationType.BTI => "BTI"
+      case ApplicationType.LIABILITY_ORDER => "Liability Order"
     }
   }
+}
+
+object ApplicationType extends Enumeration {
+  type ApplicationType = Value
+  val BTI, LIABILITY_ORDER = Value
 }
 
 case class BTIApplication
@@ -72,7 +81,7 @@ case class BTIApplication
   sampleToBeProvided: Boolean,
   sampleToBeReturned: Boolean
 ) extends Application {
-  override val `type` = "BTI"
+  override val `type`: models.ApplicationType.Value = ApplicationType.BTI
 }
 
 case class AgentDetails
@@ -84,13 +93,18 @@ case class AgentDetails
 case class LiabilityOrder
 (
   override val contact: Contact,
-  status: String,
+  status: LiabilityStatus,
   traderName: String,
-  goodName: Option[String],
+  goodName: Option[String] = None,
   entryDate: Option[Instant] = None,
   entryNumber: Option[String] = None
 ) extends Application {
-  override val `type` = "LIABILITY_ORDER"
+  override val `type`: models.ApplicationType.Value = ApplicationType.LIABILITY_ORDER
+}
+
+object LiabilityStatus extends Enumeration {
+  type LiabilityStatus = Value
+  val LIVE, NON_LIVE = Value
 }
 
 case class EORIDetails
@@ -108,5 +122,5 @@ case class Contact
 (
   name: String,
   email: String,
-  phone: Option[String]
+  phone: Option[String] = None
 )

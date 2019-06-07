@@ -297,6 +297,10 @@ class CasesService @Inject()(appConfig: AppConfig,
     connector.updateCase(caseToUpdate)
   }
 
+  def createCase(application: Application)(implicit hc: HeaderCarrier): Future[Case] = {
+    connector.createCase(application)
+  }
+
   def addAttachment(c: Case, f: FileUpload, o: Operator)(implicit headerCarrier: HeaderCarrier): Future[Case] = {
     fileService.upload(f) flatMap { fileStored: FileStoreAttachment =>
       val attachment = Attachment(id = fileStored.id, operator = Some(o))

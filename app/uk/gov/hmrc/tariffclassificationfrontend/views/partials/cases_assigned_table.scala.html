@@ -38,7 +38,7 @@
         @for((c: Case, index: Int) <- cases.zipWithIndex) {
             <tr id="cases_list-@{id}-row-@index">
                 <th scope="row">
-                    <a tabindex="@{index+startTabIndexWith}" id="cases_list-@{id}-row-@{index}-reference" href="@CaseController.trader(c.reference)">@c.reference</a>
+                    <a tabindex="@{index+startTabIndexWith}" id="cases_list-@{id}-row-@{index}-reference" href="@CaseController.get(c.reference)">@c.reference</a>
                 </th>
                 <td>@case_status(c, s"cases_list-$id-row-$index-status")</td>
                 <td>@days_elapsed(c.daysElapsed, s"cases_list-$id-row-$index-days_elapsed")</td>

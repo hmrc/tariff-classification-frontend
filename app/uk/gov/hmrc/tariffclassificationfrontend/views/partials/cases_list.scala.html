@@ -17,7 +17,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.{AssignCaseController, CaseController}
 @import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
-@import uk.gov.hmrc.tariffclassificationfrontend.models.{Application, BTIApplication, Case, Paged, LiabilityOrder}
+@import uk.gov.hmrc.tariffclassificationfrontend.models.{Application, BTIApplication, Case, Paged, LiabilityOrder, LiabilityStatus}
 @import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.statuses.case_status
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.days_elapsed
@@ -55,9 +55,9 @@
                         <tr id="@{id}-row-@index">
                             <th scope="row">
                             @if(c.queueId.isDefined && !c.assignee.map(_.id).contains(request.operator.id)) {
-                                <a tabindex="@{startAtTabIndex + index}" id="@{id}-row-@{index}-reference" href="@AssignCaseController.get(c.reference)">@c.reference</a>
+                                <a tabindex="@{startAtTabIndex+index}" id="@{id}-row-@{index}-reference" href="@AssignCaseController.get(c.reference)">@c.reference</a>
                             } else {
-                                <a tabindex="@{startAtTabIndex + index}" id="@{id}-row-@{index}-reference" href="@CaseController.trader(c.reference)">@c.reference</a>
+                                <a tabindex="@{startAtTabIndex+index}" id="@{id}-row-@{index}-reference" href="@CaseController.get(c.reference)">@c.reference</a>
                             }
                             </th>
                             <td id="@{id}-row-@{index}-good_name">@btiApp.goodName</td>
@@ -78,7 +78,7 @@
                                 @c.reference
                             </a>
                             } else {
-                            <a tabindex="@{startAtTabIndex + index}" id="@{id}-row-@{index}-reference" href="@CaseController.trader(c.reference)">
+                            <a tabindex="@{startAtTabIndex + index}" id="@{id}-row-@{index}-reference" href="@CaseController.get(c.reference)">
                                 @c.reference
                             </a>
                             }
@@ -95,7 +95,7 @@
                                     <td>@case_status(c, s"$id-row-$index-status")</td>
                                     <td id="@{id}-row-@{index}-type">
                                         Liability</br>
-                                        @if(liab.status == "LIVE"){
+                                        @if(liab.status == LiabilityStatus.LIVE){
                                             <span class="live-red-text">LIVE</span>
                                         }
                                     </td>

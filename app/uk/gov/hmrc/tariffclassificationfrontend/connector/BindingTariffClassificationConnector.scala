@@ -41,6 +41,11 @@ class BindingTariffClassificationConnector @Inject()(appConfig: AppConfig, clien
   private lazy val liveStatuses: String = Set(OPEN, REFERRED, SUSPENDED)
     .map(_.toString).mkString(",")
 
+  def createCase(application: Application)(implicit hc: HeaderCarrier): Future[Case] = {
+    val url = s"${appConfig.bindingTariffClassificationUrl}/cases"
+    client.POST[NewCaseRequest, Case](url, NewCaseRequest(application))
+  }
+
   def findCase(reference: String)(implicit hc: HeaderCarrier): Future[Option[Case]] = {
     val url = s"${appConfig.bindingTariffClassificationUrl}/cases/$reference"
     client.GET[Option[Case]](url)

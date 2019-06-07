@@ -49,7 +49,21 @@ class ReportingServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfte
 
       theReport shouldBe CaseReport(
         filter = CaseReportFilter(
-          decisionStartDate = Some(dateRange)
+          decisionStartDate = Some(dateRange), applicationType = Some(Set("BTI"))
+        ),
+        group = CaseReportGroup.QUEUE,
+        field = CaseReportField.ACTIVE_DAYS_ELAPSED
+      )
+    }
+
+    "Build & Request Queue Report" in {
+      given(connector.generateReport(any[CaseReport])(any[HeaderCarrier])) willReturn Future.successful(Seq.empty[ReportResult])
+
+      await(service.getQueueReport(mock[HeaderCarrier])) shouldBe Seq.empty[ReportResult]
+
+      theReport shouldBe CaseReport(
+        filter = CaseReportFilter(
+          status = Some(Set("NEW", "OPEN", "REFERRED", "SUSPENDED")), assigneeId = Some("none")
         ),
         group = CaseReportGroup.QUEUE,
         field = CaseReportField.ACTIVE_DAYS_ELAPSED
@@ -64,7 +78,7 @@ class ReportingServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfte
 
       theReport shouldBe CaseReport(
         filter = CaseReportFilter(
-          referralDate = Some(dateRange)
+          referralDate = Some(dateRange), applicationType = Some(Set("BTI"))
         ),
         group = CaseReportGroup.QUEUE,
         field = CaseReportField.REFERRED_DAYS_ELAPSED
