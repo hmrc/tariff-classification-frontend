@@ -23,6 +23,7 @@ case class CaseReportFilter
   decisionStartDate: Option[InstantRange] = None,
   referralDate: Option[InstantRange] = None,
   status: Option[Set[String]] = None,
+  applicationType: Option[Set[String]],
   assigneeId: Option[String] = None
 )
 
@@ -31,6 +32,7 @@ object CaseReportFilter {
   val decisionStartKey = "decision_start"
   val referralDateKey = "referral_date"
   val statusKey = "status"
+  val applicationTypeKey = "application_type"
   val assigneeIdKey = "assignee_id"
 
   implicit def binder(implicit rangeBinder: QueryStringBindable[InstantRange], stringBinder: QueryStringBindable[String]): QueryStringBindable[CaseReportFilter] = new QueryStringBindable[CaseReportFilter] {
@@ -41,6 +43,7 @@ object CaseReportFilter {
       val decisionStart: Option[InstantRange] = rangeBinder.bind(decisionStartKey, requestParams).filter(_.isRight).map(_.right.get)
       val referralDate: Option[InstantRange] = rangeBinder.bind(referralDateKey, requestParams).filter(_.isRight).map(_.right.get)
       val status: Option[Set[String]] = params(statusKey)
+      val applicationType: Option[Set[String]] = params(statusKey)
       val assigneeId: Option[String] = param(assigneeIdKey)
 
       Some(
@@ -49,6 +52,7 @@ object CaseReportFilter {
             decisionStart,
             referralDate,
             status,
+            applicationType,
             assigneeId
           )
         )
@@ -60,6 +64,7 @@ object CaseReportFilter {
         filter.decisionStartDate.map(r => rangeBinder.unbind(decisionStartKey, r)),
         filter.referralDate.map(r => rangeBinder.unbind(referralDateKey, r)),
         filter.status.map(_.map(r => stringBinder.unbind(statusKey, r)).mkString("&")),
+        filter.applicationType.map(_.map(r => stringBinder.unbind(applicationTypeKey, r)).mkString("&")),
         filter.assigneeId.map(r => stringBinder.unbind(assigneeIdKey, r))
       ).filter(_.isDefined).map(_.get).mkString("&")
 
