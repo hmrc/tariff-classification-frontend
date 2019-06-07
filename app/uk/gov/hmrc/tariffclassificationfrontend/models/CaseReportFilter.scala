@@ -23,7 +23,7 @@ case class CaseReportFilter
   decisionStartDate: Option[InstantRange] = None,
   referralDate: Option[InstantRange] = None,
   status: Option[Set[String]] = None,
-  applicationType: Option[Set[String]],
+  applicationType: Option[Set[String]] = None,
   assigneeId: Option[String] = None
 )
 
@@ -43,7 +43,7 @@ object CaseReportFilter {
       val decisionStart: Option[InstantRange] = rangeBinder.bind(decisionStartKey, requestParams).filter(_.isRight).map(_.right.get)
       val referralDate: Option[InstantRange] = rangeBinder.bind(referralDateKey, requestParams).filter(_.isRight).map(_.right.get)
       val status: Option[Set[String]] = params(statusKey)
-      val applicationType: Option[Set[String]] = params(statusKey)
+      val applicationType: Option[Set[String]] = params(applicationTypeKey)
       val assigneeId: Option[String] = param(assigneeIdKey)
 
       Some(
