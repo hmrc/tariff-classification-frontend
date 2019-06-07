@@ -435,7 +435,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       // Then
       doc should containElementWithID("activity-events-row-0-content")
-      doc.getElementById("activity-events-row-0-content") should containText("Case unassigned")
+      doc.getElementById("activity-events-row-0-content") should containText("Case assignment changed")
     }
 
     "Not render assigned information if does not have right permissions" in {

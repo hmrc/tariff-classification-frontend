@@ -22,9 +22,12 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.case_heading
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.statuses.status_change_upload
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.error_summary
 @(c: Case, form: Form[String])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("page.title.reject.case"))) {
+
+    @error_summary(form.errors)
 
     @case_heading(c)
 
@@ -38,13 +41,12 @@
 
                 @helper.CSRF.formField
 
-                <h3 id="reject_case-heading" class="heading-medium mt-30 mb-30">Add a note</h3>
-
                 @input_textarea(
                     field = form("note"),
-                    label = "",
+                    label = "Add a note",
+                    labelClass = Some("heading-medium"),
                     hint = Some("Give details of why you are rejecting this case. Keep the note clear and concise."),
-                    customErrorMessage = Some("Add a note giving details of why you are rejecting this case")
+                    customErrorMessage = Some(messages("error.empty.reject.note"))
                 )
 
                 @status_change_upload(form("file-input"), "rejecting")

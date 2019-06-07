@@ -19,6 +19,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{Application, BTIApplication, Case, EORIDetails, Event, Paged, Permission, SampleStatus}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials._
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.sample.sample_status_events_table
+@import uk.gov.hmrc.tariffclassificationfrontend.models.SampleReturn
 @(c: Case, events: Paged[Event], startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @defining(c.application) { a: Application =>
@@ -34,10 +35,10 @@
 
                 <div id="app-details-sending-samples" class="grid-row">
                     <dt class="column-one-third">
-                        @messages("case.application.provide-samples")
+                    @messages("case.application.provide-samples")
                     </dt>
                     <dd class="column-two-thirds">
-                        @if(btiApp.sampleToBeProvided){ @messages("answer.yes") } else { @messages("answer.no")}
+                    @if(btiApp.sampleToBeProvided){ @messages("answer.yes") } else { @messages("answer.no")}
                     </dd>
                 </div>
 
@@ -52,22 +53,43 @@
                     </div>
                 }
 
+                @if(c.sample.requestedBy.isDefined) {
+                    <h3 class="heading-medium" id="sample-requested-heading">@messages("case.sample.request.heading")</h3>
+
+                    <div id="sample-requested-by" class="grid-row">
+                        <dt id="sample-requested-by-value" class="column-one-third">
+                        @messages("case.sample.request.operator", c.sample.requestedBy.flatMap(_.name).getOrElse("Unknown"))
+                        </dt>
+                    </div>
+                    <div id="sample-requested-return" class="grid-row">
+                        <dt class="column-one-third">
+                        @messages("case.sample.request.return")
+                        </dt>
+                        <dd id="sample-requested-return-value" class="column-one-third">
+                            @SampleReturn.format(c.sample.returnStatus)
+                        </dd>
+                        <dd class="column-one-third">
+                            <a id="sample-requested-return-change" tabindex="@startAtTabIndex" href="sample/return-status">@messages("case.sample.request.change")</a>
+                        </dd>
+                    </div>
+                }
+
                 <h3 class="heading-medium" id="sample-status-heading">@messages("case.sample.sample-status-header")</h3>
 
                 <div id="sample-status" class="grid-row">
-                    <dt class="column-one-third" id="sample-status-value" >
-                        @SampleStatus.format(c.sampleStatus)
+                    <dt class="column-two-thirds" id="sample-status-value" >
+                        @SampleStatus.format(c.sample.status)
                     </dt>
                     @if(request.hasPermission(Permission.EDIT_SAMPLE)){
-                    <dd class="column-two-thirds" id="change-sample-status">
-                        <a tabindex="@startAtTabIndex" href="sample/status">@messages("case.sample.change-sample-status")</a>
+                    <dd class="column-one-third" id="change-sample-status">
+                        <a tabindex="@{startAtTabIndex+10}" href="sample/status">@messages("case.sample.change-sample-status")</a>
                     </dd>
                     }
                 </div>
 
             </dl>
 
-            @sample_status_events_table(c,events)
+            @sample_status_events_table(c,events,startAtTabIndex+15)
 
         }
     }

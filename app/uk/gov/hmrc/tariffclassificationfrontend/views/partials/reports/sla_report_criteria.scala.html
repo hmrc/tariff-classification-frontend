@@ -20,7 +20,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 @import uk.gov.hmrc.tariffclassificationfrontend.views.Report
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.input_date
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.error_summary
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.error_summary
 @import views.html.helper.CSRF
 @(form: Form[InstantRange], startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
@@ -28,7 +28,7 @@
 
 @helper.form(action = routes.ReportingController.getReport(Report.SLA.toString)) {
 
- @error_summary(form)
+ @error_summary(form.errors)
 
  @CSRF.formField
 

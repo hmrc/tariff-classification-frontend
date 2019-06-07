@@ -21,18 +21,23 @@
         allowNone: Boolean = false,
         inputClass: Option[String] = None,
         hint: Option[String] = None,
+        label : Option[String] = None,
         labelClass: Option[String] = None,
         id: String = "radio_option_group",
         preSelect : Boolean = true,
-        customErrorMessage : Option[String] = None
+        customErrorMessage : Option[String] = None,
+        customGroupId : Option[String] = None
 )(implicit messages: Messages)
 
-<div class="form-group @if(field.hasErrors){form-group-error}">
+<div class="form-group @if(field.hasErrors){form-group-error}"
+    @{customGroupId.map(x => s"id=$x").getOrElse("")}>
     <fieldset>
-        <legend>
-            @field.errors.map { error =>
-                <span class="error-message" id="error-message-@{field.id}-input">@customErrorMessage.getOrElse( messages(error.message, error.args: _*))</span>
-            }
+
+            <legend>
+                <span class="@labelClass">@label</span>
+                @field.errors.map { error =>
+                    <span class="error-message" id="error-message-@{field.id}-input">@customErrorMessage.getOrElse( messages(error.message, error.args: _*))</span>
+                }
             </legend>
 
         @if(allowNone) {
@@ -44,10 +49,16 @@
 
         @for(option: RadioOption <- options) {
             @defining(option.value.replace(" ", "_")) { optionId: String =>
-                <div class="multiple-choice">
+                <div class="multiple-choice" @{option.dataTarget.map(dt => s"data-target=$dt").getOrElse("")}>
                     <input id="@id-@optionId" type="radio" name="@{field.name}" value="@option.value" @if(field.value.contains(option.value) && preSelect){checked="checked"}>
                     <label id="@id-@optionId-label" for="@id-@optionId">@option.label</label>
                 </div>
+                    @if(option.customHtml.isDefined) {
+                        <div class="form-group panel panel-border-narrow js-hidden" id="@{option.dataTarget.get}" aria-hidden="false">
+                        @option.customHtml.get
+                        </div>
+                    }
+
             }
         }
 

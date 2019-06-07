@@ -17,13 +17,14 @@
 package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
 import javax.inject.{Inject, Singleton}
-import play.api.data.{Form, FormError}
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import play.twirl.api.{Html, HtmlFormat}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms._
+import uk.gov.hmrc.tariffclassificationfrontend.models.EventType.{SAMPLE_RETURN_CHANGE, SAMPLE_STATUS_CHANGE}
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
 import uk.gov.hmrc.tariffclassificationfrontend.service._
@@ -88,7 +89,7 @@ class CaseController @Inject()(verify: RequestActions,
       SAMPLE_DETAILS,
       c => {
         for {
-          events <- eventsService.getFilteredEvents(c.reference, NoPagination(), Some(Set(EventType.SAMPLE_STATUS_CHANGE)))
+          events <- eventsService.getFilteredEvents(c.reference, NoPagination(), Some(Set(SAMPLE_STATUS_CHANGE, SAMPLE_RETURN_CHANGE)))
         } yield views.html.partials.sample.sample_details(c, events, pagesWithStartTabIndexes(SAMPLE_DETAILS))
       },
       "tab-item-Sample"
@@ -213,7 +214,7 @@ class CaseController @Inject()(verify: RequestActions,
   private def showActivity(c: Case, f: Form[ActivityFormData])
                           (implicit request: AuthenticatedRequest[AnyContent]): Future[HtmlFormat.Appendable] = {
     for {
-      events <- eventsService.getFilteredEvents(c.reference, NoPagination(), Some(EventType.values.diff(Set(EventType.SAMPLE_STATUS_CHANGE))))
+      events <- eventsService.getFilteredEvents(c.reference, NoPagination(), Some(EventType.values.diff(Set(SAMPLE_STATUS_CHANGE, SAMPLE_RETURN_CHANGE))))
       queues <- queuesService.getAll
     } yield views.html.partials.activity_details(c, events, f, queues, pagesWithStartTabIndexes(ACTIVITY))
   }

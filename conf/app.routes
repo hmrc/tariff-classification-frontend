@@ -36,7 +36,6 @@ GET         /cases/:reference/reassign-case/confirmation        @uk.gov.hmrc.tar
 GET         /cases/:reference/refer                             @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReferCaseController.getReferCase(reference: String)
 POST        /cases/:reference/refer                             @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReferCaseController.postReferCase(reference: String)
 GET         /cases/:reference/refer/confirmation                @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReferCaseController.confirmReferCase(reference: String)
-GET         /cases/:reference/refer/contact-info                @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReferCaseController.showContactInformation(reference: String)
 
 GET         /cases/:reference/reject                            @uk.gov.hmrc.tariffclassificationfrontend.controllers.RejectCaseController.getRejectCase(reference: String)
 POST        /cases/:reference/reject                            @uk.gov.hmrc.tariffclassificationfrontend.controllers.RejectCaseController.postRejectCase(reference: String)
@@ -88,6 +87,9 @@ POST        /cases/:reference/change-appeal/:appealId           @uk.gov.hmrc.tar
 
 GET         /cases/:reference/sample/status                     @uk.gov.hmrc.tariffclassificationfrontend.controllers.SampleController.chooseStatus(reference: String)
 POST        /cases/:reference/sample/status                     @uk.gov.hmrc.tariffclassificationfrontend.controllers.SampleController.updateStatus(reference: String)
+
+GET         /cases/:reference/sample/return-status               @uk.gov.hmrc.tariffclassificationfrontend.controllers.SampleReturnController.chooseStatus(reference: String)
+POST        /cases/:reference/sample/return-status               @uk.gov.hmrc.tariffclassificationfrontend.controllers.SampleReturnController.updateStatus(reference: String)
 
 GET         /cases/:reference/extended-use/status               @uk.gov.hmrc.tariffclassificationfrontend.controllers.ExtendedUseCaseController.chooseStatus(reference: String)
 POST        /cases/:reference/extended-use/status               @uk.gov.hmrc.tariffclassificationfrontend.controllers.ExtendedUseCaseController.updateStatus(reference: String)

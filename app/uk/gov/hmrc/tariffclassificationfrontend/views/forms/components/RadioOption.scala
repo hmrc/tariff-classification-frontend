@@ -16,4 +16,6 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.views.forms.components
 
-case class RadioOption(value: String, label: String)
+import play.twirl.api.Html
+
+case class RadioOption(value: String, label: String, dataTarget: Option[String] = None, customHtml: Option[Html] = None)

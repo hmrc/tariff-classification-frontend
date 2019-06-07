@@ -21,20 +21,22 @@ object SampleStatus extends Enumeration {
   val AWAITING, MOVED_TO_ACT, MOVED_TO_ELM, SENT_FOR_ANALYSIS, SENT_TO_APPEALS, STORAGE, RETURNED_APPLICANT,
   RETURNED_PORT_OFFICER, RETURNED_COURIER, DESTROYED = Value
 
-  def format(status: Option[SampleStatus]): String = {
-    status match {
-      case Some(AWAITING) => "Awaiting sample"
-      case Some(MOVED_TO_ACT) => "Moved to ACT"
-      case Some(MOVED_TO_ELM) => "Moved to ELM"
-      case Some(SENT_FOR_ANALYSIS) => "Sent for analysis"
-      case Some(SENT_TO_APPEALS) => "Sent to review and appeals team"
-      case Some(STORAGE) => "Moved to storage"
-      case Some(RETURNED_APPLICANT) => "Returned to applicant"
-      case Some(RETURNED_PORT_OFFICER) => "Returned to port officer"
-      case Some(RETURNED_COURIER) => "Returned by courier"
-      case Some(DESTROYED) => "Destroyed"
-      case _ => "None"
+  def format(status: Option[SampleStatus], initialCaps: Boolean = true): String = {
+    val text = status match {
+      case Some(AWAITING) => "awaiting sample"
+      case Some(MOVED_TO_ACT) => "moved to ACT"
+      case Some(MOVED_TO_ELM) => "moved to ELM"
+      case Some(SENT_FOR_ANALYSIS) => "sent for analysis"
+      case Some(SENT_TO_APPEALS) => "sent to review and appeals team"
+      case Some(STORAGE) => "moved to storage"
+      case Some(RETURNED_APPLICANT) => "returned to applicant"
+      case Some(RETURNED_PORT_OFFICER) => "returned to port officer"
+      case Some(RETURNED_COURIER) => "returned by courier"
+      case Some(DESTROYED) => "destroyed"
+      case _ => "none"
     }
+
+    if(initialCaps) text.capitalize else text
   }
 
 }
