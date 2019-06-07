@@ -46,21 +46,27 @@ class BindingTariffClassificationConnector @Inject()(appConfig: AppConfig, clien
     client.GET[Option[Case]](url)
   }
 
+  private def buildQueryUrl(statuses: String, queueId: String = "", assigneeId: String,
+                            paginationPage: Int, paginationSize: Int): String = {
+    val sortBy = "application.type,application.status,days-elapsed"
+    s"application_type=BTI&application_type=LIABILITY_ORDER&queue_id=$queueId&assignee_id=$assigneeId&status=$statuses&sort_by=$sortBy&sort_direction=desc&page=$paginationPage&page_size=$paginationSize"
+  }
+
   def findCasesByQueue(queue: Queue, pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[Case]] = {
     val queueId = if (queue == Queues.gateway) "none" else queue.id
-    val queryString = s"application_type=BTI&queue_id=$queueId&assignee_id=none&status=$statuses&sort_by=days-elapsed&sort_direction=desc&page=${pagination.page}&page_size=${pagination.pageSize}"
+    val queryString = buildQueryUrl(statuses, queueId, "none",pagination.page, pagination.pageSize)
     val url = s"${appConfig.bindingTariffClassificationUrl}/cases?$queryString"
     client.GET[Paged[Case]](url)
   }
 
   def findCasesByAssignee(assignee: Operator, pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[Case]] = {
-    val queryString = s"application_type=BTI&assignee_id=${assignee.id}&status=$statuses&sort_by=days-elapsed&sort_direction=desc&page=${pagination.page}&page_size=${pagination.pageSize}"
+    val queryString = buildQueryUrl(statuses, "", assignee.id,pagination.page, pagination.pageSize)
     val url = s"${appConfig.bindingTariffClassificationUrl}/cases?$queryString"
     client.GET[Paged[Case]](url)
   }
 
   def findAssignedCases(pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[Case]] = {
-    val queryString = s"application_type=BTI&assignee_id=some&status=$liveStatuses&sort_by=days-elapsed&sort_direction=desc&page=${pagination.page}&page_size=${pagination.pageSize}"
+    val queryString = buildQueryUrl(liveStatuses, "", "some",pagination.page, pagination.pageSize)
     val url = s"${appConfig.bindingTariffClassificationUrl}/cases?$queryString"
     client.GET[Paged[Case]](url)
   }

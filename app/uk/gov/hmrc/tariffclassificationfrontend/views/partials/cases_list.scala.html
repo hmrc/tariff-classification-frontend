@@ -17,7 +17,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.{AssignCaseController, CaseController}
 @import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
-@import uk.gov.hmrc.tariffclassificationfrontend.models.{Application, BTIApplication, Case, Paged}
+@import uk.gov.hmrc.tariffclassificationfrontend.models.{Application, BTIApplication, Case, Paged, LiabilityOrder}
 @import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.statuses.case_status
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.days_elapsed
@@ -26,10 +26,14 @@
 
 @if(cases.isEmpty) {
     <div class="mt-3">
-        <p id="@{id}-empty">@messages("cases.table.empty")</p>
+        <p id="@{
+            id
+        }-empty">@messages("cases.table.empty")</p>
     </div>
-}else{
-    <table id="@{id}-table">
+} else {
+    <table id="@{
+        id
+    }-table">
         <thead>
             <tr>
                 <th scope="col">@messages("cases.table.reference")</th>
@@ -41,17 +45,20 @@
                 <th scope="col">@messages("cases.table.elapsed-days")</th>
             </tr>
         </thead>
-        <tbody id="@{id}-body">
-            @for((c: Case, index: Int) <- cases.results.zipWithIndex) {
-                @defining(c.application) { a: Application =>
+        <tbody id="@{
+            id
+        }-body">
+        @for((c: Case, index: Int) <- cases.results.zipWithIndex) {
+            @defining(c.application) { a: Application =>
+                @if(a.isBTI) {
                     @defining(a.asBTI) { btiApp: BTIApplication =>
                         <tr id="@{id}-row-@index">
                             <th scope="row">
-                                @if(c.queueId.isDefined && !c.assignee.map(_.id).contains(request.operator.id)) {
-                                    <a tabindex="@{startAtTabIndex+index}" id="@{id}-row-@{index}-reference" href="@AssignCaseController.get(c.reference)">@c.reference</a>
-                                } else {
-                                    <a tabindex="@{startAtTabIndex+index}" id="@{id}-row-@{index}-reference" href="@CaseController.trader(c.reference)">@c.reference</a>
-                                }
+                            @if(c.queueId.isDefined && !c.assignee.map(_.id).contains(request.operator.id)) {
+                                <a tabindex="@{startAtTabIndex + index}" id="@{id}-row-@{index}-reference" href="@AssignCaseController.get(c.reference)">@c.reference</a>
+                            } else {
+                                <a tabindex="@{startAtTabIndex + index}" id="@{id}-row-@{index}-reference" href="@CaseController.trader(c.reference)">@c.reference</a>
+                            }
                             </th>
                             <td id="@{id}-row-@{index}-good_name">@btiApp.goodName</td>
                             <td id="@{id}-row-@{index}-business_name">@btiApp.holder.businessName</td>
@@ -61,8 +68,44 @@
                             <td>@days_elapsed(c.daysElapsed, s"$id-row-$index-days_elapsed")</td>
                         </tr>
                     }
+                } else {
+                    @if(a.isLiabilityOrder) {
+                        @defining(a.asLiabilityOrder) { liab: LiabilityOrder =>
+                            <tr id="@{id}-row-@index">
+                                <th scope="row">
+                                    @if(c.queueId.isDefined && !c.assignee.map(_.id).contains(request.operator.id)){
+                            <a tabindex="@{startAtTabIndex + index}" id="@{id}-row-@{index}-reference" href="@AssignCaseController.get(c.reference)">
+                                @c.reference
+                            </a>
+                            } else {
+                            <a tabindex="@{startAtTabIndex + index}" id="@{id}-row-@{index}-reference" href="@CaseController.trader(c.reference)">
+                                @c.reference
+                            </a>
+                            }
+                            </th>
+                            <td id="@{id}-row-@{index}-good_name">
+                                @liab.goodName
+                            </td>
+                                    <td id="@{id}-row-@{index}-business_name">
+                                        @liab.traderName
+                                    </td>
+                                    <td id="@{id}-row-@{index}-created_date">
+                                        @Dates.format(c.createdDate)
+                                    </td>
+                                    <td>@case_status(c, s"$id-row-$index-status")</td>
+                                    <td id="@{id}-row-@{index}-type">
+                                        Liability</br>
+                                        @if(liab.status == "LIVE"){
+                                            <span class="live-red-text">LIVE</span>
+                                        }
+                                    </td>
+                                    <td>@days_elapsed(c.daysElapsed, s"$id-row-$index-days_elapsed")</td>
+                            </tr>
+                        }
+                    }
                 }
             }
+        }
         </tbody>
     </table>
 }
