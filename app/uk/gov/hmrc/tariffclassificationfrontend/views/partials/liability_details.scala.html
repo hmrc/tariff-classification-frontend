@@ -71,19 +71,19 @@
 
             <div id="liability-item-name" class="grid-row">
                 <dt class="column-one-third">
-                    @messages("case.liability.item.name")
+                    @messages("case.liability.code.trader")
                 </dt>
                 <dd class="column-two-thirds">
-                    @liability.goodName
+                    @liability.traderCommodityCode
                 </dd>
             </div>
 
             <div id="liability-item-name" class="grid-row">
                 <dt class="column-one-third">
-                    @messages("case.liability.item.name")
+                       @messages("case.liability.code.officer")
                 </dt>
                 <dd class="column-two-thirds">
-                    @liability.goodName
+                    @liability.officerCommodityCode
                 </dd>
             </div>
 
@@ -116,6 +116,5 @@
         </dl>
 
         @liability_actions(c, startAtTabIndex)
-
     }
 }

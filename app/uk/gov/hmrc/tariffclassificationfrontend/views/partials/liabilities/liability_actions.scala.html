@@ -28,7 +28,7 @@
 <h3 class="heading-medium mt-0"> Actions on this case </h3>
 
 @if(c.status == CaseStatus.OPEN){
-    <div id="open-case-section" class="mt-1">
+    <div id="refer-case-section" class="mt-1">
         <p class="mt-1">
             <a  tabindex="@{startAtTabIndex +1}" id="refer-case-button" href="@ReferCaseController.getReferCase(c.reference)">Refer this case</a>
         </p>
