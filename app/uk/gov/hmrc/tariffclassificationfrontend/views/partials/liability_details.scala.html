@@ -27,6 +27,52 @@
 
         @tab_heading("liability", messages("case.menu.liability"))
 
-        Hello trader @liability.traderName
+        <h3 class="heading-medium mt-0">@messages("case.liability.about.title") </h3>
+
+        <dl class="dl-mb-2">
+            <div id="liability-entry-date" class="grid-row">
+                <dt class="column-one-third">
+                    @messages("case.liability.entry.date")
+                </dt>
+                <dd class="column-two-thirds">
+                    @liability.entryDate
+                </dd>
+            </div>
+            <div id="liability-entry-number" class="grid-row">
+                <dt class="column-one-third">
+                    @messages("case.liability.entry.number")
+                </dt>
+                <dd class="column-two-thirds">
+                    @liability.entryNumber
+                </dd>
+            </div>
+               <div id="liability-trader-name" class="grid-row">
+                <dt class="column-one-third">
+                    @messages("case.liability.trader.name")
+                </dt>
+                <dd class="column-two-thirds">
+                    @liability.traderName
+                </dd>
+            </div>
+               <div id="liability-item-name" class="grid-row">
+                <dt class="column-one-third">
+                    @messages("case.liability.item.name")
+                </dt>
+                <dd class="column-two-thirds">
+                    @liability.goodName
+                </dd>
+            </div>
+
+        </dl>
+
+        <div class="mt-1">
+            @if(request.hasPermission(Permission.REFER_CASE)) {@refer_case_button(c, Some(startAtTabIndex+2))}
+            @if(request.hasPermission(Permission.REOPEN_CASE)) {@reopen_case_button(c, Some(startAtTabIndex+4))}
+        </div>
+
+        @if(request.hasPermission(Permission.SUSPEND_CASE)) {@reject_suspend_section(c, Some(startAtTabIndex+5))}
+
+
+
     }
 }

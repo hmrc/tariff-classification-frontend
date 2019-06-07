@@ -145,6 +145,15 @@ case.sample.status.change-status-confirm=Confirm and change status
 case.sample.status.change-status-cancel=Cancel and return to case
 case.sample.status.none-selected=Select a sample status
 
+
+
+case.liability.about.title = Information about this liability from the C592
+case.liability.entry.date = Liability entry date
+case.liability.entry.number = Liability entry number
+case.liability.trader.name = Trader name
+case.liability.item.name = Item name
+
+
 events.table.empty=There are no events for this case
 
 errors.case-not-found.title=Case not found
@@ -265,6 +274,7 @@ site.yes = Yes
 site.none = None
 site.unknown = Unknown
 
+page.title.liability=Liability details
 page.title.trader=Applicant details
 page.title.application=Item information
 page.title.sample=Sample details
