@@ -80,7 +80,7 @@ class ExtendedUseCaseControllerSpec extends UnitSpec with Matchers
       val result = await(controller(c).chooseStatus("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference")
+      locationOf(result) shouldBe Some(routes.CaseController.get("reference").url)
     }
 
     "redirect for other status" in {
@@ -89,7 +89,7 @@ class ExtendedUseCaseControllerSpec extends UnitSpec with Matchers
       val result = await(controller(c).chooseStatus("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference")
+      locationOf(result) shouldBe Some(routes.CaseController.get("reference").url)
     }
 
     "return OK when user has right permissions" in {
@@ -124,7 +124,7 @@ class ExtendedUseCaseControllerSpec extends UnitSpec with Matchers
       verify(casesService).updateExtendedUseStatus(refEq(c), refEq(false), any[Operator])(any[HeaderCarrier])
 
       status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/appeal")
+      locationOf(result) shouldBe Some(routes.AppealCaseController.appealDetails("reference").url)
     }
 
     "redirect for unchanged status" in {
@@ -136,7 +136,7 @@ class ExtendedUseCaseControllerSpec extends UnitSpec with Matchers
       verify(casesService, never()).updateExtendedUseStatus(any[Case], any[Boolean], any[Operator])(any[HeaderCarrier])
 
       status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/appeal")
+      locationOf(result) shouldBe Some(routes.AppealCaseController.appealDetails("reference").url)
     }
 
     "redirect for case without cancellation reason" in {
@@ -147,7 +147,7 @@ class ExtendedUseCaseControllerSpec extends UnitSpec with Matchers
       verify(casesService, never()).updateExtendedUseStatus(any[Case], any[Boolean], any[Operator])(any[HeaderCarrier])
 
       status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference")
+      locationOf(result) shouldBe Some(routes.CaseController.get("reference").url)
     }
 
     "redirect for other status" in {
@@ -158,7 +158,7 @@ class ExtendedUseCaseControllerSpec extends UnitSpec with Matchers
       verify(casesService, never()).updateExtendedUseStatus(any[Case], any[Boolean], any[Operator])(any[HeaderCarrier])
 
       status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference")
+      locationOf(result) shouldBe Some(routes.CaseController.get("reference").url)
     }
 
     "return OK when user has right permissions" in {
@@ -171,7 +171,7 @@ class ExtendedUseCaseControllerSpec extends UnitSpec with Matchers
         .updateStatus("reference")(newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("state" -> "false")))
 
       status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/appeal")
+      locationOf(result) shouldBe Some(routes.AppealCaseController.appealDetails("reference").url)
     }
 
     "redirect unauthorised when does not have right permissions" in {

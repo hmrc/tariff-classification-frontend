@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,26 +12,21 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@(id: String, summary: String, body: Option[Html] = None, open: Boolean = false, useTabIndex: Option[Int] = None)
+package uk.gov.hmrc.tariffclassificationfrontend.models
 
-@if(body.isDefined) {
-    <details role="group" @if(open){open} @if(useTabIndex.isDefined){ tabindex="@{useTabIndex.get}"}>
-        <summary role="button" @if(useTabIndex.isDefined){ tabindex="@{useTabIndex.get}"}>
-            <span id="@{id}-title">
-                @summary
-            </span>
-        </summary>
-        <div id="@{id}-body">
-            @{body.get}
-        </div>
-    </details>
-} else {
-    <div id="@{id}-title">
-        @summary
-    </div>
+object SampleReturn extends Enumeration {
+  type SampleReturn = Value
+
+  val YES, NO, TO_BE_CONFIRMED = Value
+
+  def format(status: Option[SampleReturn]): String = {
+    status match {
+      case Some(YES) => "Yes"
+      case Some(NO) => "No"
+      case Some(TO_BE_CONFIRMED) => "To be confirmed"
+      case _ => "Unknown"
+    }
+  }
 }
-
-
-

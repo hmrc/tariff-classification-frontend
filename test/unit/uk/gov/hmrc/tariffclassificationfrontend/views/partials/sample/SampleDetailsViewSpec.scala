@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.views.partials.sample
 
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Event, NoPagination, Operator, Paged, SampleStatus, SampleStatusChange}
+import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewSpec
 import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.sample.sample_details
@@ -98,12 +98,36 @@ class SampleDetailsViewSpec extends ViewSpec {
       // When
       val doc = view(sample_details(caseWithSample,Paged.apply(sampleStatusActivity,NoPagination(),3)))
 
-      doc.getElementById("sample-status-events-row-0-title") should containText(SampleStatus.format(Some(SampleStatus.AWAITING)))
-      doc.getElementById("sample-status-events-row-1-title") should containText(SampleStatus.format(Some(SampleStatus.MOVED_TO_ELM)))
-      doc.getElementById("sample-status-events-row-2-title") should containText(SampleStatus.format(Some(SampleStatus.DESTROYED)))
+      doc.getElementById("sample-status-events-row-0-title") should containText("Sample status changed from none to awaiting sample")
+      doc.getElementById("sample-status-events-row-1-title") should containText("Sample status changed from awaiting sample to moved to ELM")
+      doc.getElementById("sample-status-events-row-2-title") should containText("Sample status changed from moved to ELM to destroyed")
     }
 
+    "render sample requested when present on case" in {
+      // Given
+      val caseWithSample = aCase(
+        withSampleRequested(Some(Operator("id", name = Some("Tester Op"))), Some(SampleReturn.TO_BE_CONFIRMED))
+      )
 
+      // When
+      val doc = view(sample_details(caseWithSample,Paged.empty[Event]))
+
+      doc.getElementById("sample-requested-by") should containText("Tester Op")
+      doc.getElementById("sample-requested-return") should containText(SampleReturn.format(Some(SampleReturn.TO_BE_CONFIRMED)))
+    }
+
+    "not render sample requested when not present on case" in {
+      // Given
+      val caseWithSample = aCase(
+        withSampleRequested(None, None)
+      )
+
+      // When
+      val doc = view(sample_details(caseWithSample,Paged.empty[Event]))
+
+      doc shouldNot containElementWithID("sample-requested-by")
+      doc shouldNot containElementWithID("sample-requested-return")
+    }
   }
 
 }

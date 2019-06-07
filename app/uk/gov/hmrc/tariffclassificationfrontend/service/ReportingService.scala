@@ -31,7 +31,7 @@ class ReportingService @Inject()(connector: BindingTariffClassificationConnector
                   (implicit hc: HeaderCarrier): Future[Seq[ReportResult]] = {
     val report = CaseReport(
       filter = CaseReportFilter(
-        decisionStartDate = Some(decisionStartDate)
+        decisionStartDate = Some(decisionStartDate), applicationType = Some(Set("BTI"))
       ),
       group = CaseReportGroup.QUEUE,
       field = CaseReportField.ACTIVE_DAYS_ELAPSED
@@ -55,7 +55,7 @@ class ReportingService @Inject()(connector: BindingTariffClassificationConnector
                        (implicit hc: HeaderCarrier): Future[Seq[ReportResult]] = {
     val report = CaseReport(
       filter = CaseReportFilter(
-        referralDate = Some(referralDate)
+        referralDate = Some(referralDate), applicationType = Some(Set("BTI"))
       ),
       group = CaseReportGroup.QUEUE,
       field = CaseReportField.REFERRED_DAYS_ELAPSED

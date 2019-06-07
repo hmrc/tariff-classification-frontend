@@ -18,19 +18,17 @@ package uk.gov.hmrc.tariffclassificationfrontend.forms
 
 import play.api.data.Form
 import play.api.data.Forms._
-import play.api.data.validation.{Constraint, Invalid, Valid}
+import uk.gov.hmrc.tariffclassificationfrontend.forms.mappings.FormMappings.{oneOf, textNonEmpty}
 import uk.gov.hmrc.tariffclassificationfrontend.models.{CancelReason, RulingCancellation}
 
 object CancelRulingForm {
 
-  private def oneOf(values: CancelReason.ValueSet): Constraint[String] = Constraint("constraints.cancel-reason") {
-    case s: String if CancelReason.values.exists(_.toString == s) => Valid
-    case _ => Invalid(s"Must be one of [${values.toSeq.mkString(", ")}]")
-  }
 
   lazy val form: Form[RulingCancellation] = Form(mapping(
-    "reason" -> text.verifying(oneOf(CancelReason.values)),
-    "note" -> nonEmptyText
+    "reason" -> oneOf("status.change.cancel.reason.error",CancelReason),
+    "note" -> textNonEmpty("error.empty.cancel.note")
   )(RulingCancellation.apply)(RulingCancellation.unapply)
   )
+
+
 }

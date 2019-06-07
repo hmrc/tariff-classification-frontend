@@ -84,7 +84,7 @@ class AssignCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       bodyOf(result) should include("assign_case-heading")
     }
 
-    "redirect to Trader Details for cases without a queue" in {
+    "redirect to Case Index for cases without a queue" in {
       val aCaseWithoutQueue = aCase(withoutQueue())
 
       val result: Result = await(controller(aCaseWithoutQueue).get("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
@@ -92,10 +92,10 @@ class AssignCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
       charsetOf(result) shouldBe None
-      locationOf(result) shouldBe Some(routes.CaseController.trader("reference").url)
+      locationOf(result) shouldBe Some(routes.CaseController.get("reference").url)
     }
 
-    "redirect to Trader Details for cases assigned to self" in {
+    "redirect to Case Index for cases assigned to self" in {
       val aCaseAssignedToSelf = aCase(withQueue("1"), withAssignee(Some(operator)))
 
       val result: Result = await(controller(aCaseAssignedToSelf).get("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
@@ -103,7 +103,7 @@ class AssignCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
       charsetOf(result) shouldBe None
-      locationOf(result) shouldBe Some(routes.CaseController.trader("reference").url)
+      locationOf(result) shouldBe Some(routes.CaseController.get("reference").url)
     }
 
   }
@@ -125,10 +125,10 @@ class AssignCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
       charsetOf(result) shouldBe None
-      locationOf(result) shouldBe Some(routes.CaseController.trader("reference").url)
+      locationOf(result) shouldBe Some(routes.CaseController.get("reference").url)
     }
 
-    "redirect to Trader Details for cases in a queue" in {
+    "redirect to Case Index for cases in a queue" in {
       val aCaseWithoutQueue = aCase(withoutQueue())
 
       val result: Result = await(controller(aCaseWithoutQueue).post("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
@@ -136,10 +136,10 @@ class AssignCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
       charsetOf(result) shouldBe None
-      locationOf(result) shouldBe Some(routes.CaseController.trader("reference").url)
+      locationOf(result) shouldBe Some(routes.CaseController.get("reference").url)
     }
 
-    "redirect to Trader Details for cases assigned to self" in {
+    "redirect to Case Index for cases assigned to self" in {
       val aCaseAssignedToSelf = aCase(withQueue("1"), withAssignee(Some(operator)))
 
       val result: Result = await(controller(aCaseAssignedToSelf).post("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
@@ -147,7 +147,7 @@ class AssignCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
       charsetOf(result) shouldBe None
-      locationOf(result) shouldBe Some(routes.CaseController.trader("reference").url)
+      locationOf(result) shouldBe Some(routes.CaseController.get("reference").url)
     }
 
     "redirect to Assign for cases already assigned" in {

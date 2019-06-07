@@ -42,14 +42,15 @@
             formControlClass = Some("w-50")
         )
 
-        <h2 class="heading-large">Is this a live liability?</h2>
         @input_radiogroup(
             field = form("liability-status"),
+            label = Some("Is this a live liability?"),
+            labelClass = Some("heading-large"),
             options = Seq(
                 RadioOption(LiabilityStatus.LIVE.toString, "Yes, this is a live liability"),
                 RadioOption(LiabilityStatus.NON_LIVE.toString, "No, this is not a live liability")
             ),
-            id = ""
+            id = "create_liability-liability_status"
         )
 
         @confirm_or_cancel_buttons(

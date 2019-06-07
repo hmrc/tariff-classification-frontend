@@ -145,7 +145,16 @@ case.sample.status.change-status-confirm=Confirm and change status
 case.sample.status.change-status-cancel=Cancel and return to case
 case.sample.status.none-selected=Select a sample status
 
+case.sample.request.heading=Sample request details
+case.sample.request.operator=Sample request by {0}
+case.sample.request.return=Does the sample need to be returned?
+case.sample.request.change=Change
 
+case.sample.change-sample-return=Change sample return
+case.sample.return.change-return-header=Does the applicant want the sample returned?
+case.sample.return.change-return-confirm=Confirm and change return
+case.sample.return.change-return-cancel=Cancel and return to case
+case.sample.return.none-selected=Select a sample return
 
 case.liability.about.title = Information about this liability from the C592
 case.liability.commodity.code.info = Commodity code information
@@ -179,12 +188,19 @@ error.empty.default = This field is required
 error.empty.note = Enter a case note
 error.empty.keyword = Enter a keyword
 error.empty.sample.status = Select a sample status
+error.empty.sample.return = Select a return option
 error.empty.queue = Select a queue to release this case
 error.empty.appealType = Select Alternative Dispute Resolution, review or a level of appeal to continue
 error.empty.appealStatus = Select status to continue
 error.empty.liability-status = Select a status to continue
 error.empty.trader-name = Enter a Trader Name
 
+error.empty.cancel.note=Add a note giving details of why you are cancelling this case
+error.empty.reject.note=Add a note giving details of why you are rejecting this case
+error.empty.suppress.note=Add a note giving details of why you are suppressing this case
+error.empty.suspend.note=Add a note giving details of why you are suspending this case
+error.empty.refer.note = Add a note giving details of why you are referring this case
+error.empty.refer.to=Select who you are referring this case to
 
 status.change.upload.title=You can upload:
 status.change.upload.label=Upload a file
@@ -300,6 +316,7 @@ page.title.case.reopened=Case reopened
 page.title.suspend.case=Suspend this case
 page.title.case.suspended=Case suspended
 page.title.change.sample.status=Change sample status
+page.title.change.sample.return=Change sample return
 page.title.reject.case=Reject this case
 page.title.case.rejected=Case rejected
 page.title.release.case=Release this case
@@ -324,6 +341,7 @@ page.title.choose.appeal.type=Choose appeal type
 page.title.extended.use=Extended use of this ruling
 page.title.ruling.not.found=Ruling not found
 page.title.case.queues=Tariff classification case queues
+page.title.create_liability=New liability
 
 
 view.attachment.unavailable.title=Attachment unavailable

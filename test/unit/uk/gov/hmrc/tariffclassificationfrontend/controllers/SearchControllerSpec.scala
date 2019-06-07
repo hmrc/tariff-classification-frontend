@@ -68,7 +68,21 @@ class SearchControllerSpec extends UnitSpec with Matchers with WithFakeApplicati
       val result = await(controller.search(defaultTab, reference = Some("reference"), page = 2)(fakeRequest))
 
       status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some(routes.CaseController.trader("reference").url)
+      locationOf(result) shouldBe Some(routes.CaseController.get("reference").url)
+    }
+
+    "redirect to case if searching by reference with padding" in {
+      val result = await(controller.search(defaultTab, reference = Some(" reference "), page = 2)(fakeRequest))
+
+      status(result) shouldBe Status.SEE_OTHER
+      locationOf(result) shouldBe Some(routes.CaseController.get("reference").url)
+    }
+
+    "redirect to default page if reference is empty" in {
+      val result = await(controller.search(defaultTab, reference = Some(" "), page = 2)(fakeRequest))
+
+      status(result) shouldBe Status.SEE_OTHER
+      locationOf(result) shouldBe Some(routes.IndexController.get().url)
     }
 
     "not render results if empty" in {
