@@ -59,13 +59,6 @@ class CaseController @Inject()(verify: RequestActions,
     }
   }
 
-  def get(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)) { implicit request =>
-    request.`case`.application.`type` match {
-      case ApplicationType.BTI => Redirect(routes.CaseController.trader(reference))
-      case ApplicationType.LIABILITY_ORDER => Redirect(routes.CaseController.activityDetails(reference))
-    }
-  }
-
   def trader(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
     validateAndRenderView(
       TRADER,
