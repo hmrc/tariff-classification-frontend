@@ -21,7 +21,7 @@
 @(c: Case, useTabIndex : Option[Int] = None)(implicit  messages: Messages)
 <h3 class="heading-medium mt-30">Contact details</h3>
 
-@defining(c.application.asBTI.contact) { co: Contact =>
+@defining(c.application.contact) { co: Contact =>
     <dl class="dl-mb-2">
         <div class="grid-row">
             <dt class="column-one-third">

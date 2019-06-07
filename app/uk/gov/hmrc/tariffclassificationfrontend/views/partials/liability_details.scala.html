@@ -15,10 +15,11 @@
  *@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.AttachmentsController
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.{AttachmentsController, SuppressCaseController, ReferCaseController, ReopenCaseController, RejectCaseController, SuspendCaseController}
 @import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
-@import uk.gov.hmrc.tariffclassificationfrontend.models.{Application, LiabilityOrder, Case, EORIDetails, Permission, StoredAttachment}
+@import uk.gov.hmrc.tariffclassificationfrontend.models.{Application, LiabilityOrder, Case, EORIDetails, Permission, StoredAttachment, CaseStatus}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials._
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.liabilities.liability_actions
 
 @(c: Case, startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
@@ -27,9 +28,12 @@
 
         @tab_heading("liability", messages("case.menu.liability"))
 
-        <h3 class="heading-medium mt-0">@messages("case.liability.about.title") </h3>
+        <div id="case-board-number">  @c.caseBoardsFileNumber.map(number => s"Case board Number $number") </div>
 
         <dl class="dl-mb-2">
+
+            <h3 class="heading-medium mt-0">@messages("case.liability.about.title") </h3>
+
             <div id="liability-entry-date" class="grid-row">
                 <dt class="column-one-third">
                     @messages("case.liability.entry.date")
@@ -46,7 +50,7 @@
                     @liability.entryNumber
                 </dd>
             </div>
-               <div id="liability-trader-name" class="grid-row">
+            <div id="liability-trader-name" class="grid-row">
                 <dt class="column-one-third">
                     @messages("case.liability.trader.name")
                 </dt>
@@ -54,7 +58,7 @@
                     @liability.traderName
                 </dd>
             </div>
-               <div id="liability-item-name" class="grid-row">
+            <div id="liability-item-name" class="grid-row">
                 <dt class="column-one-third">
                     @messages("case.liability.item.name")
                 </dt>
@@ -63,16 +67,55 @@
                 </dd>
             </div>
 
+            <h3 class="heading-medium mt-0">@messages("case.liability.commodity.code.info") </h3>
+
+            <div id="liability-item-name" class="grid-row">
+                <dt class="column-one-third">
+                    @messages("case.liability.item.name")
+                </dt>
+                <dd class="column-two-thirds">
+                    @liability.goodName
+                </dd>
+            </div>
+
+            <div id="liability-item-name" class="grid-row">
+                <dt class="column-one-third">
+                    @messages("case.liability.item.name")
+                </dt>
+                <dd class="column-two-thirds">
+                    @liability.goodName
+                </dd>
+            </div>
+
+            <h3 class="heading-medium mt-0">@messages("case.liability.contact.details") </h3>
+
+            <div id="liability-contact-name" class="grid-row">
+                <dt class="column-one-third">
+                    @messages("case.liability.contact.name")
+                </dt>
+                <dd class="column-two-thirds">
+                    @liability.contact.name
+                </dd>
+            </div>
+            <div id="liability-contact-email" class="grid-row">
+                <dt class="column-one-third">
+                    @messages("case.liability.contact.email")
+                </dt>
+                <dd class="column-two-thirds">
+                    @liability.contact.email
+                </dd>
+            </div>
+            <div id="liability-contact.phone" class="grid-row">
+                <dt class="column-one-third">
+                    @messages("case.liability.contact.phone")
+                </dt>
+                <dd class="column-two-thirds">
+                    @liability.contact.phone
+                </dd>
+            </div>
         </dl>
 
-        <div class="mt-1">
-            @if(request.hasPermission(Permission.REFER_CASE)) {@refer_case_button(c, Some(startAtTabIndex+2))}
-            @if(request.hasPermission(Permission.REOPEN_CASE)) {@reopen_case_button(c, Some(startAtTabIndex+4))}
-        </div>
-
-        @if(request.hasPermission(Permission.SUSPEND_CASE)) {@reject_suspend_section(c, Some(startAtTabIndex+5))}
-
-
+        @liability_actions(c, startAtTabIndex)
 
     }
 }
