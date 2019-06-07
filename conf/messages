@@ -31,6 +31,7 @@ case.menu.attachments=Attachments
 case.menu.activity=Activity
 case.menu.keywords=Keywords
 case.menu.appeal=Appeals
+case.menu.liability=Liability
 
 case.title={0} for {1}
 case.status=Status

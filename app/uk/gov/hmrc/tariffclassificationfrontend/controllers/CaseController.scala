@@ -49,12 +49,12 @@ class CaseController @Inject()(verify: RequestActions,
   private lazy val activityForm: Form[ActivityFormData] = ActivityForm.form
   private lazy val keywordForm: Form[String] = KeywordForm.form
   private val pagesWithStartTabIndexes: Map[CaseDetailPage, Int] = Map(TRADER -> 1000, APPLICATION_DETAILS -> 2000, SAMPLE_DETAILS -> 3000, ATTACHMENTS -> 4000,
-    ACTIVITY -> 5000, KEYWORDS -> 6000, RULING -> 7000, APPEAL -> 8000)
+    ACTIVITY -> 5000, KEYWORDS -> 6000, RULING -> 7000, APPEAL -> 8000, LIABILITY -> 9000)
 
   def get(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)) { implicit request =>
     request.`case`.application.`type` match {
       case ApplicationType.BTI => Redirect(routes.CaseController.trader(reference))
-      case ApplicationType.LIABILITY_ORDER => Redirect(routes.CaseController.activityDetails(reference))
+      case ApplicationType.LIABILITY_ORDER => Redirect(routes.LiabilityController.liabilityDetails(reference))
     }
   }
 

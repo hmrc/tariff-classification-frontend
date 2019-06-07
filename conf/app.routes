@@ -19,6 +19,7 @@ GET         /cases                                              controllers.Defa
 GET         /cases/:reference                                   @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.get(reference: String)
 GET         /cases/:reference/trader                            @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.trader(reference: String)
 GET         /cases/:reference/application                       @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.applicationDetails(reference: String)
+GET         /cases/:reference/liability                         @uk.gov.hmrc.tariffclassificationfrontend.controllers.LiabilityController.liabilityDetails(reference: String)
 
 GET         /cases/:reference/sample                            @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.sampleDetails(reference: String)
 
@@ -96,6 +97,8 @@ GET         /search                                             @uk.gov.hmrc.tar
 
 GET         /new-liability                                      @uk.gov.hmrc.tariffclassificationfrontend.controllers.CreateLiabilityController.get()
 POST        /new-liability                                      @uk.gov.hmrc.tariffclassificationfrontend.controllers.CreateLiabilityController.post()
+
+
 
 # Note: Browser links cant send a DELETE so it has to be GET in this case
 GET         /cases/:reference/keywords/:keyword                 @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.removeKeyword(reference: String, keyword: String)
