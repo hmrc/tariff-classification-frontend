@@ -57,6 +57,19 @@ class ApplicationSpec extends UnitSpec {
 
   }
 
+  "Application 'Is Live Liability Order'" should {
+
+    "be truthy for a Live Liability" in {
+      Cases.liabilityApplicationExample.copy(status = LiabilityStatus.LIVE).isLiveLiabilityOrder shouldBe true
+    }
+
+    "be falsy for another type" in {
+      Cases.liabilityApplicationExample.copy(status = LiabilityStatus.NON_LIVE).isLiveLiabilityOrder shouldBe false
+      Cases.btiApplicationExample.isLiveLiabilityOrder shouldBe false
+    }
+
+  }
+
   "Application 'As BTI'" should {
 
     "cast a BTI" in {
@@ -81,6 +94,18 @@ class ApplicationSpec extends UnitSpec {
       assertThrows[RuntimeException] {
         Cases.btiApplicationExample.asLiabilityOrder
       }
+    }
+
+  }
+
+  "Application 'Business Name'" should {
+
+    "return for Liability" in {
+      Cases.liabilityApplicationExample.businessName shouldBe Cases.liabilityApplicationExample.asLiabilityOrder.traderName
+    }
+
+    "return for BTI" in {
+      Cases.btiApplicationExample.businessName shouldBe Cases.btiApplicationExample.asBTI.holder.businessName
     }
 
   }
