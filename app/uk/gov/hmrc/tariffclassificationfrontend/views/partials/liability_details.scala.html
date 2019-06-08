@@ -18,6 +18,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.{AttachmentsController, SuppressCaseController, ReferCaseController, ReopenCaseController, RejectCaseController, SuspendCaseController}
 @import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{Application, LiabilityOrder, Case, EORIDetails, Permission, StoredAttachment, CaseStatus}
+@import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials._
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.liabilities.liability_actions
 
@@ -28,9 +29,18 @@
 
         @tab_heading("liability", messages("case.menu.liability"))
 
-        <div id="case-board-number">  @c.caseBoardsFileNumber.map(number => s"Case board Number $number") </div>
-
         <dl class="dl-mb-2">
+
+            @if(c.caseBoardsFileNumber.isDefined) {
+                <div id="case-board-number" class="grid-row">
+                    <dt class="column-one-third">
+                    @messages("case.liability.board.number")
+                    </dt>
+                    <dd class="column-two-thirds">
+                    @c.caseBoardsFileNumber
+                    </dd>
+                </div>
+            }
 
             <h3 class="heading-medium mt-0">@messages("case.liability.about.title") </h3>
 
@@ -39,7 +49,7 @@
                     @messages("case.liability.entry.date")
                 </dt>
                 <dd class="column-two-thirds">
-                    @liability.entryDate
+                    @Dates.format(liability.entryDate)
                 </dd>
             </div>
             <div id="liability-entry-number" class="grid-row">
@@ -69,7 +79,7 @@
 
             <h3 class="heading-medium mt-0">@messages("case.liability.commodity.code.info") </h3>
 
-            <div id="liability-item-name" class="grid-row">
+            <div id="liability-trader-code" class="grid-row">
                 <dt class="column-one-third">
                     @messages("case.liability.code.trader")
                 </dt>
@@ -78,7 +88,7 @@
                 </dd>
             </div>
 
-            <div id="liability-item-name" class="grid-row">
+            <div id="liability-officer-code" class="grid-row">
                 <dt class="column-one-third">
                        @messages("case.liability.code.officer")
                 </dt>
