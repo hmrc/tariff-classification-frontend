@@ -63,7 +63,7 @@
                     <td id="@{id}-row-@{index}-good_name">@a.goodsName</td>
                     <td id="@{id}-row-@{index}-business_name">@a.businessName</td>
                     <td id="@{id}-row-@{index}-created_date">@Dates.format(c.createdDate)</td>
-                    <td>@case_status(c, s"$id-row-$index-status")</td>
+                    <td>@case_status(c, s"$id-row-$index-status", true)</td>
                     <td id="@{id}-row-@{index}-type">@type_description(a)</td>
                     <td>@days_elapsed(c.daysElapsed, s"$id-row-$index-days_elapsed")</td>
                 </tr>
