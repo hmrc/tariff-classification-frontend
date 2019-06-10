@@ -57,7 +57,7 @@ sealed trait Application {
   def getType: String = {
     `type` match {
       case ApplicationType.BTI => "BTI"
-      case ApplicationType.LIABILITY_ORDER => "Liability Order"
+      case ApplicationType.LIABILITY_ORDER => "Liability"
     }
   }
 }
