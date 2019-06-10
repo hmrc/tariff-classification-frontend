@@ -34,6 +34,28 @@ class MyCasesViewSpec extends ViewSpec {
     val liabCase = Cases.liabilityCaseExample
     val liveLiabCase = Cases.liabilityLiveCaseExample
 
+    "render create liability button when user has CREATE_CASES permission" in {
+      // Given
+      val queues = Seq(queue1, queue2)
+
+      // When
+      val doc = view(html.my_cases(queues, Seq.empty, operator, Map.empty)(request = requestWithPermissions(Permission.CREATE_CASES), messages, appConfig))
+
+      // Then
+      doc should containElementWithID("create_liability-button")
+    }
+
+    "not render create liability button when user does not have permission" in {
+      // Given
+      val queues = Seq(queue1, queue2)
+
+      // When
+      val doc = view(html.my_cases(queues, Seq.empty, operator, Map.empty)(request = requestWithPermissions(), messages, appConfig))
+
+      // Then
+      doc should not (containElementWithID("create_liability-button"))
+    }
+
     "render empty list of cases" in {
       // Given
       val queues = Seq(queue1, queue2)
