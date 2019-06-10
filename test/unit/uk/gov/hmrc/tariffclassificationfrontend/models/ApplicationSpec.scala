@@ -24,7 +24,7 @@ class ApplicationSpec extends UnitSpec {
   "Application 'Get Type'" should {
 
     "convert liability order type" in {
-      Cases.liabilityApplicationExample.getType shouldBe "Liability Order"
+      Cases.liabilityApplicationExample.getType shouldBe "Liability"
     }
 
     "convert bti type" in {
