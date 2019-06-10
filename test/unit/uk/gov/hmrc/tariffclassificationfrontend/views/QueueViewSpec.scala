@@ -26,6 +26,7 @@ class QueueViewSpec extends ViewSpec {
     val queue1 = Queue("1", "queue1_name", "Queue 1 Name")
     val queue2 = Queue("2", "queue2_name", "Queue 2 Name")
     val case1 = Cases.btiCaseExample
+    val liabCase = Cases.liabilityCaseExample
 
     "render empty list of cases" in {
       // Given
@@ -70,6 +71,19 @@ class QueueViewSpec extends ViewSpec {
       doc.getElementById("cases_list-table") should containText(case1.reference)
       doc.getElementById("cases_list-table") should containText(case1.status.toString)
       doc.getElementById("cases_list-table") should containText(case1.application.getType)
+    }
+
+    "render both BTI and Liability" in {
+      // Given
+      val queues = Seq(queue1, queue2)
+      val cases = Seq(case1,liabCase)
+
+      // When
+      val doc = view(html.queue(queues, queue1, Map.empty, Paged(cases))(request = requestWithPermissions(Permission.VIEW_QUEUE_CASES, Permission.VIEW_MY_CASES), messages, appConfig))
+
+      // Then
+      doc.getElementById("cases_list-row-0-type") should containText("BTI")
+      doc.getElementById("cases_list-row-1-type") should containText("Liability")
     }
   }
 
