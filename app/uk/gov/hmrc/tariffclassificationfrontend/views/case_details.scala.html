@@ -29,11 +29,12 @@
     @case_heading(c, displayBackLink = true)
 
     <div class="tabs">
-        @if(c.application.isLiabilityOrder){
-            @case_nav_liability(page, c)
-        }
-        @if(c.application.isBTI){
+        @if(c.application.isBTI) {
             @case_nav_bti(page, c)
+        }else{
+            @if(c.application.isLiabilityOrder) {
+                @case_nav_liability(page, c)
+            }
         }
         <div class="tabs__panel">
             <div class="tabs__panel__content">

@@ -23,10 +23,10 @@ import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models.Case
+import uk.gov.hmrc.tariffclassificationfrontend.models.TabIndexes.tabIndexFor
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedCaseRequest
 import uk.gov.hmrc.tariffclassificationfrontend.views
-import uk.gov.hmrc.tariffclassificationfrontend.views.CaseDetailPage
-import uk.gov.hmrc.tariffclassificationfrontend.views.CaseDetailPage.CaseDetailPage
+import uk.gov.hmrc.tariffclassificationfrontend.views.CaseDetailPage.{CaseDetailPage, LIABILITY}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -37,16 +37,13 @@ class LiabilityController @Inject()(verify: RequestActions,
                                     val messagesApi: MessagesApi,
                                     implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
-  private lazy val menuTitle = CaseDetailPage.LIABILITY
-
-  private val startTabIndex = 11000
-
+  private lazy val menuTitle = LIABILITY
 
   def liabilityDetails(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
     getCaseAndRenderView(
       menuTitle,
       c => {
-        successful(views.html.partials.liability_details(c, startTabIndex))
+        successful(views.html.partials.liability_details(c, tabIndexFor(LIABILITY)))
       }
     )
   }
