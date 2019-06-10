@@ -33,7 +33,7 @@ case class Search
 ) {
 
   def isEmpty: Boolean = {
-    // Status & Application Type intentionally as it is a post-search filter
+    // Status & Application Type omitted intentionally as it is a post-search filter
     traderName.isEmpty && commodityCode.isEmpty && decisionDetails.isEmpty && keywords.isEmpty
   }
 
