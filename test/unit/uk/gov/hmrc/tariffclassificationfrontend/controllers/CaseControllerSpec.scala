@@ -22,7 +22,6 @@ import org.mockito.ArgumentMatchers.{any, anyString, refEq}
 import org.mockito.BDDMockito._
 import org.mockito.Mockito.verify
 import org.scalatest.Matchers
-import org.mockito.Mockito.verify
 import org.scalatest.mockito.MockitoSugar
 import play.api.http.Status
 import play.api.i18n.{DefaultLangs, DefaultMessagesApi}
@@ -89,7 +88,7 @@ class CaseControllerSpec extends UnitSpec with Matchers with WithFakeApplication
         val result = controller(c).get("reference")(fakeRequest)
 
         status(result) shouldBe Status.SEE_OTHER
-        locationOf(result) shouldBe Some(routes.CaseController.activityDetails("reference").url)
+        locationOf(result) shouldBe Some(routes.LiabilityController.liabilityDetails("reference").url)
       }
     }
   }

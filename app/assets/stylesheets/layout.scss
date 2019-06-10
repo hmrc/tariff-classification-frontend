@@ -308,6 +308,11 @@ table tbody td[align="right"], table tbody th[align="right"], table thead th[ali
   text-decoration: none;
 }
 
+.live-red-text {
+  color: red;
+  font-weight: 600;
+}
+
 .button-link {
   background: none !important;
   color: inherit;
