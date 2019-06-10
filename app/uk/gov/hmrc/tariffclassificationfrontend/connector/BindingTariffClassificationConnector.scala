@@ -56,8 +56,7 @@ class BindingTariffClassificationConnector @Inject()(appConfig: AppConfig, clien
                             queueId: String = "", assigneeId: String, pagination: Pagination): String = {
     val sortBy = "application.type,application.status,days-elapsed"
     val queryString = s"application_type=${types.mkString(",")}&queue_id=$queueId&assignee_id=$assigneeId&status=$withStatuses&sort_by=$sortBy&sort_direction=desc&page=${pagination.page}&page_size=${pagination.pageSize}"
-    val url = s"${appConfig.bindingTariffClassificationUrl}/cases?$queryString"
-    url
+    s"${appConfig.bindingTariffClassificationUrl}/cases?$queryString"
   }
 
   def findCasesByQueue(queue: Queue, pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[Case]] = {
