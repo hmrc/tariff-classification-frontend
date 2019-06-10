@@ -24,7 +24,7 @@ class ApplicationSpec extends UnitSpec {
   "Application 'Get Type'" should {
 
     "convert liability order type" in {
-      Cases.liabilityApplicationExample.getType shouldBe "Liability Order"
+      Cases.liabilityApplicationExample.getType shouldBe "Liability"
     }
 
     "convert bti type" in {
@@ -53,6 +53,19 @@ class ApplicationSpec extends UnitSpec {
 
     "be falsy for another type" in {
       Cases.btiApplicationExample.isLiabilityOrder shouldBe false
+    }
+
+  }
+
+  "Application 'Is Live Liability Order'" should {
+
+    "be truthy for a Live Liability" in {
+      Cases.liabilityApplicationExample.copy(status = LiabilityStatus.LIVE).isLiveLiabilityOrder shouldBe true
+    }
+
+    "be falsy for another type" in {
+      Cases.liabilityApplicationExample.copy(status = LiabilityStatus.NON_LIVE).isLiveLiabilityOrder shouldBe false
+      Cases.btiApplicationExample.isLiveLiabilityOrder shouldBe false
     }
 
   }
@@ -92,6 +105,18 @@ class ApplicationSpec extends UnitSpec {
       "return a value for liability order" in {
         Cases.liabilityApplicationExample.goodsName shouldBe "good-name"
       }
+    }
+
+  }
+
+  "Application 'Business Name'" should {
+
+    "return for Liability" in {
+      Cases.liabilityApplicationExample.businessName shouldBe Cases.liabilityApplicationExample.asLiabilityOrder.traderName
+    }
+
+    "return for BTI" in {
+      Cases.btiApplicationExample.businessName shouldBe Cases.btiApplicationExample.asBTI.holder.businessName
     }
 
   }

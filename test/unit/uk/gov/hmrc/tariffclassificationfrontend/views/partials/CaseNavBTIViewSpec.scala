@@ -24,10 +24,10 @@ import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus}
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
-import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.case_nav
+import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.case_nav_bti
 import uk.gov.hmrc.tariffclassificationfrontend.views.{CaseDetailPage, ViewSpec}
 
-class CaseNavViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterEach {
+class CaseNavBTIViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterEach {
 
   private val application = "Item"
   private val trader = "Applicant"
@@ -82,7 +82,7 @@ class CaseNavViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterEach
       given(`case`.reference) willReturn "ref"
 
       // When
-      val doc = view(case_nav(CaseDetailPage.TRADER, `case`))
+      val doc = view(case_nav_bti(CaseDetailPage.TRADER, `case`))
 
       // Then
       val spans = doc.getElementsByTag("span")
@@ -104,7 +104,7 @@ class CaseNavViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterEach
       given(`case`.reference) willReturn "ref"
 
       // When
-      val doc = view(case_nav(CaseDetailPage.APPLICATION_DETAILS, `case`))
+      val doc = view(case_nav_bti(CaseDetailPage.APPLICATION_DETAILS, `case`))
 
       // Then
       val spans = doc.getElementsByTag("span")
@@ -125,7 +125,7 @@ class CaseNavViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterEach
       given(`case`.reference) willReturn "ref"
 
       // When
-      val doc = view(case_nav(CaseDetailPage.SAMPLE_DETAILS, `case`))
+      val doc = view(case_nav_bti(CaseDetailPage.SAMPLE_DETAILS, `case`))
 
       // Then
       val spans = doc.getElementsByTag("span")
@@ -147,7 +147,7 @@ class CaseNavViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterEach
       given(`case`.reference) willReturn "ref"
 
       // When
-      val doc = view(case_nav(CaseDetailPage.RULING, `case`))
+      val doc = view(case_nav_bti(CaseDetailPage.RULING, `case`))
 
       // Then
       val spans = doc.getElementsByTag("span")
@@ -168,7 +168,7 @@ class CaseNavViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterEach
       given(`case`.reference) willReturn "ref"
 
       // When
-      val doc = view(case_nav(CaseDetailPage.ATTACHMENTS, `case`))
+      val doc = view(case_nav_bti(CaseDetailPage.ATTACHMENTS, `case`))
 
       // Then
       val spans = doc.getElementsByTag("span")
@@ -189,7 +189,7 @@ class CaseNavViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterEach
       given(`case`.reference) willReturn "ref"
 
       // When
-      val doc = view(case_nav(CaseDetailPage.ACTIVITY, `case`))
+      val doc = view(case_nav_bti(CaseDetailPage.ACTIVITY, `case`))
 
       // Then
       val spans = doc.getElementsByTag("span")
@@ -211,7 +211,7 @@ class CaseNavViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterEach
       given(`case`.status) willReturn CaseStatus.COMPLETED
 
       // When
-      val doc = view(case_nav(CaseDetailPage.APPEAL, `case`))
+      val doc = view(case_nav_bti(CaseDetailPage.APPEAL, `case`))
 
       // Then
       val spans = doc.getElementsByTag("span")
@@ -233,7 +233,7 @@ class CaseNavViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterEach
       given(`case`.status) willReturn CaseStatus.CANCELLED
 
       // When
-      val doc = view(case_nav(CaseDetailPage.APPEAL, `case`))
+      val doc = view(case_nav_bti(CaseDetailPage.APPEAL, `case`))
 
       // Then
       val spans = doc.getElementsByTag("span")
@@ -255,7 +255,7 @@ class CaseNavViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterEach
       given(`case`.status) willReturn CaseStatus.OPEN
 
       // When
-      val doc = view(case_nav(CaseDetailPage.APPEAL, `case`))
+      val doc = view(case_nav_bti(CaseDetailPage.APPEAL, `case`))
 
       // Then
       val spans = doc.getElementsByTag("span")
@@ -273,7 +273,7 @@ class CaseNavViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterEach
       given(`case`.status) willReturn CaseStatus.COMPLETED //so we can see all tabs
 
       // When
-      val doc = view(case_nav(CaseDetailPage.APPEAL, `case`))
+      val doc = view(case_nav_bti(CaseDetailPage.APPEAL, `case`))
 
       // Then
       val indexedElements = doc.getElementsByAttribute("tabindex")
