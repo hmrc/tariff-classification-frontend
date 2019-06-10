@@ -26,7 +26,7 @@ import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.tariffclassificationfrontend.utils._
 
-class BindingTariffClassificationConnectorSpec extends ConnectorTest {
+class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQueueBuilder {
 
   import uk.gov.hmrc.tariffclassificationfrontend.utils.JsonFormatters._
 
@@ -41,7 +41,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest {
   "Connector 'Get Cases By Queue'" should {
 
     "get empty cases in 'gateway' queue" in {
-      val url = "/cases?application_type=BTI&queue_id=none&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort_by=days-elapsed&sort_direction=desc&page=1&page_size=2"
+      val url = buildQueryUrl(withStatuses = "NEW,OPEN,REFERRED,SUSPENDED", queueId = "none", assigneeId = "none", pag =  TestPagination())
 
       stubFor(get(urlEqualTo(url))
         .willReturn(aResponse()
@@ -58,7 +58,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest {
     }
 
     "get cases in 'gateway' queue" in {
-      val url = "/cases?application_type=BTI&queue_id=none&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort_by=days-elapsed&sort_direction=desc&page=1&page_size=2"
+      val url = buildQueryUrl(withStatuses = "NEW,OPEN,REFERRED,SUSPENDED", queueId = "none", assigneeId = "none", pag =  TestPagination())
 
       stubFor(get(urlEqualTo(url))
         .willReturn(aResponse()
@@ -75,7 +75,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest {
     }
 
     "get empty cases in 'other' queue" in {
-      val url = "/cases?application_type=BTI&queue_id=2&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort_by=days-elapsed&sort_direction=desc&page=1&page_size=2"
+      val url = buildQueryUrl(withStatuses = "NEW,OPEN,REFERRED,SUSPENDED", queueId = "2", assigneeId = "none", pag =  TestPagination())
 
       stubFor(get(urlEqualTo(url))
         .willReturn(aResponse()
@@ -92,7 +92,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest {
     }
 
     "get cases in 'other' queue" in {
-      val url = "/cases?application_type=BTI&queue_id=2&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort_by=days-elapsed&sort_direction=desc&page=1&page_size=2"
+      val url = buildQueryUrl(withStatuses = "NEW,OPEN,REFERRED,SUSPENDED", queueId = "2", assigneeId = "none", pag =  TestPagination())
 
       stubFor(get(urlEqualTo(url))
         .willReturn(aResponse()
@@ -145,7 +145,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest {
   "Connector 'Get Cases By Assignee'" should {
 
     "get empty cases" in {
-      val url = "/cases?application_type=BTI&assignee_id=assignee&status=NEW,OPEN,REFERRED,SUSPENDED&sort_by=days-elapsed&sort_direction=desc&page=1&page_size=2"
+      val url = buildQueryUrl(withStatuses = "NEW,OPEN,REFERRED,SUSPENDED", assigneeId = "assignee", pag =  TestPagination())
 
       stubFor(get(urlEqualTo(url))
         .willReturn(aResponse()
@@ -162,7 +162,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest {
     }
 
     "get cases" in {
-      val url = "/cases?application_type=BTI&assignee_id=assignee&status=NEW,OPEN,REFERRED,SUSPENDED&sort_by=days-elapsed&sort_direction=desc&page=1&page_size=2"
+      val url = buildQueryUrl(withStatuses = "NEW,OPEN,REFERRED,SUSPENDED", assigneeId = "assignee", pag =  TestPagination())
 
       stubFor(get(urlEqualTo(url))
         .willReturn(aResponse()
@@ -517,7 +517,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest {
   "Connector 'Get Assigned Cases'" should {
 
     "get assigned cases " in {
-      val url = "/cases?application_type=BTI&assignee_id=some&status=OPEN,REFERRED,SUSPENDED&sort_by=days-elapsed&sort_direction=desc&page=1&page_size=2"
+      val url = buildQueryUrl(withStatuses = "OPEN,REFERRED,SUSPENDED", assigneeId = "some", pag =  TestPagination())
 
       stubFor(get(urlEqualTo(url))
         .willReturn(aResponse()
