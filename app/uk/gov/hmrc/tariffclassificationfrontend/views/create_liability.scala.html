@@ -34,10 +34,10 @@
     @helper.form(action = routes.CreateLiabilityController.post(), 'id -> "create_liability-form") {
         @helper.CSRF.formField
 
-        <h2 class="heading-large">What is the trader's name?</h2>
         @input_text(
             field = form("trader-name"),
-            label = "Business,  organisation or individual's name",
+            label = "What is the trader's name?",
+            labelClass = Some("heading-large"),
             hint = Some("This is the name of the importer of the item and will be used as  the name of this case."),
             formControlClass = Some("w-50")
         )
