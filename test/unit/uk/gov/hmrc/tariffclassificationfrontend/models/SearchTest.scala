@@ -27,6 +27,7 @@ class SearchTest extends UnitSpec {
     commodityCode = Some("commodity-code"),
     decisionDetails = Some("decision-details"),
     status = Some(Set(PseudoCaseStatus.OPEN, PseudoCaseStatus.LIVE)),
+    applicationType = Some(Set(ApplicationType.BTI, ApplicationType.LIABILITY_ORDER)),
     keywords = Some(Set("K1", "K2"))
   )
 
@@ -59,26 +60,22 @@ class SearchTest extends UnitSpec {
       "trader_name" -> Seq("trader-name"),
       "commodity_code" -> Seq("commodity-code"),
       "decision_details" -> Seq("decision-details"),
+      "application_type[0]" -> Seq("BTI"),
+      "application_type[1]" -> Seq("LIABILITY_ORDER"),
       "status[0]" -> Seq("OPEN"),
       "status[1]" -> Seq("LIVE"),
       "keyword[0]" -> Seq("K1"),
       "keyword[1]" -> Seq("K2")
     )
 
-    val emptyParams: Map[String, Seq[String]] = Map(
-      "trader_name" -> Seq(""),
-      "commodity_code" -> Seq(""),
-      "decision_details" -> Seq(""),
-      "status[0]" -> Seq(""),
-      "status[1]" -> Seq(""),
-      "keyword[0]" -> Seq(""),
-      "keyword[1]" -> Seq("")
-    )
+    val emptyParams: Map[String, Seq[String]] = populatedParams.mapValues(_ => Seq(""))
 
     val populatedQueryParam: Set[String] = Set(
       "decision_details=decision-details",
       "trader_name=trader-name",
       "commodity_code=commodity-code",
+      "application_type[0]=BTI",
+      "application_type[1]=LIABILITY_ORDER",
       "status[0]=OPEN",
       "status[1]=LIVE",
       "keyword[0]=K1",

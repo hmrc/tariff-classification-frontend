@@ -19,6 +19,7 @@ package uk.gov.hmrc.tariffclassificationfrontend.models
 import play.api.data.Form
 import play.api.mvc.QueryStringBindable
 import uk.gov.hmrc.tariffclassificationfrontend.forms.SearchForm
+import uk.gov.hmrc.tariffclassificationfrontend.models.ApplicationType.ApplicationType
 import uk.gov.hmrc.tariffclassificationfrontend.models.PseudoCaseStatus.PseudoCaseStatus
 
 case class Search
@@ -27,11 +28,12 @@ case class Search
   commodityCode: Option[String] = None,
   decisionDetails: Option[String] = None,
   status: Option[Set[PseudoCaseStatus]] = None,
+  applicationType: Option[Set[ApplicationType]] = None,
   keywords: Option[Set[String]] = None
 ) {
 
   def isEmpty: Boolean = {
-    // Live rulings only omitted intentionally as it is a post-search filter
+    // Status & Application Type intentionally as it is a post-search filter
     traderName.isEmpty && commodityCode.isEmpty && decisionDetails.isEmpty && keywords.isEmpty
   }
 
