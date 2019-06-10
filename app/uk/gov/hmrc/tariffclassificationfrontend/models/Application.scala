@@ -43,6 +43,10 @@ sealed trait Application {
     this.isInstanceOf[LiabilityOrder]
   }
 
+  def isLiveLiabilityOrder: Boolean = {
+    isLiabilityOrder && asLiabilityOrder.status == LiabilityStatus.LIVE
+  }
+
   def businessName: String = {
     `type` match {
       case ApplicationType.BTI => asBTI.holder.businessName
@@ -53,7 +57,7 @@ sealed trait Application {
   def getType: String = {
     `type` match {
       case ApplicationType.BTI => "BTI"
-      case ApplicationType.LIABILITY_ORDER => "Liability Order"
+      case ApplicationType.LIABILITY_ORDER => "Liability"
     }
   }
 }
@@ -97,7 +101,9 @@ case class LiabilityOrder
   traderName: String,
   goodName: Option[String] = None,
   entryDate: Option[Instant] = None,
-  entryNumber: Option[String] = None
+  entryNumber: Option[String] = None,
+  traderCommodityCode: Option[String] = None,
+  officerCommodityCode: Option[String] = None
 ) extends Application {
   override val `type`: models.ApplicationType.Value = ApplicationType.LIABILITY_ORDER
 }

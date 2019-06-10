@@ -89,7 +89,7 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers
         val result = await(controller(c).appealDetails(c.reference)(fakeRequest))
 
         status(result) shouldBe Status.SEE_OTHER
-        locationOf(result) shouldBe Some(routes.CaseController.trader(c.reference).url)
+        locationOf(result) shouldBe Some(routes.CaseController.get(c.reference).url)
 
       }
 
@@ -100,7 +100,7 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers
           val result = await(controller(c).appealDetails(c.reference)(fakeRequest))
 
           status(result) shouldBe Status.SEE_OTHER
-          locationOf(result) shouldBe Some(routes.CaseController.trader(c.reference).url)
+          locationOf(result) shouldBe Some(routes.CaseController.get(c.reference).url)
         }
       }
     }
@@ -138,7 +138,7 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers
         val result = await(controller(c).chooseType(c.reference)(request))
 
         status(result) shouldBe Status.SEE_OTHER
-        locationOf(result) shouldBe Some(routes.CaseController.trader(c.reference).url)
+        locationOf(result) shouldBe Some(routes.CaseController.get(c.reference).url)
 
       }
 
@@ -150,7 +150,7 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers
           val result = await(controller(c).chooseType(c.reference)(request))
 
           status(result) shouldBe Status.SEE_OTHER
-          locationOf(result) shouldBe Some(routes.CaseController.trader(c.reference).url)
+          locationOf(result) shouldBe Some(routes.CaseController.get(c.reference).url)
         }
       }
     }
@@ -193,7 +193,7 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers
         val result = await(controller(c).confirmType(c.reference)(fakeRequest))
 
         status(result) shouldBe Status.SEE_OTHER
-        locationOf(result) shouldBe Some(routes.CaseController.trader(c.reference).url)
+        locationOf(result) shouldBe Some(routes.CaseController.get(c.reference).url)
 
       }
 
@@ -204,7 +204,7 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers
           val result = await(controller(c).confirmType(c.reference)(fakeRequest))
 
           status(result) shouldBe Status.SEE_OTHER
-          locationOf(result) shouldBe Some(routes.CaseController.trader(c.reference).url)
+          locationOf(result) shouldBe Some(routes.CaseController.get(c.reference).url)
         }
       }
     }
@@ -242,7 +242,7 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers
         val result = await(controller(c).chooseStatus(c.reference, AppealType.REVIEW.toString)(request))
 
         status(result) shouldBe Status.SEE_OTHER
-        locationOf(result) shouldBe Some(routes.CaseController.trader(c.reference).url)
+        locationOf(result) shouldBe Some(routes.CaseController.get(c.reference).url)
 
       }
 
@@ -254,7 +254,7 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers
           val result = await(controller(c).chooseStatus(c.reference, AppealType.REVIEW.toString)(request))
 
           status(result) shouldBe Status.SEE_OTHER
-          locationOf(result) shouldBe Some(routes.CaseController.trader(c.reference).url)
+          locationOf(result) shouldBe Some(routes.CaseController.get(c.reference).url)
         }
       }
     }
@@ -300,7 +300,7 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers
         val result = await(controller(c).confirmStatus(c.reference, AppealType.REVIEW.toString)(fakeRequest))
 
         status(result) shouldBe Status.SEE_OTHER
-        locationOf(result) shouldBe Some(routes.CaseController.trader(c.reference).url)
+        locationOf(result) shouldBe Some(routes.CaseController.get(c.reference).url)
 
       }
 
@@ -311,7 +311,7 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers
           val result = await(controller(c).confirmStatus(c.reference, AppealType.REVIEW.toString)(fakeRequest))
 
           status(result) shouldBe Status.SEE_OTHER
-          locationOf(result) shouldBe Some(routes.CaseController.trader(c.reference).url)
+          locationOf(result) shouldBe Some(routes.CaseController.get(c.reference).url)
         }
       }
     }
@@ -350,7 +350,7 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers
         val result = await(controller(c).changeStatus(c.reference, "some-id")(request))
 
         status(result) shouldBe Status.SEE_OTHER
-        locationOf(result) shouldBe Some(routes.CaseController.trader(c.reference).url)
+        locationOf(result) shouldBe Some(routes.CaseController.get(c.reference).url)
 
       }
 
@@ -362,7 +362,7 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers
           val result = await(controller(c).changeStatus(c.reference, "some-id")(request))
 
           status(result) shouldBe Status.SEE_OTHER
-          locationOf(result) shouldBe Some(routes.CaseController.trader(c.reference).url)
+          locationOf(result) shouldBe Some(routes.CaseController.get(c.reference).url)
         }
       }
     }
@@ -410,7 +410,7 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers
         val result = await(controller(c).confirmChangeStatus(c.reference, "some-id")(fakeRequest))
 
         status(result) shouldBe Status.SEE_OTHER
-        locationOf(result) shouldBe Some(routes.CaseController.trader(c.reference).url)
+        locationOf(result) shouldBe Some(routes.CaseController.get(c.reference).url)
 
       }
 
@@ -421,7 +421,7 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers
         val result = await(controller(c).confirmChangeStatus(c.reference, "some-id")(fakeRequest))
 
         status(result) shouldBe Status.SEE_OTHER
-        locationOf(result) shouldBe Some(routes.CaseController.trader(c.reference).url)
+        locationOf(result) shouldBe Some(routes.CaseController.get(c.reference).url)
 
       }
 
@@ -432,7 +432,7 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers
           val result = await(controller(c).confirmChangeStatus(c.reference, "some-id")(fakeRequest))
 
           status(result) shouldBe Status.SEE_OTHER
-          locationOf(result) shouldBe Some(routes.CaseController.trader(c.reference).url)
+          locationOf(result) shouldBe Some(routes.CaseController.get(c.reference).url)
         }
       }
     }

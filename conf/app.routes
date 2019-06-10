@@ -19,6 +19,7 @@ GET         /cases                                              controllers.Defa
 GET         /cases/:reference                                   @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.get(reference: String)
 GET         /cases/:reference/trader                            @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.trader(reference: String)
 GET         /cases/:reference/application                       @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.applicationDetails(reference: String)
+GET         /cases/:reference/liability                         @uk.gov.hmrc.tariffclassificationfrontend.controllers.LiabilityController.liabilityDetails(reference: String)
 
 GET         /cases/:reference/sample                            @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.sampleDetails(reference: String)
 

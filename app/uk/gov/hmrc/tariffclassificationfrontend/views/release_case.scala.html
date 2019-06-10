@@ -27,44 +27,51 @@
 @(c: Case, form: Form[String], queues: Seq[Queue])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("page.title.release.case")), scriptElem = Some(initial_focus())) {
-    @defining(c.application.asBTI) { btiApp: BTIApplication =>
 
-        @error_summary(form.errors)
+    @error_summary(form.errors)
 
-        @case_heading(c)
+    @case_heading(c)
 
-        <div class="grid-row">
-            <div class="column-full">
-                <h2 class="heading-large mt-0">Release this case for classification</h2>
-                <dl class="dl-mb-2">
-                    @if(btiApp.envisagedCommodityCode.isDefined){
-                        <div class="grid-row">
-                            <dt id="application_envisagedCommodityCode" class="column-one-third">
+    <div class="grid-row">
+        <div class="column-full">
+            <h2 class="heading-large mt-0">Release this case for classification</h2>
+            @if(c.application.isBTI) {
+                @defining(c.application.asBTI) { btiApp: BTIApplication =>
+                    <dl class="dl-mb-2">
+                        @if(btiApp.envisagedCommodityCode.isDefined) {
+                            <div class="grid-row">
+                                <dt id="application_envisagedCommodityCode" class="column-one-third">
                                 @messages("case.application.suggested-commodity-code")
+                                </dt>
+                                <dd class="column-two-thirds">
+                                    <span id="envisagedCommodityCodeValue">@{
+                                        btiApp.envisagedCommodityCode.get
+                                    }</span>
+                                </dd>
+                            </div>
+                        }
+                        <div class="grid-row">
+                            <dt id="application_goodDescription" class="column-one-third">
+                            @messages("case.application.suggested-goods-description")
                             </dt>
                             <dd class="column-two-thirds">
-                                <span id="envisagedCommodityCodeValue">@{btiApp.envisagedCommodityCode.get}</span>
+                                <span id="application_goodDescriptionValue">@{
+                                    btiApp.goodDescription
+                                }</span>
                             </dd>
                         </div>
-                    }
-                    <div class="grid-row">
-                        <dt id="application_goodDescription" class="column-one-third">
-                            @messages("case.application.suggested-goods-description")
-                        </dt>
-                        <dd class="column-two-thirds">
-                            <span id="application_goodDescriptionValue">@{btiApp.goodDescription}</span>
-                        </dd>
-                    </div>
-                </dl>
-                @select_queue_form(
-                    form("queue"),
-                    queues,
-                    "release-case",
-                    ReleaseCaseController.releaseCaseToQueue(c.reference),
-                    CaseController.get(c.reference).url
-                )
+                    </dl>
+                }
+            }
 
-            </div>
+            @select_queue_form(
+                form("queue"),
+                queues,
+                "release-case",
+                ReleaseCaseController.releaseCaseToQueue(c.reference),
+                CaseController.get(c.reference).url
+            )
+
         </div>
-    }
+    </div>
 }

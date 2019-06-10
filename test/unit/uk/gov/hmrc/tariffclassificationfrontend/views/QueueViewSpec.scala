@@ -27,6 +27,29 @@ class QueueViewSpec extends ViewSpec {
     val queue2 = Queue("2", "queue2_name", "Queue 2 Name")
     val case1 = Cases.btiCaseExample
 
+    "render create liability button when user has CREATE_CASES permission" in {
+      // Given
+      val queues = Seq(queue1, queue2)
+
+      // When
+      val doc = view(html.queue(queues, queue1, Map.empty, Paged.empty[Case])(request = requestWithPermissions(Permission.CREATE_CASES), messages, appConfig))
+
+      // Then
+      doc should containElementWithID("create_liability-button")
+    }
+
+    "not render create liability button when user does not have permission" in {
+      // Given
+      val queues = Seq(queue1, queue2)
+
+      // When
+      val doc = view(html.queue(queues, queue1, Map.empty, Paged.empty[Case])(request = requestWithPermissions(), messages, appConfig))
+
+      // Then
+      doc should not (containElementWithID("create_liability-button"))
+    }
+
+
     "render empty list of cases" in {
       // Given
       val queues = Seq(queue1, queue2)

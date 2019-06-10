@@ -14,18 +14,15 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.tariffclassificationfrontend.views
+package uk.gov.hmrc.tariffclassificationfrontend.models
 
-object CaseDetailPage extends Enumeration {
-  type CaseDetailPage = Value
-  val TRADER = Value("trader")
-  val RULING = Value("ruling")
-  val EDIT_RULING = Value("edit.ruling")
-  val APPLICATION_DETAILS = Value("application")
-  val SAMPLE_DETAILS = Value("sample")
-  val ACTIVITY = Value("activity")
-  val ATTACHMENTS = Value("attachments")
-  val KEYWORDS = Value("keywords")
-  val APPEAL = Value("appeal")
-  val LIABILITY = Value("liability")
+import uk.gov.hmrc.tariffclassificationfrontend.views.CaseDetailPage.{CaseDetailPage, _}
+
+object TabIndexes {
+
+  private val indexByPage: Map[CaseDetailPage, Int] = Map(TRADER -> 1000, LIABILITY -> 2000 , APPLICATION_DETAILS -> 2000, SAMPLE_DETAILS -> 3000, ATTACHMENTS -> 4000,
+    ACTIVITY -> 5000, KEYWORDS -> 6000, RULING -> 7000, APPEAL -> 8000)
+
+  def tabIndexFor: CaseDetailPage => Int = { page => indexByPage.getOrElse(page, 0) }
+
 }
