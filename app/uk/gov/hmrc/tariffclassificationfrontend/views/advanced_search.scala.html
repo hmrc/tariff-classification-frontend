@@ -74,11 +74,6 @@
         <button id="advanced_search-search_button" class="button" type="submit">Search</button>
         <a id="advanced_search-reset_button" class="secondary-button" href="@controllers.routes.SearchController.search()">New search</a>
 
-        @*
-        Hack to ensure default values are populated
-        *@
-        <input type="hidden" value="BTI" name="application_type[1]"/>
-
         @if(results.isEmpty) {
             @*
             Hack to ensure the checkbox is checked when search results aren't present
@@ -87,6 +82,7 @@
             <input type="hidden" value="OPEN" name="status[0]"/>
             <input type="hidden" value="LIVE" name="status[1]"/>
             <input type="hidden" value="LIABILITY_ORDER" name="application_type[0]"/>
+            <input type="hidden" value="BTI" name="application_type[1]"/>
         }
 
         @if(results.isDefined && !form.hasErrors) {
@@ -102,12 +98,14 @@
                             @input_checkbox_group(
                                 field = form("application_type"),
                                 options = Seq(
-                                    CheckOption("Liabilities", ApplicationType.LIABILITY_ORDER.toString, checked = formHasApplicationType(ApplicationType.LIABILITY_ORDER))
+                                    CheckOption("BTI", ApplicationType.BTI.toString, checked = formHasApplicationType(ApplicationType.BTI)),
+                                    CheckOption("Liability", ApplicationType.LIABILITY_ORDER.toString, checked = formHasApplicationType(ApplicationType.LIABILITY_ORDER))
                                 ),
                                 legend = Some("Apply filters"),
                                 submitOnChange = true,
                                 divClass = Some("advanced_search--filters-checkbox")
                             )
+
                             @input_checkbox_group(
                                 field = form("status"),
                                 options = Seq(
@@ -123,7 +121,8 @@
                                 ),
                                 legend = None,
                                 submitOnChange = true,
-                                divClass = Some("advanced_search--filters-checkbox")
+                                divClass = Some("advanced_search--filters-checkbox"),
+                                customGroupClasses = Some("border-top")
                             )
                             </div>
                         </div>
