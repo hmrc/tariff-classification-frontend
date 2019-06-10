@@ -50,6 +50,13 @@ sealed trait Application {
     }
   }
 
+  def goodsName: String = {
+    `type` match {
+      case ApplicationType.BTI => asBTI.goodName
+      case ApplicationType.LIABILITY_ORDER => asLiabilityOrder.goodName.getOrElse("")
+    }
+  }
+
   def getType: String = {
     `type` match {
       case ApplicationType.BTI => "BTI"
