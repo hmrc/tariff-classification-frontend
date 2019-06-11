@@ -32,6 +32,10 @@
 
   &--filters {
     padding-bottom: 10px;
+
+    .border-top {
+      border-top: 5px solid $gray;
+    }
   }
 
   &--filters-checkbox {

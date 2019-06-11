@@ -27,10 +27,15 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.views.partials.SearchResult
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.error_summary
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.components.initial_focus
+@import uk.gov.hmrc.tariffclassificationfrontend.models.ApplicationType
+@import uk.gov.hmrc.tariffclassificationfrontend.models.ApplicationType.ApplicationType
 @(form: Form[Search], results: Option[Paged[SearchResult]] = None, keywords: Seq[String], selectedTab: SearchTab)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @formHasStatus(status: PseudoCaseStatus) = @{
     form.value.flatMap(_.status).exists(_.contains(status))
+}
+@formHasApplicationType(status: ApplicationType) = @{
+    form.value.flatMap(_.applicationType).exists(_.contains(status))
 }
 
 @main(bodyClasses = None, customTitle = Some(messages("page.title.advanced.search")), scriptElem = Some(initial_focus())) {
@@ -76,6 +81,8 @@
             *@
             <input type="hidden" value="OPEN" name="status[0]"/>
             <input type="hidden" value="LIVE" name="status[1]"/>
+            <input type="hidden" value="LIABILITY_ORDER" name="application_type[0]"/>
+            <input type="hidden" value="BTI" name="application_type[1]"/>
         }
 
         @if(results.isDefined && !form.hasErrors) {
@@ -89,6 +96,17 @@
                         <div class="advanced_search--filters_container">
                             <div class="advanced_search--filters">
                             @input_checkbox_group(
+                                field = form("application_type"),
+                                options = Seq(
+                                    CheckOption("BTI", ApplicationType.BTI.toString, checked = formHasApplicationType(ApplicationType.BTI)),
+                                    CheckOption("Liability", ApplicationType.LIABILITY_ORDER.toString, checked = formHasApplicationType(ApplicationType.LIABILITY_ORDER))
+                                ),
+                                legend = Some("Apply filters"),
+                                submitOnChange = true,
+                                divClass = Some("advanced_search--filters-checkbox")
+                            )
+
+                            @input_checkbox_group(
                                 field = form("status"),
                                 options = Seq(
                                     CheckOption("Open", PseudoCaseStatus.OPEN.toString, checked = formHasStatus(PseudoCaseStatus.OPEN)),
@@ -101,9 +119,9 @@
                                     CheckOption("Rejected", PseudoCaseStatus.REJECTED.toString, checked = formHasStatus(PseudoCaseStatus.REJECTED)),
                                     CheckOption("Suppressed", PseudoCaseStatus.SUPPRESSED.toString, checked = formHasStatus(PseudoCaseStatus.SUPPRESSED))
                                 ),
-                                legend = Some("Filter by status"),
                                 submitOnChange = true,
-                                divClass = Some("advanced_search--filters-checkbox")
+                                divClass = Some("advanced_search--filters-checkbox"),
+                                customGroupClasses = Some("border-top")
                             )
                             </div>
                         </div>

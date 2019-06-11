@@ -91,7 +91,7 @@ case class CompletedCaseStatusChange
 (
   override val from: CaseStatus,
   override val comment: Option[String] = None,
-  email: String
+  email: Option[String]
 ) extends FieldChange[CaseStatus] {
   override val to: CaseStatus = CaseStatus.COMPLETED
   override val `type`: EventType.Value = EventType.CASE_COMPLETED
