@@ -17,14 +17,17 @@
 package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
 import javax.inject.{Inject, Singleton}
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.models.Case
+import uk.gov.hmrc.tariffclassificationfrontend.forms.{DecisionFormData, LiabilityFormData}
 import uk.gov.hmrc.tariffclassificationfrontend.models.TabIndexes.tabIndexFor
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedCaseRequest
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Application, ApplicationType, Case, CaseStatus, Decision, LiabilityOrder}
+import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
 import uk.gov.hmrc.tariffclassificationfrontend.views.CaseDetailPage.{CaseDetailPage, LIABILITY}
 
@@ -35,23 +38,102 @@ import scala.concurrent.Future.successful
 @Singleton
 class LiabilityController @Inject()(verify: RequestActions,
                                     val messagesApi: MessagesApi,
+                                    casesService: CasesService,
                                     implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
   private lazy val menuTitle = LIABILITY
 
+  private lazy val form = LiabilityFormData.form
+
   def liabilityDetails(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
-    getCaseAndRenderView(
-      menuTitle,
+    getCaseAndRenderView(menuTitle,
       c => {
         successful(views.html.partials.liability_details(c, tabIndexFor(LIABILITY)))
       }
     )
   }
 
+  def editLiabilityDetails(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
+    getCaseAndRenderView(
+      menuTitle,
+      c => {
+        successful(views.html.partials.liabilities.liability_details_edit(c, toLiabilityForm(c.application.asLiabilityOrder), Some(tabIndexFor(LIABILITY))))
+      }
+    )
+  }
+
+  private def toLiabilityForm(l : LiabilityOrder): Form[LiabilityFormData] = {
+
+    LiabilityFormData.form.fill(
+      LiabilityFormData(
+        traderName = l.traderName,
+        goodName = l.goodName.getOrElse(""),
+        entryNumber = l.entryNumber.getOrElse(""),
+        traderCommodityCode = l.traderCommodityCode.getOrElse(""),
+        officerCommodityCode = l.officerCommodityCode.getOrElse(""),
+        contactName = l.contact.name,
+        contactEmail = l.contact.email,
+        contactPhone = l.contact.phone.getOrElse("")
+      )
+    )
+  }
+
+  def mergeLiabilityIntoCase(c: Case, validForm: LiabilityFormData): Case = {
+
+    val updatedContact = c.application.contact.copy(
+      name = validForm.contactName,
+      email = validForm.contactEmail,
+      phone = Some(validForm.contactPhone)
+    )
+
+    val app: Application = c.application.`type` match {
+      case ApplicationType.LIABILITY_ORDER => {
+        c.application.asLiabilityOrder.copy(
+          traderName = validForm.traderName,
+          goodName = Some(validForm.goodName),
+          entryNumber = Some(validForm.entryNumber),
+          traderCommodityCode = Some(validForm.traderCommodityCode),
+          officerCommodityCode = Some(validForm.officerCommodityCode),
+          contact = updatedContact
+        )
+      }
+      case _ => c.application
+    }
+
+    c.copy(application = app)
+  }
+
+  def postLiabilityDetails(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
+
+    LiabilityFormData.form.bindFromRequest.fold(
+      errorForm =>
+        getCaseAndRenderView(
+          menuTitle,
+          c => successful(views.html.partials.liabilities.liability_details_edit(c, errorForm))
+        ),
+      validForm =>
+        getCaseAndRedirect(menuTitle, c => for {
+          update <- casesService.updateCase(mergeLiabilityIntoCase(c, validForm))
+        } yield routes.LiabilityController.liabilityDetails(update.reference)
+        )
+    )
+  }
 
   private def getCaseAndRenderView(page: CaseDetailPage, toHtml: Case => Future[HtmlFormat.Appendable])
                                   (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
     toHtml(request.`case`).map(html => Ok(views.html.case_details(request.`case`, page, html, activeTab = Some("tab-item-Liability"))))
   }
 
+
+  private def getCaseAndRedirect(page: CaseDetailPage, toResult: Case => Future[Call])
+                                (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
+
+    //if (request.`case`.status == CaseStatus.OPEN) {
+      toResult(request.`case`).map(Redirect)
+    //} else {
+    //  successful(Redirect(routes.LiabilityController.liabilityDetails(request.`case`.reference)))
+    //}
+
+  }
 }
+

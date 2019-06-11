@@ -172,6 +172,21 @@ case.liability.contact.name = Name
 case.liability.contact.email = Contact email
 case.liability.contact.phone = Contact telephone
 
+case.liability.edit = Edit details
+case.liability.edit.information = Information about this liability from the C592
+
+case.liability.edit.entry-number = Liability entry number from C592
+case.liability.edit.trader-name = Trader name
+case.liability.edit.item-name = Item name
+case.liability.edit.commodity-code.information = Commodity code information
+case.liability.edit.commodity-code.trader = Code entered by trader
+case.liability.edit.commodity-code.officer = Code suggested by officer
+case.liability.edit.contact.information = Contact details for port or compliance officer
+case.liability.edit.contact.name = Name
+case.liability.edit.contact.email = Contact email
+case.liability.edit.contact.phone = Contact telephone
+
+
 events.table.empty=There are no events for this case
 
 errors.case-not-found.title=Case not found
