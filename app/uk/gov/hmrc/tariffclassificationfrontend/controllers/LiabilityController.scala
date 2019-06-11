@@ -23,10 +23,10 @@ import play.api.mvc._
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.forms.{DecisionFormData, LiabilityFormData}
+import uk.gov.hmrc.tariffclassificationfrontend.forms.LiabilityFormData
 import uk.gov.hmrc.tariffclassificationfrontend.models.TabIndexes.tabIndexFor
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedCaseRequest
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Application, ApplicationType, Case, CaseStatus, Decision, LiabilityOrder}
+import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
 import uk.gov.hmrc.tariffclassificationfrontend.views.CaseDetailPage.{CaseDetailPage, LIABILITY}
@@ -55,7 +55,7 @@ class LiabilityController @Inject()(verify: RequestActions,
 
   def editLiabilityDetails(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
     request.`case` match {
-      case c : Case =>
+      case c: Case =>
         successful(
           Ok(
             views.html.partials.liabilities.liability_details_edit(c, toLiabilityForm(c.application.asLiabilityOrder), Some(tabIndexFor(LIABILITY)))
@@ -64,8 +64,7 @@ class LiabilityController @Inject()(verify: RequestActions,
     }
   }
 
-  private def toLiabilityForm(l : LiabilityOrder): Form[LiabilityFormData] = {
-
+  private def toLiabilityForm(l: LiabilityOrder): Form[LiabilityFormData] = {
     LiabilityFormData.form.fill(
       LiabilityFormData(
         traderName = l.traderName,
@@ -81,7 +80,6 @@ class LiabilityController @Inject()(verify: RequestActions,
   }
 
   def mergeLiabilityIntoCase(c: Case, validForm: LiabilityFormData): Case = {
-
     val updatedContact = c.application.contact.copy(
       name = validForm.contactName,
       email = validForm.contactEmail.getOrElse(""),
@@ -106,7 +104,6 @@ class LiabilityController @Inject()(verify: RequestActions,
   }
 
   def postLiabilityDetails(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
-
     LiabilityFormData.form.bindFromRequest.fold(
       errorForm =>
         getCaseAndRenderView(
@@ -129,13 +126,12 @@ class LiabilityController @Inject()(verify: RequestActions,
 
   private def getCaseAndRedirect(page: CaseDetailPage, toResult: Case => Future[Call])
                                 (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
-
     if (request.`case`.status == CaseStatus.OPEN) {
       toResult(request.`case`).map(Redirect)
     } else {
       successful(Redirect(routes.LiabilityController.liabilityDetails(request.`case`.reference)))
     }
-
   }
+
 }
 

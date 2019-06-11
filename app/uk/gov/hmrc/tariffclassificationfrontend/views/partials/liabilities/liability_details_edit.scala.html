@@ -85,7 +85,6 @@
 
                 <h3 class="heading-medium mb-1">@messages("case.liability.edit.contact.information")</h3>
 
-
                 @input_text(
                     field = form("contactName"),
                     label = messages("case.liability.edit.contact.name"),
@@ -104,19 +103,13 @@
                     disableAutoComplete = true
                 )
 
-
                 <div class="form-group">
                     <button id="submit" class="button" type="submit">Save changes</button>
                     <a href="@LiabilityController.liabilityDetails(c.reference)" class="secondary-button" id="cancel-button">Cancel changes</a>
                 </div>
-
             }
         </div>
     }
-
-
-
-
 }
 
 
