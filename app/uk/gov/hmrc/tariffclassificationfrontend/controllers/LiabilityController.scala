@@ -54,12 +54,14 @@ class LiabilityController @Inject()(verify: RequestActions,
   }
 
   def editLiabilityDetails(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
-    getCaseAndRenderView(
-      menuTitle,
-      c => {
-        successful(views.html.partials.liabilities.liability_details_edit(c, toLiabilityForm(c.application.asLiabilityOrder), Some(tabIndexFor(LIABILITY))))
-      }
-    )
+    request.`case` match {
+      case c : Case =>
+        successful(
+          Ok(
+            views.html.partials.liabilities.liability_details_edit(c, toLiabilityForm(c.application.asLiabilityOrder), Some(tabIndexFor(LIABILITY)))
+          )
+        )
+    }
   }
 
   private def toLiabilityForm(l : LiabilityOrder): Form[LiabilityFormData] = {
