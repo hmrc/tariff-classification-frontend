@@ -27,7 +27,7 @@
 
 <h3 class="heading-medium mt-0"> Actions on this case </h3>
 
-@if(c.status == CaseStatus.OPEN){
+@if(c.status == CaseStatus.OPEN && request.hasPermission(Permission.REFER_CASE)){
     <div id="refer-case-section" class="mt-1">
         <p class="mt-1">
             <a  tabindex="@{startAtTabIndex +1}" id="refer-case-button" href="@ReferCaseController.getReferCase(c.reference)">Refer this case</a>
@@ -35,11 +35,13 @@
     </div>
 }
 @if(c.status == CaseStatus.OPEN) {
-    <div id="reject-case-section" class="mt-1">
+    @if(request.hasPermission(Permission.REJECT_CASE)) {
+      <div id="reject-case-section" class="mt-1">
         <p>
             <a tabindex="@{startAtTabIndex +2}" id="reject-case-button" href="@RejectCaseController.getRejectCase(c.reference)">Reject this case</a>
         </p>
-    </div>
+      </div>
+    }
 
     @if(request.hasPermission(Permission.SUSPEND_CASE)){
         <div id="suspend-case-section" class="mt-1">
@@ -64,7 +66,7 @@
     </div>
 }
 
-@if(c.status == CaseStatus.SUSPENDED || c.status == CaseStatus.REFERRED) {
+@if((c.status == CaseStatus.SUSPENDED || c.status == CaseStatus.REFERRED) && request.hasPermission(Permission.REOPEN_CASE)) {
     @helper.form(action = ReopenCaseController.confirmReopenCase(c.reference), 'id -> "reopen-case") {
         @helper.CSRF.formField
         <div>

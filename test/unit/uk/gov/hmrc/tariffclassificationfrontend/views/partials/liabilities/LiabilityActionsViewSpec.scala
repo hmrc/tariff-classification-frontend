@@ -37,10 +37,30 @@ class LiabilityActionsViewSpec extends ViewSpec {
       val doc = view(liability_actions(c, 0)(requestWithPermissions(Permission.SUSPEND_CASE), messages, appConfig))
 
       // Then
-      doc should containElementWithID("refer-case-button")
-      doc should containElementWithID("reject-case-button")
       doc should containElementWithID("suspend-case-button")
 
+      doc should not (containElementWithID("refer-case-button"))
+      doc should not (containElementWithID("reject-case-button"))
+      doc should not (containElementWithID("release-case-button"))
+      doc should not (containElementWithID("suppress_link"))
+      doc should not (containElementWithID("reopen-case-button"))
+    }
+
+    "Render OPEN case with REJECT_CASE permission" in {
+      // Given
+      val c = aCase(
+        withStatus(CaseStatus.OPEN),
+        withLiabilityOrderApplication
+      )
+
+      // When
+      val doc = view(liability_actions(c, 0)(requestWithPermissions(Permission.REJECT_CASE), messages, appConfig))
+
+      // Then
+      doc should containElementWithID("reject-case-button")
+
+      doc should not (containElementWithID("suspend-case-button"))
+      doc should not (containElementWithID("refer-case-button"))
       doc should not (containElementWithID("release-case-button"))
       doc should not (containElementWithID("suppress_link"))
       doc should not (containElementWithID("reopen-case-button"))
@@ -100,7 +120,7 @@ class LiabilityActionsViewSpec extends ViewSpec {
       doc should not (containElementWithID("reopen-case-button"))
     }
 
-    "Render SUSPENDED case" in {
+    "Render SUSPENDED case with REOPEN permission" in {
       // Given
       val c = aCase(
         withStatus(CaseStatus.SUSPENDED),
@@ -108,7 +128,7 @@ class LiabilityActionsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(liability_actions(c, 0)(requestWithPermissions(), messages, appConfig))
+      val doc = view(liability_actions(c, 0)(requestWithPermissions(Permission.REOPEN_CASE), messages, appConfig))
 
       // Then
       doc should containElementWithID("reopen-case-button")
@@ -120,7 +140,7 @@ class LiabilityActionsViewSpec extends ViewSpec {
       doc should not (containElementWithID("suppress_link"))
     }
 
-    "Render REFERRED case" in {
+    "Render REFERRED case with REOPEN permission" in {
       // Given
       val c = aCase(
         withStatus(CaseStatus.REFERRED),
@@ -128,7 +148,7 @@ class LiabilityActionsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(liability_actions(c, 0)(requestWithPermissions(), messages, appConfig))
+      val doc = view(liability_actions(c, 0)(requestWithPermissions(Permission.REOPEN_CASE), messages, appConfig))
 
       // Then
       doc should containElementWithID("reopen-case-button")
