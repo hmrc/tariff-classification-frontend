@@ -19,7 +19,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Paged, Queue}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{cases_list, nav_header, queue_nav, create_liability_button}
-@(queues: Seq[Queue], queue: Queue, caseCountByQueue: Map[String, Int], cases: Paged[Case])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(queues: Seq[Queue], queue: Queue, caseCountByQueue: Map[String, Int], cases: Paged[Case], filteredBy: String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, scriptElem = Some(Html(s"<script>document.getElementById('nav-menu-queue-${queue.slug}').focus();</script>")),
     customTitle = Some(messages("page.title.case.queues"))) {
@@ -30,7 +30,7 @@
 
     <div class="grid-row">
         <div class="column-one-quarter">
-            @queue_nav(queues, queue.slug, caseCountByQueue)
+            @queue_nav(queues, queue.slug, caseCountByQueue, filteredBy)
         </div>
         <div class="column-three-quarters">
             @cases_list(cases, startAtTabIndex = ((queues.indexOf(queue)+2)*1000))

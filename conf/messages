@@ -2,7 +2,6 @@ error.summary.title = There is a problem
 
 cases.menu.my-cases=My cases
 cases.menu.gateway-cases=Gateway cases
-cases.menu.queue-cases={0} cases
 cases.list.my-cases=Cases for {0}
 cases.menu.assigned-cases=Assigned cases
 

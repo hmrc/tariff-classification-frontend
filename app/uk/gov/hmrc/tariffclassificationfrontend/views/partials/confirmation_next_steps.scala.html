@@ -15,7 +15,8 @@
  *@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.{MyCasesController, QueuesController}
+@import uk.gov.hmrc.tariffclassificationfrontend.models.ApplicationType
 @()(implicit messages: Messages)
 
   <h3 class="heading-medium mt-0">Next steps</h3>
-  <p>Go to <a id="my-cases-link" href="@MyCasesController.myCases()">@messages("cases.menu.my-cases")</a> or <a id="gateway-cases-link" href="@QueuesController.queue("gateway")">@messages("cases.menu.gateway-cases")</a>.</p>
+  <p>Go to <a id="my-cases-link" href="@MyCasesController.myCases()">@messages("cases.menu.my-cases")</a> or <a id="gateway-cases-link" href="@QueuesController.queue("gateway", Seq(ApplicationType.BTI,ApplicationType.LIABILITY_ORDER).mkString(","))">@messages("cases.menu.gateway-cases")</a>.</p>
