@@ -110,10 +110,11 @@ class BindingTariffClassificationConnector @Inject()(appConfig: AppConfig, clien
       search.commodityCode.map(qb.unbind("commodity_code", _)),
       search.decisionDetails.map(qb.unbind("decision_details", _)),
       search.status.map(_.map(s => qb.unbind("status", s.toString)).mkString("&")),
+      search.applicationType.map(_.map(s => qb.unbind("application_type", s.toString)).mkString("&")),
       search.keywords.map(_.map(k => qb.unbind("keyword", k)).mkString("&"))
     ).filter(_.isDefined).map(_.get)
 
-    val url = s"${appConfig.bindingTariffClassificationUrl}/cases?application_type=BTI&${(reqParams ++ optParams).mkString("&")}&page=${pagination.page}&page_size=${pagination.pageSize}"
+    val url = s"${appConfig.bindingTariffClassificationUrl}/cases?${(reqParams ++ optParams).mkString("&")}&page=${pagination.page}&page_size=${pagination.pageSize}"
     client.GET[Paged[Case]](url)
   }
 
