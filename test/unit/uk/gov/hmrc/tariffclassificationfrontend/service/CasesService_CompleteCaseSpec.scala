@@ -50,7 +50,8 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
   private val audit = mock[AuditService]
   private val config = mock[AppConfig]
   private val clock = Clock.fixed(LocalDateTime.of(2018, 1, 1, 14, 0).toInstant(ZoneOffset.UTC), ZoneId.of("UTC"))
-  private val aCase = Cases.btiCaseExample
+  private val aBTI = Cases.btiCaseExample
+  private val aLiability = Cases.liabilityCaseExample
 
   private val service = new CasesService(config, audit, emailService, fileStoreService,reportingService, connector, rulingConnector)
 
@@ -66,39 +67,68 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
   }
 
   "Complete Case" should {
-    "update case status to COMPLETED" in {
-      // Given
-      val operator: Operator = Operator("operator-id", Some("Billy Bobbins"))
-      val originalDecision = Decision("code", None, None, "justification", "goods")
-      val originalCase = aCase.copy(status = CaseStatus.OPEN, decision = Some(originalDecision))
-      val updatedDecision = Decision("code", Some(date("2018-01-01")), Some(date("2019-01-01")), "justification", "goods")
-      val caseUpdated = aCase.copy(status = CaseStatus.COMPLETED, decision = Some(updatedDecision))
-      val emailTemplate = EmailTemplate("plain", "html", "from", "subject", "service")
+    "update case status to COMPLETED" when {
+      "Liability" in {
+        // Given
+        val operator: Operator = Operator("operator-id", Some("Billy Bobbins"))
+        val originalDecision = Decision("code", None, None, "justification", "goods")
+        val originalCase = aLiability.copy(status = CaseStatus.OPEN, decision = Some(originalDecision))
+        val updatedDecision = Decision("code", Some(date("2018-01-01")), Some(date("2019-01-01")), "justification", "goods")
+        val caseUpdated = aLiability.copy(status = CaseStatus.COMPLETED, decision = Some(updatedDecision))
 
-      given(config.decisionLifetimeYears).willReturn(1)
-      given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
-      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])).willReturn(successful(mock[Event]))
-      given(emailService.sendCaseCompleteEmail(refEq(caseUpdated))(any[HeaderCarrier])).willReturn(Future.successful(emailTemplate))
-      given(rulingConnector.notify(refEq(originalCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(()))
+        given(config.decisionLifetimeYears).willReturn(1)
+        given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
+        given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])).willReturn(successful(mock[Event]))
 
-      // When Then
-      await(service.completeCase(originalCase, operator)) shouldBe caseUpdated
+        // When Then
+        await(service.completeCase(originalCase, operator)) shouldBe caseUpdated
 
-      verify(audit).auditCaseCompleted(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
-      verify(emailService).sendCaseCompleteEmail(refEq(caseUpdated))(any[HeaderCarrier])
+        verify(audit).auditCaseCompleted(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
+        verify(emailService, never()).sendCaseCompleteEmail(any[Case])(any[HeaderCarrier])
+        verify(rulingConnector, never()).notify(refEq(originalCase.reference))(any[HeaderCarrier])
 
-      val caseUpdating = theCaseUpdating(connector)
-      caseUpdating.status shouldBe CaseStatus.COMPLETED
+        val caseUpdating = theCaseUpdating(connector)
+        caseUpdating.status shouldBe CaseStatus.COMPLETED
 
-      val eventCreated = theEventCreatedFor(connector, caseUpdated)
-      eventCreated.operator shouldBe Operator("operator-id", Some("Billy Bobbins"))
-      eventCreated.details shouldBe CompletedCaseStatusChange(CaseStatus.OPEN, None, "- Subject: subject\n- Body: plain")
+        val eventCreated = theEventCreatedFor(connector, caseUpdated)
+        eventCreated.operator shouldBe Operator("operator-id", Some("Billy Bobbins"))
+        eventCreated.details shouldBe CompletedCaseStatusChange(CaseStatus.OPEN, None, None)
+      }
+
+      "BTI" in  {
+        // Given
+        val operator: Operator = Operator("operator-id", Some("Billy Bobbins"))
+        val originalDecision = Decision("code", None, None, "justification", "goods")
+        val originalCase = aBTI.copy(status = CaseStatus.OPEN, decision = Some(originalDecision))
+        val updatedDecision = Decision("code", Some(date("2018-01-01")), Some(date("2019-01-01")), "justification", "goods")
+        val caseUpdated = aBTI.copy(status = CaseStatus.COMPLETED, decision = Some(updatedDecision))
+        val emailTemplate = EmailTemplate("plain", "html", "from", "subject", "service")
+
+        given(config.decisionLifetimeYears).willReturn(1)
+        given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
+        given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])).willReturn(successful(mock[Event]))
+        given(emailService.sendCaseCompleteEmail(refEq(caseUpdated))(any[HeaderCarrier])).willReturn(Future.successful(emailTemplate))
+        given(rulingConnector.notify(refEq(originalCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(()))
+
+        // When Then
+        await(service.completeCase(originalCase, operator)) shouldBe caseUpdated
+
+        verify(audit).auditCaseCompleted(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
+        verify(emailService).sendCaseCompleteEmail(refEq(caseUpdated))(any[HeaderCarrier])
+
+        val caseUpdating = theCaseUpdating(connector)
+        caseUpdating.status shouldBe CaseStatus.COMPLETED
+
+        val eventCreated = theEventCreatedFor(connector, caseUpdated)
+        eventCreated.operator shouldBe Operator("operator-id", Some("Billy Bobbins"))
+        eventCreated.details shouldBe CompletedCaseStatusChange(CaseStatus.OPEN, None, Some("- Subject: subject\n- Body: plain"))
+      }
     }
 
     "reject case without a decision" in {
       // Given
       val operator: Operator = Operator("operator-id")
-      val originalCase = aCase.copy(status = CaseStatus.OPEN, decision = None)
+      val originalCase = aBTI.copy(status = CaseStatus.OPEN, decision = None)
 
       // When Then
       intercept[IllegalArgumentException] {
@@ -113,7 +143,7 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
     "not create event on update failure" in {
       val operator: Operator = Operator("operator-id")
       val originalDecision = Decision("code", None, None, "justification", "goods")
-      val originalCase = aCase.copy(status = CaseStatus.OPEN, decision = Some(originalDecision))
+      val originalCase = aBTI.copy(status = CaseStatus.OPEN, decision = Some(originalDecision))
 
       given(config.decisionLifetimeYears).willReturn(1)
       given(queue.id).willReturn("queue_id")
@@ -125,16 +155,16 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
 
       verifyZeroInteractions(audit)
       verifyZeroInteractions(emailService)
-      verify(connector, never()).createEvent(refEq(aCase), any[NewEventRequest])(any[HeaderCarrier])
+      verify(connector, never()).createEvent(refEq(aBTI), any[NewEventRequest])(any[HeaderCarrier])
     }
 
     "succeed on event create failure" in {
       // Given
       val operator: Operator = Operator("operator-id")
       val originalDecision = Decision("code", None, None, "justification", "goods")
-      val originalCase = aCase.copy(status = CaseStatus.OPEN, decision = Some(originalDecision))
+      val originalCase = aBTI.copy(status = CaseStatus.OPEN, decision = Some(originalDecision))
       val updatedDecision = Decision("code", Some(date("2018-01-01")), Some(date("2019-01-01")), "justification", "goods")
-      val caseUpdated = aCase.copy(status = CaseStatus.COMPLETED, decision = Some(updatedDecision))
+      val caseUpdated = aBTI.copy(status = CaseStatus.COMPLETED, decision = Some(updatedDecision))
       val emailTemplate = EmailTemplate("plain", "html", "from", "subject", "service")
 
       given(config.decisionLifetimeYears).willReturn(1)
@@ -157,9 +187,9 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
       // Given
       val operator: Operator = Operator("operator-id", Some("Billy Bobbins"))
       val originalDecision = Decision("code", None, None, "justification", "goods")
-      val originalCase = aCase.copy(status = CaseStatus.OPEN, decision = Some(originalDecision))
+      val originalCase = aBTI.copy(status = CaseStatus.OPEN, decision = Some(originalDecision))
       val updatedDecision = Decision("code", Some(date("2018-01-01")), Some(date("2019-01-01")), "justification", "goods")
-      val caseUpdated = aCase.copy(status = CaseStatus.COMPLETED, decision = Some(updatedDecision))
+      val caseUpdated = aBTI.copy(status = CaseStatus.COMPLETED, decision = Some(updatedDecision))
 
       given(config.decisionLifetimeYears).willReturn(1)
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
@@ -176,16 +206,16 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
 
       val eventCreated = theEventCreatedFor(connector, caseUpdated)
       eventCreated.operator shouldBe Operator("operator-id", Some("Billy Bobbins"))
-      eventCreated.details shouldBe CompletedCaseStatusChange(CaseStatus.OPEN, None, "Attempted to send an email to the applicant which failed")
+      eventCreated.details shouldBe CompletedCaseStatusChange(CaseStatus.OPEN, None, Some("Attempted to send an email to the applicant which failed"))
     }
 
     "suceed on ruling notify failure" in {
       // Given
       val operator: Operator = Operator("operator-id", Some("Billy Bobbins"))
       val originalDecision = Decision("code", None, None, "justification", "goods")
-      val originalCase = aCase.copy(status = CaseStatus.OPEN, decision = Some(originalDecision))
+      val originalCase = aBTI.copy(status = CaseStatus.OPEN, decision = Some(originalDecision))
       val updatedDecision = Decision("code", Some(date("2018-01-01")), Some(date("2019-01-01")), "justification", "goods")
-      val caseUpdated = aCase.copy(status = CaseStatus.COMPLETED, decision = Some(updatedDecision))
+      val caseUpdated = aBTI.copy(status = CaseStatus.COMPLETED, decision = Some(updatedDecision))
       val emailTemplate = EmailTemplate("plain", "html", "from", "subject", "service")
 
       given(config.decisionLifetimeYears).willReturn(1)
@@ -205,7 +235,7 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
 
       val eventCreated = theEventCreatedFor(connector, caseUpdated)
       eventCreated.operator shouldBe Operator("operator-id", Some("Billy Bobbins"))
-      eventCreated.details shouldBe CompletedCaseStatusChange(CaseStatus.OPEN,None, "- Subject: subject\n- Body: plain")
+      eventCreated.details shouldBe CompletedCaseStatusChange(CaseStatus.OPEN,None, Some("- Subject: subject\n- Body: plain"))
     }
   }
 

@@ -29,8 +29,10 @@
   </p>
  }
 
- <p class="bold">Email sent to applicant:</p>
- <p id="activity-events-row-@index-email" class="pre-wrap">@body.email</p>
+ @if(body.email.isDefined) {
+  <p class="bold">Email sent to applicant:</p>
+  <p id="activity-events-row-@index-email" class="pre-wrap">@body.email</p>
+ }
 }
 
 @defining(event.details.asInstanceOf[CompletedCaseStatusChange]) { body: CompletedCaseStatusChange =>
