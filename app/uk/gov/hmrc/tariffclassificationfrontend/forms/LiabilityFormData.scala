@@ -16,11 +16,11 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.forms
 
-import java.time.{Instant, LocalDate, ZoneOffset}
+import java.time.LocalDate
 
 import play.api.data.Form
 import play.api.data.Forms._
-import play.api.data.validation.{Constraint, Invalid, Valid}
+import uk.gov.hmrc.tariffclassificationfrontend.forms.mappings.FormMappings
 
 import scala.util.Try
 
@@ -39,14 +39,9 @@ case class LiabilityFormData(
 object LiabilityFormData {
 
   private type FormDate = (Int, Int, Int)
-
-  private val formDateIsValid: FormDate => Boolean = {
-    case (day, month, year) => Try(LocalDate.of(year, month, day)).isSuccess
-  }
-
   val form: Form[LiabilityFormData] = Form[LiabilityFormData](
     mapping(
-      "traderName" -> text,
+      "traderName" -> FormMappings.textNonEmpty("case.liability.error.empty.trader-name"),
       "goodName" -> text,
       "entryNumber" -> text,
       "traderCommodityCode" -> text,
@@ -56,6 +51,9 @@ object LiabilityFormData {
       "contactPhone" -> text
     )(LiabilityFormData.apply)(LiabilityFormData.unapply)
   )
+  private val formDateIsValid: FormDate => Boolean = {
+    case (day, month, year) => Try(LocalDate.of(year, month, day)).isSuccess
+  }
 
 
 }
