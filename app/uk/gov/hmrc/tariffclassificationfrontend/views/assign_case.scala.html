@@ -37,7 +37,7 @@
     </h2>
 
     @if(c.assignee.isEmpty) {
-        <p>This will add the case to your my cases list</p>
+        <p>This will add the case to your My cases list.</p>
 
         @form(action = routes.AssignCaseController.post(c.reference), 'class -> "form") {
             @CSRF.formField
