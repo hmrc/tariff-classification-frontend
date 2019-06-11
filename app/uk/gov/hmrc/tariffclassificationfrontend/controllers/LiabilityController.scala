@@ -72,7 +72,7 @@ class LiabilityController @Inject()(verify: RequestActions,
         traderCommodityCode = l.traderCommodityCode.getOrElse(""),
         officerCommodityCode = l.officerCommodityCode.getOrElse(""),
         contactName = l.contact.name,
-        contactEmail = l.contact.email,
+        contactEmail = Some(l.contact.email),
         contactPhone = l.contact.phone.getOrElse("")
       )
     )
@@ -82,7 +82,7 @@ class LiabilityController @Inject()(verify: RequestActions,
 
     val updatedContact = c.application.contact.copy(
       name = validForm.contactName,
-      email = validForm.contactEmail,
+      email = validForm.contactEmail.getOrElse(""),
       phone = Some(validForm.contactPhone)
     )
 
@@ -128,11 +128,11 @@ class LiabilityController @Inject()(verify: RequestActions,
   private def getCaseAndRedirect(page: CaseDetailPage, toResult: Case => Future[Call])
                                 (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
 
-    //if (request.`case`.status == CaseStatus.OPEN) {
+    if (request.`case`.status == CaseStatus.OPEN) {
       toResult(request.`case`).map(Redirect)
-    //} else {
-    //  successful(Redirect(routes.LiabilityController.liabilityDetails(request.`case`.reference)))
-    //}
+    } else {
+      successful(Redirect(routes.LiabilityController.liabilityDetails(request.`case`.reference)))
+    }
 
   }
 }

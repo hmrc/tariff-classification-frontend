@@ -20,6 +20,7 @@ import java.time.{Instant, LocalDate, ZoneOffset}
 
 import play.api.data.Form
 import play.api.data.Forms._
+import play.api.data.validation.{Constraint, Invalid, Valid}
 
 import scala.util.Try
 
@@ -32,7 +33,7 @@ case class LiabilityFormData(
                               traderCommodityCode: String = "",
                               officerCommodityCode: String = "",
                               contactName: String = "",
-                              contactEmail: String = "",
+                              contactEmail: Option[String] = None,
                               contactPhone: String = "")
 
 object LiabilityFormData {
@@ -51,33 +52,10 @@ object LiabilityFormData {
       "traderCommodityCode" -> text,
       "officerCommodityCode" -> text,
       "contactName" -> text,
-      "contactEmail" -> text,
+      "contactEmail" -> optional(email),
       "contactPhone" -> text
     )(LiabilityFormData.apply)(LiabilityFormData.unapply)
   )
 
-  /*
-   mapping(
-      "entryDate" -> mapping(
-        "date" -> tuple(
-          "day" -> number,
-          "month" -> number,
-          "year" -> number
-        ).verifying("Date must be valid", formDateIsValid)
-      )(mappingFromFormToFilter)(mappingFromFilterToForm)
-    )(LiabilityFormData.apply)(LiabilityFormData.unapply)
-   */
-
-//  private val mappingFromFormToFilter: FormDate => Instant = {
-//    case (day, month, year) =>
-//      val min = LocalDate.of(year, month, day)
-//      min.atStartOfDay(ZoneOffset.UTC).toInstant
-//  }
-//
-//  private val mappingFromFilterToForm: Instant => Option[FormDate] = { date =>
-//    val offsetDate = date.atOffset(ZoneOffset.UTC).toLocalDate
-//    val formDate: FormDate = (offsetDate.getDayOfMonth, offsetDate.getMonthValue, offsetDate.getYear)
-//    Some(formDate)
-//  }
 
 }
