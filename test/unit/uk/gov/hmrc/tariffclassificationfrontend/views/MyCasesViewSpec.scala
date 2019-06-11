@@ -31,6 +31,8 @@ class MyCasesViewSpec extends ViewSpec {
     val openCase = Cases.btiCaseExample.copy(status = CaseStatus.OPEN)
     val referredCase = Cases.btiCaseExample.copy(status = CaseStatus.REFERRED)
     val suspendedCase = Cases.btiCaseExample.copy(status = CaseStatus.SUSPENDED)
+    val liabCase = Cases.liabilityCaseExample
+    val liveLiabCase = Cases.liabilityLiveCaseExample
 
     "render create liability button when user has CREATE_CASES permission" in {
       // Given
@@ -79,7 +81,22 @@ class MyCasesViewSpec extends ViewSpec {
     }
 
 
-    "render with a list of cases" in {
+    "render both BTI and Liability" in {
+      // Given
+      val queues = Seq(queue1, queue2)
+      val cases = Seq(openCase,liabCase,liveLiabCase)
+
+      // When
+      val doc = view(html.my_cases(queues, cases, operator, Map.empty)(request = requestWithPermissions(Permission.VIEW_QUEUE_CASES, Permission.VIEW_MY_CASES), messages, appConfig))
+
+      // Then
+      doc.getElementById("cases_list-row-0-type") should containText("BTI")
+      doc.getElementById("cases_list-row-1-type") should containText("Liability")
+      doc.getElementById("cases_list-row-2-type") should containText("Liability")
+      doc.getElementById("cases_list-row-2-type") should containElementWithAttribute("class", "live-red-text")
+    }
+
+    "render cases in the expected order" in {
       // Given
       val queues = Seq(queue1, queue2)
       val cases = Seq(openCase)
@@ -105,7 +122,7 @@ class MyCasesViewSpec extends ViewSpec {
       doc should containElementWithID("cases_list-row-0-reference")
     }
 
-    "render with a list of cases and refered cases" in {
+    "render with a list of cases and referred cases" in {
       // Given
       val queues = Seq(queue1, queue2)
       val cases = Seq(openCase, referredCase, suspendedCase)

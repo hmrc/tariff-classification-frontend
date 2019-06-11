@@ -17,7 +17,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.CaseStatus
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{CancelReason, Case, CaseStatus}
-@(c: Case, id: String)(implicit appConfig: AppConfig)
+@(c: Case, id: String, suppressLiveIndicator: Boolean = false)(implicit appConfig: AppConfig)
 
 @c.status match {
     case CaseStatus.CANCELLED => {
@@ -35,6 +35,6 @@
     }
 }
 
-@if(c.application.isLiveLiabilityOrder) {
+@if(c.application.isLiveLiabilityOrder && !suppressLiveIndicator) {
     <span id = "@id-liability-status" class="live-red-text">LIVE</span>
 }

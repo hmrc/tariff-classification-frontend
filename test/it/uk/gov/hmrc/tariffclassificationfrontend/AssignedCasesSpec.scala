@@ -4,17 +4,16 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import org.scalatest.mockito.MockitoSugar
 import play.api.libs.ws.WSResponse
 import play.api.test.Helpers.OK
-import uk.gov.hmrc.tariffclassificationfrontend.models.Pagination
-import uk.gov.tariffclassificationfrontend.utils.CasePayloads
+import uk.gov.hmrc.tariffclassificationfrontend.models.{NoPagination, Pagination}
+import uk.gov.tariffclassificationfrontend.utils.{CasePayloads, CaseQueueBuilder}
 
-class AssignedCasesSpec extends IntegrationTest with MockitoSugar {
+class AssignedCasesSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder {
 
-  private val testCasesServiceUrl = "/cases?application_type=BTI&assignee_id=some&status=OPEN,REFERRED,SUSPENDED" +
-    s"&sort_by=days-elapsed&sort_direction=desc&page=1&page_size=${Pagination.unlimited}"
+  private val testCasesServiceUrl = buildQueryUrl(withStatuses = "OPEN,REFERRED,SUSPENDED", assigneeId = "some", pag = NoPagination())
 
   private val testReportServiceUrl = "/report?status=NEW&status=OPEN&status=REFERRED&status=SUSPENDED&assignee_id=none&report_group=queue-id&report_field=active-days-elapsed"
 
-  private val testMyCasesServiceUrl = "/cases?application_type=BTI&assignee_id=123&status=NEW,OPEN,REFERRED,SUSPENDED&sort_by=days-elapsed&sort_direction=desc&page=1&page_size=2147483647"
+  private val testMyCasesServiceUrl = buildQueryUrl(withStatuses = "NEW,OPEN,REFERRED,SUSPENDED", assigneeId = "123", pag = NoPagination())
 
 
   "Assigned Cases" should {
