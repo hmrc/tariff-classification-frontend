@@ -19,12 +19,8 @@
 @(application: Application)
 
 <div>
-    @if(application.isBTI) {
-        @application.getType
-    } else {
-        Liability</br>
-        @if(application.asLiabilityOrder.status == LiabilityStatus.LIVE){
-            <span class="live-red-text">LIVE</span>
-        }
+    @application.getType
+    @if(application.isLiabilityOrder && application.asLiabilityOrder.status == LiabilityStatus.LIVE) {
+        </br><span class="live-red-text">LIVE</span>
     }
 </div>
