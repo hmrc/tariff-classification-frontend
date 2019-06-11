@@ -141,52 +141,54 @@
         @if(c.decision.isDefined) {
 
             @defining(c.decision.get) { decision: Decision =>
-                <dl class="dl-mb-2">
-                    <div id="liability-decision-code" class="grid-row">
-                        <dt class="column-one-third">
-                            @messages("case.liability.decision.code")
-                        </dt>
-                        <dd class="column-two-thirds">
+                <div class="mt-2">
+                    <dl class="dl-mb-2">
+                        <div id="liability-decision-code" class="grid-row">
+                            <dt class="column-one-third">
+                                @messages("case.liability.decision.code")
+                            </dt>
+                            <dd class="column-two-thirds">
                             @decision.bindingCommodityCode
-                        </dd>
-                    </div>
+                            </dd>
+                        </div>
 
-                    <div id="liability-decision-description" class="grid-row">
-                        <dt class="column-one-third">
+                        <div id="liability-decision-description" class="grid-row">
+                            <dt class="column-one-third">
                             @messages("case.liability.decision.description")
-                        </dt>
-                        <dd class="column-two-thirds">
+                            </dt>
+                            <dd class="column-two-thirds">
                             @decision.goodsDescription
-                        </dd>
-                    </div>
+                            </dd>
+                        </div>
 
-                    <div id="liability-decision-justification" class="grid-row">
-                        <dt class="column-one-third">
+                        <div id="liability-decision-justification" class="grid-row">
+                            <dt class="column-one-third">
                             @messages("case.liability.decision.justification")
-                        </dt>
-                        <dd class="column-two-thirds">
+                            </dt>
+                            <dd class="column-two-thirds">
                             @decision.justification
-                        </dd>
-                    </div>
+                            </dd>
+                        </div>
 
-                    <div id="liability-decision-searches" class="grid-row">
-                        <dt class="column-one-third">
+                        <div id="liability-decision-searches" class="grid-row">
+                            <dt class="column-one-third">
                             @messages("case.liability.decision.searches")
-                        </dt>
-                        <dd class="column-two-thirds">
+                            </dt>
+                            <dd class="column-two-thirds">
                             @decision.justification
-                        </dd>
-                    </div>
+                            </dd>
+                        </div>
 
-                    <div id="liability-decision-exclusions" class="grid-row">
-                        <dt class="column-one-third">
+                        <div id="liability-decision-exclusions" class="grid-row">
+                            <dt class="column-one-third">
                             @messages("case.liability.decision.exclusions")
-                        </dt>
-                        <dd class="column-two-thirds">
+                            </dt>
+                            <dd class="column-two-thirds">
                             @decision.methodExclusion
-                        </dd>
-                    </div>
-                </dl>
+                            </dd>
+                        </div>
+                    </dl>
+                </div>
             }
         }
 
