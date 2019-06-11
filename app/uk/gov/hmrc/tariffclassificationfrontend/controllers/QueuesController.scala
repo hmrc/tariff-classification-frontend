@@ -23,6 +23,7 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.controllers.SessionKeys._
 import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.QueuesController
+import uk.gov.hmrc.tariffclassificationfrontend.models.ApplicationType.ApplicationType
 import uk.gov.hmrc.tariffclassificationfrontend.models.{ApplicationType, _}
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, QueuesService}
 import uk.gov.hmrc.tariffclassificationfrontend.views
@@ -37,28 +38,24 @@ class QueuesController @Inject()(verify: RequestActions,
                                  val messagesApi: MessagesApi,
                                  implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
-  def queue(slug: String, types: String = Seq(ApplicationType.BTI, ApplicationType.LIABILITY_ORDER).mkString(",")): Action[AnyContent] =
+  def queue(slug: String, caseType: Option[String] = None): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.VIEW_QUEUE_CASES)).async { implicit request =>
+
+      val types: Seq[ApplicationType] = caseType.map(x => Seq[ApplicationType](ApplicationType.withName(x)))
+        .getOrElse(Seq(ApplicationType.BTI, ApplicationType.LIABILITY_ORDER))
+
     queuesService.getOneBySlug(slug) flatMap {
       case None => successful(Ok(views.html.resource_not_found()))
       case Some(q: Queue) =>
         for {
-          cases <- casesService.getCasesByQueue(q, NoPagination())
+          cases <- casesService.getCasesByQueue(q, NoPagination(), types)
           queues <- queuesService.getAll
           caseCountByQueue <- casesService.countCasesByQueue(request.operator)
-        } yield Ok(views.html.queue(queues, q, caseCountByQueue, cases, types))
-          .addingToSession((backToQueuesLinkLabel, s"${q.name} cases"), (backToQueuesLinkUrl, QueuesController.queue(q.slug,types).url))
+        } yield Ok(views.html.queue(queues, q, caseCountByQueue, cases, types.mkString(",")))
+          .addingToSession((backToQueuesLinkLabel, s"${q.name} cases"), (backToQueuesLinkUrl, QueuesController.queue(q.slug,caseType).url))
           .removingFromSession(backToSearchResultsLinkLabel, backToSearchResultsLinkUrl)
     }
   }
 
-//  def queueLiabilities(slug: String): Action[AnyContent] =
-//    (verify.authenticated andThen verify.mustHave(Permission.VIEW_QUEUE_CASES)).async { implicit request =>
-//      queue(slug, Seq(ApplicationType.LIABILITY_ORDER))
-//    }
-//
-//  def queueBti(slug: String): Action[AnyContent] =
-//    (verify.authenticated andThen verify.mustHave(Permission.VIEW_QUEUE_CASES)).async { implicit request =>
-//      queue(slug, Seq(ApplicationType.BTI))
-//    }
+
 }

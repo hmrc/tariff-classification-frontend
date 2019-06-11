@@ -59,9 +59,9 @@ class BindingTariffClassificationConnector @Inject()(appConfig: AppConfig, clien
     s"${appConfig.bindingTariffClassificationUrl}/cases?$queryString"
   }
 
-  def findCasesByQueue(queue: Queue, pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[Case]] = {
+  def findCasesByQueue(queue: Queue, pagination: Pagination, types: Seq[ApplicationType])(implicit hc: HeaderCarrier): Future[Paged[Case]] = {
     val queueId = if (queue == Queues.gateway) "none" else queue.id
-    val url = buildQueryUrl(withStatuses = statuses, queueId = queueId,  assigneeId = "none", pagination = pagination)
+    val url = buildQueryUrl(types = types, withStatuses = statuses, queueId = queueId,  assigneeId = "none", pagination = pagination)
     client.GET[Paged[Case]](url)
   }
 

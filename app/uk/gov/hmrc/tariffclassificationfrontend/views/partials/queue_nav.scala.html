@@ -32,7 +32,7 @@
         @if(request.hasPermission(Permission.VIEW_QUEUE_CASES)) {
             @for((q,index) <- queues.zipWithIndex if q.slug == "gateway") {
                 <li class="side-nav__list @if(section == q.slug ) { side-nav__list--selected }">
-                    <a tabindex="@{TabIndexes.tabIndexForQueue(q.slug)}" id="nav-menu-queue-@q.slug" class="side-nav__link" href="@controllers.routes.QueuesController.queue(q.slug, Seq(ApplicationType.BTI,ApplicationType.LIABILITY_ORDER).mkString(","))">@messages("cases.menu.gateway-cases") (<span id="case-count-@q.slug">@caseCountByQueue.getOrElse(q.id, "0")</span>)</a>
+                    <a tabindex="@{TabIndexes.tabIndexForQueue(q.slug)}" id="nav-menu-queue-@q.slug" class="side-nav__link" href="@controllers.routes.QueuesController.queue(q.slug)">@messages("cases.menu.gateway-cases") (<span id="case-count-@q.slug">@caseCountByQueue.getOrElse(q.id, "0")</span>)</a>
                 </li>
             }
         }
@@ -43,7 +43,7 @@
         @if(request.hasPermission(Permission.VIEW_QUEUE_CASES)) {
             @for((q,index) <- queues.zipWithIndex if q.slug != "gateway") {
                 <li class="side-nav__list @if(section == q.slug && filteredBy == "BTI") { side-nav__list--selected }">
-                    <a tabindex="@{TabIndexes.tabIndexForQueue(q.slug)}" id="nav-menu-queue-@q.slug" class="side-nav__link" href="@controllers.routes.QueuesController.queue(q.slug, ApplicationType.BTI.toString)">@q.name (<span id="case-count-@q.slug">@caseCountByQueue.getOrElse(q.id, "0")</span>)</a>
+                    <a tabindex="@{TabIndexes.tabIndexForQueue(q.slug)}" id="nav-menu-queue-@q.slug" class="side-nav__link" href="@controllers.routes.QueuesController.queue(q.slug, Some(ApplicationType.BTI.toString))">@q.name (<span id="case-count-@q.slug">@caseCountByQueue.getOrElse(q.id, "0")</span>)</a>
                 </li>
             }
         }
@@ -55,7 +55,7 @@
         @if(request.hasPermission(Permission.VIEW_QUEUE_CASES)) {
             @for((q,index) <- queues.zipWithIndex if q.slug != "gateway") {
                 <li class="side-nav__list @if(section == q.slug && filteredBy == "LIABILITY_ORDER") { side-nav__list--selected }">
-                    <a tabindex="@{TabIndexes.tabIndexForQueue(s"${q.slug}-liab")}" id="nav-menu-queue-liab-@q.slug" class="side-nav__link" href="@controllers.routes.QueuesController.queue(q.slug, ApplicationType.LIABILITY_ORDER.toString)">@q.name (<span id="case-count-@q.slug">@caseCountByQueue.getOrElse(q.id, "0")</span>)</a>
+                    <a tabindex="@{TabIndexes.tabIndexForQueue(s"${q.slug}-liab")}" id="nav-menu-queue-liab-@q.slug" class="side-nav__link" href="@controllers.routes.QueuesController.queue(q.slug, Some(ApplicationType.LIABILITY_ORDER.toString))">@q.name (<span id="case-count-liab-@q.slug">@caseCountByQueue.getOrElse(q.id, "0")</span>)</a>
                 </li>
             }
         }
