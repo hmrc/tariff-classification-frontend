@@ -26,7 +26,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.views.partials.ShowActions
 @(c: Case, startAtTabIndex: Int)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@defining(new ShowActions(c.status)) { show: ShowActions =>
+@defining(ShowActions(c.status)) { show: ShowActions =>
 
     @if(show.any) {
         <h3 class="heading-medium mt-0"> Actions on this case </h3>

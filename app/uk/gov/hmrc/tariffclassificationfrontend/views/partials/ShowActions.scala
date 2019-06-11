@@ -31,3 +31,7 @@ class ShowActions(caseStatus: CaseStatus)(implicit request: AuthenticatedRequest
 
   def any: Boolean = refer || reject || suspend || release || suppress || reopen
 }
+
+object ShowActions {
+  def apply(caseStatus: CaseStatus)(implicit request: AuthenticatedRequest[_]): ShowActions = new ShowActions(caseStatus)
+}
