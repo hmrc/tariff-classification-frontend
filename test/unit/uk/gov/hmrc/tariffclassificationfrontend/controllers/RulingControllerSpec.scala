@@ -33,12 +33,16 @@ import uk.gov.hmrc.tariffclassificationfrontend.forms.{CommodityCodeConstraints,
 import uk.gov.hmrc.tariffclassificationfrontend.models.Permission.Permission
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus, Operator, Permission}
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, CommodityCodeService, FileStoreService}
-import uk.gov.tariffclassificationfrontend.utils.Cases
+import uk.gov.tariffclassificationfrontend.utils.Cases._
 
 import scala.concurrent.Future
 
-class RulingControllerSpec extends UnitSpec with Matchers with WithFakeApplication
-  with MockitoSugar with BeforeAndAfterEach with ControllerCommons {
+class RulingControllerSpec extends UnitSpec
+  with Matchers
+  with WithFakeApplication
+  with MockitoSugar
+  with BeforeAndAfterEach
+  with ControllerCommons {
 
   private val env = Environment.simple()
   private val configuration = Configuration.load(env)
@@ -67,24 +71,34 @@ class RulingControllerSpec extends UnitSpec with Matchers with WithFakeApplicati
 
 
   "Edit Ruling" should {
-    val caseWithStatusNEW = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.NEW)
-    val caseWithStatusOPEN = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.OPEN)
-    val attachment = Cases.storedAttachment
+    val btiCaseWithStatusNEW = aCase(withBTIApplication, withReference("reference"), withStatus(CaseStatus.NEW))
+    val btiCaseWithStatusOPEN = aCase(withBTIApplication, withReference("reference"), withStatus(CaseStatus.OPEN))
+    val liabilityCaseWithStatusOPEN = aCase(withLiabilityApplication, withReference("reference"), withStatus(CaseStatus.OPEN))
+    val attachment = storedAttachment
 
-    "return OK and HTML content type" in {
+    "return OK and HTML content type" when {
+      "Case is a BTI" in {
+        given(fileService.getAttachments(refEq(btiCaseWithStatusOPEN))(any[HeaderCarrier])).willReturn(Future.successful(Seq(attachment)))
 
-      given(fileService.getAttachments(refEq(caseWithStatusOPEN))(any[HeaderCarrier])).willReturn(Future.successful(Seq(attachment)))
+        val result = controller(btiCaseWithStatusOPEN).editRulingDetails("reference")(newFakeGETRequestWithCSRF(fakeApplication))
+        status(result) shouldBe Status.OK
+        contentType(result) shouldBe Some("text/html")
+        charset(result) shouldBe Some("utf-8")
+        contentAsString(result) should (include("Ruling") and include("<form"))
+      }
 
-      val result = controller(caseWithStatusOPEN).editRulingDetails("reference")(newFakeGETRequestWithCSRF(fakeApplication))
-      status(result) shouldBe Status.OK
-      contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
-      contentAsString(result) should (include("Ruling") and include("<form"))
+      "Case is a Liability" in {
+        val result = controller(liabilityCaseWithStatusOPEN).editRulingDetails("reference")(newFakeGETRequestWithCSRF(fakeApplication))
+        status(result) shouldBe Status.OK
+        contentType(result) shouldBe Some("text/html")
+        charset(result) shouldBe Some("utf-8")
+        contentAsString(result) should (include("Ruling") and include("<form"))
+      }
     }
 
     "redirect to Ruling for non OPEN Statuses" in {
 
-      val result = controller(caseWithStatusNEW).editRulingDetails("reference")(newFakeGETRequestWithCSRF(fakeApplication))
+      val result = controller(btiCaseWithStatusNEW).editRulingDetails("reference")(newFakeGETRequestWithCSRF(fakeApplication))
       status(result) shouldBe Status.SEE_OTHER
       contentType(result) shouldBe None
       charset(result) shouldBe None
@@ -94,14 +108,14 @@ class RulingControllerSpec extends UnitSpec with Matchers with WithFakeApplicati
     "return OK when user has right permissions" in {
       given(fileService.getAttachments(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(Seq(attachment)))
 
-      val result = controller(caseWithStatusOPEN, Set(Permission.EDIT_RULING))
+      val result = controller(btiCaseWithStatusOPEN, Set(Permission.EDIT_RULING))
         .editRulingDetails("reference")(newFakeGETRequestWithCSRF(fakeApplication))
 
       status(result) shouldBe Status.OK
     }
 
     "redirect unauthorised when does not have right permissions" in {
-      val result = controller(caseWithStatusOPEN, Set.empty)
+      val result = controller(btiCaseWithStatusOPEN, Set.empty)
         .editRulingDetails("reference")(newFakeGETRequestWithCSRF(fakeApplication))
 
       status(result) shouldBe Status.SEE_OTHER
@@ -110,10 +124,11 @@ class RulingControllerSpec extends UnitSpec with Matchers with WithFakeApplicati
   }
 
   "Update Ruling" should {
-    val caseWithStatusNEW = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.NEW)
-    val caseWithStatusOPEN = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.OPEN)
-    val updatedCase = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.OPEN)
-    val attachment = Cases.storedAttachment
+    val caseWithStatusNEW = aCase(withReference("reference"), withStatus(CaseStatus.NEW))
+    val caseWithStatusOPEN = aCase(withReference("reference"), withStatus(CaseStatus.OPEN))
+    val liabilityCaseWithStatusOPEN = aCase(withLiabilityApplication, withReference("reference"), withStatus(CaseStatus.OPEN))
+    val updatedCase = aCase(withReference("reference"), withStatus(CaseStatus.OPEN))
+    val attachment = storedAttachment
 
     val aValidForm = newFakePOSTRequestWithCSRF(fakeApplication, Map(
       "bindingCommodityCode" -> "",
@@ -126,14 +141,25 @@ class RulingControllerSpec extends UnitSpec with Matchers with WithFakeApplicati
       "explanation" -> "")
     )
 
-    "update and redirect for permitted user" in {
-      given(casesService.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(updatedCase))
-      given(fileService.getAttachments(refEq(updatedCase))(any[HeaderCarrier])).willReturn(Future.successful(Seq(attachment)))
+    "update and redirect for permitted user" when {
+      "Case is a BTI" in {
+        given(casesService.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(updatedCase))
+        given(fileService.getAttachments(refEq(updatedCase))(any[HeaderCarrier])).willReturn(Future.successful(Seq(attachment)))
 
-      val result = await(controller(caseWithStatusOPEN).updateRulingDetails("reference")(aValidForm))
-      verify(casesService).updateCase(any[Case])(any[HeaderCarrier])
-      status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some(routes.CaseController.rulingDetails("reference").url)
+        val result = await(controller(caseWithStatusOPEN).updateRulingDetails("reference")(aValidForm))
+        verify(casesService).updateCase(any[Case])(any[HeaderCarrier])
+        status(result) shouldBe Status.SEE_OTHER
+        locationOf(result) shouldBe Some(routes.CaseController.rulingDetails("reference").url)
+      }
+
+      "Case is a Liability" in {
+        given(casesService.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(updatedCase))
+
+        val result = await(controller(liabilityCaseWithStatusOPEN).updateRulingDetails("reference")(aValidForm))
+        verify(casesService).updateCase(any[Case])(any[HeaderCarrier])
+        status(result) shouldBe Status.SEE_OTHER
+        locationOf(result) shouldBe Some(routes.CaseController.rulingDetails("reference").url)
+      }
     }
 
     "redirect back to edit ruling on Form Error" in {

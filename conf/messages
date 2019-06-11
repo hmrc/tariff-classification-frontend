@@ -171,6 +171,11 @@ case.liability.code.officer= Code suggested by officer
 case.liability.contact.name = Name
 case.liability.contact.email = Contact email
 case.liability.contact.phone = Contact telephone
+case.liability.decision.code = Commodity code
+case.liability.decision.description = Item description
+case.liability.decision.justification = Justification
+case.liability.decision.searches = Searches  performed
+case.liability.decision.exclusions = Exclusions and inclusions
 
 events.table.empty=There are no events for this case
 
@@ -343,6 +348,7 @@ page.title.extended.use=Extended use of this ruling
 page.title.ruling.not.found=Ruling not found
 page.title.case.queues=Tariff classification case queues
 page.title.create_liability=New liability
+page.title.edit_liability_decision=Edit liability decision
 
 
 view.attachment.unavailable.title=Attachment unavailable

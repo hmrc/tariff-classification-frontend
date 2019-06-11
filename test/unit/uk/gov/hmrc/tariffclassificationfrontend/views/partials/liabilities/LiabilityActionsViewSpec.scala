@@ -38,7 +38,7 @@ class LiabilityActionsViewSpec extends ViewSpec {
       // Given
       val c = aCase(
         withStatus(CaseStatus.OPEN),
-        withLiabilityOrderApplication
+        withLiabilityApplication
       )
 
       // When
@@ -58,7 +58,7 @@ class LiabilityActionsViewSpec extends ViewSpec {
       // Given
       val c = aCase(
         withStatus(CaseStatus.OPEN),
-        withLiabilityOrderApplication
+        withLiabilityApplication
       )
 
       // When
@@ -79,7 +79,7 @@ class LiabilityActionsViewSpec extends ViewSpec {
       // Given
       val c = aCase(
         withStatus(CaseStatus.OPEN),
-        withLiabilityOrderApplication
+        withLiabilityApplication
       )
 
       // When
@@ -100,7 +100,7 @@ class LiabilityActionsViewSpec extends ViewSpec {
       // Given
       val c = aCase(
         withStatus(CaseStatus.OPEN),
-        withLiabilityOrderApplication
+        withLiabilityApplication
       )
 
       // When
@@ -114,7 +114,7 @@ class LiabilityActionsViewSpec extends ViewSpec {
       // Given
       val c = aCase(
         withStatus(CaseStatus.NEW),
-        withLiabilityOrderApplication
+        withLiabilityApplication
       )
 
       // When
@@ -135,7 +135,7 @@ class LiabilityActionsViewSpec extends ViewSpec {
       // Given
       val c = aCase(
         withStatus(CaseStatus.NEW),
-        withLiabilityOrderApplication
+        withLiabilityApplication
       )
 
       // When
@@ -156,7 +156,7 @@ class LiabilityActionsViewSpec extends ViewSpec {
       // Given
       val c = aCase(
         withStatus(CaseStatus.SUSPENDED),
-        withLiabilityOrderApplication
+        withLiabilityApplication
       )
 
       // When
@@ -177,7 +177,7 @@ class LiabilityActionsViewSpec extends ViewSpec {
       // Given
       val c = aCase(
         withStatus(CaseStatus.REFERRED),
-        withLiabilityOrderApplication
+        withLiabilityApplication
       )
 
       // When

@@ -25,42 +25,49 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.components.confirm_or_cancel_buttons
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.input_text
 @import uk.gov.hmrc.tariffclassificationfrontend.models.LiabilityStatus
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.error_summary
-@(form: Form[LiabilityOrder])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@import uk.gov.hmrc.tariffclassificationfrontend.models.Decision
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.input_textarea
+@(c: Case, form: Form[Decision])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("page.title.create_liability"))) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.edit_liability_decision"))) {
 
-    @error_summary(form.errors)
+    <h1 id="edit_liability_decision-heading" class="heading-xlarge">Liability for  @c.application.asLiabilityOrder.traderName</h1>
 
-    <h1 id="create_liability-heading" class="heading-xlarge">Liability information</h1>
-
-    @helper.form(action = routes.CreateLiabilityController.post(), 'id -> "create_liability-form") {
+    @helper.form(action = routes.RulingController.updateRulingDetails(c.reference), 'id -> "edit_liability_decision-form") {
         @helper.CSRF.formField
 
         @input_text(
-            field = form("trader-name"),
-            label = "What is the trader's name?",
-            labelClass = Some("heading-large"),
-            hint = Some("This is the name of the importer of the item and will be used as  the name of this case."),
+            field = form("bindingCommodityCode"),
+            label = "Commodity code",
+            hint = Some("This is the commodity code that you think should be used by the importer."),
             formControlClass = Some("w-50")
         )
 
-        @input_radiogroup(
-            field = form("liability-status"),
-            label = Some("Is this a live liability?"),
-            labelClass = Some("heading-large"),
-            options = Seq(
-                RadioOption(LiabilityStatus.LIVE.toString, "Yes, this is a live liability"),
-                RadioOption(LiabilityStatus.NON_LIVE.toString, "No, this is not a live liability")
-            ),
-            id = "create_liability-liability_status"
+        @input_textarea(
+            field = form("goodsDescription"),
+            label = "Item description"
+        )
+
+        @input_textarea(
+            field = form("justification"),
+            label = "Justification"
+        )
+
+        @input_textarea(
+            field = form("methodSearch"),
+            label = "Searches performed"
+        )
+
+        @input_textarea(
+            field = form("methodExclusion"),
+            label = "Exclusions, inclusions and comments"
         )
 
         @confirm_or_cancel_buttons(
-            id = "create_liability",
-            confirmText = "Confirm and create case",
-            cancelText = "Cancel and return to case queues",
-            cancelHref = routes.IndexController.get()
+            id = "edit_liability_decision",
+            confirmText = "Save changes",
+            cancelText = "Cancel changes",
+            cancelHref = routes.LiabilityController.liabilityDetails(c.reference)
         )
     }
 

@@ -22,6 +22,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials._
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.liabilities.liability_actions
 
+@import uk.gov.hmrc.tariffclassificationfrontend.models.Decision
 @(c: Case, startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @defining(c.application) { a: Application =>
@@ -126,5 +127,68 @@
         </dl>
 
         @liability_actions(c, startAtTabIndex)
+
+        <hr class="mt-0 mb-0">
+
+        <h3 class="heading-medium" id="liability-decision-heading">Liability decision details</h3>
+
+        @if(request.hasPermission(Permission.EDIT_RULING)) {
+            <a id="liability-decision-edit" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.RulingController.editRulingDetails(c.reference)">
+                Edit liability details
+            </a>
+        }
+
+        @if(c.decision.isDefined) {
+
+            @defining(c.decision.get) { decision: Decision =>
+                <dl class="dl-mb-2">
+                    <div id="liability-decision-code" class="grid-row">
+                        <dt class="column-one-third">
+                            @messages("case.liability.decision.code")
+                        </dt>
+                        <dd class="column-two-thirds">
+                            @decision.bindingCommodityCode
+                        </dd>
+                    </div>
+
+                    <div id="liability-decision-description" class="grid-row">
+                        <dt class="column-one-third">
+                            @messages("case.liability.decision.description")
+                        </dt>
+                        <dd class="column-two-thirds">
+                            @decision.goodsDescription
+                        </dd>
+                    </div>
+
+                    <div id="liability-decision-justification" class="grid-row">
+                        <dt class="column-one-third">
+                            @messages("case.liability.decision.justification")
+                        </dt>
+                        <dd class="column-two-thirds">
+                            @decision.justification
+                        </dd>
+                    </div>
+
+                    <div id="liability-decision-searches" class="grid-row">
+                        <dt class="column-one-third">
+                            @messages("case.liability.decision.searches")
+                        </dt>
+                        <dd class="column-two-thirds">
+                            @decision.justification
+                        </dd>
+                    </div>
+
+                    <div id="liability-decision-exclusions" class="grid-row">
+                        <dt class="column-one-third">
+                            @messages("case.liability.decision.exclusions")
+                        </dt>
+                        <dd class="column-two-thirds">
+                            @decision.methodExclusion
+                        </dd>
+                    </div>
+                </dl>
+            }
+        }
+
     }
 }
