@@ -50,8 +50,8 @@ class LiabilitySampleController @Inject()(override val verify: RequestActions,
   override protected val form: Form[Option[LiabilitySample]] = LiabilitySampleForm.form
 
   override protected def status(c: Case): Option[LiabilitySample] = c.sample.status match {
-    case Some(_) => Some(LiabilitySample.YES)
-    case _ => Some(LiabilitySample.NO)
+    case Some(_) => Some(LiabilitySample.SENDING)
+    case _ => Some(LiabilitySample.NOT_SENDING)
   }
 
   override protected def chooseStatusView(c: Case, notFilledForm: Form[Option[LiabilitySample]])

@@ -28,7 +28,7 @@
     @helper.CSRF.formField
     @input_radiogroup(
         field = field,
-        options = Seq(LiabilitySample.YES, LiabilitySample.NO).map(s => RadioOption(s.toString, LiabilitySample.format(s))),
+        options = Seq(LiabilitySample.SENDING, LiabilitySample.NOT_SENDING).map(s => RadioOption(s.toString, LiabilitySample.format(s))),
         id = "liability_sending_sample_form",
         preSelect = false,
         label = Some(messages("case.liability.sending.sample.change-return-header")),

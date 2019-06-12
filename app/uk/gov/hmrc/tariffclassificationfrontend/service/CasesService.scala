@@ -110,7 +110,7 @@ class CasesService @Inject()(appConfig: AppConfig,
   def updateLiabilitySample(original: Case, sending: Option[LiabilitySample], operator: Operator)
                         (implicit hc: HeaderCarrier): Future[Case] = {
     def sample = sending match {
-      case Some(LiabilitySample.YES) => Sample(status = Some(SampleStatus.AWAITING))
+      case Some(LiabilitySample.SENDING) => Sample(status = Some(SampleStatus.AWAITING))
       case _ => Sample()
     }
     for {
@@ -392,8 +392,8 @@ class CasesService @Inject()(appConfig: AppConfig,
   private def addLiabilitySampleChangeEvent(original: Case, updated: Case, operator: Operator, comment: Option[String] = None)
                                         (implicit hc: HeaderCarrier): Future[Unit] = {
     def sending(sample: Sample) = sample.status match {
-      case None => LiabilitySample.NO
-      case Some(_) => LiabilitySample.YES
+      case None => LiabilitySample.NOT_SENDING
+      case Some(_) => LiabilitySample.SENDING
     }
     val details = LiabilitySampleChange(sending(original.sample), sending(updated.sample), comment)
     addEvent(original, updated, details, operator)
