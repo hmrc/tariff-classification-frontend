@@ -66,7 +66,8 @@ class ReportingServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfte
           status = Some(Set("NEW", "OPEN", "REFERRED", "SUSPENDED")), assigneeId = Some("none")
         ),
         group = CaseReportGroup.QUEUE,
-        field = CaseReportField.ACTIVE_DAYS_ELAPSED
+        field = CaseReportField.ACTIVE_DAYS_ELAPSED,
+        splitByType = true
       )
     }
 

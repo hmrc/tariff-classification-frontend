@@ -272,7 +272,7 @@ class CasesService @Inject()(appConfig: AppConfig,
     connector.search(search, sort, pagination)
   }
 
-  def getCasesByQueue(queue: Queue, pagination: Pagination, forTypes: Seq[ApplicationType])(implicit hc: HeaderCarrier): Future[Paged[Case]] = {
+  def getCasesByQueue(queue: Queue, pagination: Pagination, forTypes: Seq[ApplicationType] = Seq(ApplicationType.BTI, ApplicationType.LIABILITY_ORDER))(implicit hc: HeaderCarrier): Future[Paged[Case]] = {
     connector.findCasesByQueue(queue, pagination, forTypes)
   }
 

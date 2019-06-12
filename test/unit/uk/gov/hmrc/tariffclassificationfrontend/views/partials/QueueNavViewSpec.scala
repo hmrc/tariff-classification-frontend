@@ -28,7 +28,7 @@ class QueueNavViewSpec extends ViewSpec with BeforeAndAfterEach {
     super.afterEach()
   }
 
-  val queues: Seq[Queue] = Seq(Queue("1", "act", "ACT"))
+  val queues: Seq[Queue] = Seq(Queue("0", "gateway", "Gateway"), Queue("1", "act", "ACT"))
 
   "Queue Nav" should {
 
@@ -62,7 +62,7 @@ class QueueNavViewSpec extends ViewSpec with BeforeAndAfterEach {
       doc shouldNot containElementWithID("nav-menu-queue-act")
     }
 
-    "Render queue cases if authorised" in {
+    "Render separate BTI and liability entries and counts for queue cases" in {
       // Given
 
       // When
@@ -70,6 +70,9 @@ class QueueNavViewSpec extends ViewSpec with BeforeAndAfterEach {
 
       // Then
       doc should containElementWithID("nav-menu-queue-act")
+      doc should containElementWithID("nav-menu-queue-liab-act")
+      doc should containElementWithID("case-count-act")
+      doc should containElementWithID("liability-count-act")
     }
 
     "Not render team cases if unauthorised" in {
@@ -111,5 +114,56 @@ class QueueNavViewSpec extends ViewSpec with BeforeAndAfterEach {
       // Then
       doc should containElementWithID("nav-menu-reports")
     }
+
+    "Render reporting header if authorised with VIEW_REPORTS" in {
+      // Given
+
+      // When
+      val doc = view(queue_nav(queues, "")(requestWithPermissions(Permission.VIEW_REPORTS), messages))
+
+      // Then
+      doc should containElementWithID("nav-menu-header-reporting")
+    }
+
+    "Render reporting header if authorised with VIEW_ASSIGNED_CASES" in {
+      // Given
+
+      // When
+      val doc = view(queue_nav(queues, "")(requestWithPermissions(Permission.VIEW_ASSIGNED_CASES), messages))
+
+      // Then
+      doc should containElementWithID("nav-menu-header-reporting")
+    }
+
+    "Not render reporting header if unauthorised" in {
+      // Given
+
+      // When
+      val doc = view(queue_nav(queues, "")(requestWithPermissions(), messages))
+
+      // Then
+      doc shouldNot containElementWithID("nav-menu-header-reporting")
+    }
+
+    "Render combined case count for gateway" in {
+      // Given
+      val queueCounts = Map("-BTI" -> 2, "-LIABILITY_ORDER" -> 2, "2-BTI" -> 3)
+      // When
+      val doc = view(queue_nav(queues, "",queueCounts)(requestWithPermissions(Permission.VIEW_QUEUE_CASES), messages))
+
+      // Then
+      doc.getElementById("case-count-gateway") should containText("4")
+    }
+    "Render case counts separately for named queue" in {
+      // Given
+      val queueCounts = Map("-BTI" -> 2, "-LIABILITY_ORDER" -> 2, "1-BTI" -> 3, "1-LIABILITY_ORDER" -> 5)
+      // When
+      val doc = view(queue_nav(queues, "",queueCounts)(requestWithPermissions(Permission.VIEW_QUEUE_CASES), messages))
+
+      // Then
+      doc.getElementById("case-count-act") should containText("3")
+      doc.getElementById("liability-count-act") should containText("5")
+    }
+
   }
 }

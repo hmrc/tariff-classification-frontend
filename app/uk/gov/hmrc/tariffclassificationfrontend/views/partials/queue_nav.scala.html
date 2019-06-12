@@ -37,7 +37,7 @@
             }
         }
 
-        <li class="side-nav__list heading">
+        <li id="nav-menu-header-bti" class="side-nav__list heading">
             <span>BTI Cases</span>
         </li>
         @if(request.hasPermission(Permission.VIEW_QUEUE_CASES)) {
@@ -48,7 +48,7 @@
             }
         }
 
-        <li class="side-nav__list heading">
+        <li id="nav-menu-header-liability" class="side-nav__list heading">
             <span>Liability Cases</span>
         </li>
 
@@ -61,7 +61,7 @@
         }
 
         @if(request.hasPermission(Permission.VIEW_ASSIGNED_CASES) || request.hasPermission(Permission.VIEW_REPORTS)) {
-            <li class="side-nav__list heading">
+            <li id="nav-menu-header-reporting" class="side-nav__list heading">
                 <span>Reporting</span>
             </li>
         }
