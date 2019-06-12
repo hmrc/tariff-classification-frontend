@@ -73,7 +73,7 @@ class RulingControllerSpec extends UnitSpec
   "Edit Ruling" should {
     val btiCaseWithStatusNEW = aCase(withBTIApplication, withReference("reference"), withStatus(CaseStatus.NEW))
     val btiCaseWithStatusOPEN = aCase(withBTIApplication, withReference("reference"), withStatus(CaseStatus.OPEN))
-    val liabilityCaseWithStatusOPEN = aCase(withLiabilityApplication, withReference("reference"), withStatus(CaseStatus.OPEN))
+    val liabilityCaseWithStatusOPEN = aCase(withLiabilityApplication(), withReference("reference"), withStatus(CaseStatus.OPEN))
     val attachment = storedAttachment
 
     "return OK and HTML content type" when {
@@ -126,7 +126,7 @@ class RulingControllerSpec extends UnitSpec
   "Update Ruling" should {
     val caseWithStatusNEW = aCase(withReference("reference"), withStatus(CaseStatus.NEW))
     val caseWithStatusOPEN = aCase(withReference("reference"), withStatus(CaseStatus.OPEN))
-    val liabilityCaseWithStatusOPEN = aCase(withLiabilityApplication, withReference("reference"), withStatus(CaseStatus.OPEN))
+    val liabilityCaseWithStatusOPEN = aCase(withLiabilityApplication(), withReference("reference"), withStatus(CaseStatus.OPEN))
     val updatedCase = aCase(withReference("reference"), withStatus(CaseStatus.OPEN))
     val attachment = storedAttachment
 

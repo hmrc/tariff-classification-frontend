@@ -84,7 +84,7 @@ class CaseControllerSpec extends UnitSpec with Matchers with WithFakeApplication
       }
 
       "case is a Liability" in {
-        val c = aCase(withReference("reference"), withLiabilityApplication)
+        val c = aCase(withReference("reference"), withLiabilityApplication())
         val result = controller(c).get("reference")(fakeRequest)
 
         status(result) shouldBe Status.SEE_OTHER

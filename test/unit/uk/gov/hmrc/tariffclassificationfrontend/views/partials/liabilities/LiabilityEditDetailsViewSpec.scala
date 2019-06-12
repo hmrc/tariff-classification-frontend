@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.views.partials.liabilities
 
-import uk.gov.hmrc.tariffclassificationfrontend.forms.LiabilityFormData
+import uk.gov.hmrc.tariffclassificationfrontend.forms.LiabilityDetailsForm
 import uk.gov.hmrc.tariffclassificationfrontend.models.LiabilityOrder
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewSpec
@@ -29,10 +29,10 @@ class LiabilityEditDetailsViewSpec extends ViewSpec {
 
     "Render all fields for an empty form" in {
       // Given
-      val c = aCase(withLiabilityOrderApplication)
+      val c = aCase(withLiabilityApplication())
 
       // When
-      val doc = view(liability_details_edit(c, LiabilityFormData.form))
+      val doc = view(liability_details_edit(c, LiabilityDetailsForm.liabilityDetailsForm))
 
       // Then
       doc should containElementWithID("liability-details-edit-form")
@@ -40,7 +40,7 @@ class LiabilityEditDetailsViewSpec extends ViewSpec {
 
     "Render all fields with expected values" in {
       // Given
-      val c = aCase(withLiabilityOrderApplication)
+      val c = aCase(withLiabilityApplication())
 
       // When
       val doc = view(liability_details_edit(c,createLiabilityForm(c.application.asLiabilityOrder)))
@@ -59,8 +59,8 @@ class LiabilityEditDetailsViewSpec extends ViewSpec {
   }
 
   def createLiabilityForm(l: LiabilityOrder) = {
-    LiabilityFormData.form.fill(
-      LiabilityFormData(
+    LiabilityDetailsForm.liabilityDetailsForm.fill(
+      LiabilityDetailsForm(
         entryDate = l.entryDate,
         traderName = l.traderName,
         goodName = l.goodName.getOrElse(""),

@@ -25,7 +25,7 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionForm
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Decision}
-import uk.gov.hmrc.tariffclassificationfrontend.forms.LiabilityFormData
+import uk.gov.hmrc.tariffclassificationfrontend.forms.LiabilityDetailsForm
 import uk.gov.hmrc.tariffclassificationfrontend.models.TabIndexes.tabIndexFor
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedCaseRequest
@@ -47,13 +47,12 @@ class LiabilityController @Inject()(verify: RequestActions,
 
   private lazy val menuTitle = LIABILITY
 
-  private lazy val form = LiabilityFormData.form
-
   def liabilityDetails(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
     getCaseAndRenderView(menuTitle,
       c => {
-        val form = decisionForm.liabilityCompleteForm(c.decision.getOrElse(Decision()))
-        successful(views.html.partials.liability_details(c, tabIndexFor(LIABILITY), form))
+        val df: Form[Decision] = decisionForm.liabilityCompleteForm(c.decision.getOrElse(Decision()))
+        val lf: Form[LiabilityOrder] = LiabilityDetailsForm.liabilityDetailsCompleteForm(c.application.asLiabilityOrder)
+        successful(views.html.partials.liability_details(c, tabIndexFor(LIABILITY), lf, df))
       }
     )
   }
@@ -63,66 +62,21 @@ class LiabilityController @Inject()(verify: RequestActions,
       case c: Case =>
         successful(
           Ok(
-            liability_details_edit(c, toLiabilityForm(c.application.asLiabilityOrder), Some(tabIndexFor(LIABILITY)))
+            liability_details_edit(c, LiabilityDetailsForm.liabilityDetailsForm(c.application.asLiabilityOrder), Some(tabIndexFor(LIABILITY)))
           )
         )
     }
-  }
-
-  private def toLiabilityForm(l: LiabilityOrder): Form[LiabilityFormData] = {
-    LiabilityFormData.form.fill(
-      LiabilityFormData(
-        entryDate = l.entryDate,
-        traderName = l.traderName,
-        goodName = l.goodName.getOrElse(""),
-        entryNumber = l.entryNumber.getOrElse(""),
-        traderCommodityCode = l.traderCommodityCode.getOrElse(""),
-        officerCommodityCode = l.officerCommodityCode.getOrElse(""),
-        contactName = l.contact.name,
-        contactEmail = Some(l.contact.email),
-        contactPhone = l.contact.phone.getOrElse("")
-      )
-    )
-  }
-
-  def mergeLiabilityIntoCase(c: Case, validForm: LiabilityFormData): Case = {
-    val updatedContact = c.application.contact.copy(
-      name = validForm.contactName,
-      email = validForm.contactEmail.getOrElse(""),
-      phone = Some(validForm.contactPhone)
-    )
-
-    val app: Application = c.application.`type` match {
-      case ApplicationType.LIABILITY_ORDER => {
-        c.application.asLiabilityOrder.copy(
-          traderName = validForm.traderName,
-          goodName = Some(validForm.goodName),
-          entryNumber = Some(validForm.entryNumber),
-          entryDate = validForm.entryDate,
-          traderCommodityCode = Some(validForm.traderCommodityCode),
-          officerCommodityCode = Some(validForm.officerCommodityCode),
-          contact = updatedContact
-        )
-      }
-      case _ => c.application
-    }
-
-    c.copy(application = app)
   }
 
   def postLiabilityDetails(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
-    LiabilityFormData.form.bindFromRequest.fold(
-      errorForm =>
-        successful(
-          Ok(
-            liability_details_edit(request.`case`, errorForm)
-          )
-        ),
-      validForm =>
-        getCaseAndRedirect(menuTitle, c => for {
-          update <- casesService.updateCase(mergeLiabilityIntoCase(c, validForm))
+    LiabilityDetailsForm.liabilityDetailsForm(request.`case`.application.asLiabilityOrder).bindFromRequest.fold(
+      errorForm => successful(Ok(liability_details_edit(request.`case`, errorForm))),
+
+      updatedLiability => getCaseAndRedirect(menuTitle, c =>
+        for {
+          update <- casesService.updateCase(c.copy(application = updatedLiability))
         } yield routes.LiabilityController.liabilityDetails(update.reference)
-        )
+      )
     )
   }
 

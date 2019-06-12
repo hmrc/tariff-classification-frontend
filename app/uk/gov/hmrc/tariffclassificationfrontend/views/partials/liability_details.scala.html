@@ -24,7 +24,8 @@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.models.Decision
 @import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionFormData
-@(c: Case, startAtTabIndex : Int = 0, decisionForm: Form[Decision])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@import uk.gov.hmrc.tariffclassificationfrontend.forms.LiabilityDetailsForm
+@(c: Case, startAtTabIndex : Int = 0, liabilityForm: Form[LiabilityOrder], decisionForm: Form[Decision])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @defining(c.application) { a: Application =>
     @defining(a.asLiabilityOrder) { liability: LiabilityOrder =>
@@ -201,14 +202,15 @@
 
             <h3 class="heading-medium" id="liability-complete-heading">Complete this liability decision</h3>
 
-            <h4 class="heading-small" id="liability-complete_details-heading">Liability details</h4>
-            <p>You need to enter:</p>
-            <ul class="list list-bullet">
-                <li>Liability entry date</li>
-                <li>Liability entry number</li>
-                <li>Item name</li>
-                <li>Port or compliance officer name</li>
-            </ul>
+            @if(liabilityForm.hasErrors) {
+                <h4 class="heading-small" id="liability-complete_details-heading">Liability details</h4>
+                <p>You need to enter:</p>
+                <ul class="list list-bullet">
+                @for(err: String <- liabilityForm.errors.map(_.key)) {
+                    <li><span id="constraint-@err">@messages("case.decision.constraint." + err)</span></li>
+                }
+                </ul>
+            }
 
             @if(decisionForm.hasErrors) {
                 <h4 class="heading-small mt-4" id="liability-complete_decision-heading">Liability decision</h4>
@@ -220,7 +222,7 @@
                 </ul>
             }
 
-            <a tabindex="@startAtTabIndex" id="liability-complete-button"  class="button"  @if(decisionForm.hasErrors) { disabled="disabled" }else{ href="@routes.CompleteCaseController.completeCase(c.reference)"}>
+            <a tabindex="@startAtTabIndex" id="liability-complete-button"  class="button"  @if(liabilityForm.hasErrors || decisionForm.hasErrors) { disabled="disabled" }else{ href="@routes.CompleteCaseController.completeCase(c.reference)"}>
                 Complete case
             </a>
         }
