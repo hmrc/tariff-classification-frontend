@@ -24,12 +24,14 @@ case class CaseReport
 (
   filter: CaseReportFilter,
   group: CaseReportGroup,
-  field: CaseReportField
+  field: CaseReportField,
+  splitByType: Boolean = false
 )
 
 object CaseReport {
   private val reportGroupKey = "report_group"
   private val reportFieldKey = "report_field"
+  private val splitByTypeKey = "split_by_type"
 
   implicit def bindable(implicit stringBinder: QueryStringBindable[String],
                         filterBinder: QueryStringBindable[CaseReportFilter]
@@ -41,9 +43,10 @@ object CaseReport {
       val filter: CaseReportFilter = filterBinder.bind("", requestParams).get.right.get
       val group: Option[CaseReportGroup] = param(reportGroupKey).flatMap(bindCaseReportGroup)
       val field: Option[CaseReportField] = param(reportFieldKey).flatMap(bindCaseReportField)
+      val splitByType: Boolean = param(splitByTypeKey).map(s => s.toBoolean).getOrElse(false)
 
       (group, field) match {
-        case (Some(g), Some(f)) => Some(Right(CaseReport(filter, g, f)))
+        case (Some(g), Some(f)) => Some(Right(CaseReport(filter, g, f, splitByType)))
         case (None, Some(_)) => Some(Left("Invalid Group"))
         case (Some(_), None) => Some(Left("Invalid Field"))
         case _ => Some(Left("Invalid Field/Group"))
@@ -54,7 +57,8 @@ object CaseReport {
       Seq(
         filterBinder.unbind("", report.filter),
         stringBinder.unbind(reportGroupKey, report.group.toString),
-        stringBinder.unbind(reportFieldKey, report.field.toString)
+        stringBinder.unbind(reportFieldKey, report.field.toString),
+        stringBinder.unbind(splitByTypeKey, report.splitByType.toString)
       ).filter(_.nonEmpty).mkString("&")
     }
   }

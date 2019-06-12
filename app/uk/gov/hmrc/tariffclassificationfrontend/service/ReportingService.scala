@@ -46,7 +46,8 @@ class ReportingService @Inject()(connector: BindingTariffClassificationConnector
     val report = CaseReport(
       filter = CaseReportFilter(status = Some(statuses), assigneeId = Some("none")),
       group = CaseReportGroup.QUEUE,
-      field = CaseReportField.ACTIVE_DAYS_ELAPSED
+      field = CaseReportField.ACTIVE_DAYS_ELAPSED,
+      splitByType = true
     )
     connector.generateReport(report)
   }
