@@ -148,7 +148,7 @@ class LiabilityControllerSpec extends UnitSpec with Matchers with BeforeAndAfter
       val result: Result = await(controller(Set(Permission.VIEW_CASES)).postLiabilityDetails("reference")(invalidReq))
       verify(casesService, never()).updateCase(any[Case])(any[HeaderCarrier])
       status(result) shouldBe Status.OK
-      errorSummaryShouldContains(result, Seq("#traderName", "#contactEmail"))
+      errorSummaryShouldContains(result, Seq("#traderName"))
     }
 
     "redirect unauthorised when does not have right permissions" in {
