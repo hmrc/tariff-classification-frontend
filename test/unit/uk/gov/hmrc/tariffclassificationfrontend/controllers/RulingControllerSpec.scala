@@ -92,7 +92,7 @@ class RulingControllerSpec extends UnitSpec
         status(result) shouldBe Status.OK
         contentType(result) shouldBe Some("text/html")
         charset(result) shouldBe Some("utf-8")
-        contentAsString(result) should (include("Ruling") and include("<form"))
+        contentAsString(result) should (include("Liability") and include("<form"))
       }
     }
 
@@ -158,20 +158,32 @@ class RulingControllerSpec extends UnitSpec
         val result = await(controller(liabilityCaseWithStatusOPEN).updateRulingDetails("reference")(aValidForm))
         verify(casesService).updateCase(any[Case])(any[HeaderCarrier])
         status(result) shouldBe Status.SEE_OTHER
-        locationOf(result) shouldBe Some(routes.CaseController.rulingDetails("reference").url)
+        locationOf(result) shouldBe Some(routes.LiabilityController.liabilityDetails("reference").url)
       }
     }
 
-    "redirect back to edit ruling on Form Error" in {
-      given(fileService.getAttachments(refEq(caseWithStatusOPEN))(any[HeaderCarrier])).willReturn(Future.successful(Seq(attachment)))
+    "redirect back to edit ruling on Form Error" when {
+      "case is a BTI" in {
+        given(fileService.getAttachments(refEq(caseWithStatusOPEN))(any[HeaderCarrier])).willReturn(Future.successful(Seq(attachment)))
 
-      val result = controller(caseWithStatusOPEN).updateRulingDetails("reference")(newFakePOSTRequestWithCSRF(fakeApplication))
-      verify(casesService, never()).updateCase(any[Case])(any[HeaderCarrier])
-      status(result) shouldBe Status.OK
-      contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
-      contentAsString(result) should include("error-summary")
-      contentAsString(result) should (include("Ruling") and include("<form"))
+        val result = controller(caseWithStatusOPEN).updateRulingDetails("reference")(newFakePOSTRequestWithCSRF(fakeApplication))
+        verify(casesService, never()).updateCase(any[Case])(any[HeaderCarrier])
+        status(result) shouldBe Status.OK
+        contentType(result) shouldBe Some("text/html")
+        charset(result) shouldBe Some("utf-8")
+        contentAsString(result) should include("error-summary")
+        contentAsString(result) should (include("Ruling") and include("<form"))
+      }
+
+      "case is a Liability" in {
+        val result = controller(liabilityCaseWithStatusOPEN).updateRulingDetails("reference")(newFakePOSTRequestWithCSRF(fakeApplication))
+        verify(casesService, never()).updateCase(any[Case])(any[HeaderCarrier])
+        status(result) shouldBe Status.OK
+        contentType(result) shouldBe Some("text/html")
+        charset(result) shouldBe Some("utf-8")
+        contentAsString(result) should include("error-summary")
+        contentAsString(result) should (include("Liability") and include("<form"))
+      }
     }
 
     "redirect to Ruling for non OPEN Statuses" in {

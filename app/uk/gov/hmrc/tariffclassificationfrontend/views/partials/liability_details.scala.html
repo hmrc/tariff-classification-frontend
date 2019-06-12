@@ -141,55 +141,77 @@
         @if(c.decision.isDefined) {
 
             @defining(c.decision.get) { decision: Decision =>
-                <div class="mt-2">
+                <div class="mt-2" id="liability_details-decision">
                     <dl class="dl-mb-2">
                         <div id="liability-decision-code" class="grid-row">
                             <dt class="column-one-third">
                                 @messages("case.liability.decision.code")
                             </dt>
                             <dd class="column-two-thirds">
-                            @decision.bindingCommodityCode
+                                @decision.bindingCommodityCode
                             </dd>
                         </div>
 
                         <div id="liability-decision-description" class="grid-row">
                             <dt class="column-one-third">
-                            @messages("case.liability.decision.description")
+                                @messages("case.liability.decision.description")
                             </dt>
                             <dd class="column-two-thirds">
-                            @decision.goodsDescription
+                                @decision.goodsDescription
                             </dd>
                         </div>
 
                         <div id="liability-decision-justification" class="grid-row">
                             <dt class="column-one-third">
-                            @messages("case.liability.decision.justification")
+                                @messages("case.liability.decision.justification")
                             </dt>
                             <dd class="column-two-thirds">
-                            @decision.justification
+                                @decision.justification
                             </dd>
                         </div>
 
                         <div id="liability-decision-searches" class="grid-row">
                             <dt class="column-one-third">
-                            @messages("case.liability.decision.searches")
+                                @messages("case.liability.decision.searches")
                             </dt>
                             <dd class="column-two-thirds">
-                            @decision.justification
+                                @decision.methodSearch
+
                             </dd>
                         </div>
 
                         <div id="liability-decision-exclusions" class="grid-row">
                             <dt class="column-one-third">
-                            @messages("case.liability.decision.exclusions")
+                                @messages("case.liability.decision.exclusions")
                             </dt>
                             <dd class="column-two-thirds">
-                            @decision.methodExclusion
+                                @decision.methodExclusion
                             </dd>
                         </div>
                     </dl>
                 </div>
             }
+
+            <h3 class="heading-medium" id="liability-complete-heading">Complete this liability decision</h3>
+
+            <h4 class="heading-small" id="liability-complete_details-heading">Liability details</h4>
+            <p>You need to enter:</p>
+            <ul class="list list-bullet">
+                <li>Liability entry date</li>
+                <li>Liability entry number</li>
+                <li>Item name</li>
+                <li>Port or compliance officer name</li>
+            </ul>
+
+            <h4 class="heading-small mt-4" id="liability-complete_decision-heading">Liability decision</h4>
+            <p>You need to enter:</p>
+            <ul class="list list-bullet">
+                <li>Commodity code</li>
+                <li>Item description</li>
+                <li>Justification</li>
+                <li>Searches performed</li>
+                <li>Exclusions, inclusions and comments</li>
+            </ul>
         }
 
     }

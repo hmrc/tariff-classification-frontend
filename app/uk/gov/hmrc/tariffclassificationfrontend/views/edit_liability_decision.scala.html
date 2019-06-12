@@ -27,9 +27,12 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.models.LiabilityStatus
 @import uk.gov.hmrc.tariffclassificationfrontend.models.Decision
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.input_textarea
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.error_summary
 @(c: Case, form: Form[Decision])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("page.title.edit_liability_decision"))) {
+
+    @error_summary(form.errors)
 
     <h1 id="edit_liability_decision-heading" class="heading-xlarge">Liability for  @c.application.asLiabilityOrder.traderName</h1>
 

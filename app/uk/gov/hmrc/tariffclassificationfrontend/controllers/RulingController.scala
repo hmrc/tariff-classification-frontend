@@ -20,17 +20,13 @@ import javax.inject.{Inject, Singleton}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
-import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.{DecisionForm, DecisionFormData, DecisionFormMapper}
-import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedCaseRequest
 import uk.gov.hmrc.tariffclassificationfrontend.models._
+import uk.gov.hmrc.tariffclassificationfrontend.models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, FileStoreService}
 import uk.gov.hmrc.tariffclassificationfrontend.views
-import uk.gov.hmrc.tariffclassificationfrontend.views.CaseDetailPage
-import uk.gov.hmrc.tariffclassificationfrontend.views.CaseDetailPage.CaseDetailPage
-import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -73,11 +69,11 @@ class RulingController @Inject()(verify: RequestActions,
 
       case ApplicationType.LIABILITY_ORDER =>
         val decision = c.decision.getOrElse(Decision())
-        decisionForm.liabilityCompleteForm(decision).bindFromRequest.fold(
+        decisionForm.liabilityForm(decision).bindFromRequest.fold(
           errorForm => editLiabilityRulingView(errorForm, c),
           updatedDecision => for {
             update <- casesService.updateCase(c.copy(decision = Some(updatedDecision)))
-          } yield Redirect(routes.CaseController.get(update.reference))
+          } yield Redirect(routes.LiabilityController.liabilityDetails(update.reference))
         )
     })
   }
