@@ -22,6 +22,7 @@ import java.time.{Instant, LocalDate}
 import play.api.data.Form
 import play.api.data.Forms._
 import uk.gov.hmrc.tariffclassificationfrontend.forms.mappings.FormMappings
+import uk.gov.hmrc.tariffclassificationfrontend.models.LiabilityOrder
 
 import scala.util.Try
 
@@ -80,4 +81,24 @@ object LiabilityFormData {
       "contactPhone" -> text
     )(LiabilityFormData.apply)(LiabilityFormData.unapply)
   )
+
+  def bindFrom: LiabilityOrder => Form[LiabilityFormData] = { liability =>
+    mapFrom(liability) match {
+      case formData => form.fillAndValidate(formData)
+    }
+  }
+
+  private def mapFrom(l: LiabilityOrder): LiabilityFormData = {
+    LiabilityFormData(
+      entryDate = l.entryDate,
+      traderName = l.traderName,
+      goodName = l.goodName.getOrElse(""),
+      entryNumber = l.entryNumber.getOrElse(""),
+      traderCommodityCode = l.traderCommodityCode.getOrElse(""),
+      officerCommodityCode = l.officerCommodityCode.getOrElse(""),
+      contactName = l.contact.name,
+      contactEmail = Some(l.contact.email),
+      contactPhone = l.contact.phone.getOrElse("")
+    )
+  }
 }
