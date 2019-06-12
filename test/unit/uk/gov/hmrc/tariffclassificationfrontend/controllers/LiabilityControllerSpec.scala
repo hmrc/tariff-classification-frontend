@@ -16,6 +16,9 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
+import org.mockito.ArgumentMatchers.any
+import org.mockito.{ArgumentMatchers, BDDMockito}
+import org.mockito.BDDMockito._
 import org.scalatest.Matchers
 import org.scalatest.mockito.MockitoSugar
 import play.api.http.Status
@@ -25,12 +28,14 @@ import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
+import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionForm
 import uk.gov.hmrc.tariffclassificationfrontend.models.Permission.Permission
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.tariffclassificationfrontend.utils.Cases
 
 class LiabilityControllerSpec extends UnitSpec with Matchers with WithFakeApplication with MockitoSugar with ControllerCommons {
 
+  private val decisionForm = mock[DecisionForm]
   private val env = Environment.simple()
   private val configuration = Configuration.load(env)
   private val messageApi = new DefaultMessagesApi(env, configuration, new DefaultLangs(configuration))
@@ -40,7 +45,7 @@ class LiabilityControllerSpec extends UnitSpec with Matchers with WithFakeApplic
 
   private def controller(permissions: Set[Permission]) = new LiabilityController(
     new RequestActionsWithPermissions(permissions = permissions, addViewCasePermission = false,
-      c = Cases.liabilityCaseExample), messageApi, appConfig
+      c = Cases.liabilityCaseExample), decisionForm, messageApi, appConfig
   )
 
   "GET" should {
@@ -52,6 +57,8 @@ class LiabilityControllerSpec extends UnitSpec with Matchers with WithFakeApplic
     }
 
     "return 200 OK and HTML content type" in {
+      given(decisionForm.liabilityCompleteForm(any[Decision])).willReturn(null)
+
       val request = newFakeGETRequestWithCSRF(fakeApplication)
       val result = await(controller(Set(Permission.VIEW_CASES)).liabilityDetails("ref")(request))
       status(result) shouldBe Status.OK

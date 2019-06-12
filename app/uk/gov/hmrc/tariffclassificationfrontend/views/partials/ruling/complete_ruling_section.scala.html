@@ -36,7 +36,7 @@
                 <p>To complete this case, you need to fill in these fields:</p>
                 <ul class="list list-bullet">
                 @for(error: String <- LinkedHashSet(decisionForm.get.errors.map(_.key): _*)) {
-                    <li><span id="constrain-@error">@messages("case.decision.constrain." + error)</span></li>
+                    <li><span id="constrain-@error">@messages("case.decision.constraint." + error)</span></li>
                 }
                 </ul>
             }

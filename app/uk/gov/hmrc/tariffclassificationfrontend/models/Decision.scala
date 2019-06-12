@@ -36,3 +36,7 @@ case class Decision
 ) {
   def appeal(`type`: AppealType): Option[Appeal] = appeal.find(_.`type` == `type`)
 }
+
+object Decision {
+  def apply(): Decision = Decision(bindingCommodityCode = "", justification = "", goodsDescription = "")
+}
