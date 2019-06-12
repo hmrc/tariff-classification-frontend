@@ -16,10 +16,6 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
-import org.mockito.ArgumentMatchers.any
-import org.mockito.{ArgumentMatchers, BDDMockito}
-import org.mockito.BDDMockito._
-import org.scalatest.Matchers
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.given

@@ -82,8 +82,8 @@ object LiabilityDetailsForm {
       "entryDate" -> optional(tuple(
         "day" -> number,
         "month" -> number,
-        "year" -> number)
-        .verifying("case.liability.error.entry-date", validDateFormat)
+        "year" -> number
+      ).verifying("case.liability.error.entry-date", validDateFormat)
         .transform(formDate2Instant, instant2FormDate)),
       "traderName" -> textNonEmpty("case.liability.error.empty.trader-name"),
       "goodName" -> optional(text),
@@ -101,8 +101,8 @@ object LiabilityDetailsForm {
       "entryDate" -> optional(tuple(
         "day" -> number,
         "month" -> number,
-        "year" -> number)
-        .verifying("case.liability.error.entry-date", validDateFormat)
+        "year" -> number
+      ).verifying("case.liability.error.entry-date", validDateFormat)
         .transform(formDate2Instant, instant2FormDate)),
       "traderName" -> textNonEmpty("case.liability.error.empty.trader-name"),
       "goodName" -> optional(nonEmptyText),

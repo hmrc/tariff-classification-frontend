@@ -31,7 +31,7 @@ class LiabilityDetailsViewSpec extends ViewSpec with MockitoSugar {
   private val constraints = mock[CommodityCodeConstraints]
   private val form = new DecisionForm(constraints)
 
-  "Liability  Details" should {
+  "Liability Details" should {
     given(constraints.commodityCodeExistsInUKTradeTariff) willReturn Constraint[String]("code")(_ => Valid)
 
     "Not render edit button if not permitted" in {
@@ -41,10 +41,11 @@ class LiabilityDetailsViewSpec extends ViewSpec with MockitoSugar {
         withLiabilityApplication()
       )
       val d = c.decision.getOrElse(Decision())
+      val l = c.application.asLiabilityOrder
 
       // When
       val doc = view(
-        liability_details(c = c, liabilityForm = LiabilityDetailsForm.liabilityDetailsForm, decisionForm = form.liabilityCompleteForm(d)
+        liability_details(c = c, liabilityForm = LiabilityDetailsForm.liabilityDetailsForm(l), decisionForm = form.liabilityCompleteForm(d)
         )(requestWithPermissions(), messages, appConfig))
 
       // Then
@@ -58,10 +59,11 @@ class LiabilityDetailsViewSpec extends ViewSpec with MockitoSugar {
         withLiabilityApplication()
       )
       val d = c.decision.getOrElse(Decision())
+      val l = c.application.asLiabilityOrder
 
       // When
       val doc = view(
-        liability_details(c = c, liabilityForm = LiabilityDetailsForm.liabilityDetailsForm, decisionForm = form.liabilityCompleteForm(d)
+        liability_details(c = c, liabilityForm = LiabilityDetailsForm.liabilityDetailsForm(l), decisionForm = form.liabilityCompleteForm(d)
         )(requestWithPermissions(Permission.EDIT_RULING), messages, appConfig))
 
       // Then
@@ -76,10 +78,11 @@ class LiabilityDetailsViewSpec extends ViewSpec with MockitoSugar {
         withoutDecision()
       )
       val d = c.decision.getOrElse(Decision())
+      val l = c.application.asLiabilityOrder
 
       // When
       val doc = view(
-        liability_details(c = c, liabilityForm = LiabilityDetailsForm.liabilityDetailsForm, decisionForm = form.liabilityCompleteForm(d)
+        liability_details(c = c, liabilityForm = LiabilityDetailsForm.liabilityDetailsForm(l), decisionForm = form.liabilityCompleteForm(d)
         )(requestWithPermissions(), messages, appConfig))
 
       // Then
@@ -100,10 +103,11 @@ class LiabilityDetailsViewSpec extends ViewSpec with MockitoSugar {
         )
       )
       val d = c.decision.getOrElse(Decision())
+      val l = c.application.asLiabilityOrder
 
       // When
       val doc = view(
-        liability_details(c = c, liabilityForm = LiabilityDetailsForm.liabilityDetailsForm, decisionForm = form.liabilityCompleteForm(d)
+        liability_details(c = c, liabilityForm = LiabilityDetailsForm.liabilityDetailsForm(l), decisionForm = form.liabilityCompleteForm(d)
         )(requestWithPermissions(), messages, appConfig))
 
       // Then
@@ -123,24 +127,28 @@ class LiabilityDetailsViewSpec extends ViewSpec with MockitoSugar {
           withLiabilityApplication(),
           withDecision(
             bindingCommodityCode = "code",
-            justification = "justification",
+            justification = "",
             goodsDescription = "",
-            methodSearch = Some("search"),
-            methodExclusion = Some("exclusion")
+            methodSearch = None,
+            methodExclusion = None
           )
         )
         val d = c.decision.getOrElse(Decision())
+        val l = c.application.asLiabilityOrder
 
         // When
         val doc = view(
-          liability_details(c = c, liabilityForm = LiabilityDetailsForm.liabilityDetailsForm, decisionForm = form.liabilityCompleteForm(d)
+          liability_details(c = c, liabilityForm = LiabilityDetailsForm.liabilityDetailsCompleteForm(l), decisionForm = form.liabilityCompleteForm(d)
           )(requestWithPermissions(), messages, appConfig))
 
         // Then
         doc should containElementWithID("liability_details-decision")
         doc shouldNot containElementWithID("liability-complete_details-heading")
         doc should containElementWithID("liability-complete_decision-heading")
+        doc should containElementWithID("constraint-justification")
         doc should containElementWithID("constraint-goodsDescription")
+        doc should containElementWithID("constraint-methodSearch")
+        doc shouldNot containElementWithID("constraint-methodExclusion")
         doc.getElementById("liability-complete-button") should haveAttribute("disabled", "disabled")
       }
 
@@ -149,7 +157,7 @@ class LiabilityDetailsViewSpec extends ViewSpec with MockitoSugar {
         val c = aCase(
           withStatus(CaseStatus.OPEN),
           withLiabilityApplication(
-            traderName = ""
+            contact = Contact(name = "", email =  "")
           ),
           withDecision(
             bindingCommodityCode = "code",
@@ -160,17 +168,18 @@ class LiabilityDetailsViewSpec extends ViewSpec with MockitoSugar {
           )
         )
         val d = c.decision.getOrElse(Decision())
+        val l = c.application.asLiabilityOrder
 
         // When
         val doc = view(
-          liability_details(c = c, liabilityForm = LiabilityDetailsForm.liabilityDetailsForm, decisionForm = form.liabilityCompleteForm(d)
+          liability_details(c = c, liabilityForm = LiabilityDetailsForm.liabilityDetailsCompleteForm(l), decisionForm = form.liabilityCompleteForm(d)
           )(requestWithPermissions(), messages, appConfig))
 
         // Then
         doc should containElementWithID("liability_details-decision")
         doc should containElementWithID("liability-complete_details-heading")
         doc shouldNot containElementWithID("liability-complete_decision-heading")
-        doc should containElementWithID("constraint-goodsDescription")
+        doc should containElementWithID("constraint-contactName")
         doc.getElementById("liability-complete-button") should haveAttribute("disabled", "disabled")
       }
     }
@@ -189,10 +198,11 @@ class LiabilityDetailsViewSpec extends ViewSpec with MockitoSugar {
         )
       )
       val d = c.decision.getOrElse(Decision())
+      val l = c.application.asLiabilityOrder
 
       // When
       val doc = view(
-        liability_details(c = c, liabilityForm = LiabilityDetailsForm.liabilityDetailsForm, decisionForm = form.liabilityCompleteForm(d)
+        liability_details(c = c, liabilityForm = LiabilityDetailsForm.liabilityDetailsForm(l), decisionForm = form.liabilityCompleteForm(d)
         )(requestWithPermissions(), messages, appConfig))
 
       // Then
