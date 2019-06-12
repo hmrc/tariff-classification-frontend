@@ -70,7 +70,7 @@ class SampleDetailsViewSpec extends ViewSpec {
       doc.getElementById("sample-status-value") should containText(SampleStatus.format(Some(SampleStatus.AWAITING)))
     }
 
-    "render sample status details of None when not present on case" in {
+    "not render sample status details of when sample not being provided" in {
       // Given
       val caseWithSample = aCase(
         withBTIDetails(sampleToBeProvided = false, sampleToBeReturned = false),
@@ -80,13 +80,13 @@ class SampleDetailsViewSpec extends ViewSpec {
       // When
       val doc = view(sample_details(caseWithSample,Paged.empty[Event]))
 
-      doc.getElementById("sample-status-value") should containText(SampleStatus.format(None))
+      doc shouldNot containElementWithID("sample-status-value")
     }
 
     "render sample status activity when present on case" in {
       // Given
       val caseWithSample = aCase(
-        withBTIDetails(sampleToBeProvided = false, sampleToBeReturned = false),
+        withBTIDetails(sampleToBeProvided = true, sampleToBeReturned = false),
         withoutAttachments()
       )
 
@@ -101,6 +101,18 @@ class SampleDetailsViewSpec extends ViewSpec {
       doc.getElementById("sample-status-events-row-0-title") should containText("Sample status changed from none to awaiting sample")
       doc.getElementById("sample-status-events-row-1-title") should containText("Sample status changed from awaiting sample to moved to ELM")
       doc.getElementById("sample-status-events-row-2-title") should containText("Sample status changed from moved to ELM to destroyed")
+    }
+
+    "not render sample status activity when sample not being provided" in {
+      // Given
+      val caseWithSample = aCase(
+        withBTIDetails(sampleToBeProvided = false, sampleToBeReturned = false),
+        withoutAttachments()
+      )
+      // When
+      val doc = view(sample_details(caseWithSample,Paged.empty[Event]))
+
+      doc shouldNot containElementWithID("sample-status-events-heading")
     }
 
     "render sample requested when present on case" in {

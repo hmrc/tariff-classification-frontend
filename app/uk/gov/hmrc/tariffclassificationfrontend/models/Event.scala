@@ -18,6 +18,7 @@ package uk.gov.hmrc.tariffclassificationfrontend.models
 
 import java.time.Instant
 
+import uk.gov.hmrc.tariffclassificationfrontend.models
 import uk.gov.hmrc.tariffclassificationfrontend.models.AppealStatus.AppealStatus
 import uk.gov.hmrc.tariffclassificationfrontend.models.AppealType.AppealType
 import uk.gov.hmrc.tariffclassificationfrontend.models.CancelReason.CancelReason
@@ -25,6 +26,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.CaseStatus
 import uk.gov.hmrc.tariffclassificationfrontend.models.EventType.EventType
 import uk.gov.hmrc.tariffclassificationfrontend.models.ReferralReason.ReferralReason
 import uk.gov.hmrc.tariffclassificationfrontend.models.SampleReturn.SampleReturn
+import uk.gov.hmrc.tariffclassificationfrontend.models.SampleSending.SampleSending
 import uk.gov.hmrc.tariffclassificationfrontend.models.SampleStatus.SampleStatus
 
 
@@ -160,6 +162,15 @@ case class SampleStatusChange
   override val `type`: EventType.Value = EventType.SAMPLE_STATUS_CHANGE
 }
 
+case class LiabilitySampleChange
+(
+  override val from: SampleSending,
+  override val to: SampleSending,
+  override val comment: Option[String] = None
+) extends FieldChange[SampleSending] {
+  override val `type`: EventType.Value = EventType.LIABILITY_SAMPLE_CHANGE
+}
+
 case class SampleReturnChange
 (
   override val from: Option[SampleReturn],
@@ -183,5 +194,8 @@ object EventType extends Enumeration {
   val NOTE = Value
   val SAMPLE_STATUS_CHANGE = Value
   val SAMPLE_RETURN_CHANGE = Value
+  val LIABILITY_SAMPLE_CHANGE = Value
+
+  def sampleEvents: Set[models.EventType.Value] = Set(SAMPLE_STATUS_CHANGE, SAMPLE_RETURN_CHANGE, LIABILITY_SAMPLE_CHANGE)
 }
 

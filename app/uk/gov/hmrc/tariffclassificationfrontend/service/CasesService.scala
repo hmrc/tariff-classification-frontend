@@ -30,6 +30,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.AppealType.AppealType
 import uk.gov.hmrc.tariffclassificationfrontend.models.CancelReason.CancelReason
 import uk.gov.hmrc.tariffclassificationfrontend.models.ReferralReason.ReferralReason
 import uk.gov.hmrc.tariffclassificationfrontend.models.SampleReturn.SampleReturn
+import uk.gov.hmrc.tariffclassificationfrontend.models.SampleSending.SampleSending
 import uk.gov.hmrc.tariffclassificationfrontend.models.SampleStatus.SampleStatus
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
@@ -106,6 +107,19 @@ class CasesService @Inject()(appConfig: AppConfig,
     } yield updated
   }
 
+  def updateLiabilitySample(original: Case, sending: Option[SampleSending], operator: Operator)
+                        (implicit hc: HeaderCarrier): Future[Case] = {
+    def sample = sending match {
+      case Some(SampleSending.YES) => Sample(status = Some(SampleStatus.AWAITING))
+      case _ => Sample()
+    }
+    for {
+      updated <- connector.updateCase(original.copy(sample = sample))
+      _ <- addLiabilitySampleChangeEvent(original, updated, operator)
+      _ = auditService.auditLiabilitySampleChange(original, updated, operator)
+    } yield updated
+  }
+
 
   def assignCase(original: Case, operator: Operator)
                 (implicit hc: HeaderCarrier): Future[Case] = {
@@ -156,14 +170,22 @@ class CasesService @Inject()(appConfig: AppConfig,
         .copy(
           status = CaseStatus.REFERRED,
           sample = if(reason.contains(ReferralReason.REQUEST_SAMPLE)){
-            original.sample.copy(requestedBy = Some(operator), returnStatus = Some(SampleReturn.TO_BE_CONFIRMED))
+            Sample(Some(SampleStatus.AWAITING), Some(operator), Some(SampleReturn.TO_BE_CONFIRMED))
           } else{
             original.sample
           }
         ))
       _ <- addReferStatusChangeEvent(original, updated, operator, Some(note), referredTo, reason, Some(attachment))
       _ = auditService.auditCaseReferred(original, updated, operator)
+      _ = processChangedSampleStatus(original, updated, operator)
     } yield updated
+  }
+
+  private def processChangedSampleStatus(original: Case, updated: Case, operator: Operator)(implicit hc: HeaderCarrier): Unit = {
+    if(updated.sample.status != original.sample.status){
+      addSampleStatusChangeEvent(original, updated, operator)
+      auditService.auditSampleStatusChange(original, updated, operator)
+    }
   }
 
   def rejectCase(original: Case, f: FileUpload, note: String, operator: Operator)
@@ -364,6 +386,16 @@ class CasesService @Inject()(appConfig: AppConfig,
   private def addSampleStatusChangeEvent(original: Case, updated: Case, operator: Operator, comment: Option[String] = None)
                                            (implicit hc: HeaderCarrier): Future[Unit] = {
     val details = SampleStatusChange(original.sample.status, updated.sample.status, comment)
+    addEvent(original, updated, details, operator)
+  }
+
+  private def addLiabilitySampleChangeEvent(original: Case, updated: Case, operator: Operator, comment: Option[String] = None)
+                                        (implicit hc: HeaderCarrier): Future[Unit] = {
+    def sending(sample: Sample) = sample.status match {
+      case None => SampleSending.NO
+      case Some(_) => SampleSending.YES
+    }
+    val details = LiabilitySampleChange(sending(original.sample), sending(updated.sample), comment)
     addEvent(original, updated, details, operator)
   }
 

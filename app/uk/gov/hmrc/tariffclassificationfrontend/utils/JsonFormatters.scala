@@ -44,6 +44,7 @@ object JsonFormatters {
   implicit val appealStatusFormat: Format[AppealStatus.Value] = EnumJson.format(AppealStatus)
   implicit val sampleStatusFormat: Format[SampleStatus.Value] = EnumJson.format(SampleStatus)
   implicit val sampleReturnFormat: Format[SampleReturn.Value] = EnumJson.format(SampleReturn)
+  implicit val sampleSendingFormat: Format[SampleSending.Value] = EnumJson.format(SampleSending)
   implicit val appealTypeFormat: Format[AppealType.Value] = EnumJson.format(AppealType)
   implicit val cancelReasonFormat: Format[CancelReason.Value] = EnumJson.format(CancelReason)
   implicit val caseStatusFormat: Format[CaseStatus.Value] = EnumJson.format(CaseStatus)
@@ -70,6 +71,7 @@ object JsonFormatters {
   implicit val formatCompletedCaseStatusChange: OFormat[CompletedCaseStatusChange] = Json.format[CompletedCaseStatusChange]
   implicit val formatAppealStatusChange: OFormat[AppealStatusChange] = Json.format[AppealStatusChange]
   implicit val formatSampleStatusChange: OFormat[SampleStatusChange] = Json.format[SampleStatusChange]
+  implicit val formatLiabilitySampleChange: OFormat[LiabilitySampleChange] = Json.format[LiabilitySampleChange]
   implicit val formatSampleReturnChange: OFormat[SampleReturnChange] = Json.format[SampleReturnChange]
   implicit val formatAppealAdded: OFormat[AppealAdded] = Json.format[AppealAdded]
   implicit val formatExtendedUseStatusChange: OFormat[ExtendedUseStatusChange] = Json.format[ExtendedUseStatusChange]
@@ -85,6 +87,7 @@ object JsonFormatters {
     .and[AppealStatusChange](EventType.APPEAL_STATUS_CHANGE.toString)
     .and[SampleStatusChange](EventType.SAMPLE_STATUS_CHANGE.toString)
     .and[SampleReturnChange](EventType.SAMPLE_RETURN_CHANGE.toString)
+    .and[LiabilitySampleChange](EventType.LIABILITY_SAMPLE_CHANGE.toString)
     .and[AppealAdded](EventType.APPEAL_ADDED.toString)
     .and[ExtendedUseStatusChange](EventType.EXTENDED_USE_STATUS_CHANGE.toString)
     .and[AssignmentChange](EventType.ASSIGNMENT_CHANGE.toString)

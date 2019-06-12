@@ -73,7 +73,7 @@ class SampleControllerSpec extends UnitSpec with Matchers
       when(eventsService.getFilteredEvents(any[String],any[Pagination],any[Option[Set[EventType]]])(any[HeaderCarrier]))
         .thenReturn(Future.successful(Paged.empty[Event]))
 
-      val c = aCase(withStatus(CaseStatus.OPEN), withDecision())
+      val c = aCase(withStatus(CaseStatus.OPEN), withBTIDetails(sampleToBeProvided = true))
 
       val result = await(controller(c).sampleDetails("reference")(fakeRequest))
 

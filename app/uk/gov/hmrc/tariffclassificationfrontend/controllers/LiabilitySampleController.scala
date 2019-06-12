@@ -23,40 +23,40 @@ import play.api.mvc.{Action, AnyContent, Call, Request}
 import play.twirl.api.Html
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.forms.SampleStatusForm
-import uk.gov.hmrc.tariffclassificationfrontend.models.SampleStatus.SampleStatus
+import uk.gov.hmrc.tariffclassificationfrontend.forms.LiabilitySampleForm
+import uk.gov.hmrc.tariffclassificationfrontend.models.SampleSending.SampleSending
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
-import uk.gov.hmrc.tariffclassificationfrontend.models._
-import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, EventsService}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{SampleSending, _}
+import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
-import uk.gov.hmrc.tariffclassificationfrontend.views.CaseDetailPage
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
 @Singleton
-class SampleController @Inject()(override val verify: RequestActions,
-                                  override val caseService: CasesService,
-                                  eventsService: EventsService,
-                                  override val messagesApi: MessagesApi,
-                                  override implicit val config: AppConfig) extends StatusChangeAction[Option[SampleStatus]] {
+class LiabilitySampleController @Inject()(override val verify: RequestActions,
+                                          override val caseService: CasesService,
+                                          override val messagesApi: MessagesApi,
+                                          override implicit val config: AppConfig) extends StatusChangeAction[Option[SampleSending]] {
 
   override protected val requiredPermission: Permission.Value = Permission.EDIT_SAMPLE
 
-  override protected def redirect: String => Call = routes.CaseController.get
+  override protected def redirect: String => Call = routes.CaseController.trader
 
   override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = {
-    true //No constraints on when the case is valid
+    c.application.isLiabilityOrder
   }
 
-  override protected val form: Form[Option[SampleStatus]] = SampleStatusForm.form
+  override protected val form: Form[Option[SampleSending]] = LiabilitySampleForm.form
 
-  override protected def status(c: Case): Option[SampleStatus] = c.sample.status
+  override protected def status(c: Case): Option[SampleSending] = c.sample.status match {
+    case Some(_) => Some(SampleSending.YES)
+    case _ => Some(SampleSending.NO)
+  }
 
-  override protected def chooseStatusView(c: Case, notFilledForm: Form[Option[SampleStatus]])
+  override protected def chooseStatusView(c: Case, notFilledForm: Form[Option[SampleSending]])
                                          (implicit request: Request[_]): Html = {
-    views.html.change_sample_status(c, notFilledForm)
+    views.html.change_liablity_sending_sample(c, notFilledForm)
   }
 
   override def chooseStatus(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen
@@ -67,21 +67,11 @@ class SampleController @Inject()(override val verify: RequestActions,
     )
   }
 
-  override protected def update(c: Case, status: Option[SampleStatus], operator: Operator)
+  override protected def update(c: Case, sendingSample: Option[SampleSending], operator: Operator)
                                (implicit hc: HeaderCarrier): Future[Case] = {
-    caseService.updateSampleStatus(c, status, operator)
+    caseService.updateLiabilitySample(c, sendingSample, operator)
   }
 
   override protected def onSuccessRedirect(reference: String): Call = routes.CaseController.sampleDetails(reference)
 
-  def sampleDetails(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
-    getCaseAndRenderView(
-      reference,
-      c => {
-        for {
-          events <- eventsService.getFilteredEvents(c.reference, NoPagination(),Some(EventType.sampleEvents))
-        } yield views.html.case_details(c, CaseDetailPage.SAMPLE_DETAILS, views.html.partials.sample.sample_details(c, events))
-      }
-    )
-  }
 }
