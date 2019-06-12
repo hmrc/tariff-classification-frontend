@@ -30,6 +30,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedCase
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
 import uk.gov.hmrc.tariffclassificationfrontend.views.CaseDetailPage.{CaseDetailPage, LIABILITY}
+import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.liabilities.liability_details_edit
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -58,7 +59,7 @@ class LiabilityController @Inject()(verify: RequestActions,
       case c: Case =>
         successful(
           Ok(
-            views.html.partials.liabilities.liability_details_edit(c, toLiabilityForm(c.application.asLiabilityOrder), Some(tabIndexFor(LIABILITY)))
+            liability_details_edit(c, toLiabilityForm(c.application.asLiabilityOrder), Some(tabIndexFor(LIABILITY)))
           )
         )
     }
@@ -108,9 +109,10 @@ class LiabilityController @Inject()(verify: RequestActions,
   def postLiabilityDetails(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
     LiabilityFormData.form.bindFromRequest.fold(
       errorForm =>
-        getCaseAndRenderView(
-          menuTitle,
-          c => successful(views.html.partials.liabilities.liability_details_edit(c, errorForm))
+        successful(
+          Ok(
+            liability_details_edit(request.`case`, errorForm)
+          )
         ),
       validForm =>
         getCaseAndRedirect(menuTitle, c => for {
