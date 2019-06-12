@@ -30,7 +30,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.AppealType.AppealType
 import uk.gov.hmrc.tariffclassificationfrontend.models.CancelReason.CancelReason
 import uk.gov.hmrc.tariffclassificationfrontend.models.ReferralReason.ReferralReason
 import uk.gov.hmrc.tariffclassificationfrontend.models.SampleReturn.SampleReturn
-import uk.gov.hmrc.tariffclassificationfrontend.models.SampleSending.SampleSending
+import uk.gov.hmrc.tariffclassificationfrontend.models.LiabilitySample.LiabilitySample
 import uk.gov.hmrc.tariffclassificationfrontend.models.SampleStatus.SampleStatus
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
@@ -107,10 +107,10 @@ class CasesService @Inject()(appConfig: AppConfig,
     } yield updated
   }
 
-  def updateLiabilitySample(original: Case, sending: Option[SampleSending], operator: Operator)
+  def updateLiabilitySample(original: Case, sending: Option[LiabilitySample], operator: Operator)
                         (implicit hc: HeaderCarrier): Future[Case] = {
     def sample = sending match {
-      case Some(SampleSending.YES) => Sample(status = Some(SampleStatus.AWAITING))
+      case Some(LiabilitySample.YES) => Sample(status = Some(SampleStatus.AWAITING))
       case _ => Sample()
     }
     for {
@@ -392,8 +392,8 @@ class CasesService @Inject()(appConfig: AppConfig,
   private def addLiabilitySampleChangeEvent(original: Case, updated: Case, operator: Operator, comment: Option[String] = None)
                                         (implicit hc: HeaderCarrier): Future[Unit] = {
     def sending(sample: Sample) = sample.status match {
-      case None => SampleSending.NO
-      case Some(_) => SampleSending.YES
+      case None => LiabilitySample.NO
+      case Some(_) => LiabilitySample.YES
     }
     val details = LiabilitySampleChange(sending(original.sample), sending(updated.sample), comment)
     addEvent(original, updated, details, operator)

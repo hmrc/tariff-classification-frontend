@@ -26,7 +26,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.CaseStatus
 import uk.gov.hmrc.tariffclassificationfrontend.models.EventType.EventType
 import uk.gov.hmrc.tariffclassificationfrontend.models.ReferralReason.ReferralReason
 import uk.gov.hmrc.tariffclassificationfrontend.models.SampleReturn.SampleReturn
-import uk.gov.hmrc.tariffclassificationfrontend.models.SampleSending.SampleSending
+import uk.gov.hmrc.tariffclassificationfrontend.models.LiabilitySample.LiabilitySample
 import uk.gov.hmrc.tariffclassificationfrontend.models.SampleStatus.SampleStatus
 
 
@@ -164,10 +164,10 @@ case class SampleStatusChange
 
 case class LiabilitySampleChange
 (
-  override val from: SampleSending,
-  override val to: SampleSending,
+  override val from: LiabilitySample,
+  override val to: LiabilitySample,
   override val comment: Option[String] = None
-) extends FieldChange[SampleSending] {
+) extends FieldChange[LiabilitySample] {
   override val `type`: EventType.Value = EventType.LIABILITY_SAMPLE_CHANGE
 }
 

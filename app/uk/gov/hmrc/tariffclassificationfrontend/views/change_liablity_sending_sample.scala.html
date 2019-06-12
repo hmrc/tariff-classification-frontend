@@ -16,12 +16,12 @@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.models.Case
-@import uk.gov.hmrc.tariffclassificationfrontend.models.SampleSending.SampleSending
+@import uk.gov.hmrc.tariffclassificationfrontend.models.LiabilitySample.LiabilitySample
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.components.initial_focus
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.liability_sending_sample_form
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{case_heading, error_summary}
-@(c: Case, form: Form[Option[SampleSending]])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(c: Case, form: Form[Option[LiabilitySample]])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("page.title.change.liablity.sending.sample")), scriptElem = Some(initial_focus())) {
 

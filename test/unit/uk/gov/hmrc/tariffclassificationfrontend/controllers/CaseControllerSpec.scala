@@ -158,7 +158,7 @@ class CaseControllerSpec extends UnitSpec with Matchers with WithFakeApplication
       charset(result) shouldBe Some("utf-8")
 
       verify(eventService).getFilteredEvents(refEq(aCase.reference),refEq(NoPagination()),
-        refEq(Some(Set(EventType.SAMPLE_STATUS_CHANGE, EventType.SAMPLE_RETURN_CHANGE))))(any[HeaderCarrier])
+        refEq(Some(EventType.sampleEvents)))(any[HeaderCarrier])
     }
   }
 
@@ -179,7 +179,7 @@ class CaseControllerSpec extends UnitSpec with Matchers with WithFakeApplication
       charset(result) shouldBe Some("utf-8")
 
       verify(eventService).getFilteredEvents(refEq(aCase.reference),refEq(NoPagination()),
-        refEq(Some(EventType.values.diff(Set(EventType.SAMPLE_STATUS_CHANGE, EventType.SAMPLE_RETURN_CHANGE)))))(any[HeaderCarrier])
+        refEq(Some(EventType.values.diff(EventType.sampleEvents))))(any[HeaderCarrier])
     }
 
     "return 200 OK and HTML content type when no Events are present" in {

@@ -16,15 +16,15 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.models
 
-object SampleSending extends Enumeration {
-  type SampleSending = Value
+object LiabilitySample extends Enumeration {
+  type LiabilitySample = Value
 
   val YES, NO = Value
 
-  def format(status: Option[SampleSending]): String = {
+  def format(status: LiabilitySample): String = {
     status match {
-      case Some(YES) => "Yes"
-      case Some(NO) => "No"
+      case YES => "Yes"
+      case NO => "No"
       case _ => "Unknown"
     }
   }

@@ -82,7 +82,7 @@ class SampleControllerSpec extends UnitSpec with Matchers
       charset(result) shouldBe Some("utf-8")
       contentAsString(result) should include("sample-status-heading")
 
-      verify(eventsService).getFilteredEvents(refEq(c.reference),refEq(NoPagination()),refEq(Some(Set(EventType.SAMPLE_STATUS_CHANGE))))(any[HeaderCarrier])
+      verify(eventsService).getFilteredEvents(refEq(c.reference),refEq(NoPagination()),refEq(Some(EventType.sampleEvents)))(any[HeaderCarrier])
     }
 
   }

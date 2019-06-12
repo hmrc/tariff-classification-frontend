@@ -24,9 +24,9 @@ import play.twirl.api.Html
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.LiabilitySampleForm
-import uk.gov.hmrc.tariffclassificationfrontend.models.SampleSending.SampleSending
+import uk.gov.hmrc.tariffclassificationfrontend.models.LiabilitySample.LiabilitySample
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, LiabilitySample, Operator, Permission}
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
-import uk.gov.hmrc.tariffclassificationfrontend.models.{SampleSending, _}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
@@ -37,7 +37,7 @@ import scala.concurrent.Future.successful
 class LiabilitySampleController @Inject()(override val verify: RequestActions,
                                           override val caseService: CasesService,
                                           override val messagesApi: MessagesApi,
-                                          override implicit val config: AppConfig) extends StatusChangeAction[Option[SampleSending]] {
+                                          override implicit val config: AppConfig) extends StatusChangeAction[Option[LiabilitySample]] {
 
   override protected val requiredPermission: Permission.Value = Permission.EDIT_SAMPLE
 
@@ -47,14 +47,14 @@ class LiabilitySampleController @Inject()(override val verify: RequestActions,
     c.application.isLiabilityOrder
   }
 
-  override protected val form: Form[Option[SampleSending]] = LiabilitySampleForm.form
+  override protected val form: Form[Option[LiabilitySample]] = LiabilitySampleForm.form
 
-  override protected def status(c: Case): Option[SampleSending] = c.sample.status match {
-    case Some(_) => Some(SampleSending.YES)
-    case _ => Some(SampleSending.NO)
+  override protected def status(c: Case): Option[LiabilitySample] = c.sample.status match {
+    case Some(_) => Some(LiabilitySample.YES)
+    case _ => Some(LiabilitySample.NO)
   }
 
-  override protected def chooseStatusView(c: Case, notFilledForm: Form[Option[SampleSending]])
+  override protected def chooseStatusView(c: Case, notFilledForm: Form[Option[LiabilitySample]])
                                          (implicit request: Request[_]): Html = {
     views.html.change_liablity_sending_sample(c, notFilledForm)
   }
@@ -67,7 +67,7 @@ class LiabilitySampleController @Inject()(override val verify: RequestActions,
     )
   }
 
-  override protected def update(c: Case, sendingSample: Option[SampleSending], operator: Operator)
+  override protected def update(c: Case, sendingSample: Option[LiabilitySample], operator: Operator)
                                (implicit hc: HeaderCarrier): Future[Case] = {
     caseService.updateLiabilitySample(c, sendingSample, operator)
   }
