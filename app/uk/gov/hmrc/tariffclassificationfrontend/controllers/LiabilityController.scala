@@ -22,7 +22,8 @@ import play.api.mvc._
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.models.Case
+import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionForm
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Decision}
 import uk.gov.hmrc.tariffclassificationfrontend.models.TabIndexes.tabIndexFor
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedCaseRequest
 import uk.gov.hmrc.tariffclassificationfrontend.views
@@ -34,6 +35,7 @@ import scala.concurrent.Future.successful
 
 @Singleton
 class LiabilityController @Inject()(verify: RequestActions,
+                                    decisionForm: DecisionForm,
                                     val messagesApi: MessagesApi,
                                     implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
@@ -43,7 +45,8 @@ class LiabilityController @Inject()(verify: RequestActions,
     getCaseAndRenderView(
       menuTitle,
       c => {
-        successful(views.html.partials.liability_details(c, tabIndexFor(LIABILITY)))
+        val form = decisionForm.liabilityCompleteForm(c.decision.getOrElse(Decision()))
+        successful(views.html.partials.liability_details(c, tabIndexFor(LIABILITY), form))
       }
     )
   }

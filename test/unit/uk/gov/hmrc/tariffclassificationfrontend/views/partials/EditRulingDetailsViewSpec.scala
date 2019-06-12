@@ -23,7 +23,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.response.ScanStatus
 import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, StoredAttachment}
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewSpec
-import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.ruling.ruling_details_edit
+import uk.gov.hmrc.tariffclassificationfrontend.views.html.ruling_details_edit
 import uk.gov.tariffclassificationfrontend.utils.Cases._
 import org.scalatest.mockito.MockitoSugar
 
@@ -40,7 +40,7 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
       )
 
       // When
-      val doc = view(ruling_details_edit(c, Seq.empty, decisionForm.form))
+      val doc = view(ruling_details_edit(c, Seq.empty, decisionForm.btiForm))
 
       // Then
       doc should containElementWithID("envisagedCommodityCodeValue")
@@ -54,7 +54,7 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
       )
 
       // When
-      val doc = view(ruling_details_edit(c, Seq.empty, decisionForm.form))
+      val doc = view(ruling_details_edit(c, Seq.empty, decisionForm.btiForm))
 
       // Then
       doc should containElementWithID("envisagedCommodityCodeValue")
@@ -75,7 +75,7 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
       )
 
       // When
-      val doc = view(ruling_details_edit(c, Seq.empty, decisionForm.form.fill(formData)))
+      val doc = view(ruling_details_edit(c, Seq.empty, decisionForm.btiForm.fill(formData)))
 
       // Then
       doc should containElementWithID("bindingCommodityCode")
@@ -109,7 +109,7 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
       )
 
       // When
-      val doc = view(ruling_details_edit(c, Seq(stored), decisionForm.form))
+      val doc = view(ruling_details_edit(c, Seq(stored), decisionForm.btiForm))
 
       // Then
       doc shouldNot containElementWithID("edit-ruling-no_attachments")
@@ -134,7 +134,7 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
       )
 
       // When
-      val doc = view(ruling_details_edit(c, Seq(stored), decisionForm.form))
+      val doc = view(ruling_details_edit(c, Seq(stored), decisionForm.btiForm))
 
       // Then
       doc should containElementWithID("edit-ruling-no_attachments")
@@ -159,7 +159,7 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
       )
 
       // When
-      val doc = view(ruling_details_edit(c, Seq(stored), decisionForm.form))
+      val doc = view(ruling_details_edit(c, Seq(stored), decisionForm.btiForm))
 
       // Then
       doc should containElementWithID("attachments[0]")
@@ -183,7 +183,7 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
       )
 
       // When
-      val doc = view(ruling_details_edit(c, Seq(stored), decisionForm.form))
+      val doc = view(ruling_details_edit(c, Seq(stored), decisionForm.btiForm))
 
       // Then
       doc should containElementWithID("attachments[0]")
@@ -207,7 +207,7 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
       )
 
       // When
-      val doc = view(ruling_details_edit(c, Seq(stored), decisionForm.form))
+      val doc = view(ruling_details_edit(c, Seq(stored), decisionForm.btiForm))
 
       // Then
       doc should containElementWithID("attachments-row-0-file")
@@ -233,7 +233,7 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
       )
 
       // When
-      val doc = view(ruling_details_edit(c, Seq(stored), decisionForm.form))
+      val doc = view(ruling_details_edit(c, Seq(stored), decisionForm.btiForm))
 
       // Then
       doc should containElementWithID("attachments-row-0-file")
@@ -256,7 +256,7 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
       )
 
       // When
-      val doc = view(ruling_details_edit(c, Seq.empty, decisionForm.form.fill(formData)))
+      val doc = view(ruling_details_edit(c, Seq.empty, decisionForm.btiForm.fill(formData)))
 
       // Then
       doc should containElementWithID("bindingCommodityCode")

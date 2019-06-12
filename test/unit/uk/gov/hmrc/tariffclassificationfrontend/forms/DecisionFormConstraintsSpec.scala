@@ -84,12 +84,12 @@ class DecisionFormConstraintsSpec extends UnitSpec with MockitoSugar {
   }
 
   private def assertNoErrors(commodityCodeValue: String): Unit = {
-    val errors = decisionForm.form.bind(commodityCodeJsValue(commodityCodeValue)).errors(bindingCommodityCodeElementId)
+    val errors = decisionForm.btiForm.bind(commodityCodeJsValue(commodityCodeValue)).errors(bindingCommodityCodeElementId)
     errors shouldBe Seq.empty
   }
 
   private def assertOnlyOneError(commodityCodeValue: String, errorMessages: Seq[String]): Unit = {
-    val errors = decisionForm.form.bind(commodityCodeJsValue(commodityCodeValue)).errors(bindingCommodityCodeElementId)
+    val errors = decisionForm.btiForm.bind(commodityCodeJsValue(commodityCodeValue)).errors(bindingCommodityCodeElementId)
     errors.map(_.message) shouldBe errorMessages
   }
 

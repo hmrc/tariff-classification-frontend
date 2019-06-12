@@ -69,7 +69,7 @@ object Cases {
     _.copy(application = btiApplicationExample)
   }
 
-  def withLiabilityOrderApplication: Case => Case = {
+  def withLiabilityApplication: Case => Case = {
     _.copy(application = liabilityApplicationExample)
   }
 

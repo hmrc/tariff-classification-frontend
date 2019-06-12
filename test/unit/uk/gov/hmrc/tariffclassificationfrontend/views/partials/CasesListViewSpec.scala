@@ -123,7 +123,7 @@ class CasesListViewSpec extends ViewSpec {
       val c = aCase(
         withReference("REF"),
         withoutAssignee(),
-        withLiabilityOrderApplication
+        withLiabilityApplication
       )
 
       // When
