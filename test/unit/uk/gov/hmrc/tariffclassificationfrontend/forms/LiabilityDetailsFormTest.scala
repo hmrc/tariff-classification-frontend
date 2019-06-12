@@ -38,8 +38,8 @@ class LiabilityDetailsFormTest extends UnitSpec {
         val form = LiabilityDetailsForm.liabilityDetailsForm(liability).bindFromRequest(Map())
 
         form.hasErrors shouldBe true
-        form.errors should have(size(9))
-        form.errors.map(_.key) shouldBe Seq("entryDate", "traderName", "goodName", "entryNumber", "traderCommodityCode", "officerCommodityCode", "contactName", "contactEmail", "contactPhone")
+        form.errors should have(size(3))
+        form.errors.map(_.key) shouldBe Seq("traderName", "contactName", "contactEmail")
       }
 
       "using complete form" in {
@@ -57,7 +57,7 @@ class LiabilityDetailsFormTest extends UnitSpec {
 
         form.hasErrors shouldBe true
         form.errors should have(size(1))
-        form.errors.map(_.key) shouldBe Seq("entryDate", "traderName", "goodName", "entryNumber", "traderCommodityCode", "officerCommodityCode", "contactName", "contactEmail", "contactPhone")
+        form.errors.map(_.key) shouldBe Seq("traderName")
       }
 
       "using complete form" in {
@@ -96,7 +96,7 @@ class LiabilityDetailsFormTest extends UnitSpec {
       }
 
       "using complete form" in {
-        val form = LiabilityDetailsForm.liabilityDetailsForm(liability)
+        val form = LiabilityDetailsForm.liabilityDetailsCompleteForm(liability)
 
         form.hasErrors shouldBe false
         form.data shouldBe params.mapValues(v => v.head)
