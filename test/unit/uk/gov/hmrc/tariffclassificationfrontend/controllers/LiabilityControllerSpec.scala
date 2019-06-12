@@ -16,6 +16,10 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
+import org.mockito.ArgumentMatchers.any
+import org.mockito.{ArgumentMatchers, BDDMockito}
+import org.mockito.BDDMockito._
+import org.scalatest.Matchers
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.given
@@ -60,7 +64,7 @@ class LiabilityControllerSpec extends UnitSpec with Matchers with BeforeAndAfter
 
   private def controller(permissions: Set[Permission]) = new LiabilityController(
     new RequestActionsWithPermissions(permissions = permissions, addViewCasePermission = false,
-      c = Cases.liabilityCaseExample), decisionForm, casesService, messageApi, appConfig
+      c = Cases.liabilityCaseExample), decisionForm, messageApi, casesService, appConfig
   )
 
   "GET liability view" should {

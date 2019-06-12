@@ -23,10 +23,12 @@ import play.api.mvc._
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.forms.{DecisionForm, LiabilityFormData}
+import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionForm
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Decision}
+import uk.gov.hmrc.tariffclassificationfrontend.forms.LiabilityFormData
 import uk.gov.hmrc.tariffclassificationfrontend.models.TabIndexes.tabIndexFor
+import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedCaseRequest
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Decision, _}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
 import uk.gov.hmrc.tariffclassificationfrontend.views.CaseDetailPage.{CaseDetailPage, LIABILITY}
@@ -39,8 +41,8 @@ import scala.concurrent.Future.successful
 @Singleton
 class LiabilityController @Inject()(verify: RequestActions,
                                     decisionForm: DecisionForm,
-                                    casesService: CasesService,
                                     val messagesApi: MessagesApi,
+                                    casesService: CasesService,
                                     implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
   private lazy val menuTitle = LIABILITY
@@ -48,8 +50,7 @@ class LiabilityController @Inject()(verify: RequestActions,
   private lazy val form = LiabilityFormData.form
 
   def liabilityDetails(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
-    getCaseAndRenderView(
-      menuTitle,
+    getCaseAndRenderView(menuTitle,
       c => {
         val form = decisionForm.liabilityCompleteForm(c.decision.getOrElse(Decision()))
         successful(views.html.partials.liability_details(c, tabIndexFor(LIABILITY), form))
@@ -62,10 +63,26 @@ class LiabilityController @Inject()(verify: RequestActions,
       case c: Case =>
         successful(
           Ok(
-            liability_details_edit(c, LiabilityFormData.bindFrom(c.application.asLiabilityOrder), Some(tabIndexFor(LIABILITY)))
+            liability_details_edit(c, toLiabilityForm(c.application.asLiabilityOrder), Some(tabIndexFor(LIABILITY)))
           )
         )
     }
+  }
+
+  private def toLiabilityForm(l: LiabilityOrder): Form[LiabilityFormData] = {
+    LiabilityFormData.form.fill(
+      LiabilityFormData(
+        entryDate = l.entryDate,
+        traderName = l.traderName,
+        goodName = l.goodName.getOrElse(""),
+        entryNumber = l.entryNumber.getOrElse(""),
+        traderCommodityCode = l.traderCommodityCode.getOrElse(""),
+        officerCommodityCode = l.officerCommodityCode.getOrElse(""),
+        contactName = l.contact.name,
+        contactEmail = Some(l.contact.email),
+        contactPhone = l.contact.phone.getOrElse("")
+      )
+    )
   }
 
   def mergeLiabilityIntoCase(c: Case, validForm: LiabilityFormData): Case = {
