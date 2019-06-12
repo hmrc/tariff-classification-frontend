@@ -79,39 +79,43 @@ object LiabilityDetailsForm {
 
   def liabilityDetailsForm(existingLiability: LiabilityOrder): Form[LiabilityOrder] = Form[LiabilityOrder](
     mapping[LiabilityOrder, Option[Instant], String, Option[String], Option[String], Option[String], Option[String], String, String, Option[String]](
-      "entryDate" -> optional(tuple(
-        "day" -> number,
-        "month" -> number,
-        "year" -> number
-      ).verifying("case.liability.error.entry-date", validDateFormat)
-        .transform(formDate2Instant, instant2FormDate)),
+      "entryDate" -> optional(
+        tuple(
+          "day" -> number,
+          "month" -> number,
+          "year" -> number
+        ).verifying("case.liability.error.entry-date", validDateFormat)
+          .transform(formDate2Instant, instant2FormDate)
+      ),
       "traderName" -> textNonEmpty("case.liability.error.empty.trader-name"),
-      "goodName" -> optional(text),
-      "entryNumber" -> optional(text),
-      "traderCommodityCode" -> optional(text),
-      "officerCommodityCode" -> optional(text),
+      "goodName" -> optional(text).verifying("error.required", _.isDefined),
+      "entryNumber" -> optional(text).verifying("error.required", _.isDefined),
+      "traderCommodityCode" -> optional(text).verifying("error.required", _.isDefined),
+      "officerCommodityCode" -> optional(text).verifying("error.required", _.isDefined),
       "contactName" -> text,
       "contactEmail" -> text.verifying("case.liability.error.email", e => validEmailFormat(e)),
-      "contactPhone" -> optional(text)
+      "contactPhone" -> optional(text).verifying("error.required", _.isDefined)
     )(form2Liability(existingLiability))(liability2Form)
   ).fillAndValidate(existingLiability)
 
   def liabilityDetailsCompleteForm(existingLiability: LiabilityOrder): Form[LiabilityOrder] = Form[LiabilityOrder](
     mapping[LiabilityOrder, Option[Instant], String, Option[String], Option[String], Option[String], Option[String], String, String, Option[String]](
-      "entryDate" -> optional(tuple(
-        "day" -> number,
-        "month" -> number,
-        "year" -> number
-      ).verifying("case.liability.error.entry-date", validDateFormat)
-        .transform(formDate2Instant, instant2FormDate)),
+      "entryDate" -> optional(
+        tuple(
+          "day" -> number,
+          "month" -> number,
+          "year" -> number
+        ).verifying("case.liability.error.entry-date", validDateFormat)
+          .transform(formDate2Instant, instant2FormDate)
+      ).verifying("error.required", _.isDefined),
       "traderName" -> textNonEmpty("case.liability.error.empty.trader-name"),
-      "goodName" -> optional(nonEmptyText),
-      "entryNumber" -> optional(nonEmptyText),
-      "traderCommodityCode" -> optional(nonEmptyText),
-      "officerCommodityCode" -> optional(nonEmptyText),
+      "goodName" -> optional(nonEmptyText).verifying("error.required", _.isDefined),
+      "entryNumber" -> optional(nonEmptyText).verifying("error.required", _.isDefined),
+      "traderCommodityCode" -> optional(nonEmptyText).verifying("error.required", _.isDefined),
+      "officerCommodityCode" -> optional(nonEmptyText).verifying("error.required", _.isDefined),
       "contactName" -> nonEmptyText,
       "contactEmail" -> text.verifying("case.liability.error.email", e => validEmailFormat(e)),
-      "contactPhone" -> optional(text)
+      "contactPhone" -> optional(text).verifying("error.required", _.isDefined)
     )(form2Liability(existingLiability))(liability2Form)
   ).fillAndValidate(existingLiability)
 }
