@@ -154,6 +154,7 @@ class QueueNavViewSpec extends ViewSpec with BeforeAndAfterEach {
       // Then
       doc.getElementById("case-count-gateway") should containText("4")
     }
+
     "Render case counts separately for named queue" in {
       // Given
       val queueCounts = Map("-BTI" -> 2, "-LIABILITY_ORDER" -> 2, "1-BTI" -> 3, "1-LIABILITY_ORDER" -> 5)
