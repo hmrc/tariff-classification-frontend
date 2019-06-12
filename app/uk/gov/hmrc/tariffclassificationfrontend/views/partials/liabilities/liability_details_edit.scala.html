@@ -51,6 +51,13 @@
 
                 <h3 class="heading-medium mb-1">@messages("case.liability.edit.information")</h3>
 
+                @input_date(
+                    dayField = form("entryDate.day"),
+                    monthField = form("entryDate.month"),
+                    yearField = form("entryDate.year"),
+                    legend = messages("case.liability.edit.entry.date")
+                )
+
                 @input_text(
                     field = form("entryNumber"),
                     label = messages("case.liability.edit.entry-number"),
