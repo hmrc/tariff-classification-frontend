@@ -23,6 +23,7 @@ import javax.inject.Singleton
 import play.api.mvc.QueryStringBindable
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
+import uk.gov.hmrc.tariffclassificationfrontend.models.ApplicationType.ApplicationType
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus._
 import uk.gov.hmrc.tariffclassificationfrontend.models.EventType.EventType
 import uk.gov.hmrc.tariffclassificationfrontend.models._
@@ -51,22 +52,26 @@ class BindingTariffClassificationConnector @Inject()(appConfig: AppConfig, clien
     client.GET[Option[Case]](url)
   }
 
+  private def buildQueryUrl(types : Seq[ApplicationType] = Seq(ApplicationType.BTI,ApplicationType.LIABILITY_ORDER), withStatuses: String,
+                            queueId: String = "", assigneeId: String, pagination: Pagination): String = {
+    val sortBy = "application.type,application.status,days-elapsed"
+    val queryString = s"application_type=${types.mkString(",")}&queue_id=$queueId&assignee_id=$assigneeId&status=$withStatuses&sort_by=$sortBy&sort_direction=desc&page=${pagination.page}&page_size=${pagination.pageSize}"
+    s"${appConfig.bindingTariffClassificationUrl}/cases?$queryString"
+  }
+
   def findCasesByQueue(queue: Queue, pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[Case]] = {
     val queueId = if (queue == Queues.gateway) "none" else queue.id
-    val queryString = s"application_type=BTI&queue_id=$queueId&assignee_id=none&status=$statuses&sort_by=days-elapsed&sort_direction=desc&page=${pagination.page}&page_size=${pagination.pageSize}"
-    val url = s"${appConfig.bindingTariffClassificationUrl}/cases?$queryString"
+    val url = buildQueryUrl(withStatuses = statuses, queueId = queueId,  assigneeId = "none", pagination = pagination)
     client.GET[Paged[Case]](url)
   }
 
   def findCasesByAssignee(assignee: Operator, pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[Case]] = {
-    val queryString = s"application_type=BTI&assignee_id=${assignee.id}&status=$statuses&sort_by=days-elapsed&sort_direction=desc&page=${pagination.page}&page_size=${pagination.pageSize}"
-    val url = s"${appConfig.bindingTariffClassificationUrl}/cases?$queryString"
+    val url = buildQueryUrl(withStatuses = statuses, queueId = "",  assigneeId = assignee.id,  pagination = pagination)
     client.GET[Paged[Case]](url)
   }
 
   def findAssignedCases(pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[Case]] = {
-    val queryString = s"application_type=BTI&assignee_id=some&status=$liveStatuses&sort_by=days-elapsed&sort_direction=desc&page=${pagination.page}&page_size=${pagination.pageSize}"
-    val url = s"${appConfig.bindingTariffClassificationUrl}/cases?$queryString"
+    val url = buildQueryUrl(withStatuses = liveStatuses, queueId = "",  assigneeId = "some",  pagination = pagination)
     client.GET[Paged[Case]](url)
   }
 
@@ -105,10 +110,11 @@ class BindingTariffClassificationConnector @Inject()(appConfig: AppConfig, clien
       search.commodityCode.map(qb.unbind("commodity_code", _)),
       search.decisionDetails.map(qb.unbind("decision_details", _)),
       search.status.map(_.map(s => qb.unbind("status", s.toString)).mkString("&")),
+      search.applicationType.map(_.map(s => qb.unbind("application_type", s.toString)).mkString("&")),
       search.keywords.map(_.map(k => qb.unbind("keyword", k)).mkString("&"))
     ).filter(_.isDefined).map(_.get)
 
-    val url = s"${appConfig.bindingTariffClassificationUrl}/cases?application_type=BTI&${(reqParams ++ optParams).mkString("&")}&page=${pagination.page}&page_size=${pagination.pageSize}"
+    val url = s"${appConfig.bindingTariffClassificationUrl}/cases?${(reqParams ++ optParams).mkString("&")}&page=${pagination.page}&page_size=${pagination.pageSize}"
     client.GET[Paged[Case]](url)
   }
 

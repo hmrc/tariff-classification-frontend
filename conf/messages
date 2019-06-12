@@ -106,11 +106,11 @@ case.decision.empty=There is no ruling information associated to this case.
 case.decision.hint.published-content=This will be published on the public rulings website.
 
 case.decision.before-you-complete=Before you complete this case
-case.decision.constrain.methodSearch=Searches performed
-case.decision.constrain.justification=Justification
-case.decision.constrain.bindingCommodityCode=Binding commodity code
-case.decision.constrain.goodsDescription=Item description
-case.decision.constrain.explanation=Explanation for holder
+case.decision.constraint.methodSearch=Searches performed
+case.decision.constraint.justification=Justification
+case.decision.constraint.bindingCommodityCode=Binding commodity code
+case.decision.constraint.goodsDescription=Item description
+case.decision.constraint.explanation=Explanation for holder
 
 case.decision.ruling.certificate.content=If this case is under review or appeal
 case.decision.ruling.certificate.link=view and print a PDF of the ruling.
@@ -171,6 +171,11 @@ case.liability.code.officer= Code suggested by officer
 case.liability.contact.name = Name
 case.liability.contact.email = Contact email
 case.liability.contact.phone = Contact telephone
+case.liability.decision.code = Commodity code
+case.liability.decision.description = Item description
+case.liability.decision.justification = Justification
+case.liability.decision.searches = Searches  performed
+case.liability.decision.exclusions = Exclusions and inclusions
 
 case.liability.edit = Edit details
 case.liability.edit.information = Information about this liability from the C592
@@ -364,6 +369,7 @@ page.title.extended.use=Extended use of this ruling
 page.title.ruling.not.found=Ruling not found
 page.title.case.queues=Tariff classification case queues
 page.title.create_liability=New liability
+page.title.edit_liability_decision=Edit liability decision
 
 
 view.attachment.unavailable.title=Attachment unavailable

@@ -20,6 +20,10 @@ import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito.{never, reset, verify}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.{ArgumentMatchers, BDDMockito}
+import org.mockito.BDDMockito._
+import org.scalatest.Matchers
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterEach, Matchers}
 import play.api.http.Status
@@ -30,6 +34,7 @@ import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
+import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionForm
 import uk.gov.hmrc.tariffclassificationfrontend.models.Permission.Permission
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
@@ -40,6 +45,7 @@ import scala.concurrent.Future
 
 class LiabilityControllerSpec extends UnitSpec with Matchers with BeforeAndAfterEach with WithFakeApplication with MockitoSugar with ControllerCommons {
 
+  private val decisionForm = mock[DecisionForm]
   private val env = Environment.simple()
   private val configuration = Configuration.load(env)
   private val messageApi = new DefaultMessagesApi(env, configuration, new DefaultLangs(configuration))
@@ -58,7 +64,7 @@ class LiabilityControllerSpec extends UnitSpec with Matchers with BeforeAndAfter
 
   private def controller(permissions: Set[Permission]) = new LiabilityController(
     new RequestActionsWithPermissions(permissions = permissions, addViewCasePermission = false,
-      c = Cases.liabilityCaseExample), messageApi, casesService, appConfig
+      c = Cases.liabilityCaseExample), decisionForm, casesService, messageApi, appConfig
   )
 
   "GET liability view" should {
@@ -70,6 +76,8 @@ class LiabilityControllerSpec extends UnitSpec with Matchers with BeforeAndAfter
     }
 
     "return 200 OK and HTML content type" in {
+      given(decisionForm.liabilityCompleteForm(any[Decision])).willReturn(null)
+
       val request = newFakeGETRequestWithCSRF(fakeApplication)
       val result = await(controller(Set(Permission.VIEW_CASES)).liabilityDetails("ref")(request))
       status(result) shouldBe Status.OK

@@ -117,5 +117,21 @@ class CasesListViewSpec extends ViewSpec {
       doc should containElementWithID("cases_list-row-0-reference")
       doc.getElementById("cases_list-row-0-reference") should haveAttribute("href", routes.CaseController.get("REF").url)
     }
+
+    "Render some - with Liability type indication - for liability case" in {
+      // Given
+      val c = aCase(
+        withReference("REF"),
+        withoutAssignee(),
+        withLiabilityApplication
+      )
+
+      // When
+      val doc = view(cases_list(Paged(Seq(c))))
+
+      // Then
+      doc should containElementWithID("cases_list-row-0-type")
+      doc.getElementById("cases_list-row-0-type") should containText("Liability")
+    }
   }
 }

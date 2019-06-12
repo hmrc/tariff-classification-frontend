@@ -3,17 +3,17 @@ package uk.gov.hmrc.tariffclassificationfrontend
 import com.github.tomakehurst.wiremock.client.WireMock._
 import org.scalatest.mockito.MockitoSugar
 import play.api.test.Helpers._
-import uk.gov.hmrc.tariffclassificationfrontend.models.Pagination
-import uk.gov.tariffclassificationfrontend.utils.CasePayloads
+import uk.gov.hmrc.tariffclassificationfrontend.models.NoPagination
+import uk.gov.tariffclassificationfrontend.utils.{CasePayloads, CaseQueueBuilder}
 
-class QueuesSpec extends IntegrationTest with MockitoSugar {
+class QueuesSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder {
 
   "My Cases" should {
 
     "return status 200" in {
       // Given
       givenAuthSuccess()
-      stubFor(get(urlEqualTo(s"/cases?application_type=BTI&assignee_id=123&status=NEW,OPEN,REFERRED,SUSPENDED&sort_by=days-elapsed&sort_direction=desc&page=1&page_size=${Pagination.unlimited}"))
+      stubFor(get(urlEqualTo(buildQueryUrl(withStatuses = "NEW,OPEN,REFERRED,SUSPENDED", assigneeId = "123", pag = NoPagination())))
         .willReturn(aResponse()
           .withStatus(OK)
           .withBody(CasePayloads.pagedGatewayCases))
@@ -53,7 +53,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar {
       givenAuthSuccess()
 
 
-      stubFor(get(urlEqualTo(s"/cases?application_type=BTI&queue_id=none&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort_by=days-elapsed&sort_direction=desc&page=1&page_size=${Pagination.unlimited}"))
+      stubFor(get(urlEqualTo(buildQueryUrl(withStatuses = "NEW,OPEN,REFERRED,SUSPENDED", queueId = "none", assigneeId = "none", pag = NoPagination())))
         .willReturn(aResponse()
           .withStatus(OK)
           .withBody(CasePayloads.pagedGatewayCases))
@@ -92,7 +92,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar {
     "return status 200" in {
       // Given
       givenAuthSuccess()
-      stubFor(get(urlEqualTo(s"/cases?application_type=BTI&queue_id=2&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort_by=days-elapsed&sort_direction=desc&page=1&page_size=${Pagination.unlimited}"))
+      stubFor(get(urlEqualTo(buildQueryUrl(withStatuses = "NEW,OPEN,REFERRED,SUSPENDED", queueId = "2", assigneeId = "none", pag = NoPagination())))
         .willReturn(aResponse()
           .withStatus(OK)
           .withBody(CasePayloads.pagedGatewayCases))
@@ -130,7 +130,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar {
     "return status 200" in {
       // Given
       givenAuthSuccess()
-      stubFor(get(urlEqualTo(s"/cases?application_type=BTI&queue_id=3&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort_by=days-elapsed&sort_direction=desc&page=1&page_size=${Pagination.unlimited}"))
+      stubFor(get(urlEqualTo(buildQueryUrl(withStatuses = "NEW,OPEN,REFERRED,SUSPENDED", queueId = "3", assigneeId = "none", pag = NoPagination())))
         .willReturn(aResponse()
           .withStatus(OK)
           .withBody(CasePayloads.pagedGatewayCases))
@@ -168,7 +168,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar {
     "return status 200" in {
       // Given
       givenAuthSuccess()
-      stubFor(get(urlEqualTo(s"/cases?application_type=BTI&queue_id=4&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort_by=days-elapsed&sort_direction=desc&page=1&page_size=${Pagination.unlimited}"))
+      stubFor(get(urlEqualTo(buildQueryUrl(withStatuses = "NEW,OPEN,REFERRED,SUSPENDED", queueId = "4", assigneeId = "none", pag = NoPagination())))
         .willReturn(aResponse()
           .withStatus(OK)
           .withBody(CasePayloads.pagedGatewayCases))
@@ -206,7 +206,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar {
     "return status 200" in {
       // Given
       givenAuthSuccess()
-      stubFor(get(urlEqualTo(s"/cases?application_type=BTI&queue_id=5&assignee_id=none&status=NEW,OPEN,REFERRED,SUSPENDED&sort_by=days-elapsed&sort_direction=desc&page=1&page_size=${Pagination.unlimited}"))
+      stubFor(get(urlEqualTo(buildQueryUrl(withStatuses = "NEW,OPEN,REFERRED,SUSPENDED", queueId = "5", assigneeId = "none", pag = NoPagination())))
         .willReturn(aResponse()
           .withStatus(OK)
           .withBody(CasePayloads.pagedGatewayCases))

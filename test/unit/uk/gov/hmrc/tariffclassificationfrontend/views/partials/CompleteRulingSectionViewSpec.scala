@@ -44,7 +44,7 @@ class CompleteRulingSectionViewSpec extends ViewSpec with MockitoSugar {
         view(
           complete_ruling_section(
             case1,
-            Some(decisionForm.mandatoryFieldsForm.bindFromRequest(
+            Some(decisionForm.btiCompleteForm.bindFromRequest(
               Map(
                 "goodsDescription" -> Seq.empty,
                 "bindingCommodityCode" -> Seq("lorum ipsum"),
@@ -67,7 +67,7 @@ class CompleteRulingSectionViewSpec extends ViewSpec with MockitoSugar {
 
     "render with enabled button for OPEN case with complete decision" in {
       val case1 = Cases.btiCaseExample.copy(status = CaseStatus.OPEN)
-      val mandatoryFieldForm = Some(decisionForm.mandatoryFieldsForm)
+      val mandatoryFieldForm = Some(decisionForm.btiCompleteForm)
 
       // When
       val doc = view(complete_ruling_section(c = case1, decisionForm = mandatoryFieldForm, commodityCode = Some(CommodityCode("lorum ipsum"))))

@@ -18,7 +18,7 @@ package uk.gov.hmrc.tariffclassificationfrontend.forms
 
 import play.api.data.FormError
 import uk.gov.hmrc.play.test.UnitSpec
-import uk.gov.hmrc.tariffclassificationfrontend.models.{PseudoCaseStatus, Search}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{ApplicationType, PseudoCaseStatus, Search}
 
 class SearchFormTest extends UnitSpec {
 
@@ -39,6 +39,7 @@ class SearchFormTest extends UnitSpec {
           "trader_name" -> Seq(""),
           "decision_details" -> Seq(""),
           "status[0]" -> Seq(""),
+          "application_type[0]" -> Seq(""),
           "keyword[0]" -> Seq("")
         )
       ).errors shouldBe Seq.empty
@@ -76,6 +77,8 @@ class SearchFormTest extends UnitSpec {
           "decision_details" -> Seq("decision-details"),
           "status[0]" -> Seq("OPEN"),
           "status[1]" -> Seq("LIVE"),
+          "application_type[0]" -> Seq("BTI"),
+          "application_type[1]" -> Seq("LIABILITY_ORDER"),
           "keyword[0]" -> Seq("X"),
           "keyword[1]" -> Seq("Y")
         )
@@ -84,6 +87,7 @@ class SearchFormTest extends UnitSpec {
         commodityCode = Some("00"),
         decisionDetails = Some("decision-details"),
         status = Some(Set(PseudoCaseStatus.OPEN, PseudoCaseStatus.LIVE)),
+        applicationType = Some(Set(ApplicationType.BTI, ApplicationType.LIABILITY_ORDER)),
         keywords = Some(Set("X", "Y"))
       )
     }
@@ -94,13 +98,16 @@ class SearchFormTest extends UnitSpec {
         commodityCode = Some("00"),
         decisionDetails = Some("decision-details"),
         status = Some(Set(PseudoCaseStatus.OPEN, PseudoCaseStatus.LIVE)),
+        applicationType = Some(Set(ApplicationType.BTI, ApplicationType.LIABILITY_ORDER)),
         keywords = Some(Set("X", "Y"))
-      )).data shouldBe Map(
+      )).data shouldBe Map[String, String](
         "trader_name" -> "trader-name",
         "commodity_code" -> "00",
         "decision_details" -> "decision-details",
         "status[0]" -> "OPEN",
         "status[1]" -> "LIVE",
+        "application_type[0]" -> "BTI",
+        "application_type[1]" -> "LIABILITY_ORDER",
         "keyword[0]" -> "X",
         "keyword[1]" -> "Y"
       )

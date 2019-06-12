@@ -96,6 +96,17 @@ class ApplicationSpec extends UnitSpec {
       }
     }
 
+    "Application goodsName" should {
+
+      "return a value for BTI application" in {
+        Cases.btiApplicationExample.goodsName shouldBe "Laptop"
+      }
+
+      "return a value for liability order" in {
+        Cases.liabilityApplicationExample.goodsName shouldBe "good-name"
+      }
+    }
+
   }
 
   "Application 'Business Name'" should {

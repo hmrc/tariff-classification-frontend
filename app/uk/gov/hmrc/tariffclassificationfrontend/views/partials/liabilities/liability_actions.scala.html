@@ -23,52 +23,77 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus
 @import uk.gov.hmrc.tariffclassificationfrontend.models.Permission
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.release_case_button
+@import uk.gov.hmrc.tariffclassificationfrontend.views.partials.ShowActions
 @(c: Case, startAtTabIndex: Int)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-<h3 class="heading-medium mt-0"> Actions on this case </h3>
+@defining(ShowActions(c.status)) { show: ShowActions =>
 
-@if(c.status == CaseStatus.OPEN){
-    <div id="refer-case-section" class="mt-1">
-        <p class="mt-1">
-            <a  tabindex="@{startAtTabIndex +1}" id="refer-case-button" href="@ReferCaseController.getReferCase(c.reference)">Refer this case</a>
-        </p>
-    </div>
-}
-@if(c.status == CaseStatus.OPEN) {
-    <div id="reject-case-section" class="mt-1">
-        <p>
-            <a tabindex="@{startAtTabIndex +2}" id="reject-case-button" href="@RejectCaseController.getRejectCase(c.reference)">Reject this case</a>
-        </p>
-    </div>
+    @if(show.any) {
+        <h3 class="heading-medium mt-0"> Actions on this case </h3>
 
-    @if(request.hasPermission(Permission.SUSPEND_CASE)){
-        <div id="suspend-case-section" class="mt-1">
-            <p>
-                <a tabindex="@{startAtTabIndex +3}" id="suspend-case-button" href="@SuspendCaseController.getSuspendCase(c.reference)">Suspend this case</a>
-            </p>
-        </div>
+        @if(show.refer) {
+            <div id="refer-case-section" class="mt-1">
+                <p class="mt-1">
+                    <a tabindex="@{
+                        startAtTabIndex + 1
+                    }" id="refer-case-button" href="@ReferCaseController.getReferCase(c.reference)">
+                        Refer this case</a>
+                </p>
+            </div>
+        }
+
+        @if(show.reject) {
+            <div id="reject-case-section" class="mt-1">
+                <p>
+                    <a tabindex="@{
+                        startAtTabIndex + 2
+                    }" id="reject-case-button" href="@RejectCaseController.getRejectCase(c.reference)">
+                        Reject this case</a>
+                </p>
+            </div>
+        }
+
+        @if(show.suspend) {
+            <div id="suspend-case-section" class="mt-1">
+                <p>
+                    <a tabindex="@{
+                        startAtTabIndex + 3
+                    }" id="suspend-case-button" href="@SuspendCaseController.getSuspendCase(c.reference)">
+                        Suspend this case</a>
+                </p>
+            </div>
+        }
+
+        @if(show.release) {
+            <div id="release-case-section" class="mt-1">
+                <a tabindex="@{
+                    startAtTabIndex + 4
+                }" id="release-case-button" href="@ReleaseCaseController.releaseCase(c.reference)">
+                    Release this case</a>
+            </div>
+        }
+
+        @if(show.suppress) {
+            <div id="supress-case-section" class="mt-1">
+                <p class="mt-30">
+                    <a tabindex="@{
+                        startAtTabIndex + 5
+                    }" id="suppress_link" href="@SuppressCaseController.getSuppressCase(c.reference)">
+                        Suppress this case</a>
+                </p>
+            </div>
+        }
+
+        @if(show.reopen) {
+            @helper.form(action = ReopenCaseController.confirmReopenCase(c.reference), 'id -> "reopen-case") {
+                @helper.CSRF.formField
+                <div>
+                    <button tabindex="@{
+                        startAtTabIndex + 6
+                    }" class="button" id="reopen-case-button" type="submit">Reopen this case</button>
+                </div>
+            }
+        }
     }
 }
 
-@if(c.status == CaseStatus.NEW && request.hasPermission(Permission.RELEASE_CASE)) {
-    <div id="release-case-section" class="mt-1">
-        <a tabindex="@{startAtTabIndex +4}" id="release-case-button" href="@ReleaseCaseController.releaseCase(c.reference)">Release this case</a>
-    </div>
-}
-
-@if(c.status == CaseStatus.NEW && request.hasPermission(Permission.SUPPRESS_CASE)) {
-    <div id="supress-case-section" class="mt-1">
-        <p class="mt-30">
-            <a tabindex="@{startAtTabIndex+5}" id="suppress_link" href="@SuppressCaseController.getSuppressCase(c.reference)">Suppress this case</a>
-        </p>
-    </div>
-}
-
-@if(c.status == CaseStatus.SUSPENDED || c.status == CaseStatus.REFERRED) {
-    @helper.form(action = ReopenCaseController.confirmReopenCase(c.reference), 'id -> "reopen-case") {
-        @helper.CSRF.formField
-        <div>
-            <button tabindex="@{startAtTabIndex+6}" class="button" id="reopen-case-button" type="submit">Reopen this case</button>
-        </div>
-    }
-}
