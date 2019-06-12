@@ -62,26 +62,10 @@ class LiabilityController @Inject()(verify: RequestActions,
       case c: Case =>
         successful(
           Ok(
-            liability_details_edit(c, toLiabilityForm(c.application.asLiabilityOrder), Some(tabIndexFor(LIABILITY)))
+            liability_details_edit(c, LiabilityFormData.bindFrom(c.application.asLiabilityOrder), Some(tabIndexFor(LIABILITY)))
           )
         )
     }
-  }
-
-  private def toLiabilityForm(l: LiabilityOrder): Form[LiabilityFormData] = {
-    LiabilityFormData.form.fill(
-      LiabilityFormData(
-        entryDate = l.entryDate,
-        traderName = l.traderName,
-        goodName = l.goodName.getOrElse(""),
-        entryNumber = l.entryNumber.getOrElse(""),
-        traderCommodityCode = l.traderCommodityCode.getOrElse(""),
-        officerCommodityCode = l.officerCommodityCode.getOrElse(""),
-        contactName = l.contact.name,
-        contactEmail = Some(l.contact.email),
-        contactPhone = l.contact.phone.getOrElse("")
-      )
-    )
   }
 
   def mergeLiabilityIntoCase(c: Case, validForm: LiabilityFormData): Case = {
