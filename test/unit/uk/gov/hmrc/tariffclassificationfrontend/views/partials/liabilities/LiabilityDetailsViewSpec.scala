@@ -16,15 +16,23 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.views.partials.liabilities
 
+import org.mockito.BDDMockito._
+import org.scalatest.mockito.MockitoSugar
+import play.api.data.validation.{Constraint, Valid}
+import uk.gov.hmrc.tariffclassificationfrontend.forms.{CommodityCodeConstraints, DecisionForm}
 import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, _}
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewSpec
 import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.liability_details
 import uk.gov.tariffclassificationfrontend.utils.Cases._
 
-class LiabilityDetailsViewSpec extends ViewSpec {
+class LiabilityDetailsViewSpec extends ViewSpec with MockitoSugar {
+
+  private val constraints = mock[CommodityCodeConstraints]
+  private val form = new DecisionForm(constraints)
 
   "Liability  Details" should {
+    given(constraints.commodityCodeExistsInUKTradeTariff) willReturn Constraint[String]("code")(_ => Valid)
 
     "Not render edit button if not permitted" in {
       // Given
@@ -32,9 +40,10 @@ class LiabilityDetailsViewSpec extends ViewSpec {
         withStatus(CaseStatus.OPEN),
         withLiabilityApplication
       )
+      val d = c.decision.getOrElse(Decision())
 
       // When
-      val doc = view(liability_details(c)(requestWithPermissions(), messages, appConfig))
+      val doc = view(liability_details(c = c, decisionForm = form.liabilityCompleteForm(d))(requestWithPermissions(), messages, appConfig))
 
       // Then
       doc shouldNot containElementWithID("liability-decision-edit")
@@ -46,9 +55,10 @@ class LiabilityDetailsViewSpec extends ViewSpec {
         withStatus(CaseStatus.OPEN),
         withLiabilityApplication
       )
+      val d = c.decision.getOrElse(Decision())
 
       // When
-      val doc = view(liability_details(c)(requestWithPermissions(Permission.EDIT_RULING), messages, appConfig))
+      val doc = view(liability_details(c = c, decisionForm = form.liabilityCompleteForm(d))(requestWithPermissions(Permission.EDIT_RULING), messages, appConfig))
 
       // Then
       doc should containElementWithID("liability-decision-edit")
@@ -61,9 +71,10 @@ class LiabilityDetailsViewSpec extends ViewSpec {
         withLiabilityApplication,
         withoutDecision()
       )
+      val d = c.decision.getOrElse(Decision())
 
       // When
-      val doc = view(liability_details(c)(requestWithPermissions(), messages, appConfig))
+      val doc = view(liability_details(c = c, decisionForm = form.liabilityCompleteForm(d))(requestWithPermissions(), messages, appConfig))
 
       // Then
       doc shouldNot containElementWithID("liability_details-decision")
@@ -82,9 +93,10 @@ class LiabilityDetailsViewSpec extends ViewSpec {
           methodExclusion = Some("exclusion")
         )
       )
+      val d = c.decision.getOrElse(Decision())
 
       // When
-      val doc = view(liability_details(c)(requestWithPermissions(), messages, appConfig))
+      val doc = view(liability_details(c = c, decisionForm = form.liabilityCompleteForm(d))(requestWithPermissions(), messages, appConfig))
 
       // Then
       doc should containElementWithID("liability_details-decision")
@@ -93,6 +105,57 @@ class LiabilityDetailsViewSpec extends ViewSpec {
       doc.getElementById("liability-decision-justification") should containText("justification")
       doc.getElementById("liability-decision-searches") should containText("search")
       doc.getElementById("liability-decision-exclusions") should containText("exclusion")
+    }
+
+    "Disallow Case completion" when {
+      "Decision is invalid" in {
+        // Given
+        val c = aCase(
+          withStatus(CaseStatus.OPEN),
+          withLiabilityApplication,
+          withDecision(
+            bindingCommodityCode = "code",
+            justification = "justification",
+            goodsDescription = "",
+            methodSearch = Some("search"),
+            methodExclusion = Some("exclusion")
+          )
+        )
+        val d = c.decision.getOrElse(Decision())
+
+        // When
+        val doc = view(liability_details(c = c, decisionForm = form.liabilityCompleteForm(d))(requestWithPermissions(), messages, appConfig))
+
+        // Then
+        doc should containElementWithID("liability_details-decision")
+        doc should containElementWithID("liability-complete_decision-heading")
+        doc should containElementWithID("constraint-goodsDescription")
+        doc.getElementById("liability-complete-button") should haveAttribute("disabled", "disabled")
+      }
+    }
+
+    "Allow Case completion" in {
+      // Given
+      val c = aCase(
+        withStatus(CaseStatus.OPEN),
+        withLiabilityApplication,
+        withDecision(
+          bindingCommodityCode = "code",
+          justification = "justification",
+          goodsDescription = "description",
+          methodSearch = Some("search"),
+          methodExclusion = Some("exclusion")
+        )
+      )
+      val d = c.decision.getOrElse(Decision())
+
+      // When
+      val doc = view(liability_details(c = c, decisionForm = form.liabilityCompleteForm(d))(requestWithPermissions(), messages, appConfig))
+
+      // Then
+      doc should containElementWithID("liability_details-decision")
+      doc shouldNot containElementWithID("liability-complete_decision-heading")
+      doc.getElementById("liability-complete-button") shouldNot haveAttribute("disabled", "disabled")
     }
 
   }

@@ -86,7 +86,7 @@ class DecisionForm @Inject()(commodityCodeConstraints: CommodityCodeConstraints)
       "justification" -> text,
       "methodExclusion" -> text
     )(form2Decision(existingDecision))(decision2Form)
-  ).fill(existingDecision)
+  ).fillAndValidate(existingDecision)
 
   def liabilityCompleteForm(existingDecision: Decision = Decision()): Form[Decision] = Form[Decision](
     mapping(
@@ -96,7 +96,7 @@ class DecisionForm @Inject()(commodityCodeConstraints: CommodityCodeConstraints)
       "justification" -> nonEmptyText,
       "methodExclusion" -> text
     )(form2Decision(existingDecision))(decision2Form)
-  ).fill(existingDecision)
+  ).fillAndValidate(existingDecision)
 
   def bindFrom: Option[Decision] => Option[Form[DecisionFormData]] = {
     _.map(mapFrom)

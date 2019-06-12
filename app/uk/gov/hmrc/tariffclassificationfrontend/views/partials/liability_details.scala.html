@@ -15,7 +15,7 @@
  *@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.{AttachmentsController, SuppressCaseController, ReferCaseController, ReopenCaseController, RejectCaseController, SuspendCaseController}
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes
 @import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{Application, LiabilityOrder, Case, EORIDetails, Permission, StoredAttachment, CaseStatus}
 @import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
@@ -23,7 +23,8 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.liabilities.liability_actions
 
 @import uk.gov.hmrc.tariffclassificationfrontend.models.Decision
-@(c: Case, startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionFormData
+@(c: Case, startAtTabIndex : Int = 0, decisionForm: Form[Decision])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @defining(c.application) { a: Application =>
     @defining(a.asLiabilityOrder) { liability: LiabilityOrder =>
@@ -133,7 +134,7 @@
         <h3 class="heading-medium" id="liability-decision-heading">Liability decision details</h3>
 
         @if(request.hasPermission(Permission.EDIT_RULING)) {
-            <a id="liability-decision-edit" href="@uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.RulingController.editRulingDetails(c.reference)">
+            <a id="liability-decision-edit" href="@routes.RulingController.editRulingDetails(c.reference)">
                 Edit liability details
             </a>
         }
@@ -203,15 +204,19 @@
                 <li>Port or compliance officer name</li>
             </ul>
 
-            <h4 class="heading-small mt-4" id="liability-complete_decision-heading">Liability decision</h4>
-            <p>You need to enter:</p>
-            <ul class="list list-bullet">
-                <li>Commodity code</li>
-                <li>Item description</li>
-                <li>Justification</li>
-                <li>Searches performed</li>
-                <li>Exclusions, inclusions and comments</li>
-            </ul>
+            @if(decisionForm.hasErrors) {
+                <h4 class="heading-small mt-4" id="liability-complete_decision-heading">Liability decision</h4>
+                <p>You need to enter:</p>
+                <ul class="list list-bullet">
+                @for(err: String <- decisionForm.errors.map(_.key)) {
+                    <li><span id="constraint-@err">@messages("case.decision.constraint." + err)</span></li>
+                }
+                </ul>
+            }
+
+            <a tabindex="@startAtTabIndex" id="liability-complete-button"  class="button"  @if(decisionForm.hasErrors) { disabled="disabled" }else{ href="@routes.CompleteCaseController.completeCase(c.reference)"}>
+                Complete case
+            </a>
         }
 
     }
