@@ -31,4 +31,12 @@ object TabIndexes {
 
   def tabIndexForQueue: String => Int = { page => indexByQueues.getOrElse(page, 0) }
 
+  def tabIndexForQueue(slug: String, filteredBy: String) : Int = {
+    filteredBy match {
+      case "LIABILITY_ORDER" => indexByQueues.getOrElse(s"$slug-liab", 0)
+      case _ => indexByQueues.getOrElse(slug, 0)
+    }
+
+  }
+
 }
