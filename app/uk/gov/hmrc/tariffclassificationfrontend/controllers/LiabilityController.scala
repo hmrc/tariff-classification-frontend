@@ -23,12 +23,10 @@ import play.api.mvc._
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.forms.LiabilityFormData
-import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionForm
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Decision}
+import uk.gov.hmrc.tariffclassificationfrontend.forms.{DecisionForm, LiabilityFormData}
 import uk.gov.hmrc.tariffclassificationfrontend.models.TabIndexes.tabIndexFor
-import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedCaseRequest
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Decision, _}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
 import uk.gov.hmrc.tariffclassificationfrontend.views.CaseDetailPage.{CaseDetailPage, LIABILITY}

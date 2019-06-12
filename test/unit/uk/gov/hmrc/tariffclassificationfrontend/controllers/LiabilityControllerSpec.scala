@@ -20,10 +20,6 @@ import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito.{never, reset, verify}
-import org.mockito.ArgumentMatchers.any
-import org.mockito.{ArgumentMatchers, BDDMockito}
-import org.mockito.BDDMockito._
-import org.scalatest.Matchers
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterEach, Matchers}
 import play.api.http.Status
