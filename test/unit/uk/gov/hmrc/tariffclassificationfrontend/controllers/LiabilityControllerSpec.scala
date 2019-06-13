@@ -99,18 +99,28 @@ class LiabilityControllerSpec extends UnitSpec with Matchers with BeforeAndAfter
     }
 
     "return 200 OK and HTML content type" when {
-      for(s: CaseStatus <- Set(CaseStatus.NEW, CaseStatus.OPEN)) {
-        s"Case has status $s" in {
-          val c = aCase(withReference("reference"), withStatus(s), withLiabilityApplication())
-          val request = newFakeGETRequestWithCSRF(fakeApplication)
-          val result = await(controller(Set(Permission.VIEW_CASES), c).editLiabilityDetails("ref")(request))
+      "Case has status NEW" in {
+        val c = aCase(withReference("reference"), withStatus(CaseStatus.NEW), withLiabilityApplication())
+        val request = newFakeGETRequestWithCSRF(fakeApplication)
+        val result = await(controller(Set(Permission.VIEW_CASES), c).editLiabilityDetails("ref")(request))
 
-          status(result) shouldBe Status.OK
-          contentType(result) shouldBe Some("text/html")
-          charset(result) shouldBe Some("utf-8")
+        status(result) shouldBe Status.OK
+        contentType(result) shouldBe Some("text/html")
+        charset(result) shouldBe Some("utf-8")
 
-          contentAsString(result) should include("liability-details-edit-form")
-        }
+        contentAsString(result) should include("liability-details-edit-form")
+      }
+
+      "Case has status OPEN and Edit Access" in {
+        val c = aCase(withReference("reference"), withStatus(CaseStatus.OPEN), withLiabilityApplication())
+        val request = newFakeGETRequestWithCSRF(fakeApplication)
+        val result = await(controller(Set(Permission.VIEW_CASES, Permission.EDIT_LIABILITY), c).editLiabilityDetails("ref")(request))
+
+        status(result) shouldBe Status.OK
+        contentType(result) shouldBe Some("text/html")
+        charset(result) shouldBe Some("utf-8")
+
+        contentAsString(result) should include("liability-details-edit-form")
       }
     }
   }
@@ -149,18 +159,28 @@ class LiabilityControllerSpec extends UnitSpec with Matchers with BeforeAndAfter
     )
 
     "update and redirect to liability view" when {
-      for(s: CaseStatus <- Set(CaseStatus.NEW, CaseStatus.OPEN)) {
-        s"case status is $s" in {
-          given(commodityCodeConstraints.commodityCodeExistsInUKTradeTariff).willReturn(Constraint[String]("error")(_ => Valid))
-          given(casesService.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(updatedCase))
+      "case status is NEW" in {
+        given(commodityCodeConstraints.commodityCodeExistsInUKTradeTariff).willReturn(Constraint[String]("error")(_ => Valid))
+        given(casesService.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(updatedCase))
 
-          val c = aCase(withReference("reference"), withStatus(s), withLiabilityApplication())
-          val result = await(controller(Set(Permission.VIEW_CASES), c).postLiabilityDetails("reference")(validReq))
+        val c = aCase(withReference("reference"), withStatus(CaseStatus.NEW), withLiabilityApplication())
+        val result = await(controller(Set(Permission.VIEW_CASES), c).postLiabilityDetails("reference")(validReq))
 
-          status(result) shouldBe Status.SEE_OTHER
-          locationOf(result) shouldBe Some(routes.LiabilityController.liabilityDetails("reference").url)
-          verify(casesService).updateCase(any[Case])(any[HeaderCarrier])
-        }
+        status(result) shouldBe Status.SEE_OTHER
+        locationOf(result) shouldBe Some(routes.LiabilityController.liabilityDetails("reference").url)
+        verify(casesService).updateCase(any[Case])(any[HeaderCarrier])
+      }
+
+      "case status is OPEN with permission" in {
+        given(commodityCodeConstraints.commodityCodeExistsInUKTradeTariff).willReturn(Constraint[String]("error")(_ => Valid))
+        given(casesService.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(updatedCase))
+
+        val c = aCase(withReference("reference"), withStatus(CaseStatus.NEW), withLiabilityApplication())
+        val result = await(controller(Set(Permission.VIEW_CASES, Permission.EDIT_LIABILITY), c).postLiabilityDetails("reference")(validReq))
+
+        status(result) shouldBe Status.SEE_OTHER
+        locationOf(result) shouldBe Some(routes.LiabilityController.liabilityDetails("reference").url)
+        verify(casesService).updateCase(any[Case])(any[HeaderCarrier])
       }
     }
 
