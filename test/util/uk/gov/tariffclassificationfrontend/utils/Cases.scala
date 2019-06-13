@@ -70,14 +70,14 @@ object Cases {
     _.copy(application = btiApplicationExample)
   }
 
-  def withLiabilityApplication(contact: Contact = Contact("name", "12345"),
+  def withLiabilityApplication(contact: Contact = Contact("name", "email@email.com", Some("1234")),
                                status: LiabilityStatus = LiabilityStatus.NON_LIVE,
                                traderName: String = "trader",
-                               goodName: Option[String] = None,
-                               entryDate: Option[Instant] = None,
-                               entryNumber: Option[String] = None,
-                               traderCommodityCode: Option[String] = None,
-                               officerCommodityCode: Option[String] = None): Case => Case = {
+                               goodName: Option[String] = Some("Goods Name"),
+                               entryDate: Option[Instant] = Some(Instant.EPOCH),
+                               entryNumber: Option[String] = Some("1234567"),
+                               traderCommodityCode: Option[String] = Some("0100000000"),
+                               officerCommodityCode: Option[String] = Some("0200000000")): Case => Case = {
     _.copy(application = liabilityApplicationExample.copy(
       contact = contact,
       status = status,
