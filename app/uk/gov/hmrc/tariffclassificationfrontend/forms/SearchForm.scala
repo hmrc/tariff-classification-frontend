@@ -20,8 +20,9 @@ import play.api.data.Form
 import play.api.data.Forms._
 import uk.gov.hmrc.tariffclassificationfrontend.forms.FormConstraints._
 import uk.gov.hmrc.tariffclassificationfrontend.forms.FormUtils._
+import uk.gov.hmrc.tariffclassificationfrontend.models.ApplicationType.ApplicationType
 import uk.gov.hmrc.tariffclassificationfrontend.models.PseudoCaseStatus.PseudoCaseStatus
-import uk.gov.hmrc.tariffclassificationfrontend.models.{PseudoCaseStatus, Search}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{ApplicationType, PseudoCaseStatus, Search}
 
 object SearchForm {
 
@@ -31,6 +32,7 @@ object SearchForm {
       "commodity_code" -> optional[String](text.verifying(emptyOr(validCommodityCodeSearch): _*)),
       "decision_details" -> optional[String](text),
       "status" -> optional[Set[PseudoCaseStatus]](set(textTransformingTo(PseudoCaseStatus.withName, _.toString))),
+      "application_type" -> optional[Set[ApplicationType]](set(textTransformingTo(ApplicationType.withName, _.toString))),
       "keyword" -> optional[Set[String]](set(text))
     )(Search.apply)(Search.unapply)
   )
@@ -41,6 +43,7 @@ object SearchForm {
       "commodity_code" -> optional[String](text),
       "decision_details" -> optional[String](text),
       "status" -> optional[Set[PseudoCaseStatus]](set(textTransformingTo(PseudoCaseStatus.withName, _.toString))),
+      "application_type" -> optional[Set[ApplicationType]](set(textTransformingTo(ApplicationType.withName, _.toString))),
       "keyword" -> optional[Set[String]](set(text))
     )(Search.apply)(Search.unapply)
   )

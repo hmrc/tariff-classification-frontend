@@ -19,7 +19,7 @@ package uk.gov.hmrc.tariffclassificationfrontend.views
 import org.jsoup.select.Elements
 import play.twirl.api.Html
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
-import uk.gov.tariffclassificationfrontend.utils.Cases.{aCase, withBTIApplication, withLiabilityOrderApplication, withReference}
+import uk.gov.tariffclassificationfrontend.utils.Cases.{aCase, withBTIApplication, withLiabilityApplication, withReference}
 
 class CaseDetailsViewSpec extends ViewSpec {
 
@@ -42,7 +42,7 @@ class CaseDetailsViewSpec extends ViewSpec {
     "render liability order" in {
 
       // When
-      val c = aCase(withReference("reference"), withLiabilityOrderApplication)
+      val c = aCase(withReference("reference"), withLiabilityApplication())
       val doc = view(html.case_details(c, CaseDetailPage.LIABILITY, Html("html"), Some("tab-item-Liability")))
 
       // Then

@@ -22,6 +22,7 @@ import java.util.UUID
 
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.CaseStatus
 import uk.gov.hmrc.tariffclassificationfrontend.models.ImportExport.ImportExport
+import uk.gov.hmrc.tariffclassificationfrontend.models.LiabilityStatus.LiabilityStatus
 import uk.gov.hmrc.tariffclassificationfrontend.models.SampleReturn.SampleReturn
 import uk.gov.hmrc.tariffclassificationfrontend.models.SampleStatus.SampleStatus
 import uk.gov.hmrc.tariffclassificationfrontend.models._
@@ -38,7 +39,7 @@ object Cases {
   val btiApplicationExample = BTIApplication(eoriDetailsExample, contactExample, Some(eoriAgentDetailsExample), offline = false, "Laptop", "Personal Computer", None, None, None, None, None, None, None, sampleToBeProvided = false, sampleToBeReturned = false)
   val simpleBtiApplicationExample = BTIApplication(eoriDetailsExample, contactExample, None, offline = false, "Laptop", "Personal Computer", None, None, None, None, None, None, None, sampleToBeProvided = false, sampleToBeReturned = false)
   val decision = Decision("040900", Some(Instant.now()), Some(Instant.now().plusSeconds(2*3600*24*365)), "justification", "good description", None, None, Some("denomination"), Seq.empty)
-  val liabilityApplicationExample = LiabilityOrder(contactExample, LiabilityStatus.NON_LIVE, "trader-business-name", Some("good-name"), Some(Instant.now()), Some("entry number"))
+  val liabilityApplicationExample = LiabilityOrder(contactExample, LiabilityStatus.NON_LIVE, "trader-business-name", Some("good-name"), Some(Instant.now()), Some("entry number"),Some("trader-1234567"),Some("officer-1234567"))
   val liabilityLiveApplicationExample = LiabilityOrder(contactExample, LiabilityStatus.LIVE, "trader-business-name", Some("good-name"), Some(Instant.now()), Some("entry number"))
   val btiCaseExample = Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, None, btiApplicationExample, Some(decision), Seq())
   val simpleCaseExample = Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, None, simpleBtiApplicationExample, None, Seq())
@@ -69,8 +70,24 @@ object Cases {
     _.copy(application = btiApplicationExample)
   }
 
-  def withLiabilityOrderApplication: Case => Case = {
-    _.copy(application = liabilityApplicationExample)
+  def withLiabilityApplication(contact: Contact = Contact("name", "email@email.com", Some("1234")),
+                               status: LiabilityStatus = LiabilityStatus.NON_LIVE,
+                               traderName: String = "trader",
+                               goodName: Option[String] = Some("Goods Name"),
+                               entryDate: Option[Instant] = Some(Instant.EPOCH),
+                               entryNumber: Option[String] = Some("1234567"),
+                               traderCommodityCode: Option[String] = Some("0100000000"),
+                               officerCommodityCode: Option[String] = Some("0200000000")): Case => Case = {
+    _.copy(application = liabilityApplicationExample.copy(
+      contact = contact,
+      status = status,
+      traderName = traderName,
+      goodName = goodName,
+      entryDate = entryDate,
+      entryNumber = entryNumber,
+      traderCommodityCode = traderCommodityCode,
+      officerCommodityCode = officerCommodityCode
+    ))
   }
 
   def withSampleStatus(sampleStatus : Option[SampleStatus]): Case => Case = { c =>

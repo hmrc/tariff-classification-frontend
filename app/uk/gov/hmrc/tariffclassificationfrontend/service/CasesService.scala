@@ -211,19 +211,23 @@ class CasesService @Inject()(appConfig: AppConfig,
       .copy(effectiveStartDate = Some(startInstant), effectiveEndDate = Some(endInstant))
     val caseUpdating = original.copy(status = CaseStatus.COMPLETED, decision = Some(decisionUpdating))
 
+    def sendCaseCompleteEmail(updated: Case): Future[Option[String]] = {
+      emailService.sendCaseCompleteEmail(updated)
+        .map { email: EmailTemplate =>
+          Some(s"- Subject: ${email.subject}\n- Body: ${email.plain}")
+        } recover {
+        case t: Throwable =>
+          Logger.error("Failed to send email", t)
+          Some("Attempted to send an email to the applicant which failed")
+      }
+    }
+
     for {
       // Update the case
       updated: Case <- connector.updateCase(caseUpdating)
 
       // Send the email
-      message <- emailService.sendCaseCompleteEmail(updated)
-        .map { email: EmailTemplate =>
-          s"- Subject: ${email.subject}\n- Body: ${email.plain}"
-        } recover {
-        case t: Throwable =>
-          Logger.error("Failed to send email", t)
-          "Attempted to send an email to the applicant which failed"
-      }
+      message: Option[String] <- if(original.application.isBTI) sendCaseCompleteEmail(updated) else Future.successful(None)
 
       // Create the event
       _ <- addCompletedEvent(original, updated, operator, None, message)
@@ -232,7 +236,7 @@ class CasesService @Inject()(appConfig: AppConfig,
       _ = auditService.auditCaseCompleted(original, updated, operator)
 
       // Notify the Ruling store
-      _ = rulingConnector.notify(original.reference) recover loggingARulingErrorFor(original.reference)
+      _ = if(original.application.isBTI) rulingConnector.notify(original.reference) recover loggingARulingErrorFor(original.reference)
     } yield updated
   }
 
@@ -319,7 +323,7 @@ class CasesService @Inject()(appConfig: AppConfig,
                                    updated: Case,
                                    operator: Operator,
                                    comment: Option[String],
-                                    email: String)
+                                    email: Option[String])
                                   (implicit hc: HeaderCarrier): Future[Unit] = {
     val details = CompletedCaseStatusChange(from = original.status, comment = comment, email = email)
     addEvent(original, updated, details, operator)

@@ -201,7 +201,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
     def encode(value: String): String = URLEncoder.encode(value, "UTF-8")
 
     "handle no filters" in {
-      val url = "/cases?application_type=BTI&sort_direction=asc&sort_by=commodity-code&page=1&page_size=2"
+      val url = "/cases?sort_direction=asc&sort_by=commodity-code&page=1&page_size=2"
 
       stubFor(get(urlEqualTo(url))
         .willReturn(aResponse()
@@ -219,14 +219,15 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
     "filter by all" in {
       val url = s"/cases" +
-        s"?application_type=BTI" +
-        s"&sort_direction=asc" +
+        s"?sort_direction=asc" +
         s"&sort_by=commodity-code" +
         s"&trader_name=trader" +
         s"&commodity_code=comm-code" +
         s"&decision_details=decision-details" +
         s"&status=OPEN" +
         s"&status=LIVE" +
+        s"&application_type=BTI" +
+        s"&application_type=LIABILITY_ORDER" +
         s"&keyword=K1" +
         s"&keyword=K2" +
         s"&page=1" +
@@ -243,6 +244,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
         commodityCode = Some("comm-code"),
         decisionDetails = Some("decision-details"),
         status = Some(Set(PseudoCaseStatus.OPEN, PseudoCaseStatus.LIVE)),
+        applicationType = Some(Set(ApplicationType.BTI, ApplicationType.LIABILITY_ORDER)),
         keywords = Some(Set("K1", "K2"))
       )
 
@@ -255,7 +257,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
     }
 
     "filter by 'trader name'" in {
-      val url = "/cases?application_type=BTI&sort_direction=asc&sort_by=commodity-code&trader_name=trader&page=1&page_size=2"
+      val url = "/cases?sort_direction=asc&sort_by=commodity-code&trader_name=trader&page=1&page_size=2"
 
       stubFor(get(urlEqualTo(url))
         .willReturn(aResponse()
@@ -274,7 +276,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
     }
 
     "filter by 'commodity code'" in {
-      val url = "/cases?application_type=BTI&sort_direction=asc&sort_by=commodity-code&commodity_code=comm-code&page=1&page_size=2"
+      val url = "/cases?sort_direction=asc&sort_by=commodity-code&commodity_code=comm-code&page=1&page_size=2"
 
       stubFor(get(urlEqualTo(url))
         .willReturn(aResponse()
@@ -295,7 +297,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
     }
 
     "filter by 'decision_details'" in {
-      val url = s"/cases?application_type=BTI&sort_direction=asc&sort_by=commodity-code&decision_details=decision-details&page=1&page_size=2"
+      val url = s"/cases?sort_direction=asc&sort_by=commodity-code&decision_details=decision-details&page=1&page_size=2"
 
       stubFor(get(urlEqualTo(url))
         .willReturn(aResponse()
@@ -316,7 +318,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
     }
 
     "filter by 'keyword'" in {
-      val url = "/cases?application_type=BTI&sort_direction=asc&sort_by=commodity-code&keyword=K1&keyword=K2&page=1&page_size=2"
+      val url = "/cases?sort_direction=asc&sort_by=commodity-code&keyword=K1&keyword=K2&page=1&page_size=2"
 
       stubFor(get(urlEqualTo(url))
         .willReturn(aResponse()
@@ -337,7 +339,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
     }
 
     "get cases by 'status'" in {
-      val url = s"/cases?application_type=BTI&sort_direction=asc&sort_by=commodity-code&status=OPEN&status=LIVE&page=1&page_size=2"
+      val url = s"/cases?sort_direction=asc&sort_by=commodity-code&status=OPEN&status=LIVE&page=1&page_size=2"
 
       stubFor(get(urlEqualTo(url))
         .willReturn(aResponse()
@@ -347,6 +349,27 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
       val search = Search(
         status = Some(Set(PseudoCaseStatus.OPEN, PseudoCaseStatus.LIVE))
+      )
+
+      await(connector.search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE), pagination)) shouldBe Paged(Seq(Cases.btiCaseExample))
+
+      verify(
+        getRequestedFor(urlEqualTo(url))
+          .withHeader("X-Api-Token", equalTo(realConfig.apiToken))
+      )
+    }
+
+    "get cases by 'application type'" in {
+      val url = s"/cases?sort_direction=asc&sort_by=commodity-code&application_type=BTI&application_type=LIABILITY_ORDER&page=1&page_size=2"
+
+      stubFor(get(urlEqualTo(url))
+        .willReturn(aResponse()
+          .withStatus(HttpStatus.SC_OK)
+          .withBody(CasePayloads.pagedGatewayCases))
+      )
+
+      val search = Search(
+        applicationType = Some(Set(ApplicationType.BTI, ApplicationType.LIABILITY_ORDER))
       )
 
       await(connector.search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE), pagination)) shouldBe Paged(Seq(Cases.btiCaseExample))

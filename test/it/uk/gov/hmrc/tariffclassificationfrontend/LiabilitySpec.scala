@@ -9,7 +9,7 @@ import uk.gov.tariffclassificationfrontend.utils.{CasePayloads, EventPayloads}
 
 class LiabilitySpec extends IntegrationTest with MockitoSugar {
 
-  private val liabilityCase: Case = aCase(withReference("1"), withLiabilityOrderApplication)
+  private val liabilityCase: Case = aCase(withReference("1"), withLiabilityApplication())
 
   "Liability Summary" should {
 

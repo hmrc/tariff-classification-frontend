@@ -1,0 +1,233 @@
+@*
+ * Copyright 2019 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes
+@import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
+@import uk.gov.hmrc.tariffclassificationfrontend.models.{Application, LiabilityOrder, Case, EORIDetails, Permission, StoredAttachment, CaseStatus}
+@import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials._
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.liabilities.liability_actions
+
+@import uk.gov.hmrc.tariffclassificationfrontend.models.Decision
+@import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionFormData
+@import uk.gov.hmrc.tariffclassificationfrontend.forms.LiabilityDetailsForm
+@(c: Case, startAtTabIndex : Int = 0, liabilityForm: Form[LiabilityOrder], decisionForm: Form[Decision])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+
+@defining(c.application) { a: Application =>
+    @defining(a.asLiabilityOrder) { liability: LiabilityOrder =>
+
+        @tab_heading("liability", messages("case.menu.liability"))
+
+        <dl class="dl-mb-2">
+
+            @if(c.caseBoardsFileNumber.isDefined) {
+                <div id="case-board-number" class="grid-row">
+                    <dt class="column-one-third">
+                    @messages("case.liability.caseBoardNumber")
+                    </dt>
+                    <dd class="column-two-thirds">
+                    @c.caseBoardsFileNumber
+                    </dd>
+                </div>
+            }
+
+            <h3 class="heading-medium mt-0">@messages("case.liability.about.title") </h3>
+
+            <div id="edit-liability-details" class="grid-row  mb-2">
+                <span class="column-one-third">
+                    <a href="@routes.LiabilityController.editLiabilityDetails(c.reference)"> Edit details </a>
+                </span>
+            </div>
+
+            <div  class="grid-row">
+                <dt class="column-one-third">
+                    @messages("case.liability.entryDate")
+                </dt>
+                <dd class="column-two-thirds" id="liability-entry-date">
+                    @liability.entryDate.map(Dates.format)
+                </dd>
+            </div>
+            <div  class="grid-row">
+                <dt class="column-one-third">
+                    @messages("case.liability.entryNumber")
+                </dt>
+                <dd class="column-two-thirds" id="liability-entry-number">
+                    @liability.entryNumber
+                </dd>
+            </div>
+            <div  class="grid-row">
+                <dt class="column-one-third">
+                    @messages("case.liability.traderName")
+                </dt>
+                <dd class="column-two-thirds" id="liability-trader-name">
+                    @liability.traderName
+                </dd>
+            </div>
+            <div  class="grid-row">
+                <dt class="column-one-third">
+                    @messages("case.liability.goodName")
+                </dt>
+                <dd class="column-two-thirds" id="liability-item-name">
+                    @liability.goodName
+                </dd>
+            </div>
+
+            <h3 class="heading-medium mt-0">@messages("case.liability.commodity.code.info") </h3>
+
+            <div  class="grid-row">
+                <dt class="column-one-third">
+                    @messages("case.liability.traderCommodityCode")
+                </dt>
+                <dd class="column-two-thirds" id="liability-trader-code">
+                    @liability.traderCommodityCode
+                </dd>
+            </div>
+
+            <div  class="grid-row">
+                <dt class="column-one-third">
+                       @messages("case.liability.officerCommodityCode")
+                </dt>
+                <dd class="column-two-thirds" id="liability-officer-code">
+                    @liability.officerCommodityCode
+                </dd>
+            </div>
+
+            <h3 class="heading-medium mt-0">@messages("case.liability.contact.details") </h3>
+
+            <div  class="grid-row">
+                <dt class="column-one-third">
+                    @messages("case.liability.contactName")
+                </dt>
+                <dd class="column-two-thirds" id="liability-contact-name">
+                    @liability.contact.name
+                </dd>
+            </div>
+            <div  class="grid-row">
+                <dt class="column-one-third">
+                    @messages("case.liability.contactEmail")
+                </dt>
+                <dd class="column-two-thirds" id="liability-contact-email">
+                    @liability.contact.email
+                </dd>
+            </div>
+            <div  class="grid-row">
+                <dt class="column-one-third">
+                    @messages("case.liability.contactPhone")
+                </dt>
+                <dd class="column-two-thirds" id="liability-contact.phone">
+                    @liability.contact.phone
+                </dd>
+            </div>
+        </dl>
+
+        @liability_actions(c, startAtTabIndex)
+
+        <hr class="mt-0 mb-0">
+
+        <h3 class="heading-medium" id="liability-decision-heading">Liability decision details</h3>
+
+        @if(request.hasPermission(Permission.EDIT_RULING)) {
+            <a id="liability-decision-edit" href="@routes.RulingController.editRulingDetails(c.reference)">
+                Edit liability details
+            </a>
+        }
+
+        @if(c.decision.isDefined) {
+
+            @defining(c.decision.get) { decision: Decision =>
+                <div class="mt-2" id="liability_details-decision">
+                    <dl class="dl-mb-2">
+                        <div id="liability-decision-code" class="grid-row">
+                            <dt class="column-one-third">
+                                @messages("case.liability.decision.bindingCommodityCode")
+                            </dt>
+                            <dd class="column-two-thirds">
+                                @decision.bindingCommodityCode
+                            </dd>
+                        </div>
+
+                        <div id="liability-decision-description" class="grid-row">
+                            <dt class="column-one-third">
+                                @messages("case.liability.decision.goodsDescription")
+                            </dt>
+                            <dd class="column-two-thirds">
+                                @decision.goodsDescription
+                            </dd>
+                        </div>
+
+                        <div id="liability-decision-justification" class="grid-row">
+                            <dt class="column-one-third">
+                                @messages("case.liability.decision.justification")
+                            </dt>
+                            <dd class="column-two-thirds">
+                                @decision.justification
+                            </dd>
+                        </div>
+
+                        <div id="liability-decision-searches" class="grid-row">
+                            <dt class="column-one-third">
+                                @messages("case.liability.decision.methodSearch")
+                            </dt>
+                            <dd class="column-two-thirds">
+                                @decision.methodSearch
+
+                            </dd>
+                        </div>
+
+                        <div id="liability-decision-exclusions" class="grid-row">
+                            <dt class="column-one-third">
+                                @messages("case.liability.decision.methodExclusion")
+                            </dt>
+                            <dd class="column-two-thirds">
+                                @decision.methodExclusion
+                            </dd>
+                        </div>
+                    </dl>
+                </div>
+            }
+
+            @if(request.hasPermission(Permission.COMPLETE_CASE)) {
+                <h3 class="heading-medium" id="liability-complete-heading">Complete this liability decision</h3>
+
+                @if(liabilityForm.hasErrors) {
+                    <h4 class="heading-small" id="liability-complete_details-heading">Liability details</h4>
+                    <p>You need to enter:</p>
+                    <ul class="list list-bullet">
+                    @for(err: String <- liabilityForm.errors.map(_.key)) {
+                        <li><span id="constraint-@err">@messages("case.liability." + err)</span></li>
+                    }
+                    </ul>
+                }
+
+                @if(decisionForm.hasErrors) {
+                    <h4 class="heading-small mt-4" id="liability-complete_decision-heading">Liability decision</h4>
+                    <p>You need to enter:</p>
+                    <ul class="list list-bullet">
+                    @for(err: String <- decisionForm.errors.map(_.key)) {
+                        <li><span id="constraint-@err">@messages("case.liability.decision." + err)</span></li>
+                    }
+                    </ul>
+                }
+
+                <a tabindex="@startAtTabIndex" id="liability-complete-button"  class="button"  @if(liabilityForm.hasErrors || decisionForm.hasErrors) { disabled="disabled" }else{ href="@routes.CompleteCaseController.completeCase(c.reference)"}>
+                    Complete case
+                </a>
+            }
+        }
+
+    }
+}
