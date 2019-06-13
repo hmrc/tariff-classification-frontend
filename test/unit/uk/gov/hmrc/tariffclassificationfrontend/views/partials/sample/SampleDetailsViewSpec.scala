@@ -74,6 +74,21 @@ class SampleDetailsViewSpec extends ViewSpec {
       doc.getElementById("sample-status-events-row-2-title") should containText("Sample status changed from moved to ELM to destroyed")
     }
 
+    "render sample status event as sending sample for liability" in {
+      // Given
+      val caseWithSample = aCase(
+        withLiabilityApplication()
+      )
+
+      val event1 : Event = Event("1",SampleStatusChange(None, Some(SampleStatus.AWAITING), None),Operator("1"),"1")
+      val sampleStatusActivity : Seq[Event] = Seq(event1)
+
+      // When
+      val doc = view(sample_details(caseWithSample,Paged.apply(sampleStatusActivity,NoPagination(),3)))
+
+      doc.getElementById("sample-status-events-row-0-title") should containText("Sending sample changed from no to yes")
+    }
+
   }
 
 }
