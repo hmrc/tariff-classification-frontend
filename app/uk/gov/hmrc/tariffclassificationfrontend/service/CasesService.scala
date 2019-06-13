@@ -27,6 +27,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.connector.{BindingTariffClassificationConnector, RulingConnector}
 import uk.gov.hmrc.tariffclassificationfrontend.models.AppealStatus.AppealStatus
 import uk.gov.hmrc.tariffclassificationfrontend.models.AppealType.AppealType
+import uk.gov.hmrc.tariffclassificationfrontend.models.ApplicationType.ApplicationType
 import uk.gov.hmrc.tariffclassificationfrontend.models.CancelReason.CancelReason
 import uk.gov.hmrc.tariffclassificationfrontend.models.ReferralReason.ReferralReason
 import uk.gov.hmrc.tariffclassificationfrontend.models.SampleReturn.SampleReturn
@@ -282,8 +283,8 @@ class CasesService @Inject()(appConfig: AppConfig,
     connector.search(search, sort, pagination)
   }
 
-  def getCasesByQueue(queue: Queue, pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[Case]] = {
-    connector.findCasesByQueue(queue, pagination)
+  def getCasesByQueue(queue: Queue, pagination: Pagination, forTypes: Seq[ApplicationType] = Seq(ApplicationType.BTI, ApplicationType.LIABILITY_ORDER))(implicit hc: HeaderCarrier): Future[Paged[Case]] = {
+    connector.findCasesByQueue(queue, pagination, forTypes)
   }
 
   def countCasesByQueue(operator: Operator)(implicit hc: HeaderCarrier): Future[Map[String, Int]] = {
@@ -291,7 +292,7 @@ class CasesService @Inject()(appConfig: AppConfig,
       countMyCases <- getCasesByAssignee(operator, NoPagination())
       countByQueue <- reportingService.getQueueReport
       casesByQueueAndMyCases = countByQueue.map(report => (
-        report.group.getOrElse(Queues.gateway.id), report.value.size))
+        report.group.getOrElse(CaseReportGroup.QUEUE, Some(Queues.gateway.id)).getOrElse("") + "-" +report.group.getOrElse(CaseReportGroup.APPLICATION_TYPE, Some("")).get, report.value.size))
         .toMap + ("my-cases" -> countMyCases.size)
     } yield casesByQueueAndMyCases
   }

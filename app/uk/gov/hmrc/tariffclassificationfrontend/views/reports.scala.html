@@ -22,6 +22,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials._
 @import uk.gov.hmrc.tariffclassificationfrontend.views.{Report, SelectedReport}
+@import uk.gov.hmrc.tariffclassificationfrontend.models.TabIndexes
 @(queues: Seq[Queue], report: Option[SelectedReport] = None, caseCountByQueue: Map[String, Int] )(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, scriptElem = Some(Html("<script>document.getElementById('nav-menu-reports').focus();</script>")),
@@ -42,11 +43,9 @@
                     <h3 class="heading-small">@messages("cases.heading.reports")</h3>
                     <ul>
                     @for((r: Report, index) <- Report.values.zipWithIndex) {
-                        @defining(8000+(index+1)+(200*index)) { startAtTabIndex =>
-                            <li class="side-nav__list@if(report.exists(_.report == r)) { side-nav__list--selected}">
-                                <a tabindex="@startAtTabIndex" id="nav-menu-report-@r" class="side-nav__link" href="@routes.ReportingController.getReportCriteria(r.toString, startAtTabIndex)">@r.toString</a>
-                            </li>
-                        }
+                        <li class="side-nav__list@if(report.exists(_.report == r)) { side-nav__list--selected}">
+                            <a tabindex="@{TabIndexes.tabIndexForQueue("reports","")+(index+1)+(200*index)}" id="nav-menu-report-@r" class="side-nav__link" href="@routes.ReportingController.getReportCriteria(r.toString, TabIndexes.tabIndexForQueue("reports","")+(index+1)+(200*index))">@r.toString</a>
+                        </li>
                     }
                     </ul>
 

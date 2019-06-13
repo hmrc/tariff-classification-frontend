@@ -24,7 +24,8 @@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.models.Decision
 @import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionFormData
-@(c: Case, startAtTabIndex : Int = 0, decisionForm: Form[Decision])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@import uk.gov.hmrc.tariffclassificationfrontend.forms.LiabilityDetailsForm
+@(c: Case, startAtTabIndex : Int = 0, liabilityForm: Form[LiabilityOrder], decisionForm: Form[Decision])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @defining(c.application) { a: Application =>
     @defining(a.asLiabilityOrder) { liability: LiabilityOrder =>
@@ -36,7 +37,7 @@
             @if(c.caseBoardsFileNumber.isDefined) {
                 <div id="case-board-number" class="grid-row">
                     <dt class="column-one-third">
-                    @messages("case.liability.board.number")
+                    @messages("case.liability.caseBoardNumber")
                     </dt>
                     <dd class="column-two-thirds">
                     @c.caseBoardsFileNumber
@@ -46,82 +47,88 @@
 
             <h3 class="heading-medium mt-0">@messages("case.liability.about.title") </h3>
 
-            <div id="liability-entry-date" class="grid-row">
+            <div id="edit-liability-details" class="grid-row  mb-2">
+                <span class="column-one-third">
+                    <a href="@routes.LiabilityController.editLiabilityDetails(c.reference)"> Edit details </a>
+                </span>
+            </div>
+
+            <div  class="grid-row">
                 <dt class="column-one-third">
-                    @messages("case.liability.entry.date")
+                    @messages("case.liability.entryDate")
                 </dt>
-                <dd class="column-two-thirds">
-                    @Dates.format(liability.entryDate)
+                <dd class="column-two-thirds" id="liability-entry-date">
+                    @liability.entryDate.map(Dates.format)
                 </dd>
             </div>
-            <div id="liability-entry-number" class="grid-row">
+            <div  class="grid-row">
                 <dt class="column-one-third">
-                    @messages("case.liability.entry.number")
+                    @messages("case.liability.entryNumber")
                 </dt>
-                <dd class="column-two-thirds">
+                <dd class="column-two-thirds" id="liability-entry-number">
                     @liability.entryNumber
                 </dd>
             </div>
-            <div id="liability-trader-name" class="grid-row">
+            <div  class="grid-row">
                 <dt class="column-one-third">
-                    @messages("case.liability.trader.name")
+                    @messages("case.liability.traderName")
                 </dt>
-                <dd class="column-two-thirds">
+                <dd class="column-two-thirds" id="liability-trader-name">
                     @liability.traderName
                 </dd>
             </div>
-            <div id="liability-item-name" class="grid-row">
+            <div  class="grid-row">
                 <dt class="column-one-third">
-                    @messages("case.liability.item.name")
+                    @messages("case.liability.goodName")
                 </dt>
-                <dd class="column-two-thirds">
+                <dd class="column-two-thirds" id="liability-item-name">
                     @liability.goodName
                 </dd>
             </div>
 
             <h3 class="heading-medium mt-0">@messages("case.liability.commodity.code.info") </h3>
 
-            <div id="liability-trader-code" class="grid-row">
+            <div  class="grid-row">
                 <dt class="column-one-third">
-                    @messages("case.liability.code.trader")
+                    @messages("case.liability.traderCommodityCode")
                 </dt>
-                <dd class="column-two-thirds">
+                <dd class="column-two-thirds" id="liability-trader-code">
                     @liability.traderCommodityCode
                 </dd>
             </div>
 
-            <div id="liability-officer-code" class="grid-row">
+            <div  class="grid-row">
                 <dt class="column-one-third">
-                       @messages("case.liability.code.officer")
+                       @messages("case.liability.officerCommodityCode")
                 </dt>
-                <dd class="column-two-thirds">
+                <dd class="column-two-thirds" id="liability-officer-code">
                     @liability.officerCommodityCode
                 </dd>
             </div>
 
             <h3 class="heading-medium mt-0">@messages("case.liability.contact.details") </h3>
 
-            <div id="liability-contact-name" class="grid-row">
+            <div  class="grid-row">
                 <dt class="column-one-third">
-                    @messages("case.liability.contact.name")
+                    @messages("case.liability.contactName")
                 </dt>
-                <dd class="column-two-thirds">
+                <dd class="column-two-thirds" id="liability-contact-name">
                     @liability.contact.name
                 </dd>
             </div>
-            <div id="liability-contact-email" class="grid-row">
+            <div  class="grid-row">
                 <dt class="column-one-third">
-                    @messages("case.liability.contact.email")
+                    @messages("case.liability.contactEmail")
                 </dt>
-                <dd class="column-two-thirds">
+                <dd class="column-two-thirds" id="liability-contact-email">
                     @liability.contact.email
                 </dd>
             </div>
-            <div id="liability-contact.phone" class="grid-row">
+            <div  class="grid-row">
                 <dt class="column-one-third">
-                    @messages("case.liability.contact.phone")
+                    @messages("case.liability.contactPhone")
                 </dt>
-                <dd class="column-two-thirds">
+                <dd class="column-two-thirds" id="liability-contact.phone">
                     @liability.contact.phone
                 </dd>
             </div>
@@ -146,7 +153,7 @@
                     <dl class="dl-mb-2">
                         <div id="liability-decision-code" class="grid-row">
                             <dt class="column-one-third">
-                                @messages("case.liability.decision.code")
+                                @messages("case.liability.decision.bindingCommodityCode")
                             </dt>
                             <dd class="column-two-thirds">
                                 @decision.bindingCommodityCode
@@ -155,7 +162,7 @@
 
                         <div id="liability-decision-description" class="grid-row">
                             <dt class="column-one-third">
-                                @messages("case.liability.decision.description")
+                                @messages("case.liability.decision.goodsDescription")
                             </dt>
                             <dd class="column-two-thirds">
                                 @decision.goodsDescription
@@ -173,7 +180,7 @@
 
                         <div id="liability-decision-searches" class="grid-row">
                             <dt class="column-one-third">
-                                @messages("case.liability.decision.searches")
+                                @messages("case.liability.decision.methodSearch")
                             </dt>
                             <dd class="column-two-thirds">
                                 @decision.methodSearch
@@ -183,7 +190,7 @@
 
                         <div id="liability-decision-exclusions" class="grid-row">
                             <dt class="column-one-third">
-                                @messages("case.liability.decision.exclusions")
+                                @messages("case.liability.decision.methodExclusion")
                             </dt>
                             <dd class="column-two-thirds">
                                 @decision.methodExclusion
@@ -193,30 +200,33 @@
                 </div>
             }
 
-            <h3 class="heading-medium" id="liability-complete-heading">Complete this liability decision</h3>
+            @if(request.hasPermission(Permission.COMPLETE_CASE)) {
+                <h3 class="heading-medium" id="liability-complete-heading">Complete this liability decision</h3>
 
-            <h4 class="heading-small" id="liability-complete_details-heading">Liability details</h4>
-            <p>You need to enter:</p>
-            <ul class="list list-bullet">
-                <li>Liability entry date</li>
-                <li>Liability entry number</li>
-                <li>Item name</li>
-                <li>Port or compliance officer name</li>
-            </ul>
-
-            @if(decisionForm.hasErrors) {
-                <h4 class="heading-small mt-4" id="liability-complete_decision-heading">Liability decision</h4>
-                <p>You need to enter:</p>
-                <ul class="list list-bullet">
-                @for(err: String <- decisionForm.errors.map(_.key)) {
-                    <li><span id="constraint-@err">@messages("case.decision.constraint." + err)</span></li>
+                @if(liabilityForm.hasErrors) {
+                    <h4 class="heading-small" id="liability-complete_details-heading">Liability details</h4>
+                    <p>You need to enter:</p>
+                    <ul class="list list-bullet">
+                    @for(err: String <- liabilityForm.errors.map(_.key)) {
+                        <li><span id="constraint-@err">@messages("case.liability." + err)</span></li>
+                    }
+                    </ul>
                 }
-                </ul>
-            }
 
-            <a tabindex="@startAtTabIndex" id="liability-complete-button"  class="button"  @if(decisionForm.hasErrors) { disabled="disabled" }else{ href="@routes.CompleteCaseController.completeCase(c.reference)"}>
-                Complete case
-            </a>
+                @if(decisionForm.hasErrors) {
+                    <h4 class="heading-small mt-4" id="liability-complete_decision-heading">Liability decision</h4>
+                    <p>You need to enter:</p>
+                    <ul class="list list-bullet">
+                    @for(err: String <- decisionForm.errors.map(_.key)) {
+                        <li><span id="constraint-@err">@messages("case.liability.decision." + err)</span></li>
+                    }
+                    </ul>
+                }
+
+                <a tabindex="@startAtTabIndex" id="liability-complete-button"  class="button"  @if(liabilityForm.hasErrors || decisionForm.hasErrors) { disabled="disabled" }else{ href="@routes.CompleteCaseController.completeCase(c.reference)"}>
+                    Complete case
+                </a>
+            }
         }
 
     }

@@ -28,6 +28,7 @@ import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
+import uk.gov.hmrc.tariffclassificationfrontend.models.ApplicationType.ApplicationType
 import uk.gov.hmrc.tariffclassificationfrontend.models.Permission.Permission
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, QueuesService}
@@ -59,7 +60,7 @@ class QueuesControllerSpec extends UnitSpec with Matchers with WithFakeApplicati
     }
 
     "return 200 OK and HTML content type when Queue is found" in {
-      given(casesService.getCasesByQueue(refEq(queue), refEq(NoPagination()))(any[HeaderCarrier])).willReturn(Future.successful(Paged.empty[Case]))
+      given(casesService.getCasesByQueue(refEq(queue), refEq(NoPagination()),any[Seq[ApplicationType]])(any[HeaderCarrier])).willReturn(Future.successful(Paged.empty[Case]))
       given(casesService.countCasesByQueue(any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(Map.empty[String, Int]))
       given(queuesService.getOneBySlug("slug")).willReturn(Future.successful(Some(queue)))
       given(queuesService.getAll).willReturn(Future.successful(Seq(queue)))
@@ -75,8 +76,22 @@ class QueuesControllerSpec extends UnitSpec with Matchers with WithFakeApplicati
       session(result).get(SessionKeys.backToSearchResultsLinkUrl) shouldBe None
     }
 
+    "return 200 OK and HTML content type when Queue is found with specific case type specified" in {
+      given(casesService.getCasesByQueue(refEq(queue), refEq(NoPagination()),refEq(Seq(ApplicationType.LIABILITY_ORDER)))(any[HeaderCarrier])).willReturn(Future.successful(Paged.empty[Case]))
+      given(casesService.countCasesByQueue(any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(Map.empty[String, Int]))
+      given(queuesService.getOneBySlug("slug")).willReturn(Future.successful(Some(queue)))
+      given(queuesService.getAll).willReturn(Future.successful(Seq(queue)))
+
+      val result = await(controller(Set(Permission.VIEW_QUEUE_CASES)).queue("slug",Some("LIABILITY_ORDER"))(fakeRequest))
+      status(result) shouldBe Status.OK
+      contentType(result) shouldBe Some("text/html")
+      charset(result) shouldBe Some("utf-8")
+      contentAsString(result) should include ("Queue Name")
+      session(result).get(SessionKeys.backToQueuesLinkUrl) shouldBe Some("/tariff-classification/queues/queue?caseType=LIABILITY_ORDER")
+    }
+
     "return 200 OK and HTML content type when Queue is not found" in {
-      given(casesService.getCasesByQueue(refEq(queue), refEq(NoPagination()))(any[HeaderCarrier])).willReturn(Future.successful(Paged.empty[Case]))
+      given(casesService.getCasesByQueue(refEq(queue), refEq(NoPagination()),any[Seq[ApplicationType]])(any[HeaderCarrier])).willReturn(Future.successful(Paged.empty[Case]))
       given(queuesService.getOneBySlug("slug")).willReturn(Future.successful(None))
       given(queuesService.getAll).willReturn(Future.successful(Seq(queue)))
 

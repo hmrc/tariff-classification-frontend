@@ -16,9 +16,11 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.models
 
+import uk.gov.hmrc.tariffclassificationfrontend.models.CaseReportGroup.CaseReportGroup
+
 case class ReportResult
 (
-  group: Option[String],
+  group: Map[CaseReportGroup, Option[String]],
   value: Seq[Int]
 ) {
   def size: Int = value.size

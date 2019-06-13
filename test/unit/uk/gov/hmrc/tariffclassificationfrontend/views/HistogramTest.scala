@@ -17,7 +17,7 @@
 package uk.gov.hmrc.tariffclassificationfrontend.views
 
 import uk.gov.hmrc.play.test.UnitSpec
-import uk.gov.hmrc.tariffclassificationfrontend.models.ReportResult
+import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseReportGroup, ReportResult}
 
 class HistogramTest extends UnitSpec {
 
@@ -56,7 +56,7 @@ class HistogramTest extends UnitSpec {
 
     "Build Groups from data without name" in {
       val data = Seq(
-        ReportResult(group = None, value = Seq(0, 1, 2, 3, 4, 5))
+        ReportResult(Map(CaseReportGroup.QUEUE ->  None), value = Seq(0, 1, 2, 3, 4, 5))
       )
 
       Histogram.calculate(data, buckets) shouldBe Histogram(
@@ -70,7 +70,7 @@ class HistogramTest extends UnitSpec {
 
     "Build Groups from data with name" in {
       val data = Seq(
-        ReportResult(group = Some("1"), value = Seq(0, 1, 2, 3, 4, 5))
+        ReportResult(Map(CaseReportGroup.QUEUE ->  Some("1")), value = Seq(0, 1, 2, 3, 4, 5))
       )
 
       Histogram.calculate(data, buckets) shouldBe Histogram(
@@ -84,8 +84,8 @@ class HistogramTest extends UnitSpec {
 
     "Build Groups from data" in {
       val data = Seq(
-        ReportResult(group = Some("1"), value = Seq(0, 1, 2, 3, 4, 5)),
-        ReportResult(group = None, value = Seq(0, 1, 2, 3, 4, 5))
+        ReportResult(Map(CaseReportGroup.QUEUE ->  Some("1")), value = Seq(0, 1, 2, 3, 4, 5)),
+        ReportResult(Map(CaseReportGroup.QUEUE ->  None), value = Seq(0, 1, 2, 3, 4, 5))
       )
 
       Histogram.calculate(data, buckets) shouldBe Histogram(

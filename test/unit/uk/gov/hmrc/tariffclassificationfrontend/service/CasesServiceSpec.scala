@@ -29,6 +29,7 @@ import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.tariffclassificationfrontend.audit.AuditService
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.connector.{BindingTariffClassificationConnector, RulingConnector}
+import uk.gov.hmrc.tariffclassificationfrontend.models.ApplicationType.ApplicationType
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 
 import scala.concurrent.Future.successful
@@ -59,10 +60,17 @@ class CasesServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEac
 
   "Get Cases 'By Queue'" should {
     "retrieve connector cases" in {
-      given(connector.findCasesByQueue(any[Queue], any[Pagination])(any[HeaderCarrier])) willReturn successful(Paged(manyCases))
+      given(connector.findCasesByQueue(any[Queue], any[Pagination], any[Seq[ApplicationType]])(any[HeaderCarrier])) willReturn successful(Paged(manyCases))
 
       await(service.getCasesByQueue(queue, pagination)) shouldBe Paged(manyCases)
     }
+
+    "retrieve connector cases with type restriction" in {
+      given(connector.findCasesByQueue(any[Queue], any[Pagination], refEq(Seq(ApplicationType.LIABILITY_ORDER)))(any[HeaderCarrier])) willReturn successful(Paged(manyCases))
+
+      await(service.getCasesByQueue(queue, pagination,Seq(ApplicationType.LIABILITY_ORDER))) shouldBe Paged(manyCases)
+    }
+
   }
 
   "Get Cases 'By Assignee'" should {

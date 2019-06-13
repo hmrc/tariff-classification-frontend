@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.views
 
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Queue, ReportResult}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseReportGroup, Queue, ReportResult}
 
 class ReferralReport(results: Seq[ReportResult]) {
 
@@ -24,7 +24,7 @@ class ReferralReport(results: Seq[ReportResult]) {
 
   lazy val average: Int = Math.round(results.flatMap(_.value).sum.toDouble / count).toInt
 
-  def countFor(queue: Queue): Int = results.find(_.group.contains(queue.id)).map(_.size).getOrElse(0)
+  def countFor(queue: Queue): Int = results.find(_.group.get(CaseReportGroup.QUEUE).contains(Some(queue.id))).map(_.size).getOrElse(0)
 
-  def averageFor(queue: Queue): Int = Math.round(results.find(_.group.contains(queue.id)).map(_.average).getOrElse(0.0)).toInt
+  def averageFor(queue: Queue): Int = Math.round(results.find(_.group.get(CaseReportGroup.QUEUE).contains(Some(queue.id))).map(_.average).getOrElse(0.0)).toInt
 }

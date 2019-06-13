@@ -20,6 +20,7 @@ import org.jsoup.nodes.Document
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
 import uk.gov.tariffclassificationfrontend.utils.Cases
+import uk.gov.tariffclassificationfrontend.utils.Cases._
 
 class MyCasesViewSpec extends ViewSpec {
 
@@ -28,11 +29,11 @@ class MyCasesViewSpec extends ViewSpec {
   "My Cases View" should {
     val queue1 = Queue("1", "queue1_name", "Queue 1 Name")
     val queue2 = Queue("2", "queue2_name", "Queue 2 Name")
-    val openCase = Cases.btiCaseExample.copy(status = CaseStatus.OPEN)
-    val referredCase = Cases.btiCaseExample.copy(status = CaseStatus.REFERRED)
-    val suspendedCase = Cases.btiCaseExample.copy(status = CaseStatus.SUSPENDED)
-    val liabCase = Cases.liabilityCaseExample
-    val liveLiabCase = Cases.liabilityLiveCaseExample
+    val openCase = btiCaseExample.copy(status = CaseStatus.OPEN)
+    val referredCase = btiCaseExample.copy(status = CaseStatus.REFERRED)
+    val suspendedCase = btiCaseExample.copy(status = CaseStatus.SUSPENDED)
+    val liabCase = aCase(withLiabilityApplication())
+    val liveLiabCase = aCase(withLiabilityApplication(status = LiabilityStatus.LIVE))
 
     "render create liability button when user has CREATE_CASES permission" in {
       // Given

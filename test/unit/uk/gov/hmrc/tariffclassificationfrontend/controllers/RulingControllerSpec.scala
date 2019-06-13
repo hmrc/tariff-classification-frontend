@@ -18,10 +18,11 @@ package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito._
-import org.mockito.Mockito
+import org.mockito.{BDDMockito, Mockito}
 import org.mockito.Mockito.{never, verify}
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterEach, Matchers}
+import play.api.data.validation.{Constraint, Valid}
 import play.api.http.Status
 import play.api.i18n.{DefaultLangs, DefaultMessagesApi}
 import play.api.test.Helpers.{redirectLocation, _}
@@ -53,7 +54,8 @@ class RulingControllerSpec extends UnitSpec
   private val mapper = mock[DecisionFormMapper]
   private val commodityCodeService = mock[CommodityCodeService]
   private val operator = mock[Operator]
-  private val decisionForm = new DecisionForm(new CommodityCodeConstraints(commodityCodeService, appConfig))
+  private val commodityCodeConstraints = mock[CommodityCodeConstraints]
+  private val decisionForm = new DecisionForm(commodityCodeConstraints)
 
   private implicit val hc: HeaderCarrier = HeaderCarrier()
 
@@ -73,7 +75,7 @@ class RulingControllerSpec extends UnitSpec
   "Edit Ruling" should {
     val btiCaseWithStatusNEW = aCase(withBTIApplication, withReference("reference"), withStatus(CaseStatus.NEW))
     val btiCaseWithStatusOPEN = aCase(withBTIApplication, withReference("reference"), withStatus(CaseStatus.OPEN))
-    val liabilityCaseWithStatusOPEN = aCase(withLiabilityApplication, withReference("reference"), withStatus(CaseStatus.OPEN))
+    val liabilityCaseWithStatusOPEN = aCase(withLiabilityApplication(), withReference("reference"), withStatus(CaseStatus.OPEN))
     val attachment = storedAttachment
 
     "return OK and HTML content type" when {
@@ -88,6 +90,7 @@ class RulingControllerSpec extends UnitSpec
       }
 
       "Case is a Liability" in {
+        given(commodityCodeConstraints.commodityCodeExistsInUKTradeTariff).willReturn(Constraint[String]("error")( _ =>  Valid))
         val result = controller(liabilityCaseWithStatusOPEN).editRulingDetails("reference")(newFakeGETRequestWithCSRF(fakeApplication))
         status(result) shouldBe Status.OK
         contentType(result) shouldBe Some("text/html")
@@ -126,7 +129,7 @@ class RulingControllerSpec extends UnitSpec
   "Update Ruling" should {
     val caseWithStatusNEW = aCase(withReference("reference"), withStatus(CaseStatus.NEW))
     val caseWithStatusOPEN = aCase(withReference("reference"), withStatus(CaseStatus.OPEN))
-    val liabilityCaseWithStatusOPEN = aCase(withLiabilityApplication, withReference("reference"), withStatus(CaseStatus.OPEN))
+    val liabilityCaseWithStatusOPEN = aCase(withLiabilityApplication(), withReference("reference"), withStatus(CaseStatus.OPEN))
     val updatedCase = aCase(withReference("reference"), withStatus(CaseStatus.OPEN))
     val attachment = storedAttachment
 
@@ -153,6 +156,7 @@ class RulingControllerSpec extends UnitSpec
       }
 
       "Case is a Liability" in {
+        given(commodityCodeConstraints.commodityCodeExistsInUKTradeTariff).willReturn(Constraint[String]("error")( _ =>  Valid))
         given(casesService.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(updatedCase))
 
         val result = await(controller(liabilityCaseWithStatusOPEN).updateRulingDetails("reference")(aValidForm))
@@ -176,6 +180,7 @@ class RulingControllerSpec extends UnitSpec
       }
 
       "case is a Liability" in {
+        given(commodityCodeConstraints.commodityCodeExistsInUKTradeTariff).willReturn(Constraint[String]("error")( _ =>  Valid))
         val result = controller(liabilityCaseWithStatusOPEN).updateRulingDetails("reference")(newFakePOSTRequestWithCSRF(fakeApplication))
         verify(casesService, never()).updateCase(any[Case])(any[HeaderCarrier])
         status(result) shouldBe Status.OK

@@ -33,7 +33,7 @@ class ReportingService @Inject()(connector: BindingTariffClassificationConnector
       filter = CaseReportFilter(
         decisionStartDate = Some(decisionStartDate), applicationType = Some(Set("BTI"))
       ),
-      group = CaseReportGroup.QUEUE,
+      group = Set(CaseReportGroup.QUEUE),
       field = CaseReportField.ACTIVE_DAYS_ELAPSED
     )
 
@@ -45,7 +45,7 @@ class ReportingService @Inject()(connector: BindingTariffClassificationConnector
 
     val report = CaseReport(
       filter = CaseReportFilter(status = Some(statuses), assigneeId = Some("none")),
-      group = CaseReportGroup.QUEUE,
+      group = Set(CaseReportGroup.QUEUE, CaseReportGroup.APPLICATION_TYPE),
       field = CaseReportField.ACTIVE_DAYS_ELAPSED
     )
     connector.generateReport(report)
@@ -57,7 +57,7 @@ class ReportingService @Inject()(connector: BindingTariffClassificationConnector
       filter = CaseReportFilter(
         referralDate = Some(referralDate), applicationType = Some(Set("BTI"))
       ),
-      group = CaseReportGroup.QUEUE,
+      group = Set(CaseReportGroup.QUEUE),
       field = CaseReportField.REFERRED_DAYS_ELAPSED
     )
 
