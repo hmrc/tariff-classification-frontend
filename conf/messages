@@ -160,22 +160,43 @@ case.liability.about.title = Information about this liability from the C592
 case.liability.commodity.code.info = Commodity code information
 case.liability.contact.details = Contact details for port or compliance officer
 
-case.liability.board.number = Case board number
-case.liability.entry.date = Liability entry date
-case.liability.entry.number = Liability entry number
-case.liability.trader.name = Trader name
-case.liability.item.name = Item name
-case.liability.code.trader= Code entered by trader
-case.liability.code.officer= Code suggested by officer
+case.liability.caseBoardNumber = Case board number
+case.liability.entryDate = Liability entry date
+case.liability.entryNumber = Liability entry number
+case.liability.traderName = Trader name
+case.liability.goodName = Item name
+case.liability.traderCommodityCode = Code entered by trader
+case.liability.officerCommodityCode = Code suggested by officer
 
-case.liability.contact.name = Name
-case.liability.contact.email = Contact email
-case.liability.contact.phone = Contact telephone
-case.liability.decision.code = Commodity code
-case.liability.decision.description = Item description
+case.liability.contactName = Name
+case.liability.contactEmail = Contact email
+case.liability.contactPhone = Contact telephone
+case.liability.decision.bindingCommodityCode = Commodity code
+case.liability.decision.goodsDescription = Item description
 case.liability.decision.justification = Justification
-case.liability.decision.searches = Searches  performed
-case.liability.decision.exclusions = Exclusions and inclusions
+case.liability.decision.methodSearch = Searches  performed
+case.liability.decision.methodExclusion = Exclusions and inclusions
+
+case.liability.edit = Edit details
+case.liability.edit.information = Information about this liability from the C592
+
+case.liability.edit.entry.date = Liability entry date
+case.liability.edit.entry.date.hint = This is the date recorded on the C592 by the compliance or port officer, for example, 27 3 2007.
+case.liability.edit.entry-number = Liability entry number from C592
+case.liability.edit.trader-name = Trader name
+case.liability.edit.item-name = Item name
+case.liability.edit.commodity-code.information = Commodity code information
+case.liability.edit.commodity-code.trader = Code entered by trader
+case.liability.edit.commodity-code.officer = Code suggested by officer
+case.liability.edit.contact.information = Contact details for port or compliance officer
+case.liability.edit.contact.name = Name
+case.liability.edit.contact.email = Contact email
+case.liability.edit.contact.phone = Contact telephone
+
+case.liability.error.empty.trader-name = Enter a trader name
+case.liability.error.empty.format-email = Enter a trader name
+case.liability.error.email = Enter an email address in the correct format
+case.liability.error.entry-date = The liability entry date must be valid
 
 events.table.empty=There are no events for this case
 

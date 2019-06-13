@@ -20,6 +20,8 @@ GET         /cases/:reference                                   @uk.gov.hmrc.tar
 GET         /cases/:reference/trader                            @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.trader(reference: String)
 GET         /cases/:reference/application                       @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.applicationDetails(reference: String)
 GET         /cases/:reference/liability                         @uk.gov.hmrc.tariffclassificationfrontend.controllers.LiabilityController.liabilityDetails(reference: String)
+GET         /cases/:reference/liability/edit                    @uk.gov.hmrc.tariffclassificationfrontend.controllers.LiabilityController.editLiabilityDetails(reference: String)
+POST        /cases/:reference/liability/edit                    @uk.gov.hmrc.tariffclassificationfrontend.controllers.LiabilityController.postLiabilityDetails(reference: String)
 
 GET         /cases/:reference/sample                            @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.sampleDetails(reference: String)
 

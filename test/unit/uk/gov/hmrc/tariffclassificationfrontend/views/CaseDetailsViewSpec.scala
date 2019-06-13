@@ -42,7 +42,7 @@ class CaseDetailsViewSpec extends ViewSpec {
     "render liability order" in {
 
       // When
-      val c = aCase(withReference("reference"), withLiabilityApplication)
+      val c = aCase(withReference("reference"), withLiabilityApplication())
       val doc = view(html.case_details(c, CaseDetailPage.LIABILITY, Html("html"), Some("tab-item-Liability")))
 
       // Then
