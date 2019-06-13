@@ -20,7 +20,7 @@ class RootSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder {
           .withBody(CasePayloads.pagedGatewayCases))
       )
 
-      stubFor(get(urlEqualTo("/report?status=NEW&status=OPEN&status=REFERRED&status=SUSPENDED&assignee_id=none&report_group=queue-id&report_field=active-days-elapsed&split_by_type=true"))
+      stubFor(get(urlEqualTo("/report?status=NEW&status=OPEN&status=REFERRED&status=SUSPENDED&assignee_id=none&report_group=queue-id%2Capplication-type&report_field=active-days-elapsed"))
         .willReturn(aResponse()
           .withStatus(OK)
           .withBody(CasePayloads.report))

@@ -281,7 +281,7 @@ class CasesService @Inject()(appConfig: AppConfig,
       countMyCases <- getCasesByAssignee(operator, NoPagination())
       countByQueue <- reportingService.getQueueReport
       casesByQueueAndMyCases = countByQueue.map(report => (
-        report.group.getOrElse(Queues.gateway.id), report.value.size))
+        report.group.getOrElse(CaseReportGroup.QUEUE, Some(Queues.gateway.id)).getOrElse("") + "-" +report.group.getOrElse(CaseReportGroup.APPLICATION_TYPE, Some("")).get, report.value.size))
         .toMap + ("my-cases" -> countMyCases.size)
     } yield casesByQueueAndMyCases
   }

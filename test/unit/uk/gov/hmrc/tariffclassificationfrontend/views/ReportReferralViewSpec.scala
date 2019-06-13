@@ -59,8 +59,8 @@ class ReportReferralViewSpec extends ViewSpec {
     "render queues - with some data" in {
       // Given
       val results = Seq(
-        ReportResult(Some(queue1.id), Seq(0, 11, 21, 31, 41, 51)),
-        ReportResult(Some(queue2.id), Seq(10, 20, 30, 40, 50, 60))
+        ReportResult(group = Map(CaseReportGroup.QUEUE -> Some(queue1.id)), value = Seq(0, 11, 21, 31, 41, 51)),
+        ReportResult(group = Map(CaseReportGroup.QUEUE -> Some(queue2.id)), Seq(10, 20, 30, 40, 50, 60))
       )
 
       // When
@@ -91,8 +91,8 @@ class ReportReferralViewSpec extends ViewSpec {
     "render totals - with some data" in {
       // Given
       val results = Seq(
-        ReportResult(Some(queue1.id), Seq(0, 11, 21, 31, 41, 51)),
-        ReportResult(Some(queue2.id), Seq(10, 20, 30, 40, 50, 60))
+        ReportResult(Map(CaseReportGroup.QUEUE -> Some(queue1.id)), Seq(0, 11, 21, 31, 41, 51)),
+        ReportResult(Map(CaseReportGroup.QUEUE -> Some(queue2.id)), Seq(10, 20, 30, 40, 50, 60))
       )
 
       // When

@@ -52,26 +52,26 @@ class BindingTariffClassificationConnector @Inject()(appConfig: AppConfig, clien
     client.GET[Option[Case]](url)
   }
 
-  private def buildQueryUrl(types : Seq[ApplicationType] = Seq(ApplicationType.BTI,ApplicationType.LIABILITY_ORDER), withStatuses: String,
+  private def buildQueryUrl(types : Seq[ApplicationType] = Seq(ApplicationType.BTI,ApplicationType.LIABILITY_ORDER), statuses: String,
                             queueId: String = "", assigneeId: String, pagination: Pagination): String = {
     val sortBy = "application.type,application.status,days-elapsed"
-    val queryString = s"application_type=${types.mkString(",")}&queue_id=$queueId&assignee_id=$assigneeId&status=$withStatuses&sort_by=$sortBy&sort_direction=desc&page=${pagination.page}&page_size=${pagination.pageSize}"
+    val queryString = s"application_type=${types.mkString(",")}&queue_id=$queueId&assignee_id=$assigneeId&status=$statuses&sort_by=$sortBy&sort_direction=desc&page=${pagination.page}&page_size=${pagination.pageSize}"
     s"${appConfig.bindingTariffClassificationUrl}/cases?$queryString"
   }
 
   def findCasesByQueue(queue: Queue, pagination: Pagination, types: Seq[ApplicationType] = Seq(ApplicationType.BTI, ApplicationType.LIABILITY_ORDER))(implicit hc: HeaderCarrier): Future[Paged[Case]] = {
     val queueId = if (queue == Queues.gateway) "none" else queue.id
-    val url = buildQueryUrl(types = types, withStatuses = statuses, queueId = queueId,  assigneeId = "none", pagination = pagination)
+    val url = buildQueryUrl(types = types, statuses = statuses, queueId = queueId,  assigneeId = "none", pagination = pagination)
     client.GET[Paged[Case]](url)
   }
 
   def findCasesByAssignee(assignee: Operator, pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[Case]] = {
-    val url = buildQueryUrl(withStatuses = statuses, queueId = "",  assigneeId = assignee.id,  pagination = pagination)
+    val url = buildQueryUrl(statuses = statuses, queueId = "",  assigneeId = assignee.id,  pagination = pagination)
     client.GET[Paged[Case]](url)
   }
 
   def findAssignedCases(pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[Case]] = {
-    val url = buildQueryUrl(withStatuses = liveStatuses, queueId = "",  assigneeId = "some",  pagination = pagination)
+    val url = buildQueryUrl(statuses = liveStatuses, queueId = "",  assigneeId = "some",  pagination = pagination)
     client.GET[Paged[Case]](url)
   }
 

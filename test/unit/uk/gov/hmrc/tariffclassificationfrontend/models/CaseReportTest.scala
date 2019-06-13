@@ -38,7 +38,7 @@ class CaseReportTest extends UnitSpec {
       applicationType = Some(Set("BTI"))
     ),
     field = CaseReportField.ACTIVE_DAYS_ELAPSED,
-    group = CaseReportGroup.QUEUE
+    group = Set(CaseReportGroup.QUEUE)
   )
 
   private val params: Map[String, Seq[String]] = Map(
@@ -49,8 +49,7 @@ class CaseReportTest extends UnitSpec {
     "status"  -> Seq("OPEN"),
     "application_type" -> Seq("BTI"),
     "report_field" -> Seq("active-days-elapsed"),
-    "report_group" -> Seq("queue-id"),
-    "split_by_type" -> Seq("false")
+    "report_group" -> Seq("queue-id")
   )
 
   /**
@@ -67,8 +66,7 @@ class CaseReportTest extends UnitSpec {
           "status=OPEN&" +
           "application_type=BTI&" +
           "report_group=queue-id&" +
-          "report_field=active-days-elapsed&" +
-          "split_by_type=false"
+          "report_field=active-days-elapsed"
       URLDecoder.decode(CaseReport.bindable.unbind("", report), "UTF-8") shouldBe populatedQueryParam
     }
 

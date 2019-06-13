@@ -22,4 +22,6 @@ object Queues {
   val cap = Queue("3", "cap", "CAP")
   val cars = Queue("4", "cars", "Cars")
   val elm = Queue("5", "elm", "ELM")
+
+  def allDynamicQueues: Seq[Queue] = Seq(act,cap,cars,elm)
 }

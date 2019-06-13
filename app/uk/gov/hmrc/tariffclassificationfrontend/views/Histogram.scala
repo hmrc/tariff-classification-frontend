@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.views
 
-import uk.gov.hmrc.tariffclassificationfrontend.models.ReportResult
+import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseReportGroup, ReportResult}
 
 case class HistogramBucket(data: Seq[Int]) {
   def count: Int = data.size
@@ -57,7 +57,7 @@ object Histogram {
   def calculate(results: Seq[ReportResult], intervals: Seq[HistogramBucketInterval]): Histogram = Histogram(
     results flatMap { result: ReportResult =>
       intervals.map { interval =>
-        ((result.group, interval), HistogramBucket(result.value.filter(interval.contains)))
+        ((result.group.get(CaseReportGroup.QUEUE).get, interval), HistogramBucket(result.value.filter(interval.contains)))
       }
     } toMap
   )

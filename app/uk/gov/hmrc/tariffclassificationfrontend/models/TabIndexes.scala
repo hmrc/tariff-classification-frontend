@@ -25,15 +25,23 @@ object TabIndexes {
 
   def tabIndexFor: CaseDetailPage => Int = { page => indexByPage.getOrElse(page, 0) }
 
-  private val indexByQueues: Map[String, Int] = Map("my-cases" -> 1000, Queues.gateway.slug -> 2000 , Queues.act.slug -> 3000,  Queues.cap.slug -> 4000,
-    Queues.cars.slug -> 5000,  Queues.elm.slug -> 6000, s"${Queues.gateway.slug}-liab" -> 7000 , s"${Queues.act.slug}-liab" -> 8000,  s"${Queues.cap.slug}-liab" -> 9000,
-      s"${Queues.cars.slug}-liab" -> 10000,  s"${Queues.elm.slug}-liab" -> 11000, "assigned-cases" -> 12000, "reports" -> 13000)
+  private val tabIncrement = 1000
+  private val nextQueueIndex = { var i = 0; () => { i += tabIncrement; i} }
+
+  private val fixedQueues: Map[String, Int] = Map("my-cases" -> nextQueueIndex(), Queues.gateway.slug -> nextQueueIndex())
+
+  private val dynamicQueues: Map[String, Int] = Queues.allDynamicQueues.map(q => q.slug -> nextQueueIndex()).toMap ++
+                                    Queues.allDynamicQueues.map(q => s"${q.slug}-liability" -> nextQueueIndex()).toMap
+
+  private val reportingQueues: Map[String,Int] = Map("assigned-cases" -> nextQueueIndex(), "reports" -> nextQueueIndex())
+
+  private val indexByQueues: Map[String, Int] = fixedQueues ++ dynamicQueues ++ reportingQueues
 
   def tabIndexForQueue: String => Int = { page => indexByQueues.getOrElse(page, 0) }
 
   def tabIndexForQueue(slug: String, filteredBy: String) : Int = {
     filteredBy match {
-      case "LIABILITY_ORDER" => indexByQueues.getOrElse(s"$slug-liab", 0)
+      case "LIABILITY_ORDER" => indexByQueues.getOrElse(s"$slug-liability", 0)
       case _ => indexByQueues.getOrElse(slug, 0)
     }
 

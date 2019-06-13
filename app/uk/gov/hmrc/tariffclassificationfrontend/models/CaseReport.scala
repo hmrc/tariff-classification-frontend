@@ -23,15 +23,13 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.CaseReportGroup.CaseRepor
 case class CaseReport
 (
   filter: CaseReportFilter,
-  group: CaseReportGroup,
-  field: CaseReportField,
-  splitByType: Boolean = false
+  group: Set[CaseReportGroup],
+  field: CaseReportField
 )
 
 object CaseReport {
   private val reportGroupKey = "report_group"
   private val reportFieldKey = "report_field"
-  private val splitByTypeKey = "split_by_type"
 
   implicit def bindable(implicit stringBinder: QueryStringBindable[String],
                         filterBinder: QueryStringBindable[CaseReportFilter]
@@ -41,12 +39,11 @@ object CaseReport {
       implicit val rp: Map[String, Seq[String]] = requestParams
 
       val filter: CaseReportFilter = filterBinder.bind("", requestParams).get.right.get
-      val group: Option[CaseReportGroup] = param(reportGroupKey).flatMap(bindCaseReportGroup)
+      val group: Option[Set[CaseReportGroup]] = params(reportGroupKey).map(_.map(bindCaseReportGroup).filter(_.isDefined).map(_.get))
       val field: Option[CaseReportField] = param(reportFieldKey).flatMap(bindCaseReportField)
-      val splitByType: Boolean = param(splitByTypeKey).map(s => s.toBoolean).getOrElse(false)
 
       (group, field) match {
-        case (Some(g), Some(f)) => Some(Right(CaseReport(filter, g, f, splitByType)))
+        case (Some(g), Some(f)) => Some(Right(CaseReport(filter, g, f)))
         case (None, Some(_)) => Some(Left("Invalid Group"))
         case (Some(_), None) => Some(Left("Invalid Field"))
         case _ => Some(Left("Invalid Field/Group"))
@@ -56,9 +53,8 @@ object CaseReport {
     override def unbind(key: String, report: CaseReport): String = {
       Seq(
         filterBinder.unbind("", report.filter),
-        stringBinder.unbind(reportGroupKey, report.group.toString),
-        stringBinder.unbind(reportFieldKey, report.field.toString),
-        stringBinder.unbind(splitByTypeKey, report.splitByType.toString)
+        stringBinder.unbind(reportGroupKey, report.group.mkString(",").toString),
+        stringBinder.unbind(reportFieldKey, report.field.toString)
       ).filter(_.nonEmpty).mkString("&")
     }
   }
