@@ -30,7 +30,7 @@
 )(implicit messages: Messages)
 
 <div class="form-group @if(field.hasErrors){form-group-error}"
-    @{customGroupId.map(x => s"id=$x").getOrElse("")}>
+    @{customGroupId.map(x => s"id=$x").getOrElse(s"id=${field.id}")}>
     <fieldset>
 
             <legend>
