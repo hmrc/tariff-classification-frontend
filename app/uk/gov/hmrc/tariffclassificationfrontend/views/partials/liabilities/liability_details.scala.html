@@ -222,7 +222,7 @@
                     <h4 class="heading-small mt-4" id="liability-complete_decision-heading">Liability decision</h4>
                     <p>You need to enter:</p>
                     <ul class="list list-bullet">
-                    @for(err: String <- mutable.LinkedHashSet(liabilityForm.errors.map(_.key): _*)) {
+                    @for(err: String <- mutable.LinkedHashSet(decisionForm.errors.map(_.key): _*)) {
                         <li><span id="constraint-@err">@messages("case.liability.decision." + err)</span></li>
                     }
                     </ul>
