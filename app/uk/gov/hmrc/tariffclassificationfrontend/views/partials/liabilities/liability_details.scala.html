@@ -25,6 +25,8 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.models.Decision
 @import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionFormData
 @import uk.gov.hmrc.tariffclassificationfrontend.forms.LiabilityDetailsForm
+@import scala.collection.mutable
+@import scala.collection.mutable
 @(c: Case, startAtTabIndex : Int = 0, liabilityForm: Form[LiabilityOrder], decisionForm: Form[Decision])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @defining(c.application) { a: Application =>
@@ -210,7 +212,7 @@
                     <h4 class="heading-small" id="liability-complete_details-heading">Liability details</h4>
                     <p>You need to enter:</p>
                     <ul class="list list-bullet">
-                    @for(err: String <- liabilityForm.errors.map(_.key).toSet) {
+                    @for(err: String <- mutable.LinkedHashSet(liabilityForm.errors.map(_.key): _*)) {
                         <li><span id="constraint-@err">@messages("case.liability." + err)</span></li>
                     }
                     </ul>
@@ -220,7 +222,7 @@
                     <h4 class="heading-small mt-4" id="liability-complete_decision-heading">Liability decision</h4>
                     <p>You need to enter:</p>
                     <ul class="list list-bullet">
-                    @for(err: String <- decisionForm.errors.map(_.key).toSet) {
+                    @for(err: String <- mutable.LinkedHashSet(liabilityForm.errors.map(_.key): _*)) {
                         <li><span id="constraint-@err">@messages("case.liability.decision." + err)</span></li>
                     }
                     </ul>
