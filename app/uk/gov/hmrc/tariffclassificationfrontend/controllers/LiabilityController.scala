@@ -67,7 +67,7 @@ class LiabilityController @Inject()(verify: RequestActions,
   }
 
   def postLiabilityDetails(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
-    LiabilityDetailsForm.liabilityDetailsForm(request.`case`.application.asLiabilityOrder).bindFromRequest.fold(
+    LiabilityDetailsForm.liabilityDetailsForm(request.`case`.application.asLiabilityOrder).discardingErrors.bindFromRequest.fold(
       errorForm => successful(Ok(liability_details_edit(request.`case`, errorForm))),
       updatedLiability => getCaseAndRedirect(menuTitle, c =>
         for {
