@@ -73,8 +73,8 @@ class DecisionForm @Inject()(commodityCodeConstraints: CommodityCodeConstraints)
   private def decision2Form: Decision => Option[(String, String, String, String, String)] = d => Some((
     d.bindingCommodityCode,
     d.goodsDescription,
-    d.justification,
     d.methodSearch.getOrElse(""),
+    d.justification,
     d.methodExclusion.getOrElse("")
   ))
 
