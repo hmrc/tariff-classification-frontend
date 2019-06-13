@@ -16,14 +16,14 @@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 @import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
-@import uk.gov.hmrc.tariffclassificationfrontend.models.{Application, BTIApplication, Case, EORIDetails, Event, Paged, Permission, SampleStatus}
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials._
+@import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Event, Paged}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.sample.sample_status_events_table
-@import uk.gov.hmrc.tariffclassificationfrontend.models.SampleReturn
 @(c: Case, events: Paged[Event], startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @if(c.application.isLiabilityOrder) {
-    @sample_details_liability(c, events)
+    @sample_details_liability(c)
 } else {
-    @sample_details_bti(c, events)
+    @sample_details_bti(c)
 }
+
+@sample_status_events_table(c,events,startAtTabIndex+15)

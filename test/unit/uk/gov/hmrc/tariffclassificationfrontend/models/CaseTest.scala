@@ -141,7 +141,7 @@ class CaseTest extends UnitSpec with MockitoSugar with BeforeAndAfterAll {
     }
 
     "return true for Liability" in {
-      val c = aCase(withReference("reference"), withLiabilityApplication, withSample(Sample(status = Some(SampleStatus.AWAITING))))
+      val c = aCase(withReference("reference"), withLiabilityApplication(), withSample(Sample(status = Some(SampleStatus.AWAITING))))
 
       c.sampleToBeProvided shouldBe true
     }
@@ -155,7 +155,7 @@ class CaseTest extends UnitSpec with MockitoSugar with BeforeAndAfterAll {
     }
 
     "return true for Liability" in {
-      val c = aCase(withReference("reference"), withLiabilityApplication, withSample(Sample(returnStatus = Some(SampleReturn.YES))))
+      val c = aCase(withReference("reference"), withLiabilityApplication(), withSample(Sample(returnStatus = Some(SampleReturn.YES))))
 
       c.sampleToBeReturned shouldBe true
     }

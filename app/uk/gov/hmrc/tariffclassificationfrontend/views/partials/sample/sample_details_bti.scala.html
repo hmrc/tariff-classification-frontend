@@ -20,7 +20,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials._
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.sample.sample_status_events_table
 @import uk.gov.hmrc.tariffclassificationfrontend.models.SampleReturn
-@(c: Case, events: Paged[Event], startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(c: Case, startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @tab_heading("application", messages("case.menu.sample-details"))
 
@@ -75,6 +75,4 @@
     }
 
 </dl>
-
-@sample_status_events_table(c,events,startAtTabIndex+15)
 

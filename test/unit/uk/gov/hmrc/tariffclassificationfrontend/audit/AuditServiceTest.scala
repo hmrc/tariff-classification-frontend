@@ -344,6 +344,42 @@ class AuditServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEac
     }
   }
 
+  "Service 'audit sample status changed'" should {
+    val original = aCase(withReference("ref"), withSampleStatus(None))
+    val updated = aCase(withReference("ref"), withSampleStatus(Some(SampleStatus.AWAITING)))
+    val operator = Operator("operator-id")
+
+    "Delegate to connector" in {
+      service.auditSampleStatusChange(original, updated, operator)
+
+      val payload = sampleStatusChangeAudit(
+        caseReference = "ref",
+        newStatus = "AWAITING",
+        previousStatus = "None",
+        operatorId = operator.id
+      )
+      verify(connector).sendExplicitAudit(refEq("caseSampleStatusChange"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+    }
+  }
+
+  "Service 'audit sample return changed'" should {
+    val original = aCase(withReference("ref"))
+    val updated = aCase(withReference("ref"), withSample(Sample(returnStatus = Some(SampleReturn.YES))))
+    val operator = Operator("operator-id")
+
+    "Delegate to connector" in {
+      service.auditSampleReturnChange(original, updated, operator)
+
+      val payload = sampleReturnChangeAudit(
+        caseReference = "ref",
+        newStatus = "YES",
+        previousStatus = "None",
+        operatorId = operator.id
+      )
+      verify(connector).sendExplicitAudit(refEq("caseSampleReturnChange"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+    }
+  }
+
   private def caseChangeAudit(caseReference: String, newStatus: CaseStatus, previousStatus: CaseStatus, operatorId: String): Map[String, String] = {
     Map[String, String](
       "caseReference" -> caseReference,
@@ -399,4 +435,21 @@ class AuditServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEac
     )
   }
 
+  private def sampleStatusChangeAudit(caseReference: String, newStatus: String, previousStatus: String, operatorId: String): Map[String, String] = {
+    Map[String, String](
+      "caseReference" -> caseReference,
+      "operatorId" -> operatorId,
+      "newSampleStatus" -> newStatus,
+      "previousSampleStatus" -> previousStatus
+    )
+  }
+
+  private def sampleReturnChangeAudit(caseReference: String, newStatus: String, previousStatus: String, operatorId: String): Map[String, String] = {
+    Map[String, String](
+      "caseReference" -> caseReference,
+      "operatorId" -> operatorId,
+      "newSampleReturn" -> newStatus,
+      "previousSampleReturn" -> previousStatus
+    )
+  }
 }
