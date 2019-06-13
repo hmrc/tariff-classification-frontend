@@ -47,11 +47,13 @@
 
             <h3 class="heading-medium mt-0">@messages("case.liability.about.title") </h3>
 
-            <div id="edit-liability-details" class="grid-row  mb-2">
-                <span class="column-one-third">
-                    <a href="@routes.LiabilityController.editLiabilityDetails(c.reference)"> Edit details </a>
-                </span>
-            </div>
+            @if(c.status == CaseStatus.OPEN || c.status == CaseStatus.NEW) {
+                <div id="edit-liability-details" class="grid-row  mb-2">
+                    <span class="column-one-third">
+                        <a href="@routes.LiabilityController.editLiabilityDetails(c.reference)"> Edit details </a>
+                    </span>
+                </div>
+            }
 
             <div id="liability-entry-date" class="grid-row">
                 <dt class="column-one-third">
@@ -140,7 +142,7 @@
 
         <h3 class="heading-medium" id="liability-decision-heading">Liability decision details</h3>
 
-        @if(request.hasPermission(Permission.EDIT_RULING)) {
+        @if(c.status == CaseStatus.OPEN && request.hasPermission(Permission.EDIT_RULING)) {
             <a id="liability-decision-edit" href="@routes.RulingController.editRulingDetails(c.reference)">
                 Edit liability details
             </a>
@@ -200,7 +202,7 @@
                 </div>
             }
 
-            @if(request.hasPermission(Permission.COMPLETE_CASE)) {
+            @if(c.status == CaseStatus.OPEN && request.hasPermission(Permission.COMPLETE_CASE)) {
                 <h3 class="heading-medium" id="liability-complete-heading">Complete this liability decision</h3>
 
                 @if(liabilityForm.hasErrors) {

@@ -20,6 +20,7 @@ import org.mockito.BDDMockito._
 import org.scalatest.mockito.MockitoSugar
 import play.api.data.validation.{Constraint, Valid}
 import uk.gov.hmrc.tariffclassificationfrontend.forms.{CommodityCodeConstraints, DecisionForm, LiabilityDetailsForm}
+import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.CaseStatus
 import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, _}
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewSpec
@@ -34,25 +35,91 @@ class LiabilityDetailsViewSpec extends ViewSpec with MockitoSugar {
   "Liability Details" should {
     given(constraints.commodityCodeExistsInUKTradeTariff) willReturn Constraint[String]("code")(_ => Valid)
 
-    "Not render edit button if not permitted" in {
-      // Given
-      val c = aCase(
-        withStatus(CaseStatus.OPEN),
-        withLiabilityApplication()
-      )
-      val d = c.decision.getOrElse(Decision())
-      val l = c.application.asLiabilityOrder
+    "Not render edit details button" when {
+      for(status: CaseStatus <- CaseStatus.values.filterNot(_ == CaseStatus.OPEN).filterNot(_ == CaseStatus.NEW)) {
+        s"case is status $status" in {
+          // Given
+          val c = aCase(
+            withStatus(status),
+            withLiabilityApplication()
+          )
+          val d = c.decision.getOrElse(Decision())
+          val l = c.application.asLiabilityOrder
 
-      // When
-      val doc = view(
-        liability_details(c = c, liabilityForm = LiabilityDetailsForm.liabilityDetailsForm(l), decisionForm = form.liabilityCompleteForm(d)
-        )(requestWithPermissions(), messages, appConfig))
+          // When
+          val doc = view(
+            liability_details(c = c, liabilityForm = LiabilityDetailsForm.liabilityDetailsForm(l), decisionForm = form.liabilityCompleteForm(d)
+            )(requestWithPermissions(), messages, appConfig))
 
-      // Then
-      doc shouldNot containElementWithID("liability-decision-edit")
+          // Then
+          doc shouldNot containElementWithID("edit-liability-details")
+        }
+      }
     }
 
-    "Render edit button if permitted" in {
+    "Render edit details button" when {
+      for (status: CaseStatus <- Set(CaseStatus.OPEN, CaseStatus.NEW)) {
+        s"Case status is $status" in {
+          // Given
+          val c = aCase(
+            withStatus(CaseStatus.OPEN),
+            withLiabilityApplication()
+          )
+          val d = c.decision.getOrElse(Decision())
+          val l = c.application.asLiabilityOrder
+
+          // When
+          val doc = view(
+            liability_details(c = c, liabilityForm = LiabilityDetailsForm.liabilityDetailsForm(l), decisionForm = form.liabilityCompleteForm(d)
+            )(requestWithPermissions(Permission.EDIT_RULING), messages, appConfig))
+
+          // Then
+          doc should containElementWithID("edit-liability-details")
+        }
+      }
+    }
+
+    "Not render edit decision button" when {
+      "Not permitted" in {
+        // Given
+        val c = aCase(
+          withStatus(CaseStatus.OPEN),
+          withLiabilityApplication()
+        )
+        val d = c.decision.getOrElse(Decision())
+        val l = c.application.asLiabilityOrder
+
+        // When
+        val doc = view(
+          liability_details(c = c, liabilityForm = LiabilityDetailsForm.liabilityDetailsForm(l), decisionForm = form.liabilityCompleteForm(d)
+          )(requestWithPermissions(), messages, appConfig))
+
+        // Then
+        doc shouldNot containElementWithID("liability-decision-edit")
+      }
+
+      for(status: CaseStatus <- CaseStatus.values.filterNot(_ == CaseStatus.OPEN)) {
+        s"Case is status $status" in {
+          // Given
+          val c = aCase(
+            withStatus(status),
+            withLiabilityApplication()
+          )
+          val d = c.decision.getOrElse(Decision())
+          val l = c.application.asLiabilityOrder
+
+          // When
+          val doc = view(
+            liability_details(c = c, liabilityForm = LiabilityDetailsForm.liabilityDetailsForm(l), decisionForm = form.liabilityCompleteForm(d)
+            )(requestWithPermissions(), messages, appConfig))
+
+          // Then
+          doc shouldNot containElementWithID("liability-decision-edit")
+        }
+      }
+    }
+
+    "Render edit decision button if permitted" in {
       // Given
       val c = aCase(
         withStatus(CaseStatus.OPEN),
@@ -120,6 +187,33 @@ class LiabilityDetailsViewSpec extends ViewSpec with MockitoSugar {
     }
 
     "Disallow Case completion" when {
+
+      for(status: CaseStatus <- CaseStatus.values.filterNot(_ == CaseStatus.OPEN)) {
+        s"Case status is $status" in {
+          val c = aCase(
+            withStatus(status),
+            withLiabilityApplication(),
+            withDecision(
+              bindingCommodityCode = "code",
+              justification = "",
+              goodsDescription = "",
+              methodSearch = None,
+              methodExclusion = None
+            )
+          )
+          val d = c.decision.getOrElse(Decision())
+          val l = c.application.asLiabilityOrder
+
+          // When
+          val doc = view(
+            liability_details(c = c, liabilityForm = LiabilityDetailsForm.liabilityDetailsCompleteForm(l), decisionForm = form.liabilityCompleteForm(d)
+            )(requestWithPermissions(), messages, appConfig))
+
+          doc shouldNot containElementWithID("liability-complete-heading")
+          doc shouldNot containElementWithID("liability-complete-button")
+        }
+      }
+
       "User is not permitted" in {
         val c = aCase(
           withStatus(CaseStatus.OPEN),
