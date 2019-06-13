@@ -51,7 +51,7 @@ class ReportingServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfte
         filter = CaseReportFilter(
           decisionStartDate = Some(dateRange), applicationType = Some(Set("BTI"))
         ),
-        group = CaseReportGroup.QUEUE,
+        group = Set(CaseReportGroup.QUEUE),
         field = CaseReportField.ACTIVE_DAYS_ELAPSED
       )
     }
@@ -65,7 +65,7 @@ class ReportingServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfte
         filter = CaseReportFilter(
           status = Some(Set("NEW", "OPEN", "REFERRED", "SUSPENDED")), assigneeId = Some("none")
         ),
-        group = CaseReportGroup.QUEUE,
+        group = Set(CaseReportGroup.QUEUE, CaseReportGroup.APPLICATION_TYPE),
         field = CaseReportField.ACTIVE_DAYS_ELAPSED
       )
     }
@@ -80,7 +80,7 @@ class ReportingServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfte
         filter = CaseReportFilter(
           referralDate = Some(dateRange), applicationType = Some(Set("BTI"))
         ),
-        group = CaseReportGroup.QUEUE,
+        group = Set(CaseReportGroup.QUEUE),
         field = CaseReportField.REFERRED_DAYS_ELAPSED
       )
     }

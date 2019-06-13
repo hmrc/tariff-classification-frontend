@@ -23,7 +23,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.CaseReportGroup.CaseRepor
 case class CaseReport
 (
   filter: CaseReportFilter,
-  group: CaseReportGroup,
+  group: Set[CaseReportGroup],
   field: CaseReportField
 )
 
@@ -39,7 +39,7 @@ object CaseReport {
       implicit val rp: Map[String, Seq[String]] = requestParams
 
       val filter: CaseReportFilter = filterBinder.bind("", requestParams).get.right.get
-      val group: Option[CaseReportGroup] = param(reportGroupKey).flatMap(bindCaseReportGroup)
+      val group: Option[Set[CaseReportGroup]] = params(reportGroupKey).map(_.map(bindCaseReportGroup).filter(_.isDefined).map(_.get))
       val field: Option[CaseReportField] = param(reportFieldKey).flatMap(bindCaseReportField)
 
       (group, field) match {
@@ -53,7 +53,7 @@ object CaseReport {
     override def unbind(key: String, report: CaseReport): String = {
       Seq(
         filterBinder.unbind("", report.filter),
-        stringBinder.unbind(reportGroupKey, report.group.toString),
+        stringBinder.unbind(reportGroupKey, report.group.mkString(",").toString),
         stringBinder.unbind(reportFieldKey, report.field.toString)
       ).filter(_.nonEmpty).mkString("&")
     }

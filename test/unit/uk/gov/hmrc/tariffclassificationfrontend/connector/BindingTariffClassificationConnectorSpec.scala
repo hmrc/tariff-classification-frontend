@@ -107,6 +107,23 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
           .withHeader("X-Api-Token", equalTo(realConfig.apiToken))
       )
     }
+
+    "get cases for liability version of 'other' queue" in {
+      val url = buildQueryUrl(types = Seq(ApplicationType.LIABILITY_ORDER),withStatuses = "NEW,OPEN,REFERRED,SUSPENDED", queueId = "2", assigneeId = "none", pag =  TestPagination())
+
+      stubFor(get(urlEqualTo(url))
+        .willReturn(aResponse()
+          .withStatus(HttpStatus.SC_OK)
+          .withBody(CasePayloads.pagedGatewayCases))
+      )
+
+      await(connector.findCasesByQueue(otherQueue, pagination,Seq(ApplicationType.LIABILITY_ORDER))) shouldBe Paged(Seq(Cases.btiCaseExample))
+
+      verify(
+        getRequestedFor(urlEqualTo(url))
+          .withHeader("X-Api-Token", equalTo(realConfig.apiToken))
+      )
+    }
   }
 
   "Connector 'Get One'" should {
@@ -566,11 +583,11 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
           max = Instant.EPOCH.plusSeconds(1)
         ))
       ),
-      group = CaseReportGroup.QUEUE,
+      group = Set(CaseReportGroup.QUEUE),
       field = CaseReportField.ACTIVE_DAYS_ELAPSED
     )
 
-    val result = ReportResult(Some("queue-id"), Seq(1))
+    val result = ReportResult(Map(CaseReportGroup.QUEUE -> Some("queue-id")), Seq(1))
 
     "GET report " in {
       val url = "/report?min_decision_start=1970-01-01T00%3A00%3A00Z&max_decision_start=1970-01-01T00%3A00%3A01Z&report_group=queue-id&report_field=active-days-elapsed"

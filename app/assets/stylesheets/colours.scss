@@ -3,7 +3,8 @@ $blue: #005EA5;
 $white: #FFF;
 $black: #0b0c0c;
 $gray: #dee0e2;
-$gray-dark: #6F777B;
+$gray-dark: #BFC1C3;
+$gray-very-dark: #6F777B;
 
 
 .text-red {
@@ -36,7 +37,8 @@ $gray-dark: #6F777B;
 
 a.button-gray, button.button-gray, .button-gray:visited {
   background-color: $gray;
-  color: $black;
+  color: $black !important;
+  box-shadow: 0 2px 0 $gray-very-dark;
 
   &:hover, &:focus {
     background-color: $gray-dark;
