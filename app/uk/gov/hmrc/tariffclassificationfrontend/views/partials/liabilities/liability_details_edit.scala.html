@@ -56,24 +56,28 @@
                     dayField = form("entryDate.day"),
                     monthField = form("entryDate.month"),
                     yearField = form("entryDate.year"),
+                    hint = Some(messages("case.liability.edit.entry.date.hint")),
                     legend = messages("case.liability.edit.entry.date")
                 )
 
                 @input_text(
                     field = form("entryNumber"),
                     label = messages("case.liability.edit.entry-number"),
+                    inputClass = Some("width-one-half"),
                     disableAutoComplete = true
                 )
 
                 @input_text(
                     field = form("traderName"),
                     label = messages("case.liability.edit.trader-name"),
+                    inputClass = Some("width-one-half"),
                     disableAutoComplete = true
                 )
 
                 @input_text(
                     field = form("goodName"),
                     label = messages("case.liability.edit.item-name"),
+                    inputClass = Some("width-one-half"),
                     disableAutoComplete = true
                 )
 
@@ -82,12 +86,14 @@
                 @input_text(
                     field = form("traderCommodityCode"),
                     label = messages("case.liability.edit.commodity-code.trader"),
+                    inputClass = Some("width-one-half"),
                     disableAutoComplete = true
                 )
 
                 @input_text(
                     field = form("officerCommodityCode"),
                     label = messages("case.liability.edit.commodity-code.officer"),
+                    inputClass = Some("width-one-half"),
                     disableAutoComplete = true
                 )
 
@@ -96,18 +102,21 @@
                 @input_text(
                     field = form("contactName"),
                     label = messages("case.liability.edit.contact.name"),
+                    inputClass = Some("width-one-half"),
                     disableAutoComplete = true
                 )
 
                 @input_text(
                     field = form("contactEmail"),
                     label = messages("case.liability.edit.contact.email"),
+                    inputClass = Some("width-one-half"),
                     disableAutoComplete = true
                 )
 
                 @input_text(
                     field = form("contactPhone"),
                     label = messages("case.liability.edit.contact.phone"),
+                    inputClass = Some("width-one-half"),
                     disableAutoComplete = true
                 )
 

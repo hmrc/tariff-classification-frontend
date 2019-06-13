@@ -26,14 +26,14 @@
         startAtTabIndex : Option[Int] = None
 )(implicit messages: Messages)
 
-@input_date_component(field: Field, label: String, tabIndex : Option[Int]) = {
-    <div class="w-30 pr-15 display-inline">
+@input_date_component(field: Field, label: String, tabIndex : Option[Int], dateClass : Option[String] = None) = {
+    <div class="pr-15 display-inline">
         <label class="form-label" for="@{field.id}">
             <span class="bold">@label</span>
         </label>
         <div class="form-control-wrapper @formControlClass">
             <input
-            class="form-control w-100 @inputClass"
+            class="form-control @dateClass"
             type="number"
             autocomplete="off"
             id="@{field.id}"
@@ -51,7 +51,7 @@
 <div class="form-group @if(dayField.hasErrors || monthField.hasErrors || yearField.hasErrors){form-group-error}">
     <fieldset class="inline">
         <legend>
-            <h1 class="heading-small">
+            <h1 class="@labelClass">
                 @legend
             </h1>
         </legend>
@@ -64,9 +64,9 @@
             <span class="error-message" id="error-message-date-input">The date must be valid</span>
         }
 
-        @input_date_component(dayField, "Day",startAtTabIndex.map(v => v+1))
-        @input_date_component(monthField, "Month",startAtTabIndex.map(v => v+2))
-        @input_date_component(yearField, "Year",startAtTabIndex.map(v => v+3))
+        @input_date_component(dayField, "Day",startAtTabIndex.map(v => v+1), dateClass = Some("width-3em"))
+        @input_date_component(monthField, "Month",startAtTabIndex.map(v => v+2), dateClass = Some("width-3em"))
+        @input_date_component(yearField, "Year",startAtTabIndex.map(v => v+3), dateClass = Some("width-6em"))
 
     </fieldset>
 </div>
