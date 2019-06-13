@@ -28,7 +28,7 @@ object CasePayloads {
   val gatewayCases: String = jsonOf(Seq(Cases.btiCaseExample))
   val pagedGatewayCases: String = jsonOf(Paged(Seq(Cases.btiCaseExample), NoPagination(), 1))
   val pagedAssignedCases: String = jsonOf(Paged(Seq(Cases.caseAssignedExample), NoPagination(), 1))
-  val report: String = jsonOfReport(Seq(ReportResult(Some("test-report"), Seq(1,2))))
+  val report: String = jsonOfReport(Seq(ReportResult(Map(CaseReportGroup.QUEUE -> Some("test-report")), Seq(1,2))))
   val reportEmpty: String = jsonOfReport(Seq.empty)
   val pagedEmpty: String = jsonOf(Paged.empty[Case])
 

@@ -20,9 +20,31 @@ import uk.gov.hmrc.tariffclassificationfrontend.views.CaseDetailPage.{CaseDetail
 
 object TabIndexes {
 
-  private val indexByPage: Map[CaseDetailPage, Int] = Map(TRADER -> 1000, LIABILITY -> 2000 , APPLICATION_DETAILS -> 2000, SAMPLE_DETAILS -> 3000, ATTACHMENTS -> 4000,
-    ACTIVITY -> 5000, KEYWORDS -> 6000, RULING -> 7000, APPEAL -> 8000)
+  private val indexByPage: Map[CaseDetailPage, Int] = Map(TRADER -> 1000, LIABILITY -> 2000 , APPLICATION_DETAILS -> 2000, SAMPLE_DETAILS -> 3000,
+    ATTACHMENTS -> 4000, ACTIVITY -> 5000, KEYWORDS -> 6000, RULING -> 7000, APPEAL -> 8000)
 
   def tabIndexFor: CaseDetailPage => Int = { page => indexByPage.getOrElse(page, 0) }
+
+  private val tabIncrement = 1000
+  private val nextQueueIndex = { var i = 0; () => { i += tabIncrement; i} }
+
+  private val fixedQueues: Map[String, Int] = Map("my-cases" -> nextQueueIndex(), Queues.gateway.slug -> nextQueueIndex())
+
+  private val dynamicQueues: Map[String, Int] = Queues.allDynamicQueues.map(q => q.slug -> nextQueueIndex()).toMap ++
+                                    Queues.allDynamicQueues.map(q => s"${q.slug}-liability" -> nextQueueIndex()).toMap
+
+  private val reportingQueues: Map[String,Int] = Map("assigned-cases" -> nextQueueIndex(), "reports" -> nextQueueIndex())
+
+  private val indexByQueues: Map[String, Int] = fixedQueues ++ dynamicQueues ++ reportingQueues
+
+  def tabIndexForQueue: String => Int = { page => indexByQueues.getOrElse(page, 0) }
+
+  def tabIndexForQueue(slug: String, filteredBy: String) : Int = {
+    filteredBy match {
+      case "LIABILITY_ORDER" => indexByQueues.getOrElse(s"$slug-liability", 0)
+      case _ => indexByQueues.getOrElse(slug, 0)
+    }
+
+  }
 
 }

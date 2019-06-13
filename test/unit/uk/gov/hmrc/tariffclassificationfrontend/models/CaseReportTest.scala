@@ -38,7 +38,7 @@ class CaseReportTest extends UnitSpec {
       applicationType = Some(Set("BTI"))
     ),
     field = CaseReportField.ACTIVE_DAYS_ELAPSED,
-    group = CaseReportGroup.QUEUE
+    group = Set(CaseReportGroup.QUEUE)
   )
 
   private val params: Map[String, Seq[String]] = Map(

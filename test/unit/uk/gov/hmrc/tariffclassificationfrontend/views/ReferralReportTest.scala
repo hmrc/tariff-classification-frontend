@@ -17,7 +17,7 @@
 package uk.gov.hmrc.tariffclassificationfrontend.views
 
 import uk.gov.hmrc.play.test.UnitSpec
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Queue, ReportResult}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseReportGroup, Queue, ReportResult}
 
 class ReferralReportTest extends UnitSpec {
 
@@ -27,8 +27,8 @@ class ReferralReportTest extends UnitSpec {
 
     val report = new ReferralReport(
       Seq(
-        ReportResult(Some("id1"), Seq(1, 2, 3)),
-        ReportResult(Some("id2"), Seq(4, 5))
+        ReportResult(Map(CaseReportGroup.QUEUE -> Some("id1")), Seq(1, 2, 3)),
+        ReportResult(Map(CaseReportGroup.QUEUE -> Some("id2")), Seq(4, 5))
       )
     )
 

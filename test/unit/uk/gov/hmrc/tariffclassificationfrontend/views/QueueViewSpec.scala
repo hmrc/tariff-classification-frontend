@@ -33,7 +33,7 @@ class QueueViewSpec extends ViewSpec {
       val queues = Seq(queue1, queue2)
 
       // When
-      val doc = view(html.queue(queues, queue1, Map.empty, Paged.empty[Case])(request = requestWithPermissions(Permission.CREATE_CASES), messages, appConfig))
+      val doc = view(html.queue(queues, queue1, Map.empty, Paged.empty[Case], "BTI,LIABILITY_ORDER")(request = requestWithPermissions(Permission.CREATE_CASES), messages, appConfig))
 
       // Then
       doc should containElementWithID("create_liability-button")
@@ -44,7 +44,7 @@ class QueueViewSpec extends ViewSpec {
       val queues = Seq(queue1, queue2)
 
       // When
-      val doc = view(html.queue(queues, queue1, Map.empty, Paged.empty[Case])(request = requestWithPermissions(), messages, appConfig))
+      val doc = view(html.queue(queues, queue1, Map.empty, Paged.empty[Case], "BTI,LIABILITY_ORDER")(request = requestWithPermissions(), messages, appConfig))
 
       // Then
       doc should not (containElementWithID("create_liability-button"))
@@ -56,7 +56,7 @@ class QueueViewSpec extends ViewSpec {
       val queues = Seq(queue1, queue2)
 
       // When
-      val doc = view(html.queue(queues, queue1, Map.empty, Paged.empty[Case])(request = requestWithPermissions(Permission.VIEW_QUEUE_CASES, Permission.VIEW_MY_CASES), messages, appConfig))
+      val doc = view(html.queue(queues, queue1, Map.empty, Paged.empty[Case], "BTI,LIABILITY_ORDER")(request = requestWithPermissions(Permission.VIEW_QUEUE_CASES, Permission.VIEW_MY_CASES), messages, appConfig))
 
       // Then
       doc should containElementWithID("queue-navigation")
@@ -78,7 +78,7 @@ class QueueViewSpec extends ViewSpec {
       val cases = Seq(case1)
 
       // When
-      val doc = view(html.queue(queues, queue1, Map.empty, Paged(cases))(request = requestWithPermissions(Permission.VIEW_QUEUE_CASES, Permission.VIEW_MY_CASES), messages, appConfig))
+      val doc = view(html.queue(queues, queue1, Map.empty, Paged(cases), "BTI,LIABILITY_ORDER")(request = requestWithPermissions(Permission.VIEW_QUEUE_CASES, Permission.VIEW_MY_CASES), messages, appConfig))
 
       // Then
       doc should containElementWithID("queue-navigation")
@@ -102,12 +102,13 @@ class QueueViewSpec extends ViewSpec {
       val cases = Seq(case1,liabCase)
 
       // When
-      val doc = view(html.queue(queues, queue1, Map.empty, Paged(cases))(request = requestWithPermissions(Permission.VIEW_QUEUE_CASES, Permission.VIEW_MY_CASES), messages, appConfig))
+      val doc = view(html.queue(queues, queue1, Map.empty, Paged(cases), "BTI,LIABILITY_ORDER")(request = requestWithPermissions(Permission.VIEW_QUEUE_CASES, Permission.VIEW_MY_CASES), messages, appConfig))
 
       // Then
       doc.getElementById("cases_list-row-0-type") should containText("BTI")
       doc.getElementById("cases_list-row-1-type") should containText("Liability")
     }
+
   }
 
 }
