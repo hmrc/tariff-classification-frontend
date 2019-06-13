@@ -37,17 +37,17 @@
             @if(c.caseBoardsFileNumber.isDefined) {
                 <div id="case-board-number" class="grid-row">
                     <dt class="column-one-third">
-                    @messages("case.liability.caseBoardNumber")
+                        @messages("case.liability.caseBoardNumber")
                     </dt>
                     <dd class="column-two-thirds">
-                    @c.caseBoardsFileNumber
+                        @c.caseBoardsFileNumber
                     </dd>
                 </div>
             }
 
             <h3 class="heading-medium mt-0">@messages("case.liability.about.title") </h3>
 
-            @if(c.status == CaseStatus.OPEN || c.status == CaseStatus.NEW && request.hasPermission(Permission.EDIT_LIABILITY)) {
+            @if(c.status == CaseStatus.NEW || (c.status == CaseStatus.OPEN && request.hasPermission(Permission.EDIT_LIABILITY))) {
                 <div id="edit-liability-details" class="grid-row  mb-2">
                     <span class="column-one-third">
                         <a href="@routes.LiabilityController.editLiabilityDetails(c.reference)"> Edit details </a>
@@ -138,7 +138,7 @@
 
         @liability_actions(c, startAtTabIndex)
 
-        @if(c.status == CaseStatus.OPEN || c.decision.isDefined) {
+        @if((c.status == CaseStatus.OPEN && request.hasPermission(Permission.EDIT_RULING)) || c.decision.isDefined) {
             <hr class="mt-0 mb-0">
 
             <h3 class="heading-medium" id="liability-decision-heading">Liability decision details</h3>
