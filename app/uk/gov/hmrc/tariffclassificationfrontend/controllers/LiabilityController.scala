@@ -23,12 +23,10 @@ import play.api.mvc._
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionForm
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Decision}
-import uk.gov.hmrc.tariffclassificationfrontend.forms.LiabilityDetailsForm
+import uk.gov.hmrc.tariffclassificationfrontend.forms.{DecisionForm, LiabilityDetailsForm}
 import uk.gov.hmrc.tariffclassificationfrontend.models.TabIndexes.tabIndexFor
-import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedCaseRequest
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Decision, _}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
 import uk.gov.hmrc.tariffclassificationfrontend.views.CaseDetailPage.{CaseDetailPage, LIABILITY}
@@ -71,7 +69,6 @@ class LiabilityController @Inject()(verify: RequestActions,
   def postLiabilityDetails(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
     LiabilityDetailsForm.liabilityDetailsForm(request.`case`.application.asLiabilityOrder).bindFromRequest.fold(
       errorForm => successful(Ok(liability_details_edit(request.`case`, errorForm))),
-
       updatedLiability => getCaseAndRedirect(menuTitle, c =>
         for {
           update <- casesService.updateCase(c.copy(application = updatedLiability))
@@ -88,11 +85,7 @@ class LiabilityController @Inject()(verify: RequestActions,
 
   private def getCaseAndRedirect(page: CaseDetailPage, toResult: Case => Future[Call])
                                 (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
-    if (request.`case`.status == CaseStatus.OPEN) {
-      toResult(request.`case`).map(Redirect)
-    } else {
-      successful(Redirect(routes.LiabilityController.liabilityDetails(request.`case`.reference)))
-    }
+    toResult(request.`case`).map(Redirect)
   }
 
 }
