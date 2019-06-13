@@ -200,31 +200,33 @@
                 </div>
             }
 
-            <h3 class="heading-medium" id="liability-complete-heading">Complete this liability decision</h3>
+            @if(request.hasPermission(Permission.COMPLETE_CASE)) {
+                <h3 class="heading-medium" id="liability-complete-heading">Complete this liability decision</h3>
 
-            @if(liabilityForm.hasErrors) {
-                <h4 class="heading-small" id="liability-complete_details-heading">Liability details</h4>
-                <p>You need to enter:</p>
-                <ul class="list list-bullet">
-                @for(err: String <- liabilityForm.errors.map(_.key)) {
-                    <li><span id="constraint-@err">@messages("case.liability." + err)</span></li>
+                @if(liabilityForm.hasErrors) {
+                    <h4 class="heading-small" id="liability-complete_details-heading">Liability details</h4>
+                    <p>You need to enter:</p>
+                    <ul class="list list-bullet">
+                    @for(err: String <- liabilityForm.errors.map(_.key)) {
+                        <li><span id="constraint-@err">@messages("case.liability." + err)</span></li>
+                    }
+                    </ul>
                 }
-                </ul>
-            }
 
-            @if(decisionForm.hasErrors) {
-                <h4 class="heading-small mt-4" id="liability-complete_decision-heading">Liability decision</h4>
-                <p>You need to enter:</p>
-                <ul class="list list-bullet">
-                @for(err: String <- decisionForm.errors.map(_.key)) {
-                    <li><span id="constraint-@err">@messages("case.liability.decision." + err)</span></li>
+                @if(decisionForm.hasErrors) {
+                    <h4 class="heading-small mt-4" id="liability-complete_decision-heading">Liability decision</h4>
+                    <p>You need to enter:</p>
+                    <ul class="list list-bullet">
+                    @for(err: String <- decisionForm.errors.map(_.key)) {
+                        <li><span id="constraint-@err">@messages("case.liability.decision." + err)</span></li>
+                    }
+                    </ul>
                 }
-                </ul>
-            }
 
-            <a tabindex="@startAtTabIndex" id="liability-complete-button"  class="button"  @if(liabilityForm.hasErrors || decisionForm.hasErrors) { disabled="disabled" }else{ href="@routes.CompleteCaseController.completeCase(c.reference)"}>
-                Complete case
-            </a>
+                <a tabindex="@startAtTabIndex" id="liability-complete-button"  class="button"  @if(liabilityForm.hasErrors || decisionForm.hasErrors) { disabled="disabled" }else{ href="@routes.CompleteCaseController.completeCase(c.reference)"}>
+                    Complete case
+                </a>
+            }
         }
 
     }
