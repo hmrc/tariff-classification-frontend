@@ -22,7 +22,6 @@ import org.mockito.BDDMockito.given
 import org.mockito.Mockito.{never, reset, verify}
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterEach, Matchers}
-import play.api.data.Form
 import play.api.data.validation.{Constraint, Valid}
 import play.api.http.Status
 import play.api.i18n.{DefaultLangs, DefaultMessagesApi}

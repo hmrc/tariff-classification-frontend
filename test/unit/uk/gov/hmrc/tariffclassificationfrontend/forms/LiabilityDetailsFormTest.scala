@@ -1,3 +1,19 @@
+/*
+ * Copyright 2019 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package uk.gov.hmrc.tariffclassificationfrontend.forms
 
 import java.time.Instant
@@ -8,7 +24,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.{Contact, LiabilityOrder,
 class LiabilityDetailsFormTest extends UnitSpec {
 
   private val liability = LiabilityOrder(
-    Contact(name = "contact-name", email = "contact-email", Some("contact-phone")),
+    Contact(name = "contact-name", email = "contact@email.com", Some("contact-phone")),
     status = LiabilityStatus.LIVE,
     traderName = "trader-name",
     goodName = Some("good-name"),
@@ -20,7 +36,7 @@ class LiabilityDetailsFormTest extends UnitSpec {
 
   private val params = Map(
     "contactName" -> Seq("contact-name"),
-    "contactEmail" -> Seq("contact-email"),
+    "contactEmail" -> Seq("contact@email.com"),
     "contactPhone" -> Seq("contact-phone"),
     "traderName" -> Seq("trader-name"),
     "goodName" -> Seq("good-name"),
@@ -33,24 +49,6 @@ class LiabilityDetailsFormTest extends UnitSpec {
   )
 
   "Bind from request" should {
-    "Bind empty" when {
-      "using edit form" in {
-        val form = LiabilityDetailsForm.liabilityDetailsForm(liability).bindFromRequest(Map())
-
-        form.hasErrors shouldBe true
-        form.errors should have(size(3))
-        form.errors.map(_.key) shouldBe Seq("traderName", "contactName", "contactEmail")
-      }
-
-      "using complete form" in {
-        val form = LiabilityDetailsForm.liabilityDetailsCompleteForm(liability).bindFromRequest(Map())
-
-        form.hasErrors shouldBe true
-        form.errors should have(size(9))
-        form.errors.map(_.key) shouldBe Seq("entryDate", "traderName", "goodName", "entryNumber", "traderCommodityCode", "officerCommodityCode", "contactName", "contactEmail", "contactPhone")
-      }
-    }
-
     "Bind blank" when {
       "using edit form" in {
         val form = LiabilityDetailsForm.liabilityDetailsForm(liability).bindFromRequest(params.mapValues(_ => Seq("")))
