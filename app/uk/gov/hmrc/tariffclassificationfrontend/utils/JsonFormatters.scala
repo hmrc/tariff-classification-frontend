@@ -30,11 +30,6 @@ object JsonFormatters {
 
   case class Something(value: String)
 
-  implicit val formatSomething = Json.format[Something]
-
-  Json.toJson(Something(""))
-  Json.toJson(Map[String, Option[String]]("" -> Some("")))
-
   implicit val role: Format[Role] = EnumJson.format(Role)
   implicit val liabilityStatus: Format[LiabilityStatus] = EnumJson.format(LiabilityStatus)
   implicit val permission: Format[Permission] = EnumJson.format(Permission)
