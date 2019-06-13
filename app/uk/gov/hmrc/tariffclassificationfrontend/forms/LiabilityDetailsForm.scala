@@ -48,7 +48,7 @@ object LiabilityDetailsForm {
 
   private val emailRegex = """^[a-zA-Z0-9\.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$""".r
 
-  private def validEmailFormat(email: String): Boolean = email.trim.isEmpty || emailRegex.findFirstMatchIn(email.trim).isEmpty
+  private def validEmailFormat(email: String): Boolean = email.trim.isEmpty || emailRegex.findFirstMatchIn(email.trim).nonEmpty
 
   private def form2Liability(existingLiability: LiabilityOrder): (Option[Instant], String, Option[String], Option[String], Option[String], Option[String], String, String, Option[String]) => LiabilityOrder = {
     case (entryDate, traderName, goodName, entryNumber, traderCommodityCode, officerCommodityCode, contactName, contactEmail, contactPhone) =>
