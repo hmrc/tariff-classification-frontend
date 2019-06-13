@@ -23,7 +23,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.forms.{CommodityCodeConstraints,
 import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, _}
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewSpec
-import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.liability_details
+import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.liabilities.liability_details
 import uk.gov.tariffclassificationfrontend.utils.Cases._
 
 class LiabilityDetailsViewSpec extends ViewSpec with MockitoSugar {
