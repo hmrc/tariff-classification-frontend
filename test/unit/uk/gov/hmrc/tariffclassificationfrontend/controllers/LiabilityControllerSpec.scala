@@ -22,6 +22,8 @@ import org.mockito.BDDMockito.given
 import org.mockito.Mockito.{never, reset, verify}
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterEach, Matchers}
+import play.api.data.Form
+import play.api.data.validation.{Constraint, Valid}
 import play.api.http.Status
 import play.api.i18n.{DefaultLangs, DefaultMessagesApi}
 import play.api.mvc.{AnyContent, Request, Result}
@@ -30,7 +32,7 @@ import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionForm
+import uk.gov.hmrc.tariffclassificationfrontend.forms.{CommodityCodeConstraints, DecisionForm}
 import uk.gov.hmrc.tariffclassificationfrontend.models.Permission.Permission
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
@@ -41,7 +43,8 @@ import scala.concurrent.Future
 
 class LiabilityControllerSpec extends UnitSpec with Matchers with BeforeAndAfterEach with WithFakeApplication with MockitoSugar with ControllerCommons {
 
-  private val decisionForm = mock[DecisionForm]
+  private val commodityCodeConstraints = mock[CommodityCodeConstraints]
+  private val decisionForm = new DecisionForm(commodityCodeConstraints)
   private val env = Environment.simple()
   private val configuration = Configuration.load(env)
   private val messageApi = new DefaultMessagesApi(env, configuration, new DefaultLangs(configuration))
@@ -72,7 +75,7 @@ class LiabilityControllerSpec extends UnitSpec with Matchers with BeforeAndAfter
     }
 
     "return 200 OK and HTML content type" in {
-      given(decisionForm.liabilityCompleteForm(any[Decision])).willReturn(null)
+      given(commodityCodeConstraints.commodityCodeExistsInUKTradeTariff).willReturn(Constraint[String]("error")(_ => Valid))
 
       val request = newFakeGETRequestWithCSRF(fakeApplication)
       val result = await(controller(Set(Permission.VIEW_CASES)).liabilityDetails("ref")(request))
@@ -137,7 +140,9 @@ class LiabilityControllerSpec extends UnitSpec with Matchers with BeforeAndAfter
     )
 
     "update and redirect to liability view for permitted user" in {
+      given(commodityCodeConstraints.commodityCodeExistsInUKTradeTariff).willReturn(Constraint[String]("error")(_ => Valid))
       given(casesService.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(updatedCase))
+
       val result = await(controller(Set(Permission.VIEW_CASES)).postLiabilityDetails("reference")(validReq))
       verify(casesService).updateCase(any[Case])(any[HeaderCarrier])
       status(result) shouldBe Status.SEE_OTHER

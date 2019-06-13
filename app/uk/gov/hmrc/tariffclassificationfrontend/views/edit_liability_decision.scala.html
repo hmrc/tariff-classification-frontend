@@ -41,29 +41,29 @@
 
         @input_text(
             field = form("bindingCommodityCode"),
-            label = "Commodity code",
+            label = messages("case.liability.decision.bindingCommodityCode"),
             hint = Some("This is the commodity code that you think should be used by the importer."),
             formControlClass = Some("w-50")
         )
 
         @input_textarea(
             field = form("goodsDescription"),
-            label = "Item description"
+            label = messages("case.liability.decision.goodsDescription")
         )
 
         @input_textarea(
             field = form("justification"),
-            label = "Justification"
+            label = messages("case.liability.decision.justification")
         )
 
         @input_textarea(
             field = form("methodSearch"),
-            label = "Searches performed"
+            label = messages("case.liability.decision.methodSearch")
         )
 
         @input_textarea(
             field = form("methodExclusion"),
-            label = "Exclusions, inclusions and comments"
+            label = messages("case.liability.decision.methodExclusion")
         )
 
         @confirm_or_cancel_buttons(
