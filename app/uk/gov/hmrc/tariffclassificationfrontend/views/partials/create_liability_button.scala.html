@@ -21,7 +21,7 @@
 @(clazz: String = "")(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @if(request.hasPermission(Permission.CREATE_CASES)) {
- <a tabindex="300" class="button button-arrow button-gray @clazz" id="create_liability-button" href="@CreateLiabilityController.get()">
+ <a tabindex="300" class="button button-gray @clazz" id="create_liability-button" href="@CreateLiabilityController.get()">
   Create new liability
  </a>
 }
