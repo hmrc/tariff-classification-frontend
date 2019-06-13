@@ -158,7 +158,10 @@ case.sample.return.none-selected=Select a sample return
 
 case.liability.sending.sample.change-return-confirm=Continue
 case.liability.sending.sample.change-return-cancel=Cancel
-case.liability.sending.sample.change-return-header=Is the applicant sending a sample?
+case.liability.sending.sample.change-return-header=Is a sample being sent?
+
+case.liability.provide-samples=Is a sample being sent?
+case.liability.returning-samples=Does the sample need to be returned?
 
 case.liability.about.title = Information about this liability from the C592
 case.liability.commodity.code.info = Commodity code information

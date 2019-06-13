@@ -107,20 +107,6 @@ class CasesService @Inject()(appConfig: AppConfig,
     } yield updated
   }
 
-  def updateLiabilitySample(original: Case, sending: Option[LiabilitySample], operator: Operator)
-                        (implicit hc: HeaderCarrier): Future[Case] = {
-    def sample = sending match {
-      case Some(LiabilitySample.SENDING) => Sample(status = Some(SampleStatus.AWAITING))
-      case _ => Sample()
-    }
-    for {
-      updated <- connector.updateCase(original.copy(sample = sample))
-      _ <- addLiabilitySampleChangeEvent(original, updated, operator)
-      _ = auditService.auditLiabilitySampleChange(original, updated, operator)
-    } yield updated
-  }
-
-
   def assignCase(original: Case, operator: Operator)
                 (implicit hc: HeaderCarrier): Future[Case] = {
     for {
@@ -386,16 +372,6 @@ class CasesService @Inject()(appConfig: AppConfig,
   private def addSampleStatusChangeEvent(original: Case, updated: Case, operator: Operator, comment: Option[String] = None)
                                            (implicit hc: HeaderCarrier): Future[Unit] = {
     val details = SampleStatusChange(original.sample.status, updated.sample.status, comment)
-    addEvent(original, updated, details, operator)
-  }
-
-  private def addLiabilitySampleChangeEvent(original: Case, updated: Case, operator: Operator, comment: Option[String] = None)
-                                        (implicit hc: HeaderCarrier): Future[Unit] = {
-    def sending(sample: Sample) = sample.status match {
-      case None => LiabilitySample.NOT_SENDING
-      case Some(_) => LiabilitySample.SENDING
-    }
-    val details = LiabilitySampleChange(sending(original.sample), sending(updated.sample), comment)
     addEvent(original, updated, details, operator)
   }
 

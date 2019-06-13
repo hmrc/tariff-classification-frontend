@@ -21,9 +21,6 @@ GET         /cases/:reference/trader                            @uk.gov.hmrc.tar
 GET         /cases/:reference/application                       @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.applicationDetails(reference: String)
 GET         /cases/:reference/liability                         @uk.gov.hmrc.tariffclassificationfrontend.controllers.LiabilityController.liabilityDetails(reference: String)
 
-GET         /cases/:reference/liablity/send-sample              @uk.gov.hmrc.tariffclassificationfrontend.controllers.LiabilitySampleController.chooseStatus(reference: String)
-POST        /cases/:reference/liablity/send-sample              @uk.gov.hmrc.tariffclassificationfrontend.controllers.LiabilitySampleController.updateStatus(reference: String)
-
 GET         /cases/:reference/sample                            @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.sampleDetails(reference: String)
 
 GET         /cases/:reference/release                           @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReleaseCaseController.releaseCase(reference: String)
@@ -89,8 +86,8 @@ POST        /cases/:reference/new-appeal/:appealType            @uk.gov.hmrc.tar
 GET         /cases/:reference/change-appeal/:appealId           @uk.gov.hmrc.tariffclassificationfrontend.controllers.AppealCaseController.changeStatus(reference: String, appealId: String)
 POST        /cases/:reference/change-appeal/:appealId           @uk.gov.hmrc.tariffclassificationfrontend.controllers.AppealCaseController.confirmChangeStatus(reference: String, appealId: String)
 
-GET         /cases/:reference/sample/status                     @uk.gov.hmrc.tariffclassificationfrontend.controllers.SampleController.chooseStatus(reference: String)
-POST        /cases/:reference/sample/status                     @uk.gov.hmrc.tariffclassificationfrontend.controllers.SampleController.updateStatus(reference: String)
+GET         /cases/:reference/sample/status                     @uk.gov.hmrc.tariffclassificationfrontend.controllers.SampleController.chooseStatus(reference: String, options: Option[String])
+POST        /cases/:reference/sample/status                     @uk.gov.hmrc.tariffclassificationfrontend.controllers.SampleController.updateStatus(reference: String, options: Option[String])
 
 GET         /cases/:reference/sample/return-status              @uk.gov.hmrc.tariffclassificationfrontend.controllers.SampleReturnController.chooseStatus(reference: String)
 POST        /cases/:reference/sample/return-status              @uk.gov.hmrc.tariffclassificationfrontend.controllers.SampleReturnController.updateStatus(reference: String)

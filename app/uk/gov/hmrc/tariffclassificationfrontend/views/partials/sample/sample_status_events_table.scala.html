@@ -51,26 +51,17 @@
                             val body = event.details.asInstanceOf[SampleStatusChange]
                             progressive_disclosure(
                                 id = s"sample-status-events-row-$index",
-                                summary = s"Sample status changed from ${SampleStatus.format(body.from, false)} to ${SampleStatus.format(body.to, false)}",
+                                summary = body.renderSummaryFor(c.application.`type`),
                                 body = body.comment.map(Html(_)),
                                 useTabIndex = Some(startAtTabIndex + (index * 2))
                             )
                         }
                         case EventType.SAMPLE_RETURN_CHANGE => {
                             val body = event.details.asInstanceOf[SampleReturnChange]
-                            val sampleType = if(c.application.isLiabilityOrder) "Return sample" else "Return requested sample"
+                            val sampleType = if(c.application.isLiabilityOrder) "Returning sample" else "Returning requested sample"
                             progressive_disclosure(
                                 id = s"sample-status-events-row-$index",
-                                summary = s"‘$sampleType’ changed from ${SampleReturn.format(body.from).toLowerCase} to ${SampleReturn.format(body.to).toLowerCase}",
-                                body = body.comment.map(Html(_)),
-                                useTabIndex = Some(startAtTabIndex + (index * 2))
-                            )
-                        }
-                        case EventType.LIABILITY_SAMPLE_CHANGE => {
-                            val body = event.details.asInstanceOf[LiabilitySampleChange]
-                            progressive_disclosure(
-                                id = s"sample-status-events-row-$index",
-                                summary = s"Liability sample changed from ${LiabilitySample.format(body.from).toLowerCase} to ${LiabilitySample.format(body.to).toLowerCase}",
+                                summary = s"$sampleType changed from ${SampleReturn.format(body.from).toLowerCase} to ${SampleReturn.format(body.to).toLowerCase}",
                                 body = body.comment.map(Html(_)),
                                 useTabIndex = Some(startAtTabIndex + (index * 2))
                             )

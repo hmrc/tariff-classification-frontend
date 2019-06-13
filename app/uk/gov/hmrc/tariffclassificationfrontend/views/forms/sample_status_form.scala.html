@@ -23,12 +23,11 @@
 @(c: Case, field: Field)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 
-@helper.form(action = routes.SampleController.updateStatus(c.reference), 'id -> "sample_status_form") {
+@helper.form(action = routes.SampleController.updateStatus(c.reference, None), 'id -> "sample_status_form") {
     @helper.CSRF.formField
     @input_radiogroup(
         field = field,
         options = SampleStatus.values.toList.sorted.map(s => RadioOption(s.toString, SampleStatus.format(Some(s)))),
-        allowNone = true,
         id = "sample_status_form",
         preSelect = false
     )

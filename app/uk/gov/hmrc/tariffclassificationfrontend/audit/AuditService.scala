@@ -20,7 +20,7 @@ import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.audit.DefaultAuditConnector
 import uk.gov.hmrc.tariffclassificationfrontend.models.AppealStatus.AppealStatus
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Appeal, Case, Operator, Queue}
+import uk.gov.hmrc.tariffclassificationfrontend.models._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -170,17 +170,6 @@ class AuditService @Inject()(auditConnector: DefaultAuditConnector) {
     )
   }
 
-  def auditLiabilitySampleChange(oldCase: Case, updatedCase: Case, operator: Operator)
-                             (implicit hc: HeaderCarrier): Unit = {
-    sendExplicitAuditEvent(
-      auditEventType = CaseLiabilitySampleChange,
-      auditPayload = baseAuditPayload(updatedCase, operator) + (
-        "newLiabilitySample" -> sampleStatus(updatedCase),
-        "previousLiabilitySample" -> sampleStatus(oldCase)
-      )
-    )
-  }
-
   def auditSampleReturnChange(oldCase: Case, updatedCase: Case, operator: Operator)
                              (implicit hc: HeaderCarrier): Unit = {
     sendExplicitAuditEvent(
@@ -263,6 +252,5 @@ object AuditPayloadType {
   val CaseNote = "caseNote"
   val CaseSampleStatusChange = "caseSampleStatusChange"
   val CaseSampleReturnChange = "caseSampleReturnChange"
-  val CaseLiabilitySampleChange = "caseLiabilitySampleChange"
 
 }

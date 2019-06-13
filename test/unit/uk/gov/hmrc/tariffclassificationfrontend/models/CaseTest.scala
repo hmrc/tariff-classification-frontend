@@ -24,6 +24,7 @@ import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
+import uk.gov.tariffclassificationfrontend.utils.Cases.{aCase, withBTIApplication, _}
 
 class CaseTest extends UnitSpec with MockitoSugar with BeforeAndAfterAll {
 
@@ -129,6 +130,34 @@ class CaseTest extends UnitSpec with MockitoSugar with BeforeAndAfterAll {
       val c = Cases.btiCaseExample
 
       c.findAppeal("99999") shouldBe None
+    }
+  }
+
+  "sampleToBeProvided" should {
+    "return true for BIT" in {
+      val c = aCase(withReference("reference"), withBTIApplication, withBTIDetails(sampleToBeProvided = true))
+
+      c.sampleToBeProvided shouldBe true
+    }
+
+    "return true for Liability" in {
+      val c = aCase(withReference("reference"), withLiabilityApplication, withSample(Sample(status = Some(SampleStatus.AWAITING))))
+
+      c.sampleToBeProvided shouldBe true
+    }
+  }
+
+  "sampleToBeReturned" should {
+    "return true for BIT" in {
+      val c = aCase(withReference("reference"), withBTIApplication, withBTIDetails(sampleToBeReturned = true))
+
+      c.sampleToBeReturned shouldBe true
+    }
+
+    "return true for Liability" in {
+      val c = aCase(withReference("reference"), withLiabilityApplication, withSample(Sample(returnStatus = Some(SampleReturn.YES))))
+
+      c.sampleToBeReturned shouldBe true
     }
   }
 

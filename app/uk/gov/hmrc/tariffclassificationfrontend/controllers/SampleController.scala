@@ -54,16 +54,19 @@ class SampleController @Inject()(override val verify: RequestActions,
 
   override protected def status(c: Case): Option[SampleStatus] = c.sample.status
 
-  override protected def chooseStatusView(c: Case, notFilledForm: Form[Option[SampleStatus]])
+  protected def chooseStatusView(c: Case, notFilledForm: Form[Option[SampleStatus]], options: Option[String])
                                          (implicit request: Request[_]): Html = {
-    views.html.change_sample_status(c, notFilledForm)
+    if(options.contains("liability"))
+      views.html.change_liablity_sending_sample(c, notFilledForm)
+    else
+      views.html.change_sample_status(c, notFilledForm)
   }
 
-  override def chooseStatus(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen
+  override def chooseStatus(reference: String, options: Option[String]): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen
     verify.mustHave(requiredPermission)).async { implicit request =>
     getCaseAndRenderView(
       reference,
-      c => successful(chooseStatusView(c, form))
+      c => successful(chooseStatusView(c, form, options))
     )
   }
 
