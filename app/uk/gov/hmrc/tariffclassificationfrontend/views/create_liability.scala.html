@@ -53,7 +53,8 @@
                 RadioOption(LiabilityStatus.LIVE.toString, "Yes, this is a live liability"),
                 RadioOption(LiabilityStatus.NON_LIVE.toString, "No, this is not a live liability")
             ),
-            id = "create_liability-liability_status"
+            id = "create_liability-liability_status",
+            customGroupId = Some("liability-status")
         )
 
         @confirm_or_cancel_buttons(
