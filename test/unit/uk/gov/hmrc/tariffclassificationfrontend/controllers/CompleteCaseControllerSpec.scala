@@ -102,13 +102,12 @@ class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
           withLiabilityApplication(),
           withDecision()
         )
+        when(casesService.completeCase(refEq(c), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusCOMPLETED))
 
         val result: Result = await(getController(c).completeCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
-        status(result) shouldBe Status.OK
-        contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
-        charsetOf(result) shouldBe Some("utf-8")
-        bodyOf(result) should include("Complete this case")
+        status(result) shouldBe Status.SEE_OTHER
+        locationOf(result) shouldBe Some("/tariff-classification/cases/reference/complete/confirmation")
       }
     }
 
