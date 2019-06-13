@@ -47,7 +47,7 @@
 
             <h3 class="heading-medium mt-0">@messages("case.liability.about.title") </h3>
 
-            @if(c.status == CaseStatus.OPEN || c.status == CaseStatus.NEW) {
+            @if(c.status == CaseStatus.OPEN || c.status == CaseStatus.NEW && request.hasPermission(Permission.EDIT_LIABILITY)) {
                 <div id="edit-liability-details" class="grid-row  mb-2">
                     <span class="column-one-third">
                         <a href="@routes.LiabilityController.editLiabilityDetails(c.reference)"> Edit details </a>
