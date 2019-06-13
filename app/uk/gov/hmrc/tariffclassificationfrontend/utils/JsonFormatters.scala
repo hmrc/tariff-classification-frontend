@@ -44,7 +44,6 @@ object JsonFormatters {
   implicit val appealStatusFormat: Format[AppealStatus.Value] = EnumJson.format(AppealStatus)
   implicit val sampleStatusFormat: Format[SampleStatus.Value] = EnumJson.format(SampleStatus)
   implicit val sampleReturnFormat: Format[SampleReturn.Value] = EnumJson.format(SampleReturn)
-  implicit val sampleSendingFormat: Format[LiabilitySample.Value] = EnumJson.format(LiabilitySample)
   implicit val appealTypeFormat: Format[AppealType.Value] = EnumJson.format(AppealType)
   implicit val cancelReasonFormat: Format[CancelReason.Value] = EnumJson.format(CancelReason)
   implicit val caseStatusFormat: Format[CaseStatus.Value] = EnumJson.format(CaseStatus)

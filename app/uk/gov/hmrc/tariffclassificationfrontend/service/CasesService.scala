@@ -30,7 +30,6 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.AppealType.AppealType
 import uk.gov.hmrc.tariffclassificationfrontend.models.CancelReason.CancelReason
 import uk.gov.hmrc.tariffclassificationfrontend.models.ReferralReason.ReferralReason
 import uk.gov.hmrc.tariffclassificationfrontend.models.SampleReturn.SampleReturn
-import uk.gov.hmrc.tariffclassificationfrontend.models.LiabilitySample.LiabilitySample
 import uk.gov.hmrc.tariffclassificationfrontend.models.SampleStatus.SampleStatus
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
