@@ -58,7 +58,7 @@
                     @messages("case.liability.entryDate")
                 </dt>
                 <dd class="column-two-thirds">
-                    @Dates.format(liability.entryDate)
+                    @liability.entryDate.map(Dates.format)
                 </dd>
             </div>
             <div id="liability-entry-number" class="grid-row">
