@@ -211,7 +211,7 @@
                     <h4 class="heading-small" id="liability-complete_details-heading">Liability details</h4>
                     <p>You need to enter:</p>
                     <ul class="list list-bullet">
-                    @for(err: String <- liabilityForm.errors.map(_.key)) {
+                    @for(err: String <- liabilityForm.errors.map(_.key).toSet) {
                         <li><span id="constraint-@err">@messages("case.liability." + err)</span></li>
                     }
                     </ul>
@@ -221,7 +221,7 @@
                     <h4 class="heading-small mt-4" id="liability-complete_decision-heading">Liability decision</h4>
                     <p>You need to enter:</p>
                     <ul class="list list-bullet">
-                    @for(err: String <- decisionForm.errors.map(_.key)) {
+                    @for(err: String <- decisionForm.errors.map(_.key).toSet) {
                         <li><span id="constraint-@err">@messages("case.liability.decision." + err)</span></li>
                     }
                     </ul>
