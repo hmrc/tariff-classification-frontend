@@ -30,7 +30,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Decision, _}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
 import uk.gov.hmrc.tariffclassificationfrontend.views.CaseDetailPage.{CaseDetailPage, LIABILITY}
-import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.liabilities.liability_details_edit
+import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.liabilities._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -50,7 +50,7 @@ class LiabilityController @Inject()(verify: RequestActions,
       c => {
         val df: Form[Decision] = decisionForm.liabilityCompleteForm(c.decision.getOrElse(Decision()))
         val lf: Form[LiabilityOrder] = LiabilityDetailsForm.liabilityDetailsCompleteForm(c.application.asLiabilityOrder)
-        successful(views.html.partials.liability_details(c, tabIndexFor(LIABILITY), lf, df))
+        successful(liability_details(c, tabIndexFor(LIABILITY), lf, df))
       }
     )
   }
