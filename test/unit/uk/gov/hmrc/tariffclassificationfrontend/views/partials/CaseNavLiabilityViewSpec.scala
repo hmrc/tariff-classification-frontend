@@ -33,6 +33,7 @@ class CaseNavLiabilityViewSpec extends ViewSpec with MockitoSugar with BeforeAnd
   private val sample = "Sample"
   private val attachments = "Attachments"
   private val activity = "Activity"
+  private val appeal = "Appeal"
 
   private val liabilityURL = routes.LiabilityController.liabilityDetails("ref").url
   private val sampleDetailsURL = routes.CaseController.sampleDetails("ref").url
@@ -41,7 +42,7 @@ class CaseNavLiabilityViewSpec extends ViewSpec with MockitoSugar with BeforeAnd
 
   private val `case` = mock[Case]
 
-  private val tabOrder : Seq[String] = Seq(liability, sample, attachments, activity)
+  private val tabOrder : Seq[String] = Seq(liability, sample, attachments, activity, appeal)
   private val urlOrder : Seq[String] = Seq(liabilityURL, sampleDetailsURL, attachmentsURL, activityURL)
   private val tabWithUrl : Seq[(String,String)] = tabOrder.zip(urlOrder)
 
@@ -64,7 +65,8 @@ class CaseNavLiabilityViewSpec extends ViewSpec with MockitoSugar with BeforeAnd
   "Case Heading" should {
 
     val expectedTabAnchors = 3
-    val expectedTotalTabIndexes = 4
+    val expectedTabAnchorsForCompletedOrCancelledCases = 4
+    val expectedTotalTabIndexes = 5
 
     "Render Liability Details" in {
       // Given
@@ -149,6 +151,68 @@ class CaseNavLiabilityViewSpec extends ViewSpec with MockitoSugar with BeforeAnd
       anchors should haveSize(expectedTabAnchors)
 
       tabsWithLinksShouldBeActiveExceptGiven(anchors, activity)
+    }
+
+    "Render Appeal for COMPLETE Cases" in {
+      // Given
+      given(`case`.reference) willReturn "ref"
+      given(`case`.status) willReturn CaseStatus.COMPLETED
+
+      // When
+      val doc = view(case_nav_liability(CaseDetailPage.APPEAL, `case`))
+
+      // Then
+      val spans = doc.getElementsByTag("span")
+      spans should haveSize(1)
+
+      val selectedTab = spans.first()
+      selectedTab should containText(appeal)
+      selectedTab should haveAttribute("aria-selected", "true")
+
+      val anchors = doc.getElementsByTag("a")
+      anchors should haveSize(expectedTabAnchorsForCompletedOrCancelledCases)
+
+      tabsWithLinksShouldBeActiveExceptGiven(anchors, appeal)
+    }
+
+    "Render Appeal for CANCELLED Cases" in {
+      // Given
+      given(`case`.reference) willReturn "ref"
+      given(`case`.status) willReturn CaseStatus.CANCELLED
+
+      // When
+      val doc = view(case_nav_liability(CaseDetailPage.APPEAL, `case`))
+
+      // Then
+      val spans = doc.getElementsByTag("span")
+      spans should haveSize(1)
+
+      val selectedTab = spans.first()
+      selectedTab should containText(appeal)
+      selectedTab should haveAttribute("aria-selected", "true")
+
+      val anchors = doc.getElementsByTag("a")
+      anchors should haveSize(expectedTabAnchorsForCompletedOrCancelledCases)
+
+      tabsWithLinksShouldBeActiveExceptGiven(anchors, appeal)
+    }
+
+    "Not render Appeal for other Statuses" in {
+      // Given
+      given(`case`.reference) willReturn "ref"
+      given(`case`.status) willReturn CaseStatus.OPEN
+
+      // When
+      val doc = view(case_nav_liability(CaseDetailPage.APPEAL, `case`))
+
+      // Then
+      val spans = doc.getElementsByTag("span")
+      spans should haveSize(0)
+
+      val anchors = doc.getElementsByTag("a")
+      anchors should haveSize(expectedTabAnchorsForCompletedOrCancelledCases)
+
+      tabsWithLinksShouldBeActiveExceptGiven(anchors, appeal)
     }
 
     "Render tabindexes for all tabs" in {
