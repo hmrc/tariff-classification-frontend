@@ -33,7 +33,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.forms.{CommodityCodeConstraints,
 import uk.gov.hmrc.tariffclassificationfrontend.models.Permission.Permission
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, CommodityCodeService}
-import uk.gov.tariffclassificationfrontend.utils.Cases
+import uk.gov.tariffclassificationfrontend.utils.Cases._
 
 import scala.concurrent.Future.successful
 
@@ -55,14 +55,15 @@ class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     justification = "justification-content",
     goodsDescription = "goods-description",
     methodSearch = Some("method-to-search"),
-    explanation = Some("explanation"))
+    explanation = Some("explanation")
+  )
 
   private val inCompleteDecision = Decision(bindingCommodityCode = "", justification = "", goodsDescription = "")
 
-  private val validCaseWithStatusOPEN = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.OPEN, decision = Some(completeDecision))
-  private val caseWithStatusCOMPLETED = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.COMPLETED)
-  private val caseWithoutDecision = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.OPEN, decision = None)
-  private val caseWithoutIncompleteDecision = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.OPEN, decision = Some(inCompleteDecision))
+  private val validCaseWithStatusOPEN = btiCaseExample.copy(reference = "reference", status = CaseStatus.OPEN, decision = Some(completeDecision))
+  private val caseWithStatusCOMPLETED = btiCaseExample.copy(reference = "reference", status = CaseStatus.COMPLETED)
+  private val caseWithoutDecision = btiCaseExample.copy(reference = "reference", status = CaseStatus.OPEN, decision = None)
+  private val caseWithIncompleteDecision = btiCaseExample.copy(reference = "reference", status = CaseStatus.OPEN, decision = Some(inCompleteDecision))
 
   private implicit val mat: Materializer = fakeApplication.materializer
   private implicit val hc: HeaderCarrier = HeaderCarrier()
@@ -84,32 +85,81 @@ class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
     when(commodityCodeService.find(any())).thenReturn(Some(CommodityCode("code")))
 
-    "return OK and HTML content type" in {
+    "return OK and HTML content type" when {
+      "Case is a valid BTI" in {
+        val result: Result = await(getController(validCaseWithStatusOPEN).completeCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
-      val result: Result = await(getController(validCaseWithStatusOPEN).completeCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+        status(result) shouldBe Status.OK
+        contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
+        charsetOf(result) shouldBe Some("utf-8")
+        bodyOf(result) should include("Complete this case")
+      }
 
-      status(result) shouldBe Status.OK
-      contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
-      charsetOf(result) shouldBe Some("utf-8")
-      bodyOf(result) should include("Complete this case")
+      "Case is a valid Liability" in {
+        val c = aCase(
+          withReference("reference"),
+          withStatus(CaseStatus.OPEN),
+          withLiabilityApplication(),
+          withDecision()
+        )
+
+        val result: Result = await(getController(c).completeCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+
+        status(result) shouldBe Status.OK
+        contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
+        charsetOf(result) shouldBe Some("utf-8")
+        bodyOf(result) should include("Complete this case")
+      }
     }
 
-    "redirect to Application Details for non OPEN statuses" in {
+    "redirect to default page for non OPEN statuses" in {
       val result: Result = await(getController(caseWithStatusCOMPLETED).completeCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
       charsetOf(result) shouldBe None
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/ruling")
+      locationOf(result) shouldBe Some(routes.CaseController.get("reference").url)
     }
 
-    "redirect to Application Details for cases without a decision" in {
+    "redirect to default page for cases without a decision" in {
       val result: Result = await(getController(caseWithoutDecision).completeCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
       charsetOf(result) shouldBe None
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/ruling")
+      locationOf(result) shouldBe Some(routes.CaseController.get("reference").url)
+    }
+
+    "redirect to default page for Liability case with incomplete decision" in {
+      val c = aCase(
+        withReference("reference"),
+        withStatus(CaseStatus.OPEN),
+        withLiabilityApplication(),
+        withDecision(goodsDescription = "")
+      )
+
+      val result: Result = await(getController(c).completeCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
+
+      status(result) shouldBe Status.SEE_OTHER
+      contentTypeOf(result) shouldBe None
+      charsetOf(result) shouldBe None
+      locationOf(result) shouldBe Some(routes.CaseController.get("reference").url)
+    }
+
+    "redirect to default page for Liability case with incomplete application" in {
+      val c = aCase(
+        withReference("reference"),
+        withStatus(CaseStatus.OPEN),
+        withLiabilityApplication(goodName = None),
+        withDecision()
+      )
+
+      val result: Result = await(getController(c).completeCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
+
+      status(result) shouldBe Status.SEE_OTHER
+      contentTypeOf(result) shouldBe None
+      charsetOf(result) shouldBe None
+      locationOf(result) shouldBe Some(routes.CaseController.get("reference").url)
     }
 
     "return OK when user has right permissions" in {
@@ -139,32 +189,64 @@ class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       locationOf(result) shouldBe Some("/tariff-classification/cases/reference/complete/confirmation")
     }
 
-    "redirect to Application Details for non OPEN statuses" in {
+    "redirect to default page for non OPEN statuses" in {
       val result: Result = await(getController(caseWithStatusCOMPLETED).postCompleteCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
       charsetOf(result) shouldBe None
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/ruling")
+      locationOf(result) shouldBe Some(routes.CaseController.get("reference").url)
     }
 
-    "redirect to Application Details for case without decision" in {
+    "redirect to default page for case without decision" in {
 
       val result: Result = await(getController(caseWithoutDecision).postCompleteCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
       charsetOf(result) shouldBe None
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/ruling")
+      locationOf(result) shouldBe Some(routes.CaseController.get("reference").url)
     }
 
-    "redirect to Application Details for case with incomplete decision" in {
-      val result: Result = await(getController(caseWithoutIncompleteDecision).postCompleteCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
+    "redirect to default page for BTI case with incomplete decision" in {
+      val result: Result = await(getController(caseWithIncompleteDecision).postCompleteCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
       charsetOf(result) shouldBe None
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/ruling")
+      locationOf(result) shouldBe Some(routes.CaseController.get("reference").url)
+    }
+
+    "redirect to default page for Liability case with incomplete decision" in {
+      val c = aCase(
+        withReference("reference"),
+        withStatus(CaseStatus.OPEN),
+        withLiabilityApplication(),
+        withDecision(goodsDescription = "")
+      )
+
+      val result: Result = await(getController(c).postCompleteCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
+
+      status(result) shouldBe Status.SEE_OTHER
+      contentTypeOf(result) shouldBe None
+      charsetOf(result) shouldBe None
+      locationOf(result) shouldBe Some(routes.CaseController.get("reference").url)
+    }
+
+    "redirect to default page for Liability case with incomplete application" in {
+      val c = aCase(
+        withReference("reference"),
+        withStatus(CaseStatus.OPEN),
+        withLiabilityApplication(goodName = None),
+        withDecision()
+      )
+
+      val result: Result = await(getController(c).postCompleteCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
+
+      status(result) shouldBe Status.SEE_OTHER
+      contentTypeOf(result) shouldBe None
+      charsetOf(result) shouldBe None
+      locationOf(result) shouldBe Some(routes.CaseController.get("reference").url)
     }
 
     "return OK when user has right permissions" in {
@@ -203,7 +285,7 @@ class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
       charsetOf(result) shouldBe None
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/ruling")
+      locationOf(result) shouldBe Some(routes.CaseController.get("reference").url)
     }
   }
 
