@@ -26,7 +26,7 @@
     @helper.CSRF.formField
     @input_radiogroup(
         field = field,
-        options = Seq(RadioOption(SampleStatus.NONE.toString, "Yes"), RadioOption("", "No")),
+        options = Seq(RadioOption(SampleStatus.AWAITING.toString, "Yes"), RadioOption("", "No")),
         id = "sample_status_form",
         preSelect = false,
         label = Some(messages("case.liability.sending.sample.change-return-header")),
