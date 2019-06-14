@@ -23,7 +23,6 @@ object SampleStatus extends Enumeration {
 
   def format(status: Option[SampleStatus], initialCaps: Boolean = true): String = {
     val text = status match {
-      case Some(NONE) => "none"
       case Some(AWAITING) => "awaiting sample"
       case Some(MOVED_TO_ACT) => "moved to ACT"
       case Some(MOVED_TO_ELM) => "moved to ELM"
