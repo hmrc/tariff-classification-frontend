@@ -56,7 +56,7 @@ class LiabilityController @Inject()(verify: RequestActions,
 
   def editLiabilityDetails(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
     request.`case` match {
-      case c: Case if c.status == CaseStatus.OPEN && request.hasPermission(Permission.EDIT_LIABILITY) || c.status == CaseStatus.NEW =>
+      case c: Case if c.status == CaseStatus.OPEN && request.hasPermission(Permission.EDIT_LIABILITY) || c.status == CaseStatus.NEW && request.hasPermission(Permission.CREATE_CASES) =>
         successful(
           Ok(
             views.html.partials.liabilities.liability_details_edit(c, LiabilityDetailsForm.liabilityDetailsForm(c.application.asLiabilityOrder), Some(tabIndexFor(LIABILITY)))
@@ -69,7 +69,7 @@ class LiabilityController @Inject()(verify: RequestActions,
 
   def postLiabilityDetails(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
     request.`case` match {
-      case c: Case if (c.status == CaseStatus.OPEN && request.hasPermission(Permission.EDIT_LIABILITY)) || c.status == CaseStatus.NEW =>
+      case c: Case if (c.status == CaseStatus.OPEN && request.hasPermission(Permission.EDIT_LIABILITY)) || c.status == CaseStatus.NEW  && request.hasPermission(Permission.CREATE_CASES) =>
         LiabilityDetailsForm.liabilityDetailsForm(request.`case`.application.asLiabilityOrder).discardingErrors.bindFromRequest.fold(
           errorForm => successful(Ok(views.html.partials.liabilities.liability_details_edit(request.`case`, errorForm))),
           updatedLiability => getCaseAndRedirect(menuTitle, c =>
