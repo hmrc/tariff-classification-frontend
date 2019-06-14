@@ -25,6 +25,8 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.models.Decision
 @import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionFormData
 @import uk.gov.hmrc.tariffclassificationfrontend.forms.LiabilityDetailsForm
+@import scala.collection.mutable
+@import scala.collection.mutable
 @(c: Case, startAtTabIndex : Int = 0, liabilityForm: Form[LiabilityOrder], decisionForm: Form[Decision])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @defining(c.application) { a: Application =>
@@ -37,21 +39,23 @@
             @if(c.caseBoardsFileNumber.isDefined) {
                 <div id="case-board-number" class="grid-row">
                     <dt class="column-one-third">
-                    @messages("case.liability.caseBoardNumber")
+                        @messages("case.liability.caseBoardNumber")
                     </dt>
                     <dd class="column-two-thirds">
-                    @c.caseBoardsFileNumber
+                        @c.caseBoardsFileNumber
                     </dd>
                 </div>
             }
 
             <h3 class="heading-medium mt-0">@messages("case.liability.about.title") </h3>
 
-            <div id="edit-liability-details" class="grid-row  mb-2">
-                <span class="column-one-third">
-                    <a href="@routes.LiabilityController.editLiabilityDetails(c.reference)"> Edit details </a>
-                </span>
-            </div>
+            @if(c.status == CaseStatus.NEW || (c.status == CaseStatus.OPEN && request.hasPermission(Permission.EDIT_LIABILITY))) {
+                <div id="edit-liability-details" class="grid-row  mb-2">
+                    <span class="column-one-third">
+                        <a href="@routes.LiabilityController.editLiabilityDetails(c.reference)"> Edit details </a>
+                    </span>
+                </div>
+            }
 
             <div  class="grid-row">
                 <dt class="column-one-third">
@@ -136,11 +140,13 @@
 
         @liability_actions(c, startAtTabIndex)
 
-        <hr class="mt-0 mb-0">
+        @if((c.status == CaseStatus.OPEN && request.hasPermission(Permission.EDIT_RULING)) || c.decision.isDefined) {
+            <hr class="mt-0 mb-0">
 
-        <h3 class="heading-medium" id="liability-decision-heading">Liability decision details</h3>
+            <h3 class="heading-medium" id="liability-decision-heading">Liability decision details</h3>
+        }
 
-        @if(request.hasPermission(Permission.EDIT_RULING)) {
+        @if(c.status == CaseStatus.OPEN && request.hasPermission(Permission.EDIT_RULING)) {
             <a id="liability-decision-edit" href="@routes.RulingController.editRulingDetails(c.reference)">
                 Edit liability details
             </a>
@@ -156,7 +162,7 @@
                                 @messages("case.liability.decision.bindingCommodityCode")
                             </dt>
                             <dd class="column-two-thirds">
-                                @decision.bindingCommodityCode
+                                <span id="liability-commodity-code">@decision.bindingCommodityCode</span>
                             </dd>
                         </div>
 
@@ -165,7 +171,7 @@
                                 @messages("case.liability.decision.goodsDescription")
                             </dt>
                             <dd class="column-two-thirds">
-                                @decision.goodsDescription
+                                <span id="liability-item-description" class="pre-wrap">@decision.goodsDescription</span>
                             </dd>
                         </div>
 
@@ -174,7 +180,7 @@
                                 @messages("case.liability.decision.justification")
                             </dt>
                             <dd class="column-two-thirds">
-                                @decision.justification
+                                <span id="liability-justification" class="pre-wrap">@decision.justification</span>
                             </dd>
                         </div>
 
@@ -183,8 +189,7 @@
                                 @messages("case.liability.decision.methodSearch")
                             </dt>
                             <dd class="column-two-thirds">
-                                @decision.methodSearch
-
+                                <span id="liability-method-search" class="pre-wrap">@decision.methodSearch</span>
                             </dd>
                         </div>
 
@@ -193,21 +198,21 @@
                                 @messages("case.liability.decision.methodExclusion")
                             </dt>
                             <dd class="column-two-thirds">
-                                @decision.methodExclusion
+                                <span id="liability-method-exclusion" class="pre-wrap">@decision.methodExclusion</span>
                             </dd>
                         </div>
                     </dl>
                 </div>
             }
 
-            @if(request.hasPermission(Permission.COMPLETE_CASE)) {
+            @if(c.status == CaseStatus.OPEN && request.hasPermission(Permission.COMPLETE_CASE)) {
                 <h3 class="heading-medium" id="liability-complete-heading">Complete this liability decision</h3>
 
                 @if(liabilityForm.hasErrors) {
                     <h4 class="heading-small" id="liability-complete_details-heading">Liability details</h4>
                     <p>You need to enter:</p>
                     <ul class="list list-bullet">
-                    @for(err: String <- liabilityForm.errors.map(_.key)) {
+                    @for(err: String <- mutable.LinkedHashSet(liabilityForm.errors.map(_.key): _*)) {
                         <li><span id="constraint-@err">@messages("case.liability." + err)</span></li>
                     }
                     </ul>
@@ -217,7 +222,7 @@
                     <h4 class="heading-small mt-4" id="liability-complete_decision-heading">Liability decision</h4>
                     <p>You need to enter:</p>
                     <ul class="list list-bullet">
-                    @for(err: String <- decisionForm.errors.map(_.key)) {
+                    @for(err: String <- mutable.LinkedHashSet(decisionForm.errors.map(_.key): _*)) {
                         <li><span id="constraint-@err">@messages("case.liability.decision." + err)</span></li>
                     }
                     </ul>

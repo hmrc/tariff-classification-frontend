@@ -234,12 +234,12 @@ object Cases {
                    effectiveEndDate: Option[Instant] = Some(Instant.now().plus(30, DAYS)),
                    justification: String = "decision-justification",
                    goodsDescription: String = "decision-goods-description",
-                   methodSearch: Option[String] = None,
-                   methodExclusion: Option[String] = None,
+                   methodSearch: Option[String] = Some("search"),
+                   methodExclusion: Option[String] = Some("exclusion"),
                    methodCommercialDenomination: Option[String] = None,
                    appeal: Seq[Appeal] = Seq.empty,
                    cancellation: Option[Cancellation] = None,
-                   explanation: Option[String] = None
+                   explanation: Option[String] = Some("explanation")
                   ): Case => Case = {
     _.copy(decision = Some(
       Decision(

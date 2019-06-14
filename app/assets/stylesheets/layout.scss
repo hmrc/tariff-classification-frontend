@@ -313,6 +313,12 @@ table tbody td[align="right"], table tbody th[align="right"], table thead th[ali
   font-weight: 600;
 }
 
+#case-status-section .live-red-text {
+  padding-right: 8px;
+  font-size: 16px;
+  font-family: Arial;
+}
+
 .button-link {
   background: none !important;
   color: inherit;
@@ -398,4 +404,16 @@ table tbody tr th {
   background-repeat: no-repeat;
   background-position: 100% 50%;
   padding-right: 40px;
+}
+
+.width-one-half {
+  width: 50% !important;
+}
+
+.width-3em{
+  width: 3em;
+}
+
+.width-6em{
+  width: 6em;
 }

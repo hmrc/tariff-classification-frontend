@@ -53,4 +53,13 @@
         call = routes.CaseController.activityDetails(c.reference),
         tabIndex = tabIndexFor(CaseDetailPage.ACTIVITY)
     )
+
+    @if(Set(CaseStatus.COMPLETED, CaseStatus.CANCELLED).contains(c.status)) {
+        @case_nav_item(
+            active = page == CaseDetailPage.APPEAL,
+            title = messages("case.menu.appeal"),
+            call = routes.AppealCaseController.appealDetails(c.reference),
+            tabIndex = tabIndexFor(CaseDetailPage.APPEAL)
+        )
+    }
 </ul>

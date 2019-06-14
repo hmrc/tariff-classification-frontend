@@ -32,11 +32,12 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.{CommodityCodeConstraints, DecisionForm}
+import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.CaseStatus
 import uk.gov.hmrc.tariffclassificationfrontend.models.Permission.Permission
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
-import uk.gov.tariffclassificationfrontend.utils.Cases
+import uk.gov.tariffclassificationfrontend.utils.Cases._
 
 import scala.concurrent.Future
 
@@ -60,15 +61,17 @@ class LiabilityControllerSpec extends UnitSpec with Matchers with BeforeAndAfter
     reset(casesService)
   }
 
-  private def controller(permissions: Set[Permission]) = new LiabilityController(
-    new RequestActionsWithPermissions(permissions = permissions, addViewCasePermission = false,
-      c = Cases.liabilityCaseExample), decisionForm, messageApi, casesService, appConfig
+  private def controller(permissions: Set[Permission], c: Case) = new LiabilityController(
+    new RequestActionsWithPermissions(permissions = permissions, addViewCasePermission = false, c = c),
+    decisionForm, messageApi, casesService, appConfig
   )
 
   "GET liability view" should {
+    val openCase = aCase(withReference("reference"), withStatus(CaseStatus.OPEN), withLiabilityApplication())
+
     "redirect to unauthorised if not permitted" in {
       val request = newFakeGETRequestWithCSRF(fakeApplication)
-      val result = await(controller(Set.empty).liabilityDetails("ref")(request))
+      val result = await(controller(Set.empty, openCase).liabilityDetails("ref")(request))
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.SecurityController.unauthorized().url)
     }
@@ -77,7 +80,7 @@ class LiabilityControllerSpec extends UnitSpec with Matchers with BeforeAndAfter
       given(commodityCodeConstraints.commodityCodeExistsInUKTradeTariff).willReturn(Constraint[String]("error")(_ => Valid))
 
       val request = newFakeGETRequestWithCSRF(fakeApplication)
-      val result = await(controller(Set(Permission.VIEW_CASES)).liabilityDetails("ref")(request))
+      val result = await(controller(Set(Permission.VIEW_CASES), openCase).liabilityDetails("ref")(request))
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
@@ -88,25 +91,42 @@ class LiabilityControllerSpec extends UnitSpec with Matchers with BeforeAndAfter
 
   "GET liability edit" should {
     "redirect to unauthorised if not permitted" in {
+      val openCase = aCase(withReference("reference"), withStatus(CaseStatus.OPEN), withLiabilityApplication())
       val request = newFakeGETRequestWithCSRF(fakeApplication)
-      val result = await(controller(Set.empty).editLiabilityDetails("ref")(request))
+      val result = await(controller(Set.empty, openCase).editLiabilityDetails("ref")(request))
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.SecurityController.unauthorized().url)
     }
 
-    "return 200 OK and HTML content type" in {
-      val request = newFakeGETRequestWithCSRF(fakeApplication)
-      val result = await(controller(Set(Permission.VIEW_CASES)).editLiabilityDetails("ref")(request))
-      status(result) shouldBe Status.OK
-      contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
+    "return 200 OK and HTML content type" when {
+      "Case has status NEW" in {
+        val c = aCase(withReference("reference"), withStatus(CaseStatus.NEW), withLiabilityApplication())
+        val request = newFakeGETRequestWithCSRF(fakeApplication)
+        val result = await(controller(Set(Permission.VIEW_CASES), c).editLiabilityDetails("ref")(request))
 
-      contentAsString(result) should include("liability-details-edit-form")
+        status(result) shouldBe Status.OK
+        contentType(result) shouldBe Some("text/html")
+        charset(result) shouldBe Some("utf-8")
+
+        contentAsString(result) should include("liability-details-edit-form")
+      }
+
+      "Case has status OPEN and Edit Access" in {
+        val c = aCase(withReference("reference"), withStatus(CaseStatus.OPEN), withLiabilityApplication())
+        val request = newFakeGETRequestWithCSRF(fakeApplication)
+        val result = await(controller(Set(Permission.VIEW_CASES, Permission.EDIT_LIABILITY), c).editLiabilityDetails("ref")(request))
+
+        status(result) shouldBe Status.OK
+        contentType(result) shouldBe Some("text/html")
+        charset(result) shouldBe Some("utf-8")
+
+        contentAsString(result) should include("liability-details-edit-form")
+      }
     }
   }
 
   "POST liability edit" should {
-    val updatedCase = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.OPEN)
+    val updatedCase = aCase(withReference("reference"), withStatus(CaseStatus.OPEN), withLiabilityApplication())
 
     val validReq: AuthenticatedRequest[AnyContent] = request(
       operator,
@@ -138,28 +158,59 @@ class LiabilityControllerSpec extends UnitSpec with Matchers with BeforeAndAfter
       )
     )
 
-    "update and redirect to liability view for permitted user" in {
-      given(commodityCodeConstraints.commodityCodeExistsInUKTradeTariff).willReturn(Constraint[String]("error")(_ => Valid))
-      given(casesService.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(updatedCase))
+    "update and redirect to liability view" when {
+      "case status is NEW" in {
+        given(commodityCodeConstraints.commodityCodeExistsInUKTradeTariff).willReturn(Constraint[String]("error")(_ => Valid))
+        given(casesService.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(updatedCase))
 
-      val result = await(controller(Set(Permission.VIEW_CASES)).postLiabilityDetails("reference")(validReq))
-      verify(casesService).updateCase(any[Case])(any[HeaderCarrier])
-      status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some(routes.LiabilityController.liabilityDetails("reference").url)
+        val c = aCase(withReference("reference"), withStatus(CaseStatus.NEW), withLiabilityApplication())
+        val result = await(controller(Set(Permission.VIEW_CASES), c).postLiabilityDetails("reference")(validReq))
+
+        status(result) shouldBe Status.SEE_OTHER
+        locationOf(result) shouldBe Some(routes.LiabilityController.liabilityDetails("reference").url)
+        verify(casesService).updateCase(any[Case])(any[HeaderCarrier])
+      }
+
+      "case status is OPEN with permission" in {
+        given(commodityCodeConstraints.commodityCodeExistsInUKTradeTariff).willReturn(Constraint[String]("error")(_ => Valid))
+        given(casesService.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(updatedCase))
+
+        val c = aCase(withReference("reference"), withStatus(CaseStatus.NEW), withLiabilityApplication())
+        val result = await(controller(Set(Permission.VIEW_CASES, Permission.EDIT_LIABILITY), c).postLiabilityDetails("reference")(validReq))
+
+        status(result) shouldBe Status.SEE_OTHER
+        locationOf(result) shouldBe Some(routes.LiabilityController.liabilityDetails("reference").url)
+        verify(casesService).updateCase(any[Case])(any[HeaderCarrier])
+      }
     }
 
     "error summary should contain expected form errors" in {
-      val result: Result = await(controller(Set(Permission.VIEW_CASES)).postLiabilityDetails("reference")(invalidReq))
+      val openCase = aCase(withReference("reference"), withStatus(CaseStatus.OPEN), withLiabilityApplication())
+      val result: Result = await(controller(Set(Permission.VIEW_CASES, Permission.EDIT_LIABILITY), openCase).postLiabilityDetails("reference")(invalidReq))
       verify(casesService, never()).updateCase(any[Case])(any[HeaderCarrier])
       status(result) shouldBe Status.OK
       errorSummaryShouldContains(result, Seq("#traderName"))
     }
 
     "redirect unauthorised when does not have right permissions" in {
-      val result: Result = await(controller(Set.empty).postLiabilityDetails("reference")(invalidReq))
+      val openCase = aCase(withReference("reference"), withStatus(CaseStatus.OPEN), withLiabilityApplication())
+      val result: Result = await(controller(Set(), openCase).postLiabilityDetails("reference")(invalidReq))
 
       status(result) shouldBe Status.SEE_OTHER
-      redirectLocation(result).get should include("unauthorized")
+      redirectLocation(result) shouldBe Some(routes.SecurityController.unauthorized().url)
+    }
+
+    "redirect to default" when {
+      for(s: CaseStatus <- CaseStatus.values.filterNot(_ == CaseStatus.OPEN).filterNot(_ == CaseStatus.NEW)) {
+
+        s"case status is $s" in {
+          val c = aCase(withReference("reference"), withStatus(s), withLiabilityApplication())
+          val result: Result = await(controller(Set(Permission.VIEW_CASES), c).postLiabilityDetails("reference")(invalidReq))
+
+          status(result) shouldBe Status.SEE_OTHER
+          redirectLocation(result) shouldBe Some(routes.CaseController.get("reference").url)
+        }
+      }
     }
   }
 

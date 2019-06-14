@@ -21,7 +21,7 @@
 @helper.form(action = postAction, 'id -> s"$id-form") {
     @helper.CSRF.formField
 
-    <div class="form-group @if(field.hasErrors){form-group-error}">
+    <div class="form-group @if(field.hasErrors){form-group-error}" id="@{field.id}" >
         <fieldset>
             <legend>
                 <span class="heading-small mb-2">Choose a queue</span>

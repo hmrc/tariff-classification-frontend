@@ -20,10 +20,10 @@ import javax.inject.{Inject, Singleton}
 import play.api.i18n.MessagesApi
 import play.api.mvc._
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.forms.DecisionForm
+import uk.gov.hmrc.tariffclassificationfrontend.forms.{DecisionForm, LiabilityDetailsForm}
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.OPEN
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus, Permission}
+import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
@@ -41,7 +41,16 @@ class CompleteCaseController @Inject()(verify: RequestActions,
   override protected val caseService: CasesService = casesService
 
   def completeCase(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.COMPLETE_CASE)).async { implicit request =>
-    validateAndRenderView(c => successful(views.html.complete_case(c)))
+    validateAndRespond(c =>
+      c.application.`type` match {
+        case ApplicationType.BTI =>
+          successful(Ok(views.html.complete_case(c)))
+
+        case ApplicationType.LIABILITY_ORDER =>
+          casesService.completeCase(c, request.operator)
+            .map(c => Redirect(routes.CompleteCaseController.confirmCompleteCase(c.reference)))
+      }
+    )
   }
 
   def postCompleteCase(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.COMPLETE_CASE)).async { implicit request =>
@@ -56,14 +65,18 @@ class CompleteCaseController @Inject()(verify: RequestActions,
       renderView(c => c.status == CaseStatus.COMPLETED, c => successful(views.html.confirm_complete_case(c)))
     }
 
-  override protected def redirect: String => Call = routes.CaseController.rulingDetails
+  override protected def redirect: String => Call = routes.CaseController.get
 
   override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = {
     c.status == OPEN && hasValidDecision(c)
   }
 
-  private def hasValidDecision(c: Case): Boolean = {
-    decisionForm.bindFrom(c.decision).map(_.errors).exists(_.isEmpty)
+  private def hasValidDecision(c: Case): Boolean = c.application.`type` match {
+    case ApplicationType.BTI =>
+      decisionForm.bindFrom(c.decision).map(_.errors).exists(_.isEmpty)
+    case ApplicationType.LIABILITY_ORDER =>
+      decisionForm.liabilityCompleteForm(c.decision.getOrElse(Decision())).errors.isEmpty &&
+        LiabilityDetailsForm.liabilityDetailsCompleteForm(c.application.asLiabilityOrder).errors.isEmpty
   }
 
 }

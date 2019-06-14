@@ -59,9 +59,9 @@ class DecisionForm @Inject()(commodityCodeConstraints: CommodityCodeConstraints)
     )(DecisionFormData.apply)(DecisionFormData.unapply)
   )
 
-  private def form2Decision(existingDecision:  Decision): (String, String, String, String, String) => Decision = {
+  private def form2Decision(existingDecision: Decision): (String, String, String, String, String) => Decision = {
     case (code, description, search, justification, exclusion) =>
-      Decision(
+      existingDecision.copy(
         bindingCommodityCode = code,
         goodsDescription = description,
         justification = justification,
@@ -73,8 +73,8 @@ class DecisionForm @Inject()(commodityCodeConstraints: CommodityCodeConstraints)
   private def decision2Form: Decision => Option[(String, String, String, String, String)] = d => Some((
     d.bindingCommodityCode,
     d.goodsDescription,
-    d.justification,
     d.methodSearch.getOrElse(""),
+    d.justification,
     d.methodExclusion.getOrElse("")
   ))
 
