@@ -20,7 +20,7 @@ import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.audit.DefaultAuditConnector
 import uk.gov.hmrc.tariffclassificationfrontend.models.AppealStatus.AppealStatus
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Appeal, Case, Operator, Queue}
+import uk.gov.hmrc.tariffclassificationfrontend.models._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 

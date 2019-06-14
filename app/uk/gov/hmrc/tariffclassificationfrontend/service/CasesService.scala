@@ -107,7 +107,6 @@ class CasesService @Inject()(appConfig: AppConfig,
     } yield updated
   }
 
-
   def assignCase(original: Case, operator: Operator)
                 (implicit hc: HeaderCarrier): Future[Case] = {
     for {
@@ -157,14 +156,22 @@ class CasesService @Inject()(appConfig: AppConfig,
         .copy(
           status = CaseStatus.REFERRED,
           sample = if(reason.contains(ReferralReason.REQUEST_SAMPLE)){
-            original.sample.copy(requestedBy = Some(operator), returnStatus = Some(SampleReturn.TO_BE_CONFIRMED))
+            Sample(Some(SampleStatus.AWAITING), Some(operator), Some(SampleReturn.TO_BE_CONFIRMED))
           } else{
             original.sample
           }
         ))
       _ <- addReferStatusChangeEvent(original, updated, operator, Some(note), referredTo, reason, Some(attachment))
       _ = auditService.auditCaseReferred(original, updated, operator)
+      _ = processChangedSampleStatus(original, updated, operator)
     } yield updated
+  }
+
+  private def processChangedSampleStatus(original: Case, updated: Case, operator: Operator)(implicit hc: HeaderCarrier): Unit = {
+    if(updated.sample.status != original.sample.status){
+      addSampleStatusChangeEvent(original, updated, operator)
+      auditService.auditSampleStatusChange(original, updated, operator)
+    }
   }
 
   def rejectCase(original: Case, f: FileUpload, note: String, operator: Operator)

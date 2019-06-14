@@ -51,12 +51,12 @@ class SampleReturnController @Inject()(override val verify: RequestActions,
 
   override protected def status(c: Case): Option[SampleReturn] = c.sample.returnStatus
 
-  override protected def chooseStatusView(c: Case, notFilledForm: Form[Option[SampleReturn]])
+  override protected def chooseStatusView(c: Case, notFilledForm: Form[Option[SampleReturn]], options: Option[String] = None)
                                          (implicit request: Request[_]): Html = {
     views.html.change_sample_return(c, notFilledForm)
   }
 
-  override def chooseStatus(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen
+  override def chooseStatus(reference: String, options: Option[String] = None): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen
     verify.mustHave(requiredPermission)).async { implicit request =>
     getCaseAndRenderView(
       reference,
