@@ -25,7 +25,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, FileStoreService, PdfService}
 import uk.gov.hmrc.tariffclassificationfrontend.views
-import uk.gov.hmrc.tariffclassificationfrontend.views.html.templates.{application_template, ruling_template}
+import uk.gov.hmrc.tariffclassificationfrontend.views.html.templates.{application_template, ruling_template, decision_template}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -42,6 +42,14 @@ class PdfDownloadController @Inject()(authenticatedAction: AuthenticatedAction,
   def rulingPdf(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     caseService.getOne(reference) flatMap {
       case Some(c: Case) if c.decision.isDefined => generatePdf(ruling_template(c, c.decision.get), s"BTIRuling_$reference.pdf")
+      case Some(c: Case) if c.decision.isEmpty =>  successful(Ok(views.html.ruling_not_found(reference)))
+      case _ => successful(Ok(views.html.case_not_found(reference)))
+    }
+  }
+
+  def liabilityPdf(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
+    caseService.getOne(reference) flatMap {
+      case Some(c: Case) if c.decision.isDefined => generatePdf(decision_template(c, c.decision.get), s"LiabilityDecision_$reference.pdf")
       case Some(c: Case) if c.decision.isEmpty =>  successful(Ok(views.html.ruling_not_found(reference)))
       case _ => successful(Ok(views.html.case_not_found(reference)))
     }

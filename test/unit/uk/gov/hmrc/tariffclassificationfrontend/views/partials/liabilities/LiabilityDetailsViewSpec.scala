@@ -347,4 +347,44 @@ class LiabilityDetailsViewSpec extends ViewSpec with MockitoSugar {
 
   }
 
+  "Render view PDF link" when {
+  for(status: CaseStatus <- CaseStatus.values.filter((x => x == CaseStatus.COMPLETED  || x == CaseStatus.CANCELLED))) {
+    s"Case status is $status" in {
+      val c = aCase(
+        withStatus(status),
+        withLiabilityApplication()
+      )
+      val d = c.decision.getOrElse(Decision())
+      val l = c.application.asLiabilityOrder
+
+      // When
+      val doc = view(
+        views.html.partials.liabilities.liability_details(c = c, liabilityForm = LiabilityDetailsForm.liabilityDetailsCompleteForm(l),
+          decisionForm = form.liabilityCompleteForm(d))(requestWithPermissions(), messages, appConfig))
+
+      doc should containElementWithID("liability-ruling-certificate-link")
+    }
+  }
+}
+
+  "Not render view PDF link" when {
+    for(status: CaseStatus <- CaseStatus.values.filterNot(_ == CaseStatus.COMPLETED).filterNot(_ == CaseStatus.CANCELLED)) {
+      s"Case status is $status" in {
+        val c = aCase(
+          withStatus(status),
+          withLiabilityApplication()
+        )
+        val d = c.decision.getOrElse(Decision())
+        val l = c.application.asLiabilityOrder
+
+        // When
+        val doc = view(
+          views.html.partials.liabilities.liability_details(c = c, liabilityForm = LiabilityDetailsForm.liabilityDetailsCompleteForm(l),
+            decisionForm = form.liabilityCompleteForm(d))(requestWithPermissions(), messages, appConfig))
+
+        doc shouldNot containElementWithID("liability-ruling-certificate-link")
+      }
+    }
+  }
+
 }

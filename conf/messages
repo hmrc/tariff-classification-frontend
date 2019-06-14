@@ -114,6 +114,8 @@ case.decision.constraint.explanation=Explanation for holder
 case.decision.ruling.certificate.content=If this case is under review or appeal
 case.decision.ruling.certificate.link=view and print a PDF of the ruling.
 case.decision.ruling.certificate.title=Ruling certificate
+liability.decision.ruling.certificate.title=Liability decision
+liability.decision.ruling.certificate.link=View PDF document for this liability.
 
 case.decision.holder.information=Information for the BTI holder
 case.decision.explanation.label=Explanation for holder
@@ -277,6 +279,24 @@ pdf.ruling.section.ruling.legalInformation.section2.paragraph2 = We might publis
 pdf.ruling.section.ruling.legalInformation.section2.paragraph2.listitem1 = information about the item that is not confidential
 pdf.ruling.created.label = File created
 
+pdf.decision.title = Liability decision for {0}
+pdf.decision.section.c592.heading = Liability details from C592
+pdf.decision.section.c592.liability.type.label = Liability type
+pdf.decision.section.c592.port.officer.label = Port/complicance officer
+pdf.decision.section.c592.trader.name.label = Trader name
+pdf.decision.section.c592.liability.entry.date.label = Liability entry date
+pdf.decision.section.c592.liability.entry.number.label = Liability entry number
+pdf.decision.section.information.heading = Information about this decision
+pdf.decision.section.information.classification.officer.label = HMRC classification officer
+pdf.decision.section.information.reference.number.label = HMRC reference number
+pdf.decision.section.information.decision.date.label = Date of decision
+pdf.decision.section.information.expiry.date.label = Date of expiry
+pdf.decision.section.commcode.suggested.commodity.code.label = Suggested commodity code
+pdf.decision.section.commcode.suggested.commodity.code.hint = This is the commodity code that HMRC advise is used, however this is not a legal judgement.
+pdf.decision.section.description.item.description.label = Item description
+pdf.decision.section.justification.label = Justification
+pdf.decision.section.exclusion.label = Exclusions/inclusions and comments from HMRC
+pdf.decision.section.legal.label = This ruling does not constitute a Binding Tariff Information ruling as defined by (EEC) 2913/92.
 
 pdf.application.title = Your application for a Binding Tariff Information ruling
 pdf.application.submitted = Application submitted
