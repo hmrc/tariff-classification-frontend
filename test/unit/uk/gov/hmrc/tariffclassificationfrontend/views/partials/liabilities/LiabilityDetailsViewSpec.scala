@@ -72,7 +72,7 @@ class LiabilityDetailsViewSpec extends ViewSpec with MockitoSugar {
         // When
         val doc = view(
           views.html.partials.liabilities.liability_details(c = c, liabilityForm = LiabilityDetailsForm.liabilityDetailsForm(l), decisionForm = form.liabilityCompleteForm(d)
-          )(requestWithPermissions(), messages, appConfig))
+          )(requestWithPermissions(Permission.CREATE_CASES), messages, appConfig))
 
         // Then
         doc should containElementWithID("edit-liability-details")
