@@ -17,34 +17,53 @@
 package uk.gov.hmrc.tariffclassificationfrontend.forms
 
 import java.time.ZoneOffset._
-import java.time.{Instant, LocalDate}
+import java.time.{Clock, Instant, LocalDate}
 
-import play.api.data.Form
 import play.api.data.Forms._
-import uk.gov.hmrc.tariffclassificationfrontend.forms.mappings.FormMappings.textNonEmpty
+import play.api.data.{Form, Mapping}
+import uk.gov.hmrc.tariffclassificationfrontend.forms.mappings.FormMappings._
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Contact, LiabilityOrder}
 
 import scala.util.Try
 
+object dateType {
 
-object LiabilityDetailsForm {
+  private type FormDateStr = (String, String, String)
 
-  private type FormDate = (Int, Int, Int)
-
-  private val formDate2Instant: FormDate => Instant = {
+  private val formDate2Instant: FormDateStr => Instant = {
     case (day, month, year) =>
-      val min = LocalDate.of(year, month, day)
+      val min = LocalDate.of(year.toInt, month.toInt, day.toInt)
       min.atStartOfDay(UTC).toInstant
   }
 
-  private val instant2FormDate: Instant => FormDate = { date =>
+  private val instant2FormDate: Instant => FormDateStr = { date =>
     val offsetDate = date.atOffset(UTC).toLocalDate
-    (offsetDate.getDayOfMonth, offsetDate.getMonthValue, offsetDate.getYear)
+    (offsetDate.getDayOfMonth.toString, offsetDate.getMonthValue.toString, offsetDate.getYear.toString)
   }
 
-  private val validDateFormat: FormDate => Boolean = {
-    case (day, month, year) => Try(LocalDate.of(year, month, day)).isSuccess
+  private val checkAllNumeric: FormDateStr => Boolean = {
+    date => date.productIterator.count(s => Try(s.toString.toInt).isSuccess) == date.productIterator.size
   }
+
+  private val validDateFormat: FormDateStr => Boolean = {
+    case (day, month, year) if checkAllNumeric(day, month, year) => Try(LocalDate.of(year.toInt, month.toInt, day.toInt)).isSuccess
+    case _ => false
+  }
+
+  private val dateMustBeInTheFuture: Instant => Boolean = _.isBefore(Instant.now(Clock.systemUTC))
+
+  val dateInThePast: Mapping[Instant] = tuple(
+    "day" -> text,
+    "month" -> text,
+    "year" -> text
+  ).verifying("case.liability.error.entry-date", validDateFormat)
+    .transform(formDate2Instant, instant2FormDate)
+    .verifying("case.liability.error.future-date", dateMustBeInTheFuture)
+
+}
+
+
+object LiabilityDetailsForm {
 
   private val emailRegex = """^[a-zA-Z0-9\.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$""".r
 
@@ -79,14 +98,7 @@ object LiabilityDetailsForm {
 
   def liabilityDetailsForm(existingLiability: LiabilityOrder): Form[LiabilityOrder] = Form[LiabilityOrder](
     mapping[LiabilityOrder, Option[Instant], String, Option[String], Option[String], Option[String], Option[String], String, String, Option[String]](
-      "entryDate" -> optional(
-        tuple(
-          "day" -> number,
-          "month" -> number,
-          "year" -> number
-        ).verifying("case.liability.error.entry-date", validDateFormat)
-          .transform(formDate2Instant, instant2FormDate)
-      ),
+      "entryDate" -> optional(dateType.dateInThePast),
       "traderName" -> textNonEmpty("case.liability.error.empty.trader-name"),
       "goodName" -> optional(text),
       "entryNumber" -> optional(text),
@@ -100,14 +112,7 @@ object LiabilityDetailsForm {
 
   def liabilityDetailsCompleteForm(existingLiability: LiabilityOrder): Form[LiabilityOrder] = Form[LiabilityOrder](
     mapping[LiabilityOrder, Option[Instant], String, Option[String], Option[String], Option[String], Option[String], String, String, Option[String]](
-      "entryDate" -> optional(
-        tuple(
-          "day" -> number,
-          "month" -> number,
-          "year" -> number
-        ).verifying("case.liability.error.entry-date", validDateFormat)
-          .transform(formDate2Instant, instant2FormDate)
-      ).verifying("error.required", _.isDefined),
+      "entryDate" -> optional(dateType.dateInThePast).verifying("error.required", _.isDefined),
       "traderName" -> textNonEmpty("case.liability.error.empty.trader-name"),
       "goodName" -> optional(nonEmptyText).verifying("error.required", _.isDefined),
       "entryNumber" -> optional(nonEmptyText).verifying("error.required", _.isDefined),

@@ -196,6 +196,7 @@ case.liability.error.empty.trader-name = Enter a trader name
 case.liability.error.empty.format-email = Enter a trader name
 case.liability.error.email = Enter an email address in the correct format
 case.liability.error.entry-date = The liability entry date must be valid
+case.liability.error.future-date = The liability entry date must be in the past
 
 events.table.empty=There are no events for this case
 
