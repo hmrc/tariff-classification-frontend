@@ -24,6 +24,6 @@
 @if(validStatus.contains(c.status) && c.decision.isDefined) {
     <div id="liability-ruling-certificate">
         <h3 class="heading-medium  mt-1">@messages("liability.decision.ruling.certificate.title")</h3>
-        <a @if(useTabIndex.isDefined){tabindex="@{useTabIndex.get}"} id="liability-ruling-certificate-link" target="_blank" href="@PdfDownloadController.liabilityPdf(c.reference)"> @messages("liability.decision.ruling.certificate.link") </a>
+        <a @if(useTabIndex.isDefined){tabindex="@{useTabIndex.get}"} id="liability-ruling-certificate-link" target="_blank" href="@PdfDownloadController.getRulingPdf(c.reference)"> @messages("liability.decision.ruling.certificate.link") </a>
     </div>
 }

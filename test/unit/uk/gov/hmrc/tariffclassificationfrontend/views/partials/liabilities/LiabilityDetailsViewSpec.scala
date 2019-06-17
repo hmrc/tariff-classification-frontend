@@ -32,6 +32,8 @@ class LiabilityDetailsViewSpec extends ViewSpec with MockitoSugar {
   private val constraints = mock[CommodityCodeConstraints]
   private val form = new DecisionForm(constraints)
 
+  private val caseIsCompletedStatuses : Seq[CaseStatus] = Seq(CaseStatus.COMPLETED,CaseStatus.CANCELLED)
+
   "Liability Details" should {
     given(constraints.commodityCodeExistsInUKTradeTariff) willReturn Constraint[String]("code")(_ => Valid)
 
@@ -348,7 +350,7 @@ class LiabilityDetailsViewSpec extends ViewSpec with MockitoSugar {
   }
 
   "Render view PDF link" when {
-  for(status: CaseStatus <- CaseStatus.values.filter((x => x == CaseStatus.COMPLETED  || x == CaseStatus.CANCELLED))) {
+  for(status: CaseStatus <- caseIsCompletedStatuses) {
     s"Case status is $status" in {
       val c = aCase(
         withStatus(status),
@@ -368,7 +370,7 @@ class LiabilityDetailsViewSpec extends ViewSpec with MockitoSugar {
 }
 
   "Not render view PDF link" when {
-    for(status: CaseStatus <- CaseStatus.values.filterNot(_ == CaseStatus.COMPLETED).filterNot(_ == CaseStatus.CANCELLED)) {
+    for(status: CaseStatus <- CaseStatus.values.filterNot(caseIsCompletedStatuses.contains(_))) {
       s"Case status is $status" in {
         val c = aCase(
           withStatus(status),
