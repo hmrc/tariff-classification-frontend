@@ -26,33 +26,35 @@ import scala.util.Try
 
 object DateType {
 
-  private type FormDateStr = (String, String, String)
+  private case class DateForm(day: String, month: String, year: String)
 
-  private val formDate2Instant: FormDateStr => Instant = {
-    case (day, month, year) =>
+  private val formDate2Instant: DateForm => Instant = {
+    case dateForm =>
       LocalDate
-        .of(year.toInt, month.toInt, day.toInt)
+        .of(dateForm.year.toInt, dateForm.month.toInt, dateForm.day.toInt)
         .atStartOfDay(UTC)
         .toInstant
   }
 
-  private val instant2FormDate: Instant => FormDateStr = { date =>
+  private val instant2FormDate: Instant => DateForm = { date =>
     val offsetDate = date.atOffset(UTC).toLocalDate
-    (offsetDate.getDayOfMonth.toString, offsetDate.getMonthValue.toString, offsetDate.getYear.toString)
+    DateForm(offsetDate.getDayOfMonth.toString, offsetDate.getMonthValue.toString, offsetDate.getYear.toString)
   }
 
-  private val validDateFormat: FormDateStr => Boolean = {
-    case (day, month, year) => Try(LocalDate.of(year.toInt, month.toInt, day.toInt)).isSuccess
+  private val validDateFormat: DateForm => Boolean = {
+    myDate => Try(LocalDate.of(myDate.year.toInt, myDate.month.toInt, myDate.day.toInt)).isSuccess
   }
 
   private val dateMustBeInThePast: Instant => Boolean = _.isBefore(Instant.now(Clock.systemUTC))
 
-  def date(error: String = "invalid.date"): Mapping[Instant] = tuple(
-    "day" -> text,
-    "month" -> text,
-    "year" -> text
-  ).verifying(error, validDateFormat)
-    .transform(formDate2Instant, instant2FormDate)
+  def date(error: String = "invalid.date"): Mapping[Instant] =
+    mapping(
+      "day" -> text,
+      "month" -> text,
+      "year" -> text
+    )(DateForm.apply)(DateForm.unapply)
+      .verifying(error, validDateFormat)
+      .transform(formDate2Instant, instant2FormDate)
 
   def pastDate(error: String): Mapping[Instant] = date(error)
     .verifying(s"$error.future", dateMustBeInThePast)
