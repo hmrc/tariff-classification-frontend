@@ -50,15 +50,15 @@ object dateType {
     case _ => false
   }
 
-  private val dateMustBeInTheFuture: Instant => Boolean = _.isBefore(Instant.now(Clock.systemUTC))
+  private val dateMustBeInThePast: Instant => Boolean = _.isBefore(Instant.now(Clock.systemUTC))
 
-  val dateInThePast: Mapping[Instant] = tuple(
+  val pastDate: Mapping[Instant] = tuple(
     "day" -> text,
     "month" -> text,
     "year" -> text
   ).verifying("case.liability.error.entry-date", validDateFormat)
     .transform(formDate2Instant, instant2FormDate)
-    .verifying("case.liability.error.future-date", dateMustBeInTheFuture)
+    .verifying("case.liability.error.future-date", dateMustBeInThePast)
 
 }
 
@@ -98,7 +98,7 @@ object LiabilityDetailsForm {
 
   def liabilityDetailsForm(existingLiability: LiabilityOrder): Form[LiabilityOrder] = Form[LiabilityOrder](
     mapping[LiabilityOrder, Option[Instant], String, Option[String], Option[String], Option[String], Option[String], String, String, Option[String]](
-      "entryDate" -> optional(dateType.dateInThePast),
+      "entryDate" -> optional(dateType.pastDate),
       "traderName" -> textNonEmpty("case.liability.error.empty.trader-name"),
       "goodName" -> optional(text),
       "entryNumber" -> optional(text),
@@ -112,7 +112,7 @@ object LiabilityDetailsForm {
 
   def liabilityDetailsCompleteForm(existingLiability: LiabilityOrder): Form[LiabilityOrder] = Form[LiabilityOrder](
     mapping[LiabilityOrder, Option[Instant], String, Option[String], Option[String], Option[String], Option[String], String, String, Option[String]](
-      "entryDate" -> optional(dateType.dateInThePast).verifying("error.required", _.isDefined),
+      "entryDate" -> optional(dateType.pastDate).verifying("error.required", _.isDefined),
       "traderName" -> textNonEmpty("case.liability.error.empty.trader-name"),
       "goodName" -> optional(nonEmptyText).verifying("error.required", _.isDefined),
       "entryNumber" -> optional(nonEmptyText).verifying("error.required", _.isDefined),
