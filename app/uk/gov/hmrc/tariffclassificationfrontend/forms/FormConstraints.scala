@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.forms
 
+import java.time.{Clock, Instant}
+
 import play.api.data.validation.{Constraint, Invalid, Valid}
 
 object FormConstraints {
@@ -24,10 +26,14 @@ object FormConstraints {
     case s: String if s.matches("[0-9]{6,22}") && (s.length % 2 == 0) => Valid
     case _: String => Invalid("Commodity code must be empty or numeric between 6 and 22 digits with an even number of digits")
   })
-
   val validCommodityCodeSearch: Constraint[String] = Constraint("constraints.commoditycode")({
-    case s: String if s.matches("[0-9]{2,22}")  => Valid
+    case s: String if s.matches("[0-9]{2,22}") => Valid
     case _: String => Invalid("Commodity code must be empty or numeric between 2 and 22 digits")
+  })
+
+  def dateMustBeInThePast(error: String = "date.must.be.in.past"): Constraint[Instant] = Constraint(error)({
+    case s: Instant if s.isBefore(Instant.now(Clock.systemUTC)) => Valid
+    case _ => Invalid(error)
   })
 
   def emptyOr(c: Constraint[String]*): Seq[Constraint[String]] = c.map { c =>

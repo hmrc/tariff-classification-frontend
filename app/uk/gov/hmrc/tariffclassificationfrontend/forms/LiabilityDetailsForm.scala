@@ -20,12 +20,28 @@ import java.time.Instant
 
 import play.api.data.Form
 import play.api.data.Forms._
+import uk.gov.hmrc.tariffclassificationfrontend.forms.FormConstraints.dateMustBeInThePast
 import uk.gov.hmrc.tariffclassificationfrontend.forms.mappings.FormMappings._
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Contact, LiabilityOrder}
 
 object LiabilityDetailsForm {
 
   private val emailRegex = """^[a-zA-Z0-9\.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$""".r
+
+  def liabilityDetailsForm(existingLiability: LiabilityOrder): Form[LiabilityOrder] = Form[LiabilityOrder](
+    mapping[LiabilityOrder, Option[Instant], String, Option[String], Option[String], Option[String], Option[String], String, String, Option[String]](
+      "entryDate" -> optional(DateType.date("case.liability.error.entry-date")
+        .verifying(dateMustBeInThePast("case.liability.error.entry-date.future"))),
+      "traderName" -> textNonEmpty("case.liability.error.empty.trader-name"),
+      "goodName" -> optional(text),
+      "entryNumber" -> optional(text),
+      "traderCommodityCode" -> optional(text),
+      "officerCommodityCode" -> optional(text),
+      "contactName" -> text,
+      "contactEmail" -> text.verifying("case.liability.error.email", e => validEmailFormat(e)),
+      "contactPhone" -> optional(text)
+    )(form2Liability(existingLiability))(liability2Form)
+  ).fillAndValidate(existingLiability)
 
   private def validEmailFormat(email: String): Boolean = email.trim.isEmpty || emailRegex.findFirstMatchIn(email.trim).nonEmpty
 
@@ -56,23 +72,11 @@ object LiabilityDetailsForm {
     ))
   }
 
-  def liabilityDetailsForm(existingLiability: LiabilityOrder): Form[LiabilityOrder] = Form[LiabilityOrder](
-    mapping[LiabilityOrder, Option[Instant], String, Option[String], Option[String], Option[String], Option[String], String, String, Option[String]](
-      "entryDate" -> optional(DateType.pastDate("case.liability.error.entry-date")),
-      "traderName" -> textNonEmpty("case.liability.error.empty.trader-name"),
-      "goodName" -> optional(text),
-      "entryNumber" -> optional(text),
-      "traderCommodityCode" -> optional(text),
-      "officerCommodityCode" -> optional(text),
-      "contactName" -> text,
-      "contactEmail" -> text.verifying("case.liability.error.email", e => validEmailFormat(e)),
-      "contactPhone" -> optional(text)
-    )(form2Liability(existingLiability))(liability2Form)
-  ).fillAndValidate(existingLiability)
-
   def liabilityDetailsCompleteForm(existingLiability: LiabilityOrder): Form[LiabilityOrder] = Form[LiabilityOrder](
     mapping[LiabilityOrder, Option[Instant], String, Option[String], Option[String], Option[String], Option[String], String, String, Option[String]](
-      "entryDate" -> optional(DateType.pastDate("case.liability.error.entry-date")).verifying("error.required", _.isDefined),
+      "entryDate" -> optional(DateType.date("case.liability.error.entry-date")
+        .verifying(dateMustBeInThePast("case.liability.error.entry-date.future")))
+        .verifying("error.required", _.isDefined),
       "traderName" -> textNonEmpty("case.liability.error.empty.trader-name"),
       "goodName" -> optional(nonEmptyText).verifying("error.required", _.isDefined),
       "entryNumber" -> optional(nonEmptyText).verifying("error.required", _.isDefined),
