@@ -18,8 +18,10 @@ package uk.gov.hmrc.tariffclassificationfrontend.models
 
 import java.time.Instant
 
+import uk.gov.hmrc.tariffclassificationfrontend.models
 import uk.gov.hmrc.tariffclassificationfrontend.models.AppealStatus.AppealStatus
 import uk.gov.hmrc.tariffclassificationfrontend.models.AppealType.AppealType
+import uk.gov.hmrc.tariffclassificationfrontend.models.ApplicationType.ApplicationType
 import uk.gov.hmrc.tariffclassificationfrontend.models.CancelReason.CancelReason
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.CaseStatus
 import uk.gov.hmrc.tariffclassificationfrontend.models.EventType.EventType
@@ -158,6 +160,15 @@ case class SampleStatusChange
   override val comment: Option[String] = None
 ) extends FieldChange[Option[SampleStatus]] {
   override val `type`: EventType.Value = EventType.SAMPLE_STATUS_CHANGE
+
+  def renderSummaryFor(application: ApplicationType): String = {
+    if (application.equals(ApplicationType.LIABILITY_ORDER) && (from.isEmpty || to.isEmpty)) {
+      def yesNo(s: Option[SampleStatus]) = if (s.isDefined) "yes" else "no"
+      s"Sending sample changed from ${yesNo(from)} to ${yesNo(to)}"
+    } else {
+      s"Sample status changed from ${SampleStatus.format(from, false)} to ${SampleStatus.format(to, false)}"
+    }
+  }
 }
 
 case class SampleReturnChange
@@ -183,5 +194,7 @@ object EventType extends Enumeration {
   val NOTE = Value
   val SAMPLE_STATUS_CHANGE = Value
   val SAMPLE_RETURN_CHANGE = Value
+
+  def sampleEvents: Set[models.EventType.Value] = Set(SAMPLE_STATUS_CHANGE, SAMPLE_RETURN_CHANGE)
 }
 

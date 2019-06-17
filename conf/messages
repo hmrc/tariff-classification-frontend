@@ -114,6 +114,8 @@ case.decision.constraint.explanation=Explanation for holder
 case.decision.ruling.certificate.content=If this case is under review or appeal
 case.decision.ruling.certificate.link=view and print a PDF of the ruling.
 case.decision.ruling.certificate.title=Ruling certificate
+liability.decision.ruling.certificate.title=Liability decision
+liability.decision.ruling.certificate.link=View PDF document for this liability.
 
 case.decision.holder.information=Information for the BTI holder
 case.decision.explanation.label=Explanation for holder
@@ -151,9 +153,16 @@ case.sample.request.change=Change
 
 case.sample.change-sample-return=Change sample return
 case.sample.return.change-return-header=Does the applicant want the sample returned?
-case.sample.return.change-return-confirm=Confirm and change return
-case.sample.return.change-return-cancel=Cancel and return to case
+case.sample.return.change-return-confirm=Continue
+case.sample.return.change-return-cancel=Cancel
 case.sample.return.none-selected=Select a sample return
+
+case.liability.sending.sample.change-return-confirm=Continue
+case.liability.sending.sample.change-return-cancel=Cancel
+case.liability.sending.sample.change-return-header=Is a sample being sent?
+
+case.liability.provide-samples=Is a sample being sent?
+case.liability.returning-samples=Does the sample need to be returned?
 
 case.liability.about.title = Information about this liability from the C592
 case.liability.commodity.code.info = Commodity code information
@@ -215,12 +224,13 @@ error.empty.default = This field is required
 error.empty.note = Enter a case note
 error.empty.keyword = Enter a keyword
 error.empty.sample.status = Select a sample status
-error.empty.sample.return = Select a return option
+error.empty.sample.return = Select yes if the applicant wants the sample returned
 error.empty.queue = Select a queue to release this case
 error.empty.appealType = Select Alternative Dispute Resolution, review or a level of appeal to continue
 error.empty.appealStatus = Select status to continue
 error.empty.liability-status = Select a status to continue
 error.empty.trader-name = Enter a Trader Name
+error.empty.sending-liability-sample = Select yes if the applicant is sending a sample
 
 error.empty.cancel.note=Add a note giving details of why you are cancelling this case
 error.empty.reject.note=Add a note giving details of why you are rejecting this case
@@ -281,6 +291,24 @@ pdf.ruling.section.ruling.legalInformation.section2.paragraph2 = We might publis
 pdf.ruling.section.ruling.legalInformation.section2.paragraph2.listitem1 = information about the item that is not confidential
 pdf.ruling.created.label = File created
 
+pdf.decision.title = Liability decision for {0}
+pdf.decision.section.c592.heading = Liability details from C592
+pdf.decision.section.c592.liability.type.label = Liability type
+pdf.decision.section.c592.port.officer.label = Port/complicance officer
+pdf.decision.section.c592.trader.name.label = Trader name
+pdf.decision.section.c592.liability.entry.date.label = Liability entry date
+pdf.decision.section.c592.liability.entry.number.label = Liability entry number
+pdf.decision.section.information.heading = Information about this decision
+pdf.decision.section.information.classification.officer.label = HMRC classification officer
+pdf.decision.section.information.reference.number.label = HMRC reference number
+pdf.decision.section.information.decision.date.label = Date of decision
+pdf.decision.section.information.expiry.date.label = Date of expiry
+pdf.decision.section.commcode.suggested.commodity.code.label = Suggested commodity code
+pdf.decision.section.commcode.suggested.commodity.code.hint = This is the commodity code that HMRC advise is used, however this is not a legal judgement.
+pdf.decision.section.description.item.description.label = Item description
+pdf.decision.section.justification.label = Justification
+pdf.decision.section.exclusion.label = Exclusions/inclusions and comments from HMRC
+pdf.decision.section.legal.label = This ruling does not constitute a Binding Tariff Information ruling as defined by (EEC) 2913/92.
 
 pdf.application.title = Your application for a Binding Tariff Information ruling
 pdf.application.submitted = Application submitted
@@ -347,6 +375,7 @@ page.title.suspend.case=Suspend this case
 page.title.case.suspended=Case suspended
 page.title.change.sample.status=Change sample status
 page.title.change.sample.return=Change sample return
+page.title.change.liablity.sending.sample=Change sending sample
 page.title.reject.case=Reject this case
 page.title.case.rejected=Case rejected
 page.title.release.case=Release this case

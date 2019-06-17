@@ -102,7 +102,7 @@ class LiabilityControllerSpec extends UnitSpec with Matchers with BeforeAndAfter
       "Case has status NEW" in {
         val c = aCase(withReference("reference"), withStatus(CaseStatus.NEW), withLiabilityApplication())
         val request = newFakeGETRequestWithCSRF(fakeApplication)
-        val result = await(controller(Set(Permission.VIEW_CASES), c).editLiabilityDetails("ref")(request))
+        val result = await(controller(Set(Permission.VIEW_CASES, Permission.CREATE_CASES), c).editLiabilityDetails("ref")(request))
 
         status(result) shouldBe Status.OK
         contentType(result) shouldBe Some("text/html")
@@ -164,7 +164,7 @@ class LiabilityControllerSpec extends UnitSpec with Matchers with BeforeAndAfter
         given(casesService.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(updatedCase))
 
         val c = aCase(withReference("reference"), withStatus(CaseStatus.NEW), withLiabilityApplication())
-        val result = await(controller(Set(Permission.VIEW_CASES), c).postLiabilityDetails("reference")(validReq))
+        val result = await(controller(Set(Permission.VIEW_CASES, Permission.CREATE_CASES), c).postLiabilityDetails("reference")(validReq))
 
         status(result) shouldBe Status.SEE_OTHER
         locationOf(result) shouldBe Some(routes.LiabilityController.liabilityDetails("reference").url)
@@ -175,7 +175,7 @@ class LiabilityControllerSpec extends UnitSpec with Matchers with BeforeAndAfter
         given(commodityCodeConstraints.commodityCodeExistsInUKTradeTariff).willReturn(Constraint[String]("error")(_ => Valid))
         given(casesService.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(updatedCase))
 
-        val c = aCase(withReference("reference"), withStatus(CaseStatus.NEW), withLiabilityApplication())
+        val c = aCase(withReference("reference"), withStatus(CaseStatus.OPEN), withLiabilityApplication())
         val result = await(controller(Set(Permission.VIEW_CASES, Permission.EDIT_LIABILITY), c).postLiabilityDetails("reference")(validReq))
 
         status(result) shouldBe Status.SEE_OTHER

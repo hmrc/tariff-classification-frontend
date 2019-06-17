@@ -88,7 +88,7 @@ class CaseController @Inject()(verify: RequestActions,
       SAMPLE_DETAILS,
       c => {
         for {
-          events <- eventsService.getFilteredEvents(c.reference, NoPagination(), Some(Set(SAMPLE_STATUS_CHANGE, SAMPLE_RETURN_CHANGE)))
+          events <- eventsService.getFilteredEvents(c.reference, NoPagination(), Some(EventType.sampleEvents))
         } yield views.html.partials.sample.sample_details(c, events, tabIndexFor(SAMPLE_DETAILS))
       },
       "tab-item-Sample"
@@ -213,7 +213,7 @@ class CaseController @Inject()(verify: RequestActions,
   private def showActivity(c: Case, f: Form[ActivityFormData])
                           (implicit request: AuthenticatedRequest[AnyContent]): Future[HtmlFormat.Appendable] = {
     for {
-      events <- eventsService.getFilteredEvents(c.reference, NoPagination(), Some(EventType.values.diff(Set(SAMPLE_STATUS_CHANGE, SAMPLE_RETURN_CHANGE))))
+      events <- eventsService.getFilteredEvents(c.reference, NoPagination(), Some(EventType.values.diff(EventType.sampleEvents)))
       queues <- queuesService.getAll
     } yield views.html.partials.activity_details(c, events, f, queues, tabIndexFor(ACTIVITY))
   }

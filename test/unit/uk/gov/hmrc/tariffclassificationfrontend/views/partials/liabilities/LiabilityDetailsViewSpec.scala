@@ -32,6 +32,8 @@ class LiabilityDetailsViewSpec extends ViewSpec with MockitoSugar {
   private val constraints = mock[CommodityCodeConstraints]
   private val form = new DecisionForm(constraints)
 
+  private val caseIsCompletedStatuses : Seq[CaseStatus] = Seq(CaseStatus.COMPLETED,CaseStatus.CANCELLED)
+
   "Liability Details" should {
     given(constraints.commodityCodeExistsInUKTradeTariff) willReturn Constraint[String]("code")(_ => Valid)
 
@@ -70,7 +72,7 @@ class LiabilityDetailsViewSpec extends ViewSpec with MockitoSugar {
         // When
         val doc = view(
           views.html.partials.liabilities.liability_details(c = c, liabilityForm = LiabilityDetailsForm.liabilityDetailsForm(l), decisionForm = form.liabilityCompleteForm(d)
-          )(requestWithPermissions(), messages, appConfig))
+          )(requestWithPermissions(Permission.CREATE_CASES), messages, appConfig))
 
         // Then
         doc should containElementWithID("edit-liability-details")
@@ -345,6 +347,46 @@ class LiabilityDetailsViewSpec extends ViewSpec with MockitoSugar {
       doc.getElementById("liability-complete-button") shouldNot haveAttribute("disabled", "disabled")
     }
 
+  }
+
+  "Render view PDF link" when {
+  for(status: CaseStatus <- caseIsCompletedStatuses) {
+    s"Case status is $status" in {
+      val c = aCase(
+        withStatus(status),
+        withLiabilityApplication()
+      )
+      val d = c.decision.getOrElse(Decision())
+      val l = c.application.asLiabilityOrder
+
+      // When
+      val doc = view(
+        views.html.partials.liabilities.liability_details(c = c, liabilityForm = LiabilityDetailsForm.liabilityDetailsCompleteForm(l),
+          decisionForm = form.liabilityCompleteForm(d))(requestWithPermissions(), messages, appConfig))
+
+      doc should containElementWithID("liability-ruling-certificate-link")
+    }
+  }
+}
+
+  "Not render view PDF link" when {
+    for(status: CaseStatus <- CaseStatus.values.filterNot(caseIsCompletedStatuses.contains(_))) {
+      s"Case status is $status" in {
+        val c = aCase(
+          withStatus(status),
+          withLiabilityApplication()
+        )
+        val d = c.decision.getOrElse(Decision())
+        val l = c.application.asLiabilityOrder
+
+        // When
+        val doc = view(
+          views.html.partials.liabilities.liability_details(c = c, liabilityForm = LiabilityDetailsForm.liabilityDetailsCompleteForm(l),
+            decisionForm = form.liabilityCompleteForm(d))(requestWithPermissions(), messages, appConfig))
+
+        doc shouldNot containElementWithID("liability-ruling-certificate-link")
+      }
+    }
   }
 
 }

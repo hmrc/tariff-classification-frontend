@@ -19,74 +19,45 @@ package uk.gov.hmrc.tariffclassificationfrontend.views.partials.sample
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewSpec
-import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.sample.sample_details
+import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.sample.{sample_details, sample_details_bti}
 import uk.gov.tariffclassificationfrontend.utils.Cases._
 
 class SampleDetailsViewSpec extends ViewSpec {
 
   "Sample Details" should {
 
-    "render sample to be returned when sample provided" in {
+    "render bti details" in {
       // Given
       val caseWithSample = aCase(
-        withBTIDetails(sampleToBeProvided = true, sampleToBeReturned = true),
-        withoutAttachments()
+        withBTIDetails()
       )
 
       // When
       val doc = view(sample_details(caseWithSample,Paged.empty[Event]))
 
       // Then
-      doc.getElementById("app-details-sending-samples") should containText(messages("answer.yes"))
-      doc.getElementById("app-details-returning-samples") should containText(messages("answer.yes"))
+      doc should containElementWithID("app-details-sending-samples")
+      doc shouldNot containElementWithID("liability-sending-samples")
     }
 
-    "not render sample to be returned when sample not provided" in {
+    "render liability details" in {
       // Given
       val `case` = aCase(
-        withBTIDetails(sampleToBeReturned = true),
-        withoutAttachments()
+        withLiabilityApplication()
       )
 
       // When
       val doc = view(sample_details(`case`,Paged.empty[Event]))
 
       // Then
-      doc.getElementById("app-details-sending-samples") should containText(messages("answer.no"))
-      doc shouldNot containElementWithID("app-details-returning-samples")
-    }
-
-    "render sample status details when present on case" in {
-      // Given
-      val caseWithSample = aCase(
-        withSampleStatus(Some(SampleStatus.AWAITING)),
-        withBTIDetails(sampleToBeProvided = true, sampleToBeReturned = true),
-        withoutAttachments()
-      )
-
-      // When
-      val doc = view(sample_details(caseWithSample,Paged.empty[Event]))
-
-      doc.getElementById("sample-status-value") should containText(SampleStatus.format(Some(SampleStatus.AWAITING)))
-    }
-
-    "render sample status details of None when not present on case" in {
-      // Given
-      val caseWithSample = aCase(
-        withBTIDetails(sampleToBeProvided = false, sampleToBeReturned = false),
-        withoutAttachments()
-      )
-
-      // When
-      val doc = view(sample_details(caseWithSample,Paged.empty[Event]))
-
-      doc.getElementById("sample-status-value") should containText(SampleStatus.format(None))
+      doc should containElementWithID("liability-sending-samples")
+      doc shouldNot containElementWithID("app-details-sending-samples")
     }
 
     "render sample status activity when present on case" in {
       // Given
       val caseWithSample = aCase(
-        withBTIDetails(sampleToBeProvided = false, sampleToBeReturned = false),
+        withBTIDetails(sampleToBeProvided = true, sampleToBeReturned = false),
         withoutAttachments()
       )
 
@@ -103,31 +74,21 @@ class SampleDetailsViewSpec extends ViewSpec {
       doc.getElementById("sample-status-events-row-2-title") should containText("Sample status changed from moved to ELM to destroyed")
     }
 
-    "render sample requested when present on case" in {
+    "render sample status event as sending sample for liability" in {
       // Given
       val caseWithSample = aCase(
-        withSampleRequested(Some(Operator("id", name = Some("Tester Op"))), Some(SampleReturn.TO_BE_CONFIRMED))
+        withLiabilityApplication()
       )
 
-      // When
-      val doc = view(sample_details(caseWithSample,Paged.empty[Event]))
-
-      doc.getElementById("sample-requested-by") should containText("Tester Op")
-      doc.getElementById("sample-requested-return") should containText(SampleReturn.format(Some(SampleReturn.TO_BE_CONFIRMED)))
-    }
-
-    "not render sample requested when not present on case" in {
-      // Given
-      val caseWithSample = aCase(
-        withSampleRequested(None, None)
-      )
+      val event1 : Event = Event("1",SampleStatusChange(None, Some(SampleStatus.AWAITING), None),Operator("1"),"1")
+      val sampleStatusActivity : Seq[Event] = Seq(event1)
 
       // When
-      val doc = view(sample_details(caseWithSample,Paged.empty[Event]))
+      val doc = view(sample_details(caseWithSample,Paged.apply(sampleStatusActivity,NoPagination(),3)))
 
-      doc shouldNot containElementWithID("sample-requested-by")
-      doc shouldNot containElementWithID("sample-requested-return")
+      doc.getElementById("sample-status-events-row-0-title") should containText("Sending sample changed from no to yes")
     }
+
   }
 
 }

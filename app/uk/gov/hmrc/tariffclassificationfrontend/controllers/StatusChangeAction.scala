@@ -35,7 +35,7 @@ trait StatusChangeAction[T] extends RenderCaseAction {
 
   protected def status(c: Case): T
 
-  protected def chooseStatusView(c: Case, preFilledForm: Form[T])(implicit request: Request[_]): Html
+  protected def chooseStatusView(c: Case, preFilledForm: Form[T], options: Option[String] = None)(implicit request: Request[_]): Html
 
   protected def update(c: Case, status: T, operator: Operator)(implicit hc: HeaderCarrier): Future[Case]
 
@@ -43,21 +43,21 @@ trait StatusChangeAction[T] extends RenderCaseAction {
 
   protected val requiredPermission: Permission
 
-  def chooseStatus(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen
+  def chooseStatus(reference: String, options: Option[String] = None): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen
     verify.mustHave(requiredPermission)).async { implicit request =>
     getCaseAndRenderView(
       reference,
-      c => successful(chooseStatusView(c, form.fill(status(c))))
+      c => successful(chooseStatusView(c, form.fill(status(c)), options))
     )
   }
 
-  def updateStatus(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen
+  def updateStatus(reference: String, options: Option[String] = None): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen
     verify.mustHave(requiredPermission)).async { implicit request =>
     form.bindFromRequest().fold(
       errors => {
         getCaseAndRenderView(
           reference,
-          c => successful(chooseStatusView(c, errors))
+          c => successful(chooseStatusView(c, errors, options))
         )
       },
       (status: T) => {
