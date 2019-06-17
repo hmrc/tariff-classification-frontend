@@ -50,7 +50,7 @@ class ExtendedUseCaseController @Inject()(override val verify: RequestActions,
 
   override protected def status(c: Case): Boolean = c.decision.flatMap(_.cancellation).exists(_.applicationForExtendedUse)
 
-  override protected def chooseStatusView(c: Case, preFilledForm: Form[Boolean])
+  override protected def chooseStatusView(c: Case, preFilledForm: Form[Boolean], options: Option[String] = None)
                                          (implicit request: Request[_]): Html = {
     views.html.change_extended_use_status(c, preFilledForm)
   }

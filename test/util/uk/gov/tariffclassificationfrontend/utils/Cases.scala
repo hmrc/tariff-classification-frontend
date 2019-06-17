@@ -96,6 +96,10 @@ object Cases {
     c.copy(sample = c.sample.copy(status = sampleStatus))
   }
 
+  def withSample(sample : Sample): Case => Case = { c =>
+    c.copy(sample = sample)
+  }
+
   def withSampleRequested(operator: Option[Operator], returnStatus : Option[SampleReturn]): Case => Case = { c =>
     c.copy(sample = c.sample.copy(requestedBy = operator, returnStatus = returnStatus))
   }
