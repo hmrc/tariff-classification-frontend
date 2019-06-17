@@ -118,6 +118,13 @@ case class LiabilityOrder
 object LiabilityStatus extends Enumeration {
   type LiabilityStatus = Value
   val LIVE, NON_LIVE = Value
+
+  def format(liabilityStatus: LiabilityStatus) : String = {
+    liabilityStatus match {
+      case LIVE => "Live"
+      case NON_LIVE => "Non-live"
+    }
+  }
 }
 
 case class EORIDetails

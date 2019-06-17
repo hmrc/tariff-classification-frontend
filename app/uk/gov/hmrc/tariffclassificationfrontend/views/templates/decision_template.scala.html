@@ -1,0 +1,169 @@
+@*
+ * Copyright 2019 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
+@import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Decision, LiabilityOrder, LiabilityStatus}
+@import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
+
+@(c: Case, d: Decision)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+
+@createLink(path: String)(implicit req: play.api.mvc.Request[_]) = @{
+    val protocol = if(req.secure) "https" else "http"
+    s"$protocol://${req.host}${routes.Assets.at("images/hmrc-logo.jpg")}"
+}
+
+@defining(c.application.asLiabilityOrder) { liab: LiabilityOrder =>
+
+<html>
+    <head>
+        <style>
+                body {
+                    font-size: 21px;
+                    font-family: "nta", Arial, sans-serif;
+                }
+
+                table {
+                    width: 100%;
+                    font-size: 21px;
+                    line-height: 1.31579;
+                    border-collapse: collapse;
+                }
+
+                td {
+                    padding: 8px 0px 8px 0px;
+                    /*border-bottom: 1px solid #bfc1c3;*/
+                    vertical-align: top;
+                }
+
+                td:nth-child(n) {
+                    width: 35%;
+                }
+
+                table.header td {
+                    border-bottom: 0px
+                }
+
+                .box {
+                    border: 1px solid #000000;
+                    padding: 0px 10px 0px 10px;
+                }
+
+                .section-label {
+                    font-weight: bold;
+                }
+
+                .timestamp {
+                    font-size: 10px;
+                    text-align: right;
+                }
+                .pre-wrap {
+                    white-space: pre-wrap;
+                }
+        </style>
+
+    </head>
+    <body>
+        <div class="centered-content">
+
+            <img src="@createLink("images/hmrc-logo.jpg")">
+            <h1>@messages("pdf.decision.title", liab.traderName)</h1>
+
+            <div id="section-c592" class="box">
+                <h2>@messages("pdf.decision.section.c592.heading")</h2>
+
+                <table>
+                    <tr>
+                        <td class="section-label">@messages("pdf.decision.section.c592.liability.type.label")</td>
+                        <td id="decision.c592.liability.type">@{LiabilityStatus.format(liab.status)}</td>
+                    </tr>
+                    <tr>
+                        <td class="section-label">@messages("pdf.decision.section.c592.port.officer.label")</td>
+                        <td id="decision.c592.port.officer">@liab.contact.name</td>
+                    </tr>
+                    <tr>
+                        <td class="section-label">@messages("pdf.decision.section.c592.trader.name.label")</td>
+                        <td id="decision.c592.traderName">@liab.traderName</td>
+                    </tr>
+                    <tr>
+                        <td class="section-label">@messages("pdf.decision.section.c592.liability.entry.date.label")</td>
+                        <td id="decision.c592.liability.entry.date">@Dates.format(liab.entryDate)</td>
+                    </tr>
+                    <tr>
+                        <td class="section-label">@messages("pdf.decision.section.c592.liability.entry.number.label")</td>
+                        <td id="decision.c592.liability.entry.number">@liab.entryNumber.getOrElse("")</td>
+                    </tr>
+
+                </table>
+
+            </div>
+            <div id="section-information" class="box">
+                <h2>@messages("pdf.decision.section.information.heading")</h2>
+
+                <table>
+                    <tr>
+                        <td class="section-label">@messages("pdf.decision.section.information.classification.officer.label")</td>
+                        <td id="decision.information.classification.officer">@c.assignee.map(x => x.name).getOrElse("")</td>
+                    </tr>
+                    <tr>
+                        <td class="section-label">@messages("pdf.decision.section.information.reference.number.label")</td>
+                        <td id="decision.information.reference.number">@c.reference</td>
+                    </tr>
+                    <tr>
+                        <td class="section-label">@messages("pdf.decision.section.information.decision.date.label")</td>
+                        <td id="decision.information.decision.date">@Dates.format(d.effectiveStartDate)</td>
+                    </tr>
+                    <tr>
+                        <td class="section-label">@messages("pdf.decision.section.information.expiry.date.label")</td>
+                        <td id="decision.information.expiry.date">@Dates.format(d.effectiveEndDate)</td>
+                    </tr>
+                </table>
+
+            </div>
+
+            <div id="section-commcode" class="box">
+                <p class="section-label">@messages("pdf.decision.section.commcode.suggested.commodity.code.label")</p>
+                <span id="decision.suggested.commodity.code.hint">@messages("pdf.decision.section.commcode.suggested.commodity.code.hint")</span>
+                <p id="decision.suggested.commodity.code"><span class="pre-wrap">@liab.officerCommodityCode</span></p>
+            </div>
+
+            <div id="section-description" class="box">
+                <p>
+                    <span class="section-label">@messages("pdf.decision.section.description.item.description.label")</span>
+                </p>
+                <p id="ruling.methodCommercialDenomination"><span class="pre-wrap">@d.goodsDescription</span></p>
+            </div>
+
+            <div id="section-justification" class="box">
+                <p class="section-label">@messages("pdf.decision.section.justification.label")</p>
+                <p id="decision.justification"><span class="pre-wrap">@d.justification</span></p>
+            </div>
+
+            <div id="section-exclusion" class="box">
+                <p class="section-label">@messages("pdf.decision.section.exclusion.label")</p>
+                <p id="decision.exclusion"><span class="pre-wrap">@d.methodExclusion.getOrElse("")</span></p>
+            </div>
+
+            <div id="section-legal" class="box">
+                <p>@messages("pdf.decision.section.legal.label")</p>
+            </div>
+
+        </div>
+
+    </body>
+
+</html>
+
+}

@@ -105,7 +105,7 @@ POST        /new-liability                                      @uk.gov.hmrc.tar
 # Note: Browser links cant send a DELETE so it has to be GET in this case
 GET         /cases/:reference/keywords/:keyword                 @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.removeKeyword(reference: String, keyword: String)
 
-GET         /pdf/ruling/:reference                              @uk.gov.hmrc.tariffclassificationfrontend.controllers.PdfDownloadController.rulingPdf(reference: String)
+GET         /pdf/ruling/:reference                              @uk.gov.hmrc.tariffclassificationfrontend.controllers.PdfDownloadController.getRulingPdf(reference: String)
 GET         /pdf/application/:reference                         @uk.gov.hmrc.tariffclassificationfrontend.controllers.PdfDownloadController.applicationPdf(reference: String)
 
 GET         /attachment/:id                                     @uk.gov.hmrc.tariffclassificationfrontend.controllers.ViewAttachmentController.get(id: String)

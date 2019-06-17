@@ -57,11 +57,16 @@ class PdfDownloadControllerSpec extends UnitSpec with MockitoSugar with Controll
 
   private val caseWithDecision = Cases.btiCaseExample.copy(decision = Some(decision))
   private val caseWithoutDecision = Cases.btiCaseExample.copy(decision = None)
+  private val liabilityCaseWithDecision = Cases.liabilityCaseExample.copy(decision = Some(decision))
 
   private val controller = new PdfDownloadController(new SuccessfulAuthenticatedAction(operator), messageApi, pdfService, fileService, caseService)
 
   private def givenCompletedCase(): Unit = {
     when(caseService.getOne(any[String])(any[HeaderCarrier])).thenReturn(successful(Some(caseWithDecision)))
+  }
+
+  private def givenCompletedLiabilityCase(): Unit = {
+    when(caseService.getOne(any[String])(any[HeaderCarrier])).thenReturn(successful(Some(liabilityCaseWithDecision)))
   }
 
   private def givenNonDecisionCase(): Unit = {
@@ -119,18 +124,31 @@ class PdfDownloadControllerSpec extends UnitSpec with MockitoSugar with Controll
       givenCompletedCase()
       givenValidGeneratedPdf()
 
-      val result = await(controller.rulingPdf(caseWithDecision.reference)(fakeRequest))
+      val result = await(controller.getRulingPdf(caseWithDecision.reference)(fakeRequest))
 
       status(result) shouldBe OK
       contentAsString(result) shouldBe "Some content"
       contentType(result) shouldBe Some("application/pdf")
+      header("Content-Disposition",result) shouldBe Some("filename=BTIRuling_1.pdf")
+    }
+
+    "return expected pdf for liability case" in {
+      givenCompletedLiabilityCase()
+      givenValidGeneratedPdf()
+
+      val result = await(controller.getRulingPdf(liabilityCaseWithDecision.reference)(fakeRequest))
+
+      status(result) shouldBe OK
+      contentAsString(result) shouldBe "Some content"
+      contentType(result) shouldBe Some("application/pdf")
+      header("Content-Disposition",result) shouldBe Some("filename=LiabilityDecision_1.pdf")
     }
 
     "redirect to ruling when no decision found" in {
       givenNonDecisionCase()
       givenValidGeneratedPdf()
 
-      val result = await(controller.rulingPdf(caseWithDecision.reference)(fakeRequest))
+      val result = await(controller.getRulingPdf(caseWithDecision.reference)(fakeRequest))
 
       status(result) shouldBe Status.OK
       locationOf(result) shouldBe None
@@ -140,7 +158,7 @@ class PdfDownloadControllerSpec extends UnitSpec with MockitoSugar with Controll
     "error when case not found" in {
       givenNotFoundCase()
 
-      val result = await(controller.rulingPdf(caseWithDecision.reference)(newFakeGETRequestWithCSRF(fakeApplication)))
+      val result = await(controller.getRulingPdf(caseWithDecision.reference)(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
