@@ -39,11 +39,13 @@ object Cases {
   val btiApplicationExample = BTIApplication(eoriDetailsExample, contactExample, Some(eoriAgentDetailsExample), offline = false, "Laptop", "Personal Computer", None, None, None, None, None, None, None, sampleToBeProvided = false, sampleToBeReturned = false)
   val simpleBtiApplicationExample = BTIApplication(eoriDetailsExample, contactExample, None, offline = false, "Laptop", "Personal Computer", None, None, None, None, None, None, None, sampleToBeProvided = false, sampleToBeReturned = false)
   val decision = Decision("040900", Some(Instant.now()), Some(Instant.now().plusSeconds(2*3600*24*365)), "justification", "good description", None, None, Some("denomination"), Seq.empty)
+  val decisionWithExclusion = decision.copy(methodExclusion = Some("Excludes everything ever"))
   val liabilityApplicationExample = LiabilityOrder(contactExample, LiabilityStatus.NON_LIVE, "trader-business-name", Some("good-name"), Some(Instant.now()), Some("entry number"),Some("trader-1234567"),Some("officer-1234567"))
   val liabilityLiveApplicationExample = LiabilityOrder(contactExample, LiabilityStatus.LIVE, "trader-business-name", Some("good-name"), Some(Instant.now()), Some("entry number"))
   val btiCaseExample = Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, None, btiApplicationExample, Some(decision), Seq())
   val simpleCaseExample = Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, None, simpleBtiApplicationExample, None, Seq())
   val liabilityCaseExample = Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, None, liabilityApplicationExample, None, Seq())
+  val liabilityCaseWithDecisionExample = Case("1", CaseStatus.OPEN, Instant.now(), 0, None, Some(Operator("0", Some("Kevin"))), None, liabilityApplicationExample, Some(decisionWithExclusion), Seq())
   val liabilityLiveCaseExample = Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, None, liabilityLiveApplicationExample, None, Seq())
   val caseQueueExample = Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, Some("1"), btiApplicationExample, Some(decision), Seq())
   val caseAssignedExample = Case("1", CaseStatus.OPEN, Instant.now(), 0, None, Some(Operator("1", Some("Test User"))), Some("1"), btiApplicationExample, Some(decision), Seq())
@@ -92,6 +94,10 @@ object Cases {
 
   def withSampleStatus(sampleStatus : Option[SampleStatus]): Case => Case = { c =>
     c.copy(sample = c.sample.copy(status = sampleStatus))
+  }
+
+  def withSample(sample : Sample): Case => Case = { c =>
+    c.copy(sample = sample)
   }
 
   def withSampleRequested(operator: Option[Operator], returnStatus : Option[SampleReturn]): Case => Case = { c =>

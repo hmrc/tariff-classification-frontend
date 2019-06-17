@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.service
 
-import java.time.LocalDate
+import java.time.{Instant, LocalDate}
 import java.util.UUID
 
 import javax.inject.{Inject, Singleton}
@@ -107,7 +107,6 @@ class CasesService @Inject()(appConfig: AppConfig,
     } yield updated
   }
 
-
   def assignCase(original: Case, operator: Operator)
                 (implicit hc: HeaderCarrier): Future[Case] = {
     for {
@@ -157,14 +156,22 @@ class CasesService @Inject()(appConfig: AppConfig,
         .copy(
           status = CaseStatus.REFERRED,
           sample = if(reason.contains(ReferralReason.REQUEST_SAMPLE)){
-            original.sample.copy(requestedBy = Some(operator), returnStatus = Some(SampleReturn.TO_BE_CONFIRMED))
+            Sample(Some(SampleStatus.AWAITING), Some(operator), Some(SampleReturn.TO_BE_CONFIRMED))
           } else{
             original.sample
           }
         ))
       _ <- addReferStatusChangeEvent(original, updated, operator, Some(note), referredTo, reason, Some(attachment))
       _ = auditService.auditCaseReferred(original, updated, operator)
+      _ = processChangedSampleStatus(original, updated, operator)
     } yield updated
+  }
+
+  private def processChangedSampleStatus(original: Case, updated: Case, operator: Operator)(implicit hc: HeaderCarrier): Unit = {
+    if(updated.sample.status != original.sample.status){
+      addSampleStatusChangeEvent(original, updated, operator)
+      auditService.auditSampleStatusChange(original, updated, operator)
+    }
   }
 
   def rejectCase(original: Case, f: FileUpload, note: String, operator: Operator)
@@ -204,11 +211,14 @@ class CasesService @Inject()(appConfig: AppConfig,
                   (implicit hc: HeaderCarrier): Future[Case] = {
     val date = LocalDate.now(appConfig.clock).atStartOfDay(appConfig.clock.getZone)
     val startInstant = date.toInstant
-    val endInstant = date.plusYears(appConfig.decisionLifetimeYears).toInstant
+    val possibleEndInstant: Option[Instant] = original.application.isBTI match {
+      case true => Some(date.plusYears(appConfig.decisionLifetimeYears).toInstant)
+      case _ => None
+    }
 
     val decisionUpdating: Decision = original.decision
       .getOrElse(throw new IllegalArgumentException("Cannot Complete a Case without a Decision"))
-      .copy(effectiveStartDate = Some(startInstant), effectiveEndDate = Some(endInstant))
+      .copy(effectiveStartDate = Some(startInstant), effectiveEndDate = possibleEndInstant)
     val caseUpdating = original.copy(status = CaseStatus.COMPLETED, decision = Some(decisionUpdating))
 
     def sendCaseCompleteEmail(updated: Case): Future[Option[String]] = {

@@ -15,47 +15,55 @@
  *@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-@import uk.gov.hmrc.tariffclassificationfrontend.models.{SampleStatusChange, _}
+@import uk.gov.hmrc.tariffclassificationfrontend.models._
 @import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 @import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.progressive_disclosure
 @(c: Case, events: Paged[Event], startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-<h3 class="heading-medium" id="sample-status-events-heading">Sample activity</h3>
+@if(events.nonEmpty) {
+    <h3 class="heading-medium" id="sample-status-events-heading">Sample activity</h3>
 
-<table id="activity-events">
-    <thead>
-        <tr>
-            <th scope="col">Name</th>
-            <th scope="col">Description</th>
-            <th scope="col">Date</th>
+    <table id="activity-events">
+        <thead>
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Description</th>
+                <th scope="col">Date</th>
 
-        </tr>
-    </thead>
-    <tbody>
-    @for((event: Event, index: Int) <- events.results.zipWithIndex) {
-        <tr id="sample-status-events-row-@{index}">
-            <td id="sample-status-events-row-@{index}-operator" class="sample-status-cell">@event.operator.name.getOrElse("Unknown")</td>
+            </tr>
+        </thead>
+        <tbody>
+        @for((event: Event, index: Int) <- events.results.zipWithIndex) {
+            <tr id="sample-status-events-row-@{
+                index
+            }">
+                <td id="sample-status-events-row-@{
+                    index
+                }-operator" class="sample-status-cell">@event.operator.name.getOrElse("Unknown")</td>
 
-            <td id="sample-status-events-row-@{index}-content" class="sample-status-cell-desc">
+                <td id="sample-status-events-row-@{
+                    index
+                }-content" class="sample-status-cell-desc">
                 @{
                     event.details.`type` match {
                         case EventType.SAMPLE_STATUS_CHANGE => {
                             val body = event.details.asInstanceOf[SampleStatusChange]
                             progressive_disclosure(
                                 id = s"sample-status-events-row-$index",
-                                summary = s"Sample status changed from ${SampleStatus.format(body.from, false)} to ${SampleStatus.format(body.to, false)}",
+                                summary = body.renderSummaryFor(c.application.`type`),
                                 body = body.comment.map(Html(_)),
-                                useTabIndex = Some(startAtTabIndex + (index*2))
+                                useTabIndex = Some(startAtTabIndex + (index * 2))
                             )
                         }
                         case EventType.SAMPLE_RETURN_CHANGE => {
                             val body = event.details.asInstanceOf[SampleReturnChange]
+                            val sampleType = if(c.application.isLiabilityOrder) "Returning sample" else "Returning requested sample"
                             progressive_disclosure(
                                 id = s"sample-status-events-row-$index",
-                                summary = s"‘Return requested sample’ changed from ${SampleReturn.format(body.from).toLowerCase} to ${SampleReturn.format(body.to).toLowerCase}",
+                                summary = s"$sampleType changed from ${SampleReturn.format(body.from).toLowerCase} to ${SampleReturn.format(body.to).toLowerCase}",
                                 body = body.comment.map(Html(_)),
-                                useTabIndex = Some(startAtTabIndex + (index*2))
+                                useTabIndex = Some(startAtTabIndex + (index * 2))
                             )
                         }
                         case _ => {
@@ -63,12 +71,15 @@
                         }
                     }
                 }
-            </td>
+                </td>
 
-            <td id="sample-status-events-row-@{index}-date" class="sample-status-cell-date">@Dates.format(event.timestamp)</td>
-        </tr>
-    }
+                <td id="sample-status-events-row-@{
+                    index
+                }-date" class="sample-status-cell-date">@Dates.format(event.timestamp)</td>
+            </tr>
+        }
 
-    </tbody>
+        </tbody>
 
-</table>
+    </table>
+}

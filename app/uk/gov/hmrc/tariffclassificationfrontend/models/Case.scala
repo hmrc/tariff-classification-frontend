@@ -59,4 +59,18 @@ case class Case
 
   def addAttachment(attachment: Attachment): Case = this.copy(attachments = this.attachments :+ attachment)
 
+  def sampleToBeProvided: Boolean = {
+    application.`type` match {
+      case ApplicationType.BTI => application.asBTI.sampleToBeProvided
+      case ApplicationType.LIABILITY_ORDER => sample.status.isDefined
+    }
+  }
+
+  def sampleToBeReturned: Boolean = {
+    application.`type` match {
+      case ApplicationType.BTI => application.asBTI.sampleToBeReturned
+      case ApplicationType.LIABILITY_ORDER => sample.returnStatus.contains(SampleReturn.YES)
+    }
+  }
+
 }
