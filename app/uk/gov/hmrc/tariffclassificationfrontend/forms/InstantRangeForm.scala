@@ -24,8 +24,8 @@ object InstantRangeForm {
 
   val form: Form[InstantRange] = Form(
     mapping(
-      "min" -> DateType.date("report.error.min.date"),
-      "max" -> DateType.date("report.error.max.date")
+      "min" -> FormDate.date("report.error.min.date"),
+      "max" -> FormDate.date("report.error.max.date")
     )(InstantRange.apply)(InstantRange.unapply)
   )
 }

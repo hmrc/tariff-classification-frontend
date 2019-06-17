@@ -30,7 +30,7 @@ object LiabilityDetailsForm {
 
   def liabilityDetailsForm(existingLiability: LiabilityOrder): Form[LiabilityOrder] = Form[LiabilityOrder](
     mapping[LiabilityOrder, Option[Instant], String, Option[String], Option[String], Option[String], Option[String], String, String, Option[String]](
-      "entryDate" -> optional(DateType.date("case.liability.error.entry-date")
+      "entryDate" -> optional(FormDate.date("case.liability.error.entry-date")
         .verifying(dateMustBeInThePast("case.liability.error.entry-date.future"))),
       "traderName" -> textNonEmpty("case.liability.error.empty.trader-name"),
       "goodName" -> optional(text),
@@ -74,7 +74,7 @@ object LiabilityDetailsForm {
 
   def liabilityDetailsCompleteForm(existingLiability: LiabilityOrder): Form[LiabilityOrder] = Form[LiabilityOrder](
     mapping[LiabilityOrder, Option[Instant], String, Option[String], Option[String], Option[String], Option[String], String, String, Option[String]](
-      "entryDate" -> optional(DateType.date("case.liability.error.entry-date")
+      "entryDate" -> optional(FormDate.date("case.liability.error.entry-date")
         .verifying(dateMustBeInThePast("case.liability.error.entry-date.future")))
         .verifying("error.required", _.isDefined),
       "traderName" -> textNonEmpty("case.liability.error.empty.trader-name"),

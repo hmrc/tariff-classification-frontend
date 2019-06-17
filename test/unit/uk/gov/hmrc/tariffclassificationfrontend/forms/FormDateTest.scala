@@ -21,9 +21,9 @@ import java.time.{ZoneOffset, ZonedDateTime}
 import play.api.data.Form
 import uk.gov.hmrc.play.test.UnitSpec
 
-class DateTypeTest extends UnitSpec {
+class FormDateTest extends UnitSpec {
 
-  val test = Form(DateType.date())
+  val test = Form(FormDate.date())
 
   "Date type" should {
 

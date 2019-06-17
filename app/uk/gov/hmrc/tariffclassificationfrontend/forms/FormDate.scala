@@ -24,7 +24,7 @@ import play.api.data.Mapping
 
 import scala.util.Try
 
-object DateType {
+object FormDate {
 
   private val formDate2Instant: DateForm => Instant = {
     dateForm =>
