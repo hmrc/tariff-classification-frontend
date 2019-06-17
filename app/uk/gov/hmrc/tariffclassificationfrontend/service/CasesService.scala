@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.service
 
-import java.time.LocalDate
+import java.time.{Instant, LocalDate}
 import java.util.UUID
 
 import javax.inject.{Inject, Singleton}
@@ -211,11 +211,14 @@ class CasesService @Inject()(appConfig: AppConfig,
                   (implicit hc: HeaderCarrier): Future[Case] = {
     val date = LocalDate.now(appConfig.clock).atStartOfDay(appConfig.clock.getZone)
     val startInstant = date.toInstant
-    val endInstant = date.plusYears(appConfig.decisionLifetimeYears).toInstant
+    val possibleEndInstant: Option[Instant] = original.application.isBTI match {
+      case true => Some(date.plusYears(appConfig.decisionLifetimeYears).toInstant)
+      case _ => None
+    }
 
     val decisionUpdating: Decision = original.decision
       .getOrElse(throw new IllegalArgumentException("Cannot Complete a Case without a Decision"))
-      .copy(effectiveStartDate = Some(startInstant), effectiveEndDate = Some(endInstant))
+      .copy(effectiveStartDate = Some(startInstant), effectiveEndDate = possibleEndInstant)
     val caseUpdating = original.copy(status = CaseStatus.COMPLETED, decision = Some(decisionUpdating))
 
     def sendCaseCompleteEmail(updated: Case): Future[Option[String]] = {

@@ -72,9 +72,6 @@ class DecisionTemplateViewSpec extends ViewSpec {
       assertSectionContains(section, Dates.format(ruling.effectiveStartDate))
     }
 
-    "contain the decision expiry date" in {
-      assertSectionContains(section, Dates.format(ruling.effectiveEndDate))
-    }
   }
 
   "Decision pdf commodity code section" must {
@@ -82,7 +79,7 @@ class DecisionTemplateViewSpec extends ViewSpec {
     val section = "section-commcode"
 
     "contain the suggested commodity code" in {
-      assertSectionContains(section, liability.officerCommodityCode.getOrElse("Lovely code that will not match"))
+      assertSectionContains(section, ruling.bindingCommodityCode)
     }
   }
 
