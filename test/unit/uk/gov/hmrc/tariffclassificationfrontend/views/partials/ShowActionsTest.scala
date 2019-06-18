@@ -43,13 +43,11 @@ class ShowActionsTest extends ViewSpec {
 
     "Show Release" in {
       ShowActions(CaseStatus.NEW)(requestWithPermissions(Permission.RELEASE_CASE)).release shouldBe true
-      ShowActions(CaseStatus.OPEN)(requestWithPermissions(Permission.RELEASE_CASE)).release shouldBe true
       ShowActions(CaseStatus.NEW)(requestWithPermissions()).release shouldBe false
     }
 
     "Show Suppress" in {
       ShowActions(CaseStatus.NEW)(requestWithPermissions(Permission.SUPPRESS_CASE)).suppress shouldBe true
-      ShowActions(CaseStatus.OPEN)(requestWithPermissions(Permission.SUPPRESS_CASE)).suppress shouldBe false
       ShowActions(CaseStatus.NEW)(requestWithPermissions()).suppress shouldBe false
     }
 

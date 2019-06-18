@@ -149,13 +149,13 @@ object Permission {
   case object RELEASE_CASE extends CasePermission {
     override def name: String = nameOf(this)
     override def appliesTo(`case`: Case, operator: Operator): Boolean =
-      managersOrTeamMembersOnly(operator) &&
-    `case`.hasStatus(NEW)
+      managersOrTeamMembersOnly(operator) && `case`.hasStatus(NEW)
   }
 
   case object SUPPRESS_CASE extends CasePermission {
     override def name: String = nameOf(this)
-    override def appliesTo(`case`: Case, operator: Operator): Boolean = managersOrTeamMembersOnly(operator)
+    override def appliesTo(`case`: Case, operator: Operator): Boolean =
+      managersOrTeamMembersOnly(operator) && `case`.hasStatus(NEW)
   }
 
   case object REFER_CASE extends CasePermission {
