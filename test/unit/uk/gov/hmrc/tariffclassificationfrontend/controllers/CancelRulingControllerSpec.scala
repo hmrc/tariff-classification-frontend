@@ -33,7 +33,6 @@ import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.models.CancelReason.CancelReason
 import uk.gov.hmrc.tariffclassificationfrontend.models.Permission.Permission
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
@@ -59,7 +58,7 @@ class CancelRulingControllerSpec extends WordSpec with Matchers with UnitSpec
 
   private val largeFileSize :Long = 16485760
 
-  private val rulingDetailsUrl = "/tariff-classification/cases/1/ruling"
+  private val itemDetailsUrl = "/tariff-classification/cases/1"
   private implicit val mat: Materializer = fakeApplication.materializer
   private implicit val hc: HeaderCarrier = HeaderCarrier()
 
@@ -113,23 +112,23 @@ class CancelRulingControllerSpec extends WordSpec with Matchers with UnitSpec
       bodyOf(result) should include("Cancel the ruling")
     }
 
-    "redirect to Ruling Details for non COMPLETED statuses" in {
+    "redirect to Item Details for non COMPLETED statuses" in {
       val result: Result = await(controller(caseWithStatusOPEN).getCancelRuling("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
       charsetOf(result) shouldBe None
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/ruling")
+      locationOf(result) shouldBe Some("/tariff-classification/cases/reference")
     }
 
-    "redirect to Ruling Details for expired rulings" in {
+    "redirect to Item Details for expired rulings" in {
 
       val result: Result = await(controller(btiCaseWithExpiredRuling).getCancelRuling("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
       charsetOf(result) shouldBe None
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/ruling")
+      locationOf(result) shouldBe Some("/tariff-classification/cases/reference")
     }
 
     "return OK when user has right permissions" in {
@@ -199,24 +198,24 @@ class CancelRulingControllerSpec extends WordSpec with Matchers with UnitSpec
       bodyOf(result) should include("Change the status of this case to: Cancelled")
     }
 
-    "redirect to Ruling Details for non COMPLETED statuses" in {
+    "redirect to Item Details for non COMPLETED statuses" in {
       val result: Result = await(controller(caseWithStatusOPEN).postCancelRuling("reference")(newFakePOSTRequestWithCSRF(fakeApplication)
         .withBody(aMultipartFileWithParams("reason" -> Seq("ANNULLED"), "note" -> Seq("some-note")))))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
       charsetOf(result) shouldBe None
-      locationOf(result) shouldBe Some(rulingDetailsUrl)
+      locationOf(result) shouldBe Some(itemDetailsUrl)
     }
 
-    "redirect to Ruling Details for expired rulings" in {
+    "redirect to Item Details for expired rulings" in {
       val result: Result = await(controller(btiCaseWithExpiredRuling).postCancelRuling("reference")(newFakePOSTRequestWithCSRF(fakeApplication)
         .withBody(aMultipartFileWithParams("reason" -> Seq("ANNULLED"), "note" -> Seq("some-note")))))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
       charsetOf(result) shouldBe None
-      locationOf(result) shouldBe Some(rulingDetailsUrl)
+      locationOf(result) shouldBe Some(itemDetailsUrl)
     }
 
     "redirect unauthorised when does not have right permissions" in {

@@ -14,17 +14,15 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.{CaseController,CancelRulingController}
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-@import uk.gov.hmrc.tariffclassificationfrontend.models.RulingCancellation
-@import uk.gov.hmrc.tariffclassificationfrontend.models.{CancelReason, Case}
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.{CancelRulingController, CaseController}
+@import uk.gov.hmrc.tariffclassificationfrontend.models.{CancelReason, Case, RulingCancellation}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.forms.components.RadioOption
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.components.{confirm_or_cancel_buttons, warning}
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.{input_textarea, input_radiogroup}
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.{input_radiogroup, input_textarea}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.case_heading
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{case_heading, error_summary}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.statuses.status_change_upload
-@import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.error_summary
 @(c: Case, form: Form[RulingCancellation])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("page.title.cancel.ruling"))) {
@@ -61,7 +59,12 @@
                 @status_change_upload(form("email"), "cancelling")
 
                 @warning(
-                    "Cancelling this BTI ruling cannot be reversed.",
+                    if(c.application.isBTI) {
+                        "Cancelling this BTI ruling cannot be reversed."
+                    }
+                    else {
+                        "Cancelling this liability decision cannot be reversed."
+                    },
                     containerClass = "mb-4"
                 )
 
