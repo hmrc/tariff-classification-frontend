@@ -139,7 +139,7 @@ class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
     "redirect to confirmation page when data filled correctly" in {
       when(casesService.referCase(refEq(caseWithStatusOPEN),any[String],any[Seq[ReferralReason]],any[FileUpload],
-        any[String], refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREFERRED))
+        any[String], any[Operator])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREFERRED))
 
       val result: Result = await(controller(caseWithStatusOPEN).postReferCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)
         .withBody(aMultipartFileWithParams("referredTo" -> Seq("Applicant"), "reasons[0]" -> Seq(ReferralReason.REQUEST_SAMPLE.toString), "note" -> Seq("some-note")))))
@@ -150,7 +150,7 @@ class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
     "display required field when failing to submit referred to" in {
       when(casesService.referCase(refEq(caseWithStatusOPEN), any[String],any[Seq[ReferralReason]],any[FileUpload],
-        any[String], refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREFERRED))
+        any[String], any[Operator])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREFERRED))
 
       val result: Result = await(controller(caseWithStatusOPEN).postReferCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)
         .withBody(aMultipartFileWithParams("note" -> Seq("some-note")))))
@@ -190,7 +190,7 @@ class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     "remove reasons when referred to is set to Lab Analyst" in {
       val captor = ArgumentCaptor.forClass(classOf[Seq[ReferralReason]])
       when(casesService.referCase(refEq(caseWithStatusOPEN), any[String],captor.capture(),any[FileUpload],
-        any[String], refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREFERRED))
+        any[String], any[Operator])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREFERRED))
 
       val result: Result = await(controller(caseWithStatusOPEN).postReferCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)
         .withBody(aMultipartFileWithParams("referredTo" -> Seq("Lab Analyst"), "reasons[0]" -> Seq(ReferralReason.REQUEST_SAMPLE.toString),
@@ -202,7 +202,7 @@ class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
     "display required field when failing to submit a note" in {
       when(casesService.referCase(refEq(caseWithStatusOPEN), any[String],any[Seq[ReferralReason]],any[FileUpload],
-        any[String], refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREFERRED))
+        any[String], any[Operator])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREFERRED))
 
       val result: Result = await(controller(caseWithStatusOPEN).postReferCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)
         .withBody(aMultipartFileWithParams("referredTo" -> Seq("LAB")))))
@@ -262,7 +262,7 @@ class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
     "return OK and HTML content type" in {
       when(casesService.referCase(refEq(caseWithStatusREFERRED),any[String],any[Seq[ReferralReason]],any[FileUpload],
-        any[String], refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREFERRED))
+        any[String], any[Operator])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREFERRED))
 
       val result: Result = await(controller(caseWithStatusREFERRED).confirmReferCase("reference")
       (newFakePOSTRequestWithCSRF(fakeApplication)
@@ -276,7 +276,7 @@ class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
     "redirect to a default page if the status is not right" in {
       when(casesService.referCase(refEq(caseWithStatusOPEN),any[String],any[Seq[ReferralReason]],any[FileUpload],
-        any[String], refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREFERRED))
+        any[String], any[Operator])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREFERRED))
 
       val result: Result = await(controller(caseWithStatusOPEN).confirmReferCase("reference")
       (newFakePOSTRequestWithCSRF(fakeApplication)

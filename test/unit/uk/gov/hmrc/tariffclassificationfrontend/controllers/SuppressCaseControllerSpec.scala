@@ -120,7 +120,7 @@ class SuppressCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     }
 
     "redirect to confirmation" in {
-      when(casesService.suppressCase(refEq(caseWithStatusNEW), any[FileUpload], refEq("some-note"), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusSUPRRESSED))
+      when(casesService.suppressCase(refEq(caseWithStatusNEW), any[FileUpload], refEq("some-note"), any[Operator])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusSUPRRESSED))
 
       val result: Result =
         await(controller(caseWithStatusNEW).postSuppressCase("reference")

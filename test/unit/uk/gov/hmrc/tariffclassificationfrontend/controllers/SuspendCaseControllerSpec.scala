@@ -121,7 +121,7 @@ class SuspendCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     }
 
     "redirect to confirmation" in {
-      when(casesService.suspendCase(refEq(caseWithStatusOPEN), any[FileUpload], refEq("some-note"), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusSUSPENDED))
+      when(casesService.suspendCase(refEq(caseWithStatusOPEN), any[FileUpload], refEq("some-note"), any[Operator])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusSUSPENDED))
 
       val result: Result =
         await(controller(caseWithStatusOPEN).postSuspendCase("reference")

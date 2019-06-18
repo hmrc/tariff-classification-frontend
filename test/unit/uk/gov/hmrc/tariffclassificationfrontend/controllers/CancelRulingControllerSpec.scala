@@ -152,7 +152,7 @@ class CancelRulingControllerSpec extends WordSpec with Matchers with UnitSpec
   "Post Confirm Cancel a Ruling" should {
 
     "redirect to confirmation page when data filled correctly" in {
-      when(casesService.cancelRuling(refEq(caseWithStatusCOMPLETED), refEq(CancelReason.ANNULLED), any[FileUpload], any[String], refEq(operator))
+      when(casesService.cancelRuling(refEq(caseWithStatusCOMPLETED), refEq(CancelReason.ANNULLED), any[FileUpload], any[String], any[Operator])
       (any[HeaderCarrier])).thenReturn(successful(caseWithStatusCANCELLED))
 
       val result: Result = await(controller(caseWithStatusCOMPLETED).postCancelRuling("reference")(newFakePOSTRequestWithCSRF(fakeApplication)
@@ -163,7 +163,7 @@ class CancelRulingControllerSpec extends WordSpec with Matchers with UnitSpec
     }
 
     "display required field when failing to submit reason" in {
-      when(casesService.cancelRuling(refEq(caseWithStatusCOMPLETED), refEq(CancelReason.ANNULLED), any[FileUpload], any[String], refEq(operator))
+      when(casesService.cancelRuling(refEq(caseWithStatusCOMPLETED), refEq(CancelReason.ANNULLED), any[FileUpload], any[String], any[Operator])
       (any[HeaderCarrier])).thenReturn(successful(caseWithStatusCANCELLED))
 
       val result: Result = await(controller(caseWithStatusCOMPLETED).postCancelRuling("reference")(newFakePOSTRequestWithCSRF(fakeApplication)

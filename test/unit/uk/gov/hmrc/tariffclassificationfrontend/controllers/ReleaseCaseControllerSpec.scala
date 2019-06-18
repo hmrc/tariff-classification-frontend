@@ -115,7 +115,7 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
     "return OK and HTML content type" in {
       when(queueService.getOneBySlug("queue")).thenReturn(successful(Some(queue)))
-      when(casesService.releaseCase(refEq(caseWithStatusNEW), any[Queue], refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusOPEN))
+      when(casesService.releaseCase(refEq(caseWithStatusNEW), any[Queue], any[Operator])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusOPEN))
 
       val result: Result = await(controller(caseWithStatusNEW).releaseCaseToQueue("reference")(requestWithQueue("queue")))
 

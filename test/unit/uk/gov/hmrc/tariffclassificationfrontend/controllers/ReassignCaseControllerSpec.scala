@@ -122,7 +122,7 @@ class ReassignCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       when(queueService.getOneBySlug("queue")).thenReturn(successful(Some(queue)))
       when(queueService.getOneById("1")).thenReturn(successful(Some(queue)))
       when(queue.name).thenReturn("SOME_QUEUE")
-      when(casesService.reassignCase(refEq(caseWithStatusOPEN), any[Queue], refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusOPEN))
+      when(casesService.reassignCase(refEq(caseWithStatusOPEN), any[Queue], any[Operator])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusOPEN))
 
       val result: Result = await(controller(caseWithStatusOPEN).reassignCase("reference", "origin")(requestWithQueue("queue")))
 

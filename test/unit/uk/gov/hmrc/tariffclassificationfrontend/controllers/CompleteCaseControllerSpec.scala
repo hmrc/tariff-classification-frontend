@@ -102,7 +102,7 @@ class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
           withLiabilityApplication(),
           withDecision()
         )
-        when(casesService.completeCase(refEq(c), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusCOMPLETED))
+        when(casesService.completeCase(refEq(c), any[Operator])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusCOMPLETED))
 
         val result: Result = await(getController(c).completeCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
@@ -180,7 +180,7 @@ class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   "Confirm Complete Case" should {
 
     "return OK and HTML content type" in {
-      when(casesService.completeCase(refEq(validCaseWithStatusOPEN), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusCOMPLETED))
+      when(casesService.completeCase(refEq(validCaseWithStatusOPEN), any[Operator])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusCOMPLETED))
 
       val result: Result = await(getController(validCaseWithStatusOPEN).postCompleteCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
 

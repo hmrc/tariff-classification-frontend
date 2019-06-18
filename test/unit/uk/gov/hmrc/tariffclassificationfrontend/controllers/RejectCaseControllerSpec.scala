@@ -138,7 +138,7 @@ class RejectCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   "Post Confirm Reject a Case" should {
 
     "redirect to confirmation page when data filled in" in {
-      when(casesService.rejectCase(refEq(caseWithStatusOPEN), any[FileUpload], any[String], refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREJECTED))
+      when(casesService.rejectCase(refEq(caseWithStatusOPEN), any[FileUpload], any[String], any[Operator])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREJECTED))
 
       val result: Result = await(controller(caseWithStatusOPEN).postRejectCase("reference")
       (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileWithParams("note" -> Seq("some-note")))))

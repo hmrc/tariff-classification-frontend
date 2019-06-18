@@ -52,7 +52,7 @@ class CaseControllerSpec extends UnitSpec with Matchers with WithFakeApplication
   private val fileService = mock[FileStoreService]
   private val eventService = mock[EventsService]
   private val queueService = mock[QueuesService]
-  private val operator = mock[Operator]
+  private val operator = Operator(id = "id")
   private val event = mock[Event]
   private val commodityCodeService = mock[CommodityCodeService]
   private val decisionForm = new DecisionForm(new CommodityCodeConstraints(commodityCodeService, appConfig))
@@ -277,9 +277,7 @@ class CaseControllerSpec extends UnitSpec with Matchers with WithFakeApplication
       val aValidForm = newFakePOSTRequestWithCSRF(fakeApplication, Map())
       given(keywordsService.autoCompleteKeywords).willReturn(successful(Seq()))
 
-      given(operator.hasPermissions(refEq(Set(Permission.KEYWORDS)))).willReturn(true)
-
-      val result = controller(aCase).addKeyword(aCase.reference)(aValidForm)
+      val result = controller(aCase, Set(Permission.KEYWORDS)).addKeyword(aCase.reference)(aValidForm)
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")

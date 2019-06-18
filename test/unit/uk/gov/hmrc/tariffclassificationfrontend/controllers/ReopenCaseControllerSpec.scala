@@ -69,7 +69,7 @@ class ReopenCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   "Confirm Reopen a Case" should {
 
     "return OK and HTML content type" in {
-      when(casesService.reopenCase(refEq(caseWithStatusREFERRED), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusOPEN))
+      when(casesService.reopenCase(refEq(caseWithStatusREFERRED), any[Operator])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusOPEN))
 
       val result: Result = await(controller(caseWithStatusREFERRED).confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
 
@@ -85,7 +85,7 @@ class ReopenCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       for (s <- CaseStatus.values) {
         val statusCase = Cases.btiCaseExample.copy(reference = "reference", status = s)
 
-        when(casesService.reopenCase(any[Case], refEq(operator))(any[HeaderCarrier])).thenReturn(successful(statusCase))
+        when(casesService.reopenCase(any[Case], any[Operator])(any[HeaderCarrier])).thenReturn(successful(statusCase))
         val result: Result = await(controller(statusCase).confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
         if (allowedStatus.contains(s)) {
           withClue(s"Status $s must be redirected") {

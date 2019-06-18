@@ -48,7 +48,7 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers
   private val messageApi = new DefaultMessagesApi(env, configuration, new DefaultLangs(configuration))
   private val appConfig = new AppConfig(configuration, env)
   private val casesService = mock[CasesService]
-  private val operator = mock[Operator]
+  private val operator = Operator(id = "id")
 
   private def controller(requestCase: Case) = new AppealCaseController(
     new SuccessfulRequestActions(operator, c = requestCase), casesService, messageApi, appConfig

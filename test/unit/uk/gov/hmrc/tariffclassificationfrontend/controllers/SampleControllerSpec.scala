@@ -49,7 +49,7 @@ class SampleControllerSpec extends UnitSpec with Matchers
   private val appConfig = new AppConfig(configuration, env)
   private val casesService = mock[CasesService]
   private val eventsService = mock[EventsService]
-  private val operator = mock[Operator]
+  private val operator = Operator(id = "id")
 
   private def controller(requestCase: Case) = new SampleController(
     new SuccessfulRequestActions(operator, c = requestCase), casesService, eventsService, messageApi, appConfig
