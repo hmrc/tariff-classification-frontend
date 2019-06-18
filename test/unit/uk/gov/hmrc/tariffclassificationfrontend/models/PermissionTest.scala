@@ -137,15 +137,10 @@ class PermissionTest extends UnitSpec {
       permission.appliesTo(caseWithoutQueue, teamMember) shouldBe false
       permission.appliesTo(caseWithoutQueue, manager) shouldBe false
 
-      val caseWithQueue = aCase(withQueue("queue"), withoutAssignee())
+      val caseWithQueue = aCase(withQueue("queue"))
       permission.appliesTo(caseWithQueue, readOnly) shouldBe false
       permission.appliesTo(caseWithQueue, teamMember) shouldBe true
       permission.appliesTo(caseWithQueue, manager) shouldBe true
-
-      val caseWithOperator = aCase(withQueue("queue"), withAssignee(Some(Operator("other"))))
-      permission.appliesTo(caseWithOperator, readOnly) shouldBe false
-      permission.appliesTo(caseWithOperator, teamMember) shouldBe true
-      permission.appliesTo(caseWithOperator, manager) shouldBe true
 
       for(status: CaseStatus <- Seq(CaseStatus.OPEN, CaseStatus.REFERRED, CaseStatus.SUSPENDED)) {
         val caseWithValidStatus = aCase(withQueue("queue"), withoutAssignee(), withStatus(status))
