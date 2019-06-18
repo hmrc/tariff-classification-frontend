@@ -79,33 +79,6 @@ class ReopenCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       bodyOf(result) should include("This case has been reopened")
     }
 
-
-    def doNotRedirectWith(allowedStatus: CaseStatus*): Unit = {
-
-      for (s <- CaseStatus.values) {
-        val statusCase = Cases.btiCaseExample.copy(reference = "reference", status = s)
-
-        when(casesService.reopenCase(any[Case], any[Operator])(any[HeaderCarrier])).thenReturn(successful(statusCase))
-        val result: Result = await(controller(statusCase).confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
-        if (allowedStatus.contains(s)) {
-          withClue(s"Status $s must be redirected") {
-            status(result) shouldBe Status.OK
-          }
-        } else {
-          withClue(s"Status $s has not been redirected") {
-            status(result) shouldBe Status.SEE_OTHER
-          }
-          contentTypeOf(result) shouldBe None
-          charsetOf(result) shouldBe None
-          locationOf(result) shouldBe Some("/tariff-classification/cases/reference/application")
-        }
-      }
-    }
-
-    "redirect to Application Details for non REFERRED or SUSPENDED statuses" in {
-      doNotRedirectWith(CaseStatus.REFERRED, CaseStatus.SUSPENDED)
-    }
-
     "return OK when user has right permissions" in {
       when(casesService.reopenCase(any[Case], any[Operator])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusOPEN))
 
