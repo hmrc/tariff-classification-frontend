@@ -57,8 +57,6 @@ object Permission {
     APPEAL_CASE,
     EXTENDED_USE,
     MOVE_CASE_BACK_TO_QUEUE,
-    MANAGE_KEYWORDS,
-    MANAGE_QUEUES,
     EDIT_SAMPLE
   )
 
@@ -88,8 +86,6 @@ object Permission {
   }
 
   private def managersOnly(operator: Operator): Boolean = operator.role == Role.CLASSIFICATION_MANAGER
-
-  private def adminOnly(operator: Operator): Boolean = false
 
   private def nameOf[T >: Permission](permission: T): String = permission.getClass.getSimpleName.replaceAll("\\$", "")
 
@@ -228,16 +224,6 @@ object Permission {
   case object MOVE_CASE_BACK_TO_QUEUE extends CasePermission {
     override def name: String = nameOf(this)
     override def appliesTo(`case`: Case, operator: Operator): Boolean = managersOrAssignedTeamMembersOnly(`case`, operator)
-  }
-
-  case object MANAGE_KEYWORDS extends GlobalPermission {
-    override def name: String = nameOf(this)
-    override def appliesTo(operator: Operator): Boolean = adminOnly(operator)
-  }
-
-  case object MANAGE_QUEUES extends GlobalPermission {
-    override def name: String = nameOf(this)
-    override def appliesTo(operator: Operator): Boolean = adminOnly(operator)
   }
 
   case object EDIT_SAMPLE extends CasePermission {

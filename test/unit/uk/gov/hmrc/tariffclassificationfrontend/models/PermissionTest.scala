@@ -349,30 +349,6 @@ class PermissionTest extends UnitSpec {
       permission.appliesTo(caseUnassigned, manager) shouldBe true
     }
 
-    "contain 'Manage Keywords'" in {
-      val permission = Permission.MANAGE_KEYWORDS
-      val name = "MANAGE_KEYWORDS"
-
-      permission.name shouldBe name
-      Permission.from(name) shouldBe Some(permission)
-
-      permission.appliesTo(readOnly) shouldBe false
-      permission.appliesTo(teamMember) shouldBe false
-      permission.appliesTo(manager) shouldBe false
-    }
-
-    "contain 'Manage Queues'" in {
-      val permission = Permission.MANAGE_QUEUES
-      val name = "MANAGE_QUEUES"
-
-      permission.name shouldBe name
-      Permission.from(name) shouldBe Some(permission)
-
-      permission.appliesTo(readOnly) shouldBe false
-      permission.appliesTo(teamMember) shouldBe false
-      permission.appliesTo(manager) shouldBe false
-    }
-
     "contain 'View Reports'" in {
       val permission = Permission.VIEW_REPORTS
       val name = "VIEW_REPORTS"
