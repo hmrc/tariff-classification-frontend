@@ -149,7 +149,7 @@ class PermissionTest extends UnitSpec {
         permission.appliesTo(caseWithValidStatus, manager) shouldBe true
       }
 
-      for(status: CaseStatus <- CaseStatus.values.filterNot(Seq(CaseStatus.OPEN, CaseStatus.REFERRED, CaseStatus.SUSPENDED).contains)) {
+      for(status: CaseStatus <- CaseStatus.values.filterNot(anyOf(CaseStatus.OPEN, CaseStatus.REFERRED, CaseStatus.SUSPENDED))) {
         val caseWithValidStatus = aCase(withQueue("queue"), withoutAssignee(), withStatus(status))
         permission.appliesTo(caseWithValidStatus, readOnly) shouldBe false
         permission.appliesTo(caseWithValidStatus, teamMember) shouldBe false
@@ -395,5 +395,7 @@ class PermissionTest extends UnitSpec {
     }
 
   }
+
+  private def anyOf[T](values: T*): T => Boolean = values.contains
 
 }
