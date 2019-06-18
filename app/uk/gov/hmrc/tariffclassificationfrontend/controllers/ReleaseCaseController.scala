@@ -95,5 +95,5 @@ class ReleaseCaseController @Inject()(verify: RequestActions,
 
   override protected def redirect: String => Call = routes.CaseController.applicationDetails
 
-  override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = c.status == CaseStatus.NEW
+  override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = true
 }

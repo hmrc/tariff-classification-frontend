@@ -150,10 +150,10 @@ class PermissionTest extends UnitSpec {
       }
 
       for(status: CaseStatus <- CaseStatus.values.filterNot(anyOf(CaseStatus.OPEN, CaseStatus.REFERRED, CaseStatus.SUSPENDED))) {
-        val caseWithValidStatus = aCase(withQueue("queue"), withoutAssignee(), withStatus(status))
-        permission.appliesTo(caseWithValidStatus, readOnly) shouldBe false
-        permission.appliesTo(caseWithValidStatus, teamMember) shouldBe false
-        permission.appliesTo(caseWithValidStatus, manager) shouldBe false
+        val caseWithInvalidStatus = aCase(withQueue("queue"), withoutAssignee(), withStatus(status))
+        permission.appliesTo(caseWithInvalidStatus, readOnly) shouldBe false
+        permission.appliesTo(caseWithInvalidStatus, teamMember) shouldBe false
+        permission.appliesTo(caseWithInvalidStatus, manager) shouldBe false
       }
     }
 
@@ -164,9 +164,17 @@ class PermissionTest extends UnitSpec {
       permission.name shouldBe name
       Permission.from(name) shouldBe Some(permission)
 
-      permission.appliesTo(caseUnassigned, readOnly) shouldBe false
-      permission.appliesTo(caseUnassigned, teamMember) shouldBe true
-      permission.appliesTo(caseUnassigned, manager) shouldBe true
+      val caseWithValidStatus = aCase(withQueue("queue"), withoutAssignee(), withStatus(CaseStatus.NEW))
+      permission.appliesTo(caseWithValidStatus, readOnly) shouldBe false
+      permission.appliesTo(caseWithValidStatus, teamMember) shouldBe true
+      permission.appliesTo(caseWithValidStatus, manager) shouldBe true
+
+      for(status: CaseStatus <- CaseStatus.values.filterNot(anyOf(CaseStatus.NEW))) {
+        val caseWithInvalidStatus = aCase(withQueue("queue"), withoutAssignee(), withStatus(status))
+        permission.appliesTo(caseWithInvalidStatus, readOnly) shouldBe false
+        permission.appliesTo(caseWithInvalidStatus, teamMember) shouldBe false
+        permission.appliesTo(caseWithInvalidStatus, manager) shouldBe false
+      }
     }
 
     "contain 'Suppress a Case'" in {
@@ -397,5 +405,6 @@ class PermissionTest extends UnitSpec {
   }
 
   private def anyOf[T](values: T*): T => Boolean = values.contains
+  private def equalTo[T](value: T): T => Boolean = _ == value
 
 }

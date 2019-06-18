@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.models
 
-import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.{OPEN, REFERRED, SUSPENDED}
+import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.{NEW, OPEN, REFERRED, SUSPENDED}
 
 trait Permission {
   def name: String
@@ -148,7 +148,9 @@ object Permission {
 
   case object RELEASE_CASE extends CasePermission {
     override def name: String = nameOf(this)
-    override def appliesTo(`case`: Case, operator: Operator): Boolean = managersOrTeamMembersOnly(operator)
+    override def appliesTo(`case`: Case, operator: Operator): Boolean =
+      managersOrTeamMembersOnly(operator) &&
+    `case`.hasStatus(NEW)
   }
 
   case object SUPPRESS_CASE extends CasePermission {

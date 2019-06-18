@@ -84,7 +84,7 @@ class CaseTraderViewSpec extends ViewSpec {
       doc shouldNot containElementWithID("agent-letter-file-letter-of-auth-id")
     }
 
-    "show the suppress case section for NEW cases with correct permissions" in {
+    "show the suppress case section for cases with correct permissions" in {
       // Given
       val case1 = Cases.btiCaseExample.copy(status = CaseStatus.NEW)
 
@@ -95,7 +95,7 @@ class CaseTraderViewSpec extends ViewSpec {
       doc should containElementWithID("release-suppress-case-heading")
     }
 
-    "not show the suppress case section for NEW cases with incorrect permissions" in {
+    "not show the suppress case section for cases with incorrect permissions" in {
       // Given
       val case1 = Cases.btiCaseExample.copy(status = CaseStatus.NEW)
 
@@ -105,18 +105,6 @@ class CaseTraderViewSpec extends ViewSpec {
       // Then
       doc shouldNot containElementWithID("release-suppress-case-heading")
     }
-
-    "not show the suppress case section for non-NEW cases" in {
-      // Given
-      val case1 = Cases.btiCaseExample.copy(status = CaseStatus.OPEN)
-
-      // When
-      val doc = view(case_trader(case1, None)(requestWithReleaseAndSuppressPermission, messages))
-
-      // Then
-      doc shouldNot containElementWithID("release-suppress-case-heading")
-    }
-
     "render boards file number when present" in {
       // Given
       val c = aCase().copy(caseBoardsFileNumber = Some("file 123"))
