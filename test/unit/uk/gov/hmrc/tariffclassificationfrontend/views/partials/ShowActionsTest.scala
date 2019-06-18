@@ -25,7 +25,6 @@ class ShowActionsTest extends ViewSpec {
 
     "Show Refer" in {
       ShowActions(CaseStatus.OPEN)(requestWithPermissions(Permission.REFER_CASE)).refer shouldBe true
-      ShowActions(CaseStatus.NEW)(requestWithPermissions(Permission.REFER_CASE)).refer shouldBe false
       ShowActions(CaseStatus.OPEN)(requestWithPermissions()).refer shouldBe false
     }
 

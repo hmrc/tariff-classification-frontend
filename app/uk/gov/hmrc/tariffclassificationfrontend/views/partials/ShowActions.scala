@@ -22,7 +22,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequ
 
 class ShowActions(caseStatus: CaseStatus)(implicit request: AuthenticatedRequest[_]) {
 
-  def refer: Boolean = caseStatus == CaseStatus.OPEN && request.hasPermission(Permission.REFER_CASE)
+  def refer: Boolean = request.hasPermission(Permission.REFER_CASE)
   def reject: Boolean = caseStatus == CaseStatus.OPEN && request.hasPermission(Permission.REJECT_CASE)
   def suspend: Boolean = caseStatus == CaseStatus.OPEN && request.hasPermission(Permission.SUSPEND_CASE)
   def release: Boolean = request.hasPermission(Permission.RELEASE_CASE)

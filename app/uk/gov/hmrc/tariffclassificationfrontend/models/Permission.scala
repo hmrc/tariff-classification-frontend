@@ -160,7 +160,8 @@ object Permission {
 
   case object REFER_CASE extends CasePermission {
     override def name: String = nameOf(this)
-    override def appliesTo(`case`: Case, operator: Operator): Boolean = managersOrAssignedTeamMembersOnly(`case`, operator)
+    override def appliesTo(`case`: Case, operator: Operator): Boolean =
+      managersOrAssignedTeamMembersOnly(`case`, operator) && `case`.hasStatus(OPEN)
   }
 
   case object REOPEN_CASE extends CasePermission {

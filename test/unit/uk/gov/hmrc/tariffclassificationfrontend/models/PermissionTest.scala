@@ -184,9 +184,17 @@ class PermissionTest extends UnitSpec {
       permission.name shouldBe name
       Permission.from(name) shouldBe Some(permission)
 
-      permission.appliesTo(caseUnassigned, readOnly) shouldBe false
-      permission.appliesTo(caseUnassigned, teamMember) shouldBe true
-      permission.appliesTo(caseUnassigned, manager) shouldBe true
+      val caseWithValidStatus = aCase(withQueue("queue"), withStatus(CaseStatus.NEW))
+      permission.appliesTo(caseWithValidStatus, readOnly) shouldBe false
+      permission.appliesTo(caseWithValidStatus, teamMember) shouldBe true
+      permission.appliesTo(caseWithValidStatus, manager) shouldBe true
+
+      for(status: CaseStatus <- CaseStatus.values.filterNot(anyOf(CaseStatus.NEW))) {
+        val caseWithInvalidStatus = aCase(withQueue("queue"), withStatus(status))
+        permission.appliesTo(caseWithInvalidStatus, readOnly) shouldBe false
+        permission.appliesTo(caseWithInvalidStatus, teamMember) shouldBe false
+        permission.appliesTo(caseWithInvalidStatus, manager) shouldBe false
+      }
     }
 
     "contain 'Refer a Case'" in {
@@ -196,10 +204,20 @@ class PermissionTest extends UnitSpec {
       permission.name shouldBe name
       Permission.from(name) shouldBe Some(permission)
 
-      permission.appliesTo(caseUnassigned, readOnly) shouldBe false
-      permission.appliesTo(caseUnassigned, teamMember) shouldBe false
-      permission.appliesTo(caseAssignedTo(teamMember), teamMember) shouldBe true
-      permission.appliesTo(caseUnassigned, manager) shouldBe true
+      val caseWithValidStatus = aCase(withQueue("queue"), withoutAssignee(), withStatus(CaseStatus.OPEN))
+      permission.appliesTo(caseWithValidStatus, readOnly) shouldBe false
+      permission.appliesTo(caseWithValidStatus, teamMember) shouldBe false
+      permission.appliesTo(caseWithValidStatus.copy(assignee = Some(teamMember)), teamMember) shouldBe true
+      permission.appliesTo(caseWithValidStatus, manager) shouldBe true
+
+      for(status: CaseStatus <- CaseStatus.values.filterNot(anyOf(CaseStatus.OPEN))) {
+        val caseWithInvalidStatus = aCase(withQueue("queue"), withoutAssignee(), withStatus(status))
+        permission.appliesTo(caseWithInvalidStatus, readOnly) shouldBe false
+        permission.appliesTo(caseWithInvalidStatus, teamMember) shouldBe false
+        permission.appliesTo(caseWithInvalidStatus.copy(assignee = Some(teamMember)), teamMember) shouldBe false
+        permission.appliesTo(caseWithInvalidStatus, manager) shouldBe false
+
+      }
     }
 
     "contain 'Reopen a Case'" in {
