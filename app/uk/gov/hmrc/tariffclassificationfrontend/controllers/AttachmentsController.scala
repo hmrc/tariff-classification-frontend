@@ -110,7 +110,7 @@ class AttachmentsController @Inject()(verify: RequestActions,
   }
 
   def uploadAttachment(reference: String): Action[Either[MaxSizeExceeded, MultipartFormData[TemporaryFile]]] =
-    (verify.authenticated andThen verify.mustHave(Permission.ADD_ATTACHMENT))
+    (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.ADD_ATTACHMENT))
       .async(parse.maxLength(appConfig.fileUploadMaxSize, parse.multipartFormData)) {
 
         implicit request =>
