@@ -125,18 +125,14 @@
                         <td class="section-label">@messages("pdf.decision.section.information.decision.date.label")</td>
                         <td id="decision.information.decision.date">@Dates.format(d.effectiveStartDate)</td>
                     </tr>
-                    <tr>
-                        <td class="section-label">@messages("pdf.decision.section.information.expiry.date.label")</td>
-                        <td id="decision.information.expiry.date">@Dates.format(d.effectiveEndDate)</td>
-                    </tr>
                 </table>
 
             </div>
 
             <div id="section-commcode" class="box">
-                <p class="section-label">@messages("pdf.decision.section.commcode.suggested.commodity.code.label")</p>
-                <span id="decision.suggested.commodity.code.hint">@messages("pdf.decision.section.commcode.suggested.commodity.code.hint")</span>
-                <p id="decision.suggested.commodity.code"><span class="pre-wrap">@liab.officerCommodityCode</span></p>
+                <p class="section-label">@messages("pdf.decision.section.commcode.commodity.code.label")</p>
+                <span id="decision.suggested.commodity.code.hint">@messages("pdf.decision.section.commcode.commodity.code.hint")</span>
+                <p id="decision.suggested.commodity.code"><span class="pre-wrap">@d.bindingCommodityCode</span></p>
             </div>
 
             <div id="section-description" class="box">

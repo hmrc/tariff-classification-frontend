@@ -15,7 +15,7 @@
  *@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-@import uk.gov.hmrc.tariffclassificationfrontend.models.{BTIApplication, Case, Queue}
+@import uk.gov.hmrc.tariffclassificationfrontend.models.Case
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials._
 
@@ -26,9 +26,13 @@
 
     <div class="grid-row">
         <div class="column-full">
-            <h2 class="heading-large mt-0">The ruling has been cancelled</h2>
-            <p>The ruling has been removed from the 'Find Binding Tariff Information rulings' search.</p>
-            <p>The expiry date of the ruling has been set to today's date.</p>
+            @if(c.application.isBTI) {
+                <h2 class="heading-large mt-0">The ruling has been cancelled</h2>
+                <p>The ruling has been removed from the 'Find Binding Tariff Information rulings' search.</p>
+                <p>The expiry date of the ruling has been set to today's date.</p>
+            } else {
+                <h2 class="heading-large mt-0">The liability decision has been cancelled</h2>
+            }
             @confirmation_next_steps()
         </div>
     </div>
