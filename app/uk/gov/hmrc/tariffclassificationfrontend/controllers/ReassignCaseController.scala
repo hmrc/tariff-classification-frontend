@@ -101,8 +101,6 @@ class ReassignCaseController @Inject()(verify: RequestActions,
     routes.CaseController.applicationDetails
   }
 
-  override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = {
-    reassignCaseStatuses.contains(c.status)
-  }
+  override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = true
 
 }

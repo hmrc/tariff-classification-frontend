@@ -84,17 +84,6 @@ class AssignCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       bodyOf(result) should include("assign_case-heading")
     }
 
-    "redirect to Case Index for cases without a queue" in {
-      val aCaseWithoutQueue = aCase(withoutQueue())
-
-      val result: Result = await(controller(aCaseWithoutQueue).get("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
-
-      status(result) shouldBe Status.SEE_OTHER
-      contentTypeOf(result) shouldBe None
-      charsetOf(result) shouldBe None
-      locationOf(result) shouldBe Some(routes.CaseController.get("reference").url)
-    }
-
     "redirect to Case Index for cases assigned to self" in {
       val aCaseAssignedToSelf = aCase(withQueue("1"), withAssignee(Some(operator)))
 
@@ -121,17 +110,6 @@ class AssignCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       when(casesService.assignCase(any[Case], any[Operator])(any[HeaderCarrier])).thenReturn(successful(aCaseWithQueue))
 
       val result: Result = await(controller(aCaseWithQueue, Set(Permission.ASSIGN_CASE)).post("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
-
-      status(result) shouldBe Status.SEE_OTHER
-      contentTypeOf(result) shouldBe None
-      charsetOf(result) shouldBe None
-      locationOf(result) shouldBe Some(routes.CaseController.get("reference").url)
-    }
-
-    "redirect to Case Index for cases in a queue" in {
-      val aCaseWithoutQueue = aCase(withoutQueue())
-
-      val result: Result = await(controller(aCaseWithoutQueue).post("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None

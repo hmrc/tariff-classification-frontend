@@ -17,13 +17,14 @@
 package uk.gov.hmrc.tariffclassificationfrontend.models
 
 import uk.gov.hmrc.play.test.UnitSpec
+import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.CaseStatus
 import uk.gov.tariffclassificationfrontend.utils.Cases._
 
 class PermissionTest extends UnitSpec {
 
-  private val readOnly = Operator(id = "team", role = Role.READ_ONLY)
-  private val teamMember = Operator(id = "team", role = Role.CLASSIFICATION_OFFICER)
-  private val manager = Operator(id = "team", role = Role.CLASSIFICATION_MANAGER)
+  private val readOnly = Operator(id = "id", role = Role.READ_ONLY)
+  private val teamMember = Operator(id = "id", role = Role.CLASSIFICATION_OFFICER)
+  private val manager = Operator(id = "id", role = Role.CLASSIFICATION_MANAGER)
   private def caseUnassigned = aCase(withoutAssignee())
   private def caseAssignedTo(operator: Operator) = aCase(withAssignee(Some(operator)))
 
@@ -131,9 +132,34 @@ class PermissionTest extends UnitSpec {
       permission.name shouldBe name
       Permission.from(name) shouldBe Some(permission)
 
-      permission.appliesTo(readOnly) shouldBe false
-      permission.appliesTo(teamMember) shouldBe true
-      permission.appliesTo(manager) shouldBe true
+      val caseWithoutQueue = aCase(withoutQueue(), withoutAssignee())
+      permission.appliesTo(caseWithoutQueue, readOnly) shouldBe false
+      permission.appliesTo(caseWithoutQueue, teamMember) shouldBe false
+      permission.appliesTo(caseWithoutQueue, manager) shouldBe false
+
+      val caseWithQueue = aCase(withQueue("queue"), withoutAssignee())
+      permission.appliesTo(caseWithQueue, readOnly) shouldBe false
+      permission.appliesTo(caseWithQueue, teamMember) shouldBe true
+      permission.appliesTo(caseWithQueue, manager) shouldBe true
+
+      val caseWithOperator = aCase(withQueue("queue"), withAssignee(Some(Operator("other"))))
+      permission.appliesTo(caseWithOperator, readOnly) shouldBe false
+      permission.appliesTo(caseWithOperator, teamMember) shouldBe true
+      permission.appliesTo(caseWithOperator, manager) shouldBe true
+
+      for(status: CaseStatus <- Seq(CaseStatus.OPEN, CaseStatus.REFERRED, CaseStatus.SUSPENDED)) {
+        val caseWithValidStatus = aCase(withQueue("queue"), withoutAssignee(), withStatus(status))
+        permission.appliesTo(caseWithValidStatus, readOnly) shouldBe false
+        permission.appliesTo(caseWithValidStatus, teamMember) shouldBe true
+        permission.appliesTo(caseWithValidStatus, manager) shouldBe true
+      }
+
+      for(status: CaseStatus <- CaseStatus.values.filterNot(Seq(CaseStatus.OPEN, CaseStatus.REFERRED, CaseStatus.SUSPENDED).contains)) {
+        val caseWithValidStatus = aCase(withQueue("queue"), withoutAssignee(), withStatus(status))
+        permission.appliesTo(caseWithValidStatus, readOnly) shouldBe false
+        permission.appliesTo(caseWithValidStatus, teamMember) shouldBe false
+        permission.appliesTo(caseWithValidStatus, manager) shouldBe false
+      }
     }
 
     "contain 'Release a Case'" in {

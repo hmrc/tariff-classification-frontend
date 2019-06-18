@@ -36,6 +36,11 @@ case class Case
   keywords: Set[String] = Set.empty,
   sample: Sample = Sample()
 ) {
+  def hasQueue: Boolean = queueId.isDefined
+
+  def hasStatus(statuses: CaseStatus*): Boolean  = statuses.contains(status)
+
+  def hasAssignee: Boolean = assignee.isDefined
 
   private def hasRuling: Boolean = {
     decision.flatMap(_.effectiveEndDate).isDefined
