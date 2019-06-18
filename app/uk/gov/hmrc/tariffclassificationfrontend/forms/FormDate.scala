@@ -46,11 +46,7 @@ object FormDate {
   }
 
   def date(error: String = "invalid.date"): Mapping[Instant] =
-    mapping(
-      "day" -> text,
-      "month" -> text,
-      "year" -> text
-    )(DateForm.apply)(DateForm.unapply)
+    mapping("day" -> text, "month" -> text, "year" -> text)(DateForm.apply)(DateForm.unapply)
       .verifying(error, validDateFormat)
       .transform(formDate2Instant, instant2FormDate)
 
