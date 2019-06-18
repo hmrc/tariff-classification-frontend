@@ -19,6 +19,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers.SessionKeys
 @import uk.gov.hmrc.tariffclassificationfrontend.models.PseudoCaseStatus.PseudoCaseStatus
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{Paged, PseudoCaseStatus, Search}
+@import uk.gov.hmrc.tariffclassificationfrontend.views.SearchTab
 @import uk.gov.hmrc.tariffclassificationfrontend.views.SearchTab.SearchTab
 @import uk.gov.hmrc.tariffclassificationfrontend.views.forms.components.CheckOption
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.forms.components.{input_checkbox_group, input_text}
@@ -29,7 +30,8 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.components.initial_focus
 @import uk.gov.hmrc.tariffclassificationfrontend.models.ApplicationType
 @import uk.gov.hmrc.tariffclassificationfrontend.models.ApplicationType.ApplicationType
-@(form: Form[Search], results: Option[Paged[SearchResult]] = None, keywords: Seq[String], selectedTab: SearchTab)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@import uk.gov.hmrc.tariffclassificationfrontend.models.ReusableTabIndexer
+@(form: Form[Search], results: Option[Paged[SearchResult]] = None, keywords: Seq[String], selectedTab: SearchTab, tabIndexer: ReusableTabIndexer = ReusableTabIndexer(startTabIndex = 5))(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @formHasStatus(status: PseudoCaseStatus) = @{
     form.value.flatMap(_.status).exists(_.contains(status))
@@ -38,11 +40,19 @@
     form.value.flatMap(_.applicationType).exists(_.contains(status))
 }
 
-@main(bodyClasses = None, customTitle = Some(messages("page.title.advanced.search")), scriptElem = Some(initial_focus())) {
+@workOutInitialFocusComponent() = @{
+    selectedTab match {
+        case SearchTab.DETAILS => Some("tab-details-link")
+        case SearchTab.IMAGES => Some("tab-images-link")
+        case _ => None
+    }
+}
+
+@main(bodyClasses = None, customTitle = Some(messages("page.title.advanced.search")), scriptElem = Some(initial_focus(workOutInitialFocusComponent(), withTimeout = 100))) {
 
     @back_link(displayBackLink = true, SessionKeys.backToQueuesLinkUrl, SessionKeys.backToQueuesLinkLabel)
 
-    @error_summary(form.errors)
+    @error_summary(form.errors, Some(tabIndexer.nextTabIndex()))
 
     <h1 id="advanced_search-heading" class="heading-xlarge mb-3">Advanced search</h1>
     <p>To narrow your search, enter multiple search terms.<p>
@@ -52,27 +62,31 @@
         @input_text(
             field = form("trader_name"),
             label = "Trader name",
-            formControlClass = Some("w-75")
+            formControlClass = Some("w-75"),
+            tabIndex = Some(tabIndexer.nextTabIndexWithJump(5))
         )
 
         @input_text(
             field = form("commodity_code"),
             label = "Commodity code",
             hint = Some("Search by 2 digits or more"),
-            formControlClass = Some("w-75")
+            formControlClass = Some("w-75"),
+            tabIndex = Some(tabIndexer.nextTabIndex())
         )
 
         @input_text(
             field = form("decision_details"),
             label = "Ruling details",
             hint = Some("Search the goods description, justification and the commercial denomination"),
-            formControlClass = Some("w-75")
+            formControlClass = Some("w-75"),
+            tabIndex = Some(tabIndexer.nextTabIndex())
         )
 
-        @advanced_search_keywords(form, keywords)
+        @advanced_search_keywords(form, keywords, ReusableTabIndexer(startTabIndex = tabIndexer.nextTabIndex()))
 
-        <button id="advanced_search-search_button" class="button" type="submit">Search</button>
-        <a id="advanced_search-reset_button" class="secondary-button" href="@controllers.routes.SearchController.search()">New search</a>
+        @* We jump 50 here, to allow dynamic elements to be added between when new keywords added *@
+        <button tabindex="@tabIndexer.nextTabIndexWithJump(50)" id="advanced_search-search_button" class="button" type="submit">Search</button>
+        <a tabindex="@tabIndexer.nextTabIndex()" id="advanced_search-reset_button" class="secondary-button" href="@controllers.routes.SearchController.search()">New search</a>
 
         @if(results.isEmpty) {
             @*
@@ -103,7 +117,8 @@
                                 ),
                                 legend = Some("Apply filters"),
                                 submitOnChange = true,
-                                divClass = Some("advanced_search--filters-checkbox")
+                                divClass = Some("advanced_search--filters-checkbox"),
+                                startAtTabIndex = Some(tabIndexer.nextTabIndex())
                             )
 
                             @input_checkbox_group(
@@ -121,7 +136,8 @@
                                 ),
                                 submitOnChange = true,
                                 divClass = Some("advanced_search--filters-checkbox"),
-                                customGroupClasses = Some("border-top")
+                                customGroupClasses = Some("border-top"),
+                                startAtTabIndex = Some(tabIndexer.nextTabIndexWithJump(3))
                             )
                             </div>
                         </div>
@@ -144,7 +160,8 @@
                             @advanced_search_results_tabs(
                                 searchResults,
                                 selectedTab,
-                                onChange = selected => controllers.routes.SearchController.search(selected, search = form.get, page = searchResults.pageIndex).withFragment("advanced_search_keywords"))
+                                onChange = selected => controllers.routes.SearchController.search(selected, search = form.get, page = searchResults.pageIndex).withFragment("advanced_search_keywords"),
+                                tabIndexer = ReusableTabIndexer(startTabIndex = tabIndexer.nextTabIndexWithJump(10)))
 
                             @pagination(
                                 id = "advanced_search-pagination_bottom",
@@ -156,7 +173,7 @@
                                 onChange = page => controllers.routes.SearchController.search(selectedTab, search = form.get, page = page).withFragment("advanced_search_keywords")
                             )
 
-                            <a href="#advanced_search_keywords">Back to top</a>
+                            <a tabindex="@{tabIndexer.nextTabIndexWithJump(2000)}" href="#advanced_search_keywords">Back to top</a>
 
                         </div>
                     }

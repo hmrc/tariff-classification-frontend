@@ -16,7 +16,8 @@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.models.Search
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.components.input_auto_complete
-@(f: Form[Search], keywords: Seq[String])(implicit messages: Messages)
+@import uk.gov.hmrc.tariffclassificationfrontend.models.ReusableTabIndexer
+@(f: Form[Search], keywords: Seq[String], tabIndexer: ReusableTabIndexer = ReusableTabIndexer())(implicit messages: Messages)
 
 @moveUnAddedKeywordToTable(form: Form[Search]) = @{
     form.data.get("keyword[0]").filter(_.nonEmpty).map { keyword =>
@@ -50,10 +51,11 @@
                 @input_auto_complete(
                     field = form("keyword[0]"),
                     formControlClass = Some("w-100"),
-                    autoCompleteOptions = keywords.diff(keywordsAdded(form))
+                    autoCompleteOptions = keywords.diff(keywordsAdded(form)),
+                    useTabIndex = Some(tabIndexer.nextTabIndex())
                 )
             </div>
-            <button id="advanced_search-add_keyword" class="button left ml-1" type="submit">
+            <button tabindex="@{tabIndexer.nextTabIndex()}" id="advanced_search-add_keyword" class="button left ml-1" type="submit">
                 Add to search
             </button>
         </div>
@@ -73,7 +75,7 @@
                         </td>
 
                         <td align="right">
-                            <button id="advanced_search_keywords-table-row-@{index}-remove_button" type="button" class="button-link" onclick="advancedSearch.removeKeyword(@index)">Remove</button>
+                            <button tabindex="@{tabIndexer.nextTabIndex()}" id="advanced_search_keywords-table-row-@{index}-remove_button" type="button" class="button-link" onclick="advancedSearch.removeKeyword(@index)">Remove</button>
                         </td>
                     </tr>
                 }

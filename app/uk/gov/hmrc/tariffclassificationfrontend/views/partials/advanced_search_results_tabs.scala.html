@@ -20,29 +20,37 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.views.partials.SearchResult
 @import uk.gov.hmrc.tariffclassificationfrontend.views.SearchTab
 @import uk.gov.hmrc.tariffclassificationfrontend.views.SearchTab._
-@(results: Paged[SearchResult], selectedTab : SearchTab, onChange: SearchTab => Call)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@import uk.gov.hmrc.tariffclassificationfrontend.models.ReusableTabIndexer
+@(results: Paged[SearchResult], selectedTab : SearchTab, onChange: SearchTab => Call, tabIndexer: ReusableTabIndexer)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-    <div class="tabs">
-        <ul class="tabs__list" role="tablist">
-            <li class="tabs__list-item" role="tab">
-                <span class="tabs__tab" id="tab-details" @if(selectedTab == DETAILS){aria-selected="true"}> <a href="@onChange(DETAILS)">Details</a></span>
-            </li>
-            <li class="tabs__list-item" role="tab">
-                <span class="tabs__tab" id="tab-images"  @if(selectedTab == IMAGES){aria-selected="true"}><a href="@onChange(IMAGES)">Images</a></span>
-            </li>
-        </ul>
+@defining(tabIndexer.nextTabIndex()) { tabIndexForDetails: Int =>
+    @defining(tabIndexer.nextTabIndexWithJump(1000)) { tabIndexForImages: Int =>
+        <div class="tabs">
+            <ul class="tabs__list" role="tablist">
+                <li class="tabs__list-item" role="tab">
+                    <span class="tabs__tab" id="tab-details" @if(selectedTab == DETAILS) {
+                        aria-selected="true"}> <a id="tab-details-link" tabindex="@tabIndexForDetails" href="@onChange(DETAILS)">Details</a></span>
+                </li>
+                <li class="tabs__list-item" role="tab">
+                    <span class="tabs__tab" id="tab-images" @if(selectedTab == IMAGES) {
+                        aria-selected="true"}><a id="tab-images-link" tabindex="@tabIndexForImages" href="@onChange(IMAGES)">
+                        Images</a></span>
+                </li>
+            </ul>
 
-        <div class="tabs__panel">
-            <div class="tabs__panel__content" id="content-tab-@selectedTab">
-                @if(selectedTab == DETAILS){
-                    @advanced_search_results_table(results)
-                }
-                @if(selectedTab == IMAGES){
-                    @advanced_search_results_images(results)
-                }
+            <div class="tabs__panel">
+                <div class="tabs__panel__content" id="content-tab-@selectedTab">
+                    @if(selectedTab == DETAILS) {
+                        @advanced_search_results_table(results, tabIndexForDetails+1)
+                    }
+                    @if(selectedTab == IMAGES) {
+                        @advanced_search_results_images(results, tabIndexForImages+1)
+                    }
+                </div>
             </div>
         </div>
-    </div>
+    }
+}
 
     <input type="hidden" id="selected_tab" name="selectedTab" value="@selectedTab">
 

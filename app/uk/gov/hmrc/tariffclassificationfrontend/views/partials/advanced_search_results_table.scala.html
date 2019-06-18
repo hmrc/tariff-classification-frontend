@@ -20,7 +20,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.statuses._
 @import uk.gov.hmrc.tariffclassificationfrontend.views.partials.SearchResult
-@(results: Paged[SearchResult])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(results: Paged[SearchResult], startAtTabIndex: Int = 0)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @if(results.isEmpty) {
     <p id="advanced_search_results-empty" class="mt-1">No results found</p>
@@ -40,7 +40,7 @@
                 @for((result: SearchResult, index: Int) <- results.results.zipWithIndex) {
                     <tr>
                         <td id="advanced_search_results-row-@{index}-reference">
-                            <a id="advanced_search_results-row-@{index}-reference" href="@routes.CaseController.get(result.c.reference)">@result.c.reference</a>
+                            <a tabindex="@{startAtTabIndex+index}" id="advanced_search_results-row-@{index}-reference" href="@routes.CaseController.get(result.c.reference)">@result.c.reference</a>
                         </td>
                         <td id="advanced_search_results-row-@{index}-business_name">
                             @result.c.application.businessName

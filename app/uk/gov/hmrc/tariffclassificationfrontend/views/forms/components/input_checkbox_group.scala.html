@@ -24,7 +24,8 @@
         labelClass: Option[String] = None,
         submitOnChange: Boolean = false,
         customGroupClasses : Option[String] = None,
-        customGroupId : Option[String] = None
+        customGroupId : Option[String] = None,
+        startAtTabIndex : Option[Int] = None
 )(implicit messages: Messages)
 
 <div class="form-group @customGroupClasses.getOrElse("")
@@ -48,6 +49,9 @@
                         id="@id"
                         name="@{field.name}[@index]"
                         value="@option.value"
+                        @if(startAtTabIndex.isDefined){
+                            tabindex="@{startAtTabIndex.get+index}"
+                        }
                     @if(field.hasErrors){
                         aria-describedby="error-message-@{id}-input"
                     }
