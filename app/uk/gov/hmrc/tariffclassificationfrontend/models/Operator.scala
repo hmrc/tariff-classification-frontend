@@ -16,16 +16,14 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.models
 
-import uk.gov.hmrc.tariffclassificationfrontend.models.Permission.Permission
 import uk.gov.hmrc.tariffclassificationfrontend.models.Role.Role
 
 case class Operator
 (
- id: String,
- name: Option[String] = None,
- role: Role = Role.CLASSIFICATION_OFFICER,
- permissions: Set[Permission] = Set.empty
-
+  id: String,
+  name: Option[String] = None,
+  role: Role = Role.CLASSIFICATION_OFFICER,
+  permissions: Set[Permission] = Set.empty
 ){
 
   def manager: Boolean = role == Role.CLASSIFICATION_MANAGER

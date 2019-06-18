@@ -30,7 +30,7 @@ import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.models.Permission.Permission
+import uk.gov.hmrc.tariffclassificationfrontend.models.Permission
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, QueuesService}
 import uk.gov.tariffclassificationfrontend.utils.Cases
@@ -115,7 +115,7 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
     "return OK and HTML content type" in {
       when(queueService.getOneBySlug("queue")).thenReturn(successful(Some(queue)))
-      when(casesService.releaseCase(refEq(caseWithStatusNEW), any[Queue], refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusOPEN))
+      when(casesService.releaseCase(refEq(caseWithStatusNEW), any[Queue], any[Operator])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusOPEN))
 
       val result: Result = await(controller(caseWithStatusNEW).releaseCaseToQueue("reference")(requestWithQueue("queue")))
 

@@ -39,7 +39,7 @@ class SampleReturnController @Inject()(override val verify: RequestActions,
                                        override val messagesApi: MessagesApi,
                                        override implicit val config: AppConfig) extends StatusChangeAction[Option[SampleReturn]] {
 
-  override protected val requiredPermission: Permission.Value = Permission.EDIT_SAMPLE
+  override protected val requiredPermission: Permission = Permission.EDIT_SAMPLE
 
   override protected def redirect: String => Call = routes.CaseController.trader
 

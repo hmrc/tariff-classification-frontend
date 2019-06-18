@@ -38,7 +38,7 @@ class ExtendedUseCaseController @Inject()(override val verify: RequestActions,
                                           override val messagesApi: MessagesApi,
                                           override implicit val config: AppConfig) extends StatusChangeAction[Boolean] {
 
-  override protected val requiredPermission: Permission.Value = Permission.EXTENDED_USE
+  override protected val requiredPermission: Permission = Permission.EXTENDED_USE
 
   override protected def redirect: String => Call = routes.CaseController.get
 

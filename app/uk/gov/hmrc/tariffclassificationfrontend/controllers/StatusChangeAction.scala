@@ -20,8 +20,7 @@ import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, Call, Request}
 import play.twirl.api.Html
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.tariffclassificationfrontend.models.Permission.Permission
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Operator}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Operator, Permission}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future

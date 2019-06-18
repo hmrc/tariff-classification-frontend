@@ -67,13 +67,11 @@ class AuthenticatedAction @Inject()(appConfig: AppConfig,
           case e if e.contains(teamEnrolment) => Role.CLASSIFICATION_OFFICER
           case _ => Role.READ_ONLY
         }
-        val operator = Operator(
-          id,
-          name.name,
-          role = role,
-          permissions = Permission.roleBasedPermissions(role)
+        val operator = Operator(id, name.name, role = role)
+        val permittedOperator = operator.copy(
+          permissions = Permission.applyingTo(operator)
         )
-        block(AuthenticatedRequest(operator, request))
+        block(AuthenticatedRequest(permittedOperator, request))
     } recover {
       case _: NoActiveSession => toStrideLogin(
         if (appConfig.runningAsDev) s"http://${request.host}${request.uri}"

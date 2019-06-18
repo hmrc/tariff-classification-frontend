@@ -31,7 +31,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models.EventType.EventType
-import uk.gov.hmrc.tariffclassificationfrontend.models.Permission.Permission
+import uk.gov.hmrc.tariffclassificationfrontend.models.Permission
 import uk.gov.hmrc.tariffclassificationfrontend.models.SampleStatus.SampleStatus
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, EventsService}
@@ -49,7 +49,7 @@ class SampleControllerSpec extends UnitSpec with Matchers
   private val appConfig = new AppConfig(configuration, env)
   private val casesService = mock[CasesService]
   private val eventsService = mock[EventsService]
-  private val operator = mock[Operator]
+  private val operator = Operator(id = "id")
 
   private def controller(requestCase: Case) = new SampleController(
     new SuccessfulRequestActions(operator, c = requestCase), casesService, eventsService, messageApi, appConfig

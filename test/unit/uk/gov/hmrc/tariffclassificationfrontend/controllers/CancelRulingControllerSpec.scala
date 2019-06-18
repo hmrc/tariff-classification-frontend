@@ -33,7 +33,8 @@ import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.models.Permission.Permission
+import uk.gov.hmrc.tariffclassificationfrontend.models.CancelReason.CancelReason
+import uk.gov.hmrc.tariffclassificationfrontend.models.Permission
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.tariffclassificationfrontend.utils.Cases
@@ -151,7 +152,7 @@ class CancelRulingControllerSpec extends WordSpec with Matchers with UnitSpec
   "Post Confirm Cancel a Ruling" should {
 
     "redirect to confirmation page when data filled correctly" in {
-      when(casesService.cancelRuling(refEq(caseWithStatusCOMPLETED), refEq(CancelReason.ANNULLED), any[FileUpload], any[String], refEq(operator))
+      when(casesService.cancelRuling(refEq(caseWithStatusCOMPLETED), refEq(CancelReason.ANNULLED), any[FileUpload], any[String], any[Operator])
       (any[HeaderCarrier])).thenReturn(successful(caseWithStatusCANCELLED))
 
       val result: Result = await(controller(caseWithStatusCOMPLETED).postCancelRuling("reference")(newFakePOSTRequestWithCSRF(fakeApplication)
@@ -162,7 +163,7 @@ class CancelRulingControllerSpec extends WordSpec with Matchers with UnitSpec
     }
 
     "display required field when failing to submit reason" in {
-      when(casesService.cancelRuling(refEq(caseWithStatusCOMPLETED), refEq(CancelReason.ANNULLED), any[FileUpload], any[String], refEq(operator))
+      when(casesService.cancelRuling(refEq(caseWithStatusCOMPLETED), refEq(CancelReason.ANNULLED), any[FileUpload], any[String], any[Operator])
       (any[HeaderCarrier])).thenReturn(successful(caseWithStatusCANCELLED))
 
       val result: Result = await(controller(caseWithStatusCOMPLETED).postCancelRuling("reference")(newFakePOSTRequestWithCSRF(fakeApplication)

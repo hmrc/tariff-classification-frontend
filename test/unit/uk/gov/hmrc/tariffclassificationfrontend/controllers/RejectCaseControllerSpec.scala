@@ -33,7 +33,7 @@ import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.models.Permission.Permission
+import uk.gov.hmrc.tariffclassificationfrontend.models.Permission
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.tariffclassificationfrontend.utils.Cases
@@ -138,7 +138,7 @@ class RejectCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   "Post Confirm Reject a Case" should {
 
     "redirect to confirmation page when data filled in" in {
-      when(casesService.rejectCase(refEq(caseWithStatusOPEN), any[FileUpload], any[String], refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREJECTED))
+      when(casesService.rejectCase(refEq(caseWithStatusOPEN), any[FileUpload], any[String], any[Operator])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREJECTED))
 
       val result: Result = await(controller(caseWithStatusOPEN).postRejectCase("reference")
       (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileWithParams("note" -> Seq("some-note")))))

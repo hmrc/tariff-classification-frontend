@@ -20,7 +20,6 @@ import play.api.libs.json._
 import play.json.extra.Jsonx
 import uk.gov.hmrc.play.json.Union
 import uk.gov.hmrc.tariffclassificationfrontend.models.LiabilityStatus.LiabilityStatus
-import uk.gov.hmrc.tariffclassificationfrontend.models.Permission.Permission
 import uk.gov.hmrc.tariffclassificationfrontend.models.Role.Role
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.NewEventRequest
 import uk.gov.hmrc.tariffclassificationfrontend.models.response.{FileMetadata, ScanStatus}
@@ -32,11 +31,17 @@ object JsonFormatters {
 
   implicit val role: Format[Role] = EnumJson.format(Role)
   implicit val liabilityStatus: Format[LiabilityStatus] = EnumJson.format(LiabilityStatus)
-  implicit val permission: Format[Permission] = EnumJson.format(Permission)
   implicit val formatReferralReason: Format[ReferralReason.Value] = EnumJson.format(ReferralReason)
   implicit val reportField: Format[CaseReportField.Value] = EnumJson.format(CaseReportField)
   implicit val reportGroup: Format[CaseReportGroup.Value] = EnumJson.format(CaseReportGroup)
   implicit val importExportFormat: Format[ImportExport.Value] = EnumJson.format(ImportExport)
+  implicit val formatPermission: Format[Permission] = Format[Permission](
+    Reads(json => json.validate[JsString].flatMap(js => Permission.from(js.value) match {
+      case Some(permission: Permission) => JsSuccess(permission)
+      case _ => JsError()
+    })),
+    Writes[Permission](v => JsString(v.toString))
+  )
 
   implicit val formatReportResultMap: OFormat[Map[CaseReportGroup.Value, Option[String]]] = {
     implicit val optrds: Reads[Option[String]] = Reads.optionNoError[String]

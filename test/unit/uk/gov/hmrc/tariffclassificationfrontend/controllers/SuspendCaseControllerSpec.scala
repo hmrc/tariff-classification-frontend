@@ -31,7 +31,7 @@ import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.models.Permission.Permission
+import uk.gov.hmrc.tariffclassificationfrontend.models.Permission
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.tariffclassificationfrontend.utils.Cases
@@ -121,7 +121,7 @@ class SuspendCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     }
 
     "redirect to confirmation" in {
-      when(casesService.suspendCase(refEq(caseWithStatusOPEN), any[FileUpload], refEq("some-note"), refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusSUSPENDED))
+      when(casesService.suspendCase(refEq(caseWithStatusOPEN), any[FileUpload], refEq("some-note"), any[Operator])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusSUSPENDED))
 
       val result: Result =
         await(controller(caseWithStatusOPEN).postSuspendCase("reference")
