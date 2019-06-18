@@ -23,9 +23,8 @@ import play.api.mvc.{ActionFilter, ActionRefiner, Result}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.models.Permission.Permission
-import uk.gov.hmrc.tariffclassificationfrontend.models.request.{AuthenticatedCaseRequest, AuthenticatedRequest, OperatorRequest}
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Permission}
+import uk.gov.hmrc.tariffclassificationfrontend.models.request.{AuthenticatedCaseRequest, AuthenticatedRequest, OperatorRequest}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
@@ -34,26 +33,19 @@ import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
 @Singleton
-class CheckPermissionsAction
+class CheckCasePermissionsAction
   extends ActionRefiner[AuthenticatedCaseRequest, AuthenticatedCaseRequest] {
 
   override protected def refine[A](request: AuthenticatedCaseRequest[A]):
   Future[Either[Result, AuthenticatedCaseRequest[A]]] = {
-
-    if (request.`case`.isAssignedTo(request.operator)) {
-      // add case owner permissions
-      authCaseRequest(request, Permission.teamCaseOwnerPermissions)
-    } else {
-      // nothing extra to add
-      authCaseRequest(request, Set.empty)
-    }
-  }
-
-  private def authCaseRequest[A](request: AuthenticatedCaseRequest[A], additionalPermissions: Set[Permission]) = {
-    successful(Right(new AuthenticatedCaseRequest(
-      operator = request.operator.addPermissions(additionalPermissions),
-      request = request,
-      requestedCase = request.`case`)))
+    successful(
+      Right(
+        new AuthenticatedCaseRequest(
+          operator = request.operator.addPermissions(Permission.applyingTo(request.`case`, request.operator)),
+          request = request,
+          requestedCase = request.`case`)
+      )
+    )
   }
 }
 

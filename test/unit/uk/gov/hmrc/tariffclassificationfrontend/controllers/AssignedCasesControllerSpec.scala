@@ -29,7 +29,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models
-import uk.gov.hmrc.tariffclassificationfrontend.models.Permission.Permission
+import uk.gov.hmrc.tariffclassificationfrontend.models.Permission
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, QueuesService}
 import uk.gov.tariffclassificationfrontend.utils.Cases.btiCaseExample
@@ -49,8 +49,8 @@ class AssignedCasesControllerSpec extends UnitSpec with Matchers with WithFakeAp
   private implicit val hc: HeaderCarrier = HeaderCarrier()
   private val assignedCase = btiCaseExample.copy(assignee = Some(Operator("1", Some("Test User"))))
 
-  private val requiredPermissions: Set[models.Permission.Value] = Set(Permission.VIEW_ASSIGNED_CASES)
-  private val noPermissions: Set[models.Permission.Value] = Set.empty
+  private val requiredPermissions: Set[models.Permission] = Set(Permission.VIEW_ASSIGNED_CASES)
+  private val noPermissions: Set[models.Permission] = Set.empty
 
   private def controller(permission: Set[Permission]) = new AssignedCasesController(
     new RequestActionsWithPermissions(permission), casesService, queuesService, messageApi, appConfig

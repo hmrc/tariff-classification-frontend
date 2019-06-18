@@ -19,11 +19,10 @@ package uk.gov.hmrc.tariffclassificationfrontend.controllers
 import javax.inject.{Inject, Singleton}
 import play.api.mvc.ActionFunction
 import uk.gov.hmrc.tariffclassificationfrontend.models.Permission
-import uk.gov.hmrc.tariffclassificationfrontend.models.Permission.Permission
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.{AuthenticatedCaseRequest, AuthenticatedRequest, OperatorRequest}
 
 @Singleton
-class RequestActions @Inject()(checkPermissionsAction: CheckPermissionsAction,
+class RequestActions @Inject()(checkPermissionsAction: CheckCasePermissionsAction,
                                authenticatedAction: AuthenticatedAction,
                                caseExistsActionFactory: VerifyCaseExistsActionFactory,
                                mustHavePermissionActionFactory: MustHavePermissionActionFactory) {

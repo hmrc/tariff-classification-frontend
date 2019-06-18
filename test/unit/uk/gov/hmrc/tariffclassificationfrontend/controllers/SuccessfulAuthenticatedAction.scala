@@ -22,7 +22,7 @@ import play.api.mvc.{ActionFilter, ActionRefiner, Request, Result}
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.connector.StrideAuthConnector
-import uk.gov.hmrc.tariffclassificationfrontend.models.Permission.Permission
+import uk.gov.hmrc.tariffclassificationfrontend.models.Permission
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.{AuthenticatedCaseRequest, AuthenticatedRequest, OperatorRequest}
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Operator, Permission}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
@@ -42,7 +42,7 @@ class SuccessfulAuthenticatedAction(operator: Operator = Operator("0", Some("nam
   }
 }
 
-class SuccessfulCheckPermissionsAction(operator: Operator = Operator("0", Some("name"))) extends CheckPermissionsAction {
+class SuccessfulCheckCasePermissionsAction(operator: Operator = Operator("0", Some("name"))) extends CheckCasePermissionsAction {
   override def refine[A](request: AuthenticatedCaseRequest[A]): Future[Either[Result, AuthenticatedCaseRequest[A]]] = {
     successful(Right(new AuthenticatedCaseRequest(operator, request, request.`case`)))
   }
@@ -76,7 +76,7 @@ class HaveRightPermissionsActionFactory extends MustHavePermissionActionFactory 
 
 class SuccessfulRequestActions(operator: Operator, c: Case = Cases.btiCaseExample, reference: String = "test-reference")
   extends RequestActions(
-    new SuccessfulCheckPermissionsAction(operator),
+    new SuccessfulCheckCasePermissionsAction(operator),
     new SuccessfulAuthenticatedAction(operator),
     new ExistingCaseActionFactory(reference, c),
     new HaveRightPermissionsActionFactory
@@ -86,7 +86,7 @@ class SuccessfulRequestActions(operator: Operator, c: Case = Cases.btiCaseExampl
 
 class RequestActionsWithPermissions(permissions : Set[Permission], addViewCasePermission: Boolean = true, reference: String = "test-reference",  c: Case = Cases.btiCaseExample)
   extends RequestActions(
-    new CheckPermissionsAction,
+    new CheckCasePermissionsAction,
     new SuccessfulAuthenticatedAction(permissions = if(addViewCasePermission) permissions ++ Set(Permission.VIEW_CASES) else permissions),
     new ExistingCaseActionFactory(reference, c),
     new MustHavePermissionActionFactory

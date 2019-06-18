@@ -17,8 +17,7 @@
 package uk.gov.hmrc.tariffclassificationfrontend.models.request
 
 import play.api.mvc.{Request, WrappedRequest}
-import uk.gov.hmrc.tariffclassificationfrontend.models.Permission.Permission
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Operator}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, Operator, Permission}
 
 abstract class OperatorRequest[A](_operator: Operator, _request: Request[A]) extends WrappedRequest[A](_request){
   val operator: Operator
