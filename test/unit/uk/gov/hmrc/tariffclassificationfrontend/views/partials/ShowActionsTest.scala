@@ -52,7 +52,6 @@ class ShowActionsTest extends ViewSpec {
 
     "Show Reopen" in {
       ShowActions(CaseStatus.SUSPENDED)(requestWithPermissions(Permission.REOPEN_CASE)).reopen shouldBe true
-      ShowActions(CaseStatus.OPEN)(requestWithPermissions(Permission.REOPEN_CASE)).reopen shouldBe false
       ShowActions(CaseStatus.SUSPENDED)(requestWithPermissions()).reopen shouldBe false
     }
   }
