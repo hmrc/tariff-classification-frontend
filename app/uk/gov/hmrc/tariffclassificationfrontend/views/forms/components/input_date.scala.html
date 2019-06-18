@@ -18,6 +18,8 @@
         dayField: Field,
         monthField: Field,
         yearField: Field,
+        dateField: Field,
+        fieldsetId: Option[String] = None,
         legend: String,
         inputClass: Option[String] = None,
         hint: Option[String] = None,
@@ -48,8 +50,8 @@
     </div>
 }
 
-<div class="form-group @if(dayField.hasErrors || monthField.hasErrors || yearField.hasErrors){form-group-error}">
-    <fieldset class="inline">
+<div class="form-group @if(dateField.hasErrors) {form-group-error}">
+    <fieldset class="inline" id="@fieldsetId">
         <legend>
             <h1 class="@labelClass">
                 @legend
@@ -60,8 +62,12 @@
             <span class="form-hint">@hint</span>
         }
 
-        @if(dayField.hasErrors || monthField.hasErrors || yearField.hasErrors) {
-            <span class="error-message" id="error-message-date-input">The date must be valid</span>
+        @if(dateField.hasErrors) {
+            <span class="error-message" id="error-message-date-input">
+                @dateField.errors.map { error =>
+                    <span class="error-message" id="error-message-@{error.key}-input">@messages(error.message, error.args: _*)</span>
+                }
+            </span>
         }
 
         @input_date_component(dayField, "Day",startAtTabIndex.map(v => v+1), dateClass = Some("width-3em"))

@@ -28,28 +28,30 @@
 
 @helper.form(action = routes.ReportingController.getReport(Report.SLA.toString)) {
 
- @error_summary(form.errors)
+    @error_summary(form.errors)
 
- @CSRF.formField
+    @CSRF.formField
 
- @input_date(
-  dayField = form("min.day"),
-  monthField = form("min.month"),
-  yearField = form("min.year"),
-  labelClass = Some("heading-small"),
-  legend = "From date",
-  startAtTabIndex = Some(startAtTabIndex)
- )
+    @input_date(
+        dayField = form("min.day"),
+        monthField = form("min.month"),
+        yearField = form("min.year"),
+        dateField = form("min"),
+        labelClass = Some("heading-small"),
+        legend = "From date",
+        startAtTabIndex = Some(startAtTabIndex)
+    )
 
- @input_date(
-  dayField = form("max.day"),
-  monthField = form("max.month"),
-  yearField = form("max.year"),
-  labelClass = Some("heading-small"),
-  legend = "To date",
-  startAtTabIndex = Some(startAtTabIndex+4)
- )
+    @input_date(
+        dayField = form("max.day"),
+        monthField = form("max.month"),
+        yearField = form("max.year"),
+        dateField = form("max"),
+        labelClass = Some("heading-small"),
+        legend = "To date",
+        startAtTabIndex = Some(startAtTabIndex+4)
+    )
 
- <button tabindex="@{startAtTabIndex+10}" id="sla_criteria-submit" class="button" type="submit">Generate report</button>
+    <button tabindex="@{startAtTabIndex+10}" id="sla_criteria-submit" class="button" type="submit">Generate report</button>
 
 }
