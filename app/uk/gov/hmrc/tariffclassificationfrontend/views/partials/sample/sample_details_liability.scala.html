@@ -32,7 +32,7 @@
         @messages("case.liability.provide-samples")
         </dt>
         <dd class="column-one-third">
-        @if(c.sampleToBeProvided){ @messages("answer.yes") } else { @messages("answer.no")}
+        <span id="liability-sending-samples_answer">@if(c.sampleToBeProvided){@messages("answer.yes")} else { @messages("answer.no")}</span>
         </dd>
         <dd class="column-one-third">
             @if(request.hasPermission(Permission.EDIT_SAMPLE)) {
