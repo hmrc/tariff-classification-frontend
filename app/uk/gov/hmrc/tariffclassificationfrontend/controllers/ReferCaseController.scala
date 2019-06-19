@@ -54,7 +54,7 @@ class ReferCaseController @Inject()(verify: RequestActions,
   def confirmReferCase(reference: String): Action[AnyContent] =
     (verify.authenticated
       andThen verify.casePermissions(reference)
-      andThen verify.mustHave(Permission.REFER_CASE)).async { implicit request =>
+      andThen verify.mustHave(Permission.VIEW_CASES)).async { implicit request =>
       renderView(c => c.status == REFERRED, c => successful(views.html.confirm_refer_case(c)))
     }
 
