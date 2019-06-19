@@ -82,17 +82,6 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       bodyOf(result) should include("Release this case for classification")
     }
 
-    "redirect to Application Details for non NEW statuses" in {
-      when(queueService.getNonGateway).thenReturn(successful(Seq.empty))
-
-      val result: Result = await(controller(caseWithStatusOPEN).releaseCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
-
-      status(result) shouldBe Status.SEE_OTHER
-      contentTypeOf(result) shouldBe None
-      charsetOf(result) shouldBe None
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/application")
-    }
-
     "return OK when user has right permissions" in {
       when(queueService.getNonGateway).thenReturn(successful(Seq.empty))
 
@@ -147,18 +136,7 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       bodyOf(result) should include("Release this case for classification")
     }
 
-    "redirect to Application Details for non NEW statuses" in {
-      when(queueService.getOneBySlug("queue")).thenReturn(successful(Some(queue)))
-
-      val result: Result = await(controller(caseWithStatusOPEN).releaseCaseToQueue(caseWithStatusOPEN.reference)(requestWithQueue("queue")))
-
-      status(result) shouldBe Status.SEE_OTHER
-      contentTypeOf(result) shouldBe None
-      charsetOf(result) shouldBe None
-      locationOf(result) shouldBe Some("/tariff-classification/cases/1/application")
-    }
-
-    "return OK when user has right permissions" in {
+    "redirect to confirmation when user has right permissions" in {
       when(queueService.getOneBySlug("queue")).thenReturn(successful(Some(queue)))
       when(casesService.releaseCase(any[Case], any[Queue], any[Operator])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusOPEN))
 

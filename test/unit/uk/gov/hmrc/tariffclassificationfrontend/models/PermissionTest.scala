@@ -17,13 +17,14 @@
 package uk.gov.hmrc.tariffclassificationfrontend.models
 
 import uk.gov.hmrc.play.test.UnitSpec
+import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.CaseStatus
 import uk.gov.tariffclassificationfrontend.utils.Cases._
 
 class PermissionTest extends UnitSpec {
 
-  private val readOnly = Operator(id = "team", role = Role.READ_ONLY)
-  private val teamMember = Operator(id = "team", role = Role.CLASSIFICATION_OFFICER)
-  private val manager = Operator(id = "team", role = Role.CLASSIFICATION_MANAGER)
+  private val readOnly = Operator(id = "id", role = Role.READ_ONLY)
+  private val teamMember = Operator(id = "id", role = Role.CLASSIFICATION_OFFICER)
+  private val manager = Operator(id = "id", role = Role.CLASSIFICATION_MANAGER)
   private def caseUnassigned = aCase(withoutAssignee())
   private def caseAssignedTo(operator: Operator) = aCase(withAssignee(Some(operator)))
 
@@ -131,9 +132,29 @@ class PermissionTest extends UnitSpec {
       permission.name shouldBe name
       Permission.from(name) shouldBe Some(permission)
 
-      permission.appliesTo(readOnly) shouldBe false
-      permission.appliesTo(teamMember) shouldBe true
-      permission.appliesTo(manager) shouldBe true
+      val caseWithoutQueue = aCase(withoutQueue(), withoutAssignee())
+      permission.appliesTo(caseWithoutQueue, readOnly) shouldBe false
+      permission.appliesTo(caseWithoutQueue, teamMember) shouldBe false
+      permission.appliesTo(caseWithoutQueue, manager) shouldBe false
+
+      val caseWithQueue = aCase(withQueue("queue"))
+      permission.appliesTo(caseWithQueue, readOnly) shouldBe false
+      permission.appliesTo(caseWithQueue, teamMember) shouldBe true
+      permission.appliesTo(caseWithQueue, manager) shouldBe true
+
+      for(status: CaseStatus <- Seq(CaseStatus.OPEN, CaseStatus.REFERRED, CaseStatus.SUSPENDED)) {
+        val caseWithValidStatus = aCase(withQueue("queue"), withoutAssignee(), withStatus(status))
+        permission.appliesTo(caseWithValidStatus, readOnly) shouldBe false
+        permission.appliesTo(caseWithValidStatus, teamMember) shouldBe true
+        permission.appliesTo(caseWithValidStatus, manager) shouldBe true
+      }
+
+      for(status: CaseStatus <- CaseStatus.values.filterNot(anyOf(CaseStatus.OPEN, CaseStatus.REFERRED, CaseStatus.SUSPENDED))) {
+        val caseWithInvalidStatus = aCase(withQueue("queue"), withoutAssignee(), withStatus(status))
+        permission.appliesTo(caseWithInvalidStatus, readOnly) shouldBe false
+        permission.appliesTo(caseWithInvalidStatus, teamMember) shouldBe false
+        permission.appliesTo(caseWithInvalidStatus, manager) shouldBe false
+      }
     }
 
     "contain 'Release a Case'" in {
@@ -143,9 +164,17 @@ class PermissionTest extends UnitSpec {
       permission.name shouldBe name
       Permission.from(name) shouldBe Some(permission)
 
-      permission.appliesTo(caseUnassigned, readOnly) shouldBe false
-      permission.appliesTo(caseUnassigned, teamMember) shouldBe true
-      permission.appliesTo(caseUnassigned, manager) shouldBe true
+      val caseWithValidStatus = aCase(withoutAssignee(), withStatus(CaseStatus.NEW))
+      permission.appliesTo(caseWithValidStatus, readOnly) shouldBe false
+      permission.appliesTo(caseWithValidStatus, teamMember) shouldBe true
+      permission.appliesTo(caseWithValidStatus, manager) shouldBe true
+
+      for(status: CaseStatus <- CaseStatus.values.filterNot(equalTo(CaseStatus.NEW))) {
+        val caseWithInvalidStatus = aCase(withoutAssignee(), withStatus(status))
+        permission.appliesTo(caseWithInvalidStatus, readOnly) shouldBe false
+        permission.appliesTo(caseWithInvalidStatus, teamMember) shouldBe false
+        permission.appliesTo(caseWithInvalidStatus, manager) shouldBe false
+      }
     }
 
     "contain 'Suppress a Case'" in {
@@ -155,9 +184,17 @@ class PermissionTest extends UnitSpec {
       permission.name shouldBe name
       Permission.from(name) shouldBe Some(permission)
 
-      permission.appliesTo(caseUnassigned, readOnly) shouldBe false
-      permission.appliesTo(caseUnassigned, teamMember) shouldBe true
-      permission.appliesTo(caseUnassigned, manager) shouldBe true
+      val caseWithValidStatus = aCase(withStatus(CaseStatus.NEW))
+      permission.appliesTo(caseWithValidStatus, readOnly) shouldBe false
+      permission.appliesTo(caseWithValidStatus, teamMember) shouldBe true
+      permission.appliesTo(caseWithValidStatus, manager) shouldBe true
+
+      for(status: CaseStatus <- CaseStatus.values.filterNot(equalTo(CaseStatus.NEW))) {
+        val caseWithInvalidStatus = aCase(withStatus(status))
+        permission.appliesTo(caseWithInvalidStatus, readOnly) shouldBe false
+        permission.appliesTo(caseWithInvalidStatus, teamMember) shouldBe false
+        permission.appliesTo(caseWithInvalidStatus, manager) shouldBe false
+      }
     }
 
     "contain 'Refer a Case'" in {
@@ -167,10 +204,20 @@ class PermissionTest extends UnitSpec {
       permission.name shouldBe name
       Permission.from(name) shouldBe Some(permission)
 
-      permission.appliesTo(caseUnassigned, readOnly) shouldBe false
-      permission.appliesTo(caseUnassigned, teamMember) shouldBe false
-      permission.appliesTo(caseAssignedTo(teamMember), teamMember) shouldBe true
-      permission.appliesTo(caseUnassigned, manager) shouldBe true
+      val caseWithValidStatus = aCase(withoutAssignee(), withStatus(CaseStatus.OPEN))
+      permission.appliesTo(caseWithValidStatus, readOnly) shouldBe false
+      permission.appliesTo(caseWithValidStatus, teamMember) shouldBe false
+      permission.appliesTo(caseWithValidStatus.copy(assignee = Some(teamMember)), teamMember) shouldBe true
+      permission.appliesTo(caseWithValidStatus, manager) shouldBe true
+
+      for(status: CaseStatus <- CaseStatus.values.filterNot(equalTo(CaseStatus.OPEN))) {
+        val caseWithInvalidStatus = aCase(withoutAssignee(), withStatus(status))
+        permission.appliesTo(caseWithInvalidStatus, readOnly) shouldBe false
+        permission.appliesTo(caseWithInvalidStatus, teamMember) shouldBe false
+        permission.appliesTo(caseWithInvalidStatus.copy(assignee = Some(teamMember)), teamMember) shouldBe false
+        permission.appliesTo(caseWithInvalidStatus, manager) shouldBe false
+
+      }
     }
 
     "contain 'Reopen a Case'" in {
@@ -180,9 +227,19 @@ class PermissionTest extends UnitSpec {
       permission.name shouldBe name
       Permission.from(name) shouldBe Some(permission)
 
-      permission.appliesTo(caseUnassigned, readOnly) shouldBe false
-      permission.appliesTo(caseUnassigned, teamMember) shouldBe true
-      permission.appliesTo(caseUnassigned, manager) shouldBe true
+      for(status: CaseStatus <- Set(CaseStatus.SUSPENDED, CaseStatus.REFERRED)) {
+        val caseWithValidStatus = aCase(withStatus(status))
+        permission.appliesTo(caseWithValidStatus, readOnly) shouldBe false
+        permission.appliesTo(caseWithValidStatus, teamMember) shouldBe true
+        permission.appliesTo(caseWithValidStatus, manager) shouldBe true
+      }
+
+      for(status: CaseStatus <- CaseStatus.values.filterNot(anyOf(CaseStatus.SUSPENDED, CaseStatus.REFERRED))) {
+        val caseWithInvalidStatus = aCase(withStatus(status))
+        permission.appliesTo(caseWithInvalidStatus, readOnly) shouldBe false
+        permission.appliesTo(caseWithInvalidStatus, teamMember) shouldBe false
+        permission.appliesTo(caseWithInvalidStatus, manager) shouldBe false
+      }
     }
 
     "contain 'Reject a Case'" in {
@@ -374,5 +431,8 @@ class PermissionTest extends UnitSpec {
     }
 
   }
+
+  private def anyOf[T](values: T*): T => Boolean = values.contains
+  private def equalTo[T](value: T): T => Boolean = _ == value
 
 }
