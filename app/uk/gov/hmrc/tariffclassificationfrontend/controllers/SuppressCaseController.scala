@@ -101,7 +101,7 @@ class SuppressCaseController @Inject()(verify: RequestActions,
   def confirmSuppressCase(reference: String): Action[AnyContent] =
     (verify.authenticated
       andThen verify.casePermissions(reference)
-      andThen verify.mustHave(Permission.SUPPRESS_CASE)).async { implicit request =>
+      andThen verify.mustHave(Permission.VIEW_CASES)).async { implicit request =>
       renderView(c => c.status == SUPPRESSED, c => successful(views.html.confirm_supressed_case(c)))
     }
 
