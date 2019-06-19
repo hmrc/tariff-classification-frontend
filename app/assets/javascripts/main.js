@@ -11,6 +11,9 @@ window.onload = function () {
             });
         }
     }
+    if(document.getElementById("error-summary-heading")!=null){
+        document.title = "Error: " + document.title
+    }
 };
 
 

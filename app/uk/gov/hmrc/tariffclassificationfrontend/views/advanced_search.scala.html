@@ -48,7 +48,7 @@
     }
 }
 
-@main(bodyClasses = None, customTitle = Some(messages("page.title.advanced.search")), scriptElem = Some(initial_focus(workOutInitialFocusComponent(), withTimeout = 100))) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.advanced.search")), scriptElem = Some(initial_focus(workOutInitialFocusComponent(), withTimeout = 5))) {
 
     @back_link(displayBackLink = true, SessionKeys.backToQueuesLinkUrl, SessionKeys.backToQueuesLinkLabel)
 
