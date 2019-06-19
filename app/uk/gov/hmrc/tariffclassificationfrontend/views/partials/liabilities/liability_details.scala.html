@@ -224,7 +224,7 @@
                     </ul>
                 }
 
-                <a tabindex="@startAtTabIndex" id="liability-complete-button"  class="button"  @if(liabilityForm.hasErrors || decisionForm.hasErrors) { disabled="disabled" }else{ href="@routes.CompleteCaseController.completeCase(c.reference)"}>
+                <a tabindex="@startAtTabIndex" id="liability-complete-button" class="button" role="button" @if(liabilityForm.hasErrors || decisionForm.hasErrors) { disabled="disabled" }else{ href="@routes.CompleteCaseController.completeCase(c.reference)"}>
                     Complete case
                 </a>
             }
