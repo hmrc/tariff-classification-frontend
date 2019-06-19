@@ -31,8 +31,8 @@
         <dt class="column-one-third">
         @messages("case.liability.provide-samples")
         </dt>
-        <dd class="column-one-third">
-        <span id="liability-sending-samples_answer">@if(c.sampleToBeProvided){@messages("answer.yes")} else { @messages("answer.no")}</span>
+        <dd id="liability-sending-samples_answer" class="column-one-third">
+            @if(c.sampleToBeProvided){@messages("answer.yes")} else { @messages("answer.no")}
         </dd>
         <dd class="column-one-third">
             @if(request.hasPermission(Permission.EDIT_SAMPLE)) {
@@ -46,7 +46,7 @@
             <dt class="column-one-third">
                 @messages("case.liability.returning-samples")
             </dt>
-            <dd class="column-one-third">
+            <dd id="sample-requested-return-value" class="column-one-third">
                 @SampleReturn.format(c.sample.returnStatus)
             </dd>
             <dd class="column-one-third">
