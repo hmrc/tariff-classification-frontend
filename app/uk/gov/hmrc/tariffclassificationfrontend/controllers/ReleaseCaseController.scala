@@ -76,7 +76,7 @@ class ReleaseCaseController @Inject()(verify: RequestActions,
   def confirmReleaseCase(reference: String): Action[AnyContent] =
     (verify.authenticated
       andThen verify.casePermissions(reference)
-      andThen verify.mustHave(Permission.RELEASE_CASE)).async {
+      andThen verify.mustHave(Permission.VIEW_CASES)).async {
       implicit request =>
 
         def queueNotFound(implicit request: AuthenticatedCaseRequest[_]) = {
