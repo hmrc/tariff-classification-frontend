@@ -24,6 +24,13 @@ class ReusableTabIndexerTest extends UnitSpec {
       tabIndexer.nextTabIndexWithJump(50) shouldBe 50
     }
 
+    "return current index without consuming index when calling current tab index" in {
+      val tabIndexer = ReusableTabIndexer(startTabIndex = 5)
+      tabIndexer.nextTabIndex()
+      tabIndexer.currentTabIndex() shouldBe 5
+      tabIndexer.currentTabIndex() shouldBe 5
+    }
+
     "start at specified index when supplied" in {
       val tabIndexer = ReusableTabIndexer(startTabIndex = 10)
       tabIndexer.nextTabIndex() shouldBe 10

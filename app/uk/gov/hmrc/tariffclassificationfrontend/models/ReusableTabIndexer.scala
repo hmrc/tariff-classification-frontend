@@ -22,4 +22,5 @@ case class ReusableTabIndexer(startTabIndex: Int = 0, indexIncrement: Int = 1) {
   private var nextIndex = startTabIndex - tabIncrement
   val nextTabIndex = {  () => { nextIndex += tabIncrement; nextIndex} }
   val nextTabIndexWithJump = { (jump: Int) => { nextIndex += jump; nextIndex}}
+  val currentTabIndex = { () => nextIndex}
 }

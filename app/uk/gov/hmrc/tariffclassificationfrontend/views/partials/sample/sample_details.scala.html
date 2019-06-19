@@ -21,9 +21,9 @@
 @(c: Case, events: Paged[Event], startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @if(c.application.isLiabilityOrder) {
-    @sample_details_liability(c)
+    @sample_details_liability(c, startAtTabIndex)
 } else {
-    @sample_details_bti(c)
+    @sample_details_bti(c, startAtTabIndex)
 }
 
 @sample_status_events_table(c,events,startAtTabIndex+15)
