@@ -48,11 +48,6 @@
 
                 @status_change_upload(form("email"), "suspending")
 
-                @warning(
-                    "This case cannot be reopened once it has been suspended.",
-                    containerClass = "mb-4"
-                )
-
                 @confirm_or_cancel_buttons(
                     id = "suspend_case",
                     confirmText = "Confirm status change",
