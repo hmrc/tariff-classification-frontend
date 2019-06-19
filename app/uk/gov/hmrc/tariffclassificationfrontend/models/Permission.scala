@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.models
 
+import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.{NEW, OPEN, REFERRED, SUSPENDED}
+
 trait Permission {
   def name: String
 }
@@ -136,29 +138,36 @@ object Permission {
     override def appliesTo(operator: Operator): Boolean = managersOrTeamMembersOnly(operator)
   }
 
-  case object ASSIGN_CASE extends GlobalPermission {
+  case object ASSIGN_CASE extends CasePermission {
     override def name: String = nameOf(this)
-    override def appliesTo(operator: Operator): Boolean = managersOrTeamMembersOnly(operator)
+    override def appliesTo(`case`: Case, operator: Operator): Boolean =
+      managersOrTeamMembersOnly(operator) &&
+        `case`.hasQueue &&
+        `case`.hasStatus(OPEN, REFERRED, SUSPENDED)
   }
 
   case object RELEASE_CASE extends CasePermission {
     override def name: String = nameOf(this)
-    override def appliesTo(`case`: Case, operator: Operator): Boolean = managersOrTeamMembersOnly(operator)
+    override def appliesTo(`case`: Case, operator: Operator): Boolean =
+      managersOrTeamMembersOnly(operator) && `case`.hasStatus(NEW)
   }
 
   case object SUPPRESS_CASE extends CasePermission {
     override def name: String = nameOf(this)
-    override def appliesTo(`case`: Case, operator: Operator): Boolean = managersOrTeamMembersOnly(operator)
+    override def appliesTo(`case`: Case, operator: Operator): Boolean =
+      managersOrTeamMembersOnly(operator) && `case`.hasStatus(NEW)
   }
 
   case object REFER_CASE extends CasePermission {
     override def name: String = nameOf(this)
-    override def appliesTo(`case`: Case, operator: Operator): Boolean = managersOrAssignedTeamMembersOnly(`case`, operator)
+    override def appliesTo(`case`: Case, operator: Operator): Boolean =
+      managersOrAssignedTeamMembersOnly(`case`, operator) && `case`.hasStatus(OPEN)
   }
 
   case object REOPEN_CASE extends CasePermission {
     override def name: String = nameOf(this)
-    override def appliesTo(`case`: Case, operator: Operator): Boolean = managersOrTeamMembersOnly(operator)
+    override def appliesTo(`case`: Case, operator: Operator): Boolean =
+      managersOrTeamMembersOnly(operator) && `case`.hasStatus(SUSPENDED, REFERRED)
   }
 
   case object REJECT_CASE extends CasePermission {

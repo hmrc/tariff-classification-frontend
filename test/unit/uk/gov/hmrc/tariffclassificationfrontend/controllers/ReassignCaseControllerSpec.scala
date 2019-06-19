@@ -84,18 +84,6 @@ class ReassignCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       bodyOf(result) should include("Move this case back to a queue")
     }
 
-    "redirect to Application Details for non OPEN, REFERRED or SUSPENDED statuses" in {
-
-      when(queueService.getNonGateway).thenReturn(successful(Seq.empty))
-
-      val result: Result = await(controller(caseWithStatusNEW).showAvailableQueues("reference", "origin")(newFakeGETRequestWithCSRF(fakeApplication)))
-
-      status(result) shouldBe Status.SEE_OTHER
-      contentTypeOf(result) shouldBe None
-      charsetOf(result) shouldBe None
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/application")
-    }
-
     "return OK when user has right permissions" in {
       when(queueService.getNonGateway).thenReturn(successful(Seq.empty))
       when(queueService.getOneById(any())).thenReturn(successful(None))
@@ -144,17 +132,6 @@ class ReassignCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result) shouldBe Some("utf-8")
       bodyOf(result) should include("Select a queue to release this case")
-    }
-
-    "redirect to Application Details for non  OPEN, REFERRED or SUSPENDED statuses" in {
-      when(queueService.getOneBySlug("queue")).thenReturn(successful(Some(queue)))
-
-      val result: Result = await(controller(caseWithStatusNEW).reassignCase("reference", "origin")(requestWithQueue("queue")))
-
-      status(result) shouldBe Status.SEE_OTHER
-      contentTypeOf(result) shouldBe None
-      charsetOf(result) shouldBe None
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/application")
     }
 
     "return Not Found and HTML content type on missing Queue" in {

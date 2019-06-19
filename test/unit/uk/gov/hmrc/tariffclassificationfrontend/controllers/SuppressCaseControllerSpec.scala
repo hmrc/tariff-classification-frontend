@@ -80,15 +80,6 @@ class SuppressCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       bodyOf(result) should include("Change the status of this case to: Suppressed")
     }
 
-    "redirect to Application Details for non NEW statuses" in {
-      val result: Result = await(controller(caseWithStatusOPEN).getSuppressCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
-
-      status(result) shouldBe Status.SEE_OTHER
-      contentTypeOf(result) shouldBe None
-      charsetOf(result) shouldBe None
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/application")
-    }
-
     "return OK when user has right permissions" in {
       val result: Result = await(controller(caseWithStatusNEW, Set(Permission.SUPPRESS_CASE))
         .getSuppressCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
@@ -155,15 +146,6 @@ class SuppressCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
       status(result) shouldBe Status.OK
       bodyOf(result) should include("Change the status of this case to: Suppressed")
-    }
-
-    "redirect to Application Details for non NEW statuses" in {
-      val result: Result = await(controller(caseWithStatusOPEN).postSuppressCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileWithParams("text/plain"))))
-
-      status(result) shouldBe Status.SEE_OTHER
-      contentTypeOf(result) shouldBe None
-      charsetOf(result) shouldBe None
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/application")
     }
 
     "redirect unauthorised when does not have right permissions" in {

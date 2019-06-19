@@ -25,7 +25,6 @@ class ShowActionsTest extends ViewSpec {
 
     "Show Refer" in {
       ShowActions(CaseStatus.OPEN)(requestWithPermissions(Permission.REFER_CASE)).refer shouldBe true
-      ShowActions(CaseStatus.NEW)(requestWithPermissions(Permission.REFER_CASE)).refer shouldBe false
       ShowActions(CaseStatus.OPEN)(requestWithPermissions()).refer shouldBe false
     }
 
@@ -43,19 +42,16 @@ class ShowActionsTest extends ViewSpec {
 
     "Show Release" in {
       ShowActions(CaseStatus.NEW)(requestWithPermissions(Permission.RELEASE_CASE)).release shouldBe true
-      ShowActions(CaseStatus.OPEN)(requestWithPermissions(Permission.RELEASE_CASE)).release shouldBe false
       ShowActions(CaseStatus.NEW)(requestWithPermissions()).release shouldBe false
     }
 
     "Show Suppress" in {
       ShowActions(CaseStatus.NEW)(requestWithPermissions(Permission.SUPPRESS_CASE)).suppress shouldBe true
-      ShowActions(CaseStatus.OPEN)(requestWithPermissions(Permission.SUPPRESS_CASE)).suppress shouldBe false
       ShowActions(CaseStatus.NEW)(requestWithPermissions()).suppress shouldBe false
     }
 
     "Show Reopen" in {
       ShowActions(CaseStatus.SUSPENDED)(requestWithPermissions(Permission.REOPEN_CASE)).reopen shouldBe true
-      ShowActions(CaseStatus.OPEN)(requestWithPermissions(Permission.REOPEN_CASE)).reopen shouldBe false
       ShowActions(CaseStatus.SUSPENDED)(requestWithPermissions()).reopen shouldBe false
     }
   }
