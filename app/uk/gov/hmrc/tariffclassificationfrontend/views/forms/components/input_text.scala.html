@@ -22,6 +22,7 @@
         labelClass: Option[String] = None,
         hintClass: Option[String] = None,
         formControlClass: Option[String] = None,
+        tabIndex : Option[Int] = None,
         disableAutoComplete: Boolean = false,
         customErrorMessage : Option[String] = None,
         customGroupClasses : Option[String] = None
@@ -52,6 +53,7 @@
         id="@{field.id}"
         name="@{field.name}"
         value="@{field.value}"
+        @if(tabIndex.isDefined){ tabindex="@{tabIndex.get}" }
         />
     </div>
 </div>

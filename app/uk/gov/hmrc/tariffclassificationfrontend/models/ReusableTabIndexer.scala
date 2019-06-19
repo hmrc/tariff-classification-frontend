@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,20 +12,15 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@(focusOnThisElement: Option[String] = None, withTimeout: Int = 0)
+package uk.gov.hmrc.tariffclassificationfrontend.models
 
-<script>
-        setTimeout(function() {
-            var hasErrors = document.getElementById("error-summary");
-            if (hasErrors) {
-                hasErrors.focus();
-            } else {
-                @if(focusOnThisElement.isDefined){
-                     document.getElementById("@focusOnThisElement").focus();
-                }
-            }
-                }
-    , @withTimeout);
-</script>
+case class ReusableTabIndexer(startTabIndex: Int = 0, indexIncrement: Int = 1) {
+
+  private val tabIncrement = indexIncrement
+  private var nextIndex = startTabIndex - tabIncrement
+  val nextTabIndex = {  () => { nextIndex += tabIncrement; nextIndex} }
+  val nextTabIndexWithJump = { (jump: Int) => { nextIndex += jump; nextIndex}}
+  val currentTabIndex = { () => nextIndex}
+}
