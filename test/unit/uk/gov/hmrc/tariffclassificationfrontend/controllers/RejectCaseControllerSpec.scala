@@ -169,22 +169,9 @@ class RejectCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       bodyOf(result) should include("Change the status of this case to: Rejected")
     }
 
-    "return SEE_OTHER when user has right permissions" in {
-      when(casesService.rejectCase(any[Case], any[FileUpload], any[String], any[Operator])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREJECTED))
-
-      val result: Result = await(controller(caseWithStatusOPEN, Set(Permission.REJECT_CASE))
-        .confirmRejectCase("reference")
-        (newFakePOSTRequestWithCSRF(fakeApplication)
-          .withFormUrlEncodedBody("state" -> "false")))
-
-      status(result) shouldBe Status.SEE_OTHER
-    }
-
     "redirect unauthorised when does not have right permissions" in {
-      val result: Result = await(controller(caseWithStatusOPEN, Set.empty)
-        .confirmRejectCase("reference")
-        (newFakePOSTRequestWithCSRF(fakeApplication)
-          .withFormUrlEncodedBody("state" -> "false")))
+      val result: Result = await(controller(caseWithStatusOPEN, Set.empty).postRejectCase("reference")
+      (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileWithParams("note" -> Seq("some-note")))))
 
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
