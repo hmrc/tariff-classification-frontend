@@ -21,9 +21,15 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{cases_list, nav_header, queue_nav, create_liability_button}
 @(queues: Seq[Queue], queue: Queue, caseCountByQueue: Map[String, Int], cases: Paged[Case], filteredBy: String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
+@getSuffixBasedOnFilter() = @{
+    filteredBy match {
+        case "LIABILITY_ORDER" => "-liab"
+        case _ => ""
+    }
+}
 
-@main(bodyClasses = None, scriptElem = Some(Html(s"<script>document.getElementById('nav-menu-queue${filteredBy match {case "LIABILITY_ORDER" => "-liab"; case _ => ""}}-${queue.slug}').focus();</script>")),
-    customTitle = Some(messages("page.title.case.queues"))) {
+@main(bodyClasses = None, scriptElem = Some(Html(s"<script>document.getElementById('nav-menu-queue${getSuffixBasedOnFilter}-${queue.slug}').focus();</script>")),
+    customTitle = Some(messages(s"page.title.case.queues.${queue.slug}${getSuffixBasedOnFilter}"))) {
 
     <h1 id="queue-name" class="heading-xlarge">@queue.name cases</h1>
 

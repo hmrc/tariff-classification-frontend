@@ -26,7 +26,7 @@
 @(queues: Seq[Queue], report: Option[SelectedReport] = None, caseCountByQueue: Map[String, Int] )(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, scriptElem = Some(Html("<script>document.getElementById('nav-menu-reports').focus();</script>")),
-    customTitle = Some(messages("page.title.case.queues"))) {
+    customTitle = Some(messages("page.title.case.queues.reports"))) {
 
     <h1 id="queue-name" class="heading-xlarge">@messages("cases.menu.reports")</h1>
 

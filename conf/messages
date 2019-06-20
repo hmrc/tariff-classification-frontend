@@ -358,3 +358,16 @@ view.attachment.unavailable.heading=Attachment is unavailable
 view.attachment.unavailable.content.failedToProcess=File failed to process. This could be because a virus was found.
 view.attachment.unavailable.content.stillProcessing=File is still processing. It should be available in the next few minutes.
 view.attachment.unavailable.content.doesNotExist=File does not exist.
+
+page.title.case.queues.my-cases = My cases
+page.title.case.queues.gateway = Gateway cases
+page.title.case.queues.act = ACT BTI
+page.title.case.queues.cap = CAP BTI
+page.title.case.queues.cars = Cars BTI
+page.title.case.queues.elm = ELM BTI
+page.title.case.queues.act-liab = ACT Liability
+page.title.case.queues.cap-liab = CAP Liability
+page.title.case.queues.cars-liab = Cars Liability
+page.title.case.queues.elm-liab = ELM Liability
+page.title.case.queues.assigned-cases = Assigned cases
+page.title.case.queues.reports = Reports
