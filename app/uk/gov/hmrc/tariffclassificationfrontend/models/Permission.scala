@@ -253,7 +253,9 @@ object Permission {
   case object EXTENDED_USE extends CasePermission {
     override def name: String = nameOf(this)
     override def appliesTo(`case`: Case, operator: Operator): Boolean =
-      managersOrTeamMembersOnly(operator)
+      managersOrTeamMembersOnly(operator) &&
+        `case`.hasStatus(CaseStatus.CANCELLED) &&
+        `case`.decision.flatMap(_.cancellation).isDefined
   }
 
   case object MOVE_CASE_BACK_TO_QUEUE extends CasePermission {

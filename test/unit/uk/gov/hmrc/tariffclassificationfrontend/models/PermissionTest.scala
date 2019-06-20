@@ -480,9 +480,22 @@ class PermissionTest extends UnitSpec {
       permission.name shouldBe name
       Permission.from(name) shouldBe Some(permission)
 
-      permission.appliesTo(caseUnassigned, readOnly) shouldBe false
-      permission.appliesTo(caseUnassigned, teamMember) shouldBe true
-      permission.appliesTo(caseUnassigned, manager) shouldBe true
+      val caseWithValidStatus = aCase(withStatus(CaseStatus.CANCELLED), withDecision(cancellation = Some(Cancellation(CancelReason.ANNULLED))))
+      permission.appliesTo(caseWithValidStatus, readOnly) shouldBe false
+      permission.appliesTo(caseWithValidStatus, teamMember) shouldBe true
+      permission.appliesTo(caseWithValidStatus, manager) shouldBe true
+
+      val caseWithInvalidCancellation = aCase(withStatus(CaseStatus.CANCELLED), withDecision(cancellation = None))
+      permission.appliesTo(caseWithInvalidCancellation, readOnly) shouldBe false
+      permission.appliesTo(caseWithInvalidCancellation, teamMember) shouldBe false
+      permission.appliesTo(caseWithInvalidCancellation, manager) shouldBe false
+
+      for(status: CaseStatus <- CaseStatus.values.filterNot(equalTo(CaseStatus.CANCELLED))) {
+        val caseWithInvalidStatus = aCase(withStatus(status), withDecision(cancellation = Some(Cancellation(CancelReason.ANNULLED))))
+        permission.appliesTo(caseWithInvalidStatus, readOnly) shouldBe false
+        permission.appliesTo(caseWithInvalidStatus, teamMember) shouldBe false
+        permission.appliesTo(caseWithInvalidStatus, manager) shouldBe false
+      }
     }
 
     "contain 'Move Case Back To Queue'" in {
