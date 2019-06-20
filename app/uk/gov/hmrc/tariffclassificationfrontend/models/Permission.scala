@@ -172,7 +172,8 @@ object Permission {
 
   case object REJECT_CASE extends CasePermission {
     override def name: String = nameOf(this)
-    override def appliesTo(`case`: Case, operator: Operator): Boolean = managersOrAssignedTeamMembersOnly(`case`, operator)
+    override def appliesTo(`case`: Case, operator: Operator): Boolean =
+      managersOrAssignedTeamMembersOnly(`case`, operator) && `case`.hasStatus(OPEN)
   }
 
   case object SUSPEND_CASE extends CasePermission {

@@ -103,8 +103,8 @@ class RejectCaseController @Inject()(verify: RequestActions,
     getCaseAndRenderView(reference, c => successful(views.html.reject_case(c, form.withError("file-input", specificProblem))))
 
 
-  override protected def redirect: String => Call = routes.CaseController.applicationDetails
+  override protected def redirect: String => Call = routes.CaseController.get
 
-  override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = c.status == OPEN
+  override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = true
 
 }

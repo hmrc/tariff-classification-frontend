@@ -109,16 +109,6 @@ class RejectCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       bodyOf(result) should include("Reject this case")
     }
 
-    "redirect to Application Details for non OPEN statuses" in {
-
-      val result: Result = await(controller(caseWithStatusNEW).getRejectCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
-
-      status(result) shouldBe Status.SEE_OTHER
-      contentTypeOf(result) shouldBe None
-      charsetOf(result) shouldBe None
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/application")
-    }
-
     "return OK when user has right permissions" in {
       val result: Result = await(controller(caseWithStatusOPEN, Set(Permission.REJECT_CASE))
         .getRejectCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
@@ -179,16 +169,6 @@ class RejectCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       bodyOf(result) should include("Change the status of this case to: Rejected")
     }
 
-    "redirect to Application Details for non OPEN statuses" in {
-
-      val result: Result = await(controller(caseWithStatusNEW).confirmRejectCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
-
-      status(result) shouldBe Status.SEE_OTHER
-      contentTypeOf(result) shouldBe None
-      charsetOf(result) shouldBe None
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/application")
-    }
-
     "return SEE_OTHER when user has right permissions" in {
       when(casesService.rejectCase(any[Case], any[FileUpload], any[String], any[Operator])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREJECTED))
 
@@ -222,17 +202,6 @@ class RejectCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result) shouldBe Some("utf-8")
       bodyOf(result) should include("This case has been rejected")
-    }
-
-    "redirect to a default page if the status is not right" in {
-      val result: Result = await(controller(caseWithStatusOPEN).confirmRejectCase("reference")
-      (newFakePOSTRequestWithCSRF(fakeApplication)
-        .withFormUrlEncodedBody("state" -> "true")))
-
-      status(result) shouldBe Status.SEE_OTHER
-      contentTypeOf(result) shouldBe None
-      charsetOf(result) shouldBe None
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/application")
     }
   }
 
