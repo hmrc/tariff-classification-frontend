@@ -110,15 +110,6 @@ class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       bodyOf(result) should include("Refer this case")
     }
 
-    "redirect to Application Details for non OPEN statuses" in {
-      val result: Result = await(controller(caseWithStatusNEW).getReferCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
-
-      status(result) shouldBe Status.SEE_OTHER
-      contentTypeOf(result) shouldBe None
-      charsetOf(result) shouldBe None
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/application")
-    }
-
     "return OK when user has right permissions" in {
       val result: Result = await(controller(caseWithStatusOPEN, Set(Permission.REFER_CASE))
         .getReferCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
@@ -237,16 +228,6 @@ class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       bodyOf(result) should include("Change the status of this case to: Referred")
     }
 
-    "redirect to Application Details for non OPEN statuses" in {
-      val result: Result = await(controller(caseWithStatusNEW).postReferCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)
-        .withBody(aMultipartFileWithParams("referredTo" -> Seq("APPLICANT"), "reason" -> Seq(ReferralReason.REQUEST_SAMPLE.toString), "note" -> Seq("some-note")))))
-
-      status(result) shouldBe Status.SEE_OTHER
-      contentTypeOf(result) shouldBe None
-      charsetOf(result) shouldBe None
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/application")
-    }
-
     "redirect unauthorised when does not have right permissions" in {
       val result: Result = await(controller(caseWithStatusNEW, Set.empty)
         .postReferCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)
@@ -272,20 +253,6 @@ class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result) shouldBe Some("utf-8")
       bodyOf(result) should include("This case has been referred")
-    }
-
-    "redirect to a default page if the status is not right" in {
-      when(casesService.referCase(refEq(caseWithStatusOPEN),any[String],any[Seq[ReferralReason]],any[FileUpload],
-        any[String], any[Operator])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREFERRED))
-
-      val result: Result = await(controller(caseWithStatusOPEN).confirmReferCase("reference")
-      (newFakePOSTRequestWithCSRF(fakeApplication)
-        .withFormUrlEncodedBody("state" -> "true")))
-
-      status(result) shouldBe Status.SEE_OTHER
-      contentTypeOf(result) shouldBe None
-      charsetOf(result) shouldBe None
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/application")
     }
   }
 

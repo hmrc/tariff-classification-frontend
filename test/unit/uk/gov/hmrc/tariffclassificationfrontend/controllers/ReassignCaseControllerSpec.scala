@@ -199,7 +199,7 @@ class ReassignCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       val result: Result = await(controller(caseWithStatusNEW).confirmReassignCase("reference", "origin")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/application")
+      locationOf(result) shouldBe Some("/tariff-classification/cases/reference")
     }
   }
 
