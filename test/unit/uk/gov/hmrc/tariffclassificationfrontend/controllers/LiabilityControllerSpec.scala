@@ -99,19 +99,8 @@ class LiabilityControllerSpec extends UnitSpec with Matchers with BeforeAndAfter
     }
 
     "return 200 OK and HTML content type" when {
-      "Case has status NEW" in {
-        val c = aCase(withReference("reference"), withStatus(CaseStatus.NEW), withLiabilityApplication())
-        val request = newFakeGETRequestWithCSRF(fakeApplication)
-        val result = await(controller(Set(Permission.VIEW_CASES, Permission.CREATE_CASES), c).editLiabilityDetails("ref")(request))
 
-        status(result) shouldBe Status.OK
-        contentType(result) shouldBe Some("text/html")
-        charset(result) shouldBe Some("utf-8")
-
-        contentAsString(result) should include("liability-details-edit-form")
-      }
-
-      "Case has status OPEN and Edit Access" in {
+      "Permitted with Edit Access" in {
         val c = aCase(withReference("reference"), withStatus(CaseStatus.OPEN), withLiabilityApplication())
         val request = newFakeGETRequestWithCSRF(fakeApplication)
         val result = await(controller(Set(Permission.VIEW_CASES, Permission.EDIT_LIABILITY), c).editLiabilityDetails("ref")(request))
@@ -159,19 +148,7 @@ class LiabilityControllerSpec extends UnitSpec with Matchers with BeforeAndAfter
     )
 
     "update and redirect to liability view" when {
-      "case status is NEW" in {
-        given(commodityCodeConstraints.commodityCodeExistsInUKTradeTariff).willReturn(Constraint[String]("error")(_ => Valid))
-        given(casesService.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(updatedCase))
-
-        val c = aCase(withReference("reference"), withStatus(CaseStatus.NEW), withLiabilityApplication())
-        val result = await(controller(Set(Permission.VIEW_CASES, Permission.CREATE_CASES), c).postLiabilityDetails("reference")(validReq))
-
-        status(result) shouldBe Status.SEE_OTHER
-        locationOf(result) shouldBe Some(routes.LiabilityController.liabilityDetails("reference").url)
-        verify(casesService).updateCase(any[Case])(any[HeaderCarrier])
-      }
-
-      "case status is OPEN with permission" in {
+      "request has permission" in {
         given(commodityCodeConstraints.commodityCodeExistsInUKTradeTariff).willReturn(Constraint[String]("error")(_ => Valid))
         given(casesService.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(updatedCase))
 
@@ -198,19 +175,6 @@ class LiabilityControllerSpec extends UnitSpec with Matchers with BeforeAndAfter
 
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.SecurityController.unauthorized().url)
-    }
-
-    "redirect to default" when {
-      for(s: CaseStatus <- CaseStatus.values.filterNot(_ == CaseStatus.OPEN).filterNot(_ == CaseStatus.NEW)) {
-
-        s"case status is $s" in {
-          val c = aCase(withReference("reference"), withStatus(s), withLiabilityApplication())
-          val result: Result = await(controller(Set(Permission.VIEW_CASES), c).postLiabilityDetails("reference")(invalidReq))
-
-          status(result) shouldBe Status.SEE_OTHER
-          redirectLocation(result) shouldBe Some(routes.CaseController.get("reference").url)
-        }
-      }
     }
   }
 

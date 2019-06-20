@@ -54,38 +54,23 @@ class LiabilityController @Inject()(verify: RequestActions,
     )
   }
 
-  def editLiabilityDetails(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
-    request.`case` match {
-      case c: Case if hasPermissionForEdit(c, request) =>
-        successful(
-          Ok(
-            views.html.partials.liabilities.liability_details_edit(c, LiabilityDetailsForm.liabilityDetailsForm(c.application.asLiabilityOrder), Some(tabIndexFor(LIABILITY)))
-          )
-        )
-      case _ =>
-        successful(Redirect(routes.CaseController.get(reference)))
-    }
+  def editLiabilityDetails(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.EDIT_LIABILITY)).async { implicit request =>
+    successful(
+      Ok(
+        views.html.partials.liabilities.liability_details_edit(request.`case`, LiabilityDetailsForm.liabilityDetailsForm(request.`case`.application.asLiabilityOrder), Some(tabIndexFor(LIABILITY)))
+      )
+    )
   }
 
-  def postLiabilityDetails(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
-    request.`case` match {
-      case c: Case if hasPermissionForEdit(c, request) =>
-        LiabilityDetailsForm.liabilityDetailsForm(request.`case`.application.asLiabilityOrder).discardingErrors.bindFromRequest.fold(
-          errorForm => successful(Ok(views.html.partials.liabilities.liability_details_edit(request.`case`, errorForm))),
-          updatedLiability => getCaseAndRedirect(menuTitle, c =>
-            for {
-              update <- casesService.updateCase(c.copy(application = updatedLiability))
-            } yield routes.LiabilityController.liabilityDetails(update.reference)
-          )
-        )
-      case _ =>
-        successful(Redirect(routes.CaseController.get(reference)))
-    }
-  }
-
-  private def hasPermissionForEdit(c: Case, request: AuthenticatedCaseRequest[AnyContent]) = {
-    (c.status == CaseStatus.OPEN && request.hasPermission(Permission.EDIT_LIABILITY)) ||
-      (c.status == CaseStatus.NEW && request.hasPermission(Permission.CREATE_CASES))
+  def postLiabilityDetails(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.EDIT_LIABILITY)).async { implicit request =>
+    LiabilityDetailsForm.liabilityDetailsForm(request.`case`.application.asLiabilityOrder).discardingErrors.bindFromRequest.fold(
+      errorForm => successful(Ok(views.html.partials.liabilities.liability_details_edit(request.`case`, errorForm))),
+      updatedLiability => getCaseAndRedirect(menuTitle, c =>
+        for {
+          update <- casesService.updateCase(c.copy(application = updatedLiability))
+        } yield routes.LiabilityController.liabilityDetails(update.reference)
+      )
+    )
   }
 
   private def getCaseAndRenderView(page: CaseDetailPage, toHtml: Case => Future[HtmlFormat.Appendable])

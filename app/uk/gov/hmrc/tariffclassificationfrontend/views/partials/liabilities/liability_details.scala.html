@@ -45,7 +45,7 @@
 
             <h3 class="heading-medium mt-0">@messages("case.liability.about.title") </h3>
 
-            @if((c.status == CaseStatus.NEW && request.hasPermission(Permission.CREATE_CASES)) || (c.status == CaseStatus.OPEN && request.hasPermission(Permission.EDIT_LIABILITY))) {
+            @if(request.hasPermission(Permission.EDIT_LIABILITY)) {
                 <div class="grid-row  mb-2">
                     <span class="column-one-third">
                         <a id="edit-liability-details" href="@routes.LiabilityController.editLiabilityDetails(c.reference)"> Edit details </a>
@@ -53,7 +53,7 @@
                 </div>
             }
 
-            <div  class="grid-row">
+            <div class="grid-row">
                 <dt class="column-one-third">
                     @messages("case.liability.entryDate")
                 </dt>

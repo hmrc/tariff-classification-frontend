@@ -415,10 +415,24 @@ class PermissionTest extends UnitSpec {
       permission.name shouldBe name
       Permission.from(name) shouldBe Some(permission)
 
-      permission.appliesTo(caseUnassigned, readOnly) shouldBe false
-      permission.appliesTo(caseUnassigned, teamMember) shouldBe false
-      permission.appliesTo(caseAssignedTo(teamMember), teamMember) shouldBe true
-      permission.appliesTo(caseUnassigned, manager) shouldBe true
+      val caseWithValidStatusNEW = aCase(withoutAssignee(), withStatus(CaseStatus.NEW))
+      permission.appliesTo(caseWithValidStatusNEW, readOnly) shouldBe false
+      permission.appliesTo(caseWithValidStatusNEW, teamMember) shouldBe true
+      permission.appliesTo(caseWithValidStatusNEW, manager) shouldBe true
+
+      val caseWithValidStatusOPEN = aCase(withoutAssignee(), withStatus(CaseStatus.OPEN))
+      permission.appliesTo(caseWithValidStatusOPEN, readOnly) shouldBe false
+      permission.appliesTo(caseWithValidStatusOPEN, teamMember) shouldBe false
+      permission.appliesTo(caseWithValidStatusOPEN.copy(assignee = Some(teamMember)), teamMember) shouldBe true
+      permission.appliesTo(caseWithValidStatusOPEN, manager) shouldBe true
+
+      for(status: CaseStatus <- CaseStatus.values.filterNot(anyOf(CaseStatus.NEW, CaseStatus.OPEN))) {
+        val caseWithInvalidStatus = aCase(withStatus(status))
+        permission.appliesTo(caseWithInvalidStatus, readOnly) shouldBe false
+        permission.appliesTo(caseWithInvalidStatus, teamMember) shouldBe false
+        permission.appliesTo(caseWithInvalidStatus.copy(assignee = Some(teamMember)), teamMember) shouldBe false
+        permission.appliesTo(caseWithInvalidStatus, manager) shouldBe false
+      }
     }
 
     "contain 'Edit Appeal Status'" in {
