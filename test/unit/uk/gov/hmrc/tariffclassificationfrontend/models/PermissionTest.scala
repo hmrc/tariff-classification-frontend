@@ -451,9 +451,26 @@ class PermissionTest extends UnitSpec {
       permission.name shouldBe name
       Permission.from(name) shouldBe Some(permission)
 
-      permission.appliesTo(caseUnassigned, readOnly) shouldBe false
-      permission.appliesTo(caseUnassigned, teamMember) shouldBe true
-      permission.appliesTo(caseUnassigned, manager) shouldBe true
+      for(status: CaseStatus <- Set(CaseStatus.COMPLETED, CaseStatus.CANCELLED)) {
+        val caseWithValidStatus = aCase(withStatus(status), withDecision())
+        permission.appliesTo(caseWithValidStatus, readOnly) shouldBe false
+        permission.appliesTo(caseWithValidStatus, teamMember) shouldBe true
+        permission.appliesTo(caseWithValidStatus, manager) shouldBe true
+      }
+
+      for(status: CaseStatus <- CaseStatus.values.filterNot(anyOf(CaseStatus.COMPLETED, CaseStatus.CANCELLED))) {
+        val caseWithInvalidStatus = aCase(withStatus(status), withDecision())
+        permission.appliesTo(caseWithInvalidStatus, readOnly) shouldBe false
+        permission.appliesTo(caseWithInvalidStatus, teamMember) shouldBe false
+        permission.appliesTo(caseWithInvalidStatus, manager) shouldBe false
+      }
+
+      for(status: CaseStatus <- Set(CaseStatus.COMPLETED, CaseStatus.CANCELLED)) {
+        val caseWithInvalidDecision = aCase(withStatus(status), withoutDecision())
+        permission.appliesTo(caseWithInvalidDecision, readOnly) shouldBe false
+        permission.appliesTo(caseWithInvalidDecision, teamMember) shouldBe false
+        permission.appliesTo(caseWithInvalidDecision, manager) shouldBe false
+      }
     }
 
     "contain 'Edit Extended Use Status'" in {

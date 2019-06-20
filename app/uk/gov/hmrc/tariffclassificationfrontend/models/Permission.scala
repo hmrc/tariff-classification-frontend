@@ -245,7 +245,9 @@ object Permission {
   case object APPEAL_CASE extends CasePermission {
     override def name: String = nameOf(this)
     override def appliesTo(`case`: Case, operator: Operator): Boolean =
-      managersOrTeamMembersOnly(operator)
+      managersOrTeamMembersOnly(operator) &&
+        `case`.hasStatus(CaseStatus.COMPLETED, CaseStatus.CANCELLED) &&
+        `case`.decision.isDefined
   }
 
   case object EXTENDED_USE extends CasePermission {
