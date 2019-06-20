@@ -63,41 +63,15 @@ class ExtendedUseCaseControllerSpec extends UnitSpec with Matchers
 
   "Case Extended Use - Choose Status" should {
 
-    "return 200 OK and HTML content type - For CANCELLED Case" in {
-      val c = aCase(withStatus(CaseStatus.CANCELLED), withDecision(cancellation = Some(Cancellation(CancelReason.ANNULLED))))
-
-      val result = await(controller(c).chooseStatus("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
-
-      status(result) shouldBe Status.OK
-      contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
-      contentAsString(result) should include("change_extended_use_status-heading")
-    }
-
-    "redirect for case without cancellation reason" in {
-      val c = aCase(withStatus(CaseStatus.CANCELLED), withDecision(cancellation = None))
-
-      val result = await(controller(c).chooseStatus("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
-
-      status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some(routes.CaseController.get("reference").url)
-    }
-
-    "redirect for other status" in {
-      val c = aCase(withStatus(CaseStatus.COMPLETED), withDecision())
-
-      val result = await(controller(c).chooseStatus("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
-
-      status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some(routes.CaseController.get("reference").url)
-    }
-
     "return OK when user has right permissions" in {
       val c = aCase(withStatus(CaseStatus.CANCELLED), withDecision(cancellation = Some(Cancellation(CancelReason.ANNULLED))))
 
       val result = await(controller(c, Set(Permission.EXTENDED_USE)).chooseStatus("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.OK
+      contentType(result) shouldBe Some("text/html")
+      charset(result) shouldBe Some("utf-8")
+      contentAsString(result) should include("change_extended_use_status-heading")
     }
 
     "redirect unauthorised when does not have right permissions" in {
@@ -137,28 +111,6 @@ class ExtendedUseCaseControllerSpec extends UnitSpec with Matchers
 
       status(result) shouldBe Status.SEE_OTHER
       locationOf(result) shouldBe Some(routes.AppealCaseController.appealDetails("reference").url)
-    }
-
-    "redirect for case without cancellation reason" in {
-      val c = aCase(withStatus(CaseStatus.CANCELLED), withDecision(cancellation = None))
-
-      val result = await(controller(c).updateStatus("reference")(newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("state" -> "true")))
-
-      verify(casesService, never()).updateExtendedUseStatus(any[Case], any[Boolean], any[Operator])(any[HeaderCarrier])
-
-      status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some(routes.CaseController.get("reference").url)
-    }
-
-    "redirect for other status" in {
-      val c = aCase(withStatus(CaseStatus.OPEN), withDecision(cancellation = Some(Cancellation(CancelReason.ANNULLED, applicationForExtendedUse = true))))
-
-      val result = await(controller(c).updateStatus("reference")(newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("state" -> "false")))
-
-      verify(casesService, never()).updateExtendedUseStatus(any[Case], any[Boolean], any[Operator])(any[HeaderCarrier])
-
-      status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some(routes.CaseController.get("reference").url)
     }
 
     "return OK when user has right permissions" in {

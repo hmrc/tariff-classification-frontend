@@ -40,10 +40,6 @@ class ExtendedUseCaseController @Inject()(override val verify: RequestActions,
 
   override protected val requiredPermission: Permission = Permission.EXTENDED_USE
 
-  override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = {
-    c.status == CANCELLED && c.decision.flatMap(_.cancellation).isDefined
-  }
-
   override protected val form: Form[Boolean] = BooleanForm.form
 
   override protected def status(c: Case): Boolean = c.decision.flatMap(_.cancellation).exists(_.applicationForExtendedUse)

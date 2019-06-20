@@ -45,7 +45,7 @@
 
             <h3 class="heading-medium mt-0">@messages("case.liability.about.title") </h3>
 
-            @if((c.status == CaseStatus.NEW && request.hasPermission(Permission.CREATE_CASES)) || (c.status == CaseStatus.OPEN && request.hasPermission(Permission.EDIT_LIABILITY))) {
+            @if(request.hasPermission(Permission.EDIT_LIABILITY)) {
                 <div class="grid-row  mb-2">
                     <span class="column-one-third">
                         <a id="edit-liability-details" href="@routes.LiabilityController.editLiabilityDetails(c.reference)"> Edit details </a>
@@ -53,7 +53,7 @@
                 </div>
             }
 
-            <div  class="grid-row">
+            <div class="grid-row">
                 <dt class="column-one-third">
                     @messages("case.liability.entryDate")
                 </dt>
@@ -136,13 +136,13 @@
 
         @liability_actions(c, startAtTabIndex)
 
-        @if((c.status == CaseStatus.OPEN && request.hasPermission(Permission.EDIT_RULING)) || c.decision.isDefined) {
+        @if(request.hasPermission(Permission.EDIT_RULING) || c.decision.isDefined) {
             <hr class="mt-0 mb-0">
 
             <h3 class="heading-medium" id="liability-decision-heading">Liability decision details</h3>
         }
 
-        @if(c.status == CaseStatus.OPEN && request.hasPermission(Permission.EDIT_RULING)) {
+        @if(request.hasPermission(Permission.EDIT_RULING)) {
             <a id="liability-decision-edit" href="@routes.RulingController.editRulingDetails(c.reference)">
                 Edit liability details
             </a>

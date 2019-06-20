@@ -60,25 +60,8 @@ class LiabilityDetailsViewSpec extends ViewSpec with MockitoSugar {
     }
 
     "Render edit details button" when {
-      "Case status is NEW" in {
-        // Given
-        val c = aCase(
-          withStatus(CaseStatus.NEW),
-          withLiabilityApplication()
-        )
-        val d = c.decision.getOrElse(Decision())
-        val l = c.application.asLiabilityOrder
 
-        // When
-        val doc = view(
-          views.html.partials.liabilities.liability_details(c = c, liabilityForm = LiabilityDetailsForm.liabilityDetailsForm(l), decisionForm = form.liabilityCompleteForm(d)
-          )(requestWithPermissions(Permission.CREATE_CASES), messages, appConfig))
-
-        // Then
-        doc should containElementWithID("edit-liability-details")
-      }
-
-      "Case status is OPEN with permission" in {
+      "operator has permission" in {
         // Given
         val c = aCase(
           withStatus(CaseStatus.OPEN),
@@ -114,26 +97,6 @@ class LiabilityDetailsViewSpec extends ViewSpec with MockitoSugar {
 
         // Then
         doc shouldNot containElementWithID("liability-decision-edit")
-      }
-
-      for (status: CaseStatus <- CaseStatus.values.filterNot(_ == CaseStatus.OPEN)) {
-        s"Case is status $status" in {
-          // Given
-          val c = aCase(
-            withStatus(status),
-            withLiabilityApplication()
-          )
-          val d = c.decision.getOrElse(Decision())
-          val l = c.application.asLiabilityOrder
-
-          // When
-          val doc = view(
-            views.html.partials.liabilities.liability_details(c = c, liabilityForm = LiabilityDetailsForm.liabilityDetailsForm(l), decisionForm = form.liabilityCompleteForm(d)
-            )(requestWithPermissions(), messages, appConfig))
-
-          // Then
-          doc shouldNot containElementWithID("liability-decision-edit")
-        }
       }
     }
 

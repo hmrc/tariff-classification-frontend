@@ -81,29 +81,6 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers
       }
 
     }
-
-    "Redirect" when {
-      "Case has no decision" in {
-        val c = aCase(withStatus(CaseStatus.COMPLETED), withoutDecision())
-
-        val result = await(controller(c).appealDetails(c.reference)(fakeRequest))
-
-        status(result) shouldBe Status.SEE_OTHER
-        locationOf(result) shouldBe Some(routes.CaseController.get(c.reference).url)
-
-      }
-
-      for (s <- CaseStatus.values.filter(s => s != CaseStatus.CANCELLED && s != CaseStatus.COMPLETED)) {
-        s"Case has status $s" in {
-          val c = aCase(withStatus(s), withDecision())
-
-          val result = await(controller(c).appealDetails(c.reference)(fakeRequest))
-
-          status(result) shouldBe Status.SEE_OTHER
-          locationOf(result) shouldBe Some(routes.CaseController.get(c.reference).url)
-        }
-      }
-    }
   }
 
   "Case Choose Type" should {
@@ -128,31 +105,6 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers
       val result = await(controller(aCase(), Set.empty).chooseType("")(newFakeGETRequestWithCSRF(fakeApplication)))
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.SecurityController.unauthorized().url)
-    }
-
-    "Redirect" when {
-      "Case has no decision" in {
-        val c = aCase(withStatus(CaseStatus.COMPLETED), withoutDecision())
-
-        val request = newFakeGETRequestWithCSRF(fakeApplication)
-        val result = await(controller(c).chooseType(c.reference)(request))
-
-        status(result) shouldBe Status.SEE_OTHER
-        locationOf(result) shouldBe Some(routes.CaseController.get(c.reference).url)
-
-      }
-
-      for (s <- CaseStatus.values.filter(s => s != CaseStatus.CANCELLED && s != CaseStatus.COMPLETED)) {
-        s"Case has status $s" in {
-          val c = aCase(withStatus(s), withDecision())
-
-          val request = newFakeGETRequestWithCSRF(fakeApplication)
-          val result = await(controller(c).chooseType(c.reference)(request))
-
-          status(result) shouldBe Status.SEE_OTHER
-          locationOf(result) shouldBe Some(routes.CaseController.get(c.reference).url)
-        }
-      }
     }
   }
 
@@ -185,29 +137,6 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers
 
       status(result) shouldBe Status.OK
     }
-
-    "Redirect" when {
-      "Case has no decision" in {
-        val c = aCase(withStatus(CaseStatus.COMPLETED), withoutDecision())
-
-        val result = await(controller(c).confirmType(c.reference)(fakeRequest))
-
-        status(result) shouldBe Status.SEE_OTHER
-        locationOf(result) shouldBe Some(routes.CaseController.get(c.reference).url)
-
-      }
-
-      for (s <- CaseStatus.values.filter(s => s != CaseStatus.CANCELLED && s != CaseStatus.COMPLETED)) {
-        s"Case has status $s" in {
-          val c = aCase(withStatus(s), withDecision())
-
-          val result = await(controller(c).confirmType(c.reference)(fakeRequest))
-
-          status(result) shouldBe Status.SEE_OTHER
-          locationOf(result) shouldBe Some(routes.CaseController.get(c.reference).url)
-        }
-      }
-    }
   }
 
   "Case Choose Status" should {
@@ -232,31 +161,6 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers
       val result = await(controller(aCase(), Set.empty).chooseStatus("", "")(newFakeGETRequestWithCSRF(fakeApplication)))
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.SecurityController.unauthorized().url)
-    }
-
-    "Redirect" when {
-      "Case has no decision" in {
-        val c = aCase(withStatus(CaseStatus.COMPLETED), withoutDecision())
-
-        val request = newFakeGETRequestWithCSRF(fakeApplication)
-        val result = await(controller(c).chooseStatus(c.reference, AppealType.REVIEW.toString)(request))
-
-        status(result) shouldBe Status.SEE_OTHER
-        locationOf(result) shouldBe Some(routes.CaseController.get(c.reference).url)
-
-      }
-
-      for (s <- CaseStatus.values.filter(s => s != CaseStatus.CANCELLED && s != CaseStatus.COMPLETED)) {
-        s"Case has status $s" in {
-          val c = aCase(withStatus(s), withDecision())
-
-          val request = newFakeGETRequestWithCSRF(fakeApplication)
-          val result = await(controller(c).chooseStatus(c.reference, AppealType.REVIEW.toString)(request))
-
-          status(result) shouldBe Status.SEE_OTHER
-          locationOf(result) shouldBe Some(routes.CaseController.get(c.reference).url)
-        }
-      }
     }
   }
 
@@ -292,29 +196,6 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers
 
       status(result) shouldBe Status.OK
     }
-
-    "Redirect" when {
-      "Case has no decision" in {
-        val c = aCase(withStatus(CaseStatus.COMPLETED), withoutDecision())
-
-        val result = await(controller(c).confirmStatus(c.reference, AppealType.REVIEW.toString)(fakeRequest))
-
-        status(result) shouldBe Status.SEE_OTHER
-        locationOf(result) shouldBe Some(routes.CaseController.get(c.reference).url)
-
-      }
-
-      for (s <- CaseStatus.values.filter(s => s != CaseStatus.CANCELLED && s != CaseStatus.COMPLETED)) {
-        s"Case has status $s" in {
-          val c = aCase(withStatus(s), withDecision())
-
-          val result = await(controller(c).confirmStatus(c.reference, AppealType.REVIEW.toString)(fakeRequest))
-
-          status(result) shouldBe Status.SEE_OTHER
-          locationOf(result) shouldBe Some(routes.CaseController.get(c.reference).url)
-        }
-      }
-    }
   }
 
   "Case Change Status" should {
@@ -340,31 +221,6 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers
       val result = await(controller(aCase(), Set.empty).changeStatus("", "")(newFakeGETRequestWithCSRF(fakeApplication)))
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.SecurityController.unauthorized().url)
-    }
-
-    "Redirect" when {
-      "Case has no decision" in {
-        val c = aCase(withStatus(CaseStatus.COMPLETED), withoutDecision())
-
-        val request = newFakeGETRequestWithCSRF(fakeApplication)
-        val result = await(controller(c).changeStatus(c.reference, "some-id")(request))
-
-        status(result) shouldBe Status.SEE_OTHER
-        locationOf(result) shouldBe Some(routes.CaseController.get(c.reference).url)
-
-      }
-
-      for (s <- CaseStatus.values.filter(s => s != CaseStatus.CANCELLED && s != CaseStatus.COMPLETED)) {
-        s"Case has status $s" in {
-          val c = aCase(withStatus(s), withDecision())
-
-          val request = newFakeGETRequestWithCSRF(fakeApplication)
-          val result = await(controller(c).changeStatus(c.reference, "some-id")(request))
-
-          status(result) shouldBe Status.SEE_OTHER
-          locationOf(result) shouldBe Some(routes.CaseController.get(c.reference).url)
-        }
-      }
     }
   }
 
@@ -404,16 +260,6 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers
     }
 
     "Redirect" when {
-      "Case has no decision" in {
-        val c = aCase(withStatus(CaseStatus.COMPLETED), withoutDecision())
-
-        val result = await(controller(c).confirmChangeStatus(c.reference, "some-id")(fakeRequest))
-
-        status(result) shouldBe Status.SEE_OTHER
-        locationOf(result) shouldBe Some(routes.CaseController.get(c.reference).url)
-
-      }
-
       "Case does not have appeal with id" in {
         val appeal = Appeal("appeal-id", AppealStatus.IN_PROGRESS, AppealType.SUPREME_COURT)
         val c = aCase(withStatus(CaseStatus.COMPLETED), withDecision(appeal = Seq(appeal)))
@@ -422,18 +268,6 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers
 
         status(result) shouldBe Status.SEE_OTHER
         locationOf(result) shouldBe Some(routes.CaseController.get(c.reference).url)
-
-      }
-
-      for (s <- CaseStatus.values.filter(s => s != CaseStatus.CANCELLED && s != CaseStatus.COMPLETED)) {
-        s"Case has status $s" in {
-          val c = aCase(withStatus(s), withDecision())
-
-          val result = await(controller(c).confirmChangeStatus(c.reference, "some-id")(fakeRequest))
-
-          status(result) shouldBe Status.SEE_OTHER
-          locationOf(result) shouldBe Some(routes.CaseController.get(c.reference).url)
-        }
       }
     }
   }

@@ -55,7 +55,7 @@ class RulingDetailsViewSpec extends ViewSpec {
       doc shouldNot containElementWithID("envisagedCommodityCodeValue")
     }
 
-    "Render 'Edit' button for EDIT_RULING users with OPEN cases" in {
+    "Render 'Edit' button for EDIT_RULING users" in {
       // Given
       val c = aCase(withReference("ref"), withStatus(CaseStatus.OPEN))
 
@@ -71,19 +71,7 @@ class RulingDetailsViewSpec extends ViewSpec {
       doc.getElementById("ruling_edit") should haveAttribute("href", call.url)
     }
 
-    "Not render 'Edit' button for other statuses" in {
-      // Given
-      val c = aCase(withReference("ref"), withStatus(CaseStatus.NEW))
-
-      // When
-      val doc = view(ruling_details(c, None, Seq.empty, None)(requestWithPermissions(Permission.EDIT_RULING), messages, appConfig))
-
-      // Then
-      doc shouldNot containElementWithID("ruling_edit_details")
-      doc shouldNot containElementWithID("ruling_edit")
-    }
-
-    "Not render 'Edit' button for READ_ONLY users" in {
+    "Not render 'Edit' button when not permitted" in {
       // Given
       val c = aCase(withReference("ref"), withStatus(CaseStatus.OPEN))
 

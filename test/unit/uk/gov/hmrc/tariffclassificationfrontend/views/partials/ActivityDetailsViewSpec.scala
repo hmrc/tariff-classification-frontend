@@ -591,22 +591,6 @@ class ActivityDetailsViewSpec extends ViewSpec {
       doc.getElementById("activity-events-row-0-content") should containText("Name moved this case to the TEST queue")
     }
 
-    "Not Render 'Reassign Link' When Case is in invalid state" in {
-
-      Set(CaseStatus.NEW, CaseStatus.COMPLETED, CaseStatus.CANCELLED).foreach(status => {
-        // Given
-        val c = aCase(
-          withAssignee(Some(Operator("id"))),
-          withStatus(status)
-        )
-        // When
-        val doc = view(activity_details(c, Paged(Seq.empty), ActivityForm.form, queues)(requestWithMoveCasePermission, messages, appConfig))
-
-        // Then
-        doc shouldNot containElementWithID("reassign-queue-link")
-      })
-    }
-
     "Not Render 'Reassign Link' When Case is not assigned" in {
 
       // Given

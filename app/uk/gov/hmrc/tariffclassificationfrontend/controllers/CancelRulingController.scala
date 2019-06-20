@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
+import java.time.Clock
+
 import javax.inject.{Inject, Singleton}
 import play.api.data.Form
 import play.api.i18n.MessagesApi
@@ -25,7 +27,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.CancelRulingForm
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.{CANCELLED, COMPLETED}
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
-import uk.gov.hmrc.tariffclassificationfrontend.models.{CancelReason, RulingCancellation, Case, Permission}
+import uk.gov.hmrc.tariffclassificationfrontend.models.{CancelReason, Case, Permission, RulingCancellation}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views
 
@@ -42,10 +44,7 @@ class CancelRulingController @Inject()(verify: RequestActions,
 
   override protected val config: AppConfig = appConfig
   override protected val caseService: CasesService = casesService
-
-  override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = {
-    c.status == COMPLETED && (c.hasLiveRuling || c.application.isLiabilityOrder)
-  }
+  private implicit val clock: Clock = appConfig.clock
 
   private def cancelRuling(f: Form[RulingCancellation], caseRef: String)
                           (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
@@ -61,7 +60,7 @@ class CancelRulingController @Inject()(verify: RequestActions,
   def confirmCancelRuling(reference: String): Action[AnyContent] =
     (verify.authenticated
       andThen verify.casePermissions(reference)
-      andThen verify.mustHave(Permission.CANCEL_CASE)).async { implicit request =>
+      andThen verify.mustHave(Permission.VIEW_CASES)).async { implicit request =>
       renderView(c => c.status == CANCELLED , c => successful(views.html.confirm_cancel_ruling(c)))
     }
 

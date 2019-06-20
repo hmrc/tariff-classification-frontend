@@ -46,10 +46,6 @@ class AppealCaseController @Inject()(verify: RequestActions,
 
   private val startTabIndexForAppeals = 8000
 
-  override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = {
-    (c.status == COMPLETED || c.status == CANCELLED) && c.decision.isDefined
-  }
-
   def appealDetails(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
     getCaseAndRenderView(
       reference,
