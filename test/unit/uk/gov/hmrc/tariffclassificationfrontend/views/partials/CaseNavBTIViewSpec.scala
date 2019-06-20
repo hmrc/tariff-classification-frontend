@@ -38,12 +38,12 @@ class CaseNavBTIViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
   private val keywords = "Keywords"
   private val appeal = "Appeal"
 
-  private val applicationDetailsURL = routes.CaseController.applicationDetails("ref").url
+  private val applicationDetailsURL = routes.CaseController.itemDetails("ref").url
   private val sampleDetailsURL = routes.CaseController.sampleDetails("ref").url
   private val rulingURL = routes.CaseController.rulingDetails("ref").url
   private val attachmentsURL = routes.AttachmentsController.attachmentsDetails("ref").url
   private val activityURL = routes.CaseController.activityDetails("ref").url
-  private val traderURL = routes.CaseController.trader("ref").url
+  private val traderURL = routes.CaseController.applicantDetails("ref").url
   private val keywordsURL = routes.CaseController.keywordsDetails("ref").url
 
   private val `case` = mock[Case]

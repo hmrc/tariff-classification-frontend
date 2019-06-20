@@ -80,7 +80,7 @@ class CaseControllerSpec extends UnitSpec with Matchers with WithFakeApplication
         val result = await(controller(c).get("reference")(fakeRequest))
 
         status(result) shouldBe Status.SEE_OTHER
-        locationOf(result) shouldBe Some(routes.CaseController.trader("reference").url)
+        locationOf(result) shouldBe Some(routes.CaseController.applicantDetails("reference").url)
       }
 
       "case is a Liability" in {
@@ -101,7 +101,7 @@ class CaseControllerSpec extends UnitSpec with Matchers with WithFakeApplication
 
       given(fileService.getLetterOfAuthority(refEq(aCase))(any[HeaderCarrier])).willReturn(successful(Some(attachment)))
 
-      val result = controller(Cases.btiCaseExample).trader("reference")(fakeRequest)
+      val result = controller(Cases.btiCaseExample).applicantDetails("reference")(fakeRequest)
 
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -117,7 +117,7 @@ class CaseControllerSpec extends UnitSpec with Matchers with WithFakeApplication
       given(fileService.getAttachments(refEq(aCase))(any[HeaderCarrier])).willReturn(successful(Seq(attachment)))
       given(fileService.getLetterOfAuthority(refEq(aCase))(any[HeaderCarrier])).willReturn(successful(Some(attachment)))
 
-      val result = controller(aCase).applicationDetails("reference")(fakeRequest)
+      val result = controller(aCase).itemDetails("reference")(fakeRequest)
 
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")

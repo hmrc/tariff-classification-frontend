@@ -28,14 +28,14 @@
     @case_nav_item(
         active = page == CaseDetailPage.TRADER,
         title = messages("case.menu.trader"),
-        call = routes.CaseController.trader(c.reference),
+        call = routes.CaseController.applicantDetails(c.reference),
         tabIndex = tabIndexFor(CaseDetailPage.TRADER)
     )
 
     @case_nav_item(
         active = page == CaseDetailPage.APPLICATION_DETAILS,
         title = messages("case.menu.application-details"),
-        call = routes.CaseController.applicationDetails(c.reference),
+        call = routes.CaseController.itemDetails(c.reference),
         tabIndex = tabIndexFor(CaseDetailPage.APPLICATION_DETAILS)
     )
 
