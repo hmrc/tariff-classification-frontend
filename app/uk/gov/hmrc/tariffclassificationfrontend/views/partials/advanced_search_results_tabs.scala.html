@@ -29,14 +29,14 @@
             <ul class="tabs__list" role="tablist">
                 <li class="tabs__list-item" role="tab">
                     @if(selectedTab == DETAILS){
-                        <span class="tabs__tab" id="tab-details-link" tabindex="@tabIndexForDetails" aria-selected="true">Details</span>
+                        <span class="tabs__tab" id="tab-details" tabindex="@tabIndexForDetails" aria-selected="true">Details</span>
                     }else{
                         <a id="tab-details-link" class="tabs__tab" tabindex="@tabIndexForDetails" href="@onChange(DETAILS)">Details</a>
                     }
                 </li>
                 <li class="tabs__list-item" role="tab">
                     @if(selectedTab == IMAGES){
-                        <span class="tabs__tab" id="tab-images-link"  tabindex="@tabIndexForImages" aria-selected="true">Images</span>
+                        <span class="tabs__tab" id="tab-images"  tabindex="@tabIndexForImages" aria-selected="true">Images</span>
                     }else{
                         <a  class="tabs__tab" id="tab-images-link" tabindex="@tabIndexForImages" href="@onChange(IMAGES)">Images</a>
                     }
