@@ -261,7 +261,8 @@ object Permission {
   case object MOVE_CASE_BACK_TO_QUEUE extends CasePermission {
     override def name: String = nameOf(this)
     override def appliesTo(`case`: Case, operator: Operator): Boolean =
-      managersOrAssignedTeamMembersOnly(`case`, operator)
+      managersOrAssignedTeamMembersOnly(`case`, operator) &&
+        `case`.hasStatus(OPEN, REFERRED, SUSPENDED)
   }
 
   case object EDIT_SAMPLE extends CasePermission {

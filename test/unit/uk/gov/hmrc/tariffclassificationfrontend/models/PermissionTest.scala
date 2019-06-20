@@ -505,10 +505,20 @@ class PermissionTest extends UnitSpec {
       permission.name shouldBe name
       Permission.from(name) shouldBe Some(permission)
 
-      permission.appliesTo(caseUnassigned, readOnly) shouldBe false
-      permission.appliesTo(caseUnassigned, teamMember) shouldBe false
-      permission.appliesTo(caseAssignedTo(teamMember), teamMember) shouldBe true
-      permission.appliesTo(caseUnassigned, manager) shouldBe true
+      for(status: CaseStatus <- Seq(CaseStatus.OPEN, CaseStatus.REFERRED, CaseStatus.SUSPENDED)) {
+        val caseWithValidStatus = aCase(withStatus(status), withoutAssignee())
+        permission.appliesTo(caseWithValidStatus, readOnly) shouldBe false
+        permission.appliesTo(caseWithValidStatus, teamMember) shouldBe false
+        permission.appliesTo(caseWithValidStatus.copy(assignee = Some(teamMember)), teamMember) shouldBe true
+        permission.appliesTo(caseWithValidStatus, manager) shouldBe true
+      }
+
+      for(status: CaseStatus <- CaseStatus.values.filterNot(anyOf(CaseStatus.OPEN, CaseStatus.REFERRED, CaseStatus.SUSPENDED))) {
+        val caseWithInvalidStatus = aCase(withStatus(status), withoutAssignee())
+        permission.appliesTo(caseWithInvalidStatus, readOnly) shouldBe false
+        permission.appliesTo(caseWithInvalidStatus, teamMember) shouldBe false
+        permission.appliesTo(caseWithInvalidStatus, manager) shouldBe false
+      }
     }
 
     "contain 'View Reports'" in {
