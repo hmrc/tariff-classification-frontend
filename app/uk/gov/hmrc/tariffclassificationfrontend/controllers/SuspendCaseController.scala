@@ -99,5 +99,5 @@ class SuspendCaseController @Inject()(verify: RequestActions,
 
   override protected def redirect: String => Call = routes.CaseController.applicationDetails
 
-  override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = c.status == OPEN
+  override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = true
 }

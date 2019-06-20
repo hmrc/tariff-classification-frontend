@@ -24,7 +24,7 @@ class ShowActions(caseStatus: CaseStatus)(implicit request: AuthenticatedRequest
 
   def refer: Boolean = request.hasPermission(Permission.REFER_CASE)
   def reject: Boolean = request.hasPermission(Permission.REJECT_CASE)
-  def suspend: Boolean = caseStatus == CaseStatus.OPEN && request.hasPermission(Permission.SUSPEND_CASE)
+  def suspend: Boolean = request.hasPermission(Permission.SUSPEND_CASE)
   def release: Boolean = request.hasPermission(Permission.RELEASE_CASE)
   def suppress: Boolean = request.hasPermission(Permission.SUPPRESS_CASE)
   def reopen: Boolean = request.hasPermission(Permission.REOPEN_CASE)
