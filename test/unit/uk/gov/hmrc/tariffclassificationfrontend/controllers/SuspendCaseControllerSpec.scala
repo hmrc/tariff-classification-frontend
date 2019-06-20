@@ -80,17 +80,6 @@ class SuspendCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       bodyOf(result) should include("Suspend this case")
     }
 
-    "redirect to Application Details for non OPEN statuses" in {
-      val con = controller(caseWithStatusNEW)
-
-      val result: Result = await(con.getSuspendCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
-
-      status(result) shouldBe Status.SEE_OTHER
-      contentTypeOf(result) shouldBe None
-      charsetOf(result) shouldBe None
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/application")
-    }
-
     "return OK when user has right permissions" in {
       val result: Result = await(controller(caseWithStatusOPEN, Set(Permission.SUSPEND_CASE))
         .getSuspendCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
@@ -156,15 +145,6 @@ class SuspendCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
       status(result) shouldBe Status.OK
       bodyOf(result) should include("Change the status of this case to: Suspended")
-    }
-
-    "redirect to Application Details for non OPEN statuses" in {
-      val result: Result = await(controller(caseWithStatusNEW).postSuspendCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileWithParams("text/plain"))))
-
-      status(result) shouldBe Status.SEE_OTHER
-      contentTypeOf(result) shouldBe None
-      charsetOf(result) shouldBe None
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/application")
     }
 
     "redirect unauthorised when does not have right permissions" in {
