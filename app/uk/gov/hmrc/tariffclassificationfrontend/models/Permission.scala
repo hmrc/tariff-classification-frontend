@@ -206,7 +206,7 @@ object Permission {
   case object CANCEL_CASE extends CasePermission {
     override def name: String = nameOf(this)
     override def appliesTo(`case`: Case, operator: Operator): Boolean =
-      managersOrTeamMembersOnly(operator) && `case`.hasStatus(CaseStatus.CANCELLED) && (
+      managersOrTeamMembersOnly(operator) && `case`.hasStatus(CaseStatus.COMPLETED) && (
         `case`.hasLiveRuling || `case`.application.isLiabilityOrder
       )
   }

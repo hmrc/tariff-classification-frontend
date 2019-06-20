@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.models
 
+import java.time.Instant
+
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.CaseStatus
 import uk.gov.tariffclassificationfrontend.utils.Cases._
@@ -259,6 +261,7 @@ class PermissionTest extends UnitSpec {
         val caseWithInvalidStatus = aCase(withStatus(status))
         permission.appliesTo(caseWithInvalidStatus, readOnly) shouldBe false
         permission.appliesTo(caseWithInvalidStatus, teamMember) shouldBe false
+        permission.appliesTo(caseWithInvalidStatus.copy(assignee = Some(teamMember)), teamMember) shouldBe false
         permission.appliesTo(caseWithInvalidStatus, manager) shouldBe false
       }
     }
@@ -280,6 +283,7 @@ class PermissionTest extends UnitSpec {
         val caseWithInvalidStatus = aCase(withStatus(status))
         permission.appliesTo(caseWithInvalidStatus, readOnly) shouldBe false
         permission.appliesTo(caseWithInvalidStatus, teamMember) shouldBe false
+        permission.appliesTo(caseWithInvalidStatus.copy(assignee = Some(teamMember)), teamMember) shouldBe false
         permission.appliesTo(caseWithInvalidStatus, manager) shouldBe false
       }
     }
@@ -301,6 +305,7 @@ class PermissionTest extends UnitSpec {
         val caseWithInvalidStatus = aCase(withStatus(status))
         permission.appliesTo(caseWithInvalidStatus, readOnly) shouldBe false
         permission.appliesTo(caseWithInvalidStatus, teamMember) shouldBe false
+        permission.appliesTo(caseWithInvalidStatus.copy(assignee = Some(teamMember)), teamMember) shouldBe false
         permission.appliesTo(caseWithInvalidStatus, manager) shouldBe false
       }
     }
@@ -312,9 +317,32 @@ class PermissionTest extends UnitSpec {
       permission.name shouldBe name
       Permission.from(name) shouldBe Some(permission)
 
-      permission.appliesTo(caseUnassigned, readOnly) shouldBe false
-      permission.appliesTo(caseUnassigned, teamMember) shouldBe true
-      permission.appliesTo(caseUnassigned, manager) shouldBe true
+      val caseWithValidStatus = aCase(withStatus(CaseStatus.COMPLETED), withLiabilityApplication())
+      permission.appliesTo(caseWithValidStatus, readOnly) shouldBe false
+      permission.appliesTo(caseWithValidStatus, teamMember) shouldBe true
+      permission.appliesTo(caseWithValidStatus, manager) shouldBe true
+
+      val caseWithValidBTIDecision = aCase(withStatus(CaseStatus.COMPLETED), withBTIApplication, withDecision(effectiveEndDate = Some(Instant.now().plusSeconds(10))))
+      permission.appliesTo(caseWithValidBTIDecision, readOnly) shouldBe false
+      permission.appliesTo(caseWithValidBTIDecision, teamMember) shouldBe true
+      permission.appliesTo(caseWithValidBTIDecision, manager) shouldBe true
+
+      val caseWithExpiredBTIDecision = aCase(withStatus(CaseStatus.COMPLETED), withBTIApplication, withDecision(effectiveEndDate = Some(Instant.now().minusSeconds(10))))
+      permission.appliesTo(caseWithExpiredBTIDecision, readOnly) shouldBe false
+      permission.appliesTo(caseWithExpiredBTIDecision, teamMember) shouldBe false
+      permission.appliesTo(caseWithExpiredBTIDecision, manager) shouldBe false
+
+      val caseWithInvalidBTIDecision = aCase(withStatus(CaseStatus.COMPLETED), withBTIApplication, withoutDecision())
+      permission.appliesTo(caseWithInvalidBTIDecision, readOnly) shouldBe false
+      permission.appliesTo(caseWithInvalidBTIDecision, teamMember) shouldBe false
+      permission.appliesTo(caseWithInvalidBTIDecision, manager) shouldBe false
+
+      for(status: CaseStatus <- CaseStatus.values.filterNot(equalTo(CaseStatus.COMPLETED))) {
+        val caseWithInvalidStatus = aCase(withStatus(status), withLiabilityApplication())
+        permission.appliesTo(caseWithInvalidStatus, readOnly) shouldBe false
+        permission.appliesTo(caseWithInvalidStatus, teamMember) shouldBe false
+        permission.appliesTo(caseWithInvalidStatus, manager) shouldBe false
+      }
     }
 
     "contain 'Add a Note'" in {
