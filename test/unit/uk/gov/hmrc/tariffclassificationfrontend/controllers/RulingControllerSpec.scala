@@ -99,15 +99,6 @@ class RulingControllerSpec extends UnitSpec
       }
     }
 
-    "redirect to Ruling for non OPEN Statuses" in {
-
-      val result = controller(btiCaseWithStatusNEW).editRulingDetails("reference")(newFakeGETRequestWithCSRF(fakeApplication))
-      status(result) shouldBe Status.SEE_OTHER
-      contentType(result) shouldBe None
-      charset(result) shouldBe None
-      redirectLocation(result) shouldBe Some("/tariff-classification/cases/reference/ruling")
-    }
-
     "return OK when user has right permissions" in {
       given(fileService.getAttachments(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(Seq(attachment)))
 
@@ -189,17 +180,6 @@ class RulingControllerSpec extends UnitSpec
         contentAsString(result) should include("error-summary")
         contentAsString(result) should (include("Liability") and include("<form"))
       }
-    }
-
-    "redirect to Ruling for non OPEN Statuses" in {
-      given(mapper.mergeFormIntoCase(any[Case], any[DecisionFormData])).willReturn(caseWithStatusNEW)
-
-      val result = controller(caseWithStatusNEW).updateRulingDetails("reference")(aValidForm)
-      verify(casesService, never()).updateCase(any[Case])(any[HeaderCarrier])
-      status(result) shouldBe Status.SEE_OTHER
-      contentType(result) shouldBe None
-      charset(result) shouldBe None
-      redirectLocation(result) shouldBe Some("/tariff-classification/cases/reference/ruling")
     }
 
     "redirect unauthorised when does not have right permissions" in {

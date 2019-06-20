@@ -30,7 +30,6 @@ import uk.gov.hmrc.tariffclassificationfrontend.views
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import scala.concurrent.Future.successful
 
 @Singleton
 class RulingController @Inject()(verify: RequestActions,
@@ -88,11 +87,7 @@ class RulingController @Inject()(verify: RequestActions,
 
   private def getCaseAndThen(toResult: Case => Future[Result])
                                 (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
-    if (request.`case`.status == CaseStatus.OPEN) {
-      toResult(request.`case`)
-    } else {
-      successful(Redirect(routes.CaseController.rulingDetails(request.`case`.reference)))
-    }
+    toResult(request.`case`)
   }
 
 }

@@ -136,13 +136,13 @@
 
         @liability_actions(c, startAtTabIndex)
 
-        @if((c.status == CaseStatus.OPEN && request.hasPermission(Permission.EDIT_RULING)) || c.decision.isDefined) {
+        @if(request.hasPermission(Permission.EDIT_RULING) || c.decision.isDefined) {
             <hr class="mt-0 mb-0">
 
             <h3 class="heading-medium" id="liability-decision-heading">Liability decision details</h3>
         }
 
-        @if(c.status == CaseStatus.OPEN && request.hasPermission(Permission.EDIT_RULING)) {
+        @if(request.hasPermission(Permission.EDIT_RULING)) {
             <a id="liability-decision-edit" href="@routes.RulingController.editRulingDetails(c.reference)">
                 Edit liability details
             </a>

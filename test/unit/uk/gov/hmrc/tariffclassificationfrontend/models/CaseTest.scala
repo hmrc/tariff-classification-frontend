@@ -28,13 +28,13 @@ import uk.gov.tariffclassificationfrontend.utils.Cases.{aCase, withBTIApplicatio
 
 class CaseTest extends UnitSpec with MockitoSugar with BeforeAndAfterAll {
 
-  private implicit val appConfig: AppConfig = mock[AppConfig]
+  private val appConfig: AppConfig = mock[AppConfig]
 
   private val pastTime = Instant.parse("2010-01-01T01:01:00Z")
   private val currentTime = Instant.parse("2010-01-01T01:01:01Z")
   private val futureTime = Instant.parse("2010-01-01T01:01:02Z")
 
-  private val clockWithFixedTime = Clock.fixed(currentTime, ZoneOffset.UTC)
+  private implicit val clockWithFixedTime: Clock = Clock.fixed(currentTime, ZoneOffset.UTC)
 
   override protected def beforeAll(): Unit = {
     super.beforeAll()
