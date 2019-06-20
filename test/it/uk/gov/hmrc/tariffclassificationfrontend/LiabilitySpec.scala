@@ -55,7 +55,7 @@ class LiabilitySpec extends IntegrationTest with MockitoSugar {
     }
 
     "redirect on auth failure" in {
-      verifyNotAuthorisedFor("cases/1/application")
+      verifyNotAuthorisedFor("cases/1/item")
     }
   }
 

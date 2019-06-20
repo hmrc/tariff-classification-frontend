@@ -77,7 +77,7 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response = await(ws.url(s"$baseUrl/cases/1/application").get())
+      val response = await(ws.url(s"$baseUrl/cases/1/item").get())
 
       // Then
       response.status shouldBe OK
@@ -85,7 +85,7 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
     }
 
     "redirect on auth failure" in {
-      verifyNotAuthorisedFor("cases/1/application")
+      verifyNotAuthorisedFor("cases/1/item")
     }
   }
 

@@ -53,12 +53,12 @@ class CaseController @Inject()(verify: RequestActions,
 
   def get(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)) { implicit request =>
     request.`case`.application.`type` match {
-      case ApplicationType.BTI => Redirect(routes.CaseController.trader(reference))
+      case ApplicationType.BTI => Redirect(routes.CaseController.applicantDetails(reference))
       case ApplicationType.LIABILITY_ORDER => Redirect(routes.LiabilityController.liabilityDetails(reference))
     }
   }
 
-  def trader(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
+  def applicantDetails(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
     validateAndRenderView(
       TRADER,
       c => {
@@ -70,7 +70,7 @@ class CaseController @Inject()(verify: RequestActions,
     )
   }
 
-  def applicationDetails(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
+  def itemDetails(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
     validateAndRenderView(
       APPLICATION_DETAILS,
       c => {
