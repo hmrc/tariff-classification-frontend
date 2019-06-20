@@ -95,47 +95,56 @@ object Permission {
 
   case object VIEW_MY_CASES extends GlobalPermission {
     override def name: String = nameOf(this)
-    override def appliesTo(operator: Operator): Boolean = managersOrTeamMembersOnly(operator)
+    override def appliesTo(operator: Operator): Boolean =
+      managersOrTeamMembersOnly(operator)
   }
 
   case object VIEW_QUEUE_CASES extends GlobalPermission {
     override def name: String = nameOf(this)
-    override def appliesTo(operator: Operator): Boolean = managersOrTeamMembersOnly(operator)
+    override def appliesTo(operator: Operator): Boolean =
+      managersOrTeamMembersOnly(operator)
   }
 
   case object VIEW_ASSIGNED_CASES extends GlobalPermission {
     override def name: String = nameOf(this)
-    override def appliesTo(operator: Operator): Boolean = managersOnly(operator)
+    override def appliesTo(operator: Operator): Boolean =
+      managersOnly(operator)
   }
 
   case object SEARCH extends GlobalPermission {
     override def name: String = nameOf(this)
-    override def appliesTo(operator: Operator): Boolean = anyone()
+    override def appliesTo(operator: Operator): Boolean =
+      anyone()
   }
 
   case object ADVANCED_SEARCH extends GlobalPermission {
     override def name: String = nameOf(this)
-    override def appliesTo(operator: Operator): Boolean = anyone()
+    override def appliesTo(operator: Operator): Boolean =
+      anyone()
   }
 
   case object VIEW_CASES extends GlobalPermission {
     override def name: String = nameOf(this)
-    override def appliesTo(operator: Operator): Boolean = anyone()
+    override def appliesTo(operator: Operator): Boolean =
+      anyone()
   }
 
   case object VIEW_CASE_ASSIGNEE extends CasePermission {
     override def name: String = nameOf(this)
-    override def appliesTo(`case`: Case, operator: Operator): Boolean = managersOrTeamMembersOnly(operator)
+    override def appliesTo(`case`: Case, operator: Operator): Boolean =
+      managersOrTeamMembersOnly(operator)
   }
 
   case object VIEW_REPORTS extends GlobalPermission {
     override def name: String = nameOf(this)
-    override def appliesTo(operator: Operator): Boolean = managersOnly(operator)
+    override def appliesTo(operator: Operator): Boolean =
+      managersOnly(operator)
   }
 
   case object CREATE_CASES extends GlobalPermission {
     override def name: String = nameOf(this)
-    override def appliesTo(operator: Operator): Boolean = managersOrTeamMembersOnly(operator)
+    override def appliesTo(operator: Operator): Boolean =
+      managersOrTeamMembersOnly(operator)
   }
 
   case object ASSIGN_CASE extends CasePermission {
@@ -190,56 +199,69 @@ object Permission {
 
   case object REMOVE_ATTACHMENTS extends CasePermission {
     override def name: String = nameOf(this)
-    override def appliesTo(`case`: Case, operator: Operator): Boolean = managersOrAssignedTeamMembersOnly(`case`, operator)
+    override def appliesTo(`case`: Case, operator: Operator): Boolean =
+      managersOrAssignedTeamMembersOnly(`case`, operator)
   }
 
   case object CANCEL_CASE extends CasePermission {
     override def name: String = nameOf(this)
-    override def appliesTo(`case`: Case, operator: Operator): Boolean = managersOrTeamMembersOnly(operator)
+    override def appliesTo(`case`: Case, operator: Operator): Boolean =
+      managersOrTeamMembersOnly(operator) && `case`.hasStatus(CaseStatus.CANCELLED) && (
+        `case`.hasLiveRuling || `case`.application.isLiabilityOrder
+      )
   }
 
   case object ADD_NOTE extends CasePermission {
     override def name: String = nameOf(this)
-    override def appliesTo(`case`: Case, operator: Operator): Boolean = managersOrTeamMembersOnly(operator)
+    override def appliesTo(`case`: Case, operator: Operator): Boolean =
+      managersOrTeamMembersOnly(operator)
   }
 
   case object ADD_ATTACHMENT extends CasePermission {
     override def name: String = nameOf(this)
-    override def appliesTo(`case`: Case, operator: Operator): Boolean = managersOrTeamMembersOnly(operator)
+    override def appliesTo(`case`: Case, operator: Operator): Boolean =
+      managersOrTeamMembersOnly(operator)
   }
 
   case object KEYWORDS extends CasePermission {
     override def name: String = nameOf(this)
-    override def appliesTo(`case`: Case, operator: Operator): Boolean = managersOrAssignedTeamMembersOnly(`case`, operator)
+    override def appliesTo(`case`: Case, operator: Operator): Boolean =
+      managersOrAssignedTeamMembersOnly(`case`, operator)
   }
 
   case object EDIT_LIABILITY extends CasePermission {
     override def name: String = nameOf(this)
-    override def appliesTo(`case`: Case, operator: Operator): Boolean = managersOrAssignedTeamMembersOnly(`case`, operator)
+    override def appliesTo(`case`: Case, operator: Operator): Boolean =
+      managersOrAssignedTeamMembersOnly(`case`, operator)
   }
 
   case object EDIT_RULING extends CasePermission {
     override def name: String = nameOf(this)
-    override def appliesTo(`case`: Case, operator: Operator): Boolean = managersOrAssignedTeamMembersOnly(`case`, operator)
+    override def appliesTo(`case`: Case, operator: Operator): Boolean =
+      managersOrAssignedTeamMembersOnly(`case`, operator)
   }
 
   case object APPEAL_CASE extends CasePermission {
     override def name: String = nameOf(this)
-    override def appliesTo(`case`: Case, operator: Operator): Boolean = managersOrTeamMembersOnly(operator)
+    override def appliesTo(`case`: Case, operator: Operator): Boolean =
+      managersOrTeamMembersOnly(operator)
   }
 
   case object EXTENDED_USE extends CasePermission {
     override def name: String = nameOf(this)
-    override def appliesTo(`case`: Case, operator: Operator): Boolean = managersOrTeamMembersOnly(operator)
+    override def appliesTo(`case`: Case, operator: Operator): Boolean =
+      managersOrTeamMembersOnly(operator)
   }
 
   case object MOVE_CASE_BACK_TO_QUEUE extends CasePermission {
     override def name: String = nameOf(this)
-    override def appliesTo(`case`: Case, operator: Operator): Boolean = managersOrAssignedTeamMembersOnly(`case`, operator)
+    override def appliesTo(`case`: Case, operator: Operator): Boolean =
+      managersOrAssignedTeamMembersOnly(`case`, operator)
   }
 
   case object EDIT_SAMPLE extends CasePermission {
     override def name: String = nameOf(this)
-    override def appliesTo(`case`: Case, operator: Operator): Boolean = managersOrTeamMembersOnly(operator)
+    override def appliesTo(`case`: Case, operator: Operator): Boolean =
+      managersOrTeamMembersOnly(operator)
   }
 }

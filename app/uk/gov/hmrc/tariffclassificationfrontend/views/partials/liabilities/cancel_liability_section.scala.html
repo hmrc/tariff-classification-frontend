@@ -20,8 +20,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus, Permission}
 @(c: Case, useTabIndex : Option[Int] = None)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@if(c.status == CaseStatus.COMPLETED && request.hasPermission(Permission.CANCEL_CASE)) {
-
+@if(request.hasPermission(Permission.CANCEL_CASE)) {
     <div class="mt-3">
 
         <h3 class="heading-medium mt-1">Cancel this liability decision</h3>
