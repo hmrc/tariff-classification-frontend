@@ -65,8 +65,6 @@ class CompleteCaseController @Inject()(verify: RequestActions,
       renderView(c => c.status == CaseStatus.COMPLETED, c => successful(views.html.confirm_complete_case(c)))
     }
 
-  override protected def redirect: String => Call = routes.CaseController.get
-
   override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = hasValidDecision(c)
 
   private def hasValidDecision(c: Case): Boolean = c.application.`type` match {

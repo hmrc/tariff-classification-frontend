@@ -92,8 +92,4 @@ class ReleaseCaseController @Inject()(verify: RequestActions,
             }).getOrElse(queueNotFound)
         )
     }
-
-  override protected def redirect: String => Call = routes.CaseController.applicationDetails
-
-  override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = true
 }

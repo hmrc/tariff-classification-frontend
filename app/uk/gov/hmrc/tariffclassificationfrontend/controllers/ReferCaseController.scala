@@ -117,8 +117,4 @@ class ReferCaseController @Inject()(verify: RequestActions,
                                     (implicit request: AuthenticatedCaseRequest[MultipartFormData[Files.TemporaryFile]]): Future[Result] =
     getCaseAndRenderView(reference, c => successful(views.html.refer_case(c, form.withError("email", specificProblem))))
 
-  override protected def redirect: String => Call = routes.CaseController.applicationDetails
-
-  override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = c.status == OPEN
-
 }

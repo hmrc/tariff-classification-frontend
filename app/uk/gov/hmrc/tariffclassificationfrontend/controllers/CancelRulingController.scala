@@ -43,8 +43,6 @@ class CancelRulingController @Inject()(verify: RequestActions,
   override protected val config: AppConfig = appConfig
   override protected val caseService: CasesService = casesService
 
-  override protected def redirect: String => Call = routes.CaseController.get
-
   override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = {
     c.status == COMPLETED && (c.hasLiveRuling || c.application.isLiabilityOrder)
   }

@@ -170,14 +170,14 @@ class SuspendCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       bodyOf(result) should include("This case has been suspended")
     }
 
-    "redirect to a default page if the status is not right" in {
+    "redirect to a default page on validaiton error" in {
       val result: Result = await(controller(caseWithStatusOPEN).confirmSuspendCase("reference")
       (newFakePOSTRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
       charsetOf(result) shouldBe None
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/application")
+      locationOf(result) shouldBe Some("/tariff-classification/cases/reference")
     }
   }
 

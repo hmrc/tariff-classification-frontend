@@ -41,12 +41,6 @@ class SampleReturnController @Inject()(override val verify: RequestActions,
 
   override protected val requiredPermission: Permission = Permission.EDIT_SAMPLE
 
-  override protected def redirect: String => Call = routes.CaseController.trader
-
-  override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = {
-    true //No constraints on when the case is valid
-  }
-
   override protected val form: Form[Option[SampleReturn]] = SampleReturnForm.form
 
   override protected def status(c: Case): Option[SampleReturn] = c.sample.returnStatus

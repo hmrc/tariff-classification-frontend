@@ -46,8 +46,6 @@ class AppealCaseController @Inject()(verify: RequestActions,
 
   private val startTabIndexForAppeals = 8000
 
-  override protected def redirect: String => Call = routes.CaseController.get
-
   override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = {
     (c.status == COMPLETED || c.status == CANCELLED) && c.decision.isDefined
   }

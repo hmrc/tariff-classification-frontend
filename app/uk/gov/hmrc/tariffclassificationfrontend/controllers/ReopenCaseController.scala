@@ -41,8 +41,4 @@ class ReopenCaseController @Inject()(verify: RequestActions,
     validateAndRenderView(casesService.reopenCase(_, request.operator).map(views.html.confirm_reopen_case(_)))
   }
 
-  override protected def redirect: String => Call = routes.CaseController.applicationDetails
-
-  override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = true
-
 }

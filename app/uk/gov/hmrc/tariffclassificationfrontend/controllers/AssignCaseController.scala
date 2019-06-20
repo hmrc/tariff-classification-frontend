@@ -51,8 +51,6 @@ class AssignCaseController @Inject()(verify: RequestActions,
     getCaseAndRespond(reference, respond)
   }
 
-  override protected def redirect: String => Call = routes.CaseController.get
-
   override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = {
     (c.queueId, c.assignee) match {
       case (Some(_), None) => true

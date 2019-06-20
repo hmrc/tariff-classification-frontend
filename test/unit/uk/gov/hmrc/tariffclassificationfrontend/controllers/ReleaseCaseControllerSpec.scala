@@ -185,13 +185,13 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       bodyOf(result) should include("Case Queue not found")
     }
 
-    "redirect to a default page if the status is not right" in {
+    "redirect to a default page on validation error" in {
       val result: Result = await(controller(caseWithStatusNEW).confirmReleaseCase("1")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
       charsetOf(result) shouldBe None
-      locationOf(result) shouldBe Some("/tariff-classification/cases/1/application")
+      locationOf(result) shouldBe Some("/tariff-classification/cases/1")
     }
   }
 
