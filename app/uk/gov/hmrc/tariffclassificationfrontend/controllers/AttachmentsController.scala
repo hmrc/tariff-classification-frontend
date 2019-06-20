@@ -50,8 +50,6 @@ class AttachmentsController @Inject()(verify: RequestActions,
 
   override protected val config: AppConfig = appConfig
   override protected val caseService: CasesService = casesService
-  override protected def redirect: String => Call = routes.AttachmentsController.attachmentsDetails
-  override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = true
 
 
   private val tabStartIndexForAttachments = 4000

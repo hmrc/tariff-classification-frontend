@@ -32,13 +32,13 @@ class LiabilityDetailsViewSpec extends ViewSpec with MockitoSugar {
   private val constraints = mock[CommodityCodeConstraints]
   private val form = new DecisionForm(constraints)
 
-  private val caseIsCompletedStatuses : Seq[CaseStatus] = Seq(CaseStatus.COMPLETED,CaseStatus.CANCELLED)
+  private val caseIsCompletedStatuses: Seq[CaseStatus] = Seq(CaseStatus.COMPLETED, CaseStatus.CANCELLED)
 
   "Liability Details" should {
     given(constraints.commodityCodeExistsInUKTradeTariff) willReturn Constraint[String]("code")(_ => Valid)
 
     "Not render edit details button" when {
-      for(status: CaseStatus <- CaseStatus.values.filterNot(_ == CaseStatus.NEW)) {
+      for (status: CaseStatus <- CaseStatus.values.filterNot(_ == CaseStatus.NEW)) {
         s"case is status $status" in {
           // Given
           val c = aCase(
@@ -116,7 +116,7 @@ class LiabilityDetailsViewSpec extends ViewSpec with MockitoSugar {
         doc shouldNot containElementWithID("liability-decision-edit")
       }
 
-      for(status: CaseStatus <- CaseStatus.values.filterNot(_ == CaseStatus.OPEN)) {
+      for (status: CaseStatus <- CaseStatus.values.filterNot(_ == CaseStatus.OPEN)) {
         s"Case is status $status" in {
           // Given
           val c = aCase(
@@ -206,32 +206,6 @@ class LiabilityDetailsViewSpec extends ViewSpec with MockitoSugar {
 
     "Disallow Case completion" when {
 
-      for(status: CaseStatus <- CaseStatus.values.filterNot(_ == CaseStatus.OPEN)) {
-        s"Case status is $status" in {
-          val c = aCase(
-            withStatus(status),
-            withLiabilityApplication(),
-            withDecision(
-              bindingCommodityCode = "code",
-              justification = "",
-              goodsDescription = "",
-              methodSearch = None,
-              methodExclusion = None
-            )
-          )
-          val d = c.decision.getOrElse(Decision())
-          val l = c.application.asLiabilityOrder
-
-          // When
-          val doc = view(
-            views.html.partials.liabilities.liability_details(c = c, liabilityForm = LiabilityDetailsForm.liabilityDetailsCompleteForm(l), decisionForm = form.liabilityCompleteForm(d)
-            )(requestWithPermissions(), messages, appConfig))
-
-          doc shouldNot containElementWithID("liability-complete-heading")
-          doc shouldNot containElementWithID("liability-complete-button")
-        }
-      }
-
       "User is not permitted" in {
         val c = aCase(
           withStatus(CaseStatus.OPEN),
@@ -293,7 +267,7 @@ class LiabilityDetailsViewSpec extends ViewSpec with MockitoSugar {
         val c = aCase(
           withStatus(CaseStatus.OPEN),
           withLiabilityApplication(
-            contact = Contact(name = "", email =  "")
+            contact = Contact(name = "", email = "")
           ),
           withDecision(
             bindingCommodityCode = "code",
@@ -350,27 +324,27 @@ class LiabilityDetailsViewSpec extends ViewSpec with MockitoSugar {
   }
 
   "Render view PDF link" when {
-  for(status: CaseStatus <- caseIsCompletedStatuses) {
-    s"Case status is $status" in {
-      val c = aCase(
-        withStatus(status),
-        withLiabilityApplication()
-      )
-      val d = c.decision.getOrElse(Decision())
-      val l = c.application.asLiabilityOrder
+    for (status: CaseStatus <- caseIsCompletedStatuses) {
+      s"Case status is $status" in {
+        val c = aCase(
+          withStatus(status),
+          withLiabilityApplication()
+        )
+        val d = c.decision.getOrElse(Decision())
+        val l = c.application.asLiabilityOrder
 
-      // When
-      val doc = view(
-        views.html.partials.liabilities.liability_details(c = c, liabilityForm = LiabilityDetailsForm.liabilityDetailsCompleteForm(l),
-          decisionForm = form.liabilityCompleteForm(d))(requestWithPermissions(), messages, appConfig))
+        // When
+        val doc = view(
+          views.html.partials.liabilities.liability_details(c = c, liabilityForm = LiabilityDetailsForm.liabilityDetailsCompleteForm(l),
+            decisionForm = form.liabilityCompleteForm(d))(requestWithPermissions(), messages, appConfig))
 
-      doc should containElementWithID("liability-ruling-certificate-link")
+        doc should containElementWithID("liability-ruling-certificate-link")
+      }
     }
   }
-}
 
   "Not render view PDF link" when {
-    for(status: CaseStatus <- CaseStatus.values.filterNot(caseIsCompletedStatuses.contains(_))) {
+    for (status: CaseStatus <- CaseStatus.values.filterNot(caseIsCompletedStatuses.contains(_))) {
       s"Case status is $status" in {
         val c = aCase(
           withStatus(status),

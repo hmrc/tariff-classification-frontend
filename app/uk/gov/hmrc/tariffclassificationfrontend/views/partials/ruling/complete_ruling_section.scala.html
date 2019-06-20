@@ -23,7 +23,7 @@
 @import scala.collection.mutable.LinkedHashSet
 @(c: Case, decisionForm : Option[Form[DecisionFormData]], classes: Seq[String] = Seq.empty, commodityCode: Option[CommodityCode], useTabIndex : Option[Int] = None)(implicit  request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@if(c.decision.isDefined && c.status == CaseStatus.OPEN) {
+@if(c.decision.isDefined) {
     <div id="complete-case-section">
         @defining(decisionForm.map(_.errors.size).exists(_ > 0)) { hasErrors : Boolean =>
             @if(hasErrors || commodityCode.flatMap(_.expiry).isDefined) {

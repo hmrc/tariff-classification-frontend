@@ -30,13 +30,11 @@ class ShowActionsTest extends ViewSpec {
 
     "Show Reject" in {
       ShowActions(CaseStatus.OPEN)(requestWithPermissions(Permission.REJECT_CASE)).reject shouldBe true
-      ShowActions(CaseStatus.NEW)(requestWithPermissions(Permission.REJECT_CASE)).reject shouldBe false
       ShowActions(CaseStatus.OPEN)(requestWithPermissions()).reject shouldBe false
     }
 
     "Show Suspend" in {
       ShowActions(CaseStatus.OPEN)(requestWithPermissions(Permission.SUSPEND_CASE)).suspend shouldBe true
-      ShowActions(CaseStatus.NEW)(requestWithPermissions(Permission.SUSPEND_CASE)).suspend shouldBe false
       ShowActions(CaseStatus.OPEN)(requestWithPermissions()).suspend shouldBe false
     }
 

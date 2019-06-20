@@ -93,11 +93,7 @@ class SuspendCaseController @Inject()(verify: RequestActions,
   def confirmSuspendCase(reference: String): Action[AnyContent] =
     (verify.authenticated
       andThen verify.casePermissions(reference)
-      andThen verify.mustHave(Permission.SUSPEND_CASE)).async { implicit request =>
+      andThen verify.mustHave(Permission.VIEW_CASES)).async { implicit request =>
       renderView(c => c.status == SUSPENDED, c => successful(views.html.confirm_suspended(c)))
     }
-
-  override protected def redirect: String => Call = routes.CaseController.applicationDetails
-
-  override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = c.status == OPEN
 }

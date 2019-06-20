@@ -201,7 +201,7 @@
                 </div>
             }
 
-            @if(c.status == CaseStatus.OPEN && request.hasPermission(Permission.COMPLETE_CASE)) {
+            @if(request.hasPermission(Permission.COMPLETE_CASE)) {
                 <h3 class="heading-medium" id="liability-complete-heading">Complete this liability decision</h3>
 
                 @if(liabilityForm.hasErrors) {

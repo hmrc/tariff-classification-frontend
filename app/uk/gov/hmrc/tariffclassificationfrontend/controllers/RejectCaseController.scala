@@ -54,7 +54,7 @@ class RejectCaseController @Inject()(verify: RequestActions,
   def confirmRejectCase(reference: String): Action[AnyContent] =
     (verify.authenticated
       andThen verify.casePermissions(reference)
-      andThen verify.mustHave(Permission.REJECT_CASE)).async { implicit request =>
+      andThen verify.mustHave(Permission.VIEW_CASES)).async { implicit request =>
       renderView(c => c.status == REJECTED, c => successful(views.html.confirm_rejected(c)))
     }
 
@@ -101,10 +101,5 @@ class RejectCaseController @Inject()(verify: RequestActions,
   private def getCaseAndRenderErrors(reference : String, form: Form[String],  specificProblem : String)
                                     (implicit request: AuthenticatedCaseRequest[MultipartFormData[Files.TemporaryFile]]): Future[Result] =
     getCaseAndRenderView(reference, c => successful(views.html.reject_case(c, form.withError("file-input", specificProblem))))
-
-
-  override protected def redirect: String => Call = routes.CaseController.applicationDetails
-
-  override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = c.status == OPEN
 
 }

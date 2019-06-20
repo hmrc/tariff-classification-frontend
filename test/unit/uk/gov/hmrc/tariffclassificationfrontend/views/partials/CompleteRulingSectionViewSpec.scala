@@ -35,7 +35,7 @@ class CompleteRulingSectionViewSpec extends ViewSpec with MockitoSugar {
 
   "Complete ruling section" should {
 
-    "render with disabled button for OPEN case with incomplete decision" in {
+    "render with disabled button for case with incomplete decision" in {
       given(commodityCodeService.find(anyString())).willReturn(None)
       val case1 = Cases.btiCaseExample.copy(status = CaseStatus.OPEN)
 
@@ -65,7 +65,7 @@ class CompleteRulingSectionViewSpec extends ViewSpec with MockitoSugar {
       doc should containElementWithID("complete-case-button")
     }
 
-    "render with enabled button for OPEN case with complete decision" in {
+    "render with enabled button for case with complete decision" in {
       val case1 = Cases.btiCaseExample.copy(status = CaseStatus.OPEN)
       val mandatoryFieldForm = Some(decisionForm.btiCompleteForm)
 
@@ -78,19 +78,7 @@ class CompleteRulingSectionViewSpec extends ViewSpec with MockitoSugar {
       doc.getElementById("complete-case-button") should haveAttribute("href", "/tariff-classification/cases/1/complete")
     }
 
-    "not render for non-OPEN case statuses" in {
-      val case1 = Cases.btiCaseExample.copy(status = CaseStatus.CANCELLED)
-
-      // When
-      val doc = view(complete_ruling_section(c = case1, decisionForm = None, commodityCode = Some(CommodityCode("lorum ipsum"))))
-
-      // Then
-      doc shouldNot containElementWithID("complete-case-button-disabled")
-      doc shouldNot containElementWithID("complete-case-button")
-    }
-
-
-    "not render for OPEN cases with no decision" in {
+    "not render for cases with no decision" in {
       val c = Cases.btiCaseExample.copy(decision = None)
 
       // When

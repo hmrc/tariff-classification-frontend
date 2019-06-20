@@ -61,15 +61,11 @@ class CompleteCaseController @Inject()(verify: RequestActions,
   def confirmCompleteCase(reference: String): Action[AnyContent] =
     (verify.authenticated
       andThen verify.casePermissions(reference)
-      andThen verify.mustHave(Permission.COMPLETE_CASE)).async { implicit request =>
+      andThen verify.mustHave(Permission.VIEW_CASES)).async { implicit request =>
       renderView(c => c.status == CaseStatus.COMPLETED, c => successful(views.html.confirm_complete_case(c)))
     }
 
-  override protected def redirect: String => Call = routes.CaseController.get
-
-  override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = {
-    c.status == OPEN && hasValidDecision(c)
-  }
+  override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = hasValidDecision(c)
 
   private def hasValidDecision(c: Case): Boolean = c.application.`type` match {
     case ApplicationType.BTI =>

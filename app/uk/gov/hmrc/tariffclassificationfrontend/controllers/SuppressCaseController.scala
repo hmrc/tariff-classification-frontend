@@ -44,9 +44,6 @@ class SuppressCaseController @Inject()(verify: RequestActions,
   override protected val config: AppConfig = appConfig
   override protected val caseService: CasesService = casesService
 
-  override protected def redirect: String => Call = routes.CaseController.applicationDetails
-  override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = true
-
   def getSuppressCase(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen
     verify.mustHave(Permission.SUPPRESS_CASE)).async { implicit request =>
     getCaseAndRenderView(reference, c => successful(views.html.suppress_case(c, form)))

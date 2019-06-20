@@ -96,11 +96,4 @@ class ReassignCaseController @Inject()(verify: RequestActions,
       )
     }
 
-  override protected def redirect: String => Call = {
-    // in case this is called from the "assigned cases" journey, we should redirect to `/queue/assigned/:assigneeId`
-    routes.CaseController.applicationDetails
-  }
-
-  override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = true
-
 }
