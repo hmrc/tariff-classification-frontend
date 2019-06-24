@@ -42,8 +42,8 @@
 
 @workOutInitialFocusComponent() = @{
     selectedTab match {
-        case SearchTab.DETAILS => Some("tab-details-link")
-        case SearchTab.IMAGES => Some("tab-images-link")
+        case SearchTab.DETAILS => Some("tab-details")
+        case SearchTab.IMAGES => Some("tab-images")
         case _ => None
     }
 }
