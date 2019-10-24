@@ -19,25 +19,21 @@ package uk.gov.hmrc.tariffclassificationfrontend.filters
 
 import akka.stream.Materializer
 import com.google.inject.{Inject, Singleton}
-import play.api.Configuration
 import play.api.mvc.Results.ServiceUnavailable
 import play.api.mvc._
+import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.views.html.shutterPage
 
 import scala.concurrent.Future
 
 @Singleton
 class ShutteringFilter @Inject()(
-                                  configuration: Configuration
+                                  appConfig: AppConfig
                                 )(implicit val mat: Materializer) extends Filter {
 
-  private val shuttered: Boolean = configuration
-    .getBoolean("shuttered")
-    .getOrElse(false)
+  private val shuttered: Boolean = appConfig.shutterFlag
 
-  private val excludedPaths: Seq[Call] = configuration
-    .getString("shutter.urls.excluded")
-    .getOrElse("")
+  private val excludedPaths: Seq[Call] = appConfig.shutterExcludedUrls
     .split(",").map {
     path =>
       Call("GET", path.trim)
