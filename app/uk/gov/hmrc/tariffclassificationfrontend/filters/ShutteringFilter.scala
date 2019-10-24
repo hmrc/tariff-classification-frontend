@@ -19,7 +19,6 @@ package uk.gov.hmrc.tariffclassificationfrontend.filters
 
 import akka.stream.Materializer
 import com.google.inject.{Inject, Singleton}
-import play.api.Configuration
 import play.api.mvc.Results.ServiceUnavailable
 import play.api.mvc._
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
