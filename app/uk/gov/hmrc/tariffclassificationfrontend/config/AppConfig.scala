@@ -54,7 +54,9 @@ class AppConfig @Inject()(val runModeConfiguration: Configuration, environment: 
   lazy val pdfGeneratorUrl: String = baseUrl("pdf-generator-service")
   lazy val activeDaysElapsedSlaLimit: Int = getInt("app.active-days-elapsed-sla-limit")
   lazy val commodityCodePath: String = loadConfig("app.commodity-code-path")
-  lazy val shutteredFlag: Boolean = loadConfig("shuttered").toBoolean
+  lazy val shutterFlag: Boolean = loadConfig("shutter.enabled").toBoolean
+  lazy val shutterExcludedUrls: String = loadConfig("shutter.urls.excluded")
+
 
   lazy val clock: Clock = Clock.systemUTC()
 

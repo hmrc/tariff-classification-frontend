@@ -137,6 +137,11 @@ class AppConfigSpec extends UnitSpec with MockitoSugar {
         "microservice.services.binding-tariff-filestore.port" -> "123"
       ).fileStoreUrl shouldBe "https://www.host.co.uk:123"
     }
+
+    "shutter urls excluded" in {
+
+      appConfig("shutter.urls.excluded" -> "/ping/ping").shutterExcludedUrls shouldBe "/ping/ping"
+    }
   }
 
 }

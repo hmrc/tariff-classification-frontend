@@ -28,14 +28,12 @@ import scala.concurrent.Future
 
 @Singleton
 class ShutteringFilter @Inject()(
-                                  configuration: AppConfig
+                                  appConfig: AppConfig
                                 )(implicit val mat: Materializer) extends Filter {
 
-  private val shuttered: Boolean = configuration
-    .getBoolean("shuttered")
+  private val shuttered: Boolean = appConfig.shutterFlag
 
-  private val excludedPaths: Seq[Call] = configuration
-    .getString("shutter.urls.excluded")
+  private val excludedPaths: Seq[Call] = appConfig.shutterExcludedUrls
     .split(",").map {
     path =>
       Call("GET", path.trim)
