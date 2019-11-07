@@ -51,8 +51,13 @@ trait RenderCaseAction extends FrontendController with I18nSupport {
     successful(Redirect(redirect(reference.getOrElse(request.`case`.reference))))
   }
 
+  protected def defaultRedirectAndEdit(reference : Option[String] = None) (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
+    successful(Redirect(routes.RulingController.editRulingDetails(reference.getOrElse(request.`case`.reference))))
+  }
+
+
   protected def validateAndRedirect(toHtml: Case => Future[Call])
-                                     (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
+                                   (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
 
     if (isValidCase(request.`case`)(request)) {
       toHtml(request.`case`).map(Redirect)
@@ -98,7 +103,7 @@ trait RenderCaseAction extends FrontendController with I18nSupport {
     if (isValidCase(request.`case`)(request)) {
       toResult(request.`case`)
     } else {
-      defaultRedirect()
+      defaultRedirectAndEdit()
     }
   }
 

@@ -56,7 +56,8 @@ class RulingController @Inject()(verify: RequestActions,
     })
   }
 
-  def updateRulingDetails(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.EDIT_RULING)).async { implicit request =>
+  def updateRulingDetails(reference: String): Action[AnyContent] =
+    (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.EDIT_RULING)).async { implicit request =>
     getCaseAndThen(c => c.application.`type` match {
       case ApplicationType.BTI =>
         decisionForm.btiForm.bindFromRequest.fold(

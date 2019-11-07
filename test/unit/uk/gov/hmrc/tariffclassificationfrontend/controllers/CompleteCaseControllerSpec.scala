@@ -111,25 +111,16 @@ class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       }
     }
 
-    "redirect to default page for non OPEN statuses" in {
-      val result: Result = await(getController(caseWithStatusCOMPLETED).completeCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
-
-      status(result) shouldBe Status.SEE_OTHER
-      contentTypeOf(result) shouldBe None
-      charsetOf(result) shouldBe None
-      locationOf(result) shouldBe Some(routes.CaseController.get("reference").url)
-    }
-
-    "redirect to default page for cases without a decision" in {
+    "redirect to default page (editRulingDetails) for cases without a decision" in {
       val result: Result = await(getController(caseWithoutDecision).completeCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
       charsetOf(result) shouldBe None
-      locationOf(result) shouldBe Some(routes.CaseController.get("reference").url)
+      locationOf(result) shouldBe Some(routes.RulingController.editRulingDetails("reference").url)
     }
 
-    "redirect to default page for Liability case with incomplete decision" in {
+    "redirect to default page (editRulingDetails) for Liability case with incomplete decision" in {
       val c = aCase(
         withReference("reference"),
         withStatus(CaseStatus.OPEN),
@@ -142,10 +133,10 @@ class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
       charsetOf(result) shouldBe None
-      locationOf(result) shouldBe Some(routes.CaseController.get("reference").url)
+      locationOf(result) shouldBe Some(routes.RulingController.editRulingDetails("reference").url)
     }
 
-    "redirect to default page for Liability case with incomplete application" in {
+    "redirect to default page (editRulingDetails) for Liability case with incomplete application" in {
       val c = aCase(
         withReference("reference"),
         withStatus(CaseStatus.OPEN),
@@ -158,7 +149,7 @@ class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
       charsetOf(result) shouldBe None
-      locationOf(result) shouldBe Some(routes.CaseController.get("reference").url)
+      locationOf(result) shouldBe Some(routes.RulingController.editRulingDetails("reference").url)
     }
 
     "return OK when user has right permissions" in {

@@ -193,7 +193,7 @@ class CaseController @Inject()(verify: RequestActions,
   }
 
   private def validateAndRenderView(reference: String, page: CaseDetailPage, toHtml: Case => Future[Html], c: Case, activeTabId: String)
-                                   (implicit request: Request[_]): Future[Result] = {
+                                   (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
 
     toHtml(c).map(html => Ok(views.html.case_details(c, page, html, Some(activeTabId))))
   }
