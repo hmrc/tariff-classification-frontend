@@ -34,7 +34,7 @@
     @case_heading(c, displayBackLink = true)
 
     @if(c.status == CaseStatus.OPEN && request.hasPermission(Permission.COMPLETE_CASE)){
-        @complete_button("id", "Complete case", CompleteCaseController.completeCase(c.reference))
+        @complete_button("complete-case", "Complete case", CompleteCaseController.completeCase(c.reference))
     }
 
 <br>

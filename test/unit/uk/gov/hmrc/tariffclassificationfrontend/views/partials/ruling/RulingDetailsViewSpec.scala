@@ -246,7 +246,7 @@ class RulingDetailsViewSpec extends ViewSpec {
       doc.getElementById("ruling_methodCommercialDenominationValue") should containText("commercial denomination")
       doc should containElementWithID("ruling_exclusionsValue")
       doc.getElementById("ruling_exclusionsValue") should containText("method exclusion")
-      doc_case_details should containElementWithID("id-button")
+      doc_case_details should containElementWithID("complete-case-button")
     }
 
     "Render Decision details without Complete button for READ_ONLY users" in {

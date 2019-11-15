@@ -75,7 +75,7 @@ class CaseDetailsViewSpec extends ViewSpec {
       val doc = view(html.case_details(c, CaseDetailPage.RULING, Html("html"), None)(requestWithPermissions(Permission.COMPLETE_CASE), messages, appConfig))
 
       // Then
-      val item: Element = doc.getElementById("id-button")
+      val item: Element = doc.getElementById("complete-case-button")
       item should containText("Complete case")
 
     }
