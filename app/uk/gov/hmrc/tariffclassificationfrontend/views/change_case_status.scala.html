@@ -23,24 +23,9 @@
 
 @(c: Case, page: CaseDetailPage, view: Html, activeTab: Option[String] = None)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, scriptElem = Some(initial_focus(activeTab)),
-    customTitle = Some(messages(s"page.title.${page.toString}"))) {
+@main(bodyClasses = None, scriptElem = Some(initial_focus(activeTab)), customTitle = Some(messages(s"page.title.${page.toString}"))) {
 
-    @case_heading(c, displayBackLink = true)
+    @case_heading(c)
 
-    <div class="tabs">
-        @if(c.application.isBTI) {
-            @case_nav_bti(page, c)
-        }else{
-            @if(c.application.isLiabilityOrder) {
-                @case_nav_liability(page, c)
-            }
-        }
-        <div class="tabs__panel">
-            <div class="tabs__panel__content">
-                @view
-            </div>
-        </div>
-    </div>
 
 }

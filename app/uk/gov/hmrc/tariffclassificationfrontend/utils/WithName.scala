@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.tariffclassificationfrontend.controllers
+package uk.gov.hmrc.tariffclassificationfrontend.utils
 
-class ChangeCaseStatusControllerSpec {
-
+class WithName(string: String) {
+  override val toString: String = string
 }
