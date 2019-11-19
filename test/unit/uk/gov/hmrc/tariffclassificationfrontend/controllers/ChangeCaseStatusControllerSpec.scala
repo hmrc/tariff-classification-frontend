@@ -22,19 +22,25 @@ import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterEach, Matchers, WordSpec}
 import play.api.http.Status
 import play.api.i18n.{DefaultLangs, DefaultMessagesApi, Messages}
+import play.api.test.Helpers._
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
+import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes._
 import uk.gov.hmrc.tariffclassificationfrontend.forms.CaseStatusRadioInputForm
-import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus, Operator, Permission}
+import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views.html.change_case_status
 import uk.gov.tariffclassificationfrontend.utils.Cases
-import play.api.test.Helpers._
 
-class ChangeCaseStatusControllerSpec extends WordSpec with Matchers with UnitSpec
-  with WithFakeApplication with MockitoSugar with BeforeAndAfterEach with ControllerCommons {
+class ChangeCaseStatusControllerSpec extends WordSpec
+  with Matchers
+  with UnitSpec
+  with WithFakeApplication
+  with MockitoSugar
+  with BeforeAndAfterEach
+  with ControllerCommons {
 
   private val env = Environment.simple()
 
@@ -43,10 +49,10 @@ class ChangeCaseStatusControllerSpec extends WordSpec with Matchers with UnitSpe
   private val appConfig = new AppConfig(configuration, env)
   private val casesService = mock[CasesService]
   private val operator = mock[Operator]
+  private val messages: Messages = messageApi.preferred(newFakeGETRequestWithCSRF(fakeApplication))
 
   private val caseWithStatusNEW = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.NEW)
   private val caseWithStatusOPEN = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.OPEN)
-  private val caseWithStatusREJECTED = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.REJECTED)
 
   private implicit val mat: Materializer = fakeApplication.materializer
   private implicit val hc: HeaderCarrier = HeaderCarrier()
@@ -66,15 +72,88 @@ class ChangeCaseStatusControllerSpec extends WordSpec with Matchers with UnitSpe
 
   val form = CaseStatusRadioInputForm.form
 
-  def view(btiCase: Case) = change_case_status(btiCase, form)(newFakeGETRequestWithCSRF(fakeApplication), mock[Messages], appConfig).toString
+  def view(btiCase: Case) = change_case_status(btiCase, form)(newFakeGETRequestWithCSRF(fakeApplication), messages, appConfig).toString
 
   "ChangeCaseStatusControllerSpec" should {
 
     "return OK with correct HTML" in {
-      val result = await(controller(caseWithStatusOPEN).onSubmit("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+      val result = await(controller(caseWithStatusOPEN).onPageLoad("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.OK
       contentAsString(result) shouldBe view(caseWithStatusOPEN)
+    }
+
+    "return OK when the user has the right permissions" in {
+      val result = await(controller(caseWithStatusOPEN, Set(Permission.EDIT_RULING)).onPageLoad("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+
+      status(result) shouldBe Status.OK
+      contentAsString(result) shouldBe view(caseWithStatusOPEN)
+    }
+
+    "return unauthorised when user does not have the necessary permissions" in {
+      val result = await(controller(caseWithStatusOPEN, Set(Permission.VIEW_ASSIGNED_CASES)).onPageLoad("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result).get should include("unauthorized")
+    }
+
+    "redirect to Complete case page POST" in {
+      val result = await(
+        controller(caseWithStatusOPEN, Set(Permission.EDIT_RULING))
+          .onSubmit("reference", "requri")(
+            newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("caseStatus" -> CaseStatusRadioInput.Complete.toString)))
+
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result).get shouldBe CompleteCaseController.completeCase("reference").url
+    }
+
+    "redirect to Refer case page POST" in {
+      val result = await(
+        controller(caseWithStatusOPEN, Set(Permission.EDIT_RULING))
+          .onSubmit("reference", "requri")(
+            newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("caseStatus" -> CaseStatusRadioInput.Refer.toString)))
+
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result).get shouldBe ReferCaseController.getReferCase("reference").url
+    }
+
+    "redirect to Reject case page POST" in {
+      val result = await(
+        controller(caseWithStatusOPEN, Set(Permission.EDIT_RULING))
+          .onSubmit("reference", "requri")(
+            newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("caseStatus" -> CaseStatusRadioInput.Reject.toString)))
+
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result).get shouldBe RejectCaseController.getRejectCase("reference").url
+    }
+
+    "redirect to Suspend case page with POST" in {
+      val result = await(
+        controller(caseWithStatusOPEN, Set(Permission.EDIT_RULING))
+          .onSubmit("reference", "requri")(
+            newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("caseStatus" -> CaseStatusRadioInput.Suspend.toString)))
+
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result).get shouldBe SuspendCaseController.getSuspendCase("reference").url
+    }
+
+    "redirect to Move back to queue page with POST" in {
+      val result = await(
+        controller(caseWithStatusOPEN, Set(Permission.EDIT_RULING))
+          .onSubmit("reference", "requri")(
+            newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("caseStatus" -> CaseStatusRadioInput.MoveBackToQueue.toString)))
+
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result).get shouldBe ReassignCaseController.reassignCase("reference", "requri").url
+    }
+
+    "redirect to change case status page when form has errors" in {
+      val result =
+        controller(caseWithStatusOPEN, Set(Permission.EDIT_RULING))
+          .onSubmit("reference", "requri")(
+            newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("caseStatus" -> ""))
+
+      contentAsString(result) should include ("Not valid case status")
     }
   }
 }

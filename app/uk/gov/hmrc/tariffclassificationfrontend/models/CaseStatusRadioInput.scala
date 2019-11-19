@@ -17,6 +17,7 @@
 package uk.gov.hmrc.tariffclassificationfrontend.models
 
 import uk.gov.hmrc.tariffclassificationfrontend.utils.{Enumerable, WithName}
+
 sealed trait CaseStatusRadioInput
 
 object CaseStatusRadioInput extends Enumerable.Implicits {

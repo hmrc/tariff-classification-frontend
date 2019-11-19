@@ -21,10 +21,12 @@ import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.CaseStatusRadioInputForm
-import uk.gov.hmrc.tariffclassificationfrontend.models.Permission
+import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatusRadioInput, Permission}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
+import uk.gov.hmrc.tariffclassificationfrontend.views
 import uk.gov.hmrc.tariffclassificationfrontend.views.html.change_case_status
 
+import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
 class ChangeCaseStatusController @Inject()(verify: RequestActions,
@@ -38,11 +40,56 @@ class ChangeCaseStatusController @Inject()(verify: RequestActions,
   val form = CaseStatusRadioInputForm.form
 
 
-  def onSubmit(reference: String): Action[AnyContent] =
+  def onPageLoad(reference: String): Action[AnyContent] =
     (verify.authenticated andThen
       verify.casePermissions(reference) andThen
       verify.mustHave(Permission.EDIT_RULING)).async { implicit request =>
+      validateAndRenderView(c => successful(change_case_status(c, form)))
+    }
 
-        validateAndRenderView(c => successful(change_case_status(c, form)))
+  def onSubmit(reference: String, requestUri: String): Action[AnyContent] =
+    (verify.authenticated andThen
+      verify.casePermissions(reference) andThen
+      verify.mustHave(Permission.EDIT_RULING)) { implicit request =>
+      form.bindFromRequest.fold(
+        hasErrors => {
+
+          println("has errors:::::::::::::")
+          println("has errors:::::::::::::")
+          println("has errors:::::::::::::")
+          println("has errors:::::::::::::")
+          println("has errors:::::::::::::" + hasErrors)
+          Ok(change_case_status(request.`case`, hasErrors))
+        },
+
+        //  Redirect(routes.CompleteCaseController.completeCase(reference))}
+        {
+          case CaseStatusRadioInput.Complete.toString        => Redirect(routes.CompleteCaseController.completeCase(reference))
+          case CaseStatusRadioInput.Refer.toString           => Redirect(routes.ReferCaseController.getReferCase(reference))
+          case CaseStatusRadioInput.Reject.toString          => Redirect(routes.RejectCaseController.getRejectCase(reference))
+          case CaseStatusRadioInput.Suspend.toString         => Redirect(routes.SuspendCaseController.getSuspendCase(reference))
+          case CaseStatusRadioInput.MoveBackToQueue.toString => Redirect(routes.ReassignCaseController.reassignCase(reference, requestUri))
+        }
+      )
     }
 }
+
+/*  def onSubmit(reference: String, requestUri: String): Action[AnyContent] =
+    (verify.authenticated andThen
+      verify.casePermissions(reference) andThen
+      verify.mustHave(Permission.EDIT_RULING)) { implicit request =>
+
+      getCaseAndRespond(
+        reference,
+        `case` => form.bindFromRequest.fold(
+          hasErrors => successful(Ok(change_case_status(`case`, hasErrors))),
+          {
+            case CaseStatusRadioInput.Complete.toString        => Redirect(routes.CompleteCaseController.completeCase(reference))
+            case CaseStatusRadioInput.Refer.toString           => Redirect(routes.ReferCaseController.getReferCase(reference))
+            case CaseStatusRadioInput.Reject.toString          => Redirect(routes.RejectCaseController.getRejectCase(reference))
+            case CaseStatusRadioInput.Suspend.toString         => Redirect(routes.SuspendCaseController.getSuspendCase(reference))
+            case CaseStatusRadioInput.MoveBackToQueue.toString => Redirect(routes.ReassignCaseController.reassignCase(reference, requestUri))
+          }
+        )
+      )
+    }*/

@@ -26,7 +26,7 @@ object CaseStatusRadioInputForm {
   lazy val form = Form(caseStatusRadioInputMapping)
 
   val caseStatusRadioInputMapping = mapping(
-    "caseStatus" -> text.verifying("Not valid case status", isInList(CaseStatusRadioInput.values))
+    "caseStatus" -> text.verifying("Not valid case status", _.length <= 9999999)
   )(identity)(Some(_))
 }
 
