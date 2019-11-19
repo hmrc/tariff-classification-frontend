@@ -365,8 +365,7 @@ select:focus,
           width: auto;
           float: none; } }
       #global-header .header-wrapper .header-global .header-logo .content {
-        margin: 0 15px;
-         }
+        margin: 0 15px; }
     #global-header .header-wrapper .header-global .header-logo {
       margin: 5px 0 2px; }
   @media (min-width: 769px) {
