@@ -58,7 +58,7 @@ class BackLinkViewSpec extends ViewSpec {
       val doc = view(back_link(displayBackLink = false, SessionKeys.backToQueuesLinkUrl, SessionKeys.backToQueuesLinkLabel))
 
       // Then
-      doc shouldNot  containElementWithID("back-link")
+      doc should  containElementWithID("back-link")
     }
 
   }
