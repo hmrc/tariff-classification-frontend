@@ -15,7 +15,7 @@
  *@
 
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes
-@(displayBackLink: Boolean = false, backLinkUrl: String, backLinkLabel: String)(implicit request: Request[_], messages: Messages)
+@(backLinkUrl: String, backLinkLabel: String)(implicit request: Request[_], messages: Messages)
 
         <div>
             <a tabindex="3" id="back-link" class="link-back mt-0" href="@request.session.get(backLinkUrl).getOrElse(routes.IndexController.get())">

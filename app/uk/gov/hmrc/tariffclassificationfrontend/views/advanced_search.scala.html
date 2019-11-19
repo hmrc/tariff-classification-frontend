@@ -50,7 +50,7 @@
 
 @main(bodyClasses = None, customTitle = Some(messages("page.title.advanced.search")), scriptElem = Some(initial_focus(workOutInitialFocusComponent(), withTimeout = 5))) {
 
-    @back_link(displayBackLink = true, SessionKeys.backToQueuesLinkUrl, SessionKeys.backToQueuesLinkLabel)
+    @back_link(SessionKeys.backToQueuesLinkUrl, SessionKeys.backToQueuesLinkLabel)
 
     @error_summary(form.errors, Some(tabIndexer.nextTabIndex()))
 

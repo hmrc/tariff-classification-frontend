@@ -24,9 +24,9 @@
 <div id="case-heading" class="case-heading mt-1 mb-2">
 
     @if(request.session.get(SessionKeys.backToSearchResultsLinkUrl).isDefined) {
-        @back_link(displayBackLink, SessionKeys.backToSearchResultsLinkUrl, SessionKeys.backToSearchResultsLinkLabel)
+        @back_link(SessionKeys.backToSearchResultsLinkUrl, SessionKeys.backToSearchResultsLinkLabel)
     } else {
-        @back_link(displayBackLink, SessionKeys.backToQueuesLinkUrl, SessionKeys.backToQueuesLinkLabel)
+        @back_link(SessionKeys.backToQueuesLinkUrl, SessionKeys.backToQueuesLinkLabel)
     }
 
 
