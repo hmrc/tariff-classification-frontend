@@ -16,12 +16,10 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.models
 
-import play.api.libs.json._
 import uk.gov.hmrc.tariffclassificationfrontend.utils.{Enumerable, WithName}
-import uk.gov.hmrc.tariffclassificationfrontend.views.forms.components.RadioOption
 sealed trait CaseStatusRadioInput
 
-object CaseStatusRadioInput {
+object CaseStatusRadioInput extends Enumerable.Implicits {
 
   case object Complete extends WithName("complete") with CaseStatusRadioInput
   case object Refer extends WithName("refer") with CaseStatusRadioInput
@@ -31,9 +29,9 @@ object CaseStatusRadioInput {
 
   val values: Set[CaseStatusRadioInput] = Set(Complete, Refer, Reject, Suspend, MoveBackToQueue)
 
-  val options: Set[RadioOption] = values.map{
+  val options: Set[InputRadio] = values.map{
     value =>
-      RadioOption(value.toString, s"change_case_status_${value.toString}")
+      InputRadio(value.toString, s"change_case_status_${value.toString}")
   }
 
   implicit val enumerable: Enumerable[CaseStatusRadioInput] =

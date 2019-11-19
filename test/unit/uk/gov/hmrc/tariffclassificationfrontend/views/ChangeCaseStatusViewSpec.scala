@@ -16,22 +16,49 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.views
 
-import play.twirl.api.Html
-import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers.{containElementWithID, containText}
+import play.api.data.Form
+import uk.gov.hmrc.tariffclassificationfrontend.forms.CaseStatusRadioInputForm
+import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
+import uk.gov.hmrc.tariffclassificationfrontend.views.html.change_case_status
 import uk.gov.tariffclassificationfrontend.utils.Cases.{aCase, withBTIApplication, withReference}
 
 class ChangeCaseStatusViewSpec extends ViewSpec {
+
+  val form = CaseStatusRadioInputForm.form
+
   "ChangeCaseStatusViewSpec" should {
     "contain a case heading" in {
-
-      // When
       val c = aCase(withReference("reference"), withBTIApplication)
-      val doc = view(html.case_details(c, CaseDetailPage.TRADER, Html("html")))
+      val doc = view(change_case_status(c,  form))
 
-      // Then
       doc should containElementWithID("case-heading")
-      doc.getElementById("case-heading") should containText("case-status")
+      doc.getElementById("case-heading") should containText(c.status.toString)
 
+    }
+    "contain case details" in {
+      val c = aCase(withReference("reference"), withBTIApplication)
+      val doc = view(change_case_status(c,  form))
+
+      doc should containElementWithID("case-reference")
+    }
+
+    "contain correct radio button options" in {
+      val c = aCase(withReference("reference"), withBTIApplication)
+      val doc = view(change_case_status(c,  form))
+
+      doc should containText(messages("change_case_status_complete"))
+      doc should containText(messages("change_case_status_refer"))
+      doc should containText(messages("change_case_status_reject"))
+      doc should containText(messages("change_case_status_suspend"))
+      doc should containText(messages("change_case_status_move_back_to_queue"))
+    }
+
+    "contain legend with the correct text" in {
+      val c = aCase(withReference("reference"), withBTIApplication)
+      val doc = view(change_case_status(c, form))
+
+      println(doc)
+      doc should containText(messages("change_case_status_legend"))
     }
   }
 }

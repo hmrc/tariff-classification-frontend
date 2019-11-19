@@ -47,6 +47,7 @@ class RejectCaseController @Inject()(verify: RequestActions,
   def getRejectCase(reference: String): Action[AnyContent] = (verify.authenticated
     andThen verify.casePermissions(reference)
     andThen verify.mustHave(Permission.REJECT_CASE)).async { implicit request =>
+
     validateAndRenderView(c => successful(views.html.reject_case(c, form)))
   }
 
