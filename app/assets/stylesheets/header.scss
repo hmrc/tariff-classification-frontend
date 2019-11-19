@@ -1,15 +1,17 @@
 a.header__menu__proposition-name, a:visited.header__menu__proposition-name {
   color: #fff;
-  font-weight: bold;
 }
 
 a.header__menu__proposition-name {
-  font-size: 24px;
+  font-size: 22px;
   line-height: 1.25;
+  font-weight: 700;
+  text-transform: none;
   font-family: "nta",Arial,sans-serif;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: bold;
+  text-decoration: none;
+
 }
 
