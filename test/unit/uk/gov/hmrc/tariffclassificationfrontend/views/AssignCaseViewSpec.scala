@@ -44,7 +44,7 @@ class AssignCaseViewSpec extends ViewSpec {
 
       doc should containElementWithID("assign_case-continue_button")
       doc.getElementById("assign_case-continue_button") should haveAttribute("href", routes.CaseController.get("REF").url)
-      doc shouldNot containElementWithID("back-link")
+      doc should containElementWithID("back-link")
     }
 
     "Render message - when currently assigned" in {
