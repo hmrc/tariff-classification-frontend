@@ -43,7 +43,7 @@ class CaseHeadingViewSpec extends ViewSpec {
       doc.getElementById("case-reference") should containText("Case ref")
       doc should containElementWithID("case-status")
       doc.getElementById("case-status") should containText("OPEN")
-      doc shouldNot containElementWithID("back-link")
+      doc should containElementWithID("back-link")
     }
 
     "Render without Optional Statuses" in {
