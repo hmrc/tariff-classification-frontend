@@ -23,7 +23,7 @@ import uk.gov.tariffclassificationfrontend.utils.Cases.{aCase, withBTIApplicatio
 
 class ChangeCaseStatusViewSpec extends ViewSpec {
 
-  val form = new CaseStatusRadioInputFormProvider().apply()
+  val form = new CaseStatusRadioInputFormProvider()()
 
   "ChangeCaseStatusViewSpec" should {
     "contain a case heading" in {

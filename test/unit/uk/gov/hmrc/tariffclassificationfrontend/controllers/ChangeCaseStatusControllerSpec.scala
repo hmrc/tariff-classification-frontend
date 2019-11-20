@@ -69,7 +69,7 @@ class ChangeCaseStatusControllerSpec extends WordSpec
   private def controller(requestCase: Case, permission: Set[Permission]) = new ChangeCaseStatusController(
     new RequestActionsWithPermissions(permission, c = requestCase), casesService, messageApi, appConfig)
 
-  val form = new CaseStatusRadioInputFormProvider().apply()
+  val form = new CaseStatusRadioInputFormProvider()()
 
 
   "ChangeCaseStatusControllerSpec" should {

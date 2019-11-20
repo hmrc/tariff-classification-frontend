@@ -35,7 +35,7 @@ class ChangeCaseStatusController @Inject()(verify: RequestActions,
   override protected val config: AppConfig = appConfig
   override protected val caseService: CasesService = casesService
 
-  val form = new CaseStatusRadioInputFormProvider().apply()
+  val form = new CaseStatusRadioInputFormProvider()()
 
   def onPageLoad(reference: String): Action[AnyContent] =
     (verify.authenticated andThen
