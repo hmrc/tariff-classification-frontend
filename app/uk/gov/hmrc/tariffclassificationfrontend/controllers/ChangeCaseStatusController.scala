@@ -20,7 +20,7 @@ import javax.inject.Inject
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.forms.CaseStatusRadioInputForm
+import uk.gov.hmrc.tariffclassificationfrontend.forms.CaseStatusRadioInputFormProvider
 import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatusRadioInput, Permission}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views.html.change_case_status
@@ -35,8 +35,7 @@ class ChangeCaseStatusController @Inject()(verify: RequestActions,
   override protected val config: AppConfig = appConfig
   override protected val caseService: CasesService = casesService
 
-  val form = CaseStatusRadioInputForm.form
-
+  val form = new CaseStatusRadioInputFormProvider().apply()
 
   def onPageLoad(reference: String): Action[AnyContent] =
     (verify.authenticated andThen
@@ -45,18 +44,18 @@ class ChangeCaseStatusController @Inject()(verify: RequestActions,
       validateAndRenderView(c => successful(change_case_status(c, form)))
     }
 
-  def onSubmit(reference: String, requestUri: String): Action[AnyContent] =
+  def onSubmit(reference: String): Action[AnyContent] =
     (verify.authenticated andThen
       verify.casePermissions(reference) andThen
       verify.mustHave(Permission.EDIT_RULING)) { implicit request =>
       form.bindFromRequest.fold(
         hasErrors => Ok(change_case_status(request.`case`, hasErrors)),
         {
-          case CaseStatusRadioInput.Complete.toString        => Redirect(routes.CompleteCaseController.completeCase(reference))
-          case CaseStatusRadioInput.Refer.toString           => Redirect(routes.ReferCaseController.getReferCase(reference))
-          case CaseStatusRadioInput.Reject.toString          => Redirect(routes.RejectCaseController.getRejectCase(reference))
-          case CaseStatusRadioInput.Suspend.toString         => Redirect(routes.SuspendCaseController.getSuspendCase(reference))
-          case CaseStatusRadioInput.MoveBackToQueue.toString => Redirect(routes.ReassignCaseController.reassignCase(reference, requestUri))
+          case CaseStatusRadioInput.Complete        => Redirect(routes.CompleteCaseController.completeCase(reference))
+          case CaseStatusRadioInput.Refer           => Redirect(routes.ReferCaseController.getReferCase(reference))
+          case CaseStatusRadioInput.Reject          => Redirect(routes.RejectCaseController.getRejectCase(reference))
+          case CaseStatusRadioInput.Suspend         => Redirect(routes.SuspendCaseController.getSuspendCase(reference))
+          case CaseStatusRadioInput.MoveBackToQueue => Redirect(routes.ReassignCaseController.reassignCase(reference, request.uri))
         }
       )
     }

@@ -78,7 +78,7 @@ GET         /cases/:reference/keywords                          @uk.gov.hmrc.tar
 POST        /cases/:reference/keywords                          @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.addKeyword(reference: String)
 
 GET         /cases/:reference/change-case-status                @uk.gov.hmrc.tariffclassificationfrontend.controllers.ChangeCaseStatusController.onPageLoad(reference: String)
-POST        /cases/:reference/change-case-status                @uk.gov.hmrc.tariffclassificationfrontend.controllers.ChangeCaseStatusController.onSubmit(reference: String, requestUri: String)
+POST        /cases/:reference/change-case-status                @uk.gov.hmrc.tariffclassificationfrontend.controllers.ChangeCaseStatusController.onSubmit(reference: String)
 
 GET         /cases/:reference/appeal                            @uk.gov.hmrc.tariffclassificationfrontend.controllers.AppealCaseController.appealDetails(reference: String)
 

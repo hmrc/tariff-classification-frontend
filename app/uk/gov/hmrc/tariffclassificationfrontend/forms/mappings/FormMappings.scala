@@ -59,6 +59,6 @@ object FormMappings {
         Map(key -> value)
     })
 
-  def isInSeq[T](seq: Set[T]): String => Boolean =
+  def isInSeq[T](seq: Seq[T]): String => Boolean =
     s => seq.exists(_.toString == s)
 }

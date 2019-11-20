@@ -16,16 +16,16 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.forms
 
+import javax.inject.Inject
 import play.api.data.Form
-import play.api.data.Forms._
-import uk.gov.hmrc.tariffclassificationfrontend.forms.mappings.FormMappings.isInSeq
+import uk.gov.hmrc.tariffclassificationfrontend.forms.mappings.Mappings
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatusRadioInput
 
-object CaseStatusRadioInputForm {
+class CaseStatusRadioInputFormProvider @Inject() extends FormErrorHelper with Mappings {
 
-/*  lazy val form = Form(caseStatusRadioInputMapping)
+  def apply(): Form[CaseStatusRadioInput] =
+    Form(
+      "caseStatus" -> enumerable[CaseStatusRadioInput]("Not valid case status, please enter something")
+    )
 
-  val caseStatusRadioInputMapping = mapping(
-    "caseStatus" -> text.verifying("Not valid case status", isInSeq(CaseStatusRadioInput.values))
-  )(identity)(Some(_))*/
 }

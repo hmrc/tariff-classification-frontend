@@ -28,7 +28,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes._
-import uk.gov.hmrc.tariffclassificationfrontend.forms.CaseStatusRadioInputForm
+import uk.gov.hmrc.tariffclassificationfrontend.forms.{CaseStatusRadioInputForm, CaseStatusRadioInputFormProvider}
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.hmrc.tariffclassificationfrontend.views.html.change_case_status
@@ -70,9 +70,8 @@ class ChangeCaseStatusControllerSpec extends WordSpec
   private def controller(requestCase: Case, permission: Set[Permission]) = new ChangeCaseStatusController(
     new RequestActionsWithPermissions(permission, c = requestCase), casesService, messageApi, appConfig)
 
-  val form = CaseStatusRadioInputForm.form
+  val form = new CaseStatusRadioInputFormProvider().apply()
 
-  def view(btiCase: Case) = change_case_status(btiCase, form)(newFakeGETRequestWithCSRF(fakeApplication), messages, appConfig).toString
 
   "ChangeCaseStatusControllerSpec" should {
 
@@ -80,14 +79,17 @@ class ChangeCaseStatusControllerSpec extends WordSpec
       val result = await(controller(caseWithStatusOPEN).onPageLoad("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.OK
-      contentAsString(result) shouldBe view(caseWithStatusOPEN)
+      contentType(result) shouldBe Some("text/html")
+      charset(result) shouldBe Some("utf-8")
     }
 
     "return OK when the user has the right permissions" in {
       val result = await(controller(caseWithStatusOPEN, Set(Permission.EDIT_RULING)).onPageLoad("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.OK
-      contentAsString(result) shouldBe view(caseWithStatusOPEN)
+      contentType(result) shouldBe Some("text/html")
+      charset(result) shouldBe Some("utf-8")
+      contentAsString(result) should include ("Change case status")
     }
 
     "return unauthorised when user does not have the necessary permissions" in {
@@ -100,7 +102,7 @@ class ChangeCaseStatusControllerSpec extends WordSpec
     "redirect to Complete case page POST" in {
       val result = await(
         controller(caseWithStatusOPEN, Set(Permission.EDIT_RULING))
-          .onSubmit("reference", "requri")(
+          .onSubmit("reference")(
             newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("caseStatus" -> CaseStatusRadioInput.Complete.toString)))
 
       status(result) shouldBe Status.SEE_OTHER
@@ -110,7 +112,7 @@ class ChangeCaseStatusControllerSpec extends WordSpec
     "redirect to Refer case page POST" in {
       val result = await(
         controller(caseWithStatusOPEN, Set(Permission.EDIT_RULING))
-          .onSubmit("reference", "requri")(
+          .onSubmit("reference")(
             newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("caseStatus" -> CaseStatusRadioInput.Refer.toString)))
 
       status(result) shouldBe Status.SEE_OTHER
@@ -120,7 +122,7 @@ class ChangeCaseStatusControllerSpec extends WordSpec
     "redirect to Reject case page POST" in {
       val result = await(
         controller(caseWithStatusOPEN, Set(Permission.EDIT_RULING))
-          .onSubmit("reference", "requri")(
+          .onSubmit("reference")(
             newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("caseStatus" -> CaseStatusRadioInput.Reject.toString)))
 
       status(result) shouldBe Status.SEE_OTHER
@@ -130,7 +132,7 @@ class ChangeCaseStatusControllerSpec extends WordSpec
     "redirect to Suspend case page with POST" in {
       val result = await(
         controller(caseWithStatusOPEN, Set(Permission.EDIT_RULING))
-          .onSubmit("reference", "requri")(
+          .onSubmit("reference")(
             newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("caseStatus" -> CaseStatusRadioInput.Suspend.toString)))
 
       status(result) shouldBe Status.SEE_OTHER
@@ -138,22 +140,24 @@ class ChangeCaseStatusControllerSpec extends WordSpec
     }
 
     "redirect to Move back to queue page with POST" in {
+
+
       val result = await(
         controller(caseWithStatusOPEN, Set(Permission.EDIT_RULING))
-          .onSubmit("reference", "requri")(
-            newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("caseStatus" -> CaseStatusRadioInput.MoveBackToQueue.toString)))
+          .onSubmit("reference")(newFakePOSTRequestWithCSRF(fakeApplication).copyFakeRequest(uri = "origin")
+            .withFormUrlEncodedBody("caseStatus" -> CaseStatusRadioInput.MoveBackToQueue.toString)))
 
       status(result) shouldBe Status.SEE_OTHER
-      redirectLocation(result).get shouldBe ReassignCaseController.reassignCase("reference", "requri").url
+      redirectLocation(result).get shouldBe ReassignCaseController.reassignCase("reference", "origin").url
     }
 
     "redirect to change case status page when form has errors" in {
       val result =
         controller(caseWithStatusOPEN, Set(Permission.EDIT_RULING))
-          .onSubmit("reference", "requri")(
+          .onSubmit("reference")(
             newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("caseStatus" -> ""))
 
-      contentAsString(result) should include ("Not valid case status")
+      contentAsString(result) should include("Not valid case status")
     }
   }
 }

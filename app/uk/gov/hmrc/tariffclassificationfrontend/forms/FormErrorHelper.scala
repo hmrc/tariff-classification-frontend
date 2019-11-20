@@ -16,16 +16,8 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.forms
 
-import play.api.data.Form
-import play.api.data.Forms._
-import uk.gov.hmrc.tariffclassificationfrontend.forms.mappings.FormMappings.isInSeq
-import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatusRadioInput
+import play.api.data.FormError
 
-object CaseStatusRadioInputForm {
-
-/*  lazy val form = Form(caseStatusRadioInputMapping)
-
-  val caseStatusRadioInputMapping = mapping(
-    "caseStatus" -> text.verifying("Not valid case status", isInSeq(CaseStatusRadioInput.values))
-  )(identity)(Some(_))*/
+trait FormErrorHelper {
+  def produceError(key: String, error: String) = Left(Seq(FormError(key, error)))
 }
