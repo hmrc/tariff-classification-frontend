@@ -53,12 +53,9 @@
           }
 
           &.tabs__tab[aria-selected="true"] {
-            margin-top: -5px;
-            margin-bottom: -1px;
-            padding: 14px 19px 16px 19px;
-            border: 1px solid #bfc1c3;
-            border-bottom: 0;
-            background-color: #fff;
+             position: fixed; /* Set the navbar to fixed position */
+              top: 0; /* Position the navbar at the top of the page */
+              width: 100%; /* Full width */
           }
         }
       }
