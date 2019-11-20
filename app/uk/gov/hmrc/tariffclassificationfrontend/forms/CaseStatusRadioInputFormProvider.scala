@@ -21,11 +21,11 @@ import play.api.data.Form
 import uk.gov.hmrc.tariffclassificationfrontend.forms.mappings.Mappings
 import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatusRadioInput
 
-class CaseStatusRadioInputFormProvider @Inject() extends FormErrorHelper with Mappings {
+class CaseStatusRadioInputFormProvider @Inject() extends Mappings {
 
   def apply(): Form[CaseStatusRadioInput] =
     Form(
-      "caseStatus" -> enumerable[CaseStatusRadioInput]("Not valid case status, please enter something")
+      "caseStatus" -> enumerable[CaseStatusRadioInput]("Please select an option")
     )
 
 }

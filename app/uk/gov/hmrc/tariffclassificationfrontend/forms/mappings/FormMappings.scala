@@ -19,7 +19,6 @@ package uk.gov.hmrc.tariffclassificationfrontend.forms.mappings
 import play.api.data.Forms.of
 import play.api.data.format.Formatter
 import play.api.data.{FieldMapping, FormError}
-import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatusRadioInput
 
 object FormMappings {
 
