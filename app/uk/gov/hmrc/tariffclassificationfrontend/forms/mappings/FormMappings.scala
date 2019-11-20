@@ -59,11 +59,6 @@ object FormMappings {
         Map(key -> value)
     })
 
-  def isInList[T](seq: Set[T]): String => Boolean = {
-        println("is in list :::::::::::::::::: ")
-        println("is in list :::::::::::::::::: ")
-        println("is in list :::::::::::::::::: ")
-        println("is in list :::::::::::::::::: " + seq)
+  def isInSeq[T](seq: Set[T]): String => Boolean =
     s => seq.exists(_.toString == s)
-  }
 }

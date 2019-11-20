@@ -28,11 +28,11 @@ object CaseStatusRadioInput extends Enumerable.Implicits {
   case object Suspend extends WithName("suspend") with CaseStatusRadioInput
   case object MoveBackToQueue extends WithName("move_back_to_queue") with CaseStatusRadioInput
 
-  val values: Set[CaseStatusRadioInput] = Set(Complete, Refer, Reject, Suspend, MoveBackToQueue)
+  val values: Set[CaseStatusRadioInput] = Set(MoveBackToQueue, Refer, Reject, Suspend, Complete)
 
   val options: Set[InputRadio] = values.map{
     value =>
-      InputRadio(value.toString, s"change_case_status_${value.toString}")
+      InputRadio("change_case_status", value.toString)
   }
 
   implicit val enumerable: Enumerable[CaseStatusRadioInput] =

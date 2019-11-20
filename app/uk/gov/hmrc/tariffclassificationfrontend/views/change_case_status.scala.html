@@ -35,7 +35,9 @@
 
  @helper.form(action = ChangeCaseStatusController.onSubmit(c.reference, request.uri), 'id -> "zzzz-aaa") {
     @helper.CSRF.formField
-    @input_radio(field = form("caseStatus"), legend = messages("change_case_status_legend"), inputs = CaseStatusRadioInput.options.toSeq)
+    @input_radio(field = form("caseStatus"),
+                 legend = messages("change_case_status_legend"),
+                 inputs = CaseStatusRadioInput.options.toSeq)
 
     @confirm_or_cancel_buttons(
         id = "zzzz-aaa",

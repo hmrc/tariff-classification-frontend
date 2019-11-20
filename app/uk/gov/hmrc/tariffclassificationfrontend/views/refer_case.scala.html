@@ -66,9 +66,7 @@
                     label = Some("Who are you referring this case to?"),
                     labelClass = Some ("heading-medium mt-1"),
                     options = Seq(
-                        RadioOption("Applicant","Applicant (the main contact for this case)",Some("reason-detail"),
-                            Some(inputCheckboxGroupContent(isChecked(form("reasons[0]").value,form("reasons[1]").value, ReferralReason.REQUEST_SAMPLE.toString),
-                                isChecked(form("reasons[0]").value,form("reasons[1]").value, ReferralReason.REQUEST_MORE_INFO.toString)))),
+                        RadioOption("Applicant","Applicant (the main contact for this case)",Some("reason-detail"), Some(inputCheckboxGroupContent(isChecked(form("reasons[0]").value,form("reasons[1]").value, ReferralReason.REQUEST_SAMPLE.toString), isChecked(form("reasons[0]").value,form("reasons[1]").value, ReferralReason.REQUEST_MORE_INFO.toString)))),
                         RadioOption("Laboratory analyst","Laboratory analyst", None, None),
                         RadioOption("Other", "Other", Some("other-detail"),Some(inputTextContent()))
                     ),
