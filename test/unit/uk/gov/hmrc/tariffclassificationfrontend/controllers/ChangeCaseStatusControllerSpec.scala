@@ -28,10 +28,9 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes._
-import uk.gov.hmrc.tariffclassificationfrontend.forms.{CaseStatusRadioInputForm, CaseStatusRadioInputFormProvider}
+import uk.gov.hmrc.tariffclassificationfrontend.forms.CaseStatusRadioInputFormProvider
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
-import uk.gov.hmrc.tariffclassificationfrontend.views.html.change_case_status
 import uk.gov.tariffclassificationfrontend.utils.Cases
 
 class ChangeCaseStatusControllerSpec extends WordSpec

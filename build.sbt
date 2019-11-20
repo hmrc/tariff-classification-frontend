@@ -16,7 +16,6 @@ lazy val microservice = (project in file("."))
   .settings(publishingSettings: _*)
   .settings(defaultSettings(): _*)
   .settings(majorVersion := 0)
-  .settings(inConfig(Test)(testSettings): _*)
   .settings(
     name := appName,
     scalaVersion := "2.11.11",
@@ -75,11 +74,3 @@ def oneForkedJvmPerTest(tests: Seq[TestDefinition]): Seq[Group] = {
 coverageMinimum := 93
 coverageFailOnMinimum := true
 coverageExcludedPackages := "<empty>;com.kenshoo.play.metrics.*;prod.*;testOnlyDoNotUseInAppConf.*;app.*;uk.gov.hmrc.BuildInfo"
-
-
-lazy val testSettings: Seq[Def.Setting[_]] = Seq(
-  fork        := true,
-  javaOptions ++= Seq(
-    "-Dconfig.resource=empty-application.conf"
-  )
-)
