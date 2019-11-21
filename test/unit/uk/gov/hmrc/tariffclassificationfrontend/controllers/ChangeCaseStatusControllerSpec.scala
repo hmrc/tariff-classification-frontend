@@ -17,7 +17,6 @@
 package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
 import akka.stream.Materializer
-import org.mockito.Mockito.reset
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterEach, Matchers, WordSpec}
 import play.api.http.Status
@@ -50,18 +49,10 @@ class ChangeCaseStatusControllerSpec extends WordSpec
   private val operator = mock[Operator]
   private val messages: Messages = messageApi.preferred(newFakeGETRequestWithCSRF(fakeApplication))
 
-  private val caseWithStatusNEW = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.NEW)
   private val caseWithStatusOPEN = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.OPEN)
 
   private implicit val mat: Materializer = fakeApplication.materializer
   private implicit val hc: HeaderCarrier = HeaderCarrier()
-
-  private val largeFileSize: Long = 16485760
-
-  override def afterEach(): Unit = {
-    super.afterEach()
-    reset(casesService)
-  }
 
   private def controller(c: Case) = new ChangeCaseStatusController(
     new SuccessfulRequestActions(operator, c = c), casesService, messageApi, appConfig)
@@ -156,7 +147,7 @@ class ChangeCaseStatusControllerSpec extends WordSpec
           .onSubmit("reference")(
             newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("caseStatus" -> ""))
 
-      contentAsString(result) should include("Not valid case status")
+      contentAsString(result) should include("Please select an option")
     }
   }
 }
