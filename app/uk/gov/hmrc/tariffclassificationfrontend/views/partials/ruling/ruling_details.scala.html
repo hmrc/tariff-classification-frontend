@@ -53,8 +53,20 @@
     <div class="full-width border-bottom mb-2"></div>
 
     <div class="grid-row">
+        <div class="column-two-thirds">
+                <h3 class="heading-medium mt-0">@messages("case.menu.ruling-details")</h3>
+
+                @if(commodityCode.flatMap(_.expiry).isDefined) {
+
+                    @ruling_commodity_code_expiry_section(c, commodityCode,  clazz = "mb-3")
+                }
+        </div>
+    </div>
+
+    <div class="grid-row">
         <div class="column-one-third">
-            <h3 class="heading-medium mt-0">@messages("case.menu.ruling-details")</h3>
+
+
             @if(request.hasPermission(Permission.EDIT_RULING) ) {
                 <div id="ruling_edit_details" class="mb-2">
                     <a tabindex="@{startAtTabIndex+1}" id="ruling_edit" href="@RulingController.editRulingDetails(c.reference)">Edit ruling details</a>
