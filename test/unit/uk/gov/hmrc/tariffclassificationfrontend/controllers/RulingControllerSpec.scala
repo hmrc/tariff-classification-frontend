@@ -25,6 +25,7 @@ import org.scalatest.{BeforeAndAfterEach, Matchers}
 import play.api.data.validation.{Constraint, Valid}
 import play.api.http.Status
 import play.api.i18n.{DefaultLangs, DefaultMessagesApi}
+import play.api.test.FakeApplication
 import play.api.test.Helpers.{redirectLocation, _}
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -114,6 +115,32 @@ class RulingControllerSpec extends UnitSpec
 
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
+    }
+  }
+
+  "ValidateBeforeComplete Ruling" should {
+    val btiCaseWithStatusNEW = aCase(withBTIApplication, withReference("reference"), withStatus(CaseStatus.NEW))
+    val btiCaseWithStatusOPEN = aCase(withBTIApplication, withReference("reference"), withStatus(CaseStatus.OPEN))
+    val btiCaseWithStatusOpenWithDecision = aCase(withBTIApplication, withReference("reference"), withStatus(CaseStatus.OPEN), withDecision())
+    val liabilityCaseWithStatusOPEN = aCase(withLiabilityApplication(), withReference("reference"), withStatus(CaseStatus.OPEN))
+    val attachment = storedAttachment
+
+    val aValidForm = newFakePOSTRequestWithCSRF(fakeApplication, Map(
+      "bindingCommodityCode" -> "",
+      "goodsDescription" -> "",
+      "methodSearch" -> "",
+      "justification" -> "",
+      "methodCommercialDenomination" -> "",
+      "methodExclusion" -> "",
+      "attachments" -> "[]",
+      "explanation" -> "")
+    )
+
+    "redirect to RulingController" in {
+      val result = controller(btiCaseWithStatusOpenWithDecision, Set(Permission.EDIT_RULING))
+        .validateBeforeComplete("reference")(newFakeGETRequestWithCSRF(fakeApplication))
+
+      status(result) shouldBe Status.OK
     }
   }
 

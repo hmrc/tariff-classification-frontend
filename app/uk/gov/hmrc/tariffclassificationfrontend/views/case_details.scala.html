@@ -24,7 +24,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CompleteCaseController
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, Permission}
 @import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
-
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.ChangeCaseStatusController
 
 @(c: Case, page: CaseDetailPage, view: Html, activeTab: Option[String] = None)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
@@ -34,7 +34,7 @@
     @case_heading(c, displayBackLink = true)
 
     @if(c.status == CaseStatus.OPEN && request.hasPermission(Permission.COMPLETE_CASE)){
-        @complete_button("complete-case", "Complete case", CompleteCaseController.completeCase(c.reference))
+        @complete_button("complete-case", "Change case status", ChangeCaseStatusController.onPageLoad(c.reference))
     }
 
 <br>

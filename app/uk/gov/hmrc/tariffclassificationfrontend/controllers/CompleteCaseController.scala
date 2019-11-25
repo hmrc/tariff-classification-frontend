@@ -65,7 +65,14 @@ class CompleteCaseController @Inject()(verify: RequestActions,
       renderView(c => c.status == CaseStatus.COMPLETED, c => successful(views.html.confirm_complete_case(c)))
     }
 
-  override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = hasValidDecision(c)
+  override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = {
+    println("overriden method :::::::::::::::::::::::::::")
+    println("overriden method :::::::::::::::::::::::::::")
+    println("overriden method :::::::::::::::::::::::::::")
+    println("overriden method :::::::::::::::::::::::::::")
+    println("overriden method :::::::::::::::::::::::::::")
+    hasValidDecision(c)
+  }
 
   private def hasValidDecision(c: Case): Boolean = c.application.`type` match {
     case ApplicationType.BTI =>

@@ -259,6 +259,34 @@ object Cases {
       )))
   }
 
+  def withIncompleteDecision(bindingCommodityCode: String = "decision-commodity-code",
+                   effectiveStartDate: Option[Instant] = Some(Instant.now()),
+                   effectiveEndDate: Option[Instant] = Some(Instant.now().plus(30, DAYS)),
+                   justification: String = "decision-justification",
+                   goodsDescription: String = "",
+                   methodSearch: Option[String] = Some("search"),
+                   methodExclusion: Option[String] = Some("exclusion"),
+                   methodCommercialDenomination: Option[String] = None,
+                   appeal: Seq[Appeal] = Seq.empty,
+                   cancellation: Option[Cancellation] = None,
+                   explanation: Option[String] = Some("explanation")
+                  ): Case => Case = {
+    _.copy(decision = Some(
+      Decision(
+        bindingCommodityCode,
+        effectiveStartDate,
+        effectiveEndDate,
+        justification,
+        goodsDescription,
+        methodSearch,
+        methodExclusion,
+        methodCommercialDenomination,
+        appeal,
+        cancellation,
+        explanation
+      )))
+  }
+
   def withCreatedDate(date: Instant): Case => Case = {
     _.copy(createdDate = date)
   }
