@@ -55,18 +55,14 @@
     <div class="grid-row">
         <div class="column-two-thirds">
                 <h3 class="heading-medium mt-0">@messages("case.menu.ruling-details")</h3>
-
                 @if(commodityCode.flatMap(_.expiry).isDefined) {
-
-                    @ruling_commodity_code_expiry_section(c, commodityCode,  clazz = "mb-3")
+                    @ruling_commodity_code_expiry_section_warning_message(c, commodityCode,  clazz = "mb-3")
                 }
         </div>
     </div>
 
     <div class="grid-row">
         <div class="column-one-third">
-
-
             @if(request.hasPermission(Permission.EDIT_RULING) ) {
                 <div id="ruling_edit_details" class="mb-2">
                     <a tabindex="@{startAtTabIndex+1}" id="ruling_edit" href="@RulingController.editRulingDetails(c.reference)">Edit ruling details</a>
@@ -85,16 +81,6 @@
                     </dt>
                     <dd class="column-two-thirds">
                         <span id="ruling_bindingCommodityCodeValue">@d.bindingCommodityCode</span>
-                        @if(commodityCode.flatMap(_.expiry).isDefined) {
-                            <span id="ruling_bindingCommodityCodeValue_expiry" class="bold">
-                                @if(commodityCode.exists(_.isExpired(appConfig.clock))) {
-                                    <span id="ruling_bindingCommodityCodeValue_expired">invalid from </span>
-                                } else {
-                                    <span id="ruling_bindingCommodityCodeValue_expiring">valid until </span>
-                                }
-                                <span>@Dates.format(commodityCode.flatMap(_.expiry).get)</span>
-                            </span>
-                        }
                     </dd>
                 </div>
 
