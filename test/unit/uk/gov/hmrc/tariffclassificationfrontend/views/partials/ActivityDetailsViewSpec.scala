@@ -621,25 +621,5 @@ class ActivityDetailsViewSpec extends ViewSpec {
         doc shouldNot containElementWithID("reassign-queue-link")
       })
     }
-
-    "Render 'Reassign Link' when valid state and permissions are MOVE_CASE_BACK_TO_QUEUE " in {
-
-      Set(CaseStatus.OPEN, CaseStatus.REFERRED, CaseStatus.SUSPENDED).foreach(status => {
-        // Given
-        val c = aCase(
-          withAssignee(Some(Operator("id"))),
-          withStatus(status)
-        )
-
-        // When
-        val doc = view(activity_details(c, Paged(Seq.empty), ActivityForm.form, queues)(requestWithMoveCasePermission, messages, appConfig))
-
-        // Then
-        doc should containElementWithID("reassign-queue-link")
-      })
-
-    }
   }
-
-
 }

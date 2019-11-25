@@ -47,17 +47,6 @@ class RulingController @Inject()(verify: RequestActions,
       case ApplicationType.BTI =>
         val formData = mapper.caseToDecisionFormData(c)
         val df = decisionForm.btiForm.fill(formData)
-
-        val ddd = decisionForm.btiCompleteForm.fillAndValidate(formData)
-        println("form data ::::::::::::::::::::")
-        println("form data ::::::::::::::::::::")
-        println("form data ::::::::::::::::::::" + ddd.errors)
-        println("form data ::::::::::::::::::::")
-        println("form data ::::::::::::::::::::")
-        println("form data ::::::::::::::::::::" + df)
-        println("form data ::::::::::::::::::::")
-        println("form data ::::::::::::::::::::")
-        println("form data ::::::::::::::::::::" + df.errors)
         editBTIRulingView(df, c)
 
       case ApplicationType.LIABILITY_ORDER =>
@@ -73,7 +62,6 @@ class RulingController @Inject()(verify: RequestActions,
         val formData = mapper.caseToDecisionFormData(c)
         val decisionFormWithErrors = decisionForm.btiCompleteForm.fillAndValidate(formData)
         editBTIRulingView(decisionFormWithErrors, c)
-      case ApplicationType.LIABILITY_ORDER => ???
     })
   }
 

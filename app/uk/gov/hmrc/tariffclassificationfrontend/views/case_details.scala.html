@@ -33,8 +33,8 @@
 
     @case_heading(c, displayBackLink = true)
 
-    @if(c.status == CaseStatus.OPEN && request.hasPermission(Permission.COMPLETE_CASE)){
-        @complete_button("complete-case", "Change case status", ChangeCaseStatusController.onPageLoad(c.reference))
+    @if(c.application.isBTI && c.status == CaseStatus.OPEN && request.hasPermission(Permission.COMPLETE_CASE)){
+        @complete_button("change-case-status", "Change case status", ChangeCaseStatusController.onPageLoad(c.reference))
     }
 
 <br>

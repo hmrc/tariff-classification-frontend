@@ -118,25 +118,13 @@ class RulingControllerSpec extends UnitSpec
     }
   }
 
-  "ValidateBeforeComplete Ruling" should {
+  "validateBeforeComplete Ruling" should {
     val btiCaseWithStatusNEW = aCase(withBTIApplication, withReference("reference"), withStatus(CaseStatus.NEW))
     val btiCaseWithStatusOPEN = aCase(withBTIApplication, withReference("reference"), withStatus(CaseStatus.OPEN))
     val btiCaseWithStatusOpenWithDecision = aCase(withBTIApplication, withReference("reference"), withStatus(CaseStatus.OPEN), withDecision())
     val liabilityCaseWithStatusOPEN = aCase(withLiabilityApplication(), withReference("reference"), withStatus(CaseStatus.OPEN))
-    val attachment = storedAttachment
 
-    val aValidForm = newFakePOSTRequestWithCSRF(fakeApplication, Map(
-      "bindingCommodityCode" -> "",
-      "goodsDescription" -> "",
-      "methodSearch" -> "",
-      "justification" -> "",
-      "methodCommercialDenomination" -> "",
-      "methodExclusion" -> "",
-      "attachments" -> "[]",
-      "explanation" -> "")
-    )
-
-    "redirect to RulingController" in {
+    "load edit details page when a mandatory field is missing" in {
       val result = controller(btiCaseWithStatusOpenWithDecision, Set(Permission.EDIT_RULING))
         .validateBeforeComplete("reference")(newFakeGETRequestWithCSRF(fakeApplication))
 

@@ -217,5 +217,4 @@ class CaseController @Inject()(verify: RequestActions,
       queues <- queuesService.getAll
     } yield views.html.partials.activity_details(c, events, f, queues, tabIndexFor(ACTIVITY))
   }
-
 }

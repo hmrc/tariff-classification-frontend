@@ -36,16 +36,7 @@ trait RenderCaseAction extends FrontendController with I18nSupport {
 
   protected def redirect: String => Call = routes.CaseController.get
 
-  protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = {
-    println("isvalid case function ::::::::::::::::::::::::::::")
-    println("isvalid case function ::::::::::::::::::::::::::::")
-    println("isvalid case function ::::::::::::::::::::::::::::")
-    println("isvalid case function ::::::::::::::::::::::::::::")
-    println("isvalid case function ::::::::::::::::::::::::::::")
-    println("isvalid case function ::::::::::::::::::::::::::::")
-
-    true
-  }
+  protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = true
 
   protected def getCaseAndRenderView(caseReference: String, toHtml: Case => Future[HtmlFormat.Appendable])
                                     (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
@@ -110,18 +101,9 @@ trait RenderCaseAction extends FrontendController with I18nSupport {
                                   (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
 
     if (isValidCase(request.`case`)(request)) {
-      println("hiii:::: ")
-      println("hiii:::: ")
-      println("hiii:::: ")
-      println("hiii:::: ")
       toResult(request.`case`)
     } else {
-      println("not wavlid:::: ")
-      println("not wavlid:::: ")
-      println("not wavlid:::: ")
-      println("not wavlid:::: " + isValidCase(request.`case`)(request))
       defaultRedirectAndEdit()
     }
   }
-
 }
