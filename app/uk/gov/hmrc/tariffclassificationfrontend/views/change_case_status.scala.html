@@ -28,7 +28,7 @@
 
 @(c: Case, form: Form[_])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None) {
+@main(bodyClasses = None, customTitle = Some(messages("change_case_status_title"))) {
     @case_heading(c)
     @error_summary(form.errors)
 
@@ -41,7 +41,7 @@
                  inputs = CaseStatusRadioInput.options)
 
     @confirm_or_cancel_buttons(
-        id = "change_case_status_button",
+        id = "change_case_status",
         confirmText = "Submit",
         cancelText = "Cancel",
         cancelHref = CaseController.get(c.reference)

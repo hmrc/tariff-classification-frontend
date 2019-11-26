@@ -36,7 +36,7 @@ class DecisionForm @Inject()(commodityCodeConstraints: CommodityCodeConstraints)
   val btiForm: Form[DecisionFormData] = Form[DecisionFormData](
     mapping(
       "bindingCommodityCode" -> text.verifying(emptyOr(validCommodityCodeDecision, commodityCodeConstraints.commodityCodeExistsInUKTradeTariff): _*),
-      "goodsDescription" -> text.verifying("Cannot be empty", _.length < 520),
+      "goodsDescription" -> text,
       "methodSearch" -> text,
       "justification" -> text,
       "methodCommercialDenomination" -> text,
@@ -49,7 +49,7 @@ class DecisionForm @Inject()(commodityCodeConstraints: CommodityCodeConstraints)
   val btiCompleteForm: Form[DecisionFormData] = Form[DecisionFormData](
     mapping(
       "bindingCommodityCode" -> nonEmptyText.verifying(commodityCodeConstraints.commodityCodeExistsInUKTradeTariff),
-      "goodsDescription" -> nonEmptyText.verifying("Cannot be empty", _.length < 520),
+      "goodsDescription" -> nonEmptyText,
       "methodSearch" -> nonEmptyText,
       "justification" -> nonEmptyText,
       "methodCommercialDenomination" -> text,
