@@ -118,8 +118,6 @@ class RulingDetailsViewSpec extends ViewSpec {
       val doc = view(ruling_details(c, None, Seq.empty, Some(commodityCode))(requestWithPermissions(Permission.COMPLETE_CASE), messages, appConfig))
 
       // Then
-      doc should containElementWithID("ruling_bindingCommodityCodeValue_expiry")
-      doc should containElementWithID("ruling_bindingCommodityCodeValue_expiring")
       doc shouldNot containElementWithID("ruling_bindingCommodityCodeValue_expired")
     }
 
@@ -137,8 +135,6 @@ class RulingDetailsViewSpec extends ViewSpec {
       val doc = view(ruling_details(c, None, Seq.empty, Some(commodityCode))(requestWithPermissions(Permission.COMPLETE_CASE), messages, appConfig))
 
       // Then
-      doc should containElementWithID("ruling_bindingCommodityCodeValue_expiry")
-      doc should containElementWithID("ruling_bindingCommodityCodeValue_expired")
       doc shouldNot containElementWithID("ruling_bindingCommodityCodeValue_expiring")
     }
 

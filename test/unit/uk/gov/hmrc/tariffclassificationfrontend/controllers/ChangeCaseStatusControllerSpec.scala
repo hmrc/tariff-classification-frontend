@@ -16,9 +16,6 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
-import java.time.Instant
-import java.time.temporal.ChronoUnit.DAYS
-
 import akka.stream.Materializer
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterEach, Matchers, WordSpec}
@@ -34,9 +31,6 @@ import uk.gov.hmrc.tariffclassificationfrontend.forms.CaseStatusRadioInputFormPr
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.tariffclassificationfrontend.utils.Cases
-import uk.gov.tariffclassificationfrontend.utils.Cases._
-import scala.concurrent.Future.successful
-import scala.concurrent.Future._
 
 class ChangeCaseStatusControllerSpec extends WordSpec
   with Matchers

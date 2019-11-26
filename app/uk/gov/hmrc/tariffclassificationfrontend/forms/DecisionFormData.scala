@@ -48,7 +48,7 @@ class DecisionForm @Inject()(commodityCodeConstraints: CommodityCodeConstraints)
 
   val btiCompleteForm: Form[DecisionFormData] = Form[DecisionFormData](
     mapping(
-      "bindingCommodityCode" -> nonEmptyText.verifying(commodityCodeConstraints.commodityCodeExistsInUKTradeTariff),
+      "bindingCommodityCode" -> nonEmptyText,
       "goodsDescription" -> nonEmptyText,
       "methodSearch" -> nonEmptyText,
       "justification" -> nonEmptyText,

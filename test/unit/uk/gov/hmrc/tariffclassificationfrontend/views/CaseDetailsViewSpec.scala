@@ -20,10 +20,10 @@ import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 import play.api.mvc.Request
 import play.twirl.api.Html
-import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, Decision, Operator, Permission}
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
+import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, Decision, Operator, Permission}
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
-import uk.gov.tariffclassificationfrontend.utils.Cases.{aCase, withBTIApplication, withLiabilityApplication, withReference, withStatus}
+import uk.gov.tariffclassificationfrontend.utils.Cases._
 
 class CaseDetailsViewSpec extends ViewSpec {
 
