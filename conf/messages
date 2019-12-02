@@ -68,6 +68,7 @@ change_case_status.reject=Reject
 change_case_status.suspend=Suspend
 change_case_status.move_back_to_queue=Move back to queue
 change_case_status_legend=Change case status
+change_case_status_title=Change case status
 case.item.name=Item name
 case.item.description=Description
 case.item.confidential-information=Confidential information

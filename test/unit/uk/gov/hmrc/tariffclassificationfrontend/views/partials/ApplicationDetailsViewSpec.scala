@@ -84,44 +84,5 @@ class ApplicationDetailsViewSpec extends ViewSpec {
       doc should containElementWithID("app-details-import-or-export")
       doc.getElementById("app-details-import-or-export") should containText("Import")
     }
-
-
-    "Hide refer, reject and suspend action when a user have no permissions" in {
-      // Given
-      val `case` = aCase(
-        withOptionalApplicationFields(),
-        withoutAttachments()
-      )
-
-      // When
-      val doc = view(application_details(`case`, Seq.empty, None)(operatorRequest, messages, appConfig))
-
-      // Then
-      doc shouldNot containElementWithID("refer-case-button")
-      doc shouldNot containElementWithID("reject-case-button")
-      doc shouldNot containElementWithID("suspend-case-button")
-
-
-    }
-
-    "refer, reject and suspend action available for user with permissions" in {
-      // Given
-      val `case` = aCase(
-        withOptionalApplicationFields(),
-        withoutAttachments()
-      )
-
-      val request = requestWithPermissions(Permission.REFER_CASE, Permission.REJECT_CASE, Permission.SUSPEND_CASE)
-
-      // When
-      val doc = view(application_details(`case`, Seq.empty, None)(request, messages, appConfig))
-
-      // Then
-      doc should containElementWithID("refer-case-button")
-      doc should containElementWithID("reject-case-button")
-      doc should containElementWithID("suspend-case-button")
-    }
-
   }
-
 }

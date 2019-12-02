@@ -18,7 +18,7 @@ package uk.gov.hmrc.tariffclassificationfrontend.controllers
 
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito._
-import org.mockito.{BDDMockito, Mockito}
+import org.mockito.Mockito
 import org.mockito.Mockito.{never, verify}
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterEach, Matchers}
@@ -30,8 +30,7 @@ import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.forms.{CommodityCodeConstraints, DecisionForm, DecisionFormData, DecisionFormMapper}
-import uk.gov.hmrc.tariffclassificationfrontend.models.Permission
+import uk.gov.hmrc.tariffclassificationfrontend.forms.{CommodityCodeConstraints, DecisionForm, DecisionFormMapper}
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus, Operator, Permission}
 import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, CommodityCodeService, FileStoreService}
 import uk.gov.tariffclassificationfrontend.utils.Cases._
@@ -114,6 +113,17 @@ class RulingControllerSpec extends UnitSpec
 
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
+    }
+  }
+
+  "validateBeforeComplete Ruling" should {
+    val btiCaseWithStatusOpenWithDecision = aCase(withBTIApplication, withReference("reference"), withStatus(CaseStatus.OPEN), withDecision())
+
+    "load edit details page when a mandatory field is missing" in {
+      val result = controller(btiCaseWithStatusOpenWithDecision, Set(Permission.EDIT_RULING))
+        .validateBeforeComplete("reference")(newFakeGETRequestWithCSRF(fakeApplication))
+
+      status(result) shouldBe Status.OK
     }
   }
 

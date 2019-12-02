@@ -72,24 +72,6 @@ class CompleteCaseSpec extends IntegrationTest with MockitoSugar {
       shouldSucceed
     }
 
-    "return disabled complete button when no complete decision" in {
-      // Given
-      givenAuthSuccess()
-      stubFor(get(urlEqualTo("/cases/1"))
-        .willReturn(aResponse()
-          .withStatus(OK)
-          .withBody(caseIncompleteWithStatusOPEN))
-      )
-
-      // When
-      val response: WSResponse = await(ws.url(s"http://localhost:$port/tariff-classification/cases/1/complete").get())
-
-      // Then
-      response.status shouldBe OK
-
-      response.body should include("<title>Applicant details</title>")
-    }
-
     "redirect on auth failure" in {
       // Given
       givenAuthFailed()

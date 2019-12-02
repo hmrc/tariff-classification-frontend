@@ -50,6 +50,8 @@ class ChangeCaseStatusControllerSpec extends WordSpec
   private val messages: Messages = messageApi.preferred(newFakeGETRequestWithCSRF(fakeApplication))
 
   private val caseWithStatusOPEN = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.OPEN)
+  private val caseWithStatusOpenWithDecision = Cases.btiCaseWithIncompleteDecision.copy(reference = "reference", status = CaseStatus.OPEN)
+
 
   private implicit val mat: Materializer = fakeApplication.materializer
   private implicit val hc: HeaderCarrier = HeaderCarrier()

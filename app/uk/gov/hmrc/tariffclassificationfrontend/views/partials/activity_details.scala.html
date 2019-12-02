@@ -80,11 +80,4 @@
                 }
             </div>
         }
-        @if(request.hasPermission(Permission.MOVE_CASE_BACK_TO_QUEUE)){
-            <span class="column-one-third mt-1">
-                <a tabindex="@{startAtTabIndex+300}" id="reassign-queue-link" href="@ReassignCaseController.showAvailableQueues(c.reference, request.uri)">
-                        Move this case back to a queue
-                </a>
-            </span>
-        }
     </div>

@@ -18,9 +18,11 @@ package uk.gov.hmrc.tariffclassificationfrontend.views.partials.ruling
 
 import java.time.Instant
 
+import play.twirl.api.Html
 import uk.gov.hmrc.tariffclassificationfrontend.models._
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
-import uk.gov.hmrc.tariffclassificationfrontend.views.ViewSpec
+import uk.gov.hmrc.tariffclassificationfrontend.views.{CaseDetailPage, ViewSpec, html}
+import uk.gov.hmrc.tariffclassificationfrontend.views.html.case_details
 import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.ruling.ruling_details
 import uk.gov.tariffclassificationfrontend.utils.Cases._
 
@@ -116,8 +118,6 @@ class RulingDetailsViewSpec extends ViewSpec {
       val doc = view(ruling_details(c, None, Seq.empty, Some(commodityCode))(requestWithPermissions(Permission.COMPLETE_CASE), messages, appConfig))
 
       // Then
-      doc should containElementWithID("ruling_bindingCommodityCodeValue_expiry")
-      doc should containElementWithID("ruling_bindingCommodityCodeValue_expiring")
       doc shouldNot containElementWithID("ruling_bindingCommodityCodeValue_expired")
     }
 
@@ -135,8 +135,6 @@ class RulingDetailsViewSpec extends ViewSpec {
       val doc = view(ruling_details(c, None, Seq.empty, Some(commodityCode))(requestWithPermissions(Permission.COMPLETE_CASE), messages, appConfig))
 
       // Then
-      doc should containElementWithID("ruling_bindingCommodityCodeValue_expiry")
-      doc should containElementWithID("ruling_bindingCommodityCodeValue_expired")
       doc shouldNot containElementWithID("ruling_bindingCommodityCodeValue_expiring")
     }
 
@@ -229,6 +227,7 @@ class RulingDetailsViewSpec extends ViewSpec {
 
       // When
       val doc = view(ruling_details(c, None, Seq.empty, None)(requestWithPermissions(Permission.COMPLETE_CASE), messages, appConfig))
+      val doc_case_details = view(case_details(c, CaseDetailPage.RULING, Html("html"), None)(requestWithPermissions(Permission.COMPLETE_CASE), messages, appConfig))
 
       // Then
       doc should containElementWithID("ruling_bindingCommodityCodeValue")
@@ -243,7 +242,7 @@ class RulingDetailsViewSpec extends ViewSpec {
       doc.getElementById("ruling_methodCommercialDenominationValue") should containText("commercial denomination")
       doc should containElementWithID("ruling_exclusionsValue")
       doc.getElementById("ruling_exclusionsValue") should containText("method exclusion")
-      doc should containElementWithID("complete-case-button")
+      doc_case_details should containElementWithID("change-case-status-button")
     }
 
     "Render Decision details without Complete button for READ_ONLY users" in {

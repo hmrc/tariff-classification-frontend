@@ -16,12 +16,26 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.views
 
+import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
+import play.api.mvc.Request
 import play.twirl.api.Html
+import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
+import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, Decision, Operator, Permission}
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
-import uk.gov.tariffclassificationfrontend.utils.Cases.{aCase, withBTIApplication, withLiabilityApplication, withReference}
+import uk.gov.tariffclassificationfrontend.utils.Cases._
 
 class CaseDetailsViewSpec extends ViewSpec {
+
+  private val completeDecision = Decision(
+    bindingCommodityCode = "040900",
+    justification = "justification-content",
+    goodsDescription = "goods-description",
+    methodSearch = Some("method-to-search"),
+    explanation = Some("explanation")
+  )
+
+  private def request[A](operator: Operator, request: Request[A]) = new AuthenticatedRequest(operator, request)
 
   "Case Details View" should {
 
@@ -52,6 +66,46 @@ class CaseDetailsViewSpec extends ViewSpec {
       listItems.first should containText("Liability")
       haveAttribute("aria-selected", "true")
     }
+
+    "show the complete case button if case is open and operator has permissions to complete the case" in {
+
+      // When
+      val myCase = aCase(withReference("reference"), withBTIApplication, withStatus(CaseStatus.OPEN))
+      val c = myCase.copy(decision = Some(completeDecision))
+      val doc = view(html.case_details(c, CaseDetailPage.RULING, Html("html"), None)(requestWithPermissions(Permission.COMPLETE_CASE), messages, appConfig))
+
+      // Then
+      val item: Element = doc.getElementById("change-case-status-button")
+      item should containText("Change case status")
+
+    }
+
+    "not show the complete button if a case status is completed" in {
+
+      //When
+      val myCase = aCase(withReference("reference"), withBTIApplication, withStatus(CaseStatus.COMPLETED))
+      val c = myCase.copy(decision = Some(completeDecision))
+
+      //Then
+      val doc = view(html.case_details(c, CaseDetailPage.RULING, Html("html"), None)(requestWithPermissions(Permission.COMPLETE_CASE), messages, appConfig))
+      val item: Element = doc.getElementById("case-status")
+      item should containText("COMPLETED")
+
+
+    }
+
+    "not show the complete button if operator does not have permissions to complete the case" in {
+
+      // When
+      val myCase = aCase(withReference("reference"), withBTIApplication, withStatus(CaseStatus.OPEN))
+      val c = myCase.copy(decision = Some(completeDecision))
+      val doc = view(html.case_details(c, CaseDetailPage.RULING, Html("html"), None)(requestWithPermissions(Permission.VIEW_CASES), messages, appConfig))
+
+      //Then
+      val item: Element = doc.getElementById("case-status")
+      item should containText("OPEN")
+    }
+
   }
 
 }

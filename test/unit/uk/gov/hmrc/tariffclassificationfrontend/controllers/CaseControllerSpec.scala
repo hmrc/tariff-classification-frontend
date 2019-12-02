@@ -77,6 +77,7 @@ class CaseControllerSpec extends UnitSpec with Matchers with WithFakeApplication
     "redirect to default tab" when {
       "case is a BTI" in {
         val c = aCase(withReference("reference"), withBTIApplication)
+
         val result = await(controller(c).get("reference")(fakeRequest))
 
         status(result) shouldBe Status.SEE_OTHER

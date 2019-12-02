@@ -20,14 +20,24 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.includes.main
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{case_heading, case_nav_bti, case_nav_liability}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.components.initial_focus
+@import uk.gov.hmrc.tariffclassificationfrontend.views.html.components.change_case_status_button
+@import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, Permission}
+@import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.ChangeCaseStatusController
 
-@(c: Case, page: CaseDetailPage, view: Html, activeTab: Option[String] = None)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(c: Case, page: CaseDetailPage, view: Html, activeTab: Option[String] = None)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, scriptElem = Some(initial_focus(activeTab)),
     customTitle = Some(messages(s"page.title.${page.toString}"))) {
 
     @case_heading(c, displayBackLink = true)
 
+    @if(c.application.isBTI && c.status == CaseStatus.OPEN && request.hasPermission(Permission.COMPLETE_CASE)){
+        @change_case_status_button("change-case-status", "Change case status", ChangeCaseStatusController.onPageLoad(c.reference))
+    }
+
+<br>
+</a>
     <div class="tabs">
         @if(c.application.isBTI) {
             @case_nav_bti(page, c)
