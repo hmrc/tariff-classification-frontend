@@ -88,9 +88,8 @@ class CaseDetailsViewSpec extends ViewSpec {
 
       //Then
       val doc = view(html.case_details(c, CaseDetailPage.RULING, Html("html"), None)(requestWithPermissions(Permission.COMPLETE_CASE), messages, appConfig))
-      val item: Element = doc.getElementById("case-status")
-      item should containText("COMPLETED")
-
+      val item: Element = doc.getElementById("change-case-status-button")
+      item shouldNot containText("Change case status")
 
     }
 
@@ -106,6 +105,35 @@ class CaseDetailsViewSpec extends ViewSpec {
       item should containText("OPEN")
     }
 
+    "show the Reopen case button if the case status is suspended and the operator has the permission to reopen the case" in {
+
+      val myCase = aCase(withReference("reference"), withBTIApplication, withStatus(CaseStatus.SUSPENDED))
+      val doc = view(html.case_details(myCase, CaseDetailPage.APPLICATION_DETAILS, Html("html"))(requestWithPermissions(Permission.REOPEN_CASE), messages, appConfig))
+
+      val item: Element = doc.getElementById("reopen-case-button")
+      item should containText("Reopen case")
+      item shouldNot containText("Change case status")
+    }
+
+    "not show the Reopen case button if the case status is not suspended" in {
+
+      val myCase = aCase(withReference("reference"), withBTIApplication, withStatus(CaseStatus.OPEN))
+      val doc = view(html.case_details(myCase, CaseDetailPage.APPLICATION_DETAILS, Html("html"))(requestWithPermissions(Permission.COMPLETE_CASE), messages, appConfig))
+
+      val item: Element = doc.getElementById("change-case-status-button")
+      item shouldNot containText("Reopen case")
+      item should containText("Change case status")
+
+    }
+
+    "not show the Reopen case button if the case in Suspended and the operator does not have the required permission" in {
+
+      val myCase = aCase(withReference("reference"), withBTIApplication, withStatus(CaseStatus.SUSPENDED))
+      val doc = view(html.case_details(myCase, CaseDetailPage.APPLICATION_DETAILS, Html("html"))(requestWithPermissions(Permission.VIEW_CASES), messages, appConfig))
+
+      val item: Element = doc.getElementById("reopen-case-button")
+      item shouldNot containText("Reopen case")
+    }
   }
 
 }
