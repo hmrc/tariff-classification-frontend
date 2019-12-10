@@ -40,6 +40,9 @@
     @if(c.application.isBTI && c.status == CaseStatus.SUSPENDED && request.hasPermission(Permission.REOPEN_CASE)) {
         @reopen_case_button(c)
     }
+    @if(c.application.isBTI && c.status == CaseStatus.REFERRED && request.hasPermission(Permission.REOPEN_CASE)) {
+        @take_off_referral_button(c)
+    }
 <br>
 </a>
     <div class="tabs">
