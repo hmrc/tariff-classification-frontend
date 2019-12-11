@@ -24,15 +24,33 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.ChangeCaseStatusController
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.components.confirm_or_cancel_buttons
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.AttachmentsController
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.AppealCaseController
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.LiabilityController
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.error_summary
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.ActiveTab
 
-@(c: Case, form: Form[_])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(c: Case, form: Form[_], activeTab: Option[ActiveTab])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+
+@cancelHref() = @{
+    activeTab match {
+        case Some(ActiveTab.Item) => CaseController.itemDetails(c.reference)
+        case Some(ActiveTab.Sample) => CaseController.sampleDetails(c.reference)
+        case Some(ActiveTab.Attachments) => AttachmentsController.attachmentsDetails(c.reference)
+        case Some(ActiveTab.Activity) => CaseController.activityDetails(c.reference)
+        case Some(ActiveTab.Keywords) => CaseController.keywordsDetails(c.reference)
+        case Some(ActiveTab.Ruling) => CaseController.rulingDetails(c.reference)
+        case Some(ActiveTab.Appeals) => AppealCaseController.appealDetails(c.reference)
+        case Some(ActiveTab.Liability) => LiabilityController.liabilityDetails(c.reference)
+        case _ =>  CaseController.get(c.reference)
+        }
+}
 
 @main(bodyClasses = None, customTitle = Some(messages("change_case_status_title"))) {
     @case_heading(c)
     @error_summary(form.errors)
 
- @helper.form(action = ChangeCaseStatusController.onSubmit(c.reference)) {
+ @helper.form(action = ChangeCaseStatusController.onSubmit(c.reference, activeTab.map(_.name))) {
 
     @helper.CSRF.formField
 
@@ -44,7 +62,9 @@
         id = "change_case_status",
         confirmText = "Submit",
         cancelText = "Cancel",
-        cancelHref = CaseController.get(c.reference)
+        cancelHref = cancelHref()
     )
-   }
+
+
+}
 }

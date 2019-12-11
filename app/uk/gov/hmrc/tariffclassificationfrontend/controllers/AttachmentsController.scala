@@ -102,7 +102,7 @@ class AttachmentsController @Inject()(verify: RequestActions,
   private def getCaseAndRenderView(reference: String, page: CaseDetailPage, toHtml: Case => Future[Html])
                                   (implicit request: AuthenticatedRequest[_]): Future[Result] = {
     casesService.getOne(reference).flatMap {
-      case Some(c: Case) => toHtml(c).map(html => Ok(views.html.case_details(c, page, html, Some("tab-item-Attachments"))))
+      case Some(c: Case) => toHtml(c).map(html => Ok(views.html.case_details(c, page, html, Some(ActiveTab.Attachments))))
       case _ => successful(Ok(views.html.case_not_found(reference)))
     }
   }

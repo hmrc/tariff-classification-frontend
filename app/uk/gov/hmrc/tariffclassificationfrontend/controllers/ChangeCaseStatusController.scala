@@ -37,19 +37,19 @@ class ChangeCaseStatusController @Inject()(verify: RequestActions,
 
   val form = new CaseStatusRadioInputFormProvider()()
 
-  def onPageLoad(reference: String): Action[AnyContent] =
+  def onPageLoad(reference: String, activeTab: Option[String] = None): Action[AnyContent] =
     (verify.authenticated andThen
       verify.casePermissions(reference) andThen
       verify.mustHave(Permission.EDIT_RULING)).async { implicit request =>
-      validateAndRenderView(c => successful(change_case_status(c, form)))
+      validateAndRenderView(c => successful(change_case_status(c, form, activeTab.map(ActiveTab(_)))))
     }
 
-  def onSubmit(reference: String): Action[AnyContent] =
+  def onSubmit(reference: String, activeTab: Option[String] = None): Action[AnyContent] =
     (verify.authenticated andThen
       verify.casePermissions(reference) andThen
       verify.mustHave(Permission.EDIT_RULING)) { implicit request =>
       form.bindFromRequest.fold(
-        hasErrors => Ok(change_case_status(request.`case`, hasErrors)),
+        hasErrors => Ok(change_case_status(request.`case`, hasErrors, activeTab.map(ActiveTab(_)))),
         {
           case CaseStatusRadioInput.Complete        => Redirect(routes.CompleteCaseController.completeCase(reference))
           case CaseStatusRadioInput.Refer           => Redirect(routes.ReferCaseController.getReferCase(reference))

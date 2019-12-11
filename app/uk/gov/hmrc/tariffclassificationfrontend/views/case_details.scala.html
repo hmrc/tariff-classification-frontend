@@ -26,16 +26,17 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.ChangeCaseStatusController
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.ReopenCaseController
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials._
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.ActiveTab
 
-@(c: Case, page: CaseDetailPage, view: Html, activeTab: Option[String] = None)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(c: Case, page: CaseDetailPage, view: Html, activeTab: Option[ActiveTab] = None)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, scriptElem = Some(initial_focus(activeTab)),
+@main(bodyClasses = None, scriptElem = Some(initial_focus(activeTab.map(_.name))),
     customTitle = Some(messages(s"page.title.${page.toString}"))) {
 
     @case_heading(c, displayBackLink = true)
 
     @if(c.application.isBTI && c.status == CaseStatus.OPEN && request.hasPermission(Permission.COMPLETE_CASE)){
-        @change_case_status_button("change-case-status", "Change case status", ChangeCaseStatusController.onPageLoad(c.reference))
+        @change_case_status_button("change-case-status", "Change case status", ChangeCaseStatusController.onPageLoad(c.reference, activeTab.map(_.name)))
     }
     @if(c.application.isBTI && c.status == CaseStatus.SUSPENDED && request.hasPermission(Permission.REOPEN_CASE)) {
         @reopen_case_button(c)
