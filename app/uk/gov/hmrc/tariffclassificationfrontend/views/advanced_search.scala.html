@@ -44,7 +44,15 @@
     selectedTab match {
         case SearchTab.DETAILS => Some("tab-details")
         case SearchTab.IMAGES => Some("tab-images")
+        case SearchTab.SEARCH_BOX => Some("keyword_0")
         case _ => None
+    }
+}
+
+@useSelectedTab() = @{
+    selectedTab match {
+        case SearchTab.SEARCH_BOX => SearchTab.DETAILS
+        case _ => selectedTab
     }
 }
 
@@ -85,7 +93,7 @@
         @advanced_search_keywords(form, keywords, ReusableTabIndexer(startTabIndex = tabIndexer.nextTabIndex()))
 
         @* We jump 50 here, to allow dynamic elements to be added between when new keywords added *@
-        <button tabindex="@tabIndexer.nextTabIndexWithJump(50)" id="advanced_search-search_button" class="button" type="submit">Search</button>
+        <button tabindex="@tabIndexer.nextTabIndexWithJump(50)" id="advanced_search-search_button" class="button" type="submit" name="addToSearch" value="false">Search</button>
         <a tabindex="@tabIndexer.nextTabIndex()" id="advanced_search-reset_button" class="secondary-button" href="@controllers.routes.SearchController.search()">New search</a>
 
         @if(results.isEmpty) {
@@ -159,7 +167,7 @@
 
                             @advanced_search_results_tabs(
                                 searchResults,
-                                selectedTab,
+                                useSelectedTab(),
                                 onChange = selected => controllers.routes.SearchController.search(selected, search = form.get, page = searchResults.pageIndex).withFragment("advanced_search_keywords"),
                                 tabIndexer = ReusableTabIndexer(startTabIndex = tabIndexer.nextTabIndexWithJump(10)))
 

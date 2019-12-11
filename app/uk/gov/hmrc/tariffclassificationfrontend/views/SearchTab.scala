@@ -22,6 +22,7 @@ object SearchTab extends Enumeration {
   type SearchTab = Value
   val DETAILS = Value("details")
   val IMAGES = Value("images")
+  val SEARCH_BOX = Value("searchbox")
 
   implicit object searchTypeQueryStringBinder
     extends QueryStringBindable.Parsing[SearchTab.SearchTab](
