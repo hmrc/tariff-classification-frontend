@@ -20,6 +20,7 @@ import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 import play.api.mvc.Request
 import play.twirl.api.Html
+import uk.gov.hmrc.tariffclassificationfrontend.controllers.ActiveTab
 import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, Decision, Operator, Permission}
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
@@ -43,7 +44,7 @@ class CaseDetailsViewSpec extends ViewSpec {
 
       // When
       val c = aCase(withReference("reference"), withBTIApplication)
-      val doc = view(html.case_details(c, CaseDetailPage.TRADER, Html("html"), Some("tab-item-Applicant")))
+      val doc = view(html.case_details(c, CaseDetailPage.TRADER, Html("html"), Some(ActiveTab.Applicant)))
 
       // Then
       val listItems: Elements = doc.getElementsByClass("tabs__list-item")
@@ -57,7 +58,7 @@ class CaseDetailsViewSpec extends ViewSpec {
 
       // When
       val c = aCase(withReference("reference"), withLiabilityApplication())
-      val doc = view(html.case_details(c, CaseDetailPage.LIABILITY, Html("html"), Some("tab-item-Liability")))
+      val doc = view(html.case_details(c, CaseDetailPage.LIABILITY, Html("html"), Some(ActiveTab.Liability)))
 
       // Then
       val listItems: Elements = doc.getElementsByClass("tabs__list-item")

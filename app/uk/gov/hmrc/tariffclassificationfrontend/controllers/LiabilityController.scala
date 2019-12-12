@@ -75,7 +75,7 @@ class LiabilityController @Inject()(verify: RequestActions,
 
   private def getCaseAndRenderView(page: CaseDetailPage, toHtml: Case => Future[HtmlFormat.Appendable])
                                   (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
-    toHtml(request.`case`).map(html => Ok(views.html.case_details(request.`case`, page, html, activeTab = Some("tab-item-Liability"))))
+    toHtml(request.`case`).map(html => Ok(views.html.case_details(request.`case`, page, html, activeTab = Some(ActiveTab.Liability))))
   }
 
 

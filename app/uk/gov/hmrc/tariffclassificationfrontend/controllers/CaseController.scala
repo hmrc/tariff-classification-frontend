@@ -66,7 +66,7 @@ class CaseController @Inject()(verify: RequestActions,
           letter <- fileService.getLetterOfAuthority(c)
         } yield views.html.partials.case_trader(c, letter, tabIndexFor(TRADER))
       },
-      "tab-item-Applicant"
+      ActiveTab.Applicant
     )
   }
 
@@ -79,7 +79,7 @@ class CaseController @Inject()(verify: RequestActions,
           letter <- fileService.getLetterOfAuthority(c)
         } yield views.html.partials.application_details(c, attachments, letter, tabIndexFor(APPLICATION_DETAILS))
       },
-      "tab-item-Item"
+      ActiveTab.Item
     )
   }
 
@@ -91,7 +91,7 @@ class CaseController @Inject()(verify: RequestActions,
           events <- eventsService.getFilteredEvents(c.reference, NoPagination(), Some(EventType.sampleEvents))
         } yield views.html.partials.sample.sample_details(c, events, tabIndexFor(SAMPLE_DETAILS))
       },
-      "tab-item-Sample"
+      ActiveTab.Sample
     )
   }
 
@@ -102,7 +102,7 @@ class CaseController @Inject()(verify: RequestActions,
         attachments <- fileService.getAttachments(c)
         commodityCode = c.decision.map(_.bindingCommodityCode).flatMap(commodityCodeService.find)
       } yield views.html.partials.ruling.ruling_details(c, decisionForm.bindFrom(c.decision), attachments, commodityCode, tabIndexFor(RULING)),
-      "tab-item-Ruling"
+      ActiveTab.Ruling
     )
   }
 
@@ -111,7 +111,7 @@ class CaseController @Inject()(verify: RequestActions,
     validateAndRenderView(
       ACTIVITY,
       showActivity(_, activityForm),
-      "tab-item-Activity"
+      ActiveTab.Activity
     )
   }
 
@@ -121,7 +121,7 @@ class CaseController @Inject()(verify: RequestActions,
       validateAndRenderView(
         ACTIVITY,
         showActivity(_, errorForm),
-        "tab-item-Activity"
+        ActiveTab.Activity
       )
     }
 
@@ -146,7 +146,7 @@ class CaseController @Inject()(verify: RequestActions,
       KEYWORDS,
       showKeywords(_, keywordForm),
       request.`case`,
-      "tab-item-Keywords"
+      ActiveTab.Keywords
     )
   }
 
@@ -156,14 +156,14 @@ class CaseController @Inject()(verify: RequestActions,
         validateAndRenderView(
           KEYWORDS,
           showKeywords(_, errorForm),
-          "tab-item-Keywords"
+          ActiveTab.Keywords
         )
       },
       keyword =>
         validateAndRenderView(
           KEYWORDS,
           updateKeywords(_, keyword)(keywordsService.addKeyword),
-          "tab-item-Keywords"
+          ActiveTab.Keywords
         )
     )
   }
@@ -172,7 +172,7 @@ class CaseController @Inject()(verify: RequestActions,
     validateAndRenderView(
       KEYWORDS,
       updateKeywords(_, keyword)(keywordsService.removeKeyword),
-      "tab-item-Keywords"
+      ActiveTab.Keywords
     )
   }
 
@@ -192,16 +192,16 @@ class CaseController @Inject()(verify: RequestActions,
     }
   }
 
-  private def validateAndRenderView(reference: String, page: CaseDetailPage, toHtml: Case => Future[Html], c: Case, activeTabId: String)
+  private def validateAndRenderView(reference: String, page: CaseDetailPage, toHtml: Case => Future[Html], c: Case, activeTab: ActiveTab)
                                    (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
 
-    toHtml(c).map(html => Ok(views.html.case_details(c, page, html, Some(activeTabId))))
+    toHtml(c).map(html => Ok(views.html.case_details(c, page, html, Some(activeTab))))
   }
 
-  private def validateAndRenderView(page: CaseDetailPage, toHtml: Case => Future[Html], activeTabId: String)
+  private def validateAndRenderView(page: CaseDetailPage, toHtml: Case => Future[Html], activeTab: ActiveTab)
                                    (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
 
-    toHtml(request.`case`).map(html => Ok(views.html.case_details(request.`case`, page, html, Some(activeTabId))))
+    toHtml(request.`case`).map(html => Ok(views.html.case_details(request.`case`, page, html, Some(activeTab))))
   }
 
   private def validateAndRedirect(reference: String, page: CaseDetailPage, toHtml: Case => Future[Call])
