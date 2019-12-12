@@ -72,7 +72,7 @@ class SuspendCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
     "return OK and HTML content type" in {
 
-      val result: Result = await(controller(caseWithStatusOPEN).getSuspendCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+      val result: Result = await(controller(caseWithStatusOPEN).getSuspendCase("reference", None)(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -82,14 +82,14 @@ class SuspendCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
     "return OK when user has right permissions" in {
       val result: Result = await(controller(caseWithStatusOPEN, Set(Permission.SUSPEND_CASE))
-        .getSuspendCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+        .getSuspendCase("reference", None)(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.OK
     }
 
     "redirect unauthorised when does not have right permissions" in {
       val result: Result = await(controller(caseWithStatusNEW, Set.empty)
-        .getSuspendCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+        .getSuspendCase("reference", None)(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
@@ -113,7 +113,7 @@ class SuspendCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       when(casesService.suspendCase(refEq(caseWithStatusOPEN), any[FileUpload], refEq("some-note"), any[Operator])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusSUSPENDED))
 
       val result: Result =
-        await(controller(caseWithStatusOPEN).postSuspendCase("reference")
+        await(controller(caseWithStatusOPEN).postSuspendCase("reference", None)
         (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileWithParams("text/plain", "note" -> Seq("some-note")))))
 
       status(result) shouldBe Status.SEE_OTHER
@@ -122,7 +122,7 @@ class SuspendCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
     "return to form on missing file" in {
       val result: Result =
-        await(controller(caseWithStatusOPEN).postSuspendCase("reference")
+        await(controller(caseWithStatusOPEN).postSuspendCase("reference", None)
         (newFakePOSTRequestWithCSRF(fakeApplication).withBody(anEmptyMultipartFileWithParams())))
 
       status(result) shouldBe Status.OK
@@ -131,7 +131,7 @@ class SuspendCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
     "return to form on missing form field" in {
       val result: Result =
-        await(controller(caseWithStatusOPEN).postSuspendCase("reference")
+        await(controller(caseWithStatusOPEN).postSuspendCase("reference", None)
         (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileWithParams("text/plain"))))
 
       status(result) shouldBe Status.OK
@@ -140,7 +140,7 @@ class SuspendCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
     "return to form on invalid file type" in {
       val result: Result =
-        await(controller(caseWithStatusOPEN).postSuspendCase("reference")
+        await(controller(caseWithStatusOPEN).postSuspendCase("reference", None)
         (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileWithParams("audio/mpeg", "note" -> Seq("some-note")))))
 
       status(result) shouldBe Status.OK
@@ -149,7 +149,7 @@ class SuspendCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
     "redirect unauthorised when does not have right permissions" in {
       val result: Result = await(controller(caseWithStatusOPEN, Set.empty)
-        .postSuspendCase("reference")
+        .postSuspendCase("reference", None)
         (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileWithParams("text/plain"))))
 
       status(result) shouldBe Status.SEE_OTHER

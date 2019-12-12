@@ -26,7 +26,13 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.models.ReferralReason._
 @import uk.gov.hmrc.tariffclassificationfrontend.views.forms.components.{CheckOption, RadioOption}
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.error_summary
-@(c: Case, form: Form[CaseReferral])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.ActiveTab
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.AttachmentsController
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.AppealCaseController
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.LiabilityController
+@import uk.gov.hmrc.tariffclassificationfrontend.views.CancelAction
+
+@(c: Case, form: Form[CaseReferral], activeTab: Option[ActiveTab] = None)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @inputTextContent() = {
         @input_text(label = "Give details of who you are referring this case to", field = form("referManually"), inputClass = Some("w-50"),
@@ -58,7 +64,7 @@
         <div class="column-full">
             <h2 class="heading-large mt-0">Change the status of this case to: Referred</h2>
 
-            @helper.form(action = ReferCaseController.postReferCase(c.reference), 'id -> "refer_case", 'enctype -> "multipart/form-data") {
+            @helper.form(action = ReferCaseController.postReferCase(c.reference, activeTab.map(_.name)), 'id -> "refer_case", 'enctype -> "multipart/form-data") {
                 @helper.CSRF.formField
 
                 @input_radiogroup(
@@ -89,7 +95,7 @@
                     id = "refer_case",
                     confirmText = "Confirm status change",
                     cancelText = "Cancel and return to case",
-                    cancelHref = CaseController.get(c.reference)
+                    cancelHref = CancelAction.cancelHref(activeTab, c.reference)
                 )
             }
 

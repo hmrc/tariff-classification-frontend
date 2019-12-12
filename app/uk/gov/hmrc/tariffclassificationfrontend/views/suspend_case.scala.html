@@ -23,7 +23,13 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.case_heading
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.statuses.status_change_upload
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.error_summary
-@(c: Case, form: Form[String])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.ActiveTab
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.AttachmentsController
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.AppealCaseController
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.LiabilityController
+@import uk.gov.hmrc.tariffclassificationfrontend.views.CancelAction
+
+@(c: Case, form: Form[String], activeTab: Option[ActiveTab] = None)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("page.title.suspend.case"))) {
 
@@ -35,7 +41,7 @@
         <div class="column-full">
             <h2 class="heading-large mt-0">Change the status of this case to: Suspended</h2>
 
-            @helper.form(action = SuspendCaseController.postSuspendCase(c.reference), 'id -> "suspend_case", 'enctype -> "multipart/form-data") {
+            @helper.form(action = SuspendCaseController.postSuspendCase(c.reference, activeTab.map(_.name)), 'id -> "suspend_case", 'enctype -> "multipart/form-data") {
                 @helper.CSRF.formField
 
                 @input_textarea(
@@ -52,7 +58,7 @@
                     id = "suspend_case",
                     confirmText = "Confirm status change",
                     cancelText = "Cancel and return to case",
-                    cancelHref = CaseController.get(c.reference)
+                    cancelHref = CancelAction.cancelHref(activeTab, c.reference)
                 )
             }
         </div>
