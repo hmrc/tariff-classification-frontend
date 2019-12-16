@@ -43,11 +43,11 @@ class ReferCaseController @Inject()(verify: RequestActions,
   override protected val config: AppConfig = appConfig
   override protected val caseService: CasesService = casesService
 
-  def getReferCase(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen
+  def getReferCase(reference: String, activeTab: Option[String]): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen
     verify.mustHave(Permission.REFER_CASE)).async { implicit request =>
     validateAndRenderView(
       c =>
-        successful(views.html.refer_case(c, ReferCaseForm.form))
+        successful(views.html.refer_case(c, ReferCaseForm.form, activeTab.map(ActiveTab(_))))
     )
   }
 
@@ -58,7 +58,7 @@ class ReferCaseController @Inject()(verify: RequestActions,
       renderView(c => c.status == REFERRED, c => successful(views.html.confirm_refer_case(c)))
     }
 
-  def postReferCase(reference: String): Action[MultipartFormData[Files.TemporaryFile]] = (verify.authenticated andThen verify.casePermissions(reference) andThen
+  def postReferCase(reference: String, activeTab: Option[String]): Action[MultipartFormData[Files.TemporaryFile]] = (verify.authenticated andThen verify.casePermissions(reference) andThen
     verify.mustHave(Permission.REFER_CASE)).async(parse.multipartFormData) { implicit request: AuthenticatedCaseRequest[MultipartFormData[Files.TemporaryFile]] =>
 
     val myForm = (checkReasonIsSelected andThen checkedOtherCommentNotEmpty) (ReferCaseForm.form.bindFromRequest())
@@ -88,7 +88,7 @@ class ReferCaseController @Inject()(verify: RequestActions,
       onFileValid = validFile => {
         myForm.fold(
           formWithErrors =>
-            getCaseAndRenderView(reference, c => successful(views.html.refer_case(c, formWithErrors))),
+            getCaseAndRenderView(reference, c => successful(views.html.refer_case(c, formWithErrors, activeTab.map(ActiveTab(_))))),
           referral => {
             validateAndRedirect(casesService.referCase(_, whoIsReferredTo(referral), sanityCheckReasons(referral), validFile,
               referral.note, request.operator).map(c => routes.ReferCaseController.confirmReferCase(c.reference)))

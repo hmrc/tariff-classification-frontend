@@ -44,10 +44,10 @@ class RejectCaseController @Inject()(verify: RequestActions,
   override protected val caseService: CasesService = casesService
   private val form: Form[String] = AddNoteForm.getForm("reject")
 
-  def getRejectCase(reference: String): Action[AnyContent] = (verify.authenticated
+  def getRejectCase(reference: String, activeTab: Option[String]): Action[AnyContent] = (verify.authenticated
     andThen verify.casePermissions(reference)
     andThen verify.mustHave(Permission.REJECT_CASE)).async { implicit request =>
-    validateAndRenderView(c => successful(views.html.reject_case(c, form)))
+    validateAndRenderView(c => successful(views.html.reject_case(c, form, activeTab.map(ActiveTab(_)))))
   }
 
 
@@ -58,14 +58,14 @@ class RejectCaseController @Inject()(verify: RequestActions,
       renderView(c => c.status == REJECTED, c => successful(views.html.confirm_rejected(c)))
     }
 
-  def postRejectCase(reference: String): Action[MultipartFormData[Files.TemporaryFile]] = (verify.authenticated andThen verify.casePermissions(reference) andThen
+  def postRejectCase(reference: String, activeTab: Option[String]): Action[MultipartFormData[Files.TemporaryFile]] = (verify.authenticated andThen verify.casePermissions(reference) andThen
     verify.mustHave(Permission.REJECT_CASE)).async(parse.multipartFormData) { implicit request: AuthenticatedCaseRequest[MultipartFormData[Files.TemporaryFile]] =>
 
     extractFile(key = "file-input")(
       onFileValid = validFile => {
         form.bindFromRequest().fold(
           formWithErrors =>
-            getCaseAndRenderView(reference, c => successful(views.html.reject_case(c, formWithErrors))),
+            getCaseAndRenderView(reference, c => successful(views.html.reject_case(c, formWithErrors, activeTab.map(ActiveTab(_))))),
           note => {
             validateAndRedirect(casesService.rejectCase(_, validFile, note, request.operator).map(c => routes.RejectCaseController.confirmRejectCase(c.reference)))
           }

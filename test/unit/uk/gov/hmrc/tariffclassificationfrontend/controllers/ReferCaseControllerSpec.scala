@@ -102,7 +102,7 @@ class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   "Refer Case" should {
 
     "return OK and HTML content type" in {
-      val result: Result = await(controller(caseWithStatusOPEN).getReferCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+      val result: Result = await(controller(caseWithStatusOPEN).getReferCase("reference", None)(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -112,13 +112,13 @@ class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
     "return OK when user has right permissions" in {
       val result: Result = await(controller(caseWithStatusOPEN, Set(Permission.REFER_CASE))
-        .getReferCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+        .getReferCase("reference", None)(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.OK
     }
 
     "redirect unauthorised when does not have right permissions" in {
-      val result: Result = await(controller(caseWithStatusNEW, Set.empty).getReferCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+      val result: Result = await(controller(caseWithStatusNEW, Set.empty).getReferCase("reference", None)(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
@@ -132,7 +132,7 @@ class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       when(casesService.referCase(refEq(caseWithStatusOPEN),any[String],any[Seq[ReferralReason]],any[FileUpload],
         any[String], any[Operator])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREFERRED))
 
-      val result: Result = await(controller(caseWithStatusOPEN).postReferCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)
+      val result: Result = await(controller(caseWithStatusOPEN).postReferCase("reference", None)(newFakePOSTRequestWithCSRF(fakeApplication)
         .withBody(aMultipartFileWithParams("referredTo" -> Seq("Applicant"), "reasons[0]" -> Seq(ReferralReason.REQUEST_SAMPLE.toString), "note" -> Seq("some-note")))))
 
       status(result) shouldBe Status.SEE_OTHER
@@ -143,7 +143,7 @@ class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       when(casesService.referCase(refEq(caseWithStatusOPEN), any[String],any[Seq[ReferralReason]],any[FileUpload],
         any[String], any[Operator])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREFERRED))
 
-      val result: Result = await(controller(caseWithStatusOPEN).postReferCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)
+      val result: Result = await(controller(caseWithStatusOPEN).postReferCase("reference", None)(newFakePOSTRequestWithCSRF(fakeApplication)
         .withBody(aMultipartFileWithParams("note" -> Seq("some-note")))))
 
       status(result) shouldBe Status.OK
@@ -156,7 +156,7 @@ class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       when(casesService.referCase(refEq(caseWithStatusOPEN), any[String],any[Seq[ReferralReason]],any[FileUpload],
         any[String], refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREFERRED))
 
-      val result: Result = await(controller(caseWithStatusOPEN).postReferCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)
+      val result: Result = await(controller(caseWithStatusOPEN).postReferCase("reference", None)(newFakePOSTRequestWithCSRF(fakeApplication)
         .withBody(aMultipartFileWithParams("referredTo" -> Seq("Applicant"), "note" -> Seq("some-note")))))
 
       status(result) shouldBe Status.OK
@@ -169,7 +169,7 @@ class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       when(casesService.referCase(refEq(caseWithStatusOPEN), any[String],any[Seq[ReferralReason]],any[FileUpload],
         any[String], refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREFERRED))
 
-      val result: Result = await(controller(caseWithStatusOPEN).postReferCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)
+      val result: Result = await(controller(caseWithStatusOPEN).postReferCase("reference", None)(newFakePOSTRequestWithCSRF(fakeApplication)
         .withBody(aMultipartFileWithParams("referredTo" -> Seq("Other"), "note" -> Seq("some-note")))))
 
       status(result) shouldBe Status.OK
@@ -183,7 +183,7 @@ class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       when(casesService.referCase(refEq(caseWithStatusOPEN), any[String],captor.capture(),any[FileUpload],
         any[String], any[Operator])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREFERRED))
 
-      val result: Result = await(controller(caseWithStatusOPEN).postReferCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)
+      val result: Result = await(controller(caseWithStatusOPEN).postReferCase("reference", None)(newFakePOSTRequestWithCSRF(fakeApplication)
         .withBody(aMultipartFileWithParams("referredTo" -> Seq("Lab Analyst"), "reasons[0]" -> Seq(ReferralReason.REQUEST_SAMPLE.toString),
           "reasons[1]" -> Seq(ReferralReason.REQUEST_MORE_INFO.toString), "note" -> Seq("some-note")))))
 
@@ -195,7 +195,7 @@ class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       when(casesService.referCase(refEq(caseWithStatusOPEN), any[String],any[Seq[ReferralReason]],any[FileUpload],
         any[String], any[Operator])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREFERRED))
 
-      val result: Result = await(controller(caseWithStatusOPEN).postReferCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)
+      val result: Result = await(controller(caseWithStatusOPEN).postReferCase("reference", None)(newFakePOSTRequestWithCSRF(fakeApplication)
         .withBody(aMultipartFileWithParams("referredTo" -> Seq("LAB")))))
 
       status(result) shouldBe Status.OK
@@ -205,7 +205,7 @@ class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     }
 
     "return to form on missing file" in {
-      val result: Result = await(controller(caseWithStatusOPEN).postReferCase("reference")
+      val result: Result = await(controller(caseWithStatusOPEN).postReferCase("reference", None)
       (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aEmptyMultipartFileWithParams())))
 
       status(result) shouldBe Status.OK
@@ -213,7 +213,7 @@ class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     }
 
     "return to form on wrong type of file" in {
-      val result: Result = await(controller(caseWithStatusOPEN).postReferCase("reference")
+      val result: Result = await(controller(caseWithStatusOPEN).postReferCase("reference", None)
       (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileOfType("audio/mpeg"))))
 
       status(result) shouldBe Status.OK
@@ -221,7 +221,7 @@ class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     }
 
     "return to form on file size too large" in {
-      val result: Result = await(controller(caseWithStatusOPEN).postReferCase("reference")
+      val result: Result = await(controller(caseWithStatusOPEN).postReferCase("reference", None)
       (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileOfLargeSize)))
 
       status(result) shouldBe Status.OK
@@ -230,7 +230,7 @@ class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
     "redirect unauthorised when does not have right permissions" in {
       val result: Result = await(controller(caseWithStatusNEW, Set.empty)
-        .postReferCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)
+        .postReferCase("reference", None)(newFakePOSTRequestWithCSRF(fakeApplication)
           .withBody(aMultipartFileWithParams("referredTo" -> Seq("APPLICANT"), "reason" -> Seq(ReferralReason.REQUEST_SAMPLE.toString), "note" -> Seq("some-note")))))
 
       status(result) shouldBe Status.SEE_OTHER

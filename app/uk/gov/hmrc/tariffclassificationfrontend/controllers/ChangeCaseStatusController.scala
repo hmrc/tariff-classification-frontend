@@ -52,9 +52,9 @@ class ChangeCaseStatusController @Inject()(verify: RequestActions,
         hasErrors => Ok(change_case_status(request.`case`, hasErrors, activeTab.map(ActiveTab(_)))),
         {
           case CaseStatusRadioInput.Complete        => Redirect(routes.CompleteCaseController.completeCase(reference))
-          case CaseStatusRadioInput.Refer           => Redirect(routes.ReferCaseController.getReferCase(reference))
-          case CaseStatusRadioInput.Reject          => Redirect(routes.RejectCaseController.getRejectCase(reference))
-          case CaseStatusRadioInput.Suspend         => Redirect(routes.SuspendCaseController.getSuspendCase(reference))
+          case CaseStatusRadioInput.Refer           => Redirect(routes.ReferCaseController.getReferCase(reference, activeTab))
+          case CaseStatusRadioInput.Reject          => Redirect(routes.RejectCaseController.getRejectCase(reference, activeTab))
+          case CaseStatusRadioInput.Suspend         => Redirect(routes.SuspendCaseController.getSuspendCase(reference, activeTab))
           case CaseStatusRadioInput.MoveBackToQueue => Redirect(routes.ReassignCaseController.reassignCase(reference, request.uri))
         }
       )

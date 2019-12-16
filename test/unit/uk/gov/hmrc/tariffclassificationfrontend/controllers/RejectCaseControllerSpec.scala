@@ -101,7 +101,7 @@ class RejectCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
     "return OK and HTML content type" in {
 
-      val result: Result = await(controller(caseWithStatusOPEN).getRejectCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+      val result: Result = await(controller(caseWithStatusOPEN).getRejectCase("reference", None)(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -111,14 +111,14 @@ class RejectCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
     "return OK when user has right permissions" in {
       val result: Result = await(controller(caseWithStatusOPEN, Set(Permission.REJECT_CASE))
-        .getRejectCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+        .getRejectCase("reference", None)(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.OK
     }
 
     "redirect unauthorised when does not have right permissions" in {
       val result: Result = await(controller(caseWithStatusNEW, Set.empty)
-        .getRejectCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+        .getRejectCase("reference", None)(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
@@ -130,7 +130,7 @@ class RejectCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     "redirect to confirmation page when data filled in" in {
       when(casesService.rejectCase(refEq(caseWithStatusOPEN), any[FileUpload], any[String], any[Operator])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREJECTED))
 
-      val result: Result = await(controller(caseWithStatusOPEN).postRejectCase("reference")
+      val result: Result = await(controller(caseWithStatusOPEN).postRejectCase("reference", None)
       (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileWithParams("note" -> Seq("some-note")))))
 
       status(result) shouldBe Status.SEE_OTHER
@@ -138,7 +138,7 @@ class RejectCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     }
 
     "return to form on missing file" in {
-      val result: Result = await(controller(caseWithStatusOPEN).postRejectCase("reference")
+      val result: Result = await(controller(caseWithStatusOPEN).postRejectCase("reference", None)
       (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aEmptyMultipartFileWithParams())))
 
       status(result) shouldBe Status.OK
@@ -146,7 +146,7 @@ class RejectCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     }
 
     "return to form on wrong type of file" in {
-      val result: Result = await(controller(caseWithStatusOPEN).postRejectCase("reference")
+      val result: Result = await(controller(caseWithStatusOPEN).postRejectCase("reference", None)
       (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileOfType("audio/mpeg"))))
 
       status(result) shouldBe Status.OK
@@ -154,7 +154,7 @@ class RejectCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     }
 
     "return to form on file size too large" in {
-      val result: Result = await(controller(caseWithStatusOPEN).postRejectCase("reference")
+      val result: Result = await(controller(caseWithStatusOPEN).postRejectCase("reference", None)
       (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileOfLargeSize)))
 
       status(result) shouldBe Status.OK
@@ -162,7 +162,7 @@ class RejectCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     }
 
     "return to form on missing form field" in {
-      val result: Result = await(controller(caseWithStatusOPEN).postRejectCase("reference")
+      val result: Result = await(controller(caseWithStatusOPEN).postRejectCase("reference", None)
       (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileWithParams())))
 
       status(result) shouldBe Status.OK
@@ -170,7 +170,7 @@ class RejectCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     }
 
     "redirect unauthorised when does not have right permissions" in {
-      val result: Result = await(controller(caseWithStatusOPEN, Set.empty).postRejectCase("reference")
+      val result: Result = await(controller(caseWithStatusOPEN, Set.empty).postRejectCase("reference", None)
       (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileWithParams("note" -> Seq("some-note")))))
 
       status(result) shouldBe Status.SEE_OTHER
