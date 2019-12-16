@@ -21,7 +21,7 @@ import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterEach, Matchers, WordSpec}
-import play.api.http.{MimeTypes, Status}
+import play.api.http.Status
 import play.api.i18n.{DefaultLangs, DefaultMessagesApi}
 import play.api.mvc.Result
 import play.api.test.Helpers.{redirectLocation, _}
@@ -29,8 +29,6 @@ import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.CaseStatus
-import uk.gov.hmrc.tariffclassificationfrontend.models.Permission
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus, Operator, Permission}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.tariffclassificationfrontend.utils.Cases
@@ -50,6 +48,7 @@ class ReopenCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
   private val caseWithStatusOPEN = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.OPEN)
   private val caseWithStatusREFERRED = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.REFERRED)
+  private val caseWithStatusSUSPENDED = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.SUSPENDED)
 
   private implicit val mat: Materializer = fakeApplication.materializer
   private implicit val hc: HeaderCarrier = HeaderCarrier()
@@ -66,30 +65,41 @@ class ReopenCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     new RequestActionsWithPermissions(permission, c = requestCase), casesService, messageApi, appConfig)
 
 
-  "Confirm Reopen a Case" should {
+  "ReopenCaseControllerSpec" should {
 
-    "return OK and HTML content type" in {
+    "return 303 and redirect to applicant details (case_details page) when case is referred" in {
       when(casesService.reopenCase(refEq(caseWithStatusREFERRED), any[Operator])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusOPEN))
 
-      val result: Result = await(controller(caseWithStatusREFERRED).confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
+      val result: Result = await(controller(caseWithStatusREFERRED)
+        .confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
 
-      status(result) shouldBe Status.OK
-      contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
-      charsetOf(result) shouldBe Some("utf-8")
-      bodyOf(result) should include("This case has been reopened")
+      status(result) shouldBe Status.SEE_OTHER
+      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/applicant")
     }
 
-    "return OK when user has right permissions" in {
+    "return 303 and redirect to applicant details (case_details page) when case is suspended" in {
+      when(casesService.reopenCase(refEq(caseWithStatusSUSPENDED), any[Operator])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusOPEN))
+
+      val result: Result = await(controller(caseWithStatusSUSPENDED)
+        .confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
+
+      status(result) shouldBe Status.SEE_OTHER
+      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/applicant")
+    }
+
+    "return 303 when user has right permissions" in {
       when(casesService.reopenCase(any[Case], any[Operator])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusOPEN))
 
       val result: Result = await(controller(caseWithStatusREFERRED, Set(Permission.REOPEN_CASE))
         .confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
 
-      status(result) shouldBe Status.OK
+      status(result) shouldBe Status.SEE_OTHER
+      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/applicant")
     }
 
-    "redirect unauthorised when does not have right permissions" in {
-      val result: Result = await(controller(caseWithStatusREFERRED, Set.empty).confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
+    "redirect to unauthorised when user does not have the right permissions" in {
+      val result: Result = await(controller(caseWithStatusREFERRED, Set.empty)
+        .confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
