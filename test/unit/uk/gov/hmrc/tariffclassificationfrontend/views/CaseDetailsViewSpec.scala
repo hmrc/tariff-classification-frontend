@@ -135,6 +135,36 @@ class CaseDetailsViewSpec extends ViewSpec {
       val item: Element = doc.getElementById("reopen-case-button")
       item shouldNot containText("Reopen case")
     }
+
+    "show the Take off referral button if the case status is referral and the operator has the permission to reopen the case" in {
+
+      val myCase = aCase(withReference("reference"), withBTIApplication, withStatus(CaseStatus.REFERRED))
+      val doc = view(html.case_details(myCase, CaseDetailPage.APPLICATION_DETAILS, Html("html"))(requestWithPermissions(Permission.REOPEN_CASE), messages, appConfig))
+
+      val item: Element = doc.getElementById("take-off-referral-button")
+      item should containText("Take off referral")
+      item shouldNot containText("Change case status")
+    }
+
+    "not show the Take off referral button if the case status is not suspended" in {
+
+      val myCase = aCase(withReference("reference"), withBTIApplication, withStatus(CaseStatus.OPEN))
+      val doc = view(html.case_details(myCase, CaseDetailPage.APPLICATION_DETAILS, Html("html"))(requestWithPermissions(Permission.COMPLETE_CASE), messages, appConfig))
+
+      val item: Element = doc.getElementById("change-case-status-button")
+      item shouldNot containText("Take off referral")
+      item should containText("Change case status")
+
+    }
+
+    "not show the Take off referral if the case status is referral and the operator does not have the required permission" in {
+
+      val myCase = aCase(withReference("reference"), withBTIApplication, withStatus(CaseStatus.REFERRED))
+      val doc = view(html.case_details(myCase, CaseDetailPage.APPLICATION_DETAILS, Html("html"))(requestWithPermissions(Permission.VIEW_CASES), messages, appConfig))
+
+      val item: Element = doc.getElementById("take-off-referral-button")
+      item shouldNot containText("Take off referral")
+    }
   }
 
 }
