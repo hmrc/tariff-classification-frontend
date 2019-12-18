@@ -21,7 +21,7 @@ import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterEach, Matchers, WordSpec}
-import play.api.http.{MimeTypes, Status}
+import play.api.http.Status
 import play.api.i18n.{DefaultLangs, DefaultMessagesApi}
 import play.api.mvc.Result
 import play.api.test.Helpers.{redirectLocation, _}
@@ -29,8 +29,6 @@ import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatus.CaseStatus
-import uk.gov.hmrc.tariffclassificationfrontend.models.Permission
 import uk.gov.hmrc.tariffclassificationfrontend.models.{Case, CaseStatus, Operator, Permission}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 import uk.gov.tariffclassificationfrontend.utils.Cases
@@ -48,8 +46,12 @@ class ReopenCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   private val casesService = mock[CasesService]
   private val operator = mock[Operator]
 
-  private val caseWithStatusOPEN = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.OPEN)
-  private val caseWithStatusREFERRED = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.REFERRED)
+  private val btiCaseWithStatusOPEN = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.OPEN)
+  private val btiCaseWithStatusREFERRED = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.REFERRED)
+  private val btiCaseWithStatusSUSPENDED = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.SUSPENDED)
+
+  private val liabilityCaseWithStatusOpen = Cases.liabilityCaseExample.copy(reference = "reference", status = CaseStatus.OPEN)
+  private val liabilityCaseWithStatusSuspended = Cases.liabilityCaseExample.copy(reference = "reference", status = CaseStatus.SUSPENDED)
 
   private implicit val mat: Materializer = fakeApplication.materializer
   private implicit val hc: HeaderCarrier = HeaderCarrier()
@@ -66,30 +68,55 @@ class ReopenCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     new RequestActionsWithPermissions(permission, c = requestCase), casesService, messageApi, appConfig)
 
 
-  "Confirm Reopen a Case" should {
+  "ReopenCaseControllerSpec" should {
 
-    "return OK and HTML content type" in {
-      when(casesService.reopenCase(refEq(caseWithStatusREFERRED), any[Operator])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusOPEN))
+    "return 303 and redirect to applicant details (case_details page) for BTI when case is referred" in {
+      when(casesService.reopenCase(refEq(btiCaseWithStatusREFERRED), any[Operator])(any[HeaderCarrier]))
+        .thenReturn(successful(btiCaseWithStatusOPEN))
 
-      val result: Result = await(controller(caseWithStatusREFERRED).confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
-
-      status(result) shouldBe Status.OK
-      contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
-      charsetOf(result) shouldBe Some("utf-8")
-      bodyOf(result) should include("This case has been reopened")
-    }
-
-    "return OK when user has right permissions" in {
-      when(casesService.reopenCase(any[Case], any[Operator])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusOPEN))
-
-      val result: Result = await(controller(caseWithStatusREFERRED, Set(Permission.REOPEN_CASE))
+      val result: Result = await(controller(btiCaseWithStatusREFERRED)
         .confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
 
-      status(result) shouldBe Status.OK
+      status(result) shouldBe Status.SEE_OTHER
+      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/applicant")
     }
 
-    "redirect unauthorised when does not have right permissions" in {
-      val result: Result = await(controller(caseWithStatusREFERRED, Set.empty).confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
+    "return 303 and redirect to applicant details (case_details page) for BTI when case is suspended" in {
+      when(casesService.reopenCase(refEq(btiCaseWithStatusSUSPENDED), any[Operator])(any[HeaderCarrier]))
+        .thenReturn(successful(btiCaseWithStatusOPEN))
+
+      val result: Result = await(controller(btiCaseWithStatusSUSPENDED)
+        .confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
+
+      status(result) shouldBe Status.SEE_OTHER
+      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/applicant")
+    }
+
+    "return 303 and redirect to liability details (liability_details page) for liability when case is suspended" in {
+      when(casesService.reopenCase(refEq(liabilityCaseWithStatusSuspended), any[Operator])(any[HeaderCarrier]))
+        .thenReturn(successful(liabilityCaseWithStatusOpen))
+
+      val result: Result = await(controller(liabilityCaseWithStatusSuspended)
+        .confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
+
+      status(result) shouldBe Status.SEE_OTHER
+      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/liability")
+    }
+
+    "return 303 when user has right permissions" in {
+      when(casesService.reopenCase(any[Case], any[Operator])(any[HeaderCarrier]))
+        .thenReturn(successful(btiCaseWithStatusOPEN))
+
+      val result: Result = await(controller(btiCaseWithStatusREFERRED, Set(Permission.REOPEN_CASE))
+        .confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
+
+      status(result) shouldBe Status.SEE_OTHER
+      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/applicant")
+    }
+
+    "redirect to unauthorised when user does not have the right permissions" in {
+      val result: Result = await(controller(btiCaseWithStatusREFERRED, Set.empty)
+        .confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
