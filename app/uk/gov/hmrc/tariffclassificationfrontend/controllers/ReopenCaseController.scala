@@ -20,7 +20,7 @@ import javax.inject.{Inject, Singleton}
 import play.api.i18n.MessagesApi
 import play.api.mvc._
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
-import uk.gov.hmrc.tariffclassificationfrontend.models.Permission
+import uk.gov.hmrc.tariffclassificationfrontend.models.{ApplicationType, Permission}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -39,7 +39,11 @@ class ReopenCaseController @Inject()(verify: RequestActions,
       verify.casePermissions(reference) andThen
       verify.mustHave(Permission.REOPEN_CASE)).async { implicit request =>
       validateAndRedirect(_ => casesService.reopenCase(request.`case`, request.operator)
-        .map(c => routes.CaseController.applicantDetails(c.reference)))
+        .map(request.`case`.application.`type` match {
+          case ApplicationType.BTI => c => routes.CaseController.applicantDetails(c.reference)
+          case ApplicationType.LIABILITY_ORDER => c => routes.LiabilityController.liabilityDetails(c.reference)
+        }
+        )
+      )
     }
-
 }
