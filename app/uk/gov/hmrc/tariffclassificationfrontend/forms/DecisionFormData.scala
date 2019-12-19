@@ -20,6 +20,7 @@ import javax.inject.Inject
 import play.api.data.Form
 import play.api.data.Forms._
 import uk.gov.hmrc.tariffclassificationfrontend.forms.FormConstraints._
+import uk.gov.hmrc.tariffclassificationfrontend.forms.mappings.Constraints
 import uk.gov.hmrc.tariffclassificationfrontend.models.Decision
 
 case class DecisionFormData(bindingCommodityCode: String = "",
@@ -31,7 +32,7 @@ case class DecisionFormData(bindingCommodityCode: String = "",
                             attachments: Seq[String] = Seq.empty,
                             explanation: String = "")
 
-class DecisionForm @Inject()(commodityCodeConstraints: CommodityCodeConstraints) {
+class DecisionForm @Inject()(commodityCodeConstraints: CommodityCodeConstraints) extends Constraints {
 
   val btiForm: Form[DecisionFormData] = Form[DecisionFormData](
     mapping(
@@ -46,57 +47,19 @@ class DecisionForm @Inject()(commodityCodeConstraints: CommodityCodeConstraints)
     )(DecisionFormData.apply)(DecisionFormData.unapply)
   )
 
+
   val btiCompleteForm: Form[DecisionFormData] = Form[DecisionFormData](
     mapping(
-      "bindingCommodityCode" -> nonEmptyText,
-      "goodsDescription" -> nonEmptyText,
-      "methodSearch" -> nonEmptyText,
-      "justification" -> nonEmptyText,
+      "bindingCommodityCode" -> text.verifying(commodityCodeConstraints.commodityCodeExistsInUKTradeTariff),
+      "goodsDescription" -> text.verifying(customNonEmpty("decision_form.error.itemDescription.required")),
+      "methodSearch" -> text.verifying(customNonEmpty("decision_form.error.searchesPerformed.required")),
+      "justification" -> text.verifying(customNonEmpty("decision_form.error.legalJustification.required")),
       "methodCommercialDenomination" -> text,
       "methodExclusion" -> text,
       "attachments" -> seq(text),
-      "explanation" -> nonEmptyText
+      "explanation" -> text.verifying(customNonEmpty("decision_form.error.decisionExplanation.required"))
     )(DecisionFormData.apply)(DecisionFormData.unapply)
   )
-
-  private def form2Decision(existingDecision: Decision): (String, String, String, String, String) => Decision = {
-    case (code, description, search, justification, exclusion) =>
-      existingDecision.copy(
-        bindingCommodityCode = code,
-        goodsDescription = description,
-        justification = justification,
-        methodSearch = Some(search).filter(_.nonEmpty),
-        methodExclusion = Some(exclusion).filter(_.nonEmpty)
-      )
-  }
-
-  private def decision2Form: Decision => Option[(String, String, String, String, String)] = d => Some((
-    d.bindingCommodityCode,
-    d.goodsDescription,
-    d.methodSearch.getOrElse(""),
-    d.justification,
-    d.methodExclusion.getOrElse("")
-  ))
-
-  def liabilityForm(existingDecision: Decision = Decision()): Form[Decision] = Form[Decision](
-    mapping(
-      "bindingCommodityCode" -> text.verifying(emptyOr(validCommodityCodeDecision, commodityCodeConstraints.commodityCodeExistsInUKTradeTariff): _*),
-      "goodsDescription" -> text,
-      "methodSearch" -> text,
-      "justification" -> text,
-      "methodExclusion" -> text
-    )(form2Decision(existingDecision))(decision2Form)
-  ).fillAndValidate(existingDecision)
-
-  def liabilityCompleteForm(existingDecision: Decision = Decision()): Form[Decision] = Form[Decision](
-    mapping(
-      "bindingCommodityCode" -> nonEmptyText.verifying(commodityCodeConstraints.commodityCodeExistsInUKTradeTariff),
-      "goodsDescription" -> nonEmptyText,
-      "methodSearch" -> nonEmptyText,
-      "justification" -> nonEmptyText,
-      "methodExclusion" -> text
-    )(form2Decision(existingDecision))(decision2Form)
-  ).fillAndValidate(existingDecision)
 
   def bindFrom: Option[Decision] => Option[Form[DecisionFormData]] = {
     _.map(mapFrom)
@@ -114,6 +77,45 @@ class DecisionForm @Inject()(commodityCodeConstraints: CommodityCodeConstraints)
       explanation = d.explanation.getOrElse("")
     )
   }
+
+  def liabilityForm(existingDecision: Decision = Decision()): Form[Decision] = Form[Decision](
+    mapping(
+      "bindingCommodityCode" -> text.verifying(emptyOr(validCommodityCodeDecision, commodityCodeConstraints.commodityCodeExistsInUKTradeTariff): _*),
+      "goodsDescription" -> text,
+      "methodSearch" -> text,
+      "justification" -> text,
+      "methodExclusion" -> text
+    )(liabilityForm2Decision(existingDecision))(decision2LiabilityForm)
+  ).fillAndValidate(existingDecision)
+
+  def liabilityCompleteForm(existingDecision: Decision = Decision()): Form[Decision] = Form[Decision](
+    mapping(
+      "bindingCommodityCode" -> nonEmptyText.verifying(commodityCodeConstraints.commodityCodeExistsInUKTradeTariff),
+      "goodsDescription" -> nonEmptyText,
+      "methodSearch" -> nonEmptyText,
+      "justification" -> nonEmptyText,
+      "methodExclusion" -> text
+    )(liabilityForm2Decision(existingDecision))(decision2LiabilityForm)
+  ).fillAndValidate(existingDecision)
+
+  private def liabilityForm2Decision(existingDecision: Decision): (String, String, String, String, String) => Decision = {
+    case (code, description, search, justification, exclusion) =>
+      existingDecision.copy(
+        bindingCommodityCode = code,
+        goodsDescription = description,
+        justification = justification,
+        methodSearch = Some(search).filter(_.nonEmpty),
+        methodExclusion = Some(exclusion).filter(_.nonEmpty)
+      )
+  }
+
+  private def decision2LiabilityForm: Decision => Option[(String, String, String, String, String)] = d => Some((
+    d.bindingCommodityCode,
+    d.goodsDescription,
+    d.methodSearch.getOrElse(""),
+    d.justification,
+    d.methodExclusion.getOrElse("")
+  ))
 }
 
 

@@ -115,4 +115,16 @@ class ConstraintsSpec extends WordSpec with MustMatchers with Constraints {
       result mustEqual Invalid("error.length", 10)
     }
   }
+
+  "customNonEmpty" must {
+    "return Valid for a string that length is greater than zero" in {
+      val result = customNonEmpty("error.key").apply("foo")
+      result mustEqual Valid
+    }
+
+    "return Invalid for a string that length is zero" in {
+      val result = customNonEmpty("custom.error.key").apply("")
+      result mustEqual Invalid("custom.error.key")
+    }
+  }
 }

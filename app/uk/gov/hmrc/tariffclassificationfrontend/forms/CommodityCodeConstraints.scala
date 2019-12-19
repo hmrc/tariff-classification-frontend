@@ -28,6 +28,7 @@ class CommodityCodeConstraints @Inject()(commodityCodeService: CommodityCodeServ
   private implicit val clock: Clock = appConfig.clock
 
   val commodityCodeExistsInUKTradeTariff: Constraint[String] = Constraint("constraints.commodityCodeExists")({
+    case s: String if s.isEmpty => Invalid("decision_form.error.bindingCommodityCode.required")
     case s: String if commodityCodeService.find(s).exists(_.isLive) =>
       Valid
     case s: String if commodityCodeService.find(s).exists(_.isExpired) =>
