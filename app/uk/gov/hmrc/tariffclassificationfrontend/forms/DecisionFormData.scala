@@ -19,6 +19,7 @@ package uk.gov.hmrc.tariffclassificationfrontend.forms
 import javax.inject.Inject
 import play.api.data.Form
 import play.api.data.Forms._
+import uk.gov.hmrc.play.mappers.StopOnFirstFail
 import uk.gov.hmrc.tariffclassificationfrontend.forms.FormConstraints._
 import uk.gov.hmrc.tariffclassificationfrontend.forms.mappings.Constraints
 import uk.gov.hmrc.tariffclassificationfrontend.models.Decision
@@ -50,7 +51,8 @@ class DecisionForm @Inject()(commodityCodeConstraints: CommodityCodeConstraints)
 
   val btiCompleteForm: Form[DecisionFormData] = Form[DecisionFormData](
     mapping(
-      "bindingCommodityCode" -> text.verifying(commodityCodeConstraints.commodityCodeExistsInUKTradeTariff),
+      "bindingCommodityCode" -> text
+        .verifying(StopOnFirstFail(commodityCodeConstraints.commodityCodeNonEmpty, commodityCodeConstraints.commodityCodeExistsInUKTradeTariff)),
       "goodsDescription" -> text.verifying(customNonEmpty("decision_form.error.itemDescription.required")),
       "methodSearch" -> text.verifying(customNonEmpty("decision_form.error.searchesPerformed.required")),
       "justification" -> text.verifying(customNonEmpty("decision_form.error.legalJustification.required")),

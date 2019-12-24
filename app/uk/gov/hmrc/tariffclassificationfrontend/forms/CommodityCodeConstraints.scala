@@ -27,8 +27,12 @@ import uk.gov.hmrc.tariffclassificationfrontend.service.CommodityCodeService
 class CommodityCodeConstraints @Inject()(commodityCodeService: CommodityCodeService, appConfig: AppConfig) {
   private implicit val clock: Clock = appConfig.clock
 
-  val commodityCodeExistsInUKTradeTariff: Constraint[String] = Constraint("constraints.commodityCodeExists")({
+  val commodityCodeNonEmpty: Constraint[String] = Constraint("constraints.commodityCodeExists")({
     case s: String if s.isEmpty => Invalid("decision_form.error.bindingCommodityCode.required")
+    case _ => Valid
+  })
+
+  val commodityCodeExistsInUKTradeTariff: Constraint[String] = Constraint("constraints.commodityCodeExists")({
     case s: String if commodityCodeService.find(s).exists(_.isLive) =>
       Valid
     case s: String if commodityCodeService.find(s).exists(_.isExpired) =>
