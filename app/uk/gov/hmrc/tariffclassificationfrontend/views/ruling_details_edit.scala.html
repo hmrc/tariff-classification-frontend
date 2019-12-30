@@ -34,9 +34,9 @@
     @defining(c.application.asBTI) { btiApp: BTIApplication =>
         <div class="form-group">
 
-            @error_summary(decisionForm.errors, startAtTabIndex)
-
             @case_heading(c)
+
+            @error_summary(decisionForm.errors, startAtTabIndex, "decision_form.error.title")
 
             <h3 class="heading-medium mb-1">@messages("case.decision.information-applicant")</h3>
 

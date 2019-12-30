@@ -18,7 +18,8 @@ package uk.gov.hmrc.tariffclassificationfrontend.forms
 
 import org.mockito.BDDMockito._
 import org.scalatest.mockito.MockitoSugar
-import play.api.data.validation.{Constraint, Valid}
+import play.api.data.FormError
+import play.api.data.validation.{Constraint, Invalid, Valid, ValidationResult}
 import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.tariffclassificationfrontend.models.Decision
 
@@ -41,63 +42,134 @@ class DecisionFormTest extends UnitSpec with MockitoSugar {
     "methodExclusion" -> Seq("exclusion")
   )
 
-  private val commodityCodeConstraints = mock[CommodityCodeConstraints]
-  private val formProvider = new DecisionForm(commodityCodeConstraints)
+  val validDecisionFormData = DecisionFormData(
+    bindingCommodityCode = "03000000000",
+    goodsDescription = "desc",
+    methodSearch = "method",
+    justification = "justified",
+    explanation = "some exp")
 
-  "Bind from request" should {
-    given(commodityCodeConstraints.commodityCodeExistsInUKTradeTariff).willReturn(Constraint[String]("error")(_ => Valid))
+  private def formProvider(commodityCodeConstraints: CommodityCodeConstraints = mock[CommodityCodeConstraints]) =
+    new DecisionForm(commodityCodeConstraints)
 
-    "Bind blank" when {
-      "using edit form" in {
-        val form = formProvider.liabilityForm(decision).bindFromRequest(params.mapValues(_ => Seq("")))
+  "liability form" should {
+    "bind the form from the request" when {
+      "provided with blank values" in {
+        val mockedCommodityCodeConstraint = mockCommodityCodeConstraint(Valid)
+        val form = formProvider(mockedCommodityCodeConstraint).liabilityForm(decision).bindFromRequest(params.mapValues(_ => Seq("")))
 
         form.hasErrors shouldBe false
       }
 
-      "using complete form" in {
-        val form = formProvider.liabilityCompleteForm(decision).bindFromRequest(params.mapValues(_ => Seq("")))
+      "provided with valid values" in {
+        val mockedCommodityCodeConstraint = mockCommodityCodeConstraint(Valid)
+        val form = formProvider(mockedCommodityCodeConstraint).liabilityForm(decision).bindFromRequest(params)
+
+        form.hasErrors shouldBe false
+        form.get shouldBe decision
+      }
+    }
+    "bind the form from a decision model" when {
+      "provided with with valid values" in {
+        val mockedCommodityCodeConstraint = mockCommodityCodeConstraint(Valid)
+        val form = formProvider(mockedCommodityCodeConstraint).liabilityForm(decision)
+
+        form.hasErrors shouldBe false
+        form.data shouldBe params.mapValues(v => v.head)
+      }
+    }
+  }
+  "liability complete form" should {
+    "bind the form from the request" when {
+      "provided with valid values" in {
+        val mockedCommodityCodeConstraint = mockCommodityCodeConstraint(Valid)
+        val form = formProvider(mockedCommodityCodeConstraint).liabilityCompleteForm(decision).bindFromRequest(params)
+
+        form.hasErrors shouldBe false
+        form.get shouldBe decision
+      }
+    }
+    "bind the form from a decision model" when {
+      "provided with valid values" in {
+        val mockedCommodityCodeConstraint = mockCommodityCodeConstraint(Valid)
+        val form = formProvider(mockedCommodityCodeConstraint).liabilityCompleteForm(decision)
+
+        form.hasErrors shouldBe false
+        form.data shouldBe params.mapValues(v => v.head)
+      }
+    }
+    "return validation errors" when {
+      "provided with invalid values" in {
+        val mockedCommodityCodeConstraint = mockCommodityCodeConstraint(Valid)
+        val form = formProvider(mockedCommodityCodeConstraint).liabilityCompleteForm(decision).bindFromRequest(params.mapValues(_ => Seq("")))
 
         form.hasErrors shouldBe true
         form.errors should have(size(4))
         form.errors.map(_.key) shouldBe Seq("bindingCommodityCode", "goodsDescription", "methodSearch", "justification")
       }
     }
-
-    "Bind valid form" when {
-      "using edit form" in {
-        val form = formProvider.liabilityForm(decision).bindFromRequest(params)
+  }
+  "bti complete form" should {
+    "bind data correctly" when {
+      "provided with valid values" in {
+        val mockedCommodityCodeConstraint = mockCommodityCodeConstraint()
+        val form = formProvider(mockedCommodityCodeConstraint).btiCompleteForm.fillAndValidate(validDecisionFormData)
 
         form.hasErrors shouldBe false
-        form.get shouldBe decision
       }
+    }
+    "return validation errors" when {
+      "all fields are empty" in {
+        val mockedCommodityCodeConstraint = mockCommodityCodeConstraint(validationResultForEmpty =
+          Invalid("decision_form.error.bindingCommodityCode.required"))
+        val form = formProvider(mockedCommodityCodeConstraint).btiCompleteForm.fillAndValidate(DecisionFormData())
 
-      "using complete form" in {
-        val form = formProvider.liabilityCompleteForm(decision).bindFromRequest(params)
+        form.hasErrors shouldBe true
 
-        form.hasErrors shouldBe false
-        form.get shouldBe decision
+        form.errors shouldBe Seq(FormError("bindingCommodityCode", "decision_form.error.bindingCommodityCode.required"),
+          FormError("goodsDescription", "decision_form.error.itemDescription.required"),
+          FormError("methodSearch", "decision_form.error.searchesPerformed.required"),
+          FormError("justification", "decision_form.error.legalJustification.required"),
+          FormError("explanation", "decision_form.error.decisionExplanation.required")
+        )
+      }
+    }
+    "return commodity code invalid error" when {
+      "provided by an invalid commodity code" in {
+        val mockedCommodityCodeConstraint = mockCommodityCodeConstraint(
+          validationResultForEmpty = Valid,
+          validationResultForExists = Invalid("mock.commodity.error"))
+
+        val form = formProvider(mockedCommodityCodeConstraint).btiCompleteForm.fillAndValidate(validDecisionFormData)
+
+        form.hasErrors shouldBe true
+
+        form.errors shouldBe Seq(FormError("bindingCommodityCode", "mock.commodity.error")
+        )
+      }
+    }
+    "return only commodity code empty validation error" when {
+      "validation fails both on commodityCodeNonEmpty and commodityCodeExistsInUKTradeTariff" in {
+        val mockedCommodityCodeConstraint = mockCommodityCodeConstraint(
+          validationResultForEmpty = Invalid("decision_form.error.bindingCommodityCode.required"),
+          validationResultForExists = Invalid("mock.commodity.error"))
+
+        val form = formProvider(mockedCommodityCodeConstraint).btiCompleteForm.fillAndValidate(validDecisionFormData)
+
+        form.hasErrors shouldBe true
+
+        form.errors shouldBe Seq(FormError("bindingCommodityCode", "decision_form.error.bindingCommodityCode.required")
+        )
       }
     }
   }
 
-  "Fill" should {
-    given(commodityCodeConstraints.commodityCodeExistsInUKTradeTariff).willReturn(Constraint[String]("error")(_ => Valid))
 
-    "populate by default" when {
-      "using edit form" in {
-        val form = formProvider.liabilityForm(decision)
-
-        form.hasErrors shouldBe false
-        form.data shouldBe params.mapValues(v => v.head)
-      }
-
-      "using complete form" in {
-        val form = formProvider.liabilityCompleteForm(decision)
-
-        form.hasErrors shouldBe false
-        form.data shouldBe params.mapValues(v => v.head)
-      }
-    }
+  def mockCommodityCodeConstraint(validationResultForEmpty: ValidationResult = Valid, validationResultForExists: ValidationResult = Valid) = {
+    val mockCommodityCodeConstraints = mock[CommodityCodeConstraints]
+    given(mockCommodityCodeConstraints.commodityCodeExistsInUKTradeTariff).willReturn(Constraint[String]("error")(_ => validationResultForExists))
+    given(mockCommodityCodeConstraints.commodityCodeNonEmpty).willReturn(Constraint[String]("error")(_ => validationResultForEmpty))
+    mockCommodityCodeConstraints
   }
 
 }

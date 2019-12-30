@@ -65,4 +65,12 @@ trait Constraints {
       case _ =>
         Invalid(errorKey, maximum)
     }
+
+  protected def customNonEmpty(errorKey: String): Constraint[String] =
+    Constraint {
+      case str if str.length > 0 =>
+        Valid
+      case _ =>
+        Invalid(errorKey)
+    }
 }
