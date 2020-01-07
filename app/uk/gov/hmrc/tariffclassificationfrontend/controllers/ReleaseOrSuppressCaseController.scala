@@ -23,7 +23,7 @@ import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.forms.CaseStatusRadioInputFormProvider
 import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatusRadioInput, Permission}
 import uk.gov.hmrc.tariffclassificationfrontend.service.CasesService
-import uk.gov.hmrc.tariffclassificationfrontend.views.html.change_case_status
+import uk.gov.hmrc.tariffclassificationfrontend.views.html.release_or_suppress
 
 import scala.concurrent.Future.successful
 
@@ -41,7 +41,7 @@ class ReleaseOrSuppressCaseController @Inject()(verify: RequestActions,
     (verify.authenticated andThen
       verify.casePermissions(reference) andThen
       verify.mustHaveOneOf(Seq(Permission.SUPPRESS_CASE, Permission.RELEASE_CASE))).async { implicit request =>
-      validateAndRenderView(c => successful(change_case_status(c, form, activeTab.map(ActiveTab(_)))))
+      validateAndRenderView(c => successful(release_or_suppress(c, form, activeTab.map(ActiveTab(_)))))
     }
 
   def onSubmit(reference: String, activeTab: Option[String] = None): Action[AnyContent] =
@@ -49,10 +49,10 @@ class ReleaseOrSuppressCaseController @Inject()(verify: RequestActions,
       verify.casePermissions(reference) andThen
       verify.mustHaveOneOf(Seq(Permission.SUPPRESS_CASE, Permission.RELEASE_CASE))) { implicit request =>
       form.bindFromRequest.fold(
-        hasErrors => Ok(change_case_status(request.`case`, hasErrors, activeTab.map(ActiveTab(_)))),
+        hasErrors => Ok(release_or_suppress(request.`case`, hasErrors, activeTab.map(ActiveTab(_)))),
         {
           case CaseStatusRadioInput.Release        => Redirect(routes.ReleaseCaseController.releaseCase(reference))
-          case CaseStatusRadioInput.Suppress       => Redirect(routes.SuppressCaseController.confirmSuppressCase(reference))
+          case CaseStatusRadioInput.Suppress       => Redirect(routes.SuppressCaseController.getSuppressCase(reference))
         }
       )
     }

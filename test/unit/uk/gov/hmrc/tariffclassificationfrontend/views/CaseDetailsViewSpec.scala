@@ -81,6 +81,32 @@ class CaseDetailsViewSpec extends ViewSpec {
 
     }
 
+    "show the change case status button if case is new and operator has permissions to release the case" in {
+
+      // When
+      val myCase = aCase(withReference("reference"), withBTIApplication, withStatus(CaseStatus.NEW))
+      val c = myCase.copy(decision = Some(completeDecision))
+      val doc = view(html.case_details(c, CaseDetailPage.APPLICATION_DETAILS, Html("html"), None)(requestWithPermissions(Permission.RELEASE_CASE), messages, appConfig))
+
+      // Then
+      val item: Element = doc.getElementById("release-or-suppress-button")
+      item should containText("Change case status")
+
+    }
+
+    "show the change case status button if case is new and operator has permissions to suppress the case" in {
+
+      // When
+      val myCase = aCase(withReference("reference"), withBTIApplication, withStatus(CaseStatus.NEW))
+      val c = myCase.copy(decision = Some(completeDecision))
+      val doc = view(html.case_details(c, CaseDetailPage.APPLICATION_DETAILS, Html("html"), None)(requestWithPermissions(Permission.SUPPRESS_CASE), messages, appConfig))
+
+      // Then
+      val item: Element = doc.getElementById("release-or-suppress-button")
+      item should containText("Change case status")
+
+    }
+
     "not show the complete button if a case status is completed" in {
 
       //When

@@ -118,7 +118,7 @@ class ReleaseOrSuppressCaseControllerSpec extends WordSpec
             newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("caseStatus" -> CaseStatusRadioInput.Suppress.toString)))
 
       status(result) shouldBe Status.SEE_OTHER
-      redirectLocation(result).get shouldBe SuppressCaseController.confirmSuppressCase("reference").url
+      redirectLocation(result).get shouldBe SuppressCaseController.getSuppressCase("reference").url
     }
 
 
