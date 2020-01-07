@@ -38,6 +38,9 @@
     @if(c.application.isBTI && c.status == CaseStatus.OPEN && request.hasPermission(Permission.COMPLETE_CASE)){
         @change_case_status_button("change-case-status", "Change case status", ChangeCaseStatusController.onPageLoad(c.reference, activeTab.map(_.name)))
     }
+    @if(c.application.isBTI && c.status == CaseStatus.NEW && request.hasPermission(Permission.RELEASE_CASE)){
+    @change_case_status_button("change-case-status", "Change case status", ChangeCaseStatusController.onPageLoad(c.reference, activeTab.map(_.name)))
+    }
     @if(c.application.isBTI && c.status == CaseStatus.SUSPENDED && request.hasPermission(Permission.REOPEN_CASE)) {
         @reopen_case_button(c)
     }

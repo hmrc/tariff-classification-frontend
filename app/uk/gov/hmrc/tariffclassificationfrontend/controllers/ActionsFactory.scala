@@ -86,4 +86,14 @@ class MustHavePermissionActionFactory {
         }
       }
     }
+
+  def apply[B[C] <: OperatorRequest[C]](permissions: Seq[Permission]): ActionFilter[B] =
+    new ActionFilter[B] {
+      override protected def filter[A](request: B[A]): Future[Option[Result]] = {
+        request match {
+          case r if permissions.foldLeft[Boolean](false){_ || r.hasPermission(_)} => successful(None)
+          case _ => successful(Some(Redirect(routes.SecurityController.unauthorized())))
+        }
+      }
+    }
 }

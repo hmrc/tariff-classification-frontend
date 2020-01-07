@@ -33,4 +33,6 @@ class RequestActions @Inject()(checkPermissionsAction: CheckCasePermissionsActio
     mustHave(Permission.VIEW_CASES) andThen caseExistsActionFactory(reference) andThen checkPermissionsAction
 
   def mustHave[B[A] <: OperatorRequest[A]](permission: Permission): ActionFunction[B, B] = mustHavePermissionActionFactory[B](permission)
+
+  def mustHaveOneOf[B[A] <: OperatorRequest[A]](permissions: Seq[Permission]): ActionFunction[B, B] = mustHavePermissionActionFactory[B](permissions)
 }

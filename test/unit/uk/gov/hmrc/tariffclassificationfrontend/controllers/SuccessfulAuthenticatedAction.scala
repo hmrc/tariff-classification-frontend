@@ -63,7 +63,15 @@ class ExistingCaseActionFactory(reference: String, requestCase: Case)
 }
 
 class HaveRightPermissionsActionFactory extends MustHavePermissionActionFactory {
+
   override def apply[B[C] <: OperatorRequest[_]](permission: Permission): ActionFilter[B] = {
+    new ActionFilter[B] {
+      override protected def filter[A](request: B[A]): Future[Option[Result]] = {
+        successful(None)
+      }
+    }
+  }
+  override def apply[B[C] <: OperatorRequest[_]](ppermissions: Seq[Permission]): ActionFilter[B] = {
     new ActionFilter[B] {
       override protected def filter[A](request: B[A]): Future[Option[Result]] = {
         successful(None)
