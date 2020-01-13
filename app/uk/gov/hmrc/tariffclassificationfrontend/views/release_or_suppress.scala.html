@@ -21,7 +21,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.components.initial_focus
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.components.input_radio
 @import uk.gov.hmrc.tariffclassificationfrontend.models.CaseStatusRadioInput
-@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.ChangeCaseStatusController
+@import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.ReleaseOrSuppressCaseController
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.components.confirm_or_cancel_buttons
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.CaseController
 @import uk.gov.hmrc.tariffclassificationfrontend.controllers.routes.AttachmentsController
@@ -37,13 +37,13 @@
     @case_heading(c)
     @error_summary(form.errors)
 
- @helper.form(action = ChangeCaseStatusController.onSubmit(c.reference, activeTab.map(_.name))) {
+ @helper.form(action = ReleaseOrSuppressCaseController.onSubmit(c.reference, activeTab.map(_.name))) {
 
     @helper.CSRF.formField
 
     @input_radio(field = form("caseStatus"),
                  legend = messages("change_case_status_legend"),
-                 inputs = CaseStatusRadioInput.changeCaseStatusOptions)
+                 inputs = CaseStatusRadioInput.releaseOrSuppressOptions)
 
     @confirm_or_cancel_buttons(
         id = "change_case_status",
