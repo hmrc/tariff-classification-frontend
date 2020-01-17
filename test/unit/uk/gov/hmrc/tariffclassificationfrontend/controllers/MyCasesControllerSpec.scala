@@ -68,7 +68,7 @@ class MyCasesControllerSpec extends UnitSpec with Matchers with WithFakeApplicat
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
       session(result).get(SessionKeys.backToQueuesLinkLabel) shouldBe Some("My cases")
-      session(result).get(SessionKeys.backToQueuesLinkUrl) shouldBe Some("/tariff-classification/queues/my-cases")
+      session(result).get(SessionKeys.backToQueuesLinkUrl) shouldBe Some("/manage-tariff-classifications/queues/my-cases")
       session(result).get(SessionKeys.backToSearchResultsLinkLabel) shouldBe None
       session(result).get(SessionKeys.backToSearchResultsLinkUrl) shouldBe None
     }

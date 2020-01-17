@@ -117,7 +117,7 @@ class SuspendCaseControllerSpec extends WordSpec with Matchers with UnitSpec
         (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileWithParams("text/plain", "note" -> Seq("some-note")))))
 
       status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/suspend/confirmation")
+      locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/reference/suspend/confirmation")
     }
 
     "return to form on missing file" in {
@@ -177,7 +177,7 @@ class SuspendCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
       charsetOf(result) shouldBe None
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference")
+      locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/reference")
     }
   }
 

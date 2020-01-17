@@ -35,10 +35,10 @@
             <p>The case status is still @c.status.toString.toLowerCase. </p>
             <h3 class="heading-medium mt-0">Next steps</h3>
 
-            @if(originUrl.matches(".*/tariff-classification/cases/[0-9]+/activity.*")) {
+            @if(originUrl.matches(".*/manage-tariff-classifications/cases/[0-9]+/activity.*")) {
                 <p>Go to <a href="@MyCasesController.myCases()">@messages("cases.menu.my-cases")</a>.</p>
             } else {
-                @defining(".*/tariff-classification/queues/assigned/([0-9]+).*".r) { casesAssignedToUrlRegex: Regex =>
+                @defining(".*/manage-tariff-classifications/queues/assigned/([0-9]+).*".r) { casesAssignedToUrlRegex: Regex =>
                     @defining(casesAssignedToUrlRegex.findFirstMatchIn(originUrl)) { matched: Option[Regex.Match] =>
                         @if(matched.isDefined) {
                             <p>Go to <a href="@AssignedCasesController.assignedCasesFor(matched.get.group(1),0)">Assigned cases</a>.</p>

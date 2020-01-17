@@ -138,7 +138,7 @@ class CancelRulingControllerSpec extends WordSpec with Matchers with UnitSpec
         .withBody(aMultipartFileWithParams("reason" -> Seq("ANNULLED"), "note" -> Seq("some-note")))))
 
       status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/tariff-classification/cases/1/ruling/cancel/confirmation")
+      locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/1/ruling/cancel/confirmation")
     }
 
     "display required field when failing to submit reason" in {

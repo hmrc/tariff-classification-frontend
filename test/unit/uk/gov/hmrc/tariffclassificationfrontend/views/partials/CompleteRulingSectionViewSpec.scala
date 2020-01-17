@@ -75,7 +75,7 @@ class CompleteRulingSectionViewSpec extends ViewSpec with MockitoSugar {
       // Then
       doc shouldNot containElementWithID("complete-case-button-disabled")
       doc should containElementWithID("complete-case-button")
-      doc.getElementById("complete-case-button") should haveAttribute("href", "/tariff-classification/cases/1/complete")
+      doc.getElementById("complete-case-button") should haveAttribute("href", "/manage-tariff-classifications/cases/1/complete")
     }
 
     "not render for cases with no decision" in {

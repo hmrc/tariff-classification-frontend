@@ -28,11 +28,11 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.error_summary
 @(form: Form[LiabilityOrder])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("page.title.create_liability"))) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.create_liability.h1"))) {
 
     @error_summary(form.errors)
 
-    <h1 id="create_liability-heading" class="heading-xlarge">Liability information</h1>
+    <h1 id="create_liability-heading" class="heading-xlarge">@messages("page.title.create_liability.h1")</h1>
 
     @helper.form(action = routes.CreateLiabilityController.post(), 'id -> "create_liability-form") {
         @helper.CSRF.formField
@@ -47,7 +47,7 @@
 
         @input_radiogroup(
             field = form("liability-status"),
-            label = Some("Is this a live liability?"),
+            label = Some(messages("page.title.create_liability")),
             labelClass = Some("heading-large"),
             options = Seq(
                 RadioOption(LiabilityStatus.LIVE.toString, "Yes, this is a live liability"),

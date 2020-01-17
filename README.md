@@ -25,7 +25,7 @@ The Front End for the internal Operator Service for reviewing & determining BTI 
 
 Finally Run `sbt run"` to boot the app
 
-Open `http://localhost:9000/tariff-classification-frontend`
+Open `http://localhost:9000/manage-tariff-classifications-frontend`
  
 See [Binding Tariff Classification](https://github.com/hmrc/binding-tariff-classification) for info on how to set up test data
 
@@ -35,7 +35,7 @@ This application runs on port 9581
 
 Run `sm --start TARIFF_CLASSIFICATION_FRONTEND -r`
 
-Open `http://localhost:9581/tariff-classification`
+Open `http://localhost:9581/manage-tariff-classifications`
 
 ### PDF Generator Service
 This service requires the installation of some dependencies before it can be run using Service Manager.  See [Pdf Generator Service](https://github.com/hmrc/pdf-generator-service).

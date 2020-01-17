@@ -134,7 +134,7 @@ class RejectCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileWithParams("note" -> Seq("some-note")))))
 
       status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/reject/confirmation")
+      locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/reference/reject/confirmation")
     }
 
     "return to form on missing file" in {

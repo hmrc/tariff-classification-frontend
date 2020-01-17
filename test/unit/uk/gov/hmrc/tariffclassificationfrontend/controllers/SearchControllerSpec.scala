@@ -123,7 +123,7 @@ class SearchControllerSpec extends UnitSpec with Matchers with WithFakeApplicati
       contentAsString(result) should include("advanced_search_results")
       session(result).get(SessionKeys.backToSearchResultsLinkLabel) shouldBe Some("search results")
       session(result).get(SessionKeys.backToSearchResultsLinkUrl) shouldBe
-        Some("/tariff-classification/search?addToSearch=false&trader_name=trader&commodity_code=00&page=2#advanced_search_keywords")
+        Some("/manage-tariff-classifications/search?addToSearch=false&trader_name=trader&commodity_code=00&page=2#advanced_search_keywords")
     }
 
     "render errors if form invalid" in {

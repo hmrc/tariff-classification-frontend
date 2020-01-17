@@ -136,7 +136,7 @@ class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
         .withBody(aMultipartFileWithParams("referredTo" -> Seq("Applicant"), "reasons[0]" -> Seq(ReferralReason.REQUEST_SAMPLE.toString), "note" -> Seq("some-note")))))
 
       status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/refer/confirmation")
+      locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/reference/refer/confirmation")
     }
 
     "display required field when failing to submit referred to" in {

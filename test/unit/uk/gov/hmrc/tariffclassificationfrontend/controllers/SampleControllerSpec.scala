@@ -130,7 +130,7 @@ class SampleControllerSpec extends UnitSpec with Matchers
       verify(casesService).updateSampleStatus(refEq(c), refEq(Some(SampleStatus.DESTROYED)), any[Operator])(any[HeaderCarrier])
 
       status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/sample")
+      locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/reference/sample")
     }
 
     "redirect for unchanged status" in {
@@ -141,7 +141,7 @@ class SampleControllerSpec extends UnitSpec with Matchers
       verify(casesService, never()).updateSampleStatus(any[Case], any[Option[SampleStatus]], any[Operator])(any[HeaderCarrier])
 
       status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/sample")
+      locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/reference/sample")
     }
 
     "when error form re-displays with error message" in {
@@ -165,7 +165,7 @@ class SampleControllerSpec extends UnitSpec with Matchers
       (newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("status" -> "AWAITING")))
 
       status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/sample")
+      locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/reference/sample")
     }
 
     "redirect unauthorised when does not have right permissions" in {

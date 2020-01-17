@@ -24,7 +24,7 @@ trait IntegrationTest extends UnitSpec with GuiceOneServerPerSuite
 
   protected val ws: WSClient = app.injector.instanceOf[WSClient]
 
-  protected val baseUrl = s"http://localhost:$port/tariff-classification"
+  protected val baseUrl = s"http://localhost:$port/manage-tariff-classifications"
 
   protected def givenAuthSuccess(role: String = "manager"): Unit = {
 
