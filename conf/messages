@@ -333,6 +333,7 @@ page.title.ruling=Ruling details
 page.title.edit.ruling=Edit ruling details
 page.title.appeal=Appeal details
 page.title.advanced.search=Advanced search
+page.title.searchByCaseReference=Search by case reference
 page.title.case.not.found=Case not found
 page.title.refer.case=Refer this case
 page.title.case.referred=Case referred
@@ -386,3 +387,5 @@ page.title.case.queues.cars-liab = Cars Liability
 page.title.case.queues.elm-liab = ELM Liability
 page.title.case.queues.assigned-cases = Assigned cases
 page.title.case.queues.reports = Reports
+
+find.and.view.case.label = To find a case you can search by reference
