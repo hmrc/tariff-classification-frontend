@@ -9,6 +9,10 @@
   .w-95 {
     width: 95%;
   }
+
+  body #advanced_search-reset_button {
+    margin-top: 0px;
+  }
 }
 
 .column-three-quarters {
@@ -244,6 +248,10 @@ table tbody td[align="right"], table tbody th[align="right"], table thead th[ali
 
 .word-break {
   word-break: break-all;
+}
+
+#advanced_search-reset_button {
+  margin-top: 4px;
 }
 
 .secondary-button {
