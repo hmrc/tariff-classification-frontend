@@ -131,7 +131,7 @@ class ReassignCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result) shouldBe Some("utf-8")
-      bodyOf(result) should include("Select a queue to release this case")
+      bodyOf(result) should include("Select a queue")
     }
 
     "return Not Found and HTML content type on missing Queue" in {

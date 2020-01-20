@@ -176,7 +176,7 @@ class AttachmentsControllerSpec extends UnitSpec with Matchers with WithFakeAppl
       // Then
       status(result) shouldBe OK
       contentAsString(result) should include("error-summary")
-      contentAsString(result) should include("You must select a file")
+      contentAsString(result) should include("Select a file to upload")
     }
 
 
@@ -192,7 +192,7 @@ class AttachmentsControllerSpec extends UnitSpec with Matchers with WithFakeAppl
 
       // Then
       status(result) shouldBe OK
-      contentAsString(result) should include("You must select a file")
+      contentAsString(result) should include("Select a file to upload")
     }
 
     "upload a file higher than the size permitted shows expected error" in {

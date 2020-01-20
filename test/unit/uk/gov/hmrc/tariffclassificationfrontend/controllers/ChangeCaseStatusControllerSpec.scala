@@ -149,7 +149,7 @@ class ChangeCaseStatusControllerSpec extends WordSpec
           .onSubmit("reference")(
             newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("caseStatus" -> ""))
 
-      contentAsString(result) should include("Please select an option")
+      contentAsString(result) should include("Select a case status")
     }
   }
 }

@@ -25,7 +25,7 @@ class CaseStatusRadioInputFormProvider @Inject() extends Mappings {
 
   def apply(): Form[CaseStatusRadioInput] =
     Form(
-      "caseStatus" -> enumerable[CaseStatusRadioInput]("Please select an option")
+      "caseStatus" -> enumerable[CaseStatusRadioInput]("case.status.error")
     )
 
 }
