@@ -77,7 +77,7 @@ class SuspendCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result) shouldBe Some("utf-8")
-      bodyOf(result) should include("Suspend this case")
+      bodyOf(result) should include("Change case status to: Suspended")
     }
 
     "return OK when user has right permissions" in {
@@ -126,7 +126,7 @@ class SuspendCaseControllerSpec extends WordSpec with Matchers with UnitSpec
         (newFakePOSTRequestWithCSRF(fakeApplication).withBody(anEmptyMultipartFileWithParams())))
 
       status(result) shouldBe Status.OK
-      bodyOf(result) should include("Change the status of this case to: Suspended")
+      bodyOf(result) should include("Change case status to: Suspended")
     }
 
     "return to form on missing form field" in {
@@ -135,7 +135,7 @@ class SuspendCaseControllerSpec extends WordSpec with Matchers with UnitSpec
         (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileWithParams("text/plain"))))
 
       status(result) shouldBe Status.OK
-      bodyOf(result) should include("Change the status of this case to: Suspended")
+      bodyOf(result) should include("Change case status to: Suspended")
     }
 
     "return to form on invalid file type" in {
@@ -144,7 +144,7 @@ class SuspendCaseControllerSpec extends WordSpec with Matchers with UnitSpec
         (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileWithParams("audio/mpeg", "note" -> Seq("some-note")))))
 
       status(result) shouldBe Status.OK
-      bodyOf(result) should include("Change the status of this case to: Suspended")
+      bodyOf(result) should include("Change case status to: Suspended")
     }
 
     "redirect unauthorised when does not have right permissions" in {

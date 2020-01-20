@@ -33,7 +33,7 @@
 
     <div class="grid-row" id="div-cancel-ruling">
         <div class="column-full">
-            <h2 class="heading-large mt-0">Change the status of this case to: Cancelled</h2>
+            <h2 class="heading-large mt-0">@messages("change_case_status.to.cancelled")</h2>
 
             @helper.form(action = CancelRulingController.postCancelRuling(c.reference), 'id -> "cancel_ruling", 'enctype -> "multipart/form-data") {
                 @helper.CSRF.formField

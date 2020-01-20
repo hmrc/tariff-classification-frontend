@@ -39,7 +39,7 @@
 
     <div class="grid-row">
         <div class="column-full">
-            <h2 class="heading-large mt-0">Change the status of this case to: Suspended</h2>
+            <h2 class="heading-large mt-0">@messages("change_case_status.to.suspended")</h2>
 
             @helper.form(action = SuspendCaseController.postSuspendCase(c.reference, activeTab.map(_.name)), 'id -> "suspend_case", 'enctype -> "multipart/form-data") {
                 @helper.CSRF.formField

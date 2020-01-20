@@ -33,7 +33,7 @@
 
     <div class="grid-row">
         <div class="column-full">
-            <h2 class="heading-large mt-0">Change the status of this case to: Suppressed</h2>
+            <h2 class="heading-large mt-0">@messages("change_case_status.to.suppressed")</h2>
 
             @helper.form(action = SuppressCaseController.postSuppressCase(c.reference), 'id -> "suppress-case", 'enctype -> "multipart/form-data") {
                 @helper.CSRF.formField
