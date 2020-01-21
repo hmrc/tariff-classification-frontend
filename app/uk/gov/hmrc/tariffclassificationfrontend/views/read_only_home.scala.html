@@ -29,7 +29,7 @@
     <div id="read_only_home-search" class="form-group">
         @if(request.hasPermission(Permission.SEARCH)) {
             @search_box(
-                label = "To find a case you can search by reference",
+                label = messages("find.and.view.case.label"),
                 containerClass = "w-30"
             )
         }
