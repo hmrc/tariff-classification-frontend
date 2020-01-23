@@ -55,7 +55,7 @@ class RejectCaseSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body should include("Reject this case")
+      response.body should include("Change case status to: Rejected")
     }
 
     def shouldFail = {
