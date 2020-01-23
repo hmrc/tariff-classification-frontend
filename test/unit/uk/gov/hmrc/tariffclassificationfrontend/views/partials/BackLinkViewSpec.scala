@@ -49,7 +49,7 @@ class BackLinkViewSpec extends ViewSpec {
       // Then
       doc should containElementWithID("back-link")
       doc.getElementById("back-link") should haveTag("a")
-      doc.getElementById("back-link") should haveAttribute("href", "/tariff-classification")
+      doc.getElementById("back-link") should haveAttribute("href", "/manage-tariff-classifications")
       doc.getElementById("back-link") should containText(messages("errors.all.back"))
     }
 

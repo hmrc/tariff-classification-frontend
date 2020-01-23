@@ -106,7 +106,7 @@ class RejectCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result) shouldBe Some("utf-8")
-      bodyOf(result) should include("Reject this case")
+      bodyOf(result) should include("Change case status to: Rejected")
     }
 
     "return OK when user has right permissions" in {
@@ -134,7 +134,7 @@ class RejectCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileWithParams("note" -> Seq("some-note")))))
 
       status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/reject/confirmation")
+      locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/reference/reject/confirmation")
     }
 
     "return to form on missing file" in {
@@ -142,7 +142,7 @@ class RejectCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aEmptyMultipartFileWithParams())))
 
       status(result) shouldBe Status.OK
-      bodyOf(result) should include("Change the status of this case to: Rejected")
+      bodyOf(result) should include("Change case status to: Rejected")
     }
 
     "return to form on wrong type of file" in {
@@ -150,7 +150,7 @@ class RejectCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileOfType("audio/mpeg"))))
 
       status(result) shouldBe Status.OK
-      bodyOf(result) should include("Change the status of this case to: Rejected")
+      bodyOf(result) should include("Change case status to: Rejected")
     }
 
     "return to form on file size too large" in {
@@ -158,7 +158,7 @@ class RejectCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileOfLargeSize)))
 
       status(result) shouldBe Status.OK
-      bodyOf(result) should include("Change the status of this case to: Rejected")
+      bodyOf(result) should include("Change case status to: Rejected")
     }
 
     "return to form on missing form field" in {
@@ -166,7 +166,7 @@ class RejectCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileWithParams())))
 
       status(result) shouldBe Status.OK
-      bodyOf(result) should include("Change the status of this case to: Rejected")
+      bodyOf(result) should include("Change case status to: Rejected")
     }
 
     "redirect unauthorised when does not have right permissions" in {

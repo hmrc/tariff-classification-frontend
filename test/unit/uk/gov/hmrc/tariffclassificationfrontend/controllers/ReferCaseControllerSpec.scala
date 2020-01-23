@@ -107,7 +107,7 @@ class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result) shouldBe Some("utf-8")
-      bodyOf(result) should include("Refer this case")
+      bodyOf(result) should include("Change case status to: Referred")
     }
 
     "return OK when user has right permissions" in {
@@ -136,7 +136,7 @@ class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
         .withBody(aMultipartFileWithParams("referredTo" -> Seq("Applicant"), "reasons[0]" -> Seq(ReferralReason.REQUEST_SAMPLE.toString), "note" -> Seq("some-note")))))
 
       status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/refer/confirmation")
+      locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/reference/refer/confirmation")
     }
 
     "display required field when failing to submit referred to" in {
@@ -209,7 +209,7 @@ class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aEmptyMultipartFileWithParams())))
 
       status(result) shouldBe Status.OK
-      bodyOf(result) should include("Change the status of this case to: Referred")
+      bodyOf(result) should include("Change case status to: Referred")
     }
 
     "return to form on wrong type of file" in {
@@ -217,7 +217,7 @@ class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileOfType("audio/mpeg"))))
 
       status(result) shouldBe Status.OK
-      bodyOf(result) should include("Change the status of this case to: Referred")
+      bodyOf(result) should include("Change case status to: Referred")
     }
 
     "return to form on file size too large" in {
@@ -225,7 +225,7 @@ class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileOfLargeSize)))
 
       status(result) shouldBe Status.OK
-      bodyOf(result) should include("Change the status of this case to: Referred")
+      bodyOf(result) should include("Change case status to: Referred")
     }
 
     "redirect unauthorised when does not have right permissions" in {

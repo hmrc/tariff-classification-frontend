@@ -109,7 +109,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder
 
       // Then
       response.status shouldBe OK
-      response.body should include("ACT cases")
+      response.body should include("ACT BTI cases")
     }
 
     "redirect on auth failure" in {
@@ -147,7 +147,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder
 
       // Then
       response.status shouldBe OK
-      response.body should include("CAP cases")
+      response.body should include("CAP BTI cases")
     }
 
     "redirect on auth failure" in {
@@ -185,7 +185,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder
 
       // Then
       response.status shouldBe OK
-      response.body should include("Cars cases")
+      response.body should include("Cars BTI cases")
     }
 
     "redirect on auth failure" in {
@@ -223,7 +223,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder
 
       // Then
       response.status shouldBe OK
-      response.body should include("ELM cases")
+      response.body should include("ELM BTI cases")
     }
 
     "redirect on auth failure" in {

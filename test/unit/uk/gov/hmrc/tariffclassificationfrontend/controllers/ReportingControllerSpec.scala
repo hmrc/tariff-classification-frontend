@@ -142,7 +142,7 @@ class ReportingControllerSpec extends UnitSpec with Matchers with WithFakeApplic
       val result = await(controller(requiredPermissions).getReportCriteria("xyz",0)(req.request))
 
       status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/tariff-classification/reports")
+      locationOf(result) shouldBe Some("/manage-tariff-classifications/reports")
     }
 
     "Return Forbidden for Non-Manager" in {
@@ -233,7 +233,7 @@ class ReportingControllerSpec extends UnitSpec with Matchers with WithFakeApplic
       val result = await(controller(requiredPermissions).getReport("xyz")(req.request))
 
       status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/tariff-classification/reports")
+      locationOf(result) shouldBe Some("/manage-tariff-classifications/reports")
     }
 
     "Return Forbidden for Non-Manager" in {

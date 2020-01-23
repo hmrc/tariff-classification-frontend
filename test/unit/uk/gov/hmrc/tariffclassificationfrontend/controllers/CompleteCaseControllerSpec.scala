@@ -107,7 +107,7 @@ class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
         val result: Result = await(getController(c).completeCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
         status(result) shouldBe Status.SEE_OTHER
-        locationOf(result) shouldBe Some("/tariff-classification/cases/reference/complete/confirmation")
+        locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/reference/complete/confirmation")
       }
     }
 
@@ -176,7 +176,7 @@ class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       val result: Result = await(getController(validCaseWithStatusOPEN).postCompleteCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/complete/confirmation")
+      locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/reference/complete/confirmation")
     }
 
     "redirect to default page for non OPEN statuses" in {
@@ -246,7 +246,7 @@ class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
         .postCompleteCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/complete/confirmation")
+      locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/reference/complete/confirmation")
     }
 
     "redirect unauthorised when does not have right permissions" in {

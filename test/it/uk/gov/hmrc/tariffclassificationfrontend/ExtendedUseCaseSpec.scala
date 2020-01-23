@@ -26,7 +26,7 @@ class ExtendedUseCaseSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response: WSResponse = await(ws.url(s"http://localhost:$port/tariff-classification/cases/1/extended-use/status").get())
+      val response: WSResponse = await(ws.url(s"http://localhost:$port/manage-tariff-classifications/cases/1/extended-use/status").get())
 
       // Then
       response.status shouldBe OK
@@ -38,7 +38,7 @@ class ExtendedUseCaseSpec extends IntegrationTest with MockitoSugar {
       givenAuthFailed()
 
       // When
-      val response: WSResponse = await(ws.url(s"http://localhost:$port/tariff-classification/cases/1/extended-use/status").get())
+      val response: WSResponse = await(ws.url(s"http://localhost:$port/manage-tariff-classifications/cases/1/extended-use/status").get())
 
       // Then
       response.status shouldBe OK

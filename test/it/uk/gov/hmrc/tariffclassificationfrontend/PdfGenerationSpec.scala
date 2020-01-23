@@ -31,7 +31,7 @@ class PdfGenerationSpec extends IntegrationTest {
       )
 
       // When
-      val response: WSResponse = await(ws.url(s"http://localhost:$port/tariff-classification/pdf/application/$caseRef").get())
+      val response: WSResponse = await(ws.url(s"http://localhost:$port/manage-tariff-classifications/pdf/application/$caseRef").get())
 
       // Then
       response.status shouldBe OK
@@ -43,7 +43,7 @@ class PdfGenerationSpec extends IntegrationTest {
       givenAuthFailed()
 
       // When
-      val response: WSResponse = await(ws.url(s"http://localhost:$port/tariff-classification/pdf/application/$caseRef").get())
+      val response: WSResponse = await(ws.url(s"http://localhost:$port/manage-tariff-classifications/pdf/application/$caseRef").get())
 
       // Then
       response.status shouldBe OK
@@ -71,7 +71,7 @@ class PdfGenerationSpec extends IntegrationTest {
       )
 
       // When
-      val response: WSResponse = await(ws.url(s"http://localhost:$port/tariff-classification/pdf/ruling/$caseRef").get())
+      val response: WSResponse = await(ws.url(s"http://localhost:$port/manage-tariff-classifications/pdf/ruling/$caseRef").get())
 
       // Then
       response.status shouldBe OK
@@ -83,7 +83,7 @@ class PdfGenerationSpec extends IntegrationTest {
       givenAuthFailed()
 
       // When
-      val response: WSResponse = await(ws.url(s"http://localhost:$port/tariff-classification/pdf/ruling/$caseRef").get())
+      val response: WSResponse = await(ws.url(s"http://localhost:$port/manage-tariff-classifications/pdf/ruling/$caseRef").get())
 
       // Then
       response.status shouldBe OK

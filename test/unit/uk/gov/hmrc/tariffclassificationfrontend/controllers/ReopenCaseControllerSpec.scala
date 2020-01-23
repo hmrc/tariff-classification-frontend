@@ -78,7 +78,7 @@ class ReopenCaseControllerSpec extends WordSpec with Matchers with UnitSpec
         .confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/applicant")
+      locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/reference/applicant")
     }
 
     "return 303 and redirect to applicant details (case_details page) for BTI when case is suspended" in {
@@ -89,7 +89,7 @@ class ReopenCaseControllerSpec extends WordSpec with Matchers with UnitSpec
         .confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/applicant")
+      locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/reference/applicant")
     }
 
     "return 303 and redirect to liability details (liability_details page) for liability when case is suspended" in {
@@ -100,7 +100,7 @@ class ReopenCaseControllerSpec extends WordSpec with Matchers with UnitSpec
         .confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/liability")
+      locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/reference/liability")
     }
 
     "return 303 when user has right permissions" in {
@@ -111,7 +111,7 @@ class ReopenCaseControllerSpec extends WordSpec with Matchers with UnitSpec
         .confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/applicant")
+      locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/reference/applicant")
     }
 
     "redirect to unauthorised when user does not have the right permissions" in {
