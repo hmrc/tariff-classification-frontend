@@ -25,7 +25,7 @@ The Front End for the internal Operator Service for reviewing & determining BTI 
 
 Finally Run `sbt run"` to boot the app
 
-Open `http://localhost:9000/manage-tariff-classifications-frontend`
+Open `http://localhost:9000/tariff-classification-frontend`
  
 See [Binding Tariff Classification](https://github.com/hmrc/binding-tariff-classification) for info on how to set up test data
 
