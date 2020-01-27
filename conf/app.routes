@@ -78,8 +78,8 @@ POST        /cases/:reference/attachments/remove                @uk.gov.hmrc.tar
 GET         /cases/:reference/keywords                          @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.keywordsDetails(reference: String)
 POST        /cases/:reference/keywords                          @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.addKeyword(reference: String)
 
-GET         /cases/:reference/change-case-status                @uk.gov.hmrc.tariffclassificationfrontend.controllers.ChangeCaseStatusController.onPageLoad(reference: String, activeTab: Option[String] ?= None)
-POST        /cases/:reference/change-case-status                @uk.gov.hmrc.tariffclassificationfrontend.controllers.ChangeCaseStatusController.onSubmit(reference: String, activeTab: Option[String] ?= None)
+GET         /cases/:reference/change-case-status                @uk.gov.hmrc.tariffclassificationfrontend.controllers.ChangeCaseStatusController.onPageLoad(reference: String, activeTab: uk.gov.hmrc.tariffclassificationfrontend.controllers.ActiveTab)
+POST        /cases/:reference/change-case-status                @uk.gov.hmrc.tariffclassificationfrontend.controllers.ChangeCaseStatusController.onSubmit(reference: String, activeTab: uk.gov.hmrc.tariffclassificationfrontend.controllers.ActiveTab)
 
 GET         /cases/:reference/release-or-suppress-case          @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReleaseOrSuppressCaseController.onPageLoad(reference: String, activeTab: Option[String] ?= None)
 POST        /cases/:reference/release-or-suppress-case          @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReleaseOrSuppressCaseController.onSubmit(reference: String, activeTab: Option[String] ?= None)

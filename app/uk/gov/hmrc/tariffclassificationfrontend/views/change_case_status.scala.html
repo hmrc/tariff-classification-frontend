@@ -37,7 +37,7 @@
     @case_heading(c)
     @error_summary(form.errors)
 
- @helper.form(action = ChangeCaseStatusController.onSubmit(c.reference, activeTab.map(_.name))) {
+ @helper.form(action = ChangeCaseStatusController.onSubmit(c.reference, activeTab.get)) {
 
     @helper.CSRF.formField
 
