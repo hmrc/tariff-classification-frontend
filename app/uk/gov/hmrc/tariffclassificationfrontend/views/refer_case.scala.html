@@ -64,7 +64,7 @@
         <div class="column-full">
             <h2 class="heading-large mt-0">@messages("change_case_status.to.referred")</h2>
 
-            @helper.form(action = ReferCaseController.postReferCase(c.reference, activeTab.map(_.name)), 'id -> "refer_case", 'enctype -> "multipart/form-data") {
+            @helper.form(action = ReferCaseController.postReferCase(c.reference, activeTab), 'id -> "refer_case", 'enctype -> "multipart/form-data") {
                 @helper.CSRF.formField
 
                 @input_radiogroup(

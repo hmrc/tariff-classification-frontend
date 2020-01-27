@@ -37,24 +37,24 @@ class ChangeCaseStatusController @Inject()(verify: RequestActions,
 
   val form = new CaseStatusRadioInputFormProvider()()
 
-  def onPageLoad(reference: String, activeTab:ActiveTab): Action[AnyContent] =
+  def onPageLoad(reference: String, activeTab: Option[ActiveTab] = None): Action[AnyContent] =
     (verify.authenticated andThen
       verify.casePermissions(reference) andThen
       verify.mustHave(Permission.EDIT_RULING)).async { implicit request =>
-      validateAndRenderView(c => successful(change_case_status(c, form, Some(activeTab))))
+      validateAndRenderView(c => successful(change_case_status(c, form, activeTab)))
     }
 
-  def onSubmit(reference: String, activeTab: ActiveTab): Action[AnyContent] =
+  def onSubmit(reference: String, activeTab: Option[ActiveTab] = None): Action[AnyContent] =
     (verify.authenticated andThen
       verify.casePermissions(reference) andThen
       verify.mustHave(Permission.EDIT_RULING)) { implicit request =>
       form.bindFromRequest.fold(
-        hasErrors => Ok(change_case_status(request.`case`, hasErrors, Some(activeTab))),
+        hasErrors => Ok(change_case_status(request.`case`, hasErrors, activeTab)),
         {
           case CaseStatusRadioInput.Complete        => Redirect(routes.CompleteCaseController.completeCase(reference))
-          case CaseStatusRadioInput.Refer           => Redirect(routes.ReferCaseController.getReferCase(reference, Some(activeTab.name)))
-          case CaseStatusRadioInput.Reject          => Redirect(routes.RejectCaseController.getRejectCase(reference, Some(activeTab.name)))
-          case CaseStatusRadioInput.Suspend         => Redirect(routes.SuspendCaseController.getSuspendCase(reference, Some(activeTab.name)))
+          case CaseStatusRadioInput.Refer           => Redirect(routes.ReferCaseController.getReferCase(reference, activeTab))
+          case CaseStatusRadioInput.Reject          => Redirect(routes.RejectCaseController.getRejectCase(reference, activeTab))
+          case CaseStatusRadioInput.Suspend         => Redirect(routes.SuspendCaseController.getSuspendCase(reference, activeTab))
           case CaseStatusRadioInput.MoveBackToQueue => Redirect(routes.ReassignCaseController.reassignCase(reference, request.uri))
         }
       )
