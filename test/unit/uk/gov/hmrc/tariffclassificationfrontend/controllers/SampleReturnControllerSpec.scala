@@ -72,7 +72,7 @@ class SampleReturnControllerSpec extends UnitSpec with Matchers
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
-      contentAsString(result) should include("Change sample return")
+      contentAsString(result) should include("Should the sample be returned?")
     }
 
     "return OK when user has right permissions" in {
@@ -105,7 +105,7 @@ class SampleReturnControllerSpec extends UnitSpec with Matchers
       verify(casesService).updateSampleReturn(refEq(c), refEq(Some(SampleReturn.YES)), any[Operator])(any[HeaderCarrier])
 
       status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/sample")
+      locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/reference/sample")
     }
 
     "redirect for unchanged status" in {
@@ -116,7 +116,7 @@ class SampleReturnControllerSpec extends UnitSpec with Matchers
       verify(casesService, never()).updateSampleReturn(any[Case], any[Option[SampleReturn]], any[Operator])(any[HeaderCarrier])
 
       status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/sample")
+      locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/reference/sample")
     }
 
     "when error form re-displays with error message" in {
@@ -140,7 +140,7 @@ class SampleReturnControllerSpec extends UnitSpec with Matchers
       (newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("return" -> "NO")))
 
       status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/sample")
+      locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/reference/sample")
     }
 
     "redirect unauthorised when does not have right permissions" in {

@@ -23,7 +23,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{case_heading, error_summary}
 @(c: Case, form: Form[Option[SampleStatus]])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("page.title.change.liablity.sending.sample")), scriptElem = Some(initial_focus())) {
+@main(bodyClasses = None, customTitle = Some(messages("case.liability.provide-samples")), scriptElem = Some(initial_focus())) {
 
     @error_summary(form.errors)
 

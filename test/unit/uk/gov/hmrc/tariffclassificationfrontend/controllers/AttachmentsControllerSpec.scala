@@ -306,7 +306,7 @@ class AttachmentsControllerSpec extends UnitSpec with Matchers with WithFakeAppl
         (newFakePOSTRequestWithCSRF(fakeApplication)
           .withFormUrlEncodedBody("state" -> "true")))
 
-      redirectLocation(result) shouldBe Some("/tariff-classification/cases/1/attachments")
+      redirectLocation(result) shouldBe Some("/manage-tariff-classifications/cases/1/attachments")
     }
 
     "redirect to attachments tab when user selects `no`" in {
@@ -315,7 +315,7 @@ class AttachmentsControllerSpec extends UnitSpec with Matchers with WithFakeAppl
         (newFakePOSTRequestWithCSRF(fakeApplication)
           .withFormUrlEncodedBody("state" -> "false")))
 
-      redirectLocation(result) shouldBe Some("/tariff-classification/cases/1/attachments")
+      redirectLocation(result) shouldBe Some("/manage-tariff-classifications/cases/1/attachments")
     }
 
     "redirect back to confirm remove view on form error" in {

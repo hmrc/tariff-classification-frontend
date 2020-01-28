@@ -40,7 +40,7 @@ class AppealCaseSpec extends IntegrationTest with MockitoSugar {
 
     def shouldFail = {
       // When
-      val response: WSResponse = await(ws.url(s"http://localhost:$port/tariff-classification/cases/1/appeal").get())
+      val response: WSResponse = await(ws.url(s"http://localhost:$port/manage-tariff-classifications/cases/1/appeal").get())
 
       // Then
       response.status shouldBe OK
@@ -55,7 +55,7 @@ class AppealCaseSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response: WSResponse = await(ws.url(s"http://localhost:$port/tariff-classification/cases/1/appeal").get())
+      val response: WSResponse = await(ws.url(s"http://localhost:$port/manage-tariff-classifications/cases/1/appeal").get())
 
       // Then
       response.status shouldBe OK
@@ -95,7 +95,7 @@ class AppealCaseSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response: WSResponse = await(ws.url(s"http://localhost:$port/tariff-classification/cases/1/new-appeal").get())
+      val response: WSResponse = await(ws.url(s"http://localhost:$port/manage-tariff-classifications/cases/1/new-appeal").get())
 
       // Then
       response.status shouldBe OK
@@ -104,7 +104,7 @@ class AppealCaseSpec extends IntegrationTest with MockitoSugar {
 
     def shouldFail = {
       // When
-      val response: WSResponse = await(ws.url(s"http://localhost:$port/tariff-classification/cases/1/new-appeal").get())
+      val response: WSResponse = await(ws.url(s"http://localhost:$port/manage-tariff-classifications/cases/1/new-appeal").get())
 
       // Then
       response.status shouldBe OK

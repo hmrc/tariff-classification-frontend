@@ -44,7 +44,7 @@ class QueueViewSpec extends ViewSpec {
 
       val doc = view(html.queue(queues, queue1, Map.empty, Paged.empty[Case], "BTI")(request = requestWithPermissions(Permission.CREATE_CASES), messages, appConfig))
 
-      doc should containHtml("<title>page.title.case.queues.queue1_name</title>")
+      doc should containHtml("<title>page.title.case.queues.queue1_name cases - Manage applications for Binding Tariff Information rulings - GOV.UK</title>")
     }
 
     "render page with title applicable to selected liability queue" in {
@@ -52,7 +52,7 @@ class QueueViewSpec extends ViewSpec {
 
       val doc = view(html.queue(queues, queue1, Map.empty, Paged.empty[Case], "LIABILITY_ORDER")(request = requestWithPermissions(Permission.CREATE_CASES), messages, appConfig))
 
-      doc should containHtml("<title>page.title.case.queues.queue1_name-liab</title>")
+      doc should containHtml("<title>page.title.case.queues.queue1_name-liab cases - Manage applications for Binding Tariff Information rulings - GOV.UK</title>")
     }
 
     "not render create liability button when user does not have permission" in {
@@ -84,7 +84,7 @@ class QueueViewSpec extends ViewSpec {
 
       doc should containElementWithID("nav-menu-my-cases")
 
-      doc.getElementById("queue-name") should containText("Queue 1 Name cases")
+      doc.getElementById("queue-name") should containText("page.title.case.queues.queue1_name cases")
       doc should containText(messages("cases.table.empty"))
     }
 
@@ -106,7 +106,7 @@ class QueueViewSpec extends ViewSpec {
 
       doc should containElementWithID("nav-menu-my-cases")
 
-      doc.getElementById("queue-name") should containText("Queue 1 Name")
+      doc.getElementById("queue-name") should containText("page.title.case.queues.queue1_name")
       doc.getElementById("cases_list-table") should containText(case1.reference)
       doc.getElementById("cases_list-table") should containText(case1.status.toString)
       doc.getElementById("cases_list-table") should containText(case1.application.getType)

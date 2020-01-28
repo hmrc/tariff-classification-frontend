@@ -71,7 +71,7 @@ class QueuesControllerSpec extends UnitSpec with Matchers with WithFakeApplicati
       charset(result) shouldBe Some("utf-8")
       contentAsString(result) should include ("Queue Name")
       session(result).get(SessionKeys.backToQueuesLinkLabel) shouldBe Some("Queue Name cases")
-      session(result).get(SessionKeys.backToQueuesLinkUrl) shouldBe Some("/tariff-classification/queues/queue")
+      session(result).get(SessionKeys.backToQueuesLinkUrl) shouldBe Some("/manage-tariff-classifications/queues/queue")
       session(result).get(SessionKeys.backToSearchResultsLinkLabel) shouldBe None
       session(result).get(SessionKeys.backToSearchResultsLinkUrl) shouldBe None
     }
@@ -87,7 +87,7 @@ class QueuesControllerSpec extends UnitSpec with Matchers with WithFakeApplicati
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
       contentAsString(result) should include ("Queue Name")
-      session(result).get(SessionKeys.backToQueuesLinkUrl) shouldBe Some("/tariff-classification/queues/queue?caseType=LIABILITY_ORDER")
+      session(result).get(SessionKeys.backToQueuesLinkUrl) shouldBe Some("/manage-tariff-classifications/queues/queue?caseType=LIABILITY_ORDER")
     }
 
     "return 200 OK and HTML content type when Queue is not found" in {

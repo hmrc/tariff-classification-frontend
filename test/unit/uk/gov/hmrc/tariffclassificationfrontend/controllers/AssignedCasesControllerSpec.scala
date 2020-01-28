@@ -74,7 +74,7 @@ class AssignedCasesControllerSpec extends UnitSpec with Matchers with WithFakeAp
       charset(result) shouldBe Some("utf-8")
       contentAsString(result) should include ("Assigned cases")
       session(result).get(SessionKeys.backToQueuesLinkLabel) shouldBe Some("Assigned cases")
-      session(result).get(SessionKeys.backToQueuesLinkUrl) shouldBe Some("/tariff-classification/queues/assigned")
+      session(result).get(SessionKeys.backToQueuesLinkUrl) shouldBe Some("/manage-tariff-classifications/queues/assigned")
       session(result).get(SessionKeys.backToSearchResultsLinkLabel) shouldBe None
       session(result).get(SessionKeys.backToSearchResultsLinkUrl) shouldBe None
     }
@@ -99,7 +99,7 @@ class AssignedCasesControllerSpec extends UnitSpec with Matchers with WithFakeAp
       charset(result) shouldBe Some("utf-8")
       contentAsString(result) should include ("Assigned cases")
       session(result).get(SessionKeys.backToQueuesLinkLabel) shouldBe Some("Assigned cases")
-      session(result).get(SessionKeys.backToQueuesLinkUrl) shouldBe Some("/tariff-classification/queues/assigned/1/0")
+      session(result).get(SessionKeys.backToQueuesLinkUrl) shouldBe Some("/manage-tariff-classifications/queues/assigned/1/0")
       session(result).get(SessionKeys.backToSearchResultsLinkLabel) shouldBe None
       session(result).get(SessionKeys.backToSearchResultsLinkUrl) shouldBe None
     }
@@ -113,7 +113,7 @@ class AssignedCasesControllerSpec extends UnitSpec with Matchers with WithFakeAp
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
       contentAsString(result) should include ("Assigned to Test User")
-      session(result).get(SessionKeys.backToQueuesLinkUrl) shouldBe Some("/tariff-classification/queues/assigned/1/0")
+      session(result).get(SessionKeys.backToQueuesLinkUrl) shouldBe Some("/manage-tariff-classifications/queues/assigned/1/0")
       session(result).get(SessionKeys.backToSearchResultsLinkLabel) shouldBe None
       session(result).get(SessionKeys.backToSearchResultsLinkUrl) shouldBe None
     }

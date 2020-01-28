@@ -35,7 +35,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.components.confirm_or_cancel_buttons
 @(c: Case, form : Form[LiabilityOrder], startAtTabIndex : Option[Int] = None)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("edit liability"))) {
+@main(bodyClasses = None, customTitle = Some(messages("case.liability.edit.title"))) {
 
     @case_heading(c)
 

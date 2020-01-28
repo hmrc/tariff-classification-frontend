@@ -115,7 +115,7 @@ class ReassignCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       val result: Result = await(controller(caseWithStatusOPEN).reassignCase("reference", "origin")(requestWithQueue("queue")))
 
       status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/reassign-case/confirmation?origin=origin")
+      locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/reference/reassign-case/confirmation?origin=origin")
     }
 
     "show error message when no option is selected" in {
@@ -155,7 +155,7 @@ class ReassignCaseControllerSpec extends WordSpec with Matchers with UnitSpec
         .reassignCase("reference", "origin")(requestWithQueue("queue")))
 
       status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/reassign-case/confirmation?origin=origin")
+      locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/reference/reassign-case/confirmation?origin=origin")
     }
 
     "redirect unauthorised when does not have right permissions" in {
@@ -199,7 +199,7 @@ class ReassignCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       val result: Result = await(controller(caseWithStatusNEW).confirmReassignCase("reference", "origin")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference")
+      locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/reference")
     }
   }
 

@@ -36,7 +36,7 @@
 
 
 @govuk_wrapper(appConfig = appConfig,
-               title = customTitle.getOrElse("Tariff classification"),
+               title = customTitle.getOrElse(messages("site.service_name")) + " - " + messages("site.title.suffix"),
                mainClass = mainClass,
                bodyClasses = bodyClasses,
                sidebar = sidebar,

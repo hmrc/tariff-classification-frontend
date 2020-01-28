@@ -57,7 +57,7 @@ class ReferCaseSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body should include("Refer this case")
+      response.body should include("Change case status to: Referred")
     }
 
     def shouldFail = {

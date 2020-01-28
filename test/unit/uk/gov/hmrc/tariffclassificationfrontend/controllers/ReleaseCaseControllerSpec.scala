@@ -109,7 +109,7 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       val result: Result = await(controller(caseWithStatusNEW).releaseCaseToQueue("reference")(requestWithQueue("queue")))
 
       status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/release/confirmation")
+      locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/reference/release/confirmation")
     }
 
     "redirect to resource not found when the queue specified is not recognised" in {
@@ -143,7 +143,7 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       val result: Result = await(controller(caseWithStatusNEW, Set(Permission.RELEASE_CASE)).releaseCaseToQueue("reference")(requestWithQueue("queue")))
 
       status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/release/confirmation")
+      locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/reference/release/confirmation")
     }
 
 
@@ -191,7 +191,7 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
       charsetOf(result) shouldBe None
-      locationOf(result) shouldBe Some("/tariff-classification/cases/1")
+      locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/1")
     }
   }
 

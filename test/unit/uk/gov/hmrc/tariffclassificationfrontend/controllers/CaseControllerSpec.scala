@@ -208,7 +208,7 @@ class CaseControllerSpec extends UnitSpec with Matchers with WithFakeApplication
       given(eventService.addNote(refEq(aCase), refEq(aNote), refEq(operator), any[Clock])(any[HeaderCarrier])) willReturn successful(event)
 
       val result = await(controller(aCase).addNote(aCase.reference)(aValidForm))
-      locationOf(result) shouldBe Some("/tariff-classification/cases/1/activity")
+      locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/1/activity")
     }
 
     "displays an error when no case note is provided" in {

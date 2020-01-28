@@ -39,7 +39,7 @@ class AppealCaseTypeSpec extends IntegrationTest with MockitoSugar {
 
     def shouldFail = {
       // When
-      val response: WSResponse = await(ws.url(s"http://localhost:$port/tariff-classification/cases/1/new-appeal/ANY").get())
+      val response: WSResponse = await(ws.url(s"http://localhost:$port/manage-tariff-classifications/cases/1/new-appeal/ANY").get())
 
       // Then
       response.status shouldBe OK
@@ -55,7 +55,7 @@ class AppealCaseTypeSpec extends IntegrationTest with MockitoSugar {
 
       AppealType.values.foreach { appealType =>
         // When
-        val response: WSResponse = await(ws.url(s"http://localhost:$port/tariff-classification/cases/1/new-appeal/$appealType").get())
+        val response: WSResponse = await(ws.url(s"http://localhost:$port/manage-tariff-classifications/cases/1/new-appeal/$appealType").get())
 
         // Then
         response.status shouldBe OK

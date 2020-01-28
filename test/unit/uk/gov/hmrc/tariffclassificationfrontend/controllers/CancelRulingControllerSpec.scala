@@ -138,7 +138,7 @@ class CancelRulingControllerSpec extends WordSpec with Matchers with UnitSpec
         .withBody(aMultipartFileWithParams("reason" -> Seq("ANNULLED"), "note" -> Seq("some-note")))))
 
       status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/tariff-classification/cases/1/ruling/cancel/confirmation")
+      locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/1/ruling/cancel/confirmation")
     }
 
     "display required field when failing to submit reason" in {
@@ -159,7 +159,7 @@ class CancelRulingControllerSpec extends WordSpec with Matchers with UnitSpec
       (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aEmptyMultipartFileWithParams())))
 
       status(result) shouldBe Status.OK
-      bodyOf(result) should include("Change the status of this case to: Cancelled")
+      bodyOf(result) should include("Change case status to: Cancelled")
     }
 
     "return to form on wrong type of file" in {
@@ -167,7 +167,7 @@ class CancelRulingControllerSpec extends WordSpec with Matchers with UnitSpec
       (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileOfType("audio/mpeg"))))
 
       status(result) shouldBe Status.OK
-      bodyOf(result) should include("Change the status of this case to: Cancelled")
+      bodyOf(result) should include("Change case status to: Cancelled")
     }
 
     "return to form on file size too large" in {
@@ -175,7 +175,7 @@ class CancelRulingControllerSpec extends WordSpec with Matchers with UnitSpec
       (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileOfLargeSize)))
 
       status(result) shouldBe Status.OK
-      bodyOf(result) should include("Change the status of this case to: Cancelled")
+      bodyOf(result) should include("Change case status to: Cancelled")
     }
 
     "redirect unauthorised when does not have right permissions" in {

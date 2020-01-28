@@ -35,7 +35,7 @@ This application runs on port 9581
 
 Run `sm --start TARIFF_CLASSIFICATION_FRONTEND -r`
 
-Open `http://localhost:9581/tariff-classification`
+Open `http://localhost:9581/manage-tariff-classifications`
 
 ### PDF Generator Service
 This service requires the installation of some dependencies before it can be run using Service Manager.  See [Pdf Generator Service](https://github.com/hmrc/pdf-generator-service).

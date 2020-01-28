@@ -77,7 +77,7 @@ class SuppressCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result) shouldBe Some("utf-8")
-      bodyOf(result) should include("Change the status of this case to: Suppressed")
+      bodyOf(result) should include("Change case status to: Suppressed")
     }
 
     "return OK when user has right permissions" in {
@@ -118,7 +118,7 @@ class SuppressCaseControllerSpec extends WordSpec with Matchers with UnitSpec
              (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileWithParams("text/plain", "note" -> Seq("some-note")))))
 
       status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference/suppress/confirmation")
+      locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/reference/suppress/confirmation")
     }
 
     "return to form on missing file" in {
@@ -127,7 +127,7 @@ class SuppressCaseControllerSpec extends WordSpec with Matchers with UnitSpec
         (newFakePOSTRequestWithCSRF(fakeApplication).withBody(anEmptyMultipartFileWithParams())))
 
       status(result) shouldBe Status.OK
-      bodyOf(result) should include("Change the status of this case to: Suppressed")
+      bodyOf(result) should include("Change case status to: Suppressed")
     }
 
     "return to form on missing form field" in {
@@ -136,7 +136,7 @@ class SuppressCaseControllerSpec extends WordSpec with Matchers with UnitSpec
         (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileWithParams("text/plain"))))
 
       status(result) shouldBe Status.OK
-      bodyOf(result) should include("Change the status of this case to: Suppressed")
+      bodyOf(result) should include("Change case status to: Suppressed")
     }
 
     "return to form on invalid file type" in {
@@ -145,7 +145,7 @@ class SuppressCaseControllerSpec extends WordSpec with Matchers with UnitSpec
         (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileWithParams("audio/mpeg", "note" -> Seq("some-note")))))
 
       status(result) shouldBe Status.OK
-      bodyOf(result) should include("Change the status of this case to: Suppressed")
+      bodyOf(result) should include("Change case status to: Suppressed")
     }
 
     "redirect unauthorised when does not have right permissions" in {
@@ -179,7 +179,7 @@ class SuppressCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
       charsetOf(result) shouldBe None
-      locationOf(result) shouldBe Some("/tariff-classification/cases/reference")
+      locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/reference")
     }
   }
 
