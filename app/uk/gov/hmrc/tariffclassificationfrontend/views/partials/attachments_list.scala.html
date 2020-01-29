@@ -78,7 +78,10 @@
                                 caseRef.isDefined &&
                                 request.hasPermission(Permission.REMOVE_ATTACHMENTS)) {
                                 <td id="@{id}-row-@{index}-remove">
-                                    <a @if(startAtTabIndex.isDefined){tabindex="@{startAtTabIndex.get+2+(2*index)}"} id="@{id}-row-@{index}-remove-link" href="@AttachmentsController.removeAttachment(caseRef.get, file.id, file.fileName)">Remove</a>
+                                    <a @if(startAtTabIndex.isDefined){tabindex="@{startAtTabIndex.get+2+(2*index)}"} id="@{id}-row-@{index}-remove-link" href="@AttachmentsController.removeAttachment(caseRef.get, file.id, file.fileName)">
+                                        <span>@messages("case.attachment.remove.file.text")</span>
+                                        <span class="visually-hidden">@messages("case.attachment.remove.file.hidden.text",file.fileName)</span>
+                                    </a>
                                 </td>
                             }
                         </tr>
