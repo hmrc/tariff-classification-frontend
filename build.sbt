@@ -1,4 +1,5 @@
 import play.sbt.PlayScala
+import play.sbt.routes.RoutesKeys
 import sbt.Tests.{Group, SubProcess}
 import uk.gov.hmrc.DefaultBuildSettings._
 import uk.gov.hmrc.SbtArtifactory
@@ -38,6 +39,9 @@ lazy val microservice = (project in file("."))
     resourceDirectory in Test := baseDirectory.value / "test" / "resources",
     addTestReportOption(Test, "test-reports")
   )
+  .settings(RoutesKeys.routesImport += "uk.gov.hmrc.tariffclassificationfrontend.models.Sort")
+  .settings(RoutesKeys.routesImport += "uk.gov.hmrc.tariffclassificationfrontend.controllers.ActiveTab")
+  .settings(RoutesKeys.routesImport += "uk.gov.hmrc.tariffclassificationfrontend.models.Search")
   .configs(IntegrationTest)
   .settings(inConfig(TemplateItTest)(Defaults.itSettings): _*)
   .settings(
