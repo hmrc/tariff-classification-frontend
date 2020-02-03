@@ -42,16 +42,16 @@ class ReleaseCaseController @Inject()(verify: RequestActions,
   override protected val config: AppConfig = appConfig
   override protected val caseService: CasesService = casesService
 
-  def releaseCase(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen
+  def releaseCase(reference: String, activeTab: Option[ActiveTab]): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen
     verify.mustHave(Permission.RELEASE_CASE)).async { implicit request =>
-    releaseCase(releaseCaseForm, reference)
+    releaseCase(releaseCaseForm, reference, activeTab)
   }
 
-  def releaseCaseToQueue(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen
+  def releaseCaseToQueue(reference: String, activeTab: Option[ActiveTab]): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen
     verify.mustHave(Permission.RELEASE_CASE)).async { implicit request =>
 
     def onInvalidForm(formWithErrors: Form[String]): Future[Result] = {
-      releaseCase(formWithErrors, reference)
+      releaseCase(formWithErrors, reference, activeTab)
     }
 
     def onValidForm(queueSlug: String): Future[Result] = {
@@ -68,9 +68,9 @@ class ReleaseCaseController @Inject()(verify: RequestActions,
     releaseCaseForm.bindFromRequest.fold(onInvalidForm, onValidForm)
   }
 
-  private def releaseCase(f: Form[String], caseRef: String)
+  private def releaseCase(f: Form[String], caseRef: String, activeTab: Option[ActiveTab])
                          (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
-    getCaseAndRenderView(caseRef, c => queueService.getNonGateway.map(views.html.release_case(c, f, _)))
+    getCaseAndRenderView(caseRef, c => queueService.getNonGateway.map(views.html.release_case(c, f, _, activeTab)))
   }
 
   def confirmReleaseCase(reference: String): Action[AnyContent] =
