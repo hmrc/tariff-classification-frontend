@@ -37,10 +37,10 @@
     @case_heading(c, displayBackLink = true)
 
     @if(c.application.isBTI && c.status == CaseStatus.OPEN && request.hasPermission(Permission.COMPLETE_CASE)){
-        @change_case_status_button("change-case-status", "Change case status", ChangeCaseStatusController.onPageLoad(c.reference, activeTab.map(_.name)))
+        @change_case_status_button("change-case-status", "Change case status", ChangeCaseStatusController.onPageLoad(c.reference, activeTab))
     }
     @if(c.application.isBTI && c.status == CaseStatus.NEW && (request.hasPermission(Permission.RELEASE_CASE) || request.hasPermission(Permission.SUPPRESS_CASE))){
-        @change_case_status_button("release-or-suppress", "Change case status", ReleaseOrSuppressCaseController.onPageLoad(c.reference, activeTab.map(_.name)))
+        @change_case_status_button("release-or-suppress", "Change case status", ReleaseOrSuppressCaseController.onPageLoad(c.reference, activeTab))
     }
     @if(c.application.isBTI && c.status == CaseStatus.SUSPENDED && request.hasPermission(Permission.REOPEN_CASE)) {
         @reopen_case_button(c)

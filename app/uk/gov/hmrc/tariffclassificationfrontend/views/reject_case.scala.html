@@ -41,7 +41,7 @@
         <div class="column-full">
             <h2 class="heading-large mt-0">@messages("change_case_status.to.rejected")</h2>
 
-            @helper.form(action = RejectCaseController.postRejectCase(c.reference, activeTab.map(_.name)),
+            @helper.form(action = RejectCaseController.postRejectCase(c.reference, activeTab),
             'enctype -> "multipart/form-data",
             'id -> "reject_case") {
 

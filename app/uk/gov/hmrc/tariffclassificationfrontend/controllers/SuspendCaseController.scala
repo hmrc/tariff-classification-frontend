@@ -43,16 +43,16 @@ class SuspendCaseController @Inject()(verify: RequestActions,
   override protected val caseService: CasesService = casesService
   private val form: Form[String] = AddNoteForm.getForm("suspend")
 
-  def getSuspendCase(reference: String, activeTab: Option[String]): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.SUSPEND_CASE)).async { implicit request =>
-    validateAndRenderView(c => successful(views.html.suspend_case(c, form, activeTab.map(ActiveTab(_)))))
+  def getSuspendCase(reference: String, activeTab: Option[ActiveTab]): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.SUSPEND_CASE)).async { implicit request =>
+    validateAndRenderView(c => successful(views.html.suspend_case(c, form, activeTab)))
   }
 
-  def postSuspendCase(reference: String, activeTab: Option[String]): Action[MultipartFormData[Files.TemporaryFile]] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.SUSPEND_CASE)).async(parse.multipartFormData) { implicit request =>
+  def postSuspendCase(reference: String, activeTab: Option[ActiveTab]): Action[MultipartFormData[Files.TemporaryFile]] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.SUSPEND_CASE)).async(parse.multipartFormData) { implicit request =>
     extractFile(key = "email")(
       onFileValid = validFile => {
         form.bindFromRequest().fold(
           formWithErrors =>
-            getCaseAndRenderView(reference, c => successful(views.html.suspend_case(c, formWithErrors, activeTab.map(ActiveTab(_))))),
+            getCaseAndRenderView(reference, c => successful(views.html.suspend_case(c, formWithErrors, activeTab))),
           note => {
             validateAndRedirect(casesService.suspendCase(_, validFile, note, request.operator).map(c => routes.SuspendCaseController.confirmSuspendCase(c.reference)))
           }
@@ -85,9 +85,9 @@ class SuspendCaseController @Inject()(verify: RequestActions,
     )
   }
 
-  private def getCaseAndRenderEmailError(reference: String, form: Form[String], error: String, activeTab: Option[String])(implicit request: AuthenticatedCaseRequest[_]): Future[Result] = getCaseAndRenderView(
+  private def getCaseAndRenderEmailError(reference: String, form: Form[String], error: String, activeTab: Option[ActiveTab])(implicit request: AuthenticatedCaseRequest[_]): Future[Result] = getCaseAndRenderView(
     reference,
-    c => successful(views.html.suspend_case(c, form.withError("email", error), activeTab.map(ActiveTab(_))))
+    c => successful(views.html.suspend_case(c, form.withError("email", error), activeTab))
   )
 
   def confirmSuspendCase(reference: String): Action[AnyContent] =

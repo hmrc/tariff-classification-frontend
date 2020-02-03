@@ -36,16 +36,16 @@ GET         /cases/:reference/reassign-case                     @uk.gov.hmrc.tar
 POST        /cases/:reference/reassign-case                     @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReassignCaseController.reassignCase(reference: String, origin: String)
 GET         /cases/:reference/reassign-case/confirmation        @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReassignCaseController.confirmReassignCase(reference: String, origin: String)
 
-GET         /cases/:reference/refer                             @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReferCaseController.getReferCase(reference: String, activeTab: Option[String] ?= None)
-POST        /cases/:reference/refer                             @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReferCaseController.postReferCase(reference: String, activeTab: Option[String] ?= None)
+GET         /cases/:reference/refer                             @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReferCaseController.getReferCase(reference: String, activeTab: Option[ActiveTab] ?= None)
+POST        /cases/:reference/refer                             @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReferCaseController.postReferCase(reference: String, activeTab: Option[ActiveTab] ?= None)
 GET         /cases/:reference/refer/confirmation                @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReferCaseController.confirmReferCase(reference: String)
 
-GET         /cases/:reference/reject                            @uk.gov.hmrc.tariffclassificationfrontend.controllers.RejectCaseController.getRejectCase(reference: String, activeTab: Option[String] ?= None)
-POST        /cases/:reference/reject                            @uk.gov.hmrc.tariffclassificationfrontend.controllers.RejectCaseController.postRejectCase(reference: String, activeTab: Option[String] ?= None)
+GET         /cases/:reference/reject                            @uk.gov.hmrc.tariffclassificationfrontend.controllers.RejectCaseController.getRejectCase(reference: String, activeTab: Option[ActiveTab] ?= None)
+POST        /cases/:reference/reject                            @uk.gov.hmrc.tariffclassificationfrontend.controllers.RejectCaseController.postRejectCase(reference: String, activeTab: Option[ActiveTab] ?= None)
 GET         /cases/:reference/reject/confirmation               @uk.gov.hmrc.tariffclassificationfrontend.controllers.RejectCaseController.confirmRejectCase(reference: String)
 
-GET         /cases/:reference/suspend                           @uk.gov.hmrc.tariffclassificationfrontend.controllers.SuspendCaseController.getSuspendCase(reference: String, activeTab: Option[String] ?= None)
-POST        /cases/:reference/suspend                           @uk.gov.hmrc.tariffclassificationfrontend.controllers.SuspendCaseController.postSuspendCase(reference: String, activeTab: Option[String] ?= None)
+GET         /cases/:reference/suspend                           @uk.gov.hmrc.tariffclassificationfrontend.controllers.SuspendCaseController.getSuspendCase(reference: String, activeTab: Option[ActiveTab] ?= None)
+POST        /cases/:reference/suspend                           @uk.gov.hmrc.tariffclassificationfrontend.controllers.SuspendCaseController.postSuspendCase(reference: String, activeTab: Option[ActiveTab] ?= None)
 GET         /cases/:reference/suspend/confirmation              @uk.gov.hmrc.tariffclassificationfrontend.controllers.SuspendCaseController.confirmSuspendCase(reference: String)
 
 
@@ -78,11 +78,11 @@ POST        /cases/:reference/attachments/remove                @uk.gov.hmrc.tar
 GET         /cases/:reference/keywords                          @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.keywordsDetails(reference: String)
 POST        /cases/:reference/keywords                          @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.addKeyword(reference: String)
 
-GET         /cases/:reference/change-case-status                @uk.gov.hmrc.tariffclassificationfrontend.controllers.ChangeCaseStatusController.onPageLoad(reference: String, activeTab: Option[String] ?= None)
-POST        /cases/:reference/change-case-status                @uk.gov.hmrc.tariffclassificationfrontend.controllers.ChangeCaseStatusController.onSubmit(reference: String, activeTab: Option[String] ?= None)
+GET         /cases/:reference/change-case-status                @uk.gov.hmrc.tariffclassificationfrontend.controllers.ChangeCaseStatusController.onPageLoad(reference: String, activeTab: Option[ActiveTab] ?= None)
+POST        /cases/:reference/change-case-status                @uk.gov.hmrc.tariffclassificationfrontend.controllers.ChangeCaseStatusController.onSubmit(reference: String, activeTab: Option[ActiveTab] ?= None)
 
-GET         /cases/:reference/release-or-suppress-case          @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReleaseOrSuppressCaseController.onPageLoad(reference: String, activeTab: Option[String] ?= None)
-POST        /cases/:reference/release-or-suppress-case          @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReleaseOrSuppressCaseController.onSubmit(reference: String, activeTab: Option[String] ?= None)
+GET         /cases/:reference/release-or-suppress-case          @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReleaseOrSuppressCaseController.onPageLoad(reference: String, activeTab: Option[ActiveTab] ?= None)
+POST        /cases/:reference/release-or-suppress-case          @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReleaseOrSuppressCaseController.onSubmit(reference: String, activeTab: Option[ActiveTab] ?= None)
 
 GET         /cases/:reference/appeal                            @uk.gov.hmrc.tariffclassificationfrontend.controllers.AppealCaseController.appealDetails(reference: String)
 
@@ -104,7 +104,7 @@ POST        /cases/:reference/sample/return-status              @uk.gov.hmrc.tar
 GET         /cases/:reference/extended-use/status               @uk.gov.hmrc.tariffclassificationfrontend.controllers.ExtendedUseCaseController.chooseStatus(reference: String)
 POST        /cases/:reference/extended-use/status               @uk.gov.hmrc.tariffclassificationfrontend.controllers.ExtendedUseCaseController.updateStatus(reference: String)
 
-GET         /search                                             @uk.gov.hmrc.tariffclassificationfrontend.controllers.SearchController.search(selectedTab: uk.gov.hmrc.tariffclassificationfrontend.views.SearchTab.SearchTab ?= uk.gov.hmrc.tariffclassificationfrontend.views.SearchTab.DETAILS,addToSearch: Option[Boolean] ?= None, reference: Option[String] ?= None, search: uk.gov.hmrc.tariffclassificationfrontend.models.Search ?= uk.gov.hmrc.tariffclassificationfrontend.models.Search(), sort: uk.gov.hmrc.tariffclassificationfrontend.models.Sort ?= uk.gov.hmrc.tariffclassificationfrontend.models.Sort(), page: Int ?= 1)
+GET         /search                                             @uk.gov.hmrc.tariffclassificationfrontend.controllers.SearchController.search(selectedTab: uk.gov.hmrc.tariffclassificationfrontend.views.SearchTab.SearchTab ?= uk.gov.hmrc.tariffclassificationfrontend.views.SearchTab.DETAILS,addToSearch: Option[Boolean] ?= None, reference: Option[String] ?= None, search: Search ?= Search(), sort: Sort ?= Sort(), page: Int ?= 1)
 
 GET         /new-liability                                      @uk.gov.hmrc.tariffclassificationfrontend.controllers.CreateLiabilityController.get()
 POST        /new-liability                                      @uk.gov.hmrc.tariffclassificationfrontend.controllers.CreateLiabilityController.post()
