@@ -72,7 +72,7 @@ class SuppressCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   "Suppress Case" should {
 
     "return OK and HTML content type" in {
-      val result: Result = await(controller(caseWithStatusNEW).getSuppressCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+      val result: Result = await(controller(caseWithStatusNEW).getSuppressCase("reference", None)(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -82,14 +82,14 @@ class SuppressCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
     "return OK when user has right permissions" in {
       val result: Result = await(controller(caseWithStatusNEW, Set(Permission.SUPPRESS_CASE))
-        .getSuppressCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+        .getSuppressCase("reference", None)(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.OK
     }
 
 
     "redirect unauthorised when does not have right permissions" in {
-      val result: Result = await(controller(caseWithStatusNEW, Set.empty).getSuppressCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+      val result: Result = await(controller(caseWithStatusNEW, Set.empty).getSuppressCase("reference", None)(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
@@ -114,7 +114,7 @@ class SuppressCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       when(casesService.suppressCase(refEq(caseWithStatusNEW), any[FileUpload], refEq("some-note"), any[Operator])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusSUPRRESSED))
 
       val result: Result =
-        await(controller(caseWithStatusNEW).postSuppressCase("reference")
+        await(controller(caseWithStatusNEW).postSuppressCase("reference", None)
              (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileWithParams("text/plain", "note" -> Seq("some-note")))))
 
       status(result) shouldBe Status.SEE_OTHER
@@ -123,7 +123,7 @@ class SuppressCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
     "return to form on missing file" in {
       val result: Result =
-        await(controller(caseWithStatusNEW).postSuppressCase("reference")
+        await(controller(caseWithStatusNEW).postSuppressCase("reference", None)
         (newFakePOSTRequestWithCSRF(fakeApplication).withBody(anEmptyMultipartFileWithParams())))
 
       status(result) shouldBe Status.OK
@@ -132,7 +132,7 @@ class SuppressCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
     "return to form on missing form field" in {
       val result: Result =
-        await(controller(caseWithStatusNEW).postSuppressCase("reference")
+        await(controller(caseWithStatusNEW).postSuppressCase("reference", None)
         (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileWithParams("text/plain"))))
 
       status(result) shouldBe Status.OK
@@ -141,7 +141,7 @@ class SuppressCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
     "return to form on invalid file type" in {
       val result: Result =
-        await(controller(caseWithStatusNEW).postSuppressCase("reference")
+        await(controller(caseWithStatusNEW).postSuppressCase("reference", None)
         (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileWithParams("audio/mpeg", "note" -> Seq("some-note")))))
 
       status(result) shouldBe Status.OK
@@ -150,7 +150,7 @@ class SuppressCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
     "redirect unauthorised when does not have right permissions" in {
       val result: Result = await(controller(caseWithStatusNEW, Set.empty)
-        .postSuppressCase("reference")
+        .postSuppressCase("reference", None)
         (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileWithParams("text/plain"))))
 
       status(result) shouldBe Status.SEE_OTHER

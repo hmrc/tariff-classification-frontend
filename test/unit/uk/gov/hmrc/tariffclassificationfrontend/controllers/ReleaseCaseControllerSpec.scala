@@ -74,7 +74,7 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     "return OK and HTML content type" in {
       when(queueService.getNonGateway).thenReturn(successful(Seq.empty))
 
-      val result: Result = await(controller(caseWithStatusNEW).releaseCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+      val result: Result = await(controller(caseWithStatusNEW).releaseCase("reference", None)(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -86,13 +86,13 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       when(queueService.getNonGateway).thenReturn(successful(Seq.empty))
 
       val result: Result = await(controller(caseWithStatusNEW, Set(Permission.RELEASE_CASE))
-        .releaseCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+        .releaseCase("reference", None)(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.OK
     }
 
     "redirect unauthorised when does not have right permissions" in {
-      val result: Result = await(controller(caseWithStatusNEW, Set.empty).releaseCase("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+      val result: Result = await(controller(caseWithStatusNEW, Set.empty).releaseCase("reference", None)(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
@@ -106,7 +106,7 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       when(queueService.getOneBySlug("queue")).thenReturn(successful(Some(queue)))
       when(casesService.releaseCase(refEq(caseWithStatusNEW), any[Queue], any[Operator])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusOPEN))
 
-      val result: Result = await(controller(caseWithStatusNEW).releaseCaseToQueue("reference")(requestWithQueue("queue")))
+      val result: Result = await(controller(caseWithStatusNEW).releaseCaseToQueue("reference", None)(requestWithQueue("queue")))
 
       status(result) shouldBe Status.SEE_OTHER
       locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/reference/release/confirmation")
@@ -115,7 +115,7 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
     "redirect to resource not found when the queue specified is not recognised" in {
       when(queueService.getOneBySlug("queue")).thenReturn(successful(None))
 
-      val result: Result = await(controller(caseWithStatusNEW).releaseCaseToQueue("reference")(requestWithQueue("queue")))
+      val result: Result = await(controller(caseWithStatusNEW).releaseCaseToQueue("reference", None)(requestWithQueue("queue")))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -128,7 +128,7 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       when(queueService.getNonGateway).thenReturn(successful(Seq.empty))
       when(casesService.releaseCase(refEq(caseWithStatusNEW), any[Queue], refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusOPEN))
 
-      val result: Result = await(controller(caseWithStatusNEW).releaseCaseToQueue("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
+      val result: Result = await(controller(caseWithStatusNEW).releaseCaseToQueue("reference", None)(newFakePOSTRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -140,7 +140,7 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       when(queueService.getOneBySlug("queue")).thenReturn(successful(Some(queue)))
       when(casesService.releaseCase(any[Case], any[Queue], any[Operator])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusOPEN))
 
-      val result: Result = await(controller(caseWithStatusNEW, Set(Permission.RELEASE_CASE)).releaseCaseToQueue("reference")(requestWithQueue("queue")))
+      val result: Result = await(controller(caseWithStatusNEW, Set(Permission.RELEASE_CASE)).releaseCaseToQueue("reference", None)(requestWithQueue("queue")))
 
       status(result) shouldBe Status.SEE_OTHER
       locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/reference/release/confirmation")
@@ -148,7 +148,7 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
 
     "redirect unauthorised when does not have right permissions" in {
-      val result: Result = await(controller(caseWithStatusNEW, Set.empty).releaseCaseToQueue("reference")(requestWithQueue("queue")))
+      val result: Result = await(controller(caseWithStatusNEW, Set.empty).releaseCaseToQueue("reference", None)(requestWithQueue("queue")))
 
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")

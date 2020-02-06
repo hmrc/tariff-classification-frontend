@@ -25,8 +25,8 @@ POST        /cases/:reference/liability/edit                    @uk.gov.hmrc.tar
 
 GET         /cases/:reference/sample                            @uk.gov.hmrc.tariffclassificationfrontend.controllers.CaseController.sampleDetails(reference: String)
 
-GET         /cases/:reference/release                           @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReleaseCaseController.releaseCase(reference: String)
-POST        /cases/:reference/release                           @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReleaseCaseController.releaseCaseToQueue(reference: String)
+GET         /cases/:reference/release                           @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReleaseCaseController.releaseCase(reference: String, activeTab: Option[ActiveTab] ?= None)
+POST        /cases/:reference/release                           @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReleaseCaseController.releaseCaseToQueue(reference: String, activeTab: Option[ActiveTab] ?= None)
 GET         /cases/:reference/release/confirmation              @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReleaseCaseController.confirmReleaseCase(reference: String)
 
 GET         /cases/:reference/assign                            @uk.gov.hmrc.tariffclassificationfrontend.controllers.AssignCaseController.get(reference: String)
@@ -49,8 +49,8 @@ POST        /cases/:reference/suspend                           @uk.gov.hmrc.tar
 GET         /cases/:reference/suspend/confirmation              @uk.gov.hmrc.tariffclassificationfrontend.controllers.SuspendCaseController.confirmSuspendCase(reference: String)
 
 
-GET         /cases/:reference/suppress                          @uk.gov.hmrc.tariffclassificationfrontend.controllers.SuppressCaseController.getSuppressCase(reference: String)
-POST        /cases/:reference/suppress                          @uk.gov.hmrc.tariffclassificationfrontend.controllers.SuppressCaseController.postSuppressCase(reference: String)
+GET         /cases/:reference/suppress                          @uk.gov.hmrc.tariffclassificationfrontend.controllers.SuppressCaseController.getSuppressCase(reference: String, activeTab: Option[ActiveTab] ?= None)
+POST        /cases/:reference/suppress                          @uk.gov.hmrc.tariffclassificationfrontend.controllers.SuppressCaseController.postSuppressCase(reference: String, activeTab: Option[ActiveTab] ?= None)
 GET         /cases/:reference/suppress/confirmation             @uk.gov.hmrc.tariffclassificationfrontend.controllers.SuppressCaseController.confirmSuppressCase(reference: String)
 
 POST        /cases/:reference/reopen                            @uk.gov.hmrc.tariffclassificationfrontend.controllers.ReopenCaseController.confirmReopenCase(reference: String)
