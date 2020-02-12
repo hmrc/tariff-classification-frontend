@@ -19,10 +19,10 @@
 
 @(resource: String = "Resource")(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None) {
+@main(bodyClasses = None, customTitle = Some(messages("not_authorised.title"))) {
 
-    <h1 class="heading-large">You are not authorised to access this page.</h1>
+    <h1 class="heading-large">@messages("not_authorised.heading")</h1>
 
-    <p>This could be because you are not enrolled to use this service.</p>
-    <p>Contact your manager if you believe you are seeing this in error.</p>
+    <p>@messages("not_authorised.paragraph1")</p>
+    <p>@messages("not_authorised.paragraph2")</p>
 }

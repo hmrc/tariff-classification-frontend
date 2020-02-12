@@ -385,6 +385,10 @@ view.attachment.unavailable.heading=Attachment is unavailable
 view.attachment.unavailable.content.failedToProcess=File failed to process. This could be because a virus was found.
 view.attachment.unavailable.content.stillProcessing=File is still processing. It should be available in the next few minutes.
 view.attachment.unavailable.content.doesNotExist=File does not exist.
+not_authorised.title = You cannot use this service - Manage applications for Binding Tariff Information rulings - GOV.UK
+not_authorised.heading= You cannot use this service
+not_authorised.paragraph1 = You need to be authorised to use this service.
+not_authorised.paragraph2 = Contact your manager to get access.
 
 page.title.case.queues.my-cases = My cases
 page.title.case.queues.cases = {0} cases
