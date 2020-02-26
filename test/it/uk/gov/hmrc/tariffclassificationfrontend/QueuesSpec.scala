@@ -42,7 +42,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder
 
       // Then
       response.status shouldBe OK
-      response.body should include("You are not authorised to access this page.")
+      response.body should include(messages("not_authorised.paragraph1"))
     }
   }
 
@@ -83,7 +83,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder
 
       // Then
       response.status shouldBe OK
-      response.body should include("You are not authorised to access this page.")
+      response.body should include(messages("not_authorised.paragraph1"))
     }
   }
 
@@ -121,7 +121,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder
 
       // Then
       response.status shouldBe OK
-      response.body should include("You are not authorised to access this page.")
+      response.body should include(messages("not_authorised.paragraph1"))
     }
   }
 
@@ -159,7 +159,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder
 
       // Then
       response.status shouldBe OK
-      response.body should include("You are not authorised to access this page.")
+      response.body should include(messages("not_authorised.paragraph1"))
     }
   }
 
@@ -197,7 +197,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder
 
       // Then
       response.status shouldBe OK
-      response.body should include("You are not authorised to access this page.")
+      response.body should include(messages("not_authorised.paragraph1"))
     }
   }
 
@@ -235,7 +235,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder
 
       // Then
       response.status shouldBe OK
-      response.body should include("You are not authorised to access this page.")
+      response.body should include(messages("not_authorised.paragraph1"))
     }
   }
 

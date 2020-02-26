@@ -3,6 +3,7 @@ package uk.gov.hmrc.tariffclassificationfrontend
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, post, stubFor, urlEqualTo}
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.Application
+import play.api.i18n.MessagesApi
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.ws.WSClient
 import play.api.test.Helpers.{OK, UNAUTHORIZED}
@@ -11,6 +12,8 @@ import uk.gov.tariffclassificationfrontend.utils.{ResourceFiles, WiremockTestSer
 
 trait IntegrationTest extends UnitSpec with GuiceOneServerPerSuite
   with ResourceFiles with WiremockTestServer {
+
+  val messages = app.injector.instanceOf[MessagesApi]
 
   override def fakeApplication(): Application = new GuiceApplicationBuilder()
     .disable[com.kenshoo.play.metrics.PlayModule]
@@ -59,7 +62,7 @@ trait IntegrationTest extends UnitSpec with GuiceOneServerPerSuite
     val response = await(ws.url(s"$baseUrl/$path").get())
 
     response.status shouldBe OK
-    response.body should include("You are not authorised to access this page.")
+    response.body should include(messages("not_authorised.paragraph1"))
   }
 
 }
