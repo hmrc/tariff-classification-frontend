@@ -46,7 +46,7 @@ class ReleaseCaseSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body should include("You are not authorised to access this page.")
+      response.body should include(messages("not_authorised.paragraph1"))
     }
   }
 
