@@ -29,7 +29,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import config.AppConfig
 import models._
-import service.{CasesService, FileStoreService, PdfService}
+import service.{CasesService, CountriesService, FileStoreService, PdfService}
 import utils.Cases
 
 import scala.concurrent.Future.successful
@@ -47,7 +47,7 @@ class PdfDownloadControllerSpec extends UnitSpec with MockitoSugar with GuiceOne
 
   private val expectedResult = PdfFile("Some content".getBytes)
   private val messageApi = inject[MessagesControllerComponents]
-
+  private val countriesService = new CountriesService
   private implicit val appConfig: AppConfig = inject[AppConfig]
   private implicit val hc: HeaderCarrier = HeaderCarrier()
 
@@ -55,7 +55,7 @@ class PdfDownloadControllerSpec extends UnitSpec with MockitoSugar with GuiceOne
   private val caseWithoutDecision = Cases.btiCaseExample.copy(decision = None)
   private val liabilityCaseWithDecision = Cases.liabilityCaseExample.copy(decision = Some(decision))
 
-  private val controller = new PdfDownloadController(new SuccessfulAuthenticatedAction(inject[BodyParsers.Default], operator), messageApi, pdfService, fileService, caseService)
+  private val controller = new PdfDownloadController(new SuccessfulAuthenticatedAction(inject[BodyParsers.Default], operator), messageApi, pdfService, fileService, caseService, countriesService)
 
   private def givenCompletedCase(): Unit = {
     when(caseService.getOne(any[String])(any[HeaderCarrier])).thenReturn(successful(Some(caseWithDecision)))

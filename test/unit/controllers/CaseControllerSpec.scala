@@ -53,19 +53,20 @@ class CaseControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSuite
   private val event = mock[Event]
   private val commodityCodeService = mock[CommodityCodeService]
   private val decisionForm = new DecisionForm(new CommodityCodeConstraints(commodityCodeService, appConfig))
+  private val countriesService = new CountriesService
 
   private def controller(c: Case) = new CaseController(
     new SuccessfulRequestActions(inject[BodyParsers.Default], operator, c = c),
     mock[CasesService], keywordsService, fileService,
     eventService, queueService, commodityCodeService,
-    decisionForm, messageApi, appConfig
+    decisionForm, countriesService, messageApi, appConfig
   )
 
   private def controller(c: Case, permission: Set[Permission]) = new CaseController(
     new RequestActionsWithPermissions(inject[BodyParsers.Default], permission, c = c),
     mock[CasesService], keywordsService, fileService,
     eventService, queueService, commodityCodeService,
-    decisionForm, messageApi, appConfig
+    decisionForm, countriesService, messageApi, appConfig
   )
 
   private implicit val hc: HeaderCarrier = HeaderCarrier()
@@ -331,6 +332,12 @@ class CaseControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSuite
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
     }
+  }
+
+  "return a valid country when given a valid country code" in {
+    val result: Option[String] = controller(aCase(withReference("withReference"))).getCountryName("IE")
+
+    result shouldBe Some("title.ireland")
   }
 
 }

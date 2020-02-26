@@ -22,7 +22,7 @@ import models.Case
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import play.twirl.api.Html
-import service.{CasesService, FileStoreService, PdfService}
+import service.{CasesService, CountriesService, FileStoreService, PdfService}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.templates.{application_template, decision_template, ruling_template}
 
@@ -35,12 +35,13 @@ class PdfDownloadController @Inject()(
   mcc: MessagesControllerComponents,
   pdfService: PdfService,
   fileStore: FileStoreService,
-  caseService: CasesService
+  caseService: CasesService,
+  countriesService: CountriesService
 )(implicit appConfig: AppConfig) extends FrontendController(mcc) with I18nSupport {
 
   def getRulingPdf(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     caseService.getOne(reference) flatMap {
-      case Some(c: Case) if c.decision.isDefined && c.application.isBTI => generatePdf(ruling_template(c, c.decision.get), s"BTIRuling_$reference.pdf")
+      case Some(c: Case) if c.decision.isDefined && c.application.isBTI => generatePdf(ruling_template(c, c.decision.get, getCountryName), s"BTIRuling_$reference.pdf")
       case Some(c: Case) if c.decision.isDefined && c.application.isLiabilityOrder => generatePdf(decision_template(c, c.decision.get), s"LiabilityDecision_$reference.pdf")
       case Some(c: Case) if c.decision.isEmpty =>  successful(Ok(views.html.ruling_not_found(reference)))
       case _ => successful(Ok(views.html.case_not_found(reference)))
@@ -53,7 +54,7 @@ class PdfDownloadController @Inject()(
         for {
           attachments <- fileStore.getAttachments(c)
           letter <- fileStore.getLetterOfAuthority(c)
-          pdf <-  generatePdf(application_template(c, attachments, letter), s"BTIConfirmation$reference.pdf")
+          pdf <-  generatePdf(application_template(c, attachments, letter, getCountryName), s"BTIConfirmation$reference.pdf")
         } yield pdf
       }
       case _ => successful(Ok(views.html.case_not_found(reference)))
@@ -67,5 +68,7 @@ class PdfDownloadController @Inject()(
         .withHeaders(CONTENT_DISPOSITION -> s"filename=$filename")
     }
   }
+
+  def getCountryName(code: String) = countriesService.getAllCountries.find(_.code == code).map(_.countryName)
 
 }
