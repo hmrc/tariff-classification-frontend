@@ -30,7 +30,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.tariffclassificationfrontend.config.AppConfig
 import uk.gov.hmrc.tariffclassificationfrontend.models._
-import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, FileStoreService, PdfService}
+import uk.gov.hmrc.tariffclassificationfrontend.service.{CasesService, CountriesService, FileStoreService, PdfService}
 import uk.gov.tariffclassificationfrontend.utils.Cases
 
 import scala.concurrent.Future.successful
@@ -51,7 +51,7 @@ class PdfDownloadControllerSpec extends UnitSpec with MockitoSugar with Controll
   private val env = Environment.simple()
   private val configuration = Configuration.load(env)
   private val messageApi = new DefaultMessagesApi(env, configuration, new DefaultLangs(configuration))
-
+  private val countriesService = new CountriesService
   private implicit val appConfig: AppConfig = new AppConfig(configuration, env)
   private implicit val hc: HeaderCarrier = HeaderCarrier()
 
@@ -59,7 +59,7 @@ class PdfDownloadControllerSpec extends UnitSpec with MockitoSugar with Controll
   private val caseWithoutDecision = Cases.btiCaseExample.copy(decision = None)
   private val liabilityCaseWithDecision = Cases.liabilityCaseExample.copy(decision = Some(decision))
 
-  private val controller = new PdfDownloadController(new SuccessfulAuthenticatedAction(operator), messageApi, pdfService, fileService, caseService)
+  private val controller = new PdfDownloadController(new SuccessfulAuthenticatedAction(operator), messageApi, pdfService, fileService, caseService, countriesService)
 
   private def givenCompletedCase(): Unit = {
     when(caseService.getOne(any[String])(any[HeaderCarrier])).thenReturn(successful(Some(caseWithDecision)))

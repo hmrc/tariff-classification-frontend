@@ -16,8 +16,10 @@
 
 package uk.gov.hmrc.tariffclassificationfrontend.views.partials
 
+import org.mockito.internal.matchers.Any
 import uk.gov.hmrc.tariffclassificationfrontend.models.response.ScanStatus
 import uk.gov.hmrc.tariffclassificationfrontend.models.{CaseStatus, Contact, Permission}
+import uk.gov.hmrc.tariffclassificationfrontend.service.CountriesService
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewMatchers._
 import uk.gov.hmrc.tariffclassificationfrontend.views.ViewSpec
 import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.case_trader
@@ -27,6 +29,7 @@ import uk.gov.tariffclassificationfrontend.utils.Cases._
 class CaseTraderViewSpec extends ViewSpec {
 
   val requestWithReleaseAndSuppressPermission = requestWithPermissions(Permission.RELEASE_CASE, Permission.SUPPRESS_CASE)
+  val countriesService = new CountriesService
 
   "Case Trader" should {
 
@@ -38,7 +41,7 @@ class CaseTraderViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(case_trader(`case`, None))
+      val doc = view(case_trader(`case`, None, 0, s => Some("dummy country name")))
 
       // Then
       doc shouldNot containElementWithID("agent-submitted-heading")
@@ -52,7 +55,7 @@ class CaseTraderViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(case_trader(`case`, None))
+      val doc = view(case_trader(`case`, None, 0, s => Some("dummy country name")))
 
       // Then
       doc should containElementWithID("agent-submitted-heading")
@@ -68,7 +71,7 @@ class CaseTraderViewSpec extends ViewSpec {
       val letterOfAuthorization = Cases.storedAttachment.copy(id = "letter-of-auth-id", url = Some("url"), scanStatus = Some(ScanStatus.READY))
 
       // When
-      val doc = view(case_trader(`case`, Some(letterOfAuthorization)))
+      val doc = view(case_trader(`case`, Some(letterOfAuthorization), 0, s => Some("dummy country name")))
 
       // Then
       doc should containElementWithID("agent-letter-file")
@@ -78,7 +81,7 @@ class CaseTraderViewSpec extends ViewSpec {
     "show no tag when no letter of auth is provided" in {
 
       // Given When
-      val doc = view(case_trader(btiCaseExample, None))
+      val doc = view(case_trader(btiCaseExample, None, 0, s => Some("dummy country name")))
 
       // Then
       doc shouldNot containElementWithID("agent-letter-file-letter-of-auth-id")
@@ -89,7 +92,7 @@ class CaseTraderViewSpec extends ViewSpec {
       val c = aCase().copy(caseBoardsFileNumber = Some("file 123"))
 
       // When
-      val doc = view(case_trader(c, None))
+      val doc = view(case_trader(c, None, 0, s => Some("dummy country name")))
 
       // Then
       val boardFileNumber = doc.getElementById("boards-file-number")
@@ -101,7 +104,7 @@ class CaseTraderViewSpec extends ViewSpec {
       val c = aCase()
 
       // When
-      val doc = view(case_trader(c, None))
+      val doc = view(case_trader(c, None, 0, s => Some("dummy country name")))
 
       // Then
       doc shouldNot containElementWithID("boards-file-number-label")

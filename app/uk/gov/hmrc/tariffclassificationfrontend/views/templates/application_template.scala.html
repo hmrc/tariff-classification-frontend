@@ -18,7 +18,7 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{AgentDetails, BTIApplication, Case, StoredAttachment}
 @import uk.gov.hmrc.tariffclassificationfrontend.utils.Dates
 @import uk.gov.hmrc.tariffclassificationfrontend.models.ImportExport
-@(c: Case, attachments: Seq[StoredAttachment], letterOfAuthority : Option[StoredAttachment] = None)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(c: Case, attachments: Seq[StoredAttachment], letterOfAuthority : Option[StoredAttachment] = None, getCountryName: String => Option[String])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @createLink(path: String)(implicit req: play.api.mvc.Request[_]) = @{
     val protocol = if(req.secure) "https" else "http"
@@ -121,7 +121,7 @@
                         @btiApp.holder.addressLine2 <br/>
                         @btiApp.holder.addressLine3 <br/>
                         @btiApp.holder.postcode <br/>
-                        @btiApp.holder.country
+                        @messages(getCountryName(btiApp.holder.country).mkString)
 
                     </td>
                 </tr>
@@ -158,7 +158,7 @@
                                 @agent.eoriDetails.addressLine2 <br/>
                                 @agent.eoriDetails.addressLine3 <br/>
                                 @agent.eoriDetails.postcode <br/>
-                                @agent.eoriDetails.country
+                                @messages(getCountryName(agent.eoriDetails.country).mkString)
                             </td>
                         </tr>
                         <tr>

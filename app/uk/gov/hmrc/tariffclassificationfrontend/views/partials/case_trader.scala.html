@@ -18,7 +18,9 @@
 @import uk.gov.hmrc.tariffclassificationfrontend.models.{AgentDetails, Application, BTIApplication, Case, CaseStatus, EORIDetails, Permission, StoredAttachment}
 @import uk.gov.hmrc.tariffclassificationfrontend.models.request.AuthenticatedRequest
 @import uk.gov.hmrc.tariffclassificationfrontend.views.html.partials.{attachment, contact_details, tab_heading}
-@(c: Case,  letterOfAuth: Option[StoredAttachment], startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages)
+@import uk.gov.hmrc.tariffclassificationfrontend.models.Country
+
+@(c: Case,  letterOfAuth: Option[StoredAttachment], startAtTabIndex : Int = 0, getCountryName: String => Option[String])(implicit request: AuthenticatedRequest[_], messages: Messages)
 
     @tab_heading("trader", "Applicant")
 
@@ -55,7 +57,7 @@
                                 @btiHolder.addressLine2 @if(!btiHolder.addressLine2.isEmpty) {<br>}
                                 @btiHolder.addressLine3 @if(!btiHolder.addressLine3.isEmpty) {<br>}
                                 @btiHolder.postcode     @if(!btiHolder.postcode.isEmpty)     {<br>}
-                                @btiHolder.country
+                                @messages(getCountryName(btiHolder.country).mkString)
 
                         </dd>
                     </div>
@@ -94,7 +96,7 @@
                                     @btiAgent.eoriDetails.addressLine2  @if(!btiAgent.eoriDetails.addressLine2.isEmpty) {<br>}
                                     @btiAgent.eoriDetails.addressLine3  @if(!btiAgent.eoriDetails.addressLine3.isEmpty) {<br>}
                                     @btiAgent.eoriDetails.postcode  @if(!btiAgent.eoriDetails.postcode.isEmpty) {<br>}
-                                    @btiAgent.eoriDetails.country
+                                    @messages(getCountryName(btiAgent.eoriDetails.country).mkString)
                                 </dd>
                             </div>
 
