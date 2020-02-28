@@ -1,0 +1,80 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import models.request.AuthenticatedRequest
+@import models.{Permission, Queue, TabIndexes}
+@import models.ApplicationType
+@(queues: Seq[Queue], section: String, caseCountByQueue: Map[String, Int] = Map.empty,
+        filteredBy: String = Seq(ApplicationType.BTI,ApplicationType.LIABILITY_ORDER).mkString(","))(implicit request: AuthenticatedRequest[_], messages: Messages)
+
+<div id="queue-navigation" class="side-nav" role="navigation" style="margin-top: 14px">
+    <ul>
+
+        @if(request.hasPermission(Permission.VIEW_MY_CASES)) {
+            <li class="side-nav__list @if(section == "my-cases") { side-nav__list--selected }">
+                <a tabindex="@{TabIndexes.tabIndexForQueue("my-cases")}" id="nav-menu-my-cases" class="side-nav__link" href="@controllers.routes.MyCasesController.myCases()">@messages("cases.menu.my-cases") (<span id="case-count-my-cases">@caseCountByQueue.getOrElse("my-cases", "0")</span>)</a>
+            </li>
+        }
+        @if(request.hasPermission(Permission.VIEW_QUEUE_CASES)) {
+            @for((q,index) <- queues.zipWithIndex if q.slug == "gateway") {
+                <li class="side-nav__list @if(section == q.slug ) { side-nav__list--selected }">
+                    <a tabindex="@{TabIndexes.tabIndexForQueue(q.slug)}" id="nav-menu-queue-@q.slug" class="side-nav__link" href="@controllers.routes.QueuesController.queue(q.slug)">@messages("cases.menu.gateway-cases") (<span id="case-count-@q.slug">@{caseCountByQueue.getOrElse(s"-${ApplicationType.BTI.toString}", 0)+caseCountByQueue.getOrElse(s"-${ApplicationType.LIABILITY_ORDER.toString}", 0)}</span>)</a>
+                </li>
+            }
+        }
+
+        <li id="nav-menu-header-bti" class="side-nav__list heading">
+            <span>BTI Cases</span>
+        </li>
+        @if(request.hasPermission(Permission.VIEW_QUEUE_CASES)) {
+            @for((q,index) <- queues.zipWithIndex if q.slug != "gateway") {
+                <li class="side-nav__list @if(section == q.slug && filteredBy == ApplicationType.BTI.toString) { side-nav__list--selected }">
+                    <a tabindex="@{TabIndexes.tabIndexForQueue(q.slug)}" id="nav-menu-queue-@q.slug" class="side-nav__link" href="@controllers.routes.QueuesController.queue(q.slug, Some(ApplicationType.BTI.toString))">@q.name (<span id="case-count-@q.slug">@caseCountByQueue.getOrElse(s"${q.id}-${ApplicationType.BTI.toString}", "0")</span>)</a>
+                </li>
+            }
+        }
+
+        <li id="nav-menu-header-liability" class="side-nav__list heading">
+            <span>Liability Cases</span>
+        </li>
+
+        @if(request.hasPermission(Permission.VIEW_QUEUE_CASES)) {
+            @for((q,index) <- queues.zipWithIndex if q.slug != "gateway") {
+                <li class="side-nav__list @if(section == q.slug && filteredBy == ApplicationType.LIABILITY_ORDER.toString) { side-nav__list--selected }">
+                    <a tabindex="@{TabIndexes.tabIndexForQueue(s"${q.slug}-liability")}" id="nav-menu-queue-liab-@q.slug" class="side-nav__link" href="@controllers.routes.QueuesController.queue(q.slug, Some(ApplicationType.LIABILITY_ORDER.toString))">@q.name (<span id="liability-count-@q.slug">@caseCountByQueue.getOrElse(s"${q.id}-${ApplicationType.LIABILITY_ORDER.toString}", "0")</span>)</a>
+                </li>
+            }
+        }
+
+        @if(request.hasPermission(Permission.VIEW_ASSIGNED_CASES) || request.hasPermission(Permission.VIEW_REPORTS)) {
+            <li id="nav-menu-header-reporting" class="side-nav__list heading">
+                <span>Reporting</span>
+            </li>
+        }
+
+        @if(request.hasPermission(Permission.VIEW_ASSIGNED_CASES)) {
+            <li class="side-nav__list @if(section == "assigned-cases") { side-nav__list--selected }">
+                <a tabindex="@{TabIndexes.tabIndexForQueue("assigned-cases")}" id="nav-menu-assigned-cases" class="side-nav__link" href="@controllers.routes.AssignedCasesController.assignedCases()">@messages("cases.menu.assigned-cases")</a>
+            </li>
+        }
+        @if(request.hasPermission(Permission.VIEW_REPORTS)) {
+            <li  class="side-nav__list @if(section == "reports") { side-nav__list--selected }">
+                <a tabindex="@{TabIndexes.tabIndexForQueue("reports")}"id="nav-menu-reports" class="side-nav__link" href="@controllers.routes.ReportingController.getReports()">@messages("cases.menu.reports")</a>
+            </li>
+        }
+    </ul>
+    <br>
+</div>

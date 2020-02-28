@@ -1,0 +1,94 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.AppConfig
+@import controllers.routes.{ReferCaseController, RejectCaseController, ReleaseCaseController, ReopenCaseController, SuppressCaseController, SuspendCaseController}
+@import models.Case
+@import models.request.AuthenticatedRequest
+@import views.partials.ShowActions
+@(c: Case, startAtTabIndex: Int)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+
+@defining(ShowActions(c.status)) { show: ShowActions =>
+
+    @if(show.any) {
+        <h3 class="heading-medium mt-0"> Actions on this case </h3>
+
+        @if(show.refer) {
+            <div id="refer-case-section" class="mt-1">
+                <p class="mt-1">
+                    <a tabindex="@{
+                        startAtTabIndex + 1
+                    }" id="refer-case-button" href="@ReferCaseController.getReferCase(c.reference)">
+                        Refer this case</a>
+                </p>
+            </div>
+        }
+
+        @if(show.reject) {
+            <div id="reject-case-section" class="mt-1">
+                <p>
+                    <a tabindex="@{
+                        startAtTabIndex + 2
+                    }" id="reject-case-button" href="@RejectCaseController.getRejectCase(c.reference)">
+                        Reject this case</a>
+                </p>
+            </div>
+        }
+
+        @if(show.suspend) {
+            <div id="suspend-case-section" class="mt-1">
+                <p>
+                    <a tabindex="@{
+                        startAtTabIndex + 3
+                    }" id="suspend-case-button" href="@SuspendCaseController.getSuspendCase(c.reference)">
+                        Suspend this case</a>
+                </p>
+            </div>
+        }
+
+        @if(show.release) {
+            <div id="release-case-section" class="mt-1">
+                <a tabindex="@{
+                    startAtTabIndex + 4
+                }" id="release-case-button" href="@ReleaseCaseController.releaseCase(c.reference)">
+                    Release this case</a>
+            </div>
+        }
+
+        @if(show.suppress) {
+            <div id="supress-case-section" class="mt-1">
+                <p class="mt-30">
+                    <a tabindex="@{
+                        startAtTabIndex + 5
+                    }" id="suppress_link" href="@SuppressCaseController.getSuppressCase(c.reference)">
+                        Suppress this case</a>
+                </p>
+            </div>
+        }
+
+        @if(show.reopen) {
+            @helper.form(action = ReopenCaseController.confirmReopenCase(c.reference), 'id -> "reopen-case") {
+                @helper.CSRF.formField
+                <div>
+                    <button tabindex="@{
+                        startAtTabIndex + 6
+                    }" class="button" id="reopen-case-button" type="submit">Reopen this case</button>
+                </div>
+            }
+        }
+    }
+}
+

@@ -1,0 +1,60 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.AppConfig
+@import controllers.routes
+@import models.AppealType.AppealType
+@import models.{AppealType, Case}
+@import views.forms.components.RadioOption
+@import views.html.components.initial_focus
+@import views.html.forms.components.input_radiogroup
+@import views.html.includes.main
+@import views.html.partials.case_heading
+@import views.html.partials.error_summary
+
+
+@(c: Case, form: Form[AppealType])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+
+@main(bodyClasses = None, customTitle = Some(messages("page.title.choose.appeal.type")), scriptElem =  Some(Html(s"<script>document.getElementById('error-summary').focus();</script>"))) {
+
+  @error_summary(form.errors)
+
+  @case_heading(c)
+
+  <h2 id="appeal_choose_type-heading" class="heading-large">Choose review or a level of appeal</h2>
+
+  @helper.form(action = routes.AppealCaseController.confirmType(c.reference), 'id -> "appeal_type_form") {
+   @helper.CSRF.formField
+   @input_radiogroup(
+    field = form("type"),
+    options = Seq(
+     AppealType.ADR,
+     AppealType.REVIEW,
+     AppealType.APPEAL_TIER_1,
+     AppealType.APPEAL_TIER_2,
+     AppealType.COURT_OF_APPEALS,
+     AppealType.SUPREME_COURT
+    ).map(s => RadioOption(s.toString, AppealType.format(s))),
+    id = "appeal_type"
+   )
+
+   <div>
+    <button id="appeal_choose_type-submit" class="button" type="submit">Add to case</button>
+    <a id="appeal_choose_type-cancel" class="secondary-button" href="@routes.AppealCaseController.appealDetails(c.reference)">Cancel changes</a>
+   </div>
+  }
+
+}

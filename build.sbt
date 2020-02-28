@@ -27,8 +27,7 @@ lazy val microservice = (project in file("."))
     parallelExecution in Test := false,
     testGrouping in Test := oneForkedJvmPerTest((definedTests in Test).value),
     fork in Test := false,
-    retrieveManaged := true,
-    routesGenerator := StaticRoutesGenerator
+    retrieveManaged := true
   )
   .settings(inConfig(TemplateTest)(Defaults.testSettings): _*)
   .settings(
@@ -37,11 +36,12 @@ lazy val microservice = (project in file("."))
       (baseDirectory in Test).value / "test/util"
     ),
     resourceDirectory in Test := baseDirectory.value / "test" / "resources",
+    javaOptions in Test += "-Dconfig.file=conf/test.application.conf",
     addTestReportOption(Test, "test-reports")
   )
-  .settings(RoutesKeys.routesImport += "uk.gov.hmrc.tariffclassificationfrontend.models.Sort")
-  .settings(RoutesKeys.routesImport += "uk.gov.hmrc.tariffclassificationfrontend.controllers.ActiveTab")
-  .settings(RoutesKeys.routesImport += "uk.gov.hmrc.tariffclassificationfrontend.models.Search")
+  .settings(RoutesKeys.routesImport += "models.Sort")
+  .settings(RoutesKeys.routesImport += "controllers.ActiveTab")
+  .settings(RoutesKeys.routesImport += "models.Search")
   .configs(IntegrationTest)
   .settings(inConfig(TemplateItTest)(Defaults.itSettings): _*)
   .settings(

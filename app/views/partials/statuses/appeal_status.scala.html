@@ -1,0 +1,33 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import models.AppealStatus.AppealStatus
+@import models.{AppealStatus, Case}
+@(c: Case, id: String)
+
+@defining(c.decision.map(_.appeal).getOrElse(Seq.empty).map(_.status)) { status: Seq[AppealStatus] =>
+
+ @if(status.nonEmpty) {
+  <span id="@id" class="phase-tag bg-red">
+   @status match {
+    case s if status.contains(AppealStatus.IN_PROGRESS) => {Under appeal}
+    case s if status.contains(AppealStatus.ALLOWED) => {Appeal allowed}
+    case s if status.contains(AppealStatus.DISMISSED) => {Appeal dismissed}
+   }
+  </span>
+ }
+
+}

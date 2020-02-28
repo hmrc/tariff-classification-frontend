@@ -1,0 +1,86 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.CaseDetailPage
+@import views.CaseDetailPage.CaseDetailPage
+@import views.html.partials.case_nav_item
+@import controllers.routes
+@import models.Case
+@import models.CaseStatus
+@import models.TabIndexes
+@import models.TabIndexes._
+@(page: CaseDetailPage, c: Case)(implicit request: Request[_], messages: Messages)
+
+<ul class="tabs__list" role="tablist">
+    @case_nav_item(
+        active = page == CaseDetailPage.TRADER,
+        title = messages("case.menu.trader"),
+        call = routes.CaseController.applicantDetails(c.reference),
+        tabIndex = tabIndexFor(CaseDetailPage.TRADER)
+    )
+
+    @case_nav_item(
+        active = page == CaseDetailPage.APPLICATION_DETAILS,
+        title = messages("case.menu.application-details"),
+        call = routes.CaseController.itemDetails(c.reference),
+        tabIndex = tabIndexFor(CaseDetailPage.APPLICATION_DETAILS)
+    )
+
+    @case_nav_item(
+        active = page == CaseDetailPage.SAMPLE_DETAILS,
+        title = messages("case.menu.sample-details"),
+        call = routes.CaseController.sampleDetails(c.reference),
+        tabIndex = tabIndexFor(CaseDetailPage.SAMPLE_DETAILS)
+    )
+
+    @case_nav_item(
+        active = page == CaseDetailPage.ATTACHMENTS,
+        title = messages("case.menu.attachments"),
+        call = routes.AttachmentsController.attachmentsDetails(c.reference),
+        tabIndex = tabIndexFor(CaseDetailPage.ATTACHMENTS)
+    )
+
+    @case_nav_item(
+        active = page == CaseDetailPage.ACTIVITY,
+        title = messages("case.menu.activity"),
+        call = routes.CaseController.activityDetails(c.reference),
+        tabIndex = tabIndexFor(CaseDetailPage.ACTIVITY)
+    )
+
+    @case_nav_item(
+        active = page == CaseDetailPage.KEYWORDS,
+        title = messages("case.menu.keywords"),
+        call = routes.CaseController.keywordsDetails(c.reference),
+        tabIndex = tabIndexFor(CaseDetailPage.KEYWORDS)
+    )
+
+    @case_nav_item(
+        active = page == CaseDetailPage.RULING || page == CaseDetailPage.EDIT_RULING ,
+        title = messages("case.menu.ruling"),
+        call = routes.CaseController.rulingDetails(c.reference),
+        tabIndex = tabIndexFor(CaseDetailPage.RULING)
+    )
+
+    @if(Set(CaseStatus.COMPLETED, CaseStatus.CANCELLED).contains(c.status)) {
+        @case_nav_item(
+            active = page == CaseDetailPage.APPEAL,
+            title = messages("case.menu.appeal"),
+            call = routes.AppealCaseController.appealDetails(c.reference),
+            tabIndex = tabIndexFor(CaseDetailPage.APPEAL)
+        )
+    }
+
+</ul>

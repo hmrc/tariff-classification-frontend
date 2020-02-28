@@ -1,0 +1,31 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import controllers.routes
+@import models.StoredAttachment
+
+@(id: String, caseReference : String, attachment: StoredAttachment, figureClass: Option[String] = None, useTabIndex: Option[Int] = None)(implicit messages: Messages)
+
+<figure id="thumbnail-@id" class="search-results--thumbnail_wrapper @figureClass.getOrElse("")">
+    <div class="search-results--thumbnail_image">
+        <a @if(useTabIndex.isDefined){ tabindex="@useTabIndex" } id="@{id}-link" target="_blank" href="@attachment.url" class="image-anchor">
+            <img id="@id" src="@attachment.url" alt="Image @attachment.fileName for case @caseReference" title="@attachment.fileName"/>
+        </a>
+    </div>
+    <figcaption class="search-results--thumbnail_text">
+        <a @if(useTabIndex.isDefined){ tabindex="@useTabIndex" } aria-label="View case @caseReference" id="search-images-@id-text" href="@routes.CaseController.rulingDetails(caseReference)">@caseReference</a>
+    </figcaption>
+</figure>

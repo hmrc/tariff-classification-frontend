@@ -1,0 +1,136 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import helper._
+@import controllers.routes.RulingController
+@import config.AppConfig
+@import controllers.routes._
+@import models.forms.DecisionFormData
+@import models.response.ScanStatus
+@import models.{BTIApplication, Case, StoredAttachment}
+@import views.html.forms.components.{input_text, input_textarea}
+@import views.html.partials.{attachments_list, tab_heading}
+@import models.request.AuthenticatedRequest
+@import views.html.partials.error_summary
+@import models.LiabilityOrder
+@import models.forms.LiabilityDetailsForm
+@import views.html.forms.components.input_date
+
+@import views.html.partials.case_heading
+@import views.html.includes.main
+@import views.html.components.initial_focus
+@import views.html.components.confirm_or_cancel_buttons
+@(c: Case, form : Form[LiabilityOrder], startAtTabIndex : Option[Int] = None)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+
+@main(bodyClasses = None, customTitle = Some(messages("case.liability.edit.title"))) {
+
+    @case_heading(c)
+
+    @defining(c.application.asLiabilityOrder) { liability: LiabilityOrder =>
+        <div class="form-group">
+
+            @error_summary(form.errors, startAtTabIndex)
+
+            @tab_heading("ruling", messages("case.liability.edit"), Some("mt-5"))
+
+            @helper.form(action = LiabilityController.postLiabilityDetails(c.reference) , 'class -> "form" , 'id -> "liability-details-edit-form") {
+
+                @CSRF.formField
+
+                <h3 class="heading-medium mb-1">@messages("case.liability.edit.information")</h3>
+
+                @input_date(
+                    dayField = form("entryDate.day"),
+                    monthField = form("entryDate.month"),
+                    yearField = form("entryDate.year"),
+                    dateField = form("entryDate"),
+                    fieldsetId = Some("entryDate"),
+                    hint = Some(messages("case.liability.edit.entry.date.hint")),
+                    legend = messages("case.liability.edit.entry.date")
+                )
+
+                @input_text(
+                    field = form("entryNumber"),
+                    label = messages("case.liability.edit.entry-number"),
+                    inputClass = Some("width-one-half"),
+                    disableAutoComplete = true
+                )
+
+                @input_text(
+                    field = form("traderName"),
+                    label = messages("case.liability.edit.trader-name"),
+                    inputClass = Some("width-one-half"),
+                    disableAutoComplete = true
+                )
+
+                @input_text(
+                    field = form("goodName"),
+                    label = messages("case.liability.edit.item-name"),
+                    inputClass = Some("width-one-half"),
+                    disableAutoComplete = true
+                )
+
+                <h3 class="heading-medium mb-1">@messages("case.liability.edit.commodity-code.information")</h3>
+
+                @input_text(
+                    field = form("traderCommodityCode"),
+                    label = messages("case.liability.edit.commodity-code.trader"),
+                    inputClass = Some("width-one-half"),
+                    disableAutoComplete = true
+                )
+
+                @input_text(
+                    field = form("officerCommodityCode"),
+                    label = messages("case.liability.edit.commodity-code.officer"),
+                    inputClass = Some("width-one-half"),
+                    disableAutoComplete = true
+                )
+
+                <h3 class="heading-medium mb-1">@messages("case.liability.edit.contact.information")</h3>
+
+                @input_text(
+                    field = form("contactName"),
+                    label = messages("case.liability.edit.contact.name"),
+                    inputClass = Some("width-one-half"),
+                    disableAutoComplete = true
+                )
+
+                @input_text(
+                    field = form("contactEmail"),
+                    label = messages("case.liability.edit.contact.email"),
+                    inputClass = Some("width-one-half"),
+                    disableAutoComplete = true
+                )
+
+                @input_text(
+                    field = form("contactPhone"),
+                    label = messages("case.liability.edit.contact.phone"),
+                    inputClass = Some("width-one-half"),
+                    disableAutoComplete = true
+                )
+
+                @confirm_or_cancel_buttons(
+                    id = "edit_liability_details",
+                    confirmText = "Save changes",
+                    cancelText = "Cancel changes",
+                    cancelHref = LiabilityController.liabilityDetails(c.reference)
+                )
+            }
+        </div>
+    }
+}
+
+

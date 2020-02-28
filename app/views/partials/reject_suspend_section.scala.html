@@ -1,0 +1,32 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import models.{Case, CaseStatus}
+@(c: Case, useTabIndex : Option[Int] = None)
+
+<div id="reject-suspend-section" class="mt-1">
+    <h3 class="heading-medium mt-30 mb-30">Reject or suspend this case</h3>
+
+    <p>
+        <a @if(useTabIndex.isDefined){ tabindex="@{useTabIndex.get}" } id="reject-case-button" href="@controllers.routes.RejectCaseController.getRejectCase(c.reference)">Reject this case</a>
+        if the case details are invalid. Once it has been rejected, it cannot be reopened.
+    </p>
+
+    <p>
+        <a @if(useTabIndex.isDefined){ tabindex="@{useTabIndex.get +1}" } id="suspend-case-button" href="@controllers.routes.SuspendCaseController.getSuspendCase(c.reference)">Suspend this case</a>
+        if the commodity code that you want to assign to the ruling is changing.  The case can be reopened.
+    </p>
+</div>

@@ -1,0 +1,62 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.components.input_file
+@(
+bindField: Field,
+action: String
+)(implicit messages: Messages)
+
+<div id="attach-email-heading">
+    <h3 class="heading-medium mt-30 mb-30">Attach an email</h3>
+</div>
+
+<div class="form-group">
+    <div aria-label="Information">
+        <p class="form-hint">Attach the email that you have sent to notify the relevant contact that you are @action this case. Any other attachments can be added in the attachments tab.</p>
+        <details role="group" class="mb-2">
+            <summary role="button">
+                <span id="release-suppress-help-title">How to save an email as a PDF</span>
+            </summary>
+            <div id="release-suppress-help-body" class="panel panel-border">
+                <ol class="list list-number">
+                    <li>Open the email you want to save, and on the file tab, click print.</li>
+                    <li>From the printer drop-down, choose 'microsoft print to PDF'.</li>
+                    <li>Choose print.</li>
+                    <li>In the 'save print output as' box, choose a folder for your PDF and enter a descriptive file name.</li>
+                    <li>Then choose save</li>
+                </ol>
+            </div>
+        </details>
+    </div>
+    <fieldset>
+        <div aria-label="Information">
+            <p>@messages("status.change.upload.title")</p>
+            <ul class="list list-bullet">
+                <li>@messages("status.change.upload.restrictionSize")</li>
+                <li>@messages("status.change.upload.typeOfFiles")</li>
+            </ul>
+        </div>
+    </fieldset>
+    <div class="mt-0">
+    @input_file(
+        field = bindField,
+        label = messages("status.change.upload.label"),
+        accept = Some(".pdf,.doc,.docx,.png,.jpeg,.jpg,.txt")
+    )
+    </div>
+</div>
+

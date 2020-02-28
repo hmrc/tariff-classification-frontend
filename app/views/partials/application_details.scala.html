@@ -1,0 +1,148 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.AppConfig
+@import controllers.routes.AttachmentsController
+@import models.request.AuthenticatedRequest
+@import models.{Application, BTIApplication, Case, EORIDetails, Permission, StoredAttachment}
+@import views.html.partials._
+@(c: Case, files: Seq[StoredAttachment], letterOfAuth: Option[StoredAttachment], startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+
+@defining(c.application) { a: Application =>
+    @defining(a.asBTI) { btiApp: BTIApplication =>
+        @defining(btiApp.holder) { btiHolder: EORIDetails =>
+
+            @tab_heading("application", messages("case.menu.application-details"))
+
+            <dl class="dl-mb-2">
+                <div id="app-details-goods-name" class="grid-row">
+                    <dt class="column-one-third">
+                        @messages("case.item.name")
+                    </dt>
+                    <dd class="column-two-thirds">
+                        @btiApp.goodName
+                    </dd>
+                </div>
+                <div id="app-details-goods-description" class="grid-row">
+                    <dt class="column-one-third">
+                        @messages("case.item.description")
+                    </dt>
+                    <dd class="column-two-thirds">
+                        <span class="pre-wrap">@btiApp.goodDescription</span>
+                    </dd>
+                </div>
+                <div id="app-details-confidential-info" class="grid-row">
+                    <dt class="column-one-third">
+                        @messages("case.item.confidential-information")
+                    </dt>
+                    <dd class="column-two-thirds">
+                        <span class="pre-wrap">@btiApp.confidentialInformation.getOrElse(messages("answer.none"))</span>
+                    </dd>
+                </div>
+
+                @if(btiApp.envisagedCommodityCode.isDefined) {
+                    <div id="app-details-envisaged-code" class="grid-row">
+                        <dt class="column-one-third">
+                            @messages("case.application.suggested-commodity-code")
+                        </dt>
+                        <dd class="column-two-thirds">
+                            @btiApp.envisagedCommodityCode.get
+                        </dd>
+                    </div>
+                }
+
+                <div id="app-details-import-or-export" class="grid-row">
+                    <dt class="column-one-third">
+                    @messages("case.application.importOrExport")
+                    </dt>
+                    <dd class="column-two-thirds">
+                    @btiApp.importOrExport.getOrElse(messages("site.unknown")).toString.toLowerCase.capitalize
+                    </dd>
+                </div>
+
+                <h3 class="heading-medium" id="trader-submitted-heading">@messages("case.application.type")</h3>
+
+                <div id="app-details-reissue-application-type" class="grid-row">
+                    <dt class="column-one-third">
+                        @messages("case.application.reissue-application")
+                    </dt>
+                    <dd class="column-two-thirds">
+                        @if(btiApp.reissuedBTIReference.isDefined){ @messages("case.bti.renewal") }else{ @messages("case.bti.new") }
+                    </dd>
+                </div>
+
+                @if(btiApp.reissuedBTIReference.isDefined) {
+                    <div id="app-details-reissue-application-reference" class="grid-row">
+                        <dt class="column-one-third">
+                            @messages("case.application.renewal-reference-number")
+                        </dt>
+                        <dd class="column-two-thirds">
+                            @btiApp.reissuedBTIReference.get
+                        </dd>
+                    </div>
+                }
+
+                <h3 class="heading-medium" id="trader-submitted-heading">@messages("case.application.attachments")</h3>
+
+                <div id="app-details-attachments" class="grid-row">
+                    <dt class="column-one-third">
+                        @messages("case.application.has-attachments")
+                    </dt>
+                    <dd class="column-two-thirds">
+                        @if(c.attachments.exists(_.operator.isEmpty)){
+                            Yes, <a tabindex="@{startAtTabIndex+1}" href="@AttachmentsController.attachmentsDetails(c.reference)"> view attached documents </a>
+                        } else { @messages("answer.no")}
+                    </dd>
+                </div>
+
+                <h3 class="heading-medium" id="trader-submitted-heading">@messages("case.application.additional-information")</h3>
+
+                <div id="app-details-other-info" class="grid-row">
+                    <dt class="column-one-third">
+                        @messages("case.application.supporting-information")
+                    </dt>
+                    <dd class="column-two-thirds">
+                        <span class="pre-wrap">@btiApp.otherInformation.getOrElse(messages("answer.none"))</span>
+                    </dd>
+                </div>
+
+                @if(btiApp.relatedBTIReference.isDefined){
+                    <div id="app-details-related-reference" class="grid-row">
+                        <dt class="column-one-third">
+                            @messages("case.application.similar-bti-ruling")
+                        </dt>
+                        <dd class="column-two-thirds">
+                            @btiApp.relatedBTIReference
+                        </dd>
+                    </div>
+                }
+
+                <div id="app-details-legal-proceedings" class="grid-row">
+                    <dt class="column-one-third">
+                        @messages("case.application.known-legal-proceedings")
+                    </dt>
+                    <dd class="column-two-thirds">
+                        <span class="pre-wrap">@btiApp.knownLegalProceedings.getOrElse(messages("answer.no"))</span>
+                    </dd>
+                </div>
+            </dl>
+
+            <div class="mt-3">
+                @submitted_application_link(c, Some(startAtTabIndex+7))
+            </div>
+        }
+    }
+}

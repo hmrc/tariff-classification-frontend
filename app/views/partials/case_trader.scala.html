@@ -1,0 +1,136 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import controllers.routes.SuppressCaseController
+@import models.{AgentDetails, Application, BTIApplication, Case, CaseStatus, EORIDetails, Permission, StoredAttachment}
+@import models.request.AuthenticatedRequest
+@import views.html.partials.{attachment, contact_details, tab_heading}
+@(c: Case,  letterOfAuth: Option[StoredAttachment], startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages)
+
+    @tab_heading("trader", "Applicant")
+
+    @defining(c.application) { a: Application =>
+        @defining(a.asBTI) { btiApp: BTIApplication =>
+            @defining(btiApp.holder) { btiHolder: EORIDetails =>
+                <dl class="dl-mb-2">
+                    <h3 class="heading-medium" id="trader-submitted-heading">Trader</h3>
+                    <div class="grid-row">
+                        <dt class="column-one-third">
+                            @messages("case.application.holder.eori-number")
+                        </dt>
+                        <dd class="column-two-thirds">
+                            @btiHolder.eori
+                        </dd>
+                    </div>
+
+                    <div class="grid-row">
+                        <dt class="column-one-third">
+                            @messages("case.application.holder.trader-name")
+                        </dt>
+                        <dd class="column-two-thirds">
+                            @btiHolder.businessName
+                        </dd>
+                    </div>
+
+                    <div class="grid-row">
+                        <dt class="column-one-third">
+                            @messages("case.application.holder.address")
+                        </dt>
+                        <dd class="column-two-thirds">
+
+                                @btiHolder.addressLine1 @if(!btiHolder.addressLine1.isEmpty) {<br>}
+                                @btiHolder.addressLine2 @if(!btiHolder.addressLine2.isEmpty) {<br>}
+                                @btiHolder.addressLine3 @if(!btiHolder.addressLine3.isEmpty) {<br>}
+                                @btiHolder.postcode     @if(!btiHolder.postcode.isEmpty)     {<br>}
+                                @btiHolder.country
+
+                        </dd>
+                    </div>
+
+                </dl>
+                @if(btiApp.agent.isDefined) {
+                    <dl class="dl-mb-2">
+                        <h3 class="heading-medium" id="agent-submitted-heading">Agent</h3>
+
+                        @defining(btiApp.agent.get) { btiAgent: AgentDetails =>
+
+                            <div class="grid-row">
+                                <dt class="column-one-third">
+                                    @messages("case.application.agent.eori-number")
+                                </dt>
+                                <dd class="column-two-thirds">
+                                    @btiAgent.eoriDetails.eori
+                                </dd>
+                            </div>
+
+                            <div class="grid-row">
+                                <dt class="column-one-third">
+                                    @messages("case.application.agent.trader-name")
+                                </dt>
+                                <dd class="column-two-thirds">
+                                    @btiAgent.eoriDetails.businessName
+                                </dd>
+                            </div>
+
+                            <div class="grid-row">
+                                <dt class="column-one-third">
+                                    @messages("case.application.agent.address")
+                                </dt>
+                                <dd class="column-two-thirds">
+                                    @btiAgent.eoriDetails.addressLine1 @if(!btiAgent.eoriDetails.addressLine1.isEmpty) {<br>}
+                                    @btiAgent.eoriDetails.addressLine2  @if(!btiAgent.eoriDetails.addressLine2.isEmpty) {<br>}
+                                    @btiAgent.eoriDetails.addressLine3  @if(!btiAgent.eoriDetails.addressLine3.isEmpty) {<br>}
+                                    @btiAgent.eoriDetails.postcode  @if(!btiAgent.eoriDetails.postcode.isEmpty) {<br>}
+                                    @btiAgent.eoriDetails.country
+                                </dd>
+                            </div>
+
+                            @if(letterOfAuth.isDefined) {
+                                <div class="grid-row">
+                                    <dt class="column-one-third">
+
+                                    </dt>
+                                    <dd class="column-two-thirds">
+                                        @attachment(
+                                            id = "agent-letter",
+                                            file = letterOfAuth.get,
+                                            name = Some(messages("case.application.agent.letter-of-authorisation"))
+                                        )
+                                    </dd>
+                                </div>
+                            }
+                        }
+                    </dl>
+                }
+            }
+        }
+    }
+
+    @contact_details(c, Some(startAtTabIndex+1))
+
+    @if(c.caseBoardsFileNumber.isDefined) {
+        <div class="grid-row mt-30">
+            <dt class="column-one-third">
+                <p id="boards-file-number-label">@messages("case.application.boards-file-number")</p>
+            </dt>
+            <dd class="column-two-thirds">
+                <p id="boards-file-number">@{c.caseBoardsFileNumber.get}</p>
+            </dd>
+        </div>
+    }
+
+
+

@@ -1,0 +1,57 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.AppConfig
+@import controllers.routes
+@import models.InstantRange
+@import models.request.AuthenticatedRequest
+@import views.Report
+@import views.html.forms.components.input_date
+@import views.html.partials.error_summary
+@import views.html.helper.CSRF
+@(form: Form[InstantRange], startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+
+<h3 id="referral_report_criteria-heading" class="heading-small">Referral Report Criteria</h3>
+
+@helper.form(action = routes.ReportingController.getReport(Report.REFERRAL.toString)) {
+
+ @error_summary(form.errors)
+
+ @CSRF.formField
+
+ @input_date(
+  dayField = form("min.day"),
+  monthField = form("min.month"),
+  yearField = form("min.year"),
+  dateField = form("min"),
+  labelClass = Some("heading-small"),
+  legend = "From date",
+  startAtTabIndex = Some(startAtTabIndex)
+ )
+
+ @input_date(
+  dayField = form("max.day"),
+  monthField = form("max.month"),
+  yearField = form("max.year"),
+  dateField = form("max"),
+  labelClass = Some("heading-small"),
+  legend = "To date",
+  startAtTabIndex = Some(startAtTabIndex+4)
+ )
+
+ <button tabindex="@{startAtTabIndex+10}" id="referral_report_criteria-submit" class="button" type="submit">Generate report</button>
+
+}

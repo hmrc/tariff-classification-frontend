@@ -1,0 +1,51 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.AppConfig
+@import models.request.AuthenticatedRequest
+@import models.{Case, CaseStatus, CommodityCode}
+@import utils.Dates
+@(c: Case, commodityCode: Option[CommodityCode], clazz: String = "")(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+
+@if(commodityCode.flatMap(_.expiry).isDefined) {
+    <div id="ruling_commodity_code_expiry_section" class="@clazz">
+        <div class="notice">
+            <i class="icon icon-important">
+                <span class="visually-hidden">Warning</span>
+            </i>
+            <strong id="ruling_commodity_code_expiry_section-warning" class="bold-small">
+                <span>Commodity code @c.decision.get.bindingCommodityCode </span>
+                @if(commodityCode.exists(_.isExpired(appConfig.clock))) {
+                    <span id="ruling_commodity_code_expiry_section-warning_expired">invalid from </span>
+                } else {
+                    <span id="ruling_commodity_code_expiry_section-warning_expiring">is valid until </span>
+                }
+                <span>@Dates.format(commodityCode.flatMap(_.expiry).get)</span>
+            </strong>
+        </div>
+        @if(c.status != CaseStatus.CANCELLED && c.status != CaseStatus.OPEN) {
+            <p id="ruling_commodity_code_expiry_section-message" class="mt-30">
+                <span>Contact the trader to inform them the commodity code </span>
+                @if(commodityCode.exists(_.isExpired(appConfig.clock))) {
+                    <span id="ruling_commodity_code_expiry_section-message_expired">has expired </span>
+                } else {
+                    <span id="ruling_commodity_code_expiry_section-message_expiring">will expire </span>
+                }
+                <span>on @Dates.format(commodityCode.flatMap(_.expiry).get).</span>
+            </p>
+        }
+    </div>
+}

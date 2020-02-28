@@ -1,0 +1,52 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.AppConfig
+@import controllers.routes.{CaseController, ReassignCaseController}
+@import models.Case
+@import models.request.AuthenticatedRequest
+@import views.html.partials.statuses.case_status
+@import views.html.partials.days_elapsed
+
+@(title: String, cases: Seq[Case], id: String, startTabIndexWith : Int = 0)(implicit request: AuthenticatedRequest[_], appConfig: AppConfig, messages: Messages)
+
+@if(cases.nonEmpty) {
+    <h3 class="heading-small">@title</h3>
+    <table id="cases_list-@{id}-table">
+        <thead>
+            <tr>
+                <th scope="col">@messages("cases.table.reference")</th>
+                <th scope="col">@messages("cases.table.status")</th>
+                <th scope="col">@messages("cases.table.elapsed-days")</th>
+                <th scope="col">@messages("cases.table.move")</th>
+            </tr>
+        </thead>
+        <tbody id="cases_list-@{id}-body">
+        @for((c: Case, index: Int) <- cases.zipWithIndex) {
+            <tr id="cases_list-@{id}-row-@index">
+                <th scope="row">
+                    <a tabindex="@{index+startTabIndexWith}" id="cases_list-@{id}-row-@{index}-reference" href="@CaseController.get(c.reference)">@c.reference</a>
+                </th>
+                <td>@case_status(c, s"cases_list-$id-row-$index-status")</td>
+                <td>@days_elapsed(c.daysElapsed, s"cases_list-$id-row-$index-days_elapsed")</td>
+                <th scope="row">
+                    <a tabindex="@{index+startTabIndexWith}" id="cases_list-@{id}-row-@{index}-move" href="@ReassignCaseController.showAvailableQueues(c.reference, request.uri)">Move</a>
+                </th>
+            </tr>
+        }
+        </tbody>
+    </table>
+}

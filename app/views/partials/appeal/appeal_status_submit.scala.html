@@ -1,0 +1,33 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.AppConfig
+@import controllers.routes
+@import models.AppealStatus.AppealStatus
+@import models.AppealType.AppealType
+@import models.{AppealStatus, AppealType, Case}
+@import views.forms.components.RadioOption
+@import views.html.forms.components.input_radiogroup
+@import views.html.includes.main
+@import views.html.partials.case_heading
+@import models.Appeal
+
+@(caseReference: String)
+
+<div>
+ <button id="appeal_choose_status-submit" class="button" type="submit">Confirm status</button>
+ <a id="appeal_choose_status-cancel" class="secondary-button" href="@routes.AppealCaseController.appealDetails(caseReference)">Cancel changes</a>
+</div>

@@ -1,0 +1,64 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import controllers.routes.{PdfDownloadController, RulingController}
+@import config.AppConfig
+@import models.{BTIApplication, Case, CaseStatus, Decision, StoredAttachment}
+@import views.html.partials.{attachments_list, tab_heading}
+@import models.forms.DecisionFormData
+@import views.html.partials.ruling.{ruling_certificate_link, complete_ruling_section}
+@import models.request.AuthenticatedRequest
+
+@(c: Case, useTabIndex : Option[Int] = None)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+
+@if(c.decision.isDefined) {
+    @defining(c.decision.get) { d: Decision =>
+        <h3 class="heading-medium">@messages("case.decision.holder.information")</h3>
+        <div class="grid-row" id="information-for-holder">
+            <dt class="column-one-third">
+                @messages("case.decision.explanation.label")
+            </dt>
+            <dd class="column-two-thirds">
+            @if(d.explanation.exists(_.trim.nonEmpty)) {
+                <p class="mt-0">Commodity code for your item:
+                    <span id="binding-commodity-code">
+                        @{
+                            d.bindingCommodityCode match {
+                                case "" => messages("case.decision.explanation.commodityCode")
+                                case _ => d.bindingCommodityCode
+                            }
+                        }
+                    </span>
+                </p>
+
+                <p id="holder_explanationValue" class="pre-wrap">@d.explanation</p>
+
+                <p>
+                    In reaching this decision I have followed the legal procedure for Tariff Classification as
+                    shown in Volume 2, Part 1, Section 3 of the Tariff.
+                </p>
+
+                <p>
+                    Get more information about classification in the guide
+                    <a @if(useTabIndex.isDefined){tabindex="@{useTabIndex.get}"} href="https://www.gov.uk/guidance/apply-for-a-binding-tariff-information-decision-notice-600">
+                        Apply for a Binding Tariff Information (BTI) ruling (Notice 600)
+                    </a>
+                </p>
+            }
+            </dd>
+        </div>
+    }
+}

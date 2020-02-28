@@ -1,0 +1,48 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.AppConfig
+@import controllers.routes.CompleteCaseController
+@import models.forms.DecisionFormData
+@import models.request.AuthenticatedRequest
+@import models.{Case, CaseStatus, CommodityCode}
+@import views.html.partials.ruling.ruling_commodity_code_expiry_section
+@import scala.collection.mutable.LinkedHashSet
+@(c: Case, decisionForm : Option[Form[DecisionFormData]], classes: Seq[String] = Seq.empty, commodityCode: Option[CommodityCode], useTabIndex : Option[Int] = None)(implicit  request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+
+@if(c.decision.isDefined) {
+    <div id="complete-case-section">
+        @defining(decisionForm.map(_.errors.size).exists(_ > 0)) { hasErrors : Boolean =>
+            @if(hasErrors || commodityCode.flatMap(_.expiry).isDefined) {
+                <h3 class="heading-medium">@messages("case.decision.before-you-complete")</h3>
+
+                @ruling_commodity_code_expiry_section(c, commodityCode,  clazz = "mb-3")
+            }
+
+            @if(hasErrors) {
+                <p>To complete this case, you need to fill in these fields:</p>
+                <ul class="list list-bullet">
+                @for(error: String <- LinkedHashSet(decisionForm.get.errors.map(_.key): _*)) {
+                    <li><span id="constrain-@error">@messages("case.decision.constraint." + error)</span></li>
+                }
+                </ul>
+            }
+            <a @if(useTabIndex.isDefined){tabindex="@{useTabIndex.get}"} id="complete-case-button"  class="button @classes.mkString(" ")"  @if(hasErrors) { disabled="disabled" }else{ href="@CompleteCaseController.completeCase(c.reference)"}>
+                Complete case
+            </a>
+        }
+    </div>
+}
