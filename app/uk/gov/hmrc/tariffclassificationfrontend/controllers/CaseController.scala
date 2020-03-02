@@ -44,6 +44,7 @@ class CaseController @Inject()(verify: RequestActions,
                                queuesService: QueuesService,
                                commodityCodeService: CommodityCodeService,
                                decisionForm: DecisionForm,
+                               countriesService: CountriesService,
                                val messagesApi: MessagesApi,
                                implicit val appConfig: AppConfig) extends FrontendController with I18nSupport {
 
@@ -64,7 +65,7 @@ class CaseController @Inject()(verify: RequestActions,
       c => {
         for {
           letter <- fileService.getLetterOfAuthority(c)
-        } yield views.html.partials.case_trader(c, letter, tabIndexFor(TRADER))
+        } yield views.html.partials.case_trader(c, letter, tabIndexFor(TRADER), getCountryName)
       },
       ActiveTab.Applicant
     )
@@ -217,4 +218,7 @@ class CaseController @Inject()(verify: RequestActions,
       queues <- queuesService.getAll
     } yield views.html.partials.activity_details(c, events, f, queues, tabIndexFor(ACTIVITY))
   }
+
+  def getCountryName(code: String) = countriesService.getAllCountries.find(_.code == code).map(_.countryName)
+
 }

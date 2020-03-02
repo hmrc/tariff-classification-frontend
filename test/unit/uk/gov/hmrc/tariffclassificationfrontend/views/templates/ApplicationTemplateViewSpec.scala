@@ -29,7 +29,7 @@ class ApplicationTemplateViewSpec extends ViewSpec {
   private val caseWithoutAgent = Cases.simpleCaseExample
   private val caseWithAgent = Cases.btiCaseExample
 
-  private def createView(c: Case, attachments: Seq[ StoredAttachment ]) = application_template(c, attachments)(authenticatedFakeRequest, messages, appConfig)
+  private def createView(c: Case, attachments: Seq[ StoredAttachment ]) = application_template(c, attachments, None, s => Some("dummy country name"))(authenticatedFakeRequest, messages, appConfig)
 
   "Application pdf view" must {
 
