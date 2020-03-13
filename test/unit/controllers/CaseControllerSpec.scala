@@ -337,7 +337,7 @@ class CaseControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSuite
   "return a valid country when given a valid country code" in {
     val result: Option[String] = controller(aCase(withReference("withReference"))).getCountryName("IE")
 
-    result shouldBe Some("title.ireland")
+    result shouldBe Some("title.irish_republic")
   }
 
 }
