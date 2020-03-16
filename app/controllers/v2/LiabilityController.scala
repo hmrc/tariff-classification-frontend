@@ -37,6 +37,9 @@ class LiabilityController @Inject()(
 
   def displayLiability(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)).async {
     implicit request =>
-      Future.successful(Ok)
+
+      val ref = request.`case`.reference
+
+      Future.successful(Ok("Case ref: " + ref))
   }
 }

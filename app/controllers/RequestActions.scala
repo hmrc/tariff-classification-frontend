@@ -19,7 +19,7 @@ package controllers
 import javax.inject.{Inject, Singleton}
 import models.Permission
 import models.request.{AuthenticatedCaseRequest, AuthenticatedRequest, OperatorRequest}
-import play.api.mvc.ActionFunction
+import play.api.mvc.{Action, ActionFunction}
 
 @Singleton
 class RequestActions @Inject()(checkPermissionsAction: CheckCasePermissionsAction,
