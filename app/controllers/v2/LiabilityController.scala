@@ -32,6 +32,7 @@ class LiabilityController @Inject()(
   verify: RequestActions,
   casesService: CasesService,
   mcc: MessagesControllerComponents,
+  val liability_view: views.html.v2.liability_view,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc) with I18nSupport {
 
@@ -40,6 +41,6 @@ class LiabilityController @Inject()(
 
       val ref = request.`case`.reference
 
-      Future.successful(Ok("Case ref: " + ref))
+      Future.successful(Ok(liability_view()))
   }
 }

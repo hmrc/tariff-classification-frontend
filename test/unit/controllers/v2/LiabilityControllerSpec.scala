@@ -71,5 +71,7 @@ class LiabilityControllerSpec extends UnitSpec with Matchers with BeforeAndAfter
 
       println(contentAsString(result))
     }
+
+
   }
 }
