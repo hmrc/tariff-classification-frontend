@@ -14,13 +14,18 @@
  * limitations under the License.
  *@
 
+@import models.viewmodels.CaseHeaderViewModel
 @import config.AppConfig
-@import models.viewmodels.LiabilityViewModel
-@import views.html.includes.main
 
-@this(case_heading: views.html.v2.case_heading)
 
-@(liabilityViewModel: LiabilityViewModel)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
-@main(bodyClasses = None) {
-  @case_heading(liabilityViewModel.caseHeaderViewModel)
-}
+@this()
+@(caseHeaderViewModel: CaseHeaderViewModel)(implicit messages: Messages, appConfig: AppConfig, request: Request[_])
+
+<div id="case-heading" class="case-heading mt-1 mb-2">
+    <div id="case-reference" class="case-reference">
+        Case <a tabindex="4" href="@controllers.routes.CaseController.get(caseHeaderViewModel.referenceNumber)">@{caseHeaderViewModel.referenceNumber}</a>
+    </div>
+
+    <h1 class="heading-xlarge case-title">@messages("case.title", caseHeaderViewModel.caseType, caseHeaderViewModel.businessName)</h1>
+
+</div>

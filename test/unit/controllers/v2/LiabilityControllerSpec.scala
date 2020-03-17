@@ -16,35 +16,22 @@
 
 package controllers.v2
 
-import akka.stream.Materializer
 import com.google.inject.Provider
-import org.jsoup.Jsoup
-import org.mockito.ArgumentMatchers.any
-import org.mockito.BDDMockito.given
-import org.mockito.Mockito.{never, reset, verify}
-import org.scalatestplus.mockito.MockitoSugar
-import org.scalatest.{BeforeAndAfterEach, Matchers}
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.data.validation.{Constraint, Valid}
-import play.api.http.Status
-import play.api.mvc.{AnyContent, BodyParser, BodyParsers, MessagesControllerComponents, PlayBodyParsers, Request, Result}
-import play.api.test.Helpers._
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
-import config.AppConfig
-import controllers.{AttachmentsController, ControllerCommons, ExistingCaseActionFactory, HaveRightPermissionsActionFactory, RequestActions, SuccessfulAuthenticatedAction, SuccessfulCasePermissionsAction, SuccessfulRequestActions}
+import controllers.{ControllerCommons, RequestActions, SuccessfulRequestActions}
 import javax.inject.Inject
-import models.forms.{CommodityCodeConstraints, DecisionForm}
-import models.{Permission, _}
-import models.request.AuthenticatedRequest
+import models._
+import org.scalatest.{BeforeAndAfterEach, Matchers}
+import org.scalatestplus.mockito.MockitoSugar
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
-import play.api.http.MediaType.parse
-import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.test.FakeRequest
-import service.{CasesService, FileStoreService}
-import utils.Cases
-import utils.Cases._
 import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.mvc.{BodyParsers, Result}
+import play.api.test.FakeRequest
+import play.api.test.Helpers._
+import uk.gov.hmrc.play.test.UnitSpec
+import utils.Cases
+import views.html.v2.liability_view
 
 import scala.concurrent.Future
 
@@ -58,7 +45,8 @@ class SuccessfulRequestActionsProvider @Inject() (implicit parse: BodyParsers.De
 class LiabilityControllerSpec extends UnitSpec with Matchers with BeforeAndAfterEach with GuiceOneAppPerSuite with MockitoSugar with ControllerCommons {
 
   override lazy val app: Application = new GuiceApplicationBuilder().overrides(
-    bind[RequestActions].toProvider[SuccessfulRequestActionsProvider]
+    bind[RequestActions].toProvider[SuccessfulRequestActionsProvider],
+    bind[liability_view].toInstance(mock[liability_view])
   ).build()
 
   "Calling /manage-tariff-classifications/cases/v2/:reference/liability " should {

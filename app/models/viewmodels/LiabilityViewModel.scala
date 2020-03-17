@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,15 +12,20 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import config.AppConfig
-@import models.viewmodels.LiabilityViewModel
-@import views.html.includes.main
+package models.viewmodels
 
-@this(case_heading: views.html.v2.case_heading)
+import models.Case
 
-@(liabilityViewModel: LiabilityViewModel)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
-@main(bodyClasses = None) {
-  @case_heading(liabilityViewModel.caseHeaderViewModel)
+case class LiabilityViewModel(
+                               caseHeaderViewModel: CaseHeaderViewModel
+                             )
+
+object LiabilityViewModel {
+
+  def fromCase(c: Case) = LiabilityViewModel(
+    CaseHeaderViewModel("Liability", c.application.businessName, c.reference)
+  )
+
 }
