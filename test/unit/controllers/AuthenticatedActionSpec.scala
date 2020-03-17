@@ -136,20 +136,6 @@ class AuthenticatedActionSpec extends UnitSpec with MockitoSugar with BeforeAndA
     }
 
     "Redirect to Stride Login on NoActiveSession" in {
-      given(appConfig.runningAsDev).willReturn(false)
-      given(connector.authorise(
-        any[Predicate],
-        any[Retrieval[Credentials ~ Name]]
-      )(any[HeaderCarrier], any[ExecutionContext])).willReturn(Future.failed(new NoActiveSession("No Session") {}))
-
-      val result: Result = await(action.invokeBlock(FakeRequest(), block))
-      status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/stride/sign-in?successURL=%2F&origin=undefined")
-    }
-
-    "Redirect to Stride Login Dev on NoActiveSession" in {
-      given(appConfig.runningAsDev).willReturn(true)
-      given(config.getOptional[String](ArgumentMatchers.eq("run.mode"))(any[ConfigLoader[String]])).willReturn(Some("Dev"))
       given(connector.authorise(
         any[Predicate],
         any[Retrieval[Credentials ~ Name]]
