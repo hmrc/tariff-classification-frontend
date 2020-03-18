@@ -16,11 +16,7 @@
 
 package models.viewmodels
 
-case class CaseHeaderViewModel(
-                                caseType: String,
-                                businessName: String,
-                                goodsName: String,
-                                referenceNumber: String,
-                                caseStatus: String,
-                                isLive: Boolean
+case class CaseStatusViewModel(
+                                status: String,
+                                badgeColor: String
                               )

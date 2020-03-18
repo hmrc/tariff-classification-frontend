@@ -16,16 +16,27 @@
 
 package models.viewmodels
 
-import models.Case
+import models.CaseStatus.CaseStatus
+import models.{CancelReason, Case, CaseStatus}
 
 case class LiabilityViewModel(
-  caseHeaderViewModel: CaseHeaderViewModel
-)
+                               caseHeaderViewModel: CaseHeaderViewModel
+                             )
 
 object LiabilityViewModel {
 
-  def fromCase(c: Case) = LiabilityViewModel(
-    CaseHeaderViewModel("Liability", c.application.businessName, c.reference)
-  )
+  def fromCase(c: Case) = {
 
+    def status = {
+      c.status match {
+        case CaseStatus.CANCELLED => s"CANCELLED${c.decision.flatMap(_.cancellation).map(c => CancelReason.code(c.reason)).map(s => s" - $s").getOrElse("")}"
+        case CaseStatus.COMPLETED if c.hasExpiredRuling => "EXPIRED"
+        case s: CaseStatus => s.toString
+      }
+    }
+
+    LiabilityViewModel(
+      CaseHeaderViewModel("Liability", c.application.businessName, c.application.goodsName, c.reference, status, c.application.isLiveLiabilityOrder)
+    )
+  }
 }
