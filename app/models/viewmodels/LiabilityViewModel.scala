@@ -19,8 +19,8 @@ package models.viewmodels
 import models.Case
 
 case class LiabilityViewModel(
-                               caseHeaderViewModel: CaseHeaderViewModel
-                             )
+  caseHeaderViewModel: CaseHeaderViewModel
+)
 
 object LiabilityViewModel {
 

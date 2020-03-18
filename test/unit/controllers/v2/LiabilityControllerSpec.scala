@@ -20,6 +20,7 @@ import com.google.inject.Provider
 import controllers.{ControllerCommons, RequestActions, SuccessfulRequestActions}
 import javax.inject.Inject
 import models._
+import models.viewmodels.LiabilityViewModel
 import org.scalatest.{BeforeAndAfterEach, Matchers}
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
@@ -32,6 +33,9 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.Cases
 import views.html.v2.liability_view
+import org.mockito.Mockito._
+import org.mockito.ArgumentMatchers.{any, eq => meq}
+import play.twirl.api.Html
 
 import scala.concurrent.Future
 
@@ -53,9 +57,14 @@ class LiabilityControllerSpec extends UnitSpec with Matchers with BeforeAndAfter
 
     "return a 200 status" in {
 
+      when(inject[liability_view].apply(any())(any(), any(), any())) thenReturn Html("body")
+
       val result: Future[Result] = route(app, FakeRequest("GET", "/manage-tariff-classifications/cases/v2/123456/liability")).get
 
       status(result) shouldBe OK
+
+      val expected = LiabilityViewModel.fromCase(Cases.btiCaseExample)
+      verify(inject[liability_view], times(1)).apply(meq(expected))(any(), any(), any())
 
       println(contentAsString(result))
     }
