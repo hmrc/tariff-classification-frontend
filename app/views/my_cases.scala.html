@@ -31,7 +31,7 @@
     Paged[Case](cases.filter(c => referredStatuses.contains(c.status)))
 }
 
-@main(bodyClasses = None, scriptElem = Some(Html("<script>document.getElementById('nav-menu-my-cases').focus();</script>")),
+@main(bodyClasses = None,
     customTitle = Some(messages("page.title.case.queues.my-cases"))) {
 
     <h1 id="queue-name" class="heading-xlarge">

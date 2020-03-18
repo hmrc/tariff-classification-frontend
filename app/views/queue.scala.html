@@ -28,7 +28,7 @@
     }
 }
 
-@main(bodyClasses = None, scriptElem = Some(Html(s"<script>document.getElementById('nav-menu-queue${getSuffixBasedOnFilter}-${queue.slug}').focus();</script>")),
+@main(bodyClasses = None,
     customTitle = Some(messages("page.title.case.queues.cases", messages(s"page.title.case.queues.${queue.slug}${getSuffixBasedOnFilter}")))){
 
     <h1 id="queue-name" class="heading-xlarge">@messages("page.title.case.queues.cases", messages(s"page.title.case.queues.${queue.slug}${getSuffixBasedOnFilter}"))</h1>

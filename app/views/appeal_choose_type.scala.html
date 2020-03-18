@@ -28,7 +28,7 @@
 
 @(c: Case, form: Form[AppealType])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("page.title.choose.appeal.type")), scriptElem =  Some(Html(s"<script>document.getElementById('error-summary').focus();</script>"))) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.choose.appeal.type"))) {
 
   @error_summary(form.errors)
 
