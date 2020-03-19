@@ -53,7 +53,6 @@ class CaseController @Inject()(
   private lazy val keywordForm: Form[String] = KeywordForm.form
   private lazy val newliabilityDetailsToggle = appConfig.newLiabilityDetails
 
-  println("newliabilityDetailsToggle " + newliabilityDetailsToggle)
   def get(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)) { implicit request =>
     request.`case`.application.`type` match {
       case ApplicationType.BTI => Redirect(routes.CaseController.applicantDetails(reference))
