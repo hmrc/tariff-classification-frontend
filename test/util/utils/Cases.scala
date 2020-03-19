@@ -56,6 +56,7 @@ object Cases {
     effectiveEndDate = Some(Instant.now().plus(-10, DAYS))
   )
   val btiCaseWithExpiredRuling = btiCaseExample.copy(status = CaseStatus.COMPLETED, decision = Some(expiredRuling))
+  val liabilityCaseWithExpiredRuling = liabilityCaseExample.copy(status = CaseStatus.COMPLETED, decision = Some(expiredRuling))
 
   def attachment(id: String = UUID.randomUUID().toString): Attachment = {
     Attachment(

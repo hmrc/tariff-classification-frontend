@@ -28,16 +28,16 @@ class LiabilityViewModelSpec extends UnitSpec {
 
     "create a cancelled view model" in {
 
-      val c = Cases.btiCaseExample.copy(status = CaseStatus.CANCELLED)
+      val c = Cases.liabilityCaseExample.copy(status = CaseStatus.CANCELLED)
 
-      assert(LiabilityViewModel.fromCase(c) === LiabilityViewModel(CaseHeaderViewModel("Liability", "trader-business-name", "Laptop", "1", "CANCELLED", false)))
+      assert(LiabilityViewModel.fromCase(c) === LiabilityViewModel(CaseHeaderViewModel("Liability", "trader-business-name", "Laptop", "1", "CANCELLED", false), C592ViewModel("")))
 
     }
 
 
     "create a complete view model if it has an expired ruling" in {
 
-      val c = Cases.btiCaseWithExpiredRuling
+      val c = Cases.liabilityCaseWithExpiredRuling
 
       assert(LiabilityViewModel.fromCase(c).caseHeaderViewModel.caseStatus === "EXPIRED")
 
@@ -45,7 +45,7 @@ class LiabilityViewModelSpec extends UnitSpec {
 
     "create a completed view model" in {
 
-      val c = Cases.btiCaseExample.copy(status = CaseStatus.COMPLETED)
+      val c = Cases.liabilityCaseExample.copy(status = CaseStatus.COMPLETED)
 
       assert(LiabilityViewModel.fromCase(c).caseHeaderViewModel.caseStatus === "COMPLETED")
 

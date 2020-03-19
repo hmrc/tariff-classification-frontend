@@ -17,10 +17,11 @@
 package models.viewmodels
 
 import models.CaseStatus.CaseStatus
-import models.{CancelReason, Case, CaseStatus}
+import models.{CancelReason, Case, CaseStatus, viewmodels}
 
 case class LiabilityViewModel(
-                               caseHeaderViewModel: CaseHeaderViewModel
+                               caseHeaderViewModel: CaseHeaderViewModel,
+                               c592ViewModel: C592ViewModel
                              )
 
 object LiabilityViewModel {
@@ -36,7 +37,8 @@ object LiabilityViewModel {
     }
 
     LiabilityViewModel(
-      CaseHeaderViewModel("Liability", c.application.businessName, c.application.goodsName, c.reference, status, c.application.isLiveLiabilityOrder)
+      CaseHeaderViewModel("Liability", c.application.businessName, c.application.goodsName, c.reference, status, c.application.isLiveLiabilityOrder),
+      C592ViewModel.fromCase(c)
     )
   }
 }
