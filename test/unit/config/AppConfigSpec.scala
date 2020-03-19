@@ -105,6 +105,10 @@ class AppConfigSpec extends UnitSpec with MockitoSugar with GuiceOneAppPerSuite 
 
       appConf.shutterExcludedUrls shouldBe "/ping/ping"
     }
+
+    "build new-liability-details" in {
+      appConf.newLiabilityDetails shouldBe false
+    }
   }
 
 }

@@ -34,6 +34,7 @@ import config.AppConfig
 import models.forms.{CommodityCodeConstraints, DecisionForm}
 import models.EventType.EventType
 import models.{Permission, _}
+import play.api.inject.guice.GuiceApplicationBuilder
 import service._
 import utils.Cases._
 import utils.{Cases, Events}
@@ -69,6 +70,19 @@ class CaseControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSuite
     decisionForm, countriesService, messageApi, appConfig
   )
 
+   implicit lazy val appWithLiabilityToggle = new GuiceApplicationBuilder()
+    .configure("toggle.new-liability-details" -> true)
+    .build()
+
+  lazy val appConf: AppConfig = appWithLiabilityToggle.injector.instanceOf[AppConfig]
+
+  private def controllerWithNewLiability(c: Case) = new CaseController(
+    new SuccessfulRequestActions(inject[BodyParsers.Default], operator, c = c),
+    mock[CasesService], keywordsService, fileService,
+    eventService, queueService, commodityCodeService,
+    decisionForm, countriesService, messageApi, appConf
+  )
+
   private implicit val hc: HeaderCarrier = HeaderCarrier()
 
   "Case Index" should {
@@ -82,12 +96,20 @@ class CaseControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSuite
         locationOf(result) shouldBe Some(routes.CaseController.applicantDetails("reference").url)
       }
 
-      "case is a Liability" in {
+      "case is a Liability with newLiabilityDetails toggle is set to false" in {
         val c = aCase(withReference("reference"), withLiabilityApplication())
         val result = controller(c).get("reference")(fakeRequest)
 
         status(result) shouldBe Status.SEE_OTHER
         locationOf(result) shouldBe Some(routes.LiabilityController.liabilityDetails("reference").url)
+      }
+
+      "case is a Liability with newLiability toggle is set to true" in {
+        val c = aCase(withReference("reference"), withLiabilityApplication())
+        val result = controllerWithNewLiability(c).get("reference")(fakeRequest)
+
+        status(result) shouldBe Status.SEE_OTHER
+        locationOf(result) shouldBe Some(v2.routes.LiabilityController.displayLiability("reference").url)
       }
     }
   }
