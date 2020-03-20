@@ -20,6 +20,7 @@ package controllers.v2
 import config.AppConfig
 import controllers.RequestActions
 import javax.inject.{Inject, Singleton}
+import models.viewmodels.LiabilityViewModel
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import service.CasesService
@@ -32,11 +33,13 @@ class LiabilityController @Inject()(
   verify: RequestActions,
   casesService: CasesService,
   mcc: MessagesControllerComponents,
+  val liability_view: views.html.v2.liability_view,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc) with I18nSupport {
 
   def displayLiability(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)).async {
     implicit request =>
-      Future.successful(Ok)
+
+      Future.successful(Ok(liability_view(LiabilityViewModel.fromCase(request.`case`))))
   }
 }

@@ -51,11 +51,15 @@ class CaseController @Inject()(
   private type Keyword = String
   private lazy val activityForm: Form[ActivityFormData] = ActivityForm.form
   private lazy val keywordForm: Form[String] = KeywordForm.form
+  private lazy val newliabilityDetailsToggle = appConfig.newLiabilityDetails
 
   def get(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)) { implicit request =>
     request.`case`.application.`type` match {
       case ApplicationType.BTI => Redirect(routes.CaseController.applicantDetails(reference))
-      case ApplicationType.LIABILITY_ORDER => Redirect(routes.LiabilityController.liabilityDetails(reference))
+      case ApplicationType.LIABILITY_ORDER => {
+        if (newliabilityDetailsToggle) Redirect(v2.routes.LiabilityController.displayLiability(reference))
+        else Redirect(routes.LiabilityController.liabilityDetails(reference))
+      }
     }
   }
 

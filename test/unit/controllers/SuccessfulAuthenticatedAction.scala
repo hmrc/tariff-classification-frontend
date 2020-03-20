@@ -22,6 +22,7 @@ import play.api.mvc._
 import play.api.{Configuration, Environment}
 import config.AppConfig
 import connector.StrideAuthConnector
+import javax.inject.Inject
 import models.request.{AuthenticatedCaseRequest, AuthenticatedRequest, OperatorRequest}
 import models.{Case, Operator, Permission}
 import service.CasesService
