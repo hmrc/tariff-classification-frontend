@@ -24,6 +24,11 @@
 @main(bodyClasses = None) {
   @case_heading(liabilityViewModel.caseHeaderViewModel)
 
+@if(liabilityViewModel.isNewCase) {
+@* button placeholder*@
+ }
+
+
 <div class="govuk-tabs" data-module="govuk-tabs">
  <ul class="govuk-tabs__list">
   <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">

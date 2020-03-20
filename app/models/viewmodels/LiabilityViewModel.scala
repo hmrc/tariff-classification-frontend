@@ -21,7 +21,8 @@ import models.{CancelReason, Case, CaseStatus, viewmodels}
 
 case class LiabilityViewModel(
                                caseHeaderViewModel: CaseHeaderViewModel,
-                               c592ViewModel: C592ViewModel
+                               c592ViewModel: C592ViewModel,
+                               isNewCase: Boolean
                              )
 
 object LiabilityViewModel {
@@ -36,9 +37,12 @@ object LiabilityViewModel {
       }
     }
 
+    def isNew: Boolean = c.status == CaseStatus.NEW
+
     LiabilityViewModel(
       CaseHeaderViewModel("Liability", c.application.businessName, c.application.goodsName, c.reference, status, c.application.isLiveLiabilityOrder),
-      C592ViewModel.fromCase(c)
+      C592ViewModel.fromCase(c),
+      isNewCase = isNew
     )
   }
 }
