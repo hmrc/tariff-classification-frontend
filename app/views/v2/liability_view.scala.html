@@ -55,22 +55,32 @@
   </div>
 
   <div class="grid-row">
+  <dt class="column-one-third">
+   @messages("case.v2.liability.c592.bti_case")
+  </dt>
+  <dd class="column-two-thirds" id="liability-bti-case">
+   @liabilityViewModel.c592ViewModel.btiCase
+  </dd>
+ </div>
+
+  <div class="grid-row">
    <dt class="column-one-third">
-    @messages("case.v2.liability.c592.bti_case")
+    @messages("case.v2.liability.c592.repayment_claim")
    </dt>
-   <dd class="column-two-thirds" id="liability-bti-case">
-    <!--@liabilityViewModel.c592ViewModel.btiCase-->
-    5557748485
+   <dd class="column-two-thirds" id="liability-repayment-claim">
+    @liabilityViewModel.c592ViewModel.repaymentClaim
    </dd>
   </div>
 
-<!--  Repayment claim?-->
+  <div class="grid-row">
+   <dt class="column-one-third">
+    @messages("case.v2.liability.c592.receipt_date")
+   </dt>
+   <dd class="column-two-thirds" id="liability-receipt-date">
+    @liabilityViewModel.c592ViewModel.receiptDate
+   </dd>
+  </div>
 
-<!--  Yes-->
-
-<!--  Date of receipt-->
-
-<!--  08 Apr 2015-->
 
 </div>
 

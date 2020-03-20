@@ -706,3 +706,5 @@ case.v2.liability.c592.tab_title=C592
 case.v2.liability.c592.tab_heading=Information from the C592
 case.v2.liability.c592.entry_date=Liability entry date
 case.v2.liability.c592.bti_case=BTI Case
+case.v2.liability.c592.repayment_claim=Repayment claim?
+case.v2.liability.c592.receipt_date=Date of receipt
