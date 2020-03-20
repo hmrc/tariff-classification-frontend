@@ -700,3 +700,9 @@ title.western_sahara=Western Sahara
 title.yemen=Yemen
 title.zambia=Zambia
 title.zimbabwe=Zimbabwe
+
+case.v2.liability.c592.entry_number=Entry number
+case.v2.liability.c592.tab_title=C592
+case.v2.liability.c592.tab_heading=Information from the C592
+case.v2.liability.c592.entry_date=Liability entry date
+case.v2.liability.c592.bti_case=BTI Case

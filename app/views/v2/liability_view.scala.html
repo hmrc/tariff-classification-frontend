@@ -24,5 +24,57 @@
 @main(bodyClasses = None) {
   @case_heading(liabilityViewModel.caseHeaderViewModel)
 
+<div class="govuk-tabs" data-module="govuk-tabs">
+ <ul class="govuk-tabs__list">
+  <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
+   <a class="govuk-tabs__tab" href="#past-day">
+    @messages("case.v2.liability.c592.tab_title")
+   </a>
+  </li>
+ </ul>
+</div>
+
+ <div class="govuk-tabs__panel" id="past-day">
+  <h2 class="govuk-heading-l">@messages("case.v2.liability.c592.tab_heading")</h2>
+  <div class="grid-row">
+   <dt class="column-one-third">
+    @messages("case.v2.liability.c592.entry_number")
+   </dt>
+   <dd class="column-two-thirds" id="liability-entry-number">
+  @liabilityViewModel.c592ViewModel.entryNumber
+   </dd>
+  </div>
+
+  <div class="grid-row">
+   <dt class="column-one-third">
+    @messages("case.v2.liability.c592.entry_date")
+   </dt>
+   <dd class="column-two-thirds" id="liability-entry-date">
+    @liabilityViewModel.c592ViewModel.entryDate
+   </dd>
+  </div>
+
+  <div class="grid-row">
+   <dt class="column-one-third">
+    @messages("case.v2.liability.c592.bti_case")
+   </dt>
+   <dd class="column-two-thirds" id="liability-bti-case">
+    <!--@liabilityViewModel.c592ViewModel.btiCase-->
+    5557748485
+   </dd>
+  </div>
+
+<!--  Repayment claim?-->
+
+<!--  Yes-->
+
+<!--  Date of receipt-->
+
+<!--  08 Apr 2015-->
+
+</div>
+
+ </div>
 
 }
+

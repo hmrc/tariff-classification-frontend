@@ -16,6 +16,8 @@
 
 package models.viewmodels
 
+import java.time.Instant
+
 import controllers.ActiveTab.Liability
 import models.CaseStatus
 import uk.gov.hmrc.play.test.UnitSpec
@@ -28,9 +30,14 @@ class LiabilityViewModelSpec extends UnitSpec {
 
     "create a cancelled view model" in {
 
-      val c = Cases.liabilityCaseExample.copy(status = CaseStatus.CANCELLED)
+      val c = Cases.liabilityCaseExample.copy(status = CaseStatus.CANCELLED,application = Cases.liabilityCaseExample.application.asLiabilityOrder.copy(entryDate = Some(Instant.parse("2020-03-03T10:15:30.00Z"))))
 
-      assert(LiabilityViewModel.fromCase(c) === LiabilityViewModel(CaseHeaderViewModel("Liability", "trader-business-name", "good-name", "1", "CANCELLED", false), C592ViewModel("entry number")))
+      assert(LiabilityViewModel.fromCase(c) === LiabilityViewModel(CaseHeaderViewModel("Liability",
+        "trader-business-name", "good-name",
+        "1",
+        "CANCELLED",
+        false),
+        C592ViewModel("entry number", "03 Mar 2020", "")))
 
     }
 

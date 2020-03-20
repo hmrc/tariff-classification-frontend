@@ -17,12 +17,14 @@
 package models.viewmodels
 
 import models.Case
+import utils.Dates
 
-case class C592ViewModel(entryNumber: String)
+case class C592ViewModel(entryNumber: String, entryDate: String, btiCase: String )
 
 object C592ViewModel {
   def fromCase(c: Case): C592ViewModel = {
-    C592ViewModel(c.application.asLiabilityOrder.entryNumber.getOrElse(""))
+    val liabilityOrder = c.application.asLiabilityOrder
+    C592ViewModel(liabilityOrder.entryNumber.getOrElse(""), liabilityOrder.entryDate.map(Dates.format).getOrElse(""), "" )
   }
 
 }
