@@ -30,7 +30,7 @@ class LiabilityViewModelSpec extends UnitSpec {
 
       val c = Cases.liabilityCaseExample.copy(status = CaseStatus.CANCELLED)
 
-      assert(LiabilityViewModel.fromCase(c) === LiabilityViewModel(CaseHeaderViewModel("Liability", "trader-business-name", "Laptop", "1", "CANCELLED", false), C592ViewModel("")))
+      assert(LiabilityViewModel.fromCase(c) === LiabilityViewModel(CaseHeaderViewModel("Liability", "trader-business-name", "good-name", "1", "CANCELLED", false), C592ViewModel("entry number")))
 
     }
 

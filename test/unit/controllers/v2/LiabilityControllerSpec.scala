@@ -42,7 +42,7 @@ import scala.concurrent.Future
 class SuccessfulRequestActionsProvider @Inject() (implicit parse: BodyParsers.Default) extends Provider[SuccessfulRequestActions] {
 
   override def get(): SuccessfulRequestActions = {
-    new SuccessfulRequestActions(parse, MockitoSugar.mock[Operator], c = Cases.btiCaseExample)
+    new SuccessfulRequestActions(parse, MockitoSugar.mock[Operator], c = Cases.liabilityCaseExample)
   }
 }
 
@@ -63,7 +63,7 @@ class LiabilityControllerSpec extends UnitSpec with Matchers with BeforeAndAfter
 
       status(result) shouldBe OK
 
-      val expected = LiabilityViewModel.fromCase(Cases.btiCaseExample)
+      val expected = LiabilityViewModel.fromCase(Cases.liabilityCaseExample)
       verify(inject[liability_view], times(1)).apply(meq(expected))(any(), any(), any())
 
       println(contentAsString(result))
