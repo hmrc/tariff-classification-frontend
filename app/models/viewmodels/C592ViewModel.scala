@@ -19,7 +19,15 @@ package models.viewmodels
 import models.Case
 import utils.Dates
 
-case class C592ViewModel(entryNumber: String, entryDate: String, btiCase: String, repaymentClaim: Option[Boolean], receiptDate: String )
+case class C592ViewModel(entryNumber: String,
+                         entryDate: String, btiCase: String,
+                         repaymentClaim: Option[Boolean],
+                         receiptDate: String,
+                         itemName: String,
+                         traderName: String,
+                         traderEmail: String,
+                         traderTelephone: String,
+                         traderAddress: String )
 
 object C592ViewModel {
   def fromCase(c: Case): C592ViewModel = {
@@ -28,6 +36,6 @@ object C592ViewModel {
       liabilityOrder.entryDate.map(Dates.format).getOrElse(""),
       "",
       None,
-      "")
+      "", "", "", "", "","")
   }
 }
