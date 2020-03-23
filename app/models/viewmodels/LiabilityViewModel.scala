@@ -17,12 +17,13 @@
 package models.viewmodels
 
 import models.CaseStatus.CaseStatus
-import models.{CancelReason, Case, CaseStatus, viewmodels}
+import models.{CancelReason, Case, CaseStatus, Permission}
 
 case class LiabilityViewModel(
                                caseHeaderViewModel: CaseHeaderViewModel,
                                c592ViewModel: C592ViewModel,
-                               isNewCase: Boolean
+                               isNewCase: Boolean,
+                               hasPermissions: Boolean
                              )
 
 object LiabilityViewModel {
@@ -38,11 +39,15 @@ object LiabilityViewModel {
     }
 
     def isNew: Boolean = c.status == CaseStatus.NEW
+    val permissions = c.assignee.fold(Set[Permission]())(sdf => sdf.permissions)
+    def releaseOrSuppressPermissions = permissions.contains(Permission.RELEASE_CASE) || permissions.contains(Permission.SUPPRESS_CASE)
+
 
     LiabilityViewModel(
       CaseHeaderViewModel("Liability", c.application.businessName, c.application.goodsName, c.reference, status, c.application.isLiveLiabilityOrder),
       C592ViewModel.fromCase(c),
-      isNewCase = isNew
+      isNewCase = isNew,
+      hasPermissions = releaseOrSuppressPermissions
     )
   }
 }

@@ -27,7 +27,6 @@
   @case_heading(liabilityViewModel.caseHeaderViewModel)
 
 @if(liabilityViewModel.isNewCase) {
-@* button placeholder*@
  @change_case_status_button("action-this-case", "Action this case", ReleaseOrSuppressCaseController.onPageLoad(liabilityViewModel.caseHeaderViewModel.referenceNumber))
 }
 

@@ -20,6 +20,7 @@ package controllers.v2
 import config.AppConfig
 import controllers.RequestActions
 import javax.inject.{Inject, Singleton}
+import models.Permission
 import models.viewmodels.LiabilityViewModel
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -39,7 +40,6 @@ class LiabilityController @Inject()(
 
   def displayLiability(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)).async {
     implicit request =>
-
       Future.successful(Ok(liability_view(LiabilityViewModel.fromCase(request.`case`))))
   }
 }
