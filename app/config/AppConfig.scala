@@ -64,4 +64,13 @@ class AppConfig @Inject()(
 
   lazy val clock: Clock = Clock.systemUTC()
 
+  def runningAsDev: Boolean = {
+    environment.mode == Mode.Dev
+
+//    config
+//      .getString("run.mode")
+//      .map(_.equals(Mode.Dev.toString))
+//      .getOrElse(Mode.Dev.equals(mode))
+  }
+
 }
