@@ -48,7 +48,8 @@ class ReleaseOrSuppressCaseControllerSpec extends WordSpec
   private val casesService = mock[CasesService]
   private val operator = mock[Operator]
 
-  private val caseWithStatusNEW = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.NEW)
+  private val caseBTIWithStatusNEW = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.NEW)
+  private val caseLiabilityWithStatusNEW = Cases.liabilityCaseExample.copy(reference = "reference", status = CaseStatus.NEW)
 
   private implicit val mat: Materializer = fakeApplication.materializer
   private implicit val hc: HeaderCarrier = HeaderCarrier()
@@ -65,7 +66,7 @@ class ReleaseOrSuppressCaseControllerSpec extends WordSpec
   "ReleaseOrSuppressCaseControllerSpec" should {
 
     "return OK with correct HTML" in {
-      val result = await(controller(caseWithStatusNEW).onPageLoad("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+      val result = await(controller(caseBTIWithStatusNEW).onPageLoad("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -73,7 +74,7 @@ class ReleaseOrSuppressCaseControllerSpec extends WordSpec
     }
 
     "return OK when the user has release case permissions" in {
-      val result = await(controller(caseWithStatusNEW, Set(Permission.RELEASE_CASE)).onPageLoad("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+      val result = await(controller(caseBTIWithStatusNEW, Set(Permission.RELEASE_CASE)).onPageLoad("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -82,7 +83,7 @@ class ReleaseOrSuppressCaseControllerSpec extends WordSpec
     }
 
     "return OK when the user has the suppress case permissions" in {
-      val result = await(controller(caseWithStatusNEW, Set(Permission.SUPPRESS_CASE)).onPageLoad("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+      val result = await(controller(caseBTIWithStatusNEW, Set(Permission.SUPPRESS_CASE)).onPageLoad("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -91,7 +92,7 @@ class ReleaseOrSuppressCaseControllerSpec extends WordSpec
     }
 
     "return unauthorised when user does not have the necessary permissions" in {
-      val result = await(controller(caseWithStatusNEW, Set(Permission.VIEW_ASSIGNED_CASES)).onPageLoad("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+      val result = await(controller(caseBTIWithStatusNEW, Set(Permission.VIEW_ASSIGNED_CASES)).onPageLoad("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
@@ -99,7 +100,7 @@ class ReleaseOrSuppressCaseControllerSpec extends WordSpec
 
     "redirect to Release case page POST" in {
       val result = await(
-        controller(caseWithStatusNEW, Set(Permission.RELEASE_CASE))
+        controller(caseBTIWithStatusNEW, Set(Permission.RELEASE_CASE))
           .onSubmit("reference")(
             newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("caseStatus" -> CaseStatusRadioInput.Release.toString)))
 
@@ -109,7 +110,7 @@ class ReleaseOrSuppressCaseControllerSpec extends WordSpec
 
     "redirect to Suppress case page POST" in {
       val result = await(
-        controller(caseWithStatusNEW, Set(Permission.SUPPRESS_CASE))
+        controller(caseBTIWithStatusNEW, Set(Permission.SUPPRESS_CASE))
           .onSubmit("reference")(
             newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("caseStatus" -> CaseStatusRadioInput.Suppress.toString)))
 
@@ -120,7 +121,7 @@ class ReleaseOrSuppressCaseControllerSpec extends WordSpec
 
     "redirect to change case status page when form has errors" in {
       val result =
-        controller(caseWithStatusNEW, Set(Permission.RELEASE_CASE))
+        controller(caseBTIWithStatusNEW, Set(Permission.RELEASE_CASE))
           .onSubmit("reference")(
             newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("caseStatus" -> ""))
 

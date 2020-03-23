@@ -58,6 +58,21 @@ class LiabilityViewModelSpec extends UnitSpec {
       assert(LiabilityViewModel.fromCase(c).caseHeaderViewModel.caseStatus === "COMPLETED")
 
     }
+
+    "create a viewModel with isNewCase is set to true" in {
+
+      val c = Cases.liabilityCaseExample.copy(status = CaseStatus.NEW)
+
+      assert(LiabilityViewModel.fromCase(c).isNewCase === true)
+    }
+
+    "create a viewModel with isNewCase is set to false" in {
+
+      val c = Cases.liabilityCaseExample
+
+      assert(LiabilityViewModel.fromCase(c).isNewCase === false)
+
+    }
   }
 
 }

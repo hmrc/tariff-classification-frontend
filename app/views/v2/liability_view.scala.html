@@ -17,6 +17,8 @@
 @import config.AppConfig
 @import models.viewmodels.LiabilityViewModel
 @import views.html.includes.main
+@import controllers.routes.ReleaseOrSuppressCaseController
+@import views.html.components.change_case_status_button
 
 @this(case_heading: views.html.v2.case_heading)
 
@@ -26,7 +28,8 @@
 
 @if(liabilityViewModel.isNewCase) {
 @* button placeholder*@
- }
+ @change_case_status_button("action-this-case", "Action this case", ReleaseOrSuppressCaseController.onPageLoad(liabilityViewModel.caseHeaderViewModel.referenceNumber))
+}
 
 
 <div class="govuk-tabs" data-module="govuk-tabs">
