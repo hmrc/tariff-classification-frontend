@@ -55,26 +55,79 @@
   </div>
 
   <div class="grid-row">
+  <dt class="column-one-third">
+   @messages("case.v2.liability.c592.bti_case")
+  </dt>
+  <dd class="column-two-thirds" id="liability-bti-case">
+   @liabilityViewModel.c592ViewModel.btiCase
+  </dd>
+ </div>
+
+  <div class="grid-row">
    <dt class="column-one-third">
-    @messages("case.v2.liability.c592.bti_case")
+    @messages("case.v2.liability.c592.repayment_claim")
    </dt>
-   <dd class="column-two-thirds" id="liability-bti-case">
-    <!--@liabilityViewModel.c592ViewModel.btiCase-->
-    5557748485
+   <dd class="column-two-thirds" id="liability-repayment-claim">
+    @liabilityViewModel.c592ViewModel.repaymentClaim
    </dd>
   </div>
 
-<!--  Repayment claim?-->
+  <div class="grid-row">
+   <dt class="column-one-third">
+    @messages("case.v2.liability.c592.receipt_date")
+   </dt>
+   <dd class="column-two-thirds" id="liability-receipt-date">
+    @liabilityViewModel.c592ViewModel.receiptDate
+   </dd>
+  </div>
 
-<!--  Yes-->
+  <div class="grid-row">
+   <dt class="column-one-third">
+    @messages("case.v2.liability.c592.item_name")
+   </dt>
+   <dd class="column-two-thirds" id="liability-item-name">
+    @liabilityViewModel.c592ViewModel.itemName
+   </dd>
+  </div>
 
-<!--  Date of receipt-->
+  <div class="grid-row">
+   <dt class="column-one-third">
+    @messages("case.v2.liability.c592.trader_name")
+   </dt>
+   <dd class="column-two-thirds" id="liability-trader-name">
+    @liabilityViewModel.c592ViewModel.traderName
+   </dd>
+  </div>
 
-<!--  08 Apr 2015-->
+  <div class="grid-row">
+   <dt class="column-one-third">
+    @messages("case.v2.liability.c592.trader_email")
+   </dt>
+   <dd class="column-two-thirds" id="liability-trader-email">
+    @liabilityViewModel.c592ViewModel.traderEmail
+   </dd>
+  </div>
+
+  <div class="grid-row">
+   <dt class="column-one-third">
+    @messages("case.v2.liability.c592.trader_telephone")
+   </dt>
+   <dd class="column-two-thirds" id="liability-trader-telephone">
+    @liabilityViewModel.c592ViewModel.traderTelephone
+   </dd>
+  </div>
+
+  <div class="grid-row">
+   <dt class="column-one-third">
+    @messages("case.v2.liability.c592.trader_address")
+   </dt>
+   <dd class="column-two-thirds" id="liability-trader-address">
+    @liabilityViewModel.c592ViewModel.traderAddress
+   </dd>
+  </div>
+
 
 </div>
-
- </div>
 
 }
 

@@ -19,12 +19,30 @@ package models.viewmodels
 import models.Case
 import utils.Dates
 
-case class C592ViewModel(entryNumber: String, entryDate: String, btiCase: String )
+case class C592ViewModel(entryNumber: String,
+                         entryDate: String, btiCase: String,
+                         repaymentClaim: Option[Boolean],
+                         receiptDate: String,
+                         itemName: String,
+                         traderName: String,
+                         traderEmail: String,
+                         traderTelephone: String,
+                         traderAddress: String )
 
 object C592ViewModel {
   def fromCase(c: Case): C592ViewModel = {
     val liabilityOrder = c.application.asLiabilityOrder
-    C592ViewModel(liabilityOrder.entryNumber.getOrElse(""), liabilityOrder.entryDate.map(Dates.format).getOrElse(""), "" )
+
+    C592ViewModel(liabilityOrder.entryNumber.getOrElse(""),
+      liabilityOrder.entryDate.map(Dates.format).getOrElse(""),
+      "",
+      None,
+      "",
+      liabilityOrder.goodName.getOrElse(""),
+      liabilityOrder.traderName,
+      liabilityOrder.contact.email,
+      liabilityOrder.contact.phone.getOrElse(""),
+      "")
   }
 
 }
