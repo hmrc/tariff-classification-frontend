@@ -32,9 +32,9 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.Cases
-import views.html.v2.liability_view
+import views.html.v2.{case_heading, liability_view}
 import org.mockito.Mockito._
-import org.mockito.ArgumentMatchers.{any, eq => meq}
+import org.mockito.ArgumentMatchers.{any, eq => meq, refEq}
 import play.twirl.api.Html
 
 import scala.concurrent.Future
@@ -42,7 +42,7 @@ import scala.concurrent.Future
 class SuccessfulRequestActionsProvider @Inject() (implicit parse: BodyParsers.Default) extends Provider[SuccessfulRequestActions] {
 
   override def get(): SuccessfulRequestActions = {
-    new SuccessfulRequestActions(parse, MockitoSugar.mock[Operator], c = Cases.liabilityCaseExample)
+    new SuccessfulRequestActions(parse, Cases.operator, c = Cases.liabilityCaseExample)
   }
 }
 
@@ -50,23 +50,27 @@ class LiabilityControllerSpec extends UnitSpec with Matchers with BeforeAndAfter
 
   override lazy val app: Application = new GuiceApplicationBuilder().overrides(
     bind[RequestActions].toProvider[SuccessfulRequestActionsProvider],
-    bind[liability_view].toInstance(mock[liability_view])
+    bind[liability_view].toInstance(mock[liability_view]),
+    bind[case_heading].toInstance(mock[case_heading])
+
   ).build()
+
+  override def beforeEach() = reset(inject[liability_view])
 
   "Calling /manage-tariff-classifications/cases/v2/:reference/liability " should {
 
     "return a 200 status" in {
 
-      when(inject[liability_view].apply(any())(any(), any(), any())) thenReturn Html("body")
+      val expected = LiabilityViewModel.fromCase(Cases.liabilityCaseExample, Cases.operator)
 
-      val result: Future[Result] = route(app, FakeRequest("GET", "/manage-tariff-classifications/cases/v2/123456/liability")).get
+      println("expected ::: " + expected)
+      when(inject[liability_view].apply(refEq(expected, "hasPermissions"))(any(), any(), any())) thenReturn Html("body")
+
+      val result: Future[Result] = route(app, FakeRequest("GET", "/manage-tariff-classifications/cases/v2/123456/liability").withFormUrlEncodedBody()).get
 
       status(result) shouldBe OK
 
-      val expected = LiabilityViewModel.fromCase(Cases.liabilityCaseExample)
-      verify(inject[liability_view], times(1)).apply(meq(expected))(any(), any(), any())
-
-      println(contentAsString(result))
+      verify(inject[liability_view], times(1)).apply(refEq(expected, "hasPermissions"))(any(), any(), any())
     }
   }
 }

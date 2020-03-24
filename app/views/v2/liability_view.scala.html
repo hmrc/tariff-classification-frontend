@@ -26,7 +26,7 @@
 @main(bodyClasses = None) {
   @case_heading(liabilityViewModel.caseHeaderViewModel)
 
-@if(liabilityViewModel.isNewCase) {
+@if(liabilityViewModel.isNewCase && liabilityViewModel.hasPermissions) {
  @change_case_status_button("action-this-case", "Action this case", ReleaseOrSuppressCaseController.onPageLoad(liabilityViewModel.caseHeaderViewModel.referenceNumber))
 }
 

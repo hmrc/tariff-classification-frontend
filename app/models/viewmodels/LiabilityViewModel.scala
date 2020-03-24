@@ -17,7 +17,7 @@
 package models.viewmodels
 
 import models.CaseStatus.CaseStatus
-import models.{CancelReason, Case, CaseStatus, Permission}
+import models._
 
 case class LiabilityViewModel(
                                caseHeaderViewModel: CaseHeaderViewModel,
@@ -28,7 +28,7 @@ case class LiabilityViewModel(
 
 object LiabilityViewModel {
 
-  def fromCase(c: Case) = {
+  def fromCase(c: Case, operator: Operator) = {
 
     def status = {
       c.status match {
@@ -39,8 +39,9 @@ object LiabilityViewModel {
     }
 
     def isNew: Boolean = c.status == CaseStatus.NEW
-    val permissions = c.assignee.fold(Set[Permission]())(sdf => sdf.permissions)
-    def releaseOrSuppressPermissions = permissions.contains(Permission.RELEASE_CASE) || permissions.contains(Permission.SUPPRESS_CASE)
+
+    def releaseOrSuppressPermissions =
+      operator.permissions.contains(Permission.RELEASE_CASE) || operator.permissions.contains(Permission.SUPPRESS_CASE)
 
 
     LiabilityViewModel(

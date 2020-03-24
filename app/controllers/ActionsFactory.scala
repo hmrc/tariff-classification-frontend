@@ -37,6 +37,9 @@ class CheckCasePermissionsAction
 
   override protected def refine[A](request: AuthenticatedCaseRequest[A]):
   Future[Either[Result, AuthenticatedCaseRequest[A]]] = {
+    println("refine ::::::::::::::")
+    println("refine ::::::::::::::")
+    println("refine ::::::::::::::" + request.operator)
     successful(
       Right(
         new AuthenticatedCaseRequest(
@@ -60,7 +63,10 @@ class VerifyCaseExistsActionFactory @Inject()(casesService: CasesService)(implic
         implicit val r: AuthenticatedRequest[A] = request
 
         casesService.getOne(reference).flatMap {
-          case Some(c: Case) =>
+          case Some(c: Case) =>{
+            println("VerifyCaseExistsActionFactory")
+            println("VerifyCaseExistsActionFactory")
+            println("VerifyCaseExistsActionFactory" + request.operator)
             successful(
               Right(
                 new AuthenticatedCaseRequest(
@@ -69,6 +75,8 @@ class VerifyCaseExistsActionFactory @Inject()(casesService: CasesService)(implic
                   requestedCase = c)
               )
             )
+          }
+
           case _ => successful(Left(NotFound(views.html.case_not_found(reference))))
         }
       }

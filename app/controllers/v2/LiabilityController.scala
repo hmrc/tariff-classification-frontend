@@ -31,15 +31,15 @@ import scala.concurrent.Future
 
 @Singleton
 class LiabilityController @Inject()(
-  verify: RequestActions,
-  casesService: CasesService,
-  mcc: MessagesControllerComponents,
-  val liability_view: views.html.v2.liability_view,
-  implicit val appConfig: AppConfig
-) extends FrontendController(mcc) with I18nSupport {
+                                     verify: RequestActions,
+                                     casesService: CasesService,
+                                     mcc: MessagesControllerComponents,
+                                     val liability_view: views.html.v2.liability_view,
+                                     implicit val appConfig: AppConfig
+                                   ) extends FrontendController(mcc) with I18nSupport {
 
   def displayLiability(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)).async {
     implicit request =>
-      Future.successful(Ok(liability_view(LiabilityViewModel.fromCase(request.`case`))))
+      Future.successful(Ok(liability_view(LiabilityViewModel.fromCase(request.`case`, request.operator))))
   }
 }
