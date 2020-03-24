@@ -49,9 +49,6 @@
                         id="@id"
                         name="@{field.name}[@index]"
                         value="@option.value"
-                        @if(startAtTabIndex.isDefined){
-                            tabindex="@{startAtTabIndex.get+index}"
-                        }
                     @if(field.hasErrors){
                         aria-describedby="error-message-@{id}-input"
                     }

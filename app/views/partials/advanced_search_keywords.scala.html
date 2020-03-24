@@ -51,11 +51,10 @@
                 @input_auto_complete(
                     field = form("keyword[0]"),
                     formControlClass = Some("w-100"),
-                    autoCompleteOptions = keywords.diff(keywordsAdded(form)),
-                    useTabIndex = Some(tabIndexer.nextTabIndex())
+                    autoCompleteOptions = keywords.diff(keywordsAdded(form))
                 )
             </div>
-            <button tabindex="@{tabIndexer.nextTabIndex()}" id="advanced_search-add_keyword" class="button left ml-1" type="submit" name="addToSearch" value="true">
+            <button id="advanced_search-add_keyword" class="button left ml-1" type="submit" name="addToSearch" value="true">
                 Add to search
             </button>
         </div>
