@@ -37,7 +37,7 @@ class LiabilityViewModelSpec extends UnitSpec {
         "1",
         "CANCELLED",
         false),
-        C592ViewModel("entry number", "03 Mar 2020", "", None, "")))
+        C592ViewModel("entry number", "03 Mar 2020", "", None, "", "good-name", "trader-business-name", "email", "phone", "")))
 
     }
 

@@ -36,6 +36,11 @@ object C592ViewModel {
       liabilityOrder.entryDate.map(Dates.format).getOrElse(""),
       "",
       None,
-      "", "", "", "", "","")
+      "",
+      liabilityOrder.goodName.getOrElse(""),
+      liabilityOrder.traderName,
+      liabilityOrder.contact.email,
+      liabilityOrder.contact.phone.getOrElse(""),
+      "")
   }
 }
