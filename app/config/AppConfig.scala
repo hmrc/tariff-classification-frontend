@@ -31,7 +31,7 @@ class AppConfig @Inject()(
   servicesConfig: ServicesConfig
 ) {
 
-//  override protected def mode: Mode = environment.mode
+  protected def mode: Mode = environment.mode
 
   private lazy val contactHost = config.getOptional[String]("contact-frontend.host").getOrElse("")
   private lazy val contactFormServiceIdentifier = config.get[String]("appName")
@@ -67,10 +67,10 @@ class AppConfig @Inject()(
   def runningAsDev: Boolean = {
     environment.mode == Mode.Dev
 
-//    config
-//      .getString("run.mode")
-//      .map(_.equals(Mode.Dev.toString))
-//      .getOrElse(Mode.Dev.equals(mode))
+    config
+      .getString("run.mode")
+      .map(_.equals(Mode.Dev.toString))
+      .getOrElse(Mode.Dev.equals(mode))
   }
 
 }

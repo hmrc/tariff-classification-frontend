@@ -32,6 +32,7 @@ case class C592ViewModel(entryNumber: String,
 object C592ViewModel {
   def fromCase(c: Case): C592ViewModel = {
     val liabilityOrder = c.application.asLiabilityOrder
+
     C592ViewModel(liabilityOrder.entryNumber.getOrElse(""),
       liabilityOrder.entryDate.map(Dates.format).getOrElse(""),
       "",
@@ -43,4 +44,5 @@ object C592ViewModel {
       liabilityOrder.contact.phone.getOrElse(""),
       "")
   }
+
 }
