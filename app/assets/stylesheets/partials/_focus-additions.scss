@@ -15,6 +15,19 @@
     width: 44px;
     height: 44px;
 }
+.multiple-choice [type="radio"]+label::before {
+    width: 40px;
+    height: 40px;
+    box-sizing: border-box;
+}
+.multiple-choice [type="radio"]:focus+label::before {
+    border-width: 4px;
+}
+.multiple-choice [type=radio]+label::after {
+    top: 10px;
+    left: 10px;
+}
+
 .multiple-choice [type=checkbox]+label::before {
     width: 40px;
     height: 40px;
