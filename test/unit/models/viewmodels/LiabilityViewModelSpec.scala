@@ -32,23 +32,23 @@ class LiabilityViewModelSpec extends UnitSpec {
     "create a cancelled view model" in {
 
       val c = Cases.liabilityCaseExample.copy(status = CaseStatus.CANCELLED, application = Cases.liabilityCaseExample.application.asLiabilityOrder.copy(entryDate = Some(Instant.parse("2020-03-03T10:15:30.00Z"))))
-      val op = Cases.operator
+      val op = Cases.operatorWithoutPermissions
 
       assert(LiabilityViewModel.fromCase(c, op) === LiabilityViewModel(CaseHeaderViewModel("Liability",
         "trader-business-name", "good-name",
         "1",
         "CANCELLED",
-        false),
-        C592ViewModel("entry number", "03 Mar 2020", "", None, "", "good-name", "trader-business-name", "email", "phone", "")))
-      false,
-      false))
+        isLive = false),
+        C592ViewModel("entry number", "03 Mar 2020", "", None, "", "good-name", "trader-business-name", "email", "phone", ""),
+        isNewCase = false,
+        hasPermissions = false))
     }
 
 
     "create a complete view model if it has an expired ruling" in {
 
       val c = Cases.liabilityCaseWithExpiredRuling
-      val op = Cases.operator
+      val op = Cases.operatorWithoutPermissions
 
       assert(LiabilityViewModel.fromCase(c, op).caseHeaderViewModel.caseStatus === "EXPIRED")
 
@@ -57,7 +57,7 @@ class LiabilityViewModelSpec extends UnitSpec {
     "create a completed view model" in {
 
       val c = Cases.liabilityCaseExample.copy(status = CaseStatus.COMPLETED)
-      val op = Cases.operator
+      val op = Cases.operatorWithoutPermissions
 
       assert(LiabilityViewModel.fromCase(c, op).caseHeaderViewModel.caseStatus === "COMPLETED")
 
@@ -66,7 +66,7 @@ class LiabilityViewModelSpec extends UnitSpec {
     "create a viewModel with isNewCase is set to true" in {
 
       val c = Cases.liabilityCaseExample.copy(status = CaseStatus.NEW)
-      val op = Cases.operator
+      val op = Cases.operatorWithoutPermissions
 
       assert(LiabilityViewModel.fromCase(c, op).isNewCase === true)
     }
@@ -74,38 +74,31 @@ class LiabilityViewModelSpec extends UnitSpec {
     "create a viewModel with isNewCase is set to false" in {
 
       val c = Cases.liabilityCaseExample
-      val op = Cases.operator
+      val op = Cases.operatorWithoutPermissions
 
       assert(LiabilityViewModel.fromCase(c, op).isNewCase === false)
 
     }
 
     "create a viewModel with hasPermissions flag set to false" in {
-
       val c = Cases.liabilityCaseExample
-      val op = Cases.operator
+      val op = Cases.operatorWithoutPermissions.copy(permissions = Set())
 
       assert(LiabilityViewModel.fromCase(c, op).hasPermissions === false)
-
     }
 
-
     "create a viewModel with hasPermissions flag set to false when operator doesn't have required permission" in {
-
-      val c = Cases.liabilityCaseExample.copy(assignee = Some(Operator(id = "1", name = Some("Test User"), permissions = Set(Permission.VIEW_CASES))))
-      val op = Cases.operator
+      val c = Cases.liabilityCaseExample
+      val op = Cases.operatorWithoutPermissions.copy(permissions = Set(Permission.VIEW_CASES))
 
       assert(LiabilityViewModel.fromCase(c, op).hasPermissions === false)
-
     }
 
     "create a viewModel with hasPermissions flag set to true when operator has the required permission" in {
-
-      val c = Cases.liabilityCaseExample.copy(assignee = Some(Operator(id = "1", name = Some("Test User"), permissions = Set(Permission.RELEASE_CASE))))
-      val op = Cases.operator
+      val c = Cases.liabilityCaseExample
+      val op = Cases.operatorWithoutPermissions.copy(permissions = Set(Permission.RELEASE_CASE))
 
       assert(LiabilityViewModel.fromCase(c, op).hasPermissions === true)
-
     }
   }
 

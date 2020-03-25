@@ -41,7 +41,7 @@ import scala.concurrent.Future
 class SuccessfulRequestActionsProviderWithPermission @Inject()(implicit parse: BodyParsers.Default) extends Provider[RequestActionsWithPermissions] {
 
   override def get(): RequestActionsWithPermissions = {
-    new RequestActionsWithPermissions(parse, Cases.operator.permissions, c = Cases.liabilityCaseExample)
+    new RequestActionsWithPermissions(parse, Cases.operatorWithoutPermissions.permissions, c = Cases.liabilityCaseExample)
   }
 }
 
@@ -58,7 +58,7 @@ class LiabilityControllerSpec extends UnitSpec with Matchers with BeforeAndAfter
   "Calling /manage-tariff-classifications/cases/v2/:reference/liability " should {
 
     "return a 200 status" in {
-      val expected = LiabilityViewModel.fromCase(Cases.liabilityCaseExample, Cases.operator)
+      val expected = LiabilityViewModel.fromCase(Cases.liabilityCaseExample, Cases.operatorWithoutPermissions)
 
       when(inject[liability_view].apply(meq(expected))(any(), any(), any())) thenReturn Html("body")
 
