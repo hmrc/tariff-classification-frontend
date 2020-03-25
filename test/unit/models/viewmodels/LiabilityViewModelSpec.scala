@@ -37,10 +37,11 @@ class LiabilityViewModelSpec extends UnitSpec {
         "1",
         "CANCELLED",
         false),
-        C592ViewModel("entry number", "03 Mar 2020", "", None, "", "good-name", "trader-business-name", "email", "phone", "")))
+        C592ViewModel("entry number", "03 Mar 2020", "", None, "", "good-name",
+          TraderContact("trader-business-name", "email", "phone", ""),"trader-1234567","officer-1234567",
+          PortOrComplianceOfficerContact("name","email","phone"),"","")))
 
     }
-
 
     "create a complete view model if it has an expired ruling" in {
 

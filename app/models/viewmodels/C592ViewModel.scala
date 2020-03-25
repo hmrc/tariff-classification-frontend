@@ -24,25 +24,37 @@ case class C592ViewModel(entryNumber: String,
                          repaymentClaim: Option[Boolean],
                          receiptDate: String,
                          itemName: String,
-                         traderName: String,
-                         traderEmail: String,
-                         traderTelephone: String,
-                         traderAddress: String )
+                         traderContact: TraderContact,
+                         commodityCodeEnteredByTraderOrAgent: String,
+                         commodityCodeSuggestedByOfficer: String,
+                         portOrComplianceOfficerContact: PortOrComplianceOfficerContact,
+                         dvrNumber: String,
+                         dateForRepayment: String)
 
 object C592ViewModel {
+
+  //fields that need to be added to the Liability Model
+  val NOT_YET_IMPLEMENTED = ""
+
   def fromCase(c: Case): C592ViewModel = {
     val liabilityOrder = c.application.asLiabilityOrder
 
     C592ViewModel(liabilityOrder.entryNumber.getOrElse(""),
       liabilityOrder.entryDate.map(Dates.format).getOrElse(""),
-      "",
+      NOT_YET_IMPLEMENTED,
       None,
-      "",
+      NOT_YET_IMPLEMENTED,
       liabilityOrder.goodName.getOrElse(""),
-      liabilityOrder.traderName,
-      liabilityOrder.contact.email,
-      liabilityOrder.contact.phone.getOrElse(""),
-      "")
+      TraderContact.fromCase(c),
+      liabilityOrder.traderCommodityCode.getOrElse(""),
+      liabilityOrder.officerCommodityCode.getOrElse(""),
+      PortOrComplianceOfficerContact(liabilityOrder.contact.name,
+        liabilityOrder.contact.email,
+        liabilityOrder.contact.phone.getOrElse("")
+      ),
+      NOT_YET_IMPLEMENTED,
+      NOT_YET_IMPLEMENTED
+    )
   }
 
 }

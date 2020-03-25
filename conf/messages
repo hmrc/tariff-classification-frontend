@@ -707,7 +707,7 @@ case.v2.liability.c592.tab_heading=Information from the C592
 case.v2.liability.c592.entry_date=Liability entry date
 case.v2.liability.c592.bti_case=BTI Case
 
-case.v2.liability.c592.repayment_claim=Repayment claim?
+case.v2.liability.c592.is_repayment_claim=Repayment claim?
 case.v2.liability.c592.receipt_date=Date of receipt
 case.v2.liability.c592.trader_information=Trader information
 case.v2.liability.c592.item_name=Item name
@@ -715,4 +715,21 @@ case.v2.liability.c592.trader_name=Trader name
 case.v2.liability.c592.trader_email=Trader email
 case.v2.liability.c592.trader_telephone=Trader telephone
 case.v2.liability.c592.trader_address=Trader address
+case.v2.liability.c592.commodity_code_information=Commodity code information
+case.v2.liability.c592.commodity_code_entered_by_trader_or_agent=Code entered by trader or agent
+case.v2.liability.c592.commodity_code_suggested_by_officer=Code suggested by officer
+case.v2.liability.c592.contact_details_for_port_or_compliance_officer=Contact details for port or compliance officer
+case.v2.liability.c592.name_of_port_or_compliance_officer=Name
+case.v2.liability.c592.email_of_port_or_compliance_officer=Contact email
+case.v2.liability.c592.telephone_of_port_or_compliance_officer=Contact telephone
+case.v2.liability.c592.repayment_claim=Repayment claim
+case.v2.liability.c592.dvr_number=DVR number
+case.v2.liability.c592.date_for_repayment=Date for repayment
+
+
+
+
+
+
+
 
