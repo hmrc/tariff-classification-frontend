@@ -77,11 +77,10 @@ class AuthenticatedAction @Inject()(
         )
         block(AuthenticatedRequest(permittedOperator, request))
     } recover {
-      case _: NoActiveSession =>
-
-        val protocol = if (request.secure) "https" else "http"
-        toStrideLogin(s"${protocol}://${request.host}${request.uri}")
-
+      case _: NoActiveSession => toStrideLogin(
+        if (appConfig.runningAsDev) s"http://${request.host}${request.uri}"
+        else s"${request.uri}"
+      )
       case e: AuthorisationException =>
         Logger.info("Auth Failed", e)
         Redirect(routes.SecurityController.unauthorized())

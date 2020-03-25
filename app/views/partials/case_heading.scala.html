@@ -30,7 +30,7 @@
     }
 
     <div id="case-reference" class="case-reference">
-        Case <a tabindex="4" href="@controllers.routes.CaseController.get(c.reference)">@{c.reference}</a>
+        Case <a href="@controllers.routes.CaseController.get(c.reference)">@{c.reference}</a>
     </div>
 
     <h1 class="heading-xlarge case-title">@messages("case.title", c.application.getType, c.application.businessName)</h1>

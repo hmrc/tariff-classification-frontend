@@ -31,7 +31,7 @@
 
 @(c: Case, page: CaseDetailPage, view: Html, activeTab: Option[ActiveTab] = None)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, scriptElem = Some(initial_focus(activeTab.map(_.name))),
+@main(bodyClasses = None, scriptElem = Some(initial_focus()),
     customTitle = Some(messages(s"page.title.${page.toString}"))) {
 
     @case_heading(c, displayBackLink = true)
@@ -48,8 +48,7 @@
     @if(c.application.isBTI && c.status == CaseStatus.REFERRED && request.hasPermission(Permission.REOPEN_CASE)) {
         @take_off_referral_button(c)
     }
-<br>
-</a>
+
     <div class="tabs">
         @if(c.application.isBTI) {
             @case_nav_bti(page, c)

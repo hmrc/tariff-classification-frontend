@@ -19,7 +19,7 @@
 @import models.{Paged, StoredAttachment}
 @import views.html.partials.thumbnail
 @import views.partials.SearchResult
-@(results: Paged[SearchResult], startAtTabIndex: Int = 0)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(results: Paged[SearchResult])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @if(results.results.flatMap(_.attachments).isEmpty) {
     <p id="advanced_search_results-empty" class="mt-1">No images found</p>
@@ -33,8 +33,7 @@
                             id = s"advanced_search_results-row-$index-attachments-$attIndex",
                             caseReference = result.c.reference,
                             attachment = attachment,
-                            figureClass = Some("column-one-fifth"),
-                            useTabIndex = Some(startAtTabIndex+index)
+                            figureClass = Some("column-one-fifth")
                         )
                     }
                 }
