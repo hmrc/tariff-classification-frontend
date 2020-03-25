@@ -1,0 +1,31 @@
+// these are AF 4.11 updates which need to be verified with another service prior to merging into _focus.scss
+
+.secondary-button:focus {
+    outline: 3px solid transparent;
+    color: #0b0c0c;
+    background-color: #fd0;
+    -webkit-box-shadow: 0 -2px #fd0, 0 4px #0b0c0c;
+    box-shadow: 0 -2px #fd0, 0 4px #0b0c0c;
+    text-decoration: none;
+}
+
+.multiple-choice input {
+    left: -2px;
+    top: -2px;
+    width: 44px;
+    height: 44px;
+}
+.multiple-choice [type=checkbox]+label::before {
+    width: 40px;
+    height: 40px;
+    box-sizing: border-box;
+}
+
+.multiple-choice [type=checkbox]:focus+label::before {
+    border-width: 4px;
+}
+
+.multiple-choice [type=checkbox]+label::after {
+    top: 11px;
+    left: 9px;
+}
