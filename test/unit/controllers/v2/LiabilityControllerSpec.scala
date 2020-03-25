@@ -38,7 +38,7 @@ import play.twirl.api.Html
 
 import scala.concurrent.Future
 
-class SuccessfulRequestActionsProviderWithPermission @Inject()(implicit parse: BodyParsers.Default) extends Provider[RequestActionsWithPermissions] {
+class RequestActionsWithPermissionsProvider @Inject()(implicit parse: BodyParsers.Default) extends Provider[RequestActionsWithPermissions] {
 
   override def get(): RequestActionsWithPermissions = {
     new RequestActionsWithPermissions(parse, Cases.operatorWithoutPermissions.permissions, c = Cases.liabilityCaseExample)
@@ -48,7 +48,7 @@ class SuccessfulRequestActionsProviderWithPermission @Inject()(implicit parse: B
 class LiabilityControllerSpec extends UnitSpec with Matchers with BeforeAndAfterEach with GuiceOneAppPerSuite with MockitoSugar with ControllerCommons {
 
   override lazy val app: Application = new GuiceApplicationBuilder().overrides(
-    bind[RequestActions].toProvider[SuccessfulRequestActionsProviderWithPermission],
+    bind[RequestActions].toProvider[RequestActionsWithPermissionsProvider],
     bind[liability_view].toInstance(mock[liability_view]),
     bind[case_heading].toInstance(mock[case_heading])
   ).build()

@@ -20,11 +20,11 @@
 @import controllers.routes.ReleaseOrSuppressCaseController
 @import views.html.components.change_case_status_button
 
-@this(case_heading: views.html.v2.case_heading)
+@this(case_heading: views.html.v2.case_heading, c592_tab: views.html.partials.liabilities.c592_tab)
 
 @(liabilityViewModel: LiabilityViewModel)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 @main(bodyClasses = None) {
-  @case_heading(liabilityViewModel.caseHeaderViewModel)
+@case_heading(liabilityViewModel.caseHeaderViewModel)
 
 @if(liabilityViewModel.isNewCase && liabilityViewModel.hasPermissions) {
  @change_case_status_button("action-this-case", "Action this case", ReleaseOrSuppressCaseController.onPageLoad(liabilityViewModel.caseHeaderViewModel.referenceNumber))
@@ -32,109 +32,16 @@
 
 
 <div class="govuk-tabs" data-module="govuk-tabs">
- <ul class="govuk-tabs__list">
-  <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
-   <a class="govuk-tabs__tab" href="#past-day">
-    @messages("case.v2.liability.c592.tab_title")
-   </a>
-  </li>
- </ul>
+    <ul class="govuk-tabs__list">
+        <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
+            <a class="govuk-tabs__tab" href="#past-day">
+                @messages("case.v2.liability.c592.tab_title")
+            </a>
+        </li>
+    </ul>
 </div>
 
- <div class="govuk-tabs__panel" id="past-day">
-  <h2 class="govuk-heading-l">@messages("case.v2.liability.c592.tab_heading")</h2>
-  <div class="grid-row">
-   <dt class="column-one-third">
-    @messages("case.v2.liability.c592.entry_number")
-   </dt>
-   <dd class="column-two-thirds" id="liability-entry-number">
-  @liabilityViewModel.c592ViewModel.entryNumber
-   </dd>
-  </div>
-
-  <div class="grid-row">
-   <dt class="column-one-third">
-    @messages("case.v2.liability.c592.entry_date")
-   </dt>
-   <dd class="column-two-thirds" id="liability-entry-date">
-    @liabilityViewModel.c592ViewModel.entryDate
-   </dd>
-  </div>
-
-  <div class="grid-row">
-  <dt class="column-one-third">
-   @messages("case.v2.liability.c592.bti_case")
-  </dt>
-  <dd class="column-two-thirds" id="liability-bti-case">
-   @liabilityViewModel.c592ViewModel.btiCase
-  </dd>
- </div>
-
-  <div class="grid-row">
-   <dt class="column-one-third">
-    @messages("case.v2.liability.c592.repayment_claim")
-   </dt>
-   <dd class="column-two-thirds" id="liability-repayment-claim">
-    @liabilityViewModel.c592ViewModel.repaymentClaim
-   </dd>
-  </div>
-
-  <div class="grid-row">
-   <dt class="column-one-third">
-    @messages("case.v2.liability.c592.receipt_date")
-   </dt>
-   <dd class="column-two-thirds" id="liability-receipt-date">
-    @liabilityViewModel.c592ViewModel.receiptDate
-   </dd>
-  </div>
-
-  <div class="grid-row">
-   <dt class="column-one-third">
-    @messages("case.v2.liability.c592.item_name")
-   </dt>
-   <dd class="column-two-thirds" id="liability-item-name">
-    @liabilityViewModel.c592ViewModel.itemName
-   </dd>
-  </div>
-
-  <div class="grid-row">
-   <dt class="column-one-third">
-    @messages("case.v2.liability.c592.trader_name")
-   </dt>
-   <dd class="column-two-thirds" id="liability-trader-name">
-    @liabilityViewModel.c592ViewModel.traderName
-   </dd>
-  </div>
-
-  <div class="grid-row">
-   <dt class="column-one-third">
-    @messages("case.v2.liability.c592.trader_email")
-   </dt>
-   <dd class="column-two-thirds" id="liability-trader-email">
-    @liabilityViewModel.c592ViewModel.traderEmail
-   </dd>
-  </div>
-
-  <div class="grid-row">
-   <dt class="column-one-third">
-    @messages("case.v2.liability.c592.trader_telephone")
-   </dt>
-   <dd class="column-two-thirds" id="liability-trader-telephone">
-    @liabilityViewModel.c592ViewModel.traderTelephone
-   </dd>
-  </div>
-
-  <div class="grid-row">
-   <dt class="column-one-third">
-    @messages("case.v2.liability.c592.trader_address")
-   </dt>
-   <dd class="column-two-thirds" id="liability-trader-address">
-    @liabilityViewModel.c592ViewModel.traderAddress
-   </dd>
-  </div>
-
-
-</div>
+@c592_tab(liabilityViewModel: LiabilityViewModel)
 
 }
 

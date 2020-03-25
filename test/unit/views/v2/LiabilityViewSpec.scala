@@ -26,7 +26,7 @@ import play.api.mvc.Request
 import play.twirl.api.Html
 import utils.Cases
 import utils.Cases.{aCase, withBTIApplication, withLiabilityApplication, withReference}
-import views.ViewMatchers.{containText, haveAttribute}
+import views.ViewMatchers.{containElementWithID, containText, haveAttribute}
 import views.{CaseDetailPage, ViewSpec, html}
 import views.html.v2.liability_view
 
@@ -45,6 +45,17 @@ class LiabilityViewSpec extends ViewSpec with GuiceOneAppPerSuite{
       val doc = view(liabilityView(LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions))(request, messages, appConfig))
 
       doc.getElementById("case-reference") should containText(c.reference)
+    }
+
+    "render C592 tab always" in {
+
+      val c = aCase(withReference("reference"), withLiabilityApplication())
+
+      def liabilityView = app.injector.instanceOf[liability_view]
+
+      val doc = view(liabilityView(LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions))(request, messages, appConfig))
+
+      doc should containElementWithID("c592_tab")
     }
 
   }
