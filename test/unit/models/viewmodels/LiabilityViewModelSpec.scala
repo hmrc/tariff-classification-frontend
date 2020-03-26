@@ -16,10 +16,11 @@
 
 package models.viewmodels
 
+import java.security.Permissions
 import java.time.Instant
 
 import controllers.ActiveTab.Liability
-import models.CaseStatus
+import models.{CaseStatus, Operator, Permission}
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.Cases
 
@@ -30,33 +31,75 @@ class LiabilityViewModelSpec extends UnitSpec {
 
     "create a cancelled view model" in {
 
-      val c = Cases.liabilityCaseExample.copy(status = CaseStatus.CANCELLED,application = Cases.liabilityCaseExample.application.asLiabilityOrder.copy(entryDate = Some(Instant.parse("2020-03-03T10:15:30.00Z"))))
+      val c = Cases.liabilityCaseExample.copy(status = CaseStatus.CANCELLED, application = Cases.liabilityCaseExample.application.asLiabilityOrder.copy(entryDate = Some(Instant.parse("2020-03-03T10:15:30.00Z"))))
+      val op = Cases.operatorWithoutPermissions
 
-      assert(LiabilityViewModel.fromCase(c) === LiabilityViewModel(CaseHeaderViewModel("Liability",
+      assert(LiabilityViewModel.fromCase(c, op) === LiabilityViewModel(CaseHeaderViewModel("Liability",
         "trader-business-name", "good-name",
         "1",
         "CANCELLED",
-        false),
+        isLive = false),
         C592ViewModel("entry number", "03 Mar 2020", "", None, "", "good-name",
-          TraderContact("trader-business-name", "email", "phone", ""),"trader-1234567","officer-1234567",
-          PortOrComplianceOfficerContact("name","email","phone"),"","")))
-
+          TraderContact("trader-business-name", "email", "phone", ""), "trader-1234567", "officer-1234567",
+          PortOrComplianceOfficerContact("name", "email", "phone"), "", ""),
+        isNewCase = false,
+        hasPermissions = false))
     }
 
     "create a complete view model if it has an expired ruling" in {
 
       val c = Cases.liabilityCaseWithExpiredRuling
+      val op = Cases.operatorWithoutPermissions
 
-      assert(LiabilityViewModel.fromCase(c).caseHeaderViewModel.caseStatus === "EXPIRED")
+      assert(LiabilityViewModel.fromCase(c, op).caseHeaderViewModel.caseStatus === "EXPIRED")
 
     }
 
     "create a completed view model" in {
 
       val c = Cases.liabilityCaseExample.copy(status = CaseStatus.COMPLETED)
+      val op = Cases.operatorWithoutPermissions
 
-      assert(LiabilityViewModel.fromCase(c).caseHeaderViewModel.caseStatus === "COMPLETED")
+      assert(LiabilityViewModel.fromCase(c, op).caseHeaderViewModel.caseStatus === "COMPLETED")
 
+    }
+
+    "create a viewModel with isNewCase is set to true" in {
+
+      val c = Cases.liabilityCaseExample.copy(status = CaseStatus.NEW)
+      val op = Cases.operatorWithoutPermissions
+
+      assert(LiabilityViewModel.fromCase(c, op).isNewCase === true)
+    }
+
+    "create a viewModel with isNewCase is set to false" in {
+
+      val c = Cases.liabilityCaseExample
+      val op = Cases.operatorWithoutPermissions
+
+      assert(LiabilityViewModel.fromCase(c, op).isNewCase === false)
+
+    }
+
+    "create a viewModel with hasPermissions flag set to false" in {
+      val c = Cases.liabilityCaseExample
+      val op = Cases.operatorWithoutPermissions.copy(permissions = Set())
+
+      assert(LiabilityViewModel.fromCase(c, op).hasPermissions === false)
+    }
+
+    "create a viewModel with hasPermissions flag set to false when operator doesn't have required permission" in {
+      val c = Cases.liabilityCaseExample
+      val op = Cases.operatorWithoutPermissions.copy(permissions = Set(Permission.VIEW_CASES))
+
+      assert(LiabilityViewModel.fromCase(c, op).hasPermissions === false)
+    }
+
+    "create a viewModel with hasPermissions flag set to true when operator has the required permission" in {
+      val c = Cases.liabilityCaseExample
+      val op = Cases.operatorWithoutPermissions.copy(permissions = Set(Permission.RELEASE_CASE))
+
+      assert(LiabilityViewModel.fromCase(c, op).hasPermissions === true)
     }
   }
 

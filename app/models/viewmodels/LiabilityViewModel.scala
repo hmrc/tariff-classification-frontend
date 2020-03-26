@@ -17,16 +17,18 @@
 package models.viewmodels
 
 import models.CaseStatus.CaseStatus
-import models.{CancelReason, Case, CaseStatus, viewmodels}
+import models._
 
 case class LiabilityViewModel(
                                caseHeaderViewModel: CaseHeaderViewModel,
-                               c592ViewModel: C592ViewModel
+                               c592ViewModel: C592ViewModel,
+                               isNewCase: Boolean,
+                               hasPermissions: Boolean
                              )
 
 object LiabilityViewModel {
 
-  def fromCase(c: Case) = {
+  def fromCase(c: Case, operator: Operator) = {
 
     def status = {
       c.status match {
@@ -36,9 +38,17 @@ object LiabilityViewModel {
       }
     }
 
+    def isNew: Boolean = c.status == CaseStatus.NEW
+
+    def releaseOrSuppressPermissions =
+      operator.permissions.contains(Permission.RELEASE_CASE) || operator.permissions.contains(Permission.SUPPRESS_CASE)
+
+
     LiabilityViewModel(
       CaseHeaderViewModel("Liability", c.application.businessName, c.application.goodsName, c.reference, status, c.application.isLiveLiabilityOrder),
-      C592ViewModel.fromCase(c)
+      C592ViewModel.fromCase(c),
+      isNewCase = isNew,
+      hasPermissions = releaseOrSuppressPermissions
     )
   }
 }

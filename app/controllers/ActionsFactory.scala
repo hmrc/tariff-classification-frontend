@@ -36,7 +36,7 @@ class CheckCasePermissionsAction
   extends ActionRefiner[AuthenticatedCaseRequest, AuthenticatedCaseRequest] {
 
   override protected def refine[A](request: AuthenticatedCaseRequest[A]):
-  Future[Either[Result, AuthenticatedCaseRequest[A]]] = {
+  Future[Either[Result, AuthenticatedCaseRequest[A]]] =
     successful(
       Right(
         new AuthenticatedCaseRequest(
@@ -45,7 +45,7 @@ class CheckCasePermissionsAction
           requestedCase = request.`case`)
       )
     )
-  }
+
 
   override protected def executionContext: ExecutionContext = global
 }
@@ -69,6 +69,7 @@ class VerifyCaseExistsActionFactory @Inject()(casesService: CasesService)(implic
                   requestedCase = c)
               )
             )
+
           case _ => successful(Left(NotFound(views.html.case_not_found(reference))))
         }
       }

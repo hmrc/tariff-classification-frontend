@@ -17,9 +17,8 @@
 package controllers.v2
 
 import com.google.inject.Provider
-import controllers.{ControllerCommons, RequestActions, SuccessfulRequestActions}
+import controllers.{ControllerCommons, RequestActions, RequestActionsWithPermissions, SuccessfulRequestActions}
 import javax.inject.Inject
-import models._
 import models.viewmodels.LiabilityViewModel
 import org.scalatest.{BeforeAndAfterEach, Matchers}
 import org.scalatestplus.mockito.MockitoSugar
@@ -32,41 +31,42 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.Cases
-import views.html.v2.liability_view
+import views.html.v2.{case_heading, liability_view}
 import org.mockito.Mockito._
 import org.mockito.ArgumentMatchers.{any, eq => meq}
 import play.twirl.api.Html
 
 import scala.concurrent.Future
 
-class SuccessfulRequestActionsProvider @Inject() (implicit parse: BodyParsers.Default) extends Provider[SuccessfulRequestActions] {
+class RequestActionsWithPermissionsProvider @Inject()(implicit parse: BodyParsers.Default) extends Provider[RequestActionsWithPermissions] {
 
-  override def get(): SuccessfulRequestActions = {
-    new SuccessfulRequestActions(parse, MockitoSugar.mock[Operator], c = Cases.liabilityCaseExample)
+  override def get(): RequestActionsWithPermissions = {
+    new RequestActionsWithPermissions(parse, Cases.operatorWithoutPermissions.permissions, c = Cases.liabilityCaseExample)
   }
 }
 
 class LiabilityControllerSpec extends UnitSpec with Matchers with BeforeAndAfterEach with GuiceOneAppPerSuite with MockitoSugar with ControllerCommons {
 
   override lazy val app: Application = new GuiceApplicationBuilder().overrides(
-    bind[RequestActions].toProvider[SuccessfulRequestActionsProvider],
-    bind[liability_view].toInstance(mock[liability_view])
+    bind[RequestActions].toProvider[RequestActionsWithPermissionsProvider],
+    bind[liability_view].toInstance(mock[liability_view]),
+    bind[case_heading].toInstance(mock[case_heading])
   ).build()
+
+  override def beforeEach(): Unit = reset(inject[liability_view])
 
   "Calling /manage-tariff-classifications/cases/v2/:reference/liability " should {
 
     "return a 200 status" in {
+      val expected = LiabilityViewModel.fromCase(Cases.liabilityCaseExample, Cases.operatorWithoutPermissions)
 
-      when(inject[liability_view].apply(any())(any(), any(), any())) thenReturn Html("body")
+      when(inject[liability_view].apply(meq(expected))(any(), any(), any())) thenReturn Html("body")
 
-      val result: Future[Result] = route(app, FakeRequest("GET", "/manage-tariff-classifications/cases/v2/123456/liability")).get
+      val result: Future[Result] = route(app, FakeRequest("GET", "/manage-tariff-classifications/cases/v2/123456/liability").withFormUrlEncodedBody()).get
 
       status(result) shouldBe OK
 
-      val expected = LiabilityViewModel.fromCase(Cases.liabilityCaseExample)
       verify(inject[liability_view], times(1)).apply(meq(expected))(any(), any(), any())
-
-      println(contentAsString(result))
     }
   }
 }

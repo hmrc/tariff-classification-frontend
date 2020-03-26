@@ -24,6 +24,7 @@ import org.jsoup.select.Elements
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.mvc.Request
 import play.twirl.api.Html
+import utils.Cases
 import utils.Cases.{aCase, withBTIApplication, withLiabilityApplication, withReference}
 import views.ViewMatchers.{containElementWithID, containText, haveAttribute}
 import views.{CaseDetailPage, ViewSpec, html}
@@ -41,7 +42,7 @@ class LiabilityViewSpec extends ViewSpec with GuiceOneAppPerSuite{
 
       def liabilityView = app.injector.instanceOf[liability_view]
 
-      val doc = view(liabilityView(LiabilityViewModel.fromCase(c))(request, messages, appConfig))
+      val doc = view(liabilityView(LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions))(request, messages, appConfig))
 
       doc.getElementById("case-reference") should containText(c.reference)
     }
@@ -52,7 +53,7 @@ class LiabilityViewSpec extends ViewSpec with GuiceOneAppPerSuite{
 
       def liabilityView = app.injector.instanceOf[liability_view]
 
-      val doc = view(liabilityView(LiabilityViewModel.fromCase(c))(request, messages, appConfig))
+      val doc = view(liabilityView(LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions))(request, messages, appConfig))
 
       doc should containElementWithID("c592_tab")
     }

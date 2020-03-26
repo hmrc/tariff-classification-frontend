@@ -17,12 +17,19 @@
 @import config.AppConfig
 @import models.viewmodels.LiabilityViewModel
 @import views.html.includes.main
+@import controllers.routes.ReleaseOrSuppressCaseController
+@import views.html.components.change_case_status_button
 
 @this(case_heading: views.html.v2.case_heading, c592_tab: views.html.partials.liabilities.c592_tab)
 
 @(liabilityViewModel: LiabilityViewModel)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 @main(bodyClasses = None) {
 @case_heading(liabilityViewModel.caseHeaderViewModel)
+
+@if(liabilityViewModel.isNewCase && liabilityViewModel.hasPermissions) {
+ @change_case_status_button("action-this-case", "Action this case", ReleaseOrSuppressCaseController.onPageLoad(liabilityViewModel.caseHeaderViewModel.referenceNumber))
+}
+
 
 <div class="govuk-tabs" data-module="govuk-tabs">
     <ul class="govuk-tabs__list">
