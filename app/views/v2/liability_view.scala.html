@@ -19,8 +19,10 @@
 @import views.html.includes.main
 @import controllers.routes.ReleaseOrSuppressCaseController
 @import views.html.components.change_case_status_button
+@import views.html.partials.liabilities.activity_tab
 
-@this(case_heading: views.html.v2.case_heading, c592_tab: views.html.partials.liabilities.c592_tab)
+@this(case_heading: views.html.v2.case_heading,
+        c592_tab: views.html.partials.liabilities.c592_tab)
 
 @(liabilityViewModel: LiabilityViewModel)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 @main(bodyClasses = None) {
@@ -42,6 +44,7 @@
 </div>
 
 @c592_tab(liabilityViewModel: LiabilityViewModel)
+@activity_tab(liabilityViewModel: LiabilityViewModel)
 
 }
 

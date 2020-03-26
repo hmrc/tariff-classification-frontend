@@ -31,8 +31,15 @@ class LiabilityViewModelSpec extends UnitSpec {
 
     "create a cancelled view model" in {
 
-      val c = Cases.liabilityCaseExample.copy(status = CaseStatus.CANCELLED, application = Cases.liabilityCaseExample.application.asLiabilityOrder.copy(entryDate = Some(Instant.parse("2020-03-03T10:15:30.00Z"))))
+      val createdDateTime = Instant.now
       val op = Cases.operatorWithoutPermissions
+
+      val c = Cases.liabilityCaseExample.copy(
+        status = CaseStatus.CANCELLED,
+        application = Cases.liabilityCaseExample.application.asLiabilityOrder.copy(
+          entryDate = Some(Instant.parse("2020-03-03T10:15:30.00Z"))),
+        assignee = Some(op),
+        createdDate = createdDateTime)
 
       assert(LiabilityViewModel.fromCase(c, op) === LiabilityViewModel(CaseHeaderViewModel("Liability",
         "trader-business-name", "good-name",
@@ -42,6 +49,7 @@ class LiabilityViewModelSpec extends UnitSpec {
         C592ViewModel("entry number", "03 Mar 2020", "", None, "", "good-name",
           TraderContact("trader-business-name", "email", "phone", ""), "trader-1234567", "officer-1234567",
           PortOrComplianceOfficerContact("name", "email", "phone"), "", ""),
+        ActivityViewModel(Some(op), None, createdDateTime),
         isNewCase = false,
         hasPermissions = false))
     }
