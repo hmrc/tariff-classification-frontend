@@ -20,11 +20,15 @@
 @import controllers.routes.ReleaseOrSuppressCaseController
 @import views.html.components.change_case_status_button
 @import views.html.partials.liabilities.activity_tab
+@import models.{Case, Event, Paged, Permission, Queue}
+@import models.forms.ActivityFormData
+@import models.request.AuthenticatedRequest
 
 @this(case_heading: views.html.v2.case_heading,
-        c592_tab: views.html.partials.liabilities.c592_tab)
+        c592_tab: views.html.partials.liabilities.c592_tab,
+        activity_tab: views.html.partials.liabilities.activity_tab)
 
-@(liabilityViewModel: LiabilityViewModel)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(liabilityViewModel: LiabilityViewModel, events: Paged[Event], activityForm: Form[ActivityFormData], queues: Seq[Queue], startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 @main(bodyClasses = None) {
 @case_heading(liabilityViewModel.caseHeaderViewModel)
 
@@ -44,7 +48,7 @@
 </div>
 
 @c592_tab(liabilityViewModel: LiabilityViewModel)
-@activity_tab(liabilityViewModel: LiabilityViewModel)
+@activity_tab(liabilityViewModel: LiabilityViewModel, events, activityForm, queues, startAtTabIndex)
 
 }
 

@@ -19,6 +19,8 @@ package controllers.v2
 import com.google.inject.Provider
 import controllers.{ControllerCommons, RequestActions, RequestActionsWithPermissions, SuccessfulRequestActions}
 import javax.inject.Inject
+import models.{Paged, Queue}
+import models.forms.{ActivityForm, ActivityFormData}
 import models.viewmodels.LiabilityViewModel
 import org.scalatest.{BeforeAndAfterEach, Matchers}
 import org.scalatestplus.mockito.MockitoSugar
@@ -30,10 +32,11 @@ import play.api.mvc.{BodyParsers, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.play.test.UnitSpec
-import utils.Cases
+import utils.{Cases, Events}
 import views.html.v2.{case_heading, liability_view}
 import org.mockito.Mockito._
 import org.mockito.ArgumentMatchers.{any, eq => meq}
+import play.api.data.Form
 import play.twirl.api.Html
 
 import scala.concurrent.Future
@@ -46,6 +49,9 @@ class RequestActionsWithPermissionsProvider @Inject()(implicit parse: BodyParser
 }
 
 class LiabilityControllerSpec extends UnitSpec with Matchers with BeforeAndAfterEach with GuiceOneAppPerSuite with MockitoSugar with ControllerCommons {
+  private val activityForm: Form[ActivityFormData] = ActivityForm.form
+  private val pagedEvent = Paged(Seq(Events.event), 1, 1, 1)
+  private val queues =  Seq(Queue("", "", ""))
 
   override lazy val app: Application = new GuiceApplicationBuilder().overrides(
     bind[RequestActions].toProvider[RequestActionsWithPermissionsProvider],
@@ -60,13 +66,13 @@ class LiabilityControllerSpec extends UnitSpec with Matchers with BeforeAndAfter
     "return a 200 status" in {
       val expected = LiabilityViewModel.fromCase(Cases.liabilityCaseExample, Cases.operatorWithoutPermissions)
 
-      when(inject[liability_view].apply(meq(expected))(any(), any(), any())) thenReturn Html("body")
+      when(inject[liability_view].apply(meq(expected), meq(pagedEvent), meq(activityForm), meq(queues))(any(), any(), any())) thenReturn Html("body")
 
       val result: Future[Result] = route(app, FakeRequest("GET", "/manage-tariff-classifications/cases/v2/123456/liability").withFormUrlEncodedBody()).get
 
       status(result) shouldBe OK
 
-      verify(inject[liability_view], times(1)).apply(meq(expected))(any(), any(), any())
+      verify(inject[liability_view], times(1)).apply(meq(expected), meq(pagedEvent), meq(activityForm), meq(queues))(any(), any(), any())
     }
   }
 }

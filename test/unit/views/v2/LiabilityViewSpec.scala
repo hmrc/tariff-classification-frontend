@@ -17,22 +17,29 @@
 package views.v2
 
 import controllers.ActiveTab
-import models.{Operator, Permission}
+import models.forms.{ActivityForm, ActivityFormData}
+import models.{Event, Operator, Permission}
 import models.request.AuthenticatedRequest
 import models.viewmodels.LiabilityViewModel
 import org.jsoup.select.Elements
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.mvc.Request
 import play.twirl.api.Html
-import utils.Cases
+import utils.{Cases, Events}
 import utils.Cases.{aCase, withBTIApplication, withLiabilityApplication, withReference}
 import views.ViewMatchers.{containElementWithID, containText, haveAttribute}
 import views.{CaseDetailPage, ViewSpec, html}
 import views.html.v2.liability_view
+import models.{Case, Event, Paged, Permission, Queue}
+import play.api.data.Form
 
-class LiabilityViewSpec extends ViewSpec with GuiceOneAppPerSuite{
+class LiabilityViewSpec extends ViewSpec with GuiceOneAppPerSuite {
 
   private def request[A](operator: Operator, request: Request[A]) = new AuthenticatedRequest(operator, request)
+
+  private val activityForm: Form[ActivityFormData] = ActivityForm.form
+
+  private val pagedEvent = Paged(Seq(Events.event), 1, 1, 1)
 
   "Liability View" should {
 
@@ -42,7 +49,7 @@ class LiabilityViewSpec extends ViewSpec with GuiceOneAppPerSuite{
 
       def liabilityView = app.injector.instanceOf[liability_view]
 
-      val doc = view(liabilityView(LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions))(request, messages, appConfig))
+      val doc = view(liabilityView(LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions), pagedEvent, activityForm, Seq(Queue("", "", "")), 1)(authenticatedFakeRequest, messages, appConfig))
 
       doc.getElementById("case-reference") should containText(c.reference)
     }
@@ -53,7 +60,7 @@ class LiabilityViewSpec extends ViewSpec with GuiceOneAppPerSuite{
 
       def liabilityView = app.injector.instanceOf[liability_view]
 
-      val doc = view(liabilityView(LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions))(request, messages, appConfig))
+      val doc = view(liabilityView(LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions), pagedEvent, activityForm, Seq(Queue("", "", "")), 1)(authenticatedFakeRequest, messages, appConfig))
 
       doc should containElementWithID("c592_tab")
     }
