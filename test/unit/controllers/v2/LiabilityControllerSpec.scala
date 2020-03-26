@@ -19,7 +19,7 @@ package controllers.v2
 import com.google.inject.Provider
 import controllers.{ControllerCommons, RequestActions, RequestActionsWithPermissions, SuccessfulRequestActions}
 import javax.inject.Inject
-import models.viewmodels.LiabilityViewModel
+import models.viewmodels.{AttachmentsTabViewModel, LiabilityViewModel}
 import org.scalatest.{BeforeAndAfterEach, Matchers}
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
@@ -58,15 +58,16 @@ class LiabilityControllerSpec extends UnitSpec with Matchers with BeforeAndAfter
   "Calling /manage-tariff-classifications/cases/v2/:reference/liability " should {
 
     "return a 200 status" in {
-      val expected = LiabilityViewModel.fromCase(Cases.liabilityCaseExample, Cases.operatorWithoutPermissions)
+      val expectedLiabilityViewModel = LiabilityViewModel.fromCase(Cases.liabilityCaseExample, Cases.operatorWithoutPermissions)
+      val expectedAttachmentsTabViewModel = AttachmentsTabViewModel(Cases.liabilityCaseExample.reference, Nil, None, Nil)
 
-      when(inject[liability_view].apply(meq(expected))(any(), any(), any())) thenReturn Html("body")
+      when(inject[liability_view].apply(meq(expectedLiabilityViewModel), meq(expectedAttachmentsTabViewModel))(any(), any(), any())) thenReturn Html("body")
 
       val result: Future[Result] = route(app, FakeRequest("GET", "/manage-tariff-classifications/cases/v2/123456/liability").withFormUrlEncodedBody()).get
 
       status(result) shouldBe OK
 
-      verify(inject[liability_view], times(1)).apply(meq(expected))(any(), any(), any())
+      verify(inject[liability_view], times(1)).apply(meq(expectedLiabilityViewModel), meq(expectedAttachmentsTabViewModel))(any(), any(), any())
     }
   }
 }

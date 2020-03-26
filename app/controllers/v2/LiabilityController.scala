@@ -21,25 +21,38 @@ import config.AppConfig
 import controllers.RequestActions
 import javax.inject.{Inject, Singleton}
 import models.Permission
-import models.viewmodels.LiabilityViewModel
+import models.viewmodels.{AttachmentsTabViewModel, LiabilityViewModel}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import service.CasesService
+import service.{CasesService, FileStoreService}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
 class LiabilityController @Inject()(
                                      verify: RequestActions,
                                      casesService: CasesService,
+                                     fileService: FileStoreService,
                                      mcc: MessagesControllerComponents,
                                      val liability_view: views.html.v2.liability_view,
                                      implicit val appConfig: AppConfig
                                    ) extends FrontendController(mcc) with I18nSupport {
 
   def displayLiability(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)).async {
-    implicit request =>
-      Future.successful(Ok(liability_view(LiabilityViewModel.fromCase(request.`case`, request.operator))))
+    implicit request => {
+      val liabilityCase = request.`case`
+      for {
+        attachments <- fileService.getAttachments(liabilityCase)
+        letter <- fileService.getLetterOfAuthority(liabilityCase)
+      } yield {
+        val (applicantFiles, nonApplicantFiles) = attachments.partition(_.operator.isEmpty)
+        val attachmentsTabViewModel = AttachmentsTabViewModel(liabilityCase.reference, applicantFiles, letter, nonApplicantFiles)
+
+        Ok(liability_view(LiabilityViewModel.fromCase(liabilityCase, request.operator), attachmentsTabViewModel))
+      }
+
+    }
   }
 }

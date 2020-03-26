@@ -19,7 +19,7 @@ package views.v2
 import controllers.ActiveTab
 import models.{Operator, Permission}
 import models.request.AuthenticatedRequest
-import models.viewmodels.LiabilityViewModel
+import models.viewmodels.{AttachmentsTabViewModel, LiabilityViewModel}
 import org.jsoup.select.Elements
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.mvc.Request
@@ -42,7 +42,9 @@ class LiabilityViewSpec extends ViewSpec with GuiceOneAppPerSuite{
 
       def liabilityView = app.injector.instanceOf[liability_view]
 
-      val doc = view(liabilityView(LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions))(request, messages, appConfig))
+      val doc = view(liabilityView(LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions),
+        AttachmentsTabViewModel(c.reference, Seq(Cases.storedAttachment), Some(Cases.letterOfAuthority),
+          Seq(Cases.storedOperatorAttachment)))(request, messages, appConfig))
 
       doc.getElementById("case-reference") should containText(c.reference)
     }
@@ -53,7 +55,9 @@ class LiabilityViewSpec extends ViewSpec with GuiceOneAppPerSuite{
 
       def liabilityView = app.injector.instanceOf[liability_view]
 
-      val doc = view(liabilityView(LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions))(request, messages, appConfig))
+      val doc = view(liabilityView(LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions),
+        AttachmentsTabViewModel(c.reference, Seq(Cases.storedAttachment), Some(Cases.letterOfAuthority),
+          Seq(Cases.storedOperatorAttachment)))(request, messages, appConfig))
 
       doc should containElementWithID("c592_tab")
     }
