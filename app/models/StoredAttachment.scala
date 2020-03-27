@@ -20,6 +20,7 @@ import java.time.Instant
 
 import models.response.FileMetadata
 import models.response.ScanStatus.ScanStatus
+import utils.Dates
 
 case class StoredAttachment
 (
@@ -40,6 +41,10 @@ case class StoredAttachment
       case "image/gif" => true
       case _ => false
     }
+  }
+
+  def formattedDate: String ={
+    Dates.format(this.timestamp)
   }
 
 }

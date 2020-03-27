@@ -43,14 +43,14 @@ abstract class ViewSpec extends UnitSpec with GuiceOneAppPerSuite {
     .withCSRFToken.asInstanceOf[FakeRequest[AnyContentAsEmpty.type]]
 
   val operatorRequest = new AuthenticatedRequest(authenticatedOperator, request)
-  val authenticatedManagerFakeRequest: AuthenticatedRequest[AnyContentAsEmpty.type] = new AuthenticatedRequest(authenticatedManager, request)
+  val authenticatedManagerFakeRequest = new AuthenticatedRequest(authenticatedManager, request)
 
   def requestWithPermissions(permissions: Permission*): AuthenticatedRequest[AnyContentAsEmpty.type] = {
     val operator = authenticatedOperator.copy(permissions = permissions.toSet)
     new AuthenticatedRequest(operator, request)
   }
 
-  implicit val authenticatedFakeRequest: AuthenticatedRequest[AnyContentAsEmpty.type] = new AuthenticatedRequest(authenticatedOperator, request)
+  implicit val authenticatedFakeRequest = new AuthenticatedRequest(authenticatedOperator, request)
   implicit val messages: Messages = injector.instanceOf[MessagesApi].preferred(authenticatedFakeRequest)
 
   protected def view(html: Html): Document = {

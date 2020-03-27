@@ -15,11 +15,12 @@
  *@
 
 @import models.viewmodels.CaseHeaderViewModel
-@import config.AppConfig
 @import views.html.partials.statuses.{appeal_status, case_status}
 
 @this()
-@(caseHeaderViewModel: CaseHeaderViewModel)(implicit messages: Messages, appConfig: AppConfig, request: Request[_])
+@(
+        caseHeaderViewModel: CaseHeaderViewModel
+)(implicit messages: Messages)
 
 @phaseTagColor = @{
     if(caseHeaderViewModel.caseStatus == "CANCELLED" || caseHeaderViewModel.caseStatus == "COMPLETED") {

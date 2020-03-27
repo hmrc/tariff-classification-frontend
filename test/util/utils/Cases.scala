@@ -27,6 +27,7 @@ import models.SampleReturn.SampleReturn
 import models.SampleStatus.SampleStatus
 import models._
 import models.response.ScanStatus
+import models.viewmodels.{AttachmentsTabViewModel, C592ViewModel, PortOrComplianceOfficerContact, TraderContact}
 
 object Cases {
 
@@ -58,6 +59,11 @@ object Cases {
   val btiCaseWithExpiredRuling = btiCaseExample.copy(status = CaseStatus.COMPLETED, decision = Some(expiredRuling))
   val liabilityCaseWithExpiredRuling = liabilityCaseExample.copy(status = CaseStatus.COMPLETED, decision = Some(expiredRuling))
   val operatorWithoutPermissions = Operator(id = "0", name =Some("liability op name"), permissions = Set())
+
+  val c592ViewModel = Some(C592ViewModel("entry number", "03 Mar 2020", "", None, "", "good-name",
+    TraderContact("trader-business-name", "email", "phone", ""), "trader-1234567", "officer-1234567",
+    PortOrComplianceOfficerContact("name", "email", "phone"), "", ""))
+  val attachmentsTabViewModel = Some(AttachmentsTabViewModel(Cases.liabilityCaseExample.reference, Nil, None, Nil))
 
   def attachment(id: String = UUID.randomUUID().toString): Attachment = {
     Attachment(

@@ -16,50 +16,47 @@
 
 package views.v2
 
-import controllers.ActiveTab
-import models.{Operator, Permission}
-import models.request.AuthenticatedRequest
-import models.viewmodels.{AttachmentsTabViewModel, LiabilityViewModel}
-import org.jsoup.select.Elements
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.mvc.Request
-import play.twirl.api.Html
+import models.viewmodels.LiabilityViewModel
 import utils.Cases
-import utils.Cases.{aCase, withBTIApplication, withLiabilityApplication, withReference}
-import views.ViewMatchers.{containElementWithID, containText, haveAttribute}
-import views.{CaseDetailPage, ViewSpec, html}
+import utils.Cases.{aCase, withLiabilityApplication, withReference}
+import views.ViewMatchers.{containElementWithID, containText}
+import views.ViewSpec
 import views.html.v2.liability_view
 
-class LiabilityViewSpec extends ViewSpec with GuiceOneAppPerSuite{
+class LiabilityViewSpec extends ViewSpec {
 
-  private def request[A](operator: Operator, request: Request[A]) = new AuthenticatedRequest(operator, request)
+  def liabilityView: liability_view = app.injector.instanceOf[liability_view]
 
   "Liability View" should {
 
     "render with case reference" in {
-
       val c = aCase(withReference("reference"), withLiabilityApplication())
-
-      def liabilityView = app.injector.instanceOf[liability_view]
-
-      val doc = view(liabilityView(LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions),
-        AttachmentsTabViewModel(c.reference, Seq(Cases.storedAttachment), Some(Cases.letterOfAuthority),
-          Seq(Cases.storedOperatorAttachment)))(request, messages, appConfig))
-
+      val doc = view(liabilityView(LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions), None, None))
       doc.getElementById("case-reference") should containText(c.reference)
     }
 
-    "render C592 tab always" in {
-
+    "render C592 tab" in {
       val c = aCase(withReference("reference"), withLiabilityApplication())
-
-      def liabilityView = app.injector.instanceOf[liability_view]
-
-      val doc = view(liabilityView(LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions),
-        AttachmentsTabViewModel(c.reference, Seq(Cases.storedAttachment), Some(Cases.letterOfAuthority),
-          Seq(Cases.storedOperatorAttachment)))(request, messages, appConfig))
-
+      val doc = view(liabilityView(LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions), Cases.c592ViewModel, None))
       doc should containElementWithID("c592_tab")
+    }
+
+    "not render C592 tab" in {
+      val c = aCase(withReference("reference"), withLiabilityApplication())
+      val doc = view(liabilityView(LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions), None, None))
+      doc shouldNot containElementWithID("c592_tab")
+    }
+
+    "render Attachments tab" in {
+      val c = aCase(withReference("reference"), withLiabilityApplication())
+      val doc = view(liabilityView(LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions), None, Cases.attachmentsTabViewModel))
+      doc should containElementWithID("attachments_tab")
+    }
+
+    "not render Attachments tab" in {
+      val c = aCase(withReference("reference"), withLiabilityApplication())
+      val doc = view(liabilityView(LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions), None, None))
+      doc shouldNot containElementWithID("attachments_tab")
     }
 
   }
