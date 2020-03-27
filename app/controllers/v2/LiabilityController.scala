@@ -75,10 +75,8 @@ class LiabilityController @Inject()(
 
       liabilityViewActivityDetails(reference).flatMap(
         tuple => Future.successful(Ok(liability_view(
-          LiabilityViewModel.fromCase(request.`case`, request.operator),
-          tuple._1,
-          activityForm,
-          tuple._2))
+          LiabilityViewModel.fromCase(request.`case`, request.operator, tuple._1, tuple._2),
+          activityForm))
         )
       )
   }

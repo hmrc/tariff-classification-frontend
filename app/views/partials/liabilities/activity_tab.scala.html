@@ -31,7 +31,7 @@
 
 @this(case_heading: views.html.v2.case_heading)
 
-@(liabilityViewModel: LiabilityViewModel, events: Paged[Event], activityForm: Form[ActivityFormData], queues: Seq[Queue], startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(liabilityViewModel: LiabilityViewModel, activityForm: Form[ActivityFormData], startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @error_summary(activityForm.errors, Some(startAtTabIndex))
 
@@ -58,7 +58,7 @@
   </div>
  </div>
 }
-
+ @*TODO: liabilityViewModel.activityViewModel.getwhatweneed
 @*//@activity_details_events_table(c, events, queues, startAtTabIndex+15)*@
 
 <div class="grid-row mt-2">

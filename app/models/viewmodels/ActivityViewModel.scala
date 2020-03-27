@@ -18,21 +18,26 @@ package models.viewmodels
 
 import java.time.Instant
 
-import models.{Case, Operator}
+import models.{Case, Event, Operator, Paged, Queue}
 
 case class ActivityViewModel(
                               assignee: Option[Operator],
                               queueId: Option[String],
-                              createdDate: Instant
+                              createdDate: Instant,
+                              events: Paged[Event],
+                              queues: Seq[Queue]
                             ) {
 
 }
 
 object ActivityViewModel {
-  def fromCase(c: Case): ActivityViewModel = {
+  def fromCase(c: Case, events: Paged[Event], queues: Seq[Queue]): ActivityViewModel = {
     ActivityViewModel(c.assignee,
       c.queueId,
-      c.createdDate)
+      c.createdDate,
+      events,
+      queues
+    )
   }
 
 }
