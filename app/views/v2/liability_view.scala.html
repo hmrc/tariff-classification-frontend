@@ -28,7 +28,7 @@
         c592_tab: views.html.partials.liabilities.c592_tab,
         activity_tab: views.html.partials.liabilities.activity_tab)
 
-@(liabilityViewModel: LiabilityViewModel, events: Paged[Event], activityForm: Form[ActivityFormData], queues: Seq[Queue], startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(liabilityViewModel: LiabilityViewModel, events: Paged[Event], activityForm: Form[ActivityFormData], queues: Seq[Queue])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 @main(bodyClasses = None) {
 @case_heading(liabilityViewModel.caseHeaderViewModel)
 
@@ -48,7 +48,7 @@
 </div>
 
 @c592_tab(liabilityViewModel: LiabilityViewModel)
-@activity_tab(liabilityViewModel: LiabilityViewModel, events, activityForm, queues, startAtTabIndex)
+@activity_tab(liabilityViewModel: LiabilityViewModel, events, activityForm, queues, 1000)
 
 }
 

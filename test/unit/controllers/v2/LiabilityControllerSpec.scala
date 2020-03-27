@@ -38,6 +38,8 @@ import org.mockito.Mockito._
 import org.mockito.ArgumentMatchers.{any, eq => meq}
 import play.api.data.Form
 import play.twirl.api.Html
+import service.{EventsService, QueuesService}
+import scala.concurrent.ExecutionContext.Implicits.global
 
 import scala.concurrent.Future
 
@@ -51,12 +53,13 @@ class RequestActionsWithPermissionsProvider @Inject()(implicit parse: BodyParser
 class LiabilityControllerSpec extends UnitSpec with Matchers with BeforeAndAfterEach with GuiceOneAppPerSuite with MockitoSugar with ControllerCommons {
   private val activityForm: Form[ActivityFormData] = ActivityForm.form
   private val pagedEvent = Paged(Seq(Events.event), 1, 1, 1)
-  private val queues =  Seq(Queue("", "", ""))
+  private val queues = Seq(Queue("", "", ""))
 
   override lazy val app: Application = new GuiceApplicationBuilder().overrides(
     bind[RequestActions].toProvider[RequestActionsWithPermissionsProvider],
     bind[liability_view].toInstance(mock[liability_view]),
-    bind[case_heading].toInstance(mock[case_heading])
+    bind[EventsService].toInstance(mock[EventsService]),
+    bind[QueuesService].toInstance(mock[QueuesService])
   ).build()
 
   override def beforeEach(): Unit = reset(inject[liability_view])
@@ -67,6 +70,10 @@ class LiabilityControllerSpec extends UnitSpec with Matchers with BeforeAndAfter
       val expected = LiabilityViewModel.fromCase(Cases.liabilityCaseExample, Cases.operatorWithoutPermissions)
 
       when(inject[liability_view].apply(meq(expected), meq(pagedEvent), meq(activityForm), meq(queues))(any(), any(), any())) thenReturn Html("body")
+
+      when(inject[EventsService].getFilteredEvents(any(), any(), any())(any())) thenReturn Future(pagedEvent)
+
+      when(inject[QueuesService].getAll) thenReturn Future(queues)
 
       val result: Future[Result] = route(app, FakeRequest("GET", "/manage-tariff-classifications/cases/v2/123456/liability").withFormUrlEncodedBody()).get
 

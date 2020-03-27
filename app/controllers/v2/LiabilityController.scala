@@ -78,8 +78,7 @@ class LiabilityController @Inject()(
           LiabilityViewModel.fromCase(request.`case`, request.operator),
           tuple._1,
           activityForm,
-          tuple._2,
-          tuple._3))
+          tuple._2))
         )
       )
   }
