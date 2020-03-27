@@ -49,7 +49,7 @@ class LiabilityViewSpec extends ViewSpec with GuiceOneAppPerSuite {
 
       def liabilityView = app.injector.instanceOf[liability_view]
 
-      val doc = view(liabilityView(LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions), pagedEvent, activityForm, Seq(Queue("", "", "")))(authenticatedFakeRequest, messages, appConfig))
+      val doc = view(liabilityView(LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions, pagedEvent, Seq(Queue("", "", ""))), activityForm)(authenticatedFakeRequest, messages, appConfig))
 
       doc.getElementById("case-reference") should containText(c.reference)
     }
@@ -60,7 +60,7 @@ class LiabilityViewSpec extends ViewSpec with GuiceOneAppPerSuite {
 
       def liabilityView = app.injector.instanceOf[liability_view]
 
-      val doc = view(liabilityView(LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions), pagedEvent, activityForm, Seq(Queue("", "", "")))(authenticatedFakeRequest, messages, appConfig))
+      val doc = view(liabilityView(LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions, pagedEvent, Seq(Queue("", "", ""))), activityForm)(authenticatedFakeRequest, messages, appConfig))
 
       doc should containElementWithID("c592_tab")
     }

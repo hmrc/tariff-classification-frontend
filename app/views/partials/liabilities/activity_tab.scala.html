@@ -58,7 +58,6 @@
   </div>
  </div>
 }
- @*TODO: liabilityViewModel.activityViewModel.getwhatweneed
 @*//@activity_details_events_table(c, events, queues, startAtTabIndex+15)*@
 
 <div class="grid-row mt-2">
@@ -78,7 +77,7 @@
   <span id="activity-events-assigned-queue">
   @{
    if(liabilityViewModel.activityViewModel.queueId.isDefined) {
-    liabilityViewModel.activityViewModel.queueId.flatMap(id => queues.find(_.id == id)).map(_.name).getOrElse("unknown")
+    liabilityViewModel.activityViewModel.queueName
    } else {
     messages("case.activity.no-queue-assigned")
    }

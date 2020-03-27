@@ -67,9 +67,9 @@ class LiabilityControllerSpec extends UnitSpec with Matchers with BeforeAndAfter
   "Calling /manage-tariff-classifications/cases/v2/:reference/liability " should {
 
     "return a 200 status" in {
-      val expected = LiabilityViewModel.fromCase(Cases.liabilityCaseExample, Cases.operatorWithoutPermissions)
+      val expected = LiabilityViewModel.fromCase(Cases.liabilityCaseExample, Cases.operatorWithoutPermissions, pagedEvent, queues)
 
-      when(inject[liability_view].apply(meq(expected), meq(pagedEvent), meq(activityForm), meq(queues))(any(), any(), any())) thenReturn Html("body")
+      when(inject[liability_view].apply(meq(expected), meq(activityForm))(any(), any(), any())) thenReturn Html("body")
 
       when(inject[EventsService].getFilteredEvents(any(), any(), any())(any())) thenReturn Future(pagedEvent)
 
@@ -79,7 +79,7 @@ class LiabilityControllerSpec extends UnitSpec with Matchers with BeforeAndAfter
 
       status(result) shouldBe OK
 
-      verify(inject[liability_view], times(1)).apply(meq(expected), meq(pagedEvent), meq(activityForm), meq(queues))(any(), any(), any())
+      verify(inject[liability_view], times(1)).apply(meq(expected), meq(activityForm))(any(), any(), any())
     }
   }
 }
