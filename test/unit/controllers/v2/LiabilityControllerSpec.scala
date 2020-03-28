@@ -19,6 +19,7 @@ package controllers.v2
 import com.google.inject.Provider
 import controllers.{ControllerCommons, RequestActions, RequestActionsWithPermissions}
 import javax.inject.Inject
+import models.Case
 import models.viewmodels.{AttachmentsTabViewModel, LiabilityViewModel}
 import org.scalatest.{BeforeAndAfterEach, Matchers}
 import org.scalatestplus.mockito.MockitoSugar
@@ -35,7 +36,10 @@ import views.html.v2.{case_heading, liability_view}
 import org.mockito.Mockito._
 import org.mockito.ArgumentMatchers.{any, eq => meq}
 import play.twirl.api.Html
+import service.FileStoreService
+import uk.gov.hmrc.http.HeaderCarrier
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class RequestActionsWithPermissionsProvider @Inject()(implicit parse: BodyParsers.Default) extends Provider[RequestActionsWithPermissions] {
@@ -50,8 +54,12 @@ class LiabilityControllerSpec extends UnitSpec with Matchers with BeforeAndAfter
   override lazy val app: Application = new GuiceApplicationBuilder().overrides(
     bind[RequestActions].toProvider[RequestActionsWithPermissionsProvider],
     bind[liability_view].toInstance(mock[liability_view]),
-    bind[case_heading].toInstance(mock[case_heading])
+    bind[case_heading].toInstance(mock[case_heading]),
+    bind[FileStoreService].toInstance(mock[FileStoreService])
   ).build()
+
+  private implicit val hc: HeaderCarrier = HeaderCarrier()
+
 
   override def beforeEach(): Unit = reset(inject[liability_view])
 
@@ -61,6 +69,9 @@ class LiabilityControllerSpec extends UnitSpec with Matchers with BeforeAndAfter
       val expectedLiabilityViewModel = LiabilityViewModel.fromCase(Cases.liabilityCaseExample, Cases.operatorWithoutPermissions)
       val expectedC592TabViewModel = Cases.c592ViewModel
       val expectedAttachmentsTabViewModel = Cases.attachmentsTabViewModel
+
+      when(inject[FileStoreService].getAttachments(any[Case]())(any())) thenReturn(Future.successful(Seq(Cases.storedAttachment)))
+      when(inject[FileStoreService].getLetterOfAuthority(any())(any())) thenReturn(Future.successful(Some(Cases.letterOfAuthority)))
 
       when(inject[liability_view].apply(meq(expectedLiabilityViewModel), meq(expectedC592TabViewModel), meq(expectedAttachmentsTabViewModel))(any(), any(), any())) thenReturn Html("body")
 
