@@ -38,6 +38,7 @@ class LiabilityViewModelSpec extends UnitSpec {
 
       val c = Cases.liabilityCaseExample.copy(
         status = CaseStatus.CANCELLED,
+        queueId = Some("queueId"),
         application = Cases.liabilityCaseExample.application.asLiabilityOrder.copy(
           entryDate = Some(Instant.parse("2020-03-03T10:15:30.00Z"))),
         assignee = Some(op),
@@ -51,7 +52,7 @@ class LiabilityViewModelSpec extends UnitSpec {
         C592ViewModel("entry number", "03 Mar 2020", "", None, "", "good-name",
           TraderContact("trader-business-name", "email", "phone", ""), "trader-1234567", "officer-1234567",
           PortOrComplianceOfficerContact("name", "email", "phone"), "", ""),
-        ActivityViewModel(Some(op), None, createdDateTime, pagedEvent, queues, ""),
+        ActivityViewModel(Some(op), Some("queueId"), createdDateTime, pagedEvent, queues, "unknown"),
         isNewCase = false,
         hasPermissions = false))
     }

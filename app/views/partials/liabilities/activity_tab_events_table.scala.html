@@ -1,0 +1,153 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.AppConfig
+@import models._
+@import models.request.AuthenticatedRequest
+@import utils.Dates
+@import views.html.partials.activity.{activity_case_cancellation, activity_case_referral, activity_status_change, activity_case_completed}
+@import views.html.partials.{assignee, progressive_disclosure}
+@import models.viewmodels.ActivityViewModel
+@(activityViewModel: ActivityViewModel, startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+
+<table id="activity-events">
+    <thead>
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Description</th>
+            <th scope="col">Date</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @for((event: Event, index: Int) <- activityViewModel.events.results.zipWithIndex) {
+            <tr id="activity-events-row-@{index}">
+                <td id="activity-events-row-@{index}-operator" class="activity-cell">@event.operator.name.getOrElse("Unknown")</td>
+
+                <td id="activity-events-row-@{index}-content" class="activity-cell-desc">
+                @{
+                    event.details.`type` match {
+                        case EventType.NOTE => {
+                            val body = event.details.asInstanceOf[Note]
+                                <div id={s"activity-events-row-${index}-body"}>
+                                <span id={s"activity-events-row-${index}-comment"} class="pre-wrap">{body.comment}</span>
+                                </div>
+                        }
+                        case EventType.CASE_STATUS_CHANGE => {
+                            activity_status_change(index, event)
+                        }
+                        case EventType.CASE_CANCELLATION => {
+                            activity_case_cancellation(index, event, startAtTabIndex + (index*2))
+                        }
+                        case EventType.CASE_REFERRAL => {
+                            activity_case_referral(index, event, startAtTabIndex + (index*2))
+                        }
+                        case EventType.CASE_COMPLETED => {
+                            activity_case_completed(index, event, startAtTabIndex + (index*2))
+                        }
+                        case EventType.APPEAL_ADDED => {
+                            val body = event.details.asInstanceOf[AppealAdded]
+                            if(body.appealType == AppealType.REVIEW) {
+                                progressive_disclosure(
+                                    id = s"activity-events-row-$index",
+                                    summary = s"Review added with status ${AppealStatus.formatReview(body.appealStatus)}",
+                                    body = body.comment.map(Html(_)),
+                                    useTabIndex = Some(startAtTabIndex + (index*2))
+                                )
+                            } else {
+                                progressive_disclosure(
+                                    id = s"activity-events-row-$index",
+                                    summary = s"Appeal added with type ${AppealType.format(body.appealType)} and status ${AppealStatus.formatAppeal(body.appealStatus)}",
+                                    body = body.comment.map(Html(_)),
+                                    useTabIndex = Some(startAtTabIndex + (index*2))
+                                )
+                            }
+                        }
+                        case EventType.APPEAL_STATUS_CHANGE => {
+                            val body = event.details.asInstanceOf[AppealStatusChange]
+                            if(body.appealType == AppealType.REVIEW) {
+                                progressive_disclosure(
+                                    id = s"activity-events-row-$index",
+                                    summary = s"Review status changed from ${AppealStatus.formatReview(body.from)} to ${AppealStatus.formatReview(body.to)}",
+                                    body = body.comment.map(Html(_)),
+                                    useTabIndex = Some(startAtTabIndex + (index*2))
+                                )
+                            } else {
+                                progressive_disclosure(
+                                    id = s"activity-events-row-$index",
+                                    summary = s"${AppealType.format(body.appealType)} status changed from ${AppealStatus.formatAppeal(body.from)} to ${AppealStatus.formatAppeal(body.to)}",
+                                    body = body.comment.map(Html(_)),
+                                    useTabIndex = Some(startAtTabIndex + (index*2))
+                                )
+                            }
+                        }
+                        case EventType.EXTENDED_USE_STATUS_CHANGE => {
+                            val body = event.details.asInstanceOf[ExtendedUseStatusChange]
+                            val from = if(body.from) "Yes" else "No"
+                            val to = if(body.to) "Yes" else "No"
+                            progressive_disclosure(
+                                id = s"activity-events-row-$index",
+                                summary = s"Application for extended use status changed from ${from} to ${to}",
+                                body = body.comment.map(Html(_)),
+                                useTabIndex = Some(startAtTabIndex + (index*2))
+                            )
+                        }
+                        case EventType.ASSIGNMENT_CHANGE => {
+                            val body = event.details.asInstanceOf[AssignmentChange]
+                            val summary: String = (body.from, body.to) match {
+                                case (Some(from: Operator), Some(to: Operator)) =>
+                                    s"Case reassigned from ${assignee(from)} to ${assignee(to)}"
+                                case (None, Some(to: Operator)) =>
+                                    s"Case assigned to ${assignee(to)}"
+                                case (Some(from: Operator), None) =>
+                                    s"Case unassigned from ${assignee(from)}"
+                                case _ =>
+                                    "Case assignment changed"
+                            }
+                            progressive_disclosure(
+                                id = s"activity-events-row-$index",
+                                summary = summary,
+                                body = body.comment.map(Html(_)),
+                                useTabIndex = Some(startAtTabIndex + (index*2))
+                            )
+                        }
+                        case EventType.QUEUE_CHANGE => {
+                            val body = event.details.asInstanceOf[QueueChange]
+                            progressive_disclosure(
+                                id = s"activity-events-row-$index",
+                                summary = s" ${assignee(event.operator, true)} moved this case to the ${body.to.flatMap(to => activityViewModel.queues.find(to == _.id)).map(_.name).getOrElse("unknown")} queue",
+                                body = body.comment.map(Html(_)),
+                                useTabIndex = Some(startAtTabIndex + (index*2))
+                            )
+                        }
+                        case _ => {
+                            throw new IllegalArgumentException(s"Unhandled Event Type [${event.details.`type`}]")
+                        }
+                    }
+                }
+                </td>
+
+                <td id="activity-events-row-@{index}-date" class="activity-cell-date">@Dates.format(event.timestamp)</td>
+            </tr>
+        }
+    <tr id="activity-events-row-application_submitted">
+        <td id="activity-events-row-application_submitted-operator">Applicant</td>
+        <td id="activity-events-row-application_submitted-content" class="activity-cell">Application submitted</td>
+        <td id="activity-events-row-application_submitted-date" class="activity-cell">@Dates.format(activityViewModel.createdDate)</td>
+    </tr>
+    </tbody>
+
+</table>
