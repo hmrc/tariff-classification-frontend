@@ -18,7 +18,7 @@ package controllers.v2
 
 
 import config.AppConfig
-import controllers.RequestActions
+import controllers.{ActiveTab, RequestActions, routes, v2}
 import javax.inject.{Inject, Singleton}
 import models.TabIndexes.tabIndexFor
 import models._
@@ -57,6 +57,7 @@ import config.AppConfig
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+
 @Singleton
 class LiabilityController @Inject()(
                                      verify: RequestActions,
@@ -81,10 +82,31 @@ class LiabilityController @Inject()(
       )
   }
 
+
+  def addNote(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.ADD_NOTE)).async { implicit request =>
+
+    def onError: Form[ActivityFormData] => Future[Result] = errorForm => {
+      liabilityViewActivityDetails(reference).flatMap(
+        tuple => Future.successful(Ok(liability_view(
+          LiabilityViewModel.fromCase(request.`case`, request.operator, tuple._1, tuple._2),
+          errorForm))
+        )
+      )
+    }
+
+    def onSuccess: ActivityFormData => Future[Result] = validForm => {
+      eventsService.addNote(request.`case`, validForm.note, request.operator)
+        .map(_ => Redirect(v2.routes.LiabilityController.displayLiability(reference)))
+    }
+
+    activityForm.bindFromRequest.fold(onError, onSuccess)
+  }
+
   def liabilityViewActivityDetails(reference: String)(implicit request: AuthenticatedRequest[AnyContent]) = {
     for {
       events <- eventsService.getFilteredEvents(reference, NoPagination(), Some(EventType.values.diff(EventType.sampleEvents)))
       queues <- queuesService.getAll
     } yield (events, queues, tabIndexFor(ACTIVITY))
   }
+
 }

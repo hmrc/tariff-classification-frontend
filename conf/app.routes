@@ -118,3 +118,4 @@ GET         /pdf/application/:reference                         controllers.PdfD
 GET         /attachment/:id                                     controllers.ViewAttachmentController.get(id: String)
 
 GET         /cases/v2/:reference/liability                      controllers.v2.LiabilityController.displayLiability(reference: String)
+POST        /cases/v2/:reference/liability                      controllers.v2.LiabilityController.addNote(reference: String)

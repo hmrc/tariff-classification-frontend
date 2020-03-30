@@ -18,7 +18,7 @@
 
 @import helper._
 @import config.AppConfig
-@import controllers.routes.{CaseController, ReassignCaseController}
+@import controllers.v2.routes.LiabilityController
 @import models.forms.ActivityFormData
 @import models.CaseStatus._
 @import models.request.AuthenticatedRequest
@@ -43,7 +43,7 @@
 
   <div class="column-full">
 
-  @form(action = CaseController.addNote(liabilityViewModel.caseHeaderViewModel.referenceNumber), 'class -> "form") {
+  @form(action = LiabilityController.addNote(liabilityViewModel.caseHeaderViewModel.referenceNumber), 'class -> "form") {
    @CSRF.formField
    @input_textarea(
     field = activityForm("note"),

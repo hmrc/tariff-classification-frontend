@@ -16,10 +16,14 @@
 
 package controllers.v2
 
+import java.time.Clock
+
+import audit.AuditService
 import com.google.inject.Provider
+import connector.BindingTariffClassificationConnector
 import controllers.{ControllerCommons, RequestActions, RequestActionsWithPermissions, SuccessfulRequestActions}
 import javax.inject.Inject
-import models.{Paged, Queue}
+import models._
 import models.forms.{ActivityForm, ActivityFormData}
 import models.viewmodels.LiabilityViewModel
 import org.scalatest.{BeforeAndAfterEach, Matchers}
@@ -35,18 +39,22 @@ import uk.gov.hmrc.play.test.UnitSpec
 import utils.{Cases, Events}
 import views.html.v2.{case_heading, liability_view}
 import org.mockito.Mockito._
-import org.mockito.ArgumentMatchers.{any, eq => meq}
+import org.mockito.ArgumentMatchers.{any, refEq, eq => meq}
+import org.mockito.BDDMockito.given
 import play.api.data.Form
+import play.api.http.Status
 import play.twirl.api.Html
 import service.{EventsService, QueuesService}
-import scala.concurrent.ExecutionContext.Implicits.global
+import uk.gov.hmrc.http.HeaderCarrier
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import scala.concurrent.Future.successful
 
 class RequestActionsWithPermissionsProvider @Inject()(implicit parse: BodyParsers.Default) extends Provider[RequestActionsWithPermissions] {
 
   override def get(): RequestActionsWithPermissions = {
-    new RequestActionsWithPermissions(parse, Cases.operatorWithoutPermissions.permissions, c = Cases.liabilityCaseExample)
+    new RequestActionsWithPermissions(parse, Set(Permission.ADD_NOTE), c = Cases.liabilityCaseExample)
   }
 }
 
@@ -54,12 +62,19 @@ class LiabilityControllerSpec extends UnitSpec with Matchers with BeforeAndAfter
   private val activityForm: Form[ActivityFormData] = ActivityForm.form
   private val pagedEvent = Paged(Seq(Events.event), 1, 1, 1)
   private val queues = Seq(Queue("", "", ""))
+  private val eventService = mock[EventsService]
+  private val queueService = mock[QueuesService]
+  private val operator = Operator(id = "id")
+  private val event = mock[Event]
+
 
   override lazy val app: Application = new GuiceApplicationBuilder().overrides(
     bind[RequestActions].toProvider[RequestActionsWithPermissionsProvider],
     bind[liability_view].toInstance(mock[liability_view]),
     bind[EventsService].toInstance(mock[EventsService]),
-    bind[QueuesService].toInstance(mock[QueuesService])
+    bind[QueuesService].toInstance(mock[QueuesService]),
+    bind[AuditService].toInstance(mock[AuditService]),
+    bind[BindingTariffClassificationConnector].toInstance(mock[BindingTariffClassificationConnector])
   ).build()
 
   override def beforeEach(): Unit = reset(inject[liability_view])
@@ -82,4 +97,63 @@ class LiabilityControllerSpec extends UnitSpec with Matchers with BeforeAndAfter
       verify(inject[liability_view], times(1)).apply(meq(expected), meq(activityForm))(any(), any(), any())
     }
   }
+
+  "Activity: Add Note" should {
+    val aCase = Cases.liabilityCaseExample.copy(assignee = Some(Cases.operatorWithPermissions))
+
+    "add a new note when a case note is provided" in {
+      val aNote = "This is a note"
+
+      when(inject[AuditService].auditNote(any(), any(), any())(any()))
+
+      when(inject[BindingTariffClassificationConnector].createEvent(any(), any())(any())) thenReturn Future(event)
+
+      when(inject[EventsService].addNote(meq(aCase), meq(aNote), meq(Cases.operatorWithPermissions), any[Clock])(any[HeaderCarrier])) thenReturn Future(event)
+
+      when(inject[EventsService].getFilteredEvents(any(), any(), any())(any())) thenReturn Future(pagedEvent)
+
+      when(inject[QueuesService].getAll) thenReturn Future(queues)
+
+
+      val result: Future[Result] =
+        route(app, FakeRequest("POST", "/manage-tariff-classifications/cases/v2/123456/liability").withFormUrlEncodedBody("note" -> aNote)).get
+
+      status(result) shouldBe SEE_OTHER
+
+      locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/v2/123456/liability")
+    }
+
+/*    "displays an error when no case note is provided" in {
+      val aValidForm = newFakePOSTRequestWithCSRF(fakeApplication, Map())
+      given(eventService.getEvents(refEq(aCase.reference), refEq(NoPagination()))(any[HeaderCarrier])) willReturn successful(Paged.empty[Event])
+      given(queueService.getAll) willReturn successful(Seq.empty)
+
+      val result = controller(aCase, Set(Permission.ADD_NOTE)).addNote(aCase.reference)(aValidForm)
+      status(result) shouldBe Status.OK
+      contentType(result) shouldBe Some("text/html")
+      charset(result) shouldBe Some("utf-8")
+      contentAsString(result) should include("error-summary")
+      contentAsString(result) should include("Enter a case note")
+    }
+
+    "return OK when user has right permissions" in {
+      val aCase  = Cases.btiCaseExample
+      given(eventService.getEvents(refEq(aCase.reference), refEq(NoPagination()))(any[HeaderCarrier])) willReturn successful(Paged(Events.events))
+      given(queueService.getAll) willReturn successful(Seq.empty)
+
+      val result = controller(aCase,Set(Permission.ADD_NOTE)).addNote(aCase.reference)(newFakeGETRequestWithCSRF(fakeApplication))
+
+      status(result) shouldBe Status.OK
+    }
+
+    "redirect unauthorised when does not have right permissions" in {
+      val aCase  = Cases.btiCaseExample
+
+      val result = controller(aCase, Set.empty).addNote(aCase.reference)(newFakeGETRequestWithCSRF(fakeApplication))
+
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result).get should include ("unauthorized")
+    }*/
+  }
+
 }
