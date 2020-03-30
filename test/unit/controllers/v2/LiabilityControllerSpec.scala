@@ -16,6 +16,8 @@
 
 package controllers.v2
 
+import java.time.Instant
+
 import com.google.inject.Provider
 import controllers.{ControllerCommons, RequestActions, RequestActionsWithPermissions}
 import javax.inject.Inject
@@ -31,7 +33,7 @@ import play.api.mvc.{BodyParsers, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.play.test.UnitSpec
-import utils.Cases
+import utils.{Cases, Dates}
 import views.html.v2.{case_heading, liability_view}
 import org.mockito.Mockito._
 import org.mockito.ArgumentMatchers.{any, eq => meq}
@@ -67,8 +69,8 @@ class LiabilityControllerSpec extends UnitSpec with Matchers with BeforeAndAfter
 
     "return a 200 status" in {
       val expectedLiabilityViewModel = LiabilityViewModel.fromCase(Cases.liabilityCaseExample, Cases.operatorWithoutPermissions)
-      val expectedC592TabViewModel = Cases.c592ViewModel
-      val expectedAttachmentsTabViewModel = Cases.attachmentsTabViewModel
+      val expectedC592TabViewModel = Cases.c592ViewModel.map(vm => vm.copy(entryDate = Dates.format(Instant.now())))
+      val expectedAttachmentsTabViewModel = Cases.attachmentsTabViewModel.map(vm => vm.copy(applicantFiles = Seq(Cases.storedAttachment),letter = Some(Cases.letterOfAuthority), nonApplicantFiles = Nil))
 
       when(inject[FileStoreService].getAttachments(any[Case]())(any())) thenReturn(Future.successful(Seq(Cases.storedAttachment)))
       when(inject[FileStoreService].getLetterOfAuthority(any())(any())) thenReturn(Future.successful(Some(Cases.letterOfAuthority)))
