@@ -34,7 +34,7 @@ class AppConfigSpec extends UnitSpec with MockitoSugar with GuiceOneAppPerSuite 
   "Config" should {
 
     "Build assets prefix" in {
-      appConf.assetsPrefix shouldBe "http://localhost:9032/assets/4.5.0"
+      appConf.assetsPrefix shouldBe "http://localhost:9032/assets/4.11.0"
     }
 
     "Build analytics token" in {
