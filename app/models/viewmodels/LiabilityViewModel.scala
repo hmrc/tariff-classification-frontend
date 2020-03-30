@@ -21,7 +21,6 @@ import models._
 
 case class LiabilityViewModel(
                                caseHeaderViewModel: CaseHeaderViewModel,
-                               c592ViewModel: C592ViewModel,
                                isNewCase: Boolean,
                                hasPermissions: Boolean
                              )
@@ -46,7 +45,6 @@ object LiabilityViewModel {
 
     LiabilityViewModel(
       CaseHeaderViewModel("Liability", c.application.businessName, c.application.goodsName, c.reference, status, c.application.isLiveLiabilityOrder),
-      C592ViewModel.fromCase(c),
       isNewCase = isNew,
       hasPermissions = releaseOrSuppressPermissions
     )

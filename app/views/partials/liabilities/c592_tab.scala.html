@@ -17,175 +17,173 @@
 @import config.AppConfig
 @import models.viewmodels.LiabilityViewModel
 @import views.html.includes.main
+@import models.viewmodels.C592ViewModel
 
 @this(case_heading: views.html.v2.case_heading)
 
-@(liabilityViewModel: LiabilityViewModel)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(c592ViewModel: C592ViewModel)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-<div class="govuk-tabs__panel" id="c592_tab">
-    <h2 class="heading-large mt-0 mb-30">@messages("case.v2.liability.c592.tab_heading")</h2>
-    <dl class="dl-mb-2">
-        <div class="grid-row">
-            <dt class="column-one-half">
-                @messages("case.v2.liability.c592.entry_number")
-            </dt>
-            <dd class="column-one-half" id="liability-entry-number">
-                @liabilityViewModel.c592ViewModel.entryNumber
-            </dd>
-        </div>
+<h2 class="heading-large mt-0 mb-30">@messages("case.v2.liability.c592.tab_heading")</h2>
+<dl class="dl-mb-2">
+    <div class="grid-row">
+        <dt class="column-one-half">
+        @messages("case.v2.liability.c592.entry_number")
+        </dt>
+        <dd class="column-one-half" id="liability-entry-number">
+        @c592ViewModel.entryNumber
+        </dd>
+    </div>
 
-        <div class="grid-row">
-            <dt class="column-one-half">
-                @messages("case.v2.liability.c592.entry_date")
-            </dt>
-            <dd class="column-one-half" id="liability-entry-date">
-                @liabilityViewModel.c592ViewModel.entryDate
-            </dd>
-        </div>
+    <div class="grid-row">
+        <dt class="column-one-half">
+        @messages("case.v2.liability.c592.entry_date")
+        </dt>
+        <dd class="column-one-half" id="liability-entry-date">
+        @c592ViewModel.entryDate
+        </dd>
+    </div>
 
-        <div class="grid-row">
-            <dt class="column-one-half">
-                @messages("case.v2.liability.c592.bti_case")
-            </dt>
-            <dd class="column-one-half" id="liability-bti-case">
-                @liabilityViewModel.c592ViewModel.btiCase
-            </dd>
-        </div>
+    <div class="grid-row">
+        <dt class="column-one-half">
+        @messages("case.v2.liability.c592.bti_case")
+        </dt>
+        <dd class="column-one-half" id="liability-bti-case">
+        @c592ViewModel.btiCase
+        </dd>
+    </div>
 
-        <div class="grid-row">
-            <dt class="column-one-half">
-                @messages("case.v2.liability.c592.is_repayment_claim")
-            </dt>
-            <dd class="column-one-half" id="liability-repayment-claim">
-                @liabilityViewModel.c592ViewModel.repaymentClaim
-            </dd>
-        </div>
+    <div class="grid-row">
+        <dt class="column-one-half">
+        @messages("case.v2.liability.c592.is_repayment_claim")
+        </dt>
+        <dd class="column-one-half" id="liability-repayment-claim">
+        @c592ViewModel.repaymentClaim
+        </dd>
+    </div>
 
-        <div class="grid-row">
-            <dt class="column-one-half">
-                @messages("case.v2.liability.c592.receipt_date")
-            </dt>
-            <dd class="column-one-half" id="liability-receipt-date">
-                @liabilityViewModel.c592ViewModel.receiptDate
-            </dd>
-        </div>
+    <div class="grid-row">
+        <dt class="column-one-half">
+        @messages("case.v2.liability.c592.receipt_date")
+        </dt>
+        <dd class="column-one-half" id="liability-receipt-date">
+        @c592ViewModel.receiptDate
+        </dd>
+    </div>
 
-        <h3 class="heading-medium mt-0">@messages("case.v2.liability.c592.trader_information")</h3>
+    <h3 class="heading-medium mt-0">@messages("case.v2.liability.c592.trader_information")</h3>
 
-        <div class="grid-row">
-            <dt class="column-one-half">
-                @messages("case.v2.liability.c592.item_name")
-            </dt>
-            <dd class="column-one-half" id="liability-item-name">
-                @liabilityViewModel.c592ViewModel.itemName
-            </dd>
-        </div>
+    <div class="grid-row">
+        <dt class="column-one-half">
+        @messages("case.v2.liability.c592.item_name")
+        </dt>
+        <dd class="column-one-half" id="liability-item-name">
+        @c592ViewModel.itemName
+        </dd>
+    </div>
 
-        <div class="grid-row">
-            <dt class="column-one-half">
-                @messages("case.v2.liability.c592.trader_name")
-            </dt>
-            <dd class="column-one-half" id="liability-trader-name">
-                @liabilityViewModel.c592ViewModel.traderContact.name
-            </dd>
-        </div>
+    <div class="grid-row">
+        <dt class="column-one-half">
+        @messages("case.v2.liability.c592.trader_name")
+        </dt>
+        <dd class="column-one-half" id="liability-trader-name">
+        @c592ViewModel.traderContact.name
+        </dd>
+    </div>
 
-        <div class="grid-row">
-            <dt class="column-one-half">
-                @messages("case.v2.liability.c592.trader_email")
-            </dt>
-            <dd class="column-one-half" id="liability-trader-email">
-                @liabilityViewModel.c592ViewModel.traderContact.email
-            </dd>
-        </div>
+    <div class="grid-row">
+        <dt class="column-one-half">
+        @messages("case.v2.liability.c592.trader_email")
+        </dt>
+        <dd class="column-one-half" id="liability-trader-email">
+        @c592ViewModel.traderContact.email
+        </dd>
+    </div>
 
-        <div class="grid-row">
-            <dt class="column-one-half">
-                @messages("case.v2.liability.c592.trader_telephone")
-            </dt>
-            <dd class="column-one-half" id="liability-trader-telephone">
-                @liabilityViewModel.c592ViewModel.traderContact.telephone
-            </dd>
-        </div>
+    <div class="grid-row">
+        <dt class="column-one-half">
+        @messages("case.v2.liability.c592.trader_telephone")
+        </dt>
+        <dd class="column-one-half" id="liability-trader-telephone">
+        @c592ViewModel.traderContact.telephone
+        </dd>
+    </div>
 
-        <div class="grid-row">
-            <dt class="column-one-half">
-                @messages("case.v2.liability.c592.trader_address")
-            </dt>
-            <dd class="column-one-half" id="liability-trader-address">
-                @liabilityViewModel.c592ViewModel.traderContact.address
-            </dd>
-        </div>
+    <div class="grid-row">
+        <dt class="column-one-half">
+        @messages("case.v2.liability.c592.trader_address")
+        </dt>
+        <dd class="column-one-half" id="liability-trader-address">
+        @c592ViewModel.traderContact.address
+        </dd>
+    </div>
 
-        <h3 class="heading-medium mt-0">@messages("case.v2.liability.c592.commodity_code_information")</h3>
+    <h3 class="heading-medium mt-0">@messages("case.v2.liability.c592.commodity_code_information")</h3>
 
-        <div class="grid-row">
-            <dt class="column-one-half">
-                @messages("case.v2.liability.c592.commodity_code_entered_by_trader_or_agent")
-            </dt>
-            <dd class="column-one-half" id="trader_commodity_code">
-                @liabilityViewModel.c592ViewModel.commodityCodeEnteredByTraderOrAgent
-            </dd>
-        </div>
+    <div class="grid-row">
+        <dt class="column-one-half">
+        @messages("case.v2.liability.c592.commodity_code_entered_by_trader_or_agent")
+        </dt>
+        <dd class="column-one-half" id="trader_commodity_code">
+        @c592ViewModel.commodityCodeEnteredByTraderOrAgent
+        </dd>
+    </div>
 
-        <div class="grid-row">
-            <dt class="column-one-half">
-                @messages("case.v2.liability.c592.commodity_code_suggested_by_officer")
-            </dt>
-            <dd class="column-one-half" id="officer_commodity_code">
-                @liabilityViewModel.c592ViewModel.commodityCodeSuggestedByOfficer
-            </dd>
-        </div>
+    <div class="grid-row">
+        <dt class="column-one-half">
+        @messages("case.v2.liability.c592.commodity_code_suggested_by_officer")
+        </dt>
+        <dd class="column-one-half" id="officer_commodity_code">
+        @c592ViewModel.commodityCodeSuggestedByOfficer
+        </dd>
+    </div>
 
-        <h3 class="heading-medium mt-0">
-            @messages("case.v2.liability.c592.contact_details_for_port_or_compliance_officer")</h3>
+    <h3 class="heading-medium mt-0">
+    @messages("case.v2.liability.c592.contact_details_for_port_or_compliance_officer")</h3>
 
-        <div class="grid-row">
-            <dt class="column-one-half">
-                @messages("case.v2.liability.c592.name_of_port_or_compliance_officer")
-            </dt>
-            <dd class="column-one-half" id="officer_name">
-                @liabilityViewModel.c592ViewModel.portOrComplianceOfficerContact.name
-            </dd>
-        </div>
+    <div class="grid-row">
+        <dt class="column-one-half">
+        @messages("case.v2.liability.c592.name_of_port_or_compliance_officer")
+        </dt>
+        <dd class="column-one-half" id="officer_name">
+        @c592ViewModel.portOrComplianceOfficerContact.name
+        </dd>
+    </div>
 
-        <div class="grid-row">
-            <dt class="column-one-half">
-                @messages("case.v2.liability.c592.email_of_port_or_compliance_officer")
-            </dt>
-            <dd class="column-one-half" id="officer_email">
-                @liabilityViewModel.c592ViewModel.portOrComplianceOfficerContact.email
-            </dd>
-        </div>
+    <div class="grid-row">
+        <dt class="column-one-half">
+        @messages("case.v2.liability.c592.email_of_port_or_compliance_officer")
+        </dt>
+        <dd class="column-one-half" id="officer_email">
+        @c592ViewModel.portOrComplianceOfficerContact.email
+        </dd>
+    </div>
 
-        <div class="grid-row">
-            <dt class="column-one-half">
-                @messages("case.v2.liability.c592.telephone_of_port_or_compliance_officer")
-            </dt>
-            <dd class="column-one-half" id="officer_telephone">
-                @liabilityViewModel.c592ViewModel.portOrComplianceOfficerContact.telephone
-            </dd>
-        </div>
+    <div class="grid-row">
+        <dt class="column-one-half">
+        @messages("case.v2.liability.c592.telephone_of_port_or_compliance_officer")
+        </dt>
+        <dd class="column-one-half" id="officer_telephone">
+        @c592ViewModel.portOrComplianceOfficerContact.telephone
+        </dd>
+    </div>
 
-        <h3 class="heading-medium mt-0">@messages("case.v2.liability.c592.repayment_claim")</h3>
+    <h3 class="heading-medium mt-0">@messages("case.v2.liability.c592.repayment_claim")</h3>
 
-        <div class="grid-row">
-            <dt class="column-one-half">
-                @messages("case.v2.liability.c592.dvr_number")
-            </dt>
-            <dd class="column-one-half" id="dvr_number">
-                @liabilityViewModel.c592ViewModel.dvrNumber
-            </dd>
-        </div>
+    <div class="grid-row">
+        <dt class="column-one-half">
+        @messages("case.v2.liability.c592.dvr_number")
+        </dt>
+        <dd class="column-one-half" id="dvr_number">
+        @c592ViewModel.dvrNumber
+        </dd>
+    </div>
 
-        <div class="grid-row">
-            <dt class="column-one-half">
-                @messages("case.v2.liability.c592.date_for_repayment")
-            </dt>
-            <dd class="column-one-half" id="date_for_repayment">
-                @liabilityViewModel.c592ViewModel.dateForRepayment
-            </dd>
-        </div>
-    </dl>
-
-</div>
+    <div class="grid-row">
+        <dt class="column-one-half">
+        @messages("case.v2.liability.c592.date_for_repayment")
+        </dt>
+        <dd class="column-one-half" id="date_for_repayment">
+        @c592ViewModel.dateForRepayment
+        </dd>
+    </div>
+</dl>
