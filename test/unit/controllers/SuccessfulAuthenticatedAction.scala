@@ -102,10 +102,16 @@ class SuccessfulRequestActions(parse: BodyParsers.Default, operator: Operator, c
 
 
 
-class RequestActionsWithPermissions(parse: BodyParsers.Default, permissions : Set[Permission], addViewCasePermission: Boolean = true, reference: String = "test-reference",  c: Case = Cases.btiCaseExample)
+class RequestActionsWithPermissions(
+                                     parse: BodyParsers.Default,
+                                     permissions : Set[Permission],
+                                     addViewCasePermission: Boolean = true,
+                                     reference: String = "test-reference",
+                                     c: Case = Cases.btiCaseExample,
+                                     op: Operator = Operator("0", Some("name")))
   extends RequestActions(
-    new SuccessfulCasePermissionsAction(permissions = if(addViewCasePermission) permissions ++ Set(Permission.VIEW_CASES) else permissions),
-    new SuccessfulAuthenticatedAction(parse, permissions = if(addViewCasePermission) permissions ++ Set(Permission.VIEW_CASES) else permissions),
+    new SuccessfulCasePermissionsAction(operator = op, permissions = if(addViewCasePermission) permissions ++ Set(Permission.VIEW_CASES) else permissions),
+    new SuccessfulAuthenticatedAction(parse, operator = op, permissions = if(addViewCasePermission) permissions ++ Set(Permission.VIEW_CASES) else permissions),
     new ExistingCaseActionFactory(reference, c),
     new MustHavePermissionActionFactory
   ) {}

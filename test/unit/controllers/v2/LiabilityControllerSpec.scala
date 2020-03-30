@@ -54,7 +54,11 @@ import scala.concurrent.Future.successful
 class RequestActionsWithPermissionsProvider @Inject()(implicit parse: BodyParsers.Default) extends Provider[RequestActionsWithPermissions] {
 
   override def get(): RequestActionsWithPermissions = {
-    new RequestActionsWithPermissions(parse, Set(Permission.ADD_NOTE), c = Cases.liabilityCaseExample)
+    new RequestActionsWithPermissions(
+      parse, Set(Permission.ADD_NOTE),
+      c = Cases.liabilityCaseExample.copy(assignee = Some(Cases.operatorWithPermissions)),
+      op = Cases.operatorWithPermissions
+    )
   }
 }
 
@@ -72,9 +76,7 @@ class LiabilityControllerSpec extends UnitSpec with Matchers with BeforeAndAfter
     bind[RequestActions].toProvider[RequestActionsWithPermissionsProvider],
     bind[liability_view].toInstance(mock[liability_view]),
     bind[EventsService].toInstance(mock[EventsService]),
-    bind[QueuesService].toInstance(mock[QueuesService]),
-    bind[AuditService].toInstance(mock[AuditService]),
-    bind[BindingTariffClassificationConnector].toInstance(mock[BindingTariffClassificationConnector])
+    bind[QueuesService].toInstance(mock[QueuesService])
   ).build()
 
   override def beforeEach(): Unit = reset(inject[liability_view])
@@ -82,7 +84,7 @@ class LiabilityControllerSpec extends UnitSpec with Matchers with BeforeAndAfter
   "Calling /manage-tariff-classifications/cases/v2/:reference/liability " should {
 
     "return a 200 status" in {
-      val expected = LiabilityViewModel.fromCase(Cases.liabilityCaseExample, Cases.operatorWithoutPermissions, pagedEvent, queues)
+      val expected = LiabilityViewModel.fromCase(Cases.liabilityCaseExample.copy(assignee = Some(Cases.operatorWithPermissions)), Cases.operatorWithPermissions, pagedEvent, queues)
 
       when(inject[liability_view].apply(meq(expected), meq(activityForm))(any(), any(), any())) thenReturn Html("body")
 
@@ -104,17 +106,16 @@ class LiabilityControllerSpec extends UnitSpec with Matchers with BeforeAndAfter
     "add a new note when a case note is provided" in {
       val aNote = "This is a note"
 
-      when(inject[AuditService].auditNote(any(), any(), any())(any()))
-
-      when(inject[BindingTariffClassificationConnector].createEvent(any(), any())(any())) thenReturn Future(event)
+      println("Specccc ::: " + aCase)
+      println("Specccc ::: " + aNote)
+      println("Specccc ::: " + Cases.operatorWithPermissions)
 
       when(inject[EventsService].addNote(meq(aCase), meq(aNote), meq(Cases.operatorWithPermissions), any[Clock])(any[HeaderCarrier])) thenReturn Future(event)
 
       when(inject[EventsService].getFilteredEvents(any(), any(), any())(any())) thenReturn Future(pagedEvent)
 
       when(inject[QueuesService].getAll) thenReturn Future(queues)
-
-
+      
       val result: Future[Result] =
         route(app, FakeRequest("POST", "/manage-tariff-classifications/cases/v2/123456/liability").withFormUrlEncodedBody("note" -> aNote)).get
 
@@ -123,37 +124,37 @@ class LiabilityControllerSpec extends UnitSpec with Matchers with BeforeAndAfter
       locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/v2/123456/liability")
     }
 
-/*    "displays an error when no case note is provided" in {
-      val aValidForm = newFakePOSTRequestWithCSRF(fakeApplication, Map())
-      given(eventService.getEvents(refEq(aCase.reference), refEq(NoPagination()))(any[HeaderCarrier])) willReturn successful(Paged.empty[Event])
-      given(queueService.getAll) willReturn successful(Seq.empty)
+    /*    "displays an error when no case note is provided" in {
+          val aValidForm = newFakePOSTRequestWithCSRF(fakeApplication, Map())
+          given(eventService.getEvents(refEq(aCase.reference), refEq(NoPagination()))(any[HeaderCarrier])) willReturn successful(Paged.empty[Event])
+          given(queueService.getAll) willReturn successful(Seq.empty)
 
-      val result = controller(aCase, Set(Permission.ADD_NOTE)).addNote(aCase.reference)(aValidForm)
-      status(result) shouldBe Status.OK
-      contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
-      contentAsString(result) should include("error-summary")
-      contentAsString(result) should include("Enter a case note")
-    }
+          val result = controller(aCase, Set(Permission.ADD_NOTE)).addNote(aCase.reference)(aValidForm)
+          status(result) shouldBe Status.OK
+          contentType(result) shouldBe Some("text/html")
+          charset(result) shouldBe Some("utf-8")
+          contentAsString(result) should include("error-summary")
+          contentAsString(result) should include("Enter a case note")
+        }
 
-    "return OK when user has right permissions" in {
-      val aCase  = Cases.btiCaseExample
-      given(eventService.getEvents(refEq(aCase.reference), refEq(NoPagination()))(any[HeaderCarrier])) willReturn successful(Paged(Events.events))
-      given(queueService.getAll) willReturn successful(Seq.empty)
+        "return OK when user has right permissions" in {
+          val aCase  = Cases.btiCaseExample
+          given(eventService.getEvents(refEq(aCase.reference), refEq(NoPagination()))(any[HeaderCarrier])) willReturn successful(Paged(Events.events))
+          given(queueService.getAll) willReturn successful(Seq.empty)
 
-      val result = controller(aCase,Set(Permission.ADD_NOTE)).addNote(aCase.reference)(newFakeGETRequestWithCSRF(fakeApplication))
+          val result = controller(aCase,Set(Permission.ADD_NOTE)).addNote(aCase.reference)(newFakeGETRequestWithCSRF(fakeApplication))
 
-      status(result) shouldBe Status.OK
-    }
+          status(result) shouldBe Status.OK
+        }
 
-    "redirect unauthorised when does not have right permissions" in {
-      val aCase  = Cases.btiCaseExample
+        "redirect unauthorised when does not have right permissions" in {
+          val aCase  = Cases.btiCaseExample
 
-      val result = controller(aCase, Set.empty).addNote(aCase.reference)(newFakeGETRequestWithCSRF(fakeApplication))
+          val result = controller(aCase, Set.empty).addNote(aCase.reference)(newFakeGETRequestWithCSRF(fakeApplication))
 
-      status(result) shouldBe Status.SEE_OTHER
-      redirectLocation(result).get should include ("unauthorized")
-    }*/
+          status(result) shouldBe Status.SEE_OTHER
+          redirectLocation(result).get should include ("unauthorized")
+        }*/
   }
 
 }

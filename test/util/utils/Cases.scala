@@ -58,7 +58,7 @@ object Cases {
   val btiCaseWithExpiredRuling = btiCaseExample.copy(status = CaseStatus.COMPLETED, decision = Some(expiredRuling))
   val liabilityCaseWithExpiredRuling = liabilityCaseExample.copy(status = CaseStatus.COMPLETED, decision = Some(expiredRuling))
   val operatorWithoutPermissions = Operator(id = "0", name =Some("liability op name"), permissions = Set())
-  val operatorWithPermissions = Operator(id = "0", name =Some("liability op name"), permissions = Set(Permission.ADD_NOTE))
+  val operatorWithPermissions = Operator(id = "0", name =Some("liability op name"), permissions = Set(Permission.ADD_NOTE, Permission.VIEW_CASES))
 
   def attachment(id: String = UUID.randomUUID().toString): Attachment = {
     Attachment(

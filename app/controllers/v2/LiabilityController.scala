@@ -95,6 +95,10 @@ class LiabilityController @Inject()(
     }
 
     def onSuccess: ActivityFormData => Future[Result] = validForm => {
+
+      println(":::::::::" + request.`case`)
+      println(":::::::::" + validForm.note)
+      println(":::::::::" + request.operator)
       eventsService.addNote(request.`case`, validForm.note, request.operator)
         .map(_ => Redirect(v2.routes.LiabilityController.displayLiability(reference)))
     }
