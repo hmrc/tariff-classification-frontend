@@ -18,42 +18,20 @@ package controllers.v2
 
 
 import config.AppConfig
-import controllers.{ActiveTab, RequestActions, routes, v2}
+import controllers.{RequestActions, v2}
 import javax.inject.{Inject, Singleton}
 import models.TabIndexes.tabIndexFor
-import models._
 import models.forms.{ActivityForm, ActivityFormData}
 import models.request.AuthenticatedRequest
-import models.viewmodels.LiabilityViewModel
+import models.viewmodels.{ActivityViewModel, AttachmentsTabViewModel, C592ViewModel, LiabilityViewModel}
+import models.{Case, Permission, _}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import service.{CasesService, EventsService, QueuesService}
+import service.{CasesService, EventsService, FileStoreService, QueuesService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.CaseDetailPage.ACTIVITY
-
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
-import config.AppConfig
-import models.forms._
-import javax.inject.{Inject, Singleton}
-import models.TabIndexes.tabIndexFor
-import models._
-import models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
-import play.api.data.Form
-import play.api.i18n.I18nSupport
-import play.api.mvc._
-import play.twirl.api.{Html, HtmlFormat}
-import service._
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.CaseDetailPage._
-
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
-import javax.inject.{Inject, Singleton}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-import config.AppConfig
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -64,6 +42,7 @@ class LiabilityController @Inject()(
                                      casesService: CasesService,
                                      eventsService: EventsService,
                                      queuesService: QueuesService,
+                                     fileService: FileStoreService,
                                      mcc: MessagesControllerComponents,
                                      val liability_view: views.html.v2.liability_view,
                                      implicit val appConfig: AppConfig
@@ -72,33 +51,50 @@ class LiabilityController @Inject()(
   private val activityForm: Form[ActivityFormData] = ActivityForm.form
 
   def displayLiability(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)).async {
-    implicit request =>
-
-      liabilityViewActivityDetails(reference).flatMap(
-        tuple => Future.successful(Ok(liability_view(
-          LiabilityViewModel.fromCase(request.`case`, request.operator, tuple._1, tuple._2),
-          activityForm))
-        )
-      )
+    implicit request => {
+      val liabilityCase: Case = request.`case`
+      val liabilityViewModel = LiabilityViewModel.fromCase(liabilityCase, request.operator)
+      for {
+        tuple <- liabilityViewActivityDetails(reference)
+        attachmentsTab <- getAttachmentTab(liabilityCase)
+        c592 = Some(C592ViewModel.fromCase(liabilityCase))
+        activityTab = ActivityViewModel.fromCase(liabilityCase, tuple._1, tuple._2)
+      } yield {
+        Ok(liability_view(liabilityViewModel, c592, attachmentsTab, activityTab, activityForm))
+      }
+    }
   }
 
 
-  def addNote(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.ADD_NOTE)).async { implicit request =>
+  private def getAttachmentTab(liabilityCase: Case)(implicit hc: HeaderCarrier): Future[Option[AttachmentsTabViewModel]] = {
+    for {
+      attachments <- fileService.getAttachments(liabilityCase)
+      letter <- fileService.getLetterOfAuthority(liabilityCase)
+    } yield {
+      val (applicantFiles, nonApplicantFiles) = attachments.partition(_.operator.isEmpty)
+      Some(AttachmentsTabViewModel(liabilityCase.reference, applicantFiles, letter, nonApplicantFiles))
+    }
+  }
 
+
+  def addNote(reference: String): Action[AnyContent] = (verify.authenticated andThen
+    verify.casePermissions(reference) andThen verify.mustHave(Permission.ADD_NOTE)).async { implicit request =>
     def onError: Form[ActivityFormData] => Future[Result] = errorForm => {
-      liabilityViewActivityDetails(reference).flatMap(
-        tuple => Future.successful(Ok(liability_view(
-          LiabilityViewModel.fromCase(request.`case`, request.operator, tuple._1, tuple._2),
-          errorForm))
-        )
-      )
+      val liabilityCase: Case = request.`case`
+      val liabilityViewModel = LiabilityViewModel.fromCase(liabilityCase, request.operator)
+      for {
+        //TODO you can hide tabs with feature flags, if you assign None
+        //tabs
+        tuple <- liabilityViewActivityDetails(reference)
+        attachmentsTab <- getAttachmentTab(liabilityCase)
+        c592 = Some(C592ViewModel.fromCase(liabilityCase))
+        activityTab = ActivityViewModel.fromCase(liabilityCase, tuple._1, tuple._2)
+      } yield {
+        Ok(liability_view(liabilityViewModel, c592, attachmentsTab, activityTab, errorForm))
+      }
     }
 
     def onSuccess: ActivityFormData => Future[Result] = validForm => {
-
-      println(":::::::::" + request.`case`)
-      println(":::::::::" + validForm.note)
-      println(":::::::::" + request.operator)
       eventsService.addNote(request.`case`, validForm.note, request.operator)
         .map(_ => Redirect(v2.routes.LiabilityController.displayLiability(reference)))
     }

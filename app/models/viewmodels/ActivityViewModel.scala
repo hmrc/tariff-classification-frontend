@@ -21,6 +21,7 @@ import java.time.Instant
 import models.{Case, Event, Operator, Paged, Queue}
 
 case class ActivityViewModel(
+                              referenceNumber: String,
                               assignee: Option[Operator],
                               queueId: Option[String],
                               createdDate: Instant,
@@ -39,8 +40,8 @@ object ActivityViewModel {
     c.queueId.flatMap(id => queues.find(_.id == id)).map(_.name).getOrElse("unknown")
    }
 
-
-    ActivityViewModel(c.assignee,
+    ActivityViewModel(c.reference,
+      c.assignee,
       c.queueId,
       c.createdDate,
       events,

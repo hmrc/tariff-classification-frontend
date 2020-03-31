@@ -44,15 +44,17 @@ class LiabilityViewModelSpec extends UnitSpec {
         assignee = Some(op),
         createdDate = createdDateTime)
 
-      assert(LiabilityViewModel.fromCase(c, op, pagedEvent, queues) === LiabilityViewModel(CaseHeaderViewModel("Liability",
+      assert(LiabilityViewModel.fromCase(c, op) === LiabilityViewModel(CaseHeaderViewModel("Liability",
         "trader-business-name", "good-name",
         "1",
         "CANCELLED",
         isLive = false),
-        C592ViewModel("entry number", "03 Mar 2020", "", None, "", "good-name",
-          TraderContact("trader-business-name", "email", "phone", ""), "trader-1234567", "officer-1234567",
-          PortOrComplianceOfficerContact("name", "email", "phone"), "", ""),
-        ActivityViewModel(Some(op), Some("queueId"), createdDateTime, pagedEvent, queues, "unknown"),
+        //TODO:
+//        C592ViewModel("entry number", "03 Mar 2020", "", None, "", "good-name",
+//          TraderContact("trader-business-name", "email", "phone", ""), "trader-1234567", "officer-1234567",
+//          PortOrComplianceOfficerContact("name", "email", "phone"), "", ""),
+//        ActivityViewModel("referenceNumber", Some(op), Some("queueId"), createdDateTime, pagedEvent, queues, "unknown"),
+
         isNewCase = false,
         hasPermissions = false))
     }
@@ -62,7 +64,7 @@ class LiabilityViewModelSpec extends UnitSpec {
       val c = Cases.liabilityCaseWithExpiredRuling
       val op = Cases.operatorWithoutPermissions
 
-      assert(LiabilityViewModel.fromCase(c, op, pagedEvent, queues).caseHeaderViewModel.caseStatus === "EXPIRED")
+      assert(LiabilityViewModel.fromCase(c, op).caseHeaderViewModel.caseStatus === "EXPIRED")
 
     }
 
@@ -71,7 +73,7 @@ class LiabilityViewModelSpec extends UnitSpec {
       val c = Cases.liabilityCaseExample.copy(status = CaseStatus.COMPLETED)
       val op = Cases.operatorWithoutPermissions
 
-      assert(LiabilityViewModel.fromCase(c, op, pagedEvent, queues).caseHeaderViewModel.caseStatus === "COMPLETED")
+      assert(LiabilityViewModel.fromCase(c, op).caseHeaderViewModel.caseStatus === "COMPLETED")
 
     }
 
@@ -80,7 +82,7 @@ class LiabilityViewModelSpec extends UnitSpec {
       val c = Cases.liabilityCaseExample.copy(status = CaseStatus.NEW)
       val op = Cases.operatorWithoutPermissions
 
-      assert(LiabilityViewModel.fromCase(c, op, pagedEvent, queues).isNewCase === true)
+      assert(LiabilityViewModel.fromCase(c, op).isNewCase === true)
     }
 
     "create a viewModel with isNewCase is set to false" in {
@@ -88,7 +90,7 @@ class LiabilityViewModelSpec extends UnitSpec {
       val c = Cases.liabilityCaseExample
       val op = Cases.operatorWithoutPermissions
 
-      assert(LiabilityViewModel.fromCase(c, op, pagedEvent, queues).isNewCase === false)
+      assert(LiabilityViewModel.fromCase(c, op).isNewCase === false)
 
     }
 
@@ -96,21 +98,21 @@ class LiabilityViewModelSpec extends UnitSpec {
       val c = Cases.liabilityCaseExample
       val op = Cases.operatorWithoutPermissions.copy(permissions = Set())
 
-      assert(LiabilityViewModel.fromCase(c, op, pagedEvent, queues).hasPermissions === false)
+      assert(LiabilityViewModel.fromCase(c, op).hasPermissions === false)
     }
 
     "create a viewModel with hasPermissions flag set to false when operator doesn't have required permission" in {
       val c = Cases.liabilityCaseExample
       val op = Cases.operatorWithoutPermissions.copy(permissions = Set(Permission.VIEW_CASES))
 
-      assert(LiabilityViewModel.fromCase(c, op, pagedEvent, queues).hasPermissions === false)
+      assert(LiabilityViewModel.fromCase(c, op).hasPermissions === false)
     }
 
     "create a viewModel with hasPermissions flag set to true when operator has the required permission" in {
       val c = Cases.liabilityCaseExample
       val op = Cases.operatorWithoutPermissions.copy(permissions = Set(Permission.RELEASE_CASE))
 
-      assert(LiabilityViewModel.fromCase(c, op, pagedEvent, queues).hasPermissions === true)
+      assert(LiabilityViewModel.fromCase(c, op).hasPermissions === true)
     }
   }
 

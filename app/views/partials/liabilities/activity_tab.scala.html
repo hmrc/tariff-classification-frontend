@@ -20,19 +20,17 @@
 @import config.AppConfig
 @import controllers.v2.routes.LiabilityController
 @import models.forms.ActivityFormData
-@import models.CaseStatus._
 @import models.request.AuthenticatedRequest
-@import models.{Case, Event, Paged, Permission, Queue}
+@import models.Permission
 @import views.html.forms.components.input_textarea
 @import views.html.partials.{assignee, tab_heading}
 @import views.html.partials.liabilities.activity_tab_events_table
 @import views.html.partials.error_summary
-@import models.request.AuthenticatedRequest
-@import models.viewmodels.LiabilityViewModel
+@import models.viewmodels.ActivityViewModel
 
 @this(case_heading: views.html.v2.case_heading)
 
-@(liabilityViewModel: LiabilityViewModel, activityForm: Form[ActivityFormData], startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(activityViewModel: ActivityViewModel, activityForm: Form[ActivityFormData], startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @error_summary(activityForm.errors, Some(startAtTabIndex))
 
@@ -43,7 +41,7 @@
 
   <div class="column-full">
 
-  @form(action = LiabilityController.addNote(liabilityViewModel.caseHeaderViewModel.referenceNumber), 'class -> "form") {
+  @form(action = LiabilityController.addNote(activityViewModel.referenceNumber), 'class -> "form") {
    @CSRF.formField
    @input_textarea(
     field = activityForm("note"),
@@ -59,17 +57,17 @@
   </div>
  </div>
 }
-@activity_tab_events_table(liabilityViewModel.activityViewModel, startAtTabIndex+15)
+@activity_tab_events_table(activityViewModel, startAtTabIndex+15)
 
 <div class="grid-row mt-2">
 @if(request.hasPermission(Permission.VIEW_CASE_ASSIGNEE)){
  <div class="column-full">
- @if(liabilityViewModel.activityViewModel.assignee.isDefined) {
+ @if(activityViewModel.assignee.isDefined) {
   <span id="activity-events-assignee-label">
   @messages("case.activity.assigned-to")
   </span>
   <span id="activity-events-assignee">
-  @assignee(liabilityViewModel.activityViewModel.assignee.get, true)
+  @assignee(activityViewModel.assignee.get, true)
   </span>
  } else {
   <span id="activity-events-assigned-queue-label">
@@ -77,8 +75,8 @@
   </span>
   <span id="activity-events-assigned-queue">
   @{
-   if(liabilityViewModel.activityViewModel.queueId.isDefined) {
-    liabilityViewModel.activityViewModel.queueName
+   if(activityViewModel.queueId.isDefined) {
+       activityViewModel.queueName
    } else {
     messages("case.activity.no-queue-assigned")
    }

@@ -21,15 +21,13 @@ import models._
 
 case class LiabilityViewModel(
                                caseHeaderViewModel: CaseHeaderViewModel,
-                               c592ViewModel: C592ViewModel,
-                               activityViewModel: ActivityViewModel,
                                isNewCase: Boolean,
                                hasPermissions: Boolean
                              )
 
 object LiabilityViewModel {
 
-  def fromCase(c: Case, operator: Operator, events: Paged[Event], queues: Seq[Queue]) = {
+  def fromCase(c: Case, operator: Operator) = {
 
     def status = {
       c.status match {
@@ -47,8 +45,6 @@ object LiabilityViewModel {
 
     LiabilityViewModel(
       CaseHeaderViewModel("Liability", c.application.businessName, c.application.goodsName, c.reference, status, c.application.isLiveLiabilityOrder),
-      C592ViewModel.fromCase(c),
-      ActivityViewModel.fromCase(c, events, queues),
       isNewCase = isNew,
       hasPermissions = releaseOrSuppressPermissions
     )

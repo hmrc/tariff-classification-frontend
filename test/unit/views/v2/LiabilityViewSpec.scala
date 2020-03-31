@@ -16,6 +16,8 @@
 
 package views.v2
 
+import java.time.Instant
+
 import controllers.ActiveTab
 import models.forms.{ActivityForm, ActivityFormData}
 import models.{Event, Operator, Permission}
@@ -29,13 +31,17 @@ import utils.{Cases, Events}
 import utils.Cases.{aCase, withBTIApplication, withLiabilityApplication, withReference}
 import views.ViewMatchers.{containElementWithID, containText, haveAttribute}
 import views.{CaseDetailPage, ViewSpec, html}
+import utils.Cases
+import utils.Cases.{aCase, withLiabilityApplication, withReference}
+import views.ViewMatchers.{containElementWithID, containText}
+import views.ViewSpec
 import views.html.v2.liability_view
 import models.{Case, Event, Paged, Permission, Queue}
 import play.api.data.Form
 
-class LiabilityViewSpec extends ViewSpec with GuiceOneAppPerSuite {
+class LiabilityViewSpec extends ViewSpec {
 
-  private def request[A](operator: Operator, request: Request[A]) = new AuthenticatedRequest(operator, request)
+  def liabilityView: liability_view = app.injector.instanceOf[liability_view]
 
   private val activityForm: Form[ActivityFormData] = ActivityForm.form
 
@@ -43,26 +49,33 @@ class LiabilityViewSpec extends ViewSpec with GuiceOneAppPerSuite {
 
   "Liability View" should {
 
-    "render with case reference" in {
-
+    "render C592 tab" in {
       val c = aCase(withReference("reference"), withLiabilityApplication())
-
-      def liabilityView = app.injector.instanceOf[liability_view]
-
-      val doc = view(liabilityView(LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions, pagedEvent, Seq(Queue("", "", ""))), activityForm)(authenticatedFakeRequest, messages, appConfig))
-
-      doc.getElementById("case-reference") should containText(c.reference)
-    }
-
-    "render C592 tab always" in {
-
-      val c = aCase(withReference("reference"), withLiabilityApplication())
-
-      def liabilityView = app.injector.instanceOf[liability_view]
-
-      val doc = view(liabilityView(LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions, pagedEvent, Seq(Queue("", "", ""))), activityForm)(authenticatedFakeRequest, messages, appConfig))
+      val doc = view(liabilityView(LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions),
+        Cases.c592ViewModel, None, Cases.activityTabViewModel, activityForm))
 
       doc should containElementWithID("c592_tab")
+    }
+
+    "not render C592 tab" in {
+      val c = aCase(withReference("reference"), withLiabilityApplication())
+      val doc = view(liabilityView(LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions), None, None, Cases.activityTabViewModel, activityForm))
+      doc shouldNot containElementWithID("c592_tab")
+    }
+
+    "render Attachments tab" in {
+      val c = aCase(withReference("reference"), withLiabilityApplication())
+      val doc = view(liabilityView(LiabilityViewModel.fromCase(c, Cases.operatorWithAddAttachment), None,
+        Cases.attachmentsTabViewModel.map(_.copy(applicantFiles = Seq(Cases.storedAttachment),
+          letter = Some(Cases.letterOfAuthority),
+          nonApplicantFiles = Seq(Cases.storedOperatorAttachment))), Cases.activityTabViewModel, activityForm))
+      doc should containElementWithID("attachments_tab")
+    }
+
+    "not render Attachments tab" in {
+      val c = aCase(withReference("reference"), withLiabilityApplication())
+      val doc = view(liabilityView(LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions), None, None, Cases.activityTabViewModel, activityForm))
+      doc shouldNot containElementWithID("attachments_tab")
     }
 
   }
