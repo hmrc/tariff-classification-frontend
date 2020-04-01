@@ -16,48 +16,35 @@
 
 package controllers.v2
 
-import java.time.Clock
-
-import audit.AuditService
-import com.google.inject.Provider
-import connector.BindingTariffClassificationConnector
-import controllers.{ControllerCommons, RequestActions, RequestActionsWithPermissions, SuccessfulRequestActions}
-import javax.inject.Inject
-import models._
-import models.forms.{ActivityForm, ActivityFormData}
-import models.viewmodels.{ActivityViewModel, AttachmentsTabViewModel, LiabilityViewModel}
-import java.time.Instant
+import java.time.{Clock, Instant}
 
 import com.google.inject.Provider
 import controllers.{ControllerCommons, RequestActions, RequestActionsWithPermissions}
 import javax.inject.Inject
-import models.Case
+import models.{Case, _}
+import models.forms.{ActivityForm, ActivityFormData}
+import models.viewmodels.{ActivityViewModel, LiabilityViewModel}
+import org.mockito.ArgumentMatchers.{any, eq => meq}
+import org.mockito.Mockito._
 import org.scalatest.{BeforeAndAfterEach, Matchers}
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{BodyParsers, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import uk.gov.hmrc.play.test.UnitSpec
-import utils.{Cases, Events}
-import utils.{Cases, Dates}
-import views.html.v2.{case_heading, liability_view}
-import org.mockito.Mockito._
-import org.mockito.ArgumentMatchers.{any, refEq, eq => meq}
-import org.mockito.BDDMockito.given
-import play.api.data.Form
-import play.api.http.Status
 import play.twirl.api.Html
-import service.{EventsService, QueuesService}
-import service.FileStoreService
+import service.{EventsService, FileStoreService, QueuesService}
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.test.UnitSpec
+import utils.{Cases, Dates, Events}
+import views.html.v2.{case_heading, liability_view}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import scala.concurrent.Future.successful
 
 class RequestActionsWithPermissionsProvider @Inject()(implicit parse: BodyParsers.Default) extends Provider[RequestActionsWithPermissions] {
 
@@ -103,12 +90,12 @@ class LiabilityControllerSpec extends UnitSpec with Matchers with BeforeAndAfter
       val expectedLiabilityViewModel = LiabilityViewModel.fromCase(Cases.liabilityCaseExample, Cases.operatorWithoutPermissions)
       val expectedC592TabViewModel = Cases.c592ViewModel.map(vm => vm.copy(entryDate = Dates.format(Instant.now())))
       val expectedAttachmentsTabViewModel = Cases.attachmentsTabViewModel.map(vm => vm.copy(
-        applicantFiles = Seq(Cases.storedAttachment),letter = Some(Cases.letterOfAuthority), nonApplicantFiles = Nil))
+        applicantFiles = Seq(Cases.storedAttachment), letter = Some(Cases.letterOfAuthority), nonApplicantFiles = Nil))
       val expectedActivityTabViewModel = ActivityViewModel.fromCase(Cases.liabilityCaseExample.copy(
         assignee = Some(Cases.operatorWithPermissions)), pagedEvent, queues)
 
-      when(inject[FileStoreService].getAttachments(any[Case]())(any())) thenReturn(Future.successful(Seq(Cases.storedAttachment)))
-      when(inject[FileStoreService].getLetterOfAuthority(any())(any())) thenReturn(Future.successful(Some(Cases.letterOfAuthority)))
+      when(inject[FileStoreService].getAttachments(any[Case]())(any())) thenReturn (Future.successful(Seq(Cases.storedAttachment)))
+      when(inject[FileStoreService].getLetterOfAuthority(any())(any())) thenReturn (Future.successful(Some(Cases.letterOfAuthority)))
 
       when(inject[liability_view].apply(meq(expectedLiabilityViewModel), meq(expectedC592TabViewModel), meq(expectedAttachmentsTabViewModel),
         meq(expectedActivityTabViewModel), meq(activityForm))(any(), any(), any())) thenReturn Html("body")
@@ -122,22 +109,18 @@ class LiabilityControllerSpec extends UnitSpec with Matchers with BeforeAndAfter
     }
   }
 
-  "Activity: Add Note" should {
+  "Liability controller addNote" should {
     val aCase = Cases.liabilityCaseExample.copy(assignee = Some(Cases.operatorWithPermissions))
 
     "add a new note when a case note is provided" in {
       val aNote = "This is a note"
-
-      println("Specccc ::: " + aCase)
-      println("Specccc ::: " + aNote)
-      println("Specccc ::: " + Cases.operatorWithPermissions)
 
       when(inject[EventsService].addNote(meq(aCase), meq(aNote), meq(Cases.operatorWithPermissions), any[Clock])(any[HeaderCarrier])) thenReturn Future(event)
 
       when(inject[EventsService].getFilteredEvents(any(), any(), any())(any())) thenReturn Future(pagedEvent)
 
       when(inject[QueuesService].getAll) thenReturn Future(queues)
-      
+
       val result: Future[Result] =
         route(app, FakeRequest("POST", "/manage-tariff-classifications/cases/v2/123456/liability").withFormUrlEncodedBody("note" -> aNote)).get
 
@@ -146,37 +129,27 @@ class LiabilityControllerSpec extends UnitSpec with Matchers with BeforeAndAfter
       locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/v2/123456/liability")
     }
 
-    /*    "displays an error when no case note is provided" in {
-          val aValidForm = newFakePOSTRequestWithCSRF(fakeApplication, Map())
-          given(eventService.getEvents(refEq(aCase.reference), refEq(NoPagination()))(any[HeaderCarrier])) willReturn successful(Paged.empty[Event])
-          given(queueService.getAll) willReturn successful(Seq.empty)
+    "not add a new note when a case note is not provided" in {
+      val aNote = ""
 
-          val result = controller(aCase, Set(Permission.ADD_NOTE)).addNote(aCase.reference)(aValidForm)
-          status(result) shouldBe Status.OK
-          contentType(result) shouldBe Some("text/html")
-          charset(result) shouldBe Some("utf-8")
-          contentAsString(result) should include("error-summary")
-          contentAsString(result) should include("Enter a case note")
-        }
+      when(inject[EventsService].addNote(meq(aCase), meq(aNote), meq(Cases.operatorWithPermissions), any[Clock])(any[HeaderCarrier])) thenReturn Future(event)
 
-        "return OK when user has right permissions" in {
-          val aCase  = Cases.btiCaseExample
-          given(eventService.getEvents(refEq(aCase.reference), refEq(NoPagination()))(any[HeaderCarrier])) willReturn successful(Paged(Events.events))
-          given(queueService.getAll) willReturn successful(Seq.empty)
+      when(inject[EventsService].getFilteredEvents(any(), any(), any())(any())) thenReturn Future(pagedEvent)
 
-          val result = controller(aCase,Set(Permission.ADD_NOTE)).addNote(aCase.reference)(newFakeGETRequestWithCSRF(fakeApplication))
+      when(inject[QueuesService].getAll) thenReturn Future(queues)
 
-          status(result) shouldBe Status.OK
-        }
+      when(inject[FileStoreService].getAttachments(any[Case]())(any())) thenReturn (Future.successful(Seq(Cases.storedAttachment)))
 
-        "redirect unauthorised when does not have right permissions" in {
-          val aCase  = Cases.btiCaseExample
+      when(inject[FileStoreService].getLetterOfAuthority(any())(any())) thenReturn (Future.successful(Some(Cases.letterOfAuthority)))
 
-          val result = controller(aCase, Set.empty).addNote(aCase.reference)(newFakeGETRequestWithCSRF(fakeApplication))
+      when(inject[liability_view].apply(any(), any(), any(), any(), any())(any(), any(), any())) thenReturn Html("body")
 
-          status(result) shouldBe Status.SEE_OTHER
-          redirectLocation(result).get should include ("unauthorized")
-        }*/
+      val result: Future[Result] =
+        route(app, FakeRequest("POST", "/manage-tariff-classifications/cases/v2/123456/liability").withFormUrlEncodedBody("note" -> aNote)).get
+
+      status(result) shouldBe OK
+
+      verify(inject[liability_view], times(1)).apply(any(), any(), any(), any(), any())(any(), any(), any())
+    }
   }
-
 }

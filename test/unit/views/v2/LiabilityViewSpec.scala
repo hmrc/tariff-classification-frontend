@@ -65,7 +65,9 @@ class LiabilityViewSpec extends ViewSpec {
 
     "render Attachments tab" in {
       val c = aCase(withReference("reference"), withLiabilityApplication())
-      val doc = view(liabilityView(LiabilityViewModel.fromCase(c, Cases.operatorWithAddAttachment), None,
+      val doc = view(liabilityView(
+        LiabilityViewModel.fromCase(c, Cases.operatorWithAddAttachment),
+        None,
         Cases.attachmentsTabViewModel.map(_.copy(applicantFiles = Seq(Cases.storedAttachment),
           letter = Some(Cases.letterOfAuthority),
           nonApplicantFiles = Seq(Cases.storedOperatorAttachment))), Cases.activityTabViewModel, activityForm))
@@ -78,5 +80,13 @@ class LiabilityViewSpec extends ViewSpec {
       doc shouldNot containElementWithID("attachments_tab")
     }
 
+    "render Activity tab" in {
+      val c = aCase(withReference("reference"), withLiabilityApplication())
+      val doc = view(liabilityView(LiabilityViewModel.fromCase(c, Cases.operatorWithAddAttachment), None,
+        Cases.attachmentsTabViewModel.map(_.copy(applicantFiles = Seq(Cases.storedAttachment),
+          letter = Some(Cases.letterOfAuthority),
+          nonApplicantFiles = Seq(Cases.storedOperatorAttachment))), Cases.activityTabViewModel, activityForm))
+      doc should containElementWithID("activity_tab")
+    }
   }
 }
