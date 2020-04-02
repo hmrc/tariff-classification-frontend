@@ -21,15 +21,13 @@ import java.time.{ZoneOffset, ZonedDateTime}
 import controllers.routes
 import models._
 import models.forms.{ActivityForm, ActivityFormData}
-import models.viewmodels.{ActivityViewModel, LiabilityViewModel}
+import models.viewmodels.ActivityViewModel
 import play.api.data.Form
-import play.twirl.api.Html
 import utils.Cases._
 import utils.{Cases, Events}
+import views.ViewMatchers.{containElementWithID, containText, haveAttribute}
 import views.ViewSpec
 import views.html.partials.liabilities.activity_tab
-import views.ViewMatchers.{containElementWithID, containText, haveAttribute}
-import views.html.partials.activity_details
 
 class ActivityTabSpec extends ViewSpec {
 
@@ -46,6 +44,8 @@ class ActivityTabSpec extends ViewSpec {
   val requestWithMoveCasePermission = requestWithPermissions(Permission.MOVE_CASE_BACK_TO_QUEUE)
 
   val requestWithAddNotePermission = requestWithPermissions(Permission.ADD_NOTE)
+
+  val requestWithViewCaseAssigneePermission = requestWithPermissions(Permission.VIEW_CASE_ASSIGNEE)
 
   val requestWithAddNoteViewCasePermission = requestWithPermissions(Permission.ADD_NOTE, Permission.VIEW_CASE_ASSIGNEE)
 
@@ -65,8 +65,6 @@ class ActivityTabSpec extends ViewSpec {
 
       val doc = view(activityTab(activityViewModel, activityForm, 1)(requestWithAddNotePermission, messages, appConfig))
 
-      println(doc)
-
       doc should containElementWithID("add-note-submit")
     }
 
@@ -79,7 +77,6 @@ class ActivityTabSpec extends ViewSpec {
 
     "Render 'Status Change'" in {
 
-      // Given
       val e = Event(
         id = "EVENT_ID",
         details = CaseStatusChange(from = CaseStatus.OPEN, to = CaseStatus.COMPLETED, comment = Some("comment"), attachmentId = Some("att-id")),
@@ -88,10 +85,10 @@ class ActivityTabSpec extends ViewSpec {
         timestamp = date
       )
 
-      // When
+
       val doc = view(activityTab(activityViewModel.copy(events = Paged(Seq(e))), activityForm)(requestWithAddNotePermission, messages, appConfig))
 
-      // Then
+
       doc should containElementWithID("activity-events-row-0-operator")
       doc.getElementById("activity-events-row-0-operator") should containText("name")
       doc should containElementWithID("activity-events-row-0-content")
@@ -105,7 +102,7 @@ class ActivityTabSpec extends ViewSpec {
     }
 
     "Render 'Cancellation Status Change'" in {
-      // Given
+
       val e = Event(
         id = "EVENT_ID",
         details = CancellationCaseStatusChange(from = CaseStatus.OPEN, comment = Some("comment"), attachmentId = Some("att-id"), reason = CancelReason.INVALIDATED_CODE_CHANGE),
@@ -114,10 +111,10 @@ class ActivityTabSpec extends ViewSpec {
         timestamp = date
       )
 
-      // When
+
       val doc = view(activityTab(activityViewModel.copy(events = Paged(Seq(e))), activityForm)(requestWithAddNotePermission, messages, appConfig))
 
-      // Then
+
       doc should containElementWithID("activity-events-row-0-operator")
       doc.getElementById("activity-events-row-0-operator") should containText("name")
       doc should containElementWithID("activity-events-row-0-content")
@@ -134,7 +131,7 @@ class ActivityTabSpec extends ViewSpec {
 
 
     "Render 'Referral Status Change'" in {
-      // Given
+
       val e = Event(
         id = "EVENT_ID",
         details = ReferralCaseStatusChange(from = CaseStatus.OPEN, comment = Some("comment"), attachmentId = Some("att-id"), referredTo = "Applicant", reason = Seq(ReferralReason.REQUEST_SAMPLE, ReferralReason.REQUEST_MORE_INFO)),
@@ -143,10 +140,10 @@ class ActivityTabSpec extends ViewSpec {
         timestamp = date
       )
 
-      // When
+
       val doc = view(activityTab(activityViewModel.copy(events = Paged(Seq(e))), activityForm)(requestWithAddNotePermission, messages, appConfig))
 
-      // Then
+
       doc should containElementWithID("activity-events-row-0-operator")
       doc.getElementById("activity-events-row-0-operator") should containText("name")
       doc should containElementWithID("activity-events-row-0-content")
@@ -165,7 +162,7 @@ class ActivityTabSpec extends ViewSpec {
 
     "Render 'Completed Status Change'" when {
       "Email is present" in {
-        // Given
+
         val e = Event(
           id = "EVENT_ID",
           details = CompletedCaseStatusChange(from = CaseStatus.OPEN, comment = Some("comment"), email = Some("some email")),
@@ -174,10 +171,10 @@ class ActivityTabSpec extends ViewSpec {
           timestamp = date
         )
 
-        // When
+
         val doc = view(activityTab(activityViewModel.copy(events = Paged(Seq(e))), activityForm)(requestWithAddNotePermission, messages, appConfig))
 
-        // Then
+
         doc should containElementWithID("activity-events-row-0-operator")
         doc.getElementById("activity-events-row-0-operator") should containText("name")
         doc should containElementWithID("activity-events-row-0-content")
@@ -191,7 +188,7 @@ class ActivityTabSpec extends ViewSpec {
       }
 
       "Email is absent" in {
-        // Given
+
         val e = Event(
           id = "EVENT_ID",
           details = CompletedCaseStatusChange(from = CaseStatus.OPEN, comment = Some("comment"), email = None),
@@ -200,10 +197,10 @@ class ActivityTabSpec extends ViewSpec {
           timestamp = date
         )
 
-        // When
+
         val doc = view(activityTab(activityViewModel.copy(events = Paged(Seq(e))), activityForm)(requestWithAddNotePermission, messages, appConfig))
 
-        // Then
+
         doc should containElementWithID("activity-events-row-0-operator")
         doc.getElementById("activity-events-row-0-operator") should containText("name")
         doc should containElementWithID("activity-events-row-0-content")
@@ -217,7 +214,7 @@ class ActivityTabSpec extends ViewSpec {
     }
 
     "Render 'Appeal Added'" in {
-      // Given
+
       val e = Event(
         id = "EVENT_ID",
         details = AppealAdded(appealType = AppealType.APPEAL_TIER_1, appealStatus = AppealStatus.IN_PROGRESS, comment = Some("comment")),
@@ -226,10 +223,10 @@ class ActivityTabSpec extends ViewSpec {
         timestamp = date
       )
 
-      // When
+
       val doc = view(activityTab(activityViewModel.copy(events = Paged(Seq(e))), activityForm)(requestWithAddNotePermission, messages, appConfig))
 
-      // Then
+
       doc should containElementWithID("activity-events-row-0-operator")
       doc.getElementById("activity-events-row-0-operator") should containText("name")
       doc should containElementWithID("activity-events-row-0-content")
@@ -240,7 +237,7 @@ class ActivityTabSpec extends ViewSpec {
     }
 
     "Render 'Review Added'" in {
-      // Given
+
       val e = Event(
         id = "EVENT_ID",
         details = AppealAdded(appealType = AppealType.REVIEW, appealStatus = AppealStatus.IN_PROGRESS, comment = Some("comment")),
@@ -249,10 +246,10 @@ class ActivityTabSpec extends ViewSpec {
         timestamp = date
       )
 
-      // When
+
       val doc = view(activityTab(activityViewModel.copy(events = Paged(Seq(e))), activityForm)(requestWithAddNotePermission, messages, appConfig))
 
-      // Then
+
       doc should containElementWithID("activity-events-row-0-operator")
       doc.getElementById("activity-events-row-0-operator") should containText("name")
       doc should containElementWithID("activity-events-row-0-content")
@@ -262,34 +259,29 @@ class ActivityTabSpec extends ViewSpec {
       doc.getElementById("activity-events-row-0-date") should containText("01 Jan 2019")
     }
 
-    /*
-        "Render 'Appeal Status Changed'" in {
-          // Given
-          val c = aCase(withDecision(appeal = Seq(Appeal("id", AppealStatus.ALLOWED, AppealType.APPEAL_TIER_1))), withStatus(CaseStatus.COMPLETED))
-          val e = Event(
-            id = "EVENT_ID",
-            details = AppealStatusChange(appealType = AppealType.APPEAL_TIER_1, from = AppealStatus.IN_PROGRESS, to = AppealStatus.ALLOWED, comment = Some("comment")),
-            operator = Operator("id", Some("name")),
-            caseReference = "ref",
-            timestamp = date
-          )
+    "Render 'Appeal Status Changed'" in {
+      val e = Event(
+        id = "EVENT_ID",
+        details = AppealStatusChange(appealType = AppealType.APPEAL_TIER_1,
+          from = AppealStatus.IN_PROGRESS, to = AppealStatus.ALLOWED, comment = Some("comment")),
+        operator = Operator("id", Some("name")),
+        caseReference = "ref",
+        timestamp = date
+      )
 
-          // When
-          val doc = view(activity_details(c, Paged(Seq(e)), ActivityForm.form, queues))
+      val doc = view(activityTab(activityViewModel.copy(events = Paged(Seq(e))), activityForm)(requestWithAddNotePermission, messages, appConfig))
 
-          // Then
-          doc should containElementWithID("activity-events-row-0-operator")
-          doc.getElementById("activity-events-row-0-operator") should containText("name")
-          doc should containElementWithID("activity-events-row-0-content")
-          doc.getElementById("activity-events-row-0-content") should containText("Appeal tier 1 status changed from Under appeal to Appeal allowed")
-          doc.getElementById("activity-events-row-0-content") should containText("comment")
-          doc should containElementWithID("activity-events-row-0-date")
-          doc.getElementById("activity-events-row-0-date") should containText("01 Jan 2019")
-        }
-    */
+      doc should containElementWithID("activity-events-row-0-operator")
+      doc.getElementById("activity-events-row-0-operator") should containText("name")
+      doc should containElementWithID("activity-events-row-0-content")
+      doc.getElementById("activity-events-row-0-content") should containText("Appeal tier 1 status changed from Under appeal to Appeal allowed")
+      doc.getElementById("activity-events-row-0-content") should containText("comment")
+      doc should containElementWithID("activity-events-row-0-date")
+      doc.getElementById("activity-events-row-0-date") should containText("01 Jan 2019")
+    }
 
     "Render 'Extended Use Change'" in {
-      // Given
+
       val e = Event(
         id = "EVENT_ID",
         details = ExtendedUseStatusChange(from = false, to = true, comment = Some("comment")),
@@ -298,10 +290,10 @@ class ActivityTabSpec extends ViewSpec {
         timestamp = date
       )
 
-      // When
+
       val doc = view(activityTab(activityViewModel.copy(events = Paged(Seq(e))), activityForm)(requestWithAddNotePermission, messages, appConfig))
 
-      // Then
+
       doc should containElementWithID("activity-events-row-0-operator")
       doc.getElementById("activity-events-row-0-operator") should containText("name")
       doc should containElementWithID("activity-events-row-0-content")
@@ -312,7 +304,6 @@ class ActivityTabSpec extends ViewSpec {
     }
 
     "Render 'Assignment Change'" in {
-      // Given
       val e = Event(
         id = "EVENT_ID",
         details = AssignmentChange(from = None, to = None, comment = Some("comment")),
@@ -321,10 +312,8 @@ class ActivityTabSpec extends ViewSpec {
         timestamp = date
       )
 
-      // When
       val doc = view(activityTab(activityViewModel.copy(events = Paged(Seq(e))), activityForm)(requestWithAddNotePermission, messages, appConfig))
 
-      // Then
       doc should containElementWithID("activity-events-row-0-operator")
       doc.getElementById("activity-events-row-0-operator") should containText("name")
       doc.getElementById("activity-events-row-0-content") should containText("comment")
@@ -333,7 +322,6 @@ class ActivityTabSpec extends ViewSpec {
     }
 
     "Render 'Assignment Change' from Some to Some" in {
-      // Given
       val e = Event(
         id = "EVENT_ID",
         details = AssignmentChange(from = Some(Operator("from", Some("FROM"))), to = Some(Operator("to", Some("TO"))), comment = Some("comment")),
@@ -342,16 +330,13 @@ class ActivityTabSpec extends ViewSpec {
         timestamp = date
       )
 
-      // When
       val doc = view(activityTab(activityViewModel.copy(events = Paged(Seq(e))), activityForm)(requestWithAddNotePermission, messages, appConfig))
 
-      // Then
       doc should containElementWithID("activity-events-row-0-content")
       doc.getElementById("activity-events-row-0-content") should containText("Case reassigned from FROM to TO")
     }
 
     "Render 'Assignment Change' from Some to None" in {
-      // Given
       val e = Event(
         id = "EVENT_ID",
         details = AssignmentChange(from = Some(Operator("from", Some("FROM"))), to = None, comment = Some("comment")),
@@ -360,16 +345,13 @@ class ActivityTabSpec extends ViewSpec {
         timestamp = date
       )
 
-      // When
       val doc = view(activityTab(activityViewModel.copy(events = Paged(Seq(e))), activityForm)(requestWithAddNotePermission, messages, appConfig))
 
-      // Then
       doc should containElementWithID("activity-events-row-0-content")
       doc.getElementById("activity-events-row-0-content") should containText("Case unassigned from FROM")
     }
 
     "Render 'Assignment Change' from None to Some" in {
-      // Given
       val e = Event(
         id = "EVENT_ID",
         details = AssignmentChange(from = None, to = Some(Operator("to", Some("TO"))), comment = Some("comment")),
@@ -378,16 +360,13 @@ class ActivityTabSpec extends ViewSpec {
         timestamp = date
       )
 
-      // When
       val doc = view(activityTab(activityViewModel.copy(events = Paged(Seq(e))), activityForm)(requestWithAddNotePermission, messages, appConfig))
 
-      // Then
       doc should containElementWithID("activity-events-row-0-content")
       doc.getElementById("activity-events-row-0-content") should containText("Case assigned to TO")
     }
 
     "Render 'Assignment Change' from None to None" in {
-      // Given
       val e = Event(
         id = "EVENT_ID",
         details = AssignmentChange(from = None, to = None, comment = Some("comment")),
@@ -396,98 +375,81 @@ class ActivityTabSpec extends ViewSpec {
         timestamp = date
       )
 
-      // When
       val doc = view(activityTab(activityViewModel.copy(events = Paged(Seq(e))), activityForm)(requestWithAddNotePermission, messages, appConfig))
 
-      // Then
       doc should containElementWithID("activity-events-row-0-content")
       doc.getElementById("activity-events-row-0-content") should containText("Case assignment changed")
     }
 
     "Not render assigned information if does not have right permissions" in {
-      // When
       val doc = view(activityTab(activityViewModel, activityForm)(operatorRequest, messages, appConfig))
 
-      // Then
       doc shouldNot containElementWithID("activity-events-assignee")
       doc shouldNot containElementWithID("activity-events-assignee-label")
     }
 
     "Render assigned to 'You'" in {
-      // When
-      val doc = view(activityTab(activityViewModel.copy(assignee = Some(authenticatedOperator)), activityForm)(requestWithAddNoteViewCasePermission, messages, appConfig))
+      val doc = view(activityTab(activityViewModel.copy(assignee = Some(authenticatedOperator)), activityForm)
+      (requestWithAddNoteViewCasePermission, messages, appConfig))
 
-      // Then
       doc should containElementWithID("activity-events-assignee")
       doc.getElementById("activity-events-assignee").text() shouldBe "You"
       doc.getElementById("activity-events-assignee-label").text() shouldBe "Currently assigned to:"
     }
 
     "Render assigned to name" in {
-      // When
       val doc = view(activityTab(activityViewModel.copy(assignee = Some(authenticatedOperator.copy(id = "id", name = Some("name")))), activityForm)(requestWithAddNoteViewCasePermission, messages, appConfig))
 
-      // Then
       doc should containElementWithID("activity-events-assignee")
       doc.getElementById("activity-events-assignee").text() shouldBe "name"
       doc.getElementById("activity-events-assignee-label").text() shouldBe "Currently assigned to:"
     }
 
     "Render assigned to PID" in {
-      // When
       val doc = view(activityTab(activityViewModel.copy(assignee = Some(authenticatedOperator.copy(id = "id"))), activityForm)(requestWithAddNoteViewCasePermission, messages, appConfig))
 
-      // Then
       doc should containElementWithID("activity-events-assignee")
       doc.getElementById("activity-events-assignee").text() shouldBe "PID id"
       doc.getElementById("activity-events-assignee-label").text() shouldBe "Currently assigned to:"
     }
 
-/*    "Render currently in 'TEST'" in {
-      // Given
-      val c = aCase(
+    "Render currently in 'TEST'" in {
+      val c = aLiabilityCase(
         withAssignee(None),
         withQueue("1")
       )
 
-      // When
-      val doc = view(activity_details(c, Paged.empty[Event], ActivityForm.form, queues)(request = requestWithPermissions(Permission.VIEW_CASE_ASSIGNEE), messages, appConfig))
+      val doc = view(activityTab(ActivityViewModel.fromCase(c, pagedEvent, queues), activityForm)
+      (requestWithViewCaseAssigneePermission, messages, appConfig))
 
-      // Then
       doc should containElementWithID("activity-events-assigned-queue")
       doc.getElementById("activity-events-assigned-queue").text() shouldBe "TEST"
       doc.getElementById("activity-events-assigned-queue-label").text() shouldBe "Currently in:"
-    }*/
+    }
 
     "Render currently in 'Gateway'" in {
-      // Given
-      val c = aCase(
-        withAssignee(None)
-      )
 
-      // When
-      val doc = view(activityTab(activityViewModel.copy(assignee = None, queueId = None), activityForm)(requestWithPermissions(Permission.VIEW_CASE_ASSIGNEE), messages, appConfig))
+      val doc = view(activityTab(activityViewModel.copy(assignee = None, queueId = None), activityForm)
+      (requestWithPermissions(Permission.VIEW_CASE_ASSIGNEE), messages, appConfig))
 
-      // Then
       doc should containElementWithID("activity-events-assigned-queue")
       doc.getElementById("activity-events-assigned-queue").text() shouldBe "Gateway"
       doc.getElementById("activity-events-assigned-queue-label").text() shouldBe "Currently in:"
     }
 
-/*    "Render currently in 'unknown'" in {
-      // Given
-      val c = aCase(
+    "Render currently in 'unknown'" in {
+
+      val c = aLiabilityCase(
         withAssignee(None),
         withQueue("99")
       )
 
-      // When
-      val doc = view(activity_details(c, Paged.empty[Event], ActivityForm.form, queues)(request = requestWithPermissions(Permission.VIEW_CASE_ASSIGNEE), messages, appConfig))
+      val doc = view(activityTab(ActivityViewModel.fromCase(c, pagedEvent, queues), activityForm)
+      (requestWithPermissions(Permission.VIEW_CASE_ASSIGNEE), messages, appConfig))
 
-      // Then
       doc should containElementWithID("activity-events-assigned-queue")
       doc.getElementById("activity-events-assigned-queue").text() shouldBe "unknown"
       doc.getElementById("activity-events-assigned-queue-label").text() shouldBe "Currently in:"
-    }*/
+    }
   }
 }

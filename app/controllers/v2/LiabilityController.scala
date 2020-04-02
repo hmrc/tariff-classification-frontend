@@ -65,7 +65,6 @@ class LiabilityController @Inject()(
     }
   }
 
-
   private def getAttachmentTab(liabilityCase: Case)(implicit hc: HeaderCarrier): Future[Option[AttachmentsTabViewModel]] = {
     for {
       attachments <- fileService.getAttachments(liabilityCase)
@@ -82,9 +81,7 @@ class LiabilityController @Inject()(
     def onError: Form[ActivityFormData] => Future[Result] = errorForm => {
       val liabilityCase: Case = request.`case`
       val liabilityViewModel = LiabilityViewModel.fromCase(liabilityCase, request.operator)
-      println("error form ::::::: ")
-      println("error form ::::::: ")
-      println("error form ::::::: " + errorForm)
+
       for {
         //TODO you can hide tabs with feature flags, if you assign None
         //tabs

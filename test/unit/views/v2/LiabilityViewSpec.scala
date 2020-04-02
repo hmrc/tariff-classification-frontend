@@ -16,28 +16,15 @@
 
 package views.v2
 
-import java.time.Instant
-
-import controllers.ActiveTab
 import models.forms.{ActivityForm, ActivityFormData}
-import models.{Event, Operator, Permission}
-import models.request.AuthenticatedRequest
 import models.viewmodels.LiabilityViewModel
-import org.jsoup.select.Elements
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.mvc.Request
-import play.twirl.api.Html
+import models.{CaseStatus, Paged}
+import play.api.data.Form
+import utils.Cases.{aLiabilityCase, withLiabilityApplication, withReference, withStatus}
 import utils.{Cases, Events}
-import utils.Cases.{aCase, withBTIApplication, withLiabilityApplication, withReference}
-import views.ViewMatchers.{containElementWithID, containText, haveAttribute}
-import views.{CaseDetailPage, ViewSpec, html}
-import utils.Cases
-import utils.Cases.{aCase, withLiabilityApplication, withReference}
-import views.ViewMatchers.{containElementWithID, containText}
+import views.ViewMatchers.containElementWithID
 import views.ViewSpec
 import views.html.v2.liability_view
-import models.{Case, Event, Paged, Permission, Queue}
-import play.api.data.Form
 
 class LiabilityViewSpec extends ViewSpec {
 
@@ -45,12 +32,30 @@ class LiabilityViewSpec extends ViewSpec {
 
   private val activityForm: Form[ActivityFormData] = ActivityForm.form
 
-  private val pagedEvent = Paged(Seq(Events.event), 1, 1, 1)
-
   "Liability View" should {
 
+    "render the action this case button for new case" in {
+
+      val c = aLiabilityCase(withReference("reference"), withStatus(CaseStatus.NEW), withLiabilityApplication())
+
+      val doc = view(liabilityView(LiabilityViewModel.fromCase(c, Cases.operatorWithReleaseOrSuppressPermissions),
+        None, None, Cases.activityTabViewModel, activityForm))
+
+      doc should containElementWithID("action-this-case-button")
+    }
+
+    "not render the action this case button" in {
+
+      val c = aLiabilityCase(withReference("reference"), withStatus(CaseStatus.NEW) , withLiabilityApplication())
+
+      val doc = view(liabilityView(LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions),
+        None, None, Cases.activityTabViewModel, activityForm))
+
+      doc shouldNot containElementWithID("action-this-case-button")
+    }
+
     "render C592 tab" in {
-      val c = aCase(withReference("reference"), withLiabilityApplication())
+      val c = aLiabilityCase(withReference("reference"), withLiabilityApplication())
       val doc = view(liabilityView(LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions),
         Cases.c592ViewModel, None, Cases.activityTabViewModel, activityForm))
 
@@ -58,13 +63,13 @@ class LiabilityViewSpec extends ViewSpec {
     }
 
     "not render C592 tab" in {
-      val c = aCase(withReference("reference"), withLiabilityApplication())
+      val c = aLiabilityCase(withReference("reference"), withLiabilityApplication())
       val doc = view(liabilityView(LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions), None, None, Cases.activityTabViewModel, activityForm))
       doc shouldNot containElementWithID("c592_tab")
     }
 
     "render Attachments tab" in {
-      val c = aCase(withReference("reference"), withLiabilityApplication())
+      val c = aLiabilityCase(withReference("reference"), withLiabilityApplication())
       val doc = view(liabilityView(
         LiabilityViewModel.fromCase(c, Cases.operatorWithAddAttachment),
         None,
@@ -75,13 +80,13 @@ class LiabilityViewSpec extends ViewSpec {
     }
 
     "not render Attachments tab" in {
-      val c = aCase(withReference("reference"), withLiabilityApplication())
+      val c = aLiabilityCase(withReference("reference"), withLiabilityApplication())
       val doc = view(liabilityView(LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions), None, None, Cases.activityTabViewModel, activityForm))
       doc shouldNot containElementWithID("attachments_tab")
     }
 
     "render Activity tab" in {
-      val c = aCase(withReference("reference"), withLiabilityApplication())
+      val c = aLiabilityCase(withReference("reference"), withLiabilityApplication())
       val doc = view(liabilityView(LiabilityViewModel.fromCase(c, Cases.operatorWithAddAttachment), None,
         Cases.attachmentsTabViewModel.map(_.copy(applicantFiles = Seq(Cases.storedAttachment),
           letter = Some(Cases.letterOfAuthority),
