@@ -49,7 +49,10 @@ class LiabilityViewSpec extends ViewSpec {
 
     "render Attachments tab" in {
       val c = aCase(withReference("reference"), withLiabilityApplication())
-      val doc = view(liabilityView(LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions), None, Cases.attachmentsTabViewModel))
+      val doc = view(liabilityView(LiabilityViewModel.fromCase(c, Cases.operatorWithAddAttachment), None,
+        Cases.attachmentsTabViewModel.map(_.copy(applicantFiles = Seq(Cases.storedAttachment),
+          letter = Some(Cases.letterOfAuthority),
+          nonApplicantFiles = Seq(Cases.storedOperatorAttachment)))))
       doc should containElementWithID("attachments_tab")
     }
 
