@@ -18,22 +18,19 @@ package controllers.v2
 
 import akka.stream.Materializer
 import config.AppConfig
-import controllers.{ActiveTab, RenderCaseAction, RequestActions, v2}
+import controllers.{RenderCaseAction, RequestActions}
 import javax.inject.{Inject, Singleton}
 import models._
-import models.forms.{MandatoryBooleanForm, UploadAttachmentForm}
+import models.forms.{RemoveAttachmentForm, UploadAttachmentForm}
 import models.request.AuthenticatedCaseRequest
-import models.viewmodels.{AttachmentsTabViewModel, CaseHeaderViewModel}
+import models.viewmodels.CaseHeaderViewModel
 import play.api.data.{Form, FormError}
 import play.api.i18n.I18nSupport
 import play.api.libs.Files.TemporaryFile
 import play.api.mvc._
-import play.twirl.api.Html
 import service.{CasesService, FileStoreService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.CaseDetailPage
-import views.CaseDetailPage.CaseDetailPage
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -51,7 +48,7 @@ class AttachmentsController @Inject()(
                                        implicit val mat: Materializer
                                      ) extends FrontendController(mcc) with RenderCaseAction with I18nSupport {
 
-  private lazy val removeAttachmentForm: Form[Boolean] = MandatoryBooleanForm.form("remove_attachment")
+  private lazy val removeAttachmentForm: Form[Boolean] = RemoveAttachmentForm.form
   override protected val config: AppConfig = appConfig
   override protected val caseService: CasesService = casesService
 
