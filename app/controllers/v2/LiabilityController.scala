@@ -22,7 +22,7 @@ import controllers.{RequestActions, v2}
 import javax.inject.{Inject, Singleton}
 import models.TabIndexes.tabIndexFor
 import models.forms.{ActivityForm, ActivityFormData}
-import models.request.AuthenticatedRequest
+import models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
 import models.viewmodels.{ActivityViewModel, AttachmentsTabViewModel, C592ViewModel, LiabilityViewModel}
 import models.{Case, Permission, _}
 import play.api.data.Form
@@ -52,16 +52,7 @@ class LiabilityController @Inject()(
 
   def displayLiability(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)).async {
     implicit request => {
-      val liabilityCase: Case = request.`case`
-      val liabilityViewModel = LiabilityViewModel.fromCase(liabilityCase, request.operator)
-      for {
-        tuple <- liabilityViewActivityDetails(reference)
-        attachmentsTab <- getAttachmentTab(liabilityCase)
-        c592 = Some(C592ViewModel.fromCase(liabilityCase))
-        activityTab = ActivityViewModel.fromCase(liabilityCase, tuple._1, tuple._2)
-      } yield {
-        Ok(liability_view(liabilityViewModel, c592, attachmentsTab, activityTab, activityForm))
-      }
+      buildLiabilityView(activityForm)
     }
   }
 
@@ -75,23 +66,10 @@ class LiabilityController @Inject()(
     }
   }
 
-
   def addNote(reference: String): Action[AnyContent] = (verify.authenticated andThen
     verify.casePermissions(reference) andThen verify.mustHave(Permission.ADD_NOTE)).async { implicit request =>
     def onError: Form[ActivityFormData] => Future[Result] = errorForm => {
-      val liabilityCase: Case = request.`case`
-      val liabilityViewModel = LiabilityViewModel.fromCase(liabilityCase, request.operator)
-
-      for {
-        //TODO you can hide tabs with feature flags, if you assign None
-        //tabs
-        tuple <- liabilityViewActivityDetails(reference)
-        attachmentsTab <- getAttachmentTab(liabilityCase)
-        c592 = Some(C592ViewModel.fromCase(liabilityCase))
-        activityTab = ActivityViewModel.fromCase(liabilityCase, tuple._1, tuple._2)
-      } yield {
-        Ok(liability_view(liabilityViewModel, c592, attachmentsTab, activityTab, errorForm))
-      }
+      buildLiabilityView(errorForm)
     }
 
     def onSuccess: ActivityFormData => Future[Result] = validForm => {
@@ -100,6 +78,20 @@ class LiabilityController @Inject()(
     }
 
     activityForm.bindFromRequest.fold(onError, onSuccess)
+  }
+
+  def buildLiabilityView(form: Form[_])(implicit request: AuthenticatedCaseRequest[AnyContent]): Future[Result] = {
+    val liabilityCase: Case = request.`case`
+    val liabilityViewModel = LiabilityViewModel.fromCase(liabilityCase, request.operator)
+
+    for {
+      tuple <- liabilityViewActivityDetails(liabilityCase.reference)
+      attachmentsTab <- getAttachmentTab(liabilityCase)
+      c592 = Some(C592ViewModel.fromCase(liabilityCase))
+      activityTab = ActivityViewModel.fromCase(liabilityCase, tuple._1, tuple._2)
+    } yield {
+      Ok(liability_view(liabilityViewModel, c592, attachmentsTab, activityTab, activityForm))
+    }
   }
 
   def liabilityViewActivityDetails(reference: String)(implicit request: AuthenticatedRequest[AnyContent]) = {
