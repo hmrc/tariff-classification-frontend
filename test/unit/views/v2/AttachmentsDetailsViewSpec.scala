@@ -16,6 +16,7 @@
 
 package views.v2
 
+import models.{Permission, StoredAttachment}
 import models.forms.UploadAttachmentForm
 import models.viewmodels.{AttachmentsTabViewModel, LiabilityViewModel}
 import play.twirl.api.HtmlFormat
@@ -29,6 +30,8 @@ import views.html.v2.partials.attachments_details
 class AttachmentsDetailsViewSpec extends ViewSpec {
 
   val testTabIndex = 99
+
+  lazy val attachment: StoredAttachment = Cases.storedAttachment.copy()
 
   def notRenderAttachmentsDetails: HtmlFormat.Appendable = {
     attachments_details(
@@ -51,10 +54,10 @@ class AttachmentsDetailsViewSpec extends ViewSpec {
   def renderAttachmentsDetailsWithAttachments: HtmlFormat.Appendable = {
     attachments_details(
       UploadAttachmentForm.form,
-      AttachmentsTabViewModel("ref", Seq(Cases.storedAttachment), None),
+      AttachmentsTabViewModel("ref", Seq(attachment), None),
       testTabIndex,
       showUploadAttachments = true
-    )
+    )(requestWithPermissions(Permission.EDIT_ATTACHMENT_DETAIL, Permission.REMOVE_ATTACHMENTS),messages,appConfig)
   }
 
   def attachments_details: attachments_details = app.injector.instanceOf[attachments_details]
@@ -90,6 +93,22 @@ class AttachmentsDetailsViewSpec extends ViewSpec {
       val doc = view(renderAttachmentsDetailsWithAttachments)
 
       doc.getElementsByTag("table").size() shouldBe 1
+    }
+
+    "render upload form and some elements in attachments table check edit details button" in {
+      val doc = view(renderAttachmentsDetailsWithAttachments)
+      val expectedMsg = messages("case.attachment.edit.file.text") + " " +
+        messages("case.attachment.edit.file.hidden.text",attachment.fileName)
+
+      doc.getElementById(s"all-row-0-edit-attachment-details").text().trim shouldBe expectedMsg
+    }
+
+    "render upload form and some elements in attachments table check remove attachment button" in {
+      val doc = view(renderAttachmentsDetailsWithAttachments)
+      val expectedMsg = messages("case.attachment.remove.file.text") + " " +
+        messages("case.attachment.remove.file.hidden.text",attachment.fileName)
+
+      doc.getElementById(s"all-row-0-remove").text().trim shouldBe expectedMsg
     }
   }
 
