@@ -43,17 +43,12 @@ class ControllerBaseSpec extends UnitSpec with I18nSupport with GuiceOneAppPerSu
     bind[remove_attachment].toInstance(mock[remove_attachment]),
     bind[attachments_list].toInstance(mock[attachments_list]),
     //services
-    bind[FileStoreService].toInstance(mock[FileStoreService]),
-    //controllers
-    bind[LiabilityController].toInstance(mock[LiabilityController])
-
+    bind[FileStoreService].toInstance(mock[FileStoreService])
   ).configure(
     "metrics.jvm" -> false,
     "metrics.enabled" -> false,
     "new-liability-details" -> true
   ).build()
-
-//  override lazy val app: Application = fakeApplication()
 
   implicit val request: Request[AnyContent] = FakeRequest()
 

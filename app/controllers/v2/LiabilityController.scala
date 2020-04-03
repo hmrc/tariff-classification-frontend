@@ -46,10 +46,10 @@ class LiabilityController @Inject()(
                                    ) extends FrontendController(mcc) with I18nSupport {
 
 
-  def displayLiability(reference: String, uploadAttachmentForm: Form[String] = UploadAttachmentForm.form): Action[AnyContent] =
+  def displayLiability(reference: String): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference)).async {
     implicit request => {
-      buildLiabilityView(reference, uploadAttachmentForm)
+      buildLiabilityView(reference)
     }
   }
 

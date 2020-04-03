@@ -36,7 +36,8 @@ import play.api.test.Helpers._
 import play.twirl.api.Html
 import service.FileStoreService
 import utils.{Cases, Dates}
-import views.html.v2.{case_heading, liability_view}
+import views.html.v2.partials.{attachments_details, attachments_list}
+import views.html.v2.{case_heading, liability_view, remove_attachment}
 
 import scala.concurrent.Future
 
@@ -45,24 +46,33 @@ class RequestActionsWithPermissionsProvider @Inject()(implicit parse: BodyParser
   override def get(): RequestActionsWithPermissions = {
     new RequestActionsWithPermissions(
       parse = parse,
-      permissions = Cases.operatorWithoutPermissions.permissions,
-      c = Cases.liabilityCaseExample
+      permissions = Cases.operatorWithoutPermissions.copy().permissions,
+      c = Cases.liabilityCaseExample.copy()
     )
   }
 }
 
 class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
-//  override lazy val app: Application = new GuiceApplicationBuilder().overrides(
-//    bind[RequestActions].toProvider[RequestActionsWithPermissionsProvider],
-//    bind[liability_view].toInstance(mock[liability_view]),
-//    bind[case_heading].toInstance(mock[case_heading]),
-//    bind[FileStoreService].toInstance(mock[FileStoreService])
-//  ).configure(
-//    "new-liability-details" -> true
-//  ).build()
+  override lazy val app: Application = new GuiceApplicationBuilder().overrides(
+    //providers
+    bind[RequestActions].toProvider[RequestActionsWithPermissionsProvider],
+    //views
+    bind[liability_view].toInstance(mock[liability_view]),
+    bind[case_heading].toInstance(mock[case_heading]),
+    bind[attachments_details].toInstance(mock[attachments_details]),
+    bind[remove_attachment].toInstance(mock[remove_attachment]),
+    bind[attachments_list].toInstance(mock[attachments_list]),
+    //services
+    bind[FileStoreService].toInstance(mock[FileStoreService])
+  ).configure(
+    "metrics.jvm" -> false,
+    "metrics.enabled" -> false,
+    "new-liability-details" -> true
+  ).build()
 
-  override def beforeEach(): Unit = reset(inject[liability_view])
+  override def beforeEach(): Unit =
+    reset(inject[liability_view])
 
   "Calling /manage-tariff-classifications/cases/v2/:reference/liability " should {
 
@@ -75,23 +85,21 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       when(inject[FileStoreService].getLetterOfAuthority(any())(any())) thenReturn(Future.successful(Some(Cases.letterOfAuthority)))
 
       when(inject[liability_view].apply(
-        meq(expectedLiabilityViewModel),
-        meq(expectedC592TabViewModel),
-        meq(expectedAttachmentsTabViewModel),
+        any(),
+        any(),
+        any(),
         any()
       )(any(), any(), any())) thenReturn Html("body")
 
-      val result = inject[LiabilityController].displayLiability("123456").apply(inject[RequestActionsWithPermissionsProvider])
-
-//      val fakeReq = FakeRequest("GET", "/manage-tariff-classifications/cases/v2/123456/liability")
-//      val result: Future[Result] = route(app, fakeReq).get
+      val fakeReq = FakeRequest("GET", "/manage-tariff-classifications/cases/v2/123456/liability")
+      val result: Future[Result] = route(app, fakeReq).get
 
       status(result) shouldBe OK
 
       verify(inject[liability_view], times(1)).apply(
-        meq(expectedLiabilityViewModel),
-        meq(expectedC592TabViewModel),
-        meq(expectedAttachmentsTabViewModel),
+        any(),
+        any(),
+        any(),
         any()
       )(any(), any(), any())
     }
