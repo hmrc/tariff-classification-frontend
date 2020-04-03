@@ -27,18 +27,20 @@
 @this(
         case_heading: views.html.v2.case_heading,
         c592_tab: views.html.partials.liabilities.c592_tab,
-        attachments_details: views.html.v2.attachments_details
+        attachments_details: views.html.v2.partials.attachments_details
 )
 
 @(
         liabilityViewModel: LiabilityViewModel,
         c592ViewModel: Option[C592ViewModel],
-        attachmentsTabViewModel: Option[AttachmentsTabViewModel]
+        attachmentsTabViewModel: Option[AttachmentsTabViewModel],
+
+        //forms
+        uploadAttachmentsForm: Form[String]
 )(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 @main(bodyClasses = None) {
 
     @case_heading(liabilityViewModel.caseHeaderViewModel)
-
     @* TODO refactor and extract in view model method *@
     @if(liabilityViewModel.isNewCase && liabilityViewModel.hasPermissions) {
         @change_case_status_button("action-this-case", "Action this case", ReleaseOrSuppressCaseController.onPageLoad(liabilityViewModel.caseHeaderViewModel.referenceNumber))
@@ -77,7 +79,12 @@
         @* attachments*@
         @if(attachmentsTabViewModel.isDefined) {
             <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="attachments_tab">
-            @attachments_details(UploadAttachmentForm.form, attachmentsTabViewModel.get, tabIndexFor(CaseDetailPage.ATTACHMENTS))
+            @attachments_details(
+                uploadAttachmentsForm,
+                attachmentsTabViewModel.get,
+                tabIndexFor(CaseDetailPage.ATTACHMENTS),
+                request.hasPermission(Permission.ADD_ATTACHMENT)
+            )
             </div>
         }
         @* TODO WIPs*@

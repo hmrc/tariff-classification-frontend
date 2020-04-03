@@ -33,7 +33,9 @@ class FileStoreService @Inject()(connector: FileStoreConnector) {
   def getFileMetadata(id: String)(implicit hc: HeaderCarrier): Future[Option[FileMetadata]] = connector.get(id)
 
   def getAttachments(c: Case)(implicit hc: HeaderCarrier): Future[Seq[StoredAttachment]] = {
-    getAttachments(Seq(c)).map(group => group.getOrElse(c, Seq.empty))
+    getAttachments(Seq(c))
+      .map(group => group.getOrElse(c, Seq.empty))
+      .map(_.sortBy(_.timestamp))
   }
 
   def getAttachments(cases: Seq[Case])(implicit hc: HeaderCarrier): Future[Map[Case, Seq[StoredAttachment]]] = {

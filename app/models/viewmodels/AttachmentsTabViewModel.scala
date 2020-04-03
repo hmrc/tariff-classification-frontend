@@ -18,7 +18,8 @@ package models.viewmodels
 
 import models.StoredAttachment
 
-case class AttachmentsTabViewModel(caseReference: String,
-                                   applicantFiles: Seq[StoredAttachment],
-                                   letter: Option[StoredAttachment],
-                                   nonApplicantFiles: Seq[StoredAttachment])
+case class AttachmentsTabViewModel(
+                                    caseReference: String,
+                                    attachments: Seq[StoredAttachment],
+                                    letter: Option[StoredAttachment]
+                                  )

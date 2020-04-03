@@ -19,9 +19,11 @@
 @import views.html.includes.main
 @import models.viewmodels.C592ViewModel
 
-@this(case_heading: views.html.v2.case_heading)
+@this()
 
-@(c592ViewModel: C592ViewModel)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(
+        c592ViewModel: C592ViewModel
+)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 <h2 class="heading-large mt-0 mb-30">@messages("case.v2.liability.c592.tab_heading")</h2>
 <dl class="dl-mb-2">

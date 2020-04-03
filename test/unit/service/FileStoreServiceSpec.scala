@@ -155,7 +155,8 @@ class FileStoreServiceSpec extends UnitSpec with MockitoSugar {
       fileName = s"name-$id",
       mimeType = s"type-$id",
       scanStatus = Some(ScanStatus.READY),
-      timestamp = Instant.EPOCH
+      timestamp = Instant.EPOCH,
+      description = "test description"
     )
   }
 
@@ -170,7 +171,8 @@ class FileStoreServiceSpec extends UnitSpec with MockitoSugar {
       id = id,
       public = true,
       None,
-      timestamp = Instant.EPOCH
+      timestamp = Instant.EPOCH,
+      description = "test description"
     )
     c.copy(attachments = attachments)
   }
@@ -186,7 +188,8 @@ class FileStoreServiceSpec extends UnitSpec with MockitoSugar {
       id = id,
       public = true,
       None,
-      timestamp = Instant.EPOCH
+      timestamp = Instant.EPOCH,
+      description = "test description"
     )
   }
 

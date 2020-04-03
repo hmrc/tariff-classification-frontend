@@ -31,9 +31,9 @@ import models.viewmodels.{AttachmentsTabViewModel, C592ViewModel, PortOrComplian
 
 object Cases {
 
-  val storedAttachment = StoredAttachment("id", public = true, None, Some("url"), "name", "type", Some(ScanStatus.READY), Instant.now())
-  val storedOperatorAttachment = StoredAttachment("id", public = true, Some(Operator("0", Some("Operator Name"))), Some("url"), "name", "type", Some(ScanStatus.READY), Instant.now())
-  val letterOfAuthority = StoredAttachment("id", public = true, None, Some("url"), "letterOfAuthority", "pdf", Some(ScanStatus.READY), Instant.now())
+  val storedAttachment = StoredAttachment("id", public = true, None, Some("url"), "name", "type", Some(ScanStatus.READY), Instant.now(),"test description")
+  val storedOperatorAttachment = StoredAttachment("id", public = true, Some(Operator("0", Some("Operator Name"))), Some("url"), "name", "type", Some(ScanStatus.READY), Instant.now(),"test description")
+  val letterOfAuthority = StoredAttachment("id", public = true, None, Some("url"), "letterOfAuthority", "pdf", Some(ScanStatus.READY), Instant.now(),"test description")
   val eoriDetailsExample = EORIDetails("eori", "trader-business-name", "line1", "line2", "line3", "postcode", "country")
   val eoriAgentDetailsExample = AgentDetails(EORIDetails("eori", "agent-business-name", "line1", "line2", "line3", "postcode", "country"), Some(Attachment("letter-id", public = true, None, Instant.now())))
   val contactExample = Contact("name", "email", Some("phone"))
@@ -65,12 +65,7 @@ object Cases {
   val c592ViewModel = Some(C592ViewModel("entry number", "03 Mar 2020", "", None, "", "good-name",
     TraderContact("trader-business-name", "email", "phone", ""), "trader-1234567", "officer-1234567",
     PortOrComplianceOfficerContact("name", "email", "phone"), "", ""))
-  val attachmentsTabViewModel = Some(AttachmentsTabViewModel(Cases.liabilityCaseExample.reference, Nil, None, Nil))
-
-  val c592ViewModel = Some(C592ViewModel("entry number", "03 Mar 2020", "", None, "", "good-name",
-    TraderContact("trader-business-name", "email", "phone", ""), "trader-1234567", "officer-1234567",
-    PortOrComplianceOfficerContact("name", "email", "phone"), "", ""))
-  val attachmentsTabViewModel = Some(AttachmentsTabViewModel(Cases.liabilityCaseExample.reference, Nil, None, Nil))
+  val attachmentsTabViewModel = Some(AttachmentsTabViewModel(Cases.liabilityCaseExample.reference, Nil, None))
 
   def attachment(id: String = UUID.randomUUID().toString): Attachment = {
     Attachment(

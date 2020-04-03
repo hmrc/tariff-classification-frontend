@@ -321,7 +321,8 @@ class RulingDetailsViewSpec extends ViewSpec {
         url = None,
         mimeType = "text/plain",
         scanStatus = None,
-        timestamp = Instant.now()
+        timestamp = Instant.now(),
+        description = "test description"
       )
 
       // When
@@ -344,7 +345,8 @@ class RulingDetailsViewSpec extends ViewSpec {
         url = None,
         mimeType = "text/plain",
         scanStatus = None,
-        timestamp = Instant.now()
+        timestamp = Instant.now(),
+        description = "test description"
       )
 
       // When

@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import controllers.routes.AttachmentsController
+@import controllers.v2.routes.AttachmentsController
 @import uk.gov.hmrc.play.views.html.helpers
 @import config.AppConfig
 @import views.html.components.input_file
@@ -24,32 +24,34 @@
 @import models.Permission
 @import models.viewmodels.AttachmentsTabViewModel
 
-@this(attachments_list: views.html.v2.attachments_list)
+@this(
+        attachments_list: views.html.v2.partials.attachments_list
+)
 
 @(
         form: Form[String],
         attachmentsTabViewModel: AttachmentsTabViewModel,
-        tabIndex: Int
+        tabIndex: Int,
+        showUploadAttachments: Boolean = false
 )(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @error_summary(form.errors, Some(tabIndex))
 
 @tab_heading("attachments", messages("case.menu.attachments"))
 
-@attachments_state_message(attachments = attachmentsTabViewModel.applicantFiles ++ attachmentsTabViewModel.nonApplicantFiles)
+@attachments_state_message(attachments = attachmentsTabViewModel.attachments)
 
-<h3 class="heading-medium" id="applicant-heading">@messages(s"case.attachment.heading.applicant")</h3>
-@attachments_list("applicant", attachmentsTabViewModel.applicantFiles, startAtTabIndex = Some(tabIndex + 10))
+@attachments_list(
+    "all",
+    attachmentsTabViewModel.attachments,
+    showUploadedBy = true,
+    showEditDetails = true,
+    showRemoval = true,
+    caseRef = attachmentsTabViewModel.caseReference,
+    startAtTabIndex = Some(tabIndex + 1)
+)
 
-@if(attachmentsTabViewModel.letter.isDefined) {
-    <h3 class="heading-medium" id="letter-of-auth-heading">@messages(s"case.attachment.heading.letter-of-auth")</h3>
-    @attachments_list("letter-of-auth", Seq(attachmentsTabViewModel.letter.get), startAtTabIndex = Some(tabIndex + 30))
-}
-
-<h3 class="heading-medium" id="classification-team-heading">@messages(s"case.attachment.heading.classification-team")</h3>
-@attachments_list("classification-team", attachmentsTabViewModel.nonApplicantFiles, showUploadedBy = true, showSelect = false, showRemoval = true, Some(attachmentsTabViewModel.caseReference), startAtTabIndex = Some(tabIndex + 31))
-
-@if(request.hasPermission(Permission.ADD_ATTACHMENT)) {
+@if(showUploadAttachments) {
     @helpers.form(action = AttachmentsController.uploadAttachment(attachmentsTabViewModel.caseReference),
         'enctype -> "multipart/form-data",
         'id -> "upload-files-form") {

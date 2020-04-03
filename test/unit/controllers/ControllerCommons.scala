@@ -19,17 +19,13 @@ package controllers
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.http.HeaderNames.LOCATION
-import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded, Request, Result}
-import play.api.test.{FakeHeaders, FakeRequest}
+import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded, Result}
 import play.api.test.CSRFTokenHelper._
-import play.mvc.BodyParser.AnyContent
+import play.api.test.{FakeHeaders, FakeRequest}
 
 trait ControllerCommons { self : GuiceOneAppPerSuite =>
 
-//  override lazy val app = new GuiceApplicationBuilder().overrides().build()
-
-  def inject[T](implicit m: Manifest[T]) = app.injector.instanceOf[T]
+  def inject[T](implicit m: Manifest[T]): T = app.injector.instanceOf[T]
 
   protected def locationOf(result: Result): Option[String] = {
     result.header.headers.get(LOCATION)
