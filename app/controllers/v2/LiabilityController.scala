@@ -18,15 +18,20 @@ package controllers.v2
 
 
 import config.AppConfig
-import controllers.RequestActions
+import controllers.{RequestActions, v2}
 import javax.inject.{Inject, Singleton}
-import models.{Case, Permission}
-import models.viewmodels.{AttachmentsTabViewModel, C592ViewModel, LiabilityViewModel}
+import models.TabIndexes.tabIndexFor
+import models.forms.{ActivityForm, ActivityFormData}
+import models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
+import models.viewmodels.{ActivityViewModel, AttachmentsTabViewModel, C592ViewModel, LiabilityViewModel}
+import models.{Case, Permission, _}
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import service.{CasesService, FileStoreService}
+import service.{CasesService, EventsService, FileStoreService, QueuesService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import views.CaseDetailPage.ACTIVITY
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -35,24 +40,19 @@ import scala.concurrent.Future
 class LiabilityController @Inject()(
                                      verify: RequestActions,
                                      casesService: CasesService,
+                                     eventsService: EventsService,
+                                     queuesService: QueuesService,
                                      fileService: FileStoreService,
                                      mcc: MessagesControllerComponents,
                                      val liability_view: views.html.v2.liability_view,
                                      implicit val appConfig: AppConfig
                                    ) extends FrontendController(mcc) with I18nSupport {
 
+  private val activityForm: Form[ActivityFormData] = ActivityForm.form
+
   def displayLiability(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)).async {
     implicit request => {
-      val liabilityCase: Case = request.`case`
-      val liabilityViewModel = LiabilityViewModel.fromCase(liabilityCase, request.operator)
-      for {
-        //TODO you can hide tabs with feature flags, if you assign None
-        //tabs
-        attachmentsTab <- getAttachmentTab(liabilityCase)
-        c592 = Some(C592ViewModel.fromCase(liabilityCase))
-      } yield {
-        Ok(liability_view(liabilityViewModel, c592, attachmentsTab))
-      }
+      buildLiabilityView(activityForm)
     }
   }
 
@@ -65,4 +65,40 @@ class LiabilityController @Inject()(
       Some(AttachmentsTabViewModel(liabilityCase.reference, applicantFiles, letter, nonApplicantFiles))
     }
   }
+
+  def addNote(reference: String): Action[AnyContent] = (verify.authenticated andThen
+    verify.casePermissions(reference) andThen verify.mustHave(Permission.ADD_NOTE)).async { implicit request =>
+    def onError: Form[ActivityFormData] => Future[Result] = errorForm => {
+      buildLiabilityView(errorForm)
+    }
+
+    def onSuccess: ActivityFormData => Future[Result] = validForm => {
+      eventsService.addNote(request.`case`, validForm.note, request.operator)
+        .map(_ => Redirect(v2.routes.LiabilityController.displayLiability(reference)))
+    }
+
+    activityForm.bindFromRequest.fold(onError, onSuccess)
+  }
+
+  def buildLiabilityView(activityForm: Form[ActivityFormData])(implicit request: AuthenticatedCaseRequest[AnyContent]): Future[Result] = {
+    val liabilityCase: Case = request.`case`
+    val liabilityViewModel = LiabilityViewModel.fromCase(liabilityCase, request.operator)
+
+    for {
+      tuple <- liabilityViewActivityDetails(liabilityCase.reference)
+      attachmentsTab <- getAttachmentTab(liabilityCase)
+      c592 = Some(C592ViewModel.fromCase(liabilityCase))
+      activityTab = ActivityViewModel.fromCase(liabilityCase, tuple._1, tuple._2)
+    } yield {
+      Ok(liability_view(liabilityViewModel, c592, attachmentsTab, activityTab, activityForm))
+    }
+  }
+
+  def liabilityViewActivityDetails(reference: String)(implicit request: AuthenticatedRequest[AnyContent]) = {
+    for {
+      events <- eventsService.getFilteredEvents(reference, NoPagination(), Some(EventType.values.diff(EventType.sampleEvents)))
+      queues <- queuesService.getAll
+    } yield (events, queues, tabIndexFor(ACTIVITY))
+  }
+
 }

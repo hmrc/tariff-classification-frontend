@@ -27,7 +27,7 @@ import models.SampleReturn.SampleReturn
 import models.SampleStatus.SampleStatus
 import models._
 import models.response.ScanStatus
-import models.viewmodels.{AttachmentsTabViewModel, C592ViewModel, PortOrComplianceOfficerContact, TraderContact}
+import models.viewmodels.{ActivityViewModel, AttachmentsTabViewModel, C592ViewModel, PortOrComplianceOfficerContact, TraderContact}
 
 object Cases {
 
@@ -58,14 +58,24 @@ object Cases {
   )
   val btiCaseWithExpiredRuling = btiCaseExample.copy(status = CaseStatus.COMPLETED, decision = Some(expiredRuling))
   val liabilityCaseWithExpiredRuling = liabilityCaseExample.copy(status = CaseStatus.COMPLETED, decision = Some(expiredRuling))
+
+  val pagedEvent = Paged(Seq(Events.event), 1, 1, 1)
+  val queues = Seq(Queue("", "", ""))
+
   val operatorWithoutPermissions = Operator(id = "0", name =Some("liability op name"), permissions = Set())
   val operatorWithAddAttachment = Operator(id = "0", name =Some("liability op name"), permissions = Set(Permission.ADD_ATTACHMENT))
-
 
   val c592ViewModel = Some(C592ViewModel("entry number", "03 Mar 2020", "", None, "", "good-name",
     TraderContact("trader-business-name", "email", "phone", ""), "trader-1234567", "officer-1234567",
     PortOrComplianceOfficerContact("name", "email", "phone"), "", ""))
   val attachmentsTabViewModel = Some(AttachmentsTabViewModel(Cases.liabilityCaseExample.reference, Nil, None, Nil))
+  val activityTabViewModel = ActivityViewModel("referenceNumber", Some(operatorWithoutPermissions),
+    Some("queueId"), Instant.now, pagedEvent, queues, "queue Name")
+  val activityTabViewModelWithPermissions = ActivityViewModel("referenceNumber", Some(operatorWithPermissions),
+    Some("queueId"), Instant.now, pagedEvent, queues, "queue Name")
+  val operatorWithPermissions = Operator(id = "0", name =Some("liability op name"), permissions = Set(Permission.ADD_NOTE, Permission.VIEW_CASES))
+  val operatorWithReleaseOrSuppressPermissions = Operator(id = "0", name =
+    Some("liability op name"), permissions = Set(Permission.RELEASE_CASE, Permission.SUPPRESS_CASE))
 
   def attachment(id: String = UUID.randomUUID().toString): Attachment = {
     Attachment(
@@ -78,6 +88,10 @@ object Cases {
 
   def aCase(withModifier: (Case => Case)*): Case = {
     withModifier.foldLeft(btiCaseExample)((current: Case, modifier) => modifier.apply(current))
+  }
+
+  def aLiabilityCase(withModifier: (Case => Case)*): Case = {
+    withModifier.foldLeft(liabilityCaseExample)((current: Case, modifier) => modifier.apply(current))
   }
 
   def withBTIApplication: Case => Case = {
