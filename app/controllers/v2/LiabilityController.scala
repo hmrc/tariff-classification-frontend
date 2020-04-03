@@ -80,7 +80,7 @@ class LiabilityController @Inject()(
     activityForm.bindFromRequest.fold(onError, onSuccess)
   }
 
-  def buildLiabilityView(form: Form[_])(implicit request: AuthenticatedCaseRequest[AnyContent]): Future[Result] = {
+  def buildLiabilityView(activityForm: Form[_])(implicit request: AuthenticatedCaseRequest[AnyContent]): Future[Result] = {
     val liabilityCase: Case = request.`case`
     val liabilityViewModel = LiabilityViewModel.fromCase(liabilityCase, request.operator)
 
