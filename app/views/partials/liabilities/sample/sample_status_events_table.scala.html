@@ -21,10 +21,11 @@
 @import views.html.partials.progressive_disclosure
 @import models.viewmodels.SampleStatusTabViewModel
 
+@this()
 
-@(s: SampleStatusTabViewModel, events: Paged[Event], startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(events: Paged[Event], startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@if(events.nonEmpty) {
+
     <h3 class="heading-medium" id="sample-status-events-heading">Sample activity</h3>
 
     <table id="activity-events">
@@ -85,4 +86,4 @@
         </tbody>
 
     </table>
-}
+

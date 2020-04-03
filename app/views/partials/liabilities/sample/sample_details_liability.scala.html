@@ -24,10 +24,10 @@
 
 @this(
 sample_status: views.html.partials.liabilities.sample.sample_status,
-sample_status_events_table: views.html.partials.liabilities.sample.sample_status_events
+sample_status_events_table: views.html.partials.liabilities.sample.sample_status_events_table
 )
 
-@(s: SampleStatusTabViewModel,events: Paged[Event], startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(s: SampleStatusTabViewModel, startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 <h2 class="heading-large mt-0 mb-30">@messages("case.menu.sample-details")</h2>
 
@@ -69,5 +69,6 @@ sample_status_events_table: views.html.partials.liabilities.sample.sample_status
     }
 
 </dl>
-
-@sample_status_events_table(s,events,startAtTabIndex+15)
+@if(s.sampleActivity) {
+ @sample_status_events_table(s.sampleActivity,startAtTabIndex+15)
+}
