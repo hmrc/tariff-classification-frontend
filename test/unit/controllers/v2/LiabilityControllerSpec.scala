@@ -20,7 +20,7 @@ import java.time.Instant
 
 import akka.http.scaladsl.model.HttpHeader.ParsingResult.Ok
 import com.google.inject.Provider
-import controllers.{ControllerCommons, RequestActions, RequestActionsWithPermissions}
+import controllers.{ControllerBaseSpec, ControllerCommons, RequestActions, RequestActionsWithPermissions}
 import javax.inject.Inject
 import models.Case
 import models.viewmodels.LiabilityViewModel

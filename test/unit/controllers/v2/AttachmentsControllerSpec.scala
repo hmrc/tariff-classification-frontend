@@ -16,11 +16,13 @@
 
 package controllers.v2
 
+import java.io.File
+
 import play.api.mvc.Results.Ok
 import akka.stream.Materializer
 import config.AppConfig
 import controllers.v2.routes.LiabilityController
-import controllers.{RequestActionsWithPermissions, SuccessfulRequestActions}
+import controllers.{ControllerBaseSpec, RequestActionsWithPermissions, SuccessfulRequestActions}
 import models.request.AuthenticatedRequest
 import models.{Permission, _}
 import org.mockito.ArgumentMatchers._
@@ -60,6 +62,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
   lazy val liabilityController = mock[LiabilityController]
   lazy val attachments_details = mock[attachments_details]
   lazy val remove_attachment = mock[remove_attachment]
+  private lazy val invalidFileTypes = Seq("test", "javascript/none", "so/so")
   private val fakeRequest = FakeRequest(onwardRoute)
 
   def controller: AttachmentsController = {
@@ -88,11 +91,11 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
     )
   }
 
+  private implicit val hc: HeaderCarrier = HeaderCarrier()
+
   override protected def beforeEach(): Unit = {
     reset(remove_attachment)
   }
-
-  private implicit val hc: HeaderCarrier = HeaderCarrier()
 
   "Attachment upload" should {
 
@@ -101,6 +104,12 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
     def aMultipartFile: MultipartFormData[TemporaryFile] = {
       val file = SingletonTemporaryFileCreator.create("example-file.txt")
       val filePart = FilePart[TemporaryFile](key = "file-input", "file.txt", contentType = Some("text/plain"), ref = file)
+      MultipartFormData[TemporaryFile](dataParts = Map(), files = Seq(filePart), badParts = Seq.empty)
+    }
+
+    def aMultipartFileWrongMapping: MultipartFormData[TemporaryFile] = {
+      val file = SingletonTemporaryFileCreator.create("example-file.txt")
+      val filePart = FilePart[TemporaryFile](key = "file-input2", "file.txt", contentType = Some("text/plain"), ref = file)
       MultipartFormData[TemporaryFile](dataParts = Map(), files = Seq(filePart), badParts = Seq.empty)
     }
 
@@ -113,6 +122,16 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
       val file = SingletonTemporaryFileCreator.create("example-file")
       val filePart = FilePart[TemporaryFile](key = "file-input", "example-file", contentType = Some(mimeType), ref = file)
       MultipartFormData[TemporaryFile](dataParts = Map(), files = Seq(filePart), badParts = Seq.empty)
+    }
+
+    def aMultipartFileOfTypeWithoutContentType: MultipartFormData[TemporaryFile] = {
+      val file = SingletonTemporaryFileCreator.create("example-file")
+      val filePart = FilePart[TemporaryFile](key = "file-input", "example-file", contentType = None, ref = file)
+      MultipartFormData[TemporaryFile](dataParts = Map(), files = Seq(filePart), badParts = Seq.empty)
+    }
+
+    def aMultipartFileWithFiles(files: Seq[FilePart[TemporaryFile]]): MultipartFormData[TemporaryFile] = {
+      MultipartFormData[TemporaryFile](dataParts = Map(), files = files, badParts = Seq.empty)
     }
 
     "reload page when valid data is submitted" in {
@@ -152,9 +171,8 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
       contentAsString(result) should include("We could not find a Case with reference")
     }
 
-    "upload a file of valid type should reload page" in {
-
-      appConfig.fileUploadMimeTypes foreach { mimeType =>
+    appConfig.fileUploadMimeTypes.foreach { mimeType =>
+      s"upload a file of valid type '$mimeType' should reload page" in {
         //Given
         val aCase = Cases.btiCaseExample.copy(reference = testReference)
         val updatedCase = aCase.copy(attachments = aCase.attachments :+ Cases.attachment("anyUrl"))
@@ -172,6 +190,29 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
         // Then
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(LiabilityController.displayLiability(testReference).toString)
+      }
+    }
+
+    invalidFileTypes.foreach { mimeType =>
+      s"upload a file of invalid type '$mimeType' should reload page" in {
+        //Given
+        val aCase = Cases.btiCaseExample.copy(reference = testReference)
+        val updatedCase = aCase.copy(attachments = aCase.attachments :+ Cases.attachment("anyUrl"))
+
+        givenACaseWithNoAttachmentsAndNoLetterOfAuthority(aCase.reference, aCase)
+
+        val postRequest = fakeRequest.withBody(Right(aMultipartFileOfType(mimeType)))
+
+        when(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).thenReturn(successful(Some(aCase)))
+        when(casesService.updateCase(any[Case])(any[HeaderCarrier])).thenReturn(successful(updatedCase))
+        when(casesService.addAttachment(any[Case], any[FileUpload], any[Operator])(any[HeaderCarrier])).thenReturn(successful(updatedCase))
+        when(fileService.upload(any[FileUpload])(any[HeaderCarrier])).thenReturn(successful(FileStoreAttachment("id", "file-name", "type", 0)))
+
+        // When
+        val result: Result = await(controller.uploadAttachment(testReference)(postRequest))
+
+        // Then
+        status(result) shouldBe OK //because is the same page with error form return 200
       }
     }
 
@@ -194,6 +235,162 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
       // Then
       status(result) shouldBe SEE_OTHER
       redirectLocation(result) shouldBe Some(LiabilityController.displayLiability(testReference).toString)
+    }
+
+    "upload file which exceed max file size" in {
+      //Given
+      val aCase = Cases.btiCaseExample.copy(reference = testReference)
+      val updatedCase = aCase.copy(attachments = aCase.attachments :+ Cases.attachment("anyUrl"))
+
+      givenACaseWithNoAttachmentsAndNoLetterOfAuthority(aCase.reference, aCase)
+
+      val postRequest = fakeRequest.withBody(Left(MaxSizeExceeded(12L)))
+      val fileUpload = FileUpload(
+        SingletonTemporaryFileCreator.create("example-file.txt"),
+        "file.txt",
+        "text/plain"
+      )
+
+      when(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).thenReturn(successful(Some(aCase)))
+      when(casesService.updateCase(any[Case])(any[HeaderCarrier])).thenReturn(successful(updatedCase))
+      when(casesService.addAttachment(any[Case], any[FileUpload], any[Operator])(any[HeaderCarrier])).thenReturn(successful(updatedCase))
+      when(fileService.upload(refEq(fileUpload))(any[HeaderCarrier])).thenReturn(successful(FileStoreAttachment("id", "file-name", "type", 0)))
+
+      // When
+      val result: Result = await(controller.uploadAttachment(testReference)(postRequest))
+
+      // Then
+      status(result) shouldBe OK
+    }
+
+    "upload file which multipart name is empty" in {
+      //Given
+      val aCase = Cases.btiCaseExample.copy(reference = testReference)
+      val updatedCase = aCase.copy(attachments = aCase.attachments :+ Cases.attachment("anyUrl"))
+
+      givenACaseWithNoAttachmentsAndNoLetterOfAuthority(aCase.reference, aCase)
+
+      val postRequest = fakeRequest.withBody(Right(aEmptyNameMultipartFile))
+      val fileUpload = FileUpload(
+        SingletonTemporaryFileCreator.create("example-file.txt"),
+        "file.txt",
+        "text/plain"
+      )
+
+      when(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).thenReturn(successful(Some(aCase)))
+      when(casesService.updateCase(any[Case])(any[HeaderCarrier])).thenReturn(successful(updatedCase))
+      when(casesService.addAttachment(any[Case], any[FileUpload], any[Operator])(any[HeaderCarrier])).thenReturn(successful(updatedCase))
+      when(fileService.upload(refEq(fileUpload))(any[HeaderCarrier])).thenReturn(successful(FileStoreAttachment("id", "file-name", "type", 0)))
+
+      // When
+      val result: Result = await(controller.uploadAttachment(testReference)(postRequest))
+
+      // Then
+      status(result) shouldBe OK
+    }
+
+    "upload file which multipart with files inside is empty" in {
+      //Given
+      val aCase = Cases.btiCaseExample.copy(reference = testReference)
+      val updatedCase = aCase.copy(attachments = aCase.attachments :+ Cases.attachment("anyUrl"))
+
+      givenACaseWithNoAttachmentsAndNoLetterOfAuthority(aCase.reference, aCase)
+
+      val postRequest = fakeRequest.withBody(Right(aMultipartFileWithFiles(Seq())))
+      val fileUpload = FileUpload(
+        SingletonTemporaryFileCreator.create("example-file.txt"),
+        "file.txt",
+        "text/plain"
+      )
+
+      when(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).thenReturn(successful(Some(aCase)))
+      when(casesService.updateCase(any[Case])(any[HeaderCarrier])).thenReturn(successful(updatedCase))
+      when(casesService.addAttachment(any[Case], any[FileUpload], any[Operator])(any[HeaderCarrier])).thenReturn(successful(updatedCase))
+      when(fileService.upload(refEq(fileUpload))(any[HeaderCarrier])).thenReturn(successful(FileStoreAttachment("id", "file-name", "type", 0)))
+
+      // When
+      val result: Result = await(controller.uploadAttachment(testReference)(postRequest))
+
+      // Then
+      status(result) shouldBe OK
+    }
+
+    "upload file which multipart with have no file inside" in {
+      //Given
+      val aCase = Cases.btiCaseExample.copy(reference = testReference)
+      val updatedCase = aCase.copy(attachments = aCase.attachments :+ Cases.attachment("anyUrl"))
+
+      givenACaseWithNoAttachmentsAndNoLetterOfAuthority(aCase.reference, aCase)
+
+      val postRequest = fakeRequest.withBody(Right(aMultipartFileWithFiles(Seq())))
+      val fileUpload = FileUpload(
+        SingletonTemporaryFileCreator.create("example-file.txt"),
+        "file.txt",
+        "text/plain"
+      )
+
+      when(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).thenReturn(successful(Some(aCase)))
+      when(casesService.updateCase(any[Case])(any[HeaderCarrier])).thenReturn(successful(updatedCase))
+      when(casesService.addAttachment(any[Case], any[FileUpload], any[Operator])(any[HeaderCarrier])).thenReturn(successful(updatedCase))
+      when(fileService.upload(refEq(fileUpload))(any[HeaderCarrier])).thenReturn(successful(FileStoreAttachment("id", "file-name", "type", 0)))
+
+      // When
+      val result: Result = await(controller.uploadAttachment(testReference)(postRequest))
+
+      // Then
+      status(result) shouldBe OK
+    }
+
+    "upload file which multipart content type is not defined" in {
+      //Given
+      val aCase = Cases.btiCaseExample.copy(reference = testReference)
+      val updatedCase = aCase.copy(attachments = aCase.attachments :+ Cases.attachment("anyUrl"))
+
+      givenACaseWithNoAttachmentsAndNoLetterOfAuthority(aCase.reference, aCase)
+
+      val postRequest = fakeRequest.withBody(Right(aMultipartFileOfTypeWithoutContentType))
+      val fileUpload = FileUpload(
+        SingletonTemporaryFileCreator.create("example-file.txt"),
+        "file.txt",
+        "text/plain"
+      )
+
+      when(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).thenReturn(successful(Some(aCase)))
+      when(casesService.updateCase(any[Case])(any[HeaderCarrier])).thenReturn(successful(updatedCase))
+      when(casesService.addAttachment(any[Case], any[FileUpload], any[Operator])(any[HeaderCarrier])).thenReturn(successful(updatedCase))
+      when(fileService.upload(refEq(fileUpload))(any[HeaderCarrier])).thenReturn(successful(FileStoreAttachment("id", "file-name", "type", 0)))
+
+      // When
+      val result: Result = await(controller.uploadAttachment(testReference)(postRequest))
+
+      // Then
+      status(result) shouldBe OK
+    }
+
+    "upload file which multipart is wrong mapped" in {
+      //Given
+      val aCase = Cases.btiCaseExample.copy(reference = testReference)
+      val updatedCase = aCase.copy(attachments = aCase.attachments :+ Cases.attachment("anyUrl"))
+
+      givenACaseWithNoAttachmentsAndNoLetterOfAuthority(aCase.reference, aCase)
+
+      val postRequest = fakeRequest.withBody(Right(aMultipartFileWrongMapping))
+      val fileUpload = FileUpload(
+        SingletonTemporaryFileCreator.create("example-file.txt"),
+        "file.txt",
+        "text/plain"
+      )
+
+      when(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).thenReturn(successful(Some(aCase)))
+      when(casesService.updateCase(any[Case])(any[HeaderCarrier])).thenReturn(successful(updatedCase))
+      when(casesService.addAttachment(any[Case], any[FileUpload], any[Operator])(any[HeaderCarrier])).thenReturn(successful(updatedCase))
+      when(fileService.upload(refEq(fileUpload))(any[HeaderCarrier])).thenReturn(successful(FileStoreAttachment("id", "file-name", "type", 0)))
+
+      // When
+      val result: Result = await(controller.uploadAttachment(testReference)(postRequest))
+
+      // Then
+      status(result) shouldBe OK
     }
 
   }
@@ -267,9 +464,9 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
 
   private def givenACaseWithNoAttachmentsAndNoLetterOfAuthority(testReference: String, aCase: Case) = {
     when(remove_attachment.apply(any(), any(), anyString(), anyString())(any(), any(), any())).thenReturn(Html("heading"))
-    //    when(inject[views.html.partials.error_summary].apply(any())).thenReturn(Html(""))
 
     when(liabilityController.buildLiabilityView(refEq(testReference), any())(any())).thenReturn(successful(Ok("Ok")))
+
     when(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).thenReturn(successful(Some(aCase)))
     when(fileService.getAttachments(refEq(aCase))(any[HeaderCarrier])).thenReturn(successful(Seq.empty))
     when(fileService.getLetterOfAuthority(refEq(aCase))(any[HeaderCarrier])).thenReturn(successful(None))

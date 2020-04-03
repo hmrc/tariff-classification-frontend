@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package controllers.v2
+package controllers
 
-import controllers.{ControllerCommons, RequestActions}
+import controllers.v2.RequestActionsWithPermissionsProvider
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application

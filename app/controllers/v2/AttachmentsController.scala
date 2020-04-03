@@ -51,10 +51,9 @@ class AttachmentsController @Inject()(
                                        implicit val mat: Materializer
                                      ) extends FrontendController(mcc) with RenderCaseAction with I18nSupport {
 
+  private lazy val removeAttachmentForm: Form[Boolean] = MandatoryBooleanForm.form("remove_attachment")
   override protected val config: AppConfig = appConfig
   override protected val caseService: CasesService = casesService
-
-  private lazy val removeAttachmentForm: Form[Boolean] = MandatoryBooleanForm.form("remove_attachment")
 
   def removeAttachment(reference: String, fileId: String, fileName: String): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.REMOVE_ATTACHMENTS)).async { implicit request =>
@@ -99,8 +98,10 @@ class AttachmentsController @Inject()(
               renderAttachmentsErrors(reference, request2Messages(implicitly)("cases.attachment.upload.error.restrictionSize"))
             case Right(multipartForm) =>
               multipartForm match {
-                case file: MultipartFormData[TemporaryFile] if file.files.nonEmpty => uploadAndSave(reference, file)
-                case _ => renderAttachmentsErrors(reference, request2Messages(implicitly)("cases.attachment.upload.error.mustSelect"))
+                case file: MultipartFormData[TemporaryFile] if file.files.nonEmpty =>
+                  uploadAndSave(reference, file)
+                case _ =>
+                  renderAttachmentsErrors(reference, request2Messages(implicitly)("cases.attachment.upload.error.mustSelect"))
               }
           }
       }
@@ -122,7 +123,8 @@ class AttachmentsController @Inject()(
           case _ =>
             successful(Ok(views.html.case_not_found(reference)))
         }
-      case _ => renderAttachmentsErrors(reference, "expected type file on the form")
+      case _ =>
+        renderAttachmentsErrors(reference, "expected type file on the form")
     }
   }
 
@@ -134,7 +136,7 @@ class AttachmentsController @Inject()(
   }
 
   private def renderAttachmentsErrors(reference: String, errorMessage: String)
-                          (implicit hc: HeaderCarrier, req: AuthenticatedCaseRequest[_]): Future[Result] = {
+                                     (implicit hc: HeaderCarrier, req: AuthenticatedCaseRequest[_]): Future[Result] = {
     val errors = Seq(FormError("file-input", errorMessage))
     val formWithErrors = UploadAttachmentForm.form.copy(errors = errors)
     liabilityController.buildLiabilityView(reference, formWithErrors)
