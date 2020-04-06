@@ -16,19 +16,18 @@
 
 package views
 
+import config.AppConfig
+import models.request.AuthenticatedRequest
+import models.{Operator, Permission, Role}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.AnyContentAsEmpty
+import play.api.test.CSRFTokenHelper._
 import play.api.test.{FakeHeaders, FakeRequest}
-import play.filters.csrf.CSRF.{Token, TokenProvider}
 import play.twirl.api.Html
 import uk.gov.hmrc.play.test.UnitSpec
-import config.AppConfig
-import models.request.AuthenticatedRequest
-import models.{Operator, Permission, Role}
-import play.api.test.CSRFTokenHelper._
 
 abstract class ViewSpec extends UnitSpec with GuiceOneAppPerSuite {
 
@@ -36,8 +35,13 @@ abstract class ViewSpec extends UnitSpec with GuiceOneAppPerSuite {
 
   implicit val appConfig: AppConfig = injector.instanceOf[AppConfig]
 
-  protected val authenticatedOperator = Operator("operator-id")
-  protected val authenticatedManager = Operator("operator-id", role = Role.CLASSIFICATION_MANAGER)
+  protected val authenticatedOperator: Operator = Operator("operator-id")
+  protected val authenticatedManager: Operator = Operator(
+    id = "operator-id",
+    name = Some("operator-name"),
+    role = Role.CLASSIFICATION_MANAGER,
+    permissions = Set(Permission.EDIT_ATTACHMENT_DETAIL)
+  )
 
   val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", "/", FakeHeaders(Seq("csrfToken"->"csrfToken")), AnyContentAsEmpty)
     .withCSRFToken.asInstanceOf[FakeRequest[AnyContentAsEmpty.type]]
@@ -50,7 +54,8 @@ abstract class ViewSpec extends UnitSpec with GuiceOneAppPerSuite {
     new AuthenticatedRequest(operator, request)
   }
 
-  implicit val authenticatedFakeRequest = new AuthenticatedRequest(authenticatedOperator, request)
+  implicit val authenticatedFakeRequest: AuthenticatedRequest[AnyContentAsEmpty.type] =
+    new AuthenticatedRequest(authenticatedOperator, request)
   implicit val messages: Messages = injector.instanceOf[MessagesApi].preferred(authenticatedFakeRequest)
 
   protected def view(html: Html): Document = {

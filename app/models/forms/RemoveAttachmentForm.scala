@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package models.viewmodels
+package models.forms
 
-import models.StoredAttachment
+import play.api.data.Form
+import play.api.data.Forms._
 
-case class AttachmentsTabViewModel(
-                                    caseReference: String,
-                                    attachments: Seq[StoredAttachment],
-                                    letter: Option[StoredAttachment]
-                                  )
+object RemoveAttachmentForm {
+  val form: Form[Boolean] = MandatoryBooleanForm.form("remove_attachment")
+}

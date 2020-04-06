@@ -18,18 +18,18 @@ package models
 
 import java.time.Instant
 
-case class Attachment
-(
-  id: String,
-  public: Boolean = false,
-  operator: Option[Operator],
-  timestamp: Instant = Instant.now()
-)
+case class Attachment(
+                       id: String,
+                       public: Boolean = false,
+                       operator: Option[Operator],
+                       timestamp: Instant = Instant.now(),
+                       //TODO implement
+                       description: String = ""
+                     )
 
-case class FileStoreAttachment
-(
-  id: String,
-  name: String,
-  mimeType: String,
-  size: Long
-)
+case class FileStoreAttachment(
+                                id: String,
+                                name: String,
+                                mimeType: String,
+                                size: Long
+                              )

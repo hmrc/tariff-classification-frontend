@@ -16,18 +16,38 @@
 
 package models.viewmodels
 
-import java.security.Permissions
 import java.time.Instant
 
-import controllers.ActiveTab.Liability
-import models.{CaseStatus, Operator, Paged, Permission, Queue}
+import models.{CaseStatus, Permission}
 import uk.gov.hmrc.play.test.UnitSpec
-import utils.{Cases, Events}
-
+import utils.Cases
 
 class LiabilityViewModelSpec extends UnitSpec {
-  private val pagedEvent = Paged(Seq(Events.event), 1, 1, 1)
-  private val queues = Seq(Queue("", "", ""))
+
+  private val caseHeader = CaseHeaderViewModel("Liability",
+    "trader-business-name", "good-name",
+    "1",
+    "CANCELLED",
+    isLive = false)
+
+  "showActionThisCase" should {
+
+    "isNewCase = false and hasPermissions = false" in {
+      LiabilityViewModel(caseHeader, isNewCase = false, hasPermissions = false).showActionThisCase shouldBe false
+    }
+
+    "isNewCase = false and hasPermissions = true" in {
+      LiabilityViewModel(caseHeader, isNewCase = false, hasPermissions = true).showActionThisCase shouldBe false
+    }
+
+    "isNewCase = true and hasPermissions = false" in {
+      LiabilityViewModel(caseHeader, isNewCase = true, hasPermissions = false).showActionThisCase shouldBe false
+    }
+
+    "isNewCase = true and hasPermissions = true" in {
+      LiabilityViewModel(caseHeader, isNewCase = true, hasPermissions = true).showActionThisCase shouldBe true
+    }
+  }
 
   "fromCase" should {
 

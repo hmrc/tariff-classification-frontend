@@ -109,7 +109,7 @@ GET         /search                                             controllers.Sear
 GET         /new-liability                                      controllers.CreateLiabilityController.get()
 POST        /new-liability                                      controllers.CreateLiabilityController.post()
 
-# Note: Browser links cant send a DELETE so it has to be GET in this case
+# Note: Browser links can't send a DELETE so it has to be GET in this case
 GET         /cases/:reference/keywords/:keyword                 controllers.CaseController.removeKeyword(reference: String, keyword: String)
 
 GET         /pdf/ruling/:reference                              controllers.PdfDownloadController.getRulingPdf(reference: String)
@@ -117,5 +117,10 @@ GET         /pdf/application/:reference                         controllers.PdfD
 
 GET         /attachment/:id                                     controllers.ViewAttachmentController.get(id: String)
 
+# v2
 GET         /cases/v2/:reference/liability                      controllers.v2.LiabilityController.displayLiability(reference: String)
 POST        /cases/v2/:reference/liability                      controllers.v2.LiabilityController.addNote(reference: String)
+
+POST        /cases/v2/:reference/attachments                    controllers.v2.AttachmentsController.uploadAttachment(reference: String)
+GET         /cases/v2/:reference/attachments/remove             controllers.v2.AttachmentsController.removeAttachment(reference: String, fileId: String, fileName: String)
+POST        /cases/v2/:reference/attachments/remove             controllers.v2.AttachmentsController.confirmRemoveAttachment(reference: String, fileId: String, fileName: String)

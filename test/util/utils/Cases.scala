@@ -31,9 +31,9 @@ import models.viewmodels.{ActivityViewModel, AttachmentsTabViewModel, C592ViewMo
 
 object Cases {
 
-  val storedAttachment = StoredAttachment("id", public = true, None, Some("url"), "name", "type", Some(ScanStatus.READY), Instant.now())
-  val storedOperatorAttachment = StoredAttachment("id", public = true, Some(Operator("0", Some("Operator Name"))), Some("url"), "name", "type", Some(ScanStatus.READY), Instant.now())
-  val letterOfAuthority = StoredAttachment("id", public = true, None, Some("url"), "letterOfAuthority", "pdf", Some(ScanStatus.READY), Instant.now())
+  val storedAttachment = StoredAttachment("id", public = true, None, Some("url"), "name", "type", Some(ScanStatus.READY), Instant.now(),"test description")
+  val storedOperatorAttachment = StoredAttachment("id", public = true, Some(Operator("0", Some("Operator Name"))), Some("url"), "name", "type", Some(ScanStatus.READY), Instant.now(),"test description")
+  val letterOfAuthority = StoredAttachment("id", public = true, None, Some("url"), "letterOfAuthority", "pdf", Some(ScanStatus.READY), Instant.now(),"test description")
   val eoriDetailsExample = EORIDetails("eori", "trader-business-name", "line1", "line2", "line3", "postcode", "country")
   val eoriAgentDetailsExample = AgentDetails(EORIDetails("eori", "agent-business-name", "line1", "line2", "line3", "postcode", "country"), Some(Attachment("letter-id", public = true, None, Instant.now())))
   val contactExample = Contact("name", "email", Some("phone"))
@@ -68,9 +68,9 @@ object Cases {
   val c592ViewModel = Some(C592ViewModel("entry number", "03 Mar 2020", "", None, "", "good-name",
     TraderContact("trader-business-name", "email", "phone", ""), "trader-1234567", "officer-1234567",
     PortOrComplianceOfficerContact("name", "email", "phone"), "", ""))
-  val attachmentsTabViewModel = Some(AttachmentsTabViewModel(Cases.liabilityCaseExample.reference, Nil, None, Nil))
-  val activityTabViewModel = ActivityViewModel("referenceNumber", Some(operatorWithoutPermissions),
-    Some("queueId"), Instant.now, pagedEvent, queues, "queue Name")
+  val attachmentsTabViewModel = Some(AttachmentsTabViewModel(Cases.liabilityCaseExample.reference, Nil, None))
+  val activityTabViewModel = Some(ActivityViewModel("referenceNumber", Some(operatorWithoutPermissions),
+    Some("queueId"), Instant.now, pagedEvent, queues, "queue Name"))
   val activityTabViewModelWithPermissions = ActivityViewModel("referenceNumber", Some(operatorWithPermissions),
     Some("queueId"), Instant.now, pagedEvent, queues, "queue Name")
   val operatorWithPermissions = Operator(id = "0", name =Some("liability op name"), permissions = Set(Permission.ADD_NOTE, Permission.VIEW_CASES))

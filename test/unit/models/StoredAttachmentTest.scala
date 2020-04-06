@@ -56,7 +56,8 @@ class StoredAttachmentTest extends UnitSpec {
         url = metadata.url,
         fileName = metadata.fileName,
         mimeType = metadata.mimeType,
-        scanStatus = metadata.scanStatus
+        scanStatus = metadata.scanStatus,
+        description = "test description"
       )
     }
 
@@ -75,7 +76,13 @@ class StoredAttachmentTest extends UnitSpec {
     StoredAttachment(anAttachment, someMetadataWithType(t))
   }
 
-  private def anAttachment = Attachment(id = "id", public = true, None, timestamp = Instant.EPOCH)
+  private def anAttachment = Attachment(
+    id = "id",
+    public = true,
+    None,
+    timestamp = Instant.EPOCH,
+    description = "test description"
+  )
 
   private def someMetadataWithType(t: String = "text/plain") = FileMetadata(
     id = "id",

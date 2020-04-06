@@ -223,6 +223,12 @@ object Permission {
       managersOrTeamMembersOnly(operator)
   }
 
+  case object EDIT_ATTACHMENT_DETAIL extends CasePermission {
+    override def name: String = nameOf(this)
+    override def appliesTo(`case`: Case, operator: Operator): Boolean =
+      managersOrTeamMembersOnly(operator)
+  }
+
   case object KEYWORDS extends CasePermission {
     override def name: String = nameOf(this)
     override def appliesTo(`case`: Case, operator: Operator): Boolean =
