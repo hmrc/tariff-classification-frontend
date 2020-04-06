@@ -173,6 +173,7 @@ case.liability.officerCommodityCode=Code suggested by officer
 case.liability.contactName=Name
 case.liability.contactEmail=Contact email
 case.liability.contactPhone=Contact telephone
+case.liability.decision.heading=Liability ruling details
 case.liability.decision.bindingCommodityCode=Commodity code
 case.liability.decision.goodsDescription=Item description
 case.liability.decision.justification=Justification

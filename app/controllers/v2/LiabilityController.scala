@@ -23,7 +23,7 @@ import javax.inject.{Inject, Singleton}
 import models.TabIndexes.tabIndexFor
 import models.forms.{ActivityForm, ActivityFormData, UploadAttachmentForm}
 import models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
-import models.viewmodels.{ActivityViewModel, AttachmentsTabViewModel, C592ViewModel, LiabilityViewModel}
+import models.viewmodels._
 import models.{Case, Permission, _}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -66,10 +66,12 @@ class LiabilityController @Inject()(
       attachmentsTab <- getAttachmentTab(liabilityCase)
       c592 = Some(C592ViewModel.fromCase(liabilityCase))
       activityTab = Some(ActivityViewModel.fromCase(liabilityCase, tuple._1, tuple._2))
+      rulingViewModel = Some(RulingViewModel.fromCase(liabilityCase))
     } yield {
       Ok(liability_view(
         liabilityViewModel,
         c592,
+        rulingViewModel,
         activityTab,
         activityForm,
         attachmentsTab,

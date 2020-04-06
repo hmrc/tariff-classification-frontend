@@ -1,0 +1,71 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import models.viewmodels.RulingViewModel
+@import utils.Dates
+
+@this()
+
+@(rulingViewModel: RulingViewModel, startAtTabIndex : Int = 0)(implicit messages: Messages)
+
+<h3 class="heading-medium  mt-1">@messages("case.liability.decision.heading")</h3>
+
+<dl class="dl-mb-2">
+    <div class="grid-row">
+        <dt id="ruling_bindingCommodityCode" class="column-one-third">
+            @messages("case.decision.commodity-code")
+        </dt>
+        <dd class="column-two-thirds">
+            <span id="ruling_bindingCommodityCodeValue">@rulingViewModel.commodityCode</span>
+        </dd>
+    </div>
+
+    <div class="grid-row">
+        <dt id="ruling_itemDescription" class="column-one-third">
+            @messages("case.decision.goods-description")
+        </dt>
+        <dd class="column-two-thirds">
+            <span id="ruling_itemDescriptionValue" class="pre-wrap">@rulingViewModel.itemDescription</span>
+        </dd>
+    </div>
+
+    <div class="grid-row">
+        <dt id="ruling_justification" class="column-one-third">
+            @messages("case.decision.justification")
+        </dt>
+        <dd class="column-two-thirds">
+            <span id="ruling_justificationValue" class="pre-wrap">@rulingViewModel.justification</span>
+        </dd>
+    </div>
+
+    <div class="grid-row">
+        <dt id="ruling_searches" class="column-one-third">
+            @messages("case.decision.method-search")
+        </dt>
+        <dd class="column-two-thirds">
+            <span id="ruling_searchesValue" class="pre-wrap">@rulingViewModel.methodSearch</span>
+        </dd>
+    </div>
+
+    <div class="grid-row">
+        <dt id="ruling_exclusions" class="column-one-third">
+            @messages("case.decision.method-exclusion")
+        </dt>
+        <dd class="column-two-thirds">
+            <span id="ruling_exclusionsValue" class="pre-wrap">@rulingViewModel.methodExclusion</span>
+        </dd>
+    </div>
+</dl>

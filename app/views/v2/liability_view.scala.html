@@ -31,6 +31,7 @@
 @this(
         case_heading: views.html.v2.case_heading,
         c592_tab: views.html.partials.liabilities.c592_tab,
+        ruling_tab: views.html.partials.liabilities.ruling_tab,
         activity_tab: views.html.partials.liabilities.activity_tab,
         attachments_details: views.html.partials.liabilities.attachments_details
 )
@@ -38,6 +39,7 @@
 @(
         liabilityViewModel: LiabilityViewModel,
         c592ViewModel: Option[C592ViewModel],
+        rulingViewModel: Option[RulingViewModel],
 
         //activity
         activityViewModel: Option[ActivityViewModel],
@@ -91,6 +93,13 @@
             <div class="govuk-tabs__panel" id="c592_tab">
             @c592_tab(c592ViewModel.get)
             </div>
+        }
+
+        @* content*@
+        @if(rulingViewModel.isDefined && liabilityViewModel.showRulingTab) {
+        <div class="govuk-tabs__panel" id="ruling_tab">
+            @ruling_tab(rulingViewModel.get)
+        </div>
         }
 
         @* attachments*@
