@@ -23,7 +23,7 @@ import javax.inject.{Inject, Singleton}
 import models.TabIndexes.tabIndexFor
 import models.forms.{ActivityForm, ActivityFormData}
 import models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
-import models.viewmodels.{ActivityViewModel, AttachmentsTabViewModel, C592ViewModel, LiabilityViewModel}
+import models.viewmodels.{ActivityViewModel, AttachmentsTabViewModel, C592ViewModel, LiabilityViewModel, SampleStatusTabViewModel}
 import models.{Case, Permission, _}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -66,6 +66,16 @@ class LiabilityController @Inject()(
     }
   }
 
+  private def getSampleTab(c: Case)(implicit request: AuthenticatedRequest[AnyContent]) = {
+    eventsService.getFilteredEvents(c.reference, NoPagination(),Some(EventType.sampleEvents)).map {
+      sampleEvents => SampleStatusTabViewModel(
+        c.reference,
+        c.sample,
+        sampleEvents
+      )
+    }
+  }
+
   def addNote(reference: String): Action[AnyContent] = (verify.authenticated andThen
     verify.casePermissions(reference) andThen verify.mustHave(Permission.ADD_NOTE)).async { implicit request =>
     def onError: Form[ActivityFormData] => Future[Result] = errorForm => {
@@ -85,12 +95,13 @@ class LiabilityController @Inject()(
     val liabilityViewModel = LiabilityViewModel.fromCase(liabilityCase, request.operator)
 
     for {
-      tuple <- liabilityViewActivityDetails(liabilityCase.reference)
+      (activityEvents, queues) <- liabilityViewActivityDetails(liabilityCase.reference)
       attachmentsTab <- getAttachmentTab(liabilityCase)
+      sampleTab <- getSampleTab(liabilityCase)
       c592 = Some(C592ViewModel.fromCase(liabilityCase))
-      activityTab = ActivityViewModel.fromCase(liabilityCase, tuple._1, tuple._2)
+      activityTab = ActivityViewModel.fromCase(liabilityCase, activityEvents, queues)
     } yield {
-      Ok(liability_view(liabilityViewModel, c592, attachmentsTab, activityTab, activityForm))
+      Ok(liability_view(liabilityViewModel, c592, attachmentsTab, activityTab, sampleTab, activityForm))
     }
   }
 
@@ -98,7 +109,9 @@ class LiabilityController @Inject()(
     for {
       events <- eventsService.getFilteredEvents(reference, NoPagination(), Some(EventType.values.diff(EventType.sampleEvents)))
       queues <- queuesService.getAll
-    } yield (events, queues, tabIndexFor(ACTIVITY))
+    } yield (events, queues)
   }
+
+
 
 }

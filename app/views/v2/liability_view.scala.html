@@ -31,12 +31,14 @@
 @this(case_heading: views.html.v2.case_heading,
         c592_tab: views.html.partials.liabilities.c592_tab,
         activity_tab: views.html.partials.liabilities.activity_tab,
-        attachments_details: views.html.v2.attachments_details)
+        attachments_details: views.html.v2.attachments_details,
+        sample_status: views.html.partials.liabilities.sample.sample_details_liability)
 
 @(liabilityViewModel: LiabilityViewModel,
         c592ViewModel: Option[C592ViewModel],
         attachmentsTabViewModel: Option[AttachmentsTabViewModel],
         activityViewModel: ActivityViewModel,
+        sampleStatusTabViewModel: SampleStatusTabViewModel,
         activityForm: Form[ActivityFormData])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None) {
@@ -58,6 +60,12 @@
                     </a>
                 </li>
             }
+
+            <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
+                <a class="govuk-tabs__tab" href="#sample_status_tab">
+                    @messages("page.title.sample")
+                </a>
+            </li>
 
             @* attachments*@
             @* TODO WIPs*@
@@ -84,6 +92,10 @@
             @c592_tab(c592ViewModel.get)
             </div>
         }
+
+        <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="samples_tab">
+            @sample_status(sampleStatusTabViewModel: SampleStatusTabViewModel, tabIndexFor(CaseDetailPage.SAMPLE_DETAILS))
+        </div>
 
         @* TODO WIPs*@
         @* attachments*@

@@ -69,6 +69,6 @@ sample_status_events_table: views.html.partials.liabilities.sample.sample_status
     }
 
 </dl>
-@if(s.sampleActivity) {
+@if(s.sampleActivity.nonEmpty) {
  @sample_status_events_table(s.sampleActivity,startAtTabIndex+15)
 }
