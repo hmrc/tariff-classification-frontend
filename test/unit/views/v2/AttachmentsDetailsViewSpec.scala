@@ -16,22 +16,18 @@
 
 package views.v2
 
-import models.{Permission, StoredAttachment}
 import models.forms.UploadAttachmentForm
-import models.viewmodels.{AttachmentsTabViewModel, LiabilityViewModel}
+import models.viewmodels.AttachmentsTabViewModel
+import models.{Permission, StoredAttachment}
 import play.twirl.api.HtmlFormat
 import utils.Cases
-import utils.Cases.{aCase, withLiabilityApplication, withReference}
-import views.ViewMatchers.{containElementWithID, containText}
 import views.ViewSpec
-import views.html.v2.liability_view
 import views.html.v2.partials.attachments_details
 
 class AttachmentsDetailsViewSpec extends ViewSpec {
 
-  val testTabIndex = 99
-
   lazy val attachment: StoredAttachment = Cases.storedAttachment.copy()
+  val testTabIndex = 99
 
   def notRenderAttachmentsDetails: HtmlFormat.Appendable = {
     attachments_details(
@@ -51,16 +47,16 @@ class AttachmentsDetailsViewSpec extends ViewSpec {
     )
   }
 
+  def attachments_details: attachments_details = app.injector.instanceOf[attachments_details]
+
   def renderAttachmentsDetailsWithAttachments: HtmlFormat.Appendable = {
     attachments_details(
       UploadAttachmentForm.form,
       AttachmentsTabViewModel("ref", Seq(attachment), None),
       testTabIndex,
       showUploadAttachments = true
-    )(requestWithPermissions(Permission.EDIT_ATTACHMENT_DETAIL, Permission.REMOVE_ATTACHMENTS),messages,appConfig)
+    )(requestWithPermissions(Permission.EDIT_ATTACHMENT_DETAIL, Permission.REMOVE_ATTACHMENTS), messages, appConfig)
   }
-
-  def attachments_details: attachments_details = app.injector.instanceOf[attachments_details]
 
   "Attachments Details View" should {
 
@@ -98,7 +94,7 @@ class AttachmentsDetailsViewSpec extends ViewSpec {
     "render upload form and some elements in attachments table check edit details button" in {
       val doc = view(renderAttachmentsDetailsWithAttachments)
       val expectedMsg = messages("case.attachment.edit.file.text") + " " +
-        messages("case.attachment.edit.file.hidden.text",attachment.fileName)
+        messages("case.attachment.edit.file.hidden.text", attachment.fileName)
 
       doc.getElementById(s"all-row-0-edit-attachment-details").text().trim shouldBe expectedMsg
     }
@@ -106,7 +102,7 @@ class AttachmentsDetailsViewSpec extends ViewSpec {
     "render upload form and some elements in attachments table check remove attachment button" in {
       val doc = view(renderAttachmentsDetailsWithAttachments)
       val expectedMsg = messages("case.attachment.remove.file.text") + " " +
-        messages("case.attachment.remove.file.hidden.text",attachment.fileName)
+        messages("case.attachment.remove.file.hidden.text", attachment.fileName)
 
       doc.getElementById(s"all-row-0-remove").text().trim shouldBe expectedMsg
     }
