@@ -63,6 +63,15 @@
             @if(c592ViewModel.isDefined) {
                 <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
                     <a class="govuk-tabs__tab" href="#c592_tab">
+                    @messages("case.v2.liability.ruling.tab_title")
+                    </a>
+                </li>
+            }
+
+            @* ruling*@
+            @if(rulingViewModel.isDefined) {
+                <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
+                    <a class="govuk-tabs__tab" href="#c592_tab">
                     @messages("case.v2.liability.c592.tab_title")
                     </a>
                 </li>

@@ -60,18 +60,22 @@ class LiabilityController @Inject()(
                         )(implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
     val liabilityCase: Case = request.`case`
     val liabilityViewModel = LiabilityViewModel.fromCase(liabilityCase, request.operator)
+    val x = Some(RulingViewModel.fromCase(liabilityCase))
+    println("x :::::::::::::")
+    println("x :::::::::::::" + x)
+    println("x :::::::::::::")
+
 
     for {
       tuple <- liabilityViewActivityDetails(liabilityCase.reference)
       attachmentsTab <- getAttachmentTab(liabilityCase)
       c592 = Some(C592ViewModel.fromCase(liabilityCase))
       activityTab = Some(ActivityViewModel.fromCase(liabilityCase, tuple._1, tuple._2))
-      rulingViewModel = Some(RulingViewModel.fromCase(liabilityCase))
     } yield {
       Ok(liability_view(
         liabilityViewModel,
         c592,
-        rulingViewModel,
+        x,
         activityTab,
         activityForm,
         attachmentsTab,

@@ -730,4 +730,11 @@ case.v2.liability.c592.repayment_claim=Repayment claim
 case.v2.liability.c592.dvr_number=DVR number
 case.v2.liability.c592.date_for_repayment=Date for repayment
 
+case.v2.liability.ruling.tab_title=Ruling
+case.v2.liability.ruling.commodity_code=Commodity code
+case.v2.liability.ruling.item_description=Item description
+case.v2.liability.ruling.justification=Justification
+case.v2.liability.ruling.searches=Searches performed
+case.v2.liability.ruling.exclusions=Exclusions
+
 case.v2.liability.activity_tab.tab_title=Activity

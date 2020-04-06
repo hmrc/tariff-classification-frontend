@@ -66,6 +66,18 @@ class LiabilityViewSpec extends ViewSpec {
       doc shouldNot containElementWithID("ruling_tab")
     }
 
+    "render ruling tab when showRulingTab flag is true" in {
+      val c = aCase(withReference("reference"), withLiabilityApplication()).copy(status = CaseStatus.OPEN)
+      val doc = view(liabilityView(LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions), None, Cases.rulingViewModel, Cases.activityTabViewModel, activityForm, None, uploadAttachmentForm))
+      doc should containElementWithID("ruling_tab")
+    }
+
+    "not render ruling tab when showRulingTab flag is false" in {
+      val c = aCase(withReference("reference"), withLiabilityApplication()).copy(status = CaseStatus.CANCELLED)
+      val doc = view(liabilityView(LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions), None, Cases.rulingViewModel, Cases.activityTabViewModel, activityForm, None, uploadAttachmentForm))
+      doc shouldNot containElementWithID("ruling_tab")
+    }
+
     "render Attachments tab" in {
       val c = aCase(withReference("reference"), withLiabilityApplication())
       val doc = view(liabilityView(

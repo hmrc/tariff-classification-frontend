@@ -21,12 +21,12 @@
 
 @(rulingViewModel: RulingViewModel, startAtTabIndex : Int = 0)(implicit messages: Messages)
 
-<h3 class="heading-medium  mt-1">@messages("case.liability.decision.heading")</h3>
+<h2 class="heading-large mt-0 mb-30">@messages("case.liability.decision.heading")</h2>
 
 <dl class="dl-mb-2">
     <div class="grid-row">
         <dt id="ruling_bindingCommodityCode" class="column-one-third">
-            @messages("case.decision.commodity-code")
+            @messages("case.v2.liability.ruling.commodity_code")
         </dt>
         <dd class="column-two-thirds">
             <span id="ruling_bindingCommodityCodeValue">@rulingViewModel.commodityCode</span>
@@ -35,7 +35,7 @@
 
     <div class="grid-row">
         <dt id="ruling_itemDescription" class="column-one-third">
-            @messages("case.decision.goods-description")
+            @messages("case.v2.liability.ruling.item_description")
         </dt>
         <dd class="column-two-thirds">
             <span id="ruling_itemDescriptionValue" class="pre-wrap">@rulingViewModel.itemDescription</span>
@@ -44,7 +44,7 @@
 
     <div class="grid-row">
         <dt id="ruling_justification" class="column-one-third">
-            @messages("case.decision.justification")
+            @messages("case.v2.liability.ruling.justification")
         </dt>
         <dd class="column-two-thirds">
             <span id="ruling_justificationValue" class="pre-wrap">@rulingViewModel.justification</span>
@@ -53,7 +53,7 @@
 
     <div class="grid-row">
         <dt id="ruling_searches" class="column-one-third">
-            @messages("case.decision.method-search")
+            @messages("case.v2.liability.ruling.searches")
         </dt>
         <dd class="column-two-thirds">
             <span id="ruling_searchesValue" class="pre-wrap">@rulingViewModel.methodSearch</span>
@@ -62,7 +62,7 @@
 
     <div class="grid-row">
         <dt id="ruling_exclusions" class="column-one-third">
-            @messages("case.decision.method-exclusion")
+            @messages("case.v2.liability.ruling.exclusions")
         </dt>
         <dd class="column-two-thirds">
             <span id="ruling_exclusionsValue" class="pre-wrap">@rulingViewModel.methodExclusion</span>
