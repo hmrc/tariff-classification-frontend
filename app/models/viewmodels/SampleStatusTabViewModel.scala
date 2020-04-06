@@ -28,7 +28,8 @@ object SampleStatusTabViewModel {
 
   val NOT_YET_IMPLEMENTED: Option[String] = None
 
-  def apply(caseReference: String, sample: Sample, activity: Paged[Event]): SampleStatusTabViewModel = SampleStatusTabViewModel(caseReference, sample.status.isDefined,
+  def apply(caseReference: String, sample: Sample, activity: Paged[Event]): SampleStatusTabViewModel =
+    SampleStatusTabViewModel(caseReference, sample.status.isDefined,
     NOT_YET_IMPLEMENTED,
     sample.returnStatus,
     format(sample.status),

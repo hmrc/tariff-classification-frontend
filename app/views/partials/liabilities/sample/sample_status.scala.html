@@ -27,7 +27,7 @@
 
 @(s: SampleStatusTabViewModel, startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-<h3 class="heading-medium" id="sample-status-heading">@messages("case.sample.sample-status-header")</h3>
+<h3 class="heading-medium" id="sample-status-heading">@messages("case.v2.liability.sample_status_tab.sample_location_heading")</h3>
 
 <div id="sample-status" class="grid-row">
  <dt class="column-two-thirds" id="sample-status-value" >
@@ -37,7 +37,7 @@
   <dd class="column-one-third" id="change-sample-status">
    <a tabindex="@{
     startAtTabIndex + 10
-   }" href="sample/status">@messages("case.sample.change-sample-status")</a>
+   }" href="sample/status">@messages("case.v2.liability.sample_status_tab.sample_location_change")</a>
   </dd>
  }
 </div>

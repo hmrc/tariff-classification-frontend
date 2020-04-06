@@ -16,9 +16,9 @@
 
 package views.v2
 
-import models.CaseStatus
+import models.{CaseStatus, Event, Paged}
 import models.forms.{ActivityForm, ActivityFormData, UploadAttachmentForm}
-import models.viewmodels.LiabilityViewModel
+import models.viewmodels.{LiabilityViewModel, SampleStatusTabViewModel}
 import play.api.data.Form
 import utils.Cases
 import utils.Cases._
@@ -34,24 +34,33 @@ class LiabilityViewSpec extends ViewSpec {
 
   def uploadAttachmentForm: Form[String] = UploadAttachmentForm.form
 
+  val sampleStatusTabViewModel = SampleStatusTabViewModel("caseReference",
+    isSampleBeingSent = true,
+    Some("a person"),
+    None,
+    "location",
+    sampleActivity = Paged.empty[Event])
+
   "Liability View" should {
 
     "render with case reference" in {
       val c = aCase(withReference("reference"), withLiabilityApplication())
       val doc = view(liabilityView(LiabilityViewModel.fromCase(
-        c, Cases.operatorWithoutPermissions), None, , Cases.activityTabViewModel, activityForm, None, uploadAttachmentForm))
+        c, Cases.operatorWithoutPermissions), None, sampleStatusTabViewModel, Cases.activityTabViewModel, activityForm, None, uploadAttachmentForm))
       doc.getElementById("case-reference") should containText(c.reference)
     }
 
     "render C592 tab" in {
       val c = aCase(withReference("reference"), withLiabilityApplication())
-      val doc = view(liabilityView(LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions), Cases.c592ViewModel, Cases.activityTabViewModel, activityForm, None, uploadAttachmentForm))
+      val doc = view(liabilityView(LiabilityViewModel.fromCase(
+        c, Cases.operatorWithoutPermissions), Cases.c592ViewModel, sampleStatusTabViewModel, Cases.activityTabViewModel, activityForm, None, uploadAttachmentForm))
       doc should containElementWithID("c592_tab")
     }
 
     "not render C592 tab" in {
       val c = aCase(withReference("reference"), withLiabilityApplication())
-      val doc = view(liabilityView(LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions), None, Cases.activityTabViewModel, activityForm, None, uploadAttachmentForm))
+      val doc = view(liabilityView(LiabilityViewModel.fromCase(
+        c, Cases.operatorWithoutPermissions), None, sampleStatusTabViewModel, Cases.activityTabViewModel, activityForm, None, uploadAttachmentForm))
       doc shouldNot containElementWithID("c592_tab")
     }
 
@@ -60,6 +69,7 @@ class LiabilityViewSpec extends ViewSpec {
       val doc = view(liabilityView(
         LiabilityViewModel.fromCase(c, Cases.operatorWithAddAttachment),
         None,
+        sampleStatusTabViewModel,
         Cases.activityTabViewModel, activityForm,
         Cases.attachmentsTabViewModel.map(_.copy(attachments = Seq(Cases.storedAttachment), letter = Some(Cases.letterOfAuthority))),
         UploadAttachmentForm.form
@@ -69,13 +79,16 @@ class LiabilityViewSpec extends ViewSpec {
 
     "not render Attachments tab" in {
       val c = aCase(withReference("reference"), withLiabilityApplication())
-      val doc = view(liabilityView(LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions), None, Cases.activityTabViewModel, activityForm, None, uploadAttachmentForm))
+      val doc = view(liabilityView(LiabilityViewModel.fromCase(
+        c, Cases.operatorWithoutPermissions), None, sampleStatusTabViewModel, Cases.activityTabViewModel, activityForm, None, uploadAttachmentForm))
       doc shouldNot containElementWithID("attachments_tab")
     }
 
     "render Activity tab" in {
       val c = aLiabilityCase(withReference("reference"), withLiabilityApplication())
-      val doc = view(liabilityView(LiabilityViewModel.fromCase(c, Cases.operatorWithAddAttachment), None,
+      val doc = view(liabilityView(LiabilityViewModel.fromCase(
+        c, Cases.operatorWithAddAttachment), None,
+        sampleStatusTabViewModel,
         Cases.activityTabViewModel, activityForm,
         None, uploadAttachmentForm
       ))
@@ -87,7 +100,7 @@ class LiabilityViewSpec extends ViewSpec {
       val c = aLiabilityCase(withReference("reference"), withStatus(CaseStatus.NEW), withLiabilityApplication())
 
       val doc = view(liabilityView(LiabilityViewModel.fromCase(c, Cases.operatorWithReleaseOrSuppressPermissions),
-        None, None, activityForm, None, uploadAttachmentForm))
+        None, sampleStatusTabViewModel, None, activityForm, None, uploadAttachmentForm))
 
       doc should containElementWithID("action-this-case-button")
     }
@@ -97,7 +110,7 @@ class LiabilityViewSpec extends ViewSpec {
       val c = aLiabilityCase(withReference("reference"), withStatus(CaseStatus.NEW), withLiabilityApplication())
 
       val doc = view(liabilityView(LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions),
-        None, Cases.activityTabViewModel, activityForm, None, uploadAttachmentForm))
+        None, sampleStatusTabViewModel,  Cases.activityTabViewModel, activityForm, None, uploadAttachmentForm))
 
       doc shouldNot containElementWithID("action-this-case-button")
     }
