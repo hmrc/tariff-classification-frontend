@@ -16,29 +16,33 @@
 
 package models.viewmodels
 
-import models.CaseStatus.CaseStatus
 import models._
 
 case class LiabilityViewModel(
                                caseHeaderViewModel: CaseHeaderViewModel,
                                isNewCase: Boolean,
                                hasPermissions: Boolean
-                             )
+                             ) {
+
+  def showActionThisCase: Boolean = {
+    isNewCase && hasPermissions
+  }
+}
 
 object LiabilityViewModel {
 
-  def fromCase(c: Case, operator: Operator) = {
+  def fromCase(c: Case, operator: Operator): LiabilityViewModel = {
 
     def isNew: Boolean = c.status == CaseStatus.NEW
 
-    def releaseOrSuppressPermissions =
+    def releaseOrSuppressPermissions(): Boolean =
       operator.permissions.contains(Permission.RELEASE_CASE) || operator.permissions.contains(Permission.SUPPRESS_CASE)
 
 
     LiabilityViewModel(
       CaseHeaderViewModel.fromCase(c),
       isNewCase = isNew,
-      hasPermissions = releaseOrSuppressPermissions
+      hasPermissions = releaseOrSuppressPermissions()
     )
   }
 }
