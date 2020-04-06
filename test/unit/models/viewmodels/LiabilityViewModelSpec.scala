@@ -20,19 +20,29 @@ import java.security.Permissions
 import java.time.Instant
 
 import controllers.ActiveTab.Liability
-import models.{CaseStatus, Operator, Permission}
+import models.{CaseStatus, Operator, Paged, Permission, Queue}
 import uk.gov.hmrc.play.test.UnitSpec
-import utils.Cases
+import utils.{Cases, Events}
 
 
 class LiabilityViewModelSpec extends UnitSpec {
+  private val pagedEvent = Paged(Seq(Events.event), 1, 1, 1)
+  private val queues = Seq(Queue("", "", ""))
 
   "fromCase" should {
 
     "create a cancelled view model" in {
 
-      val c = Cases.liabilityCaseExample.copy(status = CaseStatus.CANCELLED, application = Cases.liabilityCaseExample.application.asLiabilityOrder.copy(entryDate = Some(Instant.parse("2020-03-03T10:15:30.00Z"))))
+      val createdDateTime = Instant.now
       val op = Cases.operatorWithoutPermissions
+
+      val c = Cases.liabilityCaseExample.copy(
+        status = CaseStatus.CANCELLED,
+        queueId = Some("queueId"),
+        application = Cases.liabilityCaseExample.application.asLiabilityOrder.copy(
+          entryDate = Some(Instant.parse("2020-03-03T10:15:30.00Z"))),
+        assignee = Some(op),
+        createdDate = createdDateTime)
 
       assert(LiabilityViewModel.fromCase(c, op) === LiabilityViewModel(CaseHeaderViewModel("Liability",
         "trader-business-name", "good-name",

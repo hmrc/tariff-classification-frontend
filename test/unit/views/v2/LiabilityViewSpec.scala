@@ -16,8 +16,14 @@
 
 package views.v2
 
+import models.forms.{ActivityForm, ActivityFormData}
 import models.forms.UploadAttachmentForm
 import models.viewmodels.LiabilityViewModel
+import models.{CaseStatus, Paged}
+import play.api.data.Form
+import utils.Cases.{aLiabilityCase, withLiabilityApplication, withReference, withStatus}
+import utils.{Cases, Events}
+import views.ViewMatchers.containElementWithID
 import play.api.data.Form
 import utils.Cases
 import utils.Cases.{aCase, withLiabilityApplication, withReference}
@@ -29,6 +35,8 @@ class LiabilityViewSpec extends ViewSpec {
 
   def liabilityView: liability_view = app.injector.instanceOf[liability_view]
   def uploadAttachmentForm: Form[String] = UploadAttachmentForm.form
+
+  private val activityForm: Form[ActivityFormData] = ActivityForm.form
 
   "Liability View" should {
 
@@ -56,7 +64,8 @@ class LiabilityViewSpec extends ViewSpec {
         LiabilityViewModel.fromCase(c, Cases.operatorWithAddAttachment),
         None,
         Cases.attachmentsTabViewModel.map(_.copy(attachments = Seq(Cases.storedAttachment), letter = Some(Cases.letterOfAuthority))),
-        UploadAttachmentForm.form
+        UploadAttachmentForm.form,
+        activityForm
       ))
       doc should containElementWithID("attachments_tab")
     }
@@ -67,5 +76,33 @@ class LiabilityViewSpec extends ViewSpec {
       doc shouldNot containElementWithID("attachments_tab")
     }
 
+    "render Activity tab" in {
+      val c = aLiabilityCase(withReference("reference"), withLiabilityApplication())
+      val doc = view(liabilityView(LiabilityViewModel.fromCase(c, Cases.operatorWithAddAttachment), None,
+        Cases.attachmentsTabViewModel.map(_.copy(applicantFiles = Seq(Cases.storedAttachment),
+          letter = Some(Cases.letterOfAuthority),
+          nonApplicantFiles = Seq(Cases.storedOperatorAttachment))), Cases.activityTabViewModel, activityForm))
+      doc should containElementWithID("activity_tab")
+    }
+
+    "render the action this case button for new case" in {
+
+      val c = aLiabilityCase(withReference("reference"), withStatus(CaseStatus.NEW), withLiabilityApplication())
+
+      val doc = view(liabilityView(LiabilityViewModel.fromCase(c, Cases.operatorWithReleaseOrSuppressPermissions),
+        None, None, Cases.activityTabViewModel, activityForm))
+
+      doc should containElementWithID("action-this-case-button")
+    }
+
+    "not render the action this case button" in {
+
+      val c = aLiabilityCase(withReference("reference"), withStatus(CaseStatus.NEW) , withLiabilityApplication())
+
+      val doc = view(liabilityView(LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions),
+        None, None, Cases.activityTabViewModel, activityForm))
+
+      doc shouldNot containElementWithID("action-this-case-button")
+    }
   }
 }

@@ -8,6 +8,10 @@
 @import "autocomplete";
 @import "casestatus";
 
+// AF 4.11 WCAG 2.1 updates
+@import "partials/_palette";
+@import "partials/_focus";
+
 span.extra-bold {
   font-weight: 800;
 }
