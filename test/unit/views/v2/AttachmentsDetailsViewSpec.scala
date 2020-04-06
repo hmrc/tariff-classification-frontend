@@ -22,7 +22,7 @@ import models.{Permission, StoredAttachment}
 import play.twirl.api.HtmlFormat
 import utils.Cases
 import views.ViewSpec
-import views.html.v2.partials.attachments_details
+import views.html.partials.liabilities.attachments_details
 
 class AttachmentsDetailsViewSpec extends ViewSpec {
 

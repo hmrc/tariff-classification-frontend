@@ -44,7 +44,7 @@ import service.{CasesService, FileStoreService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.Cases
-import views.html.v2.partials.attachments_details
+import views.html.partials.liabilities.attachments_details
 import views.html.v2.{case_heading, liability_view, remove_attachment}
 import views.html._
 import views.html.partials.error_summary
@@ -465,7 +465,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
   private def givenACaseWithNoAttachmentsAndNoLetterOfAuthority(testReference: String, aCase: Case) = {
     when(remove_attachment.apply(any(), any(), anyString(), anyString())(any(), any(), any())).thenReturn(Html("heading"))
 
-    when(liabilityController.buildLiabilityView(refEq(testReference), any())(any())).thenReturn(successful(Ok("Ok")))
+    when(liabilityController.buildLiabilityView(any(), any())(any())).thenReturn(successful(Ok("Ok")))
 
     when(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).thenReturn(successful(Some(aCase)))
     when(fileService.getAttachments(refEq(aCase))(any[HeaderCarrier])).thenReturn(successful(Seq.empty))

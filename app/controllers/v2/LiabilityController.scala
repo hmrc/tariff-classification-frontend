@@ -21,21 +21,14 @@ import config.AppConfig
 import controllers.{RequestActions, v2}
 import javax.inject.{Inject, Singleton}
 import models.TabIndexes.tabIndexFor
-import models.forms.{ActivityForm, ActivityFormData}
+import models.forms.{ActivityForm, ActivityFormData, UploadAttachmentForm}
 import models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
 import models.viewmodels.{ActivityViewModel, AttachmentsTabViewModel, C592ViewModel, LiabilityViewModel}
 import models.{Case, Permission, _}
 import play.api.data.Form
-import models.forms.UploadAttachmentForm
-import models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
-import models.{Case, Permission}
-import models.viewmodels.{AttachmentsTabViewModel, C592ViewModel, LiabilityViewModel}
-import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import service.{CasesService, EventsService, FileStoreService, QueuesService}
-import play.twirl.api.Html
-import service.{CasesService, FileStoreService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.CaseDetailPage.ACTIVITY
@@ -55,22 +48,48 @@ class LiabilityController @Inject()(
                                      implicit val appConfig: AppConfig
                                    ) extends FrontendController(mcc) with I18nSupport {
 
-  private val activityForm: Form[ActivityFormData] = ActivityForm.form
-
   def displayLiability(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)).async {
     implicit request => {
-      buildLiabilityView(activityForm)
+      buildLiabilityView()
     }
+  }
+
+  def buildLiabilityView(
+                          activityForm: Form[ActivityFormData] = ActivityForm.form,
+                          uploadAttachmentForm: Form[String] = UploadAttachmentForm.form
+                        )(implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
+    val liabilityCase: Case = request.`case`
+    val liabilityViewModel = LiabilityViewModel.fromCase(liabilityCase, request.operator)
+
+    for {
+      tuple <- liabilityViewActivityDetails(liabilityCase.reference)
+      attachmentsTab <- getAttachmentTab(liabilityCase)
+      c592 = Some(C592ViewModel.fromCase(liabilityCase))
+      activityTab = Some(ActivityViewModel.fromCase(liabilityCase, tuple._1, tuple._2))
+    } yield {
+      Ok(liability_view(
+        liabilityViewModel,
+        c592,
+        activityTab,
+        activityForm,
+        attachmentsTab,
+        uploadAttachmentForm
+      ))
+    }
+  }
+
+  def liabilityViewActivityDetails(reference: String)(implicit request: AuthenticatedRequest[_]): Future[(Paged[Event], Seq[Queue], Int)] = {
+    for {
+      events <- eventsService.getFilteredEvents(reference, NoPagination(), Some(EventType.values.diff(EventType.sampleEvents)))
+      queues <- queuesService.getAll
+    } yield (events, queues, tabIndexFor(ACTIVITY))
   }
 
   private def getAttachmentTab(liabilityCase: Case)(implicit hc: HeaderCarrier): Future[Option[AttachmentsTabViewModel]] = {
     for {
       attachments <- fileService.getAttachments(liabilityCase)
       letter <- fileService.getLetterOfAuthority(liabilityCase)
-    } yield {
-      val (applicantFiles, nonApplicantFiles) = attachments.partition(_.operator.isEmpty)
-      Some(AttachmentsTabViewModel(liabilityCase.reference, applicantFiles, letter, nonApplicantFiles))
-    }
+    } yield Some(AttachmentsTabViewModel(liabilityCase.reference, attachments, letter))
   }
 
   def addNote(reference: String): Action[AnyContent] = (verify.authenticated andThen
@@ -84,35 +103,7 @@ class LiabilityController @Inject()(
         .map(_ => Redirect(v2.routes.LiabilityController.displayLiability(reference)))
     }
 
-    activityForm.bindFromRequest.fold(onError, onSuccess)
-  }
-
-  def buildLiabilityView(activityForm: Form[ActivityFormData])(implicit request: AuthenticatedCaseRequest[AnyContent]): Future[Result] = {
-    val liabilityCase: Case = request.`case`
-    val liabilityViewModel = LiabilityViewModel.fromCase(liabilityCase, request.operator)
-
-    for {
-      tuple <- liabilityViewActivityDetails(liabilityCase.reference)
-      attachmentsTab <- getAttachmentTab(liabilityCase)
-      c592 = Some(C592ViewModel.fromCase(liabilityCase))
-      activityTab = ActivityViewModel.fromCase(liabilityCase, tuple._1, tuple._2)
-    } yield {
-      Ok(liability_view(liabilityViewModel, c592, attachmentsTab, activityTab, activityForm))
-    }
-  }
-
-  def liabilityViewActivityDetails(reference: String)(implicit request: AuthenticatedRequest[AnyContent]) = {
-    for {
-      events <- eventsService.getFilteredEvents(reference, NoPagination(), Some(EventType.values.diff(EventType.sampleEvents)))
-      queues <- queuesService.getAll
-    } yield (events, queues, tabIndexFor(ACTIVITY))
-  }
-
-  private def getAttachmentTab(liabilityCase: Case)(implicit hc: HeaderCarrier): Future[Option[AttachmentsTabViewModel]] = {
-    for {
-      attachments <- fileService.getAttachments(liabilityCase)
-      letter <- fileService.getLetterOfAuthority(liabilityCase)
-    } yield Some(AttachmentsTabViewModel(liabilityCase.reference, attachments, letter))
+    ActivityForm.form.bindFromRequest.fold(onError, onSuccess)
   }
 
 }

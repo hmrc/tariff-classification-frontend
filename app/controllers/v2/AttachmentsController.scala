@@ -133,10 +133,10 @@ class AttachmentsController @Inject()(
   }
 
   private def renderAttachmentsErrors(reference: String, errorMessage: String)
-                                     (implicit hc: HeaderCarrier, req: AuthenticatedCaseRequest[_]): Future[Result] = {
+                                     (implicit hc: HeaderCarrier, request: AuthenticatedCaseRequest[_]): Future[Result] = {
     val errors = Seq(FormError("file-input", errorMessage))
     val formWithErrors = UploadAttachmentForm.form.copy(errors = errors)
-    liabilityController.buildLiabilityView(reference, formWithErrors)
+    liabilityController.buildLiabilityView(uploadAttachmentForm = formWithErrors)
   }
 
 }

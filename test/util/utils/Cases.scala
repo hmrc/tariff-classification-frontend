@@ -69,9 +69,8 @@ object Cases {
     TraderContact("trader-business-name", "email", "phone", ""), "trader-1234567", "officer-1234567",
     PortOrComplianceOfficerContact("name", "email", "phone"), "", ""))
   val attachmentsTabViewModel = Some(AttachmentsTabViewModel(Cases.liabilityCaseExample.reference, Nil, None))
-  val attachmentsTabViewModel = Some(AttachmentsTabViewModel(Cases.liabilityCaseExample.reference, Nil, None, Nil))
-  val activityTabViewModel = ActivityViewModel("referenceNumber", Some(operatorWithoutPermissions),
-    Some("queueId"), Instant.now, pagedEvent, queues, "queue Name")
+  val activityTabViewModel = Some(ActivityViewModel("referenceNumber", Some(operatorWithoutPermissions),
+    Some("queueId"), Instant.now, pagedEvent, queues, "queue Name"))
   val activityTabViewModelWithPermissions = ActivityViewModel("referenceNumber", Some(operatorWithPermissions),
     Some("queueId"), Instant.now, pagedEvent, queues, "queue Name")
   val operatorWithPermissions = Operator(id = "0", name =Some("liability op name"), permissions = Set(Permission.ADD_NOTE, Permission.VIEW_CASES))

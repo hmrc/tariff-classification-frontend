@@ -32,18 +32,19 @@
         case_heading: views.html.v2.case_heading,
         c592_tab: views.html.partials.liabilities.c592_tab,
         activity_tab: views.html.partials.liabilities.activity_tab,
-        attachments_details: views.html.v2.attachments_details
+        attachments_details: views.html.partials.liabilities.attachments_details
 )
 
-@(liabilityViewModel: LiabilityViewModel,
+@(
+        liabilityViewModel: LiabilityViewModel,
         c592ViewModel: Option[C592ViewModel],
-        attachmentsTabViewModel: Option[AttachmentsTabViewModel],
-        activityViewModel: ActivityViewModel,
-        activityForm: Form[ActivityFormData])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-        attachmentsTabViewModel: Option[AttachmentsTabViewModel],
+        //activity
+        activityViewModel: Option[ActivityViewModel],
+        activityForm: Form[ActivityFormData],
 
-        //forms
+        //attachments
+        attachmentsTabViewModel: Option[AttachmentsTabViewModel],
         uploadAttachmentsForm: Form[String]
 )(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 @main(bodyClasses = None) {
@@ -66,7 +67,6 @@
             }
 
             @* attachments*@
-            @* TODO WIPs*@
             @if(attachmentsTabViewModel.isDefined) {
                 <li class="govuk-tabs__list-item govuk-tabs__list-item">
                     <a class="govuk-tabs__tab" href="#attachments_tab">
@@ -76,11 +76,13 @@
             }
 
             @* activity*@
+            @if(activityViewModel.isDefined) {
                 <li class="govuk-tabs__list-item govuk-tabs__list-item">
                     <a class="govuk-tabs__tab" href="#activity_tab">
                     @messages("page.title.activity")
                     </a>
                 </li>
+            }
 
         </ul>
 
@@ -91,7 +93,6 @@
             </div>
         }
 
-        @* TODO WIPs*@
         @* attachments*@
         @if(attachmentsTabViewModel.isDefined) {
             <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="attachments_tab">
@@ -103,12 +104,17 @@
             )
             </div>
         }
-        @* TODO WIPs*@
-        <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="activity_tab">
-            @activity_tab(activityViewModel: ActivityViewModel, activityForm, tabIndexFor(CaseDetailPage.ACTIVITY))
-        </div>
 
-        @* TODO WIPs*@
+        @* activity*@
+        @if(activityViewModel.isDefined) {
+            <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="activity_tab">
+            @activity_tab(
+                activityViewModel.get,
+                activityForm,
+                tabIndexFor(CaseDetailPage.ACTIVITY)
+            )
+            </div>
+        }
 
     </div>
 }

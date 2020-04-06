@@ -28,7 +28,7 @@ import play.api.test.FakeRequest
 import service.FileStoreService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
-import views.html.v2.partials.{attachments_details, attachments_list}
+import views.html.partials.liabilities.{attachments_details, attachments_list}
 import views.html.v2.{case_heading, liability_view, remove_attachment}
 
 class ControllerBaseSpec extends UnitSpec with I18nSupport with GuiceOneAppPerSuite with MockitoSugar with ControllerCommons {
