@@ -30,16 +30,18 @@ object CancelReason extends Enumeration {
       case INVALIDATED_NATIONAL_MEASURE => s"Invalidated due to national legal measure (${code(INVALIDATED_NATIONAL_MEASURE)})"
       case INVALIDATED_WRONG_CLASSIFICATION => s"Invalidated due to incorrect classification (${code(INVALIDATED_WRONG_CLASSIFICATION)})"
       case INVALIDATED_OTHER => s"Invalidated due to other reasons (${code(INVALIDATED_OTHER)})"
-      case unknown => throw new IllegalArgumentException(s"Unexpected reason: $unknown")
+      case unknown: CancelReason => throw new IllegalArgumentException(s"Unexpected reason: $unknown")
     }
   }
 
-  def code(reason: CancelReason): Int = reason match {
-    case ANNULLED => 55
-    case INVALIDATED_CODE_CHANGE => 61
-    case INVALIDATED_EU_MEASURE => 62
-    case INVALIDATED_NATIONAL_MEASURE => 63
-    case INVALIDATED_WRONG_CLASSIFICATION => 64
-    case INVALIDATED_OTHER => 65
-  }
+  def code(reason: CancelReason): Int =
+    reason match {
+      case ANNULLED => 55
+      case INVALIDATED_CODE_CHANGE => 61
+      case INVALIDATED_EU_MEASURE => 62
+      case INVALIDATED_NATIONAL_MEASURE => 63
+      case INVALIDATED_WRONG_CLASSIFICATION => 64
+      case INVALIDATED_OTHER => 65
+      case unknown: CancelReason => throw new IllegalArgumentException(s"Unexpected reason: $unknown")
+    }
 }
