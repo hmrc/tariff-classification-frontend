@@ -161,6 +161,28 @@ class CaseTest extends UnitSpec with MockitoSugar with BeforeAndAfterAll {
     }
   }
 
+  "hasAssignee" should {
+    "return true" in {
+      val c = aCase(
+        withReference("reference"),
+        withBTIApplication,
+        withBTIDetails(sampleToBeReturned = true)
+      ).copy(assignee = Some(Cases.operatorWithAddAttachment))
+
+      c.hasAssignee shouldBe true
+    }
+
+    "return false" in {
+      val c = aCase(
+        withReference("reference"),
+        withBTIApplication,
+        withBTIDetails(sampleToBeReturned = true)
+      ).copy(assignee = None)
+
+      c.hasAssignee shouldBe false
+    }
+  }
+
   private def rulingWithEffectiveEndDate(date: Option[Instant]): Decision = {
     Cases.decision.copy(effectiveEndDate = date)
   }
