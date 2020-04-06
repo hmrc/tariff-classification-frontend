@@ -96,7 +96,8 @@ class AdvancedSearchResultsViewSpec extends ViewSpec {
         fileName = "filename",
         mimeType = "image/png",
         scanStatus = Some(ScanStatus.READY),
-        timestamp = Instant.now()
+        timestamp = Instant.now(),
+        description = "test description"
       )
 
       val searchResult = SearchResult(c, Seq(storedAttachment))
@@ -159,7 +160,8 @@ class AdvancedSearchResultsViewSpec extends ViewSpec {
       fileName = "filename",
       mimeType = "text/plain",
       scanStatus = Some(ScanStatus.READY),
-      timestamp = Instant.now()
+      timestamp = Instant.now(),
+      description = "test description"
     )
 
     val searchResult = SearchResult(c, Seq(storedAttachment))
@@ -193,7 +195,8 @@ class AdvancedSearchResultsViewSpec extends ViewSpec {
       fileName = "filename",
       mimeType = "image/png",
       scanStatus = Some(ScanStatus.READY),
-      timestamp = Instant.now()
+      timestamp = Instant.now(),
+      description = "test description"
     )
 
     val searchResult = SearchResult(c, Seq(storedAttachment))
@@ -227,7 +230,8 @@ class AdvancedSearchResultsViewSpec extends ViewSpec {
       fileName = "filename",
       mimeType = "text/plain",
       scanStatus = None,
-      timestamp = Instant.now()
+      timestamp = Instant.now(),
+      description = "test description"
     )
 
     val searchResult = SearchResult(c, Seq(storedAttachment))
@@ -261,7 +265,8 @@ class AdvancedSearchResultsViewSpec extends ViewSpec {
       fileName = "filename",
       mimeType = "text/plain",
       scanStatus = Some(ScanStatus.FAILED),
-      timestamp = Instant.now()
+      timestamp = Instant.now(),
+      description = "test description"
     )
 
     val searchResult = SearchResult(c, Seq(storedAttachment))

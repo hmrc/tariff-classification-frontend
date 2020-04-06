@@ -28,25 +28,31 @@
 @import models.forms.ActivityFormData
 @import models.request.AuthenticatedRequest
 
-@this(case_heading: views.html.v2.case_heading,
+@this(
+        case_heading: views.html.v2.case_heading,
         c592_tab: views.html.partials.liabilities.c592_tab,
+        sample_status: views.html.partials.liabilities.sample.sample_details_liability,
         activity_tab: views.html.partials.liabilities.activity_tab,
-        attachments_details: views.html.v2.attachments_details,
-        sample_status: views.html.partials.liabilities.sample.sample_details_liability)
+        attachments_details: views.html.partials.liabilities.attachments_details)
 
-@(liabilityViewModel: LiabilityViewModel,
+@(
+        liabilityViewModel: LiabilityViewModel,
         c592ViewModel: Option[C592ViewModel],
-        attachmentsTabViewModel: Option[AttachmentsTabViewModel],
-        activityViewModel: ActivityViewModel,
         sampleStatusTabViewModel: SampleStatusTabViewModel,
-        activityForm: Form[ActivityFormData])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
+        //activity
+        activityViewModel: Option[ActivityViewModel],
+        activityForm: Form[ActivityFormData],
+
+        //attachments
+        attachmentsTabViewModel: Option[AttachmentsTabViewModel],
+        uploadAttachmentsForm: Form[String]
+)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 @main(bodyClasses = None) {
 
     @case_heading(liabilityViewModel.caseHeaderViewModel)
 
-    @* TODO refactor and extract in view model method *@
-    @if(liabilityViewModel.isNewCase && liabilityViewModel.hasPermissions) {
+    @if(liabilityViewModel.showActionThisCase) {
         @change_case_status_button("action-this-case", "Action this case", ReleaseOrSuppressCaseController.onPageLoad(liabilityViewModel.caseHeaderViewModel.referenceNumber))
     }
 
@@ -68,7 +74,6 @@
             </li>
 
             @* attachments*@
-            @* TODO WIPs*@
             @if(attachmentsTabViewModel.isDefined) {
                 <li class="govuk-tabs__list-item govuk-tabs__list-item">
                     <a class="govuk-tabs__tab" href="#attachments_tab">
@@ -78,11 +83,13 @@
             }
 
             @* activity*@
+            @if(activityViewModel.isDefined) {
                 <li class="govuk-tabs__list-item govuk-tabs__list-item">
                     <a class="govuk-tabs__tab" href="#activity_tab">
                     @messages("page.title.activity")
                     </a>
                 </li>
+            }
 
         </ul>
 
@@ -97,19 +104,28 @@
             @sample_status(sampleStatusTabViewModel: SampleStatusTabViewModel, tabIndexFor(CaseDetailPage.SAMPLE_DETAILS))
         </div>
 
-        @* TODO WIPs*@
         @* attachments*@
         @if(attachmentsTabViewModel.isDefined) {
             <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="attachments_tab">
-            @attachments_details(UploadAttachmentForm.form, attachmentsTabViewModel.get, tabIndexFor(CaseDetailPage.ATTACHMENTS))
+            @attachments_details(
+                uploadAttachmentsForm,
+                attachmentsTabViewModel.get,
+                tabIndexFor(CaseDetailPage.ATTACHMENTS),
+                request.hasPermission(Permission.ADD_ATTACHMENT)
+            )
             </div>
         }
-        @* TODO WIPs*@
-        <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="activity_tab">
-            @activity_tab(activityViewModel: ActivityViewModel, activityForm, tabIndexFor(CaseDetailPage.ACTIVITY))
-        </div>
 
-        @* TODO WIPs*@
+        @* activity*@
+        @if(activityViewModel.isDefined) {
+            <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="activity_tab">
+            @activity_tab(
+                activityViewModel.get,
+                activityForm,
+                tabIndexFor(CaseDetailPage.ACTIVITY)
+            )
+            </div>
+        }
 
     </div>
 }

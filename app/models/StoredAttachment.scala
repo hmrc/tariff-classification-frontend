@@ -20,19 +20,20 @@ import java.time.Instant
 
 import models.response.FileMetadata
 import models.response.ScanStatus.ScanStatus
+import play.twirl.api.Html
 import utils.Dates
 
-case class StoredAttachment
-(
-  id: String,
-  public: Boolean,
-  operator: Option[Operator],
-  url: Option[String],
-  fileName: String,
-  mimeType: String,
-  scanStatus: Option[ScanStatus],
-  timestamp: Instant
-) {
+case class StoredAttachment(
+                             id: String,
+                             public: Boolean,
+                             operator: Option[Operator],
+                             url: Option[String],
+                             fileName: String,
+                             mimeType: String,
+                             scanStatus: Option[ScanStatus],
+                             timestamp: Instant,
+                             description: String
+                           ) {
 
   def isImage: Boolean = {
     mimeType match {
@@ -43,10 +44,31 @@ case class StoredAttachment
     }
   }
 
-  def formattedDate: String ={
+  def formattedDate: String = {
     Dates.format(this.timestamp)
   }
 
+  def nameOfOperator: String = {
+    val name = operator.map(op => {
+      op.name.map(name => name.trim).getOrElse("")
+    }).getOrElse("")
+    name
+  }
+
+  def delimiterBetweenNameAndRole: Html = {
+    if (nameOfOperator.trim.isEmpty || roleOfOperator.trim.isEmpty) {
+      Html("")
+    } else {
+      Html("<br>")
+    }
+  }
+
+  def roleOfOperator: String = {
+    val role = operator.map(op => {
+      op.role.toString
+    }).getOrElse("")
+    role
+  }
 }
 
 object StoredAttachment {
@@ -60,7 +82,8 @@ object StoredAttachment {
       url = metadata.url,
       fileName = metadata.fileName,
       mimeType = metadata.mimeType,
-      scanStatus = metadata.scanStatus
+      scanStatus = metadata.scanStatus,
+      description = attachment.description
     )
   }
 }

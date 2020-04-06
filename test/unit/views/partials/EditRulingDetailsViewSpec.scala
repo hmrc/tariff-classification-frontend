@@ -105,7 +105,8 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
         url = None,
         mimeType = "text/plain",
         scanStatus = Some(ScanStatus.READY),
-        timestamp = Instant.now()
+        timestamp = Instant.now(),
+        description = "test description"
       )
 
       // When
@@ -130,7 +131,8 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
         url = None,
         mimeType = "text/plain",
         scanStatus = Some(ScanStatus.FAILED),
-        timestamp = Instant.now()
+        timestamp = Instant.now(),
+        description = "test description"
       )
 
       // When
@@ -155,7 +157,8 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
         url = None,
         mimeType = "text/plain",
         scanStatus = Some(ScanStatus.READY),
-        timestamp = Instant.now()
+        timestamp = Instant.now(),
+        description = "test description"
       )
 
       // When
@@ -179,7 +182,8 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
         url = None,
         mimeType = "text/plain",
         scanStatus = Some(ScanStatus.READY),
-        timestamp = Instant.now()
+        timestamp = Instant.now(),
+        description = "test description"
       )
 
       // When
@@ -203,7 +207,8 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
         url = Some("url"),
         mimeType = "text/plain",
         scanStatus = Some(ScanStatus.READY),
-        timestamp = Instant.now()
+        timestamp = Instant.now(),
+        description = "test description"
       )
 
       // When
@@ -229,7 +234,8 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
         url = None,
         mimeType = "text/plain",
         scanStatus = Some(ScanStatus.READY),
-        timestamp = Instant.now()
+        timestamp = Instant.now(),
+        description = "test description"
       )
 
       // When
