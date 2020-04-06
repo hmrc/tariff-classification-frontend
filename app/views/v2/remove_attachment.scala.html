@@ -36,7 +36,7 @@
     <div class="grid-row">
         <div class="column-full">
 
-            <h3 class="heading-medium mt-0">Are you sure you want to remove @fileName from this case?</h3>
+            <h3 id="remove_question" class="heading-medium mt-0">Are you sure you want to remove @fileName from this case?</h3>
 
             @helper.form(action = AttachmentsController.confirmRemoveAttachment(c.referenceNumber, fileId, fileName), 'id -> "remove-attachment") {
                 @helper.CSRF.formField

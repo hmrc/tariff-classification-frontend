@@ -19,6 +19,7 @@ package views.v2
 import models.forms.RemoveAttachmentForm
 import models.viewmodels.CaseHeaderViewModel
 import models.{Case, StoredAttachment}
+import play.api.data.FormError
 import play.twirl.api.HtmlFormat
 import utils.Cases
 import views.ViewSpec
@@ -35,6 +36,16 @@ class RemoveAttachmentViewSpec extends ViewSpec {
     remove_attachment(header, RemoveAttachmentForm.form, "file test", "name test")
   }
 
+  def renderWithError: HtmlFormat.Appendable = {
+    val header = CaseHeaderViewModel.fromCase(caseOne)
+    remove_attachment(
+      header,
+      RemoveAttachmentForm.form.copy(errors = Seq(FormError("remove_attachment", "Test error"))),
+      "file test",
+      "name test"
+    )
+  }
+
   def remove_attachment: remove_attachment = app.injector.instanceOf[remove_attachment]
 
   "Remove attachment View" should {
@@ -45,46 +56,25 @@ class RemoveAttachmentViewSpec extends ViewSpec {
       doc.getElementsByTag("error-summary").size() shouldBe 0
     }
 
-    //    "render upload form" in {
-    //      val doc = view(renderAttachmentsDetails)
-    //
-    //      doc.getElementsByTag("form").size() shouldBe 1
-    //    }
-    //
-    //    "render upload form and correct heading" in {
-    //      val doc = view(renderAttachmentsDetails)
-    //
-    //      doc.getElementById("attachments-heading").text() shouldBe messages("case.menu.attachments")
-    //    }
-    //
-    //    "render upload form and empty attachments table" in {
-    //      val doc = view(renderAttachmentsDetails)
-    //
-    //      doc.getElementById("all-empty-table").text() shouldBe messages("case.attachment.table.empty")
-    //      doc.getElementsByTag("table").size() shouldBe 0
-    //    }
-    //
-    //    "render upload form and some elements in attachments table" in {
-    //      val doc = view(renderAttachmentsDetailsWithAttachments)
-    //
-    //      doc.getElementsByTag("table").size() shouldBe 1
-    //    }
-    //
-    //    "render upload form and some elements in attachments table check edit details button" in {
-    //      val doc = view(renderAttachmentsDetailsWithAttachments)
-    //      val expectedMsg = messages("case.attachment.edit.file.text") + " " +
-    //        messages("case.attachment.edit.file.hidden.text",attachment.fileName)
-    //
-    //      doc.getElementById(s"all-row-0-edit-attachment-details").text().trim shouldBe expectedMsg
-    //    }
-    //
-    //    "render upload form and some elements in attachments table check remove attachment button" in {
-    //      val doc = view(renderAttachmentsDetailsWithAttachments)
-    //      val expectedMsg = messages("case.attachment.remove.file.text") + " " +
-    //        messages("case.attachment.remove.file.hidden.text",attachment.fileName)
-    //
-    //      doc.getElementById(s"all-row-0-remove").text().trim shouldBe expectedMsg
-    //    }
+    "render with errors" in {
+      val doc = view(renderWithError)
+
+      doc.getElementsByClass("error-summary").size() shouldBe 1
+    }
+
+    "render without errors check question" in {
+      val doc = view(renderWithoutError)
+
+      doc.getElementById("remove_question").text().trim shouldBe "Are you sure you want to remove name test from this case?"
+    }
+
+    "render without errors check form" in {
+      val doc = view(renderWithoutError)
+      val expected: Seq[String] = Seq("Yes", "No", "Confirm")
+      val actual: Seq[String] = doc.getElementsByTag("form").text().split(" ").toSeq
+
+      actual shouldBe expected
+    }
   }
 
 }
