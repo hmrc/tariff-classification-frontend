@@ -69,7 +69,7 @@ class SampleController @Inject()(
     caseService.updateSampleStatus(c, status, operator)
   }
 
-  override protected def onSuccessRedirect(reference: String): Call = routes.CaseController.sampleDetails(reference)
+  override protected def onSuccessRedirect(reference: String, isV2Liability: Boolean): Call = routes.CaseController.sampleDetails(reference)
 
   def sampleDetails(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
     getCaseAndRenderView(

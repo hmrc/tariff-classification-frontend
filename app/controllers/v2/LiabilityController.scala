@@ -16,14 +16,12 @@
 
 package controllers.v2
 
-
 import config.AppConfig
 import controllers.{RequestActions, v2}
 import javax.inject.{Inject, Singleton}
-import models.TabIndexes.tabIndexFor
 import models.forms.{ActivityForm, ActivityFormData, UploadAttachmentForm}
 import models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
-import models.viewmodels.{ActivityViewModel, AttachmentsTabViewModel, C592ViewModel, LiabilityViewModel, SampleStatusTabViewModel}
+import models.viewmodels._
 import models.{Case, Permission, _}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -31,7 +29,6 @@ import play.api.mvc._
 import service.{CasesService, EventsService, FileStoreService, QueuesService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.CaseDetailPage.ACTIVITY
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -106,6 +103,7 @@ class LiabilityController @Inject()(
 
   def addNote(reference: String): Action[AnyContent] = (verify.authenticated andThen
     verify.casePermissions(reference) andThen verify.mustHave(Permission.ADD_NOTE)).async { implicit request =>
+
     def onError: Form[ActivityFormData] => Future[Result] = errorForm => {
       buildLiabilityView(errorForm)
     }
@@ -114,7 +112,6 @@ class LiabilityController @Inject()(
       eventsService.addNote(request.`case`, validForm.note, request.operator)
         .map(_ => Redirect(v2.routes.LiabilityController.displayLiability(reference)))
     }
-
 
     ActivityForm.form.bindFromRequest.fold(onError, onSuccess)
   }
