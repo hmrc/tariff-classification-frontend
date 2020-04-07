@@ -33,6 +33,7 @@ import config.AppConfig
 import models.EventType.EventType
 import models.SampleStatus.SampleStatus
 import models.{Permission, _}
+import play.api.inject.guice.GuiceApplicationBuilder
 import service.{CasesService, EventsService}
 import utils.Cases._
 
@@ -48,14 +49,25 @@ class SampleControllerSpec extends UnitSpec with Matchers
   private val eventsService = mock[EventsService]
   private val operator = Operator(id = "id")
 
+  implicit lazy val appWithLiabilityToggle = new GuiceApplicationBuilder()
+    .configure("toggle.new-liability-details" -> true)
+    .build()
+
+  lazy val appConf: AppConfig = appWithLiabilityToggle.injector.instanceOf[AppConfig]
+
   private def controller(requestCase: Case) = new SampleController(
     new SuccessfulRequestActions(inject[BodyParsers.Default], operator, c = requestCase), casesService, eventsService, messagesControllerComponents, appConfig
   )
 
   private def controller(requestCase: Case, permission: Set[Permission]) = new SampleController(
-    new RequestActionsWithPermissions(inject[BodyParsers.Default], permission, c = requestCase), casesService, eventsService, messagesControllerComponents, appConfig
+    new RequestActionsWithPermissions(inject[BodyParsers.Default], permission, c = requestCase),
+    casesService, eventsService, messagesControllerComponents, appConfig
   )
 
+  private def controllerV2(requestCase: Case, permission: Set[Permission]) = new SampleController(
+    new RequestActionsWithPermissions(inject[BodyParsers.Default], permission, c = requestCase),
+    casesService, eventsService, messagesControllerComponents, appConf
+  )
   private implicit val hc: HeaderCarrier = HeaderCarrier()
 
   override def afterEach(): Unit = {
@@ -173,6 +185,20 @@ class SampleControllerSpec extends UnitSpec with Matchers
 
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
+    }
+
+    "update & redirect when isV2Liability is set to true" in {
+      val c = aLiabilityCase(withReference("reference"), withSampleStatus(Some(SampleStatus.AWAITING)), withDecision())
+
+      given(casesService.updateSampleStatus(refEq(c), any[Option[SampleStatus]], any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(c))
+
+      val result = await(controllerV2(c, Set(Permission.EDIT_SAMPLE)).updateStatus("reference")
+      (newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("status" -> "")))
+
+      verify(casesService).updateSampleStatus(refEq(c), refEq(None), any[Operator])(any[HeaderCarrier])
+
+      status(result) shouldBe Status.SEE_OTHER
+      locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/v2/reference/liability")
     }
 
   }

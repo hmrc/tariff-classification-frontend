@@ -46,7 +46,8 @@ trait StatusChangeAction[T] extends RenderCaseAction { this: FrontendController 
 
   implicit val config: AppConfig
 
-  def chooseStatus(reference: String, options: Option[String] = None): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen
+  def chooseStatus(reference: String, options: Option[String] = None): Action[AnyContent] = (verify.authenticated
+    andThen verify.casePermissions(reference) andThen
     verify.mustHave(requiredPermission)).async { implicit request =>
     getCaseAndRenderView(
       reference,
@@ -54,8 +55,9 @@ trait StatusChangeAction[T] extends RenderCaseAction { this: FrontendController 
     )
   }
 
-  def updateStatus(reference: String, options: Option[String] = None): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen
-    verify.mustHave(requiredPermission)).async { implicit request =>
+  def updateStatus(reference: String, options: Option[String] = None): Action[AnyContent] =
+    (verify.authenticated andThen verify.casePermissions(reference)
+      andThen verify.mustHave(requiredPermission)).async { implicit request =>
     form.bindFromRequest().fold(
       errors => {
         getCaseAndRenderView(
