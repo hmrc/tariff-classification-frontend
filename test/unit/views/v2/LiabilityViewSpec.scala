@@ -95,6 +95,17 @@ class LiabilityViewSpec extends ViewSpec {
       doc should containElementWithID("activity_tab")
     }
 
+    "render Sample tab" in {
+      val c = aLiabilityCase(withReference("reference"), withLiabilityApplication())
+      val doc = view(liabilityView(LiabilityViewModel.fromCase(
+        c, Cases.operatorWithAddAttachment), None,
+        sampleStatusTabViewModel,
+        Cases.activityTabViewModel, activityForm,
+        None, uploadAttachmentForm
+      ))
+      doc should containElementWithID("sample_status_tab")
+    }
+
     "render the action this case button for new case" in {
 
       val c = aLiabilityCase(withReference("reference"), withStatus(CaseStatus.NEW), withLiabilityApplication())
