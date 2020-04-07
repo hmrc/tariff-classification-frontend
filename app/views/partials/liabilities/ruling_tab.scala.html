@@ -15,43 +15,43 @@
  *@
 
 @import models.viewmodels.RulingViewModel
-@import utils.Dates
 @import views.html.partials.tab_heading
 
 @this()
 
-@(rulingViewModel: RulingViewModel, startAtTabIndex : Int = 0)(implicit messages: Messages)
+@(rulingViewModel: RulingViewModel, startAtTabIndex: Int = 0)(implicit messages: Messages)
 
-
-@tab_heading("attachments", messages("case.liability.decision.heading"))
+@tab_heading("ruling", messages("case.liability.decision.heading"))
 
 @*Information from the C592*@
 <h3 class="heading-medium mt-30 mb-30">@messages("case.v2.liability.ruling.info.from.c592")</h3>
 <dl class="dl-mb-2">
-    <div class="grid-row">
-        <dt id="ruling_vode_by_trader" class="column-one-third">
+
+    <div id="ruling_code_by_trader" class="grid-row">
+        <dt class="column-one-third">
         @messages("case.v2.liability.ruling.info.from.c592.code.by.trader")
         </dt>
         <dd class="column-two-thirds">
-            <span id="ruling_bindingCommodityCodeValue">@rulingViewModel.commodityCodeEnteredByTraderOrAgent</span>
+            <span id="ruling_commodityCodeEnteredByTraderOrAgent">@rulingViewModel.commodityCodeEnteredByTraderOrAgent</span>
         </dd>
     </div>
 
-    <div class="grid-row">
-        <dt id="ruling_itemDescription" class="column-one-third">
+    <div id="ruling_code_suggested" class="grid-row">
+        <dt class="column-one-third">
         @messages("case.v2.liability.ruling.info.from.c592.code.suggested")
         </dt>
         <dd class="column-two-thirds">
-            <span id="ruling_itemDescriptionValue" class="pre-wrap">@rulingViewModel.commodityCodeSuggestedByOfficer</span>
+            <span id="ruling_commodityCodeSuggestedByOfficer" class="pre-wrap">@rulingViewModel.commodityCodeSuggestedByOfficer</span>
         </dd>
     </div>
+</dl>
 
 @*liability ruling*@
 <h3 class="heading-medium mt-30 mb-30">@messages("case.v2.liability.ruling.section")</h3>
 
 <dl class="dl-mb-2">
-    <div class="grid-row">
-@*        TODO fix href*@
+    <div id="ruling_edit_details" class="grid-row">
+        @* TODO fix href*@
         <a href="#" class="column-one-third">
             <span>@messages("case.v2.liability.ruling.edit.details")</span>
             <span class="visually-hidden">@messages("case.v2.liability.ruling.edit.details")</span>
@@ -60,7 +60,7 @@
 
     <div class="grid-row">
         <dt id="ruling_bindingCommodityCode" class="column-one-third">
-            @messages("case.v2.liability.ruling.commodity_code")
+        @messages("case.v2.liability.ruling.commodity_code")
         </dt>
         <dd class="column-two-thirds">
             <span id="ruling_bindingCommodityCodeValue">@rulingViewModel.commodityCode</span>
@@ -69,7 +69,7 @@
 
     <div class="grid-row">
         <dt id="ruling_itemDescription" class="column-one-third">
-            @messages("case.v2.liability.ruling.item_description")
+        @messages("case.v2.liability.ruling.item_description")
         </dt>
         <dd class="column-two-thirds">
             <span id="ruling_itemDescriptionValue" class="pre-wrap">@rulingViewModel.itemDescription</span>
@@ -78,7 +78,7 @@
 
     <div class="grid-row">
         <dt id="ruling_justification" class="column-one-third">
-            @messages("case.v2.liability.ruling.justification")
+        @messages("case.v2.liability.ruling.justification")
         </dt>
         <dd class="column-two-thirds">
             <span id="ruling_justificationValue" class="pre-wrap">@rulingViewModel.justification</span>
@@ -87,7 +87,7 @@
 
     <div class="grid-row">
         <dt id="ruling_searches" class="column-one-third">
-            @messages("case.v2.liability.ruling.searches")
+        @messages("case.v2.liability.ruling.searches")
         </dt>
         <dd class="column-two-thirds">
             <span id="ruling_searchesValue" class="pre-wrap">@rulingViewModel.methodSearch</span>
@@ -96,7 +96,7 @@
 
     <div class="grid-row">
         <dt id="ruling_exclusions" class="column-one-third">
-            @messages("case.v2.liability.ruling.exclusions")
+        @messages("case.v2.liability.ruling.exclusions")
         </dt>
         <dd class="column-two-thirds">
             <span id="ruling_exclusionsValue" class="pre-wrap">@rulingViewModel.methodExclusion</span>

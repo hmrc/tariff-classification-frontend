@@ -68,7 +68,7 @@ object Cases {
   val c592ViewModel = Some(C592ViewModel("entry number", "03 Mar 2020", "", None, "", "good-name",
     TraderContact("trader-business-name", "email", "phone", ""), "trader-1234567", "officer-1234567",
     PortOrComplianceOfficerContact("name", "email", "phone"), "", ""))
-  val rulingViewModel = Some(RulingViewModel("123456", "item description", "justification", "method searches", "method exclusions"))
+  val rulingViewModel = Some(RulingViewModel("","","123456", "item description", "justification", "method searches", "method exclusions",CaseStatus.OPEN))
 
   val attachmentsTabViewModel = Some(AttachmentsTabViewModel(Cases.liabilityCaseExample.reference, Nil, None))
   val activityTabViewModel = Some(ActivityViewModel("referenceNumber", Some(operatorWithoutPermissions),

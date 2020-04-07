@@ -28,16 +28,17 @@ class RulingViewModelTest extends UnitSpec {
       val liabilityCase = Cases.liabilityCaseWithDecisionExample
       val rulingViewModel = RulingViewModel.fromCase(liabilityCase)
 
-      assert(RulingViewModel.fromCase(liabilityCase) === RulingViewModel(
-        commodityCodeEnteredByTraderOrAgent = "",
-        commodityCodeSuggestedByOfficer= "",
+      val expected = RulingViewModel(
+        commodityCodeEnteredByTraderOrAgent = "trader-1234567",
+        commodityCodeSuggestedByOfficer = "officer-1234567",
         commodityCode = "040900",
         itemDescription = "good description",
         justification = "justification",
         methodSearch = "",
         methodExclusion = "Excludes everything ever",
         status = CaseStatus.OPEN)
-      )
+
+      rulingViewModel shouldBe expected
     }
   }
 }
