@@ -61,10 +61,6 @@ class LiabilityController @Inject()(
     val liabilityCase: Case = request.`case`
     val liabilityViewModel = LiabilityViewModel.fromCase(liabilityCase, request.operator)
     val x = Some(RulingViewModel.fromCase(liabilityCase))
-    println("x :::::::::::::")
-    println("x :::::::::::::" + x)
-    println("x :::::::::::::")
-
 
     for {
       tuple <- liabilityViewActivityDetails(liabilityCase.reference)
