@@ -16,6 +16,7 @@
 
 package models.viewmodels
 
+import models.CaseStatus
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.Cases
 
@@ -28,11 +29,14 @@ class RulingViewModelTest extends UnitSpec {
       val rulingViewModel = RulingViewModel.fromCase(liabilityCase)
 
       assert(RulingViewModel.fromCase(liabilityCase) === RulingViewModel(
+        commodityCodeEnteredByTraderOrAgent = "",
+        commodityCodeSuggestedByOfficer= "",
         commodityCode = "040900",
         itemDescription = "good description",
         justification = "justification",
         methodSearch = "",
-        methodExclusion = "Excludes everything ever")
+        methodExclusion = "Excludes everything ever",
+        status = CaseStatus.OPEN)
       )
     }
   }

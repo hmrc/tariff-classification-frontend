@@ -734,6 +734,7 @@ case.v2.liability.ruling.info.from.c592=Information from the C592
 case.v2.liability.ruling.info.from.c592.code.by.trader=Code entered by trader or agent
 case.v2.liability.ruling.info.from.c592.code.suggested=Code suggested by officer
 
+case.v2.liability.ruling.section=Liability ruling
 case.v2.liability.ruling.edit.details=Edit details
 case.v2.liability.ruling.tab_title=Ruling
 case.v2.liability.ruling.commodity_code=Commodity code

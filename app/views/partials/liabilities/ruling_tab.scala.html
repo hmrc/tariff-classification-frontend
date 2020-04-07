@@ -16,13 +16,17 @@
 
 @import models.viewmodels.RulingViewModel
 @import utils.Dates
+@import views.html.partials.tab_heading
 
 @this()
 
 @(rulingViewModel: RulingViewModel, startAtTabIndex : Int = 0)(implicit messages: Messages)
 
+
+@tab_heading("attachments", messages("case.liability.decision.heading"))
+
 @*Information from the C592*@
-<h2 class="heading-large mt-0 mb-30">@messages("case.v2.liability.ruling.info.from.c592")</h2>
+<h3 class="heading-medium mt-30 mb-30">@messages("case.v2.liability.ruling.info.from.c592")</h3>
 <dl class="dl-mb-2">
     <div class="grid-row">
         <dt id="ruling_vode_by_trader" class="column-one-third">
@@ -42,40 +46,12 @@
         </dd>
     </div>
 
-    <div class="grid-row">
-        <dt id="ruling_justification" class="column-one-third">
-        @messages("case.v2.liability.ruling.justification")
-        </dt>
-        <dd class="column-two-thirds">
-            <span id="ruling_justificationValue" class="pre-wrap">@rulingViewModel.justification</span>
-        </dd>
-    </div>
-
-    <div class="grid-row">
-        <dt id="ruling_searches" class="column-one-third">
-        @messages("case.v2.liability.ruling.searches")
-        </dt>
-        <dd class="column-two-thirds">
-            <span id="ruling_searchesValue" class="pre-wrap">@rulingViewModel.methodSearch</span>
-        </dd>
-    </div>
-
-    <div class="grid-row">
-        <dt id="ruling_exclusions" class="column-one-third">
-        @messages("case.v2.liability.ruling.exclusions")
-        </dt>
-        <dd class="column-two-thirds">
-            <span id="ruling_exclusionsValue" class="pre-wrap">@rulingViewModel.methodExclusion</span>
-        </dd>
-    </div>
-</dl>
-
 @*liability ruling*@
-<h2 class="heading-large mt-0 mb-30">@messages("case.liability.decision.heading")</h2>
+<h3 class="heading-medium mt-30 mb-30">@messages("case.v2.liability.ruling.section")</h3>
 
 <dl class="dl-mb-2">
     <div class="grid-row">
-        <a href="#">
+        <a href="#" class="column-one-third">
             <span>@messages("case.v2.liability.ruling.edit.details")</span>
             <span class="visually-hidden">@messages("case.v2.liability.ruling.edit.details")</span>
         </a>
