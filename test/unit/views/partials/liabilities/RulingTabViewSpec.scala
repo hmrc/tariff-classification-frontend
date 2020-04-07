@@ -39,6 +39,7 @@ class RulingTabViewSpec extends ViewSpec {
   "Ruling Tab" should {
 
     val doc = view(rulingTab(rulingViewModel, 1))
+    val notShowEditButton = view(rulingTab(rulingViewModel.copy(status = CaseStatus.CANCELLED), 1))
 
     "display tab title" in {
       doc.getElementById("ruling-heading").text shouldBe messages("case.liability.decision.heading")
@@ -68,6 +69,10 @@ class RulingTabViewSpec extends ViewSpec {
       val expected = messages("case.v2.liability.ruling.edit.details") + " " + messages("case.v2.liability.ruling.edit.details")
 
       doc.getElementById("ruling_edit_details").text shouldBe expected
+    }
+
+    "not render edit details" in {
+      notShowEditButton.getElementsByTag("a").size() shouldBe 0
     }
 
     "render commodity code" in {

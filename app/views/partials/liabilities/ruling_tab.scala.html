@@ -50,13 +50,15 @@
 <h3 class="heading-medium mt-30 mb-30">@messages("case.v2.liability.ruling.section")</h3>
 
 <dl class="dl-mb-2">
-    <div id="ruling_edit_details" class="grid-row">
-        @* TODO fix href*@
-        <a href="#" class="column-one-third">
-            <span>@messages("case.v2.liability.ruling.edit.details")</span>
-            <span class="visually-hidden">@messages("case.v2.liability.ruling.edit.details")</span>
-        </a>
-    </div>
+    @if(rulingViewModel.showEditRuling) {
+        <div id="ruling_edit_details" class="grid-row">
+            @* TODO fix href*@
+            <a href="#" class="column-one-third">
+                <span>@messages("case.v2.liability.ruling.edit.details")</span>
+                <span class="visually-hidden">@messages("case.v2.liability.ruling.edit.details")</span>
+            </a>
+        </div>
+    }
 
     <div class="grid-row">
         <dt id="ruling_bindingCommodityCode" class="column-one-third">
