@@ -17,10 +17,31 @@
 package models.viewmodels
 
 import models.CaseStatus
+import models.CaseStatus._
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.Cases
 
 class RulingViewModelTest extends UnitSpec {
+
+  val testRuling = RulingViewModel("", "", "", "", "", "", "", CaseStatus.NEW)
+
+  val showEditRuling = Set(OPEN)
+  val notShowEditRuling: Set[models.CaseStatus.Value] = CaseStatus.values -- showEditRuling
+
+  "showEditRuling" should {
+
+    showEditRuling.foreach { element =>
+      s"return true -> edit details for '$element'" in {
+        testRuling.copy(status = element).showEditRuling shouldBe true
+      }
+    }
+
+    notShowEditRuling.foreach { element =>
+      s"return false -> edit details for '$element'" in {
+        testRuling.copy(status = element).showEditRuling shouldBe false
+      }
+    }
+  }
 
   "fromCase" should {
 
@@ -36,7 +57,7 @@ class RulingViewModelTest extends UnitSpec {
         justification = "justification",
         methodSearch = "",
         methodExclusion = "Excludes everything ever",
-        status = CaseStatus.OPEN)
+        status = OPEN)
 
       rulingViewModel shouldBe expected
     }
