@@ -21,9 +21,66 @@
 
 @(rulingViewModel: RulingViewModel, startAtTabIndex : Int = 0)(implicit messages: Messages)
 
+@*Information from the C592*@
+<h2 class="heading-large mt-0 mb-30">@messages("case.v2.liability.ruling.info.from.c592")</h2>
+<dl class="dl-mb-2">
+    <div class="grid-row">
+        <dt id="ruling_vode_by_trader" class="column-one-third">
+        @messages("case.v2.liability.ruling.info.from.c592.code.by.trader")
+        </dt>
+        <dd class="column-two-thirds">
+            <span id="ruling_bindingCommodityCodeValue">@rulingViewModel.commodityCodeEnteredByTraderOrAgent</span>
+        </dd>
+    </div>
+
+    <div class="grid-row">
+        <dt id="ruling_itemDescription" class="column-one-third">
+        @messages("case.v2.liability.ruling.info.from.c592.code.suggested")
+        </dt>
+        <dd class="column-two-thirds">
+            <span id="ruling_itemDescriptionValue" class="pre-wrap">@rulingViewModel.commodityCodeSuggestedByOfficer</span>
+        </dd>
+    </div>
+
+    <div class="grid-row">
+        <dt id="ruling_justification" class="column-one-third">
+        @messages("case.v2.liability.ruling.justification")
+        </dt>
+        <dd class="column-two-thirds">
+            <span id="ruling_justificationValue" class="pre-wrap">@rulingViewModel.justification</span>
+        </dd>
+    </div>
+
+    <div class="grid-row">
+        <dt id="ruling_searches" class="column-one-third">
+        @messages("case.v2.liability.ruling.searches")
+        </dt>
+        <dd class="column-two-thirds">
+            <span id="ruling_searchesValue" class="pre-wrap">@rulingViewModel.methodSearch</span>
+        </dd>
+    </div>
+
+    <div class="grid-row">
+        <dt id="ruling_exclusions" class="column-one-third">
+        @messages("case.v2.liability.ruling.exclusions")
+        </dt>
+        <dd class="column-two-thirds">
+            <span id="ruling_exclusionsValue" class="pre-wrap">@rulingViewModel.methodExclusion</span>
+        </dd>
+    </div>
+</dl>
+
+@*liability ruling*@
 <h2 class="heading-large mt-0 mb-30">@messages("case.liability.decision.heading")</h2>
 
 <dl class="dl-mb-2">
+    <div class="grid-row">
+        <a href="#">
+            <span>@messages("case.v2.liability.ruling.edit.details")</span>
+            <span class="visually-hidden">@messages("case.v2.liability.ruling.edit.details")</span>
+        </a>
+    </div>
+
     <div class="grid-row">
         <dt id="ruling_bindingCommodityCode" class="column-one-third">
             @messages("case.v2.liability.ruling.commodity_code")

@@ -16,9 +16,11 @@
 
 package models.viewmodels
 
-import models.{Case, Decision}
+import models.Case
 
 case class RulingViewModel(
+                            commodityCodeEnteredByTraderOrAgent: String,
+                            commodityCodeSuggestedByOfficer: String,
                             commodityCode: String,
                             itemDescription: String,
                             justification: String,
@@ -28,7 +30,9 @@ case class RulingViewModel(
 
 object RulingViewModel {
 
-  def fromCase(c: Case) = {
+  def fromCase(c: Case): RulingViewModel = {
+
+    val c592ViewModel = C592ViewModel.fromCase(c)
 
     val bindingCommodityCode = c.decision.fold("")(_.bindingCommodityCode)
     val goodsDescription = c.decision.fold("")(_.goodsDescription)
@@ -36,10 +40,14 @@ object RulingViewModel {
     val decisionMethodSearch = c.decision.fold("")(_.methodSearch.getOrElse(""))
     val decisionMethodExclusion = c.decision.fold("")(_.methodExclusion.getOrElse(""))
 
-    RulingViewModel(commodityCode = bindingCommodityCode,
+    RulingViewModel(
+      commodityCodeEnteredByTraderOrAgent = c592ViewModel.commodityCodeEnteredByTraderOrAgent,
+      commodityCodeSuggestedByOfficer = c592ViewModel.commodityCodeSuggestedByOfficer,
+      commodityCode = bindingCommodityCode,
       itemDescription = goodsDescription,
       justification = decisionJustification,
       methodSearch = decisionMethodSearch,
-      methodExclusion = decisionMethodExclusion)
+      methodExclusion = decisionMethodExclusion
+    )
   }
 }
