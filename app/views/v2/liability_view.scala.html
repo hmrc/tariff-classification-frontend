@@ -32,6 +32,7 @@
         case_heading: views.html.v2.case_heading,
         c592_tab: views.html.partials.liabilities.c592_tab,
         ruling_tab: views.html.partials.liabilities.ruling_tab,
+        sample_status: views.html.partials.liabilities.sample.sample_details_liability,
         activity_tab: views.html.partials.liabilities.activity_tab,
         attachments_details: views.html.partials.liabilities.attachments_details
 )
@@ -40,6 +41,7 @@
         liabilityViewModel: LiabilityViewModel,
         c592ViewModel: Option[C592ViewModel],
         rulingViewModel: Option[RulingViewModel],
+        sampleStatusTabViewModel: SampleStatusTabViewModel,
 
         //activity
         activityViewModel: Option[ActivityViewModel],
@@ -77,6 +79,12 @@
                 </li>
             }
 
+            <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
+                <a class="govuk-tabs__tab" href="#sample_status_tab">
+                    @messages("page.title.sample")
+                </a>
+            </li>
+
             @* attachments*@
             @if(attachmentsTabViewModel.isDefined) {
                 <li class="govuk-tabs__list-item govuk-tabs__list-item">
@@ -110,6 +118,10 @@
             @ruling_tab(rulingViewModel.get)
         </div>
         }
+
+        <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="sample_status_tab">
+            @sample_status(sampleStatusTabViewModel: SampleStatusTabViewModel, tabIndexFor(CaseDetailPage.SAMPLE_DETAILS))
+        </div>
 
         @* attachments*@
         @if(attachmentsTabViewModel.isDefined) {

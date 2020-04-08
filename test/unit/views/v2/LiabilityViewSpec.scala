@@ -16,9 +16,9 @@
 
 package views.v2
 
-import models.CaseStatus
+import models.{CaseStatus, Event, Paged}
 import models.forms.{ActivityForm, ActivityFormData, UploadAttachmentForm}
-import models.viewmodels.LiabilityViewModel
+import models.viewmodels.{LiabilityViewModel, SampleStatusTabViewModel}
 import play.api.data.Form
 import utils.Cases
 import utils.Cases._
@@ -33,6 +33,13 @@ class LiabilityViewSpec extends ViewSpec {
   def liabilityView: liability_view = app.injector.instanceOf[liability_view]
 
   def uploadAttachmentForm: Form[String] = UploadAttachmentForm.form
+
+  val sampleStatusTabViewModel = SampleStatusTabViewModel("caseReference",
+    isSampleBeingSent = true,
+    Some("a person"),
+    None,
+    "location",
+    sampleActivity = Paged.empty[Event])
 
   "Liability View" should {
 
@@ -84,6 +91,7 @@ class LiabilityViewSpec extends ViewSpec {
         LiabilityViewModel.fromCase(c, Cases.operatorWithAddAttachment),
         None,
         None,
+        sampleStatusTabViewModel,
         Cases.activityTabViewModel, activityForm,
         Cases.attachmentsTabViewModel.map(_.copy(attachments = Seq(Cases.storedAttachment), letter = Some(Cases.letterOfAuthority))),
         UploadAttachmentForm.form
@@ -104,6 +112,18 @@ class LiabilityViewSpec extends ViewSpec {
         None, uploadAttachmentForm
       ))
       doc should containElementWithID("activity_tab")
+    }
+
+    "render Sample tab" in {
+      val c = aLiabilityCase(withReference("reference"), withLiabilityApplication())
+      val doc = view(liabilityView(LiabilityViewModel.fromCase(
+        c, Cases.operatorWithAddAttachment), None,
+        None,
+        sampleStatusTabViewModel,
+        Cases.activityTabViewModel, activityForm,
+        None, uploadAttachmentForm
+      ))
+      doc should containElementWithID("sample_status_tab")
     }
 
     "render the action this case button for new case" in {

@@ -1,0 +1,43 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.AppConfig
+@import models.request.AuthenticatedRequest
+@import models.{Application, BTIApplication, Case, EORIDetails, Event, Paged, Permission, SampleStatus}
+@import views.html.partials._
+@import views.html.partials.sample.sample_status_events_table
+@import models.SampleReturn
+
+@import models.viewmodels.SampleStatusTabViewModel
+
+@this()
+
+@(s: SampleStatusTabViewModel, startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+
+<h3 class="heading-medium" id="sample-status-heading">@messages("case.v2.liability.sample_status_tab.sample_location_heading")</h3>
+
+<div id="sample-status" class="grid-row">
+ <dt class="column-two-thirds" id="sample-status-value" >
+ @s.sampleLocation
+ </dt>
+ @if(request.hasPermission(Permission.EDIT_SAMPLE)) {
+  <dd class="column-one-third" id="change-sample-status">
+   <a tabindex="@{
+    startAtTabIndex + 10
+   }" href="@routes.SampleController.chooseStatus(s.caseReference, None)">@messages("case.v2.liability.sample_status_tab.sample_location_change")</a>
+  </dd>
+ }
+</div>

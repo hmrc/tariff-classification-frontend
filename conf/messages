@@ -744,3 +744,12 @@ case.v2.liability.ruling.searches=Searches performed
 case.v2.liability.ruling.exclusions=Exclusions
 
 case.v2.liability.activity_tab.tab_title=Activity
+
+case.v2.liability.sample_status_tab.tab_title=Sample status
+case.v2.liability.sample_status_tab.hint=Sample photos are in the Attachments section.
+case.v2.liability.sample_status_tab.should_sample_return=Should the sample be returned?
+case.v2.liability.sample_status_tab.sample_location_heading=Sample location
+case.v2.liability.sample_status_tab.sample_location_change=Change
+case.v2.liability.sample_status_tab.sample_activity_timeline_heading=Sample activity timeline
+case.v2.liability.sample_status_tab.who_is_sending_sample_p=Who is sending the sample?
+

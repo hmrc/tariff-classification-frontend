@@ -16,11 +16,9 @@
 
 package controllers.v2
 
-
 import config.AppConfig
 import controllers.{RequestActions, v2}
 import javax.inject.{Inject, Singleton}
-import models.TabIndexes.tabIndexFor
 import models.forms.{ActivityForm, ActivityFormData, UploadAttachmentForm}
 import models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
 import models.viewmodels._
@@ -31,7 +29,6 @@ import play.api.mvc._
 import service.{CasesService, EventsService, FileStoreService, QueuesService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.CaseDetailPage.ACTIVITY
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -63,15 +60,17 @@ class LiabilityController @Inject()(
     val x = Some(RulingViewModel.fromCase(liabilityCase))
 
     for {
-      tuple <- liabilityViewActivityDetails(liabilityCase.reference)
+      (activityEvents, queues) <- liabilityViewActivityDetails(liabilityCase.reference)
       attachmentsTab <- getAttachmentTab(liabilityCase)
+      sampleTab <- getSampleTab(liabilityCase)
       c592 = Some(C592ViewModel.fromCase(liabilityCase))
-      activityTab = Some(ActivityViewModel.fromCase(liabilityCase, tuple._1, tuple._2))
+      activityTab = Some(ActivityViewModel.fromCase(liabilityCase, activityEvents, queues))
     } yield {
       Ok(liability_view(
         liabilityViewModel,
         c592,
         x,
+        sampleTab,
         activityTab,
         activityForm,
         attachmentsTab,
@@ -80,11 +79,11 @@ class LiabilityController @Inject()(
     }
   }
 
-  def liabilityViewActivityDetails(reference: String)(implicit request: AuthenticatedRequest[_]): Future[(Paged[Event], Seq[Queue], Int)] = {
+  def liabilityViewActivityDetails(reference: String)(implicit request: AuthenticatedRequest[_]) = {
     for {
       events <- eventsService.getFilteredEvents(reference, NoPagination(), Some(EventType.values.diff(EventType.sampleEvents)))
       queues <- queuesService.getAll
-    } yield (events, queues, tabIndexFor(ACTIVITY))
+    } yield (events, queues)
   }
 
   private def getAttachmentTab(liabilityCase: Case)(implicit hc: HeaderCarrier): Future[Option[AttachmentsTabViewModel]] = {
@@ -94,8 +93,19 @@ class LiabilityController @Inject()(
     } yield Some(AttachmentsTabViewModel(liabilityCase.reference, attachments, letter))
   }
 
+  private def getSampleTab(c: Case)(implicit request: AuthenticatedRequest[_]) = {
+    eventsService.getFilteredEvents(c.reference, NoPagination(),Some(EventType.sampleEvents)).map {
+      sampleEvents => SampleStatusTabViewModel(
+        c.reference,
+        c.sample,
+        sampleEvents
+      )
+    }
+  }
+
   def addNote(reference: String): Action[AnyContent] = (verify.authenticated andThen
     verify.casePermissions(reference) andThen verify.mustHave(Permission.ADD_NOTE)).async { implicit request =>
+
     def onError: Form[ActivityFormData] => Future[Result] = errorForm => {
       buildLiabilityView(errorForm)
     }
