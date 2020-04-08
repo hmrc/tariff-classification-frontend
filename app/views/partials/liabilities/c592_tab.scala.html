@@ -18,14 +18,24 @@
 @import models.viewmodels.LiabilityViewModel
 @import views.html.includes.main
 @import models.viewmodels.C592ViewModel
+@import models.request.AuthenticatedRequest
 
 @this()
 
-@(
-        c592ViewModel: C592ViewModel
-)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(c592ViewModel: C592ViewModel)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 <h2 class="heading-large mt-0 mb-30">@messages("case.v2.liability.c592.tab_heading")</h2>
+
+    @if(request.hasPermission(Permission.EDIT_LIABILITY)) {
+        <div class="grid-row  mb-2">
+            <span class="column-one-third">
+                <a id="edit-liability-details" href="@routes.LiabilityController.editLiabilityDetails(c592ViewModel.caseReference)">
+                @messages("case.v2.liability.c592.edit_details_title")
+                </a>
+            </span>
+        </div>
+    }
+
 <dl class="dl-mb-2">
     <div class="grid-row">
         <dt class="column-one-half">
