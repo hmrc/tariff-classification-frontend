@@ -65,7 +65,7 @@ object Cases {
   val operatorWithoutPermissions = Operator(id = "0", name =Some("liability op name"), permissions = Set())
   val operatorWithAddAttachment = Operator(id = "0", name =Some("liability op name"), permissions = Set(Permission.ADD_ATTACHMENT))
 
-  val c592ViewModel = Some(C592ViewModel("entry number", "03 Mar 2020", "", None, "", "good-name",
+  val c592ViewModel = Some(C592ViewModel("caseReference", "entry number", "03 Mar 2020", "", None, "", "good-name",
     TraderContact("trader-business-name", "email", "phone", ""), "trader-1234567", "officer-1234567",
     PortOrComplianceOfficerContact("name", "email", "phone"), "", ""))
   val attachmentsTabViewModel = Some(AttachmentsTabViewModel(Cases.liabilityCaseExample.reference, Nil, None))

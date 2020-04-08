@@ -19,7 +19,8 @@ package models.viewmodels
 import models.Case
 import utils.Dates
 
-case class C592ViewModel(entryNumber: String,
+case class C592ViewModel(caseReference: String,
+                         entryNumber: String,
                          entryDate: String, btiCase: String,
                          repaymentClaim: Option[Boolean],
                          receiptDate: String,
@@ -39,7 +40,8 @@ object C592ViewModel {
   def fromCase(c: Case): C592ViewModel = {
     val liabilityOrder = c.application.asLiabilityOrder
 
-    C592ViewModel(liabilityOrder.entryNumber.getOrElse(""),
+    C592ViewModel(c.reference,
+      liabilityOrder.entryNumber.getOrElse(""),
       liabilityOrder.entryDate.map(Dates.format).getOrElse(""),
       NOT_YET_IMPLEMENTED,
       None,
