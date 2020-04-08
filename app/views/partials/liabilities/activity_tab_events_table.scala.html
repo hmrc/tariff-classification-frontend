@@ -23,6 +23,8 @@
 @import models.viewmodels.ActivityViewModel
 @(activityViewModel: ActivityViewModel, startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
+<h3 class="heading-medium mt-30 mb-30">@messages("case.v2.liability.activity_tab.activity_timeline_h2")</h3>
+
 <table id="activity-events">
     <thead>
         <tr>
