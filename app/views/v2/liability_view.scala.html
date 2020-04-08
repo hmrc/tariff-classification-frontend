@@ -51,7 +51,7 @@
         attachmentsTabViewModel: Option[AttachmentsTabViewModel],
         uploadAttachmentsForm: Form[String]
 )(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
-@main(bodyClasses = None) {
+@main(bodyClasses = None, customTitle = Some(messages("case.v2.liaiblity.page_title"))) {
 
     @case_heading(liabilityViewModel.caseHeaderViewModel)
 

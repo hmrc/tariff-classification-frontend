@@ -19,7 +19,8 @@ package models.viewmodels
 import models.Case
 import utils.Dates
 
-case class C592ViewModel(entryNumber: String,
+case class C592ViewModel(caseReference: String,
+                         entryNumber: String,
                          entryDate: String, btiCase: String,
                          repaymentClaim: Option[Boolean],
                          receiptDate: String,
@@ -40,6 +41,7 @@ object C592ViewModel {
     val liabilityOrder = c.application.asLiabilityOrder
 
     C592ViewModel(
+      caseReference = c.reference,
       entryNumber = liabilityOrder.entryNumber.getOrElse(""),
       entryDate = liabilityOrder.entryDate.map(Dates.format).getOrElse(""),
       btiCase = NOT_YET_IMPLEMENTED,
