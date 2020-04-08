@@ -37,7 +37,7 @@ class RulingTabViewSpec extends ViewSpec {
 
   "Ruling Tab" should {
 
-    val doc = view(rulingTab(rulingViewModel, 1))
+    val doc = view(rulingTab(rulingViewModel.copy(showEditRuling = true), 1))
     val notShowEditButton = view(rulingTab(rulingViewModel.copy(showEditRuling = false), 1))
 
     "display tab title" in {

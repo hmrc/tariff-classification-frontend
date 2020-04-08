@@ -28,21 +28,21 @@ class RulingViewModelTest extends UnitSpec {
   "showEditRuling" should {
 
     "show edit ruling button" in {
-      val aCase = dummyCase.copy(status = NEW)
-      val permissions: Set[Permission] = Set(Permission.EDIT_RULING)
-      RulingViewModel.fromCase(aCase, permissions).showEditRuling shouldBe true
-    }
-
-    "not show edit ruling button because case status" in {
       val aCase = dummyCase.copy(status = OPEN)
       val permissions: Set[Permission] = Set(Permission.EDIT_RULING)
       RulingViewModel.fromCase(aCase, permissions).showEditRuling shouldBe true
     }
 
+    "not show edit ruling button because case status" in {
+      val aCase = dummyCase.copy(status = REJECTED)
+      val permissions: Set[Permission] = Set(Permission.EDIT_RULING)
+      RulingViewModel.fromCase(aCase, permissions).showEditRuling shouldBe false
+    }
+
     "not show edit ruling button because permission is missing" in {
-      val aCase = dummyCase.copy(status = NEW)
-      val permissions: Set[Permission] = Set(Permission.ADD_ATTACHMENT)
-      RulingViewModel.fromCase(aCase, permissions).showEditRuling shouldBe true
+      val aCase = dummyCase.copy(status = OPEN)
+      val permissions: Set[Permission] = Set()
+      RulingViewModel.fromCase(aCase, permissions).showEditRuling shouldBe false
     }
   }
 
