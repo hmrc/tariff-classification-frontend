@@ -46,4 +46,30 @@ class CancelReasonTest extends UnitSpec {
     }
   }
 
+  "Review code" should {
+    "format 'Annulled'" in {
+      CancelReason.code(CancelReason.ANNULLED) shouldBe 55
+    }
+
+    "format 'Invalidated Code Change'" in {
+      CancelReason.code(CancelReason.INVALIDATED_CODE_CHANGE) shouldBe 61
+    }
+
+    "format 'Invalidated EU Measure'" in {
+      CancelReason.code(CancelReason.INVALIDATED_EU_MEASURE) shouldBe 62
+    }
+
+    "format 'Invalidated National Measure'" in {
+      CancelReason.code(CancelReason.INVALIDATED_NATIONAL_MEASURE) shouldBe 63
+    }
+
+    "format 'Invalidated Wrong Classification'" in {
+      CancelReason.code(CancelReason.INVALIDATED_WRONG_CLASSIFICATION) shouldBe 64
+    }
+
+    "format 'Invalidated Other'" in {
+      CancelReason.code(CancelReason.INVALIDATED_OTHER) shouldBe 65
+    }
+  }
+
 }

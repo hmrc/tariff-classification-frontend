@@ -57,6 +57,7 @@ class LiabilityController @Inject()(
                         )(implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
     val liabilityCase: Case = request.`case`
     val liabilityViewModel = LiabilityViewModel.fromCase(liabilityCase, request.operator)
+    val rulingViewModel = Some(RulingViewModel.fromCase(liabilityCase, request.operator.permissions))
 
     for {
       (activityEvents, queues) <- liabilityViewActivityDetails(liabilityCase.reference)
@@ -68,6 +69,7 @@ class LiabilityController @Inject()(
       Ok(liability_view(
         liabilityViewModel,
         c592,
+        rulingViewModel,
         sampleTab,
         activityTab,
         activityForm,

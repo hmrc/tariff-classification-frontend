@@ -57,7 +57,4 @@ object FormMappings {
       override def unbind(key: String, value: String): Map[String, String] =
         Map(key -> value)
     })
-
-  def isInSeq[T](seq: Seq[T]): String => Boolean =
-    s => seq.exists(_.toString == s)
 }

@@ -30,22 +30,34 @@ class LiabilityViewModelSpec extends UnitSpec {
     "CANCELLED",
     isLive = false)
 
+  val openCase = Cases.liabilityCaseExample.copy(status = CaseStatus.OPEN)
+  val referredCase = Cases.liabilityCaseExample.copy(status = CaseStatus.REFERRED)
+  val rejectedCase = Cases.liabilityCaseExample.copy(status = CaseStatus.REJECTED)
+  val suspendedCase = Cases.liabilityCaseExample.copy(status = CaseStatus.SUSPENDED)
+  val completedCase = Cases.liabilityCaseExample.copy(status = CaseStatus.COMPLETED)
+
+  val newCase = Cases.liabilityCaseExample.copy(status = CaseStatus.NEW)
+  val cancelledCase = Cases.liabilityCaseExample.copy(status = CaseStatus.CANCELLED)
+
+  val casesWithRulingTab = Seq(openCase, referredCase, rejectedCase, suspendedCase, completedCase)
+  val casesWithoutRulingTab = Seq(newCase, cancelledCase)
+
   "showActionThisCase" should {
 
     "isNewCase = false and hasPermissions = false" in {
-      LiabilityViewModel(caseHeader, isNewCase = false, hasPermissions = false).showActionThisCase shouldBe false
+      LiabilityViewModel(caseHeader, isNewCase = false, hasPermissions = false, showRulingTab = false).showActionThisCase shouldBe false
     }
 
     "isNewCase = false and hasPermissions = true" in {
-      LiabilityViewModel(caseHeader, isNewCase = false, hasPermissions = true).showActionThisCase shouldBe false
+      LiabilityViewModel(caseHeader, isNewCase = false, hasPermissions = true, showRulingTab = false).showActionThisCase shouldBe false
     }
 
     "isNewCase = true and hasPermissions = false" in {
-      LiabilityViewModel(caseHeader, isNewCase = true, hasPermissions = false).showActionThisCase shouldBe false
+      LiabilityViewModel(caseHeader, isNewCase = true, hasPermissions = false, showRulingTab = false).showActionThisCase shouldBe false
     }
 
     "isNewCase = true and hasPermissions = true" in {
-      LiabilityViewModel(caseHeader, isNewCase = true, hasPermissions = true).showActionThisCase shouldBe true
+      LiabilityViewModel(caseHeader, isNewCase = true, hasPermissions = true, showRulingTab = false).showActionThisCase shouldBe true
     }
   }
 
@@ -70,7 +82,8 @@ class LiabilityViewModelSpec extends UnitSpec {
         "CANCELLED",
         isLive = false),
         isNewCase = false,
-        hasPermissions = false))
+        hasPermissions = false,
+        showRulingTab = false))
     }
 
     "create a complete view model if it has an expired ruling" in {
@@ -105,7 +118,6 @@ class LiabilityViewModelSpec extends UnitSpec {
       val op = Cases.operatorWithoutPermissions
 
       assert(LiabilityViewModel.fromCase(c, op).isNewCase === false)
-
     }
 
     "create a viewModel with hasPermissions flag set to false" in {
@@ -128,6 +140,23 @@ class LiabilityViewModelSpec extends UnitSpec {
 
       assert(LiabilityViewModel.fromCase(c, op).hasPermissions === true)
     }
-  }
 
+    casesWithRulingTab.foreach { c =>
+      s"create a viewModel with showRulingTab flag is set to true when Case status is ${c.status}" in {
+
+        val op = Cases.operatorWithoutPermissions
+
+        assert(LiabilityViewModel.fromCase(c, op).showRulingTab === true)
+      }
+    }
+
+    casesWithoutRulingTab.foreach { c =>
+      s"create a viewModel with showRulingTab flag is set to false when Case status is ${c.status}" in {
+
+        val op = Cases.operatorWithoutPermissions
+
+        assert(LiabilityViewModel.fromCase(c, op).showRulingTab === false)
+      }
+    }
+  }
 }

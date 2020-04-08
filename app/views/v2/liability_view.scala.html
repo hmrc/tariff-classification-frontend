@@ -31,13 +31,16 @@
 @this(
         case_heading: views.html.v2.case_heading,
         c592_tab: views.html.partials.liabilities.c592_tab,
+        ruling_tab: views.html.partials.liabilities.ruling_tab,
         sample_status: views.html.partials.liabilities.sample.sample_details_liability,
         activity_tab: views.html.partials.liabilities.activity_tab,
-        attachments_details: views.html.partials.liabilities.attachments_details)
+        attachments_details: views.html.partials.liabilities.attachments_details
+)
 
 @(
         liabilityViewModel: LiabilityViewModel,
         c592ViewModel: Option[C592ViewModel],
+        rulingViewModel: Option[RulingViewModel],
         sampleStatusTabViewModel: SampleStatusTabViewModel,
 
         //activity
@@ -63,6 +66,15 @@
                 <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
                     <a class="govuk-tabs__tab" href="#c592_tab">
                     @messages("case.v2.liability.c592.tab_title")
+                    </a>
+                </li>
+            }
+
+            @* ruling*@
+            @if(rulingViewModel.isDefined && liabilityViewModel.showRulingTab) {
+                <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
+                    <a class="govuk-tabs__tab" href="#ruling_tab">
+                    @messages("case.v2.liability.ruling.tab_title")
                     </a>
                 </li>
             }
@@ -98,6 +110,13 @@
             <div class="govuk-tabs__panel" id="c592_tab">
             @c592_tab(c592ViewModel.get)
             </div>
+        }
+
+        @* content*@
+        @if(rulingViewModel.isDefined && liabilityViewModel.showRulingTab) {
+        <div class="govuk-tabs__panel" id="ruling_tab">
+            @ruling_tab(rulingViewModel.get)
+        </div>
         }
 
         <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="sample_status_tab">
