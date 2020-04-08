@@ -16,7 +16,6 @@
 
 package views.partials.liabilities
 
-import models.CaseStatus
 import models.viewmodels.RulingViewModel
 import views.ViewSpec
 import views.html.partials.liabilities.ruling_tab
@@ -31,7 +30,7 @@ class RulingTabViewSpec extends ViewSpec {
     "justification",
     "method search",
     "exclusions",
-    CaseStatus.OPEN
+    showEditRuling = true
   )
 
   def rulingTab: ruling_tab = app.injector.instanceOf[ruling_tab]
@@ -39,7 +38,7 @@ class RulingTabViewSpec extends ViewSpec {
   "Ruling Tab" should {
 
     val doc = view(rulingTab(rulingViewModel, 1))
-    val notShowEditButton = view(rulingTab(rulingViewModel.copy(status = CaseStatus.CANCELLED), 1))
+    val notShowEditButton = view(rulingTab(rulingViewModel.copy(showEditRuling = false), 1))
 
     "display tab title" in {
       doc.getElementById("ruling-heading").text shouldBe messages("case.liability.decision.heading")

@@ -39,14 +39,16 @@ object LiabilityViewModel {
     def releaseOrSuppressPermissions: Boolean =
       operator.permissions.contains(Permission.RELEASE_CASE) || operator.permissions.contains(Permission.SUPPRESS_CASE)
 
+    /**
+     * open/referred/rejected/suspended/completed
+     * @return true || false
+     */
     def showRulingAndKeywords: Boolean =
       c.status == CaseStatus.OPEN ||
         c.status == CaseStatus.REFERRED ||
         c.status == CaseStatus.REJECTED ||
         c.status == CaseStatus.SUSPENDED ||
         c.status == CaseStatus.COMPLETED
-
-    //open/referred/rejected/suspended/completed
 
     LiabilityViewModel(
       CaseHeaderViewModel.fromCase(c),

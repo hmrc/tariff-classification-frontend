@@ -16,37 +16,40 @@
 
 package models.viewmodels
 
-import models.CaseStatus
 import models.CaseStatus._
+import models.{Case, CaseStatus, Permission}
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.Cases
 
 class RulingViewModelTest extends UnitSpec {
 
-  val testRuling = RulingViewModel("", "", "", "", "", "", "", CaseStatus.NEW)
-
-  val showEditRuling = Set(OPEN)
-  val notShowEditRuling: Set[models.CaseStatus.Value] = CaseStatus.values -- showEditRuling
+  val dummyCase: Case = Cases.liabilityCaseExample.copy(status = CaseStatus.NEW)
 
   "showEditRuling" should {
 
-    showEditRuling.foreach { element =>
-      s"return true -> edit details for '$element'" in {
-        testRuling.copy(status = element).showEditRuling shouldBe true
-      }
+    "show edit ruling button" in {
+      val aCase = dummyCase.copy(status = NEW)
+      val permissions: Set[Permission] = Set(Permission.EDIT_RULING)
+      RulingViewModel.fromCase(aCase, permissions).showEditRuling shouldBe true
     }
 
-    notShowEditRuling.foreach { element =>
-      s"return false -> edit details for '$element'" in {
-        testRuling.copy(status = element).showEditRuling shouldBe false
-      }
+    "not show edit ruling button because case status" in {
+      val aCase = dummyCase.copy(status = OPEN)
+      val permissions: Set[Permission] = Set(Permission.EDIT_RULING)
+      RulingViewModel.fromCase(aCase, permissions).showEditRuling shouldBe true
+    }
+
+    "not show edit ruling button because permission is missing" in {
+      val aCase = dummyCase.copy(status = NEW)
+      val permissions: Set[Permission] = Set(Permission.ADD_ATTACHMENT)
+      RulingViewModel.fromCase(aCase, permissions).showEditRuling shouldBe true
     }
   }
 
   "fromCase" should {
 
     "return a RulingViewModel when a case with decision is passed" in {
-      val liabilityCase = Cases.liabilityCaseWithDecisionExample
+      val liabilityCase = Cases.liabilityCaseWithDecisionExample.copy(status = CaseStatus.OPEN)
       val rulingViewModel = RulingViewModel.fromCase(liabilityCase)
 
       val expected = RulingViewModel(
@@ -57,7 +60,7 @@ class RulingViewModelTest extends UnitSpec {
         justification = "justification",
         methodSearch = "",
         methodExclusion = "Excludes everything ever",
-        status = OPEN)
+        showEditRuling = false)
 
       rulingViewModel shouldBe expected
     }
