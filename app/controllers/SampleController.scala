@@ -56,7 +56,8 @@ class SampleController @Inject()(
       views.html.change_sample_status(c, notFilledForm)
   }
 
-  override def chooseStatus(reference: String, options: Option[String]): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen
+  override def chooseStatus(reference: String, options: Option[String]): Action[AnyContent] =
+    (verify.authenticated andThen verify.casePermissions(reference) andThen
     verify.mustHave(requiredPermission)).async { implicit request =>
     getCaseAndRenderView(
       reference,
@@ -69,7 +70,10 @@ class SampleController @Inject()(
     caseService.updateSampleStatus(c, status, operator)
   }
 
-  override protected def onSuccessRedirect(reference: String): Call = routes.CaseController.sampleDetails(reference)
+  override protected def onSuccessRedirect(reference: String, isV2Liability: Boolean): Call =
+    if (isV2Liability) controllers.v2.routes.LiabilityController.displayLiability(reference)
+    else routes.CaseController.sampleDetails(reference)
+
 
   def sampleDetails(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
     getCaseAndRenderView(

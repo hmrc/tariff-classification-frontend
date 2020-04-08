@@ -53,6 +53,6 @@ class ExtendedUseCaseController @Inject()(
     caseService.updateExtendedUseStatus(c, status, operator)
   }
 
-  override protected def onSuccessRedirect(reference: String): Call = routes.AppealCaseController.appealDetails(reference)
+  override protected def onSuccessRedirect(reference: String, isV2Liability: Boolean): Call = routes.AppealCaseController.appealDetails(reference)
 
 }

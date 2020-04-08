@@ -31,6 +31,7 @@ import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import config.AppConfig
 import models.SampleReturn.SampleReturn
 import models.{Permission, SampleReturn, _}
+import play.api.inject.guice.GuiceApplicationBuilder
 import service.CasesService
 import utils.Cases._
 
@@ -50,6 +51,16 @@ class SampleReturnControllerSpec extends UnitSpec with Matchers
 
   private def controller(requestCase: Case, permission: Set[Permission]) = new SampleReturnController(
     new RequestActionsWithPermissions(inject[BodyParsers.Default], permission, c = requestCase), casesService, messagesControllerComponents, appConfig
+  )
+
+  implicit lazy val appWithLiabilityToggle = new GuiceApplicationBuilder()
+    .configure("toggle.new-liability-details" -> true)
+    .build()
+
+  lazy val appConf: AppConfig = appWithLiabilityToggle.injector.instanceOf[AppConfig]
+
+  private def controllerV2(requestCase: Case, permission: Set[Permission]) = new SampleReturnController(
+    new RequestActionsWithPermissions(inject[BodyParsers.Default], permission, c = requestCase), casesService, messagesControllerComponents, appConf
   )
 
   private implicit val hc: HeaderCarrier = HeaderCarrier()
@@ -148,6 +159,20 @@ class SampleReturnControllerSpec extends UnitSpec with Matchers
 
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
+    }
+
+    "update & redirect when isV2Liability is set to true" in {
+      val c = aLiabilityCase(withReference("reference"), withDecision())
+
+      given(casesService.updateSampleReturn(refEq(c), any[Option[SampleReturn]], any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(c))
+
+      val result = await(controllerV2(c, Set(Permission.EDIT_SAMPLE)).updateStatus("reference")
+      (newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("return" -> "YES")))
+
+      verify(casesService).updateSampleReturn(refEq(c), refEq(Some(SampleReturn.YES)), any[Operator])(any[HeaderCarrier])
+
+      status(result) shouldBe Status.SEE_OTHER
+      locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/v2/reference/liability")
     }
 
   }

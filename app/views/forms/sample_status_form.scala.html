@@ -33,7 +33,7 @@
     )
     <div>
         <button id="sample_status_form-submit" class="button" type="submit">@messages("case.sample.status.change-status-confirm")</button>
-        <a id="sample_status_form-cancel" class="secondary-button" href="@routes.CaseController.sampleDetails(c.reference)">@messages("case.sample.status.change-status-cancel")</a>
+        <a id="sample_status_form-cancel" class="secondary-button" href="@{if(appConfig.newLiabilityDetails) controllers.v2.routes.LiabilityController.displayLiability(c.reference) else routes.CaseController.sampleDetails(c.reference)}">@messages("case.sample.status.change-status-cancel")</a>
     </div>
 }
 
