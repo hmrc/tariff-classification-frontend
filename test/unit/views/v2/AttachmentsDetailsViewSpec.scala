@@ -27,13 +27,11 @@ import views.html.partials.liabilities.attachments_details
 class AttachmentsDetailsViewSpec extends ViewSpec {
 
   lazy val attachment: StoredAttachment = Cases.storedAttachment.copy()
-  val testTabIndex = 99
 
   def notRenderAttachmentsDetails: HtmlFormat.Appendable = {
     attachments_details(
       UploadAttachmentForm.form,
       AttachmentsTabViewModel("ref", Seq(), None),
-      testTabIndex,
       showUploadAttachments = false
     )
   }
@@ -42,7 +40,6 @@ class AttachmentsDetailsViewSpec extends ViewSpec {
     attachments_details(
       UploadAttachmentForm.form,
       AttachmentsTabViewModel("ref", Seq(), None),
-      testTabIndex,
       showUploadAttachments = true
     )
   }
@@ -53,7 +50,6 @@ class AttachmentsDetailsViewSpec extends ViewSpec {
     attachments_details(
       UploadAttachmentForm.form,
       AttachmentsTabViewModel("ref", Seq(attachment), None),
-      testTabIndex,
       showUploadAttachments = true
     )(requestWithPermissions(Permission.EDIT_ATTACHMENT_DETAIL, Permission.REMOVE_ATTACHMENTS), messages, appConfig)
   }
