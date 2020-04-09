@@ -30,9 +30,9 @@
 
 @this(case_heading: views.html.v2.case_heading)
 
-@(activityViewModel: ActivityViewModel, activityForm: Form[ActivityFormData], startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(activityViewModel: ActivityViewModel, activityForm: Form[ActivityFormData])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@error_summary(activityForm.errors, Some(startAtTabIndex))
+@error_summary(activityForm.errors)
 
 @tab_heading("activity", messages("case.menu.activity"))
 
@@ -47,17 +47,16 @@
     field = activityForm("note"),
     label = "Add case note",
     hint = Some("Add short, descriptive notes to record case activity. For example, 'A sample of one trainer has been received and sent to the lab for testing.'"),
-    tabIndex = Some(startAtTabIndex+10),
     customErrorMessage = Some(messages("error.empty.note"))
    )
    <div class="form-group">
-    <button tabindex="@{startAtTabIndex+11}" id="add-note-submit" class="button" type="submit">Add note to activity timeline</button>
+    <button id="add-note-submit" class="button" type="submit">Add note to activity timeline</button>
    </div>
   }
   </div>
  </div>
 }
-@activity_tab_events_table(activityViewModel, startAtTabIndex+15)
+@activity_tab_events_table(activityViewModel)
 
 <div class="grid-row mt-2">
 @if(request.hasPermission(Permission.VIEW_CASE_ASSIGNEE)){

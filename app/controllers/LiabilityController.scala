@@ -19,7 +19,6 @@ package controllers
 import config.AppConfig
 import models.forms.{DecisionForm, LiabilityDetailsForm}
 import javax.inject.{Inject, Singleton}
-import models.TabIndexes.tabIndexFor
 import models.request.AuthenticatedCaseRequest
 import models.{Case, Decision, _}
 import play.api.data.Form
@@ -50,7 +49,7 @@ class LiabilityController @Inject()(
       c => {
         val df: Form[Decision] = decisionForm.liabilityCompleteForm(c.decision.getOrElse(Decision()))
         val lf: Form[LiabilityOrder] = LiabilityDetailsForm.liabilityDetailsCompleteForm(c.application.asLiabilityOrder)
-        successful(views.html.partials.liabilities.liability_details(c, tabIndexFor(LIABILITY), lf, df))
+        successful(views.html.partials.liabilities.liability_details(c, lf, df))
       }
     )
   }
@@ -58,7 +57,7 @@ class LiabilityController @Inject()(
   def editLiabilityDetails(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.EDIT_LIABILITY)).async { implicit request =>
     successful(
       Ok(
-        views.html.partials.liabilities.liability_details_edit(request.`case`, LiabilityDetailsForm.liabilityDetailsForm(request.`case`.application.asLiabilityOrder), Some(tabIndexFor(LIABILITY)))
+        views.html.partials.liabilities.liability_details_edit(request.`case`, LiabilityDetailsForm.liabilityDetailsForm(request.`case`.application.asLiabilityOrder))
       )
     )
   }

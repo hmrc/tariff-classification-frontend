@@ -33,7 +33,7 @@
 @import views.html.includes.main
 @import views.html.components.initial_focus
 @import views.html.components.confirm_or_cancel_buttons
-@(c: Case, form : Form[LiabilityOrder], startAtTabIndex : Option[Int] = None)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(c: Case, form : Form[LiabilityOrder])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("case.liability.edit.title"))) {
 
@@ -42,7 +42,7 @@
     @defining(c.application.asLiabilityOrder) { liability: LiabilityOrder =>
         <div class="form-group">
 
-            @error_summary(form.errors, startAtTabIndex)
+            @error_summary(form.errors)
 
             @tab_heading("ruling", messages("case.liability.edit"), Some("mt-5"))
 

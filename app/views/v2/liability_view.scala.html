@@ -21,7 +21,6 @@
 @import models.forms.UploadAttachmentForm
 @import models.request.AuthenticatedRequest
 @import models.viewmodels._
-@import models.TabIndexes._
 @import views.CaseDetailPage
 @import views.html.partials.liabilities.activity_tab
 @import models.{Case, Event, Paged, Permission, Queue}
@@ -60,14 +59,14 @@
         <ul class="govuk-tabs__list">
             @* c592*@
             @if(c592ViewModel.isDefined) {
-                <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
+                <li class="govuk-tabs__list-item">
                     <a class="govuk-tabs__tab" href="#c592_tab">
                     @messages("case.v2.liability.c592.tab_title")
                     </a>
                 </li>
             }
 
-            <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
+            <li class="govuk-tabs__list-item">
                 <a class="govuk-tabs__tab" href="#sample_status_tab">
                     @messages("page.title.sample")
                 </a>
@@ -101,7 +100,7 @@
         }
 
         <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="sample_status_tab">
-            @sample_status(sampleStatusTabViewModel: SampleStatusTabViewModel, tabIndexFor(CaseDetailPage.SAMPLE_DETAILS))
+            @sample_status(sampleStatusTabViewModel: SampleStatusTabViewModel)
         </div>
 
         @* attachments*@
@@ -110,7 +109,6 @@
             @attachments_details(
                 uploadAttachmentsForm,
                 attachmentsTabViewModel.get,
-                tabIndexFor(CaseDetailPage.ATTACHMENTS),
                 request.hasPermission(Permission.ADD_ATTACHMENT)
             )
             </div>
@@ -121,8 +119,7 @@
             <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="activity_tab">
             @activity_tab(
                 activityViewModel.get,
-                activityForm,
-                tabIndexFor(CaseDetailPage.ACTIVITY)
+                activityForm
             )
             </div>
         }

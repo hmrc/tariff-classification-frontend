@@ -18,7 +18,7 @@
 @import controllers.routes.CancelRulingController
 @import models.request.AuthenticatedRequest
 @import models.{Case, CaseStatus, Permission}
-@(c: Case, useTabIndex : Option[Int] = None)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(c: Case)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @if(request.hasPermission(Permission.CANCEL_CASE)) {
     <div class="mt-3">
@@ -27,7 +27,7 @@
 
         <p>This liability decision may be cancelled if the commodity code changes or expires, or if incorrect information was provided.</p>
 
-        <a @if(useTabIndex.isDefined){tabindex="@{useTabIndex.get}"} id="cancel-liability-button" class="button" role="button" href="@CancelRulingController.getCancelRuling(c.reference)">
+        <a id="cancel-liability-button" class="button" role="button" href="@CancelRulingController.getCancelRuling(c.reference)">
             Cancel liability decision
         </a>
 
