@@ -173,6 +173,7 @@ case.liability.officerCommodityCode=Code suggested by officer
 case.liability.contactName=Name
 case.liability.contactEmail=Contact email
 case.liability.contactPhone=Contact telephone
+case.liability.decision.heading=Liability ruling details
 case.liability.decision.bindingCommodityCode=Commodity code
 case.liability.decision.goodsDescription=Item description
 case.liability.decision.justification=Justification
@@ -729,6 +730,21 @@ case.v2.liability.c592.telephone_of_port_or_compliance_officer=Contact telephone
 case.v2.liability.c592.repayment_claim=Repayment claim
 case.v2.liability.c592.dvr_number=DVR number
 case.v2.liability.c592.date_for_repayment=Date for repayment
+
+case.v2.liability.activity_tab.hint=Updates about samples are in the Sample status section.
+case.v2.liability.activity_tab.activity_timeline_h2=Activity timeline
+case.v2.liability.ruling.info.from.c592=Information from the C592
+case.v2.liability.ruling.info.from.c592.code.by.trader=Code entered by trader or agent
+case.v2.liability.ruling.info.from.c592.code.suggested=Code suggested by officer
+
+case.v2.liability.ruling.section=Liability ruling
+case.v2.liability.ruling.edit.details=Edit details
+case.v2.liability.ruling.tab_title=Ruling
+case.v2.liability.ruling.commodity_code=Commodity code
+case.v2.liability.ruling.item_description=Item description
+case.v2.liability.ruling.justification=Justification
+case.v2.liability.ruling.searches=Searches performed
+case.v2.liability.ruling.exclusions=Exclusions
 
 case.v2.liability.activity_tab.tab_title=Activity
 

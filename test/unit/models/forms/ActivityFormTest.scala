@@ -16,17 +16,32 @@
 
 package models.forms
 
-import play.api.data.Form
-import play.api.data.Forms.mapping
-import models.forms.mappings.FormMappings.textNonEmpty
+import uk.gov.hmrc.play.test.UnitSpec
 
-case class ActivityFormData(note: String)
+class ActivityFormTest extends UnitSpec {
 
-object ActivityForm {
-  val form: Form[ActivityFormData] = Form(
-    mapping(
-      "note" -> textNonEmpty("error.empty.note")
-    )(ActivityFormData.apply)(ActivityFormData.unapply)
-  )
+  "Bind from request" should {
+    "Bind empty" in {
+      val form = ActivityForm.form.bindFromRequest(Map())
+
+      form.hasErrors shouldBe true
+    }
+
+    "Bind data" in {
+      val form = ActivityForm.form.bindFromRequest(Map("note" -> Seq("other.pdf")))
+
+      form.hasErrors shouldBe false
+    }
+  }
+
+  "Fill" should {
+    "populate some" in {
+      val form = ActivityForm.form.fill(ActivityFormData("data.pdf"))
+
+      form.hasErrors shouldBe false
+      form.data shouldBe Map("note" -> "data.pdf")
+    }
+  }
+
 
 }

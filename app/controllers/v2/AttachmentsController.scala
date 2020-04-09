@@ -112,7 +112,7 @@ class AttachmentsController @Inject()(
       case Some(filePart) if hasInvalidContentType(filePart) =>
         renderAttachmentsErrors(reference, request2Messages(implicitly)("cases.attachment.upload.error.fileType"))
       case Some(filePart) =>
-        val fileUpload = FileUpload(filePart.ref, filePart.filename, filePart.contentType.getOrElse(throw new IllegalArgumentException("Missing file type")))
+        val fileUpload = FileUpload.fromFilePart(filePart)
         casesService.getOne(reference).flatMap {
           case Some(c: Case) =>
             casesService.addAttachment(c, fileUpload, request.operator)

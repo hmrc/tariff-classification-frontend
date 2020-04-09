@@ -40,22 +40,23 @@ object C592ViewModel {
   def fromCase(c: Case): C592ViewModel = {
     val liabilityOrder = c.application.asLiabilityOrder
 
-    C592ViewModel(c.reference,
-      liabilityOrder.entryNumber.getOrElse(""),
-      liabilityOrder.entryDate.map(Dates.format).getOrElse(""),
-      NOT_YET_IMPLEMENTED,
-      None,
-      NOT_YET_IMPLEMENTED,
-      liabilityOrder.goodName.getOrElse(""),
-      TraderContact.fromCase(c),
-      liabilityOrder.traderCommodityCode.getOrElse(""),
-      liabilityOrder.officerCommodityCode.getOrElse(""),
-      PortOrComplianceOfficerContact(liabilityOrder.contact.name,
+    C592ViewModel(
+      caseReference = c.reference,
+      entryNumber = liabilityOrder.entryNumber.getOrElse(""),
+      entryDate = liabilityOrder.entryDate.map(Dates.format).getOrElse(""),
+      btiCase = NOT_YET_IMPLEMENTED,
+      repaymentClaim = None,
+      receiptDate = NOT_YET_IMPLEMENTED,
+      itemName = liabilityOrder.goodName.getOrElse(""),
+      traderContact = TraderContact.fromCase(c),
+      commodityCodeEnteredByTraderOrAgent = liabilityOrder.traderCommodityCode.getOrElse(""),
+      commodityCodeSuggestedByOfficer = liabilityOrder.officerCommodityCode.getOrElse(""),
+      portOrComplianceOfficerContact = PortOrComplianceOfficerContact(liabilityOrder.contact.name,
         liabilityOrder.contact.email,
         liabilityOrder.contact.phone.getOrElse("")
       ),
-      NOT_YET_IMPLEMENTED,
-      NOT_YET_IMPLEMENTED
+      dvrNumber = NOT_YET_IMPLEMENTED,
+      dateForRepayment = NOT_YET_IMPLEMENTED
     )
   }
 
