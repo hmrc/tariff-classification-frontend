@@ -116,12 +116,23 @@ class RulingControllerSpec extends UnitSpec
 
   "validateBeforeComplete Ruling" should {
     val btiCaseWithStatusOpenWithDecision = aCase(withBTIApplication, withReference("reference"), withStatus(CaseStatus.OPEN), withDecision())
+    val liabilityCaseWithStatusOpenWithDecision = aLiabilityCase(withReference("reference"), withStatus(CaseStatus.COMPLETED), withDecision())
 
     "load edit details page when a mandatory field is missing" in {
       val result = controller(btiCaseWithStatusOpenWithDecision, Set(Permission.EDIT_RULING))
         .validateBeforeComplete("reference")(newFakeGETRequestWithCSRF(fakeApplication))
 
       status(result) shouldBe Status.OK
+    }
+
+    "redirect to confirm complete case" in {
+      val result = controller(liabilityCaseWithStatusOpenWithDecision, Set(Permission.EDIT_RULING))
+        .validateBeforeComplete("reference")(newFakeGETRequestWithCSRF(fakeApplication))
+
+      status(result) shouldBe Status.SEE_OTHER
+
+      val expectedUrl = Some(routes.CompleteCaseController.confirmCompleteCase(liabilityCaseWithStatusOpenWithDecision.reference).url)
+      redirectLocation(result) shouldBe expectedUrl
     }
   }
 

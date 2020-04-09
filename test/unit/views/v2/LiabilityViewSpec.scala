@@ -222,6 +222,7 @@ class LiabilityViewSpec extends ViewSpec {
       )
 
       doc should containElementWithID("action-this-case-button")
+      doc.getElementById("action-this-case-button").text shouldBe messages("case.v2.liability.action_this_case.button")
     }
 
     "not render the action this case button" in {
@@ -240,6 +241,43 @@ class LiabilityViewSpec extends ViewSpec {
       )
 
       doc shouldNot containElementWithID("action-this-case-button")
+    }
+
+    "render the change case status button for open case with complete case permission" in {
+
+      val c = aLiabilityCase(withReference("reference"), withStatus(CaseStatus.OPEN), withLiabilityApplication())
+
+      val doc = view(liabilityView(
+        LiabilityViewModel.fromCase(c, Cases.operatorWithCompleteCasePermission),
+        None,
+        None,
+        sampleStatusTabViewModel,
+        None,
+        activityForm,
+        None,
+        uploadAttachmentForm)
+      )
+
+      doc should containElementWithID("change-case-status-button")
+      doc.getElementById("change-case-status-button").text shouldBe messages("case.v2.liability.change_case_status.button")
+    }
+
+    "not render the change case status button" in {
+
+      val c = aLiabilityCase(withReference("reference"), withStatus(CaseStatus.NEW), withLiabilityApplication())
+
+      val doc = view(liabilityView(
+        LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions),
+        None,
+        None,
+        sampleStatusTabViewModel,
+        Cases.activityTabViewModel,
+        activityForm,
+        None,
+        uploadAttachmentForm)
+      )
+
+      doc shouldNot containElementWithID("change-case-status-button")
     }
   }
 }
