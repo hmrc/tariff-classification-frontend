@@ -24,7 +24,7 @@ import utils.Cases
 
 class LiabilityViewModelSpec extends UnitSpec {
 
-  private val caseHeader = CaseHeaderViewModel("Liability",
+  private val caseHeaderViewModel = CaseHeaderViewModel("Liability",
     "trader-business-name", "good-name",
     "1",
     "CANCELLED",
@@ -45,29 +45,51 @@ class LiabilityViewModelSpec extends UnitSpec {
   val operator = Cases.operatorWithCompleteCasePermission
   val operatorWithoutPermission = Cases.operatorWithoutCompleteCasePermission
 
+  def buildLiabilityModel(
+                           caseHeaderViewModel: CaseHeaderViewModel = caseHeaderViewModel,
+                           isNewCase: Boolean = false,
+                           hasPermissions: Boolean = false,
+                           showRulingTab: Boolean = false,
+                           showChangeCaseStatus: Boolean = false,
+                           showTakeOffReferral: Boolean = false
+                         ): LiabilityViewModel = {
+    LiabilityViewModel(
+      caseHeaderViewModel = caseHeaderViewModel,
+      isNewCase = isNewCase,
+      hasPermissions = hasPermissions,
+      showRulingTab = showRulingTab,
+      showChangeCaseStatus = showChangeCaseStatus,
+      showTakeOffReferral
+    )
+  }
+
   "showActionThisCase" should {
 
     "not show action this case button when isNewCase = false and hasPermissions = false" in {
-      LiabilityViewModel(caseHeader, isNewCase = false, hasPermissions = false, showRulingTab = false, showChangeCaseStatus = false).showActionThisCase shouldBe false
+
+      buildLiabilityModel(isNewCase = false, hasPermissions = false).showActionThisCase shouldBe false
     }
 
     "not show action this case button when isNewCase = false and hasPermissions = true" in {
-      LiabilityViewModel(caseHeader, isNewCase = false, hasPermissions = true, showRulingTab = false, showChangeCaseStatus = false).showActionThisCase shouldBe false
+
+      buildLiabilityModel(isNewCase = false, hasPermissions = true).showActionThisCase shouldBe false
     }
 
     "not show action this case button when isNewCase = true and hasPermissions = false" in {
-      LiabilityViewModel(caseHeader, isNewCase = true, hasPermissions = false, showRulingTab = false, showChangeCaseStatus = false).showActionThisCase shouldBe false
+
+      buildLiabilityModel(isNewCase = true, hasPermissions = false).showActionThisCase shouldBe false
     }
 
     "show action this case button when isNewCase = true and hasPermissions = true" in {
-      LiabilityViewModel(caseHeader, isNewCase = true, hasPermissions = true, showRulingTab = false, showChangeCaseStatus = false).showActionThisCase shouldBe true
+
+      buildLiabilityModel(isNewCase = true, hasPermissions = true).showActionThisCase shouldBe true
     }
   }
 
   "showChangeCaseStatus" should {
 
     "show change case status button when case status is OPEN and user has COMPLETE CASE permission" in {
-      
+
       val liabilityViewModel = LiabilityViewModel.fromCase(openCase, operator)
       liabilityViewModel.showChangeCaseStatus shouldBe true
     }
@@ -83,6 +105,29 @@ class LiabilityViewModelSpec extends UnitSpec {
       val liabilityViewModel = LiabilityViewModel.fromCase(referredCase, operatorWithoutPermission)
       liabilityViewModel.showChangeCaseStatus shouldBe false
     }
+  }
+
+  "showTakeOffReferral" should {
+
+    "show take off referral button when case status is REFERRED and user has REOPEN_CASE permission" in {
+
+      val liabilityViewModel = LiabilityViewModel.fromCase(referredCase, operator)
+      liabilityViewModel.showTakeOffReferral shouldBe true
+    }
+
+    "not show take off referral button when case status is not REFERRED" in {
+
+      val liabilityViewModel = LiabilityViewModel.fromCase(openCase, operator)
+      liabilityViewModel.showTakeOffReferral shouldBe false
+    }
+
+
+    "not show take off referral button when user has not REOPEN_CASE permission" in {
+
+      val liabilityViewModel = LiabilityViewModel.fromCase(referredCase, operatorWithoutPermission)
+      liabilityViewModel.showTakeOffReferral shouldBe false
+    }
+
   }
 
   "fromCase" should {
@@ -108,7 +153,8 @@ class LiabilityViewModelSpec extends UnitSpec {
         isNewCase = false,
         hasPermissions = false,
         showRulingTab = false,
-        showChangeCaseStatus = false)
+        showChangeCaseStatus = false,
+        showTakeOffReferral = false)
       )
     }
 

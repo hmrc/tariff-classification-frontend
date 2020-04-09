@@ -24,6 +24,7 @@
 @import views.CaseDetailPage
 @import views.html.components.change_case_status_button
 @import views.html.includes.main
+@import views.html.partials.take_off_referral_button
 
 @this(
         case_heading: views.html.v2.case_heading,
@@ -58,6 +59,10 @@
 
     @if(liabilityViewModel.showChangeCaseStatus) {
         @change_case_status_button("change-case-status", messages("case.v2.liability.change_case_status.button"), ChangeCaseStatusController.onPageLoad(liabilityViewModel.caseHeaderViewModel.referenceNumber))
+    }
+
+    @if(liabilityViewModel.showTakeOffReferral) {
+        @take_off_referral_button(liabilityViewModel.caseHeaderViewModel.referenceNumber)
     }
 
     <div class="govuk-tabs" data-module="govuk-tabs">
