@@ -46,11 +46,6 @@ object LiabilityViewModel {
     def changeCaseStatus: Boolean =
       c.status == CaseStatus.OPEN && completeCasePermission
 
-    /**
-      * open/referred/rejected/suspended/completed
-      *
-      * @return true || false
-      */
     def showRulingAndKeywords: Boolean =
       c.status == CaseStatus.OPEN ||
         c.status == CaseStatus.REFERRED ||
