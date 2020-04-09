@@ -36,7 +36,9 @@
 
 @tab_heading("activity", messages("case.menu.activity"))
 
-@if(request.hasPermission(Permission.ADD_NOTE)) {
+ <div class="form-hint">@messages("case.v2.liability.activity_tab.hint")</div>
+
+ @if(request.hasPermission(Permission.ADD_NOTE)) {
  <div class="grid-row">
 
   <div class="column-full">
@@ -46,6 +48,7 @@
    @input_textarea(
     field = activityForm("note"),
     label = "Add case note",
+    labelClass = Some("heading-small"),
     hint = Some("Add short, descriptive notes to record case activity. For example, 'A sample of one trainer has been received and sent to the lab for testing.'"),
     tabIndex = Some(startAtTabIndex+10),
     customErrorMessage = Some(messages("error.empty.note"))
