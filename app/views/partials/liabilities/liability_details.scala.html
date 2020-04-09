@@ -23,7 +23,7 @@
 @import views.html.partials.liabilities.liability_actions
 
 @import scala.collection.mutable
-@(c: Case, startAtTabIndex : Int = 0, liabilityForm: Form[LiabilityOrder], decisionForm: Form[Decision])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(c: Case, liabilityForm: Form[LiabilityOrder], decisionForm: Form[Decision])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @defining(c.application) { a: Application =>
     @defining(a.asLiabilityOrder) { liability: LiabilityOrder =>
@@ -134,7 +134,7 @@
             </div>
         </dl>
 
-        @liability_actions(c, startAtTabIndex)
+        @liability_actions(c)
 
         @if(request.hasPermission(Permission.EDIT_RULING) || c.decision.isDefined) {
             <hr class="mt-0 mb-0">
@@ -224,14 +224,14 @@
                     </ul>
                 }
 
-                <a tabindex="@startAtTabIndex" id="liability-complete-button" class="button" role="button" @if(liabilityForm.hasErrors || decisionForm.hasErrors) { disabled="disabled" }else{ href="@routes.CompleteCaseController.completeCase(c.reference)"}>
+                <a id="liability-complete-button" class="button" role="button" @if(liabilityForm.hasErrors || decisionForm.hasErrors) { disabled="disabled" }else{ href="@routes.CompleteCaseController.completeCase(c.reference)"}>
                     Complete case
                 </a>
             }
 
-            @liability_ruling_pdf_link(c, Some(startAtTabIndex))
+            @liability_ruling_pdf_link(c)
 
-            @cancel_liability_section(c,Some(startAtTabIndex+50))
+            @cancel_liability_section(c)
         }
 
     }

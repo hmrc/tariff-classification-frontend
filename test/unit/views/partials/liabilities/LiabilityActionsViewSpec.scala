@@ -42,7 +42,7 @@ class LiabilityActionsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(liability_actions(c, 0)(requestWithPermissions(), messages, appConfig))
+      val doc = view(liability_actions(c)(requestWithPermissions(), messages, appConfig))
 
       // Then
       doc shouldNot containHeading
@@ -62,7 +62,7 @@ class LiabilityActionsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(liability_actions(c, 0)(requestWithPermissions(Permission.SUSPEND_CASE), messages, appConfig))
+      val doc = view(liability_actions(c)(requestWithPermissions(Permission.SUSPEND_CASE), messages, appConfig))
 
       // Then
       doc should containHeading
@@ -83,7 +83,7 @@ class LiabilityActionsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(liability_actions(c, 0)(requestWithPermissions(Permission.REJECT_CASE), messages, appConfig))
+      val doc = view(liability_actions(c)(requestWithPermissions(Permission.REJECT_CASE), messages, appConfig))
 
       // Then
       doc should containHeading
@@ -104,7 +104,7 @@ class LiabilityActionsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(liability_actions(c, 0)(requestWithPermissions(), messages, appConfig))
+      val doc = view(liability_actions(c)(requestWithPermissions(), messages, appConfig))
 
       // Then
       doc shouldNot containSuspend
@@ -118,7 +118,7 @@ class LiabilityActionsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(liability_actions(c, 0)(requestWithPermissions(Permission.RELEASE_CASE), messages, appConfig))
+      val doc = view(liability_actions(c)(requestWithPermissions(Permission.RELEASE_CASE), messages, appConfig))
 
       // Then
       doc should containHeading
@@ -139,7 +139,7 @@ class LiabilityActionsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(liability_actions(c, 0)(requestWithPermissions(Permission.SUPPRESS_CASE), messages, appConfig))
+      val doc = view(liability_actions(c)(requestWithPermissions(Permission.SUPPRESS_CASE), messages, appConfig))
 
       // Then
       doc should containHeading
@@ -160,7 +160,7 @@ class LiabilityActionsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(liability_actions(c, 0)(requestWithPermissions(Permission.REOPEN_CASE), messages, appConfig))
+      val doc = view(liability_actions(c)(requestWithPermissions(Permission.REOPEN_CASE), messages, appConfig))
 
       // Then
       doc should containHeading
@@ -181,7 +181,7 @@ class LiabilityActionsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(liability_actions(c, 0)(requestWithPermissions(Permission.REOPEN_CASE), messages, appConfig))
+      val doc = view(liability_actions(c)(requestWithPermissions(Permission.REOPEN_CASE), messages, appConfig))
 
       // Then
       doc should containHeading

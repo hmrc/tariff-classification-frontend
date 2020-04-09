@@ -17,13 +17,13 @@
 @import models.{Case, CaseStatus}
 @import controllers.routes.PdfDownloadController
 
-@(c: Case, useTabIndex : Option[Int] = None)(implicit messages: Messages)
+@(c: Case)(implicit messages: Messages)
 
 @validStatus = @{ Seq(CaseStatus.COMPLETED, CaseStatus.CANCELLED)}
 
 @if(validStatus.contains(c.status) && c.decision.isDefined) {
     <div id="liability-ruling-certificate">
         <h3 class="heading-medium  mt-1">@messages("liability.decision.ruling.certificate.title")</h3>
-        <a @if(useTabIndex.isDefined){tabindex="@{useTabIndex.get}"} id="liability-ruling-certificate-link" target="_blank" href="@PdfDownloadController.getRulingPdf(c.reference)"> @messages("liability.decision.ruling.certificate.link") </a>
+        <a id="liability-ruling-certificate-link" target="_blank" href="@PdfDownloadController.getRulingPdf(c.reference)"> @messages("liability.decision.ruling.certificate.link") </a>
     </div>
 }
