@@ -63,6 +63,9 @@ class RulingController @Inject()(
         val formData = mapper.caseToDecisionFormData(c)
         val decisionFormWithErrors = decisionForm.btiCompleteForm.fillAndValidate(formData)
         editBTIRulingView(decisionFormWithErrors, c)
+      case ApplicationType.LIABILITY_ORDER =>
+        //TODO add validate logic
+        Future.successful(Redirect(routes.CompleteCaseController.confirmCompleteCase(c.reference)))
     })
   }
 

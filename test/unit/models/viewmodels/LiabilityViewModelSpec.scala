@@ -42,22 +42,46 @@ class LiabilityViewModelSpec extends UnitSpec {
   val casesWithRulingTab = Seq(openCase, referredCase, rejectedCase, suspendedCase, completedCase)
   val casesWithoutRulingTab = Seq(newCase, cancelledCase)
 
+  val operator = Cases.operatorWithCompleteCasePermission
+  val operatorWithoutPermission = Cases.operatorWithoutCompleteCasePermission
+
   "showActionThisCase" should {
 
-    "isNewCase = false and hasPermissions = false" in {
-      LiabilityViewModel(caseHeader, isNewCase = false, hasPermissions = false, showRulingTab = false).showActionThisCase shouldBe false
+    "not show action this case button when isNewCase = false and hasPermissions = false" in {
+      LiabilityViewModel(caseHeader, isNewCase = false, hasPermissions = false, showRulingTab = false, showChangeCaseStatus = false).showActionThisCase shouldBe false
     }
 
-    "isNewCase = false and hasPermissions = true" in {
-      LiabilityViewModel(caseHeader, isNewCase = false, hasPermissions = true, showRulingTab = false).showActionThisCase shouldBe false
+    "not show action this case button when isNewCase = false and hasPermissions = true" in {
+      LiabilityViewModel(caseHeader, isNewCase = false, hasPermissions = true, showRulingTab = false, showChangeCaseStatus = false).showActionThisCase shouldBe false
     }
 
-    "isNewCase = true and hasPermissions = false" in {
-      LiabilityViewModel(caseHeader, isNewCase = true, hasPermissions = false, showRulingTab = false).showActionThisCase shouldBe false
+    "not show action this case button when isNewCase = true and hasPermissions = false" in {
+      LiabilityViewModel(caseHeader, isNewCase = true, hasPermissions = false, showRulingTab = false, showChangeCaseStatus = false).showActionThisCase shouldBe false
     }
 
-    "isNewCase = true and hasPermissions = true" in {
-      LiabilityViewModel(caseHeader, isNewCase = true, hasPermissions = true, showRulingTab = false).showActionThisCase shouldBe true
+    "show action this case button when isNewCase = true and hasPermissions = true" in {
+      LiabilityViewModel(caseHeader, isNewCase = true, hasPermissions = true, showRulingTab = false, showChangeCaseStatus = false).showActionThisCase shouldBe true
+    }
+  }
+
+  "showChangeCaseStatus" should {
+
+    "show change case status button when case status is OPEN and user has COMPLETE CASE permission" in {
+      
+      val liabilityViewModel = LiabilityViewModel.fromCase(openCase, operator)
+      liabilityViewModel.showChangeCaseStatus shouldBe true
+    }
+
+    "not show change case status button when case status is not OPEN" in {
+
+      val liabilityViewModel = LiabilityViewModel.fromCase(referredCase, operator)
+      liabilityViewModel.showChangeCaseStatus shouldBe false
+    }
+
+    "not show change case status button when user has not COMPLETE CASE permission" in {
+
+      val liabilityViewModel = LiabilityViewModel.fromCase(referredCase, operatorWithoutPermission)
+      liabilityViewModel.showChangeCaseStatus shouldBe false
     }
   }
 
@@ -83,7 +107,9 @@ class LiabilityViewModelSpec extends UnitSpec {
         isLive = false),
         isNewCase = false,
         hasPermissions = false,
-        showRulingTab = false))
+        showRulingTab = false,
+        showChangeCaseStatus = false)
+      )
     }
 
     "create a complete view model if it has an expired ruling" in {

@@ -15,18 +15,15 @@
  *@
 
 @import config.AppConfig
-@import views.html.includes.main
-@import controllers.routes.ReleaseOrSuppressCaseController
-@import views.html.components.change_case_status_button
-@import models.forms.UploadAttachmentForm
-@import models.request.AuthenticatedRequest
-@import models.viewmodels._
+@import controllers.routes.{ChangeCaseStatusController, ReleaseOrSuppressCaseController}
+@import models.Permission
 @import models.TabIndexes._
-@import views.CaseDetailPage
-@import views.html.partials.liabilities.activity_tab
-@import models.{Case, Event, Paged, Permission, Queue}
 @import models.forms.ActivityFormData
 @import models.request.AuthenticatedRequest
+@import models.viewmodels._
+@import views.CaseDetailPage
+@import views.html.components.change_case_status_button
+@import views.html.includes.main
 
 @this(
         case_heading: views.html.v2.case_heading,
@@ -56,7 +53,11 @@
     @case_heading(liabilityViewModel.caseHeaderViewModel)
 
     @if(liabilityViewModel.showActionThisCase) {
-        @change_case_status_button("action-this-case", "Action this case", ReleaseOrSuppressCaseController.onPageLoad(liabilityViewModel.caseHeaderViewModel.referenceNumber))
+        @change_case_status_button("action-this-case", messages("case.v2.liability.action_this_case.button"), ReleaseOrSuppressCaseController.onPageLoad(liabilityViewModel.caseHeaderViewModel.referenceNumber))
+    }
+
+    @if(liabilityViewModel.showChangeCaseStatus) {
+        @change_case_status_button("change-case-status", messages("case.v2.liability.change_case_status.button"), ChangeCaseStatusController.onPageLoad(liabilityViewModel.caseHeaderViewModel.referenceNumber))
     }
 
     <div class="govuk-tabs" data-module="govuk-tabs">
