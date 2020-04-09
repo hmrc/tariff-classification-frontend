@@ -93,7 +93,7 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
   private def checkLiabilityView(timesInvoked: Int) =
     verify(inject[liability_view], times(timesInvoked)).apply(
-      any(), any(), any(), any(), any(), any(), any(), any()
+      any(), any(), any(), any(), any(), any(), any(), any(), any(), any()
     )(any(), any(), any())
 
   private def mockLiabilityController(
@@ -113,7 +113,7 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
   private def mockLiabilityView =
     when(inject[liability_view].apply(
-      any(), any(), any(), any(), any(), any(), any(), any()
+      any(), any(), any(), any(), any(), any(), any(), any(), any(), any()
     )(any(), any(), any())) thenReturn Html("body")
 
 

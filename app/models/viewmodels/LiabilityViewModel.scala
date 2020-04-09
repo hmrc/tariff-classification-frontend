@@ -22,7 +22,7 @@ case class LiabilityViewModel(
                                caseHeaderViewModel: CaseHeaderViewModel,
                                isNewCase: Boolean,
                                hasPermissions: Boolean,
-                               showRulingTab: Boolean,
+                               showRulingAndKeywordsTabs: Boolean,
                                showChangeCaseStatus: Boolean
                              ) {
 
@@ -57,7 +57,7 @@ object LiabilityViewModel {
       CaseHeaderViewModel.fromCase(c),
       isNewCase = isNew,
       hasPermissions = releaseOrSuppressPermissions,
-      showRulingTab = showRulingAndKeywords,
+      showRulingAndKeywordsTabs = showRulingAndKeywords,
       showChangeCaseStatus = changeCaseStatus
     )
   }

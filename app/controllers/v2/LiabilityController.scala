@@ -19,14 +19,14 @@ package controllers.v2
 import config.AppConfig
 import controllers.{RequestActions, v2}
 import javax.inject.{Inject, Singleton}
-import models.forms.{ActivityForm, ActivityFormData, UploadAttachmentForm}
+import models.forms.{ActivityForm, ActivityFormData, KeywordForm, UploadAttachmentForm}
 import models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
 import models.viewmodels._
 import models.{Case, Permission, _}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import service.{CasesService, EventsService, FileStoreService, QueuesService}
+import service.{CasesService, EventsService, FileStoreService, KeywordsService, QueuesService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
@@ -40,6 +40,7 @@ class LiabilityController @Inject()(
                                      eventsService: EventsService,
                                      queuesService: QueuesService,
                                      fileService: FileStoreService,
+                                     keywordsService: KeywordsService,
                                      mcc: MessagesControllerComponents,
                                      val liability_view: views.html.v2.liability_view,
                                      implicit val appConfig: AppConfig
@@ -53,7 +54,8 @@ class LiabilityController @Inject()(
 
   def buildLiabilityView(
                           activityForm: Form[ActivityFormData] = ActivityForm.form,
-                          uploadAttachmentForm: Form[String] = UploadAttachmentForm.form
+                          uploadAttachmentForm: Form[String] = UploadAttachmentForm.form,
+                          keywordForm: Form[String] = KeywordForm.form
                         )(implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
     val liabilityCase: Case = request.`case`
     val liabilityViewModel = LiabilityViewModel.fromCase(liabilityCase, request.operator)
@@ -65,6 +67,7 @@ class LiabilityController @Inject()(
       sampleTab <- getSampleTab(liabilityCase)
       c592 = Some(C592ViewModel.fromCase(liabilityCase))
       activityTab = Some(ActivityViewModel.fromCase(liabilityCase, activityEvents, queues))
+      keywordsTab <- keywordsService.autoCompleteKeywords.map(kws => KeywordsTabViewModel(liabilityCase.reference, liabilityCase.keywords, kws))
     } yield {
       Ok(liability_view(
         liabilityViewModel,
@@ -74,7 +77,9 @@ class LiabilityController @Inject()(
         activityTab,
         activityForm,
         attachmentsTab,
-        uploadAttachmentForm
+        uploadAttachmentForm,
+        keywordsTab,
+        keywordForm
       ))
     }
   }
