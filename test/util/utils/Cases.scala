@@ -31,18 +31,18 @@ import models.viewmodels._
 
 object Cases {
 
-  val storedAttachment = StoredAttachment("id", public = true, None, Some("url"), "name", "type", Some(ScanStatus.READY), Instant.now(),"test description")
-  val storedOperatorAttachment = StoredAttachment("id", public = true, Some(Operator("0", Some("Operator Name"))), Some("url"), "name", "type", Some(ScanStatus.READY), Instant.now(),"test description")
-  val letterOfAuthority = StoredAttachment("id", public = true, None, Some("url"), "letterOfAuthority", "pdf", Some(ScanStatus.READY), Instant.now(),"test description")
+  val storedAttachment = StoredAttachment("id", public = true, None, Some("url"), "name", "type", Some(ScanStatus.READY), Instant.now(), "test description")
+  val storedOperatorAttachment = StoredAttachment("id", public = true, Some(Operator("0", Some("Operator Name"))), Some("url"), "name", "type", Some(ScanStatus.READY), Instant.now(), "test description")
+  val letterOfAuthority = StoredAttachment("id", public = true, None, Some("url"), "letterOfAuthority", "pdf", Some(ScanStatus.READY), Instant.now(), "test description")
   val eoriDetailsExample = EORIDetails("eori", "trader-business-name", "line1", "line2", "line3", "postcode", "country")
   val eoriAgentDetailsExample = AgentDetails(EORIDetails("eori", "agent-business-name", "line1", "line2", "line3", "postcode", "country"), Some(Attachment("letter-id", public = true, None, Instant.now())))
   val contactExample = Contact("name", "email", Some("phone"))
   val btiApplicationExample = BTIApplication(eoriDetailsExample, contactExample, Some(eoriAgentDetailsExample), offline = false, "Laptop", "Personal Computer", None, None, None, None, None, None, None, sampleToBeProvided = false, sampleToBeReturned = false)
   val simpleBtiApplicationExample = BTIApplication(eoriDetailsExample, contactExample, None, offline = false, "Laptop", "Personal Computer", None, None, None, None, None, None, None, sampleToBeProvided = false, sampleToBeReturned = false)
-  val decision = Decision("040900", Some(Instant.now()), Some(Instant.now().plusSeconds(2*3600*24*365)), "justification", "good description", None, None, Some("denomination"), Seq.empty)
-  val incompleteDecision = Decision("", Some(Instant.now()), Some(Instant.now().plusSeconds(2*3600*24*365)), "justification", "", None, None, Some("denomination"), Seq.empty)
+  val decision = Decision("040900", Some(Instant.now()), Some(Instant.now().plusSeconds(2 * 3600 * 24 * 365)), "justification", "good description", None, None, Some("denomination"), Seq.empty)
+  val incompleteDecision = Decision("", Some(Instant.now()), Some(Instant.now().plusSeconds(2 * 3600 * 24 * 365)), "justification", "", None, None, Some("denomination"), Seq.empty)
   val decisionWithExclusion = decision.copy(methodExclusion = Some("Excludes everything ever"))
-  val liabilityApplicationExample = LiabilityOrder(contactExample, LiabilityStatus.NON_LIVE, "trader-business-name", Some("good-name"), Some(Instant.now()), Some("entry number"),Some("trader-1234567"),Some("officer-1234567"))
+  val liabilityApplicationExample = LiabilityOrder(contactExample, LiabilityStatus.NON_LIVE, "trader-business-name", Some("good-name"), Some(Instant.now()), Some("entry number"), Some("trader-1234567"), Some("officer-1234567"))
   val liabilityLiveApplicationExample = LiabilityOrder(contactExample, LiabilityStatus.LIVE, "trader-business-name", Some("good-name"), Some(Instant.now()), Some("entry number"))
   val btiCaseExample = Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, None, btiApplicationExample, Some(decision), Seq())
   val btiCaseWithIncompleteDecision = Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, None, btiApplicationExample, Some(incompleteDecision), Seq())
@@ -62,21 +62,23 @@ object Cases {
   val pagedEvent = Paged(Seq(Events.event), 1, 1, 1)
   val queues = Seq(Queue("", "", ""))
 
-  val operatorWithoutPermissions = Operator(id = "0", name =Some("liability op name"), permissions = Set())
-  val operatorWithAddAttachment = Operator(id = "0", name =Some("liability op name"), permissions = Set(Permission.ADD_ATTACHMENT))
+  val operatorWithoutPermissions = Operator(id = "0", name = Some("liability op name"), permissions = Set())
+  val operatorWithAddAttachment = Operator(id = "0", name = Some("liability op name"), permissions = Set(Permission.ADD_ATTACHMENT))
 
   val c592ViewModel = Some(C592ViewModel("caseReference", "entry number", "03 Mar 2020", "", None, "", "good-name",
     TraderContact("trader-business-name", "email", "phone", ""), "trader-1234567", "officer-1234567",
     PortOrComplianceOfficerContact("name", "email", "phone"), "", ""))
   val rulingViewModel = Some(
-    RulingViewModel("","","123456", "item description", "justification", "method searches", "method exclusions",showEditRuling = false))
+    RulingViewModel("", "", "123456", "item description", "justification", "method searches", "method exclusions", showEditRuling = false))
 
   val attachmentsTabViewModel = Some(AttachmentsTabViewModel(Cases.liabilityCaseExample.reference, Nil, None))
   val activityTabViewModel = Some(ActivityViewModel("referenceNumber", Some(operatorWithoutPermissions),
     Some("queueId"), Instant.now, pagedEvent, queues, "queue Name"))
   val activityTabViewModelWithPermissions = ActivityViewModel("referenceNumber", Some(operatorWithPermissions),
     Some("queueId"), Instant.now, pagedEvent, queues, "queue Name")
-  val operatorWithPermissions = Operator(id = "0", name =Some("liability op name"), permissions = Set(Permission.ADD_NOTE, Permission.VIEW_CASES))
+  val operatorWithPermissions = Operator(id = "0", name = Some("liability op name"), permissions = Set(Permission.ADD_NOTE, Permission.VIEW_CASES))
+  val operatorWithCompleteCasePermission = Operator(id = "0", name = Some("liability op name"), permissions = Set(Permission.COMPLETE_CASE))
+  val operatorWithoutCompleteCasePermission = Operator(id = "0", name = Some("liability op name"), permissions = Set(Permission.VIEW_CASES))
   val operatorWithReleaseOrSuppressPermissions = Operator(id = "0", name =
     Some("liability op name"), permissions = Set(Permission.RELEASE_CASE, Permission.SUPPRESS_CASE))
 
@@ -122,13 +124,13 @@ object Cases {
   }
 
   def withIncompleteLiabilityApplication(contact: Contact = Contact("name", "email@email.com", Some("1234")),
-                               status: LiabilityStatus = LiabilityStatus.NON_LIVE,
-                               traderName: String = "trader",
-                               goodName: Option[String] = Some("Goods Name"),
-                               entryDate: Option[Instant] = Some(Instant.EPOCH),
-                               entryNumber: Option[String] = Some("1234567"),
-                               traderCommodityCode: Option[String] = Some("0100000000"),
-                               officerCommodityCode: Option[String] = Some("0200000000")): Case => Case = {
+                                         status: LiabilityStatus = LiabilityStatus.NON_LIVE,
+                                         traderName: String = "trader",
+                                         goodName: Option[String] = Some("Goods Name"),
+                                         entryDate: Option[Instant] = Some(Instant.EPOCH),
+                                         entryNumber: Option[String] = Some("1234567"),
+                                         traderCommodityCode: Option[String] = Some("0100000000"),
+                                         officerCommodityCode: Option[String] = Some("0200000000")): Case => Case = {
     _.copy(application = liabilityApplicationExample.copy(
       contact = contact,
       status = status,
@@ -141,15 +143,15 @@ object Cases {
     ))
   }
 
-  def withSampleStatus(sampleStatus : Option[SampleStatus]): Case => Case = { c =>
+  def withSampleStatus(sampleStatus: Option[SampleStatus]): Case => Case = { c =>
     c.copy(sample = c.sample.copy(status = sampleStatus))
   }
 
-  def withSample(sample : Sample): Case => Case = { c =>
+  def withSample(sample: Sample): Case => Case = { c =>
     c.copy(sample = sample)
   }
 
-  def withSampleRequested(operator: Option[Operator], returnStatus : Option[SampleReturn]): Case => Case = { c =>
+  def withSampleRequested(operator: Option[Operator], returnStatus: Option[SampleReturn]): Case => Case = { c =>
     c.copy(sample = c.sample.copy(requestedBy = operator, returnStatus = returnStatus))
   }
 
@@ -309,17 +311,17 @@ object Cases {
   }
 
   def withIncompleteDecision(bindingCommodityCode: String = "decision-commodity-code",
-                   effectiveStartDate: Option[Instant] = Some(Instant.now()),
-                   effectiveEndDate: Option[Instant] = Some(Instant.now().plus(30, DAYS)),
-                   justification: String = "decision-justification",
-                   goodsDescription: String = "",
-                   methodSearch: Option[String] = Some("search"),
-                   methodExclusion: Option[String] = Some("exclusion"),
-                   methodCommercialDenomination: Option[String] = None,
-                   appeal: Seq[Appeal] = Seq.empty,
-                   cancellation: Option[Cancellation] = None,
-                   explanation: Option[String] = Some("explanation")
-                  ): Case => Case = {
+                             effectiveStartDate: Option[Instant] = Some(Instant.now()),
+                             effectiveEndDate: Option[Instant] = Some(Instant.now().plus(30, DAYS)),
+                             justification: String = "decision-justification",
+                             goodsDescription: String = "",
+                             methodSearch: Option[String] = Some("search"),
+                             methodExclusion: Option[String] = Some("exclusion"),
+                             methodCommercialDenomination: Option[String] = None,
+                             appeal: Seq[Appeal] = Seq.empty,
+                             cancellation: Option[Cancellation] = None,
+                             explanation: Option[String] = Some("explanation")
+                            ): Case => Case = {
     _.copy(decision = Some(
       Decision(
         bindingCommodityCode,
