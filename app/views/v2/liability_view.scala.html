@@ -27,6 +27,7 @@
 @import models.{Case, Event, Paged, Permission, Queue}
 @import models.forms.ActivityFormData
 @import models.request.AuthenticatedRequest
+@import controllers.routes.ChangeCaseStatusController
 
 @this(
         case_heading: views.html.v2.case_heading,
@@ -57,6 +58,9 @@
 
     @if(liabilityViewModel.showActionThisCase) {
         @change_case_status_button("action-this-case", "Action this case", ReleaseOrSuppressCaseController.onPageLoad(liabilityViewModel.caseHeaderViewModel.referenceNumber))
+
+    } else if(liabilityViewModel.showChangeCaseStatus) {
+        @change_case_status_button("change-case-status", "Change case status", ChangeCaseStatusController.onPageLoad(liabilityViewModel.caseHeaderViewModel.referenceNumber))
     }
 
     <div class="govuk-tabs" data-module="govuk-tabs">
