@@ -758,6 +758,10 @@ case.v2.liability.sample_status_tab.who_is_sending_sample_p=Who is sending the s
 
 case.v2.liability.keywords.case_only_keyword=Keyword is not from the list
 case.v2.liability.keywords.tab_title=Keywords
+case.v2.liability.keywords.label=Find or add a keyword
+case.v2.liability.keywords.hint=Start typing and select a keyword if it appears on the list. To add a keyword not on the list, type it in full.
+case.v2.liability.keywords.paragraph=Classification team managers approve new keywords.
+
 
 case.v2.liability.action_this_case.button=Action this case
 case.v2.liability.change_case_status.button=Change case status
