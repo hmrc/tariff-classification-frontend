@@ -132,6 +132,29 @@ class LiabilityViewModelSpec extends UnitSpec {
 
   }
 
+  "showReopen" should {
+
+    "show reopen button when case status is REFERRED and user has REOPEN_CASE permission" in {
+
+      val liabilityViewModel = LiabilityViewModel.fromCase(referredCase, operator)
+      liabilityViewModel.showTakeOffReferral shouldBe true
+    }
+
+    "not reopen button when case status is not REFERRED" in {
+
+      val liabilityViewModel = LiabilityViewModel.fromCase(openCase, operator)
+      liabilityViewModel.showTakeOffReferral shouldBe false
+    }
+
+
+    "not reopen button when user has not REOPEN_CASE permission" in {
+
+      val liabilityViewModel = LiabilityViewModel.fromCase(referredCase, operatorWithoutPermission)
+      liabilityViewModel.showTakeOffReferral shouldBe false
+    }
+
+  }
+
   "fromCase" should {
 
     "create a cancelled view model" in {
