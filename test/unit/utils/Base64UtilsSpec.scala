@@ -23,7 +23,7 @@ class Base64UtilsSpec extends UnitSpec {
   private val text: String = "hello world"
   private val encoded: String = "aGVsbG8gd29ybGQ="
 
-  "Encode" should {
+  "Base64Utils" should {
     "Convert string to Base64" in {
       Base64Utils.encode(text) shouldBe encoded
     }

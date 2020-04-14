@@ -19,17 +19,12 @@ package controllers.v2
 import java.time.Clock
 
 import com.google.inject.Provider
-import controllers.{ControllerBaseSpec, RequestActions, RequestActionsWithPermissions}
+import controllers.{ControllerBaseSpec, RequestActionsWithPermissions}
 import javax.inject.Inject
-import models.forms.{ActivityForm, ActivityFormData}
 import models.{Case, _}
 import org.mockito.ArgumentMatchers.{any, eq => meq}
 import org.mockito.Mockito.{times, _}
 import org.scalatest.BeforeAndAfterEach
-import play.api.Application
-import play.api.data.Form
-import play.api.inject.bind
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{BodyParsers, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -37,8 +32,7 @@ import play.twirl.api.Html
 import service.{EventsService, FileStoreService, QueuesService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{Cases, Events}
-import views.html.partials.liabilities.{attachments_details, attachments_list}
-import views.html.v2.{case_heading, liability_view, remove_attachment}
+import views.html.v2.liability_view
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -55,30 +49,8 @@ class RequestActionsWithPermissionsProvider @Inject()(implicit parse: BodyParser
 }
 
 class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
-  override lazy val app: Application = new GuiceApplicationBuilder().overrides(
-    //providers
-    bind[RequestActions].toProvider[RequestActionsWithPermissionsProvider],
-    //views
-    bind[liability_view].toInstance(mock[liability_view]),
-    bind[EventsService].toInstance(mock[EventsService]),
-    bind[QueuesService].toInstance(mock[QueuesService]),
-    bind[case_heading].toInstance(mock[case_heading]),
-    bind[attachments_details].toInstance(mock[attachments_details]),
-    bind[remove_attachment].toInstance(mock[remove_attachment]),
-    bind[attachments_list].toInstance(mock[attachments_list]),
-    //services
-    bind[FileStoreService].toInstance(mock[FileStoreService])
-  ).configure(
-    "metrics.jvm" -> false,
-    "metrics.enabled" -> false,
-    "new-liability-details" -> true
-  ).build()
-  private val activityForm: Form[ActivityFormData] = ActivityForm.form
   private val pagedEvent: Paged[Event] = Paged(Seq(Events.event), 1, 1, 1)
   private val queues: Seq[Queue] = Seq(Queue("", "", ""))
-  private val eventService = mock[EventsService]
-  private val queueService = mock[QueuesService]
-  private val operator = Operator(id = "id")
   private val event = mock[Event]
 
   override def beforeEach(): Unit =
@@ -105,8 +77,8 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     when(inject[EventsService].getFilteredEvents(any(), any(), any())(any())) thenReturn Future(pagedEvent)
     when(inject[QueuesService].getAll) thenReturn Future(queues)
 
-    when(inject[FileStoreService].getAttachments(any[Case]())(any())) thenReturn (Future.successful(attachments))
-    when(inject[FileStoreService].getLetterOfAuthority(any())(any())) thenReturn (Future.successful(letterOfAuthority))
+    when(inject[FileStoreService].getAttachments(any[Case]())(any())) thenReturn Future.successful(attachments)
+    when(inject[FileStoreService].getLetterOfAuthority(any())(any())) thenReturn Future.successful(letterOfAuthority)
 
     mockLiabilityView
   }
