@@ -26,8 +26,6 @@
         liabilityViewModel: LiabilityViewModel
 )(implicit request: AuthenticatedRequest[_], messages: Messages)
 
-@*TODO add separate test for this partial and remove these test from liability view spec*@
-
 @if(liabilityViewModel.showActionThisCase) {
     @change_case_status_button(
         "action-this-case",
