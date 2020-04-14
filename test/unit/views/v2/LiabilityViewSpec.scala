@@ -194,6 +194,7 @@ class LiabilityViewSpec extends ViewSpec {
 
     "render Sample tab" in {
       val c = aLiabilityCase(withReference("reference"), withLiabilityApplication())
+
       val doc = view(liabilityView(LiabilityViewModel.fromCase(
         c, Cases.operatorWithAddAttachment), None,
         None,
@@ -207,7 +208,6 @@ class LiabilityViewSpec extends ViewSpec {
     }
 
     "render the action this case button for new case" in {
-
       val c = aLiabilityCase(withReference("reference"), withStatus(CaseStatus.NEW), withLiabilityApplication())
 
       val doc = view(liabilityView(
@@ -244,7 +244,6 @@ class LiabilityViewSpec extends ViewSpec {
     }
 
     "render the change case status button for open case with complete case permission" in {
-
       val c = aLiabilityCase(withReference("reference"), withStatus(CaseStatus.OPEN), withLiabilityApplication())
 
       val doc = view(liabilityView(
@@ -263,7 +262,6 @@ class LiabilityViewSpec extends ViewSpec {
     }
 
     "not render the change case status button" in {
-
       val c = aLiabilityCase(withReference("reference"), withStatus(CaseStatus.NEW), withLiabilityApplication())
 
       val doc = view(liabilityView(
@@ -278,6 +276,58 @@ class LiabilityViewSpec extends ViewSpec {
       )
 
       doc shouldNot containElementWithID("change-case-status-button")
+    }
+
+    "render the take off referral button for a referred case and reopen case permission" in {
+      val c = aLiabilityCase(withReference("reference"), withStatus(CaseStatus.REFERRED))
+
+      val doc = view(liabilityView(
+        LiabilityViewModel.fromCase(c, Cases.operatorWithCompleteCasePermission),
+        None,
+        None,
+        sampleStatusTabViewModel,
+        None,
+        activityForm,
+        None,
+        uploadAttachmentForm)
+      )
+
+      doc should containElementWithID("take-off-referral-button")
+      doc.getElementById("take-off-referral-button").text shouldBe "Take off referral"
+    }
+
+    "not render the take off referral button for a not referred case" in {
+      val c = aLiabilityCase(withReference("reference"), withStatus(CaseStatus.OPEN))
+
+      val doc = view(liabilityView(
+        LiabilityViewModel.fromCase(c, Cases.operatorWithCompleteCasePermission),
+        None,
+        None,
+        sampleStatusTabViewModel,
+        None,
+        activityForm,
+        None,
+        uploadAttachmentForm)
+      )
+
+      doc shouldNot containElementWithID("take-off-referral-button")
+    }
+
+    "not render the take off referral button for a case without permissions" in {
+      val c = aLiabilityCase(withReference("reference"), withStatus(CaseStatus.REFERRED))
+
+      val doc = view(liabilityView(
+        LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions),
+        None,
+        None,
+        sampleStatusTabViewModel,
+        None,
+        activityForm,
+        None,
+        uploadAttachmentForm)
+      )
+
+      doc shouldNot containElementWithID("take-off-referral-button")
     }
   }
 }

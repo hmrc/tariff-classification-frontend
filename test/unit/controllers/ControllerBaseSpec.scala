@@ -25,7 +25,7 @@ import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.FakeRequest
-import service.FileStoreService
+import service.{CasesService, EventsService, FileStoreService, QueuesService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import views.html.partials.liabilities.{attachments_details, attachments_list}
@@ -43,11 +43,14 @@ class ControllerBaseSpec extends UnitSpec with I18nSupport with GuiceOneAppPerSu
     bind[remove_attachment].toInstance(mock[remove_attachment]),
     bind[attachments_list].toInstance(mock[attachments_list]),
     //services
-    bind[FileStoreService].toInstance(mock[FileStoreService])
+    bind[FileStoreService].toInstance(mock[FileStoreService]),
+    bind[EventsService].toInstance(mock[EventsService]),
+    bind[QueuesService].toInstance(mock[QueuesService]),
+    bind[CasesService].toInstance(mock[CasesService])
   ).configure(
     "metrics.jvm" -> false,
     "metrics.enabled" -> false,
-    "new-liability-details" -> true
+    "toggle.new-liability-details" -> true
   ).build()
 
   implicit val request: Request[AnyContent] = FakeRequest()
