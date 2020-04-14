@@ -44,8 +44,13 @@ class ReopenCaseController @Inject()(
       verify.mustHave(Permission.REOPEN_CASE)).async { implicit request: AuthenticatedCaseRequest[AnyContent] =>
       validateAndRedirect(_ => casesService.reopenCase(request.`case`, request.operator)
         .map(updatedCase => updatedCase.application.`type` match {
-          case ApplicationType.BTI => routes.CaseController.applicantDetails(updatedCase.reference)
-          case ApplicationType.LIABILITY_ORDER => routes.LiabilityController.liabilityDetails(updatedCase.reference)
+          case ApplicationType.BTI =>
+            routes.CaseController.applicantDetails(updatedCase.reference)
+          case ApplicationType.LIABILITY_ORDER =>
+            if (config.newLiabilityDetails)
+              v2.routes.LiabilityController.displayLiability(updatedCase.reference)
+            else
+              routes.LiabilityController.liabilityDetails(updatedCase.reference)
         }
         )
       )

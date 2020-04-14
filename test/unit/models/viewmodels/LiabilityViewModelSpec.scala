@@ -51,7 +51,8 @@ class LiabilityViewModelSpec extends UnitSpec {
                            hasPermissions: Boolean = false,
                            showRulingTab: Boolean = false,
                            showChangeCaseStatus: Boolean = false,
-                           showTakeOffReferral: Boolean = false
+                           showTakeOffReferral: Boolean = false,
+                           showReopen: Boolean = false
                          ): LiabilityViewModel = {
     LiabilityViewModel(
       caseHeaderViewModel = caseHeaderViewModel,
@@ -59,7 +60,8 @@ class LiabilityViewModelSpec extends UnitSpec {
       hasPermissions = hasPermissions,
       showRulingTab = showRulingTab,
       showChangeCaseStatus = showChangeCaseStatus,
-      showTakeOffReferral
+      showTakeOffReferral = showTakeOffReferral,
+      showReopen = showReopen
     )
   }
 
@@ -154,7 +156,8 @@ class LiabilityViewModelSpec extends UnitSpec {
         hasPermissions = false,
         showRulingTab = false,
         showChangeCaseStatus = false,
-        showTakeOffReferral = false)
+        showTakeOffReferral = false,
+        showReopen = false)
       )
     }
 
