@@ -14,13 +14,18 @@
  * limitations under the License.
  *@
 
-@import controllers.routes.ReopenCaseController
-@import models.{Case, CaseStatus}
-@(c: Case, useTabIndex : Option[Int] = None)(implicit request: Request[_])
+@(
+        id: String,
+        reference: String,
+        action: play.api.mvc.Call,
+        buttonText: String
+)(implicit request: Request[_])
 
-@helper.form(action = ReopenCaseController.confirmReopenCase(c.reference), 'id -> "reopen-case") {
-    @helper.CSRF.formField
-    <div>
-        <button @if(useTabIndex.isDefined){ tabindex="@{useTabIndex.get}" } class="button" id="reopen-case-button" type="submit">Reopen case</button>
-    </div>
-}
+@*TODO rename this class to reopen_case_button and remove old reopen_button partial*@
+
+    @helper.form(action = action, 'id -> id) {
+        @helper.CSRF.formField
+        <div class="form-group" >
+            <button class="button" id="@id-button" type="submit">@buttonText</button>
+        </div>
+    }

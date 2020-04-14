@@ -43,10 +43,20 @@
         @change_case_status_button("release-or-suppress", "Change case status", ReleaseOrSuppressCaseController.onPageLoad(c.reference, activeTab))
     }
     @if(c.application.isBTI && c.status == CaseStatus.SUSPENDED && request.hasPermission(Permission.REOPEN_CASE)) {
-        @reopen_case_button(c)
+        @reopen_case_button(
+            "reopen-case",
+            c.reference,
+            ReopenCaseController.confirmReopenCase(c.reference),
+            messages("case.v2.liability.reopen.button")
+        )
     }
     @if(c.application.isBTI && c.status == CaseStatus.REFERRED && request.hasPermission(Permission.REOPEN_CASE)) {
-        @take_off_referral_button(c.reference)
+        @reopen_case_button(
+            "take-off-referral",
+            c.reference,
+            ReopenCaseController.confirmReopenCase(c.reference),
+            messages("case.v2.liability.take_off_referral.button")
+        )
     }
 
     <div class="tabs">
