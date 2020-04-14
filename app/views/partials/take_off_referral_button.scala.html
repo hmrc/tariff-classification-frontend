@@ -20,7 +20,7 @@
 
 @helper.form(action = ReopenCaseController.confirmReopenCase(reference), 'id -> "take-off-referral") {
     @helper.CSRF.formField
-    <div>
+    <div class="form-group" >
         <button class="button" id="take-off-referral-button" type="submit">Take off referral</button>
     </div>
 }
