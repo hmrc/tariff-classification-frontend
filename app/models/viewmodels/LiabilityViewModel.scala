@@ -44,14 +44,14 @@ object LiabilityViewModel {
     def completeCasePermission: Boolean =
       operator.permissions.contains(Permission.COMPLETE_CASE)
 
-    def takeOffReferralPermission: Boolean =
+    def reopenCasePermission: Boolean =
       operator.permissions.contains(Permission.REOPEN_CASE)
 
     def changeCaseStatus: Boolean =
       c.status == CaseStatus.OPEN && completeCasePermission
 
     def takeOffReferral: Boolean =
-      c.status == CaseStatus.REFERRED && takeOffReferralPermission
+      c.status == CaseStatus.REFERRED && reopenCasePermission
 
     def showRulingAndKeywords: Boolean =
       c.status == CaseStatus.OPEN ||
