@@ -318,7 +318,9 @@ class LiabilityViewSpec extends ViewSpec {
         None,
         activityForm,
         None,
-        uploadAttachmentForm)
+        uploadAttachmentForm,
+        emptyKeywordsTabViewModel,
+        keywordForm)
       )
 
       doc should containElementWithID("change-case-status-button")
@@ -337,7 +339,9 @@ class LiabilityViewSpec extends ViewSpec {
         Cases.activityTabViewModel,
         activityForm,
         None,
-        uploadAttachmentForm)
+        uploadAttachmentForm,
+        emptyKeywordsTabViewModel,
+        keywordForm)
       )
 
       doc shouldNot containElementWithID("change-case-status-button")
