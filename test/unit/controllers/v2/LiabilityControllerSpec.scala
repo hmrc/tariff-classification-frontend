@@ -28,13 +28,16 @@ import org.mockito.Mockito.{times, _}
 import org.scalatest.BeforeAndAfterEach
 import play.api.Application
 import play.api.data.Form
+import play.api.http.Status
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{BodyParsers, Result}
+import play.api.mvc.BodyParsers.Default
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import play.mvc.BodyParser.Default
 import play.twirl.api.Html
-import service.{EventsService, FileStoreService, QueuesService}
+import service.{EventsService, FileStoreService, KeywordsService, QueuesService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{Cases, Events}
 import views.html.partials.liabilities.{attachments_details, attachments_list}
@@ -54,10 +57,10 @@ class RequestActionsWithPermissionsProvider @Inject()(implicit parse: BodyParser
   }
 }
 
-class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
-  override lazy val app: Application = new GuiceApplicationBuilder().overrides(
-    //providers
-    bind[RequestActions].toProvider[RequestActionsWithPermissionsProvider],
+class LiabilityControllerSpec @Inject()(implicit parse: BodyParsers.Default) extends ControllerBaseSpec with BeforeAndAfterEach {
+
+  val binds = List(
+
     //views
     bind[liability_view].toInstance(mock[liability_view]),
     bind[EventsService].toInstance(mock[EventsService]),
@@ -67,12 +70,42 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     bind[remove_attachment].toInstance(mock[remove_attachment]),
     bind[attachments_list].toInstance(mock[attachments_list]),
     //services
-    bind[FileStoreService].toInstance(mock[FileStoreService])
+    bind[FileStoreService].toInstance(mock[FileStoreService]),
+    bind[KeywordsService].toInstance(mock[KeywordsService])
+  )
+
+  val defaultRequestActions = List(
+    //providers
+    bind[RequestActions].toProvider[RequestActionsWithPermissionsProvider])
+
+  val requestActionsWithKeywordsPermissionBinder = List(
+    bind[RequestActions].to(requestActionsWithKeywordsPermission)
+  )
+
+  val requestActionsWithKeywordsPermission:  RequestActionsWithPermissions = {
+    new RequestActionsWithPermissions(
+      parse, Set(Permission.KEYWORDS),
+      c = Cases.liabilityCaseExample.copy(assignee = Some(Cases.operatorWithPermissions)),
+      op = Cases.operatorWithPermissions
+    )
+  }
+
+  val appWithKeywordPermissions: Application = new GuiceApplicationBuilder().overrides(
+    binds ++ requestActionsWithKeywordsPermissionBinder
   ).configure(
     "metrics.jvm" -> false,
     "metrics.enabled" -> false,
     "new-liability-details" -> true
   ).build()
+
+  override lazy val app: Application = new GuiceApplicationBuilder().overrides(
+   binds ++ defaultRequestActions
+  ).configure(
+    "metrics.jvm" -> false,
+    "metrics.enabled" -> false,
+    "new-liability-details" -> true
+  ).build()
+  
   private val pagedEvent: Paged[Event] = Paged(Seq(Events.event), 1, 1, 1)
   private val queues: Seq[Queue] = Seq(Queue("", "", ""))
   private val event = mock[Event]
@@ -82,7 +115,8 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       inject[liability_view],
       inject[EventsService],
       inject[QueuesService],
-      inject[FileStoreService]
+      inject[FileStoreService],
+      inject[KeywordsService]
     )
 
   private implicit val hc: HeaderCarrier = HeaderCarrier()
@@ -103,6 +137,7 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
     when(inject[FileStoreService].getAttachments(any[Case]())(any())) thenReturn (Future.successful(attachments))
     when(inject[FileStoreService].getLetterOfAuthority(any())(any())) thenReturn (Future.successful(letterOfAuthority))
+    when(inject[KeywordsService].autoCompleteKeywords) thenReturn Future(Seq("keyword1", "keyword2"))
 
     mockLiabilityView
   }
@@ -165,10 +200,28 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
     "redirect back to display liability if form submitted successfully" in {
 
+      when(inject[KeywordsService].addKeyword(
+        meq(Cases.liabilityCaseExample), meq("pajamas"), meq(Cases.operatorWithKeywordsPermissions))
+      (any[HeaderCarrier])) thenReturn Future(Cases.liabilityCaseExample)
+
+      mockLiabilityController()
+
       val result: Future[Result] =
-        route(app, FakeRequest("POST", "/manage-tariff-classifications/cases/v2/123456/liability/add-keyword").withFormUrlEncodedBody("keyword" -> "pajamas")).get
+        route(appWithKeywordPermissions, FakeRequest("POST", "/manage-tariff-classifications/cases/v2/123456/liability/add-keyword")
+          .withFormUrlEncodedBody("keyword" -> "pajamas")).get
 
       status(result) shouldBe 303
+      locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/v2/123456/liability#keywords_tab")
+    }
+
+    "redirect to unauthorised if the user does not have the right permissions" in {
+
+      val result: Future[Result] =
+        route(app, FakeRequest("POST", "/manage-tariff-classifications/cases/v2/123456/liability/add-keyword")
+          .withFormUrlEncodedBody("keyword" -> "pajamas")).get
+
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result).get should include("unauthorized")
     }
 
   }

@@ -23,7 +23,7 @@ import models.forms.{ActivityForm, ActivityFormData, KeywordForm, UploadAttachme
 import models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
 import models.viewmodels._
 import models.{Case, Permission, _}
-import play.api.data.Form
+import play.api.data.{Form}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import service.{CasesService, EventsService, FileStoreService, KeywordsService, QueuesService}
@@ -45,6 +45,8 @@ class LiabilityController @Inject()(
                                      val liability_view: views.html.v2.liability_view,
                                      implicit val appConfig: AppConfig
                                    ) extends FrontendController(mcc) with I18nSupport {
+
+  private val keywordsTab = "keywords_tab"
 
   def displayLiability(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)).async {
     implicit request => {
@@ -125,9 +127,19 @@ class LiabilityController @Inject()(
 
   def addKeyword(reference: String): Action[AnyContent] = (verify.authenticated andThen
     verify.casePermissions(reference) andThen verify.mustHave(Permission.KEYWORDS)).async {
-    implicit request => ???
+    implicit request =>
 
 
+      def onError: Form[String] => Future[Result] = (errorForm: Form[String]) => {
+        buildLiabilityView(keywordForm = errorForm)
+      }
+
+      def onSuccess: String => Future[Result] = validForm => {
+        keywordsService.addKeyword(request.`case`, validForm, request.operator)
+          .map(_ => Redirect(v2.routes.LiabilityController.displayLiability(reference).withFragment(keywordsTab)))
+      }
+
+      KeywordForm.form.bindFromRequest.fold(onError, onSuccess)
   }
 
 }
