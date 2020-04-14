@@ -28,8 +28,7 @@
         showUploadedBy: Boolean = false,
         showRemoval: Boolean = false,
         showEditDetails: Boolean = false,
-        caseRef: String = "",
-        startAtTabIndex : Option[Int] = None
+        caseRef: String = ""
 )(implicit request: AuthenticatedRequest[_], messages: Messages)
 
     @if(attachments.nonEmpty){
@@ -48,7 +47,7 @@
                     @for((file: StoredAttachment, index: Int) <- attachments.zipWithIndex) {
                         <tr id="@{id}-row-@{index}">
                             <td id="@{id}-row-@{index}-title" >
-                                @attachment(s"$id-row-$index", file, useTabIndex = startAtTabIndex.map(x => x+1+(0*index)))
+                                @attachment(s"$id-row-$index", file)
                             </td>
 
                             @if(showUploadedBy) {
@@ -69,7 +68,7 @@
                                 !caseRef.isEmpty &&
                                 request.hasPermission(Permission.REMOVE_ATTACHMENTS)) {
                                 <td id="@{id}-row-@{index}-remove">
-                                    <a @if(startAtTabIndex.isDefined){tabindex="@{startAtTabIndex.get+2+(2*index)}"} id="@{id}-row-@{index}-remove-link" href="@AttachmentsController.removeAttachment(caseRef, file.id, file.fileName)">
+                                    <a id="@{id}-row-@{index}-remove-link" href="@AttachmentsController.removeAttachment(caseRef, file.id, file.fileName)">
                                         <span>@messages("case.attachment.remove.file.text")</span>
                                         <span class="visually-hidden">@messages("case.attachment.remove.file.hidden.text",file.fileName)</span>
                                     </a>
@@ -81,7 +80,7 @@
                                 request.hasPermission(Permission.EDIT_ATTACHMENT_DETAIL)) {
                                 <td id="@{id}-row-@{index}-edit-attachment-details">
 @*                                    TODO href*@
-                                    <a @if(startAtTabIndex.isDefined){tabindex="@{startAtTabIndex.get+3+(2*index)}"} id="@{id}-row-@{index}-edit-attachment-link" href="#">
+                                    <a id="@{id}-row-@{index}-edit-attachment-link" href="#">
                                         <span>@messages("case.attachment.edit.file.text")</span>
                                         <span class="visually-hidden">@messages("case.attachment.edit.file.hidden.text",file.fileName)</span>
                                     </a>

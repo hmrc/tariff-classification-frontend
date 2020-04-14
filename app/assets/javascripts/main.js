@@ -14,6 +14,14 @@ window.onload = function () {
     if(document.getElementById("error-summary-heading")!=null){
         document.title = "Error: " + document.title
     }
+
+
+
+    var Tabs = window.GOVUKFrontend.Tabs
+    var $tabs = document.querySelector('[data-module="govuk-tabs"]')
+    if ($tabs) {
+        new Tabs($tabs).init()
+    }
 };
 
 

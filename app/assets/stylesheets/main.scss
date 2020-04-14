@@ -1,3 +1,5 @@
+@import "partials/_govuk-helpers.scss";
+
 @import "layout";
 @import "side_nav";
 @import "header";
@@ -11,6 +13,9 @@
 // AF 4.11 WCAG 2.1 updates
 @import "partials/_palette";
 @import "partials/_focus";
+
+@import "partials/_tabs";
+
 
 span.extra-bold {
   font-weight: 800;

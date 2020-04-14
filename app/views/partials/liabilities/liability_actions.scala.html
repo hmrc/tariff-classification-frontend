@@ -19,7 +19,7 @@
 @import models.Case
 @import models.request.AuthenticatedRequest
 @import views.partials.ShowActions
-@(c: Case, startAtTabIndex: Int)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(c: Case)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @defining(ShowActions(c.status)) { show: ShowActions =>
 
@@ -29,9 +29,7 @@
         @if(show.refer) {
             <div id="refer-case-section" class="mt-1">
                 <p class="mt-1">
-                    <a tabindex="@{
-                        startAtTabIndex + 1
-                    }" id="refer-case-button" href="@ReferCaseController.getReferCase(c.reference)">
+                    <a id="refer-case-button" href="@ReferCaseController.getReferCase(c.reference)">
                         Refer this case</a>
                 </p>
             </div>
@@ -40,9 +38,7 @@
         @if(show.reject) {
             <div id="reject-case-section" class="mt-1">
                 <p>
-                    <a tabindex="@{
-                        startAtTabIndex + 2
-                    }" id="reject-case-button" href="@RejectCaseController.getRejectCase(c.reference)">
+                    <a id="reject-case-button" href="@RejectCaseController.getRejectCase(c.reference)">
                         Reject this case</a>
                 </p>
             </div>
@@ -51,9 +47,7 @@
         @if(show.suspend) {
             <div id="suspend-case-section" class="mt-1">
                 <p>
-                    <a tabindex="@{
-                        startAtTabIndex + 3
-                    }" id="suspend-case-button" href="@SuspendCaseController.getSuspendCase(c.reference)">
+                    <a id="suspend-case-button" href="@SuspendCaseController.getSuspendCase(c.reference)">
                         Suspend this case</a>
                 </p>
             </div>
@@ -61,9 +55,7 @@
 
         @if(show.release) {
             <div id="release-case-section" class="mt-1">
-                <a tabindex="@{
-                    startAtTabIndex + 4
-                }" id="release-case-button" href="@ReleaseCaseController.releaseCase(c.reference)">
+                <a id="release-case-button" href="@ReleaseCaseController.releaseCase(c.reference)">
                     Release this case</a>
             </div>
         }
@@ -71,9 +63,7 @@
         @if(show.suppress) {
             <div id="supress-case-section" class="mt-1">
                 <p class="mt-30">
-                    <a tabindex="@{
-                        startAtTabIndex + 5
-                    }" id="suppress_link" href="@SuppressCaseController.getSuppressCase(c.reference)">
+                    <a id="suppress_link" href="@SuppressCaseController.getSuppressCase(c.reference)">
                         Suppress this case</a>
                 </p>
             </div>
@@ -83,9 +73,7 @@
             @helper.form(action = ReopenCaseController.confirmReopenCase(c.reference), 'id -> "reopen-case") {
                 @helper.CSRF.formField
                 <div>
-                    <button tabindex="@{
-                        startAtTabIndex + 6
-                    }" class="button" id="reopen-case-button" type="submit">Reopen this case</button>
+                    <button class="button" id="reopen-case-button" type="submit">Reopen this case</button>
                 </div>
             }
         }

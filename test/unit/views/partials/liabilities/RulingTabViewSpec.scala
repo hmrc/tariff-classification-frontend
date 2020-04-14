@@ -65,7 +65,7 @@ class RulingTabViewSpec extends ViewSpec {
     }
 
     "render edit details" in {
-      val expected = messages("case.v2.liability.ruling.edit.details") + " " + messages("case.v2.liability.ruling.edit.details")
+      val expected = messages("case.v2.liability.ruling.edit.details")
 
       doc.getElementById("ruling_edit_details").text shouldBe expected
     }
