@@ -73,12 +73,8 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     "metrics.enabled" -> false,
     "new-liability-details" -> true
   ).build()
-  private val activityForm: Form[ActivityFormData] = ActivityForm.form
   private val pagedEvent: Paged[Event] = Paged(Seq(Events.event), 1, 1, 1)
   private val queues: Seq[Queue] = Seq(Queue("", "", ""))
-  private val eventService = mock[EventsService]
-  private val queueService = mock[QueuesService]
-  private val operator = Operator(id = "id")
   private val event = mock[Event]
 
   override def beforeEach(): Unit =
@@ -163,5 +159,17 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
       checkLiabilityView(1)
     }
+  }
+
+  "Liability add keyword" should {
+
+    "redirect back to display liability if form submitted successfully" in {
+
+      val result: Future[Result] =
+        route(app, FakeRequest("POST", "/manage-tariff-classifications/cases/v2/123456/liability/add-keyword").withFormUrlEncodedBody("keyword" -> "pajamas")).get
+
+      status(result) shouldBe 303
+    }
+
   }
 }

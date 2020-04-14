@@ -121,6 +121,8 @@ GET         /attachment/:id                                     controllers.View
 GET         /cases/v2/:reference/liability                      controllers.v2.LiabilityController.displayLiability(reference: String)
 POST        /cases/v2/:reference/liability                      controllers.v2.LiabilityController.addNote(reference: String)
 
+POST        /cases/v2/:reference/liability/add-keyword          controllers.v2.LiabilityController.addKeyword(reference: String)
+
 POST        /cases/v2/:reference/attachments                    controllers.v2.AttachmentsController.uploadAttachment(reference: String)
 GET         /cases/v2/:reference/attachments/remove             controllers.v2.AttachmentsController.removeAttachment(reference: String, fileId: String, fileName: String)
 POST        /cases/v2/:reference/attachments/remove             controllers.v2.AttachmentsController.confirmRemoveAttachment(reference: String, fileId: String, fileName: String)

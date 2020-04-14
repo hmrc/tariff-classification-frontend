@@ -123,4 +123,11 @@ class LiabilityController @Inject()(
     ActivityForm.form.bindFromRequest.fold(onError, onSuccess)
   }
 
+  def addKeyword(reference: String): Action[AnyContent] = (verify.authenticated andThen
+    verify.casePermissions(reference) andThen verify.mustHave(Permission.KEYWORDS)).async {
+    implicit request => ???
+
+
+  }
+
 }
