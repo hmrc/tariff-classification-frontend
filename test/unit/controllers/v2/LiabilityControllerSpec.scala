@@ -57,7 +57,7 @@ class RequestActionsWithPermissionsProvider @Inject()(implicit parse: BodyParser
   }
 }
 
-class LiabilityControllerSpec @Inject()(implicit parse: BodyParsers.Default) extends ControllerBaseSpec with BeforeAndAfterEach {
+class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   val binds = List(
 
@@ -84,7 +84,7 @@ class LiabilityControllerSpec @Inject()(implicit parse: BodyParsers.Default) ext
 
   val requestActionsWithKeywordsPermission:  RequestActionsWithPermissions = {
     new RequestActionsWithPermissions(
-      parse, Set(Permission.KEYWORDS),
+      inject[BodyParsers.Default], Set(Permission.KEYWORDS),
       c = Cases.liabilityCaseExample.copy(assignee = Some(Cases.operatorWithPermissions)),
       op = Cases.operatorWithPermissions
     )
@@ -138,7 +138,7 @@ class LiabilityControllerSpec @Inject()(implicit parse: BodyParsers.Default) ext
     when(inject[FileStoreService].getAttachments(any[Case]())(any())) thenReturn (Future.successful(attachments))
     when(inject[FileStoreService].getLetterOfAuthority(any())(any())) thenReturn (Future.successful(letterOfAuthority))
     when(inject[KeywordsService].autoCompleteKeywords) thenReturn Future(Seq("keyword1", "keyword2"))
-
+    when(inject[KeywordsService].addKeyword(any(), any(), any())(any())) thenReturn Future(Cases.liabilityLiveCaseExample)
     mockLiabilityView
   }
 
