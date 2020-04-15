@@ -51,7 +51,8 @@ class LiabilityViewModelSpec extends UnitSpec {
                            hasPermissions: Boolean = false,
                            showRulingTab: Boolean = false,
                            showChangeCaseStatus: Boolean = false,
-                           showTakeOffReferral: Boolean = false
+                           showTakeOffReferral: Boolean = false,
+                           showReopen: Boolean = false
                          ): LiabilityViewModel = {
     LiabilityViewModel(
       caseHeaderViewModel = caseHeaderViewModel,
@@ -59,7 +60,8 @@ class LiabilityViewModelSpec extends UnitSpec {
       hasPermissions = hasPermissions,
       showRulingTab = showRulingTab,
       showChangeCaseStatus = showChangeCaseStatus,
-      showTakeOffReferral
+      showTakeOffReferral = showTakeOffReferral,
+      showReopen = showReopen
     )
   }
 
@@ -130,6 +132,29 @@ class LiabilityViewModelSpec extends UnitSpec {
 
   }
 
+  "showReopen" should {
+
+    "show reopen button when case status is SUSPENDED and user has REOPEN_CASE permission" in {
+
+      val liabilityViewModel = LiabilityViewModel.fromCase(suspendedCase, operator)
+      liabilityViewModel.showReopen shouldBe true
+    }
+
+    "not reopen button when case status is not SUSPENDED" in {
+
+      val liabilityViewModel = LiabilityViewModel.fromCase(openCase, operator)
+      liabilityViewModel.showReopen shouldBe false
+    }
+
+
+    "not reopen button when user has not REOPEN_CASE permission" in {
+
+      val liabilityViewModel = LiabilityViewModel.fromCase(suspendedCase, operatorWithoutPermission)
+      liabilityViewModel.showReopen shouldBe false
+    }
+
+  }
+
   "fromCase" should {
 
     "create a cancelled view model" in {
@@ -154,7 +179,8 @@ class LiabilityViewModelSpec extends UnitSpec {
         hasPermissions = false,
         showRulingTab = false,
         showChangeCaseStatus = false,
-        showTakeOffReferral = false)
+        showTakeOffReferral = false,
+        showReopen = false)
       )
     }
 
