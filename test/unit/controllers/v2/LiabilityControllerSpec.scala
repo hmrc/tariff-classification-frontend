@@ -119,14 +119,15 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       inject[liability_view],
       inject[EventsService],
       inject[QueuesService],
-      inject[FileStoreService]
+      inject[FileStoreService],
+      inject[KeywordsService]
     )
 
   private implicit val hc: HeaderCarrier = HeaderCarrier()
 
   private def checkLiabilityView(timesInvoked: Int) =
     verify(inject[liability_view], times(timesInvoked)).apply(
-      any(), any(), any(), any(), any(), any(), any(), any()
+      any(), any(), any(), any(), any(), any(), any(), any(), any(), any()
     )(any(), any(), any())
 
   private def mockLiabilityController(
@@ -140,13 +141,15 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
     when(inject[FileStoreService].getAttachments(any[Case]())(any())) thenReturn (Future.successful(attachments))
     when(inject[FileStoreService].getLetterOfAuthority(any())(any())) thenReturn (Future.successful(letterOfAuthority))
-
+    when(inject[KeywordsService].autoCompleteKeywords) thenReturn Future(Seq("keyword1", "keyword2"))
+    when(inject[KeywordsService].addKeyword(any(), any(), any())(any())) thenReturn Future(Cases.liabilityLiveCaseExample)
+    when(inject[KeywordsService].removeKeyword(any(), any(), any())(any())) thenReturn Future(Cases.liabilityLiveCaseExample)
     mockLiabilityView
   }
 
   private def mockLiabilityView =
     when(inject[liability_view].apply(
-      any(), any(), any(), any(), any(), any(), any(), any()
+      any(), any(), any(), any(), any(), any(), any(), any(), any(), any()
     )(any(), any(), any())) thenReturn Html("body")
 
 
@@ -216,6 +219,21 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/v2/123456/liability#keywords_tab")
     }
 
+    "return to view if form fails to validate" in {
+
+      when(inject[KeywordsService].addKeyword(
+        meq(Cases.liabilityCaseExample), meq(""), meq(Cases.operatorWithKeywordsPermissions))
+      (any[HeaderCarrier])) thenReturn Future(Cases.liabilityCaseExample)
+
+      mockLiabilityController()
+
+      val result: Future[Result] =
+        route(appWithKeywordPermissions, FakeRequest("POST", "/manage-tariff-classifications/cases/v2/123456/liability/add-keyword")
+          .withFormUrlEncodedBody("keyword" -> "")).get
+
+      status(result) shouldBe 200
+    }
+
     "redirect to unauthorised if the user does not have the right permissions" in {
 
       val result: Future[Result] =
@@ -225,6 +243,22 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
     }
+
+  }
+
+  "Liability remove keyword" should {
+
+      "remove keyword and return to liability view" in {
+
+        mockLiabilityController()
+
+        val fakeReq = FakeRequest("GET", "/manage-tariff-classifications/cases/v2/123456/liability/remove-keyword/llamas")
+        val result: Future[Result] = route(appWithKeywordPermissions, fakeReq).get
+
+        status(result) shouldBe 303
+        locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/v2/123456/liability#keywords_tab")
+      }
+
 
   }
 }

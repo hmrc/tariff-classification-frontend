@@ -72,7 +72,7 @@ class LiabilityViewModelSpec extends UnitSpec {
     }
 
     "isNewCase = true and hasPermissions = false" in {
-      buildLiabilityModel(caseHeader, isNewCase = true, hasPermissions = false, showRulingAndKeywordsTabs = false, showChangeCaseStatus = false).showActionThisCase shouldBe false
+      buildLiabilityModel(isNewCase = true, hasPermissions = false, showRulingAndKeywordsTabs = false, showChangeCaseStatus = false).showActionThisCase shouldBe false
     }
 
     "not show action this case button when isNewCase = false and hasPermissions = false" in {

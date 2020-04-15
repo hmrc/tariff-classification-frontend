@@ -58,7 +58,7 @@
                         </div>
                         @if(request.hasPermission(Permission.KEYWORDS)) {
                             <div id="keywords-row-@{index}-remove" class="column-one-third text-right">
-                                <a tabindex="@{startAtTabIndex+10+index}" id="keywords-row-@{index}-remove-link" aria-label="remove @keyword" href="@CaseController.removeKeyword(ktvm.caseReference, keyword)">Remove</a>
+                                <a tabindex="@{startAtTabIndex+10+index}" id="keywords-row-@{index}-remove-link" aria-label="remove @keyword" href="@LiabilityController.removeKeyword(ktvm.caseReference, keyword)">Remove</a>
                             </div>
                         }
                     </div>

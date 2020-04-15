@@ -142,4 +142,12 @@ class LiabilityController @Inject()(
       KeywordForm.form.bindFromRequest.fold(onError, onSuccess)
   }
 
-}
+  def removeKeyword(reference: String, keyword: String): Action[AnyContent] =
+    (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.KEYWORDS)).async {
+      implicit request: AuthenticatedCaseRequest[AnyContent] =>
+        keywordsService.removeKeyword(request.`case`, keyword, request.operator) map {
+          _ => Redirect(v2.routes.LiabilityController.displayLiability(reference).withFragment(keywordsTab))
+        }
+    }
+
+  }
