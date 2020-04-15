@@ -218,6 +218,7 @@ class LiabilityViewSpec extends ViewSpec {
 
     "render Sample tab" in {
       val c = aLiabilityCase(withReference("reference"), withLiabilityApplication())
+
       val doc = view(liabilityView(LiabilityViewModel.fromCase(
         c, Cases.operatorWithAddAttachment), None,
         None,

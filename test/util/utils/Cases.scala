@@ -77,8 +77,8 @@ object Cases {
   val activityTabViewModelWithPermissions = ActivityViewModel("referenceNumber", Some(operatorWithPermissions),
     Some("queueId"), Instant.now, pagedEvent, queues, "queue Name")
   val operatorWithPermissions = Operator(id = "0", name = Some("liability op name"), permissions = Set(Permission.ADD_NOTE, Permission.VIEW_CASES))
+  val operatorWithCompleteCasePermission = Operator(id = "0", name = Some("liability op name"), permissions = Set(Permission.COMPLETE_CASE, Permission.REOPEN_CASE))
   val operatorWithKeywordsPermissions = Operator(id = "0", name = Some("liability op name"), permissions = Set(Permission.KEYWORDS))
-  val operatorWithCompleteCasePermission = Operator(id = "0", name = Some("liability op name"), permissions = Set(Permission.COMPLETE_CASE))
   val operatorWithoutCompleteCasePermission = Operator(id = "0", name = Some("liability op name"), permissions = Set(Permission.VIEW_CASES))
   val operatorWithReleaseOrSuppressPermissions = Operator(id = "0", name =
     Some("liability op name"), permissions = Set(Permission.RELEASE_CASE, Permission.SUPPRESS_CASE))

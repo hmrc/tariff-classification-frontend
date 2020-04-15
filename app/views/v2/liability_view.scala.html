@@ -40,6 +40,7 @@
         sample_status: views.html.partials.liabilities.sample.sample_details_liability,
         activity_tab: views.html.partials.liabilities.activity_tab,
         attachments_details: views.html.partials.liabilities.attachments_details,
+        case_action_buttons_partial: views.html.partials.liabilities.case_action_buttons_partial,
         keywords_tab: views.html.v2.keywords_details
 )
 
@@ -65,13 +66,7 @@
 
     @case_heading(liabilityViewModel.caseHeaderViewModel)
 
-    @if(liabilityViewModel.showActionThisCase) {
-        @change_case_status_button("action-this-case", messages("case.v2.liability.action_this_case.button"), ReleaseOrSuppressCaseController.onPageLoad(liabilityViewModel.caseHeaderViewModel.referenceNumber))
-    }
-
-    @if(liabilityViewModel.showChangeCaseStatus) {
-        @change_case_status_button("change-case-status", messages("case.v2.liability.change_case_status.button"), ChangeCaseStatusController.onPageLoad(liabilityViewModel.caseHeaderViewModel.referenceNumber))
-    }
+    @case_action_buttons_partial(liabilityViewModel)
 
     <div class="govuk-tabs" data-module="govuk-tabs">
         <ul class="govuk-tabs__list">

@@ -41,6 +41,7 @@ import service.{EventsService, FileStoreService, KeywordsService, QueuesService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{Cases, Events}
 import views.html.partials.liabilities.{attachments_details, attachments_list}
+
 import views.html.v2.{case_heading, liability_view, remove_attachment}
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -105,9 +106,12 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     "metrics.enabled" -> false,
     "new-liability-details" -> true
   ).build()
-  
+
   private val pagedEvent: Paged[Event] = Paged(Seq(Events.event), 1, 1, 1)
   private val queues: Seq[Queue] = Seq(Queue("", "", ""))
+  private val eventService = mock[EventsService]
+  private val queueService = mock[QueuesService]
+  private val operator = Operator(id = "id")
   private val event = mock[Event]
 
   override def beforeEach(): Unit =
@@ -115,15 +119,14 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       inject[liability_view],
       inject[EventsService],
       inject[QueuesService],
-      inject[FileStoreService],
-      inject[KeywordsService]
+      inject[FileStoreService]
     )
 
   private implicit val hc: HeaderCarrier = HeaderCarrier()
 
   private def checkLiabilityView(timesInvoked: Int) =
     verify(inject[liability_view], times(timesInvoked)).apply(
-      any(), any(), any(), any(), any(), any(), any(), any(), any(), any()
+      any(), any(), any(), any(), any(), any(), any(), any()
     )(any(), any(), any())
 
   private def mockLiabilityController(
@@ -137,14 +140,13 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
     when(inject[FileStoreService].getAttachments(any[Case]())(any())) thenReturn (Future.successful(attachments))
     when(inject[FileStoreService].getLetterOfAuthority(any())(any())) thenReturn (Future.successful(letterOfAuthority))
-    when(inject[KeywordsService].autoCompleteKeywords) thenReturn Future(Seq("keyword1", "keyword2"))
-    when(inject[KeywordsService].addKeyword(any(), any(), any())(any())) thenReturn Future(Cases.liabilityLiveCaseExample)
+
     mockLiabilityView
   }
 
   private def mockLiabilityView =
     when(inject[liability_view].apply(
-      any(), any(), any(), any(), any(), any(), any(), any(), any(), any()
+      any(), any(), any(), any(), any(), any(), any(), any()
     )(any(), any(), any())) thenReturn Html("body")
 
 
