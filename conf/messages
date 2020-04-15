@@ -731,8 +731,7 @@ case.v2.liability.c592.repayment_claim=Repayment claim
 case.v2.liability.c592.dvr_number=DVR number
 case.v2.liability.c592.date_for_repayment=Date for repayment
 
-case.v2.liability.activity_tab.hint=Updates about samples are in the Sample status section.
-case.v2.liability.activity_tab.activity_timeline_h2=Activity timeline
+
 case.v2.liability.ruling.info.from.c592=Information from the C592
 case.v2.liability.ruling.info.from.c592.code.by.trader=Code entered by trader or agent
 case.v2.liability.ruling.info.from.c592.code.suggested=Code suggested by officer
@@ -747,6 +746,10 @@ case.v2.liability.ruling.searches=Searches performed
 case.v2.liability.ruling.exclusions=Exclusions
 
 case.v2.liability.activity_tab.tab_title=Activity
+case.v2.liability.activity_tab.add_note=Add a case note
+case.v2.liability.activity_tab.add_note_hint=Add short, descriptive notes to record case activity. For example, '''A sample of one trainer has been received and sent to the lab for testing.'''
+case.v2.liability.activity_tab.hint=Updates about samples are in the Sample status section.
+case.v2.liability.activity_tab.activity_timeline_h2=Activity timeline
 
 case.v2.liability.sample_status_tab.tab_title=Sample status
 case.v2.liability.sample_status_tab.hint=Sample photos are in the Attachments section.

@@ -249,7 +249,6 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
   "Liability remove keyword" should {
 
       "remove keyword and return to liability view" in {
-
         mockLiabilityController()
 
         val fakeReq = FakeRequest("GET", "/manage-tariff-classifications/cases/v2/123456/liability/remove-keyword/llamas")
@@ -259,6 +258,16 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
         locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/v2/123456/liability#keywords_tab")
       }
 
+    "redirect to unauthorised if the user does not have the right permissions" in {
+      mockLiabilityController()
+
+      val fakeReq = FakeRequest("GET", "/manage-tariff-classifications/cases/v2/123456/liability/remove-keyword/llamas")
+      val result: Future[Result] = route(app, fakeReq).get
+
+      status(result) shouldBe 303
+      redirectLocation(result).get should include("unauthorized")
+
+    }
 
   }
 }
