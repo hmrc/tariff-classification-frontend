@@ -63,18 +63,6 @@ class LiabilityViewModelSpec extends UnitSpec {
 
   "showActionThisCase" should {
 
-    "isNewCase = false and hasPermissions = false" in {
-      buildLiabilityModel(isNewCase = false, hasPermissions = false, showRulingAndKeywordsTabs = false, showChangeCaseStatus = false).showActionThisCase shouldBe false
-    }
-
-    "isNewCase = false and hasPermissions = true" in {
-      buildLiabilityModel(isNewCase = false, hasPermissions = true, showRulingAndKeywordsTabs = false, showChangeCaseStatus = false).showActionThisCase shouldBe false
-    }
-
-    "isNewCase = true and hasPermissions = false" in {
-      buildLiabilityModel(isNewCase = true, hasPermissions = false, showRulingAndKeywordsTabs = false, showChangeCaseStatus = false).showActionThisCase shouldBe false
-    }
-
     "not show action this case button when isNewCase = false and hasPermissions = false" in {
       buildLiabilityModel(isNewCase = false, hasPermissions = false).showActionThisCase shouldBe false
     }
@@ -89,10 +77,6 @@ class LiabilityViewModelSpec extends UnitSpec {
 
     "show action this case button when isNewCase = true and hasPermissions = true" in {
       buildLiabilityModel(isNewCase = true, hasPermissions = true).showActionThisCase shouldBe true
-    }
-
-    "isNewCase = true and hasPermissions = true" in {
-      buildLiabilityModel(isNewCase = true, hasPermissions = true, showRulingAndKeywordsTabs = false, showChangeCaseStatus = false).showActionThisCase shouldBe true
     }
 
   }
