@@ -25,6 +25,7 @@
 @import views.html.partials.tab_heading
 @import views.html.partials.error_summary
 @import controllers.v2.routes.LiabilityController
+@import controllers.Tab._
 
 @this()
 
@@ -67,7 +68,7 @@
             </div>
 
             @if(request.hasPermission(Permission.KEYWORDS)) {
-                @form(action = LiabilityController.addKeyword(ktvm.caseReference), 'class -> "form mt-3") {
+                @form(action = LiabilityController.addKeyword(ktvm.caseReference).withFragment(KEYWORDS_TAB), 'class -> "form mt-3") {
 
                     @CSRF.formField
                     @input_auto_complete(
