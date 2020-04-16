@@ -50,8 +50,6 @@
     caseRef = attachmentsTabViewModel.caseReference
 )
 
-<h3>@AttachmentsController.uploadAttachment(attachmentsTabViewModel.caseReference).withFragment(ATTACHMENTS_TAB)</h3>
-
 @if(showUploadAttachments) {
     @helpers.form(action = {AttachmentsController.uploadAttachment(attachmentsTabViewModel.caseReference).withFragment(ATTACHMENTS_TAB)},
         'enctype -> "multipart/form-data",
