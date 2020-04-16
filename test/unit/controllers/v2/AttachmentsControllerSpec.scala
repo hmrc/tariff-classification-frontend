@@ -465,7 +465,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
   private def givenACaseWithNoAttachmentsAndNoLetterOfAuthority(testReference: String, aCase: Case) = {
     when(remove_attachment.apply(any(), any(), anyString(), anyString())(any(), any(), any())).thenReturn(Html("heading"))
 
-    when(liabilityController.buildLiabilityView(any(), any())(any())).thenReturn(successful(Ok("Ok")))
+    when(liabilityController.buildLiabilityView(any(), any(), any())(any())).thenReturn(successful(Ok("Ok")))
 
     when(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).thenReturn(successful(Some(aCase)))
     when(fileService.getAttachments(refEq(aCase))(any[HeaderCarrier])).thenReturn(successful(Seq.empty))

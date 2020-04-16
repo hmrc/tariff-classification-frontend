@@ -15,10 +15,22 @@
  *@
 
 @import config.AppConfig
+@import views.html.includes.main
+@import controllers.routes.ReleaseOrSuppressCaseController
+@import views.html.components.change_case_status_button
+@import models.forms.{UploadAttachmentForm,ActivityFormData,KeywordForm}
+@import models.request.AuthenticatedRequest
+@import models.viewmodels._
+@import views.CaseDetailPage
+@import views.html.partials.liabilities.activity_tab
+@import models.{Case, Event, Paged, Permission, Queue}
+@import controllers.routes.{ChangeCaseStatusController, ReleaseOrSuppressCaseController}
 @import models.Permission
 @import models.forms.ActivityFormData
 @import models.request.AuthenticatedRequest
 @import models.viewmodels._
+@import views.CaseDetailPage
+@import views.html.components.change_case_status_button
 @import views.html.includes.main
 
 @this(
@@ -28,7 +40,8 @@
         sample_status: views.html.partials.liabilities.sample.sample_details_liability,
         activity_tab: views.html.partials.liabilities.activity_tab,
         attachments_details: views.html.partials.liabilities.attachments_details,
-        case_action_buttons_partial: views.html.partials.liabilities.case_action_buttons_partial
+        case_action_buttons_partial: views.html.partials.liabilities.case_action_buttons_partial,
+        keywords_tab: views.html.v2.keywords_details
 )
 
 @(
@@ -43,7 +56,11 @@
 
         //attachments
         attachmentsTabViewModel: Option[AttachmentsTabViewModel],
-        uploadAttachmentsForm: Form[String]
+        uploadAttachmentsForm: Form[String],
+
+        //keywords
+        keywordsTabViewModel: KeywordsTabViewModel,
+        keywordForm: Form[String]
 )(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 @main(bodyClasses = None, customTitle = Some(messages("case.v2.liaiblity.page_title"))) {
 
@@ -63,7 +80,7 @@
             }
 
             @* ruling*@
-            @if(rulingViewModel.isDefined && liabilityViewModel.showRulingTab) {
+            @if(rulingViewModel.isDefined && liabilityViewModel.showRulingAndKeywordsTabs) {
                 <li class="govuk-tabs__list-item">
                     <a class="govuk-tabs__tab" href="#ruling_tab">
                     @messages("case.v2.liability.ruling.tab_title")
@@ -95,6 +112,14 @@
                 </li>
             }
 
+            @if(liabilityViewModel.showRulingAndKeywordsTabs) {
+            <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
+                <a class="govuk-tabs__tab" href="#keywords_tab">
+                    @messages("case.v2.liability.keywords.tab_title")
+                </a>
+            </li>
+            }
+
         </ul>
 
         @* content*@
@@ -105,7 +130,7 @@
         }
 
         @* content*@
-        @if(rulingViewModel.isDefined && liabilityViewModel.showRulingTab) {
+        @if(rulingViewModel.isDefined && liabilityViewModel.showRulingAndKeywordsTabs) {
         <div class="govuk-tabs__panel" id="ruling_tab">
             @ruling_tab(rulingViewModel.get)
         </div>
@@ -134,6 +159,12 @@
                 activityForm
             )
             </div>
+        }
+
+        @if(liabilityViewModel.showRulingAndKeywordsTabs) {
+        <div class="govuk-tabs__panel" id="keywords_tab">
+            @keywords_tab(keywordsTabViewModel, keywordForm)
+        </div>
         }
 
     </div>

@@ -22,7 +22,7 @@ case class LiabilityViewModel(
                                caseHeaderViewModel: CaseHeaderViewModel,
                                isNewCase: Boolean,
                                hasPermissions: Boolean,
-                               showRulingTab: Boolean,
+                               showRulingAndKeywordsTabs: Boolean,
                                showChangeCaseStatus: Boolean,
                                showTakeOffReferral: Boolean,
                                showReopen: Boolean
@@ -67,7 +67,7 @@ object LiabilityViewModel {
       CaseHeaderViewModel.fromCase(c),
       isNewCase = isNew,
       hasPermissions = releaseOrSuppressPermissions,
-      showRulingTab = showRulingAndKeywords,
+      showRulingAndKeywordsTabs = showRulingAndKeywords,
       showChangeCaseStatus = changeCaseStatus,
       showTakeOffReferral = takeOffReferral,
       showReopen = showReopenButton

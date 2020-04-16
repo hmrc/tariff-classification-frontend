@@ -19,14 +19,14 @@ package controllers.v2
 import config.AppConfig
 import controllers.{RequestActions, v2}
 import javax.inject.{Inject, Singleton}
-import models.forms.{ActivityForm, ActivityFormData, UploadAttachmentForm}
+import models.forms.{ActivityForm, ActivityFormData, KeywordForm, UploadAttachmentForm}
 import models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
 import models.viewmodels._
 import models.{Case, Permission, _}
-import play.api.data.Form
+import play.api.data.{Form}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import service.{CasesService, EventsService, FileStoreService, QueuesService}
+import service.{CasesService, EventsService, FileStoreService, KeywordsService, QueuesService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
@@ -40,10 +40,13 @@ class LiabilityController @Inject()(
                                      eventsService: EventsService,
                                      queuesService: QueuesService,
                                      fileService: FileStoreService,
+                                     keywordsService: KeywordsService,
                                      mcc: MessagesControllerComponents,
                                      val liability_view: views.html.v2.liability_view,
                                      implicit val appConfig: AppConfig
                                    ) extends FrontendController(mcc) with I18nSupport {
+
+  private val keywordsTab = "keywords_tab"
 
   def displayLiability(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)).async {
     implicit request => {
@@ -53,7 +56,8 @@ class LiabilityController @Inject()(
 
   def buildLiabilityView(
                           activityForm: Form[ActivityFormData] = ActivityForm.form,
-                          uploadAttachmentForm: Form[String] = UploadAttachmentForm.form
+                          uploadAttachmentForm: Form[String] = UploadAttachmentForm.form,
+                          keywordForm: Form[String] = KeywordForm.form
                         )(implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
     val liabilityCase: Case = request.`case`
     val liabilityViewModel = LiabilityViewModel.fromCase(liabilityCase, request.operator)
@@ -65,6 +69,7 @@ class LiabilityController @Inject()(
       sampleTab <- getSampleTab(liabilityCase)
       c592 = Some(C592ViewModel.fromCase(liabilityCase))
       activityTab = Some(ActivityViewModel.fromCase(liabilityCase, activityEvents, queues))
+      keywordsTab <- keywordsService.autoCompleteKeywords.map(kws => KeywordsTabViewModel(liabilityCase.reference, liabilityCase.keywords, kws))
     } yield {
       Ok(liability_view(
         liabilityViewModel,
@@ -74,7 +79,9 @@ class LiabilityController @Inject()(
         activityTab,
         activityForm,
         attachmentsTab,
-        uploadAttachmentForm
+        uploadAttachmentForm,
+        keywordsTab,
+        keywordForm
       ))
     }
   }
@@ -118,4 +125,29 @@ class LiabilityController @Inject()(
     ActivityForm.form.bindFromRequest.fold(onError, onSuccess)
   }
 
-}
+  def addKeyword(reference: String): Action[AnyContent] = (verify.authenticated andThen
+    verify.casePermissions(reference) andThen verify.mustHave(Permission.KEYWORDS)).async {
+    implicit request =>
+
+
+      def onError: Form[String] => Future[Result] = (errorForm: Form[String]) => {
+        buildLiabilityView(keywordForm = errorForm)
+      }
+
+      def onSuccess: String => Future[Result] = validForm => {
+        keywordsService.addKeyword(request.`case`, validForm, request.operator)
+          .map(_ => Redirect(v2.routes.LiabilityController.displayLiability(reference).withFragment(keywordsTab)))
+      }
+
+      KeywordForm.form.bindFromRequest.fold(onError, onSuccess)
+  }
+
+  def removeKeyword(reference: String, keyword: String): Action[AnyContent] =
+    (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.KEYWORDS)).async {
+      implicit request: AuthenticatedCaseRequest[AnyContent] =>
+        keywordsService.removeKeyword(request.`case`, keyword, request.operator) map {
+          _ => Redirect(v2.routes.LiabilityController.displayLiability(reference).withFragment(keywordsTab))
+        }
+    }
+
+  }

@@ -24,32 +24,28 @@ import utils.Cases
 
 class LiabilityViewModelSpec extends UnitSpec {
 
+  val openCase = Cases.liabilityCaseExample.copy(status = CaseStatus.OPEN)
+  val referredCase = Cases.liabilityCaseExample.copy(status = CaseStatus.REFERRED)
+  val rejectedCase = Cases.liabilityCaseExample.copy(status = CaseStatus.REJECTED)
+  val suspendedCase = Cases.liabilityCaseExample.copy(status = CaseStatus.SUSPENDED)
+  val completedCase = Cases.liabilityCaseExample.copy(status = CaseStatus.COMPLETED)
+  val newCase = Cases.liabilityCaseExample.copy(status = CaseStatus.NEW)
+  val cancelledCase = Cases.liabilityCaseExample.copy(status = CaseStatus.CANCELLED)
+  val casesWithRulingTab = Seq(openCase, referredCase, rejectedCase, suspendedCase, completedCase)
+  val casesWithoutRulingTab = Seq(newCase, cancelledCase)
+  val operator = Cases.operatorWithCompleteCasePermission
+  val operatorWithoutPermission = Cases.operatorWithoutCompleteCasePermission
   private val caseHeaderViewModel = CaseHeaderViewModel("Liability",
     "trader-business-name", "good-name",
     "1",
     "CANCELLED",
     isLive = false)
 
-  val openCase = Cases.liabilityCaseExample.copy(status = CaseStatus.OPEN)
-  val referredCase = Cases.liabilityCaseExample.copy(status = CaseStatus.REFERRED)
-  val rejectedCase = Cases.liabilityCaseExample.copy(status = CaseStatus.REJECTED)
-  val suspendedCase = Cases.liabilityCaseExample.copy(status = CaseStatus.SUSPENDED)
-  val completedCase = Cases.liabilityCaseExample.copy(status = CaseStatus.COMPLETED)
-
-  val newCase = Cases.liabilityCaseExample.copy(status = CaseStatus.NEW)
-  val cancelledCase = Cases.liabilityCaseExample.copy(status = CaseStatus.CANCELLED)
-
-  val casesWithRulingTab = Seq(openCase, referredCase, rejectedCase, suspendedCase, completedCase)
-  val casesWithoutRulingTab = Seq(newCase, cancelledCase)
-
-  val operator = Cases.operatorWithCompleteCasePermission
-  val operatorWithoutPermission = Cases.operatorWithoutCompleteCasePermission
-
   def buildLiabilityModel(
                            caseHeaderViewModel: CaseHeaderViewModel = caseHeaderViewModel,
                            isNewCase: Boolean = false,
                            hasPermissions: Boolean = false,
-                           showRulingTab: Boolean = false,
+                           showRulingAndKeywordsTabs: Boolean = false,
                            showChangeCaseStatus: Boolean = false,
                            showTakeOffReferral: Boolean = false,
                            showReopen: Boolean = false
@@ -58,7 +54,7 @@ class LiabilityViewModelSpec extends UnitSpec {
       caseHeaderViewModel = caseHeaderViewModel,
       isNewCase = isNewCase,
       hasPermissions = hasPermissions,
-      showRulingTab = showRulingTab,
+      showRulingAndKeywordsTabs = showRulingAndKeywordsTabs,
       showChangeCaseStatus = showChangeCaseStatus,
       showTakeOffReferral = showTakeOffReferral,
       showReopen = showReopen
@@ -68,24 +64,21 @@ class LiabilityViewModelSpec extends UnitSpec {
   "showActionThisCase" should {
 
     "not show action this case button when isNewCase = false and hasPermissions = false" in {
-
       buildLiabilityModel(isNewCase = false, hasPermissions = false).showActionThisCase shouldBe false
     }
 
     "not show action this case button when isNewCase = false and hasPermissions = true" in {
-
       buildLiabilityModel(isNewCase = false, hasPermissions = true).showActionThisCase shouldBe false
     }
 
     "not show action this case button when isNewCase = true and hasPermissions = false" in {
-
       buildLiabilityModel(isNewCase = true, hasPermissions = false).showActionThisCase shouldBe false
     }
 
     "show action this case button when isNewCase = true and hasPermissions = true" in {
-
       buildLiabilityModel(isNewCase = true, hasPermissions = true).showActionThisCase shouldBe true
     }
+
   }
 
   "showChangeCaseStatus" should {
@@ -107,6 +100,7 @@ class LiabilityViewModelSpec extends UnitSpec {
       val liabilityViewModel = LiabilityViewModel.fromCase(referredCase, operatorWithoutPermission)
       liabilityViewModel.showChangeCaseStatus shouldBe false
     }
+
   }
 
   "showTakeOffReferral" should {
@@ -177,7 +171,7 @@ class LiabilityViewModelSpec extends UnitSpec {
         isLive = false),
         isNewCase = false,
         hasPermissions = false,
-        showRulingTab = false,
+        showRulingAndKeywordsTabs = false,
         showChangeCaseStatus = false,
         showTakeOffReferral = false,
         showReopen = false)
@@ -244,7 +238,7 @@ class LiabilityViewModelSpec extends UnitSpec {
 
         val op = Cases.operatorWithoutPermissions
 
-        assert(LiabilityViewModel.fromCase(c, op).showRulingTab === true)
+        assert(LiabilityViewModel.fromCase(c, op).showRulingAndKeywordsTabs === true)
       }
     }
 
@@ -253,8 +247,10 @@ class LiabilityViewModelSpec extends UnitSpec {
 
         val op = Cases.operatorWithoutPermissions
 
-        assert(LiabilityViewModel.fromCase(c, op).showRulingTab === false)
+        assert(LiabilityViewModel.fromCase(c, op).showRulingAndKeywordsTabs === false)
       }
     }
+
   }
 }
+
