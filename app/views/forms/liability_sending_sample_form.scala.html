@@ -20,6 +20,7 @@
 @import views.forms.components.RadioOption
 @import views.html.components.confirm_or_cancel_buttons
 @import views.html.forms.components.input_radiogroup
+@import controllers.Tab._
 @(c: Case, field: Field)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 
@@ -37,7 +38,7 @@
         id = "sending_sample_form-submit",
         confirmText = messages("case.liability.sending.sample.change-return-confirm"),
         cancelText = messages("case.liability.sending.sample.change-return-cancel"),
-        cancelHref = if(appConfig.newLiabilityDetails) controllers.v2.routes.LiabilityController.displayLiability(c.reference) else routes.CaseController.sampleDetails(c.reference)
+        cancelHref = if(appConfig.newLiabilityDetails) controllers.v2.routes.LiabilityController.displayLiability(c.reference).withFragment(SAMPLE_TAB) else routes.CaseController.sampleDetails(c.reference)
     )
 }
 
