@@ -35,6 +35,7 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
+import controllers.Tab._
 
 @Singleton
 class AttachmentsController @Inject()(
@@ -76,9 +77,9 @@ class AttachmentsController @Inject()(
           case true =>
             getCaseAndRespond(reference,
               caseService.removeAttachment(_, fileId)
-                .map(_ => Redirect(controllers.v2.routes.LiabilityController.displayLiability(reference))))
+                .map(_ => Redirect(controllers.v2.routes.LiabilityController.displayLiability(reference).withFragment(ATTACHMENTS_TAB))))
           case _ =>
-            successful(Redirect(controllers.v2.routes.LiabilityController.displayLiability(reference)))
+            successful(Redirect(controllers.v2.routes.LiabilityController.displayLiability(reference).withFragment(ATTACHMENTS_TAB)))
         }
       )
 
@@ -116,7 +117,7 @@ class AttachmentsController @Inject()(
         casesService.getOne(reference).flatMap {
           case Some(c: Case) =>
             casesService.addAttachment(c, fileUpload, request.operator)
-              .map(_ => Redirect(controllers.v2.routes.LiabilityController.displayLiability(reference)))
+              .map(_ => Redirect(controllers.v2.routes.LiabilityController.displayLiability(reference).withFragment(ATTACHMENTS_TAB)))
           case _ =>
             successful(Ok(views.html.case_not_found(reference)))
         }

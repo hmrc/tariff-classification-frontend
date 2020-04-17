@@ -232,39 +232,5 @@ class LiabilityViewSpec extends ViewSpec {
       ))
       doc should containElementWithID("sample_status_tab")
     }
-
-    "render Keywords tab when showRulingAndKeywords is true" in {
-      val c = aLiabilityCase(withReference("reference"), withLiabilityApplication()).copy(status = CaseStatus.OPEN)
-      val doc = view(liabilityView(
-        LiabilityViewModel.fromCase(c, Cases.operatorWithAddAttachment),
-        None,
-        None,
-        sampleStatusTabViewModel,
-        Cases.activityTabViewModel, activityForm,
-        Cases.attachmentsTabViewModel.map(_.copy(attachments = Seq(Cases.storedAttachment), letter = Some(Cases.letterOfAuthority))),
-        UploadAttachmentForm.form,
-        emptyKeywordsTabViewModel,
-        keywordForm
-      ))
-      doc should containElementWithID("keywords_tab")
-    }
-
-    "not render Keywords tab when showRulingAndKeywords is false" in {
-      val c = aLiabilityCase(withReference("reference"), withLiabilityApplication()).copy(status = CaseStatus.NEW)
-      val doc = view(liabilityView(
-        LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions),
-        None,
-        None,
-        sampleStatusTabViewModel,
-        Cases.activityTabViewModel,
-        activityForm,
-        None,
-        uploadAttachmentForm,
-        emptyKeywordsTabViewModel,
-        keywordForm)
-      )
-      doc shouldNot containElementWithID("keywords_tab")
-    }
-
   }
 }

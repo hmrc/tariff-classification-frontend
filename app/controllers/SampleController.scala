@@ -32,6 +32,7 @@ import views.CaseDetailPage
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
+import controllers.Tab._
 
 @Singleton
 class SampleController @Inject()(
@@ -71,7 +72,7 @@ class SampleController @Inject()(
   }
 
   override protected def onSuccessRedirect(reference: String, isV2Liability: Boolean): Call =
-    if (isV2Liability) controllers.v2.routes.LiabilityController.displayLiability(reference)
+    if (isV2Liability) controllers.v2.routes.LiabilityController.displayLiability(reference).withFragment(SAMPLE_TAB)
     else routes.CaseController.sampleDetails(reference)
 
 

@@ -20,6 +20,7 @@
 @import views.html.forms.components.input_yes_no
 @import views.html.partials.error_summary
 @import models.viewmodels.CaseHeaderViewModel
+@import controllers.Tab._
 
 @this(
         case_heading: views.html.v2.case_heading
@@ -38,7 +39,7 @@
 
             <h3 id="remove_question" class="heading-medium mt-0">Are you sure you want to remove @fileName from this case?</h3>
 
-            @helper.form(action = AttachmentsController.confirmRemoveAttachment(c.referenceNumber, fileId, fileName), 'id -> "remove-attachment") {
+            @helper.form(action = AttachmentsController.confirmRemoveAttachment(c.referenceNumber, fileId, fileName).withFragment(ATTACHMENTS_TAB), 'id -> "remove-attachment") {
                 @helper.CSRF.formField
 
                 @input_yes_no(form("state"), "remove-attachment")

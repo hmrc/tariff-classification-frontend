@@ -27,6 +27,7 @@
 @import views.html.partials.liabilities.activity_tab_events_table
 @import views.html.partials.error_summary
 @import models.viewmodels.ActivityViewModel
+@import controllers.Tab._
 
 @this(case_heading: views.html.v2.case_heading)
 
@@ -43,7 +44,7 @@
 
   <div class="column-full">
 
-  @form(action = LiabilityController.addNote(activityViewModel.referenceNumber), 'class -> "form") {
+  @form(action = LiabilityController.addNote(activityViewModel.referenceNumber).withFragment(ACTIVITY_TAB), 'class -> "form") {
    @CSRF.formField
    @input_textarea(
     field = activityForm("note"),

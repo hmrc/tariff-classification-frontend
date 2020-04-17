@@ -48,6 +48,7 @@ import views.html.partials.liabilities.attachments_details
 import views.html.v2.{case_heading, liability_view, remove_attachment}
 import views.html._
 import views.html.partials.error_summary
+import controllers.Tab._
 
 import scala.concurrent.Future.successful
 
@@ -152,7 +153,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
 
       // Then
       status(result) shouldBe SEE_OTHER
-      redirectLocation(result) shouldBe Some(LiabilityController.displayLiability(testReference).toString)
+      redirectLocation(result) shouldBe Some(LiabilityController.displayLiability(testReference).withFragment(ATTACHMENTS_TAB).toString)
     }
 
     "show not found case page when non existing case is provided" in {
@@ -189,7 +190,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
 
         // Then
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(LiabilityController.displayLiability(testReference).toString)
+        redirectLocation(result) shouldBe Some(LiabilityController.displayLiability(testReference).withFragment(ATTACHMENTS_TAB).toString)
       }
     }
 
@@ -234,7 +235,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
 
       // Then
       status(result) shouldBe SEE_OTHER
-      redirectLocation(result) shouldBe Some(LiabilityController.displayLiability(testReference).toString)
+      redirectLocation(result) shouldBe Some(LiabilityController.displayLiability(testReference).withFragment(ATTACHMENTS_TAB).toString)
     }
 
     "upload file which exceed max file size" in {
@@ -429,7 +430,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
         (newFakePOSTRequestWithCSRF(fakeApplication)
           .withFormUrlEncodedBody("state" -> "true")))
 
-      redirectLocation(result) shouldBe Some("/manage-tariff-classifications/cases/v2/1/liability")
+      redirectLocation(result) shouldBe Some("/manage-tariff-classifications/cases/v2/1/liability#attachments_tab")
     }
 
     "redirect to attachments tab when user selects `no`" in {
@@ -438,7 +439,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
         (newFakePOSTRequestWithCSRF(fakeApplication)
           .withFormUrlEncodedBody("state" -> "false")))
 
-      redirectLocation(result) shouldBe Some("/manage-tariff-classifications/cases/v2/1/liability")
+      redirectLocation(result) shouldBe Some("/manage-tariff-classifications/cases/v2/1/liability#attachments_tab")
     }
 
     "redirect back to confirm remove view on form error" in {

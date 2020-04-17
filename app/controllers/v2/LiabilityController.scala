@@ -29,6 +29,7 @@ import play.api.mvc._
 import service.{CasesService, EventsService, FileStoreService, KeywordsService, QueuesService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import controllers.Tab._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -136,7 +137,7 @@ class LiabilityController @Inject()(
 
       def onSuccess: String => Future[Result] = validForm => {
         keywordsService.addKeyword(request.`case`, validForm, request.operator)
-          .map(_ => Redirect(v2.routes.LiabilityController.displayLiability(reference).withFragment(keywordsTab)))
+          .map(_ => Redirect(v2.routes.LiabilityController.displayLiability(reference).withFragment(KEYWORDS_TAB)))
       }
 
       KeywordForm.form.bindFromRequest.fold(onError, onSuccess)
@@ -146,7 +147,7 @@ class LiabilityController @Inject()(
     (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.KEYWORDS)).async {
       implicit request: AuthenticatedCaseRequest[AnyContent] =>
         keywordsService.removeKeyword(request.`case`, keyword, request.operator) map {
-          _ => Redirect(v2.routes.LiabilityController.displayLiability(reference).withFragment(keywordsTab))
+          _ => Redirect(v2.routes.LiabilityController.displayLiability(reference).withFragment(KEYWORDS_TAB))
         }
     }
 

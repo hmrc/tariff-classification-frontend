@@ -27,6 +27,7 @@ import play.twirl.api.Html
 import service.CasesService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import controllers.Tab._
 
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
@@ -64,7 +65,7 @@ class SampleReturnController @Inject()(
   }
 
   override protected def onSuccessRedirect(reference: String, isV2Liability: Boolean): Call = {
-    if(isV2Liability) controllers.v2.routes.LiabilityController.displayLiability(reference)
+    if(isV2Liability) controllers.v2.routes.LiabilityController.displayLiability(reference).withFragment(SAMPLE_TAB)
     else routes.CaseController.sampleDetails(reference)
   }
 
