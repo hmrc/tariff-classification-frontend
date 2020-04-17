@@ -172,7 +172,7 @@ class SampleReturnControllerSpec extends UnitSpec with Matchers
       verify(casesService).updateSampleReturn(refEq(c), refEq(Some(SampleReturn.YES)), any[Operator])(any[HeaderCarrier])
 
       status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/v2/reference/liability")
+      locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/v2/reference/liability#sample_status_tab")
     }
 
   }
