@@ -68,7 +68,7 @@ class LiabilityViewSpec extends ViewSpec {
       val c = aCase(withReference("reference"), withLiabilityApplication())
       val doc = view(liabilityView(
         LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions),
-        Cases.c592ViewModel,
+        Some(Cases.c592ViewModel),
         None,
         sampleStatusTabViewModel,
         Cases.activityTabViewModel,

@@ -109,7 +109,11 @@ case class LiabilityOrder
   entryDate: Option[Instant] = None,
   entryNumber: Option[String] = None,
   traderCommodityCode: Option[String] = None,
-  officerCommodityCode: Option[String] = None
+  officerCommodityCode: Option[String] = None,
+  btiReference: Option[String] = None,
+  repaymentClaim: Option[RepaymentClaim] = None,
+  dateOfReceipt: Option[Instant] = None,
+  traderContactDetails: Option[TraderContactDetails] = None
 ) extends Application {
   override val `type`: models.ApplicationType.Value = ApplicationType.LIABILITY_ORDER
 }
