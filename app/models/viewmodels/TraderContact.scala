@@ -16,19 +16,19 @@
 
 package models.viewmodels
 
-import models.Case
+import models.{Address, Case}
 
 case class TraderContact(name: String,
                          email: String,
                          telephone: String,
-                         address: String)
+                         address: Address)
 
 object TraderContact {
   def fromCase(c: Case): TraderContact = {
     val liabilityOrder = c.application.asLiabilityOrder
     TraderContact(liabilityOrder.traderName,
-      liabilityOrder.contact.email,
-      liabilityOrder.contact.phone.getOrElse(""),
-      "")
+      liabilityOrder.traderContactDetails.flatMap(_.email).getOrElse(""),
+      liabilityOrder.traderContactDetails.flatMap(_.phone).getOrElse(""),
+      liabilityOrder.traderContactDetails.flatMap(_.address).getOrElse(Address("","",None, None)))
   }
 }

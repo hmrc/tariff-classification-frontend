@@ -125,7 +125,19 @@
         @messages("case.v2.liability.c592.trader_address")
         </dt>
         <dd class="column-one-half" id="liability-trader-address">
-        @c592ViewModel.traderContact.address
+            <div>@c592ViewModel.traderContact.address.buildingAndStreet</div>
+            <div>@c592ViewModel.traderContact.address.townOrCity</div>
+            <div>@c592ViewModel.traderContact.address.county.getOrElse("")</div>
+            <div>@c592ViewModel.traderContact.address.postCode.getOrElse("")</div>
+        </dd>
+    </div>
+
+    <div class="grid-row">
+        <dt class="column-one-half">
+            @messages("case.v2.liability.c592.boards_file_number")
+        </dt>
+        <dd class="column-one-half" id="boards-file-number">
+            @c592ViewModel.caseBoardsFileNumber
         </dd>
     </div>
 
@@ -179,6 +191,7 @@
         </dd>
     </div>
 
+    @if(c592ViewModel.isRepaymentClaim){
     <h3 class="heading-medium mt-0">@messages("case.v2.liability.c592.repayment_claim")</h3>
 
     <div class="grid-row">
@@ -198,4 +211,5 @@
         @c592ViewModel.dateForRepayment
         </dd>
     </div>
+    }
 </dl>

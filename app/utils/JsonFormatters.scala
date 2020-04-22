@@ -53,6 +53,9 @@ object JsonFormatters {
 
 
   implicit val instantRange: Format[InstantRange] = Json.format[InstantRange]
+  implicit val formatRepaymentClaim: OFormat[RepaymentClaim] = Json.format[RepaymentClaim]
+  implicit val formatAddress: OFormat[Address] = Json.format[Address]
+  implicit val formatTraderContactDetails: OFormat[TraderContactDetails] = Json.format[TraderContactDetails]
   implicit val caseReportFilter: Format[CaseReportFilter] = Json.format[CaseReportFilter]
   implicit val caseReport: Format[CaseReport] = Json.format[CaseReport]
   implicit val operator: Format[Operator] = Json.using[Json.WithDefaultValues].format[Operator]

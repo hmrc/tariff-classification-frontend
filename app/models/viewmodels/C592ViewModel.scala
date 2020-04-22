@@ -22,7 +22,7 @@ import utils.Dates
 case class C592ViewModel(caseReference: String,
                          entryNumber: String,
                          entryDate: String, btiCase: String,
-                         repaymentClaim: Option[Boolean],
+                         repaymentClaim: String,
                          receiptDate: String,
                          itemName: String,
                          traderContact: TraderContact,
@@ -30,12 +30,11 @@ case class C592ViewModel(caseReference: String,
                          commodityCodeSuggestedByOfficer: String,
                          portOrComplianceOfficerContact: PortOrComplianceOfficerContact,
                          dvrNumber: String,
-                         dateForRepayment: String)
+                         dateForRepayment: String,
+                         caseBoardsFileNumber: Option[String],
+                         isRepaymentClaim: Boolean = false)
 
 object C592ViewModel {
-
-  //fields that need to be added to the Liability Model
-  val NOT_YET_IMPLEMENTED = ""
 
   def fromCase(c: Case): C592ViewModel = {
     val liabilityOrder = c.application.asLiabilityOrder
@@ -44,9 +43,9 @@ object C592ViewModel {
       caseReference = c.reference,
       entryNumber = liabilityOrder.entryNumber.getOrElse(""),
       entryDate = liabilityOrder.entryDate.map(Dates.format).getOrElse(""),
-      btiCase = NOT_YET_IMPLEMENTED,
-      repaymentClaim = None,
-      receiptDate = NOT_YET_IMPLEMENTED,
+      btiCase = liabilityOrder.btiReference.getOrElse(""),
+      repaymentClaim = liabilityOrder.repaymentClaim.map(_ => "Yes").getOrElse("No"),
+      receiptDate = liabilityOrder.dateOfReceipt.map(Dates.format).getOrElse(""),
       itemName = liabilityOrder.goodName.getOrElse(""),
       traderContact = TraderContact.fromCase(c),
       commodityCodeEnteredByTraderOrAgent = liabilityOrder.traderCommodityCode.getOrElse(""),
@@ -55,8 +54,10 @@ object C592ViewModel {
         liabilityOrder.contact.email,
         liabilityOrder.contact.phone.getOrElse("")
       ),
-      dvrNumber = NOT_YET_IMPLEMENTED,
-      dateForRepayment = NOT_YET_IMPLEMENTED
+      dvrNumber = liabilityOrder.repaymentClaim.flatMap(_.dvrNumber).getOrElse(""),
+      dateForRepayment = liabilityOrder.repaymentClaim.flatMap(_.dateForRepayment).map(Dates.format).getOrElse(""),
+      caseBoardsFileNumber = c.caseBoardsFileNumber,
+      isRepaymentClaim = liabilityOrder.repaymentClaim.isDefined
     )
   }
 

@@ -720,6 +720,7 @@ case.v2.liability.c592.trader_name=Trader name
 case.v2.liability.c592.trader_email=Trader email
 case.v2.liability.c592.trader_telephone=Trader telephone
 case.v2.liability.c592.trader_address=Trader address
+case.v2.liability.c592.boards_file_number=Boards file number
 case.v2.liability.c592.commodity_code_information=Commodity code information
 case.v2.liability.c592.commodity_code_entered_by_trader_or_agent=Code entered by trader or agent
 case.v2.liability.c592.commodity_code_suggested_by_officer=Code suggested by officer
