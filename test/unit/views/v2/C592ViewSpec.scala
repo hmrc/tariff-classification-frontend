@@ -28,7 +28,7 @@ class C592ViewSpec extends ViewSpec {
   def c592Tab: c592_tab = app.injector.instanceOf[c592_tab]
   
 
-  "C592ViewSpec" should {
+  "C592 View" should {
     "render successfully" in {
       val doc = view(c592Tab(Cases.c592ViewModel))
 
@@ -47,6 +47,20 @@ class C592ViewSpec extends ViewSpec {
       (requestWithPermissions(Permission.VIEW_CASES),messages, appConfig))
 
       doc shouldNot containElementWithID("edit-liability-details")
+    }
+
+    "show repayment section if one is required" in {
+      val doc = view(c592Tab(Cases.c592ViewModel.copy(isRepaymentClaim = true))
+      (requestWithPermissions(Permission.VIEW_CASES),messages, appConfig))
+
+      doc should containElementWithID("dvr_number")
+    }
+
+    "not show repayment section if one is not required" in {
+      val doc = view(c592Tab(Cases.c592ViewModel)
+      (requestWithPermissions(Permission.VIEW_CASES),messages, appConfig))
+
+      doc shouldNot containElementWithID("dvr_number")
     }
   }
 
