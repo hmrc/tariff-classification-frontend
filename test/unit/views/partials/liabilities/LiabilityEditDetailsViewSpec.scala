@@ -30,7 +30,7 @@ class LiabilityEditDetailsViewSpec extends ViewSpec {
     "Render all fields for an empty form" in {
       // Given
       val c = aCase(withLiabilityApplication())
-      val l  = c.application.asLiabilityOrder
+      val l  = c
 
       // When
       val doc = view(liability_details_edit(c, LiabilityDetailsForm.liabilityDetailsForm(l)))
@@ -49,7 +49,7 @@ class LiabilityEditDetailsViewSpec extends ViewSpec {
         officerCommodityCode = Some("321"),
         contact = Contact(name  = "name", email = "email", phone = Some("phone"))
       ))
-      val l  = c.application.asLiabilityOrder
+      val l  = c
 
       // When
       val doc = view(liability_details_edit(c,LiabilityDetailsForm.liabilityDetailsForm(l)))

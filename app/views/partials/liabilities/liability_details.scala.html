@@ -23,7 +23,7 @@
 @import views.html.partials.liabilities.liability_actions
 
 @import scala.collection.mutable
-@(c: Case, liabilityForm: Form[LiabilityOrder], decisionForm: Form[Decision])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(c: Case, liabilityForm: Form[Case], decisionForm: Form[Decision])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @defining(c.application) { a: Application =>
     @defining(a.asLiabilityOrder) { liability: LiabilityOrder =>

@@ -45,11 +45,12 @@ class LiabilityDetailsViewSpec extends ViewSpec with MockitoSugar {
             withLiabilityApplication()
           )
           val d = c.decision.getOrElse(Decision())
-          val l = c.application.asLiabilityOrder
+          val l = c
 
           // When
           val doc = view(
-            views.html.partials.liabilities.liability_details(c = c, liabilityForm = LiabilityDetailsForm.liabilityDetailsForm(l), decisionForm = form.liabilityCompleteForm(d)
+            views.html.partials.liabilities.liability_details(c = c, liabilityForm = LiabilityDetailsForm.liabilityDetailsForm(l),
+              decisionForm = form.liabilityCompleteForm(d)
             )(requestWithPermissions(), messages, appConfig))
 
           // Then
@@ -67,11 +68,12 @@ class LiabilityDetailsViewSpec extends ViewSpec with MockitoSugar {
           withLiabilityApplication()
         )
         val d = c.decision.getOrElse(Decision())
-        val l = c.application.asLiabilityOrder
+        val l = c
 
         // When
         val doc = view(
-          views.html.partials.liabilities.liability_details(c = c, liabilityForm = LiabilityDetailsForm.liabilityDetailsForm(l), decisionForm = form.liabilityCompleteForm(d)
+          views.html.partials.liabilities.liability_details(c = c, liabilityForm = LiabilityDetailsForm.liabilityDetailsForm(l),
+            decisionForm = form.liabilityCompleteForm(d)
           )(requestWithPermissions(Permission.EDIT_LIABILITY), messages, appConfig))
 
         // Then
@@ -87,11 +89,12 @@ class LiabilityDetailsViewSpec extends ViewSpec with MockitoSugar {
           withLiabilityApplication()
         )
         val d = c.decision.getOrElse(Decision())
-        val l = c.application.asLiabilityOrder
+        val l = c
 
         // When
         val doc = view(
-          views.html.partials.liabilities.liability_details(c = c, liabilityForm = LiabilityDetailsForm.liabilityDetailsForm(l), decisionForm = form.liabilityCompleteForm(d)
+          views.html.partials.liabilities.liability_details(c = c, liabilityForm = LiabilityDetailsForm.liabilityDetailsForm(l),
+            decisionForm = form.liabilityCompleteForm(d)
           )(requestWithPermissions(), messages, appConfig))
 
         // Then
@@ -106,11 +109,12 @@ class LiabilityDetailsViewSpec extends ViewSpec with MockitoSugar {
         withLiabilityApplication()
       )
       val d = c.decision.getOrElse(Decision())
-      val l = c.application.asLiabilityOrder
+      val l = c
 
       // When
       val doc = view(
-        views.html.partials.liabilities.liability_details(c = c, liabilityForm = LiabilityDetailsForm.liabilityDetailsForm(l), decisionForm = form.liabilityCompleteForm(d)
+        views.html.partials.liabilities.liability_details(c = c, liabilityForm = LiabilityDetailsForm.liabilityDetailsForm(l),
+          decisionForm = form.liabilityCompleteForm(d)
         )(requestWithPermissions(Permission.EDIT_RULING), messages, appConfig))
 
       // Then
@@ -125,11 +129,12 @@ class LiabilityDetailsViewSpec extends ViewSpec with MockitoSugar {
         withoutDecision()
       )
       val d = c.decision.getOrElse(Decision())
-      val l = c.application.asLiabilityOrder
+      val l = c
 
       // When
       val doc = view(
-        views.html.partials.liabilities.liability_details(c = c, liabilityForm = LiabilityDetailsForm.liabilityDetailsForm(l), decisionForm = form.liabilityCompleteForm(d)
+        views.html.partials.liabilities.liability_details(c = c, liabilityForm = LiabilityDetailsForm.liabilityDetailsForm(l),
+          decisionForm = form.liabilityCompleteForm(d)
         )(requestWithPermissions(), messages, appConfig))
 
       // Then
@@ -150,11 +155,12 @@ class LiabilityDetailsViewSpec extends ViewSpec with MockitoSugar {
         )
       )
       val d = c.decision.getOrElse(Decision())
-      val l = c.application.asLiabilityOrder
+      val l = c
 
       // When
       val doc = view(
-        views.html.partials.liabilities.liability_details(c = c, liabilityForm = LiabilityDetailsForm.liabilityDetailsForm(l), decisionForm = form.liabilityCompleteForm(d)
+        views.html.partials.liabilities.liability_details(c = c, liabilityForm = LiabilityDetailsForm.liabilityDetailsForm(l),
+          decisionForm = form.liabilityCompleteForm(d)
         )(requestWithPermissions(), messages, appConfig))
 
       // Then
@@ -181,11 +187,12 @@ class LiabilityDetailsViewSpec extends ViewSpec with MockitoSugar {
           )
         )
         val d = c.decision.getOrElse(Decision())
-        val l = c.application.asLiabilityOrder
+        val l = c
 
         // When
         val doc = view(
-          views.html.partials.liabilities.liability_details(c = c, liabilityForm = LiabilityDetailsForm.liabilityDetailsCompleteForm(l), decisionForm = form.liabilityCompleteForm(d)
+          views.html.partials.liabilities.liability_details(c = c, liabilityForm = LiabilityDetailsForm.liabilityDetailsCompleteForm(l),
+            decisionForm = form.liabilityCompleteForm(d)
           )(requestWithPermissions(), messages, appConfig))
 
         doc shouldNot containElementWithID("liability-complete-heading")
@@ -206,11 +213,12 @@ class LiabilityDetailsViewSpec extends ViewSpec with MockitoSugar {
           )
         )
         val d = c.decision.getOrElse(Decision())
-        val l = c.application.asLiabilityOrder
+        val l = c
 
         // When
         val doc = view(
-          views.html.partials.liabilities.liability_details(c = c, liabilityForm = LiabilityDetailsForm.liabilityDetailsCompleteForm(l), decisionForm = form.liabilityCompleteForm(d)
+          views.html.partials.liabilities.liability_details(c = c, liabilityForm = LiabilityDetailsForm.liabilityDetailsCompleteForm(l),
+            decisionForm = form.liabilityCompleteForm(d)
           )(requestWithPermissions(Permission.COMPLETE_CASE), messages, appConfig))
 
         // Then
@@ -240,11 +248,12 @@ class LiabilityDetailsViewSpec extends ViewSpec with MockitoSugar {
           )
         )
         val d = c.decision.getOrElse(Decision())
-        val l = c.application.asLiabilityOrder
+        val l = c
 
         // When
         val doc = view(
-          views.html.partials.liabilities.liability_details(c = c, liabilityForm = LiabilityDetailsForm.liabilityDetailsCompleteForm(l), decisionForm = form.liabilityCompleteForm(d)
+          views.html.partials.liabilities.liability_details(c = c, liabilityForm = LiabilityDetailsForm.liabilityDetailsCompleteForm(l),
+            decisionForm = form.liabilityCompleteForm(d)
           )(requestWithPermissions(Permission.COMPLETE_CASE), messages, appConfig))
 
         // Then
@@ -270,11 +279,12 @@ class LiabilityDetailsViewSpec extends ViewSpec with MockitoSugar {
         )
       )
       val d = c.decision.getOrElse(Decision())
-      val l = c.application.asLiabilityOrder
+      val l = c
 
       // When
       val doc = view(
-        views.html.partials.liabilities.liability_details(c = c, liabilityForm = LiabilityDetailsForm.liabilityDetailsForm(l), decisionForm = form.liabilityCompleteForm(d)
+        views.html.partials.liabilities.liability_details(c = c, liabilityForm = LiabilityDetailsForm.liabilityDetailsForm(l),
+          decisionForm = form.liabilityCompleteForm(d)
         )(requestWithPermissions(Permission.COMPLETE_CASE), messages, appConfig))
 
       // Then
@@ -293,7 +303,7 @@ class LiabilityDetailsViewSpec extends ViewSpec with MockitoSugar {
           withLiabilityApplication()
         )
         val d = c.decision.getOrElse(Decision())
-        val l = c.application.asLiabilityOrder
+        val l = c
 
         // When
         val doc = view(
@@ -313,7 +323,7 @@ class LiabilityDetailsViewSpec extends ViewSpec with MockitoSugar {
           withLiabilityApplication()
         )
         val d = c.decision.getOrElse(Decision())
-        val l = c.application.asLiabilityOrder
+        val l = c
 
         // When
         val doc = view(
