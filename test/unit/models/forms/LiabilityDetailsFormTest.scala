@@ -18,8 +18,8 @@ package models.forms
 
 import java.time.Instant
 
+import models._
 import uk.gov.hmrc.play.test.UnitSpec
-import models.{Case, Contact, LiabilityOrder, LiabilityStatus}
 import utils.Cases
 
 class LiabilityDetailsFormTest extends UnitSpec {
@@ -32,10 +32,21 @@ class LiabilityDetailsFormTest extends UnitSpec {
     entryDate = Some(Instant.EPOCH),
     entryNumber = Some("entry-no"),
     traderCommodityCode = Some("0200000000"),
-    officerCommodityCode = Some("0100000000")
+    officerCommodityCode = Some("0100000000"),
+    btiReference = Some("btiReferenceN"),
+    repaymentClaim = Some(RepaymentClaim(dvrNumber = Some(""), dateForRepayment = Some(Instant.EPOCH))),
+    dateOfReceipt = Some(Instant.EPOCH),
+    traderContactDetails = Some(TraderContactDetails(email = Some("trader@email.com"),
+      phone = Some("2345"),
+      address = Some(Address(buildingAndStreet = "STREET 1",
+        townOrCity = "Town",
+        county = Some("County"),
+        postCode = Some("postcode")
+      ))
+    ))
   )
 
-  private val sampleCase = Cases.liabilityCaseExample.copy(application = liability)
+  private val sampleCase = Cases.liabilityCaseExample.copy(caseBoardsFileNumber = Some("SCR/ARD/123"), application = liability)
 
   private val params = Map(
     "contactName" -> Seq("contact-name"),

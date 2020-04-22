@@ -19,11 +19,11 @@ package controllers.v2
 import config.AppConfig
 import controllers.{RequestActions, v2}
 import javax.inject.{Inject, Singleton}
-import models.forms.{ActivityForm, ActivityFormData, KeywordForm, UploadAttachmentForm}
+import models.forms.{ActivityForm, ActivityFormData, KeywordForm, LiabilityDetailsForm, UploadAttachmentForm}
 import models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
 import models.viewmodels._
 import models.{Case, Permission, _}
-import play.api.data.{Form}
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import service.{CasesService, EventsService, FileStoreService, KeywordsService, QueuesService}
@@ -33,6 +33,7 @@ import controllers.Tab._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import scala.concurrent.Future.successful
 
 @Singleton
 class LiabilityController @Inject()(
@@ -151,4 +152,12 @@ class LiabilityController @Inject()(
         }
     }
 
+  def editLiabilityDetails(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.EDIT_LIABILITY)).async { implicit request =>
+    successful(
+      Ok(
+        views.html.partials.liabilities.liability_details_edit(request.`case`, LiabilityDetailsForm.liabilityDetailsForm(request.`case`))
+      )
+    )
   }
+
+}
