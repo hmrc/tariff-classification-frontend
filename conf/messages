@@ -732,6 +732,12 @@ case.v2.liability.c592.repayment_claim=Repayment claim
 case.v2.liability.c592.dvr_number=DVR number
 case.v2.liability.c592.date_for_repayment=Date for repayment
 
+case.v2.liability.c592.details_edit.information=Information from the C592
+case.v2.liability.c592.details_edit.entry_number=Entry number
+case.v2.liability.c592.details_edit.date_p=Entry date
+case.v2.liability.c592.details_edit.date_hint=Date recorded on the C592 by compliance or port officer, for example, 27 3 2007.
+case.v2.liability.c592.details_edit.bti_reference=BTI reference
+
 
 case.v2.liability.ruling.info.from.c592=Information from the C592
 case.v2.liability.ruling.info.from.c592.code.by.trader=Code entered by trader or agent

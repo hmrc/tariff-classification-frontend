@@ -85,6 +85,29 @@ object Cases {
   val operatorWithReleaseOrSuppressPermissions = Operator(id = "0", name =
     Some("liability op name"), permissions = Set(Permission.RELEASE_CASE, Permission.SUPPRESS_CASE))
 
+  val aCaseWithCompleteDecision = Cases.liabilityCaseExample.copy(caseBoardsFileNumber = Some("SCR/ARD/123"), application = liabilityWithCompleteDecision)
+
+  val liabilityWithCompleteDecision = LiabilityOrder(
+    Contact(name = "contact-name", email = "contact@email.com", Some("contact-phone")),
+    status = LiabilityStatus.LIVE,
+    traderName = "trader-name",
+    goodName = Some("good-name"),
+    entryDate = Some(Instant.EPOCH),
+    entryNumber = Some("entry-no"),
+    traderCommodityCode = Some("0200000000"),
+    officerCommodityCode = Some("0100000000"),
+    btiReference = Some("btiReferenceN"),
+    repaymentClaim = Some(RepaymentClaim(dvrNumber = Some(""), dateForRepayment = Some(Instant.EPOCH))),
+    dateOfReceipt = Some(Instant.EPOCH),
+    traderContactDetails = Some(TraderContactDetails(email = Some("trader@email.com"),
+      phone = Some("2345"),
+      address = Some(Address(buildingAndStreet = "STREET 1",
+        townOrCity = "Town",
+        county = Some("County"),
+        postCode = Some("postcode")
+      ))
+    ))
+  )
   def attachment(id: String = UUID.randomUUID().toString): Attachment = {
     Attachment(
       id = id,

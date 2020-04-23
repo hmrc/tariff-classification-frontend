@@ -17,7 +17,6 @@
 @import helper._
 @import controllers.routes.RulingController
 @import config.AppConfig
-@import controllers.routes._
 @import models.forms.DecisionFormData
 @import models.response.ScanStatus
 @import models.{BTIApplication, Case, StoredAttachment}
@@ -28,15 +27,17 @@
 @import models.LiabilityOrder
 @import models.forms.LiabilityDetailsForm
 @import views.html.forms.components.input_date
+@import controllers.Tab._
+@import controllers.v2.routes.LiabilityController
 
 @import views.html.v2.case_heading
 @import views.html.includes.main
 @import views.html.components.initial_focus
 @import views.html.components.confirm_or_cancel_buttons
 @import models.viewmodels.CaseHeaderViewModel
+@import views.html.components.save_and_continue_button
 
 @this(case_heading: views.html.v2.case_heading)
-
 
 @(c: Case, form : Form[Case])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
@@ -51,11 +52,18 @@
 
             @tab_heading("ruling", messages("case.liability.edit"), Some("mt-5"))
 
-            @helper.form(action = LiabilityController.postLiabilityDetails(c.reference) , 'class -> "form" , 'id -> "liability-details-edit-form") {
+            @helper.form(action = LiabilityController.postLiabilityDetails(c.reference), 'class -> "form" , 'id -> "liability-details-edit-form") {
 
                 @CSRF.formField
 
-                <h3 class="heading-medium mb-1">@messages("case.liability.edit.information")</h3>
+                <h3 class="heading-medium mb-1">@messages("case.v2.liability.c592.details_edit.information")</h3>
+
+                @input_text(
+                    field = form("entryNumber"),
+                    label = messages("case.v2.liability.c592.details_edit.entry_number"),
+                    inputClass = Some("width-one-half"),
+                    disableAutoComplete = true
+                )
 
                 @input_date(
                     dayField = form("entryDate.day"),
@@ -63,20 +71,13 @@
                     yearField = form("entryDate.year"),
                     dateField = form("entryDate"),
                     fieldsetId = Some("entryDate"),
-                    hint = Some(messages("case.liability.edit.entry.date.hint")),
-                    legend = messages("case.liability.edit.entry.date")
-                )
-
-                @input_text(
-                    field = form("entryNumber"),
-                    label = messages("case.liability.edit.entry-number"),
-                    inputClass = Some("width-one-half"),
-                    disableAutoComplete = true
+                    hint = Some(messages("case.v2.liability.c592.details_edit.date_hint")),
+                    legend = messages("case.v2.liability.c592.details_edit.date_p")
                 )
 
                 @input_text(
                     field = form("btiReference"),
-                    label = messages("case"),
+                    label = messages("case.v2.liability.c592.details_edit.bti_reference"),
                     inputClass = Some("width-one-half"),
                     disableAutoComplete = true
                 )
@@ -134,11 +135,9 @@
                     disableAutoComplete = true
                 )
 
-                @confirm_or_cancel_buttons(
+                @save_and_continue_button(
                     id = "edit_liability_details",
-                    confirmText = "Save changes",
-                    cancelText = "Cancel changes",
-                    cancelHref = LiabilityController.liabilityDetails(c.reference)
+                    confirmText = "Save and continue"
                 )
             }
         </div>

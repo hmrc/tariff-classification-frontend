@@ -37,12 +37,12 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.mvc.BodyParser.Default
 import play.twirl.api.Html
-import service.{EventsService, FileStoreService, KeywordsService, QueuesService}
+import service.{CasesService, EventsService, FileStoreService, KeywordsService, QueuesService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{Cases, Events}
 import views.html.partials.liabilities.{attachments_details, attachments_list}
-
 import views.html.v2.{case_heading, liability_view, remove_attachment}
+import play.api.test.CSRFTokenHelper._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -72,7 +72,8 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     bind[attachments_list].toInstance(mock[attachments_list]),
     //services
     bind[FileStoreService].toInstance(mock[FileStoreService]),
-    bind[KeywordsService].toInstance(mock[KeywordsService])
+    bind[KeywordsService].toInstance(mock[KeywordsService]),
+    bind[CasesService].toInstance(mock[CasesService])
   )
 
   val defaultRequestActions = List(
@@ -301,7 +302,7 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       status(result) shouldBe 200
     }
 
-    "return unauthorised if the user does not hae the right permissions" in {
+    "return unauthorised if the user does not have the right permissions" in {
       mockLiabilityController()
 
       val fakeReq = FakeRequest("GET", "/manage-tariff-classifications/cases/v2/123456/liability/edit-details")
@@ -309,6 +310,57 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
       status(result) shouldBe 303
       redirectLocation(result).get should include("unauthorized")
+    }
+  }
+
+  "post Liability details" should {
+    "redirect back to c592_tab if the form has been submitted successfully" in {
+
+      when(inject[CasesService].updateCase(any[Case])(any[HeaderCarrier])) thenReturn Future(Cases.aCaseWithCompleteDecision)
+
+      mockLiabilityController()
+      val result: Future[Result] =
+        route(appWithEditLiabilityPermissions,
+          FakeRequest("POST", "/manage-tariff-classifications/cases/v2/123456/liability/edit-details")
+          .withFormUrlEncodedBody(
+            "entryDate" -> "",
+            "entryNumber" -> "",
+            "traderName" -> "mandatory-name",
+            "goodName" -> "",
+            "traderCommodityCode" -> "",
+            "officerCommodityCode" -> "",
+            "contactName" -> "",
+            "contactEmail" -> "valid@email.com",
+            "contactPhone" -> ""
+          ).withCSRFToken
+        ).get
+
+      status(result) shouldBe 303
+
+      locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/v2/123456/liability#c592_tab")
+    }
+
+    "return back to the view if form fails to validate" in {
+      when(inject[CasesService].updateCase(any[Case])(any[HeaderCarrier])) thenReturn Future(Cases.aCaseWithCompleteDecision)
+      mockLiabilityController()
+
+      val result: Future[Result] =
+        route(appWithEditLiabilityPermissions,
+          FakeRequest("POST", "/manage-tariff-classifications/cases/v2/123456/liability/edit-details")
+            .withFormUrlEncodedBody(
+              "entryNumber" -> "",
+              "entryDate" -> "",
+              "traderName" -> "",
+              "goodName" -> "",
+              "traderCommodityCode" -> "",
+              "officerCommodityCode" -> "",
+              "contactName" -> "",
+              "contactEmail" -> "wrongemail",
+              "contactPhone" -> ""
+            ).withCSRFToken
+        ).get
+
+      status(result) shouldBe 200
     }
   }
 }
