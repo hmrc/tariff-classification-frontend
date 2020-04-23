@@ -53,44 +53,40 @@
             </div>
 
             <div class="form-group">
-                <div aria-label="Information">
-                    <p>@messages("upload.files.before")</p>
-                    <details tabindex="@{startAtTabIndex+100}" role="group" class="mb-2">
-                        <summary tabindex="@{startAtTabIndex+100}" role="button">
-                            <span id="release-suppress-help-title">@messages("email.attach.save")</span>
-                        </summary>
-                        <div id="release-suppress-help-body" class="panel panel-border">
-                            <ol class="list list-number">
-                                <li>@messages("email.attach.save.bullet1")</li>
-                                <li>@messages("email.attach.save.bullet2")</li>
-                                <li>@messages("email.attach.save.bullet3")</li>
-                                <li>@messages("email.attach.save.bullet4")</li>
-                                <li>@messages("email.attach.save.bullet5")</li>
-                            </ol>
-                        </div>
-                    </details>
-                </div>
-                <fieldset>
-                    <div aria-label="Information">
-                        <p>@messages("cases.attachment.upload.title")</p>
-                        <ul class="list list-bullet">
-                            <li>@messages("cases.attachment.upload.restrictionSize")</li>
-                            <li>@messages("cases.attachment.upload.typeOfFiles")</li>
-                        </ul>
+                <p>@messages("upload.files.before")</p>
+                <details role="group" class="mb-2">
+                    <summary role="button">
+                        <span id="release-suppress-help-title">@messages("email.attach.save")</span>
+                    </summary>
+                    <div id="release-suppress-help-body" class="panel panel-border">
+                        <ol class="list list-number">
+                            <li>@messages("email.attach.save.bullet1")</li>
+                            <li>@messages("email.attach.save.bullet2")</li>
+                            <li>@messages("email.attach.save.bullet3")</li>
+                            <li>@messages("email.attach.save.bullet4")</li>
+                            <li>@messages("email.attach.save.bullet5")</li>
+                        </ol>
                     </div>
-                </fieldset>
+                </details>
+
+                <p>@messages("cases.attachment.upload.title")</p>
+                <ul class="list list-bullet">
+                    <li>@messages("cases.attachment.upload.restrictionSize")</li>
+                    <li>@messages("cases.attachment.upload.typeOfFiles")</li>
+                </ul>
+
                 <div class="mt-0">
-                @input_file(
-                    field = form("file-input"),
-                    label = messages("cases.attachment.upload.label"),
-                    accept = Some(".pdf,.doc,.docx,.png,.jpeg,.jpg,.txt"),
-                    useTabIndex = Some(startAtTabIndex+101)
-                )
+                    @input_file(
+                        field = form("file-input"),
+                        label = messages("cases.attachment.upload.label"),
+                        accept = Some(".pdf,.doc,.docx,.png,.jpeg,.jpg,.txt"),
+                        useTabIndex = Some(startAtTabIndex+101)
+                    )
                 </div>
             </div>
 
             <div class="section">
-                <button tabindex="@{startAtTabIndex+102}" id="upload-file-button" class="button">@messages("upload.button")</button>
+                <button id="upload-file-button" class="button">@messages("upload.button")</button>
             </div>
         }
     }
