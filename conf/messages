@@ -771,3 +771,15 @@ case.v2.liability.action_this_case.button=Action this case
 case.v2.liability.change_case_status.button=Change case status
 case.v2.liability.take_off_referral.button=Take off referral
 case.v2.liability.reopen.button=Reopen case
+
+upload.button = Upload
+upload.files.title = Upload new files
+upload.files.before = Before you upload a file, give it a useful and descriptive filename.
+email.attach.title = Attach an email
+email.attach.notify = Attach the email that you have sent to notify the relevant contact that you are {0} this case. Any other attachments can be added in the attachments tab.
+email.attach.save = How to save an email as a PDF
+email.attach.save.bullet1 = Open the email you want to save, and on the file tab, click print.
+email.attach.save.bullet2 = From the printer drop-down, choose 'microsoft print to PDF'.
+email.attach.save.bullet3 = Choose print.
+email.attach.save.bullet4 = In the 'save print output as' box, choose a folder for your PDF and enter a descriptive file name.
+email.attach.save.bullet5 = Then choose save
