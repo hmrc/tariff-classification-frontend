@@ -80,6 +80,7 @@ object Cases {
   val operatorWithPermissions = Operator(id = "0", name = Some("liability op name"), permissions = Set(Permission.ADD_NOTE, Permission.VIEW_CASES))
   val operatorWithCompleteCasePermission = Operator(id = "0", name = Some("liability op name"), permissions = Set(Permission.COMPLETE_CASE, Permission.REOPEN_CASE))
   val operatorWithKeywordsPermissions = Operator(id = "0", name = Some("liability op name"), permissions = Set(Permission.KEYWORDS))
+  val operatorWithEditLiabilityPermissions = Operator(id = "0", name = Some("liability op name"), permissions = Set(Permission.EDIT_LIABILITY))
   val operatorWithoutCompleteCasePermission = Operator(id = "0", name = Some("liability op name"), permissions = Set(Permission.VIEW_CASES))
   val operatorWithReleaseOrSuppressPermissions = Operator(id = "0", name =
     Some("liability op name"), permissions = Set(Permission.RELEASE_CASE, Permission.SUPPRESS_CASE))

@@ -27,6 +27,8 @@ import views.html.v2.liability_details_edit
 
 class LiabilityDetailsEditViewSpec extends ViewSpec {
 
+  def liabilityDetailsEditView: liability_details_edit = app.injector.instanceOf[liability_details_edit]
+
   private val liability = LiabilityOrder(
     Contact(name = "contact-name", email = "contact@email.com", Some("contact-phone")),
     status = LiabilityStatus.LIVE,
@@ -53,10 +55,17 @@ class LiabilityDetailsEditViewSpec extends ViewSpec {
 
 
   "Liability Details Edit View" should {
-    "render correctly" in {
-      val doc = view(liability_details_edit(sampleCase, LiabilityDetailsForm.liabilityDetailsForm(sampleCase)))
+    "render the liability fields correctly" in {
+      val doc = view(liabilityDetailsEditView(sampleCase, LiabilityDetailsForm.liabilityDetailsForm(sampleCase)))
 
       doc should containElementWithID("liability-details-edit-form")
+    }
+
+    "render the liability view with all the fields" in {
+      val doc = view(liabilityDetailsEditView(sampleCase, LiabilityDetailsForm.liabilityDetailsForm(sampleCase)))
+
+      doc should containElementWithID("liability-details-edit-form")
+      doc should containElementWithID("btiReference")
 
     }
   }

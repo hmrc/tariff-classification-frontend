@@ -152,10 +152,11 @@ class LiabilityController @Inject()(
         }
     }
 
-  def editLiabilityDetails(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.EDIT_LIABILITY)).async { implicit request =>
+  def editLiabilityDetails(reference: String): Action[AnyContent] =
+    (verify.authenticated andThen verify.casePermissions(reference)
+      andThen verify.mustHave(Permission.EDIT_LIABILITY)).async { implicit request =>
     successful(
-      Ok(
-        views.html.partials.liabilities.liability_details_edit(request.`case`, LiabilityDetailsForm.liabilityDetailsForm(request.`case`))
+      Ok(views.html.partials.liabilities.liability_details_edit(request.`case`, LiabilityDetailsForm.liabilityDetailsForm(request.`case`))
       )
     )
   }

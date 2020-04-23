@@ -83,6 +83,10 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     bind[RequestActions].to(requestActionsWithKeywordsPermission)
   )
 
+  val requestActionsWithEditLiabilityPermissionBinder = List(
+    bind[RequestActions].to(requestActionsWithEditLiabilityPermission)
+  )
+
   val requestActionsWithKeywordsPermission:  RequestActionsWithPermissions = {
     new RequestActionsWithPermissions(
       inject[BodyParsers.Default], Set(Permission.KEYWORDS),
@@ -91,8 +95,24 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     )
   }
 
+  val requestActionsWithEditLiabilityPermission:  RequestActionsWithPermissions = {
+    new RequestActionsWithPermissions(
+      inject[BodyParsers.Default], Set(Permission.EDIT_LIABILITY),
+      c = Cases.liabilityCaseExample.copy(assignee = Some(Cases.operatorWithEditLiabilityPermissions)),
+      op = Cases.operatorWithEditLiabilityPermissions
+    )
+  }
+
   val appWithKeywordPermissions: Application = new GuiceApplicationBuilder().overrides(
     binds ++ requestActionsWithKeywordsPermissionBinder
+  ).configure(
+    "metrics.jvm" -> false,
+    "metrics.enabled" -> false,
+    "new-liability-details" -> true
+  ).build()
+
+  val appWithEditLiabilityPermissions: Application = new GuiceApplicationBuilder().overrides(
+    binds ++ requestActionsWithEditLiabilityPermissionBinder
   ).configure(
     "metrics.jvm" -> false,
     "metrics.enabled" -> false,
@@ -269,5 +289,26 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
     }
 
+  }
+
+  "edit Liability" should {
+    "return 200 and load the editLiability form" in {
+      mockLiabilityController()
+
+      val fakeReq = FakeRequest("GET", "/manage-tariff-classifications/cases/v2/123456/liability/edit-details")
+      val result: Future[Result] = route(appWithEditLiabilityPermissions, fakeReq).get
+
+      status(result) shouldBe 200
+    }
+
+    "return unauthorised if the user does not hae the right permissions" in {
+      mockLiabilityController()
+
+      val fakeReq = FakeRequest("GET", "/manage-tariff-classifications/cases/v2/123456/liability/edit-details")
+      val result: Future[Result] = route(app, fakeReq).get
+
+      status(result) shouldBe 303
+      redirectLocation(result).get should include("unauthorized")
+    }
   }
 }
