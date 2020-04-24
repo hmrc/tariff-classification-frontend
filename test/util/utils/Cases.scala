@@ -85,7 +85,7 @@ object Cases {
   val operatorWithReleaseOrSuppressPermissions = Operator(id = "0", name =
     Some("liability op name"), permissions = Set(Permission.RELEASE_CASE, Permission.SUPPRESS_CASE))
 
-  val aCaseWithCompleteDecision = Cases.liabilityCaseExample.copy(caseBoardsFileNumber = Some("SCR/ARD/123"), application = liabilityWithCompleteDecision)
+  val aCaseWithCompleteDecision = Cases.liabilityCaseExample.copy(reference = "123456", caseBoardsFileNumber = Some("SCR/ARD/123"), application = liabilityWithCompleteDecision)
 
   val liabilityWithCompleteDecision = LiabilityOrder(
     Contact(name = "contact-name", email = "contact@email.com", Some("contact-phone")),

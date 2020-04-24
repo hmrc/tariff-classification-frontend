@@ -21,7 +21,7 @@ import java.time.Instant
 import models.forms.FormConstraints.dateMustBeInThePast
 import models.forms.FormDate
 import models.forms.mappings.FormMappings._
-import models.{Case, Contact}
+import models.{Case, Contact, RepaymentClaim}
 import play.api.data.Form
 import play.api.data.Forms._
 
@@ -30,31 +30,42 @@ object LiabilityDetailsForm {
   private val emailRegex = """^[a-zA-Z0-9\.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$""".r
 
   def liabilityDetailsForm(existingLiability: Case): Form[Case] = Form[Case](
-    mapping[Case, Option[Instant], String, Option[String], Option[String], Option[String], Option[String],
-      Option[String], String, String, Option[String]](
+    mapping[Case, Option[Instant], String, Option[String], Boolean,
+      Option[Instant], Option[String], Option[String], Option[String],
+      Option[String], String, String, Option[String], Option[String], Option[Instant]](
       "entryDate" -> optional(FormDate.date("case.liability.error.entry-date")
         .verifying(dateMustBeInThePast("case.liability.error.entry-date.future"))),
       "traderName" -> textNonEmpty("case.liability.error.empty.trader-name"),
       "btiReference" -> optional(text),
+      "repaymentClaim" -> boolean,
+      "dateOfReceipt" -> optional(FormDate.date("case.liability.error.entry-date")
+        .verifying(dateMustBeInThePast("case.liability.error.entry-date.future"))),
       "goodName" -> optional(text),
       "entryNumber" -> optional(text),
       "traderCommodityCode" -> optional(text),
       "officerCommodityCode" -> optional(text),
       "contactName" -> text,
       "contactEmail" -> text.verifying("case.liability.error.email", e => validEmailFormat(e)),
-      "contactPhone" -> optional(text)
+      "contactPhone" -> optional(text),
+      "dvrNumber" -> optional(text),
+      //TODO revisit .verifying logic
+      "dateForRepayment" -> optional(FormDate.date("case.liability.error.entry-date")
+        .verifying(dateMustBeInThePast("case.liability.error.entry-date.future")))
     )(form2Liability(existingLiability))(liability2Form)
   ).fillAndValidate(existingLiability)
 
   private def validEmailFormat(email: String): Boolean = email.trim.isEmpty || emailRegex.findFirstMatchIn(email.trim).nonEmpty
 
   private def form2Liability(existingCase: Case): (Option[Instant], String, Option[String],
-    Option[String], Option[String], Option[String], Option[String], String, String, Option[String]) => Case = {
-    case (entryDate, traderName, btiReference, goodName, entryNumber, traderCommodityCode, officerCommodityCode,
-    contactName, contactEmail, contactPhone) =>
+    Boolean, Option[Instant], Option[String], Option[String], Option[String], Option[String], String, String, Option[String],
+    Option[String], Option[Instant]) => Case = {
+    case (entryDate, traderName, btiReference, isRepaymentClaim, dateOfReceipt, goodName, entryNumber, traderCommodityCode, officerCommodityCode,
+    contactName, contactEmail, contactPhone, dvrNumber, dateForRepayment) =>
       existingCase.copy(application = existingCase.application.asLiabilityOrder.copy(
         traderName = traderName,
         btiReference = btiReference,
+        repaymentClaim = if (isRepaymentClaim) Some(RepaymentClaim(dvrNumber = dvrNumber, dateForRepayment = dateForRepayment)) else None,
+        dateOfReceipt = dateOfReceipt,
         goodName = goodName,
         entryDate = entryDate,
         entryNumber = entryNumber,
@@ -64,39 +75,52 @@ object LiabilityDetailsForm {
       ))
   }
 
-  private def liability2Form(existingCase: Case): Option[(Option[Instant], String, Option[String], Option[String], Option[String],
-    Option[String], Option[String], String, String, Option[String])] = {
+  private def liability2Form(existingCase: Case): Option[(Option[Instant], String, Option[String],
+    Boolean, Option[Instant], Option[String], Option[String],
+    Option[String], Option[String], String, String, Option[String], Option[String], Option[Instant])] = {
     val existingLiability = existingCase.application.asLiabilityOrder
 
     Some((
       existingLiability.entryDate,
       existingLiability.traderName,
       existingLiability.btiReference,
+      existingLiability.repaymentClaim.isDefined,
+      existingLiability.dateOfReceipt,
       existingLiability.goodName,
       existingLiability.entryNumber,
       existingLiability.traderCommodityCode,
       existingLiability.officerCommodityCode,
       existingLiability.contact.name,
       existingLiability.contact.email,
-      existingLiability.contact.phone
+      existingLiability.contact.phone,
+      existingLiability.repaymentClaim.flatMap(_.dvrNumber),
+      existingLiability.repaymentClaim.flatMap(_.dateForRepayment)
     ))
   }
 
   def liabilityDetailsCompleteForm(existingLiability: Case): Form[Case] = Form[Case](
-    mapping[Case, Option[Instant], String, Option[String], Option[String], Option[String], Option[String], Option[String], String,
-      String, Option[String]](
+    mapping[Case, Option[Instant], String, Option[String], Boolean, Option[Instant],
+      Option[String], Option[String], Option[String], Option[String], String,
+      String, Option[String], Option[String], Option[Instant]](
       "entryDate" -> optional(FormDate.date("case.liability.error.entry-date")
         .verifying(dateMustBeInThePast("case.liability.error.entry-date.future")))
         .verifying("error.required", _.isDefined),
       "traderName" -> textNonEmpty("case.liability.error.empty.trader-name"),
       "btiReference" -> optional(nonEmptyText),
+      "repaymentClaim" -> boolean,
+      "dateOfReceipt" -> optional(FormDate.date("case.liability.error.entry-date")
+        .verifying(dateMustBeInThePast("case.liability.error.entry-date.future"))),
       "goodName" -> optional(nonEmptyText).verifying("error.required", _.isDefined),
       "entryNumber" -> optional(nonEmptyText).verifying("error.required", _.isDefined),
       "traderCommodityCode" -> optional(nonEmptyText).verifying("error.required", _.isDefined),
       "officerCommodityCode" -> optional(nonEmptyText).verifying("error.required", _.isDefined),
       "contactName" -> nonEmptyText,
       "contactEmail" -> nonEmptyText.verifying("case.liability.error.email", e => validEmailFormat(e)),
-      "contactPhone" -> optional(text).verifying("error.required", _.isDefined)
+      "contactPhone" -> optional(text).verifying("error.required", _.isDefined),
+      "dvrNumber" -> optional(text),
+      "dateForRepayment" -> optional(FormDate.date("case.liability.error.entry-date")
+        .verifying(dateMustBeInThePast("case.liability.error.entry-date.future")))
+        .verifying("error.required", _.isDefined)
     )(form2Liability(existingLiability))(liability2Form)
   ).fillAndValidate(existingLiability)
 }
