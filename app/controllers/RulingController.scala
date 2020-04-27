@@ -96,7 +96,9 @@ class RulingController @Inject()(
   }
 
   private def editLiabilityRulingView(f: Form[Decision], c: Case)(implicit request: AuthenticatedRequest[_]): Future[Result] = {
-    Future.successful(Ok(views.html.edit_liability_decision(c, f)))
+    val v2toggle = appConfig.newLiabilityDetails
+    if(v2toggle) Future.successful(Ok)
+    else Future.successful(Ok(views.html.edit_liability_decision(c, f)))
   }
 
   private def getCaseAndThen(toResult: Case => Future[Result])

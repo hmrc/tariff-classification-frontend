@@ -26,7 +26,8 @@ case class RulingViewModel(
                             justification: String,
                             methodSearch: String,
                             methodExclusion: String,
-                            showEditRuling: Boolean
+                            showEditRuling: Boolean,
+                            caseReference: String
                           )
 
 object RulingViewModel {
@@ -49,7 +50,8 @@ object RulingViewModel {
       justification = decisionJustification,
       methodSearch = decisionMethodSearch,
       methodExclusion = decisionMethodExclusion,
-      showEditRuling
+      showEditRuling,
+      c.reference
     )
   }
 }

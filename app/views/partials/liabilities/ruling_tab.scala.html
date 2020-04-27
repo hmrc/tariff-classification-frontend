@@ -16,6 +16,7 @@
 
 @import models.viewmodels.RulingViewModel
 @import views.html.partials.tab_heading
+@import controllers.routes.RulingController
 
 @this()
 
@@ -50,7 +51,7 @@
 <h3 class="heading-medium mt-30 mb-30">@messages("case.v2.liability.ruling.section")</h3>
 @if(rulingViewModel.showEditRuling) {
     <div id="ruling_edit_details" class="govuk-!-margin-bottom-4">
-        <a href="#">@messages("case.v2.liability.ruling.edit.details")</a>
+        <a href="@RulingController.editRulingDetails(rulingViewModel.caseReference)">@messages("case.v2.liability.ruling.edit.details")</a>
     </div>
 }
 <dl class="dl-mb-2 dl-mt-2">
