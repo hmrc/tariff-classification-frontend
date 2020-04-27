@@ -23,7 +23,7 @@
 
 @*TODO rename this class to reopen_case_button and remove old reopen_button partial*@
 
-    @helper.form(action = action, 'id -> id) {
+    @helper.form(action = action, 'id -> id, 'novalidate -> "novalidate") {
         @helper.CSRF.formField
         <div class="form-group" >
             <button class="button" id="@id-button" type="submit">@buttonText</button>

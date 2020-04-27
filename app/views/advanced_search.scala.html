@@ -64,7 +64,7 @@
     <p>To narrow your search, enter multiple search terms.<p>
 
     @helper.form(action = controllers.routes.SearchController.search().withFragment("advanced_search-results_and_filters"),
-        'id -> "advanced_search-form") {
+        'id -> "advanced_search-form", 'novalidate -> "novalidate") {
         @input_text(
             field = form("trader_name"),
             label = "Trader name",

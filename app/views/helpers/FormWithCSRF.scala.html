@@ -24,7 +24,7 @@ args: (Symbol,String)*
 @import views.html.helper._
 @import views.html.helper.CSRF
 
-<form action="@action.path" method="@action.method" @toHtmlArgs(args.toMap)>
+<form action="@action.path" method="@action.method" novalidate="novalidate" @toHtmlArgs(args.toMap)>
     @{
     play.filters.csrf.CSRF.getToken(request).map {token => CSRF.formField(request)}
     }
