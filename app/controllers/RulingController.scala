@@ -21,6 +21,7 @@ import models.forms.{DecisionForm, DecisionFormData, DecisionFormMapper}
 import javax.inject.{Inject, Singleton}
 import models._
 import models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
+import models.viewmodels.CaseHeaderViewModel
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -38,6 +39,7 @@ class RulingController @Inject()(
   mapper: DecisionFormMapper,
   decisionForm: DecisionForm,
   mcc: MessagesControllerComponents,
+  val editRulingView: views.html.v2.edit_liability_ruling,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc) with I18nSupport {
 
@@ -97,7 +99,8 @@ class RulingController @Inject()(
 
   private def editLiabilityRulingView(f: Form[Decision], c: Case)(implicit request: AuthenticatedRequest[_]): Future[Result] = {
     val v2toggle = appConfig.newLiabilityDetails
-    if(v2toggle) Future.successful(Ok)
+    val caseHeaderViewModel = CaseHeaderViewModel.fromCase(c)
+    if(v2toggle) Future.successful(Ok(editRulingView(caseHeaderViewModel, f)))
     else Future.successful(Ok(views.html.edit_liability_decision(c, f)))
   }
 

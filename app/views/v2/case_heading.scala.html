@@ -18,8 +18,10 @@
 @import views.html.partials.statuses.{appeal_status, case_status}
 
 @this()
+
 @(
-        caseHeaderViewModel: CaseHeaderViewModel
+        caseHeaderViewModel: CaseHeaderViewModel,
+        headingPrefix: Option[String] = None
 )(implicit messages: Messages)
 
 @phaseTagColor = @{
@@ -31,11 +33,11 @@
 }
 
 <div id="case-heading" class="case-heading mt-1 mb-2">
-    <div id="case-reference">
+    <div id="case-reference" class="case-reference">
         @messages("case.title.liabilities", messages("case.menu.liability"), caseHeaderViewModel.referenceNumber)
     </div>
 
-    <h1 class="heading-xlarge case-title">@caseHeaderViewModel.goodsName</h1>
+    <h1 class="heading-xlarge case-title">@headingPrefix.fold(caseHeaderViewModel.goodsName)(messages("case.title", _, caseHeaderViewModel.goodsName))</h1>
 
     <p class="heading-medium">@caseHeaderViewModel.businessName</p>
 
