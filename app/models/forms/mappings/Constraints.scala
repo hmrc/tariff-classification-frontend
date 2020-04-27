@@ -18,6 +18,8 @@ package models.forms.mappings
 
 import play.api.data.validation.{Constraint, Invalid, Valid}
 
+import scala.util.matching.Regex
+
 trait Constraints {
 
   protected def firstError[A](constraints: Constraint[A]*): Constraint[A] =
@@ -50,9 +52,9 @@ trait Constraints {
       }
     }
 
-  protected def regexp(regex: String, errorKey: String): Constraint[String] =
+  def regexp(regex: Regex, errorKey: String): Constraint[String] =
     Constraint {
-      case str if str.matches(regex) =>
+      case str if regex.pattern.matcher(str).matches() =>
         Valid
       case _ =>
         Invalid(errorKey, regex)
