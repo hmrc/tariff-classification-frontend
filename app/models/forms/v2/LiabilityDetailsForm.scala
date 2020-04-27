@@ -30,6 +30,7 @@ object LiabilityDetailsForm extends Constraints {
 
   private val emailRegex = """^[a-zA-Z0-9\.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$""".r
   private val numbersOnlyRegex = """^\d+$""".r
+  private val btiRefRegex = """[0-9]{6,22}""".r
 
   def liabilityDetailsForm(existingLiability: Case): Form[Case] = Form[Case](
     mapping[Case, Option[Instant], String, Option[String],Option[String], Option[String],
@@ -49,7 +50,7 @@ object LiabilityDetailsForm extends Constraints {
       "traderPostcode" -> optional(text),
       "boardsFileNumber" -> optional(text),
       //TODO ^^
-      "btiReference" -> optional(text),
+      "btiReference" -> optional(text.verifying(regexp(btiRefRegex, "case.v2.liability.c592.details_edit.bti_reference_error"))),
       "repaymentClaim" -> boolean,
       "dateOfReceipt" -> optional(FormDate.date("case.liability.error.date-of-receipt")
         .verifying(dateMustBeInThePast("case.liability.error.entry-date.future"))),
