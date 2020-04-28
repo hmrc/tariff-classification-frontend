@@ -33,6 +33,7 @@ object FormDate {
         .atStartOfDay(UTC)
         .toInstant
   }
+
   private val instant2FormDate: Instant => DateForm = { date =>
     val offsetDate = date.atOffset(UTC).toLocalDate
     DateForm(
@@ -41,14 +42,30 @@ object FormDate {
       offsetDate.getYear.toString
     )
   }
+
   private val validDateFormat: DateForm => Boolean = {
-    myDate => Try(LocalDate.of(myDate.year.toInt, myDate.month.toInt, myDate.day.toInt)).isSuccess
+    myDate => if (validateDayInDate(myDate) && validateMonthInDate(myDate) && validateYearInDate(myDate))
+      Try(LocalDate.of(myDate.year.toInt, myDate.month.toInt, myDate.day.toInt)).isSuccess
+    else
+      true
   }
 
-  def date(error: String = "invalid.date"): Mapping[Instant] =
+  private def validateDayInDate: DateForm => Boolean = !_.day.trim.isEmpty
+  private def validateMonthInDate: DateForm => Boolean = !_.month.trim.isEmpty
+  private def validateYearInDate: DateForm => Boolean = date => !date.year.trim.isEmpty
+
+  def date(error: String): Mapping[Instant] = {
+    val emptyDay = error + ".day"
+    val emptyMonth = error + ".month"
+    val emptyYear = error + ".year"
+
     mapping("day" -> text, "month" -> text, "year" -> text)(DateForm.apply)(DateForm.unapply)
+      .verifying(emptyDay, validateDayInDate)
+      .verifying(emptyMonth, validateMonthInDate)
+      .verifying(emptyYear, validateYearInDate)
       .verifying(error, validDateFormat)
       .transform(formDate2Instant, instant2FormDate)
+  }
 
   private case class DateForm(day: String, month: String, year: String)
 }
