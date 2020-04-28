@@ -16,6 +16,7 @@
 
 @import models.viewmodels.RulingViewModel
 @import views.html.partials.tab_heading
+@import views.html.partials.c592_information
 @import controllers.routes.RulingController
 
 @this()
@@ -24,28 +25,7 @@
 
 @tab_heading("ruling", messages("case.liability.decision.heading"))
 
-@*Information from the C592*@
-<h3 class="heading-medium mt-30 mb-30">@messages("case.v2.liability.ruling.info.from.c592")</h3>
-<dl class="dl-mb-2">
-
-    <div id="ruling_code_by_trader" class="grid-row">
-        <dt class="column-one-third">
-        @messages("case.v2.liability.ruling.info.from.c592.code.by.trader")
-        </dt>
-        <dd class="column-two-thirds">
-            <span id="ruling_commodityCodeEnteredByTraderOrAgent">@rulingViewModel.commodityCodeEnteredByTraderOrAgent</span>
-        </dd>
-    </div>
-
-    <div id="ruling_code_suggested" class="grid-row">
-        <dt class="column-one-third">
-        @messages("case.v2.liability.ruling.info.from.c592.code.suggested")
-        </dt>
-        <dd class="column-two-thirds">
-            <span id="ruling_commodityCodeSuggestedByOfficer" class="pre-wrap">@rulingViewModel.commodityCodeSuggestedByOfficer</span>
-        </dd>
-    </div>
-</dl>
+@c592_information(rulingViewModel.commodityCodeEnteredByTraderOrAgent, rulingViewModel.commodityCodeSuggestedByOfficer)
 
 @*liability ruling*@
 <h3 class="heading-medium mt-30 mb-30">@messages("case.v2.liability.ruling.section")</h3>

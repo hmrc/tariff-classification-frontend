@@ -34,12 +34,10 @@
 
 <div id="case-heading" class="case-heading mt-1 mb-2">
     <div id="case-reference" class="case-reference">
-        @messages("case.title.liabilities", messages("case.menu.liability"), caseHeaderViewModel.referenceNumber)
+        @messages("case.title.liabilities", messages("case.menu.liability"), caseHeaderViewModel.referenceNumber, caseHeaderViewModel.businessName)
     </div>
 
     <h1 class="heading-xlarge case-title">@headingPrefix.fold(caseHeaderViewModel.goodsName)(messages("case.title", _, caseHeaderViewModel.goodsName))</h1>
-
-    <p class="heading-medium">@caseHeaderViewModel.businessName</p>
 
     <div id="case-status-section">
 
