@@ -25,7 +25,7 @@ action: String
 </div>
 
 <div class="form-group">
-    <div aria-label="Information">
+    <div>
         <p class="form-hint">Attach the email that you have sent to notify the relevant contact that you are @action this case. Any other attachments can be added in the attachments tab.</p>
         <details role="group" class="mb-2">
             <summary role="button">
@@ -42,15 +42,15 @@ action: String
             </div>
         </details>
     </div>
-    <fieldset>
-        <div aria-label="Information">
-            <p>@messages("status.change.upload.title")</p>
-            <ul class="list list-bullet">
-                <li>@messages("status.change.upload.restrictionSize")</li>
-                <li>@messages("status.change.upload.typeOfFiles")</li>
-            </ul>
-        </div>
-    </fieldset>
+
+    <div>
+        <p>@messages("status.change.upload.title")</p>
+        <ul class="list list-bullet">
+            <li>@messages("status.change.upload.restrictionSize")</li>
+            <li>@messages("status.change.upload.typeOfFiles")</li>
+        </ul>
+    </div>
+
     <div class="mt-0">
     @input_file(
         field = bindField,

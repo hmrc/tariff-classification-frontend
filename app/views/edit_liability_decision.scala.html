@@ -36,7 +36,7 @@
 
     <h1 id="edit_liability_decision-heading" class="heading-xlarge">Liability for  @c.application.asLiabilityOrder.traderName</h1>
 
-    @helper.form(action = routes.RulingController.updateRulingDetails(c.reference), 'id -> "edit_liability_decision-form") {
+    @helper.form(action = routes.RulingController.updateRulingDetails(c.reference), 'id -> "edit_liability_decision-form", 'novalidate -> "novalidate") {
         @helper.CSRF.formField
 
         @input_text(
