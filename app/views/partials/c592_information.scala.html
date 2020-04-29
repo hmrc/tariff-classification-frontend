@@ -1,0 +1,41 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import models.viewmodels.RulingViewModel
+
+@(traderCommodityCode: String, officerCommodityCode: String)(implicit messages: Messages)
+
+<h3 class="heading-medium mt-30 mb-30">@messages("case.v2.liability.ruling.info.from.c592")</h3>
+<dl class="dl-mb-2">
+
+ <div id="ruling_code_by_trader" class="grid-row">
+  <dt class="column-one-third">
+   @messages("case.v2.liability.ruling.info.from.c592.code.by.trader")
+  </dt>
+  <dd class="column-two-thirds">
+   <span id="ruling_commodityCodeEnteredByTraderOrAgent">@traderCommodityCode</span>
+  </dd>
+ </div>
+
+ <div id="ruling_code_suggested" class="grid-row">
+  <dt class="column-one-third">
+   @messages("case.v2.liability.ruling.info.from.c592.code.suggested")
+  </dt>
+  <dd class="column-two-thirds">
+   <span id="ruling_commodityCodeSuggestedByOfficer" class="pre-wrap">@officerCommodityCode</span>
+  </dd>
+ </div>
+</dl>

@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,16 +12,13 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package views.html
+@(
+   id: String,
+   confirmText: String = "Confirm"
+)
 
-import views.html.helpers.FormWithCSRF
-
-
-package object helpers {
-
-  @deprecated("Use DI")
-  lazy val form = new FormWithCSRF()
-
-}
+<div id="@id-buttons">
+    <button class="button" id="@id-button" type="submit">@confirmText</button>
+</div>

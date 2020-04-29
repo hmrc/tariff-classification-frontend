@@ -32,8 +32,10 @@ import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import config.AppConfig
 import models.forms.{CommodityCodeConstraints, DecisionForm, DecisionFormMapper}
 import models.{Case, CaseStatus, Operator, Permission}
+import play.api.inject.guice.GuiceApplicationBuilder
 import service.{CasesService, CommodityCodeService, FileStoreService}
 import utils.Cases._
+import views.html.v2.edit_liability_ruling
 
 import scala.concurrent.Future
 
@@ -53,6 +55,7 @@ class RulingControllerSpec extends UnitSpec
   private val operator = mock[Operator]
   private val commodityCodeConstraints = mock[CommodityCodeConstraints]
   private val decisionForm = new DecisionForm(commodityCodeConstraints)
+  private val editLiabilityView = inject[edit_liability_ruling]
 
   private implicit val hc: HeaderCarrier = HeaderCarrier()
 
@@ -61,13 +64,22 @@ class RulingControllerSpec extends UnitSpec
     Mockito.reset(casesService)
   }
 
+  private val appWithLiabilityToggle = new GuiceApplicationBuilder()
+    .configure("toggle.new-liability-details" -> true)
+    .build()
+
+  lazy val appConfWithLiabilityToggle: AppConfig = appWithLiabilityToggle.injector.instanceOf[AppConfig]
+
   private def controller(c: Case) = new RulingController(
-    new SuccessfulRequestActions(inject[BodyParsers.Default], operator, c = c), casesService, fileService, mapper, decisionForm, messagesControllerComponents, appConfig
+    new SuccessfulRequestActions(inject[BodyParsers.Default], operator, c = c), casesService, fileService, mapper, decisionForm, messagesControllerComponents,editLiabilityView, appConfig
   )
 
   private def controller(requestCase: Case, permission: Set[Permission]) = new RulingController(
-    new RequestActionsWithPermissions(inject[BodyParsers.Default], permission, c = requestCase), casesService, fileService, mapper, decisionForm, messagesControllerComponents, appConfig)
+    new RequestActionsWithPermissions(inject[BodyParsers.Default], permission, c = requestCase), casesService, fileService, mapper, decisionForm, messagesControllerComponents,editLiabilityView, appConfig)
 
+  private def controllerWithV2Toggle(c: Case) = new RulingController(
+    new SuccessfulRequestActions(inject[BodyParsers.Default], operator, c = c), casesService, fileService, mapper, decisionForm, messagesControllerComponents,editLiabilityView, appConfWithLiabilityToggle
+  )
 
   "Edit Ruling" should {
     val btiCaseWithStatusNEW = aCase(withBTIApplication, withReference("reference"), withStatus(CaseStatus.NEW))
@@ -93,6 +105,14 @@ class RulingControllerSpec extends UnitSpec
         contentType(result) shouldBe Some("text/html")
         charset(result) shouldBe Some("utf-8")
         contentAsString(result) should (include("Liability") and include("<form"))
+      }
+
+      "Case is a Liability under V2 toggle" in {
+        given(commodityCodeConstraints.commodityCodeExistsInUKTradeTariff).willReturn(Constraint[String]("error")( _ =>  Valid))
+        val result = controllerWithV2Toggle(liabilityCaseWithStatusOPEN).editRulingDetails("reference")(newFakeGETRequestWithCSRF(fakeApplication))
+        status(result) shouldBe Status.OK
+        contentAsString(result) shouldNot (include("edit_liability_decision-heading"))
+        contentAsString(result) should (include("case-heading"))
       }
     }
 

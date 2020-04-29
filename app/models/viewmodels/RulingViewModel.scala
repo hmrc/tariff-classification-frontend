@@ -26,7 +26,8 @@ case class RulingViewModel(
                             justification: String,
                             methodSearch: String,
                             methodExclusion: String,
-                            showEditRuling: Boolean
+                            showEditRuling: Boolean,
+                            caseReference: String
                           )
 
 object RulingViewModel {
@@ -39,7 +40,7 @@ object RulingViewModel {
     val decisionMethodSearch = c.decision.fold("")(_.methodSearch.getOrElse(""))
     val decisionMethodExclusion = c.decision.fold("")(_.methodExclusion.getOrElse(""))
 
-    val showEditRuling = c.status == CaseStatus.OPEN && permissions.contains(Permission.EDIT_RULING)
+    val showEditRuling = Set(CaseStatus.OPEN,CaseStatus.REFERRED,CaseStatus.SUSPENDED).contains(c.status) && permissions.contains(Permission.EDIT_RULING)
 
     RulingViewModel(
       commodityCodeEnteredByTraderOrAgent = c.application.asLiabilityOrder.traderCommodityCode.getOrElse(""),
@@ -49,7 +50,8 @@ object RulingViewModel {
       justification = decisionJustification,
       methodSearch = decisionMethodSearch,
       methodExclusion = decisionMethodExclusion,
-      showEditRuling
+      showEditRuling,
+      c.reference
     )
   }
 }

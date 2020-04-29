@@ -27,8 +27,20 @@ class RulingViewModelTest extends UnitSpec {
 
   "showEditRuling" should {
 
-    "show edit ruling button" in {
+    "show edit ruling button when case status is OPEN" in {
       val aCase = dummyCase.copy(status = OPEN)
+      val permissions: Set[Permission] = Set(Permission.EDIT_RULING)
+      RulingViewModel.fromCase(aCase, permissions).showEditRuling shouldBe true
+    }
+
+    "show edit ruling button when case status is REFERRED" in {
+      val aCase = dummyCase.copy(status = REFERRED)
+      val permissions: Set[Permission] = Set(Permission.EDIT_RULING)
+      RulingViewModel.fromCase(aCase, permissions).showEditRuling shouldBe true
+    }
+
+    "show edit ruling button when case status is SUSPENDED" in {
+      val aCase = dummyCase.copy(status = SUSPENDED)
       val permissions: Set[Permission] = Set(Permission.EDIT_RULING)
       RulingViewModel.fromCase(aCase, permissions).showEditRuling shouldBe true
     }
@@ -49,7 +61,7 @@ class RulingViewModelTest extends UnitSpec {
   "fromCase" should {
 
     "return a RulingViewModel when a case with decision is passed" in {
-      val liabilityCase = Cases.liabilityCaseWithDecisionExample.copy(status = CaseStatus.OPEN)
+      val liabilityCase = Cases.liabilityCaseWithDecisionExample.copy(status = CaseStatus.OPEN, reference = "case reference")
       val rulingViewModel = RulingViewModel.fromCase(liabilityCase)
 
       val expected = RulingViewModel(
@@ -60,7 +72,8 @@ class RulingViewModelTest extends UnitSpec {
         justification = "justification",
         methodSearch = "",
         methodExclusion = "Excludes everything ever",
-        showEditRuling = false)
+        showEditRuling = false,
+        caseReference = "case reference")
 
       rulingViewModel shouldBe expected
     }
