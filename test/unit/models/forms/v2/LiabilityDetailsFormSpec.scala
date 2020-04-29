@@ -145,12 +145,13 @@ class LiabilityDetailsFormSpec extends UnitSpec {
         form.data shouldBe params.mapValues(v => v.head)
       }
 
-      "populate trader contact details" in {
-        val form = LiabilityDetailsForm.liabilityDetailsForm(sampleEmptyCase).bindFromRequest(traderAddressParams)
+      "using edit form is repayments claim set to true" in {
+        val form = LiabilityDetailsForm.liabilityDetailsForm(sampleCase)
 
         form.hasErrors shouldBe false
-        form.get.application.asLiabilityOrder.traderContactDetails shouldBe sampleEmptyCase.application.asLiabilityOrder.traderContactDetails
+        form.get.application.asLiabilityOrder.repaymentClaim shouldBe sampleCase.application.asLiabilityOrder.repaymentClaim
       }
+
     }
   }
 
