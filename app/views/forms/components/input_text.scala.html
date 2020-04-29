@@ -49,11 +49,10 @@
         @if(disableAutoComplete) {
             autocomplete="off"
         }
-        aria-describedby="@{field.id}-hint @{field.id}-error"
+        @if(field.hasErrors || hint.nonEmpty){aria-describedby="@if(hint.nonEmpty){@{field.id}-hint} @if(field.hasErrors){@{field.id}-error}"}
         id="@{field.id}"
         name="@{field.name}"
         value="@{field.value}"
-        @if(tabIndex.isDefined){ tabindex="@{tabIndex.get}" }
         />
     </div>
 </div>

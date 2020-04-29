@@ -43,7 +43,7 @@
 
             @helper.form(action = RejectCaseController.postRejectCase(c.reference, activeTab),
             'enctype -> "multipart/form-data",
-            'id -> "reject_case") {
+            'id -> "reject_case", 'novalidate -> "novalidate") {
 
                 @helper.CSRF.formField
 

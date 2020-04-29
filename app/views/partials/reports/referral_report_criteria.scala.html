@@ -26,7 +26,7 @@
 
 <h3 id="referral_report_criteria-heading" class="heading-small">Referral Report Criteria</h3>
 
-@helper.form(action = routes.ReportingController.getReport(Report.REFERRAL.toString)) {
+@helper.form(action = routes.ReportingController.getReport(Report.REFERRAL.toString), 'novalidate -> "novalidate") {
 
  @error_summary(form.errors)
 
