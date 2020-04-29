@@ -70,7 +70,7 @@ object Cases {
     PortOrComplianceOfficerContact("name", "email", "phone"), "", "", None)
 
   val rulingViewModel = Some(
-    RulingViewModel("", "", "123456", "item description", "justification", "method searches", "method exclusions", showEditRuling = false))
+    RulingViewModel("", "", "123456", "item description", "justification", "method searches", "method exclusions", false, "case references"))
 
   val attachmentsTabViewModel = Some(AttachmentsTabViewModel(Cases.liabilityCaseExample.reference, Nil, None))
   val activityTabViewModel = Some(ActivityViewModel("referenceNumber", Some(operatorWithoutPermissions),
