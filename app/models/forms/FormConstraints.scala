@@ -38,17 +38,8 @@ object FormConstraints {
 
   def emptyOr(c: Constraint[String]*): Seq[Constraint[String]] = c.map { c =>
     Constraint[String]("constraints.empty")({
-      case s: String if s.isEmpty => {
-        println("_______")
-        println("------" * 50)
-        println("------" + s)
-        Valid
-      }
-      case s: String => {
-        println(" This is the second block")
-        println(" ******************** " + s)
-        c.apply(s)
-      }
+      case s: String if s.isEmpty => Valid
+      case s: String => c.apply(s)
     })
   }
 

@@ -19,13 +19,14 @@ package models.forms.v2
 import java.time.Instant
 
 import models.{Address, Contact, LiabilityOrder, LiabilityStatus, RepaymentClaim, TraderContactDetails}
+import org.joda.time.{DateTime, DateTimeZone}
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.Cases
 
 class LiabilityDetailsFormSpec extends UnitSpec {
 
 
-  private val emptyLiability = LiabilityOrder(
+  private val emptyLiabilityOrder = LiabilityOrder(
     Contact(name = "", email = "", Some("")),
     status = LiabilityStatus.LIVE,
     traderName = "trader-name",
@@ -35,7 +36,7 @@ class LiabilityDetailsFormSpec extends UnitSpec {
     traderCommodityCode = Some(""),
     officerCommodityCode = Some(""),
     btiReference = Some(""),
-    repaymentClaim = Some(RepaymentClaim(dvrNumber = Some(""), dateForRepayment = Some(Instant.EPOCH))),
+    repaymentClaim = None,
     dateOfReceipt = Some(Instant.EPOCH),
     traderContactDetails = Some(TraderContactDetails(email = Some(""),
       phone = Some(""),
@@ -48,21 +49,21 @@ class LiabilityDetailsFormSpec extends UnitSpec {
 
   )
 
-  private val liability = LiabilityOrder(
+  private val liabilityOrder = LiabilityOrder(
     Contact(name = "contact-name", email = "contact@email.com", Some("contact-phone")),
     status = LiabilityStatus.LIVE,
     traderName = "trader-name",
     goodName = Some("good-name"),
     entryDate = Some(Instant.EPOCH),
-    entryNumber = Some("entry-no"),
+    entryNumber = Some("123456"),
     traderCommodityCode = Some("0200000000"),
     officerCommodityCode = Some("0100000000"),
-    btiReference = Some("btiReferenceN"),
-    repaymentClaim = Some(RepaymentClaim(dvrNumber = Some(""), dateForRepayment = Some(Instant.EPOCH))),
+    btiReference = Some("12345678"),
+    repaymentClaim = Some(RepaymentClaim(dvrNumber = Some("123456"), dateForRepayment = Some(Instant.EPOCH))),
     dateOfReceipt = Some(Instant.EPOCH),
     traderContactDetails = Some(TraderContactDetails(email = Some("trader@email.com"),
-      phone = Some("2345"),
-      address = Some(Address(buildingAndStreet = "STREET 1",
+      phone = Some("0123456764"),
+      address = Some(Address(buildingAndStreet = "1 Street",
         townOrCity = "Town",
         county = Some("County"),
         postCode = Some("postcode")
@@ -70,8 +71,13 @@ class LiabilityDetailsFormSpec extends UnitSpec {
     ))
   )
 
-  private val sampleCase = Cases.newLiabilityLiveCaseExample.copy(caseBoardsFileNumber = Some("SCR/ARD/123"), application = liability)
-  private val sampleEmptyCase = Cases.newLiabilityLiveCaseExample.copy(caseBoardsFileNumber = Some("SCR/ARD/123"), application = emptyLiability)
+  private val sampleCase = Cases.newLiabilityLiveCaseExample.copy(caseBoardsFileNumber = Some("SCR/ARD/123"), application = liabilityOrder)
+  private val sampleEmptyCase = Cases.newLiabilityLiveCaseExample.copy(caseBoardsFileNumber = Some("SCR/ARD/123"), application = emptyLiabilityOrder)
+
+  private val day = new DateTime(Instant.EPOCH.getEpochSecond, DateTimeZone.forID("Etc/UTC")).dayOfMonth.getAsText
+  private val month = new DateTime(Instant.EPOCH.getEpochSecond, DateTimeZone.forID("Etc/UTC")).getMonthOfYear.toString
+  private val year = new DateTime(Instant.EPOCH.getEpochSecond, DateTimeZone.forID("Etc/UTC")).year.getAsText
+
 
   private val params = Map(
     "contactName" -> Seq("contact-name"),
@@ -83,30 +89,35 @@ class LiabilityDetailsFormSpec extends UnitSpec {
     "traderBuildingAndStreet" -> Seq("1 Street"),
     "traderTownOrCity" -> Seq("Town"),
     "traderCounty" -> Seq("County"),
-    "traderPostcode" -> Seq("AA11AA"),
+    "traderPostcode" -> Seq("postcode"),
     "boardsFileNumber" -> Seq("SCR/ARD/123"),
     "goodName" -> Seq("good-name"),
-    "entryDate.day" -> Seq("1"),
-    "entryDate.month" -> Seq("1"),
-    "entryDate.year" -> Seq("1970"),
+    "entryDate.day" -> Seq(day),
+    "entryDate.month" -> Seq(month),
+    "entryDate.year" -> Seq(year),
     "entryNumber" -> Seq("123456"),
     "traderCommodityCode" -> Seq("0200000000"),
     "officerCommodityCode" -> Seq("0100000000"),
     "btiReference" -> Seq("12345678"),
-//    "repaymentClaim"-> Seq(),
-    "dateOfReceipt.day" -> Seq("2"),
-    "dateOfReceipt.month" -> Seq("3"),
-    "dateOfReceipt.year" -> Seq("2010"),
+    "repaymentClaim"-> Seq("true"),
+    "dateOfReceipt.day" -> Seq(day),
+    "dateOfReceipt.month" -> Seq(month),
+    "dateOfReceipt.year" -> Seq(year),
     "dvrNumber" -> Seq("123456"),
-    "dateForRepayment.day" -> Seq("2"),
-    "dateForRepayment.month" -> Seq("3"),
-    "dateForRepayment.year" -> Seq("2020")
+    "dateForRepayment.day" -> Seq(day),
+    "dateForRepayment.month" -> Seq(month),
+    "dateForRepayment.year" -> Seq(year)
   )
+
+  private val traderAddressParams: Map[String, Seq[String]] = Map("traderName" -> params.getOrElse("traderName", Seq("traderName")))
+
+  private val booleanValues = Seq("repaymentClaim")
+  private val emptyParams = (params -- booleanValues).mapValues(_ => Seq(""))
 
   "Bind from request" should {
     "Bind blank" when {
       "using edit form" in {
-        val form = LiabilityDetailsForm.liabilityDetailsForm(sampleEmptyCase).bindFromRequest(params.mapValues(_ => Seq("")))
+        val form = LiabilityDetailsForm.liabilityDetailsForm(sampleEmptyCase).bindFromRequest(emptyParams)
 
         form.hasErrors shouldBe true
         form.errors should have(size(1))
@@ -117,12 +128,9 @@ class LiabilityDetailsFormSpec extends UnitSpec {
 
     "Bind valid form" when {
       "using edit form" in {
-        val form = LiabilityDetailsForm.liabilityDetailsForm(sampleEmptyCase).bindFromRequest(params)
-
-        println("111111111111111")
-        println(form.errors)
+        val form = LiabilityDetailsForm.liabilityDetailsForm(sampleCase).bindFromRequest(params)
         form.hasErrors shouldBe false
-        form.get shouldBe sampleEmptyCase
+        form.get shouldBe sampleCase
       }
 
     }
@@ -131,12 +139,18 @@ class LiabilityDetailsFormSpec extends UnitSpec {
   "Fill" should {
     "populate by default" when {
       "using edit form" in {
-        val form = LiabilityDetailsForm.liabilityDetailsForm(sampleEmptyCase)
+        val form = LiabilityDetailsForm.liabilityDetailsForm(sampleCase)
 
         form.hasErrors shouldBe false
         form.data shouldBe params.mapValues(v => v.head)
       }
 
+      "populate trader contact details" in {
+        val form = LiabilityDetailsForm.liabilityDetailsForm(sampleEmptyCase).bindFromRequest(traderAddressParams)
+
+        form.hasErrors shouldBe false
+        form.get.application.asLiabilityOrder.traderContactDetails shouldBe sampleEmptyCase.application.asLiabilityOrder.traderContactDetails
+      }
     }
   }
 
