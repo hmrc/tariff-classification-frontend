@@ -87,6 +87,11 @@ object Cases {
 
   val aCaseWithCompleteDecision = Cases.liabilityCaseExample.copy(reference = "123456", caseBoardsFileNumber = Some("SCR/ARD/123"), application = liabilityWithCompleteDecision)
 
+  val newLiabilityLiveCaseExample = Case("1", CaseStatus.NEW, Instant.now(), 0, None, None, None, newLiabilityLiveApplicationExample, None, Seq())
+  val newLiabilityLiveApplicationExample = LiabilityOrder(Contact("contact-name","contact@email.com",Some("contact-phone")),
+    LiabilityStatus.LIVE, "trader-business-name", Some("good-name"), Some(Instant.now()), None)
+
+
   val liabilityWithCompleteDecision = LiabilityOrder(
     Contact(name = "contact-name", email = "contact@email.com", Some("contact-phone")),
     status = LiabilityStatus.LIVE,

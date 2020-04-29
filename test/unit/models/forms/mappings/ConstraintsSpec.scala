@@ -127,4 +127,22 @@ class ConstraintsSpec extends WordSpec with MustMatchers with Constraints {
       result mustEqual Invalid("custom.error.key")
     }
   }
+
+  "validEmail" must {
+    "return Valid if email is empty" in {
+      val result = validEmail("custom.error.key").apply("")
+      result mustEqual Valid
+    }
+
+    "return Valid if email is not empty and email is valid regex" in {
+      val result = validEmail("custom.error.key").apply("test@test.com")
+      result mustEqual Valid
+    }
+
+    "return Invalid if email not empty and email is not valid regex" in {
+      val result = validEmail("custom.error.key").apply("a@a")
+      result mustEqual Valid
+    }
+
+  }
 }

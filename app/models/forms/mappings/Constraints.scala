@@ -82,7 +82,7 @@ trait Constraints {
     Constraint {
       case str if str.isEmpty =>
         Valid
-      case email if !email.isEmpty && (email.trim.isEmpty || emailRegex.findFirstMatchIn(email.trim).nonEmpty) =>
+      case email if !email.isEmpty && emailRegex.findFirstMatchIn(email.trim).nonEmpty =>
         Valid
       case _ =>
         Invalid(errorKey)
