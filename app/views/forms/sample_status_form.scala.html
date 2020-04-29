@@ -24,7 +24,7 @@
 @(c: Case, field: Field)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 
-@helper.form(action = routes.SampleController.updateStatus(c.reference, None), 'id -> "sample_status_form") {
+@helper.form(action = routes.SampleController.updateStatus(c.reference, None), 'id -> "sample_status_form", 'novalidate -> "novalidate") {
     @helper.CSRF.formField
     @input_radiogroup(
         field = field,
