@@ -15,7 +15,10 @@ window.onload = function () {
         document.title = "Error: " + document.title
     }
 
-
+    var hasErrors = document.querySelector("#error-summary");
+    if (hasErrors) {
+        hasErrors.focus();
+    }
 
     var Tabs = window.GOVUKFrontend.Tabs
     var $tabs = document.querySelector('[data-module="govuk-tabs"]')

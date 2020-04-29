@@ -21,10 +21,9 @@
 @import views.html.includes.main
 @import views.html.partials.case_heading
 @import views.html.partials.error_summary
-@import views.html.components.initial_focus
 @(c: Case, form: Form[Option[SampleStatus]])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("page.title.change.sample.status")), scriptElem = Some(initial_focus())) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.change.sample.status"))) {
 
     @error_summary(form.errors)
 
