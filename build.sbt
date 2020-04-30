@@ -58,8 +58,8 @@ lazy val microservice = (project in file("."))
   .settings(
     resolvers += Resolver.bintrayRepo("hmrc", "releases"),
     resolvers += Resolver.jcenterRepo)
-  .settings(ivyScala := ivyScala.value map {
-    _.copy(overrideScalaVersion = true)
+  .settings(scalaModuleInfo := scalaModuleInfo.value map {
+    _.withOverrideScalaVersion(true)
   })
 
 lazy val allPhases = "tt->test;test->test;test->compile;compile->compile"
@@ -71,8 +71,9 @@ lazy val TemplateItTest = config("tit") extend IntegrationTest
 def unitFilter(name: String): Boolean = name startsWith "unit"
 
 def oneForkedJvmPerTest(tests: Seq[TestDefinition]): Seq[Group] = {
-  tests map {
-    test => Group(test.name, Seq(test), SubProcess(ForkOptions(runJVMOptions = Seq("-Dtest.name=" + test.name))))
+  tests map { test =>
+    val forkOpts = ForkOptions().withRunJVMOptions(Vector("-Dtest.name=" + test.name))
+    Group(test.name, Seq(test), SubProcess(forkOpts))
   }
 }
 
