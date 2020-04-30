@@ -12,6 +12,7 @@ lazy val playSettings: Seq[Setting[_]] = Seq.empty
 
 lazy val microservice = (project in file("."))
   .enablePlugins(plugins: _*)
+  .disablePlugins(JUnitXmlReportPlugin) //Required to prevent https://github.com/scalatest/scalatest/issues/1427
   .settings(playSettings: _*)
   .settings(scalaSettings: _*)
   .settings(publishingSettings: _*)
@@ -20,7 +21,7 @@ lazy val microservice = (project in file("."))
   .settings(PlayKeys.playDefaultPort := 9581)
   .settings(
     name := appName,
-    scalaVersion := "2.11.11",
+    scalaVersion := "2.12.10",
     targetJvm := "jvm-1.8",
     libraryDependencies ++= (AppDependencies.compile ++ AppDependencies.test).map(_ withSources()),
     evictionWarningOptions in update := EvictionWarningOptions.default.withWarnScalaVersionEviction(false),

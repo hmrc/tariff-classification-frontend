@@ -51,23 +51,23 @@ class AuthenticatedHttpClient @Inject()(
   }
 
   override def doGet(url: String, headers: Seq[(String, String)])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
-    super.doGet(url)(addAuth, implicitly)
+    super.doGet(url)(addAuth, ec)
   }
 
   override def doPost[A](url: String, body: A, headers: Seq[(String, String)])(implicit rds: Writes[A], hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
-    super.doPost(url, body, headers)(rds, addAuth, implicitly)
+    super.doPost(url, body, headers)(rds, addAuth, ec)
   }
 
   override def doEmptyPost[A](url: String, headers: Seq[(String, String)])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
-    super.doEmptyPost(url)(addAuth, implicitly)
+    super.doEmptyPost(url)(addAuth, ec)
   }
 
   override def doPut[A](url: String, body: A, headers: Seq[(String, String)])(implicit rds: Writes[A], hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
-    super.doPut(url, body)(rds, addAuth, implicitly)
+    super.doPut(url, body)(rds, addAuth, ec)
   }
 
   override def doDelete(url: String, headers: Seq[(String, String)])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
-    super.doDelete(url)(addAuth, implicitly)
+    super.doDelete(url)(addAuth, ec)
   }
 
 }
