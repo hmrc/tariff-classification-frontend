@@ -25,7 +25,6 @@ import utils.Cases
 
 class LiabilityDetailsFormSpec extends UnitSpec {
 
-
   private val emptyLiabilityOrder = LiabilityOrder(
     Contact(name = "", email = "", Some("")),
     status = LiabilityStatus.LIVE,

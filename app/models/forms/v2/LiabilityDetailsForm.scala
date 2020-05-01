@@ -18,18 +18,15 @@ package models.forms.v2
 
 import java.time.Instant
 
-import models.forms.FormConstraints.{dateMustBeInThePast, emptyOr}
+import models._
+import models.forms.FormConstraints._
 import models.forms.FormDate
 import models.forms.mappings.Constraints
 import models.forms.mappings.FormMappings._
-import models._
 import play.api.data.Form
 import play.api.data.Forms._
 
 object LiabilityDetailsForm extends Constraints {
-
-  private val numbersOnlyRegex = """^\d+$""".r
-  private val btiRefRegex = """[0-9]{6,22}""".r
 
   def liabilityDetailsForm(existingLiability: Case): Form[Case] = Form[Case](
     mapping[Case, Option[Instant], String, Option[String],Option[String], Option[String],
@@ -49,13 +46,13 @@ object LiabilityDetailsForm extends Constraints {
       "traderPostcode" -> optional(text),
       "boardsFileNumber" -> optional(text),
       //TODO ^^
-      "btiReference" -> optional(text.verifying(emptyOr(regexp(btiRefRegex, "case.v2.liability.c592.details_edit.bti_reference_error")): _*)),
+      "btiReference" -> optional(text.verifying(emptyOr(btiReferenceIsCorrectFormat()): _*)),
       "repaymentClaim" -> boolean,
       "dateOfReceipt" -> optional(FormDate.date("case.liability.error.date-of-receipt")
         .verifying(dateMustBeInThePast("case.liability.error.entry-date.future"))),
       "goodName" -> optional(text),
       "entryNumber" -> optional(
-        text.verifying(emptyOr(regexp(numbersOnlyRegex, "case.liability.error.entry-number")): _*)
+        text.verifying(emptyOr(entryNumberIsNumberOnly()): _*)
       ),
       "traderCommodityCode" -> optional(text),
       "officerCommodityCode" -> optional(text),
@@ -63,7 +60,7 @@ object LiabilityDetailsForm extends Constraints {
       "contactEmail" -> optional(text.verifying(emptyOr(validEmail("case.liability.error.contact.email")):_*)),
       "contactPhone" -> optional(text),
       "dvrNumber" -> optional(
-        text.verifying(emptyOr(regexp(numbersOnlyRegex, "case.liability.error.dvr-number")): _*)
+        text.verifying(emptyOr(dvrNumberIsNumberOnly()): _*)
       ),
       //TODO revisit .verifying logic
       "dateForRepayment" -> optional(FormDate.date("case.liability.error.date-of-repayment")
@@ -171,7 +168,7 @@ object LiabilityDetailsForm extends Constraints {
       "contactEmail" -> optional(nonEmptyText.verifying(emptyOr(validEmail("case.liability.error.contact.email")):_*)),
       "contactPhone" -> optional(text).verifying("error.required", _.isDefined),
       "dvrNumber" -> optional(
-        text.verifying(regexp(numbersOnlyRegex, "case.liability.error.dvr-number"))
+        text.verifying(dvrNumberIsNumberOnly())
       ),
       "dateForRepayment" -> optional(FormDate.date("case.liability.error.date-of-repayment")
         .verifying(dateMustBeInThePast("case.liability.error.date-of-repayment.future")))

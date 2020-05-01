@@ -18,9 +18,13 @@ package models.forms
 
 import java.time.{Clock, Instant}
 
+import models.forms.v2.LiabilityDetailsForm.regexp
 import play.api.data.validation.{Constraint, Invalid, Valid}
 
 object FormConstraints {
+
+  private val numbersOnlyRegex = """^\d+$""".r
+  private val btiRefRegex = """[0-9]{6,22}""".r
 
   val validCommodityCodeDecision: Constraint[String] = Constraint("constraints.commoditycode")({
     case s: String if s.matches("[0-9]{6,22}") && (s.length % 2 == 0) => Valid
@@ -35,6 +39,18 @@ object FormConstraints {
     case s: Instant if s.isBefore(Instant.now(Clock.systemUTC)) => Valid
     case _ => Invalid(error)
   })
+
+  def btiReferenceIsCorrectFormat(): Constraint[String] = {
+    regexp(btiRefRegex, "case.v2.liability.c592.details_edit.bti_reference_error")
+  }
+
+  def entryNumberIsNumberOnly(): Constraint[String] = {
+    regexp(numbersOnlyRegex, "case.liability.error.entry-number")
+  }
+
+  def dvrNumberIsNumberOnly(): Constraint[String] = {
+    regexp(numbersOnlyRegex, "case.liability.error.dvr-number")
+  }
 
   def emptyOr(c: Constraint[String]*): Seq[Constraint[String]] = c.map { c =>
     Constraint[String]("constraints.empty")({
