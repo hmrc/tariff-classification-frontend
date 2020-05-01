@@ -16,7 +16,7 @@
 
 package models.viewmodels
 
-import models.{Case, CaseStatus, Permission}
+import models.{Case, Permission}
 
 case class RulingViewModel(
                             commodityCodeEnteredByTraderOrAgent: String,
@@ -40,8 +40,6 @@ object RulingViewModel {
     val decisionMethodSearch = c.decision.fold("")(_.methodSearch.getOrElse(""))
     val decisionMethodExclusion = c.decision.fold("")(_.methodExclusion.getOrElse(""))
 
-    val showEditRuling = Set(CaseStatus.OPEN,CaseStatus.REFERRED,CaseStatus.SUSPENDED).contains(c.status) && permissions.contains(Permission.EDIT_RULING)
-
     RulingViewModel(
       commodityCodeEnteredByTraderOrAgent = c.application.asLiabilityOrder.traderCommodityCode.getOrElse(""),
       commodityCodeSuggestedByOfficer = c.application.asLiabilityOrder.officerCommodityCode.getOrElse(""),
@@ -50,7 +48,7 @@ object RulingViewModel {
       justification = decisionJustification,
       methodSearch = decisionMethodSearch,
       methodExclusion = decisionMethodExclusion,
-      showEditRuling,
+      showEditRuling = permissions.contains(Permission.EDIT_RULING),
       c.reference
     )
   }
