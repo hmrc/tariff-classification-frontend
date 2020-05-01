@@ -72,7 +72,8 @@ class CompleteCaseController @Inject()(
       decisionForm.bindFrom(c.decision).map(_.errors).exists(_.isEmpty)
     case ApplicationType.LIABILITY_ORDER =>
       decisionForm.liabilityCompleteForm(c.decision.getOrElse(Decision())).errors.isEmpty &&
-        LiabilityDetailsForm.liabilityDetailsCompleteForm(c.application.asLiabilityOrder).errors.isEmpty
+        LiabilityDetailsForm.liabilityDetailsCompleteForm(c).errors.isEmpty
   }
 
+  
 }

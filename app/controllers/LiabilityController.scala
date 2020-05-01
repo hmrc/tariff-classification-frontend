@@ -48,7 +48,7 @@ class LiabilityController @Inject()(
     getCaseAndRenderView(menuTitle,
       c => {
         val df: Form[Decision] = decisionForm.liabilityCompleteForm(c.decision.getOrElse(Decision()))
-        val lf: Form[LiabilityOrder] = LiabilityDetailsForm.liabilityDetailsCompleteForm(c.application.asLiabilityOrder)
+        val lf: Form[Case] = LiabilityDetailsForm.liabilityDetailsCompleteForm(c)
         successful(views.html.partials.liabilities.liability_details(c, lf, df))
       }
     )
@@ -57,17 +57,17 @@ class LiabilityController @Inject()(
   def editLiabilityDetails(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.EDIT_LIABILITY)).async { implicit request =>
     successful(
       Ok(
-        views.html.partials.liabilities.liability_details_edit(request.`case`, LiabilityDetailsForm.liabilityDetailsForm(request.`case`.application.asLiabilityOrder))
+        views.html.partials.liabilities.liability_details_edit(request.`case`, LiabilityDetailsForm.liabilityDetailsForm(request.`case`))
       )
     )
   }
 
   def postLiabilityDetails(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.EDIT_LIABILITY)).async { implicit request =>
-    LiabilityDetailsForm.liabilityDetailsForm(request.`case`.application.asLiabilityOrder).discardingErrors.bindFromRequest.fold(
+    LiabilityDetailsForm.liabilityDetailsForm(request.`case`).discardingErrors.bindFromRequest.fold(
       errorForm => successful(Ok(views.html.partials.liabilities.liability_details_edit(request.`case`, errorForm))),
-      updatedLiability => getCaseAndRedirect(menuTitle, c =>
+      updatedCase => getCaseAndRedirect(menuTitle, c =>
         for {
-          update <- casesService.updateCase(c.copy(application = updatedLiability))
+          update <- casesService.updateCase(updatedCase)
         } yield routes.LiabilityController.liabilityDetails(update.reference)
       )
     )

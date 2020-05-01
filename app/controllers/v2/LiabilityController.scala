@@ -23,16 +23,18 @@ import models.forms.{ActivityForm, ActivityFormData, KeywordForm, UploadAttachme
 import models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
 import models.viewmodels._
 import models.{Case, Permission, _}
-import play.api.data.{Form}
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import service.{CasesService, EventsService, FileStoreService, KeywordsService, QueuesService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import controllers.Tab._
+import models.forms.v2.LiabilityDetailsForm
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import scala.concurrent.Future.successful
 
 @Singleton
 class LiabilityController @Inject()(
@@ -44,6 +46,7 @@ class LiabilityController @Inject()(
                                      keywordsService: KeywordsService,
                                      mcc: MessagesControllerComponents,
                                      val liability_view: views.html.v2.liability_view,
+                                     val liability_details_edit: views.html.v2.liability_details_edit,
                                      implicit val appConfig: AppConfig
                                    ) extends FrontendController(mcc) with I18nSupport {
 
@@ -102,12 +105,13 @@ class LiabilityController @Inject()(
   }
 
   private def getSampleTab(c: Case)(implicit request: AuthenticatedRequest[_]) = {
-    eventsService.getFilteredEvents(c.reference, NoPagination(),Some(EventType.sampleEvents)).map {
-      sampleEvents => SampleStatusTabViewModel(
-        c.reference,
-        c.sample,
-        sampleEvents
-      )
+    eventsService.getFilteredEvents(c.reference, NoPagination(), Some(EventType.sampleEvents)).map {
+      sampleEvents =>
+        SampleStatusTabViewModel(
+          c.reference,
+          c.sample,
+          sampleEvents
+        )
     }
   }
 
@@ -151,4 +155,25 @@ class LiabilityController @Inject()(
         }
     }
 
-  }
+  def editLiabilityDetails(reference: String): Action[AnyContent] =
+    (verify.authenticated andThen verify.casePermissions(reference)
+      andThen verify.mustHave(Permission.EDIT_LIABILITY)).async { implicit request =>
+      successful(
+        Ok(liability_details_edit(request.`case`, LiabilityDetailsForm.liabilityDetailsForm(request.`case`))
+        )
+      )
+    }
+
+  def postLiabilityDetails(reference: String): Action[AnyContent] =
+    (verify.authenticated andThen verify.casePermissions(reference)
+      andThen verify.mustHave(Permission.EDIT_LIABILITY)).async { implicit request =>
+
+      LiabilityDetailsForm.liabilityDetailsForm(request.`case`).discardingErrors.bindFromRequest.fold(
+        errorForm =>
+          successful(Ok(liability_details_edit(request.`case`, errorForm))),
+        updatedCase => casesService.updateCase(updatedCase).map(
+          _ => Redirect(v2.routes.LiabilityController.displayLiability(reference).withFragment(C592_TAB))
+        )
+      )
+    }
+}

@@ -18,8 +18,9 @@ package models.forms
 
 import java.time.Instant
 
+import models._
 import uk.gov.hmrc.play.test.UnitSpec
-import models.{Contact, LiabilityOrder, LiabilityStatus}
+import utils.Cases
 
 class LiabilityDetailsFormTest extends UnitSpec {
 
@@ -31,8 +32,21 @@ class LiabilityDetailsFormTest extends UnitSpec {
     entryDate = Some(Instant.EPOCH),
     entryNumber = Some("entry-no"),
     traderCommodityCode = Some("0200000000"),
-    officerCommodityCode = Some("0100000000")
+    officerCommodityCode = Some("0100000000"),
+    btiReference = Some("btiReferenceN"),
+    repaymentClaim = Some(RepaymentClaim(dvrNumber = Some(""), dateForRepayment = Some(Instant.EPOCH))),
+    dateOfReceipt = Some(Instant.EPOCH),
+    traderContactDetails = Some(TraderContactDetails(email = Some("trader@email.com"),
+      phone = Some("2345"),
+      address = Some(Address(buildingAndStreet = "STREET 1",
+        townOrCity = "Town",
+        county = Some("County"),
+        postCode = Some("postcode")
+      ))
+    ))
   )
+
+  private val sampleCase = Cases.liabilityCaseExample.copy(caseBoardsFileNumber = Some("SCR/ARD/123"), application = liability)
 
   private val params = Map(
     "contactName" -> Seq("contact-name"),
@@ -51,7 +65,7 @@ class LiabilityDetailsFormTest extends UnitSpec {
   "Bind from request" should {
     "Bind blank" when {
       "using edit form" in {
-        val form = LiabilityDetailsForm.liabilityDetailsForm(liability).bindFromRequest(params.mapValues(_ => Seq("")))
+        val form = LiabilityDetailsForm.liabilityDetailsForm(sampleCase).bindFromRequest(params.mapValues(_ => Seq("")))
 
         form.hasErrors shouldBe true
         form.errors should have(size(1))
@@ -59,7 +73,7 @@ class LiabilityDetailsFormTest extends UnitSpec {
       }
 
       "using complete form" in {
-        val form = LiabilityDetailsForm.liabilityDetailsCompleteForm(liability).bindFromRequest(params.mapValues(_ => Seq("")))
+        val form = LiabilityDetailsForm.liabilityDetailsCompleteForm(sampleCase).bindFromRequest(params.mapValues(_ => Seq("")))
 
         form.hasErrors shouldBe true
         form.errors should have(size(9))
@@ -69,17 +83,17 @@ class LiabilityDetailsFormTest extends UnitSpec {
 
     "Bind valid form" when {
       "using edit form" in {
-        val form = LiabilityDetailsForm.liabilityDetailsForm(liability).bindFromRequest(params)
+        val form = LiabilityDetailsForm.liabilityDetailsForm(sampleCase).bindFromRequest(params)
 
         form.hasErrors shouldBe false
-        form.get shouldBe liability
+        form.get shouldBe sampleCase
       }
 
       "using complete form" in {
-        val form = LiabilityDetailsForm.liabilityDetailsCompleteForm(liability).bindFromRequest(params)
+        val form = LiabilityDetailsForm.liabilityDetailsCompleteForm(sampleCase).bindFromRequest(params)
 
         form.hasErrors shouldBe false
-        form.get shouldBe liability
+        form.get shouldBe sampleCase
       }
     }
   }
@@ -87,14 +101,14 @@ class LiabilityDetailsFormTest extends UnitSpec {
   "Fill" should {
     "populate by default" when {
       "using edit form" in {
-        val form = LiabilityDetailsForm.liabilityDetailsForm(liability)
+        val form = LiabilityDetailsForm.liabilityDetailsForm(sampleCase)
 
         form.hasErrors shouldBe false
         form.data shouldBe params.mapValues(v => v.head)
       }
 
       "using complete form" in {
-        val form = LiabilityDetailsForm.liabilityDetailsCompleteForm(liability)
+        val form = LiabilityDetailsForm.liabilityDetailsCompleteForm(sampleCase)
 
         form.hasErrors shouldBe false
         form.data shouldBe params.mapValues(v => v.head)

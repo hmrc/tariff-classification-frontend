@@ -1,0 +1,231 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import helper._
+@import controllers.routes.RulingController
+@import config.AppConfig
+@import models.forms.DecisionFormData
+@import models.response.ScanStatus
+@import models.{BTIApplication, Case, StoredAttachment}
+@import views.html.forms.components.{input_text, input_textarea}
+@import views.html.partials.{attachments_list, tab_heading}
+@import models.request.AuthenticatedRequest
+@import views.html.partials.error_summary
+@import models.LiabilityOrder
+@import models.forms.LiabilityDetailsForm
+@import views.html.forms.components.input_date
+@import controllers.Tab._
+@import controllers.v2.routes.LiabilityController
+
+@import views.html.v2.case_heading
+@import views.html.includes.main
+@import views.html.components.initial_focus
+@import views.html.components.confirm_or_cancel_buttons
+@import models.viewmodels.CaseHeaderViewModel
+@import views.html.components.save_and_continue_button
+@import views.html.forms.components.input_checkbox
+
+@this(case_heading: views.html.v2.case_heading)
+
+@(c: Case, form : Form[Case])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+
+@main(bodyClasses = None, customTitle = Some(messages("case.liability.edit.title"))) {
+
+    @case_heading(CaseHeaderViewModel.fromCase(c))
+
+    @defining(c.application.asLiabilityOrder) { liability: LiabilityOrder =>
+        <div class="form-group">
+
+            @error_summary(form.errors)
+
+            @helper.form(action = LiabilityController.postLiabilityDetails(c.reference), 'class -> "form" , 'id -> "liability-details-edit-form") {
+
+                @CSRF.formField
+
+                <h3 class="heading-medium mb-1">@messages("case.v2.liability.c592.details_edit.information")</h3>
+
+                @input_text(
+                    field = form("entryNumber"),
+                    label = messages("case.v2.liability.c592.details_edit.entry_number"),
+                    inputClass = Some("width-one-half"),
+                    disableAutoComplete = true
+                )
+
+                @input_date(
+                    dayField = form("entryDate.day"),
+                    monthField = form("entryDate.month"),
+                    yearField = form("entryDate.year"),
+                    dateField = form("entryDate"),
+                    fieldsetId = Some("entryDate"),
+                    hint = Some(messages("case.v2.liability.c592.details_edit.date_hint")),
+                    legend = messages("case.v2.liability.c592.details_edit.date_p")
+                )
+
+                @input_text(
+                    field = form("btiReference"),
+                    label = messages("case.v2.liability.c592.details_edit.bti_reference"),
+                    inputClass = Some("width-one-half"),
+                    disableAutoComplete = true
+                )
+
+                @input_checkbox(
+                    field = form("repaymentClaim"),
+                    label = messages("case.v2.liability.c592.details_edit.repayment_claim")
+                )
+
+                @input_date(
+                    dayField = form("dateOfReceipt.day"),
+                    monthField = form("dateOfReceipt.month"),
+                    yearField = form("dateOfReceipt.year"),
+                    dateField = form("dateOfReceipt"),
+                    fieldsetId = Some("dateOfReceipt"),
+                    hint = Some(messages("case.v2.liability.c592.details_edit.date_dete_of_receipt_hint")),
+                    legend = messages("case.v2.liability.c592.details_edit.date_dete_of_receipt")
+                )
+
+                <h3 class="heading-medium mt-0">@messages("case.v2.liability.c592.trader_information")</h3>
+
+                @input_text(
+                    field = form("traderName"),
+                    label = messages("case.liability.edit.trader-name"),
+                    inputClass = Some("width-one-half"),
+                    disableAutoComplete = true
+                )
+
+                @input_text(
+                    field = form("goodName"),
+                    label = messages("case.liability.edit.item-name"),
+                    inputClass = Some("width-one-half"),
+                    disableAutoComplete = true
+                )
+
+                @input_text(
+                    field = form("traderEmail"),
+                    label = messages("case.v2.liability.c592.trader_email"),
+                    inputClass = Some("width-one-half"),
+                    disableAutoComplete = true
+                )
+
+                @input_text(
+                    field = form("traderPhone"),
+                    label = messages("case.v2.liability.c592.trader_telephone"),
+                    inputClass = Some("width-one-half"),
+                    disableAutoComplete = true
+                )
+
+@*                TODO Fix make like in prototype*@
+                <h3 class="heading-medium mb-1">@messages("case.v2.liability.c592.trader_address")</h3>
+
+                @input_text(
+                    field = form("traderBuildingAndStreet"),
+                    label = messages("case.v2.liability.c592.trader_building_and_street"),
+                    inputClass = Some("width-one-half"),
+                    disableAutoComplete = true
+                )
+
+                @input_text(
+                    field = form("traderTownOrCity"),
+                    label = messages("case.v2.liability.c592.trader_town_or_city"),
+                    inputClass = Some("width-one-half"),
+                    disableAutoComplete = true
+                )
+
+                @input_text(
+                    field = form("traderCounty"),
+                    label = messages("case.v2.liability.c592.trader_county"),
+                    inputClass = Some("width-one-half"),
+                    disableAutoComplete = true
+                )
+
+                @input_text(
+                    field = form("traderPostcode"),
+                    label = messages("case.v2.liability.c592.trader_postcode"),
+                    inputClass = Some("width-one-half"),
+                    disableAutoComplete = true
+                )
+
+                @input_text(
+                    field = form("boardsFileNumber"),
+                    label = messages("case.v2.liability.c592.boards_file_number"),
+                    inputClass = Some("width-one-half"),
+                    disableAutoComplete = true
+                )
+
+                <h3 class="heading-medium mb-1">@messages("case.liability.edit.commodity-code.information")</h3>
+
+                @input_text(
+                    field = form("traderCommodityCode"),
+                    label = messages("case.liability.edit.commodity-code.trader"),
+                    inputClass = Some("width-one-half"),
+                    disableAutoComplete = true
+                )
+
+                @input_text(
+                    field = form("officerCommodityCode"),
+                    label = messages("case.liability.edit.commodity-code.officer"),
+                    inputClass = Some("width-one-half"),
+                    disableAutoComplete = true
+                )
+
+                <h3 class="heading-medium mb-1">@messages("case.liability.edit.contact.information")</h3>
+
+                @input_text(
+                    field = form("contactName"),
+                    label = messages("case.liability.edit.contact.name"),
+                    inputClass = Some("width-one-half"),
+                    disableAutoComplete = true
+                )
+
+                @input_text(
+                    field = form("contactEmail"),
+                    label = messages("case.liability.edit.contact.email"),
+                    inputClass = Some("width-one-half"),
+                    disableAutoComplete = true
+                )
+
+                @input_text(
+                    field = form("contactPhone"),
+                    label = messages("case.liability.edit.contact.phone"),
+                    inputClass = Some("width-one-half"),
+                    disableAutoComplete = true
+                )
+
+                <h3 class="heading-medium mb-1">@messages("case.v2.liability.c592.details_edit.repayment_claim_h3")</h3>
+
+                @input_text(
+                    field = form("dvrNumber"),
+                    label = messages("case.v2.liability.c592.details_edit.dvr_number"),
+                    inputClass = Some("width-one-half"),
+                    disableAutoComplete = true
+                )
+
+                @input_date(
+                    dayField = form("dateForRepayment.day"),
+                    monthField = form("dateForRepayment.month"),
+                    yearField = form("dateForRepayment.year"),
+                    dateField = form("dateForRepayment"),
+                    fieldsetId = Some("dateForRepayment"),
+                    legend = messages("case.v2.liability.c592.details_edit.date_of_repayment")
+                )
+
+                @save_and_continue_button(
+                    id = "edit_liability_details",
+                    confirmText = "Save and continue"
+                )
+            }
+        </div>
+    }
+}

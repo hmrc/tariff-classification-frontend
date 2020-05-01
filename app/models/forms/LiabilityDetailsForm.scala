@@ -22,14 +22,14 @@ import play.api.data.Form
 import play.api.data.Forms._
 import models.forms.FormConstraints.dateMustBeInThePast
 import models.forms.mappings.FormMappings._
-import models.{Contact, LiabilityOrder}
+import models.{Case, Contact}
 
 object LiabilityDetailsForm {
 
   private val emailRegex = """^[a-zA-Z0-9\.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$""".r
 
-  def liabilityDetailsForm(existingLiability: LiabilityOrder): Form[LiabilityOrder] = Form[LiabilityOrder](
-    mapping[LiabilityOrder, Option[Instant], String, Option[String], Option[String], Option[String], Option[String], String, String, Option[String]](
+  def liabilityDetailsForm(existingLiability: Case): Form[Case] = Form[Case](
+    mapping[Case, Option[Instant], String, Option[String], Option[String], Option[String], Option[String], String, String, Option[String]](
       "entryDate" -> optional(FormDate.date("case.liability.error.entry-date")
         .verifying(dateMustBeInThePast("case.liability.error.entry-date.future"))),
       "traderName" -> textNonEmpty("case.liability.error.empty.trader-name"),
@@ -45,9 +45,9 @@ object LiabilityDetailsForm {
 
   private def validEmailFormat(email: String): Boolean = email.trim.isEmpty || emailRegex.findFirstMatchIn(email.trim).nonEmpty
 
-  private def form2Liability(existingLiability: LiabilityOrder): (Option[Instant], String, Option[String], Option[String], Option[String], Option[String], String, String, Option[String]) => LiabilityOrder = {
+  private def form2Liability(existingCase: Case): (Option[Instant], String, Option[String], Option[String], Option[String], Option[String], String, String, Option[String]) => Case = {
     case (entryDate, traderName, goodName, entryNumber, traderCommodityCode, officerCommodityCode, contactName, contactEmail, contactPhone) =>
-      existingLiability.copy(
+      existingCase.copy(application = existingCase.application.asLiabilityOrder.copy(
         traderName = traderName,
         goodName = goodName,
         entryDate = entryDate,
@@ -55,10 +55,12 @@ object LiabilityDetailsForm {
         traderCommodityCode = traderCommodityCode,
         officerCommodityCode = officerCommodityCode,
         contact = Contact(contactName, contactEmail, contactPhone)
-      )
+      ))
   }
 
-  private def liability2Form(existingLiability: LiabilityOrder): Option[(Option[Instant], String, Option[String], Option[String], Option[String], Option[String], String, String, Option[String])] = {
+  private def liability2Form(existingCase: Case): Option[(Option[Instant], String, Option[String], Option[String], Option[String], Option[String], String, String, Option[String])] = {
+    val existingLiability = existingCase.application.asLiabilityOrder
+
     Some((
       existingLiability.entryDate,
       existingLiability.traderName,
@@ -72,8 +74,8 @@ object LiabilityDetailsForm {
     ))
   }
 
-  def liabilityDetailsCompleteForm(existingLiability: LiabilityOrder): Form[LiabilityOrder] = Form[LiabilityOrder](
-    mapping[LiabilityOrder, Option[Instant], String, Option[String], Option[String], Option[String], Option[String], String, String, Option[String]](
+  def liabilityDetailsCompleteForm(existingLiability: Case): Form[Case] = Form[Case](
+    mapping[Case, Option[Instant], String, Option[String], Option[String], Option[String], Option[String], String, String, Option[String]](
       "entryDate" -> optional(FormDate.date("case.liability.error.entry-date")
         .verifying(dateMustBeInThePast("case.liability.error.entry-date.future")))
         .verifying("error.required", _.isDefined),
