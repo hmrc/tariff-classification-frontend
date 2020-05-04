@@ -21,6 +21,7 @@
 @import views.html.partials.liabilities.sample._
 @import models.Permission
 @import models.viewmodels.SampleStatusTabViewModel
+@import views.html.partials.tab_heading
 
 @this(
 sample_status: views.html.partials.liabilities.sample.sample_status,
@@ -29,8 +30,7 @@ sample_status_events_table: views.html.partials.liabilities.sample.sample_status
 
 @(s: SampleStatusTabViewModel, startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-<h2 class="heading-large mt-0 mb-30">@messages("case.v2.liability.sample_status_tab.tab_title")</h2>
-<p class="form-hint">@messages("case.v2.liability.sample_status_tab.hint")</p>
+@tab_heading("samples", messages("case.v2.liability.sample_status_tab.tab_title"), Some(messages("case.v2.liability.sample_status_tab.hint")))
 
 <dl class="dl-mb-2">
 
