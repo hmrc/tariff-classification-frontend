@@ -37,7 +37,7 @@
 
 @error_summary(form.errors)
 
-@tab_heading("attachments", messages("case.menu.attachments"))
+@tab_heading("attachments", messages("case.menu.attachments"), Some(messages("case.attachment.hint.text.header")))
 
 @attachments_state_message(attachments = attachmentsTabViewModel.attachments)
 
