@@ -19,7 +19,6 @@
 @import views.CaseDetailPage.CaseDetailPage
 @import views.html.includes.main
 @import views.html.partials.{case_heading, case_nav_bti, case_nav_liability}
-@import views.html.components.initial_focus
 @import views.html.components.change_case_status_button
 @import models.{CaseStatus, Permission}
 @import models.request.AuthenticatedRequest
@@ -31,7 +30,7 @@
 
 @(c: Case, page: CaseDetailPage, view: Html, activeTab: Option[ActiveTab] = None)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, scriptElem = Some(initial_focus()),
+@main(bodyClasses = None,
     customTitle = Some(messages(s"page.title.${page.toString}"))) {
 
     @case_heading(c, displayBackLink = true)
