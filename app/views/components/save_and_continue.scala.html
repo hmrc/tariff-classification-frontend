@@ -14,18 +14,11 @@
  * limitations under the License.
  *@
 
-@(focusOnThisElement: Option[String] = None, withTimeout: Int = 0)
+@(
+   id: String,
+   confirmText: String = "Confirm"
+)
 
-<script>
-        setTimeout(function() {
-            var hasErrors = document.getElementById("error-summary");
-            if (hasErrors) {
-                hasErrors.focus();
-            } else {
-                @if(focusOnThisElement.isDefined){
-                     document.getElementById("@focusOnThisElement").focus();
-                }
-            }
-                }
-    , @withTimeout);
-</script>
+<div id="@id-buttons">
+    <button class="button" id="@id-button" type="submit">@confirmText</button>
+</div>

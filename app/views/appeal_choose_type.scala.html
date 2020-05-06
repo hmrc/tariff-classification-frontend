@@ -19,7 +19,6 @@
 @import models.AppealType.AppealType
 @import models.{AppealType, Case}
 @import views.forms.components.RadioOption
-@import views.html.components.initial_focus
 @import views.html.forms.components.input_radiogroup
 @import views.html.includes.main
 @import views.html.partials.case_heading
@@ -36,7 +35,7 @@
 
   <h2 id="appeal_choose_type-heading" class="heading-large">Choose review or a level of appeal</h2>
 
-  @helper.form(action = routes.AppealCaseController.confirmType(c.reference), 'id -> "appeal_type_form") {
+  @helper.form(action = routes.AppealCaseController.confirmType(c.reference), 'id -> "appeal_type_form", 'novalidate -> "novalidate") {
    @helper.CSRF.formField
    @input_radiogroup(
     field = form("type"),

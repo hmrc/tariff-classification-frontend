@@ -22,12 +22,11 @@
 
 @import controllers.routes.ReleaseCaseController
 @import views.html.partials.error_summary
-@import views.html.components.initial_focus
 @import controllers.ActiveTab
 @import views.CancelAction
 @(c: Case, form: Form[String], queues: Seq[Queue], activeTab: Option[ActiveTab] = None)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("page.title.release.case")), scriptElem = Some(initial_focus())) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.release.case"))) {
 
     @error_summary(form.errors)
 

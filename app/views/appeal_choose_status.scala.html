@@ -28,10 +28,9 @@
 @import views.html.partials.appeal.appeal_status_heading
 @import views.html.partials.appeal.appeal_status_submit
 @import views.html.partials.error_summary
-@import views.html.components.initial_focus
 @(c: Case, appealType: AppealType, form: Form[AppealStatus])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("page.title.choose.appeal.status")), scriptElem = Some(initial_focus())) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.choose.appeal.status"))) {
 
   @error_summary(form.errors)
 
@@ -39,7 +38,7 @@
 
   @appeal_status_heading(appealType)
 
-  @helper.form(action = routes.AppealCaseController.confirmStatus(c.reference, appealType.toString), 'id -> "appeal_status_form") {
+  @helper.form(action = routes.AppealCaseController.confirmStatus(c.reference, appealType.toString), 'id -> "appeal_status_form", 'novalidate -> "novalidate") {
 
       @helper.CSRF.formField
 

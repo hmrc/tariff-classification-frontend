@@ -17,7 +17,6 @@
 package utils
 
 import play.api.libs.json._
-import play.json.extra.Jsonx
 import uk.gov.hmrc.play.json.Union
 import models.LiabilityStatus.LiabilityStatus
 import models.Role.Role

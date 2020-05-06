@@ -18,7 +18,11 @@ package models.forms.mappings
 
 import play.api.data.validation.{Constraint, Invalid, Valid}
 
+import scala.util.matching.Regex
+
 trait Constraints {
+
+  private val emailRegex = """^[a-zA-Z0-9\.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$""".r
 
   protected def firstError[A](constraints: Constraint[A]*): Constraint[A] =
     Constraint { input =>
@@ -50,12 +54,12 @@ trait Constraints {
       }
     }
 
-  protected def regexp(regex: String, errorKey: String): Constraint[String] =
+  def regexp(regex: Regex, errorKey: String): Constraint[String] =
     Constraint {
-      case str if str.matches(regex) =>
+      case str if regex.pattern.matcher(str).matches() =>
         Valid
       case _ =>
-        Invalid(errorKey, regex)
+        Invalid(errorKey, regex.pattern.pattern())
     }
 
   protected def maxLength(maximum: Int, errorKey: String): Constraint[String] =
@@ -73,4 +77,15 @@ trait Constraints {
       case _ =>
         Invalid(errorKey)
     }
+
+  protected def validEmail(errorKey: String): Constraint[String] = {
+    Constraint {
+      case str if str.isEmpty =>
+        Valid
+      case email if !email.isEmpty && emailRegex.findFirstMatchIn(email.trim).nonEmpty =>
+        Valid
+      case _ =>
+        Invalid(errorKey)
+    }
+  }
 }

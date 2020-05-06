@@ -56,6 +56,18 @@ class AttachmentsDetailsViewSpec extends ViewSpec {
 
   "Attachments Details View" should {
 
+    "render tab title" in {
+      val doc = view(notRenderAttachmentsDetails)
+
+      doc.getElementsByTag("h2").text() shouldBe messages("case.menu.attachments")
+    }
+
+    "render hint under tab title" in {
+      val doc = view(notRenderAttachmentsDetails)
+
+      doc.getElementsByClass("form-hint").text() shouldBe messages("case.attachment.hint.text.header")
+    }
+
     "not render upload form" in {
       val doc = view(notRenderAttachmentsDetails)
 
@@ -66,12 +78,6 @@ class AttachmentsDetailsViewSpec extends ViewSpec {
       val doc = view(renderAttachmentsDetails)
 
       doc.getElementsByTag("form").size() shouldBe 1
-    }
-
-    "render upload form and correct heading" in {
-      val doc = view(renderAttachmentsDetails)
-
-      doc.getElementById("attachments-heading").text() shouldBe messages("case.menu.attachments")
     }
 
     "render upload form and empty attachments table" in {

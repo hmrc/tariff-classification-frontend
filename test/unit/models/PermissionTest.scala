@@ -408,7 +408,7 @@ class PermissionTest extends UnitSpec {
       permission.appliesTo(caseWithValidStatus.copy(assignee = Some(teamMember)), teamMember) shouldBe true
       permission.appliesTo(caseWithValidStatus, manager) shouldBe true
 
-      for(status: CaseStatus <- CaseStatus.values.filterNot(equalTo(CaseStatus.OPEN))) {
+      for(status: CaseStatus <- CaseStatus.values.filterNot(Set(CaseStatus.OPEN, CaseStatus.REFERRED, CaseStatus.SUSPENDED))) {
         val caseWithInvalidStatus = aCase(withStatus(status))
         permission.appliesTo(caseWithInvalidStatus, readOnly) shouldBe false
         permission.appliesTo(caseWithInvalidStatus, teamMember) shouldBe false

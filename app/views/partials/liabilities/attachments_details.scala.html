@@ -15,7 +15,7 @@
  *@
 
 @import controllers.v2.routes.AttachmentsController
-@import views.html.helpers
+@import uk.gov.hmrc.play.views.html.helpers
 @import config.AppConfig
 @import views.html.components.input_file
 @import views.html.partials.{attachments_state_message, tab_heading, error_summary}
@@ -37,7 +37,7 @@
 
 @error_summary(form.errors)
 
-@tab_heading("attachments", messages("case.menu.attachments"))
+@tab_heading("attachments", messages("case.menu.attachments"), Some(messages("case.attachment.hint.text.header")))
 
 @attachments_state_message(attachments = attachmentsTabViewModel.attachments)
 

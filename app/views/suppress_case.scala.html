@@ -37,7 +37,7 @@
         <div class="column-full">
             <h2 class="heading-large mt-0">@messages("change_case_status.to.suppressed")</h2>
 
-            @helper.form(action = SuppressCaseController.postSuppressCase(c.reference, activeTab), 'id -> "suppress-case", 'enctype -> "multipart/form-data") {
+            @helper.form(action = SuppressCaseController.postSuppressCase(c.reference, activeTab), 'id -> "suppress-case", 'enctype -> "multipart/form-data", 'novalidate -> "novalidate") {
                 @helper.CSRF.formField
 
                 @input_textarea(

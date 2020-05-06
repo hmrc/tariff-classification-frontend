@@ -16,9 +16,11 @@
 
 package views.partials.liabilities
 
+import controllers.routes
 import models.viewmodels.RulingViewModel
 import views.ViewSpec
 import views.html.partials.liabilities.ruling_tab
+import views.ViewMatchers._
 
 class RulingTabViewSpec extends ViewSpec {
 
@@ -30,7 +32,8 @@ class RulingTabViewSpec extends ViewSpec {
     "justification",
     "method search",
     "exclusions",
-    showEditRuling = true
+    true,
+    "case reference"
   )
 
   def rulingTab: ruling_tab = app.injector.instanceOf[ruling_tab]
@@ -92,6 +95,10 @@ class RulingTabViewSpec extends ViewSpec {
 
     "render exclusions" in {
       doc.getElementById("ruling_exclusionsValue").text shouldBe rulingViewModel.methodExclusion
+    }
+
+    "render the correct link for edit details" in {
+      doc.getElementById("ruling_edit_details") should containElementWithAttribute("href",routes.RulingController.editRulingDetails(rulingViewModel.caseReference).path())
     }
   }
 }

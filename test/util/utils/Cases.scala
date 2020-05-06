@@ -70,7 +70,7 @@ object Cases {
     PortOrComplianceOfficerContact("name", "email", "phone"), "", "", None)
 
   val rulingViewModel = Some(
-    RulingViewModel("", "", "123456", "item description", "justification", "method searches", "method exclusions", showEditRuling = false))
+    RulingViewModel("", "", "123456", "item description", "justification", "method searches", "method exclusions", false, "case references"))
 
   val attachmentsTabViewModel = Some(AttachmentsTabViewModel(Cases.liabilityCaseExample.reference, Nil, None))
   val activityTabViewModel = Some(ActivityViewModel("referenceNumber", Some(operatorWithoutPermissions),
@@ -80,10 +80,39 @@ object Cases {
   val operatorWithPermissions = Operator(id = "0", name = Some("liability op name"), permissions = Set(Permission.ADD_NOTE, Permission.VIEW_CASES))
   val operatorWithCompleteCasePermission = Operator(id = "0", name = Some("liability op name"), permissions = Set(Permission.COMPLETE_CASE, Permission.REOPEN_CASE))
   val operatorWithKeywordsPermissions = Operator(id = "0", name = Some("liability op name"), permissions = Set(Permission.KEYWORDS))
+  val operatorWithEditLiabilityPermissions = Operator(id = "0", name = Some("liability op name"), permissions = Set(Permission.EDIT_LIABILITY))
   val operatorWithoutCompleteCasePermission = Operator(id = "0", name = Some("liability op name"), permissions = Set(Permission.VIEW_CASES))
   val operatorWithReleaseOrSuppressPermissions = Operator(id = "0", name =
     Some("liability op name"), permissions = Set(Permission.RELEASE_CASE, Permission.SUPPRESS_CASE))
 
+  val aCaseWithCompleteDecision = Cases.liabilityCaseExample.copy(reference = "123456", caseBoardsFileNumber = Some("SCR/ARD/123"), application = liabilityWithCompleteDecision)
+
+  val newLiabilityLiveCaseExample = Case("1", CaseStatus.NEW, Instant.now(), 0, None, None, None, newLiabilityLiveApplicationExample, None, Seq())
+  val newLiabilityLiveApplicationExample = LiabilityOrder(Contact("contact-name","contact@email.com",Some("contact-phone")),
+    LiabilityStatus.LIVE, "trader-business-name", Some("good-name"), Some(Instant.now()), None)
+
+
+  val liabilityWithCompleteDecision = LiabilityOrder(
+    Contact(name = "contact-name", email = "contact@email.com", Some("contact-phone")),
+    status = LiabilityStatus.LIVE,
+    traderName = "trader-name",
+    goodName = Some("good-name"),
+    entryDate = Some(Instant.EPOCH),
+    entryNumber = Some("entry-no"),
+    traderCommodityCode = Some("0200000000"),
+    officerCommodityCode = Some("0100000000"),
+    btiReference = Some("btiReferenceN"),
+    repaymentClaim = Some(RepaymentClaim(dvrNumber = Some(""), dateForRepayment = Some(Instant.EPOCH))),
+    dateOfReceipt = Some(Instant.EPOCH),
+    traderContactDetails = Some(TraderContactDetails(email = Some("trader@email.com"),
+      phone = Some("2345"),
+      address = Some(Address(buildingAndStreet = "STREET 1",
+        townOrCity = "Town",
+        county = Some("County"),
+        postCode = Some("postcode")
+      ))
+    ))
+  )
   def attachment(id: String = UUID.randomUUID().toString): Attachment = {
     Attachment(
       id = id,

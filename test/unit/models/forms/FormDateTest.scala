@@ -23,7 +23,7 @@ import uk.gov.hmrc.play.test.UnitSpec
 
 class FormDateTest extends UnitSpec {
 
-  val test = Form(FormDate.date())
+  private val test = Form(FormDate.date("invalid.date"))
 
   val emptyStr = ""
 
@@ -34,23 +34,23 @@ class FormDateTest extends UnitSpec {
     }
 
     "disallow empty fields" in {
-      assertInvalid(day = emptyStr, month = emptyStr, year = emptyStr)
+      assertInvalid(day = emptyStr, month = emptyStr, year = emptyStr, List("invalid.date.day", "invalid.date.month", "invalid.date.year"))
     }
 
     "disallow empty day" in {
-      assertInvalid(day = emptyStr, month = "1", year = "2000")
+      assertInvalid(day = emptyStr, month = "1", year = "2000",  List("invalid.date.day"))
     }
 
     "disallow empty month" in {
-      assertInvalid(day = "1", month = emptyStr, year = "2000")
+      assertInvalid(day = "1", month = emptyStr, year = "2000", List("invalid.date.month"))
     }
 
     "disallow empty year" in {
-      assertInvalid(day = "1", month = "1", year = emptyStr)
+      assertInvalid(day = "1", month = "1", year = emptyStr, List("invalid.date.year"))
     }
 
     "verify invalid date" in {
-      assertInvalid(day = "30", month = "02", year = "2019")
+      assertInvalid(day = "30", month = "02", year = "2019", List("invalid.date"))
     }
 
     "maps to data" in {
@@ -63,8 +63,10 @@ class FormDateTest extends UnitSpec {
       ).get shouldBe ZonedDateTime.of(2019, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC).toInstant
     }
 
-    def assertInvalid(day: String, month: String, year: String) = {
-      test.bindFromRequest(Map("day" -> Seq(day), "month" -> Seq(month), "year" -> Seq(year))).errors.flatMap(_.messages) shouldBe List("invalid.date")
+    def assertInvalid(day: String, month: String, year: String, expected: List[String]) = {
+      val messages = test.bindFromRequest(Map("day" -> Seq(day), "month" -> Seq(month), "year" -> Seq(year))).errors.flatMap(_.messages)
+
+      messages shouldBe expected
     }
   }
 }

@@ -44,11 +44,9 @@ customErrorMessage : Option[String] = None
             class="form-control w-100 @inputClass"
             id="@{field.id}"
             name="@{field.id}"
-            aria-describedby="@{field.id}-hint @{field.id}-error"
+            @if(field.hasErrors || hint.nonEmpty){aria-describedby="@if(hint.nonEmpty){@{field.id}-hint} @if(field.hasErrors){@{field.id}-error}"}
             rows="5"
             @if(autofocus){autofocus}
-            @if(tabIndex.isDefined){ tabindex="@{tabIndex.get}" }
     >@{field.value}</textarea>
 
 </div>
-

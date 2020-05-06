@@ -29,7 +29,7 @@
     @if(request.hasPermission(Permission.EDIT_LIABILITY)) {
         <div class="grid-row  mb-2">
             <span class="column-one-third">
-                <a id="edit-liability-details" href="@routes.LiabilityController.editLiabilityDetails(c592ViewModel.caseReference)">
+                <a id="edit-liability-details" href="@controllers.v2.routes.LiabilityController.editLiabilityDetails(c592ViewModel.caseReference)">
                 @messages("case.v2.liability.c592.edit_details_title")
                 </a>
             </span>

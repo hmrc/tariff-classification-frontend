@@ -245,7 +245,8 @@ object Permission {
   case object EDIT_RULING extends CasePermission {
     override def name: String = nameOf(this)
     override def appliesTo(`case`: Case, operator: Operator): Boolean =
-      `case`.hasStatus(CaseStatus.OPEN) && managersOrAssignedTeamMembersOnly(`case`, operator)
+      `case`.hasStatus(CaseStatus.OPEN, CaseStatus.REFERRED, CaseStatus.SUSPENDED) &&
+        managersOrAssignedTeamMembersOnly(`case`, operator)
   }
 
   case object APPEAL_CASE extends CasePermission {

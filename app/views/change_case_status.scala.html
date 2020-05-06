@@ -18,7 +18,6 @@
 @import models.Case
 @import views.html.includes.main
 @import views.html.partials.case_heading
-@import views.html.components.initial_focus
 @import views.html.components.input_radio
 @import models.CaseStatusRadioInput
 @import controllers.routes.ChangeCaseStatusController
@@ -37,7 +36,7 @@
     @case_heading(c)
     @error_summary(form.errors)
 
- @helper.form(action = ChangeCaseStatusController.onSubmit(c.reference, activeTab)) {
+ @helper.form(action = ChangeCaseStatusController.onSubmit(c.reference, activeTab), 'novalidate -> "novalidate") {
 
     @helper.CSRF.formField
 
