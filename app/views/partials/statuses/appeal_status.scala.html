@@ -14,20 +14,16 @@
  * limitations under the License.
  *@
 
-@import models.AppealStatus.AppealStatus
-@import models.{AppealStatus, Case}
+@import models._
+
 @(c: Case, id: String)
 
-@defining(c.decision.map(_.appeal).getOrElse(Seq.empty).map(_.status)) { status: Seq[AppealStatus] =>
+@defining(Appeal.highestAppealFromDecision(c.decision)) { appeal: Option[Appeal] =>
 
- @if(status.nonEmpty) {
-  <span id="@id" class="phase-tag bg-red">
-   @status match {
-    case s if status.contains(AppealStatus.IN_PROGRESS) => {Under appeal}
-    case s if status.contains(AppealStatus.ALLOWED) => {Appeal allowed}
-    case s if status.contains(AppealStatus.DISMISSED) => {Appeal dismissed}
-   }
-  </span>
- }
+    @if(appeal.isDefined) {
+        <span id="@id" class="phase-tag bg-red">
+        @AppealStatus.format(appeal.get.`type`, appeal.get.status)
+        </span>
+    }
 
 }

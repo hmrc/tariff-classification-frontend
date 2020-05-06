@@ -19,9 +19,21 @@ package models
 import models.AppealStatus.AppealStatus
 import models.AppealType.AppealType
 
-case class Appeal
-(
-  id: String,
-  status: AppealStatus,
-  `type`: AppealType
-)
+case class Appeal(
+                   id: String,
+                   status: AppealStatus,
+                   `type`: AppealType
+                 )
+
+object Appeal {
+
+  def highestAppealFromDecision(decision: Option[Decision]): Option[Appeal] = {
+    val appeals = decision.map(_.appeal).getOrElse(Seq.empty)
+
+    if (appeals.nonEmpty) {
+      Some(appeals.maxBy(_.`type`.id))
+    } else {
+      None
+    }
+  }
+}
