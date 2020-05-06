@@ -43,7 +43,7 @@
 
             @error_summary(form.errors)
 
-            @tab_heading("ruling", messages("case.liability.edit"), Some("mt-5"))
+            @tab_heading("ruling", messages("case.liability.edit"))
 
             @helper.form(action = LiabilityController.postLiabilityDetails(c.reference) , 'class -> "form" , 'id -> "liability-details-edit-form", 'novalidate -> "novalidate") {
 
