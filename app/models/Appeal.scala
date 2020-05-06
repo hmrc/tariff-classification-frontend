@@ -31,7 +31,7 @@ object Appeal {
     val appeals = decision.map(_.appeal).getOrElse(Seq.empty)
 
     if (appeals.nonEmpty) {
-      Some(appeals.sortWith((a, b) => a.`type`.id > b.`type`.id).head)
+      Some(appeals.maxBy(_.`type`.id))
     } else {
       None
     }
