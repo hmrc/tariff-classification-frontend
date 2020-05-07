@@ -18,15 +18,15 @@
 @import models.{BTIApplication, Case, Queue}
 @import views.html.forms.select_queue_form
 @import views.html.includes.main
-@import views.html.partials.case_heading
-
 @import controllers.routes.ReleaseCaseController
-@import views.html.partials.error_summary
+@import views.html.partials.{error_summary, case_heading, back_link}
 @import controllers.ActiveTab
 @import views.CancelAction
 @(c: Case, form: Form[String], queues: Seq[Queue], activeTab: Option[ActiveTab] = None)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("page.title.release.case"))) {
+
+    @back_link()
 
     @error_summary(form.errors)
 

@@ -22,7 +22,7 @@
 @import models.response.ScanStatus
 @import models.{BTIApplication, Case, StoredAttachment}
 @import views.html.forms.components.{input_text, input_textarea}
-@import views.html.partials.{attachments_list, tab_heading}
+@import views.html.partials.{attachments_list, tab_heading, back_link}
 @import models.request.AuthenticatedRequest
 @import views.html.partials.error_summary
 
@@ -30,13 +30,16 @@
 
 @main(bodyClasses = None, customTitle = Some(messages("page.title.edit.ruling"))) {
     @defining(c.application.asBTI) { btiApp: BTIApplication =>
+
+        @back_link()
+
+        @error_summary(decisionForm.errors, startAtTabIndex, "decision_form.error.title")
+
+        @case_heading(c)
+
         <div class="form-group">
 
-            @case_heading(c)
-
-            @error_summary(decisionForm.errors, startAtTabIndex, "decision_form.error.title")
-
-            <h3 class="heading-medium mb-1">@messages("case.decision.information-applicant")</h3>
+            <h2 class="heading-medium mb-1">@messages("case.decision.information-applicant")</h2>
 
             <div class="grid-row">
                 <div id="application_envisagedCommodityCode" class="column-one-third">

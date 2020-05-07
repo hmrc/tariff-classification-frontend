@@ -33,7 +33,7 @@ class BackLinkViewSpec extends ViewSpec {
                                                              (backToQueuesLinkLabel, "somewhere nice"))
 
       // When
-      val doc = view(back_link(displayBackLink = true, SessionKeys.backToQueuesLinkUrl, SessionKeys.backToQueuesLinkLabel)(requestWithSessionData, messages))
+      val doc = view(back_link()(requestWithSessionData, messages))
 
       // Then
       doc should containElementWithID("back-link")
@@ -44,21 +44,13 @@ class BackLinkViewSpec extends ViewSpec {
 
     "render back link with default details if session does not contain details" in {
       // When
-      val doc = view(back_link(displayBackLink = true, SessionKeys.backToQueuesLinkUrl, SessionKeys.backToQueuesLinkLabel))
+      val doc = view(back_link())
 
       // Then
       doc should containElementWithID("back-link")
       doc.getElementById("back-link") should haveTag("a")
       doc.getElementById("back-link") should haveAttribute("href", "/manage-tariff-classifications")
       doc.getElementById("back-link") should containText(messages("errors.all.back"))
-    }
-
-    "do not render back link when not called for" in {
-      // When
-      val doc = view(back_link(displayBackLink = false, SessionKeys.backToQueuesLinkUrl, SessionKeys.backToQueuesLinkLabel))
-
-      // Then
-      doc shouldNot  containElementWithID("back-link")
     }
 
   }

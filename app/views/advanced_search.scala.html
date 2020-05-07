@@ -25,7 +25,7 @@
 @import views.html.includes.main
 @import views.html.partials.{advanced_search_keywords, advanced_search_results_tabs, back_link, pagination}
 @import views.partials.SearchResult
-@import views.html.partials.error_summary
+@import views.html.partials.{error_summary, back_link}
 @import models.ApplicationType
 @import models.ApplicationType.ApplicationType
 @(form: Form[Search], results: Option[Paged[SearchResult]] = None, keywords: Seq[String], selectedTab: SearchTab)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
@@ -47,7 +47,7 @@
 
 @main(bodyClasses = None, customTitle = Some(messages("page.title.advanced.search"))) {
 
-    @back_link(displayBackLink = true, SessionKeys.backToQueuesLinkUrl, SessionKeys.backToQueuesLinkLabel)
+    @back_link()
 
     @error_summary(form.errors)
 

@@ -19,11 +19,13 @@
 @import models.Case
 @import models.request.AuthenticatedRequest
 @import views.html.includes.main
-@import views.html.partials.{assignee, case_heading}
+@import views.html.partials.{assignee, case_heading, back_link}
 @import views.html.helper.{CSRF, form}
 @(c: Case)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("page.title.take.ownership"))) {
+
+    @back_link()
 
     @case_heading(c)
 
