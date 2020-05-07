@@ -30,12 +30,11 @@
 @import controllers.Tab._
 @import controllers.v2.routes.LiabilityController
 
-@import views.html.v2.case_heading
 @import views.html.includes.main
-@import views.html.components.confirm_or_cancel_buttons
 @import models.viewmodels.CaseHeaderViewModel
 @import views.html.components.save_and_continue_button
 @import views.html.forms.components.input_checkbox
+@import views.html.forms.components.input_number
 
 @this(case_heading: views.html.v2.case_heading)
 
@@ -45,12 +44,14 @@
 
     @case_heading(CaseHeaderViewModel.fromCase(c))
 
+    <h1 id="liability-details-edit" class="heading-large">@messages("case.v2.liability.c592.edit_details_title")</h1>
+
     @defining(c.application.asLiabilityOrder) { liability: LiabilityOrder =>
         <div class="form-group">
 
             @error_summary(form.errors)
 
-            @helper.form(action = LiabilityController.postLiabilityDetails(c.reference), 'class -> "form" , 'id -> "liability-details-edit-form") {
+            @helper.form(action = LiabilityController.postLiabilityDetails(c.reference), 'class -> "form" , 'id -> "liability-details-edit-form", 'novalidate -> "novalidate") {
 
                 @CSRF.formField
 
@@ -118,11 +119,10 @@
                     disableAutoComplete = true
                 )
 
-                @input_text(
+                @input_number(
                     field = form("traderPhone"),
                     label = messages("case.v2.liability.c592.trader_telephone"),
-                    inputClass = Some("width-one-half"),
-                    disableAutoComplete = true
+                    inputClass = Some("width-one-half")
                 )
 
 @*                TODO Fix make like in prototype*@
@@ -195,11 +195,10 @@
                     disableAutoComplete = true
                 )
 
-                @input_text(
+                @input_number(
                     field = form("contactPhone"),
                     label = messages("case.liability.edit.contact.phone"),
-                    inputClass = Some("width-one-half"),
-                    disableAutoComplete = true
+                    inputClass = Some("width-one-half")
                 )
 
                 <h3 class="heading-medium mb-1">@messages("case.v2.liability.c592.details_edit.repayment_claim_h3")</h3>
