@@ -51,6 +51,7 @@ class AppConfig @Inject()(
   lazy val emailRendererUrl: String = servicesConfig.baseUrl("hmrc-email-renderer")
   lazy val fileStoreUrl: String = servicesConfig.baseUrl("binding-tariff-filestore")
   lazy val decisionLifetimeYears: Int = config.get[Int]("app.decision-lifetime-years")
+  lazy val decisionLifetimeDays: Int = config.get[Int]("app.decision-lifetime-days")
   lazy val fileUploadMaxSize: Int = config.get[String]("fileupload.maxSize").toInt
   lazy val fileUploadMimeTypes: Set[String] = config.get[String]("fileupload.mimeTypes").split(",").map(_.trim).toSet
   lazy val apiToken: String = config.get[String]("auth.api-token")
