@@ -16,7 +16,7 @@
 
 package models.forms
 
-import java.time.{Clock, Instant}
+import java.time.{Clock, Instant, LocalDateTime, ZoneId}
 
 import models.forms.v2.LiabilityDetailsForm.regexp
 import play.api.data.validation.{Constraint, Invalid, Valid}
@@ -35,8 +35,13 @@ object FormConstraints {
     case _: String => Invalid("Commodity code must be empty or numeric between 2 and 22 digits")
   })
 
-  def dateMustBeInThePast(error: String = "date.must.be.in.past"): Constraint[Instant] = Constraint(error)({
+  def dateMustBeInThePast(error: String): Constraint[Instant] = Constraint(error)({
     case s: Instant if s.isBefore(Instant.now(Clock.systemUTC)) => Valid
+    case _ => Invalid(error)
+  })
+
+  def dateLowerBound(error: String, minimumValidYear: Int): Constraint[Instant] = Constraint(error)({
+    case s: Instant if LocalDateTime.ofInstant(s, ZoneId.systemDefault()).getYear >= minimumValidYear => Valid
     case _ => Invalid(error)
   })
 

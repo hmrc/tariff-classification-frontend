@@ -18,6 +18,7 @@ package models.forms.v2
 
 import java.time.Instant
 
+import config.AppConfig
 import models._
 import models.forms.FormConstraints._
 import models.forms.FormDate
@@ -28,14 +29,15 @@ import play.api.data.Forms._
 
 object LiabilityDetailsForm extends Constraints {
 
-  def liabilityDetailsForm(existingLiability: Case): Form[Case] = Form[Case](
+  def liabilityDetailsForm(existingLiability: Case, appConfig: AppConfig): Form[Case] = Form[Case](
     mapping[Case, Option[Instant], String, Option[String],Option[String], Option[String],
       Option[String], Option[String], Option[String],Option[String], Option[String], Boolean,
       Option[Instant], Option[String], Option[String], Option[String], Option[String],
        Option[String], Option[String], Option[String], Option[String],
       Option[Instant]](
       "entryDate" -> optional(FormDate.date("case.liability.error.entry-date")
-        .verifying(dateMustBeInThePast("case.liability.error.entry-date.future"))),
+        .verifying(dateMustBeInThePast("case.liability.error.entry-date.future"))
+        .verifying(dateLowerBound("case.liability.error.entry-date.year.lower.bound", appConfig.entryDateYearLowerBound))),
       "traderName" -> textNonEmpty("case.liability.error.empty.trader-name"),
       //TODO make sure dont need validation
       "traderEmail" -> optional(text.verifying(emptyOr(validEmail("case.liability.error.trader.email")):_*)),
@@ -49,7 +51,9 @@ object LiabilityDetailsForm extends Constraints {
       "btiReference" -> optional(text.verifying(emptyOr(btiReferenceIsCorrectFormat()): _*)),
       "repaymentClaim" -> boolean,
       "dateOfReceipt" -> optional(FormDate.date("case.liability.error.date-of-receipt")
-        .verifying(dateMustBeInThePast("case.liability.error.entry-date.future"))),
+        .verifying(dateMustBeInThePast("case.liability.error.date-of-receipt.future"))
+        .verifying(dateLowerBound("case.liability.error.date-of-receipt.year.lower.bound", appConfig.dateOfReceiptYearLowerBound)),
+    ),
       "goodName" -> optional(text),
       "entryNumber" -> optional(
         text.verifying(emptyOr(entryNumberIsNumberOnly()): _*)
@@ -64,7 +68,9 @@ object LiabilityDetailsForm extends Constraints {
       ),
       //TODO revisit .verifying logic
       "dateForRepayment" -> optional(FormDate.date("case.liability.error.date-of-repayment")
-        .verifying(dateMustBeInThePast("case.liability.error.date-of-repayment.future")))
+        .verifying(dateMustBeInThePast("case.liability.error.date-of-repayment.future"))
+        .verifying(dateLowerBound("case.liability.error.date-for-repayment.year.lower.bound", appConfig.dateForRepaymentYearLowerBound)),
+  )
     )(form2Liability(existingLiability))(liability2Form)
   ).fillAndValidate(existingLiability)
 
@@ -136,13 +142,15 @@ object LiabilityDetailsForm extends Constraints {
   }
 
   //TODO: As part of the follow-up ticket regarding complete form validation, add tests
-  def liabilityDetailsCompleteForm(existingLiability: Case): Form[Case] = Form[Case](
+  def liabilityDetailsCompleteForm(existingLiability: Case, appConfig: AppConfig): Form[Case] = Form[Case](
     mapping[Case, Option[Instant], String, Option[String], Option[String],
       Option[String], Option[String], Option[String],Option[String], Option[String],
       Option[String], Boolean, Option[Instant], Option[String], Option[String], Option[String],
       Option[String], Option[String], Option[String], Option[String], Option[String], Option[Instant]](
       "entryDate" -> optional(FormDate.date("case.liability.error.entry-date")
-        .verifying(dateMustBeInThePast("case.liability.error.entry-date.future")))
+        .verifying(dateMustBeInThePast("case.liability.error.entry-date.future"))
+        .verifying(dateLowerBound("case.liability.error.entry-date.year.lower.bound", appConfig.entryDateYearLowerBound))
+    )
         .verifying("error.required", _.isDefined),
       "traderName" -> textNonEmpty("case.liability.error.empty.trader-name"),
       //TODO find what need to validate
@@ -158,7 +166,9 @@ object LiabilityDetailsForm extends Constraints {
       "btiReference" -> optional(nonEmptyText),
       "repaymentClaim" -> boolean,
       "dateOfReceipt" -> optional(FormDate.date("case.liability.error.date-of-receipt")
-        .verifying(dateMustBeInThePast("case.liability.error.entry-date.future"))),
+        .verifying(dateMustBeInThePast("case.liability.error.date-of-receipt.future"))
+        .verifying(dateLowerBound("case.liability.error.date-of-receipt.year.lower.bound", appConfig.dateOfReceiptYearLowerBound))
+      ),
       "goodName" -> optional(nonEmptyText).verifying("error.required", _.isDefined),
       "entryNumber" -> optional(nonEmptyText).verifying("error.required", _.isDefined),
       "traderCommodityCode" -> optional(nonEmptyText).verifying("error.required", _.isDefined),
@@ -171,7 +181,9 @@ object LiabilityDetailsForm extends Constraints {
         text.verifying(dvrNumberIsNumberOnly())
       ),
       "dateForRepayment" -> optional(FormDate.date("case.liability.error.date-of-repayment")
-        .verifying(dateMustBeInThePast("case.liability.error.date-of-repayment.future")))
+        .verifying(dateMustBeInThePast("case.liability.error.date-of-repayment.future"))
+        .verifying(dateLowerBound("case.liability.error.date-for-repayment.year.lower.bound", appConfig.dateForRepaymentYearLowerBound))
+      )
         .verifying("error.required", _.isDefined)
     )(form2Liability(existingLiability))(liability2Form)
   ).fillAndValidate(existingLiability)

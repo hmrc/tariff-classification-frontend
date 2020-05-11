@@ -61,6 +61,9 @@ class AppConfig @Inject()(
   lazy val shutterFlag: Boolean = config.get[String]("shutter.enabled").toBoolean
   lazy val shutterExcludedUrls: String = config.get[String]("shutter.urls.excluded")
   lazy val newLiabilityDetails: Boolean = config.get[String]("toggle.new-liability-details").toBoolean
+  lazy val entryDateYearLowerBound: Int = 2010
+  lazy val dateOfReceiptYearLowerBound: Int = 2010
+  lazy val dateForRepaymentYearLowerBound: Int = 2010
 
 
   lazy val clock: Clock = Clock.systemUTC()
