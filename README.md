@@ -38,6 +38,7 @@ Run `sm --start TARIFF_CLASSIFICATION_FRONTEND -r`
 Open `http://localhost:9581/manage-tariff-classifications`
 
 ### PDF Generator Service
+
 This service requires the installation of some dependencies before it can be run using Service Manager.  See [Pdf Generator Service](https://github.com/hmrc/pdf-generator-service).
 
 Running PDF Generator Service locally on Mac OSX (currently) requires running an older version.  
