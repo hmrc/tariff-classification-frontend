@@ -216,9 +216,9 @@ case.liability.error.entry-number=Entry number must be a number, like 123456
 case.liability.error.entry-date.future=Entry date must be today or in the past
 case.liability.error.date-of-receipt.future=Date of receipt must be today or in the past
 case.liability.error.date-of-repayment.future=Date of repayment must be today or in the past
-case.liability.error.entry-date.year.lower.bound=Entry date error error error
-case.liability.error.date-of-receipt.year.lower.bound=Date of receipt date error error error
-case.liability.error.date-for-repayment.year.lower.bound=Date for repayment error error error
+case.liability.error.entry-date.year.lower.bound=Entry date must be between 1 January {0} and today
+case.liability.error.date-of-receipt.year.lower.bound=Date of receipt must be between 1 January {0} and today
+case.liability.error.date-for-repayment.year.lower.bound=Date for repayment must be between 1 January {0} and today
 case.liability.error.dvr-number=DVR number must be a number, like 123456
 date.must.be.in.past=The date must be in the past
 events.table.empty=There are no events for this case
@@ -766,15 +766,15 @@ case.v2.liability.c592.date_for_repayment=Date for repayment
 case.v2.liability.c592.details_edit.information=Information from the C592
 case.v2.liability.c592.details_edit.entry_number=Entry number
 case.v2.liability.c592.details_edit.date_p=Entry date
-case.v2.liability.c592.details_edit.date_hint=Date recorded on the C592 by compliance or port officer, for example, 27 3 2007.
+case.v2.liability.c592.details_edit.date_hint=Date recorded on the C592 by compliance or port officer, for example, 27 3 2015.
 case.v2.liability.c592.details_edit.bti_reference=BTI reference
 case.v2.liability.c592.details_edit.bti_reference_error=Enter a correct BTI reference number
 case.v2.liability.c592.details_edit.repayment_claim=Repayment claim
 case.v2.liability.c592.details_edit.repayment_claim_h3=Repayment claim
 case.v2.liability.c592.details_edit.dvr_number=DVR number
 case.v2.liability.c592.details_edit.date_of_repayment=Date of repayment
-case.v2.liability.c592.details_edit.date_dete_of_receipt=Date of receipt
-case.v2.liability.c592.details_edit.date_dete_of_receipt_hint=Date stamped on the C592 when received by Gateway officer, for example, 27 3 2007.
+case.v2.liability.c592.details_edit.date_of_receipt=Date of receipt
+case.v2.liability.c592.details_edit.date_of_receipt_hint=Date stamped on the C592 when received by Gateway officer, for example, 27 3 2015.
 
 
 

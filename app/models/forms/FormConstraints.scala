@@ -43,9 +43,9 @@ object FormConstraints {
     case _ => Invalid(error)
   })
 
-  def dateLowerBound(error: String, minimumValidYear: Int): Constraint[Instant] = Constraint(error)({
+  def dateLowerBound(error: String, minimumValidYear: Int): Constraint[Instant] = Constraint(error, minimumValidYear.toString)({
     case s: Instant if LocalDateTime.ofInstant(s, ZoneId.systemDefault()).getYear >= minimumValidYear => Valid
-    case _ => Invalid(error)
+    case _ => Invalid(error, minimumValidYear.toString)
   })
 
   def btiReferenceIsCorrectFormat(): Constraint[String] = {

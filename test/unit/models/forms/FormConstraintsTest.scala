@@ -101,7 +101,7 @@ class FormConstraintsTest extends UnitSpec {
         val yearInstant = date.toInstant
         val result = FormConstraints.dateLowerBound("Test error", yearLowBound).apply(yearInstant)
 
-        result shouldBe Invalid("Test error")
+        result shouldBe Invalid("Test error", yearLowBound.toString)
       }
     }
 
