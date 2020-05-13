@@ -159,7 +159,7 @@ class LiabilityController @Inject()(
     (verify.authenticated andThen verify.casePermissions(reference)
       andThen verify.mustHave(Permission.EDIT_LIABILITY)).async { implicit request =>
       successful(
-        Ok(liability_details_edit(request.`case`, LiabilityDetailsForm.liabilityDetailsForm(request.`case`))
+        Ok(liability_details_edit(request.`case`, LiabilityDetailsForm.liabilityDetailsForm(request.`case`, appConfig))
         )
       )
     }
@@ -168,7 +168,7 @@ class LiabilityController @Inject()(
     (verify.authenticated andThen verify.casePermissions(reference)
       andThen verify.mustHave(Permission.EDIT_LIABILITY)).async { implicit request =>
 
-      LiabilityDetailsForm.liabilityDetailsForm(request.`case`).discardingErrors.bindFromRequest.fold(
+      LiabilityDetailsForm.liabilityDetailsForm(request.`case`, appConfig).discardingErrors.bindFromRequest.fold(
         errorForm =>
           successful(Ok(liability_details_edit(request.`case`, errorForm))),
         updatedCase => casesService.updateCase(updatedCase).map(

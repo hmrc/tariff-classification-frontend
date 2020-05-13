@@ -18,12 +18,16 @@ package models.forms.v2
 
 import java.time.Instant
 
+import config.AppConfig
 import models.{Address, Contact, LiabilityOrder, LiabilityStatus, RepaymentClaim, TraderContactDetails}
 import org.joda.time.{DateTime, DateTimeZone}
+import org.scalatestplus.mockito.MockitoSugar
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.Cases
 
-class LiabilityDetailsFormSpec extends UnitSpec {
+class LiabilityDetailsFormSpec extends UnitSpec with MockitoSugar {
+
+  private val appConfig = mock[AppConfig]
 
   private val emptyLiabilityOrder = LiabilityOrder(
     Contact(name = "", email = "", Some("")),
@@ -116,7 +120,7 @@ class LiabilityDetailsFormSpec extends UnitSpec {
   "Bind from request" should {
     "Bind blank" when {
       "using edit form" in {
-        val form = LiabilityDetailsForm.liabilityDetailsForm(sampleEmptyCase).bindFromRequest(emptyParams)
+        val form = LiabilityDetailsForm.liabilityDetailsForm(sampleEmptyCase, appConfig).bindFromRequest(emptyParams)
 
         form.hasErrors shouldBe true
         form.errors should have(size(1))
@@ -127,7 +131,7 @@ class LiabilityDetailsFormSpec extends UnitSpec {
 
     "Bind valid form" when {
       "using edit form" in {
-        val form = LiabilityDetailsForm.liabilityDetailsForm(sampleCase).bindFromRequest(params)
+        val form = LiabilityDetailsForm.liabilityDetailsForm(sampleCase, appConfig).bindFromRequest(params)
         form.hasErrors shouldBe false
         form.get shouldBe sampleCase
       }
@@ -138,14 +142,14 @@ class LiabilityDetailsFormSpec extends UnitSpec {
   "Fill" should {
     "populate by default" when {
       "using edit form" in {
-        val form = LiabilityDetailsForm.liabilityDetailsForm(sampleCase)
+        val form = LiabilityDetailsForm.liabilityDetailsForm(sampleCase, appConfig)
 
         form.hasErrors shouldBe false
         form.data shouldBe params.mapValues(v => v.head)
       }
 
       "using edit form is repayments claim set to true" in {
-        val form = LiabilityDetailsForm.liabilityDetailsForm(sampleCase)
+        val form = LiabilityDetailsForm.liabilityDetailsForm(sampleCase, appConfig)
 
         form.hasErrors shouldBe false
         form.get.application.asLiabilityOrder.repaymentClaim shouldBe sampleCase.application.asLiabilityOrder.repaymentClaim
