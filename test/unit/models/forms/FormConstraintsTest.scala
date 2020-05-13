@@ -67,7 +67,6 @@ class FormConstraintsTest extends UnitSpec {
       }
     }
 
-    //TODO Pass the correct error message
     "dateLowerBound" should {
 
       "return valid when year entered is earliest valid" in {
