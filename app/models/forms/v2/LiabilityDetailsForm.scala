@@ -37,7 +37,8 @@ object LiabilityDetailsForm extends Constraints {
       Option[Instant]](
       "entryDate" -> optional(FormDate.date("case.liability.error.entry-date")
         .verifying(dateMustBeInThePast("case.liability.error.entry-date.future"))
-        .verifying(dateLowerBound("case.liability.error.entry-date.year.lower.bound", appConfig.entryDateYearLowerBound))),
+        .verifying(dateLowerBound("case.liability.error.entry-date.year.lower.bound", appConfig.entryDateYearLowerBound))
+      ),
       "traderName" -> textNonEmpty("case.liability.error.empty.trader-name"),
       //TODO make sure dont need validation
       "traderEmail" -> optional(text.verifying(emptyOr(validEmail("case.liability.error.trader.email")):_*)),
@@ -69,7 +70,7 @@ object LiabilityDetailsForm extends Constraints {
       //TODO revisit .verifying logic
       "dateForRepayment" -> optional(FormDate.date("case.liability.error.date-of-repayment")
         .verifying(dateMustBeInThePast("case.liability.error.date-of-repayment.future"))
-        .verifying(dateLowerBound("case.liability.error.date-for-repayment.year.lower.bound", appConfig.dateForRepaymentYearLowerBound)),
+        .verifying(dateLowerBound("case.liability.error.date-for-repayment.year.lower.bound", appConfig.dateForRepaymentYearLowerBound))
   )
     )(form2Liability(existingLiability))(liability2Form)
   ).fillAndValidate(existingLiability)
