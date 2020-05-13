@@ -53,7 +53,7 @@ object LiabilityDetailsForm extends Constraints {
       "repaymentClaim" -> boolean,
       "dateOfReceipt" -> optional(FormDate.date("case.liability.error.date-of-receipt")
         .verifying(dateMustBeInThePast("case.liability.error.date-of-receipt.future"))
-        .verifying(dateLowerBound("case.liability.error.date-of-receipt.year.lower.bound", appConfig.dateOfReceiptYearLowerBound)),
+        .verifying(dateLowerBound("case.liability.error.date-of-receipt.year.lower.bound", appConfig.dateOfReceiptYearLowerBound))
     ),
       "goodName" -> optional(text),
       "entryNumber" -> optional(
