@@ -38,20 +38,28 @@
         @helper.CSRF.formField
 
         @input_text(
-            field = form("trader-name"),
-            label = "What is the trader's name?",
+            field = form("item-name"),
+            label = messages("liability.create_liability.item-name.heading"),
             labelClass = Some("heading-large"),
-            hint = Some("This is the name of the importer of the item and will be used as  the name of this case."),
+            hint = Some(messages("liability.create_liability.item-name.heading.hint")),
+            formControlClass = Some("w-50")
+        )
+
+        @input_text(
+            field = form("trader-name"),
+            label = messages("liability.create_liability.trader-name.heading"),
+            labelClass = Some("heading-large"),
+            hint = Some(messages("liability.create_liability.trader-name.heading.hint")),
             formControlClass = Some("w-50")
         )
 
         @input_radiogroup(
             field = form("liability-status"),
-            label = Some(messages("page.title.create_liability")),
+            label = Some(messages("liability.create_liability.liability-status.heading")),
             labelClass = Some("heading-large"),
             options = Seq(
-                RadioOption(LiabilityStatus.LIVE.toString, "Yes, this is a live liability"),
-                RadioOption(LiabilityStatus.NON_LIVE.toString, "No, this is not a live liability")
+                RadioOption(LiabilityStatus.LIVE.toString, messages("liability.create_liability.liability-status.radio.yes")),
+                RadioOption(LiabilityStatus.NON_LIVE.toString, messages("liability.create_liability.liability-status.radio.no"))
             ),
             id = "create_liability-liability_status",
             customGroupId = Some("liability-status")
@@ -59,8 +67,8 @@
 
         @confirm_or_cancel_buttons(
             id = "create_liability",
-            confirmText = "Confirm and create case",
-            cancelText = "Cancel and return to case queues",
+            confirmText = messages("liability.create_liability.confirm-button"),
+            cancelText = messages("liability.create_liability.cancel-button"),
             cancelHref = routes.IndexController.get()
         )
     }
