@@ -51,6 +51,7 @@ class AppConfig @Inject()(
   lazy val emailRendererUrl: String = servicesConfig.baseUrl("hmrc-email-renderer")
   lazy val fileStoreUrl: String = servicesConfig.baseUrl("binding-tariff-filestore")
   lazy val decisionLifetimeYears: Int = config.get[Int]("app.decision-lifetime-years")
+  lazy val decisionLifetimeDays: Int = config.get[Int]("app.decision-lifetime-days")
   lazy val fileUploadMaxSize: Int = config.get[String]("fileupload.maxSize").toInt
   lazy val fileUploadMimeTypes: Set[String] = config.get[String]("fileupload.mimeTypes").split(",").map(_.trim).toSet
   lazy val apiToken: String = config.get[String]("auth.api-token")
@@ -60,6 +61,9 @@ class AppConfig @Inject()(
   lazy val shutterFlag: Boolean = config.get[String]("shutter.enabled").toBoolean
   lazy val shutterExcludedUrls: String = config.get[String]("shutter.urls.excluded")
   lazy val newLiabilityDetails: Boolean = config.get[String]("toggle.new-liability-details").toBoolean
+  lazy val entryDateYearLowerBound: Int = 2010
+  lazy val dateOfReceiptYearLowerBound: Int = 2010
+  lazy val dateForRepaymentYearLowerBound: Int = 2010
 
 
   lazy val clock: Clock = Clock.systemUTC()

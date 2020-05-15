@@ -17,9 +17,9 @@
 package views.partials.statuses
 
 import models.{Appeal, AppealStatus, AppealType}
+import utils.Cases.{aCase, withDecision, withReference}
 import views.ViewSpec
 import views.html.partials.statuses.appeal_status
-import utils.Cases.{aCase, withDecision, withReference}
 
 class AppealStatusViewSpec extends ViewSpec {
 
@@ -39,14 +39,13 @@ class AppealStatusViewSpec extends ViewSpec {
       doc.text() shouldBe ""
     }
 
-    "render under appeal" in {
+    //ADR
+    "render under mediation for IN_PROGRESS ADR" in {
       // Given
       val c = aCase(
         withReference("ref"),
         withDecision(appeal = Seq(
-          Appeal("id", AppealStatus.IN_PROGRESS, AppealType.APPEAL_TIER_1),
-          Appeal("id", AppealStatus.ALLOWED, AppealType.APPEAL_TIER_1),
-          Appeal("id", AppealStatus.DISMISSED, AppealType.APPEAL_TIER_1)
+          Appeal("id", AppealStatus.IN_PROGRESS, AppealType.ADR)
         ))
       )
 
@@ -54,16 +53,15 @@ class AppealStatusViewSpec extends ViewSpec {
       val doc = view(appeal_status(c, "id"))
 
       // Then
-      doc.text() shouldBe "Under appeal"
+      doc.text() shouldBe "Under mediation"
     }
 
-    "render appeal allowed" in {
+    "render completed for ALLOWED ADR" in {
       // Given
       val c = aCase(
         withReference("ref"),
         withDecision(appeal = Seq(
-          Appeal("id", AppealStatus.ALLOWED, AppealType.APPEAL_TIER_1),
-          Appeal("id", AppealStatus.DISMISSED, AppealType.APPEAL_TIER_1)
+          Appeal("id", AppealStatus.ALLOWED, AppealType.ADR)
         ))
       )
 
@@ -71,15 +69,15 @@ class AppealStatusViewSpec extends ViewSpec {
       val doc = view(appeal_status(c, "id"))
 
       // Then
-      doc.text() shouldBe "Appeal allowed"
+      doc.text() shouldBe "Completed"
     }
 
-    "render appeal dismissed" in {
+    "render complected for DISMISSED ADR" in {
       // Given
       val c = aCase(
         withReference("ref"),
         withDecision(appeal = Seq(
-          Appeal("id", AppealStatus.DISMISSED, AppealType.APPEAL_TIER_1)
+          Appeal("id", AppealStatus.DISMISSED, AppealType.ADR)
         ))
       )
 
@@ -87,7 +85,56 @@ class AppealStatusViewSpec extends ViewSpec {
       val doc = view(appeal_status(c, "id"))
 
       // Then
-      doc.text() shouldBe "Appeal dismissed"
+      doc.text() shouldBe "Completed"
+    }
+
+    //REVIEW
+    "render under review for IN_PROGRESS REVIEW" in {
+      // Given
+      val c = aCase(
+        withReference("ref"),
+        withDecision(appeal = Seq(
+          Appeal("id", AppealStatus.IN_PROGRESS, AppealType.REVIEW)
+        ))
+      )
+
+      // When
+      val doc = view(appeal_status(c, "id"))
+
+      // Then
+      doc.text() shouldBe "Under review"
+    }
+
+    "render review upheld for ALLOWED REVIEW" in {
+      // Given
+      val c = aCase(
+        withReference("ref"),
+        withDecision(appeal = Seq(
+          Appeal("id", AppealStatus.ALLOWED, AppealType.REVIEW)
+        ))
+      )
+
+      // When
+      val doc = view(appeal_status(c, "id"))
+
+      // Then
+      doc.text() shouldBe "Review upheld"
+    }
+
+    "render review overturned for DISMISSED REVIEW" in {
+      // Given
+      val c = aCase(
+        withReference("ref"),
+        withDecision(appeal = Seq(
+          Appeal("id", AppealStatus.DISMISSED, AppealType.REVIEW)
+        ))
+      )
+
+      // When
+      val doc = view(appeal_status(c, "id"))
+
+      // Then
+      doc.text() shouldBe "Review overturned"
     }
 
   }

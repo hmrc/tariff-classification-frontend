@@ -51,8 +51,10 @@ object Search {
 
       val form: Form[Search] = SearchForm.formWithoutValidation.bindFromRequest(filteredParams)
 
-      if (form.hasErrors) Some(Right(Search()))
-      else Some(Right(form.get))
+      if (form.hasErrors)
+        Some(Right(Search()))
+      else
+        Some(Right(form.get))
     }
 
     override def unbind(string: String, search: Search): String = {

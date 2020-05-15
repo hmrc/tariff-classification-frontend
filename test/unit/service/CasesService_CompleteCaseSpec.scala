@@ -103,8 +103,10 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
         val updatedDecision = Decision("code", Some(date("2018-01-01")), Some(date("2019-01-01")), "justification", "goods")
         val caseUpdated = aBTI.copy(status = CaseStatus.COMPLETED, decision = Some(updatedDecision))
         val emailTemplate = EmailTemplate("plain", "html", "from", "subject", "service")
+        val updatedEndDateInstant = Some(date("2020-12-31"))
 
-        given(config.decisionLifetimeYears).willReturn(1)
+        given(config.decisionLifetimeYears).willReturn(3)
+        given(config.decisionLifetimeDays).willReturn(1)
         given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
         given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])).willReturn(successful(mock[Event]))
         given(emailService.sendCaseCompleteEmail(refEq(caseUpdated))(any[HeaderCarrier])).willReturn(Future.successful(emailTemplate))
@@ -118,6 +120,7 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
 
         val caseUpdating = theCaseUpdating(connector)
         caseUpdating.status shouldBe CaseStatus.COMPLETED
+        caseUpdating.decision.get.effectiveEndDate shouldBe updatedEndDateInstant
 
         val eventCreated = theEventCreatedFor(connector, caseUpdated)
         eventCreated.operator shouldBe Operator("operator-id", Some("Billy Bobbins"))

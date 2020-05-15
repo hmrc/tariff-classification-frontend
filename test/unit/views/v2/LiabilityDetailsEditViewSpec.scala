@@ -68,5 +68,19 @@ class LiabilityDetailsEditViewSpec extends ViewSpec {
       doc should containElementWithID("btiReference")
 
     }
+
+    "show the correct hint text for entry date" in {
+      val doc = view(liabilityDetailsEditView(sampleCase, LiabilityDetailsForm.liabilityDetailsForm(sampleCase)))
+
+      doc should containElementWithID("entryDate-hint")
+      doc.getElementById("entryDate-hint").text shouldBe messages("case.v2.liability.c592.details_edit.date_hint")
+    }
+
+    "show the correct hint text for date of receipt" in {
+      val doc = view(liabilityDetailsEditView(sampleCase, LiabilityDetailsForm.liabilityDetailsForm(sampleCase)))
+
+      doc should containElementWithID("dateOfReceipt-hint")
+      doc.getElementById("dateOfReceipt-hint").text shouldBe messages("case.v2.liability.c592.details_edit.date_of_receipt_hint")
+    }
   }
 }

@@ -212,7 +212,7 @@ class CasesService @Inject()(appConfig: AppConfig,
     val date = LocalDate.now(appConfig.clock).atStartOfDay(appConfig.clock.getZone)
     val startInstant = date.toInstant
     val possibleEndInstant: Option[Instant] = original.application.isBTI match {
-      case true => Some(date.plusYears(appConfig.decisionLifetimeYears).toInstant)
+      case true => Some(date.plusYears(appConfig.decisionLifetimeYears).minusDays(appConfig.decisionLifetimeDays).toInstant)
       case _ => None
     }
 
