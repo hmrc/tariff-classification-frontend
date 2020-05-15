@@ -18,7 +18,7 @@
 @import models.{BTIApplication, Case, ApplicationType}
 @import views.CaseDetailPage.CaseDetailPage
 @import views.html.includes.main
-@import views.html.partials.{case_heading, case_nav_bti, case_nav_liability}
+@import views.html.partials.{case_heading, case_nav_bti, case_nav_liability, back_link}
 @import views.html.components.change_case_status_button
 @import models.{CaseStatus, Permission}
 @import models.request.AuthenticatedRequest
@@ -33,7 +33,9 @@
 @main(bodyClasses = None,
     customTitle = Some(messages(s"page.title.${page.toString}"))) {
 
-    @case_heading(c, displayBackLink = true)
+    @back_link()
+
+    @case_heading(c)
 
     @if(c.application.isBTI && c.status == CaseStatus.OPEN && request.hasPermission(Permission.COMPLETE_CASE)){
         @change_case_status_button("change-case-status", "Change case status", ChangeCaseStatusController.onPageLoad(c.reference, activeTab))

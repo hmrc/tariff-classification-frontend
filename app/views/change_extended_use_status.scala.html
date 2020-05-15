@@ -20,10 +20,11 @@
 @import views.forms.components.RadioOption
 @import views.html.forms.components.input_radiogroup
 @import views.html.includes.main
-@import views.html.partials.case_heading
+@import views.html.partials.{case_heading, back_link}
 @(c: Case, form: Form[Boolean])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("page.title.extended.use"))) {
+    @back_link()
 
     @case_heading(c)
 

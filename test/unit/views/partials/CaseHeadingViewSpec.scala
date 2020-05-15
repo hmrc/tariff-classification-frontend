@@ -16,8 +16,6 @@
 
 package views.partials
 
-import play.api.test.FakeRequest
-import controllers.SessionKeys._
 import models._
 import views.ViewMatchers.{containElementWithID, _}
 import views.ViewSpec
@@ -43,7 +41,6 @@ class CaseHeadingViewSpec extends ViewSpec {
       doc.getElementById("case-reference") should containText("Case ref")
       doc should containElementWithID("case-status")
       doc.getElementById("case-status") should containText("OPEN")
-      doc should containElementWithID("back-link")
     }
 
     "Render without Optional Statuses" in {
@@ -71,47 +68,6 @@ class CaseHeadingViewSpec extends ViewSpec {
       // Then
       doc should containElementWithID("appeal-status")
       doc.getElementById("appeal-status") should containText("Appeal allowed")
-    }
-
-    "Render with queues back link" in {
-      // Given
-      val c = aCase()
-      val requestWithSessionData = FakeRequest().withSession((backToQueuesLinkUrl, "url"), (backToQueuesLinkLabel, "some cases"))
-
-      // When
-      val doc = view(case_heading(c, displayBackLink = true)(messages, appConfig, requestWithSessionData))
-
-      // Then
-      doc should containElementWithID("back-link")
-      doc.getElementById("back-link") should containText("some cases")
-    }
-
-    "Render with search results back link" in {
-      // Given
-      val c = aCase()
-      val requestWithSessionData =
-        FakeRequest().withSession((backToSearchResultsLinkUrl, "url"), (backToSearchResultsLinkLabel, "some search results"))
-                     .withSession((backToQueuesLinkUrl, "url"), (backToQueuesLinkLabel, "some cases"))
-
-      // When
-      val doc = view(case_heading(c, displayBackLink = true)(messages, appConfig, requestWithSessionData))
-
-      // Then
-      doc should containElementWithID("back-link")
-      doc.getElementById("back-link") should containText("some search results")
-    }
-
-    "Render back link when session is empty" in {
-      // Given
-      val c = aCase()
-      val requestWithoutSessionData = FakeRequest()
-
-      // When
-      val doc = view(case_heading(c, displayBackLink = true)(messages, appConfig, requestWithoutSessionData))
-
-      // Then
-      doc should containElementWithID("back-link")
-      doc.getElementById("back-link") should containText("Back Home")
     }
 
   }

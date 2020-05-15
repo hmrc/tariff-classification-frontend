@@ -23,12 +23,6 @@
 
 <div id="case-heading" class="case-heading mt-1 mb-2">
 
-    @if(request.session.get(SessionKeys.backToSearchResultsLinkUrl).isDefined) {
-        @back_link(displayBackLink, SessionKeys.backToSearchResultsLinkUrl, SessionKeys.backToSearchResultsLinkLabel)
-    } else {
-        @back_link(displayBackLink, SessionKeys.backToQueuesLinkUrl, SessionKeys.backToQueuesLinkLabel)
-    }
-
     <div id="case-reference" class="case-reference">
         Case <a href="@controllers.routes.CaseController.get(c.reference)">@{c.reference}</a>
     </div>

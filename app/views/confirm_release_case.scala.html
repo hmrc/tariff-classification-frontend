@@ -22,7 +22,10 @@
 
 @main(bodyClasses = None, customTitle = Some(messages("page.title.case.released"))) {
 
+    @back_link()
+
     @case_heading(c)
+
     <div class="grid-row">
         <div class="column-full">
             <h2 class="heading-large mt-0">This case has been released to the @queueName queue for classification</h2>
