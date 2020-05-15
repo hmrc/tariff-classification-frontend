@@ -22,15 +22,18 @@
 @(c: Case)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("page.title.case.suppressed"))) {
+
+    @back_link()
+
     @case_heading(c)
 
     <div class="grid-row">
         <div class="column-full">
-            <h2 class="heading-large mt-0">This case has been suppressed</h2>
+            <h2 class="heading-large mt-0">@messages("case.suppress.title")</h2>
 
-            <h3 class="heading-medium mt-45">Next steps</h3>
+            <h3 class="heading-medium mt-45">@messages("case.suppress.next")</h3>
 
-            <p>Go back to <a href="@QueuesController.queue("gateway")">@messages("cases.menu.gateway-cases")</a>.</p>
+            <p>@messages("case.suppress.link") <a href="@QueuesController.queue("gateway")">@messages("cases.menu.gateway-cases")</a>.</p>
 
         </div>
     </div>

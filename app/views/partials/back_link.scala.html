@@ -15,12 +15,22 @@
  *@
 
 @import controllers.routes
-@(displayBackLink: Boolean = false, backLinkUrl: String, backLinkLabel: String)(implicit request: Request[_], messages: Messages)
+@()(implicit request: Request[_], messages: Messages)
 
-    @if(displayBackLink) {
-        <div>
-            <a id="back-link" class="link-back mt-0" href="@request.session.get(backLinkUrl).getOrElse(routes.IndexController.get())">
-            @request.session.get(backLinkLabel).map(l =>  if(l.isEmpty) "Back" else s"Back to $l").getOrElse(messages("errors.all.back"))
+
+
+    @if(request.session.get(SessionKeys.backToSearchResultsLinkUrl).isDefined) {
+
+        <a id="back-link" class="link-back mt-0" href="@request.session.get(SessionKeys.backToSearchResultsLinkUrl).getOrElse(routes.IndexController.get())">
+            @request.session.get(SessionKeys.backToSearchResultsLinkLabel).map(l =>  if(l.isEmpty) "Back" else s"Back to $l").getOrElse(messages("errors.all.back"))
             </a>
-        </div>
+
+
+    } else {
+
+        <a id="back-link" class="link-back mt-0" href="@request.session.get(SessionKeys.backToQueuesLinkUrl).getOrElse(routes.IndexController.get())">
+            @request.session.get(SessionKeys.backToQueuesLinkLabel).map(l =>  if(l.isEmpty) "Back" else s"Back to $l").getOrElse(messages("errors.all.back"))
+            </a>
+
+
     }
