@@ -65,28 +65,34 @@ class LiabilityFormTest extends UnitSpec {
 
       form.hasErrors shouldBe true
       form.errors should have(size(1))
+      //TODO get message for messages
+      form.errors.head.message shouldBe "Invalid entry"
     }
 
     "Bind invalid trader name" in {
       val form = LiabilityForm.newLiabilityForm.bindFromRequest(Map(
-        "liability-status" -> Seq("other"),
+        "liability-status" -> Seq("LIVE"),
         "trader-name" -> Seq(""),
         "item-name" -> Seq("item name")
       ))
 
       form.hasErrors shouldBe true
       form.errors should have(size(1))
+      //TODO get message for messages
+      form.errors.head.message shouldBe "error.empty.trader-name"
     }
 
     "Bind invalid item name" in {
       val form = LiabilityForm.newLiabilityForm.bindFromRequest(Map(
-        "liability-status" -> Seq("other"),
+        "liability-status" -> Seq("LIVE"),
         "trader-name" -> Seq("trader"),
         "item-name" -> Seq("")
       ))
 
       form.hasErrors shouldBe true
       form.errors should have(size(1))
+      //TODO get message for messages
+      form.errors.head.message shouldBe "error.empty.item-name"
     }
   }
 
