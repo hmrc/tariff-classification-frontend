@@ -67,6 +67,8 @@ class LiabilityController @Inject()(
     val liabilityViewModel = LiabilityViewModel.fromCase(liabilityCase, request.operator)
     val rulingViewModel = Some(RulingViewModel.fromCase(liabilityCase, request.operator.permissions))
 
+
+
     for {
       (activityEvents, queues) <- liabilityViewActivityDetails(liabilityCase.reference)
       attachmentsTab <- getAttachmentTab(liabilityCase)

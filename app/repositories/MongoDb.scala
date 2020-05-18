@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,29 +12,21 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@(
-   id: String,
-   buttonText: String = "Complete",
-   href: Call
-)
+package repositories
 
-<div class="form-group" id="@id-buttons">
-    <a class="button" role="button" id="@id-button" href="@href">@buttonText</a>
-</div>
+import com.google.inject.ImplementedBy
+import javax.inject.{Inject, Singleton}
+import play.modules.reactivemongo.ReactiveMongoComponent
+import reactivemongo.api.DefaultDB
 
-@*TODO finish this thing, CALL THE CONTROLLER*@
- <script>
-  let button = document.getElementById("action-this-case-button");
-  button.addEventListener('click', function(){
-   // alert(window.location.href);
-   let url = window.location.href.toString()
-   let parts = url.split("#")
-   if (parts.length === 2) {
-    let anchor = parts[1].toString()
-    alert(anchor)
-   }
-  }, false);
+@ImplementedBy(classOf[MongoDb])
+trait MongoDbProvider {
+  def mongo: () => DefaultDB
+}
 
- </script>
+@Singleton
+class MongoDb @Inject()(component: ReactiveMongoComponent) extends MongoDbProvider {
+  override val mongo: () => DefaultDB = component.mongoConnector.db
+}
