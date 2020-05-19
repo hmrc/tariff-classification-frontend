@@ -20,17 +20,14 @@ import models.UserAnswers
 import play.api.mvc.{Request, WrappedRequest}
 
 case class IdentifierRequest[A] (request: Request[A],
-                                 identifier: String,
-                                 eoriNumber: Option[String]) extends WrappedRequest[A](request)
+                                 internalId: String) extends WrappedRequest[A](request)
 
 case class OptionalDataRequest[A] (request: Request[A],
                                    internalId: String,
-                                   userEoriNumber: Option[String],
                                    userAnswers: Option[UserAnswers]) extends WrappedRequest[A](request)
 
 case class DataRequest[A] (request: Request[A],
                            internalId: String,
-                           eoriNumber: Option[String],
                            userAnswers: UserAnswers) extends WrappedRequest[A](request)
 
 

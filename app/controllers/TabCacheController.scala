@@ -16,35 +16,51 @@
 
 package controllers
 
-import connector.{DataCacheConnector, MongoCacheConnector}
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import connector.DataCacheConnector
+import controllers.actions.{DataRetrievalAction, IdentifierAction}
 import javax.inject.{Inject, Singleton}
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.http.cache.client.CacheMap
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
-import scala.concurrent.Future.successful
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 @Singleton
 class TabCacheController @Inject()(
                                     dataCacheConnector: DataCacheConnector,
                                     identify: IdentifierAction,
                                     getData: DataRetrievalAction,
-                                    requireData: DataRequiredAction,
+                                    verify: RequestActions,
                                     mcc: MessagesControllerComponents,
                                   ) extends FrontendController(mcc) {
 
-  def post(reference: String, anchor: String): Action[AnyContent] = (identify andThen getData andThen requireData) {
-    implicit request =>
-      val map: Map[String, JsValue] = Map(reference -> Json.toJson(anchor))
-      val cacheMap = new CacheMap(request.internalId, map)
-      dataCacheConnector.save(cacheMap)
-      Ok("OK")
-  }
+  def post(reference: String, itemType: String): Action[AnyContent] =
+    (identify andThen getData).async {
+      implicit request =>
+        val anchor = request.body.asText.getOrElse("")
+        if (anchor.trim.nonEmpty) {
+          val key = reference + itemType.toLowerCase
+          val map: Map[String, JsValue] = Map(key -> Json.toJson(anchor))
+          val cacheMap = new CacheMap(request.internalId, map)
+          dataCacheConnector.save(cacheMap)
+        }
 
-  def get(reference: String): Action[AnyContent] = Action.async {
-    successful(Ok("OK"))
-  }
+        Future.successful(Ok("Ok"))
+    }
+
+  def get(reference: String, itemType: String): Action[AnyContent] =
+    (verify.authenticated andThen verify.casePermissions(reference) andThen identify andThen getData).async {
+      implicit request => {
+
+        lazy val defaultTab: String = if (itemType.toLowerCase.equals("liability")) "#c592_tab" else ""
+
+        dataCacheConnector.fetch(request.internalId).map {
+          case Some(value) => Ok(value.getEntry[String](reference + itemType.toLowerCase).getOrElse(defaultTab))
+          case _ => Ok(defaultTab)
+        }
+      }
+    }
 
 }

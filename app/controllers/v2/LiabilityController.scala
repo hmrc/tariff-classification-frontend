@@ -20,7 +20,7 @@ import config.AppConfig
 import controllers.{RequestActions, v2}
 import javax.inject.{Inject, Singleton}
 import models.forms.{ActivityForm, ActivityFormData, KeywordForm, UploadAttachmentForm}
-import models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
+import models.request.{AuthenticatedCaseRequest, AuthenticatedRequest, OptionalDataRequest}
 import models.viewmodels._
 import models.{Case, Permission, _}
 import play.api.data.Form
@@ -30,6 +30,7 @@ import service.{CasesService, EventsService, FileStoreService, KeywordsService, 
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import controllers.Tab._
+import controllers.actions.{DataRetrievalAction, IdentifierAction}
 import models.forms.v2.LiabilityDetailsForm
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -39,6 +40,8 @@ import scala.concurrent.Future.successful
 @Singleton
 class LiabilityController @Inject()(
                                      verify: RequestActions,
+                                     identify: IdentifierAction,
+                                     getData: DataRetrievalAction,
                                      casesService: CasesService,
                                      eventsService: EventsService,
                                      queuesService: QueuesService,
@@ -49,8 +52,6 @@ class LiabilityController @Inject()(
                                      val liability_details_edit: views.html.v2.liability_details_edit,
                                      implicit val appConfig: AppConfig
                                    ) extends FrontendController(mcc) with I18nSupport {
-
-  private val keywordsTab = "keywords_tab"
 
   def displayLiability(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)).async {
     implicit request => {
@@ -66,8 +67,6 @@ class LiabilityController @Inject()(
     val liabilityCase: Case = request.`case`
     val liabilityViewModel = LiabilityViewModel.fromCase(liabilityCase, request.operator)
     val rulingViewModel = Some(RulingViewModel.fromCase(liabilityCase, request.operator.permissions))
-
-
 
     for {
       (activityEvents, queues) <- liabilityViewActivityDetails(liabilityCase.reference)

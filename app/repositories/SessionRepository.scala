@@ -46,7 +46,7 @@ object DatedCacheMap {
 
 class ReactiveMongoRepository(config: Configuration, mongo: () => DefaultDB)
   extends ReactiveRepository[DatedCacheMap, BSONObjectID](
-    collectionName = config.get[String]("appName"),
+    collectionName = "api-cache",
     mongo = mongo,
     domainFormat = DatedCacheMap.formats) {
 

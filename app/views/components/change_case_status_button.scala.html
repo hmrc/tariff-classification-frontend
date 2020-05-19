@@ -14,27 +14,27 @@
  * limitations under the License.
  *@
 
-@(
-   id: String,
-   buttonText: String = "Complete",
-   href: Call
-)
+@import views.html.helper.CSRF
+@import models.request.AuthenticatedRequest
 
-<div class="form-group" id="@id-buttons">
-    <a class="button" role="button" id="@id-button" href="@href">@buttonText</a>
+@(
+        idOfElement: String,
+        buttonText: String = "Complete",
+        href: Call,
+        itemType: String,
+        caseReference: String
+)(implicit request: AuthenticatedRequest[_])
+
+<div class="form-group" id="@idOfElement-buttons">
+    <a class="button" role="button" id="@idOfElement-button" href="@href">@buttonText</a>
 </div>
 
-@*TODO finish this thing, CALL THE CONTROLLER*@
- <script>
-  let button = document.getElementById("action-this-case-button");
-  button.addEventListener('click', function(){
-   // alert(window.location.href);
-   let url = window.location.href.toString()
-   let parts = url.split("#")
-   if (parts.length === 2) {
-    let anchor = parts[1].toString()
-    alert(anchor)
-   }
-  }, false);
+@if(itemType == "Liability") {
+    <script>
+                let url = "@routes.TabCacheController.post(caseReference, itemType).url";
+                let csrf = "@CSRF.getToken.value";
+                let button = document.getElementById("@idOfElement" + "-button");
 
- </script>
+                saveAnchor(button, url, csrf);
+    </script>
+}

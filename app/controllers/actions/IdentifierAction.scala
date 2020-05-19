@@ -18,26 +18,23 @@ package controllers.actions
 
 import com.google.inject.Inject
 import models.request.IdentifierRequest
+import play.api.Logger
 import play.api.mvc._
-import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
+import uk.gov.hmrc.auth.core.AuthProvider.PrivilegedApplication
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
-import uk.gov.hmrc.auth.core.retrieve.~
-import uk.gov.hmrc.http.{HeaderCarrier, UnauthorizedException}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait IdentifierAction extends ActionBuilder[IdentifierRequest, AnyContent] with ActionFunction[Request, IdentifierRequest] {
-  protected lazy val cdsEnrolment = "HMRC-CUS-ORG"
-}
+trait IdentifierAction extends ActionBuilder[IdentifierRequest, AnyContent] with ActionFunction[Request, IdentifierRequest]
 
 class AuthenticatedIdentifierAction @Inject()(
                                                override val authConnector: AuthConnector,
                                                cc: ControllerComponents,
                                              )(implicit ec: ExecutionContext)
   extends IdentifierAction with AuthorisedFunctions {
-
 
   override val parser: BodyParser[AnyContent] = cc.parsers.defaultBodyParser
   override protected val executionContext: ExecutionContext = cc.executionContext
@@ -46,21 +43,24 @@ class AuthenticatedIdentifierAction @Inject()(
 
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
-    authorise().retrieve(Retrievals.internalId and Retrievals.allEnrolments) {
-      case ~(Some(internalId: String), allEnrolments: Enrolments) => eori(allEnrolments) match {
-        case Some(eori: String) => block(IdentifierRequest(request, internalId, Some(eori)))
-        case _ => throw InsufficientEnrolments()
-      }
-
+    authorise().retrieve(Retrievals.internalId) {
+      case Some(internalId: String) =>
+        Logger.info("Found internalID, it is GG login!")
+        block(IdentifierRequest(request, internalId))
       case _ =>
-        throw new UnauthorizedException("Unable to retrieve internal Id")
+        Logger.info("Can't find internalID, use sessionID!")
+        val sessionID = hc.sessionId match {
+          case Some(value) =>
+            value.value
+          case _ =>
+            //TODO change exception name or type or object or whatever
+            throw new RuntimeException("Unable to retrieve session ID!")
+        }
 
+        block(IdentifierRequest(request, sessionID))
     }
   }
 
-  def eori(enrolments: Enrolments): Option[String] = enrolments.getEnrolment(cdsEnrolment).flatMap(_.getIdentifier("EORINumber")).map(_.value)
-
-  private def authorise(): AuthorisedFunction =
-    authorised(AuthProviders(GovernmentGateway))
+  private def authorise(): AuthorisedFunction = authorised(AuthProviders(PrivilegedApplication))
 
 }

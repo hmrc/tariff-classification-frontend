@@ -132,5 +132,5 @@ GET         /cases/v2/:reference/attachments/remove             controllers.v2.A
 POST        /cases/v2/:reference/attachments/remove             controllers.v2.AttachmentsController.confirmRemoveAttachment(reference: String, fileId: String, fileName: String)
 
 
-GET         /cases/cache/:reference             controllers.TabCacheController.get(reference: String)
-POST        /cases/cache/:reference/:anchor             controllers.TabCacheController.post(reference: String, anchor: String)
+GET        /cases/cache/:reference/:itemType                    controllers.TabCacheController.get(reference: String, itemType: String)
+POST       /cases/cache/:reference/:itemType                    controllers.TabCacheController.post(reference: String, itemType: String)
