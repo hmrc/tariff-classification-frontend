@@ -177,6 +177,7 @@ object ViewMatchers {
   def containElementWithID(id: String) = new ContainElementWithIDMatcher(id)
   def containElementWithAttribute(key: String, value: String) = new ContainElementWithAttribute(key, value)
   def containElementWithTag(tag: String) = new ContainElementWithTagMatcher(tag)
+  def containElementWithClass(classz: String) = containElementWithAttribute("class", classz)
   def containText(text: String) = new ElementContainsTextMatcher(text)
   def haveClass(text: String) = new ElementHasClassMatcher(text)
   def containHtml(text: String) = new ElementContainsHtmlMatcher(text)

@@ -25,7 +25,7 @@ import play.api.http.Status
 import play.api.mvc.{BodyParsers, MessagesControllerComponents}
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
+import uk.gov.hmrc.play.test.UnitSpec
 import config.AppConfig
 import models.forms.LiabilityForm
 import models.{Permission, _}
@@ -60,7 +60,8 @@ class CreateLiabilityControllerSpec extends UnitSpec with Matchers with GuiceOne
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
-      contentAsString(result) shouldBe create_liability(LiabilityForm.newLiabilityForm)(request, messageApi.messagesApi.preferred(request), appConfig).toString()
+      contentAsString(result) shouldBe create_liability(
+        LiabilityForm.newLiabilityForm)(request, messageApi.messagesApi.preferred(request), appConfig).toString()
     }
   }
 
@@ -86,8 +87,10 @@ class CreateLiabilityControllerSpec extends UnitSpec with Matchers with GuiceOne
     }
 
     "redirect on success" in {
-      given(casesService.createCase(any[LiabilityOrder])(any[HeaderCarrier])).willReturn(successful(aCase(withReference("reference"))))
+      given(casesService.createCase(any[LiabilityOrder])(any[HeaderCarrier]))
+        .willReturn(successful(aCase(withReference("reference"))))
       val request = newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody(
+        "item-name" -> "item name",
         "trader-name" -> "Trader",
         "liability-status" -> "LIVE"
       )

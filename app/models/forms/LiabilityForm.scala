@@ -25,17 +25,20 @@ import models.LiabilityStatus.LiabilityStatus
 
 object LiabilityForm {
 
-  private val form2Liability: (String, LiabilityStatus) => LiabilityOrder = {
-    case (traderName, status) =>
-      LiabilityOrder(Contact("", "", None), status, traderName, None, None, None)
+  private val form2Liability: (String, String, LiabilityStatus) => LiabilityOrder = {
+    case (itemName, traderName, status) =>
+      LiabilityOrder(Contact("", "", None), status, traderName, Some(itemName), None, None)
   }
 
-  private val liability2Form: LiabilityOrder => Option[(String, LiabilityStatus)] = liability => Some((liability.traderName, liability.status))
+  private val liability2Form: LiabilityOrder => Option[(String, String, LiabilityStatus)] = liability =>
+    Some((liability.goodName.getOrElse(""), liability.traderName, liability.status))
 
   val newLiabilityForm: Form[LiabilityOrder] = Form(
     mapping(
+      "item-name" -> textNonEmpty("error.empty.item-name"),
       "trader-name" -> textNonEmpty("error.empty.trader-name"),
-      "liability-status" -> textTransformingTo[LiabilityStatus](errorKey = "error.empty.liability-status", reader = LiabilityStatus.withName, writer = _.toString)
+      "liability-status" -> textTransformingTo[LiabilityStatus](errorKey = "error.empty.liability-status",
+        reader = LiabilityStatus.withName, writer = _.toString)
     )(form2Liability)(liability2Form)
   )
 

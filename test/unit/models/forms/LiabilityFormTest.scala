@@ -22,63 +22,97 @@ import models.{Contact, LiabilityOrder, LiabilityStatus}
 class LiabilityFormTest extends UnitSpec {
 
   "Bind from request" should {
-    "Bind empty" in {
+    "Bind an empty form" in {
       val form = LiabilityForm.newLiabilityForm.bindFromRequest(Map())
 
       form.hasErrors shouldBe true
-      form.errors should have(size(2))
+      form.errors should have(size(3))
     }
 
-    "Bind blank" in {
+    "Bind a blank form" in {
       val form = LiabilityForm.newLiabilityForm.bindFromRequest(Map(
         "liability-status" -> Seq(""),
-        "trader-name" -> Seq("")
+        "trader-name" -> Seq(""),
+        "item-name" -> Seq("")
       ))
 
       form.hasErrors shouldBe true
-      form.errors should have(size(2))
+      form.errors should have(size(3))
     }
 
-    "Bind valid form" in {
+    "Bind a valid form" in {
       val form = LiabilityForm.newLiabilityForm.bindFromRequest(Map(
         "liability-status" -> Seq("LIVE"),
-        "trader-name" -> Seq("Name")
+        "trader-name" -> Seq("trader name"),
+        "item-name" -> Seq("item name")
       ))
 
       form.hasErrors shouldBe false
       form.get shouldBe LiabilityOrder(
         contact = Contact(name = "", email = ""),
         status = LiabilityStatus.LIVE,
-        traderName = "Name"
+        traderName = "trader name",
+        goodName = Some("item name")
       )
     }
 
     "Bind invalid status" in {
       val form = LiabilityForm.newLiabilityForm.bindFromRequest(Map(
         "liability-status" -> Seq("other"),
-        "trader-name" -> Seq("Name")
+        "trader-name" -> Seq("Name"),
+        "item-name" -> Seq("item name")
       ))
 
       form.hasErrors shouldBe true
       form.errors should have(size(1))
+      //TODO get message for messages
+      form.errors.head.message shouldBe "Invalid entry"
+    }
+
+    "Bind invalid trader name" in {
+      val form = LiabilityForm.newLiabilityForm.bindFromRequest(Map(
+        "liability-status" -> Seq("LIVE"),
+        "trader-name" -> Seq(""),
+        "item-name" -> Seq("item name")
+      ))
+
+      form.hasErrors shouldBe true
+      form.errors should have(size(1))
+      //TODO get message for messages
+      form.errors.head.message shouldBe "error.empty.trader-name"
+    }
+
+    "Bind invalid item name" in {
+      val form = LiabilityForm.newLiabilityForm.bindFromRequest(Map(
+        "liability-status" -> Seq("LIVE"),
+        "trader-name" -> Seq("trader"),
+        "item-name" -> Seq("")
+      ))
+
+      form.hasErrors shouldBe true
+      form.errors should have(size(1))
+      //TODO get message for messages
+      form.errors.head.message shouldBe "error.empty.item-name"
     }
   }
 
   "Fill" should {
 
-    "populate" in {
+    "populate a correct form" in {
       val form = LiabilityForm.newLiabilityForm.fill(
         LiabilityOrder(
           contact = Contact(name = "", email = ""),
           status = LiabilityStatus.LIVE,
-          traderName = "Name"
+          traderName = "Name",
+          goodName = Some("item name")
         )
       )
 
       form.hasErrors shouldBe false
       form.data shouldBe Map(
         "liability-status" -> "LIVE",
-        "trader-name" -> "Name"
+        "trader-name" -> "Name",
+        "item-name" -> "item name"
       )
     }
   }
