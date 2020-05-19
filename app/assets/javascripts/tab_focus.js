@@ -19,7 +19,7 @@ function saveAnchor(button, url, csrf) {
 }
 
 // get
-function getAnchor(targetURL, callback, csrf) {
+function getAnchor(targetURL, csrf) {
     let xhr = new XMLHttpRequest();
     xhr.open("GET", targetURL, true);
     xhr.setRequestHeader('Csrf-Token', csrf);
@@ -27,7 +27,7 @@ function getAnchor(targetURL, callback, csrf) {
     xhr.onload = function () {
         if (xhr.readyState === xhr.DONE) {
             if (xhr.status === 200) {
-                callback(xhr.responseText)
+                setLocation(xhr.responseText)
             }
         }
     };
@@ -37,7 +37,7 @@ function getAnchor(targetURL, callback, csrf) {
 
 function setLocation(anchor) {
     if (anchor && anchor.toString().startsWith("#")) {
-        let ourElement = document.getElementById(anchor)
+        let ourElement = document.getElementById(anchor.toString().substr(1))
         if (ourElement) {
             window.location.hash = anchor;
         }
@@ -46,8 +46,8 @@ function setLocation(anchor) {
 
 function fixAnchorInURL(targetURL, csrf) {
     let anchor = window.location.hash
-    if (anchor && anchor.toString() !== "") {
+    if (anchor.toString() === "") {
         //no anchor in url
-        getAnchor(targetURL, setLocation, csrf)
+        getAnchor(targetURL, csrf)
     }
 }

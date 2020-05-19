@@ -19,6 +19,7 @@ package controllers
 import connector.DataCacheConnector
 import controllers.actions.{DataRetrievalAction, IdentifierAction}
 import javax.inject.{Inject, Singleton}
+import play.api.Logger
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.http.cache.client.CacheMap
@@ -41,10 +42,15 @@ class TabCacheController @Inject()(
       implicit request =>
         val anchor = request.body.asText.getOrElse("")
         if (anchor.trim.nonEmpty) {
-          val key = reference + itemType.toLowerCase
-          val map: Map[String, JsValue] = Map(key -> Json.toJson(anchor))
-          val cacheMap = new CacheMap(request.internalId, map)
-          dataCacheConnector.save(cacheMap)
+          Tab.findEnum(anchor) match {
+            case Some(_) =>
+              val key = reference + itemType.toLowerCase
+              val map: Map[String, JsValue] = Map(key -> Json.toJson(anchor))
+              val cacheMap = new CacheMap(request.internalId, map)
+              dataCacheConnector.save(cacheMap)
+            case _ =>
+              Logger.warn(s"Can't find [$anchor] in tab list!")
+          }
         }
 
         Future.successful(Ok("Ok"))

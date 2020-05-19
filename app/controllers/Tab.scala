@@ -25,4 +25,8 @@ object Tab extends Enumeration {
   val KEYWORDS_TAB = Value("keywords_tab")
 
   implicit def toString(value: Value): String = value.toString
+
+  def findEnum(enumString: String): Option[Tab.Value] =
+    Tab.values.find(element => "#" + element.toLowerCase() == enumString.toLowerCase())
+
 }

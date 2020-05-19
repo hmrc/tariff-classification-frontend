@@ -45,10 +45,8 @@ class AuthenticatedIdentifierAction @Inject()(
 
     authorise().retrieve(Retrievals.internalId) {
       case Some(internalId: String) =>
-        Logger.info("Found internalID, it is GG login!")
         block(IdentifierRequest(request, internalId))
       case _ =>
-        Logger.info("Can't find internalID, use sessionID!")
         val sessionID = hc.sessionId match {
           case Some(value) =>
             value.value
