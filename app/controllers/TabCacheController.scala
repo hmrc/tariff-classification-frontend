@@ -42,7 +42,7 @@ class TabCacheController @Inject()(
       implicit request =>
         val anchor = request.body.asText.getOrElse("")
         if (anchor.trim.nonEmpty) {
-          Tab.findEnum(anchor) match {
+          Tab.findAnchorInEnum(anchor) match {
             case Some(_) =>
               val key = reference + itemType.toLowerCase
               val map: Map[String, JsValue] = Map(key -> Json.toJson(anchor))
