@@ -16,31 +16,10 @@
 
 package models
 
-import pages.{DataPage, QuestionPage}
-import play.api.libs.json._
 import uk.gov.hmrc.http.cache.client.CacheMap
 import utils.Enumerable
 
 case class UserAnswers(cacheMap: CacheMap) extends Enumerable.Implicits {
-
-  def get[A](page: DataPage[A])(implicit rds: Reads[A]): Option[A] =
-    cacheMap.getEntry[A](page)
-
-  def set[A](page: QuestionPage[A], value: A)(implicit writes: Writes[A]): UserAnswers = {
-    val updatedAnswers = UserAnswers(cacheMap copy (data = cacheMap.data + (page.toString -> Json.toJson(value))))
-
-    page.cleanup(Some(value), updatedAnswers)
-  }
-
-  def set[A](page: DataPage[A], value: A)(implicit writes: Writes[A]): UserAnswers = {
-    UserAnswers(cacheMap copy (data = cacheMap.data + (page.toString -> Json.toJson(value))))
-  }
-
-  def remove[A](page: QuestionPage[A]): UserAnswers = {
-    val updatedAnswers = UserAnswers(cacheMap copy (data = cacheMap.data - page))
-
-    page.cleanup(None, updatedAnswers)
-  }
 }
 
 object UserAnswers {
