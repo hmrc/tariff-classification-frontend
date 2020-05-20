@@ -17,14 +17,19 @@
 package controllers.actions
 
 import com.google.inject.Inject
+import config.AppConfig
+import connector.StrideAuthConnector
+import controllers.routes
 import models.request.IdentifierRequest
-import play.api.Logger
+import play.api.{Configuration, Environment, Logger}
+import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import uk.gov.hmrc.auth.core.AuthProvider.PrivilegedApplication
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
+import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -33,8 +38,11 @@ trait IdentifierAction extends ActionBuilder[IdentifierRequest, AnyContent] with
 class AuthenticatedIdentifierAction @Inject()(
                                                override val authConnector: AuthConnector,
                                                cc: ControllerComponents,
+                                               appConfig: AppConfig,
+                                               override val config: Configuration,
+                                               override val env: Environment,
                                              )(implicit ec: ExecutionContext)
-  extends IdentifierAction with AuthorisedFunctions {
+  extends IdentifierAction with AuthorisedFunctions with AuthRedirects {
 
   override val parser: BodyParser[AnyContent] = cc.parsers.defaultBodyParser
   override protected val executionContext: ExecutionContext = cc.executionContext
@@ -56,6 +64,14 @@ class AuthenticatedIdentifierAction @Inject()(
         }
 
         block(IdentifierRequest(request, sessionID))
+    } recover {
+      case _: NoActiveSession => toStrideLogin(
+        if (appConfig.runningAsDev) s"http://${request.host}${request.uri}"
+        else s"${request.uri}"
+      )
+      case e: AuthorisationException =>
+        Logger.info("Auth Failed", e)
+        Redirect(routes.SecurityController.unauthorized())
     }
   }
 
