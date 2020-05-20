@@ -62,9 +62,10 @@ class TabCacheController @Inject()(
 
         lazy val defaultTab: String = if (itemType.toLowerCase.equals("liability")) "#c592_tab" else ""
 
-        dataCacheConnector.fetch(request.internalId).map {
-          case Some(value) => Ok(value.getEntry[String](reference + itemType.toLowerCase).getOrElse(defaultTab))
-          case _ => Ok(defaultTab)
+        dataCacheConnector.fetch(request.internalId).flatMap {
+          case Some(value) => dataCacheConnector.remove(value).map(_ =>
+            Ok(value.getEntry[String](reference + itemType.toLowerCase).getOrElse(defaultTab)))
+          case _ => Future.successful(Ok(defaultTab))
         }
       }
     }

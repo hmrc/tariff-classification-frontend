@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import views.html.helper.CSRF
 @import models.request.AuthenticatedRequest
 
 @(
@@ -28,13 +27,3 @@
 <div class="form-group" id="@idOfElement-buttons">
     <a class="button" role="button" id="@idOfElement-button" href="@href">@buttonText</a>
 </div>
-
-@if(itemType == "Liability") {
-    <script>
-                let url = "@routes.TabCacheController.post(caseReference, itemType).url";
-                let csrf = "@CSRF.getToken.value";
-                let button = document.getElementById("@idOfElement" + "-button");
-
-                saveAnchor(button, url, csrf);
-    </script>
-}
