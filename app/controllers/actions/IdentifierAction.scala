@@ -18,7 +18,6 @@ package controllers.actions
 
 import com.google.inject.Inject
 import config.AppConfig
-import connector.StrideAuthConnector
 import controllers.routes
 import models.request.IdentifierRequest
 import play.api.{Configuration, Environment, Logger}
@@ -59,8 +58,7 @@ class AuthenticatedIdentifierAction @Inject()(
           case Some(value) =>
             value.value
           case _ =>
-            //TODO change exception name or type or object or whatever
-            throw new RuntimeException("Unable to retrieve session ID!")
+            throw new MissingSessionIdException("Unable to retrieve session ID")
         }
 
         block(IdentifierRequest(request, sessionID))

@@ -19,6 +19,7 @@ package controllers.actions
 import base.SpecBase
 import controllers.routes
 import play.api.mvc._
+import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.authorise.Predicate
@@ -117,6 +118,28 @@ class AuthActionSpec extends SpecBase {
       }
     }
 
+    "internalId" must {
+      "be present in IdentifierAction when it is available from AuthConnector" in {
+        val result = handleAuth(Some("internalId"), fakeRequest)
+
+        status(result) shouldBe OK
+        await(bodyOf(result)(mat)) shouldBe "internalId"
+      }
+
+      "not be present in IdentifierAction when it is not available from AuthConnector" in {
+        assertThrows[MissingSessionIdException](await(handleAuth(None, fakeRequest)))
+      }
+
+    }
+
+    "sessionId" must {
+      "be present if internalId is missing" in {
+        val result = handleAuth(None, fakeRequestWithSessionId("sessionID"))
+
+        status(result) shouldBe OK
+        await(bodyOf(result)(mat)) shouldBe "sessionID"
+      }
+    }
   }
 
   private def beTheLoginPage = {
@@ -135,10 +158,24 @@ class AuthActionSpec extends SpecBase {
     controller.onPageLoad()(fakeRequest)
   }
 
+  private def handleAuth(internalId: Option[String], request: FakeRequest[AnyContent]): Future[Result] = {
+    val authAction = new AuthenticatedIdentifierAction(
+      new FakeAuthConnector(internalId),
+      cc,
+      appConfig,
+      config,
+      env
+    )
+    val controller = new Harness(authAction)
+    controller.onPageLoadWithInternalId()(request)
+  }
+
   private class Harness(authAction: IdentifierAction) extends BaseController {
     def onPageLoad(): Action[AnyContent] = authAction { _ => Ok }
 
     override protected def controllerComponents: ControllerComponents = cc
+
+    def onPageLoadWithInternalId(): Action[AnyContent] = authAction { request => Ok(request.internalId) }
   }
 
 }
@@ -148,6 +185,15 @@ class FakeFailingAuthConnector(exceptionToReturn: Throwable) extends AuthConnect
   override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])
                            (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] = {
     Future.failed(exceptionToReturn)
+  }
+
+}
+
+class FakeAuthConnector(internalId: Option[String]) extends AuthConnector {
+
+  override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])
+                           (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] = {
+    Future.successful(internalId.asInstanceOf[A])
   }
 
 }

@@ -16,6 +16,7 @@
 
 package base
 
+import akka.stream.Materializer
 import config.AppConfig
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
@@ -26,6 +27,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.Files.TemporaryFileCreator
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.FakeRequest
+import uk.gov.hmrc.http.SessionKeys
 import uk.gov.hmrc.play.test.UnitSpec
 
 trait SpecBase extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar {
@@ -45,10 +47,15 @@ trait SpecBase extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar {
 
   def fakeRequest = FakeRequest()
 
+  def fakeRequestWithSessionId(sessionId: String) = FakeRequest().withSession(
+    SessionKeys.sessionId -> sessionId)
+
   def messages: Messages = messagesApi.preferred(fakeRequest)
 
   def messagesApi: MessagesApi = injector.instanceOf[MessagesApi]
 
   def tempFileCreator: TemporaryFileCreator = injector.instanceOf[TemporaryFileCreator]
+
+  val mat: Materializer = injector.instanceOf[Materializer]
 
 }
