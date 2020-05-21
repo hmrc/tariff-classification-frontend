@@ -232,7 +232,7 @@ class CaseControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSuite
     }
 
     "displays an error when no case note is provided" in {
-      val aValidForm = newFakePOSTRequestWithCSRF(fakeApplication, Map())
+      val aValidForm = newFakePOSTRequestWithCSRF(fakeApplication)
       given(eventService.getEvents(refEq(aCase.reference), refEq(NoPagination()))(any[HeaderCarrier])) willReturn successful(Paged.empty[Event])
       given(queueService.getAll) willReturn successful(Seq.empty)
 
@@ -295,7 +295,7 @@ class CaseControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSuite
     }
 
     "displays an error when no keyword is provided" in {
-      val aValidForm = newFakePOSTRequestWithCSRF(fakeApplication, Map())
+      val aValidForm = newFakePOSTRequestWithCSRF(fakeApplication)
       given(keywordsService.autoCompleteKeywords).willReturn(successful(Seq()))
 
       val result = controller(aCase, Set(Permission.KEYWORDS)).addKeyword(aCase.reference)(aValidForm)
@@ -318,7 +318,7 @@ class CaseControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSuite
     }
 
     "redirect unauthorised when does not have right permissions" in {
-      val aValidForm = newFakePOSTRequestWithCSRF(fakeApplication, Map())
+      val aValidForm = newFakePOSTRequestWithCSRF(fakeApplication)
       val result = controller(aCase, Set.empty).addKeyword(aCase.reference)(aValidForm)
 
       status(result) shouldBe Status.SEE_OTHER
