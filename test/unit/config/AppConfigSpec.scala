@@ -107,7 +107,7 @@ class AppConfigSpec extends UnitSpec with MockitoSugar with GuiceOneAppPerSuite 
     }
 
     "build new-liability-details" in {
-      appConf.newLiabilityDetails shouldBe false
+      appConf.newLiabilityDetails shouldBe true
     }
   }
 
