@@ -34,7 +34,7 @@ class TabCacheController @Inject()(
                                     identify: IdentifierAction,
                                     getData: DataRetrievalAction,
                                     verify: RequestActions,
-                                    mcc: MessagesControllerComponents,
+                                    mcc: MessagesControllerComponents
                                   ) extends FrontendController(mcc) {
 
   def post(reference: String, itemType: String): Action[AnyContent] =
