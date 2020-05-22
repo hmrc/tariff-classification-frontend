@@ -46,6 +46,17 @@ class AuthenticatedIdentifierAction @Inject()(
   override val parser: BodyParser[AnyContent] = cc.parsers.defaultBodyParser
   override protected val executionContext: ExecutionContext = cc.executionContext
 
+  private def getSessionFromHeaderCarrier(hc: HeaderCarrier): String = {
+    hc.sessionId match {
+      case Some(value) =>
+        value.value
+      case _ =>
+        throw new MissingSessionIdException("Unable to retrieve session ID")
+    }
+  }
+
+  private def authorise(): AuthorisedFunction = authorised(AuthProviders(PrivilegedApplication))
+
   override def invokeBlock[A](request: Request[A], block: IdentifierRequest[A] => Future[Result]): Future[Result] = {
 
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
@@ -54,14 +65,7 @@ class AuthenticatedIdentifierAction @Inject()(
       case Some(internalId: String) =>
         block(IdentifierRequest(request, internalId))
       case _ =>
-        val sessionID = hc.sessionId match {
-          case Some(value) =>
-            value.value
-          case _ =>
-            throw new MissingSessionIdException("Unable to retrieve session ID")
-        }
-
-        block(IdentifierRequest(request, sessionID))
+        block(IdentifierRequest(request, getSessionFromHeaderCarrier(hc)))
     } recover {
       case _: NoActiveSession => toStrideLogin(
         if (appConfig.runningAsDev) s"http://${request.host}${request.uri}"
@@ -72,7 +76,4 @@ class AuthenticatedIdentifierAction @Inject()(
         Redirect(routes.SecurityController.unauthorized())
     }
   }
-
-  private def authorise(): AuthorisedFunction = authorised(AuthProviders(PrivilegedApplication))
-
 }
