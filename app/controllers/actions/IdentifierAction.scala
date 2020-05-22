@@ -39,7 +39,7 @@ class AuthenticatedIdentifierAction @Inject()(
                                                cc: ControllerComponents,
                                                appConfig: AppConfig,
                                                override val config: Configuration,
-                                               override val env: Environment,
+                                               override val env: Environment
                                              )(implicit ec: ExecutionContext)
   extends IdentifierAction with AuthorisedFunctions with AuthRedirects {
 
