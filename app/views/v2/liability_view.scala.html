@@ -41,7 +41,8 @@
         activity_tab: views.html.partials.liabilities.activity_tab,
         attachments_details: views.html.partials.liabilities.attachments_details,
         case_action_buttons_partial: views.html.partials.liabilities.case_action_buttons_partial,
-        keywords_tab: views.html.v2.keywords_details
+        keywords_tab: views.html.v2.keywords_details,
+        appeal_tab: views.html.v2.appeal_tab
 )
 
 @(
@@ -60,11 +61,12 @@
 
         //keywords
         keywordsTabViewModel: KeywordsTabViewModel,
-        keywordForm: Form[String]
+        keywordForm: Form[String],
 
         //appeal
-      //  appealTabViewModel: Option[AppealTabViewModel]
+        appealTabViewModel: Option[AppealTabViewModel]
 )(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+
 @main(bodyClasses = None, customTitle = Some(messages("case.v2.liaiblity.page_title"))) {
 
     @case_heading(liabilityViewModel.caseHeaderViewModel)
@@ -115,6 +117,7 @@
                 </li>
             }
 
+            @* keywords*@
             @if(liabilityViewModel.showRulingAndKeywordsTabs) {
             <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
                 <a class="govuk-tabs__tab" href="#keywords_tab">
@@ -123,14 +126,15 @@
             </li>
             }
 
-@*            @if(appealTabViewModel.isDefined) {*@
-@*                <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">*@
-@*                    <a class="govuk-tabs__tab" href="#appeal_tab">*@
-@*                        TODO  messages*@
-@*                    @messages("case.v2.liability.")*@
-@*                    </a>*@
-@*                </li>*@
-@*            }*@
+            @* appeal*@
+            @if(appealTabViewModel.isDefined) {
+                <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
+                    <a class="govuk-tabs__tab" href="#appeal_tab">
+                        TODO  messages
+                    @messages("case.v2.liability.")
+                    </a>
+                </li>
+            }
 
         </ul>
 
@@ -173,17 +177,19 @@
             </div>
         }
 
+        @* keywords*@
         @if(liabilityViewModel.showRulingAndKeywordsTabs) {
         <div class="govuk-tabs__panel" id="keywords_tab">
             @keywords_tab(keywordsTabViewModel, keywordForm)
         </div>
         }
 
-@*        @if(appealTabViewModel.isDefined) {*@
-@*        <div class="govuk-tabs__panel" id="appeal_tab">*@
-@*//            @keywords_tab(keywordsTabViewModel, keywordForm)*@
-@*        </div>*@
-@*        }*@
+        @* appeal*@
+        @if(appealTabViewModel.isDefined) {
+        <div class="govuk-tabs__panel" id="appeal_tab">
+            @appeal_tab(appealTabViewModel.get)
+        </div>
+        }
 
     </div>
 }

@@ -26,6 +26,65 @@
 
 @(appealTabViewModel: AppealTabViewModel)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@tab_heading("appeals", messages("appeals"))
+@tab_heading("appeal", messages("case.menu.appeal"))
+
+<p>If this ruling is reviewed or appealed, update the status here.</p>
+
+
+@defining(appealTabViewModel.appeals) { appeals: Seq[Appeal] =>
+ <table id="appeal_details">
+  <tbody>
+   @for((appeal: Appeal, index: Int) <- appeals.sortWith((a, b) => a.`type`.id < b.`type`.id).zipWithIndex) {
+    <tr id="appeal_details-@{index}" class="grid-row mb-2">
+     <th id="appeal_details-@{index}-type" class="bold w-40">
+      @AppealType.format(appeal.`type`) status
+     </th>
+     <td id="appeal_details-@{index}-status" class=" w-30">
+     @AppealStatus.format(appeal.`type`, appeal.status)
+     </td>
+     <td class="w-30">
+     @if(request.hasPermission(Permission.APPEAL_CASE)) {
+      <a id="appeal_details-@{index}-change-status" aria-label="Change status of @AppealType.format(appeal.`type`) " href="@routes.AppealCaseController.changeStatus(appealTabViewModel.caseReference, appeal.id)">Change</a>
+     }
+     </td>
+    </tr>
+   }
+  </tbody>
+ </table>
+}
+
+@if(request.hasPermission(Permission.APPEAL_CASE)) {
+ <a id="appeal_details-add_new" class="button" role="button" href="@routes.AppealCaseController.chooseType(appealTabViewModel.caseReference)">Add a review or appeal</a>
+}
+
+@if(appealTabViewModel.applicationForExtendedUseButton.isDefined) {
+ <div id="appeal_details-extended_use" class="mt-5">
+  <p>This ruling has been cancelled.</p>
+  <p>If the holder applies for a period of extended use of the ruling, update the status here.</p>
+
+  <table>
+   <tbody>
+
+    <tr>
+     <th class="bold w-40">Application for extended use</th>
+     <td id="appeal_details-extended_use_status" class="w-30">
+     appealTabViewModel.applicationForExtendedUseButton.getOrElse("")
+
+
+     </td>
+     <td class="w-30">
+     @if(request.hasPermission(Permission.EXTENDED_USE)) {
+      <a id="appeal_details-extended_use-change" href="@routes.ExtendedUseCaseController.chooseStatus(appealTabViewModel.caseReference)">
+       Change
+      </a>
+     }
+     </td>
+    </tr>
+
+   </tbody>
+  </table>
+ </div>
+}
+
 
 

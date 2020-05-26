@@ -42,7 +42,7 @@ class AppealTabViewModelSpec extends UnitSpec {
         appeals = Seq(Appeal("id",
           AppealStatus.IN_PROGRESS,
           AppealType.APPEAL_TIER_1)),
-        Some(""),
+        None,
         false)
 
       appealTabViewModel shouldBe expected

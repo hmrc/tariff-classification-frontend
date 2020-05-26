@@ -37,7 +37,7 @@ object AppealTabViewModel {
 
     val yesNoLink: Option[String] =
       if (c.status == CaseStatus.CANCELLED && applicationForExtendedUse) Some("Yes")
-      else if (c.status == CaseStatus.CANCELLED && !applicationForExtendedUse) Some("No") else Some("")
+      else if (c.status == CaseStatus.CANCELLED && !applicationForExtendedUse) Some("No") else None
 
     AppealTabViewModel(c.reference,
       appealsDecision,
