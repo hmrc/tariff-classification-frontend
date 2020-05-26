@@ -16,28 +16,34 @@
 
 package models.viewmodels
 
-import java.time.Instant
-
-import models.{Appeal, Case, CaseStatus}
+import models._
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.Cases
-import utils.Cases.liabilityApplicationExample
 
 class AppealTabViewModelSpec extends UnitSpec {
 
-  val dummyCase: Case = Cases.aCaseWithCompleteDecision.copy(status = CaseStatus.COMPLETED)
-
-  val liabilityCaseExample = Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, decision = Some(), liabilityApplicationExample)
+  val dummyCase: Case = Cases.aCaseWithCompleteDecision.copy(
+    status = CaseStatus.COMPLETED,
+    decision = Some(Cases.decision.copy(
+      appeal = Seq(Appeal("id",
+        AppealStatus.IN_PROGRESS,
+        AppealType.APPEAL_TIER_1)),
+      cancellation = Some(Cancellation(CancelReason.ANNULLED, applicationForExtendedUse = true)))
+    )
+  )
 
   "AppealTabViewModel fromCase" should {
+
     "return an AppealTabViewModel when a case has been passed" in {
 
-      val appealTabViewModel = RulingViewModel.fromCase(dummyCase)
+      val appealTabViewModel = AppealTabViewModel.fromCase(dummyCase, Cases.operatorWithPermissions)
 
       val expected = AppealTabViewModel(caseReference = "123456",
-        appeals = Seq.empty,
-        showApplicationForExtendedUse = true,
-        permissionForExtendedUse = true)
+        appeals = Seq(Appeal("id",
+          AppealStatus.IN_PROGRESS,
+          AppealType.APPEAL_TIER_1)),
+        Some(""),
+        false)
 
       appealTabViewModel shouldBe expected
     }

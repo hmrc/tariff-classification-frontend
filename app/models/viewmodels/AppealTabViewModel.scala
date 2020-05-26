@@ -21,23 +21,28 @@ import models.{Appeal, Case, CaseStatus, Operator, Permission}
 case class AppealTabViewModel(
                                caseReference: String,
                                appeals: Seq[Appeal],
-                               showApplicationForExtendedUse: Boolean,
+                               applicationForExtendedUseButton: Option[String],
                                permissionForExtendedUse: Boolean
                              )
 
 object AppealTabViewModel {
 
   def fromCase(c: Case, operator: Operator): AppealTabViewModel = {
-    def appealCasePermissions: Boolean = operator.permissions.contains(Permission.APPEAL_CASE)
 
     val appealsDecision = c.decision.map(_.appeal).getOrElse(Seq.empty)
-    val x = c.decision.flatMap(_.cancellation).exists(_.applicationForExtendedUse)
-    val permissionForExtendedUse = c.status == CaseStatus.CANCELLED && appealCasePermissions
+
+    val applicationForExtendedUse = c.decision.flatMap(_.cancellation).exists(_.applicationForExtendedUse)
+
+    val showExtendedUseButton = c.status == CaseStatus.CANCELLED && operator.permissions.contains(Permission.APPEAL_CASE)
+
+    val yesNoLink: Option[String] =
+      if (c.status == CaseStatus.CANCELLED && applicationForExtendedUse) Some("Yes")
+      else if (c.status == CaseStatus.CANCELLED && !applicationForExtendedUse) Some("No") else Some("")
 
     AppealTabViewModel(c.reference,
       appealsDecision,
-      x,
-      permissionForExtendedUse)
+      applicationForExtendedUseButton = yesNoLink,
+      showExtendedUseButton)
   }
 }
 
