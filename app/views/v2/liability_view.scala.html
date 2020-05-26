@@ -61,6 +61,9 @@
         //keywords
         keywordsTabViewModel: KeywordsTabViewModel,
         keywordForm: Form[String]
+
+        //appeal
+      //  appealTabViewModel: Option[AppealTabViewModel]
 )(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 @main(bodyClasses = None, customTitle = Some(messages("case.v2.liaiblity.page_title"))) {
 
@@ -120,6 +123,15 @@
             </li>
             }
 
+@*            @if(appealTabViewModel.isDefined) {*@
+@*                <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">*@
+@*                    <a class="govuk-tabs__tab" href="#appeal_tab">*@
+@*                        TODO  messages*@
+@*                    @messages("case.v2.liability.")*@
+@*                    </a>*@
+@*                </li>*@
+@*            }*@
+
         </ul>
 
         @* content*@
@@ -166,6 +178,12 @@
             @keywords_tab(keywordsTabViewModel, keywordForm)
         </div>
         }
+
+@*        @if(appealTabViewModel.isDefined) {*@
+@*        <div class="govuk-tabs__panel" id="appeal_tab">*@
+@*//            @keywords_tab(keywordsTabViewModel, keywordForm)*@
+@*        </div>*@
+@*        }*@
 
     </div>
 }

@@ -25,7 +25,8 @@ case class LiabilityViewModel(
                                showRulingAndKeywordsTabs: Boolean,
                                showChangeCaseStatus: Boolean,
                                showTakeOffReferral: Boolean,
-                               showReopen: Boolean
+                               showReopen: Boolean,
+                               showAppealTab: Boolean
                              ) {
 
   def showActionThisCase: Boolean = {
@@ -63,6 +64,9 @@ object LiabilityViewModel {
 
     def showReopenButton: Boolean = c.status == CaseStatus.SUSPENDED && reopenCasePermission
 
+    def showAppeal: Boolean =
+      c.status == CaseStatus.COMPLETED || c.status == CaseStatus.CANCELLED
+
     LiabilityViewModel(
       CaseHeaderViewModel.fromCase(c),
       isNewCase = isNew,
@@ -70,7 +74,8 @@ object LiabilityViewModel {
       showRulingAndKeywordsTabs = showRulingAndKeywords,
       showChangeCaseStatus = changeCaseStatus,
       showTakeOffReferral = takeOffReferral,
-      showReopen = showReopenButton
+      showReopen = showReopenButton,
+      showAppealTab = showAppeal
     )
   }
 }
