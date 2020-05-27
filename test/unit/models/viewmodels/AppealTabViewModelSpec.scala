@@ -47,5 +47,84 @@ class AppealTabViewModelSpec extends UnitSpec {
 
       appealTabViewModel shouldBe expected
     }
+
+    "create a viewModel with permissionForExtendedUse flag set to true" in {
+
+      val op = Cases.operatorWithPermissions.copy(permissions = Set(Permission.APPEAL_CASE))
+
+      val canceledCase = dummyCase.copy(status = CaseStatus.CANCELLED)
+
+      val appealTabViewModel = AppealTabViewModel.fromCase(canceledCase, op)
+
+      val expected = AppealTabViewModel(caseReference = "123456",
+        appeals = Seq(Appeal("id",
+          AppealStatus.IN_PROGRESS,
+          AppealType.APPEAL_TIER_1)),
+        Some("Yes"),
+        true)
+
+      appealTabViewModel shouldBe expected
+    }
+
+    "not create a viewModel with permissionForExtendedUse flag set to false and case is not canceled" in {
+
+      val op = Cases.operatorWithPermissions.copy(permissions = Set(Permission.APPEAL_CASE))
+
+      val completedCase = dummyCase.copy(status = CaseStatus.COMPLETED)
+
+      val appealTabViewModel = AppealTabViewModel.fromCase(completedCase, op)
+
+      val expected = AppealTabViewModel(caseReference = "123456",
+        appeals = Seq(Appeal("id",
+          AppealStatus.IN_PROGRESS,
+          AppealType.APPEAL_TIER_1)),
+        None,
+        false)
+
+      appealTabViewModel shouldBe expected
+    }
+
+    "not create a viewModel when request does not contain the required permissions" in {
+
+      val op = Cases.operatorWithPermissions.copy(permissions = Set(Permission.VIEW_CASES))
+
+      val completedCase = dummyCase.copy(status = CaseStatus.COMPLETED)
+
+      val appealTabViewModel = AppealTabViewModel.fromCase(completedCase, op)
+
+      val expected = AppealTabViewModel(caseReference = "123456",
+        appeals = Seq(Appeal("id",
+          AppealStatus.IN_PROGRESS,
+          AppealType.APPEAL_TIER_1)),
+        None,
+        false)
+
+      appealTabViewModel shouldBe expected
+    }
+
+    "not create a viewModel when applicationForExtendedUse is false" in {
+
+      val op = Cases.operatorWithPermissions.copy(permissions = Set(Permission.APPEAL_CASE))
+
+      val completedCase = dummyCase.copy(status = CaseStatus.CANCELLED,
+        decision = Some(Cases.decision.copy(
+          appeal = Seq(Appeal("id",
+            AppealStatus.IN_PROGRESS,
+            AppealType.APPEAL_TIER_1)),
+          cancellation = Some(Cancellation(CancelReason.ANNULLED)))
+        ))
+
+      val appealTabViewModel = AppealTabViewModel.fromCase(completedCase, op)
+
+      val expected = AppealTabViewModel(caseReference = "123456",
+        appeals = Seq(Appeal("id",
+          AppealStatus.IN_PROGRESS,
+          AppealType.APPEAL_TIER_1)),
+        Some("No"),
+        true)
+
+      appealTabViewModel shouldBe expected
+    }
+
   }
 }
