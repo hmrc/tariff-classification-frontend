@@ -197,6 +197,7 @@ case.liability.edit.contact.name=Name
 case.liability.edit.contact.email=Contact email
 case.liability.edit.contact.phone=Contact telephone
 case.liability.error.empty.trader-name=Enter a trader name
+case.liability.error.empty.good-name=Enter an item name
 case.liability.error.trader.email=Enter a trader email address in the correct format, like name@example.com
 case.liability.error.contact.email=Enter a contact email address in the correct format, like name@example.com
 case.liability.error.email=Enter an email address in the correct format, like name@example.com
