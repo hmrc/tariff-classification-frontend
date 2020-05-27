@@ -127,11 +127,10 @@
             }
 
             @* appeal*@
-            @if(appealTabViewModel.isDefined) {
+            @if(liabilityViewModel.showAppealTab) {
                 <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
                     <a class="govuk-tabs__tab" href="#appeal_tab">
-                        TODO  messages
-                    @messages("case.v2.liability.")
+                    @messages("case.v2.liability.appeals.tab_title")
                     </a>
                 </li>
             }
@@ -185,7 +184,7 @@
         }
 
         @* appeal*@
-        @if(appealTabViewModel.isDefined) {
+        @if(liabilityViewModel.showAppealTab) {
         <div class="govuk-tabs__panel" id="appeal_tab">
             @appeal_tab(appealTabViewModel.get)
         </div>

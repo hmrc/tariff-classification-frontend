@@ -49,6 +49,9 @@ object LiabilityViewModel {
     def reopenCasePermission: Boolean =
       operator.permissions.contains(Permission.REOPEN_CASE)
 
+    def appealCasePermission: Boolean =
+      operator.permissions.contains(Permission.APPEAL_CASE)
+
     def changeCaseStatus: Boolean =
       c.status == CaseStatus.OPEN && completeCasePermission
 
@@ -62,10 +65,11 @@ object LiabilityViewModel {
         c.status == CaseStatus.SUSPENDED ||
         c.status == CaseStatus.COMPLETED
 
-    def showReopenButton: Boolean = c.status == CaseStatus.SUSPENDED && reopenCasePermission
+    def showReopenButton: Boolean =
+      c.status == CaseStatus.SUSPENDED && reopenCasePermission
 
     def showAppeal: Boolean =
-      c.status == CaseStatus.COMPLETED || c.status == CaseStatus.CANCELLED
+      (c.status == CaseStatus.COMPLETED || c.status == CaseStatus.CANCELLED) && appealCasePermission
 
     LiabilityViewModel(
       CaseHeaderViewModel.fromCase(c),

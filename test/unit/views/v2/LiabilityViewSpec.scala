@@ -43,7 +43,7 @@ class LiabilityViewSpec extends ViewSpec {
 
   def keywordForm: Form[String] = KeywordForm.form
 
-  val emptyKeywordsTabViewModel = KeywordsTabViewModel("", Set.empty[String],Nil)
+  val emptyKeywordsTabViewModel = KeywordsTabViewModel("", Set.empty[String], Nil)
 
   val appealTabViewModel = Some(AppealTabViewModel(caseReference = "123456",
     appeals = Seq(Appeal("id",
@@ -249,6 +249,42 @@ class LiabilityViewSpec extends ViewSpec {
         appealTabViewModel
       ))
       doc should containElementWithID("sample_status_tab")
+    }
+
+    "render Appeals tab" in {
+      val c = aLiabilityCase(withReference("reference"), withStatus(CaseStatus.COMPLETED))
+
+      val doc = view(liabilityView(LiabilityViewModel.fromCase(c, Cases.operatorWithPermissions), None,
+        None,
+        sampleStatusTabViewModel,
+        Cases.activityTabViewModel,
+        activityForm,
+        None,
+        uploadAttachmentForm,
+        emptyKeywordsTabViewModel,
+        keywordForm,
+        appealTabViewModel
+      ))
+
+      doc should containElementWithID("appeal_tab")
+    }
+
+    "not render Appeals tab" in {
+      val c = aLiabilityCase(withReference("reference"), withStatus(CaseStatus.OPEN))
+
+      val doc = view(liabilityView(LiabilityViewModel.fromCase(c, Cases.operatorWithPermissions), None,
+        None,
+        sampleStatusTabViewModel,
+        Cases.activityTabViewModel,
+        activityForm,
+        None,
+        uploadAttachmentForm,
+        emptyKeywordsTabViewModel,
+        keywordForm,
+        appealTabViewModel
+      ))
+
+      doc shouldNot containElementWithID("appeal_tab")
     }
   }
 }
