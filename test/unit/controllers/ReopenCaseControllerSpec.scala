@@ -29,6 +29,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import config.AppConfig
 import models.{Case, CaseStatus, Operator, Permission}
+import play.api.inject.guice.GuiceApplicationBuilder
 import service.CasesService
 import utils.Cases
 
@@ -52,6 +53,12 @@ class ReopenCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   private implicit val mat: Materializer = fakeApplication.materializer
   private implicit val hc: HeaderCarrier = HeaderCarrier()
 
+  implicit lazy val appWithLiabilityToggleOff = new GuiceApplicationBuilder()
+    .configure("toggle.new-liability-details" -> false)
+    .build()
+
+  lazy val appConf: AppConfig = appWithLiabilityToggleOff.injector.instanceOf[AppConfig]
+
   override def afterEach(): Unit = {
     super.afterEach()
     reset(casesService)
@@ -59,6 +66,9 @@ class ReopenCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
   private def controller(c: Case) = new ReopenCaseController(
     new SuccessfulRequestActions(inject[BodyParsers.Default], operator, c = c), casesService, messageApi, appConfig)
+
+  private def controllerForOldLiabilities(c: Case) = new ReopenCaseController(
+    new SuccessfulRequestActions(inject[BodyParsers.Default], operator, c = c), casesService, messageApi, appConf)
 
   private def controller(requestCase: Case, permission: Set[Permission]) = new ReopenCaseController(
     new RequestActionsWithPermissions(inject[BodyParsers.Default], permission, c = requestCase), casesService, messageApi, appConfig)
@@ -92,7 +102,7 @@ class ReopenCaseControllerSpec extends WordSpec with Matchers with UnitSpec
       when(casesService.reopenCase(refEq(liabilityCaseWithStatusSuspended), any[Operator])(any[HeaderCarrier]))
         .thenReturn(successful(liabilityCaseWithStatusOpen))
 
-      val result: Result = await(controller(liabilityCaseWithStatusSuspended)
+      val result: Result = await(controllerForOldLiabilities(liabilityCaseWithStatusSuspended)
         .confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
 
       status(result) shouldBe Status.SEE_OTHER

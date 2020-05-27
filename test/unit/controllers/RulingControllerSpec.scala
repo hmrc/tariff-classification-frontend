@@ -64,18 +64,18 @@ class RulingControllerSpec extends UnitSpec
     Mockito.reset(casesService)
   }
 
-  private val appWithLiabilityToggle = new GuiceApplicationBuilder()
-    .configure("toggle.new-liability-details" -> true)
+  private val appWithLiabilityToggleOff = new GuiceApplicationBuilder()
+    .configure("toggle.new-liability-details" -> false)
     .build()
 
-  lazy val appConfWithLiabilityToggle: AppConfig = appWithLiabilityToggle.injector.instanceOf[AppConfig]
+  lazy val appConfWithLiabilityToggleOff: AppConfig = appWithLiabilityToggleOff.injector.instanceOf[AppConfig]
 
   private def controller(c: Case) = new RulingController(
-    new SuccessfulRequestActions(inject[BodyParsers.Default], operator, c = c), casesService, fileService, mapper, decisionForm, messagesControllerComponents,editLiabilityView, appConfig
+    new SuccessfulRequestActions(inject[BodyParsers.Default], operator, c = c), casesService, fileService, mapper, decisionForm, messagesControllerComponents,editLiabilityView, appConfWithLiabilityToggleOff
   )
 
   private def controller(requestCase: Case, permission: Set[Permission], appConf: AppConfig = appConfig) = new RulingController(
-    new RequestActionsWithPermissions(inject[BodyParsers.Default], permission, c = requestCase), casesService, fileService, mapper, decisionForm, messagesControllerComponents,editLiabilityView, appConf)
+    new RequestActionsWithPermissions(inject[BodyParsers.Default], permission, c = requestCase), casesService, fileService, mapper, decisionForm, messagesControllerComponents,editLiabilityView, appConfig)
 
   "Edit Ruling" should {
     val btiCaseWithStatusNEW = aCase(withBTIApplication, withReference("reference"), withStatus(CaseStatus.NEW))
@@ -105,7 +105,7 @@ class RulingControllerSpec extends UnitSpec
 
       "Case is an Liability under V2 toggle with correct permissions" in {
         given(commodityCodeConstraints.commodityCodeExistsInUKTradeTariff).willReturn(Constraint[String]("error")( _ =>  Valid))
-        val result = controller(liabilityCaseWithStatusOPEN, permission = Set(Permission.EDIT_RULING), appConf = appConfWithLiabilityToggle).editRulingDetails("reference")(newFakeGETRequestWithCSRF(fakeApplication))
+        val result = controller(liabilityCaseWithStatusOPEN, permission = Set(Permission.EDIT_RULING), appConf = appConfWithLiabilityToggleOff).editRulingDetails("reference")(newFakeGETRequestWithCSRF(fakeApplication))
         status(result) shouldBe Status.OK
         contentAsString(result) shouldNot (include("edit_liability_decision-heading"))
         contentAsString(result) should (include("case-heading"))
@@ -113,7 +113,7 @@ class RulingControllerSpec extends UnitSpec
 
       "Case is an Liability under V2 toggle with incorrect permissions" in {
         given(commodityCodeConstraints.commodityCodeExistsInUKTradeTariff).willReturn(Constraint[String]("error")( _ =>  Valid))
-        val result = controller(liabilityCaseWithStatusOPEN, permission = Set.empty[Permission], appConf = appConfWithLiabilityToggle).editRulingDetails("reference")(newFakeGETRequestWithCSRF(fakeApplication))
+        val result = controller(liabilityCaseWithStatusOPEN, permission = Set.empty[Permission], appConf = appConfWithLiabilityToggleOff).editRulingDetails("reference")(newFakeGETRequestWithCSRF(fakeApplication))
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result).get should include("unauthorized")
       }
@@ -188,7 +188,7 @@ class RulingControllerSpec extends UnitSpec
         locationOf(result) shouldBe Some(routes.CaseController.rulingDetails("reference").url)
       }
 
-      "Case is a Liability" in {
+      "Case is a Liability - old liability view" in {
         given(commodityCodeConstraints.commodityCodeExistsInUKTradeTariff).willReturn(Constraint[String]("error")( _ =>  Valid))
         given(casesService.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(updatedCase))
 
