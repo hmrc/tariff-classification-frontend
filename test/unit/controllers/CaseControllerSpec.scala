@@ -60,27 +60,27 @@ class CaseControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSuite
     new SuccessfulRequestActions(inject[BodyParsers.Default], operator, c = c),
     mock[CasesService], keywordsService, fileService,
     eventService, queueService, commodityCodeService,
-    decisionForm, countriesService, messageApi, appConfig
+    decisionForm, countriesService, messageApi, appConf
   )
 
   private def controller(c: Case, permission: Set[Permission]) = new CaseController(
     new RequestActionsWithPermissions(inject[BodyParsers.Default], permission, c = c),
     mock[CasesService], keywordsService, fileService,
     eventService, queueService, commodityCodeService,
-    decisionForm, countriesService, messageApi, appConfig
+    decisionForm, countriesService, messageApi, appConf
   )
 
-   implicit lazy val appWithLiabilityToggle = new GuiceApplicationBuilder()
-    .configure("toggle.new-liability-details" -> true)
+   implicit lazy val appWithLiabilityToggleOff = new GuiceApplicationBuilder()
+    .configure("toggle.new-liability-details" -> false)
     .build()
 
-  lazy val appConf: AppConfig = appWithLiabilityToggle.injector.instanceOf[AppConfig]
+  lazy val appConf: AppConfig = appWithLiabilityToggleOff.injector.instanceOf[AppConfig]
 
   private def controllerWithNewLiability(c: Case) = new CaseController(
     new SuccessfulRequestActions(inject[BodyParsers.Default], operator, c = c),
     mock[CasesService], keywordsService, fileService,
     eventService, queueService, commodityCodeService,
-    decisionForm, countriesService, messageApi, appConf
+    decisionForm, countriesService, messageApi, appConfig
   )
 
   private implicit val hc: HeaderCarrier = HeaderCarrier()

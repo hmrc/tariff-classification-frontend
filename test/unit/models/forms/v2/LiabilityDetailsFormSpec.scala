@@ -102,7 +102,7 @@ class LiabilityDetailsFormSpec extends UnitSpec with MockitoSugar {
     "traderCommodityCode" -> Seq("0200000000"),
     "officerCommodityCode" -> Seq("0100000000"),
     "btiReference" -> Seq("12345678"),
-    "repaymentClaim"-> Seq("true"),
+    "repaymentClaim" -> Seq("true"),
     "dateOfReceipt.day" -> Seq(day),
     "dateOfReceipt.month" -> Seq(month),
     "dateOfReceipt.year" -> Seq(year),
@@ -123,10 +123,9 @@ class LiabilityDetailsFormSpec extends UnitSpec with MockitoSugar {
         val form = LiabilityDetailsForm.liabilityDetailsForm(sampleEmptyCase, appConfig).bindFromRequest(emptyParams)
 
         form.hasErrors shouldBe true
-        form.errors should have(size(1))
-        form.errors.map(_.key) shouldBe Seq("traderName")
+        form.errors should have(size(2))
+        form.errors.map(_.key) shouldBe Seq("traderName", "goodName")
       }
-
     }
 
     "Bind valid form" when {
@@ -135,7 +134,27 @@ class LiabilityDetailsFormSpec extends UnitSpec with MockitoSugar {
         form.hasErrors shouldBe false
         form.get shouldBe sampleCase
       }
+    }
 
+    "fail to bind with correct error messages" when {
+
+      "trader name is empty" in {
+        val form = LiabilityDetailsForm.liabilityDetailsForm(sampleEmptyCase, appConfig).bindFromRequest(emptyParams)
+
+        form.fold(
+          errors => errors.error("traderName").map(_.message shouldBe "case.liability.error.empty.trader-name"),
+          _ => "form should not succeed"
+        )
+      }
+
+      "item name is empty" in {
+        val form = LiabilityDetailsForm.liabilityDetailsForm(sampleEmptyCase, appConfig).bindFromRequest(emptyParams)
+
+        form.fold(
+          errors => errors.error("goodName").map(_.message shouldBe "case.liability.error.empty.good-name"),
+          _ => "form should not succeed"
+        )
+      }
     }
   }
 
@@ -154,9 +173,6 @@ class LiabilityDetailsFormSpec extends UnitSpec with MockitoSugar {
         form.hasErrors shouldBe false
         form.get.application.asLiabilityOrder.repaymentClaim shouldBe sampleCase.application.asLiabilityOrder.repaymentClaim
       }
-
     }
   }
-
-
 }

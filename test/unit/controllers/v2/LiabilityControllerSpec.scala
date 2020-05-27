@@ -326,7 +326,7 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
             "entryDate" -> "",
             "entryNumber" -> "",
             "traderName" -> "mandatory-name",
-            "goodName" -> "",
+            "goodName" -> "item-name",
             "traderCommodityCode" -> "",
             "officerCommodityCode" -> "",
             "contactName" -> "",
