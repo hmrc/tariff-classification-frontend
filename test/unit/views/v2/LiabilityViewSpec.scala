@@ -252,9 +252,11 @@ class LiabilityViewSpec extends ViewSpec {
     }
 
     "render Appeals tab" in {
-      val c = aLiabilityCase(withReference("reference"), withStatus(CaseStatus.COMPLETED))
 
-      val doc = view(liabilityView(LiabilityViewModel.fromCase(c, Cases.operatorWithPermissions), None,
+      val c = aLiabilityCase(withReference("reference"), withStatus(CaseStatus.COMPLETED))
+      val op = Cases.operatorWithPermissions.copy(permissions = Set(Permission.APPEAL_CASE))
+
+      val doc = view(liabilityView(LiabilityViewModel.fromCase(c, op), None,
         None,
         sampleStatusTabViewModel,
         Cases.activityTabViewModel,

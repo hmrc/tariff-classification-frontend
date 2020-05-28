@@ -68,9 +68,7 @@
     <tr>
      <th class="bold w-40">Application for extended use</th>
      <td id="appeal_details-extended_use_status" class="w-30">
-     appealTabViewModel.applicationForExtendedUseButton.getOrElse("")
-
-
+     @appealTabViewModel.applicationForExtendedUseButton.getOrElse("")
      </td>
      <td class="w-30">
      @if(request.hasPermission(Permission.EXTENDED_USE)) {
