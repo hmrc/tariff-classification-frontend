@@ -132,7 +132,7 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers
     "Render Form errors" in {
       val c = aCase(withStatus(CaseStatus.COMPLETED), withDecision())
 
-      val request = newFakePOSTRequestWithCSRF(fakeApplication, Map())
+      val request = newFakePOSTRequestWithCSRF(fakeApplication)
       val result = await(controller(c).confirmType(c.reference)(request))
 
       status(result) shouldBe Status.OK
@@ -191,7 +191,7 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers
     "Render Form errors" in {
       val c = aCase(withStatus(CaseStatus.COMPLETED), withDecision())
 
-      val request = newFakePOSTRequestWithCSRF(fakeApplication, Map())
+      val request = newFakePOSTRequestWithCSRF(fakeApplication)
       val result = await(controller(c).confirmStatus(c.reference, AppealType.REVIEW.toString)(request))
 
       status(result) shouldBe Status.OK
@@ -253,7 +253,7 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers
       val appeal = Appeal("appeal-id", AppealStatus.IN_PROGRESS, AppealType.SUPREME_COURT)
       val c = aCase(withStatus(CaseStatus.COMPLETED), withDecision(appeal = Seq(appeal)))
 
-      val request = newFakePOSTRequestWithCSRF(fakeApplication, Map())
+      val request = newFakePOSTRequestWithCSRF(fakeApplication)
       val result = await(controller(c).confirmChangeStatus(c.reference, "appeal-id")(request))
 
       status(result) shouldBe Status.OK
