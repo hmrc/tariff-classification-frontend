@@ -21,13 +21,33 @@ class LiabilitySpec extends IntegrationTest with MockitoSugar {
           .withStatus(OK)
           .withBody(CasePayloads.jsonOf(liabilityCase)))
       )
+      givenAuthSuccess()
+      stubFor(post(urlEqualTo("/file?id="))
+        .willReturn(
+          aResponse()
+            .withStatus(OK)
+            .withBody("[]")
+        )
+      )
+      givenAuthSuccess()
+      stubFor(get(urlEqualTo(s"/events?case_reference=1&type=QUEUE_CHANGE&type=APPEAL_ADDED&type=APPEAL_STATUS_CHANGE&type=EXTENDED_USE_STATUS_CHANGE&type=CASE_STATUS_CHANGE&type=CASE_REFERRAL&type=NOTE&type=CASE_COMPLETED&type=CASE_CANCELLATION&type=ASSIGNMENT_CHANGE&page=1&page_size=${Pagination.unlimited}"))
+        .willReturn(aResponse()
+          .withStatus(OK)
+          .withBody(EventPayloads.pagedEvents))
+      )
+      givenAuthSuccess()
+      stubFor(get(urlEqualTo(s"/events?case_reference=1&type=SAMPLE_STATUS_CHANGE&type=SAMPLE_RETURN_CHANGE&page=1&page_size=${Pagination.unlimited}"))
+        .willReturn(aResponse()
+          .withStatus(OK)
+          .withBody(EventPayloads.pagedEmpty))
+      )
 
       // When
       val response = await(ws.url(s"$baseUrl/cases/1").get())
 
       // Then
       response.status shouldBe OK
-      response.body should include("id=\"liability-heading\"")
+      response.body should include("id=\"liability-entry-number\"")
     }
 
     "redirect on auth failure" in {
@@ -77,9 +97,9 @@ class LiabilitySpec extends IntegrationTest with MockitoSugar {
           .withStatus(OK)
           .withBody(EventPayloads.pagedEvents))
       )
+
       // When
       val response = await(ws.url(s"$baseUrl/cases/1/activity").get())
-
       // Then
       response.status shouldBe OK
       response.body should include("id=\"activity-heading\"")
