@@ -44,10 +44,11 @@ object FormDate {
   }
 
   private val validDateFormat: DateForm => Boolean = {
-    myDate => if (validateDayInDate(myDate) && validateMonthInDate(myDate) && validateYearInDate(myDate))
+    myDate => if (validateDayInDate(myDate) && validateMonthInDate(myDate) && validateYearInDate(myDate)) {
       Try(LocalDate.of(myDate.year.toInt, myDate.month.toInt, myDate.day.toInt)).isSuccess
-    else
+    } else {
       true
+    }
   }
 
   private def validateDayInDate: DateForm => Boolean = !_.day.trim.isEmpty

@@ -27,8 +27,14 @@ object TabIndexes {
   private val indexByPage: Map[CaseDetailPage, Int] = Map(
     TRADER -> pageTabIndexer.nextTabIndex(),
     LIABILITY -> pageTabIndexer.nextTabIndex() ,
-    APPLICATION_DETAILS -> pageTabIndexer.currentTabIndex(), SAMPLE_DETAILS -> pageTabIndexer.nextTabIndex(), ATTACHMENTS -> pageTabIndexer.nextTabIndex(),
-    ACTIVITY -> pageTabIndexer.nextTabIndex(), KEYWORDS -> pageTabIndexer.nextTabIndex(), RULING -> pageTabIndexer.nextTabIndex(), APPEAL -> pageTabIndexer.nextTabIndex())
+    APPLICATION_DETAILS -> pageTabIndexer.currentTabIndex(),
+    SAMPLE_DETAILS -> pageTabIndexer.nextTabIndex(),
+    ATTACHMENTS -> pageTabIndexer.nextTabIndex(),
+    ACTIVITY -> pageTabIndexer.nextTabIndex(),
+    KEYWORDS -> pageTabIndexer.nextTabIndex(),
+    RULING -> pageTabIndexer.nextTabIndex(),
+    APPEAL -> pageTabIndexer.nextTabIndex()
+  )
 
   def tabIndexFor: CaseDetailPage => Int = { page => indexByPage.getOrElse(page, 0) }
 

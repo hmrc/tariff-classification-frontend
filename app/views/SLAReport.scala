@@ -20,16 +20,22 @@ import models.Queue
 
 class SLAReport(histogram: Histogram) {
 
-  lazy val totalCount: Int = histogram.map.values.map(_.count).sum
+  lazy val totalCount: Int =
+    histogram.map.values.map(_.count).sum
 
-  def totalCountFor(queue: Queue): Int = histogram.getBuckets(Some(queue.id)).values.map(_.count).sum
+  def totalCountFor(queue: Queue): Int =
+    histogram.getBuckets(Some(queue.id)).values.map(_.count).sum
 
-  def totalCountFor(interval: HistogramBucketInterval): Int = histogram.getBuckets(interval).values.map(_.count).sum
+  def totalCountFor(interval: HistogramBucketInterval): Int =
+    histogram.getBuckets(interval).values.map(_.count).sum
 
-  def totalPercentFor(interval: HistogramBucketInterval): Int = Math.round(100 * totalCountFor(interval).toDouble / totalCount.toDouble).toInt
+  def totalPercentFor(interval: HistogramBucketInterval): Int =
+    Math.round(100 * totalCountFor(interval).toDouble / totalCount.toDouble).toInt
 
-  def totalCountFor(queue: Queue, interval: HistogramBucketInterval): Int  = histogram.getBucket(Some(queue.id), interval).map(_.count).getOrElse(0)
+  def totalCountFor(queue: Queue, interval: HistogramBucketInterval): Int =
+    histogram.getBucket(Some(queue.id), interval).map(_.count).getOrElse(0)
 
-  def totalPercentFor(queue: Queue, interval: HistogramBucketInterval): Int = Math.round(100 * totalCountFor(queue, interval).toDouble / totalCountFor(queue).toDouble).toInt
+  def totalPercentFor(queue: Queue, interval: HistogramBucketInterval): Int =
+    Math.round(100 * totalCountFor(queue, interval).toDouble / totalCountFor(queue).toDouble).toInt
 
 }

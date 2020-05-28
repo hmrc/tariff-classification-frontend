@@ -17,8 +17,8 @@
 package controllers
 
 import config.AppConfig
-import models.forms.{DecisionForm, LiabilityDetailsForm}
 import javax.inject.{Inject, Singleton}
+import models.forms.{DecisionForm, LiabilityDetailsForm}
 import models.request.AuthenticatedCaseRequest
 import models.{Case, Decision, _}
 import play.api.data.Form
@@ -54,15 +54,22 @@ class LiabilityController @Inject()(
     )
   }
 
-  def editLiabilityDetails(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.EDIT_LIABILITY)).async { implicit request =>
-    successful(
-      Ok(
-        views.html.partials.liabilities.liability_details_edit(request.`case`, LiabilityDetailsForm.liabilityDetailsForm(request.`case`))
+  def editLiabilityDetails(reference: String): Action[AnyContent] =
+    (verify.authenticated andThen
+      verify.casePermissions(reference) andThen
+      verify.mustHave(Permission.EDIT_LIABILITY)).async { implicit request =>
+      successful(
+        Ok(views.html.partials.liabilities.liability_details_edit(
+          request.`case`,
+          LiabilityDetailsForm.liabilityDetailsForm(request.`case`)
+        ))
       )
-    )
-  }
+    }
 
-  def postLiabilityDetails(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.EDIT_LIABILITY)).async { implicit request =>
+  def postLiabilityDetails(reference: String): Action[AnyContent] =
+    (verify.authenticated andThen
+      verify.casePermissions(reference) andThen
+      verify.mustHave(Permission.EDIT_LIABILITY)).async { implicit request =>
     LiabilityDetailsForm.liabilityDetailsForm(request.`case`).discardingErrors.bindFromRequest.fold(
       errorForm => successful(Ok(views.html.partials.liabilities.liability_details_edit(request.`case`, errorForm))),
       updatedCase => getCaseAndRedirect(menuTitle, c =>

@@ -90,7 +90,16 @@ object LiabilityDetailsForm extends Constraints {
         caseBoardsFileNumber = boardsFileNumber,
         application = existingCase.application.asLiabilityOrder.copy(
           traderName = traderName,
-          traderContactDetails = Some(TraderContactDetails(traderEmail, traderPhone, Some(Address(traderBuildingAndStreet.getOrElse(""), traderTownOrCity.getOrElse(""), traderCounty, traderPostcode)))),
+          traderContactDetails = Some(TraderContactDetails(
+            email = traderEmail,
+            phone = traderPhone,
+            address = Some(Address(
+              buildingAndStreet = traderBuildingAndStreet.getOrElse(""),
+              townOrCity = traderTownOrCity.getOrElse(""),
+              county = traderCounty,
+              postCode = traderPostcode
+            ))
+          )),
           btiReference = btiReference,
           repaymentClaim = if (isRepaymentClaim) Some(RepaymentClaim(dvrNumber = dvrNumber, dateForRepayment = dateForRepayment)) else None,
           dateOfReceipt = dateOfReceipt,
