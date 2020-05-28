@@ -47,10 +47,19 @@ class AppealCaseController @Inject()(
 
 
   def appealDetails(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
-    getCaseAndRenderView(
-      reference,
-      c => successful(views.html.case_details(c, CaseDetailPage.APPEAL, views.html.partials.appeal.appeal_details(c, startTabIndexForAppeals), activeTab = Some(ActiveTab.Appeals)))
-    )
+
+    request.`case`.application.`type` match {
+      case ApplicationType.BTI => getCaseAndRenderView(
+        reference,
+        c => successful(views.html.case_details(
+          c, CaseDetailPage.APPEAL, views.html.partials.appeal.appeal_details(
+            c, startTabIndexForAppeals), activeTab = Some(ActiveTab.Appeals)))
+      )
+
+      case ApplicationType.LIABILITY_ORDER => {
+        successful(Redirect(v2.routes.LiabilityController.displayLiability(reference).withFragment("appeal_tab")))
+      }
+    }
   }
 
   def chooseType(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)
