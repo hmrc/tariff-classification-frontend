@@ -28,6 +28,7 @@ import uk.gov.hmrc.play.test.UnitSpec
 import connector.FileStoreConnector
 import models._
 import models.response.{FileMetadata, ScanStatus}
+import org.mockito.Mockito
 import utils.Cases
 import utils.Cases._
 
@@ -76,9 +77,14 @@ class FileStoreServiceSpec extends UnitSpec with MockitoSugar {
       val c = aCase(withAnAttachmentWithId("1"))
       givenFileStoreReturnsAttachments(someMetadataWithId("1"))
 
-      await(service.getAttachments(c)) shouldBe Seq(
-        aStoredAttachmentWithId("1")
-      )
+      await(service.getAttachments(c)) shouldBe Seq(aStoredAttachmentWithId("1"))
+    }
+
+    "Return no Stored Attachments" in {
+      val c = aCase(withAnAttachmentWithId("1"), withAnAttachmentWithId("11"))
+      givenFileStoreReturnsAttachments(someMetadataWithId("2"), someMetadataWithId("22"))
+
+      await(service.getAttachments(c)) shouldBe Seq.empty
     }
 
     "Filter missing Attachments" in {
@@ -144,6 +150,20 @@ class FileStoreServiceSpec extends UnitSpec with MockitoSugar {
       given(connector.get("id")) willReturn Future.successful(Some(file))
       await(service.getFileMetadata("id")) shouldBe Some(file)
     }
+  }
+
+  "Service 'removeAttachment'" should {
+
+    "call the connector" in {
+      val id = "id"
+      val file = mock[FileMetadata]
+      given(connector.get(id)) willReturn Future.successful(Some(file))
+
+      service.removeAttachment(id)
+
+      Mockito.verify(connector).delete(id)
+    }
+
   }
 
   private def aStoredAttachmentWithId(id: String): StoredAttachment = {

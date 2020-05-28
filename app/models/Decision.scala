@@ -33,9 +33,7 @@ case class Decision
   appeal: Seq[Appeal] = Seq.empty,
   cancellation: Option[Cancellation] = None,
   explanation: Option[String] = None
-) {
-  def appeal(`type`: AppealType): Option[Appeal] = appeal.find(_.`type` == `type`)
-}
+)
 
 object Decision {
   def apply(): Decision = Decision(bindingCommodityCode = "", justification = "", goodsDescription = "")
