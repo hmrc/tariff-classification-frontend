@@ -14,21 +14,18 @@
  * limitations under the License.
  *@
 
-@import helper._
 @import config.AppConfig
 @import models.viewmodels.AppealTabViewModel
 @import models.request.AuthenticatedRequest
 @import views.html.partials.tab_heading
 
-
 @this()
-
 
 @(appealTabViewModel: AppealTabViewModel)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @tab_heading("appeal", messages("case.menu.appeal"))
 
-<p>If this ruling is reviewed or appealed, update the status here.</p>
+<p>@messages("case.v2.liability.appeals.tab_paragraph")</p>
 
 
 @defining(appealTabViewModel.appeals) { appeals: Seq[Appeal] =>
@@ -54,19 +51,19 @@
 }
 
 @if(request.hasPermission(Permission.APPEAL_CASE)) {
- <a id="appeal_details-add_new" class="button" role="button" href="@routes.AppealCaseController.chooseType(appealTabViewModel.caseReference)">Add a review or appeal</a>
+ <a id="appeal_details-add_new" class="button" role="button" href="@routes.AppealCaseController.chooseType(appealTabViewModel.caseReference)">@messages("case.v2.liability.appeal_tab.add_review_or_appeal")</a>
 }
 
 @if(appealTabViewModel.applicationForExtendedUseButton.isDefined) {
  <div id="appeal_details-extended_use" class="mt-5">
-  <p>This ruling has been cancelled.</p>
-  <p>If the holder applies for a period of extended use of the ruling, update the status here.</p>
+  <p>@messages("case.v2.liability.appeal_details-extended_use.canceled.paragraph")</p>
+  <p>@messages("case.v2.liability.appeal_details-extended_use.paragraph")</p>
 
   <table>
    <tbody>
 
     <tr>
-     <th class="bold w-40">Application for extended use</th>
+     <th class="bold w-40">@messages("case.v2.liability.appeal_tab.application_for_extended_use")</th>
      <td id="appeal_details-extended_use_status" class="w-30">
      @appealTabViewModel.applicationForExtendedUseButton.getOrElse("")
      </td>
@@ -83,6 +80,3 @@
   </table>
  </div>
 }
-
-
-

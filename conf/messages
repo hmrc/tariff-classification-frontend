@@ -827,6 +827,11 @@ case.v2.liability.keywords.hint=Start typing and select a keyword if it appears 
 case.v2.liability.keywords.paragraph=Classification team managers approve new keywords.
 
 case.v2.liability.appeals.tab_title=Appeals
+case.v2.liability.appeals.tab_paragraph=If this ruling is reviewed or appealed, update the status here.
+case.v2.liability.appeal_details-extended_use.canceled.paragraph=This ruling has been cancelled.
+case.v2.liability.appeal_details-extended_use.paragraph=If the holder applies for a period of extended use of the ruling, update the status here.
+case.v2.liability.appeal_tab.add_review_or_appeal=Add a review or appeal
+case.v2.liability.appeal_tab.application_for_extended_use=Application for extended use
 
 case.v2.liability.action_this_case.button=Action this case
 case.v2.liability.change_case_status.button=Change case status

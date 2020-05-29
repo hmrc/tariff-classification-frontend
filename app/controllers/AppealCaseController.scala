@@ -42,6 +42,7 @@ class AppealCaseController @Inject()(
 
   private val typeForm: Form[AppealType] = AppealForm.appealTypeForm
   private val statusForm: Form[AppealStatus] = AppealForm.appealStatusForm
+  private lazy val newliabilityDetailsToggle = config.newLiabilityDetails
 
   private val startTabIndexForAppeals = 8000
 
@@ -51,13 +52,19 @@ class AppealCaseController @Inject()(
     request.`case`.application.`type` match {
       case ApplicationType.BTI =>
         getCaseAndRenderView(reference,
-        c => successful(views.html.case_details(
-          c, CaseDetailPage.APPEAL, views.html.partials.appeal.appeal_details(
-            c, startTabIndexForAppeals), activeTab = Some(ActiveTab.Appeals)))
-      )
+          c => successful(views.html.case_details(
+            c, CaseDetailPage.APPEAL, views.html.partials.appeal.appeal_details(
+              c, startTabIndexForAppeals), activeTab = Some(ActiveTab.Appeals)))
+        )
 
       case ApplicationType.LIABILITY_ORDER => {
-        successful(Redirect(v2.routes.LiabilityController.displayLiability(reference).withFragment("appeal_tab")))
+        if (newliabilityDetailsToggle) successful(
+          Redirect(v2.routes.LiabilityController.displayLiability(reference).withFragment("appeal_tab")))
+        else getCaseAndRenderView(reference,
+          c => successful(views.html.case_details(
+            c, CaseDetailPage.APPEAL, views.html.partials.appeal.appeal_details(
+              c, startTabIndexForAppeals), activeTab = Some(ActiveTab.Appeals)))
+        )
       }
     }
   }
