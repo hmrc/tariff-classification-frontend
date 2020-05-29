@@ -32,6 +32,7 @@
 @import views.CaseDetailPage
 @import views.html.components.change_case_status_button
 @import views.html.includes.main
+@import views.html.helper.CSRF
 
 @this(
         case_heading: views.html.v2.case_heading,
@@ -73,7 +74,7 @@
 
     @case_action_buttons_partial(liabilityViewModel)
 
-    <div class="govuk-tabs" data-module="govuk-tabs">
+    <div id="liability_tabs" class="govuk-tabs" data-module="govuk-tabs">
         <ul class="govuk-tabs__list">
             @* c592*@
             @if(c592ViewModel.isDefined) {
@@ -192,3 +193,10 @@
 
     </div>
 }
+
+    <script>
+    let cacheURL = "@routes.TabCacheController.get(liabilityViewModel.caseHeaderViewModel.referenceNumber, "Liability").url";
+    let csrfToken = "@CSRF.getToken.value";
+
+     window.addEventListener("load", () => fixAnchorInURL(cacheURL, csrfToken), false);
+    </script>

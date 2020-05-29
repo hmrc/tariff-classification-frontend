@@ -14,12 +14,16 @@
  * limitations under the License.
  *@
 
-@(
-   id: String,
-   buttonText: String = "Complete",
-   href: Call
-)
+@import models.request.AuthenticatedRequest
 
-<div class="form-group" id="@id-buttons">
-    <a class="button" role="button" id="@id-button" href="@href">@buttonText</a>
+@(
+        idOfElement: String,
+        buttonText: String = "Complete",
+        href: Call,
+        itemType: String,
+        caseReference: String
+)(implicit request: AuthenticatedRequest[_])
+
+<div class="form-group" id="@idOfElement-buttons">
+    <a class="button" role="button" id="@idOfElement-button" href="@href">@buttonText</a>
 </div>

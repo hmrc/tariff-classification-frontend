@@ -19,7 +19,7 @@ package controllers
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.http.HeaderNames.LOCATION
-import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded, Result}
+import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded, AnyContentAsText, Result}
 import play.api.test.CSRFTokenHelper._
 import play.api.test.{FakeHeaders, FakeRequest}
 
@@ -45,6 +45,11 @@ trait ControllerCommons { self : GuiceOneAppPerSuite =>
   protected def newFakeGETRequestWithCSRF(application: Application): FakeRequest[AnyContentAsEmpty.type] = {
     FakeRequest("GET", "/", FakeHeaders(Seq("csrfToken"->"csrfToken")), AnyContentAsEmpty)
       .withCSRFToken.asInstanceOf[FakeRequest[AnyContentAsEmpty.type]]
+  }
+
+  protected def newFakePOSTRequestWithCSRF(application: Application, body: String): FakeRequest[AnyContentAsText] = {
+    FakeRequest("POST", "/", FakeHeaders(Seq("csrfToken"->"csrfToken")), AnyContentAsText).withTextBody(body)
+      .withCSRFToken.asInstanceOf[FakeRequest[AnyContentAsText]]
   }
 
   protected def newFakePOSTRequestWithCSRF(application: Application, encodedBody: Map[String, String] = Map.empty): FakeRequest[AnyContentAsFormUrlEncoded] = {
