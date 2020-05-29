@@ -28,22 +28,23 @@ case class LiabilityViewModel(
                                caseStatus: CaseStatus
                              ) {
 
-  def isNewCase: Boolean = caseStatus == CaseStatus.NEW
-
-  def showRulingAndKeywordsTabs: Boolean =
-    caseStatus == CaseStatus.OPEN ||
-      caseStatus == CaseStatus.REFERRED ||
-      caseStatus == CaseStatus.REJECTED ||
-      caseStatus == CaseStatus.SUSPENDED ||
-      caseStatus == CaseStatus.COMPLETED
-
+  def showRulingAndKeywordsTabs: Boolean = Set(
+    CaseStatus.OPEN,
+    CaseStatus.REFERRED,
+    CaseStatus.REJECTED,
+    CaseStatus.SUSPENDED,
+    CaseStatus.COMPLETED
+  ).contains(caseStatus)
 
   def showActionThisCase: Boolean = isNewCase && hasPermissions
 
-  def showAdvancedSearchButton: Boolean =
-    caseStatus == CaseStatus.OPEN ||
-      caseStatus == CaseStatus.REFERRED ||
-      caseStatus == CaseStatus.SUSPENDED
+  def isNewCase: Boolean = caseStatus == CaseStatus.NEW
+
+  def showAdvancedSearchButton: Boolean = Set(
+    CaseStatus.OPEN,
+    CaseStatus.REFERRED,
+    CaseStatus.SUSPENDED
+  ).contains(caseStatus)
 }
 
 object LiabilityViewModel {
