@@ -281,6 +281,10 @@ table tbody td[align="right"], table tbody th[align="right"], table thead th[ali
     text-decoration: underline;
 
     padding: .526315em .789473em .263157em;
+
+    text-align: left;
+    float: left;
+    padding-left: 0;
   }
 }
 
@@ -428,4 +432,15 @@ table tbody tr th {
 
 .width-6em{
   width: 6em;
+}
+
+.confirm-cancel-alignment > button {
+  display: block;
+  margin-bottom: 1.000em;
+}
+
+.confirm-cancel-alignment > a {
+  text-align: left;
+  float: left;
+  padding-left: 0;
 }
