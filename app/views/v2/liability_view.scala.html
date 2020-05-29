@@ -32,6 +32,7 @@
 @import views.CaseDetailPage
 @import views.html.components.change_case_status_button
 @import views.html.includes.main
+@import views.html.partials.liabilities.advanced_search_cases
 @import views.html.helper.CSRF
 
 @this(
@@ -67,7 +68,12 @@
 
     @case_heading(liabilityViewModel.caseHeaderViewModel)
 
-    @case_action_buttons_partial(liabilityViewModel)
+    <div class="form-groups">
+
+        @case_action_buttons_partial(liabilityViewModel)
+
+        @advanced_search_cases(liabilityViewModel)
+    </div>
 
     <div id="liability_tabs" class="govuk-tabs" data-module="govuk-tabs">
         <ul class="govuk-tabs__list">

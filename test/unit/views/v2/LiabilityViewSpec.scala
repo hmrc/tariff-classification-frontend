@@ -43,7 +43,7 @@ class LiabilityViewSpec extends ViewSpec {
 
   def keywordForm: Form[String] = KeywordForm.form
 
-  val emptyKeywordsTabViewModel = KeywordsTabViewModel("", Set.empty[String],Nil)
+  val emptyKeywordsTabViewModel: KeywordsTabViewModel = KeywordsTabViewModel("", Set.empty[String],Nil)
 
   "Liability View" should {
 

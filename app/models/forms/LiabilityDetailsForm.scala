@@ -45,7 +45,10 @@ object LiabilityDetailsForm {
 
   private def validEmailFormat(email: String): Boolean = email.trim.isEmpty || emailRegex.findFirstMatchIn(email.trim).nonEmpty
 
-  private def form2Liability(existingCase: Case): (Option[Instant], String, Option[String], Option[String], Option[String], Option[String], String, String, Option[String]) => Case = {
+  private def form2Liability(existingCase: Case): (
+    Option[Instant], String, Option[String], Option[String],
+      Option[String], Option[String], String, String, Option[String]
+    ) => Case = {
     case (entryDate, traderName, goodName, entryNumber, traderCommodityCode, officerCommodityCode, contactName, contactEmail, contactPhone) =>
       existingCase.copy(application = existingCase.application.asLiabilityOrder.copy(
         traderName = traderName,
@@ -58,7 +61,10 @@ object LiabilityDetailsForm {
       ))
   }
 
-  private def liability2Form(existingCase: Case): Option[(Option[Instant], String, Option[String], Option[String], Option[String], Option[String], String, String, Option[String])] = {
+  private def liability2Form(existingCase: Case): Option[(
+    Option[Instant], String, Option[String], Option[String],
+      Option[String], Option[String], String, String, Option[String]
+    )] = {
     val existingLiability = existingCase.application.asLiabilityOrder
 
     Some((

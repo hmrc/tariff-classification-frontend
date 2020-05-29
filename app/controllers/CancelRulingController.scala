@@ -65,8 +65,11 @@ class CancelRulingController @Inject()(
       renderView(c => c.status == CANCELLED , c => successful(views.html.confirm_cancel_ruling(c)))
     }
 
-  def postCancelRuling(reference: String): Action[MultipartFormData[Files.TemporaryFile]] = (verify.authenticated andThen verify.casePermissions(reference) andThen
-    verify.mustHave(Permission.CANCEL_CASE)).async(parse.multipartFormData) { implicit request: AuthenticatedCaseRequest[MultipartFormData[Files.TemporaryFile]] =>
+  def postCancelRuling(reference: String): Action[MultipartFormData[Files.TemporaryFile]] =
+    (verify.authenticated andThen
+      verify.casePermissions(reference) andThen
+    verify.mustHave(Permission.CANCEL_CASE)).async(parse.multipartFormData) {
+      implicit request: AuthenticatedCaseRequest[MultipartFormData[Files.TemporaryFile]] =>
 
     extractFile(key = "email")(
       onFileValid = validFile => {
