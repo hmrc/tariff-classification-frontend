@@ -17,10 +17,10 @@
 package controllers
 
 import config.AppConfig
-import models.forms.AddNoteForm
 import javax.inject.{Inject, Singleton}
 import models.CaseStatus.SUPPRESSED
 import models.Permission
+import models.forms.AddNoteForm
 import models.request.AuthenticatedCaseRequest
 import play.api.data.Form
 import play.api.libs.Files
@@ -45,10 +45,11 @@ class SuppressCaseController @Inject()(
   override protected val config: AppConfig = appConfig
   override protected val caseService: CasesService = casesService
 
-  def getSuppressCase(reference: String, activeTab: Option[ActiveTab]): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen
-    verify.mustHave(Permission.SUPPRESS_CASE)).async { implicit request =>
-    getCaseAndRenderView(reference, c => successful(views.html.suppress_case(c, form, activeTab)))
-  }
+  def getSuppressCase(reference: String, activeTab: Option[ActiveTab]): Action[AnyContent] =
+    (verify.authenticated andThen verify.casePermissions(reference) andThen
+      verify.mustHave(Permission.SUPPRESS_CASE)).async { implicit request =>
+      getCaseAndRenderView(reference, c => successful(views.html.suppress_case(c, form, activeTab)))
+    }
 
   def postSuppressCase(reference: String, activeTab: Option[ActiveTab]): Action[MultipartFormData[Files.TemporaryFile]] =
     (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.SUPPRESS_CASE))
@@ -60,7 +61,10 @@ class SuppressCaseController @Inject()(
               formWithErrors =>
                 getCaseAndRenderView(reference, c => successful(views.html.suppress_case(c, formWithErrors))),
               note => {
-                validateAndRedirect(casesService.suppressCase(_, validFile, note, request.operator).map(c => routes.SuppressCaseController.confirmSuppressCase(c.reference)))
+                validateAndRedirect(
+                  casesService.suppressCase(_, validFile, note, request.operator)
+                    .map(c => routes.SuppressCaseController.confirmSuppressCase(c.reference))
+                )
               }
             )
           },
@@ -91,10 +95,16 @@ class SuppressCaseController @Inject()(
         )
   }
 
-  private def getCaseAndRenderEmailError(reference: String, form: Form[String], error: String, activeTab: Option[ActiveTab])(implicit request: AuthenticatedCaseRequest[_]): Future[Result] = getCaseAndRenderView(
-    reference,
-    c => successful(views.html.suppress_case(c, form.withError("email", error), activeTab))
-  )
+  private def getCaseAndRenderEmailError(
+                                          reference: String,
+                                          form: Form[String],
+                                          error: String,
+                                          activeTab: Option[ActiveTab]
+                                        )(implicit request: AuthenticatedCaseRequest[_]): Future[Result] =
+    getCaseAndRenderView(
+      reference,
+      c => successful(views.html.suppress_case(c, form.withError("email", error), activeTab))
+    )
 
   def confirmSuppressCase(reference: String): Action[AnyContent] =
     (verify.authenticated

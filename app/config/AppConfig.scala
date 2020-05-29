@@ -72,9 +72,9 @@ class AppConfig @Inject()(
     environment.mode == Mode.Dev
 
     config
-      .getString("run.mode")
+      .getOptional[String]("run.mode")
       .map(_.equals(Mode.Dev.toString))
-      .getOrElse(Mode.Dev.equals(mode))
+      .getOrElse(Mode.Dev.equals(environment.mode))
   }
 
 }

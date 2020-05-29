@@ -34,11 +34,12 @@ trait ExtractableFile {
     onFileTooLarge: () => Future[Result],
     onFileInvalidType: () => Future[Result],
     onFileMissing: () => Future[Result]
-  )(implicit request: AuthenticatedCaseRequest[MultipartFormData[Files.TemporaryFile]]): Future[Result] = request.body.file(key).filter(_.filename.nonEmpty).filter(_.contentType.isDefined) match {
-    case Some(file) if !hasValidContentType(file) => onFileInvalidType()
-    case Some(file) if !hasValidFileSize(file) => onFileTooLarge()
-    case Some(file) => onFileValid(FileUpload(file.ref, file.filename, file.contentType.get))
-    case None => onFileMissing()
+  )(implicit request: AuthenticatedCaseRequest[MultipartFormData[Files.TemporaryFile]]): Future[Result] =
+    request.body.file(key).filter(_.filename.nonEmpty).filter(_.contentType.isDefined) match {
+      case Some(file) if !hasValidContentType(file) => onFileInvalidType()
+      case Some(file) if !hasValidFileSize(file) => onFileTooLarge()
+      case Some(file) => onFileValid(FileUpload(file.ref, file.filename, file.contentType.get))
+      case None => onFileMissing()
   }
 
   private def hasValidContentType(f: MultipartFormData.FilePart[TemporaryFile]): Boolean = f.contentType match {

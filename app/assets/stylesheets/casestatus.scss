@@ -41,3 +41,11 @@ fieldset .form-group.panel .form-group-error {
 fieldset .form-group.innertext .form-control-wrapper {
   margin-left: 30px;
 }
+
+.form-groups {
+  display: flex;
+}
+
+.form-groups > div.form-group {
+  margin-right: 15px;
+}
