@@ -49,8 +49,8 @@ class AppealCaseController @Inject()(
   def appealDetails(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
 
     request.`case`.application.`type` match {
-      case ApplicationType.BTI => getCaseAndRenderView(
-        reference,
+      case ApplicationType.BTI =>
+        getCaseAndRenderView(reference,
         c => successful(views.html.case_details(
           c, CaseDetailPage.APPEAL, views.html.partials.appeal.appeal_details(
             c, startTabIndexForAppeals), activeTab = Some(ActiveTab.Appeals)))
