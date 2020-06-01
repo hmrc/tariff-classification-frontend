@@ -7,7 +7,7 @@ object AppDependencies {
     "uk.gov.hmrc"             %% "bootstrap-play-26"          % "1.7.0",
     "uk.gov.hmrc"             %% "play-ui"                    % "8.9.0-play-26",
     "uk.gov.hmrc"             %% "http-caching-client"        % "9.0.0-play-26",
-    "uk.gov.hmrc"             %% "simple-reactivemongo"             % "7.26.0-play-26",
+    "uk.gov.hmrc"             %% "simple-reactivemongo"       % "7.26.0-play-26",
     "uk.gov.hmrc"             %% "play-json-union-formatter"  % "1.10.0-play-26"
   )
 

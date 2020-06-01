@@ -34,15 +34,12 @@ import service.{CasesService, CommodityCodeService}
 import utils.Cases._
 
 import scala.concurrent.Future.successful
-class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
-  with GuiceOneAppPerSuite with MockitoSugar with BeforeAndAfterEach with ControllerCommons {
+class CompleteCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
-  private val messageApi = inject[MessagesControllerComponents]
-  private val appConfig = inject[AppConfig]
   private val casesService = mock[CasesService]
   private val operator = mock[Operator]
   private val commodityCodeService = mock[CommodityCodeService]
-  private val decisionForm = new DecisionForm(new CommodityCodeConstraints(commodityCodeService, appConfig))
+  private val decisionForm = new DecisionForm(new CommodityCodeConstraints(commodityCodeService, realAppConfig))
 
   private val completeDecision = Decision(
     bindingCommodityCode = "040900",
@@ -59,20 +56,17 @@ class CompleteCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   private val caseWithoutDecision = btiCaseExample.copy(reference = "reference", status = CaseStatus.OPEN, decision = None)
   private val caseWithIncompleteDecision = btiCaseExample.copy(reference = "reference", status = CaseStatus.OPEN, decision = Some(inCompleteDecision))
 
-  private implicit val mat: Materializer = fakeApplication.materializer
-  private implicit val hc: HeaderCarrier = HeaderCarrier()
-
   override def afterEach(): Unit = {
     super.afterEach()
     reset(casesService)
   }
 
   private def getController(requestCase: Case): CompleteCaseController = {
-    new CompleteCaseController(new SuccessfulRequestActions(inject[BodyParsers.Default], operator, c = requestCase), casesService, decisionForm, messageApi, appConfig)
+    new CompleteCaseController(new SuccessfulRequestActions(defaultPlayBodyParsers, operator, c = requestCase), casesService, decisionForm, mcc, realAppConfig)
   }
 
   private def controller(requestCase: Case, permission: Set[Permission]) = new CompleteCaseController(
-    new RequestActionsWithPermissions(inject[BodyParsers.Default], permission, c = requestCase), casesService, decisionForm, messageApi, appConfig)
+    new RequestActionsWithPermissions(defaultPlayBodyParsers, permission, c = requestCase), casesService, decisionForm, mcc, realAppConfig)
 
 
   "Complete Case" should {

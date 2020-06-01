@@ -16,6 +16,7 @@
 
 package controllers
 
+import base.SpecBase
 import controllers.v2.RequestActionsWithPermissionsProvider
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
@@ -31,7 +32,7 @@ import uk.gov.hmrc.play.test.UnitSpec
 import views.html.partials.liabilities.{attachments_details, attachments_list}
 import views.html.v2.{case_heading, liability_view, remove_attachment}
 
-class ControllerBaseSpec extends UnitSpec with I18nSupport with GuiceOneAppPerSuite with MockitoSugar with ControllerCommons {
+class ControllerBaseSpec extends UnitSpec with I18nSupport with SpecBase with ControllerCommons {
 
   override lazy val app: Application = new GuiceApplicationBuilder().overrides(
     //providers
@@ -53,9 +54,4 @@ class ControllerBaseSpec extends UnitSpec with I18nSupport with GuiceOneAppPerSu
     "toggle.new-liability-details" -> true
   ).build()
 
-  implicit val request: Request[AnyContent] = FakeRequest()
-
-  implicit def messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
-
-  implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
 }

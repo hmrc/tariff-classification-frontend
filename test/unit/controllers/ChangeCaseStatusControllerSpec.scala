@@ -33,37 +33,20 @@ import models._
 import service.CasesService
 import utils.Cases
 
-class ChangeCaseStatusControllerSpec extends WordSpec
-  with Matchers
-  with UnitSpec
-  with GuiceOneAppPerSuite
-  with MockitoSugar
-  with BeforeAndAfterEach
-  with ControllerCommons {
+class ChangeCaseStatusControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
-  private val env = Environment.simple()
-
-  private val configuration = Configuration.load(env)
-  private val messageApi = inject[MessagesControllerComponents]
-  private val appConfig = inject[AppConfig]
   private val casesService = mock[CasesService]
   private val operator = mock[Operator]
 
   private val caseWithStatusOPEN = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.OPEN)
-  private val caseWithStatusOpenWithDecision = Cases.btiCaseWithIncompleteDecision.copy(reference = "reference", status = CaseStatus.OPEN)
-
-
-  private implicit val mat: Materializer = fakeApplication.materializer
-  private implicit val hc: HeaderCarrier = HeaderCarrier()
 
   private def controller(c: Case) = new ChangeCaseStatusController(
-    new SuccessfulRequestActions(inject[BodyParsers.Default], operator, c = c), casesService, messageApi, appConfig)
+    new SuccessfulRequestActions(inject[BodyParsers.Default], operator, c = c), casesService, mcc, realAppConfig)
 
   private def controller(requestCase: Case, permission: Set[Permission]) = new ChangeCaseStatusController(
-    new RequestActionsWithPermissions(inject[BodyParsers.Default], permission, c = requestCase), casesService, messageApi, appConfig)
+    new RequestActionsWithPermissions(inject[BodyParsers.Default], permission, c = requestCase), casesService, mcc, realAppConfig)
 
   val form = new CaseStatusRadioInputFormProvider()()
-
 
   "ChangeCaseStatusControllerSpec" should {
 

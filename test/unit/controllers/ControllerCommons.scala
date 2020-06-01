@@ -25,6 +25,8 @@ import play.api.test.{FakeHeaders, FakeRequest}
 
 trait ControllerCommons { self : GuiceOneAppPerSuite =>
 
+  //TODO delete
+  @deprecated
   def inject[T](implicit m: Manifest[T]): T = app.injector.instanceOf[T]
 
   protected def locationOf(result: Result): Option[String] = {

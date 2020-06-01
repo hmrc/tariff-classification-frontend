@@ -38,16 +38,12 @@ import utils.Cases._
 
 import scala.concurrent.Future
 
-class LiabilityControllerSpec extends UnitSpec with Matchers with BeforeAndAfterEach with GuiceOneAppPerSuite with MockitoSugar with ControllerCommons {
+class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   private val commodityCodeConstraints = mock[CommodityCodeConstraints]
   private val decisionForm = new DecisionForm(commodityCodeConstraints)
-  private val messageApi = inject[MessagesControllerComponents]
-  private val appConfig = inject[AppConfig]
   private val casesService = mock[CasesService]
   private val operator = mock[Operator]
-
-  private implicit val hc: HeaderCarrier = HeaderCarrier()
 
   private def request[A](operator: Operator, request: Request[A]) = new AuthenticatedRequest(operator, request)
 
@@ -58,7 +54,7 @@ class LiabilityControllerSpec extends UnitSpec with Matchers with BeforeAndAfter
 
   private def controller(permissions: Set[Permission], c: Case) = new LiabilityController(
     new RequestActionsWithPermissions(inject[BodyParsers.Default], permissions = permissions, addViewCasePermission = false, c = c),
-    decisionForm, messageApi, casesService, appConfig
+    decisionForm, mcc, casesService, realAppConfig
   )
 
   "GET liability view" should {

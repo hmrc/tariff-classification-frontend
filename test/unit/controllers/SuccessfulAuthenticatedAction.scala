@@ -32,7 +32,6 @@ import scala.concurrent.Future.successful
 import scala.concurrent.{ExecutionContext, Future}
 
 
-//FIXME - this fails because parser is not real
 class SuccessfulAuthenticatedAction(parse: BodyParsers.Default, operator: Operator = Operator("0", Some("name")), permissions : Set[Permission] = Set.empty) extends AuthenticatedAction(
   appConfig = mock(classOf[AppConfig]),
   config = mock(classOf[Configuration]),

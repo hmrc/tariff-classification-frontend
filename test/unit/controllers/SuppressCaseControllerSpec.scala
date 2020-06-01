@@ -37,13 +37,8 @@ import utils.Cases
 
 import scala.concurrent.Future.successful
 
-class SuppressCaseControllerSpec extends WordSpec with Matchers with UnitSpec
-  with GuiceOneAppPerSuite with MockitoSugar with BeforeAndAfterEach with ControllerCommons {
+class SuppressCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
-  private val env = Environment.simple()
-
-  private val messagesControllerComponents = inject[MessagesControllerComponents]
-  private val appConfig = inject[AppConfig]
   private val casesService = mock[CasesService]
   private val operator = mock[Operator]
 
@@ -51,15 +46,12 @@ class SuppressCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   private val caseWithStatusOPEN = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.OPEN)
   private val caseWithStatusSUPRRESSED = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.SUPPRESSED)
 
-  private implicit val mat: Materializer = fakeApplication.materializer
-  private implicit val hc: HeaderCarrier = HeaderCarrier()
-
   private def controller(requestCase: Case = caseWithStatusNEW) = new SuppressCaseController(
-    new SuccessfulRequestActions(inject[BodyParsers.Default], operator, c = requestCase), casesService, messagesControllerComponents, appConfig
+    new SuccessfulRequestActions(inject[BodyParsers.Default], operator, c = requestCase), casesService, mcc, realAppConfig
   )
 
   private def controller(requestCase: Case, permission: Set[Permission]) = new SuppressCaseController(
-    new RequestActionsWithPermissions(inject[BodyParsers.Default], permission, c = requestCase), casesService, messagesControllerComponents, appConfig
+    new RequestActionsWithPermissions(inject[BodyParsers.Default], permission, c = requestCase), casesService, mcc, realAppConfig
   )
 
   override def afterEach(): Unit = {

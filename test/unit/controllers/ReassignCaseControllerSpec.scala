@@ -35,11 +35,8 @@ import utils.Cases
 
 import scala.concurrent.Future.successful
 
-class ReassignCaseControllerSpec extends WordSpec with Matchers with UnitSpec
-  with GuiceOneAppPerSuite with MockitoSugar with BeforeAndAfterEach with ControllerCommons {
+class ReassignCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
-  private val messageApi = inject[MessagesControllerComponents]
-  private val appConfig = inject[AppConfig]
   private val casesService = mock[CasesService]
   private val queueService = mock[QueuesService]
   private val queue = mock[Queue]
@@ -49,20 +46,17 @@ class ReassignCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   private val caseWithStatusOPEN = Cases.caseQueueExample.copy(reference = "reference", status = CaseStatus.OPEN,
     assignee = Some(Operator("12345", Some("Operator Test"))))
 
-  private implicit val mat: Materializer = fakeApplication.materializer
-  private implicit val hc: HeaderCarrier = HeaderCarrier()
-
   override def afterEach(): Unit = {
     super.afterEach()
     reset(casesService)
   }
 
   private def controller(requestCase: Case): ReassignCaseController = new ReassignCaseController(
-    new SuccessfulRequestActions(inject[BodyParsers.Default], operator, c = requestCase), casesService, queueService, messageApi, appConfig
+    new SuccessfulRequestActions(defaultPlayBodyParsers, operator, c = requestCase), casesService, queueService, mcc, realAppConfig
   )
 
   private def controller(requestCase: Case, permission: Set[Permission]) = new ReassignCaseController(
-    new RequestActionsWithPermissions(inject[BodyParsers.Default], permission, c = requestCase), casesService, queueService, messageApi, appConfig)
+    new RequestActionsWithPermissions(defaultPlayBodyParsers, permission, c = requestCase), casesService, queueService, mcc, realAppConfig)
 
 
   "Reassign Case" should {

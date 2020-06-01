@@ -27,14 +27,9 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import config.AppConfig
 
-class SecurityControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSuite with MockitoSugar with ControllerCommons {
+class SecurityControllerSpec extends ControllerBaseSpec {
 
-  private val fakeRequest = FakeRequest()
-  private val messagesControllerComponents = inject[MessagesControllerComponents]
-  private val appConfig = inject[AppConfig]
-  private implicit val hc = HeaderCarrier()
-
-  private val controller = new SecurityController(messagesControllerComponents, appConfig)
+  private val controller = new SecurityController(mcc, realAppConfig)
 
   "Unauthorized" should {
 

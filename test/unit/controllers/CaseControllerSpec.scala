@@ -41,11 +41,8 @@ import utils.{Cases, Events}
 
 import scala.concurrent.Future.successful
 
-class CaseControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSuite with MockitoSugar with ControllerCommons {
+class CaseControllerSpec extends ControllerBaseSpec {
 
-  private val fakeRequest = FakeRequest()
-  private val messageApi = inject[MessagesControllerComponents]
-  private val appConfig = inject[AppConfig]
   private val keywordsService = mock[KeywordsService]
   private val fileService = mock[FileStoreService]
   private val eventService = mock[EventsService]
@@ -53,37 +50,35 @@ class CaseControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSuite
   private val operator = Operator(id = "id")
   private val event = mock[Event]
   private val commodityCodeService = mock[CommodityCodeService]
-  private val decisionForm = new DecisionForm(new CommodityCodeConstraints(commodityCodeService, appConfig))
+  private val decisionForm = new DecisionForm(new CommodityCodeConstraints(commodityCodeService, realAppConfig))
   private val countriesService = new CountriesService
 
   private def controller(c: Case) = new CaseController(
-    new SuccessfulRequestActions(inject[BodyParsers.Default], operator, c = c),
+    new SuccessfulRequestActions(defaultPlayBodyParsers, operator, c = c),
     mock[CasesService], keywordsService, fileService,
     eventService, queueService, commodityCodeService,
-    decisionForm, countriesService, messageApi, appConf
+    decisionForm, countriesService, mcc, realAppConfig
   )
 
   private def controller(c: Case, permission: Set[Permission]) = new CaseController(
-    new RequestActionsWithPermissions(inject[BodyParsers.Default], permission, c = c),
+    new RequestActionsWithPermissions(defaultPlayBodyParsers, permission, c = c),
     mock[CasesService], keywordsService, fileService,
     eventService, queueService, commodityCodeService,
-    decisionForm, countriesService, messageApi, appConf
+    decisionForm, countriesService, mcc, realAppConfig
   )
 
-   implicit lazy val appWithLiabilityToggleOff = new GuiceApplicationBuilder()
-    .configure("toggle.new-liability-details" -> false)
+   private lazy val appWithLiabilityToggleOff = new GuiceApplicationBuilder()
+    .configure("toggle.new-liability-details" -> true)
     .build()
 
   lazy val appConf: AppConfig = appWithLiabilityToggleOff.injector.instanceOf[AppConfig]
 
   private def controllerWithNewLiability(c: Case) = new CaseController(
-    new SuccessfulRequestActions(inject[BodyParsers.Default], operator, c = c),
+    new SuccessfulRequestActions(defaultPlayBodyParsers, operator, c = c),
     mock[CasesService], keywordsService, fileService,
     eventService, queueService, commodityCodeService,
-    decisionForm, countriesService, messageApi, appConfig
+    decisionForm, countriesService, mcc, appConf
   )
-
-  private implicit val hc: HeaderCarrier = HeaderCarrier()
 
   "Case Index" should {
     "redirect to default tab" when {

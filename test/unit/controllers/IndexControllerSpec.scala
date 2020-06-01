@@ -30,16 +30,11 @@ import config.AppConfig
 import models.Role.Role
 import models._
 
-class IndexControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSuite with MockitoSugar  with ControllerCommons {
+class IndexControllerSpec extends ControllerBaseSpec {
 
-  private val fakeRequest = FakeRequest()
-  private val messageApi = inject[MessagesControllerComponents]
-  private val appConfig = inject[AppConfig]
-
-  private implicit val mat: Materializer = fakeApplication.materializer
-  private implicit val hc: HeaderCarrier = HeaderCarrier()
-
-  private def controller(role: Role) = new IndexController(new SuccessfulAuthenticatedAction(inject[BodyParsers.Default], Operator(id = "0", role = role)), messageApi, appConfig)
+  private def controller(role: Role) = new IndexController(
+    new SuccessfulAuthenticatedAction(defaultPlayBodyParsers, Operator(id = "0", role = role)), mcc, realAppConfig
+  )
 
   "GET" should {
 

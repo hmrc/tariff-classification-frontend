@@ -39,25 +39,15 @@ import views.html.v2.edit_liability_ruling
 
 import scala.concurrent.Future
 
-class RulingControllerSpec extends UnitSpec
-  with Matchers
-  with GuiceOneAppPerSuite
-  with MockitoSugar
-  with BeforeAndAfterEach
-  with ControllerCommons {
+class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
-  private val messagesControllerComponents = inject[MessagesControllerComponents]
-  private val appConfig = inject[AppConfig]
   private val casesService = mock[CasesService]
   private val fileService = mock[FileStoreService]
   private val mapper = mock[DecisionFormMapper]
-  private val commodityCodeService = mock[CommodityCodeService]
   private val operator = mock[Operator]
   private val commodityCodeConstraints = mock[CommodityCodeConstraints]
   private val decisionForm = new DecisionForm(commodityCodeConstraints)
-  private val editLiabilityView = inject[edit_liability_ruling]
-
-  private implicit val hc: HeaderCarrier = HeaderCarrier()
+  private val editLiabilityView = injector.instanceOf[edit_liability_ruling]
 
   override protected def afterEach(): Unit = {
     super.afterEach()
@@ -71,14 +61,13 @@ class RulingControllerSpec extends UnitSpec
   lazy val appConfWithLiabilityToggleOff: AppConfig = appWithLiabilityToggleOff.injector.instanceOf[AppConfig]
 
   private def controller(c: Case) = new RulingController(
-    new SuccessfulRequestActions(inject[BodyParsers.Default], operator, c = c), casesService, fileService, mapper, decisionForm, messagesControllerComponents,editLiabilityView, appConfWithLiabilityToggleOff
+    new SuccessfulRequestActions(defaultPlayBodyParsers, operator, c = c), casesService, fileService, mapper, decisionForm, mcc, editLiabilityView, appConfWithLiabilityToggleOff
   )
 
-  private def controller(requestCase: Case, permission: Set[Permission], appConf: AppConfig = appConfig) = new RulingController(
-    new RequestActionsWithPermissions(inject[BodyParsers.Default], permission, c = requestCase), casesService, fileService, mapper, decisionForm, messagesControllerComponents,editLiabilityView, appConfig)
+  private def controller(requestCase: Case, permission: Set[Permission], appConf: AppConfig = realAppConfig) = new RulingController(
+    new RequestActionsWithPermissions(defaultPlayBodyParsers, permission, c = requestCase), casesService, fileService, mapper, decisionForm, mcc, editLiabilityView, realAppConfig)
 
   "Edit Ruling" should {
-    val btiCaseWithStatusNEW = aCase(withBTIApplication, withReference("reference"), withStatus(CaseStatus.NEW))
     val btiCaseWithStatusOPEN = aCase(withBTIApplication, withReference("reference"), withStatus(CaseStatus.OPEN))
     val liabilityCaseWithStatusOPEN = aCase(withLiabilityApplication(), withReference("reference"), withStatus(CaseStatus.OPEN))
     val attachment = storedAttachment

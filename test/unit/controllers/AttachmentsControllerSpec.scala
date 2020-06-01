@@ -40,27 +40,18 @@ import utils.Cases
 
 import scala.concurrent.Future.successful
 
-class AttachmentsControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSuite with MockitoSugar with ControllerCommons {
-  private val fakeRequest = FakeRequest(onwardRoute)
-  private val env = Environment.simple()
+class AttachmentsControllerSpec extends ControllerBaseSpec {
 
-  private implicit val mtrlzr: Materializer = app.injector.instanceOf[Materializer]
-  private val messageApi = inject[MessagesControllerComponents]
-  private val appConfig = inject[AppConfig]
   private val casesService = mock[CasesService]
   private val fileService = mock[FileStoreService]
   private val operator = mock[Operator]
 
   private val controller = new AttachmentsController(
-    new SuccessfulRequestActions(inject[BodyParsers.Default], operator, c = Cases.btiCaseExample), casesService, fileService, messageApi, appConfig, mtrlzr
+    new SuccessfulRequestActions(defaultPlayBodyParsers, operator, c = Cases.btiCaseExample), casesService, fileService, mcc, realAppConfig, mat
   )
 
   private def controller(requestCase: Case, permission: Set[Permission]) = new AttachmentsController(
-    new RequestActionsWithPermissions(inject[BodyParsers.Default], permission, c = requestCase), casesService, fileService, messageApi, appConfig, mtrlzr)
-
-  private def onwardRoute = Call("POST", "/foo")
-
-  private implicit val hc: HeaderCarrier = HeaderCarrier()
+    new RequestActionsWithPermissions(defaultPlayBodyParsers, permission, c = requestCase), casesService, fileService, mcc, realAppConfig, mat)
 
   "Attachments Details" should {
 
@@ -225,7 +216,7 @@ class AttachmentsControllerSpec extends UnitSpec with Matchers with GuiceOneAppP
 
     "upload a file of valid type should reload page" in {
 
-      appConfig.fileUploadMimeTypes foreach { mimeType =>
+      realAppConfig.fileUploadMimeTypes foreach { mimeType =>
         //Given
         val aCase = Cases.btiCaseExample.copy(reference = testReference)
         val updatedCase = aCase.copy(attachments = aCase.attachments :+ Cases.attachment("anyUrl"))

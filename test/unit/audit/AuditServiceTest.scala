@@ -16,6 +16,7 @@
 
 package audit
 
+import base.SpecBase
 import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
@@ -31,9 +32,8 @@ import utils.Cases._
 
 import scala.concurrent.ExecutionContext
 
-class AuditServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
+class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
 
-  private implicit val hc: HeaderCarrier = HeaderCarrier()
   private val connector = mock[DefaultAuditConnector]
 
   private val service = new AuditService(connector)

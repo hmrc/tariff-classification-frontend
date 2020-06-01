@@ -34,18 +34,14 @@ import service.{CasesService, QueuesService}
 
 import scala.concurrent.Future
 
-class QueuesControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSuite with MockitoSugar with ControllerCommons {
+class QueuesControllerSpec extends ControllerBaseSpec {
 
-  private val fakeRequest = FakeRequest()
-  private val messageApi = inject[MessagesControllerComponents]
-  private val appConfig = inject[AppConfig]
   private val casesService = mock[CasesService]
   private val queuesService = mock[QueuesService]
   private val queue = Queue("0", "queue", "Queue Name")
-  private implicit val hc: HeaderCarrier = HeaderCarrier()
 
   private def controller(permission: Set[Permission]) = new QueuesController(
-    new RequestActionsWithPermissions(inject[BodyParsers.Default], permission), casesService, queuesService, messageApi, appConfig
+    new RequestActionsWithPermissions(defaultPlayBodyParsers, permission), casesService, queuesService, mcc, realAppConfig
   )
 
   "Queue" should {

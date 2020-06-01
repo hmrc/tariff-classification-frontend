@@ -35,11 +35,8 @@ import utils.Cases
 
 import scala.concurrent.Future.successful
 
-class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
-  with GuiceOneAppPerSuite with MockitoSugar with BeforeAndAfterEach with ControllerCommons {
+class ReleaseCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
-  private val messageApi = inject[MessagesControllerComponents]
-  private val appConfig = inject[AppConfig]
   private val casesService = mock[CasesService]
   private val queueService = mock[QueuesService]
   private val queue = mock[Queue]
@@ -48,20 +45,17 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   private val caseWithStatusNEW = Cases.btiCaseExample.copy(status = CaseStatus.NEW)
   private val caseWithStatusOPEN = Cases.btiCaseExample.copy(status = CaseStatus.OPEN)
 
-  private implicit val mat: Materializer = fakeApplication.materializer
-  private implicit val hc: HeaderCarrier = HeaderCarrier()
-
   override def afterEach(): Unit = {
     super.afterEach()
     reset(casesService)
   }
 
   private def controller(requestCase: Case) = new ReleaseCaseController(
-    new SuccessfulRequestActions(inject[BodyParsers.Default], operator, c = requestCase), casesService, queueService, messageApi, appConfig
+    new SuccessfulRequestActions(inject[BodyParsers.Default], operator, c = requestCase), casesService, queueService, mcc, realAppConfig
   )
 
   private def controller(requestCase: Case, permission: Set[Permission]) = new ReleaseCaseController(
-    new RequestActionsWithPermissions(inject[BodyParsers.Default], permission, c = requestCase), casesService, queueService, messageApi, appConfig
+    new RequestActionsWithPermissions(inject[BodyParsers.Default], permission, c = requestCase), casesService, queueService, mcc, realAppConfig
   )
 
   "Release Case" should {

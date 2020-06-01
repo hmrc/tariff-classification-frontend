@@ -30,8 +30,8 @@ import uk.gov.hmrc.http.cache.client.CacheMap
 
 import scala.concurrent.Future
 
-class MongoCacheConnectorSpec extends WordSpec with MustMatchers with ScalaCheckDrivenPropertyChecks
-  with Generators with MockitoSugar with ScalaFutures with OptionValues {
+class MongoCacheConnectorSpec extends ScalaCheckDrivenPropertyChecks
+  with Generators with ConnectorTest with ScalaFutures with OptionValues {
 
   ".save" must {
 
@@ -50,7 +50,7 @@ class MongoCacheConnectorSpec extends WordSpec with MustMatchers with ScalaCheck
         val result = mongoCacheConnector.save(cacheMap)
 
         whenReady(result) { savedCacheMap =>
-          savedCacheMap mustEqual cacheMap
+          savedCacheMap shouldBe cacheMap
           verify(mockReactiveMongoRepository).upsert(cacheMap)
         }
 
@@ -77,7 +77,7 @@ class MongoCacheConnectorSpec extends WordSpec with MustMatchers with ScalaCheck
         val result = mongoCacheConnector.remove(cacheMap)
 
         whenReady(result) { savedCacheMap =>
-          savedCacheMap mustEqual true
+          savedCacheMap shouldBe true
           verify(mockReactiveMongoRepository).remove(cacheMap)
         }
       }
@@ -105,7 +105,7 @@ class MongoCacheConnectorSpec extends WordSpec with MustMatchers with ScalaCheck
           val result = mongoCacheConnector.fetch(cacheId)
 
           whenReady(result) { optionalCacheMap =>
-            optionalCacheMap must be(empty)
+            optionalCacheMap should be(empty)
           }
         }
 
@@ -131,7 +131,7 @@ class MongoCacheConnectorSpec extends WordSpec with MustMatchers with ScalaCheck
           val result = mongoCacheConnector.fetch(cacheMap.id)
 
           whenReady(result) { optionalCacheMap =>
-              optionalCacheMap.value mustEqual cacheMap
+              optionalCacheMap.get shouldBe cacheMap
           }
         }
 
@@ -160,7 +160,7 @@ class MongoCacheConnectorSpec extends WordSpec with MustMatchers with ScalaCheck
             val result = mongoCacheConnector.getEntry[String](cacheId, key)
 
             whenReady(result) { optionalValue =>
-              optionalValue must be(empty)
+              optionalValue should be(empty)
             }
         }
 
@@ -191,7 +191,7 @@ class MongoCacheConnectorSpec extends WordSpec with MustMatchers with ScalaCheck
           val result = mongoCacheConnector.getEntry[String](cacheMap.id, k)
 
           whenReady(result) { optionalValue =>
-            optionalValue must be(empty)
+            optionalValue should be(empty)
           }
         }
 
@@ -222,7 +222,7 @@ class MongoCacheConnectorSpec extends WordSpec with MustMatchers with ScalaCheck
           val result = mongoCacheConnector.getEntry[String](cacheMap.id, k)
 
           whenReady(result) { optionalValue =>
-            optionalValue.value mustEqual v
+            optionalValue.get shouldBe v
           }
         }
 

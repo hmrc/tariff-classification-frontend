@@ -33,22 +33,19 @@ import utils.Cases
 
 import scala.concurrent.Future
 
-class TabCacheControllerSpec extends UnitSpec with Matchers with
-  GuiceOneAppPerSuite with MockitoSugar with ControllerCommons with ScalaFutures with BeforeAndAfterEach {
+class TabCacheControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
-  val dataCacheConnector = mock[DataCacheConnector]
+  private val dataCacheConnector = mock[DataCacheConnector]
   private val operator = mock[Operator]
   private val cacheMap = mock[CacheMap]
-  private val messagesControllerComponents = inject[MessagesControllerComponents]
-  implicit val mat = inject[Materializer]
 
-  override def beforeEach(): Unit =
-    reset(
-      dataCacheConnector
-    )
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(dataCacheConnector)
+  }
 
   def controller() = new TabCacheController(dataCacheConnector, FakeIdentifierAction(), new FakeDataRetrievalAction(None),
-    new SuccessfulRequestActions(inject[BodyParsers.Default], operator), messagesControllerComponents)
+    new SuccessfulRequestActions(inject[BodyParsers.Default], operator), mcc)
 
   "GET" should {
 

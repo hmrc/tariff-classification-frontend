@@ -40,12 +40,9 @@ import utils.Cases
 
 import scala.concurrent.Future.successful
 
-class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
-  with GuiceOneAppPerSuite with MockitoSugar with BeforeAndAfterEach with ControllerCommons {
+class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   private val largeFileSize :Long = 16485760
-  private val messageApi = inject[MessagesControllerComponents]
-  private val appConfig = inject[AppConfig]
   private val casesService = mock[CasesService]
   private val operator = mock[Operator]
 
@@ -53,19 +50,16 @@ class ReferCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   private val caseWithStatusOPEN = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.OPEN)
   private val caseWithStatusREFERRED = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.REFERRED)
 
-  private implicit val mat: Materializer = fakeApplication.materializer
-  private implicit val hc: HeaderCarrier = HeaderCarrier()
-
   override def afterEach(): Unit = {
     super.afterEach()
     reset(casesService)
   }
 
   private def controller(requestedCase: Case) = new ReferCaseController(
-    new SuccessfulRequestActions(inject[BodyParsers.Default], operator, c = requestedCase), casesService, messageApi, appConfig)
+    new SuccessfulRequestActions(inject[BodyParsers.Default], operator, c = requestedCase), casesService, mcc, realAppConfig)
 
   private def controller(requestCase: Case, permission: Set[Permission]) = new ReferCaseController(
-    new RequestActionsWithPermissions(inject[BodyParsers.Default], permission, c = requestCase), casesService, messageApi, appConfig)
+    new RequestActionsWithPermissions(inject[BodyParsers.Default], permission, c = requestCase), casesService, mcc, realAppConfig)
 
   private def aMultipartFileWithParams(params: (String, Seq[String])*): MultipartFormData[TemporaryFile] = {
     val file = SingletonTemporaryFileCreator.create("example-file.txt")

@@ -34,22 +34,18 @@ import utils.Cases.btiCaseExample
 
 import scala.concurrent.Future
 
-class AssignedCasesControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSuite with MockitoSugar with ControllerCommons {
+class AssignedCasesControllerSpec extends ControllerBaseSpec {
 
-  private val fakeRequest = FakeRequest()
-  private val messageApi = inject[MessagesControllerComponents]
-  private val appConfig = inject[AppConfig]
   private val casesService = mock[CasesService]
   private val queuesService = mock[QueuesService]
   private val queue = Queue("0", "queue", "Queue Name")
-  private implicit val hc: HeaderCarrier = HeaderCarrier()
   private val assignedCase = btiCaseExample.copy(assignee = Some(Operator("1", Some("Test User"))))
 
   private val requiredPermissions: Set[models.Permission] = Set(Permission.VIEW_ASSIGNED_CASES)
   private val noPermissions: Set[models.Permission] = Set.empty
 
   private def controller(permission: Set[Permission]) = new AssignedCasesController(
-    new RequestActionsWithPermissions(inject[BodyParsers.Default], permission), casesService, queuesService, messageApi, appConfig
+    new RequestActionsWithPermissions(defaultPlayBodyParsers, permission), casesService, queuesService, mcc, realAppConfig
   )
 
   "Assigned Cases" should {

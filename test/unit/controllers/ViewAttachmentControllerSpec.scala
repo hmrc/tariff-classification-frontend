@@ -35,16 +35,10 @@ import service.FileStoreService
 
 import scala.concurrent.Future
 
-class ViewAttachmentControllerSpec extends WordSpec with Matchers with UnitSpec
-  with GuiceOneAppPerSuite with MockitoSugar with BeforeAndAfterEach with ControllerCommons {
+class ViewAttachmentControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
-  private val messagesControllerComponents = inject[MessagesControllerComponents]
-  private val appConfig = inject[AppConfig]
   private val fileService = mock[FileStoreService]
   private val operator = mock[Operator]
-
-  private implicit val mat: Materializer = fakeApplication.materializer
-  private implicit val hc: HeaderCarrier = HeaderCarrier()
 
   override def afterEach(): Unit = {
     super.afterEach()
@@ -52,10 +46,10 @@ class ViewAttachmentControllerSpec extends WordSpec with Matchers with UnitSpec
   }
 
   private def controller() = new ViewAttachmentController(
-    new SuccessfulRequestActions(inject[BodyParsers.Default], operator), fileService, messagesControllerComponents, appConfig)
+    new SuccessfulRequestActions(defaultPlayBodyParsers, operator), fileService, mcc, realAppConfig)
 
   private def controller(permission: Set[Permission]) = new ViewAttachmentController(
-    new RequestActionsWithPermissions(inject[BodyParsers.Default], permission, addViewCasePermission = false), fileService, messagesControllerComponents, appConfig)
+    new RequestActionsWithPermissions(defaultPlayBodyParsers, permission, addViewCasePermission = false), fileService, mcc, realAppConfig)
 
   private def givenFileMetadata(fileMetadata: Option[FileMetadata]) =
     given(fileService.getFileMetadata(refEq("id"))(any[HeaderCarrier])) willReturn Future.successful(fileMetadata)

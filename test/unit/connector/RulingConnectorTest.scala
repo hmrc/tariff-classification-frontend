@@ -21,7 +21,7 @@ import play.api.http.Status
 
 class RulingConnectorTest extends ConnectorTest {
 
-  private val connector = new RulingConnector(appConfig, authenticatedHttpClient)
+  private val connector = new RulingConnector(mockAppConfig, authenticatedHttpClient)
 
   "Connector Publish" should {
 
@@ -34,7 +34,7 @@ class RulingConnectorTest extends ConnectorTest {
           )
       )
 
-      await(connector.notify("id")) shouldBe ((): Unit)
+      await(connector.notify("id"))
 
       verify(
         postRequestedFor(urlEqualTo("/binding-tariff-rulings/ruling/id"))

@@ -26,7 +26,7 @@ import models.{Attachment, FileUpload}
 class FileStoreConnectorSpec extends ConnectorTest {
 
   private val attachmentId = "id"
-  private val connector = new FileStoreConnector(appConfig, authenticatedHttpClient, wsClient)
+  private val connector = new FileStoreConnector(mockAppConfig, authenticatedHttpClient, wsClient)
 
   "Connector 'GET' one" should {
     "handle 404" in {

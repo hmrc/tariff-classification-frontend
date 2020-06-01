@@ -34,17 +34,10 @@ import utils.Cases._
 
 import scala.concurrent.Future.successful
 
-class AssignCaseControllerSpec extends WordSpec with Matchers with UnitSpec
-  with GuiceOneAppPerSuite with MockitoSugar with BeforeAndAfterEach with ControllerCommons {
+class AssignCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
-  private val messageApi = inject[MessagesControllerComponents]
-  private val appConfig = inject[AppConfig]
   private val casesService = mock[CasesService]
   private val operator = Operator("id")
-
-  private implicit val mat: Materializer = fakeApplication.materializer
-  private implicit val hc: HeaderCarrier = HeaderCarrier()
-
 
   override def afterEach(): Unit = {
     super.afterEach()
@@ -52,11 +45,11 @@ class AssignCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   }
 
   private def controller(requestCase: Case) = new AssignCaseController(
-    new SuccessfulRequestActions(inject[BodyParsers.Default], operator, c = requestCase), casesService, messageApi, appConfig
+    new SuccessfulRequestActions(defaultPlayBodyParsers, operator, c = requestCase), casesService, mcc, realAppConfig
   )
 
   private def controller(requestCase: Case, permissions: Set[Permission]) = new AssignCaseController(
-    new RequestActionsWithPermissions(inject[BodyParsers.Default], permissions = permissions, c = requestCase), casesService, messageApi, appConfig
+    new RequestActionsWithPermissions(defaultPlayBodyParsers, permissions = permissions, c = requestCase), casesService, mcc, realAppConfig
   )
 
   "Assign Case" should {

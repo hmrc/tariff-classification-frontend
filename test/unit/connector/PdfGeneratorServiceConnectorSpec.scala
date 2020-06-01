@@ -23,9 +23,9 @@ import models.PdfFile
 
 class PdfGeneratorServiceConnectorSpec extends ConnectorTest {
 
-  private val pdfTemplate = mock[Html]
+  private val pdfTemplate = Html("dummy html")
 
-  private val connector = new PdfGeneratorServiceConnector(appConfig, wsClient)
+  private val connector = new PdfGeneratorServiceConnector(realAppConfig, wsClient)
 
   "Connector" should {
 

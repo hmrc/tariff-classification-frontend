@@ -16,8 +16,7 @@
 
 package controllers.actions
 
-import base.SpecBase
-import controllers.routes
+import controllers.{ControllerBaseSpec, routes}
 import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -29,7 +28,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 
-class AuthActionSpec extends SpecBase {
+class AuthActionSpec extends ControllerBaseSpec {
 
   private def unauthorisedLocation = {
     Some(routes.SecurityController.unauthorized().url)
@@ -150,9 +149,9 @@ class AuthActionSpec extends SpecBase {
     val authAction = new AuthenticatedIdentifierAction(
       new FakeFailingAuthConnector(exc),
       cc,
-      appConfig,
-      config,
-      env
+      realAppConfig,
+      realConfig,
+      realEnv
     )
     val controller = new Harness(authAction)
     controller.onPageLoad()(fakeRequest)
@@ -162,9 +161,9 @@ class AuthActionSpec extends SpecBase {
     val authAction = new AuthenticatedIdentifierAction(
       new FakeAuthConnector(internalId),
       cc,
-      appConfig,
-      config,
-      env
+      realAppConfig,
+      realConfig,
+      realEnv
     )
     val controller = new Harness(authAction)
     controller.onPageLoadWithInternalId()(request)

@@ -27,7 +27,7 @@ class EmailConnectorSpec extends ConnectorTest {
 
   private val email = CaseCompletedEmail(Seq("user@domain.com"), CaseCompletedEmailParameters("name", "case-ref", "item-name"))
 
-  private val connector = new EmailConnector(appConfig, standardHttpClient)
+  private val connector = new EmailConnector(mockAppConfig, standardHttpClient)
 
   "Connector 'Send'" should {
     implicit val format: Format[Email[_]] = JsonFormatters.emailFormat
@@ -39,7 +39,7 @@ class EmailConnectorSpec extends ConnectorTest {
           .withStatus(HttpStatus.SC_ACCEPTED))
       )
 
-      await(connector.send(email)) shouldBe ((): Unit)
+      await(connector.send(email))
 
       verify(
         postRequestedFor(urlEqualTo("/hmrc/email"))

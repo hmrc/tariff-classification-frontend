@@ -36,7 +36,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
   private val currentTime = LocalDate.of(2019,1,1).atStartOfDay().toInstant(ZoneOffset.UTC)
   private implicit val clock: Clock = Clock.fixed(currentTime, ZoneOffset.UTC)
 
-  private val connector = new BindingTariffClassificationConnector(appConfig, authenticatedHttpClient)
+  private val connector = new BindingTariffClassificationConnector(mockAppConfig, authenticatedHttpClient)
 
   "Connector 'Get Cases By Queue'" should {
 

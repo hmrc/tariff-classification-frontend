@@ -37,11 +37,8 @@ import utils.Cases._
 
 import scala.concurrent.Future
 
-class SearchControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSuite with MockitoSugar with ControllerCommons {
+class SearchControllerSpec extends ControllerBaseSpec {
 
-  private val fakeRequest = FakeRequest()
-  private val messagesControllerComponents = inject[MessagesControllerComponents]
-  private val appConfig = inject[AppConfig]
   private val casesService = mock[CasesService]
   private val fileStoreService = mock[FileStoreService]
   private val keywordsService = mock[KeywordsService]
@@ -50,14 +47,11 @@ class SearchControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSui
   private val defaultTab = SearchTab.DETAILS
 
   private def controller = new SearchController(
-    new SuccessfulRequestActions(inject[BodyParsers.Default], operator), casesService, keywordsService, fileStoreService, messagesControllerComponents, appConfig
+    new SuccessfulRequestActions(defaultPlayBodyParsers, operator), casesService, keywordsService, fileStoreService, mcc, realAppConfig
   )
 
   private def controller(permission: Set[Permission]) = new SearchController(
-    new RequestActionsWithPermissions(inject[BodyParsers.Default], permission), casesService, keywordsService, fileStoreService, messagesControllerComponents, appConfig)
-
-
-  private implicit val hc: HeaderCarrier = HeaderCarrier()
+    new RequestActionsWithPermissions(defaultPlayBodyParsers, permission), casesService, keywordsService, fileStoreService, mcc, realAppConfig)
 
   "Search" should {
 

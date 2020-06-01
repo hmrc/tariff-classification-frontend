@@ -41,7 +41,7 @@ import models.request.AuthenticatedRequest
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 
-class AuthenticatedActionSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach with GuiceOneAppPerSuite {
+class AuthenticatedActionSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   private val appConfig = mock[AppConfig]
   private val config = mock[Configuration]
@@ -55,15 +55,6 @@ class AuthenticatedActionSpec extends UnitSpec with MockitoSugar with BeforeAndA
     reset(config, environment, connector, block, result)
   }
 
-  def inject[T](implicit m: Manifest[T]) = app.injector.instanceOf[T]
-
-  protected def locationOf(result: Result): Option[String] = {
-    result.header.headers.get(LOCATION)
-  }
-
-  protected def contentTypeOf(result: Result): Option[String] = {
-    result.body.contentType.map(_.split(";").take(1).mkString.trim)
-  }
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     given(appConfig.teamEnrolment).willReturn("team-enrolment")

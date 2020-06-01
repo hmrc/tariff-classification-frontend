@@ -33,35 +33,21 @@ import models._
 import service.CasesService
 import utils.Cases
 
-class ReleaseOrSuppressCaseControllerSpec extends WordSpec
-  with Matchers
-  with UnitSpec
-  with GuiceOneAppPerSuite
-  with MockitoSugar
-  with BeforeAndAfterEach
-  with ControllerCommons {
+class ReleaseOrSuppressCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
-  private val env = Environment.simple()
-
-  private val messageApi = inject[MessagesControllerComponents]
-  private val appConfig = inject[AppConfig]
   private val casesService = mock[CasesService]
   private val operator = mock[Operator]
 
   private val caseBTIWithStatusNEW = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.NEW)
   private val caseLiabilityWithStatusNEW = Cases.liabilityCaseExample.copy(reference = "reference", status = CaseStatus.NEW)
 
-  private implicit val mat: Materializer = fakeApplication.materializer
-  private implicit val hc: HeaderCarrier = HeaderCarrier()
-
   private def controller(c: Case) = new ReleaseOrSuppressCaseController(
-    new SuccessfulRequestActions(inject[BodyParsers.Default], operator, c = c), casesService, messageApi, appConfig)
+    new SuccessfulRequestActions(inject[BodyParsers.Default], operator, c = c), casesService, mcc, realAppConfig)
 
   private def controller(requestCase: Case, permission: Set[Permission]) = new ReleaseOrSuppressCaseController(
-    new RequestActionsWithPermissions(inject[BodyParsers.Default], permission, c = requestCase), casesService, messageApi, appConfig)
+    new RequestActionsWithPermissions(inject[BodyParsers.Default], permission, c = requestCase), casesService, mcc, realAppConfig)
 
   val form = new CaseStatusRadioInputFormProvider()()
-
 
   "ReleaseOrSuppressCaseControllerSpec" should {
     "case is BTI" when {

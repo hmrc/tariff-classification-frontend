@@ -18,18 +18,11 @@ package config
 
 import java.time.Clock
 
-import org.scalatestplus.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.Application
-import play.api.inject.guice.GuiceApplicationBuilder
-import uk.gov.hmrc.play.test.UnitSpec
+import base.SpecBase
 
-class AppConfigSpec extends UnitSpec with MockitoSugar with GuiceOneAppPerSuite {
+class AppConfigSpec extends SpecBase {
 
-  override lazy val app: Application = new GuiceApplicationBuilder().overrides().build()
-
-  lazy val appConf = app.injector.instanceOf[AppConfig]
-
+  lazy val appConf: AppConfig = realAppConfig
 
   "Config" should {
 

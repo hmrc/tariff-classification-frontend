@@ -35,11 +35,8 @@ import utils.Cases
 
 import scala.concurrent.Future.successful
 
-class ReopenCaseControllerSpec extends WordSpec with Matchers with UnitSpec
-  with GuiceOneAppPerSuite with MockitoSugar with BeforeAndAfterEach with ControllerCommons {
+class ReopenCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
-  private val messageApi = inject[MessagesControllerComponents]
-  private val appConfig = inject[AppConfig]
   private val casesService = mock[CasesService]
   private val operator = mock[Operator]
 
@@ -49,9 +46,6 @@ class ReopenCaseControllerSpec extends WordSpec with Matchers with UnitSpec
 
   private val liabilityCaseWithStatusOpen = Cases.liabilityCaseExample.copy(reference = "reference", status = CaseStatus.OPEN)
   private val liabilityCaseWithStatusSuspended = Cases.liabilityCaseExample.copy(reference = "reference", status = CaseStatus.SUSPENDED)
-
-  private implicit val mat: Materializer = fakeApplication.materializer
-  private implicit val hc: HeaderCarrier = HeaderCarrier()
 
   implicit lazy val appWithLiabilityToggleOff = new GuiceApplicationBuilder()
     .configure("toggle.new-liability-details" -> false)
@@ -65,13 +59,13 @@ class ReopenCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   }
 
   private def controller(c: Case) = new ReopenCaseController(
-    new SuccessfulRequestActions(inject[BodyParsers.Default], operator, c = c), casesService, messageApi, appConfig)
+    new SuccessfulRequestActions(defaultPlayBodyParsers, operator, c = c), casesService, mcc, realAppConfig)
 
   private def controllerForOldLiabilities(c: Case) = new ReopenCaseController(
-    new SuccessfulRequestActions(inject[BodyParsers.Default], operator, c = c), casesService, messageApi, appConf)
+    new SuccessfulRequestActions(defaultPlayBodyParsers, operator, c = c), casesService, mcc, appConf)
 
   private def controller(requestCase: Case, permission: Set[Permission]) = new ReopenCaseController(
-    new RequestActionsWithPermissions(inject[BodyParsers.Default], permission, c = requestCase), casesService, messageApi, appConfig)
+    new RequestActionsWithPermissions(defaultPlayBodyParsers, permission, c = requestCase), casesService, mcc, realAppConfig)
 
 
   "ReopenCaseControllerSpec" should {
