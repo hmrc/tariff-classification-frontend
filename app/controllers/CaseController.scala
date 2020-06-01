@@ -120,7 +120,11 @@ class CaseController @Inject()(
     )
   }
 
-  def addNote(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.ADD_NOTE)).async { implicit request =>
+  def addNote(reference: String): Action[AnyContent] =
+    (verify.authenticated andThen
+      verify.casePermissions(reference) andThen
+      verify.mustHave(Permission.ADD_NOTE)).async {
+      implicit request =>
 
     def onError: Form[ActivityFormData] => Future[Result] = errorForm => {
       validateAndRenderView(
@@ -145,7 +149,10 @@ class CaseController @Inject()(
     activityForm.bindFromRequest.fold(onError, onSuccess)
   }
 
-  def keywordsDetails(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
+  def keywordsDetails(reference: String): Action[AnyContent] =
+    (verify.authenticated andThen
+      verify.casePermissions(reference)).async {
+      implicit request =>
     validateAndRenderView(
       reference,
       KEYWORDS,
@@ -155,7 +162,11 @@ class CaseController @Inject()(
     )
   }
 
-  def addKeyword(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.KEYWORDS)).async { implicit request =>
+  def addKeyword(reference: String): Action[AnyContent] =
+    (verify.authenticated andThen
+      verify.casePermissions(reference) andThen
+      verify.mustHave(Permission.KEYWORDS)).async {
+      implicit request =>
     keywordForm.bindFromRequest.fold(
       errorForm => {
         validateAndRenderView(
@@ -173,7 +184,11 @@ class CaseController @Inject()(
     )
   }
 
-  def removeKeyword(reference: String, keyword: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.KEYWORDS)).async { implicit request: AuthenticatedCaseRequest[AnyContent] =>
+  def removeKeyword(reference: String, keyword: String): Action[AnyContent] =
+    (verify.authenticated andThen
+      verify.casePermissions(reference) andThen
+      verify.mustHave(Permission.KEYWORDS)).async {
+      implicit request: AuthenticatedCaseRequest[AnyContent] =>
     validateAndRenderView(
       KEYWORDS,
       updateKeywords(_, keyword)(keywordsService.removeKeyword),

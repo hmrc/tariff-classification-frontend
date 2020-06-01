@@ -16,29 +16,41 @@
 
 package models.viewmodels
 
+import models.CaseStatus.CaseStatus
 import models._
 
 case class LiabilityViewModel(
                                caseHeaderViewModel: CaseHeaderViewModel,
-                               isNewCase: Boolean,
                                hasPermissions: Boolean,
-                               showRulingAndKeywordsTabs: Boolean,
                                showChangeCaseStatus: Boolean,
                                showTakeOffReferral: Boolean,
                                showReopen: Boolean,
-                               showAppealTab: Boolean
+                               showAppealTab: Boolean,
+                               caseStatus: CaseStatus
                              ) {
 
-  def showActionThisCase: Boolean = {
-    isNewCase && hasPermissions
-  }
+  def showRulingAndKeywordsTabs: Boolean = Set(
+    CaseStatus.OPEN,
+    CaseStatus.REFERRED,
+    CaseStatus.REJECTED,
+    CaseStatus.SUSPENDED,
+    CaseStatus.COMPLETED
+  ).contains(caseStatus)
+
+  def showActionThisCase: Boolean = isNewCase && hasPermissions
+
+  def isNewCase: Boolean = caseStatus == CaseStatus.NEW
+
+  def showAdvancedSearchButton: Boolean = Set(
+    CaseStatus.OPEN,
+    CaseStatus.REFERRED,
+    CaseStatus.SUSPENDED
+  ).contains(caseStatus)
 }
 
 object LiabilityViewModel {
 
   def fromCase(c: Case, operator: Operator): LiabilityViewModel = {
-
-    def isNew: Boolean = c.status == CaseStatus.NEW
 
     def releaseOrSuppressPermissions: Boolean =
       operator.permissions.contains(Permission.RELEASE_CASE) || operator.permissions.contains(Permission.SUPPRESS_CASE)
@@ -58,28 +70,19 @@ object LiabilityViewModel {
     def takeOffReferral: Boolean =
       c.status == CaseStatus.REFERRED && reopenCasePermission
 
-    def showRulingAndKeywords: Boolean =
-      c.status == CaseStatus.OPEN ||
-        c.status == CaseStatus.REFERRED ||
-        c.status == CaseStatus.REJECTED ||
-        c.status == CaseStatus.SUSPENDED ||
-        c.status == CaseStatus.COMPLETED
-
-    def showReopenButton: Boolean =
-      c.status == CaseStatus.SUSPENDED && reopenCasePermission
+    def showReopenButton: Boolean = c.status == CaseStatus.SUSPENDED && reopenCasePermission
 
     def showAppeal: Boolean =
       (c.status == CaseStatus.COMPLETED || c.status == CaseStatus.CANCELLED) && appealCasePermission
 
     LiabilityViewModel(
       CaseHeaderViewModel.fromCase(c),
-      isNewCase = isNew,
       hasPermissions = releaseOrSuppressPermissions,
-      showRulingAndKeywordsTabs = showRulingAndKeywords,
       showChangeCaseStatus = changeCaseStatus,
       showTakeOffReferral = takeOffReferral,
       showReopen = showReopenButton,
-      showAppealTab = showAppeal
+      showAppealTab = showAppeal,
+      caseStatus = c.status
     )
   }
 }

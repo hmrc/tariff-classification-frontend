@@ -838,6 +838,8 @@ case.v2.liability.change_case_status.button=Change case status
 case.v2.liability.take_off_referral.button=Take off referral
 case.v2.liability.reopen.button=Reopen case
 
+case.v2.liability.advanced_search.button=Search cases
+
 upload.button = Upload
 upload.files.title = Upload new files
 upload.files.before = Before you upload a file, give it a useful and descriptive filename.
@@ -849,3 +851,4 @@ email.attach.save.bullet2 = From the printer drop-down, choose 'microsoft print 
 email.attach.save.bullet3 = Choose print.
 email.attach.save.bullet4 = In the 'save print output as' box, choose a folder for your PDF and enter a descriptive file name.
 email.attach.save.bullet5 = Then choose save
+

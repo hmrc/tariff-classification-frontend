@@ -18,6 +18,7 @@ package models.viewmodels
 
 import java.time.Instant
 
+import models.CaseStatus.CaseStatus
 import models.{CaseStatus, Permission}
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.Cases
@@ -44,42 +45,40 @@ class LiabilityViewModelSpec extends UnitSpec {
 
   def buildLiabilityModel(
                            caseHeaderViewModel: CaseHeaderViewModel = caseHeaderViewModel,
-                           isNewCase: Boolean = false,
                            hasPermissions: Boolean = false,
-                           showRulingAndKeywordsTabs: Boolean = false,
                            showChangeCaseStatus: Boolean = false,
                            showTakeOffReferral: Boolean = false,
                            showReopen: Boolean = false,
-                           showAppeal: Boolean = false
+                           showAppeal: Boolean = false,
+                           status: CaseStatus
                          ): LiabilityViewModel = {
     LiabilityViewModel(
       caseHeaderViewModel = caseHeaderViewModel,
-      isNewCase = isNewCase,
       hasPermissions = hasPermissions,
-      showRulingAndKeywordsTabs = showRulingAndKeywordsTabs,
       showChangeCaseStatus = showChangeCaseStatus,
       showTakeOffReferral = showTakeOffReferral,
       showReopen = showReopen,
-      showAppealTab = showAppeal
+      showAppealTab = showAppeal,
+      caseStatus = status
     )
   }
 
   "showActionThisCase" should {
 
     "not show action this case button when isNewCase = false and hasPermissions = false" in {
-      buildLiabilityModel(isNewCase = false, hasPermissions = false).showActionThisCase shouldBe false
+      buildLiabilityModel(status = CaseStatus.OPEN, hasPermissions = false).showActionThisCase shouldBe false
     }
 
     "not show action this case button when isNewCase = false and hasPermissions = true" in {
-      buildLiabilityModel(isNewCase = false, hasPermissions = true).showActionThisCase shouldBe false
+      buildLiabilityModel(status = CaseStatus.OPEN, hasPermissions = true).showActionThisCase shouldBe false
     }
 
     "not show action this case button when isNewCase = true and hasPermissions = false" in {
-      buildLiabilityModel(isNewCase = true, hasPermissions = false).showActionThisCase shouldBe false
+      buildLiabilityModel(status = CaseStatus.NEW, hasPermissions = false).showActionThisCase shouldBe false
     }
 
     "show action this case button when isNewCase = true and hasPermissions = true" in {
-      buildLiabilityModel(isNewCase = true, hasPermissions = true).showActionThisCase shouldBe true
+      buildLiabilityModel(status = CaseStatus.NEW, hasPermissions = true).showActionThisCase shouldBe true
     }
 
   }
@@ -173,13 +172,12 @@ class LiabilityViewModelSpec extends UnitSpec {
         "CANCELLED",
         c.decision,
         isLive = false),
-        isNewCase = false,
         hasPermissions = false,
-        showRulingAndKeywordsTabs = false,
         showChangeCaseStatus = false,
         showTakeOffReferral = false,
         showReopen = false,
-        showAppealTab = false)
+        showAppealTab = false,
+        c.status)
       )
     }
 

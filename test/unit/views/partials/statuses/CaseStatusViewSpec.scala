@@ -74,6 +74,15 @@ class CaseStatusViewSpec extends ViewSpec {
       doc.getElementById("id") should haveClass("bg-blue")
     }
 
+    "render the live liability case status" in {
+      // When
+      val doc = view(case_status(Cases.liabilityLiveCaseExample, "id"))
+
+      // Then
+      doc.text() shouldBe "LIVE OPEN"
+      doc.getElementById("id-liability-status") should haveClass("live-red-text")
+    }
+
   }
 
 }

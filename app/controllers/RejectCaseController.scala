@@ -58,8 +58,11 @@ class RejectCaseController @Inject()(
       renderView(c => c.status == REJECTED, c => successful(views.html.confirm_rejected(c)))
     }
 
-  def postRejectCase(reference: String, activeTab: Option[ActiveTab]): Action[MultipartFormData[Files.TemporaryFile]] = (verify.authenticated andThen verify.casePermissions(reference) andThen
-    verify.mustHave(Permission.REJECT_CASE)).async(parse.multipartFormData) { implicit request: AuthenticatedCaseRequest[MultipartFormData[Files.TemporaryFile]] =>
+  def postRejectCase(reference: String, activeTab: Option[ActiveTab]): Action[MultipartFormData[Files.TemporaryFile]] =
+    (verify.authenticated andThen
+      verify.casePermissions(reference) andThen
+    verify.mustHave(Permission.REJECT_CASE)).async(parse.multipartFormData) {
+      implicit request: AuthenticatedCaseRequest[MultipartFormData[Files.TemporaryFile]] =>
 
     extractFile(key = "file-input")(
       onFileValid = validFile => {
@@ -67,7 +70,10 @@ class RejectCaseController @Inject()(
           formWithErrors =>
             getCaseAndRenderView(reference, c => successful(views.html.reject_case(c, formWithErrors, activeTab))),
           note => {
-            validateAndRedirect(casesService.rejectCase(_, validFile, note, request.operator).map(c => routes.RejectCaseController.confirmRejectCase(c.reference)))
+            validateAndRedirect(
+              casesService.rejectCase(_, validFile, note, request.operator)
+                .map(c => routes.RejectCaseController.confirmRejectCase(c.reference))
+            )
           }
         )
       },

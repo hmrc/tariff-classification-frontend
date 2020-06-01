@@ -35,7 +35,10 @@ object CaseReportFilter {
   val applicationTypeKey = "application_type"
   val assigneeIdKey = "assignee_id"
 
-  implicit def binder(implicit rangeBinder: QueryStringBindable[InstantRange], stringBinder: QueryStringBindable[String]): QueryStringBindable[CaseReportFilter] = new QueryStringBindable[CaseReportFilter] {
+  implicit def binder(
+                       implicit rangeBinder: QueryStringBindable[InstantRange],
+                       stringBinder: QueryStringBindable[String]
+                     ): QueryStringBindable[CaseReportFilter] = new QueryStringBindable[CaseReportFilter] {
 
     override def bind(key: String, requestParams: Map[String, Seq[String]]): Option[Either[String, CaseReportFilter]] = {
       implicit val rp: Map[String, Seq[String]] = requestParams
