@@ -33,14 +33,14 @@ import uk.gov.hmrc.play.test.UnitSpec
 
 trait SpecBase extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar {
 
-  def fakeApp: Application = GuiceApplicationBuilder()
+  override def fakeApplication: Application = GuiceApplicationBuilder()
     .configure(
     "metrics.jvm" -> false,
       "metrics.enabled" -> false,
       "toggle.new-liability-details" -> true
   ).build()
 
-  protected lazy val injector: Injector = fakeApp.injector
+  protected lazy val injector: Injector = fakeApplication.injector
 
   //real
   implicit lazy val hc: HeaderCarrier = HeaderCarrier()
