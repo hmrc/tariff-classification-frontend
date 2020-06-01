@@ -93,7 +93,7 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers
       }
     }
 
-    "redirect to ??? when case is a BTI" when {
+    "reload Appeals page when case is a BTI" when {
       for (s <- Seq(CaseStatus.COMPLETED, CaseStatus.CANCELLED)) {
         s"Case has status $s" in {
 
@@ -106,7 +106,6 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers
         }
       }
     }
-
   }
 
   "Case Choose Type" should {
