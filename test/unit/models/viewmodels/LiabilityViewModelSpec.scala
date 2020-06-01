@@ -39,6 +39,7 @@ class LiabilityViewModelSpec extends UnitSpec {
     "trader-business-name", "good-name",
     "1",
     "CANCELLED",
+    None,
     isLive = false)
 
   def buildLiabilityModel(
@@ -170,6 +171,7 @@ class LiabilityViewModelSpec extends UnitSpec {
         "trader-business-name", "good-name",
         "1",
         "CANCELLED",
+        c.decision,
         isLive = false),
         isNewCase = false,
         hasPermissions = false,
