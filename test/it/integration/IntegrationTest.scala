@@ -3,7 +3,7 @@ package integration
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, post, stubFor, urlEqualTo}
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.Application
-import play.api.i18n.{Lang, MessagesApi}
+import play.api.i18n.{Lang, Messages, MessagesApi}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.ws.WSClient
 import play.api.test.Helpers.{OK, UNAUTHORIZED}
@@ -13,7 +13,7 @@ import utils.{ResourceFiles, WiremockTestServer}
 trait IntegrationTest extends UnitSpec with GuiceOneServerPerSuite
   with ResourceFiles with WiremockTestServer {
 
-  val messages = injector.instanceOf[MessagesApi].preferred(Seq(Lang.defaultLang))
+  val messages: Messages = app.injector.instanceOf[MessagesApi].preferred(Seq(Lang.defaultLang))
 
   override def fakeApplication(): Application = new GuiceApplicationBuilder()
     .disable[com.kenshoo.play.metrics.PlayModule]
@@ -25,7 +25,7 @@ trait IntegrationTest extends UnitSpec with GuiceOneServerPerSuite
     ))
     .build()
 
-  protected val ws: WSClient = injector.instanceOf[WSClient]
+  protected val ws: WSClient = app.injector.instanceOf[WSClient]
 
   protected val baseUrl = s"http://localhost:$port/manage-tariff-classifications"
 

@@ -16,9 +16,8 @@
 
 package integration
 
-import controllers.ControllerBaseSpec
 import controllers.routes.IndexController
-import org.scalatest.{FreeSpec, MustMatchers, OptionValues}
+import org.scalatest.OptionValues
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -27,9 +26,9 @@ import play.api.test.Helpers._
 import views.html.shutterPage
 
 
-class ShutteringFilterSpec extends IntegrationTest with GuiceOneAppPerSuite with OptionValues {
+class ShutteringFilterSpec extends IntegrationTest with OptionValues {
 
-  val baseApp: Application = new GuiceApplicationBuilder()
+  override lazy val app: Application = new GuiceApplicationBuilder()
     .configure(
       "shutter.enabled" -> true,
       "shutter.urls.excluded" -> "/ping/ping"
@@ -42,7 +41,7 @@ class ShutteringFilterSpec extends IntegrationTest with GuiceOneAppPerSuite with
 
       "the `shuttered` config property is true" in {
         val view = shutterPage
-        val result = route(baseApp, FakeRequest(GET, IndexController.get().url)).get
+        val result = route(app, FakeRequest(GET, IndexController.get().url)).get
 
         status(result) shouldBe SERVICE_UNAVAILABLE
         contentAsString(result) shouldBe view().toString
