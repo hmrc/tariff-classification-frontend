@@ -17,9 +17,9 @@
 package models.forms
 
 import uk.gov.hmrc.play.test.UnitSpec
-import models.{Contact, LiabilityOrder, LiabilityStatus}
+import models.{Contact, LiabilityOrder, LiabilityStatus, ModelsBaseSpec}
 
-class LiabilityFormTest extends UnitSpec {
+class LiabilityFormTest extends ModelsBaseSpec {
 
   "Bind from request" should {
     "Bind an empty form" in {

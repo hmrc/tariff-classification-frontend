@@ -21,9 +21,9 @@ import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.FormError
 import play.api.data.validation.{Constraint, Invalid, Valid, ValidationResult}
 import uk.gov.hmrc.play.test.UnitSpec
-import models.Decision
+import models.{Decision, ModelsBaseSpec}
 
-class DecisionFormTest extends UnitSpec with MockitoSugar {
+class DecisionFormTest extends ModelsBaseSpec {
 
   private val decision = Decision(
     bindingCommodityCode = "0100000000",

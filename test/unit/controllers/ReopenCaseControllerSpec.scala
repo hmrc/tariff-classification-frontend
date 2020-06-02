@@ -47,12 +47,6 @@ class ReopenCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
   private val liabilityCaseWithStatusOpen = Cases.liabilityCaseExample.copy(reference = "reference", status = CaseStatus.OPEN)
   private val liabilityCaseWithStatusSuspended = Cases.liabilityCaseExample.copy(reference = "reference", status = CaseStatus.SUSPENDED)
 
-  implicit lazy val appWithLiabilityToggleOff = new GuiceApplicationBuilder()
-    .configure("toggle.new-liability-details" -> false)
-    .build()
-
-  lazy val appConf: AppConfig = appWithLiabilityToggleOff.injector.instanceOf[AppConfig]
-
   override def afterEach(): Unit = {
     super.afterEach()
     reset(casesService)
@@ -62,7 +56,7 @@ class ReopenCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
     new SuccessfulRequestActions(defaultPlayBodyParsers, operator, c = c), casesService, mcc, realAppConfig)
 
   private def controllerForOldLiabilities(c: Case) = new ReopenCaseController(
-    new SuccessfulRequestActions(defaultPlayBodyParsers, operator, c = c), casesService, mcc, appConf)
+    new SuccessfulRequestActions(defaultPlayBodyParsers, operator, c = c), casesService, mcc, appConfWithLiabilityToggleOff)
 
   private def controller(requestCase: Case, permission: Set[Permission]) = new ReopenCaseController(
     new RequestActionsWithPermissions(defaultPlayBodyParsers, permission, c = requestCase), casesService, mcc, realAppConfig)

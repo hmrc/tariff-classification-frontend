@@ -17,11 +17,11 @@
 package models.forms
 
 import uk.gov.hmrc.play.test.UnitSpec
-import models.{Case, Decision}
+import models.{Case, Decision, ModelsBaseSpec}
 import utils.Cases._
 import utils.DecisionForms
 
-class DecisionFormMapperSpec extends UnitSpec {
+class DecisionFormMapperSpec extends ModelsBaseSpec {
 
   private val validForm = DecisionForms.validForm
   private val testCase = btiCaseExample

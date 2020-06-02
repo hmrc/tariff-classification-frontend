@@ -13,7 +13,7 @@ import utils.{ResourceFiles, WiremockTestServer}
 trait IntegrationTest extends UnitSpec with GuiceOneServerPerSuite
   with ResourceFiles with WiremockTestServer {
 
-  val messages = app.injector.instanceOf[MessagesApi].preferred(Seq(Lang.defaultLang))
+  val messages = injector.instanceOf[MessagesApi].preferred(Seq(Lang.defaultLang))
 
   override def fakeApplication(): Application = new GuiceApplicationBuilder()
     .disable[com.kenshoo.play.metrics.PlayModule]
@@ -25,7 +25,7 @@ trait IntegrationTest extends UnitSpec with GuiceOneServerPerSuite
     ))
     .build()
 
-  protected val ws: WSClient = app.injector.instanceOf[WSClient]
+  protected val ws: WSClient = injector.instanceOf[WSClient]
 
   protected val baseUrl = s"http://localhost:$port/manage-tariff-classifications"
 

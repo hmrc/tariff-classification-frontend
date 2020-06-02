@@ -18,9 +18,9 @@ package models.forms
 
 import play.api.data.FormError
 import uk.gov.hmrc.play.test.UnitSpec
-import models.{ApplicationType, PseudoCaseStatus, Search}
+import models.{ApplicationType, ModelsBaseSpec, PseudoCaseStatus, Search}
 
-class SearchFormTest extends UnitSpec {
+class SearchFormTest extends ModelsBaseSpec {
 
   private val commodityCodeError = "Commodity code must be empty or numeric between 2 and 22 digits"
 

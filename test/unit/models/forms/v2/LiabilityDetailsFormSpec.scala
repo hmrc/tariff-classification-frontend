@@ -19,13 +19,13 @@ package models.forms.v2
 import java.time.Instant
 
 import config.AppConfig
-import models.{Address, Contact, LiabilityOrder, LiabilityStatus, RepaymentClaim, TraderContactDetails}
+import models.{Address, Contact, LiabilityOrder, LiabilityStatus, ModelsBaseSpec, RepaymentClaim, TraderContactDetails}
 import org.joda.time.{DateTime, DateTimeZone}
 import org.scalatestplus.mockito.MockitoSugar
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.Cases
 
-class LiabilityDetailsFormSpec extends UnitSpec with MockitoSugar {
+class LiabilityDetailsFormSpec extends ModelsBaseSpec {
 
   private val appConfig = mock[AppConfig]
 

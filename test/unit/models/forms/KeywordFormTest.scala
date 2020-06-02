@@ -16,10 +16,11 @@
 
 package models.forms
 
+import models.ModelsBaseSpec
 import play.api.data.FormError
 import uk.gov.hmrc.play.test.UnitSpec
 
-class KeywordFormTest extends UnitSpec {
+class KeywordFormTest extends ModelsBaseSpec {
 
   "Keywords form " should {
     "validate 'keyword'" in {

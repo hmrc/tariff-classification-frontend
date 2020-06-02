@@ -25,7 +25,7 @@ import views.html.v2.keywords_details
 
 class KeywordsDetailsViewSpec extends ViewSpec {
 
-  def keywordDetails: keywords_details = app.injector.instanceOf[keywords_details]
+  def keywordDetails: keywords_details = injector.instanceOf[keywords_details]
 
   val keywordsTabViewModel = KeywordsTabViewModel("reference", Set("keyword1", "keyword2"), Seq("keyword1", "keywordX", "keywordY"))
 

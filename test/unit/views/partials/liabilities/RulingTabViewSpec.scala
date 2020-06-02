@@ -36,7 +36,7 @@ class RulingTabViewSpec extends ViewSpec {
     "case reference"
   )
 
-  def rulingTab: ruling_tab = app.injector.instanceOf[ruling_tab]
+  def rulingTab: ruling_tab = injector.instanceOf[ruling_tab]
 
   "Ruling Tab" should {
 

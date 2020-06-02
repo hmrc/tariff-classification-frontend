@@ -85,7 +85,7 @@ class PdfDownloadControllerSpec extends ControllerBaseSpec {
   }
 
 
-  "PdfDownloadController Application" must {
+  "PdfDownloadController Application" should {
 
     "return expected pdf" in {
       givenCompletedCase()
@@ -113,7 +113,7 @@ class PdfDownloadControllerSpec extends ControllerBaseSpec {
 
   }
 
-  "PdfDownloadController Ruling" must {
+  "PdfDownloadController Ruling" should {
 
     "return expected pdf" in {
       givenCompletedCase()

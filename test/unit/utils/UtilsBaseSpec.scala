@@ -16,35 +16,8 @@
 
 package utils
 
-import java.time.{Instant, LocalDate, ZoneOffset}
+import base.SpecBase
 
-import uk.gov.hmrc.play.test.UnitSpec
+class UtilsBaseSpec extends SpecBase {
 
-class DatesSpec extends UtilsBaseSpec {
-
-  private val date: Instant = LocalDate.of(2018, 1, 1)
-    .atStartOfDay(ZoneOffset.UTC)
-    .toInstant
-
-  "Format" should {
-
-    "convert instant to string" in {
-      val output = Dates.format(date)
-
-      output shouldBe "01 Jan 2018"
-    }
-
-    "convert Option(instant) to string" in {
-      val output = Dates.format(Some(date))
-
-      output shouldBe "01 Jan 2018"
-    }
-
-    "convert None to string" in {
-      val output = Dates.format(None)
-
-      output shouldBe "None"
-    }
-
-  }
 }

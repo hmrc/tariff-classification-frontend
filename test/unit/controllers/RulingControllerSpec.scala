@@ -19,7 +19,7 @@ package controllers
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito._
 import org.mockito.Mockito
-import org.mockito.Mockito.{never, verify}
+import org.mockito.Mockito.{never, reset, verify}
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterEach, Matchers}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
@@ -47,18 +47,19 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
   private val operator = mock[Operator]
   private val commodityCodeConstraints = mock[CommodityCodeConstraints]
   private val decisionForm = new DecisionForm(commodityCodeConstraints)
-  private val editLiabilityView = injector.instanceOf[edit_liability_ruling]
+  private lazy val editLiabilityView = injector.instanceOf[edit_liability_ruling]
 
-  override protected def afterEach(): Unit = {
-    super.afterEach()
-    Mockito.reset(casesService)
+  override protected def beforeEach(): Unit = {
+    super.beforeEach()
+
+    reset(
+      casesService,
+      fileService,
+      mapper,
+      operator,
+      commodityCodeConstraints
+    )
   }
-
-  private val appWithLiabilityToggleOff = new GuiceApplicationBuilder()
-    .configure("toggle.new-liability-details" -> false)
-    .build()
-
-  lazy val appConfWithLiabilityToggleOff: AppConfig = appWithLiabilityToggleOff.injector.instanceOf[AppConfig]
 
   private def controller(c: Case) = new RulingController(
     new SuccessfulRequestActions(defaultPlayBodyParsers, operator, c = c), casesService, fileService, mapper, decisionForm, mcc, editLiabilityView, appConfWithLiabilityToggleOff
@@ -129,8 +130,11 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
   "validateBeforeComplete Ruling" should {
     val btiCaseWithStatusOpenWithDecision = aCase(withBTIApplication, withReference("reference"), withStatus(CaseStatus.OPEN), withDecision())
     val liabilityCaseWithStatusOpenWithDecision = aLiabilityCase(withReference("reference"), withStatus(CaseStatus.COMPLETED), withDecision())
+    val attachment = storedAttachment
 
     "load edit details page when a mandatory field is missing" in {
+      given(fileService.getAttachments(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(Seq(attachment)))
+
       val result = controller(btiCaseWithStatusOpenWithDecision, Set(Permission.EDIT_RULING))
         .validateBeforeComplete("reference")(newFakeGETRequestWithCSRF(fakeApplication))
 

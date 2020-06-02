@@ -22,7 +22,7 @@ import uk.gov.hmrc.play.test.UnitSpec
 import models.CaseStatus.CaseStatus
 import utils.Cases._
 
-class PermissionTest extends UnitSpec {
+class PermissionTest extends ModelsBaseSpec {
 
   private val readOnly = Operator(id = "id", role = Role.READ_ONLY)
   private val teamMember = Operator(id = "id", role = Role.CLASSIFICATION_OFFICER)

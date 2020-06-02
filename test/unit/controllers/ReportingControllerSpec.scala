@@ -49,7 +49,12 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
   override protected def afterEach(): Unit = {
     super.afterEach()
-    Mockito.reset(reportingService, queueService)
+    Mockito.reset(
+      reportingService,
+      queueService,
+      casesService,
+      operator
+    )
   }
 
   private def controller(permission: Set[Permission]) = new ReportingController(
@@ -110,6 +115,7 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     "Return OK for Referral Report" in {
       given(queueService.getAll) willReturn Future.successful(Seq.empty)
       given(casesService.countCasesByQueue(any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(Map.empty[String, Int]))
+      given(operator.hasPermissions(requiredPermissions)) willReturn true
 
       val req: AuthenticatedRequest[AnyContent] = request(operator, newFakeGETRequestWithCSRF(fakeApplication))
       val result = await(controller(requiredPermissions).getReportCriteria(Report.REFERRAL.toString,0)(req.request))
@@ -199,6 +205,7 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
     "Return Bad Request for missing params" in {
       given(queueService.getAll) willReturn Future.successful(Seq.empty)
+      given(casesService.countCasesByQueue(any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(Map.empty[String, Int]))
       given(operator.hasPermissions(requiredPermissions)) willReturn true
 
       val req: AuthenticatedRequest[AnyContent] = request(operator, newFakeGETRequestWithCSRF(fakeApplication))

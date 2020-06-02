@@ -53,7 +53,7 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
   }
 
   private def controller(permissions: Set[Permission], c: Case) = new LiabilityController(
-    new RequestActionsWithPermissions(inject[BodyParsers.Default], permissions = permissions, addViewCasePermission = false, c = c),
+    new RequestActionsWithPermissions(defaultPlayBodyParsers, permissions = permissions, addViewCasePermission = false, c = c),
     decisionForm, mcc, casesService, realAppConfig
   )
 

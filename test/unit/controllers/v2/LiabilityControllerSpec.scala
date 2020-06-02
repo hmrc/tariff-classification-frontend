@@ -90,7 +90,7 @@ class RequestActionsWithPermissionsProvider @Inject()(implicit parse: BodyParser
 //
 //  val requestActionsWithKeywordsPermission:  RequestActionsWithPermissions = {
 //    new RequestActionsWithPermissions(
-//      inject[BodyParsers.Default], Set(Permission.KEYWORDS),
+//      defaultPlayBodyParsers, Set(Permission.KEYWORDS),
 //      c = Cases.liabilityCaseExample.copy(assignee = Some(Cases.operatorWithPermissions)),
 //      op = Cases.operatorWithPermissions
 //    )
@@ -98,7 +98,7 @@ class RequestActionsWithPermissionsProvider @Inject()(implicit parse: BodyParser
 //
 //  val requestActionsWithEditLiabilityPermission:  RequestActionsWithPermissions = {
 //    new RequestActionsWithPermissions(
-//      inject[BodyParsers.Default], Set(Permission.EDIT_LIABILITY),
+//      defaultPlayBodyParsers, Set(Permission.EDIT_LIABILITY),
 //      c = Cases.liabilityCaseExample.copy(assignee = Some(Cases.operatorWithEditLiabilityPermissions)),
 //      op = Cases.operatorWithEditLiabilityPermissions
 //    )

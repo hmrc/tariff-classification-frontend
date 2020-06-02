@@ -47,11 +47,11 @@ class SuppressCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
   private val caseWithStatusSUPRRESSED = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.SUPPRESSED)
 
   private def controller(requestCase: Case = caseWithStatusNEW) = new SuppressCaseController(
-    new SuccessfulRequestActions(inject[BodyParsers.Default], operator, c = requestCase), casesService, mcc, realAppConfig
+    new SuccessfulRequestActions(defaultPlayBodyParsers, operator, c = requestCase), casesService, mcc, realAppConfig
   )
 
   private def controller(requestCase: Case, permission: Set[Permission]) = new SuppressCaseController(
-    new RequestActionsWithPermissions(inject[BodyParsers.Default], permission, c = requestCase), casesService, mcc, realAppConfig
+    new RequestActionsWithPermissions(defaultPlayBodyParsers, permission, c = requestCase), casesService, mcc, realAppConfig
   )
 
   override def afterEach(): Unit = {

@@ -99,7 +99,7 @@ class CompleteCaseSpec extends IntegrationTest with MockitoSugar {
 //    val caseWithStatusOPEN = CasePayloads.jsonOf(Cases.btiCaseExample.copy(status = CaseStatus.OPEN))
 //    val event = EventPayloads.event
 //
-//    val csrfProvider = app.injector.instanceOf[TokenProvider]
+//    val csrfProvider = injector.instanceOf[TokenProvider]
 //
 //    "return status 200" in {
 //      // Given

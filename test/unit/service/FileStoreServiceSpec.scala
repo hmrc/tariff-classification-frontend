@@ -35,9 +35,8 @@ import utils.Cases._
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
-class FileStoreServiceSpec extends UnitSpec with MockitoSugar {
+class FileStoreServiceSpec extends ServiceSpecBase {
 
-  private implicit val hc: HeaderCarrier = HeaderCarrier()
   private val connector = mock[FileStoreConnector]
   private val service = new FileStoreService(connector)
 

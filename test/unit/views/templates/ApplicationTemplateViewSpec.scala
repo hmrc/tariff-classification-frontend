@@ -31,7 +31,7 @@ class ApplicationTemplateViewSpec extends ViewSpec {
 
   private def createView(c: Case, attachments: Seq[ StoredAttachment ]) = application_template(c, attachments, None, s => Some("dummy country name"))(authenticatedFakeRequest, messages, appConfig)
 
-  "Application pdf view" must {
+  "Application pdf view" should {
 
     "contain the details for a trader" in {
       val doc = view(createView(caseWithoutAgent, Seq.empty))

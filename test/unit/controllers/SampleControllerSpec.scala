@@ -45,19 +45,13 @@ class SampleControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
   private val eventsService = mock[EventsService]
   private val operator = Operator(id = "id")
 
-  private lazy val appWithLiabilityToggle = new GuiceApplicationBuilder()
-    .configure("toggle.new-liability-details" -> true)
-    .build()
-
-  lazy val appConf: AppConfig = appWithLiabilityToggle.injector.instanceOf[AppConfig]
-
   private def controller(requestCase: Case) = new SampleController(
-    new SuccessfulRequestActions(defaultPlayBodyParsers, operator, c = requestCase), casesService, eventsService, mcc, realAppConfig
+    new SuccessfulRequestActions(defaultPlayBodyParsers, operator, c = requestCase), casesService, eventsService, mcc, appConfWithLiabilityToggleOff
   )
 
   private def controller(requestCase: Case, permission: Set[Permission]) = new SampleController(
     new RequestActionsWithPermissions(defaultPlayBodyParsers, permission, c = requestCase),
-    casesService, eventsService, mcc, realAppConfig
+    casesService, eventsService, mcc, appConfWithLiabilityToggleOff
   )
 
   private def controllerV2(requestCase: Case, permission: Set[Permission]) = new SampleController(

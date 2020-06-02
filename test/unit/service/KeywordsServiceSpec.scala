@@ -31,13 +31,10 @@ import utils.Cases
 
 import scala.concurrent.Future.{failed, successful}
 
-class KeywordsServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
-
-  private implicit val hc: HeaderCarrier = HeaderCarrier()
+class KeywordsServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
 
   private val connector = mock[BindingTariffClassificationConnector]
   private val auditService = mock[AuditService]
-  private val config = mock[AppConfig]
 
   private val service = new KeywordsService(connector, auditService)
 
@@ -46,7 +43,7 @@ class KeywordsServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfter
 
   override protected def afterEach(): Unit = {
     super.afterEach()
-    reset(connector, auditService, config)
+    reset(connector, auditService)
   }
 
   "Add keyword" should {

@@ -32,9 +32,7 @@ import utils.Cases
 
 import scala.concurrent.Future.{failed, successful}
 
-class CasesService_ReassignCaseSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach with ConnectorCaptor {
-
-  private implicit val hc: HeaderCarrier = HeaderCarrier()
+class CasesService_ReassignCaseSpec extends ServiceSpecBase with BeforeAndAfterEach with ConnectorCaptor {
 
   private val manyCases = mock[Seq[Case]]
   private val oneCase = mock[Option[Case]]
@@ -45,14 +43,13 @@ class CasesService_ReassignCaseSpec extends UnitSpec with MockitoSugar with Befo
   private val fileStoreService = mock[FileStoreService]
   private val reportingService = mock[ReportingService]
   private val audit = mock[AuditService]
-  private val config = mock[AppConfig]
   private val aCase = Cases.btiCaseExample
 
-  private val service = new CasesService(config, audit, emailService, fileStoreService, reportingService, connector, rulingConnector)
+  private val service = new CasesService(realAppConfig, audit, emailService, fileStoreService, reportingService, connector, rulingConnector)
 
   override protected def afterEach(): Unit = {
     super.afterEach()
-    reset(connector, audit, queue, oneCase, manyCases, config)
+    reset(connector, audit, queue, oneCase, manyCases)
   }
 
   "Reassign Case" should {

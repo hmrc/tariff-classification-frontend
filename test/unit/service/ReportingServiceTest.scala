@@ -29,9 +29,8 @@ import models._
 
 import scala.concurrent.Future
 
-class ReportingServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
+class ReportingServiceTest extends ServiceSpecBase with BeforeAndAfterEach {
 
-  private implicit val hc: HeaderCarrier = HeaderCarrier()
   private val connector = mock[BindingTariffClassificationConnector]
   private val service = new ReportingService(connector)
 

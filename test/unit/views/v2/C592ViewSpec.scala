@@ -25,7 +25,7 @@ import views.html.partials.liabilities.c592_tab
 
 class C592ViewSpec extends ViewSpec {
 
-  def c592Tab: c592_tab = app.injector.instanceOf[c592_tab]
+  def c592Tab: c592_tab = injector.instanceOf[c592_tab]
   
 
   "C592 View" should {

@@ -19,11 +19,11 @@ package models.viewmodels
 import java.time.Instant
 
 import models.CaseStatus.CaseStatus
-import models.{CaseStatus, Permission}
+import models.{CaseStatus, ModelsBaseSpec, Permission}
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.Cases
 
-class LiabilityViewModelSpec extends UnitSpec {
+class LiabilityViewModelSpec extends ModelsBaseSpec {
 
   val openCase = Cases.liabilityCaseExample.copy(status = CaseStatus.OPEN)
   val referredCase = Cases.liabilityCaseExample.copy(status = CaseStatus.REFERRED)

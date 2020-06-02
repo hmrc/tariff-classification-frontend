@@ -51,11 +51,11 @@ class ReleaseCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
   }
 
   private def controller(requestCase: Case) = new ReleaseCaseController(
-    new SuccessfulRequestActions(inject[BodyParsers.Default], operator, c = requestCase), casesService, queueService, mcc, realAppConfig
+    new SuccessfulRequestActions(defaultPlayBodyParsers, operator, c = requestCase), casesService, queueService, mcc, realAppConfig
   )
 
   private def controller(requestCase: Case, permission: Set[Permission]) = new ReleaseCaseController(
-    new RequestActionsWithPermissions(inject[BodyParsers.Default], permission, c = requestCase), casesService, queueService, mcc, realAppConfig
+    new RequestActionsWithPermissions(defaultPlayBodyParsers, permission, c = requestCase), casesService, queueService, mcc, realAppConfig
   )
 
   "Release Case" should {

@@ -35,9 +35,7 @@ import utils.Cases
 import scala.concurrent.Future
 import scala.concurrent.Future.{failed, successful}
 
-class CasesService_CancelRulingSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach with ConnectorCaptor {
-
-  private implicit val hc: HeaderCarrier = HeaderCarrier()
+class CasesService_CancelRulingSpec extends ServiceSpecBase with BeforeAndAfterEach with ConnectorCaptor {
 
   private val manyCases = mock[Seq[Case]]
   private val oneCase = mock[Option[Case]]

@@ -42,10 +42,10 @@ class ReleaseOrSuppressCaseControllerSpec extends ControllerBaseSpec with Before
   private val caseLiabilityWithStatusNEW = Cases.liabilityCaseExample.copy(reference = "reference", status = CaseStatus.NEW)
 
   private def controller(c: Case) = new ReleaseOrSuppressCaseController(
-    new SuccessfulRequestActions(inject[BodyParsers.Default], operator, c = c), casesService, mcc, realAppConfig)
+    new SuccessfulRequestActions(defaultPlayBodyParsers, operator, c = c), casesService, mcc, realAppConfig)
 
   private def controller(requestCase: Case, permission: Set[Permission]) = new ReleaseOrSuppressCaseController(
-    new RequestActionsWithPermissions(inject[BodyParsers.Default], permission, c = requestCase), casesService, mcc, realAppConfig)
+    new RequestActionsWithPermissions(defaultPlayBodyParsers, permission, c = requestCase), casesService, mcc, realAppConfig)
 
   val form = new CaseStatusRadioInputFormProvider()()
 

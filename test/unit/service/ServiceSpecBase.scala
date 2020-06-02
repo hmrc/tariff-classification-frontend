@@ -14,17 +14,10 @@
  * limitations under the License.
  */
 
-package models
+package service
 
-import uk.gov.hmrc.play.test.UnitSpec
+import base.SpecBase
 
-class ReferralReasonTest extends ModelsBaseSpec {
-
-  "format" should {
-    "render to String" in {
-      ReferralReason.format(ReferralReason.REQUEST_MORE_INFO) shouldBe "To request more information"
-      ReferralReason.format(ReferralReason.REQUEST_SAMPLE) shouldBe "To request a sample"
-    }
-  }
+class ServiceSpecBase extends SpecBase with ConnectorCaptor {
 
 }

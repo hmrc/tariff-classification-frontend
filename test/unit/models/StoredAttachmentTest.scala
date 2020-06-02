@@ -22,7 +22,7 @@ import uk.gov.hmrc.play.test.UnitSpec
 import models.response.{FileMetadata, ScanStatus}
 import utils.Cases
 
-class StoredAttachmentTest extends UnitSpec {
+class StoredAttachmentTest extends ModelsBaseSpec {
 
   "'Is Image'" should {
 

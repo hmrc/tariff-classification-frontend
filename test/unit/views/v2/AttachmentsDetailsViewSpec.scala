@@ -44,7 +44,7 @@ class AttachmentsDetailsViewSpec extends ViewSpec {
     )
   }
 
-  def attachments_details: attachments_details = app.injector.instanceOf[attachments_details]
+  def attachments_details: attachments_details = injector.instanceOf[attachments_details]
 
   def renderAttachmentsDetailsWithAttachments: HtmlFormat.Appendable = {
     attachments_details(

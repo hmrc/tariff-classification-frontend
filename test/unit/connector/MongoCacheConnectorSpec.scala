@@ -33,7 +33,7 @@ import scala.concurrent.Future
 class MongoCacheConnectorSpec extends ScalaCheckDrivenPropertyChecks
   with Generators with ConnectorTest with ScalaFutures with OptionValues {
 
-  ".save" must {
+  ".save" should {
 
     "save the cache map to the Mongo repository" in {
 
@@ -60,7 +60,7 @@ class MongoCacheConnectorSpec extends ScalaCheckDrivenPropertyChecks
 
   }
 
-  ".remove" must {
+  ".remove" should {
 
     "remove the cache map to the Mongo repository" in {
 
@@ -88,7 +88,7 @@ class MongoCacheConnectorSpec extends ScalaCheckDrivenPropertyChecks
 
   ".fetch" when {
 
-    "there isn't a record for this key in Mongo" must {
+    "there isn't a record for this key in Mongo" should {
 
       "return None" in {
 
@@ -113,7 +113,7 @@ class MongoCacheConnectorSpec extends ScalaCheckDrivenPropertyChecks
 
     }
 
-    "a record exists for this key" must {
+    "a record exists for this key" should {
 
       "return the record" in {
 
@@ -143,7 +143,7 @@ class MongoCacheConnectorSpec extends ScalaCheckDrivenPropertyChecks
 
   ".getEntry" when {
 
-    "there isn't a record for this key in Mongo" must {
+    "there isn't a record for this key in Mongo" should {
 
       "return None" in {
 
@@ -168,7 +168,7 @@ class MongoCacheConnectorSpec extends ScalaCheckDrivenPropertyChecks
 
     }
 
-    "a record exists in Mongo but this key is not present" must {
+    "a record exists in Mongo but this key is not present" should {
 
       "return None" in {
 
@@ -199,7 +199,7 @@ class MongoCacheConnectorSpec extends ScalaCheckDrivenPropertyChecks
 
     }
 
-    "a record exists in Mongo with this key" must {
+    "a record exists in Mongo with this key" should {
 
       "return the key's value" in {
 

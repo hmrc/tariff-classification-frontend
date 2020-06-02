@@ -18,10 +18,11 @@ package models.forms
 
 import java.util.Calendar
 
+import models.ModelsBaseSpec
 import play.api.data.validation.{Invalid, Valid}
 import uk.gov.hmrc.play.test.UnitSpec
 
-class FormConstraintsTest extends UnitSpec {
+class FormConstraintsTest extends ModelsBaseSpec {
 
   private val currentYear: Int = Calendar.getInstance().get(Calendar.YEAR)
   //TODO read from appconfig

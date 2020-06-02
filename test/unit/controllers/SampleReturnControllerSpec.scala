@@ -43,21 +43,15 @@ class SampleReturnControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
   private val operator = mock[Operator]
 
   private def controller(requestCase: Case) = new SampleReturnController(
-    new SuccessfulRequestActions(defaultPlayBodyParsers, operator, c = requestCase), casesService, mcc, realAppConfig
+    new SuccessfulRequestActions(defaultPlayBodyParsers, operator, c = requestCase), casesService, mcc, appConfWithLiabilityToggleOff
   )
 
   private def controller(requestCase: Case, permission: Set[Permission]) = new SampleReturnController(
-    new RequestActionsWithPermissions(defaultPlayBodyParsers, permission, c = requestCase), casesService, mcc, realAppConfig
+    new RequestActionsWithPermissions(defaultPlayBodyParsers, permission, c = requestCase), casesService, mcc, appConfWithLiabilityToggleOff
   )
 
-  private lazy val appWithLiabilityToggle = new GuiceApplicationBuilder()
-    .configure("toggle.new-liability-details" -> true)
-    .build()
-
-  lazy val appConf: AppConfig = appWithLiabilityToggle.injector.instanceOf[AppConfig]
-
   private def controllerV2(requestCase: Case, permission: Set[Permission]) = new SampleReturnController(
-    new RequestActionsWithPermissions(defaultPlayBodyParsers, permission, c = requestCase), casesService, mcc, appConf
+    new RequestActionsWithPermissions(defaultPlayBodyParsers, permission, c = requestCase), casesService, mcc, realAppConfig
   )
 
   override def afterEach(): Unit = {

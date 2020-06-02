@@ -18,9 +18,9 @@ package models.forms.mappings
 
 import play.api.data.FormError
 import uk.gov.hmrc.play.test.UnitSpec
-import models.CancelReason
+import models.{CancelReason, ModelsBaseSpec}
 
-class FormMappingsTest extends UnitSpec {
+class FormMappingsTest extends ModelsBaseSpec {
 
   "One of" should {
 

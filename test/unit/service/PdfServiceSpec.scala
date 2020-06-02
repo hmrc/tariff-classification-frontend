@@ -26,7 +26,7 @@ import models.PdfFile
 
 import scala.concurrent.Future.{failed, successful}
 
-class PdfServiceSpec extends UnitSpec with MockitoSugar {
+class PdfServiceSpec extends ServiceSpecBase {
 
   private val pdfHtml = mock[Html]
   private val connector = mock[PdfGeneratorServiceConnector]

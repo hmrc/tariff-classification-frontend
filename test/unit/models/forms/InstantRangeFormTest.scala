@@ -19,9 +19,9 @@ package models.forms
 import java.time.{LocalDate, ZoneOffset}
 
 import uk.gov.hmrc.play.test.UnitSpec
-import models.InstantRange
+import models.{InstantRange, ModelsBaseSpec}
 
-class InstantRangeFormTest extends UnitSpec {
+class InstantRangeFormTest extends ModelsBaseSpec {
 
   "Instant Range Form" should {
 

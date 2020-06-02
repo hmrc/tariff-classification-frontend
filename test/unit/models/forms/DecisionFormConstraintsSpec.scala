@@ -22,10 +22,10 @@ import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.json.{JsObject, JsString, JsValue}
 import uk.gov.hmrc.play.test.UnitSpec
 import config.AppConfig
-import models.CommodityCode
+import models.{CommodityCode, ModelsBaseSpec}
 import service.CommodityCodeService
 
-class DecisionFormConstraintsSpec extends UnitSpec with MockitoSugar {
+class DecisionFormConstraintsSpec extends ModelsBaseSpec {
 
   private val commodityCodeService = mock[CommodityCodeService]
   private val decisionForm = new DecisionForm(new CommodityCodeConstraints(commodityCodeService, mock[AppConfig]))

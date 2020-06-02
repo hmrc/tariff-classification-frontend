@@ -19,7 +19,7 @@ package models
 import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.play.test.UnitSpec
 
-class PagedTest extends UnitSpec {
+class PagedTest extends ModelsBaseSpec {
 
   "Paged" should {
     "map" in {

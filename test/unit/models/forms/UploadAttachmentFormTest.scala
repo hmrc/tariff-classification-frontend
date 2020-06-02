@@ -17,9 +17,9 @@
 package models.forms
 
 import uk.gov.hmrc.play.test.UnitSpec
-import models.AppealStatus
+import models.{AppealStatus, ModelsBaseSpec}
 
-class UploadAttachmentFormTest extends UnitSpec {
+class UploadAttachmentFormTest extends ModelsBaseSpec {
 
   "Bind from request" should {
     "Bind empty" in {

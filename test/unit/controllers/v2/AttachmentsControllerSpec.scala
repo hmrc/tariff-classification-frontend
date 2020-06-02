@@ -64,7 +64,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
 
   def controller: AttachmentsController = {
     new AttachmentsController(
-      verify = new SuccessfulRequestActions(inject[BodyParsers.Default], mock[Operator], c = Cases.btiCaseExample),
+      verify = new SuccessfulRequestActions(defaultPlayBodyParsers, mock[Operator], c = Cases.btiCaseExample),
       casesService = casesService,
       fileService = fileService,
       mcc = mcc,
@@ -77,7 +77,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
 
   def controller(requestCase: Case, permission: Set[Permission]): AttachmentsController = {
     new AttachmentsController(
-      verify = new RequestActionsWithPermissions(inject[BodyParsers.Default], permission, c = requestCase),
+      verify = new RequestActionsWithPermissions(defaultPlayBodyParsers, permission, c = requestCase),
       casesService = casesService,
       fileService = fileService,
       mcc = mcc,

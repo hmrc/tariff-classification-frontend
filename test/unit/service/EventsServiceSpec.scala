@@ -35,9 +35,7 @@ import utils.Cases
 import scala.concurrent.Future
 import scala.concurrent.Future.{failed, successful}
 
-class EventsServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
-
-  private implicit val hc: HeaderCarrier = HeaderCarrier()
+class EventsServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
 
   private val connector = mock[BindingTariffClassificationConnector]
   private val auditService = mock[AuditService]

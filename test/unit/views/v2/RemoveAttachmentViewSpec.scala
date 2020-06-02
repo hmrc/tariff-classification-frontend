@@ -46,7 +46,7 @@ class RemoveAttachmentViewSpec extends ViewSpec {
     )
   }
 
-  def remove_attachment: remove_attachment = app.injector.instanceOf[remove_attachment]
+  def remove_attachment: remove_attachment = injector.instanceOf[remove_attachment]
 
   "Remove attachment View" should {
 

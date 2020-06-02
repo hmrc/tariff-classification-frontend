@@ -20,7 +20,7 @@ import models.AppealStatus.{ALLOWED, DISMISSED, IN_PROGRESS}
 import models.AppealType.{ADR, APPEAL_TIER_1, REVIEW}
 import uk.gov.hmrc.play.test.UnitSpec
 
-class AppealStatusTest extends UnitSpec {
+class AppealStatusTest extends ModelsBaseSpec {
 
   "Appeal format" should {
 

@@ -28,7 +28,7 @@ import utils.Cases.{aCase, withBTIApplication, _}
 
 class CaseTest extends UnitSpec with MockitoSugar with BeforeAndAfterAll {
 
-  private val appConfig: AppConfig = mock[AppConfig]
+//  private val appConfig: AppConfig = mock[AppConfig]
 
   private val pastTime = Instant.parse("2010-01-01T01:01:00Z")
   private val currentTime = Instant.parse("2010-01-01T01:01:01Z")
@@ -38,7 +38,7 @@ class CaseTest extends UnitSpec with MockitoSugar with BeforeAndAfterAll {
 
   override protected def beforeAll(): Unit = {
     super.beforeAll()
-    when(appConfig.clock).thenReturn(clockWithFixedTime)
+//    when(appConfig.clock).thenReturn(clockWithFixedTime)
   }
 
   "hasExpiredRuling()'" should {

@@ -28,9 +28,8 @@ import models._
 
 import scala.concurrent.Future.successful
 
-class EmailServiceSpec extends UnitSpec with MockitoSugar {
+class EmailServiceSpec extends ServiceSpecBase {
 
-  private implicit val hc: HeaderCarrier = HeaderCarrier()
   private val connector = mock[EmailConnector]
   private val service = new EmailService(connector)
 

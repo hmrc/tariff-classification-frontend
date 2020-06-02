@@ -18,19 +18,20 @@ package models.forms
 
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.{MustMatchers, WordSpec}
-import play.api.data.validation.{Valid, Invalid}
+import play.api.data.validation.{Invalid, Valid}
 import config.AppConfig
+import models.ModelsBaseSpec
 import service.CommodityCodeService
 
-class CommodityCodeConstraintsSpec extends WordSpec with MustMatchers with MockitoSugar {
+class CommodityCodeConstraintsSpec extends ModelsBaseSpec {
 
-  "commodityCodeNonEmpty" must {
+  "commodityCodeNonEmpty" should {
     "return invalid when there is no commodity code supplied" in {
       val commodityCodeConstraint = new CommodityCodeConstraints(mock[CommodityCodeService], mock[AppConfig])
 
       val result = commodityCodeConstraint.commodityCodeNonEmpty.apply("")
 
-      result mustBe Invalid("decision_form.error.bindingCommodityCode.required")
+      result shouldBe Invalid("decision_form.error.bindingCommodityCode.required")
     }
 
     "return valid when there is no commodity code supplied" in {
@@ -38,7 +39,7 @@ class CommodityCodeConstraintsSpec extends WordSpec with MustMatchers with Mocki
 
       val result = commodityCodeConstraint.commodityCodeNonEmpty.apply("000000000")
 
-      result mustBe Valid
+      result shouldBe Valid
     }
   }
 }

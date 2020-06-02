@@ -34,9 +34,7 @@ import models._
 
 import scala.concurrent.Future.successful
 
-class CasesServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
-
-  private implicit val hc: HeaderCarrier = HeaderCarrier()
+class CasesServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
 
   private val c = mock[Case]
   private val manyCases = Seq(c)
@@ -49,13 +47,12 @@ class CasesServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEac
   private val connector = mock[BindingTariffClassificationConnector]
   private val rulingConnector = mock[RulingConnector]
   private val audit = mock[AuditService]
-  private val config = mock[AppConfig]
 
-  private val service = new CasesService(config, audit, emailService, fileStoreService, reportingService, connector, rulingConnector)
+  private val service = new CasesService(realAppConfig, audit, emailService, fileStoreService, reportingService, connector, rulingConnector)
 
   override protected def afterEach(): Unit = {
     super.afterEach()
-    reset(connector, audit, queue, c, config)
+    reset(connector, audit, queue, c)
   }
 
   "Get Cases 'By Queue'" should {

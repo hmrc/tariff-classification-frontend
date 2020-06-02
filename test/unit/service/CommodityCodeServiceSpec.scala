@@ -25,7 +25,7 @@ import uk.gov.hmrc.play.test.UnitSpec
 import config.AppConfig
 import models.CommodityCode
 
-class CommodityCodeServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
+class CommodityCodeServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
 
   private val config = mock[AppConfig]
 

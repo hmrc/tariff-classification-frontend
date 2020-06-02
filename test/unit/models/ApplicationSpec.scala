@@ -19,7 +19,7 @@ package models
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.Cases
 
-class ApplicationSpec extends UnitSpec {
+class ApplicationSpec extends ModelsBaseSpec {
 
   "Application 'Get Type'" should {
 

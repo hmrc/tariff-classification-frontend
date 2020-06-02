@@ -32,9 +32,7 @@ import utils.Cases
 
 import scala.concurrent.Future.{failed, successful}
 
-class CasesService_UpdateSampleStatusSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach with ConnectorCaptor {
-
-  private implicit val hc: HeaderCarrier = HeaderCarrier()
+class CasesService_UpdateSampleStatusSpec extends ServiceSpecBase with BeforeAndAfterEach with ConnectorCaptor {
 
   private val connector = mock[BindingTariffClassificationConnector]
   private val rulingConnector = mock[RulingConnector]
@@ -45,11 +43,11 @@ class CasesService_UpdateSampleStatusSpec extends UnitSpec with MockitoSugar wit
   private val config = mock[AppConfig]
   private val aCase = Cases.btiCaseExample
 
-  private val service = new CasesService(config, audit, emailService, fileStoreService, reportingService, connector, rulingConnector)
+  private val service = new CasesService(realAppConfig, audit, emailService, fileStoreService, reportingService, connector, rulingConnector)
 
   override protected def afterEach(): Unit = {
     super.afterEach()
-    reset(connector, audit, config)
+    reset(connector, audit)
   }
 
   "Update Sample Status" should {

@@ -56,10 +56,10 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
   }
 
   private def controller(requestedCase: Case) = new ReferCaseController(
-    new SuccessfulRequestActions(inject[BodyParsers.Default], operator, c = requestedCase), casesService, mcc, realAppConfig)
+    new SuccessfulRequestActions(defaultPlayBodyParsers, operator, c = requestedCase), casesService, mcc, realAppConfig)
 
   private def controller(requestCase: Case, permission: Set[Permission]) = new ReferCaseController(
-    new RequestActionsWithPermissions(inject[BodyParsers.Default], permission, c = requestCase), casesService, mcc, realAppConfig)
+    new RequestActionsWithPermissions(defaultPlayBodyParsers, permission, c = requestCase), casesService, mcc, realAppConfig)
 
   private def aMultipartFileWithParams(params: (String, Seq[String])*): MultipartFormData[TemporaryFile] = {
     val file = SingletonTemporaryFileCreator.create("example-file.txt")

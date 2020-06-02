@@ -20,7 +20,7 @@ import java.net.URLDecoder
 
 import uk.gov.hmrc.play.test.UnitSpec
 
-class SearchTest extends UnitSpec {
+class SearchTest extends ModelsBaseSpec {
 
   private val populatedSearch = Search(
     traderName = Some("trader-name"),

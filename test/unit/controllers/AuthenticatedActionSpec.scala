@@ -49,6 +49,7 @@ class AuthenticatedActionSpec extends ControllerBaseSpec with BeforeAndAfterEach
   private val connector = mock[StrideAuthConnector]
   private val block: AuthenticatedRequest[AnyContent] => Future[Result] = mock[AuthenticatedRequest[AnyContent] => Future[Result]]
   private val result = mock[Result]
+  private val controllerComponents = injector.instanceOf[ControllerComponents]
 
   override protected def afterEach(): Unit = {
     super.afterEach()
@@ -163,7 +164,7 @@ class AuthenticatedActionSpec extends ControllerBaseSpec with BeforeAndAfterEach
   }
 
   private def action: AuthenticatedAction = {
-    new AuthenticatedAction(appConfig, inject[BodyParsers.Default], config, environment, connector, inject[ControllerComponents])
+    new AuthenticatedAction(appConfig, defaultPlayBodyParsers, config, environment, connector, controllerComponents)
   }
 
   private def theAuthenticatedRequest(): AuthenticatedRequest[AnyContent] = {

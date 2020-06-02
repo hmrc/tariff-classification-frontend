@@ -67,17 +67,11 @@ class CaseControllerSpec extends ControllerBaseSpec {
     decisionForm, countriesService, mcc, realAppConfig
   )
 
-   private lazy val appWithLiabilityToggleOff = new GuiceApplicationBuilder()
-    .configure("toggle.new-liability-details" -> true)
-    .build()
-
-  lazy val appConf: AppConfig = appWithLiabilityToggleOff.injector.instanceOf[AppConfig]
-
-  private def controllerWithNewLiability(c: Case) = new CaseController(
+  private def controllerWithoutNewLiability(c: Case) = new CaseController(
     new SuccessfulRequestActions(defaultPlayBodyParsers, operator, c = c),
     mock[CasesService], keywordsService, fileService,
     eventService, queueService, commodityCodeService,
-    decisionForm, countriesService, mcc, appConf
+    decisionForm, countriesService, mcc, appConfWithLiabilityToggleOff
   )
 
   "Case Index" should {
@@ -93,7 +87,7 @@ class CaseControllerSpec extends ControllerBaseSpec {
 
       "case is a Liability with newLiabilityDetails toggle is set to false" in {
         val c = aCase(withReference("reference"), withLiabilityApplication())
-        val result = controller(c).get("reference")(fakeRequest)
+        val result = controllerWithoutNewLiability(c).get("reference")(fakeRequest)
 
         status(result) shouldBe Status.SEE_OTHER
         locationOf(result) shouldBe Some(routes.LiabilityController.liabilityDetails("reference").url)
@@ -101,7 +95,7 @@ class CaseControllerSpec extends ControllerBaseSpec {
 
       "case is a Liability with newLiability toggle is set to true" in {
         val c = aCase(withReference("reference"), withLiabilityApplication())
-        val result = controllerWithNewLiability(c).get("reference")(fakeRequest)
+        val result = controller(c).get("reference")(fakeRequest)
 
         status(result) shouldBe Status.SEE_OTHER
         locationOf(result) shouldBe Some(v2.routes.LiabilityController.displayLiability("reference").url)

@@ -26,7 +26,7 @@ lazy val microservice = (project in file("."))
     libraryDependencies ++= (AppDependencies.compile ++ AppDependencies.test).map(_ withSources()),
     evictionWarningOptions in update := EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
     parallelExecution in Test := false,
-    fork in Test := false,
+    fork in Test := true,
     retrieveManaged := true
   )
   .settings(inConfig(TemplateTest)(Defaults.testSettings): _*)
@@ -37,7 +37,7 @@ lazy val microservice = (project in file("."))
     ),
     resourceDirectory in Test := baseDirectory.value / "test" / "resources",
 //    works only when fork is true
-//    javaOptions in Test += "-Dconfig.file=conf/application.conf",
+    javaOptions in Test += "-Xmx1G",
     addTestReportOption(Test, "test-reports")
   )
   .settings(RoutesKeys.routesImport += "models.Sort")
