@@ -20,80 +20,69 @@ import akka.stream.Materializer
 import config.AppConfig
 import connector.DataCacheConnector
 import controllers.actions.{DataRetrievalAction, IdentifierAction}
-import org.mockito.Mockito
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
 import org.scalatestplus.mockito.MockitoSugar
-import org.scalatestplus.play.FakeApplicationFactory
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.{Application, Configuration, Environment, Play}
+import org.scalatestplus.play.guice.{GuiceOneAppPerSuite, GuiceOneAppPerTest}
 import play.api.i18n.{Messages, MessagesApi}
-import play.api.inject.Injector
+import play.api.inject.{Injector, bind}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.Files.TemporaryFileCreator
+import play.api.libs.ws.WSClient
 import play.api.mvc.{AnyContentAsEmpty, BodyParsers, MessagesControllerComponents}
 import play.api.test.FakeRequest
+import play.api.{Application, Configuration, Environment}
 import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
+import uk.gov.hmrc.mongo.ReactiveRepository
 import uk.gov.hmrc.play.audit.http.HttpAuditing
 import uk.gov.hmrc.play.test.UnitSpec
-import play.api.inject.bind
 
 trait SpecBase extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with BeforeAndAfterEach with BeforeAndAfterAll {
 
-  override lazy val app: Application = GuiceApplicationBuilder()
-    .overrides(
-      bind[DataRetrievalAction].toInstance(mock[DataRetrievalAction]),
-      bind[IdentifierAction].toInstance(mock[IdentifierAction]),
-      bind[DataCacheConnector].toInstance(mock[DataCacheConnector])
-    )
+  override lazy val fakeApplication: Application = GuiceApplicationBuilder()
+//    .disable[DataCacheConnector]
+//    .disable[ReactiveRepository[_, _]]
+//    .overrides(
+//      bind[DataRetrievalAction].toInstance(mock[DataRetrievalAction]),
+//      bind[IdentifierAction].toInstance(mock[IdentifierAction]),
+//      bind[DataCacheConnector].toInstance(mock[DataCacheConnector])
+//    )
     .configure(
       //trick ws client not to use a lot of connections
-      "play.ws.ahc.maxConnectionsTotal" -> 10,
-      "play.ws.ahc.maxConnectionsPerHost" -> 10,
+//      "play.ws.ahc.maxConnectionsTotal" -> 10,
+//      "play.ws.ahc.maxConnectionsPerHost" -> 10,
       //turn off useless akka logging
-      "mongo-async-driver.akka.loglevel" -> "WARNING",
-      "mongo-async-driver.akka.log-dead-letters-during-shutdown" -> "off",
-      "mongo-async-driver.akka.log-dead-letters" -> "0",
+//      "mongo-async-driver.akka.loglevel" -> "WARNING",
+//      "mongo-async-driver.akka.log-dead-letters-during-shutdown" -> "off",
+//      "mongo-async-driver.akka.log-dead-letters" -> "0",
       //turn off metrics
-    "metrics.jvm" -> false,
+      "metrics.jvm" -> false,
       "metrics.enabled" -> false,
       //app related feature flag
       "toggle.new-liability-details" -> true
-  ).build()
+    ).build()
 
-//  lazy val appWithLiabilityToggleOff: Application = new GuiceApplicationBuilder()
-//    .configure(
-//      "metrics.jvm" -> false,
-//      "metrics.enabled" -> false,
-//      "toggle.new-liability-details" -> false
-//    ).build()
+    lazy val appWithLiabilityToggleOff: Application = new GuiceApplicationBuilder()
+      .configure(
+        "metrics.jvm" -> false,
+        "metrics.enabled" -> false,
+        "toggle.new-liability-details" -> false
+      ).build()
 
-  protected val injector: Injector = {
-    try {
-      app.injector
-    } catch {
-      case _: Throwable =>
-        Thread.sleep(300)
-        app.injector
-    }
-
-    app.injector
-  }
-
-  //real
-  implicit lazy val hc: HeaderCarrier = HeaderCarrier()
-  implicit lazy val cc: MessagesControllerComponents = injector.instanceOf[MessagesControllerComponents]
   lazy val mcc: MessagesControllerComponents = cc
   lazy val realAppConfig: AppConfig = injector.instanceOf[AppConfig]
+  implicit lazy val hc: HeaderCarrier = HeaderCarrier()
+  implicit lazy val cc: MessagesControllerComponents = injector.instanceOf[MessagesControllerComponents]
   lazy val realConfig: Configuration = injector.instanceOf[Configuration]
   lazy val realEnv: Environment = injector.instanceOf[Environment]
   lazy val realHttpAudit: HttpAuditing = injector.instanceOf[HttpAuditing]
-
   lazy val appConfWithLiabilityToggleOff: AppConfig =
-    mock[AppConfig]
-//    appWithLiabilityToggleOff.injector.instanceOf[AppConfig]
+//    mock[AppConfig]
+  appWithLiabilityToggleOff.injector.instanceOf[AppConfig]
+  lazy val defaultPlayBodyParsers: BodyParsers.Default = injector.instanceOf[BodyParsers.Default]
+  val injector: Injector = fakeApplication.injector
 
-  //mocks
+  val ws: WSClient = injector.instanceOf[WSClient]
 
   def fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
 
@@ -102,37 +91,32 @@ trait SpecBase extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with 
 
   implicit def messages: Messages = messagesApi.preferred(fakeRequest)
 
-  def messagesApi: MessagesApi = injector.instanceOf[MessagesApi]
-
   def tempFileCreator: TemporaryFileCreator = injector.instanceOf[TemporaryFileCreator]
-
-  implicit lazy val mat: Materializer = injector.instanceOf[Materializer]
-  lazy val defaultPlayBodyParsers: BodyParsers.Default = injector.instanceOf[BodyParsers.Default]
-//  def inject[T](implicit m: Manifest[T]): T = injector.instanceOf[T]
+  def messagesApi: MessagesApi = injector.instanceOf[MessagesApi]
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
 
-    reset(
-      appConfWithLiabilityToggleOff
-    )
-
-    when(appConfWithLiabilityToggleOff.newLiabilityDetails).thenReturn(false)
-    when(appConfWithLiabilityToggleOff.analyticsToken).thenReturn("g-token")
-    when(appConfWithLiabilityToggleOff.analyticsHost).thenReturn("g-host")
-    when(appConfWithLiabilityToggleOff.reportAProblemPartialUrl).thenReturn("part-url")
-    when(appConfWithLiabilityToggleOff.reportAProblemNonJSUrl).thenReturn("part-js-url")
-
-//    Thread.sleep(100)
+//    reset(
+//      appConfWithLiabilityToggleOff
+//    )
+//
+//    when(appConfWithLiabilityToggleOff.newLiabilityDetails).thenReturn(false)
+//    when(appConfWithLiabilityToggleOff.analyticsToken).thenReturn("g-token")
+//    when(appConfWithLiabilityToggleOff.analyticsHost).thenReturn("g-host")
+//    when(appConfWithLiabilityToggleOff.reportAProblemPartialUrl).thenReturn("part-url")
+//    when(appConfWithLiabilityToggleOff.reportAProblemNonJSUrl).thenReturn("part-js-url")
   }
-//
-//  override protected def beforeAll(): Unit = {
-//    super.beforeAll()
-//    Play.start(app)
-//  }
-//
-//  override protected def afterAll(): Unit = {
-//    super.afterAll()
-//    Play.stop(app)
-//  }
+
+  implicit lazy val mat: Materializer = injector.instanceOf[Materializer]
+
+  override protected def afterAll(): Unit = {
+    super.afterAll()
+    try {
+      ws.close()
+    } finally {
+      Thread.sleep(1000)
+    }
+  }
+
 }
