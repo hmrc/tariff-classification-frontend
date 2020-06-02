@@ -8,27 +8,26 @@ import play.api.test.Helpers._
 import utils.CasePayloads
 import utils.Cases.{aCase, withDecision}
 
-
 class AppealCaseTypeSpec extends IntegrationTest with MockitoSugar {
 
-  val owner = Some(Operator("111", role = Role.CLASSIFICATION_OFFICER))
-  val caseWithStatusCOMPLETE = CasePayloads.jsonOf(aCase(withDecision()).copy(assignee = owner, status = CaseStatus.COMPLETED))
+  val owner: Option[Operator] = Some(Operator("111", role = Role.CLASSIFICATION_OFFICER))
+  val caseWithStatusCOMPLETE: String = CasePayloads.jsonOf(aCase(withDecision()).copy(assignee = owner, status = CaseStatus.COMPLETED))
 
   "Case Review Change" should {
 
     "return status 200 for manager" in {
       givenAuthSuccess("manager")
-      shouldSucceed
+      shouldSucceed()
     }
 
     "return status 200 for team member" in {
       givenAuthSuccess("team")
-      shouldSucceed
+      shouldSucceed()
     }
 
     "return status 200 for another team member" in {
       givenAuthSuccess("another team member")
-      shouldSucceed
+      shouldSucceed()
     }
 
     "redirect on auth failure" in {
@@ -46,7 +45,7 @@ class AppealCaseTypeSpec extends IntegrationTest with MockitoSugar {
       response.body should include(messages("not_authorised.paragraph1"))
     }
 
-    def shouldSucceed = {
+    def shouldSucceed(): Unit = {
       stubFor(get(urlEqualTo("/cases/1"))
         .willReturn(aResponse()
           .withStatus(OK)

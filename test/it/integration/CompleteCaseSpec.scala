@@ -5,8 +5,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.ws.WSResponse
 import play.api.test.Helpers._
 import models.{CaseStatus, Decision, Operator, Role}
-import utils.{CasePayloads, Cases, EventPayloads}
-
+import utils.{CasePayloads, Cases}
 
 class CompleteCaseSpec extends IntegrationTest with MockitoSugar {
 
@@ -19,10 +18,7 @@ class CompleteCaseSpec extends IntegrationTest with MockitoSugar {
       goodsDescription = "goods-description",
       methodSearch = Some("method-to-search"),
       explanation = Some("explanation"))
-    val inCompleteDecision = Decision(bindingCommodityCode = "", justification = "", goodsDescription = "")
     val caseWithStatusOPEN = CasePayloads.jsonOf(Cases.btiCaseExample.copy(status = CaseStatus.OPEN, decision = Some(completeDecision), assignee = owner))
-    val caseIncompleteWithStatusOPEN = CasePayloads.jsonOf(Cases.btiCaseExample.copy(status = CaseStatus.OPEN, decision = Some(inCompleteDecision), assignee = owner))
-    val event = EventPayloads.event
 
     def shouldSucceed = {
       stubFor(get(urlEqualTo("/cases/1"))

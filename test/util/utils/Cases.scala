@@ -75,9 +75,9 @@ object Cases {
   val attachmentsTabViewModel = Some(AttachmentsTabViewModel(Cases.liabilityCaseExample.reference, Nil, None))
   val activityTabViewModel = Some(ActivityViewModel("referenceNumber", Some(operatorWithoutPermissions),
     Some("queueId"), Instant.now, pagedEvent, queues, "queue Name"))
+  val operatorWithPermissions = Operator(id = "0", name = Some("liability op name"), permissions = Set(Permission.ADD_NOTE, Permission.VIEW_CASES))
   val activityTabViewModelWithPermissions = ActivityViewModel("referenceNumber", Some(operatorWithPermissions),
     Some("queueId"), Instant.now, pagedEvent, queues, "queue Name")
-  val operatorWithPermissions = Operator(id = "0", name = Some("liability op name"), permissions = Set(Permission.ADD_NOTE, Permission.VIEW_CASES))
   val operatorWithCompleteCasePermission = Operator(id = "0", name = Some("liability op name"), permissions = Set(Permission.COMPLETE_CASE, Permission.REOPEN_CASE))
   val operatorWithKeywordsPermissions = Operator(id = "0", name = Some("liability op name"), permissions = Set(Permission.KEYWORDS))
   val operatorWithEditLiabilityPermissions = Operator(id = "0", name = Some("liability op name"), permissions = Set(Permission.EDIT_LIABILITY))
@@ -85,11 +85,9 @@ object Cases {
   val operatorWithReleaseOrSuppressPermissions = Operator(id = "0", name =
     Some("liability op name"), permissions = Set(Permission.RELEASE_CASE, Permission.SUPPRESS_CASE))
 
-  val aCaseWithCompleteDecision = Cases.liabilityCaseExample.copy(reference = "123456", caseBoardsFileNumber = Some("SCR/ARD/123"), application = liabilityWithCompleteDecision)
-
-  val newLiabilityLiveCaseExample = Case("1", CaseStatus.NEW, Instant.now(), 0, None, None, None, newLiabilityLiveApplicationExample, None, Seq())
   val newLiabilityLiveApplicationExample = LiabilityOrder(Contact("contact-name","contact@email.com",Some("contact-phone")),
     LiabilityStatus.LIVE, "trader-business-name", Some("good-name"), Some(Instant.now()), None)
+  val newLiabilityLiveCaseExample = Case("1", CaseStatus.NEW, Instant.now(), 0, None, None, None, newLiabilityLiveApplicationExample, None, Seq())
 
 
   val liabilityWithCompleteDecision = LiabilityOrder(
@@ -113,6 +111,9 @@ object Cases {
       ))
     ))
   )
+
+  val aCaseWithCompleteDecision = Cases.liabilityCaseExample.copy(reference = "123456", caseBoardsFileNumber = Some("SCR/ARD/123"), application = liabilityWithCompleteDecision)
+
   def attachment(id: String = UUID.randomUUID().toString): Attachment = {
     Attachment(
       id = id,

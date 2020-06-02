@@ -46,7 +46,9 @@ lazy val microservice = (project in file("."))
   .configs(IntegrationTest)
   .settings(inConfig(TemplateItTest)(Defaults.itSettings): _*)
   .settings(
-    Keys.fork in IntegrationTest := false,
+    Keys.fork in IntegrationTest := true,
+//    works only when fork is true
+    javaOptions in Test += "-Xmx1G",
     unmanagedSourceDirectories in IntegrationTest := Seq(
       (baseDirectory in IntegrationTest).value / "test/it",
       (baseDirectory in IntegrationTest).value / "test/util"

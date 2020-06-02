@@ -18,7 +18,6 @@ package integration
 
 import controllers.routes.IndexController
 import org.scalatest.OptionValues
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
