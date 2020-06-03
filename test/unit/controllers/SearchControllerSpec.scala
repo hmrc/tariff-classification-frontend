@@ -18,22 +18,15 @@ package controllers
 
 import java.time.Instant
 
+import models.{Permission, _}
 import org.mockito.ArgumentMatchers._
 import org.mockito.BDDMockito._
-import org.scalatest.Matchers
-import org.scalatestplus.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status
-import play.api.mvc.{BodyParsers, MessagesControllerComponents}
-import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
-import config.AppConfig
-import models.{Permission, _}
 import service.{CasesService, FileStoreService, KeywordsService}
-import views.SearchTab
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases._
+import views.SearchTab
 
 import scala.concurrent.Future
 

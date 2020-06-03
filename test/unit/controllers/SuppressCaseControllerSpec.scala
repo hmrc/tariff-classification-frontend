@@ -16,23 +16,17 @@
 
 package controllers
 
-import akka.stream.Materializer
+import models.{Permission, _}
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.Mockito._
-import org.scalatestplus.mockito.MockitoSugar
-import org.scalatest.{BeforeAndAfterEach, Matchers, WordSpec}
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.Environment
+import org.scalatest.BeforeAndAfterEach
 import play.api.http.{MimeTypes, Status}
 import play.api.libs.Files.{SingletonTemporaryFileCreator, TemporaryFile}
 import play.api.mvc.MultipartFormData.FilePart
-import play.api.mvc.{BodyParsers, MessagesControllerComponents, MultipartFormData, Result}
+import play.api.mvc.{MultipartFormData, Result}
 import play.api.test.Helpers.{redirectLocation, _}
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
-import config.AppConfig
-import models.{Permission, _}
 import service.CasesService
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
 
 import scala.concurrent.Future.successful
@@ -46,7 +40,7 @@ class SuppressCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
   private val caseWithStatusOPEN = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.OPEN)
   private val caseWithStatusSUPRRESSED = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.SUPPRESSED)
 
-  private def controller(requestCase: Case = caseWithStatusNEW) = new SuppressCaseController(
+  private def controller(requestCase: Case) = new SuppressCaseController(
     new SuccessfulRequestActions(defaultPlayBodyParsers, operator, c = requestCase), casesService, mcc, realAppConfig
   )
 

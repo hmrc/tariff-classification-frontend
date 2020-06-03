@@ -18,22 +18,18 @@ package controllers
 
 import java.time.Instant
 
-import config.AppConfig
 import models.forms.InstantRangeForm
 import models.request.AuthenticatedRequest
 import models.{Permission, _}
 import org.mockito.ArgumentMatchers._
 import org.mockito.BDDMockito._
 import org.mockito.Mockito
-import org.scalatest.{BeforeAndAfterEach, Matchers}
-import org.scalatestplus.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status
-import play.api.mvc.{AnyContent, BodyParsers, MessagesControllerComponents, Request}
+import play.api.mvc.{AnyContent, Request}
 import play.api.test.Helpers._
 import service._
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.test.UnitSpec
 import views.{Report, SelectedReport}
 
 import scala.concurrent.Future

@@ -18,9 +18,9 @@ package views
 
 import controllers.routes
 import models.Operator
+import utils.Cases._
 import views.ViewMatchers._
 import views.html.assign_case
-import utils.Cases._
 
 class AssignCaseViewSpec extends ViewSpec {
 

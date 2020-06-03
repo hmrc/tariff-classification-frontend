@@ -20,10 +20,10 @@ import java.time.{ZoneOffset, ZonedDateTime}
 
 import models.response.ScanStatus
 import models.{Operator, Permission}
+import utils.Cases
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.partials.attachments_list
-import utils.Cases
 
 class AttachmentsListViewSpec extends ViewSpec {
 

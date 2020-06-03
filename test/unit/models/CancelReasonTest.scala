@@ -16,8 +16,6 @@
 
 package models
 
-import uk.gov.hmrc.play.test.UnitSpec
-
 class CancelReasonTest extends ModelsBaseSpec {
 
   "Review format" should {

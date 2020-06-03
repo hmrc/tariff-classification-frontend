@@ -16,7 +16,6 @@
 
 package service
 
-import uk.gov.hmrc.play.test.UnitSpec
 import models.Queue
 
 class QueuesServiceSpec extends ServiceSpecBase {

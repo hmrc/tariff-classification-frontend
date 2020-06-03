@@ -16,39 +16,25 @@
 
 package controllers.v2
 
-import java.io.File
-
-import play.api.mvc.Results.Ok
-import akka.stream.Materializer
-import config.AppConfig
+import controllers.Tab._
 import controllers.v2.routes.LiabilityController
 import controllers.{ControllerBaseSpec, RequestActionsWithPermissions, SuccessfulRequestActions}
-import models.request.AuthenticatedRequest
 import models.{Permission, _}
 import org.mockito.ArgumentMatchers._
-import org.mockito.BDDMockito._
-import org.mockito.{ArgumentMatcher, ArgumentMatchers, Mockito}
 import org.mockito.Mockito.{reset, times, verify, when}
-import org.scalatest.{BeforeAndAfterEach, Matchers}
-import org.scalatestplus.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.Environment
+import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status
 import play.api.libs.Files.{SingletonTemporaryFileCreator, TemporaryFile}
 import play.api.mvc.MultipartFormData.FilePart
+import play.api.mvc.Results.Ok
 import play.api.mvc._
-import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import service.{CasesService, FileStoreService}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.test.UnitSpec
 import utils.Cases
 import views.html.partials.liabilities.attachments_details
-import views.html.v2.{case_heading, liability_view, remove_attachment}
-import views.html._
-import views.html.partials.error_summary
-import controllers.Tab._
+import views.html.v2.remove_attachment
 
 import scala.concurrent.Future.successful
 

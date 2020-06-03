@@ -19,10 +19,8 @@ package models.forms.v2
 import java.time.Instant
 
 import config.AppConfig
-import models.{Address, Contact, LiabilityOrder, LiabilityStatus, ModelsBaseSpec, RepaymentClaim, TraderContactDetails}
+import models._
 import org.joda.time.{DateTime, DateTimeZone}
-import org.scalatestplus.mockito.MockitoSugar
-import uk.gov.hmrc.play.test.UnitSpec
 import utils.Cases
 
 class LiabilityDetailsFormSpec extends ModelsBaseSpec {
@@ -111,8 +109,6 @@ class LiabilityDetailsFormSpec extends ModelsBaseSpec {
     "dateForRepayment.month" -> Seq(month),
     "dateForRepayment.year" -> Seq(year)
   )
-
-  private val traderAddressParams: Map[String, Seq[String]] = Map("traderName" -> params.getOrElse("traderName", Seq("traderName")))
 
   private val booleanValues = Seq("repaymentClaim")
   private val emptyParams = (params -- booleanValues).mapValues(_ => Seq(""))

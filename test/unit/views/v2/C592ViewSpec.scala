@@ -16,8 +16,7 @@
 
 package views.v2
 
-import models.{Address, Permission}
-import models.viewmodels.{C592ViewModel, PortOrComplianceOfficerContact, TraderContact}
+import models.Permission
 import utils.Cases
 import views.ViewMatchers.containElementWithID
 import views.ViewSpec

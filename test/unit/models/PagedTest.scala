@@ -17,7 +17,6 @@
 package models
 
 import play.api.libs.json.{JsObject, Json}
-import uk.gov.hmrc.play.test.UnitSpec
 
 class PagedTest extends ModelsBaseSpec {
 

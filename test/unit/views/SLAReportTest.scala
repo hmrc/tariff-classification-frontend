@@ -16,8 +16,8 @@
 
 package views
 
-import uk.gov.hmrc.play.test.UnitSpec
 import models.Queue
+import uk.gov.hmrc.play.test.UnitSpec
 
 class SLAReportTest extends UnitSpec {
 

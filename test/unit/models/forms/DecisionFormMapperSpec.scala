@@ -16,7 +16,6 @@
 
 package models.forms
 
-import uk.gov.hmrc.play.test.UnitSpec
 import models.{Case, Decision, ModelsBaseSpec}
 import utils.Cases._
 import utils.DecisionForms

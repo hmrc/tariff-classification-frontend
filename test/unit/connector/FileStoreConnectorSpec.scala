@@ -17,11 +17,11 @@
 package connector
 
 import com.github.tomakehurst.wiremock.client.WireMock._
-import org.mockito.BDDMockito.given
-import play.api.http.Status
-import play.api.libs.Files.{SingletonTemporaryFileCreator, TemporaryFile}
 import models.response.{FileMetadata, ScanStatus}
 import models.{Attachment, FileUpload}
+import org.mockito.BDDMockito.given
+import play.api.http.Status
+import play.api.libs.Files.SingletonTemporaryFileCreator
 
 class FileStoreConnectorSpec extends ConnectorTest {
 

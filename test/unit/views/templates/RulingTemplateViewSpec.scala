@@ -16,11 +16,10 @@
 
 package views.templates
 
-import utils.Dates
+import utils.{Cases, Dates}
 import views.ViewMatchers.containText
 import views.ViewSpec
 import views.html.templates.ruling_template
-import utils.Cases
 
 
 class RulingTemplateViewSpec extends ViewSpec {

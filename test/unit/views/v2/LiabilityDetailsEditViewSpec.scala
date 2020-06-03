@@ -18,8 +18,8 @@ package views.v2
 
 import java.time.Instant
 
+import models._
 import models.forms.LiabilityDetailsForm
-import models.{Address, Contact, LiabilityOrder, LiabilityStatus, RepaymentClaim, TraderContactDetails}
 import utils.Cases
 import views.ViewMatchers.containElementWithID
 import views.ViewSpec

@@ -16,13 +16,13 @@
 
 package views.partials
 
+import controllers.routes
+import models.{Case, CaseStatus}
 import org.jsoup.select.Elements
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
-import controllers.routes
-import models.{Case, CaseStatus}
 import views.ViewMatchers._
 import views.html.partials.case_nav_liability
 import views.{CaseDetailPage, ViewSpec}

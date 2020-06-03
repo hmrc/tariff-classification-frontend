@@ -16,6 +16,7 @@
 
 package views.partials
 
+import models._
 import org.mockito.ArgumentMatchers
 import org.mockito.BDDMockito._
 import org.mockito.invocation.InvocationOnMock
@@ -23,7 +24,6 @@ import org.mockito.stubbing.Answer
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.Call
-import models._
 import views.ViewMatchers.{containElementWithID, _}
 import views.ViewSpec
 import views.html.partials.pagination

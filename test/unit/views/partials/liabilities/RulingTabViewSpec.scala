@@ -18,9 +18,9 @@ package views.partials.liabilities
 
 import controllers.routes
 import models.viewmodels.RulingViewModel
+import views.ViewMatchers._
 import views.ViewSpec
 import views.html.partials.liabilities.ruling_tab
-import views.ViewMatchers._
 
 class RulingTabViewSpec extends ViewSpec {
 

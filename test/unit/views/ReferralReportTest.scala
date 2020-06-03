@@ -16,8 +16,8 @@
 
 package views
 
-import uk.gov.hmrc.play.test.UnitSpec
 import models.{CaseReportGroup, Queue, ReportResult}
+import uk.gov.hmrc.play.test.UnitSpec
 
 class ReferralReportTest extends UnitSpec {
 

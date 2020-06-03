@@ -16,7 +16,7 @@
 
 package views.forms.components
 
-import play.api.data.{Form, FormError}
+import play.api.data.Form
 import play.api.data.Forms.{mapping, number}
 import views.ViewMatchers._
 import views.ViewSpec

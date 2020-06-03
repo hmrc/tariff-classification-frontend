@@ -16,12 +16,12 @@
 
 package views.partials
 
-import models.forms.KeywordForm
 import models.Permission
+import models.forms.KeywordForm
+import utils.Cases._
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.partials.keywords_details
-import utils.Cases._
 
 class KeywordDetailsViewSpec extends ViewSpec {
 

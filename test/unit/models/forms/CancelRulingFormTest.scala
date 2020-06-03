@@ -16,7 +16,6 @@
 
 package models.forms
 
-import uk.gov.hmrc.play.test.UnitSpec
 import models.{CancelReason, ModelsBaseSpec, RulingCancellation}
 
 class CancelRulingFormTest extends ModelsBaseSpec {

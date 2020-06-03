@@ -17,9 +17,9 @@
 package connector
 
 import com.github.tomakehurst.wiremock.client.WireMock._
+import models.PdfFile
 import play.api.http.Status
 import play.twirl.api.Html
-import models.PdfFile
 
 class PdfGeneratorServiceConnectorSpec extends ConnectorTest {
 

@@ -16,21 +16,16 @@
 
 package controllers
 
-import akka.stream.Materializer
-import org.mockito.ArgumentMatchers.{any, refEq}
-import org.mockito.Mockito._
-import org.scalatestplus.mockito.MockitoSugar
-import org.scalatest.{BeforeAndAfterEach, Matchers, WordSpec}
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.http.{MimeTypes, Status}
-import play.api.mvc.{BodyParsers, MessagesControllerComponents, Result}
-import play.api.test.Helpers.{redirectLocation, _}
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
-import config.AppConfig
 import models.forms.{CommodityCodeConstraints, DecisionForm}
 import models.{Permission, _}
+import org.mockito.ArgumentMatchers.{any, refEq}
+import org.mockito.Mockito._
+import org.scalatest.BeforeAndAfterEach
+import play.api.http.{MimeTypes, Status}
+import play.api.mvc.Result
+import play.api.test.Helpers.{redirectLocation, _}
 import service.{CasesService, CommodityCodeService}
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases._
 
 import scala.concurrent.Future.successful

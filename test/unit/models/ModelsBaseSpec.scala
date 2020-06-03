@@ -17,8 +17,6 @@
 package models
 
 import base.SpecBase
-import models.forms.mappings.{Constraints, Mappings}
-import org.scalatest.{MustMatchers, OptionValues}
 
 abstract class ModelsBaseSpec extends SpecBase {
 

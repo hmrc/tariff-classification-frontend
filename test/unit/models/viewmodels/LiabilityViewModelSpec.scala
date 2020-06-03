@@ -20,7 +20,6 @@ import java.time.Instant
 
 import models.CaseStatus.CaseStatus
 import models.{CaseStatus, ModelsBaseSpec, Permission}
-import uk.gov.hmrc.play.test.UnitSpec
 import utils.Cases
 
 class LiabilityViewModelSpec extends ModelsBaseSpec {

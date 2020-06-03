@@ -16,16 +16,14 @@
 
 package service
 
+import connector.BindingTariffClassificationConnector
+import models._
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers._
 import org.mockito.BDDMockito._
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.test.UnitSpec
-import connector.BindingTariffClassificationConnector
-import models._
 
 import scala.concurrent.Future
 

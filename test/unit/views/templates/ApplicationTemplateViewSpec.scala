@@ -16,13 +16,12 @@
 
 package views.templates
 
-import org.jsoup.nodes.Document
 import models.{Case, StoredAttachment}
-import utils.Dates
+import org.jsoup.nodes.Document
+import utils.{Cases, Dates}
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.templates.application_template
-import utils.Cases
 
 class ApplicationTemplateViewSpec extends ViewSpec {
 

@@ -18,9 +18,8 @@ package views.partials.liabilities.status
 
 import models.viewmodels.SampleStatusTabViewModel
 import models.{Event, Paged, Permission}
-import views.ViewMatchers.containText
+import views.ViewMatchers.{containText, _}
 import views.ViewSpec
-import views.ViewMatchers._
 import views.html.partials.liabilities.sample.sample_details_liability
 
 class SampleDetailsViewSpec extends ViewSpec {

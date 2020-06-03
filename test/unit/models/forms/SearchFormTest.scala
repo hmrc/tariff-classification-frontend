@@ -16,9 +16,8 @@
 
 package models.forms
 
-import play.api.data.FormError
-import uk.gov.hmrc.play.test.UnitSpec
 import models.{ApplicationType, ModelsBaseSpec, PseudoCaseStatus, Search}
+import play.api.data.FormError
 
 class SearchFormTest extends ModelsBaseSpec {
 

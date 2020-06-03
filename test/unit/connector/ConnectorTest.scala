@@ -18,16 +18,11 @@ package connector
 
 import akka.actor.ActorSystem
 import base.SpecBase
+import config.AppConfig
 import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterAll
-import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.ws.WSClient
-import play.api.{Configuration, Environment}
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.audit.http.HttpAuditing
 import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
-import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
-import config.AppConfig
 import utils.{ResourceFiles, WiremockTestServer}
 
 trait ConnectorTest extends SpecBase with WiremockTestServer with ResourceFiles with BeforeAndAfterAll {
@@ -38,7 +33,7 @@ trait ConnectorTest extends SpecBase with WiremockTestServer with ResourceFiles 
 
   protected val fakeAuthToken = "AUTH_TOKEN"
 
-  protected val wsClient: WSClient = injector.instanceOf[WSClient]
+  protected val wsClient: WSClient = ws
 
   protected val authenticatedHttpClient = new AuthenticatedHttpClient(realConfig, realHttpAudit, wsClient, mockAppConfig, actorSystem)
   protected val standardHttpClient = new DefaultHttpClient(realConfig, realHttpAudit, wsClient, actorSystem)

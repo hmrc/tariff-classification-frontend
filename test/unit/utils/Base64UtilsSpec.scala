@@ -16,8 +16,6 @@
 
 package utils
 
-import uk.gov.hmrc.play.test.UnitSpec
-
 class Base64UtilsSpec extends UtilsBaseSpec {
 
   private val text: String = "hello world"

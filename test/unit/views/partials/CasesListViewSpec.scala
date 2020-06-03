@@ -20,10 +20,10 @@ import java.time.{LocalDate, ZoneOffset}
 
 import controllers.routes
 import models.{Case, CaseStatus, Paged}
+import utils.Cases._
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.partials.cases_list
-import utils.Cases._
 
 class CasesListViewSpec extends ViewSpec {
 

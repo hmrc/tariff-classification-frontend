@@ -18,7 +18,6 @@ package models.viewmodels
 
 import models.CaseStatus._
 import models.{Case, CaseStatus, ModelsBaseSpec, Permission}
-import uk.gov.hmrc.play.test.UnitSpec
 import utils.Cases
 
 class RulingViewModelTest extends ModelsBaseSpec {

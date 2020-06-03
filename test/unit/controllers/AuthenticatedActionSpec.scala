@@ -16,16 +16,16 @@
 
 package controllers
 
+import config.AppConfig
+import connector.StrideAuthConnector
+import models.request.AuthenticatedRequest
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito.reset
 import org.mockito.{ArgumentCaptor, ArgumentMatchers, Mockito}
 import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.http.HeaderNames.LOCATION
 import play.api.http.Status
-import play.api.mvc.{AnyContent, BodyParsers, ControllerComponents, Result}
+import play.api.mvc.{AnyContent, ControllerComponents, Result}
 import play.api.test.FakeRequest
 import play.api.{ConfigLoader, Configuration, Environment, Mode}
 import uk.gov.hmrc.auth.core.AuthProvider.PrivilegedApplication
@@ -33,10 +33,6 @@ import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.{~, _}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.test.UnitSpec
-import config.AppConfig
-import connector.StrideAuthConnector
-import models.request.AuthenticatedRequest
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}

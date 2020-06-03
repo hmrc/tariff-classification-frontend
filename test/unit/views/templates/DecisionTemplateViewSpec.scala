@@ -17,11 +17,10 @@
 package views.templates
 
 import models.LiabilityStatus
-import utils.Dates
+import utils.{Cases, Dates}
 import views.ViewMatchers.containText
 import views.ViewSpec
-import views.html.templates.{decision_template, ruling_template}
-import utils.Cases
+import views.html.templates.decision_template
 
 
 class DecisionTemplateViewSpec extends ViewSpec {

@@ -18,9 +18,9 @@ package connector
 
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.matching.EqualToJsonPattern
+import models._
 import org.apache.http.HttpStatus
 import play.api.libs.json.{Format, OFormat}
-import models._
 import utils.JsonFormatters
 
 class EmailConnectorSpec extends ConnectorTest {

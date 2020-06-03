@@ -17,7 +17,6 @@
 package models.forms
 
 import models.ModelsBaseSpec
-import uk.gov.hmrc.play.test.UnitSpec
 
 class MandatoryBooleanFormTest extends ModelsBaseSpec {
 

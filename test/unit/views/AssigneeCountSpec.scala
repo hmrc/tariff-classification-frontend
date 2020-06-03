@@ -16,8 +16,8 @@
 
 package views
 
-import uk.gov.hmrc.play.test.UnitSpec
 import models.Operator
+import uk.gov.hmrc.play.test.UnitSpec
 import utils.Cases.{aCase, withAssignee}
 
 class AssigneeCountSpec extends UnitSpec {

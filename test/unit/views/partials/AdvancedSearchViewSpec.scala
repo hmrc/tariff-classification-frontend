@@ -16,13 +16,12 @@
 
 package views.partials
 
-import play.api.libs.json.JsValue
-import models.forms.SearchForm
 import models.Paged
-import views.ViewMatchers._
-import views.{SearchTab, ViewSpec}
-import views.html.advanced_search
+import models.forms.SearchForm
 import utils.Cases._
+import views.ViewMatchers._
+import views.html.advanced_search
+import views.{SearchTab, ViewSpec}
 
 class AdvancedSearchViewSpec extends ViewSpec {
 

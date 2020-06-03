@@ -17,10 +17,10 @@
 package views.partials.sample
 
 import models._
+import utils.Cases._
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.partials.sample.sample_status
-import utils.Cases._
 
 class SampleStatusViewSpec extends ViewSpec {
 

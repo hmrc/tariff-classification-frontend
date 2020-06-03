@@ -16,24 +16,20 @@
 
 package controllers
 
+import models.forms.{CommodityCodeConstraints, DecisionForm}
+import models.request.AuthenticatedRequest
+import models.{Permission, _}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito.{never, reset, verify}
-import org.scalatestplus.mockito.MockitoSugar
-import org.scalatest.{BeforeAndAfterEach, Matchers}
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import org.scalatest.BeforeAndAfterEach
 import play.api.data.validation.{Constraint, Valid}
 import play.api.http.Status
-import play.api.mvc.{AnyContent, BodyParsers, MessagesControllerComponents, Request, Result}
+import play.api.mvc.{AnyContent, Request, Result}
 import play.api.test.Helpers._
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
-import config.AppConfig
-import models.forms.{CommodityCodeConstraints, DecisionForm}
-import models.{Permission, _}
-import models.request.AuthenticatedRequest
 import service.CasesService
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases._
 
 import scala.concurrent.Future

@@ -16,8 +16,8 @@
 
 package views
 
-import uk.gov.hmrc.play.test.UnitSpec
 import models.{CaseReportGroup, ReportResult}
+import uk.gov.hmrc.play.test.UnitSpec
 
 class HistogramTest extends UnitSpec {
 

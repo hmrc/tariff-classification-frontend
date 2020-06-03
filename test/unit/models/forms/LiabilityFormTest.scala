@@ -16,7 +16,6 @@
 
 package models.forms
 
-import uk.gov.hmrc.play.test.UnitSpec
 import models.{Contact, LiabilityOrder, LiabilityStatus, ModelsBaseSpec}
 
 class LiabilityFormTest extends ModelsBaseSpec {

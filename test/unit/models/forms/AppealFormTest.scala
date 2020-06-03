@@ -16,7 +16,6 @@
 
 package models.forms
 
-import uk.gov.hmrc.play.test.UnitSpec
 import models.{AppealStatus, AppealType, ModelsBaseSpec}
 
 class AppealFormTest extends ModelsBaseSpec {

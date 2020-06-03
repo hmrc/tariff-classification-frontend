@@ -21,28 +21,22 @@ import java.time.Clock
 import com.google.inject.Provider
 import controllers.{ControllerBaseSpec, RequestActions, RequestActionsWithPermissions}
 import javax.inject.Inject
-import models.forms.{ActivityForm, ActivityFormData}
 import models.{Case, _}
 import org.mockito.ArgumentMatchers.{any, eq => meq}
 import org.mockito.Mockito.{times, _}
 import org.scalatest.BeforeAndAfterEach
 import play.api.Application
-import play.api.data.Form
 import play.api.http.Status
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.mvc.{AnyContentAsFormUrlEncoded, AnyContentAsText, BodyParsers, Result}
-import play.api.mvc.BodyParsers.Default
-import play.api.test.FakeRequest
+import play.api.mvc.{BodyParsers, Result}
 import play.api.test.Helpers._
-import play.mvc.BodyParser.Default
 import play.twirl.api.Html
-import service.{CasesService, EventsService, FileStoreService, KeywordsService, QueuesService}
+import service._
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{Cases, Events}
 import views.html.partials.liabilities.{attachments_details, attachments_list}
 import views.html.v2.{case_heading, liability_details_edit, liability_view, remove_attachment}
-import play.api.test.CSRFTokenHelper._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future

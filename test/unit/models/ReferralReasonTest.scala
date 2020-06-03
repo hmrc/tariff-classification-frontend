@@ -16,8 +16,6 @@
 
 package models
 
-import uk.gov.hmrc.play.test.UnitSpec
-
 class ReferralReasonTest extends ModelsBaseSpec {
 
   "format" should {

@@ -16,13 +16,11 @@
 
 package models.forms
 
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import org.scalatestplus.mockito.MockitoSugar
-import play.api.libs.json.{JsObject, JsString, JsValue}
-import uk.gov.hmrc.play.test.UnitSpec
 import config.AppConfig
 import models.{CommodityCode, ModelsBaseSpec}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import play.api.libs.json.{JsObject, JsString, JsValue}
 import service.CommodityCodeService
 
 class DecisionFormConstraintsSpec extends ModelsBaseSpec {

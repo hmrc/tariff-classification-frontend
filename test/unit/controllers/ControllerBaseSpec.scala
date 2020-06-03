@@ -17,45 +17,13 @@
 package controllers
 
 import base.SpecBase
-import controllers.v2.RequestActionsWithPermissionsProvider
-import org.scalatestplus.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.http.HeaderNames.LOCATION
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.inject.bind
-import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.mvc.{AnyContent, AnyContentAsEmpty, AnyContentAsFormUrlEncoded, AnyContentAsText, Request, Result}
-import play.api.test.{FakeHeaders, FakeRequest}
-import service.{CasesService, EventsService, FileStoreService, QueuesService}
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.test.UnitSpec
-import views.html.partials.liabilities.{attachments_details, attachments_list}
-import views.html.v2.{case_heading, liability_view, remove_attachment}
+import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded, AnyContentAsText, Result}
 import play.api.test.CSRFTokenHelper._
+import play.api.test.{FakeHeaders, FakeRequest}
 
 class ControllerBaseSpec extends SpecBase {
-
-//  override lazy val app: Application = new GuiceApplicationBuilder().overrides(
-//    //providers
-//    bind[RequestActions].toProvider[RequestActionsWithPermissionsProvider],
-//    //views
-//    bind[liability_view].toInstance(mock[liability_view]),
-//    bind[case_heading].toInstance(mock[case_heading]),
-//    bind[attachments_details].toInstance(mock[attachments_details]),
-//    bind[remove_attachment].toInstance(mock[remove_attachment]),
-//    bind[attachments_list].toInstance(mock[attachments_list]),
-//    //services
-//    bind[FileStoreService].toInstance(mock[FileStoreService]),
-//    bind[EventsService].toInstance(mock[EventsService]),
-//    bind[QueuesService].toInstance(mock[QueuesService]),
-//    bind[CasesService].toInstance(mock[CasesService])
-//  ).configure(
-//    "metrics.jvm" -> false,
-//    "metrics.enabled" -> false,
-//    "toggle.new-liability-details" -> true
-//  ).build()
-
 
   protected def locationOf(result: Result): Option[String] = {
     result.header.headers.get(LOCATION)

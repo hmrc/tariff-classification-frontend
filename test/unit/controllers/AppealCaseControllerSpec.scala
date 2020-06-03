@@ -16,27 +16,18 @@
 
 package controllers
 
+import models.AppealStatus.AppealStatus
+import models.AppealType.AppealType
+import models.{Permission, _}
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito._
 import org.mockito.Mockito
 import org.mockito.Mockito.verify
-import org.scalatestplus.mockito.MockitoSugar
-import org.scalatest.{BeforeAndAfterEach, Matchers}
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status
-import play.api.i18n.{DefaultLangs, DefaultMessagesApi}
-import play.api.mvc.{BodyParsers, MessagesControllerComponents, PlayBodyParsers}
-import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.api.{Configuration, Environment}
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
-import config.AppConfig
-import models.AppealStatus.AppealStatus
-import models.AppealType.AppealType
-import models.Permission
-import models._
 import service.CasesService
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases._
 
 import scala.concurrent.Future

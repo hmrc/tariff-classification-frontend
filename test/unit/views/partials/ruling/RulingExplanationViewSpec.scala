@@ -17,10 +17,10 @@
 package views.partials.ruling
 
 import models.CaseStatus
+import utils.Cases.{aCase, withDecision, withStatus, withoutDecision}
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.partials.ruling.ruling_explanation
-import utils.Cases.{aCase, withDecision, withStatus, withoutDecision}
 
 class RulingExplanationViewSpec extends ViewSpec {
 

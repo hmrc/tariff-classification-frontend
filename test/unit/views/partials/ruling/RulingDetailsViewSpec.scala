@@ -18,13 +18,13 @@ package views.partials.ruling
 
 import java.time.Instant
 
-import play.twirl.api.Html
 import models._
+import play.twirl.api.Html
+import utils.Cases._
 import views.ViewMatchers._
-import views.{CaseDetailPage, ViewSpec, html}
 import views.html.case_details
 import views.html.partials.ruling.ruling_details
-import utils.Cases._
+import views.{CaseDetailPage, ViewSpec}
 
 class RulingDetailsViewSpec extends ViewSpec {
 

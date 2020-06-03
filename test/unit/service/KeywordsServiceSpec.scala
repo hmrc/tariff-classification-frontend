@@ -16,17 +16,14 @@
 
 package service
 
+import audit.AuditService
+import connector.BindingTariffClassificationConnector
+import models._
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito._
 import org.mockito.Mockito.{reset, verify, verifyNoMoreInteractions, verifyZeroInteractions}
 import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.test.UnitSpec
-import audit.AuditService
-import config.AppConfig
-import connector.BindingTariffClassificationConnector
-import models._
 import utils.Cases
 
 import scala.concurrent.Future.{failed, successful}

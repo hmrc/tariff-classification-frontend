@@ -17,10 +17,7 @@
 package uk.gov.hmrc.tariffclassificationfrontend.service
 
 import models.Country
-import org.scalatest.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import service.{CountriesService, ServiceSpecBase}
-import uk.gov.hmrc.play.test.UnitSpec
 
 class CountriesServiceSpec extends ServiceSpecBase {
 

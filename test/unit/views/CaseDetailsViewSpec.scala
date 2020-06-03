@@ -16,15 +16,13 @@
 
 package views
 
+import controllers.ActiveTab
+import models.{CaseStatus, Decision, Permission}
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
-import play.api.mvc.Request
 import play.twirl.api.Html
-import controllers.ActiveTab
-import models.request.AuthenticatedRequest
-import models.{CaseStatus, Decision, Operator, Permission}
-import views.ViewMatchers._
 import utils.Cases._
+import views.ViewMatchers._
 
 class CaseDetailsViewSpec extends ViewSpec {
 
@@ -35,8 +33,6 @@ class CaseDetailsViewSpec extends ViewSpec {
     methodSearch = Some("method-to-search"),
     explanation = Some("explanation")
   )
-
-  private def request[A](operator: Operator, request: Request[A]) = new AuthenticatedRequest(operator, request)
 
   "Case Details View" should {
 

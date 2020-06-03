@@ -17,7 +17,7 @@
 package views
 
 import utils.Cases
-import views.html.{confirm_cancel_ruling, confirm_complete_case}
+import views.html.confirm_complete_case
 
 class ConfirmCompleteCaseViewSpec extends ViewSpec {
 

@@ -18,7 +18,6 @@ package models
 
 import play.api.libs.Files.{SingletonTemporaryFileCreator, TemporaryFile}
 import play.api.mvc.MultipartFormData.FilePart
-import uk.gov.hmrc.play.test.UnitSpec
 
 class FileUploadTest extends ModelsBaseSpec {
 

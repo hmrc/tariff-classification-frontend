@@ -16,15 +16,13 @@
 
 package service
 
+import connector.EmailConnector
+import models._
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito.verify
-import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.json.{Format, Writes}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.test.UnitSpec
-import connector.EmailConnector
-import models._
 
 import scala.concurrent.Future.successful
 

@@ -18,14 +18,11 @@ package base
 
 import akka.stream.Materializer
 import config.AppConfig
-import connector.DataCacheConnector
-import controllers.actions.{DataRetrievalAction, IdentifierAction}
-import org.mockito.Mockito.{reset, when}
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
 import org.scalatestplus.mockito.MockitoSugar
-import org.scalatestplus.play.guice.{GuiceOneAppPerSuite, GuiceOneAppPerTest}
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.{Messages, MessagesApi}
-import play.api.inject.{Injector, bind}
+import play.api.inject.Injector
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.Files.TemporaryFileCreator
 import play.api.libs.ws.WSClient
@@ -33,7 +30,6 @@ import play.api.mvc.{AnyContentAsEmpty, BodyParsers, MessagesControllerComponent
 import play.api.test.FakeRequest
 import play.api.{Application, Configuration, Environment}
 import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
-import uk.gov.hmrc.mongo.ReactiveRepository
 import uk.gov.hmrc.play.audit.http.HttpAuditing
 import uk.gov.hmrc.play.test.UnitSpec
 

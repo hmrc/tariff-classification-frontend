@@ -17,7 +17,6 @@
 package models.forms.mappings
 
 import models.ModelsBaseSpec
-import org.scalatest.{MustMatchers, WordSpec}
 import play.api.data.validation.{Invalid, Valid}
 
 class ConstraintsSpec extends ModelsBaseSpec with Constraints {

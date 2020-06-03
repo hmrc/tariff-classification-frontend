@@ -16,8 +16,7 @@
 
 package models.forms
 
-import uk.gov.hmrc.play.test.UnitSpec
-import models.{AppealStatus, ModelsBaseSpec}
+import models.ModelsBaseSpec
 
 class UploadAttachmentFormTest extends ModelsBaseSpec {
 

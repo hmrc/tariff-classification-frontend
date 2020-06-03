@@ -17,10 +17,10 @@
 package views.partials
 
 import models.response.ScanStatus
+import utils.Cases
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.partials.attachments_state_message
-import utils.Cases
 
 class AttachmentsStateMessageViewSpec extends ViewSpec {
 

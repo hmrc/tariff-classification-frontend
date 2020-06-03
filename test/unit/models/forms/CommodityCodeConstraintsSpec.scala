@@ -16,11 +16,9 @@
 
 package models.forms
 
-import org.scalatestplus.mockito.MockitoSugar
-import org.scalatest.{MustMatchers, WordSpec}
-import play.api.data.validation.{Invalid, Valid}
 import config.AppConfig
 import models.ModelsBaseSpec
+import play.api.data.validation.{Invalid, Valid}
 import service.CommodityCodeService
 
 class CommodityCodeConstraintsSpec extends ModelsBaseSpec {

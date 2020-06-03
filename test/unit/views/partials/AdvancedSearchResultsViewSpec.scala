@@ -21,10 +21,10 @@ import java.time.{Instant, LocalDate, ZoneOffset}
 import controllers.routes
 import models._
 import models.response.ScanStatus
+import utils.Cases._
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.partials.advanced_search_results
-import utils.Cases._
 
 class AdvancedSearchResultsViewSpec extends ViewSpec {
 

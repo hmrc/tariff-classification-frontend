@@ -16,7 +16,6 @@
 
 package models
 
-import uk.gov.hmrc.play.test.UnitSpec
 import utils.Cases
 
 class ApplicationSpec extends ModelsBaseSpec {

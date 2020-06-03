@@ -16,8 +16,8 @@
 
 package views.partials
 
-import org.scalatest.BeforeAndAfterEach
 import models.{Permission, Queue}
+import org.scalatest.BeforeAndAfterEach
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.partials.queue_nav

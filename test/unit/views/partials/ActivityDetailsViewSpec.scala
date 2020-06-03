@@ -21,10 +21,10 @@ import java.time.{ZoneOffset, ZonedDateTime}
 import controllers.routes
 import models.forms.ActivityForm
 import models.{CaseStatus, _}
+import utils.Cases._
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.partials.activity_details
-import utils.Cases._
 
 class ActivityDetailsViewSpec extends ViewSpec {
 
@@ -33,7 +33,6 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
   "Activity Details" should {
 
-    val requestWithMoveCasePermission = requestWithPermissions(Permission.MOVE_CASE_BACK_TO_QUEUE)
     val requestWithAddNotePermission = requestWithPermissions(Permission.ADD_NOTE)
 
     "Render empty events - showing 'Application Submitted'" in {

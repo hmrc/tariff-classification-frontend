@@ -16,24 +16,18 @@
 
 package controllers
 
-import org.mockito.ArgumentMatchers.{any, refEq}
-import org.mockito.BDDMockito._
-import org.mockito.Mockito
-import org.mockito.Mockito.{never, reset, verify}
-import org.scalatestplus.mockito.MockitoSugar
-import org.scalatest.{BeforeAndAfterEach, Matchers}
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.data.validation.{Constraint, Valid}
-import play.api.http.Status
-import play.api.mvc.{BodyParsers, MessagesControllerComponents}
-import play.api.test.Helpers.{redirectLocation, _}
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import config.AppConfig
 import models.forms.{CommodityCodeConstraints, DecisionForm, DecisionFormMapper}
 import models.{Case, CaseStatus, Operator, Permission}
-import play.api.inject.guice.GuiceApplicationBuilder
-import service.{CasesService, CommodityCodeService, FileStoreService}
+import org.mockito.ArgumentMatchers.{any, refEq}
+import org.mockito.BDDMockito._
+import org.mockito.Mockito.{never, reset, verify}
+import org.scalatest.BeforeAndAfterEach
+import play.api.data.validation.{Constraint, Valid}
+import play.api.http.Status
+import play.api.test.Helpers.{redirectLocation, _}
+import service.{CasesService, FileStoreService}
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases._
 import views.html.v2.edit_liability_ruling
 
@@ -153,7 +147,6 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
   }
 
   "Update Ruling" should {
-    val caseWithStatusNEW = aCase(withReference("reference"), withStatus(CaseStatus.NEW))
     val caseWithStatusOPEN = aCase(withReference("reference"), withStatus(CaseStatus.OPEN))
     val liabilityCaseWithStatusOPEN = aCase(withLiabilityApplication(), withReference("reference"), withStatus(CaseStatus.OPEN))
     val updatedCase = aCase(withReference("reference"), withStatus(CaseStatus.OPEN))

@@ -16,14 +16,13 @@
 
 package connector
 
-import java.net.URLEncoder
 import java.time.{Clock, Instant, LocalDate, ZoneOffset}
 
 import com.github.tomakehurst.wiremock.client.WireMock._
+import models._
 import org.apache.http.HttpStatus
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.NotFoundException
-import models._
 import utils._
 
 class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQueueBuilder {
@@ -197,8 +196,6 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
   }
 
   "Connector 'Search'" should {
-
-    def encode(value: String): String = URLEncoder.encode(value, "UTF-8")
 
     "handle no filters" in {
       val url = "/cases?sort_direction=asc&sort_by=commodity-code&page=1&page_size=2"

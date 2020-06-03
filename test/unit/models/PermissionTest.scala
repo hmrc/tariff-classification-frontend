@@ -18,7 +18,6 @@ package models
 
 import java.time.Instant
 
-import uk.gov.hmrc.play.test.UnitSpec
 import models.CaseStatus.CaseStatus
 import utils.Cases._
 

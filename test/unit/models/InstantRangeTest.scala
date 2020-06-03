@@ -19,8 +19,6 @@ package models
 import java.net.URLDecoder
 import java.time.Instant
 
-import uk.gov.hmrc.play.test.UnitSpec
-
 class InstantRangeTest extends ModelsBaseSpec {
 
   private val range = InstantRange(

@@ -16,13 +16,13 @@
 
 package views.partials
 
-import models.{ImportExport, Permission}
+import models.ImportExport
 import models.response.ScanStatus
+import utils.Cases
+import utils.Cases._
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.partials.application_details
-import utils.Cases
-import utils.Cases._
 
 class ApplicationDetailsViewSpec extends ViewSpec {
 

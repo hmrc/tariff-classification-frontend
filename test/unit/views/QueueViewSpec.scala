@@ -17,8 +17,8 @@
 package views
 
 import models.{Case, Paged, Permission, Queue}
-import views.ViewMatchers._
 import utils.Cases
+import views.ViewMatchers._
 
 class QueueViewSpec extends ViewSpec {
 

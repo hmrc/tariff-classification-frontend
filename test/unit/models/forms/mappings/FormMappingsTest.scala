@@ -16,9 +16,8 @@
 
 package models.forms.mappings
 
-import play.api.data.FormError
-import uk.gov.hmrc.play.test.UnitSpec
 import models.{CancelReason, ModelsBaseSpec}
+import play.api.data.FormError
 
 class FormMappingsTest extends ModelsBaseSpec {
 

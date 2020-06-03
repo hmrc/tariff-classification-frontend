@@ -19,16 +19,14 @@ package service
 import java.io.File
 import java.time.Instant
 
-import org.mockito.ArgumentMatchers.any
-import org.mockito.BDDMockito.given
-import org.scalatestplus.mockito.MockitoSugar
-import play.api.libs.Files.TemporaryFile
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.test.UnitSpec
 import connector.FileStoreConnector
 import models._
 import models.response.{FileMetadata, ScanStatus}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.BDDMockito.given
 import org.mockito.Mockito
+import play.api.libs.Files.TemporaryFile
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
 import utils.Cases._
 

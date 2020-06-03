@@ -21,11 +21,11 @@ import java.time.Instant
 import models.forms.{CommodityCodeConstraints, DecisionForm, DecisionFormData}
 import models.response.ScanStatus
 import models.{CaseStatus, StoredAttachment}
+import org.scalatestplus.mockito.MockitoSugar
+import utils.Cases._
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.ruling_details_edit
-import utils.Cases._
-import org.scalatestplus.mockito.MockitoSugar
 
 class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
 

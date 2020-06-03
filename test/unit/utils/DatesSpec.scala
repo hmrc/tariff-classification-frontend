@@ -18,8 +18,6 @@ package utils
 
 import java.time.{Instant, LocalDate, ZoneOffset}
 
-import uk.gov.hmrc.play.test.UnitSpec
-
 class DatesSpec extends UtilsBaseSpec {
 
   private val date: Instant = LocalDate.of(2018, 1, 1)
