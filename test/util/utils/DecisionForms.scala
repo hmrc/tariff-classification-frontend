@@ -20,7 +20,7 @@ import models.forms.DecisionFormData
 
 object DecisionForms {
 
-  val validForm = DecisionFormData(
+  val validForm: DecisionFormData = DecisionFormData(
     "binding commodity code test",
     "valid goods Description",
     "valid method Search",
@@ -30,7 +30,7 @@ object DecisionForms {
     List.empty
   )
 
-  val validFormWithAttachments =
+  val validFormWithAttachments: DecisionFormData =
     DecisionFormData(
       attachments = Seq("url.to.publish")
     )

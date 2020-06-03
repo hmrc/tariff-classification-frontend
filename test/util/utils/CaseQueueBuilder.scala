@@ -24,7 +24,9 @@ trait CaseQueueBuilder {
   def buildQueryUrl(types : Seq[ApplicationType] = Seq(ApplicationType.BTI,ApplicationType.LIABILITY_ORDER), withStatuses: String,
                             queueId: String = "", assigneeId: String, pag: Pagination): String = {
     val sortBy = "application.type,application.status,days-elapsed"
-    val queryString = s"/cases?application_type=${types.mkString(",")}&queue_id=$queueId&assignee_id=$assigneeId&status=$withStatuses&sort_by=$sortBy&sort_direction=desc&page=${pag.page}&page_size=${pag.pageSize}"
+    val queryString = s"/cases?application_type=${types.mkString(",")}&queue_id=$queueId&" +
+      s"assignee_id=$assigneeId&status=$withStatuses&sort_by=$sortBy&sort_direction=desc&" +
+      s"page=${pag.page}&page_size=${pag.pageSize}"
     queryString
   }
 
