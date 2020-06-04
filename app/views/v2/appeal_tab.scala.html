@@ -1,0 +1,81 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.AppConfig
+@import models.viewmodels.AppealTabViewModel
+@import models.request.AuthenticatedRequest
+@import views.html.partials.tab_heading
+
+@this()
+
+@(appealTabViewModel: AppealTabViewModel)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+
+@tab_heading("appeal", messages("case.menu.appeal"))
+
+<p>@messages("case.v2.liability.appeals.tab_paragraph")</p>
+
+@defining(appealTabViewModel.appeals) { appeals: Seq[Appeal] =>
+ <table id="appeal_details">
+  <tbody>
+   @for((appeal: Appeal, index: Int) <- appeals.sortWith((a, b) => a.`type`.id < b.`type`.id).zipWithIndex) {
+    <tr id="appeal_details-@{index}" class="grid-row mb-2">
+     <th id="appeal_details-@{index}-type" class="bold w-40">
+      @AppealType.format(appeal.`type`) status
+     </th>
+     <td id="appeal_details-@{index}-status" class=" w-30">
+     @AppealStatus.format(appeal.`type`, appeal.status)
+     </td>
+     <td class="w-30">
+     @if(request.hasPermission(Permission.APPEAL_CASE)) {
+      <a id="appeal_details-@{index}-change-status" aria-label="Change status of @AppealType.format(appeal.`type`) " href="@routes.AppealCaseController.changeStatus(appealTabViewModel.caseReference, appeal.id)">Change</a>
+     }
+     </td>
+    </tr>
+   }
+  </tbody>
+ </table>
+}
+
+@if(request.hasPermission(Permission.APPEAL_CASE)) {
+ <a id="appeal_details-add_new" class="button" role="button" href="@routes.AppealCaseController.chooseType(appealTabViewModel.caseReference)">@messages("case.v2.liability.appeal_tab.add_review_or_appeal")</a>
+}
+
+@if(appealTabViewModel.applicationForExtendedUseButton.isDefined) {
+ <div id="appeal_details-extended_use" class="mt-5">
+  <p>@messages("case.v2.liability.appeal_details-extended_use.canceled.paragraph")</p>
+  <p>@messages("case.v2.liability.appeal_details-extended_use.paragraph")</p>
+
+  <table>
+   <tbody>
+
+    <tr>
+     <th class="bold w-40">@messages("case.v2.liability.appeal_tab.application_for_extended_use")</th>
+     <td id="appeal_details-extended_use_status" class="w-30">
+     @appealTabViewModel.applicationForExtendedUseButton.getOrElse("")
+     </td>
+     <td class="w-30">
+     @if(request.hasPermission(Permission.EXTENDED_USE)) {
+      <a id="appeal_details-extended_use-change" href="@routes.ExtendedUseCaseController.chooseStatus(appealTabViewModel.caseReference)">
+       Change
+      </a>
+     }
+     </td>
+    </tr>
+
+   </tbody>
+  </table>
+ </div>
+}

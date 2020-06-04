@@ -67,6 +67,7 @@ class LiabilityController @Inject()(
     val liabilityCase: Case = request.`case`
     val liabilityViewModel = LiabilityViewModel.fromCase(liabilityCase, request.operator)
     val rulingViewModel = Some(RulingViewModel.fromCase(liabilityCase, request.operator.permissions))
+    val appealTabViewModel = Some(AppealTabViewModel.fromCase(liabilityCase, request.operator))
 
     for {
       (activityEvents, queues) <- liabilityViewActivityDetails(liabilityCase.reference)
@@ -86,7 +87,8 @@ class LiabilityController @Inject()(
         attachmentsTab,
         uploadAttachmentForm,
         keywordsTab,
-        keywordForm
+        keywordForm,
+        appealTabViewModel
       ))
     }
   }

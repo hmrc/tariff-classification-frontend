@@ -17,7 +17,7 @@
 package models.viewmodels
 
 import models.CaseStatus.CaseStatus
-import models.{CancelReason, Case, CaseStatus, Operator}
+import models._
 
 case class CaseHeaderViewModel(
                                 caseType: String,
@@ -25,6 +25,7 @@ case class CaseHeaderViewModel(
                                 goodsName: String,
                                 referenceNumber: String,
                                 caseStatus: String,
+                                decision: Option[Decision],
                                 isLive: Boolean
                               )
 
@@ -45,6 +46,7 @@ object CaseHeaderViewModel {
         c.application.goodsName,
         c.reference,
         status,
+        c.decision,
         c.application.isLiveLiabilityOrder)
     }
 }

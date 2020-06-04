@@ -16,27 +16,24 @@
 
 package controllers
 
+import config.AppConfig
+import models.AppealStatus.AppealStatus
+import models.AppealType.AppealType
+import models.{Permission, _}
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito._
 import org.mockito.Mockito
 import org.mockito.Mockito.verify
-import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterEach, Matchers}
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status
-import play.api.i18n.{DefaultLangs, DefaultMessagesApi}
-import play.api.mvc.{BodyParsers, MessagesControllerComponents, PlayBodyParsers}
+import play.api.mvc.{BodyParsers, MessagesControllerComponents}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.api.{Configuration, Environment}
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
-import config.AppConfig
-import models.AppealStatus.AppealStatus
-import models.AppealType.AppealType
-import models.Permission
-import models._
 import service.CasesService
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.test.UnitSpec
 import utils.Cases._
 
 import scala.concurrent.Future
@@ -80,6 +77,34 @@ class AppealCaseControllerSpec extends UnitSpec with Matchers
         }
       }
 
+    }
+
+    "redirect to Liability v2 controller when case is a liability" when {
+      for (s <- Seq(CaseStatus.COMPLETED, CaseStatus.CANCELLED)) {
+        s"Case has status $s" in {
+
+          val c = aLiabilityCase(withStatus(s))
+
+          val result = await(controller(c).appealDetails(c.reference)(fakeRequest))
+
+          status(result) shouldBe 303
+          redirectLocation(result) shouldBe Some("/manage-tariff-classifications/cases/v2/1/liability#appeal_tab")
+        }
+      }
+    }
+
+    "reload Appeals page when case is a BTI" when {
+      for (s <- Seq(CaseStatus.COMPLETED, CaseStatus.CANCELLED)) {
+        s"Case has status $s" in {
+
+          val c = aCase(withStatus(s))
+
+          val result = await(controller(c).appealDetails(c.reference)(fakeRequest))
+
+          status(result) shouldBe 200
+          contentAsString(result) should include("appeal-heading")
+        }
+      }
     }
   }
 
