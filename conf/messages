@@ -792,7 +792,8 @@ case.v2.liability.c592.details_edit.date_of_receipt_hint=Date stamped on the C59
 case.v2.liability.c592.details_edit.cancel_button=Cancel
 case.v2.liability.c592.details_edit.save_and_continue_button=Save and continue
 
-
+case.v2.liability.save_and_continue_button=Save and continue
+case.v2.liability.cancel_button=Cancel
 
 case.v2.liability.ruling.info.from.c592=Information from the C592
 case.v2.liability.ruling.info.from.c592.code.by.trader=Code entered by trader or agent
