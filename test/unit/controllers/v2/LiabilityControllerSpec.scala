@@ -106,7 +106,7 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
   private def checkLiabilityView(timesInvoked: Int) =
     verify(liability_view, times(timesInvoked)).apply(
-      any(), any(), any(), any(), any(), any(), any(), any(), any(), any()
+      any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()
     )(any(), any(), any())
 
   private def mockLiabilityController(
@@ -125,7 +125,7 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     when(keywordsService.removeKeyword(any[Case](), any[String](), any[Operator]())(any())) thenReturn Future(Cases.liabilityLiveCaseExample)
 
     when(liability_view.apply(
-      any(), any(), any(), any(), any(), any(), any(), any(), any(), any()
+      any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()
     )(any(), any(), any())) thenReturn Html("body")
   }
 

@@ -17,10 +17,9 @@
 package models.viewmodels
 
 import models._
-import uk.gov.hmrc.play.test.UnitSpec
 import utils.Cases
 
-class AppealTabViewModelSpec extends UnitSpec {
+class AppealTabViewModelSpec extends ModelsBaseSpec {
 
   val dummyCase: Case = Cases.aCaseWithCompleteDecision.copy(
     status = CaseStatus.COMPLETED,

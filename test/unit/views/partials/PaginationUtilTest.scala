@@ -16,9 +16,9 @@
 
 package views.partials
 
-import uk.gov.hmrc.play.test.UnitSpec
+import views.ViewSpec
 
-class PaginationUtilTest extends UnitSpec {
+class PaginationUtilTest extends ViewSpec {
 
   "Surrounding Pages" should {
     "return empty" in {

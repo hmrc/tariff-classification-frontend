@@ -17,10 +17,9 @@
 package views
 
 import models.Operator
-import uk.gov.hmrc.play.test.UnitSpec
 import utils.Cases.{aCase, withAssignee}
 
-class AssigneeCountSpec extends UnitSpec {
+class AssigneeCountSpec extends ViewSpec {
 
   "AssigneeCount for operator with two names" should {
 

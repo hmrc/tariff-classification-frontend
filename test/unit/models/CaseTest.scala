@@ -19,12 +19,10 @@ package models
 import java.time.{Clock, Instant, ZoneOffset}
 
 import org.scalatest.BeforeAndAfterAll
-import org.scalatestplus.mockito.MockitoSugar
-import uk.gov.hmrc.play.test.UnitSpec
 import utils.Cases
 import utils.Cases.{aCase, withBTIApplication, _}
 
-class CaseTest extends UnitSpec with MockitoSugar with BeforeAndAfterAll {
+class CaseTest extends ModelsBaseSpec with BeforeAndAfterAll {
 
   private val pastTime = Instant.parse("2010-01-01T01:01:00Z")
   private val currentTime = Instant.parse("2010-01-01T01:01:01Z")
