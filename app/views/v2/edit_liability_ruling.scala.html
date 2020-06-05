@@ -17,68 +17,66 @@
 @import config.AppConfig
 @import controllers.routes
 @import models.viewmodels.CaseHeaderViewModel
-@import views.forms.components.RadioOption
-@import views.html.forms.components.input_radiogroup
 @import views.html.includes.main
-@import models.LiabilityOrder
 @import views.html.components.confirm_or_cancel_buttons
-@import views.html.components.save_and_continue
 @import views.html.forms.components.input_text
-@import models.LiabilityStatus
+@import Tab._
 @import models.Decision
 @import views.html.forms.components.input_textarea
 @import views.html.partials.error_summary
 @import views.html.partials.c592_information
 
 @this(
-  case_heading: views.html.v2.case_heading
+        case_heading: views.html.v2.case_heading
 )
 
 @(caseHeaderViewModel: CaseHeaderViewModel, form: Form[Decision], traderCommodityCode: String, officerCommodityCode: String)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("page.title.edit_liability_decision"))) {
 
-@case_heading(caseHeaderViewModel, Some("Edit ruling"))
+ @case_heading(caseHeaderViewModel, Some("Edit ruling"))
 
-@c592_information(traderCommodityCode, officerCommodityCode)
+ @c592_information(traderCommodityCode, officerCommodityCode)
 
-<hr>
+ <hr>
 
-@error_summary(form.errors)
+ @error_summary(form.errors)
 
-@helper.form(action = routes.RulingController.updateRulingDetails(caseHeaderViewModel.referenceNumber), 'id -> "edit_liability_decision-form") {
-@helper.CSRF.formField
+ @helper.form(action = routes.RulingController.updateRulingDetails(caseHeaderViewModel.referenceNumber), 'id -> "edit_liability_decision-form") {
+  @helper.CSRF.formField
 
-@input_text(
-field = form("bindingCommodityCode"),
-label = messages("case.liability.decision.bindingCommodityCode"),
-formControlClass = Some("w-50")
-)
+  @input_text(
+   field = form("bindingCommodityCode"),
+   label = messages("case.liability.decision.bindingCommodityCode"),
+   formControlClass = Some("w-50")
+  )
 
-@input_textarea(
-field = form("goodsDescription"),
-label = messages("case.liability.decision.goodsDescription")
-)
+  @input_textarea(
+   field = form("goodsDescription"),
+   label = messages("case.liability.decision.goodsDescription")
+  )
 
-@input_textarea(
-field = form("justification"),
-label = messages("case.liability.decision.justification")
-)
+  @input_textarea(
+   field = form("justification"),
+   label = messages("case.liability.decision.justification")
+  )
 
-@input_textarea(
-field = form("methodSearch"),
-label = messages("case.liability.decision.methodSearch")
-)
+  @input_textarea(
+   field = form("methodSearch"),
+   label = messages("case.liability.decision.methodSearch")
+  )
 
-@input_textarea(
-field = form("methodExclusion"),
-label = messages("case.liability.v2.decision.methodExclusion")
-)
+  @input_textarea(
+   field = form("methodExclusion"),
+   label = messages("case.liability.v2.decision.methodExclusion")
+  )
 
-@save_and_continue(
-id = "edit_liability_decision",
-confirmText = "Save and continue"
-)
-}
+  @confirm_or_cancel_buttons(
+   id = "edit_liability_decision",
+   confirmText = messages("case.v2.liability.save_and_continue_button"),
+   cancelText = messages("case.v2.liability.cancel_button"),
+   cancelHref = controllers.v2.routes.LiabilityController.displayLiability(caseHeaderViewModel.referenceNumber).withFragment(RULING_TAB)
+  )
+ }
 
 }

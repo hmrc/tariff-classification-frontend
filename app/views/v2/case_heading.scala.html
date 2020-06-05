@@ -15,7 +15,8 @@
  *@
 
 @import models.viewmodels.CaseHeaderViewModel
-@import views.html.partials.statuses.{appeal_status, case_status}
+@import views.html.partials.statuses.case_status
+@import views.html.v2.appeal_status
 
 @this()
 
@@ -48,6 +49,9 @@
         <span class="visuallyhidden">case status</span>
         <span id ="case-status" class="phase-tag @phaseTagColor">
                 @caseHeaderViewModel.caseStatus
+        </span>
+        <span id ="appeal-status">
+                @appeal_status(caseHeaderViewModel.decision, "appeal-status")
         </span>
     </div>
 

@@ -66,6 +66,34 @@ class AppealCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
       }
 
     }
+
+    "redirect to Liability v2 controller when case is a liability" when {
+      for (s <- Seq(CaseStatus.COMPLETED, CaseStatus.CANCELLED)) {
+        s"Case has status $s" in {
+
+          val c = aLiabilityCase(withStatus(s))
+
+          val result = await(controller(c).appealDetails(c.reference)(fakeRequest))
+
+          status(result) shouldBe 303
+          redirectLocation(result) shouldBe Some("/manage-tariff-classifications/cases/v2/1/liability#appeal_tab")
+        }
+      }
+    }
+
+    "reload Appeals page when case is a BTI" when {
+      for (s <- Seq(CaseStatus.COMPLETED, CaseStatus.CANCELLED)) {
+        s"Case has status $s" in {
+
+          val c = aCase(withStatus(s))
+
+          val result = await(controller(c).appealDetails(c.reference)(fakeRequest))
+
+          status(result) shouldBe 200
+          contentAsString(result) should include("appeal-heading")
+        }
+      }
+    }
   }
 
   "Case Choose Type" should {

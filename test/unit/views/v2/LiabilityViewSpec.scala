@@ -17,8 +17,8 @@
 package views.v2
 
 import models.forms.{ActivityForm, ActivityFormData, KeywordForm, UploadAttachmentForm}
-import models.viewmodels.{KeywordsTabViewModel, LiabilityViewModel, SampleStatusTabViewModel}
-import models.{CaseStatus, Event, Paged}
+import models.viewmodels.{AppealTabViewModel, KeywordsTabViewModel, LiabilityViewModel, SampleStatusTabViewModel}
+import models._
 import play.api.data.Form
 import utils.Cases
 import utils.Cases._
@@ -45,6 +45,13 @@ class LiabilityViewSpec extends ViewSpec {
 
   val emptyKeywordsTabViewModel: KeywordsTabViewModel = KeywordsTabViewModel("", Set.empty[String],Nil)
 
+  val appealTabViewModel = Some(AppealTabViewModel(caseReference = "123456",
+    appeals = Seq(Appeal("id",
+      AppealStatus.IN_PROGRESS,
+      AppealType.APPEAL_TIER_1)),
+    Some(""),
+    false))
+
   "Liability View" should {
 
     "render with case reference" in {
@@ -59,7 +66,8 @@ class LiabilityViewSpec extends ViewSpec {
         None,
         uploadAttachmentForm,
         emptyKeywordsTabViewModel,
-        keywordForm)
+        keywordForm,
+        appealTabViewModel)
       )
       doc.getElementById("case-reference") should containText(c.reference)
     }
@@ -76,7 +84,8 @@ class LiabilityViewSpec extends ViewSpec {
         None,
         uploadAttachmentForm,
         emptyKeywordsTabViewModel,
-        keywordForm)
+        keywordForm,
+        appealTabViewModel)
       )
       doc should containElementWithID("c592_tab")
     }
@@ -93,7 +102,8 @@ class LiabilityViewSpec extends ViewSpec {
         None,
         uploadAttachmentForm,
         emptyKeywordsTabViewModel,
-        keywordForm)
+        keywordForm,
+        appealTabViewModel)
       )
       doc shouldNot containElementWithID("c592_tab")
     }
@@ -110,7 +120,8 @@ class LiabilityViewSpec extends ViewSpec {
         None,
         uploadAttachmentForm,
         emptyKeywordsTabViewModel,
-        keywordForm)
+        keywordForm,
+        appealTabViewModel)
       )
       doc should containElementWithID("ruling_tab")
     }
@@ -127,7 +138,8 @@ class LiabilityViewSpec extends ViewSpec {
         None,
         uploadAttachmentForm,
         emptyKeywordsTabViewModel,
-        keywordForm)
+        keywordForm,
+        appealTabViewModel)
       )
       doc shouldNot containElementWithID("ruling_tab")
     }
@@ -144,7 +156,8 @@ class LiabilityViewSpec extends ViewSpec {
         None,
         uploadAttachmentForm,
         emptyKeywordsTabViewModel,
-        keywordForm)
+        keywordForm,
+        appealTabViewModel)
       )
       doc should containElementWithID("ruling_tab")
     }
@@ -161,7 +174,8 @@ class LiabilityViewSpec extends ViewSpec {
         None,
         uploadAttachmentForm,
         emptyKeywordsTabViewModel,
-        keywordForm)
+        keywordForm,
+        appealTabViewModel)
       )
       doc shouldNot containElementWithID("ruling_tab")
     }
@@ -177,7 +191,8 @@ class LiabilityViewSpec extends ViewSpec {
         Cases.attachmentsTabViewModel.map(_.copy(attachments = Seq(Cases.storedAttachment), letter = Some(Cases.letterOfAuthority))),
         UploadAttachmentForm.form,
         emptyKeywordsTabViewModel,
-        keywordForm
+        keywordForm,
+        appealTabViewModel
       ))
       doc should containElementWithID("attachments_tab")
     }
@@ -194,7 +209,8 @@ class LiabilityViewSpec extends ViewSpec {
         None,
         uploadAttachmentForm,
         emptyKeywordsTabViewModel,
-        keywordForm)
+        keywordForm,
+        appealTabViewModel)
       )
       doc shouldNot containElementWithID("attachments_tab")
     }
@@ -211,7 +227,8 @@ class LiabilityViewSpec extends ViewSpec {
         None,
         uploadAttachmentForm,
         emptyKeywordsTabViewModel,
-        keywordForm)
+        keywordForm,
+        appealTabViewModel)
       )
       doc should containElementWithID("activity_tab")
     }
@@ -228,9 +245,48 @@ class LiabilityViewSpec extends ViewSpec {
         None,
         uploadAttachmentForm,
         emptyKeywordsTabViewModel,
-        keywordForm
+        keywordForm,
+        appealTabViewModel
       ))
       doc should containElementWithID("sample_status_tab")
+    }
+
+    "render Appeals tab" in {
+
+      val c = aLiabilityCase(withReference("reference"), withStatus(CaseStatus.COMPLETED))
+      val op = Cases.operatorWithPermissions.copy(permissions = Set(Permission.APPEAL_CASE))
+
+      val doc = view(liabilityView(LiabilityViewModel.fromCase(c, op), None,
+        None,
+        sampleStatusTabViewModel,
+        Cases.activityTabViewModel,
+        activityForm,
+        None,
+        uploadAttachmentForm,
+        emptyKeywordsTabViewModel,
+        keywordForm,
+        appealTabViewModel
+      ))
+
+      doc should containElementWithID("appeal_tab")
+    }
+
+    "not render Appeals tab" in {
+      val c = aLiabilityCase(withReference("reference"), withStatus(CaseStatus.OPEN))
+
+      val doc = view(liabilityView(LiabilityViewModel.fromCase(c, Cases.operatorWithPermissions), None,
+        None,
+        sampleStatusTabViewModel,
+        Cases.activityTabViewModel,
+        activityForm,
+        None,
+        uploadAttachmentForm,
+        emptyKeywordsTabViewModel,
+        keywordForm,
+        appealTabViewModel
+      ))
+
+      doc shouldNot containElementWithID("appeal_tab")
     }
   }
 }

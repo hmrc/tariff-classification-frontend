@@ -39,6 +39,7 @@ class LiabilityViewModelSpec extends ModelsBaseSpec {
     "trader-business-name", "good-name",
     "1",
     "CANCELLED",
+    None,
     isLive = false)
 
   def buildLiabilityModel(
@@ -47,6 +48,7 @@ class LiabilityViewModelSpec extends ModelsBaseSpec {
                            showChangeCaseStatus: Boolean = false,
                            showTakeOffReferral: Boolean = false,
                            showReopen: Boolean = false,
+                           showAppeal: Boolean = false,
                            status: CaseStatus
                          ): LiabilityViewModel = {
     LiabilityViewModel(
@@ -55,6 +57,7 @@ class LiabilityViewModelSpec extends ModelsBaseSpec {
       showChangeCaseStatus = showChangeCaseStatus,
       showTakeOffReferral = showTakeOffReferral,
       showReopen = showReopen,
+      showAppealTab = showAppeal,
       caseStatus = status
     )
   }
@@ -166,11 +169,13 @@ class LiabilityViewModelSpec extends ModelsBaseSpec {
         "trader-business-name", "good-name",
         "1",
         "CANCELLED",
+        c.decision,
         isLive = false),
         hasPermissions = false,
         showChangeCaseStatus = false,
         showTakeOffReferral = false,
         showReopen = false,
+        showAppealTab = false,
         c.status)
       )
     }
@@ -248,5 +253,28 @@ class LiabilityViewModelSpec extends ModelsBaseSpec {
       }
     }
 
+    "create a viewModel with showAppealTab flag true if case is COMPLETED and has the required permission" in {
+
+      val c = Cases.liabilityCaseExample.copy(status = CaseStatus.COMPLETED)
+      val op = Cases.operatorWithPermissions.copy(permissions = Set(Permission.APPEAL_CASE))
+
+      assert(LiabilityViewModel.fromCase(c, op).showAppealTab === true)
+    }
+
+    "create a viewModel with showAppealTab flag false if case is not COMPLETED or CANCELLED and has the required permission" in {
+
+      val c = Cases.liabilityCaseExample.copy(status = CaseStatus.OPEN)
+      val op = Cases.operatorWithPermissions.copy(permissions = Set(Permission.APPEAL_CASE))
+
+      assert(LiabilityViewModel.fromCase(c, op).showAppealTab === false)
+    }
+
+    "create a viewModel with showAppealTab flag false if case is CANCELLED and does not have the required permission" in {
+
+      val c = Cases.liabilityCaseExample.copy(status = CaseStatus.CANCELLED)
+      val op = Cases.operatorWithPermissions.copy(permissions = Set(Permission.VIEW_CASES))
+
+      assert(LiabilityViewModel.fromCase(c, op).showAppealTab === false)
+    }
   }
 }
