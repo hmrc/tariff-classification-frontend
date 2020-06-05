@@ -16,46 +16,42 @@
 
 package controllers
 
-import controllers.v2.RequestActionsWithPermissionsProvider
-import org.scalatestplus.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import base.SpecBase
 import play.api.Application
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.inject.bind
-import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.mvc.{AnyContent, Request}
-import play.api.test.FakeRequest
-import service.{CasesService, EventsService, FileStoreService, QueuesService}
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.test.UnitSpec
-import views.html.partials.liabilities.{attachments_details, attachments_list}
-import views.html.v2.{case_heading, liability_view, remove_attachment}
+import play.api.http.HeaderNames.LOCATION
+import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded, AnyContentAsText, Result}
+import play.api.test.CSRFTokenHelper._
+import play.api.test.{FakeHeaders, FakeRequest}
 
-class ControllerBaseSpec extends UnitSpec with I18nSupport with GuiceOneAppPerSuite with MockitoSugar with ControllerCommons {
+class ControllerBaseSpec extends SpecBase {
 
-  override lazy val app: Application = new GuiceApplicationBuilder().overrides(
-    //providers
-    bind[RequestActions].toProvider[RequestActionsWithPermissionsProvider],
-    //views
-    bind[liability_view].toInstance(mock[liability_view]),
-    bind[case_heading].toInstance(mock[case_heading]),
-    bind[attachments_details].toInstance(mock[attachments_details]),
-    bind[remove_attachment].toInstance(mock[remove_attachment]),
-    bind[attachments_list].toInstance(mock[attachments_list]),
-    //services
-    bind[FileStoreService].toInstance(mock[FileStoreService]),
-    bind[EventsService].toInstance(mock[EventsService]),
-    bind[QueuesService].toInstance(mock[QueuesService]),
-    bind[CasesService].toInstance(mock[CasesService])
-  ).configure(
-    "metrics.jvm" -> false,
-    "metrics.enabled" -> false,
-    "toggle.new-liability-details" -> true
-  ).build()
+  protected def locationOf(result: Result): Option[String] = {
+    result.header.headers.get(LOCATION)
+  }
 
-  implicit val request: Request[AnyContent] = FakeRequest()
+  protected def contentTypeOf(result: Result): Option[String] = {
+    result.body.contentType.map(_.split(";").take(1).mkString.trim)
+  }
 
-  implicit def messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
+  protected def charsetOf(result: Result): Option[String] = {
+    result.body.contentType match {
+      case Some(s) if s.contains("charset=") => Some(s.split("; *charset=").drop(1).mkString.trim)
+      case _ => None
+    }
+  }
 
-  implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
+  protected def newFakeGETRequestWithCSRF(application: Application): FakeRequest[AnyContentAsEmpty.type] = {
+    FakeRequest("GET", "/", FakeHeaders(Seq("csrfToken"->"csrfToken")), AnyContentAsEmpty)
+      .withCSRFToken.asInstanceOf[FakeRequest[AnyContentAsEmpty.type]]
+  }
+
+  protected def newFakePOSTRequestWithCSRF(application: Application, body: String): FakeRequest[AnyContentAsText] = {
+    FakeRequest("POST", "/", FakeHeaders(Seq("csrfToken"->"csrfToken")), AnyContentAsText).withTextBody(body)
+      .withCSRFToken.asInstanceOf[FakeRequest[AnyContentAsText]]
+  }
+
+  protected def newFakePOSTRequestWithCSRF(application: Application, encodedBody: Map[String, String] = Map.empty): FakeRequest[AnyContentAsFormUrlEncoded] = {
+    FakeRequest("POST", "/", FakeHeaders(Seq("csrfToken"->"csrfToken")), AnyContentAsFormUrlEncoded).withFormUrlEncodedBody(encodedBody.toSeq: _*)
+      .withCSRFToken.asInstanceOf[FakeRequest[AnyContentAsFormUrlEncoded]]
+  }
 }

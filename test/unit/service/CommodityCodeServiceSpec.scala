@@ -18,14 +18,12 @@ package service
 
 import java.time.{Clock, Instant, LocalDateTime, ZoneOffset}
 
-import org.mockito.BDDMockito._
-import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar
-import uk.gov.hmrc.play.test.UnitSpec
 import config.AppConfig
 import models.CommodityCode
+import org.mockito.BDDMockito._
+import org.scalatest.BeforeAndAfterEach
 
-class CommodityCodeServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
+class CommodityCodeServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
 
   private val config = mock[AppConfig]
 

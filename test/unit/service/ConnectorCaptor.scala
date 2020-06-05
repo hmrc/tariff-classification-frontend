@@ -16,13 +16,13 @@
 
 package service
 
+import connector.BindingTariffClassificationConnector
+import models.Case
+import models.request.NewEventRequest
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.Mockito.verify
 import uk.gov.hmrc.http.HeaderCarrier
-import connector.BindingTariffClassificationConnector
-import models.Case
-import models.request.NewEventRequest
 
 trait ConnectorCaptor {
 

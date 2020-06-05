@@ -17,11 +17,10 @@
 package views.templates
 
 import models.LiabilityStatus
-import utils.Dates
+import utils.{Cases, Dates}
 import views.ViewMatchers.containText
 import views.ViewSpec
-import views.html.templates.{decision_template, ruling_template}
-import utils.Cases
+import views.html.templates.decision_template
 
 
 class DecisionTemplateViewSpec extends ViewSpec {
@@ -31,7 +30,7 @@ class DecisionTemplateViewSpec extends ViewSpec {
   private val ruling = rulingCase.decision.getOrElse(throw new Exception("Bad test data"))
   private val doc = view(decision_template(rulingCase, ruling)(authenticatedFakeRequest, messages, appConfig))
 
-  "Decision pdf c592 section" must {
+  "Decision pdf c592 section" should {
 
     val section = "section-c592"
 
@@ -56,7 +55,7 @@ class DecisionTemplateViewSpec extends ViewSpec {
     }
   }
 
-  "Decision pdf information section" must {
+  "Decision pdf information section" should {
 
     val section = "section-information"
 
@@ -74,7 +73,7 @@ class DecisionTemplateViewSpec extends ViewSpec {
 
   }
 
-  "Decision pdf commodity code section" must {
+  "Decision pdf commodity code section" should {
 
     val section = "section-commcode"
 
@@ -83,7 +82,7 @@ class DecisionTemplateViewSpec extends ViewSpec {
     }
   }
 
-  "Decision pdf item description" must {
+  "Decision pdf item description" should {
 
     val section = "section-description"
 
@@ -92,7 +91,7 @@ class DecisionTemplateViewSpec extends ViewSpec {
     }
   }
 
-  "Decision pdf justification" must {
+  "Decision pdf justification" should {
 
     val section = "section-justification"
 
@@ -101,7 +100,7 @@ class DecisionTemplateViewSpec extends ViewSpec {
     }
   }
 
-  "Decision pdf exclusions" must {
+  "Decision pdf exclusions" should {
 
     val section = "section-exclusion"
 

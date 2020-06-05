@@ -18,14 +18,13 @@ package views.partials.liabilities.status
 
 import models.viewmodels.SampleStatusTabViewModel
 import models.{Event, Paged, Permission}
-import views.ViewMatchers.containText
+import views.ViewMatchers.{containText, _}
 import views.ViewSpec
-import views.ViewMatchers._
 import views.html.partials.liabilities.sample.sample_details_liability
 
 class SampleDetailsViewSpec extends ViewSpec {
 
-  def sampleDetailsView: sample_details_liability = app.injector.instanceOf[sample_details_liability]
+  def sampleDetailsView: sample_details_liability = injector.instanceOf[sample_details_liability]
 
   "sample_details_liability view" should {
 

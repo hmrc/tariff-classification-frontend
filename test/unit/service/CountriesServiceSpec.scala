@@ -17,12 +17,11 @@
 package uk.gov.hmrc.tariffclassificationfrontend.service
 
 import models.Country
-import org.scalatest.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import service.CountriesService
-import uk.gov.hmrc.play.test.UnitSpec
+import service.{CountriesService, ServiceSpecBase}
 
-class CountriesServiceSpec extends UnitSpec with MockitoSugar with GuiceOneAppPerSuite {
+class CountriesServiceSpec extends ServiceSpecBase {
+
+  val countriesService = injector.instanceOf[CountriesService]
 
   val expectedCountriesList = List(
     Country("AE0", "title.abu_dhabi", "AE0", Nil),
@@ -321,9 +320,6 @@ class CountriesServiceSpec extends UnitSpec with MockitoSugar with GuiceOneAppPe
   )
 
   "getAllCountries" should {
-
-    val countriesService = app.injector.instanceOf[CountriesService] //CountriesService.getAllCountries
-
     "return the expected countries" in {
       countriesService.getAllCountries shouldEqual expectedCountriesList
     }

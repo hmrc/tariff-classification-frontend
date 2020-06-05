@@ -20,9 +20,8 @@ import java.net.URLDecoder
 import java.time.Instant
 
 import play.api.mvc.QueryStringBindable.bindableString
-import uk.gov.hmrc.play.test.UnitSpec
 
-class CaseReportTest extends UnitSpec {
+class CaseReportTest extends ModelsBaseSpec {
 
   private val report = CaseReport(
     filter = CaseReportFilter(

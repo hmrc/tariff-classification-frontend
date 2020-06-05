@@ -16,54 +16,37 @@
 
 package controllers
 
+import models.SampleReturn.SampleReturn
+import models.{Permission, SampleReturn, _}
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito._
 import org.mockito.Mockito
 import org.mockito.Mockito.{never, verify}
-import org.scalatestplus.mockito.MockitoSugar
-import org.scalatest.{BeforeAndAfterEach, Matchers}
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status
-import play.api.mvc.{BodyParsers, MessagesControllerComponents}
 import play.api.test.Helpers._
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
-import config.AppConfig
-import models.SampleReturn.SampleReturn
-import models.{Permission, SampleReturn, _}
-import play.api.inject.guice.GuiceApplicationBuilder
 import service.CasesService
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases._
 
 import scala.concurrent.Future
 
-class SampleReturnControllerSpec extends UnitSpec with Matchers
-  with GuiceOneAppPerSuite with MockitoSugar with ControllerCommons with BeforeAndAfterEach {
+class SampleReturnControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
-  private val messagesControllerComponents = inject[MessagesControllerComponents]
-  private val appConfig = inject[AppConfig]
   private val casesService = mock[CasesService]
   private val operator = mock[Operator]
 
   private def controller(requestCase: Case) = new SampleReturnController(
-    new SuccessfulRequestActions(inject[BodyParsers.Default], operator, c = requestCase), casesService, messagesControllerComponents, appConfig
+    new SuccessfulRequestActions(defaultPlayBodyParsers, operator, c = requestCase), casesService, mcc, appConfWithLiabilityToggleOff
   )
 
   private def controller(requestCase: Case, permission: Set[Permission]) = new SampleReturnController(
-    new RequestActionsWithPermissions(inject[BodyParsers.Default], permission, c = requestCase), casesService, messagesControllerComponents, appConfig
+    new RequestActionsWithPermissions(defaultPlayBodyParsers, permission, c = requestCase), casesService, mcc, appConfWithLiabilityToggleOff
   )
-
-  implicit lazy val appWithLiabilityToggle = new GuiceApplicationBuilder()
-    .configure("toggle.new-liability-details" -> true)
-    .build()
-
-  lazy val appConf: AppConfig = appWithLiabilityToggle.injector.instanceOf[AppConfig]
 
   private def controllerV2(requestCase: Case, permission: Set[Permission]) = new SampleReturnController(
-    new RequestActionsWithPermissions(inject[BodyParsers.Default], permission, c = requestCase), casesService, messagesControllerComponents, appConf
+    new RequestActionsWithPermissions(defaultPlayBodyParsers, permission, c = requestCase), casesService, mcc, realAppConfig
   )
-
-  private implicit val hc: HeaderCarrier = HeaderCarrier()
 
   override def afterEach(): Unit = {
     super.afterEach()

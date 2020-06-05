@@ -16,11 +16,10 @@
 
 package views.templates
 
-import utils.Dates
+import utils.{Cases, Dates}
 import views.ViewMatchers.containText
 import views.ViewSpec
 import views.html.templates.ruling_template
-import utils.Cases
 
 
 class RulingTemplateViewSpec extends ViewSpec {
@@ -30,7 +29,7 @@ class RulingTemplateViewSpec extends ViewSpec {
   private val ruling = rulingCase.decision.getOrElse(throw new Exception("Bad test data"))
   private val doc = view(ruling_template(rulingCase, ruling, s => Some("dummy country name"))(authenticatedFakeRequest, messages, appConfig))
 
-  "Ruling pdf holder section" must {
+  "Ruling pdf holder section" should {
 
     val section = "section-holder"
 
@@ -51,7 +50,7 @@ class RulingTemplateViewSpec extends ViewSpec {
     }
   }
 
-  "Ruling pdf ruling section" must {
+  "Ruling pdf ruling section" should {
 
     val section = "section-ruling"
 
@@ -72,7 +71,7 @@ class RulingTemplateViewSpec extends ViewSpec {
     }
   }
 
-  "Ruling pdf goods section" must {
+  "Ruling pdf goods section" should {
 
     val section = "section-goods"
 
@@ -81,7 +80,7 @@ class RulingTemplateViewSpec extends ViewSpec {
     }
   }
 
-  "Ruling pdf goods commercial denomination" must {
+  "Ruling pdf goods commercial denomination" should {
 
     val section = "section-commercial"
 
@@ -90,7 +89,7 @@ class RulingTemplateViewSpec extends ViewSpec {
     }
   }
 
-  "Ruling pdf justification" must {
+  "Ruling pdf justification" should {
 
     val section = "section-justification"
 

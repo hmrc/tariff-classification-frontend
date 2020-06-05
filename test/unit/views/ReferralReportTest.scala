@@ -16,10 +16,9 @@
 
 package views
 
-import uk.gov.hmrc.play.test.UnitSpec
 import models.{CaseReportGroup, Queue, ReportResult}
 
-class ReferralReportTest extends UnitSpec {
+class ReferralReportTest extends ViewSpec {
 
   "Referral Report" should {
     val queue1 = Queue("id1", "", "")

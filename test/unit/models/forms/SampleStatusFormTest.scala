@@ -16,10 +16,9 @@
 
 package models.forms
 
-import uk.gov.hmrc.play.test.UnitSpec
-import models.SampleStatus
+import models.{ModelsBaseSpec, SampleStatus}
 
-class SampleStatusFormTest extends UnitSpec {
+class SampleStatusFormTest extends ModelsBaseSpec {
 
   "Bind from request" should {
     "Bind empty" in {

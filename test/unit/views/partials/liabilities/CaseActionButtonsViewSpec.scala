@@ -28,7 +28,7 @@ import views.html.partials.liabilities.case_action_buttons_partial
 
 class CaseActionButtonsViewSpec extends ViewSpec {
 
-  def case_action_buttons_partial: case_action_buttons_partial = app.injector.instanceOf[case_action_buttons_partial]
+  def case_action_buttons_partial: case_action_buttons_partial = injector.instanceOf[case_action_buttons_partial]
 
   def uploadAttachmentForm: Form[String] = UploadAttachmentForm.form
 

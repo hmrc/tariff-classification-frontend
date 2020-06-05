@@ -18,46 +18,43 @@ package controllers
 
 import java.time.Instant
 
-import config.AppConfig
 import models.forms.InstantRangeForm
 import models.request.AuthenticatedRequest
 import models.{Permission, _}
 import org.mockito.ArgumentMatchers._
 import org.mockito.BDDMockito._
 import org.mockito.Mockito
-import org.scalatest.{BeforeAndAfterEach, Matchers}
-import org.scalatestplus.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status
-import play.api.mvc.{AnyContent, BodyParsers, MessagesControllerComponents, Request}
+import play.api.mvc.{AnyContent, Request}
 import play.api.test.Helpers._
 import service._
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.test.UnitSpec
 import views.{Report, SelectedReport}
 
 import scala.concurrent.Future
 
-class ReportingControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSuite
-  with MockitoSugar with BeforeAndAfterEach with ControllerCommons {
+class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
-  private val messageApi = inject[MessagesControllerComponents]
-  private val appConfig = inject[AppConfig]
   private val reportingService = mock[ReportingService]
   private val queueService = mock[QueuesService]
   private val casesService = mock[CasesService]
-  private implicit val hc: HeaderCarrier = HeaderCarrier()
   private val operator = mock[Operator]
   private val requiredPermissions: Set[Permission] = Set(Permission.VIEW_REPORTS)
   private val noPermissions: Set[Permission] = Set.empty
 
   override protected def afterEach(): Unit = {
     super.afterEach()
-    Mockito.reset(reportingService, queueService)
+    Mockito.reset(
+      reportingService,
+      queueService,
+      casesService,
+      operator
+    )
   }
 
   private def controller(permission: Set[Permission]) = new ReportingController(
-    new RequestActionsWithPermissions(inject[BodyParsers.Default], permission), reportingService, queueService, casesService,  messageApi, appConfig
+    new RequestActionsWithPermissions(defaultPlayBodyParsers, permission), reportingService, queueService, casesService,  mcc, realAppConfig
   )
 
   private def request[A](operator: Operator, request: Request[A]) = new AuthenticatedRequest(operator, request)
@@ -75,7 +72,7 @@ class ReportingControllerSpec extends UnitSpec with Matchers with GuiceOneAppPer
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
-      contentAsString(result) shouldBe views.html.reports(Seq.empty, None, Map.empty)(req, messageApi.messagesApi.preferred(req), appConfig).toString()
+      contentAsString(result) shouldBe views.html.reports(Seq.empty, None, Map.empty)(req, mcc.messagesApi.preferred(req), realAppConfig).toString()
     }
 
     "Return Forbidden for Non-Manager" in {
@@ -106,14 +103,15 @@ class ReportingControllerSpec extends UnitSpec with Matchers with GuiceOneAppPer
         Seq.empty,
         Some(SelectedReport(
           Report.SLA,
-          views.html.partials.reports.sla_report_criteria(InstantRangeForm.form)(req, messageApi.messagesApi.preferred(req), appConfig))
+          views.html.partials.reports.sla_report_criteria(InstantRangeForm.form)(req, mcc.messagesApi.preferred(req), realAppConfig))
         ),
-        Map.empty)(req, messageApi.messagesApi.preferred(req), appConfig).toString()
+        Map.empty)(req, mcc.messagesApi.preferred(req), realAppConfig).toString()
     }
 
     "Return OK for Referral Report" in {
       given(queueService.getAll) willReturn Future.successful(Seq.empty)
       given(casesService.countCasesByQueue(any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(Map.empty[String, Int]))
+      given(operator.hasPermissions(requiredPermissions)) willReturn true
 
       val req: AuthenticatedRequest[AnyContent] = request(operator, newFakeGETRequestWithCSRF(fakeApplication))
       val result = await(controller(requiredPermissions).getReportCriteria(Report.REFERRAL.toString,0)(req.request))
@@ -126,8 +124,8 @@ class ReportingControllerSpec extends UnitSpec with Matchers with GuiceOneAppPer
         Seq.empty,
         Some(SelectedReport(
           Report.REFERRAL,
-          views.html.partials.reports.referral_report_criteria(InstantRangeForm.form)(req, messageApi.messagesApi.preferred(req), appConfig))
-        ), Map.empty)(req, messageApi.messagesApi.preferred(req), appConfig).toString()
+          views.html.partials.reports.referral_report_criteria(InstantRangeForm.form)(req, mcc.messagesApi.preferred(req), realAppConfig))
+        ), Map.empty)(req, mcc.messagesApi.preferred(req), realAppConfig).toString()
     }
 
     "Redirect to Reports for Not Found" in {
@@ -176,7 +174,7 @@ class ReportingControllerSpec extends UnitSpec with Matchers with GuiceOneAppPer
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
 
-      contentAsString(result) shouldBe views.html.report_sla(range, Seq.empty[ReportResult], Seq.empty[Queue])(req, messageApi.messagesApi.preferred(req), appConfig).toString()
+      contentAsString(result) shouldBe views.html.report_sla(range, Seq.empty[ReportResult], Seq.empty[Queue])(req, mcc.messagesApi.preferred(req), realAppConfig).toString()
     }
 
     "Return OK for Referral Report" in {
@@ -198,11 +196,12 @@ class ReportingControllerSpec extends UnitSpec with Matchers with GuiceOneAppPer
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
 
-      contentAsString(result) shouldBe views.html.report_referral(range, Seq.empty[ReportResult], Seq.empty[Queue])(req, messageApi.messagesApi.preferred(req), appConfig).toString()
+      contentAsString(result) shouldBe views.html.report_referral(range, Seq.empty[ReportResult], Seq.empty[Queue])(req, mcc.messagesApi.preferred(req), realAppConfig).toString()
     }
 
     "Return Bad Request for missing params" in {
       given(queueService.getAll) willReturn Future.successful(Seq.empty)
+      given(casesService.countCasesByQueue(any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(Map.empty[String, Int]))
       given(operator.hasPermissions(requiredPermissions)) willReturn true
 
       val req: AuthenticatedRequest[AnyContent] = request(operator, newFakeGETRequestWithCSRF(fakeApplication))
@@ -216,9 +215,9 @@ class ReportingControllerSpec extends UnitSpec with Matchers with GuiceOneAppPer
         Seq.empty,
         Some(SelectedReport(
           Report.SLA,
-          views.html.partials.reports.sla_report_criteria(InstantRangeForm.form.bind(Map[String, String]()))(req, messageApi.messagesApi.preferred(req), appConfig))
+          views.html.partials.reports.sla_report_criteria(InstantRangeForm.form.bind(Map[String, String]()))(req, mcc.messagesApi.preferred(req), realAppConfig))
         ),
-        Map.empty)(req, messageApi.messagesApi.preferred(req), appConfig).toString()
+        Map.empty)(req, mcc.messagesApi.preferred(req), realAppConfig).toString()
     }
 
     "Redirect to Reports for Not Found" in {

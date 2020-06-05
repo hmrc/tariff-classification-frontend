@@ -16,8 +16,7 @@
 
 package controllers.actions
 
-import base.SpecBase
-import controllers.routes
+import controllers.{ControllerBaseSpec, routes}
 import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -29,7 +28,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 
-class AuthActionSpec extends SpecBase {
+class AuthActionSpec extends ControllerBaseSpec {
 
   private def unauthorisedLocation = {
     Some(routes.SecurityController.unauthorized().url)
@@ -37,7 +36,7 @@ class AuthActionSpec extends SpecBase {
 
   "Auth Action" when {
 
-    "the user hasn't logged in" must {
+    "the user hasn't logged in" should {
       "redirect the user to log in " in {
         val result: Future[Result] = handleAuthError(MissingBearerToken())
 
@@ -46,7 +45,7 @@ class AuthActionSpec extends SpecBase {
       }
     }
 
-    "the user's session has expired" must {
+    "the user's session has expired" should {
       "redirect the user to log in " in {
         val result: Future[Result] = handleAuthError(BearerTokenExpired())
 
@@ -55,7 +54,7 @@ class AuthActionSpec extends SpecBase {
       }
     }
 
-    "the user's credentials are invalid" must {
+    "the user's credentials are invalid" should {
       "redirect the user to log in " in {
         val result: Future[Result] = handleAuthError(InvalidBearerToken())
 
@@ -64,7 +63,7 @@ class AuthActionSpec extends SpecBase {
       }
     }
 
-    "the user's session cannot be found" must {
+    "the user's session cannot be found" should {
       "redirect the user to log in " in {
         val result: Future[Result] = handleAuthError(SessionRecordNotFound())
 
@@ -73,7 +72,7 @@ class AuthActionSpec extends SpecBase {
       }
     }
 
-    "the user doesn't have sufficient enrolments" must {
+    "the user doesn't have sufficient enrolments" should {
       "redirect the user to the unauthorised page" in {
         val result: Future[Result] = handleAuthError(InsufficientEnrolments())
 
@@ -82,7 +81,7 @@ class AuthActionSpec extends SpecBase {
       }
     }
 
-    "the user doesn't have sufficient confidence level" must {
+    "the user doesn't have sufficient confidence level" should {
       "redirect the user to the unauthorised page" in {
         val result: Future[Result] = handleAuthError(InsufficientConfidenceLevel())
 
@@ -91,7 +90,7 @@ class AuthActionSpec extends SpecBase {
       }
     }
 
-    "the user used an unaccepted auth provider" must {
+    "the user used an unaccepted auth provider" should {
       "redirect the user to the unauthorised page" in {
         val result: Future[Result] = handleAuthError(UnsupportedAuthProvider())
 
@@ -100,7 +99,7 @@ class AuthActionSpec extends SpecBase {
       }
     }
 
-    "the user has an unsupported affinity group" must {
+    "the user has an unsupported affinity group" should {
       "redirect the user to the unauthorised page" in {
         val result: Future[Result] = handleAuthError(UnsupportedAffinityGroup())
 
@@ -109,7 +108,7 @@ class AuthActionSpec extends SpecBase {
       }
     }
 
-    "the user has an unsupported credential role" must {
+    "the user has an unsupported credential role" should {
       "redirect the user to the unauthorised page" in {
         val result: Future[Result] = handleAuthError(UnsupportedCredentialRole())
 
@@ -118,7 +117,7 @@ class AuthActionSpec extends SpecBase {
       }
     }
 
-    "internalId" must {
+    "internalId" should {
       "be present in IdentifierAction when it is available from AuthConnector" in {
         val result = handleAuth(Some("internalId"), fakeRequest)
 
@@ -132,7 +131,7 @@ class AuthActionSpec extends SpecBase {
 
     }
 
-    "sessionId" must {
+    "sessionId" should {
       "be present if internalId is missing" in {
         val result = handleAuth(None, fakeRequestWithSessionId("sessionID"))
 
@@ -150,9 +149,9 @@ class AuthActionSpec extends SpecBase {
     val authAction = new AuthenticatedIdentifierAction(
       new FakeFailingAuthConnector(exc),
       cc,
-      appConfig,
-      config,
-      env
+      realAppConfig,
+      realConfig,
+      realEnv
     )
     val controller = new Harness(authAction)
     controller.onPageLoad()(fakeRequest)
@@ -162,9 +161,9 @@ class AuthActionSpec extends SpecBase {
     val authAction = new AuthenticatedIdentifierAction(
       new FakeAuthConnector(internalId),
       cc,
-      appConfig,
-      config,
-      env
+      realAppConfig,
+      realConfig,
+      realEnv
     )
     val controller = new Harness(authAction)
     controller.onPageLoadWithInternalId()(request)

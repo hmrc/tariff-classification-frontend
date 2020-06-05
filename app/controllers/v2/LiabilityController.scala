@@ -40,8 +40,6 @@ import scala.concurrent.Future.successful
 @Singleton
 class LiabilityController @Inject()(
                                      verify: RequestActions,
-                                     identify: IdentifierAction,
-                                     getData: DataRetrievalAction,
                                      casesService: CasesService,
                                      eventsService: EventsService,
                                      queuesService: QueuesService,

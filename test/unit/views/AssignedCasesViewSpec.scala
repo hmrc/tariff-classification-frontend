@@ -17,8 +17,8 @@
 package views
 
 import models.{Case, Operator, Permission, Queue}
-import views.ViewMatchers.{containElementWithID, containText}
 import utils.Cases
+import views.ViewMatchers.{containElementWithID, containText}
 
 class AssignedCasesViewSpec extends ViewSpec {
 

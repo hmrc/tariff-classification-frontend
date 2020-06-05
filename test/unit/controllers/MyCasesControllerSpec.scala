@@ -16,35 +16,24 @@
 
 package controllers
 
+import models.{Permission, _}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito._
-import org.scalatest.Matchers
-import org.scalatestplus.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status
-import play.api.mvc.{BodyParsers, MessagesControllerComponents}
-import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
-import config.AppConfig
-import models.{Permission, _}
 import service.{CasesService, QueuesService}
+import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
 
-class MyCasesControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSuite with MockitoSugar with ControllerCommons {
+class MyCasesControllerSpec extends ControllerBaseSpec {
 
-  private val fakeRequest = FakeRequest()
-  private val messageApi = inject[MessagesControllerComponents]
-  private val appConfig = inject[AppConfig]
   private val casesService = mock[CasesService]
   private val queuesService = mock[QueuesService]
   private val queue = Queue("0", "queue", "Queue Name")
-  private implicit val hc: HeaderCarrier = HeaderCarrier()
 
   private def controller(permission: Set[Permission]) = new MyCasesController(
-    new RequestActionsWithPermissions(inject[BodyParsers.Default], permission), casesService, queuesService, messageApi, appConfig
+    new RequestActionsWithPermissions(defaultPlayBodyParsers, permission), casesService, queuesService, mcc, realAppConfig
   )
 
   "My Cases" should {

@@ -16,24 +16,22 @@
 
 package audit
 
-import org.mockito.ArgumentMatchers._
-import org.mockito.Mockito._
-import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.audit.DefaultAuditConnector
-import uk.gov.hmrc.play.test.UnitSpec
+import base.SpecBase
 import models.AppealStatus.AppealStatus
 import models.CancelReason.CancelReason
 import models.CaseStatus._
 import models.{CaseStatus => _, _}
+import org.mockito.ArgumentMatchers._
+import org.mockito.Mockito._
+import org.scalatest.BeforeAndAfterEach
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.audit.DefaultAuditConnector
 import utils.Cases._
 
 import scala.concurrent.ExecutionContext
 
-class AuditServiceTest extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
+class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
 
-  private implicit val hc: HeaderCarrier = HeaderCarrier()
   private val connector = mock[DefaultAuditConnector]
 
   private val service = new AuditService(connector)

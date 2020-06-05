@@ -16,51 +16,34 @@
 
 package controllers
 
-import akka.stream.Materializer
+import models.{Permission, _}
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito._
 import org.mockito.Mockito.when
-import org.scalatest.Matchers
-import org.scalatestplus.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api
 import play.api.http.Status
 import play.api.libs.Files.{SingletonTemporaryFileCreator, TemporaryFile}
 import play.api.mvc.MultipartFormData.FilePart
 import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.api.{Configuration, Environment}
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
-import config.AppConfig
-import models.{Permission, _}
 import service.{CasesService, FileStoreService}
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
 
 import scala.concurrent.Future.successful
 
-class AttachmentsControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSuite with MockitoSugar with ControllerCommons {
-  private val fakeRequest = FakeRequest(onwardRoute)
-  private val env = Environment.simple()
+class AttachmentsControllerSpec extends ControllerBaseSpec {
 
-  private implicit val mtrlzr: Materializer = app.injector.instanceOf[Materializer]
-  private val messageApi = inject[MessagesControllerComponents]
-  private val appConfig = inject[AppConfig]
   private val casesService = mock[CasesService]
   private val fileService = mock[FileStoreService]
   private val operator = mock[Operator]
 
   private val controller = new AttachmentsController(
-    new SuccessfulRequestActions(inject[BodyParsers.Default], operator, c = Cases.btiCaseExample), casesService, fileService, messageApi, appConfig, mtrlzr
+    new SuccessfulRequestActions(defaultPlayBodyParsers, operator, c = Cases.btiCaseExample), casesService, fileService, mcc, realAppConfig, mat
   )
 
   private def controller(requestCase: Case, permission: Set[Permission]) = new AttachmentsController(
-    new RequestActionsWithPermissions(inject[BodyParsers.Default], permission, c = requestCase), casesService, fileService, messageApi, appConfig, mtrlzr)
-
-  private def onwardRoute = Call("POST", "/foo")
-
-  private implicit val hc: HeaderCarrier = HeaderCarrier()
+    new RequestActionsWithPermissions(defaultPlayBodyParsers, permission, c = requestCase), casesService, fileService, mcc, realAppConfig, mat)
 
   "Attachments Details" should {
 
@@ -225,7 +208,7 @@ class AttachmentsControllerSpec extends UnitSpec with Matchers with GuiceOneAppP
 
     "upload a file of valid type should reload page" in {
 
-      appConfig.fileUploadMimeTypes foreach { mimeType =>
+      realAppConfig.fileUploadMimeTypes foreach { mimeType =>
         //Given
         val aCase = Cases.btiCaseExample.copy(reference = testReference)
         val updatedCase = aCase.copy(attachments = aCase.attachments :+ Cases.attachment("anyUrl"))

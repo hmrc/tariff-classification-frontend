@@ -14,25 +14,10 @@
  * limitations under the License.
  */
 
-package controllers
+package models
 
-import play.api.http.Status
-import play.api.test.Helpers._
+import base.SpecBase
 
-class SecurityControllerSpec extends ControllerBaseSpec {
-
-  private val controller = new SecurityController(mcc, realAppConfig)
-
-  "Unauthorized" should {
-
-    "return 200 OK and HTML content type" in {
-      val result = await(controller.unauthorized()(fakeRequest))
-
-      status(result) shouldBe Status.OK
-      contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
-    }
-
-  }
+abstract class ModelsBaseSpec extends SpecBase {
 
 }

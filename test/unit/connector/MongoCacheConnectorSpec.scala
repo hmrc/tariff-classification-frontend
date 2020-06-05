@@ -20,9 +20,8 @@ import generators.Generators
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.Mockito.{verify, when}
 import org.scalacheck.Arbitrary.arbitrary
+import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatestplus.mockito.MockitoSugar
-import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import play.api.libs.json.JsString
 import repositories.{ReactiveMongoRepository, SessionRepository}
@@ -30,10 +29,10 @@ import uk.gov.hmrc.http.cache.client.CacheMap
 
 import scala.concurrent.Future
 
-class MongoCacheConnectorSpec extends WordSpec with MustMatchers with ScalaCheckDrivenPropertyChecks
-  with Generators with MockitoSugar with ScalaFutures with OptionValues {
+class MongoCacheConnectorSpec extends ScalaCheckDrivenPropertyChecks
+  with Generators with ConnectorTest with ScalaFutures with OptionValues {
 
-  ".save" must {
+  ".save" should {
 
     "save the cache map to the Mongo repository" in {
 
@@ -50,7 +49,7 @@ class MongoCacheConnectorSpec extends WordSpec with MustMatchers with ScalaCheck
         val result = mongoCacheConnector.save(cacheMap)
 
         whenReady(result) { savedCacheMap =>
-          savedCacheMap mustEqual cacheMap
+          savedCacheMap shouldBe cacheMap
           verify(mockReactiveMongoRepository).upsert(cacheMap)
         }
 
@@ -60,7 +59,7 @@ class MongoCacheConnectorSpec extends WordSpec with MustMatchers with ScalaCheck
 
   }
 
-  ".remove" must {
+  ".remove" should {
 
     "remove the cache map to the Mongo repository" in {
 
@@ -77,7 +76,7 @@ class MongoCacheConnectorSpec extends WordSpec with MustMatchers with ScalaCheck
         val result = mongoCacheConnector.remove(cacheMap)
 
         whenReady(result) { savedCacheMap =>
-          savedCacheMap mustEqual true
+          savedCacheMap shouldBe true
           verify(mockReactiveMongoRepository).remove(cacheMap)
         }
       }
@@ -88,7 +87,7 @@ class MongoCacheConnectorSpec extends WordSpec with MustMatchers with ScalaCheck
 
   ".fetch" when {
 
-    "there isn't a record for this key in Mongo" must {
+    "there isn't a record for this key in Mongo" should {
 
       "return None" in {
 
@@ -105,7 +104,7 @@ class MongoCacheConnectorSpec extends WordSpec with MustMatchers with ScalaCheck
           val result = mongoCacheConnector.fetch(cacheId)
 
           whenReady(result) { optionalCacheMap =>
-            optionalCacheMap must be(empty)
+            optionalCacheMap should be(empty)
           }
         }
 
@@ -113,7 +112,7 @@ class MongoCacheConnectorSpec extends WordSpec with MustMatchers with ScalaCheck
 
     }
 
-    "a record exists for this key" must {
+    "a record exists for this key" should {
 
       "return the record" in {
 
@@ -131,7 +130,7 @@ class MongoCacheConnectorSpec extends WordSpec with MustMatchers with ScalaCheck
           val result = mongoCacheConnector.fetch(cacheMap.id)
 
           whenReady(result) { optionalCacheMap =>
-              optionalCacheMap.value mustEqual cacheMap
+              optionalCacheMap.get shouldBe cacheMap
           }
         }
 
@@ -143,7 +142,7 @@ class MongoCacheConnectorSpec extends WordSpec with MustMatchers with ScalaCheck
 
   ".getEntry" when {
 
-    "there isn't a record for this key in Mongo" must {
+    "there isn't a record for this key in Mongo" should {
 
       "return None" in {
 
@@ -160,7 +159,7 @@ class MongoCacheConnectorSpec extends WordSpec with MustMatchers with ScalaCheck
             val result = mongoCacheConnector.getEntry[String](cacheId, key)
 
             whenReady(result) { optionalValue =>
-              optionalValue must be(empty)
+              optionalValue should be(empty)
             }
         }
 
@@ -168,7 +167,7 @@ class MongoCacheConnectorSpec extends WordSpec with MustMatchers with ScalaCheck
 
     }
 
-    "a record exists in Mongo but this key is not present" must {
+    "a record exists in Mongo but this key is not present" should {
 
       "return None" in {
 
@@ -191,7 +190,7 @@ class MongoCacheConnectorSpec extends WordSpec with MustMatchers with ScalaCheck
           val result = mongoCacheConnector.getEntry[String](cacheMap.id, k)
 
           whenReady(result) { optionalValue =>
-            optionalValue must be(empty)
+            optionalValue should be(empty)
           }
         }
 
@@ -199,7 +198,7 @@ class MongoCacheConnectorSpec extends WordSpec with MustMatchers with ScalaCheck
 
     }
 
-    "a record exists in Mongo with this key" must {
+    "a record exists in Mongo with this key" should {
 
       "return the key's value" in {
 
@@ -222,7 +221,7 @@ class MongoCacheConnectorSpec extends WordSpec with MustMatchers with ScalaCheck
           val result = mongoCacheConnector.getEntry[String](cacheMap.id, k)
 
           whenReady(result) { optionalValue =>
-            optionalValue.value mustEqual v
+            optionalValue.get shouldBe v
           }
         }
 

@@ -18,9 +18,9 @@ package views.partials.liabilities
 
 import controllers.routes
 import models.viewmodels.RulingViewModel
+import views.ViewMatchers._
 import views.ViewSpec
 import views.html.partials.liabilities.ruling_tab
-import views.ViewMatchers._
 
 class RulingTabViewSpec extends ViewSpec {
 
@@ -36,7 +36,7 @@ class RulingTabViewSpec extends ViewSpec {
     "case reference"
   )
 
-  def rulingTab: ruling_tab = app.injector.instanceOf[ruling_tab]
+  def rulingTab: ruling_tab = injector.instanceOf[ruling_tab]
 
   "Ruling Tab" should {
 

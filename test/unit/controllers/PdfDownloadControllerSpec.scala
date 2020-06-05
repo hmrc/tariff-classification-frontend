@@ -16,27 +16,21 @@
 
 package controllers
 
+import models._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
-import org.scalatestplus.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status
-import play.api.mvc.{BodyParsers, MessagesControllerComponents, Result}
-import play.api.test.FakeRequest
+import play.api.mvc.Result
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
-import config.AppConfig
-import models._
 import service.{CasesService, CountriesService, FileStoreService, PdfService}
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
 
 import scala.concurrent.Future.successful
 
-class PdfDownloadControllerSpec extends UnitSpec with MockitoSugar with GuiceOneAppPerSuite with ControllerCommons{
+class PdfDownloadControllerSpec extends ControllerBaseSpec {
 
-  private val fakeRequest = FakeRequest()
   private val pdfService = mock[PdfService]
   private val caseService = mock[CasesService]
   private val fileService = mock[FileStoreService]
@@ -46,16 +40,16 @@ class PdfDownloadControllerSpec extends UnitSpec with MockitoSugar with GuiceOne
     goodsDescription = "goods-description", methodSearch = Some("method-to-search"))
 
   private val expectedResult = PdfFile("Some content".getBytes)
-  private val messageApi = inject[MessagesControllerComponents]
   private val countriesService = new CountriesService
-  private implicit val appConfig: AppConfig = inject[AppConfig]
-  private implicit val hc: HeaderCarrier = HeaderCarrier()
 
   private val caseWithDecision = Cases.btiCaseExample.copy(decision = Some(decision))
   private val caseWithoutDecision = Cases.btiCaseExample.copy(decision = None)
   private val liabilityCaseWithDecision = Cases.liabilityCaseExample.copy(decision = Some(decision))
 
-  private val controller = new PdfDownloadController(new SuccessfulAuthenticatedAction(inject[BodyParsers.Default], operator), messageApi, pdfService, fileService, caseService, countriesService)
+  private val controller = new PdfDownloadController(
+    new SuccessfulAuthenticatedAction(defaultPlayBodyParsers, operator), mcc, pdfService,
+    fileService, caseService, countriesService, realAppConfig
+  )
 
   private def givenCompletedCase(): Unit = {
     when(caseService.getOne(any[String])(any[HeaderCarrier])).thenReturn(successful(Some(caseWithDecision)))
@@ -86,7 +80,7 @@ class PdfDownloadControllerSpec extends UnitSpec with MockitoSugar with GuiceOne
   }
 
 
-  "PdfDownloadController Application" must {
+  "PdfDownloadController Application" should {
 
     "return expected pdf" in {
       givenCompletedCase()
@@ -114,7 +108,7 @@ class PdfDownloadControllerSpec extends UnitSpec with MockitoSugar with GuiceOne
 
   }
 
-  "PdfDownloadController Ruling" must {
+  "PdfDownloadController Ruling" should {
 
     "return expected pdf" in {
       givenCompletedCase()

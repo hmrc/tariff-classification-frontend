@@ -16,31 +16,23 @@
 
 package controllers
 
-import akka.stream.Materializer
+import models.{Permission, _}
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.Mockito._
-import org.scalatestplus.mockito.MockitoSugar
-import org.scalatest.{BeforeAndAfterEach, Matchers, WordSpec}
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import org.scalatest.BeforeAndAfterEach
 import play.api.http.{MimeTypes, Status}
 import play.api.libs.Files.{SingletonTemporaryFileCreator, TemporaryFile}
 import play.api.mvc.MultipartFormData.FilePart
-import play.api.mvc.{BodyParsers, MessagesControllerComponents, MultipartFormData, Result}
+import play.api.mvc.{MultipartFormData, Result}
 import play.api.test.Helpers.{redirectLocation, _}
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
-import config.AppConfig
-import models.{Permission, _}
 import service.CasesService
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
 
 import scala.concurrent.Future.successful
 
-class SuspendCaseControllerSpec extends WordSpec with Matchers with UnitSpec
-  with GuiceOneAppPerSuite with MockitoSugar with BeforeAndAfterEach with ControllerCommons {
+class SuspendCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
-  private val appConfig = inject[AppConfig]
-  private val messagesControllerComponents = inject[MessagesControllerComponents]
   private val casesService = mock[CasesService]
   private val operator = mock[Operator]
 
@@ -48,19 +40,16 @@ class SuspendCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   private val caseWithStatusOPEN = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.OPEN)
   private val caseWithStatusSUSPENDED = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.SUSPENDED)
 
-  private implicit val mat: Materializer = fakeApplication.materializer
-  private implicit val hc: HeaderCarrier = HeaderCarrier()
-
   override def afterEach(): Unit = {
     super.afterEach()
     reset(casesService)
   }
 
   private def controller(c: Case) = new SuspendCaseController(
-    new SuccessfulRequestActions(inject[BodyParsers.Default], operator, c = c), casesService, messagesControllerComponents, appConfig)
+    new SuccessfulRequestActions(defaultPlayBodyParsers, operator, c = c), casesService, mcc, realAppConfig)
 
   private def controller(requestCase: Case, permission: Set[Permission]) = new SuspendCaseController(
-    new RequestActionsWithPermissions(inject[BodyParsers.Default], permission, c = requestCase), casesService, messagesControllerComponents, appConfig)
+    new RequestActionsWithPermissions(defaultPlayBodyParsers, permission, c = requestCase), casesService, mcc, realAppConfig)
 
 
   "Suspend Case" should {

@@ -18,11 +18,11 @@ package views.partials.statuses
 
 import models.CaseStatus.CANCELLED
 import models.{CancelReason, Cancellation}
+import utils.Cases
+import utils.Cases.{aCase, withDecision, withStatus}
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.partials.statuses.case_status
-import utils.Cases
-import utils.Cases.{aCase, withDecision, withStatus}
 
 class CaseStatusViewSpec extends ViewSpec {
 

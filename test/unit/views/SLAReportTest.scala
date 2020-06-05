@@ -16,10 +16,9 @@
 
 package views
 
-import uk.gov.hmrc.play.test.UnitSpec
 import models.Queue
 
-class SLAReportTest extends UnitSpec {
+class SLAReportTest extends ViewSpec {
 
   def newReportContaining(groups: ((Queue, HistogramBucketInterval), Seq[Int])*): SLAReport = {
     val map: Map[(Option[String], HistogramBucketInterval), HistogramBucket] = groups.map {

@@ -26,7 +26,7 @@ class SampleStatusEventsTableViewSpec extends ViewSpec {
   val sampleStatusChangeEvents: Seq[Event] = Seq(Event("1", SampleStatusChange(Some(SampleStatus.AWAITING), Some(SampleStatus.DESTROYED), None), Operator("1"), "1"))
   val sampleStatusReturnChangeEvents: Seq[Event] = Seq(Event("1", SampleReturnChange(Some(SampleReturn.YES), Some(SampleReturn.NO), None), Operator("1"), "1"))
 
-  def sampleStatusEventsTableView: sample_status_events_table = app.injector.instanceOf[sample_status_events_table]
+  def sampleStatusEventsTableView: sample_status_events_table = injector.instanceOf[sample_status_events_table]
 
 
   "sample_details_liability view" should {

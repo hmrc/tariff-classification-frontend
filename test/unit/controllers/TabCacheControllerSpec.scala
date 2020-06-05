@@ -16,39 +16,31 @@
 
 package controllers
 
-import akka.stream.Materializer
 import connector.DataCacheConnector
 import controllers.actions.{FakeDataRetrievalAction, FakeIdentifierAction}
 import models.Operator
-import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito._
-import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.{BeforeAndAfterEach, Matchers}
-import org.scalatestplus.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.mvc.{BodyParsers, MessagesControllerComponents, Result}
+import org.scalatest.BeforeAndAfterEach
+import play.api.mvc.Result
 import uk.gov.hmrc.http.cache.client.CacheMap
-import uk.gov.hmrc.play.test.UnitSpec
 import utils.Cases
 
 import scala.concurrent.Future
 
-class TabCacheControllerSpec extends UnitSpec with Matchers with
-  GuiceOneAppPerSuite with MockitoSugar with ControllerCommons with ScalaFutures with BeforeAndAfterEach {
+class TabCacheControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
-  val dataCacheConnector = mock[DataCacheConnector]
+  private val dataCacheConnector = mock[DataCacheConnector]
   private val operator = mock[Operator]
   private val cacheMap = mock[CacheMap]
-  private val messagesControllerComponents = inject[MessagesControllerComponents]
-  implicit val mat = inject[Materializer]
 
-  override def beforeEach(): Unit =
-    reset(
-      dataCacheConnector
-    )
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(dataCacheConnector, operator, cacheMap)
+  }
 
   def controller() = new TabCacheController(dataCacheConnector, FakeIdentifierAction(), new FakeDataRetrievalAction(None),
-    new SuccessfulRequestActions(inject[BodyParsers.Default], operator), messagesControllerComponents)
+    new SuccessfulRequestActions(defaultPlayBodyParsers, operator), mcc)
 
   "GET" should {
 
@@ -62,7 +54,7 @@ class TabCacheControllerSpec extends UnitSpec with Matchers with
 
       val result: Future[Result] = controller().get(reference, itemType).apply(
         newFakeGETRequestWithCSRF(app))
-      
+
       await(bodyOf(result)) shouldBe s"#${Tab.ATTACHMENTS_TAB}"
     }
 
@@ -123,12 +115,12 @@ class TabCacheControllerSpec extends UnitSpec with Matchers with
   "POST" should {
 
     "save active tab in the database" in {
+      val fakeReq = newFakePOSTRequestWithCSRF(app, s"#${Tab.C592_TAB}")
       val reference = Cases.aLiabilityCase().reference
       val itemType = Cases.aLiabilityCase().application.getType.toLowerCase
-      when(dataCacheConnector.save(any[CacheMap]())).thenReturn(Future.successful(cacheMap))
+      when(dataCacheConnector.save(refEq[CacheMap](cacheMap))).thenReturn(Future.successful(cacheMap))
 
-      controller().post(reference, itemType).apply(
-        newFakePOSTRequestWithCSRF(app, s"#${Tab.C592_TAB}"))
+      await(controller().post(reference, itemType).apply(fakeReq))
 
       verify(dataCacheConnector).save(any[CacheMap]())
     }
@@ -137,8 +129,7 @@ class TabCacheControllerSpec extends UnitSpec with Matchers with
       val reference = Cases.aLiabilityCase().reference
       val itemType = Cases.aLiabilityCase().application.getType.toLowerCase
 
-      controller().post(reference, itemType).apply(
-        newFakePOSTRequestWithCSRF(app, ""))
+      await(controller().post(reference, itemType).apply(newFakePOSTRequestWithCSRF(app, "")))
 
       verifyZeroInteractions(dataCacheConnector)
     }
@@ -147,8 +138,7 @@ class TabCacheControllerSpec extends UnitSpec with Matchers with
       val reference = Cases.aLiabilityCase().reference
       val itemType = Cases.aLiabilityCase().application.getType.toLowerCase
 
-      controller().post(reference, itemType).apply(
-        newFakePOSTRequestWithCSRF(app, Tab.ATTACHMENTS_TAB))
+      await(controller().post(reference, itemType).apply(newFakePOSTRequestWithCSRF(app, Tab.ATTACHMENTS_TAB)))
 
       verifyZeroInteractions(dataCacheConnector)
     }
@@ -157,8 +147,7 @@ class TabCacheControllerSpec extends UnitSpec with Matchers with
       val reference = Cases.aLiabilityCase().reference
       val itemType = Cases.aLiabilityCase().application.getType.toLowerCase
 
-      controller().post(reference, itemType).apply(
-        newFakePOSTRequestWithCSRF(app))
+      await(controller().post(reference, itemType).apply(newFakePOSTRequestWithCSRF(app)))
 
       verifyZeroInteractions(dataCacheConnector)
     }

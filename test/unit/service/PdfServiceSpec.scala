@@ -16,17 +16,15 @@
 
 package service
 
-import org.mockito.ArgumentMatchers._
-import org.mockito.BDDMockito.given
-import org.scalatestplus.mockito.MockitoSugar
-import play.twirl.api.Html
-import uk.gov.hmrc.play.test.UnitSpec
 import connector.PdfGeneratorServiceConnector
 import models.PdfFile
+import org.mockito.ArgumentMatchers._
+import org.mockito.BDDMockito.given
+import play.twirl.api.Html
 
 import scala.concurrent.Future.{failed, successful}
 
-class PdfServiceSpec extends UnitSpec with MockitoSugar {
+class PdfServiceSpec extends ServiceSpecBase {
 
   private val pdfHtml = mock[Html]
   private val connector = mock[PdfGeneratorServiceConnector]

@@ -16,60 +16,41 @@
 
 package controllers
 
+import models.EventType.EventType
+import models.SampleStatus.SampleStatus
+import models.{Permission, _}
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito._
 import org.mockito.Mockito
 import org.mockito.Mockito.{never, verify, when}
-import org.scalatestplus.mockito.MockitoSugar
-import org.scalatest.{BeforeAndAfterEach, Matchers}
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status
-import play.api.mvc.{BodyParsers, MessagesControllerComponents}
-import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
-import config.AppConfig
-import models.EventType.EventType
-import models.SampleStatus.SampleStatus
-import models.{Permission, _}
-import play.api.inject.guice.GuiceApplicationBuilder
 import service.{CasesService, EventsService}
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases._
 
 import scala.concurrent.Future
 
-class SampleControllerSpec extends UnitSpec with Matchers
-  with GuiceOneAppPerSuite with MockitoSugar with ControllerCommons with BeforeAndAfterEach {
+class SampleControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
-  private val fakeRequest = FakeRequest()
-  private val messagesControllerComponents = inject[MessagesControllerComponents]
-  private val appConfig = inject[AppConfig]
   private val casesService = mock[CasesService]
   private val eventsService = mock[EventsService]
   private val operator = Operator(id = "id")
 
-  implicit lazy val appWithLiabilityToggle = new GuiceApplicationBuilder()
-    .configure("toggle.new-liability-details" -> true)
-    .build()
-
-  lazy val appConf: AppConfig = appWithLiabilityToggle.injector.instanceOf[AppConfig]
-
   private def controller(requestCase: Case) = new SampleController(
-    new SuccessfulRequestActions(inject[BodyParsers.Default], operator, c = requestCase), casesService, eventsService, messagesControllerComponents, appConfig
+    new SuccessfulRequestActions(defaultPlayBodyParsers, operator, c = requestCase), casesService, eventsService, mcc, appConfWithLiabilityToggleOff
   )
 
   private def controller(requestCase: Case, permission: Set[Permission]) = new SampleController(
-    new RequestActionsWithPermissions(inject[BodyParsers.Default], permission, c = requestCase),
-    casesService, eventsService, messagesControllerComponents, appConfig
+    new RequestActionsWithPermissions(defaultPlayBodyParsers, permission, c = requestCase),
+    casesService, eventsService, mcc, appConfWithLiabilityToggleOff
   )
 
   private def controllerV2(requestCase: Case, permission: Set[Permission]) = new SampleController(
-    new RequestActionsWithPermissions(inject[BodyParsers.Default], permission, c = requestCase),
-    casesService, eventsService, messagesControllerComponents, appConf
+    new RequestActionsWithPermissions(defaultPlayBodyParsers, permission, c = requestCase),
+    casesService, eventsService, mcc, realAppConfig
   )
-  private implicit val hc: HeaderCarrier = HeaderCarrier()
-
   override def afterEach(): Unit = {
     super.afterEach()
     Mockito.reset(casesService)

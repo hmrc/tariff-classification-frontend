@@ -27,17 +27,13 @@ import org.mockito.ArgumentMatchers._
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito.{never, reset, verify, verifyZeroInteractions}
 import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.test.UnitSpec
 import utils.Cases
 
 import scala.concurrent.Future
 import scala.concurrent.Future.{failed, successful}
 
-class CasesService_CancelRulingSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach with ConnectorCaptor {
-
-  private implicit val hc: HeaderCarrier = HeaderCarrier()
+class CasesService_CancelRulingSpec extends ServiceSpecBase with BeforeAndAfterEach with ConnectorCaptor {
 
   private val manyCases = mock[Seq[Case]]
   private val oneCase = mock[Option[Case]]

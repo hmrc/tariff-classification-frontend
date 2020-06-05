@@ -16,35 +16,24 @@
 
 package controllers
 
-import akka.stream.Materializer
+import models.response.{FileMetadata, ScanStatus}
+import models.{Operator, Permission}
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito._
-import org.scalatestplus.mockito.MockitoSugar
-import org.scalatest.{BeforeAndAfterEach, Matchers, WordSpec}
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status
-import play.api.mvc.{BodyParsers, MessagesControllerComponents, Result}
+import play.api.mvc.Result
 import play.api.test.Helpers.{redirectLocation, _}
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
-import config.AppConfig
-import models.response.{FileMetadata, ScanStatus}
-import models.{Operator, Permission}
 import service.FileStoreService
+import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
 
-class ViewAttachmentControllerSpec extends WordSpec with Matchers with UnitSpec
-  with GuiceOneAppPerSuite with MockitoSugar with BeforeAndAfterEach with ControllerCommons {
+class ViewAttachmentControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
-  private val messagesControllerComponents = inject[MessagesControllerComponents]
-  private val appConfig = inject[AppConfig]
   private val fileService = mock[FileStoreService]
   private val operator = mock[Operator]
-
-  private implicit val mat: Materializer = fakeApplication.materializer
-  private implicit val hc: HeaderCarrier = HeaderCarrier()
 
   override def afterEach(): Unit = {
     super.afterEach()
@@ -52,10 +41,10 @@ class ViewAttachmentControllerSpec extends WordSpec with Matchers with UnitSpec
   }
 
   private def controller() = new ViewAttachmentController(
-    new SuccessfulRequestActions(inject[BodyParsers.Default], operator), fileService, messagesControllerComponents, appConfig)
+    new SuccessfulRequestActions(defaultPlayBodyParsers, operator), fileService, mcc, realAppConfig)
 
   private def controller(permission: Set[Permission]) = new ViewAttachmentController(
-    new RequestActionsWithPermissions(inject[BodyParsers.Default], permission, addViewCasePermission = false), fileService, messagesControllerComponents, appConfig)
+    new RequestActionsWithPermissions(defaultPlayBodyParsers, permission, addViewCasePermission = false), fileService, mcc, realAppConfig)
 
   private def givenFileMetadata(fileMetadata: Option[FileMetadata]) =
     given(fileService.getFileMetadata(refEq("id"))(any[HeaderCarrier])) willReturn Future.successful(fileMetadata)

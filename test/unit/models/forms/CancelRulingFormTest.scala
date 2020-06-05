@@ -16,10 +16,9 @@
 
 package models.forms
 
-import uk.gov.hmrc.play.test.UnitSpec
-import models.{CancelReason, RulingCancellation}
+import models.{CancelReason, ModelsBaseSpec, RulingCancellation}
 
-class CancelRulingFormTest extends UnitSpec {
+class CancelRulingFormTest extends ModelsBaseSpec {
 
   "Bind from request" should {
     "Bind empty should succeed" in {

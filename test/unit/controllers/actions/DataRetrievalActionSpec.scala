@@ -35,7 +35,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
 
   "Data Retrieval Action" when {
 
-    "there is no data in the cache" must {
+    "there is no data in the cache" should {
 
       "set userAnswers to 'None' in the request" in {
         val dataCacheConnector = mock[DataCacheConnector]
@@ -51,7 +51,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
 
     }
 
-    "there is data in the cache" must {
+    "there is data in the cache" should {
 
       "build a userAnswers object and add it to the request" in {
         val dataCacheConnector = mock[DataCacheConnector]

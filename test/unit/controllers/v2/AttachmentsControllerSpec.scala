@@ -16,83 +16,63 @@
 
 package controllers.v2
 
-import java.io.File
-
-import play.api.mvc.Results.Ok
-import akka.stream.Materializer
-import config.AppConfig
+import controllers.Tab._
 import controllers.v2.routes.LiabilityController
 import controllers.{ControllerBaseSpec, RequestActionsWithPermissions, SuccessfulRequestActions}
-import models.request.AuthenticatedRequest
 import models.{Permission, _}
 import org.mockito.ArgumentMatchers._
-import org.mockito.BDDMockito._
-import org.mockito.{ArgumentMatcher, ArgumentMatchers, Mockito}
 import org.mockito.Mockito.{reset, times, verify, when}
-import org.scalatest.{BeforeAndAfterEach, Matchers}
-import org.scalatestplus.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.Environment
+import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status
 import play.api.libs.Files.{SingletonTemporaryFileCreator, TemporaryFile}
 import play.api.mvc.MultipartFormData.FilePart
+import play.api.mvc.Results.Ok
 import play.api.mvc._
-import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import service.{CasesService, FileStoreService}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.test.UnitSpec
 import utils.Cases
 import views.html.partials.liabilities.attachments_details
-import views.html.v2.{case_heading, liability_view, remove_attachment}
-import views.html._
-import views.html.partials.error_summary
-import controllers.Tab._
+import views.html.v2.remove_attachment
 
 import scala.concurrent.Future.successful
 
 class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
-  lazy val messageApi = inject[MessagesControllerComponents]
 
-  lazy val mtrlzr: Materializer = inject[Materializer]
-  lazy val appConfig = inject[AppConfig]
-  lazy val casesService = mock[CasesService]
-  lazy val fileService = mock[FileStoreService]
-  lazy val operator = mock[Operator]
-  lazy val liabilityController = mock[LiabilityController]
-  lazy val attachments_details = mock[attachments_details]
-  lazy val remove_attachment = mock[remove_attachment]
-  private lazy val invalidFileTypes = Seq("test", "javascript/none", "so/so")
-  private val fakeRequest = FakeRequest(onwardRoute)
+  lazy val casesService: CasesService = mock[CasesService]
+  lazy val fileService: FileStoreService = mock[FileStoreService]
+  lazy val operator: Operator = mock[Operator]
+  lazy val liabilityController: LiabilityController = mock[LiabilityController]
+  lazy val attachments_details: attachments_details = mock[attachments_details]
+  lazy val remove_attachment: remove_attachment = mock[remove_attachment]
+  private lazy val invalidFileTypes: Seq[String] = Seq("test", "javascript/none", "so/so")
 
   def controller: AttachmentsController = {
     new AttachmentsController(
-      verify = new SuccessfulRequestActions(inject[BodyParsers.Default], mock[Operator], c = Cases.btiCaseExample),
+      verify = new SuccessfulRequestActions(defaultPlayBodyParsers, mock[Operator], c = Cases.btiCaseExample),
       casesService = casesService,
       fileService = fileService,
-      mcc = messageApi,
+      mcc = mcc,
       liabilityController = liabilityController,
       remove_attachment = remove_attachment,
-      appConfig = appConfig,
-      mat = mtrlzr
+      appConfig = realAppConfig,
+      mat = mat
     )
   }
 
   def controller(requestCase: Case, permission: Set[Permission]): AttachmentsController = {
     new AttachmentsController(
-      verify = new RequestActionsWithPermissions(inject[BodyParsers.Default], permission, c = requestCase),
+      verify = new RequestActionsWithPermissions(defaultPlayBodyParsers, permission, c = requestCase),
       casesService = casesService,
       fileService = fileService,
-      mcc = messageApi,
+      mcc = mcc,
       liabilityController = liabilityController,
       remove_attachment = remove_attachment,
-      appConfig = appConfig,
-      mat = mtrlzr
+      appConfig = realAppConfig,
+      mat = mat
     )
   }
-
-  private implicit val hc: HeaderCarrier = HeaderCarrier()
 
   override protected def beforeEach(): Unit = {
     reset(remove_attachment)
@@ -172,7 +152,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
       contentAsString(result) should include("We could not find a Case with reference")
     }
 
-    appConfig.fileUploadMimeTypes.foreach { mimeType =>
+    realAppConfig.fileUploadMimeTypes.foreach { mimeType =>
       s"upload a file of valid type '$mimeType' should reload page" in {
         //Given
         val aCase = Cases.btiCaseExample.copy(reference = testReference)
@@ -460,8 +440,6 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
     }
 
   }
-
-  private def onwardRoute = Call("POST", "/foo")
 
   private def givenACaseWithNoAttachmentsAndNoLetterOfAuthority(testReference: String, aCase: Case) = {
     when(remove_attachment.apply(any(), any(), anyString(), anyString())(any(), any(), any())).thenReturn(Html("heading"))

@@ -16,30 +16,22 @@
 
 package controllers
 
-import akka.stream.Materializer
+import models.{Permission, _}
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.Mockito._
-import org.scalatestplus.mockito.MockitoSugar
-import org.scalatest.{BeforeAndAfterEach, Matchers, WordSpec}
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import org.scalatest.BeforeAndAfterEach
 import play.api.http.{MimeTypes, Status}
-import play.api.mvc.{AnyContentAsFormUrlEncoded, BodyParsers, MessagesControllerComponents, Result}
+import play.api.mvc.{AnyContentAsFormUrlEncoded, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{redirectLocation, _}
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
-import config.AppConfig
-import models.{Permission, _}
 import service.{CasesService, QueuesService}
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
 
 import scala.concurrent.Future.successful
 
-class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
-  with GuiceOneAppPerSuite with MockitoSugar with BeforeAndAfterEach with ControllerCommons {
+class ReleaseCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
-  private val messageApi = inject[MessagesControllerComponents]
-  private val appConfig = inject[AppConfig]
   private val casesService = mock[CasesService]
   private val queueService = mock[QueuesService]
   private val queue = mock[Queue]
@@ -48,20 +40,17 @@ class ReleaseCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   private val caseWithStatusNEW = Cases.btiCaseExample.copy(status = CaseStatus.NEW)
   private val caseWithStatusOPEN = Cases.btiCaseExample.copy(status = CaseStatus.OPEN)
 
-  private implicit val mat: Materializer = fakeApplication.materializer
-  private implicit val hc: HeaderCarrier = HeaderCarrier()
-
   override def afterEach(): Unit = {
     super.afterEach()
     reset(casesService)
   }
 
   private def controller(requestCase: Case) = new ReleaseCaseController(
-    new SuccessfulRequestActions(inject[BodyParsers.Default], operator, c = requestCase), casesService, queueService, messageApi, appConfig
+    new SuccessfulRequestActions(defaultPlayBodyParsers, operator, c = requestCase), casesService, queueService, mcc, realAppConfig
   )
 
   private def controller(requestCase: Case, permission: Set[Permission]) = new ReleaseCaseController(
-    new RequestActionsWithPermissions(inject[BodyParsers.Default], permission, c = requestCase), casesService, queueService, messageApi, appConfig
+    new RequestActionsWithPermissions(defaultPlayBodyParsers, permission, c = requestCase), casesService, queueService, mcc, realAppConfig
   )
 
   "Release Case" should {

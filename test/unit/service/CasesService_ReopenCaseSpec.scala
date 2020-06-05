@@ -17,7 +17,6 @@
 package service
 
 import audit.AuditService
-import config.AppConfig
 import connector.{BindingTariffClassificationConnector, RulingConnector}
 import models.CaseStatus.CaseStatus
 import models.request.NewEventRequest
@@ -26,16 +25,12 @@ import org.mockito.ArgumentMatchers._
 import org.mockito.BDDMockito._
 import org.mockito.Mockito.{never, reset, verify, verifyZeroInteractions}
 import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.test.UnitSpec
 import utils.Cases
 
 import scala.concurrent.Future.{failed, successful}
 
-class CasesService_ReopenCaseSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach with ConnectorCaptor {
-
-  private implicit val hc: HeaderCarrier = HeaderCarrier()
+class CasesService_ReopenCaseSpec extends ServiceSpecBase with BeforeAndAfterEach with ConnectorCaptor {
 
   private val connector = mock[BindingTariffClassificationConnector]
   private val emailService = mock[EmailService]
@@ -43,14 +38,13 @@ class CasesService_ReopenCaseSpec extends UnitSpec with MockitoSugar with Before
   private val rulingConnector = mock[RulingConnector]
   private val audit = mock[AuditService]
   private val reportingService = mock[ReportingService]
-  private val config = mock[AppConfig]
   private val aCase = Cases.btiCaseExample
 
-  private val service = new CasesService(config, audit, emailService, fileStoreService, reportingService, connector, rulingConnector)
+  private val service = new CasesService(realAppConfig, audit, emailService, fileStoreService, reportingService, connector, rulingConnector)
 
   override protected def afterEach(): Unit = {
     super.afterEach()
-    reset(connector, audit, config)
+    reset(connector, audit)
   }
 
   "Reopen a Case" should {

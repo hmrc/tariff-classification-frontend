@@ -18,34 +18,23 @@ package controllers
 
 import java.time.Clock
 
+import models.EventType.EventType
+import models.forms.{CommodityCodeConstraints, DecisionForm}
+import models.{Permission, _}
 import org.mockito.ArgumentMatchers.{any, anyString, refEq}
 import org.mockito.BDDMockito._
 import org.mockito.Mockito.verify
-import org.scalatest.Matchers
-import org.scalatestplus.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status
-import play.api.mvc.{BodyParsers, MessagesControllerComponents}
-import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
-import config.AppConfig
-import models.forms.{CommodityCodeConstraints, DecisionForm}
-import models.EventType.EventType
-import models.{Permission, _}
-import play.api.inject.guice.GuiceApplicationBuilder
 import service._
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases._
 import utils.{Cases, Events}
 
 import scala.concurrent.Future.successful
 
-class CaseControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSuite with MockitoSugar with ControllerCommons {
+class CaseControllerSpec extends ControllerBaseSpec {
 
-  private val fakeRequest = FakeRequest()
-  private val messageApi = inject[MessagesControllerComponents]
-  private val appConfig = inject[AppConfig]
   private val keywordsService = mock[KeywordsService]
   private val fileService = mock[FileStoreService]
   private val eventService = mock[EventsService]
@@ -53,37 +42,29 @@ class CaseControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSuite
   private val operator = Operator(id = "id")
   private val event = mock[Event]
   private val commodityCodeService = mock[CommodityCodeService]
-  private val decisionForm = new DecisionForm(new CommodityCodeConstraints(commodityCodeService, appConfig))
+  private val decisionForm = new DecisionForm(new CommodityCodeConstraints(commodityCodeService, realAppConfig))
   private val countriesService = new CountriesService
 
   private def controller(c: Case) = new CaseController(
-    new SuccessfulRequestActions(inject[BodyParsers.Default], operator, c = c),
+    new SuccessfulRequestActions(defaultPlayBodyParsers, operator, c = c),
     mock[CasesService], keywordsService, fileService,
     eventService, queueService, commodityCodeService,
-    decisionForm, countriesService, messageApi, appConf
+    decisionForm, countriesService, mcc, realAppConfig
   )
 
   private def controller(c: Case, permission: Set[Permission]) = new CaseController(
-    new RequestActionsWithPermissions(inject[BodyParsers.Default], permission, c = c),
+    new RequestActionsWithPermissions(defaultPlayBodyParsers, permission, c = c),
     mock[CasesService], keywordsService, fileService,
     eventService, queueService, commodityCodeService,
-    decisionForm, countriesService, messageApi, appConf
+    decisionForm, countriesService, mcc, realAppConfig
   )
 
-   implicit lazy val appWithLiabilityToggleOff = new GuiceApplicationBuilder()
-    .configure("toggle.new-liability-details" -> false)
-    .build()
-
-  lazy val appConf: AppConfig = appWithLiabilityToggleOff.injector.instanceOf[AppConfig]
-
-  private def controllerWithNewLiability(c: Case) = new CaseController(
-    new SuccessfulRequestActions(inject[BodyParsers.Default], operator, c = c),
+  private def controllerWithoutNewLiability(c: Case) = new CaseController(
+    new SuccessfulRequestActions(defaultPlayBodyParsers, operator, c = c),
     mock[CasesService], keywordsService, fileService,
     eventService, queueService, commodityCodeService,
-    decisionForm, countriesService, messageApi, appConfig
+    decisionForm, countriesService, mcc, appConfWithLiabilityToggleOff
   )
-
-  private implicit val hc: HeaderCarrier = HeaderCarrier()
 
   "Case Index" should {
     "redirect to default tab" when {
@@ -98,7 +79,7 @@ class CaseControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSuite
 
       "case is a Liability with newLiabilityDetails toggle is set to false" in {
         val c = aCase(withReference("reference"), withLiabilityApplication())
-        val result = controller(c).get("reference")(fakeRequest)
+        val result = controllerWithoutNewLiability(c).get("reference")(fakeRequest)
 
         status(result) shouldBe Status.SEE_OTHER
         locationOf(result) shouldBe Some(routes.LiabilityController.liabilityDetails("reference").url)
@@ -106,7 +87,7 @@ class CaseControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSuite
 
       "case is a Liability with newLiability toggle is set to true" in {
         val c = aCase(withReference("reference"), withLiabilityApplication())
-        val result = controllerWithNewLiability(c).get("reference")(fakeRequest)
+        val result = controller(c).get("reference")(fakeRequest)
 
         status(result) shouldBe Status.SEE_OTHER
         locationOf(result) shouldBe Some(v2.routes.LiabilityController.displayLiability("reference").url)

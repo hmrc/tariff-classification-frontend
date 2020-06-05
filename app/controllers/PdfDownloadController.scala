@@ -36,8 +36,9 @@ class PdfDownloadController @Inject()(
   pdfService: PdfService,
   fileStore: FileStoreService,
   caseService: CasesService,
-  countriesService: CountriesService
-)(implicit appConfig: AppConfig) extends FrontendController(mcc) with I18nSupport {
+  countriesService: CountriesService,
+  implicit val appConfig: AppConfig
+) extends FrontendController(mcc) with I18nSupport {
 
   def getRulingPdf(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     caseService.getOne(reference) flatMap {

@@ -16,12 +16,12 @@
 
 package views.partials.liabilities
 
-import models.forms.LiabilityDetailsForm
 import models.Contact
+import models.forms.LiabilityDetailsForm
+import utils.Cases._
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.partials.liabilities.liability_details_edit
-import utils.Cases._
 
 class LiabilityEditDetailsViewSpec extends ViewSpec {
 

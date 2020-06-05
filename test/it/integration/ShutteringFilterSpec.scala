@@ -14,19 +14,18 @@
  * limitations under the License.
  */
 
-package filters
+package integration
 
-import org.scalatest.{FreeSpec, MustMatchers, OptionValues}
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import controllers.routes.IndexController
+import org.scalatest.OptionValues
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import controllers.routes.IndexController
 import views.html.shutterPage
 
 
-class ShutteringFilterSpec extends FreeSpec with MustMatchers with GuiceOneAppPerSuite with OptionValues {
+class ShutteringFilterSpec extends IntegrationTest with OptionValues {
 
   override lazy val app: Application = new GuiceApplicationBuilder()
     .configure(
@@ -35,24 +34,23 @@ class ShutteringFilterSpec extends FreeSpec with MustMatchers with GuiceOneAppPe
     )
     .build()
 
-  "a shuttering filter" - {
+  "a shuttering filter" should {
 
-    "must shutter" - {
+    "shutter" when {
 
-      "when the `shuttered` config property is true" in {
+      "the `shuttered` config property is true" in {
         val view = shutterPage
-        val result = route(app, FakeRequest(GET, IndexController.get().url)).value
+        val result = route(app, FakeRequest(GET, IndexController.get().url)).get
 
-        status(result) mustEqual SERVICE_UNAVAILABLE
-        contentAsString(result) mustEqual view().toString
+        status(result) shouldBe SERVICE_UNAVAILABLE
+        contentAsString(result) shouldBe view().toString
       }
     }
 
-    "must leave excluded URLs un-shuttered" in {
+    "leave excluded URLs un-shuttered" in {
+      val result = route(app, FakeRequest(GET, "/ping/ping")).get
 
-      val result = route(app, FakeRequest(GET, "/ping/ping")).value
-
-      status(result) mustEqual OK
+      status(result) shouldBe OK
     }
   }
 }

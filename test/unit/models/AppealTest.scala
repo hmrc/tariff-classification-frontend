@@ -18,10 +18,9 @@ package models
 
 import java.util.UUID
 
-import uk.gov.hmrc.play.test.UnitSpec
 import utils.Cases._
 
-class AppealTest extends UnitSpec {
+class AppealTest extends ModelsBaseSpec {
 
   private def randomId(): String = UUID.randomUUID().toString
 

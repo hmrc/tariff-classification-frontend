@@ -18,10 +18,10 @@ package models.forms
 
 import java.time.{ZoneOffset, ZonedDateTime}
 
+import models.ModelsBaseSpec
 import play.api.data.Form
-import uk.gov.hmrc.play.test.UnitSpec
 
-class FormDateTest extends UnitSpec {
+class FormDateTest extends ModelsBaseSpec {
 
   private val test = Form(FormDate.date("invalid.date"))
 

@@ -16,15 +16,14 @@
 
 package controllers
 
+import config.AppConfig
+import connector.StrideAuthConnector
+import models.request.{AuthenticatedCaseRequest, AuthenticatedRequest, OperatorRequest}
+import models.{Case, Operator, Permission}
 import org.mockito.Mockito.mock
 import play.api.i18n.MessagesApi
 import play.api.mvc._
 import play.api.{Configuration, Environment}
-import config.AppConfig
-import connector.StrideAuthConnector
-import javax.inject.Inject
-import models.request.{AuthenticatedCaseRequest, AuthenticatedRequest, OperatorRequest}
-import models.{Case, Operator, Permission}
 import service.CasesService
 import utils.Cases
 
@@ -32,7 +31,6 @@ import scala.concurrent.Future.successful
 import scala.concurrent.{ExecutionContext, Future}
 
 
-//FIXME - this fails because parser is not real
 class SuccessfulAuthenticatedAction(parse: BodyParsers.Default, operator: Operator = Operator("0", Some("name")), permissions : Set[Permission] = Set.empty) extends AuthenticatedAction(
   appConfig = mock(classOf[AppConfig]),
   config = mock(classOf[Configuration]),

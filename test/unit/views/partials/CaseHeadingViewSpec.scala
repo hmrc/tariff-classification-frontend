@@ -17,10 +17,10 @@
 package views.partials
 
 import models._
+import utils.Cases._
 import views.ViewMatchers.{containElementWithID, _}
 import views.ViewSpec
 import views.html.partials.case_heading
-import utils.Cases._
 
 class CaseHeadingViewSpec extends ViewSpec {
 

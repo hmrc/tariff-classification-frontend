@@ -16,16 +16,16 @@
 
 package controllers
 
+import config.AppConfig
+import connector.StrideAuthConnector
+import models.request.AuthenticatedRequest
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito.reset
 import org.mockito.{ArgumentCaptor, ArgumentMatchers, Mockito}
 import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.http.HeaderNames.LOCATION
 import play.api.http.Status
-import play.api.mvc.{AnyContent, BodyParsers, ControllerComponents, Result}
+import play.api.mvc.{AnyContent, ControllerComponents, Result}
 import play.api.test.FakeRequest
 import play.api.{ConfigLoader, Configuration, Environment, Mode}
 import uk.gov.hmrc.auth.core.AuthProvider.PrivilegedApplication
@@ -33,15 +33,11 @@ import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.{~, _}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.test.UnitSpec
-import config.AppConfig
-import connector.StrideAuthConnector
-import models.request.AuthenticatedRequest
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 
-class AuthenticatedActionSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach with GuiceOneAppPerSuite {
+class AuthenticatedActionSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   private val appConfig = mock[AppConfig]
   private val config = mock[Configuration]
@@ -49,21 +45,13 @@ class AuthenticatedActionSpec extends UnitSpec with MockitoSugar with BeforeAndA
   private val connector = mock[StrideAuthConnector]
   private val block: AuthenticatedRequest[AnyContent] => Future[Result] = mock[AuthenticatedRequest[AnyContent] => Future[Result]]
   private val result = mock[Result]
+  private val controllerComponents = injector.instanceOf[ControllerComponents]
 
   override protected def afterEach(): Unit = {
     super.afterEach()
     reset(config, environment, connector, block, result)
   }
 
-  def inject[T](implicit m: Manifest[T]) = app.injector.instanceOf[T]
-
-  protected def locationOf(result: Result): Option[String] = {
-    result.header.headers.get(LOCATION)
-  }
-
-  protected def contentTypeOf(result: Result): Option[String] = {
-    result.body.contentType.map(_.split(";").take(1).mkString.trim)
-  }
   override protected def beforeEach(): Unit = {
     super.beforeEach()
     given(appConfig.teamEnrolment).willReturn("team-enrolment")
@@ -172,7 +160,7 @@ class AuthenticatedActionSpec extends UnitSpec with MockitoSugar with BeforeAndA
   }
 
   private def action: AuthenticatedAction = {
-    new AuthenticatedAction(appConfig, inject[BodyParsers.Default], config, environment, connector, inject[ControllerComponents])
+    new AuthenticatedAction(appConfig, defaultPlayBodyParsers, config, environment, connector, controllerComponents)
   }
 
   private def theAuthenticatedRequest(): AuthenticatedRequest[AnyContent] = {

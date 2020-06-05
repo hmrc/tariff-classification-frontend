@@ -17,10 +17,10 @@
 package views.partials
 
 import models.Contact
+import utils.Cases._
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.partials.contact_details
-import utils.Cases._
 
 class ContactDetailsViewSpec extends ViewSpec {
 

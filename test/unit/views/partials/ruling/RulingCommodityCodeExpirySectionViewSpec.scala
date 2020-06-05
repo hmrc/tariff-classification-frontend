@@ -19,10 +19,10 @@ package views.partials.ruling
 import java.time.Instant
 
 import models.{CaseStatus, CommodityCode}
+import utils.Cases._
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.partials.ruling.ruling_commodity_code_expiry_section
-import utils.Cases._
 
 class RulingCommodityCodeExpirySectionViewSpec extends ViewSpec {
 

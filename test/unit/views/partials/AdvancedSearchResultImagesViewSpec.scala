@@ -16,19 +16,14 @@
 
 package views.partials
 
-import models.forms.SearchForm
-import models.response.ScanStatus
-import models.{Case, CaseStatus, Paged}
-import views.ViewMatchers._
-import views.ViewSpec
-import views.html.advanced_search
-import views.html.partials.advanced_search_results_images
+import models.{CaseStatus, Paged}
 import utils.Cases
 import utils.Cases._
+import views.ViewMatchers._
+import views.ViewSpec
+import views.html.partials.advanced_search_results_images
 
 class AdvancedSearchResultImagesViewSpec extends ViewSpec {
-
-  private val defaultTab = "details"
 
   "Advanced Search" should {
 

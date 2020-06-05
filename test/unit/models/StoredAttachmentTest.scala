@@ -18,11 +18,9 @@ package models
 
 import java.time.Instant
 
-import uk.gov.hmrc.play.test.UnitSpec
 import models.response.{FileMetadata, ScanStatus}
-import utils.Cases
 
-class StoredAttachmentTest extends UnitSpec {
+class StoredAttachmentTest extends ModelsBaseSpec {
 
   "'Is Image'" should {
 
@@ -84,7 +82,7 @@ class StoredAttachmentTest extends UnitSpec {
     description = "test description"
   )
 
-  private def someMetadataWithType(t: String = "text/plain") = FileMetadata(
+  private def someMetadataWithType(t: String) = FileMetadata(
     id = "id",
     fileName = "name",
     mimeType = t,

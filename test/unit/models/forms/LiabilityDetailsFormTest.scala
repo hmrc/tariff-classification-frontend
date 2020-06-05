@@ -19,10 +19,9 @@ package models.forms
 import java.time.Instant
 
 import models._
-import uk.gov.hmrc.play.test.UnitSpec
 import utils.Cases
 
-class LiabilityDetailsFormTest extends UnitSpec {
+class LiabilityDetailsFormTest extends ModelsBaseSpec {
 
   private val liability = LiabilityOrder(
     Contact(name = "contact-name", email = "contact@email.com", Some("contact-phone")),

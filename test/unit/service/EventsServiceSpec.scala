@@ -18,26 +18,21 @@ package service
 
 import java.time._
 
-import org.mockito.ArgumentMatchers._
-import org.mockito.BDDMockito._
-import org.mockito.Mockito.{reset, verify, verifyNoMoreInteractions, verifyZeroInteractions}
-import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.test.UnitSpec
 import audit.AuditService
 import connector.BindingTariffClassificationConnector
 import models._
 import models.request.NewEventRequest
-import views.html.partials.sample.sample_details
+import org.mockito.ArgumentMatchers._
+import org.mockito.BDDMockito._
+import org.mockito.Mockito.{reset, verify, verifyNoMoreInteractions, verifyZeroInteractions}
+import org.scalatest.BeforeAndAfterEach
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
 
 import scala.concurrent.Future
 import scala.concurrent.Future.{failed, successful}
 
-class EventsServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
-
-  private implicit val hc: HeaderCarrier = HeaderCarrier()
+class EventsServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
 
   private val connector = mock[BindingTariffClassificationConnector]
   private val auditService = mock[AuditService]

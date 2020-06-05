@@ -37,7 +37,7 @@ class LiabilityViewSpec extends ViewSpec {
 
   private val activityForm: Form[ActivityFormData] = ActivityForm.form
 
-  def liabilityView: liability_view = app.injector.instanceOf[liability_view]
+  def liabilityView: liability_view = injector.instanceOf[liability_view]
 
   def uploadAttachmentForm: Form[String] = UploadAttachmentForm.form
 

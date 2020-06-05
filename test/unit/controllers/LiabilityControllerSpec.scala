@@ -16,38 +16,30 @@
 
 package controllers
 
+import models.forms.{CommodityCodeConstraints, DecisionForm}
+import models.request.AuthenticatedRequest
+import models.{Permission, _}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito.{never, reset, verify}
-import org.scalatestplus.mockito.MockitoSugar
-import org.scalatest.{BeforeAndAfterEach, Matchers}
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import org.scalatest.BeforeAndAfterEach
 import play.api.data.validation.{Constraint, Valid}
 import play.api.http.Status
-import play.api.mvc.{AnyContent, BodyParsers, MessagesControllerComponents, Request, Result}
+import play.api.mvc.{AnyContent, Request, Result}
 import play.api.test.Helpers._
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
-import config.AppConfig
-import models.forms.{CommodityCodeConstraints, DecisionForm}
-import models.{Permission, _}
-import models.request.AuthenticatedRequest
 import service.CasesService
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases._
 
 import scala.concurrent.Future
 
-class LiabilityControllerSpec extends UnitSpec with Matchers with BeforeAndAfterEach with GuiceOneAppPerSuite with MockitoSugar with ControllerCommons {
+class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   private val commodityCodeConstraints = mock[CommodityCodeConstraints]
   private val decisionForm = new DecisionForm(commodityCodeConstraints)
-  private val messageApi = inject[MessagesControllerComponents]
-  private val appConfig = inject[AppConfig]
   private val casesService = mock[CasesService]
   private val operator = mock[Operator]
-
-  private implicit val hc: HeaderCarrier = HeaderCarrier()
 
   private def request[A](operator: Operator, request: Request[A]) = new AuthenticatedRequest(operator, request)
 
@@ -57,8 +49,8 @@ class LiabilityControllerSpec extends UnitSpec with Matchers with BeforeAndAfter
   }
 
   private def controller(permissions: Set[Permission], c: Case) = new LiabilityController(
-    new RequestActionsWithPermissions(inject[BodyParsers.Default], permissions = permissions, addViewCasePermission = false, c = c),
-    decisionForm, messageApi, casesService, appConfig
+    new RequestActionsWithPermissions(defaultPlayBodyParsers, permissions = permissions, addViewCasePermission = false, c = c),
+    decisionForm, mcc, casesService, realAppConfig
   )
 
   "GET liability view" should {

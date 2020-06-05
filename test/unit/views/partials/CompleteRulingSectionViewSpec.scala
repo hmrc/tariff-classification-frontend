@@ -16,17 +16,17 @@
 
 package views.partials
 
-import org.mockito.ArgumentMatchers._
-import org.mockito.BDDMockito._
-import org.scalatestplus.mockito.MockitoSugar
 import config.AppConfig
 import models.forms._
 import models.{CaseStatus, CommodityCode}
+import org.mockito.ArgumentMatchers._
+import org.mockito.BDDMockito._
+import org.scalatestplus.mockito.MockitoSugar
 import service.CommodityCodeService
+import utils.Cases
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.partials.ruling.complete_ruling_section
-import utils.Cases
 
 class CompleteRulingSectionViewSpec extends ViewSpec with MockitoSugar {
 

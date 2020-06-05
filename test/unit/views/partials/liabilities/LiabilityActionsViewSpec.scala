@@ -17,10 +17,10 @@
 package views.partials.liabilities
 
 import models.{CaseStatus, _}
+import utils.Cases._
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.partials.liabilities.liability_actions
-import utils.Cases._
 
 class LiabilityActionsViewSpec extends ViewSpec {
 

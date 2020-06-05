@@ -16,9 +16,7 @@
 
 package models
 
-import uk.gov.hmrc.play.test.UnitSpec
-
-class SortTest extends UnitSpec {
+class SortTest extends ModelsBaseSpec {
 
   "SortField Binder" should {
 

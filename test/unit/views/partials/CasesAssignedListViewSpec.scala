@@ -18,10 +18,10 @@ package views.partials
 
 import controllers.routes
 import models.CaseStatus
+import utils.Cases._
 import views.ViewMatchers._
 import views.html.partials.cases_assigned_list
 import views.{AssignedCases, ViewSpec}
-import utils.Cases._
 
 class CasesAssignedListViewSpec extends ViewSpec {
 

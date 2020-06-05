@@ -16,12 +16,11 @@
 
 package views
 
-import uk.gov.hmrc.play.test.UnitSpec
 import models.CaseStatus._
 import models.{Case, Operator}
 import utils.Cases._
 
-class AssignedCasesSpec extends UnitSpec {
+class AssignedCasesSpec extends ViewSpec {
 
   "AssignedCases" should {
     "create for missing operator" in {

@@ -16,9 +16,7 @@
 
 package controllers
 
-import uk.gov.hmrc.play.test.UnitSpec
-
-class TabSpec extends UnitSpec {
+class TabSpec extends ControllerBaseSpec {
 
   "findAnchorInEnum" should {
 

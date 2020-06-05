@@ -16,10 +16,9 @@
 
 package views
 
-import uk.gov.hmrc.play.test.UnitSpec
 import models.{CaseReportGroup, ReportResult}
 
-class HistogramTest extends UnitSpec {
+class HistogramTest extends ViewSpec {
 
   "Histogram Bucket" should {
     "count" in {

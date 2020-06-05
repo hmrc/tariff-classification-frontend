@@ -16,69 +16,53 @@
 
 package controllers
 
-import org.mockito.ArgumentMatchers.{any, refEq}
-import org.mockito.BDDMockito._
-import org.mockito.Mockito
-import org.mockito.Mockito.{never, verify}
-import org.scalatestplus.mockito.MockitoSugar
-import org.scalatest.{BeforeAndAfterEach, Matchers}
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.data.validation.{Constraint, Valid}
-import play.api.http.Status
-import play.api.mvc.{BodyParsers, MessagesControllerComponents}
-import play.api.test.Helpers.{redirectLocation, _}
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import config.AppConfig
 import models.forms.{CommodityCodeConstraints, DecisionForm, DecisionFormMapper}
 import models.{Case, CaseStatus, Operator, Permission}
-import play.api.inject.guice.GuiceApplicationBuilder
-import service.{CasesService, CommodityCodeService, FileStoreService}
+import org.mockito.ArgumentMatchers.{any, refEq}
+import org.mockito.BDDMockito._
+import org.mockito.Mockito.{never, reset, verify}
+import org.scalatest.BeforeAndAfterEach
+import play.api.data.validation.{Constraint, Valid}
+import play.api.http.Status
+import play.api.test.Helpers.{redirectLocation, _}
+import service.{CasesService, FileStoreService}
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases._
 import views.html.v2.edit_liability_ruling
 
 import scala.concurrent.Future
 
-class RulingControllerSpec extends UnitSpec
-  with Matchers
-  with GuiceOneAppPerSuite
-  with MockitoSugar
-  with BeforeAndAfterEach
-  with ControllerCommons {
+class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
-  private val messagesControllerComponents = inject[MessagesControllerComponents]
-  private val appConfig = inject[AppConfig]
   private val casesService = mock[CasesService]
   private val fileService = mock[FileStoreService]
   private val mapper = mock[DecisionFormMapper]
-  private val commodityCodeService = mock[CommodityCodeService]
   private val operator = mock[Operator]
   private val commodityCodeConstraints = mock[CommodityCodeConstraints]
   private val decisionForm = new DecisionForm(commodityCodeConstraints)
-  private val editLiabilityView = inject[edit_liability_ruling]
+  private lazy val editLiabilityView = injector.instanceOf[edit_liability_ruling]
 
-  private implicit val hc: HeaderCarrier = HeaderCarrier()
+  override protected def beforeEach(): Unit = {
+    super.beforeEach()
 
-  override protected def afterEach(): Unit = {
-    super.afterEach()
-    Mockito.reset(casesService)
+    reset(
+      casesService,
+      fileService,
+      mapper,
+      operator,
+      commodityCodeConstraints
+    )
   }
 
-  private val appWithLiabilityToggleOff = new GuiceApplicationBuilder()
-    .configure("toggle.new-liability-details" -> false)
-    .build()
-
-  lazy val appConfWithLiabilityToggleOff: AppConfig = appWithLiabilityToggleOff.injector.instanceOf[AppConfig]
-
   private def controller(c: Case) = new RulingController(
-    new SuccessfulRequestActions(inject[BodyParsers.Default], operator, c = c), casesService, fileService, mapper, decisionForm, messagesControllerComponents,editLiabilityView, appConfWithLiabilityToggleOff
+    new SuccessfulRequestActions(defaultPlayBodyParsers, operator, c = c), casesService, fileService, mapper, decisionForm, mcc, editLiabilityView, appConfWithLiabilityToggleOff
   )
 
-  private def controller(requestCase: Case, permission: Set[Permission], appConf: AppConfig = appConfig) = new RulingController(
-    new RequestActionsWithPermissions(inject[BodyParsers.Default], permission, c = requestCase), casesService, fileService, mapper, decisionForm, messagesControllerComponents,editLiabilityView, appConfig)
+  private def controller(requestCase: Case, permission: Set[Permission], appConf: AppConfig = realAppConfig) = new RulingController(
+    new RequestActionsWithPermissions(defaultPlayBodyParsers, permission, c = requestCase), casesService, fileService, mapper, decisionForm, mcc, editLiabilityView, realAppConfig)
 
   "Edit Ruling" should {
-    val btiCaseWithStatusNEW = aCase(withBTIApplication, withReference("reference"), withStatus(CaseStatus.NEW))
     val btiCaseWithStatusOPEN = aCase(withBTIApplication, withReference("reference"), withStatus(CaseStatus.OPEN))
     val liabilityCaseWithStatusOPEN = aCase(withLiabilityApplication(), withReference("reference"), withStatus(CaseStatus.OPEN))
     val attachment = storedAttachment
@@ -140,8 +124,11 @@ class RulingControllerSpec extends UnitSpec
   "validateBeforeComplete Ruling" should {
     val btiCaseWithStatusOpenWithDecision = aCase(withBTIApplication, withReference("reference"), withStatus(CaseStatus.OPEN), withDecision())
     val liabilityCaseWithStatusOpenWithDecision = aLiabilityCase(withReference("reference"), withStatus(CaseStatus.COMPLETED), withDecision())
+    val attachment = storedAttachment
 
     "load edit details page when a mandatory field is missing" in {
+      given(fileService.getAttachments(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(Seq(attachment)))
+
       val result = controller(btiCaseWithStatusOpenWithDecision, Set(Permission.EDIT_RULING))
         .validateBeforeComplete("reference")(newFakeGETRequestWithCSRF(fakeApplication))
 
@@ -160,7 +147,6 @@ class RulingControllerSpec extends UnitSpec
   }
 
   "Update Ruling" should {
-    val caseWithStatusNEW = aCase(withReference("reference"), withStatus(CaseStatus.NEW))
     val caseWithStatusOPEN = aCase(withReference("reference"), withStatus(CaseStatus.OPEN))
     val liabilityCaseWithStatusOPEN = aCase(withLiabilityApplication(), withReference("reference"), withStatus(CaseStatus.OPEN))
     val updatedCase = aCase(withReference("reference"), withStatus(CaseStatus.OPEN))

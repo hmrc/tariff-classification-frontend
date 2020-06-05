@@ -16,14 +16,12 @@
 
 package models.forms
 
+import models.{Decision, ModelsBaseSpec}
 import org.mockito.BDDMockito._
-import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.FormError
 import play.api.data.validation.{Constraint, Invalid, Valid, ValidationResult}
-import uk.gov.hmrc.play.test.UnitSpec
-import models.Decision
 
-class DecisionFormTest extends UnitSpec with MockitoSugar {
+class DecisionFormTest extends ModelsBaseSpec {
 
   private val decision = Decision(
     bindingCommodityCode = "0100000000",
@@ -42,14 +40,14 @@ class DecisionFormTest extends UnitSpec with MockitoSugar {
     "methodExclusion" -> Seq("exclusion")
   )
 
-  val validDecisionFormData = DecisionFormData(
+  val validDecisionFormData: DecisionFormData = DecisionFormData(
     bindingCommodityCode = "03000000000",
     goodsDescription = "desc",
     methodSearch = "method",
     justification = "justified",
     explanation = "some exp")
 
-  private def formProvider(commodityCodeConstraints: CommodityCodeConstraints = mock[CommodityCodeConstraints]) =
+  private def formProvider(commodityCodeConstraints: CommodityCodeConstraints) =
     new DecisionForm(commodityCodeConstraints)
 
   "liability form" should {
@@ -102,9 +100,10 @@ class DecisionFormTest extends UnitSpec with MockitoSugar {
       "provided with invalid values" in {
         val mockedCommodityCodeConstraint = mockCommodityCodeConstraint(Valid)
         val form = formProvider(mockedCommodityCodeConstraint).liabilityCompleteForm(decision).bindFromRequest(params.mapValues(_ => Seq("")))
+        val errorNumbers = 4
 
         form.hasErrors shouldBe true
-        form.errors should have(size(4))
+        form.errors should have(size(errorNumbers))
         form.errors.map(_.key) shouldBe Seq("bindingCommodityCode", "goodsDescription", "methodSearch", "justification")
       }
     }
@@ -164,8 +163,10 @@ class DecisionFormTest extends UnitSpec with MockitoSugar {
     }
   }
 
-
-  def mockCommodityCodeConstraint(validationResultForEmpty: ValidationResult = Valid, validationResultForExists: ValidationResult = Valid) = {
+  private def mockCommodityCodeConstraint(
+                                           validationResultForEmpty: ValidationResult = Valid,
+                                           validationResultForExists: ValidationResult = Valid
+                                         ): CommodityCodeConstraints = {
     val mockCommodityCodeConstraints = mock[CommodityCodeConstraints]
     given(mockCommodityCodeConstraints.commodityCodeExistsInUKTradeTariff).willReturn(Constraint[String]("error")(_ => validationResultForExists))
     given(mockCommodityCodeConstraints.commodityCodeNonEmpty).willReturn(Constraint[String]("error")(_ => validationResultForEmpty))

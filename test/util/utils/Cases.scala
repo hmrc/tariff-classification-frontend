@@ -31,68 +31,66 @@ import models.viewmodels._
 
 object Cases {
 
-  val storedAttachment = StoredAttachment("id", public = true, None, Some("url"), "name", "type", Some(ScanStatus.READY), Instant.now(), "test description")
-  val storedOperatorAttachment = StoredAttachment("id", public = true, Some(Operator("0", Some("Operator Name"))), Some("url"), "name", "type", Some(ScanStatus.READY), Instant.now(), "test description")
-  val letterOfAuthority = StoredAttachment("id", public = true, None, Some("url"), "letterOfAuthority", "pdf", Some(ScanStatus.READY), Instant.now(), "test description")
-  val eoriDetailsExample = EORIDetails("eori", "trader-business-name", "line1", "line2", "line3", "postcode", "country")
-  val eoriAgentDetailsExample = AgentDetails(EORIDetails("eori", "agent-business-name", "line1", "line2", "line3", "postcode", "country"), Some(Attachment("letter-id", public = true, None, Instant.now())))
-  val contactExample = Contact("name", "email", Some("phone"))
-  val btiApplicationExample = BTIApplication(eoriDetailsExample, contactExample, Some(eoriAgentDetailsExample), offline = false, "Laptop", "Personal Computer", None, None, None, None, None, None, None, sampleToBeProvided = false, sampleToBeReturned = false)
-  val simpleBtiApplicationExample = BTIApplication(eoriDetailsExample, contactExample, None, offline = false, "Laptop", "Personal Computer", None, None, None, None, None, None, None, sampleToBeProvided = false, sampleToBeReturned = false)
-  val decision = Decision("040900", Some(Instant.now()), Some(Instant.now().plusSeconds(2 * 3600 * 24 * 365)), "justification", "good description", None, None, Some("denomination"), Seq.empty)
-  val incompleteDecision = Decision("", Some(Instant.now()), Some(Instant.now().plusSeconds(2 * 3600 * 24 * 365)), "justification", "", None, None, Some("denomination"), Seq.empty)
-  val decisionWithExclusion = decision.copy(methodExclusion = Some("Excludes everything ever"))
-  val liabilityApplicationExample = LiabilityOrder(contactExample, LiabilityStatus.NON_LIVE, "trader-business-name", Some("good-name"), Some(Instant.now()), Some("entry number"), Some("trader-1234567"), Some("officer-1234567"))
-  val liabilityLiveApplicationExample = LiabilityOrder(contactExample, LiabilityStatus.LIVE, "trader-business-name", Some("good-name"), Some(Instant.now()), Some("entry number"))
-  val btiCaseExample = Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, None, btiApplicationExample, Some(decision), Seq())
-  val btiCaseWithIncompleteDecision = Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, None, btiApplicationExample, Some(incompleteDecision), Seq())
-  val simpleCaseExample = Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, None, simpleBtiApplicationExample, None, Seq())
-  val liabilityCaseExample = Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, None, liabilityApplicationExample, None, Seq())
-  val liabilityCaseWithDecisionExample = Case("1", CaseStatus.OPEN, Instant.now(), 0, None, Some(Operator("0", Some("Kevin"))), None, liabilityApplicationExample, Some(decisionWithExclusion), Seq())
-  val liabilityLiveCaseExample = Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, None, liabilityLiveApplicationExample, None, Seq())
-  val caseQueueExample = Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, Some("1"), btiApplicationExample, Some(decision), Seq())
-  val caseAssignedExample = Case("1", CaseStatus.OPEN, Instant.now(), 0, None, Some(Operator("1", Some("Test User"))), Some("1"), btiApplicationExample, Some(decision), Seq())
-  val expiredRuling = decision.copy(
+  val storedAttachment: StoredAttachment = StoredAttachment("id", public = true, None, Some("url"), "name", "type", Some(ScanStatus.READY), Instant.now(), "test description")
+  val storedOperatorAttachment: StoredAttachment = StoredAttachment("id", public = true, Some(Operator("0", Some("Operator Name"))), Some("url"), "name", "type", Some(ScanStatus.READY), Instant.now(), "test description")
+  val letterOfAuthority: StoredAttachment = StoredAttachment("id", public = true, None, Some("url"), "letterOfAuthority", "pdf", Some(ScanStatus.READY), Instant.now(), "test description")
+  val eoriDetailsExample: EORIDetails = EORIDetails("eori", "trader-business-name", "line1", "line2", "line3", "postcode", "country")
+  val eoriAgentDetailsExample: AgentDetails = AgentDetails(EORIDetails("eori", "agent-business-name", "line1", "line2", "line3", "postcode", "country"), Some(Attachment("letter-id", public = true, None, Instant.now())))
+  val contactExample: Contact = Contact("name", "email", Some("phone"))
+  val btiApplicationExample: BTIApplication = BTIApplication(eoriDetailsExample, contactExample, Some(eoriAgentDetailsExample), offline = false, "Laptop", "Personal Computer", None, None, None, None, None, None, None, sampleToBeProvided = false, sampleToBeReturned = false)
+  val simpleBtiApplicationExample: BTIApplication = BTIApplication(eoriDetailsExample, contactExample, None, offline = false, "Laptop", "Personal Computer", None, None, None, None, None, None, None, sampleToBeProvided = false, sampleToBeReturned = false)
+  val decision: Decision = Decision("040900", Some(Instant.now()), Some(Instant.now().plusSeconds(2 * 3600 * 24 * 365)), "justification", "good description", None, None, Some("denomination"), Seq.empty)
+  val incompleteDecision: Decision = Decision("", Some(Instant.now()), Some(Instant.now().plusSeconds(2 * 3600 * 24 * 365)), "justification", "", None, None, Some("denomination"), Seq.empty)
+  val decisionWithExclusion: Decision = decision.copy(methodExclusion = Some("Excludes everything ever"))
+  val liabilityApplicationExample: LiabilityOrder = LiabilityOrder(contactExample, LiabilityStatus.NON_LIVE, "trader-business-name", Some("good-name"), Some(Instant.now()), Some("entry number"), Some("trader-1234567"), Some("officer-1234567"))
+  val liabilityLiveApplicationExample: LiabilityOrder = LiabilityOrder(contactExample, LiabilityStatus.LIVE, "trader-business-name", Some("good-name"), Some(Instant.now()), Some("entry number"))
+  val btiCaseExample: Case = Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, None, btiApplicationExample, Some(decision), Seq())
+  val btiCaseWithIncompleteDecision: Case = Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, None, btiApplicationExample, Some(incompleteDecision), Seq())
+  val simpleCaseExample: Case = Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, None, simpleBtiApplicationExample, None, Seq())
+  val liabilityCaseExample: Case = Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, None, liabilityApplicationExample, None, Seq())
+  val liabilityCaseWithDecisionExample: Case = Case("1", CaseStatus.OPEN, Instant.now(), 0, None, Some(Operator("0", Some("Kevin"))), None, liabilityApplicationExample, Some(decisionWithExclusion), Seq())
+  val liabilityLiveCaseExample: Case = Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, None, liabilityLiveApplicationExample, None, Seq())
+  val caseQueueExample: Case = Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, Some("1"), btiApplicationExample, Some(decision), Seq())
+  val caseAssignedExample: Case = Case("1", CaseStatus.OPEN, Instant.now(), 0, None, Some(Operator("1", Some("Test User"))), Some("1"), btiApplicationExample, Some(decision), Seq())
+  val expiredRuling: Decision = decision.copy(
     effectiveStartDate = Some(Instant.now().plus(-20, DAYS)),
     effectiveEndDate = Some(Instant.now().plus(-10, DAYS))
   )
-  val btiCaseWithExpiredRuling = btiCaseExample.copy(status = CaseStatus.COMPLETED, decision = Some(expiredRuling))
-  val liabilityCaseWithExpiredRuling = liabilityCaseExample.copy(status = CaseStatus.COMPLETED, decision = Some(expiredRuling))
+  val btiCaseWithExpiredRuling: Case = btiCaseExample.copy(status = CaseStatus.COMPLETED, decision = Some(expiredRuling))
+  val liabilityCaseWithExpiredRuling: Case = liabilityCaseExample.copy(status = CaseStatus.COMPLETED, decision = Some(expiredRuling))
 
-  val pagedEvent = Paged(Seq(Events.event), 1, 1, 1)
-  val queues = Seq(Queue("", "", ""))
+  val pagedEvent: Paged[Event] = Paged(Seq(Events.event), 1, 1, 1)
+  val queues: Seq[Queue] = Seq(Queue("", "", ""))
 
-  val operatorWithoutPermissions = Operator(id = "0", name = Some("liability op name"), permissions = Set())
-  val operatorWithAddAttachment = Operator(id = "0", name = Some("liability op name"), permissions = Set(Permission.ADD_ATTACHMENT))
+  val operatorWithoutPermissions: Operator = Operator(id = "0", name = Some("liability op name"), permissions = Set())
+  val operatorWithAddAttachment: Operator = Operator(id = "0", name = Some("liability op name"), permissions = Set(Permission.ADD_ATTACHMENT))
 
-  val c592ViewModel = C592ViewModel("caseReference" ,"entry number", "03 Mar 2020", "", "No", "", "good-name",
+  val c592ViewModel: C592ViewModel = C592ViewModel("caseReference" ,"entry number", "03 Mar 2020", "", "No", "", "good-name",
     TraderContact("trader-business-name", "email", "phone", Address("","",None, None)), "trader-1234567", "officer-1234567",
     PortOrComplianceOfficerContact("name", "email", "phone"), "", "", None)
 
-  val rulingViewModel = Some(
+  val rulingViewModel: Option[RulingViewModel] = Some(
     RulingViewModel("", "", "123456", "item description", "justification", "method searches", "method exclusions", false, "case references"))
 
-  val attachmentsTabViewModel = Some(AttachmentsTabViewModel(Cases.liabilityCaseExample.reference, Nil, None))
-  val activityTabViewModel = Some(ActivityViewModel("referenceNumber", Some(operatorWithoutPermissions),
+  val attachmentsTabViewModel: Option[AttachmentsTabViewModel] = Some(AttachmentsTabViewModel(Cases.liabilityCaseExample.reference, Nil, None))
+  val activityTabViewModel: Option[ActivityViewModel] = Some(ActivityViewModel("referenceNumber", Some(operatorWithoutPermissions),
     Some("queueId"), Instant.now, pagedEvent, queues, "queue Name"))
-  val activityTabViewModelWithPermissions = ActivityViewModel("referenceNumber", Some(operatorWithPermissions),
+  val operatorWithPermissions: Operator = Operator(id = "0", name = Some("liability op name"), permissions = Set(Permission.ADD_NOTE, Permission.VIEW_CASES))
+  val activityTabViewModelWithPermissions: ActivityViewModel = ActivityViewModel("referenceNumber", Some(operatorWithPermissions),
     Some("queueId"), Instant.now, pagedEvent, queues, "queue Name")
-  val operatorWithPermissions = Operator(id = "0", name = Some("liability op name"), permissions = Set(Permission.ADD_NOTE, Permission.VIEW_CASES))
-  val operatorWithCompleteCasePermission = Operator(id = "0", name = Some("liability op name"), permissions = Set(Permission.COMPLETE_CASE, Permission.REOPEN_CASE))
-  val operatorWithKeywordsPermissions = Operator(id = "0", name = Some("liability op name"), permissions = Set(Permission.KEYWORDS))
-  val operatorWithEditLiabilityPermissions = Operator(id = "0", name = Some("liability op name"), permissions = Set(Permission.EDIT_LIABILITY))
-  val operatorWithoutCompleteCasePermission = Operator(id = "0", name = Some("liability op name"), permissions = Set(Permission.VIEW_CASES))
-  val operatorWithReleaseOrSuppressPermissions = Operator(id = "0", name =
+  val operatorWithCompleteCasePermission: Operator = Operator(id = "0", name = Some("liability op name"), permissions = Set(Permission.COMPLETE_CASE, Permission.REOPEN_CASE))
+  val operatorWithKeywordsPermissions: Operator = Operator(id = "0", name = Some("liability op name"), permissions = Set(Permission.KEYWORDS))
+  val operatorWithEditLiabilityPermissions: Operator = Operator(id = "0", name = Some("liability op name"), permissions = Set(Permission.EDIT_LIABILITY))
+  val operatorWithoutCompleteCasePermission: Operator = Operator(id = "0", name = Some("liability op name"), permissions = Set(Permission.VIEW_CASES))
+  val operatorWithReleaseOrSuppressPermissions: Operator = Operator(id = "0", name =
     Some("liability op name"), permissions = Set(Permission.RELEASE_CASE, Permission.SUPPRESS_CASE))
 
-  val aCaseWithCompleteDecision = Cases.liabilityCaseExample.copy(reference = "123456", caseBoardsFileNumber = Some("SCR/ARD/123"), application = liabilityWithCompleteDecision)
-
-  val newLiabilityLiveCaseExample = Case("1", CaseStatus.NEW, Instant.now(), 0, None, None, None, newLiabilityLiveApplicationExample, None, Seq())
-  val newLiabilityLiveApplicationExample = LiabilityOrder(Contact("contact-name","contact@email.com",Some("contact-phone")),
+  val newLiabilityLiveApplicationExample: LiabilityOrder = LiabilityOrder(Contact("contact-name","contact@email.com",Some("contact-phone")),
     LiabilityStatus.LIVE, "trader-business-name", Some("good-name"), Some(Instant.now()), None)
+  val newLiabilityLiveCaseExample: Case = Case("1", CaseStatus.NEW, Instant.now(), 0, None, None, None, newLiabilityLiveApplicationExample, None, Seq())
 
 
-  val liabilityWithCompleteDecision = LiabilityOrder(
+  val liabilityWithCompleteDecision: LiabilityOrder = LiabilityOrder(
     Contact(name = "contact-name", email = "contact@email.com", Some("contact-phone")),
     status = LiabilityStatus.LIVE,
     traderName = "trader-name",
@@ -113,6 +111,9 @@ object Cases {
       ))
     ))
   )
+
+  val aCaseWithCompleteDecision: Case = Cases.liabilityCaseExample.copy(reference = "123456", caseBoardsFileNumber = Some("SCR/ARD/123"), application = liabilityWithCompleteDecision)
+
   def attachment(id: String = UUID.randomUUID().toString): Attachment = {
     Attachment(
       id = id,

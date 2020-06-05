@@ -16,54 +16,29 @@
 
 package controllers
 
-import akka.stream.Materializer
-import org.scalatestplus.mockito.MockitoSugar
-import org.scalatest.{BeforeAndAfterEach, Matchers, WordSpec}
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.http.Status
-import play.api.mvc.{BodyParsers, MessagesControllerComponents}
-import play.api.test.Helpers._
-import play.api.{Configuration, Environment}
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
-import config.AppConfig
 import controllers.routes._
-import models.forms.CaseStatusRadioInputFormProvider
 import models._
+import models.forms.CaseStatusRadioInputFormProvider
+import org.scalatest.BeforeAndAfterEach
+import play.api.http.Status
+import play.api.test.Helpers._
 import service.CasesService
 import utils.Cases
 
-class ChangeCaseStatusControllerSpec extends WordSpec
-  with Matchers
-  with UnitSpec
-  with GuiceOneAppPerSuite
-  with MockitoSugar
-  with BeforeAndAfterEach
-  with ControllerCommons {
+class ChangeCaseStatusControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
-  private val env = Environment.simple()
-
-  private val configuration = Configuration.load(env)
-  private val messageApi = inject[MessagesControllerComponents]
-  private val appConfig = inject[AppConfig]
   private val casesService = mock[CasesService]
   private val operator = mock[Operator]
 
   private val caseWithStatusOPEN = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.OPEN)
-  private val caseWithStatusOpenWithDecision = Cases.btiCaseWithIncompleteDecision.copy(reference = "reference", status = CaseStatus.OPEN)
-
-
-  private implicit val mat: Materializer = fakeApplication.materializer
-  private implicit val hc: HeaderCarrier = HeaderCarrier()
 
   private def controller(c: Case) = new ChangeCaseStatusController(
-    new SuccessfulRequestActions(inject[BodyParsers.Default], operator, c = c), casesService, messageApi, appConfig)
+    new SuccessfulRequestActions(defaultPlayBodyParsers, operator, c = c), casesService, mcc, realAppConfig)
 
   private def controller(requestCase: Case, permission: Set[Permission]) = new ChangeCaseStatusController(
-    new RequestActionsWithPermissions(inject[BodyParsers.Default], permission, c = requestCase), casesService, messageApi, appConfig)
+    new RequestActionsWithPermissions(defaultPlayBodyParsers, permission, c = requestCase), casesService, mcc, realAppConfig)
 
   val form = new CaseStatusRadioInputFormProvider()()
-
 
   "ChangeCaseStatusControllerSpec" should {
 

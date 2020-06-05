@@ -27,17 +27,13 @@ import org.mockito.ArgumentMatchers._
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito.{never, reset, verify, verifyZeroInteractions}
 import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.test.UnitSpec
 import utils.Cases
 
 import scala.concurrent.Future
 import scala.concurrent.Future.{failed, successful}
 
-class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach with ConnectorCaptor {
-
-  private implicit val hc: HeaderCarrier = HeaderCarrier()
+class CasesService_CompleteCaseSpec extends ServiceSpecBase with BeforeAndAfterEach with ConnectorCaptor {
 
   private val manyCases = mock[Seq[Case]]
   private val oneCase = mock[Option[Case]]
@@ -58,12 +54,9 @@ class CasesService_CompleteCaseSpec extends UnitSpec with MockitoSugar with Befo
   override protected def beforeEach(): Unit = {
     super.beforeEach()
 
-    given(config.clock).willReturn(clock)
-  }
-
-  override protected def afterEach(): Unit = {
-    super.afterEach()
     reset(connector, audit, queue, oneCase, manyCases, config, emailService)
+
+    given(config.clock).willReturn(clock)
   }
 
   "Complete Case" should {

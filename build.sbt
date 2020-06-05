@@ -26,8 +26,7 @@ lazy val microservice = (project in file("."))
     libraryDependencies ++= (AppDependencies.compile ++ AppDependencies.test).map(_ withSources()),
     evictionWarningOptions in update := EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
     parallelExecution in Test := false,
-    testGrouping in Test := oneForkedJvmPerTest((definedTests in Test).value),
-    fork in Test := false,
+    fork in Test := true,
     retrieveManaged := true
   )
   .settings(inConfig(TemplateTest)(Defaults.testSettings): _*)
@@ -37,7 +36,8 @@ lazy val microservice = (project in file("."))
       (baseDirectory in Test).value / "test/util"
     ),
     resourceDirectory in Test := baseDirectory.value / "test" / "resources",
-    javaOptions in Test += "-Dconfig.file=conf/test.application.conf",
+//    works only when fork is true
+    javaOptions in Test += "-Xmx1G",
     addTestReportOption(Test, "test-reports")
   )
   .settings(RoutesKeys.routesImport += "models.Sort")
@@ -46,18 +46,21 @@ lazy val microservice = (project in file("."))
   .configs(IntegrationTest)
   .settings(inConfig(TemplateItTest)(Defaults.itSettings): _*)
   .settings(
-    Keys.fork in IntegrationTest := false,
+    Keys.fork in IntegrationTest := true,
+//    works only when fork is true
+    javaOptions in Test += "-Xmx1G",
     unmanagedSourceDirectories in IntegrationTest := Seq(
       (baseDirectory in IntegrationTest).value / "test/it",
       (baseDirectory in IntegrationTest).value / "test/util"
     ),
     resourceDirectory in IntegrationTest := baseDirectory.value / "test" / "resources",
     addTestReportOption(IntegrationTest, "int-test-reports"),
-    testGrouping in IntegrationTest := oneForkedJvmPerTest((definedTests in IntegrationTest).value),
-    parallelExecution in IntegrationTest := false)
+    parallelExecution in IntegrationTest := false
+  )
   .settings(
     resolvers += Resolver.bintrayRepo("hmrc", "releases"),
-    resolvers += Resolver.jcenterRepo)
+    resolvers += Resolver.jcenterRepo
+  )
   .settings(scalaModuleInfo := scalaModuleInfo.value map {
     _.withOverrideScalaVersion(true)
   })
@@ -68,14 +71,14 @@ lazy val allItPhases = "tit->it;it->it;it->compile;compile->compile"
 lazy val TemplateTest = config("tt") extend Test
 lazy val TemplateItTest = config("tit") extend IntegrationTest
 
-def unitFilter(name: String): Boolean = name startsWith "unit"
-
-def oneForkedJvmPerTest(tests: Seq[TestDefinition]): Seq[Group] = {
-  tests map { test =>
-    val forkOpts = ForkOptions().withRunJVMOptions(Vector("-Dtest.name=" + test.name))
-    Group(test.name, Seq(test), SubProcess(forkOpts))
-  }
-}
+//def unitFilter(name: String): Boolean = name startsWith "unit"
+//
+//def oneForkedJvmPerTest(tests: Seq[TestDefinition]): Seq[Group] = {
+//  tests map { test =>
+//    val forkOpts = ForkOptions().withRunJVMOptions(Vector("-Dtest.name=" + test.name))
+//    Group(test.name, Seq(test), SubProcess(forkOpts))
+//  }
+//}
 
 // Coverage configuration
 coverageMinimum := 94

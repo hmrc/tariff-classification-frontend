@@ -16,34 +16,25 @@
 
 package controllers
 
-import org.mockito.ArgumentMatchers._
-import org.mockito.BDDMockito._
-import org.scalatest.Matchers
-import org.scalatestplus.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.http.Status
-import play.api.mvc.{BodyParsers, MessagesControllerComponents}
-import play.api.test.Helpers._
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.test.UnitSpec
-import config.AppConfig
 import models.forms.LiabilityForm
 import models.{Permission, _}
+import org.mockito.ArgumentMatchers._
+import org.mockito.BDDMockito._
+import play.api.http.Status
+import play.api.test.Helpers._
 import service.CasesService
-import views.html.create_liability
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases._
+import views.html.create_liability
 
 import scala.concurrent.Future._
 
-class CreateLiabilityControllerSpec extends UnitSpec with Matchers with GuiceOneAppPerSuite with MockitoSugar with ControllerCommons {
+class CreateLiabilityControllerSpec extends ControllerBaseSpec {
 
-  private val messageApi = inject[MessagesControllerComponents]
-  private val appConfig = inject[AppConfig]
   private val casesService = mock[CasesService]
-  private implicit val hc: HeaderCarrier = HeaderCarrier()
 
   private def controller(permission: Set[Permission]) = new CreateLiabilityController(
-    new RequestActionsWithPermissions(inject[BodyParsers.Default], permission), casesService, messageApi, appConfig
+    new RequestActionsWithPermissions(defaultPlayBodyParsers, permission), casesService, mcc, realAppConfig
   )
 
   "GET" should {
@@ -61,7 +52,7 @@ class CreateLiabilityControllerSpec extends UnitSpec with Matchers with GuiceOne
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
       contentAsString(result) shouldBe create_liability(
-        LiabilityForm.newLiabilityForm)(request, messageApi.messagesApi.preferred(request), appConfig).toString()
+        LiabilityForm.newLiabilityForm)(request, messages, realAppConfig).toString()
     }
   }
 
@@ -77,12 +68,12 @@ class CreateLiabilityControllerSpec extends UnitSpec with Matchers with GuiceOne
       "form is invalid" in {
         val request = newFakePOSTRequestWithCSRF(fakeApplication)
         val result = await(controller(Set(Permission.CREATE_CASES)).post()(request))
+        lazy val form = LiabilityForm.newLiabilityForm.bindFromRequest()(request)
+
         status(result) shouldBe Status.OK
         contentType(result) shouldBe Some("text/html")
         charset(result) shouldBe Some("utf-8")
-        contentAsString(result) shouldBe create_liability(
-          LiabilityForm.newLiabilityForm.bindFromRequest()(request)
-        )(request, messageApi.messagesApi.preferred(request), appConfig).toString()
+        contentAsString(result) shouldBe create_liability(form)(request, messages, realAppConfig).toString()
       }
     }
 

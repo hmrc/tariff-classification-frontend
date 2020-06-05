@@ -16,30 +16,19 @@
 
 package models
 
-import uk.gov.hmrc.play.test.UnitSpec
-import utils.Cases
 import java.time.{Clock, Instant, ZoneOffset}
 
-import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterAll
-import org.scalatestplus.mockito.MockitoSugar
-import config.AppConfig
+import utils.Cases
 import utils.Cases.{aCase, withBTIApplication, _}
 
-class CaseTest extends UnitSpec with MockitoSugar with BeforeAndAfterAll {
-
-  private val appConfig: AppConfig = mock[AppConfig]
+class CaseTest extends ModelsBaseSpec with BeforeAndAfterAll {
 
   private val pastTime = Instant.parse("2010-01-01T01:01:00Z")
   private val currentTime = Instant.parse("2010-01-01T01:01:01Z")
   private val futureTime = Instant.parse("2010-01-01T01:01:02Z")
 
   private implicit val clockWithFixedTime: Clock = Clock.fixed(currentTime, ZoneOffset.UTC)
-
-  override protected def beforeAll(): Unit = {
-    super.beforeAll()
-    when(appConfig.clock).thenReturn(clockWithFixedTime)
-  }
 
   "hasExpiredRuling()'" should {
 
@@ -126,7 +115,6 @@ class CaseTest extends UnitSpec with MockitoSugar with BeforeAndAfterAll {
     }
 
     "return none when no appeals" in {
-      val appeal = Appeal("12345", AppealStatus.ALLOWED, AppealType.APPEAL_TIER_1)
       val c = Cases.btiCaseExample
 
       c.findAppeal("99999") shouldBe None

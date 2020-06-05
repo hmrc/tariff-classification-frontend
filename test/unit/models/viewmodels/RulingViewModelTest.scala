@@ -17,11 +17,10 @@
 package models.viewmodels
 
 import models.CaseStatus._
-import models.{Case, CaseStatus, Permission}
-import uk.gov.hmrc.play.test.UnitSpec
+import models.{Case, CaseStatus, ModelsBaseSpec, Permission}
 import utils.Cases
 
-class RulingViewModelTest extends UnitSpec {
+class RulingViewModelTest extends ModelsBaseSpec {
 
   val dummyCase: Case = Cases.liabilityCaseExample.copy(status = CaseStatus.NEW)
 

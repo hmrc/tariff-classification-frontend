@@ -19,11 +19,11 @@ package views.partials
 import models.response.ScanStatus
 import models.{Contact, Permission}
 import service.CountriesService
+import utils.Cases
+import utils.Cases._
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.partials.case_trader
-import utils.Cases
-import utils.Cases._
 
 class CaseTraderViewSpec extends ViewSpec {
 

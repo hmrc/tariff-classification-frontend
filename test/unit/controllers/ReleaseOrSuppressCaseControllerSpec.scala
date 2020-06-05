@@ -16,52 +16,30 @@
 
 package controllers
 
-import akka.stream.Materializer
-import org.scalatestplus.mockito.MockitoSugar
-import org.scalatest.{BeforeAndAfterEach, Matchers, WordSpec}
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.Environment
-import play.api.http.Status
-import play.api.mvc.{BodyParsers, MessagesControllerComponents}
-import play.api.test.Helpers._
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
-import config.AppConfig
 import controllers.routes._
-import models.forms.CaseStatusRadioInputFormProvider
 import models._
+import models.forms.CaseStatusRadioInputFormProvider
+import org.scalatest.BeforeAndAfterEach
+import play.api.http.Status
+import play.api.test.Helpers._
 import service.CasesService
 import utils.Cases
 
-class ReleaseOrSuppressCaseControllerSpec extends WordSpec
-  with Matchers
-  with UnitSpec
-  with GuiceOneAppPerSuite
-  with MockitoSugar
-  with BeforeAndAfterEach
-  with ControllerCommons {
+class ReleaseOrSuppressCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
-  private val env = Environment.simple()
-
-  private val messageApi = inject[MessagesControllerComponents]
-  private val appConfig = inject[AppConfig]
   private val casesService = mock[CasesService]
   private val operator = mock[Operator]
 
   private val caseBTIWithStatusNEW = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.NEW)
   private val caseLiabilityWithStatusNEW = Cases.liabilityCaseExample.copy(reference = "reference", status = CaseStatus.NEW)
 
-  private implicit val mat: Materializer = fakeApplication.materializer
-  private implicit val hc: HeaderCarrier = HeaderCarrier()
-
   private def controller(c: Case) = new ReleaseOrSuppressCaseController(
-    new SuccessfulRequestActions(inject[BodyParsers.Default], operator, c = c), casesService, messageApi, appConfig)
+    new SuccessfulRequestActions(defaultPlayBodyParsers, operator, c = c), casesService, mcc, realAppConfig)
 
   private def controller(requestCase: Case, permission: Set[Permission]) = new ReleaseOrSuppressCaseController(
-    new RequestActionsWithPermissions(inject[BodyParsers.Default], permission, c = requestCase), casesService, messageApi, appConfig)
+    new RequestActionsWithPermissions(defaultPlayBodyParsers, permission, c = requestCase), casesService, mcc, realAppConfig)
 
   val form = new CaseStatusRadioInputFormProvider()()
-
 
   "ReleaseOrSuppressCaseControllerSpec" should {
     "case is BTI" when {

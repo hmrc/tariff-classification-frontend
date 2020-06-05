@@ -16,30 +16,21 @@
 
 package controllers
 
-import akka.stream.Materializer
+import models.{Case, CaseStatus, Operator, Permission}
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.Mockito._
-import org.scalatestplus.mockito.MockitoSugar
-import org.scalatest.{BeforeAndAfterEach, Matchers, WordSpec}
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status
-import play.api.mvc.{BodyParsers, MessagesControllerComponents, Result}
+import play.api.mvc.Result
 import play.api.test.Helpers.{redirectLocation, _}
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
-import config.AppConfig
-import models.{Case, CaseStatus, Operator, Permission}
-import play.api.inject.guice.GuiceApplicationBuilder
 import service.CasesService
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
 
 import scala.concurrent.Future.successful
 
-class ReopenCaseControllerSpec extends WordSpec with Matchers with UnitSpec
-  with GuiceOneAppPerSuite with MockitoSugar with BeforeAndAfterEach with ControllerCommons {
+class ReopenCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
-  private val messageApi = inject[MessagesControllerComponents]
-  private val appConfig = inject[AppConfig]
   private val casesService = mock[CasesService]
   private val operator = mock[Operator]
 
@@ -50,28 +41,19 @@ class ReopenCaseControllerSpec extends WordSpec with Matchers with UnitSpec
   private val liabilityCaseWithStatusOpen = Cases.liabilityCaseExample.copy(reference = "reference", status = CaseStatus.OPEN)
   private val liabilityCaseWithStatusSuspended = Cases.liabilityCaseExample.copy(reference = "reference", status = CaseStatus.SUSPENDED)
 
-  private implicit val mat: Materializer = fakeApplication.materializer
-  private implicit val hc: HeaderCarrier = HeaderCarrier()
-
-  implicit lazy val appWithLiabilityToggleOff = new GuiceApplicationBuilder()
-    .configure("toggle.new-liability-details" -> false)
-    .build()
-
-  lazy val appConf: AppConfig = appWithLiabilityToggleOff.injector.instanceOf[AppConfig]
-
   override def afterEach(): Unit = {
     super.afterEach()
     reset(casesService)
   }
 
   private def controller(c: Case) = new ReopenCaseController(
-    new SuccessfulRequestActions(inject[BodyParsers.Default], operator, c = c), casesService, messageApi, appConfig)
+    new SuccessfulRequestActions(defaultPlayBodyParsers, operator, c = c), casesService, mcc, realAppConfig)
 
   private def controllerForOldLiabilities(c: Case) = new ReopenCaseController(
-    new SuccessfulRequestActions(inject[BodyParsers.Default], operator, c = c), casesService, messageApi, appConf)
+    new SuccessfulRequestActions(defaultPlayBodyParsers, operator, c = c), casesService, mcc, appConfWithLiabilityToggleOff)
 
   private def controller(requestCase: Case, permission: Set[Permission]) = new ReopenCaseController(
-    new RequestActionsWithPermissions(inject[BodyParsers.Default], permission, c = requestCase), casesService, messageApi, appConfig)
+    new RequestActionsWithPermissions(defaultPlayBodyParsers, permission, c = requestCase), casesService, mcc, realAppConfig)
 
 
   "ReopenCaseControllerSpec" should {

@@ -20,7 +20,6 @@ import play.api.libs.json.Json
 import models._
 import utils.JsonFormatters.{caseFormat, reportResult}
 
-
 object CasePayloads {
 
   val btiCase: String = jsonOf(Cases.btiCaseExample)

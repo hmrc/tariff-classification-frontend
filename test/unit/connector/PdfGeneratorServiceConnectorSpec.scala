@@ -17,15 +17,15 @@
 package connector
 
 import com.github.tomakehurst.wiremock.client.WireMock._
+import models.PdfFile
 import play.api.http.Status
 import play.twirl.api.Html
-import models.PdfFile
 
 class PdfGeneratorServiceConnectorSpec extends ConnectorTest {
 
-  private val pdfTemplate = mock[Html]
+  private val pdfTemplate = Html("dummy html")
 
-  private val connector = new PdfGeneratorServiceConnector(appConfig, wsClient)
+  private val connector = new PdfGeneratorServiceConnector(mockAppConfig, wsClient)
 
   "Connector" should {
 

@@ -16,12 +16,11 @@
 
 package service
 
-import uk.gov.hmrc.play.test.UnitSpec
 import models.Queue
 
-class QueuesServiceSpec extends UnitSpec {
+class QueuesServiceSpec extends ServiceSpecBase {
 
-  private val service = new QueuesService()
+  private val service = injector.instanceOf[QueuesService]
 
   "Get All Queues" should {
 

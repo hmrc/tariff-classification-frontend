@@ -18,8 +18,8 @@ package views.v2
 
 import java.time.Instant
 
+import models._
 import models.forms.LiabilityDetailsForm
-import models.{Address, Contact, LiabilityOrder, LiabilityStatus, RepaymentClaim, TraderContactDetails}
 import utils.Cases
 import views.ViewMatchers.containElementWithID
 import views.ViewSpec
@@ -27,7 +27,7 @@ import views.html.v2.liability_details_edit
 
 class LiabilityDetailsEditViewSpec extends ViewSpec {
 
-  def liabilityDetailsEditView: liability_details_edit = app.injector.instanceOf[liability_details_edit]
+  def liabilityDetailsEditView: liability_details_edit = injector.instanceOf[liability_details_edit]
 
   private val liability = LiabilityOrder(
     Contact(name = "contact-name", email = "contact@email.com", Some("contact-phone")),

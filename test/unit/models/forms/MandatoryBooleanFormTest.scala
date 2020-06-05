@@ -16,9 +16,9 @@
 
 package models.forms
 
-import uk.gov.hmrc.play.test.UnitSpec
+import models.ModelsBaseSpec
 
-class MandatoryBooleanFormTest extends UnitSpec {
+class MandatoryBooleanFormTest extends ModelsBaseSpec {
 
   "Boolean Form 'Bind From Request'" should {
     "fail on empty request" in {

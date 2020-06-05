@@ -16,11 +16,10 @@
 
 package views
 
-import org.jsoup.nodes.Document
 import models._
-import views.ViewMatchers._
-import utils.Cases
+import org.jsoup.nodes.Document
 import utils.Cases._
+import views.ViewMatchers._
 
 class MyCasesViewSpec extends ViewSpec {
 

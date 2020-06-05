@@ -49,7 +49,7 @@ class ActivityTabSpec extends ViewSpec {
 
   val requestWithAddNoteViewCasePermission = requestWithPermissions(Permission.ADD_NOTE, Permission.VIEW_CASE_ASSIGNEE)
 
-  def activityTab: activity_tab = app.injector.instanceOf[activity_tab]
+  def activityTab: activity_tab = injector.instanceOf[activity_tab]
 
 
   "Activity Tab" should {

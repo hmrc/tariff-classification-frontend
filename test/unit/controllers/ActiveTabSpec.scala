@@ -16,9 +16,8 @@
 
 package controllers
 
-import uk.gov.hmrc.play.test.UnitSpec
+class ActiveTabSpec extends ControllerBaseSpec {
 
-class ActiveTabSpec  extends UnitSpec {
   "ActiveTab Binder" should {
 
     "Unbind Populated ActivityTab to Query String" in {

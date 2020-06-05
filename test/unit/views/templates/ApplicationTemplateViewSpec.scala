@@ -16,13 +16,12 @@
 
 package views.templates
 
-import org.jsoup.nodes.Document
 import models.{Case, StoredAttachment}
-import utils.Dates
+import org.jsoup.nodes.Document
+import utils.{Cases, Dates}
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.templates.application_template
-import utils.Cases
 
 class ApplicationTemplateViewSpec extends ViewSpec {
 
@@ -31,7 +30,7 @@ class ApplicationTemplateViewSpec extends ViewSpec {
 
   private def createView(c: Case, attachments: Seq[ StoredAttachment ]) = application_template(c, attachments, None, s => Some("dummy country name"))(authenticatedFakeRequest, messages, appConfig)
 
-  "Application pdf view" must {
+  "Application pdf view" should {
 
     "contain the details for a trader" in {
       val doc = view(createView(caseWithoutAgent, Seq.empty))

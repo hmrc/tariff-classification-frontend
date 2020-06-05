@@ -16,9 +16,9 @@
 
 package views.partials
 
-import org.scalatestplus.mockito.MockitoSugar
 import controllers.routes
 import models.Operator
+import org.scalatestplus.mockito.MockitoSugar
 import views.ViewMatchers._
 import views.html.partials.cases_assignee_nav
 import views.{AssigneeCount, ViewSpec}
