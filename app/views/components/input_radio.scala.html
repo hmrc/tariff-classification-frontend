@@ -27,7 +27,7 @@ inputs: Seq[InputRadio]
 
 <div class="form-group @if(field.hasErrors){form-group-error}">
     <fieldset id="@{field.id}">
-        <legend>
+        <legend class="radio-button-legend-alignment">
             <span class="bold-small @if(legendClass.nonEmpty){@{legendClass.get}}">@legend</span>
             @if(hint.nonEmpty){
             <span class="form-hint">@{hint.get}</span>
