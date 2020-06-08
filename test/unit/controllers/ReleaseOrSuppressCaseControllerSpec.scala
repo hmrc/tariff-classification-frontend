@@ -57,7 +57,7 @@ class ReleaseOrSuppressCaseControllerSpec extends ControllerBaseSpec with Before
         status(result) shouldBe Status.OK
         contentType(result) shouldBe Some("text/html")
         charset(result) shouldBe Some("utf-8")
-        contentAsString(result) should include("Change case status")
+        contentAsString(result) should include("Action this case")
       }
 
       "return OK when the user has the suppress case permissions" in {
@@ -66,7 +66,7 @@ class ReleaseOrSuppressCaseControllerSpec extends ControllerBaseSpec with Before
         status(result) shouldBe Status.OK
         contentType(result) shouldBe Some("text/html")
         charset(result) shouldBe Some("utf-8")
-        contentAsString(result) should include("Change case status")
+        contentAsString(result) should include("Action this case")
       }
 
       "return unauthorised when user does not have the necessary permissions" in {
@@ -122,7 +122,7 @@ class ReleaseOrSuppressCaseControllerSpec extends ControllerBaseSpec with Before
         status(result) shouldBe Status.OK
         contentType(result) shouldBe Some("text/html")
         charset(result) shouldBe Some("utf-8")
-        contentAsString(result) should include("Change case status")
+        contentAsString(result) should include("Action this case")
       }
 
       "return unauthorised when user does not have the necessary permissions" in {
