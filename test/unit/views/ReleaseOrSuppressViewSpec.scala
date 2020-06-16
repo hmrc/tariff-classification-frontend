@@ -60,7 +60,7 @@ class ReleaseOrSuppressViewSpec extends ViewSpec {
       val c = aCase(withReference("reference"), withBTIApplication)
       val doc = view(release_or_suppress(c, form, None))
 
-      doc should containText(messages("change_case_status_legend"))
+      doc should containText(messages("action_this_case_status_legend"))
     }
 
     "contain correct cancel link for item tab" in {
