@@ -56,7 +56,7 @@ class ChangeCaseStatusControllerSpec extends ControllerBaseSpec with BeforeAndAf
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
-      contentAsString(result) should include ("Action this case")
+      contentAsString(result) should include (messages("change_case_status_legend"))
     }
 
     "return unauthorised when user does not have the necessary permissions" in {
