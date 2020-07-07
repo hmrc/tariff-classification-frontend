@@ -1,0 +1,76 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import models.request.AuthenticatedRequest
+@import models.Permission
+@import controllers.routes.AttachmentsController
+@import models.StoredAttachment
+@import utils.Dates
+@import views.html.partials.attachment
+@import models.Case
+@(id: String, attachments: Seq[StoredAttachment], showSelect: Boolean = false,
+showRemoval: Boolean = false, caseRef: Option[String] = None, startAtTabIndex : Option[Int] = None)(implicit request: AuthenticatedRequest[_], messages: Messages)
+
+@if(attachments.nonEmpty){
+<div id="" class="grid-row">
+    <div style="background-color:yellow">
+        <div class="bold-small column-one-third">File</div>
+        @if(showSelect) {
+        <div class="bold-small column-one-third" id="@{id}-header-select" >Publish
+        </div>
+        }
+        <div class="bold-small column-one-third" >Date</div>
+    </div>
+    <div class="grid-row">
+        @for((file: StoredAttachment, index: Int) <- attachments.zipWithIndex) {
+        <div id="@{id}-row-@{index}">
+            <div id="@{id}-row-@{index}-title" class="column-one-third">
+                @attachment(s"$id-row-$index", file, useTabIndex = startAtTabIndex.map(x => x+1+(0*index)))
+            </div>
+
+            @if(showSelect) {
+            <div class="column-one-third">
+                <div class="form-group">
+
+                    <div class="multiple-choice">
+
+                        <input @if(startAtTabIndex.isDefined){tabindex="@{startAtTabIndex.get+1+(1*index)}"}
+                               id="attachments[@{index}]"
+                               name="attachments[@{index}]"
+                               type="checkbox"
+                               value="@file.id"
+                               aria-label="publish @file.fileName on GOV.UK"
+                               @if(file.public) {checked="checked"}/>
+
+                        <label for="attachments[@{index}]"></label>
+                    </div>
+
+                </div>
+            </div>
+
+            }
+
+            <div id="@{id}-row-@{index}-date" class="column-one-third w-15">
+                @Dates.format(file.timestamp)
+            </div>
+
+        </div>
+        }
+    </div>
+</div>
+}else {
+<p id="@{id}-empty-table"> @messages("case.attachment.table.empty") </p>
+}
