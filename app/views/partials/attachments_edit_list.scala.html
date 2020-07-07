@@ -25,28 +25,24 @@
 showRemoval: Boolean = false, caseRef: Option[String] = None, startAtTabIndex : Option[Int] = None)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @if(attachments.nonEmpty){
-<div id="" class="grid-row">
-    <div style="background-color:yellow">
-        <div class="bold-small column-one-third">File</div>
-        @if(showSelect) {
-        <div class="bold-small column-one-third" id="@{id}-header-select" >Publish
-        </div>
-        }
-        <div class="bold-small column-one-third" >Date</div>
+<legend class="w-100">
+<div id="@{id}-div">
+    <div class="border-bottom display-flex row-alignment" >
+        <div class="bold-small w-75 pl-0">File</div>
+        @if(showSelect) {<div class="bold-small w-25 p-0" id="@{id}-header-select" >Publish</div>}
+        <div class="bold-small w-25 p-0 attachment-table-date">Date</div>
     </div>
-    <div class="grid-row">
+    <div class="">
         @for((file: StoredAttachment, index: Int) <- attachments.zipWithIndex) {
-        <div id="@{id}-row-@{index}">
-            <div id="@{id}-row-@{index}-title" class="column-one-third">
+        <div id="@{id}-row-@{index}" class="border-bottom display-flex row-alignment">
+            <div id="@{id}-row-@{index}-title" class="w-75 pl-0">
                 @attachment(s"$id-row-$index", file, useTabIndex = startAtTabIndex.map(x => x+1+(0*index)))
             </div>
 
             @if(showSelect) {
-            <div class="column-one-third">
+            <div class="w-25 p-0">
                 <div class="form-group">
-
                     <div class="multiple-choice">
-
                         <input @if(startAtTabIndex.isDefined){tabindex="@{startAtTabIndex.get+1+(1*index)}"}
                                id="attachments[@{index}]"
                                name="attachments[@{index}]"
@@ -54,23 +50,20 @@ showRemoval: Boolean = false, caseRef: Option[String] = None, startAtTabIndex : 
                                value="@file.id"
                                aria-label="publish @file.fileName on GOV.UK"
                                @if(file.public) {checked="checked"}/>
-
-                        <label for="attachments[@{index}]"></label>
+                        <label for="attachments[@{index}]"><div class="hide-label">publish</div></label>
                     </div>
-
                 </div>
             </div>
-
             }
 
-            <div id="@{id}-row-@{index}-date" class="column-one-third w-15">
+            <div id="@{id}-row-@{index}-date" class="w-25 p-0">
                 @Dates.format(file.timestamp)
             </div>
-
         </div>
         }
     </div>
 </div>
+</legend>
 }else {
-<p id="@{id}-empty-table"> @messages("case.attachment.table.empty") </p>
+<p id="@{id}-empty-div"> @messages("case.attachment.div.empty") </p>
 }
