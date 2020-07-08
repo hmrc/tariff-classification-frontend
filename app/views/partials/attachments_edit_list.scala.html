@@ -21,7 +21,7 @@
 @import utils.Dates
 @import views.html.partials.attachment
 @import models.Case
-@(id: String, attachments: Seq[StoredAttachment], showSelect: Boolean = true,
+@(id: String, attachments: Seq[StoredAttachment],
 showRemoval: Boolean = false, caseRef: Option[String] = None, startAtTabIndex : Option[Int] = None)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @if(attachments.nonEmpty){
