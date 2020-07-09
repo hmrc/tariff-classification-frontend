@@ -112,7 +112,7 @@
 
                 <div class="form-group">
                     <fieldset>
-
+                        <legend class="w-100">
                         <h3 class="heading-medium">@messages("case.decision.attachments")</h3>
                         @defining(files.filter(_.scanStatus.contains(ScanStatus.READY))) { attachments: Seq[StoredAttachment] =>
                             @if(attachments.isEmpty) {
@@ -125,7 +125,7 @@
                                 @attachments_edit_list("attachments", attachments)
                             }
                         }
-
+                        </legend>
                     </fieldset>
                 </div>
 
