@@ -20,6 +20,6 @@
 @(c: Case, useTabIndex : Option[Int] = None)(implicit messages: Messages)
 
 <div id="submitted-application" class="mb-3">
-   If this case is under review or appeal,
-   <a  @if(useTabIndex.isDefined){ tabindex="@{useTabIndex.get}" } id="submitted-application-link" target="_blank" href="@PdfDownloadController.applicationPdf(c.reference)">  view and print a PDF of the original application (opens in a new window or tab).</a>.
+ @messages("case.decision.ruling.review.appeal")
+   <a  @if(useTabIndex.isDefined){ tabindex="@{useTabIndex.get}" } id="submitted-application-link" target="_blank" href="@PdfDownloadController.applicationPdf(c.reference)"> @messages("case.decision.ruling.review.appeal.link") </a>.
 </div>
