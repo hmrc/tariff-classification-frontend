@@ -67,7 +67,7 @@
 
             <h2 class="heading-large mt-0 mb-3"> @messages("case.decision.edit-ruling")</h2>
 
-            <h3 class="heading-medium mt-0">@messages("case.decision.ruling-details")</h3>
+            <h2 class="heading-medium mt-0">@messages("case.decision.ruling-details")</h2>
 
 
             @form(action = controllers.routes.RulingController.updateRulingDetails(c.reference), 'class -> "form") {
@@ -93,7 +93,7 @@
                     hint = Some(messages("case.decision.hint.published-content"))
                 )
 
-                <h3 class="heading-medium mb-2">@messages("case.decision.information-not-published")</h3>
+                <h2 class="heading-medium mb-2">@messages("case.decision.information-not-published")</h2>
 
                 @input_textarea(
                     field = decisionForm("methodCommercialDenomination"),
@@ -113,7 +113,7 @@
                 <div class="form-group">
                     <fieldset>
                         <legend class="w-100">
-                        <h3 class="heading-medium">@messages("case.decision.attachments")</h3>
+                        <h2 class="heading-medium">@messages("case.decision.attachments")</h2>
                         @defining(files.filter(_.scanStatus.contains(ScanStatus.READY))) { attachments: Seq[StoredAttachment] =>
                             @if(attachments.isEmpty) {
                                 <span id="edit-ruling-no_attachments" class="body-text mb-0">
@@ -130,7 +130,7 @@
                 </div>
 
                 <div class="form-group">
-                    <h3 class="heading-medium">@messages("case.decision.holder.information")</h3>
+                    <h2 class="heading-medium">@messages("case.decision.holder.information")</h2>
 
                     @input_textarea(
                         field = decisionForm("explanation"),
