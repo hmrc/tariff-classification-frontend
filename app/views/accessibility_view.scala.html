@@ -25,7 +25,7 @@
 @components.heading(messages("accessibility.heading"))
 
 <p class="govuk-body-l">@messages("accessibility.overview1")</p>
-<p>@messages("accessibility.overview2.start") <a id="govuk_accessibility_url" target="_self" href="@appConfig.govukAccessibilityUrl">@messages("accessibility.overview2.link")</a> @messages("accessibility.overview2.end")</p>
+
 <p>@messages("accessibility.overview3") <a id="govuk_taxservice_subdomain" target="_self" href="@appConfig.subdomainUrl">@messages("accessibility.overview3.subdomainUrl")</a></p>
 
 @components.subheading(messages("accessibility.usingThisService.heading"))
@@ -55,7 +55,6 @@ messages("accessibility.howAccessible.bullet3"),
 <p>@messages("accessibility.talkAboutDifficultiesForDisabledUsers.text2")</p>
 <p>@messages("accessibility.talkAboutDifficultiesForDisabledUsers.text3")</p>
 
-    <p style="font-weight:bold">--- This is place holder abd get confirmation before finalised ---</p>
 @components.subheading(messages("accessibility.reportingProblems.heading"))
 <p>
     @messages("accessibility.reportingProblems.p1")
@@ -68,13 +67,6 @@ messages("accessibility.howAccessible.bullet3"),
     @messages("accessibility.notHappyWithCompliance.p1.text")
     <a id="equality_commission" target="_self" href="@appConfig.equalityni">@messages("accessibility.notHappyWithCompliance.p1.link2")</a>
     @messages("accessibility.notHappyWithCompliance.p1.text2")
-</p>
-
-@components.subheading(messages("accessibility.contactUs.heading"))
-<p>@messages("accessibility.contactUs.p1")</p>
-<p>@messages("accessibility.contactUs.p2")</p>
-<p>@messages("accessibility.contactUs.p3")
-    <a id="get_help" target="_self" href="@appConfig.extrasupport">@messages("accessibility.contactUs.p3.link")</a>
 </p>
 
 @components.subheading(messages("accessibility.technicalInformation.heading"))

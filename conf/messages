@@ -861,9 +861,6 @@ email.attach.save.bullet5 = Then choose save
 accessibility.title = Accessibility statement - Manage tariff classifications - GOV.UK
 accessibility.heading = Accessibility statement for Manage tariff classifications
 accessibility.overview1 = This accessibility statement explains how accessible this service is, what to do if you have difficulty using it, and how to report accessibility problems with the service.
-accessibility.overview2.start = This service is part of the wider GOV.UK website. There is a separate
-accessibility.overview2.link = accessibility statement
-accessibility.overview2.end = for the main GOV.UK website.
 accessibility.overview3 = This page only contains information about the Manage tariff classifications service, available at
 accessibility.overview3.subdomainUrl = tax.service.gov.uk/manage-tariff-classifications.
 
@@ -900,12 +897,6 @@ accessibility.notHappyWithCompliance.p1.link = contact the Equality Advisory and
 accessibility.notHappyWithCompliance.p1.text = , or the
 accessibility.notHappyWithCompliance.p1.link2 = Equality Commission for Northern Ireland (ECNI)
 accessibility.notHappyWithCompliance.p1.text2 = if you live in Northern Ireland.
-
-accessibility.contactUs.heading = Contacting us by phone or getting a visit from us in person
-accessibility.contactUs.p1 = We provide a text relay service if you are deaf, hearing impaired or have a speech impediment.
-accessibility.contactUs.p2 = We can provide a British Sign Language (BSL) interpreter, or you can arrange a visit from an HMRC advisor to help you complete the service.
-accessibility.contactUs.p3 = Find out how to
-accessibility.contactUs.p3.link = contact us.
 
 accessibility.technicalInformation.heading = Technical information about this service’s accessibility
 accessibility.technicalInformation.p1 = HMRC is committed to making this service accessible, in accordance with the Public Sector Bodies (Websites and Mobile Applications) (No. 2) Accessibility Regulations 2018.
