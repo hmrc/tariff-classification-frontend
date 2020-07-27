@@ -20,21 +20,46 @@ import controllers.actions._
 import play.api.test.Helpers._
 import models.Role.Role
 import models._
+import models.request._
 import play.api.http.Status
 import play.api.test.Helpers._
-import views.html.accessibilityView
+import play.api.mvc.Request
 
 class AccessibilityControllerSpec extends ControllerBaseSpec {
+  implicit val appConfig = realAppConfig
+  implicit val operator = Operator(id = "0", role = Role.CLASSIFICATION_OFFICER)
+  implicit val request = fakeRequest
 
-  var accessibility_view: views.html.accessibilityView
+  implicit def authenticatedRequest[A](
+    implicit
+    operator: Operator,
+    request: Request[A]
+  ): AuthenticatedRequest[A] =
+    AuthenticatedRequest(operator, request)
 
-  def viewAsString(): String = accessibility_view(frontendAppConfig)(fakeRequest, messages).toString
+  val accessibility_view = new views.html.accessibility_view()
+
+  def viewAsString(): String = accessibility_view().toString
+
+  private def action = new SuccessfulAuthenticatedAction(
+    defaultPlayBodyParsers,
+    operator
+  )
+
+  private def controller =  new AccessibilityController(
+    action,
+    mcc,
+    accessibility_view,
+    realAppConfig
+  )
 
   "AccessibilityView Controller" must {
 
     "return OK and the correct view for a GET" in {
-      val result = new AccessibilityController(frontendAppConfig, cc).onPageLoad()(fakeRequest)
+      val result = controller.onPageLoad(request)
+
       status(result) shouldBe OK
+
       contentAsString(result) shouldBe viewAsString()
     }
   }

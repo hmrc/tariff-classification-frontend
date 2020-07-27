@@ -21,11 +21,11 @@ import org.jsoup.nodes.Document
 import org.scalatest.Assertion
 import play.twirl.api.{Html, HtmlFormat}
 import views.ViewMatchers._
-import views.html.accessibilityView
+import views.html.accessibility_view
 
 class AccessibilityViewSpec extends ViewSpec{
 
-  var accessibility_view: views.html.accessibilityView
+  val accessibility_view = new views.html.accessibility_view()
 
   val messageKeyPrefix = "accessibility"
   val expectTimeoutDialog = false
@@ -35,8 +35,8 @@ class AccessibilityViewSpec extends ViewSpec{
     assert(doc.getElementById(id).attr("href").contains(href))
   }
 
-
-  def view = () => accessibility_view(frontendAppConfig)(fakeRequest, messages)
+  def view = () => accessibility_view()
+ 
   protected def normalPage(view: () => HtmlFormat.Appendable, messageKeyPrefix: String, messageHeadingArgs: Any*)
                           (expectedGuidanceKeys: String*): Unit = {
 
