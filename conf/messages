@@ -1,5 +1,5 @@
-site.service_name = Manage tariff classifications
-site.title.suffix = Manage tariff classifications - GOV.UK
+site.service_name = Advance Tariff Rulings Case Manager
+site.title.suffix = Advance Tariff Rulings Case Manager - GOV.UK
 error.summary.title=There is a problem
 cases.menu.my-cases=My cases
 cases.menu.gateway-cases=Gateway cases
@@ -859,9 +859,9 @@ email.attach.save.bullet4 = In the 'save print output as' box, choose a folder f
 email.attach.save.bullet5 = Then choose save
 
 accessibility.title = Accessibility statement - Manage tariff classifications - GOV.UK
-accessibility.heading = Accessibility statement for Manage tariff classifications
+accessibility.heading = Accessibility statement for Advance Tariff Rulings Case Manager
 accessibility.overview1 = This accessibility statement explains how accessible this service is, what to do if you have difficulty using it, and how to report accessibility problems with the service.
-accessibility.overview3 = This page only contains information about the Manage tariff classifications service, available at
+accessibility.overview3 = This page only contains information about the Advance Tariff Rulings Case Manager service, available at
 accessibility.overview3.subdomainUrl = https://www.gov.uk/tax.service.gov.uk/manage-tariff-classifications.
 
 accessibility.usingThisService.heading = Using this service
