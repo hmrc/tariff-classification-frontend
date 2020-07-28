@@ -67,7 +67,11 @@
 }
 
 @footerTop = {}
-@footerLinks = {}
+@footerLinks = {
+    @uiLayouts.footer_links(
+    accessibilityFooterUrl = Some(controllers.routes.AccessibilityController.onPageLoad().url)
+    )
+}
 
 @serviceInfo = {
 @uiLayouts.serviceInfo(
@@ -98,4 +102,4 @@
     sidebar = sidebar)
 }
 
-@govuk_template(Some(title), bodyClasses)(head, bodyEnd, insideHeader, afterHeader, footerTop, Some(uiLayouts.footer_links()), true)(content)
+@govuk_template(Some(title), bodyClasses)(head, bodyEnd, insideHeader, afterHeader, footerTop, Some(footerLinks), true)(content)

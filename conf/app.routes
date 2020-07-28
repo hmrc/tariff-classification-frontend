@@ -134,3 +134,5 @@ POST        /cases/v2/:reference/attachments/remove             controllers.v2.A
 
 GET        /cases/cache/:reference/:itemType                    controllers.TabCacheController.get(reference: String, itemType: String)
 POST       /cases/cache/:reference/:itemType                    controllers.TabCacheController.post(reference: String, itemType: String)
+
+GET        /accessibility                                       controllers.AccessibilityController.onPageLoad

@@ -65,6 +65,22 @@ class AppConfig @Inject()(
   lazy val dateOfReceiptYearLowerBound: Int = 2010
   lazy val dateForRepaymentYearLowerBound: Int = 2010
 
+  //accessibility Urls
+  lazy val accessibilityUrl: String = config.get[String]("accessibility-urls.accessibility")
+  lazy val govukAccessibilityUrl : String = config.get[String]("accessibility-urls.govukAccessibilityUrl")
+  lazy val subdomainUrl : String = config.get[String]("accessibility-urls.subdomainUrl")
+  lazy val abilityNetUrl : String = config.get[String]("accessibility-urls.abilityNetUrl")
+  lazy val webStandards : String = config.get[String]("accessibility-urls.webStandards")
+  lazy val reportEmail : String = config.get[String]("accessibility-urls.reportEmail")
+  lazy val eassUrl : String = config.get[String]("accessibility-urls.eassUrl")
+  lazy val ecniUrl : String = config.get[String]("accessibility-urls.ecniUrl")
+  lazy val dacUrl : String = config.get[String]("accessibility-urls.dacUrl")
+  lazy val equalityadvisoryservice : String = config.get[String]("accessibility-urls.equalityadvisoryservice")
+  lazy val equalityni : String = config.get[String]("accessibility-urls.equalityni")
+  lazy val extrasupport : String = config.get[String]("accessibility-urls.extrasupport")
+  lazy val digitalcentre : String = config.get[String]("accessibility-urls.digitalcentre")
+  //accessibility Urls end
+
 
   lazy val clock: Clock = Clock.systemUTC()
 
