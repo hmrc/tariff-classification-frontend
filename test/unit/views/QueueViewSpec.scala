@@ -44,7 +44,7 @@ class QueueViewSpec extends ViewSpec {
 
       val doc = view(html.queue(queues, queue1, Map.empty, Paged.empty[Case], "BTI")(request = requestWithPermissions(Permission.CREATE_CASES), messages, appConfig))
 
-      doc should containHtml("<title>page.title.case.queues.queue1_name cases - Manage applications for Binding Tariff Information rulings - GOV.UK</title>")
+      doc should containHtml("<title>page.title.case.queues.queue1_name cases - Advance Tariff Rulings Case Manager - GOV.UK</title>")
     }
 
     "render page with title applicable to selected liability queue" in {
@@ -52,7 +52,7 @@ class QueueViewSpec extends ViewSpec {
 
       val doc = view(html.queue(queues, queue1, Map.empty, Paged.empty[Case], "LIABILITY_ORDER")(request = requestWithPermissions(Permission.CREATE_CASES), messages, appConfig))
 
-      doc should containHtml("<title>page.title.case.queues.queue1_name-liab cases - Manage applications for Binding Tariff Information rulings - GOV.UK</title>")
+      doc should containHtml("<title>page.title.case.queues.queue1_name-liab cases - Advance Tariff Rulings Case Manager - GOV.UK</title>")
     }
 
     "not render create liability button when user does not have permission" in {
