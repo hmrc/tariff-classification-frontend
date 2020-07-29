@@ -882,7 +882,7 @@ accessibility.howAccessible.p1.link = Web Content Accessibility Guidelines versi
 
 accessibility.reportingProblems.heading = Reporting accessibility problems with this service
 accessibility.reportingProblems.p1 = We are always looking to improve the accessibility of this service. If you find any problems that are not listed on this page or think we are not meeting accessibility requirements, report the
-accessibility.reportingProblems.p1.link = accessibility problem by emailing (insert email address @hmrc.gov.uk)
+accessibility.reportingProblems.p1.link = accessibility problem by emailing (opens in a new window or tab)
 accessibility.reportingProblems.p1.text=.
 
 accessibility.notHappyWithCompliance.heading = What to do if you are not happy with how we respond to your complaint
