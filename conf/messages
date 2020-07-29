@@ -862,7 +862,7 @@ accessibility.title = Accessibility statement - Manage tariff classifications - 
 accessibility.heading = Accessibility statement for Advance Tariff Rulings Case Manager
 accessibility.overview1 = This accessibility statement explains how accessible this service is, what to do if you have difficulty using it, and how to report accessibility problems with the service.
 accessibility.overview3 = This page only contains information about the Advance Tariff Rulings Case Manager service, available at
-accessibility.overview3.subdomainUrl = https://www.gov.uk/tax.service.gov.uk/manage-tariff-classifications.
+accessibility.overview3.subdomainUrl = www.tax.service.gov.uk/manage-tariff-classifications.
 
 accessibility.usingThisService.heading = Using this service
 accessibility.usingThisService.p1 = This service lets HMRC classification officers manage applications for Advance Tariff Ruling.
