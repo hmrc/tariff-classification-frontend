@@ -125,9 +125,9 @@
         @messages("case.v2.liability.c592.trader_address")
         </dt>
         <dd class="column-one-half" id="liability-trader-address">
-            <div>@c592ViewModel.traderContact.address.buildingAndStreet</div>
-            <div>@c592ViewModel.traderContact.address.townOrCity</div>
-            <div>@c592ViewModel.traderContact.address.county.getOrElse("")</div>
+            <div class="pre-wrap">@c592ViewModel.traderContact.address.buildingAndStreet</div>
+            <div class="pre-wrap">@c592ViewModel.traderContact.address.townOrCity</div>
+            <div class="pre-wrap">@c592ViewModel.traderContact.address.county.getOrElse("")</div>
             <div>@c592ViewModel.traderContact.address.postCode.getOrElse("")</div>
         </dd>
     </div>
