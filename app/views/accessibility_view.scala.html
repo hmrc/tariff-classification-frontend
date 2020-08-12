@@ -26,6 +26,8 @@
 
 <p class="govuk-body-l">@messages("accessibility.overview1")</p>
 
+<p>@messages("accessibility.overview2") <a id="govuk_accessibility_statement" target="_self" href="@appConfig.govukAccessibilityUrl">@messages("accessibility.overview2.link")</a> @messages("accessibility.overview2.text")</p>
+
 <p>@messages("accessibility.overview3") <a id="govuk_taxservice_subdomain" target="_self" href="@appConfig.subdomainUrl">@messages("accessibility.overview3.subdomainUrl")</a></p>
 
 @components.subheading(messages("accessibility.usingThisService.heading"))
@@ -37,28 +39,37 @@ messages("accessibility.usingThisService.bullet1"),
 messages("accessibility.usingThisService.bullet2"),
 messages("accessibility.usingThisService.bullet3"),
 messages("accessibility.usingThisService.bullet4"),
-messages("accessibility.usingThisService.bullet5")
+messages("accessibility.usingThisService.bullet5"),
+messages("accessibility.usingThisService.bullet6"),
 )
 <p>@messages("accessibility.usingThisService.p3")</p>
 
 <p><a id="abilityNet_url" target="_self" href="@appConfig.abilityNetUrl">@messages("accessibility.usingThisService.p4.link")</a>
     @messages("accessibility.usingThisService.p4.text")</p>
 
-@components.subheading(messages("accessibility.howAccessibleIsThisService.heading"))
-<p>@messages("accessibility.howAccessible.p1") <a id="webstandard_url" target="_self" href="@appConfig.webStandards">@messages("accessibility.howAccessible.p1.link")</a></p>
-
 @components.subheading(messages("accessibility.reportingProblems.heading"))
-<p>
-    @messages("accessibility.reportingProblems.p1")
-    <a id="email_link" target="_blank" href="@appConfig.reportEmail">@messages("accessibility.reportingProblems.p1.link")</a>@messages("accessibility.reportingProblems.p1.text")
+<p>@messages("accessibility.reportingProblems.p1")</p>
+
+<p>@messages("accessibility.reportingProblems.p2")
+   <a id="email_link" target="_blank" href="@appConfig.reportEmail">@messages("accessibility.reportingProblems.p2.link")</a>
 </p>
 
+
 @components.subheading(messages("accessibility.notHappyWithCompliance.heading"))
-<p>@messages("accessibility.notHappyWithCompliance.p1")
-    <a id="equality_advisory" target="_self" href="@appConfig.equalityadvisoryservice">@messages("accessibility.notHappyWithCompliance.p1.link")</a>
-    @messages("accessibility.notHappyWithCompliance.p1.text")
-    <a id="equality_commission" target="_self" href="@appConfig.equalityni">@messages("accessibility.notHappyWithCompliance.p1.link2")</a>
-    @messages("accessibility.notHappyWithCompliance.p1.text2")
+<p>@messages("accessibility.notHappyWithCompliance.p1")</p>
+
+<p>@messages("accessibility.notHappyWithCompliance.p2")
+    <a id="equality_advisory" target="_self" href="@appConfig.equalityadvisoryservice">@messages("accessibility.notHappyWithCompliance.p2.link")</a>
+    @messages("accessibility.notHappyWithCompliance.p2.text")
+    <a id="equality_commission" target="_self" href="@appConfig.equalityni">@messages("accessibility.notHappyWithCompliance.p2.link2")</a>
+    @messages("accessibility.notHappyWithCompliance.p2.text2")
+</p>
+
+@components.subheading(messages("accessibility.contactUs.heading"))
+<p>@messages("accessibility.contactUs.p1")</p>
+<p>@messages("accessibility.contactUs.p2")</p>
+<p>@messages("accessibility.contactUs.p3")
+    <a id="get_help" target="_self" href="@appConfig.extrasupport">@messages("accessibility.contactUs.p3.link")</a>
 </p>
 
 @components.subheading(messages("accessibility.technicalInformation.heading"))
@@ -68,6 +79,8 @@ messages("accessibility.usingThisService.bullet5")
 @components.subheading(messages("accessibility.howWeTested.heading"))
 <p>@messages("accessibility.howWeTested.p1")</p>
 <p>@messages("accessibility.howWeTested.p2")</p>
-<p>@messages("accessibility.howWeTested.p3")</p>
+<p>@messages("accessibility.howWeTested.p3")
+    <br />@messages("accessibility.howWeTested.p4")
+</p>
 </article>
 }
