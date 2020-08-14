@@ -31,26 +31,13 @@ import play.api.test.FakeRequest
 import play.api.{Application, Configuration, Environment}
 import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
 import uk.gov.hmrc.play.audit.http.HttpAuditing
-import uk.gov.hmrc.play.test.UnitSpec
+import utils.UnitSpec
+import play.api.test.Helpers
 
 trait SpecBase extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with BeforeAndAfterEach with BeforeAndAfterAll {
 
-  override lazy val fakeApplication: Application = GuiceApplicationBuilder()
-//    .disable[DataCacheConnector]
-//    .disable[ReactiveRepository[_, _]]
-//    .overrides(
-//      bind[DataRetrievalAction].toInstance(mock[DataRetrievalAction]),
-//      bind[IdentifierAction].toInstance(mock[IdentifierAction]),
-//      bind[DataCacheConnector].toInstance(mock[DataCacheConnector])
-//    )
+  override def fakeApplication(): Application = GuiceApplicationBuilder()
     .configure(
-      //trick ws client not to use a lot of connections
-//      "play.ws.ahc.maxConnectionsTotal" -> 10,
-//      "play.ws.ahc.maxConnectionsPerHost" -> 10,
-      //turn off useless akka logging
-//      "mongo-async-driver.akka.loglevel" -> "WARNING",
-//      "mongo-async-driver.akka.log-dead-letters-during-shutdown" -> "off",
-//      "mongo-async-driver.akka.log-dead-letters" -> "0",
       //turn off metrics
       "metrics.jvm" -> false,
       "metrics.enabled" -> false,
@@ -58,12 +45,12 @@ trait SpecBase extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with 
       "toggle.new-liability-details" -> true
     ).build()
 
-    lazy val appWithLiabilityToggleOff: Application = new GuiceApplicationBuilder()
-      .configure(
-        "metrics.jvm" -> false,
-        "metrics.enabled" -> false,
-        "toggle.new-liability-details" -> false
-      ).build()
+  lazy val appWithLiabilityToggleOff: Application = new GuiceApplicationBuilder()
+    .configure(
+      "metrics.jvm" -> false,
+      "metrics.enabled" -> false,
+      "toggle.new-liability-details" -> false
+    ).build()
 
   lazy val mcc: MessagesControllerComponents = cc
   lazy val realAppConfig: AppConfig = injector.instanceOf[AppConfig]
@@ -72,13 +59,11 @@ trait SpecBase extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with 
   lazy val realConfig: Configuration = injector.instanceOf[Configuration]
   lazy val realEnv: Environment = injector.instanceOf[Environment]
   lazy val realHttpAudit: HttpAuditing = injector.instanceOf[HttpAuditing]
-  lazy val appConfWithLiabilityToggleOff: AppConfig =
-//    mock[AppConfig]
-  appWithLiabilityToggleOff.injector.instanceOf[AppConfig]
+  lazy val appConfWithLiabilityToggleOff: AppConfig = appWithLiabilityToggleOff.injector.instanceOf[AppConfig]
   lazy val defaultPlayBodyParsers: BodyParsers.Default = injector.instanceOf[BodyParsers.Default]
-  val injector: Injector = fakeApplication.injector
+  lazy val injector: Injector = app.injector
 
-  val ws: WSClient = injector.instanceOf[WSClient]
+  lazy val ws: WSClient = injector.instanceOf[WSClient]
 
   def fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
 
@@ -90,29 +75,5 @@ trait SpecBase extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with 
   def tempFileCreator: TemporaryFileCreator = injector.instanceOf[TemporaryFileCreator]
   def messagesApi: MessagesApi = injector.instanceOf[MessagesApi]
 
-  override protected def beforeEach(): Unit = {
-    super.beforeEach()
-
-//    reset(
-//      appConfWithLiabilityToggleOff
-//    )
-//
-//    when(appConfWithLiabilityToggleOff.newLiabilityDetails).thenReturn(false)
-//    when(appConfWithLiabilityToggleOff.analyticsToken).thenReturn("g-token")
-//    when(appConfWithLiabilityToggleOff.analyticsHost).thenReturn("g-host")
-//    when(appConfWithLiabilityToggleOff.reportAProblemPartialUrl).thenReturn("part-url")
-//    when(appConfWithLiabilityToggleOff.reportAProblemNonJSUrl).thenReturn("part-js-url")
-  }
-
   implicit lazy val mat: Materializer = injector.instanceOf[Materializer]
-
-  override protected def afterAll(): Unit = {
-    super.afterAll()
-    try {
-      ws.close()
-    } finally {
-      Thread.sleep(1000)
-    }
-  }
-
 }

@@ -258,7 +258,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec {
 
     "return OK when user has correct permissions" in {
       val result: Result = await(controller(aCase, Set(Permission.REMOVE_ATTACHMENTS))
-        .removeAttachment(aCase.reference, "reference", "some-file.jpg")(newFakeGETRequestWithCSRF(fakeApplication)))
+        .removeAttachment(aCase.reference, "reference", "some-file.jpg")(newFakeGETRequestWithCSRF(app)))
 
       status(result) shouldBe Status.OK
       contentAsString(result) should include("Are you sure you want to remove some-file.jpg from this case?")
@@ -266,7 +266,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec {
 
     "redirect unauthorised when does not have correct permissions" in {
       val result: Result = await(controller(aCase, Set.empty)
-        .removeAttachment(aCase.reference, "reference", "some-file.jpg")(newFakeGETRequestWithCSRF(fakeApplication)))
+        .removeAttachment(aCase.reference, "reference", "some-file.jpg")(newFakeGETRequestWithCSRF(app)))
 
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
@@ -282,7 +282,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec {
 
       val result: Result = await(controller(aCase, Set(Permission.REMOVE_ATTACHMENTS))
         .confirmRemoveAttachment(aCase.reference, "fileId", "some-file.jpg")
-        (newFakePOSTRequestWithCSRF(fakeApplication)
+        (newFakePOSTRequestWithCSRF(app)
           .withFormUrlEncodedBody("state" -> "true")))
 
       redirectLocation(result) shouldBe Some("/manage-tariff-classifications/cases/1/attachments")
@@ -291,7 +291,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec {
     "redirect to attachments tab when user selects `no`" in {
       val result: Result = await(controller(aCase, Set(Permission.REMOVE_ATTACHMENTS))
         .confirmRemoveAttachment(aCase.reference, "reference", "some-file.jpg")
-        (newFakePOSTRequestWithCSRF(fakeApplication)
+        (newFakePOSTRequestWithCSRF(app)
           .withFormUrlEncodedBody("state" -> "false")))
 
       redirectLocation(result) shouldBe Some("/manage-tariff-classifications/cases/1/attachments")
@@ -302,7 +302,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec {
 
       val result: Result = await(controller(aCase, Set(Permission.REMOVE_ATTACHMENTS))
         .confirmRemoveAttachment(aCase.reference, "fileId", "some-file.jpg")
-        (newFakePOSTRequestWithCSRF(fakeApplication)))
+        (newFakePOSTRequestWithCSRF(app)))
 
       status(result) shouldBe Status.OK
       contentAsString(result) should include("Select yes if you want to remove the attachment")

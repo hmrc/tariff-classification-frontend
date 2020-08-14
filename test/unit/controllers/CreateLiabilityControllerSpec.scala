@@ -39,14 +39,14 @@ class CreateLiabilityControllerSpec extends ControllerBaseSpec {
 
   "GET" should {
     "redirect to unauthorised if not permitted" in {
-      val request = newFakeGETRequestWithCSRF(fakeApplication)
+      val request = newFakeGETRequestWithCSRF(app)
       val result = await(controller(Set.empty).get()(request))
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.SecurityController.unauthorized().url)
     }
 
     "return 200 OK and HTML content type" in {
-      val request = newFakeGETRequestWithCSRF(fakeApplication)
+      val request = newFakeGETRequestWithCSRF(app)
       val result = await(controller(Set(Permission.CREATE_CASES)).get()(request))
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -58,7 +58,7 @@ class CreateLiabilityControllerSpec extends ControllerBaseSpec {
 
   "POST" should {
     "redirect to unauthorised if not permitted" in {
-      val request = newFakePOSTRequestWithCSRF(fakeApplication)
+      val request = newFakePOSTRequestWithCSRF(app)
       val result = await(controller(Set.empty).post()(request))
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.SecurityController.unauthorized().url)
@@ -66,7 +66,7 @@ class CreateLiabilityControllerSpec extends ControllerBaseSpec {
 
     "render view with errors" when {
       "form is invalid" in {
-        val request = newFakePOSTRequestWithCSRF(fakeApplication)
+        val request = newFakePOSTRequestWithCSRF(app)
         val result = await(controller(Set(Permission.CREATE_CASES)).post()(request))
         lazy val form = LiabilityForm.newLiabilityForm.bindFromRequest()(request)
 
@@ -80,7 +80,7 @@ class CreateLiabilityControllerSpec extends ControllerBaseSpec {
     "redirect on success" in {
       given(casesService.createCase(any[LiabilityOrder])(any[HeaderCarrier]))
         .willReturn(successful(aCase(withReference("reference"))))
-      val request = newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody(
+      val request = newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody(
         "item-name" -> "item name",
         "trader-name" -> "Trader",
         "liability-status" -> "LIVE"

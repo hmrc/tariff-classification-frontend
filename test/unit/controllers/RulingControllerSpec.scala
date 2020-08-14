@@ -71,7 +71,7 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       "Case is a BTI" in {
         given(fileService.getAttachments(refEq(btiCaseWithStatusOPEN))(any[HeaderCarrier])).willReturn(Future.successful(Seq(attachment)))
 
-        val result = controller(btiCaseWithStatusOPEN).editRulingDetails("reference")(newFakeGETRequestWithCSRF(fakeApplication))
+        val result = controller(btiCaseWithStatusOPEN).editRulingDetails("reference")(newFakeGETRequestWithCSRF(app))
         status(result) shouldBe Status.OK
         contentType(result) shouldBe Some("text/html")
         charset(result) shouldBe Some("utf-8")
@@ -80,7 +80,7 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
       "Case is a Liability" in {
         given(commodityCodeConstraints.commodityCodeExistsInUKTradeTariff).willReturn(Constraint[String]("error")( _ =>  Valid))
-        val result = controller(liabilityCaseWithStatusOPEN).editRulingDetails("reference")(newFakeGETRequestWithCSRF(fakeApplication))
+        val result = controller(liabilityCaseWithStatusOPEN).editRulingDetails("reference")(newFakeGETRequestWithCSRF(app))
         status(result) shouldBe Status.OK
         contentType(result) shouldBe Some("text/html")
         charset(result) shouldBe Some("utf-8")
@@ -89,7 +89,7 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
       "Case is an Liability under V2 toggle with correct permissions" in {
         given(commodityCodeConstraints.commodityCodeExistsInUKTradeTariff).willReturn(Constraint[String]("error")( _ =>  Valid))
-        val result = controller(liabilityCaseWithStatusOPEN, permission = Set(Permission.EDIT_RULING), appConf = appConfWithLiabilityToggleOff).editRulingDetails("reference")(newFakeGETRequestWithCSRF(fakeApplication))
+        val result = controller(liabilityCaseWithStatusOPEN, permission = Set(Permission.EDIT_RULING), appConf = appConfWithLiabilityToggleOff).editRulingDetails("reference")(newFakeGETRequestWithCSRF(app))
         status(result) shouldBe Status.OK
         contentAsString(result) shouldNot (include("edit_liability_decision-heading"))
         contentAsString(result) should (include("case-heading"))
@@ -97,7 +97,7 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
       "Case is an Liability under V2 toggle with incorrect permissions" in {
         given(commodityCodeConstraints.commodityCodeExistsInUKTradeTariff).willReturn(Constraint[String]("error")( _ =>  Valid))
-        val result = controller(liabilityCaseWithStatusOPEN, permission = Set.empty[Permission], appConf = appConfWithLiabilityToggleOff).editRulingDetails("reference")(newFakeGETRequestWithCSRF(fakeApplication))
+        val result = controller(liabilityCaseWithStatusOPEN, permission = Set.empty[Permission], appConf = appConfWithLiabilityToggleOff).editRulingDetails("reference")(newFakeGETRequestWithCSRF(app))
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result).get should include("unauthorized")
       }
@@ -107,14 +107,14 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       given(fileService.getAttachments(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(Seq(attachment)))
 
       val result = controller(btiCaseWithStatusOPEN, Set(Permission.EDIT_RULING))
-        .editRulingDetails("reference")(newFakeGETRequestWithCSRF(fakeApplication))
+        .editRulingDetails("reference")(newFakeGETRequestWithCSRF(app))
 
       status(result) shouldBe Status.OK
     }
 
     "redirect unauthorised when does not have right permissions" in {
       val result = controller(btiCaseWithStatusOPEN, Set.empty)
-        .editRulingDetails("reference")(newFakeGETRequestWithCSRF(fakeApplication))
+        .editRulingDetails("reference")(newFakeGETRequestWithCSRF(app))
 
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
@@ -130,14 +130,14 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       given(fileService.getAttachments(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(Seq(attachment)))
 
       val result = controller(btiCaseWithStatusOpenWithDecision, Set(Permission.EDIT_RULING))
-        .validateBeforeComplete("reference")(newFakeGETRequestWithCSRF(fakeApplication))
+        .validateBeforeComplete("reference")(newFakeGETRequestWithCSRF(app))
 
       status(result) shouldBe Status.OK
     }
 
     "redirect to confirm complete case" in {
       val result = controller(liabilityCaseWithStatusOpenWithDecision, Set(Permission.EDIT_RULING))
-        .validateBeforeComplete("reference")(newFakeGETRequestWithCSRF(fakeApplication))
+        .validateBeforeComplete("reference")(newFakeGETRequestWithCSRF(app))
 
       status(result) shouldBe Status.SEE_OTHER
 
@@ -152,7 +152,7 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
     val updatedCase = aCase(withReference("reference"), withStatus(CaseStatus.OPEN))
     val attachment = storedAttachment
 
-    val aValidForm = newFakePOSTRequestWithCSRF(fakeApplication, Map(
+    val aValidForm = newFakePOSTRequestWithCSRF(app, Map(
       "bindingCommodityCode" -> "",
       "goodsDescription" -> "",
       "methodSearch" -> "",
@@ -189,7 +189,7 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       "case is a BTI" in {
         given(fileService.getAttachments(refEq(caseWithStatusOPEN))(any[HeaderCarrier])).willReturn(Future.successful(Seq(attachment)))
 
-        val result = controller(caseWithStatusOPEN).updateRulingDetails("reference")(newFakePOSTRequestWithCSRF(fakeApplication))
+        val result = controller(caseWithStatusOPEN).updateRulingDetails("reference")(newFakePOSTRequestWithCSRF(app))
         verify(casesService, never()).updateCase(any[Case])(any[HeaderCarrier])
         status(result) shouldBe Status.OK
         contentType(result) shouldBe Some("text/html")
@@ -200,7 +200,7 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
       "case is a Liability" in {
         given(commodityCodeConstraints.commodityCodeExistsInUKTradeTariff).willReturn(Constraint[String]("error")( _ =>  Valid))
-        val result = controller(liabilityCaseWithStatusOPEN).updateRulingDetails("reference")(newFakePOSTRequestWithCSRF(fakeApplication))
+        val result = controller(liabilityCaseWithStatusOPEN).updateRulingDetails("reference")(newFakePOSTRequestWithCSRF(app))
         verify(casesService, never()).updateCase(any[Case])(any[HeaderCarrier])
         status(result) shouldBe Status.OK
         contentType(result) shouldBe Some("text/html")

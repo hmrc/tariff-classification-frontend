@@ -384,14 +384,14 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
       givenACaseWithNoAttachmentsAndNoLetterOfAuthority(aCase.reference, aCase)
 
       val result: Result = await(controller(aCase, Set(Permission.REMOVE_ATTACHMENTS))
-        .removeAttachment(aCase.reference, "reference", "some-file.jpg")(newFakeGETRequestWithCSRF(fakeApplication)))
+        .removeAttachment(aCase.reference, "reference", "some-file.jpg")(newFakeGETRequestWithCSRF(app)))
 
       status(result) shouldBe Status.OK
     }
 
     "redirect unauthorised when does not have correct permissions" in {
       val result: Result = await(controller(aCase, Set.empty)
-        .removeAttachment(aCase.reference, "reference", "some-file.jpg")(newFakeGETRequestWithCSRF(fakeApplication)))
+        .removeAttachment(aCase.reference, "reference", "some-file.jpg")(newFakeGETRequestWithCSRF(app)))
 
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
@@ -407,7 +407,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
 
       val result: Result = await(controller(aCase, Set(Permission.REMOVE_ATTACHMENTS))
         .confirmRemoveAttachment(aCase.reference, "fileId", "some-file.jpg")
-        (newFakePOSTRequestWithCSRF(fakeApplication)
+        (newFakePOSTRequestWithCSRF(app)
           .withFormUrlEncodedBody("state" -> "true")))
 
       redirectLocation(result) shouldBe Some("/manage-tariff-classifications/cases/v2/1/liability#attachments_tab")
@@ -416,7 +416,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
     "redirect to attachments tab when user selects `no`" in {
       val result: Result = await(controller(aCase, Set(Permission.REMOVE_ATTACHMENTS))
         .confirmRemoveAttachment(aCase.reference, "reference", "some-file.jpg")
-        (newFakePOSTRequestWithCSRF(fakeApplication)
+        (newFakePOSTRequestWithCSRF(app)
           .withFormUrlEncodedBody("state" -> "false")))
 
       redirectLocation(result) shouldBe Some("/manage-tariff-classifications/cases/v2/1/liability#attachments_tab")
@@ -428,7 +428,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
 
       val result: Result = await(controller(aCase, Set(Permission.REMOVE_ATTACHMENTS))
         .confirmRemoveAttachment(aCase.reference, "fileId", "some-file.jpg")
-        (newFakePOSTRequestWithCSRF(fakeApplication)))
+        (newFakePOSTRequestWithCSRF(app)))
 
       status(result) shouldBe Status.OK
       verify(remove_attachment, times(1)).apply(

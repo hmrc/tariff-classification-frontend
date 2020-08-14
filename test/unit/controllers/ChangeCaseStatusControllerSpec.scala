@@ -24,6 +24,7 @@ import play.api.http.Status
 import play.api.test.Helpers._
 import service.CasesService
 import utils.Cases
+import play.api.mvc.request.RequestTarget
 
 class ChangeCaseStatusControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
@@ -43,7 +44,7 @@ class ChangeCaseStatusControllerSpec extends ControllerBaseSpec with BeforeAndAf
   "ChangeCaseStatusControllerSpec" should {
 
     "return OK with correct HTML" in {
-      val result = await(controller(caseWithStatusOPEN).onPageLoad("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+      val result = await(controller(caseWithStatusOPEN).onPageLoad("reference")(newFakeGETRequestWithCSRF(app)))
 
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -51,7 +52,7 @@ class ChangeCaseStatusControllerSpec extends ControllerBaseSpec with BeforeAndAf
     }
 
     "return OK when the user has the right permissions" in {
-      val result = await(controller(caseWithStatusOPEN, Set(Permission.EDIT_RULING)).onPageLoad("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+      val result = await(controller(caseWithStatusOPEN, Set(Permission.EDIT_RULING)).onPageLoad("reference")(newFakeGETRequestWithCSRF(app)))
 
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -60,7 +61,7 @@ class ChangeCaseStatusControllerSpec extends ControllerBaseSpec with BeforeAndAf
     }
 
     "return unauthorised when user does not have the necessary permissions" in {
-      val result = await(controller(caseWithStatusOPEN, Set(Permission.VIEW_ASSIGNED_CASES)).onPageLoad("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+      val result = await(controller(caseWithStatusOPEN, Set(Permission.VIEW_ASSIGNED_CASES)).onPageLoad("reference")(newFakeGETRequestWithCSRF(app)))
 
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
@@ -70,7 +71,7 @@ class ChangeCaseStatusControllerSpec extends ControllerBaseSpec with BeforeAndAf
       val result = await(
         controller(caseWithStatusOPEN, Set(Permission.EDIT_RULING))
           .onSubmit("reference")(
-            newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("caseStatus" -> CaseStatusRadioInput.Complete.toString)))
+            newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("caseStatus" -> CaseStatusRadioInput.Complete.toString)))
 
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result).get shouldBe CompleteCaseController.completeCase("reference").url
@@ -80,7 +81,7 @@ class ChangeCaseStatusControllerSpec extends ControllerBaseSpec with BeforeAndAf
       val result = await(
         controller(caseWithStatusOPEN, Set(Permission.EDIT_RULING))
           .onSubmit("reference")(
-            newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("caseStatus" -> CaseStatusRadioInput.Refer.toString)))
+            newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("caseStatus" -> CaseStatusRadioInput.Refer.toString)))
 
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result).get shouldBe ReferCaseController.getReferCase("reference").url
@@ -90,7 +91,7 @@ class ChangeCaseStatusControllerSpec extends ControllerBaseSpec with BeforeAndAf
       val result = await(
         controller(caseWithStatusOPEN, Set(Permission.EDIT_RULING))
           .onSubmit("reference")(
-            newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("caseStatus" -> CaseStatusRadioInput.Reject.toString)))
+            newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("caseStatus" -> CaseStatusRadioInput.Reject.toString)))
 
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result).get shouldBe RejectCaseController.getRejectCase("reference").url
@@ -100,7 +101,7 @@ class ChangeCaseStatusControllerSpec extends ControllerBaseSpec with BeforeAndAf
       val result = await(
         controller(caseWithStatusOPEN, Set(Permission.EDIT_RULING))
           .onSubmit("reference")(
-            newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("caseStatus" -> CaseStatusRadioInput.Suspend.toString)))
+            newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("caseStatus" -> CaseStatusRadioInput.Suspend.toString)))
 
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result).get shouldBe SuspendCaseController.getSuspendCase("reference").url
@@ -111,7 +112,7 @@ class ChangeCaseStatusControllerSpec extends ControllerBaseSpec with BeforeAndAf
 
       val result = await(
         controller(caseWithStatusOPEN, Set(Permission.EDIT_RULING))
-          .onSubmit("reference")(newFakePOSTRequestWithCSRF(fakeApplication).copyFakeRequest(uri = "origin")
+          .onSubmit("reference")(newFakePOSTRequestWithCSRF(app).withTarget(RequestTarget("origin", "", Map.empty))
             .withFormUrlEncodedBody("caseStatus" -> CaseStatusRadioInput.MoveBackToQueue.toString)))
 
       status(result) shouldBe Status.SEE_OTHER
@@ -122,7 +123,7 @@ class ChangeCaseStatusControllerSpec extends ControllerBaseSpec with BeforeAndAf
       val result =
         controller(caseWithStatusOPEN, Set(Permission.EDIT_RULING))
           .onSubmit("reference")(
-            newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("caseStatus" -> ""))
+            newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("caseStatus" -> ""))
 
       contentAsString(result) should include("Select a case status")
     }

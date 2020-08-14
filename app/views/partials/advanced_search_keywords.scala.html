@@ -59,7 +59,7 @@
             </button>
         </div>
 
-    @defining(RepeatedMapping.indexes("keyword", form.data).map(idx => (idx, form.data(s"keyword[$idx]"))).filterNot(_._1 == 0)) { keywords: Seq[(Int, String)] =>
+    @defining(RepeatedMapping.indexes("keyword", form.data).map(idx => (idx, form.data(s"keyword[$idx]"))).filterNot(_._1 == 0)) { keywords =>
         @if(keywords.nonEmpty) {
             <table id="advanced_search_keywords-table" class="mb-30">
                 <tbody id="advanced_search_keywords-table-table_body">

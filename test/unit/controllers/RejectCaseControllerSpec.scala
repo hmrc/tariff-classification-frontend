@@ -86,7 +86,7 @@ class RejectCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
 
     "return OK and HTML content type" in {
 
-      val result: Result = await(controller(caseWithStatusOPEN).getRejectCase("reference", None)(newFakeGETRequestWithCSRF(fakeApplication)))
+      val result: Result = await(controller(caseWithStatusOPEN).getRejectCase("reference", None)(newFakeGETRequestWithCSRF(app)))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -96,14 +96,14 @@ class RejectCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
 
     "return OK when user has right permissions" in {
       val result: Result = await(controller(caseWithStatusOPEN, Set(Permission.REJECT_CASE))
-        .getRejectCase("reference", None)(newFakeGETRequestWithCSRF(fakeApplication)))
+        .getRejectCase("reference", None)(newFakeGETRequestWithCSRF(app)))
 
       status(result) shouldBe Status.OK
     }
 
     "redirect unauthorised when does not have right permissions" in {
       val result: Result = await(controller(caseWithStatusNEW, Set.empty)
-        .getRejectCase("reference", None)(newFakeGETRequestWithCSRF(fakeApplication)))
+        .getRejectCase("reference", None)(newFakeGETRequestWithCSRF(app)))
 
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
@@ -116,7 +116,7 @@ class RejectCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
       when(casesService.rejectCase(refEq(caseWithStatusOPEN), any[FileUpload], any[String], any[Operator])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREJECTED))
 
       val result: Result = await(controller(caseWithStatusOPEN).postRejectCase("reference", None)
-      (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileWithParams("note" -> Seq("some-note")))))
+      (newFakePOSTRequestWithCSRF(app).withBody(aMultipartFileWithParams("note" -> Seq("some-note")))))
 
       status(result) shouldBe Status.SEE_OTHER
       locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/reference/reject/confirmation")
@@ -124,7 +124,7 @@ class RejectCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
 
     "return to form on missing file" in {
       val result: Result = await(controller(caseWithStatusOPEN).postRejectCase("reference", None)
-      (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aEmptyMultipartFileWithParams())))
+      (newFakePOSTRequestWithCSRF(app).withBody(aEmptyMultipartFileWithParams())))
 
       status(result) shouldBe Status.OK
       bodyOf(result) should include("Change case status to: Rejected")
@@ -132,7 +132,7 @@ class RejectCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
 
     "return to form on wrong type of file" in {
       val result: Result = await(controller(caseWithStatusOPEN).postRejectCase("reference", None)
-      (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileOfType("audio/mpeg"))))
+      (newFakePOSTRequestWithCSRF(app).withBody(aMultipartFileOfType("audio/mpeg"))))
 
       status(result) shouldBe Status.OK
       bodyOf(result) should include("Change case status to: Rejected")
@@ -140,7 +140,7 @@ class RejectCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
 
     "return to form on file size too large" in {
       val result: Result = await(controller(caseWithStatusOPEN).postRejectCase("reference", None)
-      (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileOfLargeSize)))
+      (newFakePOSTRequestWithCSRF(app).withBody(aMultipartFileOfLargeSize)))
 
       status(result) shouldBe Status.OK
       bodyOf(result) should include("Change case status to: Rejected")
@@ -148,7 +148,7 @@ class RejectCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
 
     "return to form on missing form field" in {
       val result: Result = await(controller(caseWithStatusOPEN).postRejectCase("reference", None)
-      (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileWithParams())))
+      (newFakePOSTRequestWithCSRF(app).withBody(aMultipartFileWithParams())))
 
       status(result) shouldBe Status.OK
       bodyOf(result) should include("Change case status to: Rejected")
@@ -156,7 +156,7 @@ class RejectCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
 
     "redirect unauthorised when does not have right permissions" in {
       val result: Result = await(controller(caseWithStatusOPEN, Set.empty).postRejectCase("reference", None)
-      (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileWithParams("note" -> Seq("some-note")))))
+      (newFakePOSTRequestWithCSRF(app).withBody(aMultipartFileWithParams("note" -> Seq("some-note")))))
 
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
@@ -167,7 +167,7 @@ class RejectCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
 
     "return OK and HTML content type" in {
       val result: Result = await(controller(caseWithStatusREJECTED).confirmRejectCase("reference")
-      (newFakePOSTRequestWithCSRF(fakeApplication)
+      (newFakePOSTRequestWithCSRF(app)
         .withFormUrlEncodedBody("state" -> "true")))
 
       status(result) shouldBe Status.OK

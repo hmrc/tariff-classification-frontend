@@ -131,7 +131,7 @@ object EnumJson {
   def readsMap[E, B](implicit erds: Reads[E], brds: Reads[B]): JsValue => JsResult[Map[E, B]] = (js: JsValue) => {
     val maprds: Reads[Map[String, B]] = Reads.mapReads[B]
     Json.fromJson[Map[String, B]](js)(maprds).map(_.map {
-      case (key: String, value: B) => erds.reads(JsString(key)).get -> value
+      case (key, value) => erds.reads(JsString(key)).get -> value
     })
   }
 

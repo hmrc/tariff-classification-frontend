@@ -22,7 +22,7 @@ import javax.inject.Inject
 import models.{CaseStatusRadioInput, Permission}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import service.CasesService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.change_case_status
 
 import scala.concurrent.Future.successful

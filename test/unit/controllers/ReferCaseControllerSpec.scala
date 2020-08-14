@@ -85,7 +85,7 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
   "Refer Case" should {
 
     "return OK and HTML content type" in {
-      val result: Result = await(controller(caseWithStatusOPEN).getReferCase("reference", None)(newFakeGETRequestWithCSRF(fakeApplication)))
+      val result: Result = await(controller(caseWithStatusOPEN).getReferCase("reference", None)(newFakeGETRequestWithCSRF(app)))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -95,13 +95,13 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
     "return OK when user has right permissions" in {
       val result: Result = await(controller(caseWithStatusOPEN, Set(Permission.REFER_CASE))
-        .getReferCase("reference", None)(newFakeGETRequestWithCSRF(fakeApplication)))
+        .getReferCase("reference", None)(newFakeGETRequestWithCSRF(app)))
 
       status(result) shouldBe Status.OK
     }
 
     "redirect unauthorised when does not have right permissions" in {
-      val result: Result = await(controller(caseWithStatusNEW, Set.empty).getReferCase("reference", None)(newFakeGETRequestWithCSRF(fakeApplication)))
+      val result: Result = await(controller(caseWithStatusNEW, Set.empty).getReferCase("reference", None)(newFakeGETRequestWithCSRF(app)))
 
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
@@ -115,7 +115,7 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       when(casesService.referCase(refEq(caseWithStatusOPEN),any[String],any[Seq[ReferralReason]],any[FileUpload],
         any[String], any[Operator])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREFERRED))
 
-      val result: Result = await(controller(caseWithStatusOPEN).postReferCase("reference", None)(newFakePOSTRequestWithCSRF(fakeApplication)
+      val result: Result = await(controller(caseWithStatusOPEN).postReferCase("reference", None)(newFakePOSTRequestWithCSRF(app)
         .withBody(aMultipartFileWithParams("referredTo" -> Seq("Applicant"), "reasons[0]" -> Seq(ReferralReason.REQUEST_SAMPLE.toString), "note" -> Seq("some-note")))))
 
       status(result) shouldBe Status.SEE_OTHER
@@ -126,7 +126,7 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       when(casesService.referCase(refEq(caseWithStatusOPEN), any[String],any[Seq[ReferralReason]],any[FileUpload],
         any[String], any[Operator])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREFERRED))
 
-      val result: Result = await(controller(caseWithStatusOPEN).postReferCase("reference", None)(newFakePOSTRequestWithCSRF(fakeApplication)
+      val result: Result = await(controller(caseWithStatusOPEN).postReferCase("reference", None)(newFakePOSTRequestWithCSRF(app)
         .withBody(aMultipartFileWithParams("note" -> Seq("some-note")))))
 
       status(result) shouldBe Status.OK
@@ -139,7 +139,7 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       when(casesService.referCase(refEq(caseWithStatusOPEN), any[String],any[Seq[ReferralReason]],any[FileUpload],
         any[String], refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREFERRED))
 
-      val result: Result = await(controller(caseWithStatusOPEN).postReferCase("reference", None)(newFakePOSTRequestWithCSRF(fakeApplication)
+      val result: Result = await(controller(caseWithStatusOPEN).postReferCase("reference", None)(newFakePOSTRequestWithCSRF(app)
         .withBody(aMultipartFileWithParams("referredTo" -> Seq("Applicant"), "note" -> Seq("some-note")))))
 
       status(result) shouldBe Status.OK
@@ -152,7 +152,7 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       when(casesService.referCase(refEq(caseWithStatusOPEN), any[String],any[Seq[ReferralReason]],any[FileUpload],
         any[String], refEq(operator))(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREFERRED))
 
-      val result: Result = await(controller(caseWithStatusOPEN).postReferCase("reference", None)(newFakePOSTRequestWithCSRF(fakeApplication)
+      val result: Result = await(controller(caseWithStatusOPEN).postReferCase("reference", None)(newFakePOSTRequestWithCSRF(app)
         .withBody(aMultipartFileWithParams("referredTo" -> Seq("Other"), "note" -> Seq("some-note")))))
 
       status(result) shouldBe Status.OK
@@ -166,7 +166,7 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       when(casesService.referCase(refEq(caseWithStatusOPEN), any[String],captor.capture(),any[FileUpload],
         any[String], any[Operator])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREFERRED))
 
-      val result: Result = await(controller(caseWithStatusOPEN).postReferCase("reference", None)(newFakePOSTRequestWithCSRF(fakeApplication)
+      val result: Result = await(controller(caseWithStatusOPEN).postReferCase("reference", None)(newFakePOSTRequestWithCSRF(app)
         .withBody(aMultipartFileWithParams("referredTo" -> Seq("Lab Analyst"), "reasons[0]" -> Seq(ReferralReason.REQUEST_SAMPLE.toString),
           "reasons[1]" -> Seq(ReferralReason.REQUEST_MORE_INFO.toString), "note" -> Seq("some-note")))))
 
@@ -178,7 +178,7 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       when(casesService.referCase(refEq(caseWithStatusOPEN), any[String],any[Seq[ReferralReason]],any[FileUpload],
         any[String], any[Operator])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREFERRED))
 
-      val result: Result = await(controller(caseWithStatusOPEN).postReferCase("reference", None)(newFakePOSTRequestWithCSRF(fakeApplication)
+      val result: Result = await(controller(caseWithStatusOPEN).postReferCase("reference", None)(newFakePOSTRequestWithCSRF(app)
         .withBody(aMultipartFileWithParams("referredTo" -> Seq("LAB")))))
 
       status(result) shouldBe Status.OK
@@ -189,7 +189,7 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
     "return to form on missing file" in {
       val result: Result = await(controller(caseWithStatusOPEN).postReferCase("reference", None)
-      (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aEmptyMultipartFileWithParams())))
+      (newFakePOSTRequestWithCSRF(app).withBody(aEmptyMultipartFileWithParams())))
 
       status(result) shouldBe Status.OK
       bodyOf(result) should include("Change case status to: Referred")
@@ -197,7 +197,7 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
     "return to form on wrong type of file" in {
       val result: Result = await(controller(caseWithStatusOPEN).postReferCase("reference", None)
-      (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileOfType("audio/mpeg"))))
+      (newFakePOSTRequestWithCSRF(app).withBody(aMultipartFileOfType("audio/mpeg"))))
 
       status(result) shouldBe Status.OK
       bodyOf(result) should include("Change case status to: Referred")
@@ -205,7 +205,7 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
     "return to form on file size too large" in {
       val result: Result = await(controller(caseWithStatusOPEN).postReferCase("reference", None)
-      (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileOfLargeSize)))
+      (newFakePOSTRequestWithCSRF(app).withBody(aMultipartFileOfLargeSize)))
 
       status(result) shouldBe Status.OK
       bodyOf(result) should include("Change case status to: Referred")
@@ -213,7 +213,7 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
     "redirect unauthorised when does not have right permissions" in {
       val result: Result = await(controller(caseWithStatusNEW, Set.empty)
-        .postReferCase("reference", None)(newFakePOSTRequestWithCSRF(fakeApplication)
+        .postReferCase("reference", None)(newFakePOSTRequestWithCSRF(app)
           .withBody(aMultipartFileWithParams("referredTo" -> Seq("APPLICANT"), "reason" -> Seq(ReferralReason.REQUEST_SAMPLE.toString), "note" -> Seq("some-note")))))
 
       status(result) shouldBe Status.SEE_OTHER
@@ -229,7 +229,7 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
         any[String], any[Operator])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusREFERRED))
 
       val result: Result = await(controller(caseWithStatusREFERRED).confirmReferCase("reference")
-      (newFakePOSTRequestWithCSRF(fakeApplication)
+      (newFakePOSTRequestWithCSRF(app)
         .withFormUrlEncodedBody("state" -> "true")))
 
       status(result) shouldBe Status.OK
