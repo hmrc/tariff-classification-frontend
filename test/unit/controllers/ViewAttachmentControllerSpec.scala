@@ -59,7 +59,7 @@ class ViewAttachmentControllerSpec extends ControllerBaseSpec with BeforeAndAfte
     "return 303 and redirect for safe file found" in {
       givenFileMetadata(Some(fileReady))
 
-      val result = await(controller().get("id")(newFakeGETRequestWithCSRF(fakeApplication)))
+      val result = await(controller().get("id")(newFakeGETRequestWithCSRF(app)))
 
       status(result) shouldBe Status.SEE_OTHER
       locationOf(result) shouldBe Some("url")
@@ -68,7 +68,7 @@ class ViewAttachmentControllerSpec extends ControllerBaseSpec with BeforeAndAfte
     "return 200 for file processing" in {
       givenFileMetadata(Some(fileProcessing))
 
-      val result = await(controller().get("id")(newFakeGETRequestWithCSRF(fakeApplication)))
+      val result = await(controller().get("id")(newFakeGETRequestWithCSRF(app)))
 
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -79,7 +79,7 @@ class ViewAttachmentControllerSpec extends ControllerBaseSpec with BeforeAndAfte
     "return 200 for un-safe file found" in {
       givenFileMetadata(Some(fileFailed))
 
-      val result = await(controller().get("id")(newFakeGETRequestWithCSRF(fakeApplication)))
+      val result = await(controller().get("id")(newFakeGETRequestWithCSRF(app)))
 
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -91,14 +91,14 @@ class ViewAttachmentControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       givenFileMetadata(Some(fileProcessing))
 
       val result: Result = await(controller(Set(Permission.VIEW_CASES))
-        .get("id")(newFakeGETRequestWithCSRF(fakeApplication)))
+        .get("id")(newFakeGETRequestWithCSRF(app)))
 
       status(result) shouldBe Status.OK
     }
 
     "redirect unauthorised when does not have right permissions" in {
       val result: Result = await(controller(Set.empty)
-        .get("id")(newFakeGETRequestWithCSRF(fakeApplication)))
+        .get("id")(newFakeGETRequestWithCSRF(app)))
 
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")

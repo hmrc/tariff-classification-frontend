@@ -19,7 +19,7 @@ package controllers
 import javax.inject.{Inject, Singleton}
 import play.api.i18n.MessagesApi
 import play.api.mvc._
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import config.AppConfig
 import models.request.AuthenticatedCaseRequest
 import models.{ApplicationType, Permission}

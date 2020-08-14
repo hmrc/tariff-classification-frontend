@@ -98,7 +98,7 @@ class PdfDownloadControllerSpec extends ControllerBaseSpec {
     "error when case not found" in {
       givenNotFoundCase()
 
-      val result = await(controller.applicationPdf(caseWithDecision.reference)(newFakeGETRequestWithCSRF(fakeApplication)))
+      val result = await(controller.applicationPdf(caseWithDecision.reference)(newFakeGETRequestWithCSRF(app)))
 
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -148,7 +148,7 @@ class PdfDownloadControllerSpec extends ControllerBaseSpec {
     "error when case not found" in {
       givenNotFoundCase()
 
-      val result = await(controller.getRulingPdf(caseWithDecision.reference)(newFakeGETRequestWithCSRF(fakeApplication)))
+      val result = await(controller.getRulingPdf(caseWithDecision.reference)(newFakeGETRequestWithCSRF(app)))
 
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")

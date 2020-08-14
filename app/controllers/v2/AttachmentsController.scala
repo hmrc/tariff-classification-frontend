@@ -30,7 +30,7 @@ import play.api.libs.Files.TemporaryFile
 import play.api.mvc._
 import service.{CasesService, FileStoreService}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future

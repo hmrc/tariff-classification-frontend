@@ -50,7 +50,7 @@ class AssignCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
   "Assign Case" should {
 
     "redirect to unauthorised if no permissions" in {
-      val result = await(controller(aCase(), Set.empty).get("")(newFakeGETRequestWithCSRF(fakeApplication)))
+      val result = await(controller(aCase(), Set.empty).get("")(newFakeGETRequestWithCSRF(app)))
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.SecurityController.unauthorized().url)
     }
@@ -58,7 +58,7 @@ class AssignCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
     "return OK and HTML content type when user has right permissions" in {
       val aCaseWithQueue = aCase(withQueue("1"))
 
-      val result: Result = await(controller(aCaseWithQueue, Set(Permission.ASSIGN_CASE)).get("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+      val result: Result = await(controller(aCaseWithQueue, Set(Permission.ASSIGN_CASE)).get("reference")(newFakeGETRequestWithCSRF(app)))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -69,7 +69,7 @@ class AssignCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
     "redirect to Case Index for cases assigned to self" in {
       val aCaseAssignedToSelf = aCase(withQueue("1"), withAssignee(Some(operator)))
 
-      val result: Result = await(controller(aCaseAssignedToSelf).get("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+      val result: Result = await(controller(aCaseAssignedToSelf).get("reference")(newFakeGETRequestWithCSRF(app)))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
@@ -82,7 +82,7 @@ class AssignCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
   "Confirm Assign Case" should {
 
     "redirect to unauthorised if no permissions" in {
-      val result = await(controller(aCase(), Set.empty).post("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
+      val result = await(controller(aCase(), Set.empty).post("reference")(newFakePOSTRequestWithCSRF(app)))
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.SecurityController.unauthorized().url)
     }
@@ -91,7 +91,7 @@ class AssignCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
       val aCaseWithQueue = aCase(withQueue("1"))
       when(casesService.assignCase(any[Case], any[Operator])(any[HeaderCarrier])).thenReturn(successful(aCaseWithQueue))
 
-      val result: Result = await(controller(aCaseWithQueue, Set(Permission.ASSIGN_CASE)).post("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
+      val result: Result = await(controller(aCaseWithQueue, Set(Permission.ASSIGN_CASE)).post("reference")(newFakePOSTRequestWithCSRF(app)))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
@@ -102,7 +102,7 @@ class AssignCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
     "redirect to Case Index for cases assigned to self" in {
       val aCaseAssignedToSelf = aCase(withQueue("1"), withAssignee(Some(operator)))
 
-      val result: Result = await(controller(aCaseAssignedToSelf).post("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
+      val result: Result = await(controller(aCaseAssignedToSelf).post("reference")(newFakePOSTRequestWithCSRF(app)))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
@@ -113,7 +113,7 @@ class AssignCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
     "redirect to Assign for cases already assigned" in {
       val aCaseAssignedToSelf = aCase(withQueue("1"), withAssignee(Some(Operator("other-id"))))
 
-      val result: Result = await(controller(aCaseAssignedToSelf).post("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
+      val result: Result = await(controller(aCaseAssignedToSelf).post("reference")(newFakePOSTRequestWithCSRF(app)))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None

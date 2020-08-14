@@ -29,7 +29,7 @@ import play.api.mvc._
 import play.twirl.api.Html
 import service.{CasesService, FileStoreService}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.CaseDetailPage
 import views.CaseDetailPage.CaseDetailPage
 

@@ -7,8 +7,7 @@ import play.api.i18n.{Lang, Messages, MessagesApi}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.ws.WSClient
 import play.api.test.Helpers.{OK, UNAUTHORIZED}
-import uk.gov.hmrc.play.test.UnitSpec
-import utils.{ResourceFiles, WiremockTestServer}
+import utils.{ResourceFiles, UnitSpec, WiremockTestServer}
 
 trait IntegrationTest extends UnitSpec with GuiceOneServerPerSuite
   with ResourceFiles with WiremockTestServer {

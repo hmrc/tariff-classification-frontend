@@ -82,7 +82,7 @@ class SampleControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
     "return 200 OK and HTML content type - For Case" in {
       val c = aCase(withStatus(CaseStatus.OPEN), withDecision())
 
-      val result = await(controller(c).chooseStatus("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+      val result = await(controller(c).chooseStatus("reference")(newFakeGETRequestWithCSRF(app)))
 
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -93,7 +93,7 @@ class SampleControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
     "return OK when user has right permissions" in {
       val c = aCase(withStatus(CaseStatus.COMPLETED), withDecision())
 
-      val result = await(controller(c, Set(Permission.EDIT_SAMPLE)).chooseStatus("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+      val result = await(controller(c, Set(Permission.EDIT_SAMPLE)).chooseStatus("reference")(newFakeGETRequestWithCSRF(app)))
 
       status(result) shouldBe Status.OK
     }
@@ -101,7 +101,7 @@ class SampleControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
     "redirect unauthorised when does not have right permissions" in {
       val c = aCase(withStatus(CaseStatus.COMPLETED), withDecision())
 
-      val result = await(controller(c, Set.empty).chooseStatus("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+      val result = await(controller(c, Set.empty).chooseStatus("reference")(newFakeGETRequestWithCSRF(app)))
 
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
@@ -115,7 +115,7 @@ class SampleControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
       given(casesService.updateSampleStatus(refEq(c), any[Option[SampleStatus]], any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(c))
 
-      val result = await(controller(c).updateStatus("reference")(newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("status" -> "DESTROYED")))
+      val result = await(controller(c).updateStatus("reference")(newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("status" -> "DESTROYED")))
 
       verify(casesService).updateSampleStatus(refEq(c), refEq(Some(SampleStatus.DESTROYED)), any[Operator])(any[HeaderCarrier])
 
@@ -126,7 +126,7 @@ class SampleControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
     "redirect for unchanged status" in {
       val c = aCase(withReference("reference"), withStatus(CaseStatus.CANCELLED), withDecision())
 
-      val result = await(controller(c).updateStatus("reference")(newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("status" -> "")))
+      val result = await(controller(c).updateStatus("reference")(newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("status" -> "")))
 
       verify(casesService, never()).updateSampleStatus(any[Case], any[Option[SampleStatus]], any[Operator])(any[HeaderCarrier])
 
@@ -137,7 +137,7 @@ class SampleControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
     "when error form re-displays with error message" in {
       val c = aCase(withStatus(CaseStatus.COMPLETED), withoutDecision())
 
-      val result = await(controller(c).updateStatus("reference")(newFakePOSTRequestWithCSRF(fakeApplication)
+      val result = await(controller(c).updateStatus("reference")(newFakePOSTRequestWithCSRF(app)
         .withFormUrlEncodedBody("status" -> "WRONG_STATUS")))
 
       verify(casesService, never()).updateSampleStatus(any[Case], any[Option[SampleStatus]], any[Operator])(any[HeaderCarrier])
@@ -152,7 +152,7 @@ class SampleControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       given(casesService.updateSampleStatus(any[Case], any[Option[SampleStatus]], any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(c))
 
       val result = await(controller(c, Set(Permission.EDIT_SAMPLE)).updateStatus("reference")
-      (newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("status" -> "AWAITING")))
+      (newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("status" -> "AWAITING")))
 
       status(result) shouldBe Status.SEE_OTHER
       locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/reference/sample")
@@ -162,7 +162,7 @@ class SampleControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       val c = aCase(withReference("reference"), withStatus(CaseStatus.COMPLETED), withDecision())
 
       val result = await(controller(c, Set.empty).updateStatus("reference")
-      (newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("status" -> "AWAITING")))
+      (newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("status" -> "AWAITING")))
 
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
@@ -174,7 +174,7 @@ class SampleControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       given(casesService.updateSampleStatus(refEq(c), any[Option[SampleStatus]], any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(c))
 
       val result = await(controllerV2(c, Set(Permission.EDIT_SAMPLE)).updateStatus("reference")
-      (newFakePOSTRequestWithCSRF(fakeApplication).withFormUrlEncodedBody("status" -> "")))
+      (newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("status" -> "")))
 
       verify(casesService).updateSampleStatus(refEq(c), refEq(None), any[Operator])(any[HeaderCarrier])
 

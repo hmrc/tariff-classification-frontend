@@ -63,7 +63,7 @@ class ReopenCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
         .thenReturn(successful(btiCaseWithStatusOPEN))
 
       val result: Result = await(controller(btiCaseWithStatusREFERRED)
-        .confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
+        .confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(app)))
 
       status(result) shouldBe Status.SEE_OTHER
       locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/reference/applicant")
@@ -74,7 +74,7 @@ class ReopenCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
         .thenReturn(successful(btiCaseWithStatusOPEN))
 
       val result: Result = await(controller(btiCaseWithStatusSUSPENDED)
-        .confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
+        .confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(app)))
 
       status(result) shouldBe Status.SEE_OTHER
       locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/reference/applicant")
@@ -85,7 +85,7 @@ class ReopenCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
         .thenReturn(successful(liabilityCaseWithStatusOpen))
 
       val result: Result = await(controllerForOldLiabilities(liabilityCaseWithStatusSuspended)
-        .confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
+        .confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(app)))
 
       status(result) shouldBe Status.SEE_OTHER
       locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/reference/liability")
@@ -96,7 +96,7 @@ class ReopenCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
         .thenReturn(successful(btiCaseWithStatusOPEN))
 
       val result: Result = await(controller(btiCaseWithStatusREFERRED, Set(Permission.REOPEN_CASE))
-        .confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
+        .confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(app)))
 
       status(result) shouldBe Status.SEE_OTHER
       locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/reference/applicant")
@@ -104,7 +104,7 @@ class ReopenCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
 
     "redirect to unauthorised when user does not have the right permissions" in {
       val result: Result = await(controller(btiCaseWithStatusREFERRED, Set.empty)
-        .confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(fakeApplication)))
+        .confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(app)))
 
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")

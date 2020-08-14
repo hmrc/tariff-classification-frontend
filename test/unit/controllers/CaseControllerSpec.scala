@@ -153,7 +153,7 @@ class CaseControllerSpec extends ControllerBaseSpec {
       given(eventService.getFilteredEvents(refEq(aCase.reference), refEq(NoPagination()),
         any[Option[Set[EventType]]])(any[HeaderCarrier])) willReturn successful(Paged.empty[Event])
 
-      val result = controller(aCase).sampleDetails(aCase.reference)(newFakeGETRequestWithCSRF(fakeApplication))
+      val result = controller(aCase).sampleDetails(aCase.reference)(newFakeGETRequestWithCSRF(app))
 
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -174,7 +174,7 @@ class CaseControllerSpec extends ControllerBaseSpec {
 
       given(queueService.getAll) willReturn successful(Seq.empty)
 
-      val result = controller(aCase).activityDetails(aCase.reference)(newFakeGETRequestWithCSRF(fakeApplication))
+      val result = controller(aCase).activityDetails(aCase.reference)(newFakeGETRequestWithCSRF(app))
 
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -191,7 +191,7 @@ class CaseControllerSpec extends ControllerBaseSpec {
         any[Option[Set[EventType]]])(any[HeaderCarrier])) willReturn successful(Paged.empty[Event])
       given(queueService.getAll) willReturn successful(Seq.empty)
 
-      val result = controller(aCase).activityDetails(aCase.reference)(newFakeGETRequestWithCSRF(fakeApplication))
+      val result = controller(aCase).activityDetails(aCase.reference)(newFakeGETRequestWithCSRF(app))
 
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -205,7 +205,7 @@ class CaseControllerSpec extends ControllerBaseSpec {
 
     "add a new note when a case note is provided" in {
       val aNote = "This is a note"
-      val aValidForm = newFakePOSTRequestWithCSRF(fakeApplication, Map("note" -> aNote))
+      val aValidForm = newFakePOSTRequestWithCSRF(app, Map("note" -> aNote))
       given(eventService.addNote(refEq(aCase), refEq(aNote), refEq(operator), any[Clock])(any[HeaderCarrier])) willReturn successful(event)
 
       val result = await(controller(aCase).addNote(aCase.reference)(aValidForm))
@@ -213,7 +213,7 @@ class CaseControllerSpec extends ControllerBaseSpec {
     }
 
     "displays an error when no case note is provided" in {
-      val aValidForm = newFakePOSTRequestWithCSRF(fakeApplication)
+      val aValidForm = newFakePOSTRequestWithCSRF(app)
       given(eventService.getEvents(refEq(aCase.reference), refEq(NoPagination()))(any[HeaderCarrier])) willReturn successful(Paged.empty[Event])
       given(queueService.getAll) willReturn successful(Seq.empty)
 
@@ -230,7 +230,7 @@ class CaseControllerSpec extends ControllerBaseSpec {
       given(eventService.getEvents(refEq(aCase.reference), refEq(NoPagination()))(any[HeaderCarrier])) willReturn successful(Paged(Events.events))
       given(queueService.getAll) willReturn successful(Seq.empty)
 
-      val result = controller(aCase,Set(Permission.ADD_NOTE)).addNote(aCase.reference)(newFakeGETRequestWithCSRF(fakeApplication))
+      val result = controller(aCase,Set(Permission.ADD_NOTE)).addNote(aCase.reference)(newFakeGETRequestWithCSRF(app))
 
       status(result) shouldBe Status.OK
     }
@@ -238,7 +238,7 @@ class CaseControllerSpec extends ControllerBaseSpec {
     "redirect unauthorised when does not have right permissions" in {
       val aCase  = Cases.btiCaseExample
 
-      val result = controller(aCase, Set.empty).addNote(aCase.reference)(newFakeGETRequestWithCSRF(fakeApplication))
+      val result = controller(aCase, Set.empty).addNote(aCase.reference)(newFakeGETRequestWithCSRF(app))
 
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include ("unauthorized")
@@ -251,7 +251,7 @@ class CaseControllerSpec extends ControllerBaseSpec {
       val aCase = Cases.btiCaseExample
       given(keywordsService.autoCompleteKeywords).willReturn(successful(Seq()))
 
-      val result = controller(aCase).keywordsDetails(aCase.reference)(newFakeGETRequestWithCSRF(fakeApplication))
+      val result = controller(aCase).keywordsDetails(aCase.reference)(newFakeGETRequestWithCSRF(app))
 
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -264,7 +264,7 @@ class CaseControllerSpec extends ControllerBaseSpec {
 
     "add a new keyword" in {
       val aKeyword = "Apples"
-      val aValidForm = newFakePOSTRequestWithCSRF(fakeApplication, Map("keyword" -> aKeyword))
+      val aValidForm = newFakePOSTRequestWithCSRF(app, Map("keyword" -> aKeyword))
       given(keywordsService.addKeyword(refEq(aCase), refEq("Apples"), refEq(operator))(any[HeaderCarrier])).willReturn(successful(aCase))
       given(keywordsService.autoCompleteKeywords).willReturn(successful(Seq()))
 
@@ -276,7 +276,7 @@ class CaseControllerSpec extends ControllerBaseSpec {
     }
 
     "displays an error when no keyword is provided" in {
-      val aValidForm = newFakePOSTRequestWithCSRF(fakeApplication)
+      val aValidForm = newFakePOSTRequestWithCSRF(app)
       given(keywordsService.autoCompleteKeywords).willReturn(successful(Seq()))
 
       val result = controller(aCase, Set(Permission.KEYWORDS)).addKeyword(aCase.reference)(aValidForm)
@@ -289,7 +289,7 @@ class CaseControllerSpec extends ControllerBaseSpec {
 
     "return OK when user has right permissions" in {
       val aKeyword = "Apples"
-      val aValidForm = newFakePOSTRequestWithCSRF(fakeApplication, Map("keyword" -> aKeyword))
+      val aValidForm = newFakePOSTRequestWithCSRF(app, Map("keyword" -> aKeyword))
       given(keywordsService.addKeyword(any[Case], any[String], any[Operator])(any[HeaderCarrier])).willReturn(successful(aCase))
       given(keywordsService.autoCompleteKeywords).willReturn(successful(Seq()))
 
@@ -299,7 +299,7 @@ class CaseControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect unauthorised when does not have right permissions" in {
-      val aValidForm = newFakePOSTRequestWithCSRF(fakeApplication)
+      val aValidForm = newFakePOSTRequestWithCSRF(app)
       val result = controller(aCase, Set.empty).addKeyword(aCase.reference)(aValidForm)
 
       status(result) shouldBe Status.SEE_OTHER
@@ -314,7 +314,7 @@ class CaseControllerSpec extends ControllerBaseSpec {
     "remove an existing keyword" in {
       given(keywordsService.removeKeyword(refEq(aCase), refEq("Apples"), refEq(operator))(any[HeaderCarrier])).willReturn(successful(aCase))
 
-      val result = controller(aCase).removeKeyword(aCase.reference, aKeyword)(newFakeGETRequestWithCSRF(fakeApplication))
+      val result = controller(aCase).removeKeyword(aCase.reference, aKeyword)(newFakeGETRequestWithCSRF(app))
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
@@ -324,13 +324,13 @@ class CaseControllerSpec extends ControllerBaseSpec {
     "return OK when user has right permissions" in {
       given(keywordsService.removeKeyword(any[Case], any[String], any[Operator])(any[HeaderCarrier])).willReturn(successful(aCase))
 
-      val result = controller(aCase, Set(Permission.KEYWORDS)).removeKeyword(aCase.reference, aKeyword)(newFakeGETRequestWithCSRF(fakeApplication))
+      val result = controller(aCase, Set(Permission.KEYWORDS)).removeKeyword(aCase.reference, aKeyword)(newFakeGETRequestWithCSRF(app))
 
       status(result) shouldBe Status.OK
     }
 
     "redirect unauthorised when does not have right permissions" in {
-      val result = controller(aCase, Set.empty).removeKeyword(aCase.reference, aKeyword)(newFakeGETRequestWithCSRF(fakeApplication))
+      val result = controller(aCase, Set.empty).removeKeyword(aCase.reference, aKeyword)(newFakeGETRequestWithCSRF(app))
 
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")

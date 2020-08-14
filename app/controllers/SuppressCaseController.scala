@@ -26,7 +26,7 @@ import play.api.data.Form
 import play.api.libs.Files
 import play.api.mvc._
 import service.CasesService
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future

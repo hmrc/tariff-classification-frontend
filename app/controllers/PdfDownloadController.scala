@@ -23,7 +23,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import play.twirl.api.Html
 import service.{CasesService, CountriesService, FileStoreService, PdfService}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.templates.{application_template, decision_template, ruling_template}
 
 import scala.concurrent.ExecutionContext.Implicits.global

@@ -85,7 +85,7 @@ class CancelRulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
   "Cancel Ruling" should {
 
     "return OK and HTML content type" in {
-      val result: Result = await(controller(caseWithStatusCOMPLETED).getCancelRuling("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+      val result: Result = await(controller(caseWithStatusCOMPLETED).getCancelRuling("reference")(newFakeGETRequestWithCSRF(app)))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -95,14 +95,14 @@ class CancelRulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
 
     "return OK when user has right permissions" in {
       val result: Result = await(controller(caseWithStatusCOMPLETED, Set(Permission.CANCEL_CASE))
-        .getCancelRuling("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+        .getCancelRuling("reference")(newFakeGETRequestWithCSRF(app)))
 
       status(result) shouldBe Status.OK
     }
 
     "redirect unauthorised when does not have right permissions" in {
       val result: Result = await(controller(caseWithStatusCOMPLETED, Set.empty)
-        .getCancelRuling("reference")(newFakeGETRequestWithCSRF(fakeApplication)))
+        .getCancelRuling("reference")(newFakeGETRequestWithCSRF(app)))
 
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
@@ -116,7 +116,7 @@ class CancelRulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
       when(casesService.cancelRuling(refEq(caseWithStatusCOMPLETED), refEq(CancelReason.ANNULLED), any[FileUpload], any[String], any[Operator])
       (any[HeaderCarrier])).thenReturn(successful(caseWithStatusCANCELLED))
 
-      val result: Result = await(controller(caseWithStatusCOMPLETED).postCancelRuling("reference")(newFakePOSTRequestWithCSRF(fakeApplication)
+      val result: Result = await(controller(caseWithStatusCOMPLETED).postCancelRuling("reference")(newFakePOSTRequestWithCSRF(app)
         .withBody(aMultipartFileWithParams("reason" -> Seq("ANNULLED"), "note" -> Seq("some-note")))))
 
       status(result) shouldBe Status.SEE_OTHER
@@ -127,7 +127,7 @@ class CancelRulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
       when(casesService.cancelRuling(refEq(caseWithStatusCOMPLETED), refEq(CancelReason.ANNULLED), any[FileUpload], any[String], any[Operator])
       (any[HeaderCarrier])).thenReturn(successful(caseWithStatusCANCELLED))
 
-      val result: Result = await(controller(caseWithStatusCOMPLETED).postCancelRuling("reference")(newFakePOSTRequestWithCSRF(fakeApplication)
+      val result: Result = await(controller(caseWithStatusCOMPLETED).postCancelRuling("reference")(newFakePOSTRequestWithCSRF(app)
         .withBody(aMultipartFileWithParams("note" -> Seq("some-note")))))
 
       status(result) shouldBe Status.OK
@@ -138,7 +138,7 @@ class CancelRulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
 
     "return to form on missing file" in {
       val result: Result = await(controller(caseWithStatusCOMPLETED).postCancelRuling("reference")
-      (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aEmptyMultipartFileWithParams())))
+      (newFakePOSTRequestWithCSRF(app).withBody(aEmptyMultipartFileWithParams())))
 
       status(result) shouldBe Status.OK
       bodyOf(result) should include("Change case status to: Cancelled")
@@ -146,7 +146,7 @@ class CancelRulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
 
     "return to form on wrong type of file" in {
       val result: Result = await(controller(caseWithStatusCOMPLETED).postCancelRuling("reference")
-      (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileOfType("audio/mpeg"))))
+      (newFakePOSTRequestWithCSRF(app).withBody(aMultipartFileOfType("audio/mpeg"))))
 
       status(result) shouldBe Status.OK
       bodyOf(result) should include("Change case status to: Cancelled")
@@ -154,7 +154,7 @@ class CancelRulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
 
     "return to form on file size too large" in {
       val result: Result = await(controller(caseWithStatusCOMPLETED).postCancelRuling("reference")
-      (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileOfLargeSize)))
+      (newFakePOSTRequestWithCSRF(app).withBody(aMultipartFileOfLargeSize)))
 
       status(result) shouldBe Status.OK
       bodyOf(result) should include("Change case status to: Cancelled")
@@ -162,7 +162,7 @@ class CancelRulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
 
     "redirect unauthorised when does not have right permissions" in {
       val result: Result = await(controller(caseWithStatusCOMPLETED, Set.empty)
-        .postCancelRuling("reference")(newFakePOSTRequestWithCSRF(fakeApplication)
+        .postCancelRuling("reference")(newFakePOSTRequestWithCSRF(app)
           .withBody(aMultipartFileWithParams("reason" -> Seq("ANNULLED"), "note" -> Seq("some-note")))))
 
       status(result) shouldBe Status.SEE_OTHER

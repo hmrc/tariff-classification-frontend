@@ -19,7 +19,6 @@ package utils
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
 import org.scalatest.BeforeAndAfterAll
-import uk.gov.hmrc.play.test.UnitSpec
 
 trait WiremockTestServer extends UnitSpec with BeforeAndAfterAll {
 

@@ -19,8 +19,7 @@ package connector
 import com.google.inject.Inject
 import javax.inject.Singleton
 import play.api.libs.json.{Format, Writes}
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import uk.gov.hmrc.http.{ HeaderCarrier, HttpClient }
 import config.AppConfig
 import models.{Email, EmailTemplate}
 import utils.Base64Utils

@@ -56,7 +56,7 @@ class SuspendCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
 
     "return OK and HTML content type" in {
 
-      val result: Result = await(controller(caseWithStatusOPEN).getSuspendCase("reference", None)(newFakeGETRequestWithCSRF(fakeApplication)))
+      val result: Result = await(controller(caseWithStatusOPEN).getSuspendCase("reference", None)(newFakeGETRequestWithCSRF(app)))
 
       status(result) shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -66,14 +66,14 @@ class SuspendCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
 
     "return OK when user has right permissions" in {
       val result: Result = await(controller(caseWithStatusOPEN, Set(Permission.SUSPEND_CASE))
-        .getSuspendCase("reference", None)(newFakeGETRequestWithCSRF(fakeApplication)))
+        .getSuspendCase("reference", None)(newFakeGETRequestWithCSRF(app)))
 
       status(result) shouldBe Status.OK
     }
 
     "redirect unauthorised when does not have right permissions" in {
       val result: Result = await(controller(caseWithStatusNEW, Set.empty)
-        .getSuspendCase("reference", None)(newFakeGETRequestWithCSRF(fakeApplication)))
+        .getSuspendCase("reference", None)(newFakeGETRequestWithCSRF(app)))
 
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
@@ -99,7 +99,7 @@ class SuspendCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
 
       val result: Result =
         await(controller(caseWithStatusOPEN).postSuspendCase("reference", None)
-        (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileWithParams("text/plain", "note" -> Seq("some-note")))))
+        (newFakePOSTRequestWithCSRF(app).withBody(aMultipartFileWithParams("text/plain", "note" -> Seq("some-note")))))
 
       status(result) shouldBe Status.SEE_OTHER
       locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/reference/suspend/confirmation")
@@ -108,7 +108,7 @@ class SuspendCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
     "return to form on missing file" in {
       val result: Result =
         await(controller(caseWithStatusOPEN).postSuspendCase("reference", None)
-        (newFakePOSTRequestWithCSRF(fakeApplication).withBody(anEmptyMultipartFileWithParams())))
+        (newFakePOSTRequestWithCSRF(app).withBody(anEmptyMultipartFileWithParams())))
 
       status(result) shouldBe Status.OK
       bodyOf(result) should include("Change case status to: Suspended")
@@ -117,7 +117,7 @@ class SuspendCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
     "return to form on missing form field" in {
       val result: Result =
         await(controller(caseWithStatusOPEN).postSuspendCase("reference", None)
-        (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileWithParams("text/plain"))))
+        (newFakePOSTRequestWithCSRF(app).withBody(aMultipartFileWithParams("text/plain"))))
 
       status(result) shouldBe Status.OK
       bodyOf(result) should include("Change case status to: Suspended")
@@ -126,7 +126,7 @@ class SuspendCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
     "return to form on invalid file type" in {
       val result: Result =
         await(controller(caseWithStatusOPEN).postSuspendCase("reference", None)
-        (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileWithParams("audio/mpeg", "note" -> Seq("some-note")))))
+        (newFakePOSTRequestWithCSRF(app).withBody(aMultipartFileWithParams("audio/mpeg", "note" -> Seq("some-note")))))
 
       status(result) shouldBe Status.OK
       bodyOf(result) should include("Change case status to: Suspended")
@@ -135,7 +135,7 @@ class SuspendCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
     "redirect unauthorised when does not have right permissions" in {
       val result: Result = await(controller(caseWithStatusOPEN, Set.empty)
         .postSuspendCase("reference", None)
-        (newFakePOSTRequestWithCSRF(fakeApplication).withBody(aMultipartFileWithParams("text/plain"))))
+        (newFakePOSTRequestWithCSRF(app).withBody(aMultipartFileWithParams("text/plain"))))
 
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
@@ -146,7 +146,7 @@ class SuspendCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
 
     "return OK and HTML content type" in {
       val result: Result = await(controller(caseWithStatusSUSPENDED).confirmSuspendCase("reference")
-      (newFakePOSTRequestWithCSRF(fakeApplication)
+      (newFakePOSTRequestWithCSRF(app)
         .withFormUrlEncodedBody("state" -> "true")))
 
       status(result) shouldBe Status.OK
@@ -157,7 +157,7 @@ class SuspendCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
 
     "redirect to a default page on validaiton error" in {
       val result: Result = await(controller(caseWithStatusOPEN).confirmSuspendCase("reference")
-      (newFakePOSTRequestWithCSRF(fakeApplication)))
+      (newFakePOSTRequestWithCSRF(app)))
 
       status(result) shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None

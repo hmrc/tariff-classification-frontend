@@ -57,7 +57,7 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     val openCase = aCase(withReference("reference"), withStatus(CaseStatus.OPEN), withLiabilityApplication())
 
     "redirect to unauthorised if not permitted" in {
-      val request = newFakeGETRequestWithCSRF(fakeApplication)
+      val request = newFakeGETRequestWithCSRF(app)
       val result = await(controller(Set.empty, openCase).liabilityDetails("ref")(request))
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.SecurityController.unauthorized().url)
@@ -66,7 +66,7 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     "return 200 OK and HTML content type" in {
       given(commodityCodeConstraints.commodityCodeExistsInUKTradeTariff).willReturn(Constraint[String]("error")(_ => Valid))
 
-      val request = newFakeGETRequestWithCSRF(fakeApplication)
+      val request = newFakeGETRequestWithCSRF(app)
       val result = await(controller(Set(Permission.VIEW_CASES), openCase).liabilityDetails("ref")(request))
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -79,7 +79,7 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
   "GET liability edit" should {
     "redirect to unauthorised if not permitted" in {
       val openCase = aCase(withReference("reference"), withStatus(CaseStatus.OPEN), withLiabilityApplication())
-      val request = newFakeGETRequestWithCSRF(fakeApplication)
+      val request = newFakeGETRequestWithCSRF(app)
       val result = await(controller(Set.empty, openCase).editLiabilityDetails("ref")(request))
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.SecurityController.unauthorized().url)
@@ -89,7 +89,7 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
       "Permitted with Edit Access" in {
         val c = aCase(withReference("reference"), withStatus(CaseStatus.OPEN), withLiabilityApplication())
-        val request = newFakeGETRequestWithCSRF(fakeApplication)
+        val request = newFakeGETRequestWithCSRF(app)
         val result = await(controller(Set(Permission.VIEW_CASES, Permission.EDIT_LIABILITY), c).editLiabilityDetails("ref")(request))
 
         status(result) shouldBe Status.OK
@@ -106,7 +106,7 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
     val validReq: AuthenticatedRequest[AnyContent] = request(
       operator,
-      newFakeGETRequestWithCSRF(fakeApplication).withFormUrlEncodedBody(
+      newFakeGETRequestWithCSRF(app).withFormUrlEncodedBody(
         "entryDate" -> "",
         "entryNumber" -> "",
         "traderName" -> "mandatory-name",
@@ -121,7 +121,7 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
     val invalidReq: AuthenticatedRequest[AnyContent] = request(
       operator,
-      newFakeGETRequestWithCSRF(fakeApplication).withFormUrlEncodedBody(
+      newFakeGETRequestWithCSRF(app).withFormUrlEncodedBody(
         "entryDate" -> "",
         "entryNumber" -> "",
         "traderName" -> "",

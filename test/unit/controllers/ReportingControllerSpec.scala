@@ -65,7 +65,7 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       given(casesService.countCasesByQueue(any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(Map.empty[String, Int]))
       given(operator.hasPermissions(requiredPermissions)) willReturn true
 
-      val req: AuthenticatedRequest[AnyContent] = request(operator, newFakeGETRequestWithCSRF(fakeApplication))
+      val req: AuthenticatedRequest[AnyContent] = request(operator, newFakeGETRequestWithCSRF(app))
 
       val result = await(controller(requiredPermissions).getReports(req.request))
 
@@ -78,7 +78,7 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     "Return Forbidden for Non-Manager" in {
       given(queueService.getAll) willReturn Future.successful(Seq.empty)
 
-      val req: AuthenticatedRequest[AnyContent] = request(operator, newFakeGETRequestWithCSRF(fakeApplication))
+      val req: AuthenticatedRequest[AnyContent] = request(operator, newFakeGETRequestWithCSRF(app))
       val result = await(controller(noPermissions).getReports(req.request))
 
       status(result) shouldBe Status.SEE_OTHER
@@ -92,7 +92,7 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       given(casesService.countCasesByQueue(any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(Map.empty[String, Int]))
       given(operator.hasPermissions(requiredPermissions)) willReturn true
 
-      val req: AuthenticatedRequest[AnyContent] = request(operator, newFakeGETRequestWithCSRF(fakeApplication))
+      val req: AuthenticatedRequest[AnyContent] = request(operator, newFakeGETRequestWithCSRF(app))
       val result = await(controller(requiredPermissions).getReportCriteria(Report.SLA.toString,0)(req.request))
 
       status(result) shouldBe Status.OK
@@ -113,7 +113,7 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       given(casesService.countCasesByQueue(any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(Map.empty[String, Int]))
       given(operator.hasPermissions(requiredPermissions)) willReturn true
 
-      val req: AuthenticatedRequest[AnyContent] = request(operator, newFakeGETRequestWithCSRF(fakeApplication))
+      val req: AuthenticatedRequest[AnyContent] = request(operator, newFakeGETRequestWithCSRF(app))
       val result = await(controller(requiredPermissions).getReportCriteria(Report.REFERRAL.toString,0)(req.request))
 
       status(result) shouldBe Status.OK
@@ -131,7 +131,7 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     "Redirect to Reports for Not Found" in {
       given(operator.hasPermissions(requiredPermissions)) willReturn true
 
-      val req: AuthenticatedRequest[AnyContent] = request(operator, newFakeGETRequestWithCSRF(fakeApplication))
+      val req: AuthenticatedRequest[AnyContent] = request(operator, newFakeGETRequestWithCSRF(app))
       val result = await(controller(requiredPermissions).getReportCriteria("xyz",0)(req.request))
 
       status(result) shouldBe Status.SEE_OTHER
@@ -141,7 +141,7 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     "Return Forbidden for Non-Manager" in {
       given(queueService.getAll) willReturn Future.successful(Seq.empty)
 
-      val req: AuthenticatedRequest[AnyContent] = request(operator, newFakeGETRequestWithCSRF(fakeApplication))
+      val req: AuthenticatedRequest[AnyContent] = request(operator, newFakeGETRequestWithCSRF(app))
       val result = await(controller(noPermissions).getReportCriteria(Report.SLA.toString,0)(req.request))
 
       status(result) shouldBe Status.SEE_OTHER
@@ -162,7 +162,7 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
       val req: AuthenticatedRequest[AnyContent] = request(
         operator,
-        newFakeGETRequestWithCSRF(fakeApplication)
+        newFakeGETRequestWithCSRF(app)
           .withFormUrlEncodedBody(
             "min.day" -> "1", "min.month" -> "1", "min.year" -> "1970",
             "max.day" -> "2", "max.month" -> "1", "max.year" -> "1970"
@@ -184,7 +184,7 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
       val req: AuthenticatedRequest[AnyContent] = request(
         operator,
-        newFakeGETRequestWithCSRF(fakeApplication)
+        newFakeGETRequestWithCSRF(app)
           .withFormUrlEncodedBody(
             "min.day" -> "1", "min.month" -> "1", "min.year" -> "1970",
             "max.day" -> "2", "max.month" -> "1", "max.year" -> "1970"
@@ -204,7 +204,7 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       given(casesService.countCasesByQueue(any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(Map.empty[String, Int]))
       given(operator.hasPermissions(requiredPermissions)) willReturn true
 
-      val req: AuthenticatedRequest[AnyContent] = request(operator, newFakeGETRequestWithCSRF(fakeApplication))
+      val req: AuthenticatedRequest[AnyContent] = request(operator, newFakeGETRequestWithCSRF(app))
       val result = await(controller(requiredPermissions).getReport(Report.SLA.toString)(req.request))
 
       status(result) shouldBe Status.OK
@@ -223,7 +223,7 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     "Redirect to Reports for Not Found" in {
       given(operator.hasPermissions(requiredPermissions)) willReturn true
 
-      val req: AuthenticatedRequest[AnyContent] = request(operator, newFakeGETRequestWithCSRF(fakeApplication))
+      val req: AuthenticatedRequest[AnyContent] = request(operator, newFakeGETRequestWithCSRF(app))
       val result = await(controller(requiredPermissions).getReport("xyz")(req.request))
 
       status(result) shouldBe Status.SEE_OTHER
@@ -233,7 +233,7 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     "Return Forbidden for Non-Manager" in {
       given(queueService.getAll) willReturn Future.successful(Seq.empty)
 
-      val req: AuthenticatedRequest[AnyContent] = request(operator, newFakeGETRequestWithCSRF(fakeApplication))
+      val req: AuthenticatedRequest[AnyContent] = request(operator, newFakeGETRequestWithCSRF(app))
       val result = await(controller(noPermissions).getReport(Report.SLA.toString)(req.request))
 
       status(result) shouldBe Status.SEE_OTHER
