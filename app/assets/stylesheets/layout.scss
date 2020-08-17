@@ -490,4 +490,9 @@ table tbody tr th {
 .hide-label {
  display:none;
 }
+@media screen and (max-width: 767px) {
+  table th, table td {
+    padding: 0.63158em 0.05263em 0.47368em 0;
+  }
+}
 
