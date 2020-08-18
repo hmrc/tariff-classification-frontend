@@ -44,7 +44,7 @@ object Cases {
   val decisionWithExclusion: Decision = decision.copy(methodExclusion = Some("Excludes everything ever"))
   val liabilityApplicationExample: LiabilityOrder = LiabilityOrder(contactExample, LiabilityStatus.NON_LIVE, "trader-business-name", Some("good-name"), Some(Instant.now()), Some("entry number"), Some("trader-1234567"), Some("officer-1234567"))
   val liabilityLiveApplicationExample: LiabilityOrder = LiabilityOrder(contactExample, LiabilityStatus.LIVE, "trader-business-name", Some("good-name"), Some(Instant.now()), Some("entry number"))
-  val btiCaseExample: Case = Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, None, btiApplicationExample, Some(decision), Seq())
+  val btiCaseExample: Case = Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, None, btiApplicationExample, Some(decision), Seq(), Set.empty, Sample(), Some(Instant.now()), Some(5))
   val btiCaseWithIncompleteDecision: Case = Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, None, btiApplicationExample, Some(incompleteDecision), Seq())
   val simpleCaseExample: Case = Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, None, simpleBtiApplicationExample, None, Seq())
   val liabilityCaseExample: Case = Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, None, liabilityApplicationExample, None, Seq())

@@ -34,7 +34,9 @@ case class Case
   decision: Option[Decision],
   attachments: Seq[Attachment],
   keywords: Set[String] = Set.empty,
-  sample: Sample = Sample()
+  sample: Sample = Sample(),
+  dateOfExtract: Option[Instant] = None,
+  migratedDaysElapsed: Option[Long] = None
 ) {
   def hasQueue: Boolean = queueId.isDefined
 
