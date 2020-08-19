@@ -22,12 +22,14 @@ import audit.AuditService
 import connector.{BindingTariffClassificationConnector, RulingConnector}
 import models.ApplicationType.ApplicationType
 import models._
+import models.request.NewEventRequest
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito._
 import org.mockito.Mockito.reset
 import org.scalatest.BeforeAndAfterEach
 import play.api.mvc.QueryStringBindable
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.Cases
 
 import scala.concurrent.Future.successful
 
@@ -105,11 +107,24 @@ class CasesServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
   "Create Case" should {
     val application = mock[Application]
     val createdCase = mock[Case]
+    val operator = mock[Operator]
 
     "delegate to connector" in {
       given(connector.createCase(refEq(application))(any[HeaderCarrier])) willReturn successful(createdCase)
 
-      await(service.createCase(application)) shouldBe createdCase
+      await(service.createCase(application, operator)) shouldBe createdCase
+    }
+
+    "add a case created event" in {
+      val aCase = Cases.newLiabilityLiveCaseExample
+
+      given(connector.createEvent(refEq(aCase), any[NewEventRequest])(any[HeaderCarrier])).willReturn(successful(mock[Event]))
+
+
+      val eventCreated = theEventCreatedFor(connector, aCase)
+      eventCreated.operator shouldBe Operator("operator-id")
+      eventCreated.details shouldBe CaseCreated(comment = "case created")
+
     }
   }
 

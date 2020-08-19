@@ -58,9 +58,7 @@ sealed trait FieldChange[T] extends Details with OptionalComment {
 
 case class CaseCreated
 (
-  operator: Operator,
-  comment: String,
-  dateOfCreation: String
+  comment: String
 ) extends Details {
   override val `type`: EventType = EventType.CASE_CREATED
 }
