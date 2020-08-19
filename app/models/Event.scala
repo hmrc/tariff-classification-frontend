@@ -55,6 +55,15 @@ sealed trait FieldChange[T] extends Details with OptionalComment {
   val to: T
 }
 
+case class CaseCreated
+(
+  operator: Operator,
+  comment: String,
+  dateOfCreation: String
+) extends Details {
+  override val `type`: EventType = EventType.CASE_CREATED
+}
+
 case class CaseStatusChange
 (
   override val from: CaseStatus,
@@ -144,7 +153,6 @@ case class QueueChange
   override val `type`: EventType.Value = EventType.QUEUE_CHANGE
 }
 
-
 case class Note
 (
   comment: String
@@ -163,6 +171,7 @@ case class SampleStatusChange
   def renderSummaryFor(application: ApplicationType): String = {
     if (application.equals(ApplicationType.LIABILITY_ORDER) && (from.isEmpty || to.isEmpty)) {
       def yesNo(s: Option[SampleStatus]) = if (s.isDefined) "yes" else "no"
+
       s"Sending sample changed from ${yesNo(from)} to ${yesNo(to)}"
     } else {
       s"Sample status changed from ${SampleStatus.format(from, false)} to ${SampleStatus.format(to, false)}"
@@ -193,6 +202,7 @@ object EventType extends Enumeration {
   val NOTE = Value
   val SAMPLE_STATUS_CHANGE = Value
   val SAMPLE_RETURN_CHANGE = Value
+  val CASE_CREATED = Value
 
   def sampleEvents: Set[models.EventType.Value] = Set(SAMPLE_STATUS_CHANGE, SAMPLE_RETURN_CHANGE)
 }
