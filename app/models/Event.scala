@@ -55,6 +55,7 @@ sealed trait FieldChange[T] extends Details with OptionalComment {
   val to: T
 }
 
+
 case class CaseCreated
 (
   operator: Operator,

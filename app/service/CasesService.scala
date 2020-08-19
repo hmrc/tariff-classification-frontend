@@ -312,9 +312,47 @@ class CasesService @Inject()(appConfig: AppConfig,
     connector.updateCase(caseToUpdate)
   }
 
-  def createCase(application: Application)(implicit hc: HeaderCarrier): Future[Case] = {
-    connector.createCase(application)
+  def createCase(application: Application, operator: Operator)(implicit hc: HeaderCarrier): Future[Case] = {
+    println("create case :::::::::::")
+    println("create case :::::::::::")
+    println("create case :::::::::::" + application)
+    println("create case :::::::::::" + operator)
+    for {
+      updated <- connector.createCase(application)
+      _       <- addCaseCreatedEvent(updated, operator)
+    } yield updated
   }
+
+  private def addCaseCreatedEvent(updated: Case, operator: Operator)(implicit hc: HeaderCarrier): Future[Unit] = {
+        println("::::::::::::::::::::")
+        println("::::::::::::::::::::")
+        println("updated case ::::::::::::::::::::" + updated)
+        println("op op op ::::::::::::::::::::" + operator)
+    //val details = SampleStatusChange(original.sample.status, updated.sample.status, comment)
+
+    val details = CaseCreated(operator, "Liability created", "")
+    addEvent(updated, updated, details, operator)
+  }
+
+/*  def createCase(application: Application)(implicit hc: HeaderCarrier): Future[Case] = {
+    for {
+      updated <- connector.createCase(application)
+      //  updated <- connector.updateCase(original.copy(status = CaseStatus.OPEN, queueId = Some(queue.id)))
+      _ <- addStatusChangeEvent(original, updated, operator, None)
+      // _ = auditService.auditCaseReleased(original, updated, queue, operator)
+    } yield updated
+  }
+
+  private def addCaseCreatedEvent(original: Case,
+                                  updated: Case,
+                                  operator: Operator,
+                                  comment: Option[String],
+                                  attachment: Option[Attachment] = None)
+                                 (implicit hc: HeaderCarrier): Future[Unit] = {
+
+    val details = CaseStatusChange(from = original.status, to = updated.status, comment = comment, attachmentId = attachment.map(_.id))
+    addEvent(original, updated, details, operator)
+  }*/
 
   def addAttachment(c: Case, f: FileUpload, o: Operator)(implicit headerCarrier: HeaderCarrier): Future[Case] = {
     fileService.upload(f) flatMap { fileStored: FileStoreAttachment =>
