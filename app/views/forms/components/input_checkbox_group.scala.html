@@ -36,7 +36,7 @@
         <legend class="advanced_search--filters_heading">
             @legend
             @field.errors.map { error =>
-                <span class="error-message" id="error-message-@{field.id}-input">@error.message</span>
+                <span class="error-message" id="error-message-@{field.id}-input"><span class="visually-hidden">@messages("error.browser.title.prefix")</span>@error.message</span>
             }
         </legend>
 

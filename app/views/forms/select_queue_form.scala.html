@@ -26,7 +26,7 @@
             <legend>
                 <span class="heading-small mb-2">Choose a queue</span>
                 @field.errors.map { error =>
-                    <span class="error-message" id="error-message-@{field.id}-input">@messages(error.message, error.args: _*)</span>
+                    <span class="error-message" id="error-message-@{field.id}-input"><span class="visually-hidden">@messages("error.browser.title.prefix")</span>@messages(error.message, error.args: _*)</span>
                 }
             </legend>
 
