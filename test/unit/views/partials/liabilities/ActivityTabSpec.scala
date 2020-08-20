@@ -80,7 +80,7 @@ class ActivityTabSpec extends ViewSpec {
       val e = Event(
         id = "EVENT_ID",
         details = CaseStatusChange(from = CaseStatus.OPEN, to = CaseStatus.COMPLETED, comment = Some("comment"), attachmentId = Some("att-id")),
-        operator = Operator("id", Some("name")),
+        operator = Operator("PID", Some("name")),
         caseReference = "ref",
         timestamp = date
       )
@@ -90,7 +90,7 @@ class ActivityTabSpec extends ViewSpec {
 
 
       doc should containElementWithID("activity-events-row-0-operator")
-      doc.getElementById("activity-events-row-0-operator") should containText("name")
+      doc.getElementById("activity-events-row-0-operator") should containText("PID")
       doc should containElementWithID("activity-events-row-0-content")
       doc.getElementById("activity-events-row-0-content") should containText("Status changed from open to completed")
       doc should containElementWithID("activity-events-row-0-comment")
