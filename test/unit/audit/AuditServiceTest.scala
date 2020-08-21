@@ -43,6 +43,22 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
     reset(connector)
   }
 
+
+  "Service 'audit case created'" should {
+    val original = aLiabilityCase(withReference("ref"))
+    //val appeal = Appeal(id = "id", status = AppealStatus.IN_PROGRESS, `type` = AppealType.REVIEW)
+
+    "Delegate to connector" in {
+      service.auditCaseCreated(original, operator)
+
+      val payload = caseCreatedAudit(
+        caseReference = "ref",
+        operatorId = operator.id,
+        comment = "Liability case created"
+      )
+      verify(connector).sendExplicitAudit(refEq("caseCreated"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+    }
+  }
   "Service 'audit case assigned'" should {
 
     "Delegate to connector" in {
@@ -376,6 +392,14 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
       )
       verify(connector).sendExplicitAudit(refEq("caseSampleReturnChange"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
     }
+  }
+
+  private def caseCreatedAudit(caseReference: String, operatorId: String, comment: String): Map[String, String] = {
+    Map[String, String](
+      "caseReference" -> caseReference,
+      "operatorId" -> operatorId,
+      "comment" -> comment
+    )
   }
 
   private def caseChangeAudit(caseReference: String, newStatus: CaseStatus, previousStatus: CaseStatus, operatorId: String): Map[String, String] = {

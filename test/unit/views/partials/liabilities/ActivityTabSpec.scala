@@ -75,6 +75,25 @@ class ActivityTabSpec extends ViewSpec {
       doc shouldNot containElementWithID("add-note-submit")
     }
 
+    "Render 'Liability case created' for a liability case" in {
+      val e = Event(
+        id = "EVENT_ID",
+        details = CaseCreated("Liability case created"),
+        operator = Operator("PID", Some("name")),
+        caseReference = "ref",
+        timestamp = date
+      )
+
+      val doc = view(activityTab(activityViewModel.copy(events = Paged(Seq(e))), activityForm)(requestWithAddNotePermission, messages, appConfig))
+
+      doc should containElementWithID("activity-events-row-0-operator")
+      doc.getElementById("activity-events-row-0-operator") should containText("PID")
+      doc should containElementWithID("activity-events-row-0-content")
+      doc.getElementById("activity-events-row-case_created") should containText("Liability case created")
+      doc should containElementWithID("activity-events-row-0-date")
+      doc.getElementById("activity-events-row-0-date") should containText("01 Jan 2019")
+    }
+
     "Render 'Status Change'" in {
 
       val e = Event(
@@ -85,9 +104,7 @@ class ActivityTabSpec extends ViewSpec {
         timestamp = date
       )
 
-
       val doc = view(activityTab(activityViewModel.copy(events = Paged(Seq(e))), activityForm)(requestWithAddNotePermission, messages, appConfig))
-
 
       doc should containElementWithID("activity-events-row-0-operator")
       doc.getElementById("activity-events-row-0-operator") should containText("PID")
@@ -116,7 +133,7 @@ class ActivityTabSpec extends ViewSpec {
 
 
       doc should containElementWithID("activity-events-row-0-operator")
-      doc.getElementById("activity-events-row-0-operator") should containText("name")
+      doc.getElementById("activity-events-row-0-operator") should containText("id")
       doc should containElementWithID("activity-events-row-0-content")
       doc.getElementById("activity-events-row-0-content") should containText("Status changed from open to cancelled")
       doc should containElementWithID("activity-events-row-0-comment")
@@ -145,7 +162,7 @@ class ActivityTabSpec extends ViewSpec {
 
 
       doc should containElementWithID("activity-events-row-0-operator")
-      doc.getElementById("activity-events-row-0-operator") should containText("name")
+      doc.getElementById("activity-events-row-0-operator") should containText("id")
       doc should containElementWithID("activity-events-row-0-content")
       doc.getElementById("activity-events-row-0-content") should containText("Status changed from open to referred")
       doc should containElementWithID("activity-events-row-0-comment")
@@ -176,7 +193,7 @@ class ActivityTabSpec extends ViewSpec {
 
 
         doc should containElementWithID("activity-events-row-0-operator")
-        doc.getElementById("activity-events-row-0-operator") should containText("name")
+        doc.getElementById("activity-events-row-0-operator") should containText("id")
         doc should containElementWithID("activity-events-row-0-content")
         doc.getElementById("activity-events-row-0-content") should containText("Status changed from open to completed")
         doc should containElementWithID("activity-events-row-0-comment")
@@ -202,7 +219,7 @@ class ActivityTabSpec extends ViewSpec {
 
 
         doc should containElementWithID("activity-events-row-0-operator")
-        doc.getElementById("activity-events-row-0-operator") should containText("name")
+        doc.getElementById("activity-events-row-0-operator") should containText("id")
         doc should containElementWithID("activity-events-row-0-content")
         doc.getElementById("activity-events-row-0-content") should containText("Status changed from open to completed")
         doc should containElementWithID("activity-events-row-0-comment")
@@ -228,7 +245,7 @@ class ActivityTabSpec extends ViewSpec {
 
 
       doc should containElementWithID("activity-events-row-0-operator")
-      doc.getElementById("activity-events-row-0-operator") should containText("name")
+      doc.getElementById("activity-events-row-0-operator") should containText("id")
       doc should containElementWithID("activity-events-row-0-content")
       doc.getElementById("activity-events-row-0-content") should containText("Appeal added with type Appeal tier 1 and status Under appeal")
       doc.getElementById("activity-events-row-0-content") should containText("comment")
@@ -251,7 +268,7 @@ class ActivityTabSpec extends ViewSpec {
 
 
       doc should containElementWithID("activity-events-row-0-operator")
-      doc.getElementById("activity-events-row-0-operator") should containText("name")
+      doc.getElementById("activity-events-row-0-operator") should containText("id")
       doc should containElementWithID("activity-events-row-0-content")
       doc.getElementById("activity-events-row-0-content") should containText("Review added with status Under review")
       doc.getElementById("activity-events-row-0-content") should containText("comment")
@@ -272,7 +289,7 @@ class ActivityTabSpec extends ViewSpec {
       val doc = view(activityTab(activityViewModel.copy(events = Paged(Seq(e))), activityForm)(requestWithAddNotePermission, messages, appConfig))
 
       doc should containElementWithID("activity-events-row-0-operator")
-      doc.getElementById("activity-events-row-0-operator") should containText("name")
+      doc.getElementById("activity-events-row-0-operator") should containText("id")
       doc should containElementWithID("activity-events-row-0-content")
       doc.getElementById("activity-events-row-0-content") should containText("Appeal tier 1 status changed from Under appeal to Appeal allowed")
       doc.getElementById("activity-events-row-0-content") should containText("comment")
@@ -295,7 +312,7 @@ class ActivityTabSpec extends ViewSpec {
 
 
       doc should containElementWithID("activity-events-row-0-operator")
-      doc.getElementById("activity-events-row-0-operator") should containText("name")
+      doc.getElementById("activity-events-row-0-operator") should containText("id")
       doc should containElementWithID("activity-events-row-0-content")
       doc.getElementById("activity-events-row-0-content") should containText("Application for extended use status changed from No to Yes")
       doc.getElementById("activity-events-row-0-content") should containText("comment")
@@ -315,7 +332,7 @@ class ActivityTabSpec extends ViewSpec {
       val doc = view(activityTab(activityViewModel.copy(events = Paged(Seq(e))), activityForm)(requestWithAddNotePermission, messages, appConfig))
 
       doc should containElementWithID("activity-events-row-0-operator")
-      doc.getElementById("activity-events-row-0-operator") should containText("name")
+      doc.getElementById("activity-events-row-0-operator") should containText("id")
       doc.getElementById("activity-events-row-0-content") should containText("comment")
       doc should containElementWithID("activity-events-row-0-date")
       doc.getElementById("activity-events-row-0-date") should containText("01 Jan 2019")

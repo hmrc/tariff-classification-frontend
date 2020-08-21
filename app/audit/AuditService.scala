@@ -147,6 +147,15 @@ class AuditService @Inject()(auditConnector: DefaultAuditConnector) {
     )
   }
 
+  def auditCaseCreated(c: Case, operator: Operator)
+                      (implicit hc: HeaderCarrier): Unit = {
+    sendExplicitAuditEvent(
+      auditEventType = CaseCreated,
+      auditPayload = baseAuditPayload(c, operator) + (
+        "comment" -> "Liability case created")
+    )
+  }
+
   def auditCaseAppealStatusChange(c: Case, appeal: Appeal, newAppealStatus: AppealStatus, operator: Operator)
                           (implicit hc: HeaderCarrier): Unit = {
     sendExplicitAuditEvent(
@@ -234,6 +243,7 @@ class AuditService @Inject()(auditConnector: DefaultAuditConnector) {
 
 object AuditPayloadType {
 
+  val CaseCreated = "caseCreated"
   val CaseReleased = "caseReleased"
   val CaseAssigned = "caseAssigned"
   val CaseCompleted = "caseCompleted"

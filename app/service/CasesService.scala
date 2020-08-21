@@ -314,10 +314,10 @@ class CasesService @Inject()(appConfig: AppConfig,
 
   def createCase(application: Application, operator: Operator)(implicit hc: HeaderCarrier): Future[Case] = {
     for {
-      updated <- connector.createCase(application)
-      _ <- addCaseCreatedEvent(updated, operator)
-      // TODO auditing
-    } yield updated
+      caseCreated <- connector.createCase(application)
+      _ <- addCaseCreatedEvent(caseCreated, operator)
+      _ = auditService.auditCaseCreated(caseCreated, operator)
+    } yield caseCreated
   }
 
   def addAttachment(c: Case, f: FileUpload, o: Operator)(implicit headerCarrier: HeaderCarrier): Future[Case] = {
