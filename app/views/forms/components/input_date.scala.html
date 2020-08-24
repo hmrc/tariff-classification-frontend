@@ -43,7 +43,7 @@
         @if(dateField.hasErrors) {
             <span class="error-message" id="error-message-date-input">
                 @dateField.errors.map { error =>
-                    <span class="error-message" id="error-message-@{error.key}-input">@messages(error.message, error.args: _*)</span>
+                    <span class="error-message" id="error-message-@{error.key}-input"><span class="visually-hidden">@messages("error.browser.title.prefix")</span>@messages(error.message, error.args: _*)</span>
                 }
             </span>
         }

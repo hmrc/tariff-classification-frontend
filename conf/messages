@@ -1,5 +1,6 @@
 site.service_name = Advance Tariff Rulings Case Manager
 site.title.suffix = Advance Tariff Rulings Case Manager - GOV.UK
+error.browser.title.prefix = Error:
 error.summary.title=There is a problem
 cases.menu.my-cases=My cases
 cases.menu.gateway-cases=Gateway cases

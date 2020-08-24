@@ -41,7 +41,7 @@
     }
 
     @field.errors.map { error =>
-        <span class="error-message" id="@{field.id}-error">@customErrorMessage.getOrElse( messages(error.message, error.args: _*))</span>
+        <span class="error-message" id="@{field.id}-error"><span class="visually-hidden">@messages("error.browser.title.prefix")</span>@customErrorMessage.getOrElse( messages(error.message, error.args: _*))</span>
     }
 
     <div class="form-control-wrapper autocomplete @formControlClass">
