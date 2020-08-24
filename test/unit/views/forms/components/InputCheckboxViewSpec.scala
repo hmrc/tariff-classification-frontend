@@ -16,11 +16,12 @@
 
 package views.forms.components
 
+import org.scalatest.MustMatchers.convertToAnyMustWrapper
 import play.api.data.Form
 import play.api.data.Forms.{mapping, text}
 import views.ViewMatchers._
 import views.ViewSpec
-import views.html.forms.components.input_checkbox
+import views.html.forms.components.{input_checkbox, input_text}
 
 class InputCheckboxViewSpec extends ViewSpec {
 
@@ -56,6 +57,12 @@ class InputCheckboxViewSpec extends ViewSpec {
       doc.getElementById("field") should haveAttribute("name", "field")
       doc.getElementById("field") should haveAttribute("value", "false")
       doc.getElementById("field") should haveAttribute("onChange", "this.form.submit()")
+    }
+    "show an error in the value field's label" in {
+      lazy val emptyForm = Map[String, String]()
+      val formWithError = form.bind(emptyForm).apply("field")
+      val doc = view(input_text(formWithError, "Span"))
+      doc.getElementsByClass("visually-hidden").text() mustBe  errorPrefix
     }
   }
 
