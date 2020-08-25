@@ -46,7 +46,6 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
 
   "Service 'audit case created'" should {
     val original = aLiabilityCase(withReference("ref"))
-    //val appeal = Appeal(id = "id", status = AppealStatus.IN_PROGRESS, `type` = AppealType.REVIEW)
 
     "Delegate to connector" in {
       service.auditCaseCreated(original, operator)
