@@ -19,12 +19,10 @@ package service
 import java.time.{Instant, LocalDate}
 import java.util.UUID
 
-import javax.inject.{Inject, Singleton}
-import play.api.Logger
-import uk.gov.hmrc.http.HeaderCarrier
 import audit.AuditService
 import config.AppConfig
 import connector.{BindingTariffClassificationConnector, RulingConnector}
+import javax.inject.{Inject, Singleton}
 import models.AppealStatus.AppealStatus
 import models.AppealType.AppealType
 import models.ApplicationType.ApplicationType
@@ -34,6 +32,8 @@ import models.SampleReturn.SampleReturn
 import models.SampleStatus.SampleStatus
 import models._
 import models.request.NewEventRequest
+import play.api.Logger
+import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -422,11 +422,8 @@ class CasesService @Inject()(appConfig: AppConfig,
 
   private def addCaseCreatedEvent(liabilityCase: Case, operator: Operator)
                                  (implicit hc: HeaderCarrier): Future[Unit] = {
-    val event = NewEventRequest(CaseCreated("Liability case created"), operator)
-    connector.createEvent(liabilityCase, event) recover {
-      case t: Throwable =>
-        Logger.error(s"Could not create Event for case [${liabilityCase.reference}] with payload [$event]", t)
-    } map (_ => ())
+    val details = CaseCreated("Liability case created")
+    addEvent(liabilityCase, liabilityCase, details, operator)
   }
 
   private def extendedUseStatus: Case => Boolean = {

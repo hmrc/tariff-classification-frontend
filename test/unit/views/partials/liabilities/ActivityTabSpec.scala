@@ -89,7 +89,7 @@ class ActivityTabSpec extends ViewSpec {
       doc should containElementWithID("activity-events-row-0-operator")
       doc.getElementById("activity-events-row-0-operator") should containText("PID")
       doc should containElementWithID("activity-events-row-0-content")
-      doc.getElementById("activity-events-row-case_created") should containText("Liability case created")
+      doc.getElementById("activity-events-row-0-title") should containText("Liability case created")
       doc should containElementWithID("activity-events-row-0-date")
       doc.getElementById("activity-events-row-0-date") should containText("01 Jan 2019")
     }

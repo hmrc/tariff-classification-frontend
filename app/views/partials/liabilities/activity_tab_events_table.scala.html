@@ -21,6 +21,7 @@
 @import views.html.partials.activity.{activity_case_cancellation, activity_case_referral, activity_status_change, activity_case_completed}
 @import views.html.partials.{assignee, progressive_disclosure}
 @import models.viewmodels.ActivityViewModel
+
 @(activityViewModel: ActivityViewModel)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 <h3 class="heading-medium mt-30 mb-30">@messages("case.v2.liability.activity_tab.activity_timeline_h2")</h3>
@@ -63,11 +64,10 @@
 
                         case EventType.CASE_CREATED => {
                         val body = event.details.asInstanceOf[CaseCreated]
-
-                        <div id="activity-events-row-case_created">
-                            <span id="activity-events-row-application_submitted-comment" class="pre-wrap">{body.comment}</span>
-                        </div>
-
+                            progressive_disclosure(
+                                id = s"activity-events-row-$index",
+                                summary = body.comment
+                            )
                         }
                         case EventType.APPEAL_ADDED => {
                             val body = event.details.asInstanceOf[AppealAdded]
