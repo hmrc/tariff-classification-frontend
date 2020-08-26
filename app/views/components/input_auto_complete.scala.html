@@ -53,7 +53,7 @@
         name="@{field.name}"
         value="@{field.value}"
         @if(useTabIndex.isDefined){tabindex="@{useTabIndex.get}"}
-        aria-describedby="@{field.id}-hint @{field.id}-error"
+        @if(field.hasErrors || hint.isDefined){ aria-describedby="@if(hint.isDefined){@{field.id}-hint}@if(field.hasErrors && hint.isDefined){ }@if(field.hasErrors){@{field.id}-error}"}
         @if(autofocus){ autofocus }
         />
     </div>

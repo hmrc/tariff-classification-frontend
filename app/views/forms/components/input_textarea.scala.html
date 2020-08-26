@@ -44,7 +44,7 @@ customErrorMessage : Option[String] = None
             class="form-control w-100 @inputClass"
             id="@{field.id}"
             name="@{field.id}"
-            @if(field.hasErrors || hint.nonEmpty){aria-describedby="@if(hint.nonEmpty){@{field.id}-hint} @if(field.hasErrors){@{field.id}-error}"}
+            @if(field.hasErrors || hint.nonEmpty){ aria-describedby="@if(hint.nonEmpty){@{field.id}-hint}@if(field.hasErrors && hint.nonEmpty){ }@if(field.hasErrors){@{field.id}-error}"}
             rows="5"
             @if(autofocus){autofocus}
     >@{field.value}</textarea>
