@@ -16,6 +16,7 @@
 
 package views.forms.components
 
+import org.scalatest.MustMatchers.convertToAnyMustWrapper
 import play.api.data.Form
 import play.api.data.Forms.{mapping, number}
 import views.ViewMatchers._
@@ -73,6 +74,7 @@ class InputNumberViewSpec extends ViewSpec {
 
       // Then
       doc should containElementWithID("error-message-field-input")
+      doc.getElementsByClass("visually-hidden").text() mustBe  errorPrefix
     }
   }
 
