@@ -33,7 +33,6 @@ object JsonFormatters {
   implicit val formatReferralReason: Format[ReferralReason.Value] = EnumJson.format(ReferralReason)
   implicit val reportField: Format[CaseReportField.Value] = EnumJson.format(CaseReportField)
   implicit val reportGroup: Format[CaseReportGroup.Value] = EnumJson.format(CaseReportGroup)
-  implicit val importExportFormat: Format[ImportExport.Value] = EnumJson.format(ImportExport)
   implicit val formatPermission: Format[Permission] = Format[Permission](
     Reads(json => json.validate[JsString].flatMap(js => Permission.from(js.value) match {
       case Some(permission: Permission) => JsSuccess(permission)

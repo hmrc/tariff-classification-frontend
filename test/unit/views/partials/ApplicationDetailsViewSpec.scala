@@ -16,7 +16,6 @@
 
 package views.partials
 
-import models.ImportExport
 import models.response.ScanStatus
 import utils.Cases
 import utils.Cases._
@@ -44,7 +43,6 @@ class ApplicationDetailsViewSpec extends ViewSpec {
       doc shouldNot containElementWithID("app-details-related-reference")
       doc.getElementById("app-details-legal-proceedings") should containText(messages("answer.no"))
       doc.getElementById("app-details-other-info") should containText(messages("answer.none"))
-      doc.getElementById("app-details-import-or-export") should containText(messages("site.unknown"))
     }
 
     "Render optional fields when present" in {
@@ -56,8 +54,7 @@ class ApplicationDetailsViewSpec extends ViewSpec {
           reissuedBTIReference = Some("reissued bti"),
           relatedBTIReference = Some("related bti"),
           knownLegalProceedings = Some("legal proceedings"),
-          envisagedCommodityCode = Some("envisaged code"),
-          importOrExport = Some(ImportExport.IMPORT)
+          envisagedCommodityCode = Some("envisaged code")
         ),
         withAttachment(attachment("FILE_ID"))
       )
@@ -81,8 +78,6 @@ class ApplicationDetailsViewSpec extends ViewSpec {
       doc.getElementById("app-details-legal-proceedings") should containText("legal proceedings")
       doc should containElementWithID("app-details-other-info")
       doc.getElementById("app-details-other-info") should containText("other info")
-      doc should containElementWithID("app-details-import-or-export")
-      doc.getElementById("app-details-import-or-export") should containText("Import")
     }
   }
 }
