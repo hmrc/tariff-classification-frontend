@@ -20,6 +20,7 @@
 @(c: Case, id: String, suppressLiveIndicator: Boolean = false)
 
 @if(c.application.isLiveLiabilityOrder && !suppressLiveIndicator) {
+    <span class="visuallyhidden">liability type</span>
     <span id = "@id-liability-status" class="live-red-text">LIVE</span>
 }
 
@@ -30,11 +31,13 @@
         </span>
     }
     case CaseStatus.COMPLETED if c.hasExpiredRuling => {
+        <span class="visuallyhidden">case status</span>
         <span id ="@id" class="phase-tag bg-gray--dark">
             EXPIRED
         </span>
     }
     case s : CaseStatus => {
+        <span class="visuallyhidden">case status</span>
         <span id="@id" class="phase-tag bg-blue">@s</span>
     }
 }
