@@ -19,12 +19,10 @@ package service
 import java.time.{Instant, LocalDate}
 import java.util.UUID
 
-import javax.inject.{Inject, Singleton}
-import play.api.Logger
-import uk.gov.hmrc.http.HeaderCarrier
 import audit.AuditService
 import config.AppConfig
 import connector.{BindingTariffClassificationConnector, RulingConnector}
+import javax.inject.{Inject, Singleton}
 import models.AppealStatus.AppealStatus
 import models.AppealType.AppealType
 import models.ApplicationType.ApplicationType
@@ -34,6 +32,8 @@ import models.SampleReturn.SampleReturn
 import models.SampleStatus.SampleStatus
 import models._
 import models.request.NewEventRequest
+import play.api.Logger
+import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -147,7 +147,7 @@ class CasesService @Inject()(appConfig: AppConfig,
     } yield updated
   }
 
-  def referCase(original: Case, referredTo : String, reason: Seq[ReferralReason], f: FileUpload, note: String, operator: Operator)
+  def referCase(original: Case, referredTo: String, reason: Seq[ReferralReason], f: FileUpload, note: String, operator: Operator)
                (implicit hc: HeaderCarrier): Future[Case] = {
     for {
       fileStored <- fileService.upload(fileUpload = f)
@@ -155,9 +155,9 @@ class CasesService @Inject()(appConfig: AppConfig,
       updated <- connector.updateCase(original.addAttachment(attachment)
         .copy(
           status = CaseStatus.REFERRED,
-          sample = if(reason.contains(ReferralReason.REQUEST_SAMPLE)){
+          sample = if (reason.contains(ReferralReason.REQUEST_SAMPLE)) {
             Sample(Some(SampleStatus.AWAITING), Some(operator), Some(SampleReturn.TO_BE_CONFIRMED))
-          } else{
+          } else {
             original.sample
           }
         ))
@@ -168,7 +168,7 @@ class CasesService @Inject()(appConfig: AppConfig,
   }
 
   private def processChangedSampleStatus(original: Case, updated: Case, operator: Operator)(implicit hc: HeaderCarrier): Unit = {
-    if(updated.sample.status != original.sample.status){
+    if (updated.sample.status != original.sample.status) {
       addSampleStatusChangeEvent(original, updated, operator)
       auditService.auditSampleStatusChange(original, updated, operator)
     }
@@ -237,7 +237,7 @@ class CasesService @Inject()(appConfig: AppConfig,
       updated: Case <- connector.updateCase(caseUpdating)
 
       // Send the email
-      message: Option[String] <- if(original.application.isBTI) sendCaseCompleteEmail(updated) else Future.successful(None)
+      message: Option[String] <- if (original.application.isBTI) sendCaseCompleteEmail(updated) else Future.successful(None)
 
       // Create the event
       _ <- addCompletedEvent(original, updated, operator, None, message)
@@ -246,7 +246,7 @@ class CasesService @Inject()(appConfig: AppConfig,
       _ = auditService.auditCaseCompleted(original, updated, operator)
 
       // Notify the Ruling store
-      _ = if(original.application.isBTI) rulingConnector.notify(original.reference) recover loggingARulingErrorFor(original.reference)
+      _ = if (original.application.isBTI) rulingConnector.notify(original.reference) recover loggingARulingErrorFor(original.reference)
     } yield updated
   }
 
@@ -267,7 +267,7 @@ class CasesService @Inject()(appConfig: AppConfig,
       // Create attachment
       attachment = Attachment(id = fileStored.id, operator = Some(operator))
       // Update the case
-      updated: Case <- connector.updateCase( original.addAttachment(attachment).copy(status = CaseStatus.CANCELLED, decision = Some(decisionUpdating)))
+      updated: Case <- connector.updateCase(original.addAttachment(attachment).copy(status = CaseStatus.CANCELLED, decision = Some(decisionUpdating)))
       // Create the event
       _ <- addCancelStatusChangeEvent(original, updated, operator, Some(note), reason, Some(attachment))
       // Audit
@@ -295,7 +295,7 @@ class CasesService @Inject()(appConfig: AppConfig,
       countMyCases <- getCasesByAssignee(operator, NoPagination())
       countByQueue <- reportingService.getQueueReport
       casesByQueueAndMyCases = countByQueue.map(report => (
-        report.group.getOrElse(CaseReportGroup.QUEUE, Some(Queues.gateway.id)).getOrElse("") + "-" +report.group.getOrElse(CaseReportGroup.APPLICATION_TYPE, Some("")).get, report.value.size))
+        report.group.getOrElse(CaseReportGroup.QUEUE, Some(Queues.gateway.id)).getOrElse("") + "-" + report.group.getOrElse(CaseReportGroup.APPLICATION_TYPE, Some("")).get, report.value.size))
         .toMap + ("my-cases" -> countMyCases.size)
     } yield casesByQueueAndMyCases
   }
@@ -312,8 +312,12 @@ class CasesService @Inject()(appConfig: AppConfig,
     connector.updateCase(caseToUpdate)
   }
 
-  def createCase(application: Application)(implicit hc: HeaderCarrier): Future[Case] = {
-    connector.createCase(application)
+  def createCase(application: Application, operator: Operator)(implicit hc: HeaderCarrier): Future[Case] = {
+    for {
+      caseCreated <- connector.createCase(application)
+      _ <- addCaseCreatedEvent(caseCreated, operator)
+      _ = auditService.auditCaseCreated(caseCreated, operator)
+    } yield caseCreated
   }
 
   def addAttachment(c: Case, f: FileUpload, o: Operator)(implicit headerCarrier: HeaderCarrier): Future[Case] = {
@@ -324,17 +328,17 @@ class CasesService @Inject()(appConfig: AppConfig,
   }
 
   def removeAttachment(c: Case, fileId: String)(implicit headerCarrier: HeaderCarrier): Future[Case] = {
-    fileService.removeAttachment(fileId) flatMap {_ =>
+    fileService.removeAttachment(fileId) flatMap { _ =>
       connector.updateCase(c.copy(attachments = c.attachments.filter(_.id != fileId)))
     }
   }
 
   private def addCompletedEvent(original: Case,
-                                   updated: Case,
-                                   operator: Operator,
-                                   comment: Option[String],
-                                    email: Option[String])
-                                  (implicit hc: HeaderCarrier): Future[Unit] = {
+                                updated: Case,
+                                operator: Operator,
+                                comment: Option[String],
+                                email: Option[String])
+                               (implicit hc: HeaderCarrier): Future[Unit] = {
     val details = CompletedCaseStatusChange(from = original.status, comment = comment, email = email)
     addEvent(original, updated, details, operator)
   }
@@ -356,24 +360,24 @@ class CasesService @Inject()(appConfig: AppConfig,
                                          reason: CancelReason,
                                          attachment: Option[Attachment] = None)
                                         (implicit hc: HeaderCarrier): Future[Unit] = {
-    val details = CancellationCaseStatusChange(from = original.status, reason = reason, comment = comment, attachmentId = attachment.map(_.id) )
+    val details = CancellationCaseStatusChange(from = original.status, reason = reason, comment = comment, attachmentId = attachment.map(_.id))
     addEvent(original, updated, details, operator)
   }
 
   private def addReferStatusChangeEvent(original: Case,
-                                         updated: Case,
-                                         operator: Operator,
-                                         comment: Option[String],
-                                         referredTo: String,
-                                         reason: Seq[ReferralReason],
-                                         attachment: Option[Attachment] = None)
-                                        (implicit hc: HeaderCarrier): Future[Unit] = {
-    val details = ReferralCaseStatusChange(from = original.status, comment = comment, attachmentId = attachment.map(_.id), referredTo = referredTo, reason = reason )
+                                        updated: Case,
+                                        operator: Operator,
+                                        comment: Option[String],
+                                        referredTo: String,
+                                        reason: Seq[ReferralReason],
+                                        attachment: Option[Attachment] = None)
+                                       (implicit hc: HeaderCarrier): Future[Unit] = {
+    val details = ReferralCaseStatusChange(from = original.status, comment = comment, attachmentId = attachment.map(_.id), referredTo = referredTo, reason = reason)
     addEvent(original, updated, details, operator)
   }
 
   private def addSampleStatusChangeEvent(original: Case, updated: Case, operator: Operator, comment: Option[String] = None)
-                                           (implicit hc: HeaderCarrier): Future[Unit] = {
+                                        (implicit hc: HeaderCarrier): Future[Unit] = {
     val details = SampleStatusChange(original.sample.status, updated.sample.status, comment)
     addEvent(original, updated, details, operator)
   }
@@ -391,13 +395,13 @@ class CasesService @Inject()(appConfig: AppConfig,
   }
 
   private def addAppealAddedEvent(original: Case, updated: Case, appeal: Appeal, operator: Operator, comment: Option[String] = None)
-                                        (implicit hc: HeaderCarrier): Future[Unit] = {
+                                 (implicit hc: HeaderCarrier): Future[Unit] = {
     val details = AppealAdded(appeal.`type`, appeal.status, comment)
     addEvent(original, updated, details, operator)
   }
 
   private def addAppealStatusChangedEvent(original: Case, updated: Case, appeal: Appeal, newStatus: AppealStatus, operator: Operator, comment: Option[String] = None)
-                                 (implicit hc: HeaderCarrier): Future[Unit] = {
+                                         (implicit hc: HeaderCarrier): Future[Unit] = {
     val details = AppealStatusChange(appeal.`type`, appeal.status, newStatus, comment)
     addEvent(original, updated, details, operator)
   }
@@ -414,6 +418,12 @@ class CasesService @Inject()(appConfig: AppConfig,
                                              (implicit hc: HeaderCarrier): Future[Unit] = {
     val details = ExtendedUseStatusChange(extendedUseStatus(original), extendedUseStatus(updated), comment)
     addEvent(original, updated, details, operator)
+  }
+
+  private def addCaseCreatedEvent(liabilityCase: Case, operator: Operator)
+                                 (implicit hc: HeaderCarrier): Future[Unit] = {
+    val details = CaseCreated("Liability case created")
+    addEvent(liabilityCase, liabilityCase, details, operator)
   }
 
   private def extendedUseStatus: Case => Boolean = {
