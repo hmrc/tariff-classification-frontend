@@ -31,7 +31,7 @@
 
 
 <div class="form-group @if(dateField.hasErrors) {form-group-error}">
-    <fieldset class="inline" id="@fieldsetId" @if(dateField.hasErrors || hint.nonEmpty){aria-describedby="@if(hint.nonEmpty){@{dateField.id}-hint} @if(dateField.hasErrors){error-message-date-input}"}>
+    <fieldset class="inline" id="@fieldsetId" @if(dateField.hasErrors || hint.nonEmpty){ aria-describedby="@if(hint.nonEmpty){@{dateField.id}-hint}@if(dateField.hasErrors && hint.nonEmpty){ }@if(dateField.hasErrors){error-message-date-input}"}>
         <legend class="@labelClass">
             @legend
         </legend>

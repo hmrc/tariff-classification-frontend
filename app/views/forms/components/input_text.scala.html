@@ -49,7 +49,9 @@
         @if(disableAutoComplete) {
             autocomplete="off"
         }
-        @if(field.hasErrors || hint.nonEmpty){aria-describedby="@if(hint.nonEmpty){@{field.id}-hint} @if(field.hasErrors){@{field.id}-error}"}
+        @if(field.hasErrors || hint.nonEmpty){
+            aria-describedby="@if(hint.nonEmpty){@{field.id}-hint}@if(field.hasErrors && hint.nonEmpty){ }@if(field.hasErrors){@{field.id}-error}"
+        }
         id="@{field.id}"
         name="@{field.name}"
         value="@{field.value}"

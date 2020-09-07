@@ -22,14 +22,16 @@ import audit.AuditService
 import connector.{BindingTariffClassificationConnector, RulingConnector}
 import models.ApplicationType.ApplicationType
 import models._
+import models.request.NewEventRequest
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito._
-import org.mockito.Mockito.reset
+import org.mockito.Mockito.{never, reset, verify, verifyZeroInteractions}
 import org.scalatest.BeforeAndAfterEach
 import play.api.mvc.QueryStringBindable
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.Cases
 
-import scala.concurrent.Future.successful
+import scala.concurrent.Future.{failed, successful}
 
 class CasesServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
 
@@ -103,13 +105,45 @@ class CasesServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
   }
 
   "Create Case" should {
-    val application = mock[Application]
-    val createdCase = mock[Case]
+    val aLiabilityCase = Cases.newLiabilityLiveCaseExample
+    val operator = Operator("id")
 
-    "delegate to connector" in {
-      given(connector.createCase(refEq(application))(any[HeaderCarrier])) willReturn successful(createdCase)
+    "delegate to connector - add a case created event" in {
+      given(connector.createCase(refEq(aLiabilityCase.application))(any[HeaderCarrier])) willReturn successful(aLiabilityCase)
+      given(connector.createEvent(refEq(aLiabilityCase), any[NewEventRequest])(any[HeaderCarrier])).willReturn(successful(mock[Event]))
 
-      await(service.createCase(application)) shouldBe createdCase
+      await(service.createCase(aLiabilityCase.application, operator)) shouldBe aLiabilityCase
+
+      verify(audit).auditCaseCreated(refEq(aLiabilityCase), refEq(operator))(any[HeaderCarrier])
+
+      val eventCreated = theEventCreatedFor(connector, aLiabilityCase)
+
+      eventCreated.operator shouldBe Operator("id")
+      eventCreated.details shouldBe CaseCreated(comment = "Liability case created")
+
+    }
+
+    "not succeed and not create event on create case failure" in {
+      given(connector.createCase(any[Application])(any[HeaderCarrier])).willReturn(failed(new RuntimeException()))
+
+      intercept[RuntimeException] {
+        await(service.createCase(any[Application], operator))
+      }
+
+      verify(connector, never()).createEvent(refEq(aLiabilityCase), any[NewEventRequest])(any[HeaderCarrier])
+
+      verifyZeroInteractions(audit)
+    }
+
+    "succeed but not create event on create event failure" in {
+
+      given(connector.createCase(any[Application])(any[HeaderCarrier])) willReturn successful(aLiabilityCase)
+
+      given(connector.createEvent(any[Case], any[NewEventRequest])(any[HeaderCarrier])).willReturn(failed(new RuntimeException()))
+
+      await(service.createCase(aLiabilityCase.application, operator)) shouldBe aLiabilityCase
+
+      verify(audit).auditCaseCreated(refEq(aLiabilityCase), refEq(operator))(any[HeaderCarrier])
     }
   }
 

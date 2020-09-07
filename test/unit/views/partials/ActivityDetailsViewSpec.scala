@@ -35,23 +35,6 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
     val requestWithAddNotePermission = requestWithPermissions(Permission.ADD_NOTE)
 
-    "Render empty events - showing 'Application Submitted'" in {
-      // Given
-      val c = aCase(
-        withCreatedDate(date)
-      )
-
-      // When
-      val doc = view(activity_details(c, Paged.empty[Event], ActivityForm.form, queues))
-
-      // Then
-      doc should containElementWithID("activity-events-row-application_submitted")
-      doc should containElementWithID("activity-events-row-application_submitted-operator")
-      doc should containElementWithID("activity-events-row-application_submitted-content")
-      doc should containElementWithID("activity-events-row-application_submitted-date")
-      doc.getElementById("activity-events-row-application_submitted-date") should containText("01 Jan 2019")
-    }
-
     "Render event without operator name" in {
       // Given
       val c = aCase()

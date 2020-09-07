@@ -32,7 +32,6 @@ import play.api.{Application, Configuration, Environment}
 import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
 import uk.gov.hmrc.play.audit.http.HttpAuditing
 import utils.UnitSpec
-import play.api.test.Helpers
 
 trait SpecBase extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with BeforeAndAfterEach with BeforeAndAfterAll {
 

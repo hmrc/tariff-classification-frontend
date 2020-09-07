@@ -132,6 +132,16 @@
                                 useTabIndex = Some(startAtTabIndex + (index*2))
                             )
                         }
+
+                        case EventType.CASE_CREATED => {
+                            val body = event.details.asInstanceOf[CaseCreated]
+                            progressive_disclosure(
+                                id = s"activity-events-row-$index",
+                                summary = body.comment,
+                                useTabIndex = Some(startAtTabIndex + (index*2))
+                            )
+                        }
+
                         case _ => {
                             throw new IllegalArgumentException(s"Unhandled Event Type [${event.details.`type`}]")
                         }
@@ -142,11 +152,6 @@
             <td id="activity-events-row-@{index}-date" class="activity-cell-date">@Dates.format(event.timestamp)</td>
         </tr>
     }
-        <tr id="activity-events-row-application_submitted">
-            <td id="activity-events-row-application_submitted-operator">Applicant</td>
-            <td id="activity-events-row-application_submitted-content" class="activity-cell">Application submitted</td>
-            <td id="activity-events-row-application_submitted-date" class="activity-cell">@Dates.format(c.createdDate)</td>
-        </tr>
     </tbody>
 
 </table>
