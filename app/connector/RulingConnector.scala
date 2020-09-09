@@ -16,18 +16,22 @@
 
 package connector
 
-import javax.inject.{Inject, Singleton}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import com.kenshoo.play.metrics.Metrics
 import config.AppConfig
-
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import javax.inject.{Inject, Singleton}
+import metrics.HasMetrics
+import scala.concurrent.{ ExecutionContext, Future }
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
 @Singleton
-class RulingConnector @Inject()(configuration: AppConfig, http: AuthenticatedHttpClient) {
+class RulingConnector @Inject()(
+  configuration: AppConfig,
+  http: AuthenticatedHttpClient,
+  val metrics: Metrics
+)(implicit ec: ExecutionContext) extends HasMetrics {
 
-  def notify(id: String)(implicit hc: HeaderCarrier): Future[Unit] = {
-    http.POSTEmpty[HttpResponse](s"${configuration.rulingUrl}/binding-tariff-rulings/ruling/$id", Nil).map(_ => ())
-  }
-
+  def notify(id: String)(implicit hc: HeaderCarrier): Future[Unit] =
+    withMetricsTimerAsync("notify-rulings-frontend") { _ =>
+      http.POSTEmpty[HttpResponse](s"${configuration.rulingUrl}/binding-tariff-rulings/ruling/$id", Nil).map(_ => ())
+    }
 }

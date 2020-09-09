@@ -17,29 +17,35 @@
 package connector
 
 import com.google.inject.Inject
+import com.kenshoo.play.metrics.Metrics
+import config.AppConfig
 import javax.inject.Singleton
+import metrics.HasMetrics
 import play.api.libs.json.{Format, Writes}
 import uk.gov.hmrc.http.{ HeaderCarrier, HttpClient }
-import config.AppConfig
 import models.{Email, EmailTemplate}
+import scala.concurrent.{ ExecutionContext, Future }
 import utils.Base64Utils
 import utils.JsonFormatters.emailTemplateFormat
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
-
 @Singleton
-class EmailConnector @Inject()(configuration: AppConfig, client: HttpClient) {
+class EmailConnector @Inject()(
+  configuration: AppConfig,
+  client: HttpClient,
+  val metrics: Metrics
+)(implicit ec: ExecutionContext) extends HasMetrics {
 
-  def send[E >: Email[Any]](e: E)(implicit hc: HeaderCarrier, writes: Writes[E]): Future[Unit] = {
-    val url = s"${configuration.emailUrl}/hmrc/email"
-    client.POST(url = url, body = e).map(_ => ())
-  }
+  def send[E >: Email[Any]](e: E)(implicit hc: HeaderCarrier, writes: Writes[E]): Future[Unit] =
+    withMetricsTimerAsync("send-email") { _ =>
+      val url = s"${configuration.emailUrl}/hmrc/email"
+      client.POST(url = url, body = e).map(_ => ())
+    }
 
-  def generate[T](e: Email[T])(implicit hc: HeaderCarrier, writes: Format[T]): Future[EmailTemplate] = {
-    val url = s"${configuration.emailRendererUrl}/templates/${e.templateId}"
-    client.POST[Map[String, T], EmailTemplate](url, Map("parameters" -> e.parameters)).map(decodingContent)
-  }
+  def generate[T](e: Email[T])(implicit hc: HeaderCarrier, writes: Format[T]): Future[EmailTemplate] =
+    withMetricsTimerAsync("generate-email") { _ =>
+      val url = s"${configuration.emailRendererUrl}/templates/${e.templateId}"
+      client.POST[Map[String, T], EmailTemplate](url, Map("parameters" -> e.parameters)).map(decodingContent)
+    }
 
   private def decodingContent: EmailTemplate => EmailTemplate = { t: EmailTemplate =>
     t.copy(
