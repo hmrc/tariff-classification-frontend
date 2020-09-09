@@ -72,7 +72,7 @@ class BindingTariffClassificationConnector @Inject()(
     }
 
   def findCasesByAssignee(assignee: Operator, pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[Case]] =
-    withMetricsTimerAsync("search-cases-by-assignee") { _ =>
+    withMetricsTimerAsync("get-cases-by-assignee") { _ =>
       val url = buildQueryUrl(statuses = statuses, queueId = "",  assigneeId = assignee.id,  pagination = pagination)
       client.GET[Paged[Case]](url)
     }
