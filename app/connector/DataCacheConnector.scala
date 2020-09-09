@@ -17,34 +17,41 @@
 package connector
 
 import com.google.inject.Inject
+import com.kenshoo.play.metrics.Metrics
 import javax.inject.Singleton
+import metrics.HasMetrics
 import play.api.libs.json.Format
 import repositories.SessionRepository
+import scala.concurrent.{ ExecutionContext, Future }
 import uk.gov.hmrc.http.cache.client.CacheMap
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
-
 @Singleton
-class MongoCacheConnector @Inject()(val sessionRepository: SessionRepository) extends DataCacheConnector {
+class MongoCacheConnector @Inject()(
+  val sessionRepository: SessionRepository,
+  val metrics: Metrics
+)(implicit ec: ExecutionContext) extends DataCacheConnector with HasMetrics {
 
-  def save[A](cacheMap: CacheMap): Future[CacheMap] = {
-    sessionRepository().upsert(cacheMap).map {_ => cacheMap}
-  }
+  def save[A](cacheMap: CacheMap): Future[CacheMap] =
+    withMetricsTimerAsync("mongo-cache-save") { _ =>
+      sessionRepository().upsert(cacheMap).map {_ => cacheMap}
+    }
 
   def fetch(cacheId: String): Future[Option[CacheMap]] =
-    sessionRepository().get(cacheId)
-
-  def getEntry[A](cacheId: String, key: String)(implicit fmt: Format[A]): Future[Option[A]] = {
-    fetch(cacheId).map { optionalCacheMap =>
-      optionalCacheMap.flatMap { cacheMap => cacheMap.getEntry(key)}
+    withMetricsTimerAsync("mongo-cache-fetch") { _ =>
+      sessionRepository().get(cacheId)
     }
-  }
 
-  def remove(cacheMap: CacheMap): Future[Boolean] = {
-    sessionRepository().remove(cacheMap)
-  }
+  def getEntry[A](cacheId: String, key: String)(implicit fmt: Format[A]): Future[Option[A]] =
+    withMetricsTimerAsync("mongo-cache-get-entry") { _ =>
+      fetch(cacheId).map { optionalCacheMap =>
+        optionalCacheMap.flatMap { cacheMap => cacheMap.getEntry(key)}
+      }
+    }
 
+  def remove(cacheMap: CacheMap): Future[Boolean] =
+    withMetricsTimerAsync("mongo-cache-remove") { _ =>
+      sessionRepository().remove(cacheMap)
+    }
 }
 
 trait DataCacheConnector {

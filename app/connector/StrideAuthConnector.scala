@@ -17,18 +17,30 @@
 package connector
 
 import com.google.inject.Inject
+import com.kenshoo.play.metrics.Metrics
 import javax.inject.Singleton
+import metrics.HasMetrics
+import scala.concurrent.{ExecutionContext, Future}
 import uk.gov.hmrc.auth.core.PlayAuthConnector
 import uk.gov.hmrc.http.CorePost
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.http.HttpClient
-import config.AppConfig
+import uk.gov.hmrc.auth.core.authorise.Predicate
+import uk.gov.hmrc.auth.core.retrieve.Retrieval
+import uk.gov.hmrc.http.HeaderCarrier
 
 @Singleton
 class StrideAuthConnector @Inject()(
   client: HttpClient,
-  servicesConfig: ServicesConfig
-) extends PlayAuthConnector {
+  servicesConfig: ServicesConfig,
+  val metrics: Metrics
+) extends PlayAuthConnector with HasMetrics {
   override val serviceUrl: String = servicesConfig.baseUrl("auth")
   override def http: CorePost = client
+
+  override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] = {
+    withMetricsTimerAsync("stride-authorise") { _ =>
+      super.authorise(predicate, retrieval)
+    }
+  }
 }

@@ -23,10 +23,12 @@ import org.mockito.BDDMockito.given
 import play.api.http.Status
 import play.api.libs.Files.SingletonTemporaryFileCreator
 
+import scala.concurrent.ExecutionContext.Implicits.global
+
 class FileStoreConnectorSpec extends ConnectorTest {
 
   private val attachmentId = "id"
-  private val connector = new FileStoreConnector(mockAppConfig, authenticatedHttpClient, wsClient)
+  private val connector = new FileStoreConnector(mockAppConfig, authenticatedHttpClient, wsClient, metrics)
 
   "Connector 'GET' one" should {
     "handle 404" in {
