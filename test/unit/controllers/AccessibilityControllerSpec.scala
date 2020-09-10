@@ -16,12 +16,8 @@
 
 package controllers
 
-import controllers.actions._
-import play.api.test.Helpers._
-import models.Role.Role
 import models._
 import models.request._
-import play.api.http.Status
 import play.api.test.Helpers._
 import play.api.mvc.Request
 

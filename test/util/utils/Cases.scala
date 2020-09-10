@@ -21,7 +21,6 @@ import java.time.temporal.ChronoUnit.DAYS
 import java.util.UUID
 
 import models.CaseStatus.CaseStatus
-import models.ImportExport.ImportExport
 import models.LiabilityStatus.LiabilityStatus
 import models.SampleReturn.SampleReturn
 import models.SampleStatus.SampleStatus
@@ -37,8 +36,8 @@ object Cases {
   val eoriDetailsExample: EORIDetails = EORIDetails("eori", "trader-business-name", "line1", "line2", "line3", "postcode", "country")
   val eoriAgentDetailsExample: AgentDetails = AgentDetails(EORIDetails("eori", "agent-business-name", "line1", "line2", "line3", "postcode", "country"), Some(Attachment("letter-id", public = true, None, Instant.now())))
   val contactExample: Contact = Contact("name", "email", Some("phone"))
-  val btiApplicationExample: BTIApplication = BTIApplication(eoriDetailsExample, contactExample, Some(eoriAgentDetailsExample), offline = false, "Laptop", "Personal Computer", None, None, None, None, None, None, None, sampleToBeProvided = false, sampleToBeReturned = false)
-  val simpleBtiApplicationExample: BTIApplication = BTIApplication(eoriDetailsExample, contactExample, None, offline = false, "Laptop", "Personal Computer", None, None, None, None, None, None, None, sampleToBeProvided = false, sampleToBeReturned = false)
+  val btiApplicationExample: BTIApplication = BTIApplication(eoriDetailsExample, contactExample, Some(eoriAgentDetailsExample), offline = false, "Laptop", "Personal Computer", None, None, None, None, None, None, sampleToBeProvided = false, sampleToBeReturned = false)
+  val simpleBtiApplicationExample: BTIApplication = BTIApplication(eoriDetailsExample, contactExample, None, offline = false, "Laptop", "Personal Computer", None, None, None, None, None, None, sampleToBeProvided = false, sampleToBeReturned = false)
   val decision: Decision = Decision("040900", Some(Instant.now()), Some(Instant.now().plusSeconds(2 * 3600 * 24 * 365)), "justification", "good description", None, None, Some("denomination"), Seq.empty)
   val incompleteDecision: Decision = Decision("", Some(Instant.now()), Some(Instant.now().plusSeconds(2 * 3600 * 24 * 365)), "justification", "", None, None, Some("denomination"), Seq.empty)
   val decisionWithExclusion: Decision = decision.copy(methodExclusion = Some("Excludes everything ever"))
@@ -216,7 +215,6 @@ object Cases {
                      relatedBTIReference: Option[String] = None,
                      knownLegalProceedings: Option[String] = None,
                      envisagedCommodityCode: Option[String] = None,
-                     importOrExport: Option[ImportExport] = None,
                      sampleToBeProvided: Boolean = false,
                      sampleToBeReturned: Boolean = false): Case => Case = { c =>
     c.copy(application = c.application.asBTI.copy(
@@ -229,7 +227,6 @@ object Cases {
       relatedBTIReference = relatedBTIReference,
       knownLegalProceedings = knownLegalProceedings,
       envisagedCommodityCode = envisagedCommodityCode,
-      importOrExport = importOrExport,
       sampleToBeProvided = sampleToBeProvided,
       sampleToBeReturned = sampleToBeReturned
     ))
@@ -258,8 +255,7 @@ object Cases {
                                     reissuedBTIReference: Option[String] = None,
                                     relatedBTIReference: Option[String] = None,
                                     knownLegalProceedings: Option[String] = None,
-                                    envisagedCommodityCode: Option[String] = None,
-                                    importOrExport: Option[ImportExport] = None): Case => Case = { c =>
+                                    envisagedCommodityCode: Option[String] = None): Case => Case = { c =>
     c.copy(
       application = c.application.asBTI.copy(
         confidentialInformation = confidentialInformation,
@@ -267,8 +263,7 @@ object Cases {
         reissuedBTIReference = reissuedBTIReference,
         relatedBTIReference = relatedBTIReference,
         knownLegalProceedings = knownLegalProceedings,
-        envisagedCommodityCode = envisagedCommodityCode,
-        importOrExport = importOrExport
+        envisagedCommodityCode = envisagedCommodityCode
       )
     )
   }

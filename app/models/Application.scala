@@ -19,7 +19,6 @@ package models
 import java.time.Instant
 
 import models.ApplicationType.ApplicationType
-import models.ImportExport.ImportExport
 import models.LiabilityStatus.LiabilityStatus
 
 sealed trait Application {
@@ -82,7 +81,6 @@ case class BTIApplication
   goodName: String,
   goodDescription: String,
   confidentialInformation: Option[String],
-  importOrExport: Option[ImportExport] = None,
   otherInformation: Option[String],
   reissuedBTIReference: Option[String],
   relatedBTIReference: Option[String],
