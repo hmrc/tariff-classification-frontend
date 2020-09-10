@@ -20,57 +20,65 @@ import akka.stream.IOResult
 import akka.stream.scaladsl.{FileIO, Source}
 import akka.util.ByteString
 import com.google.inject.Inject
+import com.kenshoo.play.metrics.Metrics
+import config.AppConfig
 import javax.inject.Singleton
+import metrics.HasMetrics
+import models._
+import models.response.FileMetadata
 import play.api.libs.json.Json
 import play.api.libs.ws.WSClient
 import play.api.mvc.MultipartFormData
 import play.api.mvc.MultipartFormData.FilePart
 import uk.gov.hmrc.http.HeaderCarrier
-import config.AppConfig
-import models._
-import models.response.FileMetadata
+import scala.concurrent.{ ExecutionContext, Future }
 import utils.JsonFormatters.fileMetaDataFormat
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
-
 @Singleton
-class FileStoreConnector @Inject()(appConfig: AppConfig, http: AuthenticatedHttpClient, ws: WSClient) {
+class FileStoreConnector @Inject()(
+  appConfig: AppConfig,
+  http: AuthenticatedHttpClient,
+  ws: WSClient,
+  val metrics: Metrics
+)(implicit ec: ExecutionContext) extends HasMetrics {
 
-  def get(attachments: Seq[Attachment])(implicit headerCarrier: HeaderCarrier): Future[Seq[FileMetadata]] = {
-    if (attachments.isEmpty) {
-      Future.successful(Seq.empty)
-    } else {
-      val query = s"?${attachments.map(att => s"id=${att.id}").mkString("&")}"
-      http.GET[Seq[FileMetadata]](s"${appConfig.fileStoreUrl}/file$query")
+  def get(attachments: Seq[Attachment])(implicit headerCarrier: HeaderCarrier): Future[Seq[FileMetadata]] =
+    withMetricsTimerAsync("get-file-metadata") { _ =>
+      if (attachments.isEmpty) {
+        Future.successful(Seq.empty)
+      } else {
+        val query = s"?${attachments.map(att => s"id=${att.id}").mkString("&")}"
+        http.GET[Seq[FileMetadata]](s"${appConfig.fileStoreUrl}/file$query")
+      }
     }
-  }
 
-  def get(attachmentId: String)(implicit headerCarrier: HeaderCarrier): Future[Option[FileMetadata]] = {
-    http.GET[Option[FileMetadata]](s"${appConfig.fileStoreUrl}/file/$attachmentId")
-  }
+  def get(attachmentId: String)(implicit headerCarrier: HeaderCarrier): Future[Option[FileMetadata]] =
+    withMetricsTimerAsync("get-file-metadata-by-id") { _ =>
+      http.GET[Option[FileMetadata]](s"${appConfig.fileStoreUrl}/file/$attachmentId")
+    }
 
   def upload(fileUpload: FileUpload)
-            (implicit hc: HeaderCarrier): Future[FileMetadata] = {
+            (implicit hc: HeaderCarrier): Future[FileMetadata] =
+    withMetricsTimerAsync("upload-file") { _ =>
+      val dataPart: MultipartFormData.DataPart = MultipartFormData.DataPart("publish", "true")
 
-    val dataPart: MultipartFormData.DataPart = MultipartFormData.DataPart("publish", "true")
+      val filePart: MultipartFormData.Part[Source[ByteString, Future[IOResult]]] = FilePart(
+        "file",
+        fileUpload.fileName,
+        Some(fileUpload.contentType),
+        FileIO.fromPath(fileUpload.content.file.toPath)
+      )
 
-    val filePart: MultipartFormData.Part[Source[ByteString, Future[IOResult]]] = FilePart(
-      "file",
-      fileUpload.fileName,
-      Some(fileUpload.contentType),
-      FileIO.fromPath(fileUpload.content.file.toPath)
-    )
+      ws.url(s"${appConfig.fileStoreUrl}/file")
+        .withHeaders( hc.headers: _* )
+        .withHeaders( "X-Api-Token" -> appConfig.apiToken )
+        .post(Source(List(filePart, dataPart)))
+        .map(response => Json.fromJson[FileMetadata](Json.parse(response.body)).get)
+    }
 
-    ws.url(s"${appConfig.fileStoreUrl}/file")
-      .withHeaders( hc.headers: _* )
-      .withHeaders( "X-Api-Token" -> appConfig.apiToken )
-      .post(Source(List(filePart, dataPart)))
-      .map(response => Json.fromJson[FileMetadata](Json.parse(response.body)).get)
-  }
-
-  def delete(fileId: String)(implicit hc: HeaderCarrier): Future[Unit] = {
-    http.DELETE(s"${appConfig.fileStoreUrl}/file/$fileId").map(_ => ())
-  }
+  def delete(fileId: String)(implicit hc: HeaderCarrier): Future[Unit] =
+    withMetricsTimerAsync("delete-file") { _ =>
+      http.DELETE(s"${appConfig.fileStoreUrl}/file/$fileId").map(_ => ())
+    }
 
 }

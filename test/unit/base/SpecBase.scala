@@ -31,7 +31,8 @@ import play.api.test.FakeRequest
 import play.api.{Application, Configuration, Environment}
 import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
 import uk.gov.hmrc.play.audit.http.HttpAuditing
-import utils.UnitSpec
+import utils.{ TestMetrics, UnitSpec }
+import com.kenshoo.play.metrics.Metrics
 
 trait SpecBase extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with BeforeAndAfterEach with BeforeAndAfterAll {
 
@@ -61,6 +62,7 @@ trait SpecBase extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with 
   lazy val appConfWithLiabilityToggleOff: AppConfig = appWithLiabilityToggleOff.injector.instanceOf[AppConfig]
   lazy val defaultPlayBodyParsers: BodyParsers.Default = injector.instanceOf[BodyParsers.Default]
   lazy val injector: Injector = app.injector
+  lazy val metrics: Metrics = new TestMetrics
 
   lazy val ws: WSClient = injector.instanceOf[WSClient]
 

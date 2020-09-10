@@ -1,13 +1,16 @@
 package integration
 
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, post, stubFor, urlEqualTo}
+import com.kenshoo.play.metrics.Metrics
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.Application
 import play.api.i18n.{Lang, Messages, MessagesApi}
+import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.ws.WSClient
 import play.api.test.Helpers.{OK, UNAUTHORIZED}
 import utils.{ResourceFiles, UnitSpec, WiremockTestServer}
+import utils.TestMetrics
 
 trait IntegrationTest extends UnitSpec with GuiceOneServerPerSuite
   with ResourceFiles with WiremockTestServer {
@@ -16,6 +19,7 @@ trait IntegrationTest extends UnitSpec with GuiceOneServerPerSuite
 
   override def fakeApplication(): Application = new GuiceApplicationBuilder()
     .disable[com.kenshoo.play.metrics.PlayModule]
+    .overrides(bind[Metrics].toInstance(new TestMetrics))
     .configure(Map(
       "microservice.services.binding-tariff-classification.port" -> wirePort,
       "microservice.services.binding-tariff-filestore.port" -> wirePort,

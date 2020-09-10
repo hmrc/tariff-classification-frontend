@@ -25,6 +25,8 @@ import play.api.libs.json.Json
 import uk.gov.hmrc.http.NotFoundException
 import utils._
 
+import scala.concurrent.ExecutionContext.Implicits.global
+
 class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQueueBuilder {
 
   import utils.JsonFormatters._
@@ -35,7 +37,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
   private val currentTime = LocalDate.of(2019,1,1).atStartOfDay().toInstant(ZoneOffset.UTC)
   private implicit val clock: Clock = Clock.fixed(currentTime, ZoneOffset.UTC)
 
-  private val connector = new BindingTariffClassificationConnector(mockAppConfig, authenticatedHttpClient)
+  private val connector = new BindingTariffClassificationConnector(mockAppConfig, authenticatedHttpClient, metrics)
 
   "Connector 'Get Cases By Queue'" should {
 

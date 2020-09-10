@@ -23,11 +23,13 @@ import org.apache.http.HttpStatus
 import play.api.libs.json.{Format, OFormat}
 import utils.JsonFormatters
 
+import scala.concurrent.ExecutionContext.Implicits.global
+
 class EmailConnectorSpec extends ConnectorTest {
 
   private val email = CaseCompletedEmail(Seq("user@domain.com"), CaseCompletedEmailParameters("name", "case-ref", "item-name"))
 
-  private val connector = new EmailConnector(mockAppConfig, standardHttpClient)
+  private val connector = new EmailConnector(mockAppConfig, standardHttpClient, metrics)
 
   "Connector 'Send'" should {
     implicit val format: Format[Email[_]] = JsonFormatters.emailFormat
