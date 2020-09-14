@@ -20,7 +20,7 @@ import config.AppConfig
 import controllers.{RequestActions, v2}
 import javax.inject.{Inject, Singleton}
 import models.forms.{ActivityForm, ActivityFormData, KeywordForm, UploadAttachmentForm}
-import models.request.{AuthenticatedCaseRequest, AuthenticatedRequest, OptionalDataRequest}
+import models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
 import models.viewmodels._
 import models.{Case, Permission, _}
 import play.api.data.Form
@@ -30,7 +30,6 @@ import service.{CasesService, EventsService, FileStoreService, KeywordsService, 
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import controllers.Tab._
-import controllers.actions.{DataRetrievalAction, IdentifierAction}
 import models.forms.v2.LiabilityDetailsForm
 
 import scala.concurrent.ExecutionContext.Implicits.global

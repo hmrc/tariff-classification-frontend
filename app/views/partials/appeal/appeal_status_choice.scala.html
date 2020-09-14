@@ -14,16 +14,11 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
-@import controllers.routes
 @import models.AppealStatus.AppealStatus
 @import models.AppealType.AppealType
-@import models.{AppealStatus, AppealType, Case}
+@import models.{AppealStatus, AppealType}
 @import views.forms.components.RadioOption
 @import views.html.forms.components.input_radiogroup
-@import views.html.includes.main
-@import views.html.partials.case_heading
-@import models.Appeal
 
 @(appealType: AppealType, form: Form[AppealStatus])(implicit messages: Messages)
 

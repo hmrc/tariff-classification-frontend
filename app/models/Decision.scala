@@ -18,8 +18,6 @@ package models
 
 import java.time.Instant
 
-import models.AppealType.AppealType
-
 case class Decision
 (
   bindingCommodityCode: String,

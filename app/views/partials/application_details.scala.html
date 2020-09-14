@@ -17,8 +17,9 @@
 @import config.AppConfig
 @import controllers.routes.AttachmentsController
 @import models.request.AuthenticatedRequest
-@import models.{Application, BTIApplication, Case, EORIDetails, Permission, StoredAttachment}
+@import models.{Application, BTIApplication, Case, EORIDetails, StoredAttachment}
 @import views.html.partials._
+
 @(c: Case, files: Seq[StoredAttachment], letterOfAuth: Option[StoredAttachment], startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @defining(c.application) { a: Application =>
@@ -63,15 +64,6 @@
                         </dd>
                     </div>
                 }
-
-                <div id="app-details-import-or-export" class="grid-row">
-                    <dt class="column-one-third">
-                    @messages("case.application.importOrExport")
-                    </dt>
-                    <dd class="column-two-thirds">
-                    @btiApp.importOrExport.getOrElse(messages("site.unknown")).toString.toLowerCase.capitalize
-                    </dd>
-                </div>
 
                 <h3 class="heading-medium" id="trader-submitted-heading">@messages("case.application.type")</h3>
 
