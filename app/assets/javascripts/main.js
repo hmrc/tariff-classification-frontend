@@ -1,4 +1,11 @@
 window.onload = function () {
+    var Tabs = window.GOVUKFrontend.Tabs
+        var $tabs = document.querySelector('[data-module="govuk-tabs"]')
+        if ($tabs) {
+            setTimeout(function() {
+            new Tabs($tabs).init()
+            }, 200);
+        }
     if (document.querySelectorAll && document.addEventListener) {
         var els = document.querySelectorAll('a[role="button"]');
         for (var i = 0; i < els.length; i++) {
@@ -20,11 +27,7 @@ window.onload = function () {
         hasErrors.focus();
     }
 
-    var Tabs = window.GOVUKFrontend.Tabs
-    var $tabs = document.querySelector('[data-module="govuk-tabs"]')
-    if ($tabs) {
-        new Tabs($tabs).init()
-    }
+
 };
 
 

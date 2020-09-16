@@ -96,7 +96,7 @@
 
             @* attachments*@
             @if(attachmentsTabViewModel.isDefined) {
-                <li class="govuk-tabs__list-item govuk-tabs__list-item">
+                <li class="govuk-tabs__list-item">
                     <a class="govuk-tabs__tab" href="#attachments_tab">
                     @messages("page.title.attachments")
                     </a>
@@ -105,7 +105,7 @@
 
             @* activity*@
             @if(activityViewModel.isDefined) {
-                <li class="govuk-tabs__list-item govuk-tabs__list-item">
+                <li class="govuk-tabs__list-item">
                     <a class="govuk-tabs__tab" href="#activity_tab">
                     @messages("page.title.activity")
                     </a>
@@ -114,7 +114,7 @@
 
             @* keywords*@
             @if(liabilityViewModel.showRulingAndKeywordsTabs) {
-            <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
+            <li class="govuk-tabs__list-item">
                 <a class="govuk-tabs__tab" href="#keywords_tab">
                     @messages("case.v2.liability.keywords.tab_title")
                 </a>
@@ -123,7 +123,7 @@
 
             @* appeal*@
             @if(liabilityViewModel.showAppealTab) {
-                <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
+                <li class="govuk-tabs__list-item">
                     <a class="govuk-tabs__tab" href="#appeal_tab">
                     @messages("case.v2.liability.appeals.tab_title")
                     </a>
