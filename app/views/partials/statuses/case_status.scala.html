@@ -27,7 +27,7 @@
 @c.status match {
     case CaseStatus.CANCELLED => {
         <span id ="@id" class="phase-tag bg-gray--dark">
-            CANCELLED@{c.decision.flatMap(_.cancellation).map(c => CancelReason.code(c.reason)).map(s => s" - $s").getOrElse("")}
+            CANCELLED@{c.decision.flatMap(_.cancellation).flatMap(c => CancelReason.code(c.reason)).map(s => s" - $s").getOrElse("")}
         </span>
     }
     case CaseStatus.COMPLETED if c.hasExpiredRuling => {

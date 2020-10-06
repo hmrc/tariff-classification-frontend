@@ -34,9 +34,13 @@ object CaseHeaderViewModel {
     def fromCase(c: Case): CaseHeaderViewModel = {
       val status: String = {
         c.status match {
-          case CaseStatus.CANCELLED => s"CANCELLED${c.decision.flatMap(_.cancellation).map(c => CancelReason.code(c.reason)).map(s => s" - $s").getOrElse("")}"
-          case CaseStatus.COMPLETED if c.hasExpiredRuling => "EXPIRED"
-          case s: CaseStatus => s.toString
+          case CaseStatus.CANCELLED =>
+            val code = c.decision.flatMap(_.cancellation).flatMap(c => CancelReason.code(c.reason))
+            "CANCELLED" + code.map(c => s" - $c").getOrElse("")
+          case CaseStatus.COMPLETED if c.hasExpiredRuling =>
+            "EXPIRED"
+          case s: CaseStatus =>
+            s.toString
         }
       }
 
