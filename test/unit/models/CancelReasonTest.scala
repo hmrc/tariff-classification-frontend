@@ -42,31 +42,39 @@ class CancelReasonTest extends ModelsBaseSpec {
     "format 'Invalidated Other'" in {
       CancelReason.format(CancelReason.INVALIDATED_OTHER) shouldBe "Invalidated due to other reasons (65)"
     }
+
+    "format 'Other'" in {
+      CancelReason.format(CancelReason.OTHER) shouldBe "Invalidated due to other reasons"
+    }
   }
 
   "Review code" should {
     "format 'Annulled'" in {
-      CancelReason.code(CancelReason.ANNULLED) shouldBe 55
+      CancelReason.code(CancelReason.ANNULLED) shouldBe Some(55)
     }
 
     "format 'Invalidated Code Change'" in {
-      CancelReason.code(CancelReason.INVALIDATED_CODE_CHANGE) shouldBe 61
+      CancelReason.code(CancelReason.INVALIDATED_CODE_CHANGE) shouldBe Some(61)
     }
 
     "format 'Invalidated EU Measure'" in {
-      CancelReason.code(CancelReason.INVALIDATED_EU_MEASURE) shouldBe 62
+      CancelReason.code(CancelReason.INVALIDATED_EU_MEASURE) shouldBe Some(62)
     }
 
     "format 'Invalidated National Measure'" in {
-      CancelReason.code(CancelReason.INVALIDATED_NATIONAL_MEASURE) shouldBe 63
+      CancelReason.code(CancelReason.INVALIDATED_NATIONAL_MEASURE) shouldBe Some(63)
     }
 
     "format 'Invalidated Wrong Classification'" in {
-      CancelReason.code(CancelReason.INVALIDATED_WRONG_CLASSIFICATION) shouldBe 64
+      CancelReason.code(CancelReason.INVALIDATED_WRONG_CLASSIFICATION) shouldBe Some(64)
     }
 
     "format 'Invalidated Other'" in {
-      CancelReason.code(CancelReason.INVALIDATED_OTHER) shouldBe 65
+      CancelReason.code(CancelReason.INVALIDATED_OTHER) shouldBe Some(65)
+    }
+
+    "format 'Other'" in {
+      CancelReason.code(CancelReason.OTHER) shouldBe None
     }
   }
 
