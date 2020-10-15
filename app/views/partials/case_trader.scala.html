@@ -50,13 +50,11 @@
                             @messages("case.application.holder.address")
                         </dt>
                         <dd class="column-two-thirds">
-
-                                @btiHolder.addressLine1 @if(!btiHolder.addressLine1.isEmpty) {<br>}
-                                @btiHolder.addressLine2 @if(!btiHolder.addressLine2.isEmpty) {<br>}
-                                @btiHolder.addressLine3 @if(!btiHolder.addressLine3.isEmpty) {<br>}
-                                @btiHolder.postcode     @if(!btiHolder.postcode.isEmpty)     {<br>}
-                                @messages(getCountryName(btiHolder.country).mkString)
-
+                            <span class="pre-wrap">@btiHolder.addressLine1</span> @if(!btiHolder.addressLine1.isEmpty) {<br>}
+                            <span class="pre-wrap">@btiHolder.addressLine2</span> @if(!btiHolder.addressLine2.isEmpty) {<br>}
+                            <span class="pre-wrap">@btiHolder.addressLine3</span> @if(!btiHolder.addressLine3.isEmpty) {<br>}
+                            <span class="pre-wrap">@btiHolder.postcode</span> @if(!btiHolder.postcode.isEmpty) {<br>}
+                            <span class="pre-wrap">@messages(getCountryName(btiHolder.country).mkString)</span>
                         </dd>
                     </div>
 
@@ -90,11 +88,11 @@
                                     @messages("case.application.agent.address")
                                 </dt>
                                 <dd class="column-two-thirds">
-                                    @btiAgent.eoriDetails.addressLine1 @if(!btiAgent.eoriDetails.addressLine1.isEmpty) {<br>}
-                                    @btiAgent.eoriDetails.addressLine2  @if(!btiAgent.eoriDetails.addressLine2.isEmpty) {<br>}
-                                    @btiAgent.eoriDetails.addressLine3  @if(!btiAgent.eoriDetails.addressLine3.isEmpty) {<br>}
-                                    @btiAgent.eoriDetails.postcode  @if(!btiAgent.eoriDetails.postcode.isEmpty) {<br>}
-                                    @messages(getCountryName(btiAgent.eoriDetails.country).mkString)
+                                    <span class="pre-wrap">@btiAgent.eoriDetails.addressLine1</span> @if(!btiAgent.eoriDetails.addressLine1.isEmpty) {<br>}
+                                    <span class="pre-wrap">@btiAgent.eoriDetails.addressLine2</span> @if(!btiAgent.eoriDetails.addressLine2.isEmpty) {<br>}
+                                    <span class="pre-wrap">@btiAgent.eoriDetails.addressLine3</span> @if(!btiAgent.eoriDetails.addressLine3.isEmpty) {<br>}
+                                    <span class="pre-wrap">@btiAgent.eoriDetails.postcode</span> @if(!btiAgent.eoriDetails.postcode.isEmpty) {<br>}
+                                    <span class="pre-wrap">@messages(getCountryName(btiAgent.eoriDetails.country).mkString)</span>
                                 </dd>
                             </div>
 
