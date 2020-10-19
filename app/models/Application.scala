@@ -84,6 +84,7 @@ case class BTIApplication
   otherInformation: Option[String],
   reissuedBTIReference: Option[String],
   relatedBTIReference: Option[String],
+  relatedBTIReferences: List[String],
   knownLegalProceedings: Option[String],
   envisagedCommodityCode: Option[String],
   sampleToBeProvided: Boolean,
