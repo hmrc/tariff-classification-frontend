@@ -116,8 +116,19 @@
                         <dt class="column-one-third">
                             @messages("case.application.similar-bti-ruling")
                         </dt>
+                            <dd class="column-two-thirds">
+                                <span class="pre-wrap">@btiApp.relatedBTIReference</span>
+                            </dd>
+                    </div>
+                }
+
+                @if(!btiApp.relatedBTIReferences.isEmpty){
+                    <div id="app-details-related-reference" class="grid-row">
+                        <dt class="column-one-third">
+                        @messages("case.application.similar-bti-ruling")
+                        </dt>
                         <dd class="column-two-thirds">
-                            <span class="pre-wrap">@btiApp.relatedBTIReference</span>
+                            <span class="pre-wrap">@btiApp.relatedBTIReferences.mkString("\n")</span>
                         </dd>
                     </div>
                 }

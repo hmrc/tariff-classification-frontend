@@ -73,7 +73,7 @@ object JsonFormatters {
   implicit val sampleFormat: OFormat[Sample] = Json.format[Sample]
   implicit val agentDetailsFormat: OFormat[AgentDetails] = Json.format[AgentDetails]
   implicit val liabilityOrderFormat: OFormat[LiabilityOrder] = Json.format[LiabilityOrder]
-  implicit val btiApplicationFormat: OFormat[BTIApplication] = Json.format[BTIApplication]
+  implicit val btiApplicationFormat: OFormat[BTIApplication] = Json.using[Json.WithDefaultValues].format[BTIApplication]
   implicit val applicationFormat: Format[Application] = Union.from[Application]("type")
     .and[BTIApplication](ApplicationType.BTI.toString)
     .and[LiabilityOrder](ApplicationType.LIABILITY_ORDER.toString)
