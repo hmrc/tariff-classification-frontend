@@ -136,3 +136,5 @@ GET        /cases/cache/:reference/:itemType                    controllers.TabC
 POST       /cases/cache/:reference/:itemType                    controllers.TabCacheController.post(reference: String, itemType: String)
 
 GET        /accessibility                                       controllers.AccessibilityController.onPageLoad
+
+GET        /operator-dashboard-classification                  controllers.OperatorDashboardController.onPageLoad

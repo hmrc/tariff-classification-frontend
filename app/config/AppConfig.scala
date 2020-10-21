@@ -65,6 +65,9 @@ class AppConfig @Inject()(
   lazy val dateOfReceiptYearLowerBound: Int = 2010
   lazy val dateForRepaymentYearLowerBound: Int = 2010
 
+  lazy val betaFeedbackUrl = s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier"
+  lazy val betaFeedbackUnauthenticatedUrl = s"$contactHost/contact/beta-feedback-unauthenticated?service=$contactFormServiceIdentifier"
+
   //accessibility Urls
   lazy val accessibilityUrl: String = config.get[String]("accessibility-urls.accessibility")
   lazy val govukAccessibilityUrl : String = config.get[String]("accessibility-urls.govukAccessibilityUrl")

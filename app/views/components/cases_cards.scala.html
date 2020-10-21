@@ -1,0 +1,81 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.AppConfig
+@import models.request.AuthenticatedRequest
+@import views.html.includes.main
+
+
+@()(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+
+<div id="dashboard-view"  class="centered-content">
+
+        <h1 class="heading-xlarge mt-40 mb-0">Eileen Smith</h1>
+        <span class="caption-xl">@messages("operator.dashboard.classification.title")</span>
+        <h2 class="heading-medium">@messages("cases.menu.my-cases")</h2>
+        <div class="flex-container govuk-grid-row">
+            <a id="my-cases" class="link-text" href="my-cases">
+                <div class="card">
+                    <h3 class="card-heading govuk-heading-s">@messages("operator.dashboard.classification.my-cases")</h3>
+                    <p class="card-body">@messages("operator.dashboard.classification.my-cases.progress")</p>
+                </div>
+            </a>
+            <a id="my-referred-cases" class="link-text" href="my-referred-cases">
+                <div class="card">
+                    <h3 class="card-heading govuk-heading-s">@messages("operator.dashboard.classification.my-cases.referred-me")</h3>
+                    <div class="card-body"><p>@messages("operator.dashboard.classification.my-cases.progress")</p></div>
+                </div>
+            </a>
+        </div>
+
+        <h2 class="heading-medium mt-0">@messages("operator.dashboard.classification.all-open-cases")</h2>
+        <div class="flex-container govuk-grid-row">
+            <a class="link-text" href="bti-cases">
+                <div class="card">
+                    <h3 class="card-heading govuk-heading-s">@messages("operator.dashboard.classification.all-open-cases.atar")</h3>
+                    <p class="card-body">@messages("operator.dashboard.classification.all-open-cases.list-all")</p>
+                </div>
+            </a>
+            <a class="link-text" href="liability-cases">
+                <div class="card">
+                    <h3 class="card-heading govuk-heading-s">@messages("case.menu.liability")</h3>
+                    <p class="card-body">@messages("operator.dashboard.classification.all-open-cases.liability")</p>
+                </div>
+            </a>
+            <a class="link-text" href="corres-cases">
+                <div class="card">
+                    <h3 class="card-heading govuk-heading-s">@messages("operator.dashboard.classification.all-open-cases.correspondence")</h3>
+                    <p class="card-body">@messages("operator.dashboard.classification.all-open-cases.correspondence.list")</p>
+                </div>
+            </a>
+            <a class="link-text" href="misc-cases">
+                <div class="card">
+                    <h3 class="card-heading govuk-heading-s">@messages("operator.dashboard.classification.all-open-cases.Miscellaneous")</h3>
+                    <p class="card-body">@messages("operator.dashboard.classification.all-open-cases.miscellaneous.list")</p>
+                </div>
+            </a>
+        </div>
+
+        <h2 class="heading-medium mt-0">@messages("cases.menu.gateway-cases")</h2>
+        <div class="flex-container govuk-grid-row">
+            <a class="link-text" href="gateway-cases">
+                <div class="card">
+                    <h3 class="card-heading govuk-heading-s">@messages("page.title.case.queues.gateway")</h3>
+                    <p class="card-body card-action">@messages("operator.dashboard.classification.gateway-cases")</p>
+                </div>
+            </a>
+        </div>
+    </div>
