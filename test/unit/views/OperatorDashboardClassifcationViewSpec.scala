@@ -44,14 +44,8 @@ class OperatorDashboardClassifcationViewSpec extends ViewSpec {
 
       "contain a link to my cases" in {
         val doc = asDocument(view())
-        assertLinkContainsHref(doc, "my-cases", "my-cases")
+        assertLinkContainsHref(doc, "my-cases-id", "my-cases")
       }
-
-      "contain a link to my Referred cases" in {
-        val doc = asDocument(view())
-        assertLinkContainsHref(doc, "my-referred-cases", "my-referred-cases")
-      }
-
 
     }
   }
