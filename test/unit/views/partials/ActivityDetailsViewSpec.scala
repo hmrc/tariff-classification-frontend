@@ -342,7 +342,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       // Then
       doc should containElementWithID("activity-events-row-0-operator")
-      doc.getElementById("activity-events-row-0-operator") should containText("id")
+      doc.getElementById("activity-events-row-0-operator") should containText("name")
       doc should containElementWithID("activity-events-row-0-content")
       doc.getElementById("activity-events-row-0-content") should containText("Expert advice received")
       doc.getElementById("activity-events-row-0-content") should containText("advice paragraph")
