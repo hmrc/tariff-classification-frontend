@@ -263,3 +263,26 @@ button.button-gray,
 .button-gray:visited:hover {
     background-color: #c7cacc;
 }
+.beta-banner {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #b1b4b6;
+    margin-bottom: -0.5em;
+}
+.beta-banner .phase-tag{
+    font-size: 16px;
+    line-height: 16px;
+    font-weight: 700px;
+    padding-top: 5px;
+    padding-right: 8px;
+    padding-left: 8px;
+    letter-spacing: 1px
+}
+.beta-banner p {
+    font-size: 16px;
+    line-height: 1.25;
+    font-weight: 400;
+    color: #0b0c0c;
+    display: table;
+    margin: 0;
+}

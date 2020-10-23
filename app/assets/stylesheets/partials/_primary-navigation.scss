@@ -1,0 +1,182 @@
+/* ==========================================================================
+   #PRIMARY NAVIGATION
+   ========================================================================== */
+
+.moj-primary-navigation {
+  background-color: #f3f2f1;
+}
+
+.moj-primary-navigation__container {
+  //@include moj-width-container;
+  font-size: 0; // Hide whitespace between elements
+  text-align: justify; // Trick to remove the need for floats
+
+  &:after {
+    content: '';
+    display: inline-block;
+    width: 100%;
+  }
+
+}
+
+.moj-primary-navigation__nav {
+  text-align: left;
+  //@include govuk-media-query($from: desktop) {
+    display: inline-block;
+    vertical-align: middle;
+  //}
+
+}
+
+.moj-primary-navigation__list {
+  font-size: 0; // Removes white space when using inline-block on child element.
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.moj-primary-navigation__item {
+  font-size: 19px;
+  font-size: 1.1875rem;
+  line-height: 1.31579;
+  display: inline-block;
+  margin-right: 20px;
+  margin-top: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 400;
+  display: inline-block;
+  margin-right: 20px;
+  margin-top: 0;
+
+  &:last-child {
+    margin-right: 0;
+  }
+
+}
+
+.moj-primary-navigation__link {
+  display: block;
+  padding-bottom: 15px;
+  padding-top: 15px;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 19px;
+
+  &:link,
+  &:visited {
+    color: #1d70b8;
+  }
+  &:hover {
+  background-color: #dee0e2;
+  }
+
+  &:focus {
+    color: #0b0c0c; // Focus colour on yellow should really be black.
+    position: relative; // Ensure focus sits above everything else.
+    z-index: 1;
+    box-shadow: none;
+    background-color: #ffdd00;
+    &:before {
+       background-color: #0b0c0c;
+       content: "";
+       display: block;
+       height: 5px;
+       position: absolute;
+       bottom: 0;
+       left: 0;
+       width: 100%;
+    }
+  }
+
+  &[aria-current] {
+    color: #1d70b8;;
+    position: relative;
+    text-decoration: none;
+    font-weight: bold;
+    &:before {
+      background-color: #1d70b8;;
+      content: "";
+      display: block;
+      height: 5px;
+      position: absolute; bottom: 0; left: 0;
+      width: 100%;
+    }
+
+    &:focus {
+      color: #0b0c0c; // Focus colour on yellow should really be black.
+      position: relative; // Ensure focus sits above everything else.
+      border: none;
+
+      &:before {
+        background-color: #0b0c0c;
+            content: "";
+            display: block;
+            height: 5px;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+      }
+
+    }
+
+  }
+
+}
+
+.moj-primary-navigation__search {
+
+ // @include govuk-media-query($from: desktop) {
+    display: inline-block;
+    vertical-align: middle;
+  //}
+}
+.moj-search--inline {
+    padding: 0 !important;
+}
+.moj-primary-navigation__container {
+    max-width: 960px;
+    //margin: 0 15px;
+    font-size: 0;
+    text-align: justify;
+    }
+.moj-search form {
+    align-items: flex-end;
+    display: flex;
+}
+.moj-search .govuk-form-group {
+    display: inline-block;
+    flex: 1;
+    margin-bottom: 0;
+    vertical-align: top;
+}
+.moj-search__label, .moj-search__hint {
+    text-align: left;
+}
+.moj-search__button {
+    display: inline-block;
+    margin-bottom: 0;
+    margin-left: 10px;
+    position: relative;
+    top: -2px;
+    vertical-align: bottom;
+    width: auto;
+    font-size: 19px;
+    line-height: 1;
+}
+
+/* cards */
+#dashboard-view .govuk-link:visited, a:visited, .app-step-nav-header__title:visited, .app-step-nav-related__link:visited {
+    color: #4c2c92;
+    text-decoration: none;
+}
+
+.govuk-heading-s {
+    margin-bottom: 20px;
+    font-size: 19px;
+        line-height: 1.31579;
+        display: block;
+            margin-top: 0;
+            font-weight:700;
+}

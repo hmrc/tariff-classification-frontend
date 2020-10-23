@@ -73,9 +73,18 @@
     )
 }
 
+@phaseBanner = {
+    @uiLayouts.betaBanner(
+        userLoggedIn = false,
+        betaFeedbackUrl = appConfig.betaFeedbackUrl,
+        betaFeedbackUnauthenticatedUrl = appConfig.betaFeedbackUnauthenticatedUrl,
+        showFeedbackLinkInBetaBanner = true
+    )
+}
+
 @serviceInfo = {
 @uiLayouts.serviceInfo(
-    betaBanner = HtmlFormat.empty,
+    betaBanner = phaseBanner,
     includeGridWrapper = false,
     includeHMRCBranding = false,
     serviceInfoContent = Some(serviceInfoContent))
