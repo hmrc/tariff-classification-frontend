@@ -93,6 +93,7 @@ object JsonFormatters {
   implicit val formatAssignmentChange: OFormat[AssignmentChange] = Json.format[AssignmentChange]
   implicit val formatQueueChange: OFormat[QueueChange] = Json.format[QueueChange]
   implicit val formatCaseCreated: OFormat[CaseCreated] = Json.format[CaseCreated]
+  implicit val formatExpertAdviceReceived: OFormat[ExpertAdviceReceived] = Json.format[ExpertAdviceReceived]
   implicit val formatNote: OFormat[Note] = Json.format[Note]
   implicit val fileMetaDataFormat: OFormat[FileMetadata] = Json.format[FileMetadata]
   implicit val formatEventDetail: Format[Details] = Union.from[Details]("type")
@@ -109,6 +110,7 @@ object JsonFormatters {
     .and[QueueChange](EventType.QUEUE_CHANGE.toString)
     .and[Note](EventType.NOTE.toString)
     .and[CaseCreated](EventType.CASE_CREATED.toString)
+    .and[ExpertAdviceReceived](EventType.EXPERT_ADVICE_RECEIVED.toString)
     .format
 
 

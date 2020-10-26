@@ -297,6 +297,26 @@ class ActivityTabSpec extends ViewSpec {
       doc.getElementById("activity-events-row-0-date") should containText("01 Jan 2019")
     }
 
+    "Render 'Expert advice received'" in {
+      val e = Event(
+        id = "EVENT_ID",
+        details = ExpertAdviceReceived(comment = "advice paragraph"),
+        operator = Operator("id", Some("name")),
+        caseReference = "ref",
+        timestamp = date
+      )
+
+      val doc = view(activityTab(activityViewModel.copy(events = Paged(Seq(e))), activityForm)(requestWithAddNotePermission, messages, appConfig))
+
+      doc should containElementWithID("activity-events-row-0-operator")
+      doc.getElementById("activity-events-row-0-operator") should containText("id")
+      doc should containElementWithID("activity-events-row-0-content")
+      doc.getElementById("activity-events-row-0-content") should containText("Expert advice received")
+      doc.getElementById("activity-events-row-0-content") should containText("advice paragraph")
+      doc should containElementWithID("activity-events-row-0-date")
+      doc.getElementById("activity-events-row-0-date") should containText("01 Jan 2019")
+    }
+
     "Render 'Extended Use Change'" in {
 
       val e = Event(
