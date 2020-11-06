@@ -87,7 +87,7 @@ class SearchControllerSpec extends ControllerBaseSpec {
       // Given
       val search = Search(traderName = Some("trader"), commodityCode = Some("00"))
       val c = aCase()
-      val attachment = StoredAttachment("id", public = true, None, None, "file", "image/png", None, Instant.now(), "test description")
+      val attachment = StoredAttachment("id", public = true, None, None, "file", "image/png", None, Instant.now(), Some("test description"))
 
       given(casesService.search(refEq(search), refEq(Sort()), refEq(SearchPagination(2)))(any[HeaderCarrier])) willReturn Future.successful(Paged(Seq(c)))
       given(fileStoreService.getAttachments(refEq(Seq(c)))(any[HeaderCarrier])) willReturn Future.successful(Map(c -> Seq(attachment)))
@@ -133,7 +133,7 @@ class SearchControllerSpec extends ControllerBaseSpec {
       // Given
       val search = Search(traderName = Some("trader"), commodityCode = Some("00"))
       val c = aCase()
-      val attachment = StoredAttachment("id", public = true, None, None, "file", "image/png", None, Instant.now(), "test description")
+      val attachment = StoredAttachment("id", public = true, None, None, "file", "image/png", None, Instant.now(), Some("test description"))
 
       given(casesService.search(refEq(search), refEq(Sort()), refEq(SearchPagination(2)))(any[HeaderCarrier])) willReturn Future.successful(Paged(Seq(c)))
       given(fileStoreService.getAttachments(refEq(Seq(c)))(any[HeaderCarrier])) willReturn Future.successful(Map(c -> Seq(attachment)))

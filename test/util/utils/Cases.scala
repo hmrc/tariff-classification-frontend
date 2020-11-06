@@ -30,9 +30,9 @@ import models.viewmodels._
 
 object Cases {
 
-  val storedAttachment: StoredAttachment = StoredAttachment("id", public = true, None, Some("url"), "name", "type", Some(ScanStatus.READY), Instant.now(), "test description")
-  val storedOperatorAttachment: StoredAttachment = StoredAttachment("id", public = true, Some(Operator("0", Some("Operator Name"))), Some("url"), "name", "type", Some(ScanStatus.READY), Instant.now(), "test description")
-  val letterOfAuthority: StoredAttachment = StoredAttachment("id", public = true, None, Some("url"), "letterOfAuthority", "pdf", Some(ScanStatus.READY), Instant.now(), "test description")
+  val storedAttachment: StoredAttachment = StoredAttachment("id", public = true, None, Some("url"), "name", "type", Some(ScanStatus.READY), Instant.now(), Some("test description"))
+  val storedOperatorAttachment: StoredAttachment = StoredAttachment("id", public = true, Some(Operator("0", Some("Operator Name"))), Some("url"), "name", "type", Some(ScanStatus.READY), Instant.now(), Some("test description"))
+  val letterOfAuthority: StoredAttachment = StoredAttachment("id", public = true, None, Some("url"), "letterOfAuthority", "pdf", Some(ScanStatus.READY), Instant.now(), Some("test description"))
   val eoriDetailsExample: EORIDetails = EORIDetails("eori", "trader-business-name", "line1", "line2", "line3", "postcode", "country")
   val eoriAgentDetailsExample: AgentDetails = AgentDetails(EORIDetails("eori", "agent-business-name", "line1", "line2", "line3", "postcode", "country"), Some(Attachment("letter-id", public = true, None, Instant.now())))
   val contactExample: Contact = Contact("name", "email", Some("phone"))

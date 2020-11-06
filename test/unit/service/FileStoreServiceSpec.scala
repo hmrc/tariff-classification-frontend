@@ -173,7 +173,7 @@ class FileStoreServiceSpec extends ServiceSpecBase {
       mimeType = s"type-$id",
       scanStatus = Some(ScanStatus.READY),
       timestamp = Instant.EPOCH,
-      description = "test description"
+      description = Some("test description")
     )
   }
 
@@ -189,7 +189,7 @@ class FileStoreServiceSpec extends ServiceSpecBase {
       public = true,
       None,
       timestamp = Instant.EPOCH,
-      description = "test description"
+      description = Some("test description")
     )
     c.copy(attachments = attachments)
   }
@@ -206,7 +206,7 @@ class FileStoreServiceSpec extends ServiceSpecBase {
       public = true,
       None,
       timestamp = Instant.EPOCH,
-      description = "test description"
+      description = Some("test description")
     )
   }
 
