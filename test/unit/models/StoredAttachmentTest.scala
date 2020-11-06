@@ -55,7 +55,7 @@ class StoredAttachmentTest extends ModelsBaseSpec {
         fileName = metadata.fileName,
         mimeType = metadata.mimeType,
         scanStatus = metadata.scanStatus,
-        description = "test description"
+        description = Some("test description")
       )
     }
 
@@ -79,7 +79,7 @@ class StoredAttachmentTest extends ModelsBaseSpec {
     public = true,
     None,
     timestamp = Instant.EPOCH,
-    description = "test description"
+    description = Some("test description")
   )
 
   private def someMetadataWithType(t: String) = FileMetadata(

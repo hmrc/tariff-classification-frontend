@@ -40,7 +40,7 @@ class ThumbnailViewSpec extends ViewSpec  {
         mimeType = "image/png",
         scanStatus = Some(ScanStatus.READY),
         timestamp = Instant.now(),
-        description = "test description"
+        description = Some("test description")
       )
 
       // When
