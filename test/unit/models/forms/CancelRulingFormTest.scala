@@ -34,7 +34,8 @@ class CancelRulingFormTest extends ModelsBaseSpec {
     }
 
     "Bind valid enum and note should succeed" in {
-      val form = CancelRulingForm.form.bindFromRequest(Map("reason" -> Seq(CancelReason.ANNULLED.toString),"note" -> Seq("hi")))
+      val form =
+        CancelRulingForm.form.bindFromRequest(Map("reason" -> Seq(CancelReason.ANNULLED.toString), "note" -> Seq("hi")))
 
       form.hasErrors shouldBe false
     }
@@ -49,13 +50,13 @@ class CancelRulingFormTest extends ModelsBaseSpec {
   "Fill" should {
 
     "populate value" in {
-      val form = CancelRulingForm.form.fill(RulingCancellation(CancelReason.INVALIDATED_WRONG_CLASSIFICATION.toString, "some note text"))
+      val form = CancelRulingForm.form.fill(
+        RulingCancellation(CancelReason.INVALIDATED_WRONG_CLASSIFICATION.toString, "some note text")
+      )
 
       form.hasErrors shouldBe false
-      form.data shouldBe Map("reason" -> "INVALIDATED_WRONG_CLASSIFICATION", "note" -> "some note text")
+      form.data      shouldBe Map("reason" -> "INVALIDATED_WRONG_CLASSIFICATION", "note" -> "some note text")
     }
   }
-
-
 
 }

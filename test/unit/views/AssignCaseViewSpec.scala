@@ -43,7 +43,10 @@ class AssignCaseViewSpec extends ViewSpec {
       doc should containElementWithID("assign_case-assign_button")
 
       doc should containElementWithID("assign_case-continue_button")
-      doc.getElementById("assign_case-continue_button") should haveAttribute("href", routes.CaseController.get("REF").url)
+      doc.getElementById("assign_case-continue_button") should haveAttribute(
+        "href",
+        routes.CaseController.get("REF").url
+      )
       doc should containElementWithID("back-link")
     }
 
@@ -64,7 +67,10 @@ class AssignCaseViewSpec extends ViewSpec {
       doc shouldNot containElementWithID("assign_case-assign_button")
 
       doc should containElementWithID("assign_case-continue_button")
-      doc.getElementById("assign_case-continue_button") should haveAttribute("href", routes.CaseController.get("REF").url)
+      doc.getElementById("assign_case-continue_button") should haveAttribute(
+        "href",
+        routes.CaseController.get("REF").url
+      )
     }
   }
 }

@@ -16,7 +16,6 @@
 
 package models.forms.mappings
 
-
 import models.ModelsBaseSpec
 import play.api.data.{Form, FormError}
 import utils.Enumerable
@@ -63,7 +62,7 @@ class MappingsSpec extends ModelsBaseSpec with Mappings {
     }
 
     "return a custom error message" in {
-      val form = Form("value" -> text("custom.error"))
+      val form   = Form("value" -> text("custom.error"))
       val result = form.bind(Map("value" -> ""))
       result.errors should contain(FormError("value", "custom.error"))
     }

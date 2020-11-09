@@ -25,38 +25,47 @@ import service.{CasesService, QueuesService}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class MyCasesControllerSpec extends ControllerBaseSpec {
 
-  private val casesService = mock[CasesService]
+  private val casesService  = mock[CasesService]
   private val queuesService = mock[QueuesService]
-  private val queue = Queue("0", "queue", "Queue Name")
+  private val queue         = Queue("0", "queue", "Queue Name")
 
   private def controller(permission: Set[Permission]) = new MyCasesController(
-    new RequestActionsWithPermissions(defaultPlayBodyParsers, permission), casesService, queuesService, mcc, realAppConfig
+    new RequestActionsWithPermissions(playBodyParsers, permission),
+    casesService,
+    queuesService,
+    mcc,
+    realAppConfig
   )
 
   "My Cases" should {
 
     "redirect to unauthorised if no permission" in {
       val result = await(controller(Set.empty).myCases()(fakeRequest))
-      status(result) shouldBe Status.SEE_OTHER
+      status(result)           shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.SecurityController.unauthorized().url)
     }
 
     "return 200 OK and HTML content type" in {
-      given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier])).willReturn(Future.successful(Paged.empty[Case]))
-      given(casesService.countCasesByQueue(any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(Map.empty[String, Int]))
+      given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
+        .willReturn(Future.successful(Paged.empty[Case]))
+      given(casesService.countCasesByQueue(any[Operator])(any[HeaderCarrier]))
+        .willReturn(Future.successful(Map.empty[String, Int]))
       given(queuesService.getAll).willReturn(Future.successful(Seq(queue)))
 
       val result = await(controller(Set(Permission.VIEW_MY_CASES)).myCases()(fakeRequest))
-      status(result) shouldBe Status.OK
-      contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
+      status(result)                                         shouldBe Status.OK
+      contentType(result)                                    shouldBe Some("text/html")
+      charset(result)                                        shouldBe Some("utf-8")
       session(result).get(SessionKeys.backToQueuesLinkLabel) shouldBe Some("My cases")
-      session(result).get(SessionKeys.backToQueuesLinkUrl) shouldBe Some("/manage-tariff-classifications/queues/my-cases")
+      session(result).get(SessionKeys.backToQueuesLinkUrl) shouldBe Some(
+        "/manage-tariff-classifications/queues/my-cases"
+      )
       session(result).get(SessionKeys.backToSearchResultsLinkLabel) shouldBe None
-      session(result).get(SessionKeys.backToSearchResultsLinkUrl) shouldBe None
+      session(result).get(SessionKeys.backToSearchResultsLinkUrl)   shouldBe None
     }
 
   }

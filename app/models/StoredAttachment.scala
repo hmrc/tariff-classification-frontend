@@ -24,49 +24,42 @@ import play.twirl.api.Html
 import utils.Dates
 
 case class StoredAttachment(
-                             id: String,
-                             public: Boolean,
-                             operator: Option[Operator],
-                             url: Option[String],
-                             fileName: String,
-                             mimeType: String,
-                             scanStatus: Option[ScanStatus],
-                             timestamp: Instant,
-                             description: String
-                           ) {
+  id: String,
+  public: Boolean,
+  operator: Option[Operator],
+  url: Option[String],
+  fileName: String,
+  mimeType: String,
+  scanStatus: Option[ScanStatus],
+  timestamp: Instant,
+  description: String
+) {
 
-  def isImage: Boolean = {
+  def isImage: Boolean =
     mimeType match {
-      case "image/png" => true
+      case "image/png"  => true
       case "image/jpeg" => true
-      case "image/gif" => true
-      case _ => false
+      case "image/gif"  => true
+      case _            => false
     }
-  }
 
-  def formattedDate: String = {
+  def formattedDate: String =
     Dates.format(this.timestamp)
-  }
 
   def nameOfOperator: String = {
-    val name = operator.map(op => {
-      op.name.map(name => name.trim).getOrElse("")
-    }).getOrElse("")
+    val name = operator.map(op => op.name.map(name => name.trim).getOrElse("")).getOrElse("")
     name
   }
 
-  def delimiterBetweenNameAndRole: Html = {
+  def delimiterBetweenNameAndRole: Html =
     if (nameOfOperator.trim.isEmpty || roleOfOperator.trim.isEmpty) {
       Html("")
     } else {
       Html("<br>")
     }
-  }
 
   def roleOfOperator: String = {
-    val role = operator.map(op => {
-      op.role.toString
-    }).getOrElse("")
+    val role = operator.map(op => op.role.toString).getOrElse("")
     role
   }
 }
@@ -75,14 +68,14 @@ object StoredAttachment {
   def apply(attachment: Attachment, metadata: FileMetadata): StoredAttachment = {
     require(attachment.id == metadata.id, "Cannot combine different attachments")
     StoredAttachment(
-      id = attachment.id,
-      public = attachment.public,
-      operator = attachment.operator,
-      timestamp = attachment.timestamp,
-      url = metadata.url,
-      fileName = metadata.fileName,
-      mimeType = metadata.mimeType,
-      scanStatus = metadata.scanStatus,
+      id          = attachment.id,
+      public      = attachment.public,
+      operator    = attachment.operator,
+      timestamp   = attachment.timestamp,
+      url         = metadata.url,
+      fileName    = metadata.fileName,
+      mimeType    = metadata.mimeType,
+      scanStatus  = metadata.scanStatus,
       description = attachment.description
     )
   }

@@ -33,9 +33,9 @@ class AttachmentViewSpec extends ViewSpec {
       val doc = view(attachment("MODULE", stored))
 
       // Then
-      doc should containElementWithID("MODULE-file")
-      doc should containElementWithID("MODULE-file-status")
-      doc.getElementById("MODULE-file") should haveChild("span").containingText("name")
+      doc                                      should containElementWithID("MODULE-file")
+      doc                                      should containElementWithID("MODULE-file-status")
+      doc.getElementById("MODULE-file")        should haveChild("span").containingText("name")
       doc.getElementById("MODULE-file-status") should containText("Processing")
     }
 
@@ -46,27 +46,29 @@ class AttachmentViewSpec extends ViewSpec {
       val doc = view(attachment("MODULE", stored))
 
       // Then
-      doc should containElementWithID("MODULE-file")
-      doc should containElementWithID("MODULE-file-status")
-      doc.getElementById("MODULE-file") should haveChild("span").containingText("name")
+      doc                                      should containElementWithID("MODULE-file")
+      doc                                      should containElementWithID("MODULE-file-status")
+      doc.getElementById("MODULE-file")        should haveChild("span").containingText("name")
       doc.getElementById("MODULE-file-status") should containText("Failed")
     }
 
     "Render Safe attachment without URL" in {
-      val stored = Cases.storedAttachment.copy(id = "FILE_ID", fileName = "name", scanStatus = Some(ScanStatus.READY), url = None)
+      val stored =
+        Cases.storedAttachment.copy(id = "FILE_ID", fileName = "name", scanStatus = Some(ScanStatus.READY), url = None)
 
       // When
       val doc = view(attachment("MODULE", stored))
 
       // Then
-      doc should containElementWithID("MODULE-file")
-      doc should containElementWithID("MODULE-file-status")
-      doc.getElementById("MODULE-file") should haveChild("span").containingText("name")
+      doc                                      should containElementWithID("MODULE-file")
+      doc                                      should containElementWithID("MODULE-file-status")
+      doc.getElementById("MODULE-file")        should haveChild("span").containingText("name")
       doc.getElementById("MODULE-file-status") should containText("Failed")
     }
 
     "Render Safe attachment" in {
-      val stored = Cases.storedAttachment.copy(id = "FILE_ID", fileName = "name", scanStatus = Some(ScanStatus.READY), url = Some("url"))
+      val stored = Cases.storedAttachment
+        .copy(id = "FILE_ID", fileName = "name", scanStatus = Some(ScanStatus.READY), url = Some("url"))
 
       // When
       val doc = view(attachment("MODULE", stored))

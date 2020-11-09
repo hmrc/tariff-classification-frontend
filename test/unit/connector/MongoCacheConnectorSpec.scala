@@ -30,15 +30,19 @@ import uk.gov.hmrc.http.cache.client.CacheMap
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class MongoCacheConnectorSpec extends ScalaCheckDrivenPropertyChecks
-  with Generators with ConnectorTest with ScalaFutures with OptionValues {
+class MongoCacheConnectorSpec
+    extends ScalaCheckDrivenPropertyChecks
+    with Generators
+    with ConnectorTest
+    with ScalaFutures
+    with OptionValues {
 
   ".save" should {
 
     "save the cache map to the Mongo repository" in {
 
       val mockReactiveMongoRepository = mock[ReactiveMongoRepository]
-      val mockSessionRepository = mock[SessionRepository]
+      val mockSessionRepository       = mock[SessionRepository]
 
       when(mockSessionRepository.apply()) thenReturn mockReactiveMongoRepository
       when(mockReactiveMongoRepository.upsert(any[CacheMap])) thenReturn Future.successful(true)
@@ -46,7 +50,6 @@ class MongoCacheConnectorSpec extends ScalaCheckDrivenPropertyChecks
       val mongoCacheConnector = new MongoCacheConnector(mockSessionRepository, metrics)
 
       forAll(arbitrary[CacheMap]) { cacheMap =>
-
         val result = mongoCacheConnector.save(cacheMap)
 
         whenReady(result) { savedCacheMap =>
@@ -65,7 +68,7 @@ class MongoCacheConnectorSpec extends ScalaCheckDrivenPropertyChecks
     "remove the cache map to the Mongo repository" in {
 
       val mockReactiveMongoRepository = mock[ReactiveMongoRepository]
-      val mockSessionRepository = mock[SessionRepository]
+      val mockSessionRepository       = mock[SessionRepository]
 
       when(mockSessionRepository.apply()) thenReturn mockReactiveMongoRepository
       when(mockReactiveMongoRepository.remove(any[CacheMap])) thenReturn Future.successful(true)
@@ -73,7 +76,6 @@ class MongoCacheConnectorSpec extends ScalaCheckDrivenPropertyChecks
       val mongoCacheConnector = new MongoCacheConnector(mockSessionRepository, metrics)
 
       forAll(arbitrary[CacheMap]) { cacheMap =>
-
         val result = mongoCacheConnector.remove(cacheMap)
 
         whenReady(result) { savedCacheMap =>
@@ -93,7 +95,7 @@ class MongoCacheConnectorSpec extends ScalaCheckDrivenPropertyChecks
       "return None" in {
 
         val mockReactiveMongoRepository = mock[ReactiveMongoRepository]
-        val mockSessionRepository = mock[SessionRepository]
+        val mockSessionRepository       = mock[SessionRepository]
 
         when(mockSessionRepository.apply()) thenReturn mockReactiveMongoRepository
         when(mockReactiveMongoRepository.get(any())) thenReturn Future.successful(None)
@@ -101,12 +103,9 @@ class MongoCacheConnectorSpec extends ScalaCheckDrivenPropertyChecks
         val mongoCacheConnector = new MongoCacheConnector(mockSessionRepository, metrics)
 
         forAll(nonEmptyString) { cacheId =>
-
           val result = mongoCacheConnector.fetch(cacheId)
 
-          whenReady(result) { optionalCacheMap =>
-            optionalCacheMap should be(empty)
-          }
+          whenReady(result)(optionalCacheMap => optionalCacheMap should be(empty))
         }
 
       }
@@ -118,21 +117,18 @@ class MongoCacheConnectorSpec extends ScalaCheckDrivenPropertyChecks
       "return the record" in {
 
         val mockReactiveMongoRepository = mock[ReactiveMongoRepository]
-        val mockSessionRepository = mock[SessionRepository]
+        val mockSessionRepository       = mock[SessionRepository]
 
         when(mockSessionRepository.apply()) thenReturn mockReactiveMongoRepository
 
         val mongoCacheConnector = new MongoCacheConnector(mockSessionRepository, metrics)
 
         forAll(arbitrary[CacheMap]) { cacheMap =>
-
           when(mockReactiveMongoRepository.get(refEq(cacheMap.id))) thenReturn Future.successful(Some(cacheMap))
 
           val result = mongoCacheConnector.fetch(cacheMap.id)
 
-          whenReady(result) { optionalCacheMap =>
-              optionalCacheMap.get shouldBe cacheMap
-          }
+          whenReady(result)(optionalCacheMap => optionalCacheMap.get shouldBe cacheMap)
         }
 
       }
@@ -148,7 +144,7 @@ class MongoCacheConnectorSpec extends ScalaCheckDrivenPropertyChecks
       "return None" in {
 
         val mockReactiveMongoRepository = mock[ReactiveMongoRepository]
-        val mockSessionRepository = mock[SessionRepository]
+        val mockSessionRepository       = mock[SessionRepository]
 
         when(mockSessionRepository.apply()) thenReturn mockReactiveMongoRepository
         when(mockReactiveMongoRepository.get(any())) thenReturn Future.successful(None)
@@ -156,12 +152,9 @@ class MongoCacheConnectorSpec extends ScalaCheckDrivenPropertyChecks
         val mongoCacheConnector = new MongoCacheConnector(mockSessionRepository, metrics)
 
         forAll(nonEmptyString, nonEmptyString) { (cacheId, key) =>
+          val result = mongoCacheConnector.getEntry[String](cacheId, key)
 
-            val result = mongoCacheConnector.getEntry[String](cacheId, key)
-
-            whenReady(result) { optionalValue =>
-              optionalValue should be(empty)
-            }
+          whenReady(result)(optionalValue => optionalValue should be(empty))
         }
 
       }
@@ -173,7 +166,7 @@ class MongoCacheConnectorSpec extends ScalaCheckDrivenPropertyChecks
       "return None" in {
 
         val mockReactiveMongoRepository = mock[ReactiveMongoRepository]
-        val mockSessionRepository = mock[SessionRepository]
+        val mockSessionRepository       = mock[SessionRepository]
 
         when(mockSessionRepository.apply()) thenReturn mockReactiveMongoRepository
 
@@ -184,15 +177,13 @@ class MongoCacheConnectorSpec extends ScalaCheckDrivenPropertyChecks
           cacheMap <- arbitrary[CacheMap]
         } yield (key, cacheMap copy (data = cacheMap.data - key))
 
-        forAll(gen) { case (k, cacheMap) =>
+        forAll(gen) {
+          case (k, cacheMap) =>
+            when(mockReactiveMongoRepository.get(refEq(cacheMap.id))) thenReturn Future.successful(Some(cacheMap))
 
-          when(mockReactiveMongoRepository.get(refEq(cacheMap.id))) thenReturn Future.successful(Some(cacheMap))
+            val result = mongoCacheConnector.getEntry[String](cacheMap.id, k)
 
-          val result = mongoCacheConnector.getEntry[String](cacheMap.id, k)
-
-          whenReady(result) { optionalValue =>
-            optionalValue should be(empty)
-          }
+            whenReady(result)(optionalValue => optionalValue should be(empty))
         }
 
       }
@@ -204,7 +195,7 @@ class MongoCacheConnectorSpec extends ScalaCheckDrivenPropertyChecks
       "return the key's value" in {
 
         val mockReactiveMongoRepository = mock[ReactiveMongoRepository]
-        val mockSessionRepository = mock[SessionRepository]
+        val mockSessionRepository       = mock[SessionRepository]
 
         when(mockSessionRepository.apply()) thenReturn mockReactiveMongoRepository
 
@@ -216,14 +207,13 @@ class MongoCacheConnectorSpec extends ScalaCheckDrivenPropertyChecks
           cacheMap <- arbitrary[CacheMap]
         } yield (key, value, cacheMap copy (data = cacheMap.data + (key -> JsString(value))))
 
-        forAll(gen) { case (k, v, cacheMap) =>
-          when(mockReactiveMongoRepository.get(refEq(cacheMap.id))) thenReturn Future.successful(Some(cacheMap))
+        forAll(gen) {
+          case (k, v, cacheMap) =>
+            when(mockReactiveMongoRepository.get(refEq(cacheMap.id))) thenReturn Future.successful(Some(cacheMap))
 
-          val result = mongoCacheConnector.getEntry[String](cacheMap.id, k)
+            val result = mongoCacheConnector.getEntry[String](cacheMap.id, k)
 
-          whenReady(result) { optionalValue =>
-            optionalValue.get shouldBe v
-          }
+            whenReady(result)(optionalValue => optionalValue.get shouldBe v)
         }
 
       }

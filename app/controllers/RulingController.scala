@@ -33,89 +33,116 @@ import scala.concurrent.Future
 import controllers.Tab._
 
 @Singleton
-class RulingController @Inject()(
-                                  verify: RequestActions,
-                                  casesService: CasesService,
-                                  fileStoreService: FileStoreService,
-                                  mapper: DecisionFormMapper,
-                                  decisionForm: DecisionForm,
-                                  mcc: MessagesControllerComponents,
-                                  val editRulingView: views.html.v2.edit_liability_ruling,
-                                  implicit val appConfig: AppConfig
-                                ) extends FrontendController(mcc) with I18nSupport {
+class RulingController @Inject() (
+  verify: RequestActions,
+  casesService: CasesService,
+  fileStoreService: FileStoreService,
+  mapper: DecisionFormMapper,
+  decisionForm: DecisionForm,
+  mcc: MessagesControllerComponents,
+  val editRulingView: views.html.v2.edit_liability_ruling,
+  implicit val appConfig: AppConfig
+) extends FrontendController(mcc)
+    with I18nSupport {
 
   private final val rulingDetailsStartTabIndex = 7000
-  private val v2toggle = appConfig.newLiabilityDetails
+  private val v2toggle                         = appConfig.newLiabilityDetails
 
-  def editRulingDetails(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.EDIT_RULING)).async { implicit request =>
-    getCaseAndThen(c => c.application.`type` match {
-      case ApplicationType.BTI =>
-        val formData = mapper.caseToDecisionFormData(c)
-        val df = decisionForm.btiForm.fill(formData)
-        editBTIRulingView(df, c)
+  def editRulingDetails(reference: String): Action[AnyContent] =
+    (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.EDIT_RULING))
+      .async { implicit request =>
+        getCaseAndThen(c =>
+          c.application.`type` match {
+            case ApplicationType.BTI =>
+              val formData = mapper.caseToDecisionFormData(c)
+              val df       = decisionForm.btiForm.fill(formData)
+              editBTIRulingView(df, c)
 
-      case ApplicationType.LIABILITY_ORDER =>
-        val decision = c.decision.getOrElse(Decision())
-        val df = decisionForm.liabilityForm(decision)
-        editLiabilityRulingView(df, c)
-    })
-  }
+            case ApplicationType.LIABILITY_ORDER =>
+              val decision = c.decision.getOrElse(Decision())
+              val df       = decisionForm.liabilityForm(decision)
+              editLiabilityRulingView(df, c)
+          }
+        )
+      }
 
-  def validateBeforeComplete(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.EDIT_RULING)).async { implicit request =>
-    getCaseAndThen(c => c.application.`type` match {
-      case ApplicationType.BTI =>
-        val formData = mapper.caseToDecisionFormData(c)
-        val decisionFormWithErrors = decisionForm.btiCompleteForm.fillAndValidate(formData)
-        editBTIRulingView(decisionFormWithErrors, c)
-      case ApplicationType.LIABILITY_ORDER =>
-        //TODO add validate logic
-        Future.successful(Redirect(routes.CompleteCaseController.confirmCompleteCase(c.reference)))
-    })
-  }
+  def validateBeforeComplete(reference: String): Action[AnyContent] =
+    (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.EDIT_RULING))
+      .async { implicit request =>
+        getCaseAndThen(c =>
+          c.application.`type` match {
+            case ApplicationType.BTI =>
+              val formData               = mapper.caseToDecisionFormData(c)
+              val decisionFormWithErrors = decisionForm.btiCompleteForm.fillAndValidate(formData)
+              editBTIRulingView(decisionFormWithErrors, c)
+            case ApplicationType.LIABILITY_ORDER =>
+              //TODO add validate logic
+              Future.successful(Redirect(routes.CompleteCaseController.confirmCompleteCase(c.reference)))
+          }
+        )
+      }
 
   def updateRulingDetails(reference: String): Action[AnyContent] =
-    (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.EDIT_RULING)).async { implicit request =>
-      getCaseAndThen(c => c.application.`type` match {
-        case ApplicationType.BTI =>
-          decisionForm.btiForm.bindFromRequest.fold(
-            errorForm => editBTIRulingView(errorForm, c),
-            validForm => for {
-              update <- casesService.updateCase(mapper.mergeFormIntoCase(c, validForm))
-            } yield Redirect(routes.CaseController.rulingDetails(update.reference))
-          )
+    (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.EDIT_RULING))
+      .async { implicit request =>
+        getCaseAndThen(c =>
+          c.application.`type` match {
+            case ApplicationType.BTI =>
+              decisionForm.btiForm.bindFromRequest.fold(
+                errorForm => editBTIRulingView(errorForm, c),
+                validForm =>
+                  for {
+                    update <- casesService.updateCase(mapper.mergeFormIntoCase(c, validForm))
+                  } yield Redirect(routes.CaseController.rulingDetails(update.reference))
+              )
 
-        case ApplicationType.LIABILITY_ORDER =>
-          val decision = c.decision.getOrElse(Decision())
-          decisionForm.liabilityForm(decision).bindFromRequest.fold(
-            errorForm => editLiabilityRulingView(errorForm, c),
-            updatedDecision => for {
-              update <- casesService.updateCase(c.copy(decision = Some(updatedDecision)))
-            } yield if (v2toggle) {
-              Redirect(v2.routes.LiabilityController.displayLiability(update.reference).withFragment(RULING_TAB))
-            } else {
-              Redirect(routes.LiabilityController.liabilityDetails(update.reference))
-            }
-          )
-      })
-    }
+            case ApplicationType.LIABILITY_ORDER =>
+              val decision = c.decision.getOrElse(Decision())
+              decisionForm
+                .liabilityForm(decision)
+                .bindFromRequest
+                .fold(
+                  errorForm => editLiabilityRulingView(errorForm, c),
+                  updatedDecision =>
+                    for {
+                      update <- casesService.updateCase(c.copy(decision = Some(updatedDecision)))
+                    } yield
+                      if (v2toggle) {
+                        Redirect(
+                          v2.routes.LiabilityController.displayLiability(update.reference).withFragment(RULING_TAB)
+                        )
+                      } else {
+                        Redirect(routes.LiabilityController.liabilityDetails(update.reference))
+                      }
+                )
+          }
+        )
+      }
 
-  private def editBTIRulingView(f: Form[DecisionFormData], c: Case)(implicit request: AuthenticatedRequest[_]): Future[Result] = {
-    fileStoreService.getAttachments(c).map(views.html.ruling_details_edit(c, _, f, startAtTabIndex = Some(rulingDetailsStartTabIndex))).map(Ok(_))
-  }
+  private def editBTIRulingView(f: Form[DecisionFormData], c: Case)(
+    implicit request: AuthenticatedRequest[_]
+  ): Future[Result] =
+    fileStoreService
+      .getAttachments(c)
+      .map(views.html.ruling_details_edit(c, _, f, startAtTabIndex = Some(rulingDetailsStartTabIndex)))
+      .map(Ok(_))
 
-  private def editLiabilityRulingView(f: Form[Decision], c: Case)(implicit request: AuthenticatedRequest[_]): Future[Result] = {
+  private def editLiabilityRulingView(f: Form[Decision], c: Case)(
+    implicit request: AuthenticatedRequest[_]
+  ): Future[Result] = {
     val caseHeaderViewModel = CaseHeaderViewModel.fromCase(c)
 
-    val traderCommodityCode = c.application.asLiabilityOrder.traderCommodityCode.getOrElse("")
+    val traderCommodityCode  = c.application.asLiabilityOrder.traderCommodityCode.getOrElse("")
     val officerCommodityCode = c.application.asLiabilityOrder.officerCommodityCode.getOrElse("")
 
-    if (v2toggle) Future.successful(Ok(editRulingView(caseHeaderViewModel, f, traderCommodityCode, officerCommodityCode)))
+    if (v2toggle)
+      Future.successful(Ok(editRulingView(caseHeaderViewModel, f, traderCommodityCode, officerCommodityCode)))
     else Future.successful(Ok(views.html.edit_liability_decision(c, f)))
   }
 
-  private def getCaseAndThen(toResult: Case => Future[Result])
-                            (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
+  private def getCaseAndThen(
+    toResult: Case => Future[Result]
+  )(implicit request: AuthenticatedCaseRequest[_]): Future[Result] =
     toResult(request.`case`)
-  }
 
 }

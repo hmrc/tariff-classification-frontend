@@ -28,33 +28,52 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
 
 import scala.concurrent.Future.successful
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class ReopenCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   private val casesService = mock[CasesService]
-  private val operator = mock[Operator]
+  private val operator     = mock[Operator]
 
   private val btiCaseWithStatusOPEN = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.OPEN)
-  private val btiCaseWithStatusREFERRED = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.REFERRED)
-  private val btiCaseWithStatusSUSPENDED = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.SUSPENDED)
+  private val btiCaseWithStatusREFERRED =
+    Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.REFERRED)
+  private val btiCaseWithStatusSUSPENDED =
+    Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.SUSPENDED)
 
-  private val liabilityCaseWithStatusOpen = Cases.liabilityCaseExample.copy(reference = "reference", status = CaseStatus.OPEN)
-  private val liabilityCaseWithStatusSuspended = Cases.liabilityCaseExample.copy(reference = "reference", status = CaseStatus.SUSPENDED)
+  private val liabilityCaseWithStatusOpen =
+    Cases.liabilityCaseExample.copy(reference = "reference", status = CaseStatus.OPEN)
+  private val liabilityCaseWithStatusSuspended =
+    Cases.liabilityCaseExample.copy(reference = "reference", status = CaseStatus.SUSPENDED)
 
   override def afterEach(): Unit = {
     super.afterEach()
     reset(casesService)
   }
 
-  private def controller(c: Case) = new ReopenCaseController(
-    new SuccessfulRequestActions(defaultPlayBodyParsers, operator, c = c), casesService, mcc, realAppConfig)
+  private def controller(c: Case) =
+    new ReopenCaseController(
+      new SuccessfulRequestActions(playBodyParsers, operator, c = c),
+      casesService,
+      mcc,
+      realAppConfig
+    )
 
-  private def controllerForOldLiabilities(c: Case) = new ReopenCaseController(
-    new SuccessfulRequestActions(defaultPlayBodyParsers, operator, c = c), casesService, mcc, appConfWithLiabilityToggleOff)
+  private def controllerForOldLiabilities(c: Case) =
+    new ReopenCaseController(
+      new SuccessfulRequestActions(playBodyParsers, operator, c = c),
+      casesService,
+      mcc,
+      appConfWithLiabilityToggleOff
+    )
 
-  private def controller(requestCase: Case, permission: Set[Permission]) = new ReopenCaseController(
-    new RequestActionsWithPermissions(defaultPlayBodyParsers, permission, c = requestCase), casesService, mcc, realAppConfig)
-
+  private def controller(requestCase: Case, permission: Set[Permission]) =
+    new ReopenCaseController(
+      new RequestActionsWithPermissions(playBodyParsers, permission, c = requestCase),
+      casesService,
+      mcc,
+      realAppConfig
+    )
 
   "ReopenCaseControllerSpec" should {
 
@@ -62,10 +81,12 @@ class ReopenCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
       when(casesService.reopenCase(refEq(btiCaseWithStatusREFERRED), any[Operator])(any[HeaderCarrier]))
         .thenReturn(successful(btiCaseWithStatusOPEN))
 
-      val result: Result = await(controller(btiCaseWithStatusREFERRED)
-        .confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(app)))
+      val result: Result = await(
+        controller(btiCaseWithStatusREFERRED)
+          .confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(app))
+      )
 
-      status(result) shouldBe Status.SEE_OTHER
+      status(result)     shouldBe Status.SEE_OTHER
       locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/reference/applicant")
     }
 
@@ -73,10 +94,12 @@ class ReopenCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
       when(casesService.reopenCase(refEq(btiCaseWithStatusSUSPENDED), any[Operator])(any[HeaderCarrier]))
         .thenReturn(successful(btiCaseWithStatusOPEN))
 
-      val result: Result = await(controller(btiCaseWithStatusSUSPENDED)
-        .confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(app)))
+      val result: Result = await(
+        controller(btiCaseWithStatusSUSPENDED)
+          .confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(app))
+      )
 
-      status(result) shouldBe Status.SEE_OTHER
+      status(result)     shouldBe Status.SEE_OTHER
       locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/reference/applicant")
     }
 
@@ -84,10 +107,12 @@ class ReopenCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
       when(casesService.reopenCase(refEq(liabilityCaseWithStatusSuspended), any[Operator])(any[HeaderCarrier]))
         .thenReturn(successful(liabilityCaseWithStatusOpen))
 
-      val result: Result = await(controllerForOldLiabilities(liabilityCaseWithStatusSuspended)
-        .confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(app)))
+      val result: Result = await(
+        controllerForOldLiabilities(liabilityCaseWithStatusSuspended)
+          .confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(app))
+      )
 
-      status(result) shouldBe Status.SEE_OTHER
+      status(result)     shouldBe Status.SEE_OTHER
       locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/reference/liability")
     }
 
@@ -95,18 +120,22 @@ class ReopenCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
       when(casesService.reopenCase(any[Case], any[Operator])(any[HeaderCarrier]))
         .thenReturn(successful(btiCaseWithStatusOPEN))
 
-      val result: Result = await(controller(btiCaseWithStatusREFERRED, Set(Permission.REOPEN_CASE))
-        .confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(app)))
+      val result: Result = await(
+        controller(btiCaseWithStatusREFERRED, Set(Permission.REOPEN_CASE))
+          .confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(app))
+      )
 
-      status(result) shouldBe Status.SEE_OTHER
+      status(result)     shouldBe Status.SEE_OTHER
       locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/reference/applicant")
     }
 
     "redirect to unauthorised when user does not have the right permissions" in {
-      val result: Result = await(controller(btiCaseWithStatusREFERRED, Set.empty)
-        .confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(app)))
+      val result: Result = await(
+        controller(btiCaseWithStatusREFERRED, Set.empty)
+          .confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(app))
+      )
 
-      status(result) shouldBe Status.SEE_OTHER
+      status(result)               shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
     }
   }

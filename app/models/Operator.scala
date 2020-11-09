@@ -19,11 +19,11 @@ package models
 import models.Role.Role
 
 case class Operator(
-                     id: String,
-                     name: Option[String] = None,
-                     role: Role = Role.CLASSIFICATION_OFFICER,
-                     permissions: Set[Permission] = Set.empty
-                   ) {
+  id: String,
+  name: Option[String]         = None,
+  role: Role                   = Role.CLASSIFICATION_OFFICER,
+  permissions: Set[Permission] = Set.empty
+) {
 
   def manager: Boolean = role == Role.CLASSIFICATION_MANAGER
 
@@ -31,7 +31,8 @@ case class Operator(
 
   def hasPermissions(p: Set[Permission]): Boolean = p.subsetOf(permissions)
 
-  def addPermissions(addedPermissions: Set[Permission]): Operator = this.copy(permissions = permissions ++ addedPermissions)
+  def addPermissions(addedPermissions: Set[Permission]): Operator =
+    this.copy(permissions = permissions ++ addedPermissions)
 
 }
 
@@ -39,5 +40,5 @@ object Role extends Enumeration {
   type Role = Value
   val CLASSIFICATION_OFFICER = Value("Classification officer")
   val CLASSIFICATION_MANAGER = Value("Classification manager")
-  val READ_ONLY = Value("Unknown")
+  val READ_ONLY              = Value("Unknown")
 }

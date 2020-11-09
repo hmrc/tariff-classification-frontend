@@ -32,14 +32,15 @@ import scala.concurrent.Future.{failed, successful}
 
 class CasesService_AddAppealSpec extends ServiceSpecBase with BeforeAndAfterEach with ConnectorCaptor {
 
-  private val connector = mock[BindingTariffClassificationConnector]
-  private val rulingConnector = mock[RulingConnector]
-  private val emailService = mock[EmailService]
+  private val connector        = mock[BindingTariffClassificationConnector]
+  private val rulingConnector  = mock[RulingConnector]
+  private val emailService     = mock[EmailService]
   private val fileStoreService = mock[FileStoreService]
   private val reportingService = mock[ReportingService]
-  private val audit = mock[AuditService]
+  private val audit            = mock[AuditService]
 
-  private val service = new CasesService(realAppConfig, audit, emailService, fileStoreService, reportingService, connector, rulingConnector)
+  private val service =
+    new CasesService(realAppConfig, audit, emailService, fileStoreService, reportingService, connector, rulingConnector)
 
   override protected def afterEach(): Unit = {
     super.afterEach()
@@ -49,8 +50,7 @@ class CasesService_AddAppealSpec extends ServiceSpecBase with BeforeAndAfterEach
   "Add Appeal" should {
     "throw exception on missing decision" in {
       val operator: Operator = Operator("operator-id")
-      val originalCase = aCase(withoutDecision())
-
+      val originalCase       = aCase(withoutDecision())
 
       intercept[RuntimeException] {
         await(service.addAppeal(originalCase, AppealType.REVIEW, AppealStatus.ALLOWED, operator))
@@ -62,28 +62,29 @@ class CasesService_AddAppealSpec extends ServiceSpecBase with BeforeAndAfterEach
 
     "update case with new appeal" in {
       // Given
-      val existingAppeal = mock[Appeal]
+      val existingAppeal     = mock[Appeal]
       val operator: Operator = Operator("operator-id", None)
-      val originalCase = aCase(withDecision(appeal = Seq(existingAppeal)))
-      val caseUpdated = mock[Case]
+      val originalCase       = aCase(withDecision(appeal = Seq(existingAppeal)))
+      val caseUpdated        = mock[Case]
 
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
-      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])).willReturn(successful(mock[Event]))
+      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
+        .willReturn(successful(mock[Event]))
 
       // When Then
       await(service.addAppeal(originalCase, AppealType.REVIEW, AppealStatus.ALLOWED, operator)) shouldBe caseUpdated
 
       verify(audit).auditCaseAppealAdded(refEq(caseUpdated), any[Appeal], refEq(operator))(any[HeaderCarrier])
 
-      val caseUpdating = theCaseUpdating(connector)
+      val caseUpdating   = theCaseUpdating(connector)
       val appealsUpdated = caseUpdating.decision.map(_.appeal).getOrElse(Seq.empty)
-      appealsUpdated should have(size(2))
-      appealsUpdated should contain(existingAppeal)
-      appealsUpdated.exists(a => a.status == AppealStatus.ALLOWED && a.`type` ==  AppealType.REVIEW) shouldBe true
+      appealsUpdated                                                                                should have(size(2))
+      appealsUpdated                                                                                should contain(existingAppeal)
+      appealsUpdated.exists(a => a.status == AppealStatus.ALLOWED && a.`type` == AppealType.REVIEW) shouldBe true
 
       val eventCreated = theEventCreatedFor(connector, caseUpdated)
       eventCreated.operator shouldBe Operator("operator-id")
-      eventCreated.details shouldBe AppealAdded(appealType = AppealType.REVIEW, appealStatus = AppealStatus.ALLOWED)
+      eventCreated.details  shouldBe AppealAdded(appealType = AppealType.REVIEW, appealStatus = AppealStatus.ALLOWED)
 
       val appealAudited = theAppealAudited()
       appealAudited.`type` shouldBe AppealType.REVIEW
@@ -92,7 +93,7 @@ class CasesService_AddAppealSpec extends ServiceSpecBase with BeforeAndAfterEach
 
     "not create event on update failure" in {
       val operator: Operator = Operator("operator-id")
-      val originalCase = aCase(withDecision())
+      val originalCase       = aCase(withDecision())
 
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(failed(new RuntimeException()))
 
@@ -107,21 +108,22 @@ class CasesService_AddAppealSpec extends ServiceSpecBase with BeforeAndAfterEach
     "succeed on event create failure" in {
       // Given
       val operator: Operator = Operator("operator-id")
-      val originalCase = aCase(withDecision())
-      val caseUpdated = mock[Case]
+      val originalCase       = aCase(withDecision())
+      val caseUpdated        = mock[Case]
 
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
-      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])).willReturn(failed(new RuntimeException()))
+      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
+        .willReturn(failed(new RuntimeException()))
 
       // When Then
       await(service.addAppeal(originalCase, AppealType.APPEAL_TIER_1, AppealStatus.DISMISSED, operator)) shouldBe caseUpdated
 
       verify(audit).auditCaseAppealAdded(refEq(caseUpdated), any[Appeal], refEq(operator))(any[HeaderCarrier])
 
-      val caseUpdating = theCaseUpdating(connector)
+      val caseUpdating   = theCaseUpdating(connector)
       val appealsUpdated = caseUpdating.decision.map(_.appeal).getOrElse(Seq.empty)
-      appealsUpdated should have(size(1))
-      appealsUpdated.exists(a => a.status == AppealStatus.DISMISSED && a.`type` ==  AppealType.APPEAL_TIER_1) shouldBe true
+      appealsUpdated                                                                                         should have(size(1))
+      appealsUpdated.exists(a => a.status == AppealStatus.DISMISSED && a.`type` == AppealType.APPEAL_TIER_1) shouldBe true
 
       val appealAudited = theAppealAudited()
       appealAudited.`type` shouldBe AppealType.APPEAL_TIER_1

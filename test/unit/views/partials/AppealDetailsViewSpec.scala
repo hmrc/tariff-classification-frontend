@@ -34,7 +34,7 @@ class AppealDetailsViewSpec extends ViewSpec {
       val doc = view(appeal_details(c))
 
       // Then
-      for(t <- AppealType.values) {
+      for (t <- AppealType.values) {
         doc shouldNot containElementWithID(s"appeal_details-$t")
       }
     }
@@ -47,8 +47,8 @@ class AppealDetailsViewSpec extends ViewSpec {
       val doc = view(appeal_details(c))
 
       // Then
-      doc should containElementWithID("appeal_details-0")
-      doc.getElementById("appeal_details-0-type") should containText("Appeal tier 1 status")
+      doc                                           should containElementWithID("appeal_details-0")
+      doc.getElementById("appeal_details-0-type")   should containText("Appeal tier 1 status")
       doc.getElementById("appeal_details-0-status") should containText("Appeal allowed")
     }
 
@@ -60,8 +60,8 @@ class AppealDetailsViewSpec extends ViewSpec {
       val doc = view(appeal_details(c))
 
       // Then
-      doc should containElementWithID("appeal_details-0")
-      doc.getElementById("appeal_details-0-type") should containText("Appeal tier 1 status")
+      doc                                           should containElementWithID("appeal_details-0")
+      doc.getElementById("appeal_details-0-type")   should containText("Appeal tier 1 status")
       doc.getElementById("appeal_details-0-status") should containText("Appeal dismissed")
     }
 
@@ -73,8 +73,8 @@ class AppealDetailsViewSpec extends ViewSpec {
       val doc = view(appeal_details(c))
 
       // Then
-      doc should containElementWithID("appeal_details-0")
-      doc.getElementById("appeal_details-0-type") should containText("Appeal tier 1 status")
+      doc                                           should containElementWithID("appeal_details-0")
+      doc.getElementById("appeal_details-0-type")   should containText("Appeal tier 1 status")
       doc.getElementById("appeal_details-0-status") should containText("Under appeal")
     }
 
@@ -82,14 +82,16 @@ class AppealDetailsViewSpec extends ViewSpec {
       // Given
       val c = aCase(
         withStatus(CaseStatus.CANCELLED),
-        withDecision(cancellation = Some(Cancellation(reason = CancelReason.ANNULLED,  applicationForExtendedUse = true)))
+        withDecision(cancellation =
+          Some(Cancellation(reason = CancelReason.ANNULLED, applicationForExtendedUse = true))
+        )
       )
 
       // When
       val doc = view(appeal_details(c))
 
       // Then
-      doc should containElementWithID("appeal_details-extended_use_status")
+      doc                                                      should containElementWithID("appeal_details-extended_use_status")
       doc.getElementById("appeal_details-extended_use_status") should containText("Yes")
     }
 
@@ -115,7 +117,10 @@ class AppealDetailsViewSpec extends ViewSpec {
 
     "Render Change Appeal Status if user has permission APPEAL_CASE" in {
       // Given
-      val c = aCase(withDecision(appeal = Seq(Appeal("id", AppealStatus.ALLOWED, AppealType.APPEAL_TIER_1))), withStatus(CaseStatus.CANCELLED))
+      val c = aCase(
+        withDecision(appeal = Seq(Appeal("id", AppealStatus.ALLOWED, AppealType.APPEAL_TIER_1))),
+        withStatus(CaseStatus.CANCELLED)
+      )
 
       // When
       val doc = view(appeal_details(c)(requestWithPermissions(Permission.APPEAL_CASE), messages, appConfig))
@@ -125,7 +130,10 @@ class AppealDetailsViewSpec extends ViewSpec {
 
     "Not render Change Appeal Status if user does not have permission" in {
       // Given
-      val c = aCase(withDecision(appeal = Seq(Appeal("id", AppealStatus.ALLOWED, AppealType.APPEAL_TIER_1))), withStatus(CaseStatus.CANCELLED))
+      val c = aCase(
+        withDecision(appeal = Seq(Appeal("id", AppealStatus.ALLOWED, AppealType.APPEAL_TIER_1))),
+        withStatus(CaseStatus.CANCELLED)
+      )
 
       // When
       val doc = view(appeal_details(c)(operatorRequest, messages, appConfig))

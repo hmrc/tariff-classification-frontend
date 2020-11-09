@@ -31,44 +31,59 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
 
 import scala.concurrent.Future.successful
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class AttachmentsControllerSpec extends ControllerBaseSpec {
 
   private val casesService = mock[CasesService]
-  private val fileService = mock[FileStoreService]
-  private val operator = mock[Operator]
+  private val fileService  = mock[FileStoreService]
+  private val operator     = mock[Operator]
 
   private val controller = new AttachmentsController(
-    new SuccessfulRequestActions(defaultPlayBodyParsers, operator, c = Cases.btiCaseExample), casesService, fileService, mcc, realAppConfig, mat
+    new SuccessfulRequestActions(playBodyParsers, operator, c = Cases.btiCaseExample),
+    casesService,
+    fileService,
+    mcc,
+    realAppConfig,
+    mat
   )
 
-  private def controller(requestCase: Case, permission: Set[Permission]) = new AttachmentsController(
-    new RequestActionsWithPermissions(defaultPlayBodyParsers, permission, c = requestCase), casesService, fileService, mcc, realAppConfig, mat)
+  private def controller(requestCase: Case, permission: Set[Permission]) =
+    new AttachmentsController(
+      new RequestActionsWithPermissions(playBodyParsers, permission, c = requestCase),
+      casesService,
+      fileService,
+      mcc,
+      realAppConfig,
+      mat
+    )
 
   "Attachments Details" should {
 
     "return 200 OK and HTML content type" in {
       val aCase = Cases.btiCaseExample
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(successful(Some(aCase)))
-      given(fileService.getAttachments(refEq(aCase))(any[HeaderCarrier])).willReturn(successful(Seq(Cases.storedAttachment, Cases.storedOperatorAttachment)))
-      given(fileService.getLetterOfAuthority(refEq(aCase))(any[HeaderCarrier])).willReturn(successful(Some(Cases.letterOfAuthority)))
+      given(fileService.getAttachments(refEq(aCase))(any[HeaderCarrier]))
+        .willReturn(successful(Seq(Cases.storedAttachment, Cases.storedOperatorAttachment)))
+      given(fileService.getLetterOfAuthority(refEq(aCase))(any[HeaderCarrier]))
+        .willReturn(successful(Some(Cases.letterOfAuthority)))
 
-      val result = await(controller(aCase,Set(Permission.ADD_ATTACHMENT)).attachmentsDetails("reference")(fakeRequest))
+      val result = await(controller(aCase, Set(Permission.ADD_ATTACHMENT)).attachmentsDetails("reference")(fakeRequest))
 
-      status(result) shouldBe Status.OK
+      status(result)      shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
+      charset(result)     shouldBe Some("utf-8")
     }
 
     "return 200 OK and HTML content type when no files are present" in {
       val aCase = Cases.btiCaseExample
       givenACaseWithNoAttachmentsAndNoLetterOfAuthority("reference", aCase)
 
-      val result = await(controller(aCase,Set(Permission.ADD_ATTACHMENT)).attachmentsDetails("reference")(fakeRequest))
+      val result = await(controller(aCase, Set(Permission.ADD_ATTACHMENT)).attachmentsDetails("reference")(fakeRequest))
 
-      status(result) shouldBe Status.OK
+      status(result)      shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
+      charset(result)     shouldBe Some("utf-8")
     }
 
     "return 404 Not Found and HTML content type" in {
@@ -76,9 +91,9 @@ class AttachmentsControllerSpec extends ControllerBaseSpec {
 
       val result = await(controller.attachmentsDetails("reference")(fakeRequest))
 
-      status(result) shouldBe Status.OK
+      status(result)      shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
+      charset(result)     shouldBe Some("utf-8")
     }
   }
 
@@ -88,39 +103,48 @@ class AttachmentsControllerSpec extends ControllerBaseSpec {
 
     def aMultipartFile: MultipartFormData[TemporaryFile] = {
       val file = SingletonTemporaryFileCreator.create("example-file.txt")
-      val filePart = FilePart[TemporaryFile](key = "file-input", "file.txt", contentType = Some("text/plain"), ref = file)
+      val filePart =
+        FilePart[TemporaryFile](key = "file-input", "file.txt", contentType = Some("text/plain"), ref = file)
       MultipartFormData[TemporaryFile](dataParts = Map(), files = Seq(filePart), badParts = Seq.empty)
     }
 
     def aEmptyNameMultipartFile: MultipartFormData[TemporaryFile] = {
-      val filePart = FilePart[TemporaryFile](key = "file-input", "", contentType = Some("text/plain"), ref = SingletonTemporaryFileCreator.create("example-file.txt"))
+      val filePart = FilePart[TemporaryFile](
+        key = "file-input",
+        "",
+        contentType = Some("text/plain"),
+        ref         = SingletonTemporaryFileCreator.create("example-file.txt")
+      )
       MultipartFormData[TemporaryFile](dataParts = Map(), files = Seq(filePart), badParts = Seq.empty)
     }
 
     def aMultipartFileOfType(mimeType: String): MultipartFormData[TemporaryFile] = {
       val file = SingletonTemporaryFileCreator.create("example-file")
-      val filePart = FilePart[TemporaryFile](key = "file-input", "example-file", contentType = Some(mimeType), ref = file)
+      val filePart =
+        FilePart[TemporaryFile](key = "file-input", "example-file", contentType = Some(mimeType), ref = file)
       MultipartFormData[TemporaryFile](dataParts = Map(), files = Seq(filePart), badParts = Seq.empty)
     }
 
     "reload page when valid data is submitted" in {
       //Given
-      val aCase = Cases.btiCaseExample.copy(reference = testReference)
-      val updatedCase = aCase.copy(attachments = aCase.attachments :+ Cases.attachment("anyUrl"))
+      val aCase       = Cases.btiCaseExample.copy(reference = testReference)
+      val updatedCase = aCase.copy(attachments              = aCase.attachments :+ Cases.attachment("anyUrl"))
 
       val postRequest = fakeRequest.withBody(Right(aMultipartFile))
-      val fileUpload = FileUpload(SingletonTemporaryFileCreator.create("example-file.txt"), "file.txt", "text/plain")
+      val fileUpload  = FileUpload(SingletonTemporaryFileCreator.create("example-file.txt"), "file.txt", "text/plain")
 
       given(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).willReturn(successful(Some(aCase)))
       given(casesService.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(updatedCase))
-      given(casesService.addAttachment(any[Case], any[FileUpload], any[Operator])(any[HeaderCarrier])).willReturn(successful(updatedCase))
-      given(fileService.upload(refEq(fileUpload))(any[HeaderCarrier])).willReturn(successful(FileStoreAttachment("id", "file-name", "type", 0)))
+      given(casesService.addAttachment(any[Case], any[FileUpload], any[Operator])(any[HeaderCarrier]))
+        .willReturn(successful(updatedCase))
+      given(fileService.upload(refEq(fileUpload))(any[HeaderCarrier]))
+        .willReturn(successful(FileStoreAttachment("id", "file-name", "type", 0)))
 
       // When
       val result: Result = await(controller.uploadAttachment(testReference)(postRequest))
 
       // Then
-      status(result) shouldBe SEE_OTHER
+      status(result)           shouldBe SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.AttachmentsController.attachmentsDetails(testReference).toString)
     }
 
@@ -134,9 +158,9 @@ class AttachmentsControllerSpec extends ControllerBaseSpec {
       val result: Result = await(controller.uploadAttachment(testReference)(postRequest))
 
       // Then
-      status(result) shouldBe Status.OK
-      contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
+      status(result)          shouldBe Status.OK
+      contentType(result)     shouldBe Some("text/html")
+      charset(result)         shouldBe Some("utf-8")
       contentAsString(result) should include("We could not find a Case with reference")
     }
 
@@ -144,33 +168,34 @@ class AttachmentsControllerSpec extends ControllerBaseSpec {
       //Given
       val aCase = Cases.btiCaseExample.copy(reference = testReference)
 
-      val form = MultipartFormData[TemporaryFile](dataParts = Map.empty, files = Seq.empty, badParts = Seq.empty)
+      val form        = MultipartFormData[TemporaryFile](dataParts = Map.empty, files = Seq.empty, badParts = Seq.empty)
       val postRequest = fakeRequest.withBody(Right(form))
 
       givenACaseWithNoAttachmentsAndNoLetterOfAuthority(testReference, aCase)
 
       // When
-      val result: Result = await(controller(aCase, Set(Permission.ADD_ATTACHMENT)).uploadAttachment(testReference)(postRequest))
+      val result: Result =
+        await(controller(aCase, Set(Permission.ADD_ATTACHMENT)).uploadAttachment(testReference)(postRequest))
 
       // Then
-      status(result) shouldBe OK
+      status(result)          shouldBe OK
       contentAsString(result) should include("error-summary")
       contentAsString(result) should include("Select a file to upload")
     }
 
-
     "show file required error message when a empty file is provided" in {
       //Given
-      val aCase = Cases.btiCaseExample.copy(reference = testReference)
+      val aCase       = Cases.btiCaseExample.copy(reference = testReference)
       val postRequest = fakeRequest.withBody(Right(aEmptyNameMultipartFile))
 
       givenACaseWithNoAttachmentsAndNoLetterOfAuthority(testReference, aCase)
 
       // When
-      val result: Result = await(controller(aCase, Set(Permission.ADD_ATTACHMENT)).uploadAttachment(testReference)(postRequest))
+      val result: Result =
+        await(controller(aCase, Set(Permission.ADD_ATTACHMENT)).uploadAttachment(testReference)(postRequest))
 
       // Then
-      status(result) shouldBe OK
+      status(result)          shouldBe OK
       contentAsString(result) should include("Select a file to upload")
     }
 
@@ -186,7 +211,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec {
       val result = await(controller(aCase, Set(Permission.ADD_ATTACHMENT)).uploadAttachment(testReference)(postRequest))
 
       // Then
-      status(result) shouldBe OK
+      status(result)          shouldBe OK
       contentAsString(result) should include("Your file will not upload")
     }
 
@@ -202,7 +227,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec {
       val result = await(controller(aCase, Set(Permission.ADD_ATTACHMENT)).uploadAttachment(testReference)(postRequest))
 
       // Then
-      status(result) shouldBe OK
+      status(result)          shouldBe OK
       contentAsString(result) should include("not a valid file type")
     }
 
@@ -210,43 +235,47 @@ class AttachmentsControllerSpec extends ControllerBaseSpec {
 
       realAppConfig.fileUploadMimeTypes foreach { mimeType =>
         //Given
-        val aCase = Cases.btiCaseExample.copy(reference = testReference)
-        val updatedCase = aCase.copy(attachments = aCase.attachments :+ Cases.attachment("anyUrl"))
+        val aCase       = Cases.btiCaseExample.copy(reference = testReference)
+        val updatedCase = aCase.copy(attachments              = aCase.attachments :+ Cases.attachment("anyUrl"))
 
         val postRequest = fakeRequest.withBody(Right(aMultipartFileOfType(mimeType)))
 
         given(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).willReturn(successful(Some(aCase)))
         given(casesService.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(updatedCase))
-        given(casesService.addAttachment(any[Case], any[FileUpload], any[Operator])(any[HeaderCarrier])).willReturn(successful(updatedCase))
-        given(fileService.upload(any[FileUpload])(any[HeaderCarrier])).willReturn(successful(FileStoreAttachment("id", "file-name", "type", 0)))
+        given(casesService.addAttachment(any[Case], any[FileUpload], any[Operator])(any[HeaderCarrier]))
+          .willReturn(successful(updatedCase))
+        given(fileService.upload(any[FileUpload])(any[HeaderCarrier]))
+          .willReturn(successful(FileStoreAttachment("id", "file-name", "type", 0)))
 
         // When
         val result: Result = await(controller.uploadAttachment(testReference)(postRequest))
 
         // Then
-        status(result) shouldBe SEE_OTHER
+        status(result)           shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(routes.AttachmentsController.attachmentsDetails(testReference).toString)
       }
     }
 
     "file service fails while upload show expected message" in {
       //Given
-      val aCase = Cases.btiCaseExample.copy(reference = testReference)
-      val updatedCase = aCase.copy(attachments = aCase.attachments :+ Cases.attachment("anyUrl"))
+      val aCase       = Cases.btiCaseExample.copy(reference = testReference)
+      val updatedCase = aCase.copy(attachments              = aCase.attachments :+ Cases.attachment("anyUrl"))
 
       val postRequest = fakeRequest.withBody(Right(aMultipartFile))
-      val fileUpload = FileUpload(SingletonTemporaryFileCreator.create("example-file.txt"), "file.txt", "text/plain")
+      val fileUpload  = FileUpload(SingletonTemporaryFileCreator.create("example-file.txt"), "file.txt", "text/plain")
 
       given(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).willReturn(successful(Some(aCase)))
       given(casesService.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(updatedCase))
-      given(casesService.addAttachment(any[Case], any[FileUpload], any[Operator])(any[HeaderCarrier])).willReturn(successful(updatedCase))
-      given(fileService.upload(refEq(fileUpload))(any[HeaderCarrier])).willReturn(successful(FileStoreAttachment("id", "file-name", "type", 0)))
+      given(casesService.addAttachment(any[Case], any[FileUpload], any[Operator])(any[HeaderCarrier]))
+        .willReturn(successful(updatedCase))
+      given(fileService.upload(refEq(fileUpload))(any[HeaderCarrier]))
+        .willReturn(successful(FileStoreAttachment("id", "file-name", "type", 0)))
 
       // When
       val result: Result = await(controller.uploadAttachment(testReference)(postRequest))
 
       // Then
-      status(result) shouldBe SEE_OTHER
+      status(result)           shouldBe SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.AttachmentsController.attachmentsDetails(testReference).toString)
     }
 
@@ -257,18 +286,22 @@ class AttachmentsControllerSpec extends ControllerBaseSpec {
     val aCase = Cases.btiCaseExample
 
     "return OK when user has correct permissions" in {
-      val result: Result = await(controller(aCase, Set(Permission.REMOVE_ATTACHMENTS))
-        .removeAttachment(aCase.reference, "reference", "some-file.jpg")(newFakeGETRequestWithCSRF(app)))
+      val result: Result = await(
+        controller(aCase, Set(Permission.REMOVE_ATTACHMENTS))
+          .removeAttachment(aCase.reference, "reference", "some-file.jpg")(newFakeGETRequestWithCSRF(app))
+      )
 
-      status(result) shouldBe Status.OK
+      status(result)          shouldBe Status.OK
       contentAsString(result) should include("Are you sure you want to remove some-file.jpg from this case?")
     }
 
     "redirect unauthorised when does not have correct permissions" in {
-      val result: Result = await(controller(aCase, Set.empty)
-        .removeAttachment(aCase.reference, "reference", "some-file.jpg")(newFakeGETRequestWithCSRF(app)))
+      val result: Result = await(
+        controller(aCase, Set.empty)
+          .removeAttachment(aCase.reference, "reference", "some-file.jpg")(newFakeGETRequestWithCSRF(app))
+      )
 
-      status(result) shouldBe Status.SEE_OTHER
+      status(result)               shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
     }
   }
@@ -280,19 +313,25 @@ class AttachmentsControllerSpec extends ControllerBaseSpec {
     "redirect to attachments tab when user selects `yes`" in {
       when(casesService.removeAttachment(any[Case], any[String])(any[HeaderCarrier])).thenReturn(successful(aCase))
 
-      val result: Result = await(controller(aCase, Set(Permission.REMOVE_ATTACHMENTS))
-        .confirmRemoveAttachment(aCase.reference, "fileId", "some-file.jpg")
-        (newFakePOSTRequestWithCSRF(app)
-          .withFormUrlEncodedBody("state" -> "true")))
+      val result: Result = await(
+        controller(aCase, Set(Permission.REMOVE_ATTACHMENTS))
+          .confirmRemoveAttachment(aCase.reference, "fileId", "some-file.jpg")(
+            newFakePOSTRequestWithCSRF(app)
+              .withFormUrlEncodedBody("state" -> "true")
+          )
+      )
 
       redirectLocation(result) shouldBe Some("/manage-tariff-classifications/cases/1/attachments")
     }
 
     "redirect to attachments tab when user selects `no`" in {
-      val result: Result = await(controller(aCase, Set(Permission.REMOVE_ATTACHMENTS))
-        .confirmRemoveAttachment(aCase.reference, "reference", "some-file.jpg")
-        (newFakePOSTRequestWithCSRF(app)
-          .withFormUrlEncodedBody("state" -> "false")))
+      val result: Result = await(
+        controller(aCase, Set(Permission.REMOVE_ATTACHMENTS))
+          .confirmRemoveAttachment(aCase.reference, "reference", "some-file.jpg")(
+            newFakePOSTRequestWithCSRF(app)
+              .withFormUrlEncodedBody("state" -> "false")
+          )
+      )
 
       redirectLocation(result) shouldBe Some("/manage-tariff-classifications/cases/1/attachments")
     }
@@ -300,11 +339,12 @@ class AttachmentsControllerSpec extends ControllerBaseSpec {
     "redirect back to confirm remove view on form error" in {
       when(casesService.removeAttachment(any[Case], any[String])(any[HeaderCarrier])).thenReturn(successful(aCase))
 
-      val result: Result = await(controller(aCase, Set(Permission.REMOVE_ATTACHMENTS))
-        .confirmRemoveAttachment(aCase.reference, "fileId", "some-file.jpg")
-        (newFakePOSTRequestWithCSRF(app)))
+      val result: Result = await(
+        controller(aCase, Set(Permission.REMOVE_ATTACHMENTS))
+          .confirmRemoveAttachment(aCase.reference, "fileId", "some-file.jpg")(newFakePOSTRequestWithCSRF(app))
+      )
 
-      status(result) shouldBe Status.OK
+      status(result)          shouldBe Status.OK
       contentAsString(result) should include("Select yes if you want to remove the attachment")
     }
 

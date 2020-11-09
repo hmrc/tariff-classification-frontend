@@ -16,8 +16,7 @@
 
 package models
 
-case class EmailTemplate
-(
+case class EmailTemplate(
   plain: String,
   html: String,
   fromAddress: String,

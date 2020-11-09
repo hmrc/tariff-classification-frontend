@@ -63,28 +63,30 @@ object Permission {
   )
 
   def from(string: String): Option[Permission] = values.find(_.name == string)
-  def applyingTo(operator: Operator): Set[Permission] = values
-    .filter(_.isInstanceOf[GlobalPermission])
-    .map(_.asInstanceOf[GlobalPermission])
-    .filter(_.appliesTo(operator))
-    .map(_.asInstanceOf[Permission])
-  def applyingTo(`case`: Case, operator: Operator): Set[Permission] = values
-    .filter(_.isInstanceOf[CasePermission])
-    .map(_.asInstanceOf[CasePermission])
-    .filter(_.appliesTo(`case`, operator))
-    .map(_.asInstanceOf[Permission])
+  def applyingTo(operator: Operator): Set[Permission] =
+    values
+      .filter(_.isInstanceOf[GlobalPermission])
+      .map(_.asInstanceOf[GlobalPermission])
+      .filter(_.appliesTo(operator))
+      .map(_.asInstanceOf[Permission])
+  def applyingTo(`case`: Case, operator: Operator): Set[Permission] =
+    values
+      .filter(_.isInstanceOf[CasePermission])
+      .map(_.asInstanceOf[CasePermission])
+      .filter(_.appliesTo(`case`, operator))
+      .map(_.asInstanceOf[Permission])
 
   private def anyone(): Boolean = true
 
   private def managersOrAssignedTeamMembersOnly(`case`: Case, operator: Operator): Boolean = operator.role match {
-    case Role.CLASSIFICATION_MANAGER => true
+    case Role.CLASSIFICATION_MANAGER                                  => true
     case Role.CLASSIFICATION_OFFICER if `case`.isAssignedTo(operator) => true
-    case _ => false
+    case _                                                            => false
   }
 
   private def managersOrTeamMembersOnly(operator: Operator): Boolean = operator.role match {
     case Role.CLASSIFICATION_MANAGER | Role.CLASSIFICATION_OFFICER => true
-    case _ => false
+    case _                                                         => false
   }
 
   private def managersOnly(operator: Operator): Boolean = operator.role == Role.CLASSIFICATION_MANAGER

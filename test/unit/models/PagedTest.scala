@@ -26,45 +26,47 @@ class PagedTest extends ModelsBaseSpec {
     }
 
     "calculate size" in {
-      Paged.empty.size shouldBe 0
+      Paged.empty.size    shouldBe 0
       Paged(Seq("")).size shouldBe 1
     }
 
     "calculate isEmpty" in {
-      Paged.empty.isEmpty shouldBe true
+      Paged.empty.isEmpty    shouldBe true
       Paged(Seq("")).isEmpty shouldBe false
     }
 
     "calculate pageCount" in {
       Paged.empty.pageCount shouldBe 0
-      Paged(results = Seq(), pageIndex = 1, pageSize = 1, resultCount = 1).pageCount shouldBe 1
-      Paged(results = Seq(), pageIndex = 1, pageSize = 1, resultCount = 2).pageCount shouldBe 2
-      Paged(results = Seq(), pageIndex = 1, pageSize = 2, resultCount = 3).pageCount shouldBe 2
+      Paged(results = Seq(), pageIndex = 1, pageSize = 1, resultCount  = 1).pageCount   shouldBe 1
+      Paged(results = Seq(), pageIndex = 1, pageSize = 1, resultCount  = 2).pageCount   shouldBe 2
+      Paged(results = Seq(), pageIndex = 1, pageSize = 2, resultCount  = 3).pageCount   shouldBe 2
       Paged(results = Seq(), pageIndex = 1, pageSize = 10, resultCount = 100).pageCount shouldBe 10
-      Paged(results = Seq(), pageIndex = 1, pageSize = 1, resultCount = 100).pageCount shouldBe 100
+      Paged(results = Seq(), pageIndex = 1, pageSize = 1, resultCount  = 100).pageCount shouldBe 100
     }
 
     "calculate nonEmpty" in {
-      Paged.empty.nonEmpty shouldBe false
+      Paged.empty.nonEmpty    shouldBe false
       Paged(Seq("")).nonEmpty shouldBe true
     }
 
     "serialize to JSON" in {
       Json.toJson(Paged(Seq("Hello"), 1, 2, 3)).as[JsObject] shouldBe Json.obj(
-        "results" -> Json.arr("Hello"),
-        "pageIndex" -> 1,
-        "pageSize" -> 2,
+        "results"     -> Json.arr("Hello"),
+        "pageIndex"   -> 1,
+        "pageSize"    -> 2,
         "resultCount" -> 3
       )
     }
 
     "serialize from JSON" in {
-      Json.obj(
-        "results" -> Json.arr("Hello"),
-        "pageIndex" -> 1,
-        "pageSize" -> 2,
-        "resultCount" -> 3
-      ).as[Paged[String]] shouldBe Paged(Seq("Hello"), 1, 2, 3)
+      Json
+        .obj(
+          "results"     -> Json.arr("Hello"),
+          "pageIndex"   -> 1,
+          "pageSize"    -> 2,
+          "resultCount" -> 3
+        )
+        .as[Paged[String]] shouldBe Paged(Seq("Hello"), 1, 2, 3)
     }
   }
 

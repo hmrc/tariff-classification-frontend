@@ -29,7 +29,7 @@ class DaysElapsedSpec extends ViewSpec {
       val doc = view(days_elapsed(30))
 
       // Then
-      doc should containElementWithID("days-elapsed")
+      doc                                should containElementWithID("days-elapsed")
       doc.getElementById("days-elapsed") should haveTag("span")
       doc.getElementById("days-elapsed") should containText("30")
       doc.getElementById("days-elapsed") should haveAttribute("class", "extra-bold")
@@ -40,7 +40,7 @@ class DaysElapsedSpec extends ViewSpec {
       val doc = view(days_elapsed(29))
 
       // Then
-      doc should containElementWithID("days-elapsed")
+      doc                                should containElementWithID("days-elapsed")
       doc.getElementById("days-elapsed") should haveTag("span")
       doc.getElementById("days-elapsed") should containText("29")
       doc.getElementById("days-elapsed") shouldNot haveAttribute("class", "extra-bold")

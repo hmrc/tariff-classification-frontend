@@ -25,7 +25,9 @@ class ActiveTabSpec extends ControllerBaseSpec {
     }
 
     "Bind populated query string" in {
-      ActiveTab.queryStringBindable.bind("activeTab", Map("activeTab" -> Seq("tab-item-Activity"))) shouldBe Some(Right(ActiveTab.Activity))
+      ActiveTab.queryStringBindable.bind("activeTab", Map("activeTab" -> Seq("tab-item-Activity"))) shouldBe Some(
+        Right(ActiveTab.Activity)
+      )
     }
 
     "Fail to bind to any value and return None" when {
@@ -44,8 +46,10 @@ class ActiveTabSpec extends ControllerBaseSpec {
 
     "Fail to bind to any value and return Left with the appropriate message" when {
       "the params does not include the item on the list" in {
-      ActiveTab.queryStringBindable.bind("activeTab", Map("activeTab" -> Seq("tab-item-not-on-List"))) shouldBe Some(Left("Unable to bind Active Tab to valid value"))
-    }
+        ActiveTab.queryStringBindable.bind("activeTab", Map("activeTab" -> Seq("tab-item-not-on-List"))) shouldBe Some(
+          Left("Unable to bind Active Tab to valid value")
+        )
+      }
     }
   }
 }

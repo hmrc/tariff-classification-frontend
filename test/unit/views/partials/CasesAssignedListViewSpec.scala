@@ -32,7 +32,7 @@ class CasesAssignedListViewSpec extends ViewSpec {
       val assignedCases = None
 
       // When
-      val doc = view(cases_assigned_list(assignedCases,0))
+      val doc = view(cases_assigned_list(assignedCases, 0))
 
       // Then
       doc should containElementWithID("assignees_list-empty")
@@ -55,30 +55,42 @@ class CasesAssignedListViewSpec extends ViewSpec {
       val assignedCases = Some(AssignedCases("User Name", Seq(openCase), Seq(referredCase)))
 
       // When
-      val doc = view(cases_assigned_list(assignedCases,0))
+      val doc = view(cases_assigned_list(assignedCases, 0))
 
       // Then
       doc shouldNot containElementWithID("assignees_list-empty")
 
-      doc should containElementWithID("cases_list-open-row-0")
-      doc should containElementWithID("cases_list-open-row-0-reference")
-      doc.getElementById("cases_list-open-row-0-reference") should containText("REF1")
-      doc should containElementWithID("cases_list-open-row-0-status")
-      doc.getElementById("cases_list-open-row-0-status") should containText("OPEN")
-      doc should containElementWithID("cases_list-open-row-0-days_elapsed")
+      doc                                                      should containElementWithID("cases_list-open-row-0")
+      doc                                                      should containElementWithID("cases_list-open-row-0-reference")
+      doc.getElementById("cases_list-open-row-0-reference")    should containText("REF1")
+      doc                                                      should containElementWithID("cases_list-open-row-0-status")
+      doc.getElementById("cases_list-open-row-0-status")       should containText("OPEN")
+      doc                                                      should containElementWithID("cases_list-open-row-0-days_elapsed")
       doc.getElementById("cases_list-open-row-0-days_elapsed") should containText("2")
-      doc.getElementById("cases_list-open-row-0-reference") should haveAttribute("href", routes.CaseController.get("REF1").url)
-      doc.getElementById("cases_list-open-row-0-move") should haveAttribute("href", routes.ReassignCaseController.showAvailableQueues("REF1", "/").url)
+      doc.getElementById("cases_list-open-row-0-reference") should haveAttribute(
+        "href",
+        routes.CaseController.get("REF1").url
+      )
+      doc.getElementById("cases_list-open-row-0-move") should haveAttribute(
+        "href",
+        routes.ReassignCaseController.showAvailableQueues("REF1", "/").url
+      )
 
-      doc should containElementWithID("cases_list-other-row-0")
-      doc should containElementWithID("cases_list-other-row-0-reference")
-      doc.getElementById("cases_list-other-row-0-reference") should containText("REF2")
-      doc should containElementWithID("cases_list-other-row-0-status")
-      doc.getElementById("cases_list-other-row-0-status") should containText("REFERRED")
-      doc should containElementWithID("cases_list-other-row-0-days_elapsed")
+      doc                                                       should containElementWithID("cases_list-other-row-0")
+      doc                                                       should containElementWithID("cases_list-other-row-0-reference")
+      doc.getElementById("cases_list-other-row-0-reference")    should containText("REF2")
+      doc                                                       should containElementWithID("cases_list-other-row-0-status")
+      doc.getElementById("cases_list-other-row-0-status")       should containText("REFERRED")
+      doc                                                       should containElementWithID("cases_list-other-row-0-days_elapsed")
       doc.getElementById("cases_list-other-row-0-days_elapsed") should containText("1")
-      doc.getElementById("cases_list-other-row-0-reference") should haveAttribute("href", routes.CaseController.get("REF2").url)
-      doc.getElementById("cases_list-other-row-0-move") should haveAttribute("href", routes.ReassignCaseController.showAvailableQueues("REF2", "/").url)
+      doc.getElementById("cases_list-other-row-0-reference") should haveAttribute(
+        "href",
+        routes.CaseController.get("REF2").url
+      )
+      doc.getElementById("cases_list-other-row-0-move") should haveAttribute(
+        "href",
+        routes.ReassignCaseController.showAvailableQueues("REF2", "/").url
+      )
     }
   }
 }

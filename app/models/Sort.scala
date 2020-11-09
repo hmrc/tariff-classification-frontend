@@ -23,15 +23,12 @@ import models.SortField.SortField
 object SortDirection extends Enumeration {
   type SortDirection = Value
   val DESCENDING = Value("desc")
-  val ASCENDING = Value("asc")
+  val ASCENDING  = Value("asc")
 
   implicit val bindable: QueryStringBindable.Parsing[SortDirection] = new QueryStringBindable.Parsing[SortDirection](
-    value =>
-      SortDirection.values.find(_.toString == value).getOrElse(throw new IllegalArgumentException),
-    sort =>
-      sort.toString,
-    (k: String, _: Exception) =>
-      s"Parameter [$k] is invalid"
+    value => SortDirection.values.find(_.toString == value).getOrElse(throw new IllegalArgumentException),
+    sort => sort.toString,
+    (k: String, _: Exception) => s"Parameter [$k] is invalid"
   )
 }
 
@@ -40,36 +37,33 @@ object SortField extends Enumeration {
   val COMMODITY_CODE = Value("commodity-code")
 
   implicit val bindable: QueryStringBindable.Parsing[SortField] = new QueryStringBindable.Parsing[SortField](
-    value =>
-      SortField.values.find(_.toString == value).getOrElse(throw new IllegalArgumentException),
-    sort =>
-      sort.toString,
-    (k: String, _: Exception) =>
-      s"Parameter [$k] is invalid"
+    value => SortField.values.find(_.toString == value).getOrElse(throw new IllegalArgumentException),
+    sort => sort.toString,
+    (k: String, _: Exception) => s"Parameter [$k] is invalid"
   )
 }
 
-case class Sort
-(
+case class Sort(
   direction: SortDirection = SortDirection.ASCENDING,
-  field: SortField = SortField.COMMODITY_CODE
+  field: SortField         = SortField.COMMODITY_CODE
 )
 
 object Sort {
   val sort_direction = "sort_direction"
-  val sort_field = "sort_by"
+  val sort_field     = "sort_by"
 
   implicit def bindable: QueryStringBindable[Sort] = new QueryStringBindable[Sort] {
 
     override def bind(key: String, params: Map[String, Seq[String]]): Option[Either[String, Sort]] = {
-      val direction: Option[SortDirection] = SortDirection.bindable.bind(sort_direction, params).filter(_.isRight).map(_.right.get)
+      val direction: Option[SortDirection] =
+        SortDirection.bindable.bind(sort_direction, params).filter(_.isRight).map(_.right.get)
       val field: Option[SortField] = SortField.bindable.bind(sort_field, params).filter(_.isRight).map(_.right.get)
 
       (direction, field) match {
         case (Some(d), Some(f)) => Some(Right(Sort(direction = d, field = f)))
-        case (_, Some(f)) => Some(Right(Sort(field = f)))
-        case (Some(d), _) => Some(Right(Sort(direction = d)))
-        case (_, _) => Some(Right(Sort()))
+        case (_, Some(f))       => Some(Right(Sort(field = f)))
+        case (Some(d), _)       => Some(Right(Sort(direction = d)))
+        case (_, _)             => Some(Right(Sort()))
       }
     }
 

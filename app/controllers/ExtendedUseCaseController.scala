@@ -30,29 +30,32 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import scala.concurrent.Future
 
 @Singleton
-class ExtendedUseCaseController @Inject()(
+class ExtendedUseCaseController @Inject() (
   override val verify: RequestActions,
   override val caseService: CasesService,
   mcc: MessagesControllerComponents,
   override implicit val config: AppConfig
-) extends FrontendController(mcc) with StatusChangeAction[Boolean] {
+) extends FrontendController(mcc)
+    with StatusChangeAction[Boolean] {
 
   override protected val requiredPermission: Permission = Permission.EXTENDED_USE
 
   override protected val form: Form[Boolean] = BooleanForm.form
 
-  override protected def status(c: Case): Boolean = c.decision.flatMap(_.cancellation).exists(_.applicationForExtendedUse)
+  override protected def status(c: Case): Boolean =
+    c.decision.flatMap(_.cancellation).exists(_.applicationForExtendedUse)
 
-  override protected def chooseStatusView(c: Case, preFilledForm: Form[Boolean], options: Option[String] = None)
-                                         (implicit request: Request[_]): Html = {
+  override protected def chooseStatusView(c: Case, preFilledForm: Form[Boolean], options: Option[String] = None)(
+    implicit request: Request[_]
+  ): Html =
     views.html.change_extended_use_status(c, preFilledForm)
-  }
 
-  override protected def update(c: Case, status: Boolean, operator: Operator)
-                               (implicit hc: HeaderCarrier): Future[Case] = {
+  override protected def update(c: Case, status: Boolean, operator: Operator)(
+    implicit hc: HeaderCarrier
+  ): Future[Case] =
     caseService.updateExtendedUseStatus(c, status, operator)
-  }
 
-  override protected def onSuccessRedirect(reference: String, isV2Liability: Boolean): Call = routes.AppealCaseController.appealDetails(reference)
+  override protected def onSuccessRedirect(reference: String, isV2Liability: Boolean): Call =
+    routes.AppealCaseController.appealDetails(reference)
 
 }

@@ -29,22 +29,27 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton
-class MyCasesController @Inject()(
+class MyCasesController @Inject() (
   verify: RequestActions,
   casesService: CasesService,
   queuesService: QueuesService,
   mcc: MessagesControllerComponents,
   implicit val appConfig: AppConfig
-) extends FrontendController(mcc) with I18nSupport {
+) extends FrontendController(mcc)
+    with I18nSupport {
 
-  def myCases(): Action[AnyContent] = (verify.authenticated andThen verify.mustHave(Permission.VIEW_MY_CASES)).async { implicit request =>
-    for {
-      cases <- casesService.getCasesByAssignee(request.operator, NoPagination())
-      queues: Seq[Queue] <- queuesService.getAll
-      countQueues: Map[String, Int] <- casesService.countCasesByQueue(request.operator)
-    } yield Ok(views.html.my_cases(queues, cases.results, request.operator, countQueues))
-         .addingToSession((backToQueuesLinkLabel, request2Messages(implicitly)("cases.menu.my-cases")), (backToQueuesLinkUrl, MyCasesController.myCases().url))
-         .removingFromSession(backToSearchResultsLinkLabel, backToSearchResultsLinkUrl)
+  def myCases(): Action[AnyContent] = (verify.authenticated andThen verify.mustHave(Permission.VIEW_MY_CASES)).async {
+    implicit request =>
+      for {
+        cases                         <- casesService.getCasesByAssignee(request.operator, NoPagination())
+        queues: Seq[Queue]            <- queuesService.getAll
+        countQueues: Map[String, Int] <- casesService.countCasesByQueue(request.operator)
+      } yield Ok(views.html.my_cases(queues, cases.results, request.operator, countQueues))
+        .addingToSession(
+          (backToQueuesLinkLabel, request2Messages(implicitly)("cases.menu.my-cases")),
+          (backToQueuesLinkUrl, MyCasesController.myCases().url)
+        )
+        .removingFromSession(backToSearchResultsLinkLabel, backToSearchResultsLinkUrl)
   }
 
 }

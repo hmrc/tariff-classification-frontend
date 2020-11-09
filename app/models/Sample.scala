@@ -19,11 +19,8 @@ package models
 import models.SampleReturn.SampleReturn
 import models.SampleStatus.SampleStatus
 
-case class Sample
-(
-  status: Option[SampleStatus] = None,
-  requestedBy: Option[Operator] = None,
+case class Sample(
+  status: Option[SampleStatus]       = None,
+  requestedBy: Option[Operator]      = None,
   returnStatus: Option[SampleReturn] = None
 )
-
-

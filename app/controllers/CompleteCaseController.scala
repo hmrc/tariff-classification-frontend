@@ -29,34 +29,43 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future.successful
 
 @Singleton
-class CompleteCaseController @Inject()(
+class CompleteCaseController @Inject() (
   verify: RequestActions,
   casesService: CasesService,
   decisionForm: DecisionForm,
   mcc: MessagesControllerComponents,
   implicit val appConfig: AppConfig
-) extends FrontendController(mcc) with RenderCaseAction {
+) extends FrontendController(mcc)
+    with RenderCaseAction {
 
-  override protected val config: AppConfig = appConfig
+  override protected val config: AppConfig         = appConfig
   override protected val caseService: CasesService = casesService
 
-  def completeCase(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.COMPLETE_CASE)).async { implicit request =>
-    validateAndRespond(c =>
-      c.application.`type` match {
-        case ApplicationType.BTI =>
-          successful(Ok(views.html.complete_case(c)))
+  def completeCase(reference: String): Action[AnyContent] =
+    (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.COMPLETE_CASE))
+      .async { implicit request =>
+        validateAndRespond(c =>
+          c.application.`type` match {
+            case ApplicationType.BTI =>
+              successful(Ok(views.html.complete_case(c)))
 
-        case ApplicationType.LIABILITY_ORDER =>
-          casesService.completeCase(c, request.operator)
-            .map(c => Redirect(routes.CompleteCaseController.confirmCompleteCase(c.reference)))
+            case ApplicationType.LIABILITY_ORDER =>
+              casesService
+                .completeCase(c, request.operator)
+                .map(c => Redirect(routes.CompleteCaseController.confirmCompleteCase(c.reference)))
+          }
+        )
       }
-    )
-  }
 
-  def postCompleteCase(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.COMPLETE_CASE)).async { implicit request =>
-    validateAndRedirect(casesService.completeCase(_, request.operator)
-      .map(c => routes.CompleteCaseController.confirmCompleteCase(c.reference)))
-  }
+  def postCompleteCase(reference: String): Action[AnyContent] =
+    (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.COMPLETE_CASE))
+      .async { implicit request =>
+        validateAndRedirect(
+          casesService
+            .completeCase(_, request.operator)
+            .map(c => routes.CompleteCaseController.confirmCompleteCase(c.reference))
+        )
+      }
 
   def confirmCompleteCase(reference: String): Action[AnyContent] =
     (verify.authenticated
@@ -75,5 +84,4 @@ class CompleteCaseController @Inject()(
         LiabilityDetailsForm.liabilityDetailsCompleteForm(c).errors.isEmpty
   }
 
-  
 }

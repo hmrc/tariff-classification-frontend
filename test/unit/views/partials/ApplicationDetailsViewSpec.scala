@@ -39,10 +39,10 @@ class ApplicationDetailsViewSpec extends ViewSpec {
 
       // Then
       doc.getElementById("app-details-reissue-application-type") should containText(messages("case.bti.new"))
-      doc.getElementById("app-details-confidential-info") should containText(messages("answer.none"))
+      doc.getElementById("app-details-confidential-info")        should containText(messages("answer.none"))
       doc shouldNot containElementWithID("app-details-related-reference")
       doc.getElementById("app-details-legal-proceedings") should containText(messages("answer.no"))
-      doc.getElementById("app-details-other-info") should containText(messages("answer.none"))
+      doc.getElementById("app-details-other-info")        should containText(messages("answer.none"))
     }
 
     "Render optional fields when present" in {
@@ -50,34 +50,35 @@ class ApplicationDetailsViewSpec extends ViewSpec {
       val `case` = aCase(
         withOptionalApplicationFields(
           confidentialInformation = Some("confidential info"),
-          otherInformation = Some("other info"),
-          reissuedBTIReference = Some("reissued bti"),
-          relatedBTIReference = Some("related bti"),
-          knownLegalProceedings = Some("legal proceedings"),
-          envisagedCommodityCode = Some("envisaged code")
+          otherInformation        = Some("other info"),
+          reissuedBTIReference    = Some("reissued bti"),
+          relatedBTIReference     = Some("related bti"),
+          knownLegalProceedings   = Some("legal proceedings"),
+          envisagedCommodityCode  = Some("envisaged code")
         ),
         withAttachment(attachment("FILE_ID"))
       )
-      val storedAttachment = Cases.storedAttachment.copy(id = "FILE_ID", url = Some("url"), scanStatus = Some(ScanStatus.READY))
+      val storedAttachment =
+        Cases.storedAttachment.copy(id = "FILE_ID", url = Some("url"), scanStatus = Some(ScanStatus.READY))
 
       // When
       val doc = view(application_details(`case`, Seq(storedAttachment), None))
 
       // Then
-      doc should containElementWithID("app-details-reissue-application-type")
-      doc.getElementById("app-details-reissue-application-type") should containText(messages("case.bti.renewal"))
-      doc should containElementWithID("app-details-reissue-application-reference")
+      doc                                                             should containElementWithID("app-details-reissue-application-type")
+      doc.getElementById("app-details-reissue-application-type")      should containText(messages("case.bti.renewal"))
+      doc                                                             should containElementWithID("app-details-reissue-application-reference")
       doc.getElementById("app-details-reissue-application-reference") should containText("reissued bti")
-      doc should containElementWithID("app-details-envisaged-code")
-      doc.getElementById("app-details-envisaged-code") should containText("envisaged code")
-      doc should containElementWithID("app-details-confidential-info")
-      doc.getElementById("app-details-confidential-info") should containText("confidential info")
-      doc should containElementWithID("app-details-related-reference")
-      doc.getElementById("app-details-related-reference") should containText("related bti")
-      doc should containElementWithID("app-details-legal-proceedings")
-      doc.getElementById("app-details-legal-proceedings") should containText("legal proceedings")
-      doc should containElementWithID("app-details-other-info")
-      doc.getElementById("app-details-other-info") should containText("other info")
+      doc                                                             should containElementWithID("app-details-envisaged-code")
+      doc.getElementById("app-details-envisaged-code")                should containText("envisaged code")
+      doc                                                             should containElementWithID("app-details-confidential-info")
+      doc.getElementById("app-details-confidential-info")             should containText("confidential info")
+      doc                                                             should containElementWithID("app-details-related-reference")
+      doc.getElementById("app-details-related-reference")             should containText("related bti")
+      doc                                                             should containElementWithID("app-details-legal-proceedings")
+      doc.getElementById("app-details-legal-proceedings")             should containText("legal proceedings")
+      doc                                                             should containElementWithID("app-details-other-info")
+      doc.getElementById("app-details-other-info")                    should containText("other info")
     }
   }
 }

@@ -43,7 +43,7 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
       val doc = view(ruling_details_edit(c, Seq.empty, decisionForm.btiForm))
 
       // Then
-      doc should containElementWithID("envisagedCommodityCodeValue")
+      doc                                               should containElementWithID("envisagedCommodityCodeValue")
       doc.getElementById("envisagedCommodityCodeValue") should containText("envisaged code")
     }
 
@@ -66,11 +66,11 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
         withStatus(CaseStatus.OPEN)
       )
       val formData = DecisionFormData(
-        bindingCommodityCode = "commodity code",
-        justification = "justification",
-        goodsDescription = "goods description",
-        methodSearch = "method search",
-        methodExclusion = "method exclusion",
+        bindingCommodityCode         = "commodity code",
+        justification                = "justification",
+        goodsDescription             = "goods description",
+        methodSearch                 = "method search",
+        methodExclusion              = "method exclusion",
         methodCommercialDenomination = "commercial denomination"
       )
 
@@ -78,18 +78,18 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
       val doc = view(ruling_details_edit(c, Seq.empty, decisionForm.btiForm.fill(formData)))
 
       // Then
-      doc should containElementWithID("bindingCommodityCode")
-      doc.getElementById("bindingCommodityCode") should haveAttribute("value", "commodity code")
-      doc should containElementWithID("goodsDescription")
-      doc.getElementById("goodsDescription") should containText("goods description")
-      doc should containElementWithID("justification")
-      doc.getElementById("justification") should containText("justification")
-      doc should containElementWithID("methodSearch")
-      doc.getElementById("methodSearch") should containText("method search")
-      doc should containElementWithID("methodCommercialDenomination")
+      doc                                                should containElementWithID("bindingCommodityCode")
+      doc.getElementById("bindingCommodityCode")         should haveAttribute("value", "commodity code")
+      doc                                                should containElementWithID("goodsDescription")
+      doc.getElementById("goodsDescription")             should containText("goods description")
+      doc                                                should containElementWithID("justification")
+      doc.getElementById("justification")                should containText("justification")
+      doc                                                should containElementWithID("methodSearch")
+      doc.getElementById("methodSearch")                 should containText("method search")
+      doc                                                should containElementWithID("methodCommercialDenomination")
       doc.getElementById("methodCommercialDenomination") should containText("commercial denomination")
-      doc should containElementWithID("methodExclusion")
-      doc.getElementById("methodExclusion") should containText("method exclusion")
+      doc                                                should containElementWithID("methodExclusion")
+      doc.getElementById("methodExclusion")              should containText("method exclusion")
     }
 
     "Render safe attachments" in {
@@ -98,14 +98,14 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
         withDecision()
       )
       val stored = StoredAttachment(
-        id = "FILE_ID",
-        public = false,
-        operator = None,
-        fileName = "file.txt",
-        url = None,
-        mimeType = "text/plain",
-        scanStatus = Some(ScanStatus.READY),
-        timestamp = Instant.now(),
+        id          = "FILE_ID",
+        public      = false,
+        operator    = None,
+        fileName    = "file.txt",
+        url         = None,
+        mimeType    = "text/plain",
+        scanStatus  = Some(ScanStatus.READY),
+        timestamp   = Instant.now(),
         description = "test description"
       )
 
@@ -124,14 +124,14 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
         withDecision()
       )
       val stored = StoredAttachment(
-        id = "FILE_ID",
-        public = false,
-        operator = None,
-        fileName = "file.txt",
-        url = None,
-        mimeType = "text/plain",
-        scanStatus = Some(ScanStatus.FAILED),
-        timestamp = Instant.now(),
+        id          = "FILE_ID",
+        public      = false,
+        operator    = None,
+        fileName    = "file.txt",
+        url         = None,
+        mimeType    = "text/plain",
+        scanStatus  = Some(ScanStatus.FAILED),
+        timestamp   = Instant.now(),
         description = "test description"
       )
 
@@ -150,14 +150,14 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
         withDecision()
       )
       val stored = StoredAttachment(
-        id = "FILE_ID",
-        public = true,
-        operator = None,
-        fileName = "file.txt",
-        url = None,
-        mimeType = "text/plain",
-        scanStatus = Some(ScanStatus.READY),
-        timestamp = Instant.now(),
+        id          = "FILE_ID",
+        public      = true,
+        operator    = None,
+        fileName    = "file.txt",
+        url         = None,
+        mimeType    = "text/plain",
+        scanStatus  = Some(ScanStatus.READY),
+        timestamp   = Instant.now(),
         description = "test description"
       )
 
@@ -165,7 +165,7 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
       val doc = view(ruling_details_edit(c, Seq(stored), decisionForm.btiForm))
 
       // Then
-      doc should containElementWithID("attachments[0]")
+      doc                                  should containElementWithID("attachments[0]")
       doc.getElementById("attachments[0]") should haveAttribute("checked", "checked")
     }
 
@@ -175,14 +175,14 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
         withDecision()
       )
       val stored = StoredAttachment(
-        id = "FILE_ID",
-        public = false,
-        operator = None,
-        fileName = "file.txt",
-        url = None,
-        mimeType = "text/plain",
-        scanStatus = Some(ScanStatus.READY),
-        timestamp = Instant.now(),
+        id          = "FILE_ID",
+        public      = false,
+        operator    = None,
+        fileName    = "file.txt",
+        url         = None,
+        mimeType    = "text/plain",
+        scanStatus  = Some(ScanStatus.READY),
+        timestamp   = Instant.now(),
         description = "test description"
       )
 
@@ -200,14 +200,14 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
         withDecision()
       )
       val stored = StoredAttachment(
-        id = "FILE_ID",
-        public = false,
-        operator = None,
-        fileName = "file.txt",
-        url = Some("url"),
-        mimeType = "text/plain",
-        scanStatus = Some(ScanStatus.READY),
-        timestamp = Instant.now(),
+        id          = "FILE_ID",
+        public      = false,
+        operator    = None,
+        fileName    = "file.txt",
+        url         = Some("url"),
+        mimeType    = "text/plain",
+        scanStatus  = Some(ScanStatus.READY),
+        timestamp   = Instant.now(),
         description = "test description"
       )
 
@@ -215,7 +215,7 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
       val doc = view(ruling_details_edit(c, Seq(stored), decisionForm.btiForm))
 
       // Then
-      doc should containElementWithID("attachments-row-0-file")
+      doc                                          should containElementWithID("attachments-row-0-file")
       doc.getElementById("attachments-row-0-file") should haveTag("a")
       doc.getElementById("attachments-row-0-file") should haveAttribute("href", "url")
       doc.getElementById("attachments-row-0-file") should containText("file.txt")
@@ -227,14 +227,14 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
         withDecision()
       )
       val stored = StoredAttachment(
-        id = "FILE_ID",
-        public = false,
-        operator = None,
-        fileName = "file.txt",
-        url = None,
-        mimeType = "text/plain",
-        scanStatus = Some(ScanStatus.READY),
-        timestamp = Instant.now(),
+        id          = "FILE_ID",
+        public      = false,
+        operator    = None,
+        fileName    = "file.txt",
+        url         = None,
+        mimeType    = "text/plain",
+        scanStatus  = Some(ScanStatus.READY),
+        timestamp   = Instant.now(),
         description = "test description"
       )
 
@@ -242,7 +242,7 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
       val doc = view(ruling_details_edit(c, Seq(stored), decisionForm.btiForm))
 
       // Then
-      doc should containElementWithID("attachments-row-0-file")
+      doc                                          should containElementWithID("attachments-row-0-file")
       doc.getElementById("attachments-row-0-file") should haveTag("span")
       doc.getElementById("attachments-row-0-file") should containText("file.txt")
     }
@@ -253,11 +253,11 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
         withStatus(CaseStatus.OPEN)
       )
       val formData = DecisionFormData(
-        bindingCommodityCode = "commodity code",
-        justification = "justification",
-        goodsDescription = "goods description",
-        methodSearch = "method search",
-        methodExclusion = "method exclusion",
+        bindingCommodityCode         = "commodity code",
+        justification                = "justification",
+        goodsDescription             = "goods description",
+        methodSearch                 = "method search",
+        methodExclusion              = "method exclusion",
         methodCommercialDenomination = "commercial denomination"
       )
 

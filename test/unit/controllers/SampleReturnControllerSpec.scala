@@ -30,22 +30,32 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases._
 
 import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class SampleReturnControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   private val casesService = mock[CasesService]
-  private val operator = mock[Operator]
+  private val operator     = mock[Operator]
 
   private def controller(requestCase: Case) = new SampleReturnController(
-    new SuccessfulRequestActions(defaultPlayBodyParsers, operator, c = requestCase), casesService, mcc, appConfWithLiabilityToggleOff
+    new SuccessfulRequestActions(playBodyParsers, operator, c = requestCase),
+    casesService,
+    mcc,
+    appConfWithLiabilityToggleOff
   )
 
   private def controller(requestCase: Case, permission: Set[Permission]) = new SampleReturnController(
-    new RequestActionsWithPermissions(defaultPlayBodyParsers, permission, c = requestCase), casesService, mcc, appConfWithLiabilityToggleOff
+    new RequestActionsWithPermissions(playBodyParsers, permission, c = requestCase),
+    casesService,
+    mcc,
+    appConfWithLiabilityToggleOff
   )
 
   private def controllerV2(requestCase: Case, permission: Set[Permission]) = new SampleReturnController(
-    new RequestActionsWithPermissions(defaultPlayBodyParsers, permission, c = requestCase), casesService, mcc, realAppConfig
+    new RequestActionsWithPermissions(playBodyParsers, permission, c = requestCase),
+    casesService,
+    mcc,
+    realAppConfig
   )
 
   override def afterEach(): Unit = {
@@ -60,16 +70,17 @@ class SampleReturnControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
 
       val result = await(controller(c).chooseStatus("reference")(newFakeGETRequestWithCSRF(app)))
 
-      status(result) shouldBe Status.OK
-      contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
+      status(result)          shouldBe Status.OK
+      contentType(result)     shouldBe Some("text/html")
+      charset(result)         shouldBe Some("utf-8")
       contentAsString(result) should include("Should the sample be returned?")
     }
 
     "return OK when user has right permissions" in {
       val c = aCase(withStatus(CaseStatus.COMPLETED), withDecision())
 
-      val result = await(controller(c, Set(Permission.EDIT_SAMPLE)).chooseStatus("reference")(newFakeGETRequestWithCSRF(app)))
+      val result =
+        await(controller(c, Set(Permission.EDIT_SAMPLE)).chooseStatus("reference")(newFakeGETRequestWithCSRF(app)))
 
       status(result) shouldBe Status.OK
     }
@@ -79,7 +90,7 @@ class SampleReturnControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
 
       val result = await(controller(c, Set.empty).chooseStatus("reference")(newFakeGETRequestWithCSRF(app)))
 
-      status(result) shouldBe Status.SEE_OTHER
+      status(result)               shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
     }
   }
@@ -89,72 +100,94 @@ class SampleReturnControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
     "update & redirect" in {
       val c = aCase(withReference("reference"), withDecision())
 
-      given(casesService.updateSampleReturn(refEq(c), any[Option[SampleReturn]], any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(c))
+      given(casesService.updateSampleReturn(refEq(c), any[Option[SampleReturn]], any[Operator])(any[HeaderCarrier]))
+        .willReturn(Future.successful(c))
 
-      val result = await(controller(c).updateStatus("reference")(newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("return" -> "YES")))
+      val result = await(
+        controller(c)
+          .updateStatus("reference")(newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("return" -> "YES"))
+      )
 
-      verify(casesService).updateSampleReturn(refEq(c), refEq(Some(SampleReturn.YES)), any[Operator])(any[HeaderCarrier])
+      verify(casesService)
+        .updateSampleReturn(refEq(c), refEq(Some(SampleReturn.YES)), any[Operator])(any[HeaderCarrier])
 
-      status(result) shouldBe Status.SEE_OTHER
+      status(result)     shouldBe Status.SEE_OTHER
       locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/reference/sample")
     }
 
     "redirect for unchanged status" in {
       val c = aCase(withReference("reference"), withStatus(CaseStatus.CANCELLED), withDecision())
 
-      val result = await(controller(c).updateStatus("reference")(newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("return" -> "")))
+      val result = await(
+        controller(c).updateStatus("reference")(newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("return" -> ""))
+      )
 
-      verify(casesService, never()).updateSampleReturn(any[Case], any[Option[SampleReturn]], any[Operator])(any[HeaderCarrier])
+      verify(casesService, never())
+        .updateSampleReturn(any[Case], any[Option[SampleReturn]], any[Operator])(any[HeaderCarrier])
 
-      status(result) shouldBe Status.SEE_OTHER
+      status(result)     shouldBe Status.SEE_OTHER
       locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/reference/sample")
     }
 
     "when error form re-displays with error message" in {
       val c = aCase(withStatus(CaseStatus.COMPLETED), withoutDecision())
 
-      val result = await(controller(c).updateStatus("reference")(newFakePOSTRequestWithCSRF(app)
-        .withFormUrlEncodedBody("return" -> "WRONG_STATUS")))
+      val result = await(
+        controller(c).updateStatus("reference")(
+          newFakePOSTRequestWithCSRF(app)
+            .withFormUrlEncodedBody("return" -> "WRONG_STATUS")
+        )
+      )
 
-      verify(casesService, never()).updateSampleReturn(any[Case], any[Option[SampleReturn]], any[Operator])(any[HeaderCarrier])
+      verify(casesService, never())
+        .updateSampleReturn(any[Case], any[Option[SampleReturn]], any[Operator])(any[HeaderCarrier])
 
-      status(result) shouldBe Status.OK
+      status(result)          shouldBe Status.OK
       contentAsString(result) should include("error-message-return-input")
     }
 
     "return OK when user has right permissions" in {
       val c = aCase(withReference("reference"), withStatus(CaseStatus.COMPLETED), withDecision())
 
-      given(casesService.updateSampleReturn(any[Case], any[Option[SampleReturn]], any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(c))
+      given(casesService.updateSampleReturn(any[Case], any[Option[SampleReturn]], any[Operator])(any[HeaderCarrier]))
+        .willReturn(Future.successful(c))
 
-      val result = await(controller(c, Set(Permission.EDIT_SAMPLE)).updateStatus("reference")
-      (newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("return" -> "NO")))
+      val result = await(
+        controller(c, Set(Permission.EDIT_SAMPLE))
+          .updateStatus("reference")(newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("return" -> "NO"))
+      )
 
-      status(result) shouldBe Status.SEE_OTHER
+      status(result)     shouldBe Status.SEE_OTHER
       locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/reference/sample")
     }
 
     "redirect unauthorised when does not have right permissions" in {
       val c = aCase(withReference("reference"), withStatus(CaseStatus.COMPLETED), withDecision())
 
-      val result = await(controller(c, Set.empty).updateStatus("reference")
-      (newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("return" -> "NO")))
+      val result = await(
+        controller(c, Set.empty)
+          .updateStatus("reference")(newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("return" -> "NO"))
+      )
 
-      status(result) shouldBe Status.SEE_OTHER
+      status(result)               shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
     }
 
     "update & redirect when isV2Liability is set to true" in {
       val c = aLiabilityCase(withReference("reference"), withDecision())
 
-      given(casesService.updateSampleReturn(refEq(c), any[Option[SampleReturn]], any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(c))
+      given(casesService.updateSampleReturn(refEq(c), any[Option[SampleReturn]], any[Operator])(any[HeaderCarrier]))
+        .willReturn(Future.successful(c))
 
-      val result = await(controllerV2(c, Set(Permission.EDIT_SAMPLE)).updateStatus("reference")
-      (newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("return" -> "YES")))
+      val result = await(
+        controllerV2(c, Set(Permission.EDIT_SAMPLE))
+          .updateStatus("reference")(newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("return" -> "YES"))
+      )
 
-      verify(casesService).updateSampleReturn(refEq(c), refEq(Some(SampleReturn.YES)), any[Operator])(any[HeaderCarrier])
+      verify(casesService)
+        .updateSampleReturn(refEq(c), refEq(Some(SampleReturn.YES)), any[Operator])(any[HeaderCarrier])
 
-      status(result) shouldBe Status.SEE_OTHER
+      status(result)     shouldBe Status.SEE_OTHER
       locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/v2/reference/liability#sample_status_tab")
     }
 

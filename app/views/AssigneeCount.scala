@@ -21,20 +21,19 @@ import models.{Case, Operator}
 case class AssigneeCount(op: Operator, count: Int) {
   private lazy val splitName = name.split(" ")
 
-  def name: String = op.safeName
+  def name: String      = op.safeName
   def firstName: String = splitName.head
-  def lastName: String = splitName.last
+  def lastName: String  = splitName.last
 }
 
-object AssigneeCount{
+object AssigneeCount {
 
-  def apply(cases: Seq[Case]): Seq[AssigneeCount] = {
+  def apply(cases: Seq[Case]): Seq[AssigneeCount] =
     cases
       .filter(_.assignee.isDefined)
-      .groupBy[Operator]( _.assignee.get)
+      .groupBy[Operator](_.assignee.get)
       .map { case (op, opCases) => AssigneeCount(op, opCases.size) }
       .toSeq
-      .sortBy( a => (a.lastName, a.firstName) )
-  }
+      .sortBy(a => (a.lastName, a.firstName))
 
 }

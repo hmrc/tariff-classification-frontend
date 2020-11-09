@@ -37,11 +37,13 @@ class CaseActionButtonsViewSpec extends ViewSpec {
     "render the action this case button for new case" in {
       val c = aLiabilityCase(withReference("reference"), withStatus(CaseStatus.NEW), withLiabilityApplication())
 
-      val doc = view(case_action_buttons_partial(
-        LiabilityViewModel.fromCase(c, Cases.operatorWithReleaseOrSuppressPermissions)
-      ))
+      val doc = view(
+        case_action_buttons_partial(
+          LiabilityViewModel.fromCase(c, Cases.operatorWithReleaseOrSuppressPermissions)
+        )
+      )
 
-      doc should containElementWithID("action-this-case-button")
+      doc                                                should containElementWithID("action-this-case-button")
       doc.getElementById("action-this-case-button").text shouldBe messages("case.v2.liability.action_this_case.button")
     }
 
@@ -49,9 +51,11 @@ class CaseActionButtonsViewSpec extends ViewSpec {
 
       val c = aLiabilityCase(withReference("reference"), withStatus(CaseStatus.NEW), withLiabilityApplication())
 
-      val doc = view(case_action_buttons_partial(
-        LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions)
-      ))
+      val doc = view(
+        case_action_buttons_partial(
+          LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions)
+        )
+      )
 
       doc shouldNot containElementWithID("action-this-case-button")
     }
@@ -59,20 +63,26 @@ class CaseActionButtonsViewSpec extends ViewSpec {
     "render the change case status button for open case with complete case permission" in {
       val c = aLiabilityCase(withReference("reference"), withStatus(CaseStatus.OPEN), withLiabilityApplication())
 
-      val doc = view(case_action_buttons_partial(
-        LiabilityViewModel.fromCase(c, Cases.operatorWithCompleteCasePermission)
-      ))
+      val doc = view(
+        case_action_buttons_partial(
+          LiabilityViewModel.fromCase(c, Cases.operatorWithCompleteCasePermission)
+        )
+      )
 
       doc should containElementWithID("change-case-status-button")
-      doc.getElementById("change-case-status-button").text shouldBe messages("case.v2.liability.change_case_status.button")
+      doc.getElementById("change-case-status-button").text shouldBe messages(
+        "case.v2.liability.change_case_status.button"
+      )
     }
 
     "not render the change case status button" in {
       val c = aLiabilityCase(withReference("reference"), withStatus(CaseStatus.NEW), withLiabilityApplication())
 
-      val doc = view(case_action_buttons_partial(
-        LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions)
-      ))
+      val doc = view(
+        case_action_buttons_partial(
+          LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions)
+        )
+      )
 
       doc shouldNot containElementWithID("change-case-status-button")
     }
@@ -80,20 +90,26 @@ class CaseActionButtonsViewSpec extends ViewSpec {
     "render the take off referral button for a referred case and reopen case permission" in {
       val c = aLiabilityCase(withReference("reference"), withStatus(CaseStatus.REFERRED))
 
-      val doc = view(case_action_buttons_partial(
-        LiabilityViewModel.fromCase(c, Cases.operatorWithCompleteCasePermission)
-      ))
+      val doc = view(
+        case_action_buttons_partial(
+          LiabilityViewModel.fromCase(c, Cases.operatorWithCompleteCasePermission)
+        )
+      )
 
       doc should containElementWithID("take-off-referral-button")
-      doc.getElementById("take-off-referral-button").text shouldBe messages("case.v2.liability.take_off_referral.button")
+      doc.getElementById("take-off-referral-button").text shouldBe messages(
+        "case.v2.liability.take_off_referral.button"
+      )
     }
 
     "not render the take off referral button for a not referred case" in {
       val c = aLiabilityCase(withReference("reference"), withStatus(CaseStatus.OPEN))
 
-      val doc = view(case_action_buttons_partial(
-        LiabilityViewModel.fromCase(c, Cases.operatorWithCompleteCasePermission)
-      ))
+      val doc = view(
+        case_action_buttons_partial(
+          LiabilityViewModel.fromCase(c, Cases.operatorWithCompleteCasePermission)
+        )
+      )
 
       doc shouldNot containElementWithID("take-off-referral-button")
     }
@@ -101,9 +117,11 @@ class CaseActionButtonsViewSpec extends ViewSpec {
     "not render the take off referral button for a case without permissions" in {
       val c = aLiabilityCase(withReference("reference"), withStatus(CaseStatus.REFERRED))
 
-      val doc = view(case_action_buttons_partial(
-        LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions)
-      ))
+      val doc = view(
+        case_action_buttons_partial(
+          LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions)
+        )
+      )
 
       doc shouldNot containElementWithID("take-off-referral-button")
     }
@@ -111,20 +129,24 @@ class CaseActionButtonsViewSpec extends ViewSpec {
     "render the reopen case button for a referred case and reopen case permission" in {
       val c = aLiabilityCase(withReference("reference"), withStatus(CaseStatus.SUSPENDED))
 
-      val doc = view(case_action_buttons_partial(
-        LiabilityViewModel.fromCase(c, Cases.operatorWithCompleteCasePermission)
-      ))
+      val doc = view(
+        case_action_buttons_partial(
+          LiabilityViewModel.fromCase(c, Cases.operatorWithCompleteCasePermission)
+        )
+      )
 
-      doc should containElementWithID("reopen-case")
+      doc                                    should containElementWithID("reopen-case")
       doc.getElementById("reopen-case").text shouldBe messages("case.v2.liability.reopen.button")
     }
 
     "not render the reopen case button for a not referred case" in {
       val c = aLiabilityCase(withReference("reference"), withStatus(CaseStatus.OPEN))
 
-      val doc = view(case_action_buttons_partial(
-        LiabilityViewModel.fromCase(c, Cases.operatorWithCompleteCasePermission)
-      ))
+      val doc = view(
+        case_action_buttons_partial(
+          LiabilityViewModel.fromCase(c, Cases.operatorWithCompleteCasePermission)
+        )
+      )
 
       doc shouldNot containElementWithID("reopen-case")
     }
@@ -132,9 +154,11 @@ class CaseActionButtonsViewSpec extends ViewSpec {
     "not render the reopen case button for a case without permissions" in {
       val c = aLiabilityCase(withReference("reference"), withStatus(CaseStatus.SUSPENDED))
 
-      val doc = view(case_action_buttons_partial(
-        LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions)
-      ))
+      val doc = view(
+        case_action_buttons_partial(
+          LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions)
+        )
+      )
 
       doc shouldNot containElementWithID("reopen-case")
     }

@@ -38,8 +38,8 @@ class InputTextViewSpec extends ViewSpec {
       val doc = view(input_text(form("field"), "Label"))
 
       // Then
-      doc should containElementWithTag("input")
-      doc should containElementWithID("field")
+      doc                         should containElementWithTag("input")
+      doc                         should containElementWithID("field")
       doc.getElementById("field") should haveAttribute("type", "text")
       doc.getElementById("field") should haveAttribute("name", "field")
       doc.getElementById("field") should haveAttribute("value", "v")
@@ -54,9 +54,9 @@ class InputTextViewSpec extends ViewSpec {
     }
     "enable an error prefix for screen reader" in {
       lazy val emptyForm = Map[String, String]()
-      val formWithError = form.bind(emptyForm).apply("field")
-      val doc = view(input_text(formWithError, "Span"))
-      doc.getElementsByClass("visually-hidden").text() mustBe  errorPrefix
+      val formWithError  = form.bind(emptyForm).apply("field")
+      val doc            = view(input_text(formWithError, "Span"))
+      doc.getElementsByClass("visually-hidden").text() mustBe errorPrefix
     }
   }
 

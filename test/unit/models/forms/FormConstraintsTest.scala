@@ -34,7 +34,7 @@ class FormConstraintsTest extends ModelsBaseSpec {
         val date = Calendar.getInstance()
         date.add(Calendar.DAY_OF_MONTH, 1)
         val dateInstant = date.toInstant
-        val result = FormConstraints.dateMustBeInThePast("Test error").apply(dateInstant)
+        val result      = FormConstraints.dateMustBeInThePast("Test error").apply(dateInstant)
 
         result shouldBe Invalid("Test error")
       }
@@ -43,7 +43,7 @@ class FormConstraintsTest extends ModelsBaseSpec {
         val date = Calendar.getInstance()
         date.add(Calendar.MONTH, 1)
         val dateInstant = date.toInstant
-        val result = FormConstraints.dateMustBeInThePast("Test error").apply(dateInstant)
+        val result      = FormConstraints.dateMustBeInThePast("Test error").apply(dateInstant)
 
         result shouldBe Invalid("Test error")
       }
@@ -52,7 +52,7 @@ class FormConstraintsTest extends ModelsBaseSpec {
         val date = Calendar.getInstance()
         date.add(Calendar.MONTH, -1)
         val dateInstant = date.toInstant
-        val result = FormConstraints.dateMustBeInThePast("Test error").apply(dateInstant)
+        val result      = FormConstraints.dateMustBeInThePast("Test error").apply(dateInstant)
 
         result shouldBe Valid
       }
@@ -61,7 +61,7 @@ class FormConstraintsTest extends ModelsBaseSpec {
         val date = Calendar.getInstance()
         date.add(Calendar.YEAR, -1000)
         val dateInstant = date.toInstant
-        val result = FormConstraints.dateMustBeInThePast("Test error").apply(dateInstant)
+        val result      = FormConstraints.dateMustBeInThePast("Test error").apply(dateInstant)
 
         result shouldBe Valid
       }
@@ -70,35 +70,35 @@ class FormConstraintsTest extends ModelsBaseSpec {
     "dateLowerBound" should {
 
       "return valid when year entered is earliest valid" in {
-        val date = Calendar.getInstance()
+        val date      = Calendar.getInstance()
         val yearsDiff = yearLowBound - currentYear
         date.add(Calendar.YEAR, yearsDiff)
 
         val yearInstant = date.toInstant
-        val result = FormConstraints.dateLowerBound("Test error", yearLowBound).apply(yearInstant)
+        val result      = FormConstraints.dateLowerBound("Test error", yearLowBound).apply(yearInstant)
 
         result shouldBe Valid
       }
 
       "return valid when year entered is in future" in {
-        val date = Calendar.getInstance()
+        val date      = Calendar.getInstance()
         val yearsDiff = currentYear + 1
         date.add(Calendar.YEAR, yearsDiff)
 
         val yearInstant = date.toInstant
-        val result = FormConstraints.dateLowerBound("Test error", yearLowBound).apply(yearInstant)
+        val result      = FormConstraints.dateLowerBound("Test error", yearLowBound).apply(yearInstant)
 
         result shouldBe Valid
       }
 
       "return invalid when year entered is less than the defined year" in {
-        val date = Calendar.getInstance()
+        val date      = Calendar.getInstance()
         val yearsDiff = yearLowBound - currentYear - 1
 
         date.add(Calendar.YEAR, yearsDiff)
 
         val yearInstant = date.toInstant
-        val result = FormConstraints.dateLowerBound("Test error", yearLowBound).apply(yearInstant)
+        val result      = FormConstraints.dateLowerBound("Test error", yearLowBound).apply(yearInstant)
 
         result shouldBe Invalid("Test error", yearLowBound.toString)
       }
@@ -114,19 +114,28 @@ class FormConstraintsTest extends ModelsBaseSpec {
       "return invalid when btiReference entered contains characters" in {
         val result = FormConstraints.btiReferenceIsCorrectFormat().apply("A1234567890")
 
-        result shouldBe Invalid("case.v2.liability.c592.details_edit.bti_reference_error", FormConstraints.btiRefRegex.pattern.pattern())
+        result shouldBe Invalid(
+          "case.v2.liability.c592.details_edit.bti_reference_error",
+          FormConstraints.btiRefRegex.pattern.pattern()
+        )
       }
 
       "return invalid when btiReference entered exceeds the maximum number (22)" in {
         val result = FormConstraints.btiReferenceIsCorrectFormat().apply("123456789123456789012312")
 
-        result shouldBe Invalid("case.v2.liability.c592.details_edit.bti_reference_error", FormConstraints.btiRefRegex.pattern.pattern())
+        result shouldBe Invalid(
+          "case.v2.liability.c592.details_edit.bti_reference_error",
+          FormConstraints.btiRefRegex.pattern.pattern()
+        )
       }
 
       "return invalid when btiReference entered less than minimum number (5)" in {
         val result = FormConstraints.btiReferenceIsCorrectFormat().apply("12345")
 
-        result shouldBe Invalid("case.v2.liability.c592.details_edit.bti_reference_error", FormConstraints.btiRefRegex.pattern.pattern())
+        result shouldBe Invalid(
+          "case.v2.liability.c592.details_edit.bti_reference_error",
+          FormConstraints.btiRefRegex.pattern.pattern()
+        )
       }
     }
 

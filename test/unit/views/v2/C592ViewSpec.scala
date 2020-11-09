@@ -25,7 +25,6 @@ import views.html.partials.liabilities.c592_tab
 class C592ViewSpec extends ViewSpec {
 
   def c592Tab: c592_tab = injector.instanceOf[c592_tab]
-  
 
   "C592 View" should {
     "render successfully" in {
@@ -35,29 +34,32 @@ class C592ViewSpec extends ViewSpec {
 
     }
     "contain Edit Details if operator has the required permissions" in {
-      val doc = view(c592Tab(Cases.c592ViewModel)
-      (requestWithPermissions(Permission.EDIT_LIABILITY),messages, appConfig))
+      val doc =
+        view(c592Tab(Cases.c592ViewModel)(requestWithPermissions(Permission.EDIT_LIABILITY), messages, appConfig))
 
       doc should containElementWithID("edit-liability-details")
     }
 
     "not contain Edit Details if operator does not have the required permissions" in {
-      val doc = view(c592Tab(Cases.c592ViewModel)
-      (requestWithPermissions(Permission.VIEW_CASES),messages, appConfig))
+      val doc = view(c592Tab(Cases.c592ViewModel)(requestWithPermissions(Permission.VIEW_CASES), messages, appConfig))
 
       doc shouldNot containElementWithID("edit-liability-details")
     }
 
     "show repayment section if one is required" in {
-      val doc = view(c592Tab(Cases.c592ViewModel.copy(isRepaymentClaim = true))
-      (requestWithPermissions(Permission.VIEW_CASES),messages, appConfig))
+      val doc = view(
+        c592Tab(Cases.c592ViewModel.copy(isRepaymentClaim = true))(
+          requestWithPermissions(Permission.VIEW_CASES),
+          messages,
+          appConfig
+        )
+      )
 
       doc should containElementWithID("dvr_number")
     }
 
     "not show repayment section if one is not required" in {
-      val doc = view(c592Tab(Cases.c592ViewModel)
-      (requestWithPermissions(Permission.VIEW_CASES),messages, appConfig))
+      val doc = view(c592Tab(Cases.c592ViewModel)(requestWithPermissions(Permission.VIEW_CASES), messages, appConfig))
 
       doc shouldNot containElementWithID("dvr_number")
     }

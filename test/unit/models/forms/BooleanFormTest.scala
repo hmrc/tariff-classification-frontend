@@ -22,7 +22,7 @@ class BooleanFormTest extends ModelsBaseSpec {
 
   "Boolean Form 'Bind From Request'" should {
     "fail on empty request" in {
-      BooleanForm.form.bindFromRequest(Map("state" -> Seq())).hasErrors shouldBe true
+      BooleanForm.form.bindFromRequest(Map("state" -> Seq())).hasErrors   shouldBe true
       BooleanForm.form.bindFromRequest(Map("state" -> Seq(""))).hasErrors shouldBe true
     }
 
@@ -33,21 +33,21 @@ class BooleanFormTest extends ModelsBaseSpec {
     "succeed on valid request" in {
       val emptyForm = BooleanForm.form.bindFromRequest(Map())
       emptyForm.hasErrors shouldBe false
-      emptyForm.get shouldBe false
+      emptyForm.get       shouldBe false
 
       val falsyForm = BooleanForm.form.bindFromRequest(Map("state" -> Seq("false")))
       falsyForm.hasErrors shouldBe false
-      falsyForm.get shouldBe false
+      falsyForm.get       shouldBe false
 
       val truthyForm = BooleanForm.form.bindFromRequest(Map("state" -> Seq("true")))
       truthyForm.hasErrors shouldBe false
-      truthyForm.get shouldBe true
+      truthyForm.get       shouldBe true
     }
   }
 
   "Boolean Form 'fill'" should {
     "pre populate form" in {
-      BooleanForm.form.fill(true).data shouldBe Map("state" -> "true")
+      BooleanForm.form.fill(true).data  shouldBe Map("state" -> "true")
       BooleanForm.form.fill(false).data shouldBe Map("state" -> "false")
     }
   }

@@ -18,6 +18,4 @@ package service
 
 import base.SpecBase
 
-class ServiceSpecBase extends SpecBase with ConnectorCaptor {
-
-}
+class ServiceSpecBase extends SpecBase with ConnectorCaptor {}

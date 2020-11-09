@@ -21,7 +21,7 @@ class ReferralReasonTest extends ModelsBaseSpec {
   "format" should {
     "render to String" in {
       ReferralReason.format(ReferralReason.REQUEST_MORE_INFO) shouldBe "To request more information"
-      ReferralReason.format(ReferralReason.REQUEST_SAMPLE) shouldBe "To request a sample"
+      ReferralReason.format(ReferralReason.REQUEST_SAMPLE)    shouldBe "To request a sample"
     }
   }
 

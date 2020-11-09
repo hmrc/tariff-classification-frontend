@@ -19,7 +19,7 @@ package models.viewmodels
 import models.StoredAttachment
 
 case class AttachmentsTabViewModel(
-                                    caseReference: String,
-                                    attachments: Seq[StoredAttachment],
-                                    letter: Option[StoredAttachment]
-                                  )
+  caseReference: String,
+  attachments: Seq[StoredAttachment],
+  letter: Option[StoredAttachment]
+)

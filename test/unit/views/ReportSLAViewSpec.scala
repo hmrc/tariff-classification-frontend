@@ -23,7 +23,7 @@ import views.ViewMatchers._
 
 class ReportSLAViewSpec extends ViewSpec {
 
-  private val range = InstantRange(min = Instant.EPOCH, max = Instant.EPOCH.plusSeconds(86400))
+  private val range  = InstantRange(min = Instant.EPOCH, max = Instant.EPOCH.plusSeconds(86400))
   private val queue1 = Queue("1", "Q1", "Queue 1 Name")
   private val queue2 = Queue("2", "Q2", "Queue 2 Name")
 
@@ -34,10 +34,10 @@ class ReportSLAViewSpec extends ViewSpec {
       val doc = view(html.report_sla(range, Seq.empty[ReportResult], Seq.empty[Queue]))
 
       // Then
-      doc should containElementWithID("report_sla-from_date")
+      doc                                        should containElementWithID("report_sla-from_date")
       doc.getElementById("report_sla-from_date") should containText("")
-      doc should containElementWithID("report_sla-to_date")
-      doc.getElementById("report_sla-to_date") should containText("")
+      doc                                        should containElementWithID("report_sla-to_date")
+      doc.getElementById("report_sla-to_date")   should containText("")
     }
 
     "render intervals" in {
@@ -45,7 +45,7 @@ class ReportSLAViewSpec extends ViewSpec {
       val doc = view(html.report_sla(range, Seq.empty[ReportResult], Seq.empty[Queue]))
 
       // Then
-      doc should containElementWithID("report_sla-table-intervals")
+      doc                                               should containElementWithID("report_sla-table-intervals")
       doc.getElementById("report_sla-table-interval_0") should containText("0 - 10")
       doc.getElementById("report_sla-table-interval_1") should containText("11 - 20")
       doc.getElementById("report_sla-table-interval_2") should containText("21 - 30")
@@ -59,37 +59,37 @@ class ReportSLAViewSpec extends ViewSpec {
       val doc = view(html.report_sla(range, Seq.empty[ReportResult], Seq(queue1, queue2)))
 
       // Then
-      doc should containElementWithID(s"report_sla-table-queue_${queue1.slug}")
-      doc.getElementById(s"report_sla-table-queue_${queue1.slug}-name") should containText(queue1.name)
-      doc.getElementById(s"report_sla-table-queue_${queue1.slug}-interval_0-count") should containText("0")
+      doc                                                                             should containElementWithID(s"report_sla-table-queue_${queue1.slug}")
+      doc.getElementById(s"report_sla-table-queue_${queue1.slug}-name")               should containText(queue1.name)
+      doc.getElementById(s"report_sla-table-queue_${queue1.slug}-interval_0-count")   should containText("0")
       doc.getElementById(s"report_sla-table-queue_${queue1.slug}-interval_0-percent") should containText("0")
-      doc.getElementById(s"report_sla-table-queue_${queue1.slug}-interval_1-count") should containText("0")
+      doc.getElementById(s"report_sla-table-queue_${queue1.slug}-interval_1-count")   should containText("0")
       doc.getElementById(s"report_sla-table-queue_${queue1.slug}-interval_1-percent") should containText("0")
-      doc.getElementById(s"report_sla-table-queue_${queue1.slug}-interval_2-count") should containText("0")
+      doc.getElementById(s"report_sla-table-queue_${queue1.slug}-interval_2-count")   should containText("0")
       doc.getElementById(s"report_sla-table-queue_${queue1.slug}-interval_2-percent") should containText("0")
-      doc.getElementById(s"report_sla-table-queue_${queue1.slug}-interval_3-count") should containText("0")
+      doc.getElementById(s"report_sla-table-queue_${queue1.slug}-interval_3-count")   should containText("0")
       doc.getElementById(s"report_sla-table-queue_${queue1.slug}-interval_3-percent") should containText("0")
-      doc.getElementById(s"report_sla-table-queue_${queue1.slug}-interval_4-count") should containText("0")
+      doc.getElementById(s"report_sla-table-queue_${queue1.slug}-interval_4-count")   should containText("0")
       doc.getElementById(s"report_sla-table-queue_${queue1.slug}-interval_4-percent") should containText("0")
-      doc.getElementById(s"report_sla-table-queue_${queue1.slug}-interval_5-count") should containText("0")
+      doc.getElementById(s"report_sla-table-queue_${queue1.slug}-interval_5-count")   should containText("0")
       doc.getElementById(s"report_sla-table-queue_${queue1.slug}-interval_5-percent") should containText("0")
-      doc.getElementById(s"report_sla-table-queue_${queue1.slug}-total") should containText("0")
+      doc.getElementById(s"report_sla-table-queue_${queue1.slug}-total")              should containText("0")
 
-      doc should containElementWithID(s"report_sla-table-queue_${queue2.slug}")
-      doc.getElementById(s"report_sla-table-queue_${queue2.slug}-name") should containText(queue2.name)
-      doc.getElementById(s"report_sla-table-queue_${queue2.slug}-interval_0-count") should containText("0")
+      doc                                                                             should containElementWithID(s"report_sla-table-queue_${queue2.slug}")
+      doc.getElementById(s"report_sla-table-queue_${queue2.slug}-name")               should containText(queue2.name)
+      doc.getElementById(s"report_sla-table-queue_${queue2.slug}-interval_0-count")   should containText("0")
       doc.getElementById(s"report_sla-table-queue_${queue2.slug}-interval_0-percent") should containText("0")
-      doc.getElementById(s"report_sla-table-queue_${queue2.slug}-interval_1-count") should containText("0")
+      doc.getElementById(s"report_sla-table-queue_${queue2.slug}-interval_1-count")   should containText("0")
       doc.getElementById(s"report_sla-table-queue_${queue2.slug}-interval_1-percent") should containText("0")
-      doc.getElementById(s"report_sla-table-queue_${queue2.slug}-interval_2-count") should containText("0")
+      doc.getElementById(s"report_sla-table-queue_${queue2.slug}-interval_2-count")   should containText("0")
       doc.getElementById(s"report_sla-table-queue_${queue2.slug}-interval_2-percent") should containText("0")
-      doc.getElementById(s"report_sla-table-queue_${queue2.slug}-interval_3-count") should containText("0")
+      doc.getElementById(s"report_sla-table-queue_${queue2.slug}-interval_3-count")   should containText("0")
       doc.getElementById(s"report_sla-table-queue_${queue2.slug}-interval_3-percent") should containText("0")
-      doc.getElementById(s"report_sla-table-queue_${queue2.slug}-interval_4-count") should containText("0")
+      doc.getElementById(s"report_sla-table-queue_${queue2.slug}-interval_4-count")   should containText("0")
       doc.getElementById(s"report_sla-table-queue_${queue2.slug}-interval_4-percent") should containText("0")
-      doc.getElementById(s"report_sla-table-queue_${queue2.slug}-interval_5-count") should containText("0")
+      doc.getElementById(s"report_sla-table-queue_${queue2.slug}-interval_5-count")   should containText("0")
       doc.getElementById(s"report_sla-table-queue_${queue2.slug}-interval_5-percent") should containText("0")
-      doc.getElementById(s"report_sla-table-queue_${queue2.slug}-total") should containText("0")
+      doc.getElementById(s"report_sla-table-queue_${queue2.slug}-total")              should containText("0")
     }
 
     "render queues - with some data" in {
@@ -103,37 +103,37 @@ class ReportSLAViewSpec extends ViewSpec {
       val doc = view(html.report_sla(range, results, Seq(queue1, queue2)))
 
       // Then
-      doc should containElementWithID(s"report_sla-table-queue_${queue1.slug}")
-      doc.getElementById(s"report_sla-table-queue_${queue1.slug}-name") should containText(queue1.name)
-      doc.getElementById(s"report_sla-table-queue_${queue1.slug}-interval_0-count") should containText("1")
+      doc                                                                             should containElementWithID(s"report_sla-table-queue_${queue1.slug}")
+      doc.getElementById(s"report_sla-table-queue_${queue1.slug}-name")               should containText(queue1.name)
+      doc.getElementById(s"report_sla-table-queue_${queue1.slug}-interval_0-count")   should containText("1")
       doc.getElementById(s"report_sla-table-queue_${queue1.slug}-interval_0-percent") should containText("17")
-      doc.getElementById(s"report_sla-table-queue_${queue1.slug}-interval_1-count") should containText("1")
+      doc.getElementById(s"report_sla-table-queue_${queue1.slug}-interval_1-count")   should containText("1")
       doc.getElementById(s"report_sla-table-queue_${queue1.slug}-interval_1-percent") should containText("17")
-      doc.getElementById(s"report_sla-table-queue_${queue1.slug}-interval_2-count") should containText("1")
+      doc.getElementById(s"report_sla-table-queue_${queue1.slug}-interval_2-count")   should containText("1")
       doc.getElementById(s"report_sla-table-queue_${queue1.slug}-interval_2-percent") should containText("17")
-      doc.getElementById(s"report_sla-table-queue_${queue1.slug}-interval_3-count") should containText("1")
+      doc.getElementById(s"report_sla-table-queue_${queue1.slug}-interval_3-count")   should containText("1")
       doc.getElementById(s"report_sla-table-queue_${queue1.slug}-interval_3-percent") should containText("17")
-      doc.getElementById(s"report_sla-table-queue_${queue1.slug}-interval_4-count") should containText("1")
+      doc.getElementById(s"report_sla-table-queue_${queue1.slug}-interval_4-count")   should containText("1")
       doc.getElementById(s"report_sla-table-queue_${queue1.slug}-interval_4-percent") should containText("17")
-      doc.getElementById(s"report_sla-table-queue_${queue1.slug}-interval_5-count") should containText("1")
+      doc.getElementById(s"report_sla-table-queue_${queue1.slug}-interval_5-count")   should containText("1")
       doc.getElementById(s"report_sla-table-queue_${queue1.slug}-interval_5-percent") should containText("17")
-      doc.getElementById(s"report_sla-table-queue_${queue1.slug}-total") should containText("6")
+      doc.getElementById(s"report_sla-table-queue_${queue1.slug}-total")              should containText("6")
 
-      doc should containElementWithID(s"report_sla-table-queue_${queue2.slug}")
-      doc.getElementById(s"report_sla-table-queue_${queue2.slug}-name") should containText(queue2.name)
-      doc.getElementById(s"report_sla-table-queue_${queue2.slug}-interval_0-count") should containText("1")
+      doc                                                                             should containElementWithID(s"report_sla-table-queue_${queue2.slug}")
+      doc.getElementById(s"report_sla-table-queue_${queue2.slug}-name")               should containText(queue2.name)
+      doc.getElementById(s"report_sla-table-queue_${queue2.slug}-interval_0-count")   should containText("1")
       doc.getElementById(s"report_sla-table-queue_${queue2.slug}-interval_0-percent") should containText("17")
-      doc.getElementById(s"report_sla-table-queue_${queue2.slug}-interval_1-count") should containText("1")
+      doc.getElementById(s"report_sla-table-queue_${queue2.slug}-interval_1-count")   should containText("1")
       doc.getElementById(s"report_sla-table-queue_${queue2.slug}-interval_1-percent") should containText("17")
-      doc.getElementById(s"report_sla-table-queue_${queue2.slug}-interval_2-count") should containText("1")
+      doc.getElementById(s"report_sla-table-queue_${queue2.slug}-interval_2-count")   should containText("1")
       doc.getElementById(s"report_sla-table-queue_${queue2.slug}-interval_2-percent") should containText("17")
-      doc.getElementById(s"report_sla-table-queue_${queue2.slug}-interval_3-count") should containText("1")
+      doc.getElementById(s"report_sla-table-queue_${queue2.slug}-interval_3-count")   should containText("1")
       doc.getElementById(s"report_sla-table-queue_${queue2.slug}-interval_3-percent") should containText("17")
-      doc.getElementById(s"report_sla-table-queue_${queue2.slug}-interval_4-count") should containText("1")
+      doc.getElementById(s"report_sla-table-queue_${queue2.slug}-interval_4-count")   should containText("1")
       doc.getElementById(s"report_sla-table-queue_${queue2.slug}-interval_4-percent") should containText("17")
-      doc.getElementById(s"report_sla-table-queue_${queue2.slug}-interval_5-count") should containText("1")
+      doc.getElementById(s"report_sla-table-queue_${queue2.slug}-interval_5-count")   should containText("1")
       doc.getElementById(s"report_sla-table-queue_${queue2.slug}-interval_5-percent") should containText("17")
-      doc.getElementById(s"report_sla-table-queue_${queue2.slug}-total") should containText("6")
+      doc.getElementById(s"report_sla-table-queue_${queue2.slug}-total")              should containText("6")
     }
 
     "render totals - with no data" in {
@@ -141,20 +141,20 @@ class ReportSLAViewSpec extends ViewSpec {
       val doc = view(html.report_sla(range, Seq.empty[ReportResult], Seq(queue1, queue2)))
 
       // Then
-      doc should containElementWithID("report_sla-table-totals")
-      doc.getElementById("report_sla-table-totals-interval_0-count") should containText("0")
+      doc                                                              should containElementWithID("report_sla-table-totals")
+      doc.getElementById("report_sla-table-totals-interval_0-count")   should containText("0")
       doc.getElementById("report_sla-table-totals-interval_0-percent") should containText("0")
-      doc.getElementById("report_sla-table-totals-interval_1-count") should containText("0")
+      doc.getElementById("report_sla-table-totals-interval_1-count")   should containText("0")
       doc.getElementById("report_sla-table-totals-interval_1-percent") should containText("0")
-      doc.getElementById("report_sla-table-totals-interval_2-count") should containText("0")
+      doc.getElementById("report_sla-table-totals-interval_2-count")   should containText("0")
       doc.getElementById("report_sla-table-totals-interval_2-percent") should containText("0")
-      doc.getElementById("report_sla-table-totals-interval_3-count") should containText("0")
+      doc.getElementById("report_sla-table-totals-interval_3-count")   should containText("0")
       doc.getElementById("report_sla-table-totals-interval_3-percent") should containText("0")
-      doc.getElementById("report_sla-table-totals-interval_4-count") should containText("0")
+      doc.getElementById("report_sla-table-totals-interval_4-count")   should containText("0")
       doc.getElementById("report_sla-table-totals-interval_4-percent") should containText("0")
-      doc.getElementById("report_sla-table-totals-interval_5-count") should containText("0")
+      doc.getElementById("report_sla-table-totals-interval_5-count")   should containText("0")
       doc.getElementById("report_sla-table-totals-interval_5-percent") should containText("0")
-      doc.getElementById("report_sla-table-totals-total") should containText("0")
+      doc.getElementById("report_sla-table-totals-total")              should containText("0")
     }
 
     "render totals - with some data" in {
@@ -168,20 +168,20 @@ class ReportSLAViewSpec extends ViewSpec {
       val doc = view(html.report_sla(range, results, Seq(queue1, queue2)))
 
       // Then
-      doc should containElementWithID("report_sla-table-totals")
-      doc.getElementById("report_sla-table-totals-interval_0-count") should containText("2")
+      doc                                                              should containElementWithID("report_sla-table-totals")
+      doc.getElementById("report_sla-table-totals-interval_0-count")   should containText("2")
       doc.getElementById("report_sla-table-totals-interval_0-percent") should containText("17")
-      doc.getElementById("report_sla-table-totals-interval_1-count") should containText("2")
+      doc.getElementById("report_sla-table-totals-interval_1-count")   should containText("2")
       doc.getElementById("report_sla-table-totals-interval_1-percent") should containText("17")
-      doc.getElementById("report_sla-table-totals-interval_2-count") should containText("2")
+      doc.getElementById("report_sla-table-totals-interval_2-count")   should containText("2")
       doc.getElementById("report_sla-table-totals-interval_2-percent") should containText("17")
-      doc.getElementById("report_sla-table-totals-interval_3-count") should containText("2")
+      doc.getElementById("report_sla-table-totals-interval_3-count")   should containText("2")
       doc.getElementById("report_sla-table-totals-interval_3-percent") should containText("17")
-      doc.getElementById("report_sla-table-totals-interval_4-count") should containText("2")
+      doc.getElementById("report_sla-table-totals-interval_4-count")   should containText("2")
       doc.getElementById("report_sla-table-totals-interval_4-percent") should containText("17")
-      doc.getElementById("report_sla-table-totals-interval_5-count") should containText("2")
+      doc.getElementById("report_sla-table-totals-interval_5-count")   should containText("2")
       doc.getElementById("report_sla-table-totals-interval_5-percent") should containText("17")
-      doc.getElementById("report_sla-table-totals-total") should containText("12")
+      doc.getElementById("report_sla-table-totals-total")              should containText("12")
     }
   }
 

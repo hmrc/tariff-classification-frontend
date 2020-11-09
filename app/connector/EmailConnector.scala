@@ -22,23 +22,25 @@ import config.AppConfig
 import javax.inject.Singleton
 import metrics.HasMetrics
 import play.api.libs.json.{Format, Writes}
-import uk.gov.hmrc.http.{ HeaderCarrier, HttpClient }
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import models.{Email, EmailTemplate}
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 import utils.Base64Utils
 import utils.JsonFormatters.emailTemplateFormat
+import uk.gov.hmrc.http.HttpReads.Implicits._
 
 @Singleton
-class EmailConnector @Inject()(
+class EmailConnector @Inject() (
   configuration: AppConfig,
   client: HttpClient,
   val metrics: Metrics
-)(implicit ec: ExecutionContext) extends HasMetrics {
+)(implicit ec: ExecutionContext)
+    extends HasMetrics {
 
   def send[E >: Email[Any]](e: E)(implicit hc: HeaderCarrier, writes: Writes[E]): Future[Unit] =
     withMetricsTimerAsync("send-email") { _ =>
       val url = s"${configuration.emailUrl}/hmrc/email"
-      client.POST(url = url, body = e).map(_ => ())
+      client.POST[E, Unit](url = url, body = e)
     }
 
   def generate[T](e: Email[T])(implicit hc: HeaderCarrier, writes: Format[T]): Future[EmailTemplate] =
@@ -50,7 +52,7 @@ class EmailConnector @Inject()(
   private def decodingContent: EmailTemplate => EmailTemplate = { t: EmailTemplate =>
     t.copy(
       plain = Base64Utils.decode(t.plain),
-      html = Base64Utils.decode(t.html)
+      html  = Base64Utils.decode(t.html)
     )
   }
 

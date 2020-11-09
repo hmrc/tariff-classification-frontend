@@ -43,7 +43,6 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
     reset(connector)
   }
 
-
   "Service 'audit case created'" should {
     val original = aLiabilityCase(withReference("ref"))
 
@@ -52,10 +51,11 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
 
       val payload = caseCreatedAudit(
         caseReference = "ref",
-        operatorId = operator.id,
-        comment = "Liability case created"
+        operatorId    = operator.id,
+        comment       = "Liability case created"
       )
-      verify(connector).sendExplicitAudit(refEq("caseCreated"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+      verify(connector)
+        .sendExplicitAudit(refEq("caseCreated"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
     }
   }
   "Service 'audit case assigned'" should {
@@ -67,11 +67,12 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
 
       val payload = Map[String, String](
         "caseReference" -> "ref",
-        "operatorId" -> operator.id,
-        "assigneeId" -> "assignee-id"
+        "operatorId"    -> operator.id,
+        "assigneeId"    -> "assignee-id"
       )
 
-      verify(connector).sendExplicitAudit(refEq("caseAssigned"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+      verify(connector)
+        .sendExplicitAudit(refEq("caseAssigned"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
     }
 
     "Delegate to connector - when assignee empty" in {
@@ -81,30 +82,32 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
 
       val payload = Map[String, String](
         "caseReference" -> "ref",
-        "operatorId" -> operator.id,
-        "assigneeId" -> "None"
+        "operatorId"    -> operator.id,
+        "assigneeId"    -> "None"
       )
 
-      verify(connector).sendExplicitAudit(refEq("caseAssigned"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+      verify(connector)
+        .sendExplicitAudit(refEq("caseAssigned"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
     }
   }
 
   "Service 'audit case released'" should {
     val original = btiCaseExample.copy(reference = "ref", status = NEW)
-    val updated = btiCaseExample.copy(reference = "ref", status = OPEN)
-    val queue = Queue("queue-id", "queue-slug", "queue-name")
+    val updated  = btiCaseExample.copy(reference = "ref", status = OPEN)
+    val queue    = Queue("queue-id", "queue-slug", "queue-name")
 
     "Delegate to connector" in {
       service.auditCaseReleased(original, updated, queue, operator)
 
       val payload = caseChangeAudit(
-        caseReference = "ref",
-        newStatus = OPEN,
+        caseReference  = "ref",
+        newStatus      = OPEN,
         previousStatus = NEW,
-        operatorId = operator.id
+        operatorId     = operator.id
       ) + ("queue" -> queue.name)
 
-      verify(connector).sendExplicitAudit(refEq("caseReleased"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+      verify(connector)
+        .sendExplicitAudit(refEq("caseReleased"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
     }
   }
 
@@ -113,175 +116,189 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
     val q = Queue("queue-id", "queue-slug", "queue-name")
 
     "Delegate to connector" in {
-      val c = btiCaseExample.copy(reference = "ref", status = OPEN, queueId = Some(q.id), assignee = Some(Operator("assignee-id")))
+      val c = btiCaseExample
+        .copy(reference = "ref", status = OPEN, queueId = Some(q.id), assignee = Some(Operator("assignee-id")))
 
       service.auditQueueReassigned(c, operator, q)
 
       val payload = Map[String, String](
         "caseReference" -> "ref",
-        "operatorId" -> operator.id,
-        "queue" -> "queue-name"
+        "operatorId"    -> operator.id,
+        "queue"         -> "queue-name"
       )
 
-      verify(connector).sendExplicitAudit(refEq("queueReassigned"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+      verify(connector)
+        .sendExplicitAudit(refEq("queueReassigned"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
     }
   }
 
   "Service 'audit case completed'" should {
     val original = btiCaseExample.copy(reference = "ref", status = OPEN)
-    val updated = btiCaseExample.copy(reference = "ref", status = COMPLETED)
+    val updated  = btiCaseExample.copy(reference = "ref", status = COMPLETED)
 
     "Delegate to connector" in {
       service.auditCaseCompleted(original, updated, operator)
 
       val payload = caseChangeAudit(
-        caseReference = "ref",
-        newStatus = COMPLETED,
+        caseReference  = "ref",
+        newStatus      = COMPLETED,
         previousStatus = OPEN,
-        operatorId = operator.id
+        operatorId     = operator.id
       )
-      verify(connector).sendExplicitAudit(refEq("caseCompleted"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+      verify(connector)
+        .sendExplicitAudit(refEq("caseCompleted"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
     }
   }
 
   "Service 'audit cancel ruling'" should {
     val original = aCase(withReference("ref"), withStatus(COMPLETED))
-    val updated = aCase(withReference("ref"), withStatus(CANCELLED),
-      withDecision(cancellation = Some(Cancellation(CancelReason.ANNULLED, applicationForExtendedUse = true))))
+    val updated = aCase(
+      withReference("ref"),
+      withStatus(CANCELLED),
+      withDecision(cancellation = Some(Cancellation(CancelReason.ANNULLED, applicationForExtendedUse = true)))
+    )
 
     "Delegate to connector" in {
       service.auditRulingCancelled(original, updated, operator)
 
       val payload = caseCancelAudit(
         caseReference = "ref",
-        cancelReason = CancelReason.ANNULLED,
-        operatorId = operator.id
+        cancelReason  = CancelReason.ANNULLED,
+        operatorId    = operator.id
       )
-      verify(connector).sendExplicitAudit(refEq("rulingCancelled"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+      verify(connector)
+        .sendExplicitAudit(refEq("rulingCancelled"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
     }
   }
 
   "Service 'audit case referred'" should {
     val original = btiCaseExample.copy(reference = "ref", status = OPEN)
-    val updated = btiCaseExample.copy(reference = "ref", status = REFERRED)
+    val updated  = btiCaseExample.copy(reference = "ref", status = REFERRED)
 
     "Delegate to connector" in {
       service.auditCaseReferred(original, updated, operator)
 
       val payload = caseChangeAudit(
-        caseReference = "ref",
-        newStatus = REFERRED,
+        caseReference  = "ref",
+        newStatus      = REFERRED,
         previousStatus = OPEN,
-        operatorId = operator.id
+        operatorId     = operator.id
       )
-      verify(connector).sendExplicitAudit(refEq("caseReferred"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+      verify(connector)
+        .sendExplicitAudit(refEq("caseReferred"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
     }
   }
 
   "Service 'audit case rejected'" should {
     val original = btiCaseExample.copy(reference = "ref", status = OPEN)
-    val updated = btiCaseExample.copy(reference = "ref", status = REJECTED)
+    val updated  = btiCaseExample.copy(reference = "ref", status = REJECTED)
 
     "Delegate to connector" in {
       service.auditCaseRejected(original, updated, operator)
 
       val payload = caseChangeAudit(
-        caseReference = "ref",
-        newStatus = REJECTED,
+        caseReference  = "ref",
+        newStatus      = REJECTED,
         previousStatus = OPEN,
-        operatorId = operator.id
+        operatorId     = operator.id
       )
-      verify(connector).sendExplicitAudit(refEq("caseRejected"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+      verify(connector)
+        .sendExplicitAudit(refEq("caseRejected"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
     }
   }
 
   "Service 'audit case suspended'" should {
     val original = btiCaseExample.copy(reference = "ref", status = OPEN)
-    val updated = btiCaseExample.copy(reference = "ref", status = SUSPENDED)
+    val updated  = btiCaseExample.copy(reference = "ref", status = SUSPENDED)
 
     "Delegate to connector" in {
       service.auditCaseSuspended(original, updated, operator)
 
       val payload = caseChangeAudit(
-        caseReference = "ref",
-        newStatus = SUSPENDED,
+        caseReference  = "ref",
+        newStatus      = SUSPENDED,
         previousStatus = OPEN,
-        operatorId = operator.id
+        operatorId     = operator.id
       )
-      verify(connector).sendExplicitAudit(refEq("caseSuspended"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+      verify(connector)
+        .sendExplicitAudit(refEq("caseSuspended"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
     }
   }
 
   "Service 'audit case suppressed'" should {
     val original = btiCaseExample.copy(reference = "ref", status = NEW)
-    val updated = btiCaseExample.copy(reference = "ref", status = SUPPRESSED)
+    val updated  = btiCaseExample.copy(reference = "ref", status = SUPPRESSED)
 
     "Delegate to connector" in {
       service.auditCaseSuppressed(original, updated, operator)
 
       val payload = caseChangeAudit(
-        caseReference = "ref",
-        newStatus = SUPPRESSED,
+        caseReference  = "ref",
+        newStatus      = SUPPRESSED,
         previousStatus = NEW,
-        operatorId = operator.id
+        operatorId     = operator.id
       )
-      verify(connector).sendExplicitAudit(refEq("caseSuppressed"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+      verify(connector)
+        .sendExplicitAudit(refEq("caseSuppressed"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
     }
   }
 
   "Service 'audit case reopened' when a case is referred" should {
     val original = btiCaseExample.copy(reference = "ref", status = REFERRED)
-    val updated = btiCaseExample.copy(reference = "ref", status = OPEN)
+    val updated  = btiCaseExample.copy(reference = "ref", status = OPEN)
 
     "Delegate to connector" in {
       service.auditCaseReOpened(original, updated, operator)
 
       val payload = caseChangeAudit(
-        caseReference = "ref",
-        newStatus = OPEN,
+        caseReference  = "ref",
+        newStatus      = OPEN,
         previousStatus = REFERRED,
-        operatorId = operator.id
+        operatorId     = operator.id
       )
-      verify(connector).sendExplicitAudit(refEq("caseReopened"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+      verify(connector)
+        .sendExplicitAudit(refEq("caseReopened"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
     }
   }
 
   "Service 'audit case reopened' when a case is suspended" should {
     val original = btiCaseExample.copy(reference = "ref", status = SUSPENDED)
-    val updated = btiCaseExample.copy(reference = "ref", status = OPEN)
+    val updated  = btiCaseExample.copy(reference = "ref", status = OPEN)
 
     "Delegate to connector" in {
       service.auditCaseReOpened(original, updated, operator)
 
       val payload = caseChangeAudit(
-        caseReference = "ref",
-        newStatus = OPEN,
+        caseReference  = "ref",
+        newStatus      = OPEN,
         previousStatus = SUSPENDED,
-        operatorId = operator.id
+        operatorId     = operator.id
       )
-      verify(connector).sendExplicitAudit(refEq("caseReopened"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+      verify(connector)
+        .sendExplicitAudit(refEq("caseReopened"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
     }
   }
 
   "Service 'audit case appeal added'" should {
     val original = aCase(withReference("ref"))
-    val appeal = Appeal(id = "id", status = AppealStatus.IN_PROGRESS, `type` = AppealType.REVIEW)
+    val appeal   = Appeal(id = "id", status = AppealStatus.IN_PROGRESS, `type` = AppealType.REVIEW)
 
     "Delegate to connector" in {
       service.auditCaseAppealAdded(original, appeal, operator)
 
       val payload = appealAddAudit(
         caseReference = "ref",
-        appeal = appeal,
-        operatorId = operator.id
+        appeal        = appeal,
+        operatorId    = operator.id
       )
-      verify(connector).sendExplicitAudit(refEq("caseAppealAdded"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+      verify(connector)
+        .sendExplicitAudit(refEq("caseAppealAdded"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
     }
   }
 
   "Service 'audit case appeal status changed'" should {
-    val original = aCase(withReference("ref"))
-    val appeal = Appeal(id = "id", status = AppealStatus.IN_PROGRESS, `type` = AppealType.REVIEW)
+    val original  = aCase(withReference("ref"))
+    val appeal    = Appeal(id = "id", status = AppealStatus.IN_PROGRESS, `type` = AppealType.REVIEW)
     val newStatus = AppealStatus.DISMISSED
 
     "Delegate to connector" in {
@@ -289,34 +306,39 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
 
       val payload = appealStatusChangeAudit(
         caseReference = "ref",
-        appeal = appeal,
-        newStatus = newStatus,
-        operatorId = operator.id
+        appeal        = appeal,
+        newStatus     = newStatus,
+        operatorId    = operator.id
       )
-      verify(connector).sendExplicitAudit(refEq("caseAppealStatusChange"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+      verify(connector)
+        .sendExplicitAudit(refEq("caseAppealStatusChange"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
     }
   }
 
   "Service 'audit extended use change'" should {
-    val original = aCase(withReference("ref"), withDecision(cancellation = Some(Cancellation(CancelReason.ANNULLED, applicationForExtendedUse = true))))
-    val updated = aCase(withReference("ref"), withoutDecision())
+    val original = aCase(
+      withReference("ref"),
+      withDecision(cancellation = Some(Cancellation(CancelReason.ANNULLED, applicationForExtendedUse = true)))
+    )
+    val updated  = aCase(withReference("ref"), withoutDecision())
     val operator = Operator("operator-id")
 
     "Delegate to connector" in {
       service.auditCaseExtendedUseChange(original, updated, operator)
 
       val payload = extendedUseChangeAudit(
-        caseReference = "ref",
-        newStatus = false,
+        caseReference  = "ref",
+        newStatus      = false,
         previousStatus = true,
-        operatorId = operator.id
+        operatorId     = operator.id
       )
-      verify(connector).sendExplicitAudit(refEq("caseExtendedUseChange"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+      verify(connector)
+        .sendExplicitAudit(refEq("caseExtendedUseChange"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
     }
   }
 
   "Service 'audit note'" should {
-    val c = btiCaseExample.copy(reference = "ref", status = OPEN)
+    val c       = btiCaseExample.copy(reference = "ref", status = OPEN)
     val comment = "this is my note"
 
     "Delegate to connector" in {
@@ -324,15 +346,15 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
 
       val payload = Map(
         "caseReference" -> c.reference,
-        "operatorId" -> operator.id,
-        "note" -> comment
+        "operatorId"    -> operator.id,
+        "note"          -> comment
       )
       verify(connector).sendExplicitAudit(refEq("caseNote"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
     }
   }
 
   "Service 'audit case keyword added'" should {
-    val c = btiCaseExample.copy(reference = "ref", status = COMPLETED)
+    val c       = btiCaseExample.copy(reference = "ref", status = COMPLETED)
     val keyword = "PHONE"
 
     "Delegate to connector" in {
@@ -340,12 +362,13 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
 
       val payload = caseKeywordAudit(c.reference, keyword, operator.id)
 
-      verify(connector).sendExplicitAudit(refEq("caseKeywordAdded"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+      verify(connector)
+        .sendExplicitAudit(refEq("caseKeywordAdded"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
     }
   }
 
   "Service 'audit case keyword removed'" should {
-    val c = btiCaseExample.copy(reference = "ref", status = COMPLETED)
+    val c       = btiCaseExample.copy(reference = "ref", status = COMPLETED)
     val keyword = "PHONE"
 
     "Delegate to connector" in {
@@ -353,124 +376,147 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
 
       val payload = caseKeywordAudit(c.reference, keyword, operator.id)
 
-      verify(connector).sendExplicitAudit(refEq("caseKeywordRemoved"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+      verify(connector)
+        .sendExplicitAudit(refEq("caseKeywordRemoved"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
     }
   }
 
   "Service 'audit sample status changed'" should {
     val original = aCase(withReference("ref"), withSampleStatus(None))
-    val updated = aCase(withReference("ref"), withSampleStatus(Some(SampleStatus.AWAITING)))
+    val updated  = aCase(withReference("ref"), withSampleStatus(Some(SampleStatus.AWAITING)))
     val operator = Operator("operator-id")
 
     "Delegate to connector" in {
       service.auditSampleStatusChange(original, updated, operator)
 
       val payload = sampleStatusChangeAudit(
-        caseReference = "ref",
-        newStatus = "AWAITING",
+        caseReference  = "ref",
+        newStatus      = "AWAITING",
         previousStatus = "None",
-        operatorId = operator.id
+        operatorId     = operator.id
       )
-      verify(connector).sendExplicitAudit(refEq("caseSampleStatusChange"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+      verify(connector)
+        .sendExplicitAudit(refEq("caseSampleStatusChange"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
     }
   }
 
   "Service 'audit sample return changed'" should {
     val original = aCase(withReference("ref"))
-    val updated = aCase(withReference("ref"), withSample(Sample(returnStatus = Some(SampleReturn.YES))))
+    val updated  = aCase(withReference("ref"), withSample(Sample(returnStatus = Some(SampleReturn.YES))))
     val operator = Operator("operator-id")
 
     "Delegate to connector" in {
       service.auditSampleReturnChange(original, updated, operator)
 
       val payload = sampleReturnChangeAudit(
-        caseReference = "ref",
-        newStatus = "YES",
+        caseReference  = "ref",
+        newStatus      = "YES",
         previousStatus = "None",
-        operatorId = operator.id
+        operatorId     = operator.id
       )
-      verify(connector).sendExplicitAudit(refEq("caseSampleReturnChange"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+      verify(connector)
+        .sendExplicitAudit(refEq("caseSampleReturnChange"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
     }
   }
 
-  private def caseCreatedAudit(caseReference: String, operatorId: String, comment: String): Map[String, String] = {
+  private def caseCreatedAudit(caseReference: String, operatorId: String, comment: String): Map[String, String] =
     Map[String, String](
       "caseReference" -> caseReference,
-      "operatorId" -> operatorId,
-      "comment" -> comment
+      "operatorId"    -> operatorId,
+      "comment"       -> comment
     )
-  }
 
-  private def caseChangeAudit(caseReference: String, newStatus: CaseStatus, previousStatus: CaseStatus, operatorId: String): Map[String, String] = {
+  private def caseChangeAudit(
+    caseReference: String,
+    newStatus: CaseStatus,
+    previousStatus: CaseStatus,
+    operatorId: String
+  ): Map[String, String] =
     Map[String, String](
-      "caseReference" -> caseReference,
-      "operatorId" -> operatorId,
-      "newStatus" -> newStatus.toString,
+      "caseReference"  -> caseReference,
+      "operatorId"     -> operatorId,
+      "newStatus"      -> newStatus.toString,
       "previousStatus" -> previousStatus.toString
     )
-  }
 
-  private def caseCancelAudit(caseReference: String, cancelReason: CancelReason, operatorId: String): Map[String, String] = {
+  private def caseCancelAudit(
+    caseReference: String,
+    cancelReason: CancelReason,
+    operatorId: String
+  ): Map[String, String] =
     Map[String, String](
-      "caseReference" -> caseReference,
-      "operatorId" -> operatorId,
-      "newStatus" -> "CANCELLED",
+      "caseReference"  -> caseReference,
+      "operatorId"     -> operatorId,
+      "newStatus"      -> "CANCELLED",
       "previousStatus" -> "COMPLETED",
-      "cancelReason" -> cancelReason.toString
+      "cancelReason"   -> cancelReason.toString
     )
-  }
 
-  private def caseKeywordAudit(caseReference: String, keyword: String, operatorId: String): Map[String, String] = {
+  private def caseKeywordAudit(caseReference: String, keyword: String, operatorId: String): Map[String, String] =
     Map[String, String](
       "caseReference" -> caseReference,
-      "operatorId" -> operatorId,
-      "keyword" -> keyword
+      "operatorId"    -> operatorId,
+      "keyword"       -> keyword
     )
-  }
 
-  private def appealAddAudit(caseReference: String, appeal: Appeal, operatorId: String): Map[String, String] = {
+  private def appealAddAudit(caseReference: String, appeal: Appeal, operatorId: String): Map[String, String] =
     Map[String, String](
       "caseReference" -> caseReference,
-      "operatorId" -> operatorId,
-      "appealType" -> appeal.`type`.toString,
-      "appealStatus" -> appeal.status.toString
+      "operatorId"    -> operatorId,
+      "appealType"    -> appeal.`type`.toString,
+      "appealStatus"  -> appeal.status.toString
     )
-  }
 
-  private def appealStatusChangeAudit(caseReference: String, appeal: Appeal, newStatus: AppealStatus, operatorId: String): Map[String, String] = {
+  private def appealStatusChangeAudit(
+    caseReference: String,
+    appeal: Appeal,
+    newStatus: AppealStatus,
+    operatorId: String
+  ): Map[String, String] =
     Map[String, String](
-      "caseReference" -> caseReference,
-      "operatorId" -> operatorId,
-      "appealType" -> appeal.`type`.toString,
+      "caseReference"        -> caseReference,
+      "operatorId"           -> operatorId,
+      "appealType"           -> appeal.`type`.toString,
       "previousAppealStatus" -> appeal.status.toString,
-      "newAppealStatus" -> newStatus.toString
+      "newAppealStatus"      -> newStatus.toString
     )
-  }
 
-  private def extendedUseChangeAudit(caseReference: String, newStatus: Boolean, previousStatus: Boolean, operatorId: String): Map[String, String] = {
+  private def extendedUseChangeAudit(
+    caseReference: String,
+    newStatus: Boolean,
+    previousStatus: Boolean,
+    operatorId: String
+  ): Map[String, String] =
     Map[String, String](
-      "caseReference" -> caseReference,
-      "operatorId" -> operatorId,
-      "newExtendedUseStatus" -> newStatus.toString,
+      "caseReference"             -> caseReference,
+      "operatorId"                -> operatorId,
+      "newExtendedUseStatus"      -> newStatus.toString,
       "previousExtendedUseStatus" -> previousStatus.toString
     )
-  }
 
-  private def sampleStatusChangeAudit(caseReference: String, newStatus: String, previousStatus: String, operatorId: String): Map[String, String] = {
+  private def sampleStatusChangeAudit(
+    caseReference: String,
+    newStatus: String,
+    previousStatus: String,
+    operatorId: String
+  ): Map[String, String] =
     Map[String, String](
-      "caseReference" -> caseReference,
-      "operatorId" -> operatorId,
-      "newSampleStatus" -> newStatus,
+      "caseReference"        -> caseReference,
+      "operatorId"           -> operatorId,
+      "newSampleStatus"      -> newStatus,
       "previousSampleStatus" -> previousStatus
     )
-  }
 
-  private def sampleReturnChangeAudit(caseReference: String, newStatus: String, previousStatus: String, operatorId: String): Map[String, String] = {
+  private def sampleReturnChangeAudit(
+    caseReference: String,
+    newStatus: String,
+    previousStatus: String,
+    operatorId: String
+  ): Map[String, String] =
     Map[String, String](
-      "caseReference" -> caseReference,
-      "operatorId" -> operatorId,
-      "newSampleReturn" -> newStatus,
+      "caseReference"        -> caseReference,
+      "operatorId"           -> operatorId,
+      "newSampleReturn"      -> newStatus,
       "previousSampleReturn" -> previousStatus
     )
-  }
 }

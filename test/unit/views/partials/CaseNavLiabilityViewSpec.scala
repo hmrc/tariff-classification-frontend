@@ -29,44 +29,44 @@ import views.{CaseDetailPage, ViewSpec}
 
 class CaseNavLiabilityViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterEach {
 
-  private val liability = "Liability"
-  private val sample = "Sample"
+  private val liability   = "Liability"
+  private val sample      = "Sample"
   private val attachments = "Attachments"
-  private val activity = "Activity"
-  private val appeal = "Appeal"
+  private val activity    = "Activity"
+  private val appeal      = "Appeal"
 
-  private val liabilityURL = routes.LiabilityController.liabilityDetails("ref").url
+  private val liabilityURL     = routes.LiabilityController.liabilityDetails("ref").url
   private val sampleDetailsURL = routes.CaseController.sampleDetails("ref").url
-  private val attachmentsURL = routes.AttachmentsController.attachmentsDetails("ref").url
-  private val activityURL = routes.CaseController.activityDetails("ref").url
+  private val attachmentsURL   = routes.AttachmentsController.attachmentsDetails("ref").url
+  private val activityURL      = routes.CaseController.activityDetails("ref").url
 
   private val `case` = mock[Case]
 
-  private val tabOrder : Seq[String] = Seq(liability, sample, attachments, activity, appeal)
-  private val urlOrder : Seq[String] = Seq(liabilityURL, sampleDetailsURL, attachmentsURL, activityURL)
-  private val tabWithUrl : Seq[(String,String)] = tabOrder.zip(urlOrder)
+  private val tabOrder: Seq[String]             = Seq(liability, sample, attachments, activity, appeal)
+  private val urlOrder: Seq[String]             = Seq(liabilityURL, sampleDetailsURL, attachmentsURL, activityURL)
+  private val tabWithUrl: Seq[(String, String)] = tabOrder.zip(urlOrder)
 
   override protected def afterEach(): Unit = {
     super.afterEach()
     Mockito.reset(`case`)
   }
 
-  def tabsWithLinksShouldBeActiveExceptGiven(anchors : Elements, exceptTab : String): Unit = {
+  def tabsWithLinksShouldBeActiveExceptGiven(anchors: Elements, exceptTab: String): Unit = {
 
-    val filteredIndexed =  tabWithUrl.filter( entry => entry._1 != exceptTab).zipWithIndex
+    val filteredIndexed = tabWithUrl.filter(entry => entry._1 != exceptTab).zipWithIndex
 
     filteredIndexed
-      .foreach(entry => {
-      anchors.get(entry._2) should containText(entry._1._1)
-      anchors.get(entry._2) should haveAttribute("href", entry._1._2)
-    })
+      .foreach { entry =>
+        anchors.get(entry._2) should containText(entry._1._1)
+        anchors.get(entry._2) should haveAttribute("href", entry._1._2)
+      }
   }
 
   "Case Heading" should {
 
-    val expectedTabAnchors = 3
+    val expectedTabAnchors                             = 3
     val expectedTabAnchorsForCompletedOrCancelledCases = 4
-    val expectedTotalTabIndexes = 5
+    val expectedTotalTabIndexes                        = 5
 
     "Render Liability Details" in {
       // Given

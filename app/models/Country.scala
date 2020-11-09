@@ -21,11 +21,11 @@ import play.api.libs.json.{JsObject, Json}
 
 case class Country(code: String, countryName: String, alphaTwoCode: String, countrySynonyms: List[String]) {
 
-  def toAutoCompleteJson(implicit messages: Messages): JsObject = Json.obj("code" -> code, "displayName" -> messages(countryName), "synonyms" -> countrySynonyms)
+  def toAutoCompleteJson(implicit messages: Messages): JsObject =
+    Json.obj("code" -> code, "displayName" -> messages(countryName), "synonyms" -> countrySynonyms)
 }
 
 object Country {
 
   implicit val formats = Json.format[Country]
 }
-

@@ -18,6 +18,6 @@ package models
 
 object CaseReportGroup extends Enumeration {
   type CaseReportGroup = Value
-  val QUEUE = Value("queue-id")
+  val QUEUE            = Value("queue-id")
   val APPLICATION_TYPE = Value("application-type")
 }

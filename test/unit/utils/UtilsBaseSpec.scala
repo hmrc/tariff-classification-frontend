@@ -18,6 +18,4 @@ package utils
 
 import base.SpecBase
 
-class UtilsBaseSpec extends SpecBase {
-
-}
+class UtilsBaseSpec extends SpecBase {}

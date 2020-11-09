@@ -21,12 +21,11 @@ object SampleReturn extends Enumeration {
 
   val YES, NO, TO_BE_CONFIRMED = Value
 
-  def format(status: Option[SampleReturn]): String = {
+  def format(status: Option[SampleReturn]): String =
     status match {
-      case Some(YES) => "Yes"
-      case Some(NO) => "No"
+      case Some(YES)             => "Yes"
+      case Some(NO)              => "No"
       case Some(TO_BE_CONFIRMED) => "To be confirmed"
-      case _ => "Unknown"
+      case _                     => "Unknown"
     }
-  }
 }

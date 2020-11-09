@@ -35,7 +35,8 @@ trait ConnectorTest extends SpecBase with WiremockTestServer with ResourceFiles 
 
   protected val wsClient: WSClient = ws
 
-  protected val authenticatedHttpClient = new AuthenticatedHttpClient(realConfig, realHttpAudit, wsClient, mockAppConfig, actorSystem)
+  protected val authenticatedHttpClient =
+    new AuthenticatedHttpClient(realConfig, realHttpAudit, wsClient, mockAppConfig, actorSystem)
   protected val standardHttpClient = new DefaultHttpClient(realConfig, realHttpAudit, wsClient, actorSystem)
 
   override def beforeAll(): Unit = {

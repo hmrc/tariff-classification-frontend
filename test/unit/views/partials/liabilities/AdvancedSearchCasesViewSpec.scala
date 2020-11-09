@@ -26,7 +26,7 @@ import views.ViewSpec
 
 class AdvancedSearchCasesViewSpec extends ViewSpec {
 
-  private val showAdvancedSearchButtonStatuses = Seq(CaseStatus.OPEN, CaseStatus.REFERRED, CaseStatus.SUSPENDED)
+  private val showAdvancedSearchButtonStatuses    = Seq(CaseStatus.OPEN, CaseStatus.REFERRED, CaseStatus.SUSPENDED)
   private val notShowAdvancedSearchButtonStatuses = (CaseStatus.values -- showAdvancedSearchButtonStatuses).toList
 
   def advanced_search_cases(liabilityViewModel: LiabilityViewModel): Html =
@@ -34,31 +34,33 @@ class AdvancedSearchCasesViewSpec extends ViewSpec {
 
   "Advanced search button" should {
 
-    showAdvancedSearchButtonStatuses.foreach {
-      status =>
-        s"render advanced search button when case status is '${status.toString}'" in {
-          val c = aLiabilityCase(withReference("reference"), withStatus(status), withLiabilityApplication())
+    showAdvancedSearchButtonStatuses.foreach { status =>
+      s"render advanced search button when case status is '${status.toString}'" in {
+        val c = aLiabilityCase(withReference("reference"), withStatus(status), withLiabilityApplication())
 
-          val doc = view(advanced_search_cases(
+        val doc = view(
+          advanced_search_cases(
             LiabilityViewModel.fromCase(c, Cases.operatorWithReleaseOrSuppressPermissions)
-          ))
+          )
+        )
 
-          doc should containElementWithID("advanced-search-button")
-          doc.getElementById("advanced-search-button").text shouldBe messages("case.v2.liability.advanced_search.button")
-        }
+        doc                                               should containElementWithID("advanced-search-button")
+        doc.getElementById("advanced-search-button").text shouldBe messages("case.v2.liability.advanced_search.button")
+      }
     }
 
-    notShowAdvancedSearchButtonStatuses.foreach {
-      status =>
-        s"not render advanced search button when case status is '${status.toString}'" in {
-          val c = aLiabilityCase(withReference("reference"), withStatus(status), withLiabilityApplication())
+    notShowAdvancedSearchButtonStatuses.foreach { status =>
+      s"not render advanced search button when case status is '${status.toString}'" in {
+        val c = aLiabilityCase(withReference("reference"), withStatus(status), withLiabilityApplication())
 
-          val doc = view(advanced_search_cases(
+        val doc = view(
+          advanced_search_cases(
             LiabilityViewModel.fromCase(c, Cases.operatorWithReleaseOrSuppressPermissions)
-          ))
+          )
+        )
 
-          doc shouldNot containElementWithID("advanced-search-button")
-        }
+        doc shouldNot containElementWithID("advanced-search-button")
+      }
     }
 
   }

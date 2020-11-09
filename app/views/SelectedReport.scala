@@ -19,8 +19,7 @@ package views
 import play.twirl.api.Html
 import views.Report.Report
 
-case class SelectedReport
-(
+case class SelectedReport(
   report: Report,
   criteria: Html
 )

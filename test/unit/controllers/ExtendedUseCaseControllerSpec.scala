@@ -29,18 +29,25 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases._
 
 import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class ExtendedUseCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   private val casesService = mock[CasesService]
-  private val operator = mock[Operator]
+  private val operator     = mock[Operator]
 
   private def controller(requestCase: Case) = new ExtendedUseCaseController(
-    new SuccessfulRequestActions(defaultPlayBodyParsers, operator, c = requestCase), casesService, mcc, realAppConfig
+    new SuccessfulRequestActions(playBodyParsers, operator, c = requestCase),
+    casesService,
+    mcc,
+    realAppConfig
   )
 
   private def controller(requestCase: Case, permission: Set[Permission]) = new ExtendedUseCaseController(
-    new RequestActionsWithPermissions(defaultPlayBodyParsers, permission, c = requestCase), casesService, mcc, realAppConfig
+    new RequestActionsWithPermissions(playBodyParsers, permission, c = requestCase),
+    casesService,
+    mcc,
+    realAppConfig
   )
 
   override def afterEach(): Unit = {
@@ -51,22 +58,25 @@ class ExtendedUseCaseControllerSpec extends ControllerBaseSpec with BeforeAndAft
   "Case Extended Use - Choose Status" should {
 
     "return OK when user has right permissions" in {
-      val c = aCase(withStatus(CaseStatus.CANCELLED), withDecision(cancellation = Some(Cancellation(CancelReason.ANNULLED))))
+      val c =
+        aCase(withStatus(CaseStatus.CANCELLED), withDecision(cancellation = Some(Cancellation(CancelReason.ANNULLED))))
 
-      val result = await(controller(c, Set(Permission.EXTENDED_USE)).chooseStatus("reference")(newFakeGETRequestWithCSRF(app)))
+      val result =
+        await(controller(c, Set(Permission.EXTENDED_USE)).chooseStatus("reference")(newFakeGETRequestWithCSRF(app)))
 
-      status(result) shouldBe Status.OK
-      contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
+      status(result)          shouldBe Status.OK
+      contentType(result)     shouldBe Some("text/html")
+      charset(result)         shouldBe Some("utf-8")
       contentAsString(result) should include("change_extended_use_status-heading")
     }
 
     "redirect unauthorised when does not have right permissions" in {
-      val c = aCase(withStatus(CaseStatus.CANCELLED), withDecision(cancellation = Some(Cancellation(CancelReason.ANNULLED))))
+      val c =
+        aCase(withStatus(CaseStatus.CANCELLED), withDecision(cancellation = Some(Cancellation(CancelReason.ANNULLED))))
 
       val result = await(controller(c, Set.empty).chooseStatus("reference")(newFakeGETRequestWithCSRF(app)))
 
-      status(result) shouldBe Status.SEE_OTHER
+      status(result)               shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
     }
 
@@ -75,52 +85,76 @@ class ExtendedUseCaseControllerSpec extends ControllerBaseSpec with BeforeAndAft
   "Case Extended Use - Submit Status" should {
 
     "update & redirect - For CANCELLED Case" in {
-      val c = aCase(withReference("reference"), withStatus(CaseStatus.CANCELLED),
-        withDecision(cancellation = Some(Cancellation(CancelReason.ANNULLED, applicationForExtendedUse = true))))
+      val c = aCase(
+        withReference("reference"),
+        withStatus(CaseStatus.CANCELLED),
+        withDecision(cancellation = Some(Cancellation(CancelReason.ANNULLED, applicationForExtendedUse = true)))
+      )
 
-      given(casesService.updateExtendedUseStatus(refEq(c), any[Boolean], any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(c))
+      given(casesService.updateExtendedUseStatus(refEq(c), any[Boolean], any[Operator])(any[HeaderCarrier]))
+        .willReturn(Future.successful(c))
 
-      val result = await(controller(c).updateStatus("reference")(newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("state" -> "false")))
+      val result = await(
+        controller(c)
+          .updateStatus("reference")(newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("state" -> "false"))
+      )
 
       verify(casesService).updateExtendedUseStatus(refEq(c), refEq(false), any[Operator])(any[HeaderCarrier])
 
-      status(result) shouldBe Status.SEE_OTHER
+      status(result)     shouldBe Status.SEE_OTHER
       locationOf(result) shouldBe Some(routes.AppealCaseController.appealDetails("reference").url)
     }
 
     "redirect for unchanged status" in {
-      val c = aCase(withReference("reference"), withStatus(CaseStatus.CANCELLED),
-        withDecision(cancellation = Some(Cancellation(CancelReason.ANNULLED, applicationForExtendedUse = true))))
+      val c = aCase(
+        withReference("reference"),
+        withStatus(CaseStatus.CANCELLED),
+        withDecision(cancellation = Some(Cancellation(CancelReason.ANNULLED, applicationForExtendedUse = true)))
+      )
 
-      val result = await(controller(c).updateStatus("reference")(newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("state" -> "true")))
+      val result = await(
+        controller(c)
+          .updateStatus("reference")(newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("state" -> "true"))
+      )
 
       verify(casesService, never()).updateExtendedUseStatus(any[Case], any[Boolean], any[Operator])(any[HeaderCarrier])
 
-      status(result) shouldBe Status.SEE_OTHER
+      status(result)     shouldBe Status.SEE_OTHER
       locationOf(result) shouldBe Some(routes.AppealCaseController.appealDetails("reference").url)
     }
 
     "return OK when user has right permissions" in {
-      val c = aCase(withReference("reference"), withStatus(CaseStatus.CANCELLED),
-        withDecision(cancellation = Some(Cancellation(CancelReason.ANNULLED, applicationForExtendedUse = true))))
+      val c = aCase(
+        withReference("reference"),
+        withStatus(CaseStatus.CANCELLED),
+        withDecision(cancellation = Some(Cancellation(CancelReason.ANNULLED, applicationForExtendedUse = true)))
+      )
 
-      given(casesService.updateExtendedUseStatus(refEq(c), any[Boolean], any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(c))
+      given(casesService.updateExtendedUseStatus(refEq(c), any[Boolean], any[Operator])(any[HeaderCarrier]))
+        .willReturn(Future.successful(c))
 
-      val result = await(controller(c, Set(Permission.EXTENDED_USE))
-        .updateStatus("reference")(newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("state" -> "false")))
+      val result = await(
+        controller(c, Set(Permission.EXTENDED_USE))
+          .updateStatus("reference")(newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("state" -> "false"))
+      )
 
-      status(result) shouldBe Status.SEE_OTHER
+      status(result)     shouldBe Status.SEE_OTHER
       locationOf(result) shouldBe Some(routes.AppealCaseController.appealDetails("reference").url)
     }
 
     "redirect unauthorised when does not have right permissions" in {
-      val c = aCase(withReference("reference"), withStatus(CaseStatus.CANCELLED),
-        withDecision(cancellation = Some(Cancellation(CancelReason.ANNULLED, applicationForExtendedUse = true))))
+      val c = aCase(
+        withReference("reference"),
+        withStatus(CaseStatus.CANCELLED),
+        withDecision(cancellation = Some(Cancellation(CancelReason.ANNULLED, applicationForExtendedUse = true)))
+      )
 
-      val result = await(controller(c, Set.empty)
-        .updateStatus("reference")(newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("state" -> "false")))
+      val result = await(
+        controller(c, Set.empty)
+          .updateStatus("reference")(newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("state" -> "false"))
+      )
 
-      status(result) shouldBe Status.SEE_OTHER
+      status(result)               shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
     }
 

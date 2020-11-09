@@ -18,12 +18,11 @@ package models.response
 
 import models.response.ScanStatus.ScanStatus
 
-case class FileMetadata
-(
+case class FileMetadata(
   id: String,
   fileName: String,
   mimeType: String,
-  url: Option[String] = None,
+  url: Option[String]            = None,
   scanStatus: Option[ScanStatus] = None
 )
 

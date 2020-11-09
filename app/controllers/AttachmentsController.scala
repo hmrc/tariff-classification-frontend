@@ -38,128 +38,140 @@ import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
 @Singleton
-class AttachmentsController @Inject()(
+class AttachmentsController @Inject() (
   verify: RequestActions,
   casesService: CasesService,
   fileService: FileStoreService,
   mcc: MessagesControllerComponents,
   implicit val appConfig: AppConfig,
   implicit val mat: Materializer
-) extends FrontendController(mcc) with RenderCaseAction with I18nSupport {
+) extends FrontendController(mcc)
+    with RenderCaseAction
+    with I18nSupport {
 
   private lazy val form: Form[String] = UploadAttachmentForm.form
 
-  override protected val config: AppConfig = appConfig
+  override protected val config: AppConfig         = appConfig
   override protected val caseService: CasesService = casesService
-
 
   private val tabStartIndexForAttachments = 4000
 
   private val removeAttachmentForm: Form[Boolean] = MandatoryBooleanForm.form("remove_attachment")
 
-  def attachmentsDetails(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
-    getCaseAndRenderView(reference, CaseDetailPage.ATTACHMENTS, renderView(_, form))
-  }
+  def attachmentsDetails(reference: String): Action[AnyContent] =
+    (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
+      getCaseAndRenderView(reference, CaseDetailPage.ATTACHMENTS, renderView(_, form))
+    }
 
   def removeAttachment(reference: String, fileId: String, fileName: String): Action[AnyContent] =
-    (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.REMOVE_ATTACHMENTS)).async { implicit request =>
-    validateAndRenderView(
-      c =>
-        successful(views.html.remove_attachment(c, removeAttachmentForm, fileId, fileName))
-    )
-  }
+    (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(
+      Permission.REMOVE_ATTACHMENTS
+    )).async { implicit request =>
+      validateAndRenderView(c => successful(views.html.remove_attachment(c, removeAttachmentForm, fileId, fileName)))
+    }
 
   def confirmRemoveAttachment(reference: String, fileId: String, fileName: String): Action[AnyContent] =
-    (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.REMOVE_ATTACHMENTS)).async { implicit request =>
-      removeAttachmentForm.bindFromRequest().fold(
-        errors => {
-          validateAndRenderView(c => successful(views.html.remove_attachment(c, errors, fileId, fileName)))
-        },
-        {
-          case true => {
-            getCaseAndRespond(reference,
-              caseService.removeAttachment(_, fileId)
-                .map(_ => Redirect(routes.AttachmentsController.attachmentsDetails(reference))))
+    (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(
+      Permission.REMOVE_ATTACHMENTS
+    )).async { implicit request =>
+      removeAttachmentForm
+        .bindFromRequest()
+        .fold(
+          errors => validateAndRenderView(c => successful(views.html.remove_attachment(c, errors, fileId, fileName))), {
+            case true => {
+              getCaseAndRespond(
+                reference,
+                caseService
+                  .removeAttachment(_, fileId)
+                  .map(_ => Redirect(routes.AttachmentsController.attachmentsDetails(reference)))
+              )
+            }
+            case _ => successful(Redirect(routes.AttachmentsController.attachmentsDetails(reference)))
           }
-          case _ => successful(Redirect(routes.AttachmentsController.attachmentsDetails(reference)))
-        }
-      )
+        )
 
     }
 
-  private def renderView(c: Case, uploadForm: Form[String])
-                        (implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[Html] = {
-
+  private def renderView(
+    c: Case,
+    uploadForm: Form[String]
+  )(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[Html] =
     for {
       attachments <- fileService.getAttachments(c)
-      letter <- fileService.getLetterOfAuthority(c)
+      letter      <- fileService.getLetterOfAuthority(c)
     } yield {
       val (applicantFiles, nonApplicantFiles) = attachments.partition(_.operator.isEmpty)
-      views.html.partials.attachments_details(c, uploadForm, applicantFiles, letter, nonApplicantFiles, tabStartIndexForAttachments)
+      views.html.partials
+        .attachments_details(c, uploadForm, applicantFiles, letter, nonApplicantFiles, tabStartIndexForAttachments)
     }
 
-  }
-
-  private def getCaseAndRenderView(reference: String, page: CaseDetailPage, toHtml: Case => Future[Html])
-                                  (implicit request: AuthenticatedRequest[_]): Future[Result] = {
+  private def getCaseAndRenderView(reference: String, page: CaseDetailPage, toHtml: Case => Future[Html])(
+    implicit request: AuthenticatedRequest[_]
+  ): Future[Result] =
     casesService.getOne(reference).flatMap {
-      case Some(c: Case) => toHtml(c).map(html => Ok(views.html.case_details(c, page, html, Some(ActiveTab.Attachments))))
+      case Some(c: Case) =>
+        toHtml(c).map(html => Ok(views.html.case_details(c, page, html, Some(ActiveTab.Attachments))))
       case _ => successful(Ok(views.html.case_not_found(reference)))
     }
-  }
 
   def uploadAttachment(reference: String): Action[Either[MaxSizeExceeded, MultipartFormData[TemporaryFile]]] =
     (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.ADD_ATTACHMENT))
-      .async(parse.maxLength(appConfig.fileUploadMaxSize, parse.multipartFormData)) {
-
-        implicit request =>
-
-          request.body match {
-            case Left(MaxSizeExceeded(_)) => renderErrors(reference, request2Messages(implicitly)("cases.attachment.upload.error.restrictionSize"))
-            case Right(multipartForm) =>
-              multipartForm match {
-                case file: MultipartFormData[TemporaryFile] if file.files.nonEmpty => uploadAndSave(reference, file)
-                case _ => renderErrors(reference, request2Messages(implicitly)("cases.attachment.upload.error.mustSelect"))
-              }
-          }
+      .async(parse.maxLength(appConfig.fileUploadMaxSize, parse.multipartFormData)) { implicit request =>
+        request.body match {
+          case Left(MaxSizeExceeded(_)) =>
+            renderErrors(reference, request2Messages(implicitly)("cases.attachment.upload.error.restrictionSize"))
+          case Right(multipartForm) =>
+            multipartForm match {
+              case file: MultipartFormData[TemporaryFile] if file.files.nonEmpty => uploadAndSave(reference, file)
+              case _ =>
+                renderErrors(reference, request2Messages(implicitly)("cases.attachment.upload.error.mustSelect"))
+            }
+        }
       }
 
-  private def uploadAndSave(reference: String, multiPartFormData: MultipartFormData[TemporaryFile])
-                           (implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]) = {
-
+  private def uploadAndSave(
+    reference: String,
+    multiPartFormData: MultipartFormData[TemporaryFile]
+  )(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]) =
     multiPartFormData.file("file-input") match {
-      case Some(filePart) if filePart.filename.isEmpty => renderErrors(reference, request2Messages(implicitly)("cases.attachment.upload.error.mustSelect"))
-      case Some(filePart) if hasInvalidContentType(filePart) => renderErrors(reference, request2Messages(implicitly)("cases.attachment.upload.error.fileType"))
+      case Some(filePart) if filePart.filename.isEmpty =>
+        renderErrors(reference, request2Messages(implicitly)("cases.attachment.upload.error.mustSelect"))
+      case Some(filePart) if hasInvalidContentType(filePart) =>
+        renderErrors(reference, request2Messages(implicitly)("cases.attachment.upload.error.fileType"))
       case Some(filePart) =>
-        val fileUpload = FileUpload(filePart.ref, filePart.filename, filePart.contentType.getOrElse(throw new IllegalArgumentException("Missing file type")))
+        val fileUpload = FileUpload(
+          filePart.ref,
+          filePart.filename,
+          filePart.contentType.getOrElse(throw new IllegalArgumentException("Missing file type"))
+        )
         casesService.getOne(reference).flatMap {
           case Some(c: Case) =>
-            casesService.addAttachment(c, fileUpload, request.operator)
+            casesService
+              .addAttachment(c, fileUpload, request.operator)
               .flatMap(_ => successful(Redirect(routes.AttachmentsController.attachmentsDetails(reference))))
           case _ =>
             successful(Ok(views.html.case_not_found(reference)))
         }
       case _ => renderErrors(reference, "expected type file on the form")
     }
-  }
 
-  private def renderErrors(reference: String, errorMessage: String)
-                          (implicit hc: HeaderCarrier, req: AuthenticatedRequest[_]): Future[Result] = {
+  private def renderErrors(
+    reference: String,
+    errorMessage: String
+  )(implicit hc: HeaderCarrier, req: AuthenticatedRequest[_]): Future[Result] =
     getCaseAndRenderView(
       reference,
-      CaseDetailPage.ATTACHMENTS,
-      {
-        val errors = Seq(FormError("file-input", errorMessage))
+      CaseDetailPage.ATTACHMENTS, {
+        val errors         = Seq(FormError("file-input", errorMessage))
         val formWithErrors = form.copy(errors = errors)
         renderView(_, formWithErrors)
       }
     )
-  }
 
   private def hasInvalidContentType: MultipartFormData.FilePart[TemporaryFile] => Boolean = { f =>
     f.contentType match {
       case Some(c: String) if appConfig.fileUploadMimeTypes.contains(c) => false
-      case _ => true
+      case _                                                            => true
     }
   }
 

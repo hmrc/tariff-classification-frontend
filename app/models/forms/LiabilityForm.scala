@@ -35,10 +35,13 @@ object LiabilityForm {
 
   val newLiabilityForm: Form[LiabilityOrder] = Form(
     mapping(
-      "item-name" -> textNonEmpty("error.empty.item-name"),
+      "item-name"   -> textNonEmpty("error.empty.item-name"),
       "trader-name" -> textNonEmpty("error.empty.trader-name"),
-      "liability-status" -> textTransformingTo[LiabilityStatus](errorKey = "error.empty.liability-status",
-        reader = LiabilityStatus.withName, writer = _.toString)
+      "liability-status" -> textTransformingTo[LiabilityStatus](
+        errorKey = "error.empty.liability-status",
+        reader   = LiabilityStatus.withName,
+        writer   = _.toString
+      )
     )(form2Liability)(liability2Form)
   )
 

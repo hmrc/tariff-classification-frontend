@@ -23,26 +23,22 @@ import utils.JsonFormatters.{eventFormat, newEventRequestFormat}
 
 object EventPayloads {
 
-  val event: String = jsonOf(Events.event)
+  val event: String        = jsonOf(Events.event)
   val eventRequest: String = jsonOf(Events.eventRequest)
-  val events: String = jsonOf(Events.events)
-  val pagedEvents: String = jsonOf(Paged(Events.events, NoPagination(), 1))
-  val pagedEmpty: String = jsonOf(Paged.empty[Event])
+  val events: String       = jsonOf(Events.events)
+  val pagedEvents: String  = jsonOf(Paged(Events.events, NoPagination(), 1))
+  val pagedEmpty: String   = jsonOf(Paged.empty[Event])
 
-  def jsonOf(obj: Event): String = {
+  def jsonOf(obj: Event): String =
     Json.toJson(obj).toString()
-  }
 
-  def jsonOf(obj: NewEventRequest): String = {
+  def jsonOf(obj: NewEventRequest): String =
     Json.toJson(obj).toString()
-  }
 
-  def jsonOf(obj: Seq[Event]): String = {
+  def jsonOf(obj: Seq[Event]): String =
     Json.toJson(obj).toString()
-  }
 
-  def jsonOf(obj: Paged[Event]): String = {
+  def jsonOf(obj: Paged[Event]): String =
     Json.toJson(obj).toString()
-  }
 
 }

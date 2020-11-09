@@ -25,9 +25,10 @@ class ConfirmCompleteCaseViewSpec extends ViewSpec {
 
     "Render text for BTI" in {
       // When
-      val c = Cases.btiCaseWithExpiredRuling
+      val c   = Cases.btiCaseWithExpiredRuling
       val doc = view(confirm_complete_case(c))
-      lazy val expected = "This case has been completed The ruling has been published. View the published ruling on the public rulings website. The applicant has been notified by email. The status of this case is now completed"
+      lazy val expected =
+        "This case has been completed The ruling has been published. View the published ruling on the public rulings website. The applicant has been notified by email. The status of this case is now completed"
       lazy val actual = doc.getElementById("confirm_complete_id").text()
 
       // Then
@@ -36,16 +37,15 @@ class ConfirmCompleteCaseViewSpec extends ViewSpec {
 
     "Render text for Liability" in {
       // When
-      val c = Cases.aLiabilityCase()
-      val doc = view(confirm_complete_case(c))
+      val c             = Cases.aLiabilityCase()
+      val doc           = view(confirm_complete_case(c))
       lazy val expected = "This liability decision is complete Email the applicant with a copy of this decision."
-      lazy val actual = doc.getElementById("confirm_complete_id").text()
+      lazy val actual   = doc.getElementById("confirm_complete_id").text()
 
       // Then
       actual should startWith(expected)
     }
 
   }
-
 
 }

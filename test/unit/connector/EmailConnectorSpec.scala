@@ -27,7 +27,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 class EmailConnectorSpec extends ConnectorTest {
 
-  private val email = CaseCompletedEmail(Seq("user@domain.com"), CaseCompletedEmailParameters("name", "case-ref", "item-name"))
+  private val email =
+    CaseCompletedEmail(Seq("user@domain.com"), CaseCompletedEmailParameters("name", "case-ref", "item-name"))
 
   private val connector = new EmailConnector(mockAppConfig, standardHttpClient, metrics)
 
@@ -35,10 +36,13 @@ class EmailConnectorSpec extends ConnectorTest {
     implicit val format: Format[Email[_]] = JsonFormatters.emailFormat
 
     "POST Email payload" in {
-      stubFor(post(urlEqualTo("/hmrc/email"))
-        .withRequestBody(new EqualToJsonPattern(fromResource("completion_email-request.json"), true, false))
-        .willReturn(aResponse()
-          .withStatus(HttpStatus.SC_ACCEPTED))
+      stubFor(
+        post(urlEqualTo("/hmrc/email"))
+          .withRequestBody(new EqualToJsonPattern(fromResource("completion_email-request.json"), true, false))
+          .willReturn(
+            aResponse()
+              .withStatus(HttpStatus.SC_ACCEPTED)
+          )
       )
 
       await(connector.send(email))
@@ -55,11 +59,14 @@ class EmailConnectorSpec extends ConnectorTest {
     implicit val format: OFormat[CaseCompletedEmailParameters] = JsonFormatters.emailCompleteParamsFormat
 
     "POST Email parameters" in {
-      stubFor(post(urlEqualTo(s"/templates/${EmailType.COMPLETE}"))
-        .withRequestBody(new EqualToJsonPattern(fromResource("parameters_email-request.json"), true, false))
-        .willReturn(aResponse()
-          .withBody(fromResource("email_template-response.json"))
-          .withStatus(HttpStatus.SC_OK))
+      stubFor(
+        post(urlEqualTo(s"/templates/${EmailType.COMPLETE}"))
+          .withRequestBody(new EqualToJsonPattern(fromResource("parameters_email-request.json"), true, false))
+          .willReturn(
+            aResponse()
+              .withBody(fromResource("email_template-response.json"))
+              .withStatus(HttpStatus.SC_OK)
+          )
       )
 
       await(connector.generate(email)) shouldBe EmailTemplate("text", "html", "from", "subject", "service")

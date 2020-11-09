@@ -26,8 +26,8 @@ class OperatorDashboardClassifcationViewSpec extends ViewSpec {
 
   val operator_dashboard_calssification = new operator_dashboard_classification()
 
-  val messageKeyPrefix = "accessibility"
-  val expectTimeoutDialog = false
+  val messageKeyPrefix                 = "accessibility"
+  val expectTimeoutDialog              = false
   def asDocument(html: Html): Document = Jsoup.parse(html.toString())
   def assertLinkContainsHref(doc: Document, id: String, href: String): Assertion = {
     assert(doc.getElementById(id) != null, s"\n\nElement $id is not present")
@@ -36,9 +36,9 @@ class OperatorDashboardClassifcationViewSpec extends ViewSpec {
 
   def view = () => operator_dashboard_calssification()
 
-  protected def normalPage(view: () => HtmlFormat.Appendable, messageKeyPrefix: String, messageHeadingArgs: Any*)
-                          (expectedGuidanceKeys: String*): Unit = {
-
+  protected def normalPage(view: () => HtmlFormat.Appendable, messageKeyPrefix: String, messageHeadingArgs: Any*)(
+    expectedGuidanceKeys: String*
+  ): Unit =
     "OperatorDashboardClassifcationView view" must {
       behave like normalPage(view, messageKeyPrefix)()
 
@@ -48,6 +48,5 @@ class OperatorDashboardClassifcationViewSpec extends ViewSpec {
       }
 
     }
-  }
 
 }

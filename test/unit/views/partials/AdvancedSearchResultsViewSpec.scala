@@ -54,23 +54,26 @@ class AdvancedSearchResultsViewSpec extends ViewSpec {
 
       // Then
       doc shouldNot containElementWithID("advanced_search_results-empty")
-      doc should containElementWithID("advanced_search_results-row-0")
-      doc should containElementWithID("advanced_search_results-row-0-reference")
+      doc                                                           should containElementWithID("advanced_search_results-row-0")
+      doc                                                           should containElementWithID("advanced_search_results-row-0-reference")
       doc.getElementById("advanced_search_results-row-0-reference") should containText("reference")
       doc.getElementById("advanced_search_results-row-0-reference") should haveTag("a")
-      doc.getElementById("advanced_search_results-row-0-reference") should haveAttribute("href", routes.CaseController.get("reference").url)
-      doc should containElementWithID("advanced_search_results-row-0-business_name")
+      doc.getElementById("advanced_search_results-row-0-reference") should haveAttribute(
+        "href",
+        routes.CaseController.get("reference").url
+      )
+      doc                                                               should containElementWithID("advanced_search_results-row-0-business_name")
       doc.getElementById("advanced_search_results-row-0-business_name") should containText("business-name")
-      doc should containElementWithID("advanced_search_results-row-0-status")
-      doc.getElementById("advanced_search_results-row-0-status") should containText("OPEN")
+      doc                                                               should containElementWithID("advanced_search_results-row-0-status")
+      doc.getElementById("advanced_search_results-row-0-status")        should containText("OPEN")
 
       doc shouldNot containElementWithID("advanced_search_results-row-0-appeal_status")
       doc shouldNot containElementWithID("advanced_search_results-row-0-review_status")
       doc shouldNot containElementWithID("advanced_search_results-row-0-attachments")
 
-      doc should containElementWithID("advanced_search_results-row-0-ruling_end")
-      doc.getElementById("advanced_search_results-row-0-ruling_end").text shouldBe ""
-      doc should containElementWithID("advanced_search_results-row-0-decision_code")
+      doc                                                                    should containElementWithID("advanced_search_results-row-0-ruling_end")
+      doc.getElementById("advanced_search_results-row-0-ruling_end").text    shouldBe ""
+      doc                                                                    should containElementWithID("advanced_search_results-row-0-decision_code")
       doc.getElementById("advanced_search_results-row-0-decision_code").text shouldBe ""
     }
 
@@ -81,22 +84,22 @@ class AdvancedSearchResultsViewSpec extends ViewSpec {
         withStatus(CaseStatus.OPEN),
         withDecision(
           bindingCommodityCode = "commodity-code",
-          effectiveStartDate = Some(instant("2019-01-01")),
-          effectiveEndDate = Some(instant("2019-02-01")),
-          appeal = Seq(Appeal("id", AppealStatus.IN_PROGRESS, AppealType.APPEAL_TIER_1))
+          effectiveStartDate   = Some(instant("2019-01-01")),
+          effectiveEndDate     = Some(instant("2019-02-01")),
+          appeal               = Seq(Appeal("id", AppealStatus.IN_PROGRESS, AppealType.APPEAL_TIER_1))
         ),
         withHolder(businessName = "business-name")
       )
 
       val storedAttachment = StoredAttachment(
         "id",
-        public = true,
-        operator = None,
-        url = Some("url"),
-        fileName = "filename",
-        mimeType = "image/png",
-        scanStatus = Some(ScanStatus.READY),
-        timestamp = Instant.now(),
+        public      = true,
+        operator    = None,
+        url         = Some("url"),
+        fileName    = "filename",
+        mimeType    = "image/png",
+        scanStatus  = Some(ScanStatus.READY),
+        timestamp   = Instant.now(),
         description = "test description"
       )
 
@@ -107,33 +110,39 @@ class AdvancedSearchResultsViewSpec extends ViewSpec {
 
       // Then
       doc shouldNot containElementWithID("advanced_search_results-empty")
-      doc should containElementWithID("advanced_search_results-row-0")
-      doc should containElementWithID("advanced_search_results-row-0-reference")
+      doc                                                           should containElementWithID("advanced_search_results-row-0")
+      doc                                                           should containElementWithID("advanced_search_results-row-0-reference")
       doc.getElementById("advanced_search_results-row-0-reference") should containText("reference")
       doc.getElementById("advanced_search_results-row-0-reference") should haveTag("a")
-      doc.getElementById("advanced_search_results-row-0-reference") should haveAttribute("href", routes.CaseController.get("reference").url)
-      doc should containElementWithID("advanced_search_results-row-0-business_name")
+      doc.getElementById("advanced_search_results-row-0-reference") should haveAttribute(
+        "href",
+        routes.CaseController.get("reference").url
+      )
+      doc                                                               should containElementWithID("advanced_search_results-row-0-business_name")
       doc.getElementById("advanced_search_results-row-0-business_name") should containText("business-name")
-      doc should containElementWithID("advanced_search_results-row-0-status")
-      doc.getElementById("advanced_search_results-row-0-status") should containText("OPEN")
+      doc                                                               should containElementWithID("advanced_search_results-row-0-status")
+      doc.getElementById("advanced_search_results-row-0-status")        should containText("OPEN")
 
-      doc should containElementWithID("advanced_search_results-row-0-appeal_status")
+      doc                                                               should containElementWithID("advanced_search_results-row-0-appeal_status")
       doc.getElementById("advanced_search_results-row-0-appeal_status") should containText("Under appeal")
 
-      doc should containElementWithID("advanced_search_results-row-0-attachments")
-      doc should containElementWithID("advanced_search_results-row-0-attachments-0")
+      doc                                                               should containElementWithID("advanced_search_results-row-0-attachments")
+      doc                                                               should containElementWithID("advanced_search_results-row-0-attachments-0")
       doc.getElementById("advanced_search_results-row-0-attachments-0") should haveTag("img")
       doc.getElementById("advanced_search_results-row-0-attachments-0") should haveAttribute("src", "url")
-      doc.getElementById("advanced_search_results-row-0-attachments-0") should haveAttribute("alt", "Image filename for case reference")
+      doc.getElementById("advanced_search_results-row-0-attachments-0") should haveAttribute(
+        "alt",
+        "Image filename for case reference"
+      )
       doc.getElementById("advanced_search_results-row-0-attachments-0") should haveAttribute("title", "filename")
 
-      doc should containElementWithID("advanced_search_results-row-0-attachments-0-link")
+      doc                                                                    should containElementWithID("advanced_search_results-row-0-attachments-0-link")
       doc.getElementById("advanced_search_results-row-0-attachments-0-link") should haveAttribute("href", "url")
       doc.getElementById("advanced_search_results-row-0-attachments-0-link") should haveAttribute("target", "_blank")
 
-      doc should containElementWithID("advanced_search_results-row-0-ruling_end")
-      doc.getElementById("advanced_search_results-row-0-ruling_end") should containText("01 Feb 2019")
-      doc should containElementWithID("advanced_search_results-row-0-decision_code")
+      doc                                                               should containElementWithID("advanced_search_results-row-0-ruling_end")
+      doc.getElementById("advanced_search_results-row-0-ruling_end")    should containText("01 Feb 2019")
+      doc                                                               should containElementWithID("advanced_search_results-row-0-decision_code")
       doc.getElementById("advanced_search_results-row-0-decision_code") should containText("commodity-code")
     }
   }
@@ -145,22 +154,22 @@ class AdvancedSearchResultsViewSpec extends ViewSpec {
       withStatus(CaseStatus.OPEN),
       withDecision(
         bindingCommodityCode = "commodity-code",
-        effectiveStartDate = Some(instant("2019-01-01")),
-        effectiveEndDate = Some(instant("2019-02-01")),
-        appeal = Seq(Appeal("id", AppealStatus.IN_PROGRESS, AppealType.APPEAL_TIER_1))
+        effectiveStartDate   = Some(instant("2019-01-01")),
+        effectiveEndDate     = Some(instant("2019-02-01")),
+        appeal               = Seq(Appeal("id", AppealStatus.IN_PROGRESS, AppealType.APPEAL_TIER_1))
       ),
       withHolder(businessName = "business-name")
     )
 
     val storedAttachment = StoredAttachment(
       "id",
-      public = true,
-      operator = None,
-      url = Some("url"),
-      fileName = "filename",
-      mimeType = "text/plain",
-      scanStatus = Some(ScanStatus.READY),
-      timestamp = Instant.now(),
+      public      = true,
+      operator    = None,
+      url         = Some("url"),
+      fileName    = "filename",
+      mimeType    = "text/plain",
+      scanStatus  = Some(ScanStatus.READY),
+      timestamp   = Instant.now(),
       description = "test description"
     )
 
@@ -180,22 +189,22 @@ class AdvancedSearchResultsViewSpec extends ViewSpec {
       withStatus(CaseStatus.OPEN),
       withDecision(
         bindingCommodityCode = "commodity-code",
-        effectiveStartDate = Some(instant("2019-01-01")),
-        effectiveEndDate = Some(instant("2019-02-01")),
-        appeal = Seq(Appeal("id", AppealStatus.IN_PROGRESS, AppealType.APPEAL_TIER_1))
+        effectiveStartDate   = Some(instant("2019-01-01")),
+        effectiveEndDate     = Some(instant("2019-02-01")),
+        appeal               = Seq(Appeal("id", AppealStatus.IN_PROGRESS, AppealType.APPEAL_TIER_1))
       ),
       withHolder(businessName = "business-name")
     )
 
     val storedAttachment = StoredAttachment(
       "id",
-      public = true,
-      operator = None,
-      url = None,
-      fileName = "filename",
-      mimeType = "image/png",
-      scanStatus = Some(ScanStatus.READY),
-      timestamp = Instant.now(),
+      public      = true,
+      operator    = None,
+      url         = None,
+      fileName    = "filename",
+      mimeType    = "image/png",
+      scanStatus  = Some(ScanStatus.READY),
+      timestamp   = Instant.now(),
       description = "test description"
     )
 
@@ -215,22 +224,22 @@ class AdvancedSearchResultsViewSpec extends ViewSpec {
       withStatus(CaseStatus.OPEN),
       withDecision(
         bindingCommodityCode = "commodity-code",
-        effectiveStartDate = Some(instant("2019-01-01")),
-        effectiveEndDate = Some(instant("2019-02-01")),
-        appeal = Seq(Appeal("id", AppealStatus.IN_PROGRESS, AppealType.APPEAL_TIER_1))
+        effectiveStartDate   = Some(instant("2019-01-01")),
+        effectiveEndDate     = Some(instant("2019-02-01")),
+        appeal               = Seq(Appeal("id", AppealStatus.IN_PROGRESS, AppealType.APPEAL_TIER_1))
       ),
       withHolder(businessName = "business-name")
     )
 
     val storedAttachment = StoredAttachment(
       "id",
-      public = true,
-      operator = None,
-      url = Some("url"),
-      fileName = "filename",
-      mimeType = "text/plain",
-      scanStatus = None,
-      timestamp = Instant.now(),
+      public      = true,
+      operator    = None,
+      url         = Some("url"),
+      fileName    = "filename",
+      mimeType    = "text/plain",
+      scanStatus  = None,
+      timestamp   = Instant.now(),
       description = "test description"
     )
 
@@ -250,22 +259,22 @@ class AdvancedSearchResultsViewSpec extends ViewSpec {
       withStatus(CaseStatus.OPEN),
       withDecision(
         bindingCommodityCode = "commodity-code",
-        effectiveStartDate = Some(instant("2019-01-01")),
-        effectiveEndDate = Some(instant("2019-02-01")),
-        appeal = Seq(Appeal("id", AppealStatus.IN_PROGRESS, AppealType.APPEAL_TIER_1))
+        effectiveStartDate   = Some(instant("2019-01-01")),
+        effectiveEndDate     = Some(instant("2019-02-01")),
+        appeal               = Seq(Appeal("id", AppealStatus.IN_PROGRESS, AppealType.APPEAL_TIER_1))
       ),
       withHolder(businessName = "business-name")
     )
 
     val storedAttachment = StoredAttachment(
       "id",
-      public = true,
-      operator = None,
-      url = Some("url"),
-      fileName = "filename",
-      mimeType = "text/plain",
-      scanStatus = Some(ScanStatus.FAILED),
-      timestamp = Instant.now(),
+      public      = true,
+      operator    = None,
+      url         = Some("url"),
+      fileName    = "filename",
+      mimeType    = "text/plain",
+      scanStatus  = Some(ScanStatus.FAILED),
+      timestamp   = Instant.now(),
       description = "test description"
     )
 

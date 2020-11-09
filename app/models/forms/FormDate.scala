@@ -26,12 +26,11 @@ import scala.util.Try
 
 object FormDate {
 
-  private val formDate2Instant: DateForm => Instant = {
-    dateForm =>
-      LocalDate
-        .of(dateForm.year.toInt, dateForm.month.toInt, dateForm.day.toInt)
-        .atStartOfDay(UTC)
-        .toInstant
+  private val formDate2Instant: DateForm => Instant = { dateForm =>
+    LocalDate
+      .of(dateForm.year.toInt, dateForm.month.toInt, dateForm.day.toInt)
+      .atStartOfDay(UTC)
+      .toInstant
   }
 
   private val instant2FormDate: Instant => DateForm = { date =>
@@ -43,22 +42,22 @@ object FormDate {
     )
   }
 
-  private val validDateFormat: DateForm => Boolean = {
-    myDate => if (validateDayInDate(myDate) && validateMonthInDate(myDate) && validateYearInDate(myDate)) {
+  private val validDateFormat: DateForm => Boolean = { myDate =>
+    if (validateDayInDate(myDate) && validateMonthInDate(myDate) && validateYearInDate(myDate)) {
       Try(LocalDate.of(myDate.year.toInt, myDate.month.toInt, myDate.day.toInt)).isSuccess
     } else {
       true
     }
   }
 
-  private def validateDayInDate: DateForm => Boolean = !_.day.trim.isEmpty
+  private def validateDayInDate: DateForm => Boolean   = !_.day.trim.isEmpty
   private def validateMonthInDate: DateForm => Boolean = !_.month.trim.isEmpty
-  private def validateYearInDate: DateForm => Boolean = date => !date.year.trim.isEmpty
+  private def validateYearInDate: DateForm => Boolean  = date => !date.year.trim.isEmpty
 
   def date(error: String): Mapping[Instant] = {
-    val emptyDay = error + ".day"
+    val emptyDay   = error + ".day"
     val emptyMonth = error + ".month"
-    val emptyYear = error + ".year"
+    val emptyYear  = error + ".year"
 
     mapping("day" -> text, "month" -> text, "year" -> text)(DateForm.apply)(DateForm.unapply)
       .verifying(emptyDay, validateDayInDate)

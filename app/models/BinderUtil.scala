@@ -25,22 +25,18 @@ import scala.util.Try
 
 object BinderUtil {
 
-  def bindCaseReportGroup(value: String): Option[CaseReportGroup] = {
+  def bindCaseReportGroup(value: String): Option[CaseReportGroup] =
     CaseReportGroup.values.find(_.toString == value)
-  }
 
-  def bindCaseReportField(value: String): Option[CaseReportField] = {
+  def bindCaseReportField(value: String): Option[CaseReportField] =
     CaseReportField.values.find(_.toString == value)
-  }
 
   def bindInstant(value: String): Option[Instant] = Try(Instant.parse(value)).toOption
 
-  def params(name: String)(implicit requestParams: Map[String, Seq[String]]): Option[Set[String]] = {
+  def params(name: String)(implicit requestParams: Map[String, Seq[String]]): Option[Set[String]] =
     requestParams.get(name).map(_.flatMap(_.split(",")).toSet).filterNot(_.exists(_.isEmpty))
-  }
 
-  def param(name: String)(implicit requestParams: Map[String, Seq[String]]): Option[String] = {
+  def param(name: String)(implicit requestParams: Map[String, Seq[String]]): Option[String] =
     params(name).map(_.head)
-  }
 
 }

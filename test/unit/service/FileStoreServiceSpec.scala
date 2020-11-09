@@ -32,11 +32,12 @@ import utils.Cases._
 
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
+import java.nio.file.Path
 
 class FileStoreServiceSpec extends ServiceSpecBase {
 
   private val connector = mock[FileStoreConnector]
-  private val service = new FileStoreService(connector)
+  private val service   = new FileStoreService(connector)
 
   "Service 'getAttachments' by Cases" should {
 
@@ -126,11 +127,13 @@ class FileStoreServiceSpec extends ServiceSpecBase {
   "Service 'upload'" should {
 
     "Return Stored Attachment" in {
-      val upload = mock[FileUpload]
+      val upload  = mock[FileUpload]
       val content = mock[TemporaryFile]
-      val file = mock[File]
+      val path    = mock[Path]
+      val file    = mock[File]
       given(upload.content) willReturn content
-      given(content.file) willReturn file
+      given(content.path) willReturn path
+      given(path.toFile) willReturn file
       given(file.length()) willReturn 1
 
       val metadata = FileMetadata(id = "id", fileName = "name", mimeType = "mimetype")
@@ -152,7 +155,7 @@ class FileStoreServiceSpec extends ServiceSpecBase {
   "Service 'removeAttachment'" should {
 
     "call the connector" in {
-      val id = "id"
+      val id   = "id"
       val file = mock[FileMetadata]
       given(connector.get(id)) willReturn Future.successful(Some(file))
 
@@ -163,19 +166,18 @@ class FileStoreServiceSpec extends ServiceSpecBase {
 
   }
 
-  private def aStoredAttachmentWithId(id: String): StoredAttachment = {
+  private def aStoredAttachmentWithId(id: String): StoredAttachment =
     StoredAttachment(
-      id = id,
-      public = true,
-      operator = None,
-      url = Some(s"url-$id"),
-      fileName = s"name-$id",
-      mimeType = s"type-$id",
-      scanStatus = Some(ScanStatus.READY),
-      timestamp = Instant.EPOCH,
+      id          = id,
+      public      = true,
+      operator    = None,
+      url         = Some(s"url-$id"),
+      fileName    = s"name-$id",
+      mimeType    = s"type-$id",
+      scanStatus  = Some(ScanStatus.READY),
+      timestamp   = Instant.EPOCH,
       description = "test description"
     )
-  }
 
   private def aCase(modifiers: (Case => Case)*): Case = {
     var c = Cases.btiCaseExample
@@ -185,10 +187,10 @@ class FileStoreServiceSpec extends ServiceSpecBase {
 
   private def withAnAttachmentWithId(id: String): Case => Case = c => {
     val attachments: Seq[Attachment] = c.attachments :+ Attachment(
-      id = id,
+      id     = id,
       public = true,
       None,
-      timestamp = Instant.EPOCH,
+      timestamp   = Instant.EPOCH,
       description = "test description"
     )
     c.copy(attachments = attachments)
@@ -196,23 +198,22 @@ class FileStoreServiceSpec extends ServiceSpecBase {
 
   private def withLetterOfAuthWithId(id: String): Case => Case = c => {
     val details = AgentDetails(mock[EORIDetails], Some(anAttachmentWithId(id)))
-    val app = c.application.asBTI.copy(agent = Some(details))
+    val app     = c.application.asBTI.copy(agent = Some(details))
     c.copy(application = app)
   }
 
-  private def anAttachmentWithId(id: String): Attachment = {
+  private def anAttachmentWithId(id: String): Attachment =
     Attachment(
-      id = id,
+      id     = id,
       public = true,
       None,
-      timestamp = Instant.EPOCH,
+      timestamp   = Instant.EPOCH,
       description = "test description"
     )
-  }
 
   private def withAgentDetails(): Case => Case = c => {
     val details = AgentDetails(mock[EORIDetails], None)
-    val app = c.application.asBTI.copy(agent = Some(details))
+    val app     = c.application.asBTI.copy(agent = Some(details))
     c.copy(application = app)
   }
 
@@ -221,27 +222,24 @@ class FileStoreServiceSpec extends ServiceSpecBase {
     c.copy(application = app)
   }
 
-  private def someMetadataWithId(id: String): FileMetadata = {
+  private def someMetadataWithId(id: String): FileMetadata =
     FileMetadata(
-      id = id,
-      fileName = s"name-$id",
-      mimeType = s"type-$id",
-      url = Some(s"url-$id"),
+      id         = id,
+      fileName   = s"name-$id",
+      mimeType   = s"type-$id",
+      url        = Some(s"url-$id"),
       scanStatus = Some(ScanStatus.READY)
     )
-  }
 
   private def givenFileStoreReturnsNoAttachments(): Unit = {
     given(connector.get(any[Seq[Attachment]])(any[HeaderCarrier])) willReturn successful(Seq.empty)
     given(connector.get(any[String])(any[HeaderCarrier])) willReturn successful(None)
   }
 
-  private def givenFileStoreReturnsAttachments(attachments: FileMetadata*): Unit = {
+  private def givenFileStoreReturnsAttachments(attachments: FileMetadata*): Unit =
     given(connector.get(any[Seq[Attachment]])(any[HeaderCarrier])) willReturn successful(attachments)
-  }
 
-  private def givenFileStoreReturnsAttachment(attachment: FileMetadata): Unit = {
+  private def givenFileStoreReturnsAttachment(attachment: FileMetadata): Unit =
     given(connector.get(any[String])(any[HeaderCarrier])) willReturn successful(Some(attachment))
-  }
 
 }

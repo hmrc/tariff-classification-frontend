@@ -28,7 +28,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class FileStoreConnectorSpec extends ConnectorTest {
 
   private val attachmentId = "id"
-  private val connector = new FileStoreConnector(mockAppConfig, authenticatedHttpClient, wsClient, metrics)
+  private val connector    = new FileStoreConnector(mockAppConfig, authenticatedHttpClient, wsClient, metrics)
 
   "Connector 'GET' one" should {
     "handle 404" in {
@@ -63,10 +63,10 @@ class FileStoreConnectorSpec extends ConnectorTest {
 
       await(connector.get(attachmentId)) shouldBe Some(
         FileMetadata(
-          id = attachmentId,
-          fileName = "name",
-          mimeType = "text/plain",
-          url = None,
+          id         = attachmentId,
+          fileName   = "name",
+          mimeType   = "text/plain",
+          url        = None,
           scanStatus = None
         )
       )
@@ -92,10 +92,10 @@ class FileStoreConnectorSpec extends ConnectorTest {
 
       await(connector.get(attachmentId)) shouldBe Some(
         FileMetadata(
-          id = attachmentId,
-          fileName = "name",
-          mimeType = "text/plain",
-          url = Some("url"),
+          id         = attachmentId,
+          fileName   = "name",
+          mimeType   = "text/plain",
+          url        = Some("url"),
           scanStatus = Some(ScanStatus.READY)
         )
       )
@@ -130,10 +130,10 @@ class FileStoreConnectorSpec extends ConnectorTest {
 
       await(connector.get(Seq(att1, att2))) shouldBe Seq(
         FileMetadata(
-          id = "id",
-          fileName = "name",
-          mimeType = "text/plain",
-          url = None,
+          id         = "id",
+          fileName   = "name",
+          mimeType   = "text/plain",
+          url        = None,
           scanStatus = None
         )
       )
@@ -161,10 +161,10 @@ class FileStoreConnectorSpec extends ConnectorTest {
 
       await(connector.get(Seq(att1, att2))) shouldBe Seq(
         FileMetadata(
-          id = "id",
-          fileName = "name",
-          mimeType = "text/plain",
-          url = Some("url"),
+          id         = "id",
+          fileName   = "name",
+          mimeType   = "text/plain",
+          url        = Some("url"),
           scanStatus = Some(ScanStatus.READY)
         )
       )
@@ -186,19 +186,18 @@ class FileStoreConnectorSpec extends ConnectorTest {
         )
     )
 
-    val file = FileUpload(SingletonTemporaryFileCreator.create("example-file.txt"), "file.txt", "text/plain")
+    val file   = FileUpload(SingletonTemporaryFileCreator.create("example-file.txt"), "file.txt", "text/plain")
     val result = await(connector.upload(file))
 
     verify(
-      postRequestedFor(
-        urlEqualTo("/file"))
+      postRequestedFor(urlEqualTo("/file"))
         .withHeader("X-Api-Token", equalTo(fakeAuthToken))
         .withRequestBody(containing("file"))
         .withRequestBody(containing("publish"))
     )
 
     result shouldBe FileMetadata(
-      id = "id",
+      id       = "id",
       fileName = "file-name.txt",
       mimeType = "text/plain"
     )
@@ -216,8 +215,7 @@ class FileStoreConnectorSpec extends ConnectorTest {
     await(connector.delete("fileId"))
 
     verify(
-      deleteRequestedFor(
-        urlEqualTo("/file/fileId"))
+      deleteRequestedFor(urlEqualTo("/file/fileId"))
         .withHeader("X-Api-Token", equalTo(fakeAuthToken))
     )
   }

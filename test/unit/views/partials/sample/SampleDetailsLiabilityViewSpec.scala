@@ -37,7 +37,7 @@ class SampleDetailsLiabilityViewSpec extends ViewSpec {
       val doc = view(sample_details_liability(caseWithSample))
 
       // Then
-      doc.getElementById("liability-sending-samples") should containText(messages("answer.yes"))
+      doc.getElementById("liability-sending-samples")   should containText(messages("answer.yes"))
       doc.getElementById("liability-returning-samples") should containText(messages("answer.yes"))
     }
 

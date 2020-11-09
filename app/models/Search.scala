@@ -22,46 +22,45 @@ import forms.SearchForm
 import models.ApplicationType.ApplicationType
 import models.PseudoCaseStatus.PseudoCaseStatus
 
-case class Search
-(
-  traderName: Option[String] = None,
-  commodityCode: Option[String] = None,
-  decisionDetails: Option[String] = None,
-  status: Option[Set[PseudoCaseStatus]] = None,
+case class Search(
+  traderName: Option[String]                    = None,
+  commodityCode: Option[String]                 = None,
+  decisionDetails: Option[String]               = None,
+  status: Option[Set[PseudoCaseStatus]]         = None,
   applicationType: Option[Set[ApplicationType]] = None,
-  keywords: Option[Set[String]] = None
+  keywords: Option[Set[String]]                 = None
 ) {
 
-  def isEmpty: Boolean = {
+  def isEmpty: Boolean =
     // Status & Application Type omitted intentionally as it is a post-search filter
     traderName.isEmpty && commodityCode.isEmpty && decisionDetails.isEmpty && keywords.isEmpty
-  }
 
   def isDefined: Boolean = !isEmpty
 }
 
 object Search {
 
-  implicit def binder(implicit stringBinder: QueryStringBindable[String]): QueryStringBindable[Search] = new QueryStringBindable[Search] {
+  implicit def binder(implicit stringBinder: QueryStringBindable[String]): QueryStringBindable[Search] =
+    new QueryStringBindable[Search] {
 
-    override def bind(string: String, requestParams: Map[String, Seq[String]]): Option[Either[String, Search]] = {
-      val filteredParams: Map[String, Seq[String]] = requestParams
-        .mapValues(_.map(_.trim).filter(_.nonEmpty))
-        .filter(_._2.nonEmpty)
+      override def bind(string: String, requestParams: Map[String, Seq[String]]): Option[Either[String, Search]] = {
+        val filteredParams: Map[String, Seq[String]] = requestParams
+          .mapValues(_.map(_.trim).filter(_.nonEmpty))
+          .filter(_._2.nonEmpty)
 
-      val form: Form[Search] = SearchForm.formWithoutValidation.bindFromRequest(filteredParams)
+        val form: Form[Search] = SearchForm.formWithoutValidation.bindFromRequest(filteredParams)
 
-      if (form.hasErrors)
-        Some(Right(Search()))
-      else
-        Some(Right(form.get))
+        if (form.hasErrors)
+          Some(Right(Search()))
+        else
+          Some(Right(form.get))
+      }
+
+      override def unbind(string: String, search: Search): String = {
+        val data: Map[String, String] = SearchForm.formWithoutValidation.fill(search).data
+        data.toSeq.map(f => stringBinder.unbind(f._1, f._2)).mkString("&")
+      }
+
     }
-
-    override def unbind(string: String, search: Search): String = {
-      val data: Map[String, String] = SearchForm.formWithoutValidation.fill(search).data
-      data.toSeq.map(f => stringBinder.unbind(f._1, f._2)).mkString("&")
-    }
-
-  }
 
 }

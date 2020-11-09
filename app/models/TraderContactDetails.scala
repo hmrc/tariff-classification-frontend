@@ -17,7 +17,7 @@
 package models
 
 case class TraderContactDetails(
-                                 email: Option[String],
-                                 phone: Option[String],
-                                 address: Option[Address]
-                               )
+  email: Option[String],
+  phone: Option[String],
+  address: Option[Address]
+)

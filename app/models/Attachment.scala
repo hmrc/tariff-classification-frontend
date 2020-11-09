@@ -19,17 +19,17 @@ package models
 import java.time.Instant
 
 case class Attachment(
-                       id: String,
-                       public: Boolean = false,
-                       operator: Option[Operator],
-                       timestamp: Instant = Instant.now(),
-                       //TODO implement
-                       description: String = ""
-                     )
+  id: String,
+  public: Boolean = false,
+  operator: Option[Operator],
+  timestamp: Instant = Instant.now(),
+  //TODO implement
+  description: String = ""
+)
 
 case class FileStoreAttachment(
-                                id: String,
-                                name: String,
-                                mimeType: String,
-                                size: Long
-                              )
+  id: String,
+  name: String,
+  mimeType: String,
+  size: Long
+)

@@ -51,17 +51,15 @@ class SampleReturnFormTest extends ModelsBaseSpec {
       val form = SampleReturnForm.form.fill(None)
 
       form.hasErrors shouldBe false
-      form.data shouldBe Map()
+      form.data      shouldBe Map()
     }
 
     "populate some" in {
       val form = SampleReturnForm.form.fill(Some(SampleReturn.NO))
 
       form.hasErrors shouldBe false
-      form.data shouldBe Map("return" -> "NO")
+      form.data      shouldBe Map("return" -> "NO")
     }
   }
-
-
 
 }

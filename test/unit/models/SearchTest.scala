@@ -21,33 +21,32 @@ import java.net.URLDecoder
 class SearchTest extends ModelsBaseSpec {
 
   private val populatedSearch = Search(
-    traderName = Some("trader-name"),
-    commodityCode = Some("commodity-code"),
+    traderName      = Some("trader-name"),
+    commodityCode   = Some("commodity-code"),
     decisionDetails = Some("decision-details"),
-    status = Some(Set(PseudoCaseStatus.OPEN, PseudoCaseStatus.LIVE)),
+    status          = Some(Set(PseudoCaseStatus.OPEN, PseudoCaseStatus.LIVE)),
     applicationType = Some(Set(ApplicationType.BTI, ApplicationType.LIABILITY_ORDER)),
-    keywords = Some(Set("K1", "K2"))
+    keywords        = Some(Set("K1", "K2"))
   )
 
   /**
     * When we add fields to Search these tests shouldn't need changing, only the field above and vals in each test suite.
     **/
-
   "Search" should {
     "Return isEmpty = true" in {
       val search = Search()
-      search.isEmpty shouldBe true
+      search.isEmpty   shouldBe true
       search.isDefined shouldBe false
     }
 
     "Return isEmpty = true when status is populated" in {
       val search = Search(status = Some(Set(PseudoCaseStatus.OPEN, PseudoCaseStatus.LIVE)))
-      search.isEmpty shouldBe true
+      search.isEmpty   shouldBe true
       search.isDefined shouldBe false
     }
 
     "Return isEmpty = false" in {
-      populatedSearch.isEmpty shouldBe false
+      populatedSearch.isEmpty   shouldBe false
       populatedSearch.isDefined shouldBe true
     }
   }
@@ -55,15 +54,15 @@ class SearchTest extends ModelsBaseSpec {
   "Search Binder" should {
 
     val populatedParams: Map[String, Seq[String]] = Map(
-      "trader_name" -> Seq("trader-name"),
-      "commodity_code" -> Seq("commodity-code"),
-      "decision_details" -> Seq("decision-details"),
+      "trader_name"         -> Seq("trader-name"),
+      "commodity_code"      -> Seq("commodity-code"),
+      "decision_details"    -> Seq("decision-details"),
       "application_type[0]" -> Seq("BTI"),
       "application_type[1]" -> Seq("LIABILITY_ORDER"),
-      "status[0]" -> Seq("OPEN"),
-      "status[1]" -> Seq("LIVE"),
-      "keyword[0]" -> Seq("K1"),
-      "keyword[1]" -> Seq("K2")
+      "status[0]"           -> Seq("OPEN"),
+      "status[1]"           -> Seq("LIVE"),
+      "keyword[0]"          -> Seq("K1"),
+      "keyword[1]"          -> Seq("K2")
     )
 
     val emptyParams: Map[String, Seq[String]] = populatedParams.mapValues(_ => Seq(""))
@@ -85,7 +84,10 @@ class SearchTest extends ModelsBaseSpec {
     }
 
     "Unbind Populated Search to Query String" in {
-      URLDecoder.decode(Search.binder.unbind("", populatedSearch), "UTF-8").split("&").toSet shouldBe populatedQueryParam
+      URLDecoder
+        .decode(Search.binder.unbind("", populatedSearch), "UTF-8")
+        .split("&")
+        .toSet shouldBe populatedQueryParam
     }
 
     "Bind empty query string" in {

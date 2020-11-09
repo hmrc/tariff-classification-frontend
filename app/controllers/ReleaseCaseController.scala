@@ -31,66 +31,66 @@ import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
 @Singleton
-class ReleaseCaseController @Inject()(
+class ReleaseCaseController @Inject() (
   verify: RequestActions,
   casesService: CasesService,
   queueService: QueuesService,
   mcc: MessagesControllerComponents,
   implicit val appConfig: AppConfig
-) extends FrontendController(mcc) with RenderCaseAction {
+) extends FrontendController(mcc)
+    with RenderCaseAction {
 
-  private lazy val releaseCaseForm: Form[String] = ReleaseCaseForm.form
-  override protected val config: AppConfig = appConfig
+  private lazy val releaseCaseForm: Form[String]   = ReleaseCaseForm.form
+  override protected val config: AppConfig         = appConfig
   override protected val caseService: CasesService = casesService
 
-  def releaseCase(reference: String, activeTab: Option[ActiveTab]): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen
-    verify.mustHave(Permission.RELEASE_CASE)).async { implicit request =>
-    releaseCase(releaseCaseForm, reference, activeTab)
-  }
-
-  def releaseCaseToQueue(reference: String, activeTab: Option[ActiveTab]): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen
-    verify.mustHave(Permission.RELEASE_CASE)).async { implicit request =>
-
-    def onInvalidForm(formWithErrors: Form[String]): Future[Result] = {
-      releaseCase(formWithErrors, reference, activeTab)
+  def releaseCase(reference: String, activeTab: Option[ActiveTab]): Action[AnyContent] =
+    (verify.authenticated andThen verify.casePermissions(reference) andThen
+      verify.mustHave(Permission.RELEASE_CASE)).async { implicit request =>
+      releaseCase(releaseCaseForm, reference, activeTab)
     }
 
-    def onValidForm(queueSlug: String): Future[Result] = {
-      queueService.getOneBySlug(queueSlug) flatMap {
-        case None => successful(Ok(views.html.resource_not_found(s"Queue $queueSlug")))
-        case Some(q: Queue) =>
-          validateAndRedirect(
-            casesService.releaseCase(_, q, request.operator).map { _ =>
+  def releaseCaseToQueue(reference: String, activeTab: Option[ActiveTab]): Action[AnyContent] =
+    (verify.authenticated andThen verify.casePermissions(reference) andThen
+      verify.mustHave(Permission.RELEASE_CASE)).async { implicit request =>
+      def onInvalidForm(formWithErrors: Form[String]): Future[Result] =
+        releaseCase(formWithErrors, reference, activeTab)
+
+      def onValidForm(queueSlug: String): Future[Result] =
+        queueService.getOneBySlug(queueSlug) flatMap {
+          case None => successful(Ok(views.html.resource_not_found(s"Queue $queueSlug")))
+          case Some(q: Queue) =>
+            validateAndRedirect(casesService.releaseCase(_, q, request.operator).map { _ =>
               routes.ReleaseCaseController.confirmReleaseCase(reference)
             })
-      }
+        }
+
+      releaseCaseForm.bindFromRequest.fold(onInvalidForm, onValidForm)
     }
 
-    releaseCaseForm.bindFromRequest.fold(onInvalidForm, onValidForm)
-  }
-
-  private def releaseCase(f: Form[String], caseRef: String, activeTab: Option[ActiveTab])
-                         (implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
+  private def releaseCase(f: Form[String], caseRef: String, activeTab: Option[ActiveTab])(
+    implicit request: AuthenticatedCaseRequest[_]
+  ): Future[Result] =
     getCaseAndRenderView(caseRef, c => queueService.getNonGateway.map(views.html.release_case(c, f, _, activeTab)))
-  }
 
   def confirmReleaseCase(reference: String): Action[AnyContent] =
     (verify.authenticated
       andThen verify.casePermissions(reference)
-      andThen verify.mustHave(Permission.VIEW_CASES)).async {
-      implicit request =>
+      andThen verify.mustHave(Permission.VIEW_CASES)).async { implicit request =>
+      def queueNotFound(implicit request: AuthenticatedCaseRequest[_]) =
+        successful(views.html.resource_not_found(s"Case Queue"))
 
-        def queueNotFound(implicit request: AuthenticatedCaseRequest[_]) = {
-          successful(views.html.resource_not_found(s"Case Queue"))
-        }
-
-        renderView(
-          c => c.status == CaseStatus.OPEN,
-          c => c.queueId.map(
-            id => queueService.getOneById(id) flatMap {
-              case Some(queue) => successful(views.html.confirm_release_case(c, queue.name))
-              case None => queueNotFound
-            }).getOrElse(queueNotFound)
-        )
+      renderView(
+        c => c.status == CaseStatus.OPEN,
+        c =>
+          c.queueId
+            .map(id =>
+              queueService.getOneById(id) flatMap {
+                case Some(queue) => successful(views.html.confirm_release_case(c, queue.name))
+                case None        => queueNotFound
+              }
+            )
+            .getOrElse(queueNotFound)
+      )
     }
 }

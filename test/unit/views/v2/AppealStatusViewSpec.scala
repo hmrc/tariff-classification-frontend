@@ -39,9 +39,11 @@ class AppealStatusViewSpec extends ViewSpec {
 
       val c = aCase(
         withReference("ref"),
-        withDecision(appeal = Seq(
-          Appeal("id", AppealStatus.IN_PROGRESS, AppealType.ADR)
-        ))
+        withDecision(appeal =
+          Seq(
+            Appeal("id", AppealStatus.IN_PROGRESS, AppealType.ADR)
+          )
+        )
       )
 
       val doc = view(appeal_status(c.decision, "id"))
@@ -52,9 +54,11 @@ class AppealStatusViewSpec extends ViewSpec {
 
       val c = aCase(
         withReference("ref"),
-        withDecision(appeal = Seq(
-          Appeal("id", AppealStatus.ALLOWED, AppealType.ADR)
-        ))
+        withDecision(appeal =
+          Seq(
+            Appeal("id", AppealStatus.ALLOWED, AppealType.ADR)
+          )
+        )
       )
 
       val doc = view(appeal_status(c.decision, "id"))
@@ -65,9 +69,11 @@ class AppealStatusViewSpec extends ViewSpec {
 
       val c = aCase(
         withReference("ref"),
-        withDecision(appeal = Seq(
-          Appeal("id", AppealStatus.DISMISSED, AppealType.ADR)
-        ))
+        withDecision(appeal =
+          Seq(
+            Appeal("id", AppealStatus.DISMISSED, AppealType.ADR)
+          )
+        )
       )
 
       val doc = view(appeal_status(c.decision, "id"))
@@ -78,9 +84,11 @@ class AppealStatusViewSpec extends ViewSpec {
 
       val c = aCase(
         withReference("ref"),
-        withDecision(appeal = Seq(
-          Appeal("id", AppealStatus.IN_PROGRESS, AppealType.REVIEW)
-        ))
+        withDecision(appeal =
+          Seq(
+            Appeal("id", AppealStatus.IN_PROGRESS, AppealType.REVIEW)
+          )
+        )
       )
 
       val doc = view(appeal_status(c.decision, "id"))
@@ -91,9 +99,11 @@ class AppealStatusViewSpec extends ViewSpec {
 
       val c = aCase(
         withReference("ref"),
-        withDecision(appeal = Seq(
-          Appeal("id", AppealStatus.ALLOWED, AppealType.REVIEW)
-        ))
+        withDecision(appeal =
+          Seq(
+            Appeal("id", AppealStatus.ALLOWED, AppealType.REVIEW)
+          )
+        )
       )
 
       val doc = view(appeal_status(c.decision, "id"))
@@ -104,9 +114,11 @@ class AppealStatusViewSpec extends ViewSpec {
 
       val c = aCase(
         withReference("ref"),
-        withDecision(appeal = Seq(
-          Appeal("id", AppealStatus.DISMISSED, AppealType.REVIEW)
-        ))
+        withDecision(appeal =
+          Seq(
+            Appeal("id", AppealStatus.DISMISSED, AppealType.REVIEW)
+          )
+        )
       )
 
       val doc = view(appeal_status(c.decision, "id"))

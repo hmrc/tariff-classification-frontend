@@ -29,11 +29,15 @@ class SortTest extends ModelsBaseSpec {
     }
 
     "Bind populated query string" in {
-      SortField.bindable.bind("sort_by", Map("sort_by" -> Seq("commodity-code"))) shouldBe Some(Right(SortField.COMMODITY_CODE))
+      SortField.bindable.bind("sort_by", Map("sort_by" -> Seq("commodity-code"))) shouldBe Some(
+        Right(SortField.COMMODITY_CODE)
+      )
     }
 
     "Bind invalid query string" in {
-      SortField.bindable.bind("sort_by", Map("sort_by" -> Seq("other"))) shouldBe Some(Left("Parameter [sort_by] is invalid"))
+      SortField.bindable.bind("sort_by", Map("sort_by" -> Seq("other"))) shouldBe Some(
+        Left("Parameter [sort_by] is invalid")
+      )
     }
 
   }
@@ -41,7 +45,7 @@ class SortTest extends ModelsBaseSpec {
   "SortDirection Binder" should {
 
     "Unbind Populated SortDirection to Query String" in {
-      SortDirection.bindable.unbind("sort_direction", SortDirection.ASCENDING) shouldBe "sort_direction=asc"
+      SortDirection.bindable.unbind("sort_direction", SortDirection.ASCENDING)  shouldBe "sort_direction=asc"
       SortDirection.bindable.unbind("sort_direction", SortDirection.DESCENDING) shouldBe "sort_direction=desc"
     }
 
@@ -50,12 +54,18 @@ class SortTest extends ModelsBaseSpec {
     }
 
     "Bind populated query string" in {
-      SortDirection.bindable.bind("sort_direction", Map("sort_direction" -> Seq("asc"))) shouldBe Some(Right(SortDirection.ASCENDING))
-      SortDirection.bindable.bind("sort_direction", Map("sort_direction" -> Seq("desc"))) shouldBe Some(Right(SortDirection.DESCENDING))
+      SortDirection.bindable.bind("sort_direction", Map("sort_direction" -> Seq("asc"))) shouldBe Some(
+        Right(SortDirection.ASCENDING)
+      )
+      SortDirection.bindable.bind("sort_direction", Map("sort_direction" -> Seq("desc"))) shouldBe Some(
+        Right(SortDirection.DESCENDING)
+      )
     }
 
     "Bind invalid query string" in {
-      SortDirection.bindable.bind("sort_direction", Map("sort_direction" -> Seq("other"))) shouldBe Some(Left("Parameter [sort_direction] is invalid"))
+      SortDirection.bindable.bind("sort_direction", Map("sort_direction" -> Seq("other"))) shouldBe Some(
+        Left("Parameter [sort_direction] is invalid")
+      )
     }
 
   }
@@ -72,19 +82,27 @@ class SortTest extends ModelsBaseSpec {
     }
 
     "Bind populated query string with a sort_direction and sort_by" in {
-      Sort.bindable.bind("", Map("sort_direction" -> Seq("asc"), "sort_by" -> Seq("commodity-code"))) shouldBe Some(Right(sort))
+      Sort.bindable.bind("", Map("sort_direction" -> Seq("asc"), "sort_by" -> Seq("commodity-code"))) shouldBe Some(
+        Right(sort)
+      )
     }
 
     "Bind populated query string with only a sort_by" in {
-      Sort.bindable.bind("", Map("sort_by" -> Seq("commodity-code"))) shouldBe Some(Right(Sort(field = SortField.COMMODITY_CODE)))
+      Sort.bindable.bind("", Map("sort_by" -> Seq("commodity-code"))) shouldBe Some(
+        Right(Sort(field = SortField.COMMODITY_CODE))
+      )
     }
 
     "Bind populated query string with only a sort_direction" in {
-      Sort.bindable.bind("", Map("sort_direction" -> Seq("asc"))) shouldBe Some(Right(Sort(direction = SortDirection.ASCENDING)))
+      Sort.bindable.bind("", Map("sort_direction" -> Seq("asc"))) shouldBe Some(
+        Right(Sort(direction = SortDirection.ASCENDING))
+      )
     }
 
     "Bind invalid query string" in {
-      Sort.bindable.bind("", Map("sort_direction" -> Seq("other"), "sort_by" -> Seq("other"))) shouldBe Some(Right(Sort()))
+      Sort.bindable.bind("", Map("sort_direction" -> Seq("other"), "sort_by" -> Seq("other"))) shouldBe Some(
+        Right(Sort())
+      )
     }
 
   }

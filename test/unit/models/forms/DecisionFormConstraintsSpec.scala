@@ -26,10 +26,11 @@ import service.CommodityCodeService
 class DecisionFormConstraintsSpec extends ModelsBaseSpec {
 
   private val commodityCodeService = mock[CommodityCodeService]
-  private val decisionForm = new DecisionForm(new CommodityCodeConstraints(commodityCodeService, mock[AppConfig]))
-  private val commodityCodeLengthErrorMessage = "Commodity code must be empty or numeric between 6 and 22 digits with an even number of digits"
+  private val decisionForm         = new DecisionForm(new CommodityCodeConstraints(commodityCodeService, mock[AppConfig]))
+  private val commodityCodeLengthErrorMessage =
+    "Commodity code must be empty or numeric between 6 and 22 digits with an even number of digits"
   private val commodityCodeUKTariffErrorMessage = "This commodity code is not a valid code in the UK Trade Tariff"
-  private val bindingCommodityCodeElementId = "bindingCommodityCode"
+  private val bindingCommodityCodeElementId     = "bindingCommodityCode"
 
   "DecisionForm validation" should {
 
@@ -63,11 +64,11 @@ class DecisionFormConstraintsSpec extends ModelsBaseSpec {
       assertOnlyOneError("12345Q", Seq(commodityCodeLengthErrorMessage))
     }
 
-    "fail if the commodity code value contains special characters"  in {
+    "fail if the commodity code value contains special characters" in {
       assertOnlyOneError("12345!", Seq(commodityCodeLengthErrorMessage))
     }
 
-    "fail if the commodity code value contains an odd number of digits"  in {
+    "fail if the commodity code value contains an odd number of digits" in {
       assertOnlyOneError("1234567", Seq(commodityCodeLengthErrorMessage))
     }
 
@@ -77,17 +78,18 @@ class DecisionFormConstraintsSpec extends ModelsBaseSpec {
     }
   }
 
-  private def commodityCodeJsValue(value: String): JsValue = {
+  private def commodityCodeJsValue(value: String): JsValue =
     JsObject(Seq(bindingCommodityCodeElementId -> JsString(value)))
-  }
 
   private def assertNoErrors(commodityCodeValue: String): Unit = {
-    val errors = decisionForm.btiForm.bind(commodityCodeJsValue(commodityCodeValue)).errors(bindingCommodityCodeElementId)
+    val errors =
+      decisionForm.btiForm.bind(commodityCodeJsValue(commodityCodeValue)).errors(bindingCommodityCodeElementId)
     errors shouldBe Seq.empty
   }
 
   private def assertOnlyOneError(commodityCodeValue: String, errorMessages: Seq[String]): Unit = {
-    val errors = decisionForm.btiForm.bind(commodityCodeJsValue(commodityCodeValue)).errors(bindingCommodityCodeElementId)
+    val errors =
+      decisionForm.btiForm.bind(commodityCodeJsValue(commodityCodeValue)).errors(bindingCommodityCodeElementId)
     errors.map(_.message) shouldBe errorMessages
   }
 

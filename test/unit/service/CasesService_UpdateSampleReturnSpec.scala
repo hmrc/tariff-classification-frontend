@@ -31,15 +31,16 @@ import scala.concurrent.Future.successful
 
 class CasesService_UpdateSampleReturnSpec extends ServiceSpecBase with BeforeAndAfterEach with ConnectorCaptor {
 
-  private val connector = mock[BindingTariffClassificationConnector]
-  private val rulingConnector = mock[RulingConnector]
-  private val emailService = mock[EmailService]
+  private val connector        = mock[BindingTariffClassificationConnector]
+  private val rulingConnector  = mock[RulingConnector]
+  private val emailService     = mock[EmailService]
   private val fileStoreService = mock[FileStoreService]
   private val reportingService = mock[ReportingService]
-  private val audit = mock[AuditService]
-  private val aCase = Cases.btiCaseExample
+  private val audit            = mock[AuditService]
+  private val aCase            = Cases.btiCaseExample
 
-  private val service = new CasesService(realAppConfig, audit, emailService, fileStoreService, reportingService, connector, rulingConnector)
+  private val service =
+    new CasesService(realAppConfig, audit, emailService, fileStoreService, reportingService, connector, rulingConnector)
 
   override protected def afterEach(): Unit = {
     super.afterEach()
@@ -51,25 +52,26 @@ class CasesService_UpdateSampleReturnSpec extends ServiceSpecBase with BeforeAnd
     "update case sample return" in {
       // Given
       val operator: Operator = Operator("operator-id", None)
-      val originalCase = aCase.copy(sample = aCase.sample.copy(returnStatus = Some(SampleReturn.TO_BE_CONFIRMED)))
-      val caseUpdated = aCase.copy(sample = aCase.sample.copy(returnStatus = Some(SampleReturn.YES)))
+      val originalCase       = aCase.copy(sample = aCase.sample.copy(returnStatus = Some(SampleReturn.TO_BE_CONFIRMED)))
+      val caseUpdated        = aCase.copy(sample = aCase.sample.copy(returnStatus = Some(SampleReturn.YES)))
 
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
-      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])).willReturn(successful(mock[Event]))
-
+      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
+        .willReturn(successful(mock[Event]))
 
       // When Then
       await(service.updateSampleReturn(originalCase, Some(SampleReturn.YES), operator)) shouldBe caseUpdated
 
-      verify(audit).auditSampleReturnChange(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
-
+      verify(audit).auditSampleReturnChange(refEq(originalCase), refEq(caseUpdated), refEq(operator))(
+        any[HeaderCarrier]
+      )
 
       val caseUpdating = theCaseUpdating(connector)
       caseUpdating.sample.returnStatus shouldBe Some(SampleReturn.YES)
 
       val eventCreated = theEventCreatedFor(connector, caseUpdated)
       eventCreated.operator shouldBe Operator("operator-id")
-      eventCreated.details shouldBe SampleReturnChange(Some(SampleReturn.TO_BE_CONFIRMED), Some(SampleReturn.YES))
+      eventCreated.details  shouldBe SampleReturnChange(Some(SampleReturn.TO_BE_CONFIRMED), Some(SampleReturn.YES))
     }
 
   }
