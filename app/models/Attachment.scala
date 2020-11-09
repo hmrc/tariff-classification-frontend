@@ -23,8 +23,7 @@ case class Attachment(
   public: Boolean = false,
   operator: Option[Operator],
   timestamp: Instant = Instant.now(),
-  //TODO implement
-  description: String = ""
+  description: Option[String] = None
 )
 
 case class FileStoreAttachment(

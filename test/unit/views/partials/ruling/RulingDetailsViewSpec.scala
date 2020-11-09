@@ -362,7 +362,7 @@ class RulingDetailsViewSpec extends ViewSpec {
         mimeType    = "text/plain",
         scanStatus  = None,
         timestamp   = Instant.now(),
-        description = "test description"
+        description = Some("test description")
       )
 
       // When
@@ -386,7 +386,7 @@ class RulingDetailsViewSpec extends ViewSpec {
         mimeType    = "text/plain",
         scanStatus  = None,
         timestamp   = Instant.now(),
-        description = "test description"
+        description = Some("test description")
       )
 
       // When

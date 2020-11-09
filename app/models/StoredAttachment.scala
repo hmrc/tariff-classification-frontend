@@ -32,7 +32,7 @@ case class StoredAttachment(
   mimeType: String,
   scanStatus: Option[ScanStatus],
   timestamp: Instant,
-  description: String
+  description: Option[String]
 ) {
 
   def isImage: Boolean =

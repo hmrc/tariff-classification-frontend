@@ -106,7 +106,7 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
         mimeType    = "text/plain",
         scanStatus  = Some(ScanStatus.READY),
         timestamp   = Instant.now(),
-        description = "test description"
+        description = Some("test description")
       )
 
       // When
@@ -132,7 +132,7 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
         mimeType    = "text/plain",
         scanStatus  = Some(ScanStatus.FAILED),
         timestamp   = Instant.now(),
-        description = "test description"
+        description = Some("test description")
       )
 
       // When
@@ -158,7 +158,7 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
         mimeType    = "text/plain",
         scanStatus  = Some(ScanStatus.READY),
         timestamp   = Instant.now(),
-        description = "test description"
+        description = Some("test description")
       )
 
       // When
@@ -183,7 +183,7 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
         mimeType    = "text/plain",
         scanStatus  = Some(ScanStatus.READY),
         timestamp   = Instant.now(),
-        description = "test description"
+        description = Some("test description")
       )
 
       // When
@@ -208,7 +208,7 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
         mimeType    = "text/plain",
         scanStatus  = Some(ScanStatus.READY),
         timestamp   = Instant.now(),
-        description = "test description"
+        description = Some("test description")
       )
 
       // When
@@ -235,7 +235,7 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
         mimeType    = "text/plain",
         scanStatus  = Some(ScanStatus.READY),
         timestamp   = Instant.now(),
-        description = "test description"
+        description = Some("test description")
       )
 
       // When
