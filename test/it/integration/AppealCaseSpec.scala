@@ -8,11 +8,11 @@ import play.api.test.Helpers._
 import utils.CasePayloads
 import utils.Cases.{aCase, withDecision}
 
-
 class AppealCaseSpec extends IntegrationTest with MockitoSugar {
 
   val owner = Some(Operator("111", role = Role.CLASSIFICATION_OFFICER))
-  val caseWithStatusCOMPLETE = CasePayloads.jsonOf(aCase(withDecision()).copy(assignee = owner, status = CaseStatus.COMPLETED))
+  val caseWithStatusCOMPLETE =
+    CasePayloads.jsonOf(aCase(withDecision()).copy(assignee = owner, status = CaseStatus.COMPLETED))
 
   "Case Appeal" should {
 
@@ -40,26 +40,31 @@ class AppealCaseSpec extends IntegrationTest with MockitoSugar {
 
     def shouldFail = {
       // When
-      val response: WSResponse = await(ws.url(s"http://localhost:$port/manage-tariff-classifications/cases/1/appeal").get())
+      val response: WSResponse =
+        await(ws.url(s"http://localhost:$port/manage-tariff-classifications/cases/1/appeal").get())
 
       // Then
       response.status shouldBe OK
-      response.body should include(messages("not_authorised.paragraph1"))
+      response.body   should include(messages("not_authorised.paragraph1"))
     }
 
     def shouldSucceed = {
-      stubFor(get(urlEqualTo("/cases/1"))
-        .willReturn(aResponse()
-          .withStatus(OK)
-          .withBody(caseWithStatusCOMPLETE))
+      stubFor(
+        get(urlEqualTo("/cases/1"))
+          .willReturn(
+            aResponse()
+              .withStatus(OK)
+              .withBody(caseWithStatusCOMPLETE)
+          )
       )
 
       // When
-      val response: WSResponse = await(ws.url(s"http://localhost:$port/manage-tariff-classifications/cases/1/appeal").get())
+      val response: WSResponse =
+        await(ws.url(s"http://localhost:$port/manage-tariff-classifications/cases/1/appeal").get())
 
       // Then
       response.status shouldBe OK
-      response.body should include("id=\"appeal-heading\"")
+      response.body   should include("id=\"appeal-heading\"")
     }
   }
 
@@ -88,29 +93,33 @@ class AppealCaseSpec extends IntegrationTest with MockitoSugar {
     }
 
     def shouldSucceed = {
-      stubFor(get(urlEqualTo("/cases/1"))
-        .willReturn(aResponse()
-          .withStatus(OK)
-          .withBody(caseWithStatusCOMPLETE))
+      stubFor(
+        get(urlEqualTo("/cases/1"))
+          .willReturn(
+            aResponse()
+              .withStatus(OK)
+              .withBody(caseWithStatusCOMPLETE)
+          )
       )
 
       // When
-      val response: WSResponse = await(ws.url(s"http://localhost:$port/manage-tariff-classifications/cases/1/new-appeal").get())
+      val response: WSResponse =
+        await(ws.url(s"http://localhost:$port/manage-tariff-classifications/cases/1/new-appeal").get())
 
       // Then
       response.status shouldBe OK
-      response.body should include("id=\"appeal_choose_type-heading\"")
+      response.body   should include("id=\"appeal_choose_type-heading\"")
     }
 
     def shouldFail = {
       // When
-      val response: WSResponse = await(ws.url(s"http://localhost:$port/manage-tariff-classifications/cases/1/new-appeal").get())
+      val response: WSResponse =
+        await(ws.url(s"http://localhost:$port/manage-tariff-classifications/cases/1/new-appeal").get())
 
       // Then
       response.status shouldBe OK
-      response.body should include(messages("not_authorised.paragraph1"))
+      response.body   should include(messages("not_authorised.paragraph1"))
     }
-
 
   }
 

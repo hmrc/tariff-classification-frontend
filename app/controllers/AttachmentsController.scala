@@ -116,7 +116,7 @@ class AttachmentsController @Inject() (
 
   def uploadAttachment(reference: String): Action[Either[MaxSizeExceeded, MultipartFormData[TemporaryFile]]] =
     (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.ADD_ATTACHMENT))
-      .async(parse.maxLength(appConfig.fileUploadMaxSize, parse.multipartFormData)) { implicit request =>
+      .async(parse.maxLength(appConfig.fileUploadMaxSize.toLong, parse.multipartFormData)) { implicit request =>
         request.body match {
           case Left(MaxSizeExceeded(_)) =>
             renderErrors(reference, request2Messages(implicitly)("cases.attachment.upload.error.restrictionSize"))

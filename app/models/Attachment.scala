@@ -22,7 +22,7 @@ case class Attachment(
   id: String,
   public: Boolean = false,
   operator: Option[Operator],
-  timestamp: Instant = Instant.now(),
+  timestamp: Instant          = Instant.now(),
   description: Option[String] = None
 )
 

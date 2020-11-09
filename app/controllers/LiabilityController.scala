@@ -85,7 +85,7 @@ class LiabilityController @Inject() (
           updatedCase =>
             getCaseAndRedirect(
               menuTitle,
-              c =>
+              _ =>
                 for {
                   update <- casesService.updateCase(updatedCase)
                 } yield routes.LiabilityController.liabilityDetails(update.reference)

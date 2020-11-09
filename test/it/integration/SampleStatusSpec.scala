@@ -14,10 +14,13 @@ class SampleStatusSpec extends IntegrationTest with MockitoSugar {
     "Return all options for BTI Case" in {
       // Given
       givenAuthSuccess()
-      stubFor(get(urlEqualTo("/cases/1"))
-        .willReturn(aResponse()
-          .withStatus(OK)
-          .withBody(CasePayloads.simpleBtiCase))
+      stubFor(
+        get(urlEqualTo("/cases/1"))
+          .willReturn(
+            aResponse()
+              .withStatus(OK)
+              .withBody(CasePayloads.simpleBtiCase)
+          )
       )
 
       // When
@@ -25,18 +28,19 @@ class SampleStatusSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      SampleStatus.values.foreach(s => {
-        response.body should include(s">${SampleStatus.format(Some(s))}<")
-      })
+      SampleStatus.values.foreach(s => response.body should include(s">${SampleStatus.format(Some(s))}<"))
     }
 
     "Return limited options for Liability Case" in {
       // Given
       givenAuthSuccess()
-      stubFor(get(urlEqualTo("/cases/1"))
-        .willReturn(aResponse()
-          .withStatus(OK)
-          .withBody(CasePayloads.simpleLiabilityCase))
+      stubFor(
+        get(urlEqualTo("/cases/1"))
+          .willReturn(
+            aResponse()
+              .withStatus(OK)
+              .withBody(CasePayloads.simpleLiabilityCase)
+          )
       )
 
       // When
@@ -44,13 +48,12 @@ class SampleStatusSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body should include(">Yes<")
-      response.body should include(">No<")
-      response.body should include("AWAITING")
+      response.body   should include(">Yes<")
+      response.body   should include(">No<")
+      response.body   should include("AWAITING")
 
       response.body shouldNot include(s">${SampleStatus.format(Some(SampleStatus.RETURNED_APPLICANT))}<")
     }
   }
-
 
 }
