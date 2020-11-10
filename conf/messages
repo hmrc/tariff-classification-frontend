@@ -828,6 +828,8 @@ case.v2.liability.reopen.button=Reopen case
 
 case.v2.liability.advanced_search.button=Search cases
 
+case.v2.liability.c592.tab_title=C592
+
 upload.button = Upload
 upload.files.title = Upload new files
 upload.files.before = Before you upload a file, give it a useful and descriptive filename.
@@ -906,3 +908,6 @@ operator.dashboard.classification.all-open-cases.correspondence.list = List of a
 operator.dashboard.classification.all-open-cases.Miscellaneous = Miscellaneous
 operator.dashboard.classification.all-open-cases.miscellaneous.list = List of all open miscellaneous cases
 operator.dashboard.classification.gateway-cases = Create, allocate and manage cases
+
+case.atar.tab_title=ATaR
+case.liability.tab_title=Liability
