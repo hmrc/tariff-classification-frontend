@@ -23,10 +23,13 @@ import scala.util.Try
 
 object FormUtils {
 
-  def textTransformingTo[A](reader: String => A, writer: A => String, errorKey: String = "error.empty.default"): Mapping[A] = {
+  def textTransformingTo[A](
+    reader: String => A,
+    writer: A => String,
+    errorKey: String = "error.empty.default"
+  ): Mapping[A] =
     fieldNonEmpty(errorKey)
       .verifying("Invalid entry", s => Try(reader(s)).isSuccess)
       .transform[A](reader, writer)
-  }
 
 }

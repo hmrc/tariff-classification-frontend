@@ -29,35 +29,36 @@ import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
 @Singleton
-class AssignCaseController @Inject()(
+class AssignCaseController @Inject() (
   verify: RequestActions,
   override val caseService: CasesService,
   mcc: MessagesControllerComponents,
   override implicit val config: AppConfig
-) extends FrontendController(mcc) with RenderCaseAction {
+) extends FrontendController(mcc)
+    with RenderCaseAction {
 
-  def get(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.ASSIGN_CASE)).async { implicit request =>
-    getCaseAndRenderView(reference, c => successful(views.html.assign_case(c)))
-  }
+  def get(reference: String): Action[AnyContent] =
+    (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.ASSIGN_CASE))
+      .async(implicit request => getCaseAndRenderView(reference, c => successful(views.html.assign_case(c))))
 
-  def post(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.ASSIGN_CASE)).async { implicit request =>
+  def post(reference: String): Action[AnyContent] =
+    (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.ASSIGN_CASE))
+      .async { implicit request =>
+        def respond: Case => Future[Result] = {
+          case c: Case if c.assignee.isEmpty =>
+            caseService.assignCase(c, request.operator).map(_ => Redirect(routes.CaseController.get(reference)))
+          case _ =>
+            successful(Redirect(routes.AssignCaseController.get(reference)))
+        }
 
-    def respond: Case => Future[Result] = {
-      case c: Case if c.assignee.isEmpty =>
-        caseService.assignCase(c, request.operator).map(_ => Redirect(routes.CaseController.get(reference)))
-      case _ =>
-        successful(Redirect(routes.AssignCaseController.get(reference)))
-    }
+        getCaseAndRespond(reference, respond)
+      }
 
-    getCaseAndRespond(reference, respond)
-  }
-
-  override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = {
+  override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean =
     (c.queueId, c.assignee) match {
-      case (Some(_), None) => true
+      case (Some(_), None)                                                 => true
       case (Some(_), Some(operator)) if request.operator.id != operator.id => true
-      case _ => false
+      case _                                                               => false
     }
-  }
 
 }

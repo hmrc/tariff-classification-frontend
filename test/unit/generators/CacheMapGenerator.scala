@@ -24,8 +24,8 @@ trait CacheMapGenerator {
   self: Generators =>
 
   private val strGen: Int => Gen[String] = (n: Int) => Gen.listOfN(n, Gen.alphaChar).map(_.mkString)
-  def genStringKey: String = strGen(10).toString
-  def genStringValue: JsValue = Json.toJson(strGen(15).toString)
+  def genStringKey: String               = strGen(10).toString
+  def genStringValue: JsValue            = Json.toJson(strGen(15).toString)
 
   implicit lazy val arbitraryCacheMap: Arbitrary[CacheMap] =
     Arbitrary {

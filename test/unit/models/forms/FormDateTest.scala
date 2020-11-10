@@ -34,11 +34,16 @@ class FormDateTest extends ModelsBaseSpec {
     }
 
     "disallow empty fields" in {
-      assertInvalid(day = emptyStr, month = emptyStr, year = emptyStr, List("invalid.date.day", "invalid.date.month", "invalid.date.year"))
+      assertInvalid(
+        day   = emptyStr,
+        month = emptyStr,
+        year  = emptyStr,
+        List("invalid.date.day", "invalid.date.month", "invalid.date.year")
+      )
     }
 
     "disallow empty day" in {
-      assertInvalid(day = emptyStr, month = "1", year = "2000",  List("invalid.date.day"))
+      assertInvalid(day = emptyStr, month = "1", year = "2000", List("invalid.date.day"))
     }
 
     "disallow empty month" in {
@@ -54,17 +59,22 @@ class FormDateTest extends ModelsBaseSpec {
     }
 
     "maps to data" in {
-      test.bindFromRequest(
-        Map(
-          "day" -> Seq("1"),
-          "month" -> Seq("1"),
-          "year" -> Seq("2019")
+      test
+        .bindFromRequest(
+          Map(
+            "day"   -> Seq("1"),
+            "month" -> Seq("1"),
+            "year"  -> Seq("2019")
+          )
         )
-      ).get shouldBe ZonedDateTime.of(2019, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC).toInstant
+        .get shouldBe ZonedDateTime.of(2019, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC).toInstant
     }
 
     def assertInvalid(day: String, month: String, year: String, expected: List[String]) = {
-      val messages = test.bindFromRequest(Map("day" -> Seq(day), "month" -> Seq(month), "year" -> Seq(year))).errors.flatMap(_.messages)
+      val messages = test
+        .bindFromRequest(Map("day" -> Seq(day), "month" -> Seq(month), "year" -> Seq(year)))
+        .errors
+        .flatMap(_.messages)
 
       messages shouldBe expected
     }

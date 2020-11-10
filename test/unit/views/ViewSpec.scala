@@ -30,20 +30,21 @@ import play.twirl.api.Html
 abstract class ViewSpec extends SpecBase {
 
   implicit val appConfig: AppConfig = realAppConfig
-  protected val errorPrefix = messages("error.browser.title.prefix")
+  protected val errorPrefix         = messages("error.browser.title.prefix")
 
   protected val authenticatedOperator: Operator = Operator("operator-id")
   protected val authenticatedManager: Operator = Operator(
-    id = "operator-id",
-    name = Some("operator-name"),
-    role = Role.CLASSIFICATION_MANAGER,
+    id          = "operator-id",
+    name        = Some("operator-name"),
+    role        = Role.CLASSIFICATION_MANAGER,
     permissions = Set(Permission.EDIT_ATTACHMENT_DETAIL)
   )
 
-  val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", "/", FakeHeaders(Seq("csrfToken"->"csrfToken")), AnyContentAsEmpty)
-    .withCSRFToken.asInstanceOf[FakeRequest[AnyContentAsEmpty.type]]
+  val request: FakeRequest[AnyContentAsEmpty.type] =
+    FakeRequest("GET", "/", FakeHeaders(Seq("csrfToken" -> "csrfToken")), AnyContentAsEmpty).withCSRFToken
+      .asInstanceOf[FakeRequest[AnyContentAsEmpty.type]]
 
-  val operatorRequest = new AuthenticatedRequest(authenticatedOperator, request)
+  val operatorRequest                 = new AuthenticatedRequest(authenticatedOperator, request)
   val authenticatedManagerFakeRequest = new AuthenticatedRequest(authenticatedManager, request)
 
   def requestWithPermissions(permissions: Permission*): AuthenticatedRequest[AnyContentAsEmpty.type] = {
@@ -54,8 +55,7 @@ abstract class ViewSpec extends SpecBase {
   implicit val authenticatedFakeRequest: AuthenticatedRequest[AnyContentAsEmpty.type] =
     new AuthenticatedRequest(authenticatedOperator, request)
 
-  protected def view(html: Html): Document = {
+  protected def view(html: Html): Document =
     Jsoup.parse(html.toString())
-  }
 
 }

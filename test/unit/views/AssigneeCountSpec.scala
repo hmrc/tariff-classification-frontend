@@ -96,8 +96,8 @@ class AssigneeCountSpec extends ViewSpec {
       val summaries = AssigneeCount.apply(cases)
 
       summaries.head shouldBe AssigneeCount(op3, 3) // 3, PID
-      summaries(1) shouldBe AssigneeCount(op2, 1) // Jones, Zac
-      summaries(2) shouldBe AssigneeCount(op1, 2) // Smith, Ann
+      summaries(1)   shouldBe AssigneeCount(op2, 1) // Jones, Zac
+      summaries(2)   shouldBe AssigneeCount(op1, 2) // Smith, Ann
 
       summaries.size shouldBe 3
     }

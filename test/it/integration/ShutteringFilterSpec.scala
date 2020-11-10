@@ -24,12 +24,11 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.shutterPage
 
-
 class ShutteringFilterSpec extends IntegrationTest with OptionValues {
 
   override lazy val app: Application = new GuiceApplicationBuilder()
     .configure(
-      "shutter.enabled" -> true,
+      "shutter.enabled"       -> true,
       "shutter.urls.excluded" -> "/ping/ping"
     )
     .build()
@@ -39,10 +38,10 @@ class ShutteringFilterSpec extends IntegrationTest with OptionValues {
     "shutter" when {
 
       "the `shuttered` config property is true" in {
-        val view = shutterPage
+        val view   = shutterPage
         val result = route(app, FakeRequest(GET, IndexController.get().url)).get
 
-        status(result) shouldBe SERVICE_UNAVAILABLE
+        status(result)          shouldBe SERVICE_UNAVAILABLE
         contentAsString(result) shouldBe view().toString
       }
     }

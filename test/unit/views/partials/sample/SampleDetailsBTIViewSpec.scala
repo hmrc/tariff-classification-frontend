@@ -37,7 +37,7 @@ class SampleDetailsBTIViewSpec extends ViewSpec {
       val doc = view(sample_details_bti(caseWithSample))
 
       // Then
-      doc.getElementById("app-details-sending-samples") should containText(messages("answer.yes"))
+      doc.getElementById("app-details-sending-samples")   should containText(messages("answer.yes"))
       doc.getElementById("app-details-returning-samples") should containText(messages("answer.yes"))
     }
 
@@ -105,7 +105,9 @@ class SampleDetailsBTIViewSpec extends ViewSpec {
       val doc = view(sample_details_bti(caseWithSample))
 
       doc.getElementById("sample-requested-by") should containText("Tester Op")
-      doc.getElementById("sample-requested-return") should containText(SampleReturn.format(Some(SampleReturn.TO_BE_CONFIRMED)))
+      doc.getElementById("sample-requested-return") should containText(
+        SampleReturn.format(Some(SampleReturn.TO_BE_CONFIRMED))
+      )
     }
 
     "not render sample requested when not present on case" in {

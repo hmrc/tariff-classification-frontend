@@ -25,46 +25,38 @@ sealed trait Application {
   val `type`: ApplicationType
   val contact: Contact
 
-  def asBTI: BTIApplication = {
+  def asBTI: BTIApplication =
     this.asInstanceOf[BTIApplication]
-  }
 
-  def asLiabilityOrder: LiabilityOrder = {
+  def asLiabilityOrder: LiabilityOrder =
     this.asInstanceOf[LiabilityOrder]
-  }
 
-  def isBTI: Boolean = {
+  def isBTI: Boolean =
     this.isInstanceOf[BTIApplication]
-  }
 
-  def isLiabilityOrder: Boolean = {
+  def isLiabilityOrder: Boolean =
     this.isInstanceOf[LiabilityOrder]
-  }
 
-  def isLiveLiabilityOrder: Boolean = {
+  def isLiveLiabilityOrder: Boolean =
     isLiabilityOrder && asLiabilityOrder.status == LiabilityStatus.LIVE
-  }
 
-  def businessName: String = {
+  def businessName: String =
     `type` match {
-      case ApplicationType.BTI => asBTI.holder.businessName
+      case ApplicationType.BTI             => asBTI.holder.businessName
       case ApplicationType.LIABILITY_ORDER => asLiabilityOrder.traderName
     }
-  }
 
-  def goodsName: String = {
+  def goodsName: String =
     `type` match {
-      case ApplicationType.BTI => asBTI.goodName
+      case ApplicationType.BTI             => asBTI.goodName
       case ApplicationType.LIABILITY_ORDER => asLiabilityOrder.goodName.getOrElse("")
     }
-  }
 
-  def getType: String = {
+  def getType: String =
     `type` match {
-      case ApplicationType.BTI => "BTI"
+      case ApplicationType.BTI             => "BTI"
       case ApplicationType.LIABILITY_ORDER => "Liability"
     }
-  }
 }
 
 object ApplicationType extends Enumeration {
@@ -72,8 +64,7 @@ object ApplicationType extends Enumeration {
   val BTI, LIABILITY_ORDER = Value
 }
 
-case class BTIApplication
-(
+case class BTIApplication(
   holder: EORIDetails,
   override val contact: Contact,
   agent: Option[AgentDetails] = None,
@@ -84,7 +75,7 @@ case class BTIApplication
   otherInformation: Option[String],
   reissuedBTIReference: Option[String],
   relatedBTIReference: Option[String] = None,
-  relatedBTIReferences: List[String] = Nil,
+  relatedBTIReferences: List[String]  = Nil,
   knownLegalProceedings: Option[String],
   envisagedCommodityCode: Option[String],
   sampleToBeProvided: Boolean,
@@ -93,25 +84,23 @@ case class BTIApplication
   override val `type`: models.ApplicationType.Value = ApplicationType.BTI
 }
 
-case class AgentDetails
-(
+case class AgentDetails(
   eoriDetails: EORIDetails,
   letterOfAuthorisation: Option[Attachment]
 )
 
-case class LiabilityOrder
-(
+case class LiabilityOrder(
   override val contact: Contact,
   status: LiabilityStatus,
   traderName: String,
-  goodName: Option[String] = None,
-  entryDate: Option[Instant] = None,
-  entryNumber: Option[String] = None,
-  traderCommodityCode: Option[String] = None,
-  officerCommodityCode: Option[String] = None,
-  btiReference: Option[String] = None,
-  repaymentClaim: Option[RepaymentClaim] = None,
-  dateOfReceipt: Option[Instant] = None,
+  goodName: Option[String]                           = None,
+  entryDate: Option[Instant]                         = None,
+  entryNumber: Option[String]                        = None,
+  traderCommodityCode: Option[String]                = None,
+  officerCommodityCode: Option[String]               = None,
+  btiReference: Option[String]                       = None,
+  repaymentClaim: Option[RepaymentClaim]             = None,
+  dateOfReceipt: Option[Instant]                     = None,
   traderContactDetails: Option[TraderContactDetails] = None
 ) extends Application {
   override val `type`: models.ApplicationType.Value = ApplicationType.LIABILITY_ORDER
@@ -121,16 +110,14 @@ object LiabilityStatus extends Enumeration {
   type LiabilityStatus = Value
   val LIVE, NON_LIVE = Value
 
-  def format(liabilityStatus: LiabilityStatus) : String = {
+  def format(liabilityStatus: LiabilityStatus): String =
     liabilityStatus match {
-      case LIVE => "Live"
+      case LIVE     => "Live"
       case NON_LIVE => "Non-live"
     }
-  }
 }
 
-case class EORIDetails
-(
+case class EORIDetails(
   eori: String,
   businessName: String,
   addressLine1: String,
@@ -140,8 +127,7 @@ case class EORIDetails
   country: String
 )
 
-case class Contact
-(
+case class Contact(
   name: String,
   email: String,
   phone: Option[String] = None

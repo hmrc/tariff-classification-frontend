@@ -31,17 +31,18 @@ import scala.concurrent.Future.{failed, successful}
 
 class CasesService_AssignCaseSpec extends ServiceSpecBase with BeforeAndAfterEach with ConnectorCaptor {
 
-  private val manyCases = mock[Seq[Case]]
-  private val oneCase = mock[Option[Case]]
-  private val connector = mock[BindingTariffClassificationConnector]
-  private val rulingConnector = mock[RulingConnector]
-  private val emailService = mock[EmailService]
+  private val manyCases        = mock[Seq[Case]]
+  private val oneCase          = mock[Option[Case]]
+  private val connector        = mock[BindingTariffClassificationConnector]
+  private val rulingConnector  = mock[RulingConnector]
+  private val emailService     = mock[EmailService]
   private val reportingService = mock[ReportingService]
   private val fileStoreService = mock[FileStoreService]
-  private val audit = mock[AuditService]
-  private val aCase = Cases.btiCaseExample
+  private val audit            = mock[AuditService]
+  private val aCase            = Cases.btiCaseExample
 
-  private val service = new CasesService(realAppConfig, audit, emailService, fileStoreService,reportingService, connector, rulingConnector)
+  private val service =
+    new CasesService(realAppConfig, audit, emailService, fileStoreService, reportingService, connector, rulingConnector)
 
   override protected def afterEach(): Unit = {
     super.afterEach()
@@ -52,11 +53,12 @@ class CasesService_AssignCaseSpec extends ServiceSpecBase with BeforeAndAfterEac
     "update case status to REFERRED" in {
       // Given
       val operator: Operator = Operator("operator-id", Some("Billy Bobbins"))
-      val originalCase = aCase.copy(assignee = None)
-      val caseUpdated = aCase.copy(assignee = Some(operator))
+      val originalCase       = aCase.copy(assignee = None)
+      val caseUpdated        = aCase.copy(assignee = Some(operator))
 
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
-      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])).willReturn(successful(mock[Event]))
+      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
+        .willReturn(successful(mock[Event]))
 
       // When
       await(service.assignCase(originalCase, operator)) shouldBe caseUpdated
@@ -69,12 +71,12 @@ class CasesService_AssignCaseSpec extends ServiceSpecBase with BeforeAndAfterEac
 
       val eventCreated = theEventCreatedFor(connector, caseUpdated)
       eventCreated.operator shouldBe Operator("operator-id", Some("Billy Bobbins"))
-      eventCreated.details shouldBe AssignmentChange(None, Some(operator))
+      eventCreated.details  shouldBe AssignmentChange(None, Some(operator))
     }
 
     "not create event on update failure" in {
       val operator: Operator = Operator("operator-id")
-      val originalCase = aCase.copy(assignee = None)
+      val originalCase       = aCase.copy(assignee = None)
 
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(failed(new RuntimeException()))
 
@@ -89,11 +91,12 @@ class CasesService_AssignCaseSpec extends ServiceSpecBase with BeforeAndAfterEac
     "succeed on event create failure" in {
       // Given
       val operator: Operator = Operator("operator-id")
-      val originalCase = aCase.copy(assignee = None)
-      val caseUpdated = aCase.copy(assignee = Some(operator))
+      val originalCase       = aCase.copy(assignee = None)
+      val caseUpdated        = aCase.copy(assignee = Some(operator))
 
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
-      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])).willReturn(failed(new RuntimeException()))
+      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
+        .willReturn(failed(new RuntimeException()))
 
       // When Then
       await(service.assignCase(originalCase, operator)) shouldBe caseUpdated
@@ -107,8 +110,8 @@ class CasesService_AssignCaseSpec extends ServiceSpecBase with BeforeAndAfterEac
     "do not create an event when there is no assignee on either of the cases" in {
       // Given
       val operator: Operator = Operator("operator-id")
-      val originalCase = aCase.copy(assignee = None)
-      val caseUpdated = aCase.copy(assignee = None)
+      val originalCase       = aCase.copy(assignee = None)
+      val caseUpdated        = aCase.copy(assignee = None)
 
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
 

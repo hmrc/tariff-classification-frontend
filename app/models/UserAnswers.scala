@@ -19,8 +19,7 @@ package models
 import uk.gov.hmrc.http.cache.client.CacheMap
 import utils.Enumerable
 
-case class UserAnswers(cacheMap: CacheMap) extends Enumerable.Implicits {
-}
+case class UserAnswers(cacheMap: CacheMap) extends Enumerable.Implicits {}
 
 object UserAnswers {
 

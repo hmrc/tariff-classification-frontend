@@ -25,15 +25,19 @@ class CaseReportTest extends ModelsBaseSpec {
 
   private val report = CaseReport(
     filter = CaseReportFilter(
-      decisionStartDate = Some(InstantRange(
-        min = Instant.EPOCH,
-        max  = Instant.EPOCH.plusSeconds(1)
-      )),
-      referralDate = Some(InstantRange(
-        min = Instant.EPOCH,
-        max  = Instant.EPOCH.plusSeconds(1)
-      )),
-      status = Some(Set("OPEN")),
+      decisionStartDate = Some(
+        InstantRange(
+          min = Instant.EPOCH,
+          max = Instant.EPOCH.plusSeconds(1)
+        )
+      ),
+      referralDate = Some(
+        InstantRange(
+          min = Instant.EPOCH,
+          max = Instant.EPOCH.plusSeconds(1)
+        )
+      ),
+      status          = Some(Set("OPEN")),
       applicationType = Some(Set("BTI"))
     ),
     field = CaseReportField.ACTIVE_DAYS_ELAPSED,
@@ -43,12 +47,12 @@ class CaseReportTest extends ModelsBaseSpec {
   private val params: Map[String, Seq[String]] = Map(
     "min_decision_start" -> Seq("1970-01-01T00:00:00Z"),
     "max_decision_start" -> Seq("1970-01-01T00:00:01Z"),
-    "min_referral_date" -> Seq("1970-01-01T00:00:00Z"),
-    "max_referral_date" -> Seq("1970-01-01T00:00:01Z"),
-    "status"  -> Seq("OPEN"),
-    "application_type" -> Seq("BTI"),
-    "report_field" -> Seq("active-days-elapsed"),
-    "report_group" -> Seq("queue-id")
+    "min_referral_date"  -> Seq("1970-01-01T00:00:00Z"),
+    "max_referral_date"  -> Seq("1970-01-01T00:00:01Z"),
+    "status"             -> Seq("OPEN"),
+    "application_type"   -> Seq("BTI"),
+    "report_field"       -> Seq("active-days-elapsed"),
+    "report_group"       -> Seq("queue-id")
   )
 
   /**

@@ -21,10 +21,14 @@ import models._
 import play.api.http.Status
 import play.api.test.Helpers._
 
+import scala.concurrent.ExecutionContext.Implicits.global
+
 class IndexControllerSpec extends ControllerBaseSpec {
 
   private def controller(role: Role) = new IndexController(
-    new SuccessfulAuthenticatedAction(defaultPlayBodyParsers, Operator(id = "0", role = role)), mcc, realAppConfig
+    new SuccessfulAuthenticatedAction(playBodyParsers, Operator(id = "0", role = role)),
+    mcc,
+    realAppConfig
   )
 
   "GET" should {
@@ -32,25 +36,25 @@ class IndexControllerSpec extends ControllerBaseSpec {
     "Load Homepage for Read Only role" in {
       val result = await(controller(Role.READ_ONLY).get()(fakeRequest))
 
-      status(result) shouldBe OK
-      bodyOf(result) should include("read_only_home-heading")
-      session(result).get(SessionKeys.backToQueuesLinkLabel) shouldBe Some("")
-      session(result).get(SessionKeys.backToQueuesLinkUrl) shouldBe Some("/manage-tariff-classifications")
+      status(result)                                                shouldBe OK
+      bodyOf(result)                                                should include("read_only_home-heading")
+      session(result).get(SessionKeys.backToQueuesLinkLabel)        shouldBe Some("")
+      session(result).get(SessionKeys.backToQueuesLinkUrl)          shouldBe Some("/manage-tariff-classifications")
       session(result).get(SessionKeys.backToSearchResultsLinkLabel) shouldBe None
-      session(result).get(SessionKeys.backToSearchResultsLinkUrl) shouldBe None
+      session(result).get(SessionKeys.backToSearchResultsLinkUrl)   shouldBe None
     }
 
     "Redirect for Officer role" in {
       val result = await(controller(Role.CLASSIFICATION_OFFICER).get()(fakeRequest))
 
-      status(result) shouldBe Status.SEE_OTHER
+      status(result)           shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.MyCasesController.myCases().url)
     }
 
     "Redirect for Manager role" in {
       val result = await(controller(Role.CLASSIFICATION_MANAGER).get()(fakeRequest))
 
-      status(result) shouldBe Status.SEE_OTHER
+      status(result)           shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.MyCasesController.myCases().url)
     }
   }

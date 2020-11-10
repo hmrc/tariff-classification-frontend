@@ -17,7 +17,6 @@
 package controllers
 
 import javax.inject.Inject
-import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import config.AppConfig
@@ -28,14 +27,15 @@ import views.html.release_or_suppress
 
 import scala.concurrent.Future.successful
 
-class ReleaseOrSuppressCaseController @Inject()(
+class ReleaseOrSuppressCaseController @Inject() (
   verify: RequestActions,
   casesService: CasesService,
   mcc: MessagesControllerComponents,
   implicit val appConfig: AppConfig
-) extends FrontendController(mcc) with RenderCaseAction {
+) extends FrontendController(mcc)
+    with RenderCaseAction {
 
-  override protected val config: AppConfig = appConfig
+  override protected val config: AppConfig         = appConfig
   override protected val caseService: CasesService = casesService
 
   val form = new CaseStatusRadioInputFormProvider()()
@@ -52,10 +52,10 @@ class ReleaseOrSuppressCaseController @Inject()(
       verify.casePermissions(reference) andThen
       verify.mustHaveOneOf(Seq(Permission.SUPPRESS_CASE, Permission.RELEASE_CASE))) { implicit request =>
       form.bindFromRequest.fold(
-        hasErrors => Ok(release_or_suppress(request.`case`, hasErrors, activeTab)),
-        {
-          case CaseStatusRadioInput.Release        => Redirect(routes.ReleaseCaseController.releaseCase(reference, activeTab))
-          case CaseStatusRadioInput.Suppress       => Redirect(routes.SuppressCaseController.getSuppressCase(reference, activeTab))
+        hasErrors => Ok(release_or_suppress(request.`case`, hasErrors, activeTab)), {
+          case CaseStatusRadioInput.Release => Redirect(routes.ReleaseCaseController.releaseCase(reference, activeTab))
+          case CaseStatusRadioInput.Suppress =>
+            Redirect(routes.SuppressCaseController.getSuppressCase(reference, activeTab))
         }
       )
     }

@@ -31,15 +31,16 @@ import scala.concurrent.Future.{failed, successful}
 
 class CasesService_UpdateSampleStatusSpec extends ServiceSpecBase with BeforeAndAfterEach with ConnectorCaptor {
 
-  private val connector = mock[BindingTariffClassificationConnector]
-  private val rulingConnector = mock[RulingConnector]
-  private val emailService = mock[EmailService]
+  private val connector        = mock[BindingTariffClassificationConnector]
+  private val rulingConnector  = mock[RulingConnector]
+  private val emailService     = mock[EmailService]
   private val fileStoreService = mock[FileStoreService]
   private val reportingService = mock[ReportingService]
-  private val audit = mock[AuditService]
-  private val aCase = Cases.btiCaseExample
+  private val audit            = mock[AuditService]
+  private val aCase            = Cases.btiCaseExample
 
-  private val service = new CasesService(realAppConfig, audit, emailService, fileStoreService, reportingService, connector, rulingConnector)
+  private val service =
+    new CasesService(realAppConfig, audit, emailService, fileStoreService, reportingService, connector, rulingConnector)
 
   override protected def afterEach(): Unit = {
     super.afterEach()
@@ -51,50 +52,56 @@ class CasesService_UpdateSampleStatusSpec extends ServiceSpecBase with BeforeAnd
     "update case sample status to None" in {
       // Given
       val operator: Operator = Operator("operator-id", None)
-      val originalCase = aCase.copy(sample = aCase.sample.copy(status = Some(SampleStatus.MOVED_TO_ACT)))
-      val caseUpdated = aCase.copy(sample = aCase.sample.copy(status = None))
+      val originalCase       = aCase.copy(sample = aCase.sample.copy(status = Some(SampleStatus.MOVED_TO_ACT)))
+      val caseUpdated        = aCase.copy(sample = aCase.sample.copy(status = None))
 
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
-      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])).willReturn(successful(mock[Event]))
+      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
+        .willReturn(successful(mock[Event]))
 
       // When Then
       await(service.updateSampleStatus(originalCase, None, operator)) shouldBe caseUpdated
 
-      verify(audit).auditSampleStatusChange(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
+      verify(audit).auditSampleStatusChange(refEq(originalCase), refEq(caseUpdated), refEq(operator))(
+        any[HeaderCarrier]
+      )
 
       val caseUpdating = theCaseUpdating(connector)
       caseUpdating.sample.status shouldBe None
 
       val eventCreated = theEventCreatedFor(connector, caseUpdated)
       eventCreated.operator shouldBe Operator("operator-id")
-      eventCreated.details shouldBe SampleStatusChange(Some(SampleStatus.MOVED_TO_ACT), None)
+      eventCreated.details  shouldBe SampleStatusChange(Some(SampleStatus.MOVED_TO_ACT), None)
     }
 
     "update case sample status from None" in {
       // Given
       val operator: Operator = Operator("operator-id", None)
-      val originalCase = aCase.copy(sample = aCase.sample.copy(status = None))
-      val caseUpdated = aCase.copy(sample = aCase.sample.copy(status = Some(SampleStatus.DESTROYED)))
+      val originalCase       = aCase.copy(sample = aCase.sample.copy(status = None))
+      val caseUpdated        = aCase.copy(sample = aCase.sample.copy(status = Some(SampleStatus.DESTROYED)))
 
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
-      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])).willReturn(successful(mock[Event]))
+      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
+        .willReturn(successful(mock[Event]))
 
       // When Then
       await(service.updateSampleStatus(originalCase, Some(SampleStatus.DESTROYED), operator)) shouldBe caseUpdated
 
-      verify(audit).auditSampleStatusChange(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
+      verify(audit).auditSampleStatusChange(refEq(originalCase), refEq(caseUpdated), refEq(operator))(
+        any[HeaderCarrier]
+      )
 
       val caseUpdating = theCaseUpdating(connector)
       caseUpdating.sample.status shouldBe Some(SampleStatus.DESTROYED)
 
       val eventCreated = theEventCreatedFor(connector, caseUpdated)
       eventCreated.operator shouldBe Operator("operator-id")
-      eventCreated.details shouldBe SampleStatusChange(None, Some(SampleStatus.DESTROYED))
+      eventCreated.details  shouldBe SampleStatusChange(None, Some(SampleStatus.DESTROYED))
     }
 
     "not create event on update failure" in {
       val operator: Operator = Operator("operator-id")
-      val originalCase = aCase.copy(sample = aCase.sample.copy(status = Some(SampleStatus.MOVED_TO_ELM)))
+      val originalCase       = aCase.copy(sample = aCase.sample.copy(status = Some(SampleStatus.MOVED_TO_ELM)))
 
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(failed(new RuntimeException()))
 
@@ -109,16 +116,19 @@ class CasesService_UpdateSampleStatusSpec extends ServiceSpecBase with BeforeAnd
     "succeed on event create failure" in {
       // Given
       val operator: Operator = Operator("operator-id")
-      val originalCase = aCase.copy(sample = Sample())
-      val caseUpdated = aCase.copy(sample = Sample())
+      val originalCase       = aCase.copy(sample = Sample())
+      val caseUpdated        = aCase.copy(sample = Sample())
 
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
-      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])).willReturn(failed(new RuntimeException()))
+      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
+        .willReturn(failed(new RuntimeException()))
 
       // When Then
       await(service.updateSampleStatus(originalCase, None, operator)) shouldBe caseUpdated
 
-      verify(audit).auditSampleStatusChange(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
+      verify(audit).auditSampleStatusChange(refEq(originalCase), refEq(caseUpdated), refEq(operator))(
+        any[HeaderCarrier]
+      )
 
       val caseUpdating = theCaseUpdating(connector)
       caseUpdating.sample.status shouldBe None

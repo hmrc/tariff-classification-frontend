@@ -19,36 +19,36 @@ package models.viewmodels
 import models.{Case, Permission}
 
 case class RulingViewModel(
-                            commodityCodeEnteredByTraderOrAgent: String,
-                            commodityCodeSuggestedByOfficer: String,
-                            commodityCode: String,
-                            itemDescription: String,
-                            justification: String,
-                            methodSearch: String,
-                            methodExclusion: String,
-                            showEditRuling: Boolean,
-                            caseReference: String
-                          )
+  commodityCodeEnteredByTraderOrAgent: String,
+  commodityCodeSuggestedByOfficer: String,
+  commodityCode: String,
+  itemDescription: String,
+  justification: String,
+  methodSearch: String,
+  methodExclusion: String,
+  showEditRuling: Boolean,
+  caseReference: String
+)
 
 object RulingViewModel {
 
   def fromCase(c: Case, permissions: Set[Permission] = Set.empty): RulingViewModel = {
 
-    val bindingCommodityCode = c.decision.fold("")(_.bindingCommodityCode)
-    val goodsDescription = c.decision.fold("")(_.goodsDescription)
-    val decisionJustification = c.decision.fold("")(_.justification)
-    val decisionMethodSearch = c.decision.fold("")(_.methodSearch.getOrElse(""))
+    val bindingCommodityCode    = c.decision.fold("")(_.bindingCommodityCode)
+    val goodsDescription        = c.decision.fold("")(_.goodsDescription)
+    val decisionJustification   = c.decision.fold("")(_.justification)
+    val decisionMethodSearch    = c.decision.fold("")(_.methodSearch.getOrElse(""))
     val decisionMethodExclusion = c.decision.fold("")(_.methodExclusion.getOrElse(""))
 
     RulingViewModel(
       commodityCodeEnteredByTraderOrAgent = c.application.asLiabilityOrder.traderCommodityCode.getOrElse(""),
-      commodityCodeSuggestedByOfficer = c.application.asLiabilityOrder.officerCommodityCode.getOrElse(""),
-      commodityCode = bindingCommodityCode,
-      itemDescription = goodsDescription,
-      justification = decisionJustification,
-      methodSearch = decisionMethodSearch,
-      methodExclusion = decisionMethodExclusion,
-      showEditRuling = permissions.contains(Permission.EDIT_RULING),
+      commodityCodeSuggestedByOfficer     = c.application.asLiabilityOrder.officerCommodityCode.getOrElse(""),
+      commodityCode                       = bindingCommodityCode,
+      itemDescription                     = goodsDescription,
+      justification                       = decisionJustification,
+      methodSearch                        = decisionMethodSearch,
+      methodExclusion                     = decisionMethodExclusion,
+      showEditRuling                      = permissions.contains(Permission.EDIT_RULING),
       c.reference
     )
   }

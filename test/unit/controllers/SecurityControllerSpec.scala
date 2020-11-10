@@ -28,9 +28,9 @@ class SecurityControllerSpec extends ControllerBaseSpec {
     "return 200 OK and HTML content type" in {
       val result = await(controller.unauthorized()(fakeRequest))
 
-      status(result) shouldBe Status.OK
+      status(result)      shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
+      charset(result)     shouldBe Some("utf-8")
     }
 
   }

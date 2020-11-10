@@ -30,7 +30,7 @@ class LiabilityEditDetailsViewSpec extends ViewSpec {
     "Render all fields for an empty form" in {
       // Given
       val c = aCase(withLiabilityApplication())
-      val l  = c
+      val l = c
 
       // When
       val doc = view(liability_details_edit(c, LiabilityDetailsForm.liabilityDetailsForm(l)))
@@ -41,29 +41,31 @@ class LiabilityEditDetailsViewSpec extends ViewSpec {
 
     "Render all fields with expected values" in {
       // Given
-      val c = aCase(withLiabilityApplication(
-        entryNumber = Some("entry number"),
-        traderName = "trader name",
-        goodName = Some("good name"),
-        traderCommodityCode = Some("123"),
-        officerCommodityCode = Some("321"),
-        contact = Contact(name  = "name", email = "email", phone = Some("phone"))
-      ))
-      val l  = c
+      val c = aCase(
+        withLiabilityApplication(
+          entryNumber          = Some("entry number"),
+          traderName           = "trader name",
+          goodName             = Some("good name"),
+          traderCommodityCode  = Some("123"),
+          officerCommodityCode = Some("321"),
+          contact              = Contact(name = "name", email = "email", phone = Some("phone"))
+        )
+      )
+      val l = c
 
       // When
-      val doc = view(liability_details_edit(c,LiabilityDetailsForm.liabilityDetailsForm(l)))
+      val doc = view(liability_details_edit(c, LiabilityDetailsForm.liabilityDetailsForm(l)))
 
       // Then
-      doc should containElementWithID("liability-details-edit-form")
-      doc.getElementById("entryNumber").attr("value") shouldBe "entry number"
-      doc.getElementById("traderName").attr("value") shouldBe "trader name"
-      doc.getElementById("goodName").attr("value") shouldBe "good name"
-      doc.getElementById("traderCommodityCode").attr("value") shouldBe "123"
+      doc                                                      should containElementWithID("liability-details-edit-form")
+      doc.getElementById("entryNumber").attr("value")          shouldBe "entry number"
+      doc.getElementById("traderName").attr("value")           shouldBe "trader name"
+      doc.getElementById("goodName").attr("value")             shouldBe "good name"
+      doc.getElementById("traderCommodityCode").attr("value")  shouldBe "123"
       doc.getElementById("officerCommodityCode").attr("value") shouldBe "321"
-      doc.getElementById("contactName").attr("value") shouldBe "name"
-      doc.getElementById("contactEmail").attr("value") shouldBe "email"
-      doc.getElementById("contactPhone").attr("value") shouldBe "phone"
+      doc.getElementById("contactName").attr("value")          shouldBe "name"
+      doc.getElementById("contactEmail").attr("value")         shouldBe "email"
+      doc.getElementById("contactPhone").attr("value")         shouldBe "phone"
     }
   }
 

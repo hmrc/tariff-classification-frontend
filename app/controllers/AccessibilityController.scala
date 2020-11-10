@@ -23,16 +23,16 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-class AccessibilityController @Inject()(authenticate: AuthenticatedAction,
-                                        mcc: MessagesControllerComponents,
-                                        accessibility_view: views.html.accessibility_view,
-                                        implicit val appConfig: AppConfig
-                                       ) extends FrontendController(mcc) with I18nSupport {
-
+class AccessibilityController @Inject() (
+  authenticate: AuthenticatedAction,
+  mcc: MessagesControllerComponents,
+  accessibility_view: views.html.accessibility_view,
+  implicit val appConfig: AppConfig
+) extends FrontendController(mcc)
+    with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = authenticate { implicit request: AuthenticatedRequest[AnyContent] =>
     Ok(accessibility_view())
   }
 
 }
-

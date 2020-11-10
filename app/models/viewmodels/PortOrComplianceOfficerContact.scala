@@ -16,4 +16,4 @@
 
 package models.viewmodels
 
-case class PortOrComplianceOfficerContact (name: String, email: String, telephone: String)
+case class PortOrComplianceOfficerContact(name: String, email: String, telephone: String)

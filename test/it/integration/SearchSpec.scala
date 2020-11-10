@@ -12,10 +12,13 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
     "Filter by 'Case Reference'" in {
       // Given
       givenAuthSuccess()
-      stubFor(get(urlEqualTo("/cases/1"))
-        .willReturn(aResponse()
-          .withStatus(OK)
-          .withBody(CasePayloads.simpleBtiCase))
+      stubFor(
+        get(urlEqualTo("/cases/1"))
+          .willReturn(
+            aResponse()
+              .withStatus(OK)
+              .withBody(CasePayloads.simpleBtiCase)
+          )
       )
 
       // When
@@ -23,7 +26,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body should include("trader-heading")
+      response.body   should include("trader-heading")
     }
   }
 
@@ -41,15 +44,16 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       response.body shouldNot include("id=\"advanced_search-results_and_filters\"")
     }
 
-
-
     "Filter by 'Trader Name'" in {
       // Given
       givenAuthSuccess()
-      stubFor(get(urlMatching("/cases\\?.*trader_name=1.*"))
-        .willReturn(aResponse()
-          .withStatus(OK)
-          .withBody(CasePayloads.pagedGatewayCases))
+      stubFor(
+        get(urlMatching("/cases\\?.*trader_name=1.*"))
+          .willReturn(
+            aResponse()
+              .withStatus(OK)
+              .withBody(CasePayloads.pagedGatewayCases)
+          )
       )
 
       // When
@@ -57,7 +61,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body should include("id=\"advanced_search-results_and_filters\"")
+      response.body   should include("id=\"advanced_search-results_and_filters\"")
     }
   }
 
@@ -78,10 +82,13 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
     "Filter by 'Commodity Code'" in {
       // Given
       givenAuthSuccess()
-      stubFor(get(urlMatching("/cases\\?.*commodity_code=1.*"))
-        .willReturn(aResponse()
-          .withStatus(OK)
-          .withBody(CasePayloads.pagedGatewayCases))
+      stubFor(
+        get(urlMatching("/cases\\?.*commodity_code=1.*"))
+          .willReturn(
+            aResponse()
+              .withStatus(OK)
+              .withBody(CasePayloads.pagedGatewayCases)
+          )
       )
 
       // When
@@ -89,7 +96,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body should include("id=\"advanced_search-results_and_filters\"")
+      response.body   should include("id=\"advanced_search-results_and_filters\"")
     }
   }
 
@@ -110,10 +117,13 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
     "Filter by 'Good Description'" in {
       // Given
       givenAuthSuccess()
-      stubFor(get(urlMatching("/cases\\?.*decision_details=1.*"))
-        .willReturn(aResponse()
-          .withStatus(OK)
-          .withBody(CasePayloads.pagedGatewayCases))
+      stubFor(
+        get(urlMatching("/cases\\?.*decision_details=1.*"))
+          .willReturn(
+            aResponse()
+              .withStatus(OK)
+              .withBody(CasePayloads.pagedGatewayCases)
+          )
       )
 
       // When
@@ -121,7 +131,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body should include("id=\"advanced_search-results_and_filters\"")
+      response.body   should include("id=\"advanced_search-results_and_filters\"")
     }
   }
 
@@ -142,10 +152,13 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
     "Filter by 'Keyword'" in {
       // Given
       givenAuthSuccess()
-      stubFor(get(urlMatching("/cases\\?.*keyword=k1&keyword=k2.*"))
-        .willReturn(aResponse()
-          .withStatus(OK)
-          .withBody(CasePayloads.pagedGatewayCases))
+      stubFor(
+        get(urlMatching("/cases\\?.*keyword=k1&keyword=k2.*"))
+          .willReturn(
+            aResponse()
+              .withStatus(OK)
+              .withBody(CasePayloads.pagedGatewayCases)
+          )
       )
 
       // When
@@ -153,12 +166,12 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body should include("id=\"advanced_search-results_and_filters\"")
+      response.body   should include("id=\"advanced_search-results_and_filters\"")
     }
   }
 
   "Search by 'Live Rulings Only'" should {
-    val dateRegex = "\\d{4}-\\d{2}-\\d{2}T\\d{2}%3A\\d{2}%3A\\d{2}(\\.\\d{3})\\\\?Z"
+    val dateRegex                         = "\\d{4}-\\d{2}-\\d{2}T\\d{2}%3A\\d{2}%3A\\d{2}(\\.\\d{3})\\\\?Z"
     def excluding(value: String*): String = s"(${value.map(v => s"(?!$v)").mkString}.)*"
 
     "Do nothing when empty" in {
@@ -190,10 +203,13 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       // Given
       givenAuthSuccess()
 
-      stubFor(get(urlMatching(s"/cases\\?.*min_decision_end=$dateRegex&status=COMPLETED"))
-        .willReturn(aResponse()
-          .withStatus(OK)
-          .withBody(CasePayloads.pagedGatewayCases))
+      stubFor(
+        get(urlMatching(s"/cases\\?.*min_decision_end=$dateRegex&status=COMPLETED"))
+          .willReturn(
+            aResponse()
+              .withStatus(OK)
+              .withBody(CasePayloads.pagedGatewayCases)
+          )
       )
 
       // When
@@ -201,17 +217,20 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body should include("id=\"advanced_search-results_and_filters\"")
+      response.body   should include("id=\"advanced_search-results_and_filters\"")
     }
 
     // Note the UI actually calls search WITHOUT the live_rulings_only flag when unchecked
     "Filter Live Rulings Only when not present" in {
       // Given
       givenAuthSuccess()
-      stubFor(get(urlMatching(s"/cases\\?${excluding("status=", "min_decision_end=")}"))
-        .willReturn(aResponse()
-          .withStatus(OK)
-          .withBody(CasePayloads.pagedGatewayCases))
+      stubFor(
+        get(urlMatching(s"/cases\\?${excluding("status=", "min_decision_end=")}"))
+          .willReturn(
+            aResponse()
+              .withStatus(OK)
+              .withBody(CasePayloads.pagedGatewayCases)
+          )
       )
 
       // When
@@ -219,16 +238,19 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body should include("id=\"advanced_search-results_and_filters\"")
+      response.body   should include("id=\"advanced_search-results_and_filters\"")
     }
 
     "Allow All Cases when 'false'" in {
       // Given
       givenAuthSuccess()
-      stubFor(get(urlMatching(s"/cases\\?${excluding("status=", "min_decision_end=")}"))
-        .willReturn(aResponse()
-          .withStatus(OK)
-          .withBody(CasePayloads.pagedGatewayCases))
+      stubFor(
+        get(urlMatching(s"/cases\\?${excluding("status=", "min_decision_end=")}"))
+          .willReturn(
+            aResponse()
+              .withStatus(OK)
+              .withBody(CasePayloads.pagedGatewayCases)
+          )
       )
 
       // When
@@ -236,7 +258,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body should include("id=\"advanced_search-results_and_filters\"")
+      response.body   should include("id=\"advanced_search-results_and_filters\"")
     }
   }
 
@@ -245,10 +267,13 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
     "Sort by default" in {
       // Given
       givenAuthSuccess()
-      stubFor(get(urlMatching("/cases\\?.*sort_direction=asc&sort_by=commodity-code.*"))
-        .willReturn(aResponse()
-          .withStatus(OK)
-          .withBody(CasePayloads.pagedGatewayCases))
+      stubFor(
+        get(urlMatching("/cases\\?.*sort_direction=asc&sort_by=commodity-code.*"))
+          .willReturn(
+            aResponse()
+              .withStatus(OK)
+              .withBody(CasePayloads.pagedGatewayCases)
+          )
       )
 
       // When
@@ -256,16 +281,19 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body should include("id=\"advanced_search-results_and_filters\"")
+      response.body   should include("id=\"advanced_search-results_and_filters\"")
     }
 
     "Sort by 'Commodity Code'" in {
       // Given
       givenAuthSuccess()
-      stubFor(get(urlMatching("/cases\\?.*sort_direction=desc&sort_by=commodity-code.*"))
-        .willReturn(aResponse()
-          .withStatus(OK)
-          .withBody(CasePayloads.pagedGatewayCases))
+      stubFor(
+        get(urlMatching("/cases\\?.*sort_direction=desc&sort_by=commodity-code.*"))
+          .willReturn(
+            aResponse()
+              .withStatus(OK)
+              .withBody(CasePayloads.pagedGatewayCases)
+          )
       )
 
       // When
@@ -273,7 +301,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body should include("id=\"advanced_search-results_and_filters\"")
+      response.body   should include("id=\"advanced_search-results_and_filters\"")
     }
 
     "redirect on auth failure" in {

@@ -285,7 +285,12 @@ class CountriesService {
     Country("UA", "title.ukraine", "UA", Nil),
     Country("AE", "title.united_arab_emirates", "AE", List("UAE", "emirati", "dubai", "abu dahbi", "abu dhabi")),
     Country("AE-UQ", "title.umm_al_qaiwain", "AE-UQ", Nil),
-    Country("GB", "title.united_kingdom_of_great_britain_and_northern_ireland_the", "GB", List("England", "Scotland", "Wales", "Northern Ireland", "GB", "UK")),
+    Country(
+      "GB",
+      "title.united_kingdom_of_great_britain_and_northern_ireland_the",
+      "GB",
+      List("England", "Scotland", "Wales", "Northern Ireland", "GB", "UK")
+    ),
     Country("US", "title.united_states_of_america", "US", List("USA", "US", "American")),
     Country("UY", "title.uruguay", "UY", Nil),
     Country("UZ", "title.uzbekistan", "UZ", Nil),

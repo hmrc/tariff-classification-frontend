@@ -21,10 +21,12 @@ import models.request._
 import play.api.test.Helpers._
 import play.api.mvc.Request
 
+import scala.concurrent.ExecutionContext.Implicits.global
+
 class AccessibilityControllerSpec extends ControllerBaseSpec {
   implicit val appConfig = realAppConfig
-  implicit val operator = Operator(id = "0", role = Role.CLASSIFICATION_OFFICER)
-  implicit val request = fakeRequest
+  implicit val operator  = Operator(id = "0", role = Role.CLASSIFICATION_OFFICER)
+  implicit val request   = fakeRequest
 
   implicit def authenticatedRequest[A](
     implicit
@@ -38,11 +40,11 @@ class AccessibilityControllerSpec extends ControllerBaseSpec {
   def viewAsString(): String = accessibility_view().toString
 
   private def action = new SuccessfulAuthenticatedAction(
-    defaultPlayBodyParsers,
+    playBodyParsers,
     operator
   )
 
-  private def controller =  new AccessibilityController(
+  private def controller = new AccessibilityController(
     action,
     mcc,
     accessibility_view,

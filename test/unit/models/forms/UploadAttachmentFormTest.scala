@@ -27,7 +27,6 @@ class UploadAttachmentFormTest extends ModelsBaseSpec {
       form.hasErrors shouldBe true
     }
 
-
     "Bind data" in {
       val form = UploadAttachmentForm.form.bindFromRequest(Map("file-input" -> Seq("other.pdf")))
 
@@ -40,10 +39,8 @@ class UploadAttachmentFormTest extends ModelsBaseSpec {
       val form = UploadAttachmentForm.form.fill("data.pdf")
 
       form.hasErrors shouldBe false
-      form.data shouldBe Map("file-input" -> "data.pdf")
+      form.data      shouldBe Map("file-input" -> "data.pdf")
     }
   }
-
-
 
 }

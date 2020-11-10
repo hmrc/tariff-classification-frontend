@@ -23,12 +23,11 @@ import models.{CancelReason, RulingCancellation}
 
 object CancelRulingForm {
 
-
-  lazy val form: Form[RulingCancellation] = Form(mapping(
-    "reason" -> oneOf("status.change.cancel.reason.error",CancelReason),
-    "note" -> textNonEmpty("error.empty.cancel.note")
-  )(RulingCancellation.apply)(RulingCancellation.unapply)
+  lazy val form: Form[RulingCancellation] = Form(
+    mapping(
+      "reason" -> oneOf("status.change.cancel.reason.error", CancelReason),
+      "note"   -> textNonEmpty("error.empty.cancel.note")
+    )(RulingCancellation.apply)(RulingCancellation.unapply)
   )
-
 
 }

@@ -19,7 +19,6 @@ package config
 import com.google.inject.AbstractModule
 import connector.{DataCacheConnector, MongoCacheConnector}
 import controllers.actions._
-import uk.gov.hmrc.crypto.CompositeSymmetricCrypto
 
 class Module extends AbstractModule {
 
@@ -31,5 +30,3 @@ class Module extends AbstractModule {
     bind(classOf[DataCacheConnector]).to(classOf[MongoCacheConnector]).asEagerSingleton()
   }
 }
-
-

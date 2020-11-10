@@ -25,33 +25,34 @@ import play.api.test.{FakeHeaders, FakeRequest}
 
 class ControllerBaseSpec extends SpecBase {
 
-  protected def locationOf(result: Result): Option[String] = {
+  protected def locationOf(result: Result): Option[String] =
     result.header.headers.get(LOCATION)
-  }
 
-  protected def contentTypeOf(result: Result): Option[String] = {
+  protected def contentTypeOf(result: Result): Option[String] =
     result.body.contentType.map(_.split(";").take(1).mkString.trim)
-  }
 
-  protected def charsetOf(result: Result): Option[String] = {
+  protected def charsetOf(result: Result): Option[String] =
     result.body.contentType match {
       case Some(s) if s.contains("charset=") => Some(s.split("; *charset=").drop(1).mkString.trim)
-      case _ => None
+      case _                                 => None
     }
-  }
 
-  protected def newFakeGETRequestWithCSRF(application: Application): FakeRequest[AnyContentAsEmpty.type] = {
-    FakeRequest("GET", "/", FakeHeaders(Seq("csrfToken"->"csrfToken")), AnyContentAsEmpty)
-      .withCSRFToken.asInstanceOf[FakeRequest[AnyContentAsEmpty.type]]
-  }
+  protected def newFakeGETRequestWithCSRF(application: Application): FakeRequest[AnyContentAsEmpty.type] =
+    FakeRequest("GET", "/", FakeHeaders(Seq("csrfToken" -> "csrfToken")), AnyContentAsEmpty).withCSRFToken
+      .asInstanceOf[FakeRequest[AnyContentAsEmpty.type]]
 
-  protected def newFakePOSTRequestWithCSRF(application: Application, body: String): FakeRequest[AnyContentAsText] = {
-    FakeRequest("POST", "/", FakeHeaders(Seq("csrfToken"->"csrfToken")), AnyContentAsText).withTextBody(body)
-      .withCSRFToken.asInstanceOf[FakeRequest[AnyContentAsText]]
-  }
+  protected def newFakePOSTRequestWithCSRF(application: Application, body: String): FakeRequest[AnyContentAsText] =
+    FakeRequest("POST", "/", FakeHeaders(Seq("csrfToken" -> "csrfToken")), AnyContentAsText)
+      .withTextBody(body)
+      .withCSRFToken
+      .asInstanceOf[FakeRequest[AnyContentAsText]]
 
-  protected def newFakePOSTRequestWithCSRF(application: Application, encodedBody: Map[String, String] = Map.empty): FakeRequest[AnyContentAsFormUrlEncoded] = {
-    FakeRequest("POST", "/", FakeHeaders(Seq("csrfToken"->"csrfToken")), AnyContentAsFormUrlEncoded).withFormUrlEncodedBody(encodedBody.toSeq: _*)
-      .withCSRFToken.asInstanceOf[FakeRequest[AnyContentAsFormUrlEncoded]]
-  }
+  protected def newFakePOSTRequestWithCSRF(
+    application: Application,
+    encodedBody: Map[String, String] = Map.empty
+  ): FakeRequest[AnyContentAsFormUrlEncoded] =
+    FakeRequest("POST", "/", FakeHeaders(Seq("csrfToken" -> "csrfToken")), AnyContentAsFormUrlEncoded)
+      .withFormUrlEncodedBody(encodedBody.toSeq: _*)
+      .withCSRFToken
+      .asInstanceOf[FakeRequest[AnyContentAsFormUrlEncoded]]
 }

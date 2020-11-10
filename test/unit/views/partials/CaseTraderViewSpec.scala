@@ -27,7 +27,8 @@ import views.html.partials.case_trader
 
 class CaseTraderViewSpec extends ViewSpec {
 
-  val requestWithReleaseAndSuppressPermission = requestWithPermissions(Permission.RELEASE_CASE, Permission.SUPPRESS_CASE)
+  val requestWithReleaseAndSuppressPermission =
+    requestWithPermissions(Permission.RELEASE_CASE, Permission.SUPPRESS_CASE)
   val countriesService = new CountriesService
 
   "Case Trader" should {
@@ -67,13 +68,14 @@ class CaseTraderViewSpec extends ViewSpec {
         withContact(Contact("name", "email", None))
       )
 
-      val letterOfAuthorization = Cases.storedAttachment.copy(id = "letter-of-auth-id", url = Some("url"), scanStatus = Some(ScanStatus.READY))
+      val letterOfAuthorization =
+        Cases.storedAttachment.copy(id = "letter-of-auth-id", url = Some("url"), scanStatus = Some(ScanStatus.READY))
 
       // When
       val doc = view(case_trader(`case`, Some(letterOfAuthorization), 0, s => Some("dummy country name")))
 
       // Then
-      doc should containElementWithID("agent-letter-file")
+      doc                                     should containElementWithID("agent-letter-file")
       doc.getElementById("agent-letter-file") should containText("View letter of authorisation")
     }
 

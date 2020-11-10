@@ -16,38 +16,43 @@
 
 package connector
 
-import java.time.{Clock, Instant, LocalDate, ZoneOffset}
-
 import com.github.tomakehurst.wiremock.client.WireMock._
+import java.time.Instant
 import models._
 import org.apache.http.HttpStatus
 import play.api.libs.json.Json
-import uk.gov.hmrc.http.NotFoundException
 import utils._
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import uk.gov.hmrc.http.UpstreamErrorResponse
 
 class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQueueBuilder {
 
   import utils.JsonFormatters._
 
   private val gatewayQueue = Queue("1", "gateway", "Gateway")
-  private val otherQueue = Queue("2", "other", "Other")
-  private val pagination = SearchPagination(1, 2)
-  private val currentTime = LocalDate.of(2019,1,1).atStartOfDay().toInstant(ZoneOffset.UTC)
-  private implicit val clock: Clock = Clock.fixed(currentTime, ZoneOffset.UTC)
+  private val otherQueue   = Queue("2", "other", "Other")
+  private val pagination   = SearchPagination(1, 2)
 
   private val connector = new BindingTariffClassificationConnector(mockAppConfig, authenticatedHttpClient, metrics)
 
   "Connector 'Get Cases By Queue'" should {
 
     "get empty cases in 'gateway' queue" in {
-      val url = buildQueryUrl(withStatuses = "NEW,OPEN,REFERRED,SUSPENDED", queueId = "none", assigneeId = "none", pag =  TestPagination())
+      val url = buildQueryUrl(
+        withStatuses = "NEW,OPEN,REFERRED,SUSPENDED",
+        queueId      = "none",
+        assigneeId   = "none",
+        pag          = TestPagination()
+      )
 
-      stubFor(get(urlEqualTo(url))
-        .willReturn(aResponse()
-          .withStatus(HttpStatus.SC_OK)
-          .withBody(CasePayloads.pagedEmpty))
+      stubFor(
+        get(urlEqualTo(url))
+          .willReturn(
+            aResponse()
+              .withStatus(HttpStatus.SC_OK)
+              .withBody(CasePayloads.pagedEmpty)
+          )
       )
 
       await(connector.findCasesByQueue(gatewayQueue, pagination)) shouldBe Paged.empty[Case]
@@ -59,12 +64,20 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
     }
 
     "get cases in 'gateway' queue" in {
-      val url = buildQueryUrl(withStatuses = "NEW,OPEN,REFERRED,SUSPENDED", queueId = "none", assigneeId = "none", pag =  TestPagination())
+      val url = buildQueryUrl(
+        withStatuses = "NEW,OPEN,REFERRED,SUSPENDED",
+        queueId      = "none",
+        assigneeId   = "none",
+        pag          = TestPagination()
+      )
 
-      stubFor(get(urlEqualTo(url))
-        .willReturn(aResponse()
-          .withStatus(HttpStatus.SC_OK)
-          .withBody(CasePayloads.pagedGatewayCases))
+      stubFor(
+        get(urlEqualTo(url))
+          .willReturn(
+            aResponse()
+              .withStatus(HttpStatus.SC_OK)
+              .withBody(CasePayloads.pagedGatewayCases)
+          )
       )
 
       await(connector.findCasesByQueue(gatewayQueue, pagination)) shouldBe Paged(Seq(Cases.btiCaseExample))
@@ -76,12 +89,20 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
     }
 
     "get empty cases in 'other' queue" in {
-      val url = buildQueryUrl(withStatuses = "NEW,OPEN,REFERRED,SUSPENDED", queueId = "2", assigneeId = "none", pag =  TestPagination())
+      val url = buildQueryUrl(
+        withStatuses = "NEW,OPEN,REFERRED,SUSPENDED",
+        queueId      = "2",
+        assigneeId   = "none",
+        pag          = TestPagination()
+      )
 
-      stubFor(get(urlEqualTo(url))
-        .willReturn(aResponse()
-          .withStatus(HttpStatus.SC_OK)
-          .withBody(CasePayloads.pagedEmpty))
+      stubFor(
+        get(urlEqualTo(url))
+          .willReturn(
+            aResponse()
+              .withStatus(HttpStatus.SC_OK)
+              .withBody(CasePayloads.pagedEmpty)
+          )
       )
 
       await(connector.findCasesByQueue(otherQueue, pagination)) shouldBe Paged.empty[Case]
@@ -93,12 +114,20 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
     }
 
     "get cases in 'other' queue" in {
-      val url = buildQueryUrl(withStatuses = "NEW,OPEN,REFERRED,SUSPENDED", queueId = "2", assigneeId = "none", pag =  TestPagination())
+      val url = buildQueryUrl(
+        withStatuses = "NEW,OPEN,REFERRED,SUSPENDED",
+        queueId      = "2",
+        assigneeId   = "none",
+        pag          = TestPagination()
+      )
 
-      stubFor(get(urlEqualTo(url))
-        .willReturn(aResponse()
-          .withStatus(HttpStatus.SC_OK)
-          .withBody(CasePayloads.pagedGatewayCases))
+      stubFor(
+        get(urlEqualTo(url))
+          .willReturn(
+            aResponse()
+              .withStatus(HttpStatus.SC_OK)
+              .withBody(CasePayloads.pagedGatewayCases)
+          )
       )
 
       await(connector.findCasesByQueue(otherQueue, pagination)) shouldBe Paged(Seq(Cases.btiCaseExample))
@@ -110,15 +139,26 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
     }
 
     "get cases for liability version of 'other' queue" in {
-      val url = buildQueryUrl(types = Seq(ApplicationType.LIABILITY_ORDER),withStatuses = "NEW,OPEN,REFERRED,SUSPENDED", queueId = "2", assigneeId = "none", pag =  TestPagination())
-
-      stubFor(get(urlEqualTo(url))
-        .willReturn(aResponse()
-          .withStatus(HttpStatus.SC_OK)
-          .withBody(CasePayloads.pagedGatewayCases))
+      val url = buildQueryUrl(
+        types        = Seq(ApplicationType.LIABILITY_ORDER),
+        withStatuses = "NEW,OPEN,REFERRED,SUSPENDED",
+        queueId      = "2",
+        assigneeId   = "none",
+        pag          = TestPagination()
       )
 
-      await(connector.findCasesByQueue(otherQueue, pagination,Seq(ApplicationType.LIABILITY_ORDER))) shouldBe Paged(Seq(Cases.btiCaseExample))
+      stubFor(
+        get(urlEqualTo(url))
+          .willReturn(
+            aResponse()
+              .withStatus(HttpStatus.SC_OK)
+              .withBody(CasePayloads.pagedGatewayCases)
+          )
+      )
+
+      await(connector.findCasesByQueue(otherQueue, pagination, Seq(ApplicationType.LIABILITY_ORDER))) shouldBe Paged(
+        Seq(Cases.btiCaseExample)
+      )
 
       verify(
         getRequestedFor(urlEqualTo(url))
@@ -130,9 +170,12 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
   "Connector 'Get One'" should {
 
     "get an unknown case" in {
-      stubFor(get(urlEqualTo("/cases/id"))
-        .willReturn(aResponse()
-          .withStatus(HttpStatus.SC_NOT_FOUND))
+      stubFor(
+        get(urlEqualTo("/cases/id"))
+          .willReturn(
+            aResponse()
+              .withStatus(HttpStatus.SC_NOT_FOUND)
+          )
       )
 
       await(connector.findCase("id")) shouldBe None
@@ -144,10 +187,13 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
     }
 
     "get a case" in {
-      stubFor(get(urlEqualTo("/cases/id"))
-        .willReturn(aResponse()
-          .withStatus(HttpStatus.SC_OK)
-          .withBody(CasePayloads.btiCase))
+      stubFor(
+        get(urlEqualTo("/cases/id"))
+          .willReturn(
+            aResponse()
+              .withStatus(HttpStatus.SC_OK)
+              .withBody(CasePayloads.btiCase)
+          )
       )
 
       await(connector.findCase("id")) shouldBe Some(Cases.btiCaseExample)
@@ -163,12 +209,16 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
   "Connector 'Get Cases By Assignee'" should {
 
     "get empty cases" in {
-      val url = buildQueryUrl(withStatuses = "NEW,OPEN,REFERRED,SUSPENDED", assigneeId = "assignee", pag =  TestPagination())
+      val url =
+        buildQueryUrl(withStatuses = "NEW,OPEN,REFERRED,SUSPENDED", assigneeId = "assignee", pag = TestPagination())
 
-      stubFor(get(urlEqualTo(url))
-        .willReturn(aResponse()
-          .withStatus(HttpStatus.SC_OK)
-          .withBody(CasePayloads.pagedEmpty))
+      stubFor(
+        get(urlEqualTo(url))
+          .willReturn(
+            aResponse()
+              .withStatus(HttpStatus.SC_OK)
+              .withBody(CasePayloads.pagedEmpty)
+          )
       )
 
       await(connector.findCasesByAssignee(Operator("assignee"), pagination)) shouldBe Paged.empty[Case]
@@ -180,12 +230,16 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
     }
 
     "get cases" in {
-      val url = buildQueryUrl(withStatuses = "NEW,OPEN,REFERRED,SUSPENDED", assigneeId = "assignee", pag =  TestPagination())
+      val url =
+        buildQueryUrl(withStatuses = "NEW,OPEN,REFERRED,SUSPENDED", assigneeId = "assignee", pag = TestPagination())
 
-      stubFor(get(urlEqualTo(url))
-        .willReturn(aResponse()
-          .withStatus(HttpStatus.SC_OK)
-          .withBody(CasePayloads.pagedGatewayCases))
+      stubFor(
+        get(urlEqualTo(url))
+          .willReturn(
+            aResponse()
+              .withStatus(HttpStatus.SC_OK)
+              .withBody(CasePayloads.pagedGatewayCases)
+          )
       )
 
       await(connector.findCasesByAssignee(Operator("assignee"), pagination)) shouldBe Paged(Seq(Cases.btiCaseExample))
@@ -202,10 +256,13 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
     "handle no filters" in {
       val url = "/cases?sort_direction=asc&sort_by=commodity-code&page=1&page_size=2"
 
-      stubFor(get(urlEqualTo(url))
-        .willReturn(aResponse()
-          .withStatus(HttpStatus.SC_OK)
-          .withBody(CasePayloads.pagedEmpty))
+      stubFor(
+        get(urlEqualTo(url))
+          .willReturn(
+            aResponse()
+              .withStatus(HttpStatus.SC_OK)
+              .withBody(CasePayloads.pagedEmpty)
+          )
       )
 
       await(connector.search(Search(), Sort(), pagination)) shouldBe Paged.empty[Case]
@@ -232,22 +289,28 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
         s"&page=1" +
         s"&page_size=2"
 
-      stubFor(get(urlEqualTo(url))
-        .willReturn(aResponse()
-          .withStatus(HttpStatus.SC_OK)
-          .withBody(CasePayloads.pagedGatewayCases))
+      stubFor(
+        get(urlEqualTo(url))
+          .willReturn(
+            aResponse()
+              .withStatus(HttpStatus.SC_OK)
+              .withBody(CasePayloads.pagedGatewayCases)
+          )
       )
 
       val search = Search(
-        traderName = Some("trader"),
-        commodityCode = Some("comm-code"),
+        traderName      = Some("trader"),
+        commodityCode   = Some("comm-code"),
         decisionDetails = Some("decision-details"),
-        status = Some(Set(PseudoCaseStatus.OPEN, PseudoCaseStatus.LIVE)),
+        status          = Some(Set(PseudoCaseStatus.OPEN, PseudoCaseStatus.LIVE)),
         applicationType = Some(Set(ApplicationType.BTI, ApplicationType.LIABILITY_ORDER)),
-        keywords = Some(Set("K1", "K2"))
+        keywords        = Some(Set("K1", "K2"))
       )
 
-      await(connector.search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE), pagination)) shouldBe Paged(Seq(Cases.btiCaseExample))
+      await(
+        connector
+          .search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE), pagination)
+      ) shouldBe Paged(Seq(Cases.btiCaseExample))
 
       verify(
         getRequestedFor(urlEqualTo(url))
@@ -258,15 +321,21 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
     "filter by 'trader name'" in {
       val url = "/cases?sort_direction=asc&sort_by=commodity-code&trader_name=trader&page=1&page_size=2"
 
-      stubFor(get(urlEqualTo(url))
-        .willReturn(aResponse()
-          .withStatus(HttpStatus.SC_OK)
-          .withBody(CasePayloads.pagedGatewayCases))
+      stubFor(
+        get(urlEqualTo(url))
+          .willReturn(
+            aResponse()
+              .withStatus(HttpStatus.SC_OK)
+              .withBody(CasePayloads.pagedGatewayCases)
+          )
       )
 
       val search = Search(traderName = Some("trader"))
 
-      await(connector.search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE), pagination)) shouldBe Paged(Seq(Cases.btiCaseExample))
+      await(
+        connector
+          .search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE), pagination)
+      ) shouldBe Paged(Seq(Cases.btiCaseExample))
 
       verify(
         getRequestedFor(urlEqualTo(url))
@@ -277,17 +346,23 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
     "filter by 'commodity code'" in {
       val url = "/cases?sort_direction=asc&sort_by=commodity-code&commodity_code=comm-code&page=1&page_size=2"
 
-      stubFor(get(urlEqualTo(url))
-        .willReturn(aResponse()
-          .withStatus(HttpStatus.SC_OK)
-          .withBody(CasePayloads.pagedGatewayCases))
+      stubFor(
+        get(urlEqualTo(url))
+          .willReturn(
+            aResponse()
+              .withStatus(HttpStatus.SC_OK)
+              .withBody(CasePayloads.pagedGatewayCases)
+          )
       )
 
       val search = Search(
         commodityCode = Some("comm-code")
       )
 
-      await(connector.search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE), pagination)) shouldBe Paged(Seq(Cases.btiCaseExample))
+      await(
+        connector
+          .search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE), pagination)
+      ) shouldBe Paged(Seq(Cases.btiCaseExample))
 
       verify(
         getRequestedFor(urlEqualTo(url))
@@ -298,17 +373,23 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
     "filter by 'decision_details'" in {
       val url = s"/cases?sort_direction=asc&sort_by=commodity-code&decision_details=decision-details&page=1&page_size=2"
 
-      stubFor(get(urlEqualTo(url))
-        .willReturn(aResponse()
-          .withStatus(HttpStatus.SC_OK)
-          .withBody(CasePayloads.pagedGatewayCases))
+      stubFor(
+        get(urlEqualTo(url))
+          .willReturn(
+            aResponse()
+              .withStatus(HttpStatus.SC_OK)
+              .withBody(CasePayloads.pagedGatewayCases)
+          )
       )
 
       val search = Search(
         decisionDetails = Some("decision-details")
       )
 
-      await(connector.search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE), pagination)) shouldBe Paged(Seq(Cases.btiCaseExample))
+      await(
+        connector
+          .search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE), pagination)
+      ) shouldBe Paged(Seq(Cases.btiCaseExample))
 
       verify(
         getRequestedFor(urlEqualTo(url))
@@ -319,17 +400,23 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
     "filter by 'keyword'" in {
       val url = "/cases?sort_direction=asc&sort_by=commodity-code&keyword=K1&keyword=K2&page=1&page_size=2"
 
-      stubFor(get(urlEqualTo(url))
-        .willReturn(aResponse()
-          .withStatus(HttpStatus.SC_OK)
-          .withBody(CasePayloads.pagedGatewayCases))
+      stubFor(
+        get(urlEqualTo(url))
+          .willReturn(
+            aResponse()
+              .withStatus(HttpStatus.SC_OK)
+              .withBody(CasePayloads.pagedGatewayCases)
+          )
       )
 
       val search = Search(
         keywords = Some(Set("K1", "K2"))
       )
 
-      await(connector.search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE), pagination)) shouldBe Paged(Seq(Cases.btiCaseExample))
+      await(
+        connector
+          .search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE), pagination)
+      ) shouldBe Paged(Seq(Cases.btiCaseExample))
 
       verify(
         getRequestedFor(urlEqualTo(url))
@@ -340,17 +427,23 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
     "get cases by 'status'" in {
       val url = s"/cases?sort_direction=asc&sort_by=commodity-code&status=OPEN&status=LIVE&page=1&page_size=2"
 
-      stubFor(get(urlEqualTo(url))
-        .willReturn(aResponse()
-          .withStatus(HttpStatus.SC_OK)
-          .withBody(CasePayloads.pagedGatewayCases))
+      stubFor(
+        get(urlEqualTo(url))
+          .willReturn(
+            aResponse()
+              .withStatus(HttpStatus.SC_OK)
+              .withBody(CasePayloads.pagedGatewayCases)
+          )
       )
 
       val search = Search(
         status = Some(Set(PseudoCaseStatus.OPEN, PseudoCaseStatus.LIVE))
       )
 
-      await(connector.search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE), pagination)) shouldBe Paged(Seq(Cases.btiCaseExample))
+      await(
+        connector
+          .search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE), pagination)
+      ) shouldBe Paged(Seq(Cases.btiCaseExample))
 
       verify(
         getRequestedFor(urlEqualTo(url))
@@ -359,19 +452,26 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
     }
 
     "get cases by 'application type'" in {
-      val url = s"/cases?sort_direction=asc&sort_by=commodity-code&application_type=BTI&application_type=LIABILITY_ORDER&page=1&page_size=2"
+      val url =
+        s"/cases?sort_direction=asc&sort_by=commodity-code&application_type=BTI&application_type=LIABILITY_ORDER&page=1&page_size=2"
 
-      stubFor(get(urlEqualTo(url))
-        .willReturn(aResponse()
-          .withStatus(HttpStatus.SC_OK)
-          .withBody(CasePayloads.pagedGatewayCases))
+      stubFor(
+        get(urlEqualTo(url))
+          .willReturn(
+            aResponse()
+              .withStatus(HttpStatus.SC_OK)
+              .withBody(CasePayloads.pagedGatewayCases)
+          )
       )
 
       val search = Search(
         applicationType = Some(Set(ApplicationType.BTI, ApplicationType.LIABILITY_ORDER))
       )
 
-      await(connector.search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE), pagination)) shouldBe Paged(Seq(Cases.btiCaseExample))
+      await(
+        connector
+          .search(search, Sort(direction = SortDirection.ASCENDING, field = SortField.COMMODITY_CODE), pagination)
+      ) shouldBe Paged(Seq(Cases.btiCaseExample))
 
       verify(
         getRequestedFor(urlEqualTo(url))
@@ -383,16 +483,18 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
   "Connector 'Update Case'" should {
 
     "update valid case" in {
-      val ref = "case-reference"
+      val ref       = "case-reference"
       val validCase = Cases.btiCaseExample.copy(reference = ref)
-      val json = Json.toJson(validCase).toString()
+      val json      = Json.toJson(validCase).toString()
 
-      stubFor(put(urlEqualTo(s"/cases/$ref"))
-        .withRequestBody(equalToJson(json))
-        .willReturn(aResponse()
-          .withStatus(HttpStatus.SC_OK)
-          .withBody(json)
-        )
+      stubFor(
+        put(urlEqualTo(s"/cases/$ref"))
+          .withRequestBody(equalToJson(json))
+          .willReturn(
+            aResponse()
+              .withStatus(HttpStatus.SC_OK)
+              .withBody(json)
+          )
       )
 
       await(connector.updateCase(validCase)) shouldBe validCase
@@ -404,18 +506,20 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
     }
 
     "update with an unknown case reference" in {
-      val unknownRef = "unknownRef"
+      val unknownRef  = "unknownRef"
       val unknownCase = Cases.btiCaseExample.copy(reference = unknownRef)
-      val json = Json.toJson(unknownCase).toString()
+      val json        = Json.toJson(unknownCase).toString()
 
-      stubFor(put(urlEqualTo(s"/cases/$unknownRef"))
-        .withRequestBody(equalToJson(json))
-        .willReturn(aResponse()
-          .withStatus(HttpStatus.SC_NOT_FOUND)
-        )
+      stubFor(
+        put(urlEqualTo(s"/cases/$unknownRef"))
+          .withRequestBody(equalToJson(json))
+          .willReturn(
+            aResponse()
+              .withStatus(HttpStatus.SC_NOT_FOUND)
+          )
       )
 
-      intercept[NotFoundException] {
+      intercept[UpstreamErrorResponse] {
         await(connector.updateCase(unknownCase))
       }
 
@@ -430,16 +534,18 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
     "create valid case" in {
       val application = Cases.btiApplicationExample
-      val validCase = Cases.btiCaseExample
-      val request = Json.toJson(NewCaseRequest(application)).toString()
-      val response = Json.toJson(validCase).toString()
+      val validCase   = Cases.btiCaseExample
+      val request     = Json.toJson(NewCaseRequest(application)).toString()
+      val response    = Json.toJson(validCase).toString()
 
-      stubFor(post(urlEqualTo(s"/cases"))
-        .withRequestBody(equalToJson(request))
-        .willReturn(aResponse()
-          .withStatus(HttpStatus.SC_CREATED)
-          .withBody(response)
-        )
+      stubFor(
+        post(urlEqualTo(s"/cases"))
+          .withRequestBody(equalToJson(request))
+          .willReturn(
+            aResponse()
+              .withStatus(HttpStatus.SC_CREATED)
+              .withBody(response)
+          )
       )
 
       await(connector.createCase(application)) shouldBe validCase
@@ -454,19 +560,21 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
   "Connector 'Create Event'" should {
 
     "create event" in {
-      val ref = "case-reference"
-      val validCase = Cases.btiCaseExample.copy(reference = ref)
+      val ref               = "case-reference"
+      val validCase         = Cases.btiCaseExample.copy(reference = ref)
       val validEventRequest = Events.eventRequest
-      val validEvent = Events.event.copy(caseReference = ref)
-      val requestJson = Json.toJson(validEventRequest).toString()
-      val responseJson = Json.toJson(validEvent).toString()
+      val validEvent        = Events.event.copy(caseReference = ref)
+      val requestJson       = Json.toJson(validEventRequest).toString()
+      val responseJson      = Json.toJson(validEvent).toString()
 
-      stubFor(post(urlEqualTo(s"/cases/$ref/events"))
-        .withRequestBody(equalToJson(requestJson))
-        .willReturn(aResponse()
-          .withStatus(HttpStatus.SC_OK)
-          .withBody(responseJson)
-        )
+      stubFor(
+        post(urlEqualTo(s"/cases/$ref/events"))
+          .withRequestBody(equalToJson(requestJson))
+          .willReturn(
+            aResponse()
+              .withStatus(HttpStatus.SC_OK)
+              .withBody(responseJson)
+          )
       )
 
       await(connector.createEvent(validCase, validEventRequest)) shouldBe validEvent
@@ -478,19 +586,21 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
     }
 
     "create event with an unknown case reference" in {
-      val ref = "unknown-reference"
-      val validCase = Cases.btiCaseExample.copy(reference = ref)
+      val ref               = "unknown-reference"
+      val validCase         = Cases.btiCaseExample.copy(reference = ref)
       val validEventRequest = Events.eventRequest
-      val requestJson = Json.toJson(validEventRequest).toString()
+      val requestJson       = Json.toJson(validEventRequest).toString()
 
-      stubFor(post(urlEqualTo(s"/cases/$ref/events"))
-        .withRequestBody(equalToJson(requestJson))
-        .willReturn(aResponse()
-          .withStatus(HttpStatus.SC_NOT_FOUND)
-        )
+      stubFor(
+        post(urlEqualTo(s"/cases/$ref/events"))
+          .withRequestBody(equalToJson(requestJson))
+          .willReturn(
+            aResponse()
+              .withStatus(HttpStatus.SC_NOT_FOUND)
+          )
       )
 
-      intercept[NotFoundException] {
+      intercept[UpstreamErrorResponse] {
         await(connector.createEvent(validCase, validEventRequest))
       }
 
@@ -507,10 +617,13 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
     "return a list of Events for this case" in {
 
-      stubFor(get(urlEqualTo(s"/events?case_reference=$ref&page=1&page_size=2"))
-        .willReturn(aResponse()
-          .withStatus(HttpStatus.SC_OK)
-          .withBody(EventPayloads.pagedEvents))
+      stubFor(
+        get(urlEqualTo(s"/events?case_reference=$ref&page=1&page_size=2"))
+          .willReturn(
+            aResponse()
+              .withStatus(HttpStatus.SC_OK)
+              .withBody(EventPayloads.pagedEvents)
+          )
       )
 
       await(connector.findEvents(ref, pagination)) shouldBe Paged(Events.events)
@@ -523,13 +636,18 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
     "return a filtered list of Events for this case" in {
 
-      stubFor(get(urlEqualTo(s"/events?case_reference=$ref&type=SAMPLE_STATUS_CHANGE&page=1&page_size=2"))
-        .willReturn(aResponse()
-          .withStatus(HttpStatus.SC_OK)
-          .withBody(EventPayloads.pagedEvents))
+      stubFor(
+        get(urlEqualTo(s"/events?case_reference=$ref&type=SAMPLE_STATUS_CHANGE&page=1&page_size=2"))
+          .willReturn(
+            aResponse()
+              .withStatus(HttpStatus.SC_OK)
+              .withBody(EventPayloads.pagedEvents)
+          )
       )
 
-      await(connector.findFilteredEvents(ref, pagination, Set(EventType.SAMPLE_STATUS_CHANGE))) shouldBe Paged(Events.events)
+      await(connector.findFilteredEvents(ref, pagination, Set(EventType.SAMPLE_STATUS_CHANGE))) shouldBe Paged(
+        Events.events
+      )
 
       verify(
         getRequestedFor(urlEqualTo(s"/events?case_reference=$ref&type=SAMPLE_STATUS_CHANGE&page=1&page_size=2"))
@@ -538,10 +656,13 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
     }
 
     "returns empty list when case ref not found" in {
-      stubFor(get(urlEqualTo(s"/events?case_reference=$ref&page=1&page_size=2"))
-        .willReturn(aResponse()
-          .withStatus(HttpStatus.SC_OK)
-          .withBody(EventPayloads.pagedEmpty))
+      stubFor(
+        get(urlEqualTo(s"/events?case_reference=$ref&page=1&page_size=2"))
+          .willReturn(
+            aResponse()
+              .withStatus(HttpStatus.SC_OK)
+              .withBody(EventPayloads.pagedEmpty)
+          )
       )
 
       await(connector.findEvents(ref, pagination)) shouldBe Paged.empty[Event]
@@ -556,12 +677,15 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
   "Connector 'Get Assigned Cases'" should {
 
     "get assigned cases " in {
-      val url = buildQueryUrl(withStatuses = "OPEN,REFERRED,SUSPENDED", assigneeId = "some", pag =  TestPagination())
+      val url = buildQueryUrl(withStatuses = "OPEN,REFERRED,SUSPENDED", assigneeId = "some", pag = TestPagination())
 
-      stubFor(get(urlEqualTo(url))
-        .willReturn(aResponse()
-          .withStatus(HttpStatus.SC_OK)
-          .withBody(CasePayloads.pagedGatewayCases))
+      stubFor(
+        get(urlEqualTo(url))
+          .willReturn(
+            aResponse()
+              .withStatus(HttpStatus.SC_OK)
+              .withBody(CasePayloads.pagedGatewayCases)
+          )
       )
 
       await(connector.findAssignedCases(pagination)) shouldBe Paged(Seq(Cases.btiCaseExample))
@@ -577,10 +701,12 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
   "Connector 'Generate Report'" should {
     val report = CaseReport(
       filter = CaseReportFilter(
-        decisionStartDate = Some(InstantRange(
-          min = Instant.EPOCH,
-          max = Instant.EPOCH.plusSeconds(1)
-        ))
+        decisionStartDate = Some(
+          InstantRange(
+            min = Instant.EPOCH,
+            max = Instant.EPOCH.plusSeconds(1)
+          )
+        )
       ),
       group = Set(CaseReportGroup.QUEUE),
       field = CaseReportField.ACTIVE_DAYS_ELAPSED
@@ -589,14 +715,16 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
     val result = ReportResult(Map(CaseReportGroup.QUEUE -> Some("queue-id")), Seq(1))
 
     "GET report " in {
-      val url = "/report?min_decision_start=1970-01-01T00%3A00%3A00Z&max_decision_start=1970-01-01T00%3A00%3A01Z&report_group=queue-id&report_field=active-days-elapsed"
+      val url =
+        "/report?min_decision_start=1970-01-01T00%3A00%3A00Z&max_decision_start=1970-01-01T00%3A00%3A01Z&report_group=queue-id&report_field=active-days-elapsed"
 
-      stubFor(get(urlEqualTo(url))
-        .willReturn(
-          aResponse()
-          .withStatus(HttpStatus.SC_OK)
-          .withBody(Json.toJson(Seq(result)).toString)
-        )
+      stubFor(
+        get(urlEqualTo(url))
+          .willReturn(
+            aResponse()
+              .withStatus(HttpStatus.SC_OK)
+              .withBody(Json.toJson(Seq(result)).toString)
+          )
       )
 
       await(connector.generateReport(report)) shouldBe Seq(result)
@@ -608,6 +736,5 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
     }
 
   }
-
 
 }

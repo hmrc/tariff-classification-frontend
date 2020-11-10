@@ -25,19 +25,32 @@ import play.api.test.Helpers._
 import service.CasesService
 import utils.Cases
 
+import scala.concurrent.ExecutionContext.Implicits.global
+
 class ReleaseOrSuppressCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   private val casesService = mock[CasesService]
-  private val operator = mock[Operator]
+  private val operator     = mock[Operator]
 
   private val caseBTIWithStatusNEW = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.NEW)
-  private val caseLiabilityWithStatusNEW = Cases.liabilityCaseExample.copy(reference = "reference", status = CaseStatus.NEW)
+  private val caseLiabilityWithStatusNEW =
+    Cases.liabilityCaseExample.copy(reference = "reference", status = CaseStatus.NEW)
 
-  private def controller(c: Case) = new ReleaseOrSuppressCaseController(
-    new SuccessfulRequestActions(defaultPlayBodyParsers, operator, c = c), casesService, mcc, realAppConfig)
+  private def controller(c: Case) =
+    new ReleaseOrSuppressCaseController(
+      new SuccessfulRequestActions(playBodyParsers, operator, c = c),
+      casesService,
+      mcc,
+      realAppConfig
+    )
 
-  private def controller(requestCase: Case, permission: Set[Permission]) = new ReleaseOrSuppressCaseController(
-    new RequestActionsWithPermissions(defaultPlayBodyParsers, permission, c = requestCase), casesService, mcc, realAppConfig)
+  private def controller(requestCase: Case, permission: Set[Permission]) =
+    new ReleaseOrSuppressCaseController(
+      new RequestActionsWithPermissions(playBodyParsers, permission, c = requestCase),
+      casesService,
+      mcc,
+      realAppConfig
+    )
 
   val form = new CaseStatusRadioInputFormProvider()()
 
@@ -46,33 +59,42 @@ class ReleaseOrSuppressCaseControllerSpec extends ControllerBaseSpec with Before
       "return OK with correct HTML" in {
         val result = await(controller(caseBTIWithStatusNEW).onPageLoad("reference")(newFakeGETRequestWithCSRF(app)))
 
-        status(result) shouldBe Status.OK
+        status(result)      shouldBe Status.OK
         contentType(result) shouldBe Some("text/html")
-        charset(result) shouldBe Some("utf-8")
+        charset(result)     shouldBe Some("utf-8")
       }
 
       "return OK when the user has release case permissions" in {
-        val result = await(controller(caseBTIWithStatusNEW, Set(Permission.RELEASE_CASE)).onPageLoad("reference")(newFakeGETRequestWithCSRF(app)))
+        val result = await(
+          controller(caseBTIWithStatusNEW, Set(Permission.RELEASE_CASE))
+            .onPageLoad("reference")(newFakeGETRequestWithCSRF(app))
+        )
 
-        status(result) shouldBe Status.OK
-        contentType(result) shouldBe Some("text/html")
-        charset(result) shouldBe Some("utf-8")
+        status(result)          shouldBe Status.OK
+        contentType(result)     shouldBe Some("text/html")
+        charset(result)         shouldBe Some("utf-8")
         contentAsString(result) should include("Action this case")
       }
 
       "return OK when the user has the suppress case permissions" in {
-        val result = await(controller(caseBTIWithStatusNEW, Set(Permission.SUPPRESS_CASE)).onPageLoad("reference")(newFakeGETRequestWithCSRF(app)))
+        val result = await(
+          controller(caseBTIWithStatusNEW, Set(Permission.SUPPRESS_CASE))
+            .onPageLoad("reference")(newFakeGETRequestWithCSRF(app))
+        )
 
-        status(result) shouldBe Status.OK
-        contentType(result) shouldBe Some("text/html")
-        charset(result) shouldBe Some("utf-8")
+        status(result)          shouldBe Status.OK
+        contentType(result)     shouldBe Some("text/html")
+        charset(result)         shouldBe Some("utf-8")
         contentAsString(result) should include("Action this case")
       }
 
       "return unauthorised when user does not have the necessary permissions" in {
-        val result = await(controller(caseBTIWithStatusNEW, Set(Permission.VIEW_ASSIGNED_CASES)).onPageLoad("reference")(newFakeGETRequestWithCSRF(app)))
+        val result = await(
+          controller(caseBTIWithStatusNEW, Set(Permission.VIEW_ASSIGNED_CASES))
+            .onPageLoad("reference")(newFakeGETRequestWithCSRF(app))
+        )
 
-        status(result) shouldBe Status.SEE_OTHER
+        status(result)               shouldBe Status.SEE_OTHER
         redirectLocation(result).get should include("unauthorized")
       }
 
@@ -80,9 +102,12 @@ class ReleaseOrSuppressCaseControllerSpec extends ControllerBaseSpec with Before
         val result = await(
           controller(caseBTIWithStatusNEW, Set(Permission.RELEASE_CASE))
             .onSubmit("reference")(
-              newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("caseStatus" -> CaseStatusRadioInput.Release.toString)))
+              newFakePOSTRequestWithCSRF(app)
+                .withFormUrlEncodedBody("caseStatus" -> CaseStatusRadioInput.Release.toString)
+            )
+        )
 
-        status(result) shouldBe Status.SEE_OTHER
+        status(result)               shouldBe Status.SEE_OTHER
         redirectLocation(result).get shouldBe ReleaseCaseController.releaseCase("reference").url
       }
 
@@ -90,18 +115,19 @@ class ReleaseOrSuppressCaseControllerSpec extends ControllerBaseSpec with Before
         val result = await(
           controller(caseBTIWithStatusNEW, Set(Permission.SUPPRESS_CASE))
             .onSubmit("reference")(
-              newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("caseStatus" -> CaseStatusRadioInput.Suppress.toString)))
+              newFakePOSTRequestWithCSRF(app)
+                .withFormUrlEncodedBody("caseStatus" -> CaseStatusRadioInput.Suppress.toString)
+            )
+        )
 
-        status(result) shouldBe Status.SEE_OTHER
+        status(result)               shouldBe Status.SEE_OTHER
         redirectLocation(result).get shouldBe SuppressCaseController.getSuppressCase("reference").url
       }
-
 
       "redirect to change case status page when form has errors" in {
         val result =
           controller(caseBTIWithStatusNEW, Set(Permission.RELEASE_CASE))
-            .onSubmit("reference")(
-              newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("caseStatus" -> ""))
+            .onSubmit("reference")(newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("caseStatus" -> ""))
 
         contentAsString(result) should include("Select a case status")
       }
@@ -109,26 +135,33 @@ class ReleaseOrSuppressCaseControllerSpec extends ControllerBaseSpec with Before
 
     "case is Liability" when {
       "return OK with correct HTML" in {
-        val result = await(controller(caseLiabilityWithStatusNEW).onPageLoad("reference")(newFakeGETRequestWithCSRF(app)))
+        val result =
+          await(controller(caseLiabilityWithStatusNEW).onPageLoad("reference")(newFakeGETRequestWithCSRF(app)))
 
-        status(result) shouldBe Status.OK
+        status(result)      shouldBe Status.OK
         contentType(result) shouldBe Some("text/html")
-        charset(result) shouldBe Some("utf-8")
+        charset(result)     shouldBe Some("utf-8")
       }
 
       "return OK when the user has release case permissions" in {
-        val result = await(controller(caseLiabilityWithStatusNEW, Set(Permission.RELEASE_CASE)).onPageLoad("reference")(newFakeGETRequestWithCSRF(app)))
+        val result = await(
+          controller(caseLiabilityWithStatusNEW, Set(Permission.RELEASE_CASE))
+            .onPageLoad("reference")(newFakeGETRequestWithCSRF(app))
+        )
 
-        status(result) shouldBe Status.OK
-        contentType(result) shouldBe Some("text/html")
-        charset(result) shouldBe Some("utf-8")
+        status(result)          shouldBe Status.OK
+        contentType(result)     shouldBe Some("text/html")
+        charset(result)         shouldBe Some("utf-8")
         contentAsString(result) should include("Action this case")
       }
 
       "return unauthorised when user does not have the necessary permissions" in {
-        val result = await(controller(caseLiabilityWithStatusNEW, Set(Permission.VIEW_ASSIGNED_CASES)).onPageLoad("reference")(newFakeGETRequestWithCSRF(app)))
+        val result = await(
+          controller(caseLiabilityWithStatusNEW, Set(Permission.VIEW_ASSIGNED_CASES))
+            .onPageLoad("reference")(newFakeGETRequestWithCSRF(app))
+        )
 
-        status(result) shouldBe Status.SEE_OTHER
+        status(result)               shouldBe Status.SEE_OTHER
         redirectLocation(result).get should include("unauthorized")
       }
     }

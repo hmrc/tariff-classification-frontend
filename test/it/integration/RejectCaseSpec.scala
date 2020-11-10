@@ -10,9 +10,9 @@ import utils.{CasePayloads, Cases, EventPayloads}
 class RejectCaseSpec extends IntegrationTest with MockitoSugar {
 
   "Case Reject" should {
-    val owner = Some(Operator("111", role = Role.CLASSIFICATION_OFFICER))
+    val owner              = Some(Operator("111", role = Role.CLASSIFICATION_OFFICER))
     val caseWithStatusOPEN = CasePayloads.jsonOf(Cases.btiCaseExample.copy(status = CaseStatus.OPEN, assignee = owner))
-    val event = EventPayloads.event
+    val event              = EventPayloads.event
 
     "return status 200 for manager" in {
       // Given
@@ -39,15 +39,21 @@ class RejectCaseSpec extends IntegrationTest with MockitoSugar {
     }
 
     def shouldSucceed = {
-      stubFor(get(urlEqualTo("/cases/1"))
-        .willReturn(aResponse()
-          .withStatus(OK)
-          .withBody(caseWithStatusOPEN))
+      stubFor(
+        get(urlEqualTo("/cases/1"))
+          .willReturn(
+            aResponse()
+              .withStatus(OK)
+              .withBody(caseWithStatusOPEN)
+          )
       )
-      stubFor(post(urlEqualTo("/cases/1/events"))
-        .willReturn(aResponse()
-          .withStatus(CREATED)
-          .withBody(event))
+      stubFor(
+        post(urlEqualTo("/cases/1/events"))
+          .willReturn(
+            aResponse()
+              .withStatus(CREATED)
+              .withBody(event)
+          )
       )
 
       // When
@@ -55,7 +61,7 @@ class RejectCaseSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body should include("Change case status to: Rejected")
+      response.body   should include("Change case status to: Rejected")
     }
 
     def shouldFail = {
@@ -64,7 +70,7 @@ class RejectCaseSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body should include(messages("not_authorised.paragraph1"))
+      response.body   should include(messages("not_authorised.paragraph1"))
     }
   }
 

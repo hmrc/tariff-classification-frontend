@@ -52,10 +52,9 @@ class AppealFormTest extends ModelsBaseSpec {
       val form = AppealForm.appealStatusForm.fill(AppealStatus.IN_PROGRESS)
 
       form.hasErrors shouldBe false
-      form.data shouldBe Map("status" -> "IN_PROGRESS")
+      form.data      shouldBe Map("status" -> "IN_PROGRESS")
     }
   }
-
 
   "Type Form: Bind from request" should {
     "Bind empty" in {
@@ -89,10 +88,8 @@ class AppealFormTest extends ModelsBaseSpec {
       val form = AppealForm.appealTypeForm.fill(AppealType.REVIEW)
 
       form.hasErrors shouldBe false
-      form.data shouldBe Map("type" -> "REVIEW")
+      form.data      shouldBe Map("type" -> "REVIEW")
     }
   }
-
-
 
 }

@@ -17,7 +17,6 @@
 package controllers
 
 import javax.inject.{Inject, Singleton}
-import play.api.i18n.MessagesApi
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import config.AppConfig
@@ -28,31 +27,35 @@ import service.CasesService
 import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton
-class ReopenCaseController @Inject()(
+class ReopenCaseController @Inject() (
   verify: RequestActions,
   casesService: CasesService,
   mcc: MessagesControllerComponents,
   implicit val appConfig: AppConfig
-) extends FrontendController(mcc) with RenderCaseAction {
+) extends FrontendController(mcc)
+    with RenderCaseAction {
 
-  override protected val config: AppConfig = appConfig
+  override protected val config: AppConfig         = appConfig
   override protected val caseService: CasesService = casesService
 
   def confirmReopenCase(reference: String): Action[AnyContent] =
     (verify.authenticated andThen
       verify.casePermissions(reference) andThen
       verify.mustHave(Permission.REOPEN_CASE)).async { implicit request: AuthenticatedCaseRequest[AnyContent] =>
-      validateAndRedirect(_ => casesService.reopenCase(request.`case`, request.operator)
-        .map(updatedCase => updatedCase.application.`type` match {
-          case ApplicationType.BTI =>
-            routes.CaseController.applicantDetails(updatedCase.reference)
-          case ApplicationType.LIABILITY_ORDER =>
-            if (config.newLiabilityDetails)
-              v2.routes.LiabilityController.displayLiability(updatedCase.reference)
-            else
-              routes.LiabilityController.liabilityDetails(updatedCase.reference)
-        }
-        )
+      validateAndRedirect(_ =>
+        casesService
+          .reopenCase(request.`case`, request.operator)
+          .map(updatedCase =>
+            updatedCase.application.`type` match {
+              case ApplicationType.BTI =>
+                routes.CaseController.applicantDetails(updatedCase.reference)
+              case ApplicationType.LIABILITY_ORDER =>
+                if (config.newLiabilityDetails)
+                  v2.routes.LiabilityController.displayLiability(updatedCase.reference)
+                else
+                  routes.LiabilityController.liabilityDetails(updatedCase.reference)
+            }
+          )
       )
     }
 }

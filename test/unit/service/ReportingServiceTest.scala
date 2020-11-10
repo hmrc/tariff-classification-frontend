@@ -30,7 +30,7 @@ import scala.concurrent.Future
 class ReportingServiceTest extends ServiceSpecBase with BeforeAndAfterEach {
 
   private val connector = mock[BindingTariffClassificationConnector]
-  private val service = new ReportingService(connector)
+  private val service   = new ReportingService(connector)
 
   override def afterEach(): Unit = {
     super.afterEach()
@@ -40,13 +40,16 @@ class ReportingServiceTest extends ServiceSpecBase with BeforeAndAfterEach {
   "Reporting Service" should {
     "Build & Request SLA Report" in {
       val dateRange = mock[InstantRange]
-      given(connector.generateReport(any[CaseReport])(any[HeaderCarrier])) willReturn Future.successful(Seq.empty[ReportResult])
+      given(connector.generateReport(any[CaseReport])(any[HeaderCarrier])) willReturn Future.successful(
+        Seq.empty[ReportResult]
+      )
 
       await(service.getSLAReport(dateRange)) shouldBe Seq.empty[ReportResult]
 
       theReport shouldBe CaseReport(
         filter = CaseReportFilter(
-          decisionStartDate = Some(dateRange), applicationType = Some(Set("BTI"))
+          decisionStartDate = Some(dateRange),
+          applicationType   = Some(Set("BTI"))
         ),
         group = Set(CaseReportGroup.QUEUE),
         field = CaseReportField.ACTIVE_DAYS_ELAPSED
@@ -54,13 +57,16 @@ class ReportingServiceTest extends ServiceSpecBase with BeforeAndAfterEach {
     }
 
     "Build & Request Queue Report" in {
-      given(connector.generateReport(any[CaseReport])(any[HeaderCarrier])) willReturn Future.successful(Seq.empty[ReportResult])
+      given(connector.generateReport(any[CaseReport])(any[HeaderCarrier])) willReturn Future.successful(
+        Seq.empty[ReportResult]
+      )
 
       await(service.getQueueReport(mock[HeaderCarrier])) shouldBe Seq.empty[ReportResult]
 
       theReport shouldBe CaseReport(
         filter = CaseReportFilter(
-          status = Some(Set("NEW", "OPEN", "REFERRED", "SUSPENDED")), assigneeId = Some("none")
+          status     = Some(Set("NEW", "OPEN", "REFERRED", "SUSPENDED")),
+          assigneeId = Some("none")
         ),
         group = Set(CaseReportGroup.QUEUE, CaseReportGroup.APPLICATION_TYPE),
         field = CaseReportField.ACTIVE_DAYS_ELAPSED
@@ -69,13 +75,16 @@ class ReportingServiceTest extends ServiceSpecBase with BeforeAndAfterEach {
 
     "Build & Request Referral Report" in {
       val dateRange = mock[InstantRange]
-      given(connector.generateReport(any[CaseReport])(any[HeaderCarrier])) willReturn Future.successful(Seq.empty[ReportResult])
+      given(connector.generateReport(any[CaseReport])(any[HeaderCarrier])) willReturn Future.successful(
+        Seq.empty[ReportResult]
+      )
 
       await(service.getReferralReport(dateRange)) shouldBe Seq.empty[ReportResult]
 
       theReport shouldBe CaseReport(
         filter = CaseReportFilter(
-          referralDate = Some(dateRange), applicationType = Some(Set("BTI"))
+          referralDate    = Some(dateRange),
+          applicationType = Some(Set("BTI"))
         ),
         group = Set(CaseReportGroup.QUEUE),
         field = CaseReportField.REFERRED_DAYS_ELAPSED

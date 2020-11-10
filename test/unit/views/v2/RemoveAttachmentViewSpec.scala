@@ -28,8 +28,8 @@ import views.html.v2.remove_attachment
 class RemoveAttachmentViewSpec extends ViewSpec {
 
   lazy val attachment: StoredAttachment = Cases.storedAttachment.copy()
-  lazy val caseOne: Case = Cases.btiCaseExample.copy(reference = "ref")
-  val testTabIndex = 99
+  lazy val caseOne: Case                = Cases.btiCaseExample.copy(reference = "ref")
+  val testTabIndex                      = 99
 
   def renderWithoutError: HtmlFormat.Appendable = {
     val header = CaseHeaderViewModel.fromCase(caseOne)
@@ -65,13 +65,16 @@ class RemoveAttachmentViewSpec extends ViewSpec {
     "render without errors check question" in {
       val doc = view(renderWithoutError)
 
-      doc.getElementById("remove_question").text().trim shouldBe "Are you sure you want to remove name test from this case?"
+      doc
+        .getElementById("remove_question")
+        .text()
+        .trim shouldBe "Are you sure you want to remove name test from this case?"
     }
 
     "render without errors check form" in {
-      val doc = view(renderWithoutError)
+      val doc                   = view(renderWithoutError)
       val expected: Seq[String] = Seq("Yes", "No", "Confirm")
-      val actual: Seq[String] = doc.getElementsByTag("form").text().split(" ").toSeq
+      val actual: Seq[String]   = doc.getElementsByTag("form").text().split(" ").toSeq
 
       actual shouldBe expected
     }

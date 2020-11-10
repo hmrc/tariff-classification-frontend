@@ -51,17 +51,15 @@ class SampleStatusFormTest extends ModelsBaseSpec {
       val form = SampleStatusForm.form.fill(None)
 
       form.hasErrors shouldBe false
-      form.data shouldBe Map()
+      form.data      shouldBe Map()
     }
 
     "populate some" in {
       val form = SampleStatusForm.form.fill(Some(SampleStatus.AWAITING))
 
       form.hasErrors shouldBe false
-      form.data shouldBe Map("status" -> "AWAITING")
+      form.data      shouldBe Map("status" -> "AWAITING")
     }
   }
-
-
 
 }

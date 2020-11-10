@@ -17,6 +17,6 @@
 package models.viewmodels
 
 case class CaseStatusViewModel(
-                                status: String,
-                                badgeColor: String
-                              )
+  status: String,
+  badgeColor: String
+)

@@ -25,71 +25,81 @@ class LiabilityFormTest extends ModelsBaseSpec {
       val form = LiabilityForm.newLiabilityForm.bindFromRequest(Map())
 
       form.hasErrors shouldBe true
-      form.errors should have(size(3))
+      form.errors    should have(size(3))
     }
 
     "Bind a blank form" in {
-      val form = LiabilityForm.newLiabilityForm.bindFromRequest(Map(
-        "liability-status" -> Seq(""),
-        "trader-name" -> Seq(""),
-        "item-name" -> Seq("")
-      ))
+      val form = LiabilityForm.newLiabilityForm.bindFromRequest(
+        Map(
+          "liability-status" -> Seq(""),
+          "trader-name"      -> Seq(""),
+          "item-name"        -> Seq("")
+        )
+      )
 
       form.hasErrors shouldBe true
-      form.errors should have(size(3))
+      form.errors    should have(size(3))
     }
 
     "Bind a valid form" in {
-      val form = LiabilityForm.newLiabilityForm.bindFromRequest(Map(
-        "liability-status" -> Seq("LIVE"),
-        "trader-name" -> Seq("trader name"),
-        "item-name" -> Seq("item name")
-      ))
+      val form = LiabilityForm.newLiabilityForm.bindFromRequest(
+        Map(
+          "liability-status" -> Seq("LIVE"),
+          "trader-name"      -> Seq("trader name"),
+          "item-name"        -> Seq("item name")
+        )
+      )
 
       form.hasErrors shouldBe false
       form.get shouldBe LiabilityOrder(
-        contact = Contact(name = "", email = ""),
-        status = LiabilityStatus.LIVE,
+        contact    = Contact(name = "", email = ""),
+        status     = LiabilityStatus.LIVE,
         traderName = "trader name",
-        goodName = Some("item name")
+        goodName   = Some("item name")
       )
     }
 
     "Bind invalid status" in {
-      val form = LiabilityForm.newLiabilityForm.bindFromRequest(Map(
-        "liability-status" -> Seq("other"),
-        "trader-name" -> Seq("Name"),
-        "item-name" -> Seq("item name")
-      ))
+      val form = LiabilityForm.newLiabilityForm.bindFromRequest(
+        Map(
+          "liability-status" -> Seq("other"),
+          "trader-name"      -> Seq("Name"),
+          "item-name"        -> Seq("item name")
+        )
+      )
 
       form.hasErrors shouldBe true
-      form.errors should have(size(1))
+      form.errors    should have(size(1))
       //TODO get message for messages
       form.errors.head.message shouldBe "Invalid entry"
     }
 
     "Bind invalid trader name" in {
-      val form = LiabilityForm.newLiabilityForm.bindFromRequest(Map(
-        "liability-status" -> Seq("LIVE"),
-        "trader-name" -> Seq(""),
-        "item-name" -> Seq("item name")
-      ))
+      val form = LiabilityForm.newLiabilityForm.bindFromRequest(
+        Map(
+          "liability-status" -> Seq("LIVE"),
+          "trader-name"      -> Seq(""),
+          "item-name"        -> Seq("item name")
+        )
+      )
 
       form.hasErrors shouldBe true
-      form.errors should have(size(1))
+      form.errors    should have(size(1))
       //TODO get message for messages
       form.errors.head.message shouldBe "error.empty.trader-name"
     }
 
     "Bind invalid item name" in {
-      val form = LiabilityForm.newLiabilityForm.bindFromRequest(Map(
-        "liability-status" -> Seq("LIVE"),
-        "trader-name" -> Seq("trader"),
-        "item-name" -> Seq("")
-      ))
+      val form = LiabilityForm.newLiabilityForm.bindFromRequest(
+        Map(
+          "liability-status" -> Seq("LIVE"),
+          "trader-name"      -> Seq("trader"),
+          "item-name"        -> Seq("")
+        )
+      )
 
       form.hasErrors shouldBe true
-      form.errors should have(size(1))
+      form.errors    should have(size(1))
       //TODO get message for messages
       form.errors.head.message shouldBe "error.empty.item-name"
     }
@@ -100,18 +110,18 @@ class LiabilityFormTest extends ModelsBaseSpec {
     "populate a correct form" in {
       val form = LiabilityForm.newLiabilityForm.fill(
         LiabilityOrder(
-          contact = Contact(name = "", email = ""),
-          status = LiabilityStatus.LIVE,
+          contact    = Contact(name = "", email = ""),
+          status     = LiabilityStatus.LIVE,
           traderName = "Name",
-          goodName = Some("item name")
+          goodName   = Some("item name")
         )
       )
 
       form.hasErrors shouldBe false
       form.data shouldBe Map(
         "liability-status" -> "LIVE",
-        "trader-name" -> "Name",
-        "item-name" -> "item name"
+        "trader-name"      -> "Name",
+        "item-name"        -> "item name"
       )
     }
   }

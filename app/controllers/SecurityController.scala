@@ -26,13 +26,12 @@ import views.html.not_authorized
 import scala.concurrent.Future.successful
 
 @Singleton
-class SecurityController @Inject()(
+class SecurityController @Inject() (
   mcc: MessagesControllerComponents,
   implicit val appConfig: AppConfig
-) extends FrontendController(mcc) with I18nSupport {
+) extends FrontendController(mcc)
+    with I18nSupport {
 
-  def unauthorized(): Action[AnyContent] = Action.async { implicit request =>
-    successful(Ok(not_authorized()))
-  }
+  def unauthorized(): Action[AnyContent] = Action.async(implicit request => successful(Ok(not_authorized())))
 
 }

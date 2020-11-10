@@ -18,19 +18,18 @@ package models
 
 import java.time.Instant
 
-case class Decision
-(
+case class Decision(
   bindingCommodityCode: String,
   effectiveStartDate: Option[Instant] = None,
-  effectiveEndDate: Option[Instant] = None,
+  effectiveEndDate: Option[Instant]   = None,
   justification: String,
   goodsDescription: String,
-  methodSearch: Option[String] = None,
-  methodExclusion: Option[String] = None,
+  methodSearch: Option[String]                 = None,
+  methodExclusion: Option[String]              = None,
   methodCommercialDenomination: Option[String] = None,
-  appeal: Seq[Appeal] = Seq.empty,
-  cancellation: Option[Cancellation] = None,
-  explanation: Option[String] = None
+  appeal: Seq[Appeal]                          = Seq.empty,
+  cancellation: Option[Cancellation]           = None,
+  explanation: Option[String]                  = None
 )
 
 object Decision {

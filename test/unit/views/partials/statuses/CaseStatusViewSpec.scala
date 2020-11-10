@@ -38,7 +38,7 @@ class CaseStatusViewSpec extends ViewSpec {
       val doc = view(case_status(c, "id"))
 
       // Then
-      doc.text() shouldBe "CANCELLED"
+      doc.text()               shouldBe "CANCELLED"
       doc.getElementById("id") should haveClass("bg-gray--dark")
     }
 
@@ -52,7 +52,7 @@ class CaseStatusViewSpec extends ViewSpec {
       val doc = view(case_status(c, "id"))
 
       // Then
-      doc.text() shouldBe "CANCELLED - 55"
+      doc.text()               shouldBe "CANCELLED - 55"
       doc.getElementById("id") should haveClass("bg-gray--dark")
     }
 
@@ -61,7 +61,7 @@ class CaseStatusViewSpec extends ViewSpec {
       val doc = view(case_status(Cases.btiCaseWithExpiredRuling, "id"))
 
       // Then
-      doc.text() shouldBe "case status EXPIRED"
+      doc.text()               shouldBe "case status EXPIRED"
       doc.getElementById("id") should haveClass("bg-gray--dark")
     }
 
@@ -70,7 +70,7 @@ class CaseStatusViewSpec extends ViewSpec {
       val doc = view(case_status(Cases.btiCaseExample, "id"))
 
       // Then
-      doc.text() shouldBe "case status OPEN"
+      doc.text()               shouldBe "case status OPEN"
       doc.getElementById("id") should haveClass("bg-blue")
     }
 
@@ -79,7 +79,7 @@ class CaseStatusViewSpec extends ViewSpec {
       val doc = view(case_status(Cases.liabilityLiveCaseExample, "id"))
 
       // Then
-      doc.text() shouldBe "liability type LIVE case status OPEN"
+      doc.text()                                shouldBe "liability type LIVE case status OPEN"
       doc.getElementById("id-liability-status") should haveClass("live-red-text")
     }
 

@@ -20,16 +20,13 @@ import play.api.data.Form
 import play.api.data.Forms._
 import models.forms.mappings.FormMappings.textNonEmpty
 
-
 object AddNoteForm {
 
-  def getForm(performingStatusChange: String) : Form[String] = {
+  def getForm(performingStatusChange: String): Form[String] =
     Form(
       mapping(
-        "note" -> textNonEmpty(s"error.empty.${performingStatusChange}.note")
+        "note" -> textNonEmpty(s"error.empty.$performingStatusChange.note")
       )(identity)(Some(_))
     )
-  }
 
 }
-

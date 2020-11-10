@@ -22,8 +22,8 @@ class HistogramTest extends ViewSpec {
 
   "Histogram Bucket" should {
     "count" in {
-      HistogramBucket(Seq(1,2,3)).count shouldBe 3
-      HistogramBucket(Seq(1,2)).count shouldBe 2
+      HistogramBucket(Seq(1, 2, 3)).count shouldBe 3
+      HistogramBucket(Seq(1, 2)).count    shouldBe 2
     }
   }
 
@@ -35,15 +35,14 @@ class HistogramTest extends ViewSpec {
       HistogramBucketInterval(Some(0), None).contains(Integer.MIN_VALUE) shouldBe false
       HistogramBucketInterval(Some(0), None).contains(Integer.MAX_VALUE) shouldBe true
 
-
       HistogramBucketInterval(None, Some(0)).contains(Integer.MIN_VALUE) shouldBe true
       HistogramBucketInterval(None, Some(0)).contains(Integer.MAX_VALUE) shouldBe false
 
       HistogramBucketInterval(Some(0), Some(0)).contains(Integer.MIN_VALUE) shouldBe false
       HistogramBucketInterval(Some(0), Some(0)).contains(Integer.MAX_VALUE) shouldBe false
-      HistogramBucketInterval(Some(0), Some(0)).contains(0) shouldBe true
-      HistogramBucketInterval(Some(0), Some(1)).contains(0) shouldBe true
-      HistogramBucketInterval(Some(0), Some(1)).contains(1) shouldBe true
+      HistogramBucketInterval(Some(0), Some(0)).contains(0)                 shouldBe true
+      HistogramBucketInterval(Some(0), Some(1)).contains(0)                 shouldBe true
+      HistogramBucketInterval(Some(0), Some(1)).contains(1)                 shouldBe true
     }
   }
 
@@ -51,11 +50,11 @@ class HistogramTest extends ViewSpec {
     val interval1 = HistogramBucketInterval(None, 1) // x <= 1
     val interval2 = HistogramBucketInterval(2, 3) // 2 <= x <= 3
     val interval3 = HistogramBucketInterval(4, None) // x >= 4
-    val buckets = Seq(interval1, interval2, interval3)
+    val buckets   = Seq(interval1, interval2, interval3)
 
     "Build Groups from data without name" in {
       val data = Seq(
-        ReportResult(Map(CaseReportGroup.QUEUE ->  None), value = Seq(0, 1, 2, 3, 4, 5))
+        ReportResult(Map(CaseReportGroup.QUEUE -> None), value = Seq(0, 1, 2, 3, 4, 5))
       )
 
       Histogram.calculate(data, buckets) shouldBe Histogram(
@@ -69,7 +68,7 @@ class HistogramTest extends ViewSpec {
 
     "Build Groups from data with name" in {
       val data = Seq(
-        ReportResult(Map(CaseReportGroup.QUEUE ->  Some("1")), value = Seq(0, 1, 2, 3, 4, 5))
+        ReportResult(Map(CaseReportGroup.QUEUE -> Some("1")), value = Seq(0, 1, 2, 3, 4, 5))
       )
 
       Histogram.calculate(data, buckets) shouldBe Histogram(
@@ -83,8 +82,8 @@ class HistogramTest extends ViewSpec {
 
     "Build Groups from data" in {
       val data = Seq(
-        ReportResult(Map(CaseReportGroup.QUEUE ->  Some("1")), value = Seq(0, 1, 2, 3, 4, 5)),
-        ReportResult(Map(CaseReportGroup.QUEUE ->  None), value = Seq(0, 1, 2, 3, 4, 5))
+        ReportResult(Map(CaseReportGroup.QUEUE -> Some("1")), value = Seq(0, 1, 2, 3, 4, 5)),
+        ReportResult(Map(CaseReportGroup.QUEUE -> None), value      = Seq(0, 1, 2, 3, 4, 5))
       )
 
       Histogram.calculate(data, buckets) shouldBe Histogram(
@@ -108,7 +107,7 @@ class HistogramTest extends ViewSpec {
         )
       )
 
-      histogram.getBucket(None, interval1) shouldBe Some(HistogramBucket(Seq(0,1)))
+      histogram.getBucket(None, interval1)      shouldBe Some(HistogramBucket(Seq(0, 1)))
       histogram.getBucket(Some("1"), interval2) shouldBe Some(HistogramBucket(Seq(2, 3)))
       histogram.getBucket(Some("2"), interval3) shouldBe Some(HistogramBucket(Seq(4, 5)))
     }
@@ -122,7 +121,7 @@ class HistogramTest extends ViewSpec {
         )
       )
 
-      histogram.getBuckets(None) shouldBe Map(interval1 -> HistogramBucket(Seq(0,1)))
+      histogram.getBuckets(None)      shouldBe Map(interval1 -> HistogramBucket(Seq(0, 1)))
       histogram.getBuckets(Some("1")) shouldBe Map(interval2 -> HistogramBucket(Seq(2, 3)))
       histogram.getBuckets(Some("2")) shouldBe Map(interval3 -> HistogramBucket(Seq(4, 5)))
     }
@@ -136,7 +135,7 @@ class HistogramTest extends ViewSpec {
         )
       )
 
-      histogram.getBuckets(interval1) shouldBe Map(None -> HistogramBucket(Seq(0,1)))
+      histogram.getBuckets(interval1) shouldBe Map(None      -> HistogramBucket(Seq(0, 1)))
       histogram.getBuckets(interval2) shouldBe Map(Some("1") -> HistogramBucket(Seq(2, 3)))
       histogram.getBuckets(interval3) shouldBe Map(Some("2") -> HistogramBucket(Seq(4, 5)))
     }
@@ -150,9 +149,15 @@ class HistogramTest extends ViewSpec {
         )
       )
 
-      histogram.filterByInterval(_ == interval1) shouldBe Histogram(Map((None, interval1) -> HistogramBucket(Seq(0,1))))
-      histogram.filterByInterval(_ == interval2) shouldBe Histogram(Map((Some("1"), interval2) -> HistogramBucket(Seq(2, 3))))
-      histogram.filterByInterval(_ == interval3) shouldBe Histogram(Map((Some("2"), interval3) -> HistogramBucket(Seq(4, 5))))
+      histogram.filterByInterval(_ == interval1) shouldBe Histogram(
+        Map((None, interval1) -> HistogramBucket(Seq(0, 1)))
+      )
+      histogram.filterByInterval(_ == interval2) shouldBe Histogram(
+        Map((Some("1"), interval2) -> HistogramBucket(Seq(2, 3)))
+      )
+      histogram.filterByInterval(_ == interval3) shouldBe Histogram(
+        Map((Some("2"), interval3) -> HistogramBucket(Seq(4, 5)))
+      )
     }
 
     "Filter by Group" in {
@@ -164,9 +169,13 @@ class HistogramTest extends ViewSpec {
         )
       )
 
-      histogram.filterByGroup(_.isEmpty) shouldBe Histogram(Map((None, interval1) -> HistogramBucket(Seq(0,1))))
-      histogram.filterByGroup(_.contains("1")) shouldBe Histogram(Map((Some("1"), interval2) -> HistogramBucket(Seq(2, 3))))
-      histogram.filterByGroup(_.contains("2")) shouldBe Histogram(Map((Some("2"), interval3) -> HistogramBucket(Seq(4, 5))))
+      histogram.filterByGroup(_.isEmpty) shouldBe Histogram(Map((None, interval1) -> HistogramBucket(Seq(0, 1))))
+      histogram.filterByGroup(_.contains("1")) shouldBe Histogram(
+        Map((Some("1"), interval2) -> HistogramBucket(Seq(2, 3)))
+      )
+      histogram.filterByGroup(_.contains("2")) shouldBe Histogram(
+        Map((Some("2"), interval3) -> HistogramBucket(Seq(4, 5)))
+      )
     }
   }
 

@@ -22,42 +22,44 @@ object TabIndexes {
 
   private val tabIndexIncrement = 1000;
 
-  private val pageTabIndexer: ReusableTabIndexer = ReusableTabIndexer(startTabIndex = tabIndexIncrement, indexIncrement = tabIndexIncrement)
+  private val pageTabIndexer: ReusableTabIndexer =
+    ReusableTabIndexer(startTabIndex = tabIndexIncrement, indexIncrement = tabIndexIncrement)
 
   private val indexByPage: Map[CaseDetailPage, Int] = Map(
-    TRADER -> pageTabIndexer.nextTabIndex(),
-    LIABILITY -> pageTabIndexer.nextTabIndex() ,
+    TRADER              -> pageTabIndexer.nextTabIndex(),
+    LIABILITY           -> pageTabIndexer.nextTabIndex(),
     APPLICATION_DETAILS -> pageTabIndexer.currentTabIndex(),
-    SAMPLE_DETAILS -> pageTabIndexer.nextTabIndex(),
-    ATTACHMENTS -> pageTabIndexer.nextTabIndex(),
-    ACTIVITY -> pageTabIndexer.nextTabIndex(),
-    KEYWORDS -> pageTabIndexer.nextTabIndex(),
-    RULING -> pageTabIndexer.nextTabIndex(),
-    APPEAL -> pageTabIndexer.nextTabIndex()
+    SAMPLE_DETAILS      -> pageTabIndexer.nextTabIndex(),
+    ATTACHMENTS         -> pageTabIndexer.nextTabIndex(),
+    ACTIVITY            -> pageTabIndexer.nextTabIndex(),
+    KEYWORDS            -> pageTabIndexer.nextTabIndex(),
+    RULING              -> pageTabIndexer.nextTabIndex(),
+    APPEAL              -> pageTabIndexer.nextTabIndex()
   )
 
   def tabIndexFor: CaseDetailPage => Int = { page => indexByPage.getOrElse(page, 0) }
 
+  private val queueTabIndexer: ReusableTabIndexer =
+    ReusableTabIndexer(startTabIndex = tabIndexIncrement, indexIncrement = tabIndexIncrement)
 
-  private val queueTabIndexer: ReusableTabIndexer = ReusableTabIndexer(startTabIndex = tabIndexIncrement, indexIncrement = tabIndexIncrement)
+  private val fixedQueues: Map[String, Int] =
+    Map("my-cases" -> queueTabIndexer.nextTabIndex(), Queues.gateway.slug -> queueTabIndexer.nextTabIndex())
 
-  private val fixedQueues: Map[String, Int] = Map("my-cases" -> queueTabIndexer.nextTabIndex(), Queues.gateway.slug -> queueTabIndexer.nextTabIndex())
+  private val dynamicQueues: Map[String, Int] =
+    Queues.allDynamicQueues.map(q => q.slug                   -> queueTabIndexer.nextTabIndex()).toMap ++
+      Queues.allDynamicQueues.map(q => s"${q.slug}-liability" -> queueTabIndexer.nextTabIndex()).toMap
 
-  private val dynamicQueues: Map[String, Int] = Queues.allDynamicQueues.map(q => q.slug -> queueTabIndexer.nextTabIndex()).toMap ++
-                                    Queues.allDynamicQueues.map(q => s"${q.slug}-liability" -> queueTabIndexer.nextTabIndex()).toMap
-
-  private val reportingQueues: Map[String,Int] = Map("assigned-cases" -> queueTabIndexer.nextTabIndex(), "reports" -> queueTabIndexer.nextTabIndex())
+  private val reportingQueues: Map[String, Int] =
+    Map("assigned-cases" -> queueTabIndexer.nextTabIndex(), "reports" -> queueTabIndexer.nextTabIndex())
 
   private val indexByQueues: Map[String, Int] = fixedQueues ++ dynamicQueues ++ reportingQueues
 
   def tabIndexForQueue: String => Int = { page => indexByQueues.getOrElse(page, 0) }
 
-  def tabIndexForQueue(slug: String, filteredBy: String) : Int = {
+  def tabIndexForQueue(slug: String, filteredBy: String): Int =
     filteredBy match {
       case "LIABILITY_ORDER" => indexByQueues.getOrElse(s"$slug-liability", 0)
-      case _ => indexByQueues.getOrElse(slug, 0)
+      case _                 => indexByQueues.getOrElse(slug, 0)
     }
-
-  }
 
 }

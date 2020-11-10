@@ -27,7 +27,7 @@ object SampleReturnForm {
 
   private def oneOf(values: SampleReturn.ValueSet): Constraint[String] = Constraint("constraints.sample-return") {
     case s: String if SampleReturn.values.exists(_.toString == s) => Valid
-    case _ => Invalid(s"Must be one of [${values.toSeq.mkString(", ")}]")
+    case _                                                        => Invalid(s"Must be one of [${values.toSeq.mkString(", ")}]")
   }
 
   private val mapping: Mapping[Option[SampleReturn]] = Forms.mapping[Option[SampleReturn], String](

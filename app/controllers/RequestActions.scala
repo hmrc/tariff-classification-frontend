@@ -19,20 +19,24 @@ package controllers
 import javax.inject.{Inject, Singleton}
 import models.Permission
 import models.request.{AuthenticatedCaseRequest, AuthenticatedRequest, OperatorRequest}
-import play.api.mvc.{Action, ActionFunction}
+import play.api.mvc.ActionFunction
 
 @Singleton
-class RequestActions @Inject()(checkPermissionsAction: CheckCasePermissionsAction,
-                               authenticatedAction: AuthenticatedAction,
-                               caseExistsActionFactory: VerifyCaseExistsActionFactory,
-                               mustHavePermissionActionFactory: MustHavePermissionActionFactory) {
+class RequestActions @Inject() (
+  checkPermissionsAction: CheckCasePermissionsAction,
+  authenticatedAction: AuthenticatedAction,
+  caseExistsActionFactory: VerifyCaseExistsActionFactory,
+  mustHavePermissionActionFactory: MustHavePermissionActionFactory
+) {
 
   val authenticated: AuthenticatedAction = authenticatedAction
 
   def casePermissions(reference: String): ActionFunction[AuthenticatedRequest, AuthenticatedCaseRequest] =
     mustHave(Permission.VIEW_CASES) andThen caseExistsActionFactory(reference) andThen checkPermissionsAction
 
-  def mustHave[B[A] <: OperatorRequest[A]](permission: Permission): ActionFunction[B, B] = mustHavePermissionActionFactory[B](permission)
+  def mustHave[B[A] <: OperatorRequest[A]](permission: Permission): ActionFunction[B, B] =
+    mustHavePermissionActionFactory[B](permission)
 
-  def mustHaveOneOf[B[A] <: OperatorRequest[A]](permissions: Seq[Permission]): ActionFunction[B, B] = mustHavePermissionActionFactory[B](permissions)
+  def mustHaveOneOf[B[A] <: OperatorRequest[A]](permissions: Seq[Permission]): ActionFunction[B, B] =
+    mustHavePermissionActionFactory[B](permissions)
 }

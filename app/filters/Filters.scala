@@ -20,7 +20,7 @@ import com.google.inject.Inject
 import play.api.http.DefaultHttpFilters
 import uk.gov.hmrc.play.bootstrap.frontend.filters.FrontendFilters
 
-class Filters @Inject()(
+class Filters @Inject() (
   shutterFilter: ShutteringFilter,
   frontendFilters: FrontendFilters
 ) extends DefaultHttpFilters(frontendFilters.filters :+ shutterFilter: _*)

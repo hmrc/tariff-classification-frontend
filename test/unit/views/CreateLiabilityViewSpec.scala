@@ -23,19 +23,19 @@ import play.api.data.{Form, FormError}
 import views.ViewMatchers.{containElementWithClass, containElementWithID, haveAttribute}
 import views.html.create_liability
 
-
 class CreateLiabilityViewSpec extends ViewSpec {
 
   private lazy val liabilityOrder: Form[LiabilityOrder] = LiabilityForm.newLiabilityForm
 
   private lazy val doc = view(create_liability(liabilityOrder))
 
-  def getElementByAttributeValue(html: Document): String = html.getElementsByAttributeValue("class", "error-summary-list").text
+  def getElementByAttributeValue(html: Document): String =
+    html.getElementsByAttributeValue("class", "error-summary-list").text
 
   def liabilityOrderWithErrors(errorKey: String, errorValue: String): Document = {
 
-    val liabilityOrderWithErrors: Form[LiabilityOrder] = LiabilityForm.newLiabilityForm.copy(
-      errors = Seq(FormError.apply(errorKey, errorValue)))
+    val liabilityOrderWithErrors: Form[LiabilityOrder] =
+      LiabilityForm.newLiabilityForm.copy(errors = Seq(FormError.apply(errorKey, errorValue)))
 
     view(create_liability(liabilityOrderWithErrors))
 
@@ -49,8 +49,8 @@ class CreateLiabilityViewSpec extends ViewSpec {
         messages("liability.create_liability.liability-status.radio.yes") + " " +
         messages("liability.create_liability.liability-status.radio.no")
 
-      doc should containElementWithID("create_liability-liability_status-LIVE")
-      doc should containElementWithID("create_liability-liability_status-NON_LIVE")
+      doc                                         should containElementWithID("create_liability-liability_status-LIVE")
+      doc                                         should containElementWithID("create_liability-liability_status-NON_LIVE")
       doc.getElementById("liability-status").text shouldBe expectedMessage
 
     }
@@ -64,7 +64,9 @@ class CreateLiabilityViewSpec extends ViewSpec {
     "contain item name" in {
 
       doc should containElementWithID("item-name")
-      doc.getElementsByAttributeValue("for", "item-name").text shouldBe messages("liability.create_liability.item-name.heading")
+      doc.getElementsByAttributeValue("for", "item-name").text shouldBe messages(
+        "liability.create_liability.item-name.heading"
+      )
       doc.getElementById("item-name-hint").text shouldBe messages("liability.create_liability.item-name.heading.hint")
 
     }
@@ -72,64 +74,72 @@ class CreateLiabilityViewSpec extends ViewSpec {
     "contain trader's name" in {
 
       doc should containElementWithID("trader-name")
-      doc.getElementsByAttributeValue("for", "trader-name").text shouldBe messages("liability.create_liability.trader-name.heading")
-      doc.getElementById("trader-name-hint").text shouldBe messages("liability.create_liability.trader-name.heading.hint")
+      doc.getElementsByAttributeValue("for", "trader-name").text shouldBe messages(
+        "liability.create_liability.trader-name.heading"
+      )
+      doc.getElementById("trader-name-hint").text shouldBe messages(
+        "liability.create_liability.trader-name.heading.hint"
+      )
 
     }
 
     "contain the correct cancel link" in {
 
-      doc.getElementById("create_liability-cancel_button") should haveAttribute("href","/manage-tariff-classifications")
+      doc.getElementById("create_liability-cancel_button") should haveAttribute(
+        "href",
+        "/manage-tariff-classifications"
+      )
 
     }
 
     "contain the correct buttons" in {
 
-      doc should containElementWithID("create_liability-button")
-      doc should containElementWithID("create_liability-cancel_button")
+      doc                                                should containElementWithID("create_liability-button")
+      doc                                                should containElementWithID("create_liability-cancel_button")
       doc.getElementById("create_liability-button").text shouldBe messages("liability.create_liability.confirm-button")
-      doc.getElementById("create_liability-cancel_button").text shouldBe messages("liability.create_liability.cancel-button")
+      doc.getElementById("create_liability-cancel_button").text shouldBe messages(
+        "liability.create_liability.cancel-button"
+      )
     }
 
     "render the correct errors if item name is missing" in {
 
-      val errorKey = "item-name-error"
-      val errorValue = "error.empty.item-name"
+      val errorKey             = "item-name-error"
+      val errorValue           = "error.empty.item-name"
       val expectedErrorMessage = messages(errorValue)
 
       val docWithErrors = liabilityOrderWithErrors(errorKey, errorValue)
 
-      docWithErrors should containElementWithClass("error-summary-list")
+      docWithErrors                             should containElementWithClass("error-summary-list")
       getElementByAttributeValue(docWithErrors) shouldBe expectedErrorMessage
 
     }
 
     "render the correct errors if trader name is missing" in {
 
-      val errorKey = "trader-name-error"
-      val errorValue = "error.empty.trader-name"
+      val errorKey             = "trader-name-error"
+      val errorValue           = "error.empty.trader-name"
       val expectedErrorMessage = messages(errorValue)
 
       val docWithErrors = liabilityOrderWithErrors(errorKey, errorValue)
 
-      docWithErrors should containElementWithClass("error-summary-list")
+      docWithErrors                             should containElementWithClass("error-summary-list")
       getElementByAttributeValue(docWithErrors) shouldBe expectedErrorMessage
 
     }
 
     "render the correct errors if liability option is missing" in {
 
-      val errorKey = "liability-status"
-      val errorValue = "error.empty.liability-status"
+      val errorKey             = "liability-status"
+      val errorValue           = "error.empty.liability-status"
       val expectedErrorMessage = messages(errorValue)
 
       val docWithErrors = liabilityOrderWithErrors(errorKey, errorValue)
 
-      docWithErrors should containElementWithClass("error-summary-list")
+      docWithErrors                             should containElementWithClass("error-summary-list")
       getElementByAttributeValue(docWithErrors) shouldBe expectedErrorMessage
 
     }
-
 
   }
 }

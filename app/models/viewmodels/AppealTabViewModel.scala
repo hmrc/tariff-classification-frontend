@@ -19,11 +19,11 @@ package models.viewmodels
 import models.{Appeal, Case, CaseStatus, Operator, Permission}
 
 case class AppealTabViewModel(
-                               caseReference: String,
-                               appeals: Seq[Appeal],
-                               applicationForExtendedUseButton: Option[String],
-                               permissionForExtendedUse: Boolean
-                             )
+  caseReference: String,
+  appeals: Seq[Appeal],
+  applicationForExtendedUseButton: Option[String],
+  permissionForExtendedUse: Boolean
+)
 
 object AppealTabViewModel {
 
@@ -33,17 +33,14 @@ object AppealTabViewModel {
 
     val applicationForExtendedUse = c.decision.flatMap(_.cancellation).exists(_.applicationForExtendedUse)
 
-    val showExtendedUseButton = c.status == CaseStatus.CANCELLED && operator.permissions.contains(Permission.APPEAL_CASE)
+    val showExtendedUseButton =
+      c.status == CaseStatus.CANCELLED && operator.permissions.contains(Permission.APPEAL_CASE)
 
     val yesNoLink: Option[String] =
       if (c.status == CaseStatus.CANCELLED && applicationForExtendedUse) Some("Yes")
-      else if (c.status == CaseStatus.CANCELLED && !applicationForExtendedUse) Some("No") else None
+      else if (c.status == CaseStatus.CANCELLED && !applicationForExtendedUse) Some("No")
+      else None
 
-    AppealTabViewModel(c.reference,
-      appealsDecision,
-      applicationForExtendedUseButton = yesNoLink,
-      showExtendedUseButton)
+    AppealTabViewModel(c.reference, appealsDecision, applicationForExtendedUseButton = yesNoLink, showExtendedUseButton)
   }
 }
-
-

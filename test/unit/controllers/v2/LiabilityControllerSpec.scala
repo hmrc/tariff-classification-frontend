@@ -29,7 +29,7 @@ import play.api.Application
 import play.api.http.Status
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.mvc.{BodyParsers, Result}
+import play.api.mvc.{PlayBodyParsers, Result}
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import service._
@@ -41,21 +41,21 @@ import views.html.v2.{case_heading, liability_details_edit, liability_view, remo
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class RequestActionsWithPermissionsProvider @Inject()(implicit parse: BodyParsers.Default) extends Provider[RequestActionsWithPermissions] {
+class RequestActionsWithPermissionsProvider @Inject() (implicit parse: PlayBodyParsers)
+    extends Provider[RequestActionsWithPermissions] {
 
-  override def get(): RequestActionsWithPermissions = {
+  override def get(): RequestActionsWithPermissions =
     new RequestActionsWithPermissions(
-      parse, Set(Permission.ADD_NOTE),
-      c = Cases.liabilityCaseExample.copy(assignee = Some(Cases.operatorWithPermissions)),
+      parse,
+      Set(Permission.ADD_NOTE),
+      c  = Cases.liabilityCaseExample.copy(assignee = Some(Cases.operatorWithPermissions)),
       op = Cases.operatorWithPermissions
     )
-  }
 }
 
 class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   val binds = List(
-
     //views
     bind[liability_view].toInstance(mock[liability_view]),
     bind[EventsService].toInstance(mock[EventsService]),
@@ -72,28 +72,32 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
   val defaultRequestActions = List(
     //providers
-    bind[RequestActions].toProvider[RequestActionsWithPermissionsProvider])
+    bind[RequestActions].toProvider[RequestActionsWithPermissionsProvider]
+  )
 
-  override lazy val app: Application = new GuiceApplicationBuilder().overrides(
-   binds ++ defaultRequestActions
-  ).configure(
-    //turn off metrics
-    "metrics.jvm" -> false,
-    "metrics.enabled" -> false,
-    //app related feature flag
-    "toggle.new-liability-details" -> true
-  ).build()
+  override lazy val app: Application = new GuiceApplicationBuilder()
+    .overrides(
+      binds ++ defaultRequestActions
+    )
+    .configure(
+      //turn off metrics
+      "metrics.jvm"     -> false,
+      "metrics.enabled" -> false,
+      //app related feature flag
+      "toggle.new-liability-details" -> true
+    )
+    .build()
 
   private lazy val pagedEvent: Paged[Event] = Paged(Seq(Events.event), 1, 1, 1)
-  private lazy val queues: Seq[Queue] = Seq(Queue("", "", ""))
-  private lazy val eventService = mock[EventsService]
-  private lazy val queueService = mock[QueuesService]
-  private lazy val event = mock[Event]
-  private lazy val liability_view = mock[liability_view]
-  private lazy val liability_details_edit = injector.instanceOf[liability_details_edit]
-  private lazy val fileStoreService = mock[FileStoreService]
-  private lazy val keywordsService = mock[KeywordsService]
-  private lazy val casesService = mock[CasesService]
+  private lazy val queues: Seq[Queue]       = Seq(Queue("", "", ""))
+  private lazy val eventService             = mock[EventsService]
+  private lazy val queueService             = mock[QueuesService]
+  private lazy val event                    = mock[Event]
+  private lazy val liability_view           = mock[liability_view]
+  private lazy val liability_details_edit   = injector.instanceOf[liability_details_edit]
+  private lazy val fileStoreService         = mock[FileStoreService]
+  private lazy val keywordsService          = mock[KeywordsService]
+  private lazy val casesService             = mock[CasesService]
 
   override def beforeEach(): Unit =
     reset(
@@ -106,41 +110,73 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
   private def checkLiabilityView(timesInvoked: Int) =
     verify(liability_view, times(timesInvoked)).apply(
-      any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()
+      any(),
+      any(),
+      any(),
+      any(),
+      any(),
+      any(),
+      any(),
+      any(),
+      any(),
+      any(),
+      any()
     )(any(), any(), any())
 
   private def mockLiabilityController(
-                                       pagedEvent: Paged[Event] = pagedEvent,
-                                       queues: Seq[Queue] = queues,
-                                       attachments: Seq[StoredAttachment] = Seq(Cases.storedAttachment),
-                                       letterOfAuthority: Option[StoredAttachment] = Some(Cases.letterOfAuthority)
-                                     ): Any = {
+    pagedEvent: Paged[Event]                    = pagedEvent,
+    queues: Seq[Queue]                          = queues,
+    attachments: Seq[StoredAttachment]          = Seq(Cases.storedAttachment),
+    letterOfAuthority: Option[StoredAttachment] = Some(Cases.letterOfAuthority)
+  ): Any = {
     when(eventService.getFilteredEvents(any[String](), any[Pagination](), any())(any())) thenReturn Future(pagedEvent)
     when(queueService.getAll) thenReturn Future(queues)
 
     when(fileStoreService.getAttachments(any[Case]())(any())) thenReturn (Future.successful(attachments))
     when(fileStoreService.getLetterOfAuthority(any[Case]())(any())) thenReturn (Future.successful(letterOfAuthority))
     when(keywordsService.autoCompleteKeywords) thenReturn Future(Seq("keyword1", "keyword2"))
-    when(keywordsService.addKeyword(any[Case](), any[String](), any[Operator]())(any())) thenReturn Future(Cases.liabilityLiveCaseExample)
-    when(keywordsService.removeKeyword(any[Case](), any[String](), any[Operator]())(any())) thenReturn Future(Cases.liabilityLiveCaseExample)
+    when(keywordsService.addKeyword(any[Case](), any[String](), any[Operator]())(any())) thenReturn Future(
+      Cases.liabilityLiveCaseExample
+    )
+    when(keywordsService.removeKeyword(any[Case](), any[String](), any[Operator]())(any())) thenReturn Future(
+      Cases.liabilityLiveCaseExample
+    )
 
-    when(liability_view.apply(
-      any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()
-    )(any(), any(), any())) thenReturn Html("body")
+    when(
+      liability_view.apply(
+        any(),
+        any(),
+        any(),
+        any(),
+        any(),
+        any(),
+        any(),
+        any(),
+        any(),
+        any(),
+        any()
+      )(any(), any(), any())
+    ) thenReturn Html("body")
   }
 
-  private def controller(permissions : Set[Permission]): LiabilityController = {
+  private def controller(permissions: Set[Permission]): LiabilityController =
     new LiabilityController(
       new RequestActionsWithPermissions(
-        defaultPlayBodyParsers, permissions,
-        c = Cases.liabilityCaseExample.copy(assignee = Some(Cases.operatorWithPermissions)),
+        playBodyParsers,
+        permissions,
+        c  = Cases.liabilityCaseExample.copy(assignee = Some(Cases.operatorWithPermissions)),
         op = Cases.operatorWithPermissions
       ),
-      casesService,eventService,queueService,
-      fileStoreService,keywordsService,mcc,
-      liability_view,liability_details_edit,realAppConfig
+      casesService,
+      eventService,
+      queueService,
+      fileStoreService,
+      keywordsService,
+      mcc,
+      liability_view,
+      liability_details_edit,
+      realAppConfig
     )
-  }
 
   private val caseReference = "123456"
 
@@ -149,7 +185,7 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     "return a 200 status" in {
       mockLiabilityController()
 
-      val fakeReq = newFakeGETRequestWithCSRF(app)
+      val fakeReq                = newFakeGETRequestWithCSRF(app)
       val result: Future[Result] = controller(Set()).displayLiability(caseReference).apply(fakeReq)
 
       status(result) shouldBe OK
@@ -164,11 +200,13 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     "add a new note when a case note is provided" in {
       val aNote = "This is a note"
 
-      when(eventService.addNote(meq(aCase), meq(aNote), meq(Cases.operatorWithPermissions), any[Clock])(any[HeaderCarrier])) thenReturn Future(event)
+      when(
+        eventService.addNote(meq(aCase), meq(aNote), meq(Cases.operatorWithPermissions), any[Clock])(any[HeaderCarrier])
+      ) thenReturn Future(event)
 
       mockLiabilityController()
 
-      val fakeReq = newFakePOSTRequestWithCSRF(app, Map("note" -> aNote))
+      val fakeReq                = newFakePOSTRequestWithCSRF(app, Map("note" -> aNote))
       val result: Future[Result] = controller(Set(Permission.ADD_NOTE)).addNote(caseReference).apply(fakeReq)
 
       status(result) shouldBe SEE_OTHER
@@ -179,11 +217,13 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     "not add a new note when a case note is not provided" in {
       val aNote = ""
 
-      when(eventService.addNote(meq(aCase), meq(aNote), meq(Cases.operatorWithPermissions), any[Clock])(any[HeaderCarrier])) thenReturn Future(event)
+      when(
+        eventService.addNote(meq(aCase), meq(aNote), meq(Cases.operatorWithPermissions), any[Clock])(any[HeaderCarrier])
+      ) thenReturn Future(event)
 
       mockLiabilityController()
 
-      val fakeReq = newFakePOSTRequestWithCSRF(app, Map("note" -> aNote))
+      val fakeReq                = newFakePOSTRequestWithCSRF(app, Map("note" -> aNote))
       val result: Future[Result] = controller(Set(Permission.ADD_NOTE)).addNote(caseReference).apply(fakeReq)
 
       status(result) shouldBe OK
@@ -196,39 +236,49 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
     "redirect back to display liability if form submitted successfully" in {
       val keyword = "pajamas"
-      when(keywordsService.addKeyword(
-        meq(Cases.liabilityCaseExample), meq(keyword), meq(Cases.operatorWithKeywordsPermissions))
-      (any[HeaderCarrier])) thenReturn Future(Cases.liabilityCaseExample)
+      when(
+        keywordsService.addKeyword(
+          meq(Cases.liabilityCaseExample),
+          meq(keyword),
+          meq(Cases.operatorWithKeywordsPermissions)
+        )(any[HeaderCarrier])
+      ) thenReturn Future(Cases.liabilityCaseExample)
 
       mockLiabilityController()
 
-      val fakeReq = newFakePOSTRequestWithCSRF(app, Map("keyword" -> keyword))
+      val fakeReq                = newFakePOSTRequestWithCSRF(app, Map("keyword" -> keyword))
       val result: Future[Result] = controller(Set(Permission.KEYWORDS)).addKeyword(caseReference).apply(fakeReq)
 
       status(result) shouldBe SEE_OTHER
-      locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/v2/" + caseReference + "/liability#keywords_tab")
+      locationOf(result) shouldBe Some(
+        "/manage-tariff-classifications/cases/v2/" + caseReference + "/liability#keywords_tab"
+      )
     }
 
     "return to view if form fails to validate" in {
       val keyword = ""
-      when(keywordsService.addKeyword(
-        meq(Cases.liabilityCaseExample), meq(keyword), meq(Cases.operatorWithKeywordsPermissions))
-      (any[HeaderCarrier])) thenReturn Future(Cases.liabilityCaseExample)
+      when(
+        keywordsService.addKeyword(
+          meq(Cases.liabilityCaseExample),
+          meq(keyword),
+          meq(Cases.operatorWithKeywordsPermissions)
+        )(any[HeaderCarrier])
+      ) thenReturn Future(Cases.liabilityCaseExample)
 
       mockLiabilityController()
 
-      val fakeReq = newFakePOSTRequestWithCSRF(app, Map("keyword" -> keyword))
+      val fakeReq                = newFakePOSTRequestWithCSRF(app, Map("keyword" -> keyword))
       val result: Future[Result] = controller(Set(Permission.KEYWORDS)).addKeyword(caseReference).apply(fakeReq)
 
       status(result) shouldBe OK
     }
 
     "redirect to unauthorised if the user does not have the right permissions" in {
-      val keyword = "pajamas"
-      val fakeReq = newFakePOSTRequestWithCSRF(app, Map("keyword" -> keyword))
+      val keyword                = "pajamas"
+      val fakeReq                = newFakePOSTRequestWithCSRF(app, Map("keyword" -> keyword))
       val result: Future[Result] = controller(Set()).addKeyword(caseReference).apply(fakeReq)
 
-      status(result) shouldBe Status.SEE_OTHER
+      status(result)               shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
     }
 
@@ -236,25 +286,28 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
   "Liability remove keyword" should {
 
-      "remove keyword and return to liability view" in {
-        mockLiabilityController()
-
-        val keyword = "llamas"
-        val fakeReq = newFakeGETRequestWithCSRF(app)
-        val result: Future[Result] = controller(Set(Permission.KEYWORDS)).removeKeyword(caseReference, keyword).apply(fakeReq)
-
-        status(result) shouldBe SEE_OTHER
-        locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/v2/" + caseReference + "/liability#keywords_tab")
-      }
-
-    "redirect to unauthorised if the user does not have the right permissions" in {
+    "remove keyword and return to liability view" in {
       mockLiabilityController()
 
       val keyword = "llamas"
       val fakeReq = newFakeGETRequestWithCSRF(app)
-      val result: Future[Result] = controller(Set()).removeKeyword(caseReference, keyword).apply(fakeReq)
+      val result: Future[Result] =
+        controller(Set(Permission.KEYWORDS)).removeKeyword(caseReference, keyword).apply(fakeReq)
 
       status(result) shouldBe SEE_OTHER
+      locationOf(result) shouldBe Some(
+        "/manage-tariff-classifications/cases/v2/" + caseReference + "/liability#keywords_tab"
+      )
+    }
+
+    "redirect to unauthorised if the user does not have the right permissions" in {
+      mockLiabilityController()
+
+      val keyword                = "llamas"
+      val fakeReq                = newFakeGETRequestWithCSRF(app)
+      val result: Future[Result] = controller(Set()).removeKeyword(caseReference, keyword).apply(fakeReq)
+
+      status(result)               shouldBe SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
     }
 
@@ -265,7 +318,8 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       mockLiabilityController()
 
       val fakeReq = newFakeGETRequestWithCSRF(app)
-      val result: Future[Result] = controller(Set(Permission.EDIT_LIABILITY)).editLiabilityDetails(caseReference).apply(fakeReq)
+      val result: Future[Result] =
+        controller(Set(Permission.EDIT_LIABILITY)).editLiabilityDetails(caseReference).apply(fakeReq)
 
       status(result) shouldBe OK
     }
@@ -273,10 +327,10 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     "return unauthorised if the user does not have the right permissions" in {
       mockLiabilityController()
 
-      val fakeReq = newFakeGETRequestWithCSRF(app)
+      val fakeReq                = newFakeGETRequestWithCSRF(app)
       val result: Future[Result] = controller(Set()).editLiabilityDetails(caseReference).apply(fakeReq)
 
-      status(result) shouldBe SEE_OTHER
+      status(result)               shouldBe SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
     }
   }
@@ -290,22 +344,25 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       val fakeReq = newFakePOSTRequestWithCSRF(
         app,
         Map(
-          "entryDate" -> "",
-          "entryNumber" -> "",
-          "traderName" -> "mandatory-name",
-          "goodName" -> "item-name",
-          "traderCommodityCode" -> "",
+          "entryDate"            -> "",
+          "entryNumber"          -> "",
+          "traderName"           -> "mandatory-name",
+          "goodName"             -> "item-name",
+          "traderCommodityCode"  -> "",
           "officerCommodityCode" -> "",
-          "contactName" -> "",
-          "contactEmail" -> "valid@email.com",
-          "contactPhone" -> ""
+          "contactName"          -> "",
+          "contactEmail"         -> "valid@email.com",
+          "contactPhone"         -> ""
         )
       )
-      val result: Future[Result] = controller(Set(Permission.EDIT_LIABILITY)).postLiabilityDetails(caseReference).apply(fakeReq)
+      val result: Future[Result] =
+        controller(Set(Permission.EDIT_LIABILITY)).postLiabilityDetails(caseReference).apply(fakeReq)
 
       status(result) shouldBe SEE_OTHER
 
-      locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/v2/" + caseReference + "/liability#c592_tab")
+      locationOf(result) shouldBe Some(
+        "/manage-tariff-classifications/cases/v2/" + caseReference + "/liability#c592_tab"
+      )
     }
 
     "return back to the view if form fails to validate" in {
@@ -314,18 +371,19 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       val fakeReq = newFakePOSTRequestWithCSRF(
         app,
         Map(
-          "entryDate" -> "",
-          "entryNumber" -> "",
-          "traderName" -> "mandatory-name",
-          "goodName" -> "item-name",
-          "traderCommodityCode" -> "",
+          "entryDate"            -> "",
+          "entryNumber"          -> "",
+          "traderName"           -> "mandatory-name",
+          "goodName"             -> "item-name",
+          "traderCommodityCode"  -> "",
           "officerCommodityCode" -> "",
-          "contactName" -> "",
-          "contactEmail" -> "wrongemail",
-          "contactPhone" -> ""
+          "contactName"          -> "",
+          "contactEmail"         -> "wrongemail",
+          "contactPhone"         -> ""
         )
       )
-      val result: Future[Result] = controller(Set(Permission.EDIT_LIABILITY)).postLiabilityDetails(caseReference).apply(fakeReq)
+      val result: Future[Result] =
+        controller(Set(Permission.EDIT_LIABILITY)).postLiabilityDetails(caseReference).apply(fakeReq)
 
       status(result) shouldBe OK
     }

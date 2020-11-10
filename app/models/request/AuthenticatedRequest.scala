@@ -19,7 +19,7 @@ package models.request
 import play.api.mvc.{Request, WrappedRequest}
 import models.{Case, Operator, Permission}
 
-abstract class OperatorRequest[A](_operator: Operator, _request: Request[A]) extends WrappedRequest[A](_request){
+abstract class OperatorRequest[A](_operator: Operator, _request: Request[A]) extends WrappedRequest[A](_request) {
   val operator: Operator
   val request: Request[A] = _request
 
@@ -27,7 +27,7 @@ abstract class OperatorRequest[A](_operator: Operator, _request: Request[A]) ext
 }
 
 class AuthenticatedRequest[A](_operator: Operator, _request: Request[A])
-  extends OperatorRequest[A](_operator, _request){
+    extends OperatorRequest[A](_operator, _request) {
 
   val operator: Operator = _operator
 }
@@ -37,6 +37,6 @@ object AuthenticatedRequest {
 }
 
 class AuthenticatedCaseRequest[A](operator: Operator, request: Request[A], requestedCase: Case)
-  extends AuthenticatedRequest[A](operator, request) {
+    extends AuthenticatedRequest[A](operator, request) {
   val `case`: Case = requestedCase
 }

@@ -26,10 +26,10 @@ import models.CommodityCode
 import scala.io.Source
 
 @Singleton
-class CommodityCodeService @Inject()(appConfig: AppConfig) {
+class CommodityCodeService @Inject() (appConfig: AppConfig) {
 
   private lazy val dateTimeFormatter = DateTimeFormatter.ofPattern("yyy-MM-dd HH:mm:ss")
-  private lazy val padLimit = 10
+  private lazy val padLimit          = 10
 
   def find(commodityCode: String): Option[CommodityCode] = {
     val canonicalCode: String = padTo10Digits(commodityCode)
@@ -44,7 +44,7 @@ class CommodityCodeService @Inject()(appConfig: AppConfig) {
   }
 
   private lazy val commodityCodesFromFile: Seq[CommodityCode] = {
-    val url = getClass.getClassLoader.getResource(appConfig.commodityCodePath)
+    val url   = getClass.getClassLoader.getResource(appConfig.commodityCodePath)
     val lines = Source.fromURL(url, "UTF-8").getLines()
 
     val byHeader: Map[String, Int] = split(lines.next()).zipWithIndex.toMap
@@ -54,18 +54,18 @@ class CommodityCodeService @Inject()(appConfig: AppConfig) {
       .filter(columns => columns(byHeader("leaf")) == "1")
       .map { columns =>
         val commodityCode = columns(byHeader("goods_nomenclature_item_id"))
-        val expiry = columns(byHeader("validity_end_date"))
-        if(expiry.nonEmpty) {
+        val expiry        = columns(byHeader("validity_end_date"))
+        if (expiry.nonEmpty) {
           val date = LocalDateTime.parse(expiry, dateTimeFormatter).atZone(appConfig.clock.getZone).toInstant
           CommodityCode(commodityCode, Some(date))
         } else {
           CommodityCode(commodityCode)
         }
-      }.toSeq
+      }
+      .toSeq
   }
 
-  private def split(string: String): Array[String] = {
+  private def split(string: String): Array[String] =
     string.split(";").map(_.replaceAll("\"", ""))
-  }
 
 }

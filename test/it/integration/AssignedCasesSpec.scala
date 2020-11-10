@@ -9,32 +9,43 @@ import utils.{CasePayloads, CaseQueueBuilder}
 
 class AssignedCasesSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder {
 
-  private val testCasesServiceUrl = buildQueryUrl(withStatuses = "OPEN,REFERRED,SUSPENDED", assigneeId = "some", pag = NoPagination())
+  private val testCasesServiceUrl =
+    buildQueryUrl(withStatuses = "OPEN,REFERRED,SUSPENDED", assigneeId = "some", pag = NoPagination())
 
-  private val testReportServiceUrl = "/report?status=NEW&status=OPEN&status=REFERRED&status=SUSPENDED&assignee_id=none&report_group=queue-id%2Capplication-type&report_field=active-days-elapsed"
+  private val testReportServiceUrl =
+    "/report?status=NEW&status=OPEN&status=REFERRED&status=SUSPENDED&assignee_id=none&report_group=queue-id%2Capplication-type&report_field=active-days-elapsed"
 
-  private val testMyCasesServiceUrl = buildQueryUrl(withStatuses = "NEW,OPEN,REFERRED,SUSPENDED", assigneeId = "123", pag = NoPagination())
-
+  private val testMyCasesServiceUrl =
+    buildQueryUrl(withStatuses = "NEW,OPEN,REFERRED,SUSPENDED", assigneeId = "123", pag = NoPagination())
 
   "Assigned Cases" should {
 
     "return status 200 for get all assigned cases" in {
       // Given
       givenAuthSuccess()
-      stubFor(get(urlEqualTo(testCasesServiceUrl))
-        .willReturn(aResponse()
-          .withStatus(OK)
-          .withBody(CasePayloads.pagedEmpty))
+      stubFor(
+        get(urlEqualTo(testCasesServiceUrl))
+          .willReturn(
+            aResponse()
+              .withStatus(OK)
+              .withBody(CasePayloads.pagedEmpty)
+          )
       )
-      stubFor(get(urlEqualTo(testMyCasesServiceUrl))
-        .willReturn(aResponse()
-          .withStatus(OK)
-          .withBody(CasePayloads.pagedEmpty))
+      stubFor(
+        get(urlEqualTo(testMyCasesServiceUrl))
+          .willReturn(
+            aResponse()
+              .withStatus(OK)
+              .withBody(CasePayloads.pagedEmpty)
+          )
       )
-      stubFor(get(urlEqualTo(testReportServiceUrl))
-        .willReturn(aResponse()
-        .withStatus(OK)
-        .withBody(CasePayloads.reportEmpty))
+      stubFor(
+        get(urlEqualTo(testReportServiceUrl))
+          .willReturn(
+            aResponse()
+              .withStatus(OK)
+              .withBody(CasePayloads.reportEmpty)
+          )
       )
 
       // When
@@ -42,16 +53,19 @@ class AssignedCasesSpec extends IntegrationTest with MockitoSugar with CaseQueue
 
       // Then
       response.status shouldBe OK
-      response.body should include("There are no cases assigned.")
+      response.body   should include("There are no cases assigned.")
     }
 
     "return status 200 for get assigned cases for operator" in {
       // Given
       givenAuthSuccess()
-      stubFor(get(urlEqualTo(testCasesServiceUrl))
-        .willReturn(aResponse()
-          .withStatus(OK)
-          .withBody(CasePayloads.pagedAssignedCases))
+      stubFor(
+        get(urlEqualTo(testCasesServiceUrl))
+          .willReturn(
+            aResponse()
+              .withStatus(OK)
+              .withBody(CasePayloads.pagedAssignedCases)
+          )
       )
 
       // When
@@ -59,7 +73,7 @@ class AssignedCasesSpec extends IntegrationTest with MockitoSugar with CaseQueue
 
       // Then
       response.status shouldBe OK
-      response.body should include("<h2 class=\"heading-small\">Assigned to Test User</h2>")
+      response.body   should include("<h2 class=\"heading-small\">Assigned to Test User</h2>")
     }
 
     "redirect on auth failure" in {
@@ -71,9 +85,8 @@ class AssignedCasesSpec extends IntegrationTest with MockitoSugar with CaseQueue
 
       // Then
       response.status shouldBe OK
-      response.body should include(messages("not_authorised.paragraph1"))
+      response.body   should include(messages("not_authorised.paragraph1"))
     }
   }
-
 
 }

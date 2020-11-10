@@ -8,12 +8,12 @@ import play.api.test.Helpers._
 import utils.Cases.{aCase, withDecision}
 import utils.{CasePayloads, EventPayloads}
 
-
 class CancelRulingSpec extends IntegrationTest with MockitoSugar {
 
   "Cancel Ruling" should {
     val owner = Some(Operator("111", role = Role.CLASSIFICATION_OFFICER))
-    val caseWithStatusCOMPLETE = CasePayloads.jsonOf(aCase(withDecision()).copy(assignee = owner, status = CaseStatus.COMPLETED))
+    val caseWithStatusCOMPLETE =
+      CasePayloads.jsonOf(aCase(withDecision()).copy(assignee = owner, status = CaseStatus.COMPLETED))
     val event = EventPayloads.event
 
     "return status 200 for manager" in {
@@ -39,15 +39,21 @@ class CancelRulingSpec extends IntegrationTest with MockitoSugar {
     }
 
     def shouldSucceed = {
-      stubFor(get(urlEqualTo("/cases/1"))
-        .willReturn(aResponse()
-          .withStatus(OK)
-          .withBody(caseWithStatusCOMPLETE))
+      stubFor(
+        get(urlEqualTo("/cases/1"))
+          .willReturn(
+            aResponse()
+              .withStatus(OK)
+              .withBody(caseWithStatusCOMPLETE)
+          )
       )
-      stubFor(post(urlEqualTo("/cases/1/events"))
-        .willReturn(aResponse()
-          .withStatus(CREATED)
-          .withBody(event))
+      stubFor(
+        post(urlEqualTo("/cases/1/events"))
+          .willReturn(
+            aResponse()
+              .withStatus(CREATED)
+              .withBody(event)
+          )
       )
 
       // When
@@ -55,7 +61,7 @@ class CancelRulingSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body should include("Cancel the ruling")
+      response.body   should include("Cancel the ruling")
     }
 
     def shouldFail = {
@@ -64,7 +70,7 @@ class CancelRulingSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body should include(messages("not_authorised.paragraph1"))
+      response.body   should include(messages("not_authorised.paragraph1"))
     }
 
   }

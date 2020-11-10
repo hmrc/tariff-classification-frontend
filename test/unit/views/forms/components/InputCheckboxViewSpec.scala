@@ -38,8 +38,8 @@ class InputCheckboxViewSpec extends ViewSpec {
       val doc = view(input_checkbox(form("field"), "Label"))
 
       // Then
-      doc should containElementWithTag("input")
-      doc should containElementWithID("field")
+      doc                         should containElementWithTag("input")
+      doc                         should containElementWithID("field")
       doc.getElementById("field") should haveAttribute("type", "checkbox")
       doc.getElementById("field") should haveAttribute("name", "field")
       doc.getElementById("field") should haveAttribute("value", "true")
@@ -51,8 +51,8 @@ class InputCheckboxViewSpec extends ViewSpec {
       val doc = view(input_checkbox(form("field"), "Label", value = false, submitOnChange = true))
 
       // Then
-      doc should containElementWithTag("input")
-      doc should containElementWithID("field")
+      doc                         should containElementWithTag("input")
+      doc                         should containElementWithID("field")
       doc.getElementById("field") should haveAttribute("type", "checkbox")
       doc.getElementById("field") should haveAttribute("name", "field")
       doc.getElementById("field") should haveAttribute("value", "false")
@@ -60,9 +60,9 @@ class InputCheckboxViewSpec extends ViewSpec {
     }
     "show an error in the value field's label" in {
       lazy val emptyForm = Map[String, String]()
-      val formWithError = form.bind(emptyForm).apply("field")
-      val doc = view(input_text(formWithError, "Span"))
-      doc.getElementsByClass("visually-hidden").text() mustBe  errorPrefix
+      val formWithError  = form.bind(emptyForm).apply("field")
+      val doc            = view(input_text(formWithError, "Span"))
+      doc.getElementsByClass("visually-hidden").text() mustBe errorPrefix
     }
   }
 

@@ -31,14 +31,15 @@ import scala.concurrent.Future.{failed, successful}
 
 class CasesService_UpdateExtendedUseStatusSpec extends ServiceSpecBase with BeforeAndAfterEach with ConnectorCaptor {
 
-  private val connector = mock[BindingTariffClassificationConnector]
-  private val rulingConnector = mock[RulingConnector]
-  private val emailService = mock[EmailService]
+  private val connector        = mock[BindingTariffClassificationConnector]
+  private val rulingConnector  = mock[RulingConnector]
+  private val emailService     = mock[EmailService]
   private val fileStoreService = mock[FileStoreService]
   private val reportingService = mock[ReportingService]
-  private val audit = mock[AuditService]
+  private val audit            = mock[AuditService]
 
-  private val service = new CasesService(realAppConfig, audit, emailService, fileStoreService, reportingService, connector, rulingConnector)
+  private val service =
+    new CasesService(realAppConfig, audit, emailService, fileStoreService, reportingService, connector, rulingConnector)
 
   override protected def afterEach(): Unit = {
     super.afterEach()
@@ -49,29 +50,39 @@ class CasesService_UpdateExtendedUseStatusSpec extends ServiceSpecBase with Befo
     "update case 'extended use' status" in {
       // Given
       val operator: Operator = Operator("operator-id", None)
-      val originalCase = aCase(withDecision(cancellation = Some(Cancellation(reason=CancelReason.ANNULLED, applicationForExtendedUse = true))))
-      val caseUpdated = aCase(withDecision(cancellation = Some(Cancellation(reason=CancelReason.ANNULLED, applicationForExtendedUse = false))))
+      val originalCase = aCase(
+        withDecision(cancellation =
+          Some(Cancellation(reason = CancelReason.ANNULLED, applicationForExtendedUse = true))
+        )
+      )
+      val caseUpdated = aCase(
+        withDecision(cancellation =
+          Some(Cancellation(reason = CancelReason.ANNULLED, applicationForExtendedUse = false))
+        )
+      )
 
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
-      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])).willReturn(successful(mock[Event]))
+      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
+        .willReturn(successful(mock[Event]))
 
       // When Then
       await(service.updateExtendedUseStatus(originalCase, status = false, operator)) shouldBe caseUpdated
 
-      verify(audit).auditCaseExtendedUseChange(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
+      verify(audit).auditCaseExtendedUseChange(refEq(originalCase), refEq(caseUpdated), refEq(operator))(
+        any[HeaderCarrier]
+      )
 
       val caseUpdating = theCaseUpdating(connector)
       caseUpdating.decision.flatMap(_.cancellation).map(_.applicationForExtendedUse) shouldBe Some(false)
 
       val eventCreated = theEventCreatedFor(connector, caseUpdated)
       eventCreated.operator shouldBe Operator("operator-id")
-      eventCreated.details shouldBe ExtendedUseStatusChange(from = true, to = false)
+      eventCreated.details  shouldBe ExtendedUseStatusChange(from = true, to = false)
     }
 
     "throw exception on missing decision" in {
       val operator: Operator = Operator("operator-id")
-      val originalCase = aCase(withoutDecision())
-
+      val originalCase       = aCase(withoutDecision())
 
       intercept[RuntimeException] {
         await(service.updateExtendedUseStatus(originalCase, status = false, operator))
@@ -83,8 +94,7 @@ class CasesService_UpdateExtendedUseStatusSpec extends ServiceSpecBase with Befo
 
     "throw exception on missing cancellation" in {
       val operator: Operator = Operator("operator-id")
-      val originalCase = aCase(withDecision(cancellation = None))
-
+      val originalCase       = aCase(withDecision(cancellation = None))
 
       intercept[RuntimeException] {
         await(service.updateExtendedUseStatus(originalCase, status = false, operator))
@@ -96,7 +106,11 @@ class CasesService_UpdateExtendedUseStatusSpec extends ServiceSpecBase with Befo
 
     "not create event on update failure" in {
       val operator: Operator = Operator("operator-id")
-      val originalCase = aCase(withDecision(cancellation = Some(Cancellation(reason=CancelReason.ANNULLED, applicationForExtendedUse = true))))
+      val originalCase = aCase(
+        withDecision(cancellation =
+          Some(Cancellation(reason = CancelReason.ANNULLED, applicationForExtendedUse = true))
+        )
+      )
 
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(failed(new RuntimeException()))
 
@@ -111,16 +125,27 @@ class CasesService_UpdateExtendedUseStatusSpec extends ServiceSpecBase with Befo
     "succeed on event create failure" in {
       // Given
       val operator: Operator = Operator("operator-id")
-      val originalCase = aCase(withDecision(cancellation = Some(Cancellation(reason=CancelReason.ANNULLED, applicationForExtendedUse = false))))
-      val caseUpdated = aCase(withDecision(cancellation = Some(Cancellation(reason=CancelReason.ANNULLED, applicationForExtendedUse = true))))
+      val originalCase = aCase(
+        withDecision(cancellation =
+          Some(Cancellation(reason = CancelReason.ANNULLED, applicationForExtendedUse = false))
+        )
+      )
+      val caseUpdated = aCase(
+        withDecision(cancellation =
+          Some(Cancellation(reason = CancelReason.ANNULLED, applicationForExtendedUse = true))
+        )
+      )
 
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
-      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])).willReturn(failed(new RuntimeException()))
+      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
+        .willReturn(failed(new RuntimeException()))
 
       // When Then
       await(service.updateExtendedUseStatus(originalCase, status = true, operator)) shouldBe caseUpdated
 
-      verify(audit).auditCaseExtendedUseChange(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
+      verify(audit).auditCaseExtendedUseChange(refEq(originalCase), refEq(caseUpdated), refEq(operator))(
+        any[HeaderCarrier]
+      )
 
       val caseUpdating = theCaseUpdating(connector)
       caseUpdating.decision.flatMap(_.cancellation).map(_.applicationForExtendedUse) shouldBe Some(true)

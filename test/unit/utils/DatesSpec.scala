@@ -20,7 +20,8 @@ import java.time.{Instant, LocalDate, ZoneOffset}
 
 class DatesSpec extends UtilsBaseSpec {
 
-  private val date: Instant = LocalDate.of(2018, 1, 1)
+  private val date: Instant = LocalDate
+    .of(2018, 1, 1)
     .atStartOfDay(ZoneOffset.UTC)
     .toInstant
 

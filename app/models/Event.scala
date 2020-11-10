@@ -28,9 +28,7 @@ import models.ReferralReason.ReferralReason
 import models.SampleReturn.SampleReturn
 import models.SampleStatus.SampleStatus
 
-
-case class Event
-(
+case class Event(
   id: String,
   details: Details,
   operator: Operator,
@@ -55,68 +53,64 @@ sealed trait FieldChange[T] extends Details with OptionalComment {
   val to: T
 }
 
-
-case class CaseCreated
-(
+case class CaseCreated(
   comment: String
 ) extends Details {
   override val `type`: EventType = EventType.CASE_CREATED
 }
 
-case class CaseStatusChange
-(
+case class CaseStatusChange(
   override val from: CaseStatus,
   override val to: CaseStatus,
-  override val comment: Option[String] = None,
+  override val comment: Option[String]      = None,
   override val attachmentId: Option[String] = None
-) extends FieldChange[CaseStatus] with OptionalAttachment {
+) extends FieldChange[CaseStatus]
+    with OptionalAttachment {
   override val `type`: EventType.Value = EventType.CASE_STATUS_CHANGE
 }
 
-case class CancellationCaseStatusChange
-(
+case class CancellationCaseStatusChange(
   override val from: CaseStatus,
-  override val comment: Option[String] = None,
+  override val comment: Option[String]      = None,
   override val attachmentId: Option[String] = None,
   reason: CancelReason
-) extends FieldChange[CaseStatus] with OptionalAttachment {
-  override val to: CaseStatus = CaseStatus.CANCELLED
+) extends FieldChange[CaseStatus]
+    with OptionalAttachment {
+  override val to: CaseStatus          = CaseStatus.CANCELLED
   override val `type`: EventType.Value = EventType.CASE_CANCELLATION
 }
 
-case class ReferralCaseStatusChange
-(
+case class ReferralCaseStatusChange(
   override val from: CaseStatus,
-  override val comment: Option[String] = None,
+  override val comment: Option[String]      = None,
   override val attachmentId: Option[String] = None,
   referredTo: String,
   reason: Seq[ReferralReason]
-) extends FieldChange[CaseStatus] with OptionalAttachment {
-  override val to: CaseStatus = CaseStatus.REFERRED
+) extends FieldChange[CaseStatus]
+    with OptionalAttachment {
+  override val to: CaseStatus          = CaseStatus.REFERRED
   override val `type`: EventType.Value = EventType.CASE_REFERRAL
 }
 
-case class CompletedCaseStatusChange
-(
+case class CompletedCaseStatusChange(
   override val from: CaseStatus,
   override val comment: Option[String] = None,
   email: Option[String]
 ) extends FieldChange[CaseStatus] {
-  override val to: CaseStatus = CaseStatus.COMPLETED
+  override val to: CaseStatus          = CaseStatus.COMPLETED
   override val `type`: EventType.Value = EventType.CASE_COMPLETED
 }
 
-case class AppealAdded
-(
+case class AppealAdded(
   appealType: AppealType,
   appealStatus: AppealStatus,
   override val comment: Option[String] = None
-) extends Details with OptionalComment {
+) extends Details
+    with OptionalComment {
   override val `type`: EventType.Value = EventType.APPEAL_ADDED
 }
 
-case class AppealStatusChange
-(
+case class AppealStatusChange(
   appealType: AppealType,
   override val from: AppealStatus,
   override val to: AppealStatus,
@@ -125,8 +119,7 @@ case class AppealStatusChange
   override val `type`: EventType.Value = EventType.APPEAL_STATUS_CHANGE
 }
 
-case class ExtendedUseStatusChange
-(
+case class ExtendedUseStatusChange(
   override val from: Boolean,
   override val to: Boolean,
   override val comment: Option[String] = None
@@ -134,8 +127,7 @@ case class ExtendedUseStatusChange
   override val `type`: EventType.Value = EventType.EXTENDED_USE_STATUS_CHANGE
 }
 
-case class AssignmentChange
-(
+case class AssignmentChange(
   override val from: Option[Operator],
   override val to: Option[Operator],
   override val comment: Option[String] = None
@@ -143,8 +135,7 @@ case class AssignmentChange
   override val `type`: EventType.Value = EventType.ASSIGNMENT_CHANGE
 }
 
-case class QueueChange
-(
+case class QueueChange(
   override val from: Option[String],
   override val to: Option[String],
   override val comment: Option[String] = None
@@ -152,22 +143,20 @@ case class QueueChange
   override val `type`: EventType.Value = EventType.QUEUE_CHANGE
 }
 
-case class Note
-(
+case class Note(
   comment: String
 ) extends Details {
   override val `type`: EventType.Value = EventType.NOTE
 }
 
-case class SampleStatusChange
-(
+case class SampleStatusChange(
   override val from: Option[SampleStatus],
   override val to: Option[SampleStatus],
   override val comment: Option[String] = None
 ) extends FieldChange[Option[SampleStatus]] {
   override val `type`: EventType.Value = EventType.SAMPLE_STATUS_CHANGE
 
-  def renderSummaryFor(application: ApplicationType): String = {
+  def renderSummaryFor(application: ApplicationType): String =
     if (application.equals(ApplicationType.LIABILITY_ORDER) && (from.isEmpty || to.isEmpty)) {
       def yesNo(s: Option[SampleStatus]) = if (s.isDefined) "yes" else "no"
 
@@ -175,11 +164,9 @@ case class SampleStatusChange
     } else {
       s"Sample status changed from ${SampleStatus.format(from, false)} to ${SampleStatus.format(to, false)}"
     }
-  }
 }
 
-case class SampleReturnChange
-(
+case class SampleReturnChange(
   override val from: Option[SampleReturn],
   override val to: Option[SampleReturn],
   override val comment: Option[String] = None
@@ -187,8 +174,7 @@ case class SampleReturnChange
   override val `type`: EventType.Value = EventType.SAMPLE_RETURN_CHANGE
 }
 
-case class ExpertAdviceReceived
-(
+case class ExpertAdviceReceived(
   comment: String
 ) extends Details {
   override val `type`: EventType.Value = EventType.EXPERT_ADVICE_RECEIVED
@@ -196,21 +182,20 @@ case class ExpertAdviceReceived
 
 object EventType extends Enumeration {
   type EventType = Value
-  val CASE_STATUS_CHANGE = Value
-  val CASE_REFERRAL = Value
-  val CASE_CANCELLATION = Value
-  val CASE_COMPLETED = Value
-  val APPEAL_STATUS_CHANGE = Value
-  val APPEAL_ADDED = Value
+  val CASE_STATUS_CHANGE         = Value
+  val CASE_REFERRAL              = Value
+  val CASE_CANCELLATION          = Value
+  val CASE_COMPLETED             = Value
+  val APPEAL_STATUS_CHANGE       = Value
+  val APPEAL_ADDED               = Value
   val EXTENDED_USE_STATUS_CHANGE = Value
-  val ASSIGNMENT_CHANGE = Value
-  val QUEUE_CHANGE = Value
-  val NOTE = Value
-  val SAMPLE_STATUS_CHANGE = Value
-  val SAMPLE_RETURN_CHANGE = Value
-  val CASE_CREATED = Value
-  val EXPERT_ADVICE_RECEIVED = Value
+  val ASSIGNMENT_CHANGE          = Value
+  val QUEUE_CHANGE               = Value
+  val NOTE                       = Value
+  val SAMPLE_STATUS_CHANGE       = Value
+  val SAMPLE_RETURN_CHANGE       = Value
+  val CASE_CREATED               = Value
+  val EXPERT_ADVICE_RECEIVED     = Value
 
   def sampleEvents: Set[models.EventType.Value] = Set(SAMPLE_STATUS_CHANGE, SAMPLE_RETURN_CHANGE)
 }
-

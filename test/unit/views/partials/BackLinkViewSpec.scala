@@ -37,7 +37,7 @@ class BackLinkViewSpec extends ViewSpec {
       val doc = view(back_link()(requestWithSessionData, messages))
 
       // Then
-      doc should containElementWithID("back-link")
+      doc                             should containElementWithID("back-link")
       doc.getElementById("back-link") should haveTag("a")
       doc.getElementById("back-link") should haveAttribute("href", "url")
       doc.getElementById("back-link") should containText("somewhere nice")
@@ -48,7 +48,7 @@ class BackLinkViewSpec extends ViewSpec {
       val doc = view(back_link())
 
       // Then
-      doc should containElementWithID("back-link")
+      doc                             should containElementWithID("back-link")
       doc.getElementById("back-link") should haveTag("a")
       doc.getElementById("back-link") should haveAttribute("href", "/manage-tariff-classifications")
       doc.getElementById("back-link") should containText(messages("errors.all.back"))
@@ -64,10 +64,10 @@ class BackLinkViewSpec extends ViewSpec {
       val doc = view(back_link()(requestWithSessionData, messages))
 
       // Then
-      doc should containElementWithID("back-link")
+      doc                             should containElementWithID("back-link")
       doc.getElementById("back-link") should haveTag("a")
       doc.getElementById("back-link") should haveAttribute("href", "url")
-      doc.text() shouldBe messages("errors.all.back")
+      doc.text()                      shouldBe messages("errors.all.back")
     }
 
     "render back link with default details if session does not contain queues label but contains queues url" in {
@@ -80,10 +80,10 @@ class BackLinkViewSpec extends ViewSpec {
       val doc = view(back_link()(requestWithSessionData, messages))
 
       // Then
-      doc should containElementWithID("back-link")
+      doc                             should containElementWithID("back-link")
       doc.getElementById("back-link") should haveTag("a")
       doc.getElementById("back-link") should haveAttribute("href", "url")
-      doc.text() shouldBe messages("errors.all.back")
+      doc.text()                      shouldBe messages("errors.all.back")
     }
 
     "render back link with details from session with default text for search result" in {
@@ -97,10 +97,10 @@ class BackLinkViewSpec extends ViewSpec {
       val doc = view(back_link()(requestWithSessionData, messages))
 
       // Then
-      doc should containElementWithID("back-link")
+      doc                             should containElementWithID("back-link")
       doc.getElementById("back-link") should haveTag("a")
       doc.getElementById("back-link") should haveAttribute("href", "url")
-      doc.text() shouldBe "Back"
+      doc.text()                      shouldBe "Back"
     }
 
     "render back link with details from session with custom text for search result" in {
@@ -115,10 +115,10 @@ class BackLinkViewSpec extends ViewSpec {
       val doc = view(back_link()(requestWithSessionData, messages))
 
       // Then
-      doc should containElementWithID("back-link")
+      doc                             should containElementWithID("back-link")
       doc.getElementById("back-link") should haveTag("a")
       doc.getElementById("back-link") should haveAttribute("href", "url")
-      doc.text() shouldBe "Back to " + customLabel
+      doc.text()                      shouldBe "Back to " + customLabel
     }
 
     "render back link with details from session with default text for queues result" in {
@@ -132,10 +132,10 @@ class BackLinkViewSpec extends ViewSpec {
       val doc = view(back_link()(requestWithSessionData, messages))
 
       // Then
-      doc should containElementWithID("back-link")
+      doc                             should containElementWithID("back-link")
       doc.getElementById("back-link") should haveTag("a")
       doc.getElementById("back-link") should haveAttribute("href", "url")
-      doc.text() shouldBe "Back"
+      doc.text()                      shouldBe "Back"
     }
 
     "render back link with details from session with custom text for queues result" in {
@@ -150,10 +150,10 @@ class BackLinkViewSpec extends ViewSpec {
       val doc = view(back_link()(requestWithSessionData, messages))
 
       // Then
-      doc should containElementWithID("back-link")
+      doc                             should containElementWithID("back-link")
       doc.getElementById("back-link") should haveTag("a")
       doc.getElementById("back-link") should haveAttribute("href", "url")
-      doc.text() shouldBe "Back to " + customLabel
+      doc.text()                      shouldBe "Back to " + customLabel
     }
   }
 }

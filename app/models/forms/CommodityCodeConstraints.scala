@@ -24,12 +24,12 @@ import config.AppConfig
 import service.CommodityCodeService
 
 @Singleton
-class CommodityCodeConstraints @Inject()(commodityCodeService: CommodityCodeService, appConfig: AppConfig) {
+class CommodityCodeConstraints @Inject() (commodityCodeService: CommodityCodeService, appConfig: AppConfig) {
   private implicit val clock: Clock = appConfig.clock
 
   val commodityCodeNonEmpty: Constraint[String] = Constraint("constraints.commodityCodeExists")({
     case s: String if s.isEmpty => Invalid("decision_form.error.bindingCommodityCode.required")
-    case _ => Valid
+    case _                      => Valid
   })
 
   val commodityCodeExistsInUKTradeTariff: Constraint[String] = Constraint("constraints.commodityCodeExists")({

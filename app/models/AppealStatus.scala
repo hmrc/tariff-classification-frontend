@@ -23,33 +23,33 @@ object AppealStatus extends Enumeration {
   val IN_PROGRESS, ALLOWED, DISMISSED = Value
 
   def format(`type`: AppealType, status: AppealStatus): String = `type` match {
-    case AppealType.ADR => formatDispute(status)
+    case AppealType.ADR    => formatDispute(status)
     case AppealType.REVIEW => formatReview(status)
-    case _ => formatAppeal(status)
+    case _                 => formatAppeal(status)
   }
 
   def formatAppeal(status: AppealStatus): String = status match {
-      case IN_PROGRESS => "Under appeal"
-      case ALLOWED => "Appeal allowed"
-      case DISMISSED => "Appeal dismissed"
+    case IN_PROGRESS => "Under appeal"
+    case ALLOWED     => "Appeal allowed"
+    case DISMISSED   => "Appeal dismissed"
   }
 
   def formatReview(status: AppealStatus): String = status match {
     case IN_PROGRESS => "Under review"
-    case ALLOWED => "Review upheld"
-    case DISMISSED => "Review overturned"
+    case ALLOWED     => "Review upheld"
+    case DISMISSED   => "Review overturned"
   }
 
   def formatDispute(status: AppealStatus): String = status match {
     case IN_PROGRESS => "Under mediation"
-    case ALLOWED => "Completed"
-    case DISMISSED => "Completed"
+    case ALLOWED     => "Completed"
+    case DISMISSED   => "Completed"
   }
 
   def validFor(appealType: AppealType): Seq[AppealStatus] = appealType match {
-    case AppealType.REVIEW => Seq(AppealStatus.IN_PROGRESS,AppealStatus.ALLOWED,AppealStatus.DISMISSED)
-    case AppealType.ADR => Seq(AppealStatus.IN_PROGRESS,AppealStatus.ALLOWED)
-    case _ => Seq(AppealStatus.IN_PROGRESS,AppealStatus.ALLOWED,AppealStatus.DISMISSED)
+    case AppealType.REVIEW => Seq(AppealStatus.IN_PROGRESS, AppealStatus.ALLOWED, AppealStatus.DISMISSED)
+    case AppealType.ADR    => Seq(AppealStatus.IN_PROGRESS, AppealStatus.ALLOWED)
+    case _                 => Seq(AppealStatus.IN_PROGRESS, AppealStatus.ALLOWED, AppealStatus.DISMISSED)
   }
 
 }

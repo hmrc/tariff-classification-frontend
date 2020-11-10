@@ -33,16 +33,18 @@ import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
 @Singleton
-class SuppressCaseController @Inject()(
+class SuppressCaseController @Inject() (
   verify: RequestActions,
   casesService: CasesService,
   mcc: MessagesControllerComponents,
   implicit val appConfig: AppConfig
-) extends FrontendController(mcc) with RenderCaseAction with ExtractableFile {
+) extends FrontendController(mcc)
+    with RenderCaseAction
+    with ExtractableFile {
 
   private val form: Form[String] = AddNoteForm.getForm("suppress")
 
-  override protected val config: AppConfig = appConfig
+  override protected val config: AppConfig         = appConfig
   override protected val caseService: CasesService = casesService
 
   def getSuppressCase(reference: String, activeTab: Option[ActiveTab]): Action[AnyContent] =
@@ -51,56 +53,65 @@ class SuppressCaseController @Inject()(
       getCaseAndRenderView(reference, c => successful(views.html.suppress_case(c, form, activeTab)))
     }
 
-  def postSuppressCase(reference: String, activeTab: Option[ActiveTab]): Action[MultipartFormData[Files.TemporaryFile]] =
+  def postSuppressCase(
+    reference: String,
+    activeTab: Option[ActiveTab]
+  ): Action[MultipartFormData[Files.TemporaryFile]] =
     (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.SUPPRESS_CASE))
-      .async(parse.multipartFormData) { implicit request: AuthenticatedCaseRequest[MultipartFormData[Files.TemporaryFile]] =>
-
-        extractFile(key = "email")(
-          onFileValid = validFile => {
-            form.bindFromRequest().fold(
-              formWithErrors =>
-                getCaseAndRenderView(reference, c => successful(views.html.suppress_case(c, formWithErrors))),
-              note => {
-                validateAndRedirect(
-                  casesService.suppressCase(_, validFile, note, request.operator)
-                    .map(c => routes.SuppressCaseController.confirmSuppressCase(c.reference))
+      .async(parse.multipartFormData) {
+        implicit request: AuthenticatedCaseRequest[MultipartFormData[Files.TemporaryFile]] =>
+          extractFile(key = "email")(
+            onFileValid = validFile => {
+              form
+                .bindFromRequest()
+                .fold(
+                  formWithErrors =>
+                    getCaseAndRenderView(reference, c => successful(views.html.suppress_case(c, formWithErrors))),
+                  note =>
+                    validateAndRedirect(
+                      casesService
+                        .suppressCase(_, validFile, note, request.operator)
+                        .map(c => routes.SuppressCaseController.confirmSuppressCase(c.reference))
+                    )
                 )
-              }
-            )
-          },
+            },
+            onFileTooLarge = () => {
+              val error = request2Messages(implicitly)("status.change.upload.error.restrictionSize")
+              form
+                .bindFromRequest()
+                .fold(
+                  formWithErrors => getCaseAndRenderEmailError(reference, formWithErrors, error, activeTab),
+                  note => getCaseAndRenderEmailError(reference, form.fill(note), error, activeTab)
+                )
+            },
+            onFileInvalidType = () => {
+              val error = request2Messages(implicitly)("status.change.upload.error.fileType")
+              form
+                .bindFromRequest()
+                .fold(
+                  formWithErrors => getCaseAndRenderEmailError(reference, formWithErrors, error, activeTab),
+                  note => getCaseAndRenderEmailError(reference, form.fill(note), error, activeTab)
+                )
+            },
+            onFileMissing = () => {
+              val error = request2Messages(implicitly)("status.change.upload.error.mustSelect")
+              form
+                .bindFromRequest()
+                .fold(
+                  formWithErrors => getCaseAndRenderEmailError(reference, formWithErrors, error, activeTab),
+                  note => getCaseAndRenderEmailError(reference, form.fill(note), error, activeTab)
+                )
 
-          onFileTooLarge = () => {
-            val error = request2Messages(implicitly)("status.change.upload.error.restrictionSize")
-            form.bindFromRequest().fold(
-              formWithErrors => getCaseAndRenderEmailError(reference, formWithErrors, error, activeTab),
-              note => getCaseAndRenderEmailError(reference, form.fill(note), error, activeTab)
-            )
-          },
-
-          onFileInvalidType = () => {
-            val error = request2Messages(implicitly)("status.change.upload.error.fileType")
-            form.bindFromRequest().fold(
-              formWithErrors => getCaseAndRenderEmailError(reference, formWithErrors, error, activeTab),
-              note => getCaseAndRenderEmailError(reference, form.fill(note), error, activeTab)
-            )
-          },
-
-          onFileMissing = () => {
-            val error = request2Messages(implicitly)("status.change.upload.error.mustSelect")
-            form.bindFromRequest().fold(
-              formWithErrors => getCaseAndRenderEmailError(reference, formWithErrors, error, activeTab),
-              note => getCaseAndRenderEmailError(reference, form.fill(note), error, activeTab))
-
-          }
-        )
-  }
+            }
+          )
+      }
 
   private def getCaseAndRenderEmailError(
-                                          reference: String,
-                                          form: Form[String],
-                                          error: String,
-                                          activeTab: Option[ActiveTab]
-                                        )(implicit request: AuthenticatedCaseRequest[_]): Future[Result] =
+    reference: String,
+    form: Form[String],
+    error: String,
+    activeTab: Option[ActiveTab]
+  )(implicit request: AuthenticatedCaseRequest[_]): Future[Result] =
     getCaseAndRenderView(
       reference,
       c => successful(views.html.suppress_case(c, form.withError("email", error), activeTab))

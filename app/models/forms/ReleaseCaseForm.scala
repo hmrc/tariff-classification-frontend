@@ -20,7 +20,6 @@ import play.api.data.Form
 import play.api.data.Forms._
 import models.forms.mappings.FormMappings.fieldNonEmpty
 
-
 object ReleaseCaseForm {
 
   val form: Form[String] = Form(

@@ -23,7 +23,7 @@ import models.forms.FormConstraints.defined
 
 object MandatoryBooleanForm {
 
-  def form(key: String = "errors"): Form[Boolean] = Form[Boolean] (
+  def form(key: String = "errors"): Form[Boolean] = Form[Boolean](
     mapping[Boolean, Boolean](
       // Booleans aren't mandatory by default - Have to do similar to the below to enforce it is submitted
       "state" -> optional(boolean).verifying(defined(s"$key.form.state.required")).transform(_.get, Some(_))

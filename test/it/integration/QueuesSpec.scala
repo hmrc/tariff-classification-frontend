@@ -13,16 +13,28 @@ class QueuesSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder
     "return status 200" in {
       // Given
       givenAuthSuccess()
-      stubFor(get(urlEqualTo(buildQueryUrl(withStatuses = "NEW,OPEN,REFERRED,SUSPENDED", assigneeId = "123", pag = NoPagination())))
-        .willReturn(aResponse()
-          .withStatus(OK)
-          .withBody(CasePayloads.pagedGatewayCases))
+      stubFor(
+        get(
+          urlEqualTo(
+            buildQueryUrl(withStatuses = "NEW,OPEN,REFERRED,SUSPENDED", assigneeId = "123", pag = NoPagination())
+          )
+        ).willReturn(
+          aResponse()
+            .withStatus(OK)
+            .withBody(CasePayloads.pagedGatewayCases)
+        )
       )
 
-      stubFor(get(urlEqualTo("/report?status=NEW&status=OPEN&status=REFERRED&status=SUSPENDED&assignee_id=none&report_group=queue-id%2Capplication-type&report_field=active-days-elapsed"))
-        .willReturn(aResponse()
-          .withStatus(OK)
-          .withBody(CasePayloads.report))
+      stubFor(
+        get(
+          urlEqualTo(
+            "/report?status=NEW&status=OPEN&status=REFERRED&status=SUSPENDED&assignee_id=none&report_group=queue-id%2Capplication-type&report_field=active-days-elapsed"
+          )
+        ).willReturn(
+          aResponse()
+            .withStatus(OK)
+            .withBody(CasePayloads.report)
+        )
       )
 
       // When
@@ -30,7 +42,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder
 
       // Then
       response.status shouldBe OK
-      response.body should include("Cases for Forename Surname")
+      response.body   should include("Cases for Forename Surname")
     }
 
     "redirect on auth failure" in {
@@ -42,7 +54,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder
 
       // Then
       response.status shouldBe OK
-      response.body should include(messages("not_authorised.paragraph1"))
+      response.body   should include(messages("not_authorised.paragraph1"))
     }
   }
 
@@ -52,26 +64,41 @@ class QueuesSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder
       // Given
       givenAuthSuccess()
 
-
-      stubFor(get(urlEqualTo(buildQueryUrl(withStatuses = "NEW,OPEN,REFERRED,SUSPENDED", queueId = "none", assigneeId = "none", pag = NoPagination())))
-        .willReturn(aResponse()
-          .withStatus(OK)
-          .withBody(CasePayloads.pagedGatewayCases))
+      stubFor(
+        get(
+          urlEqualTo(
+            buildQueryUrl(
+              withStatuses = "NEW,OPEN,REFERRED,SUSPENDED",
+              queueId      = "none",
+              assigneeId   = "none",
+              pag          = NoPagination()
+            )
+          )
+        ).willReturn(
+          aResponse()
+            .withStatus(OK)
+            .withBody(CasePayloads.pagedGatewayCases)
         )
-
-      stubFor(get(urlEqualTo("/report?status=NEW&status=OPEN&status=REFERRED&status=SUSPENDED&assignee_id=none&report_group=queue-id&report_field=active-days-elapsed"))
-        .willReturn(aResponse()
-          .withStatus(OK)
-          .withBody(CasePayloads.report))
       )
 
+      stubFor(
+        get(
+          urlEqualTo(
+            "/report?status=NEW&status=OPEN&status=REFERRED&status=SUSPENDED&assignee_id=none&report_group=queue-id&report_field=active-days-elapsed"
+          )
+        ).willReturn(
+          aResponse()
+            .withStatus(OK)
+            .withBody(CasePayloads.report)
+        )
+      )
 
       // When
       val response = await(ws.url(s"$baseUrl/queues/gateway").get())
 
       // Then
       response.status shouldBe OK
-      response.body should include("Gateway cases")
+      response.body   should include("Gateway cases")
     }
 
     "redirect on auth failure" in {
@@ -83,7 +110,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder
 
       // Then
       response.status shouldBe OK
-      response.body should include(messages("not_authorised.paragraph1"))
+      response.body   should include(messages("not_authorised.paragraph1"))
     }
   }
 
@@ -92,16 +119,33 @@ class QueuesSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder
     "return status 200" in {
       // Given
       givenAuthSuccess()
-      stubFor(get(urlEqualTo(buildQueryUrl(withStatuses = "NEW,OPEN,REFERRED,SUSPENDED", queueId = "2", assigneeId = "none", pag = NoPagination())))
-        .willReturn(aResponse()
-          .withStatus(OK)
-          .withBody(CasePayloads.pagedGatewayCases))
+      stubFor(
+        get(
+          urlEqualTo(
+            buildQueryUrl(
+              withStatuses = "NEW,OPEN,REFERRED,SUSPENDED",
+              queueId      = "2",
+              assigneeId   = "none",
+              pag          = NoPagination()
+            )
+          )
+        ).willReturn(
+          aResponse()
+            .withStatus(OK)
+            .withBody(CasePayloads.pagedGatewayCases)
+        )
       )
 
-      stubFor(get(urlEqualTo("/report?status=NEW&status=OPEN&status=REFERRED&status=SUSPENDED&assignee_id=none&report_group=queue-id&report_field=active-days-elapsed"))
-        .willReturn(aResponse()
-          .withStatus(OK)
-          .withBody(CasePayloads.report))
+      stubFor(
+        get(
+          urlEqualTo(
+            "/report?status=NEW&status=OPEN&status=REFERRED&status=SUSPENDED&assignee_id=none&report_group=queue-id&report_field=active-days-elapsed"
+          )
+        ).willReturn(
+          aResponse()
+            .withStatus(OK)
+            .withBody(CasePayloads.report)
+        )
       )
 
       // When
@@ -109,7 +153,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder
 
       // Then
       response.status shouldBe OK
-      response.body should include("ACT BTI cases")
+      response.body   should include("ACT BTI cases")
     }
 
     "redirect on auth failure" in {
@@ -121,7 +165,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder
 
       // Then
       response.status shouldBe OK
-      response.body should include(messages("not_authorised.paragraph1"))
+      response.body   should include(messages("not_authorised.paragraph1"))
     }
   }
 
@@ -130,16 +174,33 @@ class QueuesSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder
     "return status 200" in {
       // Given
       givenAuthSuccess()
-      stubFor(get(urlEqualTo(buildQueryUrl(withStatuses = "NEW,OPEN,REFERRED,SUSPENDED", queueId = "3", assigneeId = "none", pag = NoPagination())))
-        .willReturn(aResponse()
-          .withStatus(OK)
-          .withBody(CasePayloads.pagedGatewayCases))
+      stubFor(
+        get(
+          urlEqualTo(
+            buildQueryUrl(
+              withStatuses = "NEW,OPEN,REFERRED,SUSPENDED",
+              queueId      = "3",
+              assigneeId   = "none",
+              pag          = NoPagination()
+            )
+          )
+        ).willReturn(
+          aResponse()
+            .withStatus(OK)
+            .withBody(CasePayloads.pagedGatewayCases)
+        )
       )
 
-      stubFor(get(urlEqualTo("/report?status=NEW&status=OPEN&status=REFERRED&status=SUSPENDED&assignee_id=none&report_group=queue-id%2Capplication-type&report_field=active-days-elapsed"))
-        .willReturn(aResponse()
-          .withStatus(OK)
-          .withBody(CasePayloads.report))
+      stubFor(
+        get(
+          urlEqualTo(
+            "/report?status=NEW&status=OPEN&status=REFERRED&status=SUSPENDED&assignee_id=none&report_group=queue-id%2Capplication-type&report_field=active-days-elapsed"
+          )
+        ).willReturn(
+          aResponse()
+            .withStatus(OK)
+            .withBody(CasePayloads.report)
+        )
       )
 
       // When
@@ -147,7 +208,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder
 
       // Then
       response.status shouldBe OK
-      response.body should include("CAP BTI cases")
+      response.body   should include("CAP BTI cases")
     }
 
     "redirect on auth failure" in {
@@ -159,7 +220,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder
 
       // Then
       response.status shouldBe OK
-      response.body should include(messages("not_authorised.paragraph1"))
+      response.body   should include(messages("not_authorised.paragraph1"))
     }
   }
 
@@ -168,16 +229,33 @@ class QueuesSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder
     "return status 200" in {
       // Given
       givenAuthSuccess()
-      stubFor(get(urlEqualTo(buildQueryUrl(withStatuses = "NEW,OPEN,REFERRED,SUSPENDED", queueId = "4", assigneeId = "none", pag = NoPagination())))
-        .willReturn(aResponse()
-          .withStatus(OK)
-          .withBody(CasePayloads.pagedGatewayCases))
+      stubFor(
+        get(
+          urlEqualTo(
+            buildQueryUrl(
+              withStatuses = "NEW,OPEN,REFERRED,SUSPENDED",
+              queueId      = "4",
+              assigneeId   = "none",
+              pag          = NoPagination()
+            )
+          )
+        ).willReturn(
+          aResponse()
+            .withStatus(OK)
+            .withBody(CasePayloads.pagedGatewayCases)
+        )
       )
 
-      stubFor(get(urlEqualTo("/report?status=NEW&status=OPEN&status=REFERRED&status=SUSPENDED&assignee_id=none&report_group=queue-id%2Capplication-type&report_field=active-days-elapsed"))
-        .willReturn(aResponse()
-          .withStatus(OK)
-          .withBody(CasePayloads.report))
+      stubFor(
+        get(
+          urlEqualTo(
+            "/report?status=NEW&status=OPEN&status=REFERRED&status=SUSPENDED&assignee_id=none&report_group=queue-id%2Capplication-type&report_field=active-days-elapsed"
+          )
+        ).willReturn(
+          aResponse()
+            .withStatus(OK)
+            .withBody(CasePayloads.report)
+        )
       )
 
       // When
@@ -185,7 +263,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder
 
       // Then
       response.status shouldBe OK
-      response.body should include("Cars BTI cases")
+      response.body   should include("Cars BTI cases")
     }
 
     "redirect on auth failure" in {
@@ -197,7 +275,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder
 
       // Then
       response.status shouldBe OK
-      response.body should include(messages("not_authorised.paragraph1"))
+      response.body   should include(messages("not_authorised.paragraph1"))
     }
   }
 
@@ -206,16 +284,33 @@ class QueuesSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder
     "return status 200" in {
       // Given
       givenAuthSuccess()
-      stubFor(get(urlEqualTo(buildQueryUrl(withStatuses = "NEW,OPEN,REFERRED,SUSPENDED", queueId = "5", assigneeId = "none", pag = NoPagination())))
-        .willReturn(aResponse()
-          .withStatus(OK)
-          .withBody(CasePayloads.pagedGatewayCases))
+      stubFor(
+        get(
+          urlEqualTo(
+            buildQueryUrl(
+              withStatuses = "NEW,OPEN,REFERRED,SUSPENDED",
+              queueId      = "5",
+              assigneeId   = "none",
+              pag          = NoPagination()
+            )
+          )
+        ).willReturn(
+          aResponse()
+            .withStatus(OK)
+            .withBody(CasePayloads.pagedGatewayCases)
+        )
       )
 
-      stubFor(get(urlEqualTo("/report?status=NEW&status=OPEN&status=REFERRED&status=SUSPENDED&assignee_id=none&report_group=queue-id%2Capplication-type&report_field=active-days-elapsed"))
-        .willReturn(aResponse()
-          .withStatus(OK)
-          .withBody(CasePayloads.report))
+      stubFor(
+        get(
+          urlEqualTo(
+            "/report?status=NEW&status=OPEN&status=REFERRED&status=SUSPENDED&assignee_id=none&report_group=queue-id%2Capplication-type&report_field=active-days-elapsed"
+          )
+        ).willReturn(
+          aResponse()
+            .withStatus(OK)
+            .withBody(CasePayloads.report)
+        )
       )
 
       // When
@@ -223,7 +318,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder
 
       // Then
       response.status shouldBe OK
-      response.body should include("ELM BTI cases")
+      response.body   should include("ELM BTI cases")
     }
 
     "redirect on auth failure" in {
@@ -235,7 +330,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder
 
       // Then
       response.status shouldBe OK
-      response.body should include(messages("not_authorised.paragraph1"))
+      response.body   should include(messages("not_authorised.paragraph1"))
     }
   }
 

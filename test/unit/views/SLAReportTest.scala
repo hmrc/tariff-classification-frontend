@@ -29,9 +29,9 @@ class SLAReportTest extends ViewSpec {
   }
 
   "SLA Report" should {
-    val queue1 = Queue("q1", "q1-slug", "q1-name")
-    val queue2 = Queue("q2", "q2-slug", "q2-name")
-    val queue3 = Queue("q3", "q3-slug", "q3-name")
+    val queue1    = Queue("q1", "q1-slug", "q1-name")
+    val queue2    = Queue("q2", "q2-slug", "q2-name")
+    val queue3    = Queue("q3", "q3-slug", "q3-name")
     val interval1 = HistogramBucketInterval(None, 1) // x <= 1
     val interval2 = HistogramBucketInterval(2, 3) // 2 <= x <= 3
     val interval3 = HistogramBucketInterval(4, None) // x >= 4

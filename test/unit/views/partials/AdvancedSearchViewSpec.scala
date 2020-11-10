@@ -26,7 +26,7 @@ import views.{SearchTab, ViewSpec}
 class AdvancedSearchViewSpec extends ViewSpec {
 
   private val defaultTab = SearchTab.DETAILS
-  private val form = SearchForm.form.bind(Map("any" -> "any"))
+  private val form       = SearchForm.form.bind(Map("any" -> "any"))
 
   "Advanced Search" should {
 
@@ -49,8 +49,14 @@ class AdvancedSearchViewSpec extends ViewSpec {
     "Always Render Input 'status'" in {
       view(advanced_search(form, None, Seq.empty, defaultTab)) should containElementWithAttribute("name", "status[0]")
       view(advanced_search(form, None, Seq.empty, defaultTab)) should containElementWithAttribute("name", "status[1]")
-      view(advanced_search(form, Some(Paged(Seq(SearchResult(aCase(), Seq.empty)))), Seq.empty, defaultTab)) should containElementWithAttribute("name", "status[0]")
-      view(advanced_search(form, Some(Paged(Seq(SearchResult(aCase(), Seq.empty)))), Seq.empty, defaultTab)) should containElementWithAttribute("name", "status[1]")
+      view(advanced_search(form, Some(Paged(Seq(SearchResult(aCase(), Seq.empty)))), Seq.empty, defaultTab)) should containElementWithAttribute(
+        "name",
+        "status[0]"
+      )
+      view(advanced_search(form, Some(Paged(Seq(SearchResult(aCase(), Seq.empty)))), Seq.empty, defaultTab)) should containElementWithAttribute(
+        "name",
+        "status[1]"
+      )
     }
   }
 
