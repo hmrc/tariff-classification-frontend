@@ -1,0 +1,86 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import models.request.AuthenticatedRequest
+@import config.AppConfig
+@import views.html.includes.main
+
+@this(
+        case_heading: views.html.v2.assigned_cases_heading
+)
+
+@()(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+
+@main(bodyClasses = None, customTitle = Some(messages("case.asdf"))) {
+
+    <!--the heading component-->
+    @case_heading("heading text")
+
+    <div id="liability_tabs" class="govuk-tabs" data-module="govuk-tabs">
+        <ul class="govuk-tabs__list">
+            @* Atar *@
+            <li class="govuk-tabs__list-item">
+                <a class="govuk-tabs__tab" href="#atar_tab">
+                @messages("case.atar.tab_title")
+                </a>
+            </li>
+
+            @* liability *@
+            <li class="govuk-tabs__list-item">
+                <a class="govuk-tabs__tab" href="#liability_tab">
+                @messages("case.liability.tab_title")
+                </a>
+            </li>
+
+            @* Correspondence *@
+            <li class="govuk-tabs__list-item">
+                <a class="govuk-tabs__tab" href="#correspondence_tab">
+                @messages("case.correspondence.tab_title")
+                </a>
+            </li>
+
+            @* Miscellaneous *@
+            <li class="govuk-tabs__list-item">
+                <a class="govuk-tabs__tab" href="#misc_tab">
+                @messages("case.miscellaneous.tab_title")
+                </a>
+            </li>
+
+        </ul>
+
+        @* content*@
+            <!--Atar tab component-->
+        <div class="govuk-tabs__panel" id="atar_tab">
+
+        </div>
+
+            <!--liability tab component-->
+        <div class="govuk-tabs__panel" id="liability_tab">
+
+        </div>
+
+            <!--correspondence tab component-->
+        <div class="govuk-tabs__panel" id="correspondence_tab">
+
+        </div>
+
+            <!--misc tab component-->
+        <div class="govuk-tabs__panel" id="misc_tab">
+
+        </div>
+
+    </div>
+}

@@ -911,3 +911,5 @@ operator.dashboard.classification.gateway-cases = Create, allocate and manage ca
 
 case.atar.tab_title=ATaR
 case.liability.tab_title=Liability
+case.correspondence.tab_title=Correspondence
+case.miscellaneous.tab_title=Miscellaneous

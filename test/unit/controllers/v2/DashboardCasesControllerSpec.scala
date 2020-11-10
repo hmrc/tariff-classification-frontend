@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,14 +12,26 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@this()
+package controllers.v2
 
-@(heading: String)(implicit messages: Messages)
+import controllers.ControllerBaseSpec
+import org.scalatest.BeforeAndAfterEach
+import play.api.inject.bind
+import views.html.v2.assigned_cases_v2
 
-<div id="case-heading" class="case-heading mt-1 mb-2">
+class DashboardCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
+  bind[assigned_cases_v2].toInstance(mock[assigned_cases_v2])
 
-    <h1 class="heading-xlarge case-title">@heading</h1>
+  private lazy val assignedCases_view = bind[assigned_cases_v2]
 
-</div>
+  private def controller(): DashboardCasesController = {
+    new DashboardCasesController(
+      new RequestActionsWithPermissionsProvider(),
+      mcc,
+      assignedCases_view,
+      realAppConfig
+    )
+  }
+}
