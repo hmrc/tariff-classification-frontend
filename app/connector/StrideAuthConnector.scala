@@ -30,17 +30,18 @@ import uk.gov.hmrc.auth.core.retrieve.Retrieval
 import uk.gov.hmrc.http.HeaderCarrier
 
 @Singleton
-class StrideAuthConnector @Inject()(
+class StrideAuthConnector @Inject() (
   client: HttpClient,
   servicesConfig: ServicesConfig,
   val metrics: Metrics
-) extends PlayAuthConnector with HasMetrics {
+) extends PlayAuthConnector
+    with HasMetrics {
   override val serviceUrl: String = servicesConfig.baseUrl("auth")
-  override def http: CorePost = client
+  override def http: CorePost     = client
 
-  override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] = {
-    withMetricsTimerAsync("stride-authorise") { _ =>
-      super.authorise(predicate, retrieval)
-    }
-  }
+  override def authorise[A](
+    predicate: Predicate,
+    retrieval: Retrieval[A]
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] =
+    withMetricsTimerAsync("stride-authorise")(_ => super.authorise(predicate, retrieval))
 }

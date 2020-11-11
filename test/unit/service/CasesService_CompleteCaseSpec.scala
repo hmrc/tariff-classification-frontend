@@ -35,21 +35,22 @@ import scala.concurrent.Future.{failed, successful}
 
 class CasesService_CompleteCaseSpec extends ServiceSpecBase with BeforeAndAfterEach with ConnectorCaptor {
 
-  private val manyCases = mock[Seq[Case]]
-  private val oneCase = mock[Option[Case]]
-  private val queue = mock[Queue]
-  private val connector = mock[BindingTariffClassificationConnector]
-  private val rulingConnector = mock[RulingConnector]
-  private val emailService = mock[EmailService]
+  private val manyCases        = mock[Seq[Case]]
+  private val oneCase          = mock[Option[Case]]
+  private val queue            = mock[Queue]
+  private val connector        = mock[BindingTariffClassificationConnector]
+  private val rulingConnector  = mock[RulingConnector]
+  private val emailService     = mock[EmailService]
   private val reportingService = mock[ReportingService]
   private val fileStoreService = mock[FileStoreService]
-  private val audit = mock[AuditService]
-  private val config = mock[AppConfig]
-  private val clock = Clock.fixed(LocalDateTime.of(2018, 1, 1, 14, 0).toInstant(ZoneOffset.UTC), ZoneId.of("UTC"))
-  private val aBTI = Cases.btiCaseExample
-  private val aLiability = Cases.liabilityCaseExample
+  private val audit            = mock[AuditService]
+  private val config           = mock[AppConfig]
+  private val clock            = Clock.fixed(LocalDateTime.of(2018, 1, 1, 14, 0).toInstant(ZoneOffset.UTC), ZoneId.of("UTC"))
+  private val aBTI             = Cases.btiCaseExample
+  private val aLiability       = Cases.liabilityCaseExample
 
-  private val service = new CasesService(config, audit, emailService, fileStoreService,reportingService, connector, rulingConnector)
+  private val service =
+    new CasesService(config, audit, emailService, fileStoreService, reportingService, connector, rulingConnector)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -64,14 +65,16 @@ class CasesService_CompleteCaseSpec extends ServiceSpecBase with BeforeAndAfterE
       "Liability" in {
         // Given
         val operator: Operator = Operator("operator-id", Some("Billy Bobbins"))
-        val originalDecision = Decision("code", None, None, "justification", "goods")
-        val originalCase = aLiability.copy(status = CaseStatus.OPEN, decision = Some(originalDecision))
-        val updatedDecision = Decision("code", Some(date("2018-01-01")), Some(date("2019-01-01")), "justification", "goods")
+        val originalDecision   = Decision("code", None, None, "justification", "goods")
+        val originalCase       = aLiability.copy(status = CaseStatus.OPEN, decision = Some(originalDecision))
+        val updatedDecision =
+          Decision("code", Some(date("2018-01-01")), Some(date("2019-01-01")), "justification", "goods")
         val caseUpdated = aLiability.copy(status = CaseStatus.COMPLETED, decision = Some(updatedDecision))
 
         given(config.decisionLifetimeYears).willReturn(1)
         given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
-        given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])).willReturn(successful(mock[Event]))
+        given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
+          .willReturn(successful(mock[Event]))
 
         // When Then
         await(service.completeCase(originalCase, operator)) shouldBe caseUpdated
@@ -85,25 +88,29 @@ class CasesService_CompleteCaseSpec extends ServiceSpecBase with BeforeAndAfterE
 
         val eventCreated = theEventCreatedFor(connector, caseUpdated)
         eventCreated.operator shouldBe Operator("operator-id", Some("Billy Bobbins"))
-        eventCreated.details shouldBe CompletedCaseStatusChange(CaseStatus.OPEN, None, None)
+        eventCreated.details  shouldBe CompletedCaseStatusChange(CaseStatus.OPEN, None, None)
       }
 
-      "BTI" in  {
+      "BTI" in {
         // Given
         val operator: Operator = Operator("operator-id", Some("Billy Bobbins"))
-        val originalDecision = Decision("code", None, None, "justification", "goods")
-        val originalCase = aBTI.copy(status = CaseStatus.OPEN, decision = Some(originalDecision))
-        val updatedDecision = Decision("code", Some(date("2018-01-01")), Some(date("2019-01-01")), "justification", "goods")
-        val caseUpdated = aBTI.copy(status = CaseStatus.COMPLETED, decision = Some(updatedDecision))
-        val emailTemplate = EmailTemplate("plain", "html", "from", "subject", "service")
+        val originalDecision   = Decision("code", None, None, "justification", "goods")
+        val originalCase       = aBTI.copy(status = CaseStatus.OPEN, decision = Some(originalDecision))
+        val updatedDecision =
+          Decision("code", Some(date("2018-01-01")), Some(date("2019-01-01")), "justification", "goods")
+        val caseUpdated           = aBTI.copy(status = CaseStatus.COMPLETED, decision = Some(updatedDecision))
+        val emailTemplate         = EmailTemplate("plain", "html", "from", "subject", "service")
         val updatedEndDateInstant = Some(date("2020-12-31"))
 
         given(config.decisionLifetimeYears).willReturn(3)
         given(config.decisionLifetimeDays).willReturn(1)
         given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
-        given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])).willReturn(successful(mock[Event]))
-        given(emailService.sendCaseCompleteEmail(refEq(caseUpdated))(any[HeaderCarrier])).willReturn(Future.successful(emailTemplate))
-        given(rulingConnector.notify(refEq(originalCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(()))
+        given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
+          .willReturn(successful(mock[Event]))
+        given(emailService.sendCaseCompleteEmail(refEq(caseUpdated))(any[HeaderCarrier]))
+          .willReturn(Future.successful(emailTemplate))
+        given(rulingConnector.notify(refEq(originalCase.reference))(any[HeaderCarrier]))
+          .willReturn(Future.successful(()))
 
         // When Then
         await(service.completeCase(originalCase, operator)) shouldBe caseUpdated
@@ -112,19 +119,23 @@ class CasesService_CompleteCaseSpec extends ServiceSpecBase with BeforeAndAfterE
         verify(emailService).sendCaseCompleteEmail(refEq(caseUpdated))(any[HeaderCarrier])
 
         val caseUpdating = theCaseUpdating(connector)
-        caseUpdating.status shouldBe CaseStatus.COMPLETED
+        caseUpdating.status                        shouldBe CaseStatus.COMPLETED
         caseUpdating.decision.get.effectiveEndDate shouldBe updatedEndDateInstant
 
         val eventCreated = theEventCreatedFor(connector, caseUpdated)
         eventCreated.operator shouldBe Operator("operator-id", Some("Billy Bobbins"))
-        eventCreated.details shouldBe CompletedCaseStatusChange(CaseStatus.OPEN, None, Some("- Subject: subject\n- Body: plain"))
+        eventCreated.details shouldBe CompletedCaseStatusChange(
+          CaseStatus.OPEN,
+          None,
+          Some("- Subject: subject\n- Body: plain")
+        )
       }
     }
 
     "reject case without a decision" in {
       // Given
       val operator: Operator = Operator("operator-id")
-      val originalCase = aBTI.copy(status = CaseStatus.OPEN, decision = None)
+      val originalCase       = aBTI.copy(status = CaseStatus.OPEN, decision = None)
 
       // When Then
       intercept[IllegalArgumentException] {
@@ -138,12 +149,13 @@ class CasesService_CompleteCaseSpec extends ServiceSpecBase with BeforeAndAfterE
 
     "not create event on update failure" in {
       val operator: Operator = Operator("operator-id")
-      val originalDecision = Decision("code", None, None, "justification", "goods")
-      val originalCase = aBTI.copy(status = CaseStatus.OPEN, decision = Some(originalDecision))
+      val originalDecision   = Decision("code", None, None, "justification", "goods")
+      val originalCase       = aBTI.copy(status = CaseStatus.OPEN, decision = Some(originalDecision))
 
       given(config.decisionLifetimeYears).willReturn(1)
       given(queue.id).willReturn("queue_id")
-      given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(failed(new RuntimeException("Failed to update the Case")))
+      given(connector.updateCase(any[Case])(any[HeaderCarrier]))
+        .willReturn(failed(new RuntimeException("Failed to update the Case")))
 
       intercept[RuntimeException] {
         await(service.completeCase(originalCase, operator))
@@ -157,16 +169,19 @@ class CasesService_CompleteCaseSpec extends ServiceSpecBase with BeforeAndAfterE
     "succeed on event create failure" in {
       // Given
       val operator: Operator = Operator("operator-id")
-      val originalDecision = Decision("code", None, None, "justification", "goods")
-      val originalCase = aBTI.copy(status = CaseStatus.OPEN, decision = Some(originalDecision))
-      val updatedDecision = Decision("code", Some(date("2018-01-01")), Some(date("2019-01-01")), "justification", "goods")
-      val caseUpdated = aBTI.copy(status = CaseStatus.COMPLETED, decision = Some(updatedDecision))
+      val originalDecision   = Decision("code", None, None, "justification", "goods")
+      val originalCase       = aBTI.copy(status = CaseStatus.OPEN, decision = Some(originalDecision))
+      val updatedDecision =
+        Decision("code", Some(date("2018-01-01")), Some(date("2019-01-01")), "justification", "goods")
+      val caseUpdated   = aBTI.copy(status = CaseStatus.COMPLETED, decision = Some(updatedDecision))
       val emailTemplate = EmailTemplate("plain", "html", "from", "subject", "service")
 
       given(config.decisionLifetimeYears).willReturn(1)
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
-      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])).willReturn(failed(new RuntimeException("Failed to create Event")))
-      given(emailService.sendCaseCompleteEmail(refEq(caseUpdated))(any[HeaderCarrier])).willReturn(Future.successful(emailTemplate))
+      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
+        .willReturn(failed(new RuntimeException("Failed to create Event")))
+      given(emailService.sendCaseCompleteEmail(refEq(caseUpdated))(any[HeaderCarrier]))
+        .willReturn(Future.successful(emailTemplate))
       given(rulingConnector.notify(refEq(originalCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(()))
 
       // When Then
@@ -182,15 +197,18 @@ class CasesService_CompleteCaseSpec extends ServiceSpecBase with BeforeAndAfterE
     "succeed on email send failure" in {
       // Given
       val operator: Operator = Operator("operator-id", Some("Billy Bobbins"))
-      val originalDecision = Decision("code", None, None, "justification", "goods")
-      val originalCase = aBTI.copy(status = CaseStatus.OPEN, decision = Some(originalDecision))
-      val updatedDecision = Decision("code", Some(date("2018-01-01")), Some(date("2019-01-01")), "justification", "goods")
+      val originalDecision   = Decision("code", None, None, "justification", "goods")
+      val originalCase       = aBTI.copy(status = CaseStatus.OPEN, decision = Some(originalDecision))
+      val updatedDecision =
+        Decision("code", Some(date("2018-01-01")), Some(date("2019-01-01")), "justification", "goods")
       val caseUpdated = aBTI.copy(status = CaseStatus.COMPLETED, decision = Some(updatedDecision))
 
       given(config.decisionLifetimeYears).willReturn(1)
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
-      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])).willReturn(successful(mock[Event]))
-      given(emailService.sendCaseCompleteEmail(refEq(caseUpdated))(any[HeaderCarrier])).willReturn(failed(new RuntimeException("Failed to send Email")))
+      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
+        .willReturn(successful(mock[Event]))
+      given(emailService.sendCaseCompleteEmail(refEq(caseUpdated))(any[HeaderCarrier]))
+        .willReturn(failed(new RuntimeException("Failed to send Email")))
 
       // When Then
       await(service.completeCase(originalCase, operator)) shouldBe caseUpdated
@@ -202,23 +220,31 @@ class CasesService_CompleteCaseSpec extends ServiceSpecBase with BeforeAndAfterE
 
       val eventCreated = theEventCreatedFor(connector, caseUpdated)
       eventCreated.operator shouldBe Operator("operator-id", Some("Billy Bobbins"))
-      eventCreated.details shouldBe CompletedCaseStatusChange(CaseStatus.OPEN, None, Some("Attempted to send an email to the applicant which failed"))
+      eventCreated.details shouldBe CompletedCaseStatusChange(
+        CaseStatus.OPEN,
+        None,
+        Some("Attempted to send an email to the applicant which failed")
+      )
     }
 
     "suceed on ruling notify failure" in {
       // Given
       val operator: Operator = Operator("operator-id", Some("Billy Bobbins"))
-      val originalDecision = Decision("code", None, None, "justification", "goods")
-      val originalCase = aBTI.copy(status = CaseStatus.OPEN, decision = Some(originalDecision))
-      val updatedDecision = Decision("code", Some(date("2018-01-01")), Some(date("2019-01-01")), "justification", "goods")
-      val caseUpdated = aBTI.copy(status = CaseStatus.COMPLETED, decision = Some(updatedDecision))
+      val originalDecision   = Decision("code", None, None, "justification", "goods")
+      val originalCase       = aBTI.copy(status = CaseStatus.OPEN, decision = Some(originalDecision))
+      val updatedDecision =
+        Decision("code", Some(date("2018-01-01")), Some(date("2019-01-01")), "justification", "goods")
+      val caseUpdated   = aBTI.copy(status = CaseStatus.COMPLETED, decision = Some(updatedDecision))
       val emailTemplate = EmailTemplate("plain", "html", "from", "subject", "service")
 
       given(config.decisionLifetimeYears).willReturn(1)
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
-      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])).willReturn(successful(mock[Event]))
-      given(emailService.sendCaseCompleteEmail(refEq(caseUpdated))(any[HeaderCarrier])).willReturn(Future.successful(emailTemplate))
-      given(rulingConnector.notify(refEq(originalCase.reference))(any[HeaderCarrier])).willReturn(Future.failed(new RuntimeException("Failed to notify ruling store")))
+      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
+        .willReturn(successful(mock[Event]))
+      given(emailService.sendCaseCompleteEmail(refEq(caseUpdated))(any[HeaderCarrier]))
+        .willReturn(Future.successful(emailTemplate))
+      given(rulingConnector.notify(refEq(originalCase.reference))(any[HeaderCarrier]))
+        .willReturn(Future.failed(new RuntimeException("Failed to notify ruling store")))
 
       // When Then
       await(service.completeCase(originalCase, operator)) shouldBe caseUpdated
@@ -231,12 +257,15 @@ class CasesService_CompleteCaseSpec extends ServiceSpecBase with BeforeAndAfterE
 
       val eventCreated = theEventCreatedFor(connector, caseUpdated)
       eventCreated.operator shouldBe Operator("operator-id", Some("Billy Bobbins"))
-      eventCreated.details shouldBe CompletedCaseStatusChange(CaseStatus.OPEN,None, Some("- Subject: subject\n- Body: plain"))
+      eventCreated.details shouldBe CompletedCaseStatusChange(
+        CaseStatus.OPEN,
+        None,
+        Some("- Subject: subject\n- Body: plain")
+      )
     }
   }
 
-  private def date(yymmdd: String): Instant = {
+  private def date(yymmdd: String): Instant =
     LocalDate.parse(yymmdd).atStartOfDay(ZoneId.of("UTC")).toInstant
-  }
 
 }

@@ -20,37 +20,38 @@ import models.CaseStatus.CaseStatus
 import models._
 
 case class CaseHeaderViewModel(
-                                caseType: String,
-                                businessName: String,
-                                goodsName: String,
-                                referenceNumber: String,
-                                caseStatus: String,
-                                decision: Option[Decision],
-                                isLive: Boolean
-                              )
+  caseType: String,
+  businessName: String,
+  goodsName: String,
+  referenceNumber: String,
+  caseStatus: String,
+  decision: Option[Decision],
+  isLive: Boolean
+)
 
 object CaseHeaderViewModel {
 
-    def fromCase(c: Case): CaseHeaderViewModel = {
-      val status: String = {
-        c.status match {
-          case CaseStatus.CANCELLED =>
-            val code = c.decision.flatMap(_.cancellation).flatMap(c => CancelReason.code(c.reason))
-            "CANCELLED" + code.map(c => s" - $c").getOrElse("")
-          case CaseStatus.COMPLETED if c.hasExpiredRuling =>
-            "EXPIRED"
-          case s: CaseStatus =>
-            s.toString
-        }
+  def fromCase(c: Case): CaseHeaderViewModel = {
+    val status: String = {
+      c.status match {
+        case CaseStatus.CANCELLED =>
+          val code = c.decision.flatMap(_.cancellation).flatMap(c => CancelReason.code(c.reason))
+          "CANCELLED" + code.map(c => s" - $c").getOrElse("")
+        case CaseStatus.COMPLETED if c.hasExpiredRuling =>
+          "EXPIRED"
+        case s: CaseStatus =>
+          s.toString
       }
-
-      CaseHeaderViewModel(
-        "Liability",
-        c.application.businessName,
-        c.application.goodsName,
-        c.reference,
-        status,
-        c.decision,
-        c.application.isLiveLiabilityOrder)
     }
+
+    CaseHeaderViewModel(
+      "Liability",
+      c.application.businessName,
+      c.application.goodsName,
+      c.reference,
+      status,
+      c.decision,
+      c.application.isLiveLiabilityOrder
+    )
+  }
 }

@@ -8,7 +8,6 @@ import play.api.test.Helpers._
 import models.response.FileMetadata
 import utils.JsonFormatters.fileMetaDataFormat
 
-
 class ViewAttachmentSpec extends IntegrationTest with MockitoSugar {
 
   private val fileMetadata = Json.toJson(FileMetadata("id", "filename", "mimeType")).toString()
@@ -41,15 +40,18 @@ class ViewAttachmentSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body should include(messages("not_authorised.paragraph1"))
+      response.body   should include(messages("not_authorised.paragraph1"))
     }
 
     def shouldSucceed = {
       // When
-      stubFor(get(urlEqualTo("/file/id"))
-        .willReturn(aResponse()
-          .withStatus(OK)
-          .withBody(fileMetadata))
+      stubFor(
+        get(urlEqualTo("/file/id"))
+          .willReturn(
+            aResponse()
+              .withStatus(OK)
+              .withBody(fileMetadata)
+          )
       )
 
       // When
@@ -57,7 +59,7 @@ class ViewAttachmentSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body should include("Attachment is unavailable")
+      response.body   should include("Attachment is unavailable")
     }
   }
 

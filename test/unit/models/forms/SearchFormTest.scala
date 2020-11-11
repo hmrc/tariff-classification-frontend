@@ -26,89 +26,105 @@ class SearchFormTest extends ModelsBaseSpec {
   "Search Form" should {
 
     "allow missing fields" in {
-      SearchForm.form.bindFromRequest(
-        Map()
-      ).errors shouldBe Seq.empty
+      SearchForm.form
+        .bindFromRequest(
+          Map()
+        )
+        .errors shouldBe Seq.empty
     }
 
     "allow empty fields" in {
-      SearchForm.form.bindFromRequest(
-        Map(
-          "commodity_code" -> Seq(""),
-          "trader_name" -> Seq(""),
-          "decision_details" -> Seq(""),
-          "status[0]" -> Seq(""),
-          "application_type[0]" -> Seq(""),
-          "keyword[0]" -> Seq("")
+      SearchForm.form
+        .bindFromRequest(
+          Map(
+            "commodity_code"      -> Seq(""),
+            "trader_name"         -> Seq(""),
+            "decision_details"    -> Seq(""),
+            "status[0]"           -> Seq(""),
+            "application_type[0]" -> Seq(""),
+            "keyword[0]"          -> Seq("")
+          )
         )
-      ).errors shouldBe Seq.empty
+        .errors shouldBe Seq.empty
     }
 
     "disallow short commodity code" in {
-      SearchForm.form.bindFromRequest(
-        Map(
-          "commodity_code" -> Seq("0")
+      SearchForm.form
+        .bindFromRequest(
+          Map(
+            "commodity_code" -> Seq("0")
+          )
         )
-      ).errors shouldBe Seq(FormError("commodity_code", List(commodityCodeError)))
+        .errors shouldBe Seq(FormError("commodity_code", List(commodityCodeError)))
     }
 
     "disallow long commodity code" in {
-      SearchForm.form.bindFromRequest(
-        Map(
-          "commodity_code" -> Seq("0" * 23)
+      SearchForm.form
+        .bindFromRequest(
+          Map(
+            "commodity_code" -> Seq("0" * 23)
+          )
         )
-      ).errors shouldBe Seq(FormError("commodity_code", List(commodityCodeError)))
+        .errors shouldBe Seq(FormError("commodity_code", List(commodityCodeError)))
     }
 
     "disallow non-numerical commodity code" in {
-      SearchForm.form.bindFromRequest(
-        Map(
-          "commodity_code" -> Seq("eee")
+      SearchForm.form
+        .bindFromRequest(
+          Map(
+            "commodity_code" -> Seq("eee")
+          )
         )
-      ).errors shouldBe Seq(FormError("commodity_code", List(commodityCodeError)))
+        .errors shouldBe Seq(FormError("commodity_code", List(commodityCodeError)))
     }
 
     "maps to data" in {
-      SearchForm.form.bindFromRequest(
-        Map(
-          "commodity_code" -> Seq("00"),
-          "trader_name" -> Seq("trader-name"),
-          "decision_details" -> Seq("decision-details"),
-          "status[0]" -> Seq("OPEN"),
-          "status[1]" -> Seq("LIVE"),
-          "application_type[0]" -> Seq("BTI"),
-          "application_type[1]" -> Seq("LIABILITY_ORDER"),
-          "keyword[0]" -> Seq("X"),
-          "keyword[1]" -> Seq("Y")
+      SearchForm.form
+        .bindFromRequest(
+          Map(
+            "commodity_code"      -> Seq("00"),
+            "trader_name"         -> Seq("trader-name"),
+            "decision_details"    -> Seq("decision-details"),
+            "status[0]"           -> Seq("OPEN"),
+            "status[1]"           -> Seq("LIVE"),
+            "application_type[0]" -> Seq("BTI"),
+            "application_type[1]" -> Seq("LIABILITY_ORDER"),
+            "keyword[0]"          -> Seq("X"),
+            "keyword[1]"          -> Seq("Y")
+          )
         )
-      ).get shouldBe Search(
-        traderName = Some("trader-name"),
-        commodityCode = Some("00"),
+        .get shouldBe Search(
+        traderName      = Some("trader-name"),
+        commodityCode   = Some("00"),
         decisionDetails = Some("decision-details"),
-        status = Some(Set(PseudoCaseStatus.OPEN, PseudoCaseStatus.LIVE)),
+        status          = Some(Set(PseudoCaseStatus.OPEN, PseudoCaseStatus.LIVE)),
         applicationType = Some(Set(ApplicationType.BTI, ApplicationType.LIABILITY_ORDER)),
-        keywords = Some(Set("X", "Y"))
+        keywords        = Some(Set("X", "Y"))
       )
     }
 
     "maps from data" in {
-      SearchForm.form.fill(Search(
-        traderName = Some("trader-name"),
-        commodityCode = Some("00"),
-        decisionDetails = Some("decision-details"),
-        status = Some(Set(PseudoCaseStatus.OPEN, PseudoCaseStatus.LIVE)),
-        applicationType = Some(Set(ApplicationType.BTI, ApplicationType.LIABILITY_ORDER)),
-        keywords = Some(Set("X", "Y"))
-      )).data shouldBe Map[String, String](
-        "trader_name" -> "trader-name",
-        "commodity_code" -> "00",
-        "decision_details" -> "decision-details",
-        "status[0]" -> "OPEN",
-        "status[1]" -> "LIVE",
+      SearchForm.form
+        .fill(
+          Search(
+            traderName      = Some("trader-name"),
+            commodityCode   = Some("00"),
+            decisionDetails = Some("decision-details"),
+            status          = Some(Set(PseudoCaseStatus.OPEN, PseudoCaseStatus.LIVE)),
+            applicationType = Some(Set(ApplicationType.BTI, ApplicationType.LIABILITY_ORDER)),
+            keywords        = Some(Set("X", "Y"))
+          )
+        )
+        .data shouldBe Map[String, String](
+        "trader_name"         -> "trader-name",
+        "commodity_code"      -> "00",
+        "decision_details"    -> "decision-details",
+        "status[0]"           -> "OPEN",
+        "status[1]"           -> "LIVE",
         "application_type[0]" -> "BTI",
         "application_type[1]" -> "LIABILITY_ORDER",
-        "keyword[0]" -> "X",
-        "keyword[1]" -> "Y"
+        "keyword[0]"          -> "X",
+        "keyword[1]"          -> "Y"
       )
     }
   }

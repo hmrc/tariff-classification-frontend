@@ -21,15 +21,15 @@ import javax.inject.Inject
 import models.request.AuthenticatedRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.operator_dashboard_classification
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-class OperatorDashboardController @Inject()(authenticate: AuthenticatedAction,
-                                            mcc: MessagesControllerComponents,
-                                            operator_dashboard_classification: views.html.operator_dashboard_classification,
-                                            implicit val appConfig: AppConfig
-                                           ) extends FrontendController(mcc) with I18nSupport {
-
+class OperatorDashboardController @Inject() (
+  authenticate: AuthenticatedAction,
+  mcc: MessagesControllerComponents,
+  operator_dashboard_classification: views.html.operator_dashboard_classification,
+  implicit val appConfig: AppConfig
+) extends FrontendController(mcc)
+    with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = authenticate { implicit request: AuthenticatedRequest[AnyContent] =>
     Ok(operator_dashboard_classification())

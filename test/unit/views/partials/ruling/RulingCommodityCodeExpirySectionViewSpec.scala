@@ -55,7 +55,8 @@ class RulingCommodityCodeExpirySectionViewSpec extends ViewSpec {
         val c = aCase(withStatus(CaseStatus.COMPLETED), withDecision(bindingCommodityCode = "123"))
 
         // When
-        val doc = view(ruling_commodity_code_expiry_section(c, Some(CommodityCode("123", Some(Instant.now.minusSeconds(60))))))
+        val doc =
+          view(ruling_commodity_code_expiry_section(c, Some(CommodityCode("123", Some(Instant.now.minusSeconds(60))))))
 
         // Then
         doc should containElementWithID("ruling_commodity_code_expiry_section")
@@ -69,7 +70,8 @@ class RulingCommodityCodeExpirySectionViewSpec extends ViewSpec {
         val c = aCase(withStatus(CaseStatus.COMPLETED), withDecision(bindingCommodityCode = "123"))
 
         // When
-        val doc = view(ruling_commodity_code_expiry_section(c, Some(CommodityCode("123", Some(Instant.now.plusSeconds(60))))))
+        val doc =
+          view(ruling_commodity_code_expiry_section(c, Some(CommodityCode("123", Some(Instant.now.plusSeconds(60))))))
 
         // Then
         doc should containElementWithID("ruling_commodity_code_expiry_section")
@@ -83,7 +85,8 @@ class RulingCommodityCodeExpirySectionViewSpec extends ViewSpec {
         val c = aCase(withStatus(CaseStatus.CANCELLED), withDecision(bindingCommodityCode = "123"))
 
         // When
-        val doc = view(ruling_commodity_code_expiry_section(c, Some(CommodityCode("123", Some(Instant.now.minusSeconds(60))))))
+        val doc =
+          view(ruling_commodity_code_expiry_section(c, Some(CommodityCode("123", Some(Instant.now.minusSeconds(60))))))
 
         // Then
         doc should containElementWithID("ruling_commodity_code_expiry_section")
@@ -95,7 +98,8 @@ class RulingCommodityCodeExpirySectionViewSpec extends ViewSpec {
         val c = aCase(withStatus(CaseStatus.OPEN), withDecision(bindingCommodityCode = "123"))
 
         // When
-        val doc = view(ruling_commodity_code_expiry_section(c, Some(CommodityCode("123", Some(Instant.now.minusSeconds(60))))))
+        val doc =
+          view(ruling_commodity_code_expiry_section(c, Some(CommodityCode("123", Some(Instant.now.minusSeconds(60))))))
 
         // Then
         doc should containElementWithID("ruling_commodity_code_expiry_section")

@@ -23,12 +23,12 @@ import models.CaseReferral
 
 object ReferCaseForm {
 
-
-  lazy val form: Form[CaseReferral] = Form(mapping(
-    "referredTo" -> textNonEmpty("error.empty.refer.to"),
-    "reasons" -> list(text),
-    "note" -> textNonEmpty("error.empty.refer.note"),
-    "referManually" -> optional(text)
-  )(CaseReferral.apply)(CaseReferral.unapply)
+  lazy val form: Form[CaseReferral] = Form(
+    mapping(
+      "referredTo"    -> textNonEmpty("error.empty.refer.to"),
+      "reasons"       -> list(text),
+      "note"          -> textNonEmpty("error.empty.refer.note"),
+      "referManually" -> optional(text)
+    )(CaseReferral.apply)(CaseReferral.unapply)
   )
 }

@@ -27,6 +27,6 @@ trait MongoDbProvider {
 }
 
 @Singleton
-class MongoDb @Inject()(component: ReactiveMongoComponent) extends MongoDbProvider {
+class MongoDb @Inject() (component: ReactiveMongoComponent) extends MongoDbProvider {
   override val mongo: () => DefaultDB = component.mongoConnector.db
 }

@@ -23,25 +23,31 @@ class KeywordFormTest extends ModelsBaseSpec {
 
   "Keywords form " should {
     "validate 'keyword'" in {
-      KeywordForm.form.bindFromRequest(
-        Map(
-          "keyword" -> Seq("")
+      KeywordForm.form
+        .bindFromRequest(
+          Map(
+            "keyword" -> Seq("")
+          )
         )
-      ).errors shouldBe Seq(FormError("keyword", "error.empty.keyword"))
+        .errors shouldBe Seq(FormError("keyword", "error.empty.keyword"))
     }
 
     "accept a keyword" in {
-      KeywordForm.form.bindFromRequest(
-        Map(
-          "keyword" -> Seq("FOOD")
+      KeywordForm.form
+        .bindFromRequest(
+          Map(
+            "keyword" -> Seq("FOOD")
+          )
         )
-      ).value shouldBe Some("FOOD")
+        .value shouldBe Some("FOOD")
     }
 
     "don't allow missing fields" in {
-      KeywordForm.form.bindFromRequest(
-        Map()
-      ).errors shouldBe Seq(FormError("keyword", "error.empty.keyword"))
+      KeywordForm.form
+        .bindFromRequest(
+          Map()
+        )
+        .errors shouldBe Seq(FormError("keyword", "error.empty.keyword"))
     }
 
     "fill in form correctly" in {

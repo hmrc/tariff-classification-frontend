@@ -22,25 +22,23 @@ sealed case class ActiveTab(name: String)
 
 object ActiveTab {
 
-  implicit def queryStringBindable(implicit stringBinder: QueryStringBindable[String]): QueryStringBindable[ActiveTab] = new QueryStringBindable[ActiveTab] {
-    override def bind(key: String, params: Map[String, Seq[String]]): Option[Either[String, ActiveTab]] = {
-      for {
-        tN <- stringBinder.bind(key, params)
-      } yield {
-        tN match {
-          case Right(tabName) if ActiveTab.allowed.contains(ActiveTab(tabName)) => Right(ActiveTab(tabName))
-          case _ => Left("Unable to bind Active Tab to valid value")
+  implicit def queryStringBindable(implicit stringBinder: QueryStringBindable[String]): QueryStringBindable[ActiveTab] =
+    new QueryStringBindable[ActiveTab] {
+      override def bind(key: String, params: Map[String, Seq[String]]): Option[Either[String, ActiveTab]] =
+        for {
+          tN <- stringBinder.bind(key, params)
+        } yield {
+          tN match {
+            case Right(tabName) if ActiveTab.allowed.contains(ActiveTab(tabName)) => Right(ActiveTab(tabName))
+            case _                                                                => Left("Unable to bind Active Tab to valid value")
+          }
         }
-      }
-    }
 
-    override def unbind(key: String, value: ActiveTab): String = {
-      stringBinder.unbind("activeTab", value.name)
+      override def unbind(key: String, value: ActiveTab): String =
+        stringBinder.unbind("activeTab", value.name)
     }
-  }
 
   val allowed = Set(Applicant, Item, Sample, Attachments, Activity, Keywords, Ruling, Appeals, Liability)
-
 
   object Applicant extends ActiveTab("tab-item-Applicant")
 
@@ -59,7 +57,5 @@ object ActiveTab {
   object Appeals extends ActiveTab("tab-item-Appeals")
 
   object Liability extends ActiveTab("tab-item-Liability")
-
-
 
 }

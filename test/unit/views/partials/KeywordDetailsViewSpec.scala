@@ -47,8 +47,8 @@ class KeywordDetailsViewSpec extends ViewSpec {
       val doc = view(keywords_details(c, Seq("APPLES", "TOYS"), KeywordForm.form))
 
       // Then
-      doc should containElementWithID("keywords-heading")
-      doc should containElementWithID("keywords-row-0-keyword")
+      doc                                          should containElementWithID("keywords-heading")
+      doc                                          should containElementWithID("keywords-row-0-keyword")
       doc.getElementById("keywords-row-0-message") should containText("")
       doc.getElementById("keywords-row-1-message") should containText("Keyword is not from the list")
     }
@@ -58,11 +58,17 @@ class KeywordDetailsViewSpec extends ViewSpec {
       val c = aCase().copy(keywords = Set("APPLES", "CARS"))
 
       // When
-      val doc = view(keywords_details(c, Seq("APPLES", "TOYS"), KeywordForm.form)(requestWithPermissions(Permission.KEYWORDS), messages, appConfig))
+      val doc = view(
+        keywords_details(c, Seq("APPLES", "TOYS"), KeywordForm.form)(
+          requestWithPermissions(Permission.KEYWORDS),
+          messages,
+          appConfig
+        )
+      )
 
       // Then
-      doc should containElementWithID("keywords-heading")
-      doc should containElementWithID("keywords-row-0-keyword")
+      doc                                          should containElementWithID("keywords-heading")
+      doc                                          should containElementWithID("keywords-row-0-keyword")
       doc.getElementById("keywords-row-0-message") should containText("")
       doc.getElementById("keywords-row-1-message") should containText("Keyword is not from the list")
 

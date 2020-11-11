@@ -30,17 +30,15 @@ object CaseStatusRadioInput extends Enumerable.Implicits {
   case object Release extends WithName("release") with CaseStatusRadioInput
   case object Suppress extends WithName("suppress") with CaseStatusRadioInput
 
-  val changeCaseStatusValues: Seq[CaseStatusRadioInput] = Seq(Complete, Refer, Reject, Suspend, MoveBackToQueue)
+  val changeCaseStatusValues: Seq[CaseStatusRadioInput]  = Seq(Complete, Refer, Reject, Suspend, MoveBackToQueue)
   val releaseOrSuppressValues: Seq[CaseStatusRadioInput] = Seq(Release, Suppress)
 
-  val changeCaseStatusOptions: Seq[InputRadio] = changeCaseStatusValues.map {
-    value =>
-      InputRadio("change_case_status", value.toString)
+  val changeCaseStatusOptions: Seq[InputRadio] = changeCaseStatusValues.map { value =>
+    InputRadio("change_case_status", value.toString)
   }
 
-  val releaseOrSuppressOptions: Seq[InputRadio] = releaseOrSuppressValues.map {
-    value =>
-      InputRadio("change_case_status", value.toString)
+  val releaseOrSuppressOptions: Seq[InputRadio] = releaseOrSuppressValues.map { value =>
+    InputRadio("change_case_status", value.toString)
   }
 
   implicit val enumerable: Enumerable[CaseStatusRadioInput] =

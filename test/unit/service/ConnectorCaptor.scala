@@ -26,7 +26,6 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 trait ConnectorCaptor {
 
-
   protected def theEventCreatedFor(connector: BindingTariffClassificationConnector, c: Case): NewEventRequest = {
     val captor: ArgumentCaptor[NewEventRequest] = ArgumentCaptor.forClass(classOf[NewEventRequest])
     verify(connector).createEvent(refEq(c), captor.capture())(any[HeaderCarrier])

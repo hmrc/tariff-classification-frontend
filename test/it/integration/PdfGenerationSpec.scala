@@ -8,8 +8,8 @@ import utils.{CasePayloads, Cases}
 
 class PdfGenerationSpec extends IntegrationTest {
 
-  private val c = CasePayloads.jsonOf(Cases.btiCaseExample.copy(status = CaseStatus.COMPLETED))
-  private val caseRef = 12
+  private val c                      = CasePayloads.jsonOf(Cases.btiCaseExample.copy(status = CaseStatus.COMPLETED))
+  private val caseRef                = 12
   private val pdfGeneratorServiceUrl = "/pdf-generator-service/generate"
 
   "PDF Application" should {
@@ -18,24 +18,31 @@ class PdfGenerationSpec extends IntegrationTest {
       // Given
       givenAuthSuccess()
 
-      stubFor(get(urlEqualTo(s"/cases/$caseRef"))
-        .willReturn(aResponse()
-          .withStatus(OK)
-          .withBody(c))
+      stubFor(
+        get(urlEqualTo(s"/cases/$caseRef"))
+          .willReturn(
+            aResponse()
+              .withStatus(OK)
+              .withBody(c)
+          )
       )
 
-      stubFor(post(urlEqualTo(pdfGeneratorServiceUrl))
-        .willReturn(aResponse()
-          .withStatus(OK)
-          .withBody("my application pdf content".getBytes))
+      stubFor(
+        post(urlEqualTo(pdfGeneratorServiceUrl))
+          .willReturn(
+            aResponse()
+              .withStatus(OK)
+              .withBody("my application pdf content".getBytes)
+          )
       )
 
       // When
-      val response: WSResponse = await(ws.url(s"http://localhost:$port/manage-tariff-classifications/pdf/application/$caseRef").get())
+      val response: WSResponse =
+        await(ws.url(s"http://localhost:$port/manage-tariff-classifications/pdf/application/$caseRef").get())
 
       // Then
       response.status shouldBe OK
-      response.body shouldBe "my application pdf content"
+      response.body   shouldBe "my application pdf content"
     }
 
     "redirect on auth failure" in {
@@ -43,11 +50,12 @@ class PdfGenerationSpec extends IntegrationTest {
       givenAuthFailed()
 
       // When
-      val response: WSResponse = await(ws.url(s"http://localhost:$port/manage-tariff-classifications/pdf/application/$caseRef").get())
+      val response: WSResponse =
+        await(ws.url(s"http://localhost:$port/manage-tariff-classifications/pdf/application/$caseRef").get())
 
       // Then
       response.status shouldBe OK
-      response.body should include(messages("not_authorised.paragraph1"))
+      response.body   should include(messages("not_authorised.paragraph1"))
     }
 
   }
@@ -58,24 +66,31 @@ class PdfGenerationSpec extends IntegrationTest {
       // Given
       givenAuthSuccess()
 
-      stubFor(get(urlEqualTo(s"/cases/$caseRef"))
-        .willReturn(aResponse()
-          .withStatus(OK)
-          .withBody(c))
+      stubFor(
+        get(urlEqualTo(s"/cases/$caseRef"))
+          .willReturn(
+            aResponse()
+              .withStatus(OK)
+              .withBody(c)
+          )
       )
 
-      stubFor(post(urlEqualTo(pdfGeneratorServiceUrl))
-        .willReturn(aResponse()
-          .withStatus(OK)
-          .withBody("my ruling pdf content".getBytes))
+      stubFor(
+        post(urlEqualTo(pdfGeneratorServiceUrl))
+          .willReturn(
+            aResponse()
+              .withStatus(OK)
+              .withBody("my ruling pdf content".getBytes)
+          )
       )
 
       // When
-      val response: WSResponse = await(ws.url(s"http://localhost:$port/manage-tariff-classifications/pdf/ruling/$caseRef").get())
+      val response: WSResponse =
+        await(ws.url(s"http://localhost:$port/manage-tariff-classifications/pdf/ruling/$caseRef").get())
 
       // Then
       response.status shouldBe OK
-      response.body shouldBe "my ruling pdf content"
+      response.body   shouldBe "my ruling pdf content"
     }
 
     "redirect on auth failure" in {
@@ -83,11 +98,12 @@ class PdfGenerationSpec extends IntegrationTest {
       givenAuthFailed()
 
       // When
-      val response: WSResponse = await(ws.url(s"http://localhost:$port/manage-tariff-classifications/pdf/ruling/$caseRef").get())
+      val response: WSResponse =
+        await(ws.url(s"http://localhost:$port/manage-tariff-classifications/pdf/ruling/$caseRef").get())
 
       // Then
       response.status shouldBe OK
-      response.body should include(messages("not_authorised.paragraph1"))
+      response.body   should include(messages("not_authorised.paragraph1"))
     }
 
   }

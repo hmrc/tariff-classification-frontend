@@ -26,9 +26,14 @@ import views.html.templates.application_template
 class ApplicationTemplateViewSpec extends ViewSpec {
 
   private val caseWithoutAgent = Cases.simpleCaseExample
-  private val caseWithAgent = Cases.btiCaseExample
+  private val caseWithAgent    = Cases.btiCaseExample
 
-  private def createView(c: Case, attachments: Seq[ StoredAttachment ]) = application_template(c, attachments, None, s => Some("dummy country name"))(authenticatedFakeRequest, messages, appConfig)
+  private def createView(c: Case, attachments: Seq[StoredAttachment]) =
+    application_template(c, attachments, None, s => Some("dummy country name"))(
+      authenticatedFakeRequest,
+      messages,
+      appConfig
+    )
 
   "Application pdf view" should {
 
@@ -40,48 +45,77 @@ class ApplicationTemplateViewSpec extends ViewSpec {
     "contain the details for an agent" in {
       val doc = view(createView(caseWithAgent, Seq.empty))
       containsCommonSections(doc)
-      doc.getElementById("pdf.application.section.applyingFor.heading") should containText("Details of the business, organisation or individual you represent")
+      doc.getElementById("pdf.application.section.applyingFor.heading") should containText(
+        "Details of the business, organisation or individual you represent"
+      )
     }
 
     "contain the details for re-issued BTI" in {
-      val doc = view(createView(caseWithoutAgent.copy(application = Cases.btiApplicationExample.copy(reissuedBTIReference = Some("REISSUE1234"))), Seq.empty))
+      val doc = view(
+        createView(
+          caseWithoutAgent
+            .copy(application = Cases.btiApplicationExample.copy(reissuedBTIReference = Some("REISSUE1234"))),
+          Seq.empty
+        )
+      )
       doc.getElementById("application.reissuedBTIReference").text() shouldBe "REISSUE1234"
     }
 
     "contain the details for uploaded files" in {
       view(createView(caseWithoutAgent, Seq.empty)).getElementById("application.attachments").text() shouldBe "None"
 
-      val docFiles = view(createView(caseWithoutAgent, Seq(
-        Cases.storedAttachment.copy(id = "FILE_ID_PDF", fileName = "pdfFile.pdf", mimeType = "application/pdf"),
-        Cases.storedAttachment.copy(id = "FILE_ID_JPG", fileName = "image.jpg", mimeType = "image/jpg"))))
+      val docFiles = view(
+        createView(
+          caseWithoutAgent,
+          Seq(
+            Cases.storedAttachment.copy(id = "FILE_ID_PDF", fileName = "pdfFile.pdf", mimeType = "application/pdf"),
+            Cases.storedAttachment.copy(id = "FILE_ID_JPG", fileName = "image.jpg", mimeType   = "image/jpg")
+          )
+        )
+      )
 
       docFiles.getElementById("application.attachments").text() shouldBe "pdfFile.pdf image.jpg"
     }
 
     "contain the details for related BTI case" in {
-      val doc = view(createView(caseWithoutAgent.copy(application = Cases.btiApplicationExample.copy(
-        relatedBTIReference = Some("RELATED1234"))), Seq.empty))
+      val doc = view(
+        createView(
+          caseWithoutAgent
+            .copy(application = Cases.btiApplicationExample.copy(relatedBTIReference = Some("RELATED1234"))),
+          Seq.empty
+        )
+      )
 
       doc.getElementById("application.relatedBTIReference").text() shouldBe "RELATED1234"
     }
 
     "contain the details for legal problems" in {
-      val doc = view(createView(caseWithoutAgent.copy(application = Cases.btiApplicationExample.copy(
-        knownLegalProceedings = Some("Legal problems"))), Seq.empty))
+      val doc = view(
+        createView(
+          caseWithoutAgent
+            .copy(application = Cases.btiApplicationExample.copy(knownLegalProceedings = Some("Legal problems"))),
+          Seq.empty
+        )
+      )
 
       doc.getElementById("application.knownLegalProceedings").text() shouldBe "Legal problems"
     }
 
     "contain the details for other information" in {
-      val doc = view(createView(caseWithoutAgent.copy(application = Cases.btiApplicationExample.copy(
-        otherInformation = Some("Other information"))), Seq.empty))
+      val doc = view(
+        createView(
+          caseWithoutAgent
+            .copy(application = Cases.btiApplicationExample.copy(otherInformation = Some("Other information"))),
+          Seq.empty
+        )
+      )
 
       doc.getElementById("application.otherInformation").text() shouldBe "Other information"
     }
   }
 
   private def containsCommonSections(doc: Document) = {
-    doc.getElementById("application.submitted").text() shouldBe s"${Dates.format(Cases.btiCaseExample.createdDate)}"
+    doc.getElementById("application.submitted").text()     shouldBe s"${Dates.format(Cases.btiCaseExample.createdDate)}"
     doc.getElementById("application.casereference").text() shouldBe s"${Cases.btiCaseExample.reference}"
 
     doc should containElementWithID("pdf.application.section.applicant.heading")

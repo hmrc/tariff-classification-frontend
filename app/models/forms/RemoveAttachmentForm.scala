@@ -17,7 +17,6 @@
 package models.forms
 
 import play.api.data.Form
-import play.api.data.Forms._
 
 object RemoveAttachmentForm {
   val form: Form[Boolean] = MandatoryBooleanForm.form("remove_attachment")

@@ -30,27 +30,29 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class CreateLiabilityController @Inject()(
+class CreateLiabilityController @Inject() (
   verify: RequestActions,
   casesService: CasesService,
   mcc: MessagesControllerComponents,
   implicit val appConfig: AppConfig
-) extends FrontendController(mcc) with I18nSupport {
+) extends FrontendController(mcc)
+    with I18nSupport {
 
   private val form: Form[LiabilityOrder] = LiabilityForm.newLiabilityForm
 
-  def get(): Action[AnyContent] = (verify.authenticated andThen verify.mustHave(Permission.CREATE_CASES)).async { implicit request: Request[AnyContent] =>
-    Future.successful(Ok(views.html.create_liability(form)))
+  def get(): Action[AnyContent] = (verify.authenticated andThen verify.mustHave(Permission.CREATE_CASES)).async {
+    implicit request: Request[AnyContent] => Future.successful(Ok(views.html.create_liability(form)))
   }
 
-  def post(): Action[AnyContent] = (verify.authenticated andThen verify.mustHave(Permission.CREATE_CASES)).async { implicit request =>
-    form.bindFromRequest.fold(
-      formWithErrors => Future.successful(Ok(views.html.create_liability(formWithErrors))),
-      liabilityOrder =>
-        casesService.createCase(liabilityOrder, request.operator).map { caseCreated =>
-          Redirect(routes.CaseController.get(caseCreated.reference))
-        }
-    )
+  def post(): Action[AnyContent] = (verify.authenticated andThen verify.mustHave(Permission.CREATE_CASES)).async {
+    implicit request =>
+      form.bindFromRequest.fold(
+        formWithErrors => Future.successful(Ok(views.html.create_liability(formWithErrors))),
+        liabilityOrder =>
+          casesService.createCase(liabilityOrder, request.operator).map { caseCreated =>
+            Redirect(routes.CaseController.get(caseCreated.reference))
+          }
+      )
 
   }
 }

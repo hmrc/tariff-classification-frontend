@@ -31,38 +31,48 @@ import play.api.test.FakeRequest
 import play.api.{Application, Configuration, Environment}
 import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
 import uk.gov.hmrc.play.audit.http.HttpAuditing
-import utils.{ TestMetrics, UnitSpec }
+import utils.{TestMetrics, UnitSpec}
 import com.kenshoo.play.metrics.Metrics
+import play.api.mvc.PlayBodyParsers
 
-trait SpecBase extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with BeforeAndAfterEach with BeforeAndAfterAll {
+trait SpecBase
+    extends UnitSpec
+    with GuiceOneAppPerSuite
+    with MockitoSugar
+    with BeforeAndAfterEach
+    with BeforeAndAfterAll {
 
-  override def fakeApplication(): Application = GuiceApplicationBuilder()
-    .configure(
-      //turn off metrics
-      "metrics.jvm" -> false,
-      "metrics.enabled" -> false,
-      //app related feature flag
-      "toggle.new-liability-details" -> true
-    ).build()
+  override def fakeApplication(): Application =
+    GuiceApplicationBuilder()
+      .configure(
+        //turn off metrics
+        "metrics.jvm"     -> false,
+        "metrics.enabled" -> false,
+        //app related feature flag
+        "toggle.new-liability-details" -> true
+      )
+      .build()
 
   lazy val appWithLiabilityToggleOff: Application = new GuiceApplicationBuilder()
     .configure(
-      "metrics.jvm" -> false,
-      "metrics.enabled" -> false,
+      "metrics.jvm"                  -> false,
+      "metrics.enabled"              -> false,
       "toggle.new-liability-details" -> false
-    ).build()
+    )
+    .build()
 
-  lazy val mcc: MessagesControllerComponents = cc
-  lazy val realAppConfig: AppConfig = injector.instanceOf[AppConfig]
-  implicit lazy val hc: HeaderCarrier = HeaderCarrier()
-  implicit lazy val cc: MessagesControllerComponents = injector.instanceOf[MessagesControllerComponents]
-  lazy val realConfig: Configuration = injector.instanceOf[Configuration]
-  lazy val realEnv: Environment = injector.instanceOf[Environment]
-  lazy val realHttpAudit: HttpAuditing = injector.instanceOf[HttpAuditing]
-  lazy val appConfWithLiabilityToggleOff: AppConfig = appWithLiabilityToggleOff.injector.instanceOf[AppConfig]
+  lazy val mcc: MessagesControllerComponents           = cc
+  lazy val realAppConfig: AppConfig                    = injector.instanceOf[AppConfig]
+  implicit lazy val hc: HeaderCarrier                  = HeaderCarrier()
+  implicit lazy val cc: MessagesControllerComponents   = injector.instanceOf[MessagesControllerComponents]
+  lazy val realConfig: Configuration                   = injector.instanceOf[Configuration]
+  lazy val realEnv: Environment                        = injector.instanceOf[Environment]
+  lazy val realHttpAudit: HttpAuditing                 = injector.instanceOf[HttpAuditing]
+  lazy val appConfWithLiabilityToggleOff: AppConfig    = appWithLiabilityToggleOff.injector.instanceOf[AppConfig]
+  lazy val playBodyParsers: PlayBodyParsers            = injector.instanceOf[PlayBodyParsers]
   lazy val defaultPlayBodyParsers: BodyParsers.Default = injector.instanceOf[BodyParsers.Default]
-  lazy val injector: Injector = app.injector
-  lazy val metrics: Metrics = new TestMetrics
+  lazy val injector: Injector                          = app.injector
+  lazy val metrics: Metrics                            = new TestMetrics
 
   lazy val ws: WSClient = injector.instanceOf[WSClient]
 
@@ -74,7 +84,7 @@ trait SpecBase extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with 
   implicit def messages: Messages = messagesApi.preferred(fakeRequest)
 
   def tempFileCreator: TemporaryFileCreator = injector.instanceOf[TemporaryFileCreator]
-  def messagesApi: MessagesApi = injector.instanceOf[MessagesApi]
+  def messagesApi: MessagesApi              = injector.instanceOf[MessagesApi]
 
   implicit lazy val mat: Materializer = injector.instanceOf[Materializer]
 }

@@ -28,11 +28,12 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases._
 
 import scala.concurrent.Future.successful
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class AssignCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   private val casesService = mock[CasesService]
-  private val operator = Operator("id")
+  private val operator     = Operator("id")
 
   override def afterEach(): Unit = {
     super.afterEach()
@@ -40,30 +41,37 @@ class AssignCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
   }
 
   private def controller(requestCase: Case) = new AssignCaseController(
-    new SuccessfulRequestActions(defaultPlayBodyParsers, operator, c = requestCase), casesService, mcc, realAppConfig
+    new SuccessfulRequestActions(playBodyParsers, operator, c = requestCase),
+    casesService,
+    mcc,
+    realAppConfig
   )
 
   private def controller(requestCase: Case, permissions: Set[Permission]) = new AssignCaseController(
-    new RequestActionsWithPermissions(defaultPlayBodyParsers, permissions = permissions, c = requestCase), casesService, mcc, realAppConfig
+    new RequestActionsWithPermissions(playBodyParsers, permissions = permissions, c = requestCase),
+    casesService,
+    mcc,
+    realAppConfig
   )
 
   "Assign Case" should {
 
     "redirect to unauthorised if no permissions" in {
       val result = await(controller(aCase(), Set.empty).get("")(newFakeGETRequestWithCSRF(app)))
-      status(result) shouldBe Status.SEE_OTHER
+      status(result)           shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.SecurityController.unauthorized().url)
     }
 
     "return OK and HTML content type when user has right permissions" in {
       val aCaseWithQueue = aCase(withQueue("1"))
 
-      val result: Result = await(controller(aCaseWithQueue, Set(Permission.ASSIGN_CASE)).get("reference")(newFakeGETRequestWithCSRF(app)))
+      val result: Result =
+        await(controller(aCaseWithQueue, Set(Permission.ASSIGN_CASE)).get("reference")(newFakeGETRequestWithCSRF(app)))
 
-      status(result) shouldBe Status.OK
+      status(result)        shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
-      charsetOf(result) shouldBe Some("utf-8")
-      bodyOf(result) should include("assign_case-heading")
+      charsetOf(result)     shouldBe Some("utf-8")
+      bodyOf(result)        should include("assign_case-heading")
     }
 
     "redirect to Case Index for cases assigned to self" in {
@@ -71,10 +79,10 @@ class AssignCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
 
       val result: Result = await(controller(aCaseAssignedToSelf).get("reference")(newFakeGETRequestWithCSRF(app)))
 
-      status(result) shouldBe Status.SEE_OTHER
+      status(result)        shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
-      charsetOf(result) shouldBe None
-      locationOf(result) shouldBe Some(routes.CaseController.get("reference").url)
+      charsetOf(result)     shouldBe None
+      locationOf(result)    shouldBe Some(routes.CaseController.get("reference").url)
     }
 
   }
@@ -83,7 +91,7 @@ class AssignCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
 
     "redirect to unauthorised if no permissions" in {
       val result = await(controller(aCase(), Set.empty).post("reference")(newFakePOSTRequestWithCSRF(app)))
-      status(result) shouldBe Status.SEE_OTHER
+      status(result)           shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.SecurityController.unauthorized().url)
     }
 
@@ -91,12 +99,14 @@ class AssignCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
       val aCaseWithQueue = aCase(withQueue("1"))
       when(casesService.assignCase(any[Case], any[Operator])(any[HeaderCarrier])).thenReturn(successful(aCaseWithQueue))
 
-      val result: Result = await(controller(aCaseWithQueue, Set(Permission.ASSIGN_CASE)).post("reference")(newFakePOSTRequestWithCSRF(app)))
+      val result: Result = await(
+        controller(aCaseWithQueue, Set(Permission.ASSIGN_CASE)).post("reference")(newFakePOSTRequestWithCSRF(app))
+      )
 
-      status(result) shouldBe Status.SEE_OTHER
+      status(result)        shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
-      charsetOf(result) shouldBe None
-      locationOf(result) shouldBe Some(routes.CaseController.get("reference").url)
+      charsetOf(result)     shouldBe None
+      locationOf(result)    shouldBe Some(routes.CaseController.get("reference").url)
     }
 
     "redirect to Case Index for cases assigned to self" in {
@@ -104,10 +114,10 @@ class AssignCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
 
       val result: Result = await(controller(aCaseAssignedToSelf).post("reference")(newFakePOSTRequestWithCSRF(app)))
 
-      status(result) shouldBe Status.SEE_OTHER
+      status(result)        shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
-      charsetOf(result) shouldBe None
-      locationOf(result) shouldBe Some(routes.CaseController.get("reference").url)
+      charsetOf(result)     shouldBe None
+      locationOf(result)    shouldBe Some(routes.CaseController.get("reference").url)
     }
 
     "redirect to Assign for cases already assigned" in {
@@ -115,10 +125,10 @@ class AssignCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
 
       val result: Result = await(controller(aCaseAssignedToSelf).post("reference")(newFakePOSTRequestWithCSRF(app)))
 
-      status(result) shouldBe Status.SEE_OTHER
+      status(result)        shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
-      charsetOf(result) shouldBe None
-      locationOf(result) shouldBe Some(routes.AssignCaseController.get("reference").url)
+      charsetOf(result)     shouldBe None
+      locationOf(result)    shouldBe Some(routes.AssignCaseController.get("reference").url)
     }
 
   }

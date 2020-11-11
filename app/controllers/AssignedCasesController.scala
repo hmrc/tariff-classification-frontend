@@ -31,36 +31,40 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class AssignedCasesController @Inject()(
+class AssignedCasesController @Inject() (
   verify: RequestActions,
   casesService: CasesService,
   queuesService: QueuesService,
   mcc: MessagesControllerComponents,
   implicit val appConfig: AppConfig
-) extends FrontendController(mcc) with I18nSupport {
+) extends FrontendController(mcc)
+    with I18nSupport {
 
-  def assignedCases(): Action[AnyContent] = (verify.authenticated andThen verify.mustHave(Permission.VIEW_ASSIGNED_CASES))
-    .async { implicit request =>
-      showAssignedCases()
-    }
+  def assignedCases(): Action[AnyContent] =
+    (verify.authenticated andThen verify.mustHave(Permission.VIEW_ASSIGNED_CASES))
+      .async(implicit request => showAssignedCases())
 
-  def assignedCasesFor(assigneeId: String, startAtTabIndex : Int): Action[AnyContent] = (verify.authenticated andThen verify.mustHave(Permission.VIEW_ASSIGNED_CASES))
-    .async { implicit request =>
-      showAssignedCases(Some(assigneeId),startAtTabIndex = startAtTabIndex)
-    }
+  def assignedCasesFor(assigneeId: String, startAtTabIndex: Int): Action[AnyContent] =
+    (verify.authenticated andThen verify.mustHave(Permission.VIEW_ASSIGNED_CASES))
+      .async(implicit request => showAssignedCases(Some(assigneeId), startAtTabIndex = startAtTabIndex))
 
-  private def showAssignedCases(assigneeId: Option[String] = None, startAtTabIndex : Int = 0)
-                               (implicit request: AuthenticatedRequest[_]): Future[Result] = {
+  private def showAssignedCases(assigneeId: Option[String] = None, startAtTabIndex: Int = 0)(
+    implicit request: AuthenticatedRequest[_]
+  ): Future[Result] =
     for {
-      cases <- casesService.getAssignedCases(NoPagination())
-      queues <- queuesService.getAll
+      cases            <- casesService.getAssignedCases(NoPagination())
+      queues           <- queuesService.getAll
       caseCountByQueue <- casesService.countCasesByQueue(request.operator)
     } yield Ok(views.html.assigned_cases(queues, cases.results, assigneeId, caseCountByQueue, startAtTabIndex))
-              .addingToSession((backToQueuesLinkLabel, request2Messages(implicitly)("cases.menu.assigned-cases")),
-                               (backToQueuesLinkUrl, assigneeId.map(AssignedCasesController.assignedCasesFor(_,startAtTabIndex).url)
-                                                               .getOrElse(AssignedCasesController.assignedCases().url)))
-              .removingFromSession(backToSearchResultsLinkLabel, backToSearchResultsLinkUrl)
-
-  }
+      .addingToSession(
+        (backToQueuesLinkLabel, request2Messages(implicitly)("cases.menu.assigned-cases")),
+        (
+          backToQueuesLinkUrl,
+          assigneeId
+            .map(AssignedCasesController.assignedCasesFor(_, startAtTabIndex).url)
+            .getOrElse(AssignedCasesController.assignedCases().url)
+        )
+      )
+      .removingFromSession(backToSearchResultsLinkLabel, backToSearchResultsLinkUrl)
 
 }

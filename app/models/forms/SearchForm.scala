@@ -28,26 +28,28 @@ object SearchForm {
 
   val form: Form[Search] = Form(
     mapping(
-      "trader_name" -> optional[String](text),
-      "commodity_code" -> optional[String](text.verifying(emptyOr(validCommodityCodeSearch): _*)),
+      "trader_name"      -> optional[String](text),
+      "commodity_code"   -> optional[String](text.verifying(emptyOr(validCommodityCodeSearch): _*)),
       "decision_details" -> optional[String](text),
-      "status" -> optional[Set[PseudoCaseStatus]](set(textTransformingTo(PseudoCaseStatus.withName, _.toString))),
-      "application_type" -> optional[Set[ApplicationType]](set(textTransformingTo(ApplicationType.withName, _.toString))),
+      "status"           -> optional[Set[PseudoCaseStatus]](set(textTransformingTo(PseudoCaseStatus.withName, _.toString))),
+      "application_type" -> optional[Set[ApplicationType]](
+        set(textTransformingTo(ApplicationType.withName, _.toString))
+      ),
       "keyword" -> optional[Set[String]](set(text))
     )(Search.apply)(Search.unapply)
   )
 
   val formWithoutValidation: Form[Search] = Form(
     mapping(
-      "trader_name" -> optional[String](text),
-      "commodity_code" -> optional[String](text),
+      "trader_name"      -> optional[String](text),
+      "commodity_code"   -> optional[String](text),
       "decision_details" -> optional[String](text),
-      "status" -> optional[Set[PseudoCaseStatus]](set(textTransformingTo(PseudoCaseStatus.withName, _.toString))),
-      "application_type" -> optional[Set[ApplicationType]](set(textTransformingTo(ApplicationType.withName, _.toString))),
+      "status"           -> optional[Set[PseudoCaseStatus]](set(textTransformingTo(PseudoCaseStatus.withName, _.toString))),
+      "application_type" -> optional[Set[ApplicationType]](
+        set(textTransformingTo(ApplicationType.withName, _.toString))
+      ),
       "keyword" -> optional[Set[String]](set(text))
     )(Search.apply)(Search.unapply)
   )
 
 }
-
-

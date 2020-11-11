@@ -32,41 +32,44 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.Future.successful
 
 @Singleton
-class CheckCasePermissionsAction
-  extends ActionRefiner[AuthenticatedCaseRequest, AuthenticatedCaseRequest] {
+class CheckCasePermissionsAction extends ActionRefiner[AuthenticatedCaseRequest, AuthenticatedCaseRequest] {
 
-  override protected def refine[A](request: AuthenticatedCaseRequest[A]):
-  Future[Either[Result, AuthenticatedCaseRequest[A]]] =
+  override protected def refine[A](
+    request: AuthenticatedCaseRequest[A]
+  ): Future[Either[Result, AuthenticatedCaseRequest[A]]] =
     successful(
       Right(
         new AuthenticatedCaseRequest(
-          operator = request.operator.addPermissions(Permission.applyingTo(request.`case`, request.operator)),
-          request = request,
-          requestedCase = request.`case`)
+          operator      = request.operator.addPermissions(Permission.applyingTo(request.`case`, request.operator)),
+          request       = request,
+          requestedCase = request.`case`
+        )
       )
     )
-
 
   override protected def executionContext: ExecutionContext = global
 }
 
 @Singleton
-class VerifyCaseExistsActionFactory @Inject()(casesService: CasesService)(implicit val messagesApi: MessagesApi, appConfig: AppConfig) extends I18nSupport {
+class VerifyCaseExistsActionFactory @Inject() (casesService: CasesService)(
+  implicit val messagesApi: MessagesApi,
+  appConfig: AppConfig
+) extends I18nSupport {
 
   def apply(reference: String): ActionRefiner[AuthenticatedRequest, AuthenticatedCaseRequest] =
     new ActionRefiner[AuthenticatedRequest, AuthenticatedCaseRequest] {
-      override protected def refine[A](request: AuthenticatedRequest[A]): Future[Either[Result, AuthenticatedCaseRequest[A]]] = {
-        implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
+      override protected def refine[A](
+        request: AuthenticatedRequest[A]
+      ): Future[Either[Result, AuthenticatedCaseRequest[A]]] = {
+        implicit val hc: HeaderCarrier =
+          HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
         implicit val r: AuthenticatedRequest[A] = request
 
         casesService.getOne(reference).flatMap {
           case Some(c: Case) =>
             successful(
               Right(
-                new AuthenticatedCaseRequest(
-                  operator = request.operator,
-                  request = request,
-                  requestedCase = c)
+                new AuthenticatedCaseRequest(operator = request.operator, request = request, requestedCase = c)
               )
             )
 
@@ -83,24 +86,22 @@ class MustHavePermissionActionFactory {
 
   def apply[B[C] <: OperatorRequest[C]](permission: Permission): ActionFilter[B] =
     new ActionFilter[B] {
-      override protected def filter[A](request: B[A]): Future[Option[Result]] = {
+      override protected def filter[A](request: B[A]): Future[Option[Result]] =
         request match {
           case r if r.hasPermission(permission) => successful(None)
-          case _ => successful(Some(Redirect(routes.SecurityController.unauthorized())))
+          case _                                => successful(Some(Redirect(routes.SecurityController.unauthorized())))
         }
-      }
 
       override protected def executionContext: ExecutionContext = global
     }
 
   def apply[B[C] <: OperatorRequest[C]](permissions: Seq[Permission]): ActionFilter[B] =
     new ActionFilter[B] {
-      override protected def filter[A](request: B[A]): Future[Option[Result]] = {
+      override protected def filter[A](request: B[A]): Future[Option[Result]] =
         request match {
-          case r if permissions.foldLeft[Boolean](false){_ || r.hasPermission(_)} => successful(None)
-          case _ => successful(Some(Redirect(routes.SecurityController.unauthorized())))
+          case r if permissions.foldLeft[Boolean](false)(_ || r.hasPermission(_)) => successful(None)
+          case _                                                                  => successful(Some(Redirect(routes.SecurityController.unauthorized())))
         }
-      }
 
       override protected def executionContext: ExecutionContext = global
     }

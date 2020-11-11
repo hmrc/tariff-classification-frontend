@@ -31,16 +31,18 @@ import play.api.libs.ws.WSClient
 import play.api.mvc.MultipartFormData
 import play.api.mvc.MultipartFormData.FilePart
 import uk.gov.hmrc.http.HeaderCarrier
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 import utils.JsonFormatters.fileMetaDataFormat
+import uk.gov.hmrc.http.HttpReads.Implicits._
 
 @Singleton
-class FileStoreConnector @Inject()(
+class FileStoreConnector @Inject() (
   appConfig: AppConfig,
   http: AuthenticatedHttpClient,
   ws: WSClient,
   val metrics: Metrics
-)(implicit ec: ExecutionContext) extends HasMetrics {
+)(implicit ec: ExecutionContext)
+    extends HasMetrics {
 
   def get(attachments: Seq[Attachment])(implicit headerCarrier: HeaderCarrier): Future[Seq[FileMetadata]] =
     withMetricsTimerAsync("get-file-metadata") { _ =>
@@ -57,8 +59,7 @@ class FileStoreConnector @Inject()(
       http.GET[Option[FileMetadata]](s"${appConfig.fileStoreUrl}/file/$attachmentId")
     }
 
-  def upload(fileUpload: FileUpload)
-            (implicit hc: HeaderCarrier): Future[FileMetadata] =
+  def upload(fileUpload: FileUpload)(implicit hc: HeaderCarrier): Future[FileMetadata] =
     withMetricsTimerAsync("upload-file") { _ =>
       val dataPart: MultipartFormData.DataPart = MultipartFormData.DataPart("publish", "true")
 
@@ -66,19 +67,17 @@ class FileStoreConnector @Inject()(
         "file",
         fileUpload.fileName,
         Some(fileUpload.contentType),
-        FileIO.fromPath(fileUpload.content.file.toPath)
+        FileIO.fromPath(fileUpload.content.path)
       )
 
       ws.url(s"${appConfig.fileStoreUrl}/file")
-        .withHeaders( hc.headers: _* )
-        .withHeaders( "X-Api-Token" -> appConfig.apiToken )
+        .withHttpHeaders(hc.headers: _*)
+        .withHttpHeaders("X-Api-Token" -> appConfig.apiToken)
         .post(Source(List(filePart, dataPart)))
         .map(response => Json.fromJson[FileMetadata](Json.parse(response.body)).get)
     }
 
   def delete(fileId: String)(implicit hc: HeaderCarrier): Future[Unit] =
-    withMetricsTimerAsync("delete-file") { _ =>
-      http.DELETE(s"${appConfig.fileStoreUrl}/file/$fileId").map(_ => ())
-    }
+    withMetricsTimerAsync("delete-file")(_ => http.DELETE[Unit](s"${appConfig.fileStoreUrl}/file/$fileId"))
 
 }

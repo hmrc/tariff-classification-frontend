@@ -40,27 +40,28 @@ class AttachmentsListViewSpec extends ViewSpec {
 
     "Render attachments" in {
       val attachment = Cases.storedAttachment.copy(
-        id = "FILE_ID",
-        fileName = "name",
-        url = Some("url"),
+        id         = "FILE_ID",
+        fileName   = "name",
+        url        = Some("url"),
         scanStatus = Some(ScanStatus.READY),
-        timestamp = ZonedDateTime.of(2019,1,1,0,0,0,0,ZoneOffset.UTC).toInstant
+        timestamp  = ZonedDateTime.of(2019, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC).toInstant
       )
 
       // When
       val doc = view(attachments_list("MODULE", Seq(attachment)))
 
       // Then
-      doc should containElementWithID("MODULE-table")
-      doc should containElementWithID("MODULE-row-0")
-      doc should containElementWithID("MODULE-row-0-title")
-      doc should containElementWithID("MODULE-row-0-date")
+      doc                                      should containElementWithID("MODULE-table")
+      doc                                      should containElementWithID("MODULE-row-0")
+      doc                                      should containElementWithID("MODULE-row-0-title")
+      doc                                      should containElementWithID("MODULE-row-0-date")
       doc.getElementById("MODULE-row-0-title") should containText("name")
-      doc.getElementById("MODULE-row-0-date") should containText("01 Jan 2019")
+      doc.getElementById("MODULE-row-0-date")  should containText("01 Jan 2019")
     }
 
     "Hide 'uploaded by'" in {
-      val attachment = Cases.storedAttachment.copy(id = "FILE_ID", fileName = "name", url = Some("url"), scanStatus = Some(ScanStatus.READY))
+      val attachment = Cases.storedAttachment
+        .copy(id = "FILE_ID", fileName = "name", url = Some("url"), scanStatus = Some(ScanStatus.READY))
 
       // When
       val doc = view(attachments_list("MODULE", Seq(attachment)))
@@ -72,7 +73,7 @@ class AttachmentsListViewSpec extends ViewSpec {
 
     "Render 'uploaded by'" in {
       val attachment = Cases.storedAttachment.copy(
-        id = "FILE_ID",
+        id       = "FILE_ID",
         fileName = "name",
         operator = Some(Operator("id", Some("operator name")))
       )
@@ -81,14 +82,14 @@ class AttachmentsListViewSpec extends ViewSpec {
       val doc = view(attachments_list("MODULE", Seq(attachment), showUploadedBy = true))
 
       // Then
-      doc should containElementWithID("MODULE-header-uploaded_by")
-      doc should containElementWithID("MODULE-row-0-uploaded_by")
+      doc                                            should containElementWithID("MODULE-header-uploaded_by")
+      doc                                            should containElementWithID("MODULE-row-0-uploaded_by")
       doc.getElementById("MODULE-row-0-uploaded_by") should containText("operator name")
     }
 
     "Render 'uploaded by' with unknown operator" in {
       val attachment = Cases.storedAttachment.copy(
-        id = "FILE_ID",
+        id       = "FILE_ID",
         fileName = "name",
         operator = None
       )
@@ -97,14 +98,14 @@ class AttachmentsListViewSpec extends ViewSpec {
       val doc = view(attachments_list("MODULE", Seq(attachment), showUploadedBy = true))
 
       // Then
-      doc should containElementWithID("MODULE-header-uploaded_by")
-      doc should containElementWithID("MODULE-row-0-uploaded_by")
+      doc                                            should containElementWithID("MODULE-header-uploaded_by")
+      doc                                            should containElementWithID("MODULE-row-0-uploaded_by")
       doc.getElementById("MODULE-row-0-uploaded_by") should containText("Unknown")
     }
 
     "Render 'uploaded by' with unknown operator name" in {
       val attachment = Cases.storedAttachment.copy(
-        id = "FILE_ID",
+        id       = "FILE_ID",
         fileName = "name",
         operator = Some(Operator("id", None))
       )
@@ -113,30 +114,34 @@ class AttachmentsListViewSpec extends ViewSpec {
       val doc = view(attachments_list("MODULE", Seq(attachment), showUploadedBy = true))
 
       // Then
-      doc should containElementWithID("MODULE-header-uploaded_by")
-      doc should containElementWithID("MODULE-row-0-uploaded_by")
+      doc                                            should containElementWithID("MODULE-header-uploaded_by")
+      doc                                            should containElementWithID("MODULE-row-0-uploaded_by")
       doc.getElementById("MODULE-row-0-uploaded_by") should containText("Unknown")
     }
 
     "Render show remove link when user has permission " in {
       val attachment = Cases.storedAttachment.copy(
-        id = "FILE_ID",
+        id       = "FILE_ID",
         fileName = "name",
         operator = Some(Operator("id", Some("operator name")))
       )
 
       // When
-      val doc = view(attachments_list("MODULE", Seq(attachment), showRemoval = true, caseRef = Some("case-ref"))
-        (requestWithPermissions(Permission.REMOVE_ATTACHMENTS), messages))
+      val doc = view(
+        attachments_list("MODULE", Seq(attachment), showRemoval = true, caseRef = Some("case-ref"))(
+          requestWithPermissions(Permission.REMOVE_ATTACHMENTS),
+          messages
+        )
+      )
 
       // Then
-      doc should containElementWithID("MODULE-row-0-remove")
+      doc                                       should containElementWithID("MODULE-row-0-remove")
       doc.getElementById("MODULE-row-0-remove") should containText("Remove")
     }
 
     "Do not render show remove link when user does not have permission " in {
       val attachment = Cases.storedAttachment.copy(
-        id = "FILE_ID",
+        id       = "FILE_ID",
         fileName = "name",
         operator = Some(Operator("id", Some("operator name")))
       )
@@ -147,7 +152,6 @@ class AttachmentsListViewSpec extends ViewSpec {
       // Then
       doc shouldNot containElementWithID("MODULE-row-0-remove")
     }
-
 
   }
 

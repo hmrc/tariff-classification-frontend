@@ -40,23 +40,23 @@ class AttachmentsEditListViewSpec extends ViewSpec {
 
     "Render attachments" in {
       val attachment = Cases.storedAttachment.copy(
-        id = "FILE_ID",
-        fileName = "name",
-        url = Some("url"),
+        id         = "FILE_ID",
+        fileName   = "name",
+        url        = Some("url"),
         scanStatus = Some(ScanStatus.READY),
-        timestamp = ZonedDateTime.of(2019,1,1,0,0,0,0,ZoneOffset.UTC).toInstant
+        timestamp  = ZonedDateTime.of(2019, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC).toInstant
       )
 
       // When
       val doc = view(attachments_edit_list("MODULE", Seq(attachment)))
 
       // Then
-      doc should containElementWithID("MODULE-div")
-      doc should containElementWithID("MODULE-row-0")
-      doc should containElementWithID("MODULE-row-0-title")
-      doc should containElementWithID("MODULE-row-0-date")
+      doc                                      should containElementWithID("MODULE-div")
+      doc                                      should containElementWithID("MODULE-row-0")
+      doc                                      should containElementWithID("MODULE-row-0-title")
+      doc                                      should containElementWithID("MODULE-row-0-date")
       doc.getElementById("MODULE-row-0-title") should containText("name")
-      doc.getElementById("MODULE-row-0-date") should containText("01 Jan 2019")
+      doc.getElementById("MODULE-row-0-date")  should containText("01 Jan 2019")
     }
 
   }

@@ -22,16 +22,17 @@ import models.request.AuthenticatedRequest
 
 class ShowActions(caseStatus: CaseStatus)(implicit request: AuthenticatedRequest[_]) {
 
-  def refer: Boolean = request.hasPermission(Permission.REFER_CASE)
-  def reject: Boolean = request.hasPermission(Permission.REJECT_CASE)
-  def suspend: Boolean = request.hasPermission(Permission.SUSPEND_CASE)
-  def release: Boolean = request.hasPermission(Permission.RELEASE_CASE)
+  def refer: Boolean    = request.hasPermission(Permission.REFER_CASE)
+  def reject: Boolean   = request.hasPermission(Permission.REJECT_CASE)
+  def suspend: Boolean  = request.hasPermission(Permission.SUSPEND_CASE)
+  def release: Boolean  = request.hasPermission(Permission.RELEASE_CASE)
   def suppress: Boolean = request.hasPermission(Permission.SUPPRESS_CASE)
-  def reopen: Boolean = request.hasPermission(Permission.REOPEN_CASE)
+  def reopen: Boolean   = request.hasPermission(Permission.REOPEN_CASE)
 
   def any: Boolean = refer || reject || suspend || release || suppress || reopen
 }
 
 object ShowActions {
-  def apply(caseStatus: CaseStatus)(implicit request: AuthenticatedRequest[_]): ShowActions = new ShowActions(caseStatus)
+  def apply(caseStatus: CaseStatus)(implicit request: AuthenticatedRequest[_]): ShowActions =
+    new ShowActions(caseStatus)
 }

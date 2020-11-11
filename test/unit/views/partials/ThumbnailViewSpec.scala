@@ -24,8 +24,7 @@ import views.ViewMatchers._
 import views.ViewSpec
 import views.html.partials.thumbnail
 
-class ThumbnailViewSpec extends ViewSpec  {
-
+class ThumbnailViewSpec extends ViewSpec {
 
   "Thumbnail" should {
 
@@ -33,13 +32,13 @@ class ThumbnailViewSpec extends ViewSpec  {
       // Given
       val storedAttachment = StoredAttachment(
         "id",
-        public = true,
-        operator = None,
-        url = Some("some/file/url"),
-        fileName = "the-file-name.png",
-        mimeType = "image/png",
-        scanStatus = Some(ScanStatus.READY),
-        timestamp = Instant.now(),
+        public      = true,
+        operator    = None,
+        url         = Some("some/file/url"),
+        fileName    = "the-file-name.png",
+        mimeType    = "image/png",
+        scanStatus  = Some(ScanStatus.READY),
+        timestamp   = Instant.now(),
         description = Some("test description")
       )
 
@@ -47,18 +46,21 @@ class ThumbnailViewSpec extends ViewSpec  {
       val doc = view(thumbnail("some-id", "some-case-reference", storedAttachment))
 
       // Then
-      doc should containElementWithID("some-id")
+      doc                           should containElementWithID("some-id")
       doc.getElementById("some-id") should haveTag("img")
       doc.getElementById("some-id") should haveAttribute("src", "some/file/url")
       doc.getElementById("some-id") should haveAttribute("alt", "Image the-file-name.png for case some-case-reference")
       doc.getElementById("some-id") should haveAttribute("title", "the-file-name.png")
 
-      doc should containElementWithID("some-id-link")
+      doc                                should containElementWithID("some-id-link")
       doc.getElementById("some-id-link") should haveAttribute("href", "some/file/url")
       doc.getElementById("some-id-link") should haveAttribute("target", "_blank")
 
       doc should containElementWithID("search-images-some-id-text")
-      doc.getElementById("search-images-some-id-text") should haveAttribute("aria-label", "View case some-case-reference")
+      doc.getElementById("search-images-some-id-text") should haveAttribute(
+        "aria-label",
+        "View case some-case-reference"
+      )
 
     }
   }

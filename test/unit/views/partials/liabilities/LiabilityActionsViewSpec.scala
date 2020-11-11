@@ -26,13 +26,13 @@ class LiabilityActionsViewSpec extends ViewSpec {
 
   "Liability Actions" should {
 
-    def containHeading = containElementWithTag("h3")
-    def containSuspend = containElementWithID("suspend-case-button")
-    def containRefer = containElementWithID("refer-case-button")
-    def containReject = containElementWithID("reject-case-button")
-    def containRelease = containElementWithID("release-case-button")
+    def containHeading  = containElementWithTag("h3")
+    def containSuspend  = containElementWithID("suspend-case-button")
+    def containRefer    = containElementWithID("refer-case-button")
+    def containReject   = containElementWithID("reject-case-button")
+    def containRelease  = containElementWithID("release-case-button")
     def containSuppress = containElementWithID("suppress_link")
-    def containReopen = containElementWithID("reopen-case-button")
+    def containReopen   = containElementWithID("reopen-case-button")
 
     "Render case with no permissions" in {
       // Given
@@ -194,6 +194,5 @@ class LiabilityActionsViewSpec extends ViewSpec {
       doc shouldNot containSuppress
     }
   }
-
 
 }

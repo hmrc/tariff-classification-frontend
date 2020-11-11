@@ -23,37 +23,41 @@ import models.request.AuthenticatedRequest
 import models.{Operator, Permission, Role}
 import play.api.mvc.Results._
 import play.api.mvc._
-import play.api.{Configuration, Environment, Logger}
+import play.api.{Configuration, Environment, Logging}
 import uk.gov.hmrc.auth.core.AuthProvider.PrivilegedApplication
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name, Retrievals, ~}
+import uk.gov.hmrc.auth.core.retrieve.{~}
+import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class AuthenticatedAction @Inject()(
+class AuthenticatedAction @Inject() (
   appConfig: AppConfig,
-  parse : BodyParsers.Default,
+  parse: PlayBodyParsers,
   override val config: Configuration,
   override val env: Environment,
   override val authConnector: StrideAuthConnector,
   cc: ControllerComponents
-) extends ActionBuilder[AuthenticatedRequest, AnyContent] with AuthorisedFunctions with AuthRedirects {
+)(override implicit val executionContext: ExecutionContext)
+    extends ActionBuilder[AuthenticatedRequest, AnyContent]
+    with AuthorisedFunctions
+    with AuthRedirects
+    with Logging {
 
-  override protected def executionContext: ExecutionContext = global
-  override val parser: BodyParser[AnyContent] = parse
+  override val parser: BodyParser[AnyContent] = parse.default
 
-  private lazy val teamEnrolment: String = appConfig.teamEnrolment
-  private lazy val managerEnrolment: String = appConfig.managerEnrolment
+  private lazy val teamEnrolment: String     = appConfig.teamEnrolment
+  private lazy val managerEnrolment: String  = appConfig.managerEnrolment
   private lazy val readOnlyEnrolment: String = appConfig.readOnlyEnrolment
-  private lazy val checkEnrolment: Boolean = appConfig.checkEnrolment
+  private lazy val checkEnrolment: Boolean   = appConfig.checkEnrolment
 
   private val uncheckedPredicate = AuthProviders(PrivilegedApplication)
-  private val checkedPredicate = (Enrolment(teamEnrolment) or Enrolment(managerEnrolment) or Enrolment(readOnlyEnrolment)) and uncheckedPredicate
+  private val checkedPredicate =
+    (Enrolment(teamEnrolment) or Enrolment(managerEnrolment) or Enrolment(readOnlyEnrolment)) and uncheckedPredicate
   private val predicate = if (checkEnrolment) checkedPredicate else uncheckedPredicate
 
   override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] = {
@@ -63,26 +67,33 @@ class AuthenticatedAction @Inject()(
     )
 
     authorised(predicate).retrieve(Retrievals.credentials and Retrievals.name and Retrievals.allEnrolments) {
-      case (credentials: Credentials) ~ (name: Name) ~ (roles: Enrolments) =>
-        Logger.info(s"User Authenticated with id [${credentials.providerId}], roles [${roles.enrolments.map(_.key).mkString(",")}]")
+      case Some(credentials) ~ name ~ roles =>
+        logger.info(
+          s"User Authenticated with id [${credentials.providerId}], roles [${roles.enrolments.map(_.key).mkString(",")}]"
+        )
         val id = credentials.providerId
         val role = roles.enrolments.map(_.key) match {
           case e if e.contains(managerEnrolment) => Role.CLASSIFICATION_MANAGER
-          case e if e.contains(teamEnrolment) => Role.CLASSIFICATION_OFFICER
-          case _ => Role.READ_ONLY
+          case e if e.contains(teamEnrolment)    => Role.CLASSIFICATION_OFFICER
+          case _                                 => Role.READ_ONLY
         }
-        val operator = Operator(id, name.name, role = role)
+        val operator = Operator(id, name.flatMap(_.name), role = role)
         val permittedOperator = operator.copy(
           permissions = Permission.applyingTo(operator)
         )
         block(AuthenticatedRequest(permittedOperator, request))
+
+      case _ =>
+        throw InternalError("Unable to retrieve user credentials")
+
     } recover {
-      case _: NoActiveSession => toStrideLogin(
-        if (appConfig.runningAsDev) s"http://${request.host}${request.uri}"
-        else s"${request.uri}"
-      )
+      case _: NoActiveSession =>
+        toStrideLogin(
+          if (appConfig.runningAsDev) s"http://${request.host}${request.uri}"
+          else s"${request.uri}"
+        )
       case e: AuthorisationException =>
-        Logger.info("Auth Failed", e)
+        logger.info("Auth Failed", e)
         Redirect(routes.SecurityController.unauthorized())
     }
   }

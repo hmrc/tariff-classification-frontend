@@ -1,9 +1,9 @@
 {
-  "credentials": {
+  "optionalCredentials": {
     "providerId": "123",
     "providerType": "PrivilegedApplication"
   },
-  "name": {
+  "optionalName": {
     "name": "Forename Surname"
   },
   "allEnrolments": [

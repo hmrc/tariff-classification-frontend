@@ -7,10 +7,9 @@ import play.api.test.Helpers._
 import models.{CaseStatus, Operator, Role}
 import utils.{CasePayloads, Cases, EventPayloads}
 
-
 class SuspendCaseSpec extends IntegrationTest with MockitoSugar {
 
-  val owner = Some(Operator("111", role = Role.CLASSIFICATION_OFFICER))
+  val owner              = Some(Operator("111", role                            = Role.CLASSIFICATION_OFFICER))
   val caseWithStatusOPEN = CasePayloads.jsonOf(Cases.btiCaseExample.copy(status = CaseStatus.OPEN, assignee = owner))
 
   "Case Suspend" should {
@@ -41,20 +40,26 @@ class SuspendCaseSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body should include(messages("not_authorised.paragraph1"))
+      response.body   should include(messages("not_authorised.paragraph1"))
     }
 
     def shouldSucceed = {
       // When
-      stubFor(get(urlEqualTo("/cases/1"))
-        .willReturn(aResponse()
-          .withStatus(OK)
-          .withBody(caseWithStatusOPEN))
+      stubFor(
+        get(urlEqualTo("/cases/1"))
+          .willReturn(
+            aResponse()
+              .withStatus(OK)
+              .withBody(caseWithStatusOPEN)
+          )
       )
-      stubFor(post(urlEqualTo("/cases/1/events"))
-        .willReturn(aResponse()
-          .withStatus(CREATED)
-          .withBody(EventPayloads.event))
+      stubFor(
+        post(urlEqualTo("/cases/1/events"))
+          .willReturn(
+            aResponse()
+              .withStatus(CREATED)
+              .withBody(EventPayloads.event)
+          )
       )
 
       // When
@@ -62,7 +67,7 @@ class SuspendCaseSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body should include("Change case status to: Suspended")
+      response.body   should include("Change case status to: Suspended")
     }
   }
 

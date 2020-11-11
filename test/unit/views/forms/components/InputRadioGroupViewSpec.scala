@@ -38,11 +38,11 @@ class InputRadioGroupViewSpec extends ViewSpec {
       val doc = view(input_radiogroup(id = "ID", field = form("field"), options = Seq.empty, allowNone = true))
 
       // Then
-      doc should containElementWithID("ID-none")
+      doc                           should containElementWithID("ID-none")
       doc.getElementById("ID-none") should haveAttribute("value", "")
       doc.getElementById("ID-none") should haveAttribute("name", "field")
 
-      doc should containElementWithID("ID-none-label")
+      doc                                 should containElementWithID("ID-none-label")
       doc.getElementById("ID-none-label") should containText("None")
     }
 
@@ -51,7 +51,7 @@ class InputRadioGroupViewSpec extends ViewSpec {
       val doc = view(input_radiogroup(id = "ID", field = form("field"), options = Seq.empty, allowNone = true))
 
       // Then
-      doc should containElementWithID("ID-none")
+      doc                           should containElementWithID("ID-none")
       doc.getElementById("ID-none") should haveAttribute("checked", "checked")
     }
 
@@ -63,7 +63,7 @@ class InputRadioGroupViewSpec extends ViewSpec {
       val doc = view(input_radiogroup(id = "ID", field = filledForm("field"), options = Seq.empty, allowNone = true))
 
       // Then
-      doc should containElementWithID("ID-none")
+      doc                           should containElementWithID("ID-none")
       doc.getElementById("ID-none") should haveAttribute("checked", "checked")
     }
 
@@ -72,7 +72,15 @@ class InputRadioGroupViewSpec extends ViewSpec {
       val filledForm = form.fill(FormData(""))
 
       // When
-      val doc = view(input_radiogroup(id = "ID", field = filledForm("field"), options = Seq.empty, allowNone = true, preSelect = false))
+      val doc = view(
+        input_radiogroup(
+          id        = "ID",
+          field     = filledForm("field"),
+          options   = Seq.empty,
+          allowNone = true,
+          preSelect = false
+        )
+      )
 
       // Then
       doc should containElementWithID("ID-none")
@@ -93,13 +101,20 @@ class InputRadioGroupViewSpec extends ViewSpec {
 
     "Render Option" in {
       // When
-      val doc = view(input_radiogroup(id = "ID", field = form("field"), options = Seq(RadioOption("VALUE", "LABEL")), allowNone = true))
+      val doc = view(
+        input_radiogroup(
+          id        = "ID",
+          field     = form("field"),
+          options   = Seq(RadioOption("VALUE", "LABEL")),
+          allowNone = true
+        )
+      )
 
       // Then
-      doc should containElementWithID("ID-VALUE")
+      doc                            should containElementWithID("ID-VALUE")
       doc.getElementById("ID-VALUE") should haveAttribute("value", "VALUE")
 
-      doc should containElementWithID("ID-VALUE-label")
+      doc                                  should containElementWithID("ID-VALUE-label")
       doc.getElementById("ID-VALUE-label") should containText("LABEL")
     }
 
@@ -117,17 +132,18 @@ class InputRadioGroupViewSpec extends ViewSpec {
       val filledForm = form.fill(FormData("VALUE"))
 
       // When
-      val doc = view(input_radiogroup(id = "ID", field = filledForm("field"), options = Seq(RadioOption("VALUE", "LABEL"))))
+      val doc =
+        view(input_radiogroup(id = "ID", field = filledForm("field"), options = Seq(RadioOption("VALUE", "LABEL"))))
 
       // Then
-      doc should containElementWithID("ID-VALUE")
+      doc                            should containElementWithID("ID-VALUE")
       doc.getElementById("ID-VALUE") should haveAttribute("checked", "checked")
     }
     "enable an error prefix for screen reader" in {
       lazy val emptyForm = Map[String, String]()
-      val formWithError = form.bind(emptyForm).apply("field")
-      val doc = view(input_text(formWithError, "Span"))
-      doc.getElementsByClass("visually-hidden").text() mustBe  errorPrefix
+      val formWithError  = form.bind(emptyForm).apply("field")
+      val doc            = view(input_text(formWithError, "Span"))
+      doc.getElementsByClass("visually-hidden").text() mustBe errorPrefix
     }
   }
 

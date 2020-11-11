@@ -33,7 +33,7 @@ class SampleDetailsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(sample_details(caseWithSample,Paged.empty[Event]))
+      val doc = view(sample_details(caseWithSample, Paged.empty[Event]))
 
       // Then
       doc should containElementWithID("app-details-sending-samples")
@@ -47,7 +47,7 @@ class SampleDetailsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(sample_details(`case`,Paged.empty[Event]))
+      val doc = view(sample_details(`case`, Paged.empty[Event]))
 
       // Then
       doc should containElementWithID("liability-sending-samples")
@@ -61,17 +61,33 @@ class SampleDetailsViewSpec extends ViewSpec {
         withoutAttachments()
       )
 
-      val event1 : Event = Event("1",SampleStatusChange(None, Some(SampleStatus.AWAITING), None),Operator("1"),"1")
-      val event2 : Event = Event("2",SampleStatusChange(Some(SampleStatus.AWAITING), Some(SampleStatus.MOVED_TO_ELM), None),Operator("1"),"1")
-      val event3 : Event = Event("3",SampleStatusChange(Some(SampleStatus.MOVED_TO_ELM), Some(SampleStatus.DESTROYED), None),Operator("1"),"1")
-      val sampleStatusActivity : Seq[Event] = Seq(event1,event2,event3)
+      val event1: Event = Event("1", SampleStatusChange(None, Some(SampleStatus.AWAITING), None), Operator("1"), "1")
+      val event2: Event = Event(
+        "2",
+        SampleStatusChange(Some(SampleStatus.AWAITING), Some(SampleStatus.MOVED_TO_ELM), None),
+        Operator("1"),
+        "1"
+      )
+      val event3: Event = Event(
+        "3",
+        SampleStatusChange(Some(SampleStatus.MOVED_TO_ELM), Some(SampleStatus.DESTROYED), None),
+        Operator("1"),
+        "1"
+      )
+      val sampleStatusActivity: Seq[Event] = Seq(event1, event2, event3)
 
       // When
-      val doc = view(sample_details(caseWithSample,Paged.apply(sampleStatusActivity,NoPagination(),3)))
+      val doc = view(sample_details(caseWithSample, Paged.apply(sampleStatusActivity, NoPagination(), 3)))
 
-      doc.getElementById("sample-status-events-row-0-title") should containText("Sample status changed from none to awaiting sample")
-      doc.getElementById("sample-status-events-row-1-title") should containText("Sample status changed from awaiting sample to moved to ELM")
-      doc.getElementById("sample-status-events-row-2-title") should containText("Sample status changed from moved to ELM to destroyed")
+      doc.getElementById("sample-status-events-row-0-title") should containText(
+        "Sample status changed from none to awaiting sample"
+      )
+      doc.getElementById("sample-status-events-row-1-title") should containText(
+        "Sample status changed from awaiting sample to moved to ELM"
+      )
+      doc.getElementById("sample-status-events-row-2-title") should containText(
+        "Sample status changed from moved to ELM to destroyed"
+      )
     }
 
     "render sample status event as sending sample for liability" in {
@@ -80,11 +96,11 @@ class SampleDetailsViewSpec extends ViewSpec {
         withLiabilityApplication()
       )
 
-      val event1 : Event = Event("1",SampleStatusChange(None, Some(SampleStatus.AWAITING), None),Operator("1"),"1")
-      val sampleStatusActivity : Seq[Event] = Seq(event1)
+      val event1: Event                    = Event("1", SampleStatusChange(None, Some(SampleStatus.AWAITING), None), Operator("1"), "1")
+      val sampleStatusActivity: Seq[Event] = Seq(event1)
 
       // When
-      val doc = view(sample_details(caseWithSample,Paged.apply(sampleStatusActivity,NoPagination(),3)))
+      val doc = view(sample_details(caseWithSample, Paged.apply(sampleStatusActivity, NoPagination(), 3)))
 
       doc.getElementById("sample-status-events-row-0-title") should containText("Sending sample changed from no to yes")
     }

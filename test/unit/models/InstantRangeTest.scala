@@ -48,11 +48,15 @@ class InstantRangeTest extends ModelsBaseSpec {
     }
 
     "Bind populated query string missing min" in {
-      InstantRange.bindable.bind("x", params.filterNot(_._1 == "min_x")) shouldBe Some(Left("Params min_x and max_x are both required"))
+      InstantRange.bindable.bind("x", params.filterNot(_._1 == "min_x")) shouldBe Some(
+        Left("Params min_x and max_x are both required")
+      )
     }
 
     "Bind populated query string missing max" in {
-      InstantRange.bindable.bind("x", params.filterNot(_._1 == "max_x")) shouldBe Some(Left("Params min_x and max_x are both required"))
+      InstantRange.bindable.bind("x", params.filterNot(_._1 == "max_x")) shouldBe Some(
+        Left("Params min_x and max_x are both required")
+      )
     }
   }
 

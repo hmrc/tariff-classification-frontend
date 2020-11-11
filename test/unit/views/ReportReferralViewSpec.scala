@@ -23,7 +23,7 @@ import views.ViewMatchers._
 
 class ReportReferralViewSpec extends ViewSpec {
 
-  private val range = InstantRange(min = Instant.EPOCH, max = Instant.EPOCH.plusSeconds(86400))
+  private val range  = InstantRange(min = Instant.EPOCH, max = Instant.EPOCH.plusSeconds(86400))
   private val queue1 = Queue("1", "Q1", "Queue 1 Name")
   private val queue2 = Queue("2", "Q2", "Queue 2 Name")
 
@@ -34,10 +34,10 @@ class ReportReferralViewSpec extends ViewSpec {
       val doc = view(html.report_referral(range, Seq.empty[ReportResult], Seq.empty[Queue]))
 
       // Then
-      doc should containElementWithID("report_referral-from_date")
+      doc                                             should containElementWithID("report_referral-from_date")
       doc.getElementById("report_referral-from_date") should containText("")
-      doc should containElementWithID("report_referral-to_date")
-      doc.getElementById("report_referral-to_date") should containText("")
+      doc                                             should containElementWithID("report_referral-to_date")
+      doc.getElementById("report_referral-to_date")   should containText("")
     }
 
     "render queues - with no data" in {
@@ -45,14 +45,14 @@ class ReportReferralViewSpec extends ViewSpec {
       val doc = view(html.report_referral(range, Seq.empty[ReportResult], Seq(queue1, queue2)))
 
       // Then
-      doc should containElementWithID(s"report_referral-table-queue_${queue1.slug}")
-      doc.getElementById(s"report_referral-table-queue_${queue1.slug}-name") should containText(queue1.name)
-      doc.getElementById(s"report_referral-table-queue_${queue1.slug}-total") should containText("0")
+      doc                                                                       should containElementWithID(s"report_referral-table-queue_${queue1.slug}")
+      doc.getElementById(s"report_referral-table-queue_${queue1.slug}-name")    should containText(queue1.name)
+      doc.getElementById(s"report_referral-table-queue_${queue1.slug}-total")   should containText("0")
       doc.getElementById(s"report_referral-table-queue_${queue1.slug}-average") should containText("0")
 
-      doc should containElementWithID(s"report_referral-table-queue_${queue2.slug}")
-      doc.getElementById(s"report_referral-table-queue_${queue2.slug}-name") should containText(queue2.name)
-      doc.getElementById(s"report_referral-table-queue_${queue2.slug}-total") should containText("0")
+      doc                                                                       should containElementWithID(s"report_referral-table-queue_${queue2.slug}")
+      doc.getElementById(s"report_referral-table-queue_${queue2.slug}-name")    should containText(queue2.name)
+      doc.getElementById(s"report_referral-table-queue_${queue2.slug}-total")   should containText("0")
       doc.getElementById(s"report_referral-table-queue_${queue2.slug}-average") should containText("0")
     }
 
@@ -67,14 +67,14 @@ class ReportReferralViewSpec extends ViewSpec {
       val doc = view(html.report_referral(range, results, Seq(queue1, queue2)))
 
       // Then
-      doc should containElementWithID(s"report_referral-table-queue_${queue1.slug}")
-      doc.getElementById(s"report_referral-table-queue_${queue1.slug}-name") should containText(queue1.name)
-      doc.getElementById(s"report_referral-table-queue_${queue1.slug}-total") should containText("6")
+      doc                                                                       should containElementWithID(s"report_referral-table-queue_${queue1.slug}")
+      doc.getElementById(s"report_referral-table-queue_${queue1.slug}-name")    should containText(queue1.name)
+      doc.getElementById(s"report_referral-table-queue_${queue1.slug}-total")   should containText("6")
       doc.getElementById(s"report_referral-table-queue_${queue1.slug}-average") should containText("26")
 
-      doc should containElementWithID(s"report_referral-table-queue_${queue2.slug}")
-      doc.getElementById(s"report_referral-table-queue_${queue2.slug}-name") should containText(queue2.name)
-      doc.getElementById(s"report_referral-table-queue_${queue2.slug}-total") should containText("6")
+      doc                                                                       should containElementWithID(s"report_referral-table-queue_${queue2.slug}")
+      doc.getElementById(s"report_referral-table-queue_${queue2.slug}-name")    should containText(queue2.name)
+      doc.getElementById(s"report_referral-table-queue_${queue2.slug}-total")   should containText("6")
       doc.getElementById(s"report_referral-table-queue_${queue2.slug}-average") should containText("35")
     }
 
@@ -83,8 +83,8 @@ class ReportReferralViewSpec extends ViewSpec {
       val doc = view(html.report_referral(range, Seq.empty[ReportResult], Seq(queue1, queue2)))
 
       // Then
-      doc should containElementWithID("report_referral-table-totals")
-      doc.getElementById("report_referral-table-totals-total") should containText("0")
+      doc                                                        should containElementWithID("report_referral-table-totals")
+      doc.getElementById("report_referral-table-totals-total")   should containText("0")
       doc.getElementById("report_referral-table-totals-average") should containText("0")
     }
 
@@ -99,8 +99,8 @@ class ReportReferralViewSpec extends ViewSpec {
       val doc = view(html.report_referral(range, results, Seq(queue1, queue2)))
 
       // Then
-      doc should containElementWithID("report_referral-table-totals")
-      doc.getElementById("report_referral-table-totals-total") should containText("12")
+      doc                                                        should containElementWithID("report_referral-table-totals")
+      doc.getElementById("report_referral-table-totals-total")   should containText("12")
       doc.getElementById("report_referral-table-totals-average") should containText("30")
     }
   }

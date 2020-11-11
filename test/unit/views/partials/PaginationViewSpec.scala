@@ -34,11 +34,11 @@ class PaginationViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
 
   override def beforeEach(): Unit = {
 
-    def returnThePage: Answer[Call] = {
+    def returnThePage: Answer[Call] =
       new Answer[Call] {
-        override def answer(invocation: InvocationOnMock): Call = Call(method = "GET", url = "/page=" + invocation.getArgument(0))
+        override def answer(invocation: InvocationOnMock): Call =
+          Call(method = "GET", url = "/page=" + invocation.getArgument(0))
       }
-    }
 
     super.beforeEach()
     given(goToPage.apply(ArgumentMatchers.any[Int])) will returnThePage
@@ -48,11 +48,13 @@ class PaginationViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
 
     "Render empty page" in {
       // When
-      val doc = view(pagination(
-        id = "ID",
-        pager = Paged(Seq.empty[String], pageIndex = 1, pageSize = 1, resultCount = 0),
-        onChange = goToPage
-      ))
+      val doc = view(
+        pagination(
+          id       = "ID",
+          pager    = Paged(Seq.empty[String], pageIndex = 1, pageSize = 1, resultCount = 0),
+          onChange = goToPage
+        )
+      )
 
       // Then
       doc should containElementWithID("ID-none")
@@ -61,11 +63,13 @@ class PaginationViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
 
     "Render 1 page" in {
       // When
-      val doc = view(pagination(
-        id = "ID",
-        pager = Paged(Seq("", ""), pageIndex = 1, pageSize = 2, resultCount = 2),
-        onChange = goToPage
-      ))
+      val doc = view(
+        pagination(
+          id       = "ID",
+          pager    = Paged(Seq("", ""), pageIndex = 1, pageSize = 2, resultCount = 2),
+          onChange = goToPage
+        )
+      )
 
       // Then
       doc should containElementWithID("ID-one")
@@ -74,7 +78,7 @@ class PaginationViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
 
       doc shouldNot containElementWithID("ID-start")
       doc shouldNot containElementWithID("ID-end")
-      doc should containElementWithID("ID-total")
+      doc                            should containElementWithID("ID-total")
       doc.getElementById("ID-total") should containText("2")
 
       doc shouldNot containElementWithID("ID-page_back")
@@ -89,11 +93,13 @@ class PaginationViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
 
     "Render 1 partially full page" in {
       // When
-      val doc = view(pagination(
-        id = "ID",
-        pager = Paged(Seq(""), pageIndex = 1, pageSize = 2, resultCount = 1),
-        onChange = goToPage
-      ))
+      val doc = view(
+        pagination(
+          id       = "ID",
+          pager    = Paged(Seq(""), pageIndex = 1, pageSize = 2, resultCount = 1),
+          onChange = goToPage
+        )
+      )
 
       // Then
       doc should containElementWithID("ID-one")
@@ -102,7 +108,7 @@ class PaginationViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
 
       doc shouldNot containElementWithID("ID-start")
       doc shouldNot containElementWithID("ID-end")
-      doc should containElementWithID("ID-total")
+      doc                            should containElementWithID("ID-total")
       doc.getElementById("ID-total") should containText("1")
 
       doc shouldNot containElementWithID("ID-page_back")
@@ -117,28 +123,30 @@ class PaginationViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
 
     "Render 2 pages" in {
       // When
-      val doc = view(pagination(
-        id = "ID",
-        pager = Paged(Seq(""), pageIndex = 1, pageSize = 1, resultCount = 2),
-        onChange = goToPage
-      ))
+      val doc = view(
+        pagination(
+          id       = "ID",
+          pager    = Paged(Seq(""), pageIndex = 1, pageSize = 1, resultCount = 2),
+          onChange = goToPage
+        )
+      )
 
       // Then
       doc should containElementWithID("ID-some")
       doc shouldNot containElementWithID("ID-none")
 
-      doc should containElementWithID("ID-start")
+      doc                            should containElementWithID("ID-start")
       doc.getElementById("ID-start") should containText("1")
-      doc should containElementWithID("ID-end")
-      doc.getElementById("ID-end") should containText("1")
-      doc should containElementWithID("ID-total")
+      doc                            should containElementWithID("ID-end")
+      doc.getElementById("ID-end")   should containText("1")
+      doc                            should containElementWithID("ID-total")
       doc.getElementById("ID-total") should containText("2")
 
       doc shouldNot containElementWithID("ID-page_back")
-      doc should containElementWithID("ID-page_next")
+      doc                                should containElementWithID("ID-page_next")
       doc.getElementById("ID-page_next") should haveAttribute("href", "/page=2")
 
-      doc should containElementWithID("ID-page_2")
+      doc                             should containElementWithID("ID-page_2")
       doc.getElementById("ID-page_2") should haveAttribute("href", "/page=2")
       doc shouldNot containElementWithID("ID-page_3")
       doc shouldNot containElementWithID("ID-page_4")
@@ -148,30 +156,32 @@ class PaginationViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
 
     "Render 3 pages" in {
       // When
-      val doc = view(pagination(
-        id = "ID",
-        pager = Paged(Seq(""), pageIndex = 1, pageSize = 1, resultCount = 3),
-        onChange = goToPage
-      ))
+      val doc = view(
+        pagination(
+          id       = "ID",
+          pager    = Paged(Seq(""), pageIndex = 1, pageSize = 1, resultCount = 3),
+          onChange = goToPage
+        )
+      )
 
       // Then
       doc should containElementWithID("ID-some")
       doc shouldNot containElementWithID("ID-none")
 
-      doc should containElementWithID("ID-start")
+      doc                            should containElementWithID("ID-start")
       doc.getElementById("ID-start") should containText("1")
-      doc should containElementWithID("ID-end")
-      doc.getElementById("ID-end") should containText("1")
-      doc should containElementWithID("ID-total")
+      doc                            should containElementWithID("ID-end")
+      doc.getElementById("ID-end")   should containText("1")
+      doc                            should containElementWithID("ID-total")
       doc.getElementById("ID-total") should containText("3")
 
       doc shouldNot containElementWithID("ID-page_back")
-      doc should containElementWithID("ID-page_next")
+      doc                                should containElementWithID("ID-page_next")
       doc.getElementById("ID-page_next") should haveAttribute("href", "/page=2")
 
-      doc should containElementWithID("ID-page_2")
+      doc                             should containElementWithID("ID-page_2")
       doc.getElementById("ID-page_2") should haveAttribute("href", "/page=2")
-      doc should containElementWithID("ID-page_3")
+      doc                             should containElementWithID("ID-page_3")
       doc.getElementById("ID-page_3") should haveAttribute("href", "/page=3")
       doc shouldNot containElementWithID("ID-page_4")
       doc shouldNot containElementWithID("ID-page_5")
@@ -180,32 +190,34 @@ class PaginationViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
 
     "Render 4 pages" in {
       // When
-      val doc = view(pagination(
-        id = "ID",
-        pager = Paged(Seq(""), pageIndex = 1, pageSize = 1, resultCount = 4),
-        onChange = goToPage
-      ))
+      val doc = view(
+        pagination(
+          id       = "ID",
+          pager    = Paged(Seq(""), pageIndex = 1, pageSize = 1, resultCount = 4),
+          onChange = goToPage
+        )
+      )
 
       // Then
       doc should containElementWithID("ID-some")
       doc shouldNot containElementWithID("ID-none")
 
-      doc should containElementWithID("ID-start")
+      doc                            should containElementWithID("ID-start")
       doc.getElementById("ID-start") should containText("1")
-      doc should containElementWithID("ID-end")
-      doc.getElementById("ID-end") should containText("1")
-      doc should containElementWithID("ID-total")
+      doc                            should containElementWithID("ID-end")
+      doc.getElementById("ID-end")   should containText("1")
+      doc                            should containElementWithID("ID-total")
       doc.getElementById("ID-total") should containText("4")
 
       doc shouldNot containElementWithID("ID-page_back")
-      doc should containElementWithID("ID-page_next")
+      doc                                should containElementWithID("ID-page_next")
       doc.getElementById("ID-page_next") should haveAttribute("href", "/page=2")
 
-      doc should containElementWithID("ID-page_2")
+      doc                             should containElementWithID("ID-page_2")
       doc.getElementById("ID-page_2") should haveAttribute("href", "/page=2")
-      doc should containElementWithID("ID-page_3")
+      doc                             should containElementWithID("ID-page_3")
       doc.getElementById("ID-page_3") should haveAttribute("href", "/page=3")
-      doc should containElementWithID("ID-page_4")
+      doc                             should containElementWithID("ID-page_4")
       doc.getElementById("ID-page_4") should haveAttribute("href", "/page=4")
       doc shouldNot containElementWithID("ID-page_5")
       doc shouldNot containElementWithID("ID-page_6")
@@ -213,68 +225,72 @@ class PaginationViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
 
     "Render 5 pages" in {
       // When
-      val doc = view(pagination(
-        id = "ID",
-        pager = Paged(Seq(""), pageIndex = 1, pageSize = 1, resultCount = 5),
-        onChange = goToPage
-      ))
+      val doc = view(
+        pagination(
+          id       = "ID",
+          pager    = Paged(Seq(""), pageIndex = 1, pageSize = 1, resultCount = 5),
+          onChange = goToPage
+        )
+      )
 
       // Then
       doc should containElementWithID("ID-some")
       doc shouldNot containElementWithID("ID-none")
 
-      doc should containElementWithID("ID-start")
+      doc                            should containElementWithID("ID-start")
       doc.getElementById("ID-start") should containText("1")
-      doc should containElementWithID("ID-end")
-      doc.getElementById("ID-end") should containText("1")
-      doc should containElementWithID("ID-total")
+      doc                            should containElementWithID("ID-end")
+      doc.getElementById("ID-end")   should containText("1")
+      doc                            should containElementWithID("ID-total")
       doc.getElementById("ID-total") should containText("5")
 
       doc shouldNot containElementWithID("ID-page_back")
-      doc should containElementWithID("ID-page_next")
+      doc                                should containElementWithID("ID-page_next")
       doc.getElementById("ID-page_next") should haveAttribute("href", "/page=2")
 
-      doc should containElementWithID("ID-page_2")
+      doc                             should containElementWithID("ID-page_2")
       doc.getElementById("ID-page_2") should haveAttribute("href", "/page=2")
-      doc should containElementWithID("ID-page_3")
+      doc                             should containElementWithID("ID-page_3")
       doc.getElementById("ID-page_3") should haveAttribute("href", "/page=3")
-      doc should containElementWithID("ID-page_4")
+      doc                             should containElementWithID("ID-page_4")
       doc.getElementById("ID-page_4") should haveAttribute("href", "/page=4")
-      doc should containElementWithID("ID-page_5")
+      doc                             should containElementWithID("ID-page_5")
       doc.getElementById("ID-page_5") should haveAttribute("href", "/page=5")
       doc shouldNot containElementWithID("ID-page_6")
     }
 
     "Render more pages" in {
       // When
-      val doc = view(pagination(
-        id = "ID",
-        pager = Paged(Seq(""), pageIndex = 1, pageSize = 1, resultCount = 100),
-        onChange = goToPage
-      ))
+      val doc = view(
+        pagination(
+          id       = "ID",
+          pager    = Paged(Seq(""), pageIndex = 1, pageSize = 1, resultCount = 100),
+          onChange = goToPage
+        )
+      )
 
       // Then
       doc should containElementWithID("ID-some")
       doc shouldNot containElementWithID("ID-none")
 
-      doc should containElementWithID("ID-start")
+      doc                            should containElementWithID("ID-start")
       doc.getElementById("ID-start") should containText("1")
-      doc should containElementWithID("ID-end")
-      doc.getElementById("ID-end") should containText("1")
-      doc should containElementWithID("ID-total")
+      doc                            should containElementWithID("ID-end")
+      doc.getElementById("ID-end")   should containText("1")
+      doc                            should containElementWithID("ID-total")
       doc.getElementById("ID-total") should containText("100")
 
       doc shouldNot containElementWithID("ID-page_back")
-      doc should containElementWithID("ID-page_next")
+      doc                                should containElementWithID("ID-page_next")
       doc.getElementById("ID-page_next") should haveAttribute("href", "/page=2")
 
-      doc should containElementWithID("ID-page_2")
+      doc                             should containElementWithID("ID-page_2")
       doc.getElementById("ID-page_2") should haveAttribute("href", "/page=2")
-      doc should containElementWithID("ID-page_3")
+      doc                             should containElementWithID("ID-page_3")
       doc.getElementById("ID-page_3") should haveAttribute("href", "/page=3")
-      doc should containElementWithID("ID-page_4")
+      doc                             should containElementWithID("ID-page_4")
       doc.getElementById("ID-page_4") should haveAttribute("href", "/page=4")
-      doc should containElementWithID("ID-page_5")
+      doc                             should containElementWithID("ID-page_5")
       doc.getElementById("ID-page_5") should haveAttribute("href", "/page=5")
 
       doc shouldNot containElementWithID("ID-page_6")
@@ -282,24 +298,26 @@ class PaginationViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
 
     "Render 1 previous page" in {
       // When
-      val doc = view(pagination(
-        id = "ID",
-        pager = Paged(Seq(""), pageIndex = 2, pageSize = 1, resultCount = 2),
-        onChange = goToPage
-      ))
+      val doc = view(
+        pagination(
+          id       = "ID",
+          pager    = Paged(Seq(""), pageIndex = 2, pageSize = 1, resultCount = 2),
+          onChange = goToPage
+        )
+      )
 
       // Then
       doc should containElementWithID("ID-some")
       doc shouldNot containElementWithID("ID-none")
 
-      doc should containElementWithID("ID-start")
+      doc                            should containElementWithID("ID-start")
       doc.getElementById("ID-start") should containText("2")
-      doc should containElementWithID("ID-end")
-      doc.getElementById("ID-end") should containText("2")
-      doc should containElementWithID("ID-total")
+      doc                            should containElementWithID("ID-end")
+      doc.getElementById("ID-end")   should containText("2")
+      doc                            should containElementWithID("ID-total")
       doc.getElementById("ID-total") should containText("2")
 
-      doc should containElementWithID("ID-page_back")
+      doc                                should containElementWithID("ID-page_back")
       doc.getElementById("ID-page_back") should haveAttribute("href", "/page=1")
       doc shouldNot containElementWithID("ID-page_next")
 
@@ -310,7 +328,6 @@ class PaginationViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
       doc shouldNot containElementWithID("ID-page_5")
       doc shouldNot containElementWithID("ID-page_6")
     }
-
 
   }
 

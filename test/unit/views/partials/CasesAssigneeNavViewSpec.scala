@@ -25,7 +25,8 @@ import views.{AssigneeCount, ViewSpec}
 
 class CasesAssigneeNavViewSpec extends ViewSpec with MockitoSugar {
 
-  private def assignedCasesURL(id: String, tabIndex : Int) = routes.AssignedCasesController.assignedCasesFor(id,tabIndex).url
+  private def assignedCasesURL(id: String, tabIndex: Int) =
+    routes.AssignedCasesController.assignedCasesFor(id, tabIndex).url
 
   "Cases Assignee Nav" should {
 
@@ -42,7 +43,7 @@ class CasesAssigneeNavViewSpec extends ViewSpec with MockitoSugar {
 
     "Render assignees with none selected" in {
       // Given
-      val op = Operator("1", Some("Test User"))
+      val op        = Operator("1", Some("Test User"))
       val assignees = Seq(AssigneeCount(op, 1))
 
       // When
@@ -50,15 +51,15 @@ class CasesAssigneeNavViewSpec extends ViewSpec with MockitoSugar {
 
       // Then
       val anchors = doc.getElementsByTag("a")
-      anchors should haveSize(1)
+      anchors        should haveSize(1)
       anchors.get(0) should containText("Test User (1)")
       anchors.get(0) should haveAttribute("href", assignedCasesURL("1", 7030))
     }
 
     "Render assignees with one selected" in {
       // Given
-      val op1 = Operator("1", Some("Test User 1"))
-      val op2 = Operator("2", Some("Test User 2"))
+      val op1       = Operator("1", Some("Test User 1"))
+      val op2       = Operator("2", Some("Test User 2"))
       val assignees = Seq(AssigneeCount(op1, 1), AssigneeCount(op2, 2))
 
       // When
@@ -66,15 +67,15 @@ class CasesAssigneeNavViewSpec extends ViewSpec with MockitoSugar {
 
       // Then
       val anchors = doc.getElementsByTag("a")
-      anchors should haveSize(2)
+      anchors        should haveSize(2)
       anchors.get(0) should containText("Test User 1 (1)")
-      anchors.get(0) should haveAttribute("href", assignedCasesURL("1",7030))
+      anchors.get(0) should haveAttribute("href", assignedCasesURL("1", 7030))
 
       anchors.get(1) should containText("Test User 2 (2)")
-      anchors.get(1) should haveAttribute("href", assignedCasesURL("2",7060))
+      anchors.get(1) should haveAttribute("href", assignedCasesURL("2", 7060))
 
       val listItems = doc.getElementsByTag("li")
-      listItems should haveSize(2)
+      listItems        should haveSize(2)
       listItems.get(0) should haveAttribute("class", "side-nav__list side-nav__list--selected")
       listItems.get(1) should haveAttribute("class", "side-nav__list")
     }

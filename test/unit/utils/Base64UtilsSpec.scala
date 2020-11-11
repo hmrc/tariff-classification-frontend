@@ -18,7 +18,7 @@ package utils
 
 class Base64UtilsSpec extends UtilsBaseSpec {
 
-  private val text: String = "hello world"
+  private val text: String    = "hello world"
   private val encoded: String = "aGVsbG8gd29ybGQ="
 
   "Base64Utils" should {

@@ -26,66 +26,84 @@ import service.{CasesService, QueuesService}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class QueuesControllerSpec extends ControllerBaseSpec {
 
-  private val casesService = mock[CasesService]
+  private val casesService  = mock[CasesService]
   private val queuesService = mock[QueuesService]
-  private val queue = Queue("0", "queue", "Queue Name")
+  private val queue         = Queue("0", "queue", "Queue Name")
 
   private def controller(permission: Set[Permission]) = new QueuesController(
-    new RequestActionsWithPermissions(defaultPlayBodyParsers, permission), casesService, queuesService, mcc, realAppConfig
+    new RequestActionsWithPermissions(playBodyParsers, permission),
+    casesService,
+    queuesService,
+    mcc,
+    realAppConfig
   )
 
   "Queue" should {
 
     "redirect to unauthorised if no permission" in {
       val result = await(controller(Set.empty).queue("slug")(fakeRequest))
-      status(result) shouldBe Status.SEE_OTHER
+      status(result)           shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.SecurityController.unauthorized().url)
     }
 
     "return 200 OK and HTML content type when Queue is found" in {
-      given(casesService.getCasesByQueue(refEq(queue), refEq(NoPagination()),any[Seq[ApplicationType]])(any[HeaderCarrier])).willReturn(Future.successful(Paged.empty[Case]))
-      given(casesService.countCasesByQueue(any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(Map.empty[String, Int]))
+      given(
+        casesService.getCasesByQueue(refEq(queue), refEq(NoPagination()), any[Seq[ApplicationType]])(any[HeaderCarrier])
+      ).willReturn(Future.successful(Paged.empty[Case]))
+      given(casesService.countCasesByQueue(any[Operator])(any[HeaderCarrier]))
+        .willReturn(Future.successful(Map.empty[String, Int]))
       given(queuesService.getOneBySlug("slug")).willReturn(Future.successful(Some(queue)))
       given(queuesService.getAll).willReturn(Future.successful(Seq(queue)))
 
       val result = await(controller(Set(Permission.VIEW_QUEUE_CASES)).queue("slug")(fakeRequest))
-      status(result) shouldBe Status.OK
-      contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
-      contentAsString(result) should include ("Queue Name")
-      session(result).get(SessionKeys.backToQueuesLinkLabel) shouldBe Some("Queue Name cases")
-      session(result).get(SessionKeys.backToQueuesLinkUrl) shouldBe Some("/manage-tariff-classifications/queues/queue")
+      status(result)                                                shouldBe Status.OK
+      contentType(result)                                           shouldBe Some("text/html")
+      charset(result)                                               shouldBe Some("utf-8")
+      contentAsString(result)                                       should include("Queue Name")
+      session(result).get(SessionKeys.backToQueuesLinkLabel)        shouldBe Some("Queue Name cases")
+      session(result).get(SessionKeys.backToQueuesLinkUrl)          shouldBe Some("/manage-tariff-classifications/queues/queue")
       session(result).get(SessionKeys.backToSearchResultsLinkLabel) shouldBe None
-      session(result).get(SessionKeys.backToSearchResultsLinkUrl) shouldBe None
+      session(result).get(SessionKeys.backToSearchResultsLinkUrl)   shouldBe None
     }
 
     "return 200 OK and HTML content type when Queue is found with specific case type specified" in {
-      given(casesService.getCasesByQueue(refEq(queue), refEq(NoPagination()),refEq(Seq(ApplicationType.LIABILITY_ORDER)))(any[HeaderCarrier])).willReturn(Future.successful(Paged.empty[Case]))
-      given(casesService.countCasesByQueue(any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(Map.empty[String, Int]))
+      given(
+        casesService.getCasesByQueue(refEq(queue), refEq(NoPagination()), refEq(Seq(ApplicationType.LIABILITY_ORDER)))(
+          any[HeaderCarrier]
+        )
+      ).willReturn(Future.successful(Paged.empty[Case]))
+      given(casesService.countCasesByQueue(any[Operator])(any[HeaderCarrier]))
+        .willReturn(Future.successful(Map.empty[String, Int]))
       given(queuesService.getOneBySlug("slug")).willReturn(Future.successful(Some(queue)))
       given(queuesService.getAll).willReturn(Future.successful(Seq(queue)))
 
-      val result = await(controller(Set(Permission.VIEW_QUEUE_CASES)).queue("slug",Some("LIABILITY_ORDER"))(fakeRequest))
-      status(result) shouldBe Status.OK
-      contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
-      contentAsString(result) should include ("Queue Name")
-      session(result).get(SessionKeys.backToQueuesLinkUrl) shouldBe Some("/manage-tariff-classifications/queues/queue?caseType=LIABILITY_ORDER")
+      val result =
+        await(controller(Set(Permission.VIEW_QUEUE_CASES)).queue("slug", Some("LIABILITY_ORDER"))(fakeRequest))
+      status(result)          shouldBe Status.OK
+      contentType(result)     shouldBe Some("text/html")
+      charset(result)         shouldBe Some("utf-8")
+      contentAsString(result) should include("Queue Name")
+      session(result).get(SessionKeys.backToQueuesLinkUrl) shouldBe Some(
+        "/manage-tariff-classifications/queues/queue?caseType=LIABILITY_ORDER"
+      )
     }
 
     "return 200 OK and HTML content type when Queue is not found" in {
-      given(casesService.getCasesByQueue(refEq(queue), refEq(NoPagination()),any[Seq[ApplicationType]])(any[HeaderCarrier])).willReturn(Future.successful(Paged.empty[Case]))
+      given(
+        casesService.getCasesByQueue(refEq(queue), refEq(NoPagination()), any[Seq[ApplicationType]])(any[HeaderCarrier])
+      ).willReturn(Future.successful(Paged.empty[Case]))
       given(queuesService.getOneBySlug("slug")).willReturn(Future.successful(None))
       given(queuesService.getAll).willReturn(Future.successful(Seq(queue)))
 
       val result = await(controller(Set(Permission.VIEW_QUEUE_CASES)).queue("slug")(fakeRequest))
-      status(result) shouldBe Status.OK
-      contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
-      contentAsString(result) should include ("Resource not found")
+      status(result)          shouldBe Status.OK
+      contentType(result)     shouldBe Some("text/html")
+      charset(result)         shouldBe Some("utf-8")
+      contentAsString(result) should include("Resource not found")
     }
 
   }

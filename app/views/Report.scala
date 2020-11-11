@@ -18,6 +18,6 @@ package views
 
 object Report extends Enumeration {
   type Report = Value
-  val SLA = Value("SLA Report")
+  val SLA      = Value("SLA Report")
   val REFERRAL = Value("Referral Report")
 }

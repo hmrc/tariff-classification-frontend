@@ -24,9 +24,8 @@ import views.html.partials.queue_nav
 
 class QueueNavViewSpec extends ViewSpec with BeforeAndAfterEach {
 
-  override protected def afterEach(): Unit = {
+  override protected def afterEach(): Unit =
     super.afterEach()
-  }
 
   val queues: Seq[Queue] = Seq(Queue("0", "gateway", "Gateway"), Queue("1", "act", "ACT"))
 
@@ -149,7 +148,7 @@ class QueueNavViewSpec extends ViewSpec with BeforeAndAfterEach {
       // Given
       val queueCounts = Map("-BTI" -> 2, "-LIABILITY_ORDER" -> 2, "2-BTI" -> 3)
       // When
-      val doc = view(queue_nav(queues, "",queueCounts)(requestWithPermissions(Permission.VIEW_QUEUE_CASES), messages))
+      val doc = view(queue_nav(queues, "", queueCounts)(requestWithPermissions(Permission.VIEW_QUEUE_CASES), messages))
 
       // Then
       doc.getElementById("case-count-gateway") should containText("4")
@@ -159,10 +158,10 @@ class QueueNavViewSpec extends ViewSpec with BeforeAndAfterEach {
       // Given
       val queueCounts = Map("-BTI" -> 2, "-LIABILITY_ORDER" -> 2, "1-BTI" -> 3, "1-LIABILITY_ORDER" -> 5)
       // When
-      val doc = view(queue_nav(queues, "",queueCounts)(requestWithPermissions(Permission.VIEW_QUEUE_CASES), messages))
+      val doc = view(queue_nav(queues, "", queueCounts)(requestWithPermissions(Permission.VIEW_QUEUE_CASES), messages))
 
       // Then
-      doc.getElementById("case-count-act") should containText("3")
+      doc.getElementById("case-count-act")      should containText("3")
       doc.getElementById("liability-count-act") should containText("5")
     }
 
