@@ -109,7 +109,7 @@ class RulingController @Inject() (
                     } yield
                       if (v2toggle) {
                         Redirect(
-                          v2.routes.LiabilityController.displayLiability(update.reference).withFragment(RULING_TAB)
+                          v2.routes.LiabilityController.displayLiability(update.reference).withFragment(RULING_TAB.name)
                         )
                       } else {
                         Redirect(routes.LiabilityController.liabilityDetails(update.reference))

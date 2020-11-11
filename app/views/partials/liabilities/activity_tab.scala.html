@@ -44,7 +44,7 @@
 
   <div class="column-full">
 
-  @form(action = LiabilityController.addNote(activityViewModel.referenceNumber).withFragment(ACTIVITY_TAB), 'class -> "form") {
+  @form(action = LiabilityController.addNote(activityViewModel.referenceNumber).withFragment(ACTIVITY_TAB.name), 'class -> "form") {
    @CSRF.formField
    @input_textarea(
     field = activityForm("note"),

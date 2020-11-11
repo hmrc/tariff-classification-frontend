@@ -74,7 +74,7 @@ class TabCacheControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach 
 
       val result: Future[Result] = controller().get(reference, itemType).apply(newFakeGETRequestWithCSRF(app))
 
-      await(bodyOf(result)) shouldBe s"#${Tab.C592_TAB}"
+      await(bodyOf(result)) shouldBe s"#${Tab.C592_TAB.name}"
     }
 
     "return default tab when there is no entry for the case and case is Bti" in {
@@ -98,7 +98,7 @@ class TabCacheControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach 
 
       val result: Future[Result] = controller().get(reference, itemType).apply(newFakeGETRequestWithCSRF(app))
 
-      await(bodyOf(result)) shouldBe s"#${Tab.C592_TAB}"
+      await(bodyOf(result)) shouldBe s"#${Tab.C592_TAB.name}"
     }
 
     "not retrieve anchor when no data are retrieved and itemType is BTI" in {
@@ -139,7 +139,7 @@ class TabCacheControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach 
       val reference = Cases.aLiabilityCase().reference
       val itemType  = Cases.aLiabilityCase().application.getType.toLowerCase
 
-      await(controller().post(reference, itemType).apply(newFakePOSTRequestWithCSRF(app, Tab.ATTACHMENTS_TAB)))
+      await(controller().post(reference, itemType).apply(newFakePOSTRequestWithCSRF(app, Tab.ATTACHMENTS_TAB.name)))
 
       verifyZeroInteractions(dataCacheConnector)
     }

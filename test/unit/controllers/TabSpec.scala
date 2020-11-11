@@ -36,7 +36,7 @@ class TabSpec extends ControllerBaseSpec {
     }
 
     "not found enum when search as a anchor without '#'" in {
-      val anchor = Tab.C592_TAB
+      val anchor = Tab.C592_TAB.toString
       Tab.findAnchorInEnum(anchor).isDefined shouldBe false
     }
 

@@ -87,14 +87,16 @@ class AttachmentsController @Inject() (
                     Redirect(
                       controllers.v2.routes.LiabilityController
                         .displayLiability(reference)
-                        .withFragment(ATTACHMENTS_TAB)
+                        .withFragment(ATTACHMENTS_TAB.name)
                     )
                   )
               )
             case _ =>
               successful(
                 Redirect(
-                  controllers.v2.routes.LiabilityController.displayLiability(reference).withFragment(ATTACHMENTS_TAB)
+                  controllers.v2.routes.LiabilityController
+                    .displayLiability(reference)
+                    .withFragment(ATTACHMENTS_TAB.name)
                 )
               )
           }
@@ -141,7 +143,9 @@ class AttachmentsController @Inject() (
               .addAttachment(c, fileUpload, request.operator)
               .map(_ =>
                 Redirect(
-                  controllers.v2.routes.LiabilityController.displayLiability(reference).withFragment(ATTACHMENTS_TAB)
+                  controllers.v2.routes.LiabilityController
+                    .displayLiability(reference)
+                    .withFragment(ATTACHMENTS_TAB.name)
                 )
               )
           case _ =>

@@ -69,7 +69,8 @@ class SampleReturnController @Inject() (
     caseService.updateSampleReturn(c, status, operator)
 
   override protected def onSuccessRedirect(reference: String, isV2Liability: Boolean): Call =
-    if (isV2Liability) controllers.v2.routes.LiabilityController.displayLiability(reference).withFragment(SAMPLE_TAB)
+    if (isV2Liability)
+      controllers.v2.routes.LiabilityController.displayLiability(reference).withFragment(SAMPLE_TAB.name)
     else routes.CaseController.sampleDetails(reference)
 
 }

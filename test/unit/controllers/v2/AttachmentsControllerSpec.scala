@@ -141,7 +141,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
       // Then
       status(result) shouldBe SEE_OTHER
       redirectLocation(result) shouldBe Some(
-        LiabilityController.displayLiability(testReference).withFragment(ATTACHMENTS_TAB).toString
+        LiabilityController.displayLiability(testReference).withFragment(ATTACHMENTS_TAB.name).toString
       )
     }
 
@@ -182,7 +182,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
         // Then
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(
-          LiabilityController.displayLiability(testReference).withFragment(ATTACHMENTS_TAB).toString
+          LiabilityController.displayLiability(testReference).withFragment(ATTACHMENTS_TAB.name).toString
         )
       }
     }
@@ -233,7 +233,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
       // Then
       status(result) shouldBe SEE_OTHER
       redirectLocation(result) shouldBe Some(
-        LiabilityController.displayLiability(testReference).withFragment(ATTACHMENTS_TAB).toString
+        LiabilityController.displayLiability(testReference).withFragment(ATTACHMENTS_TAB.name).toString
       )
     }
 

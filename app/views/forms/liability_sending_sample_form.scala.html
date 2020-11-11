@@ -38,7 +38,7 @@
         id = "sending_sample_form-submit",
         confirmText = messages("case.liability.sending.sample.change-return-confirm"),
         cancelText = messages("case.liability.sending.sample.change-return-cancel"),
-        cancelHref = if(appConfig.newLiabilityDetails) controllers.v2.routes.LiabilityController.displayLiability(c.reference).withFragment(SAMPLE_TAB) else routes.CaseController.sampleDetails(c.reference)
+        cancelHref = if(appConfig.newLiabilityDetails) controllers.v2.routes.LiabilityController.displayLiability(c.reference).withFragment(SAMPLE_TAB.name) else routes.CaseController.sampleDetails(c.reference)
     )
 }
 

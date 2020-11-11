@@ -75,7 +75,7 @@
    id = "edit_liability_decision",
    confirmText = messages("case.v2.liability.save_and_continue_button"),
    cancelText = messages("case.v2.liability.cancel_button"),
-   cancelHref = controllers.v2.routes.LiabilityController.displayLiability(caseHeaderViewModel.referenceNumber).withFragment(RULING_TAB)
+   cancelHref = controllers.v2.routes.LiabilityController.displayLiability(caseHeaderViewModel.referenceNumber).withFragment(RULING_TAB.name)
   )
  }
 

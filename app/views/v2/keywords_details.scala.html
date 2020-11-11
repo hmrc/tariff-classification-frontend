@@ -68,7 +68,7 @@
             </div>
 
             @if(request.hasPermission(Permission.KEYWORDS)) {
-                @form(action = LiabilityController.addKeyword(ktvm.caseReference).withFragment(KEYWORDS_TAB), 'class -> "form mt-3") {
+                @form(action = LiabilityController.addKeyword(ktvm.caseReference).withFragment(KEYWORDS_TAB.name), 'class -> "form mt-3") {
 
                     @CSRF.formField
                     @input_auto_complete(

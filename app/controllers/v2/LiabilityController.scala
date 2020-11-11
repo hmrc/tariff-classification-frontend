@@ -142,7 +142,7 @@ class LiabilityController @Inject() (
       def onSuccess: String => Future[Result] = validForm => {
         keywordsService
           .addKeyword(request.`case`, validForm, request.operator)
-          .map(_ => Redirect(v2.routes.LiabilityController.displayLiability(reference).withFragment(KEYWORDS_TAB)))
+          .map(_ => Redirect(v2.routes.LiabilityController.displayLiability(reference).withFragment(KEYWORDS_TAB.name)))
       }
 
       KeywordForm.form.bindFromRequest.fold(onError, onSuccess)
@@ -152,7 +152,7 @@ class LiabilityController @Inject() (
     (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.KEYWORDS))
       .async { implicit request: AuthenticatedCaseRequest[AnyContent] =>
         keywordsService.removeKeyword(request.`case`, keyword, request.operator) map { _ =>
-          Redirect(v2.routes.LiabilityController.displayLiability(reference).withFragment(KEYWORDS_TAB))
+          Redirect(v2.routes.LiabilityController.displayLiability(reference).withFragment(KEYWORDS_TAB.name))
         }
       }
 
@@ -176,7 +176,7 @@ class LiabilityController @Inject() (
           updatedCase =>
             casesService
               .updateCase(updatedCase)
-              .map(_ => Redirect(v2.routes.LiabilityController.displayLiability(reference).withFragment(C592_TAB)))
+              .map(_ => Redirect(v2.routes.LiabilityController.displayLiability(reference).withFragment(C592_TAB.name)))
         )
     }
 }
