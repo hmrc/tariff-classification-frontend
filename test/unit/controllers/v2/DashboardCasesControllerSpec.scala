@@ -16,19 +16,27 @@
 
 package controllers.v2
 
-import controllers.ControllerBaseSpec
+import controllers.{ControllerBaseSpec, RequestActionsWithPermissions}
+import models.Permission
 import org.scalatest.BeforeAndAfterEach
 import play.api.inject.bind
+import utils.Cases
 import views.html.v2.assigned_cases_v2
+
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class DashboardCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
   bind[assigned_cases_v2].toInstance(mock[assigned_cases_v2])
 
-  private lazy val assignedCases_view = bind[assigned_cases_v2]
+  private lazy val assignedCases_view = mock[assigned_cases_v2]
 
   private def controller(): DashboardCasesController = {
     new DashboardCasesController(
-      new RequestActionsWithPermissionsProvider(),
+      new RequestActionsWithPermissions(playBodyParsers,
+        permissions = Set(Permission.VIEW_MY_CASES),
+        c  = Cases.liabilityCaseExample.copy(assignee = Some(Cases.operatorWithPermissions)),
+        op = Cases.operatorWithPermissions
+      ),
       mcc,
       assignedCases_view,
       realAppConfig
