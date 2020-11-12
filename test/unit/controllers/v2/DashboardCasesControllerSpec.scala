@@ -39,7 +39,7 @@ class DashboardCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfte
         op = Cases.operatorWithPermissions
       ),
       mcc,
-      common_cases_view("custom title"),
+      common_cases_view,
       realAppConfig
     )
   }

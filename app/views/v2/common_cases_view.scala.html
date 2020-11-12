@@ -21,9 +21,9 @@
 
 @this()
 
-@(customTitle: String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(title: String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages(customTitle))) {
+@main(bodyClasses = None, customTitle = Some(messages(title))) {
 
     <!--the heading component-->
     @heading("heading text")

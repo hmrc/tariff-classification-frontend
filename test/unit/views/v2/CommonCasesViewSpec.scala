@@ -27,13 +27,13 @@ class CommonCasesViewSpec extends ViewSpec {
   "AssignedCasesViewSpec" should {
 
     "render successfully" in {
-      val doc = view(commonCasesView())
+      val doc = view(commonCasesView("title"))
 
       doc should containElementWithID("liability_tabs")
     }
 
     "contain an atar, liability, correspondence and misc tabs" in {
-      val doc = view(commonCasesView())
+      val doc = view(commonCasesView("title"))
 
       doc should containElementWithID("atar_tab")
       doc should containElementWithID("liability_tab")
@@ -42,9 +42,9 @@ class CommonCasesViewSpec extends ViewSpec {
     }
 
     "contain a heading" in {
-      val doc = view(commonCasesView())
+      val doc = view(commonCasesView("title"))
 
-      doc should containElementWithID("case-heading")
+      doc should containElementWithID("common-cases-heading")
     }
   }
 
