@@ -19,6 +19,7 @@
 @import views.html.includes.main
 @import views.html.components.heading
 @import views.html.components.common_atar
+@import views.html.components.common_liabilities
 
 @this()
 
@@ -71,6 +72,7 @@
             <!--liability tab component-->
         <div class="govuk-tabs__panel" id="liability_tab">
 
+            @common_liabilities()
         </div>
 
             <!--correspondence tab component-->
