@@ -18,6 +18,7 @@
 @import config.AppConfig
 @import views.html.includes.main
 @import views.html.components.heading
+@import views.html.components.common_atar
 
 @this()
 
@@ -28,33 +29,33 @@
     <!--the heading component-->
     @heading("heading text")
 
-    <div id="liability_tabs" class="govuk-tabs" data-module="govuk-tabs">
+    <div id="common-cases-tabs" class="govuk-tabs" data-module="govuk-tabs">
         <ul class="govuk-tabs__list">
             @* Atar *@
             <li class="govuk-tabs__list-item">
                 <a class="govuk-tabs__tab" href="#atar_tab">
-                @messages("case.atar.tab_title")
+                @messages("common.cases.atar.tab_title")
                 </a>
             </li>
 
             @* liability *@
             <li class="govuk-tabs__list-item">
                 <a class="govuk-tabs__tab" href="#liability_tab">
-                @messages("case.liability.tab_title")
+                @messages("common.cases.liability.tab_title")
                 </a>
             </li>
 
             @* Correspondence *@
             <li class="govuk-tabs__list-item">
                 <a class="govuk-tabs__tab" href="#correspondence_tab">
-                @messages("case.correspondence.tab_title")
+                @messages("common.cases.correspondence.tab_title")
                 </a>
             </li>
 
             @* Miscellaneous *@
             <li class="govuk-tabs__list-item">
                 <a class="govuk-tabs__tab" href="#misc_tab">
-                @messages("case.miscellaneous.tab_title")
+                @messages("common.cases.miscellaneous.tab_title")
                 </a>
             </li>
 
@@ -64,6 +65,7 @@
             <!--Atar tab component-->
         <div class="govuk-tabs__panel" id="atar_tab">
 
+            @common_atar()
         </div>
 
             <!--liability tab component-->

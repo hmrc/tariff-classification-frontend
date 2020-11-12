@@ -23,7 +23,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-class DashboardCasesController @Inject()(
+class CommonCasesController @Inject()(
                                           verify: RequestActions,
                                           mcc: MessagesControllerComponents,
                                           val commonCasesView: views.html.v2.common_cases_view,
@@ -31,7 +31,7 @@ class DashboardCasesController @Inject()(
                                         ) extends FrontendController(mcc) with I18nSupport {
 
 
-  def displayAssignedCases: Action[AnyContent] = verify.authenticated  {
+  def displayCommonCases: Action[AnyContent] = verify.authenticated  {
     implicit request => {
 
       Ok(commonCasesView("the tab header"))

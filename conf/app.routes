@@ -139,4 +139,4 @@ GET        /accessibility                                       controllers.Acce
 
 GET        /operator-dashboard-classification                   controllers.OperatorDashboardController.onPageLoad
 
-GET        /test                                                controllers.v2.DashboardCasesController.displayAssignedCases
+GET        /test                                                controllers.v2.CommonCasesController.displayCommonCases

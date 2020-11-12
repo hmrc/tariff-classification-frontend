@@ -25,14 +25,14 @@ import views.html.v2.common_cases_view
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class DashboardCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
+class CommonCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   bind[common_cases_view].toInstance(mock[common_cases_view])
 
   private lazy val common_cases_view = mock[common_cases_view]
 
-  private def controller(): DashboardCasesController = {
-    new DashboardCasesController(
+  private def controller(): CommonCasesController = {
+    new CommonCasesController(
       new RequestActionsWithPermissions(playBodyParsers,
         permissions = Set(Permission.VIEW_MY_CASES),
         c  = Cases.liabilityCaseExample.copy(assignee = Some(Cases.operatorWithPermissions)),
