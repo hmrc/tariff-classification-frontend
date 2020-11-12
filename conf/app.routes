@@ -138,3 +138,5 @@ POST       /cases/cache/:reference/:itemType                    controllers.TabC
 GET        /accessibility                                       controllers.AccessibilityController.onPageLoad
 
 GET        /operator-dashboard-classification                   controllers.OperatorDashboardController.onPageLoad
+
+GET        /test                                                controllers.v2.DashboardCasesController.displayAssignedCases

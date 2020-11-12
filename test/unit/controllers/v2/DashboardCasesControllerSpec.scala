@@ -21,14 +21,15 @@ import models.Permission
 import org.scalatest.BeforeAndAfterEach
 import play.api.inject.bind
 import utils.Cases
-import views.html.v2.assigned_cases_v2
+import views.html.v2.common_cases_view
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class DashboardCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
-  bind[assigned_cases_v2].toInstance(mock[assigned_cases_v2])
 
-  private lazy val assignedCases_view = mock[assigned_cases_v2]
+  bind[common_cases_view].toInstance(mock[common_cases_view])
+
+  private lazy val common_cases_view = mock[common_cases_view]
 
   private def controller(): DashboardCasesController = {
     new DashboardCasesController(
@@ -38,7 +39,7 @@ class DashboardCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfte
         op = Cases.operatorWithPermissions
       ),
       mcc,
-      assignedCases_view,
+      common_cases_view("custom title"),
       realAppConfig
     )
   }

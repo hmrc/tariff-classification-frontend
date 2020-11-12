@@ -26,7 +26,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 class DashboardCasesController @Inject()(
                                           verify: RequestActions,
                                           mcc: MessagesControllerComponents,
-                                          val assignedCasesView: views.html.v2.assigned_cases_v2,
+                                          val commonCasesView: views.html.v2.common_cases_view,
                                           implicit val appConfig: AppConfig
                                         ) extends FrontendController(mcc) with I18nSupport {
 
@@ -34,7 +34,7 @@ class DashboardCasesController @Inject()(
   def displayAssignedCases: Action[AnyContent] = verify.authenticated  {
     implicit request => {
 
-      Ok(assignedCasesView())
+      Ok(commonCasesView("the tab header"))
     }
   }
 }

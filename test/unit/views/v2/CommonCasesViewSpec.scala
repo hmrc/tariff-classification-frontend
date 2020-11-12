@@ -17,23 +17,23 @@
 package views.v2
 
 import views.ViewMatchers.containElementWithID
-import views.html.v2.assigned_cases_v2
 import views.ViewSpec
+import views.html.v2.common_cases_view
 
-class AssignedCasesViewSpec extends ViewSpec {
+class CommonCasesViewSpec extends ViewSpec {
 
-  def assignedCases: assigned_cases_v2 = injector.instanceOf[assigned_cases_v2]
+  def commonCasesView: common_cases_view = injector.instanceOf[common_cases_view]
 
   "AssignedCasesViewSpec" should {
 
     "render successfully" in {
-      val doc = view(assignedCases())
+      val doc = view(commonCasesView())
 
       doc should containElementWithID("liability_tabs")
     }
 
     "contain an atar, liability, correspondence and misc tabs" in {
-      val doc = view(assignedCases())
+      val doc = view(commonCasesView())
 
       doc should containElementWithID("atar_tab")
       doc should containElementWithID("liability_tab")
@@ -42,7 +42,7 @@ class AssignedCasesViewSpec extends ViewSpec {
     }
 
     "contain a heading" in {
-      val doc = view(assignedCases())
+      val doc = view(commonCasesView())
 
       doc should containElementWithID("case-heading")
     }

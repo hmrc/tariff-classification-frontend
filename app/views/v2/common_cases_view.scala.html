@@ -17,17 +17,16 @@
 @import models.request.AuthenticatedRequest
 @import config.AppConfig
 @import views.html.includes.main
+@import views.html.components.heading
 
-@this(
-        case_heading: views.html.v2.assigned_cases_heading
-)
+@this()
 
-@()(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(customTitle: String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("case.asdf"))) {
+@main(bodyClasses = None, customTitle = Some(messages(customTitle))) {
 
     <!--the heading component-->
-    @case_heading("heading text")
+    @heading("heading text")
 
     <div id="liability_tabs" class="govuk-tabs" data-module="govuk-tabs">
         <ul class="govuk-tabs__list">
