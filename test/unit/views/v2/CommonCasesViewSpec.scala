@@ -24,12 +24,18 @@ class CommonCasesViewSpec extends ViewSpec {
 
   def commonCasesView: common_cases_view = injector.instanceOf[common_cases_view]
 
-  "AssignedCasesViewSpec" should {
+  "CommonCasesViewSpec" should {
 
     "render successfully" in {
       val doc = view(commonCasesView("title"))
 
-      doc should containElementWithID("liability_tabs")
+      doc should containElementWithID("common-cases-tabs")
+    }
+
+    "contain my_cases_secondary_navigation" in {
+      val doc = view(commonCasesView("title"))
+
+      doc should containElementWithID("my-cases-secondary-navigation")
     }
 
     "contain an atar, liability, correspondence and misc tabs" in {
@@ -45,6 +51,12 @@ class CommonCasesViewSpec extends ViewSpec {
       val doc = view(commonCasesView("title"))
 
       doc should containElementWithID("common-cases-heading")
+    }
+
+    "contain atars component that contains " in {
+      val doc = view(commonCasesView("title"))
+
+      doc should containElementWithID("atars")
     }
   }
 
