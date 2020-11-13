@@ -18,8 +18,10 @@ package models
 
 import java.time.Instant
 
+import cats.syntax.either._
 import models.ApplicationType.ApplicationType
 import models.LiabilityStatus.LiabilityStatus
+import play.api.mvc.PathBindable
 
 sealed trait Application {
   val `type`: ApplicationType
@@ -62,6 +64,18 @@ sealed trait Application {
 object ApplicationType extends Enumeration {
   type ApplicationType = Value
   val BTI, LIABILITY_ORDER = Value
+
+  implicit def applicationTypePathBindable(implicit stringBindable: PathBindable[String]): PathBindable[Value] =
+    new PathBindable[Value] {
+      def bind(key: String, value: String): Either[String,Value] =
+        Either.catchOnly[NoSuchElementException] {
+          ApplicationType.withName(value)
+        }.leftMap { _ =>
+          "Invalid application type"
+        }
+      def unbind(key: String, value: Value): String =
+        stringBindable.unbind(key, value.toString)
+    }
 }
 
 case class BTIApplication(

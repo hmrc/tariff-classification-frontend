@@ -21,6 +21,8 @@ import java.time.Instant
 import models.CaseStatus.CaseStatus
 import models.{CaseStatus, ModelsBaseSpec, Permission}
 import utils.Cases
+import models.ApplicationType
+import models.Application
 
 class LiabilityViewModelSpec extends ModelsBaseSpec {
 
@@ -36,7 +38,7 @@ class LiabilityViewModelSpec extends ModelsBaseSpec {
   val operator                  = Cases.operatorWithCompleteCasePermission
   val operatorWithoutPermission = Cases.operatorWithoutCompleteCasePermission
   private val caseHeaderViewModel =
-    CaseHeaderViewModel("Liability", "trader-business-name", "good-name", "1", "CANCELLED", None, isLive = false)
+    CaseHeaderViewModel(ApplicationType.LIABILITY_ORDER, "trader-business-name", "good-name", "1", "CANCELLED", None, isLive = false)
 
   def buildLiabilityModel(
     caseHeaderViewModel: CaseHeaderViewModel = caseHeaderViewModel,
@@ -162,7 +164,7 @@ class LiabilityViewModelSpec extends ModelsBaseSpec {
       assert(
         LiabilityViewModel.fromCase(c, op) === LiabilityViewModel(
           CaseHeaderViewModel(
-            "Liability",
+            ApplicationType.LIABILITY_ORDER,
             "trader-business-name",
             "good-name",
             "1",

@@ -22,7 +22,7 @@ import com.google.inject.Provider
 import controllers.{ControllerBaseSpec, RequestActions, RequestActionsWithPermissions}
 import javax.inject.Inject
 import models.{Case, _}
-import org.mockito.ArgumentMatchers.{any, eq => meq}
+import org.mockito.ArgumentMatchers.{any, eq => meq, refEq}
 import org.mockito.Mockito.{times, _}
 import org.scalatest.BeforeAndAfterEach
 import play.api.Application
@@ -40,6 +40,8 @@ import views.html.v2.{case_heading, liability_details_edit, liability_view, remo
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import controllers.actions.FakeIdentifierAction
+import controllers.Tab
 
 class RequestActionsWithPermissionsProvider @Inject() (implicit parse: PlayBodyParsers)
     extends Provider[RequestActionsWithPermissions] {
@@ -60,6 +62,7 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     bind[liability_view].toInstance(mock[liability_view]),
     bind[EventsService].toInstance(mock[EventsService]),
     bind[QueuesService].toInstance(mock[QueuesService]),
+    bind[TabCacheService].toInstance(mock[TabCacheService]),
     bind[case_heading].toInstance(mock[case_heading]),
     bind[attachments_details].toInstance(mock[attachments_details]),
     bind[remove_attachment].toInstance(mock[remove_attachment]),
@@ -98,6 +101,7 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
   private lazy val fileStoreService         = mock[FileStoreService]
   private lazy val keywordsService          = mock[KeywordsService]
   private lazy val casesService             = mock[CasesService]
+  private lazy val tabCacheService          = mock[TabCacheService]
 
   override def beforeEach(): Unit =
     reset(
@@ -141,6 +145,7 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     when(keywordsService.removeKeyword(any[Case](), any[String](), any[Operator]())(any())) thenReturn Future(
       Cases.liabilityLiveCaseExample
     )
+    when(tabCacheService.getActiveTab(any[String], refEq(ApplicationType.LIABILITY_ORDER))) thenReturn Future(None)
 
     when(
       liability_view.apply(
@@ -167,11 +172,13 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
         c  = Cases.liabilityCaseExample.copy(assignee = Some(Cases.operatorWithPermissions)),
         op = Cases.operatorWithPermissions
       ),
+      FakeIdentifierAction,
       casesService,
       eventService,
       queueService,
       fileStoreService,
       keywordsService,
+      tabCacheService,
       mcc,
       liability_view,
       liability_details_edit,
@@ -191,6 +198,19 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       status(result) shouldBe OK
 
       checkLiabilityView(1)
+    }
+
+    "redirect to a fragment URL when there is a saved tab" in {
+      mockLiabilityController()
+
+      when(tabCacheService.getActiveTab(any[String], refEq(ApplicationType.LIABILITY_ORDER))) thenReturn Future.successful(Some(Tab.ATTACHMENTS_TAB))
+      when(tabCacheService.clearActiveTab(any[String], refEq(ApplicationType.LIABILITY_ORDER))) thenReturn Future.successful(())
+
+      val fakeReq                = newFakeGETRequestWithCSRF(app)
+      val result: Future[Result] = controller(Set()).displayLiability(caseReference).apply(fakeReq)
+
+      status(result) shouldBe SEE_OTHER
+      redirectLocation(result) shouldBe Some(routes.LiabilityController.displayLiability(caseReference).withFragment(Tab.ATTACHMENTS_TAB.name).path)
     }
   }
 

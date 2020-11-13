@@ -20,10 +20,27 @@ import connector.FakeDataCacheConnector
 import scala.concurrent.ExecutionContext.Implicits.global
 import controllers.Tab
 import models.ApplicationType
+import org.scalacheck.Gen
+import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
+import uk.gov.hmrc.http.cache.client.CacheMap
 
-class TabCacheServiceSpec extends ServiceSpecBase {
+class TabCacheServiceSpec extends ServiceSpecBase with ScalaCheckDrivenPropertyChecks {
 
-  val service = new TabCacheService(FakeDataCacheConnector)
+  val cacheConnector = FakeDataCacheConnector
+  val service = new TabCacheService(cacheConnector)
+
+  val tabGenerator = Gen.oneOf(List(
+    Tab.ACTIVITY_TAB,
+    Tab.ATTACHMENTS_TAB,
+    Tab.C592_TAB,
+    Tab.KEYWORDS_TAB,
+    Tab.RULING_TAB,
+    Tab.SAMPLE_TAB
+  ))
+
+  override protected def beforeEach(): Unit = {
+    await(cacheConnector.remove(CacheMap("id", Map.empty)))
+  }
 
   "TabCacheService" should {
     "get the active tab" in {
@@ -38,26 +55,22 @@ class TabCacheServiceSpec extends ServiceSpecBase {
       await(service.setActiveTab("id", ApplicationType.LIABILITY_ORDER, Tab.ATTACHMENTS_TAB)) shouldBe (())
     }
 
-    "get back out the tab that you put in" in {
-      val expected1 = Tab.ATTACHMENTS_TAB
-      val expected2 = Tab.KEYWORDS_TAB
-
+    "get back out the tab that you put in" in forAll(tabGenerator, tabGenerator) { (firstTab, secondTab) =>
       await(for {
-        _              <- service.setActiveTab("id", ApplicationType.LIABILITY_ORDER, expected1)
+        _              <- service.setActiveTab("id", ApplicationType.LIABILITY_ORDER, firstTab)
         afterFirstSet  <- service.getActiveTab("id", ApplicationType.LIABILITY_ORDER)
-        _              <- service.setActiveTab("id", ApplicationType.LIABILITY_ORDER, expected2)
+        _              <- service.setActiveTab("id", ApplicationType.LIABILITY_ORDER, secondTab)
         afterSecondSet <- service.getActiveTab("id", ApplicationType.LIABILITY_ORDER)
-      } yield (afterFirstSet, afterSecondSet)) shouldBe ((Some(expected1), Some(expected2)))
+      } yield (afterFirstSet, afterSecondSet)) shouldBe ((Some(firstTab), Some(secondTab)))
     }
 
-    "delete the tab that was saved" in {
-      val expected = Tab.ACTIVITY_TAB
+    "delete the tab that was saved" in forAll(tabGenerator) { tab =>
       await(for {
-        _          <- service.setActiveTab("id", ApplicationType.LIABILITY_ORDER, expected)
+        _          <- service.setActiveTab("id", ApplicationType.LIABILITY_ORDER, tab)
         afterSet   <- service.getActiveTab("id", ApplicationType.LIABILITY_ORDER)
         _          <- service.clearActiveTab("id", ApplicationType.LIABILITY_ORDER)
         afterClear <- service.getActiveTab("id", ApplicationType.LIABILITY_ORDER)
-      } yield (afterSet, afterClear)) shouldBe ((Some(expected), None))
+      } yield (afterSet, afterClear)) shouldBe ((Some(tab), None))
     }
   }
 }

@@ -20,7 +20,7 @@ import models.CaseStatus.CaseStatus
 import models._
 
 case class CaseHeaderViewModel(
-  caseType: String,
+  caseType: ApplicationType.Value,
   businessName: String,
   goodsName: String,
   referenceNumber: String,
@@ -45,7 +45,7 @@ object CaseHeaderViewModel {
     }
 
     CaseHeaderViewModel(
-      "Liability",
+      ApplicationType.LIABILITY_ORDER,
       c.application.businessName,
       c.application.goodsName,
       c.reference,

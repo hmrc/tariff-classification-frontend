@@ -76,13 +76,12 @@
     )
 }
 
-@if(liabilityViewModel.caseHeaderViewModel.caseType == "Liability" && idOfElement.nonEmpty) {
+@if(liabilityViewModel.caseHeaderViewModel.caseType == ApplicationType.LIABILITY_ORDER && idOfElement.nonEmpty) {
     <script>
-            let url = "@routes.TabCacheController.post(
-        liabilityViewModel.caseHeaderViewModel.referenceNumber, liabilityViewModel.caseHeaderViewModel.caseType).url";
-            let csrf = "@CSRF.getToken.value";
-            let button = document.getElementById("@idOfElement" + "-button");
-            saveAnchor(button, url, csrf)
+        let url = "@routes.TabCacheController.post(liabilityViewModel.caseHeaderViewModel.caseType).url";
+        let csrf = "@CSRF.getToken.value";
+        let button = document.getElementById("@idOfElement" + "-button");
+        saveAnchor(button, url, csrf)
     </script>
 }
 }

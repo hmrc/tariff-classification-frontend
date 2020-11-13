@@ -18,6 +18,7 @@ package controllers.v2
 
 import config.AppConfig
 import controllers.{RequestActions, v2}
+import controllers.actions.IdentifierAction
 import javax.inject.{Inject, Singleton}
 import models.forms.{ActivityForm, ActivityFormData, KeywordForm, UploadAttachmentForm}
 import models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
@@ -35,15 +36,18 @@ import models.forms.v2.LiabilityDetailsForm
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
+import service.TabCacheService
 
 @Singleton
 class LiabilityController @Inject() (
   verify: RequestActions,
+  identify: IdentifierAction,
   casesService: CasesService,
   eventsService: EventsService,
   queuesService: QueuesService,
   fileService: FileStoreService,
   keywordsService: KeywordsService,
+  tabCacheService: TabCacheService,
   mcc: MessagesControllerComponents,
   val liability_view: views.html.v2.liability_view,
   val liability_details_edit: views.html.v2.liability_details_edit,
@@ -51,8 +55,20 @@ class LiabilityController @Inject() (
 ) extends FrontendController(mcc)
     with I18nSupport {
 
-  def displayLiability(reference: String): Action[AnyContent] =
-    (verify.authenticated andThen verify.casePermissions(reference)).async(implicit request => buildLiabilityView())
+  def displayLiability(reference: String): Action[AnyContent] = {
+    (verify.authenticated andThen verify.casePermissions(reference)).async { implicit caseRequest =>
+      identify.async { implicit idRequest =>
+        tabCacheService.getActiveTab(idRequest.internalId, ApplicationType.LIABILITY_ORDER).flatMap {
+          case Some(tab) =>
+            tabCacheService.clearActiveTab(idRequest.internalId, ApplicationType.LIABILITY_ORDER).map { _ =>
+              Redirect(routes.LiabilityController.displayLiability(reference).withFragment(tab.name))
+            }
+          case None =>
+            buildLiabilityView()
+        }
+      }(caseRequest)
+    }
+  }
 
   def buildLiabilityView(
     activityForm: Form[ActivityFormData] = ActivityForm.form,
