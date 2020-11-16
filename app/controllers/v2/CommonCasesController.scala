@@ -34,7 +34,7 @@ class CommonCasesController @Inject()(
   def displayCommonCases: Action[AnyContent] = verify.authenticated  {
     implicit request => {
 
-      Ok(commonCasesView("the tab header"))
+      Ok(commonCasesView("the tab title"))
     }
   }
 }
