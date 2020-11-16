@@ -22,15 +22,16 @@
 @import views.html.components.common_atar
 @import views.html.components.common_liabilities
 @import views.html.components.primary_navigation
+@import models.viewmodels.OpenCasesTab
 
-@this(my_cases_secondary_nav: views.html.components.my_cases_secondary_navigation)
+@this(open_cases_secondary_navigation: views.html.components.open_cases_secondary_navigation)
 
 @(title: String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages(title))) {
 
-    @primary_navigation()
-    @my_cases_secondary_nav()
+    @primary_navigation(OpenCasesTab)
+    @open_cases_secondary_navigation()
 
     <!--the heading component-->
     @heading(messages("cases.opencases.atar.heading"))
@@ -69,25 +70,25 @@
 
         @* content*@
             <!--ACT tab component-->
-        <div class="govuk-tabs__panel" id="ACT_tab">
+        <div class="govuk-tabs__panel" id="act_tab">
 
             @common_tab_content("ACT")
         </div>
 
             <!--CAP tab component-->
-        <div class="govuk-tabs__panel" id="CAP_tab">
+        <div class="govuk-tabs__panel" id="cap_tab">
 
             @common_tab_content("CAP")
         </div>
 
             <!--Cars tab component-->
-        <div class="govuk-tabs__panel" id="Cars_tab">
+        <div class="govuk-tabs__panel" id="cars_tab">
             @common_tab_content("Cars")
 
         </div>
 
             <!--ELM tab component-->
-        <div class="govuk-tabs__panel" id="ELM_tab">
+        <div class="govuk-tabs__panel" id="elm_tab">
             @common_tab_content("ELM")
         </div>
 
