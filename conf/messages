@@ -911,3 +911,6 @@ common.cases.atar.tab_title=ATaR
 common.cases.liability.tab_title=Liability
 common.cases.correspondence.tab_title=Correspondence
 common.cases.miscellaneous.tab_title=Miscellaneous
+common.cases.secondaryNav.assigned=Assigned to me
+common.cases.secondaryNav.referred=Referred by me
+common.cases.secondaryNav.completed=Completed by me
