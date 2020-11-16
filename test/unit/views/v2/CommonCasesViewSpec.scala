@@ -53,10 +53,28 @@ class CommonCasesViewSpec extends ViewSpec {
       doc should containElementWithID("common-cases-heading")
     }
 
-    "contain atars component that contains " in {
+    "contain atars component that contains a title" in {
       val doc = view(commonCasesView("title"))
 
       doc should containElementWithID("atars")
+    }
+
+    "contain liabilities component" in {
+      val doc = view(commonCasesView("title"))
+
+      doc should containElementWithID("liabilities")
+    }
+
+    "contain liabilities correspondence" in {
+      val doc = view(commonCasesView("title"))
+
+      doc should containElementWithID("correspondence")
+    }
+
+    "contain liabilities miscellaneous" in {
+      val doc = view(commonCasesView("title"))
+
+      doc should containElementWithID("miscellaneous")
     }
   }
 

@@ -21,6 +21,8 @@
 @import views.html.components.common_atar
 @import views.html.components.common_liabilities
 @import views.html.components.primary_navigation
+@import views.html.components.common_correspondence
+@import views.html.components.common_miscellaneous
 
 @this(my_cases_secondary_nav: views.html.components.my_cases_secondary_navigation)
 
@@ -81,12 +83,12 @@
 
             <!--correspondence tab component-->
         <div class="govuk-tabs__panel" id="correspondence_tab">
-
+            @common_correspondence()
         </div>
 
             <!--misc tab component-->
         <div class="govuk-tabs__panel" id="misc_tab">
-
+            @common_miscellaneous()
         </div>
 
     </div>
