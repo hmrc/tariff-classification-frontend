@@ -22,16 +22,20 @@
 @import views.html.components.common_atar
 @import views.html.components.common_liabilities
 @import views.html.components.primary_navigation
+@import views.html.components.open_cases_secondary_navigation
 @import models.viewmodels.OpenCasesTab
+@import models.viewmodels.ATaRTab
+@import models.viewmodels.SubNavigationTab
 
-@this(open_cases_secondary_navigation: views.html.components.open_cases_secondary_navigation)
 
-@(title: String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@this()
+
+@(title: String, activeSubNav : SubNavigationTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages(title))) {
 
     @primary_navigation(OpenCasesTab)
-    @open_cases_secondary_navigation()
+    @open_cases_secondary_navigation(activeSubNav)
 
     <!--the heading component-->
     @heading(messages("cases.opencases.atar.heading"))

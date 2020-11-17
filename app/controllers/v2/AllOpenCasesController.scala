@@ -19,6 +19,7 @@ package controllers.v2
 import com.google.inject.Inject
 import config.AppConfig
 import controllers.{RenderCaseAction, RequestActions}
+import models.viewmodels.{ATaRTab, SubNavigationTab}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -32,10 +33,10 @@ class AllOpenCasesController @Inject()(
                                       ) extends FrontendController(mcc) with I18nSupport {
 
 
-  def displayAllOpenCases: Action[AnyContent] = verify.authenticated  {
+  def displayAllOpenCases(activeSubNav: SubNavigationTab = ATaRTab): Action[AnyContent] = verify.authenticated  {
     implicit request => {
 
-      Ok(commonAllOpenCasesView("the tab header"))
+      Ok(commonAllOpenCasesView("the tab header", activeSubNav))
     }
   }
 

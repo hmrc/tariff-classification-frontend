@@ -14,21 +14,44 @@
  * limitations under the License.
  *@
 
-@this()
+@import models.viewmodels.SubNavigationTab
+@import models.viewmodels.ATaRTab
+@import models.viewmodels.LiabilitiesTab
+@import models.viewmodels.CorrespondenceTab
+@import models.viewmodels.MiscellaneousTab
+@import controllers.v2.routes
+
+@(selectedTab : SubNavigationTab = ATaRTab)
 
             <nav id="open-cases-sub-nav"  class="moj-sub-navigation" aria-label="Sub navigation">
                 <ul class="moj-sub-navigation__list">
                     <li class="moj-sub-navigation__item">
-                        <a id = "sub_nav_atar_tab" class="moj-sub-navigation__link" href="#">Atar</a>
+                        @if(selectedTab == ATaRTab) {
+                        <a id = "sub_nav_atar_tab" class="moj-sub-navigation__link" aria-current="page" href="@routes.AllOpenCasesController.displayAllOpenCases(ATaRTab)">Atar</a>
+                        } else {
+                        <a id = "sub_nav_atar_tab" class="moj-sub-navigation__link" href="@routes.AllOpenCasesController.displayAllOpenCases(ATaRTab)">Atar</a>
+                        }
                     </li>
                     <li class="moj-sub-navigation__item">
-                        <a id ="sub_nav_liability_tab" class="moj-sub-navigation__link" href="#">Liability</a>
+                        @if(selectedTab == LiabilitiesTab) {
+                        <a id ="sub_nav_liability_tab" class="moj-sub-navigation__link" aria-current="page" href="@routes.AllOpenCasesController.displayAllOpenCases(LiabilitiesTab)">Liability</a>
+                        } else {
+                        <a id ="sub_nav_liability_tab" class="moj-sub-navigation__link" href="@routes.AllOpenCasesController.displayAllOpenCases(LiabilitiesTab)">Liability</a>
+                        }
                     </li>
                     <li class="moj-sub-navigation__item">
-                        <a id ="sub_nav_correspondence_tab" class="moj-sub-navigation__link" href=#"">Correspondence</a>
+                        @if(selectedTab == CorrespondenceTab) {
+                        <a id ="sub_nav_correspondence_tab" class="moj-sub-navigation__link" aria-current="page" href="@routes.AllOpenCasesController.displayAllOpenCases(CorrespondenceTab)">Correspondence</a>
+                        } else {
+                        <a id ="sub_nav_correspondence_tab" class="moj-sub-navigation__link" href="@routes.AllOpenCasesController.displayAllOpenCases(CorrespondenceTab)">Correspondence</a>
+                        }
                     </li>
                     <li class="moj-sub-navigation__item">
-                        <a id ="sub_nav_miscellaneous_tab" class="moj-sub-navigation__link" href=#"">Miscellaneous</a>
+                        @if(selectedTab == MiscellaneousTab) {
+                        <a id ="sub_nav_miscellaneous_tab" class="moj-sub-navigation__link" aria-current="page" href="@routes.AllOpenCasesController.displayAllOpenCases(MiscellaneousTab)">Miscellaneous</a>
+                        } else {
+                        <a id ="sub_nav_miscellaneous_tab" class="moj-sub-navigation__link" href="@routes.AllOpenCasesController.displayAllOpenCases(MiscellaneousTab)">Miscellaneous</a>
+                        }
                     </li>
                 </ul>
             </nav>
