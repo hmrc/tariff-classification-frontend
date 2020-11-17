@@ -20,10 +20,10 @@ sealed abstract class PrimaryNavigationTab(val id: String)
 
 case object HomeTab extends PrimaryNavigationTab("primary_nav_home_tab")
 
-case object MyCasesTab extends PrimaryNavigationTab("primary_nav_my_cases_tab" )
+case object MyCasesTab extends PrimaryNavigationTab("primary_nav_my_cases_tab")
 
-case object OpenCasesTab extends PrimaryNavigationTab("primary_nav_open_cases_tab" )
+case object OpenCasesTab extends PrimaryNavigationTab("primary_nav_open_cases_tab")
 
 case object GatewayCasesTab extends PrimaryNavigationTab("primary_nav_gateway_cases_tab")
 
-case class PrimaryNavigationViewModel(selectedTab : PrimaryNavigationTab)
+case class PrimaryNavigationViewModel(selectedTab: PrimaryNavigationTab)

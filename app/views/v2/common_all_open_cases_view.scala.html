@@ -25,76 +25,18 @@
 @import views.html.components.open_cases_secondary_navigation
 @import models.viewmodels.OpenCasesTab
 @import models.viewmodels.ATaRTab
-@import models.viewmodels.SubNavigationTab
+@import views.html.components.cases_tab
+@import models.viewmodels.CasesTabViewModel
 
 
 @this()
 
-@(title: String, activeSubNav : SubNavigationTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(title: String, cases : CasesTabViewModel)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages(title))) {
 
     @primary_navigation(OpenCasesTab)
-    @open_cases_secondary_navigation(activeSubNav)
+    @open_cases_secondary_navigation()
+    @cases_tab(cases)
 
-    <!--the heading component-->
-    @heading(messages("cases.opencases.atar.heading"))
-
-    <div id="open-cases-tabs" class="govuk-tabs" data-module="govuk-tabs">
-        <ul class="govuk-tabs__list">
-            @* ACT *@
-            <li class="govuk-tabs__list-item">
-                <a class="govuk-tabs__tab" href="#act_tab">
-                @messages("cases.opencases.atar.tab_ACT")
-                </a>
-            </li>
-
-            @* CAP *@
-            <li class="govuk-tabs__list-item">
-                <a class="govuk-tabs__tab" href="#cap_tab">
-                @messages("cases.opencases.atar.tab_CAP")
-                </a>
-            </li>
-
-            @* Cars *@
-            <li class="govuk-tabs__list-item">
-                <a class="govuk-tabs__tab" href="#cars_tab">
-                @messages("cases.opencases.atar.tab_Cars")
-                </a>
-            </li>
-
-            @* ELM *@
-            <li class="govuk-tabs__list-item">
-                <a class="govuk-tabs__tab" href="#elm_tab">
-                @messages("cases.opencases.atar.tab_ELM")
-                </a>
-            </li>
-
-        </ul>
-
-        @* content*@
-            <!--ACT tab component-->
-        <div class="govuk-tabs__panel" id="act_tab">
-
-            @common_tab_content("ACT")
-        </div>
-
-            <!--CAP tab component-->
-        <div class="govuk-tabs__panel" id="cap_tab">
-
-            @common_tab_content("CAP")
-        </div>
-
-            <!--Cars tab component-->
-        <div class="govuk-tabs__panel" id="cars_tab">
-            @common_tab_content("Cars")
-
-        </div>
-
-            <!--ELM tab component-->
-        <div class="govuk-tabs__panel" id="elm_tab">
-            @common_tab_content("ELM")
-        </div>
-
-    </div>
 }

@@ -920,10 +920,14 @@ cases.opencases.liability.heading=Liability
 cases.opencases.correspondence.heading=Correspondence
 cases.opencases.miscellaneous.heading=Miscellaneous
 
-cases.opencases.atar.tab_ACT=ACT
-cases.opencases.atar.tab_CAP=CAP
-cases.opencases.atar.tab_Cars=Cars
-cases.opencases.atar.tab_ELM=ELM
+cases.opencases.tab_ACT=ACT
+cases.opencases.tab_CAP=CAP
+cases.opencases.tab_CARS=CARS
+cases.opencases.tab_ELM=ELM
+cases.opencases.tab_FLEX=FLEX
+cases.opencases.tab_TTA=TT-A
+cases.opencases.tab_TTB=TT-B
+cases.opencases.tab_TTC=TT-C
 
 
 

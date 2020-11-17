@@ -19,26 +19,29 @@ package controllers.v2
 import com.google.inject.Inject
 import config.AppConfig
 import controllers.{RenderCaseAction, RequestActions}
-import models.viewmodels.{ATaRTab, SubNavigationTab}
+import models.viewmodels.{ATaRTab, CasesTabViewModel, CorrespondenceTab, LiabilitiesTab, MiscellaneousTab, SubNavigationTab}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
+class AllOpenCasesController @Inject() (
+  verify: RequestActions,
+  mcc: MessagesControllerComponents,
+  val commonAllOpenCasesView: views.html.v2.common_all_open_cases_view,
+  implicit val appConfig: AppConfig
+) extends FrontendController(mcc)
+    with I18nSupport {
 
-class AllOpenCasesController @Inject()(
-                                        verify: RequestActions,
-                                        mcc: MessagesControllerComponents,
-                                        val commonAllOpenCasesView: views.html.v2.common_all_open_cases_view,
-                                        implicit val appConfig: AppConfig
-                                      ) extends FrontendController(mcc) with I18nSupport {
+  def displayAllOpenCases(activeSubNav: SubNavigationTab = ATaRTab): Action[AnyContent] = verify.authenticated {
+    implicit request =>
+      val cases: CasesTabViewModel = activeSubNav match {
+        case ATaRTab => CasesTabViewModel.atar
+        case LiabilitiesTab => CasesTabViewModel.liability
+        case CorrespondenceTab  => CasesTabViewModel.correspondence
+        case MiscellaneousTab => CasesTabViewModel.miscellaneous
+      }
 
-
-  def displayAllOpenCases(activeSubNav: SubNavigationTab = ATaRTab): Action[AnyContent] = verify.authenticated  {
-    implicit request => {
-
-      Ok(commonAllOpenCasesView("the tab header", activeSubNav))
-    }
+      Ok(commonAllOpenCasesView("the tab header", cases))
   }
-
 
 }

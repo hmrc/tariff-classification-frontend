@@ -20,18 +20,22 @@ import play.api.mvc.QueryStringBindable
 
 sealed abstract class SubNavigationTab(val id: String) extends Product with Serializable
 
-object SubNavigationTab{
-  val values = Set(ATaRTab, LiabilitiesTab, CorrespondenceTab, MiscellaneousTab )
-  implicit def subNavigationTabQueryStringBindable(implicit stringBindable: QueryStringBindable[String]) : QueryStringBindable[SubNavigationTab] =
+object SubNavigationTab {
+  val values = Set(ATaRTab, LiabilitiesTab, CorrespondenceTab, MiscellaneousTab)
+  implicit def subNavigationTabQueryStringBindable(
+    implicit stringBindable: QueryStringBindable[String]
+  ): QueryStringBindable[SubNavigationTab] =
     new QueryStringBindable[SubNavigationTab] {
-      override def bind(key: String, params: Map[String, Seq[String]]): Option[Either[String, SubNavigationTab]] = {
-        stringBindable.bind(key, params).map{
-          case Right(value) => values.collectFirst{case tab if tab.id == value => Right(tab)}.getOrElse(
-            Left("Invalid subnavigation tab")
-          )
+      override def bind(key: String, params: Map[String, Seq[String]]): Option[Either[String, SubNavigationTab]] =
+        stringBindable.bind(key, params).map {
+          case Right(value) =>
+            values
+              .collectFirst { case tab if tab.id == value => Right(tab) }
+              .getOrElse(
+                Left("Invalid subnavigation tab")
+              )
           case Left(value) => Left("Invalid subnavigation tab")
         }
-      }
 
       override def unbind(key: String, value: SubNavigationTab): String = stringBindable.unbind(key, value.id)
     }
@@ -40,10 +44,10 @@ object SubNavigationTab{
 
 case object ATaRTab extends SubNavigationTab("sub_nav_atar_tab")
 
-case object LiabilitiesTab extends SubNavigationTab("sub_nav_liability_tab" )
+case object LiabilitiesTab extends SubNavigationTab("sub_nav_liability_tab")
 
-case object CorrespondenceTab extends SubNavigationTab("sub_nav_correspondence_tab" )
+case object CorrespondenceTab extends SubNavigationTab("sub_nav_correspondence_tab")
 
 case object MiscellaneousTab extends SubNavigationTab("sub_nav_miscellaneous_tab")
 
-case class SubNavigationViewModel(selectedTab : SubNavigationTab)
+case class SubNavigationViewModel(selectedTab: SubNavigationTab)

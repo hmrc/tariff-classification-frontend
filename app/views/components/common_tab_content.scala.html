@@ -16,27 +16,26 @@
 
 @import models.request.AuthenticatedRequest
 @import config.AppConfig
+@import  models.viewmodels.CasesTab
 
-@(
-tabName: String
-)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(caseTab : CasesTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
- <table id="@{tabName}s">
+ <table id="@{caseTab.tabMessageKey}s">
   <tbody>
-    <tr id="@{tabName}-details" class="grid-row mb-2">
-     <th id="@{tabName}-reference" class="bold w-40">
+    <tr id="@{caseTab.tabMessageKey}-details" class="grid-row mb-2">
+     <th id="@{caseTab.tabMessageKey}-reference" class="bold w-40">
      Reference
      </th>
-     <th id="@{tabName}-goods" class="bold w-40">
+     <th id="@{caseTab.tabMessageKey}-goods" class="bold w-40">
       Goods
      </th>
-     <th id="@{tabName}-trader" class="bold w-40">
+     <th id="@{caseTab.tabMessageKey}-trader" class="bold w-40">
       Trader
      </th>
-     <th id="@{tabName}-elapsed-days" class="bold w-40">
+     <th id="@{caseTab.tabMessageKey}-elapsed-days" class="bold w-40">
       Elapsed days
      </th>
-     <th id="@{tabName}-status" class="bold w-40">
+     <th id="@{caseTab.tabMessageKey}-status" class="bold w-40">
       Status
      </th>
     </tr>
