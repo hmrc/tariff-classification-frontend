@@ -71,7 +71,7 @@ class FileStoreService @Inject() (connector: FileStoreConnector) extends Logging
 
   def getLetterOfAuthority(c: Case)(implicit hc: HeaderCarrier): Future[Option[StoredAttachment]] =
     if (c.application.isBTI) {
-      c.application.asBTI.agent.flatMap(_.letterOfAuthorisation) match {
+      c.application.asATAR.agent.flatMap(_.letterOfAuthorisation) match {
         case Some(attachment: Attachment) =>
           connector
             .get(attachment.id)

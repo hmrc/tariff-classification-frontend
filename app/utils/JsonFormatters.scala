@@ -80,8 +80,8 @@ object JsonFormatters {
   implicit val btiApplicationFormat: OFormat[BTIApplication]             = Json.using[Json.WithDefaultValues].format[BTIApplication]
   implicit val applicationFormat: Format[Application] = Union
     .from[Application]("type")
-    .and[BTIApplication](ApplicationType.BTI.toString)
-    .and[LiabilityOrder](ApplicationType.LIABILITY_ORDER.toString)
+    .and[BTIApplication](ApplicationType.ATAR.toString)
+    .and[LiabilityOrder](ApplicationType.LIABILITY.toString)
     .format
 
   implicit val caseFormat: OFormat[Case]                         = Json.using[Json.WithDefaultValues].format[Case]

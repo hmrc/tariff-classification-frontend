@@ -23,7 +23,7 @@ import play.api.mvc.QueryStringBindable
 import uk.gov.hmrc.http.HeaderCarrier
 import config.AppConfig
 import metrics.HasMetrics
-import models.ApplicationType.ApplicationType
+import models.ApplicationType
 import models.CaseStatus._
 import models.EventType.EventType
 import models._
@@ -61,7 +61,7 @@ class BindingTariffClassificationConnector @Inject() (
     }
 
   private def buildQueryUrl(
-    types: Seq[ApplicationType] = Seq(ApplicationType.BTI, ApplicationType.LIABILITY_ORDER),
+    types: Seq[ApplicationType] = Seq(ApplicationType.ATAR, ApplicationType.LIABILITY),
     statuses: String,
     queueId: String,
     assigneeId: String,
@@ -76,7 +76,7 @@ class BindingTariffClassificationConnector @Inject() (
   def findCasesByQueue(
     queue: Queue,
     pagination: Pagination,
-    types: Seq[ApplicationType] = Seq(ApplicationType.BTI, ApplicationType.LIABILITY_ORDER)
+    types: Seq[ApplicationType] = Seq(ApplicationType.ATAR, ApplicationType.LIABILITY)
   )(implicit hc: HeaderCarrier): Future[Paged[Case]] =
     withMetricsTimerAsync("get-cases-by-queue") { _ =>
       val queueId = if (queue == Queues.gateway) "none" else queue.id

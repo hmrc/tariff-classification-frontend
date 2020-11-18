@@ -19,7 +19,6 @@ package models
 import play.api.data.Form
 import play.api.mvc.QueryStringBindable
 import forms.SearchForm
-import models.ApplicationType.ApplicationType
 import models.PseudoCaseStatus.PseudoCaseStatus
 
 case class Search(

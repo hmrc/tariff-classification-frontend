@@ -16,11 +16,13 @@
 
 package models.viewmodels
 
-import models.{ApplicationType, Case, Paged}
+import java.time.Instant
+
+import models.{ApplicationType, BTIApplication, Case, CaseStatus, Contact, EORIDetails, Paged, Sample}
 
 case class CasesTab(tabMessageKey: String, elementId : String,  searchResult: Paged[Case])
 
-case class CasesTabViewModel(headingMessageKey: String, caseType: ApplicationType.Value, casesTabs: List[CasesTab])
+case class CasesTabViewModel(headingMessageKey: String, caseType: ApplicationType, casesTabs: List[CasesTab])
 
 object CasesTab {
   
@@ -36,12 +38,51 @@ object CasesTab {
 }
 
 object CasesTabViewModel {
+  val contactExample: Contact = Contact("name", "email", Some("phone"))
+
+  val eoriDetailsExample: EORIDetails =
+    EORIDetails("eori", "trader-business-name", "line1", "line2", "line3", "postcode", "country")
+
+  val btiApplicationExample: BTIApplication = BTIApplication(
+    eoriDetailsExample,
+    contactExample,
+    None,
+    offline = false,
+    "Laptop",
+    "Personal Computer",
+    None,
+    None,
+    None,
+    None,
+    Nil,
+    None,
+    None,
+    sampleToBeProvided = false,
+    sampleToBeReturned = false
+  )
+
+  val btiCaseExample: Case = Case(
+    "1",
+    CaseStatus.OPEN,
+    Instant.now(),
+    0,
+    None,
+    None,
+    None,
+    btiApplicationExample,
+    None,
+    Seq(),
+    Set.empty,
+    Sample(),
+    Some(Instant.now()),
+    Some(5)
+  )
 
   def atar = CasesTabViewModel(
     "cases.opencases.atar.heading",
-    ApplicationType.BTI,
+    ApplicationType.ATAR,
     List(
-      CasesTab.act(),
+      CasesTab.act(Paged(Seq(btiCaseExample))),
       CasesTab.cars(),
       CasesTab.elm(),
       CasesTab.flex(),
@@ -53,7 +94,7 @@ object CasesTabViewModel {
 
   def liability = CasesTabViewModel(
     "cases.opencases.liability.heading",
-    ApplicationType.LIABILITY_ORDER,
+    ApplicationType.LIABILITY,
     List(
       CasesTab.act(),
       CasesTab.cap(),
@@ -68,7 +109,7 @@ object CasesTabViewModel {
 
   def correspondence = CasesTabViewModel(
     "cases.opencases.correspondence.heading",
-    ApplicationType.BTI,
+    ApplicationType.ATAR,
     List(
       CasesTab.act(),
       CasesTab.cars(),
@@ -83,7 +124,7 @@ object CasesTabViewModel {
 
   def miscellaneous = CasesTabViewModel(
     "cases.opencases.miscellaneous.heading",
-    ApplicationType.BTI,
+    ApplicationType.ATAR,
     List(
       CasesTab.act(),
       CasesTab.cars(),

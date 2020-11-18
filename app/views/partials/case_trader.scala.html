@@ -23,7 +23,7 @@
     @tab_heading("trader", "Applicant")
 
     @defining(c.application) { a: Application =>
-        @defining(a.asBTI) { btiApp: BTIApplication =>
+        @defining(a.asATAR) { btiApp: BTIApplication =>
             @defining(btiApp.holder) { btiHolder: EORIDetails =>
                 <dl class="dl-mb-2">
                     <h3 class="heading-medium" id="trader-submitted-heading">Trader</h3>

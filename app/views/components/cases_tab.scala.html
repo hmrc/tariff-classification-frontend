@@ -15,7 +15,8 @@
  *@
 
 @import views.html.partials.create_liability_button
-@import views.html.components.common_tab_content
+@import views.html.components.atarCaseTable
+@import views.html.components.liabilityCaseTable
 @import models.request.AuthenticatedRequest
 @import config.AppConfig
 @import models.viewmodels.CasesTabViewModel
@@ -24,7 +25,7 @@
 
 
 @heading(messages(cases.headingMessageKey))
-@if(cases.caseType == ApplicationType.LIABILITY_ORDER) {
+@if(cases.caseType == ApplicationType.LIABILITY) {
     <div class="grid-row">
         <div class="column-full">
             @create_liability_button("mb-3")
@@ -44,9 +45,13 @@
 
     @* content*@
     <!--ACT tab component-->
-   @for(caseTabContent <- cases.casesTabs) {
-        <div class="govuk-tabs__panel" id="@caseTabContent.elementId">
-            @common_tab_content(caseTabContent)
+   @for(caseTab <- cases.casesTabs) {
+        <div class="govuk-tabs__panel" id="@caseTab.elementId">
+            @{cases.caseType match {
+                case ApplicationType.ATAR => atarCaseTable(caseTab)
+                case ApplicationType.LIABILITY => liabilityCaseTable(caseTab)
+            }
+    }
         </div>
     }
 </div>

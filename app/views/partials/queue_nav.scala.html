@@ -18,7 +18,7 @@
 @import models.{Permission, Queue, TabIndexes}
 @import models.ApplicationType
 @(queues: Seq[Queue], section: String, caseCountByQueue: Map[String, Int] = Map.empty,
-        filteredBy: String = Seq(ApplicationType.BTI,ApplicationType.LIABILITY_ORDER).mkString(","))(implicit request: AuthenticatedRequest[_], messages: Messages)
+        filteredBy: String = Seq(ApplicationType.ATAR,ApplicationType.LIABILITY).mkString(","))(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 <div id="queue-navigation" class="side-nav" role="navigation" style="margin-top: 14px">
     <ul>
@@ -31,7 +31,7 @@
         @if(request.hasPermission(Permission.VIEW_QUEUE_CASES)) {
             @for((q,index) <- queues.zipWithIndex if q.slug == "gateway") {
                 <li class="side-nav__list @if(section == q.slug ) { side-nav__list--selected }">
-                    <a tabindex="@{TabIndexes.tabIndexForQueue(q.slug)}" id="nav-menu-queue-@q.slug" class="side-nav__link" href="@controllers.routes.QueuesController.queue(q.slug)">@messages("cases.menu.gateway-cases") (<span id="case-count-@q.slug">@{caseCountByQueue.getOrElse(s"-${ApplicationType.BTI.toString}", 0)+caseCountByQueue.getOrElse(s"-${ApplicationType.LIABILITY_ORDER.toString}", 0)}</span>)</a>
+                    <a tabindex="@{TabIndexes.tabIndexForQueue(q.slug)}" id="nav-menu-queue-@q.slug" class="side-nav__link" href="@controllers.routes.QueuesController.queue(q.slug)">@messages("cases.menu.gateway-cases") (<span id="case-count-@q.slug">@{caseCountByQueue.getOrElse(s"-${ApplicationType.ATAR.toString}", 0)+caseCountByQueue.getOrElse(s"-${ApplicationType.LIABILITY.toString}", 0)}</span>)</a>
                 </li>
             }
         }
@@ -41,8 +41,8 @@
         </li>
         @if(request.hasPermission(Permission.VIEW_QUEUE_CASES)) {
             @for((q,index) <- queues.zipWithIndex if q.slug != "gateway") {
-                <li class="side-nav__list @if(section == q.slug && filteredBy == ApplicationType.BTI.toString) { side-nav__list--selected }">
-                    <a tabindex="@{TabIndexes.tabIndexForQueue(q.slug)}" id="nav-menu-queue-@q.slug" class="side-nav__link" href="@controllers.routes.QueuesController.queue(q.slug, Some(ApplicationType.BTI.toString))">@q.name (<span id="case-count-@q.slug">@caseCountByQueue.getOrElse(s"${q.id}-${ApplicationType.BTI.toString}", "0")</span>)</a>
+                <li class="side-nav__list @if(section == q.slug && filteredBy == ApplicationType.ATAR.toString) { side-nav__list--selected }">
+                    <a tabindex="@{TabIndexes.tabIndexForQueue(q.slug)}" id="nav-menu-queue-@q.slug" class="side-nav__link" href="@controllers.routes.QueuesController.queue(q.slug, Some(ApplicationType.ATAR.toString))">@q.name (<span id="case-count-@q.slug">@caseCountByQueue.getOrElse(s"${q.id}-${ApplicationType.ATAR.toString}", "0")</span>)</a>
                 </li>
             }
         }
@@ -53,8 +53,8 @@
 
         @if(request.hasPermission(Permission.VIEW_QUEUE_CASES)) {
             @for((q,index) <- queues.zipWithIndex if q.slug != "gateway") {
-                <li class="side-nav__list @if(section == q.slug && filteredBy == ApplicationType.LIABILITY_ORDER.toString) { side-nav__list--selected }">
-                    <a tabindex="@{TabIndexes.tabIndexForQueue(s"${q.slug}-liability")}" id="nav-menu-queue-liab-@q.slug" class="side-nav__link" href="@controllers.routes.QueuesController.queue(q.slug, Some(ApplicationType.LIABILITY_ORDER.toString))">@q.name (<span id="liability-count-@q.slug">@caseCountByQueue.getOrElse(s"${q.id}-${ApplicationType.LIABILITY_ORDER.toString}", "0")</span>)</a>
+                <li class="side-nav__list @if(section == q.slug && filteredBy == ApplicationType.LIABILITY.toString) { side-nav__list--selected }">
+                    <a tabindex="@{TabIndexes.tabIndexForQueue(s"${q.slug}-liability")}" id="nav-menu-queue-liab-@q.slug" class="side-nav__link" href="@controllers.routes.QueuesController.queue(q.slug, Some(ApplicationType.LIABILITY.toString))">@q.name (<span id="liability-count-@q.slug">@caseCountByQueue.getOrElse(s"${q.id}-${ApplicationType.LIABILITY.toString}", "0")</span>)</a>
                 </li>
             }
         }

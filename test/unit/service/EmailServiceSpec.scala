@@ -51,7 +51,7 @@ class EmailServiceSpec extends ServiceSpecBase {
       given(aCase.reference).willReturn("ref")
       given(aCase.application).willReturn(application)
       given(application.isBTI).willReturn(true)
-      given(application.asBTI).willReturn(application)
+      given(application.asATAR).willReturn(application)
       given(application.contact).willReturn(contact)
       given(application.goodName).willReturn("item")
 

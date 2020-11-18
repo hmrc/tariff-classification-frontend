@@ -140,7 +140,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
     "get cases for liability version of 'other' queue" in {
       val url = buildQueryUrl(
-        types        = Seq(ApplicationType.LIABILITY_ORDER),
+        types        = Seq(ApplicationType.LIABILITY),
         withStatuses = "NEW,OPEN,REFERRED,SUSPENDED",
         queueId      = "2",
         assigneeId   = "none",
@@ -156,7 +156,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
           )
       )
 
-      await(connector.findCasesByQueue(otherQueue, pagination, Seq(ApplicationType.LIABILITY_ORDER))) shouldBe Paged(
+      await(connector.findCasesByQueue(otherQueue, pagination, Seq(ApplicationType.LIABILITY))) shouldBe Paged(
         Seq(Cases.btiCaseExample)
       )
 
@@ -303,7 +303,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
         commodityCode   = Some("comm-code"),
         decisionDetails = Some("decision-details"),
         status          = Some(Set(PseudoCaseStatus.OPEN, PseudoCaseStatus.LIVE)),
-        applicationType = Some(Set(ApplicationType.BTI, ApplicationType.LIABILITY_ORDER)),
+        applicationType = Some(Set(ApplicationType.ATAR, ApplicationType.LIABILITY)),
         keywords        = Some(Set("K1", "K2"))
       )
 

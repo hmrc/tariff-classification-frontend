@@ -198,7 +198,7 @@ class FileStoreServiceSpec extends ServiceSpecBase {
 
   private def withLetterOfAuthWithId(id: String): Case => Case = c => {
     val details = AgentDetails(mock[EORIDetails], Some(anAttachmentWithId(id)))
-    val app     = c.application.asBTI.copy(agent = Some(details))
+    val app     = c.application.asATAR.copy(agent = Some(details))
     c.copy(application = app)
   }
 
@@ -213,12 +213,12 @@ class FileStoreServiceSpec extends ServiceSpecBase {
 
   private def withAgentDetails(): Case => Case = c => {
     val details = AgentDetails(mock[EORIDetails], None)
-    val app     = c.application.asBTI.copy(agent = Some(details))
+    val app     = c.application.asATAR.copy(agent = Some(details))
     c.copy(application = app)
   }
 
   private def withoutAgentDetails(): Case => Case = c => {
-    val app = c.application.asBTI.copy(agent = None)
+    val app = c.application.asATAR.copy(agent = None)
     c.copy(application = app)
   }
 

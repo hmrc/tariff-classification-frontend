@@ -57,8 +57,8 @@ class CaseController @Inject() (
   def get(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)) {
     implicit request =>
       request.`case`.application.`type` match {
-        case ApplicationType.BTI => Redirect(routes.CaseController.applicantDetails(reference))
-        case ApplicationType.LIABILITY_ORDER => {
+        case ApplicationType.ATAR => Redirect(routes.CaseController.applicantDetails(reference))
+        case ApplicationType.LIABILITY => {
           if (newliabilityDetailsToggle) Redirect(v2.routes.LiabilityController.displayLiability(reference))
           else Redirect(routes.LiabilityController.liabilityDetails(reference))
         }
