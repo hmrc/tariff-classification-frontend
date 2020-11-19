@@ -31,7 +31,7 @@
         @if(request.hasPermission(Permission.VIEW_QUEUE_CASES)) {
             @for((q,index) <- queues.zipWithIndex if q.slug == "gateway") {
                 <li class="side-nav__list @if(section == q.slug ) { side-nav__list--selected }">
-                    <a tabindex="@{TabIndexes.tabIndexForQueue(q.slug)}" id="nav-menu-queue-@q.slug" class="side-nav__link" href="@controllers.routes.QueuesController.queue(q.slug)">@messages("cases.menu.gateway-cases") (<span id="case-count-@q.slug">@{caseCountByQueue.getOrElse(s"-${ApplicationType.ATAR.toString}", 0)+caseCountByQueue.getOrElse(s"-${ApplicationType.LIABILITY.toString}", 0)}</span>)</a>
+                    <a tabindex="@{TabIndexes.tabIndexForQueue(q.slug)}" id="nav-menu-queue-@q.slug" class="side-nav__link" href="@controllers.routes.QueuesController.queue(q.slug)">@messages("cases.menu.gateway-cases") (<span id="case-count-@q.slug">@{caseCountByQueue.getOrElse(s"-${ApplicationType.ATAR.name}", 0)+caseCountByQueue.getOrElse(s"-${ApplicationType.LIABILITY.name}", 0)}</span>)</a>
                 </li>
             }
         }
@@ -41,8 +41,8 @@
         </li>
         @if(request.hasPermission(Permission.VIEW_QUEUE_CASES)) {
             @for((q,index) <- queues.zipWithIndex if q.slug != "gateway") {
-                <li class="side-nav__list @if(section == q.slug && filteredBy == ApplicationType.ATAR.toString) { side-nav__list--selected }">
-                    <a tabindex="@{TabIndexes.tabIndexForQueue(q.slug)}" id="nav-menu-queue-@q.slug" class="side-nav__link" href="@controllers.routes.QueuesController.queue(q.slug, Some(ApplicationType.ATAR.toString))">@q.name (<span id="case-count-@q.slug">@caseCountByQueue.getOrElse(s"${q.id}-${ApplicationType.ATAR.toString}", "0")</span>)</a>
+                <li class="side-nav__list @if(section == q.slug && filteredBy == ApplicationType.ATAR.name) { side-nav__list--selected }">
+                    <a tabindex="@{TabIndexes.tabIndexForQueue(q.slug)}" id="nav-menu-queue-@q.slug" class="side-nav__link" href="@controllers.routes.QueuesController.queue(q.slug, Some(ApplicationType.ATAR.name))">@q.name (<span id="case-count-@q.slug">@caseCountByQueue.getOrElse(s"${q.id}-${ApplicationType.ATAR.name}", "0")</span>)</a>
                 </li>
             }
         }
@@ -53,8 +53,8 @@
 
         @if(request.hasPermission(Permission.VIEW_QUEUE_CASES)) {
             @for((q,index) <- queues.zipWithIndex if q.slug != "gateway") {
-                <li class="side-nav__list @if(section == q.slug && filteredBy == ApplicationType.LIABILITY.toString) { side-nav__list--selected }">
-                    <a tabindex="@{TabIndexes.tabIndexForQueue(s"${q.slug}-liability")}" id="nav-menu-queue-liab-@q.slug" class="side-nav__link" href="@controllers.routes.QueuesController.queue(q.slug, Some(ApplicationType.LIABILITY.toString))">@q.name (<span id="liability-count-@q.slug">@caseCountByQueue.getOrElse(s"${q.id}-${ApplicationType.LIABILITY.toString}", "0")</span>)</a>
+                <li class="side-nav__list @if(section == q.slug && filteredBy == ApplicationType.LIABILITY.name) { side-nav__list--selected }">
+                    <a tabindex="@{TabIndexes.tabIndexForQueue(s"${q.slug}-liability")}" id="nav-menu-queue-liab-@q.slug" class="side-nav__link" href="@controllers.routes.QueuesController.queue(q.slug, Some(ApplicationType.LIABILITY.name))">@q.name (<span id="liability-count-@q.slug">@caseCountByQueue.getOrElse(s"${q.id}-${ApplicationType.LIABILITY.name}", "0")</span>)</a>
                 </li>
             }
         }

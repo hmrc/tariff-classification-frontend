@@ -32,6 +32,7 @@ class OperatorDashboardController @Inject() (
     with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = authenticate { implicit request: AuthenticatedRequest[AnyContent] =>
+
     Ok(operator_dashboard_classification())
   }
 }
