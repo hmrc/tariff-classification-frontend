@@ -18,7 +18,7 @@ package controllers
 
 import config.AppConfig
 import javax.inject.Inject
-import models.{NoPagination, Permission}
+import models.Permission
 import models.request.AuthenticatedRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -38,9 +38,8 @@ class OperatorDashboardController @Inject()(
   def onPageLoad: Action[AnyContent] = (verify.authenticated andThen verify.mustHave(Permission.VIEW_MY_CASES)).async {
     implicit request: AuthenticatedRequest[AnyContent] =>
       for {
-        cases                         <- casesService.getCasesByAssignee(request.operator, NoPagination())
         countQueues: Map[String, Int] <- casesService.countCasesByQueue(request.operator)
-      } yield Ok(operator_dashboard_classification(cases.results, countQueues))
+      } yield Ok(operator_dashboard_classification(countQueues))
   }
 
 

@@ -16,13 +16,10 @@
 
 @import config.AppConfig
 @import models.request.AuthenticatedRequest
-@import components.primary_navigation
-@import components.cases_cards
 @import views.html.includes.main
-@import models.Case
 
 @this()
-@(cases: Seq[Case], countCases: Map[String, Int])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(countCases: Map[String, Int])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("operator.dashboard.classification.title"))) {
 

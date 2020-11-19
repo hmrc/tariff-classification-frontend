@@ -28,71 +28,70 @@
 
 @this(my_cases_secondary_nav: views.html.components.my_cases_secondary_navigation)
 
-@(title: String, cases : CasesTabViewModel)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(title: String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages(title))) {
 
     @primary_navigation()
     @my_cases_secondary_nav()
 
-    <!--the heading component-->
+    @* the heading component *@
     @heading("heading text")
-    @cases_tab(cases)
 
-<!--    <div id="common-cases-tabs" class="govuk-tabs" data-module="govuk-tabs">-->
-<!--        <ul class="govuk-tabs__list">-->
-<!--            @* Atar *@-->
-<!--            <li class="govuk-tabs__list-item">-->
-<!--                <a class="govuk-tabs__tab" href="#atar_tab">-->
-<!--                @messages("common.cases.atar.tab_title")-->
-<!--                </a>-->
-<!--            </li>-->
+     <div id="common-cases-tabs" class="govuk-tabs" data-module="govuk-tabs"> 
+         <ul class="govuk-tabs__list"> 
+             @* Atar *@ 
+             <li class="govuk-tabs__list-item"> 
+                 <a class="govuk-tabs__tab" href="#atar_tab"> 
+                 @messages("common.cases.atar.tab_title") 
+                 </a> 
+             </li> 
 
-<!--            @* liability *@-->
-<!--            <li class="govuk-tabs__list-item">-->
-<!--                <a class="govuk-tabs__tab" href="#liability_tab">-->
-<!--                @messages("common.cases.liability.tab_title")-->
-<!--                </a>-->
-<!--            </li>-->
+             @* liability *@ 
+             <li class="govuk-tabs__list-item"> 
+                 <a class="govuk-tabs__tab" href="#liability_tab"> 
+                 @messages("common.cases.liability.tab_title") 
+                 </a> 
+             </li> 
 
-<!--            @* Correspondence *@-->
-<!--            <li class="govuk-tabs__list-item">-->
-<!--                <a class="govuk-tabs__tab" href="#correspondence_tab">-->
-<!--                @messages("common.cases.correspondence.tab_title")-->
-<!--                </a>-->
-<!--            </li>-->
+             @* Correspondence *@ 
+             <li class="govuk-tabs__list-item"> 
+                 <a class="govuk-tabs__tab" href="#correspondence_tab"> 
+                 @messages("common.cases.correspondence.tab_title") 
+                 </a> 
+             </li> 
 
-<!--            @* Miscellaneous *@-->
-<!--            <li class="govuk-tabs__list-item">-->
-<!--                <a class="govuk-tabs__tab" href="#misc_tab">-->
-<!--                @messages("common.cases.miscellaneous.tab_title")-->
-<!--                </a>-->
-<!--            </li>-->
+             @* Miscellaneous *@ 
+             <li class="govuk-tabs__list-item"> 
+                 <a class="govuk-tabs__tab" href="#misc_tab"> 
+                 @messages("common.cases.miscellaneous.tab_title") 
+                 </a> 
+             </li> 
 
-<!--        </ul>-->
+         </ul> 
 
-<!--        @* content*@-->
-<!--            &lt;!&ndash;Atar tab component&ndash;&gt;-->
-<!--        <div class="govuk-tabs__panel" id="atar_tab">-->
+         @* content*@ 
+         @* Atar tab component *@
+         <div class="govuk-tabs__panel" id="atar_tab"> 
 
-<!--            @common_atar()-->
-<!--        </div>-->
+             @common_atar() 
+         </div> 
 
-<!--            &lt;!&ndash;liability tab component&ndash;&gt;-->
-<!--        <div class="govuk-tabs__panel" id="liability_tab">-->
+           @* liability tab component *@
+         <div class="govuk-tabs__panel" id="liability_tab"> 
 
-<!--            @common_liabilities()-->
-<!--        </div>-->
+             @common_liabilities() 
+         </div>
 
-<!--            &lt;!&ndash;correspondence tab component&ndash;&gt;-->
-<!--        <div class="govuk-tabs__panel" id="correspondence_tab">-->
-<!--            @common_correspondence()-->
-<!--        </div>-->
+            @* correspondence tab component *@
+         <div class="govuk-tabs__panel" id="correspondence_tab"> 
+             @common_correspondence() 
+         </div> 
 
-<!--            &lt;!&ndash;misc tab component&ndash;&gt;-->
-<!--        <div class="govuk-tabs__panel" id="misc_tab">-->
-<!--            @common_miscellaneous()-->
-<!--        </div>-->
+             @* misc tab component *@
+         <div class="govuk-tabs__panel" id="misc_tab"> 
+             @common_miscellaneous() 
+         </div> 
 
-<!--    </div>-->
+     </div> 
 }
