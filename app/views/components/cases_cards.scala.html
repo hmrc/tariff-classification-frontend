@@ -19,7 +19,7 @@
 @import views.html.includes.main
 
 
-@()(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(countCases: Map[String, Int])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 <div id="dashboard-view"  class="centered-content">
 
@@ -30,13 +30,13 @@
             <a id="my-cases-id" class="link-text" href="my-cases">
                 <div class="card">
                     <h3 class="card-heading govuk-heading-s">@messages("operator.dashboard.classification.my-cases")</h3>
-                    <p class="card-body">@messages("operator.dashboard.classification.my-cases.progress")</p>
+                    <p class="card-body">@messages("operator.dashboard.classification.my-cases.progress", countCases.getOrElse("my-cases", "0"))</p>
                 </div>
             </a>
             <a id="my-referred-cases-id" class="link-text" href="my-referred-cases">
                 <div class="card">
                     <h3 class="card-heading govuk-heading-s">@messages("operator.dashboard.classification.my-cases.referred-me")</h3>
-                    <div class="card-body"><p>@messages("operator.dashboard.classification.my-cases.progress")</p></div>
+                    <div class="card-body"><p>@messages("operator.dashboard.classification.my-cases.referral")</p></div>
                 </div>
             </a>
         </div>
