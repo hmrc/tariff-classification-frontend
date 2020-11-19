@@ -18,18 +18,15 @@ package controllers.v2
 
 import controllers.{ControllerBaseSpec, RequestActionsWithPermissions, SuccessfulRequestActions}
 import models.viewmodels.ATaRTab
-import models.{Permission, _}
-import org.mockito.ArgumentMatchers.{any, refEq}
-import org.mockito.BDDMockito._
+import models.viewmodels.LiabilitiesTab
+import models.viewmodels.CorrespondenceTab
+import models.viewmodels.MiscellaneousTab
+import models.Permission
 import play.api.http.Status
-import play.api.inject.bind
 import play.api.test.Helpers._
-import service.{CasesService, QueuesService}
-import uk.gov.hmrc.http.HeaderCarrier
-import views.html.v2.{common_all_open_cases_view, common_cases_view}
+import views.html.v2.common_all_open_cases_view
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
 
 class AllOpenCasesControllerSpec extends ControllerBaseSpec {
 
@@ -59,6 +56,28 @@ class AllOpenCasesControllerSpec extends ControllerBaseSpec {
       redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
 
     }
+
+    "return 200 OK and HTML content type for Liability tab" in {
+      val result = await(controller(Set(Permission.VIEW_CASES)).displayAllOpenCases(LiabilitiesTab)(fakeRequest))
+      status(result) shouldBe Status.OK
+      contentType(result) shouldBe Some("text/html")
+      charset(result) shouldBe Some("utf-8")
+    }
+
+    "return 200 OK and HTML content type for Correspondence tab" in {
+      val result = await(controller(Set(Permission.VIEW_CASES)).displayAllOpenCases(CorrespondenceTab)(fakeRequest))
+      status(result) shouldBe Status.OK
+      contentType(result) shouldBe Some("text/html")
+      charset(result) shouldBe Some("utf-8")
+    }
+
+    "return 200 OK and HTML content type for Miscellaneous tab" in {
+      val result = await(controller(Set(Permission.VIEW_CASES)).displayAllOpenCases(MiscellaneousTab)(fakeRequest))
+      status(result) shouldBe Status.OK
+      contentType(result) shouldBe Some("text/html")
+      charset(result) shouldBe Some("utf-8")
+    }
+
   }
 
 }

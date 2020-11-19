@@ -59,4 +59,77 @@ class OpenCasesViewSpec extends ViewSpec {
     doc should containElementWithID("open-cases-sub-nav")
   }
 
+  "contain an atar, cap, cars and elm tabs for Liability" in {
+    val doc = view(commonCasesView("title", CasesTabViewModel.liability))
+
+    doc should containElementWithID("act_tab")
+    doc should containElementWithID("cap_tab")
+    doc should containElementWithID("cars_tab")
+    doc should containElementWithID("elm_tab")
+    doc should containElementWithID("flex_tab")
+    doc should containElementWithID("tta_tab")
+    doc should containElementWithID("ttb_tab")
+    doc should containElementWithID("ttc_tab")
+  }
+
+  "contain a heading for liability" in {
+    val doc = view(commonCasesView("title", CasesTabViewModel.liability))
+
+    doc should containElementWithID("common-cases-heading")
+  }
+
+  "contain open-cases-sub-nav in liability tab" in {
+    val doc = view(commonCasesView("title", CasesTabViewModel.liability))
+
+    doc should containElementWithID("open-cases-sub-nav")
+  }
+
+  "contain an act, cap, cars and elm, flex ,tta,ttb,ttc tabs for Correspondence" in {
+    val doc = view(commonCasesView("title", CasesTabViewModel.correspondence))
+
+    doc should containElementWithID("act_tab")
+    doc should containElementWithID("cars_tab")
+    doc should containElementWithID("elm_tab")
+    doc should containElementWithID("flex_tab")
+    doc should containElementWithID("tta_tab")
+    doc should containElementWithID("ttb_tab")
+    doc should containElementWithID("ttc_tab")
+  }
+
+  "contain a heading for Correspondence" in {
+    val doc = view(commonCasesView("title", CasesTabViewModel.correspondence))
+
+    doc should containElementWithID("common-cases-heading")
+  }
+
+  "contain open-cases-sub-nav in Correspondence tab" in {
+    val doc = view(commonCasesView("title", CasesTabViewModel.correspondence))
+
+    doc should containElementWithID("open-cases-sub-nav")
+  }
+
+  "contain an act, cap, cars and elm, flex ,tta,ttb,ttc tabs for Miscellaneous" in {
+    val doc = view(commonCasesView("title", CasesTabViewModel.miscellaneous))
+
+    doc should containElementWithID("act_tab")
+    doc should containElementWithID("cars_tab")
+    doc should containElementWithID("elm_tab")
+    doc should containElementWithID("flex_tab")
+    doc should containElementWithID("tta_tab")
+    doc should containElementWithID("ttb_tab")
+    doc should containElementWithID("ttc_tab")
+  }
+
+  "contain a heading for Miscellaneous" in {
+    val doc = view(commonCasesView("title", CasesTabViewModel.miscellaneous))
+
+    doc should containElementWithID("common-cases-heading")
+  }
+
+  "contain open-cases-sub-nav in Miscellaneous tab" in {
+    val doc = view(commonCasesView("title", CasesTabViewModel.miscellaneous))
+
+    doc should containElementWithID("open-cases-sub-nav")
+  }
+
 }
