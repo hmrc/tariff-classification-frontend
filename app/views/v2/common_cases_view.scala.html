@@ -19,79 +19,26 @@
 @import views.html.includes.main
 @import views.html.components.heading
 @import views.html.components.common_atar
+@import views.html.components.my_cases_tab
 @import views.html.components.common_liabilities
 @import views.html.components.primary_navigation
 @import views.html.components.common_correspondence
 @import views.html.components.common_miscellaneous
-@import models.viewmodels.MyCasesViewModel
+@import models.viewmodels.{ApplicationTabViewModel, MyCasesTab}
 
 
 @this(my_cases_secondary_nav: views.html.components.my_cases_secondary_navigation)
 
-@(title: String, myCases : MyCasesViewModel)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(title: String, myCases : ApplicationTabViewModel)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages(title))) {
 
-    @primary_navigation()
+    @primary_navigation(MyCasesTab)
     @my_cases_secondary_nav()
 
     @* the heading component *@
-    @heading("heading text")
+    @heading(messages(myCases.headingMessageKey))
 
-     <div id="common-cases-tabs" class="govuk-tabs" data-module="govuk-tabs"> 
-         <ul class="govuk-tabs__list"> 
-             @* Atar *@ 
-             <li class="govuk-tabs__list-item"> 
-                 <a class="govuk-tabs__tab" href="#atar_tab"> 
-                 @messages("common.cases.atar.tab_title") 
-                 </a> 
-             </li> 
+    @my_cases_tab(myCases)
 
-             @* liability *@ 
-             <li class="govuk-tabs__list-item"> 
-                 <a class="govuk-tabs__tab" href="#liability_tab"> 
-                 @messages("common.cases.liability.tab_title") 
-                 </a> 
-             </li> 
-
-             @* Correspondence *@ 
-             <li class="govuk-tabs__list-item"> 
-                 <a class="govuk-tabs__tab" href="#correspondence_tab"> 
-                 @messages("common.cases.correspondence.tab_title") 
-                 </a> 
-             </li> 
-
-             @* Miscellaneous *@ 
-             <li class="govuk-tabs__list-item"> 
-                 <a class="govuk-tabs__tab" href="#misc_tab"> 
-                 @messages("common.cases.miscellaneous.tab_title") 
-                 </a> 
-             </li> 
-
-         </ul> 
-
-         @* content*@ 
-         @* Atar tab component *@
-         <div class="govuk-tabs__panel" id="atar_tab"> 
-
-             @common_atar() 
-         </div> 
-
-           @* liability tab component *@
-         <div class="govuk-tabs__panel" id="liability_tab"> 
-
-             @common_liabilities() 
-         </div>
-
-            @* correspondence tab component *@
-         <div class="govuk-tabs__panel" id="correspondence_tab"> 
-             @common_correspondence() 
-         </div> 
-
-             @* misc tab component *@
-         <div class="govuk-tabs__panel" id="misc_tab"> 
-             @common_miscellaneous() 
-         </div> 
-
-     </div> 
 }

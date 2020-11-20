@@ -21,18 +21,20 @@ import java.time.Instant
 import models.viewmodels.CasesTabViewModel.{btiApplicationExample, btiCaseExample}
 import models.{ApplicationType, Case, CaseStatus, Paged, Sample}
 
-case class ApplicationsTab(tabMessageKey: String, elementId : String,  searchResult: Paged[Case])
+case class ApplicationsTab(tabMessageKey: String, applicationType: ApplicationType, elementId : String,  searchResult: Paged[Case])
 
-case class ApplicationTabViewModel(headingMessageKey: String, caseType: ApplicationType, applicationTabs: List[ApplicationsTab])
+case class ApplicationTabViewModel(headingMessageKey: String, applicationTabs: List[ApplicationsTab])
 
 object ApplicationsTab {
 
-  def atar(searchResult : Paged[Case] = Paged.empty) =  ApplicationsTab("applicationTab.assignedToMe.atar", "atar_tab", searchResult)
-  def liability(searchResult : Paged[Case] = Paged.empty) =  ApplicationsTab("applicationTab.assignedToMe.liability", "liability_tab", searchResult)
-  def correspondence(searchResult : Paged[Case] = Paged.empty) =  ApplicationsTab("applicationTab.assignedToMe.correspondence", "correspondence_tab", searchResult)
-  def miscellaneous(searchResult : Paged[Case] = Paged.empty) =  ApplicationsTab("applicationTab.assignedToMe.miscellaneous", "miscellaneous_tab", searchResult)
-
-
+  def atar(searchResult : Paged[Case] = Paged.empty) =
+    ApplicationsTab("applicationTab.assignedToMe.atar",ApplicationType.ATAR, "atar_tab", searchResult)
+  def liability(searchResult : Paged[Case] = Paged.empty) =
+    ApplicationsTab("applicationTab.assignedToMe.liability",ApplicationType.LIABILITY, "liability_tab", searchResult)
+  def correspondence(searchResult : Paged[Case] = Paged.empty) =
+    ApplicationsTab("applicationTab.assignedToMe.correspondence",ApplicationType.CORRESPONDENCE, "correspondence_tab", searchResult)
+  def miscellaneous(searchResult : Paged[Case] = Paged.empty) =
+    ApplicationsTab("applicationTab.assignedToMe.miscellaneous", ApplicationType.MISCELLANEOUS,"miscellaneous_tab", searchResult)
 
   val btiCaseExample: Case = Case(
     "1",
@@ -53,7 +55,6 @@ object ApplicationsTab {
 
   def assignedToMe = ApplicationTabViewModel(
     "applicationTab.assignedToMe",
-    ApplicationType.ATAR,
     List(
       ApplicationsTab.atar(Paged(Seq(btiCaseExample))),
       ApplicationsTab.liability(),
@@ -63,29 +64,40 @@ object ApplicationsTab {
     )
   )
 
+  def assignedToMeCases(cases: Seq[Case]): ApplicationTabViewModel = {
+
+    val atars = cases.filter(_.application.isBTI)
+
+    val liabilities = cases.filter(_.application.isLiabilityOrder)
+
+    ApplicationTabViewModel(
+      "applicationTab.assignedToMe",
+      List(
+        ApplicationsTab.atar(Paged(atars)),
+        ApplicationsTab.liability(Paged(liabilities)),
+        ApplicationsTab.correspondence(),
+        ApplicationsTab.miscellaneous()
+      )
+    )
+  }
 
   def referredByMe = ApplicationTabViewModel(
     "applicationTab.referredByMe",
-    ApplicationType.ATAR,
     List(
       ApplicationsTab.atar(Paged(Seq(btiCaseExample))),
       ApplicationsTab.liability(),
       ApplicationsTab.correspondence(),
       ApplicationsTab.miscellaneous()
-
     )
   )
 
-
   def completedByMe = ApplicationTabViewModel(
     "applicationTab.completedByMe",
-    ApplicationType.ATAR,
     List(
       ApplicationsTab.atar(Paged(Seq(btiCaseExample))),
       ApplicationsTab.liability(),
       ApplicationsTab.correspondence(),
       ApplicationsTab.miscellaneous()
-
     )
   )
 }

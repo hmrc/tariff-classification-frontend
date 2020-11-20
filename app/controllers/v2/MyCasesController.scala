@@ -20,39 +20,36 @@ import com.google.inject.Inject
 import config.AppConfig
 import controllers.RequestActions
 import models.request.AuthenticatedRequest
-import models.viewmodels.{ATaRTab, ApplicationTabViewModel, ApplicationsTab, AssignedToMeTab, CasesTabViewModel, CompletedByMeTab, MyCasesViewModel, ReferredByMeTab, SubNavigationTab}
-import models.{NoPagination, Permission, Queue}
+import models.viewmodels._
+import models.{NoPagination, Permission}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import service.{CasesService, QueuesService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.util.Success
 
-class MyCasesController @Inject() (
-                                    verify: RequestActions,
-                                    casesService: CasesService,
-                                    queuesService : QueuesService,
-                                    mcc: MessagesControllerComponents,
-                                    val commonCasesView: views.html.v2.common_cases_view,
-                                    implicit val appConfig: AppConfig
-                                  ) extends FrontendController(mcc)
+class MyCasesController @Inject()(
+                                   verify: RequestActions,
+                                   casesService: CasesService,
+                                   queuesService: QueuesService,
+                                   mcc: MessagesControllerComponents,
+                                   val commonCasesView: views.html.v2.common_cases_view,
+                                   implicit val appConfig: AppConfig
+                                 ) extends FrontendController(mcc)
   with I18nSupport {
 
   def displayMyCases(activeSubNav: SubNavigationTab = AssignedToMeTab): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.VIEW_MY_CASES)).async { implicit request: AuthenticatedRequest[AnyContent] =>
 
-    val myCaseStatuses: ApplicationTabViewModel= activeSubNav match {
-      case AssignedToMeTab => ApplicationsTab.assignedToMe
-      case ReferredByMeTab => ApplicationsTab.referredByMe
-      case CompletedByMeTab => ApplicationsTab.completedByMe
+      for {
+        cases <- casesService.getCasesByAssignee(request.operator, NoPagination())
+        myCaseStatuses = activeSubNav match {
+          case AssignedToMeTab => ApplicationsTab.assignedToMeCases(cases.results)
+          case ReferredByMeTab => ApplicationsTab.referredByMe
+          case CompletedByMeTab => ApplicationsTab.completedByMe
+        }
+      } yield Ok(commonCasesView("title", myCaseStatuses))
     }
-
-     for {
-        cases                         <- casesService.getCasesByAssignee(request.operator, NoPagination())
-        myCases                        = MyCasesViewModel(cases.results)
-      }yield Ok(commonCasesView("title", myCases))
-  }
 
 }

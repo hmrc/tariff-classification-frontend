@@ -31,7 +31,7 @@ class MyCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   private lazy val common_cases_view = mock[common_cases_view]
 
-  private def controller(): MyCasesController = {
+  /*private def controller(): MyCasesController = {
     new MyCasesController(
       new RequestActionsWithPermissions(playBodyParsers,
         permissions = Set(Permission.VIEW_MY_CASES),
@@ -42,5 +42,5 @@ class MyCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       common_cases_view,
       realAppConfig
     )
-  }
+  }*/
 }
