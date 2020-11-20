@@ -929,5 +929,8 @@ cases.opencases.tab_TTA=TT-A
 cases.opencases.tab_TTB=TT-B
 cases.opencases.tab_TTC=TT-C
 
-
+applicationTab.assignedToMe.atar=ATaR
+applicationTab.assignedToMe.liability=Liability
+applicationTab.assignedToMe.correspondence=Correspondence
+applicationTab.assignedToMe.miscellaneous=Miscellaneous
 

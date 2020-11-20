@@ -31,8 +31,8 @@ class CommonCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
 
   private lazy val common_cases_view = mock[common_cases_view]
 
-  private def controller(): CommonCasesController = {
-    new CommonCasesController(
+  private def controller(): MyCasesController = {
+    new MyCasesController(
       new RequestActionsWithPermissions(playBodyParsers,
         permissions = Set(Permission.VIEW_MY_CASES),
         c  = Cases.liabilityCaseExample.copy(assignee = Some(Cases.operatorWithPermissions)),

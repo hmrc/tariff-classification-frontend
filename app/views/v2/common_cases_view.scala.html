@@ -28,7 +28,7 @@
 
 @this(my_cases_secondary_nav: views.html.components.my_cases_secondary_navigation)
 
-@(title: String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(title: String, myCases : Seq[Case])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages(title))) {
 
