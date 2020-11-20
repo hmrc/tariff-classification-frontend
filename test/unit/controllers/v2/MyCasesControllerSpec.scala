@@ -25,7 +25,7 @@ import views.html.v2.common_cases_view
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class CommonCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
+class MyCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   bind[common_cases_view].toInstance(mock[common_cases_view])
 

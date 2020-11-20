@@ -23,12 +23,12 @@
 @import views.html.components.primary_navigation
 @import views.html.components.common_correspondence
 @import views.html.components.common_miscellaneous
-@import models.viewmodels.CasesTabViewModel
+@import models.viewmodels.MyCasesViewModel
 
 
 @this(my_cases_secondary_nav: views.html.components.my_cases_secondary_navigation)
 
-@(title: String, myCases : Seq[Case])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(title: String, myCases : MyCasesViewModel)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages(title))) {
 

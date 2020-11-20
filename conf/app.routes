@@ -140,6 +140,7 @@ GET        /accessibility                                       controllers.Acce
 GET        /operator-dashboard-classification                   controllers.OperatorDashboardController.onPageLoad
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 GET        /all-open-cases                                      controllers.v2.AllOpenCasesController.displayAllOpenCases
 GET        /my-cases                                            controllers.v2.CommonCasesController.displayCommonCases
 <<<<<<< HEAD
@@ -147,6 +148,9 @@ GET        /my-cases                                            controllers.v2.C
 =======
 GET        /my-cases                                            controllers.v2.MyCasesController.displayCommonCases
 >>>>>>> e02b64ba... DIT-2442: WIP
+=======
+GET        /my-cases                                            controllers.v2.MyCasesController.displayMyCases(activeSubNav: SubNavigationTab ?= AssignedToMeTab)
+>>>>>>> 27ac42ff... added view models
 
 GET        /all-open-cases                                      controllers.v2.AllOpenCasesController.displayAllOpenCases(activeSubNav: SubNavigationTab ?= ATaRTab)
 >>>>>>> 22f751fb... marking which secondary menu option is active
