@@ -18,8 +18,8 @@ package models.viewmodels
 
 import java.time.Instant
 
-import models.viewmodels.CasesTabViewModel.btiApplicationExample
 import models._
+import models.viewmodels.CasesTabViewModel.btiApplicationExample
 
 case class ApplicationsTab(tabMessageKey: String, applicationType: ApplicationType, elementId : String,  searchResult: Paged[Case])
 
@@ -55,9 +55,11 @@ object ApplicationsTab {
 
   def assignedToMeCases(cases: Seq[Case]): ApplicationTabViewModel = {
 
-    val atars = cases.filter(_.application.isBTI)
+    val atars = cases.filter(aCase =>
+      aCase.application.isBTI && aCase.status == CaseStatus.OPEN)
 
-    val liabilities = cases.filter(_.application.isLiabilityOrder)
+    val liabilities = cases.filter(aCase =>
+      aCase.application.isLiabilityOrder && aCase.status == CaseStatus.OPEN)
 
     ApplicationTabViewModel(
       "applicationTab.assignedToMe",

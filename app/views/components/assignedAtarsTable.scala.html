@@ -16,12 +16,11 @@
 
 @import models.request.AuthenticatedRequest
 @import config.AppConfig
-@import models.viewmodels.CasesTab
 @import models.viewmodels.ApplicationsTab
 
 @import play.twirl.api.TemplateMagic.defining
 @import views.html.partials.statuses.case_status
-@(atarTab : ApplicationsTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(atarTab: ApplicationsTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
  <table id="@{atarTab.tabMessageKey}s">
   <tbody>

@@ -1,0 +1,66 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import models.request.AuthenticatedRequest
+@import config.AppConfig
+@import models.viewmodels.ApplicationsTab
+
+@import play.twirl.api.TemplateMagic.defining
+@import views.html.partials.statuses.case_status
+
+@(liabilityTab: ApplicationsTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+
+ <table id="@{liabilityTab.tabMessageKey}s">
+  <tbody>
+    <tr id="@{liabilityTab.tabMessageKey}-details" class="grid-row mb-2">
+     <th id="@{liabilityTab.tabMessageKey}-reference" class="bold w-0">
+     Reference
+     </th>
+     <th id="@{liabilityTab.tabMessageKey}-goods" class="bold w-0">
+      Goods
+     </th>
+     <th id="@{liabilityTab.tabMessageKey}-trader" class="bold w-0">
+      Trader
+     </th>
+     <th id="@{liabilityTab.tabMessageKey}-elapsed-days" class="bold w-0">
+      Elapsed days
+     </th>
+     <th id="@{liabilityTab.tabMessageKey}-type" class="bold w-0">
+      Type
+     </th>
+     <th id="@{liabilityTab.tabMessageKey}-status" class="bold w-0">
+      Status
+     </th>
+    </tr>
+
+   @for((result, index) <- liabilityTab.searchResult.results.zipWithIndex) {
+
+    @defining(result.application.asLiabilityOrder) { liability =>
+
+     <tr id="@{liabilityTab.tabMessageKey}-details-@index">
+      <td id="@{liabilityTab.tabMessageKey}-reference-@index"><a href="@routes.CaseController.get(result.reference)">@{result.reference}</a></td>
+      <td id="@{liabilityTab.tabMessageKey}-goods-@index">@{liability.goodName}</td>
+      <td id="@{liabilityTab.tabMessageKey}-trader-@index">@{liability.traderName}</td>
+      <td id="@{liabilityTab.tabMessageKey}-elapsed-days-@index">@{result.daysElapsed}</td>
+      <td id="@{liabilityTab.tabMessageKey}-type-@index">@{liability.status}</td>
+      <td id="@{liabilityTab.tabMessageKey}-status-@index">@case_status(result, s"${liabilityTab.tabMessageKey}-status-label-$index", true)</td>
+     </tr>
+    }
+
+   }
+  </tbody>
+ </table>
+

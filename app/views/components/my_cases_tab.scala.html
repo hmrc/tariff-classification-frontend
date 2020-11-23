@@ -14,14 +14,13 @@
  * limitations under the License.
  *@
 
-@import views.html.partials.create_liability_button
 @import views.html.components.assignedAtarsTable
-@import views.html.components.liabilityCaseTable
+@import views.html.components.assignedLiabilitiesTable
 @import models.request.AuthenticatedRequest
 @import config.AppConfig
 @import models.viewmodels.ApplicationTabViewModel
 
-@(applicationTabViewModel : ApplicationTabViewModel)(implicit request: AuthenticatedRequest[_], appConfig: AppConfig, messages: Messages)
+@(applicationTabViewModel: ApplicationTabViewModel)(implicit request: AuthenticatedRequest[_], appConfig: AppConfig, messages: Messages)
 
 <div id="my-cases-tabs" class="govuk-tabs" data-module="govuk-tabs">
     <ul class="govuk-tabs__list">
@@ -35,13 +34,13 @@
     </ul>
 
     @* content*@
-    <!--ATAR tab component-->
 
    @for(caseTab <- applicationTabViewModel.applicationTabs) {
         <div class="govuk-tabs__panel" id="@caseTab.elementId">
             @{caseTab.applicationType match {
                 case ApplicationType.ATAR => assignedAtarsTable(caseTab)
-                case _ => "liability"
+                case ApplicationType.LIABILITY => assignedLiabilitiesTable(caseTab)
+                case _ => ""
             }
     }
         </div>
