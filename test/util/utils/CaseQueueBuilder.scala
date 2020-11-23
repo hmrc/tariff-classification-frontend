@@ -28,7 +28,7 @@ trait CaseQueueBuilder {
     pag: Pagination
   ): String = {
     val sortBy = "application.type,application.status,days-elapsed"
-    val queryString = s"/cases?application_type=${types.mkString(",")}&queue_id=$queueId&" +
+    val queryString = s"/cases?application_type=${types.map(_.name).mkString(",")}&queue_id=$queueId&" +
       s"assignee_id=$assigneeId&status=$withStatuses&sort_by=$sortBy&sort_direction=desc&" +
       s"page=${pag.page}&page_size=${pag.pageSize}"
     queryString

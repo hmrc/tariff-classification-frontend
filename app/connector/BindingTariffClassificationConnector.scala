@@ -69,7 +69,7 @@ class BindingTariffClassificationConnector @Inject() (
   ): String = {
     val sortBy = "application.type,application.status,days-elapsed"
     val queryString =
-      s"application_type=${types.mkString(",")}&queue_id=$queueId&assignee_id=$assigneeId&status=$statuses&sort_by=$sortBy&sort_direction=desc&page=${pagination.page}&page_size=${pagination.pageSize}"
+      s"application_type=${types.map(_.name).mkString(",")}&queue_id=$queueId&assignee_id=$assigneeId&status=$statuses&sort_by=$sortBy&sort_direction=desc&page=${pagination.page}&page_size=${pagination.pageSize}"
     s"${appConfig.bindingTariffClassificationUrl}/cases?$queryString"
   }
 
@@ -142,7 +142,7 @@ class BindingTariffClassificationConnector @Inject() (
         search.commodityCode.map(qb.unbind("commodity_code", _)),
         search.decisionDetails.map(qb.unbind("decision_details", _)),
         search.status.map(_.map(s => qb.unbind("status", s.toString)).mkString("&")),
-        search.applicationType.map(_.map(s => qb.unbind("application_type", s.toString)).mkString("&")),
+        search.applicationType.map(_.map(s => qb.unbind("application_type", s.name)).mkString("&")),
         search.keywords.map(_.map(k => qb.unbind("keyword", k)).mkString("&"))
       ).filter(_.isDefined).map(_.get)
 
