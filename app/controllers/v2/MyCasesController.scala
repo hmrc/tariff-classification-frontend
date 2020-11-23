@@ -48,7 +48,7 @@ class MyCasesController @Inject()(
           case ReferredByMeTab => ApplicationsTab.referredByMe
           case CompletedByMeTab => ApplicationsTab.completedByMe
         }
-      } yield Ok(commonCasesView("title", myCaseStatuses))
+      } yield Ok(commonCasesView(myCaseStatuses))
     }
 
 }

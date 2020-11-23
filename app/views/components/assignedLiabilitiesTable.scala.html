@@ -23,7 +23,7 @@
 
 @(liabilityTab: ApplicationsTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
- <table id="@{liabilityTab.tabMessageKey}s">
+ <table id="@{liabilityTab.tabMessageKey}-table">
   <tbody>
     <tr id="@{liabilityTab.tabMessageKey}-details" class="grid-row mb-2">
      <th id="@{liabilityTab.tabMessageKey}-reference" class="bold w-0">
@@ -52,11 +52,18 @@
 
      <tr id="@{liabilityTab.tabMessageKey}-details-@index">
       <td id="@{liabilityTab.tabMessageKey}-reference-@index"><a href="@routes.CaseController.get(result.reference)">@{result.reference}</a></td>
-      <td id="@{liabilityTab.tabMessageKey}-goods-@index">@{liability.goodName}</td>
-      <td id="@{liabilityTab.tabMessageKey}-trader-@index">@{liability.traderName}</td>
+      <td id="@{liabilityTab.tabMessageKey}-goods-@index" class="pre-wrap">@{liability.goodName}</td>
+      <td id="@{liabilityTab.tabMessageKey}-trader-@index" class="pre-wrap">@{liability.traderName}</td>
       <td id="@{liabilityTab.tabMessageKey}-elapsed-days-@index">@{result.daysElapsed}</td>
-      <td id="@{liabilityTab.tabMessageKey}-type-@index">@{liability.status}</td>
-      <td id="@{liabilityTab.tabMessageKey}-status-@index">@case_status(result, s"${liabilityTab.tabMessageKey}-status-label-$index", true)</td>
+      <td id="@{liabilityTab.tabMessageKey}-type-@index"> @if(liability.isLiveLiabilityOrder) {
+       <span class="live-red-text">@{liability.status}</span>
+      }</td>
+      <td id="@{liabilityTab.tabMessageKey}-status-@index">@case_status(result, s"${liabilityTab.tabMessageKey}-status-label-$index", true)
+     @if(result.isLiabilityOverdue) {
+       <span class="visuallyhidden">case status</span>
+       <span id="overdue-@index" class="phase-tag bg-red">OVERDUE</span>
+     }
+      </td>
      </tr>
     }
 

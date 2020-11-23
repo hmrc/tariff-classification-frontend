@@ -43,7 +43,7 @@ class AllOpenCasesController @Inject() (
         case MiscellaneousTab => CasesTabViewModel.miscellaneous
       }
 
-      Ok(commonAllOpenCasesView("the tab header", cases))
+      Ok(commonAllOpenCasesView(cases))
   }
 
 }

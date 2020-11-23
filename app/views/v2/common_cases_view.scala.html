@@ -25,9 +25,9 @@
 
 @this(my_cases_secondary_nav: views.html.components.my_cases_secondary_navigation)
 
-@(title: String, myCases : ApplicationTabViewModel)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(myCases : ApplicationTabViewModel)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages(title))) {
+@main(bodyClasses = None, customTitle = Some(messages("common.cases.my_cases-title"))) {
 
     @primary_navigation(MyCasesTab)
     @my_cases_secondary_nav()

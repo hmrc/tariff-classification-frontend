@@ -22,7 +22,7 @@
 @import views.html.partials.statuses.case_status
 @(atarTab: ApplicationsTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
- <table id="@{atarTab.tabMessageKey}s">
+ <table id="@{atarTab.tabMessageKey}-table">
   <tbody>
     <tr id="@{atarTab.tabMessageKey}-details" class="grid-row mb-2">
      <th id="@{atarTab.tabMessageKey}-reference" class="bold w-0">

@@ -26,7 +26,7 @@ class CommonCasesViewSpec extends ViewSpec {
 
   val applicationsTab =
     ApplicationTabViewModel(
-      "message key", ApplicationsTab.assignedToMeCases(Seq(Cases.btiCaseExample)).applicationTabs
+      "message key", ApplicationsTab.assignedToMeCases(Seq(Cases.btiCaseExample, Cases.liabilityCaseExample)).applicationTabs
     )
 
   def commonCasesView: common_cases_view = injector.instanceOf[common_cases_view]
@@ -34,42 +34,47 @@ class CommonCasesViewSpec extends ViewSpec {
   "CommonCasesViewSpec" should {
 
     "render successfully" in {
-      val doc = view(commonCasesView("title", applicationsTab))
+      val doc = view(commonCasesView(applicationsTab))
 
       doc should containElementWithID("my-cases-tabs")
     }
 
     "contain my_cases_secondary_navigation" in {
-      val doc = view(commonCasesView("title", applicationsTab))
+      val doc = view(commonCasesView(applicationsTab))
 
       doc should containElementWithID("my-cases-sub-nav")
     }
 
-    "contain an atar, liability, correspondence and misc tabs" in {
-      val doc = view(commonCasesView("title", applicationsTab))
+    "contain my cases component" in {
+      val doc = view(commonCasesView(applicationsTab))
 
       doc should containElementWithID("atar_tab")
-
-      /*      doc should containElementWithID("liability_tab")
-      doc should containElementWithID("correspondence_tab")
-      doc should containElementWithID("misc_tab")*/
+      doc should containElementWithID("liability_tab")
+      //doc should containElementWithID("correspondence_tab")
+      //doc should containElementWithID("misc_tab")
     }
 
     "contain a heading" in {
-      val doc = view(commonCasesView("title", applicationsTab))
+      val doc = view(commonCasesView(applicationsTab))
 
       doc should containElementWithID("common-cases-heading")
     }
 
-    //Uncomment the following tests when the components are implemented
+    "contain atar table" in {
+      val doc = view(commonCasesView(applicationsTab))
 
-    /*"contain liabilities component" in {
-      val doc = view(commonCasesView("title", applicationsTab))
-
-      doc should containElementWithID("liabilities")
+      doc should containElementWithID("applicationTab.assignedToMe.atar-table")
     }
 
-    "contain liabilities correspondence" in {
+    "contain liabilities table" in {
+      val doc = view(commonCasesView(applicationsTab))
+
+      doc should containElementWithID("applicationTab.assignedToMe.liability-table")
+    }
+
+    //Uncomment the following tests when the components are implemented
+
+    /*"contain liabilities correspondence" in {
       val doc = view(commonCasesView("title", applicationsTab))
 
       doc should containElementWithID("correspondence")

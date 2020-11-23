@@ -71,7 +71,7 @@ class MyCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
     "return 200 OK with the correct subNavigation tab for AssignedToMe" in {
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier])).
-        willReturn(Paged(Seq(Cases.aCase(), Cases.aCase())))
+        willReturn(Paged(Seq(Cases.aCase(), Cases.aLiabilityCase())))
 
       val result = await(controller(Set(Permission.VIEW_MY_CASES)).displayMyCases(AssignedToMeTab)(fakeRequest))
 

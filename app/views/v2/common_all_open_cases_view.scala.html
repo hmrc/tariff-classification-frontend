@@ -23,9 +23,9 @@
 
 @this()
 
-@(title: String, cases : CasesTabViewModel)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(cases : CasesTabViewModel)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages(title))) {
+@main(bodyClasses = None, customTitle = Some(messages("common.cases.open_cases-title"))) {
 
     @primary_navigation(OpenCasesTab)
     @open_cases_secondary_navigation()
