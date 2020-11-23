@@ -146,7 +146,7 @@ class QueueNavViewSpec extends ViewSpec with BeforeAndAfterEach {
 
     "Render combined case count for gateway" in {
       // Given
-      val queueCounts = Map("-BTI" -> 2, "-LIABILITY_ORDER" -> 2, "2-BTI" -> 3)
+      val queueCounts = Map("-ATAR" -> 2, "-LIABILITY" -> 2, "2-ATAR" -> 3)
       // When
       val doc = view(queue_nav(queues, "", queueCounts)(requestWithPermissions(Permission.VIEW_QUEUE_CASES), messages))
 
@@ -156,7 +156,7 @@ class QueueNavViewSpec extends ViewSpec with BeforeAndAfterEach {
 
     "Render case counts separately for named queue" in {
       // Given
-      val queueCounts = Map("-BTI" -> 2, "-LIABILITY_ORDER" -> 2, "1-BTI" -> 3, "1-LIABILITY_ORDER" -> 5)
+      val queueCounts = Map("-ATAR" -> 2, "-LIABILITY" -> 2, "1-ATAR" -> 3, "1-LIABILITY" -> 5)
       // When
       val doc = view(queue_nav(queues, "", queueCounts)(requestWithPermissions(Permission.VIEW_QUEUE_CASES), messages))
 

@@ -465,7 +465,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
       )
 
       val search = Search(
-        applicationType = Some(Set(ApplicationType.BTI, ApplicationType.LIABILITY_ORDER))
+        applicationType = Some(Set(ApplicationType.ATAR, ApplicationType.LIABILITY))
       )
 
       await(

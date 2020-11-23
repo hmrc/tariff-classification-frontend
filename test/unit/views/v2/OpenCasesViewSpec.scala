@@ -16,6 +16,7 @@
 
 package views.v2
 
+import models.viewmodels.{ATaRTab, CasesTabViewModel}
 import views.ViewSpec
 import views.html.v2.common_all_open_cases_view
 import views.ViewMatchers.containElementWithID
@@ -27,32 +28,35 @@ class OpenCasesViewSpec extends ViewSpec {
 
   "OpenCasesViewSpec" should {
 
-    "render successfully" in {
-      val doc = view(commonCasesView("title"))
+    "render successfully with the default tab" in {
+      val doc = view(commonCasesView("title", CasesTabViewModel.atar))
 
       doc should containElementWithID("open-cases-tabs")
     }
   }
 
-  "contain an atar, cap, cars and elm tabs" in {
-    val doc = view(commonCasesView("title"))
+  "contain an atar, cap, cars and elm tabs for ATaR" in {
+    val doc = view(commonCasesView("title", CasesTabViewModel.atar))
 
     doc should containElementWithID("act_tab")
-    doc should containElementWithID("cap_tab")
     doc should containElementWithID("cars_tab")
     doc should containElementWithID("elm_tab")
+    doc should containElementWithID("flex_tab")
+    doc should containElementWithID("tta_tab")
+    doc should containElementWithID("ttb_tab")
+    doc should containElementWithID("ttc_tab")
   }
 
   "contain a heading" in {
-    val doc = view(commonCasesView("title"))
+    val doc = view(commonCasesView("title", CasesTabViewModel.atar))
 
     doc should containElementWithID("common-cases-heading")
   }
 
-  "contain my_cases_secondary_navigation" in {
-    val doc = view(commonCasesView("title"))
+  "contain open-cases-sub-nav" in {
+    val doc = view(commonCasesView("title", CasesTabViewModel.atar))
 
-    doc should containElementWithID("my-cases-secondary-navigation")
+    doc should containElementWithID("open-cases-sub-nav")
   }
 
 }

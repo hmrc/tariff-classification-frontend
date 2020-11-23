@@ -19,6 +19,7 @@ package controllers.v2
 import com.google.inject.Inject
 import config.AppConfig
 import controllers.{RenderCaseAction, RequestActions}
+import models.Permission
 import models.viewmodels.{ATaRTab, CasesTabViewModel, CorrespondenceTab, LiabilitiesTab, MiscellaneousTab, SubNavigationTab}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -32,7 +33,8 @@ class AllOpenCasesController @Inject() (
 ) extends FrontendController(mcc)
     with I18nSupport {
 
-  def displayAllOpenCases(activeSubNav: SubNavigationTab = ATaRTab): Action[AnyContent] = verify.authenticated {
+  def displayAllOpenCases(activeSubNav: SubNavigationTab = ATaRTab): Action[AnyContent] = (verify.authenticated
+    andThen verify.mustHave(Permission.VIEW_CASES)) {
     implicit request =>
       val cases: CasesTabViewModel = activeSubNav match {
         case ATaRTab => CasesTabViewModel.atar

@@ -98,7 +98,7 @@ class SearchFormTest extends ModelsBaseSpec {
         commodityCode   = Some("00"),
         decisionDetails = Some("decision-details"),
         status          = Some(Set(PseudoCaseStatus.OPEN, PseudoCaseStatus.LIVE)),
-        applicationType = Some(Set(ApplicationType.BTI, ApplicationType.LIABILITY_ORDER)),
+        applicationType = Some(Set(ApplicationType.ATAR, ApplicationType.LIABILITY)),
         keywords        = Some(Set("X", "Y"))
       )
     }
@@ -111,7 +111,7 @@ class SearchFormTest extends ModelsBaseSpec {
             commodityCode   = Some("00"),
             decisionDetails = Some("decision-details"),
             status          = Some(Set(PseudoCaseStatus.OPEN, PseudoCaseStatus.LIVE)),
-            applicationType = Some(Set(ApplicationType.BTI, ApplicationType.LIABILITY_ORDER)),
+            applicationType = Some(Set(ApplicationType.ATAR, ApplicationType.LIABILITY)),
             keywords        = Some(Set("X", "Y"))
           )
         )

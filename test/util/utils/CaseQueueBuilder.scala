@@ -16,13 +16,12 @@
 
 package utils
 
-import models.ApplicationType.ApplicationType
 import models.{ApplicationType, Pagination}
 
 trait CaseQueueBuilder {
 
   def buildQueryUrl(
-    types: Seq[ApplicationType] = Seq(ApplicationType.BTI, ApplicationType.LIABILITY_ORDER),
+    types: Seq[ApplicationType] = Seq(ApplicationType.ATAR, ApplicationType.LIABILITY),
     withStatuses: String,
     queueId: String = "",
     assigneeId: String,
