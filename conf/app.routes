@@ -139,10 +139,6 @@ GET        /accessibility                                       controllers.Acce
 
 GET        /operator-dashboard-classification                   controllers.OperatorDashboardController.onPageLoad
 
-GET        /all-open-cases                                      controllers.v2.AllOpenCasesController.displayAllOpenCases
-GET        /my-cases                                            controllers.v2.CommonCasesController.displayCommonCases
-<<<<<<< HEAD
-=======
-
 GET        /all-open-cases                                      controllers.v2.AllOpenCasesController.displayAllOpenCases(activeSubNav: SubNavigationTab ?= ATaRTab)
->>>>>>> 22f751fb... marking which secondary menu option is active
+
+GET        /my-cases                                            controllers.v2.CommonCasesController.displayCommonCases
