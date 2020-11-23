@@ -98,6 +98,42 @@ class CaseTest extends ModelsBaseSpec with BeforeAndAfterAll {
 
   }
 
+  "isLiabilityOverdue" should {
+    "return true if LiveLiability is above the overdue threshold (5 days)" in {
+      val c = aCase(
+        withReference("reference"),
+        withLiabilityApplication(status = LiabilityStatus.LIVE),
+        withSample(Sample(returnStatus = Some(SampleReturn.YES))),
+        withDaysElapsed(6)
+      )
+
+      c.isLiabilityOverdue shouldBe true
+    }
+
+    "return true if Liability is above the overdue threshold (30 days)" in {
+      val c = aCase(
+        withReference("reference"),
+        withLiabilityApplication(),
+        withSample(Sample(returnStatus = Some(SampleReturn.YES))),
+        withDaysElapsed(30)
+      )
+
+      c.isLiabilityOverdue shouldBe true
+    }
+
+    "return false if LiveLiability is below the threshold (5 days)" in {
+      val c = aCase(
+        withReference("reference"),
+        withLiabilityApplication(status = LiabilityStatus.LIVE),
+        withSample(Sample(returnStatus = Some(SampleReturn.YES))),
+        withDaysElapsed(3)
+      )
+
+      c.isLiabilityOverdue shouldBe false
+    }
+    
+  }
+
   "findAppeal()" should {
 
     "return appeal when valid id presented" in {
