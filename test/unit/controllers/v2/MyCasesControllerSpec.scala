@@ -17,9 +17,15 @@
 package controllers.v2
 
 import controllers.{ControllerBaseSpec, RequestActionsWithPermissions}
-import models.Permission
+import models.viewmodels.{AssignedToMeTab, CompletedByMeTab, ReferredByMeTab}
+import models.{Operator, Paged, Pagination, Permission}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.BDDMockito.`given`
 import org.scalatest.BeforeAndAfterEach
-import play.api.inject.bind
+import play.api.http.Status
+import play.api.test.Helpers._
+import service.CasesService
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
 import views.html.v2.common_cases_view
 
@@ -27,20 +33,74 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 class MyCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
-  bind[common_cases_view].toInstance(mock[common_cases_view])
+  private lazy val common_cases_view = injector.instanceOf[common_cases_view]
 
-  private lazy val common_cases_view = mock[common_cases_view]
+  private val casesService = mock[CasesService]
 
-  /*private def controller(): MyCasesController = {
+  private def controller(permission: Set[Permission]): MyCasesController = {
     new MyCasesController(
-      new RequestActionsWithPermissions(playBodyParsers,
-        permissions = Set(Permission.VIEW_MY_CASES),
-        c  = Cases.liabilityCaseExample.copy(assignee = Some(Cases.operatorWithPermissions)),
-        op = Cases.operatorWithPermissions
-      ),
+      new RequestActionsWithPermissions(playBodyParsers, permissions = permission),
+      casesService,
       mcc,
       common_cases_view,
       realAppConfig
     )
-  }*/
+  }
+
+  "MyCasesController" should {
+
+    "return 200 and the correct content when no tab has ben specified" in {
+      given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier])).
+        willReturn(Paged(Seq(Cases.aCase(), Cases.aCase())))
+
+      val result = await(controller(Set(Permission.VIEW_MY_CASES))).displayMyCases()(fakeRequest)
+
+      contentType(result) shouldBe Some("text/html")
+      charset(result) shouldBe Some("utf-8")
+      status(result) shouldBe Status.OK
+    }
+
+    "return unauthorised with no permissions" in {
+
+      val result = await(controller(Set()).displayMyCases()(fakeRequest))
+
+      status(result) shouldBe Status.SEE_OTHER
+
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+    }
+
+    "return 200 OK with the correct subNavigation tab for AssignedToMe" in {
+      given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier])).
+        willReturn(Paged(Seq(Cases.aCase(), Cases.aCase())))
+
+      val result = await(controller(Set(Permission.VIEW_MY_CASES)).displayMyCases(AssignedToMeTab)(fakeRequest))
+
+      contentType(result) shouldBe Some("text/html")
+      charset(result) shouldBe Some("utf-8")
+      status(result) shouldBe Status.OK
+    }
+
+    "return 200 OK with the correct subNavigation tab for ReferredByMe" in {
+      given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier])).
+        willReturn(Paged(Seq(Cases.aCase(), Cases.aCase())))
+
+      val result = await(controller(Set(Permission.VIEW_MY_CASES)).displayMyCases(ReferredByMeTab)(fakeRequest))
+
+      contentType(result) shouldBe Some("text/html")
+      charset(result) shouldBe Some("utf-8")
+      status(result) shouldBe Status.OK
+    }
+
+    "return 200 OK with the correct subNavigation tab for CompletedByMe" in {
+      given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier])).
+        willReturn(Paged(Seq(Cases.aCase(), Cases.aCase())))
+
+      val result = await(controller(Set(Permission.VIEW_MY_CASES)).displayMyCases(CompletedByMeTab)(fakeRequest))
+
+      contentType(result) shouldBe Some("text/html")
+      charset(result) shouldBe Some("utf-8")
+      status(result) shouldBe Status.OK
+    }
+  }
+
 }

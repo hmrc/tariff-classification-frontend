@@ -24,7 +24,7 @@ import models.viewmodels._
 import models.{NoPagination, Permission}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import service.{CasesService, QueuesService}
+import service.CasesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -32,7 +32,6 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class MyCasesController @Inject()(
                                    verify: RequestActions,
                                    casesService: CasesService,
-                                   queuesService: QueuesService,
                                    mcc: MessagesControllerComponents,
                                    val commonCasesView: views.html.v2.common_cases_view,
                                    implicit val appConfig: AppConfig

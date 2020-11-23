@@ -18,8 +18,8 @@ package models.viewmodels
 
 import java.time.Instant
 
-import models.viewmodels.CasesTabViewModel.{btiApplicationExample, btiCaseExample}
-import models.{ApplicationType, Case, CaseStatus, Paged, Sample}
+import models.viewmodels.CasesTabViewModel.btiApplicationExample
+import models._
 
 case class ApplicationsTab(tabMessageKey: String, applicationType: ApplicationType, elementId : String,  searchResult: Paged[Case])
 
@@ -51,17 +51,6 @@ object ApplicationsTab {
     Sample(),
     Some(Instant.now()),
     Some(5)
-  )
-
-  def assignedToMe = ApplicationTabViewModel(
-    "applicationTab.assignedToMe",
-    List(
-      ApplicationsTab.atar(Paged(Seq(btiCaseExample))),
-      ApplicationsTab.liability(),
-      ApplicationsTab.correspondence(),
-      ApplicationsTab.miscellaneous()
-
-    )
   )
 
   def assignedToMeCases(cases: Seq[Case]): ApplicationTabViewModel = {
