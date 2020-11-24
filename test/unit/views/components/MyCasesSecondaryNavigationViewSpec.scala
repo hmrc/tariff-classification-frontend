@@ -22,7 +22,6 @@ import views.html.components.my_cases_secondary_navigation
 
 class MyCasesSecondaryNavigationViewSpec extends ViewSpec {
 
-
   val myCasesSecondaryView: my_cases_secondary_navigation = injector.instanceOf[my_cases_secondary_navigation]
 
   "MyCasesSecondaryNavigation" should {
