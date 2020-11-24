@@ -19,7 +19,7 @@
 @import models.viewmodels.ApplicationsTab
 
 @import play.twirl.api.TemplateMagic.defining
-@import views.html.partials.statuses.case_status
+@import views.html.v2.case_status_tab
 @(atarTab: ApplicationsTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
  <table id="@{atarTab.tabMessageKey}-table">
@@ -51,7 +51,8 @@
       <td id="@{atarTab.tabMessageKey}-goods-@index">@{atar.goodName}</td>
       <td id="@{atarTab.tabMessageKey}-trader-@index">@{atar.holder.businessName}</td>
       <td id="@{atarTab.tabMessageKey}-elapsed-days-@index">@{result.daysElapsed}</td>
-      <td id="@{atarTab.tabMessageKey}-status-@index">@case_status(result, s"${atarTab.tabMessageKey}-status-label-$index", true)</td>
+      <td id="@{atarTab.tabMessageKey}-status-@index">@case_status_tab(result, s"${atarTab.tabMessageKey}-status-label-$index")
+      </td>
      </tr>
     }
 

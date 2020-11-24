@@ -19,7 +19,7 @@
 @import models.viewmodels.ApplicationsTab
 
 @import play.twirl.api.TemplateMagic.defining
-@import views.html.partials.statuses.case_status
+@import views.html.v2.case_status_tab
 
 @(liabilityTab: ApplicationsTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
@@ -58,11 +58,7 @@
       <td id="@{liabilityTab.tabMessageKey}-type-@index"> @if(liability.isLiveLiabilityOrder) {
        <span class="live-red-text">@{liability.status}</span>
       }</td>
-      <td id="@{liabilityTab.tabMessageKey}-status-@index">@case_status(result, s"${liabilityTab.tabMessageKey}-status-label-$index", true)
-     @if(result.isLiabilityOverdue) {
-       <span class="visuallyhidden">case status</span>
-       <span id="overdue-@index" class="phase-tag bg-red">OVERDUE</span>
-     }
+      <td id="@{liabilityTab.tabMessageKey}-status-@index">@case_status_tab(result, s"${liabilityTab.tabMessageKey}-status-label-$index")
       </td>
      </tr>
     }
