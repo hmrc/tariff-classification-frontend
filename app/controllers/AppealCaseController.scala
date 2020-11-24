@@ -50,7 +50,7 @@ class AppealCaseController @Inject() (
   def appealDetails(reference: String): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
       request.`case`.application.`type` match {
-        case ApplicationType.BTI =>
+        case ApplicationType.ATAR =>
           getCaseAndRenderView(
             reference,
             c =>
@@ -64,7 +64,7 @@ class AppealCaseController @Inject() (
               )
           )
 
-        case ApplicationType.LIABILITY_ORDER => {
+        case ApplicationType.LIABILITY => {
           if (newliabilityDetailsToggle)
             successful(Redirect(v2.routes.LiabilityController.displayLiability(reference).withFragment("appeal_tab")))
           else

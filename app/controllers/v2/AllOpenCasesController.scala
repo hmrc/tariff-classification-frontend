@@ -18,20 +18,32 @@ package controllers.v2
 
 import com.google.inject.Inject
 import config.AppConfig
-import controllers.RequestActions
+import controllers.{RenderCaseAction, RequestActions}
+import models.Permission
+import models.viewmodels.{ATaRTab, CasesTabViewModel, CorrespondenceTab, LiabilitiesTab, MiscellaneousTab, SubNavigationTab}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-class CommonCasesController @Inject() (
+class AllOpenCasesController @Inject() (
   verify: RequestActions,
   mcc: MessagesControllerComponents,
-  val commonCasesView: views.html.v2.common_cases_view,
+  val commonAllOpenCasesView: views.html.v2.common_all_open_cases_view,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
     with I18nSupport {
 
-  def displayCommonCases: Action[AnyContent] = verify.authenticated { implicit request =>
-    Ok(commonCasesView("the tab title"))
+  def displayAllOpenCases(activeSubNav: SubNavigationTab = ATaRTab): Action[AnyContent] = (verify.authenticated
+    andThen verify.mustHave(Permission.VIEW_CASES)) {
+    implicit request =>
+      val cases: CasesTabViewModel = activeSubNav match {
+        case ATaRTab => CasesTabViewModel.atar
+        case LiabilitiesTab => CasesTabViewModel.liability
+        case CorrespondenceTab  => CasesTabViewModel.correspondence
+        case MiscellaneousTab => CasesTabViewModel.miscellaneous
+      }
+
+      Ok(commonAllOpenCasesView("the tab header", cases))
   }
+
 }

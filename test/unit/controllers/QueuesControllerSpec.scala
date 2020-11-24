@@ -16,7 +16,6 @@
 
 package controllers
 
-import models.ApplicationType.ApplicationType
 import models.{Permission, _}
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito._
@@ -72,7 +71,7 @@ class QueuesControllerSpec extends ControllerBaseSpec {
 
     "return 200 OK and HTML content type when Queue is found with specific case type specified" in {
       given(
-        casesService.getCasesByQueue(refEq(queue), refEq(NoPagination()), refEq(Seq(ApplicationType.LIABILITY_ORDER)))(
+        casesService.getCasesByQueue(refEq(queue), refEq(NoPagination()), refEq(Seq(ApplicationType.LIABILITY)))(
           any[HeaderCarrier]
         )
       ).willReturn(Future.successful(Paged.empty[Case]))

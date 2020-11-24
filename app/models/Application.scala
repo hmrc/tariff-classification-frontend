@@ -18,14 +18,13 @@ package models
 
 import java.time.Instant
 
-import models.ApplicationType.ApplicationType
 import models.LiabilityStatus.LiabilityStatus
 
 sealed trait Application {
   val `type`: ApplicationType
   val contact: Contact
 
-  def asBTI: BTIApplication =
+  def asATAR: BTIApplication =
     this.asInstanceOf[BTIApplication]
 
   def asLiabilityOrder: LiabilityOrder =
@@ -42,26 +41,36 @@ sealed trait Application {
 
   def businessName: String =
     `type` match {
-      case ApplicationType.BTI             => asBTI.holder.businessName
-      case ApplicationType.LIABILITY_ORDER => asLiabilityOrder.traderName
+      case ApplicationType.ATAR             => asATAR.holder.businessName
+      case ApplicationType.LIABILITY => asLiabilityOrder.traderName
     }
 
   def goodsName: String =
     `type` match {
-      case ApplicationType.BTI             => asBTI.goodName
-      case ApplicationType.LIABILITY_ORDER => asLiabilityOrder.goodName.getOrElse("")
+      case ApplicationType.ATAR             => asATAR.goodName
+      case ApplicationType.LIABILITY => asLiabilityOrder.goodName.getOrElse("")
     }
 
   def getType: String =
     `type` match {
-      case ApplicationType.BTI             => "BTI"
-      case ApplicationType.LIABILITY_ORDER => "Liability"
+      case ApplicationType.ATAR             => "BTI"
+      case ApplicationType.LIABILITY => "Liability"
+      case ApplicationType.CORRESPONDENCE => "Correspondence"
+      case ApplicationType.MISCELLANEOUS => "Misc"
     }
 }
 
-object ApplicationType extends Enumeration {
-  type ApplicationType = Value
-  val BTI, LIABILITY_ORDER = Value
+sealed abstract class ApplicationType(val name: String) extends Product with Serializable
+
+object ApplicationType {
+  val values = Set(ATAR, LIABILITY, CORRESPONDENCE, MISCELLANEOUS)
+
+  def withName(name: String) = values.find(_.name == name).getOrElse(throw new NoSuchElementException)
+
+  case object ATAR extends ApplicationType("BTI")
+  case object LIABILITY extends ApplicationType("LIABILITY_ORDER")
+  case object CORRESPONDENCE extends ApplicationType("CORRESPONDENCE")
+  case object MISCELLANEOUS extends ApplicationType("MISCELLANEOUS")
 }
 
 case class BTIApplication(
@@ -81,7 +90,7 @@ case class BTIApplication(
   sampleToBeProvided: Boolean,
   sampleToBeReturned: Boolean
 ) extends Application {
-  override val `type`: models.ApplicationType.Value = ApplicationType.BTI
+  override val `type`: models.ApplicationType = ApplicationType.ATAR
 }
 
 case class AgentDetails(
@@ -103,7 +112,7 @@ case class LiabilityOrder(
   dateOfReceipt: Option[Instant]                     = None,
   traderContactDetails: Option[TraderContactDetails] = None
 ) extends Application {
-  override val `type`: models.ApplicationType.Value = ApplicationType.LIABILITY_ORDER
+  override val `type`: models.ApplicationType = ApplicationType.LIABILITY
 }
 
 object LiabilityStatus extends Enumeration {

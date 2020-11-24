@@ -24,7 +24,7 @@
 @import views.html.partials.{attachments_list, tab_heading}
 @(c: Case, decisionForm: Option[Form[DecisionFormData]], files: Seq[StoredAttachment], commodityCode: Option[CommodityCode], startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@defining(c.application.asBTI) { btiApp: BTIApplication =>
+@defining(c.application.asATAR) { btiApp: BTIApplication =>
 
     @tab_heading("ruling", messages("case.menu.ruling"))
 

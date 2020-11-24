@@ -25,7 +25,6 @@ import connector.{BindingTariffClassificationConnector, RulingConnector}
 import javax.inject.{Inject, Singleton}
 import models.AppealStatus.AppealStatus
 import models.AppealType.AppealType
-import models.ApplicationType.ApplicationType
 import models.CancelReason.CancelReason
 import models.ReferralReason.ReferralReason
 import models.SampleReturn.SampleReturn
@@ -310,7 +309,7 @@ class CasesService @Inject() (
   def getCasesByQueue(
     queue: Queue,
     pagination: Pagination,
-    forTypes: Seq[ApplicationType] = Seq(ApplicationType.BTI, ApplicationType.LIABILITY_ORDER)
+    forTypes: Seq[ApplicationType] = Seq(ApplicationType.ATAR, ApplicationType.LIABILITY)
   )(implicit hc: HeaderCarrier): Future[Paged[Case]] =
     connector.findCasesByQueue(queue, pagination, forTypes)
 

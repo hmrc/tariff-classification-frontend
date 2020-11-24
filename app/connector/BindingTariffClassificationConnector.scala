@@ -23,7 +23,7 @@ import play.api.mvc.QueryStringBindable
 import uk.gov.hmrc.http.HeaderCarrier
 import config.AppConfig
 import metrics.HasMetrics
-import models.ApplicationType.ApplicationType
+import models.ApplicationType
 import models.CaseStatus._
 import models.EventType.EventType
 import models._
@@ -61,7 +61,7 @@ class BindingTariffClassificationConnector @Inject() (
     }
 
   private def buildQueryUrl(
-    types: Seq[ApplicationType] = Seq(ApplicationType.BTI, ApplicationType.LIABILITY_ORDER),
+    types: Seq[ApplicationType] = Seq(ApplicationType.ATAR, ApplicationType.LIABILITY),
     statuses: String,
     queueId: String,
     assigneeId: String,
@@ -69,14 +69,14 @@ class BindingTariffClassificationConnector @Inject() (
   ): String = {
     val sortBy = "application.type,application.status,days-elapsed"
     val queryString =
-      s"application_type=${types.mkString(",")}&queue_id=$queueId&assignee_id=$assigneeId&status=$statuses&sort_by=$sortBy&sort_direction=desc&page=${pagination.page}&page_size=${pagination.pageSize}"
+      s"application_type=${types.map(_.name).mkString(",")}&queue_id=$queueId&assignee_id=$assigneeId&status=$statuses&sort_by=$sortBy&sort_direction=desc&page=${pagination.page}&page_size=${pagination.pageSize}"
     s"${appConfig.bindingTariffClassificationUrl}/cases?$queryString"
   }
 
   def findCasesByQueue(
     queue: Queue,
     pagination: Pagination,
-    types: Seq[ApplicationType] = Seq(ApplicationType.BTI, ApplicationType.LIABILITY_ORDER)
+    types: Seq[ApplicationType] = Seq(ApplicationType.ATAR, ApplicationType.LIABILITY)
   )(implicit hc: HeaderCarrier): Future[Paged[Case]] =
     withMetricsTimerAsync("get-cases-by-queue") { _ =>
       val queueId = if (queue == Queues.gateway) "none" else queue.id
@@ -142,7 +142,7 @@ class BindingTariffClassificationConnector @Inject() (
         search.commodityCode.map(qb.unbind("commodity_code", _)),
         search.decisionDetails.map(qb.unbind("decision_details", _)),
         search.status.map(_.map(s => qb.unbind("status", s.toString)).mkString("&")),
-        search.applicationType.map(_.map(s => qb.unbind("application_type", s.toString)).mkString("&")),
+        search.applicationType.map(_.map(s => qb.unbind("application_type", s.name)).mkString("&")),
         search.keywords.map(_.map(k => qb.unbind("keyword", k)).mkString("&"))
       ).filter(_.isDefined).map(_.get)
 

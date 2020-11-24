@@ -15,19 +15,15 @@
  *@
 
 @import config.AppConfig
-@import controllers.SessionKeys
 @import models.PseudoCaseStatus.PseudoCaseStatus
-@import models.{Paged, PseudoCaseStatus, Search}
+@import models.{ApplicationType, Paged, PseudoCaseStatus, Search}
 @import views.SearchTab
 @import views.SearchTab.SearchTab
 @import views.forms.components.CheckOption
 @import views.html.forms.components.{input_checkbox_group, input_text}
 @import views.html.includes.main
-@import views.html.partials.{advanced_search_keywords, advanced_search_results_tabs, back_link, pagination}
+@import views.html.partials._
 @import views.partials.SearchResult
-@import views.html.partials.{error_summary, back_link}
-@import models.ApplicationType
-@import models.ApplicationType.ApplicationType
 @(form: Form[Search], results: Option[Paged[SearchResult]] = None, keywords: Seq[String], selectedTab: SearchTab)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @formHasStatus(status: PseudoCaseStatus) = @{
@@ -105,8 +101,8 @@
                             @input_checkbox_group(
                                 field = form("application_type"),
                                 options = Seq(
-                                    CheckOption("BTI", ApplicationType.BTI.toString, checked = formHasApplicationType(ApplicationType.BTI)),
-                                    CheckOption("Liability", ApplicationType.LIABILITY_ORDER.toString, checked = formHasApplicationType(ApplicationType.LIABILITY_ORDER))
+                                    CheckOption("BTI", ApplicationType.ATAR.toString, checked = formHasApplicationType(ApplicationType.ATAR)),
+                                    CheckOption("Liability", ApplicationType.LIABILITY.toString, checked = formHasApplicationType(ApplicationType.LIABILITY))
                                 ),
                                 legend = Some("Apply filters"),
                                 submitOnChange = true,

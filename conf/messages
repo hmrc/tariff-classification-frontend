@@ -914,3 +914,17 @@ common.cases.miscellaneous.tab_title=Miscellaneous
 common.cases.secondaryNav.assigned=Assigned to me
 common.cases.secondaryNav.referred=Referred by me
 common.cases.secondaryNav.completed=Completed by me
+
+cases.opencases.atar.heading=ATaR cases
+cases.opencases.liability.heading=Liability
+cases.opencases.correspondence.heading=Correspondence
+cases.opencases.miscellaneous.heading=Miscellaneous
+
+cases.opencases.tab_ACT=ACT
+cases.opencases.tab_CAP=CAP
+cases.opencases.tab_CARS=CARS
+cases.opencases.tab_ELM=ELM
+cases.opencases.tab_FLEX=FLEX
+cases.opencases.tab_TTA=TT-A
+cases.opencases.tab_TTB=TT-B
+cases.opencases.tab_TTC=TT-C
