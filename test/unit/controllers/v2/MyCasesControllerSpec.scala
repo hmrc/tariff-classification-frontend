@@ -27,13 +27,13 @@ import play.api.test.Helpers._
 import service.CasesService
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
-import views.html.v2.common_cases_view
+import views.html.v2.my_cases_view
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class MyCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
-  private lazy val common_cases_view = injector.instanceOf[common_cases_view]
+  private lazy val my_cases_view = injector.instanceOf[my_cases_view]
 
   private val casesService = mock[CasesService]
 
@@ -42,7 +42,7 @@ class MyCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       new RequestActionsWithPermissions(playBodyParsers, permissions = permission),
       casesService,
       mcc,
-      common_cases_view,
+      my_cases_view,
       realAppConfig
     )
   }

@@ -33,7 +33,7 @@ class MyCasesController @Inject()(
                                    verify: RequestActions,
                                    casesService: CasesService,
                                    mcc: MessagesControllerComponents,
-                                   val commonCasesView: views.html.v2.common_cases_view,
+                                   val myCasesView: views.html.v2.my_cases_view,
                                    implicit val appConfig: AppConfig
                                  ) extends FrontendController(mcc)
   with I18nSupport {
@@ -48,7 +48,7 @@ class MyCasesController @Inject()(
           case ReferredByMeTab => ApplicationsTab.referredByMe
           case CompletedByMeTab => ApplicationsTab.completedByMe
         }
-      } yield Ok(commonCasesView(myCaseStatuses))
+      } yield Ok(myCasesView(myCaseStatuses))
     }
 
 }

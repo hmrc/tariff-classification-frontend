@@ -18,13 +18,13 @@ package views.v2
 
 import models.viewmodels.{ATaRTab, CasesTabViewModel}
 import views.ViewSpec
-import views.html.v2.common_all_open_cases_view
+import views.html.v2.open_cases_view
 import views.ViewMatchers.containElementWithID
 
 class OpenCasesViewSpec extends ViewSpec {
 
 
-  def commonCasesView: common_all_open_cases_view = injector.instanceOf[common_all_open_cases_view]
+  def commonCasesView: open_cases_view = injector.instanceOf[open_cases_view]
 
   "OpenCasesViewSpec" should {
 
