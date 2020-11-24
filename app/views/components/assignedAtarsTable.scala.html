@@ -50,7 +50,7 @@
       <td id="@{atarTab.tabMessageKey}-reference-@index"><a href="@routes.CaseController.get(result.reference)">@{result.reference}</a></td>
       <td id="@{atarTab.tabMessageKey}-goods-@index">@{atar.goodName}</td>
       <td id="@{atarTab.tabMessageKey}-trader-@index">@{atar.holder.businessName}</td>
-      <td id="@{atarTab.tabMessageKey}-elapsed-days-@index">@{result.daysElapsed}</td>
+      <td id="@{atarTab.tabMessageKey}-elapsed-days-@index" @if(result.isCaseOverdue) {style="color:red"}>@{result.daysElapsed}</td>
       <td id="@{atarTab.tabMessageKey}-status-@index">@case_status_tab(result, s"${atarTab.tabMessageKey}-status-label-$index")
       </td>
      </tr>

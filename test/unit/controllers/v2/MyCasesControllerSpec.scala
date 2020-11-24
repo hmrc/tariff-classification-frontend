@@ -71,7 +71,7 @@ class MyCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
     "return 200 OK with the correct subNavigation tab for AssignedToMe" in {
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier])).
-        willReturn(Paged(Seq(Cases.aCase(), Cases.aLiabilityCase())))
+        willReturn(Paged(Seq(Cases.aCase(), Cases.aLiabilityCase().copy(daysElapsed = 35))))
 
       val result = await(controller(Set(Permission.VIEW_MY_CASES)).displayMyCases(AssignedToMeTab)(fakeRequest))
 
@@ -82,7 +82,7 @@ class MyCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
     "return 200 OK with the correct subNavigation tab for ReferredByMe" in {
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier])).
-        willReturn(Paged(Seq(Cases.aCase(), Cases.aCase())))
+        willReturn(Paged(Seq(Cases.aCase(), Cases.aCase().copy(daysElapsed = 35))))
 
       val result = await(controller(Set(Permission.VIEW_MY_CASES)).displayMyCases(ReferredByMeTab)(fakeRequest))
 
@@ -93,7 +93,7 @@ class MyCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
     "return 200 OK with the correct subNavigation tab for CompletedByMe" in {
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier])).
-        willReturn(Paged(Seq(Cases.aCase(), Cases.aCase())))
+        willReturn(Paged(Seq(Cases.aCase(), Cases.liabilityLiveCaseExample)))
 
       val result = await(controller(Set(Permission.VIEW_MY_CASES)).displayMyCases(CompletedByMeTab)(fakeRequest))
 
