@@ -916,9 +916,9 @@ common.cases.secondaryNav.referred=Referred by me
 common.cases.secondaryNav.completed=Completed by me
 
 cases.opencases.atar.heading=ATaR cases
-cases.opencases.liability.heading=Liability
-cases.opencases.correspondence.heading=Correspondence
-cases.opencases.miscellaneous.heading=Miscellaneous
+cases.opencases.liability.heading=Liability cases
+cases.opencases.correspondence.heading=Correspondence cases
+cases.opencases.miscellaneous.heading=Miscellaneous cases
 
 cases.opencases.tab_ACT=ACT
 cases.opencases.tab_CAP=CAP
