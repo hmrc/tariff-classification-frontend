@@ -101,8 +101,8 @@
                             @input_checkbox_group(
                                 field = form("application_type"),
                                 options = Seq(
-                                    CheckOption("BTI", ApplicationType.ATAR.toString, checked = formHasApplicationType(ApplicationType.ATAR)),
-                                    CheckOption("Liability", ApplicationType.LIABILITY.toString, checked = formHasApplicationType(ApplicationType.LIABILITY))
+                                    CheckOption("BTI", ApplicationType.ATAR.name, checked = formHasApplicationType(ApplicationType.ATAR)),
+                                    CheckOption("Liability", ApplicationType.LIABILITY.name, checked = formHasApplicationType(ApplicationType.LIABILITY))
                                 ),
                                 legend = Some("Apply filters"),
                                 submitOnChange = true,
