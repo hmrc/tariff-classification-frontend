@@ -72,8 +72,9 @@ object ApplicationsTab {
     )
   }
 
-  def referredByMe = ApplicationTabViewModel(
-    "applicationTab.referredByMe",
+  def referredByMe(cases: Seq[Case]):  ApplicationTabViewModel = {
+
+   ApplicationTabViewModel( "applicationTab.referredByMe",
     List(
       ApplicationsTab.atar(Paged(Seq(btiCaseExample))),
       ApplicationsTab.liability(),
@@ -81,6 +82,7 @@ object ApplicationsTab {
       ApplicationsTab.miscellaneous()
     )
   )
+}
 
   def completedByMe = ApplicationTabViewModel(
     "applicationTab.completedByMe",

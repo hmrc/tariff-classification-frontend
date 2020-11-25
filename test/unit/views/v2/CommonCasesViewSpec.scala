@@ -24,9 +24,16 @@ import views.html.v2.my_cases_view
 
 class myCasesViewSpec extends ViewSpec {
 
-  val applicationsTab =
+  val assignedToMeCasesTab =
     ApplicationTabViewModel(
-      "message key", ApplicationsTab.assignedToMeCases(Seq(Cases.btiCaseExample, Cases.liabilityCaseExample)).applicationTabs
+      "message key", ApplicationsTab.assignedToMeCases(
+        Seq(Cases.btiCaseExample, Cases.liabilityCaseExample)).applicationTabs
+    )
+
+  val referredByMeCasesTab =
+    ApplicationTabViewModel(
+      "referred by me heading", ApplicationsTab.referredByMe(
+        Seq(Cases.btiCaseExample, Cases.liabilityCaseExample)).applicationTabs
     )
 
   def myCasesView: my_cases_view = injector.instanceOf[my_cases_view]
@@ -34,19 +41,19 @@ class myCasesViewSpec extends ViewSpec {
   "myCasesViewSpec" should {
 
     "render successfully" in {
-      val doc = view(myCasesView(applicationsTab))
+      val doc = view(myCasesView(assignedToMeCasesTab))
 
       doc should containElementWithID("my-cases-tabs")
     }
 
     "contain my_cases_secondary_navigation" in {
-      val doc = view(myCasesView(applicationsTab))
+      val doc = view(myCasesView(assignedToMeCasesTab))
 
       doc should containElementWithID("my-cases-sub-nav")
     }
 
     "contain my cases component" in {
-      val doc = view(myCasesView(applicationsTab))
+      val doc = view(myCasesView(assignedToMeCasesTab))
 
       doc should containElementWithID("atar_tab")
       doc should containElementWithID("liability_tab")
@@ -55,19 +62,19 @@ class myCasesViewSpec extends ViewSpec {
     }
 
     "contain a heading" in {
-      val doc = view(myCasesView(applicationsTab))
+      val doc = view(myCasesView(assignedToMeCasesTab))
 
       doc should containElementWithID("common-cases-heading")
     }
 
     "contain atar table" in {
-      val doc = view(myCasesView(applicationsTab))
+      val doc = view(myCasesView(assignedToMeCasesTab))
 
       doc should containElementWithID("applicationTab.assignedToMe.atar-table")
     }
 
     "contain liabilities table" in {
-      val doc = view(myCasesView(applicationsTab))
+      val doc = view(myCasesView(assignedToMeCasesTab))
 
       doc should containElementWithID("applicationTab.assignedToMe.liability-table")
     }
