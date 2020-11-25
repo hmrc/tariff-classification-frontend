@@ -45,7 +45,7 @@ class MyCasesController @Inject()(
         cases <- casesService.getCasesByAssignee(request.operator, NoPagination())
         myCaseStatuses = activeSubNav match {
           case AssignedToMeTab => ApplicationsTab.assignedToMeCases(cases.results)
-          case ReferredByMeTab => ApplicationsTab.referredByMe
+          case ReferredByMeTab => ApplicationsTab.referredByMe(cases.results)
           case CompletedByMeTab => ApplicationsTab.completedByMe
         }
       } yield Ok(myCasesView(myCaseStatuses))

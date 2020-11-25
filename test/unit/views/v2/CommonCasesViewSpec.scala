@@ -61,6 +61,7 @@ class myCasesViewSpec extends ViewSpec {
       //doc should containElementWithID("misc_tab")
     }
 
+
     "contain a heading" in {
       val doc = view(myCasesView(assignedToMeCasesTab))
 
@@ -70,13 +71,46 @@ class myCasesViewSpec extends ViewSpec {
     "contain atar table" in {
       val doc = view(myCasesView(assignedToMeCasesTab))
 
-      doc should containElementWithID("applicationTab.assignedToMe.atar-table")
+      doc should containElementWithID("applicationTab.atar-table")
     }
 
     "contain liabilities table" in {
       val doc = view(myCasesView(assignedToMeCasesTab))
 
-      doc should containElementWithID("applicationTab.assignedToMe.liability-table")
+      doc should containElementWithID("applicationTab.liability-table")
+    }
+
+    "contain my_cases_secondary_navigation for Referred by me" in {
+      val doc = view(myCasesView(referredByMeCasesTab))
+
+      doc should containElementWithID("my-cases-sub-nav")
+    }
+
+    "contain my cases component for Referred by me" in {
+      val doc = view(myCasesView(referredByMeCasesTab))
+
+      doc should containElementWithID("atar_tab")
+      doc should containElementWithID("liability_tab")
+      //doc should containElementWithID("correspondence_tab")
+      //doc should containElementWithID("misc_tab")
+    }
+
+    "contain a heading for referred by me" in {
+      val doc = view(myCasesView(referredByMeCasesTab))
+
+      doc should containElementWithID("common-cases-heading")
+    }
+
+    "contain atar table in Referred by me" in {
+      val doc = view(myCasesView(referredByMeCasesTab))
+
+      doc should containElementWithID("applicationTab.atar-table")
+    }
+
+    "contain liabilities table in referred by me" in {
+      val doc = view(myCasesView(referredByMeCasesTab))
+
+      doc should containElementWithID("applicationTab.liability-table")
     }
 
     //Uncomment the following tests when the components are implemented

@@ -28,17 +28,17 @@ case class ApplicationTabViewModel(headingMessageKey: String, applicationTabs: L
 object ApplicationsTab {
 
   def atar(searchResult : Paged[Case] = Paged.empty) =
-    ApplicationsTab("applicationTab.assignedToMe.atar",ApplicationType.ATAR, "atar_tab", searchResult)
+    ApplicationsTab("applicationTab.atar",ApplicationType.ATAR, "atar_tab", searchResult)
   def liability(searchResult : Paged[Case] = Paged.empty) =
-    ApplicationsTab("applicationTab.assignedToMe.liability",ApplicationType.LIABILITY, "liability_tab", searchResult)
+    ApplicationsTab("applicationTab.liability",ApplicationType.LIABILITY, "liability_tab", searchResult)
   def correspondence(searchResult : Paged[Case] = Paged.empty) =
-    ApplicationsTab("applicationTab.assignedToMe.correspondence",ApplicationType.CORRESPONDENCE, "correspondence_tab", searchResult)
+    ApplicationsTab("applicationTab.correspondence",ApplicationType.CORRESPONDENCE, "correspondence_tab", searchResult)
   def miscellaneous(searchResult : Paged[Case] = Paged.empty) =
-    ApplicationsTab("applicationTab.assignedToMe.miscellaneous", ApplicationType.MISCELLANEOUS,"miscellaneous_tab", searchResult)
+    ApplicationsTab("applicationTab.miscellaneous", ApplicationType.MISCELLANEOUS,"miscellaneous_tab", searchResult)
 
   val btiCaseExample: Case = Case(
     "1",
-    CaseStatus.OPEN,
+    CaseStatus.REFERRED,
     Instant.now(),
     0,
     None,
@@ -74,10 +74,16 @@ object ApplicationsTab {
 
   def referredByMe(cases: Seq[Case]):  ApplicationTabViewModel = {
 
+    val atars = cases.filter(aCase =>
+      aCase.application.isBTI && aCase.status == CaseStatus.REFERRED)
+
+    val liabilities = cases.filter(aCase =>
+      aCase.application.isLiabilityOrder && aCase.status == CaseStatus.REFERRED)
+
    ApplicationTabViewModel( "applicationTab.referredByMe",
     List(
-      ApplicationsTab.atar(Paged(Seq(btiCaseExample))),
-      ApplicationsTab.liability(),
+      ApplicationsTab.atar(Paged(atars)),
+      ApplicationsTab.liability(Paged(liabilities)),
       ApplicationsTab.correspondence(),
       ApplicationsTab.miscellaneous()
     )
