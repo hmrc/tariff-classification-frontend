@@ -940,4 +940,5 @@ applicationTab.assignedToMe.miscellaneous=Miscellaneous
 applicationTab.assignedToMe = Assigned to me
 applicationTab.referredByMe = Referred by me
 applicationTab.completedByMe = Completed by me
+applicationTab.gateway = Gateway cases
 

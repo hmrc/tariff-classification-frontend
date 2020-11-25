@@ -19,14 +19,19 @@
 
 @(c: Case, id: String)
 
-@if(c.status == CaseStatus.OPEN ) {
         <span class="visuallyhidden">case status</span>
-        <span id="@id-status" class="phase-tag bg-blue">OPEN</span>
+        <span id="@id-status"
+              @if(c.status == CaseStatus.OPEN){
+              class="phase-tag bg-blue"
+              }else if (c.status == CaseStatus.NEW){
+              class="phase-tag bg-green"
+              }
+        >@c.status</span>
         @if(c.isCaseOverdue) {
         <span id="@id-overdue" class="phase-tag bg-red">OVERDUE</span>
         }
 
-    }
+
 
 
 
