@@ -906,6 +906,7 @@ operator.dashboard.classification.all-open-cases.correspondence.list = List of a
 operator.dashboard.classification.all-open-cases.Miscellaneous = Miscellaneous
 operator.dashboard.classification.all-open-cases.miscellaneous.list = List of all open miscellaneous cases
 operator.dashboard.classification.gateway-cases = Create, allocate and manage cases
+operator.dashboard.classification.gateway-cases-total = {0} cases in the Gateway
 
 common.cases.my_cases-title=My cases - Advance Tariff Rulings Case Manager - GOV.UK
 common.cases.open_cases-title=Open cases - Advance Tariff Rulings Case Manager - GOV.UK
