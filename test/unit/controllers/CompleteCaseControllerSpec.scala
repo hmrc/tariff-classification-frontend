@@ -99,7 +99,7 @@ class CompleteCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
           withReference("reference"),
           withStatus(CaseStatus.OPEN),
           withLiabilityApplication(),
-          withDecision()
+          withDecision(bindingCommodityCode = "040900")
         )
         when(casesService.completeCase(refEq(c), any[Operator])(any[HeaderCarrier]))
           .thenReturn(successful(caseWithStatusCOMPLETED))

@@ -68,7 +68,7 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     }
 
     "return 200 OK and HTML content type" in {
-      given(commodityCodeConstraints.commodityCodeExistsInUKTradeTariff)
+      given(commodityCodeConstraints.commodityCodeNumeric)
         .willReturn(Constraint[String]("error")(_ => Valid))
 
       val request = newFakeGETRequestWithCSRF(app)
@@ -143,7 +143,7 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
     "update and redirect to liability view" when {
       "request has permission" in {
-        given(commodityCodeConstraints.commodityCodeExistsInUKTradeTariff)
+        given(commodityCodeConstraints.commodityCodeNumeric)
           .willReturn(Constraint[String]("error")(_ => Valid))
         given(casesService.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(updatedCase))
 

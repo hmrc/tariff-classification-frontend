@@ -257,6 +257,7 @@ error.empty.refer.note=Add a note giving details of why you are referring this c
 error.empty.refer.to=Select who you are referring this case to
 decision_form.error.title=You must finish these sections to complete the case
 decision_form.error.bindingCommodityCode.required=Enter a binding commodity code
+decision_form.error.bindingCommodityCode.numeric=Binding commodity code must be numeric
 decision_form.error.itemDescription.required=Enter an item description
 decision_form.error.legalJustification.required=Enter a legal justification
 decision_form.error.searchesPerformed.required=Enter searches performed

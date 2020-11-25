@@ -98,7 +98,7 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       }
 
       "Case is a Liability" in {
-        given(commodityCodeConstraints.commodityCodeExistsInUKTradeTariff)
+        given(commodityCodeConstraints.commodityCodeNumeric)
           .willReturn(Constraint[String]("error")(_ => Valid))
         val result =
           controller(liabilityCaseWithStatusOPEN).editRulingDetails("reference")(newFakeGETRequestWithCSRF(app))
@@ -109,7 +109,7 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       }
 
       "Case is an Liability under V2 toggle with correct permissions" in {
-        given(commodityCodeConstraints.commodityCodeExistsInUKTradeTariff)
+        given(commodityCodeConstraints.commodityCodeNumeric)
           .willReturn(Constraint[String]("error")(_ => Valid))
         val result = controller(
           liabilityCaseWithStatusOPEN,
@@ -122,7 +122,7 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       }
 
       "Case is an Liability under V2 toggle with incorrect permissions" in {
-        given(commodityCodeConstraints.commodityCodeExistsInUKTradeTariff)
+        given(commodityCodeConstraints.commodityCodeNumeric)
           .willReturn(Constraint[String]("error")(_ => Valid))
         val result = controller(
           liabilityCaseWithStatusOPEN,
@@ -214,7 +214,7 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       }
 
       "Case is a Liability - old liability view" in {
-        given(commodityCodeConstraints.commodityCodeExistsInUKTradeTariff)
+        given(commodityCodeConstraints.commodityCodeNumeric)
           .willReturn(Constraint[String]("error")(_ => Valid))
         given(casesService.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(updatedCase))
 
@@ -240,7 +240,7 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       }
 
       "case is a Liability" in {
-        given(commodityCodeConstraints.commodityCodeExistsInUKTradeTariff)
+        given(commodityCodeConstraints.commodityCodeNumeric)
           .willReturn(Constraint[String]("error")(_ => Valid))
         val result =
           controller(liabilityCaseWithStatusOPEN).updateRulingDetails("reference")(newFakePOSTRequestWithCSRF(app))
