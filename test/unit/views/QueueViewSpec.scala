@@ -34,7 +34,7 @@ class QueueViewSpec extends ViewSpec {
 
       // When
       val doc = view(
-        html.queue(queues, queue1, Map.empty, Paged.empty[Case], "BTI,LIABILITY_ORDER")(
+        html.queue(queues, queue1, Map.empty, Paged.empty[Case], "BTI,LIABILITY")(
           request = requestWithPermissions(Permission.CREATE_CASES),
           messages,
           appConfig
@@ -65,7 +65,7 @@ class QueueViewSpec extends ViewSpec {
       val queues = Seq(queue1, queue2)
 
       val doc = view(
-        html.queue(queues, queue1, Map.empty, Paged.empty[Case], "LIABILITY_ORDER")(
+        html.queue(queues, queue1, Map.empty, Paged.empty[Case], "LIABILITY")(
           request = requestWithPermissions(Permission.CREATE_CASES),
           messages,
           appConfig
