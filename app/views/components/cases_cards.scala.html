@@ -33,10 +33,10 @@
                     <p class="card-body">@messages("operator.dashboard.classification.my-cases.progress", countCases.getOrElse("my-cases", "0"))</p>
                 </div>
             </a>
-            <a id="my-referred-cases-id" class="link-text" href="my-referred-cases">
+            <a id="my-referred-cases-id" class="link-text" href="my-cases?activeSubNav=sub_nav_referred_by_me_tab">
                 <div class="card">
-                    <h3 class="card-heading govuk-heading-s">@messages("operator.dashboard.classification.my-cases.referred-me")</h3>
-                    <div class="card-body"><p>@messages("operator.dashboard.classification.my-cases.referral")</p></div>
+                    <h3 class="card-heading govuk-heading-s">@messages("operator.dashboard.classification.my-cases.referredByMe")</h3>
+                    <div class="card-body"><p>@messages("operator.dashboard.classification.my-cases.onReferralProgress", countCases.getOrElse("my-cases", "0"))</p></div>
                 </div>
             </a>
         </div>
