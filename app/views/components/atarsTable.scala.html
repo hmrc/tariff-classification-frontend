@@ -20,7 +20,7 @@
 
 @import play.twirl.api.TemplateMagic.defining
 @import views.html.v2.case_status_tab
-@(atarTab: ApplicationsTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(atarTab: ApplicationsTab, assignmentType: String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
  <table id="@{atarTab.tabMessageKey}-table">
   <tbody>
@@ -37,6 +37,11 @@
      <th id="@{atarTab.tabMessageKey}-elapsed-days" class="bold w-0">
       Elapsed days
      </th>
+    @if(assignmentType == "applicationTab.referredByMe") {
+     <th id="@{atarTab.tabMessageKey}-refer-days" class="bold w-0">
+      Refer days
+     </th>
+      }
      <th id="@{atarTab.tabMessageKey}-status" class="bold w-0">
       Status
      </th>
@@ -51,6 +56,7 @@
       <td id="@{atarTab.tabMessageKey}-goods-@index">@{atar.goodName}</td>
       <td id="@{atarTab.tabMessageKey}-trader-@index">@{atar.holder.businessName}</td>
       <td id="@{atarTab.tabMessageKey}-elapsed-days-@index" @if(result.isCaseOverdue) {style="color:red"}>@{result.daysElapsed}</td>
+      @if(assignmentType == "applicationTab.referredByMe") {<td id="@{atarTab.tabMessageKey}-refer-days-@index" @if(result.isCaseOverdue) {style="color:red"}>@{result.daysElapsed}</td>}
       <td id="@{atarTab.tabMessageKey}-status-@index">@case_status_tab(result, s"${atarTab.tabMessageKey}-status-label-$index")
       </td>
      </tr>

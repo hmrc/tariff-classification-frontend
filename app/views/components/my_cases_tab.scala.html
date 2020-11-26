@@ -14,8 +14,8 @@
  * limitations under the License.
  *@
 
-@import views.html.components.assignedAtarsTable
-@import views.html.components.assignedLiabilitiesTable
+@import views.html.components.atarsTable
+@import views.html.components.liabilitiesTable
 @import models.request.AuthenticatedRequest
 @import config.AppConfig
 @import models.viewmodels.ApplicationTabViewModel
@@ -38,8 +38,8 @@
    @for(caseTab <- applicationTabViewModel.applicationTabs) {
         <div class="govuk-tabs__panel" id="@caseTab.elementId">
             @{caseTab.applicationType match {
-                case ApplicationType.ATAR => assignedAtarsTable(caseTab)
-                case ApplicationType.LIABILITY => assignedLiabilitiesTable(caseTab)
+                case ApplicationType.ATAR => atarsTable(caseTab, applicationTabViewModel.headingMessageKey)
+                case ApplicationType.LIABILITY => liabilitiesTable(caseTab, applicationTabViewModel.headingMessageKey)
                 case _ => ""
             }
     }

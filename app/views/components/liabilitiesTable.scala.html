@@ -21,7 +21,7 @@
 @import play.twirl.api.TemplateMagic.defining
 @import views.html.v2.case_status_tab
 
-@(liabilityTab: ApplicationsTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(liabilityTab: ApplicationsTab, assignmentType: String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
  <table id="@{liabilityTab.tabMessageKey}-table">
   <tbody>
