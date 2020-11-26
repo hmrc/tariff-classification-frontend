@@ -24,7 +24,9 @@ import views.html.operator_dashboard_classification
 
 class OperatorDashboardClassifcationViewSpec extends ViewSpec {
 
-  val operator_dashboard_calssification = new operator_dashboard_classification()
+  val casesCounted: Map[String, Int] = Map("BTI" -> 2, "Liability" -> 3)
+  val casesReferredByMe = Some(3)
+  val operator_dashboard_classification = new operator_dashboard_classification()
 
   val messageKeyPrefix                 = "accessibility"
   val expectTimeoutDialog              = false
@@ -34,7 +36,7 @@ class OperatorDashboardClassifcationViewSpec extends ViewSpec {
     assert(doc.getElementById(id).attr("href").contains(href))
   }
 
-  def view = () => operator_dashboard_calssification(Map("BTI" -> 2, "Liability" -> 3))
+  def view = () => operator_dashboard_classification(Map("BTI" -> 2, "Liability" -> 3), casesReferredByMe)
 
   protected def normalPage(view: () => HtmlFormat.Appendable, messageKeyPrefix: String, messageHeadingArgs: Any*)(
     expectedGuidanceKeys: String*

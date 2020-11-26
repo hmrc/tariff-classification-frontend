@@ -21,7 +21,7 @@
 @import models.viewmodels.ReferredByMeTab
 
 
-@(countCases: Map[String, Int])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(countCases: Map[String, Int], referredCasesAssignedToMe: Option[Int])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 <div id="dashboard-view"  class="centered-content">
 
@@ -38,7 +38,8 @@
             <a id="my-referred-cases-id" class="link-text" href="@routes.MyCasesController.displayMyCases(ReferredByMeTab)">
                 <div class="card">
                     <h3 class="card-heading govuk-heading-s">@messages("operator.dashboard.classification.my-cases.referredByMe")</h3>
-                    <div class="card-body"><p>@messages("operator.dashboard.classification.my-cases.onReferralProgress", countCases.getOrElse("my-cases", "0"))</p></div>
+                    <div class="card-body"><p>@messages("operator.dashboard.classification.my-cases.onReferralProgress",
+                        referredCasesAssignedToMe.getOrElse(0))</p></div>
                 </div>
             </a>
         </div>
