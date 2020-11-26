@@ -30,7 +30,13 @@
             <a id="my-cases-id" class="link-text" href="my-cases">
                 <div class="card">
                     <h3 class="card-heading govuk-heading-s">@messages("operator.dashboard.classification.my-cases")</h3>
-                    <p class="card-body">@messages("operator.dashboard.classification.my-cases.progress", countCases.getOrElse("my-cases", "0"))</p>
+                    <p class="card-body">
+                        @if(countCases.getOrElse("my-cases", "0") == 1){
+                        @messages("operator.dashboard.classification.my-cases.progress.singular", countCases.getOrElse("my-cases", "0"))
+                        } else {
+                        @messages("operator.dashboard.classification.my-cases.progress.plural", countCases.getOrElse("my-cases", "0"))
+                        }
+                    </p>
                 </div>
             </a>
             <a id="my-referred-cases-id" class="link-text" href="my-referred-cases">

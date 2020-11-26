@@ -37,9 +37,10 @@
 
    @for(caseTab <- applicationTabViewModel.applicationTabs) {
         <div class="govuk-tabs__panel" id="@caseTab.elementId">
-            @{caseTab.applicationType match {
-                case ApplicationType.ATAR => assignedAtarsTable(caseTab)
-                case ApplicationType.LIABILITY => assignedLiabilitiesTable(caseTab)
+            @{(caseTab.applicationType, caseTab.searchResult.results.size) match {
+                case (_, 0) => messages("cases.table.empty")
+                case (ApplicationType.ATAR, _) => assignedAtarsTable(caseTab)
+                case (ApplicationType.LIABILITY, _) => assignedLiabilitiesTable(caseTab)
                 case _ => ""
             }
     }
