@@ -894,9 +894,10 @@ accessibility.howWeTested.p4 = It was last updated on 1 September 2020.
 
 operator.dashboard.classification.title = Classification officer
 operator.dashboard.classification.my-cases = Assigned to me
-operator.dashboard.classification.my-cases.progress = 13 cases currently in progress
+operator.dashboard.classification.my-cases.progress.plural = {0} cases currently in progress
+operator.dashboard.classification.my-cases.progress.singular = {0} case currently in progress
 operator.dashboard.classification.my-cases.referred-me = Referred by me
-operator.dashboard.classification.my-cases.progress = 6 cases on referral
+operator.dashboard.classification.my-cases.referral = 6 cases on referral
 operator.dashboard.classification.all-open-cases = All open cases
 operator.dashboard.classification.all-open-cases.atar = ATaR
 operator.dashboard.classification.all-open-cases.list-all = List of all open ATaR cases
@@ -907,6 +908,8 @@ operator.dashboard.classification.all-open-cases.Miscellaneous = Miscellaneous
 operator.dashboard.classification.all-open-cases.miscellaneous.list = List of all open miscellaneous cases
 operator.dashboard.classification.gateway-cases = Create, allocate and manage cases
 
+common.cases.my_cases-title=My cases - Advance Tariff Rulings Case Manager - GOV.UK
+common.cases.open_cases-title=Open cases - Advance Tariff Rulings Case Manager - GOV.UK
 common.cases.atar.tab_title=ATaR
 common.cases.liability.tab_title=Liability
 common.cases.correspondence.tab_title=Correspondence
@@ -928,3 +931,13 @@ cases.opencases.tab_FLEX=FLEX
 cases.opencases.tab_TTA=TT-A
 cases.opencases.tab_TTB=TT-B
 cases.opencases.tab_TTC=TT-C
+
+applicationTab.assignedToMe.atar=ATaR
+applicationTab.assignedToMe.liability=Liability
+applicationTab.assignedToMe.correspondence=Correspondence
+applicationTab.assignedToMe.miscellaneous=Miscellaneous
+
+applicationTab.assignedToMe = Assigned to me
+applicationTab.referredByMe = Referred by me
+applicationTab.completedByMe = Completed by me
+

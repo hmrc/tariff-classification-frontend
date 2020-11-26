@@ -71,4 +71,10 @@ case class Case(
       case ApplicationType.LIABILITY => sample.returnStatus.contains(SampleReturn.YES)
     }
 
+  def isCaseOverdue: Boolean =
+    (application.isLiveLiabilityOrder) match {
+      case true  if daysElapsed >= 5   => true
+      case false if daysElapsed >= 30  => true
+      case _                           => false
+    }
 }

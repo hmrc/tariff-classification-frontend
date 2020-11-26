@@ -98,6 +98,74 @@ class CaseTest extends ModelsBaseSpec with BeforeAndAfterAll {
 
   }
 
+  "isCaseOverdue" should {
+    "return true if LiveLiability is above the overdue threshold (5 days)" in {
+      val c = aCase(
+        withReference("reference"),
+        withLiabilityApplication(status = LiabilityStatus.LIVE),
+        withSample(Sample(returnStatus = Some(SampleReturn.YES))),
+        withDaysElapsed(6)
+      )
+
+      c.isCaseOverdue shouldBe true
+    }
+
+    "return false if LiveLiability is below the threshold (5 days)" in {
+      val c = aCase(
+        withReference("reference"),
+        withLiabilityApplication(status = LiabilityStatus.LIVE),
+        withSample(Sample(returnStatus = Some(SampleReturn.YES))),
+        withDaysElapsed(3)
+      )
+
+      c.isCaseOverdue shouldBe false
+    }
+
+    "return true if Liability is above the overdue threshold (30 days)" in {
+      val c = aCase(
+        withReference("reference"),
+        withLiabilityApplication(),
+        withSample(Sample(returnStatus = Some(SampleReturn.YES))),
+        withDaysElapsed(30)
+      )
+
+      c.isCaseOverdue shouldBe true
+    }
+
+    "return false if Liability is below the threshold (30 days)" in {
+      val c = aCase(
+        withReference("reference"),
+        withLiabilityApplication(),
+        withSample(Sample(returnStatus = Some(SampleReturn.YES))),
+        withDaysElapsed(20)
+      )
+
+      c.isCaseOverdue shouldBe false
+    }
+
+    "return false if ATaR is below the threshold (30 days)" in {
+      val c = aCase(
+        withReference("reference"),
+        withBTIApplication,
+        withSample(Sample(returnStatus = Some(SampleReturn.YES))),
+        withDaysElapsed(20)
+      )
+
+      c.isCaseOverdue shouldBe false
+    }
+
+    "return true if ATaR is above the threshold (30 days)" in {
+      val c = aCase(
+        withReference("reference"),
+        withBTIApplication,
+        withSample(Sample(returnStatus = Some(SampleReturn.YES))),
+        withDaysElapsed(30)
+      )
+
+      c.isCaseOverdue shouldBe true
+    }
+  }
+
   "findAppeal()" should {
 
     "return appeal when valid id presented" in {

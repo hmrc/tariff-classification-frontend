@@ -50,4 +50,10 @@ case object CorrespondenceTab extends SubNavigationTab("sub_nav_correspondence_t
 
 case object MiscellaneousTab extends SubNavigationTab("sub_nav_miscellaneous_tab")
 
+case object AssignedToMeTab extends SubNavigationTab("sub_nav_assigned_to_me_tab")
+
+case object ReferredByMeTab extends SubNavigationTab("sub_nav_referred_by_me_tab")
+
+case object CompletedByMeTab extends SubNavigationTab("sub_nav_completed_by_me_tab")
+
 case class SubNavigationViewModel(selectedTab: SubNavigationTab)
