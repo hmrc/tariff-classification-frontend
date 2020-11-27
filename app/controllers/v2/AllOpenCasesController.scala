@@ -19,14 +19,19 @@ package controllers.v2
 import com.google.inject.Inject
 import config.AppConfig
 import controllers.{RenderCaseAction, RequestActions}
-import models.Permission
+import models.{NoPagination, Permission}
 import models.viewmodels.{ATaRTab, CasesTabViewModel, CorrespondenceTab, LiabilitiesTab, MiscellaneousTab, SubNavigationTab}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
+import service.{CasesService, QueuesService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class AllOpenCasesController @Inject() (
   verify: RequestActions,
+  casesService: CasesService,
+  queueService: QueuesService,
   mcc: MessagesControllerComponents,
   val openCasesView: views.html.v2.open_cases_view,
   implicit val appConfig: AppConfig
@@ -34,16 +39,18 @@ class AllOpenCasesController @Inject() (
     with I18nSupport {
 
   def displayAllOpenCases(activeSubNav: SubNavigationTab = ATaRTab): Action[AnyContent] = (verify.authenticated
-    andThen verify.mustHave(Permission.VIEW_CASES)) {
+    andThen verify.mustHave(Permission.VIEW_CASES)).async {
     implicit request =>
-      val cases: CasesTabViewModel = activeSubNav match {
-        case ATaRTab => CasesTabViewModel.atar
-        case LiabilitiesTab => CasesTabViewModel.liability
-        case CorrespondenceTab  => CasesTabViewModel.correspondence
-        case MiscellaneousTab => CasesTabViewModel.miscellaneous
-      }
 
-      Ok(openCasesView(cases))
+      for {
+        nonGatewayQueues <- queueService.getNonGateway
+        nonGatewayCases  <- casesService.getCasesByAllQueues(nonGatewayQueues, NoPagination())
+        atarCases: CasesTabViewModel = activeSubNav match {
+          case ATaRTab => CasesTabViewModel.atarCases(nonGatewayCases.results)
+          case LiabilitiesTab => CasesTabViewModel.liability
+          case CorrespondenceTab  => CasesTabViewModel.correspondence
+          case MiscellaneousTab => CasesTabViewModel.miscellaneous
+        }
+      } yield Ok(openCasesView(atarCases))
   }
-
 }
