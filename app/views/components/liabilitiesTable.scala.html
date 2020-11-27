@@ -38,6 +38,11 @@
      <th id="@{liabilityTab.tabMessageKey}-elapsed-days" class="bold w-0">
       Elapsed days
      </th>
+     @if(assignmentType == "applicationTab.referredByMe") {
+     <th id="@{liabilityTab.tabMessageKey}-refer-days" class="bold w-0">
+      Refer days
+     </th>
+     }
      <th id="@{liabilityTab.tabMessageKey}-type" class="bold w-0">
       Type
      </th>
@@ -55,6 +60,7 @@
       <td id="@{liabilityTab.tabMessageKey}-goods-@index" class="pre-wrap">@{liability.goodName}</td>
       <td id="@{liabilityTab.tabMessageKey}-trader-@index" class="pre-wrap">@{liability.traderName}</td>
       <td id="@{liabilityTab.tabMessageKey}-elapsed-days-@index" @if(result.isCaseOverdue) {style="color:red"}>@{result.daysElapsed}</td>
+      @if(assignmentType == "applicationTab.referredByMe") {<td id="@{liabilityTab.tabMessageKey}-refer-days-@index" @if(result.isCaseOverdue) {style="color:red"}>@{result.referredDaysElapsed}</td>}
       <td id="@{liabilityTab.tabMessageKey}-type-@index"> @if(liability.isLiveLiabilityOrder) {
        <span class="live-red-text">@{liability.status}</span>
       }</td>

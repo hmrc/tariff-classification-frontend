@@ -61,28 +61,12 @@ object CasesTabViewModel {
     sampleToBeReturned = false
   )
 
-  val btiCaseExample: Case = Case(
-    "1",
-    CaseStatus.OPEN,
-    Instant.now(),
-    0,
-    None,
-    None,
-    None,
-    btiApplicationExample,
-    None,
-    Seq(),
-    Set.empty,
-    Sample(),
-    Some(Instant.now()),
-    Some(5)
-  )
 
   def atar = CasesTabViewModel(
     "cases.opencases.atar.heading",
     ApplicationType.ATAR,
     List(
-      CasesTab.act(Paged(Seq(btiCaseExample))),
+      CasesTab.act(),
       CasesTab.cars(),
       CasesTab.elm(),
       CasesTab.flex(),

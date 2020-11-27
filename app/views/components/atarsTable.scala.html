@@ -56,7 +56,7 @@
       <td id="@{atarTab.tabMessageKey}-goods-@index">@{atar.goodName}</td>
       <td id="@{atarTab.tabMessageKey}-trader-@index">@{atar.holder.businessName}</td>
       <td id="@{atarTab.tabMessageKey}-elapsed-days-@index" @if(result.isCaseOverdue) {style="color:red"}>@{result.daysElapsed}</td>
-      @if(assignmentType == "applicationTab.referredByMe") {<td id="@{atarTab.tabMessageKey}-refer-days-@index" @if(result.isCaseOverdue) {style="color:red"}>@{result.daysElapsed}</td>}
+      @if(assignmentType == "applicationTab.referredByMe") {<td id="@{atarTab.tabMessageKey}-refer-days-@index" @if(result.isCaseOverdue) {style="color:red"}>@{result.referredDaysElapsed}</td>}
       <td id="@{atarTab.tabMessageKey}-status-@index">@case_status_tab(result, s"${atarTab.tabMessageKey}-status-label-$index")
       </td>
      </tr>
