@@ -21,10 +21,10 @@ import config.AppConfig
 import controllers.RequestActions
 import models.request.AuthenticatedRequest
 import models.viewmodels._
-import models.{NoPagination, Permission}
+import models.{EventType, NoPagination, Permission}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import service.CasesService
+import service.{CasesService, EventsService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -32,6 +32,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class MyCasesController @Inject()(
                                    verify: RequestActions,
                                    casesService: CasesService,
+                                   eventsService: EventsService,
                                    mcc: MessagesControllerComponents,
                                    val myCasesView: views.html.v2.my_cases_view,
                                    implicit val appConfig: AppConfig
@@ -43,9 +44,11 @@ class MyCasesController @Inject()(
 
       for {
         cases <- casesService.getCasesByAssignee(request.operator, NoPagination())
-        myCaseStatuses = activeSubNav match {
+        events = cases.results.map(x => eventsService.getFilteredEvents(x.reference, NoPagination(),
+          Some(Set(EventType.CASE_REFERRAL))))
+        myCaseStatuses <- activeSubNav match {
           case AssignedToMeTab => ApplicationsTab.assignedToMeCases(cases.results)
-          case ReferredByMeTab => ApplicationsTab.referredByMe(cases.results)
+          case ReferredByMeTab => ApplicationsTab.referredByMe(cases.results, events)
           case CompletedByMeTab => ApplicationsTab.completedByMe
         }
       } yield Ok(myCasesView(myCaseStatuses))

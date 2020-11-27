@@ -18,6 +18,8 @@ package models.viewmodels
 
 import models.{CaseStatus, _}
 
+import scala.concurrent.Future
+
 case class ApplicationsTab(tabMessageKey: String, applicationType: ApplicationType, elementId : String,  searchResult: Paged[Case])
 
 case class ApplicationTabViewModel(headingMessageKey: String, applicationTabs: List[ApplicationsTab])
@@ -52,7 +54,7 @@ object ApplicationsTab {
     )
   }
 
-  def referredByMe(cases: Seq[Case]):  ApplicationTabViewModel = {
+  def referredByMe(cases: Seq[Case], events: Paged[Event]):  ApplicationTabViewModel = {
 
     val atars = cases.filter(aCase =>
       aCase.application.isBTI && aCase.status == CaseStatus.REFERRED || aCase.status == CaseStatus.SUSPENDED)
