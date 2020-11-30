@@ -54,8 +54,15 @@ class AllOpenCasesControllerSpec extends ControllerBaseSpec {
 
   override protected def beforeEach(): Unit = {
     given(casesService.getCasesByAllQueues(any[Seq[Queue]], any[Pagination], any[Seq[ApplicationType]])(any[HeaderCarrier]))
-      .willReturn(Paged(Seq(Cases.aCase(), Cases.aCase(), Cases.aLiabilityCase(),
-        Cases.aLiabilityCase().copy(daysElapsed = 35), Cases.liabilityLiveCaseExample, Cases.liabilityLiveCaseExample.copy(daysElapsed = 6))))
+      .willReturn(Paged(
+        Seq(
+          Cases.aCase(),
+          Cases.aLiabilityCase().copy(queueId = Some("3")),
+          Cases.aLiabilityCase().copy(daysElapsed = 35, queueId = Some("3")),
+          Cases.liabilityLiveCaseExample.copy(queueId = Some("3")),
+          Cases.liabilityLiveCaseExample.copy(daysElapsed = 6, queueId = Some("3")))
+        )
+      )
     given(queuesService.getNonGateway).willReturn(Future.successful(queues))
   }
 
