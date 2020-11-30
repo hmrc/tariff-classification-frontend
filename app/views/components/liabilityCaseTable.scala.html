@@ -18,6 +18,8 @@
 @import config.AppConfig
 @import  models.viewmodels.CasesTab
 
+@import play.twirl.api.TemplateMagic.defining
+@import views.html.v2.case_status_tab
 @(caseTab : CasesTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
  <table id="@{caseTab.tabMessageKey}-table">
@@ -42,6 +44,23 @@
       Status
      </th>
     </tr>
+
+   @for((result, index) <- caseTab.searchResult.results.zipWithIndex) {
+
+    @defining(result.application.asLiabilityOrder) { liability =>
+
+     <tr id="@{caseTab.tabMessageKey}-details-@index">
+      <td id="@{caseTab.tabMessageKey}-reference-@index"><a href="@routes.CaseController.get(result.reference)">@{result.reference}</a></td>
+      <td id="@{caseTab.tabMessageKey}-goods-@index" class="pre-wrap">@{liability.goodName}</td>
+      <td id="@{caseTab.tabMessageKey}-trader-@index" class="pre-wrap">@{liability.traderName}</td>
+      <td id="@{caseTab.tabMessageKey}-elapsed-days-@index" @if(result.isCaseOverdue) {style="color:red"}>@{result.daysElapsed}</td>
+      <td id="@{caseTab.tabMessageKey}-type-@index"> @if(liability.isLiveLiabilityOrder) {
+       <span class="live-red-text">@{liability.status}</span>
+      }</td>
+      <td id="@{caseTab.tabMessageKey}-status-@index">@case_status_tab(result, s"${caseTab.tabMessageKey}-status-label-$index")
+      </td>
+     </tr>
+    }
+   }
   </tbody>
  </table>
-

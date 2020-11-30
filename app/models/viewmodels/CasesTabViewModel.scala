@@ -111,6 +111,25 @@ object CasesTabViewModel {
     )
   }
 
+  def liabilityCases(allQueueCases: Seq[Case]): CasesTabViewModel = {
+
+    val actCases = allQueueCases.filter(c => c.queueId.contains(Queues.act.id) && c.application.isLiabilityOrder)
+    val capCases = allQueueCases.filter(c => c.queueId.contains(Queues.cap.id) && c.application.isLiabilityOrder)
+    val carsCases = allQueueCases.filter(c => c.queueId.contains(Queues.cars.id) && c.application.isLiabilityOrder)
+    val elmCases = allQueueCases.filter(c => c.queueId.contains(Queues.elm.id) && c.application.isLiabilityOrder)
+
+    CasesTabViewModel(
+      "cases.opencases.liability.heading",
+      ApplicationType.LIABILITY,
+      List(
+        CasesTab.act(Paged(actCases)),
+        CasesTab.cap(Paged(capCases)),
+        CasesTab.cars(Paged(carsCases)),
+        CasesTab.elm(Paged(elmCases))
+      )
+    )
+  }
+
   def liability = CasesTabViewModel(
     "cases.opencases.liability.heading",
     ApplicationType.LIABILITY,

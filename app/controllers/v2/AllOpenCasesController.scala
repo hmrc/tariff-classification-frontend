@@ -45,12 +45,12 @@ class AllOpenCasesController @Inject() (
       for {
         nonGatewayQueues <- queueService.getNonGateway
         nonGatewayCases  <- casesService.getCasesByAllQueues(nonGatewayQueues, NoPagination())
-        atarCases: CasesTabViewModel = activeSubNav match {
+        openCases: CasesTabViewModel = activeSubNav match {
           case ATaRTab => CasesTabViewModel.atarCases(nonGatewayCases.results)
-          case LiabilitiesTab => CasesTabViewModel.liability
+          case LiabilitiesTab => CasesTabViewModel.liabilityCases(nonGatewayCases.results)
           case CorrespondenceTab  => CasesTabViewModel.correspondence
           case MiscellaneousTab => CasesTabViewModel.miscellaneous
         }
-      } yield Ok(openCasesView(atarCases))
+      } yield Ok(openCasesView(openCases))
   }
 }
