@@ -69,7 +69,7 @@ object ApplicationsTab {
 
     val atars: Seq[Case] = referredCases.filter(_.application.isBTI)
 
-    val liabilities = cases.filter(_.application.isLiabilityOrder)
+    val liabilities = referredCases.filter(_.application.isLiabilityOrder)
 
 
     ApplicationTabViewModel(
