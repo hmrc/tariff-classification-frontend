@@ -28,7 +28,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 class AllOpenCasesController @Inject() (
   verify: RequestActions,
   mcc: MessagesControllerComponents,
-  val commonAllOpenCasesView: views.html.v2.common_all_open_cases_view,
+  val openCasesView: views.html.v2.open_cases_view,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
     with I18nSupport {
@@ -43,7 +43,7 @@ class AllOpenCasesController @Inject() (
         case MiscellaneousTab => CasesTabViewModel.miscellaneous
       }
 
-      Ok(commonAllOpenCasesView("the tab header", cases))
+      Ok(openCasesView(cases))
   }
 
 }

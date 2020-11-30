@@ -32,14 +32,14 @@
                         @if(selectedTab == HomeTab) {
                         <a id ="primary_nav_home_tab" class="moj-primary-navigation__link"  aria-current="page" href="#">Home</a>
                         } else {
-                        <a id ="primary_nav_home_tab" class="moj-primary-navigation__link"  href="#">Home</a>
+                        <a id ="primary_nav_home_tab" class="moj-primary-navigation__link"  href="@controllers.routes.OperatorDashboardController.onPageLoad">Home</a>
                         }
                     </li>
                     <li class="moj-primary-navigation__item">
                         @if(selectedTab == MyCasesTab) {
                         <a id="primary_nav_my_cases_tab" class="moj-primary-navigation__link" aria-current="page" href="#">My cases</a>
                         } else {
-                        <a id="primary_nav_my_cases_tab" class="moj-primary-navigation__link" href="#">My cases</a>
+                        <a id="primary_nav_my_cases_tab" class="moj-primary-navigation__link" href="@routes.MyCasesController.displayMyCases()">My cases</a>
                         }
                     </li>
                     <li class="moj-primary-navigation__item">

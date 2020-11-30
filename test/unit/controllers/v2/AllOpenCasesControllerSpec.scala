@@ -16,27 +16,24 @@
 
 package controllers.v2
 
-import controllers.{ControllerBaseSpec, RequestActionsWithPermissions, SuccessfulRequestActions}
-import models.viewmodels.ATaRTab
-import models.viewmodels.LiabilitiesTab
-import models.viewmodels.CorrespondenceTab
-import models.viewmodels.MiscellaneousTab
+import controllers.{ControllerBaseSpec, RequestActionsWithPermissions}
 import models.Permission
+import models.viewmodels.{ATaRTab, CorrespondenceTab, LiabilitiesTab, MiscellaneousTab}
 import play.api.http.Status
 import play.api.test.Helpers._
-import views.html.v2.common_all_open_cases_view
+import views.html.v2.open_cases_view
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class AllOpenCasesControllerSpec extends ControllerBaseSpec {
 
-  private lazy val all_open_cases_view = injector.instanceOf[common_all_open_cases_view]
+  private lazy val open_cases_view = injector.instanceOf[open_cases_view]
 
 
   private def controller(permission: Set[Permission]) = new AllOpenCasesController(
     new RequestActionsWithPermissions(playBodyParsers, permission, addViewCasePermission = false),
     mcc,
-    all_open_cases_view,
+    open_cases_view,
     realAppConfig
   )
 

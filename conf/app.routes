@@ -139,6 +139,7 @@ GET        /accessibility                                       controllers.Acce
 
 GET        /operator-dashboard-classification                   controllers.OperatorDashboardController.onPageLoad
 
-GET        /all-open-cases                                      controllers.v2.AllOpenCasesController.displayAllOpenCases(activeSubNav: SubNavigationTab ?= ATaRTab)
 
-GET        /my-cases                                            controllers.v2.CommonCasesController.displayCommonCases
+GET        /my-cases                                            controllers.v2.MyCasesController.displayMyCases(activeSubNav: SubNavigationTab ?= AssignedToMeTab)
+
+GET        /all-open-cases                                      controllers.v2.AllOpenCasesController.displayAllOpenCases(activeSubNav: SubNavigationTab ?= ATaRTab)

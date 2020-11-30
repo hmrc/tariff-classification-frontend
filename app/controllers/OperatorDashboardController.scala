@@ -18,21 +18,29 @@ package controllers
 
 import config.AppConfig
 import javax.inject.Inject
+import models.Permission
 import models.request.AuthenticatedRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import service.CasesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-class OperatorDashboardController @Inject() (
-  authenticate: AuthenticatedAction,
-  mcc: MessagesControllerComponents,
-  operator_dashboard_classification: views.html.operator_dashboard_classification,
-  implicit val appConfig: AppConfig
-) extends FrontendController(mcc)
-    with I18nSupport {
+import scala.concurrent.ExecutionContext.Implicits.global
 
-  def onPageLoad: Action[AnyContent] = authenticate { implicit request: AuthenticatedRequest[AnyContent] =>
+class OperatorDashboardController @Inject()(
+                                             verify: RequestActions,
+                                             casesService: CasesService,
+                                             mcc: MessagesControllerComponents,
+                                             operator_dashboard_classification: views.html.operator_dashboard_classification,
+                                             implicit val appConfig: AppConfig
+                                           ) extends FrontendController(mcc) with I18nSupport {
 
-    Ok(operator_dashboard_classification())
+  def onPageLoad: Action[AnyContent] = (verify.authenticated andThen verify.mustHave(Permission.VIEW_MY_CASES)).async {
+    implicit request: AuthenticatedRequest[AnyContent] =>
+      for {
+        countQueues: Map[String, Int] <- casesService.countCasesByQueue(request.operator)
+      } yield Ok(operator_dashboard_classification(countQueues))
   }
+
+
 }

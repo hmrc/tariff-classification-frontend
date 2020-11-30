@@ -14,21 +14,19 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
-@import models.request.AuthenticatedRequest
-@import models.viewmodels.{CasesTabViewModel, OpenCasesTab}
-@import views.html.components.{cases_tab, open_cases_secondary_navigation, primary_navigation}
-@import views.html.includes.main
+@import models.CaseStatus.OPEN
+@import models.{CancelReason, Case, CaseStatus}
+
+@(c: Case, id: String)
+
+@if(c.status == CaseStatus.OPEN ) {
+        <span class="visuallyhidden">case status</span>
+        <span id="@id-status" class="phase-tag bg-blue">OPEN</span>
+        @if(c.isCaseOverdue) {
+        <span id="@id-overdue" class="phase-tag bg-red">OVERDUE</span>
+        }
+
+    }
 
 
-@this()
 
-@(title: String, cases : CasesTabViewModel)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
-
-@main(bodyClasses = None, customTitle = Some(messages(title))) {
-
-    @primary_navigation(OpenCasesTab)
-    @open_cases_secondary_navigation()
-    @cases_tab(cases)
-
-}

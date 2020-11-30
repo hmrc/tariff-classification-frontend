@@ -34,7 +34,7 @@ class OperatorDashboardClassifcationViewSpec extends ViewSpec {
     assert(doc.getElementById(id).attr("href").contains(href))
   }
 
-  def view = () => operator_dashboard_calssification()
+  def view = () => operator_dashboard_calssification(Map("BTI" -> 2, "Liability" -> 3))
 
   protected def normalPage(view: () => HtmlFormat.Appendable, messageKeyPrefix: String, messageHeadingArgs: Any*)(
     expectedGuidanceKeys: String*

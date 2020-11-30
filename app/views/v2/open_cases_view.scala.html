@@ -14,30 +14,21 @@
  * limitations under the License.
  *@
 
-@import models.request.AuthenticatedRequest
 @import config.AppConfig
+@import models.request.AuthenticatedRequest
+@import models.viewmodels.{CasesTabViewModel, OpenCasesTab}
+@import views.html.components.{cases_tab, open_cases_secondary_navigation, primary_navigation}
+@import views.html.includes.main
 
-@()(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
- <table id="atars">
-  <tbody>
-    <tr id="atar-details" class="grid-row mb-2">
-     <th id="atar-reference" class="bold w-40">
-     Reference
-     </th>
-     <th id="atar-goods" class="bold w-40">
-      Goods
-     </th>
-     <th id="atar-trader" class="bold w-40">
-      Trader
-     </th>
-     <th id="atar-elapsed-days" class="bold w-40">
-      Elapsed days
-     </th>
-     <th id="atar-status" class="bold w-40">
-      Status
-     </th>
-    </tr>
-  </tbody>
- </table>
+@this()
 
+@(cases : CasesTabViewModel)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+
+@main(bodyClasses = None, customTitle = Some(messages("common.cases.open_cases-title"))) {
+
+    @primary_navigation(OpenCasesTab)
+    @open_cases_secondary_navigation()
+    @cases_tab(cases)
+
+}
