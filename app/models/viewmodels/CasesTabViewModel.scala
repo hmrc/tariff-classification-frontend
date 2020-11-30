@@ -16,9 +16,8 @@
 
 package models.viewmodels
 
-import java.time.Instant
 
-import models.{ApplicationType, BTIApplication, Case, CaseStatus, Contact, EORIDetails, Paged, Sample}
+import models.{ApplicationType, Case, Paged}
 
 case class CasesTab(tabMessageKey: String, elementId : String,  searchResult: Paged[Case])
 
@@ -38,29 +37,6 @@ object CasesTab {
 }
 
 object CasesTabViewModel {
-  val contactExample: Contact = Contact("name", "email", Some("phone"))
-
-  val eoriDetailsExample: EORIDetails =
-    EORIDetails("eori", "trader-business-name", "line1", "line2", "line3", "postcode", "country")
-
-  val btiApplicationExample: BTIApplication = BTIApplication(
-    eoriDetailsExample,
-    contactExample,
-    None,
-    offline = false,
-    "Laptop",
-    "Personal Computer",
-    None,
-    None,
-    None,
-    None,
-    Nil,
-    None,
-    None,
-    sampleToBeProvided = false,
-    sampleToBeReturned = false
-  )
-
 
   def atar = CasesTabViewModel(
     "cases.opencases.atar.heading",

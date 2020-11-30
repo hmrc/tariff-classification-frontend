@@ -25,7 +25,7 @@ import views.html.operator_dashboard_classification
 class OperatorDashboardClassifcationViewSpec extends ViewSpec {
 
   val casesCounted: Map[String, Int] = Map("BTI" -> 2, "Liability" -> 3)
-  val casesReferredByMe = Some(3)
+  val casesReferredByMe = 3
   val operator_dashboard_classification = new operator_dashboard_classification()
 
   val messageKeyPrefix                 = "accessibility"

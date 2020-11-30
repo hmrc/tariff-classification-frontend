@@ -59,8 +59,7 @@
       @if(assignmentType == "applicationTab.referredByMe") {<td id="@{atarTab.tabMessageKey}-refer-days-@index" @if(result.isCaseOverdue) {style="color:red"}>@{result.referredDaysElapsed}</td>}
       <td id="@{atarTab.tabMessageKey}-status-@index">@case_status_tab(result, s"${atarTab.tabMessageKey}-status-label-$index")
        @for(referralEvent <- atarTab.referralEvent.flatMap(_.get(result.reference))) {
-         @referralEvent.referredTo
-         @referralEvent.comment
+       <span id="@{atarTab.tabMessageKey}-status-refer-to-@index">@referralEvent.referredTo</span>
        }
       </td>
      </tr>

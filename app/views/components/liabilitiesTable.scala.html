@@ -65,11 +65,14 @@
        <span class="live-red-text">@{liability.status}</span>
       }</td>
       <td id="@{liabilityTab.tabMessageKey}-status-@index">@case_status_tab(result, s"${liabilityTab.tabMessageKey}-status-label-$index")
+       @for(referralEvent <- liabilityTab.referralEvent.flatMap(_.get(result.reference))) {
+       <span id="@{liabilityTab.tabMessageKey}-status-refer-to-@index"> @referralEvent.referredTo</span>
+        }
       </td>
      </tr>
     }
 
-   }
+    }
   </tbody>
  </table>
 

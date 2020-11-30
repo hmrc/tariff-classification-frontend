@@ -16,13 +16,22 @@
 
 package views.v2
 
+import models.{CaseStatus, ReferralCaseStatusChange, ReferralReason}
 import models.viewmodels.{ApplicationTabViewModel, ApplicationsTab}
 import utils.Cases
 import views.ViewMatchers.containElementWithID
 import views.ViewSpec
 import views.html.v2.my_cases_view
 
-class myCasesViewSpec extends ViewSpec {
+class MyCasesViewSpec extends ViewSpec {
+
+  val referredEvents : Map[String, ReferralCaseStatusChange] =
+
+    Map("1" -> ReferralCaseStatusChange(CaseStatus.OPEN, Some("some comment"), None, "Laboratory analyst" , Seq(ReferralReason.REQUEST_MORE_INFO)),
+      ("2" -> ReferralCaseStatusChange(CaseStatus.OPEN, Some("another comment"), None, "Trader" , Seq(ReferralReason.REQUEST_SAMPLE))
+    ))
+
+
 
   val assignedToMeCasesTab =
     ApplicationTabViewModel(
@@ -33,7 +42,9 @@ class myCasesViewSpec extends ViewSpec {
   val referredByMeCasesTab =
     ApplicationTabViewModel(
       "referred by me heading", ApplicationsTab.referredByMe(
-        Seq(Cases.btiCaseExample, Cases.liabilityCaseExample)).applicationTabs
+        Seq(Cases.btiCaseExample.copy(status = CaseStatus.REFERRED),
+          Cases.liabilityCaseExample.copy(reference = "2", status = CaseStatus.REFERRED)
+        ), referredEvents).applicationTabs
     )
 
   def myCasesView: my_cases_view = injector.instanceOf[my_cases_view]
@@ -112,6 +123,40 @@ class myCasesViewSpec extends ViewSpec {
 
       doc should containElementWithID("applicationTab.liability-table")
     }
+
+    "contain a referral event in  liabilities tab for ReferredbyMe" in {
+
+      val doc = view(myCasesView(referredByMeCasesTab))
+
+      doc should containElementWithID("applicationTab.liability-status-label-0-status")
+
+    }
+
+    "contain a referral event in  atar tab for ReferredbyMe" in {
+
+      val doc = view(myCasesView(referredByMeCasesTab))
+
+      doc should containElementWithID("applicationTab.atar-status-label-0-status")
+
+    }
+
+    "contain referral reason in  atar tab for ReferredbyMe" in {
+
+      val doc = view(myCasesView(referredByMeCasesTab))
+
+      doc.getElementById("applicationTab.atar-status-refer-to-0").text shouldBe ("Laboratory analyst")
+
+    }
+
+    "contain referral reason in  liability tab for ReferredbyMe" in {
+
+      val doc = view(myCasesView(referredByMeCasesTab))
+
+      doc.getElementById("applicationTab.liability-status-refer-to-0").text shouldBe ("Trader")
+
+    }
+
+
 
     //Uncomment the following tests when the components are implemented
 

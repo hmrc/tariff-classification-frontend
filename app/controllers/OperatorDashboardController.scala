@@ -40,10 +40,9 @@ class OperatorDashboardController @Inject()(
       for {
         cases: Paged[Case] <- casesService.getCasesByAssignee(request.operator, NoPagination())
         countQueues: Map[String, Int] <- casesService.countCasesByQueue(request.operator)
-        referredCasesByAssignee: Option[Int] = Some(cases.results.count(
-          c => c.status == CaseStatus.REFERRED || c.status == CaseStatus.SUSPENDED))
+        referredCasesByAssignee = cases.results.count(
+          c => c.status == CaseStatus.REFERRED || c.status == CaseStatus.SUSPENDED)
       } yield Ok(operator_dashboard_classification(countQueues, referredCasesByAssignee))
   }
-
 
 }
