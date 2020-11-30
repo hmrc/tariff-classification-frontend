@@ -894,7 +894,8 @@ accessibility.howWeTested.p4 = It was last updated on 1 September 2020.
 
 operator.dashboard.classification.title = Classification officer
 operator.dashboard.classification.my-cases = Assigned to me
-operator.dashboard.classification.my-cases.progress = {0} cases currently in progress
+operator.dashboard.classification.my-cases.progress.plural = {0} cases currently in progress
+operator.dashboard.classification.my-cases.progress.singular = {0} case currently in progress
 operator.dashboard.classification.my-cases.referred-me = Referred by me
 operator.dashboard.classification.my-cases.referral = 6 cases on referral
 operator.dashboard.classification.all-open-cases = All open cases
@@ -919,9 +920,9 @@ common.cases.secondaryNav.referred=Referred by me
 common.cases.secondaryNav.completed=Completed by me
 
 cases.opencases.atar.heading=ATaR cases
-cases.opencases.liability.heading=Liability
-cases.opencases.correspondence.heading=Correspondence
-cases.opencases.miscellaneous.heading=Miscellaneous
+cases.opencases.liability.heading=Liability cases
+cases.opencases.correspondence.heading=Correspondence cases
+cases.opencases.miscellaneous.heading=Miscellaneous cases
 
 cases.opencases.tab_ACT=ACT
 cases.opencases.tab_CAP=CAP
