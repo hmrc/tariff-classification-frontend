@@ -80,8 +80,13 @@
             <a id="gateway-cases-id" class="link-text" href="gateway-cases">
                 <div class="card">
                     <h3 class="card-heading govuk-heading-s">@messages("page.title.case.queues.gateway")</h3>
-                    <p class="card-body card-action">@messages("operator.dashboard.classification.gateway-cases-total", {countCases.getOrElse(s"-${ApplicationType.ATAR.name}", 0)+countCases.getOrElse(s"-${ApplicationType.LIABILITY.name}", 0)})</p>
-
+                        <p class="card-body card-action">
+                            @if(countCases.getOrElse(s"-${ApplicationType.ATAR.name}", 0)+countCases.getOrElse(s"-${ApplicationType.LIABILITY.name}", 0) == 1){
+                                @messages("operator.dashboard.classification.gateway-cases-total.singular", countCases.getOrElse(s"-${ApplicationType.ATAR.name}", 0)+countCases.getOrElse(s"-${ApplicationType.LIABILITY.name}", 0))
+                            } else {
+                                @messages("operator.dashboard.classification.gateway-cases-total.plural", countCases.getOrElse(s"-${ApplicationType.ATAR.name}", 0)+countCases.getOrElse(s"-${ApplicationType.LIABILITY.name}", 0))
+                            }
+                        </p>
                 </div>
             </a>
         </div>
