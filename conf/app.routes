@@ -143,3 +143,4 @@ GET        /operator-dashboard-classification                   controllers.Oper
 GET        /my-cases                                            controllers.v2.MyCasesController.displayMyCases(activeSubNav: SubNavigationTab ?= AssignedToMeTab)
 
 GET        /all-open-cases                                      controllers.v2.AllOpenCasesController.displayAllOpenCases(activeSubNav: SubNavigationTab ?= ATaRTab)
+GET        /all-open-cases                                      controllers.v2.AllOpenCasesController.displayAllOpenCases(activeSubNav: SubNavigationTab ?= ATaRTab)
