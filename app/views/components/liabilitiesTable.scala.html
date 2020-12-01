@@ -59,7 +59,7 @@
       <td id="@{liabilityTab.tabMessageKey}-reference-@index"><a href="@routes.CaseController.get(result.reference)">@{result.reference}</a></td>
       <td id="@{liabilityTab.tabMessageKey}-goods-@index" class="pre-wrap">@{liability.goodName}</td>
       <td id="@{liabilityTab.tabMessageKey}-trader-@index" class="pre-wrap">@{liability.traderName}</td>
-      <td id="@{liabilityTab.tabMessageKey}-elapsed-days-@index" @if(result.isCaseOverdue) {style="color:red"}>@{result.daysElapsed}</td>
+      <td id="@{liabilityTab.tabMessageKey}-elapsed-days-@index" @if(result.isCaseOverdue) {class="live-red-text"}>@{result.daysElapsed}</td>
       @if(assignmentType == "applicationTab.referredByMe") {<td id="@{liabilityTab.tabMessageKey}-refer-days-@index">@{result.referredDaysElapsed}</td>}
       <td id="@{liabilityTab.tabMessageKey}-type-@index"> @if(liability.isLiveLiabilityOrder) {
        <span class="live-red-text">@{liability.status}</span>

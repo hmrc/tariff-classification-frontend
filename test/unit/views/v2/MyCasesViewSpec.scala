@@ -19,32 +19,58 @@ package views.v2
 import models.{CaseStatus, ReferralCaseStatusChange, ReferralReason}
 import models.viewmodels.{ApplicationTabViewModel, ApplicationsTab}
 import utils.Cases
-import views.ViewMatchers.containElementWithID
+import views.ViewMatchers.{containElementWithID, haveClass}
 import views.ViewSpec
 import views.html.v2.my_cases_view
 
 class MyCasesViewSpec extends ViewSpec {
 
-  val referredEvents : Map[String, ReferralCaseStatusChange] =
-
-    Map("1" -> ReferralCaseStatusChange(CaseStatus.OPEN, Some("some comment"), None, "Laboratory analyst" , Seq(ReferralReason.REQUEST_MORE_INFO)),
-      ("2" -> ReferralCaseStatusChange(CaseStatus.OPEN, Some("another comment"), None, "Trader" , Seq(ReferralReason.REQUEST_SAMPLE))
-    ))
-
-
+  val referredEvents: Map[String, ReferralCaseStatusChange] =
+    Map(
+      "1" -> ReferralCaseStatusChange(
+        CaseStatus.OPEN,
+        Some("some comment"),
+        None,
+        "Laboratory analyst",
+        Seq(ReferralReason.REQUEST_MORE_INFO)
+      ),
+      "2" -> ReferralCaseStatusChange(
+        CaseStatus.OPEN,
+        Some("another comment"),
+        None,
+        "Trader",
+        Seq(ReferralReason.REQUEST_SAMPLE)
+      ),
+      "4" -> ReferralCaseStatusChange(
+        CaseStatus.OPEN,
+        Some("another comment"),
+        None,
+        "Other reason",
+        Seq(ReferralReason.REQUEST_MORE_INFO)
+      )
+    )
 
   val assignedToMeCasesTab =
     ApplicationTabViewModel(
-      "message key", ApplicationsTab.assignedToMeCases(
-        Seq(Cases.btiCaseExample, Cases.liabilityCaseExample)).applicationTabs
+      "message key",
+      ApplicationsTab.assignedToMeCases(Seq(Cases.btiCaseExample, Cases.liabilityCaseExample)).applicationTabs
     )
 
   val referredByMeCasesTab =
     ApplicationTabViewModel(
-      "referred by me heading", ApplicationsTab.referredByMe(
-        Seq(Cases.btiCaseExample.copy(status = CaseStatus.REFERRED),
-          Cases.liabilityCaseExample.copy(reference = "2", status = CaseStatus.REFERRED)
-        ), referredEvents).applicationTabs
+      "applicationTab.referredByMe",
+      ApplicationsTab
+        .referredByMe(
+          Seq(
+            Cases.btiCaseExample.copy(status          = CaseStatus.REFERRED),
+            Cases.liabilityCaseExample.copy(reference = "2", status = CaseStatus.REFERRED, referredDaysElapsed = 65),
+            Cases.btiCaseExample.copy(reference       = "3", status = CaseStatus.SUSPENDED, daysElapsed = 30),
+            Cases.newLiabilityLiveCaseExample
+              .copy(reference = "4", status = CaseStatus.REFERRED, daysElapsed = 5, referredDaysElapsed = 6)
+          ),
+          referredEvents
+        )
+        .applicationTabs
     )
 
   def myCasesView: my_cases_view = injector.instanceOf[my_cases_view]
@@ -71,7 +97,6 @@ class MyCasesViewSpec extends ViewSpec {
       //doc should containElementWithID("correspondence_tab")
       //doc should containElementWithID("misc_tab")
     }
-
 
     "contain a heading" in {
       val doc = view(myCasesView(assignedToMeCasesTab))
@@ -153,11 +178,13 @@ class MyCasesViewSpec extends ViewSpec {
       val doc = view(myCasesView(referredByMeCasesTab))
 
       doc.getElementById("applicationTab.liability-status-refer-to-0").text shouldBe ("Trader")
+      doc.getElementById("applicationTab.atar-status-label-1-overdue").text shouldBe "OVERDUE"
+      doc.getElementById("applicationTab.atar-elapsed-days-1")              should haveClass("live-red-text")
+      doc.getElementById("applicationTab.liability-refer-days-0").text      shouldBe "65"
+      doc.getElementById("applicationTab.liability-type-1").text            should include("LIVE")
+      doc.getElementById("applicationTab.liability-status-1").text          should include("Other reason")
 
     }
-
-
-
     //Uncomment the following tests when the components are implemented
 
     /*"contain liabilities correspondence" in {
