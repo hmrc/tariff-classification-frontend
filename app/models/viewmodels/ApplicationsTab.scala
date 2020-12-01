@@ -91,6 +91,25 @@ object ApplicationsTab {
       ApplicationsTab.miscellaneous()
     )
   )
+
+  def gateway(cases: Seq[Case]) = {
+    val atars = cases.filter(aCase =>
+      aCase.application.isBTI && aCase.status == CaseStatus.NEW)
+
+    val liabilities = cases.filter(aCase =>
+      aCase.application.isLiabilityOrder && aCase.status == CaseStatus.NEW)
+
+    ApplicationTabViewModel(
+      "applicationTab.gateway",
+      List(
+        ApplicationsTab.atar(Paged(atars)),
+        ApplicationsTab.liability(Paged(liabilities)),
+        ApplicationsTab.correspondence(),
+        ApplicationsTab.miscellaneous()
+      )
+    )
+  }
+
 }
 
 
