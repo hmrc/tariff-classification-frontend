@@ -57,9 +57,10 @@
       <td id="@{atarTab.tabMessageKey}-trader-@index">@{atar.holder.businessName}</td>
       <td id="@{atarTab.tabMessageKey}-elapsed-days-@index" @if(result.isCaseOverdue) {class="live-red-text"}>@{result.daysElapsed}</td>
       @if(assignmentType == "applicationTab.referredByMe") {<td id="@{atarTab.tabMessageKey}-refer-days-@index">@{result.referredDaysElapsed}</td>}
-      <td id="@{atarTab.tabMessageKey}-status-@index">@case_status_tab(result, s"${atarTab.tabMessageKey}-status-label-$index")
+      <td id="@{atarTab.tabMessageKey}-status-@index">
+       @case_status_tab(result, s"${atarTab.tabMessageKey}-status-label-$index")
        @for(referralEvent <- atarTab.referralEvent.flatMap(_.get(result.reference))) {
-       <span id="@{atarTab.tabMessageKey}-status-refer-to-@index">@referralEvent.referredTo</span>
+        <span id="@{atarTab.tabMessageKey}-status-refer-to-@index"> <p>@{referralEvent.referredTo}</p></span>
        }
       </td>
      </tr>
