@@ -17,6 +17,8 @@
 @import config.AppConfig
 @import models.request.AuthenticatedRequest
 @import views.html.includes.main
+@import controllers.v2.routes.AllOpenCasesController
+@import models.viewmodels.{ATaRTab, LiabilitiesTab}
 
 
 @(countCases: Map[String, Int])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
@@ -49,13 +51,13 @@
 
         <h2 class="heading-medium mt-0">@messages("operator.dashboard.classification.all-open-cases")</h2>
         <div class="flex-container govuk-grid-row">
-            <a id="bti-cases-id" class="link-text" href="bti-cases">
+            <a id="bti-cases-id" class="link-text" href="@AllOpenCasesController.displayAllOpenCases(ATaRTab)">
                 <div class="card">
                     <h3 class="card-heading govuk-heading-s">@messages("operator.dashboard.classification.all-open-cases.atar")</h3>
                     <p class="card-body">@messages("operator.dashboard.classification.all-open-cases.list-all")</p>
                 </div>
             </a>
-            <a id="liability-cases-id" class="link-text" href="liability-cases">
+            <a id="liability-cases-id" class="link-text" href="@AllOpenCasesController.displayAllOpenCases(LiabilitiesTab)">
                 <div class="card">
                     <h3 class="card-heading govuk-heading-s">@messages("case.menu.liability")</h3>
                     <p class="card-body">@messages("operator.dashboard.classification.all-open-cases.liability")</p>

@@ -18,7 +18,7 @@ package models.viewmodels
 
 import java.time.Instant
 
-import models.{ApplicationType, BTIApplication, Case, CaseStatus, Contact, EORIDetails, Paged, Sample}
+import models._
 
 case class CasesTab(tabMessageKey: String, elementId : String,  searchResult: Paged[Case])
 
@@ -91,6 +91,25 @@ object CasesTabViewModel {
       CasesTab.ttc()
     )
   )
+
+  def atarCases(allQueueCases: Seq[Case]): CasesTabViewModel = {
+
+    val actCases = allQueueCases.filter(c => c.queueId.contains(Queues.act.id) && c.application.isBTI)
+    val capCases = allQueueCases.filter(c => c.queueId.contains(Queues.cap.id) && c.application.isBTI)
+    val carsCases = allQueueCases.filter(c => c.queueId.contains(Queues.cars.id) && c.application.isBTI)
+    val elmCases = allQueueCases.filter(c => c.queueId.contains(Queues.elm.id) && c.application.isBTI)
+
+    CasesTabViewModel(
+      "cases.opencases.atar.heading",
+      ApplicationType.ATAR,
+      List(
+        CasesTab.act(Paged(actCases)),
+        CasesTab.cap(Paged(capCases)),
+        CasesTab.cars(Paged(carsCases)),
+        CasesTab.elm(Paged(elmCases))
+      )
+    )
+  }
 
   def liability = CasesTabViewModel(
     "cases.opencases.liability.heading",

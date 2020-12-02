@@ -73,6 +73,16 @@ class CasesServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
 
   }
 
+  "Get Cases 'By All Queues'" should {
+    "retrieve connector cases" in {
+      given(connector.findCasesByAllQueues(any[Seq[Queue]], any[Pagination], any[Seq[ApplicationType]])(any[HeaderCarrier])) willReturn successful(
+        Paged(manyCases)
+      )
+
+      await(service.getCasesByAllQueues(Seq(queue), pagination)) shouldBe Paged(manyCases)
+    }
+  }
+
   "Get Cases 'By Assignee'" should {
     "retrieve connector cases" in {
       given(connector.findCasesByAssignee(refEq(Operator("assignee")), refEq(pagination))(any[HeaderCarrier])) willReturn successful(

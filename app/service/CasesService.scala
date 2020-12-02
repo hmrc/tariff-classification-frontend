@@ -306,12 +306,21 @@ class CasesService @Inject() (
   def search(search: Search, sort: Sort, pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[Case]] =
     connector.search(search, sort, pagination)
 
+
   def getCasesByQueue(
     queue: Queue,
     pagination: Pagination,
     forTypes: Seq[ApplicationType] = Seq(ApplicationType.ATAR, ApplicationType.LIABILITY)
   )(implicit hc: HeaderCarrier): Future[Paged[Case]] =
     connector.findCasesByQueue(queue, pagination, forTypes)
+
+  def getCasesByAllQueues(
+                       queue: Seq[Queue],
+                       pagination: Pagination,
+                       forTypes: Seq[ApplicationType] = Seq(ApplicationType.ATAR, ApplicationType.LIABILITY)
+                     )(implicit hc: HeaderCarrier): Future[Paged[Case]] =
+    connector.findCasesByAllQueues(queue, pagination, forTypes)
+
 
   def countCasesByQueue(operator: Operator)(implicit hc: HeaderCarrier): Future[Map[String, Int]] =
     for {
