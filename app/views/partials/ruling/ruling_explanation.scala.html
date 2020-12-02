@@ -26,13 +26,20 @@
 
 @if(c.decision.isDefined) {
     @defining(c.decision.get) { d: Decision =>
+
+<div class="grid-row">
+    <div class="column-full">
         <h3 class="heading-medium">@messages("case.decision.holder.information")</h3>
+    </div>
+</div>
+<dl class="govuk-check-your-answers cya-questions-short">
+
         <div class="grid-row" id="information-for-holder">
             @if(d.explanation.exists(_.trim.nonEmpty)) {
-            <dt class="column-one-third">
+            <dt class="cya-question">
                 @messages("case.decision.explanation.label")
             </dt>
-            <dd class="column-two-thirds">
+            <dd class="cya-answer">
                 <p class="mt-0">Commodity code for your item:
                     <span id="binding-commodity-code">
                         @{
@@ -57,12 +64,14 @@
                         Apply for a Binding Tariff Information (BTI) ruling (Notice 600)
                     </a>
                 </p>
+            </dd>
             } else {
-                    <dt class="column-one-third">
+                    <dt class="column-full">
                     @messages("case.decision.constraint.no-information")
                     </dt>
                 }
-            </dd>
+
         </div>
+</dl>
     }
 }
