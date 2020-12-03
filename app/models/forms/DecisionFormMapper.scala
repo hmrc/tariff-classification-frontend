@@ -16,6 +16,8 @@
 
 package models.forms
 
+import java.time.Instant
+
 import javax.inject.Singleton
 import models.{Case, Decision}
 
@@ -46,7 +48,8 @@ class DecisionFormMapper {
         d.methodCommercialDenomination.getOrElse(""),
         d.methodExclusion.getOrElse(""),
         Seq.empty, // TODO : So far this field is only used to read from the FE
-        d.explanation.getOrElse("")
+        d.explanation.getOrElse(""),
+        d.effectiveEndDate.getOrElse(Instant.now)
       )
     }
 
@@ -61,7 +64,8 @@ class DecisionFormMapper {
       justification                = form.justification,
       methodCommercialDenomination = Some(form.methodCommercialDenomination),
       methodExclusion              = Some(form.methodExclusion),
-      explanation                  = Some(form.explanation)
+      explanation                  = Some(form.explanation),
+      effectiveEndDate             = Some(form.expirydate)
     )
 
   private def from(form: DecisionFormData): Decision =
@@ -72,7 +76,8 @@ class DecisionFormMapper {
       justification                = form.justification,
       methodCommercialDenomination = Some(form.methodCommercialDenomination),
       methodExclusion              = Some(form.methodExclusion),
-      explanation                  = Some(form.explanation)
+      explanation                  = Some(form.explanation),
+      effectiveEndDate             = Some(form.expirydate)
     )
 
 }

@@ -16,6 +16,8 @@
 
 package models.forms
 
+import java.time.Instant
+
 import javax.inject.Inject
 import play.api.data.Form
 import play.api.data.Forms._
@@ -32,7 +34,8 @@ case class DecisionFormData(
   methodCommercialDenomination: String = "",
   methodExclusion: String              = "",
   attachments: Seq[String]             = Seq.empty,
-  explanation: String                  = ""
+  explanation: String                  = "",
+  expirydate: Instant                   = Instant.now
 )
 
 class DecisionForm @Inject() (commodityCodeConstraints: CommodityCodeConstraints) extends Constraints {
@@ -48,7 +51,8 @@ class DecisionForm @Inject() (commodityCodeConstraints: CommodityCodeConstraints
       "methodCommercialDenomination" -> text,
       "methodExclusion"              -> text,
       "attachments"                  -> seq(text),
-      "explanation"                  -> text
+      "explanation"                  -> text,
+      "expiryDate"                   -> FormDate.date("enter a valid date")
     )(DecisionFormData.apply)(DecisionFormData.unapply)
   )
 
@@ -67,7 +71,8 @@ class DecisionForm @Inject() (commodityCodeConstraints: CommodityCodeConstraints
       "methodCommercialDenomination" -> text,
       "methodExclusion"              -> text,
       "attachments"                  -> seq(text),
-      "explanation"                  -> text.verifying(customNonEmpty("decision_form.error.decisionExplanation.required"))
+      "explanation"                  -> text.verifying(customNonEmpty("decision_form.error.decisionExplanation.required")),
+      "expiryDate"                   -> FormDate.date("enter a valid date")
     )(DecisionFormData.apply)(DecisionFormData.unapply)
   )
 
@@ -84,7 +89,8 @@ class DecisionForm @Inject() (commodityCodeConstraints: CommodityCodeConstraints
       methodCommercialDenomination = d.methodCommercialDenomination.getOrElse(""),
       methodExclusion              = d.methodExclusion.getOrElse(""),
       attachments                  = Seq.empty,
-      explanation                  = d.explanation.getOrElse("")
+      explanation                  = d.explanation.getOrElse(""),
+      expirydate                   = d.effectiveEndDate.getOrElse(Instant.now)
     )
 
   def liabilityForm(existingDecision: Decision = Decision()): Form[Decision] =

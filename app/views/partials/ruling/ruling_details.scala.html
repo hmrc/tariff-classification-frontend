@@ -19,6 +19,7 @@
 @import models.forms.DecisionFormData
 @import models.request.AuthenticatedRequest
 @import models.{BTIApplication, Case, CaseStatus, CommodityCode, Decision, Permission, StoredAttachment}
+@import views.html.components.edit_ruling_button
 @import utils.Dates
 @import views.html.partials.ruling._
 @import views.html.partials.{attachments_list, tab_heading}
@@ -32,12 +33,13 @@
     <div class="grid-row">
         <div class="column-one-third">
             @if(request.hasPermission(Permission.EDIT_RULING) ) {
-            <div id="ruling_edit_details" class="mb-2">
-                <a tabindex="@{startAtTabIndex+1}" id="ruling_edit" href="@RulingController.editRulingDetails(c.reference)">Edit ruling details</a>
-            </div>
+                @edit_ruling_button(RulingController.editRulingDetails(c.reference))
             }
         </div>
     </div>
+<!--<div id="ruling_edit_details" class="mb-2">
+    <a tabindex="@{startAtTabIndex+1}" id="ruling_edit" href="@RulingController.editRulingDetails(c.reference)">Edit ruling details</a>
+</div>-->
 
     <h3 class="heading-medium  mt-1">@messages("case.decision.application.title")</h3>
     <dl class="govuk-check-your-answers cya-questions-short">

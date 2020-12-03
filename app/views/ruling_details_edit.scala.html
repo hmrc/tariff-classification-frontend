@@ -25,6 +25,7 @@
 @import views.html.partials.{attachments_edit_list, tab_heading, back_link}
 @import models.request.AuthenticatedRequest
 @import views.html.partials.error_summary
+@import utils.Dates
 
 @(c: Case, files: Seq[StoredAttachment], decisionForm: Form[DecisionFormData], startAtTabIndex: Option[Int] = None)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
@@ -42,6 +43,15 @@
             <h2 class="heading-medium mb-1">@messages("case.decision.information-applicant")</h2>
 
             <div class="grid-row">
+                <div id="application_submittedDate" class="column-one-third">
+                    @messages("pdf.ruling.section.date.submitted")
+                </div>
+                <div class="column-two-thirds">
+                    <p id="application_submittedDateValue">@{Dates.format(c.createdDate)}</p>
+                </div>
+            </div>
+
+            <div class="grid-row">
                 <div id="application_envisagedCommodityCode" class="column-one-third">
                     <p>@messages("case.application.suggested-commodity-code")</p>
                 </div>
@@ -54,7 +64,7 @@
 
             <div class="grid-row">
                 <div id="application_goodDescription" class="column-one-third">
-                    <p>@messages("case.application.suggested-goods-description")</p>
+                    <p>@messages("case.application.suggested-goods-description-edit-ruling")</p>
                 </div>
                 <div class="column-two-thirds">
                     <p id="application_goodDescriptionValue">@{
@@ -67,6 +77,24 @@
 
             <h2 class="heading-medium mt-0">@messages("case.decision.ruling-details")</h2>
 
+            <div class="grid-row">
+                <div id="start-date-id" class="column-one-third">
+                    <p>Start date</p>
+                </div>
+                <div class="column-two-thirds">
+                    <p id="start-date-id-text">Start date will be set when case is completed.</p>
+                </div>
+            </div>
+
+            <div class="grid-row">
+                <div id="end-date-id" class="column-one-third">
+                    <p>Expiry date</p>
+                </div>
+                <div class="column-two-thirds">
+                    <!--CALL THE CHECKBOX COMPONEN PASSSING THE FORM-->
+                    <p id="end-date-id-text">Start date will be set when case is completed.</p>
+                </div>
+            </div>
 
             @form(action = controllers.routes.RulingController.updateRulingDetails(c.reference), 'class -> "form") {
 
@@ -75,20 +103,17 @@
                 @input_text(
                     field = decisionForm("bindingCommodityCode"),
                     label = messages("case.decision.commodity-code"),
-                    hint = Some(messages("case.decision.hint.published-content")),
                     disableAutoComplete = true
                 )
 
                 @input_textarea(
                     field = decisionForm("goodsDescription"),
-                    label = messages("case.decision.goods-description"),
-                    hint = Some(messages("case.decision.hint.published-content"))
+                    label = messages("case.decision.goods-description")
                 )
 
                 @input_textarea(
                     field = decisionForm("justification"),
-                    label = messages("case.decision.justification"),
-                    hint = Some(messages("case.decision.hint.published-content"))
+                    label = messages("case.decision.justification")
                 )
 
                 <h2 class="heading-medium mb-2">@messages("case.decision.information-not-published")</h2>

@@ -36,11 +36,11 @@
 
         <div class="grid-row" id="information-for-holder">
             @if(d.explanation.exists(_.trim.nonEmpty)) {
-            <dt class="cya-question">
+            <dt class="cya-question middle-align">
                 @messages("case.decision.explanation.label")
             </dt>
             <dd class="cya-answer">
-                <p class="mt-0">Commodity code for your item:
+                <p class="mt-0">Commodity code for your goods:
                     <span id="binding-commodity-code">
                         @{
                             d.bindingCommodityCode match {
