@@ -18,8 +18,8 @@ package controllers
 
 import config.AppConfig
 import javax.inject.Inject
-import models.Permission
 import models.request.AuthenticatedRequest
+import models._
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import service.CasesService
@@ -38,9 +38,11 @@ class OperatorDashboardController @Inject()(
   def onPageLoad: Action[AnyContent] = (verify.authenticated andThen verify.mustHave(Permission.VIEW_MY_CASES)).async {
     implicit request: AuthenticatedRequest[AnyContent] =>
       for {
+        cases: Paged[Case] <- casesService.getCasesByAssignee(request.operator, NoPagination())
         countQueues: Map[String, Int] <- casesService.countCasesByQueue(request.operator)
-      } yield Ok(operator_dashboard_classification(countQueues))
+        referredCasesByAssignee = cases.results.count(
+          c => c.status == CaseStatus.REFERRED || c.status == CaseStatus.SUSPENDED)
+      } yield Ok(operator_dashboard_classification(countQueues, referredCasesByAssignee))
   }
-
 
 }

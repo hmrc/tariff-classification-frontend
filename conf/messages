@@ -896,8 +896,9 @@ operator.dashboard.classification.title = Classification officer
 operator.dashboard.classification.my-cases = Assigned to me
 operator.dashboard.classification.my-cases.progress.plural = {0} cases currently in progress
 operator.dashboard.classification.my-cases.progress.singular = {0} case currently in progress
-operator.dashboard.classification.my-cases.referred-me = Referred by me
-operator.dashboard.classification.my-cases.referral = 6 cases on referral
+operator.dashboard.classification.my-cases.referredByMe = Referred by me
+operator.dashboard.classification.my-cases.onReferralProgress.plural = {0} cases on referral
+operator.dashboard.classification.my-cases.onReferralProgress.singular = {0} case on referral
 operator.dashboard.classification.all-open-cases = All open cases
 operator.dashboard.classification.all-open-cases.atar = ATaR
 operator.dashboard.classification.all-open-cases.list-all = List of all open ATaR cases
@@ -935,10 +936,10 @@ cases.opencases.tab_TTA=TT-A
 cases.opencases.tab_TTB=TT-B
 cases.opencases.tab_TTC=TT-C
 
-applicationTab.assignedToMe.atar=ATaR
-applicationTab.assignedToMe.liability=Liability
-applicationTab.assignedToMe.correspondence=Correspondence
-applicationTab.assignedToMe.miscellaneous=Miscellaneous
+applicationTab.atar=ATaR
+applicationTab.liability=Liability
+applicationTab.correspondence=Correspondence
+applicationTab.miscellaneous=Miscellaneous
 
 applicationTab.assignedToMe = Assigned to me
 applicationTab.referredByMe = Referred by me

@@ -21,7 +21,7 @@ import play.api.mvc.QueryStringBindable
 sealed abstract class SubNavigationTab(val id: String) extends Product with Serializable
 
 object SubNavigationTab {
-  val values = Set(ATaRTab, LiabilitiesTab, CorrespondenceTab, MiscellaneousTab)
+  val values = Set(ATaRTab, LiabilitiesTab, CorrespondenceTab, MiscellaneousTab, AssignedToMeTab, ReferredByMeTab, CompletedByMeTab)
   implicit def subNavigationTabQueryStringBindable(
     implicit stringBindable: QueryStringBindable[String]
   ): QueryStringBindable[SubNavigationTab] =
