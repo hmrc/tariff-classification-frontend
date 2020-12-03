@@ -14,12 +14,11 @@
  * limitations under the License.
  *@
 
-@import models.{Case, CaseStatus}
+@import models.Case
 @import controllers.routes.PdfDownloadController
 
 @(c: Case, useTabIndex : Option[Int] = None)(implicit messages: Messages)
 
 <div id="submitted-application" class="mb-3">
- @messages("case.decision.ruling.review.appeal")
    <a  @if(useTabIndex.isDefined){ tabindex="@{useTabIndex.get}" } id="submitted-application-link" target="_blank" href="@PdfDownloadController.applicationPdf(c.reference)"> @messages("case.decision.ruling.review.appeal.link") </a>
 </div>
