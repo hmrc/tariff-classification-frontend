@@ -17,7 +17,7 @@
 package models.viewmodels
 
 
-import models.{ApplicationType, Case, Paged}
+import models._
 
 case class CasesTab(tabMessageKey: String, elementId : String,  searchResult: Paged[Case])
 
@@ -51,6 +51,45 @@ object CasesTabViewModel {
       CasesTab.ttc()
     )
   )
+
+  def atarCases(allQueueCases: Seq[Case]): CasesTabViewModel = {
+
+    val actCases = allQueueCases.filter(c => c.queueId.contains(Queues.act.id) && c.application.isBTI)
+    val capCases = allQueueCases.filter(c => c.queueId.contains(Queues.cap.id) && c.application.isBTI)
+    val carsCases = allQueueCases.filter(c => c.queueId.contains(Queues.cars.id) && c.application.isBTI)
+    val elmCases = allQueueCases.filter(c => c.queueId.contains(Queues.elm.id) && c.application.isBTI)
+
+    CasesTabViewModel(
+      "cases.opencases.atar.heading",
+      ApplicationType.ATAR,
+      List(
+        CasesTab.act(Paged(actCases)),
+        CasesTab.cap(Paged(capCases)),
+        CasesTab.cars(Paged(carsCases)),
+        CasesTab.elm(Paged(elmCases))
+      )
+    )
+  }
+
+  def liabilityCases(allQueueCases: Seq[Case]): CasesTabViewModel = {
+
+    val liabilityCases = allQueueCases.filter(_.application.isLiabilityOrder)
+    val actCases = liabilityCases.filter(c => c.queueId.contains(Queues.act.id))
+    val capCases = liabilityCases.filter(c => c.queueId.contains(Queues.cap.id))
+    val carsCases = liabilityCases.filter(c => c.queueId.contains(Queues.cars.id))
+    val elmCases = liabilityCases.filter(c => c.queueId.contains(Queues.elm.id))
+
+    CasesTabViewModel(
+      "cases.opencases.liability.heading",
+      ApplicationType.LIABILITY,
+      List(
+        CasesTab.act(Paged(actCases)),
+        CasesTab.cap(Paged(capCases)),
+        CasesTab.cars(Paged(carsCases)),
+        CasesTab.elm(Paged(elmCases))
+      )
+    )
+  }
 
   def liability = CasesTabViewModel(
     "cases.opencases.liability.heading",

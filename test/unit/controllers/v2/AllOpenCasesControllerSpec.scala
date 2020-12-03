@@ -17,25 +17,54 @@
 package controllers.v2
 
 import controllers.{ControllerBaseSpec, RequestActionsWithPermissions}
-import models.Permission
+import models.{ApplicationType, Paged, Pagination, Permission, Queue}
 import models.viewmodels.{ATaRTab, CorrespondenceTab, LiabilitiesTab, MiscellaneousTab}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.BDDMockito.`given`
 import play.api.http.Status
 import play.api.test.Helpers._
+import service.{CasesService, QueuesService}
+import uk.gov.hmrc.http.HeaderCarrier
+import utils.Cases
 import views.html.v2.open_cases_view
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 class AllOpenCasesControllerSpec extends ControllerBaseSpec {
 
-  private lazy val open_cases_view = injector.instanceOf[open_cases_view]
+  private val casesService  = mock[CasesService]
+  private val queuesService = mock[QueuesService]
+  private val queues         = Seq(
+                                    Queue("2", "act", "ACT"),
+                                    Queue("3", "cap", "CAP"),
+                                    Queue("4", "cars", "Cars")
+                                    )
 
+  private lazy val open_cases_view = injector.instanceOf[open_cases_view]
 
   private def controller(permission: Set[Permission]) = new AllOpenCasesController(
     new RequestActionsWithPermissions(playBodyParsers, permission, addViewCasePermission = false),
+    casesService,
+    queuesService,
     mcc,
     open_cases_view,
     realAppConfig
   )
+
+  override protected def beforeEach(): Unit = {
+    given(casesService.getCasesByAllQueues(any[Seq[Queue]], any[Pagination], any[Seq[ApplicationType]])(any[HeaderCarrier]))
+      .willReturn(Paged(
+        Seq(
+          Cases.aCase(),
+          Cases.aLiabilityCase().copy(queueId = Some("3")),
+          Cases.aLiabilityCase().copy(daysElapsed = 35, queueId = Some("3")),
+          Cases.liabilityLiveCaseExample.copy(queueId = Some("3")),
+          Cases.liabilityLiveCaseExample.copy(daysElapsed = 6, queueId = Some("3")))
+        )
+      )
+    given(queuesService.getNonGateway).willReturn(Future.successful(queues))
+  }
 
   "Open cases" should {
 
@@ -76,5 +105,6 @@ class AllOpenCasesControllerSpec extends ControllerBaseSpec {
     }
 
   }
+
 
 }

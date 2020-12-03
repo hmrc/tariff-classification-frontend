@@ -19,6 +19,8 @@
 @import views.html.includes.main
 @import controllers.v2.routes
 @import models.viewmodels.ReferredByMeTab
+@import controllers.v2.routes.AllOpenCasesController
+@import models.viewmodels.{ATaRTab, LiabilitiesTab}
 
 
 @(countCases: Map[String, Int], referredCasesAssignedToMe: Int)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
