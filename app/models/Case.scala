@@ -34,7 +34,8 @@ case class Case(
   keywords: Set[String]             = Set.empty,
   sample: Sample                    = Sample(),
   dateOfExtract: Option[Instant]    = None,
-  migratedDaysElapsed: Option[Long] = None
+  migratedDaysElapsed: Option[Long] = None,
+  referredDaysElapsed: Long
 ) {
   def hasQueue: Boolean = queueId.isDefined
 
@@ -78,3 +79,6 @@ case class Case(
       case _                           => false
     }
 }
+
+
+

@@ -16,7 +16,6 @@
 
 package models.viewmodels
 
-import java.time.Instant
 
 import models._
 
@@ -38,51 +37,12 @@ object CasesTab {
 }
 
 object CasesTabViewModel {
-  val contactExample: Contact = Contact("name", "email", Some("phone"))
-
-  val eoriDetailsExample: EORIDetails =
-    EORIDetails("eori", "trader-business-name", "line1", "line2", "line3", "postcode", "country")
-
-  val btiApplicationExample: BTIApplication = BTIApplication(
-    eoriDetailsExample,
-    contactExample,
-    None,
-    offline = false,
-    "Laptop",
-    "Personal Computer",
-    None,
-    None,
-    None,
-    None,
-    Nil,
-    None,
-    None,
-    sampleToBeProvided = false,
-    sampleToBeReturned = false
-  )
-
-  val btiCaseExample: Case = Case(
-    "1",
-    CaseStatus.OPEN,
-    Instant.now(),
-    0,
-    None,
-    None,
-    None,
-    btiApplicationExample,
-    None,
-    Seq(),
-    Set.empty,
-    Sample(),
-    Some(Instant.now()),
-    Some(5)
-  )
 
   def atar = CasesTabViewModel(
     "cases.opencases.atar.heading",
     ApplicationType.ATAR,
     List(
-      CasesTab.act(Paged(Seq(btiCaseExample))),
+      CasesTab.act(),
       CasesTab.cars(),
       CasesTab.elm(),
       CasesTab.flex(),
