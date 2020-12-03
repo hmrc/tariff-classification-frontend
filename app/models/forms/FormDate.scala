@@ -21,38 +21,48 @@ import java.time.{Instant, LocalDate}
 
 import play.api.data.Forms._
 import play.api.data.Mapping
+import play.api.data.validation.{Constraint, Invalid, Valid}
 
 import scala.util.Try
 
 object FormDate {
 
-  private val formDate2Instant: DateForm => Instant = { dateForm =>
-    LocalDate
+  private val formDate2Instant: DateForm => Option[Instant] = { dateForm =>
+    if(!allFieldsEmpty(dateForm)){
+    Some(LocalDate
       .of(dateForm.year.toInt, dateForm.month.toInt, dateForm.day.toInt)
       .atStartOfDay(UTC)
-      .toInstant
+      .toInstant)}
+    else None
   }
 
-  private val instant2FormDate: Instant => DateForm = { date =>
+  private val instant2FormDate: Option[Instant] => DateForm = {
+    case Some(date) =>{
     val offsetDate = date.atOffset(UTC).toLocalDate
     DateForm(
       offsetDate.getDayOfMonth.toString,
       offsetDate.getMonthValue.toString,
       offsetDate.getYear.toString
-    )
+    )}
+    case None => DateForm("", "", "")
   }
 
   private val validDateFormat: DateForm => Boolean = { myDate =>
-    if (validateDayInDate(myDate) && validateMonthInDate(myDate) && validateYearInDate(myDate)) {
       Try(LocalDate.of(myDate.year.toInt, myDate.month.toInt, myDate.day.toInt)).isSuccess
-    } else {
-      true
-    }
   }
 
-  private def validateDayInDate: DateForm => Boolean   = !_.day.trim.isEmpty
-  private def validateMonthInDate: DateForm => Boolean = !_.month.trim.isEmpty
-  private def validateYearInDate: DateForm => Boolean  = date => !date.year.trim.isEmpty
+  val validDateFormatOrEmpty: Constraint[DateForm] = Constraint("constraints.validDateFormat")({
+    case d:DateForm if allFieldsEmpty(d) => Valid
+    case d:DateForm if !d.day.trim.isEmpty => Invalid("e")
+    case d:DateForm if !d.month.trim.isEmpty => Invalid("e")
+    case d:DateForm if !d.year.trim.isEmpty => Invalid("e")
+    case d:DateForm if !validDateFormat(d) => Invalid("e")
+    case _ => Valid
+  })
+
+ private def allFieldsEmpty: DateForm => Boolean = form => {
+    form.day.trim.isEmpty && form.month.trim.isEmpty && form.year.trim.isEmpty
+  }
 
   def date(error: String): Mapping[Instant] = {
     val emptyDay   = error + ".day"
@@ -60,10 +70,7 @@ object FormDate {
     val emptyYear  = error + ".year"
 
     mapping("day" -> text, "month" -> text, "year" -> text)(DateForm.apply)(DateForm.unapply)
-      .verifying(emptyDay, validateDayInDate)
-      .verifying(emptyMonth, validateMonthInDate)
-      .verifying(emptyYear, validateYearInDate)
-      .verifying(error, validDateFormat)
+      .verifying(validDateFormatOrEmpty)
       .transform(formDate2Instant, instant2FormDate)
   }
 

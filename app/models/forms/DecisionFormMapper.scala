@@ -65,7 +65,7 @@ class DecisionFormMapper {
       methodCommercialDenomination = Some(form.methodCommercialDenomination),
       methodExclusion              = Some(form.methodExclusion),
       explanation                  = Some(form.explanation),
-      effectiveEndDate             = Some(form.expirydate)
+      effectiveEndDate             = form.expirydate
     )
 
   private def from(form: DecisionFormData): Decision =
@@ -77,7 +77,7 @@ class DecisionFormMapper {
       methodCommercialDenomination = Some(form.methodCommercialDenomination),
       methodExclusion              = Some(form.methodExclusion),
       explanation                  = Some(form.explanation),
-      effectiveEndDate             = Some(form.expirydate)
+      effectiveEndDate             = form.expirydate
     )
 
 }

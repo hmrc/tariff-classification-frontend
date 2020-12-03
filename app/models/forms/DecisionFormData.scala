@@ -35,7 +35,8 @@ case class DecisionFormData(
   methodExclusion: String              = "",
   attachments: Seq[String]             = Seq.empty,
   explanation: String                  = "",
-  expirydate: Instant                   = Instant.now
+  expirydate: Option[Instant]          = None,
+  explicitEndDate: Boolean             = false
 )
 
 class DecisionForm @Inject() (commodityCodeConstraints: CommodityCodeConstraints) extends Constraints {
@@ -52,8 +53,11 @@ class DecisionForm @Inject() (commodityCodeConstraints: CommodityCodeConstraints
       "methodExclusion"              -> text,
       "attachments"                  -> seq(text),
       "explanation"                  -> text,
-      "expiryDate"                   -> FormDate.date("enter a valid date")
-    )(DecisionFormData.apply)(DecisionFormData.unapply)
+      "expiryDate"                   -> optional(FormDate.date("enter a valid date")),
+      "explicitEndDate"              -> boolean
+    )(DecisionFormData.apply)(DecisionFormData.unapply).verifying("",
+      formData => formData.explicitEndDate && formData.expirydate.nonEmpty
+    ).verifying()
   )
 
   val btiCompleteForm: Form[DecisionFormData] = Form[DecisionFormData](
@@ -72,9 +76,12 @@ class DecisionForm @Inject() (commodityCodeConstraints: CommodityCodeConstraints
       "methodExclusion"              -> text,
       "attachments"                  -> seq(text),
       "explanation"                  -> text.verifying(customNonEmpty("decision_form.error.decisionExplanation.required")),
-      "expiryDate"                   -> FormDate.date("enter a valid date")
+      "expiryDate"                   -> optional(FormDate.date("enter a valid date")),
+      "explicitEndDate"              -> boolean
     )(DecisionFormData.apply)(DecisionFormData.unapply)
   )
+
+
 
   def bindFrom: Option[Decision] => Option[Form[DecisionFormData]] =
     _.map(mapFrom)
@@ -90,7 +97,8 @@ class DecisionForm @Inject() (commodityCodeConstraints: CommodityCodeConstraints
       methodExclusion              = d.methodExclusion.getOrElse(""),
       attachments                  = Seq.empty,
       explanation                  = d.explanation.getOrElse(""),
-      expirydate                   = d.effectiveEndDate.getOrElse(Instant.now)
+      expirydate                   = d.effectiveEndDate,
+      explicitEndDate              = d.effectiveEndDate.isDefined
     )
 
   def liabilityForm(existingDecision: Decision = Decision()): Form[Decision] =

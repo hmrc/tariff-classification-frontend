@@ -21,7 +21,7 @@
 @import models.forms.DecisionFormData
 @import models.response.ScanStatus
 @import models.{BTIApplication, Case, StoredAttachment}
-@import views.html.forms.components.{input_text, input_textarea}
+@import views.html.forms.components.{input_text, input_textarea, edit_ruling_input_checkbox}
 @import views.html.partials.{attachments_edit_list, tab_heading, back_link}
 @import models.request.AuthenticatedRequest
 @import views.html.partials.error_summary
@@ -91,14 +91,17 @@
                     <p>Expiry date</p>
                 </div>
                 <div class="column-two-thirds">
-                    <!--CALL THE CHECKBOX COMPONEN PASSSING THE FORM-->
-                    <p id="end-date-id-text">Start date will be set when case is completed.</p>
+                    <p id="end-date-id-text">Expiry date will be set 3 years from start date unless otherwise specified.</p>
                 </div>
             </div>
 
             @form(action = controllers.routes.RulingController.updateRulingDetails(c.reference), 'class -> "form") {
 
                 @CSRF.formField
+
+                @edit_ruling_input_checkbox(
+                    formData = decisionForm
+                )
 
                 @input_text(
                     field = decisionForm("bindingCommodityCode"),

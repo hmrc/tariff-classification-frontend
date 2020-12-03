@@ -14,57 +14,32 @@
  * limitations under the License.
  *@
 
+@import models.forms.DecisionFormData
+
 @(
         formData: Form[DecisionFormData],
-        label: String,
         value: Boolean = true,
         inputClass: Option[String] = None,
-        hint: Option[String] = None,
-        labelClass: Option[String] = None,
-        submitOnChange: Boolean = false
+        hint: Option[String] = None
 )(implicit messages: Messages)
-
-<!--<div class="form-group @if(field.hasErrors){form-group-error}">
-
-    <div class="multiple-choice">
-        <input
-        class="form-control @inputClass"
-        type="checkbox"
-        id="@{field.id}"
-        name="@{field.name}"
-        value="@value"
-        @if(submitOnChange) {
-            onChange="this.form.submit()"
-        }
-        @if(field.hasErrors){
-            aria-describedby="error-message-@{field.id}-input"
-        }
-        @if(field.value.contains(s"$value")){
-            checked="checked"
-        }/>
-        <label class="form-label" for="@{field.id}">
-            <span class="@if(labelClass.nonEmpty){@labelClass}">@label</span>
-            @if(hint.nonEmpty){
-                <span class="form-hint">@hint</span>
-            }
-        </label>
-    </div>
-</div>-->
 
 <div class="govuk-form-group">
     <fieldset class="govuk-fieldset" aria-describedby="expiry-date-hint">
         <div class="govuk-checkboxes" data-module="govuk-checkboxes">
-            <div class="govuk-checkboxes__item">
-                <input class="govuk-checkboxes__input" id="expiry-date" name="expiry-date" type="checkbox" value="specify-expiry" aria-controls="conditional-expiry-date" aria-expanded="true">
-                <label class="govuk-label govuk-checkboxes__label" for="expiry-date">
-                    Specify expiry date
-                </label>
-            </div>
+            @input_checkbox(
+            field = formData("expiryDate.required"),
+            label =  "Specify expiry date",
+            value = formData("expiryDate.required").value
+            )
             <div class="govuk-checkboxes__conditional" id="conditional-expiry-date">
                 <div class="govuk-form-group">
                    @input_date(
-
-                    hint = "For example, 12 11 2021"
+                    dayField = formData("expiryDate.day"),
+                    monthField = formData("expiryDate.month"),
+                    yearField = formData("expiryDate.year"),
+                    dateField = formData("expiryDate"),
+                    hint = Some("For example, 12 11 2021"),
+                    legend=""
                     )
                 </div>
             </div>
