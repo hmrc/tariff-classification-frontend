@@ -27,7 +27,7 @@ class DecisionFormConstraintsSpec extends ModelsBaseSpec {
 
   private val commodityCodeService = mock[CommodityCodeService]
   private val decisionForm         = new DecisionForm(new CommodityCodeConstraints(commodityCodeService, mock[AppConfig]))
-  private val commodityCodeNumericErrorMessage = "decision_form.error.bindingCommodityCode.numeric"
+  private val commodityCodeValidErrorMessage = "decision_form.error.bindingCommodityCode.valid"
   private val bindingCommodityCodeElementId     = "bindingCommodityCode"
 
   "DecisionForm validation" should {
@@ -50,12 +50,24 @@ class DecisionFormConstraintsSpec extends ModelsBaseSpec {
       assertNoErrors("0409000000234567890000")
     }
 
+    "fail if the commodity code value contains more than 22 digits" in {
+      assertOnlyOneError("040900000023456789012345", Seq(commodityCodeValidErrorMessage))
+    }
+
+    "fail if the commodity code value contains less than 6 digits" in {
+      assertOnlyOneError("0409", Seq(commodityCodeValidErrorMessage))
+    }
+
     "fail if the commodity code value contains non numeric characters" in {
-      assertOnlyOneError("12345Q", Seq(commodityCodeNumericErrorMessage))
+      assertOnlyOneError("12345Q", Seq(commodityCodeValidErrorMessage))
     }
 
     "fail if the commodity code value contains special characters" in {
-      assertOnlyOneError("12345!", Seq(commodityCodeNumericErrorMessage))
+      assertOnlyOneError("12345!", Seq(commodityCodeValidErrorMessage))
+    }
+
+    "fail if the commodity code value contains an odd number of digits" in {
+      assertOnlyOneError("1234567", Seq(commodityCodeValidErrorMessage))
     }
   }
 

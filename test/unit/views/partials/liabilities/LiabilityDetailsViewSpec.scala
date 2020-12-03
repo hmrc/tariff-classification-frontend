@@ -34,7 +34,7 @@ class LiabilityDetailsViewSpec extends ViewSpec with MockitoSugar {
   private val caseIsCompletedStatuses: Seq[CaseStatus] = Seq(CaseStatus.COMPLETED, CaseStatus.CANCELLED)
 
   "Liability Details" should {
-    given(constraints.commodityCodeNumeric) willReturn Constraint[String]("code")(_ => Valid)
+    given(constraints.commodityCodeValid) willReturn Constraint[String]("code")(_ => Valid)
 
     "Not render edit details button" when {
       for (status: CaseStatus <- CaseStatus.values.filterNot(_ == CaseStatus.NEW)) {

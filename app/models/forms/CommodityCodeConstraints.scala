@@ -16,21 +16,21 @@
 
 package models.forms
 
-import java.time.Clock
-
 import javax.inject.{Inject, Singleton}
-import play.api.data.validation.Constraint
+import play.api.data.validation.{Constraint, Invalid, Valid}
 import config.AppConfig
 import service.CommodityCodeService
 import models.forms.mappings.Constraints
 
 @Singleton
 class CommodityCodeConstraints @Inject() (commodityCodeService: CommodityCodeService, appConfig: AppConfig) extends Constraints {
-  private implicit val clock: Clock = appConfig.clock
 
   val commodityCodeNonEmpty: Constraint[String] =
     customNonEmpty("decision_form.error.bindingCommodityCode.required")
 
-  val commodityCodeNumeric: Constraint[String] =
-    regexp(FormConstraints.numbersOnlyRegex, "decision_form.error.bindingCommodityCode.numeric")
+  val commodityCodeValid: Constraint[String] = Constraint("constraints.commoditycode")({
+    case s: String if s.matches("[0-9]{6,22}") && (s.length % 2 == 0) => Valid
+    case _: String =>
+      Invalid("decision_form.error.bindingCommodityCode.valid")
+  })
 }
