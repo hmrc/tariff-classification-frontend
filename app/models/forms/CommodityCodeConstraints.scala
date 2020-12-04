@@ -16,29 +16,21 @@
 
 package models.forms
 
-import java.time.Clock
-
 import javax.inject.{Inject, Singleton}
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import config.AppConfig
 import service.CommodityCodeService
+import models.forms.mappings.Constraints
 
 @Singleton
-class CommodityCodeConstraints @Inject() (commodityCodeService: CommodityCodeService, appConfig: AppConfig) {
-  private implicit val clock: Clock = appConfig.clock
+class CommodityCodeConstraints @Inject() (commodityCodeService: CommodityCodeService, appConfig: AppConfig) extends Constraints {
 
-  val commodityCodeNonEmpty: Constraint[String] = Constraint("constraints.commodityCodeExists")({
-    case s: String if s.isEmpty => Invalid("decision_form.error.bindingCommodityCode.required")
-    case _                      => Valid
-  })
+  val commodityCodeNonEmpty: Constraint[String] =
+    customNonEmpty("decision_form.error.bindingCommodityCode.required")
 
-  val commodityCodeExistsInUKTradeTariff: Constraint[String] = Constraint("constraints.commodityCodeExists")({
-    case s: String if commodityCodeService.find(s).exists(_.isLive) =>
-      Valid
-    case s: String if commodityCodeService.find(s).exists(_.isExpired) =>
-      Invalid("This commodity code has expired")
+  val commodityCodeValid: Constraint[String] = Constraint("constraints.commoditycode")({
+    case s: String if s.matches("[0-9]{6,22}") && (s.length % 2 == 0) => Valid
     case _: String =>
-      Invalid("This commodity code is not a valid code in the UK Trade Tariff")
+      Invalid("decision_form.error.bindingCommodityCode.valid")
   })
-
 }
