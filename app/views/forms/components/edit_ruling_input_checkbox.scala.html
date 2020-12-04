@@ -23,15 +23,16 @@
         hint: Option[String] = None
 )(implicit messages: Messages)
 
-<div class="govuk-form-group">
+<div class="govuk-form-group ">
     <fieldset class="govuk-fieldset" aria-describedby="expiry-date-hint">
         <div class="govuk-checkboxes" data-module="govuk-checkboxes">
             @input_checkbox(
             field = formData("explicitEndDate"),
             label =  "Specify expiry date",
+            data_target = Some("conditional-expiry-date"),
             value = formData("explicitEndDate").value
             )
-            <div class="govuk-checkboxes__conditional" id="conditional-expiry-date">
+            <div class="govuk-checkboxes__conditional js-hidden" id="conditional-expiry-date">
                 <div class="govuk-form-group">
                    @input_date(
                     dayField = formData("expiryDate.day"),
