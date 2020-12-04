@@ -42,7 +42,7 @@
 </div>-->
 
     <h3 class="heading-medium  mt-1">@messages("case.decision.application.title")</h3>
-    <dl class="govuk-check-your-answers cya-questions-short">
+    <dl class="govuk-check-your-answers cya-questions-short text-grey" >
         <div class="grid-row">
             <dt id="application_submittedDate" class="cya-question">
                 @messages("pdf.ruling.section.date.submitted")
@@ -87,7 +87,7 @@
                 @if(d.effectiveEndDate.isDefined){
                     <div class="grid-row">
                         <dt id="application_expiryDate" class="cya-question">
-                            @messages("pdf.ruling.section.date.submitted")
+                            @messages("pdf.ruling.section.date.expiry")
                         </dt>
                         <dd class="cya-answer">
                             <span id="application_expiryDateValue">@{Dates.format(d.effectiveEndDate.get)}</span>
