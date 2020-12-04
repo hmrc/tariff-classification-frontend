@@ -73,5 +73,23 @@ class ApplicationDetailsViewSpec extends ViewSpec {
       doc                                                        should containElementWithID("app-details-legal-challenges")
       doc.getElementById("app-details-legal-challenges")         should containText("legal proceedings")
     }
+
+
+    "Render the correct number of relatedBtiReferences " in {
+
+      val `case` = aCase(
+        withOptionalApplicationFields(
+          relatedBTIReferences    = List("related BTI 1", "related BTI 2")
+        )
+      )
+
+      // When
+      val doc = view(application_details(`case`, Nil))
+
+      //Then
+      doc                                                        should containElementWithID("app-details-similar-ruling-reference")
+      doc.getElementById("app-details-similar-ruling-reference") should containText("related BTI 1 related BTI 2" )
+
+    }
   }
 }

@@ -487,6 +487,7 @@ object Cases {
     otherInformation: Option[String]        = None,
     reissuedBTIReference: Option[String]    = None,
     relatedBTIReference: Option[String]     = None,
+    relatedBTIReferences:  List[String]  = Nil,
     knownLegalProceedings: Option[String]   = None,
     envisagedCommodityCode: Option[String]  = None
   ): Case => Case = { c =>
@@ -496,6 +497,7 @@ object Cases {
         otherInformation        = otherInformation,
         reissuedBTIReference    = reissuedBTIReference,
         relatedBTIReference     = relatedBTIReference,
+        relatedBTIReferences    = relatedBTIReferences,
         knownLegalProceedings   = knownLegalProceedings,
         envisagedCommodityCode  = envisagedCommodityCode
       )
