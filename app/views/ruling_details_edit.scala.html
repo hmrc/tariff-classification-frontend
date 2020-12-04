@@ -42,37 +42,37 @@
 
             <h2 class="heading-medium mb-1">@messages("case.decision.information-applicant")</h2>
 
-            <div class="grid-row">
-                <div id="application_submittedDate" class="column-one-third">
-                    @messages("pdf.ruling.section.date.submitted")
+            <div class="text-grey">
+                <div class="grid-row">
+                    <div id="application_submittedDate" class="column-one-third">
+                        @messages("pdf.ruling.section.date.submitted")
+                    </div>
+                    <div class="column-two-thirds">
+                        <p id="application_submittedDateValue">@{Dates.format(c.createdDate)}</p>
+                    </div>
                 </div>
-                <div class="column-two-thirds">
-                    <p id="application_submittedDateValue">@{Dates.format(c.createdDate)}</p>
+
+                <div class="grid-row">
+                    <div id="application_envisagedCommodityCode" class="column-one-third">
+                        <p>@messages("case.application.suggested-commodity-code")</p>
+                    </div>
+                    <div class="column-two-thirds">
+                        <p id="envisagedCommodityCodeValue">@{
+                            btiApp.envisagedCommodityCode.getOrElse("")
+                        }</p>
+                    </div>
+                </div>
+                <div class="grid-row">
+                    <div id="application_goodDescription" class="column-one-third">
+                        <p>@messages("case.application.suggested-goods-description-edit-ruling")</p>
+                    </div>
+                    <div class="column-two-thirds">
+                        <p id="application_goodDescriptionValue">@{
+                            btiApp.goodDescription
+                        }</p>
+                    </div>
                 </div>
             </div>
-
-            <div class="grid-row">
-                <div id="application_envisagedCommodityCode" class="column-one-third">
-                    <p>@messages("case.application.suggested-commodity-code")</p>
-                </div>
-                <div class="column-two-thirds">
-                    <p id="envisagedCommodityCodeValue">@{
-                        btiApp.envisagedCommodityCode.getOrElse("")
-                    }</p>
-                </div>
-            </div>
-
-            <div class="grid-row">
-                <div id="application_goodDescription" class="column-one-third">
-                    <p>@messages("case.application.suggested-goods-description-edit-ruling")</p>
-                </div>
-                <div class="column-two-thirds">
-                    <p id="application_goodDescriptionValue">@{
-                        btiApp.goodDescription
-                    }</p>
-                </div>
-            </div>
-
             <hr class="mt-0"/>
 
             <h2 class="heading-medium mt-0">@messages("case.decision.ruling-details")</h2>

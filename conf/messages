@@ -295,6 +295,7 @@ pdf.ruling.issuedBy.label=Issued by
 pdf.ruling.issuedBy.text=HMRC Classification Team
 pdf.ruling.section.holder.heading=Holder details
 pdf.ruling.section.date.submitted=Date submitted
+pdf.ruling.section.date.expiry=Expiry date
 pdf.ruling.section.holder.note.label=Note:
 pdf.ruling.section.holder.note.text=These holder details are not included in the published ruling
 pdf.ruling.section.holder.name.label=Name
