@@ -19,16 +19,18 @@
 @import models.viewmodels.{CasesTabViewModel, OpenCasesTab}
 @import views.html.components.{cases_tab, open_cases_secondary_navigation, primary_navigation}
 @import views.html.includes.main
+@import models.viewmodels.SubNavigationTab
+@import models.viewmodels.ATaRTab
 
 
 @this()
 
-@(cases : CasesTabViewModel)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(cases : CasesTabViewModel, activeSubNav : SubNavigationTab = ATaRTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("common.cases.open_cases-title"))) {
 
     @primary_navigation(OpenCasesTab)
-    @open_cases_secondary_navigation()
+    @open_cases_secondary_navigation(activeSubNav)
     @cases_tab(cases)
 
 }
