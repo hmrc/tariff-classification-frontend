@@ -119,11 +119,11 @@
                     label = messages("case.decision.justification")
                 )
 
-                <h2 class="heading-medium mb-2">@messages("case.decision.information-not-published")</h2>
+                <h2 class="heading-medium mb-2">@messages("case.menu.ruling-not-published-information")</h2>
 
                 @input_textarea(
                     field = decisionForm("methodCommercialDenomination"),
-                    label = messages("case.decision.method-commercial-denomination")
+                    label = messages("case.decision.method-commercial-denomination-edit-ruling")
                 )
 
                 @input_textarea(
@@ -135,6 +135,18 @@
                     field = decisionForm("methodExclusion"),
                     label = messages("case.decision.method-exclusion")
                 )
+
+
+                <div class="form-group">
+                    <h2 class="heading-medium">@messages("case.decision.holder.information")</h2>
+
+                    @input_textarea(
+                    field = decisionForm("explanation"),
+                    label = messages("case.decision.explanation.label"),
+                    hint = Some(messages("case.decision.explanation.hint"))
+                    )
+
+                </div>
 
                 <div class="form-group">
                     <fieldset>
@@ -156,21 +168,14 @@
                 </div>
 
                 <div class="form-group">
-                    <h2 class="heading-medium">@messages("case.decision.holder.information")</h2>
-
-                    @input_textarea(
-                        field = decisionForm("explanation"),
-                        label = messages("case.decision.explanation.label"),
-                        hint = Some(messages("case.decision.explanation.hint"))
-                    )
-
+                    <button id="submit" class="button" type="submit">Save and continue</button>
                 </div>
 
                 <div class="form-group">
-                    <button id="submit" class="button" type="submit">Save changes</button>
-                    <a href="@controllers.routes.CaseController.rulingDetails(c.reference)" class="secondary-button" id="cancel-button">
+                    <a href="@controllers.routes.CaseController.rulingDetails(c.reference)" class="secondary-button pl-0-important" id="cancel-button">
                         Cancel changes</a>
                 </div>
+
             }
         </div>
     }
