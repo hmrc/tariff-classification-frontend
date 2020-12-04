@@ -53,11 +53,11 @@ class DecisionForm @Inject() (commodityCodeConstraints: CommodityCodeConstraints
       "methodExclusion"              -> text,
       "attachments"                  -> seq(text),
       "explanation"                  -> text,
-      "expiryDate"                   -> optional(FormDate.date("enter a valid date")),
+      "expiryDate"                   -> FormDate.optionalDate(),
       "explicitEndDate"              -> boolean
-    )(DecisionFormData.apply)(DecisionFormData.unapply).verifying("",
-      formData => formData.explicitEndDate && formData.expirydate.nonEmpty
-    ).verifying()
+    )(DecisionFormData.apply)(DecisionFormData.unapply).verifying("atar.editRuling.expiryDate.emptyDate",
+      formData => if(formData.explicitEndDate) formData.expirydate.isDefined else true
+    )
   )
 
   val btiCompleteForm: Form[DecisionFormData] = Form[DecisionFormData](
@@ -76,9 +76,11 @@ class DecisionForm @Inject() (commodityCodeConstraints: CommodityCodeConstraints
       "methodExclusion"              -> text,
       "attachments"                  -> seq(text),
       "explanation"                  -> text.verifying(customNonEmpty("decision_form.error.decisionExplanation.required")),
-      "expiryDate"                   -> optional(FormDate.date("enter a valid date")),
+      "expiryDate"                   -> FormDate.optionalDate(),
       "explicitEndDate"              -> boolean
-    )(DecisionFormData.apply)(DecisionFormData.unapply)
+    )(DecisionFormData.apply)(DecisionFormData.unapply).verifying("atar.editRuling.expiryDate.emptyDate",
+      formData => if(formData.explicitEndDate) formData.expirydate.isDefined else true
+    )
   )
 
 

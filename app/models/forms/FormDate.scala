@@ -27,7 +27,23 @@ import scala.util.Try
 
 object FormDate {
 
-  private val formDate2Instant: DateForm => Option[Instant] = { dateForm =>
+  private val formDate2Instant: DateForm => Instant = { dateForm =>
+    LocalDate
+      .of(dateForm.year.toInt, dateForm.month.toInt, dateForm.day.toInt)
+      .atStartOfDay(UTC)
+      .toInstant
+  }
+
+  private val instant2FormDate: Instant => DateForm = { date =>
+    val offsetDate = date.atOffset(UTC).toLocalDate
+    DateForm(
+      offsetDate.getDayOfMonth.toString,
+      offsetDate.getMonthValue.toString,
+      offsetDate.getYear.toString
+    )
+  }
+
+  private val formDate2OptionInstant: DateForm => Option[Instant] = { dateForm =>
     if(!allFieldsEmpty(dateForm)){
     Some(LocalDate
       .of(dateForm.year.toInt, dateForm.month.toInt, dateForm.day.toInt)
@@ -36,7 +52,7 @@ object FormDate {
     else None
   }
 
-  private val instant2FormDate: Option[Instant] => DateForm = {
+  private val optionInstant2FormDate: Option[Instant] => DateForm = {
     case Some(date) =>{
     val offsetDate = date.atOffset(UTC).toLocalDate
     DateForm(
@@ -53,13 +69,16 @@ object FormDate {
 
   val validDateFormatOrEmpty: Constraint[DateForm] = Constraint("constraints.validDateFormat")({
     case d:DateForm if allFieldsEmpty(d) => Valid
-    case d:DateForm if !d.day.trim.isEmpty => Invalid("e")
-    case d:DateForm if !d.month.trim.isEmpty => Invalid("e")
-    case d:DateForm if !d.year.trim.isEmpty => Invalid("e")
-    case d:DateForm if !validDateFormat(d) => Invalid("e")
+    case d:DateForm if !validDateFormat(d) => Invalid("atar.editRuling.expiryDate.invalidFormat")
+    case d:DateForm if !d.day.trim.isEmpty => Invalid("atar.editRuling.expiryDate.emptyDate.day")
+    case d:DateForm if !d.month.trim.isEmpty => Invalid("atar.editRuling.expiryDate.emptyDate.month")
+    case d:DateForm if !d.year.trim.isEmpty => Invalid("atar.editRuling.expiryDate.emptyDate.year")
     case _ => Valid
   })
 
+  private def validateDayInDate: DateForm => Boolean   = !_.day.trim.isEmpty
+  private def validateMonthInDate: DateForm => Boolean = !_.month.trim.isEmpty
+  private def validateYearInDate: DateForm => Boolean  = date => !date.year.trim.isEmpty
  private def allFieldsEmpty: DateForm => Boolean = form => {
     form.day.trim.isEmpty && form.month.trim.isEmpty && form.year.trim.isEmpty
   }
@@ -70,9 +89,19 @@ object FormDate {
     val emptyYear  = error + ".year"
 
     mapping("day" -> text, "month" -> text, "year" -> text)(DateForm.apply)(DateForm.unapply)
-      .verifying(validDateFormatOrEmpty)
+      .verifying(emptyDay, validateDayInDate)
+      .verifying(emptyMonth, validateMonthInDate)
+      .verifying(emptyYear, validateYearInDate)
+      .verifying(error, validDateFormat)
       .transform(formDate2Instant, instant2FormDate)
   }
 
-  private case class DateForm(day: String, month: String, year: String)
+
+  def optionalDate(): Mapping[Option[Instant]] = {
+    mapping("day" -> text, "month" -> text, "year" -> text)(DateForm.apply)(DateForm.unapply)
+      .verifying(validDateFormatOrEmpty)
+      .transform(formDate2OptionInstant, optionInstant2FormDate)
+  }
+
+  case class DateForm(day: String, month: String, year: String)
 }

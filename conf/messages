@@ -952,3 +952,9 @@ applicationTab.referredByMe = Referred by me
 applicationTab.completedByMe = Completed by me
 applicationTab.gateway = Gateway cases
 
+atar.editRuling.expiryDate.emptyDate = Please specify an expiry date
+atar.editRuling.expiryDate.emptyDate.day = day
+atar.editRuling.expiryDate.emptyDate.month = month
+atar.editRuling.expiryDate.emptyDate.year = year
+atar.editRuling.expiryDate.invalidFormat = format
+

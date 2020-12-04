@@ -27,9 +27,9 @@
     <fieldset class="govuk-fieldset" aria-describedby="expiry-date-hint">
         <div class="govuk-checkboxes" data-module="govuk-checkboxes">
             @input_checkbox(
-            field = formData("expiryDate.required"),
+            field = formData("explicitEndDate"),
             label =  "Specify expiry date",
-            value = formData("expiryDate.required").value
+            value = formData("explicitEndDate").value
             )
             <div class="govuk-checkboxes__conditional" id="conditional-expiry-date">
                 <div class="govuk-form-group">
