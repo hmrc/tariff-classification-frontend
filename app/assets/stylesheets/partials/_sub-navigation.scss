@@ -1,7 +1,8 @@
 /* ==========================================================================
    #SECONDARY NAV
    ========================================================================== */
-/*
+
+
 .moj-sub-navigation {
   margin-bottom: govuk-spacing(7);
 }
@@ -13,21 +14,21 @@
   margin: 0;
   padding: 0;
 
-  //@include govuk-media-query($from: tablet) {
+  @media (min-width: 40.0625em) {
     box-shadow: inset 0 -1px 0 #b1b4b6;
     width: 100%;
-  //}
+  }
 
   // IE8 does not support box shadow, so use a standard border.
-  @include govuk-if-ie8 {
-    border-bottom: 1px solid #b1b4b6;
-  }
+  /*@include govuk-if-ie8 {
+    border-bottom: 1px solid $govuk-border-colour;
+  }*/
 
 }
 
 
 .moj-sub-navigation__item {
-  @include govuk-font(19);
+  font-size: 19px;
   box-shadow: inset 0 -1px 0 #b1b4b6;
   display: block;
   margin-top: -1px;
@@ -36,10 +37,10 @@
     box-shadow: none;
   }
 
-  @include govuk-media-query($from: tablet) {
+  @media (min-width: 40.0625em) {
     box-shadow: none;
     display: inline-block;
-    margin-right: govuk-spacing(4);
+    margin-right: 20px;
     margin-top: 0;
   }
 
@@ -47,6 +48,8 @@
 
 
 .moj-sub-navigation__link {
+  //@include govuk-link-common;
+  //@include govuk-link-style-default;
   display: block;
   padding-top: 12px;
   padding-bottom: 12px;
@@ -54,51 +57,56 @@
   text-decoration: none;
   position: relative;
 
-  @include govuk-media-query($from: tablet) {
+  @media (min-width: 40.0625em) {
     padding-left: 0;
   }
 
+  &:link,
+  &:visited {
+    color: #1d70b8;
+  }
+
+  &:hover {
+    color: #5694ca;
+    background-color: #dee0e2;
+  }
+
   &:focus {
-    color: govuk-colour("black"); // Focus colour on yellow should really be black.
+    color: #0b0c0c; // Focus colour on yellow should really be black.
     position: relative; // Ensure focus sits above everything else.
     box-shadow: none;
+    outline: 3px solid transparent;
+    background-color: #ffdd00;
+    text-decoration: none;
   }
 
   &:focus:before {
-    background-color: govuk-colour("black");
+    background-color: #0b0c0c;
     content: "";
     display: block;
     width: 100%;
     position: absolute; bottom: 0; left: 0; right: 0;
     height: 5px;
   }
+  &[aria-current] {
+  color: #0b0c0c;
+    position: relative;
+    text-decoration: none;
+    &:before {
+      background-color: #1d70b8;
+      content: "";
+      display: block;
+      height: 100%;
+      position: absolute; bottom: 0; left: 0;
+      width: 5px;
 
-}
-
-
-.moj-sub-navigation__link[aria-current="page"] {
-  color: govuk-colour("black");
-  position: relative;
-  text-decoration: none;
-
-  &:before {
-    background-color: govuk-colour("blue");
-    content: "";
-    display: block;
-    height: 100%;
-    position: absolute; bottom: 0; left: 0;
-    width: 5px;
-
-    @include govuk-media-query($from: tablet) {
-      height: 5px;
-      width: 100%;
+      @media (min-width: 40.0625em) {
+        height: 5px;
+        width: 100%;
+      }
     }
-
+    &:focus:before {
+      background-color: #0b0c0c;
+    }
   }
-
-  &:focus:before {
-    background-color: govuk-colour("black");
-  }
-
 }
-*/
