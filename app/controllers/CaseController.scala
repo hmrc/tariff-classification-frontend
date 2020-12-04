@@ -69,10 +69,7 @@ class CaseController @Inject() (
     (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
       validateAndRenderView(
         TRADER,
-        c =>
-          for {
-            letter <- fileService.getLetterOfAuthority(c)
-          } yield views.html.partials.case_trader(c, letter, tabIndexFor(TRADER), getCountryName),
+        c => Future.successful( views.html.partials.case_trader(c, tabIndexFor(TRADER), getCountryName)),
         ActiveTab.Applicant
       )
     }
@@ -109,7 +106,8 @@ class CaseController @Inject() (
         c =>
           for {
             attachments <- fileService.getAttachments(c)
-            commodityCode = c.decision.map(_.bindingCommodityCode).flatMap(commodityCodeService.find)
+            // Commodity code expiry is not checked until we can integrate with the UK Global Tariff
+            commodityCode = c.decision.map(_.bindingCommodityCode).map(CommodityCode(_))
           } yield views.html.partials.ruling
             .ruling_details(c, decisionForm.bindFrom(c.decision), attachments, commodityCode, tabIndexFor(RULING)),
         ActiveTab.Ruling

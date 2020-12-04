@@ -44,7 +44,7 @@ class DecisionForm @Inject() (commodityCodeConstraints: CommodityCodeConstraints
   val btiForm: Form[DecisionFormData] = Form[DecisionFormData](
     mapping(
       "bindingCommodityCode" -> text.verifying(
-        emptyOr(validCommodityCodeDecision, commodityCodeConstraints.commodityCodeExistsInUKTradeTariff): _*
+        emptyOr(commodityCodeConstraints.commodityCodeValid): _*
       ),
       "goodsDescription"             -> text,
       "methodSearch"                 -> text,
@@ -66,7 +66,7 @@ class DecisionForm @Inject() (commodityCodeConstraints: CommodityCodeConstraints
         .verifying(
           StopOnFirstFail(
             commodityCodeConstraints.commodityCodeNonEmpty,
-            commodityCodeConstraints.commodityCodeExistsInUKTradeTariff
+            commodityCodeConstraints.commodityCodeValid
           )
         ),
       "goodsDescription"             -> text.verifying(customNonEmpty("decision_form.error.itemDescription.required")),
@@ -107,7 +107,7 @@ class DecisionForm @Inject() (commodityCodeConstraints: CommodityCodeConstraints
     Form[Decision](
       mapping(
         "bindingCommodityCode" -> text.verifying(
-          emptyOr(validCommodityCodeDecision, commodityCodeConstraints.commodityCodeExistsInUKTradeTariff): _*
+          emptyOr(commodityCodeConstraints.commodityCodeValid): _*
         ),
         "goodsDescription" -> text,
         "methodSearch"     -> text,
@@ -119,7 +119,7 @@ class DecisionForm @Inject() (commodityCodeConstraints: CommodityCodeConstraints
   def liabilityCompleteForm(existingDecision: Decision = Decision()): Form[Decision] =
     Form[Decision](
       mapping(
-        "bindingCommodityCode" -> nonEmptyText.verifying(commodityCodeConstraints.commodityCodeExistsInUKTradeTariff),
+        "bindingCommodityCode" -> nonEmptyText.verifying(commodityCodeConstraints.commodityCodeValid),
         "goodsDescription"     -> nonEmptyText,
         "methodSearch"         -> nonEmptyText,
         "justification"        -> nonEmptyText,
