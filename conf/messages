@@ -957,9 +957,10 @@ applicationTab.referredByMe = Referred by me
 applicationTab.completedByMe = Completed by me
 applicationTab.gateway = Gateway cases
 
-atar.editRuling.expiryDate.emptyDate = Please specify an expiry date
-atar.editRuling.expiryDate.emptyDate.day = day
-atar.editRuling.expiryDate.emptyDate.month = month
-atar.editRuling.expiryDate.emptyDate.year = year
-atar.editRuling.expiryDate.invalidFormat = format
+atar.editRuling.expiryDate.emptyDate = Enter an expiry date
+atar.editRuling.expiryDate.emptyDate.day = Enter a day
+atar.editRuling.expiryDate.emptyDate.month = Enter a month
+atar.editRuling.expiryDate.emptyDate.year = Enter a year
+atar.editRuling.expiryDate.invalidFormat = Enter a valid date format
+atar.editRuling.expiryDate.scope = Expiry date must be on or before the end of the 3 year period
 

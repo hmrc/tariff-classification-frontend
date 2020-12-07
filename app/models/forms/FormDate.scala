@@ -69,10 +69,10 @@ object FormDate {
 
   val validDateFormatOrEmpty: Constraint[DateForm] = Constraint("constraints.validDateFormat")({
     case d:DateForm if allFieldsEmpty(d) => Valid
-    case d:DateForm if !validDateFormat(d) => Invalid("atar.editRuling.expiryDate.invalidFormat")
     case d:DateForm if d.day.trim.isEmpty => Invalid("atar.editRuling.expiryDate.emptyDate.day")
     case d:DateForm if d.month.trim.isEmpty => Invalid("atar.editRuling.expiryDate.emptyDate.month")
     case d:DateForm if d.year.trim.isEmpty => Invalid("atar.editRuling.expiryDate.emptyDate.year")
+    case d:DateForm if !validDateFormat(d) => Invalid("atar.editRuling.expiryDate.invalidFormat")
     case _ => Valid
   })
 

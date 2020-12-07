@@ -88,6 +88,7 @@ class RulingController @Inject() (
         getCaseAndThen(c =>
           c.application.`type` match {
             case ApplicationType.ATAR =>
+              
               decisionForm.btiForm.bindFromRequest.fold(
                 errorForm => editBTIRulingView(errorForm, c),
                 validForm =>

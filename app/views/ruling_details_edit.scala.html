@@ -92,6 +92,7 @@
                 </div>
                 <div class="column-two-thirds">
                     <p id="end-date-id-text">Expiry date will be set 3 years from start date unless otherwise specified.</p>
+
                 </div>
             </div>
 
@@ -99,9 +100,17 @@
 
                 @CSRF.formField
 
-                @edit_ruling_input_checkbox(
-                    formData = decisionForm
-                )
+                <div class="grid-row">
+                    <div class="column-one-third">
+                        <p></p>
+                    </div>
+                    <div class="column-two-thirds">
+                        <p>@edit_ruling_input_checkbox(
+                            formData = decisionForm
+                            )
+                        </p>
+                    </div>
+                </div>
 
                 @input_text(
                     field = decisionForm("bindingCommodityCode"),

@@ -49,7 +49,8 @@ class DecisionFormMapper {
         d.methodExclusion.getOrElse(""),
         Seq.empty, // TODO : So far this field is only used to read from the FE
         d.explanation.getOrElse(""),
-        d.effectiveEndDate
+        d.effectiveEndDate,
+        explicitEndDate = if(d.effectiveEndDate.isDefined) true else false
       )
     }
 
