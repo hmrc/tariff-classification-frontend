@@ -33,8 +33,6 @@
 @main(bodyClasses = None,
     customTitle = Some(messages(s"page.title.${page.toString}"))) {
 
-    @back_link()
-
     @case_heading(c)
 
     @if(c.application.isBTI && c.status == CaseStatus.OPEN && request.hasPermission(Permission.COMPLETE_CASE)){

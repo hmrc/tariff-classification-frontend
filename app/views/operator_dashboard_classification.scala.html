@@ -17,13 +17,12 @@
 @import config.AppConfig
 @import models.request.AuthenticatedRequest
 @import views.html.includes.main
+@import models.viewmodels.HomeTab
 
 @this()
 @(countCases: Map[String, Int], referredCasesByAssignee: Int)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("operator.dashboard.classification.title"))) {
-
-@components.primary_navigation()
+@main(bodyClasses = None, customTitle = Some(messages("operator.dashboard.classification.title")), customPrimaryNavTab = HomeTab) {
 
 @components.cases_cards(countCases, referredCasesByAssignee)
 

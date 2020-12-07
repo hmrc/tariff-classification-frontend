@@ -27,9 +27,7 @@
 
 @(gatewayCases : ApplicationTabViewModel)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("operator.dashboard.classification.gateway-cases.title"))) {
-
-    @primary_navigation(GatewayCasesTab)
+@main(bodyClasses = None, customTitle = Some(messages("operator.dashboard.classification.gateway-cases.title")), customPrimaryNavTab = GatewayCasesTab) {
 
     @* the heading component *@
     @heading(messages("cases.menu.gateway-cases"))
