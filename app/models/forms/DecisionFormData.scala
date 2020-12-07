@@ -42,12 +42,6 @@ case class DecisionFormData(
 class DecisionForm @Inject() (commodityCodeConstraints: CommodityCodeConstraints) extends Constraints {
 
   def btiForm(): Form[DecisionFormData] = {
-
-    println("hiiiiiiiiiiiii ::")
-    println("hiiiiiiiiiiiii ::")
-    println("hiiiiiiiiiiiii ::")
-    println("hiiiiiiiiiiiii ::")
-
    Form[DecisionFormData](
       mapping(
         "bindingCommodityCode" -> text.verifying(
