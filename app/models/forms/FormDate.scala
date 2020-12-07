@@ -64,7 +64,11 @@ object FormDate {
   }
 
   private val validDateFormat: DateForm => Boolean = { myDate =>
+    if (validateDayInDate(myDate) && validateMonthInDate(myDate) && validateYearInDate(myDate)) {
       Try(LocalDate.of(myDate.year.toInt, myDate.month.toInt, myDate.day.toInt)).isSuccess
+    } else {
+      true
+    }
   }
 
   val validDateFormatOrEmpty: Constraint[DateForm] = Constraint("constraints.validDateFormat")({

@@ -197,7 +197,11 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
         "methodCommercialDenomination" -> "",
         "methodExclusion"              -> "",
         "attachments"                  -> "[]",
-        "explanation"                  -> ""
+        "explanation"                  -> "",
+        "expiryDate.day"               -> "",
+        "expiryDate.month"             -> "",
+        "expiryDate.year"              -> "",
+        "explicitEndDate"              -> "false"
       )
     )
 

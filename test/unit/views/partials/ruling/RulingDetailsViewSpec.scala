@@ -25,6 +25,7 @@ import views.ViewMatchers._
 import views.html.case_details
 import views.html.partials.ruling.ruling_details
 import views.{CaseDetailPage, ViewSpec}
+import controllers.routes.RulingController
 
 class RulingDetailsViewSpec extends ViewSpec {
 
@@ -67,12 +68,11 @@ class RulingDetailsViewSpec extends ViewSpec {
       )
 
       // Then
-      doc                               should containElementWithID("ruling_edit_details")
-      doc                               should containElementWithID("ruling_edit")
-      doc.getElementById("ruling_edit") should haveTag("a")
+      doc                               should containElementWithID("edit-ruling-button")
+      doc                               should containElementWithID("edit-ruling-buttons")
 
       val call = controllers.routes.RulingController.editRulingDetails("ref")
-      doc.getElementById("ruling_edit") should haveAttribute("href", call.url)
+      doc.getElementById("edit-ruling-button") should haveAttribute("href", call.url)
     }
 
     "Not render 'Edit' button when not permitted" in {

@@ -35,7 +35,7 @@ case class DecisionFormData(
   methodExclusion: String              = "",
   attachments: Seq[String]             = Seq.empty,
   explanation: String                  = "",
-  expirydate: Option[Instant]          = None,
+  expiryDate: Option[Instant]          = None,
   explicitEndDate: Boolean             = false
 )
 
@@ -57,7 +57,7 @@ class DecisionForm @Inject() (commodityCodeConstraints: CommodityCodeConstraints
         "expiryDate"                   -> FormDate.optionalDate(),
         "explicitEndDate"              -> boolean
       )(DecisionFormData.apply)(DecisionFormData.unapply).verifying("atar.editRuling.expiryDate.emptyDate",
-        formData => if(formData.explicitEndDate) formData.expirydate.isDefined else true
+        formData => if(formData.explicitEndDate) formData.expiryDate.isDefined else true
       )
     )
   }
@@ -81,7 +81,7 @@ class DecisionForm @Inject() (commodityCodeConstraints: CommodityCodeConstraints
       "expiryDate"                   -> FormDate.optionalDate(),
       "explicitEndDate"              -> boolean
     )(DecisionFormData.apply)(DecisionFormData.unapply).verifying("atar.editRuling.expiryDate.emptyDate",
-      formData => if(formData.explicitEndDate) formData.expirydate.isDefined else true
+      formData => if(formData.explicitEndDate) formData.expiryDate.isDefined else true
     )
   )
 
@@ -101,7 +101,7 @@ class DecisionForm @Inject() (commodityCodeConstraints: CommodityCodeConstraints
       methodExclusion              = d.methodExclusion.getOrElse(""),
       attachments                  = Seq.empty,
       explanation                  = d.explanation.getOrElse(""),
-      expirydate                   = d.effectiveEndDate,
+      expiryDate                   = d.effectiveEndDate,
       explicitEndDate              = d.effectiveEndDate.isDefined
     )
 
