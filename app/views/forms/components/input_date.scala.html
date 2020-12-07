@@ -25,12 +25,13 @@
         hint: Option[String] = None,
         labelClass: Option[String] = None,
         formControlClass: Option[String] = None,
+        formGroupClass: Option[String] = None,
         startAtTabIndex : Option[Int] = None
 )(implicit messages: Messages)
 
 
 
-<div class="form-group @if(dateField.hasErrors) {form-group-error}">
+<div class="form-group @formGroupClass @if(dateField.hasErrors) {form-group-error}">
     <fieldset class="inline" id="@fieldsetId" @if(dateField.hasErrors || hint.nonEmpty){ aria-describedby="@if(hint.nonEmpty){@{dateField.id}-hint}@if(dateField.hasErrors && hint.nonEmpty){ }@if(dateField.hasErrors){error-message-date-input}"}>
         <legend class="@labelClass">
             @legend

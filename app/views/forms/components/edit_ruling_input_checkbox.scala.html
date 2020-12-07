@@ -32,7 +32,7 @@
             data_target = Some("conditional-expiry-date"),
             value = formData("explicitEndDate").value
             )
-            <div class="govuk-checkboxes__conditional js-hidden" id="conditional-expiry-date">
+            <div class="js-hidden" id="conditional-expiry-date">
                 <div class="govuk-form-group">
                    @input_date(
                     dayField = formData("expiryDate.day"),
@@ -40,6 +40,8 @@
                     yearField = formData("expiryDate.year"),
                     dateField = formData("expiryDate"),
                     hint = Some("For example, 12 11 2021"),
+                    fieldsetId = Some("expiryDate"),
+                    formGroupClass = Some("govuk-checkboxes__conditional"),
                     legend=""
                     )
                 </div>

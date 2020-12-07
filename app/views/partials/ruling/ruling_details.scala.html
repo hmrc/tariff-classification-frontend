@@ -174,6 +174,7 @@
             @cancel_ruling_section(c,Some(startAtTabIndex+53))
         }
     </div>
+    <h3 class="heading-medium">@messages("case.decision.attachments.ruling")</h3>
 
     @attachments_list("attachments", files.filter(_.public),startAtTabIndex = Some(startAtTabIndex+2))
 

@@ -62,32 +62,7 @@ class DecisionForm @Inject() (commodityCodeConstraints: CommodityCodeConstraints
         "explanation"                  -> text,
         "expiryDate"                   -> FormDate.optionalDate(),
         "explicitEndDate"              -> boolean
-      )((a, b, c, d, e, f, g, h, i, j) =>
-        DecisionFormData(
-          bindingCommodityCode = a,
-          goodsDescription = b,
-          methodSearch = c,
-          justification = d,
-          methodCommercialDenomination = e,
-          methodExclusion = f,
-          attachments = g,
-          explanation = h,
-          expirydate = if(j == true) i else None,
-          explicitEndDate = j
-        )) { item =>
-        Some(
-          (item.bindingCommodityCode,
-            item.goodsDescription,
-            item.methodSearch,
-            item.justification,
-            item.methodCommercialDenomination,
-            item.methodExclusion,
-            item.attachments,
-            item.explanation,
-            item.expirydate,
-            item.explicitEndDate)
-        )
-      }.verifying("atar.editRuling.expiryDate.emptyDate",
+      )(DecisionFormData.apply)(DecisionFormData.unapply).verifying("atar.editRuling.expiryDate.emptyDate",
         formData => if(formData.explicitEndDate) formData.expirydate.isDefined else true
       )
     )

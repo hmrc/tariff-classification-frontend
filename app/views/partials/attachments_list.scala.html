@@ -23,8 +23,6 @@
 @import models.Case
 @(id: String, attachments: Seq[StoredAttachment], showUploadedBy: Boolean = false, showSelect: Boolean = false,
         showRemoval: Boolean = false, caseRef: Option[String] = None, startAtTabIndex : Option[Int] = None)(implicit request: AuthenticatedRequest[_], messages: Messages)
-<dl class="govuk-check-your-answers cya-questions-short">
-    <h3 class="heading-medium">@messages("case.decision.attachments.ruling")</h3>
 
     @if(attachments.nonEmpty){
 
@@ -97,4 +95,3 @@
 
     </div>
     }
-</dl>
