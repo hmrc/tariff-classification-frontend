@@ -54,5 +54,6 @@ class CaseStatusTabViewSpec extends ViewSpec {
       doc.getElementById("id-overdue") should haveClass("bg-red")
       doc.getElementById("id-status") should haveClass("bg-blue")
     }
+
   }
 }
