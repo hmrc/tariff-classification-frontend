@@ -60,15 +60,16 @@
             </nav>
         </div>
         <div class="moj-primary-navigation__search">
-            <div class="moj-search moj-search--ondark moj-search--inline"><form action="/205-classification/search/advanced-search-results" method="get">
+            <div class="moj-search moj-search--ondark moj-search--inline">
+                @helper.form(action = controllers.routes.SearchController.search(), 'novalidate -> "novalidate") {
                 <div class="govuk-form-group">
                     <label class="govuk-label moj-search__label govuk-visually-hidden" for="search_box-input">
                         Search cases
                     </label>
                     <input tabindex="100" id="search_box-input" class="form-control" name="reference" value="" type="text">
                 </div>
-                <button id="search__button" class="button moj-search__button" data-module="govuk-button" type="submit">Search cases</button>
-            </form>
+                <button id="search__button" tabindex="200" class="button moj-search__button" data-module="govuk-button" type="submit">Search cases</button>
+                }
             </div>
         </div>
     </div>
