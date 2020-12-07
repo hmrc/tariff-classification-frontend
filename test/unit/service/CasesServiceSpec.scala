@@ -18,7 +18,6 @@ package service
 
 import audit.AuditService
 import connector.{BindingTariffClassificationConnector, RulingConnector}
-import models.ApplicationType.ApplicationType
 import models._
 import models.request.NewEventRequest
 import org.mockito.ArgumentMatchers.{any, refEq}
@@ -64,14 +63,24 @@ class CasesServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
 
     "retrieve connector cases with type restriction" in {
       given(
-        connector.findCasesByQueue(any[Queue], any[Pagination], refEq(Seq(ApplicationType.LIABILITY_ORDER)))(
+        connector.findCasesByQueue(any[Queue], any[Pagination], refEq(Seq(ApplicationType.LIABILITY)))(
           any[HeaderCarrier]
         )
       ) willReturn successful(Paged(manyCases))
 
-      await(service.getCasesByQueue(queue, pagination, Seq(ApplicationType.LIABILITY_ORDER))) shouldBe Paged(manyCases)
+      await(service.getCasesByQueue(queue, pagination, Seq(ApplicationType.LIABILITY))) shouldBe Paged(manyCases)
     }
 
+  }
+
+  "Get Cases 'By All Queues'" should {
+    "retrieve connector cases" in {
+      given(connector.findCasesByAllQueues(any[Seq[Queue]], any[Pagination], any[Seq[ApplicationType]])(any[HeaderCarrier])) willReturn successful(
+        Paged(manyCases)
+      )
+
+      await(service.getCasesByAllQueues(Seq(queue), pagination)) shouldBe Paged(manyCases)
+    }
   }
 
   "Get Cases 'By Assignee'" should {

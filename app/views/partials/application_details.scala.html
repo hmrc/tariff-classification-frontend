@@ -23,7 +23,7 @@
 @(c: Case, files: Seq[StoredAttachment], letterOfAuth: Option[StoredAttachment], startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @defining(c.application) { a: Application =>
-    @defining(a.asBTI) { btiApp: BTIApplication =>
+    @defining(a.asATAR) { btiApp: BTIApplication =>
         @defining(btiApp.holder) { btiHolder: EORIDetails =>
 
             @tab_heading("application", messages("case.menu.application-details"))

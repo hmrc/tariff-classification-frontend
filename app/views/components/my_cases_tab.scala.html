@@ -1,0 +1,49 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.components.atarsTable
+@import views.html.components.liabilitiesTable
+@import models.request.AuthenticatedRequest
+@import config.AppConfig
+@import models.viewmodels.ApplicationTabViewModel
+
+@(applicationTabViewModel: ApplicationTabViewModel)(implicit request: AuthenticatedRequest[_], appConfig: AppConfig, messages: Messages)
+
+<div id="my-cases-tabs" class="govuk-tabs" data-module="govuk-tabs">
+    <ul class="govuk-tabs__list">
+        @for(caseTab <- applicationTabViewModel.applicationTabs) {
+        <li class="govuk-tabs__list-item">
+            <a class="govuk-tabs__tab" href="#@caseTab.elementId">
+                @messages(caseTab.tabMessageKey) (@caseTab.searchResult.size)
+            </a>
+        </li>
+        }
+    </ul>
+
+    @* content*@
+
+   @for(caseTab <- applicationTabViewModel.applicationTabs) {
+        <div class="govuk-tabs__panel" id="@caseTab.elementId">
+            @{(caseTab.applicationType, caseTab.searchResult.results.size) match {
+                case (_, 0) => messages("cases.table.empty")
+                case (ApplicationType.ATAR, _) => atarsTable(caseTab, applicationTabViewModel.headingMessageKey)
+                case (ApplicationType.LIABILITY, _) => liabilitiesTable(caseTab, applicationTabViewModel.headingMessageKey)
+                case _ => ""
+            }
+    }
+        </div>
+    }
+</div>

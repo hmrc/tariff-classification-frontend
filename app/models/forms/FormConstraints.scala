@@ -28,12 +28,6 @@ object FormConstraints {
   val numbersOnlyRegex: Regex = """^\d+$""".r
   val btiRefRegex: Regex      = """[0-9]{6,22}""".r
 
-  val validCommodityCodeDecision: Constraint[String] = Constraint("constraints.commoditycode")({
-    case s: String if s.matches("[0-9]{6,22}") && (s.length % 2 == 0) => Valid
-    case _: String =>
-      Invalid("Commodity code must be empty or numeric between 6 and 22 digits with an even number of digits")
-  })
-
   val validCommodityCodeSearch: Constraint[String] = Constraint("constraints.commoditycode")({
     case s: String if s.matches("[0-9]{2,22}") => Valid
     case _: String                             => Invalid("Commodity code must be empty or numeric between 2 and 22 digits")

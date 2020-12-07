@@ -20,7 +20,6 @@ import java.time.Instant
 
 import models.AppealStatus.AppealStatus
 import models.AppealType.AppealType
-import models.ApplicationType.ApplicationType
 import models.CancelReason.CancelReason
 import models.CaseStatus.CaseStatus
 import models.EventType.EventType
@@ -35,6 +34,10 @@ case class Event(
   caseReference: String,
   timestamp: Instant = Instant.now()
 )
+
+object Event {
+  val latestFirst: Ordering[Instant] = Ordering.fromLessThan(_ isAfter _)
+}
 
 sealed trait Details {
   val `type`: EventType
@@ -157,7 +160,7 @@ case class SampleStatusChange(
   override val `type`: EventType.Value = EventType.SAMPLE_STATUS_CHANGE
 
   def renderSummaryFor(application: ApplicationType): String =
-    if (application.equals(ApplicationType.LIABILITY_ORDER) && (from.isEmpty || to.isEmpty)) {
+    if (application.equals(ApplicationType.LIABILITY) && (from.isEmpty || to.isEmpty)) {
       def yesNo(s: Option[SampleStatus]) = if (s.isDefined) "yes" else "no"
 
       s"Sending sample changed from ${yesNo(from)} to ${yesNo(to)}"

@@ -47,9 +47,9 @@ class ReopenCaseController @Inject() (
           .reopenCase(request.`case`, request.operator)
           .map(updatedCase =>
             updatedCase.application.`type` match {
-              case ApplicationType.BTI =>
+              case ApplicationType.ATAR =>
                 routes.CaseController.applicantDetails(updatedCase.reference)
-              case ApplicationType.LIABILITY_ORDER =>
+              case ApplicationType.LIABILITY =>
                 if (config.newLiabilityDetails)
                   v2.routes.LiabilityController.displayLiability(updatedCase.reference)
                 else

@@ -16,4 +16,6 @@
 
 @(headingMsg: String, headingSize: String = "heading-xlarge", headingClass: Option[String] = None)
 
-<h1 class="@headingSize @headingClass.map{classes => classes}">@headingMsg</h1>
+<div id="common-cases-heading">
+ <h1 class="@headingSize @headingClass.map{classes => classes}">@headingMsg</h1>
+</div>

@@ -24,7 +24,7 @@ import views.html.templates.ruling_template
 class RulingTemplateViewSpec extends ViewSpec {
 
   private val rulingCase = Cases.btiCaseExample
-  private val holder     = rulingCase.application.asBTI.holder
+  private val holder     = rulingCase.application.asATAR.holder
   private val ruling     = rulingCase.decision.getOrElse(throw new Exception("Bad test data"))
   private val doc = view(
     ruling_template(rulingCase, ruling, s => Some("dummy country name"))(authenticatedFakeRequest, messages, appConfig)

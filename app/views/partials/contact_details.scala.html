@@ -22,21 +22,22 @@
 <h3 class="heading-medium mt-30">Contact details</h3>
 
 @defining(c.application.contact) { co: Contact =>
-    <dl class="dl-mb-2">
-        <div class="grid-row">
-            <dt class="column-one-third">
+<dl class="govuk-check-your-answers cya-questions-short">
+
+<div class="grid-row">
+            <dt class="cya-question">
                 @messages("case.application.contact.name")
             </dt>
-            <dd class="column-two-thirds">
+            <dd class="cya-answer">
                 <span id="contact-name">@co.name</span>
             </dd>
         </div>
 
         <div class="grid-row">
-            <dt class="column-one-third">
+            <dt class="cya-question">
                 @messages("case.application.contact.email")
             </dt>
-            <dd class="column-two-thirds">
+            <dd class="cya-answer">
             @if(co.email.contains("@")){
                 <a @if(useTabIndex.isDefined){ tabindex="@{useTabIndex.get}" } id="contact-email" href="mailto:@co.email?subject=@c.application.getType application #@c.reference">@co.email</a>
             } else {
@@ -47,13 +48,25 @@
 
         @if(co.phone.isDefined) {
             <div class="grid-row">
-                <dt class="column-one-third">
+                <dt class="cya-question">
                     @messages("case.application.contact.telephone")
                 </dt>
-                <dd class="column-two-thirds">
+                <dd class="cya-answer">
                     <span id="contact-telephone">@co.phone.get</span>
                 </dd>
             </div>
+        }
+        @if(c.caseBoardsFileNumber.isDefined) {
+
+            <div class="grid-row">
+                <dt class="cya-question" id="boards-file-number-label">
+                    @messages("case.application.boards-file-number")
+                </dt>
+                <dd class="cya-answer" id="boards-file-number">
+                    @{c.caseBoardsFileNumber.get}
+                </dd>
+            </div>
+
         }
     </dl>
 }

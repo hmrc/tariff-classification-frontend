@@ -35,7 +35,7 @@ class EmailService @Inject() (connector: EmailConnector) {
 
     val email: CaseCompletedEmail = CaseCompletedEmail(
       Seq(c.application.contact.email),
-      CaseCompletedEmailParameters(c.application.contact.name, c.reference, c.application.asBTI.goodName)
+      CaseCompletedEmailParameters(c.application.contact.name, c.reference, c.application.asATAR.goodName)
     )
 
     connector.send(email) flatMap (_ => connector.generate(email))

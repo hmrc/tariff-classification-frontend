@@ -159,7 +159,8 @@ object Cases {
     Set.empty,
     Sample(),
     Some(Instant.now()),
-    Some(5)
+    Some(5),
+    3
   )
   val btiCaseWithIncompleteDecision: Case = Case(
     "1",
@@ -171,12 +172,13 @@ object Cases {
     None,
     btiApplicationExample,
     Some(incompleteDecision),
-    Seq()
+    Seq(),
+    referredDaysElapsed = 0
   )
   val simpleCaseExample: Case =
-    Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, None, simpleBtiApplicationExample, None, Seq())
+    Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, None, simpleBtiApplicationExample, None, Seq() , referredDaysElapsed = 0)
   val liabilityCaseExample: Case =
-    Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, None, liabilityApplicationExample, None, Seq())
+    Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, None, liabilityApplicationExample, None, Seq(), referredDaysElapsed = 0)
   val liabilityCaseWithDecisionExample: Case = Case(
     "1",
     CaseStatus.OPEN,
@@ -187,12 +189,13 @@ object Cases {
     None,
     liabilityApplicationExample,
     Some(decisionWithExclusion),
-    Seq()
+    Seq(),
+    referredDaysElapsed = 0
   )
   val liabilityLiveCaseExample: Case =
-    Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, None, liabilityLiveApplicationExample, None, Seq())
+    Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, None, liabilityLiveApplicationExample, None, Seq(), referredDaysElapsed = 0)
   val caseQueueExample: Case =
-    Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, Some("1"), btiApplicationExample, Some(decision), Seq())
+    Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, Some("1"), btiApplicationExample, Some(decision), Seq(), referredDaysElapsed = 0)
   val caseAssignedExample: Case = Case(
     "1",
     CaseStatus.OPEN,
@@ -203,7 +206,8 @@ object Cases {
     Some("1"),
     btiApplicationExample,
     Some(decision),
-    Seq()
+    Seq(),
+    referredDaysElapsed = 0
   )
   val expiredRuling: Decision = decision.copy(
     effectiveStartDate = Some(Instant.now().plus(-20, DAYS)),
@@ -303,7 +307,7 @@ object Cases {
     None
   )
   val newLiabilityLiveCaseExample: Case =
-    Case("1", CaseStatus.NEW, Instant.now(), 0, None, None, None, newLiabilityLiveApplicationExample, None, Seq())
+    Case("1", CaseStatus.NEW, Instant.now(), 0, None, None, None, newLiabilityLiveApplicationExample, None, Seq(), referredDaysElapsed = 0)
 
   val liabilityWithCompleteDecision: LiabilityOrder = LiabilityOrder(
     Contact(name = "contact-name", email = "contact@email.com", Some("contact-phone")),
@@ -438,7 +442,7 @@ object Cases {
     sampleToBeReturned: Boolean             = false
   ): Case => Case = { c =>
     c.copy(application =
-      c.application.asBTI.copy(
+      c.application.asATAR.copy(
         offline                 = offline,
         goodName                = goodName,
         goodDescription         = goodDescription,
@@ -464,7 +468,7 @@ object Cases {
     country: String      = "country"
   ): Case => Case = { c =>
     c.copy(application =
-      c.application.asBTI.copy(holder =
+      c.application.asATAR.copy(holder =
         EORIDetails(
           eori,
           businessName,
@@ -487,7 +491,7 @@ object Cases {
     envisagedCommodityCode: Option[String]  = None
   ): Case => Case = { c =>
     c.copy(
-      application = c.application.asBTI.copy(
+      application = c.application.asATAR.copy(
         confidentialInformation = confidentialInformation,
         otherInformation        = otherInformation,
         reissuedBTIReference    = reissuedBTIReference,
@@ -504,7 +508,7 @@ object Cases {
   def withStatus(status: CaseStatus): Case => Case =
     _.copy(status = status)
 
-  def withoutAgent(): Case => Case = { c => c.copy(application = c.application.asBTI.copy(agent = None)) }
+  def withoutAgent(): Case => Case = { c => c.copy(application = c.application.asATAR.copy(agent = None)) }
 
   def withAgent(
     eori: String               = "agent-eori",
@@ -518,13 +522,13 @@ object Cases {
   ): Case => Case = { c =>
     val eoriDetails  = EORIDetails(eori, businessName, addressLine1, addressLine2, addressLine3, postcode, country)
     val agentDetails = AgentDetails(eoriDetails, letter)
-    c.copy(application = c.application.asBTI.copy(agent = Some(agentDetails)))
+    c.copy(application = c.application.asATAR.copy(agent = Some(agentDetails)))
   }
 
   def withAttachment(attachment: Attachment): Case => Case = { c => c.copy(attachments = c.attachments :+ attachment) }
 
   def withContact(contact: Contact): Case => Case = { c =>
-    c.copy(application = c.application.asBTI.copy(contact = contact))
+    c.copy(application = c.application.asATAR.copy(contact = contact))
   }
 
   def withoutAttachments(): Case => Case =

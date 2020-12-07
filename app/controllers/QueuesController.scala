@@ -20,7 +20,6 @@ import config.AppConfig
 import controllers.SessionKeys._
 import controllers.routes.QueuesController
 import javax.inject.{Inject, Singleton}
-import models.ApplicationType.ApplicationType
 import models.{ApplicationType, _}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -44,7 +43,7 @@ class QueuesController @Inject() (
     (verify.authenticated andThen verify.mustHave(Permission.VIEW_QUEUE_CASES)).async { implicit request =>
       val types: Seq[ApplicationType] = caseType
         .map(x => Seq[ApplicationType](ApplicationType.withName(x)))
-        .getOrElse(Seq(ApplicationType.BTI, ApplicationType.LIABILITY_ORDER))
+        .getOrElse(Seq(ApplicationType.ATAR, ApplicationType.LIABILITY))
 
       queuesService.getOneBySlug(slug) flatMap {
         case None => successful(Ok(views.html.resource_not_found()))

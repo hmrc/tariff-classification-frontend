@@ -46,10 +46,10 @@ class CompleteCaseController @Inject() (
       .async { implicit request =>
         validateAndRespond(c =>
           c.application.`type` match {
-            case ApplicationType.BTI =>
+            case ApplicationType.ATAR =>
               successful(Ok(views.html.complete_case(c)))
 
-            case ApplicationType.LIABILITY_ORDER =>
+            case ApplicationType.LIABILITY =>
               casesService
                 .completeCase(c, request.operator)
                 .map(c => Redirect(routes.CompleteCaseController.confirmCompleteCase(c.reference)))
@@ -77,9 +77,9 @@ class CompleteCaseController @Inject() (
   override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = hasValidDecision(c)
 
   private def hasValidDecision(c: Case): Boolean = c.application.`type` match {
-    case ApplicationType.BTI =>
+    case ApplicationType.ATAR =>
       decisionForm.bindFrom(c.decision).map(_.errors).exists(_.isEmpty)
-    case ApplicationType.LIABILITY_ORDER =>
+    case ApplicationType.LIABILITY =>
       decisionForm.liabilityCompleteForm(c.decision.getOrElse(Decision())).errors.isEmpty &&
         LiabilityDetailsForm.liabilityDetailsCompleteForm(c).errors.isEmpty
   }

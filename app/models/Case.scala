@@ -34,7 +34,8 @@ case class Case(
   keywords: Set[String]             = Set.empty,
   sample: Sample                    = Sample(),
   dateOfExtract: Option[Instant]    = None,
-  migratedDaysElapsed: Option[Long] = None
+  migratedDaysElapsed: Option[Long] = None,
+  referredDaysElapsed: Long
 ) {
   def hasQueue: Boolean = queueId.isDefined
 
@@ -61,14 +62,23 @@ case class Case(
 
   def sampleToBeProvided: Boolean =
     application.`type` match {
-      case ApplicationType.BTI             => application.asBTI.sampleToBeProvided
-      case ApplicationType.LIABILITY_ORDER => sample.status.isDefined
+      case ApplicationType.ATAR             => application.asATAR.sampleToBeProvided
+      case ApplicationType.LIABILITY => sample.status.isDefined
     }
 
   def sampleToBeReturned: Boolean =
     application.`type` match {
-      case ApplicationType.BTI             => application.asBTI.sampleToBeReturned
-      case ApplicationType.LIABILITY_ORDER => sample.returnStatus.contains(SampleReturn.YES)
+      case ApplicationType.ATAR             => application.asATAR.sampleToBeReturned
+      case ApplicationType.LIABILITY => sample.returnStatus.contains(SampleReturn.YES)
     }
 
+  def isCaseOverdue: Boolean =
+    (application.isLiveLiabilityOrder) match {
+      case true  if daysElapsed >= 5   => true
+      case false if daysElapsed >= 30  => true
+      case _                           => false
+    }
 }
+
+
+

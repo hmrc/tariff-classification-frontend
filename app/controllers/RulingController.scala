@@ -53,12 +53,12 @@ class RulingController @Inject() (
       .async { implicit request =>
         getCaseAndThen(c =>
           c.application.`type` match {
-            case ApplicationType.BTI =>
+            case ApplicationType.ATAR =>
               val formData = mapper.caseToDecisionFormData(c)
               val df       = decisionForm.btiForm.fill(formData)
               editBTIRulingView(df, c)
 
-            case ApplicationType.LIABILITY_ORDER =>
+            case ApplicationType.LIABILITY =>
               val decision = c.decision.getOrElse(Decision())
               val df       = decisionForm.liabilityForm(decision)
               editLiabilityRulingView(df, c)
@@ -71,11 +71,11 @@ class RulingController @Inject() (
       .async { implicit request =>
         getCaseAndThen(c =>
           c.application.`type` match {
-            case ApplicationType.BTI =>
+            case ApplicationType.ATAR =>
               val formData               = mapper.caseToDecisionFormData(c)
               val decisionFormWithErrors = decisionForm.btiCompleteForm.fillAndValidate(formData)
               editBTIRulingView(decisionFormWithErrors, c)
-            case ApplicationType.LIABILITY_ORDER =>
+            case ApplicationType.LIABILITY =>
               //TODO add validate logic
               Future.successful(Redirect(routes.CompleteCaseController.confirmCompleteCase(c.reference)))
           }
@@ -87,7 +87,7 @@ class RulingController @Inject() (
       .async { implicit request =>
         getCaseAndThen(c =>
           c.application.`type` match {
-            case ApplicationType.BTI =>
+            case ApplicationType.ATAR =>
               decisionForm.btiForm.bindFromRequest.fold(
                 errorForm => editBTIRulingView(errorForm, c),
                 validForm =>
@@ -96,7 +96,7 @@ class RulingController @Inject() (
                   } yield Redirect(routes.CaseController.rulingDetails(update.reference))
               )
 
-            case ApplicationType.LIABILITY_ORDER =>
+            case ApplicationType.LIABILITY =>
               val decision = c.decision.getOrElse(Decision())
               decisionForm
                 .liabilityForm(decision)

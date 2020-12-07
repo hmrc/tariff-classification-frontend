@@ -44,8 +44,9 @@ case.application.contact.name=Contact name
 case.application.contact.email=Contact email
 case.application.contact.telephone=Contact telephone
 case.application.holder.eori-number=EORI number
-case.application.holder.trader-name=Registered company name
-case.application.holder.address=Registered company address
+case.application.holder.trader-name=Registered name
+case.application.holder.address=Registered address
+case.application.holder.section_heading=Holder details
 case.application.agent.eori-number=EORI number
 case.application.agent.trader-name=Registered company name
 case.application.agent.address=Registered company address
@@ -257,6 +258,7 @@ error.empty.refer.note=Add a note giving details of why you are referring this c
 error.empty.refer.to=Select who you are referring this case to
 decision_form.error.title=You must finish these sections to complete the case
 decision_form.error.bindingCommodityCode.required=Enter a binding commodity code
+decision_form.error.bindingCommodityCode.valid=Commodity code must be numeric between 6 and 22 digits with an even number of digits
 decision_form.error.itemDescription.required=Enter an item description
 decision_form.error.legalJustification.required=Enter a legal justification
 decision_form.error.searchesPerformed.required=Enter searches performed
@@ -894,9 +896,11 @@ accessibility.howWeTested.p4 = It was last updated on 1 September 2020.
 
 operator.dashboard.classification.title = Classification officer
 operator.dashboard.classification.my-cases = Assigned to me
-operator.dashboard.classification.my-cases.progress = 13 cases currently in progress
-operator.dashboard.classification.my-cases.referred-me = Referred by me
-operator.dashboard.classification.my-cases.progress = 6 cases on referral
+operator.dashboard.classification.my-cases.progress.plural = {0} cases currently in progress
+operator.dashboard.classification.my-cases.progress.singular = {0} case currently in progress
+operator.dashboard.classification.my-cases.referredByMe = Referred by me
+operator.dashboard.classification.my-cases.onReferralProgress.plural = {0} cases on referral
+operator.dashboard.classification.my-cases.onReferralProgress.singular = {0} case on referral
 operator.dashboard.classification.all-open-cases = All open cases
 operator.dashboard.classification.all-open-cases.atar = ATaR
 operator.dashboard.classification.all-open-cases.list-all = List of all open ATaR cases
@@ -905,4 +909,42 @@ operator.dashboard.classification.all-open-cases.correspondence = Correspondence
 operator.dashboard.classification.all-open-cases.correspondence.list = List of all open correspondence cases
 operator.dashboard.classification.all-open-cases.Miscellaneous = Miscellaneous
 operator.dashboard.classification.all-open-cases.miscellaneous.list = List of all open miscellaneous cases
+operator.dashboard.classification.gateway-cases.title = Gateway cases - Advance Tariff Rulings Case Manager - GOV.UK
 operator.dashboard.classification.gateway-cases = Create, allocate and manage cases
+operator.dashboard.classification.gateway-cases-total.singular = {0} case in the Gateway
+operator.dashboard.classification.gateway-cases-total.plural = {0} cases in the Gateway
+
+common.cases.my_cases-title=My cases - Advance Tariff Rulings Case Manager - GOV.UK
+common.cases.open_cases-title=Open cases - Advance Tariff Rulings Case Manager - GOV.UK
+common.cases.atar.tab_title=ATaR
+common.cases.liability.tab_title=Liability
+common.cases.correspondence.tab_title=Correspondence
+common.cases.miscellaneous.tab_title=Miscellaneous
+common.cases.secondaryNav.assigned=Assigned to me
+common.cases.secondaryNav.referred=Referred by me
+common.cases.secondaryNav.completed=Completed by me
+
+cases.opencases.atar.heading=ATaR cases
+cases.opencases.liability.heading=Liability cases
+cases.opencases.correspondence.heading=Correspondence cases
+cases.opencases.miscellaneous.heading=Miscellaneous cases
+
+cases.opencases.tab_ACT=ACT
+cases.opencases.tab_CAP=CAP
+cases.opencases.tab_CARS=CARS
+cases.opencases.tab_ELM=ELM
+cases.opencases.tab_FLEX=FLEX
+cases.opencases.tab_TTA=TT-A
+cases.opencases.tab_TTB=TT-B
+cases.opencases.tab_TTC=TT-C
+
+applicationTab.atar=ATaR
+applicationTab.liability=Liability
+applicationTab.correspondence=Correspondence
+applicationTab.miscellaneous=Miscellaneous
+
+applicationTab.assignedToMe = Assigned to me
+applicationTab.referredByMe = Referred by me
+applicationTab.completedByMe = Completed by me
+applicationTab.gateway = Gateway cases
+
