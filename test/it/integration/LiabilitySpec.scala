@@ -6,6 +6,7 @@ import play.api.test.Helpers._
 import models.{Case, Pagination}
 import utils.Cases._
 import utils.{CasePayloads, EventPayloads}
+import uk.gov.hmrc.http.HeaderNames
 
 class LiabilitySpec extends IntegrationTest with MockitoSugar {
 
@@ -59,7 +60,12 @@ class LiabilitySpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response = await(ws.url(s"$baseUrl/cases/1").get())
+      val response = await(
+        ws
+          .url(s"$baseUrl/cases/1")
+          .withHttpHeaders(HeaderNames.xSessionId -> "1")
+          .get()
+      )
 
       // Then
       response.status shouldBe OK
@@ -86,7 +92,12 @@ class LiabilitySpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response = await(ws.url(s"$baseUrl/cases/1/liability").get())
+      val response = await(
+        ws
+          .url(s"$baseUrl/cases/1/liability")
+          .withHttpHeaders(HeaderNames.xSessionId -> "1")
+          .get()
+      )
 
       // Then
       response.status shouldBe OK
