@@ -50,27 +50,27 @@ class TabCacheControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach 
 
   "POST" should {
     "save active tab in the database" in {
-      val result = controller().post(ApplicationType.LIABILITY_ORDER).apply(newFakePOSTRequestWithCSRF(app, Tab.C592_TAB.name))
+      val result = controller().post(ApplicationType.LIABILITY).apply(newFakePOSTRequestWithCSRF(app, Tab.C592_TAB.name))
       status(result) shouldBe Status.ACCEPTED
-      await(tabCacheService.getActiveTab("id", ApplicationType.LIABILITY_ORDER)) shouldBe Some(Tab.C592_TAB)
+      await(tabCacheService.getActiveTab("id", ApplicationType.LIABILITY)) shouldBe Some(Tab.C592_TAB)
     }
 
     "not save active tab when anchor is empty" in {
-      val result = controller().post(ApplicationType.LIABILITY_ORDER).apply(newFakePOSTRequestWithCSRF(app, ""))
+      val result = controller().post(ApplicationType.LIABILITY).apply(newFakePOSTRequestWithCSRF(app, ""))
       status(result) shouldBe Status.BAD_REQUEST
-      await(tabCacheService.getActiveTab("id", ApplicationType.LIABILITY_ORDER)) shouldBe None
+      await(tabCacheService.getActiveTab("id", ApplicationType.LIABILITY)) shouldBe None
     }
 
     "not save active tab when tab name does not exist" in {
-      val result = controller().post(ApplicationType.LIABILITY_ORDER).apply(newFakePOSTRequestWithCSRF(app, "foo"))
+      val result = controller().post(ApplicationType.LIABILITY).apply(newFakePOSTRequestWithCSRF(app, "foo"))
       status(result) shouldBe Status.BAD_REQUEST
-      await(tabCacheService.getActiveTab("id", ApplicationType.LIABILITY_ORDER)) shouldBe None
+      await(tabCacheService.getActiveTab("id", ApplicationType.LIABILITY)) shouldBe None
     }
 
     "not save active tab when body is null" in {
-      val result = controller().post(ApplicationType.LIABILITY_ORDER).apply(newFakePOSTRequestWithCSRF(app))
+      val result = controller().post(ApplicationType.LIABILITY).apply(newFakePOSTRequestWithCSRF(app))
       status(result) shouldBe Status.BAD_REQUEST
-      await(tabCacheService.getActiveTab("id", ApplicationType.LIABILITY_ORDER)) shouldBe None
+      await(tabCacheService.getActiveTab("id", ApplicationType.LIABILITY)) shouldBe None
     }
   }
 }

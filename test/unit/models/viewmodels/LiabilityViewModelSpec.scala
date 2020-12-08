@@ -38,7 +38,7 @@ class LiabilityViewModelSpec extends ModelsBaseSpec {
   val operator                  = Cases.operatorWithCompleteCasePermission
   val operatorWithoutPermission = Cases.operatorWithoutCompleteCasePermission
   private val caseHeaderViewModel =
-    CaseHeaderViewModel(ApplicationType.LIABILITY_ORDER, "trader-business-name", "good-name", "1", "CANCELLED", None, isLive = false)
+    CaseHeaderViewModel(ApplicationType.LIABILITY, "trader-business-name", "good-name", "1", "CANCELLED", None, isLive = false)
 
   def buildLiabilityModel(
     caseHeaderViewModel: CaseHeaderViewModel = caseHeaderViewModel,
@@ -164,7 +164,7 @@ class LiabilityViewModelSpec extends ModelsBaseSpec {
       assert(
         LiabilityViewModel.fromCase(c, op) === LiabilityViewModel(
           CaseHeaderViewModel(
-            ApplicationType.LIABILITY_ORDER,
+            ApplicationType.LIABILITY,
             "trader-business-name",
             "good-name",
             "1",

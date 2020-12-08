@@ -76,7 +76,7 @@
     )
 }
 
-@if(liabilityViewModel.caseHeaderViewModel.caseType == ApplicationType.LIABILITY_ORDER && idOfElement.nonEmpty) {
+@if(liabilityViewModel.caseHeaderViewModel.caseType == ApplicationType.LIABILITY && idOfElement.nonEmpty) {
     <script>
         let url = "@routes.TabCacheController.post(liabilityViewModel.caseHeaderViewModel.caseType).url";
         let csrf = "@CSRF.getToken.value";

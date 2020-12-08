@@ -30,15 +30,15 @@ class TabCacheService @Inject() (
   dataCacheConnector: DataCacheConnector
 )(implicit ec: ExecutionContext) {
 
-  def cacheKey(requestId: String, appType: ApplicationType.Value) =
+  def cacheKey(requestId: String, appType: ApplicationType) =
     s"$requestId-${appType.toString}"
 
-  def getActiveTab(requestId: String, appType: ApplicationType.Value): Future[Option[Tab]] =
+  def getActiveTab(requestId: String, appType: ApplicationType): Future[Option[Tab]] =
     dataCacheConnector.getEntry[String](requestId, cacheKey(requestId, appType)).map { maybeValue =>
       maybeValue.flatMap(Tab.fromValue)
     }
 
-  def clearActiveTab(requestId: String, appType: ApplicationType.Value): Future[Unit] =
+  def clearActiveTab(requestId: String, appType: ApplicationType): Future[Unit] =
     dataCacheConnector.fetch(requestId).flatMap {
       case Some(cacheMap) =>
         val cachedData      = cacheMap.data
@@ -48,7 +48,7 @@ class TabCacheService @Inject() (
         Future.successful(())
     }
 
-  def setActiveTab(requestId: String, appType: ApplicationType.Value, activeTab: Tab): Future[Unit] =
+  def setActiveTab(requestId: String, appType: ApplicationType, activeTab: Tab): Future[Unit] =
     dataCacheConnector.fetch(requestId).flatMap { maybeCacheMap =>
       val cachedData      = maybeCacheMap.map(_.data).getOrElse(Map.empty)
       val tabMapping      = cacheKey(requestId, appType) -> JsString(activeTab.name)

@@ -74,15 +74,15 @@ object ApplicationType {
   case object CORRESPONDENCE extends ApplicationType("CORRESPONDENCE")
   case object MISCELLANEOUS extends ApplicationType("MISCELLANEOUS")
 
-  implicit def applicationTypePathBindable(implicit stringBindable: PathBindable[String]): PathBindable[Value] =
-    new PathBindable[Value] {
-      def bind(key: String, value: String): Either[String,Value] =
+  implicit def applicationTypePathBindable(implicit stringBindable: PathBindable[String]): PathBindable[ApplicationType] =
+    new PathBindable[ApplicationType] {
+      def bind(key: String, value: String): Either[String, ApplicationType] =
         Either.catchOnly[NoSuchElementException] {
           ApplicationType.withName(value)
         }.leftMap { _ =>
           "Invalid application type"
         }
-      def unbind(key: String, value: Value): String =
+      def unbind(key: String, value: ApplicationType): String =
         stringBindable.unbind(key, value.toString)
     }
 }

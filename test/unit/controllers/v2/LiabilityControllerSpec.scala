@@ -145,7 +145,7 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     when(keywordsService.removeKeyword(any[Case](), any[String](), any[Operator]())(any())) thenReturn Future(
       Cases.liabilityLiveCaseExample
     )
-    when(tabCacheService.getActiveTab(any[String], refEq(ApplicationType.LIABILITY_ORDER))) thenReturn Future(None)
+    when(tabCacheService.getActiveTab(any[String], refEq(ApplicationType.LIABILITY))) thenReturn Future(None)
 
     when(
       liability_view.apply(
@@ -203,8 +203,8 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     "redirect to a fragment URL when there is a saved tab" in {
       mockLiabilityController()
 
-      when(tabCacheService.getActiveTab(any[String], refEq(ApplicationType.LIABILITY_ORDER))) thenReturn Future.successful(Some(Tab.ATTACHMENTS_TAB))
-      when(tabCacheService.clearActiveTab(any[String], refEq(ApplicationType.LIABILITY_ORDER))) thenReturn Future.successful(())
+      when(tabCacheService.getActiveTab(any[String], refEq(ApplicationType.LIABILITY))) thenReturn Future.successful(Some(Tab.ATTACHMENTS_TAB))
+      when(tabCacheService.clearActiveTab(any[String], refEq(ApplicationType.LIABILITY))) thenReturn Future.successful(())
 
       val fakeReq                = newFakeGETRequestWithCSRF(app)
       val result: Future[Result] = controller(Set()).displayLiability(caseReference).apply(fakeReq)

@@ -44,32 +44,32 @@ class TabCacheServiceSpec extends ServiceSpecBase with ScalaCheckDrivenPropertyC
 
   "TabCacheService" should {
     "get the active tab" in {
-      await(service.getActiveTab("id", ApplicationType.LIABILITY_ORDER)) shouldBe None
+      await(service.getActiveTab("id", ApplicationType.LIABILITY)) shouldBe None
     }
 
     "clear the active tab" in {
-      await(service.clearActiveTab("id", ApplicationType.LIABILITY_ORDER)) shouldBe (())
+      await(service.clearActiveTab("id", ApplicationType.LIABILITY)) shouldBe (())
     }
 
     "set the active tab" in {
-      await(service.setActiveTab("id", ApplicationType.LIABILITY_ORDER, Tab.ATTACHMENTS_TAB)) shouldBe (())
+      await(service.setActiveTab("id", ApplicationType.LIABILITY, Tab.ATTACHMENTS_TAB)) shouldBe (())
     }
 
     "get back out the tab that you put in" in forAll(tabGenerator, tabGenerator) { (firstTab, secondTab) =>
       await(for {
-        _              <- service.setActiveTab("id", ApplicationType.LIABILITY_ORDER, firstTab)
-        afterFirstSet  <- service.getActiveTab("id", ApplicationType.LIABILITY_ORDER)
-        _              <- service.setActiveTab("id", ApplicationType.LIABILITY_ORDER, secondTab)
-        afterSecondSet <- service.getActiveTab("id", ApplicationType.LIABILITY_ORDER)
+        _              <- service.setActiveTab("id", ApplicationType.LIABILITY, firstTab)
+        afterFirstSet  <- service.getActiveTab("id", ApplicationType.LIABILITY)
+        _              <- service.setActiveTab("id", ApplicationType.LIABILITY, secondTab)
+        afterSecondSet <- service.getActiveTab("id", ApplicationType.LIABILITY)
       } yield (afterFirstSet, afterSecondSet)) shouldBe ((Some(firstTab), Some(secondTab)))
     }
 
     "delete the tab that was saved" in forAll(tabGenerator) { tab =>
       await(for {
-        _          <- service.setActiveTab("id", ApplicationType.LIABILITY_ORDER, tab)
-        afterSet   <- service.getActiveTab("id", ApplicationType.LIABILITY_ORDER)
-        _          <- service.clearActiveTab("id", ApplicationType.LIABILITY_ORDER)
-        afterClear <- service.getActiveTab("id", ApplicationType.LIABILITY_ORDER)
+        _          <- service.setActiveTab("id", ApplicationType.LIABILITY, tab)
+        afterSet   <- service.getActiveTab("id", ApplicationType.LIABILITY)
+        _          <- service.clearActiveTab("id", ApplicationType.LIABILITY)
+        afterClear <- service.getActiveTab("id", ApplicationType.LIABILITY)
       } yield (afterSet, afterClear)) shouldBe ((Some(tab), None))
     }
   }

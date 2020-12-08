@@ -35,7 +35,7 @@ class TabCacheController @Inject() (
     extends FrontendController(mcc)
     with Logging {
 
-  def post(itemType: ApplicationType.Value): Action[AnyContent] =
+  def post(itemType: ApplicationType): Action[AnyContent] =
     identify.async { implicit request =>
       val maybeTab = for {
         bodyText <- request.body.asText

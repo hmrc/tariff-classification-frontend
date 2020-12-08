@@ -58,9 +58,9 @@ class LiabilityController @Inject() (
   def displayLiability(reference: String): Action[AnyContent] = {
     (verify.authenticated andThen verify.casePermissions(reference)).async { implicit caseRequest =>
       identify.async { implicit idRequest =>
-        tabCacheService.getActiveTab(idRequest.internalId, ApplicationType.LIABILITY_ORDER).flatMap {
+        tabCacheService.getActiveTab(idRequest.internalId, ApplicationType.LIABILITY).flatMap {
           case Some(tab) =>
-            tabCacheService.clearActiveTab(idRequest.internalId, ApplicationType.LIABILITY_ORDER).map { _ =>
+            tabCacheService.clearActiveTab(idRequest.internalId, ApplicationType.LIABILITY).map { _ =>
               Redirect(routes.LiabilityController.displayLiability(reference).withFragment(tab.name))
             }
           case None =>
