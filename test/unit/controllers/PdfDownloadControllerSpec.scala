@@ -22,18 +22,18 @@ import org.mockito.Mockito._
 import play.api.http.Status
 import play.api.mvc.Result
 import play.api.test.Helpers._
-import play.twirl.api.Html
-import service.{CasesService, CountriesService, FileStoreService, PdfService}
+import service.{CasesService, FileStoreService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
 
 import scala.concurrent.Future.successful
 import scala.concurrent.ExecutionContext.Implicits.global
 import models.response.FileMetadata
+import akka.stream.scaladsl.Source
+import akka.util.ByteString
 
 class PdfDownloadControllerSpec extends ControllerBaseSpec {
 
-  private val pdfService  = mock[PdfService]
   private val caseService = mock[CasesService]
   private val fileService = mock[FileStoreService]
   private val operator    = mock[Operator]
@@ -46,23 +46,18 @@ class PdfDownloadControllerSpec extends ControllerBaseSpec {
     decisionPdf          = Some(Attachment("id", false, Some(Operator("1", None))))
   )
 
-  private val expectedResult   = PdfFile("Some content".getBytes)
-  private val countriesService = new CountriesService
-
   private val caseWithDecision          = Cases.btiCaseExample.copy(decision       = Some(decision))
   private val caseWithoutDecision       = Cases.btiCaseExample.copy(decision       = None)
   private val liabilityCaseWithDecision = Cases.liabilityCaseExample.copy(decision = Some(decision))
 
-  private val rulingPdfUrl = "http://localhost:4572/digital-tariffs-local/id"
-  private val rulingPdfMetadata = FileMetadata("id", "ATaRRuling_1.pdf", "application/pdf", Some(rulingPdfUrl))
+  private val pdfUrl      = "http://localhost:4572/digital-tariffs-local/id"
+  private val pdfMetadata = FileMetadata("id", "some.pdf", "application/pdf", Some(pdfUrl))
 
   private val controller = new PdfDownloadController(
     new SuccessfulAuthenticatedAction(playBodyParsers, operator),
     mcc,
-    pdfService,
     fileService,
     caseService,
-    countriesService,
     realAppConfig
   )
 
@@ -81,11 +76,11 @@ class PdfDownloadControllerSpec extends ControllerBaseSpec {
   private def givenCaseWithoutLetterOfAuth(): Unit =
     when(fileService.getLetterOfAuthority(any[Case])(any[HeaderCarrier])).thenReturn(successful(None))
 
-  private def givenValidGeneratedPdf(): Unit =
-    when(pdfService.generatePdf(any[Html])).thenReturn(successful(expectedResult))
-
-  private def givenValidStoredPdf(): Unit =
-    when(fileService.getFileMetadata(any[String])(any[HeaderCarrier])).thenReturn(successful(Some(rulingPdfMetadata)))
+  private def givenValidStoredPdf(): Unit = {
+    when(fileService.getFileMetadata(any[String])(any[HeaderCarrier])).thenReturn(successful(Some(pdfMetadata)))
+    when(fileService.downloadFile(any[String])(any[HeaderCarrier]))
+      .thenReturn(successful(Some(Source.single(ByteString("Some content".getBytes())))))
+  }
 
   private def givenNotFoundCase(): Unit =
     when(caseService.getOne(any[String])(any[HeaderCarrier])).thenReturn(successful(None))
@@ -96,13 +91,14 @@ class PdfDownloadControllerSpec extends ControllerBaseSpec {
       givenCompletedCase()
       givenCaseWithoutAttachments()
       givenCaseWithoutLetterOfAuth()
-      givenValidGeneratedPdf()
+      givenValidStoredPdf()
 
       val result: Result = await(controller.applicationPdf(caseWithDecision.reference)(fakeRequest))
 
-      status(result)          shouldBe OK
-      contentAsString(result) shouldBe "Some content"
-      contentType(result)     shouldBe Some("application/pdf")
+      status(result)                        shouldBe OK
+      contentAsString(result)               shouldBe "Some content"
+      contentType(result)                   shouldBe Some("application/pdf")
+      header("Content-Disposition", result) shouldBe (Some("attachment; filename=some.pdf"))
     }
 
     "error when case not found" in {
@@ -126,9 +122,10 @@ class PdfDownloadControllerSpec extends ControllerBaseSpec {
 
       val result = await(controller.getRulingPdf(caseWithDecision.reference)(fakeRequest))
 
-      status(result)                        shouldBe SEE_OTHER
-      contentAsString(result)               shouldBe empty
-      redirectLocation(result)              shouldBe Some(rulingPdfUrl)
+      status(result)                        shouldBe OK
+      contentAsString(result)               shouldBe "Some content"
+      contentType(result)                   shouldBe Some("application/pdf")
+      header("Content-Disposition", result) shouldBe (Some("attachment; filename=some.pdf"))
     }
 
     "return expected pdf for liability case" in {
@@ -137,14 +134,15 @@ class PdfDownloadControllerSpec extends ControllerBaseSpec {
 
       val result = await(controller.getRulingPdf(liabilityCaseWithDecision.reference)(fakeRequest))
 
-      status(result)                        shouldBe SEE_OTHER
-      contentAsString(result)               shouldBe empty
-      redirectLocation(result)              shouldBe Some(rulingPdfUrl)
+      status(result)                        shouldBe OK
+      contentAsString(result)               shouldBe "Some content"
+      contentType(result)                   shouldBe Some("application/pdf")
+      header("Content-Disposition", result) shouldBe (Some("attachment; filename=some.pdf"))
     }
 
     "redirect to ruling when no decision found" in {
       givenNonDecisionCase()
-      givenValidGeneratedPdf()
+      givenValidStoredPdf()
 
       val result = await(controller.getRulingPdf(caseWithDecision.reference)(fakeRequest))
 

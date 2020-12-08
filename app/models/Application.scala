@@ -88,7 +88,8 @@ case class BTIApplication(
   knownLegalProceedings: Option[String],
   envisagedCommodityCode: Option[String],
   sampleToBeProvided: Boolean,
-  sampleToBeReturned: Boolean
+  sampleToBeReturned: Boolean,
+  applicationPdf: Option[Attachment]
 ) extends Application {
   override val `type`: models.ApplicationType = ApplicationType.ATAR
 }
