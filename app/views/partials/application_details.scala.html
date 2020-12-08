@@ -84,13 +84,10 @@
                         @messages("case.goods.sending_samples")
                         </dt>
                         <dd class="cya-answer">
-                        @if(c.attachments.exists(_.operator.isEmpty)) {
                             Yes. <a tabindex="@{
                                 startAtTabIndex + 1
                             }" href="@CaseController.sampleDetails(c.reference)">@messages("case.goods.sending_samples_yes")</a>
-                        } else {
-                            @messages("answer.no")
-                        }
+
                         </dd>
                     </div>
                 }
