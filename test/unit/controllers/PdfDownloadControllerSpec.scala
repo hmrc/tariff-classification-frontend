@@ -29,6 +29,7 @@ import utils.Cases
 
 import scala.concurrent.Future.successful
 import scala.concurrent.ExecutionContext.Implicits.global
+import models.response.FileMetadata
 
 class PdfDownloadControllerSpec extends ControllerBaseSpec {
 
@@ -41,7 +42,8 @@ class PdfDownloadControllerSpec extends ControllerBaseSpec {
     bindingCommodityCode = "040900",
     justification        = "justification-content",
     goodsDescription     = "goods-description",
-    methodSearch         = Some("method-to-search")
+    methodSearch         = Some("method-to-search"),
+    decisionPdf          = Some(Attachment("id", false, Some(Operator("1", None))))
   )
 
   private val expectedResult   = PdfFile("Some content".getBytes)
@@ -50,6 +52,9 @@ class PdfDownloadControllerSpec extends ControllerBaseSpec {
   private val caseWithDecision          = Cases.btiCaseExample.copy(decision       = Some(decision))
   private val caseWithoutDecision       = Cases.btiCaseExample.copy(decision       = None)
   private val liabilityCaseWithDecision = Cases.liabilityCaseExample.copy(decision = Some(decision))
+
+  private val rulingPdfUrl = "http://localhost:4572/digital-tariffs-local/id"
+  private val rulingPdfMetadata = FileMetadata("id", "ATaRRuling_1.pdf", "application/pdf", Some(rulingPdfUrl))
 
   private val controller = new PdfDownloadController(
     new SuccessfulAuthenticatedAction(playBodyParsers, operator),
@@ -78,6 +83,9 @@ class PdfDownloadControllerSpec extends ControllerBaseSpec {
 
   private def givenValidGeneratedPdf(): Unit =
     when(pdfService.generatePdf(any[Html])).thenReturn(successful(expectedResult))
+
+  private def givenValidStoredPdf(): Unit =
+    when(fileService.getFileMetadata(any[String])(any[HeaderCarrier])).thenReturn(successful(Some(rulingPdfMetadata)))
 
   private def givenNotFoundCase(): Unit =
     when(caseService.getOne(any[String])(any[HeaderCarrier])).thenReturn(successful(None))
@@ -114,26 +122,24 @@ class PdfDownloadControllerSpec extends ControllerBaseSpec {
 
     "return expected pdf" in {
       givenCompletedCase()
-      givenValidGeneratedPdf()
+      givenValidStoredPdf()
 
       val result = await(controller.getRulingPdf(caseWithDecision.reference)(fakeRequest))
 
-      status(result)                        shouldBe OK
-      contentAsString(result)               shouldBe "Some content"
-      contentType(result)                   shouldBe Some("application/pdf")
-      header("Content-Disposition", result) shouldBe Some("filename=BTIRuling_1.pdf")
+      status(result)                        shouldBe SEE_OTHER
+      contentAsString(result)               shouldBe empty
+      redirectLocation(result)              shouldBe Some(rulingPdfUrl)
     }
 
     "return expected pdf for liability case" in {
       givenCompletedLiabilityCase()
-      givenValidGeneratedPdf()
+      givenValidStoredPdf()
 
       val result = await(controller.getRulingPdf(liabilityCaseWithDecision.reference)(fakeRequest))
 
-      status(result)                        shouldBe OK
-      contentAsString(result)               shouldBe "Some content"
-      contentType(result)                   shouldBe Some("application/pdf")
-      header("Content-Disposition", result) shouldBe Some("filename=LiabilityDecision_1.pdf")
+      status(result)                        shouldBe SEE_OTHER
+      contentAsString(result)               shouldBe empty
+      redirectLocation(result)              shouldBe Some(rulingPdfUrl)
     }
 
     "redirect to ruling when no decision found" in {

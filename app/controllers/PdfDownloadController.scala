@@ -16,6 +16,7 @@
 
 package controllers
 
+import cats.data.OptionT
 import config.AppConfig
 import javax.inject.Inject
 import models.Case
@@ -42,13 +43,19 @@ class PdfDownloadController @Inject() (
     with I18nSupport {
 
   def getRulingPdf(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
-    caseService.getOne(reference) flatMap {
-      case Some(c: Case) if c.decision.isDefined && c.application.isBTI =>
-        generatePdf(ruling_template(c, c.decision.get, getCountryName), s"BTIRuling_$reference.pdf")
-      case Some(c: Case) if c.decision.isDefined && c.application.isLiabilityOrder =>
-        generatePdf(decision_template(c, c.decision.get), s"LiabilityDecision_$reference.pdf")
-      case Some(c: Case) if c.decision.isEmpty => successful(Ok(views.html.ruling_not_found(reference)))
-      case _                                   => successful(Ok(views.html.case_not_found(reference)))
+    caseService.getOne(reference).flatMap {
+      case Some(cse) =>
+        val attachmentRedirect = for {
+          decision <- OptionT.fromOption[Future](cse.decision)
+          pdf <- OptionT.fromOption[Future](decision.decisionPdf)
+          meta <- OptionT(fileStore.getFileMetadata(pdf.id))
+          url <- OptionT.fromOption[Future](meta.url)
+        } yield Redirect(url, SEE_OTHER)
+
+        attachmentRedirect.getOrElse(Ok(views.html.ruling_not_found(reference)))
+
+      case None =>
+        successful(Ok(views.html.case_not_found(reference)))
     }
   }
 
@@ -76,6 +83,8 @@ class PdfDownloadController @Inject() (
         .withHeaders(CONTENT_DISPOSITION -> s"filename=$filename")
     }
 
-  def getCountryName(code: String) = countriesService.getAllCountries.find(_.code == code).map(_.countryName)
-
+  private def getCountryName(code: String) =
+    countriesService.getAllCountries
+      .find(_.code == code)
+      .map(_.countryName)
 }
