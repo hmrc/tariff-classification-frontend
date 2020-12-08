@@ -73,7 +73,7 @@ class RemoveAttachmentViewSpec extends ViewSpec {
 
     "render without errors check form" in {
       val doc                   = view(renderWithoutError)
-      val expected: Seq[String] = Seq("Yes", "No", "Confirm")
+      val expected: Seq[String] = Seq("Search", "cases", "Yes", "No", "Confirm")
       val actual: Seq[String]   = doc.getElementsByTag("form").text().split(" ").toSeq
 
       actual shouldBe expected

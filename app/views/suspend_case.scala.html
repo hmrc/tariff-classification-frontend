@@ -15,23 +15,21 @@
  *@
 
 @import config.AppConfig
-@import controllers.routes.{CaseController, SuspendCaseController}
+@import controllers.routes.{SuspendCaseController}
 @import models.Case
-@import views.html.components.{confirm_or_cancel_buttons, warning}
+@import views.html.components.{confirm_or_cancel_buttons}
 @import views.html.forms.components.input_textarea
 @import views.html.includes.main
 @import views.html.partials.case_heading
 @import views.html.partials.statuses.status_change_upload
 @import views.html.partials.{error_summary, back_link}
 @import controllers.ActiveTab
-@import controllers.routes.AttachmentsController
-@import controllers.routes.AppealCaseController
-@import controllers.routes.LiabilityController
 @import views.CancelAction
 
+@import models.viewmodels.NoTabSelected
 @(c: Case, form: Form[String], activeTab: Option[ActiveTab] = None)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("page.title.suspend.case"))) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.suspend.case")), customPrimaryNavTab = NoTabSelected) {
 
     @back_link()
 

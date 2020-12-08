@@ -16,17 +16,19 @@
 
 @import controllers.routes.{AssignedCasesController, MyCasesController}
 @import config.AppConfig
-@import models.{BTIApplication, Case, Queue}
+@import models.{Case, Queue}
 @import models.request.AuthenticatedRequest
 @import views.html.includes.main
 @import views.html.partials._
+@import models.viewmodels.MyCasesTab
 
 @import scala.util.matching.Regex
 
 @(c: Case, queue: Queue, originUrl: String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 
-@main(bodyClasses = None, customTitle = Some(messages("page.title.case.moved"))) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.case.moved")),
+    customPrimaryNavTab = MyCasesTab) {
 
     @back_link()
 

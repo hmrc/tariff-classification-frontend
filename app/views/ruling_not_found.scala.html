@@ -17,10 +17,11 @@
 @import config.AppConfig
 @import controllers.routes.IndexController
 @import views.html.includes.main
+@import models.viewmodels.NoTabSelected
 
 @(reference: String)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("page.title.ruling.not.found"))) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.ruling.not.found")), customPrimaryNavTab = NoTabSelected) {
     <div id="case-not-found-section">
         <h2 class="heading-large">
             @messages("errors.ruling-not-found.title")

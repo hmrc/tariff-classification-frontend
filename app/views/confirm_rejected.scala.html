@@ -15,14 +15,16 @@
  *@
 
 @import config.AppConfig
-@import models.{BTIApplication, Case}
+@import models.Case
 @import views.html.includes.main
 @import views.html.partials._
 @import controllers.routes.MyCasesController
+@import models.viewmodels.MyCasesTab
 
 @(c: Case)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("page.title.case.rejected"))) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.case.rejected")),
+    customPrimaryNavTab = MyCasesTab) {
 
     @back_link()
 

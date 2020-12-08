@@ -20,9 +20,12 @@
 @import views.html.includes.main
 @import views.html.partials.{case_heading, back_link}
 @import views.html.helper.{CSRF, form}
+@import models.viewmodels.MyCasesTab
+
 @(c: Case)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("page.title.complete.case"))) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.complete.case")),
+    customPrimaryNavTab = MyCasesTab) {
     @defining(c.application.asATAR) { btiApp: BTIApplication =>
 
         @back_link()

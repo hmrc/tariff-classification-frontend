@@ -19,9 +19,12 @@
 @import models.Case
 @import views.html.includes.main
 @import views.html.partials._
+@import models.viewmodels.MyCasesTab
+
 @(c: Case)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("page.title.case.suppressed"))) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.case.suppressed")),
+    customPrimaryNavTab = MyCasesTab) {
 
     @back_link()
 

@@ -15,14 +15,16 @@
  *@
 
 @import config.AppConfig
-@import models.{BTIApplication, Case}
+@import models.Case
 @import controllers.routes.MyCasesController
 @import views.html.includes.main
-@import views.html.partials.{days_elapsed_paused, confirmation_next_steps, case_heading, back_link}
+@import views.html.partials.{days_elapsed_paused, case_heading, back_link}
+@import models.viewmodels.MyCasesTab
 
 @(c: Case)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("page.title.case.suspended"))) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.case.suspended")),
+    customPrimaryNavTab = MyCasesTab) {
 
     @back_link()
 

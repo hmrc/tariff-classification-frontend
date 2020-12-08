@@ -21,9 +21,11 @@
 @import views.html.includes.main
 @import views.html.partials.{assignee, case_heading, back_link}
 @import views.html.helper.{CSRF, form}
+@import models.viewmodels.MyCasesTab
+
 @(c: Case)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("page.title.take.ownership"))) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.take.ownership")), customPrimaryNavTab = MyCasesTab) {
 
     @back_link()
 

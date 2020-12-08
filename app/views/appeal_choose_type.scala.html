@@ -22,11 +22,11 @@
 @import views.html.forms.components.input_radiogroup
 @import views.html.includes.main
 @import views.html.partials.{case_heading, error_summary, back_link}
-
+@import models.viewmodels.MyCasesTab
 
 @(c: Case, form: Form[AppealType])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("page.title.choose.appeal.type"))) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.choose.appeal.type")), customPrimaryNavTab = MyCasesTab) {
 
   @back_link()
 

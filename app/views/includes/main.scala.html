@@ -16,7 +16,8 @@
 
 @import config.AppConfig
 @import views.html.includes.govuk_wrapper
-@import models.viewmodels.{PrimaryNavigationTab, HomeTab}
+@import models.viewmodels.PrimaryNavigationTab
+@import models.viewmodels.NoTabSelected
 
 @(sidebarLinks: Option[Html] = None,
   contentHeader: Option[Html] = None,
@@ -24,7 +25,7 @@
   mainClass: Option[String] = None,
   scriptElem: Option[Html] = None,
   customTitle: Option[String] = None,
-  customPrimaryNavTab : PrimaryNavigationTab = HomeTab)(mainContent: Html)(implicit request : Request[_], messages: Messages, appConfig: AppConfig)
+  customPrimaryNavTab: PrimaryNavigationTab = NoTabSelected)(mainContent: Html)(implicit request : Request[_], messages: Messages, appConfig: AppConfig)
 
 @import uk.gov.hmrc.play.views.html.layouts
 
