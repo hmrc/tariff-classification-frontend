@@ -81,8 +81,7 @@ class CaseController @Inject() (
         c =>
           for {
             attachments <- fileService.getAttachments(c)
-            letter      <- fileService.getLetterOfAuthority(c)
-          } yield views.html.partials.application_details(c, attachments, letter, tabIndexFor(APPLICATION_DETAILS)),
+          } yield views.html.partials.application_details(c, attachments, tabIndexFor(APPLICATION_DETAILS)),
         ActiveTab.Item
       )
     }
