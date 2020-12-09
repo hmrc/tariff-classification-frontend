@@ -22,9 +22,9 @@
 @(c: Case, displayBackLink: Boolean = true)(implicit messages: Messages, request: Request[_])
 
 <div id="case-heading" class="case-heading mt-1 mb-2">
-
+    <br>
     <div id="case-reference" class="case-reference">
-        @messages("case.title.atars", messages("case.menu.atar"), c.reference, c.application.businessName)
+        @messages(messages("case.title.atars", c.application.getType.replace("BTI", "ATaR"), c.reference, c.application.businessName))
     </div>
 
     <h1 class="heading-xlarge case-title">@c.application.goodsName</h1>
