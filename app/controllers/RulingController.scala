@@ -81,13 +81,25 @@ class RulingController @Inject() (
               editBTIRulingView(decisionFormWithErrors, c)
             case ApplicationType.LIABILITY =>
               //TODO add validate logic
+
+              println("adadasdasads::::")
+              println("adadasdasads::::")
+              println("adadasdasads::::")
+              println("adadasdasads::::")
               val liabilityDecisionForm               = decisionForm.liabilityCompleteForm(c.decision.getOrElse(Decision()))
-              if(!liabilityDecisionForm.errors.isEmpty) {
+              println("eeeeeeee::::")
+              println("eeeeeeee::::")
+              println("eeeeeeee::::")
+              if(liabilityDecisionForm.errors.nonEmpty) {
+
+                println("hiii:::")
+                println("hiii:::")
+                println("hiii:::" + liabilityDecisionForm.errors)
+                println("hiii:::")
                 editLiabilityRulingView(liabilityDecisionForm, c)
-              }else{
+              } else {
                 val liabilityDetailsForm = LiabilityDetailsForm.liabilityDetailsCompleteForm(c, appConfig)
                 Future.successful(Ok(liability_details_edit(c, liabilityDetailsForm)))
-
               }
           }
         )

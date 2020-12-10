@@ -83,7 +83,6 @@ class CompleteCaseController @Inject() (
     case ApplicationType.LIABILITY =>
       LiabilityDetailsForm.liabilityDetailsCompleteForm(c, appConfig).errors.isEmpty&& decisionForm
         .liabilityCompleteForm(c.decision.getOrElse(Decision())).errors.isEmpty
-
   }
 
 }

@@ -28,6 +28,7 @@ import play.api.http.Status
 import play.api.test.Helpers.{redirectLocation, _}
 import service.{CasesService, FileStoreService}
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.Cases
 import utils.Cases._
 import views.html.v2.edit_liability_ruling
 
@@ -43,6 +44,7 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
   private val commodityCodeConstraints = mock[CommodityCodeConstraints]
   private val decisionForm             = new DecisionForm(commodityCodeConstraints)
   private lazy val editLiabilityView   = injector.instanceOf[edit_liability_ruling]
+  private val liability_details_edit   = injector.instanceOf[views.html.v2.liability_details_edit]
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -64,6 +66,7 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
     decisionForm,
     mcc,
     editLiabilityView,
+    liability_details_edit,
     appConfWithLiabilityToggleOff
   )
 
@@ -76,6 +79,7 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       decisionForm,
       mcc,
       editLiabilityView,
+      liability_details_edit,
       realAppConfig
     )
 
@@ -157,6 +161,8 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       aCase(withBTIApplication, withReference("reference"), withStatus(CaseStatus.OPEN), withDecision())
     val liabilityCaseWithStatusOpenWithDecision =
       aLiabilityCase(withReference("reference"), withStatus(CaseStatus.COMPLETED), withDecision())
+    val liabilityCaseWithStatusWithDecisionAndC592 =
+      aLiabilityCase(withReference("reference"), liabilityApplicationWithC592(), withStatus(CaseStatus.COMPLETED), withDecision())
     val attachment = storedAttachment
 
     "load edit details page when a mandatory field is missing" in {
@@ -168,16 +174,31 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       status(result) shouldBe Status.OK
     }
 
-    "redirect to confirm complete case" in {
+    "redirect to edit ruling page when ruling tab has missing fields that are required to complete a case" in {
+      given(commodityCodeConstraints.commodityCodeValid)
+        .willReturn(Constraint[String]("error")(_ => Valid))
+      val result = controller(Cases.liabilityCaseExample, Set(Permission.EDIT_RULING))
+        .validateBeforeComplete("reference")(newFakeGETRequestWithCSRF(app))
+
+         status(result) shouldBe Status.OK
+
+         val expectedUrl =
+           Some(routes.RulingController.validateBeforeComplete(Cases.liabilityCaseExample.reference).url)
+         redirectLocation(result) shouldBe expectedUrl
+    }
+
+/*    "redirect to edit C592 page when C592 tab has missing fields that are required to complete a case" in {
+      given(commodityCodeConstraints.commodityCodeValid)
+        .willReturn(Constraint[String]("error")(_ => Valid))
       val result = controller(liabilityCaseWithStatusOpenWithDecision, Set(Permission.EDIT_RULING))
         .validateBeforeComplete("reference")(newFakeGETRequestWithCSRF(app))
 
-      status(result) shouldBe Status.SEE_OTHER
+         status(result) shouldBe Status.OK
 
-      val expectedUrl =
-        Some(routes.CompleteCaseController.confirmCompleteCase(liabilityCaseWithStatusOpenWithDecision.reference).url)
-      redirectLocation(result) shouldBe expectedUrl
-    }
+         val expectedUrl =
+           Some(routes.RulingController.validateBeforeComplete(liabilityCaseWithStatusWithDecisionAndC592.reference).url)
+         redirectLocation(result) shouldBe expectedUrl
+    }*/
   }
 
   "Update Ruling" should {
