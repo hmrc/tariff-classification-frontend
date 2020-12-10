@@ -98,11 +98,10 @@ class AttachmentsController @Inject() (
   )(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[Html] =
     for {
       attachments <- fileService.getAttachments(c)
-      letter      <- fileService.getLetterOfAuthority(c)
     } yield {
       val (applicantFiles, nonApplicantFiles) = attachments.partition(_.operator.isEmpty)
       views.html.partials
-        .attachments_details(c, uploadForm, applicantFiles, letter, nonApplicantFiles, tabStartIndexForAttachments)
+        .attachments_details(c, uploadForm, applicantFiles, nonApplicantFiles, tabStartIndexForAttachments)
     }
 
   private def getCaseAndRenderView(reference: String, page: CaseDetailPage, toHtml: Case => Future[Html])(

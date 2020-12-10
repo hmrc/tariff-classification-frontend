@@ -65,8 +65,6 @@ class AttachmentsControllerSpec extends ControllerBaseSpec {
       given(casesService.getOne(refEq("reference"))(any[HeaderCarrier])).willReturn(successful(Some(aCase)))
       given(fileService.getAttachments(refEq(aCase))(any[HeaderCarrier]))
         .willReturn(successful(Seq(Cases.storedAttachment, Cases.storedOperatorAttachment)))
-      given(fileService.getLetterOfAuthority(refEq(aCase))(any[HeaderCarrier]))
-        .willReturn(successful(Some(Cases.letterOfAuthority)))
 
       val result = await(controller(aCase, Set(Permission.ADD_ATTACHMENT)).attachmentsDetails("reference")(fakeRequest))
 
@@ -77,7 +75,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec {
 
     "return 200 OK and HTML content type when no files are present" in {
       val aCase = Cases.btiCaseExample
-      givenACaseWithNoAttachmentsAndNoLetterOfAuthority("reference", aCase)
+      givenACaseWithNoAttachments("reference", aCase)
 
       val result = await(controller(aCase, Set(Permission.ADD_ATTACHMENT)).attachmentsDetails("reference")(fakeRequest))
 
@@ -171,7 +169,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec {
       val form        = MultipartFormData[TemporaryFile](dataParts = Map.empty, files = Seq.empty, badParts = Seq.empty)
       val postRequest = fakeRequest.withBody(Right(form))
 
-      givenACaseWithNoAttachmentsAndNoLetterOfAuthority(testReference, aCase)
+      givenACaseWithNoAttachments(testReference, aCase)
 
       // When
       val result: Result =
@@ -188,7 +186,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec {
       val aCase       = Cases.btiCaseExample.copy(reference = testReference)
       val postRequest = fakeRequest.withBody(Right(aEmptyNameMultipartFile))
 
-      givenACaseWithNoAttachmentsAndNoLetterOfAuthority(testReference, aCase)
+      givenACaseWithNoAttachments(testReference, aCase)
 
       // When
       val result: Result =
@@ -205,7 +203,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec {
 
       val postRequest = FakeRequest().withBody(Left(MaxSizeExceeded(1)))
 
-      givenACaseWithNoAttachmentsAndNoLetterOfAuthority(testReference, aCase)
+      givenACaseWithNoAttachments(testReference, aCase)
 
       // When
       val result = await(controller(aCase, Set(Permission.ADD_ATTACHMENT)).uploadAttachment(testReference)(postRequest))
@@ -221,7 +219,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec {
 
       val postRequest = FakeRequest().withBody(Right(aMultipartFileOfType("audio/mpeg")))
 
-      givenACaseWithNoAttachmentsAndNoLetterOfAuthority(testReference, aCase)
+      givenACaseWithNoAttachments(testReference, aCase)
 
       // When
       val result = await(controller(aCase, Set(Permission.ADD_ATTACHMENT)).uploadAttachment(testReference)(postRequest))
@@ -350,10 +348,9 @@ class AttachmentsControllerSpec extends ControllerBaseSpec {
 
   }
 
-  private def givenACaseWithNoAttachmentsAndNoLetterOfAuthority(testReference: String, aCase: Case) = {
+  private def givenACaseWithNoAttachments(testReference: String, aCase: Case) = {
     given(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).willReturn(successful(Some(aCase)))
     given(fileService.getAttachments(refEq(aCase))(any[HeaderCarrier])).willReturn(successful(Seq.empty))
-    given(fileService.getLetterOfAuthority(refEq(aCase))(any[HeaderCarrier])).willReturn(successful(None))
   }
 
 }
