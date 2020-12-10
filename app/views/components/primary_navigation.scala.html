@@ -20,8 +20,9 @@
 @import models.viewmodels.MyCasesTab
 @import models.viewmodels.OpenCasesTab
 @import models.viewmodels.GatewayCasesTab
+@import uk.gov.hmrc.play.views.html._
 
-@(selectedTab : PrimaryNavigationTab = HomeTab)
+@(selectedTab: PrimaryNavigationTab = HomeTab)(implicit request: Request[_], messages: Messages)
 
 <div class="moj-primary-navigation">
     <div class="moj-primary-navigation__container">
@@ -61,7 +62,7 @@
         </div>
         <div class="moj-primary-navigation__search">
             <div class="moj-search moj-search--ondark moj-search--inline">
-                @helper.form(action = controllers.routes.SearchController.search(), 'novalidate -> "novalidate") {
+                @helpers.form(action = controllers.routes.SearchController.search(), 'novalidate -> "novalidate") {
                 <div class="govuk-form-group">
                     <input tabindex="100" id="search_box-input" class="form-control" name="reference" value="" type="text">
                 </div>
