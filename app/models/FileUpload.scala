@@ -20,18 +20,17 @@ import play.api.mvc.MultipartFormData.FilePart
 import play.api.libs.Files.TemporaryFile
 
 case class FileUpload(
-                       content: TemporaryFile,
-                       fileName: String,
-                       contentType: String
-                     )
+  content: TemporaryFile,
+  fileName: String,
+  contentType: String
+)
 
 object FileUpload {
 
-  def fromFilePart(filePart: FilePart[TemporaryFile]): FileUpload = {
+  def fromFilePart(filePart: FilePart[TemporaryFile]): FileUpload =
     FileUpload(
       filePart.ref,
       filePart.filename,
       filePart.contentType.getOrElse(throw new IllegalArgumentException("Missing file type"))
     )
-  }
 }

@@ -28,31 +28,28 @@ class AttachmentsDetailsViewSpec extends ViewSpec {
 
   lazy val attachment: StoredAttachment = Cases.storedAttachment.copy()
 
-  def notRenderAttachmentsDetails: HtmlFormat.Appendable = {
+  def notRenderAttachmentsDetails: HtmlFormat.Appendable =
     attachments_details(
       UploadAttachmentForm.form,
       AttachmentsTabViewModel("ref", Seq(), None),
       showUploadAttachments = false
     )
-  }
 
-  def renderAttachmentsDetails: HtmlFormat.Appendable = {
+  def renderAttachmentsDetails: HtmlFormat.Appendable =
     attachments_details(
       UploadAttachmentForm.form,
       AttachmentsTabViewModel("ref", Seq(), None),
       showUploadAttachments = true
     )
-  }
 
   def attachments_details: attachments_details = injector.instanceOf[attachments_details]
 
-  def renderAttachmentsDetailsWithAttachments: HtmlFormat.Appendable = {
+  def renderAttachmentsDetailsWithAttachments: HtmlFormat.Appendable =
     attachments_details(
       UploadAttachmentForm.form,
       AttachmentsTabViewModel("ref", Seq(attachment), None),
       showUploadAttachments = true
     )(requestWithPermissions(Permission.EDIT_ATTACHMENT_DETAIL, Permission.REMOVE_ATTACHMENTS), messages, appConfig)
-  }
 
   "Attachments Details View" should {
 
@@ -84,7 +81,7 @@ class AttachmentsDetailsViewSpec extends ViewSpec {
       val doc = view(renderAttachmentsDetails)
 
       doc.getElementById("all-empty-table").text() shouldBe messages("case.attachment.table.empty")
-      doc.getElementsByTag("table").size() shouldBe 0
+      doc.getElementsByTag("table").size()         shouldBe 0
     }
 
     "render upload form and some elements in attachments table" in {

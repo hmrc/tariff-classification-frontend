@@ -37,9 +37,7 @@ object Enumerable {
       Reads {
         case JsString(str) =>
           ev.withName(str)
-            .map { s =>
-              JsSuccess(s)
-            }
+            .map(s => JsSuccess(s))
             .getOrElse(JsError("error.invalid"))
         case _ =>
           JsError("error.invalid")

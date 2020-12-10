@@ -30,22 +30,30 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
 
 import scala.concurrent.Future.successful
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class SuppressCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   private val casesService = mock[CasesService]
-  private val operator = mock[Operator]
+  private val operator     = mock[Operator]
 
-  private val caseWithStatusNEW = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.NEW)
+  private val caseWithStatusNEW  = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.NEW)
   private val caseWithStatusOPEN = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.OPEN)
-  private val caseWithStatusSUPRRESSED = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.SUPPRESSED)
+  private val caseWithStatusSUPRRESSED =
+    Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.SUPPRESSED)
 
   private def controller(requestCase: Case) = new SuppressCaseController(
-    new SuccessfulRequestActions(defaultPlayBodyParsers, operator, c = requestCase), casesService, mcc, realAppConfig
+    new SuccessfulRequestActions(playBodyParsers, operator, c = requestCase),
+    casesService,
+    mcc,
+    realAppConfig
   )
 
   private def controller(requestCase: Case, permission: Set[Permission]) = new SuppressCaseController(
-    new RequestActionsWithPermissions(defaultPlayBodyParsers, permission, c = requestCase), casesService, mcc, realAppConfig
+    new RequestActionsWithPermissions(playBodyParsers, permission, c = requestCase),
+    casesService,
+    mcc,
+    realAppConfig
   )
 
   override def afterEach(): Unit = {
@@ -56,26 +64,30 @@ class SuppressCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
   "Suppress Case" should {
 
     "return OK and HTML content type" in {
-      val result: Result = await(controller(caseWithStatusNEW).getSuppressCase("reference", None)(newFakeGETRequestWithCSRF(app)))
+      val result: Result =
+        await(controller(caseWithStatusNEW).getSuppressCase("reference", None)(newFakeGETRequestWithCSRF(app)))
 
-      status(result) shouldBe Status.OK
+      status(result)        shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
-      charsetOf(result) shouldBe Some("utf-8")
-      bodyOf(result) should include("Change case status to: Suppressed")
+      charsetOf(result)     shouldBe Some("utf-8")
+      bodyOf(result)        should include("Change case status to: Suppressed")
     }
 
     "return OK when user has right permissions" in {
-      val result: Result = await(controller(caseWithStatusNEW, Set(Permission.SUPPRESS_CASE))
-        .getSuppressCase("reference", None)(newFakeGETRequestWithCSRF(app)))
+      val result: Result = await(
+        controller(caseWithStatusNEW, Set(Permission.SUPPRESS_CASE))
+          .getSuppressCase("reference", None)(newFakeGETRequestWithCSRF(app))
+      )
 
       status(result) shouldBe Status.OK
     }
 
-
     "redirect unauthorised when does not have right permissions" in {
-      val result: Result = await(controller(caseWithStatusNEW, Set.empty).getSuppressCase("reference", None)(newFakeGETRequestWithCSRF(app)))
+      val result: Result = await(
+        controller(caseWithStatusNEW, Set.empty).getSuppressCase("reference", None)(newFakeGETRequestWithCSRF(app))
+      )
 
-      status(result) shouldBe Status.SEE_OTHER
+      status(result)               shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
     }
 
@@ -83,33 +95,46 @@ class SuppressCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
 
   "Confirm Suppress a Case" should {
 
-    def aMultipartFileWithParams(contentType: String, params: (String, Seq[String])*): MultipartFormData[TemporaryFile] = {
-      val file = SingletonTemporaryFileCreator.create("example-file.txt")
+    def aMultipartFileWithParams(
+      contentType: String,
+      params: (String, Seq[String])*
+    ): MultipartFormData[TemporaryFile] = {
+      val file     = SingletonTemporaryFileCreator.create("example-file.txt")
       val filePart = FilePart[TemporaryFile](key = "email", "file.txt", contentType = Some(contentType), ref = file)
       MultipartFormData[TemporaryFile](dataParts = params.toMap, files = Seq(filePart), badParts = Seq.empty)
     }
 
     def anEmptyMultipartFileWithParams(params: (String, Seq[String])*): MultipartFormData[TemporaryFile] = {
-      val file = SingletonTemporaryFileCreator.create("example-file.txt")
+      val file     = SingletonTemporaryFileCreator.create("example-file.txt")
       val filePart = FilePart[TemporaryFile](key = "email", "", contentType = Some("text/plain"), ref = file)
       MultipartFormData[TemporaryFile](dataParts = params.toMap, files = Seq(filePart), badParts = Seq.empty)
     }
 
     "redirect to confirmation" in {
-      when(casesService.suppressCase(refEq(caseWithStatusNEW), any[FileUpload], refEq("some-note"), any[Operator])(any[HeaderCarrier])).thenReturn(successful(caseWithStatusSUPRRESSED))
+      when(
+        casesService.suppressCase(refEq(caseWithStatusNEW), any[FileUpload], refEq("some-note"), any[Operator])(
+          any[HeaderCarrier]
+        )
+      ).thenReturn(successful(caseWithStatusSUPRRESSED))
 
       val result: Result =
-        await(controller(caseWithStatusNEW).postSuppressCase("reference", None)
-             (newFakePOSTRequestWithCSRF(app).withBody(aMultipartFileWithParams("text/plain", "note" -> Seq("some-note")))))
+        await(
+          controller(caseWithStatusNEW).postSuppressCase("reference", None)(
+            newFakePOSTRequestWithCSRF(app).withBody(aMultipartFileWithParams("text/plain", "note" -> Seq("some-note")))
+          )
+        )
 
-      status(result) shouldBe Status.SEE_OTHER
+      status(result)     shouldBe Status.SEE_OTHER
       locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/reference/suppress/confirmation")
     }
 
     "return to form on missing file" in {
       val result: Result =
-        await(controller(caseWithStatusNEW).postSuppressCase("reference", None)
-        (newFakePOSTRequestWithCSRF(app).withBody(anEmptyMultipartFileWithParams())))
+        await(
+          controller(caseWithStatusNEW).postSuppressCase("reference", None)(
+            newFakePOSTRequestWithCSRF(app).withBody(anEmptyMultipartFileWithParams())
+          )
+        )
 
       status(result) shouldBe Status.OK
       bodyOf(result) should include("Change case status to: Suppressed")
@@ -117,8 +142,11 @@ class SuppressCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
 
     "return to form on missing form field" in {
       val result: Result =
-        await(controller(caseWithStatusNEW).postSuppressCase("reference", None)
-        (newFakePOSTRequestWithCSRF(app).withBody(aMultipartFileWithParams("text/plain"))))
+        await(
+          controller(caseWithStatusNEW).postSuppressCase("reference", None)(
+            newFakePOSTRequestWithCSRF(app).withBody(aMultipartFileWithParams("text/plain"))
+          )
+        )
 
       status(result) shouldBe Status.OK
       bodyOf(result) should include("Change case status to: Suppressed")
@@ -126,19 +154,25 @@ class SuppressCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
 
     "return to form on invalid file type" in {
       val result: Result =
-        await(controller(caseWithStatusNEW).postSuppressCase("reference", None)
-        (newFakePOSTRequestWithCSRF(app).withBody(aMultipartFileWithParams("audio/mpeg", "note" -> Seq("some-note")))))
+        await(
+          controller(caseWithStatusNEW).postSuppressCase("reference", None)(
+            newFakePOSTRequestWithCSRF(app).withBody(aMultipartFileWithParams("audio/mpeg", "note" -> Seq("some-note")))
+          )
+        )
 
       status(result) shouldBe Status.OK
       bodyOf(result) should include("Change case status to: Suppressed")
     }
 
     "redirect unauthorised when does not have right permissions" in {
-      val result: Result = await(controller(caseWithStatusNEW, Set.empty)
-        .postSuppressCase("reference", None)
-        (newFakePOSTRequestWithCSRF(app).withBody(aMultipartFileWithParams("text/plain"))))
+      val result: Result = await(
+        controller(caseWithStatusNEW, Set.empty)
+          .postSuppressCase("reference", None)(
+            newFakePOSTRequestWithCSRF(app).withBody(aMultipartFileWithParams("text/plain"))
+          )
+      )
 
-      status(result) shouldBe Status.SEE_OTHER
+      status(result)               shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
     }
 
@@ -147,24 +181,27 @@ class SuppressCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
   "View Confirm page for a suppressed case" should {
 
     "return OK and HTML content type" in {
-      val result: Result = await(controller(caseWithStatusSUPRRESSED).confirmSuppressCase("reference")
-      (newFakePOSTRequestWithCSRF(app)
-        .withFormUrlEncodedBody("state" -> "true")))
+      val result: Result = await(
+        controller(caseWithStatusSUPRRESSED).confirmSuppressCase("reference")(
+          newFakePOSTRequestWithCSRF(app)
+            .withFormUrlEncodedBody("state" -> "true")
+        )
+      )
 
-      status(result) shouldBe Status.OK
+      status(result)        shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
-      charsetOf(result) shouldBe Some("utf-8")
-      bodyOf(result) should include("This case has been suppressed")
+      charsetOf(result)     shouldBe Some("utf-8")
+      bodyOf(result)        should include("This case has been suppressed")
     }
 
     "redirect to a default page on validation error" in {
-      val result: Result = await(controller(caseWithStatusOPEN).confirmSuppressCase("reference")
-      (newFakePOSTRequestWithCSRF(app)))
+      val result: Result =
+        await(controller(caseWithStatusOPEN).confirmSuppressCase("reference")(newFakePOSTRequestWithCSRF(app)))
 
-      status(result) shouldBe Status.SEE_OTHER
+      status(result)        shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
-      charsetOf(result) shouldBe None
-      locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/reference")
+      charsetOf(result)     shouldBe None
+      locationOf(result)    shouldBe Some("/manage-tariff-classifications/cases/reference")
     }
   }
 

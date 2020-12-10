@@ -30,7 +30,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
-class PdfDownloadController @Inject()(
+class PdfDownloadController @Inject() (
   authenticatedAction: AuthenticatedAction,
   mcc: MessagesControllerComponents,
   pdfService: PdfService,
@@ -38,14 +38,17 @@ class PdfDownloadController @Inject()(
   caseService: CasesService,
   countriesService: CountriesService,
   implicit val appConfig: AppConfig
-) extends FrontendController(mcc) with I18nSupport {
+) extends FrontendController(mcc)
+    with I18nSupport {
 
   def getRulingPdf(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     caseService.getOne(reference) flatMap {
-      case Some(c: Case) if c.decision.isDefined && c.application.isBTI => generatePdf(ruling_template(c, c.decision.get, getCountryName), s"BTIRuling_$reference.pdf")
-      case Some(c: Case) if c.decision.isDefined && c.application.isLiabilityOrder => generatePdf(decision_template(c, c.decision.get), s"LiabilityDecision_$reference.pdf")
-      case Some(c: Case) if c.decision.isEmpty =>  successful(Ok(views.html.ruling_not_found(reference)))
-      case _ => successful(Ok(views.html.case_not_found(reference)))
+      case Some(c: Case) if c.decision.isDefined && c.application.isBTI =>
+        generatePdf(ruling_template(c, c.decision.get, getCountryName), s"BTIRuling_$reference.pdf")
+      case Some(c: Case) if c.decision.isDefined && c.application.isLiabilityOrder =>
+        generatePdf(decision_template(c, c.decision.get), s"LiabilityDecision_$reference.pdf")
+      case Some(c: Case) if c.decision.isEmpty => successful(Ok(views.html.ruling_not_found(reference)))
+      case _                                   => successful(Ok(views.html.case_not_found(reference)))
     }
   }
 
@@ -54,21 +57,24 @@ class PdfDownloadController @Inject()(
       case Some(c) => {
         for {
           attachments <- fileStore.getAttachments(c)
-          letter <- fileStore.getLetterOfAuthority(c)
-          pdf <-  generatePdf(application_template(c, attachments, letter, getCountryName), s"BTIConfirmation$reference.pdf")
+          letter      <- fileStore.getLetterOfAuthority(c)
+          pdf <- generatePdf(
+                  application_template(c, attachments, letter, getCountryName),
+                  s"BTIConfirmation$reference.pdf"
+                )
         } yield pdf
       }
       case _ => successful(Ok(views.html.case_not_found(reference)))
     }
   }
 
-  private def generatePdf(htmlContent: Html, filename: String): Future[Result] = {
+  private def generatePdf(htmlContent: Html, filename: String): Future[Result] =
     pdfService.generatePdf(htmlContent) map { pdfFile =>
-      Results.Ok(pdfFile.content)
+      Results
+        .Ok(pdfFile.content)
         .as(pdfFile.contentType)
         .withHeaders(CONTENT_DISPOSITION -> s"filename=$filename")
     }
-  }
 
   def getCountryName(code: String) = countriesService.getAllCountries.find(_.code == code).map(_.countryName)
 

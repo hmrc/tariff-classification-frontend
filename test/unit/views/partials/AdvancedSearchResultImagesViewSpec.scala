@@ -32,10 +32,9 @@ class AdvancedSearchResultImagesViewSpec extends ViewSpec {
       // When
       val doc = view(advanced_search_results_images(Paged.empty[SearchResult]))
       // Then
-      doc should  containElementWithID("advanced_search_results-empty")
+      doc should containElementWithID("advanced_search_results-empty")
       doc shouldNot containElementWithID("advanced_search_images-results")
     }
-
 
     "Render with Results" in {
       //Given
@@ -48,14 +47,17 @@ class AdvancedSearchResultImagesViewSpec extends ViewSpec {
         withHolder(businessName = "business-name")
       )
 
-      val storedAttachments =  Seq(Cases.storedAttachment.copy(id = "FILE_ID_1", mimeType= "image/png") , Cases.storedAttachment.copy(id = "FILE_ID_2", mimeType= "image/png"))
+      val storedAttachments = Seq(
+        Cases.storedAttachment.copy(id = "FILE_ID_1", mimeType = "image/png"),
+        Cases.storedAttachment.copy(id = "FILE_ID_2", mimeType = "image/png")
+      )
       val searchResult = SearchResult(c, storedAttachments)
 
       // When
       val doc = view(advanced_search_results_images(Paged(Seq(searchResult))))
 
       // Then
-      doc shouldNot  containElementWithID("advanced_search_results-empty")
+      doc shouldNot containElementWithID("advanced_search_results-empty")
       doc should containElementWithID("advanced_search_images-results")
       doc should containElementWithID("thumbnail-advanced_search_results-row-0-attachments-0")
       doc should containElementWithID("thumbnail-advanced_search_results-row-0-attachments-1")

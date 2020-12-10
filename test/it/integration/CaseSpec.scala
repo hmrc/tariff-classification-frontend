@@ -16,9 +16,12 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
     "return status 200 with Case Not Found" in {
       // Given
       givenAuthSuccess()
-      stubFor(get(urlEqualTo("/cases/1"))
-        .willReturn(aResponse()
-          .withStatus(NOT_FOUND))
+      stubFor(
+        get(urlEqualTo("/cases/1"))
+          .willReturn(
+            aResponse()
+              .withStatus(NOT_FOUND)
+          )
       )
 
       // When
@@ -26,7 +29,7 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe NOT_FOUND
-      response.body should include("Case not found")
+      response.body   should include("Case not found")
     }
 
     "redirect on auth failure" in {
@@ -39,10 +42,13 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
     "return status 200" in {
       // Given
       givenAuthSuccess()
-      stubFor(get(urlEqualTo("/cases/1"))
-        .willReturn(aResponse()
-          .withStatus(OK)
-          .withBody(CasePayloads.jsonOf(c)))
+      stubFor(
+        get(urlEqualTo("/cases/1"))
+          .willReturn(
+            aResponse()
+              .withStatus(OK)
+              .withBody(CasePayloads.jsonOf(c))
+          )
       )
 
       // When
@@ -50,7 +56,7 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body should include("id=\"trader-heading\"")
+      response.body   should include("id=\"trader-heading\"")
     }
 
     "redirect on auth failure" in {
@@ -63,17 +69,21 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
     "return status 200" in {
       // Given
       givenAuthSuccess()
-      stubFor(get(urlEqualTo("/cases/1"))
-        .willReturn(aResponse()
-          .withStatus(OK)
-          .withBody(CasePayloads.jsonOf(c)))
+      stubFor(
+        get(urlEqualTo("/cases/1"))
+          .willReturn(
+            aResponse()
+              .withStatus(OK)
+              .withBody(CasePayloads.jsonOf(c))
+          )
       )
-      stubFor(post(urlEqualTo("/file?id="))
-        .willReturn(
-          aResponse()
-            .withStatus(OK)
-            .withBody("[]")
-        )
+      stubFor(
+        post(urlEqualTo("/file?id="))
+          .willReturn(
+            aResponse()
+              .withStatus(OK)
+              .withBody("[]")
+          )
       )
 
       // When
@@ -81,7 +91,7 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body should include("id=\"application-heading\"")
+      response.body   should include("id=\"application-heading\"")
     }
 
     "redirect on auth failure" in {
@@ -94,17 +104,21 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
     "return status 200" in {
       // Given
       givenAuthSuccess()
-      stubFor(get(urlEqualTo("/cases/1"))
-        .willReturn(aResponse()
-          .withStatus(OK)
-          .withBody(CasePayloads.jsonOf(c)))
+      stubFor(
+        get(urlEqualTo("/cases/1"))
+          .willReturn(
+            aResponse()
+              .withStatus(OK)
+              .withBody(CasePayloads.jsonOf(c))
+          )
       )
-      stubFor(post(urlEqualTo("/file?id="))
-        .willReturn(
-          aResponse()
-            .withStatus(OK)
-            .withBody("[]")
-        )
+      stubFor(
+        post(urlEqualTo("/file?id="))
+          .willReturn(
+            aResponse()
+              .withStatus(OK)
+              .withBody("[]")
+          )
       )
 
       // When
@@ -112,7 +126,7 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body should include("id=\"ruling-heading\"")
+      response.body   should include("id=\"ruling-heading\"")
     }
 
     "redirect on auth failure" in {
@@ -125,23 +139,32 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
     "return status 200" in {
       // Given
       givenAuthSuccess()
-      stubFor(get(urlEqualTo("/cases/1"))
-        .willReturn(aResponse()
-          .withStatus(OK)
-          .withBody(CasePayloads.jsonOf(c)))
+      stubFor(
+        get(urlEqualTo("/cases/1"))
+          .willReturn(
+            aResponse()
+              .withStatus(OK)
+              .withBody(CasePayloads.jsonOf(c))
+          )
       )
       givenAuthSuccess()
-      stubFor(get(urlEqualTo(s"/events?case_reference=1&type=QUEUE_CHANGE&type=APPEAL_ADDED&type=APPEAL_STATUS_CHANGE&type=EXTENDED_USE_STATUS_CHANGE&type=CASE_STATUS_CHANGE&type=CASE_REFERRAL&type=NOTE&type=CASE_COMPLETED&type=CASE_CANCELLATION&type=CASE_CREATED&type=ASSIGNMENT_CHANGE&page=1&page_size=${Pagination.unlimited}"))
-        .willReturn(aResponse()
-          .withStatus(OK)
-          .withBody(EventPayloads.pagedEvents))
+      stubFor(
+        get(
+          urlEqualTo(
+            s"/events?case_reference=1&type=EXPERT_ADVICE_RECEIVED&type=QUEUE_CHANGE&type=APPEAL_ADDED&type=APPEAL_STATUS_CHANGE&type=EXTENDED_USE_STATUS_CHANGE&type=CASE_STATUS_CHANGE&type=CASE_REFERRAL&type=NOTE&type=CASE_COMPLETED&type=CASE_CANCELLATION&type=CASE_CREATED&type=ASSIGNMENT_CHANGE&page=1&page_size=${Pagination.unlimited}"
+          )
+        ).willReturn(
+          aResponse()
+            .withStatus(OK)
+            .withBody(EventPayloads.pagedEvents)
+        )
       )
       // When
       val response = await(ws.url(s"$baseUrl/cases/1/activity").get())
 
       // Then
       response.status shouldBe OK
-      response.body should include("id=\"activity-heading\"")
+      response.body   should include("id=\"activity-heading\"")
     }
 
     "redirect on auth failure" in {
@@ -149,23 +172,26 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
     }
   }
 
-
   "Case attachments details" should {
 
     "return status 200" in {
       // Given
       givenAuthSuccess()
-      stubFor(get(urlEqualTo("/cases/1"))
-        .willReturn(aResponse()
-          .withStatus(OK)
-          .withBody(CasePayloads.jsonOf(c)))
+      stubFor(
+        get(urlEqualTo("/cases/1"))
+          .willReturn(
+            aResponse()
+              .withStatus(OK)
+              .withBody(CasePayloads.jsonOf(c))
+          )
       )
-      stubFor(post(urlEqualTo("/file?id="))
-        .willReturn(
-          aResponse()
-            .withStatus(OK)
-            .withBody("[]")
-        )
+      stubFor(
+        post(urlEqualTo("/file?id="))
+          .willReturn(
+            aResponse()
+              .withStatus(OK)
+              .withBody("[]")
+          )
       )
 
       // When
@@ -173,7 +199,7 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body should include("id=\"attachments-heading\"")
+      response.body   should include("id=\"attachments-heading\"")
     }
 
     "redirect on auth failure" in {

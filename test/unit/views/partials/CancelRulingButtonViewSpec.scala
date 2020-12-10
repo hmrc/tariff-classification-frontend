@@ -36,7 +36,10 @@ class CancelRulingButtonViewSpec extends ViewSpec {
 
       // Then
       doc should containElementWithID(cancelButtonId)
-      doc.getElementById(cancelButtonId) should haveAttribute("href", "/manage-tariff-classifications/cases/1/ruling/cancel")
+      doc.getElementById(cancelButtonId) should haveAttribute(
+        "href",
+        "/manage-tariff-classifications/cases/1/ruling/cancel"
+      )
     }
 
     "not render button for other case status" in {

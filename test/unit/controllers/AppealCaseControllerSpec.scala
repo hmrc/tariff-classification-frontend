@@ -31,19 +31,25 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases._
 
 import scala.concurrent.Future
-import play.api.Play
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class AppealCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   private val casesService = mock[CasesService]
-  private val operator = Operator(id = "id")
+  private val operator     = Operator(id = "id")
 
   private def controller(requestCase: Case) = new AppealCaseController(
-    new SuccessfulRequestActions(defaultPlayBodyParsers, operator, c = requestCase), casesService, realAppConfig, mcc
+    new SuccessfulRequestActions(playBodyParsers, operator, c = requestCase),
+    casesService,
+    realAppConfig,
+    mcc
   )
 
   private def controller(requestCase: Case, permission: Set[Permission]) = new AppealCaseController(
-    new RequestActionsWithPermissions(defaultPlayBodyParsers, permission, c = requestCase), casesService, realAppConfig, mcc
+    new RequestActionsWithPermissions(playBodyParsers, permission, c = requestCase),
+    casesService,
+    realAppConfig,
+    mcc
   )
 
   override def afterEach(): Unit = {
@@ -59,9 +65,9 @@ class AppealCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
 
           val result = await(controller(c).appealDetails(c.reference)(fakeRequest))
 
-          status(result) shouldBe Status.OK
-          contentType(result) shouldBe Some("text/html")
-          charset(result) shouldBe Some("utf-8")
+          status(result)          shouldBe Status.OK
+          contentType(result)     shouldBe Some("text/html")
+          charset(result)         shouldBe Some("utf-8")
           contentAsString(result) should include("appeal-heading")
         }
       }
@@ -76,7 +82,7 @@ class AppealCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
 
           val result = await(controller(c).appealDetails(c.reference)(fakeRequest))
 
-          status(result) shouldBe 303
+          status(result)           shouldBe 303
           redirectLocation(result) shouldBe Some("/manage-tariff-classifications/cases/v2/1/liability#appeal_tab")
         }
       }
@@ -90,7 +96,7 @@ class AppealCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
 
           val result = await(controller(c).appealDetails(c.reference)(fakeRequest))
 
-          status(result) shouldBe 200
+          status(result)          shouldBe 200
           contentAsString(result) should include("appeal-heading")
         }
       }
@@ -104,11 +110,11 @@ class AppealCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
           val c = aCase(withStatus(s), withDecision())
 
           val request = newFakeGETRequestWithCSRF(app)
-          val result = await(controller(c).chooseType(c.reference)(request))
+          val result  = await(controller(c).chooseType(c.reference)(request))
 
-          status(result) shouldBe Status.OK
-          contentType(result) shouldBe Some("text/html")
-          charset(result) shouldBe Some("utf-8")
+          status(result)          shouldBe Status.OK
+          contentType(result)     shouldBe Some("text/html")
+          charset(result)         shouldBe Some("utf-8")
           contentAsString(result) should include("appeal_choose_type")
         }
       }
@@ -117,7 +123,7 @@ class AppealCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
 
     "Redirect to unauthorised if no permissions" in {
       val result = await(controller(aCase(), Set.empty).chooseType("")(newFakeGETRequestWithCSRF(app)))
-      status(result) shouldBe Status.SEE_OTHER
+      status(result)           shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.SecurityController.unauthorized().url)
     }
   }
@@ -129,17 +135,19 @@ class AppealCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
           val c = aCase(withStatus(s), withDecision())
 
           val request = newFakePOSTRequestWithCSRF(app, Map("type" -> AppealType.REVIEW.toString))
-          val result = await(controller(c).confirmType(c.reference)(request))
+          val result  = await(controller(c).confirmType(c.reference)(request))
 
           status(result) shouldBe Status.SEE_OTHER
-          locationOf(result) shouldBe Some(routes.AppealCaseController.chooseStatus(c.reference, AppealType.REVIEW.toString).url)
+          locationOf(result) shouldBe Some(
+            routes.AppealCaseController.chooseStatus(c.reference, AppealType.REVIEW.toString).url
+          )
         }
       }
     }
 
     "Redirect to unauthorised if no permissions" in {
       val result = await(controller(aCase(), Set.empty).confirmType("")(newFakeGETRequestWithCSRF(app)))
-      status(result) shouldBe Status.SEE_OTHER
+      status(result)           shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.SecurityController.unauthorized().url)
     }
 
@@ -147,7 +155,7 @@ class AppealCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
       val c = aCase(withStatus(CaseStatus.COMPLETED), withDecision())
 
       val request = newFakePOSTRequestWithCSRF(app)
-      val result = await(controller(c).confirmType(c.reference)(request))
+      val result  = await(controller(c).confirmType(c.reference)(request))
 
       status(result) shouldBe Status.OK
     }
@@ -160,11 +168,11 @@ class AppealCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
           val c = aCase(withStatus(s), withDecision())
 
           val request = newFakeGETRequestWithCSRF(app)
-          val result = await(controller(c).chooseStatus(c.reference, AppealType.REVIEW.toString)(request))
+          val result  = await(controller(c).chooseStatus(c.reference, AppealType.REVIEW.toString)(request))
 
-          status(result) shouldBe Status.OK
-          contentType(result) shouldBe Some("text/html")
-          charset(result) shouldBe Some("utf-8")
+          status(result)          shouldBe Status.OK
+          contentType(result)     shouldBe Some("text/html")
+          charset(result)         shouldBe Some("utf-8")
           contentAsString(result) should include("appeal_choose_status")
         }
       }
@@ -173,7 +181,7 @@ class AppealCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
 
     "Redirect to unauthorised if no permissions" in {
       val result = await(controller(aCase(), Set.empty).chooseStatus("", "")(newFakeGETRequestWithCSRF(app)))
-      status(result) shouldBe Status.SEE_OTHER
+      status(result)           shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.SecurityController.unauthorized().url)
     }
   }
@@ -183,22 +191,29 @@ class AppealCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
       for (s <- Seq(CaseStatus.COMPLETED, CaseStatus.CANCELLED)) {
         s"Case has status $s" in {
           val c = aCase(withStatus(s), withDecision())
-          given(casesService.addAppeal(any[Case], any[AppealType], any[AppealStatus], any[Operator])(any[HeaderCarrier])) willReturn Future.successful(c)
+          given(
+            casesService.addAppeal(any[Case], any[AppealType], any[AppealStatus], any[Operator])(any[HeaderCarrier])
+          ) willReturn Future.successful(c)
 
           val request = newFakePOSTRequestWithCSRF(app, Map("status" -> AppealStatus.ALLOWED.toString))
-          val result = await(controller(c).confirmStatus(c.reference, AppealType.REVIEW.toString)(request))
+          val result  = await(controller(c).confirmStatus(c.reference, AppealType.REVIEW.toString)(request))
 
-          status(result) shouldBe Status.SEE_OTHER
+          status(result)     shouldBe Status.SEE_OTHER
           locationOf(result) shouldBe Some(routes.AppealCaseController.appealDetails(c.reference).url)
 
-          verify(casesService).addAppeal(refEq(c), refEq(AppealType.REVIEW), refEq(AppealStatus.ALLOWED), refEq(operator))(any[HeaderCarrier])
+          verify(casesService).addAppeal(
+            refEq(c),
+            refEq(AppealType.REVIEW),
+            refEq(AppealStatus.ALLOWED),
+            refEq(operator)
+          )(any[HeaderCarrier])
         }
       }
     }
 
     "Redirect to unauthorised if no permissions" in {
       val result = await(controller(aCase(), Set.empty).confirmStatus("", "")(newFakeGETRequestWithCSRF(app)))
-      status(result) shouldBe Status.SEE_OTHER
+      status(result)           shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.SecurityController.unauthorized().url)
     }
 
@@ -206,7 +221,7 @@ class AppealCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
       val c = aCase(withStatus(CaseStatus.COMPLETED), withDecision())
 
       val request = newFakePOSTRequestWithCSRF(app)
-      val result = await(controller(c).confirmStatus(c.reference, AppealType.REVIEW.toString)(request))
+      val result  = await(controller(c).confirmStatus(c.reference, AppealType.REVIEW.toString)(request))
 
       status(result) shouldBe Status.OK
     }
@@ -217,14 +232,14 @@ class AppealCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
       for (s <- Seq(CaseStatus.COMPLETED, CaseStatus.CANCELLED)) {
         s"Case has status $s" in {
           val appeal = Appeal("appeal-id", AppealStatus.IN_PROGRESS, AppealType.SUPREME_COURT)
-          val c = aCase(withStatus(s), withDecision(appeal = Seq(appeal)))
+          val c      = aCase(withStatus(s), withDecision(appeal = Seq(appeal)))
 
           val request = newFakeGETRequestWithCSRF(app)
-          val result = await(controller(c).changeStatus(c.reference, "appeal-id")(request))
+          val result  = await(controller(c).changeStatus(c.reference, "appeal-id")(request))
 
-          status(result) shouldBe Status.OK
-          contentType(result) shouldBe Some("text/html")
-          charset(result) shouldBe Some("utf-8")
+          status(result)          shouldBe Status.OK
+          contentType(result)     shouldBe Some("text/html")
+          charset(result)         shouldBe Some("utf-8")
           contentAsString(result) should include("appeal_choose_status")
         }
       }
@@ -233,7 +248,7 @@ class AppealCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
 
     "Redirect to unauthorised if no permissions" in {
       val result = await(controller(aCase(), Set.empty).changeStatus("", "")(newFakeGETRequestWithCSRF(app)))
-      status(result) shouldBe Status.SEE_OTHER
+      status(result)           shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.SecurityController.unauthorized().url)
     }
   }
@@ -243,32 +258,40 @@ class AppealCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
       for (s <- Seq(CaseStatus.COMPLETED, CaseStatus.CANCELLED)) {
         s"Case has status $s" in {
           val appeal = Appeal("appeal-id", AppealStatus.IN_PROGRESS, AppealType.SUPREME_COURT)
-          val c = aCase(withStatus(s), withDecision(appeal = Seq(appeal)))
-          given(casesService.updateAppealStatus(any[Case], any[Appeal], any[AppealStatus], any[Operator])(any[HeaderCarrier])) willReturn Future.successful(c)
+          val c      = aCase(withStatus(s), withDecision(appeal = Seq(appeal)))
+          given(
+            casesService
+              .updateAppealStatus(any[Case], any[Appeal], any[AppealStatus], any[Operator])(any[HeaderCarrier])
+          ) willReturn Future.successful(c)
 
           val request = newFakePOSTRequestWithCSRF(app, Map("status" -> AppealStatus.ALLOWED.toString))
-          val result = await(controller(c).confirmChangeStatus(c.reference, "appeal-id")(request))
+          val result  = await(controller(c).confirmChangeStatus(c.reference, "appeal-id")(request))
 
-          status(result) shouldBe Status.SEE_OTHER
+          status(result)     shouldBe Status.SEE_OTHER
           locationOf(result) shouldBe Some(routes.AppealCaseController.appealDetails(c.reference).url)
 
-          verify(casesService).updateAppealStatus(refEq(c), refEq(appeal), refEq(AppealStatus.ALLOWED), refEq(operator))(any[HeaderCarrier])
+          verify(casesService).updateAppealStatus(
+            refEq(c),
+            refEq(appeal),
+            refEq(AppealStatus.ALLOWED),
+            refEq(operator)
+          )(any[HeaderCarrier])
         }
       }
     }
 
     "Redirect to unauthorised if no permissions" in {
       val result = await(controller(aCase(), Set.empty).confirmChangeStatus("", "")(newFakeGETRequestWithCSRF(app)))
-      status(result) shouldBe Status.SEE_OTHER
+      status(result)           shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.SecurityController.unauthorized().url)
     }
 
     "Render Form errors" in {
       val appeal = Appeal("appeal-id", AppealStatus.IN_PROGRESS, AppealType.SUPREME_COURT)
-      val c = aCase(withStatus(CaseStatus.COMPLETED), withDecision(appeal = Seq(appeal)))
+      val c      = aCase(withStatus(CaseStatus.COMPLETED), withDecision(appeal = Seq(appeal)))
 
       val request = newFakePOSTRequestWithCSRF(app)
-      val result = await(controller(c).confirmChangeStatus(c.reference, "appeal-id")(request))
+      val result  = await(controller(c).confirmChangeStatus(c.reference, "appeal-id")(request))
 
       status(result) shouldBe Status.OK
     }
@@ -276,11 +299,11 @@ class AppealCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
     "Redirect" when {
       "Case does not have appeal with id" in {
         val appeal = Appeal("appeal-id", AppealStatus.IN_PROGRESS, AppealType.SUPREME_COURT)
-        val c = aCase(withStatus(CaseStatus.COMPLETED), withDecision(appeal = Seq(appeal)))
+        val c      = aCase(withStatus(CaseStatus.COMPLETED), withDecision(appeal = Seq(appeal)))
 
         val result = await(controller(c).confirmChangeStatus(c.reference, "some-id")(fakeRequest))
 
-        status(result) shouldBe Status.SEE_OTHER
+        status(result)     shouldBe Status.SEE_OTHER
         locationOf(result) shouldBe Some(routes.CaseController.get(c.reference).url)
       }
     }

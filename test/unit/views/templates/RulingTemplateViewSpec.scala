@@ -21,13 +21,14 @@ import views.ViewMatchers.containText
 import views.ViewSpec
 import views.html.templates.ruling_template
 
-
 class RulingTemplateViewSpec extends ViewSpec {
 
   private val rulingCase = Cases.btiCaseExample
-  private val holder = rulingCase.application.asBTI.holder
-  private val ruling = rulingCase.decision.getOrElse(throw new Exception("Bad test data"))
-  private val doc = view(ruling_template(rulingCase, ruling, s => Some("dummy country name"))(authenticatedFakeRequest, messages, appConfig))
+  private val holder     = rulingCase.application.asATAR.holder
+  private val ruling     = rulingCase.decision.getOrElse(throw new Exception("Bad test data"))
+  private val doc = view(
+    ruling_template(rulingCase, ruling, s => Some("dummy country name"))(authenticatedFakeRequest, messages, appConfig)
+  )
 
   "Ruling pdf holder section" should {
 
@@ -85,7 +86,10 @@ class RulingTemplateViewSpec extends ViewSpec {
     val section = "section-commercial"
 
     "contain the good description" in {
-      assertSectionContains(section, ruling.methodCommercialDenomination.getOrElse(throw new Exception("Bad test data")))
+      assertSectionContains(
+        section,
+        ruling.methodCommercialDenomination.getOrElse(throw new Exception("Bad test data"))
+      )
     }
   }
 
@@ -98,8 +102,7 @@ class RulingTemplateViewSpec extends ViewSpec {
     }
   }
 
-  private def assertSectionContains(id: String, text: String) = {
+  private def assertSectionContains(id: String, text: String) =
     doc.getElementById(id) should containText(text)
-  }
 
 }

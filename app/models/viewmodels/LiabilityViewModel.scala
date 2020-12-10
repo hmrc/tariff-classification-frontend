@@ -20,32 +20,34 @@ import models.CaseStatus.CaseStatus
 import models._
 
 case class LiabilityViewModel(
-                               caseHeaderViewModel: CaseHeaderViewModel,
-                               hasPermissions: Boolean,
-                               showChangeCaseStatus: Boolean,
-                               showTakeOffReferral: Boolean,
-                               showReopen: Boolean,
-                               showAppealTab: Boolean,
-                               caseStatus: CaseStatus
-                             ) {
+  caseHeaderViewModel: CaseHeaderViewModel,
+  hasPermissions: Boolean,
+  showChangeCaseStatus: Boolean,
+  showTakeOffReferral: Boolean,
+  showReopen: Boolean,
+  showAppealTab: Boolean,
+  caseStatus: CaseStatus
+) {
 
-  def showRulingAndKeywordsTabs: Boolean = Set(
-    CaseStatus.OPEN,
-    CaseStatus.REFERRED,
-    CaseStatus.REJECTED,
-    CaseStatus.SUSPENDED,
-    CaseStatus.COMPLETED
-  ).contains(caseStatus)
+  def showRulingAndKeywordsTabs: Boolean =
+    Set(
+      CaseStatus.OPEN,
+      CaseStatus.REFERRED,
+      CaseStatus.REJECTED,
+      CaseStatus.SUSPENDED,
+      CaseStatus.COMPLETED
+    ).contains(caseStatus)
 
   def showActionThisCase: Boolean = isNewCase && hasPermissions
 
   def isNewCase: Boolean = caseStatus == CaseStatus.NEW
 
-  def showAdvancedSearchButton: Boolean = Set(
-    CaseStatus.OPEN,
-    CaseStatus.REFERRED,
-    CaseStatus.SUSPENDED
-  ).contains(caseStatus)
+  def showAdvancedSearchButton: Boolean =
+    Set(
+      CaseStatus.OPEN,
+      CaseStatus.REFERRED,
+      CaseStatus.SUSPENDED
+    ).contains(caseStatus)
 }
 
 object LiabilityViewModel {
@@ -77,12 +79,12 @@ object LiabilityViewModel {
 
     LiabilityViewModel(
       CaseHeaderViewModel.fromCase(c),
-      hasPermissions = releaseOrSuppressPermissions,
+      hasPermissions       = releaseOrSuppressPermissions,
       showChangeCaseStatus = changeCaseStatus,
-      showTakeOffReferral = takeOffReferral,
-      showReopen = showReopenButton,
-      showAppealTab = showAppeal,
-      caseStatus = c.status
+      showTakeOffReferral  = takeOffReferral,
+      showReopen           = showReopenButton,
+      showAppealTab        = showAppeal,
+      caseStatus           = c.status
     )
   }
 }

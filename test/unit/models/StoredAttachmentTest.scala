@@ -44,24 +44,24 @@ class StoredAttachmentTest extends ModelsBaseSpec {
   "'apply'" should {
     "Combine Attachment with Metadata" in {
       val attachment = anAttachment
-      val metadata = someMetadataWithType("type")
+      val metadata   = someMetadataWithType("type")
 
       StoredAttachment(attachment, metadata) shouldBe StoredAttachment(
-        id = attachment.id,
-        public = attachment.public,
-        operator = None,
-        timestamp = attachment.timestamp,
-        url = metadata.url,
-        fileName = metadata.fileName,
-        mimeType = metadata.mimeType,
-        scanStatus = metadata.scanStatus,
-        description = "test description"
+        id          = attachment.id,
+        public      = attachment.public,
+        operator    = None,
+        timestamp   = attachment.timestamp,
+        url         = metadata.url,
+        fileName    = metadata.fileName,
+        mimeType    = metadata.mimeType,
+        scanStatus  = metadata.scanStatus,
+        description = Some("test description")
       )
     }
 
     "fail when try to combine with different attachments" in {
       val attachment = anAttachment
-      val metadata = someMetadataWithType("type").copy(id="another-id")
+      val metadata   = someMetadataWithType("type").copy(id = "another-id")
 
       val caught = intercept[IllegalArgumentException] {
         StoredAttachment(attachment, metadata)
@@ -70,23 +70,22 @@ class StoredAttachmentTest extends ModelsBaseSpec {
     }
   }
 
-  private def anImageOfType(t: String): StoredAttachment = {
+  private def anImageOfType(t: String): StoredAttachment =
     StoredAttachment(anAttachment, someMetadataWithType(t))
-  }
 
   private def anAttachment = Attachment(
-    id = "id",
+    id     = "id",
     public = true,
     None,
-    timestamp = Instant.EPOCH,
-    description = "test description"
+    timestamp   = Instant.EPOCH,
+    description = Some("test description")
   )
 
   private def someMetadataWithType(t: String) = FileMetadata(
-    id = "id",
-    fileName = "name",
-    mimeType = t,
-    url = Some("url"),
+    id         = "id",
+    fileName   = "name",
+    mimeType   = t,
+    url        = Some("url"),
     scanStatus = Some(ScanStatus.READY)
   )
 

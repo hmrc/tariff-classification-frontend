@@ -32,16 +32,17 @@ import utils.Cases._
 import views.html.v2.edit_liability_ruling
 
 import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
-  private val casesService = mock[CasesService]
-  private val fileService = mock[FileStoreService]
-  private val mapper = mock[DecisionFormMapper]
-  private val operator = mock[Operator]
+  private val casesService             = mock[CasesService]
+  private val fileService              = mock[FileStoreService]
+  private val mapper                   = mock[DecisionFormMapper]
+  private val operator                 = mock[Operator]
   private val commodityCodeConstraints = mock[CommodityCodeConstraints]
-  private val decisionForm = new DecisionForm(commodityCodeConstraints)
-  private lazy val editLiabilityView = injector.instanceOf[edit_liability_ruling]
+  private val decisionForm             = new DecisionForm(commodityCodeConstraints)
+  private lazy val editLiabilityView   = injector.instanceOf[edit_liability_ruling]
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -56,49 +57,79 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
   }
 
   private def controller(c: Case) = new RulingController(
-    new SuccessfulRequestActions(defaultPlayBodyParsers, operator, c = c), casesService, fileService, mapper, decisionForm, mcc, editLiabilityView, appConfWithLiabilityToggleOff
+    new SuccessfulRequestActions(playBodyParsers, operator, c = c),
+    casesService,
+    fileService,
+    mapper,
+    decisionForm,
+    mcc,
+    editLiabilityView,
+    appConfWithLiabilityToggleOff
   )
 
-  private def controller(requestCase: Case, permission: Set[Permission], appConf: AppConfig = realAppConfig) = new RulingController(
-    new RequestActionsWithPermissions(defaultPlayBodyParsers, permission, c = requestCase), casesService, fileService, mapper, decisionForm, mcc, editLiabilityView, realAppConfig)
+  private def controller(requestCase: Case, permission: Set[Permission], appConf: AppConfig = realAppConfig) =
+    new RulingController(
+      new RequestActionsWithPermissions(playBodyParsers, permission, c = requestCase),
+      casesService,
+      fileService,
+      mapper,
+      decisionForm,
+      mcc,
+      editLiabilityView,
+      realAppConfig
+    )
 
   "Edit Ruling" should {
     val btiCaseWithStatusOPEN = aCase(withBTIApplication, withReference("reference"), withStatus(CaseStatus.OPEN))
-    val liabilityCaseWithStatusOPEN = aCase(withLiabilityApplication(), withReference("reference"), withStatus(CaseStatus.OPEN))
+    val liabilityCaseWithStatusOPEN =
+      aCase(withLiabilityApplication(), withReference("reference"), withStatus(CaseStatus.OPEN))
     val attachment = storedAttachment
 
     "return OK and HTML content type" when {
       "Case is a BTI" in {
-        given(fileService.getAttachments(refEq(btiCaseWithStatusOPEN))(any[HeaderCarrier])).willReturn(Future.successful(Seq(attachment)))
+        given(fileService.getAttachments(refEq(btiCaseWithStatusOPEN))(any[HeaderCarrier]))
+          .willReturn(Future.successful(Seq(attachment)))
 
         val result = controller(btiCaseWithStatusOPEN).editRulingDetails("reference")(newFakeGETRequestWithCSRF(app))
-        status(result) shouldBe Status.OK
-        contentType(result) shouldBe Some("text/html")
-        charset(result) shouldBe Some("utf-8")
+        status(result)          shouldBe Status.OK
+        contentType(result)     shouldBe Some("text/html")
+        charset(result)         shouldBe Some("utf-8")
         contentAsString(result) should (include("Ruling") and include("<form"))
       }
 
       "Case is a Liability" in {
-        given(commodityCodeConstraints.commodityCodeExistsInUKTradeTariff).willReturn(Constraint[String]("error")( _ =>  Valid))
-        val result = controller(liabilityCaseWithStatusOPEN).editRulingDetails("reference")(newFakeGETRequestWithCSRF(app))
-        status(result) shouldBe Status.OK
-        contentType(result) shouldBe Some("text/html")
-        charset(result) shouldBe Some("utf-8")
+        given(commodityCodeConstraints.commodityCodeValid)
+          .willReturn(Constraint[String]("error")(_ => Valid))
+        val result =
+          controller(liabilityCaseWithStatusOPEN).editRulingDetails("reference")(newFakeGETRequestWithCSRF(app))
+        status(result)          shouldBe Status.OK
+        contentType(result)     shouldBe Some("text/html")
+        charset(result)         shouldBe Some("utf-8")
         contentAsString(result) should (include("Liability") and include("<form"))
       }
 
       "Case is an Liability under V2 toggle with correct permissions" in {
-        given(commodityCodeConstraints.commodityCodeExistsInUKTradeTariff).willReturn(Constraint[String]("error")( _ =>  Valid))
-        val result = controller(liabilityCaseWithStatusOPEN, permission = Set(Permission.EDIT_RULING), appConf = appConfWithLiabilityToggleOff).editRulingDetails("reference")(newFakeGETRequestWithCSRF(app))
+        given(commodityCodeConstraints.commodityCodeValid)
+          .willReturn(Constraint[String]("error")(_ => Valid))
+        val result = controller(
+          liabilityCaseWithStatusOPEN,
+          permission = Set(Permission.EDIT_RULING),
+          appConf    = appConfWithLiabilityToggleOff
+        ).editRulingDetails("reference")(newFakeGETRequestWithCSRF(app))
         status(result) shouldBe Status.OK
         contentAsString(result) shouldNot (include("edit_liability_decision-heading"))
         contentAsString(result) should (include("case-heading"))
       }
 
       "Case is an Liability under V2 toggle with incorrect permissions" in {
-        given(commodityCodeConstraints.commodityCodeExistsInUKTradeTariff).willReturn(Constraint[String]("error")( _ =>  Valid))
-        val result = controller(liabilityCaseWithStatusOPEN, permission = Set.empty[Permission], appConf = appConfWithLiabilityToggleOff).editRulingDetails("reference")(newFakeGETRequestWithCSRF(app))
-        status(result) shouldBe Status.SEE_OTHER
+        given(commodityCodeConstraints.commodityCodeValid)
+          .willReturn(Constraint[String]("error")(_ => Valid))
+        val result = controller(
+          liabilityCaseWithStatusOPEN,
+          permission = Set.empty[Permission],
+          appConf    = appConfWithLiabilityToggleOff
+        ).editRulingDetails("reference")(newFakeGETRequestWithCSRF(app))
+        status(result)               shouldBe Status.SEE_OTHER
         redirectLocation(result).get should include("unauthorized")
       }
     }
@@ -116,14 +147,16 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       val result = controller(btiCaseWithStatusOPEN, Set.empty)
         .editRulingDetails("reference")(newFakeGETRequestWithCSRF(app))
 
-      status(result) shouldBe Status.SEE_OTHER
+      status(result)               shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
     }
   }
 
   "validateBeforeComplete Ruling" should {
-    val btiCaseWithStatusOpenWithDecision = aCase(withBTIApplication, withReference("reference"), withStatus(CaseStatus.OPEN), withDecision())
-    val liabilityCaseWithStatusOpenWithDecision = aLiabilityCase(withReference("reference"), withStatus(CaseStatus.COMPLETED), withDecision())
+    val btiCaseWithStatusOpenWithDecision =
+      aCase(withBTIApplication, withReference("reference"), withStatus(CaseStatus.OPEN), withDecision())
+    val liabilityCaseWithStatusOpenWithDecision =
+      aLiabilityCase(withReference("reference"), withStatus(CaseStatus.COMPLETED), withDecision())
     val attachment = storedAttachment
 
     "load edit details page when a mandatory field is missing" in {
@@ -141,70 +174,80 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
       status(result) shouldBe Status.SEE_OTHER
 
-      val expectedUrl = Some(routes.CompleteCaseController.confirmCompleteCase(liabilityCaseWithStatusOpenWithDecision.reference).url)
+      val expectedUrl =
+        Some(routes.CompleteCaseController.confirmCompleteCase(liabilityCaseWithStatusOpenWithDecision.reference).url)
       redirectLocation(result) shouldBe expectedUrl
     }
   }
 
   "Update Ruling" should {
     val caseWithStatusOPEN = aCase(withReference("reference"), withStatus(CaseStatus.OPEN))
-    val liabilityCaseWithStatusOPEN = aCase(withLiabilityApplication(), withReference("reference"), withStatus(CaseStatus.OPEN))
+    val liabilityCaseWithStatusOPEN =
+      aCase(withLiabilityApplication(), withReference("reference"), withStatus(CaseStatus.OPEN))
     val updatedCase = aCase(withReference("reference"), withStatus(CaseStatus.OPEN))
-    val attachment = storedAttachment
+    val attachment  = storedAttachment
 
-    val aValidForm = newFakePOSTRequestWithCSRF(app, Map(
-      "bindingCommodityCode" -> "",
-      "goodsDescription" -> "",
-      "methodSearch" -> "",
-      "justification" -> "",
-      "methodCommercialDenomination" -> "",
-      "methodExclusion" -> "",
-      "attachments" -> "[]",
-      "explanation" -> "")
+    val aValidForm = newFakePOSTRequestWithCSRF(
+      app,
+      Map(
+        "bindingCommodityCode"         -> "",
+        "goodsDescription"             -> "",
+        "methodSearch"                 -> "",
+        "justification"                -> "",
+        "methodCommercialDenomination" -> "",
+        "methodExclusion"              -> "",
+        "attachments"                  -> "[]",
+        "explanation"                  -> ""
+      )
     )
 
     "update and redirect for permitted user" when {
       "Case is a BTI" in {
         given(casesService.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(updatedCase))
-        given(fileService.getAttachments(refEq(updatedCase))(any[HeaderCarrier])).willReturn(Future.successful(Seq(attachment)))
+        given(fileService.getAttachments(refEq(updatedCase))(any[HeaderCarrier]))
+          .willReturn(Future.successful(Seq(attachment)))
 
         val result = await(controller(caseWithStatusOPEN).updateRulingDetails("reference")(aValidForm))
         verify(casesService).updateCase(any[Case])(any[HeaderCarrier])
-        status(result) shouldBe Status.SEE_OTHER
+        status(result)     shouldBe Status.SEE_OTHER
         locationOf(result) shouldBe Some(routes.CaseController.rulingDetails("reference").url)
       }
 
       "Case is a Liability - old liability view" in {
-        given(commodityCodeConstraints.commodityCodeExistsInUKTradeTariff).willReturn(Constraint[String]("error")( _ =>  Valid))
+        given(commodityCodeConstraints.commodityCodeValid)
+          .willReturn(Constraint[String]("error")(_ => Valid))
         given(casesService.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(updatedCase))
 
         val result = await(controller(liabilityCaseWithStatusOPEN).updateRulingDetails("reference")(aValidForm))
         verify(casesService).updateCase(any[Case])(any[HeaderCarrier])
-        status(result) shouldBe Status.SEE_OTHER
+        status(result)     shouldBe Status.SEE_OTHER
         locationOf(result) shouldBe Some(routes.LiabilityController.liabilityDetails("reference").url)
       }
     }
 
     "redirect back to edit ruling on Form Error" when {
       "case is a BTI" in {
-        given(fileService.getAttachments(refEq(caseWithStatusOPEN))(any[HeaderCarrier])).willReturn(Future.successful(Seq(attachment)))
+        given(fileService.getAttachments(refEq(caseWithStatusOPEN))(any[HeaderCarrier]))
+          .willReturn(Future.successful(Seq(attachment)))
 
         val result = controller(caseWithStatusOPEN).updateRulingDetails("reference")(newFakePOSTRequestWithCSRF(app))
         verify(casesService, never()).updateCase(any[Case])(any[HeaderCarrier])
-        status(result) shouldBe Status.OK
-        contentType(result) shouldBe Some("text/html")
-        charset(result) shouldBe Some("utf-8")
+        status(result)          shouldBe Status.OK
+        contentType(result)     shouldBe Some("text/html")
+        charset(result)         shouldBe Some("utf-8")
         contentAsString(result) should include("error-summary")
         contentAsString(result) should (include("Ruling") and include("<form"))
       }
 
       "case is a Liability" in {
-        given(commodityCodeConstraints.commodityCodeExistsInUKTradeTariff).willReturn(Constraint[String]("error")( _ =>  Valid))
-        val result = controller(liabilityCaseWithStatusOPEN).updateRulingDetails("reference")(newFakePOSTRequestWithCSRF(app))
+        given(commodityCodeConstraints.commodityCodeValid)
+          .willReturn(Constraint[String]("error")(_ => Valid))
+        val result =
+          controller(liabilityCaseWithStatusOPEN).updateRulingDetails("reference")(newFakePOSTRequestWithCSRF(app))
         verify(casesService, never()).updateCase(any[Case])(any[HeaderCarrier])
-        status(result) shouldBe Status.OK
-        contentType(result) shouldBe Some("text/html")
-        charset(result) shouldBe Some("utf-8")
+        status(result)          shouldBe Status.OK
+        contentType(result)     shouldBe Some("text/html")
+        charset(result)         shouldBe Some("utf-8")
         contentAsString(result) should include("error-summary")
         contentAsString(result) should (include("Liability") and include("<form"))
       }
@@ -213,7 +256,7 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
     "redirect unauthorised when does not have right permissions" in {
       val result = controller(caseWithStatusOPEN, Set.empty).updateRulingDetails("reference")(aValidForm)
 
-      status(result) shouldBe Status.SEE_OTHER
+      status(result)               shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
     }
   }

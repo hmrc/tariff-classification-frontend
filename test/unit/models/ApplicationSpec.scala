@@ -72,12 +72,12 @@ class ApplicationSpec extends ModelsBaseSpec {
   "Application 'As BTI'" should {
 
     "cast a BTI" in {
-      Cases.btiApplicationExample.asBTI shouldBe a[BTIApplication]
+      Cases.btiApplicationExample.asATAR shouldBe a[BTIApplication]
     }
 
     "fail to case another type" in {
       assertThrows[RuntimeException] {
-        Cases.liabilityApplicationExample.asBTI
+        Cases.liabilityApplicationExample.asATAR
       }
     }
 
@@ -115,7 +115,7 @@ class ApplicationSpec extends ModelsBaseSpec {
     }
 
     "return for BTI" in {
-      Cases.btiApplicationExample.businessName shouldBe Cases.btiApplicationExample.asBTI.holder.businessName
+      Cases.btiApplicationExample.businessName shouldBe Cases.btiApplicationExample.asATAR.holder.businessName
     }
 
   }

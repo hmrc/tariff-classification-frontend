@@ -41,8 +41,8 @@ class InputNumberViewSpec extends ViewSpec {
       val doc = view(input_number(form("field"), "Label"))
 
       // Then
-      doc should containElementWithTag("input")
-      doc should containElementWithID("field")
+      doc                         should containElementWithTag("input")
+      doc                         should containElementWithID("field")
       doc.getElementById("field") should haveAttribute("type", "number")
       doc.getElementById("field") should haveAttribute("name", "field")
       doc.getElementById("field") should haveAttribute("value", "5")
@@ -52,12 +52,13 @@ class InputNumberViewSpec extends ViewSpec {
 
     "Render with Optional Fields" in {
       // When
-      val doc = view(input_number(form("field"), "Label", hint = Some("some-hint") , maxLength = Some(10), minLength = Some(1)))
+      val doc =
+        view(input_number(form("field"), "Label", hint = Some("some-hint"), maxLength = Some(10), minLength = Some(1)))
 
       // Then
-      doc should containElementWithTag("input")
-      doc should containElementWithID("field")
-      doc should containElementWithID("field")
+      doc                         should containElementWithTag("input")
+      doc                         should containElementWithID("field")
+      doc                         should containElementWithID("field")
       doc.getElementById("field") should haveAttribute("type", "number")
       doc.getElementById("field") should haveAttribute("name", "field")
       doc.getElementById("field") should haveAttribute("value", "5")
@@ -65,16 +66,15 @@ class InputNumberViewSpec extends ViewSpec {
       doc.getElementById("field") should haveAttribute("maxLength", "10")
     }
 
-
     "Render with error field" in {
       // When
-      val  formWithError = form.bind(emptyForm).apply("field")
+      val formWithError = form.bind(emptyForm).apply("field")
 
       val doc = view(input_number(formWithError, "Label"))
 
       // Then
       doc should containElementWithID("error-message-field-input")
-      doc.getElementsByClass("visually-hidden").text() mustBe  errorPrefix
+      doc.getElementsByClass("visually-hidden").text() mustBe errorPrefix
     }
   }
 

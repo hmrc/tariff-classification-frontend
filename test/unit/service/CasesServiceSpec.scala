@@ -16,11 +16,8 @@
 
 package service
 
-import java.time.Clock
-
 import audit.AuditService
 import connector.{BindingTariffClassificationConnector, RulingConnector}
-import models.ApplicationType.ApplicationType
 import models._
 import models.request.NewEventRequest
 import org.mockito.ArgumentMatchers.{any, refEq}
@@ -35,19 +32,20 @@ import scala.concurrent.Future.{failed, successful}
 
 class CasesServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
 
-  private val c = mock[Case]
-  private val manyCases = Seq(c)
-  private val oneCase = Some(c)
-  private val emailService = mock[EmailService]
+  private val c                = mock[Case]
+  private val manyCases        = Seq(c)
+  private val oneCase          = Some(c)
+  private val emailService     = mock[EmailService]
   private val fileStoreService = mock[FileStoreService]
   private val reportingService = mock[ReportingService]
-  private val queue = mock[Queue]
-  private val pagination = mock[Pagination]
-  private val connector = mock[BindingTariffClassificationConnector]
-  private val rulingConnector = mock[RulingConnector]
-  private val audit = mock[AuditService]
+  private val queue            = mock[Queue]
+  private val pagination       = mock[Pagination]
+  private val connector        = mock[BindingTariffClassificationConnector]
+  private val rulingConnector  = mock[RulingConnector]
+  private val audit            = mock[AuditService]
 
-  private val service = new CasesService(realAppConfig, audit, emailService, fileStoreService, reportingService, connector, rulingConnector)
+  private val service =
+    new CasesService(realAppConfig, audit, emailService, fileStoreService, reportingService, connector, rulingConnector)
 
   override protected def afterEach(): Unit = {
     super.afterEach()
@@ -56,22 +54,40 @@ class CasesServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
 
   "Get Cases 'By Queue'" should {
     "retrieve connector cases" in {
-      given(connector.findCasesByQueue(any[Queue], any[Pagination], any[Seq[ApplicationType]])(any[HeaderCarrier])) willReturn successful(Paged(manyCases))
+      given(connector.findCasesByQueue(any[Queue], any[Pagination], any[Seq[ApplicationType]])(any[HeaderCarrier])) willReturn successful(
+        Paged(manyCases)
+      )
 
       await(service.getCasesByQueue(queue, pagination)) shouldBe Paged(manyCases)
     }
 
     "retrieve connector cases with type restriction" in {
-      given(connector.findCasesByQueue(any[Queue], any[Pagination], refEq(Seq(ApplicationType.LIABILITY_ORDER)))(any[HeaderCarrier])) willReturn successful(Paged(manyCases))
+      given(
+        connector.findCasesByQueue(any[Queue], any[Pagination], refEq(Seq(ApplicationType.LIABILITY)))(
+          any[HeaderCarrier]
+        )
+      ) willReturn successful(Paged(manyCases))
 
-      await(service.getCasesByQueue(queue, pagination,Seq(ApplicationType.LIABILITY_ORDER))) shouldBe Paged(manyCases)
+      await(service.getCasesByQueue(queue, pagination, Seq(ApplicationType.LIABILITY))) shouldBe Paged(manyCases)
     }
 
   }
 
+  "Get Cases 'By All Queues'" should {
+    "retrieve connector cases" in {
+      given(connector.findCasesByAllQueues(any[Seq[Queue]], any[Pagination], any[Seq[ApplicationType]])(any[HeaderCarrier])) willReturn successful(
+        Paged(manyCases)
+      )
+
+      await(service.getCasesByAllQueues(Seq(queue), pagination)) shouldBe Paged(manyCases)
+    }
+  }
+
   "Get Cases 'By Assignee'" should {
     "retrieve connector cases" in {
-      given(connector.findCasesByAssignee(refEq(Operator("assignee")), refEq(pagination))(any[HeaderCarrier])) willReturn successful(Paged(manyCases))
+      given(connector.findCasesByAssignee(refEq(Operator("assignee")), refEq(pagination))(any[HeaderCarrier])) willReturn successful(
+        Paged(manyCases)
+      )
 
       await(service.getCasesByAssignee(Operator("assignee"), pagination)) shouldBe Paged(manyCases)
     }
@@ -87,14 +103,16 @@ class CasesServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
 
   "Search Cases" should {
     "retrieve connector cases" in {
-      given(connector.search(any[Search], any[Sort], any[Pagination])(any[HeaderCarrier], any[Clock], any[QueryStringBindable[String]])) willReturn successful(Paged(manyCases))
+      given(
+        connector.search(any[Search], any[Sort], any[Pagination])(any[HeaderCarrier], any[QueryStringBindable[String]])
+      ) willReturn successful(Paged(manyCases))
 
       await(service.search(Search(), Sort(), pagination)) shouldBe Paged(manyCases)
     }
   }
 
   "Update Case" should {
-    val oldCase = mock[Case]
+    val oldCase     = mock[Case]
     val updatedCase = mock[Case]
 
     "delegate to connector" in {
@@ -106,11 +124,14 @@ class CasesServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
 
   "Create Case" should {
     val aLiabilityCase = Cases.newLiabilityLiveCaseExample
-    val operator = Operator("id")
+    val operator       = Operator("id")
 
     "delegate to connector - add a case created event" in {
-      given(connector.createCase(refEq(aLiabilityCase.application))(any[HeaderCarrier])) willReturn successful(aLiabilityCase)
-      given(connector.createEvent(refEq(aLiabilityCase), any[NewEventRequest])(any[HeaderCarrier])).willReturn(successful(mock[Event]))
+      given(connector.createCase(refEq(aLiabilityCase.application))(any[HeaderCarrier])) willReturn successful(
+        aLiabilityCase
+      )
+      given(connector.createEvent(refEq(aLiabilityCase), any[NewEventRequest])(any[HeaderCarrier]))
+        .willReturn(successful(mock[Event]))
 
       await(service.createCase(aLiabilityCase.application, operator)) shouldBe aLiabilityCase
 
@@ -119,7 +140,7 @@ class CasesServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
       val eventCreated = theEventCreatedFor(connector, aLiabilityCase)
 
       eventCreated.operator shouldBe Operator("id")
-      eventCreated.details shouldBe CaseCreated(comment = "Liability case created")
+      eventCreated.details  shouldBe CaseCreated(comment = "Liability case created")
 
     }
 
@@ -139,7 +160,8 @@ class CasesServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
 
       given(connector.createCase(any[Application])(any[HeaderCarrier])) willReturn successful(aLiabilityCase)
 
-      given(connector.createEvent(any[Case], any[NewEventRequest])(any[HeaderCarrier])).willReturn(failed(new RuntimeException()))
+      given(connector.createEvent(any[Case], any[NewEventRequest])(any[HeaderCarrier]))
+        .willReturn(failed(new RuntimeException()))
 
       await(service.createCase(aLiabilityCase.application, operator)) shouldBe aLiabilityCase
 
@@ -148,17 +170,17 @@ class CasesServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
   }
 
   "Add attachment into case" should {
-    val c = mock[Case]
+    val c           = mock[Case]
     val updatedCase = mock[Case]
-    val fileUpload = mock[FileUpload]
-    val fileStored = mock[FileStoreAttachment]
+    val fileUpload  = mock[FileUpload]
+    val fileStored  = mock[FileStoreAttachment]
 
     "add the given attachment into the case provided" in {
 
       given(c.attachments) willReturn Seq.empty
       given(fileStored.id) willReturn "file-id"
       given(fileStoreService.upload(refEq(fileUpload))(any[HeaderCarrier])) willReturn successful(fileStored)
-      given(connector.updateCase(any[Case])(any[HeaderCarrier])) willReturn  successful(updatedCase)
+      given(connector.updateCase(any[Case])(any[HeaderCarrier])) willReturn successful(updatedCase)
 
       val result = await(service.addAttachment(c, fileUpload, Operator("assignee")))
 
@@ -167,9 +189,9 @@ class CasesServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
   }
 
   "Remove attachment from case" should {
-    val oldCase = mock[Case]
+    val oldCase     = mock[Case]
     val updatedCase = mock[Case]
-    val attachment = mock[Attachment]
+    val attachment  = mock[Attachment]
 
     "remove the given attachment from the case provided" in {
       given(oldCase.attachments) willReturn Seq(attachment)

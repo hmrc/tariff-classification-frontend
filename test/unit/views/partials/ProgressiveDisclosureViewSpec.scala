@@ -40,10 +40,10 @@ class ProgressiveDisclosureViewSpec extends ViewSpec {
       val doc = view(progressive_disclosure("MODULE", "summary", Some(Html("body"))))
 
       // Then
-      doc should containElementWithID("MODULE-title")
-      doc should containElementWithID("MODULE-body")
+      doc                                should containElementWithID("MODULE-title")
+      doc                                should containElementWithID("MODULE-body")
       doc.getElementById("MODULE-title") should containText("summary")
-      doc.getElementById("MODULE-body") should containText("body")
+      doc.getElementById("MODULE-body")  should containText("body")
     }
 
   }

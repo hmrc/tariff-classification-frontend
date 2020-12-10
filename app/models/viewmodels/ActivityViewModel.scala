@@ -21,33 +21,22 @@ import java.time.Instant
 import models.{Case, Event, Operator, Paged, Queue}
 
 case class ActivityViewModel(
-                              referenceNumber: String,
-                              assignee: Option[Operator],
-                              queueId: Option[String],
-                              createdDate: Instant,
-                              events: Paged[Event],
-                              queues: Seq[Queue],
-                              queueName: String
-                            ) {
-
-}
+  referenceNumber: String,
+  assignee: Option[Operator],
+  queueId: Option[String],
+  createdDate: Instant,
+  events: Paged[Event],
+  queues: Seq[Queue],
+  queueName: String
+) {}
 
 object ActivityViewModel {
   def fromCase(c: Case, events: Paged[Event], queues: Seq[Queue]): ActivityViewModel = {
 
-   def getQueueName = {
+    def getQueueName =
+      c.queueId.flatMap(id => queues.find(_.id == id)).map(_.name).getOrElse("unknown")
 
-    c.queueId.flatMap(id => queues.find(_.id == id)).map(_.name).getOrElse("unknown")
-   }
-
-    ActivityViewModel(c.reference,
-      c.assignee,
-      c.queueId,
-      c.createdDate,
-      events,
-      queues,
-      queueName = getQueueName
-    )
+    ActivityViewModel(c.reference, c.assignee, c.queueId, c.createdDate, events, queues, queueName = getQueueName)
   }
 
 }

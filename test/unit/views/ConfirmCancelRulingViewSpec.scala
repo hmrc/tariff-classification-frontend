@@ -25,9 +25,10 @@ class ConfirmCancelRulingViewSpec extends ViewSpec {
 
     "Render text for BTI" in {
       // When
-      val c = Cases.btiCaseWithExpiredRuling
+      val c   = Cases.btiCaseWithExpiredRuling
       val doc = view(confirm_cancel_ruling(c))
-      lazy val expected = "The ruling has been cancelled The ruling has been removed from the 'Find Binding Tariff Information rulings' search. The expiry date of the ruling has been set to today's date."
+      lazy val expected =
+        "The ruling has been cancelled The ruling has been removed from the 'Find Binding Tariff Information rulings' search. The expiry date of the ruling has been set to today's date."
       lazy val actual = doc.getElementById("confirm_cancel_id").text()
 
       // Then
@@ -36,16 +37,15 @@ class ConfirmCancelRulingViewSpec extends ViewSpec {
 
     "Render text for Liability" in {
       // When
-      val c = Cases.aLiabilityCase()
-      val doc = view(confirm_cancel_ruling(c))
+      val c             = Cases.aLiabilityCase()
+      val doc           = view(confirm_cancel_ruling(c))
       lazy val expected = "The liability decision has been cancelled"
-      lazy val actual = doc.getElementById("confirm_cancel_id").text()
+      lazy val actual   = doc.getElementById("confirm_cancel_id").text()
 
       // Then
       actual should startWith(expected)
     }
 
   }
-
 
 }

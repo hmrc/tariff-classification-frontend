@@ -37,10 +37,10 @@ class CaseHeadingViewSpec extends ViewSpec {
       val doc = view(case_heading(c))
 
       // Then
-      doc should containElementWithID("case-reference")
+      doc                                  should containElementWithID("case-reference")
       doc.getElementById("case-reference") should containText("Case ref")
-      doc should containElementWithID("case-status")
-      doc.getElementById("case-status") should containText("OPEN")
+      doc                                  should containElementWithID("case-status")
+      doc.getElementById("case-status")    should containText("OPEN")
     }
 
     "Render without Optional Statuses" in {
@@ -66,7 +66,7 @@ class CaseHeadingViewSpec extends ViewSpec {
       val doc = view(case_heading(c))
 
       // Then
-      doc should containElementWithID("appeal-status")
+      doc                                 should containElementWithID("appeal-status")
       doc.getElementById("appeal-status") should containText("Appeal allowed")
     }
 

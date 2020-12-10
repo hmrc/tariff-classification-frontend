@@ -56,9 +56,11 @@ class AppealTest extends ModelsBaseSpec {
       //  Given
       val expected = Some(Appeal(randomId(), AppealStatus.IN_PROGRESS, AppealType.ADR))
       val c = aCase(
-        withDecision(appeal = Seq(
-          expected.get
-        ))
+        withDecision(appeal =
+          Seq(
+            expected.get
+          )
+        )
       )
 
       // When
@@ -73,10 +75,12 @@ class AppealTest extends ModelsBaseSpec {
       val expected = Some(Appeal(randomId(), AppealStatus.IN_PROGRESS, AppealType.REVIEW))
 
       val c = aCase(
-        withDecision(appeal = Seq(
-          Appeal(randomId(), AppealStatus.IN_PROGRESS, AppealType.ADR),
-          expected.get
-        ))
+        withDecision(appeal =
+          Seq(
+            Appeal(randomId(), AppealStatus.IN_PROGRESS, AppealType.ADR),
+            expected.get
+          )
+        )
       )
 
       // When
@@ -91,14 +95,16 @@ class AppealTest extends ModelsBaseSpec {
       val expected = Some(Appeal(randomId(), AppealStatus.IN_PROGRESS, AppealType.SUPREME_COURT))
 
       val c = aCase(
-        withDecision(appeal = Seq(
-          Appeal(randomId(), AppealStatus.IN_PROGRESS, AppealType.ADR),
-          Appeal(randomId(), AppealStatus.IN_PROGRESS, AppealType.REVIEW),
-          Appeal(randomId(), AppealStatus.IN_PROGRESS, AppealType.APPEAL_TIER_1),
-          Appeal(randomId(), AppealStatus.IN_PROGRESS, AppealType.APPEAL_TIER_2),
-          Appeal(randomId(), AppealStatus.IN_PROGRESS, AppealType.COURT_OF_APPEALS),
-          expected.get
-        ))
+        withDecision(appeal =
+          Seq(
+            Appeal(randomId(), AppealStatus.IN_PROGRESS, AppealType.ADR),
+            Appeal(randomId(), AppealStatus.IN_PROGRESS, AppealType.REVIEW),
+            Appeal(randomId(), AppealStatus.IN_PROGRESS, AppealType.APPEAL_TIER_1),
+            Appeal(randomId(), AppealStatus.IN_PROGRESS, AppealType.APPEAL_TIER_2),
+            Appeal(randomId(), AppealStatus.IN_PROGRESS, AppealType.COURT_OF_APPEALS),
+            expected.get
+          )
+        )
       )
 
       // When

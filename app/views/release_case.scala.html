@@ -36,7 +36,7 @@
         <div class="column-full">
             <h2 class="heading-large mt-0">Release this case for classification</h2>
             @if(c.application.isBTI) {
-                @defining(c.application.asBTI) { btiApp: BTIApplication =>
+                @defining(c.application.asATAR) { btiApp: BTIApplication =>
                     <dl class="dl-mb-2">
                         @if(btiApp.envisagedCommodityCode.isDefined) {
                             <div class="grid-row">

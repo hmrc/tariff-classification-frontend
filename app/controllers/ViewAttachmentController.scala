@@ -28,20 +28,22 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton
-class ViewAttachmentController @Inject()(
+class ViewAttachmentController @Inject() (
   verify: RequestActions,
   fileService: FileStoreService,
   mcc: MessagesControllerComponents,
   implicit val appConfig: AppConfig
-) extends FrontendController(mcc) with I18nSupport {
+) extends FrontendController(mcc)
+    with I18nSupport {
 
-  def get(id: String): Action[AnyContent] = (verify.authenticated andThen verify.mustHave(Permission.VIEW_CASES)).async
-  { implicit request: Request[AnyContent] =>
-    fileService.getFileMetadata(id) map {
-      case Some(fileSubmitted: FileMetadata) if fileSubmitted.url.isDefined =>
-        Redirect(Call(method = "GET", url = fileSubmitted.url.get))
-      case fileSubmitted: Option[FileMetadata] =>
-        Ok(views.html.view_attachment_unavailable(fileSubmitted))
+  def get(id: String): Action[AnyContent] =
+    (verify.authenticated andThen verify.mustHave(Permission.VIEW_CASES)).async {
+      implicit request: Request[AnyContent] =>
+        fileService.getFileMetadata(id) map {
+          case Some(fileSubmitted: FileMetadata) if fileSubmitted.url.isDefined =>
+            Redirect(Call(method = "GET", url = fileSubmitted.url.get))
+          case fileSubmitted: Option[FileMetadata] =>
+            Ok(views.html.view_attachment_unavailable(fileSubmitted))
+        }
     }
-  }
 }

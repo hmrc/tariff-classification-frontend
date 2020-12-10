@@ -26,7 +26,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class EmailService @Inject()(connector: EmailConnector) {
+class EmailService @Inject() (connector: EmailConnector) {
 
   def sendCaseCompleteEmail(c: Case)(implicit hc: HeaderCarrier): Future[EmailTemplate] = {
     if (!c.application.isBTI) {
@@ -35,10 +35,10 @@ class EmailService @Inject()(connector: EmailConnector) {
 
     val email: CaseCompletedEmail = CaseCompletedEmail(
       Seq(c.application.contact.email),
-      CaseCompletedEmailParameters(c.application.contact.name, c.reference, c.application.asBTI.goodName)
+      CaseCompletedEmailParameters(c.application.contact.name, c.reference, c.application.asATAR.goodName)
     )
 
-    connector.send(email) flatMap ( _ => connector.generate(email) )
+    connector.send(email) flatMap (_ => connector.generate(email))
   }
 
 }

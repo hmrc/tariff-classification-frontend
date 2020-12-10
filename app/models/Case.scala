@@ -18,11 +18,9 @@ package models
 
 import java.time.{Clock, Instant}
 
-import config.AppConfig
 import models.CaseStatus.CaseStatus
 
-case class Case
-(
+case class Case(
   reference: String,
   status: CaseStatus,
   createdDate: Instant,
@@ -33,51 +31,54 @@ case class Case
   application: Application,
   decision: Option[Decision],
   attachments: Seq[Attachment],
-  keywords: Set[String] = Set.empty,
-  sample: Sample = Sample(),
-  dateOfExtract: Option[Instant] = None,
-  migratedDaysElapsed: Option[Long] = None
+  keywords: Set[String]             = Set.empty,
+  sample: Sample                    = Sample(),
+  dateOfExtract: Option[Instant]    = None,
+  migratedDaysElapsed: Option[Long] = None,
+  referredDaysElapsed: Long
 ) {
   def hasQueue: Boolean = queueId.isDefined
 
-  def hasStatus(statuses: CaseStatus*): Boolean  = statuses.contains(status)
+  def hasStatus(statuses: CaseStatus*): Boolean = statuses.contains(status)
 
   def hasAssignee: Boolean = assignee.isDefined
 
-  private def hasRuling: Boolean = {
+  private def hasRuling: Boolean =
     decision.flatMap(_.effectiveEndDate).isDefined
-  }
 
-  def hasExpiredRuling(implicit clock: Clock = Clock.systemUTC()): Boolean = {
+  def hasExpiredRuling(implicit clock: Clock = Clock.systemUTC()): Boolean =
     hasRuling && decision.flatMap(_.effectiveEndDate).exists(_.isBefore(Instant.now(clock)))
-  }
 
-  def hasLiveRuling(implicit clock: Clock = Clock.systemUTC()): Boolean = {
+  def hasLiveRuling(implicit clock: Clock = Clock.systemUTC()): Boolean =
     hasRuling && !hasExpiredRuling
-  }
 
-  def isAssignedTo(operator: Operator): Boolean = {
+  def isAssignedTo(operator: Operator): Boolean =
     assignee.exists(_.id == operator.id)
-  }
 
-  def findAppeal(appealId: String): Option[Appeal] = {
+  def findAppeal(appealId: String): Option[Appeal] =
     decision.flatMap(d => d.appeal.find(a => a.id.equals(appealId)))
-  }
 
   def addAttachment(attachment: Attachment): Case = this.copy(attachments = this.attachments :+ attachment)
 
-  def sampleToBeProvided: Boolean = {
+  def sampleToBeProvided: Boolean =
     application.`type` match {
-      case ApplicationType.BTI => application.asBTI.sampleToBeProvided
-      case ApplicationType.LIABILITY_ORDER => sample.status.isDefined
+      case ApplicationType.ATAR             => application.asATAR.sampleToBeProvided
+      case ApplicationType.LIABILITY => sample.status.isDefined
     }
-  }
 
-  def sampleToBeReturned: Boolean = {
+  def sampleToBeReturned: Boolean =
     application.`type` match {
-      case ApplicationType.BTI => application.asBTI.sampleToBeReturned
-      case ApplicationType.LIABILITY_ORDER => sample.returnStatus.contains(SampleReturn.YES)
+      case ApplicationType.ATAR             => application.asATAR.sampleToBeReturned
+      case ApplicationType.LIABILITY => sample.returnStatus.contains(SampleReturn.YES)
     }
-  }
 
+  def isCaseOverdue: Boolean =
+    (application.isLiveLiabilityOrder) match {
+      case true  if daysElapsed >= 5   => true
+      case false if daysElapsed >= 30  => true
+      case _                           => false
+    }
 }
+
+
+

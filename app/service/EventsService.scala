@@ -30,20 +30,19 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class EventsService @Inject()(connector: BindingTariffClassificationConnector, auditService: AuditService) {
+class EventsService @Inject() (connector: BindingTariffClassificationConnector, auditService: AuditService) {
 
-  def getEvents(reference: String, pagination: Pagination)
-               (implicit hc: HeaderCarrier): Future[Paged[Event]] = {
+  def getEvents(reference: String, pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[Event]] =
     getFilteredEvents(reference, pagination, None)
-  }
 
-  def getFilteredEvents(reference: String, pagination: Pagination, onlyEventTypes : Option[Set[EventType]])
-               (implicit hc: HeaderCarrier): Future[Paged[Event]] = {
+  def getFilteredEvents(reference: String, pagination: Pagination, onlyEventTypes: Option[Set[EventType]])(
+    implicit hc: HeaderCarrier
+  ): Future[Paged[Event]] =
     connector.findFilteredEvents(reference, pagination, onlyEventTypes.getOrElse(Set.empty))
-  }
 
-  def addNote(c: Case, note: String, operator: Operator, clock: Clock = Clock.systemUTC())
-             (implicit hc: HeaderCarrier): Future[Event] = {
+  def addNote(c: Case, note: String, operator: Operator, clock: Clock = Clock.systemUTC())(
+    implicit hc: HeaderCarrier
+  ): Future[Event] = {
     val event = NewEventRequest(Note(note), operator, Instant.now(clock))
 
     connector.createEvent(c, event).map { e =>

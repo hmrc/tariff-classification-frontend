@@ -18,8 +18,7 @@ package views.partials
 
 import models.{Case, StoredAttachment}
 
-case class SearchResult
-(
+case class SearchResult(
   c: Case,
   attachments: Seq[StoredAttachment]
 )

@@ -18,8 +18,7 @@ package models
 
 import models.CancelReason.CancelReason
 
-case class Cancellation
-(
+case class Cancellation(
   reason: CancelReason,
   applicationForExtendedUse: Boolean = false
 )

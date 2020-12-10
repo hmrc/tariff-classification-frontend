@@ -31,18 +31,19 @@ import scala.concurrent.Future.{failed, successful}
 
 class CasesService_ReleaseCaseSpec extends ServiceSpecBase with BeforeAndAfterEach with ConnectorCaptor {
 
-  private val manyCases = mock[Seq[Case]]
-  private val oneCase = mock[Option[Case]]
-  private val queue = mock[Queue]
-  private val connector = mock[BindingTariffClassificationConnector]
-  private val rulingConnector = mock[RulingConnector]
-  private val emailService = mock[EmailService]
+  private val manyCases        = mock[Seq[Case]]
+  private val oneCase          = mock[Option[Case]]
+  private val queue            = mock[Queue]
+  private val connector        = mock[BindingTariffClassificationConnector]
+  private val rulingConnector  = mock[RulingConnector]
+  private val emailService     = mock[EmailService]
   private val fileStoreService = mock[FileStoreService]
   private val reportingService = mock[ReportingService]
-  private val audit = mock[AuditService]
-  private val aCase = Cases.btiCaseExample
+  private val audit            = mock[AuditService]
+  private val aCase            = Cases.btiCaseExample
 
-  private val service = new CasesService(realAppConfig, audit, emailService, fileStoreService, reportingService, connector, rulingConnector)
+  private val service =
+    new CasesService(realAppConfig, audit, emailService, fileStoreService, reportingService, connector, rulingConnector)
 
   override protected def afterEach(): Unit = {
     super.afterEach()
@@ -53,30 +54,33 @@ class CasesService_ReleaseCaseSpec extends ServiceSpecBase with BeforeAndAfterEa
     "update case queue_id and status to NEW" in {
       // Given
       val operator: Operator = Operator("operator-id", Some("Billy Bobbins"))
-      val originalCase = aCase.copy(status = CaseStatus.NEW)
-      val caseUpdated = aCase.copy(status = CaseStatus.OPEN, queueId = Some("queue_id"))
+      val originalCase       = aCase.copy(status = CaseStatus.NEW)
+      val caseUpdated        = aCase.copy(status = CaseStatus.OPEN, queueId = Some("queue_id"))
 
       given(queue.id).willReturn("queue_id")
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
-      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])).willReturn(successful(mock[Event]))
+      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
+        .willReturn(successful(mock[Event]))
 
       // When Then
       await(service.releaseCase(originalCase, queue, operator)) shouldBe caseUpdated
 
-      verify(audit).auditCaseReleased(refEq(originalCase), refEq(caseUpdated), refEq(queue), refEq(operator))(any[HeaderCarrier])
+      verify(audit).auditCaseReleased(refEq(originalCase), refEq(caseUpdated), refEq(queue), refEq(operator))(
+        any[HeaderCarrier]
+      )
 
       val caseUpdating = theCaseUpdating(connector)
-      caseUpdating.status shouldBe CaseStatus.OPEN
+      caseUpdating.status  shouldBe CaseStatus.OPEN
       caseUpdating.queueId shouldBe Some("queue_id")
 
       val eventCreated = theEventCreatedFor(connector, caseUpdated)
       eventCreated.operator shouldBe Operator("operator-id", Some("Billy Bobbins"))
-      eventCreated.details shouldBe CaseStatusChange(CaseStatus.NEW, CaseStatus.OPEN)
+      eventCreated.details  shouldBe CaseStatusChange(CaseStatus.NEW, CaseStatus.OPEN)
     }
 
     "not create event on update failure" in {
       val operator: Operator = Operator("operator-id")
-      val originalCase = aCase.copy(status = CaseStatus.NEW)
+      val originalCase       = aCase.copy(status = CaseStatus.NEW)
 
       given(queue.id).willReturn("queue_id")
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(failed(new RuntimeException()))
@@ -92,20 +96,23 @@ class CasesService_ReleaseCaseSpec extends ServiceSpecBase with BeforeAndAfterEa
     "succeed on event create failure" in {
       // Given
       val operator: Operator = Operator("operator-id")
-      val originalCase = aCase.copy(status = CaseStatus.NEW)
-      val caseUpdated = aCase.copy(status = CaseStatus.OPEN, queueId = Some("queue_id"))
+      val originalCase       = aCase.copy(status = CaseStatus.NEW)
+      val caseUpdated        = aCase.copy(status = CaseStatus.OPEN, queueId = Some("queue_id"))
 
       given(queue.id).willReturn("queue_id")
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
-      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])).willReturn(failed(new RuntimeException()))
+      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
+        .willReturn(failed(new RuntimeException()))
 
       // When Then
       await(service.releaseCase(originalCase, queue, operator)) shouldBe caseUpdated
 
-      verify(audit).auditCaseReleased(refEq(originalCase), refEq(caseUpdated), refEq(queue), refEq(operator))(any[HeaderCarrier])
+      verify(audit).auditCaseReleased(refEq(originalCase), refEq(caseUpdated), refEq(queue), refEq(operator))(
+        any[HeaderCarrier]
+      )
 
       val caseUpdating = theCaseUpdating(connector)
-      caseUpdating.status shouldBe CaseStatus.OPEN
+      caseUpdating.status  shouldBe CaseStatus.OPEN
       caseUpdating.queueId shouldBe Some("queue_id")
     }
   }

@@ -21,8 +21,10 @@ import play.api.data.{Form, Forms}
 
 object BooleanForm {
 
-  val form: Form[Boolean] = Form[Boolean](Forms.mapping[Boolean, Boolean](
-    "state" -> boolean
-  )(identity)(Some(_)))
+  val form: Form[Boolean] = Form[Boolean](
+    Forms.mapping[Boolean, Boolean](
+      "state" -> boolean
+    )(identity)(Some(_))
+  )
 
 }

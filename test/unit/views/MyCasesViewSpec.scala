@@ -26,20 +26,26 @@ class MyCasesViewSpec extends ViewSpec {
   private val operator = Operator("111", Some("king arthur"))
 
   "My Cases View" should {
-    val queue1 = Queue("1", "queue1_name", "Queue 1 Name")
-    val queue2 = Queue("2", "queue2_name", "Queue 2 Name")
-    val openCase = btiCaseExample.copy(status = CaseStatus.OPEN)
-    val referredCase = btiCaseExample.copy(status = CaseStatus.REFERRED)
+    val queue1        = Queue("1", "queue1_name", "Queue 1 Name")
+    val queue2        = Queue("2", "queue2_name", "Queue 2 Name")
+    val openCase      = btiCaseExample.copy(status = CaseStatus.OPEN)
+    val referredCase  = btiCaseExample.copy(status = CaseStatus.REFERRED)
     val suspendedCase = btiCaseExample.copy(status = CaseStatus.SUSPENDED)
-    val liabCase = aCase(withLiabilityApplication())
-    val liveLiabCase = aCase(withLiabilityApplication(status = LiabilityStatus.LIVE))
+    val liabCase      = aCase(withLiabilityApplication())
+    val liveLiabCase  = aCase(withLiabilityApplication(status = LiabilityStatus.LIVE))
 
     "render create liability button when user has CREATE_CASES permission" in {
       // Given
       val queues = Seq(queue1, queue2)
 
       // When
-      val doc = view(html.my_cases(queues, Seq.empty, operator, Map.empty)(request = requestWithPermissions(Permission.CREATE_CASES), messages, appConfig))
+      val doc = view(
+        html.my_cases(queues, Seq.empty, operator, Map.empty)(
+          request = requestWithPermissions(Permission.CREATE_CASES),
+          messages,
+          appConfig
+        )
+      )
 
       // Then
       doc should containElementWithID("create_liability-button")
@@ -50,10 +56,12 @@ class MyCasesViewSpec extends ViewSpec {
       val queues = Seq(queue1, queue2)
 
       // When
-      val doc = view(html.my_cases(queues, Seq.empty, operator, Map.empty)(request = requestWithPermissions(), messages, appConfig))
+      val doc = view(
+        html.my_cases(queues, Seq.empty, operator, Map.empty)(request = requestWithPermissions(), messages, appConfig)
+      )
 
       // Then
-      doc should not (containElementWithID("create_liability-button"))
+      doc should not(containElementWithID("create_liability-button"))
     }
 
     "render empty list of cases" in {
@@ -61,7 +69,13 @@ class MyCasesViewSpec extends ViewSpec {
       val queues = Seq(queue1, queue2)
 
       // When
-      val doc = view(html.my_cases(queues, Seq.empty, operator, Map.empty)(request = requestWithPermissions(Permission.VIEW_QUEUE_CASES, Permission.VIEW_MY_CASES), messages, appConfig))
+      val doc = view(
+        html.my_cases(queues, Seq.empty, operator, Map.empty)(
+          request = requestWithPermissions(Permission.VIEW_QUEUE_CASES, Permission.VIEW_MY_CASES),
+          messages,
+          appConfig
+        )
+      )
 
       // Then
       doc should containElementWithID("queue-navigation")
@@ -74,20 +88,25 @@ class MyCasesViewSpec extends ViewSpec {
       doc should containElementWithID("nav-menu-my-cases")
 
       doc.getElementById("queue-name") should containText(s"Cases for ${operator.name.get}")
-      doc should containText(messages("cases.table.empty"))
+      doc                              should containText(messages("cases.table.empty"))
 
       doc should not(containElementWithID("cases_list-table"))
       doc should not(containElementWithID("referred_list-table"))
     }
 
-
     "render both BTI and Liability" in {
       // Given
       val queues = Seq(queue1, queue2)
-      val cases = Seq(openCase,liabCase,liveLiabCase)
+      val cases  = Seq(openCase, liabCase, liveLiabCase)
 
       // When
-      val doc = view(html.my_cases(queues, cases, operator, Map.empty)(request = requestWithPermissions(Permission.VIEW_QUEUE_CASES, Permission.VIEW_MY_CASES), messages, appConfig))
+      val doc = view(
+        html.my_cases(queues, cases, operator, Map.empty)(
+          request = requestWithPermissions(Permission.VIEW_QUEUE_CASES, Permission.VIEW_MY_CASES),
+          messages,
+          appConfig
+        )
+      )
 
       // Then
       doc.getElementById("cases_list-row-0-type") should containText("BTI")
@@ -99,10 +118,16 @@ class MyCasesViewSpec extends ViewSpec {
     "render cases in the expected order" in {
       // Given
       val queues = Seq(queue1, queue2)
-      val cases = Seq(openCase)
+      val cases  = Seq(openCase)
 
       // When
-      val doc = view(html.my_cases(queues, cases, operator, Map.empty)(request = requestWithPermissions(Permission.VIEW_QUEUE_CASES, Permission.VIEW_MY_CASES), messages, appConfig))
+      val doc = view(
+        html.my_cases(queues, cases, operator, Map.empty)(
+          request = requestWithPermissions(Permission.VIEW_QUEUE_CASES, Permission.VIEW_MY_CASES),
+          messages,
+          appConfig
+        )
+      )
 
       // Then
       doc should containElementWithID("queue-navigation")
@@ -114,7 +139,7 @@ class MyCasesViewSpec extends ViewSpec {
 
       doc should containElementWithID("nav-menu-my-cases")
 
-      doc.getElementById("queue-name") should containText(s"Cases for ${operator.name.get}")
+      doc.getElementById("queue-name")       should containText(s"Cases for ${operator.name.get}")
       doc.getElementById("cases_list-table") should containText(openCase.reference)
       doc.getElementById("cases_list-table") should containText(openCase.status.toString)
       doc.getElementById("cases_list-table") should containText(openCase.application.getType)
@@ -125,10 +150,16 @@ class MyCasesViewSpec extends ViewSpec {
     "render with a list of cases and referred cases" in {
       // Given
       val queues = Seq(queue1, queue2)
-      val cases = Seq(openCase, referredCase, suspendedCase)
+      val cases  = Seq(openCase, referredCase, suspendedCase)
 
       // When
-      val doc: Document = view(html.my_cases(queues, cases, operator, Map.empty)(request = requestWithPermissions(Permission.VIEW_QUEUE_CASES, Permission.VIEW_MY_CASES), messages, appConfig))
+      val doc: Document = view(
+        html.my_cases(queues, cases, operator, Map.empty)(
+          request = requestWithPermissions(Permission.VIEW_QUEUE_CASES, Permission.VIEW_MY_CASES),
+          messages,
+          appConfig
+        )
+      )
 
       // Then
       doc should containElementWithID("queue-navigation")

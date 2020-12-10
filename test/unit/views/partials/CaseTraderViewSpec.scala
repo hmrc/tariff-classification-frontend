@@ -27,7 +27,8 @@ import views.html.partials.case_trader
 
 class CaseTraderViewSpec extends ViewSpec {
 
-  val requestWithReleaseAndSuppressPermission = requestWithPermissions(Permission.RELEASE_CASE, Permission.SUPPRESS_CASE)
+  val requestWithReleaseAndSuppressPermission =
+    requestWithPermissions(Permission.RELEASE_CASE, Permission.SUPPRESS_CASE)
   val countriesService = new CountriesService
 
   "Case Trader" should {
@@ -40,50 +41,10 @@ class CaseTraderViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(case_trader(`case`, None, 0, s => Some("dummy country name")))
+      val doc = view(case_trader(`case`, 0, s => Some("dummy country name")))
 
       // Then
       doc shouldNot containElementWithID("agent-submitted-heading")
-    }
-
-    "Render agent details when present" in {
-      // Given
-      val `case` = aCase(
-        withReference("ref"),
-        withAgent()
-      )
-
-      // When
-      val doc = view(case_trader(`case`, None, 0, s => Some("dummy country name")))
-
-      // Then
-      doc should containElementWithID("agent-submitted-heading")
-    }
-
-    "Render letter of Authority when present as link" in {
-      // Given
-      val `case` = aCase(
-        withReference("ref"),
-        withContact(Contact("name", "email", None))
-      )
-
-      val letterOfAuthorization = Cases.storedAttachment.copy(id = "letter-of-auth-id", url = Some("url"), scanStatus = Some(ScanStatus.READY))
-
-      // When
-      val doc = view(case_trader(`case`, Some(letterOfAuthorization), 0, s => Some("dummy country name")))
-
-      // Then
-      doc should containElementWithID("agent-letter-file")
-      doc.getElementById("agent-letter-file") should containText("View letter of authorisation")
-    }
-
-    "show no tag when no letter of auth is provided" in {
-
-      // Given When
-      val doc = view(case_trader(btiCaseExample, None, 0, s => Some("dummy country name")))
-
-      // Then
-      doc shouldNot containElementWithID("agent-letter-file-letter-of-auth-id")
     }
 
     "render boards file number when present" in {
@@ -91,7 +52,7 @@ class CaseTraderViewSpec extends ViewSpec {
       val c = aCase().copy(caseBoardsFileNumber = Some("file 123"))
 
       // When
-      val doc = view(case_trader(c, None, 0, s => Some("dummy country name")))
+      val doc = view(case_trader(c, 0, s => Some("dummy country name")))
 
       // Then
       val boardFileNumber = doc.getElementById("boards-file-number")
@@ -103,7 +64,7 @@ class CaseTraderViewSpec extends ViewSpec {
       val c = aCase()
 
       // When
-      val doc = view(case_trader(c, None, 0, s => Some("dummy country name")))
+      val doc = view(case_trader(c, 0, s => Some("dummy country name")))
 
       // Then
       doc shouldNot containElementWithID("boards-file-number-label")

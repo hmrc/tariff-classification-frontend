@@ -39,9 +39,8 @@ class ActivityFormTest extends ModelsBaseSpec {
       val form = ActivityForm.form.fill(ActivityFormData("data.pdf"))
 
       form.hasErrors shouldBe false
-      form.data shouldBe Map("note" -> "data.pdf")
+      form.data      shouldBe Map("note" -> "data.pdf")
     }
   }
-
 
 }

@@ -25,39 +25,46 @@ class LiabilityDetailsFormTest extends ModelsBaseSpec {
 
   private val liability = LiabilityOrder(
     Contact(name = "contact-name", email = "contact@email.com", Some("contact-phone")),
-    status = LiabilityStatus.LIVE,
-    traderName = "trader-name",
-    goodName = Some("good-name"),
-    entryDate = Some(Instant.EPOCH),
-    entryNumber = Some("entry-no"),
-    traderCommodityCode = Some("0200000000"),
+    status               = LiabilityStatus.LIVE,
+    traderName           = "trader-name",
+    goodName             = Some("good-name"),
+    entryDate            = Some(Instant.EPOCH),
+    entryNumber          = Some("entry-no"),
+    traderCommodityCode  = Some("0200000000"),
     officerCommodityCode = Some("0100000000"),
-    btiReference = Some("btiReferenceN"),
-    repaymentClaim = Some(RepaymentClaim(dvrNumber = Some(""), dateForRepayment = Some(Instant.EPOCH))),
-    dateOfReceipt = Some(Instant.EPOCH),
-    traderContactDetails = Some(TraderContactDetails(email = Some("trader@email.com"),
-      phone = Some("2345"),
-      address = Some(Address(buildingAndStreet = "STREET 1",
-        townOrCity = "Town",
-        county = Some("County"),
-        postCode = Some("postcode")
-      ))
-    ))
+    btiReference         = Some("btiReferenceN"),
+    repaymentClaim       = Some(RepaymentClaim(dvrNumber = Some(""), dateForRepayment = Some(Instant.EPOCH))),
+    dateOfReceipt        = Some(Instant.EPOCH),
+    traderContactDetails = Some(
+      TraderContactDetails(
+        email = Some("trader@email.com"),
+        phone = Some("2345"),
+        address = Some(
+          Address(
+            buildingAndStreet = "STREET 1",
+            townOrCity        = "Town",
+            county            = Some("County"),
+            postCode          = Some("postcode")
+          )
+        )
+      )
+    )
   )
 
-  private val sampleCase = Cases.liabilityCaseExample.copy(caseBoardsFileNumber = Some("SCR/ARD/123"), application = liability)
+  private val sampleCase =
+    Cases.liabilityCaseExample.copy(caseBoardsFileNumber = Some("SCR/ARD/123"), application = liability)
 
   private val params = Map(
-    "contactName" -> Seq("contact-name"),
-    "contactEmail" -> Seq("contact@email.com"),
-    "contactPhone" -> Seq("contact-phone"),
-    "traderName" -> Seq("trader-name"),
-    "goodName" -> Seq("good-name"),
-    "entryDate.day" -> Seq("1"),
-    "entryDate.month" -> Seq("1"),
-    "entryDate.year" -> Seq("1970"),
-    "entryNumber" -> Seq("entry-no"),
-    "traderCommodityCode" -> Seq("0200000000"),
+    "contactName"          -> Seq("contact-name"),
+    "contactEmail"         -> Seq("contact@email.com"),
+    "contactPhone"         -> Seq("contact-phone"),
+    "traderName"           -> Seq("trader-name"),
+    "goodName"             -> Seq("good-name"),
+    "entryDate.day"        -> Seq("1"),
+    "entryDate.month"      -> Seq("1"),
+    "entryDate.year"       -> Seq("1970"),
+    "entryNumber"          -> Seq("entry-no"),
+    "traderCommodityCode"  -> Seq("0200000000"),
     "officerCommodityCode" -> Seq("0100000000")
   )
 
@@ -66,17 +73,28 @@ class LiabilityDetailsFormTest extends ModelsBaseSpec {
       "using edit form" in {
         val form = LiabilityDetailsForm.liabilityDetailsForm(sampleCase).bindFromRequest(params.mapValues(_ => Seq("")))
 
-        form.hasErrors shouldBe true
-        form.errors should have(size(1))
+        form.hasErrors         shouldBe true
+        form.errors            should have(size(1))
         form.errors.map(_.key) shouldBe Seq("traderName")
       }
 
       "using complete form" in {
-        val form = LiabilityDetailsForm.liabilityDetailsCompleteForm(sampleCase).bindFromRequest(params.mapValues(_ => Seq("")))
+        val form =
+          LiabilityDetailsForm.liabilityDetailsCompleteForm(sampleCase).bindFromRequest(params.mapValues(_ => Seq("")))
 
         form.hasErrors shouldBe true
-        form.errors should have(size(9))
-        form.errors.map(_.key) shouldBe Seq("entryDate", "traderName", "goodName", "entryNumber", "traderCommodityCode", "officerCommodityCode", "contactName", "contactEmail", "contactPhone")
+        form.errors    should have(size(9))
+        form.errors.map(_.key) shouldBe Seq(
+          "entryDate",
+          "traderName",
+          "goodName",
+          "entryNumber",
+          "traderCommodityCode",
+          "officerCommodityCode",
+          "contactName",
+          "contactEmail",
+          "contactPhone"
+        )
       }
     }
 
@@ -85,14 +103,14 @@ class LiabilityDetailsFormTest extends ModelsBaseSpec {
         val form = LiabilityDetailsForm.liabilityDetailsForm(sampleCase).bindFromRequest(params)
 
         form.hasErrors shouldBe false
-        form.get shouldBe sampleCase
+        form.get       shouldBe sampleCase
       }
 
       "using complete form" in {
         val form = LiabilityDetailsForm.liabilityDetailsCompleteForm(sampleCase).bindFromRequest(params)
 
         form.hasErrors shouldBe false
-        form.get shouldBe sampleCase
+        form.get       shouldBe sampleCase
       }
     }
   }
@@ -103,17 +121,16 @@ class LiabilityDetailsFormTest extends ModelsBaseSpec {
         val form = LiabilityDetailsForm.liabilityDetailsForm(sampleCase)
 
         form.hasErrors shouldBe false
-        form.data shouldBe params.mapValues(v => v.head)
+        form.data      shouldBe params.mapValues(v => v.head)
       }
 
       "using complete form" in {
         val form = LiabilityDetailsForm.liabilityDetailsCompleteForm(sampleCase)
 
         form.hasErrors shouldBe false
-        form.data shouldBe params.mapValues(v => v.head)
+        form.data      shouldBe params.mapValues(v => v.head)
       }
     }
   }
-
 
 }

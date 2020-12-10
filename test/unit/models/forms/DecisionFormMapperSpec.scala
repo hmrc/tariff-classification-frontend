@@ -23,7 +23,7 @@ import utils.DecisionForms
 class DecisionFormMapperSpec extends ModelsBaseSpec {
 
   private val validForm = DecisionForms.validForm
-  private val testCase = btiCaseExample
+  private val testCase  = btiCaseExample
 
   private val mapper = new DecisionFormMapper
 
@@ -48,9 +48,9 @@ class DecisionFormMapperSpec extends ModelsBaseSpec {
 
     "make attachments public when are contained into the form" in {
 
-      val attToPublish = attachment("url.to.publish")
-      val attNotPublish = attachment("url.to.not.be.published")
-      val caseWithAtt = testCase.copy(attachments = Seq(attToPublish, attNotPublish))
+      val attToPublish                = attachment("url.to.publish")
+      val attNotPublish               = attachment("url.to.not.be.published")
+      val caseWithAtt                 = testCase.copy(attachments = Seq(attToPublish, attNotPublish))
       val decisionFormWithAttSelected = validForm.copy(attachments = Seq(attToPublish.id))
 
       val result: Case = mapper.mergeFormIntoCase(caseWithAtt, decisionFormWithAttSelected)
@@ -65,7 +65,7 @@ class DecisionFormMapperSpec extends ModelsBaseSpec {
 
     "create valid decision form from a valid case " in {
 
-      val caseWithAtt = testCase.copy(attachments = Seq(attachment("url.to.publish")))
+      val caseWithAtt              = testCase.copy(attachments = Seq(attachment("url.to.publish")))
       val result: DecisionFormData = mapper.caseToDecisionFormData(caseWithAtt)
 
       compareAllFields(result, testCase.decision.get)
@@ -74,30 +74,30 @@ class DecisionFormMapperSpec extends ModelsBaseSpec {
 
     "create empty decision form when a case does not have a decision" in {
 
-      val empty = ""
-      val caseWithEmptyDecision = testCase.copy(decision = Option.empty)
+      val empty                    = ""
+      val caseWithEmptyDecision    = testCase.copy(decision = Option.empty)
       val result: DecisionFormData = mapper.caseToDecisionFormData(caseWithEmptyDecision)
 
-      result.bindingCommodityCode shouldBe empty
-      result.goodsDescription shouldBe empty
-      result.justification shouldBe empty
-      result.methodSearch shouldBe empty
-      result.methodExclusion shouldBe empty
+      result.bindingCommodityCode         shouldBe empty
+      result.goodsDescription             shouldBe empty
+      result.justification                shouldBe empty
+      result.methodSearch                 shouldBe empty
+      result.methodExclusion              shouldBe empty
       result.methodCommercialDenomination shouldBe empty
-      result.attachments shouldBe Seq.empty
-      result.explanation shouldBe empty
+      result.attachments                  shouldBe Seq.empty
+      result.explanation                  shouldBe empty
     }
 
   }
 
   private def compareAllFields(form: DecisionFormData, decision: Decision): Unit = {
-    decision.bindingCommodityCode shouldBe form.bindingCommodityCode
-    decision.goodsDescription shouldBe form.goodsDescription
-    decision.justification shouldBe form.justification
-    decision.methodSearch.getOrElse("") shouldBe form.methodSearch
-    decision.methodExclusion.getOrElse("") shouldBe form.methodExclusion
+    decision.bindingCommodityCode                       shouldBe form.bindingCommodityCode
+    decision.goodsDescription                           shouldBe form.goodsDescription
+    decision.justification                              shouldBe form.justification
+    decision.methodSearch.getOrElse("")                 shouldBe form.methodSearch
+    decision.methodExclusion.getOrElse("")              shouldBe form.methodExclusion
     decision.methodCommercialDenomination.getOrElse("") shouldBe form.methodCommercialDenomination
-    decision.explanation.getOrElse("") shouldBe form.explanation
+    decision.explanation.getOrElse("")                  shouldBe form.explanation
   }
 
 }

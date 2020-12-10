@@ -18,23 +18,23 @@ package models
 
 object AppealType extends Enumeration {
   def format(value: AppealType): String = value match {
-    case ADR => "Alternative Dispute Resolution (ADR)"
-    case REVIEW => "Review"
-    case APPEAL_TIER_1 => "Appeal tier 1"
-    case APPEAL_TIER_2 => "Appeal tier 2"
+    case ADR              => "Alternative Dispute Resolution (ADR)"
+    case REVIEW           => "Review"
+    case APPEAL_TIER_1    => "Appeal tier 1"
+    case APPEAL_TIER_2    => "Appeal tier 2"
     case COURT_OF_APPEALS => "Court of appeals"
-    case SUPREME_COURT => "Supreme Court"
+    case SUPREME_COURT    => "Supreme Court"
   }
 
   def heading(value: AppealType): String = value match {
-    case ADR => "Dispute"
+    case ADR    => "Dispute"
     case REVIEW => "Review"
-    case _ => "Appeal"
+    case _      => "Appeal"
   }
 
   /**
-   * The order of enum matters as it is used how to show elements in UI in some cases, where it is sorted by ID
-   */
+    * The order of enum matters as it is used how to show elements in UI in some cases, where it is sorted by ID
+    */
   type AppealType = Value
   val ADR, REVIEW, APPEAL_TIER_1, APPEAL_TIER_2, COURT_OF_APPEALS, SUPREME_COURT = Value
 }

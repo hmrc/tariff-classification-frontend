@@ -20,7 +20,6 @@ import play.api.data.{Form, FormError}
 
 trait PrefixErrorsInForm[T] {
 
-  def prefixErrorInForm(f: Form[T], error: FormError) : Form[T] = {
+  def prefixErrorInForm(f: Form[T], error: FormError): Form[T] =
     Form(f.mapping, f.data, error +: f.errors, f.value)
-  }
 }

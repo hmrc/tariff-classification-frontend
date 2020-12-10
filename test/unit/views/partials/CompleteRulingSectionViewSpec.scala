@@ -31,7 +31,7 @@ import views.html.partials.ruling.complete_ruling_section
 class CompleteRulingSectionViewSpec extends ViewSpec with MockitoSugar {
 
   private val commodityCodeService = mock[CommodityCodeService]
-  private val decisionForm = new DecisionForm(new CommodityCodeConstraints(commodityCodeService, mock[AppConfig]))
+  private val decisionForm         = new DecisionForm(new CommodityCodeConstraints(commodityCodeService, mock[AppConfig]))
 
   "Complete ruling section" should {
 
@@ -44,17 +44,18 @@ class CompleteRulingSectionViewSpec extends ViewSpec with MockitoSugar {
         view(
           complete_ruling_section(
             case1,
-            Some(decisionForm.btiCompleteForm.bindFromRequest(
-              Map(
-                "goodsDescription" -> Seq.empty,
-                "bindingCommodityCode" -> Seq("lorum ipsum"),
-                "methodSearch" -> Seq("lorum ipsum"),
-                "justification" -> Seq("lorum ipsum"),
-                "methodCommercialDenomination" -> Seq.empty,
-                "methodExclusion" -> Seq.empty,
-                "attachments" -> Seq.empty
+            Some(
+              decisionForm.btiCompleteForm.bindFromRequest(
+                Map(
+                  "goodsDescription"             -> Seq.empty,
+                  "bindingCommodityCode"         -> Seq("lorum ipsum"),
+                  "methodSearch"                 -> Seq("lorum ipsum"),
+                  "justification"                -> Seq("lorum ipsum"),
+                  "methodCommercialDenomination" -> Seq.empty,
+                  "methodExclusion"              -> Seq.empty,
+                  "attachments"                  -> Seq.empty
+                )
               )
-            )
             ),
             commodityCode = Some(CommodityCode("lorum ipsum"))
           )
@@ -66,23 +67,33 @@ class CompleteRulingSectionViewSpec extends ViewSpec with MockitoSugar {
     }
 
     "render with enabled button for case with complete decision" in {
-      val case1 = Cases.btiCaseExample.copy(status = CaseStatus.OPEN)
+      val case1              = Cases.btiCaseExample.copy(status = CaseStatus.OPEN)
       val mandatoryFieldForm = Some(decisionForm.btiCompleteForm)
 
       // When
-      val doc = view(complete_ruling_section(c = case1, decisionForm = mandatoryFieldForm, commodityCode = Some(CommodityCode("lorum ipsum"))))
+      val doc = view(
+        complete_ruling_section(
+          c             = case1,
+          decisionForm  = mandatoryFieldForm,
+          commodityCode = Some(CommodityCode("lorum ipsum"))
+        )
+      )
 
       // Then
       doc shouldNot containElementWithID("complete-case-button-disabled")
       doc should containElementWithID("complete-case-button")
-      doc.getElementById("complete-case-button") should haveAttribute("href", "/manage-tariff-classifications/cases/1/complete")
+      doc.getElementById("complete-case-button") should haveAttribute(
+        "href",
+        "/manage-tariff-classifications/cases/1/complete"
+      )
     }
 
     "not render for cases with no decision" in {
       val c = Cases.btiCaseExample.copy(decision = None)
 
       // When
-      val doc = view(complete_ruling_section(c = c, decisionForm = None, commodityCode = Some(CommodityCode("lorum ipsum"))))
+      val doc =
+        view(complete_ruling_section(c = c, decisionForm = None, commodityCode = Some(CommodityCode("lorum ipsum"))))
 
       // Then
       doc shouldNot containElementWithID("complete-case-button-disabled")

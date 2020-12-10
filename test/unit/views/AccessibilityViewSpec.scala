@@ -23,12 +23,12 @@ import play.twirl.api.{Html, HtmlFormat}
 import views.ViewMatchers._
 import views.html.accessibility_view
 
-class AccessibilityViewSpec extends ViewSpec{
+class AccessibilityViewSpec extends ViewSpec {
 
   val accessibility_view = new views.html.accessibility_view()
 
-  val messageKeyPrefix = "accessibility"
-  val expectTimeoutDialog = false
+  val messageKeyPrefix                 = "accessibility"
+  val expectTimeoutDialog              = false
   def asDocument(html: Html): Document = Jsoup.parse(html.toString())
   def assertLinkContainsHref(doc: Document, id: String, href: String): Assertion = {
     assert(doc.getElementById(id) != null, s"\n\nElement $id is not present")
@@ -36,10 +36,10 @@ class AccessibilityViewSpec extends ViewSpec{
   }
 
   def view = () => accessibility_view()
- 
-  protected def normalPage(view: () => HtmlFormat.Appendable, messageKeyPrefix: String, messageHeadingArgs: Any*)
-                          (expectedGuidanceKeys: String*): Unit = {
 
+  protected def normalPage(view: () => HtmlFormat.Appendable, messageKeyPrefix: String, messageHeadingArgs: Any*)(
+    expectedGuidanceKeys: String*
+  ): Unit =
     "AccessibilityView view" must {
       behave like normalPage(view, messageKeyPrefix)()
       //behave like pageWithoutBackLink(view)
@@ -91,11 +91,9 @@ class AccessibilityViewSpec extends ViewSpec{
 
       "contain correct number of bullet points display on the page" in {
         val doc = asDocument(view())
-        assert(doc.getElementsByClass("acceList_item").eachText().size() == 13 ,"expected list of elements is 13")
+        assert(doc.getElementsByClass("acceList_item").eachText().size() == 13, "expected list of elements is 13")
       }
 
     }
-
-  }
 
 }

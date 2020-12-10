@@ -16,7 +16,6 @@
 
 package filters
 
-
 import akka.stream.Materializer
 import com.google.inject.{Inject, Singleton}
 import play.api.mvc.Results.ServiceUnavailable
@@ -27,22 +26,21 @@ import views.html.shutterPage
 import scala.concurrent.Future
 
 @Singleton
-class ShutteringFilter @Inject()(
+class ShutteringFilter @Inject() (
   appConfig: AppConfig
-)(implicit val mat: Materializer) extends Filter {
+)(implicit val mat: Materializer)
+    extends Filter {
 
   private val shuttered: Boolean = appConfig.shutterFlag
 
   private val excludedPaths: Seq[Call] = appConfig.shutterExcludedUrls
-    .split(",").map {
-    path =>
-      Call("GET", path.trim)
-  }
+    .split(",")
+    .map(path => Call("GET", path.trim))
 
   private def toCall(rh: RequestHeader): Call =
     Call(rh.method, rh.uri)
 
-  override def apply(next: RequestHeader => Future[Result])(rh: RequestHeader): Future[Result] = {
-    if (shuttered && !excludedPaths.contains(toCall(rh))) Future.successful(ServiceUnavailable(shutterPage())) else next(rh)
-  }
+  override def apply(next: RequestHeader => Future[Result])(rh: RequestHeader): Future[Result] =
+    if (shuttered && !excludedPaths.contains(toCall(rh))) Future.successful(ServiceUnavailable(shutterPage()))
+    else next(rh)
 }

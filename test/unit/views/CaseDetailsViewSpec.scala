@@ -28,10 +28,10 @@ class CaseDetailsViewSpec extends ViewSpec {
 
   private val completeDecision = Decision(
     bindingCommodityCode = "040900",
-    justification = "justification-content",
-    goodsDescription = "goods-description",
-    methodSearch = Some("method-to-search"),
-    explanation = Some("explanation")
+    justification        = "justification-content",
+    goodsDescription     = "goods-description",
+    methodSearch         = Some("method-to-search"),
+    explanation          = Some("explanation")
   )
 
   "Case Details View" should {
@@ -39,28 +39,28 @@ class CaseDetailsViewSpec extends ViewSpec {
     "render BTI application" in {
 
       // When
-      val c = aCase(withReference("reference"), withBTIApplication)
+      val c   = aCase(withReference("reference"), withBTIApplication)
       val doc = view(html.case_details(c, CaseDetailPage.TRADER, Html("html"), Some(ActiveTab.Applicant)))
 
       // Then
       val listItems: Elements = doc.getElementsByClass("tabs__list-item")
 
       listItems.size() shouldBe 7
-      listItems.first should containText("Applicant")
+      listItems.first  should containText("Applicant")
       haveAttribute("aria-selected", "true")
     }
 
     "render liability order" in {
 
       // When
-      val c = aCase(withReference("reference"), withLiabilityApplication())
+      val c   = aCase(withReference("reference"), withLiabilityApplication())
       val doc = view(html.case_details(c, CaseDetailPage.LIABILITY, Html("html"), Some(ActiveTab.Liability)))
 
       // Then
       val listItems: Elements = doc.getElementsByClass("tabs__list-item")
 
       listItems.size() shouldBe 4
-      listItems.first should containText("Liability")
+      listItems.first  should containText("Liability")
       haveAttribute("aria-selected", "true")
     }
 
@@ -68,8 +68,14 @@ class CaseDetailsViewSpec extends ViewSpec {
 
       // When
       val myCase = aCase(withReference("reference"), withBTIApplication, withStatus(CaseStatus.OPEN))
-      val c = myCase.copy(decision = Some(completeDecision))
-      val doc = view(html.case_details(c, CaseDetailPage.RULING, Html("html"), None)(requestWithPermissions(Permission.COMPLETE_CASE), messages, appConfig))
+      val c      = myCase.copy(decision = Some(completeDecision))
+      val doc = view(
+        html.case_details(c, CaseDetailPage.RULING, Html("html"), None)(
+          requestWithPermissions(Permission.COMPLETE_CASE),
+          messages,
+          appConfig
+        )
+      )
 
       // Then
       val item: Element = doc.getElementById("change-case-status-button")
@@ -81,8 +87,14 @@ class CaseDetailsViewSpec extends ViewSpec {
 
       // When
       val myCase = aCase(withReference("reference"), withBTIApplication, withStatus(CaseStatus.NEW))
-      val c = myCase.copy(decision = Some(completeDecision))
-      val doc = view(html.case_details(c, CaseDetailPage.APPLICATION_DETAILS, Html("html"), None)(requestWithPermissions(Permission.RELEASE_CASE), messages, appConfig))
+      val c      = myCase.copy(decision = Some(completeDecision))
+      val doc = view(
+        html.case_details(c, CaseDetailPage.APPLICATION_DETAILS, Html("html"), None)(
+          requestWithPermissions(Permission.RELEASE_CASE),
+          messages,
+          appConfig
+        )
+      )
 
       // Then
       val item: Element = doc.getElementById("release-or-suppress-button")
@@ -94,8 +106,14 @@ class CaseDetailsViewSpec extends ViewSpec {
 
       // When
       val myCase = aCase(withReference("reference"), withBTIApplication, withStatus(CaseStatus.NEW))
-      val c = myCase.copy(decision = Some(completeDecision))
-      val doc = view(html.case_details(c, CaseDetailPage.APPLICATION_DETAILS, Html("html"), None)(requestWithPermissions(Permission.SUPPRESS_CASE), messages, appConfig))
+      val c      = myCase.copy(decision = Some(completeDecision))
+      val doc = view(
+        html.case_details(c, CaseDetailPage.APPLICATION_DETAILS, Html("html"), None)(
+          requestWithPermissions(Permission.SUPPRESS_CASE),
+          messages,
+          appConfig
+        )
+      )
 
       // Then
       val item: Element = doc.getElementById("release-or-suppress-button")
@@ -107,10 +125,16 @@ class CaseDetailsViewSpec extends ViewSpec {
 
       //When
       val myCase = aCase(withReference("reference"), withBTIApplication, withStatus(CaseStatus.COMPLETED))
-      val c = myCase.copy(decision = Some(completeDecision))
+      val c      = myCase.copy(decision = Some(completeDecision))
 
       //Then
-      val doc = view(html.case_details(c, CaseDetailPage.RULING, Html("html"), None)(requestWithPermissions(Permission.COMPLETE_CASE), messages, appConfig))
+      val doc = view(
+        html.case_details(c, CaseDetailPage.RULING, Html("html"), None)(
+          requestWithPermissions(Permission.COMPLETE_CASE),
+          messages,
+          appConfig
+        )
+      )
       val item: Element = doc.getElementById("change-case-status-button")
       item shouldNot containText("Change case status")
 
@@ -120,8 +144,14 @@ class CaseDetailsViewSpec extends ViewSpec {
 
       // When
       val myCase = aCase(withReference("reference"), withBTIApplication, withStatus(CaseStatus.OPEN))
-      val c = myCase.copy(decision = Some(completeDecision))
-      val doc = view(html.case_details(c, CaseDetailPage.RULING, Html("html"), None)(requestWithPermissions(Permission.VIEW_CASES), messages, appConfig))
+      val c      = myCase.copy(decision = Some(completeDecision))
+      val doc = view(
+        html.case_details(c, CaseDetailPage.RULING, Html("html"), None)(
+          requestWithPermissions(Permission.VIEW_CASES),
+          messages,
+          appConfig
+        )
+      )
 
       //Then
       val item: Element = doc.getElementById("case-status")
@@ -131,7 +161,13 @@ class CaseDetailsViewSpec extends ViewSpec {
     "show the Reopen case button if the case status is suspended and the operator has the permission to reopen the case" in {
 
       val myCase = aCase(withReference("reference"), withBTIApplication, withStatus(CaseStatus.SUSPENDED))
-      val doc = view(html.case_details(myCase, CaseDetailPage.APPLICATION_DETAILS, Html("html"))(requestWithPermissions(Permission.REOPEN_CASE), messages, appConfig))
+      val doc = view(
+        html.case_details(myCase, CaseDetailPage.APPLICATION_DETAILS, Html("html"))(
+          requestWithPermissions(Permission.REOPEN_CASE),
+          messages,
+          appConfig
+        )
+      )
 
       val item: Element = doc.getElementById("reopen-case-button")
       item should containText("Reopen case")
@@ -141,7 +177,13 @@ class CaseDetailsViewSpec extends ViewSpec {
     "not show the Reopen case button if the case status is not suspended" in {
 
       val myCase = aCase(withReference("reference"), withBTIApplication, withStatus(CaseStatus.OPEN))
-      val doc = view(html.case_details(myCase, CaseDetailPage.APPLICATION_DETAILS, Html("html"))(requestWithPermissions(Permission.COMPLETE_CASE), messages, appConfig))
+      val doc = view(
+        html.case_details(myCase, CaseDetailPage.APPLICATION_DETAILS, Html("html"))(
+          requestWithPermissions(Permission.COMPLETE_CASE),
+          messages,
+          appConfig
+        )
+      )
 
       val item: Element = doc.getElementById("change-case-status-button")
       item shouldNot containText("Reopen case")
@@ -152,7 +194,13 @@ class CaseDetailsViewSpec extends ViewSpec {
     "not show the Reopen case button if the case in Suspended and the operator does not have the required permission" in {
 
       val myCase = aCase(withReference("reference"), withBTIApplication, withStatus(CaseStatus.SUSPENDED))
-      val doc = view(html.case_details(myCase, CaseDetailPage.APPLICATION_DETAILS, Html("html"))(requestWithPermissions(Permission.VIEW_CASES), messages, appConfig))
+      val doc = view(
+        html.case_details(myCase, CaseDetailPage.APPLICATION_DETAILS, Html("html"))(
+          requestWithPermissions(Permission.VIEW_CASES),
+          messages,
+          appConfig
+        )
+      )
 
       val item: Element = doc.getElementById("reopen-case-button")
       item shouldNot containText("Reopen case")
@@ -161,7 +209,13 @@ class CaseDetailsViewSpec extends ViewSpec {
     "show the Take off referral button if the case status is referral and the operator has the permission to reopen the case" in {
 
       val myCase = aCase(withReference("reference"), withBTIApplication, withStatus(CaseStatus.REFERRED))
-      val doc = view(html.case_details(myCase, CaseDetailPage.APPLICATION_DETAILS, Html("html"))(requestWithPermissions(Permission.REOPEN_CASE), messages, appConfig))
+      val doc = view(
+        html.case_details(myCase, CaseDetailPage.APPLICATION_DETAILS, Html("html"))(
+          requestWithPermissions(Permission.REOPEN_CASE),
+          messages,
+          appConfig
+        )
+      )
 
       val item: Element = doc.getElementById("take-off-referral-button")
       item should containText("Take off referral")
@@ -171,7 +225,13 @@ class CaseDetailsViewSpec extends ViewSpec {
     "not show the Take off referral button if the case status is not suspended" in {
 
       val myCase = aCase(withReference("reference"), withBTIApplication, withStatus(CaseStatus.OPEN))
-      val doc = view(html.case_details(myCase, CaseDetailPage.APPLICATION_DETAILS, Html("html"))(requestWithPermissions(Permission.COMPLETE_CASE), messages, appConfig))
+      val doc = view(
+        html.case_details(myCase, CaseDetailPage.APPLICATION_DETAILS, Html("html"))(
+          requestWithPermissions(Permission.COMPLETE_CASE),
+          messages,
+          appConfig
+        )
+      )
 
       val item: Element = doc.getElementById("change-case-status-button")
       item shouldNot containText("Take off referral")
@@ -182,7 +242,13 @@ class CaseDetailsViewSpec extends ViewSpec {
     "not show the Take off referral if the case status is referral and the operator does not have the required permission" in {
 
       val myCase = aCase(withReference("reference"), withBTIApplication, withStatus(CaseStatus.REFERRED))
-      val doc = view(html.case_details(myCase, CaseDetailPage.APPLICATION_DETAILS, Html("html"))(requestWithPermissions(Permission.VIEW_CASES), messages, appConfig))
+      val doc = view(
+        html.case_details(myCase, CaseDetailPage.APPLICATION_DETAILS, Html("html"))(
+          requestWithPermissions(Permission.VIEW_CASES),
+          messages,
+          appConfig
+        )
+      )
 
       val item: Element = doc.getElementById("take-off-referral-button")
       item shouldNot containText("Take off referral")

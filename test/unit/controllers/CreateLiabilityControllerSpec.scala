@@ -28,51 +28,58 @@ import utils.Cases._
 import views.html.create_liability
 
 import scala.concurrent.Future._
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class CreateLiabilityControllerSpec extends ControllerBaseSpec {
 
   private val casesService = mock[CasesService]
 
   private def controller(permission: Set[Permission]) = new CreateLiabilityController(
-    new RequestActionsWithPermissions(defaultPlayBodyParsers, permission), casesService, mcc, realAppConfig
+    new RequestActionsWithPermissions(playBodyParsers, permission),
+    casesService,
+    mcc,
+    realAppConfig
   )
 
   "GET" should {
     "redirect to unauthorised if not permitted" in {
       val request = newFakeGETRequestWithCSRF(app)
-      val result = await(controller(Set.empty).get()(request))
-      status(result) shouldBe Status.SEE_OTHER
+      val result  = await(controller(Set.empty).get()(request))
+      status(result)           shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.SecurityController.unauthorized().url)
     }
 
     "return 200 OK and HTML content type" in {
       val request = newFakeGETRequestWithCSRF(app)
-      val result = await(controller(Set(Permission.CREATE_CASES)).get()(request))
-      status(result) shouldBe Status.OK
+      val result  = await(controller(Set(Permission.CREATE_CASES)).get()(request))
+      status(result)      shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
-      contentAsString(result) shouldBe create_liability(
-        LiabilityForm.newLiabilityForm)(request, messages, realAppConfig).toString()
+      charset(result)     shouldBe Some("utf-8")
+      contentAsString(result) shouldBe create_liability(LiabilityForm.newLiabilityForm)(
+        request,
+        messages,
+        realAppConfig
+      ).toString()
     }
   }
 
   "POST" should {
     "redirect to unauthorised if not permitted" in {
       val request = newFakePOSTRequestWithCSRF(app)
-      val result = await(controller(Set.empty).post()(request))
-      status(result) shouldBe Status.SEE_OTHER
+      val result  = await(controller(Set.empty).post()(request))
+      status(result)           shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.SecurityController.unauthorized().url)
     }
 
     "render view with errors" when {
       "form is invalid" in {
-        val request = newFakePOSTRequestWithCSRF(app)
-        val result = await(controller(Set(Permission.CREATE_CASES)).post()(request))
+        val request   = newFakePOSTRequestWithCSRF(app)
+        val result    = await(controller(Set(Permission.CREATE_CASES)).post()(request))
         lazy val form = LiabilityForm.newLiabilityForm.bindFromRequest()(request)
 
-        status(result) shouldBe Status.OK
-        contentType(result) shouldBe Some("text/html")
-        charset(result) shouldBe Some("utf-8")
+        status(result)          shouldBe Status.OK
+        contentType(result)     shouldBe Some("text/html")
+        charset(result)         shouldBe Some("utf-8")
         contentAsString(result) shouldBe create_liability(form)(request, messages, realAppConfig).toString()
       }
     }
@@ -81,13 +88,13 @@ class CreateLiabilityControllerSpec extends ControllerBaseSpec {
       given(casesService.createCase(any[LiabilityOrder], any[Operator])(any[HeaderCarrier]))
         .willReturn(successful(aCase(withReference("reference"))))
       val request = newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody(
-        "item-name" -> "item name",
-        "trader-name" -> "Trader",
+        "item-name"        -> "item name",
+        "trader-name"      -> "Trader",
         "liability-status" -> "LIVE"
       )
 
       val result = await(controller(Set(Permission.CREATE_CASES)).post()(request))
-      status(result) shouldBe Status.SEE_OTHER
+      status(result)           shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.CaseController.get("reference").url)
     }
   }

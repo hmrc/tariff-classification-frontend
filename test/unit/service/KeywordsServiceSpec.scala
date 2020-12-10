@@ -30,13 +30,13 @@ import scala.concurrent.Future.{failed, successful}
 
 class KeywordsServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
 
-  private val connector = mock[BindingTariffClassificationConnector]
+  private val connector    = mock[BindingTariffClassificationConnector]
   private val auditService = mock[AuditService]
 
   private val service = new KeywordsService(connector, auditService)
 
   private val operator: Operator = Operator("operator-id", None)
-  private val aCase = Cases.btiCaseExample
+  private val aCase              = Cases.btiCaseExample
 
   override protected def afterEach(): Unit = {
     super.afterEach()
@@ -66,7 +66,9 @@ class KeywordsServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
 
       await(service.addKeyword(aCase, aKeyword, operator)) shouldBe aCaseWithNewKeyword
 
-      verify(auditService).auditCaseKeywordAdded(refEq(aCaseWithNewKeyword), refEq(aKeyword), refEq(operator))(refEq(hc))
+      verify(auditService).auditCaseKeywordAdded(refEq(aCaseWithNewKeyword), refEq(aKeyword), refEq(operator))(
+        refEq(hc)
+      )
       verifyNoMoreInteractions(auditService)
     }
 
@@ -97,7 +99,7 @@ class KeywordsServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
     }
 
     "remove the keyword from the case keywords" in {
-      val aKeyword = "Apples"
+      val aKeyword         = "Apples"
       val aCaseWithKeyword = aCase.copy(keywords = aCase.keywords + "APPLES")
 
       given(connector.updateCase(refEq(aCase))(any[HeaderCarrier])).willReturn(successful(aCase))
@@ -109,7 +111,7 @@ class KeywordsServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
     }
 
     "leave the case unchanged if the keyword is not part of the case keywords" in {
-      val aKeyword = "Oranges"
+      val aKeyword         = "Oranges"
       val aCaseWithKeyword = aCase.copy(keywords = aCase.keywords + "Apples")
 
       await(service.removeKeyword(aCaseWithKeyword, aKeyword, operator)) shouldBe aCaseWithKeyword
@@ -121,7 +123,7 @@ class KeywordsServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
   "Retrieve auto complete keywords" should {
 
     "return a list of keywords" in {
-      await(service.autoCompleteKeywords) should contain ("ABS")
+      await(service.autoCompleteKeywords) should contain("ABS")
     }
   }
 

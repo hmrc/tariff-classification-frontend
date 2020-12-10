@@ -18,11 +18,10 @@ package models
 
 import models.CaseReportGroup.CaseReportGroup
 
-case class ReportResult
-(
+case class ReportResult(
   group: Map[CaseReportGroup, Option[String]],
   value: Seq[Int]
 ) {
-  def size: Int = value.size
+  def size: Int       = value.size
   def average: Double = value.sum.toDouble / size
 }

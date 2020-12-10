@@ -1,0 +1,51 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import models.viewmodels.SubNavigationTab
+@import models.viewmodels.AssignedToMeTab
+@import models.viewmodels.ReferredByMeTab
+@import models.viewmodels.CompletedByMeTab
+@import controllers.v2.routes
+
+@this()
+@(selectedTab : SubNavigationTab = AssignedToMeTab)(implicit messages: Messages)
+
+<nav id="my-cases-sub-nav"  class="moj-sub-navigation" aria-label="Sub navigation">
+    <ul class="moj-sub-navigation__list">
+        <li class="moj-sub-navigation__item">
+            @if(selectedTab == AssignedToMeTab) {
+            <a id = "sub_nav_assigned_to_me_tab" class="moj-sub-navigation__link" aria-current="page" href="@routes.MyCasesController.displayMyCases(AssignedToMeTab)">@messages("common.cases.secondaryNav.assigned")</a>
+            } else {
+            <a id = "sub_nav_assigned_to_me_tab" class="moj-sub-navigation__link" href="@routes.MyCasesController.displayMyCases(AssignedToMeTab)">@messages("common.cases.secondaryNav.assigned")</a>
+            }
+        </li>
+        <li class="moj-sub-navigation__item">
+            @if(selectedTab == ReferredByMeTab) {
+            <a id ="sub_nav_referred_by_me_tab" class="moj-sub-navigation__link" aria-current="page" href="@routes.MyCasesController.displayMyCases(ReferredByMeTab)">@messages("common.cases.secondaryNav.referred")</a>
+            } else {
+            <a id ="sub_nav_referred_by_me_tab" class="moj-sub-navigation__link" href="@routes.MyCasesController.displayMyCases(ReferredByMeTab)">@messages("common.cases.secondaryNav.referred")</a>
+            }
+        </li>
+        <li class="moj-sub-navigation__item">
+            @if(selectedTab == CompletedByMeTab) {
+            <a id ="sub_nav_completed_by_me_tab" class="moj-sub-navigation__link" aria-current="page" href="@routes.MyCasesController.displayMyCases(CompletedByMeTab)">@messages("common.cases.secondaryNav.completed")</a>
+            } else {
+            <a id ="sub_nav_completed_by_me_tab" class="moj-sub-navigation__link" href="@routes.MyCasesController.displayMyCases(CompletedByMeTab)">@messages("common.cases.secondaryNav.completed")</a>
+            }
+        </li>
+    </ul>
+</nav>
+

@@ -20,26 +20,23 @@ sealed trait Email[T] {
   val to: Seq[String]
   val templateId: String
   val parameters: T // Must render to JSON as a Map[String, String]
-  val force: Boolean = false
-  val eventUrl: Option[String] = None
+  val force: Boolean            = false
+  val eventUrl: Option[String]  = None
   val onSendUrl: Option[String] = None
 }
 
-case class CaseCompletedEmail
-(
+case class CaseCompletedEmail(
   override val to: Seq[String],
   override val parameters: CaseCompletedEmailParameters
 ) extends Email[CaseCompletedEmailParameters] {
   override val templateId: String = EmailType.COMPLETE.toString
 }
 
-case class CaseCompletedEmailParameters
-(
+case class CaseCompletedEmailParameters(
   recipientName_line1: String, // Must match hrmc-email-renderer SalutationHelper param name The full name of the recipient
   reference: String,
   itemName: String
 )
-
 
 object EmailType extends Enumeration {
   type EmailType = Value

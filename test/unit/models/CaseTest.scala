@@ -24,9 +24,9 @@ import utils.Cases.{aCase, withBTIApplication, _}
 
 class CaseTest extends ModelsBaseSpec with BeforeAndAfterAll {
 
-  private val pastTime = Instant.parse("2010-01-01T01:01:00Z")
+  private val pastTime    = Instant.parse("2010-01-01T01:01:00Z")
   private val currentTime = Instant.parse("2010-01-01T01:01:01Z")
-  private val futureTime = Instant.parse("2010-01-01T01:01:02Z")
+  private val futureTime  = Instant.parse("2010-01-01T01:01:02Z")
 
   private implicit val clockWithFixedTime: Clock = Clock.fixed(currentTime, ZoneOffset.UTC)
 
@@ -98,18 +98,86 @@ class CaseTest extends ModelsBaseSpec with BeforeAndAfterAll {
 
   }
 
+  "isCaseOverdue" should {
+    "return true if LiveLiability is above the overdue threshold (5 days)" in {
+      val c = aCase(
+        withReference("reference"),
+        withLiabilityApplication(status = LiabilityStatus.LIVE),
+        withSample(Sample(returnStatus = Some(SampleReturn.YES))),
+        withDaysElapsed(6)
+      )
+
+      c.isCaseOverdue shouldBe true
+    }
+
+    "return false if LiveLiability is below the threshold (5 days)" in {
+      val c = aCase(
+        withReference("reference"),
+        withLiabilityApplication(status = LiabilityStatus.LIVE),
+        withSample(Sample(returnStatus = Some(SampleReturn.YES))),
+        withDaysElapsed(3)
+      )
+
+      c.isCaseOverdue shouldBe false
+    }
+
+    "return true if Liability is above the overdue threshold (30 days)" in {
+      val c = aCase(
+        withReference("reference"),
+        withLiabilityApplication(),
+        withSample(Sample(returnStatus = Some(SampleReturn.YES))),
+        withDaysElapsed(30)
+      )
+
+      c.isCaseOverdue shouldBe true
+    }
+
+    "return false if Liability is below the threshold (30 days)" in {
+      val c = aCase(
+        withReference("reference"),
+        withLiabilityApplication(),
+        withSample(Sample(returnStatus = Some(SampleReturn.YES))),
+        withDaysElapsed(20)
+      )
+
+      c.isCaseOverdue shouldBe false
+    }
+
+    "return false if ATaR is below the threshold (30 days)" in {
+      val c = aCase(
+        withReference("reference"),
+        withBTIApplication,
+        withSample(Sample(returnStatus = Some(SampleReturn.YES))),
+        withDaysElapsed(20)
+      )
+
+      c.isCaseOverdue shouldBe false
+    }
+
+    "return true if ATaR is above the threshold (30 days)" in {
+      val c = aCase(
+        withReference("reference"),
+        withBTIApplication,
+        withSample(Sample(returnStatus = Some(SampleReturn.YES))),
+        withDaysElapsed(30)
+      )
+
+      c.isCaseOverdue shouldBe true
+    }
+  }
+
   "findAppeal()" should {
 
     "return appeal when valid id presented" in {
       val appeal = Appeal("12345", AppealStatus.ALLOWED, AppealType.APPEAL_TIER_1)
-      val c = caseWithAppeal(appeal)
+      val c      = caseWithAppeal(appeal)
 
       c.findAppeal("12345") shouldBe Some(appeal)
     }
 
     "return none when invalid id presented" in {
       val appeal = Appeal("12345", AppealStatus.ALLOWED, AppealType.APPEAL_TIER_1)
-      val c = caseWithAppeal(appeal)
+      val c      = caseWithAppeal(appeal)
 
       c.findAppeal("99999") shouldBe None
     }
@@ -129,7 +197,11 @@ class CaseTest extends ModelsBaseSpec with BeforeAndAfterAll {
     }
 
     "return true for Liability" in {
-      val c = aCase(withReference("reference"), withLiabilityApplication(), withSample(Sample(status = Some(SampleStatus.AWAITING))))
+      val c = aCase(
+        withReference("reference"),
+        withLiabilityApplication(),
+        withSample(Sample(status = Some(SampleStatus.AWAITING)))
+      )
 
       c.sampleToBeProvided shouldBe true
     }
@@ -143,7 +215,11 @@ class CaseTest extends ModelsBaseSpec with BeforeAndAfterAll {
     }
 
     "return true for Liability" in {
-      val c = aCase(withReference("reference"), withLiabilityApplication(), withSample(Sample(returnStatus = Some(SampleReturn.YES))))
+      val c = aCase(
+        withReference("reference"),
+        withLiabilityApplication(),
+        withSample(Sample(returnStatus = Some(SampleReturn.YES)))
+      )
 
       c.sampleToBeReturned shouldBe true
     }
@@ -171,15 +247,12 @@ class CaseTest extends ModelsBaseSpec with BeforeAndAfterAll {
     }
   }
 
-  private def rulingWithEffectiveEndDate(date: Option[Instant]): Decision = {
+  private def rulingWithEffectiveEndDate(date: Option[Instant]): Decision =
     Cases.decision.copy(effectiveEndDate = date)
-  }
 
-  private def caseWithRuling(d: Option[Decision]): Case = {
+  private def caseWithRuling(d: Option[Decision]): Case =
     Cases.btiCaseExample.copy(decision = d)
-  }
 
-  private def caseWithAppeal(appeal: Appeal): Case = {
+  private def caseWithAppeal(appeal: Appeal): Case =
     Cases.btiCaseExample.copy(decision = Some(Cases.decision.copy(appeal = Seq(appeal))))
-  }
 }

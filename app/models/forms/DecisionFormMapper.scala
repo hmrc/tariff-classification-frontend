@@ -26,7 +26,7 @@ class DecisionFormMapper {
 
     val decision = c.decision match {
       case Some(d: Decision) => amendDecision(d, decisionForm)
-      case _ => from(decisionForm)
+      case _                 => from(decisionForm)
     }
 
     val attachments = c.attachments
@@ -53,28 +53,26 @@ class DecisionFormMapper {
     form.getOrElse(DecisionFormData())
   }
 
-  private def amendDecision(decision: Decision, form: DecisionFormData): Decision = {
+  private def amendDecision(decision: Decision, form: DecisionFormData): Decision =
     decision.copy(
-      bindingCommodityCode = form.bindingCommodityCode.toString,
-      goodsDescription = form.goodsDescription,
-      methodSearch = Some(form.methodSearch),
-      justification = form.justification,
+      bindingCommodityCode         = form.bindingCommodityCode.toString,
+      goodsDescription             = form.goodsDescription,
+      methodSearch                 = Some(form.methodSearch),
+      justification                = form.justification,
       methodCommercialDenomination = Some(form.methodCommercialDenomination),
-      methodExclusion = Some(form.methodExclusion),
-      explanation = Some(form.explanation)
+      methodExclusion              = Some(form.methodExclusion),
+      explanation                  = Some(form.explanation)
     )
-  }
 
-  private def from(form: DecisionFormData): Decision = {
+  private def from(form: DecisionFormData): Decision =
     Decision(
-      bindingCommodityCode = form.bindingCommodityCode.toString,
-      goodsDescription = form.goodsDescription,
-      methodSearch = Some(form.methodSearch),
-      justification = form.justification,
+      bindingCommodityCode         = form.bindingCommodityCode.toString,
+      goodsDescription             = form.goodsDescription,
+      methodSearch                 = Some(form.methodSearch),
+      justification                = form.justification,
       methodCommercialDenomination = Some(form.methodCommercialDenomination),
-      methodExclusion = Some(form.methodExclusion),
-      explanation = Some(form.explanation)
+      methodExclusion              = Some(form.methodExclusion),
+      explanation                  = Some(form.explanation)
     )
-  }
 
 }

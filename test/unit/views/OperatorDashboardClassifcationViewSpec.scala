@@ -24,21 +24,23 @@ import views.html.operator_dashboard_classification
 
 class OperatorDashboardClassifcationViewSpec extends ViewSpec {
 
-  val operator_dashboard_calssification = new operator_dashboard_classification()
+  val casesCounted: Map[String, Int] = Map("BTI" -> 2, "Liability" -> 3)
+  val casesReferredByMe = 3
+  val operator_dashboard_classification = new operator_dashboard_classification()
 
-  val messageKeyPrefix = "accessibility"
-  val expectTimeoutDialog = false
+  val messageKeyPrefix                 = "accessibility"
+  val expectTimeoutDialog              = false
   def asDocument(html: Html): Document = Jsoup.parse(html.toString())
   def assertLinkContainsHref(doc: Document, id: String, href: String): Assertion = {
     assert(doc.getElementById(id) != null, s"\n\nElement $id is not present")
     assert(doc.getElementById(id).attr("href").contains(href))
   }
 
-  def view = () => operator_dashboard_calssification()
+  def view = () => operator_dashboard_classification(Map("BTI" -> 2, "Liability" -> 3), casesReferredByMe)
 
-  protected def normalPage(view: () => HtmlFormat.Appendable, messageKeyPrefix: String, messageHeadingArgs: Any*)
-                          (expectedGuidanceKeys: String*): Unit = {
-
+  protected def normalPage(view: () => HtmlFormat.Appendable, messageKeyPrefix: String, messageHeadingArgs: Any*)(
+    expectedGuidanceKeys: String*
+  ): Unit =
     "OperatorDashboardClassifcationView view" must {
       behave like normalPage(view, messageKeyPrefix)()
 
@@ -48,6 +50,5 @@ class OperatorDashboardClassifcationViewSpec extends ViewSpec {
       }
 
     }
-  }
 
 }

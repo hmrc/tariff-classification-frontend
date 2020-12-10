@@ -28,10 +28,9 @@ import scala.concurrent.Future.successful
 import scala.io.Source
 
 @Singleton
-class KeywordsService @Inject()(connector: BindingTariffClassificationConnector, auditService: AuditService) {
+class KeywordsService @Inject() (connector: BindingTariffClassificationConnector, auditService: AuditService) {
 
-  def addKeyword(c: Case, keyword: String, operator: Operator)
-                (implicit hc: HeaderCarrier): Future[Case] = {
+  def addKeyword(c: Case, keyword: String, operator: Operator)(implicit hc: HeaderCarrier): Future[Case] =
     if (c.keywords.contains(keyword.toUpperCase)) {
       successful(c)
     } else {
@@ -41,10 +40,8 @@ class KeywordsService @Inject()(connector: BindingTariffClassificationConnector,
         updated
       }
     }
-  }
 
-  def removeKeyword(c: Case, keyword: String, operator: Operator)
-                   (implicit hc: HeaderCarrier): Future[Case] = {
+  def removeKeyword(c: Case, keyword: String, operator: Operator)(implicit hc: HeaderCarrier): Future[Case] =
     if (c.keywords.contains(keyword.toUpperCase)) {
       val caseToUpdate = c.copy(keywords = c.keywords - keyword.toUpperCase)
       connector.updateCase(caseToUpdate) map { updated: Case =>
@@ -54,13 +51,11 @@ class KeywordsService @Inject()(connector: BindingTariffClassificationConnector,
     } else {
       successful(c)
     }
-  }
 
-  def autoCompleteKeywords: Future[Seq[String]] = {
+  def autoCompleteKeywords: Future[Seq[String]] =
     Future {
       val url = getClass.getClassLoader.getResource("keywords.txt")
       (for (line <- Source.fromURL(url, "UTF-8").getLines()) yield line).toSeq
     }
-  }
 
 }

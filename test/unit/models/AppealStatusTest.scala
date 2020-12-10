@@ -70,20 +70,20 @@ class AppealStatusTest extends ModelsBaseSpec {
 
     "format 'ADR''" in {
       AppealStatus.format(ADR, IN_PROGRESS) shouldBe "Under mediation"
-      AppealStatus.format(ADR, ALLOWED) shouldBe "Completed"
-      AppealStatus.format(ADR, DISMISSED ) shouldBe "Completed"
+      AppealStatus.format(ADR, ALLOWED)     shouldBe "Completed"
+      AppealStatus.format(ADR, DISMISSED)   shouldBe "Completed"
     }
 
     "format 'Review''" in {
       AppealStatus.format(REVIEW, IN_PROGRESS) shouldBe "Under review"
-      AppealStatus.format(REVIEW, ALLOWED) shouldBe "Review upheld"
-      AppealStatus.format(REVIEW, DISMISSED ) shouldBe "Review overturned"
+      AppealStatus.format(REVIEW, ALLOWED)     shouldBe "Review upheld"
+      AppealStatus.format(REVIEW, DISMISSED)   shouldBe "Review overturned"
     }
 
     "format 'Appeal''" in {
       AppealStatus.format(APPEAL_TIER_1, IN_PROGRESS) shouldBe "Under appeal"
-      AppealStatus.format(APPEAL_TIER_1, ALLOWED) shouldBe "Appeal allowed"
-      AppealStatus.format(APPEAL_TIER_1, DISMISSED ) shouldBe "Appeal dismissed"
+      AppealStatus.format(APPEAL_TIER_1, ALLOWED)     shouldBe "Appeal allowed"
+      AppealStatus.format(APPEAL_TIER_1, DISMISSED)   shouldBe "Appeal dismissed"
     }
   }
 

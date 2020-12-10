@@ -18,7 +18,7 @@
 @import models._
 @import models.request.AuthenticatedRequest
 @import utils.Dates
-@import views.html.partials.activity.{activity_case_cancellation, activity_case_referral, activity_status_change, activity_case_completed}
+@import views.html.partials.activity._
 @import views.html.partials.{assignee, progressive_disclosure}
 @import models.viewmodels.ActivityViewModel
 
@@ -136,6 +136,9 @@
                                 summary = s" ${assignee(event.operator, true)} moved this case to the ${body.to.flatMap(to => activityViewModel.queues.find(to == _.id)).map(_.name).getOrElse("unknown")} queue",
                                 body = body.comment.map(Html(_))
                             )
+                        }
+                        case EventType.EXPERT_ADVICE_RECEIVED => {
+                            activity_expert_advice_received(index, event)
                         }
                         case _ => {
                             throw new IllegalArgumentException(s"Unhandled Event Type [${event.details.`type`}]")

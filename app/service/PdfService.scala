@@ -24,10 +24,9 @@ import models._
 import scala.concurrent.Future
 
 @Singleton
-class PdfService @Inject()(connector: PdfGeneratorServiceConnector) {
+class PdfService @Inject() (connector: PdfGeneratorServiceConnector) {
 
-  def generatePdf(htmlContent: Html): Future[PdfFile] = {
+  def generatePdf(htmlContent: Html): Future[PdfFile] =
     connector.generatePdf(htmlContent)
-  }
 
 }

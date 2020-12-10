@@ -27,13 +27,13 @@ class RulingViewModelTest extends ModelsBaseSpec {
   "showEditRuling" should {
 
     "show edit ruling button when we have EDIT_RULING permission" in {
-      val aCase = dummyCase.copy(status = OPEN)
+      val aCase                        = dummyCase.copy(status = OPEN)
       val permissions: Set[Permission] = Set(Permission.EDIT_RULING)
       RulingViewModel.fromCase(aCase, permissions).showEditRuling shouldBe true
     }
 
     "not show edit ruling button because permission is missing" in {
-      val aCase = dummyCase.copy(status = OPEN)
+      val aCase                        = dummyCase.copy(status = OPEN)
       val permissions: Set[Permission] = Set()
       RulingViewModel.fromCase(aCase, permissions).showEditRuling shouldBe false
     }
@@ -42,19 +42,21 @@ class RulingViewModelTest extends ModelsBaseSpec {
   "fromCase" should {
 
     "return a RulingViewModel when a case with decision is passed" in {
-      val liabilityCase = Cases.liabilityCaseWithDecisionExample.copy(status = CaseStatus.OPEN, reference = "case reference")
+      val liabilityCase =
+        Cases.liabilityCaseWithDecisionExample.copy(status = CaseStatus.OPEN, reference = "case reference")
       val rulingViewModel = RulingViewModel.fromCase(liabilityCase)
 
       val expected = RulingViewModel(
         commodityCodeEnteredByTraderOrAgent = "trader-1234567",
-        commodityCodeSuggestedByOfficer = "officer-1234567",
-        commodityCode = "040900",
-        itemDescription = "good description",
-        justification = "justification",
-        methodSearch = "",
-        methodExclusion = "Excludes everything ever",
-        showEditRuling = false,
-        caseReference = "case reference")
+        commodityCodeSuggestedByOfficer     = "officer-1234567",
+        commodityCode                       = "040900",
+        itemDescription                     = "good description",
+        justification                       = "justification",
+        methodSearch                        = "",
+        methodExclusion                     = "Excludes everything ever",
+        showEditRuling                      = false,
+        caseReference                       = "case reference"
+      )
 
       rulingViewModel shouldBe expected
     }

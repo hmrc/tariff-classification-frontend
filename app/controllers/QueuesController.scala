@@ -20,7 +20,6 @@ import config.AppConfig
 import controllers.SessionKeys._
 import controllers.routes.QueuesController
 import javax.inject.{Inject, Singleton}
-import models.ApplicationType.ApplicationType
 import models.{ApplicationType, _}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -31,32 +30,35 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future.successful
 
 @Singleton
-class QueuesController @Inject()(
+class QueuesController @Inject() (
   verify: RequestActions,
   casesService: CasesService,
   queuesService: QueuesService,
   mcc: MessagesControllerComponents,
   implicit val appConfig: AppConfig
-) extends FrontendController(mcc) with I18nSupport {
+) extends FrontendController(mcc)
+    with I18nSupport {
 
   def queue(slug: String, caseType: Option[String] = None): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.VIEW_QUEUE_CASES)).async { implicit request =>
+      val types: Seq[ApplicationType] = caseType
+        .map(x => Seq[ApplicationType](ApplicationType.withName(x)))
+        .getOrElse(Seq(ApplicationType.ATAR, ApplicationType.LIABILITY))
 
-      val types: Seq[ApplicationType] = caseType.map(x => Seq[ApplicationType](ApplicationType.withName(x)))
-        .getOrElse(Seq(ApplicationType.BTI, ApplicationType.LIABILITY_ORDER))
-
-    queuesService.getOneBySlug(slug) flatMap {
-      case None => successful(Ok(views.html.resource_not_found()))
-      case Some(q: Queue) =>
-        for {
-          cases <- casesService.getCasesByQueue(q, NoPagination(), types)
-          queues <- queuesService.getAll
-          caseCountByQueue <- casesService.countCasesByQueue(request.operator)
-        } yield Ok(views.html.queue(queues, q, caseCountByQueue, cases, types.mkString(",")))
-          .addingToSession((backToQueuesLinkLabel, s"${q.name} cases"), (backToQueuesLinkUrl, QueuesController.queue(q.slug,caseType).url))
-          .removingFromSession(backToSearchResultsLinkLabel, backToSearchResultsLinkUrl)
+      queuesService.getOneBySlug(slug) flatMap {
+        case None => successful(Ok(views.html.resource_not_found()))
+        case Some(q: Queue) =>
+          for {
+            cases            <- casesService.getCasesByQueue(q, NoPagination(), types)
+            queues           <- queuesService.getAll
+            caseCountByQueue <- casesService.countCasesByQueue(request.operator)
+          } yield Ok(views.html.queue(queues, q, caseCountByQueue, cases, types.mkString(",")))
+            .addingToSession(
+              (backToQueuesLinkLabel, s"${q.name} cases"),
+              (backToQueuesLinkUrl, QueuesController.queue(q.slug, caseType).url)
+            )
+            .removingFromSession(backToSearchResultsLinkLabel, backToSearchResultsLinkUrl)
+      }
     }
-  }
-
 
 }

@@ -21,16 +21,14 @@ import models.CaseStatus.OPEN
 
 case class AssignedCases(name: String, openCases: Seq[Case], otherCases: Seq[Case])
 
-
 object AssignedCases {
 
-  def apply(cases: Seq[Case], assigneeId: Option[String]): Option[AssignedCases] = {
-    assigneeId.map( build(_, cases) )
-  }
+  def apply(cases: Seq[Case], assigneeId: Option[String]): Option[AssignedCases] =
+    assigneeId.map(build(_, cases))
 
   private def build(opId: String, cases: Seq[Case]): AssignedCases = {
-    val opCases = cases.filter(_.assignee.exists(_.id == opId))
-    val name = opCases.headOption.flatMap(_.assignee.flatMap(_.name)).getOrElse("")
+    val opCases                 = cases.filter(_.assignee.exists(_.id == opId))
+    val name                    = opCases.headOption.flatMap(_.assignee.flatMap(_.name)).getOrElse("")
     val (openCases, otherCases) = opCases.partition(_.status == OPEN)
     AssignedCases(name, openCases, otherCases)
   }

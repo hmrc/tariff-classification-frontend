@@ -37,9 +37,12 @@ class ContactDetailsViewSpec extends ViewSpec {
       val doc = view(contact_details(`case`))
 
       // Then
-      doc should containElementWithID("contact-email")
+      doc                                 should containElementWithID("contact-email")
       doc.getElementById("contact-email") should haveTag("a")
-      doc.getElementById("contact-email") should haveAttribute("href", "mailto:email@email.com?subject=BTI application #ref")
+      doc.getElementById("contact-email") should haveAttribute(
+        "href",
+        "mailto:email@email.com?subject=BTI application #ref"
+      )
     }
 
     "Render invalid email as text" in {
@@ -53,7 +56,7 @@ class ContactDetailsViewSpec extends ViewSpec {
       val doc = view(contact_details(`case`))
 
       // Then
-      doc should containElementWithID("contact-email")
+      doc                                 should containElementWithID("contact-email")
       doc.getElementById("contact-email") should haveTag("span")
     }
 
@@ -67,7 +70,7 @@ class ContactDetailsViewSpec extends ViewSpec {
       val doc = view(contact_details(`case`))
 
       // Then
-      doc should containElementWithID("contact-telephone")
+      doc                                     should containElementWithID("contact-telephone")
       doc.getElementById("contact-telephone") should containText("1234")
     }
 

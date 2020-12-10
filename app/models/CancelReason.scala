@@ -20,17 +20,17 @@ object CancelReason extends Enumeration {
   type CancelReason = Value
 
   val ANNULLED, INVALIDATED_CODE_CHANGE, INVALIDATED_EU_MEASURE, INVALIDATED_NATIONAL_MEASURE,
-  INVALIDATED_WRONG_CLASSIFICATION, INVALIDATED_OTHER, OTHER = Value
+    INVALIDATED_WRONG_CLASSIFICATION, INVALIDATED_OTHER, OTHER = Value
 
   def format(reason: CancelReason): String = {
     val message = reason match {
-      case ANNULLED => s"Annulled"
-      case INVALIDATED_CODE_CHANGE => s"Invalidated due to nomenclature code changes"
-      case INVALIDATED_EU_MEASURE => s"Invalidated due to EU measure"
-      case INVALIDATED_NATIONAL_MEASURE => s"Invalidated due to national legal measure"
+      case ANNULLED                         => s"Annulled"
+      case INVALIDATED_CODE_CHANGE          => s"Invalidated due to nomenclature code changes"
+      case INVALIDATED_EU_MEASURE           => s"Invalidated due to EU measure"
+      case INVALIDATED_NATIONAL_MEASURE     => s"Invalidated due to national legal measure"
       case INVALIDATED_WRONG_CLASSIFICATION => s"Invalidated due to incorrect classification"
-      case INVALIDATED_OTHER | OTHER => s"Invalidated due to other reasons"
-      case unknown: CancelReason => throw new IllegalArgumentException(s"Unexpected reason: $unknown")
+      case INVALIDATED_OTHER | OTHER        => s"Invalidated due to other reasons"
+      case unknown: CancelReason            => throw new IllegalArgumentException(s"Unexpected reason: $unknown")
     }
 
     message + code(reason).map(c => s" ($c)").getOrElse("")
@@ -38,13 +38,13 @@ object CancelReason extends Enumeration {
 
   def code(reason: CancelReason): Option[Int] =
     reason match {
-      case ANNULLED => Some(55)
-      case INVALIDATED_CODE_CHANGE => Some(61)
-      case INVALIDATED_EU_MEASURE => Some(62)
-      case INVALIDATED_NATIONAL_MEASURE => Some(63)
+      case ANNULLED                         => Some(55)
+      case INVALIDATED_CODE_CHANGE          => Some(61)
+      case INVALIDATED_EU_MEASURE           => Some(62)
+      case INVALIDATED_NATIONAL_MEASURE     => Some(63)
       case INVALIDATED_WRONG_CLASSIFICATION => Some(64)
-      case INVALIDATED_OTHER => Some(65)
-      case OTHER => None
-      case unknown: CancelReason => throw new IllegalArgumentException(s"Unexpected reason: $unknown")
+      case INVALIDATED_OTHER                => Some(65)
+      case OTHER                            => None
+      case unknown: CancelReason            => throw new IllegalArgumentException(s"Unexpected reason: $unknown")
     }
 }

@@ -14,41 +14,52 @@ class CompleteCaseSpec extends IntegrationTest with MockitoSugar {
     val owner = Some(Operator("111", role = Role.CLASSIFICATION_OFFICER))
     val completeDecision = Decision(
       bindingCommodityCode = "0300000000",
-      justification = "justification-content",
-      goodsDescription = "goods-description",
-      methodSearch = Some("method-to-search"),
-      explanation = Some("explanation"))
-    val caseWithStatusOPEN = CasePayloads.jsonOf(Cases.btiCaseExample.copy(status = CaseStatus.OPEN, decision = Some(completeDecision), assignee = owner))
+      justification        = "justification-content",
+      goodsDescription     = "goods-description",
+      methodSearch         = Some("method-to-search"),
+      explanation          = Some("explanation")
+    )
+    val caseWithStatusOPEN = CasePayloads.jsonOf(
+      Cases.btiCaseExample.copy(status = CaseStatus.OPEN, decision = Some(completeDecision), assignee = owner)
+    )
 
     def shouldSucceed = {
-      stubFor(get(urlEqualTo("/cases/1"))
-        .willReturn(aResponse()
-          .withStatus(OK)
-          .withBody(caseWithStatusOPEN))
+      stubFor(
+        get(urlEqualTo("/cases/1"))
+          .willReturn(
+            aResponse()
+              .withStatus(OK)
+              .withBody(caseWithStatusOPEN)
+          )
       )
 
       // When
-      val response: WSResponse = await(ws.url(s"http://localhost:$port/manage-tariff-classifications/cases/1/complete").get())
+      val response: WSResponse =
+        await(ws.url(s"http://localhost:$port/manage-tariff-classifications/cases/1/complete").get())
 
       // Then
       response.status shouldBe OK
-      response.body should include("Complete this case")
-      response.body should not include "disabled=disabled"
+      response.body   should include("Complete this case")
+      response.body   should not include "disabled=disabled"
     }
 
     def shouldNotSucceed = {
-      stubFor(get(urlEqualTo("/cases/1"))
-        .willReturn(aResponse()
-          .withStatus(OK)
-          .withBody(caseWithStatusOPEN))
+      stubFor(
+        get(urlEqualTo("/cases/1"))
+          .willReturn(
+            aResponse()
+              .withStatus(OK)
+              .withBody(caseWithStatusOPEN)
+          )
       )
 
       // When
-      val response: WSResponse = await(ws.url(s"http://localhost:$port/manage-tariff-classifications/cases/1/complete").get())
+      val response: WSResponse =
+        await(ws.url(s"http://localhost:$port/manage-tariff-classifications/cases/1/complete").get())
 
       // Then
       response.status shouldBe OK
-      response.body should include(messages("not_authorised.paragraph1"))
+      response.body   should include(messages("not_authorised.paragraph1"))
     }
 
     "return status 200 for manager" in {
@@ -82,11 +93,12 @@ class CompleteCaseSpec extends IntegrationTest with MockitoSugar {
 
     def shouldFail = {
       // When
-      val response: WSResponse = await(ws.url(s"http://localhost:$port/manage-tariff-classifications/cases/1/complete").get())
+      val response: WSResponse =
+        await(ws.url(s"http://localhost:$port/manage-tariff-classifications/cases/1/complete").get())
 
       // Then
       response.status shouldBe OK
-      response.body should include(messages("not_authorised.paragraph1"))
+      response.body   should include(messages("not_authorised.paragraph1"))
     }
   }
 

@@ -40,7 +40,7 @@ class RulingTabViewSpec extends ViewSpec {
 
   "Ruling Tab" should {
 
-    val doc = view(rulingTab(rulingViewModel.copy(showEditRuling = true), 1))
+    val doc               = view(rulingTab(rulingViewModel.copy(showEditRuling = true), 1))
     val notShowEditButton = view(rulingTab(rulingViewModel.copy(showEditRuling = false), 1))
 
     "display tab title" in {
@@ -53,12 +53,14 @@ class RulingTabViewSpec extends ViewSpec {
     }
 
     "render code by trader row" in {
-      val expected = messages("case.v2.liability.ruling.info.from.c592.code.by.trader") + rulingViewModel.commodityCodeEnteredByTraderOrAgent
+      val expected =
+        messages("case.v2.liability.ruling.info.from.c592.code.by.trader") + rulingViewModel.commodityCodeEnteredByTraderOrAgent
       doc.getElementById("ruling_code_by_trader").text shouldBe expected
     }
 
     "render code suggestion" in {
-      val expected = messages("case.v2.liability.ruling.info.from.c592.code.suggested") + rulingViewModel.commodityCodeSuggestedByOfficer
+      val expected =
+        messages("case.v2.liability.ruling.info.from.c592.code.suggested") + rulingViewModel.commodityCodeSuggestedByOfficer
       doc.getElementById("ruling_code_suggested").text shouldBe expected
     }
 
@@ -98,7 +100,10 @@ class RulingTabViewSpec extends ViewSpec {
     }
 
     "render the correct link for edit details" in {
-      doc.getElementById("ruling_edit_details") should containElementWithAttribute("href",routes.RulingController.editRulingDetails(rulingViewModel.caseReference).path())
+      doc.getElementById("ruling_edit_details") should containElementWithAttribute(
+        "href",
+        routes.RulingController.editRulingDetails(rulingViewModel.caseReference).path()
+      )
     }
   }
 }

@@ -23,6 +23,14 @@ import models.request.NewEventRequest
 
 object Events {
   val event: Event = Event("id", Note("comment"), Operator("user-id", Some("user name")), "case-ref", Instant.now())
-  val eventRequest: NewEventRequest = NewEventRequest(Note("comment"), Operator("user-id", Some("user name")), Instant.now())
+  val eventRequest: NewEventRequest =
+    NewEventRequest(Note("comment"), Operator("user-id", Some("user name")), Instant.now())
   val events: Seq[Event] = Seq(event)
+
+  val referredDetailsCaseChange : ReferralCaseStatusChange =
+    ReferralCaseStatusChange(CaseStatus.OPEN, Some("some comment"), None, "trader", Seq(ReferralReason.REQUEST_SAMPLE))
+
+  val referredEvent : Event = event.copy(details = referredDetailsCaseChange)
+
+  val pagedReferredEvents :  Paged[Event] = Paged(Seq(referredEvent, referredEvent))
 }

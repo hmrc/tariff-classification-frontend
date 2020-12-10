@@ -28,14 +28,12 @@ class QueuesService {
 
   def getAll: Future[Seq[Queue]] = Future.successful(Seq(gateway, act, cap, cars, elm))
 
-  def getNonGateway: Future[Seq[Queue]] = getAll map(_.filterNot (_ == gateway))
+  def getNonGateway: Future[Seq[Queue]] = getAll map (_.filterNot(_ == gateway))
 
-  def getOneBySlug(slug: String): Future[Option[Queue]] = {
+  def getOneBySlug(slug: String): Future[Option[Queue]] =
     getAll.map(_.find(_.slug == slug))
-  }
 
-  def getOneById(id: String): Future[Option[Queue]] = {
+  def getOneById(id: String): Future[Option[Queue]] =
     getAll.map(_.find(_.id == id))
-  }
 
 }

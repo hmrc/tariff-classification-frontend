@@ -22,7 +22,8 @@ import scala.util.matching.Regex
 
 trait Constraints {
 
-  private val emailRegex = """^[a-zA-Z0-9\.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$""".r
+  private val emailRegex =
+    """^[a-zA-Z0-9\.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$""".r
 
   protected def firstError[A](constraints: Constraint[A]*): Constraint[A] =
     Constraint { input =>
@@ -78,7 +79,7 @@ trait Constraints {
         Invalid(errorKey)
     }
 
-  protected def validEmail(errorKey: String): Constraint[String] = {
+  protected def validEmail(errorKey: String): Constraint[String] =
     Constraint {
       case str if str.isEmpty =>
         Valid
@@ -87,5 +88,4 @@ trait Constraints {
       case _ =>
         Invalid(errorKey)
     }
-  }
 }

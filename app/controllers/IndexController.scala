@@ -27,11 +27,12 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.read_only_home
 
 @Singleton
-class IndexController @Inject()(
+class IndexController @Inject() (
   authenticate: AuthenticatedAction,
   mcc: MessagesControllerComponents,
   implicit val appConfig: AppConfig
-) extends FrontendController(mcc) with I18nSupport {
+) extends FrontendController(mcc)
+    with I18nSupport {
 
   def get(): Action[AnyContent] = authenticate { implicit request: AuthenticatedRequest[AnyContent] =>
     request.operator.role match {

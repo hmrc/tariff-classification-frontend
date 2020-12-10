@@ -6,7 +6,6 @@ import play.api.test.Helpers._
 import models.NoPagination
 import utils.{CasePayloads, CaseQueueBuilder}
 
-
 class RootSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder {
 
   "Root" should {
@@ -14,16 +13,28 @@ class RootSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder {
     "return status 200 and redirect to My Cases" in {
       // Given
       givenAuthSuccess()
-      stubFor(get(urlEqualTo(buildQueryUrl(withStatuses = "NEW,OPEN,REFERRED,SUSPENDED", assigneeId = "123", pag = NoPagination())))
-        .willReturn(aResponse()
-          .withStatus(OK)
-          .withBody(CasePayloads.pagedGatewayCases))
+      stubFor(
+        get(
+          urlEqualTo(
+            buildQueryUrl(withStatuses = "NEW,OPEN,REFERRED,SUSPENDED", assigneeId = "123", pag = NoPagination())
+          )
+        ).willReturn(
+          aResponse()
+            .withStatus(OK)
+            .withBody(CasePayloads.pagedGatewayCases)
+        )
       )
 
-      stubFor(get(urlEqualTo("/report?status=NEW&status=OPEN&status=REFERRED&status=SUSPENDED&assignee_id=none&report_group=queue-id%2Capplication-type&report_field=active-days-elapsed"))
-        .willReturn(aResponse()
-          .withStatus(OK)
-          .withBody(CasePayloads.report))
+      stubFor(
+        get(
+          urlEqualTo(
+            "/report?status=NEW&status=OPEN&status=REFERRED&status=SUSPENDED&assignee_id=none&report_group=queue-id%2Capplication-type&report_field=active-days-elapsed"
+          )
+        ).willReturn(
+          aResponse()
+            .withStatus(OK)
+            .withBody(CasePayloads.report)
+        )
       )
 
       // When
@@ -31,7 +42,7 @@ class RootSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder {
 
       // Then
       response.status shouldBe OK
-      response.body should include("Cases for Forename Surname")
+      response.body   should include("Cases for Forename Surname")
     }
 
     "redirect on auth failure" in {
@@ -43,7 +54,7 @@ class RootSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder {
 
       // Then
       response.status shouldBe OK
-      response.body should include(messages("not_authorised.paragraph1"))
+      response.body   should include(messages("not_authorised.paragraph1"))
     }
 
     "redirect to error handler for unknown path" in {
@@ -52,8 +63,8 @@ class RootSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder {
 
       // Then
       response.status shouldBe NOT_FOUND
-      response.body should include("Please check that you have entered the correct web address.")
-      response.body should include("This page can’t be found")
+      response.body   should include("Please check that you have entered the correct web address.")
+      response.body   should include("This page can’t be found")
     }
 
   }

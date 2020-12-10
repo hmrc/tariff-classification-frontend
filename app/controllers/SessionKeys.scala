@@ -17,8 +17,8 @@
 package controllers
 
 object SessionKeys {
-  val backToQueuesLinkUrl = "back-to-queues-link-url"
-  val backToQueuesLinkLabel = "back-to-queues-link-label"
-  val backToSearchResultsLinkUrl = "back-to-search-results-link-url"
+  val backToQueuesLinkUrl          = "back-to-queues-link-url"
+  val backToQueuesLinkLabel        = "back-to-queues-link-label"
+  val backToSearchResultsLinkUrl   = "back-to-search-results-link-url"
   val backToSearchResultsLinkLabel = "back-to-search-results-link-label"
 }

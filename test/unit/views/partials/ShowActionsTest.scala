@@ -25,32 +25,32 @@ class ShowActionsTest extends ViewSpec {
 
     "Show Refer" in {
       ShowActions(CaseStatus.OPEN)(requestWithPermissions(Permission.REFER_CASE)).refer shouldBe true
-      ShowActions(CaseStatus.OPEN)(requestWithPermissions()).refer shouldBe false
+      ShowActions(CaseStatus.OPEN)(requestWithPermissions()).refer                      shouldBe false
     }
 
     "Show Reject" in {
       ShowActions(CaseStatus.OPEN)(requestWithPermissions(Permission.REJECT_CASE)).reject shouldBe true
-      ShowActions(CaseStatus.OPEN)(requestWithPermissions()).reject shouldBe false
+      ShowActions(CaseStatus.OPEN)(requestWithPermissions()).reject                       shouldBe false
     }
 
     "Show Suspend" in {
       ShowActions(CaseStatus.OPEN)(requestWithPermissions(Permission.SUSPEND_CASE)).suspend shouldBe true
-      ShowActions(CaseStatus.OPEN)(requestWithPermissions()).suspend shouldBe false
+      ShowActions(CaseStatus.OPEN)(requestWithPermissions()).suspend                        shouldBe false
     }
 
     "Show Release" in {
       ShowActions(CaseStatus.NEW)(requestWithPermissions(Permission.RELEASE_CASE)).release shouldBe true
-      ShowActions(CaseStatus.NEW)(requestWithPermissions()).release shouldBe false
+      ShowActions(CaseStatus.NEW)(requestWithPermissions()).release                        shouldBe false
     }
 
     "Show Suppress" in {
       ShowActions(CaseStatus.NEW)(requestWithPermissions(Permission.SUPPRESS_CASE)).suppress shouldBe true
-      ShowActions(CaseStatus.NEW)(requestWithPermissions()).suppress shouldBe false
+      ShowActions(CaseStatus.NEW)(requestWithPermissions()).suppress                         shouldBe false
     }
 
     "Show Reopen" in {
       ShowActions(CaseStatus.SUSPENDED)(requestWithPermissions(Permission.REOPEN_CASE)).reopen shouldBe true
-      ShowActions(CaseStatus.SUSPENDED)(requestWithPermissions()).reopen shouldBe false
+      ShowActions(CaseStatus.SUSPENDED)(requestWithPermissions()).reopen                       shouldBe false
     }
   }
 

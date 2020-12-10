@@ -10,16 +10,18 @@ import utils.{CasePayloads, Cases, EventPayloads}
 class ReAssignCaseSpec extends IntegrationTest with MockitoSugar {
 
   private val owner = Some(Operator("111", role = Role.CLASSIFICATION_OFFICER))
-  private val caseAssignedToOwner = CasePayloads.jsonOf(Cases.btiCaseExample
-    .copy(
-      status = CaseStatus.OPEN,
-      assignee = owner
-    )
+  private val caseAssignedToOwner = CasePayloads.jsonOf(
+    Cases.btiCaseExample
+      .copy(
+        status   = CaseStatus.OPEN,
+        assignee = owner
+      )
   )
-  private val caseUnassigned = CasePayloads.jsonOf(Cases.btiCaseExample
-    .copy(
-      status = CaseStatus.OPEN
-    )
+  private val caseUnassigned = CasePayloads.jsonOf(
+    Cases.btiCaseExample
+      .copy(
+        status = CaseStatus.OPEN
+      )
   )
   private val event = EventPayloads.event
 
@@ -72,15 +74,21 @@ class ReAssignCaseSpec extends IntegrationTest with MockitoSugar {
   }
 
   private def whenCaseExists(caseJson: String) = {
-    stubFor(get(urlEqualTo("/cases/1"))
-      .willReturn(aResponse()
-        .withStatus(OK)
-        .withBody(caseJson))
+    stubFor(
+      get(urlEqualTo("/cases/1"))
+        .willReturn(
+          aResponse()
+            .withStatus(OK)
+            .withBody(caseJson)
+        )
     )
-    stubFor(post(urlEqualTo("/cases/1/events"))
-      .willReturn(aResponse()
-        .withStatus(CREATED)
-        .withBody(event))
+    stubFor(
+      post(urlEqualTo("/cases/1/events"))
+        .willReturn(
+          aResponse()
+            .withStatus(CREATED)
+            .withBody(event)
+        )
     )
   }
 
@@ -90,7 +98,7 @@ class ReAssignCaseSpec extends IntegrationTest with MockitoSugar {
 
     // Then
     response.status shouldBe OK
-    response.body should include("Move this case back to a queue")
+    response.body   should include("Move this case back to a queue")
   }
 
   private def shouldFail = {
@@ -99,6 +107,6 @@ class ReAssignCaseSpec extends IntegrationTest with MockitoSugar {
 
     // Then
     response.status shouldBe OK
-    response.body should include(messages("not_authorised.paragraph1"))
+    response.body   should include(messages("not_authorised.paragraph1"))
   }
 }

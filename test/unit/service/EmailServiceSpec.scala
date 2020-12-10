@@ -29,13 +29,13 @@ import scala.concurrent.Future.successful
 class EmailServiceSpec extends ServiceSpecBase {
 
   private val connector = mock[EmailConnector]
-  private val service = new EmailService(connector)
+  private val service   = new EmailService(connector)
 
   "Email Service 'sendCompleteCaseEmail'" should {
-    val aCase = mock[Case]
+    val aCase       = mock[Case]
     val application = mock[BTIApplication]
-    val contact = Contact("name", "email", None)
-    val template = mock[EmailTemplate]
+    val contact     = Contact("name", "email", None)
+    val template    = mock[EmailTemplate]
 
     "Throw exception for non-bti" in {
       given(aCase.application).willReturn(application)
@@ -51,16 +51,20 @@ class EmailServiceSpec extends ServiceSpecBase {
       given(aCase.reference).willReturn("ref")
       given(aCase.application).willReturn(application)
       given(application.isBTI).willReturn(true)
-      given(application.asBTI).willReturn(application)
+      given(application.asATAR).willReturn(application)
       given(application.contact).willReturn(contact)
       given(application.goodName).willReturn("item")
 
-      given(connector.send(any[CaseCompletedEmail])(any[HeaderCarrier], any[Writes[Any]])).willReturn(successful((): Unit))
-      given(connector.generate(any[CaseCompletedEmail])(any[HeaderCarrier], any[Format[CaseCompletedEmailParameters]])).willReturn(successful(template))
+      given(connector.send(any[CaseCompletedEmail])(any[HeaderCarrier], any[Writes[Any]]))
+        .willReturn(successful((): Unit))
+      given(connector.generate(any[CaseCompletedEmail])(any[HeaderCarrier], any[Format[CaseCompletedEmailParameters]]))
+        .willReturn(successful(template))
 
       await(service.sendCaseCompleteEmail(aCase))
 
-      verify(connector).send(refEq(CaseCompletedEmail(Seq("email"), CaseCompletedEmailParameters("name", "ref", "item"))))(any[HeaderCarrier], any[Writes[Any]])
+      verify(connector).send(
+        refEq(CaseCompletedEmail(Seq("email"), CaseCompletedEmailParameters("name", "ref", "item")))
+      )(any[HeaderCarrier], any[Writes[Any]])
     }
   }
 

@@ -30,9 +30,8 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class AuthActionSpec extends ControllerBaseSpec {
 
-  private def unauthorisedLocation = {
+  private def unauthorisedLocation =
     Some(routes.SecurityController.unauthorized().url)
-  }
 
   "Auth Action" when {
 
@@ -40,7 +39,7 @@ class AuthActionSpec extends ControllerBaseSpec {
       "redirect the user to log in " in {
         val result: Future[Result] = handleAuthError(MissingBearerToken())
 
-        status(result) shouldBe SEE_OTHER
+        status(result)               shouldBe SEE_OTHER
         redirectLocation(result).get should beTheLoginPage
       }
     }
@@ -49,7 +48,7 @@ class AuthActionSpec extends ControllerBaseSpec {
       "redirect the user to log in " in {
         val result: Future[Result] = handleAuthError(BearerTokenExpired())
 
-        status(result) shouldBe SEE_OTHER
+        status(result)               shouldBe SEE_OTHER
         redirectLocation(result).get should beTheLoginPage
       }
     }
@@ -58,7 +57,7 @@ class AuthActionSpec extends ControllerBaseSpec {
       "redirect the user to log in " in {
         val result: Future[Result] = handleAuthError(InvalidBearerToken())
 
-        status(result) shouldBe SEE_OTHER
+        status(result)               shouldBe SEE_OTHER
         redirectLocation(result).get should beTheLoginPage
       }
     }
@@ -67,7 +66,7 @@ class AuthActionSpec extends ControllerBaseSpec {
       "redirect the user to log in " in {
         val result: Future[Result] = handleAuthError(SessionRecordNotFound())
 
-        status(result) shouldBe SEE_OTHER
+        status(result)               shouldBe SEE_OTHER
         redirectLocation(result).get should beTheLoginPage
       }
     }
@@ -76,7 +75,7 @@ class AuthActionSpec extends ControllerBaseSpec {
       "redirect the user to the unauthorised page" in {
         val result: Future[Result] = handleAuthError(InsufficientEnrolments())
 
-        status(result) shouldBe SEE_OTHER
+        status(result)           shouldBe SEE_OTHER
         redirectLocation(result) shouldBe unauthorisedLocation
       }
     }
@@ -85,7 +84,7 @@ class AuthActionSpec extends ControllerBaseSpec {
       "redirect the user to the unauthorised page" in {
         val result: Future[Result] = handleAuthError(InsufficientConfidenceLevel())
 
-        status(result) shouldBe SEE_OTHER
+        status(result)           shouldBe SEE_OTHER
         redirectLocation(result) shouldBe unauthorisedLocation
       }
     }
@@ -94,7 +93,7 @@ class AuthActionSpec extends ControllerBaseSpec {
       "redirect the user to the unauthorised page" in {
         val result: Future[Result] = handleAuthError(UnsupportedAuthProvider())
 
-        status(result) shouldBe SEE_OTHER
+        status(result)           shouldBe SEE_OTHER
         redirectLocation(result) shouldBe unauthorisedLocation
       }
     }
@@ -103,7 +102,7 @@ class AuthActionSpec extends ControllerBaseSpec {
       "redirect the user to the unauthorised page" in {
         val result: Future[Result] = handleAuthError(UnsupportedAffinityGroup())
 
-        status(result) shouldBe SEE_OTHER
+        status(result)           shouldBe SEE_OTHER
         redirectLocation(result) shouldBe unauthorisedLocation
       }
     }
@@ -112,7 +111,7 @@ class AuthActionSpec extends ControllerBaseSpec {
       "redirect the user to the unauthorised page" in {
         val result: Future[Result] = handleAuthError(UnsupportedCredentialRole())
 
-        status(result) shouldBe SEE_OTHER
+        status(result)           shouldBe SEE_OTHER
         redirectLocation(result) shouldBe unauthorisedLocation
       }
     }
@@ -121,7 +120,7 @@ class AuthActionSpec extends ControllerBaseSpec {
       "be present in IdentifierAction when it is available from AuthConnector" in {
         val result = handleAuth(Some("internalId"), fakeRequest)
 
-        status(result) shouldBe OK
+        status(result)             shouldBe OK
         await(bodyOf(result)(mat)) shouldBe "internalId"
       }
 
@@ -135,15 +134,14 @@ class AuthActionSpec extends ControllerBaseSpec {
       "be present if internalId is missing" in {
         val result = handleAuth(None, fakeRequestWithSessionId("sessionID"))
 
-        status(result) shouldBe OK
+        status(result)             shouldBe OK
         await(bodyOf(result)(mat)) shouldBe "sessionID"
       }
     }
   }
 
-  private def beTheLoginPage = {
+  private def beTheLoginPage =
     startWith("/stride/sign-in")
-  }
 
   private def handleAuthError(exc: AuthorisationException): Future[Result] = {
     val authAction = new AuthenticatedIdentifierAction(
@@ -170,29 +168,31 @@ class AuthActionSpec extends ControllerBaseSpec {
   }
 
   private class Harness(authAction: IdentifierAction) extends BaseController {
-    def onPageLoad(): Action[AnyContent] = authAction { _ => Ok }
+    def onPageLoad(): Action[AnyContent] = authAction(_ => Ok)
 
     override protected def controllerComponents: ControllerComponents = cc
 
-    def onPageLoadWithInternalId(): Action[AnyContent] = authAction { request => Ok(request.internalId) }
+    def onPageLoadWithInternalId(): Action[AnyContent] = authAction(request => Ok(request.internalId))
   }
 
 }
 
 class FakeFailingAuthConnector(exceptionToReturn: Throwable) extends AuthConnector {
 
-  override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])
-                           (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] = {
+  override def authorise[A](
+    predicate: Predicate,
+    retrieval: Retrieval[A]
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] =
     Future.failed(exceptionToReturn)
-  }
 
 }
 
 class FakeAuthConnector(internalId: Option[String]) extends AuthConnector {
 
-  override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])
-                           (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] = {
+  override def authorise[A](
+    predicate: Predicate,
+    retrieval: Retrieval[A]
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] =
     Future.successful(internalId.asInstanceOf[A])
-  }
 
 }

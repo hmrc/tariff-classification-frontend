@@ -18,6 +18,4 @@ package models
 
 import base.SpecBase
 
-abstract class ModelsBaseSpec extends SpecBase {
-
-}
+abstract class ModelsBaseSpec extends SpecBase {}

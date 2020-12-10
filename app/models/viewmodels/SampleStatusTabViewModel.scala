@@ -20,19 +20,27 @@ import models.SampleReturn.SampleReturn
 import models.{Event, Paged, Sample}
 import models.SampleStatus._
 
-case class SampleStatusTabViewModel(caseReference: String, isSampleBeingSent: Boolean, whoIsSendingTheSample: Option[String],
-                                    shouldSampleBeReturned: Option[SampleReturn], sampleLocation: String,
-                                    sampleActivity: Paged[Event])
+case class SampleStatusTabViewModel(
+  caseReference: String,
+  isSampleBeingSent: Boolean,
+  whoIsSendingTheSample: Option[String],
+  shouldSampleBeReturned: Option[SampleReturn],
+  sampleLocation: String,
+  sampleActivity: Paged[Event]
+)
 
 object SampleStatusTabViewModel {
 
   val NOT_YET_IMPLEMENTED: Option[String] = None
 
   def apply(caseReference: String, sample: Sample, activity: Paged[Event]): SampleStatusTabViewModel =
-    SampleStatusTabViewModel(caseReference, sample.status.isDefined,
-    NOT_YET_IMPLEMENTED,
-    sample.returnStatus,
-    format(sample.status),
-    activity )
+    SampleStatusTabViewModel(
+      caseReference,
+      sample.status.isDefined,
+      NOT_YET_IMPLEMENTED,
+      sample.returnStatus,
+      format(sample.status),
+      activity
+    )
 
 }

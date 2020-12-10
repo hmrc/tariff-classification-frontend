@@ -27,14 +27,20 @@ class AssignedCasesViewSpec extends ViewSpec {
   "Assigned Cases View" should {
     val queue1 = Queue("1", "queue1_name", "Queue 1 Name")
     val queue2 = Queue("2", "queue2_name", "Queue 2 Name")
-    val case1 = Cases.btiCaseExample
+    val case1  = Cases.btiCaseExample
 
     "render empty list of users" in {
       // Given
       val queues = Seq(queue1, queue2)
 
       // When
-      val doc = view(html.assigned_cases(queues, Seq.empty[Case], assigneeId, Map.empty)(request = requestWithPermissions(Permission.VIEW_QUEUE_CASES, Permission.VIEW_MY_CASES), messages, appConfig))
+      val doc = view(
+        html.assigned_cases(queues, Seq.empty[Case], assigneeId, Map.empty)(
+          request = requestWithPermissions(Permission.VIEW_QUEUE_CASES, Permission.VIEW_MY_CASES),
+          messages,
+          appConfig
+        )
+      )
 
       // Then
       doc should containElementWithID("queue-navigation")
@@ -51,10 +57,16 @@ class AssignedCasesViewSpec extends ViewSpec {
     "render with a list of users " in {
       // Given
       val queues = Seq(queue1, queue2)
-      val cases = Seq(case1.copy(assignee = Some(Operator("444", assigneeId))))
+      val cases  = Seq(case1.copy(assignee = Some(Operator("444", assigneeId))))
 
       // When
-      val doc = view(html.assigned_cases(queues, cases, assigneeId, Map.empty)(request = requestWithPermissions(Permission.VIEW_QUEUE_CASES, Permission.VIEW_MY_CASES), messages, appConfig))
+      val doc = view(
+        html.assigned_cases(queues, cases, assigneeId, Map.empty)(
+          request = requestWithPermissions(Permission.VIEW_QUEUE_CASES, Permission.VIEW_MY_CASES),
+          messages,
+          appConfig
+        )
+      )
 
       // Then
       doc should containElementWithID("queue-navigation")

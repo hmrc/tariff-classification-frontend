@@ -20,10 +20,10 @@ import models.AppealStatus.AppealStatus
 import models.AppealType.AppealType
 
 case class Appeal(
-                   id: String,
-                   status: AppealStatus,
-                   `type`: AppealType
-                 )
+  id: String,
+  status: AppealStatus,
+  `type`: AppealType
+)
 
 object Appeal {
 

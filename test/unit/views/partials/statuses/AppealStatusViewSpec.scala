@@ -44,9 +44,11 @@ class AppealStatusViewSpec extends ViewSpec {
       // Given
       val c = aCase(
         withReference("ref"),
-        withDecision(appeal = Seq(
-          Appeal("id", AppealStatus.IN_PROGRESS, AppealType.ADR)
-        ))
+        withDecision(appeal =
+          Seq(
+            Appeal("id", AppealStatus.IN_PROGRESS, AppealType.ADR)
+          )
+        )
       )
 
       // When
@@ -60,9 +62,11 @@ class AppealStatusViewSpec extends ViewSpec {
       // Given
       val c = aCase(
         withReference("ref"),
-        withDecision(appeal = Seq(
-          Appeal("id", AppealStatus.ALLOWED, AppealType.ADR)
-        ))
+        withDecision(appeal =
+          Seq(
+            Appeal("id", AppealStatus.ALLOWED, AppealType.ADR)
+          )
+        )
       )
 
       // When
@@ -76,9 +80,11 @@ class AppealStatusViewSpec extends ViewSpec {
       // Given
       val c = aCase(
         withReference("ref"),
-        withDecision(appeal = Seq(
-          Appeal("id", AppealStatus.DISMISSED, AppealType.ADR)
-        ))
+        withDecision(appeal =
+          Seq(
+            Appeal("id", AppealStatus.DISMISSED, AppealType.ADR)
+          )
+        )
       )
 
       // When
@@ -93,9 +99,11 @@ class AppealStatusViewSpec extends ViewSpec {
       // Given
       val c = aCase(
         withReference("ref"),
-        withDecision(appeal = Seq(
-          Appeal("id", AppealStatus.IN_PROGRESS, AppealType.REVIEW)
-        ))
+        withDecision(appeal =
+          Seq(
+            Appeal("id", AppealStatus.IN_PROGRESS, AppealType.REVIEW)
+          )
+        )
       )
 
       // When
@@ -109,9 +117,11 @@ class AppealStatusViewSpec extends ViewSpec {
       // Given
       val c = aCase(
         withReference("ref"),
-        withDecision(appeal = Seq(
-          Appeal("id", AppealStatus.ALLOWED, AppealType.REVIEW)
-        ))
+        withDecision(appeal =
+          Seq(
+            Appeal("id", AppealStatus.ALLOWED, AppealType.REVIEW)
+          )
+        )
       )
 
       // When
@@ -125,9 +135,11 @@ class AppealStatusViewSpec extends ViewSpec {
       // Given
       val c = aCase(
         withReference("ref"),
-        withDecision(appeal = Seq(
-          Appeal("id", AppealStatus.DISMISSED, AppealType.REVIEW)
-        ))
+        withDecision(appeal =
+          Seq(
+            Appeal("id", AppealStatus.DISMISSED, AppealType.REVIEW)
+          )
+        )
       )
 
       // When

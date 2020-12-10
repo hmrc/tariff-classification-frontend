@@ -23,14 +23,13 @@ case class HistogramBucket(data: Seq[Int]) {
 }
 
 case class HistogramBucketInterval(lower: Option[Int], upper: Option[Int]) {
-  def contains(value: Int): Boolean = !lower.exists(_ >  value) && !upper.exists(_ < value)
+  def contains(value: Int): Boolean = !lower.exists(_ > value) && !upper.exists(_ < value)
 }
 
 case class Histogram(map: Map[(Option[String], HistogramBucketInterval), HistogramBucket]) {
 
-  def getBucket(group: Option[String], interval: HistogramBucketInterval): Option[HistogramBucket] = {
+  def getBucket(group: Option[String], interval: HistogramBucketInterval): Option[HistogramBucket] =
     map.get((group, interval))
-  }
 
   def getBuckets(group: Option[String]): Map[HistogramBucketInterval, HistogramBucket] = {
     val matchingKeys: Set[(Option[String], HistogramBucketInterval)] = map.keys.filter(_._1 == group).toSet
@@ -57,7 +56,10 @@ object Histogram {
   def calculate(results: Seq[ReportResult], intervals: Seq[HistogramBucketInterval]): Histogram = Histogram(
     results flatMap { result: ReportResult =>
       intervals.map { interval =>
-        ((result.group.get(CaseReportGroup.QUEUE).get, interval), HistogramBucket(result.value.filter(interval.contains)))
+        (
+          (result.group.get(CaseReportGroup.QUEUE).get, interval),
+          HistogramBucket(result.value.filter(interval.contains))
+        )
       }
     } toMap
   )
@@ -65,7 +67,6 @@ object Histogram {
 
 object HistogramBucketInterval {
   def apply(lower: Int, upper: Option[Int]): HistogramBucketInterval = HistogramBucketInterval(Some(lower), upper)
-  def apply(lower: Int, upper: Int): HistogramBucketInterval = HistogramBucketInterval(Some(lower), Some(upper))
+  def apply(lower: Int, upper: Int): HistogramBucketInterval         = HistogramBucketInterval(Some(lower), Some(upper))
   def apply(lower: Option[Int], upper: Int): HistogramBucketInterval = HistogramBucketInterval(lower, Some(upper))
 }
-

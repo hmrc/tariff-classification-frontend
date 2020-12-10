@@ -28,57 +28,59 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
 
 import scala.concurrent.Future.successful
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class PdfDownloadControllerSpec extends ControllerBaseSpec {
 
-  private val pdfService = mock[PdfService]
+  private val pdfService  = mock[PdfService]
   private val caseService = mock[CasesService]
   private val fileService = mock[FileStoreService]
-  private val operator = mock[Operator]
+  private val operator    = mock[Operator]
 
-  private val decision = Decision(bindingCommodityCode = "040900", justification = "justification-content",
-    goodsDescription = "goods-description", methodSearch = Some("method-to-search"))
+  private val decision = Decision(
+    bindingCommodityCode = "040900",
+    justification        = "justification-content",
+    goodsDescription     = "goods-description",
+    methodSearch         = Some("method-to-search")
+  )
 
-  private val expectedResult = PdfFile("Some content".getBytes)
+  private val expectedResult   = PdfFile("Some content".getBytes)
   private val countriesService = new CountriesService
 
-  private val caseWithDecision = Cases.btiCaseExample.copy(decision = Some(decision))
-  private val caseWithoutDecision = Cases.btiCaseExample.copy(decision = None)
+  private val caseWithDecision          = Cases.btiCaseExample.copy(decision       = Some(decision))
+  private val caseWithoutDecision       = Cases.btiCaseExample.copy(decision       = None)
   private val liabilityCaseWithDecision = Cases.liabilityCaseExample.copy(decision = Some(decision))
 
   private val controller = new PdfDownloadController(
-    new SuccessfulAuthenticatedAction(defaultPlayBodyParsers, operator), mcc, pdfService,
-    fileService, caseService, countriesService, realAppConfig
+    new SuccessfulAuthenticatedAction(playBodyParsers, operator),
+    mcc,
+    pdfService,
+    fileService,
+    caseService,
+    countriesService,
+    realAppConfig
   )
 
-  private def givenCompletedCase(): Unit = {
+  private def givenCompletedCase(): Unit =
     when(caseService.getOne(any[String])(any[HeaderCarrier])).thenReturn(successful(Some(caseWithDecision)))
-  }
 
-  private def givenCompletedLiabilityCase(): Unit = {
+  private def givenCompletedLiabilityCase(): Unit =
     when(caseService.getOne(any[String])(any[HeaderCarrier])).thenReturn(successful(Some(liabilityCaseWithDecision)))
-  }
 
-  private def givenNonDecisionCase(): Unit = {
+  private def givenNonDecisionCase(): Unit =
     when(caseService.getOne(any[String])(any[HeaderCarrier])).thenReturn(successful(Some(caseWithoutDecision)))
-  }
 
-  private def givenCaseWithoutAttachments(): Unit = {
+  private def givenCaseWithoutAttachments(): Unit =
     when(fileService.getAttachments(any[Case])(any[HeaderCarrier])).thenReturn(successful(Seq.empty))
-  }
 
-  private def givenCaseWithoutLetterOfAuth(): Unit = {
+  private def givenCaseWithoutLetterOfAuth(): Unit =
     when(fileService.getLetterOfAuthority(any[Case])(any[HeaderCarrier])).thenReturn(successful(None))
-  }
 
-  private def givenValidGeneratedPdf(): Unit = {
+  private def givenValidGeneratedPdf(): Unit =
     when(pdfService.generatePdf(any[Html])).thenReturn(successful(expectedResult))
-  }
 
-  private def givenNotFoundCase(): Unit = {
+  private def givenNotFoundCase(): Unit =
     when(caseService.getOne(any[String])(any[HeaderCarrier])).thenReturn(successful(None))
-  }
-
 
   "PdfDownloadController Application" should {
 
@@ -90,9 +92,9 @@ class PdfDownloadControllerSpec extends ControllerBaseSpec {
 
       val result: Result = await(controller.applicationPdf(caseWithDecision.reference)(fakeRequest))
 
-      status(result) shouldBe OK
+      status(result)          shouldBe OK
       contentAsString(result) shouldBe "Some content"
-      contentType(result) shouldBe Some("application/pdf")
+      contentType(result)     shouldBe Some("application/pdf")
     }
 
     "error when case not found" in {
@@ -100,9 +102,9 @@ class PdfDownloadControllerSpec extends ControllerBaseSpec {
 
       val result = await(controller.applicationPdf(caseWithDecision.reference)(newFakeGETRequestWithCSRF(app)))
 
-      status(result) shouldBe Status.OK
-      contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
+      status(result)          shouldBe Status.OK
+      contentType(result)     shouldBe Some("text/html")
+      charset(result)         shouldBe Some("utf-8")
       contentAsString(result) should include("We could not find a Case with reference")
     }
 
@@ -116,10 +118,10 @@ class PdfDownloadControllerSpec extends ControllerBaseSpec {
 
       val result = await(controller.getRulingPdf(caseWithDecision.reference)(fakeRequest))
 
-      status(result) shouldBe OK
-      contentAsString(result) shouldBe "Some content"
-      contentType(result) shouldBe Some("application/pdf")
-      header("Content-Disposition",result) shouldBe Some("filename=BTIRuling_1.pdf")
+      status(result)                        shouldBe OK
+      contentAsString(result)               shouldBe "Some content"
+      contentType(result)                   shouldBe Some("application/pdf")
+      header("Content-Disposition", result) shouldBe Some("filename=BTIRuling_1.pdf")
     }
 
     "return expected pdf for liability case" in {
@@ -128,10 +130,10 @@ class PdfDownloadControllerSpec extends ControllerBaseSpec {
 
       val result = await(controller.getRulingPdf(liabilityCaseWithDecision.reference)(fakeRequest))
 
-      status(result) shouldBe OK
-      contentAsString(result) shouldBe "Some content"
-      contentType(result) shouldBe Some("application/pdf")
-      header("Content-Disposition",result) shouldBe Some("filename=LiabilityDecision_1.pdf")
+      status(result)                        shouldBe OK
+      contentAsString(result)               shouldBe "Some content"
+      contentType(result)                   shouldBe Some("application/pdf")
+      header("Content-Disposition", result) shouldBe Some("filename=LiabilityDecision_1.pdf")
     }
 
     "redirect to ruling when no decision found" in {
@@ -140,8 +142,8 @@ class PdfDownloadControllerSpec extends ControllerBaseSpec {
 
       val result = await(controller.getRulingPdf(caseWithDecision.reference)(fakeRequest))
 
-      status(result) shouldBe Status.OK
-      locationOf(result) shouldBe None
+      status(result)          shouldBe Status.OK
+      locationOf(result)      shouldBe None
       contentAsString(result) should include("We could not find a ruling with case reference")
     }
 
@@ -150,9 +152,9 @@ class PdfDownloadControllerSpec extends ControllerBaseSpec {
 
       val result = await(controller.getRulingPdf(caseWithDecision.reference)(newFakeGETRequestWithCSRF(app)))
 
-      status(result) shouldBe Status.OK
-      contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
+      status(result)          shouldBe Status.OK
+      contentType(result)     shouldBe Some("text/html")
+      charset(result)         shouldBe Some("utf-8")
       contentAsString(result) should include("We could not find a Case with reference")
     }
 

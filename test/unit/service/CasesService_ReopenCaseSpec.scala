@@ -32,15 +32,16 @@ import scala.concurrent.Future.{failed, successful}
 
 class CasesService_ReopenCaseSpec extends ServiceSpecBase with BeforeAndAfterEach with ConnectorCaptor {
 
-  private val connector = mock[BindingTariffClassificationConnector]
-  private val emailService = mock[EmailService]
+  private val connector        = mock[BindingTariffClassificationConnector]
+  private val emailService     = mock[EmailService]
   private val fileStoreService = mock[FileStoreService]
-  private val rulingConnector = mock[RulingConnector]
-  private val audit = mock[AuditService]
+  private val rulingConnector  = mock[RulingConnector]
+  private val audit            = mock[AuditService]
   private val reportingService = mock[ReportingService]
-  private val aCase = Cases.btiCaseExample
+  private val aCase            = Cases.btiCaseExample
 
-  private val service = new CasesService(realAppConfig, audit, emailService, fileStoreService, reportingService, connector, rulingConnector)
+  private val service =
+    new CasesService(realAppConfig, audit, emailService, fileStoreService, reportingService, connector, rulingConnector)
 
   override protected def afterEach(): Unit = {
     super.afterEach()
@@ -75,14 +76,14 @@ class CasesService_ReopenCaseSpec extends ServiceSpecBase with BeforeAndAfterEac
       succeededOnCreateFailure(CaseStatus.SUSPENDED, CaseStatus.OPEN)
     }
 
-
     def updateCaseShould(originalStatus: CaseStatus, updatedStatus: CaseStatus) = {
       val operator: Operator = Operator("operator-id", Some("Billy Bobbins"))
-      val originalCase = aCase.copy(status = originalStatus)
-      val caseUpdated = aCase.copy(status = updatedStatus)
+      val originalCase       = aCase.copy(status = originalStatus)
+      val caseUpdated        = aCase.copy(status = updatedStatus)
 
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
-      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])).willReturn(successful(mock[Event]))
+      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
+        .willReturn(successful(mock[Event]))
 
       // When Then
       await(service.reopenCase(originalCase, operator)) shouldBe caseUpdated
@@ -94,12 +95,12 @@ class CasesService_ReopenCaseSpec extends ServiceSpecBase with BeforeAndAfterEac
 
       val eventCreated = theEventCreatedFor(connector, caseUpdated)
       eventCreated.operator shouldBe Operator("operator-id", Some("Billy Bobbins"))
-      eventCreated.details shouldBe CaseStatusChange(originalStatus, updatedStatus)
+      eventCreated.details  shouldBe CaseStatusChange(originalStatus, updatedStatus)
     }
 
     def eventUpdateFailure(originalStatus: CaseStatus) = {
       val operator: Operator = Operator("operator-id")
-      val originalCase = aCase.copy(status = originalStatus)
+      val originalCase       = aCase.copy(status = originalStatus)
 
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(failed(new RuntimeException()))
 
@@ -113,11 +114,12 @@ class CasesService_ReopenCaseSpec extends ServiceSpecBase with BeforeAndAfterEac
 
     def succeededOnCreateFailure(originalStatus: CaseStatus, updatedStatus: CaseStatus) = {
       val operator: Operator = Operator("operator-id")
-      val originalCase = aCase.copy(status = originalStatus)
-      val caseUpdated = aCase.copy(status = updatedStatus)
+      val originalCase       = aCase.copy(status = originalStatus)
+      val caseUpdated        = aCase.copy(status = updatedStatus)
 
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
-      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])).willReturn(failed(new RuntimeException()))
+      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
+        .willReturn(failed(new RuntimeException()))
 
       // When Then
       await(service.reopenCase(originalCase, operator)) shouldBe caseUpdated

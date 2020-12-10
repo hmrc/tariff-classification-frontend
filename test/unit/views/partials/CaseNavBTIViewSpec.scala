@@ -29,53 +29,52 @@ import views.{CaseDetailPage, ViewSpec}
 
 class CaseNavBTIViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterEach {
 
-  private val application = "Item"
-  private val trader = "Applicant"
-  private val sample = "Sample"
-  private val ruling = "Ruling"
+  private val application = "Goods"
+  private val trader      = "Applicant"
+  private val sample      = "Sample"
+  private val ruling      = "Ruling"
   private val attachments = "Attachments"
-  private val activity = "Activity"
-  private val keywords = "Keywords"
-  private val appeal = "Appeal"
+  private val activity    = "Activity"
+  private val keywords    = "Keywords"
+  private val appeal      = "Appeal"
 
   private val applicationDetailsURL = routes.CaseController.itemDetails("ref").url
-  private val sampleDetailsURL = routes.CaseController.sampleDetails("ref").url
-  private val rulingURL = routes.CaseController.rulingDetails("ref").url
-  private val attachmentsURL = routes.AttachmentsController.attachmentsDetails("ref").url
-  private val activityURL = routes.CaseController.activityDetails("ref").url
-  private val traderURL = routes.CaseController.applicantDetails("ref").url
-  private val keywordsURL = routes.CaseController.keywordsDetails("ref").url
+  private val sampleDetailsURL      = routes.CaseController.sampleDetails("ref").url
+  private val rulingURL             = routes.CaseController.rulingDetails("ref").url
+  private val attachmentsURL        = routes.AttachmentsController.attachmentsDetails("ref").url
+  private val activityURL           = routes.CaseController.activityDetails("ref").url
+  private val traderURL             = routes.CaseController.applicantDetails("ref").url
+  private val keywordsURL           = routes.CaseController.keywordsDetails("ref").url
 
   private val `case` = mock[Case]
 
-  private val tabOrder : Seq[String] = Seq(trader, application, sample, attachments, activity, keywords, ruling, appeal)
-  private val urlOrder : Seq[String] = Seq(traderURL, applicationDetailsURL, sampleDetailsURL, attachmentsURL, activityURL, keywordsURL, rulingURL)
-  private val tabWithUrl : Seq[(String,String)] = tabOrder.zip(urlOrder)
+  private val tabOrder: Seq[String] = Seq(trader, application, sample, attachments, activity, keywords, ruling, appeal)
+  private val urlOrder: Seq[String] =
+    Seq(traderURL, applicationDetailsURL, sampleDetailsURL, attachmentsURL, activityURL, keywordsURL, rulingURL)
+  private val tabWithUrl: Seq[(String, String)] = tabOrder.zip(urlOrder)
 
   override protected def afterEach(): Unit = {
     super.afterEach()
     Mockito.reset(`case`)
   }
 
-  def tabsWithLinksShouldBeActiveExceptGiven(anchors : Elements, exceptTab : String): Unit = {
+  def tabsWithLinksShouldBeActiveExceptGiven(anchors: Elements, exceptTab: String): Unit = {
 
-    val filteredIndexed =  tabWithUrl.filter( entry => entry._1 != exceptTab).zipWithIndex
+    val filteredIndexed = tabWithUrl.filter(entry => entry._1 != exceptTab).zipWithIndex
 
     filteredIndexed
-      .foreach(entry => {
-      anchors.get(entry._2) should containText(entry._1._1)
-      anchors.get(entry._2) should haveAttribute("href", entry._1._2)
-    })
-
-
+      .foreach { entry =>
+        anchors.get(entry._2) should containText(entry._1._1)
+        anchors.get(entry._2) should haveAttribute("href", entry._1._2)
+      }
 
   }
 
   "Case Heading" should {
 
-    val expectedTabAnchors = 6
+    val expectedTabAnchors                  = 6
     val expectedTabAnchorsForCompletedCases = 7
-    val expectedTotalTabIndexes = 8
+    val expectedTotalTabIndexes             = 8
 
     "Render Trader" in {
       // Given
@@ -99,7 +98,7 @@ class CaseNavBTIViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
 
     }
 
-    "Render Application Details" in {
+    "Render Application Details (Goods)" in {
       // Given
       given(`case`.reference) willReturn "ref"
 

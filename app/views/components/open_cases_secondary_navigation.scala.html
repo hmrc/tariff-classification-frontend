@@ -1,0 +1,60 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import models.viewmodels.SubNavigationTab
+@import models.viewmodels.ATaRTab
+@import models.viewmodels.LiabilitiesTab
+@import models.viewmodels.CorrespondenceTab
+@import models.viewmodels.MiscellaneousTab
+@import controllers.v2.routes
+
+@(selectedTab : SubNavigationTab = ATaRTab)
+
+            <nav id="open-cases-sub-nav"  class="moj-sub-navigation" aria-label="Sub navigation">
+                <ul class="moj-sub-navigation__list">
+                    <li class="moj-sub-navigation__item">
+                        @if(selectedTab == ATaRTab) {
+                        <a id = "sub_nav_atar_tab" class="moj-sub-navigation__link" aria-current="page" href="@routes.AllOpenCasesController.displayAllOpenCases(ATaRTab)">Atar</a>
+                        } else {
+                        <a id = "sub_nav_atar_tab" class="moj-sub-navigation__link" href="@routes.AllOpenCasesController.displayAllOpenCases(ATaRTab)">Atar</a>
+                        }
+                    </li>
+                    <li class="moj-sub-navigation__item">
+                        @if(selectedTab == LiabilitiesTab) {
+                        <a id ="sub_nav_liability_tab" class="moj-sub-navigation__link" aria-current="page" href="@routes.AllOpenCasesController.displayAllOpenCases(LiabilitiesTab)">Liability</a>
+                        } else {
+                        <a id ="sub_nav_liability_tab" class="moj-sub-navigation__link" href="@routes.AllOpenCasesController.displayAllOpenCases(LiabilitiesTab)">Liability</a>
+                        }
+                    </li>
+                    <li class="moj-sub-navigation__item">
+                        @if(selectedTab == CorrespondenceTab) {
+                        <a id ="sub_nav_correspondence_tab" class="moj-sub-navigation__link" aria-current="page" href="@routes.AllOpenCasesController.displayAllOpenCases(CorrespondenceTab)">Correspondence</a>
+                        } else {
+                        <a id ="sub_nav_correspondence_tab" class="moj-sub-navigation__link" href="@routes.AllOpenCasesController.displayAllOpenCases(CorrespondenceTab)">Correspondence</a>
+                        }
+                    </li>
+                    <li class="moj-sub-navigation__item">
+                        @if(selectedTab == MiscellaneousTab) {
+                        <a id ="sub_nav_miscellaneous_tab" class="moj-sub-navigation__link" aria-current="page" href="@routes.AllOpenCasesController.displayAllOpenCases(MiscellaneousTab)">Miscellaneous</a>
+                        } else {
+                        <a id ="sub_nav_miscellaneous_tab" class="moj-sub-navigation__link" href="@routes.AllOpenCasesController.displayAllOpenCases(MiscellaneousTab)">Miscellaneous</a>
+                        }
+                    </li>
+                </ul>
+            </nav>
+
+
+

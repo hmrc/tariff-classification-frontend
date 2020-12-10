@@ -15,137 +15,151 @@
  *@
 
 @import config.AppConfig
-@import controllers.routes.AttachmentsController
+@import controllers.routes.{AttachmentsController, CaseController}
 @import models.request.AuthenticatedRequest
 @import models.{Application, BTIApplication, Case, EORIDetails, StoredAttachment}
 @import views.html.partials._
 
-@(c: Case, files: Seq[StoredAttachment], letterOfAuth: Option[StoredAttachment], startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(c: Case, files: Seq[StoredAttachment], startAtTabIndex: Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @defining(c.application) { a: Application =>
-    @defining(a.asBTI) { btiApp: BTIApplication =>
+    @defining(a.asATAR) { btiApp: BTIApplication =>
         @defining(btiApp.holder) { btiHolder: EORIDetails =>
 
             @tab_heading("application", messages("case.menu.application-details"))
 
-            <dl class="dl-mb-2">
+            <dl class="govuk-check-your-answers cya-questions-short">
+
+                <h3 class="heading-medium" id="about-the-goods">@messages("case.goods.about")</h3>
+
                 <div id="app-details-goods-name" class="grid-row">
-                    <dt class="column-one-third">
-                        @messages("case.item.name")
+                    <dt class="cya-question">
+                    @messages("case.goods.name")
                     </dt>
-                    <dd class="column-two-thirds">
-                        @btiApp.goodName
+                    <dd class="cya-answer">
+                        <span class="pre-wrap">@btiApp.goodName</span>
                     </dd>
                 </div>
+
                 <div id="app-details-goods-description" class="grid-row">
-                    <dt class="column-one-third">
-                        @messages("case.item.description")
+                    <dt class="cya-question">
+                    @messages("case.goods.goods_details")
                     </dt>
-                    <dd class="column-two-thirds">
+                    <dd class="cya-answer">
                         <span class="pre-wrap">@btiApp.goodDescription</span>
                     </dd>
                 </div>
-                <div id="app-details-confidential-info" class="grid-row">
-                    <dt class="column-one-third">
+
+                @if(btiApp.confidentialInformation.isDefined) {
+                    <div id="app-details-confidential-info" class="grid-row">
+                        <dt class="cya-question">
                         @messages("case.item.confidential-information")
-                    </dt>
-                    <dd class="column-two-thirds">
-                        <span class="pre-wrap">@btiApp.confidentialInformation.getOrElse(messages("answer.none"))</span>
-                    </dd>
-                </div>
+                        </dt>
+                        <dd class="cya-answer">
+                            <span class="pre-wrap">@btiApp.confidentialInformation</span>
+                        </dd>
+                    </div>
+                }
+
+                @if(!c.attachments.isEmpty) {
+                    <div id="app-details-attachments" class="grid-row">
+                        <dt class="cya-question">
+                        @messages("case.application.has-attachments")
+                        </dt>
+                        <dd class="cya-answer">
+                        @if(c.attachments.exists(_.operator.isEmpty)) {
+                            Yes. <a tabindex="@{
+                                startAtTabIndex + 1
+                            }" href="@AttachmentsController.attachmentsDetails(c.reference)">@messages("case.goods.attachments_yes")</a>
+                        } else {
+                            @messages("answer.no")
+                        }
+                        </dd>
+                    </div>
+                }
+
+                @if(btiApp.sampleToBeProvided) {
+                    <div id="app-details-sending-samples" class="grid-row">
+                        <dt class="cya-question">
+                        @messages("case.goods.sending_samples")
+                        </dt>
+                        <dd class="cya-answer">
+                            Yes. <a tabindex="@{
+                                startAtTabIndex + 1
+                            }" href="@CaseController.sampleDetails(c.reference)">@messages("case.goods.sending_samples_yes")</a>
+
+                        </dd>
+                    </div>
+                }
 
                 @if(btiApp.envisagedCommodityCode.isDefined) {
                     <div id="app-details-envisaged-code" class="grid-row">
-                        <dt class="column-one-third">
-                            @messages("case.application.suggested-commodity-code")
+                        <dt class="cya-question">
+                        @messages("case.application.suggested-commodity-code")
                         </dt>
-                        <dd class="column-two-thirds">
-                            @btiApp.envisagedCommodityCode.get
+                        <dd class="cya-answer">
+                        @btiApp.envisagedCommodityCode.get
                         </dd>
                     </div>
                 }
 
-                <h3 class="heading-medium" id="trader-submitted-heading">@messages("case.application.type")</h3>
+                @if(btiApp.knownLegalProceedings.isDefined) {
+                    <div id="app-details-legal-challenges" class="grid-row">
+                        <dt class="cya-question">
+                        @messages("case.application.goods.legal_challenges")
+                        </dt>
+                        <dd class="cya-answer">
+                            <span class="pre-wrap">@btiApp.knownLegalProceedings</span>
+                        </dd>
+                    </div>
+                }
 
-                <div id="app-details-reissue-application-type" class="grid-row">
-                    <dt class="column-one-third">
-                        @messages("case.application.reissue-application")
-                    </dt>
-                    <dd class="column-two-thirds">
-                        @if(btiApp.reissuedBTIReference.isDefined){ @messages("case.bti.renewal") }else{ @messages("case.bti.new") }
-                    </dd>
-                </div>
+            </dl>
+
+            <br>
+            <dl class="govuk-check-your-answers cya-questions-short">
+
+            @if(btiApp.reissuedBTIReference.isDefined | btiApp.relatedBTIReferences.nonEmpty) {
+                <h3 class="mt-40 heading-medium mt-40" id="about-other-rulings">@messages("case.goods.about_other_rulings")</h3>
 
                 @if(btiApp.reissuedBTIReference.isDefined) {
-                    <div id="app-details-reissue-application-reference" class="grid-row">
-                        <dt class="column-one-third">
-                            @messages("case.application.renewal-reference-number")
+                    <div id="app-details-previous-ruling-reference" class="grid-row">
+                        <dt class="cya-question">
+                        @messages("case.application.previous_ruling_reference")
                         </dt>
-                        <dd class="column-two-thirds">
-                            @btiApp.reissuedBTIReference.get
+                        <dd class="cya-answer">
+                        @btiApp.reissuedBTIReference.get
                         </dd>
                     </div>
                 }
 
-                <h3 class="heading-medium" id="trader-submitted-heading">@messages("case.application.attachments")</h3>
-
-                <div id="app-details-attachments" class="grid-row">
-                    <dt class="column-one-third">
-                        @messages("case.application.has-attachments")
-                    </dt>
-                    <dd class="column-two-thirds">
-                        @if(c.attachments.exists(_.operator.isEmpty)){
-                            Yes, <a tabindex="@{startAtTabIndex+1}" href="@AttachmentsController.attachmentsDetails(c.reference)"> view attached documents </a>
-                        } else { @messages("answer.no")}
-                    </dd>
-                </div>
-
-                <h3 class="heading-medium" id="trader-submitted-heading">@messages("case.application.additional-information")</h3>
-
-                <div id="app-details-other-info" class="grid-row">
-                    <dt class="column-one-third">
-                        @messages("case.application.supporting-information")
-                    </dt>
-                    <dd class="column-two-thirds">
-                        <span class="pre-wrap">@btiApp.otherInformation.getOrElse(messages("answer.none"))</span>
-                    </dd>
-                </div>
-
-                @if(btiApp.relatedBTIReference.isDefined){
-                    <div id="app-details-related-reference" class="grid-row">
-                        <dt class="column-one-third">
-                            @messages("case.application.similar-bti-ruling")
+                @if(btiApp.relatedBTIReference.isDefined) {
+                    <div id="app-details-similar-ruling-reference" class="grid-row">
+                        <dt class="cya-question">
+                        @messages("case.application.similar_ruling_references")
                         </dt>
-                            <dd class="column-two-thirds">
-                                <span class="pre-wrap">@btiApp.relatedBTIReference</span>
-                            </dd>
+                        <dd class="cya-answer">
+                            <span class="pre-wrap">@btiApp.relatedBTIReference</span>
+                        </dd>
                     </div>
                 }
 
-                @if(!btiApp.relatedBTIReferences.isEmpty){
-                    <div id="app-details-related-reference" class="grid-row">
-                        <dt class="column-one-third">
-                        @messages("case.application.similar-bti-ruling")
+                @if(!btiApp.relatedBTIReferences.isEmpty) {
+                    <div id="app-details-similar-ruling-reference" class="grid-row">
+                        <dt class="cya-question">
+                        @messages("case.application.similar_ruling_references")
                         </dt>
-                        <dd class="column-two-thirds">
+                        <dd class="cya-answer">
                             <span class="pre-wrap">@btiApp.relatedBTIReferences.mkString("\n")</span>
                         </dd>
                     </div>
                 }
-
-                <div id="app-details-legal-proceedings" class="grid-row">
-                    <dt class="column-one-third">
-                        @messages("case.application.known-legal-proceedings")
-                    </dt>
-                    <dd class="column-two-thirds">
-                        <span class="pre-wrap">@btiApp.knownLegalProceedings.getOrElse(messages("answer.no"))</span>
-                    </dd>
-                </div>
+            }
             </dl>
 
             <div class="mt-3">
-                @submitted_application_link(c, Some(startAtTabIndex+7))
-            </div>
+            @submitted_application_link(c, Some(startAtTabIndex + 7))
+        </div>
         }
     }
 }

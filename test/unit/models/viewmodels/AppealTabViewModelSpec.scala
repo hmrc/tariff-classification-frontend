@@ -23,11 +23,11 @@ class AppealTabViewModelSpec extends ModelsBaseSpec {
 
   val dummyCase: Case = Cases.aCaseWithCompleteDecision.copy(
     status = CaseStatus.COMPLETED,
-    decision = Some(Cases.decision.copy(
-      appeal = Seq(Appeal("id",
-        AppealStatus.IN_PROGRESS,
-        AppealType.APPEAL_TIER_1)),
-      cancellation = Some(Cancellation(CancelReason.ANNULLED, applicationForExtendedUse = true)))
+    decision = Some(
+      Cases.decision.copy(
+        appeal       = Seq(Appeal("id", AppealStatus.IN_PROGRESS, AppealType.APPEAL_TIER_1)),
+        cancellation = Some(Cancellation(CancelReason.ANNULLED, applicationForExtendedUse = true))
+      )
     )
   )
 
@@ -37,12 +37,12 @@ class AppealTabViewModelSpec extends ModelsBaseSpec {
 
       val appealTabViewModel = AppealTabViewModel.fromCase(dummyCase, Cases.operatorWithPermissions)
 
-      val expected = AppealTabViewModel(caseReference = "123456",
-        appeals = Seq(Appeal("id",
-          AppealStatus.IN_PROGRESS,
-          AppealType.APPEAL_TIER_1)),
+      val expected = AppealTabViewModel(
+        caseReference = "123456",
+        appeals       = Seq(Appeal("id", AppealStatus.IN_PROGRESS, AppealType.APPEAL_TIER_1)),
         None,
-        false)
+        false
+      )
 
       appealTabViewModel shouldBe expected
     }
@@ -55,12 +55,12 @@ class AppealTabViewModelSpec extends ModelsBaseSpec {
 
       val appealTabViewModel = AppealTabViewModel.fromCase(canceledCase, op)
 
-      val expected = AppealTabViewModel(caseReference = "123456",
-        appeals = Seq(Appeal("id",
-          AppealStatus.IN_PROGRESS,
-          AppealType.APPEAL_TIER_1)),
+      val expected = AppealTabViewModel(
+        caseReference = "123456",
+        appeals       = Seq(Appeal("id", AppealStatus.IN_PROGRESS, AppealType.APPEAL_TIER_1)),
         Some("Yes"),
-        true)
+        true
+      )
 
       appealTabViewModel shouldBe expected
     }
@@ -73,12 +73,12 @@ class AppealTabViewModelSpec extends ModelsBaseSpec {
 
       val appealTabViewModel = AppealTabViewModel.fromCase(completedCase, op)
 
-      val expected = AppealTabViewModel(caseReference = "123456",
-        appeals = Seq(Appeal("id",
-          AppealStatus.IN_PROGRESS,
-          AppealType.APPEAL_TIER_1)),
+      val expected = AppealTabViewModel(
+        caseReference = "123456",
+        appeals       = Seq(Appeal("id", AppealStatus.IN_PROGRESS, AppealType.APPEAL_TIER_1)),
         None,
-        false)
+        false
+      )
 
       appealTabViewModel shouldBe expected
     }
@@ -91,12 +91,12 @@ class AppealTabViewModelSpec extends ModelsBaseSpec {
 
       val appealTabViewModel = AppealTabViewModel.fromCase(completedCase, op)
 
-      val expected = AppealTabViewModel(caseReference = "123456",
-        appeals = Seq(Appeal("id",
-          AppealStatus.IN_PROGRESS,
-          AppealType.APPEAL_TIER_1)),
+      val expected = AppealTabViewModel(
+        caseReference = "123456",
+        appeals       = Seq(Appeal("id", AppealStatus.IN_PROGRESS, AppealType.APPEAL_TIER_1)),
         None,
-        false)
+        false
+      )
 
       appealTabViewModel shouldBe expected
     }
@@ -105,22 +105,24 @@ class AppealTabViewModelSpec extends ModelsBaseSpec {
 
       val op = Cases.operatorWithPermissions.copy(permissions = Set(Permission.APPEAL_CASE))
 
-      val completedCase = dummyCase.copy(status = CaseStatus.CANCELLED,
-        decision = Some(Cases.decision.copy(
-          appeal = Seq(Appeal("id",
-            AppealStatus.IN_PROGRESS,
-            AppealType.APPEAL_TIER_1)),
-          cancellation = Some(Cancellation(CancelReason.ANNULLED)))
-        ))
+      val completedCase = dummyCase.copy(
+        status = CaseStatus.CANCELLED,
+        decision = Some(
+          Cases.decision.copy(
+            appeal       = Seq(Appeal("id", AppealStatus.IN_PROGRESS, AppealType.APPEAL_TIER_1)),
+            cancellation = Some(Cancellation(CancelReason.ANNULLED))
+          )
+        )
+      )
 
       val appealTabViewModel = AppealTabViewModel.fromCase(completedCase, op)
 
-      val expected = AppealTabViewModel(caseReference = "123456",
-        appeals = Seq(Appeal("id",
-          AppealStatus.IN_PROGRESS,
-          AppealType.APPEAL_TIER_1)),
+      val expected = AppealTabViewModel(
+        caseReference = "123456",
+        appeals       = Seq(Appeal("id", AppealStatus.IN_PROGRESS, AppealType.APPEAL_TIER_1)),
         Some("No"),
-        true)
+        true
+      )
 
       appealTabViewModel shouldBe expected
     }

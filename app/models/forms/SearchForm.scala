@@ -20,7 +20,6 @@ import play.api.data.Form
 import play.api.data.Forms._
 import models.forms.FormConstraints._
 import models.forms.FormUtils._
-import models.ApplicationType.ApplicationType
 import models.PseudoCaseStatus.PseudoCaseStatus
 import models.{ApplicationType, PseudoCaseStatus, Search}
 
@@ -28,26 +27,28 @@ object SearchForm {
 
   val form: Form[Search] = Form(
     mapping(
-      "trader_name" -> optional[String](text),
-      "commodity_code" -> optional[String](text.verifying(emptyOr(validCommodityCodeSearch): _*)),
+      "trader_name"      -> optional[String](text),
+      "commodity_code"   -> optional[String](text.verifying(emptyOr(validCommodityCodeSearch): _*)),
       "decision_details" -> optional[String](text),
-      "status" -> optional[Set[PseudoCaseStatus]](set(textTransformingTo(PseudoCaseStatus.withName, _.toString))),
-      "application_type" -> optional[Set[ApplicationType]](set(textTransformingTo(ApplicationType.withName, _.toString))),
+      "status"           -> optional[Set[PseudoCaseStatus]](set(textTransformingTo(PseudoCaseStatus.withName, _.toString))),
+      "application_type" -> optional[Set[ApplicationType]](
+        set(textTransformingTo(ApplicationType.withName, _.name))
+      ),
       "keyword" -> optional[Set[String]](set(text))
     )(Search.apply)(Search.unapply)
   )
 
   val formWithoutValidation: Form[Search] = Form(
     mapping(
-      "trader_name" -> optional[String](text),
-      "commodity_code" -> optional[String](text),
+      "trader_name"      -> optional[String](text),
+      "commodity_code"   -> optional[String](text),
       "decision_details" -> optional[String](text),
-      "status" -> optional[Set[PseudoCaseStatus]](set(textTransformingTo(PseudoCaseStatus.withName, _.toString))),
-      "application_type" -> optional[Set[ApplicationType]](set(textTransformingTo(ApplicationType.withName, _.toString))),
+      "status"           -> optional[Set[PseudoCaseStatus]](set(textTransformingTo(PseudoCaseStatus.withName, _.toString))),
+      "application_type" -> optional[Set[ApplicationType]](
+        set(textTransformingTo(ApplicationType.withName, _.name))
+      ),
       "keyword" -> optional[Set[String]](set(text))
     )(Search.apply)(Search.unapply)
   )
 
 }
-
-

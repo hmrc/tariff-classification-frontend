@@ -35,13 +35,14 @@ import scala.concurrent.Future.successful
 import controllers.Tab._
 
 @Singleton
-class SampleController @Inject()(
+class SampleController @Inject() (
   override val verify: RequestActions,
   override val caseService: CasesService,
   eventsService: EventsService,
   mcc: MessagesControllerComponents,
   override implicit val config: AppConfig
-) extends FrontendController(mcc) with StatusChangeAction[Option[SampleStatus]] {
+) extends FrontendController(mcc)
+    with StatusChangeAction[Option[SampleStatus]] {
 
   override protected val requiredPermission: Permission = Permission.EDIT_SAMPLE
 
@@ -49,41 +50,41 @@ class SampleController @Inject()(
 
   override protected def status(c: Case): Option[SampleStatus] = c.sample.status
 
-  protected def chooseStatusView(c: Case, notFilledForm: Form[Option[SampleStatus]], options: Option[String])
-                                         (implicit request: Request[_]): Html = {
-    if(options.contains("liability"))
+  protected def chooseStatusView(c: Case, notFilledForm: Form[Option[SampleStatus]], options: Option[String])(
+    implicit request: Request[_]
+  ): Html =
+    if (options.contains("liability"))
       views.html.change_liablity_sending_sample(c, notFilledForm)
     else
       views.html.change_sample_status(c, notFilledForm)
-  }
 
   override def chooseStatus(reference: String, options: Option[String]): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference) andThen
-    verify.mustHave(requiredPermission)).async { implicit request =>
-    getCaseAndRenderView(
-      reference,
-      c => successful(chooseStatusView(c, form, options))
-    )
-  }
+      verify.mustHave(requiredPermission)).async { implicit request =>
+      getCaseAndRenderView(
+        reference,
+        c => successful(chooseStatusView(c, form, options))
+      )
+    }
 
-  override protected def update(c: Case, status: Option[SampleStatus], operator: Operator)
-                               (implicit hc: HeaderCarrier): Future[Case] = {
+  override protected def update(c: Case, status: Option[SampleStatus], operator: Operator)(
+    implicit hc: HeaderCarrier
+  ): Future[Case] =
     caseService.updateSampleStatus(c, status, operator)
-  }
 
   override protected def onSuccessRedirect(reference: String, isV2Liability: Boolean): Call =
     if (isV2Liability) controllers.v2.routes.LiabilityController.displayLiability(reference).withFragment(SAMPLE_TAB)
     else routes.CaseController.sampleDetails(reference)
 
-
-  def sampleDetails(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
-    getCaseAndRenderView(
-      reference,
-      c => {
-        for {
-          events <- eventsService.getFilteredEvents(c.reference, NoPagination(),Some(EventType.sampleEvents))
-        } yield views.html.case_details(c, CaseDetailPage.SAMPLE_DETAILS, views.html.partials.sample.sample_details(c, events))
-      }
-    )
-  }
+  def sampleDetails(reference: String): Action[AnyContent] =
+    (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
+      getCaseAndRenderView(
+        reference,
+        c =>
+          for {
+            events <- eventsService.getFilteredEvents(c.reference, NoPagination(), Some(EventType.sampleEvents))
+          } yield views.html
+            .case_details(c, CaseDetailPage.SAMPLE_DETAILS, views.html.partials.sample.sample_details(c, events))
+      )
+    }
 }

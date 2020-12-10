@@ -25,28 +25,28 @@ class FormMappingsTest extends ModelsBaseSpec {
 
     "return valid val if part of enum" in {
       val mapping = FormMappings.oneOf("My Error", CancelReason)
-      val result = mapping.bind(Map("" -> "INVALIDATED_CODE_CHANGE"))
+      val result  = mapping.bind(Map("" -> "INVALIDATED_CODE_CHANGE"))
 
       result shouldBe Right("INVALIDATED_CODE_CHANGE")
     }
 
     "return form error if value is invalid" in {
       val mapping = FormMappings.oneOf("My Error", CancelReason)
-      val result = mapping.bind(Map("" -> "CABBAGE"))
+      val result  = mapping.bind(Map("" -> "CABBAGE"))
 
       result shouldBe Left(Seq(FormError("", "My Error")))
     }
 
     "return form error if value is missing" in {
       val mapping = FormMappings.oneOf("My Error", CancelReason)
-      val result = mapping.bind(Map())
+      val result  = mapping.bind(Map())
 
       result shouldBe Left(Seq(FormError("", "My Error")))
     }
 
     "return form error if value is set to nothing" in {
       val mapping = FormMappings.oneOf("My Error", CancelReason)
-      val result = mapping.bind(Map("" -> ""))
+      val result  = mapping.bind(Map("" -> ""))
 
       result shouldBe Left(Seq(FormError("", "My Error")))
     }
@@ -55,14 +55,14 @@ class FormMappingsTest extends ModelsBaseSpec {
   "field non empty" should {
     "return valid val if some text present" in {
       val mapping = FormMappings.fieldNonEmpty("My Error")
-      val result = mapping.bind(Map("" -> "Some value"))
+      val result  = mapping.bind(Map("" -> "Some value"))
 
       result shouldBe Right("Some value")
     }
 
     "return form error if value missing" in {
       val mapping = FormMappings.fieldNonEmpty("My Error")
-      val result = mapping.bind(Map())
+      val result  = mapping.bind(Map())
 
       result shouldBe Left(Seq(FormError("", "My Error")))
     }
@@ -71,21 +71,21 @@ class FormMappingsTest extends ModelsBaseSpec {
   "text non empty" should {
     "return valid val if some text present" in {
       val mapping = FormMappings.textNonEmpty("My Error")
-      val result = mapping.bind(Map("" -> "Some value"))
+      val result  = mapping.bind(Map("" -> "Some value"))
 
       result shouldBe Right("Some value")
     }
 
     "return form error if value present but empty" in {
       val mapping = FormMappings.textNonEmpty("My Error")
-      val result = mapping.bind(Map("" -> ""))
+      val result  = mapping.bind(Map("" -> ""))
 
       result shouldBe Left(Seq(FormError("", "My Error")))
     }
 
     "return form error if value missing" in {
       val mapping = FormMappings.textNonEmpty("My Error")
-      val result = mapping.bind(Map())
+      val result  = mapping.bind(Map())
 
       result shouldBe Left(Seq(FormError("", "My Error")))
     }

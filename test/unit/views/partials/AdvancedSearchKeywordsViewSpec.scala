@@ -30,7 +30,7 @@ class AdvancedSearchKeywordsViewSpec extends ViewSpec {
       val doc = view(advanced_search_keywords(SearchForm.form, Seq.empty))
 
       // Then
-      doc should containElementWithID("keyword_0")
+      doc                             should containElementWithID("keyword_0")
       doc.getElementById("keyword_0") should haveTag("input")
       doc.getElementById("keyword_0") should haveAttribute("value", "")
       doc.getElementById("keyword_0") should haveAttribute("name", "keyword[0]")
@@ -46,15 +46,17 @@ class AdvancedSearchKeywordsViewSpec extends ViewSpec {
 
     "Not render table if keyword blank" in {
       // Given
-      val form = SearchForm.form.copy(data = Map(
-        "keyword[0]" -> ""
-      ))
+      val form = SearchForm.form.copy(data =
+        Map(
+          "keyword[0]" -> ""
+        )
+      )
 
       // When
       val doc = view(advanced_search_keywords(form, Seq.empty))
 
       // Then the input box should be blank
-      doc should containElementWithID("keyword_0")
+      doc                             should containElementWithID("keyword_0")
       doc.getElementById("keyword_0") should haveTag("input")
       doc.getElementById("keyword_0") should haveAttribute("value", "")
       doc.getElementById("keyword_0") should haveAttribute("name", "keyword[0]")
@@ -65,34 +67,39 @@ class AdvancedSearchKeywordsViewSpec extends ViewSpec {
 
     "Populate Keywords in Table with the input box blank" in {
       // Given
-      val form = SearchForm.form.copy(data = Map(
-        "keyword[0]" -> "K1"
-      ))
+      val form = SearchForm.form.copy(data =
+        Map(
+          "keyword[0]" -> "K1"
+        )
+      )
 
       // When
       val doc = view(advanced_search_keywords(form, Seq.empty))
 
       // Then the input box should be blank
-      doc should containElementWithID("keyword_0")
+      doc                             should containElementWithID("keyword_0")
       doc.getElementById("keyword_0") should haveTag("input")
       doc.getElementById("keyword_0") should haveAttribute("value", "")
       doc.getElementById("keyword_0") should haveAttribute("name", "keyword[0]")
 
       // Then the table should contain the keyword
-      doc should containElementWithID("advanced_search_keywords-table")
-      doc should containElementWithID("advanced_search_keywords-table-row-1")
-      doc should containElementWithID("advanced_search_keywords-table-row-1-input")
+      doc                                                              should containElementWithID("advanced_search_keywords-table")
+      doc                                                              should containElementWithID("advanced_search_keywords-table-row-1")
+      doc                                                              should containElementWithID("advanced_search_keywords-table-row-1-input")
       doc.getElementById("advanced_search_keywords-table-row-1-input") should haveTag("input")
       doc.getElementById("advanced_search_keywords-table-row-1-input") should haveAttribute("value", "K1")
       doc.getElementById("advanced_search_keywords-table-row-1-input") should haveAttribute("name", "keyword[1]")
       doc.getElementById("advanced_search_keywords-table-row-1-input") should haveAttribute("type", "hidden")
 
-      doc should containElementWithID("advanced_search_keywords-table-row-1-label")
+      doc                                                              should containElementWithID("advanced_search_keywords-table-row-1-label")
       doc.getElementById("advanced_search_keywords-table-row-1-label") should containText("K1")
 
-      doc should containElementWithID("advanced_search_keywords-table-row-1-remove_button")
+      doc                                                                      should containElementWithID("advanced_search_keywords-table-row-1-remove_button")
       doc.getElementById("advanced_search_keywords-table-row-1-remove_button") should haveAttribute("type", "button")
-      doc.getElementById("advanced_search_keywords-table-row-1-remove_button") should haveAttribute("onclick", "advancedSearch.removeKeyword(1)")
+      doc.getElementById("advanced_search_keywords-table-row-1-remove_button") should haveAttribute(
+        "onclick",
+        "advancedSearch.removeKeyword(1)"
+      )
     }
 
     "Contain autocomplete" in {
@@ -105,9 +112,11 @@ class AdvancedSearchKeywordsViewSpec extends ViewSpec {
 
     "Not contain existing keywords in autocomplete" in {
       // Given
-      val form = SearchForm.form.copy(data = Map(
-        "keyword[0]" -> "K1"
-      ))
+      val form = SearchForm.form.copy(data =
+        Map(
+          "keyword[0]" -> "K1"
+        )
+      )
 
       // When
       val doc = view(advanced_search_keywords(form, Seq("K1", "K2")))
@@ -117,6 +126,5 @@ class AdvancedSearchKeywordsViewSpec extends ViewSpec {
     }
 
   }
-
 
 }

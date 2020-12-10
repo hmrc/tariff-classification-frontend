@@ -18,14 +18,14 @@ package views
 
 object CaseDetailPage extends Enumeration {
   type CaseDetailPage = Value
-  val TRADER = Value("trader")
-  val RULING = Value("ruling")
-  val EDIT_RULING = Value("edit.ruling")
+  val TRADER              = Value("trader")
+  val RULING              = Value("ruling")
+  val EDIT_RULING         = Value("edit.ruling")
   val APPLICATION_DETAILS = Value("application")
-  val SAMPLE_DETAILS = Value("sample")
-  val ACTIVITY = Value("activity")
-  val ATTACHMENTS = Value("attachments")
-  val KEYWORDS = Value("keywords")
-  val APPEAL = Value("appeal")
-  val LIABILITY = Value("liability")
+  val SAMPLE_DETAILS      = Value("sample")
+  val ACTIVITY            = Value("activity")
+  val ATTACHMENTS         = Value("attachments")
+  val KEYWORDS            = Value("keywords")
+  val APPEAL              = Value("appeal")
+  val LIABILITY           = Value("liability")
 }

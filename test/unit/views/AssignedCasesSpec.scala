@@ -31,8 +31,8 @@ class AssignedCasesSpec extends ViewSpec {
     "create for operator with no cases " in {
       val assigned = AssignedCases.apply(Seq(buildCaseFor("2", OPEN)), Some("1")).get
 
-      assigned.name shouldBe ""
-      assigned.openCases shouldBe empty
+      assigned.name       shouldBe ""
+      assigned.openCases  shouldBe empty
       assigned.otherCases shouldBe empty
     }
 
@@ -41,29 +41,28 @@ class AssignedCasesSpec extends ViewSpec {
 
       val assigned = AssignedCases.apply(Seq(openCase), Some("1")).get
 
-      assigned.name shouldBe "Test User"
-      assigned.openCases shouldBe Seq(openCase)
+      assigned.name       shouldBe "Test User"
+      assigned.openCases  shouldBe Seq(openCase)
       assigned.otherCases shouldBe empty
     }
 
     "create for operator with multiple cases " in {
-      val openCase = buildCaseFor("1", OPEN)
-      val referredCase = buildCaseFor("1", REFERRED)
+      val openCase      = buildCaseFor("1", OPEN)
+      val referredCase  = buildCaseFor("1", REFERRED)
       val suspendedCase = buildCaseFor("1", SUSPENDED)
 
       val assigned = AssignedCases.apply(Seq(openCase, referredCase, suspendedCase), Some("1")).get
 
-      assigned.name shouldBe "Test User"
-      assigned.openCases shouldBe Seq(openCase)
+      assigned.name       shouldBe "Test User"
+      assigned.openCases  shouldBe Seq(openCase)
       assigned.otherCases shouldBe Seq(referredCase, suspendedCase)
     }
   }
 
-  private def buildCaseFor(op: String, status: CaseStatus): Case = {
+  private def buildCaseFor(op: String, status: CaseStatus): Case =
     aCase(
       withStatus(status),
       withAssignee(Some(Operator(op, Some("Test User"))))
     )
-  }
 
 }

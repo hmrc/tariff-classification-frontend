@@ -26,7 +26,7 @@ object FormMappings {
     of(new Formatter[String] {
       override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] =
         data.get(key) match {
-          case None  => Left(Seq(FormError(key, errorKey)))
+          case None    => Left(Seq(FormError(key, errorKey)))
           case Some(s) => Right(s)
         }
 
@@ -39,7 +39,7 @@ object FormMappings {
       override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] =
         data.get(key) match {
           case None | Some("") => Left(Seq(FormError(key, errorKey)))
-          case Some(s) => Right(s)
+          case Some(s)         => Right(s)
         }
 
       override def unbind(key: String, value: String): Map[String, String] =
@@ -51,7 +51,7 @@ object FormMappings {
       override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] =
         data.get(key) match {
           case Some(s) if enumeration.values.exists(_.toString == s) => Right(s)
-          case _ => Left(Seq(FormError(key, errorKey)))
+          case _                                                     => Left(Seq(FormError(key, errorKey)))
         }
 
       override def unbind(key: String, value: String): Map[String, String] =

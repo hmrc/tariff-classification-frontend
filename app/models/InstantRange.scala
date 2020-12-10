@@ -20,39 +20,38 @@ import java.time.Instant
 
 import play.api.mvc.QueryStringBindable
 
-case class InstantRange
-(
+case class InstantRange(
   min: Instant,
   max: Instant
 )
 
 object InstantRange {
 
-  implicit def bindable(implicit stringBinder: QueryStringBindable[String]): QueryStringBindable[InstantRange] = new QueryStringBindable[InstantRange] {
+  implicit def bindable(implicit stringBinder: QueryStringBindable[String]): QueryStringBindable[InstantRange] =
+    new QueryStringBindable[InstantRange] {
 
-    private def min(key: String) = s"min_$key"
+      private def min(key: String) = s"min_$key"
 
-    private def max(key: String) = s"max_$key"
+      private def max(key: String) = s"max_$key"
 
-    override def bind(key: String, requestParams: Map[String, Seq[String]]): Option[Either[String, InstantRange]] = {
-      import BinderUtil._
-      implicit val rp: Map[String, Seq[String]] = requestParams
+      override def bind(key: String, requestParams: Map[String, Seq[String]]): Option[Either[String, InstantRange]] = {
+        import BinderUtil._
+        implicit val rp: Map[String, Seq[String]] = requestParams
 
-      val minValue: Option[Instant] = param(min(key)).flatMap(bindInstant)
-      val maxValue: Option[Instant] = param(max(key)).flatMap(bindInstant)
+        val minValue: Option[Instant] = param(min(key)).flatMap(bindInstant)
+        val maxValue: Option[Instant] = param(max(key)).flatMap(bindInstant)
 
-      (minValue, maxValue) match {
-        case (Some(mn), Some(mx)) => Some(Right(InstantRange(mn, mx)))
-        case (None, None) => None
-        case _ => Some(Left(s"Params ${min(key)} and ${max(key)} are both required"))
+        (minValue, maxValue) match {
+          case (Some(mn), Some(mx)) => Some(Right(InstantRange(mn, mx)))
+          case (None, None)         => None
+          case _                    => Some(Left(s"Params ${min(key)} and ${max(key)} are both required"))
+        }
       }
-    }
 
-    override def unbind(key: String, filter: InstantRange): String = {
-      Seq(
-        stringBinder.unbind(min(key), filter.min.toString),
-        stringBinder.unbind(max(key), filter.max.toString)
-      ).mkString("&")
+      override def unbind(key: String, filter: InstantRange): String =
+        Seq(
+          stringBinder.unbind(min(key), filter.min.toString),
+          stringBinder.unbind(max(key), filter.max.toString)
+        ).mkString("&")
     }
-  }
 }

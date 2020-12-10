@@ -30,86 +30,102 @@ import utils.Cases
 import scala.concurrent.Future.successful
 import scala.concurrent.{ExecutionContext, Future}
 
+class SuccessfulAuthenticatedAction(
+  parse: PlayBodyParsers,
+  operator: Operator           = Operator("0", Some("name")),
+  permissions: Set[Permission] = Set.empty
+)(implicit ec: ExecutionContext)
+    extends AuthenticatedAction(
+      appConfig     = mock(classOf[AppConfig]),
+      config        = mock(classOf[Configuration]),
+      env           = mock(classOf[Environment]),
+      authConnector = mock(classOf[StrideAuthConnector]),
+      parse         = parse,
+      cc            = mock(classOf[ControllerComponents])
+    ) {
 
-class SuccessfulAuthenticatedAction(parse: BodyParsers.Default, operator: Operator = Operator("0", Some("name")), permissions : Set[Permission] = Set.empty) extends AuthenticatedAction(
-  appConfig = mock(classOf[AppConfig]),
-  config = mock(classOf[Configuration]),
-  env = mock(classOf[Environment]),
-  authConnector = mock(classOf[StrideAuthConnector]),
-  parse = parse,
-  cc = mock(classOf[ControllerComponents])) {
-
-  override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] = {
+  override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] =
     block(new AuthenticatedRequest(operator.copy(permissions = permissions), request))
-  }
 }
 
-class SuccessfulCasePermissionsAction(operator: Operator = Operator("0", Some("name")), permissions : Set[Permission] = Set.empty) extends CheckCasePermissionsAction {
-  override def refine[A](request: AuthenticatedCaseRequest[A]): Future[Either[Result, AuthenticatedCaseRequest[A]]] = {
+class SuccessfulCasePermissionsAction(
+  operator: Operator           = Operator("0", Some("name")),
+  permissions: Set[Permission] = Set.empty
+) extends CheckCasePermissionsAction {
+  override def refine[A](request: AuthenticatedCaseRequest[A]): Future[Either[Result, AuthenticatedCaseRequest[A]]] =
     successful(Right(new AuthenticatedCaseRequest(operator.copy(permissions = permissions), request, request.`case`)))
-  }
 }
 
 class ExistingCaseActionFactory(reference: String, requestCase: Case)
-  extends VerifyCaseExistsActionFactory(casesService = mock(classOf[CasesService]))(mock(classOf[MessagesApi]), mock(classOf[AppConfig])) {
+    extends VerifyCaseExistsActionFactory(casesService = mock(classOf[CasesService]))(
+      mock(classOf[MessagesApi]),
+      mock(classOf[AppConfig])
+    ) {
 
-  override def apply(reference: String): ActionRefiner[AuthenticatedRequest, AuthenticatedCaseRequest] = {
+  override def apply(reference: String): ActionRefiner[AuthenticatedRequest, AuthenticatedCaseRequest] =
     new ActionRefiner[AuthenticatedRequest, AuthenticatedCaseRequest] {
-      override protected def refine[A](request: AuthenticatedRequest[A]): Future[Either[Result, AuthenticatedCaseRequest[A]]] = {
+      override protected def refine[A](
+        request: AuthenticatedRequest[A]
+      ): Future[Either[Result, AuthenticatedCaseRequest[A]]] =
         successful(
-          Right(new AuthenticatedCaseRequest(operator = request.operator, request = request, requestedCase = requestCase)
+          Right(
+            new AuthenticatedCaseRequest(operator = request.operator, request = request, requestedCase = requestCase)
           )
         )
-      }
 
       override protected def executionContext: ExecutionContext = ExecutionContext.Implicits.global
     }
-  }
 }
 
 class HaveRightPermissionsActionFactory extends MustHavePermissionActionFactory {
 
-  override def apply[B[C] <: OperatorRequest[_]](permission: Permission): ActionFilter[B] = {
+  override def apply[B[C] <: OperatorRequest[_]](permission: Permission): ActionFilter[B] =
     new ActionFilter[B] {
-      override protected def filter[A](request: B[A]): Future[Option[Result]] = {
+      override protected def filter[A](request: B[A]): Future[Option[Result]] =
         successful(None)
-      }
 
       override protected def executionContext: ExecutionContext = ExecutionContext.Implicits.global
     }
-  }
-  override def apply[B[C] <: OperatorRequest[_]](ppermissions: Seq[Permission]): ActionFilter[B] = {
+  override def apply[B[C] <: OperatorRequest[_]](ppermissions: Seq[Permission]): ActionFilter[B] =
     new ActionFilter[B] {
-      override protected def filter[A](request: B[A]): Future[Option[Result]] = {
+      override protected def filter[A](request: B[A]): Future[Option[Result]] =
         successful(None)
-      }
 
       override protected def executionContext: ExecutionContext = ExecutionContext.Implicits.global
     }
-  }
 }
 
-
-class SuccessfulRequestActions(parse: BodyParsers.Default, operator: Operator, c: Case = Cases.btiCaseExample, reference: String = "test-reference")
-  extends RequestActions(
-    new SuccessfulCasePermissionsAction(operator),
-    new SuccessfulAuthenticatedAction(parse, operator),
-    new ExistingCaseActionFactory(reference, c),
-    new HaveRightPermissionsActionFactory
-  ) {}
-
-
+class SuccessfulRequestActions(
+  parse: PlayBodyParsers,
+  operator: Operator,
+  c: Case           = Cases.btiCaseExample,
+  reference: String = "test-reference"
+)(implicit ec: ExecutionContext)
+    extends RequestActions(
+      new SuccessfulCasePermissionsAction(operator),
+      new SuccessfulAuthenticatedAction(parse, operator),
+      new ExistingCaseActionFactory(reference, c),
+      new HaveRightPermissionsActionFactory
+    ) {}
 
 class RequestActionsWithPermissions(
-                                     parse: BodyParsers.Default,
-                                     permissions : Set[Permission],
-                                     addViewCasePermission: Boolean = true,
-                                     reference: String = "test-reference",
-                                     c: Case = Cases.btiCaseExample,
-                                     op: Operator = Operator("0", Some("name")))
-  extends RequestActions(
-    new SuccessfulCasePermissionsAction(operator = op, permissions = if(addViewCasePermission) permissions ++ Set(Permission.VIEW_CASES) else permissions),
-    new SuccessfulAuthenticatedAction(parse, operator = op, permissions = if(addViewCasePermission) permissions ++ Set(Permission.VIEW_CASES) else permissions),
-    new ExistingCaseActionFactory(reference, c),
-    new MustHavePermissionActionFactory
-  ) {}
+  parse: PlayBodyParsers,
+  permissions: Set[Permission],
+  addViewCasePermission: Boolean = true,
+  reference: String              = "test-reference",
+  c: Case                        = Cases.btiCaseExample,
+  op: Operator                   = Operator("0", Some("name"))
+)(implicit ec: ExecutionContext)
+    extends RequestActions(
+      new SuccessfulCasePermissionsAction(
+        operator    = op,
+        permissions = if (addViewCasePermission) permissions ++ Set(Permission.VIEW_CASES) else permissions
+      ),
+      new SuccessfulAuthenticatedAction(
+        parse,
+        operator    = op,
+        permissions = if (addViewCasePermission) permissions ++ Set(Permission.VIEW_CASES) else permissions
+      ),
+      new ExistingCaseActionFactory(reference, c),
+      new MustHavePermissionActionFactory
+    ) {}
