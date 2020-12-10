@@ -31,6 +31,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import controllers.Tab._
+import models.forms.v2.LiabilityDetailsForm
 
 @Singleton
 class RulingController @Inject() (
@@ -77,7 +78,14 @@ class RulingController @Inject() (
               editBTIRulingView(decisionFormWithErrors, c)
             case ApplicationType.LIABILITY =>
               //TODO add validate logic
-              Future.successful(Redirect(routes.CompleteCaseController.confirmCompleteCase(c.reference)))
+              val liabilityDecisionForm               = decisionForm.liabilityCompleteForm(c.decision.getOrElse(Decision()))
+              if(!liabilityDecisionForm.errors.isEmpty) {
+                editLiabilityRulingView(liabilityDecisionForm, c)
+              }else{
+                 Future.successful(Redirect(routes.CompleteCaseController.confirmCompleteCase(c.reference)))
+              }
+
+
           }
         )
       }

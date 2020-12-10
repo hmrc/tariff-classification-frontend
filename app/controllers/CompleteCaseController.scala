@@ -17,9 +17,10 @@
 package controllers
 
 import config.AppConfig
-import models.forms.{DecisionForm, LiabilityDetailsForm}
+import models.forms.DecisionForm
 import javax.inject.{Inject, Singleton}
 import models._
+import models.forms.v2.LiabilityDetailsForm
 import models.request.AuthenticatedRequest
 import play.api.mvc._
 import service.CasesService
@@ -80,8 +81,9 @@ class CompleteCaseController @Inject() (
     case ApplicationType.ATAR =>
       decisionForm.bindFrom(c.decision).map(_.errors).exists(_.isEmpty)
     case ApplicationType.LIABILITY =>
-      decisionForm.liabilityCompleteForm(c.decision.getOrElse(Decision())).errors.isEmpty &&
-        LiabilityDetailsForm.liabilityDetailsCompleteForm(c).errors.isEmpty
+      LiabilityDetailsForm.liabilityDetailsCompleteForm(c, appConfig).errors.isEmpty
+//      decisionForm.liabilityCompleteForm(c.decision.getOrElse(Decision())).errors.isEmpty &&
+//        LiabilityDetailsForm.liabilityDetailsCompleteForm(c).errors.isEmpty
   }
 
 }
