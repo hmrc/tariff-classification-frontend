@@ -338,7 +338,14 @@ object LiabilityDetailsForm extends Constraints {
                 appConfig.dateForRepaymentYearLowerBound
               )
             )
-        ).verifying("error.required", _.isDefined)
+        ).verifying(
+          "error.required",
+          f => {
+            if(existingLiability.application.asLiabilityOrder.repaymentClaim.isDefined) f.isDefined
+            else true
+          }
+
+        )
       )(form2Liability(existingLiability))(liability2Form)
     ).fillAndValidate(existingLiability)
 }
