@@ -27,7 +27,7 @@ class ApplicationDetailsViewSpec extends ViewSpec {
 
   "Application Details" should {
 
-    "render default negative text on optional fields when not present" in {
+    "not render default negative text on optional fields when not present" in {
       // Given
       val `case` = aCase(
         withOptionalApplicationFields(),
@@ -35,14 +35,12 @@ class ApplicationDetailsViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(application_details(`case`, Seq.empty, None))
+      val doc = view(application_details(`case`, Seq.empty))
 
       // Then
-      doc.getElementById("app-details-reissue-application-type") should containText(messages("case.bti.new"))
-      doc.getElementById("app-details-confidential-info")        should containText(messages("answer.none"))
+      doc.getElementById("app-details-confidential-info") shouldNot containText(messages("answer.none"))
       doc shouldNot containElementWithID("app-details-related-reference")
-      doc.getElementById("app-details-legal-proceedings") should containText(messages("answer.no"))
-      doc.getElementById("app-details-other-info")        should containText(messages("answer.none"))
+      doc.getElementById("app-details-legal-proceedings") shouldNot containText(messages("answer.no"))
     }
 
     "Render optional fields when present" in {
@@ -62,23 +60,36 @@ class ApplicationDetailsViewSpec extends ViewSpec {
         Cases.storedAttachment.copy(id = "FILE_ID", url = Some("url"), scanStatus = Some(ScanStatus.READY))
 
       // When
-      val doc = view(application_details(`case`, Seq(storedAttachment), None))
+      val doc = view(application_details(`case`, Seq(storedAttachment)))
 
       // Then
-      doc                                                             should containElementWithID("app-details-reissue-application-type")
-      doc.getElementById("app-details-reissue-application-type")      should containText(messages("case.bti.renewal"))
-      doc                                                             should containElementWithID("app-details-reissue-application-reference")
-      doc.getElementById("app-details-reissue-application-reference") should containText("reissued bti")
-      doc                                                             should containElementWithID("app-details-envisaged-code")
-      doc.getElementById("app-details-envisaged-code")                should containText("envisaged code")
-      doc                                                             should containElementWithID("app-details-confidential-info")
-      doc.getElementById("app-details-confidential-info")             should containText("confidential info")
-      doc                                                             should containElementWithID("app-details-related-reference")
-      doc.getElementById("app-details-related-reference")             should containText("related bti")
-      doc                                                             should containElementWithID("app-details-legal-proceedings")
-      doc.getElementById("app-details-legal-proceedings")             should containText("legal proceedings")
-      doc                                                             should containElementWithID("app-details-other-info")
-      doc.getElementById("app-details-other-info")                    should containText("other info")
+      doc                                                        should containElementWithID("app-details-previous-ruling-reference")
+      doc                                                        should containElementWithID("app-details-envisaged-code")
+      doc.getElementById("app-details-envisaged-code")           should containText("envisaged code")
+      doc                                                        should containElementWithID("app-details-confidential-info")
+      doc.getElementById("app-details-confidential-info")        should containText("confidential info")
+      doc                                                        should containElementWithID("app-details-similar-ruling-reference")
+      doc.getElementById("app-details-similar-ruling-reference") should containText("related bti")
+      doc                                                        should containElementWithID("app-details-legal-challenges")
+      doc.getElementById("app-details-legal-challenges")         should containText("legal proceedings")
+    }
+
+
+    "Render the correct number of relatedBtiReferences " in {
+
+      val `case` = aCase(
+        withOptionalApplicationFields(
+          relatedBTIReferences    = List("related BTI 1", "related BTI 2")
+        )
+      )
+
+      // When
+      val doc = view(application_details(`case`, Nil))
+
+      //Then
+      doc                                                        should containElementWithID("app-details-similar-ruling-reference")
+      doc.getElementById("app-details-similar-ruling-reference") should containText("related BTI 1 related BTI 2" )
+
     }
   }
 }

@@ -144,21 +144,21 @@ class DecisionFormTest extends ModelsBaseSpec {
       "provided by an invalid commodity code" in {
         val mockedCommodityCodeConstraint = mockCommodityCodeConstraint(
           validationResultForEmpty  = Valid,
-          validationResultForExists = Invalid("mock.commodity.error")
+          validationResultForValid = Invalid("decision_form.error.bindingCommodityCode.valid")
         )
 
         val form = formProvider(mockedCommodityCodeConstraint).btiCompleteForm.fillAndValidate(validDecisionFormData)
 
         form.hasErrors shouldBe true
 
-        form.errors shouldBe Seq(FormError("bindingCommodityCode", "mock.commodity.error"))
+        form.errors shouldBe Seq(FormError("bindingCommodityCode", "decision_form.error.bindingCommodityCode.valid"))
       }
     }
     "return only commodity code empty validation error" when {
-      "validation fails both on commodityCodeNonEmpty and commodityCodeExistsInUKTradeTariff" in {
+      "validation fails both on commodityCodeNonEmpty and commodityCodeValid" in {
         val mockedCommodityCodeConstraint = mockCommodityCodeConstraint(
           validationResultForEmpty  = Invalid("decision_form.error.bindingCommodityCode.required"),
-          validationResultForExists = Invalid("mock.commodity.error")
+          validationResultForValid = Invalid("decision_form.error.bindingCommodityCode.valid")
         )
 
         val form = formProvider(mockedCommodityCodeConstraint).btiCompleteForm.fillAndValidate(validDecisionFormData)
@@ -171,12 +171,12 @@ class DecisionFormTest extends ModelsBaseSpec {
   }
 
   private def mockCommodityCodeConstraint(
-    validationResultForEmpty: ValidationResult  = Valid,
-    validationResultForExists: ValidationResult = Valid
+    validationResultForEmpty: ValidationResult = Valid,
+    validationResultForValid: ValidationResult = Valid
   ): CommodityCodeConstraints = {
     val mockCommodityCodeConstraints = mock[CommodityCodeConstraints]
-    given(mockCommodityCodeConstraints.commodityCodeExistsInUKTradeTariff)
-      .willReturn(Constraint[String]("error")(_ => validationResultForExists))
+    given(mockCommodityCodeConstraints.commodityCodeValid)
+      .willReturn(Constraint[String]("error")(_ => validationResultForValid))
     given(mockCommodityCodeConstraints.commodityCodeNonEmpty)
       .willReturn(Constraint[String]("error")(_ => validationResultForEmpty))
     mockCommodityCodeConstraints

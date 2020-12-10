@@ -159,7 +159,8 @@ object Cases {
     Set.empty,
     Sample(),
     Some(Instant.now()),
-    Some(5)
+    Some(5),
+    3
   )
   val btiCaseWithIncompleteDecision: Case = Case(
     "1",
@@ -171,12 +172,13 @@ object Cases {
     None,
     btiApplicationExample,
     Some(incompleteDecision),
-    Seq()
+    Seq(),
+    referredDaysElapsed = 0
   )
   val simpleCaseExample: Case =
-    Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, None, simpleBtiApplicationExample, None, Seq())
+    Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, None, simpleBtiApplicationExample, None, Seq() , referredDaysElapsed = 0)
   val liabilityCaseExample: Case =
-    Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, None, liabilityApplicationExample, None, Seq())
+    Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, None, liabilityApplicationExample, None, Seq(), referredDaysElapsed = 0)
   val liabilityCaseWithDecisionExample: Case = Case(
     "1",
     CaseStatus.OPEN,
@@ -187,12 +189,13 @@ object Cases {
     None,
     liabilityApplicationExample,
     Some(decisionWithExclusion),
-    Seq()
+    Seq(),
+    referredDaysElapsed = 0
   )
   val liabilityLiveCaseExample: Case =
-    Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, None, liabilityLiveApplicationExample, None, Seq())
+    Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, None, liabilityLiveApplicationExample, None, Seq(), referredDaysElapsed = 0)
   val caseQueueExample: Case =
-    Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, Some("1"), btiApplicationExample, Some(decision), Seq())
+    Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, Some("1"), btiApplicationExample, Some(decision), Seq(), referredDaysElapsed = 0)
   val caseAssignedExample: Case = Case(
     "1",
     CaseStatus.OPEN,
@@ -203,7 +206,8 @@ object Cases {
     Some("1"),
     btiApplicationExample,
     Some(decision),
-    Seq()
+    Seq(),
+    referredDaysElapsed = 0
   )
   val expiredRuling: Decision = decision.copy(
     effectiveStartDate = Some(Instant.now().plus(-20, DAYS)),
@@ -303,7 +307,7 @@ object Cases {
     None
   )
   val newLiabilityLiveCaseExample: Case =
-    Case("1", CaseStatus.NEW, Instant.now(), 0, None, None, None, newLiabilityLiveApplicationExample, None, Seq())
+    Case("1", CaseStatus.NEW, Instant.now(), 0, None, None, None, newLiabilityLiveApplicationExample, None, Seq(), referredDaysElapsed = 0)
 
   val liabilityWithCompleteDecision: LiabilityOrder = LiabilityOrder(
     Contact(name = "contact-name", email = "contact@email.com", Some("contact-phone")),
@@ -483,6 +487,7 @@ object Cases {
     otherInformation: Option[String]        = None,
     reissuedBTIReference: Option[String]    = None,
     relatedBTIReference: Option[String]     = None,
+    relatedBTIReferences:  List[String]  = Nil,
     knownLegalProceedings: Option[String]   = None,
     envisagedCommodityCode: Option[String]  = None
   ): Case => Case = { c =>
@@ -492,6 +497,7 @@ object Cases {
         otherInformation        = otherInformation,
         reissuedBTIReference    = reissuedBTIReference,
         relatedBTIReference     = relatedBTIReference,
+        relatedBTIReferences    = relatedBTIReferences,
         knownLegalProceedings   = knownLegalProceedings,
         envisagedCommodityCode  = envisagedCommodityCode
       )

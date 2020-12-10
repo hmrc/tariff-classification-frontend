@@ -16,50 +16,40 @@
 
 package models.viewmodels
 
-import java.time.Instant
+import models.{CaseStatus, _}
 
-import models._
-import models.viewmodels.CasesTabViewModel.btiApplicationExample
-
-case class ApplicationsTab(tabMessageKey: String, applicationType: ApplicationType, elementId : String,  searchResult: Paged[Case])
+case class ApplicationsTab(
+  tabMessageKey: String,
+  applicationType: ApplicationType,
+  elementId: String,
+  searchResult: Paged[Case],
+  referralEvent: Option[Map[String, ReferralCaseStatusChange]] = None
+)
 
 case class ApplicationTabViewModel(headingMessageKey: String, applicationTabs: List[ApplicationsTab])
 
 object ApplicationsTab {
 
-  def atar(searchResult : Paged[Case] = Paged.empty) =
-    ApplicationsTab("applicationTab.assignedToMe.atar",ApplicationType.ATAR, "atar_tab", searchResult)
-  def liability(searchResult : Paged[Case] = Paged.empty) =
-    ApplicationsTab("applicationTab.assignedToMe.liability",ApplicationType.LIABILITY, "liability_tab", searchResult)
-  def correspondence(searchResult : Paged[Case] = Paged.empty) =
-    ApplicationsTab("applicationTab.assignedToMe.correspondence",ApplicationType.CORRESPONDENCE, "correspondence_tab", searchResult)
-  def miscellaneous(searchResult : Paged[Case] = Paged.empty) =
-    ApplicationsTab("applicationTab.assignedToMe.miscellaneous", ApplicationType.MISCELLANEOUS,"miscellaneous_tab", searchResult)
-
-  val btiCaseExample: Case = Case(
-    "1",
-    CaseStatus.OPEN,
-    Instant.now(),
-    0,
-    None,
-    None,
-    None,
-    btiApplicationExample,
-    None,
-    Seq(),
-    Set.empty,
-    Sample(),
-    Some(Instant.now()),
-    Some(5)
-  )
+  def atar(
+    searchResult: Paged[Case]                                    = Paged.empty,
+    referralEvent: Option[Map[String, ReferralCaseStatusChange]] = None
+  ) =
+    ApplicationsTab("applicationTab.atar", ApplicationType.ATAR, "atar_tab", searchResult, referralEvent)
+  def liability(
+    searchResult: Paged[Case]                                    = Paged.empty,
+    referralEvent: Option[Map[String, ReferralCaseStatusChange]] = None
+  ) =
+    ApplicationsTab("applicationTab.liability", ApplicationType.LIABILITY, "liability_tab", searchResult, referralEvent)
+  def correspondence(searchResult: Paged[Case] = Paged.empty) =
+    ApplicationsTab("applicationTab.correspondence", ApplicationType.CORRESPONDENCE, "correspondence_tab", searchResult)
+  def miscellaneous(searchResult: Paged[Case] = Paged.empty) =
+    ApplicationsTab("applicationTab.miscellaneous", ApplicationType.MISCELLANEOUS, "miscellaneous_tab", searchResult)
 
   def assignedToMeCases(cases: Seq[Case]): ApplicationTabViewModel = {
 
-    val atars = cases.filter(aCase =>
-      aCase.application.isBTI && aCase.status == CaseStatus.OPEN)
+    val atars = cases.filter(aCase => aCase.application.isBTI && aCase.status == CaseStatus.OPEN)
 
-    val liabilities = cases.filter(aCase =>
-      aCase.application.isLiabilityOrder && aCase.status == CaseStatus.OPEN)
+    val liabilities = cases.filter(aCase => aCase.application.isLiabilityOrder && aCase.status == CaseStatus.OPEN)
 
     ApplicationTabViewModel(
       "applicationTab.assignedToMe",
@@ -72,20 +62,31 @@ object ApplicationsTab {
     )
   }
 
-  def referredByMe = ApplicationTabViewModel(
-    "applicationTab.referredByMe",
-    List(
-      ApplicationsTab.atar(Paged(Seq(btiCaseExample))),
-      ApplicationsTab.liability(),
-      ApplicationsTab.correspondence(),
-      ApplicationsTab.miscellaneous()
+  def referredByMe(cases: Seq[Case], referralEvent: Map[String, ReferralCaseStatusChange]): ApplicationTabViewModel = {
+
+    val referredCases =
+      cases.filter(aCase => aCase.status == CaseStatus.REFERRED || aCase.status == CaseStatus.SUSPENDED)
+
+    val atars: Seq[Case] = referredCases.filter(_.application.isBTI)
+
+    val liabilities = referredCases.filter(_.application.isLiabilityOrder)
+
+
+    ApplicationTabViewModel(
+      "applicationTab.referredByMe",
+      List(
+        ApplicationsTab.atar(Paged(atars), Some(referralEvent)),
+        ApplicationsTab.liability(Paged(liabilities), Some(referralEvent)),
+        ApplicationsTab.correspondence(),
+        ApplicationsTab.miscellaneous()
+      )
     )
-  )
+  }
 
   def completedByMe = ApplicationTabViewModel(
     "applicationTab.completedByMe",
     List(
-      ApplicationsTab.atar(Paged(Seq(btiCaseExample))),
+      ApplicationsTab.atar(),
       ApplicationsTab.liability(),
       ApplicationsTab.correspondence(),
       ApplicationsTab.miscellaneous()
@@ -111,6 +112,3 @@ object ApplicationsTab {
   }
 
 }
-
-
-

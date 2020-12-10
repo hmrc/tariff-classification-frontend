@@ -29,7 +29,7 @@ import views.{CaseDetailPage, ViewSpec}
 
 class CaseNavBTIViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterEach {
 
-  private val application = "Item"
+  private val application = "Goods"
   private val trader      = "Applicant"
   private val sample      = "Sample"
   private val ruling      = "Ruling"
@@ -98,7 +98,7 @@ class CaseNavBTIViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
 
     }
 
-    "Render Application Details" in {
+    "Render Application Details (Goods)" in {
       // Given
       given(`case`.reference) willReturn "ref"
 

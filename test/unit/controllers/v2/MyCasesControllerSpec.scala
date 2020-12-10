@@ -18,33 +18,36 @@ package controllers.v2
 
 import controllers.{ControllerBaseSpec, RequestActionsWithPermissions}
 import models.viewmodels.{AssignedToMeTab, CompletedByMeTab, ReferredByMeTab}
-import models.{Operator, Paged, Pagination, Permission}
+import models.{CaseStatus, Event, NoPagination, Operator, Paged, Pagination, Permission, ReferralCaseStatusChange, ReferralReason}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.`given`
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status
 import play.api.test.Helpers._
-import service.CasesService
+import service.{CasesService, EventsService}
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.Cases
+import utils.{Cases, Events}
 import views.html.v2.my_cases_view
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
+import scala.concurrent.Future.successful
 
 class MyCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   private lazy val my_cases_view = injector.instanceOf[my_cases_view]
 
   private val casesService = mock[CasesService]
+  private val eventService = mock[EventsService]
 
   private def controller(permission: Set[Permission]): MyCasesController = {
     new MyCasesController(
       new RequestActionsWithPermissions(playBodyParsers, permissions = permission),
       casesService,
+      eventService,
       mcc,
-      my_cases_view,
-      realAppConfig
-    )
+      my_cases_view
+    )(realAppConfig, global)
   }
 
   "MyCasesController" should {
@@ -52,6 +55,10 @@ class MyCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
     "return 200 and the correct content when no tab has ben specified" in {
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier])).
         willReturn(Paged(Seq(Cases.aCase(), Cases.aCase())))
+
+      given(eventService.getFilteredEvents(any(), any(), any())(any[HeaderCarrier]))
+        .willReturn(Events.pagedReferredEvents)
+
 
       val result = await(controller(Set(Permission.VIEW_MY_CASES))).displayMyCases()(fakeRequest)
 
@@ -73,6 +80,9 @@ class MyCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier])).
         willReturn(Paged(Seq(Cases.aCase(), Cases.aLiabilityCase().copy(daysElapsed = 35))))
 
+      given(eventService.getFilteredEvents(any(), any(), any())(any[HeaderCarrier]))
+        .willReturn(Events.pagedReferredEvents)
+
       val result = await(controller(Set(Permission.VIEW_MY_CASES)).displayMyCases(AssignedToMeTab)(fakeRequest))
 
       contentType(result) shouldBe Some("text/html")
@@ -84,6 +94,25 @@ class MyCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier])).
         willReturn(Paged(Seq(Cases.aCase(), Cases.aCase().copy(daysElapsed = 35))))
 
+      given(eventService.getFilteredEvents(any(), any(), any())(any[HeaderCarrier]))
+        .willReturn(Events.pagedReferredEvents)
+
+
+      val result = await(controller(Set(Permission.VIEW_MY_CASES)).displayMyCases(ReferredByMeTab)(fakeRequest))
+
+      contentType(result) shouldBe Some("text/html")
+      charset(result) shouldBe Some("utf-8")
+      status(result) shouldBe Status.OK
+    }
+
+    "return 200 OK with the correct subNavigation tab for ReferredByMe without any details for the event" in {
+      given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier])).
+        willReturn(Paged(Seq(Cases.aCase(), Cases.aCase().copy(daysElapsed = 35))))
+
+      given(eventService.getFilteredEvents(any(), any(), any())(any[HeaderCarrier]))
+        .willReturn(Future.successful(Paged.empty[Event]))
+
+
       val result = await(controller(Set(Permission.VIEW_MY_CASES)).displayMyCases(ReferredByMeTab)(fakeRequest))
 
       contentType(result) shouldBe Some("text/html")
@@ -94,6 +123,9 @@ class MyCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
     "return 200 OK with the correct subNavigation tab for CompletedByMe" in {
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier])).
         willReturn(Paged(Seq(Cases.aCase(), Cases.liabilityLiveCaseExample)))
+
+      given(eventService.getFilteredEvents(any(), any(), any())(any[HeaderCarrier]))
+        .willReturn(Events.pagedReferredEvents)
 
       val result = await(controller(Set(Permission.VIEW_MY_CASES)).displayMyCases(CompletedByMeTab)(fakeRequest))
 

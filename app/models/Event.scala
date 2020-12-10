@@ -35,6 +35,10 @@ case class Event(
   timestamp: Instant = Instant.now()
 )
 
+object Event {
+  val latestFirst: Ordering[Instant] = Ordering.fromLessThan(_ isAfter _)
+}
+
 sealed trait Details {
   val `type`: EventType
 }

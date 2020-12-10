@@ -19,29 +19,32 @@ package views.components
 import views.ViewSpec
 import views.html.components.cases_cards
 
-class CaseCardsViewSpec extends ViewSpec{
+class CaseCardsViewSpec extends ViewSpec {
 
-  def casesCards(countCases: Map[String, Int]) = cases_cards(countCases)
+  def casesCards(countCases: Map[String, Int]) = cases_cards(countCases, 0)
 
+  "Case cards" should {
 
+    "display the number of cases on My Cases tile when plural" in {
 
-  "Case cards" should {}
+      val countCases = Map("my-cases" -> 2)
 
-  "display the number of cases on My Cases tile when plural" in {
+      val doc = view(casesCards(countCases))
 
-    val countCases = Map("my-cases" -> 2)
+      doc.getElementById("my-cases-id").text() should include(
+        messages("operator.dashboard.classification.my-cases.progress.plural", 2)
+      )
 
-    val doc = view(casesCards(countCases))
+    }
 
-    doc.getElementById("my-cases-id").text() should include(messages("operator.dashboard.classification.my-cases.progress.plural", 2))
+    "display the number of cases on My Cases tile when singular" in {
+      val countCases = Map("my-cases" -> 1)
 
-  }
+      val doc = view(casesCards(countCases))
 
-  "display the number of cases on My Cases tile when singular" in {
-    val countCases = Map("my-cases" -> 1)
-
-    val doc = view(casesCards(countCases))
-
-    doc.getElementById("my-cases-id").text() should include(messages("operator.dashboard.classification.my-cases.progress.singular", 1))
+      doc.getElementById("my-cases-id").text() should include(
+        messages("operator.dashboard.classification.my-cases.progress.singular", 1)
+      )
+    }
   }
 }
