@@ -68,9 +68,7 @@ class AuthenticatedAction @Inject() (
 
     authorised(predicate).retrieve(Retrievals.credentials and Retrievals.name and Retrievals.allEnrolments) {
       case Some(credentials) ~ name ~ roles =>
-        logger.info(
-          s"User Authenticated with id [${credentials.providerId}], roles [${roles.enrolments.map(_.key).mkString(",")}]"
-        )
+
         val id = credentials.providerId
         val role = roles.enrolments.map(_.key) match {
           case e if e.contains(managerEnrolment) => Role.CLASSIFICATION_MANAGER
