@@ -30,9 +30,12 @@
 
     @tab_heading("attachments", messages("case.menu.attachments"))
 
+    <h3 class="heading-medium mt-30 mb-30">@messages("page.title.case.attachments")</h3>
+
     @attachments_state_message(attachments = filesFromApplicant ++ filesFromClassification)
 
     @attachments_list_atar("classification-team", filesFromApplicant ++ filesFromClassification, showUploadedBy = true, showSelect = false, showRemoval = true, Some(c.reference), startAtTabIndex = Some(startAtTabIndex+31))
+
 
     @if(request.hasPermission(Permission.ADD_ATTACHMENT)) {
         @helpers.form(action = AttachmentsController.uploadAttachment(c.reference),
@@ -40,7 +43,7 @@
             'id -> "upload-files-form") {
 
             <div id="file-upload-heading">
-                <h3 class="heading-medium mt-30 mb-30" >@messages("upload.files.title")</h3>
+                <h3 class="heading-medium mt-30 mb-30">@messages("upload.files.title")</h3>
             </div>
 
             <div class="form-group">
