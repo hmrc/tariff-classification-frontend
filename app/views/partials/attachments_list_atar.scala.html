@@ -62,15 +62,15 @@
                             </td>
 
                             <td id="@{id}-row-@{index}-attachment-status" class="w-15">
-                                <span class="visuallyhidden">attachment-status</span>
+                                <span class="visually-hidden">attachment-status</span>
                                 @if(file.public){
-                                    <span id="@id" class="govuk-tag govuk-tag--green">PUBLISHED</span>
+                                    <span id="@id" class="govuk-tag govuk-tag--green">@messages("case.attachment.upload.status-published")</span>
                                 }
                                 @if(!file.public) {
-                                    <span id="@id" class="govuk-tag govuk-tag--yellow">CONFIDENTIAL</span>
+                                    <span id="@id" class="govuk-tag govuk-tag--yellow">@messages("case.attachment.upload.status-confidential")</span>
                                 }
                                 @if(file.scanStatus.contains(ScanStatus.FAILED)){
-                                    <span id="@id" class="govuk-tag govuk-tag--red">Upload Failed</span>
+                                    <span id="@id" class="govuk-tag govuk-tag--red">@messages("case.attachment.upload.status-failed")</span>
 
                                 }
                             </td>

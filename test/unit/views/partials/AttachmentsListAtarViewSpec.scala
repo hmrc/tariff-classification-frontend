@@ -114,7 +114,7 @@ class AttachmentsListAtarViewSpec extends ViewSpec {
       doc.getElementById("MODULE-row-1-uploaded_by") should containText("name")
     }
 
-    "Render 'uploaded by' with unknown operator name" in {
+    "Render 'Added by' with unknown operator name" in {
       val attachment = Cases.storedAttachment.copy(
         id       = "FILE_ID",
         fileName = "name",
@@ -163,6 +163,42 @@ class AttachmentsListAtarViewSpec extends ViewSpec {
 
       // Then
       doc shouldNot containElementWithID("MODULE-row-0-remove")
+    }
+
+
+    "Status should display PUBLISHED if the file is public" in {
+      val attachment = Cases.storedAttachment
+        .copy(id = "FILE_ID", public = true,  fileName = "name", url = Some("url"), scanStatus = Some(ScanStatus.READY))
+
+      // When
+      val doc = view(attachments_list_atar("MODULE", Seq(attachment), c = Cases.btiCaseExample))
+
+      // Then
+      doc should containText(messages("case.attachment.upload.status-published"))
+    }
+
+    "Status should display CONFIDENTIAL if the file is not public" in {
+      val attachment = Cases.storedAttachment
+        .copy(id = "FILE_ID", public = false,  fileName = "name", url = Some("url"), scanStatus = Some(ScanStatus.READY))
+
+      // When
+      val doc = view(attachments_list_atar("MODULE", Seq(attachment), c = Cases.btiCaseExample))
+
+      // Then
+      doc should containText(messages("case.attachment.upload.status-confidential"))
+
+    }
+
+    "Status should display UPLOAD FAILED if the file is a virus" in {
+      val attachment = Cases.storedAttachment
+        .copy(id = "FILE_ID", public = false,  fileName = "name", url = Some("url"), scanStatus = Some(ScanStatus.FAILED))
+
+      // When
+      val doc = view(attachments_list_atar("MODULE", Seq(attachment), c = Cases.btiCaseExample))
+
+      // Then
+      doc should containText(messages("case.attachment.upload.status-failed"))
+
     }
 
   }
