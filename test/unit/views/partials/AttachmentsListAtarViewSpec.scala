@@ -31,7 +31,7 @@ class AttachmentsListAtarViewSpec extends ViewSpec {
 
     "Render Nothing given no attachments" in {
       // When
-      val doc = view(attachments_list_atar("MODULE", Seq.empty, c = Cases.aCaseWithCompleteDecision))
+      val doc = view(attachments_list_atar("MODULE", Seq.empty, c = Cases.btiCaseExample))
 
       // Then
       doc shouldNot containElementWithID("MODULE-table")
@@ -48,15 +48,13 @@ class AttachmentsListAtarViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(attachments_list_atar("MODULE", Seq(attachment), c = Cases.aCaseWithCompleteDecision))
+      val doc = view(attachments_list_atar("MODULE", Seq(attachment), c = Cases.btiCaseExample))
 
       // Then
       doc                                      should containElementWithID("MODULE-table")
       doc                                      should containElementWithID("MODULE-row-0")
       doc                                      should containElementWithID("MODULE-row-0-title")
-      doc                                      should containElementWithID("MODULE-row-0-date")
       doc.getElementById("MODULE-row-0-title") should containText("name")
-      doc.getElementById("MODULE-row-0-date")  should containText("01 Jan 2019")
     }
 
     "Hide 'uploaded by'" in {
@@ -64,14 +62,14 @@ class AttachmentsListAtarViewSpec extends ViewSpec {
         .copy(id = "FILE_ID", fileName = "name", url = Some("url"), scanStatus = Some(ScanStatus.READY))
 
       // When
-      val doc = view(attachments_list_atar("MODULE", Seq(attachment), c = Cases.aCaseWithCompleteDecision))
+      val doc = view(attachments_list_atar("MODULE", Seq(attachment), c = Cases.btiCaseExample))
 
       // Then
       doc shouldNot containElementWithID("MODULE-header-uploaded_by")
       doc shouldNot containElementWithID("MODULE-row-FILE_ID-uploaded_by")
     }
 
-    "Render 'uploaded by'" in {
+    "Render 'Added by'" in {
       val attachment = Cases.storedAttachment.copy(
         id       = "FILE_ID",
         fileName = "name",
@@ -79,7 +77,7 @@ class AttachmentsListAtarViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(attachments_list_atar("MODULE", Seq(attachment), showUploadedBy = true, c = Cases.aCaseWithCompleteDecision))
+      val doc = view(attachments_list_atar("MODULE", Seq(attachment), showUploadedBy = true, c = Cases.btiCaseExample))
 
       // Then
       doc                                            should containElementWithID("MODULE-header-uploaded_by")
@@ -87,20 +85,33 @@ class AttachmentsListAtarViewSpec extends ViewSpec {
       doc.getElementById("MODULE-row-0-uploaded_by") should containText("operator name")
     }
 
-    "Render 'uploaded by' with unknown operator" in {
+    "Render 'Added by' with unknown operator and with the applicant name" in {
       val attachment = Cases.storedAttachment.copy(
         id       = "FILE_ID",
-        fileName = "name",
+        fileName = "fileName_attachment",
         operator = None
       )
 
+      val attachment_trader = Cases.storedAttachment.copy(
+        id       = "FILE_ID",
+        fileName = "fileName"
+      )
+
       // When
-      val doc = view(attachments_list_atar("MODULE", Seq(attachment), showUploadedBy = true, c = Cases.aCaseWithCompleteDecision))
+      val doc = view(
+        attachments_list_atar(
+          "MODULE",
+          Seq(attachment, attachment_trader),
+          showUploadedBy = true,
+          c              = Cases.btiCaseExample
+        )
+      )
 
       // Then
       doc                                            should containElementWithID("MODULE-header-uploaded_by")
       doc                                            should containElementWithID("MODULE-row-0-uploaded_by")
-      doc.getElementById("MODULE-row-0-uploaded_by") should containText("Unknown")
+      doc.getElementById("MODULE-row-0-uploaded_by") should containText("")
+      doc.getElementById("MODULE-row-1-uploaded_by") should containText("name")
     }
 
     "Render 'uploaded by' with unknown operator name" in {
@@ -111,15 +122,16 @@ class AttachmentsListAtarViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(attachments_list_atar("MODULE", Seq(attachment), showUploadedBy = true, c = Cases.aCaseWithCompleteDecision))
+      val doc = view(attachments_list_atar("MODULE", Seq(attachment), showUploadedBy = true, c = Cases.btiCaseExample))
 
       // Then
       doc                                            should containElementWithID("MODULE-header-uploaded_by")
       doc                                            should containElementWithID("MODULE-row-0-uploaded_by")
       doc.getElementById("MODULE-row-0-uploaded_by") should containText("Unknown")
+
     }
 
-    "Render show remove link when user has permission " in {
+    "Render show edit details link when user has permission " in {
       val attachment = Cases.storedAttachment.copy(
         id       = "FILE_ID",
         fileName = "name",
@@ -128,18 +140,18 @@ class AttachmentsListAtarViewSpec extends ViewSpec {
 
       // When
       val doc = view(
-        attachments_list_atar("MODULE", Seq(attachment), showRemoval = true, c = Cases.aCaseWithCompleteDecision)(
-          requestWithPermissions(Permission.REMOVE_ATTACHMENTS),
+        attachments_list_atar("MODULE", Seq(attachment), showRemoval = true, c = Cases.btiCaseExample)(
+          requestWithPermissions(Permission.EDIT_ATTACHMENT_DETAIL),
           messages
         )
       )
 
       // Then
-      doc                                       should containElementWithID("MODULE-row-0-remove")
-      doc.getElementById("MODULE-row-0-remove") should containText("Remove")
+      doc                                                        should containElementWithID("MODULE-row-0-edit-attachment-details")
+      doc.getElementById("MODULE-row-0-edit-attachment-details") should containText("Edit details")
     }
 
-    "Do not render show remove link when user does not have permission " in {
+    "Do not render show edit details link when user does not have permission " in {
       val attachment = Cases.storedAttachment.copy(
         id       = "FILE_ID",
         fileName = "name",
@@ -147,7 +159,7 @@ class AttachmentsListAtarViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(attachments_list_atar("MODULE", Seq(attachment), showRemoval = true, c = Cases.aCaseWithCompleteDecision))
+      val doc = view(attachments_list_atar("MODULE", Seq(attachment), showRemoval = true, c = Cases.btiCaseExample))
 
       // Then
       doc shouldNot containElementWithID("MODULE-row-0-remove")

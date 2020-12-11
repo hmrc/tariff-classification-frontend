@@ -18,7 +18,7 @@
 @import models.Permission
 @import controllers.routes.AttachmentsController
 @import models.StoredAttachment
-@import views.html.partials.attachment
+@import views.html.partials.attachment_atar
 @import models.Case
 @import models.response.ScanStatus
 
@@ -41,7 +41,7 @@
             <tbody>
                     @for((file: StoredAttachment, index: Int) <- attachments.zipWithIndex) {
                         <tr id="@{id}-row-@{index}">
-                            <td id="@{id}-row-@{index}-title" >
+                            <td id="@{id}-row-@{index}-title">
                                 @attachment_atar(s"$id-row-$index", file, useTabIndex = startAtTabIndex.map(x => x+1+(0*index)))
                             </td>
 
@@ -61,46 +61,26 @@
                                 }
                             </td>
 
-<!--                            @if(showSelect) {-->
-<!--                                <td>-->
-<!--                                    <div class="form-group">-->
-<!--                                        <fieldset>-->
-<!--                                            <div class="multiple-choice">-->
-
-<!--                                                <input @if(startAtTabIndex.isDefined){tabindex="@{startAtTabIndex.get+1+(1*index)}"}-->
-<!--                                                        id="attachments[@{index}]"-->
-<!--                                                        name="attachments[@{index}]"-->
-<!--                                                        type="checkbox"-->
-<!--                                                        value="@file.id"-->
-<!--                                                        aria-label="publish @file.fileName on GOV.UK"-->
-<!--                                                        @if(file.public) {checked="checked"}/>-->
-
-<!--                                                <label for="attachments[@{index}]"></label>-->
-<!--                                            </div>-->
-<!--                                        </fieldset>-->
-<!--                                    </div>-->
-<!--                                </td>-->
-
-<!--                            }-->
-
                             <td id="@{id}-row-@{index}-attachment-status" class="w-15">
+                                <span class="visuallyhidden">attachment-status</span>
                                 @if(file.public){
-                                    PUBLISHED
+                                    <span id="@id" class="govuk-tag govuk-tag--green">PUBLISHED</span>
                                 }
                                 @if(!file.public) {
-                                  CONFIDENTIAL
+                                    <span id="@id" class="govuk-tag govuk-tag--yellow">CONFIDENTIAL</span>
                                 }
                                 @if(file.scanStatus.contains(ScanStatus.FAILED)){
-                                    Upload Failed
+                                    <span id="@id" class="govuk-tag govuk-tag--red">Upload Failed</span>
+
                                 }
                             </td>
 
-                            @if(showRemoval &&
-                                request.hasPermission(Permission.REMOVE_ATTACHMENTS)) {
-                                <td id="@{id}-row-@{index}-remove">
-                                    <a @if(startAtTabIndex.isDefined){tabindex="@{startAtTabIndex.get+2+(2*index)}"} id="@{id}-row-@{index}-remove-link" href="@AttachmentsController.removeAttachment(c.reference, file.id, file.fileName)">
-                                        <span>@messages("case.attachment.remove.file.text")</span>
-                                        <span class="visually-hidden">@messages("case.attachment.remove.file.hidden.text",file.fileName)</span>
+                            @if(request.hasPermission(Permission.EDIT_ATTACHMENT_DETAIL)) {
+                                <td id="@{id}-row-@{index}-edit-attachment-details">
+                                    @*                                    TODO href*@
+                                    <a id="@{id}-row-@{index}-edit-attachment-link" href="#">
+                                        <span>@messages("case.attachment.edit.file.text")</span>
+                                        <span class="visually-hidden">@messages("case.attachment.edit.file.hidden.text",file.fileName)</span>
                                     </a>
                                 </td>
                             }
