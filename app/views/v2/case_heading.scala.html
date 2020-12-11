@@ -26,10 +26,16 @@
 )(implicit messages: Messages)
 
 @phaseTagColor = @{
-    if(caseHeaderViewModel.caseStatus == "CANCELLED" || caseHeaderViewModel.caseStatus == "COMPLETED") {
-        "bg-gray--dark"
+    if(caseHeaderViewModel.caseStatus == "CANCELLED"){
+        "govuk-tag govuk-tag--red"
+    }
+    if(caseHeaderViewModel.caseStatus == "COMPLETED") {
+        "govuk-tag govuk-tag--green"
+    }
+    if(caseHeaderViewModel.caseStatus == "REFERRED") {
+        "govuk-tag govuk-tag--yellow"
     } else {
-        "bg-blue"
+        "govuk-tag govuk-tag--blue"
     }
 }
 
@@ -44,7 +50,7 @@
 
         @if(caseHeaderViewModel.isLive) {
             <span class="visuallyhidden">liability type</span>
-            <span id = "case-status-liability-status" class="live-red-text">LIVE</span>
+            <span id = "case-status-liability-status" class="govuk-tag govuk-tag--pink">LIVE</span>
         }
 
         <span class="visuallyhidden">case status</span>
