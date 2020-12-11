@@ -19,12 +19,12 @@ package models.response
 import models.response.ScanStatus.ScanStatus
 
 case class FileMetadata(
-  id: String,
-  fileName: String,
-  mimeType: String,
-  url: Option[String]            = None,
-  scanStatus: Option[ScanStatus] = None
-)
+                         id: String,
+                         fileName: String,
+                         mimeType: String,
+                         url: Option[String]            = None,
+                         scanStatus: Option[ScanStatus] = None
+                       )
 
 object ScanStatus extends Enumeration {
   type ScanStatus = Value

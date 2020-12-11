@@ -20,28 +20,29 @@
 @import models.StoredAttachment
 @import views.html.partials.attachment
 @import models.Case
+@import models.response.ScanStatus
+
 
 @(id: String, attachments: Seq[StoredAttachment], showUploadedBy: Boolean = false, showSelect: Boolean = false,
         showRemoval: Boolean = false, c: Case, startAtTabIndex : Option[Int] = None)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 
-    @if(attachments.nonEmpty){
+@if(attachments.nonEmpty){
         <table id="@{id}-table">
             <thead>
                 <tr>
                     <th scope="col">File name</th>
                     @if(showUploadedBy) {<th id="@{id}-header-uploaded_by" scope="col">Added by</th>}
-                    @if(showSelect) {<th id="@{id}-header-select" scope="col">Publish</th>}
                     <th class="attachment-details" scope="col">Details</th>
                     <th class="attachment-status" scope="col">Status</th>
-                    <th><span class="visuallyhidden">attachment action</span></th>
+                    <th><span class="visually-hidden">attachment action</span></th>
                 </tr>
             </thead>
             <tbody>
                     @for((file: StoredAttachment, index: Int) <- attachments.zipWithIndex) {
                         <tr id="@{id}-row-@{index}">
                             <td id="@{id}-row-@{index}-title" >
-                                @attachment(s"$id-row-$index", file, useTabIndex = startAtTabIndex.map(x => x+1+(0*index)))
+                                @attachment_atar(s"$id-row-$index", file, useTabIndex = startAtTabIndex.map(x => x+1+(0*index)))
                             </td>
 
                             @if(showUploadedBy) {
@@ -54,32 +55,43 @@
                                 </td>
                             }
 
-                            @if(showSelect) {
-                                <td>
-                                    <div class="form-group">
-                                        <fieldset>
-                                            <div class="multiple-choice">
+                            <td id="@{id}-row-@{index}-attachment-details" class="w-15">
+                                @if(file.description.isDefined) {
+                                     @file.description
+                                }
+                            </td>
 
-                                                <input @if(startAtTabIndex.isDefined){tabindex="@{startAtTabIndex.get+1+(1*index)}"}
-                                                        id="attachments[@{index}]"
-                                                        name="attachments[@{index}]"
-                                                        type="checkbox"
-                                                        value="@file.id"
-                                                        aria-label="publish @file.fileName on GOV.UK"
-                                                        @if(file.public) {checked="checked"}/>
+<!--                            @if(showSelect) {-->
+<!--                                <td>-->
+<!--                                    <div class="form-group">-->
+<!--                                        <fieldset>-->
+<!--                                            <div class="multiple-choice">-->
 
-                                                <label for="attachments[@{index}]"></label>
-                                            </div>
-                                        </fieldset>
-                                    </div>
-                                </td>
+<!--                                                <input @if(startAtTabIndex.isDefined){tabindex="@{startAtTabIndex.get+1+(1*index)}"}-->
+<!--                                                        id="attachments[@{index}]"-->
+<!--                                                        name="attachments[@{index}]"-->
+<!--                                                        type="checkbox"-->
+<!--                                                        value="@file.id"-->
+<!--                                                        aria-label="publish @file.fileName on GOV.UK"-->
+<!--                                                        @if(file.public) {checked="checked"}/>-->
 
-                            }
+<!--                                                <label for="attachments[@{index}]"></label>-->
+<!--                                            </div>-->
+<!--                                        </fieldset>-->
+<!--                                    </div>-->
+<!--                                </td>-->
+
+<!--                            }-->
 
                             <td id="@{id}-row-@{index}-attachment-status" class="w-15">
-                                @file.scanStatus
-                                @if(file.public) {
+                                @if(file.public){
+                                    PUBLISHED
+                                }
+                                @if(!file.public) {
                                   CONFIDENTIAL
+                                }
+                                @if(file.scanStatus.contains(ScanStatus.FAILED)){
+                                    Upload Failed
                                 }
                             </td>
 
