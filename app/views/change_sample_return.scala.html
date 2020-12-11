@@ -20,12 +20,12 @@
 @import views.html.includes.main
 @import views.html.partials.{case_heading, error_summary, back_link}
 @import models.SampleReturn.SampleReturn
-@import models.viewmodels.MyCasesTab
+@import models.viewmodels.NoTabSelected
 
 @(c: Case, form: Form[Option[SampleReturn]])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("page.title.change.sample.return")),
-    customPrimaryNavTab = MyCasesTab) {
+    customPrimaryNavTab = NoTabSelected) {
 
     @back_link()
 

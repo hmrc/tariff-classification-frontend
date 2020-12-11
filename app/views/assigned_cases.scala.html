@@ -20,12 +20,13 @@
 @import views.html.includes.main
 @import views.html.partials._
 @import views.{AssignedCases, AssigneeCount}
-@import models.viewmodels.MyCasesTab
+@import models.viewmodels.NoTabSelected
 
-@(queues: Seq[Queue], cases: Seq[Case], assigneeId: Option[String], caseCountByQueue: Map[String, Int], startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(queues: Seq[Queue], cases: Seq[Case], assigneeId: Option[String], caseCountByQueue: Map[String, Int],
+        startAtTabIndex: Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None,
-    customTitle = Some(messages("page.title.case.queues.assigned-cases")), customPrimaryNavTab = MyCasesTab) {
+    customTitle = Some(messages("page.title.case.queues.assigned-cases")), customPrimaryNavTab = NoTabSelected) {
 
     <h1 id="queue-name" class="heading-xlarge">@messages("cases.heading.assigned-cases")</h1>
 

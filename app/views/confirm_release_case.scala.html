@@ -18,12 +18,12 @@
 @import models.Case
 @import views.html.includes.main
 @import views.html.partials._
-@import models.viewmodels.MyCasesTab
+@import models.viewmodels.NoTabSelected
 
 @(c: Case, queueName: String)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("page.title.case.released")),
-    customPrimaryNavTab = MyCasesTab) {
+    customPrimaryNavTab = NoTabSelected) {
 
     @back_link()
 

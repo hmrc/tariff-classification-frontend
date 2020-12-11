@@ -27,12 +27,12 @@
 @import controllers.routes.ReopenCaseController
 @import views.html.partials._
 @import controllers.ActiveTab
-@import models.viewmodels.MyCasesTab
+@import models.viewmodels.NoTabSelected
 
 @(c: Case, page: CaseDetailPage, view: Html, activeTab: Option[ActiveTab] = None)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None,
-    customTitle = Some(messages(s"page.title.${page.toString}")), customPrimaryNavTab = MyCasesTab) {
+    customTitle = Some(messages(s"page.title.${page.toString}")), customPrimaryNavTab = NoTabSelected) {
 
     @case_heading(c)
 

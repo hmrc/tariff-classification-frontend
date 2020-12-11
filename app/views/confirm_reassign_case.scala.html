@@ -20,7 +20,7 @@
 @import models.request.AuthenticatedRequest
 @import views.html.includes.main
 @import views.html.partials._
-@import models.viewmodels.MyCasesTab
+@import models.viewmodels.NoTabSelected
 
 @import scala.util.matching.Regex
 
@@ -28,7 +28,7 @@
 
 
 @main(bodyClasses = None, customTitle = Some(messages("page.title.case.moved")),
-    customPrimaryNavTab = MyCasesTab) {
+    customPrimaryNavTab = NoTabSelected) {
 
     @back_link()
 
