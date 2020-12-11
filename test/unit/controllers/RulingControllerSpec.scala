@@ -174,31 +174,23 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       status(result) shouldBe Status.OK
     }
 
-    "redirect to edit ruling page when ruling tab has missing fields that are required to complete a case" in {
+    "load edit ruling page when ruling tab has missing fields that are required to complete a case" in {
       given(commodityCodeConstraints.commodityCodeValid)
         .willReturn(Constraint[String]("error")(_ => Valid))
       val result = controller(Cases.liabilityCaseExample, Set(Permission.EDIT_RULING))
         .validateBeforeComplete("reference")(newFakeGETRequestWithCSRF(app))
 
-         status(result) shouldBe Status.OK
-
-         val expectedUrl =
-           Some(routes.RulingController.validateBeforeComplete(Cases.liabilityCaseExample.reference).url)
-         redirectLocation(result) shouldBe expectedUrl
+      status(result) shouldBe Status.OK
     }
 
-/*    "redirect to edit C592 page when C592 tab has missing fields that are required to complete a case" in {
+    "load edit C592 page when C592 tab has missing fields that are required to complete a case" in {
       given(commodityCodeConstraints.commodityCodeValid)
         .willReturn(Constraint[String]("error")(_ => Valid))
       val result = controller(liabilityCaseWithStatusOpenWithDecision, Set(Permission.EDIT_RULING))
         .validateBeforeComplete("reference")(newFakeGETRequestWithCSRF(app))
 
          status(result) shouldBe Status.OK
-
-         val expectedUrl =
-           Some(routes.RulingController.validateBeforeComplete(liabilityCaseWithStatusWithDecisionAndC592.reference).url)
-         redirectLocation(result) shouldBe expectedUrl
-    }*/
+    }
   }
 
   "Update Ruling" should {

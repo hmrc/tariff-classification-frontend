@@ -100,12 +100,7 @@ class DecisionForm @Inject() (commodityCodeConstraints: CommodityCodeConstraints
       )(liabilityForm2Decision(existingDecision))(decision2LiabilityForm)
     ).fillAndValidate(existingDecision)
 
-  def liabilityCompleteForm(existingDecision: Decision = Decision()): Form[Decision] ={
-
-  println("existing des")
-  println("existing des")
-  println("existing des " + existingDecision)
-  println("existing des")
+  def liabilityCompleteForm(existingDecision: Decision = Decision()): Form[Decision] =
     Form[Decision](
       mapping(
         "bindingCommodityCode" -> nonEmptyText.verifying(commodityCodeConstraints.commodityCodeValid),
@@ -116,7 +111,7 @@ class DecisionForm @Inject() (commodityCodeConstraints: CommodityCodeConstraints
       )(liabilityForm2Decision(existingDecision))(decision2LiabilityForm)
     ).fillAndValidate(existingDecision)
 
-  }
+
   private def liabilityForm2Decision(existingDecision: Decision): (String, String, String, String, String) => Decision = {
     case (code, description, search, justification, exclusion) =>
       existingDecision.copy(
