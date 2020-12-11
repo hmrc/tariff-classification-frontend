@@ -76,12 +76,15 @@ object JsonFormatters {
   implicit val decisionFormat: OFormat[Decision]                         = Json.using[Json.WithDefaultValues].format[Decision]
   implicit val sampleFormat: OFormat[Sample]                             = Json.format[Sample]
   implicit val agentDetailsFormat: OFormat[AgentDetails]                 = Json.format[AgentDetails]
+  implicit val messageLoggedFormat: OFormat[Message]                     = Json.format[Message]
   implicit val liabilityOrderFormat: OFormat[LiabilityOrder]             = Json.format[LiabilityOrder]
+  implicit val correspondenceFormat: OFormat[CorrespondenceApplication]  = Json.format[CorrespondenceApplication]
   implicit val btiApplicationFormat: OFormat[BTIApplication]             = Json.using[Json.WithDefaultValues].format[BTIApplication]
   implicit val applicationFormat: Format[Application] = Union
     .from[Application]("type")
     .and[BTIApplication](ApplicationType.ATAR.name)
     .and[LiabilityOrder](ApplicationType.LIABILITY.name)
+    .and[CorrespondenceApplication](ApplicationType.CORRESPONDENCE.name)
     .format
 
   implicit val caseFormat: OFormat[Case]                         = Json.using[Json.WithDefaultValues].format[Case]

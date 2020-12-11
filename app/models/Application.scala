@@ -30,6 +30,12 @@ sealed trait Application {
   def asLiabilityOrder: LiabilityOrder =
     this.asInstanceOf[LiabilityOrder]
 
+  def asCorrespondence: CorrespondenceApplication =
+    this.asInstanceOf[CorrespondenceApplication]
+
+  def asMisc: MiscApplication =
+    this.asInstanceOf[MiscApplication]
+
   def isBTI: Boolean =
     this.isInstanceOf[BTIApplication]
 
@@ -38,6 +44,12 @@ sealed trait Application {
 
   def isLiveLiabilityOrder: Boolean =
     isLiabilityOrder && asLiabilityOrder.status == LiabilityStatus.LIVE
+
+  def isCorrespondence: Boolean =
+    this.isInstanceOf[CorrespondenceApplication]
+
+  def isMisc: Boolean =
+    this.isInstanceOf[MiscApplication]
 
   def businessName: String =
     `type` match {
@@ -71,6 +83,19 @@ object ApplicationType {
   case object LIABILITY extends ApplicationType("LIABILITY_ORDER")
   case object CORRESPONDENCE extends ApplicationType("CORRESPONDENCE")
   case object MISCELLANEOUS extends ApplicationType("MISCELLANEOUS")
+}
+
+sealed abstract class MiscCaseType(val name: String) extends Product with Serializable
+
+object MiscCaseType{
+  val values = Set(HARMONISED, IB, NOMENCLATURE, OTHER_GOVT_DEP, OTHER)
+  def withName(name: String) = values.find(_.name == name).getOrElse(throw new NoSuchElementException)
+
+  case object HARMONISED extends MiscCaseType("Harmonised systems")
+  case object IB extends MiscCaseType("IB")
+  case object NOMENCLATURE extends MiscCaseType("Nomenclature")
+  case object OTHER_GOVT_DEP extends MiscCaseType("Other government dept")
+  case object OTHER extends MiscCaseType("Other")
 }
 
 case class BTIApplication(
@@ -141,3 +166,42 @@ case class Contact(
   email: String,
   phone: Option[String] = None
 )
+
+case class Message(
+  name: String,
+  date: Instant,
+  message: String
+                  )
+
+
+case class CorrespondenceApplication(
+                          correspondenceStarter: Option[String],
+                          agentName: Option[String],
+                          address: Address,
+                           override val contact: Contact,
+                          fax: Option[String] = None,
+                           offline: Boolean,
+                           summary: String,
+                           detailedDescription: String,
+                           relatedBTIReference: Option[String] = None,
+                           relatedBTIReferences: List[String]  = Nil,
+                           sampleToBeProvided: Boolean,
+                           sampleToBeReturned: Boolean,
+                          messagesLogged: List[Message]  = Nil
+                                    ) extends Application {
+  override val `type`: models.ApplicationType = ApplicationType.CORRESPONDENCE
+}
+
+case class MiscApplication(
+                           override val contact: Contact,
+                           offline: Boolean,
+                           name: String,
+                           contactName: Option[String],
+                           caseType: MiscCaseType,
+                           detailedDescription: Option[String],
+                           sampleToBeProvided: Boolean,
+                           sampleToBeReturned: Boolean,
+                           messagesLogged: List[Message]  = Nil
+                          ) extends Application {
+  override val `type`: models.ApplicationType = ApplicationType.MISCELLANEOUS
+}

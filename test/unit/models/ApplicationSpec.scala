@@ -30,6 +30,14 @@ class ApplicationSpec extends ModelsBaseSpec {
       Cases.btiApplicationExample.getType shouldBe "BTI"
     }
 
+    "convert correspondence type" in {
+      Cases.correspondenceExample.getType shouldBe "Correspondence"
+    }
+
+    "convert misc type" in {
+      Cases.miscExample.getType shouldBe "Misc"
+    }
+
   }
 
   "Application 'Is BTI'" should {
@@ -69,6 +77,30 @@ class ApplicationSpec extends ModelsBaseSpec {
 
   }
 
+  "Application 'Is Correspondence'" should {
+
+    "be truthy for a Correspondence" in {
+      Cases.correspondenceExample.isCorrespondence shouldBe true
+    }
+
+    "be falsy for another type" in {
+      Cases.btiApplicationExample.isCorrespondence shouldBe false
+    }
+
+  }
+
+  "Application 'Is Misc'" should {
+
+    "be truthy for a Misc" in {
+      Cases.miscExample.isMisc shouldBe true
+    }
+
+    "be falsy for another type" in {
+      Cases.btiApplicationExample.isMisc shouldBe false
+    }
+
+  }
+
   "Application 'As BTI'" should {
 
     "cast a BTI" in {
@@ -92,6 +124,32 @@ class ApplicationSpec extends ModelsBaseSpec {
     "fail to case another type" in {
       assertThrows[RuntimeException] {
         Cases.btiApplicationExample.asLiabilityOrder
+      }
+    }
+
+    "Application 'As Correspondence'" should {
+
+      "cast a Correspondence" in {
+        Cases.correspondenceExample.asCorrespondence shouldBe a[CorrespondenceApplication]
+      }
+
+      "fail to case another type" in {
+        assertThrows[RuntimeException] {
+          Cases.btiApplicationExample.asCorrespondence
+        }
+      }
+    }
+
+    "Application 'As Misc'" should {
+
+      "cast a Misc" in {
+        Cases.miscExample.asMisc shouldBe a[MiscApplication]
+      }
+
+      "fail to case another type" in {
+        assertThrows[RuntimeException] {
+          Cases.btiApplicationExample.asMisc
+        }
       }
     }
 
