@@ -103,10 +103,10 @@ class DecisionForm @Inject() (commodityCodeConstraints: CommodityCodeConstraints
   def liabilityCompleteForm(existingDecision: Decision = Decision()): Form[Decision] =
     Form[Decision](
       mapping(
-        "bindingCommodityCode" -> nonEmptyText.verifying(commodityCodeConstraints.commodityCodeValid),
-        "goodsDescription"     -> nonEmptyText,
-        "methodSearch"         -> nonEmptyText,
-        "justification"        -> nonEmptyText,
+        "bindingCommodityCode" -> text.verifying(customNonEmpty("Enter a commodity code")).verifying(commodityCodeConstraints.commodityCodeValid),
+        "goodsDescription"     -> text.verifying(customNonEmpty("Enter a goods description")),
+        "methodSearch"         -> text.verifying(customNonEmpty("Enter the searches performed")),
+        "justification"        -> text.verifying(customNonEmpty("Enter the justification")),
         "methodExclusion"      -> text
       )(liabilityForm2Decision(existingDecision))(decision2LiabilityForm)
     ).fillAndValidate(existingDecision)

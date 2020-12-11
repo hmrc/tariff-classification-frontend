@@ -290,11 +290,12 @@ object LiabilityDetailsForm extends Constraints {
             .verifying(
               dateLowerBound("case.liability.error.entry-date.year.lower.bound", appConfig.entryDateYearLowerBound)
             )
-        ).verifying("error.required", _.isDefined),
+        ).verifying("Enter an entry date", _.isDefined),
         "traderName" -> textNonEmpty("case.liability.error.empty.trader-name"),
         //TODO find what need to validate
         //TODO not emptyOr but it is required need to change as part of other ticket
-        "traderEmail"             -> optional(nonEmptyText.verifying(emptyOr(validEmail("case.liability.error.trader.email")): _*)),
+        "traderEmail"             -> optional(text.verifying(customNonEmpty("Enter a trader email"))
+          .verifying(emptyOr(validEmail("case.liability.error.trader.email")): _*)),
         "traderPhone"             -> optional(text),
         "traderBuildingAndStreet" -> optional(text),
         "traderTownOrCity"        -> optional(text),
@@ -315,16 +316,17 @@ object LiabilityDetailsForm extends Constraints {
               )
             )
         ),
-        "goodName"             -> optional(nonEmptyText).verifying("error.required", _.isDefined),
-        "entryNumber"          -> optional(nonEmptyText).verifying("error.required", _.isDefined),
-        "traderCommodityCode"  -> optional(nonEmptyText).verifying("error.required", _.isDefined),
-        "officerCommodityCode" -> optional(nonEmptyText).verifying("error.required", _.isDefined),
-        "contactName"          -> optional(nonEmptyText),
+        "goodName"             -> optional(nonEmptyText).verifying("Enter the goods name", _.isDefined),
+        "entryNumber"          -> optional(nonEmptyText).verifying("Enter an entry number", _.isDefined),
+        "traderCommodityCode"  -> optional(nonEmptyText).verifying("Enter the commodity code from the trader", _.isDefined),
+        "officerCommodityCode" -> optional(nonEmptyText).verifying("Enter the code suggested by the officer", _.isDefined),
+        "contactName"          -> optional(nonEmptyText).verifying("Enter a name", _.isDefined),
         //TODO not emptyOr but it is required need to change as part of other ticket
         "contactEmail" -> optional(
-          nonEmptyText.verifying(emptyOr(validEmail("case.liability.error.contact.email")): _*)
+          text.verifying(customNonEmpty("Enter a contact email"))
+            .verifying(emptyOr(validEmail("case.liability.error.contact.email")): _*)
         ),
-        "contactPhone" -> optional(text).verifying("error.required", _.isDefined),
+        "contactPhone" -> optional(text).verifying("Enter a contact telephone", _.isDefined),
         "dvrNumber" -> optional(
           text.verifying(dvrNumberIsNumberOnly())
         ),
@@ -339,7 +341,7 @@ object LiabilityDetailsForm extends Constraints {
               )
             )
         ).verifying(
-          "error.required",
+          "Enter a real date, for example 11/12/2020",
           f => {
             if(existingLiability.application.asLiabilityOrder.repaymentClaim.isDefined) f.isDefined
             else true
