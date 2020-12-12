@@ -64,7 +64,6 @@
       <td id="@{correspondenceTab.tabMessageKey}-elapsed-days-@index">@{result.daysElapsed}</td>
       @if(assignmentType == "applicationTab.referredByMe") {
       <td id="@{correspondenceTab.tabMessageKey}-refer-days-@index">@{result.referredDaysElapsed}</td>
-      <td id="@{correspondenceTab.tabMessageKey}-type-@index"> </td>
       <td id="@{correspondenceTab.tabMessageKey}-status-@index">
        @case_status_tab(result, s"${correspondenceTab.tabMessageKey}-status-label-$index")
        @for(referralEvent <- correspondenceTab.referralEvent.flatMap(_.get(result.reference))) {

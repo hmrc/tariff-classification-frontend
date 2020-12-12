@@ -43,7 +43,9 @@ object ApplicationsTab {
     referralEvent: Option[Map[String, ReferralCaseStatusChange]] = None
   ) =
     ApplicationsTab("applicationTab.liability", ApplicationType.LIABILITY, "liability_tab", searchResult, referralEvent)
-  def correspondence(searchResult: Paged[Case] = Paged.empty) =
+  def correspondence(searchResult: Paged[Case] = Paged.empty,
+    referralEvent: Option[Map[String, ReferralCaseStatusChange]] = None
+  ) =
     ApplicationsTab("applicationTab.correspondence", ApplicationType.CORRESPONDENCE, "correspondence_tab", searchResult)
   def miscellaneous(searchResult: Paged[Case] = Paged.empty) =
     ApplicationsTab("applicationTab.miscellaneous", ApplicationType.MISCELLANEOUS, "miscellaneous_tab", searchResult)
@@ -80,7 +82,7 @@ object ApplicationsTab {
       List(
         ApplicationsTab.atar(Paged(atars), Some(referralEvent)),
         ApplicationsTab.liability(Paged(liabilities), Some(referralEvent)),
-        ApplicationsTab.correspondence(),
+        ApplicationsTab.correspondence(Paged(Seq(corrCaseExample)), Some(referralEvent)),
         ApplicationsTab.miscellaneous()
       )
     )
@@ -95,7 +97,7 @@ object ApplicationsTab {
       ApplicationsTab.miscellaneous()
     )
   )
-//tODO remove dummy corr stub
+//TODO remove dummy corr stub
   def gateway(cases: Seq[Case]) = {
     val atars = cases.filter(aCase =>
       aCase.application.isBTI && aCase.status == CaseStatus.NEW)

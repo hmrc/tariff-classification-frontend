@@ -53,22 +53,39 @@ class AllOpenCasesControllerSpec extends ControllerBaseSpec {
   )
 
   override protected def beforeEach(): Unit = {
-    given(casesService.getCasesByAllQueues(any[Seq[Queue]], any[Pagination], any[Seq[ApplicationType]])(any[HeaderCarrier]))
-      .willReturn(Paged(
-        Seq(
-          Cases.aCase(),
-          Cases.aLiabilityCase().copy(queueId = Some("3")),
-          Cases.aLiabilityCase().copy(daysElapsed = 35, queueId = Some("3")),
-          Cases.liabilityLiveCaseExample.copy(queueId = Some("3")),
-          Cases.liabilityLiveCaseExample.copy(daysElapsed = 6, queueId = Some("3")))
-        )
-      )
     given(queuesService.getNonGateway).willReturn(Future.successful(queues))
   }
 
   "Open cases" should {
 
     "return 200 OK and HTML content type" in {
+      given(casesService.getCasesByAllQueues(any[Seq[Queue]], any[Pagination], any[Seq[ApplicationType]])(any[HeaderCarrier]))
+        .willReturn(Paged(
+          Seq(
+            Cases.aCase(),
+            Cases.aLiabilityCase().copy(queueId = Some("3")),
+            Cases.aLiabilityCase().copy(daysElapsed = 35, queueId = Some("3")),
+            Cases.liabilityLiveCaseExample.copy(queueId = Some("3")),
+            Cases.liabilityLiveCaseExample.copy(daysElapsed = 6, queueId = Some("3")))
+        )
+        )
+      val result = await(controller(Set(Permission.VIEW_CASES)).displayAllOpenCases(ATaRTab)(fakeRequest))
+      status(result) shouldBe Status.OK
+      contentType(result) shouldBe Some("text/html")
+      charset(result) shouldBe Some("utf-8")
+
+    }
+    "return 200 OK and HTML content type for ATaR tab" in {
+      given(casesService.getCasesByAllQueues(any[Seq[Queue]], any[Pagination], any[Seq[ApplicationType]])(any[HeaderCarrier]))
+        .willReturn(Paged(
+          Seq(
+            Cases.aCase(),
+            Cases.btiCaseExample.copy(queueId = Some("2")),
+            Cases.btiCaseExample.copy(queueId = Some("1")),
+            Cases.btiCaseExample.copy(queueId = Some("3")),
+            Cases.simpleCaseExample.copy(queueId = Some("3"))
+        ))
+        )
       val result = await(controller(Set(Permission.VIEW_CASES)).displayAllOpenCases(ATaRTab)(fakeRequest))
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -84,6 +101,16 @@ class AllOpenCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "return 200 OK and HTML content type for Liability tab" in {
+      given(casesService.getCasesByAllQueues(any[Seq[Queue]], any[Pagination], any[Seq[ApplicationType]])(any[HeaderCarrier]))
+        .willReturn(Paged(
+          Seq(
+            Cases.aCase(),
+            Cases.aLiabilityCase().copy(queueId = Some("3")),
+            Cases.aLiabilityCase().copy(daysElapsed = 35, queueId = Some("3")),
+            Cases.liabilityLiveCaseExample.copy(queueId = Some("3")),
+            Cases.liabilityLiveCaseExample.copy(daysElapsed = 6, queueId = Some("3")))
+        )
+        )
       val result = await(controller(Set(Permission.VIEW_CASES)).displayAllOpenCases(LiabilitiesTab)(fakeRequest))
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -91,6 +118,16 @@ class AllOpenCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "return 200 OK and HTML content type for Correspondence tab" in {
+      given(casesService.getCasesByAllQueues(any[Seq[Queue]], any[Pagination], any[Seq[ApplicationType]])(any[HeaderCarrier]))
+        .willReturn(Paged(
+          Seq(
+            Cases.aCase(),
+            Cases.aLiabilityCase().copy(queueId = Some("3")),
+            Cases.aLiabilityCase().copy(daysElapsed = 35, queueId = Some("3")),
+            Cases.liabilityLiveCaseExample.copy(queueId = Some("3")),
+            Cases.liabilityLiveCaseExample.copy(daysElapsed = 6, queueId = Some("3")))
+        )
+        )
       val result = await(controller(Set(Permission.VIEW_CASES)).displayAllOpenCases(CorrespondenceTab)(fakeRequest))
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -98,6 +135,16 @@ class AllOpenCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "return 200 OK and HTML content type for Miscellaneous tab" in {
+      given(casesService.getCasesByAllQueues(any[Seq[Queue]], any[Pagination], any[Seq[ApplicationType]])(any[HeaderCarrier]))
+        .willReturn(Paged(
+          Seq(
+            Cases.aCase(),
+            Cases.aLiabilityCase().copy(queueId = Some("3")),
+            Cases.aLiabilityCase().copy(daysElapsed = 35, queueId = Some("3")),
+            Cases.liabilityLiveCaseExample.copy(queueId = Some("3")),
+            Cases.liabilityLiveCaseExample.copy(daysElapsed = 6, queueId = Some("3")))
+        )
+        )
       val result = await(controller(Set(Permission.VIEW_CASES)).displayAllOpenCases(MiscellaneousTab)(fakeRequest))
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
