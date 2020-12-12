@@ -17,6 +17,7 @@
 @import views.html.partials.create_liability_button
 @import views.html.components.atarCaseTable
 @import views.html.components.liabilityCaseTable
+@import views.html.components.correspondenceCaseTable
 @import models.request.AuthenticatedRequest
 @import config.AppConfig
 @import models.viewmodels.CasesTabViewModel
@@ -51,6 +52,7 @@
                 case (_, 0) => messages("cases.table.empty")
                 case (ApplicationType.ATAR, _) => atarCaseTable(caseTab)
                 case (ApplicationType.LIABILITY, _) => liabilityCaseTable(caseTab)
+                case (ApplicationType.CORRESPONDENCE, _) => correspondenceCaseTable(caseTab)
                 case _ => ""
             }
     }
