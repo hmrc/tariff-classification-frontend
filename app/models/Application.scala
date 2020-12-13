@@ -19,6 +19,7 @@ package models
 import java.time.Instant
 
 import models.LiabilityStatus.LiabilityStatus
+import models.MiscCaseType.MiscCaseType
 
 sealed trait Application {
   val `type`: ApplicationType
@@ -83,19 +84,6 @@ object ApplicationType {
   case object LIABILITY extends ApplicationType("LIABILITY_ORDER")
   case object CORRESPONDENCE extends ApplicationType("CORRESPONDENCE")
   case object MISCELLANEOUS extends ApplicationType("MISCELLANEOUS")
-}
-
-sealed abstract class MiscCaseType(val name: String) extends Product with Serializable
-
-object MiscCaseType{
-  val values = Set(HARMONISED, IB, NOMENCLATURE, OTHER_GOVT_DEP, OTHER)
-  def withName(name: String) = values.find(_.name == name).getOrElse(throw new NoSuchElementException)
-
-  case object HARMONISED extends MiscCaseType("Harmonised systems")
-  case object IB extends MiscCaseType("IB")
-  case object NOMENCLATURE extends MiscCaseType("Nomenclature")
-  case object OTHER_GOVT_DEP extends MiscCaseType("Other government dept")
-  case object OTHER extends MiscCaseType("Other")
 }
 
 case class BTIApplication(
@@ -178,15 +166,15 @@ case class CorrespondenceApplication(
                           correspondenceStarter: Option[String],
                           agentName: Option[String],
                           address: Address,
-                           override val contact: Contact,
+                          override val contact: Contact,
                           fax: Option[String] = None,
-                           offline: Boolean,
-                           summary: String,
-                           detailedDescription: String,
-                           relatedBTIReference: Option[String] = None,
-                           relatedBTIReferences: List[String]  = Nil,
-                           sampleToBeProvided: Boolean,
-                           sampleToBeReturned: Boolean,
+                          offline: Boolean,
+                          summary: String,
+                          detailedDescription: String,
+                          relatedBTIReference: Option[String] = None,
+                          relatedBTIReferences: List[String]  = Nil,
+                          sampleToBeProvided: Boolean,
+                          sampleToBeReturned: Boolean,
                           messagesLogged: List[Message]  = Nil
                                     ) extends Application {
   override val `type`: models.ApplicationType = ApplicationType.CORRESPONDENCE
