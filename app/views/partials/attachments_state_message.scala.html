@@ -19,11 +19,11 @@
 @import utils.Dates
 @(attachments: Seq[StoredAttachment], autoRefresh: Boolean = false)(implicit messages: Messages)
 
-@if(attachments.exists(_.scanStatus.contains(ScanStatus.FAILED))) {
-    <div class="panel panel-border-wide">
-        <p id="attachment-state-message">At least one file has failed to process, a virus may have been detected.</p>
-    </div>
-}
+<!--@if(attachments.exists(_.scanStatus.contains(ScanStatus.FAILED))) {-->
+<!--    <div class="panel panel-border-wide">-->
+<!--        <p id="attachment-state-message">At least one file has failed to process, a virus may have been detected.</p>-->
+<!--    </div>-->
+<!--}-->
 
 @if(attachments.exists(_.scanStatus.isEmpty)) {
     @if(autoRefresh && attachments.exists(a => a.scanStatus.isEmpty)) {
