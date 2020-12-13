@@ -25,7 +25,6 @@
 @import models.Permission
 @(c: Case, form : Form[String], filesFromApplicant: Seq[StoredAttachment], filesFromClassification: Seq[StoredAttachment],
                 startAtTabIndex : Int = 0 )(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
-
     @error_summary(form.errors, Some(startAtTabIndex))
 
     @tab_heading("attachments", messages("case.menu.attachments"))

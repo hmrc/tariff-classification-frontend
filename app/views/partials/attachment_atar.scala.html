@@ -28,13 +28,15 @@
             </a>
         </div>
     } else {
-        <a @if(useTabIndex.isDefined){ tabindex="@{useTabIndex.get}" } id="@{id}-file" href="@file.url" target="_blank">
-            @name.getOrElse(file.fileName)
-        </a>
+
+            <a @if(useTabIndex.isDefined){ tabindex="@{useTabIndex.get}" } id="@{id}-file" href="@file.url" target="_blank">
+                   <span class="pre-wrap">@name.getOrElse(file.fileName)</span>
+            </a>
+
     }
 } else {
     <div>
-        <span id="@{id}-file">@name.getOrElse(file.fileName)</span>
+        <span id="@{id}-file"><span class="pre-wrap">@name.getOrElse(file.fileName)</span></span>
         @if(file.scanStatus.isEmpty) {
             <span id="@{id}-file-status" class="phase-tag bg-blue ml-1">Processing</span>
         }

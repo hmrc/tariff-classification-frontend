@@ -28,25 +28,27 @@
 
 
 @if(attachments.nonEmpty){
-        <table id="@{id}-table">
-            <thead>
+        <table id="@{id}-table" class="govuk-table govuk-!-font-size-16">
+            <thead class="govuk-table__head">
                 <tr>
-                    <th scope="col">File name</th>
-                    @if(showUploadedBy) {<th id="@{id}-header-uploaded_by" scope="col">Added by</th>}
-                    <th class="attachment-details" scope="col">Details</th>
-                    <th class="attachment-status" scope="col">Status</th>
+                    <th class="govuk-table__header" scope="col">File name</th>
+                    @if(showUploadedBy) {<th id="@{id}-header-uploaded_by" class="govuk-table__header" scope="col">Added by</th>}
+                    <th id="attachment-details" class="govuk-table__header" scope="col">Details</th>
+                    <th id="attachment-status" class="govuk-table__header" scope="col">Status</th>
                     <th><span class="visually-hidden">attachment action</span></th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody class="govuk-table__body">
                     @for((file: StoredAttachment, index: Int) <- attachments.zipWithIndex) {
-                        <tr id="@{id}-row-@{index}">
-                            <td id="@{id}-row-@{index}-title">
+                        <tr id="@{id}-row-@{index}" class="govuk-table__row">
+                            <span class="pre-wrap"></span>
+                            <td id="@{id}-row-@{index}-title" class="govuk-table__cell">
                                 @attachment_atar(s"$id-row-$index", file, useTabIndex = startAtTabIndex.map(x => x+1+(0*index)))
                             </td>
+                        </span>
 
                             @if(showUploadedBy) {
-                                <td id="@{id}-row-@{index}-uploaded_by">
+                                <td id="@{id}-row-@{index}-uploaded_by" class="govuk-table__cell w-15">
                                     @if(file.operator.isDefined) {
                                         @file.operator.flatMap(_.name).getOrElse("Unknown")
                                     } else {
@@ -55,13 +57,13 @@
                                 </td>
                             }
 
-                            <td id="@{id}-row-@{index}-attachment-details" class="w-15">
+                            <td id="@{id}-row-@{index}-attachment-details" class="govuk-table__cell w-15">
                                 @if(file.description.isDefined) {
                                      @file.description
                                 }
                             </td>
 
-                            <td id="@{id}-row-@{index}-attachment-status" class="w-15">
+                            <td id="@{id}-row-@{index}-attachment-status" class="govuk-table__cell w-15">
                                 <span class="visually-hidden">attachment-status</span>
                                 @if((file.public) && file.scanStatus.contains(ScanStatus.READY)){
                                     <span id="@id" class="govuk-tag govuk-tag--green">@messages("case.attachment.upload.status-published")</span>
@@ -75,7 +77,7 @@
                             </td>
 
                             @if(request.hasPermission(Permission.EDIT_ATTACHMENT_DETAIL)) {
-                                <td id="@{id}-row-@{index}-edit-attachment-details">
+                                <td id="@{id}-row-@{index}-edit-attachment-details" class="govuk-table__row">
                                     @*                                    TODO href*@
                                     <a id="@{id}-row-@{index}-edit-attachment-link" href="#">
                                         <span>@messages("case.attachment.edit.file.text")</span>
