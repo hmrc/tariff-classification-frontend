@@ -33,7 +33,7 @@
 
     @attachments_state_message(attachments = filesFromApplicant ++ filesFromClassification)
 
-    @attachments_list_atar("classification-team", filesFromApplicant ++ filesFromClassification, showUploadedBy = true, showSelect = true, showRemoval = true, c, startAtTabIndex = Some(startAtTabIndex+31))
+    @attachments_list_atar("classification-team", filesFromApplicant ++ filesFromClassification, c, startAtTabIndex = Some(startAtTabIndex+31))
 
 
     @if(request.hasPermission(Permission.ADD_ATTACHMENT)) {
