@@ -32,10 +32,16 @@
     if(caseHeaderViewModel.caseStatus == "COMPLETED") {
         "govuk-tag govuk-tag--green"
     }
-    if(caseHeaderViewModel.caseStatus == "REFERRED") {
+    if(caseHeaderViewModel.caseStatus == "REFERRED" | caseHeaderViewModel.caseStatus == "SUPPRESSED") {
         "govuk-tag govuk-tag--yellow"
-    } else {
+    }
+    if(caseHeaderViewModel.caseStatus == "REJECTED") {
+        "govuk-tag govuk-tag--red"
+    }
+    if(caseHeaderViewModel.caseStatus == "OPEN") {
         "govuk-tag govuk-tag--blue"
+    } else {
+        "govuk-tag govuk-tag--green"
     }
 }
 

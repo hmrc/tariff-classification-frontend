@@ -38,15 +38,21 @@
     }
     case CaseStatus.REFERRED | CaseStatus.SUSPENDED => {
         <span class="visually-hidden">case status</span>
-        <span id="@id-status" class="govuk-tag govuk-tag--yellow">
+        <span id="@id" class="govuk-tag govuk-tag--yellow">
             @{c.status}
         </span>
     }
     case CaseStatus.OPEN => {
         <span class="visually-hidden">case status</span>
-        <span id="@id-status" class="govuk-tag govuk-tag--blue">
+        <span id="@id" class="govuk-tag govuk-tag--blue">
              @{c.status}
         </span>
+    }
+    case CaseStatus.REJECTED => {
+    <span class="visually-hidden">case status</span>
+    <span id="@id" class="govuk-tag govuk-tag--red">
+                 @{c.status}
+            </span>
     }
     case s : CaseStatus => {
         <span class="visuallyhidden">case status</span>

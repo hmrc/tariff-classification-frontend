@@ -39,7 +39,7 @@ class CaseStatusViewSpec extends ViewSpec {
 
       // Then
       doc.text()               shouldBe "CANCELLED"
-      doc.getElementById("id") should haveClass("bg-gray--dark")
+      doc.getElementById("id") should haveClass("govuk-tag--red")
     }
 
     "render CANCELLED and the reason code" in {
@@ -53,7 +53,7 @@ class CaseStatusViewSpec extends ViewSpec {
 
       // Then
       doc.text()               shouldBe "CANCELLED - 55"
-      doc.getElementById("id") should haveClass("bg-gray--dark")
+      doc.getElementById("id") should haveClass("govuk-tag--red")
     }
 
     "render EXPIRED for expired rulings" in {
@@ -62,7 +62,7 @@ class CaseStatusViewSpec extends ViewSpec {
 
       // Then
       doc.text()               shouldBe "case status EXPIRED"
-      doc.getElementById("id") should haveClass("bg-gray--dark")
+      doc.getElementById("id") should haveClass("govuk-tag--green")
     }
 
     "render the case status" in {
@@ -71,7 +71,7 @@ class CaseStatusViewSpec extends ViewSpec {
 
       // Then
       doc.text()               shouldBe "case status OPEN"
-      doc.getElementById("id") should haveClass("bg-blue")
+      doc.getElementById("id") should haveClass("govuk-tag--blue")
     }
 
     "render the live liability case status" in {
@@ -80,7 +80,7 @@ class CaseStatusViewSpec extends ViewSpec {
 
       // Then
       doc.text()                                shouldBe "liability type LIVE case status OPEN"
-      doc.getElementById("id-liability-status") should haveClass("live-red-text")
+      doc.getElementById("id-liability-status") should haveClass("govuk-tag--pink")
     }
 
   }
