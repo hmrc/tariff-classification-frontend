@@ -111,7 +111,7 @@ class AllOpenCasesControllerSpec extends ControllerBaseSpec {
             Cases.liabilityLiveCaseExample.copy(daysElapsed = 6, queueId = Some("3")))
         )
         )
-      val result = await(controller(Set(Permission.VIEW_CASES)).displayAllOpenCases(LiabilitiesTab)(fakeRequest))
+      val result = await(controller(Set(Permission.VIEW_CASES, Permission.CREATE_CASES)).displayAllOpenCases(LiabilitiesTab)(fakeRequest))
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
@@ -128,7 +128,7 @@ class AllOpenCasesControllerSpec extends ControllerBaseSpec {
             Cases.liabilityLiveCaseExample.copy(daysElapsed = 6, queueId = Some("3")))
         )
         )
-      val result = await(controller(Set(Permission.VIEW_CASES)).displayAllOpenCases(CorrespondenceTab)(fakeRequest))
+      val result = await(controller(Set(Permission.VIEW_CASES, Permission.CREATE_CASES)).displayAllOpenCases(CorrespondenceTab)(fakeRequest))
       status(result) shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
