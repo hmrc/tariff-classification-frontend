@@ -31,6 +31,7 @@ object JsonFormatters {
   implicit val role: Format[Role]                                 = EnumJson.format(Role)
   implicit val liabilityStatus: Format[LiabilityStatus]           = EnumJson.format(LiabilityStatus)
   implicit val formatReferralReason: Format[ReferralReason.Value] = EnumJson.format(ReferralReason)
+  implicit val miscCaseType: Format[MiscCaseType.Value]           = EnumJson.format(MiscCaseType)
   implicit val reportField: Format[CaseReportField.Value]         = EnumJson.format(CaseReportField)
   implicit val reportGroup: Format[CaseReportGroup.Value]         = EnumJson.format(CaseReportGroup)
   implicit val formatPermission: Format[Permission] = Format[Permission](
@@ -79,12 +80,14 @@ object JsonFormatters {
   implicit val messageLoggedFormat: OFormat[Message]                     = Json.format[Message]
   implicit val liabilityOrderFormat: OFormat[LiabilityOrder]             = Json.format[LiabilityOrder]
   implicit val correspondenceFormat: OFormat[CorrespondenceApplication]  = Json.format[CorrespondenceApplication]
+  implicit val miscFormat: OFormat[MiscApplication]                      = Json.format[MiscApplication]
   implicit val btiApplicationFormat: OFormat[BTIApplication]             = Json.using[Json.WithDefaultValues].format[BTIApplication]
   implicit val applicationFormat: Format[Application] = Union
     .from[Application]("type")
     .and[BTIApplication](ApplicationType.ATAR.name)
     .and[LiabilityOrder](ApplicationType.LIABILITY.name)
     .and[CorrespondenceApplication](ApplicationType.CORRESPONDENCE.name)
+    .and[MiscApplication](ApplicationType.MISCELLANEOUS.name)
     .format
 
   implicit val caseFormat: OFormat[Case]                         = Json.using[Json.WithDefaultValues].format[Case]
