@@ -191,7 +191,8 @@ class FileStoreServiceSpec extends ServiceSpecBase {
       public = true,
       None,
       timestamp   = Instant.EPOCH,
-      description = Some("test description")
+      description = Some("test description"),
+      shouldPublishToRulings = true
     )
     c.copy(attachments = attachments)
   }
@@ -208,7 +209,8 @@ class FileStoreServiceSpec extends ServiceSpecBase {
       public = true,
       None,
       timestamp   = Instant.EPOCH,
-      description = Some("test description")
+      description = Some("test description"),
+      shouldPublishToRulings = true
     )
 
   private def withAgentDetails(): Case => Case = c => {

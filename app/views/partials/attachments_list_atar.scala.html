@@ -61,13 +61,17 @@
 
                             <td id="@{id}-row-@{index}-attachment-status" class="govuk-table__cell w-15">
                                 <span class="visually-hidden">attachment-status</span>
-                                @if((file.public) && file.scanStatus.contains(ScanStatus.READY)){
-                                    <span id="@id" class="govuk-tag govuk-tag--green">@messages("case.attachment.upload.status-published")</span>
-                                }
-                                @if((!file.public) &&  file.scanStatus.contains(ScanStatus.READY)) {
-                                    <span id="@id" class="govuk-tag govuk-tag--yellow">@messages("case.attachment.upload.status-confidential")</span>
-                                }
-                                @if(file.scanStatus.contains(ScanStatus.FAILED)){
+                                @if(file.scanStatus.contains(ScanStatus.READY)) {
+                                    @if(file.public && file.shouldPublishToRulings){
+                                        <span id="@id" class="govuk-tag govuk-tag--green">@messages("case.attachment.upload.status-published")</span>
+                                    }
+                                    @if(!file.public) {
+                                        <span id="@id" class="govuk-tag govuk-tag--yellow">@messages("case.attachment.upload.status-confidential")</span>
+                                    }
+                                    @if(file.public && !file.shouldPublishToRulings){
+                                    <span id="@id" class="visually-hidden"></span>
+                                    }
+                                } else {
                                     <span id="@id" class="govuk-tag govuk-tag--red">@messages("case.attachment.upload.status-failed")</span>
                                 }
                             </td>
