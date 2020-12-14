@@ -31,8 +31,8 @@
      <th id="@{caseTab.tabMessageKey}-subject" class="bold w-0">
       Subject
      </th>
-     <th id="@{caseTab.tabMessageKey}-trader" class="bold w-0">
-      Trader
+     <th id="@{caseTab.tabMessageKey}-source" class="bold w-0">
+      Case source
      </th>
      <th id="@{caseTab.tabMessageKey}-contact-email" class="bold w-0">
       Contact email
@@ -49,7 +49,7 @@
      <tr id="@{caseTab.tabMessageKey}-details-@index">
       <td id="@{caseTab.tabMessageKey}-reference-@index"><a href="@routes.CaseController.get(result.reference)">@{result.reference}</a></td>
       <td id="@{caseTab.tabMessageKey}-subject-@index" class="pre-wrap">@{correspondence.summary}</td>
-      <td id="@{caseTab.tabMessageKey}-trader-@index" class="pre-wrap">@{correspondence.correspondenceStarter}</td>
+      <td id="@{caseTab.tabMessageKey}-source-@index" class="pre-wrap">@{correspondence.correspondenceStarter}</td>
       <td id="@{caseTab.tabMessageKey}-contact-email-@index" class="pre-wrap">@{correspondence.contact.email}</td>
       <td id="@{caseTab.tabMessageKey}-elapsed-days-@index">@{result.daysElapsed}</td>
      </tr>
