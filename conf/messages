@@ -421,6 +421,7 @@ page.title.extended.use=Extended use of this ruling
 page.title.ruling.not.found=Ruling not found
 page.title.case.queues=Tariff classification case queues
 page.title.create_liability.h1=New liability information
+page.title.create_correspondence.h1=Create correspondence case
 page.title.edit_liability_decision=Edit liability decision
 view.attachment.unavailable.title=Attachment unavailable
 view.attachment.unavailable.heading=Attachment is unavailable
@@ -951,3 +952,8 @@ applicationTab.referredByMe = Referred by me
 applicationTab.completedByMe = Completed by me
 applicationTab.gateway = Gateway cases
 
+correspondence.create_correspondence.summary.heading = Short case description
+correspondence.create_correspondence.source.heading = Case source
+correspondence.create_correspondence.source.hint = For example: a trader, port officer, briefing note or EU member state.
+correspondence.create_correspondence.contactEmail.heading = Case contact email address
+correspondence.create_correspondence.confirm-button = Create case

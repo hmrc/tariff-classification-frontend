@@ -109,6 +109,9 @@ GET         /search                                             controllers.Sear
 GET         /new-liability                                      controllers.CreateLiabilityController.get()
 POST        /new-liability                                      controllers.CreateLiabilityController.post()
 
+GET         /new-correspondence                                 controllers.CreateCorrespondenceController.get()
+POST        /new-correspondence                                 controllers.CreateCorrespondenceController.post()
+
 # Note: Browser links can't send a DELETE so it has to be GET in this case
 GET         /cases/:reference/keywords/:keyword                 controllers.CaseController.removeKeyword(reference: String, keyword: String)
 
