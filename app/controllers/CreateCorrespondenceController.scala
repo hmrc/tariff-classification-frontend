@@ -23,8 +23,13 @@ import models.{CorrespondenceApplication, Permission, Case}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
+import play.api.data.Forms._
+import models.forms.mappings.FormMappings.fieldNonEmpty
 import service.CasesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import uk.gov.hmrc.http.HeaderCarrier
+import models.request.AuthenticatedRequest
+
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -36,11 +41,17 @@ class CreateCorrespondenceController @Inject() (
   casesService: CasesService,
   mcc: MessagesControllerComponents,
   val releaseCaseView: views.html.release_case,
+  val releaseCaseQuestionView: views.html.v2.release_option_choice,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
     with I18nSupport {
 
   private val form: Form[CorrespondenceApplication] = CorrespondenceForm.newCorrespondenceForm
+  val formReleaseChoice: Form[String] = Form(
+    mapping(
+      "choice" -> fieldNonEmpty("error.empty.queue")
+    )(identity)(Some(_))
+  )
 
   def get(): Action[AnyContent] = (verify.authenticated andThen verify.mustHave(Permission.CREATE_CASES)).async {
     implicit request: Request[AnyContent] => Future.successful(Ok(views.html.v2.create_correspondence(form)))
@@ -52,15 +63,45 @@ class CreateCorrespondenceController @Inject() (
         formWithErrors => Future.successful(Ok(views.html.v2.create_correspondence(formWithErrors))),
         correspondenceApp =>
           casesService.createCase(correspondenceApp, request.operator).map { caseCreated:Case =>
-            Redirect(routes.ReleaseCaseController.releaseCase(caseCreated.reference, None))
+            Redirect(routes.CreateCorrespondenceController.displayQuestion(caseCreated.reference))
+            //Redirect(routes.ReleaseCaseController.releaseCase(caseCreated.reference, None))
           }
       )
 
   }
+  def displayQuestion(reference: String): Action[AnyContent] =
+    (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
+      getCaseAndRenderChoiceView(reference)
+    }
 
-  def displayQuestion():Unit = ???
+
+  private def getCaseAndRenderChoiceView(reference: String, form:Form[String] = formReleaseChoice)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]) : Future[Result] = {
+    casesService.getOne(reference).flatMap {
+      case Some(c: Case) => successful(Ok(releaseCaseQuestionView(c, form)))
+      case _ => successful(Ok(views.html.case_not_found(reference)))
+    }
+  }
 
   def chooseQueuePost():Unit = ???
+
+  def postChoice(reference: String): Action[AnyContent] =
+    (verify.authenticated andThen verify.casePermissions(reference) andThen
+      verify.mustHave(Permission.RELEASE_CASE)).async { implicit request =>
+
+      formReleaseChoice
+    .bindFromRequest()
+    .fold(
+      errors =>
+        getCaseAndRenderChoiceView(reference, errors),
+      (choice: String) =>{
+      choice match {
+        case "Yes" => successful(Redirect(routes.ReleaseCaseController.releaseCase(reference, None)))
+        case "No" => successful(Redirect(routes.CreateCorrespondenceController.displayConfirmation()))
+        case _ => successful(Redirect(routes.CreateCorrespondenceController.get()))
+      }
+      }
+    )
+    }
 
   def displayConfirmation() = (verify.authenticated andThen verify.mustHave(Permission.CREATE_CASES)).async {
     implicit request: Request[AnyContent] => Future.successful(Ok(views.html.v2.confirmation_case_creation()))

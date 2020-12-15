@@ -1,0 +1,65 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.AppConfig
+@import models.{BTIApplication, Case, Queue}
+@import views.html.forms.select_queue_form
+@import views.html.includes.main
+@import controllers.routes.ReleaseCaseController
+@import controllers.routes.CreateCorrespondenceController
+@import views.html.partials.{error_summary, back_link}
+@import views.html.v2.release_case_heading
+@import controllers.ActiveTab
+@import models.viewmodels.CaseHeaderViewModel
+@import views.html.components.confirm_or_cancel_buttons
+@import views.CancelAction
+@import views.html.forms.components.input_radiogroup
+@import views.forms.components.RadioOption
+
+@this(case_heading: views.html.v2.release_case_decision_heading)
+
+@(c: Case, form: Form[String])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@main(bodyClasses = None, customTitle = Some(messages("page.title.release.case"))) {
+
+@back_link()
+
+@error_summary(form.errors)
+
+@case_heading(CaseHeaderViewModel.fromCase(c))
+
+<div class="grid-row">
+    <div class="column-full">
+     @helper.form(action = routes.CreateCorrespondenceController.postChoice(c.reference), 'id -> "release_choice_form", 'novalidate -> "novalidate") {
+     @helper.CSRF.formField
+
+     @input_radiogroup(
+     field = form("choice"),
+     options = Seq(RadioOption("Yes", "Yes"), RadioOption("No", "No")),
+     id = "release_choice_form",
+     preSelect = false,
+     labelClass = Some ("heading-large")
+     )
+
+     @confirm_or_cancel_buttons(
+     id = "release_choice",
+     confirmText = messages("release-case.submit.choice.button"),
+     cancelText = messages("release-case.submit.cancel"),
+     cancelHref = controllers.routes.CreateCorrespondenceController.get()
+     )
+     }
+    </div>
+</div>
+}
