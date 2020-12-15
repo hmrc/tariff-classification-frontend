@@ -71,7 +71,7 @@ class MyCasesController @Inject() (
             case ReferredByMeTab  => ApplicationsTab.referredByMe(cases.results, referralEventsByCase)
             case CompletedByMeTab => ApplicationsTab.completedByMe
           }
-        } yield Ok(myCasesView(myCaseStatuses))
+        } yield Ok(myCasesView(myCaseStatuses, activeSubNav))
     }
 
 }

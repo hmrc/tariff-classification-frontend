@@ -17,10 +17,7 @@
 @import config.AppConfig
 @import controllers.routes
 @import models.AppealStatus.AppealStatus
-@import models.AppealType.AppealType
-@import models.{AppealStatus, AppealType, Case}
-@import views.forms.components.RadioOption
-@import views.html.forms.components.input_radiogroup
+@import models.Case
 @import views.html.includes.main
 @import views.html.partials.case_heading
 @import models.Appeal
@@ -28,9 +25,12 @@
 @import views.html.partials.appeal.appeal_status_choice
 @import views.html.partials.appeal.appeal_status_submit
 @import views.html.partials.{error_summary, back_link}
+@import models.viewmodels.NoTabSelected
+
 @(c: Case, appeal: Appeal, form: Form[AppealStatus])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("page.title.change.appeal.status"))) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.change.appeal.status")),
+    customPrimaryNavTab = NoTabSelected) {
 
     @back_link()
 

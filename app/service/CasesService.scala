@@ -513,7 +513,7 @@ class CasesService @Inject() (
     val event = NewEventRequest(details, operator)
     connector.createEvent(updated, event) recover {
       case t: Throwable =>
-        logger.error(s"Could not create Event for case [${original.reference}] with payload [$event]", t)
+        logger.error(s"Could not create Event for case [${original.reference}] with payload [${event.details}]", t)
     } map (_ => ())
   }
 

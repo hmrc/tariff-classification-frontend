@@ -21,9 +21,11 @@
 @import utils.Dates
 @import views.{ReferralReport, Report}
 @import views.html.includes.main
+@import models.viewmodels.NoTabSelected
+
 @(filter: InstantRange, results: Seq[ReportResult], queues: Seq[Queue])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None) {
+@main(bodyClasses = None, customPrimaryNavTab = NoTabSelected) {
 
     <a id="back-link" class="link-back mt-0" href="@routes.ReportingController.getReportCriteria(Report.REFERRAL.toString ,(TabIndexes.tabIndexForQueue("reports","") + 202))">
         Back to reports
