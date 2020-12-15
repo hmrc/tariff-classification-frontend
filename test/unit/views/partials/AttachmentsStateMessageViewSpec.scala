@@ -56,16 +56,16 @@ class AttachmentsStateMessageViewSpec extends ViewSpec {
       doc shouldNot containElementWithID("attachment-state-message")
     }
 
-//    "Render message for failed attachments" in {
-//      // Given
-//      val attachment = Cases.storedAttachment.copy(scanStatus = Some(ScanStatus.FAILED))
-//
-//      // When
-//      val doc = view(attachments_state_message(Seq(attachment)))
-//
-//      // Then
-//      doc should containElementWithID("attachment-state-message")
-//    }
+    "Render message for failed attachments" in {
+      // Given
+      val attachment = Cases.storedAttachment.copy(scanStatus = Some(ScanStatus.FAILED))
+
+      // When
+      val doc = view(attachments_state_message(Seq(attachment)))
+
+      // Then
+      doc should containElementWithID("attachment-state-message")
+    }
 
     "Allow auto-refresh for processing files" in {
       // Given

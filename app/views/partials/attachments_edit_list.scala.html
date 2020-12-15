@@ -48,8 +48,9 @@ showRemoval: Boolean = false, caseRef: Option[String] = None, startAtTabIndex : 
                                type="checkbox"
                                value="@file.id"
                                aria-label="publish @file.fileName on GOV.UK"
-                            @if(file.shouldPublishToRulings){
-                               @if(file.public) {checked="checked"}/>}
+                                @if(file.public){
+                                  checked="checked"/>
+                        }
                         <label for="attachments[@{index}]"><div class="hide-label">publish</div></label>
                     </div>
                 </div>
