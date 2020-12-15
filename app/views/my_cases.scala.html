@@ -19,6 +19,7 @@
 @import models.{Case, CaseStatus, Operator, Paged, Queue}
 @import views.html.includes.main
 @import views.html.partials.{cases_list, nav_header, queue_nav, create_liability_button}
+@import models.viewmodels.MyCasesTab
 @(queues: Seq[Queue], cases: Seq[Case], operator: Operator, caseCountByQueue: Map[String, Int])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @referredStatuses = @{
@@ -32,7 +33,7 @@
 }
 
 @main(bodyClasses = None,
-    customTitle = Some(messages("page.title.case.queues.my-cases"))) {
+    customTitle = Some(messages("page.title.case.queues.my-cases")), customPrimaryNavTab = MyCasesTab) {
 
     <h1 id="queue-name" class="heading-xlarge">
     @{

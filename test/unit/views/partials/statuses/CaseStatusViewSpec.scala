@@ -71,7 +71,7 @@ class CaseStatusViewSpec extends ViewSpec {
 
       // Then
       doc.text()               shouldBe "case status OPEN"
-      doc.getElementById("id") should haveClass("bg-blue")
+      doc.getElementById("id") should haveClass("govuk-tag--blue")
     }
 
     "render the live liability case status" in {
