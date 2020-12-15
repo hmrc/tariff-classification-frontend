@@ -26,4 +26,6 @@ case object OpenCasesTab extends PrimaryNavigationTab("primary_nav_open_cases_ta
 
 case object GatewayCasesTab extends PrimaryNavigationTab("primary_nav_gateway_cases_tab")
 
+case object NoTabSelected extends PrimaryNavigationTab("primary_nav_no_tab_selected")
+
 case class PrimaryNavigationViewModel(selectedTab: PrimaryNavigationTab)

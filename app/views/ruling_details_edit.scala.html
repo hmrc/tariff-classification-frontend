@@ -26,9 +26,10 @@
 @import models.request.AuthenticatedRequest
 @import views.html.partials.error_summary
 
+@import models.viewmodels.NoTabSelected
 @(c: Case, files: Seq[StoredAttachment], decisionForm: Form[DecisionFormData], startAtTabIndex: Option[Int] = None)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("page.title.edit.ruling"))) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.edit.ruling")), customPrimaryNavTab = NoTabSelected) {
     @defining(c.application.asATAR) { btiApp: BTIApplication =>
 
         @back_link()

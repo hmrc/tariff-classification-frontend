@@ -15,22 +15,19 @@
  *@
 
 @import config.AppConfig
-@import controllers.routes.{CaseController, ReferCaseController}
+@import controllers.routes.ReferCaseController
 @import models.Case
 @import views.html.includes.main
-@import views.html.partials.{case_heading, contact_details}
-@import views.html.components.{confirm_or_cancel_buttons, warning}
+@import views.html.partials.{case_heading}
+@import views.html.components.{confirm_or_cancel_buttons}
 @import views.html.forms.components.{input_textarea, input_radiogroup, input_checkbox_group, input_text}
 @import views.html.partials.statuses.status_change_upload
 @import models.{CaseReferral, ReferralReason}
-@import models.ReferralReason._
 @import views.forms.components.{CheckOption, RadioOption}
 @import views.html.partials.{error_summary, back_link}
 @import controllers.ActiveTab
-@import controllers.routes.AttachmentsController
-@import controllers.routes.AppealCaseController
-@import controllers.routes.LiabilityController
 @import views.CancelAction
+@import models.viewmodels.MyCasesTab
 
 @(c: Case, form: Form[CaseReferral], activeTab: Option[ActiveTab] = None)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
@@ -54,7 +51,8 @@
     )
 }
 
-@main(bodyClasses = None, customTitle = Some(messages("page.title.refer.case"))) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.refer.case")),
+    customPrimaryNavTab = MyCasesTab) {
 
     @back_link()
 

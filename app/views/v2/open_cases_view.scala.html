@@ -25,9 +25,8 @@
 
 @(cases : CasesTabViewModel)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("common.cases.open_cases-title"))) {
+@main(bodyClasses = None, customTitle = Some(messages("common.cases.open_cases-title")), customPrimaryNavTab = OpenCasesTab) {
 
-    @primary_navigation(OpenCasesTab)
     @open_cases_secondary_navigation()
     @cases_tab(cases)
 

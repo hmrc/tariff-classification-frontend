@@ -20,11 +20,13 @@
 @import models.{InstantRange, Queue, ReportResult, TabIndexes}
 @import utils.Dates
 @import views.html.includes.main
-@import views.{Histogram, HistogramBucket, HistogramBucketInterval, Report}
+@import views.{Histogram, HistogramBucketInterval, Report}
 @import views.SLAReport
+@import models.viewmodels.NoTabSelected
+
 @(filter: InstantRange, results: Seq[ReportResult], queues: Seq[Queue])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None) {
+@main(bodyClasses = None, customPrimaryNavTab = NoTabSelected) {
 
     <a id="back-link" class="link-back mt-0" href="@routes.ReportingController.getReportCriteria(Report.SLA.toString,(TabIndexes.tabIndexForQueue("reports","") + 1))">
         Back to reports

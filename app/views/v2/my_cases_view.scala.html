@@ -27,9 +27,8 @@
 
 @(myCases : ApplicationTabViewModel)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("common.cases.my_cases-title"))) {
+@main(bodyClasses = None, customTitle = Some(messages("common.cases.my_cases-title")), customPrimaryNavTab = MyCasesTab) {
 
-    @primary_navigation(MyCasesTab)
     @my_cases_secondary_nav()
 
     @* the heading component *@

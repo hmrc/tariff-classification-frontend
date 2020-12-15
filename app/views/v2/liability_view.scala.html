@@ -57,7 +57,8 @@
         appealTabViewModel: Option[AppealTabViewModel]
 )(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("case.v2.liaiblity.page_title"))) {
+@main(bodyClasses = None, customTitle = Some(messages("case.v2.liaiblity.page_title")),
+    customPrimaryNavTab = MyCasesTab) {
 
     @case_heading(liabilityViewModel.caseHeaderViewModel)
 
