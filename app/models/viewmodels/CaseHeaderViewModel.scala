@@ -45,7 +45,7 @@ object CaseHeaderViewModel {
     }
 
     CaseHeaderViewModel(
-      "Liability",
+      c.application.getType,
       c.application.businessName,
       c.application.goodsName,
       c.reference,

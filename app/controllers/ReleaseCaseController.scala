@@ -36,6 +36,7 @@ class ReleaseCaseController @Inject() (
   casesService: CasesService,
   queueService: QueuesService,
   mcc: MessagesControllerComponents,
+  val releaseCaseView: views.html.release_case,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
     with RenderCaseAction {
@@ -71,7 +72,7 @@ class ReleaseCaseController @Inject() (
   private def releaseCase(f: Form[String], caseRef: String, activeTab: Option[ActiveTab])(
     implicit request: AuthenticatedCaseRequest[_]
   ): Future[Result] =
-    getCaseAndRenderView(caseRef, c => queueService.getNonGateway.map(views.html.release_case(c, f, _, activeTab)))
+    getCaseAndRenderView(caseRef, c => queueService.getNonGateway.map(releaseCaseView(c, f, _, activeTab)))
 
   def confirmReleaseCase(reference: String): Action[AnyContent] =
     (verify.authenticated

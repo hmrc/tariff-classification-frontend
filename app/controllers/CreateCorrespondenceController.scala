@@ -28,12 +28,14 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import scala.concurrent.Future.successful
 
 @Singleton
 class CreateCorrespondenceController @Inject() (
   verify: RequestActions,
   casesService: CasesService,
   mcc: MessagesControllerComponents,
+  val releaseCaseView: views.html.release_case,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
     with I18nSupport {
@@ -49,10 +51,19 @@ class CreateCorrespondenceController @Inject() (
       form.bindFromRequest.fold(
         formWithErrors => Future.successful(Ok(views.html.v2.create_correspondence(formWithErrors))),
         correspondenceApp =>
-          casesService.createCase(correspondenceApp, request.operator).map { caseCreated =>
-            Redirect(routes.CaseController.get(caseCreated.reference))
+          casesService.createCase(correspondenceApp, request.operator).map { caseCreated:Case =>
+            Redirect(routes.ReleaseCaseController.releaseCase(caseCreated.reference, None))
           }
       )
 
   }
+
+  def displayQuestion():Unit = ???
+
+  def chooseQueuePost():Unit = ???
+
+  def displayConfirmation() = (verify.authenticated andThen verify.mustHave(Permission.CREATE_CASES)).async {
+    implicit request: Request[AnyContent] => Future.successful(Ok(views.html.v2.confirmation_case_creation()))
+  }
+
 }
