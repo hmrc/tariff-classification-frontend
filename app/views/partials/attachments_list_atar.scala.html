@@ -62,15 +62,15 @@
                             <td id="@{id}-row-@{index}-attachment-status" class="govuk-table__cell w-15">
                                 <span class="visually-hidden">attachment-status</span>
                                 @if(file.scanStatus.contains(ScanStatus.READY)) {
-                                    @if(file.public && file.shouldPublishToRulings){
-                                        <span id="@id" class="govuk-tag govuk-tag--green">@messages("case.attachment.upload.status-published")</span>
-                                    }
-                                    @if(!file.public) {
-                                        <span id="@id" class="govuk-tag govuk-tag--yellow">@messages("case.attachment.upload.status-confidential")</span>
-                                    }
-                                    @if(file.public && !file.shouldPublishToRulings){
-                                    <span id="@id" class="visually-hidden"></span>
-                                    }
+                                  @{(file.public, file.shouldPublishToRulings) match {
+                                          case (false, _) =>
+                                              <span id="@{id}" class="govuk-tag govuk-tag--yellow"> {messages("case.attachment.upload.status-confidential")}</span>
+                                          case (true, true) =>
+                                              <span id="@{id}" class="govuk-tag govuk-tag--green"> {messages("case.attachment.upload.status-published")}</span>
+                                          case (true, false) =>
+                                              <span id="@{id}" class="visually-hidden"> </span>
+                                      }
+                                  }
                                 } else {
                                     <span id="@id" class="govuk-tag govuk-tag--red">@messages("case.attachment.upload.status-failed")</span>
                                 }

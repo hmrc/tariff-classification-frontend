@@ -57,18 +57,6 @@ class AttachmentsListAtarViewSpec extends ViewSpec {
       doc.getElementById("MODULE-row-0-title") should containText("name")
     }
 
-    "Hide 'uploaded by'" in {
-      val attachment = Cases.storedAttachment
-        .copy(id = "FILE_ID", fileName = "name", url = Some("url"), scanStatus = Some(ScanStatus.READY))
-
-      // When
-      val doc = view(attachments_list_atar("MODULE", Seq(attachment), c = Cases.btiCaseExample))
-
-      // Then
-      doc shouldNot containElementWithID("MODULE-header-uploaded_by")
-      doc shouldNot containElementWithID("MODULE-row-FILE_ID-uploaded_by")
-    }
-
     "Render 'Added by'" in {
       val attachment = Cases.storedAttachment.copy(
         id       = "FILE_ID",
@@ -77,7 +65,7 @@ class AttachmentsListAtarViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(attachments_list_atar("MODULE", Seq(attachment), showUploadedBy = true, c = Cases.btiCaseExample))
+      val doc = view(attachments_list_atar("MODULE", Seq(attachment), c = Cases.btiCaseExample))
 
       // Then
       doc                                            should containElementWithID("MODULE-header-uploaded_by")
@@ -102,8 +90,7 @@ class AttachmentsListAtarViewSpec extends ViewSpec {
         attachments_list_atar(
           "MODULE",
           Seq(attachment, attachment_trader),
-          showUploadedBy = true,
-          c              = Cases.btiCaseExample
+          c = Cases.btiCaseExample
         )
       )
 
@@ -122,7 +109,7 @@ class AttachmentsListAtarViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(attachments_list_atar("MODULE", Seq(attachment), showUploadedBy = true, c = Cases.btiCaseExample))
+      val doc = view(attachments_list_atar("MODULE", Seq(attachment), c = Cases.btiCaseExample))
 
       // Then
       doc                                            should containElementWithID("MODULE-header-uploaded_by")
@@ -140,7 +127,7 @@ class AttachmentsListAtarViewSpec extends ViewSpec {
 
       // When
       val doc = view(
-        attachments_list_atar("MODULE", Seq(attachment), showRemoval = true, c = Cases.btiCaseExample)(
+        attachments_list_atar("MODULE", Seq(attachment), c = Cases.btiCaseExample)(
           requestWithPermissions(Permission.EDIT_ATTACHMENT_DETAIL),
           messages
         )
@@ -151,7 +138,7 @@ class AttachmentsListAtarViewSpec extends ViewSpec {
       doc.getElementById("MODULE-row-0-edit-attachment-details") should containText("Edit details")
     }
 
-    "Do not render show edit details link when user does not have permission " in {
+    "Do not render show edit details link when user does not have permission" in {
       val attachment = Cases.storedAttachment.copy(
         id       = "FILE_ID",
         fileName = "name",
@@ -159,16 +146,15 @@ class AttachmentsListAtarViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(attachments_list_atar("MODULE", Seq(attachment), showRemoval = true, c = Cases.btiCaseExample))
+      val doc = view(attachments_list_atar("MODULE", Seq(attachment), c = Cases.btiCaseExample))
 
       // Then
       doc shouldNot containElementWithID("MODULE-row-0-remove")
     }
 
-
     "Status should display PUBLISHED if the file is public" in {
       val attachment = Cases.storedAttachment
-        .copy(id = "FILE_ID", public = true,  fileName = "name", url = Some("url"), scanStatus = Some(ScanStatus.READY))
+        .copy(id = "FILE_ID", public = true, fileName = "name", url = Some("url"), scanStatus = Some(ScanStatus.READY))
 
       // When
       val doc = view(attachments_list_atar("MODULE", Seq(attachment), c = Cases.btiCaseExample))
@@ -179,7 +165,7 @@ class AttachmentsListAtarViewSpec extends ViewSpec {
 
     "Status should display CONFIDENTIAL if the file is not public" in {
       val attachment = Cases.storedAttachment
-        .copy(id = "FILE_ID", public = false,  fileName = "name", url = Some("url"), scanStatus = Some(ScanStatus.READY))
+        .copy(id = "FILE_ID", public = false, fileName = "name", url = Some("url"), scanStatus = Some(ScanStatus.READY))
 
       // When
       val doc = view(attachments_list_atar("MODULE", Seq(attachment), c = Cases.btiCaseExample))
@@ -191,7 +177,13 @@ class AttachmentsListAtarViewSpec extends ViewSpec {
 
     "Status should display UPLOAD FAILED if the file is a virus" in {
       val attachment = Cases.storedAttachment
-        .copy(id = "FILE_ID", public = false,  fileName = "name", url = Some("url"), scanStatus = Some(ScanStatus.FAILED))
+        .copy(
+          id         = "FILE_ID",
+          public     = false,
+          fileName   = "name",
+          url        = Some("url"),
+          scanStatus = Some(ScanStatus.FAILED)
+        )
 
       // When
       val doc = view(attachments_list_atar("MODULE", Seq(attachment), c = Cases.btiCaseExample))

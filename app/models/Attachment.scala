@@ -24,7 +24,7 @@ case class Attachment(
   operator: Option[Operator],
   timestamp: Instant          = Instant.now(),
   description: Option[String] = None,
-  shouldPublishToRulings : Boolean = false
+  shouldPublishToRulings: Boolean = false
 )
 
 case class FileStoreAttachment(
