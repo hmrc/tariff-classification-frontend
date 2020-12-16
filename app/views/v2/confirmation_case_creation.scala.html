@@ -37,7 +37,11 @@
 
 <div class="govuk-box-highlight govuk-panel--confirmation">
  @if(c.application.getType == "Correspondence" || c.application.getType == "Misc" ){
+ @if(!queueName.isEmpty){
     <h1 class="heading-large mt-0">@messages("release_case.released_dynamic_message", c.application.getType, queueName)</h1>
+ }else{
+ <h1 class="heading-large mt-0">Correspondence case created</h1>
+ }
  }else{
  <h2 class="heading-large mt-0">This case has been released to the @queueName queue for classification</h2>
  <p class="heading-medium">The case status is now Open</p>

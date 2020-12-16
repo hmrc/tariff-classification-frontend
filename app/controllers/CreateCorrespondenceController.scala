@@ -42,6 +42,7 @@ class CreateCorrespondenceController @Inject() (
   mcc: MessagesControllerComponents,
   val releaseCaseView: views.html.release_case,
   val releaseCaseQuestionView: views.html.v2.release_option_choice,
+  val confirmation_case_creation: views.html.v2.confirmation_case_creation,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
     with I18nSupport {
@@ -109,10 +110,10 @@ class CreateCorrespondenceController @Inject() (
               c.queueId
                 .map(id =>
                   queueService.getOneById(id) flatMap {
-                    case Some(queue) => Future.successful(Ok(views.html.confirm_release_case(c, queue.name)))
+                    case Some(queue) => Future.successful(Ok(confirmation_case_creation(c, queue.name)))
                     case None        => Future.successful(Ok(views.html.resource_not_found(s"Case Queue")))
                 })
-                .getOrElse(Future.successful(Ok(views.html.resource_not_found(s"Case Queue"))))
+                .getOrElse(Future.successful(Ok(confirmation_case_creation(c, ""))))
 
             }
             case _ => successful(Ok(views.html.case_not_found(reference)))
