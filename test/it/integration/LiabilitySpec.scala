@@ -6,6 +6,7 @@ import play.api.test.Helpers._
 import models.{Case, Pagination}
 import utils.Cases._
 import utils.{CasePayloads, EventPayloads}
+import utils.JsonFormatters._
 
 class LiabilitySpec extends IntegrationTest with MockitoSugar {
 
