@@ -32,6 +32,12 @@ import play.api.mvc._
 import play.api.data.Forms._
 import models.forms.mappings.FormMappings.fieldNonEmpty
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
+import scala.concurrent.Future.successful
+import org.mockito.ArgumentMatchers._
+import org.mockito.BDDMockito._
+import play.api.http.Status
+import uk.gov.hmrc.http.HeaderCarrier
 
 class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
@@ -104,77 +110,206 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
     }
 
     "redirect to Do you want to release case page POST" in {
-      val popForm = form.fillAndValidate(CorrespondenceApplication())
+      given(casesService.createCase(any[CorrespondenceApplication], any[Operator])(any[HeaderCarrier]))
+      .willReturn(successful(Cases.corrCaseExample))
+      given(casesService.getOne(any[String])(any[HeaderCarrier]))
+        .willReturn(successful(Some(Cases.corrCaseExample)))
       val result = await(
         controller(caseWithStatusOPEN, Set(Permission.CREATE_CASES))
           .post()(
             newFakePOSTRequestWithCSRF(app)
-              .withFormUrlEncodedBody("caseStatus" -> CaseStatusRadioInput.Complete.toString)
+              .withFormUrlEncodedBody(
+                "summary"      -> "dummy1",
+                "source"       -> "dummy2",
+                "contactEmail" -> "dummy@email.com"
+              )
           )
       )
 
       status(result)               shouldBe Status.SEE_OTHER
-      redirectLocation(result).get shouldBe CompleteCaseController.completeCase("reference").url
+      redirectLocation(result).get shouldBe CreateCorrespondenceController.displayQuestion("1").url
     }
-//
-//    "redirect to Refer case page POST" in {
-//      val result = await(
-//        controller(caseWithStatusOPEN, Set(Permission.EDIT_RULING))
-//          .onSubmit("reference")(
-//            newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("caseStatus" -> CaseStatusRadioInput.Refer.toString)
-//          )
-//      )
-//
-//      status(result)               shouldBe Status.SEE_OTHER
-//      redirectLocation(result).get shouldBe ReferCaseController.getReferCase("reference").url
-//    }
-//
-//    "redirect to Reject case page POST" in {
-//      val result = await(
-//        controller(caseWithStatusOPEN, Set(Permission.EDIT_RULING))
-//          .onSubmit("reference")(
-//            newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("caseStatus" -> CaseStatusRadioInput.Reject.toString)
-//          )
-//      )
-//
-//      status(result)               shouldBe Status.SEE_OTHER
-//      redirectLocation(result).get shouldBe RejectCaseController.getRejectCase("reference").url
-//    }
-//
-//    "redirect to Suspend case page with POST" in {
-//      val result = await(
-//        controller(caseWithStatusOPEN, Set(Permission.EDIT_RULING))
-//          .onSubmit("reference")(
-//            newFakePOSTRequestWithCSRF(app)
-//              .withFormUrlEncodedBody("caseStatus" -> CaseStatusRadioInput.Suspend.toString)
-//          )
-//      )
-//
-//      status(result)               shouldBe Status.SEE_OTHER
-//      redirectLocation(result).get shouldBe SuspendCaseController.getSuspendCase("reference").url
-//    }
-//
-//    "redirect to Move back to queue page with POST" in {
-//
-//      val result = await(
-//        controller(caseWithStatusOPEN, Set(Permission.EDIT_RULING))
-//          .onSubmit("reference")(
-//            newFakePOSTRequestWithCSRF(app)
-//              .withTarget(RequestTarget("origin", "", Map.empty))
-//              .withFormUrlEncodedBody("caseStatus" -> CaseStatusRadioInput.MoveBackToQueue.toString)
-//          )
-//      )
-//
-//      status(result)               shouldBe Status.SEE_OTHER
-//      redirectLocation(result).get shouldBe ReassignCaseController.reassignCase("reference", "origin").url
-//    }
-//
-//    "redirect to change case status page when form has errors" in {
-//      val result =
-//        controller(caseWithStatusOPEN, Set(Permission.EDIT_RULING))
-//          .onSubmit("reference")(newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("caseStatus" -> ""))
-//
-//      contentAsString(result) should include("Select a case status")
-//    }
+
+    "display Corr details page if form has errors POST" in {
+      given(casesService.createCase(any[CorrespondenceApplication], any[Operator])(any[HeaderCarrier]))
+        .willReturn(successful(Cases.corrCaseExample))
+      val result = await(
+        controller(caseWithStatusOPEN, Set(Permission.CREATE_CASES))
+          .post()(
+            newFakePOSTRequestWithCSRF(app)
+              .withFormUrlEncodedBody(
+                "summary"      -> "",
+                "source"       -> "",
+                "contactEmail" -> "dummyemailcom"
+              )
+          )
+      )
+
+      contentAsString(result) should include(messages("page.title.create_correspondence.h1"))
+
+    }
+
+    "Release choice should redirect to Release Case if Yes POST" in {
+      val result = await(
+        controller(caseWithStatusOPEN, Set(Permission.CREATE_CASES, Permission.RELEASE_CASE))
+          .postChoice("reference")(
+            newFakePOSTRequestWithCSRF(app)
+              .withFormUrlEncodedBody(
+                "choice"      -> "Yes"
+              )
+          )
+      )
+
+      status(result)               shouldBe Status.SEE_OTHER
+      redirectLocation(result).get shouldBe ReleaseCaseController.releaseCase("reference", None).url
+    }
+
+    "Release choice should redirect to Confirmation page if No POST" in {
+      val result = await(
+        controller(caseWithStatusOPEN, Set(Permission.CREATE_CASES, Permission.RELEASE_CASE))
+          .postChoice("reference")(
+            newFakePOSTRequestWithCSRF(app)
+              .withFormUrlEncodedBody(
+                "choice"      -> "No"
+              )
+          )
+      )
+
+      status(result)               shouldBe Status.SEE_OTHER
+      redirectLocation(result).get shouldBe CreateCorrespondenceController.displayConfirmation("reference").url
+    }
+
+    "Release choice should display Do you want to release case page if form has errors POST" in {
+      given(casesService.getOne(any[String])(any[HeaderCarrier]))
+        .willReturn(successful(Some(Cases.corrCaseExample)))
+      val result = await(
+        controller(caseWithStatusOPEN, Set(Permission.CREATE_CASES, Permission.RELEASE_CASE))
+          .postChoice("reference")(
+            newFakePOSTRequestWithCSRF(app)
+          )
+      )
+      status(result)          shouldBe Status.OK
+
+      contentAsString(result) should include(messages("error.empty.queue"))
+
+    }
+
+    "Release choice should display case not found when case not found and form has errors POST" in {
+      given(casesService.getOne(any[String])(any[HeaderCarrier]))
+        .willReturn(successful(None))
+      val result = await(
+        controller(caseWithStatusOPEN, Set(Permission.CREATE_CASES, Permission.RELEASE_CASE))
+          .postChoice("reference")(
+            newFakePOSTRequestWithCSRF(app)
+          )
+      )
+      status(result)          shouldBe Status.OK
+
+      contentAsString(result) should include(messages("We could not find a Case with reference: reference"))
+
+    }
+
+
+    "display Do you want to release case page GET" in {
+      given(casesService.createCase(any[CorrespondenceApplication], any[Operator])(any[HeaderCarrier]))
+        .willReturn(successful(Cases.corrCaseExample))
+      given(casesService.getOne(any[String])(any[HeaderCarrier]))
+        .willReturn(successful(Some(Cases.corrCaseExample)))
+      val result = await(
+        controller(caseWithStatusOPEN, Set(Permission.CREATE_CASES))
+          .displayQuestion("reference")(newFakePOSTRequestWithCSRF(app))
+      )
+
+      status(result)               shouldBe Status.OK
+      contentAsString(result) should include("Do you want to release this new case to a team now?")
+    }
+
+    "display Confirmation case page for creating a correspondence with no queue GET" in {
+      given(casesService.createCase(any[CorrespondenceApplication], any[Operator])(any[HeaderCarrier]))
+        .willReturn(successful(Cases.corrCaseExample.copy(queueId = None)))
+      given(casesService.getOne(any[String])(any[HeaderCarrier]))
+        .willReturn(successful(Some(Cases.corrCaseExample.copy(queueId = None))))
+      val result = await(
+        controller(caseWithStatusOPEN, Set(Permission.CREATE_CASES))
+          .displayConfirmation("reference")(newFakePOSTRequestWithCSRF(app))
+      )
+
+      status(result)               shouldBe Status.OK
+      contentAsString(result) should include("Correspondence case created")
+    }
+
+    "display Confirmation case page for creating a correspondence with a queue GET" in {
+      given(casesService.createCase(any[CorrespondenceApplication], any[Operator])(any[HeaderCarrier]))
+        .willReturn(successful(Cases.corrCaseExample.copy(queueId = Some("queue"))))
+      given(casesService.getOne(any[String])(any[HeaderCarrier]))
+        .willReturn(successful(Some(Cases.corrCaseExample.copy(queueId = Some("queue")))))
+
+      given(queuesService.getOneById(any[String]))
+        .willReturn(successful(Some(Queue("queue", "queue", "queue"))))
+
+      val result = await(
+        controller(caseWithStatusOPEN, Set(Permission.CREATE_CASES))
+          .displayConfirmation("reference")(newFakePOSTRequestWithCSRF(app))
+      )
+
+      status(result)               shouldBe Status.OK
+      contentAsString(result) should include("Correspondence case released to queue team")
+    }
+
+    "display no results found when a queue is not found GET" in {
+      given(casesService.createCase(any[CorrespondenceApplication], any[Operator])(any[HeaderCarrier]))
+        .willReturn(successful(Cases.corrCaseExample.copy(queueId = Some("queue"))))
+      given(casesService.getOne(any[String])(any[HeaderCarrier]))
+        .willReturn(successful(Some(Cases.corrCaseExample.copy(queueId = Some("queue")))))
+
+      given(queuesService.getOneById(any[String]))
+        .willReturn(successful(None))
+
+      val result = await(
+        controller(caseWithStatusOPEN, Set(Permission.CREATE_CASES))
+          .displayConfirmation("reference")(newFakePOSTRequestWithCSRF(app))
+      )
+
+      status(result)               shouldBe Status.OK
+      contentAsString(result) should include("Case Queue not found.")
+    }
+
+    "display no results found when a case is not found GET" in {
+      given(casesService.createCase(any[CorrespondenceApplication], any[Operator])(any[HeaderCarrier]))
+        .willReturn(successful(Cases.corrCaseExample.copy(queueId = Some("queue"))))
+      given(casesService.getOne(any[String])(any[HeaderCarrier]))
+        .willReturn(successful(None))
+
+      given(queuesService.getOneById(any[String]))
+        .willReturn(successful(None))
+
+      val result = await(
+        controller(caseWithStatusOPEN, Set(Permission.CREATE_CASES))
+          .displayConfirmation("reference")(newFakePOSTRequestWithCSRF(app))
+      )
+
+      status(result)               shouldBe Status.OK
+      contentAsString(result) should include("We could not find a Case with reference: reference")
+    }
+
+    def asFormParams(cc: Product): List[(String, String)] =
+  cc.getClass.getDeclaredFields.toList
+    .map { f =>
+      f.setAccessible(true)
+      (f.getName, f.get(cc))
+    }
+    .filterNot(_._1 == "serialVersionUID")
+    .filterNot(_._1 == "MODULE$")
+    .flatMap {
+      case (n, l: List[_]) if l.headOption.exists(_.isInstanceOf[Product]) =>
+        l.zipWithIndex.flatMap {
+          case (x, i) => asFormParams(x.asInstanceOf[Product]).map { case (k, v) => (s"$n[$i].$k", v) }
+        }
+      case (n, Some(p: Product)) => asFormParams(p).map { case (k, v) => (s"$n.$k", v) }
+      case (n, Some(a))          => List((n, a.toString))
+      case (n, None)             => List((n, ""))
+      case (n, p: Product)       => asFormParams(p).map { case (k, v) => (s"$n.$k", v) }
+      case (n, a)                => List((n, a.toString))
+    }
   }
 }

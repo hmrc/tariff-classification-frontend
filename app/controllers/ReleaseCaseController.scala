@@ -89,7 +89,7 @@ class ReleaseCaseController @Inject() (
           c.queueId
             .map(id =>
               queueService.getOneById(id) flatMap {
-                case Some(queue) => successful(confirmation_case_creation(c, findQueue(c)))
+                case Some(queue) => successful(confirmation_case_creation(c, queue.name))
                 case None        => queueNotFound
               }
             )
@@ -97,13 +97,4 @@ class ReleaseCaseController @Inject() (
       )
     }
 
-  private def findQueue(c: Case): String =
-    c.queueId match {
-      case Some("1") => Queues.gateway.name
-      case Some("2") => Queues.act.name
-      case Some("3") => Queues.cap.name
-      case Some("4") => Queues.cars.name
-      case Some("5") => Queues.elm.name
-      case None      => ""
-    }
 }

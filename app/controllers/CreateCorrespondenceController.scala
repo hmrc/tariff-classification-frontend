@@ -94,8 +94,7 @@ class CreateCorrespondenceController @Inject() (
           (choice: String) => {
             choice match {
               case "Yes" => successful(Redirect(routes.ReleaseCaseController.releaseCase(reference, None)))
-              case "No"  => successful(Redirect(routes.CreateCorrespondenceController.displayConfirmation(reference)))
-              case _     => successful(Redirect(routes.CreateCorrespondenceController.get()))
+              case _  => successful(Redirect(routes.CreateCorrespondenceController.displayConfirmation(reference)))
             }
           }
         )
@@ -121,13 +120,3 @@ class CreateCorrespondenceController @Inject() (
         }
     }
   }
-/*
-  private def findQueue(c: Case): String =
-    c.queueId match {
-      case Some("1") => Queues.gateway.name
-      case Some("2") => Queues.act.name
-      case Some("3") => Queues.cap.name
-      case Some("4") => Queues.cars.name
-      case Some("5") => Queues.elm.name
-      case None      => ""
-    }*/
