@@ -23,10 +23,12 @@
 @import views.html.partials._
 @import views.{Report, SelectedReport}
 @import models.TabIndexes
+@import models.viewmodels.NoTabSelected
+
 @(queues: Seq[Queue], report: Option[SelectedReport] = None, caseCountByQueue: Map[String, Int] )(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None,
-    customTitle = Some(messages("page.title.case.queues.reports"))) {
+    customTitle = Some(messages("page.title.case.queues.reports")), customPrimaryNavTab = NoTabSelected) {
 
     <h1 id="queue-name" class="heading-xlarge">@messages("cases.menu.reports")</h1>
 

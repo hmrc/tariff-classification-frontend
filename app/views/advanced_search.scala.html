@@ -24,6 +24,8 @@
 @import views.html.includes.main
 @import views.html.partials._
 @import views.partials.SearchResult
+@import models.viewmodels.NoTabSelected
+
 @(form: Form[Search], results: Option[Paged[SearchResult]] = None, keywords: Seq[String], selectedTab: SearchTab)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @formHasStatus(status: PseudoCaseStatus) = @{
@@ -41,9 +43,10 @@
     }
 }
 
-@main(bodyClasses = None, customTitle = Some(messages("page.title.advanced.search"))) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.advanced.search")),
+    customPrimaryNavTab = NoTabSelected) {
 
-    @back_link()
+
 
     @error_summary(form.errors)
 
@@ -74,8 +77,10 @@
 
         @advanced_search_keywords(form, keywords)
 
-        <button id="advanced_search-search_button" class="button" type="submit" name="addToSearch" value="false">Search</button>
-        <a id="advanced_search-reset_button" class="secondary-button" href="@controllers.routes.SearchController.search()">New search</a>
+        <button id="advanced_search-search_button" class="button" type="submit" name="addToSearch" value="false">
+            Search</button>
+        <a id="advanced_search-reset_button" class="secondary-button" href="@controllers.routes.SearchController.search()">
+            New search</a>
 
         @if(results.isEmpty) {
             @*
@@ -98,34 +103,34 @@
 
                         <div class="advanced_search--filters_container">
                             <div class="advanced_search--filters">
-                            @input_checkbox_group(
-                                field = form("application_type"),
-                                options = Seq(
-                                    CheckOption("BTI", ApplicationType.ATAR.name, checked = formHasApplicationType(ApplicationType.ATAR)),
-                                    CheckOption("Liability", ApplicationType.LIABILITY.name, checked = formHasApplicationType(ApplicationType.LIABILITY))
-                                ),
-                                legend = Some("Apply filters"),
-                                submitOnChange = true,
-                                divClass = Some("advanced_search--filters-checkbox")
-                            )
+                                @input_checkbox_group(
+                                    field = form("application_type"),
+                                    options = Seq(
+                                        CheckOption("BTI", ApplicationType.ATAR.name, checked = formHasApplicationType(ApplicationType.ATAR)),
+                                        CheckOption("Liability", ApplicationType.LIABILITY.name, checked = formHasApplicationType(ApplicationType.LIABILITY))
+                                    ),
+                                    legend = Some("Apply filters"),
+                                    submitOnChange = true,
+                                    divClass = Some("advanced_search--filters-checkbox")
+                                )
 
-                            @input_checkbox_group(
-                                field = form("status"),
-                                options = Seq(
-                                    CheckOption("Open", PseudoCaseStatus.OPEN.toString, checked = formHasStatus(PseudoCaseStatus.OPEN)),
-                                    CheckOption("Completed", PseudoCaseStatus.LIVE.toString, checked = formHasStatus(PseudoCaseStatus.LIVE)),
-                                    CheckOption("Expired", PseudoCaseStatus.EXPIRED.toString, checked = formHasStatus(PseudoCaseStatus.EXPIRED)),
-                                    CheckOption("Cancelled", PseudoCaseStatus.CANCELLED.toString, checked = formHasStatus(PseudoCaseStatus.CANCELLED)),
-                                    CheckOption("New", PseudoCaseStatus.NEW.toString, checked = formHasStatus(PseudoCaseStatus.NEW)),
-                                    CheckOption("Referred", PseudoCaseStatus.REFERRED.toString, checked = formHasStatus(PseudoCaseStatus.REFERRED)),
-                                    CheckOption("Suspended", PseudoCaseStatus.SUSPENDED.toString, checked = formHasStatus(PseudoCaseStatus.SUSPENDED)),
-                                    CheckOption("Rejected", PseudoCaseStatus.REJECTED.toString, checked = formHasStatus(PseudoCaseStatus.REJECTED)),
-                                    CheckOption("Suppressed", PseudoCaseStatus.SUPPRESSED.toString, checked = formHasStatus(PseudoCaseStatus.SUPPRESSED))
-                                ),
-                                submitOnChange = true,
-                                divClass = Some("advanced_search--filters-checkbox"),
-                                customGroupClasses = Some("border-top")
-                            )
+                                @input_checkbox_group(
+                                    field = form("status"),
+                                    options = Seq(
+                                        CheckOption("Open", PseudoCaseStatus.OPEN.toString, checked = formHasStatus(PseudoCaseStatus.OPEN)),
+                                        CheckOption("Completed", PseudoCaseStatus.LIVE.toString, checked = formHasStatus(PseudoCaseStatus.LIVE)),
+                                        CheckOption("Expired", PseudoCaseStatus.EXPIRED.toString, checked = formHasStatus(PseudoCaseStatus.EXPIRED)),
+                                        CheckOption("Cancelled", PseudoCaseStatus.CANCELLED.toString, checked = formHasStatus(PseudoCaseStatus.CANCELLED)),
+                                        CheckOption("New", PseudoCaseStatus.NEW.toString, checked = formHasStatus(PseudoCaseStatus.NEW)),
+                                        CheckOption("Referred", PseudoCaseStatus.REFERRED.toString, checked = formHasStatus(PseudoCaseStatus.REFERRED)),
+                                        CheckOption("Suspended", PseudoCaseStatus.SUSPENDED.toString, checked = formHasStatus(PseudoCaseStatus.SUSPENDED)),
+                                        CheckOption("Rejected", PseudoCaseStatus.REJECTED.toString, checked = formHasStatus(PseudoCaseStatus.REJECTED)),
+                                        CheckOption("Suppressed", PseudoCaseStatus.SUPPRESSED.toString, checked = formHasStatus(PseudoCaseStatus.SUPPRESSED))
+                                    ),
+                                    submitOnChange = true,
+                                    divClass = Some("advanced_search--filters-checkbox"),
+                                    customGroupClasses = Some("border-top")
+                                )
                             </div>
                         </div>
                     </div>

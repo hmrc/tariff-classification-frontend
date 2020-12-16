@@ -21,7 +21,7 @@
 @defining(Appeal.highestAppealFromDecision(decision)) { appeal: Option[Appeal] =>
 
     @if(appeal.isDefined) {
-        <span id="@id" class="phase-tag bg-red">
+        <span id="@id" class="govuk-tag govuk-tag--red">
         @AppealStatus.format(appeal.get.`type`, appeal.get.status)
         </span>
     }

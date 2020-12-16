@@ -112,7 +112,7 @@ class MyCasesViewSpec extends ViewSpec {
       doc.getElementById("cases_list-row-0-type") should containText("ATaR")
       doc.getElementById("cases_list-row-1-type") should containText("Liability")
       doc.getElementById("cases_list-row-2-type") should containText("Liability")
-      doc.getElementById("cases_list-row-2-type") should containElementWithAttribute("class", "live-red-text")
+      doc.getElementById("cases_list-row-2-type") should containElementWithAttribute("class", "govuk-tag govuk-tag--pink")
     }
 
     "render cases in the expected order" in {

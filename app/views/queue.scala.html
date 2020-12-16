@@ -18,7 +18,9 @@
 @import models.request.AuthenticatedRequest
 @import models.{Case, Paged, Queue, TabIndexes}
 @import views.html.includes.main
-@import views.html.partials.{cases_list, nav_header, queue_nav, create_liability_button}
+@import views.html.partials.{cases_list, nav_header, queue_nav}
+@import models.viewmodels.NoTabSelected
+
 @(queues: Seq[Queue], queue: Queue, caseCountByQueue: Map[String, Int], cases: Paged[Case], filteredBy: String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @getSuffixBasedOnFilter() = @{
@@ -29,7 +31,8 @@
 }
 
 @main(bodyClasses = None,
-    customTitle = Some(messages("page.title.case.queues.cases", messages(s"page.title.case.queues.${queue.slug}${getSuffixBasedOnFilter}")))){
+    customTitle = Some(messages("page.title.case.queues.cases", messages(s"page.title.case.queues.${queue.slug}${getSuffixBasedOnFilter}"))),
+    customPrimaryNavTab = NoTabSelected){
 
     <h1 id="queue-name" class="heading-xlarge">@messages("page.title.case.queues.cases", messages(s"page.title.case.queues.${queue.slug}${getSuffixBasedOnFilter}"))</h1>
 

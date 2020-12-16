@@ -18,10 +18,13 @@
 @import controllers.routes.MyCasesController
 @import models.Case
 @import views.html.includes.main
-@import views.html.partials.{days_elapsed_paused, confirmation_next_steps, case_heading, back_link}
+@import views.html.partials.{days_elapsed_paused, case_heading, back_link}
+@import models.viewmodels.NoTabSelected
+
 @(c: Case)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("page.title.case.referred"))) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.case.referred")),
+    customPrimaryNavTab = NoTabSelected) {
 
     @back_link()
 

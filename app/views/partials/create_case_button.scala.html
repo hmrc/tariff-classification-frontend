@@ -14,16 +14,21 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
+@import controllers.routes.CreateLiabilityController
+@import models.{Case, CaseStatus}
 @import models.request.AuthenticatedRequest
-@import views.html.includes.main
-@import models.viewmodels.HomeTab
+@import models.Permission
+@(clazz: String = "", caseType:String = "liability" )(implicit request: AuthenticatedRequest[_], messages: Messages)
 
-@this()
-@(countCases: Map[String, Int], referredCasesByAssignee: Int)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("operator.dashboard.classification.title")), customPrimaryNavTab = HomeTab) {
-
-@components.cases_cards(countCases, referredCasesByAssignee)
-
+@if(request.hasPermission(Permission.CREATE_CASES)) {
+@if(caseType=="liability"){
+<a tabindex="300" role="button" class="button button-gray @clazz" id="create_@{caseType}-button"
+   href="@CreateLiabilityController.get()">
+ }else{
+ <a tabindex="300" role="button" class="button button-gray @clazz" id="create_@{caseType}-button"
+    href="">
+ }
+ Create new @{caseType} case
+</a>
 }
