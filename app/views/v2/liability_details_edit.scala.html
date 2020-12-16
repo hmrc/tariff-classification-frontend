@@ -24,18 +24,18 @@
 @import views.html.forms.components.input_date
 @import controllers.Tab._
 @import controllers.v2.routes.LiabilityController
-
 @import views.html.includes.main
 @import models.viewmodels.CaseHeaderViewModel
 @import views.html.forms.components.input_checkbox
 @import views.html.forms.components.input_number
 @import views.html.components.confirm_or_cancel_buttons
+@import models.viewmodels.MyCasesTab
 
 @this(case_heading: views.html.v2.case_heading)
 
 @(c: Case, form : Form[Case])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("case.liability.edit.title"))) {
+@main(bodyClasses = None, customTitle = Some(messages("case.liability.edit.title")), customPrimaryNavTab = MyCasesTab) {
 
     @case_heading(CaseHeaderViewModel.fromCase(c))
 

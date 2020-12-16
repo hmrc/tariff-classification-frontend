@@ -32,6 +32,10 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
   private val gatewayQueue = Queue("1", "gateway", "Gateway")
   private val otherQueue   = Queue("2", "other", "Other")
+  private val cap     = Queue("3", "cap", "CAP")
+  private val cars    = Queue("4", "cars", "Cars")
+  private val elm     = Queue("5", "elm", "ELM")
+  private val allQueues = Seq(gatewayQueue, otherQueue, cap, cars, elm)
   private val pagination   = SearchPagination(1, 2)
 
   private val connector = new BindingTariffClassificationConnector(mockAppConfig, authenticatedHttpClient, metrics)
@@ -159,6 +163,35 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
       await(connector.findCasesByQueue(otherQueue, pagination, Seq(ApplicationType.LIABILITY))) shouldBe Paged(
         Seq(Cases.btiCaseExample)
       )
+
+      verify(
+        getRequestedFor(urlEqualTo(url))
+          .withHeader("X-Api-Token", equalTo(fakeAuthToken))
+      )
+    }
+  }
+
+  "Connector 'Get Cases By All Queue'" should {
+
+    "get cases in all queues" in {
+      val url = buildQueryUrlAllQueues(
+        types = Seq(ApplicationType.ATAR, ApplicationType.LIABILITY),
+        statuses = "NEW,OPEN,REFERRED,SUSPENDED",
+        assigneeId = "none",
+        queueIds = allQueues.map(_.id),
+        pagination = pagination
+      )
+
+      stubFor(
+        get(urlEqualTo(url))
+          .willReturn(
+            aResponse()
+              .withStatus(HttpStatus.SC_OK)
+              .withBody(CasePayloads.pagedGatewayCases)
+          )
+      )
+
+      await(connector.findCasesByAllQueues(allQueues, pagination)) shouldBe Paged(Seq(Cases.btiCaseExample))
 
       verify(
         getRequestedFor(urlEqualTo(url))

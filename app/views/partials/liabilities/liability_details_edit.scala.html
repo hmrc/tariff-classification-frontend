@@ -15,26 +15,25 @@
  *@
 
 @import helper._
-@import controllers.routes.RulingController
 @import config.AppConfig
 @import controllers.routes._
-@import models.forms.DecisionFormData
-@import models.response.ScanStatus
-@import models.{BTIApplication, Case, StoredAttachment}
-@import views.html.forms.components.{input_text, input_textarea}
-@import views.html.partials.{attachments_list, tab_heading, back_link}
+@import models.Case
+@import views.html.forms.components.{input_text}
+@import views.html.partials.{tab_heading, back_link}
 @import models.request.AuthenticatedRequest
 @import views.html.partials.error_summary
 @import models.LiabilityOrder
-@import models.forms.LiabilityDetailsForm
 @import views.html.forms.components.input_date
 
 @import views.html.partials.case_heading
 @import views.html.includes.main
 @import views.html.components.confirm_or_cancel_buttons
+
+@import models.viewmodels.MyCasesTab
+
 @(c: Case, form : Form[Case])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("case.liability.edit.title"))) {
+@main(bodyClasses = None, customTitle = Some(messages("case.liability.edit.title")), customPrimaryNavTab = MyCasesTab) {
 
     @back_link()
 

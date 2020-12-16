@@ -21,24 +21,42 @@
 
 @if(c.application.isLiveLiabilityOrder && !suppressLiveIndicator) {
     <span class="visuallyhidden">liability type</span>
-    <span id = "@id-liability-status" class="live-red-text">LIVE</span>
+    <span id = "@id-liability-status" class="govuk-tag govuk-tag--pink">LIVE</span>
 }
 
 @c.status match {
     case CaseStatus.CANCELLED => {
-        <span id ="@id" class="phase-tag bg-gray--dark">
+        <span id ="@id" class="govuk-tag govuk-tag--red">
             CANCELLED@{c.decision.flatMap(_.cancellation).flatMap(c => CancelReason.code(c.reason)).map(s => s" - $s").getOrElse("")}
         </span>
     }
     case CaseStatus.COMPLETED if c.hasExpiredRuling => {
         <span class="visuallyhidden">case status</span>
-        <span id ="@id" class="phase-tag bg-gray--dark">
+        <span id ="@id" class="govuk-tag govuk-tag--green">
             EXPIRED
         </span>
     }
+    case CaseStatus.REFERRED | CaseStatus.SUSPENDED => {
+        <span class="visually-hidden">case status</span>
+        <span id="@id" class="govuk-tag govuk-tag--yellow">
+            @{c.status}
+        </span>
+    }
+    case CaseStatus.OPEN => {
+        <span class="visually-hidden">case status</span>
+        <span id="@id" class="govuk-tag govuk-tag--blue">
+             @{c.status}
+        </span>
+    }
+    case CaseStatus.REJECTED => {
+    <span class="visually-hidden">case status</span>
+    <span id="@id" class="govuk-tag govuk-tag--red">
+                 @{c.status}
+            </span>
+    }
     case s : CaseStatus => {
         <span class="visuallyhidden">case status</span>
-        <span id="@id" class="phase-tag bg-blue">@s</span>
+        <span id="@id" class="govuk-tag govuk-tag--green">@s</span>
     }
 }
 

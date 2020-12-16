@@ -28,43 +28,30 @@
      <th id="@{caseTab.tabMessageKey}-reference" class="bold w-0">
      Reference
      </th>
-     <th id="@{caseTab.tabMessageKey}-goods" class="bold w-0">
-      Goods
+     <th id="@{caseTab.tabMessageKey}-subject" class="bold w-0">
+      Subject
      </th>
-     <th id="@{caseTab.tabMessageKey}-trader" class="bold w-0">
-      Trader
+     <th id="@{caseTab.tabMessageKey}-source" class="bold w-0">
+      Case source
+     </th>
+     <th id="@{caseTab.tabMessageKey}-contact-email" class="bold w-0">
+      Contact email
      </th>
      <th id="@{caseTab.tabMessageKey}-elapsed-days" class="bold w-0">
       Elapsed days
-     </th>
-     <th id="@{caseTab.tabMessageKey}-type" class="bold w-0">
-      Type
-     </th>
-     <th id="@{caseTab.tabMessageKey}-status" class="bold w-0">
-      Status
      </th>
     </tr>
 
    @for((result, index) <- caseTab.searchResult.results.zipWithIndex) {
 
-    @defining(result.application.asLiabilityOrder) { liability =>
+    @defining(result.application.asCorrespondence) { correspondence =>
 
      <tr id="@{caseTab.tabMessageKey}-details-@index">
-      <td id="@{caseTab.tabMessageKey}-reference-@index">
-       @if(result.queueId.isDefined && !result.assignee.map(_.id).contains(request.operator.id)) {
-        <a href="@routes.AssignCaseController.get(result.reference)">@result.reference</a>
-       }else {
-        <a href="@routes.CaseController.get(result.reference)">@result.reference</a>
-       }
-      </td>
-      <td id="@{caseTab.tabMessageKey}-goods-@index" class="pre-wrap">@{liability.goodName}</td>
-      <td id="@{caseTab.tabMessageKey}-trader-@index" class="pre-wrap">@{liability.traderName}</td>
-      <td id="@{caseTab.tabMessageKey}-elapsed-days-@index" @if(result.isCaseOverdue) {style="color:red"}>@{result.daysElapsed}</td>
-      <td id="@{caseTab.tabMessageKey}-type-@index"> @if(liability.isLiveLiabilityOrder) {
-       <span class="govuk-tag govuk-tag--pink">@{liability.status}</span>
-      }</td>
-      <td id="@{caseTab.tabMessageKey}-status-@index">@case_status_tab(result, s"${caseTab.tabMessageKey}-status-label-$index")
-      </td>
+      <td id="@{caseTab.tabMessageKey}-reference-@index"><a href="@routes.CaseController.get(result.reference)">@{result.reference}</a></td>
+      <td id="@{caseTab.tabMessageKey}-subject-@index" class="pre-wrap">@{correspondence.summary}</td>
+      <td id="@{caseTab.tabMessageKey}-source-@index" class="pre-wrap">@{correspondence.correspondenceStarter}</td>
+      <td id="@{caseTab.tabMessageKey}-contact-email-@index" class="pre-wrap">@{correspondence.contact.email}</td>
+      <td id="@{caseTab.tabMessageKey}-elapsed-days-@index">@{result.daysElapsed}</td>
      </tr>
     }
    }

@@ -25,6 +25,7 @@
 @import views.html.forms.components.input_textarea
 @import views.html.partials.error_summary
 @import views.html.partials.c592_information
+@import models.viewmodels.MyCasesTab
 
 @this(
         case_heading: views.html.v2.case_heading
@@ -32,7 +33,7 @@
 
 @(caseHeaderViewModel: CaseHeaderViewModel, form: Form[Decision], traderCommodityCode: String, officerCommodityCode: String)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("page.title.edit_liability_decision"))) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.edit_liability_decision")), customPrimaryNavTab = MyCasesTab) {
 
  @case_heading(caseHeaderViewModel, Some("Edit ruling"))
 

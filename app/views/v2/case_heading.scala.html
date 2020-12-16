@@ -26,14 +26,27 @@
 )(implicit messages: Messages)
 
 @phaseTagColor = @{
-    if(caseHeaderViewModel.caseStatus == "CANCELLED" || caseHeaderViewModel.caseStatus == "COMPLETED") {
-        "bg-gray--dark"
+    if(caseHeaderViewModel.caseStatus == "CANCELLED"){
+        "govuk-tag govuk-tag--red"
+    }
+    if(caseHeaderViewModel.caseStatus == "COMPLETED") {
+        "govuk-tag govuk-tag--green"
+    }
+    if(caseHeaderViewModel.caseStatus == "REFERRED" | caseHeaderViewModel.caseStatus == "SUPPRESSED") {
+        "govuk-tag govuk-tag--yellow"
+    }
+    if(caseHeaderViewModel.caseStatus == "REJECTED") {
+        "govuk-tag govuk-tag--red"
+    }
+    if(caseHeaderViewModel.caseStatus == "OPEN") {
+        "govuk-tag govuk-tag--blue"
     } else {
-        "bg-blue"
+        "govuk-tag govuk-tag--green"
     }
 }
 
-<div id="case-heading" class="case-heading mt-1 mb-2">
+<div id="case-heading" class="case-heading mt-5 mb-4">
+
     <div id="case-reference" class="case-reference">
         @messages("case.title.liabilities", messages("case.menu.liability"), caseHeaderViewModel.referenceNumber, caseHeaderViewModel.businessName)
     </div>
@@ -44,7 +57,7 @@
 
         @if(caseHeaderViewModel.isLive) {
             <span class="visuallyhidden">liability type</span>
-            <span id = "case-status-liability-status" class="live-red-text">LIVE</span>
+            <span id = "case-status-liability-status" class="govuk-tag govuk-tag--pink">LIVE</span>
         }
 
         <span class="visuallyhidden">case status</span>
