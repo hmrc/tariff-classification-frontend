@@ -24,10 +24,8 @@ import play.api.mvc._
 import service.{CasesService, FileStoreService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.Future.successful
-import play.api.i18n.Messages
 
 class PdfDownloadController @Inject() (
   authenticatedAction: AuthenticatedAction,
@@ -35,23 +33,30 @@ class PdfDownloadController @Inject() (
   fileStore: FileStoreService,
   caseService: CasesService,
   implicit val appConfig: AppConfig,
-) extends FrontendController(mcc)
+)(implicit ec: ExecutionContext) extends FrontendController(mcc)
     with I18nSupport {
 
   def getRulingPdf(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     caseService.getOne(reference).flatMap {
       case Some(cse) =>
-        val pdfResult = for {
-          decision <- OptionT.fromOption[Future](cse.decision)
-          pdf <- OptionT.fromOption[Future](decision.decisionPdf)
-          meta <- OptionT(fileStore.getFileMetadata(pdf.id))
-          url <- OptionT.fromOption[Future](meta.url)
-          content <- OptionT(fileStore.downloadFile(url))
-        } yield Ok.streamed(content, None, Some(meta.mimeType)).withHeaders(
-          "Content-Disposition" -> s"attachment; filename=${meta.fileName}"
-        )
+        cse.decision match {
+          case Some(decision) =>
+            val pdfResult = for {
+              pdf <- OptionT.fromOption[Future](decision.decisionPdf)
+              meta <- OptionT(fileStore.getFileMetadata(pdf.id))
+              url <- OptionT.fromOption[Future](meta.url)
+              content <- OptionT(fileStore.downloadFile(url))
+            } yield Ok.streamed(content, None, Some(meta.mimeType)).withHeaders(
+              "Content-Disposition" -> s"attachment; filename=${meta.fileName}"
+            )
 
-        pdfResult.getOrElse(NotFound(views.html.ruling_not_found(reference)))
+            val messages = request.messages
+            val documentType = messages("errors.document-not-found.ruling-certificate")
+            pdfResult.getOrElse(NotFound(views.html.document_not_found(documentType, reference)))
+
+          case None =>
+            successful(NotFound(views.html.ruling_not_found(reference)))
+        }
 
       case None =>
         successful(NotFound(views.html.case_not_found(reference)))
