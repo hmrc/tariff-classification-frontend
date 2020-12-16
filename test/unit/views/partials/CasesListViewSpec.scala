@@ -65,7 +65,7 @@ class CasesListViewSpec extends ViewSpec {
       doc                                                  should containElementWithID("cases_list-row-0-status")
       doc.getElementById("cases_list-row-0-status")        should containText("NEW")
       doc                                                  should containElementWithID("cases_list-row-0-type")
-      doc.getElementById("cases_list-row-0-type")          should containText("BTI")
+      doc.getElementById("cases_list-row-0-type")          should containText("ATaR")
       doc                                                  should containElementWithID("cases_list-row-0-days_elapsed")
       doc.getElementById("cases_list-row-0-days_elapsed")  should containText("1")
       doc                                                  should containElementWithID("cases_list-row-0-created_date")

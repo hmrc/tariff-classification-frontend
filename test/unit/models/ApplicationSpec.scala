@@ -27,7 +27,7 @@ class ApplicationSpec extends ModelsBaseSpec {
     }
 
     "convert bti type" in {
-      Cases.btiApplicationExample.getType shouldBe "BTI"
+      Cases.btiApplicationExample.getType shouldBe "ATaR"
     }
 
     "convert correspondence type" in {
@@ -40,7 +40,7 @@ class ApplicationSpec extends ModelsBaseSpec {
 
   }
 
-  "Application 'Is BTI'" should {
+  "Application 'Is ATaR'" should {
 
     "be truthy for a BTI" in {
       Cases.btiApplicationExample.isBTI shouldBe true
@@ -101,9 +101,9 @@ class ApplicationSpec extends ModelsBaseSpec {
 
   }
 
-  "Application 'As BTI'" should {
+  "Application 'As ATaR'" should {
 
-    "cast a BTI" in {
+    "cast a ATaR" in {
       Cases.btiApplicationExample.asATAR shouldBe a[BTIApplication]
     }
 
@@ -155,7 +155,7 @@ class ApplicationSpec extends ModelsBaseSpec {
 
     "Application goodsName" should {
 
-      "return a value for BTI application" in {
+      "return a value for ATaR application" in {
         Cases.btiApplicationExample.goodsName shouldBe "Laptop"
       }
 
@@ -172,7 +172,7 @@ class ApplicationSpec extends ModelsBaseSpec {
       Cases.liabilityApplicationExample.businessName shouldBe Cases.liabilityApplicationExample.asLiabilityOrder.traderName
     }
 
-    "return for BTI" in {
+    "return for ATaR" in {
       Cases.btiApplicationExample.businessName shouldBe Cases.btiApplicationExample.asATAR.holder.businessName
     }
 
