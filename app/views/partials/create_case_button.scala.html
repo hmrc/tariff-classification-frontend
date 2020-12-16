@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import controllers.routes.CreateLiabilityController
+@import controllers.routes.{CreateLiabilityController, CreateCorrespondenceController}
 @import models.{Case, CaseStatus}
 @import models.request.AuthenticatedRequest
 @import models.Permission
@@ -27,7 +27,7 @@
    href="@CreateLiabilityController.get()">
  }else{
  <a tabindex="300" role="button" class="button button-gray @clazz" id="create_@{caseType}-button"
-    href="">
+    href="@CreateCorrespondenceController.get()">
  }
  Create new @{caseType} case
 </a>
