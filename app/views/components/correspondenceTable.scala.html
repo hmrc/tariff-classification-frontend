@@ -46,7 +46,8 @@
      @if(assignmentType == "applicationTab.referredByMe") {
      <th id="@{correspondenceTab.tabMessageKey}-refer-days" class="bold w-0">
       Refer days
-     </th>
+     </th>}
+     @if(assignmentType == "applicationTab.referredByMe" || assignmentType == "applicationTab.gateway") {
      <th id="@{correspondenceTab.tabMessageKey}-status" class="bold w-0">
       Status
      </th>
@@ -68,6 +69,8 @@
       <td id="@{correspondenceTab.tabMessageKey}-elapsed-days-@index">@{result.daysElapsed}</td>
       @if(assignmentType == "applicationTab.referredByMe") {
       <td id="@{correspondenceTab.tabMessageKey}-refer-days-@index">@{result.referredDaysElapsed}</td>
+      }
+      @if(assignmentType == "applicationTab.referredByMe" || assignmentType == "applicationTab.gateway") {
       <td id="@{correspondenceTab.tabMessageKey}-status-@index">
        @case_status_tab(result, s"${correspondenceTab.tabMessageKey}-status-label-$index")
        @for(referralEvent <- correspondenceTab.referralEvent.flatMap(_.get(result.reference))) {
@@ -75,6 +78,7 @@
         }
       </td>
       }
+
      </tr>
 }
 

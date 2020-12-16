@@ -134,7 +134,7 @@ object ApplicationsTab {
 
   val corrCaseExample: Case = Case(
     "1",
-    CaseStatus.OPEN,
+    CaseStatus.NEW,
     Instant.now(),
     0,
     None,
