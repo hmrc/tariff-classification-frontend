@@ -61,19 +61,19 @@
 
                             <td id="@{id}-row-@{index}-attachment-status" class="govuk-table__cell w-15">
                                 <span class="visually-hidden">attachment-status</span>
-                                @if(file.scanStatus.contains(ScanStatus.READY)) {
-                                  @{(file.public, file.shouldPublishToRulings) match {
-                                          case (false, _) =>
-                                              <span id="@{id}" class="govuk-tag govuk-tag--yellow"> {messages("case.attachment.upload.status-confidential")}</span>
-                                          case (true, true) =>
-                                              <span id="@{id}" class="govuk-tag govuk-tag--green"> {messages("case.attachment.upload.status-published")}</span>
-                                          case (true, false) =>
-                                              <span id="@{id}" class="visually-hidden"> </span>
-                                      }
-                                  }
+                                @if(file.scanStatus.contains(ScanStatus.FAILED)) {
+                                     <span id="@id" class="govuk-tag govuk-tag--red">@messages("case.attachment.upload.status-failed")</span>
                                 } else {
-                                    <span id="@id" class="govuk-tag govuk-tag--red">@messages("case.attachment.upload.status-failed")</span>
-                                }
+                                      @{(file.public, file.shouldPublishToRulings) match {
+                                              case (false, _) =>
+                                                  <span id="@{id}" class="govuk-tag govuk-tag--yellow"> {messages("case.attachment.upload.status-confidential")}</span>
+                                              case (true, true) =>
+                                                  <span id="@{id}" class="govuk-tag govuk-tag--green"> {messages("case.attachment.upload.status-published")}</span>
+                                              case (true, false) =>
+                                                  <span id="@{id}" class="visually-hidden"></span>
+                                          }
+                                      }
+                                    }
                             </td>
                             @if(request.hasPermission(Permission.EDIT_ATTACHMENT_DETAIL)) {
                                 <td id="@{id}-row-@{index}-edit-attachment-details" class="govuk-table__row">
