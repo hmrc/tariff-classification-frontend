@@ -34,7 +34,7 @@ class PdfDownloadController @Inject() (
   mcc: MessagesControllerComponents,
   fileStore: FileStoreService,
   caseService: CasesService,
-  implicit val appConfig: AppConfig,
+  implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
     with I18nSupport {
 
