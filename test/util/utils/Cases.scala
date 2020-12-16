@@ -348,7 +348,8 @@ object Cases {
       id        = id,
       public    = true,
       operator  = Some(Operator("0", Some("operatorName"))),
-      timestamp = Instant.now()
+      timestamp = Instant.now(),
+      shouldPublishToRulings = true
     )
 
   def aCase(withModifier: (Case => Case)*): Case =

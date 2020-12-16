@@ -92,14 +92,14 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
       doc.getElementById("methodExclusion")              should containText("method exclusion")
     }
 
-    "Render safe attachments" in {
+    "Render safe, non-confidential attachments" in {
       // Given
       val c = aCase(
         withDecision()
       )
       val stored = StoredAttachment(
         id                     = "FILE_ID",
-        public                 = false,
+        public                 = true,
         operator               = None,
         fileName               = "file.txt",
         url                    = None,
@@ -146,7 +146,7 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
       doc shouldNot containElementWithID("attachments[0]")
     }
 
-    "Render attachments pre-selected when 'public'" in {
+    "Render publish checkbox as checked when 'shouldPublishToRulings'" in {
       // Given
       val c = aCase(
         withDecision()
@@ -172,14 +172,14 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
       doc.getElementById("attachments[0]") should haveAttribute("checked", "checked")
     }
 
-    "Render attachments not pre-selected when not 'public'" in {
+    "Render publish checkbox unchecked when not 'shouldPublishToRulings'" in {
       // Given
       val c = aCase(
         withDecision()
       )
       val stored = StoredAttachment(
         id                     = "FILE_ID",
-        public                 = false,
+        public                 = true,
         operator               = None,
         fileName               = "file.txt",
         url                    = None,
