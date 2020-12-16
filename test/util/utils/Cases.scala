@@ -604,4 +604,28 @@ object Cases {
   def withCreatedDate(date: Instant): Case => Case =
     _.copy(createdDate = date)
 
+
+  val correspondenceExample: CorrespondenceApplication = CorrespondenceApplication(
+    None,
+    None,
+    Address("s", "s", None, None),
+    Contact("name", "email"),
+    None,
+    offline = false,
+    "Laptop",
+    "Personal Computer",
+    sampleToBeProvided = false,
+    sampleToBeReturned = false
+  )
+
+  val miscExample: MiscApplication = MiscApplication(
+    Contact("name", "email"),
+    offline = false,
+    "name",
+    None,
+    MiscCaseType.HARMONISED,
+    None,
+    sampleToBeProvided = false,
+    sampleToBeReturned = false,
+  )
 }
