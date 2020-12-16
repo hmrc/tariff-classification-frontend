@@ -27,13 +27,14 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
+import play.api.i18n.Messages
 
 class PdfDownloadController @Inject() (
   authenticatedAction: AuthenticatedAction,
   mcc: MessagesControllerComponents,
   fileStore: FileStoreService,
   caseService: CasesService,
-  implicit val appConfig: AppConfig
+  implicit val appConfig: AppConfig,
 ) extends FrontendController(mcc)
     with I18nSupport {
 
@@ -50,10 +51,10 @@ class PdfDownloadController @Inject() (
           "Content-Disposition" -> s"attachment; filename=${meta.fileName}"
         )
 
-        pdfResult.getOrElse(Ok(views.html.ruling_not_found(reference)))
+        pdfResult.getOrElse(NotFound(views.html.ruling_not_found(reference)))
 
       case None =>
-        successful(Ok(views.html.case_not_found(reference)))
+        successful(NotFound(views.html.case_not_found(reference)))
     }
   }
 
@@ -69,10 +70,12 @@ class PdfDownloadController @Inject() (
           "Content-Disposition" -> s"attachment; filename=${meta.fileName}"
         )
 
-        pdfResult.getOrElse(NotFound)
+        val messages = request.messages
+        val documentType = messages("errors.document-not-found.application")
+        pdfResult.getOrElse(NotFound(views.html.document_not_found(documentType, reference)))
 
       case None =>
-        successful(Ok(views.html.case_not_found(reference)))
+        successful(NotFound(views.html.case_not_found(reference)))
     }
   }
 }

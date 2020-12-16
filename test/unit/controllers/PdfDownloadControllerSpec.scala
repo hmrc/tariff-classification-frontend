@@ -31,12 +31,20 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import models.response.FileMetadata
 import akka.stream.scaladsl.Source
 import akka.util.ByteString
+import org.scalatest.BeforeAndAfterEach
 
-class PdfDownloadControllerSpec extends ControllerBaseSpec {
+class PdfDownloadControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   private val caseService = mock[CasesService]
   private val fileService = mock[FileStoreService]
   private val operator    = mock[Operator]
+
+  override protected def beforeEach(): Unit = {
+    reset(
+      caseService,
+      fileService
+    )
+  }
 
   private val decision = Decision(
     bindingCommodityCode = "040900",
@@ -82,6 +90,10 @@ class PdfDownloadControllerSpec extends ControllerBaseSpec {
       .thenReturn(successful(Some(Source.single(ByteString("Some content".getBytes())))))
   }
 
+  private def givenNotFoundPdf(): Unit = {
+    when(fileService.getFileMetadata(any[String])(any[HeaderCarrier])).thenReturn(successful(None))
+  }
+
   private def givenNotFoundCase(): Unit =
     when(caseService.getOne(any[String])(any[HeaderCarrier])).thenReturn(successful(None))
 
@@ -106,10 +118,23 @@ class PdfDownloadControllerSpec extends ControllerBaseSpec {
 
       val result = await(controller.applicationPdf(caseWithDecision.reference)(newFakeGETRequestWithCSRF(app)))
 
-      status(result)          shouldBe Status.OK
+      status(result)          shouldBe Status.NOT_FOUND
       contentType(result)     shouldBe Some("text/html")
       charset(result)         shouldBe Some("utf-8")
       contentAsString(result) should include("We could not find a Case with reference")
+    }
+
+    "error when document not found" in {
+      givenCompletedCase()
+      givenCaseWithoutAttachments()
+      givenNotFoundPdf()
+
+      val result = await(controller.applicationPdf(caseWithDecision.reference)(newFakeGETRequestWithCSRF(app)))
+
+      status(result)          shouldBe Status.NOT_FOUND
+      contentType(result)     shouldBe Some("text/html")
+      charset(result)         shouldBe Some("utf-8")
+      contentAsString(result) should include("We could not find an application document for case reference")
     }
 
   }
@@ -146,7 +171,7 @@ class PdfDownloadControllerSpec extends ControllerBaseSpec {
 
       val result = await(controller.getRulingPdf(caseWithDecision.reference)(fakeRequest))
 
-      status(result)          shouldBe Status.OK
+      status(result)          shouldBe Status.NOT_FOUND
       locationOf(result)      shouldBe None
       contentAsString(result) should include("We could not find a ruling with case reference")
     }
@@ -156,11 +181,10 @@ class PdfDownloadControllerSpec extends ControllerBaseSpec {
 
       val result = await(controller.getRulingPdf(caseWithDecision.reference)(newFakeGETRequestWithCSRF(app)))
 
-      status(result)          shouldBe Status.OK
+      status(result)          shouldBe Status.NOT_FOUND
       contentType(result)     shouldBe Some("text/html")
       charset(result)         shouldBe Some("utf-8")
       contentAsString(result) should include("We could not find a Case with reference")
     }
-
   }
 }
