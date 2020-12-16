@@ -186,5 +186,18 @@ class PdfDownloadControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
       charset(result)         shouldBe Some("utf-8")
       contentAsString(result) should include("We could not find a Case with reference")
     }
+
+    "error when document not found" in {
+      givenCompletedCase()
+      givenCaseWithoutAttachments()
+      givenNotFoundPdf()
+
+      val result = await(controller.getRulingPdf(caseWithDecision.reference)(newFakeGETRequestWithCSRF(app)))
+
+      status(result)          shouldBe Status.NOT_FOUND
+      contentType(result)     shouldBe Some("text/html")
+      charset(result)         shouldBe Some("utf-8")
+      contentAsString(result) should include("We could not find a ruling certificate document for case reference")
+    }
   }
 }
