@@ -20,11 +20,12 @@ import config.AppConfig
 import models.forms.ReleaseCaseForm
 import javax.inject.{Inject, Singleton}
 import models.request.AuthenticatedCaseRequest
-import models.{CaseStatus, Permission, Queue}
+import models._
 import play.api.data.Form
 import play.api.mvc._
 import service.{CasesService, QueuesService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.v2.confirmation_case_creation
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -87,11 +88,21 @@ class ReleaseCaseController @Inject() (
           c.queueId
             .map(id =>
               queueService.getOneById(id) flatMap {
-                case Some(queue) => successful(views.html.confirm_release_case(c, queue.name))
+                case Some(queue) => successful(confirmation_case_creation(c, findQueue(c)))
                 case None        => queueNotFound
               }
             )
             .getOrElse(queueNotFound)
       )
+    }
+
+  private def findQueue(c: Case): String =
+    c.queueId match {
+      case Some("1") => Queues.gateway.name
+      case Some("2") => Queues.act.name
+      case Some("3") => Queues.cap.name
+      case Some("4") => Queues.cars.name
+      case Some("5") => Queues.elm.name
+      case None      => ""
     }
 }

@@ -961,3 +961,4 @@ correspondence.create_correspondence.contactEmail.heading = Case contact email a
 correspondence.create_correspondence.confirm-button = Create case
 release_case.header = Choose a team to release the {0} case to
 release_case.question.header = Do you want to release this new case to a team now?
+release_case.released_dynamic_message = {0} case released to {1} team

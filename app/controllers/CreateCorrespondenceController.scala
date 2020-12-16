@@ -19,17 +19,16 @@ package controllers
 import config.AppConfig
 import models.forms.CorrespondenceForm
 import javax.inject.{Inject, Singleton}
-import models.{CorrespondenceApplication, Permission, Case}
+import models.{Case, CorrespondenceApplication, Permission, Queues}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import play.api.data.Forms._
 import models.forms.mappings.FormMappings.fieldNonEmpty
-import service.CasesService
+import service.{CasesService, QueuesService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.http.HeaderCarrier
 import models.request.AuthenticatedRequest
-
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -39,6 +38,7 @@ import scala.concurrent.Future.successful
 class CreateCorrespondenceController @Inject() (
   verify: RequestActions,
   casesService: CasesService,
+  queueService: QueuesService,
   mcc: MessagesControllerComponents,
   val releaseCaseView: views.html.release_case,
   val releaseCaseQuestionView: views.html.v2.release_option_choice,
@@ -47,14 +47,15 @@ class CreateCorrespondenceController @Inject() (
     with I18nSupport {
 
   private val form: Form[CorrespondenceApplication] = CorrespondenceForm.newCorrespondenceForm
-  val formReleaseChoice: Form[String] = Form(
+  private val formReleaseChoice: Form[String] = Form(
     mapping(
       "choice" -> fieldNonEmpty("error.empty.queue")
     )(identity)(Some(_))
   )
 
   def get(): Action[AnyContent] = (verify.authenticated andThen verify.mustHave(Permission.CREATE_CASES)).async {
-    implicit request: Request[AnyContent] => Future.successful(Ok(views.html.v2.create_correspondence(form)))
+    implicit request: Request[AnyContent] =>
+      Future.successful(Ok(views.html.v2.create_correspondence(form)))
   }
 
   def post(): Action[AnyContent] = (verify.authenticated andThen verify.mustHave(Permission.CREATE_CASES)).async {
@@ -62,49 +63,70 @@ class CreateCorrespondenceController @Inject() (
       form.bindFromRequest.fold(
         formWithErrors => Future.successful(Ok(views.html.v2.create_correspondence(formWithErrors))),
         correspondenceApp =>
-          casesService.createCase(correspondenceApp, request.operator).map { caseCreated:Case =>
+          casesService.createCase(correspondenceApp, request.operator).map { caseCreated: Case =>
             Redirect(routes.CreateCorrespondenceController.displayQuestion(caseCreated.reference))
-            //Redirect(routes.ReleaseCaseController.releaseCase(caseCreated.reference, None))
-          }
+        }
       )
 
   }
+
   def displayQuestion(reference: String): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
       getCaseAndRenderChoiceView(reference)
     }
 
-
-  private def getCaseAndRenderChoiceView(reference: String, form:Form[String] = formReleaseChoice)(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]) : Future[Result] = {
+  private def getCaseAndRenderChoiceView(reference: String, form: Form[String] = formReleaseChoice)(
+    implicit hc: HeaderCarrier,
+    request: AuthenticatedRequest[_]): Future[Result] =
     casesService.getOne(reference).flatMap {
       case Some(c: Case) => successful(Ok(releaseCaseQuestionView(c, form)))
-      case _ => successful(Ok(views.html.case_not_found(reference)))
+      case _             => successful(Ok(views.html.case_not_found(reference)))
     }
-  }
-
-  def chooseQueuePost():Unit = ???
 
   def postChoice(reference: String): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference) andThen
       verify.mustHave(Permission.RELEASE_CASE)).async { implicit request =>
-
       formReleaseChoice
-    .bindFromRequest()
-    .fold(
-      errors =>
-        getCaseAndRenderChoiceView(reference, errors),
-      (choice: String) =>{
-      choice match {
-        case "Yes" => successful(Redirect(routes.ReleaseCaseController.releaseCase(reference, None)))
-        case "No" => successful(Redirect(routes.CreateCorrespondenceController.displayConfirmation()))
-        case _ => successful(Redirect(routes.CreateCorrespondenceController.get()))
-      }
-      }
-    )
+        .bindFromRequest()
+        .fold(
+          errors => getCaseAndRenderChoiceView(reference, errors),
+          (choice: String) => {
+            choice match {
+              case "Yes" => successful(Redirect(routes.ReleaseCaseController.releaseCase(reference, None)))
+              case "No"  => successful(Redirect(routes.CreateCorrespondenceController.displayConfirmation(reference)))
+              case _     => successful(Redirect(routes.CreateCorrespondenceController.get()))
+            }
+          }
+        )
     }
 
-  def displayConfirmation() = (verify.authenticated andThen verify.mustHave(Permission.CREATE_CASES)).async {
-    implicit request: Request[AnyContent] => Future.successful(Ok(views.html.v2.confirmation_case_creation()))
-  }
+  def displayConfirmation(reference: String) =
+    (verify.authenticated andThen verify.mustHave(Permission.CREATE_CASES)).async {
+      implicit request: Request[AnyContent] =>
+        {
+          casesService.getOne(reference).flatMap {
+            case Some(c: Case) => {
+              c.queueId
+                .map(id =>
+                  queueService.getOneById(id) flatMap {
+                    case Some(queue) => Future.successful(Ok(views.html.confirm_release_case(c, queue.name)))
+                    case None        => Future.successful(Ok(views.html.resource_not_found(s"Case Queue")))
+                })
+                .getOrElse(Future.successful(Ok(views.html.resource_not_found(s"Case Queue"))))
 
-}
+            }
+            case _ => successful(Ok(views.html.case_not_found(reference)))
+          }
+        }
+    }
+  }
+/*
+  private def findQueue(c: Case): String =
+    c.queueId match {
+      case Some("1") => Queues.gateway.name
+      case Some("2") => Queues.act.name
+      case Some("3") => Queues.cap.name
+      case Some("4") => Queues.cars.name
+      case Some("5") => Queues.elm.name
+      case None      => ""
+    }*/
