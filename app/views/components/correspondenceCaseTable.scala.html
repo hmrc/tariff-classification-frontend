@@ -1,0 +1,59 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import models.request.AuthenticatedRequest
+@import config.AppConfig
+@import  models.viewmodels.CasesTab
+
+@import play.twirl.api.TemplateMagic.defining
+@import views.html.v2.case_status_tab
+@(caseTab : CasesTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+
+ <table id="@{caseTab.tabMessageKey}-table">
+  <tbody>
+    <tr id="@{caseTab.tabMessageKey}-details" class="grid-row mb-2">
+     <th id="@{caseTab.tabMessageKey}-reference" class="bold w-0">
+     Reference
+     </th>
+     <th id="@{caseTab.tabMessageKey}-subject" class="bold w-0">
+      Subject
+     </th>
+     <th id="@{caseTab.tabMessageKey}-source" class="bold w-0">
+      Case source
+     </th>
+     <th id="@{caseTab.tabMessageKey}-contact-email" class="bold w-0">
+      Contact email
+     </th>
+     <th id="@{caseTab.tabMessageKey}-elapsed-days" class="bold w-0">
+      Elapsed days
+     </th>
+    </tr>
+
+   @for((result, index) <- caseTab.searchResult.results.zipWithIndex) {
+
+    @defining(result.application.asCorrespondence) { correspondence =>
+
+     <tr id="@{caseTab.tabMessageKey}-details-@index">
+      <td id="@{caseTab.tabMessageKey}-reference-@index"><a href="@routes.CaseController.get(result.reference)">@{result.reference}</a></td>
+      <td id="@{caseTab.tabMessageKey}-subject-@index" class="pre-wrap">@{correspondence.summary}</td>
+      <td id="@{caseTab.tabMessageKey}-source-@index" class="pre-wrap">@{correspondence.correspondenceStarter}</td>
+      <td id="@{caseTab.tabMessageKey}-contact-email-@index" class="pre-wrap">@{correspondence.contact.email}</td>
+      <td id="@{caseTab.tabMessageKey}-elapsed-days-@index">@{result.daysElapsed}</td>
+     </tr>
+    }
+   }
+  </tbody>
+ </table>
