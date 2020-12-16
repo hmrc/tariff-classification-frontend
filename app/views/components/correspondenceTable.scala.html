@@ -35,9 +35,11 @@
      <th id="@{correspondenceTab.tabMessageKey}-source" class="bold w-0">
       Case source
      </th>
+     @if(assignmentType != "applicationTab.referredByMe") {
      <th id="@{correspondenceTab.tabMessageKey}-contact-email" class="bold w-0">
       Contact email
      </th>
+     }
      <th id="@{correspondenceTab.tabMessageKey}-elapsed-days" class="bold w-0">
       Elapsed days
      </th>
@@ -60,7 +62,9 @@
       <td id="@{correspondenceTab.tabMessageKey}-reference-@index"><a href="@routes.CaseController.get(result.reference)">@{result.reference}</a></td>
       <td id="@{correspondenceTab.tabMessageKey}-subject-@index" class="pre-wrap">@{correspondence.summary}</td>
       <td id="@{correspondenceTab.tabMessageKey}-source-@index" class="pre-wrap">@{correspondence.correspondenceStarter}</td>
+      @if(assignmentType != "applicationTab.referredByMe") {
       <td id="@{correspondenceTab.tabMessageKey}-contact-email-@index" class="pre-wrap">@{correspondence.contact.email}</td>
+      }
       <td id="@{correspondenceTab.tabMessageKey}-elapsed-days-@index">@{result.daysElapsed}</td>
       @if(assignmentType == "applicationTab.referredByMe") {
       <td id="@{correspondenceTab.tabMessageKey}-refer-days-@index">@{result.referredDaysElapsed}</td>
