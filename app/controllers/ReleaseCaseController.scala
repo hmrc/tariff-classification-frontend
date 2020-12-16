@@ -38,6 +38,7 @@ class ReleaseCaseController @Inject() (
   queueService: QueuesService,
   mcc: MessagesControllerComponents,
   val releaseCaseView: views.html.release_case,
+  val confirmation_case_creation: views.html.v2.confirmation_case_creation,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
     with RenderCaseAction {

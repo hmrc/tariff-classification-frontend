@@ -25,11 +25,14 @@
 @import views.html.forms.components.input_text
 @import models.LiabilityStatus
 @import views.html.partials.error_summary
+@import models.viewmodels.CaseHeaderViewModel
+@import views.html.v2.case_heading
 
+@this(case_heading: views.html.v2.case_heading)
 @(c: Case, queueName: String)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 @main(bodyClasses = None, customTitle = Some(messages("page.title.create_liability.h1"))) {
 
-<h1 id="create_correspondence-heading" class="heading-xlarge">@messages("page.title.create_correspondence.h1")</h1>
+@case_heading(CaseHeaderViewModel.fromCase(c))
 
 <div class="govuk-box-highlight govuk-panel--confirmation">
     <h1 class="mt-0 heading-xlarge-label">@messages("release_case.released_dynamic_message", c.application.getType, queueName)</h1>
