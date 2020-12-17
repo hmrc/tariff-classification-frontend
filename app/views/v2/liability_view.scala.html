@@ -31,12 +31,13 @@
         activity_tab: views.html.partials.liabilities.activity_tab,
         attachments_details: views.html.partials.liabilities.attachments_details,
         case_action_buttons_partial: views.html.partials.liabilities.case_action_buttons_partial,
+        advanced_search_cases: views.html.partials.liabilities.advanced_search_cases,
         keywords_tab: views.html.v2.keywords_details,
         appeal_tab: views.html.v2.appeal_tab
 )
 
 @(
-        liabilityViewModel: LiabilityViewModel,
+        caseViewModel: CaseViewModel,
         c592ViewModel: Option[C592ViewModel],
         rulingViewModel: Option[RulingViewModel],
         sampleStatusTabViewModel: SampleStatusTabViewModel,
@@ -57,16 +58,14 @@
         appealTabViewModel: Option[AppealTabViewModel]
 )(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("case.v2.liaiblity.page_title")),
+@main(bodyClasses = None, customTitle = Some(messages("case.v2.liability.page_title")),
     customPrimaryNavTab = MyCasesTab) {
 
-    @case_heading(liabilityViewModel.caseHeaderViewModel)
+    @case_heading(caseViewModel.caseHeader)
 
     <div class="form-groups">
-
-        @case_action_buttons_partial(liabilityViewModel)
-
-        @advanced_search_cases(liabilityViewModel)
+        @case_action_buttons_partial(caseViewModel)
+        @advanced_search_cases(caseViewModel)
     </div>
 
     <div id="liability_tabs" class="govuk-tabs" data-module="govuk-tabs">
@@ -81,7 +80,7 @@
             }
 
             @* ruling*@
-            @if(rulingViewModel.isDefined && liabilityViewModel.showRulingAndKeywordsTabs) {
+            @if(rulingViewModel.isDefined && caseViewModel.showRulingAndKeywordsTabs) {
                 <li class="govuk-tabs__list-item">
                     <a class="govuk-tabs__tab" href="#ruling_tab">
                     @messages("case.v2.liability.ruling.tab_title")
@@ -114,7 +113,7 @@
             }
 
             @* keywords*@
-            @if(liabilityViewModel.showRulingAndKeywordsTabs) {
+            @if(caseViewModel.showRulingAndKeywordsTabs) {
             <li class="govuk-tabs__list-item">
                 <a class="govuk-tabs__tab" href="#keywords_tab">
                     @messages("case.v2.liability.keywords.tab_title")
@@ -123,7 +122,7 @@
             }
 
             @* appeal*@
-            @if(liabilityViewModel.showAppealTab) {
+            @if(caseViewModel.showAppealTab) {
                 <li class="govuk-tabs__list-item">
                     <a class="govuk-tabs__tab" href="#appeal_tab">
                     @messages("case.v2.liability.appeals.tab_title")
@@ -141,7 +140,7 @@
         }
 
         @* content*@
-        @if(rulingViewModel.isDefined && liabilityViewModel.showRulingAndKeywordsTabs) {
+        @if(rulingViewModel.isDefined && caseViewModel.showRulingAndKeywordsTabs) {
         <div class="govuk-tabs__panel" id="ruling_tab">
             @ruling_tab(rulingViewModel.get)
         </div>
@@ -173,14 +172,14 @@
         }
 
         @* keywords*@
-        @if(liabilityViewModel.showRulingAndKeywordsTabs) {
+        @if(caseViewModel.showRulingAndKeywordsTabs) {
         <div class="govuk-tabs__panel" id="keywords_tab">
             @keywords_tab(keywordsTabViewModel, keywordForm)
         </div>
         }
 
         @* appeal*@
-        @if(liabilityViewModel.showAppealTab) {
+        @if(caseViewModel.showAppealTab) {
         <div class="govuk-tabs__panel" id="appeal_tab">
             @appeal_tab(appealTabViewModel.get)
         </div>
@@ -190,7 +189,7 @@
 }
 
     <script>
-    let cacheURL = "@routes.TabCacheController.get(liabilityViewModel.caseHeaderViewModel.referenceNumber, "Liability").url";
+    let cacheURL = "@routes.TabCacheController.get(caseViewModel.caseHeader.referenceNumber, "Liability").url";
     let csrfToken = "@CSRF.getToken.value";
 
      window.addEventListener("load", () => fixAnchorInURL(cacheURL, csrfToken), false);

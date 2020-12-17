@@ -14,9 +14,48 @@
  * limitations under the License.
  */
 
-package models.viewmodels
+package models
+package viewmodels
+
+case class StatusTagViewModel(
+  status: String,
+  colour: String
+)
+
+object StatusTagViewModel {
+  def caseStatus(c: Case): StatusTagViewModel = c.status match {
+    case CaseStatus.OPEN                             => StatusTagViewModel(c.status.toString, "blue")
+    case CaseStatus.COMPLETED if c.hasExpiredRuling  => StatusTagViewModel("EXPIRED", "green")
+    case CaseStatus.COMPLETED                        => StatusTagViewModel(c.status.toString, "green")
+    case CaseStatus.REFERRED | CaseStatus.SUPPRESSED => StatusTagViewModel(c.status.toString, "yellow")
+    case CaseStatus.REJECTED                         => StatusTagViewModel(c.status.toString, "red")
+    case CaseStatus.CANCELLED                        => StatusTagViewModel(CaseStatus.formatCancellation(c), "red")
+    case _                                           => StatusTagViewModel(c.status.toString, "blue")
+  }
+
+  def liabilityType(application: Application): Option[StatusTagViewModel] =
+    if (application.isLiabilityOrder && application.asLiabilityOrder.isLiveLiabilityOrder) {
+      Some(StatusTagViewModel(application.asLiabilityOrder.status.toString(), "pink"))
+    } else {
+      None
+    }
+
+  def appealStatus(decision: Option[Decision]): Option[StatusTagViewModel] =
+    Appeal.highestAppealFromDecision(decision).map { appeal =>
+      StatusTagViewModel(AppealStatus.format(appeal.`type`, appeal.status), "red")
+    }
+}
 
 case class CaseStatusViewModel(
-  status: String,
-  badgeColor: String
+  liabilityTypeTag: Option[StatusTagViewModel],
+  caseStatusTag: Option[StatusTagViewModel],
+  appealStatusTag: Option[StatusTagViewModel]
 )
+
+object CaseStatusViewModel {
+  def fromCase(c: Case) = CaseStatusViewModel(
+    StatusTagViewModel.liabilityType(c.application),
+    Some(StatusTagViewModel.caseStatus(c)),
+    StatusTagViewModel.appealStatus(c.decision)
+  )
+}
