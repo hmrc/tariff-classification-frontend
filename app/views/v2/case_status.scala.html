@@ -1,0 +1,46 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import models.viewmodels.CaseStatusViewModel
+
+@this()
+
+@(
+    caseStatus: CaseStatusViewModel
+)(implicit messages: Messages)
+
+<div id="case-status-section">
+    @caseStatus.liabilityTypeTag.map { tag =>
+        <span class="visuallyhidden">liability type</span>
+        <span id = "case-status-liability-status" class="govuk-tag govuk-tag--@{tag.colour}">
+            @{tag.status}
+        </span>
+    }
+
+    @caseStatus.caseStatusTag.map { tag =>
+        <span class="visuallyhidden">case status</span>
+        <span id ="case-status" class="govuk-tag govuk-tag--@{tag.colour}">
+            @{tag.status}
+        </span>
+    }
+
+    @caseStatus.appealStatusTag.map { tag =>
+        <span class="visuallyhidden">appeal status</span>
+        <span id ="appeal-status" class="govuk-tag govuk-tag--@{tag.colour}">
+            @{tag.status}
+        </span>
+    }
+</div>

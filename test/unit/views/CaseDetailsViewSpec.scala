@@ -26,6 +26,8 @@ import views.ViewMatchers._
 
 class CaseDetailsViewSpec extends ViewSpec {
 
+  val caseDetailsView = app.injector.instanceOf[views.html.case_details]
+
   private val completeDecision = Decision(
     bindingCommodityCode = "040900",
     justification        = "justification-content",
@@ -40,7 +42,7 @@ class CaseDetailsViewSpec extends ViewSpec {
 
       // When
       val c   = aCase(withReference("reference"), withBTIApplication)
-      val doc = view(html.case_details(c, CaseDetailPage.TRADER, Html("html"), Some(ActiveTab.Applicant)))
+      val doc = view(caseDetailsView(c, CaseDetailPage.TRADER, Html("html"), Some(ActiveTab.Applicant)))
 
       // Then
       val listItems: Elements = doc.getElementsByClass("tabs__list-item")
@@ -50,27 +52,13 @@ class CaseDetailsViewSpec extends ViewSpec {
       haveAttribute("aria-selected", "true")
     }
 
-    "render liability order" in {
-
-      // When
-      val c   = aCase(withReference("reference"), withLiabilityApplication())
-      val doc = view(html.case_details(c, CaseDetailPage.LIABILITY, Html("html"), Some(ActiveTab.Liability)))
-
-      // Then
-      val listItems: Elements = doc.getElementsByClass("tabs__list-item")
-
-      listItems.size() shouldBe 4
-      listItems.first  should containText("Liability")
-      haveAttribute("aria-selected", "true")
-    }
-
     "show the complete case button if case is open and operator has permissions to complete the case" in {
 
       // When
       val myCase = aCase(withReference("reference"), withBTIApplication, withStatus(CaseStatus.OPEN))
       val c      = myCase.copy(decision = Some(completeDecision))
       val doc = view(
-        html.case_details(c, CaseDetailPage.RULING, Html("html"), None)(
+        caseDetailsView(c, CaseDetailPage.RULING, Html("html"), None)(
           requestWithPermissions(Permission.COMPLETE_CASE),
           messages,
           appConfig
@@ -89,7 +77,7 @@ class CaseDetailsViewSpec extends ViewSpec {
       val myCase = aCase(withReference("reference"), withBTIApplication, withStatus(CaseStatus.NEW))
       val c      = myCase.copy(decision = Some(completeDecision))
       val doc = view(
-        html.case_details(c, CaseDetailPage.APPLICATION_DETAILS, Html("html"), None)(
+        caseDetailsView(c, CaseDetailPage.APPLICATION_DETAILS, Html("html"), None)(
           requestWithPermissions(Permission.RELEASE_CASE),
           messages,
           appConfig
@@ -97,8 +85,8 @@ class CaseDetailsViewSpec extends ViewSpec {
       )
 
       // Then
-      val item: Element = doc.getElementById("release-or-suppress-button")
-      item should containText("Change case status")
+      val item: Element = doc.getElementById("action-this-case-button")
+      item should containText("Action this case")
 
     }
 
@@ -108,7 +96,7 @@ class CaseDetailsViewSpec extends ViewSpec {
       val myCase = aCase(withReference("reference"), withBTIApplication, withStatus(CaseStatus.NEW))
       val c      = myCase.copy(decision = Some(completeDecision))
       val doc = view(
-        html.case_details(c, CaseDetailPage.APPLICATION_DETAILS, Html("html"), None)(
+        caseDetailsView(c, CaseDetailPage.APPLICATION_DETAILS, Html("html"), None)(
           requestWithPermissions(Permission.SUPPRESS_CASE),
           messages,
           appConfig
@@ -116,8 +104,8 @@ class CaseDetailsViewSpec extends ViewSpec {
       )
 
       // Then
-      val item: Element = doc.getElementById("release-or-suppress-button")
-      item should containText("Change case status")
+      val item: Element = doc.getElementById("action-this-case-button")
+      item should containText("Action this case")
 
     }
 
@@ -129,7 +117,7 @@ class CaseDetailsViewSpec extends ViewSpec {
 
       //Then
       val doc = view(
-        html.case_details(c, CaseDetailPage.RULING, Html("html"), None)(
+        caseDetailsView(c, CaseDetailPage.RULING, Html("html"), None)(
           requestWithPermissions(Permission.COMPLETE_CASE),
           messages,
           appConfig
@@ -146,7 +134,7 @@ class CaseDetailsViewSpec extends ViewSpec {
       val myCase = aCase(withReference("reference"), withBTIApplication, withStatus(CaseStatus.OPEN))
       val c      = myCase.copy(decision = Some(completeDecision))
       val doc = view(
-        html.case_details(c, CaseDetailPage.RULING, Html("html"), None)(
+        caseDetailsView(c, CaseDetailPage.RULING, Html("html"), None)(
           requestWithPermissions(Permission.VIEW_CASES),
           messages,
           appConfig
@@ -162,7 +150,7 @@ class CaseDetailsViewSpec extends ViewSpec {
 
       val myCase = aCase(withReference("reference"), withBTIApplication, withStatus(CaseStatus.SUSPENDED))
       val doc = view(
-        html.case_details(myCase, CaseDetailPage.APPLICATION_DETAILS, Html("html"))(
+        caseDetailsView(myCase, CaseDetailPage.APPLICATION_DETAILS, Html("html"))(
           requestWithPermissions(Permission.REOPEN_CASE),
           messages,
           appConfig
@@ -178,7 +166,7 @@ class CaseDetailsViewSpec extends ViewSpec {
 
       val myCase = aCase(withReference("reference"), withBTIApplication, withStatus(CaseStatus.OPEN))
       val doc = view(
-        html.case_details(myCase, CaseDetailPage.APPLICATION_DETAILS, Html("html"))(
+        caseDetailsView(myCase, CaseDetailPage.APPLICATION_DETAILS, Html("html"))(
           requestWithPermissions(Permission.COMPLETE_CASE),
           messages,
           appConfig
@@ -195,7 +183,7 @@ class CaseDetailsViewSpec extends ViewSpec {
 
       val myCase = aCase(withReference("reference"), withBTIApplication, withStatus(CaseStatus.SUSPENDED))
       val doc = view(
-        html.case_details(myCase, CaseDetailPage.APPLICATION_DETAILS, Html("html"))(
+        caseDetailsView(myCase, CaseDetailPage.APPLICATION_DETAILS, Html("html"))(
           requestWithPermissions(Permission.VIEW_CASES),
           messages,
           appConfig
@@ -210,7 +198,7 @@ class CaseDetailsViewSpec extends ViewSpec {
 
       val myCase = aCase(withReference("reference"), withBTIApplication, withStatus(CaseStatus.REFERRED))
       val doc = view(
-        html.case_details(myCase, CaseDetailPage.APPLICATION_DETAILS, Html("html"))(
+        caseDetailsView(myCase, CaseDetailPage.APPLICATION_DETAILS, Html("html"))(
           requestWithPermissions(Permission.REOPEN_CASE),
           messages,
           appConfig
@@ -226,7 +214,7 @@ class CaseDetailsViewSpec extends ViewSpec {
 
       val myCase = aCase(withReference("reference"), withBTIApplication, withStatus(CaseStatus.OPEN))
       val doc = view(
-        html.case_details(myCase, CaseDetailPage.APPLICATION_DETAILS, Html("html"))(
+        caseDetailsView(myCase, CaseDetailPage.APPLICATION_DETAILS, Html("html"))(
           requestWithPermissions(Permission.COMPLETE_CASE),
           messages,
           appConfig
@@ -243,7 +231,7 @@ class CaseDetailsViewSpec extends ViewSpec {
 
       val myCase = aCase(withReference("reference"), withBTIApplication, withStatus(CaseStatus.REFERRED))
       val doc = view(
-        html.case_details(myCase, CaseDetailPage.APPLICATION_DETAILS, Html("html"))(
+        caseDetailsView(myCase, CaseDetailPage.APPLICATION_DETAILS, Html("html"))(
           requestWithPermissions(Permission.VIEW_CASES),
           messages,
           appConfig

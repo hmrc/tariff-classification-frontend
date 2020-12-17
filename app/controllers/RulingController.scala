@@ -46,7 +46,6 @@ class RulingController @Inject() (
     with I18nSupport {
 
   private final val rulingDetailsStartTabIndex = 7000
-  private val v2toggle                         = appConfig.newLiabilityDetails
 
   def editRulingDetails(reference: String): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.EDIT_RULING))
@@ -106,14 +105,7 @@ class RulingController @Inject() (
                   updatedDecision =>
                     for {
                       update <- casesService.updateCase(c.copy(decision = Some(updatedDecision)))
-                    } yield
-                      if (v2toggle) {
-                        Redirect(
-                          v2.routes.LiabilityController.displayLiability(update.reference).withFragment(RULING_TAB)
-                        )
-                      } else {
-                        Redirect(routes.LiabilityController.liabilityDetails(update.reference))
-                      }
+                    } yield Redirect(v2.routes.LiabilityController.displayLiability(update.reference).withFragment(RULING_TAB))
                 )
           }
         )
@@ -135,9 +127,7 @@ class RulingController @Inject() (
     val traderCommodityCode  = c.application.asLiabilityOrder.traderCommodityCode.getOrElse("")
     val officerCommodityCode = c.application.asLiabilityOrder.officerCommodityCode.getOrElse("")
 
-    if (v2toggle)
-      Future.successful(Ok(editRulingView(caseHeaderViewModel, f, traderCommodityCode, officerCommodityCode)))
-    else Future.successful(Ok(views.html.edit_liability_decision(c, f)))
+    Future.successful(Ok(editRulingView(caseHeaderViewModel, f, traderCommodityCode, officerCommodityCode)))
   }
 
   private def getCaseAndThen(

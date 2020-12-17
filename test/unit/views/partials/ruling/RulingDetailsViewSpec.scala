@@ -251,6 +251,7 @@ class RulingDetailsViewSpec extends ViewSpec {
 
     "Render Decision details with COMPLETE_CASE permission" in {
       // Given
+      val caseDetailsView = app.injector.instanceOf[case_details]
       val c = aCase(
         withStatus(CaseStatus.OPEN),
         withDecision(
@@ -268,7 +269,7 @@ class RulingDetailsViewSpec extends ViewSpec {
         ruling_details(c, None, Seq.empty, None)(requestWithPermissions(Permission.COMPLETE_CASE), messages, appConfig)
       )
       val doc_case_details = view(
-        case_details(c, CaseDetailPage.RULING, Html("html"), None)(
+        caseDetailsView(c, CaseDetailPage.RULING, Html("html"), None)(
           requestWithPermissions(Permission.COMPLETE_CASE),
           messages,
           appConfig

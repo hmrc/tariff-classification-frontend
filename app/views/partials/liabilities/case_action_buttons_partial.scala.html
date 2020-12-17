@@ -16,7 +16,7 @@
 
 @import controllers.routes.{ChangeCaseStatusController, ReleaseOrSuppressCaseController, ReopenCaseController}
 @import models.request.AuthenticatedRequest
-@import models.viewmodels.LiabilityViewModel
+@import models.viewmodels.CaseViewModel
 @import views.html.components.change_case_status_button
 @import views.html.helper.CSRF
 @import views.html.partials.reopen_case_button
@@ -24,65 +24,61 @@
 @this()
 
 @(
-        liabilityViewModel: LiabilityViewModel
+    caseViewModel: CaseViewModel,
+    activeTab: Option[ActiveTab] = None
 )(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 
 @defining({
-    liabilityViewModel match {
-        case matched if liabilityViewModel.showActionThisCase => "action-this-case"
-        case matched if liabilityViewModel.showChangeCaseStatus => "change-case-status"
-        case matched if liabilityViewModel.showTakeOffReferral => "take-off-referral"
-        case matched if liabilityViewModel.showReopen => "reopen-case"
+    caseViewModel match {
+        case _ if caseViewModel.showActionThisCase => "action-this-case"
+        case _ if caseViewModel.showChangeCaseStatus => "change-case-status"
+        case _ if caseViewModel.showTakeOffReferral => "take-off-referral"
+        case _ if caseViewModel.showReopen => "reopen-case"
         case _ => ""
     }
 }) { idOfElement: String =>
 
-@if(liabilityViewModel.showActionThisCase) {
+@if(caseViewModel.showActionThisCase) {
     @change_case_status_button(
         "action-this-case",
         messages("case.v2.liability.action_this_case.button"),
-        ReleaseOrSuppressCaseController.onPageLoad(liabilityViewModel.caseHeaderViewModel.referenceNumber),
-        "Liability",
-        liabilityViewModel.caseHeaderViewModel.referenceNumber
+        ReleaseOrSuppressCaseController.onPageLoad(caseViewModel.caseHeader.referenceNumber, activeTab)
     )
 }
 
-@if(liabilityViewModel.showChangeCaseStatus) {
+@if(caseViewModel.showChangeCaseStatus) {
     @change_case_status_button(
         "change-case-status",
         messages("case.v2.liability.change_case_status.button"),
-        ChangeCaseStatusController.onPageLoad(liabilityViewModel.caseHeaderViewModel.referenceNumber),
-        "Liability",
-        liabilityViewModel.caseHeaderViewModel.referenceNumber
+        ChangeCaseStatusController.onPageLoad(caseViewModel.caseHeader.referenceNumber, activeTab)
     )
 }
 
-@if(liabilityViewModel.showTakeOffReferral) {
+@if(caseViewModel.showTakeOffReferral) {
     @reopen_case_button(
         "take-off-referral",
-        liabilityViewModel.caseHeaderViewModel.referenceNumber,
-        ReopenCaseController.confirmReopenCase(liabilityViewModel.caseHeaderViewModel.referenceNumber),
+        caseViewModel.caseHeader.referenceNumber,
+        ReopenCaseController.confirmReopenCase(caseViewModel.caseHeader.referenceNumber),
         messages("case.v2.liability.take_off_referral.button")
     )
 }
 
-@if(liabilityViewModel.showReopen) {
+@if(caseViewModel.showReopen) {
     @reopen_case_button(
         "reopen-case",
-        liabilityViewModel.caseHeaderViewModel.referenceNumber,
-        ReopenCaseController.confirmReopenCase(liabilityViewModel.caseHeaderViewModel.referenceNumber),
+        caseViewModel.caseHeader.referenceNumber,
+        ReopenCaseController.confirmReopenCase(caseViewModel.caseHeader.referenceNumber),
         messages("case.v2.liability.reopen.button")
     )
 }
 
-@if(liabilityViewModel.caseHeaderViewModel.caseType == "Liability" && idOfElement.nonEmpty) {
+@if(caseViewModel.caseHeader.caseType == "Liability" && idOfElement.nonEmpty) {
     <script>
-            let url = "@routes.TabCacheController.post(
-        liabilityViewModel.caseHeaderViewModel.referenceNumber, liabilityViewModel.caseHeaderViewModel.caseType).url";
-            let csrf = "@CSRF.getToken.value";
-            let button = document.getElementById("@idOfElement" + "-button");
-            saveAnchor(button, url, csrf)
+        let url = "@routes.TabCacheController.post(caseViewModel.caseHeader.referenceNumber, caseViewModel.caseHeader.caseType).url";
+        let csrf = "@CSRF.getToken.value";
+        let button = document.getElementById("@idOfElement" + "-button");
+        saveAnchor(button, url, csrf)
     </script>
 }
 }

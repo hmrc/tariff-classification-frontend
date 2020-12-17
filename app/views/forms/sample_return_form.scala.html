@@ -36,7 +36,7 @@
     )
     <div>
         <button id="sample_return_form-submit" class="button" type="submit">@messages("case.sample.return.change-return-confirm")</button>
-        <a id="sample_return_form-cancel" class="secondary-button" href="@{if(appConfig.newLiabilityDetails) controllers.v2.routes.LiabilityController.displayLiability(c.reference).withFragment(SAMPLE_TAB) else routes.CaseController.sampleDetails(c.reference)}">@messages("case.sample.return.change-return-cancel")</a>
+        <a id="sample_return_form-cancel" class="secondary-button" href="@controllers.v2.routes.LiabilityController.displayLiability(c.reference).withFragment(SAMPLE_TAB)">@messages("case.sample.return.change-return-cancel")</a>
     </div>
 }
 
