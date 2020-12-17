@@ -186,14 +186,14 @@ class MyCasesViewSpec extends ViewSpec {
 
     }
     //Uncomment the following tests when the components are implemented
-
+    /*
     "contain correspondence table" in {
       val doc = view(myCasesView(assignedToMeCasesTab))
 
       doc should containElementWithID("applicationTab.correspondence-table")
     }
 
-    /*
+
     "contain liabilities miscellaneous" in {
       val doc = view(myCasesView("title", applicationsTab))
 
