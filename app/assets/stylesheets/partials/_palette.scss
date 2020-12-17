@@ -286,3 +286,26 @@ button.button-gray,
     display: table;
     margin: 0;
 }
+/* govuk-panel and confirmation styles */
+.govuk-panel {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-weight: 400;
+    font-size: 16px;
+    font-size: 1rem;
+    line-height: 1.25;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    margin-bottom: 15px;
+    padding: 35px;
+    border: 5px solid transparent;
+    text-align: center;
+}
+.govuk-panel--confirmation {
+	color: #fff;
+	background: #00703C;
+	margin-top: 30px;
+}
+.govuk-panel .heading-xlarge:last-child {
+    margin-bottom: 0;
+}
