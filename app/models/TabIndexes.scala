@@ -27,7 +27,6 @@ object TabIndexes {
 
   private val indexByPage: Map[CaseDetailPage, Int] = Map(
     TRADER              -> pageTabIndexer.nextTabIndex(),
-    LIABILITY           -> pageTabIndexer.nextTabIndex(),
     APPLICATION_DETAILS -> pageTabIndexer.currentTabIndex(),
     SAMPLE_DETAILS      -> pageTabIndexer.nextTabIndex(),
     ATTACHMENTS         -> pageTabIndexer.nextTabIndex(),

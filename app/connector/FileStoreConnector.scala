@@ -34,6 +34,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.{ExecutionContext, Future}
 import utils.JsonFormatters.fileMetaDataFormat
 import uk.gov.hmrc.http.HttpReads.Implicits._
+import play.api.libs.json.JsResult
 
 @Singleton
 class FileStoreConnector @Inject() (
@@ -74,7 +75,28 @@ class FileStoreConnector @Inject() (
         .withHttpHeaders(hc.headers: _*)
         .withHttpHeaders("X-Api-Token" -> appConfig.apiToken)
         .post(Source(List(filePart, dataPart)))
-        .map(response => Json.fromJson[FileMetadata](Json.parse(response.body)).get)
+        .flatMap { response =>
+          Future.fromTry {
+            JsResult.toTry(Json.fromJson[FileMetadata](Json.parse(response.body)))
+          }
+        }
+    }
+
+  def downloadFile(url: String)(implicit hc: HeaderCarrier): Future[Option[Source[ByteString, _]]] =
+    withMetricsTimerAsync("download-file") { _ =>
+      val fileStoreResponse = ws.url(url)
+        .withHttpHeaders(hc.headers: _*)
+        .withHttpHeaders("X-Api-Token" -> appConfig.apiToken)
+        .get()
+
+      fileStoreResponse.flatMap { response =>
+        if (response.status / 100 == 2)
+          Future.successful(Some(response.bodyAsSource))
+        else if (response.status / 100 > 4)
+          Future.failed(new RuntimeException(s"Unable to retrieve file ${url} from filestore"))
+        else
+          Future.successful(None)
+      }
     }
 
   def delete(fileId: String)(implicit hc: HeaderCarrier): Future[Unit] =

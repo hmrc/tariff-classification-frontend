@@ -5,6 +5,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.ws.WSResponse
 import play.api.test.Helpers._
 import utils.{CasePayloads, Cases, EventPayloads}
+import utils.JsonFormatters._
 
 class AssignCaseSpec extends IntegrationTest with MockitoSugar {
 

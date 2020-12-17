@@ -53,14 +53,6 @@ trait SpecBase
       )
       .build()
 
-  lazy val appWithLiabilityToggleOff: Application = new GuiceApplicationBuilder()
-    .configure(
-      "metrics.jvm"                  -> false,
-      "metrics.enabled"              -> false,
-      "toggle.new-liability-details" -> false
-    )
-    .build()
-
   lazy val mcc: MessagesControllerComponents           = cc
   lazy val realAppConfig: AppConfig                    = injector.instanceOf[AppConfig]
   implicit lazy val hc: HeaderCarrier                  = HeaderCarrier()
@@ -68,7 +60,6 @@ trait SpecBase
   lazy val realConfig: Configuration                   = injector.instanceOf[Configuration]
   lazy val realEnv: Environment                        = injector.instanceOf[Environment]
   lazy val realHttpAudit: HttpAuditing                 = injector.instanceOf[HttpAuditing]
-  lazy val appConfWithLiabilityToggleOff: AppConfig    = appWithLiabilityToggleOff.injector.instanceOf[AppConfig]
   lazy val playBodyParsers: PlayBodyParsers            = injector.instanceOf[PlayBodyParsers]
   lazy val defaultPlayBodyParsers: BodyParsers.Default = injector.instanceOf[BodyParsers.Default]
   lazy val injector: Injector                          = app.injector

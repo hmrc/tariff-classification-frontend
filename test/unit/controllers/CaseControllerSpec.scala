@@ -45,6 +45,7 @@ class CaseControllerSpec extends ControllerBaseSpec {
   private val commodityCodeService = mock[CommodityCodeService]
   private val decisionForm         = new DecisionForm(new CommodityCodeConstraints(commodityCodeService, realAppConfig))
   private val countriesService     = new CountriesService
+  private val caseDetailsView = app.injector.instanceOf[views.html.case_details]
 
   private def controller(c: Case) = new CaseController(
     new SuccessfulRequestActions(playBodyParsers, operator, c = c),
@@ -57,6 +58,7 @@ class CaseControllerSpec extends ControllerBaseSpec {
     decisionForm,
     countriesService,
     mcc,
+    caseDetailsView,
     realAppConfig
   )
 
@@ -71,21 +73,8 @@ class CaseControllerSpec extends ControllerBaseSpec {
     decisionForm,
     countriesService,
     mcc,
+    caseDetailsView,
     realAppConfig
-  )
-
-  private def controllerWithoutNewLiability(c: Case) = new CaseController(
-    new SuccessfulRequestActions(playBodyParsers, operator, c = c),
-    mock[CasesService],
-    keywordsService,
-    fileService,
-    eventService,
-    queueService,
-    commodityCodeService,
-    decisionForm,
-    countriesService,
-    mcc,
-    appConfWithLiabilityToggleOff
   )
 
   "Case Index" should {
@@ -99,15 +88,7 @@ class CaseControllerSpec extends ControllerBaseSpec {
         locationOf(result) shouldBe Some(routes.CaseController.applicantDetails("reference").url)
       }
 
-      "case is a Liability with newLiabilityDetails toggle is set to false" in {
-        val c      = aCase(withReference("reference"), withLiabilityApplication())
-        val result = controllerWithoutNewLiability(c).get("reference")(fakeRequest)
-
-        status(result)     shouldBe Status.SEE_OTHER
-        locationOf(result) shouldBe Some(routes.LiabilityController.liabilityDetails("reference").url)
-      }
-
-      "case is a Liability with newLiability toggle is set to true" in {
+      "case is a Liability" in {
         val c      = aCase(withReference("reference"), withLiabilityApplication())
         val result = controller(c).get("reference")(fakeRequest)
 

@@ -22,7 +22,7 @@ import models.CaseStatus.CaseStatus
 import models.{CaseStatus, ModelsBaseSpec, Permission}
 import utils.Cases
 
-class LiabilityViewModelSpec extends ModelsBaseSpec {
+class CaseViewModelSpec extends ModelsBaseSpec {
 
   val openCase                  = Cases.liabilityCaseExample.copy(status = CaseStatus.OPEN)
   val referredCase              = Cases.liabilityCaseExample.copy(status = CaseStatus.REFERRED)
@@ -35,8 +35,15 @@ class LiabilityViewModelSpec extends ModelsBaseSpec {
   val casesWithoutRulingTab     = Seq(newCase, cancelledCase)
   val operator                  = Cases.operatorWithCompleteCasePermission
   val operatorWithoutPermission = Cases.operatorWithoutCompleteCasePermission
+
   private val caseHeaderViewModel =
-    CaseHeaderViewModel("Liability", "trader-business-name", "good-name", "1", "CANCELLED", None, isLive = false)
+    CaseHeaderViewModel(
+      "Liability",
+      Some("trader-business-name"),
+      "good-name",
+      "1",
+      CaseStatusViewModel(None, Some(StatusTagViewModel("CANCELLED", "red")), None)
+    )
 
   def buildLiabilityModel(
     caseHeaderViewModel: CaseHeaderViewModel = caseHeaderViewModel,
@@ -46,9 +53,9 @@ class LiabilityViewModelSpec extends ModelsBaseSpec {
     showReopen: Boolean                      = false,
     showAppeal: Boolean                      = false,
     status: CaseStatus
-  ): LiabilityViewModel =
-    LiabilityViewModel(
-      caseHeaderViewModel  = caseHeaderViewModel,
+  ): CaseViewModel =
+    CaseViewModel(
+      caseHeader           = caseHeaderViewModel,
       hasPermissions       = hasPermissions,
       showChangeCaseStatus = showChangeCaseStatus,
       showTakeOffReferral  = showTakeOffReferral,
@@ -81,20 +88,20 @@ class LiabilityViewModelSpec extends ModelsBaseSpec {
 
     "show change case status button when case status is OPEN and user has COMPLETE CASE permission" in {
 
-      val liabilityViewModel = LiabilityViewModel.fromCase(openCase, operator)
-      liabilityViewModel.showChangeCaseStatus shouldBe true
+      val caseViewModel = CaseViewModel.fromCase(openCase, operator)
+      caseViewModel.showChangeCaseStatus shouldBe true
     }
 
     "not show change case status button when case status is not OPEN" in {
 
-      val liabilityViewModel = LiabilityViewModel.fromCase(referredCase, operator)
-      liabilityViewModel.showChangeCaseStatus shouldBe false
+      val caseViewModel = CaseViewModel.fromCase(referredCase, operator)
+      caseViewModel.showChangeCaseStatus shouldBe false
     }
 
     "not show change case status button when user has not COMPLETE CASE permission" in {
 
-      val liabilityViewModel = LiabilityViewModel.fromCase(referredCase, operatorWithoutPermission)
-      liabilityViewModel.showChangeCaseStatus shouldBe false
+      val caseViewModel = CaseViewModel.fromCase(referredCase, operatorWithoutPermission)
+      caseViewModel.showChangeCaseStatus shouldBe false
     }
 
   }
@@ -103,20 +110,20 @@ class LiabilityViewModelSpec extends ModelsBaseSpec {
 
     "show take off referral button when case status is REFERRED and user has REOPEN_CASE permission" in {
 
-      val liabilityViewModel = LiabilityViewModel.fromCase(referredCase, operator)
-      liabilityViewModel.showTakeOffReferral shouldBe true
+      val caseViewModel = CaseViewModel.fromCase(referredCase, operator)
+      caseViewModel.showTakeOffReferral shouldBe true
     }
 
     "not show take off referral button when case status is not REFERRED" in {
 
-      val liabilityViewModel = LiabilityViewModel.fromCase(openCase, operator)
-      liabilityViewModel.showTakeOffReferral shouldBe false
+      val caseViewModel = CaseViewModel.fromCase(openCase, operator)
+      caseViewModel.showTakeOffReferral shouldBe false
     }
 
     "not show take off referral button when user has not REOPEN_CASE permission" in {
 
-      val liabilityViewModel = LiabilityViewModel.fromCase(referredCase, operatorWithoutPermission)
-      liabilityViewModel.showTakeOffReferral shouldBe false
+      val caseViewModel = CaseViewModel.fromCase(referredCase, operatorWithoutPermission)
+      caseViewModel.showTakeOffReferral shouldBe false
     }
 
   }
@@ -125,20 +132,20 @@ class LiabilityViewModelSpec extends ModelsBaseSpec {
 
     "show reopen button when case status is SUSPENDED and user has REOPEN_CASE permission" in {
 
-      val liabilityViewModel = LiabilityViewModel.fromCase(suspendedCase, operator)
-      liabilityViewModel.showReopen shouldBe true
+      val caseViewModel = CaseViewModel.fromCase(suspendedCase, operator)
+      caseViewModel.showReopen shouldBe true
     }
 
     "not reopen button when case status is not SUSPENDED" in {
 
-      val liabilityViewModel = LiabilityViewModel.fromCase(openCase, operator)
-      liabilityViewModel.showReopen shouldBe false
+      val caseViewModel = CaseViewModel.fromCase(openCase, operator)
+      caseViewModel.showReopen shouldBe false
     }
 
     "not reopen button when user has not REOPEN_CASE permission" in {
 
-      val liabilityViewModel = LiabilityViewModel.fromCase(suspendedCase, operatorWithoutPermission)
-      liabilityViewModel.showReopen shouldBe false
+      val caseViewModel = CaseViewModel.fromCase(suspendedCase, operatorWithoutPermission)
+      caseViewModel.showReopen shouldBe false
     }
 
   }
@@ -160,15 +167,17 @@ class LiabilityViewModelSpec extends ModelsBaseSpec {
       )
 
       assert(
-        LiabilityViewModel.fromCase(c, op) === LiabilityViewModel(
+        CaseViewModel.fromCase(c, op) === CaseViewModel(
           CaseHeaderViewModel(
             "Liability",
-            "trader-business-name",
+            Some("trader-business-name"),
             "good-name",
             "1",
-            "CANCELLED",
-            c.decision,
-            isLive = false
+            CaseStatusViewModel(
+              None,
+              Some(StatusTagViewModel("CANCELLED", "red")),
+              None
+            )
           ),
           hasPermissions       = false,
           showChangeCaseStatus = false,
@@ -185,7 +194,15 @@ class LiabilityViewModelSpec extends ModelsBaseSpec {
       val c  = Cases.liabilityCaseWithExpiredRuling
       val op = Cases.operatorWithoutPermissions
 
-      assert(LiabilityViewModel.fromCase(c, op).caseHeaderViewModel.caseStatus === "EXPIRED")
+      assert(
+        CaseViewModel
+          .fromCase(c, op)
+          .caseHeader
+          .caseStatus
+          .caseStatusTag
+          .map(_.status)
+          .get === "EXPIRED"
+      )
 
     }
 
@@ -194,7 +211,15 @@ class LiabilityViewModelSpec extends ModelsBaseSpec {
       val c  = Cases.liabilityCaseExample.copy(status = CaseStatus.COMPLETED)
       val op = Cases.operatorWithoutPermissions
 
-      assert(LiabilityViewModel.fromCase(c, op).caseHeaderViewModel.caseStatus === "COMPLETED")
+      assert(
+        CaseViewModel
+          .fromCase(c, op)
+          .caseHeader
+          .caseStatus
+          .caseStatusTag
+          .map(_.status)
+          .get === "COMPLETED"
+      )
 
     }
 
@@ -203,7 +228,7 @@ class LiabilityViewModelSpec extends ModelsBaseSpec {
       val c  = Cases.liabilityCaseExample.copy(status = CaseStatus.NEW)
       val op = Cases.operatorWithoutPermissions
 
-      assert(LiabilityViewModel.fromCase(c, op).isNewCase === true)
+      assert(CaseViewModel.fromCase(c, op).isNewCase === true)
     }
 
     "create a viewModel with isNewCase is set to false" in {
@@ -211,28 +236,28 @@ class LiabilityViewModelSpec extends ModelsBaseSpec {
       val c  = Cases.liabilityCaseExample
       val op = Cases.operatorWithoutPermissions
 
-      assert(LiabilityViewModel.fromCase(c, op).isNewCase === false)
+      assert(CaseViewModel.fromCase(c, op).isNewCase === false)
     }
 
     "create a viewModel with hasPermissions flag set to false" in {
       val c  = Cases.liabilityCaseExample
       val op = Cases.operatorWithoutPermissions.copy(permissions = Set())
 
-      assert(LiabilityViewModel.fromCase(c, op).hasPermissions === false)
+      assert(CaseViewModel.fromCase(c, op).hasPermissions === false)
     }
 
     "create a viewModel with hasPermissions flag set to false when operator doesn't have required permission" in {
       val c  = Cases.liabilityCaseExample
       val op = Cases.operatorWithoutPermissions.copy(permissions = Set(Permission.VIEW_CASES))
 
-      assert(LiabilityViewModel.fromCase(c, op).hasPermissions === false)
+      assert(CaseViewModel.fromCase(c, op).hasPermissions === false)
     }
 
     "create a viewModel with hasPermissions flag set to true when operator has the required permission" in {
       val c  = Cases.liabilityCaseExample
       val op = Cases.operatorWithoutPermissions.copy(permissions = Set(Permission.RELEASE_CASE))
 
-      assert(LiabilityViewModel.fromCase(c, op).hasPermissions === true)
+      assert(CaseViewModel.fromCase(c, op).hasPermissions === true)
     }
 
     casesWithRulingTab.foreach { c =>
@@ -240,7 +265,7 @@ class LiabilityViewModelSpec extends ModelsBaseSpec {
 
         val op = Cases.operatorWithoutPermissions
 
-        assert(LiabilityViewModel.fromCase(c, op).showRulingAndKeywordsTabs === true)
+        assert(CaseViewModel.fromCase(c, op).showRulingAndKeywordsTabs === true)
       }
     }
 
@@ -249,7 +274,7 @@ class LiabilityViewModelSpec extends ModelsBaseSpec {
 
         val op = Cases.operatorWithoutPermissions
 
-        assert(LiabilityViewModel.fromCase(c, op).showRulingAndKeywordsTabs === false)
+        assert(CaseViewModel.fromCase(c, op).showRulingAndKeywordsTabs === false)
       }
     }
 
@@ -258,7 +283,7 @@ class LiabilityViewModelSpec extends ModelsBaseSpec {
       val c  = Cases.liabilityCaseExample.copy(status         = CaseStatus.COMPLETED)
       val op = Cases.operatorWithPermissions.copy(permissions = Set(Permission.APPEAL_CASE))
 
-      assert(LiabilityViewModel.fromCase(c, op).showAppealTab === true)
+      assert(CaseViewModel.fromCase(c, op).showAppealTab === true)
     }
 
     "create a viewModel with showAppealTab flag false if case is not COMPLETED or CANCELLED and has the required permission" in {
@@ -266,7 +291,7 @@ class LiabilityViewModelSpec extends ModelsBaseSpec {
       val c  = Cases.liabilityCaseExample.copy(status         = CaseStatus.OPEN)
       val op = Cases.operatorWithPermissions.copy(permissions = Set(Permission.APPEAL_CASE))
 
-      assert(LiabilityViewModel.fromCase(c, op).showAppealTab === false)
+      assert(CaseViewModel.fromCase(c, op).showAppealTab === false)
     }
 
     "create a viewModel with showAppealTab flag false if case is CANCELLED and does not have the required permission" in {
@@ -274,7 +299,7 @@ class LiabilityViewModelSpec extends ModelsBaseSpec {
       val c  = Cases.liabilityCaseExample.copy(status         = CaseStatus.CANCELLED)
       val op = Cases.operatorWithPermissions.copy(permissions = Set(Permission.VIEW_CASES))
 
-      assert(LiabilityViewModel.fromCase(c, op).showAppealTab === false)
+      assert(CaseViewModel.fromCase(c, op).showAppealTab === false)
     }
   }
 }

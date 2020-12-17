@@ -30,7 +30,6 @@ object CancelAction {
       case Some(ActiveTab.Keywords)    => routes.CaseController.keywordsDetails(reference)
       case Some(ActiveTab.Ruling)      => routes.CaseController.rulingDetails(reference)
       case Some(ActiveTab.Appeals)     => routes.AppealCaseController.appealDetails(reference)
-      case Some(ActiveTab.Liability)   => routes.LiabilityController.liabilityDetails(reference)
       case _                           => routes.CaseController.get(reference)
     }
 
