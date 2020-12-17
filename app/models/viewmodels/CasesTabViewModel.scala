@@ -113,37 +113,4 @@ object CasesTabViewModel {
     )
   )
 
-  //TODO remove dummy correspondence example when writing queries for the tabs
-  val corrApplicationExample: CorrespondenceApplication = CorrespondenceApplication(
-    Some("Starter"),
-    Some("Agent 007"),
-    Address("New building", "Old Town", None, None),
-    Contact("a name", "anemail@some.com", None),
-    None,
-    false,
-    "A short summary",
-    "A detailed desc",
-    None,
-    sampleToBeProvided = false,
-    sampleToBeReturned = false
-  )
-
-  val corrCaseExample: Case = Case(
-    "1",
-    CaseStatus.OPEN,
-    Instant.now(),
-    0,
-    None,
-    None,
-    None,
-    corrApplicationExample,
-    None,
-    Seq(),
-    Set.empty,
-    Sample(),
-    Some(Instant.now()),
-    Some(5),
-    referredDaysElapsed = 0
-  )
-
 }

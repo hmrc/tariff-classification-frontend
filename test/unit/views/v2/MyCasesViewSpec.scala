@@ -53,7 +53,7 @@ class MyCasesViewSpec extends ViewSpec {
   val assignedToMeCasesTab =
     ApplicationTabViewModel(
       "message key",
-      ApplicationsTab.assignedToMeCases(Seq(Cases.btiCaseExample, Cases.liabilityCaseExample)).applicationTabs
+      ApplicationsTab.assignedToMeCases(Seq(Cases.btiCaseExample, Cases.liabilityCaseExample, Cases.corrCaseExample)).applicationTabs
     )
 
   val referredByMeCasesTab =
@@ -94,7 +94,7 @@ class MyCasesViewSpec extends ViewSpec {
 
       doc should containElementWithID("atar_tab")
       doc should containElementWithID("liability_tab")
-      //doc should containElementWithID("correspondence_tab")
+      doc should containElementWithID("correspondence_tab")
       //doc should containElementWithID("misc_tab")
     }
 
@@ -187,12 +187,13 @@ class MyCasesViewSpec extends ViewSpec {
     }
     //Uncomment the following tests when the components are implemented
 
-    /*"contain liabilities correspondence" in {
-      val doc = view(myCasesView("title", applicationsTab))
+    "contain correspondence table" in {
+      val doc = view(myCasesView(assignedToMeCasesTab))
 
-      doc should containElementWithID("correspondence")
+      doc should containElementWithID("applicationTab.correspondence-table")
     }
 
+    /*
     "contain liabilities miscellaneous" in {
       val doc = view(myCasesView("title", applicationsTab))
 
