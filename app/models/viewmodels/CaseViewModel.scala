@@ -19,8 +19,8 @@ package models.viewmodels
 import models.CaseStatus.CaseStatus
 import models._
 
-case class LiabilityViewModel(
-  caseHeaderViewModel: CaseHeaderViewModel,
+case class CaseViewModel(
+  caseHeader: CaseHeaderViewModel,
   hasPermissions: Boolean,
   showChangeCaseStatus: Boolean,
   showTakeOffReferral: Boolean,
@@ -50,9 +50,9 @@ case class LiabilityViewModel(
     ).contains(caseStatus)
 }
 
-object LiabilityViewModel {
+object CaseViewModel {
 
-  def fromCase(c: Case, operator: Operator): LiabilityViewModel = {
+  def fromCase(c: Case, operator: Operator): CaseViewModel = {
 
     def releaseOrSuppressPermissions: Boolean =
       operator.permissions.contains(Permission.RELEASE_CASE) || operator.permissions.contains(Permission.SUPPRESS_CASE)
@@ -77,7 +77,7 @@ object LiabilityViewModel {
     def showAppeal: Boolean =
       (c.status == CaseStatus.COMPLETED || c.status == CaseStatus.CANCELLED) && appealCasePermission
 
-    LiabilityViewModel(
+    CaseViewModel(
       CaseHeaderViewModel.fromCase(c),
       hasPermissions       = releaseOrSuppressPermissions,
       showChangeCaseStatus = changeCaseStatus,

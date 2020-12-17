@@ -24,7 +24,11 @@
 <div id="case-heading" class="case-heading mt-5 mb-4">
 
     <div id="case-reference" class="case-reference">
-        @messages(messages("case.title.atars", c.application.getType.replace("BTI", "ATaR"), c.reference, c.application.businessName))
+        @c.application.businessName.map { businessName =>
+            @messages("case.heading.secondary", c.application.`type`.prettyName, c.reference, businessName)
+        }.getOrElse {
+            @messages("case.heading.secondary.nosuffix", c.application.`type`.prettyName, c.reference)
+        }
     </div>
 
     <h1 class="heading-xlarge case-title">@c.application.goodsName</h1>

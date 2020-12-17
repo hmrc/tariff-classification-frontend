@@ -16,66 +16,71 @@
 
 package controllers
 
+import cats.data.OptionT
 import config.AppConfig
 import javax.inject.Inject
-import models.Case
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import play.twirl.api.Html
-import service.{CasesService, CountriesService, FileStoreService, PdfService}
+import service.{CasesService, FileStoreService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.templates.{application_template, decision_template, ruling_template}
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.Future.successful
 
 class PdfDownloadController @Inject() (
   authenticatedAction: AuthenticatedAction,
   mcc: MessagesControllerComponents,
-  pdfService: PdfService,
   fileStore: FileStoreService,
   caseService: CasesService,
-  countriesService: CountriesService,
   implicit val appConfig: AppConfig
-) extends FrontendController(mcc)
+)(implicit ec: ExecutionContext) extends FrontendController(mcc)
     with I18nSupport {
 
   def getRulingPdf(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
-    caseService.getOne(reference) flatMap {
-      case Some(c: Case) if c.decision.isDefined && c.application.isBTI =>
-        generatePdf(ruling_template(c, c.decision.get, getCountryName), s"BTIRuling_$reference.pdf")
-      case Some(c: Case) if c.decision.isDefined && c.application.isLiabilityOrder =>
-        generatePdf(decision_template(c, c.decision.get), s"LiabilityDecision_$reference.pdf")
-      case Some(c: Case) if c.decision.isEmpty => successful(Ok(views.html.ruling_not_found(reference)))
-      case _                                   => successful(Ok(views.html.case_not_found(reference)))
+    caseService.getOne(reference).flatMap {
+      case Some(cse) =>
+        cse.decision match {
+          case Some(decision) =>
+            val pdfResult = for {
+              pdf <- OptionT.fromOption[Future](decision.decisionPdf)
+              meta <- OptionT(fileStore.getFileMetadata(pdf.id))
+              url <- OptionT.fromOption[Future](meta.url)
+              content <- OptionT(fileStore.downloadFile(url))
+            } yield Ok.streamed(content, None, Some(meta.mimeType)).withHeaders(
+              "Content-Disposition" -> s"attachment; filename=${meta.fileName}"
+            )
+
+            val messages = request.messages
+            val documentType = messages("errors.document-not-found.ruling-certificate")
+            pdfResult.getOrElse(NotFound(views.html.document_not_found(documentType, reference)))
+
+          case None =>
+            successful(NotFound(views.html.ruling_not_found(reference)))
+        }
+
+      case None =>
+        successful(NotFound(views.html.case_not_found(reference)))
     }
   }
 
   def applicationPdf(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     caseService.getOne(reference).flatMap {
-      case Some(c) => {
-        for {
-          attachments <- fileStore.getAttachments(c)
-          letter      <- fileStore.getLetterOfAuthority(c)
-          pdf <- generatePdf(
-                  application_template(c, attachments, letter, getCountryName),
-                  s"BTIConfirmation$reference.pdf"
-                )
-        } yield pdf
-      }
-      case _ => successful(Ok(views.html.case_not_found(reference)))
+      case Some(cse) =>
+        val pdfResult = for {
+          pdf <- OptionT.fromOption[Future](cse.application.asATAR.applicationPdf)
+          meta <- OptionT(fileStore.getFileMetadata(pdf.id))
+          url <- OptionT.fromOption[Future](meta.url)
+          content <- OptionT(fileStore.downloadFile(url))
+        } yield Ok.streamed(content, None, Some(meta.mimeType)).withHeaders(
+          "Content-Disposition" -> s"attachment; filename=${meta.fileName}"
+        )
+
+        val messages = request.messages
+        val documentType = messages("errors.document-not-found.application")
+        pdfResult.getOrElse(NotFound(views.html.document_not_found(documentType, reference)))
+
+      case None =>
+        successful(NotFound(views.html.case_not_found(reference)))
     }
   }
-
-  private def generatePdf(htmlContent: Html, filename: String): Future[Result] =
-    pdfService.generatePdf(htmlContent) map { pdfFile =>
-      Results
-        .Ok(pdfFile.content)
-        .as(pdfFile.contentType)
-        .withHeaders(CONTENT_DISPOSITION -> s"filename=$filename")
-    }
-
-  def getCountryName(code: String) = countriesService.getAllCountries.find(_.code == code).map(_.countryName)
-
 }

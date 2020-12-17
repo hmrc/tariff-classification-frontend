@@ -37,11 +37,13 @@ class AppealCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
 
   private val casesService = mock[CasesService]
   private val operator     = Operator(id = "id")
+  private val caseDetailsView = app.injector.instanceOf[views.html.case_details]
 
   private def controller(requestCase: Case) = new AppealCaseController(
     new SuccessfulRequestActions(playBodyParsers, operator, c = requestCase),
     casesService,
     realAppConfig,
+    caseDetailsView,
     mcc
   )
 
@@ -49,6 +51,7 @@ class AppealCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
     new RequestActionsWithPermissions(playBodyParsers, permission, c = requestCase),
     casesService,
     realAppConfig,
+    caseDetailsView,
     mcc
   )
 

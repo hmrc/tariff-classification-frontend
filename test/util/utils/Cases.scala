@@ -85,7 +85,8 @@ object Cases {
     None,
     None,
     sampleToBeProvided = false,
-    sampleToBeReturned = false
+    sampleToBeReturned = false,
+    applicationPdf = Some(Attachment("id", false, Some(Operator("1", None))))
   )
   val simpleBtiApplicationExample: BTIApplication = BTIApplication(
     eoriDetailsExample,
@@ -102,7 +103,8 @@ object Cases {
     None,
     None,
     sampleToBeProvided = false,
-    sampleToBeReturned = false
+    sampleToBeReturned = false,
+    applicationPdf = None
   )
   val decision: Decision = Decision(
     "040900",
@@ -113,7 +115,8 @@ object Cases {
     None,
     None,
     Some("denomination"),
-    Seq.empty
+    Seq.empty,
+    decisionPdf = Some(Attachment("id", false, Some(Operator("1", None))))
   )
   val incompleteDecision: Decision = Decision(
     "",

@@ -27,11 +27,13 @@ import org.mockito.ArgumentMatchers._
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito.{never, reset, verify, verifyZeroInteractions}
 import org.scalatest.BeforeAndAfterEach
+import play.twirl.api.Html
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
 
 import scala.concurrent.Future
 import scala.concurrent.Future.{failed, successful}
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class CasesService_CompleteCaseSpec extends ServiceSpecBase with BeforeAndAfterEach with ConnectorCaptor {
 
@@ -43,6 +45,8 @@ class CasesService_CompleteCaseSpec extends ServiceSpecBase with BeforeAndAfterE
   private val emailService     = mock[EmailService]
   private val reportingService = mock[ReportingService]
   private val fileStoreService = mock[FileStoreService]
+  private val countriesService = injector.instanceOf[CountriesService]
+  private val pdfService       = mock[PdfService]
   private val audit            = mock[AuditService]
   private val config           = mock[AppConfig]
   private val clock            = Clock.fixed(LocalDateTime.of(2018, 1, 1, 14, 0).toInstant(ZoneOffset.UTC), ZoneId.of("UTC"))
@@ -50,7 +54,7 @@ class CasesService_CompleteCaseSpec extends ServiceSpecBase with BeforeAndAfterE
   private val aLiability       = Cases.liabilityCaseExample
 
   private val service =
-    new CasesService(config, audit, emailService, fileStoreService, reportingService, connector, rulingConnector)
+    new CasesService(config, audit, emailService, fileStoreService, countriesService, reportingService, pdfService, connector, rulingConnector)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -72,6 +76,8 @@ class CasesService_CompleteCaseSpec extends ServiceSpecBase with BeforeAndAfterE
         val caseUpdated = aLiability.copy(status = CaseStatus.COMPLETED, decision = Some(updatedDecision))
 
         given(config.decisionLifetimeYears).willReturn(1)
+        given(fileStoreService.upload(any[FileUpload])(any[HeaderCarrier])).willReturn(successful(FileStoreAttachment("id", s"LiabilityDecision_${originalCase.reference}", "application/pdf", 0L)))
+        given(pdfService.generatePdf(any[Html])).willReturn(successful(PdfFile(Array.emptyByteArray, "application/pdf")))
         given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
         given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
           .willReturn(successful(mock[Event]))

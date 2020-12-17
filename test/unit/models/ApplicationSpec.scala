@@ -169,11 +169,11 @@ class ApplicationSpec extends ModelsBaseSpec {
   "Application 'Business Name'" should {
 
     "return for Liability" in {
-      Cases.liabilityApplicationExample.businessName shouldBe Cases.liabilityApplicationExample.asLiabilityOrder.traderName
+      Cases.liabilityApplicationExample.businessName shouldBe Some(Cases.liabilityApplicationExample.asLiabilityOrder.traderName)
     }
 
     "return for ATaR" in {
-      Cases.btiApplicationExample.businessName shouldBe Cases.btiApplicationExample.asATAR.holder.businessName
+      Cases.btiApplicationExample.businessName shouldBe Some(Cases.btiApplicationExample.asATAR.holder.businessName)
     }
 
   }

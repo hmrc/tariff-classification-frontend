@@ -50,10 +50,7 @@ class ReopenCaseController @Inject() (
               case ApplicationType.ATAR =>
                 routes.CaseController.applicantDetails(updatedCase.reference)
               case ApplicationType.LIABILITY =>
-                if (config.newLiabilityDetails)
-                  v2.routes.LiabilityController.displayLiability(updatedCase.reference)
-                else
-                  routes.LiabilityController.liabilityDetails(updatedCase.reference)
+                v2.routes.LiabilityController.displayLiability(updatedCase.reference)
             }
           )
       )

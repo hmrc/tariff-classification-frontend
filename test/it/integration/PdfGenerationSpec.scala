@@ -4,13 +4,16 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import play.api.libs.ws.WSResponse
 import play.api.test.Helpers._
 import models.CaseStatus
+import models.response.FileMetadata
 import utils.{CasePayloads, Cases}
+import utils.JsonFormatters._
 
 class PdfGenerationSpec extends IntegrationTest {
 
-  private val c                      = CasePayloads.jsonOf(Cases.btiCaseExample.copy(status = CaseStatus.COMPLETED))
-  private val caseRef                = 12
-  private val pdfGeneratorServiceUrl = "/pdf-generator-service/generate"
+  private val cse     = CasePayloads.jsonOf(Cases.btiCaseExample.copy(status = CaseStatus.COMPLETED))
+  private val caseRef = 12
+  private val pdfUrl  = s"${wireMockUrl}/digital-tariffs-local/id"
+  private val pdfMeta = CasePayloads.jsonOf(Some(FileMetadata("id", "some.pdf", "application/pdf", Some(pdfUrl))))
 
   "PDF Application" should {
 
@@ -23,12 +26,21 @@ class PdfGenerationSpec extends IntegrationTest {
           .willReturn(
             aResponse()
               .withStatus(OK)
-              .withBody(c)
+              .withBody(cse)
           )
       )
 
       stubFor(
-        post(urlEqualTo(pdfGeneratorServiceUrl))
+        get(urlEqualTo("/file/id"))
+          .willReturn(
+            aResponse()
+              .withStatus(OK)
+              .withBody(pdfMeta)
+          )
+      )
+
+      stubFor(
+        get(urlEqualTo("/digital-tariffs-local/id"))
           .willReturn(
             aResponse()
               .withStatus(OK)
@@ -71,12 +83,21 @@ class PdfGenerationSpec extends IntegrationTest {
           .willReturn(
             aResponse()
               .withStatus(OK)
-              .withBody(c)
+              .withBody(cse)
           )
       )
 
       stubFor(
-        post(urlEqualTo(pdfGeneratorServiceUrl))
+        get(urlEqualTo("/file/id"))
+          .willReturn(
+            aResponse()
+              .withStatus(OK)
+              .withBody(pdfMeta)
+          )
+      )
+
+      stubFor(
+        get(urlEqualTo("/digital-tariffs-local/id"))
           .willReturn(
             aResponse()
               .withStatus(OK)
