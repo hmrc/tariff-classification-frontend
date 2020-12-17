@@ -85,14 +85,19 @@ class CaseController @Inject() (
 
   def sampleDetails(reference: String): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
-      validateAndRenderView(
-        SAMPLE_DETAILS,
-        c =>
-          for {
-            events <- eventsService.getFilteredEvents(c.reference, NoPagination(), Some(EventType.sampleEvents))
-          } yield views.html.partials.sample.sample_details(c, events, tabIndexFor(SAMPLE_DETAILS)),
-        ActiveTab.Sample
-      )
+      request.`case`.application.`type` match {
+        case ApplicationType.LIABILITY =>
+          Future.successful(Redirect(v2.routes.LiabilityController.displayLiability(reference)))
+        case ApplicationType.ATAR =>
+          validateAndRenderView(
+            SAMPLE_DETAILS,
+            c =>
+              for {
+                events <- eventsService.getFilteredEvents(c.reference, NoPagination(), Some(EventType.sampleEvents))
+              } yield views.html.partials.sample.sample_details(c, events, tabIndexFor(SAMPLE_DETAILS)),
+            ActiveTab.Sample
+          )
+      }
     }
 
   def rulingDetails(reference: String): Action[AnyContent] =

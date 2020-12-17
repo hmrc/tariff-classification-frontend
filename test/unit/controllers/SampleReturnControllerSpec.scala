@@ -105,7 +105,7 @@ class SampleReturnControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
         .updateSampleReturn(refEq(c), refEq(Some(SampleReturn.YES)), any[Operator])(any[HeaderCarrier])
 
       status(result)     shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some(routes.CaseController.get("reference").withFragment(Tab.SAMPLE_TAB).path)
+      locationOf(result) shouldBe Some(routes.CaseController.sampleDetails("reference").withFragment(Tab.SAMPLE_TAB).path)
     }
 
     "redirect for unchanged status" in {
@@ -119,7 +119,7 @@ class SampleReturnControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
         .updateSampleReturn(any[Case], any[Option[SampleReturn]], any[Operator])(any[HeaderCarrier])
 
       status(result)     shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some(routes.CaseController.get("reference").withFragment(Tab.SAMPLE_TAB).path)
+      locationOf(result) shouldBe Some(routes.CaseController.sampleDetails("reference").withFragment(Tab.SAMPLE_TAB).path)
     }
 
     "when error form re-displays with error message" in {
@@ -151,7 +151,7 @@ class SampleReturnControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
       )
 
       status(result)     shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some(routes.CaseController.get("reference").withFragment(Tab.SAMPLE_TAB).path)
+      locationOf(result) shouldBe Some(routes.CaseController.sampleDetails("reference").withFragment(Tab.SAMPLE_TAB).path)
     }
 
     "redirect unauthorised when does not have right permissions" in {
