@@ -22,6 +22,7 @@ import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.{MimeTypes, Status}
+import play.api.i18n.Messages
 import play.api.mvc.Result
 import play.api.test.Helpers.{redirectLocation, _}
 import service.{CasesService, CommodityCodeService}
@@ -101,7 +102,7 @@ class CompleteCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
           withLiabilityApplication(),
           withDecision(bindingCommodityCode = "040900")
         )
-        when(casesService.completeCase(refEq(c), any[Operator])(any[HeaderCarrier]))
+        when(casesService.completeCase(refEq(c), any[Operator])(any[HeaderCarrier], any[Messages]))
           .thenReturn(successful(caseWithStatusCOMPLETED))
 
         val result: Result = await(getController(c).completeCase("reference")(newFakeGETRequestWithCSRF(app)))
@@ -176,7 +177,7 @@ class CompleteCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
   "Confirm Complete Case" should {
 
     "return OK and HTML content type" in {
-      when(casesService.completeCase(refEq(validCaseWithStatusOPEN), any[Operator])(any[HeaderCarrier]))
+      when(casesService.completeCase(refEq(validCaseWithStatusOPEN), any[Operator])(any[HeaderCarrier], any[Messages]))
         .thenReturn(successful(caseWithStatusCOMPLETED))
 
       val result: Result =
@@ -250,7 +251,7 @@ class CompleteCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
     }
 
     "return OK when user has right permissions" in {
-      when(casesService.completeCase(any[Case], any[Operator])(any[HeaderCarrier]))
+      when(casesService.completeCase(any[Case], any[Operator])(any[HeaderCarrier], any[Messages]))
         .thenReturn(successful(caseWithStatusCOMPLETED))
 
       val result: Result = await(

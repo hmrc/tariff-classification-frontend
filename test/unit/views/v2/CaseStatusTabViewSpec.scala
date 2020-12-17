@@ -31,7 +31,7 @@ class CaseStatusTabViewSpec extends ViewSpec {
 
       // Then
       doc.text()               shouldBe "case status OPEN"
-      doc.getElementById("id-status") should haveClass("bg-blue")
+      doc.getElementById("id-status") should haveClass("govuk-tag--blue")
     }
 
     "render the live liability case status" in {
@@ -41,7 +41,7 @@ class CaseStatusTabViewSpec extends ViewSpec {
       // Then
       doc.text()                                should include("OPEN")
       doc.text()                                shouldNot  include("OVERDUE")
-      doc.getElementById("id-status") should haveClass("bg-blue")
+      doc.getElementById("id-status") should haveClass("govuk-tag--blue")
     }
 
     "render the overdue live liability case status" in {
@@ -51,8 +51,9 @@ class CaseStatusTabViewSpec extends ViewSpec {
       // Then
       doc.text()                                should include("OPEN")
       doc.text()                                should include("OVERDUE")
-      doc.getElementById("id-overdue") should haveClass("bg-red")
-      doc.getElementById("id-status") should haveClass("bg-blue")
+      doc.getElementById("id-overdue") should haveClass("govuk-tag--red")
+      doc.getElementById("id-status") should haveClass("govuk-tag--blue")
     }
+
   }
 }

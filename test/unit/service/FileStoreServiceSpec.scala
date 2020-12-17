@@ -33,6 +33,8 @@ import utils.Cases._
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
 import java.nio.file.Path
+import akka.stream.scaladsl.Source
+import akka.util.ByteString
 
 class FileStoreServiceSpec extends ServiceSpecBase {
 
@@ -164,6 +166,16 @@ class FileStoreServiceSpec extends ServiceSpecBase {
       Mockito.verify(connector).delete(id)
     }
 
+  }
+
+  "Service 'downloadFile'" should {
+    val fileContent = Some(Source.single(ByteString("Some file content".getBytes())))
+
+    "call the connector" in {
+      given(connector.downloadFile(any[String])(any[HeaderCarrier])).willReturn(successful(fileContent))
+
+      await(service.downloadFile("http://localhost:4572/foo")) shouldBe fileContent
+    }
   }
 
   private def aStoredAttachmentWithId(id: String): StoredAttachment =

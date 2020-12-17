@@ -28,6 +28,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
 
 import scala.concurrent.Future.{failed, successful}
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class CasesService_ReleaseCaseSpec extends ServiceSpecBase with BeforeAndAfterEach with ConnectorCaptor {
 
@@ -38,12 +39,14 @@ class CasesService_ReleaseCaseSpec extends ServiceSpecBase with BeforeAndAfterEa
   private val rulingConnector  = mock[RulingConnector]
   private val emailService     = mock[EmailService]
   private val fileStoreService = mock[FileStoreService]
+  private val countriesService = mock[CountriesService]
   private val reportingService = mock[ReportingService]
+  private val pdfService       = mock[PdfService]
   private val audit            = mock[AuditService]
   private val aCase            = Cases.btiCaseExample
 
   private val service =
-    new CasesService(realAppConfig, audit, emailService, fileStoreService, reportingService, connector, rulingConnector)
+    new CasesService(realAppConfig, audit, emailService, fileStoreService, countriesService, reportingService, pdfService, connector, rulingConnector)
 
   override protected def afterEach(): Unit = {
     super.afterEach()

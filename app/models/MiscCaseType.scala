@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,13 +12,15 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@(
-        id: String,
-        confirmText: String = "Save and Continue"
-)
+package models
 
-<div id="@id-button">
-    <button class="button" id="@id-button" type="submit">@confirmText</button>
-</div>
+object MiscCaseType extends Enumeration {
+  type MiscCaseType = Value
+  val HARMONISED     = Value("Harmonised systems")
+  val IB             = Value("IB")
+  val NOMENCLATURE   = Value("Nomenclature")
+  val OTHER_GOVT_DEP = Value("Other government dept")
+  val OTHER          = Value("Other")
+}

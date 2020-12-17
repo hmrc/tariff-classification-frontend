@@ -17,9 +17,11 @@
 @import models.request.AuthenticatedRequest
 @import config.AppConfig
 @import  models.viewmodels.CasesTab
+@import controllers.routes.{AssignCaseController, CaseController}
 
 @import play.twirl.api.TemplateMagic.defining
 @import views.html.partials.statuses.case_status
+
 @(caseTab : CasesTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
  <table id="@{caseTab.tabMessageKey}-table">
@@ -45,7 +47,13 @@
 
     @defining(result.application.asATAR) { atar =>
      <tr id="@{caseTab.tabMessageKey}-details-@index">
-      <td id="@{caseTab.tabMessageKey}-reference-@index"><a href="@routes.CaseController.get(result.reference)">@{result.reference}</a></td>
+      <td id="@{caseTab.tabMessageKey}-reference-@index">
+      @if(result.queueId.isDefined && !result.assignee.map(_.id).contains(request.operator.id)) {
+      <a href="@AssignCaseController.get(result.reference)">@result.reference</a>
+      }else {
+       <a href="@CaseController.get(result.reference)">@result.reference</a>
+      }
+      </td>
       <td id="@{caseTab.tabMessageKey}-goods-@index">@{atar.goodName}</td>
       <td id="@{caseTab.tabMessageKey}-trader-@index">@{atar.holder.businessName}</td>
       <td id="@{caseTab.tabMessageKey}-elapsed-days-@index">@{result.daysElapsed}</td>

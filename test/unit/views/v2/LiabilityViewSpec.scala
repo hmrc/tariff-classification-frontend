@@ -17,7 +17,7 @@
 package views.v2
 
 import models.forms.{ActivityForm, ActivityFormData, KeywordForm, UploadAttachmentForm}
-import models.viewmodels.{AppealTabViewModel, KeywordsTabViewModel, LiabilityViewModel, SampleStatusTabViewModel}
+import models.viewmodels.{AppealTabViewModel, KeywordsTabViewModel, CaseViewModel, SampleStatusTabViewModel}
 import models._
 import play.api.data.Form
 import utils.Cases
@@ -62,7 +62,7 @@ class LiabilityViewSpec extends ViewSpec {
       val c = aCase(withReference("reference"), withLiabilityApplication())
       val doc = view(
         liabilityView(
-          LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions),
+          CaseViewModel.fromCase(c, Cases.operatorWithoutPermissions),
           None,
           None,
           sampleStatusTabViewModel,
@@ -82,7 +82,7 @@ class LiabilityViewSpec extends ViewSpec {
       val c = aCase(withReference("reference"), withLiabilityApplication())
       val doc = view(
         liabilityView(
-          LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions),
+          CaseViewModel.fromCase(c, Cases.operatorWithoutPermissions),
           Some(Cases.c592ViewModel),
           None,
           sampleStatusTabViewModel,
@@ -102,7 +102,7 @@ class LiabilityViewSpec extends ViewSpec {
       val c = aCase(withReference("reference"), withLiabilityApplication())
       val doc = view(
         liabilityView(
-          LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions),
+          CaseViewModel.fromCase(c, Cases.operatorWithoutPermissions),
           None,
           None,
           sampleStatusTabViewModel,
@@ -122,7 +122,7 @@ class LiabilityViewSpec extends ViewSpec {
       val c = aCase(withReference("reference"), withLiabilityApplication())
       val doc = view(
         liabilityView(
-          LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions),
+          CaseViewModel.fromCase(c, Cases.operatorWithoutPermissions),
           None,
           Cases.rulingViewModel,
           sampleStatusTabViewModel,
@@ -142,7 +142,7 @@ class LiabilityViewSpec extends ViewSpec {
       val c = aCase(withReference("reference"), withLiabilityApplication())
       val doc = view(
         liabilityView(
-          LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions),
+          CaseViewModel.fromCase(c, Cases.operatorWithoutPermissions),
           None,
           None,
           sampleStatusTabViewModel,
@@ -162,7 +162,7 @@ class LiabilityViewSpec extends ViewSpec {
       val c = aCase(withReference("reference"), withLiabilityApplication()).copy(status = CaseStatus.OPEN)
       val doc = view(
         liabilityView(
-          LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions),
+          CaseViewModel.fromCase(c, Cases.operatorWithoutPermissions),
           None,
           Cases.rulingViewModel,
           sampleStatusTabViewModel,
@@ -182,7 +182,7 @@ class LiabilityViewSpec extends ViewSpec {
       val c = aCase(withReference("reference"), withLiabilityApplication()).copy(status = CaseStatus.CANCELLED)
       val doc = view(
         liabilityView(
-          LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions),
+          CaseViewModel.fromCase(c, Cases.operatorWithoutPermissions),
           None,
           Cases.rulingViewModel,
           sampleStatusTabViewModel,
@@ -202,7 +202,7 @@ class LiabilityViewSpec extends ViewSpec {
       val c = aCase(withReference("reference"), withLiabilityApplication())
       val doc = view(
         liabilityView(
-          LiabilityViewModel.fromCase(c, Cases.operatorWithAddAttachment),
+          CaseViewModel.fromCase(c, Cases.operatorWithAddAttachment),
           None,
           None,
           sampleStatusTabViewModel,
@@ -223,7 +223,7 @@ class LiabilityViewSpec extends ViewSpec {
       val c = aCase(withReference("reference"), withLiabilityApplication())
       val doc = view(
         liabilityView(
-          LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions),
+          CaseViewModel.fromCase(c, Cases.operatorWithoutPermissions),
           None,
           None,
           sampleStatusTabViewModel,
@@ -243,7 +243,7 @@ class LiabilityViewSpec extends ViewSpec {
       val c = aLiabilityCase(withReference("reference"), withLiabilityApplication())
       val doc = view(
         liabilityView(
-          LiabilityViewModel.fromCase(c, Cases.operatorWithAddAttachment),
+          CaseViewModel.fromCase(c, Cases.operatorWithAddAttachment),
           None,
           None,
           sampleStatusTabViewModel,
@@ -264,7 +264,7 @@ class LiabilityViewSpec extends ViewSpec {
 
       val doc = view(
         liabilityView(
-          LiabilityViewModel.fromCase(c, Cases.operatorWithAddAttachment),
+          CaseViewModel.fromCase(c, Cases.operatorWithAddAttachment),
           None,
           None,
           sampleStatusTabViewModel,
@@ -287,7 +287,7 @@ class LiabilityViewSpec extends ViewSpec {
 
       val doc = view(
         liabilityView(
-          LiabilityViewModel.fromCase(c, op),
+          CaseViewModel.fromCase(c, op),
           None,
           None,
           sampleStatusTabViewModel,
@@ -309,7 +309,7 @@ class LiabilityViewSpec extends ViewSpec {
 
       val doc = view(
         liabilityView(
-          LiabilityViewModel.fromCase(c, Cases.operatorWithPermissions),
+          CaseViewModel.fromCase(c, Cases.operatorWithPermissions),
           None,
           None,
           sampleStatusTabViewModel,

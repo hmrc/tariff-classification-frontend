@@ -23,9 +23,11 @@
 @import views.html.includes.main
 @import views.html.partials.{case_heading, error_summary, back_link}
 @import views.html.partials.statuses.status_change_upload
+@import models.viewmodels.MyCasesTab
+
 @(c: Case, form: Form[RulingCancellation])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("page.title.cancel.ruling"))) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.cancel.ruling")), customPrimaryNavTab = MyCasesTab) {
 
     @back_link()
 

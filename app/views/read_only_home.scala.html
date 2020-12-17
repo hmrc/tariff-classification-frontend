@@ -19,9 +19,10 @@
 @import views.html.forms.search_box
 @import views.html.includes.main
 @import models.Permission
+@import models.viewmodels.NoTabSelected
 @()(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None) {
+@main(bodyClasses = None, customPrimaryNavTab = NoTabSelected) {
 
     <h1 id="read_only_home-heading" class="heading-xlarge">Find and view a case</h1>
 

@@ -22,7 +22,9 @@ import java.util.UUID
 import audit.AuditService
 import config.AppConfig
 import connector.{BindingTariffClassificationConnector, RulingConnector}
+import java.nio.file.{Files, StandardOpenOption}
 import javax.inject.{Inject, Singleton}
+import models.ApplicationType._
 import models.AppealStatus.AppealStatus
 import models.AppealType.AppealType
 import models.CancelReason.CancelReason
@@ -32,10 +34,12 @@ import models.SampleStatus.SampleStatus
 import models._
 import models.request.NewEventRequest
 import play.api.Logging
+import play.api.i18n.Messages
+import play.api.libs.Files.SingletonTemporaryFileCreator
 import uk.gov.hmrc.http.HeaderCarrier
+import views.html.templates.{decision_template, ruling_template}
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class CasesService @Inject() (
@@ -43,10 +47,12 @@ class CasesService @Inject() (
   auditService: AuditService,
   emailService: EmailService,
   fileService: FileStoreService,
+  countriesService: CountriesService,
   reportingService: ReportingService,
+  pdfService: PdfService,
   connector: BindingTariffClassificationConnector,
   rulingConnector: RulingConnector
-) extends Logging {
+)(implicit ec: ExecutionContext) extends Logging {
 
   def updateExtendedUseStatus(original: Case, status: Boolean, operator: Operator)(
     implicit hc: HeaderCarrier
@@ -222,7 +228,7 @@ class CasesService @Inject() (
       _ = auditService.auditCaseSuppressed(original, updated, operator)
     } yield updated
 
-  def completeCase(original: Case, operator: Operator)(implicit hc: HeaderCarrier): Future[Case] = {
+  def completeCase(original: Case, operator: Operator)(implicit hc: HeaderCarrier, messages: Messages): Future[Case] = {
     val date         = LocalDate.now(appConfig.clock).atStartOfDay(appConfig.clock.getZone)
     val startInstant = date.toInstant
     val possibleEndInstant: Option[Instant] = original.application.isBTI match {
@@ -247,9 +253,43 @@ class CasesService @Inject() (
           Some("Attempted to send an email to the applicant which failed")
       }
 
+    def getCountryName(code: String): Option[String] =
+      countriesService.getAllCountriesById.get(code).map(_.countryName)
+
+    def createRulingPdf(pdf: PdfFile): FileUpload = {
+      val tempFile = SingletonTemporaryFileCreator.create(original.reference, "pdf")
+      Files.write(tempFile.path, pdf.content, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE)
+      FileUpload(tempFile, s"ATaRRuling_${original.reference}.pdf", pdf.contentType)
+    }
+
+    def createLiabilityDecisionPdf(pdf: PdfFile): FileUpload = {
+      val tempFile = SingletonTemporaryFileCreator.create(original.reference, "pdf")
+      Files.write(tempFile.path, pdf.content, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE)
+      FileUpload(tempFile, s"LiabilityDecision_${original.reference}.pdf", pdf.contentType)
+    }
+
     for {
+      // Generate the decision PDF
+      pdfFile <- caseUpdating.application.`type` match {
+                  case ATAR =>
+                    pdfService
+                      .generatePdf(ruling_template(caseUpdating, decisionUpdating, getCountryName)(messages, appConfig))
+                      .map(createRulingPdf(_))
+                  case LIABILITY =>
+                    pdfService
+                      .generatePdf(decision_template(caseUpdating, decisionUpdating)(messages, appConfig))
+                      .map(createLiabilityDecisionPdf(_))
+                }
+
+      // Upload the decision PDF to the filestore
+      pdfStored <- fileService.upload(pdfFile)
+
+      pdfAttachment = Attachment(id = pdfStored.id, operator = Some(operator))
+
+      caseWithPdf = caseUpdating.copy(decision = Some(decisionUpdating.copy(decisionPdf = Some(pdfAttachment))))
+
       // Update the case
-      updated: Case <- connector.updateCase(caseUpdating)
+      updated: Case <- connector.updateCase(caseWithPdf)
 
       // Send the email
       message: Option[String] <- if (original.application.isBTI) sendCaseCompleteEmail(updated)
@@ -306,7 +346,6 @@ class CasesService @Inject() (
   def search(search: Search, sort: Sort, pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[Case]] =
     connector.search(search, sort, pagination)
 
-
   def getCasesByQueue(
     queue: Queue,
     pagination: Pagination,
@@ -315,12 +354,11 @@ class CasesService @Inject() (
     connector.findCasesByQueue(queue, pagination, forTypes)
 
   def getCasesByAllQueues(
-                       queue: Seq[Queue],
-                       pagination: Pagination,
-                       forTypes: Seq[ApplicationType] = Seq(ApplicationType.ATAR, ApplicationType.LIABILITY)
-                     )(implicit hc: HeaderCarrier): Future[Paged[Case]] =
+    queue: Seq[Queue],
+    pagination: Pagination,
+    forTypes: Seq[ApplicationType] = Seq(ApplicationType.ATAR, ApplicationType.LIABILITY)
+  )(implicit hc: HeaderCarrier): Future[Paged[Case]] =
     connector.findCasesByAllQueues(queue, pagination, forTypes)
-
 
   def countCasesByQueue(operator: Operator)(implicit hc: HeaderCarrier): Future[Map[String, Int]] =
     for {
@@ -513,7 +551,7 @@ class CasesService @Inject() (
     val event = NewEventRequest(details, operator)
     connector.createEvent(updated, event) recover {
       case t: Throwable =>
-        logger.error(s"Could not create Event for case [${original.reference}] with payload [$event]", t)
+        logger.error(s"Could not create Event for case [${original.reference}] with payload [${event.details}]", t)
     } map (_ => ())
   }
 

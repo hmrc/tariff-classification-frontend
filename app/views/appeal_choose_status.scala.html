@@ -18,35 +18,34 @@
 @import controllers.routes
 @import models.AppealStatus.AppealStatus
 @import models.AppealType.AppealType
-@import models.{AppealStatus, AppealType, Case}
-@import views.forms.components.RadioOption
-@import views.html.forms.components.input_radiogroup
+@import models.Case
 @import views.html.includes.main
 @import views.html.partials.{case_heading, back_link}
-@import models.Appeal
 @import views.html.partials.appeal.appeal_status_choice
 @import views.html.partials.appeal.appeal_status_heading
 @import views.html.partials.appeal.appeal_status_submit
 @import views.html.partials.error_summary
+@import models.viewmodels.NoTabSelected
+
 @(c: Case, appealType: AppealType, form: Form[AppealStatus])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("page.title.choose.appeal.status"))) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.choose.appeal.status")), customPrimaryNavTab = NoTabSelected) {
 
-  @back_link()
+    @back_link()
 
-  @error_summary(form.errors)
+    @error_summary(form.errors)
 
-  @case_heading(c)
+    @case_heading(c)
 
-  @appeal_status_heading(appealType)
+    @appeal_status_heading(appealType)
 
-  @helper.form(action = routes.AppealCaseController.confirmStatus(c.reference, appealType.toString), 'id -> "appeal_status_form", 'novalidate -> "novalidate") {
+    @helper.form(action = routes.AppealCaseController.confirmStatus(c.reference, appealType.toString), 'id -> "appeal_status_form", 'novalidate -> "novalidate") {
 
-      @helper.CSRF.formField
+        @helper.CSRF.formField
 
-      @appeal_status_choice(appealType, form)
+        @appeal_status_choice(appealType, form)
 
-      @appeal_status_submit(c.reference)
-  }
+        @appeal_status_submit(c.reference)
+    }
 
 }

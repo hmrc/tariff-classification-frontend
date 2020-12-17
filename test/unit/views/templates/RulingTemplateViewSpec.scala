@@ -27,7 +27,7 @@ class RulingTemplateViewSpec extends ViewSpec {
   private val holder     = rulingCase.application.asATAR.holder
   private val ruling     = rulingCase.decision.getOrElse(throw new Exception("Bad test data"))
   private val doc = view(
-    ruling_template(rulingCase, ruling, s => Some("dummy country name"))(authenticatedFakeRequest, messages, appConfig)
+    ruling_template(rulingCase, ruling, s => Some("dummy country name"))(messages, appConfig)
   )
 
   "Ruling pdf holder section" should {

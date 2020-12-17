@@ -60,7 +60,7 @@ class LiabilityController @Inject() (
     keywordForm: Form[String]            = KeywordForm.form
   )(implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
     val liabilityCase: Case = request.`case`
-    val liabilityViewModel  = LiabilityViewModel.fromCase(liabilityCase, request.operator)
+    val liabilityViewModel  = CaseViewModel.fromCase(liabilityCase, request.operator)
     val rulingViewModel     = Some(RulingViewModel.fromCase(liabilityCase, request.operator.permissions))
     val appealTabViewModel  = Some(AppealTabViewModel.fromCase(liabilityCase, request.operator))
 

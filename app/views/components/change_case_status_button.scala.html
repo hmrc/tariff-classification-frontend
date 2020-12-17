@@ -17,11 +17,9 @@
 @import models.request.AuthenticatedRequest
 
 @(
-        idOfElement: String,
-        buttonText: String = "Complete",
-        href: Call,
-        itemType: String,
-        caseReference: String
+    idOfElement: String,
+    buttonText: String = "Complete",
+    href: Call,
 )(implicit request: AuthenticatedRequest[_])
 
 <div class="form-group" id="@idOfElement-buttons">

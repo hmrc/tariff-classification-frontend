@@ -19,6 +19,7 @@ package models
 import java.time.Instant
 
 import models.LiabilityStatus.LiabilityStatus
+import models.MiscCaseType.MiscCaseType
 
 sealed trait Application {
   val `type`: ApplicationType
@@ -30,6 +31,12 @@ sealed trait Application {
   def asLiabilityOrder: LiabilityOrder =
     this.asInstanceOf[LiabilityOrder]
 
+  def asCorrespondence: CorrespondenceApplication =
+    this.asInstanceOf[CorrespondenceApplication]
+
+  def asMisc: MiscApplication =
+    this.asInstanceOf[MiscApplication]
+
   def isBTI: Boolean =
     this.isInstanceOf[BTIApplication]
 
@@ -39,10 +46,17 @@ sealed trait Application {
   def isLiveLiabilityOrder: Boolean =
     isLiabilityOrder && asLiabilityOrder.status == LiabilityStatus.LIVE
 
-  def businessName: String =
+  def isCorrespondence: Boolean =
+    this.isInstanceOf[CorrespondenceApplication]
+
+  def isMisc: Boolean =
+    this.isInstanceOf[MiscApplication]
+
+  def businessName: Option[String] =
     `type` match {
-      case ApplicationType.ATAR             => asATAR.holder.businessName
-      case ApplicationType.LIABILITY => asLiabilityOrder.traderName
+      case ApplicationType.ATAR      => Some(asATAR.holder.businessName)
+      case ApplicationType.LIABILITY => Some(asLiabilityOrder.traderName)
+      case _                         => None
     }
 
   def goodsName: String =
@@ -60,7 +74,14 @@ sealed trait Application {
     }
 }
 
-sealed abstract class ApplicationType(val name: String) extends Product with Serializable
+sealed abstract class ApplicationType(val name: String) extends Product with Serializable {
+  def prettyName: String = this match {
+    case ApplicationType.ATAR => "ATaR"
+    case ApplicationType.LIABILITY => "Liability"
+    case ApplicationType.CORRESPONDENCE => "Correspondence"
+    case ApplicationType.MISCELLANEOUS => "Miscellaneous"
+  }
+}
 
 object ApplicationType {
   val values = Set(ATAR, LIABILITY, CORRESPONDENCE, MISCELLANEOUS)
@@ -88,7 +109,8 @@ case class BTIApplication(
   knownLegalProceedings: Option[String],
   envisagedCommodityCode: Option[String],
   sampleToBeProvided: Boolean,
-  sampleToBeReturned: Boolean
+  sampleToBeReturned: Boolean,
+  applicationPdf: Option[Attachment]
 ) extends Application {
   override val `type`: models.ApplicationType = ApplicationType.ATAR
 }
@@ -141,3 +163,42 @@ case class Contact(
   email: String,
   phone: Option[String] = None
 )
+
+case class Message(
+  name: String,
+  date: Instant,
+  message: String
+                  )
+
+
+case class CorrespondenceApplication(
+                          correspondenceStarter: Option[String],
+                          agentName: Option[String],
+                          address: Address,
+                          override val contact: Contact,
+                          fax: Option[String] = None,
+                          offline: Boolean,
+                          summary: String,
+                          detailedDescription: String,
+                          relatedBTIReference: Option[String] = None,
+                          relatedBTIReferences: List[String]  = Nil,
+                          sampleToBeProvided: Boolean,
+                          sampleToBeReturned: Boolean,
+                          messagesLogged: List[Message]  = Nil
+                                    ) extends Application {
+  override val `type`: models.ApplicationType = ApplicationType.CORRESPONDENCE
+}
+
+case class MiscApplication(
+                           override val contact: Contact,
+                           offline: Boolean,
+                           name: String,
+                           contactName: Option[String],
+                           caseType: MiscCaseType,
+                           detailedDescription: Option[String],
+                           sampleToBeProvided: Boolean,
+                           sampleToBeReturned: Boolean,
+                           messagesLogged: List[Message]  = Nil
+                          ) extends Application {
+  override val `type`: models.ApplicationType = ApplicationType.MISCELLANEOUS
+}

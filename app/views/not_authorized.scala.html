@@ -17,9 +17,11 @@
 @import config.AppConfig
 @import views.html.includes.main
 
+@import models.viewmodels.NoTabSelected
+
 @(resource: String = "Resource")(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("not_authorised.title"))) {
+@main(bodyClasses = None, customTitle = Some(messages("not_authorised.title")), customPrimaryNavTab = NoTabSelected) {
 
     <h1 class="heading-large">@messages("not_authorised.heading")</h1>
 

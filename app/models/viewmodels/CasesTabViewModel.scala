@@ -17,6 +17,8 @@
 package models.viewmodels
 
 
+import java.time.Instant
+
 import models._
 
 case class CasesTab(tabMessageKey: String, elementId : String,  searchResult: Paged[Case])
@@ -106,11 +108,12 @@ object CasesTabViewModel {
     )
   )
 
+//TODO remove dummy example and replace with queries
   def correspondence = CasesTabViewModel(
     "cases.opencases.correspondence.heading",
-    ApplicationType.ATAR,
+    ApplicationType.CORRESPONDENCE,
     List(
-      CasesTab.act(),
+      CasesTab.act(Paged(Seq(corrCaseExample))),
       CasesTab.cars(),
       CasesTab.elm(),
       CasesTab.flex(),
@@ -135,4 +138,39 @@ object CasesTabViewModel {
 
     )
   )
+
+
+  //TODO remove dummy correspondence example when writing queries for the tabs
+  val corrApplicationExample: CorrespondenceApplication = CorrespondenceApplication(
+   Some("Starter"),
+    Some("Agent 007"),
+    Address("New building", "Old Town", None, None),
+    Contact("a name", "anemail@some.com", None),
+    None,
+    false,
+    "A short summary",
+    "A detailed desc",
+    None,
+    sampleToBeProvided = false,
+    sampleToBeReturned = false
+  )
+
+  val corrCaseExample: Case = Case(
+    "1",
+    CaseStatus.OPEN,
+    Instant.now(),
+    0,
+    None,
+    None,
+    None,
+    corrApplicationExample,
+    None,
+    Seq(),
+    Set.empty,
+    Sample(),
+    Some(Instant.now()),
+    Some(5),
+    referredDaysElapsed = 0
+  )
+
 }

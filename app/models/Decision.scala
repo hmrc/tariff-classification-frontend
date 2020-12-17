@@ -29,7 +29,8 @@ case class Decision(
   methodCommercialDenomination: Option[String] = None,
   appeal: Seq[Appeal]                          = Seq.empty,
   cancellation: Option[Cancellation]           = None,
-  explanation: Option[String]                  = None
+  explanation: Option[String]                  = None,
+  decisionPdf: Option[Attachment]              = None
 )
 
 object Decision {

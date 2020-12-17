@@ -26,6 +26,8 @@ import models.response.FileMetadata
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
+import akka.stream.scaladsl.Source
+import akka.util.ByteString
 
 @Singleton
 class FileStoreService @Inject() (connector: FileStoreConnector) extends Logging {
@@ -92,6 +94,9 @@ class FileStoreService @Inject() (connector: FileStoreConnector) extends Logging
 
   def upload(fileUpload: FileUpload)(implicit hc: HeaderCarrier): Future[FileStoreAttachment] =
     connector.upload(fileUpload).map(toFileAttachment(fileUpload.content.path.toFile.length))
+
+  def downloadFile(url: String)(implicit hc: HeaderCarrier): Future[Option[Source[ByteString, _]]] =
+    connector.downloadFile(url)
 
   def removeAttachment(fileId: String)(implicit hc: HeaderCarrier): Future[Unit] =
     connector.delete(fileId)

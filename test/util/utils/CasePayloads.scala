@@ -19,6 +19,7 @@ package utils
 import play.api.libs.json.Json
 import models._
 import utils.JsonFormatters.{caseFormat, reportResult}
+import play.api.libs.json.Writes
 
 object CasePayloads {
 
@@ -35,13 +36,6 @@ object CasePayloads {
   def jsonOfReport(obj: Seq[ReportResult]): String =
     Json.toJson(obj).toString()
 
-  def jsonOf(obj: Case): String =
+  def jsonOf[A: Writes](obj: A): String =
     Json.toJson(obj).toString()
-
-  def jsonOf(obj: Seq[Case]): String =
-    Json.toJson(obj).toString()
-
-  def jsonOf(obj: Paged[Case]): String =
-    Json.toJson(obj).toString()
-
 }
