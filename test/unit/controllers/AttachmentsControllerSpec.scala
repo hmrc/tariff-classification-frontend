@@ -38,12 +38,14 @@ class AttachmentsControllerSpec extends ControllerBaseSpec {
   private val casesService = mock[CasesService]
   private val fileService  = mock[FileStoreService]
   private val operator     = mock[Operator]
+  private val caseDetailsView = app.injector.instanceOf[views.html.case_details]
 
   private val controller = new AttachmentsController(
     new SuccessfulRequestActions(playBodyParsers, operator, c = Cases.btiCaseExample),
     casesService,
     fileService,
     mcc,
+    caseDetailsView,
     realAppConfig,
     mat
   )
@@ -54,6 +56,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec {
       casesService,
       fileService,
       mcc,
+      caseDetailsView,
       realAppConfig,
       mat
     )

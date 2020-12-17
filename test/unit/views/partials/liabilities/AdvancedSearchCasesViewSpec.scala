@@ -17,7 +17,7 @@
 package views.partials.liabilities
 
 import models._
-import models.viewmodels.LiabilityViewModel
+import models.viewmodels.CaseViewModel
 import play.twirl.api.Html
 import utils.Cases
 import utils.Cases._
@@ -28,9 +28,7 @@ class AdvancedSearchCasesViewSpec extends ViewSpec {
 
   private val showAdvancedSearchButtonStatuses    = Seq(CaseStatus.OPEN, CaseStatus.REFERRED, CaseStatus.SUSPENDED)
   private val notShowAdvancedSearchButtonStatuses = (CaseStatus.values -- showAdvancedSearchButtonStatuses).toList
-
-  def advanced_search_cases(liabilityViewModel: LiabilityViewModel): Html =
-    views.html.partials.liabilities.advanced_search_cases(liabilityViewModel)
+  private val advanced_search_cases = app.injector.instanceOf[views.html.partials.liabilities.advanced_search_cases]
 
   "Advanced search button" should {
 
@@ -40,7 +38,7 @@ class AdvancedSearchCasesViewSpec extends ViewSpec {
 
         val doc = view(
           advanced_search_cases(
-            LiabilityViewModel.fromCase(c, Cases.operatorWithReleaseOrSuppressPermissions)
+            CaseViewModel.fromCase(c, Cases.operatorWithReleaseOrSuppressPermissions)
           )
         )
 
@@ -55,7 +53,7 @@ class AdvancedSearchCasesViewSpec extends ViewSpec {
 
         val doc = view(
           advanced_search_cases(
-            LiabilityViewModel.fromCase(c, Cases.operatorWithReleaseOrSuppressPermissions)
+            CaseViewModel.fromCase(c, Cases.operatorWithReleaseOrSuppressPermissions)
           )
         )
 

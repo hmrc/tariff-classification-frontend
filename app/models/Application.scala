@@ -52,10 +52,11 @@ sealed trait Application {
   def isMisc: Boolean =
     this.isInstanceOf[MiscApplication]
 
-  def businessName: String =
+  def businessName: Option[String] =
     `type` match {
-      case ApplicationType.ATAR             => asATAR.holder.businessName
-      case ApplicationType.LIABILITY => asLiabilityOrder.traderName
+      case ApplicationType.ATAR      => Some(asATAR.holder.businessName)
+      case ApplicationType.LIABILITY => Some(asLiabilityOrder.traderName)
+      case _                         => None
     }
 
   def goodsName: String =
@@ -73,7 +74,14 @@ sealed trait Application {
     }
 }
 
-sealed abstract class ApplicationType(val name: String) extends Product with Serializable
+sealed abstract class ApplicationType(val name: String) extends Product with Serializable {
+  def prettyName: String = this match {
+    case ApplicationType.ATAR => "ATaR"
+    case ApplicationType.LIABILITY => "Liability"
+    case ApplicationType.CORRESPONDENCE => "Correspondence"
+    case ApplicationType.MISCELLANEOUS => "Miscellaneous"
+  }
+}
 
 object ApplicationType {
   val values = Set(ATAR, LIABILITY, CORRESPONDENCE, MISCELLANEOUS)

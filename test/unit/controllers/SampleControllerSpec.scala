@@ -38,13 +38,15 @@ class SampleControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
   private val casesService  = mock[CasesService]
   private val eventsService = mock[EventsService]
   private val operator      = Operator(id = "id")
+  private val caseDetailsView = app.injector.instanceOf[views.html.case_details]
 
   private def controller(requestCase: Case) = new SampleController(
     new SuccessfulRequestActions(playBodyParsers, operator, c = requestCase),
     casesService,
     eventsService,
     mcc,
-    appConfWithLiabilityToggleOff
+    caseDetailsView,
+    realAppConfig
   )
 
   private def controller(requestCase: Case, permission: Set[Permission]) = new SampleController(
@@ -52,16 +54,10 @@ class SampleControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
     casesService,
     eventsService,
     mcc,
-    appConfWithLiabilityToggleOff
-  )
-
-  private def controllerV2(requestCase: Case, permission: Set[Permission]) = new SampleController(
-    new RequestActionsWithPermissions(playBodyParsers, permission, c = requestCase),
-    casesService,
-    eventsService,
-    mcc,
+    caseDetailsView,
     realAppConfig
   )
+
   override def afterEach(): Unit = {
     super.afterEach()
     Mockito.reset(casesService)
@@ -142,7 +138,7 @@ class SampleControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
         .updateSampleStatus(refEq(c), refEq(Some(SampleStatus.DESTROYED)), any[Operator])(any[HeaderCarrier])
 
       status(result)     shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/reference/sample")
+      locationOf(result) shouldBe Some(v2.routes.LiabilityController.displayLiability("reference").withFragment(Tab.SAMPLE_TAB).path)
     }
 
     "redirect for unchanged status" in {
@@ -156,7 +152,7 @@ class SampleControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
         .updateSampleStatus(any[Case], any[Option[SampleStatus]], any[Operator])(any[HeaderCarrier])
 
       status(result)     shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/reference/sample")
+      locationOf(result) shouldBe Some(v2.routes.LiabilityController.displayLiability("reference").withFragment(Tab.SAMPLE_TAB).path)
     }
 
     "when error form re-displays with error message" in {
@@ -188,7 +184,7 @@ class SampleControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       )
 
       status(result)     shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/reference/sample")
+      locationOf(result) shouldBe Some(v2.routes.LiabilityController.displayLiability("reference").withFragment(Tab.SAMPLE_TAB).path)
     }
 
     "redirect unauthorised when does not have right permissions" in {
@@ -202,24 +198,6 @@ class SampleControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       status(result)               shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
     }
-
-    "update & redirect when isV2Liability is set to true" in {
-      val c = aLiabilityCase(withReference("reference"), withSampleStatus(Some(SampleStatus.AWAITING)), withDecision())
-
-      given(casesService.updateSampleStatus(refEq(c), any[Option[SampleStatus]], any[Operator])(any[HeaderCarrier]))
-        .willReturn(Future.successful(c))
-
-      val result = await(
-        controllerV2(c, Set(Permission.EDIT_SAMPLE))
-          .updateStatus("reference")(newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("status" -> ""))
-      )
-
-      verify(casesService).updateSampleStatus(refEq(c), refEq(None), any[Operator])(any[HeaderCarrier])
-
-      status(result)     shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/v2/reference/liability#sample_status_tab")
-    }
-
   }
 
 }

@@ -40,6 +40,7 @@ class SampleController @Inject() (
   override val caseService: CasesService,
   eventsService: EventsService,
   mcc: MessagesControllerComponents,
+  val caseDetailsView: views.html.case_details,
   override implicit val config: AppConfig
 ) extends FrontendController(mcc)
     with StatusChangeAction[Option[SampleStatus]] {
@@ -72,9 +73,8 @@ class SampleController @Inject() (
   ): Future[Case] =
     caseService.updateSampleStatus(c, status, operator)
 
-  override protected def onSuccessRedirect(reference: String, isV2Liability: Boolean): Call =
-    if (isV2Liability) controllers.v2.routes.LiabilityController.displayLiability(reference).withFragment(SAMPLE_TAB)
-    else routes.CaseController.sampleDetails(reference)
+  override protected def onSuccessRedirect(reference: String): Call =
+    controllers.v2.routes.LiabilityController.displayLiability(reference).withFragment(SAMPLE_TAB)
 
   def sampleDetails(reference: String): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
@@ -83,8 +83,7 @@ class SampleController @Inject() (
         c =>
           for {
             events <- eventsService.getFilteredEvents(c.reference, NoPagination(), Some(EventType.sampleEvents))
-          } yield views.html
-            .case_details(c, CaseDetailPage.SAMPLE_DETAILS, views.html.partials.sample.sample_details(c, events))
+          } yield caseDetailsView(c, CaseDetailPage.SAMPLE_DETAILS, views.html.partials.sample.sample_details(c, events))
       )
     }
 }

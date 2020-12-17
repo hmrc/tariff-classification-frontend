@@ -18,66 +18,40 @@
 @import models.Case
 @import views.CaseDetailPage.CaseDetailPage
 @import views.html.includes.main
-@import views.html.partials.{case_heading, case_nav_bti, case_nav_liability}
+@import views.html.partials.{case_heading, case_nav_bti}
+@import views.html.partials.liabilities.advanced_search_cases
 @import views.html.components.change_case_status_button
 @import models.{CaseStatus, Permission}
 @import models.request.AuthenticatedRequest
+@import models.viewmodels._
 @import controllers.routes.ChangeCaseStatusController
 @import controllers.routes.ReleaseOrSuppressCaseController
 @import controllers.routes.ReopenCaseController
 @import views.html.partials._
 @import controllers.ActiveTab
-@import models.viewmodels.NoTabSelected
+
+@this(
+    case_heading: views.html.v2.case_heading,
+    case_action_buttons: views.html.partials.liabilities.case_action_buttons_partial,
+    advanced_search_cases: views.html.partials.liabilities.advanced_search_cases
+)
 
 @(c: Case, page: CaseDetailPage, view: Html, activeTab: Option[ActiveTab] = None)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None,
-    customTitle = Some(messages(s"page.title.${page.toString}")), customPrimaryNavTab = NoTabSelected) {
+    customTitle = Some(messages(s"page.title.${page.toString}")), customPrimaryNavTab = MyCasesTab) {
 
-    @case_heading(c)
+    @defining(CaseViewModel.fromCase(c, request.operator)) { caseViewModel =>
+        @case_heading(caseViewModel.caseHeader)
 
-    @if(c.application.isBTI && c.status == CaseStatus.OPEN && request.hasPermission(Permission.COMPLETE_CASE)){
-        @change_case_status_button(
-            "change-case-status",
-            "Change case status",
-            ChangeCaseStatusController.onPageLoad(c.reference, activeTab),
-            "BTI",
-            c.reference
-        )
-    }
-    @if(c.application.isBTI && c.status == CaseStatus.NEW && (request.hasPermission(Permission.RELEASE_CASE) || request.hasPermission(Permission.SUPPRESS_CASE))){
-        @change_case_status_button(
-            "release-or-suppress",
-            "Change case status", ReleaseOrSuppressCaseController.onPageLoad(c.reference, activeTab),
-            "BTI",
-            c.reference
-        )
-    }
-    @if(c.application.isBTI && c.status == CaseStatus.SUSPENDED && request.hasPermission(Permission.REOPEN_CASE)) {
-        @reopen_case_button(
-            "reopen-case",
-            c.reference,
-            ReopenCaseController.confirmReopenCase(c.reference),
-            messages("case.v2.liability.reopen.button")
-        )
-    }
-    @if(c.application.isBTI && c.status == CaseStatus.REFERRED && request.hasPermission(Permission.REOPEN_CASE)) {
-        @reopen_case_button(
-            "take-off-referral",
-            c.reference,
-            ReopenCaseController.confirmReopenCase(c.reference),
-            messages("case.v2.liability.take_off_referral.button")
-        )
+        <div class="form-groups">
+            @case_action_buttons(caseViewModel)
+            @advanced_search_cases(caseViewModel)
+        </div>
     }
 
     <div class="tabs">
-        @if(c.application.isBTI) {
-            @case_nav_bti(page, c)
-        }else{
-            @if(c.application.isLiabilityOrder) {
-                @case_nav_liability(page, c)
-            }
-        }
+        @case_nav_bti(page, c)
         <div class="tabs__panel">
             <div class="tabs__panel__content">
                 @view
