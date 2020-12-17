@@ -42,9 +42,7 @@
     @change_case_status_button(
         "action-this-case",
         messages("case.v2.liability.action_this_case.button"),
-        ReleaseOrSuppressCaseController.onPageLoad(caseViewModel.caseHeader.referenceNumber),
-        "Liability",
-        caseViewModel.caseHeader.referenceNumber
+        ReleaseOrSuppressCaseController.onPageLoad(caseViewModel.caseHeader.referenceNumber)
     )
 }
 
@@ -52,9 +50,7 @@
     @change_case_status_button(
         "change-case-status",
         messages("case.v2.liability.change_case_status.button"),
-        ChangeCaseStatusController.onPageLoad(caseViewModel.caseHeader.referenceNumber),
-        "Liability",
-        caseViewModel.caseHeader.referenceNumber
+        ChangeCaseStatusController.onPageLoad(caseViewModel.caseHeader.referenceNumber)
     )
 }
 
