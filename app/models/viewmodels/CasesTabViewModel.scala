@@ -16,26 +16,25 @@
 
 package models.viewmodels
 
-
 import java.time.Instant
 
 import models._
 
-case class CasesTab(tabMessageKey: String, elementId : String,  searchResult: Paged[Case])
+case class CasesTab(tabMessageKey: String, elementId: String, searchResult: Paged[Case])
 
 case class CasesTabViewModel(headingMessageKey: String, caseType: ApplicationType, casesTabs: List[CasesTab])
 
 object CasesTab {
-  
-  def act(searchResult : Paged[Case] = Paged.empty) =  CasesTab("cases.opencases.tab_ACT", "act_tab", searchResult)
-  def cap(searchResult : Paged[Case] = Paged.empty) =  CasesTab("cases.opencases.tab_CAP", "cap_tab", searchResult)
-  def cars(searchResult : Paged[Case] = Paged.empty) =  CasesTab("cases.opencases.tab_CARS", "cars_tab", searchResult)
-  def elm(searchResult : Paged[Case] = Paged.empty) =  CasesTab("cases.opencases.tab_ELM", "elm_tab", searchResult)
-  def flex(searchResult : Paged[Case] = Paged.empty) =  CasesTab("cases.opencases.tab_FLEX", "flex_tab", searchResult)
-  def tta(searchResult : Paged[Case] = Paged.empty) =  CasesTab("cases.opencases.tab_TTA", "tta_tab", searchResult)
-  def ttb(searchResult : Paged[Case] = Paged.empty) =  CasesTab("cases.opencases.tab_TTB", "ttb_tab", searchResult)
-  def ttc(searchResult : Paged[Case] = Paged.empty) =  CasesTab("cases.opencases.tab_TTC", "ttc_tab", searchResult)
-  
+
+  def act(searchResult: Paged[Case]  = Paged.empty) = CasesTab("cases.opencases.tab_ACT", "act_tab", searchResult)
+  def cap(searchResult: Paged[Case]  = Paged.empty) = CasesTab("cases.opencases.tab_CAP", "cap_tab", searchResult)
+  def cars(searchResult: Paged[Case] = Paged.empty) = CasesTab("cases.opencases.tab_CARS", "cars_tab", searchResult)
+  def elm(searchResult: Paged[Case]  = Paged.empty) = CasesTab("cases.opencases.tab_ELM", "elm_tab", searchResult)
+  def flex(searchResult: Paged[Case] = Paged.empty) = CasesTab("cases.opencases.tab_FLEX", "flex_tab", searchResult)
+  def tta(searchResult: Paged[Case]  = Paged.empty) = CasesTab("cases.opencases.tab_TTA", "tta_tab", searchResult)
+  def ttb(searchResult: Paged[Case]  = Paged.empty) = CasesTab("cases.opencases.tab_TTB", "ttb_tab", searchResult)
+  def ttc(searchResult: Paged[Case]  = Paged.empty) = CasesTab("cases.opencases.tab_TTC", "ttc_tab", searchResult)
+
 }
 
 object CasesTabViewModel {
@@ -56,10 +55,10 @@ object CasesTabViewModel {
 
   def atarCases(allQueueCases: Seq[Case]): CasesTabViewModel = {
 
-    val actCases = allQueueCases.filter(c => c.queueId.contains(Queues.act.id) && c.application.isBTI)
-    val capCases = allQueueCases.filter(c => c.queueId.contains(Queues.cap.id) && c.application.isBTI)
+    val actCases  = allQueueCases.filter(c => c.queueId.contains(Queues.act.id) && c.application.isBTI)
+    val capCases  = allQueueCases.filter(c => c.queueId.contains(Queues.cap.id) && c.application.isBTI)
     val carsCases = allQueueCases.filter(c => c.queueId.contains(Queues.cars.id) && c.application.isBTI)
-    val elmCases = allQueueCases.filter(c => c.queueId.contains(Queues.elm.id) && c.application.isBTI)
+    val elmCases  = allQueueCases.filter(c => c.queueId.contains(Queues.elm.id) && c.application.isBTI)
 
     CasesTabViewModel(
       "cases.opencases.atar.heading",
@@ -76,10 +75,10 @@ object CasesTabViewModel {
   def liabilityCases(allQueueCases: Seq[Case]): CasesTabViewModel = {
 
     val liabilityCases = allQueueCases.filter(_.application.isLiabilityOrder)
-    val actCases = liabilityCases.filter(c => c.queueId.contains(Queues.act.id))
-    val capCases = liabilityCases.filter(c => c.queueId.contains(Queues.cap.id))
-    val carsCases = liabilityCases.filter(c => c.queueId.contains(Queues.cars.id))
-    val elmCases = liabilityCases.filter(c => c.queueId.contains(Queues.elm.id))
+    val actCases       = liabilityCases.filter(c => c.queueId.contains(Queues.act.id))
+    val capCases       = liabilityCases.filter(c => c.queueId.contains(Queues.cap.id))
+    val carsCases      = liabilityCases.filter(c => c.queueId.contains(Queues.cars.id))
+    val elmCases       = liabilityCases.filter(c => c.queueId.contains(Queues.elm.id))
 
     CasesTabViewModel(
       "cases.opencases.liability.heading",
@@ -120,7 +119,6 @@ object CasesTabViewModel {
       CasesTab.tta(),
       CasesTab.ttb(),
       CasesTab.ttc()
-
     )
   )
 
@@ -135,14 +133,12 @@ object CasesTabViewModel {
       CasesTab.tta(),
       CasesTab.ttb(),
       CasesTab.ttc()
-
     )
   )
 
-
   //TODO remove dummy correspondence example when writing queries for the tabs
   val corrApplicationExample: CorrespondenceApplication = CorrespondenceApplication(
-   Some("Starter"),
+    Some("Starter"),
     Some("Agent 007"),
     Address("New building", "Old Town", None, None),
     Contact("a name", "anemail@some.com", None),

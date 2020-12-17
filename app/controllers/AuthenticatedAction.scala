@@ -68,7 +68,6 @@ class AuthenticatedAction @Inject() (
 
     authorised(predicate).retrieve(Retrievals.credentials and Retrievals.name and Retrievals.allEnrolments) {
       case Some(credentials) ~ name ~ roles =>
-
         val id = credentials.providerId
         val role = roles.enrolments.map(_.key) match {
           case e if e.contains(managerEnrolment) => Role.CLASSIFICATION_MANAGER

@@ -27,21 +27,23 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class OperatorDashboardController @Inject()(
-                                             verify: RequestActions,
-                                             casesService: CasesService,
-                                             mcc: MessagesControllerComponents,
-                                             operator_dashboard_classification: views.html.operator_dashboard_classification,
-                                             implicit val appConfig: AppConfig
-                                           ) extends FrontendController(mcc) with I18nSupport {
+class OperatorDashboardController @Inject() (
+  verify: RequestActions,
+  casesService: CasesService,
+  mcc: MessagesControllerComponents,
+  operator_dashboard_classification: views.html.operator_dashboard_classification,
+  implicit val appConfig: AppConfig
+) extends FrontendController(mcc)
+    with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = (verify.authenticated andThen verify.mustHave(Permission.VIEW_MY_CASES)).async {
     implicit request: AuthenticatedRequest[AnyContent] =>
       for {
-        cases: Paged[Case] <- casesService.getCasesByAssignee(request.operator, NoPagination())
+        cases: Paged[Case]            <- casesService.getCasesByAssignee(request.operator, NoPagination())
         countQueues: Map[String, Int] <- casesService.countCasesByQueue(request.operator)
-        referredCasesByAssignee = cases.results.count(
-          c => c.status == CaseStatus.REFERRED || c.status == CaseStatus.SUSPENDED)
+        referredCasesByAssignee = cases.results.count(c =>
+          c.status == CaseStatus.REFERRED || c.status == CaseStatus.SUSPENDED
+        )
       } yield Ok(operator_dashboard_classification(countQueues, referredCasesByAssignee))
   }
 

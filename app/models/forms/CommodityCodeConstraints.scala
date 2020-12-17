@@ -23,7 +23,8 @@ import service.CommodityCodeService
 import models.forms.mappings.Constraints
 
 @Singleton
-class CommodityCodeConstraints @Inject() (commodityCodeService: CommodityCodeService, appConfig: AppConfig) extends Constraints {
+class CommodityCodeConstraints @Inject() (commodityCodeService: CommodityCodeService, appConfig: AppConfig)
+    extends Constraints {
 
   val commodityCodeNonEmpty: Constraint[String] =
     customNonEmpty("decision_form.error.bindingCommodityCode.required")

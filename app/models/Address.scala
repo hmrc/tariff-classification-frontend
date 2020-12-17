@@ -17,4 +17,3 @@
 package models
 
 case class Address(buildingAndStreet: String, townOrCity: String, county: Option[String], postCode: Option[String])
-

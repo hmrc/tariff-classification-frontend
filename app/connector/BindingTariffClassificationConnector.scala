@@ -73,7 +73,6 @@ class BindingTariffClassificationConnector @Inject() (
     s"${appConfig.bindingTariffClassificationUrl}/cases?$queryString"
   }
 
-
   def findCasesByQueue(
     queue: Queue,
     pagination: Pagination,
@@ -84,7 +83,7 @@ class BindingTariffClassificationConnector @Inject() (
       val url = buildQueryUrl(
         types      = types,
         statuses   = statuses,
-        queueIds    = Seq(queueId),
+        queueIds   = Seq(queueId),
         assigneeId = "none",
         pagination = pagination
       )
@@ -92,15 +91,15 @@ class BindingTariffClassificationConnector @Inject() (
     }
 
   def findCasesByAllQueues(
-                        queue: Seq[Queue],
-                        pagination: Pagination,
-                        types: Seq[ApplicationType] = Seq(ApplicationType.ATAR, ApplicationType.LIABILITY)
-                      )(implicit hc: HeaderCarrier): Future[Paged[Case]] =
+    queue: Seq[Queue],
+    pagination: Pagination,
+    types: Seq[ApplicationType] = Seq(ApplicationType.ATAR, ApplicationType.LIABILITY)
+  )(implicit hc: HeaderCarrier): Future[Paged[Case]] =
     withMetricsTimerAsync("get-cases-by-queue") { _ =>
       val url = buildQueryUrl(
         types      = types,
         statuses   = statuses,
-        queueIds    = queue.map(_.id),
+        queueIds   = queue.map(_.id),
         assigneeId = "none",
         pagination = pagination
       )

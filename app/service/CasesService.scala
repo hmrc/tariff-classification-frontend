@@ -52,7 +52,8 @@ class CasesService @Inject() (
   pdfService: PdfService,
   connector: BindingTariffClassificationConnector,
   rulingConnector: RulingConnector
-)(implicit ec: ExecutionContext) extends Logging {
+)(implicit ec: ExecutionContext)
+    extends Logging {
 
   def updateExtendedUseStatus(original: Case, status: Boolean, operator: Operator)(
     implicit hc: HeaderCarrier

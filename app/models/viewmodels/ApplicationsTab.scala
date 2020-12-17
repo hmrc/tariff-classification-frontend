@@ -43,7 +43,8 @@ object ApplicationsTab {
     referralEvent: Option[Map[String, ReferralCaseStatusChange]] = None
   ) =
     ApplicationsTab("applicationTab.liability", ApplicationType.LIABILITY, "liability_tab", searchResult, referralEvent)
-  def correspondence(searchResult: Paged[Case] = Paged.empty,
+  def correspondence(
+    searchResult: Paged[Case]                                    = Paged.empty,
     referralEvent: Option[Map[String, ReferralCaseStatusChange]] = None
   ) =
     ApplicationsTab("applicationTab.correspondence", ApplicationType.CORRESPONDENCE, "correspondence_tab", searchResult)
@@ -76,7 +77,6 @@ object ApplicationsTab {
 
     val liabilities = referredCases.filter(_.application.isLiabilityOrder)
 
-
     ApplicationTabViewModel(
       "applicationTab.referredByMe",
       List(
@@ -99,11 +99,9 @@ object ApplicationsTab {
   )
 //TODO remove dummy corr stub
   def gateway(cases: Seq[Case]) = {
-    val atars = cases.filter(aCase =>
-      aCase.application.isBTI && aCase.status == CaseStatus.NEW)
+    val atars = cases.filter(aCase => aCase.application.isBTI && aCase.status == CaseStatus.NEW)
 
-    val liabilities = cases.filter(aCase =>
-      aCase.application.isLiabilityOrder && aCase.status == CaseStatus.NEW)
+    val liabilities = cases.filter(aCase => aCase.application.isLiabilityOrder && aCase.status == CaseStatus.NEW)
 
     ApplicationTabViewModel(
       "applicationTab.gateway",

@@ -20,7 +20,7 @@ import play.api.mvc.QueryStringBindable
 import models.CaseReportField.CaseReportField
 import models.CaseReportGroup.CaseReportGroup
 
-case class CaseReport (
+case class CaseReport(
   filter: CaseReportFilter,
   group: Set[CaseReportGroup],
   field: CaseReportField

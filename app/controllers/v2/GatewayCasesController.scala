@@ -30,23 +30,24 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future.successful
 
-class GatewayCasesController @Inject()(
-                                   verify: RequestActions,
-                                   casesService: CasesService,
-                                   mcc: MessagesControllerComponents,
-                                   val gatewayCasesView: views.html.v2.gateway_cases_view,
-                                   implicit val appConfig: AppConfig
-                                 ) extends FrontendController(mcc)
-  with I18nSupport {
+class GatewayCasesController @Inject() (
+  verify: RequestActions,
+  casesService: CasesService,
+  mcc: MessagesControllerComponents,
+  val gatewayCasesView: views.html.v2.gateway_cases_view,
+  implicit val appConfig: AppConfig
+) extends FrontendController(mcc)
+    with I18nSupport {
 
   def displayGatewayCases: Action[AnyContent] =
-    (verify.authenticated andThen verify.mustHave(Permission.VIEW_QUEUE_CASES)).async { implicit request: AuthenticatedRequest[AnyContent] =>
-      val types: Seq[ApplicationType] = Seq(ApplicationType.ATAR, ApplicationType.LIABILITY)
+    (verify.authenticated andThen verify.mustHave(Permission.VIEW_QUEUE_CASES)).async {
+      implicit request: AuthenticatedRequest[AnyContent] =>
+        val types: Seq[ApplicationType] = Seq(ApplicationType.ATAR, ApplicationType.LIABILITY)
 
-      for {
-        cases            <- casesService.getCasesByQueue(Queues.gateway, NoPagination(), types)
-        gatewayCases = ApplicationsTab.gateway(cases.results)
-      } yield Ok(gatewayCasesView(gatewayCases))
+        for {
+          cases <- casesService.getCasesByQueue(Queues.gateway, NoPagination(), types)
+          gatewayCases = ApplicationsTab.gateway(cases.results)
+        } yield Ok(gatewayCasesView(gatewayCases))
     }
 
 }

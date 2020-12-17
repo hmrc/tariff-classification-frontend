@@ -64,7 +64,7 @@ class MyCasesController @Inject() (
     (verify.authenticated andThen verify.mustHave(Permission.VIEW_MY_CASES)).async {
       implicit request: AuthenticatedRequest[AnyContent] =>
         for {
-          cases <- casesService.getCasesByAssignee(request.operator, NoPagination())
+          cases                <- casesService.getCasesByAssignee(request.operator, NoPagination())
           referralEventsByCase <- getReferralEvents(cases)
           myCaseStatuses = activeSubNav match {
             case AssignedToMeTab  => ApplicationsTab.assignedToMeCases(cases.results)
