@@ -64,9 +64,10 @@
             <div class="moj-search moj-search--ondark moj-search--inline">
                 @helpers.form(action = controllers.routes.SearchController.search(), 'novalidate -> "novalidate") {
                 <div class="govuk-form-group">
-                    <input tabindex="100" id="search_box-input" class="form-control" name="reference" value="" type="text">
+                    <label class="govuk-label moj-search__label govuk-visually-hidden" for="search_box-input">Search cases</label>
+                    <input id="search_box-input" class="form-control" name="reference" value="" type="text">
                 </div>
-                <button id="search__button" tabindex="200" class="button moj-search__button" data-module="govuk-button" type="submit">Search cases</button>
+                <button id="search__button" class="button moj-search__button" data-module="govuk-button" type="submit">Search cases</button>
                 }
             </div>
         </div>
