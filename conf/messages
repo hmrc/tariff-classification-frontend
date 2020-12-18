@@ -431,6 +431,7 @@ page.title.case.queues=Tariff classification case queues
 page.title.create_liability.h1=New liability information
 page.title.create_correspondence.h1=Create correspondence case
 page.title.edit_liability_decision=Edit liability decision
+page.title.create_misc.h1=Create miscellaneous case
 page.title.document.not.found=Document not found
 view.attachment.unavailable.title=Attachment unavailable
 view.attachment.unavailable.heading=Attachment is unavailable
@@ -971,3 +972,15 @@ release_case.question.header = Do you want to release this new case to a team no
 release_case.released_dynamic_message = {0} case released to {1} team
 back.home = Back to home
 back.gateway = Back to gateway cases
+misc.create_misc.description.heading=Short case description
+misc.create_misc.contact.name.heading=Case contact name
+misc.create_misc.type.heading=Choose a case type
+misc.create_misc.radio.type-harmonised=HARMONISED
+misc.create_misc.radio.type-ib=IB
+misc.create_misc.radio.type-nomenclature=NC
+misc.create_misc.radio.type-other-gov-dep=Other government department
+misc.create_misc.radio.type-other=Other
+misc.create_misc.confirm-button=Create case
+
+
+
