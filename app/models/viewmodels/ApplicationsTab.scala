@@ -17,8 +17,6 @@
 package models.viewmodels
 
 import java.time.Instant
-
-import models.viewmodels.CasesTabViewModel.corrCaseExample
 import models.{CaseStatus, _}
 
 case class ApplicationsTab(
@@ -38,18 +36,21 @@ object ApplicationsTab {
     referralEvent: Option[Map[String, ReferralCaseStatusChange]] = None
   ) =
     ApplicationsTab("applicationTab.atar", ApplicationType.ATAR, "atar_tab", searchResult, referralEvent)
+
   def liability(
     searchResult: Paged[Case]                                    = Paged.empty,
     referralEvent: Option[Map[String, ReferralCaseStatusChange]] = None
   ) =
     ApplicationsTab("applicationTab.liability", ApplicationType.LIABILITY, "liability_tab", searchResult, referralEvent)
+
   def correspondence(searchResult: Paged[Case] = Paged.empty,
     referralEvent: Option[Map[String, ReferralCaseStatusChange]] = None
   ) =
     ApplicationsTab("applicationTab.correspondence", ApplicationType.CORRESPONDENCE, "correspondence_tab", searchResult)
+
   def miscellaneous(searchResult: Paged[Case] = Paged.empty) =
     ApplicationsTab("applicationTab.miscellaneous", ApplicationType.MISCELLANEOUS, "miscellaneous_tab", searchResult)
-//todo remove dummy corr stub
+
   def assignedToMeCases(cases: Seq[Case]): ApplicationTabViewModel = {
 
     val atars = cases.filter(aCase => aCase.application.isBTI && aCase.status == CaseStatus.OPEN)
@@ -61,7 +62,7 @@ object ApplicationsTab {
       List(
         ApplicationsTab.atar(Paged(atars)),
         ApplicationsTab.liability(Paged(liabilities)),
-        ApplicationsTab.correspondence(Paged(Seq(corrCaseExample))),
+        ApplicationsTab.correspondence(),
         ApplicationsTab.miscellaneous()
       )
     )
@@ -82,7 +83,7 @@ object ApplicationsTab {
       List(
         ApplicationsTab.atar(Paged(atars), Some(referralEvent)),
         ApplicationsTab.liability(Paged(liabilities), Some(referralEvent)),
-        ApplicationsTab.correspondence(Paged(Seq(corrCaseExample)), Some(referralEvent)),
+        ApplicationsTab.correspondence(),
         ApplicationsTab.miscellaneous()
       )
     )
@@ -97,7 +98,7 @@ object ApplicationsTab {
       ApplicationsTab.miscellaneous()
     )
   )
-//TODO remove dummy corr stub
+
   def gateway(cases: Seq[Case]) = {
     val atars = cases.filter(aCase =>
       aCase.application.isBTI && aCase.status == CaseStatus.NEW)
@@ -110,44 +111,9 @@ object ApplicationsTab {
       List(
         ApplicationsTab.atar(Paged(atars)),
         ApplicationsTab.liability(Paged(liabilities)),
-        ApplicationsTab.correspondence(Paged(Seq(corrCaseExample))),
+        ApplicationsTab.correspondence(),
         ApplicationsTab.miscellaneous()
       )
     )
   }
-
-  //TODO remove dummy stubs
-  //TODO remove dummy correspondence example when writing queries for the tabs
-  val corrApplicationExample: CorrespondenceApplication = CorrespondenceApplication(
-    Some("Starter"),
-    Some("Agent 007"),
-    Address("New building", "Old Town", None, None),
-    Contact("a name", "anemail@some.com", None),
-    None,
-    false,
-    "A short summary",
-    "A detailed desc",
-    None,
-    sampleToBeProvided = false,
-    sampleToBeReturned = false
-  )
-
-  val corrCaseExample: Case = Case(
-    "1",
-    CaseStatus.NEW,
-    Instant.now(),
-    0,
-    None,
-    None,
-    None,
-    corrApplicationExample,
-    None,
-    Seq(),
-    Set.empty,
-    Sample(),
-    Some(Instant.now()),
-    Some(5),
-    referredDaysElapsed = 0
-  )
-
 }
