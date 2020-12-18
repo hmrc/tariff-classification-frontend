@@ -28,9 +28,21 @@ class CommodityCodeConstraints @Inject() (commodityCodeService: CommodityCodeSer
   val commodityCodeNonEmpty: Constraint[String] =
     customNonEmpty("decision_form.error.bindingCommodityCode.required")
 
-  val commodityCodeValid: Constraint[String] = Constraint("constraints.commoditycode")({
-    case s: String if s.matches("[0-9]{6,22}") && (s.length % 2 == 0) => Valid
+  val commodityCodeLengthValid: Constraint[String] = Constraint("constraints.commoditycode")({
+    case s: String if (s.length >= 6) && (s.length <= 22) => Valid
     case _: String =>
-      Invalid("decision_form.error.bindingCommodityCode.valid")
+      Invalid("decision_form.error.bindingCommodityCode.valid.length")
+  })
+
+  val commodityCodeNumbersValid: Constraint[String] = Constraint("constraints.commoditycode")({
+    case s: String if s.matches("[0-9]+") => Valid
+    case _: String =>
+      Invalid("decision_form.error.bindingCommodityCode.valid.number")
+  })
+
+  val commodityCodeEvenDigitsValid: Constraint[String] = Constraint("constraints.commoditycode")({
+    case s: String if s.length % 2 == 0 => Valid
+    case _: String =>
+      Invalid("decision_form.error.bindingCommodityCode.valid.evenDigits")
   })
 }

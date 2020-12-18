@@ -99,8 +99,9 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
         contentAsString(result) should (include("Ruling") and include("<form"))
       }
 
+      //TODO commodityCodeConstraints.commodityCodeLengthValid changed from commodityCodeConstraints.commodityCodeValid. Need to test other new constraints
       "Case is a Liability" in {
-        given(commodityCodeConstraints.commodityCodeValid)
+        given(commodityCodeConstraints.commodityCodeLengthValid)
           .willReturn(Constraint[String]("error")(_ => Valid))
         val result = controller(
           liabilityCaseWithStatusOPEN,
@@ -111,8 +112,9 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
         contentAsString(result) should (include("case-heading"))
       }
 
+      //TODO commodityCodeConstraints.commodityCodeLengthValid changed from commodityCodeConstraints.commodityCodeValid. Need to test other new constraints
       "Case is an Liability with incorrect permissions" in {
-        given(commodityCodeConstraints.commodityCodeValid)
+        given(commodityCodeConstraints.commodityCodeLengthValid)
           .willReturn(Constraint[String]("error")(_ => Valid))
         val result = controller(
           liabilityCaseWithStatusOPEN,
@@ -159,8 +161,9 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       status(result) shouldBe Status.OK
     }
 
+    //TODO commodityCodeConstraints.commodityCodeLengthValid changed from commodityCodeConstraints.commodityCodeValid. Need to test other new constraints
     "load edit ruling page when ruling tab has missing fields that are required to complete a case" in {
-      given(commodityCodeConstraints.commodityCodeValid)
+      given(commodityCodeConstraints.commodityCodeLengthValid)
         .willReturn(Constraint[String]("error")(_ => Valid))
       val result = controller(Cases.liabilityCaseExample, Set(Permission.EDIT_RULING))
         .validateBeforeComplete("reference")(newFakeGETRequestWithCSRF(app))
@@ -168,8 +171,9 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       status(result) shouldBe Status.OK
     }
 
+    //TODO commodityCodeConstraints.commodityCodeLengthValid changed from commodityCodeConstraints.commodityCodeValid. Need to test other new constraints
     "load edit C592 page when C592 tab has missing fields that are required to complete a case" in {
-      given(commodityCodeConstraints.commodityCodeValid)
+      given(commodityCodeConstraints.commodityCodeLengthValid)
         .willReturn(Constraint[String]("error")(_ => Valid))
       val result = controller(liabilityCaseWithStatusOpenWithDecision, Set(Permission.EDIT_RULING))
         .validateBeforeComplete("reference")(newFakeGETRequestWithCSRF(app))
@@ -226,8 +230,9 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
         contentAsString(result) should (include("Ruling") and include("<form"))
       }
 
+      //TODO commodityCodeConstraints.commodityCodeLengthValid changed from commodityCodeConstraints.commodityCodeValid. Need to test other new constraints
       "case is a Liability" in {
-        given(commodityCodeConstraints.commodityCodeValid)
+        given(commodityCodeConstraints.commodityCodeLengthValid)
           .willReturn(Constraint[String]("error")(_ => Valid))
         val result =
           controller(liabilityCaseWithStatusOPEN).updateRulingDetails("reference")(newFakePOSTRequestWithCSRF(app))

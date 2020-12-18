@@ -170,12 +170,13 @@ class DecisionFormTest extends ModelsBaseSpec {
     }
   }
 
+  //TODO commodityCodeConstraints.commodityCodeLengthValid changed from commodityCodeConstraints.commodityCodeValid. Need to test other new constraints
   private def mockCommodityCodeConstraint(
     validationResultForEmpty: ValidationResult = Valid,
     validationResultForValid: ValidationResult = Valid
   ): CommodityCodeConstraints = {
     val mockCommodityCodeConstraints = mock[CommodityCodeConstraints]
-    given(mockCommodityCodeConstraints.commodityCodeValid)
+    given(mockCommodityCodeConstraints.commodityCodeLengthValid)
       .willReturn(Constraint[String]("error")(_ => validationResultForValid))
     given(mockCommodityCodeConstraints.commodityCodeNonEmpty)
       .willReturn(Constraint[String]("error")(_ => validationResultForEmpty))

@@ -88,7 +88,7 @@ object LiabilityDetailsForm extends Constraints {
         ),
         "goodName" -> optional(text).verifying(defined("case.liability.error.empty.good-name")),
         "entryNumber" -> optional(
-          text.verifying(emptyOr(entryNumberIsNumberOnly()): _*)
+          text.verifying(emptyOr(entryNumberIsNumbersAndLettersOnly()): _*)
         ),
         "traderCommodityCode"  -> optional(text),
         "officerCommodityCode" -> optional(text),

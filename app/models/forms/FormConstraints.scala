@@ -26,6 +26,7 @@ import scala.util.matching.Regex
 object FormConstraints {
 
   val numbersOnlyRegex: Regex = """^\d+$""".r
+  val numbersAndLettersRegex: Regex = """[A-Za-z0-9]+""".r
   val btiRefRegex: Regex      = """[0-9]{6,22}""".r
 
   val validCommodityCodeSearch: Constraint[String] = Constraint("constraints.commoditycode")({
@@ -48,8 +49,8 @@ object FormConstraints {
   def btiReferenceIsCorrectFormat(): Constraint[String] =
     regexp(btiRefRegex, "case.v2.liability.c592.details_edit.bti_reference_error")
 
-  def entryNumberIsNumberOnly(): Constraint[String] =
-    regexp(numbersOnlyRegex, "case.liability.error.entry-number")
+  def entryNumberIsNumbersAndLettersOnly(): Constraint[String] =
+    regexp(numbersAndLettersRegex, "case.liability.error.entry-number")
 
   def dvrNumberIsNumberOnly(): Constraint[String] =
     regexp(numbersOnlyRegex, "case.liability.error.dvr-number")
