@@ -133,16 +133,6 @@ class ReleaseOrSuppressViewSpec extends ViewSpec {
       )
     }
 
-    "contain correct cancel link for liability tab" in {
-      val c   = aCase(withReference("reference"), withBTIApplication)
-      val doc = view(release_or_suppress(c, form, Some(ActiveTab.Liability)))
-
-      doc.getElementById("change_case_status-cancel_button") should haveAttribute(
-        "href",
-        "/manage-tariff-classifications/cases/reference/liability"
-      )
-    }
-
     "contain correct cancel link where tab not specified" in {
       val c   = aCase(withReference("reference"), withBTIApplication)
       val doc = view(release_or_suppress(c, form, None))

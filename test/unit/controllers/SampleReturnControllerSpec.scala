@@ -41,17 +41,10 @@ class SampleReturnControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
     new SuccessfulRequestActions(playBodyParsers, operator, c = requestCase),
     casesService,
     mcc,
-    appConfWithLiabilityToggleOff
+    realAppConfig
   )
 
   private def controller(requestCase: Case, permission: Set[Permission]) = new SampleReturnController(
-    new RequestActionsWithPermissions(playBodyParsers, permission, c = requestCase),
-    casesService,
-    mcc,
-    appConfWithLiabilityToggleOff
-  )
-
-  private def controllerV2(requestCase: Case, permission: Set[Permission]) = new SampleReturnController(
     new RequestActionsWithPermissions(playBodyParsers, permission, c = requestCase),
     casesService,
     mcc,
@@ -112,7 +105,7 @@ class SampleReturnControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
         .updateSampleReturn(refEq(c), refEq(Some(SampleReturn.YES)), any[Operator])(any[HeaderCarrier])
 
       status(result)     shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/reference/sample")
+      locationOf(result) shouldBe Some(routes.CaseController.sampleDetails("reference").withFragment(Tab.SAMPLE_TAB).path)
     }
 
     "redirect for unchanged status" in {
@@ -126,7 +119,7 @@ class SampleReturnControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
         .updateSampleReturn(any[Case], any[Option[SampleReturn]], any[Operator])(any[HeaderCarrier])
 
       status(result)     shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/reference/sample")
+      locationOf(result) shouldBe Some(routes.CaseController.sampleDetails("reference").withFragment(Tab.SAMPLE_TAB).path)
     }
 
     "when error form re-displays with error message" in {
@@ -158,7 +151,7 @@ class SampleReturnControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
       )
 
       status(result)     shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/reference/sample")
+      locationOf(result) shouldBe Some(routes.CaseController.sampleDetails("reference").withFragment(Tab.SAMPLE_TAB).path)
     }
 
     "redirect unauthorised when does not have right permissions" in {
@@ -172,25 +165,6 @@ class SampleReturnControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
       status(result)               shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
     }
-
-    "update & redirect when isV2Liability is set to true" in {
-      val c = aLiabilityCase(withReference("reference"), withDecision())
-
-      given(casesService.updateSampleReturn(refEq(c), any[Option[SampleReturn]], any[Operator])(any[HeaderCarrier]))
-        .willReturn(Future.successful(c))
-
-      val result = await(
-        controllerV2(c, Set(Permission.EDIT_SAMPLE))
-          .updateStatus("reference")(newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("return" -> "YES"))
-      )
-
-      verify(casesService)
-        .updateSampleReturn(refEq(c), refEq(Some(SampleReturn.YES)), any[Operator])(any[HeaderCarrier])
-
-      status(result)     shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/v2/reference/liability#sample_status_tab")
-    }
-
   }
 
 }

@@ -7,6 +7,7 @@ import play.api.libs.ws.WSResponse
 import play.api.test.Helpers._
 import utils.CasePayloads
 import utils.Cases.{aCase, withDecision}
+import utils.JsonFormatters._
 
 class AppealCaseTypeSpec extends IntegrationTest with MockitoSugar {
 

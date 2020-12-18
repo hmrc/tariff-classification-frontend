@@ -15,46 +15,29 @@
  *@
 
 @import models.viewmodels.CaseHeaderViewModel
-@import views.html.partials.statuses.case_status
-@import views.html.v2.appeal_status
 
-@this()
+@this(
+    caseStatus: views.html.v2.case_status
+)
 
 @(
-        caseHeaderViewModel: CaseHeaderViewModel,
-        headingPrefix: Option[String] = None
+    caseHeader: CaseHeaderViewModel,
+    headingPrefix: Option[String] = None
 )(implicit messages: Messages)
-
-@phaseTagColor = @{
-    if(caseHeaderViewModel.caseStatus == "CANCELLED" || caseHeaderViewModel.caseStatus == "COMPLETED") {
-        "bg-gray--dark"
-    } else {
-        "bg-blue"
-    }
-}
 
 <div id="case-heading" class="case-heading mt-5 mb-4">
 
     <div id="case-reference" class="case-reference">
-        @messages("case.title.liabilities", messages("case.menu.liability"), caseHeaderViewModel.referenceNumber, caseHeaderViewModel.businessName)
-    </div>
-
-    <h1 class="heading-xlarge case-title">@headingPrefix.fold(caseHeaderViewModel.goodsName)(messages("case.title", _, caseHeaderViewModel.goodsName))</h1>
-
-    <div id="case-status-section">
-
-        @if(caseHeaderViewModel.isLive) {
-            <span class="visuallyhidden">liability type</span>
-            <span id = "case-status-liability-status" class="live-red-text">LIVE</span>
+        @caseHeader.businessName.map { businessName =>
+            @messages("case.heading.secondary", caseHeader.caseType, caseHeader.referenceNumber, businessName)
+        }.getOrElse {
+            @messages("case.heading.secondary.nosuffix", caseHeader.caseType, caseHeader.referenceNumber)
         }
-
-        <span class="visuallyhidden">case status</span>
-        <span id ="case-status" class="phase-tag @phaseTagColor">
-                @caseHeaderViewModel.caseStatus
-        </span>
-        <span id ="appeal-status">
-                @appeal_status(caseHeaderViewModel.decision, "appeal-status")
-        </span>
     </div>
 
+    <h1 class="heading-xlarge case-title">
+        @headingPrefix.fold(caseHeader.goodsName)(messages("case.title", _, caseHeader.goodsName))
+    </h1>
+
+    @caseStatus(caseHeader.caseStatus)
 </div>

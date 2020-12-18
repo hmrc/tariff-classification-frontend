@@ -51,6 +51,6 @@ class AllOpenCasesController @Inject() (
           case CorrespondenceTab  => CasesTabViewModel.correspondence
           case MiscellaneousTab => CasesTabViewModel.miscellaneous
         }
-      } yield Ok(openCasesView(openCases))
+      } yield Ok(openCasesView(openCases, activeSubNav))
   }
 }

@@ -45,6 +45,7 @@ class CaseController @Inject() (
   decisionForm: DecisionForm,
   countriesService: CountriesService,
   mcc: MessagesControllerComponents,
+  val caseDetailsView: views.html.case_details,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
     with I18nSupport {
@@ -52,16 +53,12 @@ class CaseController @Inject() (
   private type Keyword = String
   private lazy val activityForm: Form[ActivityFormData] = ActivityForm.form
   private lazy val keywordForm: Form[String]            = KeywordForm.form
-  private lazy val newliabilityDetailsToggle            = appConfig.newLiabilityDetails
 
   def get(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)) {
     implicit request =>
       request.`case`.application.`type` match {
         case ApplicationType.ATAR => Redirect(routes.CaseController.applicantDetails(reference))
-        case ApplicationType.LIABILITY => {
-          if (newliabilityDetailsToggle) Redirect(v2.routes.LiabilityController.displayLiability(reference))
-          else Redirect(routes.LiabilityController.liabilityDetails(reference))
-        }
+        case ApplicationType.LIABILITY => Redirect(v2.routes.LiabilityController.displayLiability(reference))
       }
   }
 
@@ -88,14 +85,19 @@ class CaseController @Inject() (
 
   def sampleDetails(reference: String): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
-      validateAndRenderView(
-        SAMPLE_DETAILS,
-        c =>
-          for {
-            events <- eventsService.getFilteredEvents(c.reference, NoPagination(), Some(EventType.sampleEvents))
-          } yield views.html.partials.sample.sample_details(c, events, tabIndexFor(SAMPLE_DETAILS)),
-        ActiveTab.Sample
-      )
+      request.`case`.application.`type` match {
+        case ApplicationType.LIABILITY =>
+          Future.successful(Redirect(v2.routes.LiabilityController.displayLiability(reference)))
+        case ApplicationType.ATAR =>
+          validateAndRenderView(
+            SAMPLE_DETAILS,
+            c =>
+              for {
+                events <- eventsService.getFilteredEvents(c.reference, NoPagination(), Some(EventType.sampleEvents))
+              } yield views.html.partials.sample.sample_details(c, events, tabIndexFor(SAMPLE_DETAILS)),
+            ActiveTab.Sample
+          )
+      }
     }
 
   def rulingDetails(reference: String): Action[AnyContent] =
@@ -213,12 +215,12 @@ class CaseController @Inject() (
     c: Case,
     activeTab: ActiveTab
   )(implicit request: AuthenticatedCaseRequest[_]): Future[Result] =
-    toHtml(c).map(html => Ok(views.html.case_details(c, page, html, Some(activeTab))))
+    toHtml(c).map(html => Ok(caseDetailsView(c, page, html, Some(activeTab))))
 
   private def validateAndRenderView(page: CaseDetailPage, toHtml: Case => Future[Html], activeTab: ActiveTab)(
     implicit request: AuthenticatedCaseRequest[_]
   ): Future[Result] =
-    toHtml(request.`case`).map(html => Ok(views.html.case_details(request.`case`, page, html, Some(activeTab))))
+    toHtml(request.`case`).map(html => Ok(caseDetailsView(request.`case`, page, html, Some(activeTab))))
 
   private def validateAndRedirect(reference: String, page: CaseDetailPage, toHtml: Case => Future[Call])(
     implicit request: AuthenticatedCaseRequest[_]

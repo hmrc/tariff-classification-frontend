@@ -14,9 +14,10 @@
  * limitations under the License.
  *@
 
-@import views.html.partials.create_liability_button
+@import views.html.partials.create_case_button
 @import views.html.components.atarCaseTable
 @import views.html.components.liabilityCaseTable
+@import views.html.components.correspondenceCaseTable
 @import models.request.AuthenticatedRequest
 @import config.AppConfig
 @import models.viewmodels.CasesTabViewModel
@@ -28,9 +29,16 @@
 @if(cases.caseType == ApplicationType.LIABILITY) {
     <div class="grid-row">
         <div class="column-full">
-            @create_liability_button("mb-3")
+            @create_case_button("mb-3", "liability")
         </div>
     </div>
+}
+@if(cases.caseType == ApplicationType.CORRESPONDENCE) {
+<div class="grid-row">
+    <div class="column-full">
+        @create_case_button("mb-3", "correspondence")
+    </div>
+</div>
 }
 <div id="open-cases-tabs" class="govuk-tabs" data-module="govuk-tabs">
     <ul class="govuk-tabs__list">
@@ -51,6 +59,7 @@
                 case (_, 0) => messages("cases.table.empty")
                 case (ApplicationType.ATAR, _) => atarCaseTable(caseTab)
                 case (ApplicationType.LIABILITY, _) => liabilityCaseTable(caseTab)
+                case (ApplicationType.CORRESPONDENCE, _) => correspondenceCaseTable(caseTab)
                 case _ => ""
             }
     }

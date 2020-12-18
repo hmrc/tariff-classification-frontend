@@ -20,16 +20,16 @@
 @import views.html.components.heading
 @import views.html.components.my_cases_tab
 @import views.html.components.primary_navigation
-@import models.viewmodels.{ApplicationTabViewModel, MyCasesTab}
+@import models.viewmodels.{ApplicationTabViewModel, MyCasesTab, SubNavigationTab, AssignedToMeTab}
 
 
 @this(my_cases_secondary_nav: views.html.components.my_cases_secondary_navigation)
 
-@(myCases : ApplicationTabViewModel)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(myCases : ApplicationTabViewModel, activeSubNav : SubNavigationTab = AssignedToMeTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("common.cases.my_cases-title")), customPrimaryNavTab = MyCasesTab) {
 
-    @my_cases_secondary_nav()
+    @my_cases_secondary_nav(activeSubNav)
 
     @* the heading component *@
     @heading(messages(myCases.headingMessageKey))

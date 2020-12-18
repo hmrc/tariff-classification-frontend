@@ -18,7 +18,7 @@ package views.partials.liabilities
 
 import models._
 import models.forms.UploadAttachmentForm
-import models.viewmodels.LiabilityViewModel
+import models.viewmodels.CaseViewModel
 import play.api.data.Form
 import utils.Cases
 import utils.Cases._
@@ -39,7 +39,7 @@ class CaseActionButtonsViewSpec extends ViewSpec {
 
       val doc = view(
         case_action_buttons_partial(
-          LiabilityViewModel.fromCase(c, Cases.operatorWithReleaseOrSuppressPermissions)
+          CaseViewModel.fromCase(c, Cases.operatorWithReleaseOrSuppressPermissions)
         )
       )
 
@@ -53,7 +53,7 @@ class CaseActionButtonsViewSpec extends ViewSpec {
 
       val doc = view(
         case_action_buttons_partial(
-          LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions)
+          CaseViewModel.fromCase(c, Cases.operatorWithoutPermissions)
         )
       )
 
@@ -65,7 +65,7 @@ class CaseActionButtonsViewSpec extends ViewSpec {
 
       val doc = view(
         case_action_buttons_partial(
-          LiabilityViewModel.fromCase(c, Cases.operatorWithCompleteCasePermission)
+          CaseViewModel.fromCase(c, Cases.operatorWithCompleteCasePermission)
         )
       )
 
@@ -80,7 +80,7 @@ class CaseActionButtonsViewSpec extends ViewSpec {
 
       val doc = view(
         case_action_buttons_partial(
-          LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions)
+          CaseViewModel.fromCase(c, Cases.operatorWithoutPermissions)
         )
       )
 
@@ -92,7 +92,7 @@ class CaseActionButtonsViewSpec extends ViewSpec {
 
       val doc = view(
         case_action_buttons_partial(
-          LiabilityViewModel.fromCase(c, Cases.operatorWithCompleteCasePermission)
+          CaseViewModel.fromCase(c, Cases.operatorWithCompleteCasePermission)
         )
       )
 
@@ -107,7 +107,7 @@ class CaseActionButtonsViewSpec extends ViewSpec {
 
       val doc = view(
         case_action_buttons_partial(
-          LiabilityViewModel.fromCase(c, Cases.operatorWithCompleteCasePermission)
+          CaseViewModel.fromCase(c, Cases.operatorWithCompleteCasePermission)
         )
       )
 
@@ -119,7 +119,7 @@ class CaseActionButtonsViewSpec extends ViewSpec {
 
       val doc = view(
         case_action_buttons_partial(
-          LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions)
+          CaseViewModel.fromCase(c, Cases.operatorWithoutPermissions)
         )
       )
 
@@ -131,7 +131,7 @@ class CaseActionButtonsViewSpec extends ViewSpec {
 
       val doc = view(
         case_action_buttons_partial(
-          LiabilityViewModel.fromCase(c, Cases.operatorWithCompleteCasePermission)
+          CaseViewModel.fromCase(c, Cases.operatorWithCompleteCasePermission)
         )
       )
 
@@ -144,7 +144,7 @@ class CaseActionButtonsViewSpec extends ViewSpec {
 
       val doc = view(
         case_action_buttons_partial(
-          LiabilityViewModel.fromCase(c, Cases.operatorWithCompleteCasePermission)
+          CaseViewModel.fromCase(c, Cases.operatorWithCompleteCasePermission)
         )
       )
 
@@ -156,7 +156,7 @@ class CaseActionButtonsViewSpec extends ViewSpec {
 
       val doc = view(
         case_action_buttons_partial(
-          LiabilityViewModel.fromCase(c, Cases.operatorWithoutPermissions)
+          CaseViewModel.fromCase(c, Cases.operatorWithoutPermissions)
         )
       )
 

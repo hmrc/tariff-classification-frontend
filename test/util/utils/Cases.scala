@@ -88,7 +88,8 @@ object Cases {
     None,
     None,
     sampleToBeProvided = false,
-    sampleToBeReturned = false
+    sampleToBeReturned = false,
+    applicationPdf = Some(Attachment("id", false, Some(Operator("1", None))))
   )
   val simpleBtiApplicationExample: BTIApplication = BTIApplication(
     eoriDetailsExample,
@@ -105,7 +106,8 @@ object Cases {
     None,
     None,
     sampleToBeProvided = false,
-    sampleToBeReturned = false
+    sampleToBeReturned = false,
+    applicationPdf = None
   )
   val decision: Decision = Decision(
     "040900",
@@ -116,7 +118,8 @@ object Cases {
     None,
     None,
     Some("denomination"),
-    Seq.empty
+    Seq.empty,
+    decisionPdf = Some(Attachment("id", false, Some(Operator("1", None))))
   )
   val incompleteDecision: Decision = Decision(
     "",
@@ -151,6 +154,23 @@ object Cases {
   val btiCaseExample: Case = Case(
     "1",
     CaseStatus.OPEN,
+    Instant.now(),
+    0,
+    None,
+    None,
+    None,
+    btiApplicationExample,
+    Some(decision),
+    Seq(),
+    Set.empty,
+    Sample(),
+    Some(Instant.now()),
+    Some(5),
+    3
+  )
+  val btiNewCase: Case = Case(
+    "1",
+    CaseStatus.NEW,
     Instant.now(),
     0,
     None,
@@ -608,4 +628,60 @@ object Cases {
   def withCreatedDate(date: Instant): Case => Case =
     _.copy(createdDate = date)
 
+
+  val correspondenceExample: CorrespondenceApplication = CorrespondenceApplication(
+    None,
+    None,
+    Address("s", "s", None, None),
+    Contact("name", "email"),
+    None,
+    offline = false,
+    "Laptop",
+    "Personal Computer",
+    sampleToBeProvided = false,
+    sampleToBeReturned = false
+  )
+
+  val miscExample: MiscApplication = MiscApplication(
+    Contact("name", "email"),
+    offline = false,
+    "name",
+    None,
+    MiscCaseType.HARMONISED,
+    None,
+    sampleToBeProvided = false,
+    sampleToBeReturned = false,
+  )
+
+  val corrApplicationExample: CorrespondenceApplication = CorrespondenceApplication(
+    Some("Starter"),
+    Some("Agent 007"),
+    Address("New building", "Old Town", None, None),
+    Contact("a name", "anemail@some.com", None),
+    None,
+    false,
+    "A short summary",
+    "A detailed desc",
+    None,
+    sampleToBeProvided = false,
+    sampleToBeReturned = false
+  )
+
+  val corrCaseExample: Case = Case(
+    "1",
+    CaseStatus.OPEN,
+    Instant.now(),
+    0,
+    None,
+    None,
+    None,
+    corrApplicationExample,
+    None,
+    Seq(),
+    Set.empty,
+    Sample(),
+    Some(Instant.now()),
+    Some(5),
+    referredDaysElapsed = 0
+  )
 }
