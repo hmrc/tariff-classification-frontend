@@ -76,15 +76,16 @@
                                     }}
                                 }
                             </td>
-                            @if(request.hasPermission(Permission.EDIT_ATTACHMENT_DETAIL)) {
-                                <td id="@{id}-row-@{index}-edit-attachment-details" class="govuk-table__row">
-                                    @*                                    TODO href*@
-                                    <a id="@{id}-row-@{index}-edit-attachment-link" href="#">
-                                        <span>@messages("case.attachment.edit.file.text")</span>
-                                        <span class="visually-hidden">@messages("case.attachment.edit.file.hidden.text",file.fileName)</span>
-                                    </a>
-                                </td>
-                            }
+<!--                              TODO: uncomment once the functionality  is done-->
+<!--                            @if(request.hasPermission(Permission.EDIT_ATTACHMENT_DETAIL)) {-->
+<!--                                <td id="@{id}-row-@{index}-edit-attachment-details" class="govuk-table__row">-->
+<!--                                    @*                                    TODO href*@-->
+<!--                                    <a id="@{id}-row-@{index}-edit-attachment-link" href="#">-->
+<!--                                        <span>@messages("case.attachment.edit.file.text")</span>-->
+<!--                                        <span class="visually-hidden">@messages("case.attachment.edit.file.hidden.text",file.fileName)</span>-->
+<!--                                    </a>-->
+<!--                                </td>-->
+<!--                            }-->
                         </tr>
                     }
             </tbody>
