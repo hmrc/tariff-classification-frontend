@@ -37,8 +37,8 @@
     </div>
 
     <h1 class="heading-xlarge case-title">
-        @headingText.map(Html(_)).getOrElse {
-            @headingPrefix.fold(Html(caseHeader.goodsName)) { prefix =>
+        @headingText.map(HtmlFormat.escape(_)).getOrElse {
+            @headingPrefix.fold(HtmlFormat.escape(caseHeader.goodsName)) { prefix =>
                 @messages("case.title", prefix, caseHeader.goodsName)
             }
         }
