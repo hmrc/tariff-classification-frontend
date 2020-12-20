@@ -21,6 +21,7 @@ import utils.Cases._
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.partials.sample.sample_status
+import models.viewmodels.atar.SampleTabViewModel
 
 class SampleStatusViewSpec extends ViewSpec {
 
@@ -32,8 +33,10 @@ class SampleStatusViewSpec extends ViewSpec {
         withBTIDetails()
       )
 
+      val sampleTab = SampleTabViewModel.fromCase(caseWithSample, Paged.empty)
+
       // When
-      val doc = view(sample_status(caseWithSample)(requestWithPermissions(Permission.EDIT_SAMPLE), messages, appConfig))
+      val doc = view(sample_status(sampleTab)(requestWithPermissions(Permission.EDIT_SAMPLE), messages, appConfig))
 
       // Then
       doc should containElementWithID("change-sample-status")
@@ -45,8 +48,10 @@ class SampleStatusViewSpec extends ViewSpec {
         withBTIDetails()
       )
 
+      val sampleTab = SampleTabViewModel.fromCase(caseWithSample, Paged.empty)
+
       // When
-      val doc = view(sample_status(caseWithSample)(requestWithPermissions(Permission.VIEW_CASES), messages, appConfig))
+      val doc = view(sample_status(sampleTab)(requestWithPermissions(Permission.VIEW_CASES), messages, appConfig))
 
       // Then
       doc shouldNot containElementWithID("change-sample-status")

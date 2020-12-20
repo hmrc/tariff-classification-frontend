@@ -21,6 +21,7 @@ import utils.Cases._
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.partials.sample.sample_details_bti
+import models.viewmodels.atar.SampleTabViewModel
 
 class SampleDetailsBTIViewSpec extends ViewSpec {
 
@@ -33,8 +34,10 @@ class SampleDetailsBTIViewSpec extends ViewSpec {
         withoutAttachments()
       )
 
+      val sampleTab = SampleTabViewModel.fromCase(caseWithSample, Paged.empty)
+
       // When
-      val doc = view(sample_details_bti(caseWithSample))
+      val doc = view(sample_details_bti(sampleTab))
 
       // Then
       doc.getElementById("app-details-sending-samples")   should containText(messages("answer.yes"))
@@ -48,8 +51,10 @@ class SampleDetailsBTIViewSpec extends ViewSpec {
         withoutAttachments()
       )
 
+      val sampleTab = SampleTabViewModel.fromCase(`case`, Paged.empty)
+
       // When
-      val doc = view(sample_details_bti(`case`))
+      val doc = view(sample_details_bti(sampleTab))
 
       // Then
       doc.getElementById("app-details-sending-samples") should containText(messages("answer.no"))
@@ -64,8 +69,10 @@ class SampleDetailsBTIViewSpec extends ViewSpec {
         withoutAttachments()
       )
 
+      val sampleTab = SampleTabViewModel.fromCase(caseWithSample, Paged.empty)
+
       // When
-      val doc = view(sample_details_bti(caseWithSample))
+      val doc = view(sample_details_bti(sampleTab))
 
       doc.getElementById("sample-status-value") should containText(SampleStatus.format(Some(SampleStatus.AWAITING)))
     }
@@ -77,8 +84,10 @@ class SampleDetailsBTIViewSpec extends ViewSpec {
         withoutAttachments()
       )
 
+      val sampleTab = SampleTabViewModel.fromCase(caseWithSample, Paged.empty)
+
       // When
-      val doc = view(sample_details_bti(caseWithSample))
+      val doc = view(sample_details_bti(sampleTab))
 
       doc shouldNot containElementWithID("sample-status-value")
     }
@@ -89,8 +98,11 @@ class SampleDetailsBTIViewSpec extends ViewSpec {
         withBTIDetails(sampleToBeProvided = false, sampleToBeReturned = false),
         withoutAttachments()
       )
+
+      val sampleTab = SampleTabViewModel.fromCase(caseWithSample, Paged.empty)
+
       // When
-      val doc = view(sample_details_bti(caseWithSample))
+      val doc = view(sample_details_bti(sampleTab))
 
       doc shouldNot containElementWithID("sample-status-events-heading")
     }
@@ -101,8 +113,10 @@ class SampleDetailsBTIViewSpec extends ViewSpec {
         withSampleRequested(Some(Operator("id", name = Some("Tester Op"))), Some(SampleReturn.TO_BE_CONFIRMED))
       )
 
+      val sampleTab = SampleTabViewModel.fromCase(caseWithSample, Paged.empty)
+
       // When
-      val doc = view(sample_details_bti(caseWithSample))
+      val doc = view(sample_details_bti(sampleTab))
 
       doc.getElementById("sample-requested-by") should containText("Tester Op")
       doc.getElementById("sample-requested-return") should containText(
@@ -116,8 +130,10 @@ class SampleDetailsBTIViewSpec extends ViewSpec {
         withSampleRequested(None, None)
       )
 
+      val sampleTab = SampleTabViewModel.fromCase(caseWithSample, Paged.empty)
+
       // When
-      val doc = view(sample_details_bti(caseWithSample))
+      val doc = view(sample_details_bti(sampleTab))
 
       doc shouldNot containElementWithID("sample-requested-by")
       doc shouldNot containElementWithID("sample-requested-return")

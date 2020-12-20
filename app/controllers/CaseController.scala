@@ -32,6 +32,12 @@ import views.CaseDetailPage._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import models.viewmodels.atar.RulingTabViewModel
+import models.viewmodels.atar.ApplicantTabViewModel
+import models.viewmodels.atar.GoodsTabViewModel
+import models.viewmodels.atar.SampleTabViewModel
+import models.viewmodels.ActivityViewModel
+import models.viewmodels.KeywordsTabViewModel
 
 @Singleton
 class CaseController @Inject() (
@@ -57,7 +63,8 @@ class CaseController @Inject() (
   def get(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)) {
     implicit request =>
       request.`case`.application.`type` match {
-        case ApplicationType.ATAR => Redirect(routes.CaseController.applicantDetails(reference))
+        // case ApplicationType.ATAR => Redirect(routes.CaseController.applicantDetails(reference))
+        case ApplicationType.ATAR => Redirect(v2.routes.AtarController.displayAtar(reference))
         case ApplicationType.LIABILITY => Redirect(v2.routes.LiabilityController.displayLiability(reference))
       }
   }
@@ -66,7 +73,11 @@ class CaseController @Inject() (
     (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
       validateAndRenderView(
         TRADER,
-        c => Future.successful( views.html.partials.case_trader(c, tabIndexFor(TRADER), getCountryName)),
+        c => {
+          val countryNames = countriesService.getAllCountriesById.mapValues(_.countryName)
+          val applicantTab = ApplicantTabViewModel.fromCase(c, countryNames)
+          Future.successful( views.html.partials.case_trader(applicantTab, tabIndexFor(TRADER)))
+        },
         ActiveTab.Applicant
       )
     }
@@ -75,10 +86,10 @@ class CaseController @Inject() (
     (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
       validateAndRenderView(
         APPLICATION_DETAILS,
-        c =>
-          for {
-            attachments <- fileService.getAttachments(c)
-          } yield views.html.partials.application_details(c, attachments, tabIndexFor(APPLICATION_DETAILS)),
+        c => {
+          val goodsTab = GoodsTabViewModel.fromCase(c)
+          Future.successful(views.html.partials.application_details(goodsTab, tabIndexFor(APPLICATION_DETAILS)))
+        },
         ActiveTab.Item
       )
     }
@@ -94,7 +105,8 @@ class CaseController @Inject() (
             c =>
               for {
                 events <- eventsService.getFilteredEvents(c.reference, NoPagination(), Some(EventType.sampleEvents))
-              } yield views.html.partials.sample.sample_details(c, events, tabIndexFor(SAMPLE_DETAILS)),
+                sampleTab = SampleTabViewModel.fromCase(c, events)
+              } yield views.html.partials.sample.sample_details(sampleTab, tabIndexFor(SAMPLE_DETAILS)),
             ActiveTab.Sample
           )
       }
@@ -107,10 +119,9 @@ class CaseController @Inject() (
         c =>
           for {
             attachments <- fileService.getAttachments(c)
-            // Commodity code expiry is not checked until we can integrate with the UK Global Tariff
-            commodityCode = c.decision.map(_.bindingCommodityCode).map(CommodityCode(_))
+            rulingTab = RulingTabViewModel.fromCase(c)
           } yield views.html.partials.ruling
-            .ruling_details(c, decisionForm.bindFrom(c.decision), attachments, commodityCode, tabIndexFor(RULING)),
+            .ruling_details(rulingTab, decisionForm.bindFrom(c.decision), attachments, tabIndexFor(RULING)),
         ActiveTab.Ruling
       )
     }
@@ -199,13 +210,15 @@ class CaseController @Inject() (
     for {
       updatedCase          <- updateKeywords(c, keyword, request.operator)
       autoCompleteKeywords <- keywordsService.autoCompleteKeywords
-    } yield views.html.partials.keywords_details(updatedCase, autoCompleteKeywords, keywordForm, tabIndexFor(KEYWORDS))
+      keywordsTab = KeywordsTabViewModel.fromCase(c, autoCompleteKeywords)
+    } yield views.html.partials.keywords_details(keywordsTab, keywordForm, tabIndexFor(KEYWORDS))
 
   private def showKeywords(c: Case, f: Form[String])(
     implicit request: AuthenticatedRequest[AnyContent]
   ): Future[HtmlFormat.Appendable] =
     keywordsService.autoCompleteKeywords.map { keywords: Seq[String] =>
-      views.html.partials.keywords_details(c, keywords, f, tabIndexFor(KEYWORDS))
+      val keywordsTab = KeywordsTabViewModel.fromCase(c, keywords)
+      views.html.partials.keywords_details(keywordsTab, f, tabIndexFor(KEYWORDS))
     }
 
   private def validateAndRenderView(
@@ -234,7 +247,8 @@ class CaseController @Inject() (
       events <- eventsService
                  .getFilteredEvents(c.reference, NoPagination(), Some(EventType.values.diff(EventType.sampleEvents)))
       queues <- queuesService.getAll
-    } yield views.html.partials.activity_details(c, events, f, queues, tabIndexFor(ACTIVITY))
+      activityTab = ActivityViewModel.fromCase(c, events, queues)
+    } yield views.html.partials.activity_details(activityTab, f, tabIndexFor(ACTIVITY))
 
   def getCountryName(code: String) = countriesService.getAllCountries.find(_.code == code).map(_.countryName)
 

@@ -15,18 +15,22 @@
  */
 
 package models
-package viewmodels
+package viewmodels.atar
 
-case class KeywordsTabViewModel(
+case class ApplicantTabViewModel(
   caseReference: String,
-  caseKeywords: Set[String],
-  globalKeywords: Seq[String]
+  eoriDetails: EORIDetails,
+  contact: Contact,
+  countryName: String,
+  caseBoardsFileNumber: Option[String]
 )
 
-object KeywordsTabViewModel {
-  def fromCase(cse: Case, globalKeywords: Seq[String]): KeywordsTabViewModel = KeywordsTabViewModel(
-    caseReference = cse.reference,
-    caseKeywords = cse.keywords,
-    globalKeywords = globalKeywords
+object ApplicantTabViewModel {
+  def fromCase(cse: Case, countryNames: Map[String, String]) = ApplicantTabViewModel(
+    cse.reference,
+    cse.application.asATAR.holder,
+    cse.application.contact,
+    countryNames.get(cse.application.asATAR.holder.country).getOrElse(""),
+    caseBoardsFileNumber = cse.caseBoardsFileNumber
   )
 }

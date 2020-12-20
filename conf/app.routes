@@ -114,6 +114,8 @@ GET         /pdf/application/:reference                         controllers.PdfD
 GET         /attachment/:id                                     controllers.ViewAttachmentController.get(id: String)
 
 # v2
+GET         /cases/v2/:reference/atar                           controllers.v2.AtarController.displayAtar(reference: String)
+
 GET         /cases/v2/:reference/liability                      controllers.v2.LiabilityController.displayLiability(reference: String)
 POST        /cases/v2/:reference/liability                      controllers.v2.LiabilityController.addNote(reference: String)
 

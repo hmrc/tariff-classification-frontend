@@ -18,59 +18,68 @@
 @import controllers.routes
 @import models.{Case, SampleReturn}
 @import models.request.AuthenticatedRequest
+@import models.viewmodels.atar.SampleTabViewModel
 @import views.html.partials._
-@(c: Case, startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+
+@(sample: SampleTabViewModel, startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @tab_heading("application", messages("case.menu.sample-details"))
 
 <dl class="dl-mb-2">
 
-
     <h3 class="heading-medium" id="trader-submitted-heading">@messages("case.application.sample-info-from-applicant")</h3>
 
     <div id="app-details-sending-samples" class="grid-row">
         <dt class="column-one-third">
-        @messages("case.application.provide-samples")
+            @messages("case.application.provide-samples")
         </dt>
         <dd class="column-two-thirds">
-        @if(c.sampleToBeProvided){ @messages("answer.yes") } else { @messages("answer.no")}
+            @if(sample.sampleToBeProvided) {
+                @messages("answer.yes")
+            } else {
+                @messages("answer.no")
+            }
         </dd>
     </div>
 
-    @if(c.sampleToBeProvided){
+    @if(sample.sampleToBeProvided){
         <div id="app-details-returning-samples" class="grid-row">
             <dt class="column-one-third">
                 @messages("case.application.returning-samples")
             </dt>
             <dd class="column-two-thirds">
-                @if(c.sampleToBeReturned){ @messages("answer.yes") } else { @messages("answer.no")}
+                @if(sample.sampleToBeReturned) {
+                    @messages("answer.yes")
+                } else {
+                    @messages("answer.no")
+                }
             </dd>
         </div>
     }
 
-    @if(c.sample.requestedBy.isDefined) {
+    @sample.sampleRequestedBy.map { sampleRequestedBy =>
         <h3 class="heading-medium" id="sample-requested-heading">@messages("case.sample.request.heading")</h3>
 
         <div id="sample-requested-by" class="grid-row">
             <dt id="sample-requested-by-value" class="column-one-third">
-            @messages("case.sample.request.operator", c.sample.requestedBy.flatMap(_.name).getOrElse("Unknown"))
+                @messages("case.sample.request.operator", sampleRequestedBy)
             </dt>
         </div>
         <div id="sample-requested-return" class="grid-row">
             <dt class="column-one-third">
-            @messages("case.sample.request.return")
+                @messages("case.sample.request.return")
             </dt>
             <dd id="sample-requested-return-value" class="column-one-third">
-                @SampleReturn.format(c.sample.returnStatus)
+                @sample.sampleReturnStatus
             </dd>
             <dd class="column-one-third">
-                <a id="sample-requested-return-change" tabindex="@startAtTabIndex" href="@routes.SampleReturnController.updateStatus(c.reference)">@messages("case.sample.request.change")</a>
+                <a id="sample-requested-return-change" tabindex="@startAtTabIndex" href="@routes.SampleReturnController.updateStatus(sample.caseReference)">@messages("case.sample.request.change")</a>
             </dd>
         </div>
     }
 
-    @if(c.sampleToBeProvided || c.sample.requestedBy.isDefined) {
-        @sample_status(c, startAtTabIndex)
+    @if(sample.sampleToBeProvided || sample.sampleRequestedBy.nonEmpty) {
+        @sample_status(sample, startAtTabIndex)
     }
 
 </dl>

@@ -19,13 +19,12 @@
 @import models.{BTIApplication, Case, CaseStatus, Decision, StoredAttachment}
 @import views.html.partials.{attachments_list, tab_heading}
 @import models.forms.DecisionFormData
-@import views.html.partials.ruling.{ruling_certificate_link, complete_ruling_section}
+@import views.html.partials.ruling.{ruling_certificate_link}
 @import models.request.AuthenticatedRequest
 
-@(c: Case, useTabIndex : Option[Int] = None)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(d: Option[Decision], useTabIndex : Option[Int] = None)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@if(c.decision.isDefined) {
-    @defining(c.decision.get) { d: Decision =>
+@d.map { d =>
 
 <div class="grid-row">
     <div class="column-full">
@@ -73,5 +72,4 @@
 
         </div>
 </dl>
-    }
 }

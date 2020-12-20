@@ -15,18 +15,24 @@
  */
 
 package models
-package viewmodels
+package viewmodels.atar
 
-case class KeywordsTabViewModel(
+case class AttachmentsTabViewModel(
   caseReference: String,
-  caseKeywords: Set[String],
-  globalKeywords: Seq[String]
-)
+  attachmentsFromApplicant: Seq[StoredAttachment],
+  attachmentsFromClassification: Seq[StoredAttachment]
+) {
+  def allAttachments = attachmentsFromApplicant ++ attachmentsFromClassification
+}
 
-object KeywordsTabViewModel {
-  def fromCase(cse: Case, globalKeywords: Seq[String]): KeywordsTabViewModel = KeywordsTabViewModel(
-    caseReference = cse.reference,
-    caseKeywords = cse.keywords,
-    globalKeywords = globalKeywords
-  )
+object AttachmentsTabViewModel {
+  def fromCase(cse: Case, attachments: Seq[StoredAttachment]): AttachmentsTabViewModel = {
+    val (fromApplicant, fromClassification) = attachments.partition(_.operator.isEmpty)
+
+    AttachmentsTabViewModel(
+      caseReference = cse.reference,
+      attachmentsFromApplicant = fromApplicant,
+      attachmentsFromClassification = fromClassification
+    )
+  }
 }

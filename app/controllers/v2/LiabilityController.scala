@@ -32,9 +32,9 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import controllers.Tab._
 import models.forms.v2.LiabilityDetailsForm
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class LiabilityController @Inject() (
@@ -48,7 +48,7 @@ class LiabilityController @Inject() (
   val liability_view: views.html.v2.liability_view,
   val liability_details_edit: views.html.v2.liability_details_edit,
   implicit val appConfig: AppConfig
-) extends FrontendController(mcc)
+)(implicit ec: ExecutionContext) extends FrontendController(mcc)
     with I18nSupport {
 
   def displayLiability(reference: String): Action[AnyContent] =

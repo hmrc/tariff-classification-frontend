@@ -36,6 +36,7 @@ import views.CaseDetailPage.CaseDetailPage
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
+import models.viewmodels.atar.AttachmentsTabViewModel
 
 @Singleton
 class AttachmentsController @Inject() (
@@ -102,8 +103,9 @@ class AttachmentsController @Inject() (
       letter      <- fileService.getLetterOfAuthority(c)
     } yield {
       val (applicantFiles, nonApplicantFiles) = attachments.partition(_.operator.isEmpty)
+      val attachmentsTab = AttachmentsTabViewModel.fromCase(c, attachments)
       views.html.partials
-        .attachments_details(c, uploadForm, applicantFiles, letter, nonApplicantFiles, tabStartIndexForAttachments)
+        .attachments_details(attachmentsTab, uploadForm, tabStartIndexForAttachments)
     }
 
   private def getCaseAndRenderView(reference: String, page: CaseDetailPage, toHtml: Case => Future[Html])(

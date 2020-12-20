@@ -753,6 +753,24 @@ title.yugoslavia=Yugoslavia
 title.zambia=Zambia
 title.zimbabwe=Zimbabwe
 
+case.v2.atar.page_title=ATaR details
+
+case.v2.atar.applicant.tab_title=Applicant
+
+case.v2.atar.goods.tab_title=Goods
+
+case.v2.atar.sample.tab_title=Sample
+
+case.v2.atar.attachments.tab_title=Attachments
+
+case.v2.atar.activity.tab_title=Activity
+
+case.v2.atar.keywords.tab_title=Keywords
+
+case.v2.atar.ruling.tab_title=Ruling
+
+case.v2.atar.appeal.tab_title=Appeals
+
 case.v2.liability.page_title=Liability details
 case.v2.liability.c592.entry_number=Entry number
 case.v2.liability.c592.tab_title=C592

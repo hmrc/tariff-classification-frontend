@@ -31,6 +31,7 @@ import views.CaseDetailPage
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
+import models.viewmodels.atar.AppealTabViewModel
 
 @Singleton
 class AppealCaseController @Inject() (
@@ -53,15 +54,18 @@ class AppealCaseController @Inject() (
         case ApplicationType.ATAR =>
           getCaseAndRenderView(
             reference,
-            c =>
+            c => {
+              val appealTab = AppealTabViewModel.fromCase(c)
+
               successful(
                 caseDetailsView(
                   c,
                   CaseDetailPage.APPEAL,
-                  views.html.partials.appeal.appeal_details(c, startTabIndexForAppeals),
+                  views.html.partials.appeal.appeal_details(appealTab.get, startTabIndexForAppeals),
                   activeTab = Some(ActiveTab.Appeals)
                 )
               )
+            }
           )
 
         case ApplicationType.LIABILITY => {
@@ -115,8 +119,9 @@ class AppealCaseController @Inject() (
           c.findAppeal(appealId) match {
             case Some(appeal) => successful(views.html.appeal_change_status(c, appeal, statusForm))
             case None =>
+              val appealTab = AppealTabViewModel.fromCase(c)
               successful(
-                caseDetailsView(c, CaseDetailPage.APPEAL, views.html.partials.appeal.appeal_details(c))
+                caseDetailsView(c, CaseDetailPage.APPEAL, views.html.partials.appeal.appeal_details(appealTab.get))
               )
           }
       )

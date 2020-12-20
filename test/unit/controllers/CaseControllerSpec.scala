@@ -85,7 +85,7 @@ class CaseControllerSpec extends ControllerBaseSpec {
         val result = await(controller(c).get("reference")(fakeRequest))
 
         status(result)     shouldBe Status.SEE_OTHER
-        locationOf(result) shouldBe Some(routes.CaseController.applicantDetails("reference").url)
+        locationOf(result) shouldBe Some(v2.routes.AtarController.displayAtar("reference").url)
       }
 
       "case is a Liability" in {

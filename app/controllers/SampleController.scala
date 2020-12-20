@@ -21,6 +21,7 @@ import models.forms.SampleStatusForm
 import javax.inject.{Inject, Singleton}
 import models.SampleStatus.SampleStatus
 import models._
+import models.viewmodels.atar.SampleTabViewModel
 import play.api.data.Form
 import play.api.mvc._
 import play.twirl.api.Html
@@ -83,7 +84,8 @@ class SampleController @Inject() (
         c =>
           for {
             events <- eventsService.getFilteredEvents(c.reference, NoPagination(), Some(EventType.sampleEvents))
-          } yield caseDetailsView(c, CaseDetailPage.SAMPLE_DETAILS, views.html.partials.sample.sample_details(c, events))
+            sampleTab = SampleTabViewModel.fromCase(c, events)
+          } yield caseDetailsView(c, CaseDetailPage.SAMPLE_DETAILS, views.html.partials.sample.sample_details(sampleTab))
       )
     }
 }
