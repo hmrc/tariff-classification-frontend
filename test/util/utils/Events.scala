@@ -33,4 +33,7 @@ object Events {
   val referredEvent : Event = event.copy(details = referredDetailsCaseChange)
 
   val pagedReferredEvents :  Paged[Event] = Paged(Seq(referredEvent, referredEvent))
+
+  val sampleEvent = Event("id", SampleStatusChange(None, Some(SampleStatus.SENT_FOR_ANALYSIS)), Operator("user-id", Some("user name")), "case-ref", Instant.now())
+  val sampleEvents = Seq(sampleEvent)
 }
