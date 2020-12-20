@@ -147,6 +147,6 @@ GET        /gateway-cases                                       controllers.v2.G
 
 GET        /all-open-cases                                      controllers.v2.AllOpenCasesController.displayAllOpenCases(activeSubNav: SubNavigationTab ?= ATaRTab)
 
-GET         /new-miscellaneous                                  controllers.CreateMiscellaneousController.get()
-POST        /new-miscellaneous                                  controllers.CreateMiscellaneousController.post()
+GET         /create-new-miscellaneous                                  controllers.CreateMiscellaneousController.get()
+
 

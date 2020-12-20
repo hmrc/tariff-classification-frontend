@@ -17,21 +17,26 @@
 package models.forms.v2
 
 import models.MiscCaseType.MiscCaseType
+import models.forms.FormUtils.textTransformingTo
 import models.{Contact, MiscApplication, MiscCaseType}
-import play.api.data.Form
+import play.api.data.{Form, Forms, Mapping}
 import play.api.data.Forms._
 import models.forms.mappings.FormMappings._
 
 object MiscellaneousForm {
 
-  private val form2Misc: (String, String, MiscCaseType) => MiscApplication = {
-    case (shortDescr, contactName, typeMisc ) =>
+  private val miscTypeMapping: Mapping[MiscCaseType] = Forms.mapping[MiscCaseType, MiscCaseType](
+    "caseType" -> textTransformingTo(MiscCaseType.withName, _.toString, "error.empty.miscCaseType")
+  )(identity)(Some(_))
+
+  private val form2Misc: (String, String) => MiscApplication = {
+    case (shortDescr, contactName) =>
       MiscApplication(
         contact = Contact("", contactName, None),
         offline = false,
         name = "",
         contactName = Some(contactName),
-        caseType = typeMisc,
+        caseType = MiscCaseType.IB,
         detailedDescription = Some(shortDescr),
         sampleToBeProvided = false,
         sampleToBeReturned = false,
@@ -42,11 +47,11 @@ object MiscellaneousForm {
     private val misc2Form: MiscApplication => Option[(String, String, MiscCaseType)] = misc =>
       Some((misc.detailedDescription.getOrElse(""), misc.contactName.getOrElse(""), misc.caseType))
 
-    val newMiscForm: Form[MiscApplication] = ???
-//      mapping(
-//        "detailedDescription"       -> textNonEmpty("Please enter a short case description"),
-//        "contactName"      -> textNonEmpty("Please enter a case contact name"),
-//        "caseType" -> oneOf("status.change.cancel.reason.error", MiscCaseType),
-//      )(form2Misc)(misc2Form)
-//    )
+    val newMiscForm: Form[MiscApplication] =
+      mapping(
+        "detailedDescription"       -> textNonEmpty("Please enter a short case description"),
+        "contactName"      -> textNonEmpty("Please enter a case contact name"),
+        "caseType" -> oneOf("error.empty.miscCaseType", MiscCaseType)
+      )(form2Misc)(misc2Form)
+    )
 }
