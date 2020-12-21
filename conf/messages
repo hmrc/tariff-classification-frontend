@@ -972,6 +972,7 @@ release_case.question.header = Do you want to release this new case to a team no
 release_case.released_dynamic_message = {0} case released to {1} team
 back.home = Back to home
 back.gateway = Back to gateway cases
+
 misc.create_misc.description.heading=Short case description
 misc.create_misc.contact.name.heading=Case contact name
 misc.create_misc.type.heading=Choose a case type
@@ -981,6 +982,10 @@ misc.create_misc.radio.type-nomenclature=NC
 misc.create_misc.radio.type-other-gov-dep=Other government department
 misc.create_misc.radio.type-other=Other
 misc.create_misc.confirm-button=Create case
+
+choose.team.misc=Choose a team for case {0}
+
+
 
 error.empty.miscCaseType= Select a case type
 error.empty.misc.contactName=Enter a case contact name

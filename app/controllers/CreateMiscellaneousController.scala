@@ -81,7 +81,7 @@ class CreateMiscellaneousController @Inject()(
     implicit hc: HeaderCarrier,
     request: AuthenticatedRequest[_]): Future[Result] =
     casesService.getOne(reference).flatMap {
-      case Some(c: Case) => successful(Ok(releaseCaseQuestionView(c, form)))
+      case Some(c: Case) => successful(Redirect(routes.ReleaseCaseController.releaseCase(reference, None)))
       case _             => successful(Ok(views.html.case_not_found(reference)))
     }
 
