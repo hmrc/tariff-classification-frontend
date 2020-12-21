@@ -49,7 +49,7 @@ object LiabilityDetailsForm extends Constraints {
         Option[String],
         Option[String],
         Option[String],
-        Option[String],
+        String,
         Option[String],
         Option[String],
         Option[String],
@@ -92,7 +92,7 @@ object LiabilityDetailsForm extends Constraints {
         ),
         "traderCommodityCode"  -> optional(text),
         "officerCommodityCode" -> optional(text),
-        "contactName"          -> optional(text),
+        "contactName"          -> textNonEmpty("case.liability.error.compliance_officer.name"),
         "contactEmail"         -> optional(text.verifying(emptyOr(validEmail("case.liability.error.contact.email")): _*)),
         "contactPhone"         -> optional(text),
         "dvrNumber" -> optional(
@@ -130,7 +130,7 @@ object LiabilityDetailsForm extends Constraints {
     Option[String],
     Option[String],
     Option[String],
-    Option[String],
+    String,
     Option[String],
     Option[String],
     Option[String],
@@ -187,7 +187,7 @@ object LiabilityDetailsForm extends Constraints {
           entryNumber          = entryNumber,
           traderCommodityCode  = traderCommodityCode,
           officerCommodityCode = officerCommodityCode,
-          contact              = Contact(contactName.getOrElse(""), contactEmail.getOrElse(""), contactPhone)
+          contact              = Contact(contactName, contactEmail.getOrElse(""), contactPhone)
         )
       )
   }
@@ -210,7 +210,7 @@ object LiabilityDetailsForm extends Constraints {
       Option[String],
       Option[String],
       Option[String],
-      Option[String],
+      String,
       Option[String],
       Option[String],
       Option[String],
@@ -247,7 +247,7 @@ object LiabilityDetailsForm extends Constraints {
         existingLiability.entryNumber,
         existingLiability.traderCommodityCode,
         existingLiability.officerCommodityCode,
-        Some(existingLiability.contact.name),
+        existingLiability.contact.name,
         Some(existingLiability.contact.email),
         existingLiability.contact.phone,
         existingLiability.repaymentClaim.flatMap(_.dvrNumber),
@@ -277,7 +277,7 @@ object LiabilityDetailsForm extends Constraints {
         Option[String],
         Option[String],
         Option[String],
-        Option[String],
+        String,
         Option[String],
         Option[String],
         Option[String],
@@ -320,7 +320,7 @@ object LiabilityDetailsForm extends Constraints {
         "entryNumber"          -> optional(nonEmptyText).verifying("Enter an entry number", _.isDefined),
         "traderCommodityCode"  -> optional(nonEmptyText).verifying("Enter the commodity code from the trader", _.isDefined),
         "officerCommodityCode" -> optional(nonEmptyText).verifying("Enter the code suggested by the officer", _.isDefined),
-        "contactName"          -> optional(nonEmptyText).verifying("Enter a name", _.isDefined),
+        "contactName"          -> textNonEmpty("case.liability.error.compliance_officer.name"),
         //TODO not emptyOr but it is required need to change as part of other ticket
         "contactEmail" -> optional(
           text.verifying(customNonEmpty("Enter a contact email"))

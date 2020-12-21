@@ -124,8 +124,8 @@ class LiabilityDetailsFormSpec extends ModelsBaseSpec {
         val form = LiabilityDetailsForm.liabilityDetailsForm(sampleEmptyCase, appConfig).bindFromRequest(emptyParams)
 
         form.hasErrors         shouldBe true
-        form.errors            should have(size(2))
-        form.errors.map(_.key) shouldBe Seq("traderName", "goodName")
+        form.errors            should have(size(3))
+        form.errors.map(_.key) shouldBe Seq("traderName", "goodName", "contactName")
       }
     }
 
