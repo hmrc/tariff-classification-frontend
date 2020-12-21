@@ -40,6 +40,15 @@
     </div>
 </div>
 }
+
+@if(cases.caseType == ApplicationType.MISCELLANEOUS) {
+<div class="grid-row">
+    <div class="column-full">
+        @create_case_button("mb-3", "miscellaneous")
+    </div>
+</div>
+}
+
 <div id="open-cases-tabs" class="govuk-tabs" data-module="govuk-tabs">
     <ul class="govuk-tabs__list">
         @for(caseTab <- cases.casesTabs) {

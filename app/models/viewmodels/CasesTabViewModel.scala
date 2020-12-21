@@ -126,7 +126,7 @@ object CasesTabViewModel {
 
   def miscellaneous = CasesTabViewModel(
     "cases.opencases.miscellaneous.heading",
-    ApplicationType.ATAR,
+    ApplicationType.MISCELLANEOUS,
     List(
       CasesTab.act(),
       CasesTab.cars(),

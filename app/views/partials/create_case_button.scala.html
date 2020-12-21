@@ -22,17 +22,16 @@
 
 
 @if(request.hasPermission(Permission.CREATE_CASES)) {
-@if(caseType=="liability"){
-<a tabindex="300" role="button" class="button button-gray @clazz" id="create_@{caseType}-button"
-   href="@CreateLiabilityController.get()">
- }else{
+ @if(caseType=="liability"){
  <a tabindex="300" role="button" class="button button-gray @clazz" id="create_@{caseType}-button"
-    href="@CreateCorrespondenceController.get()">
+    href="@CreateLiabilityController.get()">
+  }else if(caseType=="correspondence"){
+  <a tabindex="300" role="button" class="button button-gray @clazz" id="create_@{caseType}-button"
+     href="@CreateCorrespondenceController.get()">
+  }else{
+   <a tabindex="300" role="button" class="button button-gray @clazz" id="create_@{caseType}-button"
+      href="@CreateMiscellaneousController.get()">
+    }
+  Create new @{caseType} case
+   </a></a></a>
  }
-<!--  else{-->
-<!--  <a tabindex="300" role="button" class="button button-gray @clazz" id="create_@{caseType}-button"-->
-<!--     href="@CreateMiscellaneousController.get()">-->
-<!--   }-->
- Create new @{caseType} case
-</a>
-}
