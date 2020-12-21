@@ -40,6 +40,7 @@ showRemoval: Boolean = false, caseRef: Option[String] = None, startAtTabIndex : 
             </div>
 
             <div class="w-25 p-0">
+                @if(file.public) {
                 <div class="form-group">
                     <div class="multiple-choice">
                         <input @if(startAtTabIndex.isDefined){tabindex="@{startAtTabIndex.get+1+(1*index)}"}
@@ -52,6 +53,7 @@ showRemoval: Boolean = false, caseRef: Option[String] = None, startAtTabIndex : 
                         <label for="attachments[@{index}]"><div class="hide-label">publish</div></label>
                     </div>
                 </div>
+                }
             </div>
 
             <div id="@{id}-row-@{index}-date" class="w-25 p-0">

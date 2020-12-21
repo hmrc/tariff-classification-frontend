@@ -47,16 +47,17 @@
                 <span id="application_submittedDateValue">@{Dates.format(c.createdDate)}</span>
             </dd>
         </div>
-        @if(btiApp.envisagedCommodityCode.isDefined) {
             <div class="grid-row">
                 <dt id="application_envisagedCommodityCode" class="cya-question">
                      @messages("case.application.suggested-commodity-code")
                 </dt>
                 <dd class="cya-answer">
+                    @if(btiApp.envisagedCommodityCode.isDefined) {
                     <span id="envisagedCommodityCodeValue">@btiApp.envisagedCommodityCode.get</span>
+                    }
                 </dd>
+
             </div>
-        }
         <div class="grid-row">
             <dt id="application_goodDescription" class="cya-question">
                 @messages("case.application.ruling-tab-suggested-goods-description")
