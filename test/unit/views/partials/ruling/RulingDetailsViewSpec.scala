@@ -16,8 +16,6 @@
 
 package views.partials.ruling
 
-import java.time.Instant
-
 import models._
 import play.twirl.api.Html
 import utils.Cases._
@@ -26,6 +24,8 @@ import views.html.case_details
 import views.html.partials.ruling.ruling_details
 import views.{CaseDetailPage, ViewSpec}
 import controllers.routes.RulingController
+
+import java.time.Instant
 
 class RulingDetailsViewSpec extends ViewSpec {
 
@@ -355,15 +355,16 @@ class RulingDetailsViewSpec extends ViewSpec {
         withDecision()
       )
       val stored = StoredAttachment(
-        id          = "FILE_ID",
-        public      = true,
-        operator    = None,
-        fileName    = "file.txt",
-        url         = None,
-        mimeType    = "text/plain",
-        scanStatus  = None,
-        timestamp   = Instant.now(),
-        description = Some("test description")
+        id                     = "FILE_ID",
+        public                 = true,
+        operator               = None,
+        fileName               = "file.txt",
+        url                    = None,
+        mimeType               = "text/plain",
+        scanStatus             = None,
+        timestamp              = Instant.now(),
+        description            = Some("test description"),
+        shouldPublishToRulings = true
       )
 
       // When
@@ -379,15 +380,16 @@ class RulingDetailsViewSpec extends ViewSpec {
         withDecision()
       )
       val stored = StoredAttachment(
-        id          = "FILE_ID",
-        public      = false,
-        operator    = None,
-        fileName    = "file.txt",
-        url         = None,
-        mimeType    = "text/plain",
-        scanStatus  = None,
-        timestamp   = Instant.now(),
-        description = Some("test description")
+        id                     = "FILE_ID",
+        public                 = false,
+        operator               = None,
+        fileName               = "file.txt",
+        url                    = None,
+        mimeType               = "text/plain",
+        scanStatus             = None,
+        timestamp              = Instant.now(),
+        description            = Some("test description"),
+        shouldPublishToRulings = false
       )
 
       // When

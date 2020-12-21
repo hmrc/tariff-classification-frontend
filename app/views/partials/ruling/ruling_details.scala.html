@@ -158,6 +158,14 @@
         <span id="no-ruling-information">@messages("case.decision.empty")</span>
     }
 
+    <h3 class="heading-medium">@messages("case.decision.attachments.ruling")</h3>
+
+    @attachments_list(
+        "attachments",
+        files.filter(_.shouldPublishToRulings),
+        startAtTabIndex = Some(startAtTabIndex+2)
+    )
+
     @ruling_explanation(c,Some(startAtTabIndex+50))
 
     @ruling_certificate_link(c,Some(startAtTabIndex+51))
