@@ -17,12 +17,14 @@
 @import models.StoredAttachment
 @import models.response.ScanStatus
 @import utils.Dates
-@(attachments: Seq[StoredAttachment], autoRefresh: Boolean = false)(implicit messages: Messages)
+@(attachments: Seq[StoredAttachment], autoRefresh: Boolean = false, displayStateMessage : Boolean = true)(implicit messages: Messages)
 
-@if(attachments.exists(_.scanStatus.contains(ScanStatus.FAILED))) {
-    <div class="panel panel-border-wide">
-        <p id="attachment-state-message">At least one file has failed to process, a virus may have been detected.</p>
-    </div>
+@if(displayStateMessage) {
+    @if(attachments.exists(_.scanStatus.contains(ScanStatus.FAILED))) {
+        <div class="panel panel-border-wide">
+            <p id="attachment-state-message">At least one file has failed to process, a virus may have been detected.</p>
+        </div>
+    }
 }
 
 @if(attachments.exists(_.scanStatus.isEmpty)) {
@@ -33,5 +35,4 @@
                 }, 5000)
         </script>
     }
-
 }

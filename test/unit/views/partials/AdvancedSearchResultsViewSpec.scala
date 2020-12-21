@@ -93,14 +93,15 @@ class AdvancedSearchResultsViewSpec extends ViewSpec {
 
       val storedAttachment = StoredAttachment(
         "id",
-        public      = true,
-        operator    = None,
-        url         = Some("url"),
-        fileName    = "filename",
-        mimeType    = "image/png",
-        scanStatus  = Some(ScanStatus.READY),
-        timestamp   = Instant.now(),
-        description = Some("test description")
+        public                 = true,
+        operator               = None,
+        url                    = Some("url"),
+        fileName               = "filename",
+        mimeType               = "image/png",
+        scanStatus             = Some(ScanStatus.READY),
+        timestamp              = Instant.now(),
+        description            = Some("test description"),
+        shouldPublishToRulings = true
       )
 
       val searchResult = SearchResult(c, Seq(storedAttachment))
@@ -163,14 +164,15 @@ class AdvancedSearchResultsViewSpec extends ViewSpec {
 
     val storedAttachment = StoredAttachment(
       "id",
-      public      = true,
-      operator    = None,
-      url         = Some("url"),
-      fileName    = "filename",
-      mimeType    = "text/plain",
-      scanStatus  = Some(ScanStatus.READY),
-      timestamp   = Instant.now(),
-      description = Some("test description")
+      public                 = true,
+      operator               = None,
+      url                    = Some("url"),
+      fileName               = "filename",
+      mimeType               = "text/plain",
+      scanStatus             = Some(ScanStatus.READY),
+      timestamp              = Instant.now(),
+      description            = Some("test description"),
+      shouldPublishToRulings = true
     )
 
     val searchResult = SearchResult(c, Seq(storedAttachment))
@@ -198,14 +200,15 @@ class AdvancedSearchResultsViewSpec extends ViewSpec {
 
     val storedAttachment = StoredAttachment(
       "id",
-      public      = true,
-      operator    = None,
-      url         = None,
-      fileName    = "filename",
-      mimeType    = "image/png",
-      scanStatus  = Some(ScanStatus.READY),
-      timestamp   = Instant.now(),
-      description = Some("test description")
+      public                 = true,
+      operator               = None,
+      url                    = None,
+      fileName               = "filename",
+      mimeType               = "image/png",
+      scanStatus             = Some(ScanStatus.READY),
+      timestamp              = Instant.now(),
+      description            = Some("test description"),
+      shouldPublishToRulings = true
     )
 
     val searchResult = SearchResult(c, Seq(storedAttachment))
@@ -233,14 +236,15 @@ class AdvancedSearchResultsViewSpec extends ViewSpec {
 
     val storedAttachment = StoredAttachment(
       "id",
-      public      = true,
-      operator    = None,
-      url         = Some("url"),
-      fileName    = "filename",
-      mimeType    = "text/plain",
-      scanStatus  = None,
-      timestamp   = Instant.now(),
-      description = Some("test description")
+      public                 = true,
+      operator               = None,
+      url                    = Some("url"),
+      fileName               = "filename",
+      mimeType               = "text/plain",
+      scanStatus             = None,
+      timestamp              = Instant.now(),
+      description            = Some("test description"),
+      shouldPublishToRulings = true
     )
 
     val searchResult = SearchResult(c, Seq(storedAttachment))
@@ -268,14 +272,15 @@ class AdvancedSearchResultsViewSpec extends ViewSpec {
 
     val storedAttachment = StoredAttachment(
       "id",
-      public      = true,
-      operator    = None,
-      url         = Some("url"),
-      fileName    = "filename",
-      mimeType    = "text/plain",
-      scanStatus  = Some(ScanStatus.FAILED),
-      timestamp   = Instant.now(),
-      description = Some("test description")
+      public                 = true,
+      operator               = None,
+      url                    = Some("url"),
+      fileName               = "filename",
+      mimeType               = "text/plain",
+      scanStatus             = Some(ScanStatus.FAILED),
+      timestamp              = Instant.now(),
+      description            = Some("test description"),
+      shouldPublishToRulings = true
     )
 
     val searchResult = SearchResult(c, Seq(storedAttachment))

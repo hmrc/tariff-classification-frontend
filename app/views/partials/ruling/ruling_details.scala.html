@@ -135,7 +135,12 @@
     }
 
     <h3 class="heading-medium">@messages("case.decision.attachments.ruling")</h3>
-    @attachments_list("attachments", files.filter(_.public),startAtTabIndex = Some(startAtTabIndex+2))
+
+    @attachments_list(
+        "attachments",
+        files.filter(_.shouldPublishToRulings),
+        startAtTabIndex = Some(startAtTabIndex+2)
+    )
 
     @ruling_explanation(c,Some(startAtTabIndex+50))
 
