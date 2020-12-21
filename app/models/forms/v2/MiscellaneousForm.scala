@@ -29,14 +29,14 @@ object MiscellaneousForm {
     "caseType" -> textTransformingTo(MiscCaseType.withName, _.toString, "error.empty.miscCaseType")
   )(identity)(Some(_))
 
-  private val form2Misc: (String, String) => MiscApplication = {
-    case (shortDescr, contactName) =>
+  private val form2Misc: (String, String, String) => MiscApplication = {
+    case (shortDescr, contactName, caseType) =>
       MiscApplication(
         contact = Contact("", contactName, None),
         offline = false,
         name = "",
         contactName = Some(contactName),
-        caseType = MiscCaseType.IB,
+        caseType = MiscCaseType.withName(caseType),
         detailedDescription = Some(shortDescr),
         sampleToBeProvided = false,
         sampleToBeReturned = false,
@@ -44,10 +44,10 @@ object MiscellaneousForm {
       )
   }
 
-    private val misc2Form: MiscApplication => Option[(String, String, MiscCaseType)] = misc =>
-      Some((misc.detailedDescription.getOrElse(""), misc.contactName.getOrElse(""), misc.caseType))
+    private val misc2Form: MiscApplication => Option[(String, String, String)] = misc =>
+      Some((misc.detailedDescription.getOrElse(""), misc.contactName.getOrElse(""), misc.caseType.toString))
 
-    val newMiscForm: Form[MiscApplication] =
+    val newMiscForm: Form[MiscApplication] = Form (
       mapping(
         "detailedDescription"       -> textNonEmpty("Please enter a short case description"),
         "contactName"      -> textNonEmpty("Please enter a case contact name"),
