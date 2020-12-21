@@ -30,7 +30,7 @@ class DecisionFormMapper {
     }
 
     val attachments = c.attachments
-      .map(att => att.copy(public = decisionForm.attachments.contains(att.id)))
+      .map(att => att.copy(shouldPublishToRulings = decisionForm.attachments.contains(att.id)))
 
     c.copy(decision = Some(decision), attachments = attachments)
   }
@@ -45,7 +45,7 @@ class DecisionFormMapper {
         d.justification,
         d.methodCommercialDenomination.getOrElse(""),
         d.methodExclusion.getOrElse(""),
-        Seq.empty, // TODO : So far this field is only used to read from the FE
+        c.attachments.filter(_.shouldPublishToRulings).map(_.id),
         d.explanation.getOrElse("")
       )
     }

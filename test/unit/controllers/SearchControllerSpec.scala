@@ -113,7 +113,8 @@ class SearchControllerSpec extends ControllerBaseSpec {
           "image/png",
           None,
           Instant.now(),
-          Some("test description")
+          Some("test description"),
+          shouldPublishToRulings = true
         )
 
       given(casesService.search(refEq(search), refEq(Sort()), refEq(SearchPagination(2)))(any[HeaderCarrier])) willReturn Future
@@ -176,7 +177,8 @@ class SearchControllerSpec extends ControllerBaseSpec {
           "image/png",
           None,
           Instant.now(),
-          Some("test description")
+          Some("test description"),
+          shouldPublishToRulings = true
         )
 
       given(casesService.search(refEq(search), refEq(Sort()), refEq(SearchPagination(2)))(any[HeaderCarrier])) willReturn Future

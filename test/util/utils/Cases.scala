@@ -39,7 +39,8 @@ object Cases {
     "type",
     Some(ScanStatus.READY),
     Instant.now(),
-    Some("test description")
+    Some("test description"),
+    shouldPublishToRulings = true
   )
   val storedOperatorAttachment: StoredAttachment = StoredAttachment(
     "id",
@@ -50,7 +51,8 @@ object Cases {
     "type",
     Some(ScanStatus.READY),
     Instant.now(),
-    Some("test description")
+    Some("test description"),
+    shouldPublishToRulings = false
   )
   val letterOfAuthority: StoredAttachment = StoredAttachment(
     "id",
@@ -61,7 +63,8 @@ object Cases {
     "pdf",
     Some(ScanStatus.READY),
     Instant.now(),
-    Some("test description")
+    Some("test description"),
+    shouldPublishToRulings = true
   )
   val eoriDetailsExample: EORIDetails =
     EORIDetails("eori", "trader-business-name", "line1", "line2", "line3", "postcode", "country")
@@ -365,7 +368,8 @@ object Cases {
       id        = id,
       public    = true,
       operator  = Some(Operator("0", Some("operatorName"))),
-      timestamp = Instant.now()
+      timestamp = Instant.now(),
+      shouldPublishToRulings = true
     )
 
   def aCase(withModifier: (Case => Case)*): Case =
