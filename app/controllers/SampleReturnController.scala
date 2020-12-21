@@ -27,7 +27,6 @@ import play.twirl.api.Html
 import service.CasesService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import controllers.Tab._
 
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
@@ -69,6 +68,6 @@ class SampleReturnController @Inject() (
     caseService.updateSampleReturn(c, status, operator)
 
   override protected def onSuccessRedirect(reference: String): Call =
-    controllers.routes.CaseController.sampleDetails(reference).withFragment(SAMPLE_TAB)
+    controllers.routes.CaseController.sampleDetails(reference)
 
 }

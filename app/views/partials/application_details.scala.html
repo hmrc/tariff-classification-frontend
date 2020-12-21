@@ -15,7 +15,7 @@
  *@
 
 @import config.AppConfig
-@import controllers.routes.{AttachmentsController, CaseController}
+@import controllers.{Tab, routes}
 @import models.request.AuthenticatedRequest
 @import models.{Application, BTIApplication, Case, EORIDetails, StoredAttachment}
 @import models.viewmodels.atar.GoodsTabViewModel
@@ -67,7 +67,7 @@
                 @if(goods.hasAttachmentsFromApplicant) {
                     Yes. <a tabindex="@{
                         startAtTabIndex + 1
-                    }" href="@AttachmentsController.attachmentsDetails(goods.caseReference)">@messages("case.goods.attachments_yes")</a>
+                    }" href="#@Tab.AttachmentsTab.name">@messages("case.goods.attachments_yes")</a>
                 } else {
                     @messages("answer.no")
                 }

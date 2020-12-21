@@ -14,12 +14,12 @@
  * limitations under the License.
  *@
 
-@import controllers.routes.AttachmentsController
-@import uk.gov.hmrc.play.views.html.helpers
 @import config.AppConfig
+@import controllers.{Tab, routes, v2}
 @import models.{Case, Permission, StoredAttachment}
 @import models.request.AuthenticatedRequest
 @import models.viewmodels.atar.AttachmentsTabViewModel
+@import uk.gov.hmrc.play.views.html.helpers
 @import views.html.components.input_file
 @import views.html.partials.{attachments_list, attachments_state_message, tab_heading,error_summary}
 
@@ -38,7 +38,7 @@
     @attachments_list("classification-team", attachments.attachmentsFromClassification, showUploadedBy = true, showSelect = false, showRemoval = true, Some(attachments.caseReference), startAtTabIndex = Some(startAtTabIndex+31))
 
     @if(request.hasPermission(Permission.ADD_ATTACHMENT)) {
-        @helpers.form(action = AttachmentsController.uploadAttachment(attachments.caseReference),
+        @helpers.form(action = v2.routes.AttachmentsController.uploadAttachment(attachments.caseReference),
             'enctype -> "multipart/form-data",
             'id -> "upload-files-form") {
 

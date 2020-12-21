@@ -15,7 +15,7 @@
  *@
 
 @import config.AppConfig
-@import controllers.routes.AttachmentsController
+@import controllers.v2.routes
 @import models.Case
 @import views.html.includes.main
 @import views.html.partials.{case_heading, error_summary, back_link}
@@ -38,7 +38,7 @@
 
             <h3 class="heading-medium mt-0">Are you sure you want to remove @fileName from this case?</h3>
 
-            @helper.form(action = AttachmentsController.confirmRemoveAttachment(c.reference, fileId, fileName), 'id -> "remove-attachment", 'novalidate -> "novalidate") {
+            @helper.form(action = routes.AttachmentsController.confirmRemoveAttachment(c.reference, fileId, fileName), 'id -> "remove-attachment", 'novalidate -> "novalidate") {
                 @helper.CSRF.formField
 
                 @input_yes_no(form("state"), "remove-attachment")

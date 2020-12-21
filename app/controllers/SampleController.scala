@@ -33,7 +33,6 @@ import views.CaseDetailPage
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
-import controllers.Tab._
 
 @Singleton
 class SampleController @Inject() (
@@ -41,7 +40,6 @@ class SampleController @Inject() (
   override val caseService: CasesService,
   eventsService: EventsService,
   mcc: MessagesControllerComponents,
-  val caseDetailsView: views.html.case_details,
   override implicit val config: AppConfig
 ) extends FrontendController(mcc)
     with StatusChangeAction[Option[SampleStatus]] {
@@ -75,17 +73,5 @@ class SampleController @Inject() (
     caseService.updateSampleStatus(c, status, operator)
 
   override protected def onSuccessRedirect(reference: String): Call =
-    controllers.routes.CaseController.sampleDetails(reference).withFragment(SAMPLE_TAB)
-
-  def sampleDetails(reference: String): Action[AnyContent] =
-    (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
-      getCaseAndRenderView(
-        reference,
-        c =>
-          for {
-            events <- eventsService.getFilteredEvents(c.reference, NoPagination(), Some(EventType.sampleEvents))
-            sampleTab = SampleTabViewModel.fromCase(c, events)
-          } yield caseDetailsView(c, CaseDetailPage.SAMPLE_DETAILS, views.html.partials.sample.sample_details(sampleTab))
-      )
-    }
+    controllers.routes.CaseController.sampleDetails(reference)
 }

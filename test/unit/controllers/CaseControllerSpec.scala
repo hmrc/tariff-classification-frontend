@@ -18,6 +18,7 @@ package controllers
 
 import java.time.Clock
 
+import controllers.v2.{AtarController, LiabilityController}
 import models.EventType.EventType
 import models.forms.{CommodityCodeConstraints, DecisionForm}
 import models.{Permission, _}
@@ -36,50 +37,36 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 class CaseControllerSpec extends ControllerBaseSpec {
 
-  private val keywordsService      = mock[KeywordsService]
-  private val fileService          = mock[FileStoreService]
-  private val eventService         = mock[EventsService]
-  private val queueService         = mock[QueuesService]
-  private val operator             = Operator(id = "id")
-  private val event                = mock[Event]
-  private val commodityCodeService = mock[CommodityCodeService]
-  private val decisionForm         = new DecisionForm(new CommodityCodeConstraints(commodityCodeService, realAppConfig))
-  private val countriesService     = new CountriesService
-  private val caseDetailsView = app.injector.instanceOf[views.html.case_details]
+  private val keywordsService     = mock[KeywordsService]
+  private val eventService        = mock[EventsService]
+  private val operator            = Operator(id = "id")
+  private val event               = mock[Event]
+  private val atarController      = app.injector.instanceOf[AtarController]
+  private val liabilityController = app.injector.instanceOf[LiabilityController]
 
   private def controller(c: Case) = new CaseController(
     new SuccessfulRequestActions(playBodyParsers, operator, c = c),
-    mock[CasesService],
     keywordsService,
-    fileService,
     eventService,
-    queueService,
-    commodityCodeService,
-    decisionForm,
-    countriesService,
     mcc,
-    caseDetailsView,
+    liabilityController,
+    atarController,
     realAppConfig
   )
 
   private def controller(c: Case, permission: Set[Permission]) = new CaseController(
     new RequestActionsWithPermissions(playBodyParsers, permission, c = c),
-    mock[CasesService],
     keywordsService,
-    fileService,
     eventService,
-    queueService,
-    commodityCodeService,
-    decisionForm,
-    countriesService,
     mcc,
-    caseDetailsView,
+    liabilityController,
+    atarController,
     realAppConfig
   )
 
   "Case Index" should {
     "redirect to default tab" when {
-      "case is a BTI" in {
+      "case is an ATaR" in {
         val c = aCase(withReference("reference"), withBTIApplication)
 
         val result = await(controller(c).get("reference")(fakeRequest))

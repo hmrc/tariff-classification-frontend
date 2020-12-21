@@ -20,15 +20,16 @@ import config.AppConfig
 import controllers.RequestActions
 import javax.inject.{Inject, Singleton}
 import models.{Case, EventType, NoPagination}
-import models.forms.{ActivityForm, DecisionForm, KeywordForm, UploadAttachmentForm}
-import models.viewmodels.{CaseViewModel, ActivityViewModel, KeywordsTabViewModel}
+import models.forms.{ActivityForm, ActivityFormData, DecisionForm, KeywordForm, UploadAttachmentForm}
+import models.viewmodels.{ActivityViewModel, CaseViewModel, KeywordsTabViewModel}
 import models.viewmodels.atar._
 import models.request._
+import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.mvc.MessagesControllerComponents
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import service.{CountriesService, EventsService, QueuesService, FileStoreService, KeywordsService}
+import service.{CountriesService, EventsService, FileStoreService, KeywordsService, QueuesService}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -44,44 +45,51 @@ class AtarController @Inject() (
   mcc: MessagesControllerComponents,
   val atarView: views.html.v2.atar_view,
   implicit val appConfig: AppConfig
-)(implicit ec: ExecutionContext) extends FrontendController(mcc)
+)(implicit ec: ExecutionContext)
+    extends FrontendController(mcc)
     with I18nSupport {
 
-  lazy val activityForm = ActivityForm.form
-  lazy val keywordForm = KeywordForm.form
-  lazy val uploadForm = UploadAttachmentForm.form
+  def displayAtar(reference: String): Action[AnyContent] =
+    (verify.authenticated andThen verify.casePermissions(reference)).async(implicit request => renderView())
 
-  def displayAtar(reference: String) = (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
+  def renderView(
+    activityForm: Form[ActivityFormData] = ActivityForm.form,
+    keywordForm: Form[String]            = KeywordForm.form,
+    uploadForm: Form[String]             = UploadAttachmentForm.form
+  )(implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
     val atarCase: Case = request.`case`
     val atarViewModel  = CaseViewModel.fromCase(atarCase, request.operator)
-    val applicantTab = ApplicantTabViewModel.fromCase(atarCase, countriesService.getAllCountriesById.mapValues(_.countryName))
-    val goodsTab = GoodsTabViewModel.fromCase(atarCase)
-    val rulingTab = RulingTabViewModel.fromCase(atarCase)
-    val rulingForm = decisionForm.bindFrom(rulingTab.decision)
-    val appealTab = AppealTabViewModel.fromCase(atarCase)
+    val countryNames   = countriesService.getAllCountriesById.mapValues(_.countryName)
+    val applicantTab   = ApplicantTabViewModel.fromCase(atarCase, countryNames)
+    val goodsTab       = GoodsTabViewModel.fromCase(atarCase)
+    val rulingTab      = RulingTabViewModel.fromCase(atarCase)
+    val rulingForm     = decisionForm.bindFrom(rulingTab.decision)
+    val appealTab      = AppealTabViewModel.fromCase(atarCase)
 
     for {
-      sampleTab <- getSampleTab(atarCase)
+      sampleTab      <- getSampleTab(atarCase)
       attachmentsTab <- getAttachmentTab(atarCase)
-      activityTab <- getActivityTab(atarCase)
-      keywordsTab <- getKeywordsTab(atarCase)
-      attachments <- fileService.getAttachments(atarCase)
-    } yield Ok(atarView(
-      atarViewModel,
-      applicantTab,
-      goodsTab,
-      sampleTab,
-      attachmentsTab,
-      uploadForm,
-      activityTab,
-      activityForm,
-      keywordsTab,
-      keywordForm,
-      rulingTab,
-      rulingForm,
-      attachments,
-      appealTab
-    ))
+      activityTab    <- getActivityTab(atarCase)
+      keywordsTab    <- getKeywordsTab(atarCase)
+      attachments    <- fileService.getAttachments(atarCase)
+    } yield Ok(
+      atarView(
+        atarViewModel,
+        applicantTab,
+        goodsTab,
+        sampleTab,
+        attachmentsTab,
+        uploadForm,
+        activityTab,
+        activityForm,
+        keywordsTab,
+        keywordForm,
+        rulingTab,
+        rulingForm,
+        attachments,
+        appealTab
+      )
+    )
   }
 
   private def getSampleTab(atarCase: Case)(implicit request: AuthenticatedRequest[_]) =
@@ -90,9 +98,7 @@ class AtarController @Inject() (
     }
 
   private def getAttachmentTab(atarCase: Case)(implicit hc: HeaderCarrier): Future[AttachmentsTabViewModel] =
-    fileService.getAttachments(atarCase).map { attachments =>
-      AttachmentsTabViewModel.fromCase(atarCase, attachments)
-    }
+    fileService.getAttachments(atarCase).map(attachments => AttachmentsTabViewModel.fromCase(atarCase, attachments))
 
   private def getActivityTab(atarCase: Case)(implicit request: AuthenticatedRequest[_]): Future[ActivityViewModel] =
     for {

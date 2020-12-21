@@ -14,15 +14,18 @@
  * limitations under the License.
  *@
 
+@import controllers.{Tab, routes, v2}
+@import models.{Case, Permission, StoredAttachment}
 @import models.request.AuthenticatedRequest
-@import models.Permission
-@import controllers.routes.AttachmentsController
-@import models.StoredAttachment
 @import utils.Dates
 @import views.html.partials.attachment
-@import models.Case
-@(id: String, attachments: Seq[StoredAttachment],
-showRemoval: Boolean = false, caseRef: Option[String] = None, startAtTabIndex : Option[Int] = None)(implicit request: AuthenticatedRequest[_], messages: Messages)
+
+@(id: String,
+  attachments: Seq[StoredAttachment],
+  showRemoval: Boolean = false,
+  caseRef: Option[String] = None,
+  startAtTabIndex : Option[Int] = None
+)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @if(attachments.nonEmpty){
 

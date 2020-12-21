@@ -17,6 +17,8 @@
 package controllers
 
 import config.AppConfig
+import controllers.routes
+import controllers.Tab
 import models.forms.AppealForm
 import javax.inject.{Inject, Singleton}
 import models.AppealStatus.AppealStatus
@@ -38,7 +40,6 @@ class AppealCaseController @Inject() (
   verify: RequestActions,
   override val caseService: CasesService,
   override implicit val config: AppConfig,
-  val caseDetailsView: views.html.case_details,
   mcc: MessagesControllerComponents
 ) extends FrontendController(mcc)
     with RenderCaseAction {
@@ -52,24 +53,9 @@ class AppealCaseController @Inject() (
     (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
       request.`case`.application.`type` match {
         case ApplicationType.ATAR =>
-          getCaseAndRenderView(
-            reference,
-            c => {
-              val appealTab = AppealTabViewModel.fromCase(c)
-
-              successful(
-                caseDetailsView(
-                  c,
-                  CaseDetailPage.APPEAL,
-                  views.html.partials.appeal.appeal_details(appealTab.get, startTabIndexForAppeals),
-                  activeTab = Some(ActiveTab.Appeals)
-                )
-              )
-            }
-          )
-
+          successful(Redirect(v2.routes.AtarController.displayAtar(reference).withFragment(Tab.AppealsTab.name)))
         case ApplicationType.LIABILITY => {
-            successful(Redirect(v2.routes.LiabilityController.displayLiability(reference).withFragment("appeal_tab")))
+          successful(Redirect(v2.routes.LiabilityController.displayLiability(reference).withFragment(Tab.AppealsTab.name)))
         }
       }
     }
@@ -113,16 +99,12 @@ class AppealCaseController @Inject() (
   def changeStatus(reference: String, appealId: String): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference)
       andThen verify.mustHave(Permission.APPEAL_CASE)).async { implicit request =>
-      getCaseAndRenderView(
+      getCaseAndRespond(
         reference,
         c =>
           c.findAppeal(appealId) match {
-            case Some(appeal) => successful(views.html.appeal_change_status(c, appeal, statusForm))
-            case None =>
-              val appealTab = AppealTabViewModel.fromCase(c)
-              successful(
-                caseDetailsView(c, CaseDetailPage.APPEAL, views.html.partials.appeal.appeal_details(appealTab.get))
-              )
+            case Some(appeal) => successful(Ok(views.html.appeal_change_status(c, appeal, statusForm)))
+            case None => successful(Redirect(routes.AppealCaseController.appealDetails(reference)))
           }
       )
     }

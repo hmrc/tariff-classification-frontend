@@ -17,6 +17,7 @@
 package controllers
 
 import config.AppConfig
+import controllers.Tab
 import models.forms.{DecisionForm, DecisionFormData, DecisionFormMapper}
 import javax.inject.{Inject, Singleton}
 import models._
@@ -30,7 +31,6 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import controllers.Tab._
 
 @Singleton
 class RulingController @Inject() (
@@ -87,13 +87,14 @@ class RulingController @Inject() (
         getCaseAndThen(c =>
           c.application.`type` match {
             case ApplicationType.ATAR =>
-              
               decisionForm.btiForm.bindFromRequest.fold(
                 errorForm => editBTIRulingView(errorForm, c),
                 validForm =>
                   for {
                     update <- casesService.updateCase(mapper.mergeFormIntoCase(c, validForm))
-                  } yield Redirect(routes.CaseController.rulingDetails(update.reference))
+                  } yield Redirect(
+                    v2.routes.AtarController.displayAtar(update.reference).withFragment(Tab.RulingTab.name)
+                  )
               )
 
             case ApplicationType.LIABILITY =>
@@ -106,7 +107,11 @@ class RulingController @Inject() (
                   updatedDecision =>
                     for {
                       update <- casesService.updateCase(c.copy(decision = Some(updatedDecision)))
-                    } yield Redirect(v2.routes.LiabilityController.displayLiability(update.reference).withFragment(RULING_TAB))
+                    } yield Redirect(
+                      v2.routes.LiabilityController
+                        .displayLiability(update.reference)
+                        .withFragment(Tab.RulingTab.name)
+                    )
                 )
           }
         )
