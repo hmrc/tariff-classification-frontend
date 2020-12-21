@@ -16,28 +16,23 @@
 
 package models.forms.v2
 
-import models.MiscCaseType.MiscCaseType
-import models.forms.FormUtils.textTransformingTo
+
 import models.{Contact, MiscApplication, MiscCaseType}
-import play.api.data.{Form, Forms, Mapping}
+import play.api.data.Form
 import play.api.data.Forms._
 import models.forms.mappings.FormMappings._
 
 object MiscellaneousForm {
 
-  private val miscTypeMapping: Mapping[MiscCaseType] = Forms.mapping[MiscCaseType, MiscCaseType](
-    "caseType" -> textTransformingTo(MiscCaseType.withName, _.toString, "error.empty.miscCaseType")
-  )(identity)(Some(_))
-
   private val form2Misc: (String, String, String) => MiscApplication = {
-    case (shortDescr, contactName, caseType) =>
+    case (detailedDescription, contactName, caseType) =>
       MiscApplication(
         contact = Contact("", contactName, None),
         offline = false,
         name = "",
         contactName = Some(contactName),
         caseType = MiscCaseType.withName(caseType),
-        detailedDescription = Some(shortDescr),
+        detailedDescription = Some(detailedDescription),
         sampleToBeProvided = false,
         sampleToBeReturned = false,
         messagesLogged = List.empty
@@ -49,8 +44,8 @@ object MiscellaneousForm {
 
     val newMiscForm: Form[MiscApplication] = Form (
       mapping(
-        "detailedDescription"       -> textNonEmpty("Please enter a short case description"),
-        "contactName"      -> textNonEmpty("Please enter a case contact name"),
+        "detailedDescription"       -> textNonEmpty("error.empty.misc.shortDesc"),
+        "contactName"      -> textNonEmpty("error.empty.misc.contactName"),
         "caseType" -> oneOf("error.empty.miscCaseType", MiscCaseType)
       )(form2Misc)(misc2Form)
     )

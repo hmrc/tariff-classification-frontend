@@ -36,7 +36,7 @@
 @helper.form(action = routes.CreateMiscellaneousController.post(), 'id -> "create_misc-form", 'novalidate -> "novalidate") {
 @helper.CSRF.formField
     @input_text(
-        field = form("shortDescr"),
+        field = form("detailedDescription"),
         label = messages("misc.create_misc.description.heading"),
         labelClass = Some("form-label bold"),
         formControlClass = Some("w-50")
@@ -50,24 +50,24 @@
     )
 
     @input_radiogroup(
-        field = form("typeMisc"),
+        field = form("caseType"),
         label = Some(messages("misc.create_misc.type.heading")),
         labelClass = Some("heading-large"),
         options = Seq(
                 RadioOption(MiscCaseType.HARMONISED.toString, messages("misc.create_misc.radio.type-harmonised")),
                 RadioOption(MiscCaseType.IB.toString, messages("misc.create_misc.radio.type-ib")),
-                RadioOption(MiscCaseType.NOMENCLATURE.toString, messages("misc.create_misc.radio.type-nc")),
+                RadioOption(MiscCaseType.NOMENCLATURE.toString, messages("misc.create_misc.radio.type-nomenclature")),
                 RadioOption(MiscCaseType.OTHER_GOVT_DEP.toString, messages("misc.create_misc.radio.type-other-gov-dep")),
                 RadioOption(MiscCaseType.OTHER.toString, messages("misc.create_misc.radio.type-other"))
 
             ),
-        id = "create_misc-typeMisc",
+        id = "create_misc-type",
         customGroupId = Some("typeMisc")
         )
-    )
+
 
     @confirm_or_cancel_buttons(
-        id = "create_liability",
+        id = "create_misc",
         confirmText = messages("misc.create_misc.confirm-button"),
         cancelText = messages("liability.create_liability.cancel-button"),
         cancelHref = routes.IndexController.get()

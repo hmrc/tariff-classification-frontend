@@ -1,0 +1,108 @@
+From b00c728dbd06333e35afacc0c2c0470cafceef65 Mon Sep 17 00:00:00 2001
+From: "emilia.trendafilova"
+ <20456486+emilia-trendafilova@users.noreply.github.com>
+Date: Sun, 20 Dec 2020 11:28:56 +0000
+Subject: [PATCH 2/3] DIT-2542: WIP misc case
+
+---
+ app/models/forms/v2/MiscellaneousForm.scala | 27 ++++++++++++---------
+ app/views/v2/create_misc.scala.html         |  2 +-
+ conf/app.routes                             |  4 +--
+ conf/messages                               |  2 +-
+ 4 files changed, 20 insertions(+), 15 deletions(-)
+
+diff --git a/app/models/forms/v2/MiscellaneousForm.scala b/app/models/forms/v2/MiscellaneousForm.scala
+index 2759d13b..507a630a 100644
+--- a/app/models/forms/v2/MiscellaneousForm.scala
++++ b/app/models/forms/v2/MiscellaneousForm.scala
+@@ -17,21 +17,26 @@
+ package models.forms.v2
+ 
+ import models.MiscCaseType.MiscCaseType
++import models.forms.FormUtils.textTransformingTo
+ import models.{Contact, MiscApplication, MiscCaseType}
+-import play.api.data.Form
++import play.api.data.{Form, Forms, Mapping}
+ import play.api.data.Forms._
+ import models.forms.mappings.FormMappings._
+ 
+ object MiscellaneousForm {
+ 
+-  private val form2Misc: (String, String, MiscCaseType) => MiscApplication = {
+-    case (shortDescr, contactName, typeMisc ) =>
++  private val miscTypeMapping: Mapping[MiscCaseType] = Forms.mapping[MiscCaseType, MiscCaseType](
++    "caseType" -> textTransformingTo(MiscCaseType.withName, _.toString, "error.empty.miscCaseType")
++  )(identity)(Some(_))
++
++  private val form2Misc: (String, String) => MiscApplication = {
++    case (shortDescr, contactName) =>
+       MiscApplication(
+         contact = Contact("", contactName, None),
+         offline = false,
+         name = "",
+         contactName = Some(contactName),
+-        caseType = typeMisc,
++        caseType = MiscCaseType.IB,
+         detailedDescription = Some(shortDescr),
+         sampleToBeProvided = false,
+         sampleToBeReturned = false,
+@@ -42,11 +47,11 @@ object MiscellaneousForm {
+     private val misc2Form: MiscApplication => Option[(String, String, MiscCaseType)] = misc =>
+       Some((misc.detailedDescription.getOrElse(""), misc.contactName.getOrElse(""), misc.caseType))
+ 
+-    val newMiscForm: Form[MiscApplication] = ???
+-//      mapping(
+-//        "detailedDescription"       -> textNonEmpty("Please enter a short case description"),
+-//        "contactName"      -> textNonEmpty("Please enter a case contact name"),
+-//        "caseType" -> oneOf("status.change.cancel.reason.error", MiscCaseType),
+-//      )(form2Misc)(misc2Form)
+-//    )
++    val newMiscForm: Form[MiscApplication] =
++      mapping(
++        "detailedDescription"       -> textNonEmpty("Please enter a short case description"),
++        "contactName"      -> textNonEmpty("Please enter a case contact name"),
++        "caseType" -> oneOf("error.empty.miscCaseType", MiscCaseType)
++      )(form2Misc)(misc2Form)
++    )
+ }
+\ No newline at end of file
+diff --git a/app/views/v2/create_misc.scala.html b/app/views/v2/create_misc.scala.html
+index 6839e793..1d5257d2 100644
+--- a/app/views/v2/create_misc.scala.html
++++ b/app/views/v2/create_misc.scala.html
+@@ -61,7 +61,7 @@
+                 RadioOption(MiscCaseType.OTHER.toString, messages("misc.create_misc.radio.type-other"))
+ 
+             ),
+-        id = "create_liability-typeMisc",
++        id = "create_misc-typeMisc",
+         customGroupId = Some("typeMisc")
+         )
+     )
+diff --git a/conf/app.routes b/conf/app.routes
+index eac3ec7f..4ed2774f 100644
+--- a/conf/app.routes
++++ b/conf/app.routes
+@@ -141,6 +141,6 @@ GET        /gateway-cases                                       controllers.v2.G
+ 
+ GET        /all-open-cases                                      controllers.v2.AllOpenCasesController.displayAllOpenCases(activeSubNav: SubNavigationTab ?= ATaRTab)
+ 
+-GET         /new-miscellaneous                                  controllers.CreateMiscellaneousController.get()
+-POST        /new-miscellaneous                                  controllers.CreateMiscellaneousController.post()
++GET         /create-new-miscellaneous                                  controllers.CreateMiscellaneousController.get()
++
+ 
+diff --git a/conf/messages b/conf/messages
+index c80d0a2a..ac8646a0 100644
+--- a/conf/messages
++++ b/conf/messages
+@@ -969,5 +969,5 @@ misc.create_misc.radio.type-other-gov-dep=Other government department
+ misc.create_misc.radio.type-other=Other
+ misc.create_misc.confirm-button=Create case
+ 
+-
++error.empty.miscCaseType= Select a case type
+ 
+-- 
+2.19.1
+
