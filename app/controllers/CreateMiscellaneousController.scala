@@ -42,7 +42,6 @@ class CreateMiscellaneousController @Inject()(
                                                  queueService: QueuesService,
                                                  mcc: MessagesControllerComponents,
                                                  val releaseCaseView: views.html.release_case,
-                                                 val releaseCaseQuestionView: views.html.v2.release_option_choice,
                                                  val confirmation_case_creation: views.html.v2.confirmation_case_creation,
                                                  implicit val appConfig: AppConfig
                                                ) extends FrontendController(mcc)  with I18nSupport {
@@ -84,22 +83,6 @@ class CreateMiscellaneousController @Inject()(
       case Some(c: Case) => successful(Redirect(routes.ReleaseCaseController.releaseCase(reference, None)))
       case _             => successful(Ok(views.html.case_not_found(reference)))
     }
-
-//  def postChoice(reference: String): Action[AnyContent] =
-//    (verify.authenticated andThen verify.casePermissions(reference) andThen
-//      verify.mustHave(Permission.RELEASE_CASE)).async { implicit request =>
-//      formReleaseChoice
-//        .bindFromRequest()
-//        .fold(
-//          errors => getCaseAndRenderChoiceView(reference, errors),
-//          (choice: String) => {
-//            choice match {
-//              case "Yes" => successful(Redirect(routes.ReleaseCaseController.releaseCase(reference, None)))
-//              case _  => successful(Redirect(routes.CreateCorrespondenceController.displayConfirmation(reference)))
-//            }
-//          }
-//        )
-//    }
 
   def displayConfirmation(reference: String) =
     (verify.authenticated andThen verify.mustHave(Permission.CREATE_CASES)).async {

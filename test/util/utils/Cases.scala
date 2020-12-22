@@ -680,4 +680,33 @@ object Cases {
     Some(5),
     referredDaysElapsed = 0
   )
+
+  val miscApplicationExample: MiscApplication = MiscApplication(
+    Contact("name", "email"),
+    offline = false,
+    "name",
+    None,
+    MiscCaseType.OTHER,
+    Some("dummy"),
+    sampleToBeProvided = false,
+    sampleToBeReturned = false,
+  )
+
+  val miscCaseExample : Case = Case (
+    "1",
+    CaseStatus.OPEN,
+    Instant.now(),
+    0,
+    None,
+    None,
+    None,
+    miscApplicationExample,
+    None,
+    Seq(),
+    Set.empty,
+    Sample(),
+    Some(Instant.now()),
+    Some(5),
+    referredDaysElapsed = 0
+  )
 }
