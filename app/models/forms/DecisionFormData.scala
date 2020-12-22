@@ -40,7 +40,9 @@ class DecisionForm @Inject() (commodityCodeConstraints: CommodityCodeConstraints
   val btiForm: Form[DecisionFormData] = Form[DecisionFormData](
     mapping(
       "bindingCommodityCode" -> text.verifying(
-        emptyOr(commodityCodeConstraints.commodityCodeValid): _*
+        emptyOr(commodityCodeConstraints.commodityCodeLengthValid,
+          commodityCodeConstraints.commodityCodeNumbersValid,
+          commodityCodeConstraints.commodityCodeEvenDigitsValid): _*
       ),
       "goodsDescription"             -> text,
       "methodSearch"                 -> text,
@@ -58,7 +60,9 @@ class DecisionForm @Inject() (commodityCodeConstraints: CommodityCodeConstraints
         .verifying(
           StopOnFirstFail(
             commodityCodeConstraints.commodityCodeNonEmpty,
-            commodityCodeConstraints.commodityCodeValid
+            commodityCodeConstraints.commodityCodeLengthValid,
+            commodityCodeConstraints.commodityCodeNumbersValid,
+            commodityCodeConstraints.commodityCodeEvenDigitsValid
           )
         ),
       "goodsDescription"             -> text.verifying(customNonEmpty("decision_form.error.itemDescription.required")),
@@ -91,7 +95,9 @@ class DecisionForm @Inject() (commodityCodeConstraints: CommodityCodeConstraints
     Form[Decision](
       mapping(
         "bindingCommodityCode" -> text.verifying(
-          emptyOr(commodityCodeConstraints.commodityCodeValid): _*
+          emptyOr(commodityCodeConstraints.commodityCodeLengthValid,
+            commodityCodeConstraints.commodityCodeNumbersValid,
+            commodityCodeConstraints.commodityCodeEvenDigitsValid): _*
         ),
         "goodsDescription" -> text,
         "methodSearch"     -> text,
@@ -103,13 +109,21 @@ class DecisionForm @Inject() (commodityCodeConstraints: CommodityCodeConstraints
   def liabilityCompleteForm(existingDecision: Decision = Decision()): Form[Decision] =
     Form[Decision](
       mapping(
-        "bindingCommodityCode" -> nonEmptyText.verifying(commodityCodeConstraints.commodityCodeValid),
-        "goodsDescription"     -> nonEmptyText,
-        "methodSearch"         -> nonEmptyText,
-        "justification"        -> nonEmptyText,
+        "bindingCommodityCode" -> text.verifying(
+          StopOnFirstFail(
+            commodityCodeConstraints.commodityCodeNonEmpty,
+            commodityCodeConstraints.commodityCodeLengthValid,
+            commodityCodeConstraints.commodityCodeNumbersValid,
+            commodityCodeConstraints.commodityCodeEvenDigitsValid
+          )
+        ),
+        "goodsDescription"     -> text.verifying(customNonEmpty("Enter a goods description")),
+        "methodSearch"         -> text.verifying(customNonEmpty("Enter the searches performed")),
+        "justification"        -> text.verifying(customNonEmpty("Enter the justification")),
         "methodExclusion"      -> text
       )(liabilityForm2Decision(existingDecision))(decision2LiabilityForm)
     ).fillAndValidate(existingDecision)
+
 
   private def liabilityForm2Decision(existingDecision: Decision): (String, String, String, String, String) => Decision = {
     case (code, description, search, justification, exclusion) =>

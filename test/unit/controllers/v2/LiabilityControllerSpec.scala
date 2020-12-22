@@ -350,7 +350,7 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
           "goodName"             -> "item-name",
           "traderCommodityCode"  -> "",
           "officerCommodityCode" -> "",
-          "contactName"          -> "",
+          "contactName"          -> "contact-name",
           "contactEmail"         -> "valid@email.com",
           "contactPhone"         -> ""
         )

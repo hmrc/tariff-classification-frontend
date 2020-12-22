@@ -35,13 +35,13 @@
 
 @main(bodyClasses = None, customTitle = Some(messages("page.title.edit_liability_decision")), customPrimaryNavTab = MyCasesTab) {
 
+ @error_summary(form.errors)
+
  @case_heading(caseHeaderViewModel, Some("Edit ruling"))
 
  @c592_information(traderCommodityCode, officerCommodityCode)
 
  <hr>
-
- @error_summary(form.errors)
 
  @helper.form(action = routes.RulingController.updateRulingDetails(caseHeaderViewModel.referenceNumber), 'id -> "edit_liability_decision-form") {
   @helper.CSRF.formField
@@ -54,7 +54,7 @@
 
   @input_textarea(
    field = form("goodsDescription"),
-   label = messages("case.liability.decision.goodsDescription")
+   label = messages("case.liability.decision.goodsDescriptionLabel")
   )
 
   @input_textarea(

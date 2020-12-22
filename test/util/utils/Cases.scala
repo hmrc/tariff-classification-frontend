@@ -26,7 +26,7 @@ import models.SampleReturn.SampleReturn
 import models.SampleStatus.SampleStatus
 import models._
 import models.response.ScanStatus
-import models.viewmodels._
+import models.viewmodels.{TraderContact, _}
 
 object Cases {
 
@@ -401,6 +401,42 @@ object Cases {
         entryNumber          = entryNumber,
         traderCommodityCode  = traderCommodityCode,
         officerCommodityCode = officerCommodityCode
+      )
+    )
+
+  def liabilityApplicationWithC592(
+    contact: Contact                     = Contact("name", "email@email.com", Some("1234")),
+    status: LiabilityStatus              = LiabilityStatus.NON_LIVE,
+    traderName: String                   = "trader",
+    goodName: Option[String]             = Some("Goods Name"),
+    entryDate: Option[Instant]           = Some(Instant.now.plus(-20, DAYS)),
+    entryNumber: Option[String]          = Some("1234567"),
+    traderCommodityCode: Option[String]  = Some("0100000000"),
+    officerCommodityCode: Option[String] = Some("0200000000"),
+    traderDetails: Option[TraderContactDetails]= Some(TraderContactDetails(
+      email = Some("trader@email.com"),
+      phone = Some("2345"),
+      address = Some(
+        Address(
+          buildingAndStreet = "STREET 1",
+          townOrCity        = "Town",
+          county            = Some("County"),
+          postCode          = Some("postcode")
+        )
+      )
+    ))
+  ): Case => Case =
+    _.copy(application =
+      liabilityApplicationExample.copy(
+        contact              = contact,
+        status               = status,
+        traderName           = traderName,
+        goodName             = goodName,
+        entryDate            = entryDate,
+        entryNumber          = entryNumber,
+        traderCommodityCode  = traderCommodityCode,
+        officerCommodityCode = officerCommodityCode,
+        traderContactDetails = traderDetails
       )
     )
 

@@ -37,14 +37,14 @@
 
 @main(bodyClasses = None, customTitle = Some(messages("case.liability.edit.title")), customPrimaryNavTab = MyCasesTab) {
 
+    @error_summary(form.errors)
+
     @case_heading(CaseHeaderViewModel.fromCase(c))
 
     <h2 id="liability-details-edit" class="heading-large">@messages("case.v2.liability.c592.edit_details_title")</h2>
 
     @defining(c.application.asLiabilityOrder) { liability: LiabilityOrder =>
         <div class="form-group">
-
-            @error_summary(form.errors)
 
             @helper.form(action = LiabilityController.postLiabilityDetails(c.reference), 'class -> "form" , 'id -> "liability-details-edit-form", 'novalidate -> "novalidate") {
 
@@ -66,7 +66,8 @@
                     dateField = form("entryDate"),
                     fieldsetId = Some("entryDate"),
                     hint = Some(messages("case.v2.liability.c592.details_edit.date_hint")),
-                    legend = messages("case.v2.liability.c592.details_edit.date_p")
+                    legend = messages("case.v2.liability.c592.details_edit.date_p"),
+                    formControlUnBold = true
                 )
 
                 @input_text(
@@ -88,7 +89,8 @@
                     dateField = form("dateOfReceipt"),
                     fieldsetId = Some("dateOfReceipt"),
                     hint = Some(messages("case.v2.liability.c592.details_edit.date_of_receipt_hint")),
-                    legend = messages("case.v2.liability.c592.details_edit.date_of_receipt")
+                    legend = messages("case.v2.liability.c592.details_edit.date_of_receipt"),
+                    formControlUnBold = true
                 )
 
                 <h3 class="heading-medium mt-0">@messages("case.v2.liability.c592.trader_information")</h3>
@@ -102,7 +104,7 @@
 
                 @input_text(
                     field = form("goodName"),
-                    label = messages("case.liability.edit.item-name"),
+                    label = messages("case.liability.edit.goods-name"),
                     inputClass = Some("width-one-half"),
                     disableAutoComplete = true
                 )
@@ -117,7 +119,8 @@
                 @input_number(
                     field = form("traderPhone"),
                     label = messages("case.v2.liability.c592.trader_telephone"),
-                    inputClass = Some("width-one-half")
+                    inputClass = Some("width-one-half"),
+                    labelClass= Some("un-bold")
                 )
 
 @*                TODO Fix make like in prototype*@
@@ -193,7 +196,8 @@
                 @input_number(
                     field = form("contactPhone"),
                     label = messages("case.liability.edit.contact.phone"),
-                    inputClass = Some("width-one-half")
+                    inputClass = Some("width-one-half"),
+                    labelClass= Some("un-bold")
                 )
 
                 <h3 class="heading-medium mb-1">@messages("case.v2.liability.c592.details_edit.repayment_claim_h3")</h3>
@@ -211,7 +215,8 @@
                     yearField = form("dateForRepayment.year"),
                     dateField = form("dateForRepayment"),
                     fieldsetId = Some("dateForRepayment"),
-                    legend = messages("case.v2.liability.c592.details_edit.date_of_repayment")
+                    legend = messages("case.v2.liability.c592.details_edit.date_of_repayment"),
+                    formControlUnBold = true
                 )
 
                 @confirm_or_cancel_buttons(

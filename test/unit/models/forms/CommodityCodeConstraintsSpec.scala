@@ -32,10 +32,74 @@ class CommodityCodeConstraintsSpec extends ModelsBaseSpec {
       result shouldBe Invalid("decision_form.error.bindingCommodityCode.required")
     }
 
-    "return valid when there is no commodity code supplied" in {
+    "return valid when there is a commodity code supplied" in {
       val commodityCodeConstraint = new CommodityCodeConstraints(mock[CommodityCodeService], mock[AppConfig])
 
       val result = commodityCodeConstraint.commodityCodeNonEmpty.apply("000000000")
+
+      result shouldBe Valid
+    }
+  }
+
+  "commodityCodeLengthValid" should {
+    "return invalid when commodity code is not between 6 and 22 digits long" in {
+      val commodityCodeConstraint = new CommodityCodeConstraints(mock[CommodityCodeService], mock[AppConfig])
+
+      val resultShort = commodityCodeConstraint.commodityCodeLengthValid.apply("12345")
+      val resultLong = commodityCodeConstraint.commodityCodeLengthValid.apply("12345678901234567890123")
+
+      resultShort shouldBe Invalid("decision_form.error.bindingCommodityCode.valid.length")
+      resultLong shouldBe Invalid("decision_form.error.bindingCommodityCode.valid.length")
+    }
+  }
+
+  "commodityCodeLengthValid" should {
+    "return valid when commodity code is between 6 and 22 digits long" in {
+      val commodityCodeConstraint = new CommodityCodeConstraints(mock[CommodityCodeService], mock[AppConfig])
+
+      val resultShort = commodityCodeConstraint.commodityCodeLengthValid.apply("123456")
+      val resultLong = commodityCodeConstraint.commodityCodeLengthValid.apply("1234567890123456789012")
+
+      resultShort shouldBe Valid
+      resultLong shouldBe Valid
+    }
+  }
+
+  "commodityCodeNumbersValid" should {
+    "return invalid when commodity code is not a number" in {
+      val commodityCodeConstraint = new CommodityCodeConstraints(mock[CommodityCodeService], mock[AppConfig])
+
+      val result = commodityCodeConstraint.commodityCodeNumbersValid.apply("12a45")
+
+      result shouldBe Invalid("decision_form.error.bindingCommodityCode.valid.number")
+    }
+  }
+
+  "commodityCodeNumbersValid" should {
+    "return valid when commodity code is a number" in {
+      val commodityCodeConstraint = new CommodityCodeConstraints(mock[CommodityCodeService], mock[AppConfig])
+
+      val result = commodityCodeConstraint.commodityCodeNumbersValid.apply("12345")
+
+      result shouldBe Valid
+    }
+  }
+
+  "commodityCodeEvenDigitsValid" should {
+    "return invalid when commodity code length is not even" in {
+      val commodityCodeConstraint = new CommodityCodeConstraints(mock[CommodityCodeService], mock[AppConfig])
+
+      val result = commodityCodeConstraint.commodityCodeEvenDigitsValid.apply("12345")
+
+      result shouldBe Invalid("decision_form.error.bindingCommodityCode.valid.evenDigits")
+    }
+  }
+
+  "commodityCodeEvenDigitsValid" should {
+    "return valid when commodity code length is even" in {
+      val commodityCodeConstraint = new CommodityCodeConstraints(mock[CommodityCodeService], mock[AppConfig])
+
+      val result = commodityCodeConstraint.commodityCodeEvenDigitsValid.apply("123456")
 
       result shouldBe Valid
     }

@@ -31,6 +31,9 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import controllers.Tab._
+import models.forms.v2.LiabilityDetailsForm
+
+import scala.concurrent.Future.successful
 
 @Singleton
 class RulingController @Inject() (
@@ -41,6 +44,7 @@ class RulingController @Inject() (
   decisionForm: DecisionForm,
   mcc: MessagesControllerComponents,
   val editRulingView: views.html.v2.edit_liability_ruling,
+  val liability_details_edit: views.html.v2.liability_details_edit,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
     with I18nSupport {
@@ -75,8 +79,15 @@ class RulingController @Inject() (
               val decisionFormWithErrors = decisionForm.btiCompleteForm.fillAndValidate(formData)
               editBTIRulingView(decisionFormWithErrors, c)
             case ApplicationType.LIABILITY =>
-              //TODO add validate logic
-              Future.successful(Redirect(routes.CompleteCaseController.confirmCompleteCase(c.reference)))
+
+              val liabilityDecisionForm  = decisionForm.liabilityCompleteForm(c.decision.getOrElse(Decision()))
+
+              if(liabilityDecisionForm.errors.nonEmpty) {
+                editLiabilityRulingView(liabilityDecisionForm, c)
+              } else {
+                val liabilityDetailsForm = LiabilityDetailsForm.liabilityDetailsCompleteForm(c, appConfig)
+                Future.successful(Ok(liability_details_edit(c, liabilityDetailsForm)))
+              }
           }
         )
       }
@@ -129,6 +140,7 @@ class RulingController @Inject() (
 
     Future.successful(Ok(editRulingView(caseHeaderViewModel, f, traderCommodityCode, officerCommodityCode)))
   }
+
 
   private def getCaseAndThen(
     toResult: Case => Future[Result]
