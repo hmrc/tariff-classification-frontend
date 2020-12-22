@@ -16,19 +16,16 @@
 
 package controllers
 
-import connector.{DataCacheConnector, FakeDataCacheConnector}
+import connector.FakeDataCacheConnector
 import controllers.actions.{FakeDataRetrievalAction, FakeIdentifierAction}
 import models.{ApplicationType, Operator}
-import org.mockito.ArgumentMatchers._
-import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status
+import play.api.test.Helpers._
 import service.TabCacheService
 import uk.gov.hmrc.http.cache.client.CacheMap
 
-import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
-import models.ApplicationType
 
 class TabCacheControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
@@ -73,6 +70,25 @@ class TabCacheControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach 
       val result = controller().post("caseRef", ApplicationType.LIABILITY).apply(newFakePOSTRequestWithCSRF(app))
       status(result) shouldBe Status.BAD_REQUEST
       await(tabCacheService.getActiveTab("id", "caseRef", ApplicationType.LIABILITY)) shouldBe None
+    }
+  }
+
+  "GET" should {
+    "retrieve active tab from the database" in {
+      await(controller().post("caseRef", ApplicationType.ATAR).apply(newFakePOSTRequestWithCSRF(app, Tab.ACTIVITY_TAB.name)))
+      val result = controller().get("caseRef", ApplicationType.ATAR).apply(newFakeGETRequestWithCSRF(app))
+      status(result) shouldBe Status.OK
+      contentAsString(result) shouldBe Tab.ACTIVITY_TAB.name
+    }
+
+    "clear active tab after it is fetched" in {
+      await(controller().post("caseRef", ApplicationType.ATAR).apply(newFakePOSTRequestWithCSRF(app, Tab.KEYWORDS_TAB.name)))
+      val afterSet = await(controller().get("caseRef", ApplicationType.ATAR).apply(newFakeGETRequestWithCSRF(app)))
+      status(afterSet) shouldBe Status.OK
+      contentAsString(afterSet) shouldBe Tab.KEYWORDS_TAB.name
+      val afterGet = await(controller().get("caseRef", ApplicationType.ATAR).apply(newFakeGETRequestWithCSRF(app)))
+      status(afterGet) shouldBe Status.OK
+      contentAsString(afterGet) shouldBe ""
     }
   }
 }

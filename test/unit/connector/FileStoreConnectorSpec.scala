@@ -220,4 +220,32 @@ class FileStoreConnectorSpec extends ConnectorTest {
     )
   }
 
+  "Connector download" should {
+    "handle missing file" in {
+      stubFor(
+        get("/digital-tariffs-local/id")
+          .willReturn(
+            aResponse()
+              .withStatus(Status.NOT_FOUND)
+          )
+      )
+
+      val result = await(connector.downloadFile(wireMockUrl + "/digital-tariffs-local/id"))
+
+      result shouldBe None
+    }
+
+    "handle error response" in {
+      stubFor(
+        get("/digital-tariffs-local/id")
+          .willReturn(
+            aResponse()
+              .withStatus(Status.INTERNAL_SERVER_ERROR)
+          )
+      )
+
+      assertThrows[Exception](await(connector.downloadFile(wireMockUrl + "/digital-tariffs-local/id")))
+    }
+  }
+
 }
