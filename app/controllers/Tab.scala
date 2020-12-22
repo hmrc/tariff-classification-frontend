@@ -20,22 +20,32 @@ sealed abstract class Tab(val name: String) extends Product with Serializable
 
 object Tab {
   // Common
-  case object SampleTab extends Tab("sample_status_tab")
-  case object AttachmentsTab extends Tab("attachments_tab")
-  case object ActivityTab extends Tab("activity_tab")
-  case object KeywordsTab extends Tab("keywords_tab")
-  case object RulingTab extends Tab("ruling_tab")
-  case object AppealsTab extends Tab("appeal_tab")
+  case object SAMPLE_TAB extends Tab("sample_status_tab")
+  case object ATTACHMENTS_TAB extends Tab("attachments_tab")
+  case object ACTIVITY_TAB extends Tab("activity_tab")
+  case object KEYWORDS_TAB extends Tab("keywords_tab")
+  case object RULING_TAB extends Tab("ruling_tab")
+  case object APPEALS_TAB extends Tab("appeal_tab")
 
   // ATaRs
-  case object ApplicantTab extends Tab("applicant_tab")
-  case object GoodsTab extends Tab("goods_tab")
+  case object APPLICANT_TAB extends Tab("applicant_tab")
+  case object GOODS_TAB extends Tab("goods_tab")
 
   // Liabilities
-  case object C592Tab extends Tab("c592_tab")
+  case object C592_TAB extends Tab("c592_tab")
 
   val values =
-    Set(SampleTab, AttachmentsTab, ActivityTab, KeywordsTab, RulingTab, AppealsTab, ApplicantTab, GoodsTab, C592Tab)
+    Set(
+      SAMPLE_TAB,
+      ATTACHMENTS_TAB,
+      ACTIVITY_TAB,
+      KEYWORDS_TAB,
+      RULING_TAB,
+      APPEALS_TAB,
+      APPLICANT_TAB,
+      GOODS_TAB,
+      C592_TAB
+    )
 
   def fromValue(value: String): Option[Tab] = values.find(_.name == value)
 }

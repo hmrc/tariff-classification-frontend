@@ -54,9 +54,9 @@ class CaseController @Inject() (
     (verify.authenticated andThen verify.casePermissions(reference)) { implicit request =>
       request.`case`.application.`type` match {
         case ApplicationType.ATAR =>
-          Redirect(v2.routes.AtarController.displayAtar(reference).withFragment(Tab.SampleTab.name))
+          Redirect(v2.routes.AtarController.displayAtar(reference).withFragment(Tab.SAMPLE_TAB.name))
         case ApplicationType.LIABILITY =>
-          Redirect(v2.routes.LiabilityController.displayLiability(reference).withFragment(Tab.SampleTab.name))
+          Redirect(v2.routes.LiabilityController.displayLiability(reference).withFragment(Tab.SAMPLE_TAB.name))
       }
     }
 
@@ -64,9 +64,9 @@ class CaseController @Inject() (
     (verify.authenticated andThen verify.casePermissions(reference)) { implicit request =>
       request.`case`.application.`type` match {
         case ApplicationType.ATAR =>
-          Redirect(v2.routes.AtarController.displayAtar(reference).withFragment(Tab.RulingTab.name))
+          Redirect(v2.routes.AtarController.displayAtar(reference).withFragment(Tab.RULING_TAB.name))
         case ApplicationType.LIABILITY =>
-          Redirect(v2.routes.LiabilityController.displayLiability(reference).withFragment(Tab.RulingTab.name))
+          Redirect(v2.routes.LiabilityController.displayLiability(reference).withFragment(Tab.RULING_TAB.name))
       }
     }
 
@@ -74,9 +74,9 @@ class CaseController @Inject() (
     (verify.authenticated andThen verify.casePermissions(reference)) { implicit request =>
       request.`case`.application.`type` match {
         case ApplicationType.ATAR =>
-          Redirect(v2.routes.AtarController.displayAtar(reference).withFragment(Tab.ActivityTab.name))
+          Redirect(v2.routes.AtarController.displayAtar(reference).withFragment(Tab.ACTIVITY_TAB.name))
         case ApplicationType.LIABILITY =>
-          Redirect(v2.routes.LiabilityController.displayLiability(reference).withFragment(Tab.ActivityTab.name))
+          Redirect(v2.routes.LiabilityController.displayLiability(reference).withFragment(Tab.ACTIVITY_TAB.name))
       }
     }
 
@@ -84,9 +84,9 @@ class CaseController @Inject() (
     (verify.authenticated andThen verify.casePermissions(reference)) { implicit request =>
       request.`case`.application.`type` match {
         case ApplicationType.ATAR =>
-          Redirect(v2.routes.AtarController.displayAtar(reference).withFragment(Tab.KeywordsTab.name))
+          Redirect(v2.routes.AtarController.displayAtar(reference).withFragment(Tab.KEYWORDS_TAB.name))
         case ApplicationType.LIABILITY =>
-          Redirect(v2.routes.LiabilityController.displayLiability(reference).withFragment(Tab.KeywordsTab.name))
+          Redirect(v2.routes.LiabilityController.displayLiability(reference).withFragment(Tab.KEYWORDS_TAB.name))
       }
     }
 
@@ -94,9 +94,9 @@ class CaseController @Inject() (
     (verify.authenticated andThen verify.casePermissions(reference)) { implicit request =>
       request.`case`.application.`type` match {
         case ApplicationType.ATAR =>
-          Redirect(v2.routes.AtarController.displayAtar(reference).withFragment(Tab.AttachmentsTab.name))
+          Redirect(v2.routes.AtarController.displayAtar(reference).withFragment(Tab.ATTACHMENTS_TAB.name))
         case ApplicationType.LIABILITY =>
-          Redirect(v2.routes.LiabilityController.displayLiability(reference).withFragment(Tab.AttachmentsTab.name))
+          Redirect(v2.routes.LiabilityController.displayLiability(reference).withFragment(Tab.ATTACHMENTS_TAB.name))
       }
     }
 

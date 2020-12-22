@@ -46,7 +46,11 @@
                     </span>
 
                     <td id="@{id}-row-@{index}-uploaded_by" class="govuk-table__cell w-15">
-                        @file.operator.flatMap(_.name).getOrElse(attachments.caseContact)
+                        @if(file.operator.nonEmpty) {
+                            @file.operator.flatMap(_.name).getOrElse("Unknown")
+                        } else {
+                            @attachments.caseContact
+                        }
                     </td>
 
                     <td id="@{id}-row-@{index}-attachment-details" class="govuk-table__cell w-15">

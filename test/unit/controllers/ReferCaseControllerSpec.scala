@@ -105,7 +105,7 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
     "return OK and HTML content type" in {
       val result: Result =
-        await(controller(caseWithStatusOPEN).getReferCase("reference", None)(newFakeGETRequestWithCSRF(app)))
+        await(controller(caseWithStatusOPEN).getReferCase("reference")(newFakeGETRequestWithCSRF(app)))
 
       status(result)        shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -116,7 +116,7 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     "return OK when user has right permissions" in {
       val result: Result = await(
         controller(caseWithStatusOPEN, Set(Permission.REFER_CASE))
-          .getReferCase("reference", None)(newFakeGETRequestWithCSRF(app))
+          .getReferCase("reference")(newFakeGETRequestWithCSRF(app))
       )
 
       status(result) shouldBe Status.OK
@@ -124,7 +124,7 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
     "redirect unauthorised when does not have right permissions" in {
       val result: Result =
-        await(controller(caseWithStatusNEW, Set.empty).getReferCase("reference", None)(newFakeGETRequestWithCSRF(app)))
+        await(controller(caseWithStatusNEW, Set.empty).getReferCase("reference")(newFakeGETRequestWithCSRF(app)))
 
       status(result)               shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
@@ -147,7 +147,7 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       ).thenReturn(successful(caseWithStatusREFERRED))
 
       val result: Result = await(
-        controller(caseWithStatusOPEN).postReferCase("reference", None)(
+        controller(caseWithStatusOPEN).postReferCase("reference")(
           newFakePOSTRequestWithCSRF(app)
             .withBody(
               aMultipartFileWithParams(
@@ -176,7 +176,7 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       ).thenReturn(successful(caseWithStatusREFERRED))
 
       val result: Result = await(
-        controller(caseWithStatusOPEN).postReferCase("reference", None)(
+        controller(caseWithStatusOPEN).postReferCase("reference")(
           newFakePOSTRequestWithCSRF(app)
             .withBody(aMultipartFileWithParams("note" -> Seq("some-note")))
         )
@@ -201,7 +201,7 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       ).thenReturn(successful(caseWithStatusREFERRED))
 
       val result: Result = await(
-        controller(caseWithStatusOPEN).postReferCase("reference", None)(
+        controller(caseWithStatusOPEN).postReferCase("reference")(
           newFakePOSTRequestWithCSRF(app)
             .withBody(aMultipartFileWithParams("referredTo" -> Seq("Applicant"), "note" -> Seq("some-note")))
         )
@@ -226,7 +226,7 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       ).thenReturn(successful(caseWithStatusREFERRED))
 
       val result: Result = await(
-        controller(caseWithStatusOPEN).postReferCase("reference", None)(
+        controller(caseWithStatusOPEN).postReferCase("reference")(
           newFakePOSTRequestWithCSRF(app)
             .withBody(aMultipartFileWithParams("referredTo" -> Seq("Other"), "note" -> Seq("some-note")))
         )
@@ -252,7 +252,7 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       ).thenReturn(successful(caseWithStatusREFERRED))
 
       val result: Result = await(
-        controller(caseWithStatusOPEN).postReferCase("reference", None)(
+        controller(caseWithStatusOPEN).postReferCase("reference")(
           newFakePOSTRequestWithCSRF(app)
             .withBody(
               aMultipartFileWithParams(
@@ -282,7 +282,7 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       ).thenReturn(successful(caseWithStatusREFERRED))
 
       val result: Result = await(
-        controller(caseWithStatusOPEN).postReferCase("reference", None)(
+        controller(caseWithStatusOPEN).postReferCase("reference")(
           newFakePOSTRequestWithCSRF(app)
             .withBody(aMultipartFileWithParams("referredTo" -> Seq("LAB")))
         )
@@ -297,7 +297,7 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     "return to form on missing file" in {
       val result: Result = await(
         controller(caseWithStatusOPEN)
-          .postReferCase("reference", None)(newFakePOSTRequestWithCSRF(app).withBody(aEmptyMultipartFileWithParams()))
+          .postReferCase("reference")(newFakePOSTRequestWithCSRF(app).withBody(aEmptyMultipartFileWithParams()))
       )
 
       status(result) shouldBe Status.OK
@@ -306,7 +306,7 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
     "return to form on wrong type of file" in {
       val result: Result = await(
-        controller(caseWithStatusOPEN).postReferCase("reference", None)(
+        controller(caseWithStatusOPEN).postReferCase("reference")(
           newFakePOSTRequestWithCSRF(app).withBody(aMultipartFileOfType("audio/mpeg"))
         )
       )
@@ -318,7 +318,7 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     "return to form on file size too large" in {
       val result: Result = await(
         controller(caseWithStatusOPEN)
-          .postReferCase("reference", None)(newFakePOSTRequestWithCSRF(app).withBody(aMultipartFileOfLargeSize))
+          .postReferCase("reference")(newFakePOSTRequestWithCSRF(app).withBody(aMultipartFileOfLargeSize))
       )
 
       status(result) shouldBe Status.OK
@@ -328,7 +328,7 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     "redirect unauthorised when does not have right permissions" in {
       val result: Result = await(
         controller(caseWithStatusNEW, Set.empty)
-          .postReferCase("reference", None)(
+          .postReferCase("reference")(
             newFakePOSTRequestWithCSRF(app)
               .withBody(
                 aMultipartFileWithParams(

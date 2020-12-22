@@ -194,124 +194,124 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     }
   }
 
-  "Liability controller addNote" should {
-    val aCase = Cases.liabilityCaseExample.copy(assignee = Some(Cases.operatorWithPermissions))
+  // "Liability controller addNote" should {
+  //   val aCase = Cases.liabilityCaseExample.copy(assignee = Some(Cases.operatorWithPermissions))
 
-    "add a new note when a case note is provided" in {
-      val aNote = "This is a note"
+  //   "add a new note when a case note is provided" in {
+  //     val aNote = "This is a note"
 
-      when(
-        eventService.addNote(meq(aCase), meq(aNote), meq(Cases.operatorWithPermissions), any[Clock])(any[HeaderCarrier])
-      ) thenReturn Future(event)
+  //     when(
+  //       eventService.addNote(meq(aCase), meq(aNote), meq(Cases.operatorWithPermissions), any[Clock])(any[HeaderCarrier])
+  //     ) thenReturn Future(event)
 
-      mockLiabilityController()
+  //     mockLiabilityController()
 
-      val fakeReq                = newFakePOSTRequestWithCSRF(app, Map("note" -> aNote))
-      val result: Future[Result] = controller(Set(Permission.ADD_NOTE)).addNote(caseReference).apply(fakeReq)
+  //     val fakeReq                = newFakePOSTRequestWithCSRF(app, Map("note" -> aNote))
+  //     val result: Future[Result] = controller(Set(Permission.ADD_NOTE)).addNote(caseReference).apply(fakeReq)
 
-      status(result) shouldBe SEE_OTHER
+  //     status(result) shouldBe SEE_OTHER
 
-      locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/v2/" + caseReference + "/liability")
-    }
+  //     locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/v2/" + caseReference + "/liability")
+  //   }
 
-    "not add a new note when a case note is not provided" in {
-      val aNote = ""
+  //   "not add a new note when a case note is not provided" in {
+  //     val aNote = ""
 
-      when(
-        eventService.addNote(meq(aCase), meq(aNote), meq(Cases.operatorWithPermissions), any[Clock])(any[HeaderCarrier])
-      ) thenReturn Future(event)
+  //     when(
+  //       eventService.addNote(meq(aCase), meq(aNote), meq(Cases.operatorWithPermissions), any[Clock])(any[HeaderCarrier])
+  //     ) thenReturn Future(event)
 
-      mockLiabilityController()
+  //     mockLiabilityController()
 
-      val fakeReq                = newFakePOSTRequestWithCSRF(app, Map("note" -> aNote))
-      val result: Future[Result] = controller(Set(Permission.ADD_NOTE)).addNote(caseReference).apply(fakeReq)
+  //     val fakeReq                = newFakePOSTRequestWithCSRF(app, Map("note" -> aNote))
+  //     val result: Future[Result] = controller(Set(Permission.ADD_NOTE)).addNote(caseReference).apply(fakeReq)
 
-      status(result) shouldBe OK
+  //     status(result) shouldBe OK
 
-      checkLiabilityView(1)
-    }
-  }
+  //     checkLiabilityView(1)
+  //   }
+  // }
 
-  "Liability add keyword" should {
+  // "Liability add keyword" should {
 
-    "redirect back to display liability if form submitted successfully" in {
-      val keyword = "pajamas"
-      when(
-        keywordsService.addKeyword(
-          meq(Cases.liabilityCaseExample),
-          meq(keyword),
-          meq(Cases.operatorWithKeywordsPermissions)
-        )(any[HeaderCarrier])
-      ) thenReturn Future(Cases.liabilityCaseExample)
+  //   "redirect back to display liability if form submitted successfully" in {
+  //     val keyword = "pajamas"
+  //     when(
+  //       keywordsService.addKeyword(
+  //         meq(Cases.liabilityCaseExample),
+  //         meq(keyword),
+  //         meq(Cases.operatorWithKeywordsPermissions)
+  //       )(any[HeaderCarrier])
+  //     ) thenReturn Future(Cases.liabilityCaseExample)
 
-      mockLiabilityController()
+  //     mockLiabilityController()
 
-      val fakeReq                = newFakePOSTRequestWithCSRF(app, Map("keyword" -> keyword))
-      val result: Future[Result] = controller(Set(Permission.KEYWORDS)).addKeyword(caseReference).apply(fakeReq)
+  //     val fakeReq                = newFakePOSTRequestWithCSRF(app, Map("keyword" -> keyword))
+  //     val result: Future[Result] = controller(Set(Permission.KEYWORDS)).addKeyword(caseReference).apply(fakeReq)
 
-      status(result) shouldBe SEE_OTHER
-      locationOf(result) shouldBe Some(
-        "/manage-tariff-classifications/cases/v2/" + caseReference + "/liability#keywords_tab"
-      )
-    }
+  //     status(result) shouldBe SEE_OTHER
+  //     locationOf(result) shouldBe Some(
+  //       "/manage-tariff-classifications/cases/v2/" + caseReference + "/liability#keywords_tab"
+  //     )
+  //   }
 
-    "return to view if form fails to validate" in {
-      val keyword = ""
-      when(
-        keywordsService.addKeyword(
-          meq(Cases.liabilityCaseExample),
-          meq(keyword),
-          meq(Cases.operatorWithKeywordsPermissions)
-        )(any[HeaderCarrier])
-      ) thenReturn Future(Cases.liabilityCaseExample)
+  //   "return to view if form fails to validate" in {
+  //     val keyword = ""
+  //     when(
+  //       keywordsService.addKeyword(
+  //         meq(Cases.liabilityCaseExample),
+  //         meq(keyword),
+  //         meq(Cases.operatorWithKeywordsPermissions)
+  //       )(any[HeaderCarrier])
+  //     ) thenReturn Future(Cases.liabilityCaseExample)
 
-      mockLiabilityController()
+  //     mockLiabilityController()
 
-      val fakeReq                = newFakePOSTRequestWithCSRF(app, Map("keyword" -> keyword))
-      val result: Future[Result] = controller(Set(Permission.KEYWORDS)).addKeyword(caseReference).apply(fakeReq)
+  //     val fakeReq                = newFakePOSTRequestWithCSRF(app, Map("keyword" -> keyword))
+  //     val result: Future[Result] = controller(Set(Permission.KEYWORDS)).addKeyword(caseReference).apply(fakeReq)
 
-      status(result) shouldBe OK
-    }
+  //     status(result) shouldBe OK
+  //   }
 
-    "redirect to unauthorised if the user does not have the right permissions" in {
-      val keyword                = "pajamas"
-      val fakeReq                = newFakePOSTRequestWithCSRF(app, Map("keyword" -> keyword))
-      val result: Future[Result] = controller(Set()).addKeyword(caseReference).apply(fakeReq)
+  //   "redirect to unauthorised if the user does not have the right permissions" in {
+  //     val keyword                = "pajamas"
+  //     val fakeReq                = newFakePOSTRequestWithCSRF(app, Map("keyword" -> keyword))
+  //     val result: Future[Result] = controller(Set()).addKeyword(caseReference).apply(fakeReq)
 
-      status(result)               shouldBe Status.SEE_OTHER
-      redirectLocation(result).get should include("unauthorized")
-    }
+  //     status(result)               shouldBe Status.SEE_OTHER
+  //     redirectLocation(result).get should include("unauthorized")
+  //   }
 
-  }
+  // }
 
-  "Liability remove keyword" should {
+  // "Liability remove keyword" should {
 
-    "remove keyword and return to liability view" in {
-      mockLiabilityController()
+  //   "remove keyword and return to liability view" in {
+  //     mockLiabilityController()
 
-      val keyword = "llamas"
-      val fakeReq = newFakeGETRequestWithCSRF(app)
-      val result: Future[Result] =
-        controller(Set(Permission.KEYWORDS)).removeKeyword(caseReference, keyword).apply(fakeReq)
+  //     val keyword = "llamas"
+  //     val fakeReq = newFakeGETRequestWithCSRF(app)
+  //     val result: Future[Result] =
+  //       controller(Set(Permission.KEYWORDS)).removeKeyword(caseReference, keyword).apply(fakeReq)
 
-      status(result) shouldBe SEE_OTHER
-      locationOf(result) shouldBe Some(
-        "/manage-tariff-classifications/cases/v2/" + caseReference + "/liability#keywords_tab"
-      )
-    }
+  //     status(result) shouldBe SEE_OTHER
+  //     locationOf(result) shouldBe Some(
+  //       "/manage-tariff-classifications/cases/v2/" + caseReference + "/liability#keywords_tab"
+  //     )
+  //   }
 
-    "redirect to unauthorised if the user does not have the right permissions" in {
-      mockLiabilityController()
+  //   "redirect to unauthorised if the user does not have the right permissions" in {
+  //     mockLiabilityController()
 
-      val keyword                = "llamas"
-      val fakeReq                = newFakeGETRequestWithCSRF(app)
-      val result: Future[Result] = controller(Set()).removeKeyword(caseReference, keyword).apply(fakeReq)
+  //     val keyword                = "llamas"
+  //     val fakeReq                = newFakeGETRequestWithCSRF(app)
+  //     val result: Future[Result] = controller(Set()).removeKeyword(caseReference, keyword).apply(fakeReq)
 
-      status(result)               shouldBe SEE_OTHER
-      redirectLocation(result).get should include("unauthorized")
-    }
+  //     status(result)               shouldBe SEE_OTHER
+  //     redirectLocation(result).get should include("unauthorized")
+  //   }
 
-  }
+  // }
 
   "edit Liability" should {
     "return 200 and load the editLiability form" in {
@@ -336,7 +336,7 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
   }
 
   "post Liability details" should {
-    "redirect back to c592_tab if the form has been submitted successfully" in {
+    "redirect back to controller if the form has been submitted successfully" in {
 
       when(casesService.updateCase(any[Case])(any[HeaderCarrier])) thenReturn Future(Cases.aCaseWithCompleteDecision)
 
@@ -361,7 +361,7 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       status(result) shouldBe SEE_OTHER
 
       locationOf(result) shouldBe Some(
-        "/manage-tariff-classifications/cases/v2/" + caseReference + "/liability#c592_tab"
+        "/manage-tariff-classifications/cases/v2/" + caseReference + "/liability"
       )
     }
 

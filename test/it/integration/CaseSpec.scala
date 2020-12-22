@@ -94,41 +94,6 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
     }
   }
 
-  "Case Application Details" should {
-
-    "return status 200" in {
-      // Given
-      givenAuthSuccess()
-      stubFor(
-        get(urlEqualTo("/cases/1"))
-          .willReturn(
-            aResponse()
-              .withStatus(OK)
-              .withBody(CasePayloads.jsonOf(c))
-          )
-      )
-      stubFor(
-        post(urlEqualTo("/file?id="))
-          .willReturn(
-            aResponse()
-              .withStatus(OK)
-              .withBody("[]")
-          )
-      )
-
-      // When
-      val response = await(ws.url(s"$baseUrl/cases/1/item").get())
-
-      // Then
-      response.status shouldBe OK
-      response.body   should include("id=\"application-heading\"")
-    }
-
-    "redirect on auth failure" in {
-      verifyNotAuthorisedFor("cases/1/item")
-    }
-  }
-
   "Case Ruling Details" should {
 
     "return status 200" in {

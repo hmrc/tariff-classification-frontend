@@ -130,20 +130,7 @@ class AttachmentsController @Inject() (
           case Some(c: Case) =>
             casesService
               .addAttachment(c, fileUpload, request.operator)
-              .map(_.application.`type` match {
-                case ApplicationType.ATAR =>
-                  Redirect(
-                    controllers.v2.routes.AtarController
-                      .displayAtar(reference)
-                      .withFragment(Tab.AttachmentsTab.name)
-                  )
-                case ApplicationType.LIABILITY =>
-                  Redirect(
-                    controllers.v2.routes.LiabilityController
-                      .displayLiability(reference)
-                      .withFragment(Tab.AttachmentsTab.name)
-                  )
-              })
+              .map(_ => Redirect(controllers.routes.CaseController.attachmentsDetails(reference)))
           case _ =>
             successful(Ok(views.html.case_not_found(reference)))
         }

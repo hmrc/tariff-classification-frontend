@@ -93,7 +93,7 @@ class RulingController @Inject() (
                   for {
                     update <- casesService.updateCase(mapper.mergeFormIntoCase(c, validForm))
                   } yield Redirect(
-                    v2.routes.AtarController.displayAtar(update.reference).withFragment(Tab.RulingTab.name)
+                    v2.routes.AtarController.displayAtar(update.reference).withFragment(Tab.RULING_TAB.name)
                   )
               )
 
@@ -110,7 +110,7 @@ class RulingController @Inject() (
                     } yield Redirect(
                       v2.routes.LiabilityController
                         .displayLiability(update.reference)
-                        .withFragment(Tab.RulingTab.name)
+                        .withFragment(Tab.RULING_TAB.name)
                     )
                 )
           }

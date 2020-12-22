@@ -136,11 +136,7 @@ class LiabilityController @Inject() (
           updatedCase =>
             casesService
               .updateCase(updatedCase)
-              .map(_ =>
-                Redirect(
-                  v2.routes.LiabilityController.displayLiability(reference).withFragment(Tab.C592Tab.name)
-                )
-              )
+              .map(_ => Redirect(v2.routes.LiabilityController.displayLiability(reference)))
         )
     }
 }

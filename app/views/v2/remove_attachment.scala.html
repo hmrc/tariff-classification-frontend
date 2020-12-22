@@ -43,7 +43,7 @@
 
             <h3 id="remove_question" class="heading-medium mt-0">Are you sure you want to remove @fileName from this case?</h3>
 
-            @helper.form(action = AttachmentsController.confirmRemoveAttachment(c.referenceNumber, fileId, fileName).withFragment(Tab.AttachmentsTab.name), 'id -> "remove-attachment", 'novalidate -> "novalidate") {
+            @helper.form(action = AttachmentsController.confirmRemoveAttachment(c.referenceNumber, fileId, fileName), 'id -> "remove-attachment", 'novalidate -> "novalidate") {
                 @helper.CSRF.formField
 
                 @input_yes_no(form("state"), "remove-attachment")

@@ -20,7 +20,6 @@ import models._
 import play.twirl.api.Html
 import utils.Cases._
 import views.ViewMatchers._
-import views.html.case_details
 import views.html.partials.ruling.ruling_details
 import views.{CaseDetailPage, ViewSpec}
 import controllers.routes.RulingController
@@ -273,52 +272,6 @@ class RulingDetailsViewSpec extends ViewSpec {
         // Then
         doc shouldNot containElementWithID("ruling_commodity_code_expiry_section")
       }
-    }
-
-    "Render Decision details with COMPLETE_CASE permission" in {
-      // Given
-      val caseDetailsView = app.injector.instanceOf[case_details]
-
-      val c = aCase(
-        withStatus(CaseStatus.OPEN),
-        withDecision(
-          bindingCommodityCode         = "commodity code",
-          justification                = "justification",
-          goodsDescription             = "goods description",
-          methodSearch                 = Some("method search"),
-          methodExclusion              = Some("method exclusion"),
-          methodCommercialDenomination = Some("commercial denomination")
-        )
-      )
-
-      val rulingTab = RulingTabViewModel.fromCase(c).copy(bindingCommodityCode = None)
-
-      // When
-      val doc = view(
-        ruling_details(rulingTab, None, Seq.empty)(requestWithPermissions(Permission.COMPLETE_CASE), messages, appConfig)
-      )
-      val doc_case_details = view(
-        caseDetailsView(c, CaseDetailPage.RULING, Html("html"), None)(
-          requestWithPermissions(Permission.COMPLETE_CASE),
-          messages,
-          appConfig
-        )
-      )
-
-      // Then
-      doc                                                            should containElementWithID("ruling_bindingCommodityCodeValue")
-      doc.getElementById("ruling_bindingCommodityCodeValue")         should containText("commodity code")
-      doc                                                            should containElementWithID("ruling_itemDescriptionValue")
-      doc.getElementById("ruling_itemDescriptionValue")              should containText("goods description")
-      doc                                                            should containElementWithID("ruling_justificationValue")
-      doc.getElementById("ruling_justificationValue")                should containText("justification")
-      doc                                                            should containElementWithID("ruling_searchesValue")
-      doc.getElementById("ruling_searchesValue")                     should containText("method search")
-      doc                                                            should containElementWithID("ruling_methodCommercialDenominationValue")
-      doc.getElementById("ruling_methodCommercialDenominationValue") should containText("commercial denomination")
-      doc                                                            should containElementWithID("ruling_exclusionsValue")
-      doc.getElementById("ruling_exclusionsValue")                   should containText("method exclusion")
-      doc_case_details                                               should containElementWithID("change-case-status-button")
     }
 
     "Render Decision details without Complete button for READ_ONLY users" in {
