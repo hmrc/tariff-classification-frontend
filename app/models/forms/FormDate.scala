@@ -113,9 +113,19 @@ object FormDate {
 
 
   def optionalDate(): Mapping[Option[Instant]] = {
-    mapping("day" -> text, "month" -> text, "year" -> text, "explicitEndDate" -> boolean)(OptionalDateForm.apply)(OptionalDateForm.unapply)
-      .verifying(validDateFormatOrEmpty)
-      .transform(formDate2OptionInstant, optionInstant2FormDate)
+
+    val emptyDay = "atar.editRuling.expiryDate.emptyDate.day"
+    val emptyMonth = "atar.editRuling.expiryDate.emptyDate.month"
+    val emptyYear = "atar.editRuling.expiryDate.emptyDate.year"
+
+    mapping(
+    "day"             -> text.verifying(emptyDay, validateDayInDate),
+    "month"           -> text.verifying(emptyMonth, validateMonthInDate),
+    "year"            -> text.verifying(emptyYear, validateYearInDate),
+    "explicitEndDate" -> boolean
+  )(OptionalDateForm.apply)(OptionalDateForm.unapply)
+    .verifying(validDateFormatOrEmpty)
+    .transform(formDate2OptionInstant, optionInstant2FormDate)
   }
 
   case class DateForm(day: String, month: String, year: String)
