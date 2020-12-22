@@ -19,344 +19,319 @@ package controllers
 import java.time.Clock
 
 import controllers.v2.{AtarController, LiabilityController}
-import models.EventType.EventType
-import models.forms.{CommodityCodeConstraints, DecisionForm}
-import models.{Permission, _}
-import org.mockito.ArgumentMatchers.{any, anyString, refEq}
-import org.mockito.BDDMockito._
-import org.mockito.Mockito.verify
+import models.{Case, Event, Operator, Permission}
+import models.forms.ActivityFormData
+import models.request.AuthenticatedCaseRequest
+import org.mockito.ArgumentMatchers.{any, refEq}
+import org.mockito.Mockito._
+import org.scalatest.BeforeAndAfterEach
+import play.api.data.Form
 import play.api.http.Status
+import play.api.mvc.{Results, Result}
 import play.api.test.Helpers._
 import service._
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.Cases
 import utils.Cases._
-import utils.{Cases, Events}
 
-import scala.concurrent.Future.successful
+import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class CaseControllerSpec extends ControllerBaseSpec {
-
-  // private val keywordsService     = mock[KeywordsService]
-  // private val eventService        = mock[EventsService]
-  // private val operator            = Operator(id = "id")
-  // private val event               = mock[Event]
-  // private val atarController      = app.injector.instanceOf[AtarController]
-  // private val liabilityController = app.injector.instanceOf[LiabilityController]
-
-  // private def controller(c: Case) = new CaseController(
-  //   new SuccessfulRequestActions(playBodyParsers, operator, c = c),
-  //   keywordsService,
-  //   eventService,
-  //   mcc,
-  //   liabilityController,
-  //   atarController,
-  //   realAppConfig
-  // )
-
-  // private def controller(c: Case, permission: Set[Permission]) = new CaseController(
-  //   new RequestActionsWithPermissions(playBodyParsers, permission, c = c),
-  //   keywordsService,
-  //   eventService,
-  //   mcc,
-  //   liabilityController,
-  //   atarController,
-  //   realAppConfig
-  // )
-
-  // "Case Index" should {
-  //   "redirect to default tab" when {
-  //     "case is an ATaR" in {
-  //       val c = aCase(withReference("reference"), withBTIApplication)
-
-  //       val result = await(controller(c).get("reference")(fakeRequest))
-
-  //       status(result)     shouldBe Status.SEE_OTHER
-  //       locationOf(result) shouldBe Some(v2.routes.AtarController.displayAtar("reference").url)
-  //     }
-
-  //     "case is a Liability" in {
-  //       val c      = aCase(withReference("reference"), withLiabilityApplication())
-  //       val result = controller(c).get("reference")(fakeRequest)
-
-  //       status(result)     shouldBe Status.SEE_OTHER
-  //       locationOf(result) shouldBe Some(v2.routes.LiabilityController.displayLiability("reference").url)
-  //     }
-  //   }
-  // }
-
-  // "Case Trader" should {
-
-  //   "return 200 OK and HTML content type" in {
-  //     val aCase      = Cases.btiCaseExample
-  //     val attachment = Cases.storedAttachment
-
-  //     given(fileService.getLetterOfAuthority(refEq(aCase))(any[HeaderCarrier])).willReturn(successful(Some(attachment)))
-
-  //     val result = controller(Cases.btiCaseExample).applicantDetails("reference")(fakeRequest)
-
-  //     status(result)      shouldBe Status.OK
-  //     contentType(result) shouldBe Some("text/html")
-  //     charset(result)     shouldBe Some("utf-8")
-  //   }
-  // }
-
-  // "Application Details" should {
-  //   val aCase      = Cases.btiCaseExample
-  //   val attachment = Cases.storedAttachment
-
-  //   "return 200 OK and HTML content type" in {
-  //     given(fileService.getAttachments(refEq(aCase))(any[HeaderCarrier])).willReturn(successful(Seq(attachment)))
-  //     given(fileService.getLetterOfAuthority(refEq(aCase))(any[HeaderCarrier])).willReturn(successful(Some(attachment)))
-
-  //     val result = controller(aCase).itemDetails("reference")(fakeRequest)
-
-  //     status(result)      shouldBe Status.OK
-  //     contentType(result) shouldBe Some("text/html")
-  //     charset(result)     shouldBe Some("utf-8")
-  //   }
-
-  // }
-
-  // "Ruling Details" should {
-
-  //   "return 200 OK and HTML content type" in {
-  //     val aCase      = Cases.btiCaseExample
-  //     val attachment = Cases.storedAttachment
-  //     given(fileService.getAttachments(refEq(aCase))(any[HeaderCarrier])).willReturn(successful(Seq(attachment)))
-  //     given(commodityCodeService.find(anyString())).willReturn(None)
-
-  //     val result = controller(aCase).rulingDetails("reference")(fakeRequest)
-
-  //     status(result)      shouldBe Status.OK
-  //     contentType(result) shouldBe Some("text/html")
-  //     charset(result)     shouldBe Some("utf-8")
-  //   }
-
-  // }
-
-  // "Sample Details" should {
-
-  //   "return 200 OK and HTML content type" in {
-  //     val aCase = Cases.btiCaseExample
-
-  //     given(
-  //       eventService.getFilteredEvents(refEq(aCase.reference), refEq(NoPagination()), any[Option[Set[EventType]]])(
-  //         any[HeaderCarrier]
-  //       )
-  //     ) willReturn successful(Paged.empty[Event])
-
-  //     val result = controller(aCase).sampleDetails(aCase.reference)(newFakeGETRequestWithCSRF(app))
-
-  //     status(result)      shouldBe Status.OK
-  //     contentType(result) shouldBe Some("text/html")
-  //     charset(result)     shouldBe Some("utf-8")
-
-  //     verify(eventService).getFilteredEvents(
-  //       refEq(aCase.reference),
-  //       refEq(NoPagination()),
-  //       refEq(Some(EventType.sampleEvents))
-  //     )(any[HeaderCarrier])
-  //   }
-  // }
-
-  // "Activity Details" should {
-
-  //   "return 200 OK and HTML content type" in {
-  //     val aCase = Cases.btiCaseExample
-
-  //     given(
-  //       eventService.getFilteredEvents(refEq(aCase.reference), refEq(NoPagination()), any[Option[Set[EventType]]])(
-  //         any[HeaderCarrier]
-  //       )
-  //     ) willReturn successful(Paged(Events.events))
-
-  //     given(queueService.getAll) willReturn successful(Seq.empty)
-
-  //     val result = controller(aCase).activityDetails(aCase.reference)(newFakeGETRequestWithCSRF(app))
-
-  //     status(result)      shouldBe Status.OK
-  //     contentType(result) shouldBe Some("text/html")
-  //     charset(result)     shouldBe Some("utf-8")
-
-  //     verify(eventService).getFilteredEvents(
-  //       refEq(aCase.reference),
-  //       refEq(NoPagination()),
-  //       refEq(Some(EventType.values.diff(EventType.sampleEvents)))
-  //     )(any[HeaderCarrier])
-  //   }
-
-  //   "return 200 OK and HTML content type when no Events are present" in {
-  //     val aCase = Cases.btiCaseExample
-
-  //     given(
-  //       eventService.getFilteredEvents(refEq(aCase.reference), refEq(NoPagination()), any[Option[Set[EventType]]])(
-  //         any[HeaderCarrier]
-  //       )
-  //     ) willReturn successful(Paged.empty[Event])
-  //     given(queueService.getAll) willReturn successful(Seq.empty)
-
-  //     val result = controller(aCase).activityDetails(aCase.reference)(newFakeGETRequestWithCSRF(app))
-
-  //     status(result)      shouldBe Status.OK
-  //     contentType(result) shouldBe Some("text/html")
-  //     charset(result)     shouldBe Some("utf-8")
-  //   }
-
-  // }
-
-  // "Activity: Add Note" should {
-  //   val aCase = Cases.btiCaseExample
-
-  //   "add a new note when a case note is provided" in {
-  //     val aNote      = "This is a note"
-  //     val aValidForm = newFakePOSTRequestWithCSRF(app, Map("note" -> aNote))
-  //     given(eventService.addNote(refEq(aCase), refEq(aNote), refEq(operator), any[Clock])(any[HeaderCarrier])) willReturn successful(
-  //       event
-  //     )
-
-  //     val result = await(controller(aCase).addNote(aCase.reference)(aValidForm))
-  //     locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/1/activity")
-  //   }
-
-  //   "displays an error when no case note is provided" in {
-  //     val aValidForm = newFakePOSTRequestWithCSRF(app)
-  //     given(eventService.getEvents(refEq(aCase.reference), refEq(NoPagination()))(any[HeaderCarrier])) willReturn successful(
-  //       Paged.empty[Event]
-  //     )
-  //     given(queueService.getAll) willReturn successful(Seq.empty)
-
-  //     val result = controller(aCase, Set(Permission.ADD_NOTE)).addNote(aCase.reference)(aValidForm)
-  //     status(result)          shouldBe Status.OK
-  //     contentType(result)     shouldBe Some("text/html")
-  //     charset(result)         shouldBe Some("utf-8")
-  //     contentAsString(result) should include("error-summary")
-  //     contentAsString(result) should include("Enter a case note")
-  //   }
-
-  //   "return OK when user has right permissions" in {
-  //     val aCase = Cases.btiCaseExample
-  //     given(eventService.getEvents(refEq(aCase.reference), refEq(NoPagination()))(any[HeaderCarrier])) willReturn successful(
-  //       Paged(Events.events)
-  //     )
-  //     given(queueService.getAll) willReturn successful(Seq.empty)
-
-  //     val result = controller(aCase, Set(Permission.ADD_NOTE)).addNote(aCase.reference)(newFakeGETRequestWithCSRF(app))
-
-  //     status(result) shouldBe Status.OK
-  //   }
-
-  //   "redirect unauthorised when does not have right permissions" in {
-  //     val aCase = Cases.btiCaseExample
-
-  //     val result = controller(aCase, Set.empty).addNote(aCase.reference)(newFakeGETRequestWithCSRF(app))
-
-  //     status(result)               shouldBe Status.SEE_OTHER
-  //     redirectLocation(result).get should include("unauthorized")
-  //   }
-  // }
-
-  // "Keywords Details" should {
-
-  //   "return 200 OK and HTML content type" in {
-  //     val aCase = Cases.btiCaseExample
-  //     given(keywordsService.autoCompleteKeywords).willReturn(successful(Seq()))
-
-  //     val result = controller(aCase).keywordsDetails(aCase.reference)(newFakeGETRequestWithCSRF(app))
-
-  //     status(result)      shouldBe Status.OK
-  //     contentType(result) shouldBe Some("text/html")
-  //     charset(result)     shouldBe Some("utf-8")
-  //   }
-  // }
-
-  // "Keywords: Add keyword" should {
-  //   val aCase = Cases.btiCaseExample
-
-  //   "add a new keyword" in {
-  //     val aKeyword   = "Apples"
-  //     val aValidForm = newFakePOSTRequestWithCSRF(app, Map("keyword" -> aKeyword))
-  //     given(keywordsService.addKeyword(refEq(aCase), refEq("Apples"), refEq(operator))(any[HeaderCarrier]))
-  //       .willReturn(successful(aCase))
-  //     given(keywordsService.autoCompleteKeywords).willReturn(successful(Seq()))
-
-  //     val result = controller(aCase).addKeyword(aCase.reference)(aValidForm)
-  //     status(result)          shouldBe Status.OK
-  //     contentType(result)     shouldBe Some("text/html")
-  //     charset(result)         shouldBe Some("utf-8")
-  //     contentAsString(result) should include("Keywords")
-  //   }
-
-  //   "displays an error when no keyword is provided" in {
-  //     val aValidForm = newFakePOSTRequestWithCSRF(app)
-  //     given(keywordsService.autoCompleteKeywords).willReturn(successful(Seq()))
-
-  //     val result = controller(aCase, Set(Permission.KEYWORDS)).addKeyword(aCase.reference)(aValidForm)
-  //     status(result)          shouldBe Status.OK
-  //     contentType(result)     shouldBe Some("text/html")
-  //     charset(result)         shouldBe Some("utf-8")
-  //     contentAsString(result) should include("error-summary")
-  //     contentAsString(result) should include("Enter a keyword")
-  //   }
-
-  //   "return OK when user has right permissions" in {
-  //     val aKeyword   = "Apples"
-  //     val aValidForm = newFakePOSTRequestWithCSRF(app, Map("keyword" -> aKeyword))
-  //     given(keywordsService.addKeyword(any[Case], any[String], any[Operator])(any[HeaderCarrier]))
-  //       .willReturn(successful(aCase))
-  //     given(keywordsService.autoCompleteKeywords).willReturn(successful(Seq()))
-
-  //     val result = controller(aCase, Set(Permission.KEYWORDS)).addKeyword(aCase.reference)(aValidForm)
-
-  //     status(result) shouldBe Status.OK
-  //   }
-
-  //   "redirect unauthorised when does not have right permissions" in {
-  //     val aValidForm = newFakePOSTRequestWithCSRF(app)
-  //     val result     = controller(aCase, Set.empty).addKeyword(aCase.reference)(aValidForm)
-
-  //     status(result)               shouldBe Status.SEE_OTHER
-  //     redirectLocation(result).get should include("unauthorized")
-  //   }
-  // }
-
-  // "Keywords: Remove keyword" should {
-  //   val aCase    = Cases.btiCaseExample
-  //   val aKeyword = "Apples"
-
-  //   "remove an existing keyword" in {
-  //     given(keywordsService.removeKeyword(refEq(aCase), refEq("Apples"), refEq(operator))(any[HeaderCarrier]))
-  //       .willReturn(successful(aCase))
-
-  //     val result = controller(aCase).removeKeyword(aCase.reference, aKeyword)(newFakeGETRequestWithCSRF(app))
-  //     status(result)          shouldBe Status.OK
-  //     contentType(result)     shouldBe Some("text/html")
-  //     charset(result)         shouldBe Some("utf-8")
-  //     contentAsString(result) should include("Keywords")
-  //   }
-
-  //   "return OK when user has right permissions" in {
-  //     given(keywordsService.removeKeyword(any[Case], any[String], any[Operator])(any[HeaderCarrier]))
-  //       .willReturn(successful(aCase))
-
-  //     val result = controller(aCase, Set(Permission.KEYWORDS))
-  //       .removeKeyword(aCase.reference, aKeyword)(newFakeGETRequestWithCSRF(app))
-
-  //     status(result) shouldBe Status.OK
-  //   }
-
-  //   "redirect unauthorised when does not have right permissions" in {
-  //     val result = controller(aCase, Set.empty).removeKeyword(aCase.reference, aKeyword)(newFakeGETRequestWithCSRF(app))
-
-  //     status(result)               shouldBe Status.SEE_OTHER
-  //     redirectLocation(result).get should include("unauthorized")
-  //   }
-  // }
-
-  // "return a valid country when given a valid country code" in {
-  //   val result: Option[String] = controller(aCase(withReference("withReference"))).getCountryName("IE")
-
-  //   result shouldBe Some("title.irish_republic")
-  // }
+class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
+
+  private val keywordsService     = mock[KeywordsService]
+  private val eventService        = mock[EventsService]
+  private val operator            = Operator(id = "id")
+  private val event               = mock[Event]
+  private val atarController      = mock[AtarController]
+  private val liabilityController = mock[LiabilityController]
+
+  override protected def beforeEach(): Unit =
+    reset(
+      keywordsService,
+      eventService,
+      event,
+      atarController,
+      liabilityController
+    )
+
+  private def controller(c: Case) = new CaseController(
+    new SuccessfulRequestActions(playBodyParsers, operator, c = c),
+    keywordsService,
+    eventService,
+    mcc,
+    liabilityController,
+    atarController,
+    realAppConfig
+  )
+
+  private def controller(c: Case, permission: Set[Permission]) = new CaseController(
+    new RequestActionsWithPermissions(playBodyParsers, permission, c = c),
+    keywordsService,
+    eventService,
+    mcc,
+    liabilityController,
+    atarController,
+    realAppConfig
+  )
+
+  "Case get" should {
+    "redirect to correct page" when {
+      "case is an ATaR" in {
+        val c      = aCase(withReference("reference"), withBTIApplication)
+        val result = await(controller(c).get("reference")(fakeRequest))
+
+        status(result)     shouldBe Status.SEE_OTHER
+        locationOf(result) shouldBe Some(v2.routes.AtarController.displayAtar("reference").url)
+      }
+
+      "case is a Liability" in {
+        val c      = aCase(withReference("reference"), withLiabilityApplication())
+        val result = controller(c).get("reference")(fakeRequest)
+
+        status(result)     shouldBe Status.SEE_OTHER
+        locationOf(result) shouldBe Some(v2.routes.LiabilityController.displayLiability("reference").url)
+      }
+    }
+  }
+
+  "Case sampleDetails" should {
+    "redirect to correct page" when {
+      "case is an ATaR" in {
+        val c      = aCase(withReference("reference"), withBTIApplication)
+        val result = await(controller(c).sampleDetails("reference")(fakeRequest))
+
+        status(result) shouldBe Status.SEE_OTHER
+        locationOf(result) shouldBe Some(
+          v2.routes.AtarController.displayAtar("reference").withFragment(Tab.SAMPLE_TAB.name).path
+        )
+      }
+
+      "case is a Liability" in {
+        val c      = aCase(withReference("reference"), withLiabilityApplication())
+        val result = await(controller(c).sampleDetails("reference")(fakeRequest))
+
+        status(result) shouldBe Status.SEE_OTHER
+        locationOf(result) shouldBe Some(
+          v2.routes.LiabilityController.displayLiability("reference").withFragment(Tab.SAMPLE_TAB.name).path
+        )
+      }
+    }
+  }
+
+  "Case rulingDetails" should {
+    "redirect to correct page" when {
+      "case is an ATaR" in {
+        val c      = aCase(withReference("reference"), withBTIApplication)
+        val result = await(controller(c).rulingDetails("reference")(fakeRequest))
+
+        status(result) shouldBe Status.SEE_OTHER
+        locationOf(result) shouldBe Some(
+          v2.routes.AtarController.displayAtar("reference").withFragment(Tab.RULING_TAB.name).path
+        )
+      }
+
+      "case is a Liability" in {
+        val c      = aCase(withReference("reference"), withLiabilityApplication())
+        val result = await(controller(c).rulingDetails("reference")(fakeRequest))
+
+        status(result) shouldBe Status.SEE_OTHER
+        locationOf(result) shouldBe Some(
+          v2.routes.LiabilityController.displayLiability("reference").withFragment(Tab.RULING_TAB.name).path
+        )
+      }
+    }
+  }
+
+  "Case activityDetails" should {
+    "redirect to correct page" when {
+      "case is an ATaR" in {
+        val c      = aCase(withReference("reference"), withBTIApplication)
+        val result = await(controller(c).activityDetails("reference")(fakeRequest))
+
+        status(result) shouldBe Status.SEE_OTHER
+        locationOf(result) shouldBe Some(
+          v2.routes.AtarController.displayAtar("reference").withFragment(Tab.ACTIVITY_TAB.name).path
+        )
+      }
+
+      "case is a Liability" in {
+        val c      = aCase(withReference("reference"), withLiabilityApplication())
+        val result = await(controller(c).activityDetails("reference")(fakeRequest))
+
+        status(result) shouldBe Status.SEE_OTHER
+        locationOf(result) shouldBe Some(
+          v2.routes.LiabilityController.displayLiability("reference").withFragment(Tab.ACTIVITY_TAB.name).path
+        )
+      }
+    }
+  }
+
+  "Case keywordsDetails" should {
+    "redirect to correct page" when {
+      "case is an ATaR" in {
+        val c      = aCase(withReference("reference"), withBTIApplication)
+        val result = await(controller(c).keywordsDetails("reference")(fakeRequest))
+
+        status(result) shouldBe Status.SEE_OTHER
+        locationOf(result) shouldBe Some(
+          v2.routes.AtarController.displayAtar("reference").withFragment(Tab.KEYWORDS_TAB.name).path
+        )
+      }
+
+      "case is a Liability" in {
+        val c      = aCase(withReference("reference"), withLiabilityApplication())
+        val result = await(controller(c).keywordsDetails("reference")(fakeRequest))
+
+        status(result) shouldBe Status.SEE_OTHER
+        locationOf(result) shouldBe Some(
+          v2.routes.LiabilityController.displayLiability("reference").withFragment(Tab.KEYWORDS_TAB.name).path
+        )
+      }
+    }
+  }
+
+  "Case attachmentsDetails" should {
+    "redirect to correct page" when {
+      "case is an ATaR" in {
+        val c      = aCase(withReference("reference"), withBTIApplication)
+        val result = await(controller(c).attachmentsDetails("reference")(fakeRequest))
+
+        status(result) shouldBe Status.SEE_OTHER
+        locationOf(result) shouldBe Some(
+          v2.routes.AtarController.displayAtar("reference").withFragment(Tab.ATTACHMENTS_TAB.name).path
+        )
+      }
+
+      "case is a Liability" in {
+        val c      = aCase(withReference("reference"), withLiabilityApplication())
+        val result = await(controller(c).attachmentsDetails("reference")(fakeRequest))
+
+        status(result) shouldBe Status.SEE_OTHER
+        locationOf(result) shouldBe Some(
+          v2.routes.LiabilityController.displayLiability("reference").withFragment(Tab.ATTACHMENTS_TAB.name).path
+        )
+      }
+    }
+  }
+
+  "Case addNote" should {
+    val aCase = Cases.liabilityCaseExample.copy(assignee = Some(Cases.operatorWithPermissions))
+
+    "add a new note when a case note is provided" in {
+      val aNote = "This is a note"
+
+      when(
+        eventService.addNote(refEq(aCase), refEq(aNote), any[Operator], any[Clock])(
+          any[HeaderCarrier]
+        )
+      ) thenReturn Future(event)
+
+      val fakeReq                = newFakePOSTRequestWithCSRF(app, Map("note" -> aNote))
+      val result: Future[Result] = controller(aCase, Set(Permission.ADD_NOTE)).addNote(aCase.reference)(fakeReq)
+
+      status(result)     shouldBe SEE_OTHER
+      locationOf(result) shouldBe Some(routes.CaseController.activityDetails(aCase.reference).path)
+    }
+
+    "not add a new note when a case note is not provided" in {
+      val aNote   = ""
+      val fakeReq = newFakePOSTRequestWithCSRF(app, Map("note" -> aNote))
+
+      when(
+        liabilityController.renderView(any[Form[ActivityFormData]], any[Form[String]], any[Form[String]])(
+          any[AuthenticatedCaseRequest[_]]
+        )
+      ) thenReturn Future.successful(Results.Ok("error"))
+
+      val result: Future[Result] = controller(aCase, Set(Permission.ADD_NOTE)).addNote(aCase.reference)(fakeReq)
+
+      status(result)          shouldBe OK
+      contentAsString(result) should include("error")
+
+      verifyZeroInteractions(eventService)
+    }
+
+    "redirect to unauthorised if the user does not have the right permissions" in {
+      val aNote                  = "This is a note"
+      val fakeReq                = newFakePOSTRequestWithCSRF(app, Map("note" -> aNote))
+      val result: Future[Result] = controller(aCase, Set()).addNote(aCase.reference)(fakeReq)
+      status(result)               shouldBe Status.SEE_OTHER
+      redirectLocation(result).get should include("unauthorized")
+    }
+  }
+
+  "Case addKeyword" should {
+    val aCase = Cases.liabilityCaseExample.copy(assignee = Some(Cases.operatorWithKeywordsPermissions))
+
+    "redirect back to display case if form submitted successfully" in {
+      val keyword = "pajamas"
+
+      when(keywordsService.addKeyword(refEq(aCase), refEq(keyword), any[Operator])(any[HeaderCarrier])) thenReturn Future(
+        aCase
+      )
+
+      val fakeReq = newFakePOSTRequestWithCSRF(app, Map("keyword" -> keyword))
+      val result: Future[Result] =
+        controller(aCase, Set(Permission.KEYWORDS)).addKeyword(aCase.reference)(fakeReq)
+
+      status(result)     shouldBe SEE_OTHER
+      locationOf(result) shouldBe Some(routes.CaseController.keywordsDetails(aCase.reference).path)
+    }
+
+    "return to view if form fails to validate" in {
+      val keyword = ""
+      val fakeReq = newFakePOSTRequestWithCSRF(app, Map("keyword" -> keyword))
+
+      when(
+        liabilityController.renderView(any[Form[ActivityFormData]], any[Form[String]], any[Form[String]])(
+          any[AuthenticatedCaseRequest[_]]
+        )
+      ) thenReturn Future.successful(Results.Ok("error"))
+
+      val result: Future[Result] =
+        controller(aCase, Set(Permission.KEYWORDS)).addKeyword(aCase.reference)(fakeReq)
+
+      status(result)          shouldBe OK
+      contentAsString(result) should include("error")
+
+      verifyZeroInteractions(keywordsService)
+    }
+
+    "redirect to unauthorised if the user does not have the right permissions" in {
+      val keyword                = "pajamas"
+      val fakeReq                = newFakePOSTRequestWithCSRF(app, Map("keyword" -> keyword))
+      val result: Future[Result] = controller(aCase, Set()).addKeyword(aCase.reference)(fakeReq)
+      status(result)               shouldBe Status.SEE_OTHER
+      redirectLocation(result).get should include("unauthorized")
+    }
+  }
+
+  "Case removeKeyword" should {
+    val aCase = Cases.liabilityCaseExample.copy(assignee = Some(Cases.operatorWithKeywordsPermissions))
+
+    "remove keyword and return to case view" in {
+      val keyword = "llamas"
+      val fakeReq = newFakeGETRequestWithCSRF(app)
+
+      when(keywordsService.removeKeyword(refEq(aCase), refEq(keyword), any[Operator])(any[HeaderCarrier])) thenReturn Future(
+        aCase
+      )
+
+      val result: Future[Result] =
+        controller(aCase, Set(Permission.KEYWORDS)).removeKeyword(aCase.reference, keyword)(fakeReq)
+
+      status(result)     shouldBe SEE_OTHER
+      locationOf(result) shouldBe Some(routes.CaseController.keywordsDetails(aCase.reference).path)
+    }
+
+    "redirect to unauthorised if the user does not have the right permissions" in {
+      val keyword                = "llamas"
+      val fakeReq                = newFakeGETRequestWithCSRF(app)
+      val result: Future[Result] = controller(aCase, Set()).removeKeyword(aCase.reference, keyword)(fakeReq)
+      status(result)               shouldBe SEE_OTHER
+      redirectLocation(result).get should include("unauthorized")
+    }
+  }
 
 }

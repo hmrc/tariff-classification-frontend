@@ -39,7 +39,8 @@ class CaseController @Inject() (
   liabilityController: LiabilityController,
   atarController: AtarController,
   implicit val appConfig: AppConfig
-)(implicit ec: ExecutionContext) extends FrontendController(mcc)
+)(implicit ec: ExecutionContext)
+    extends FrontendController(mcc)
     with I18nSupport {
 
   def get(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)) {
@@ -101,46 +102,46 @@ class CaseController @Inject() (
     }
 
   def addNote(reference: String): Action[AnyContent] =
-    (verify.authenticated andThen
-      verify.casePermissions(reference) andThen verify.mustHave(Permission.ADD_NOTE)).async { implicit request =>
-      def onError: Form[ActivityFormData] => Future[Result] = errorForm => {
-        request.`case`.application.`type` match {
-          case ApplicationType.ATAR =>
-            atarController.renderView(activityForm = errorForm)
-          case ApplicationType.LIABILITY =>
-            liabilityController.renderView(activityForm = errorForm)
+    (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.ADD_NOTE))
+      .async { implicit request =>
+        def onError: Form[ActivityFormData] => Future[Result] = errorForm => {
+          request.`case`.application.`type` match {
+            case ApplicationType.ATAR =>
+              atarController.renderView(activityForm = errorForm)
+            case ApplicationType.LIABILITY =>
+              liabilityController.renderView(activityForm = errorForm)
+          }
         }
-      }
 
-      def onSuccess: ActivityFormData => Future[Result] = validForm => {
-        eventsService
-          .addNote(request.`case`, validForm.note, request.operator)
-          .map(_ => Redirect(routes.CaseController.activityDetails(reference)))
-      }
+        def onSuccess: ActivityFormData => Future[Result] = validForm => {
+          eventsService
+            .addNote(request.`case`, validForm.note, request.operator)
+            .map(_ => Redirect(routes.CaseController.activityDetails(reference)))
+        }
 
-      ActivityForm.form.bindFromRequest.fold(onError, onSuccess)
-    }
+        ActivityForm.form.bindFromRequest.fold(onError, onSuccess)
+      }
 
   def addKeyword(reference: String): Action[AnyContent] =
-    (verify.authenticated andThen
-      verify.casePermissions(reference) andThen verify.mustHave(Permission.KEYWORDS)).async { implicit request =>
-      def onError: Form[String] => Future[Result] = (errorForm: Form[String]) => {
-        request.`case`.application.`type` match {
-          case ApplicationType.ATAR =>
-            atarController.renderView(keywordForm = errorForm)
-          case ApplicationType.LIABILITY =>
-            liabilityController.renderView(keywordForm = errorForm)
+    (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.KEYWORDS))
+      .async { implicit request =>
+        def onError: Form[String] => Future[Result] = (errorForm: Form[String]) => {
+          request.`case`.application.`type` match {
+            case ApplicationType.ATAR =>
+              atarController.renderView(keywordForm = errorForm)
+            case ApplicationType.LIABILITY =>
+              liabilityController.renderView(keywordForm = errorForm)
+          }
         }
-      }
 
-      def onSuccess: String => Future[Result] = validForm => {
-        keywordsService
-          .addKeyword(request.`case`, validForm, request.operator)
-          .map(_ => Redirect(routes.CaseController.keywordsDetails(reference)))
-      }
+        def onSuccess: String => Future[Result] = validForm => {
+          keywordsService
+            .addKeyword(request.`case`, validForm, request.operator)
+            .map(_ => Redirect(routes.CaseController.keywordsDetails(reference)))
+        }
 
-      KeywordForm.form.bindFromRequest.fold(onError, onSuccess)
-    }
+        KeywordForm.form.bindFromRequest.fold(onError, onSuccess)
+      }
 
   def removeKeyword(reference: String, keyword: String): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.KEYWORDS))
