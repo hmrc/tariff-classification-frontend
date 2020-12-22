@@ -53,7 +53,7 @@ class MiscellaneousFormSpec extends ModelsBaseSpec {
 
       form.hasErrors shouldBe false
       form.get shouldBe MiscApplication(
-        contact = Contact("", "example", None),
+        contact = Contact("example", "", None),
         offline = false,
         name = "",
         contactName = Some("example"),
@@ -65,8 +65,6 @@ class MiscellaneousFormSpec extends ModelsBaseSpec {
 
       )
     }
-
-
 
     "Bind empty description" in {
       val form = MiscellaneousForm.newMiscForm.bindFromRequest(
@@ -102,7 +100,7 @@ class MiscellaneousFormSpec extends ModelsBaseSpec {
     "populate a correct form" in {
       val form =MiscellaneousForm.newMiscForm.fill(
         MiscApplication(
-          contact = Contact("", "example", None),
+          contact = Contact("example", "", None),
           offline = false,
           name = "",
           contactName = Some("example"),

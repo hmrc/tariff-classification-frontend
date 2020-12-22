@@ -29,14 +29,14 @@
 @if(cases.caseType == ApplicationType.LIABILITY) {
     <div class="grid-row">
         <div class="column-full">
-            @create_case_button("mb-3", "liability")
+            @create_case_button("mb-3", ApplicationType.LIABILITY.prettyName.toLowerCase())
         </div>
     </div>
 }
 @if(cases.caseType == ApplicationType.CORRESPONDENCE) {
 <div class="grid-row">
     <div class="column-full">
-        @create_case_button("mb-3", "correspondence")
+        @create_case_button("mb-3", ApplicationType.CORRESPONDENCE.prettyName.toLowerCase())
     </div>
 </div>
 }
@@ -44,7 +44,7 @@
 @if(cases.caseType == ApplicationType.MISCELLANEOUS) {
 <div class="grid-row">
     <div class="column-full">
-        @create_case_button("mb-3", "miscellaneous")
+        @create_case_button("mb-3", ApplicationType.MISCELLANEOUS.prettyName.toLowerCase())
     </div>
 </div>
 }

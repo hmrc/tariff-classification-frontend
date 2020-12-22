@@ -18,14 +18,14 @@
 @import models.{Case, CaseStatus}
 @import models.request.AuthenticatedRequest
 @import models.Permission
-@(clazz: String = "", caseType:String = "liability" )(implicit request: AuthenticatedRequest[_], messages: Messages)
+@(clazz: String = "", caseType: String = ApplicationType.LIABILITY.name)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 
 @if(request.hasPermission(Permission.CREATE_CASES)) {
- @if(caseType=="liability"){
+ @if(caseType==ApplicationType.LIABILITY.prettyName.toLowerCase()){
  <a tabindex="300" role="button" class="button button-gray @clazz" id="create_@{caseType}-button"
     href="@CreateLiabilityController.get()">
-  }else if(caseType=="correspondence"){
+  }else if(caseType==ApplicationType.CORRESPONDENCE.prettyName.toLowerCase()){
   <a tabindex="300" role="button" class="button button-gray @clazz" id="create_@{caseType}-button"
      href="@CreateCorrespondenceController.get()">
   }else{

@@ -35,20 +35,16 @@
 
     @error_summary(form.errors)
 
-    @if(!c.application.isMisc) {
+    @if(c.application.isMisc) {
         @defining(CaseHeaderViewModel.fromCase(c)) { caseHeader =>
-            @case_heading(caseHeader, headingText = Some(messages("release_case.header", caseHeader.goodsName)))
-        }
+            @case_heading(caseHeader, headingText = Some(messages("choose.team.misc", caseHeader.goodsName)))}
     } else {
-        @defining(CaseHeaderViewModel.fromCase(c)) { caseHeader =>
-            @case_heading(caseHeader, headingText = Some(messages("choose.team.misc", caseHeader.goodsName)))
-        }
+            @defining(CaseHeaderViewModel.fromCase(c)) { caseHeader =>
+                @case_heading(caseHeader, headingText = Some(messages("release_case.header", caseHeader.goodsName)))}
     }
-
 
     <div class="grid-row">
         <div class="column-full">
-
             @select_queue_form(
                 form("queue"),
                 queues,
@@ -56,7 +52,6 @@
                 ReleaseCaseController.releaseCaseToQueue(c.reference, activeTab),
                 CancelAction.cancelHref(activeTab, c.reference).url
             )
-
         </div>
     </div>
 }

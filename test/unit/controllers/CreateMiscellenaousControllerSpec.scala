@@ -118,7 +118,6 @@ class CreateMiscellenaousControllerSpec extends ControllerBaseSpec with BeforeAn
 
     }
 
-
     "display no results found when a queue is not found GET" in {
       given(casesService.createCase(any[MiscApplication], any[Operator])(any[HeaderCarrier]))
         .willReturn(successful(Cases.miscCaseExample.copy(queueId = Some("queue"))))

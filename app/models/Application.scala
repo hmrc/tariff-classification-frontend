@@ -57,7 +57,7 @@ sealed trait Application {
       case ApplicationType.ATAR      => Some(asATAR.holder.businessName)
       case ApplicationType.LIABILITY => Some(asLiabilityOrder.traderName)
       case ApplicationType.CORRESPONDENCE => asCorrespondence.correspondenceStarter
-      case ApplicationType.MISCELLANEOUS => asMisc.contactName
+      case ApplicationType.MISCELLANEOUS => Some(asMisc.caseType.toString())
       case _                         => None
     }
 
