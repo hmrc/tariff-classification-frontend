@@ -15,7 +15,7 @@
  *@
 
 @import config.AppConfig
-@import models.{BTIApplication, Case, Queue}
+@import models.{BTIApplication, MiscApplication, Case, Queue}
 @import views.html.forms.select_queue_form
 @import views.html.includes.main
 @import controllers.routes.ReleaseCaseController
@@ -35,9 +35,16 @@
 
     @error_summary(form.errors)
 
-    @defining(CaseHeaderViewModel.fromCase(c)) { caseHeader =>
-        @case_heading(caseHeader, headingText = Some(messages("release_case.header", caseHeader.goodsName)))
+    @if(!c.application.isMisc) {
+        @defining(CaseHeaderViewModel.fromCase(c)) { caseHeader =>
+            @case_heading(caseHeader, headingText = Some(messages("release_case.header", caseHeader.goodsName)))
+        }
+    } else {
+        @defining(CaseHeaderViewModel.fromCase(c)) { caseHeader =>
+            @case_heading(caseHeader, headingText = Some(messages("choose.team.misc", caseHeader.goodsName)))
+        }
     }
+
 
     <div class="grid-row">
         <div class="column-full">

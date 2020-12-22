@@ -39,10 +39,13 @@
 
 <div class="govuk-panel govuk-panel--confirmation">
  @if(c.application.getType == "Correspondence" || c.application.getType == "Misc" ){
- @if(!queueName.isEmpty){
+ @if(!queueName.isEmpty && c.application.getType == "Correspondence") {
     <h1 class="heading-xlarge mt-0">@messages("release_case.released_dynamic_message", c.application.getType, queueName)</h1>
- }else{
+ }else if(queueName.isEmpty){
    <h1 class="heading-xlarge mt-0">Correspondence case created</h1>
+ }
+ @if(!queueName.isEmpty && c.application.getType == "Misc") {
+   <h1 class="heading-xlarge mt-0">@messages("choose_team_misc_case.released_dynamic_message", c.application.getType, queueName)</h1>
  }
  }else{
    <h2 class="heading-large mt-0">This case has been released to the @queueName queue for classification</h2>

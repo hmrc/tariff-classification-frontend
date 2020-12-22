@@ -408,6 +408,7 @@ page.title.reject.case=Change case status to: Rejected
 page.title.case.rejected=Case rejected
 page.title.release.case=Release this case for classification
 page.title.case.released=Case released
+page.title.create.case=Create this case for a team
 page.title.take.ownership=This case is unassigned. Do you want to take ownership?
 page.title.move.case=Move this case back to a queue
 page.title.case.moved=Cased moved
@@ -984,6 +985,7 @@ misc.create_misc.radio.type-other=Other
 misc.create_misc.confirm-button=Create case
 
 choose.team.misc=Choose a team for case {0}
+choose_team_misc_case.released_dynamic_message = Miscellaneous case created for {1} team
 
 
 
