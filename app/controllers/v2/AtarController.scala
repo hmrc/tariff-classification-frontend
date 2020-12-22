@@ -66,12 +66,18 @@ class AtarController @Inject() (
     val rulingForm     = decisionForm.bindFrom(rulingTab.decision)
     val appealTab      = AppealTabViewModel.fromCase(atarCase)
 
+    val sampleTabViewModel      = getSampleTab(atarCase)
+    val attachmentsTabViewModel = getAttachmentTab(atarCase)
+    val activityTabViewModel    = getActivityTab(atarCase)
+    val keywordsTabViewModel    = getKeywordsTab(atarCase)
+    val storedAttachments       = fileService.getAttachments(atarCase)
+
     for {
-      sampleTab      <- getSampleTab(atarCase)
-      attachmentsTab <- getAttachmentTab(atarCase)
-      activityTab    <- getActivityTab(atarCase)
-      keywordsTab    <- getKeywordsTab(atarCase)
-      attachments    <- fileService.getAttachments(atarCase)
+      sampleTab      <- sampleTabViewModel
+      attachmentsTab <- attachmentsTabViewModel
+      activityTab    <- activityTabViewModel
+      keywordsTab    <- keywordsTabViewModel
+      attachments    <- storedAttachments
     } yield Ok(
       atarView(
         atarViewModel,

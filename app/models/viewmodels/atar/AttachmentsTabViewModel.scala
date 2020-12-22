@@ -19,6 +19,7 @@ package viewmodels.atar
 
 case class AttachmentsTabViewModel(
   caseReference: String,
+  caseContact: String,
   attachmentsFromApplicant: Seq[StoredAttachment],
   attachmentsFromClassification: Seq[StoredAttachment]
 ) {
@@ -31,6 +32,7 @@ object AttachmentsTabViewModel {
 
     AttachmentsTabViewModel(
       caseReference = cse.reference,
+      caseContact = cse.application.contact.name,
       attachmentsFromApplicant = fromApplicant,
       attachmentsFromClassification = fromClassification
     )

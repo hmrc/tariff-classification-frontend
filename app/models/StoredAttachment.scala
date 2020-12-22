@@ -17,7 +17,6 @@
 package models
 
 import java.time.Instant
-
 import models.response.FileMetadata
 import models.response.ScanStatus.ScanStatus
 import play.twirl.api.Html
@@ -32,7 +31,8 @@ case class StoredAttachment(
   mimeType: String,
   scanStatus: Option[ScanStatus],
   timestamp: Instant,
-  description: Option[String]
+  description: Option[String],
+  shouldPublishToRulings: Boolean
 ) {
 
   def isImage: Boolean =
@@ -76,7 +76,8 @@ object StoredAttachment {
       fileName    = metadata.fileName,
       mimeType    = metadata.mimeType,
       scanStatus  = metadata.scanStatus,
-      description = attachment.description
+      description = attachment.description,
+      shouldPublishToRulings = attachment.shouldPublishToRulings
     )
   }
 }

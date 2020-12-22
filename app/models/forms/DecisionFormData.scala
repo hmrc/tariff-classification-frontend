@@ -57,7 +57,7 @@ class DecisionForm @Inject() (commodityCodeConstraints: CommodityCodeConstraints
         "expiryDate"                   -> FormDate.optionalDate(),
         "explicitEndDate"              -> boolean
       )(DecisionFormData.apply)(DecisionFormData.unapply).verifying("atar.editRuling.expiryDate.emptyDate",
-        formData => if(formData.explicitEndDate) formData.expiryDate.isDefined else true
+        formData => if(formData.explicitEndDate)formData.expiryDate.isDefined else true
       )
     )
   }

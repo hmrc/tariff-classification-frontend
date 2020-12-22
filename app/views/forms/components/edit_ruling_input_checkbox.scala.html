@@ -27,10 +27,10 @@
     <fieldset class="govuk-fieldset" aria-describedby="expiry-date-hint">
         <div class="govuk-checkboxes" data-module="govuk-checkboxes">
             @input_checkbox(
-            field = formData("explicitEndDate"),
+            field = formData("expiryDate.explicitEndDate"),
             label =  "Specify expiry date",
             data_target = Some("conditional-expiry-date"),
-            value = formData("explicitEndDate").value
+            value = formData("expiryDate.explicitEndDate").value
             )
             <div class="js-hidden" id="conditional-expiry-date">
                 <div class="govuk-form-group">
@@ -42,8 +42,7 @@
                     hint = Some("For example, 12 11 2021"),
                     fieldsetId = Some("expiryDate"),
                     formGroupClass = Some("govuk-checkboxes__conditional"),
-                    legend=""
-                    )
+                    legend="")
                 </div>
             </div>
         </div>

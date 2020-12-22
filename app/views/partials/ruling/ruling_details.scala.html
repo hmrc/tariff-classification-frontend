@@ -24,6 +24,7 @@
 @import views.html.components.edit_ruling_button
 @import views.html.partials.ruling._
 @import views.html.partials.{attachments_list, tab_heading}
+
 @(ruling: RulingTabViewModel, decisionForm: Option[Form[DecisionFormData]], files: Seq[StoredAttachment], startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @tab_heading("ruling", messages("case.menu.ruling-advance"))
@@ -46,16 +47,16 @@
             <span id="application_submittedDateValue">@{Dates.format(ruling.caseCreatedDate)}</span>
         </dd>
     </div>
-    @ruling.suggestedCommodityCode.map { suggestedCommodityCode =>
-        <div class="grid-row">
-            <dt id="application_envisagedCommodityCode" class="cya-question">
-                    @messages("case.application.suggested-commodity-code")
-            </dt>
-            <dd class="cya-answer">
+    <div class="grid-row">
+        <dt id="application_envisagedCommodityCode" class="cya-question">
+            @messages("case.application.suggested-commodity-code")
+        </dt>
+        <dd class="cya-answer">
+            @ruling.suggestedCommodityCode.map { suggestedCommodityCode =>
                 <span id="envisagedCommodityCodeValue">@suggestedCommodityCode</span>
-            </dd>
-        </div>
-    }
+            }
+        </dd>
+    </div>
     <div class="grid-row">
         <dt id="application_goodDescription" class="cya-question">
             @messages("case.application.ruling-tab-suggested-goods-description")
@@ -69,10 +70,10 @@
 
 <div class="grid-row">
     <div class="column-full">
-            <h3 class="heading-medium">@messages("case.menu.ruling-published-information")</h3>
-            @if(ruling.bindingCommodityCode.flatMap(_.expiry).isDefined) {
-                @ruling_commodity_code_expiry_section_warning_message(ruling,  clazz = "mb-3")
-            }
+        <h3 class="heading-medium">@messages("case.menu.ruling-published-information")</h3>
+        @if(ruling.bindingCommodityCode.flatMap(_.expiry).isDefined) {
+            @ruling_commodity_code_expiry_section_warning_message(ruling,  clazz = "mb-3")
+        }
     </div>
 </div>
 
@@ -153,6 +154,14 @@
 }.getOrElse {
     <span id="no-ruling-information">@messages("case.decision.empty")</span>
 }
+
+<h3 class="heading-medium">@messages("case.decision.attachments.ruling")</h3>
+
+@attachments_list(
+    "attachments",
+    files.filter(_.shouldPublishToRulings),
+    startAtTabIndex = Some(startAtTabIndex+2)
+)
 
 @ruling_explanation(ruling.decision,Some(startAtTabIndex+50))
 
