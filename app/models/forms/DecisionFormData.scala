@@ -109,10 +109,14 @@ class DecisionForm @Inject() (commodityCodeConstraints: CommodityCodeConstraints
   def liabilityCompleteForm(existingDecision: Decision = Decision()): Form[Decision] =
     Form[Decision](
       mapping(
-        "bindingCommodityCode" -> text.verifying(customNonEmpty("Enter a commodity code")).verifying(
-          commodityCodeConstraints.commodityCodeLengthValid,
-          commodityCodeConstraints.commodityCodeNumbersValid,
-          commodityCodeConstraints.commodityCodeEvenDigitsValid),
+        "bindingCommodityCode" -> text.verifying(
+          StopOnFirstFail(
+            commodityCodeConstraints.commodityCodeNonEmpty,
+            commodityCodeConstraints.commodityCodeLengthValid,
+            commodityCodeConstraints.commodityCodeNumbersValid,
+            commodityCodeConstraints.commodityCodeEvenDigitsValid
+          )
+        ),
         "goodsDescription"     -> text.verifying(customNonEmpty("Enter a goods description")),
         "methodSearch"         -> text.verifying(customNonEmpty("Enter the searches performed")),
         "justification"        -> text.verifying(customNonEmpty("Enter the justification")),

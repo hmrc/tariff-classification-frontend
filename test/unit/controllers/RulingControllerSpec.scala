@@ -168,6 +168,8 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
     }
 
     "load edit ruling page when ruling tab has missing fields that are required to complete a case" in {
+      given(commodityCodeConstraints.commodityCodeNonEmpty)
+        .willReturn(Constraint[String]("error")(_ => Valid))
       given(commodityCodeConstraints.commodityCodeLengthValid)
         .willReturn(Constraint[String]("error")(_ => Valid))
       given(commodityCodeConstraints.commodityCodeNumbersValid)
@@ -181,6 +183,8 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
     }
 
     "load edit C592 page when C592 tab has missing fields that are required to complete a case" in {
+      given(commodityCodeConstraints.commodityCodeNonEmpty)
+        .willReturn(Constraint[String]("error")(_ => Valid))
       given(commodityCodeConstraints.commodityCodeLengthValid)
         .willReturn(Constraint[String]("error")(_ => Valid))
       given(commodityCodeConstraints.commodityCodeNumbersValid)

@@ -37,14 +37,14 @@
 
 @main(bodyClasses = None, customTitle = Some(messages("case.liability.edit.title")), customPrimaryNavTab = MyCasesTab) {
 
+    @error_summary(form.errors)
+
     @case_heading(CaseHeaderViewModel.fromCase(c))
 
     <h2 id="liability-details-edit" class="heading-large">@messages("case.v2.liability.c592.edit_details_title")</h2>
 
     @defining(c.application.asLiabilityOrder) { liability: LiabilityOrder =>
         <div class="form-group">
-
-            @error_summary(form.errors)
 
             @helper.form(action = LiabilityController.postLiabilityDetails(c.reference), 'class -> "form" , 'id -> "liability-details-edit-form", 'novalidate -> "novalidate") {
 
@@ -66,7 +66,8 @@
                     dateField = form("entryDate"),
                     fieldsetId = Some("entryDate"),
                     hint = Some(messages("case.v2.liability.c592.details_edit.date_hint")),
-                    legend = messages("case.v2.liability.c592.details_edit.date_p")
+                    legend = messages("case.v2.liability.c592.details_edit.date_p"),
+                    formControlUnBold = true
                 )
 
                 @input_text(
@@ -88,7 +89,8 @@
                     dateField = form("dateOfReceipt"),
                     fieldsetId = Some("dateOfReceipt"),
                     hint = Some(messages("case.v2.liability.c592.details_edit.date_of_receipt_hint")),
-                    legend = messages("case.v2.liability.c592.details_edit.date_of_receipt")
+                    legend = messages("case.v2.liability.c592.details_edit.date_of_receipt"),
+                    formControlUnBold = true
                 )
 
                 <h3 class="heading-medium mt-0">@messages("case.v2.liability.c592.trader_information")</h3>
