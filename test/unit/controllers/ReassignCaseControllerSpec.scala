@@ -67,7 +67,7 @@ class ReassignCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
   "Reassign Case" should {
 
     "return OK and HTML content type" in {
-      when(queueService.getNonGateway).thenReturn(successful(List.empty))
+      when(queueService.getAllForCaseType(any())).thenReturn(successful(List.empty))
       when(queueService.getOneById(any())).thenReturn(successful(None))
 
       val result: Result =
@@ -80,7 +80,7 @@ class ReassignCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
     }
 
     "return OK when user has right permissions" in {
-      when(queueService.getNonGateway).thenReturn(successful(List.empty))
+      when(queueService.getAllForCaseType(any())).thenReturn(successful(List.empty))
       when(queueService.getOneById(any())).thenReturn(successful(None))
 
       val result: Result = await(
@@ -124,7 +124,7 @@ class ReassignCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
     "show error message when no option is selected" in {
 
       when(queueService.getOneBySlug("queue")).thenReturn(successful(Some(queue)))
-      when(queueService.getNonGateway).thenReturn(successful(List.empty))
+      when(queueService.getAllForCaseType(any())).thenReturn(successful(List.empty))
       when(queue.name).thenReturn("SOME_QUEUE")
       when(queueService.getOneById(any())).thenReturn(successful(None))
       when(casesService.reassignCase(refEq(caseWithStatusOPEN), any[Queue], refEq(operator))(any[HeaderCarrier]))

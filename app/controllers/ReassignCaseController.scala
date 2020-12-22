@@ -54,7 +54,7 @@ class ReassignCaseController @Inject() (
   ): Future[Result] =
     validateAndRenderView(c =>
       for {
-        queues        <- queueService.getNonGateway
+        queues        <- queueService.getAllForCaseType(c.application.`type`)
         assignedQueue <- c.queueId.map(queueService.getOneById).getOrElse(successful(None))
       } yield views.html.reassign_queue_case(c, f, queues, assignedQueue, origin)
     )
