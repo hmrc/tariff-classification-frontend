@@ -16,6 +16,8 @@
 
 package controllers
 
+import java.time.Instant
+
 import models.forms.{CommodityCodeConstraints, DecisionForm}
 import models.{Permission, _}
 import org.mockito.ArgumentMatchers.{any, refEq}
@@ -41,6 +43,7 @@ class CompleteCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
 
   private val completeDecision = Decision(
     bindingCommodityCode = "040900",
+    effectiveEndDate     = Some(Instant.now),
     justification        = "justification-content",
     goodsDescription     = "goods-description",
     methodSearch         = Some("method-to-search"),
