@@ -430,6 +430,7 @@ page.title.extended.use=Extended use of this ruling
 page.title.ruling.not.found=Ruling not found
 page.title.case.queues=Tariff classification case queues
 page.title.create_liability.h1=New liability information
+page.title.confirmation.h1=New case information
 page.title.create_correspondence.h1=Create correspondence case
 page.title.edit_liability_decision=Edit liability decision
 page.title.create_misc.h1=Create miscellaneous case
@@ -984,7 +985,7 @@ misc.create_misc.radio.type-other-gov-dep=Other government department
 misc.create_misc.radio.type-other=Other
 misc.create_misc.confirm-button=Create case
 
-choose.team.misc=Choose a team for case {0}
+choose.team.misc=Choose a team for {0} case
 choose_team_misc_case.released_dynamic_message = Miscellaneous case created for {1} team
 
 

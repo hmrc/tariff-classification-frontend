@@ -20,6 +20,7 @@ import play.api.data.Form
 import play.api.data.Forms._
 import models.forms.mappings.FormMappings.fieldNonEmpty
 
+
 object ReleaseCaseForm {
 
   val form: Form[String] = Form(
@@ -27,5 +28,7 @@ object ReleaseCaseForm {
       "queue" -> fieldNonEmpty("error.empty.queue")
     )(identity)(Some(_))
   )
+
+
 
 }
