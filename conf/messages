@@ -471,7 +471,7 @@ page.title.case.queues.cases = {0} cases
 page.title.case.queues.gateway = Gateway
 page.title.case.queues.act = ACT BTI
 page.title.case.queues.cap = CAP BTI
-page.title.case.queues.cars = Cars BTI
+page.title.case.queues.car = Cars BTI
 page.title.case.queues.elm = ELM BTI
 page.title.case.queues.act-liab = ACT Liability
 page.title.case.queues.cap-liab = CAP Liability
@@ -944,7 +944,7 @@ cases.opencases.miscellaneous.heading=Miscellaneous cases
 
 cases.opencases.tab_ACT=ACT
 cases.opencases.tab_CAP=CAP
-cases.opencases.tab_CARS=CARS
+cases.opencases.tab_CAR=CAR
 cases.opencases.tab_ELM=ELM
 cases.opencases.tab_FLEX=FLEX
 cases.opencases.tab_TTA=TT-A

@@ -259,7 +259,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder
       )
 
       // When
-      val response = await(ws.url(s"$baseUrl/queues/cars").get())
+      val response = await(ws.url(s"$baseUrl/queues/car").get())
 
       // Then
       response.status shouldBe OK
@@ -271,7 +271,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder
       givenAuthFailed()
 
       // When
-      val response = await(ws.url(s"$baseUrl/queues/cars").get())
+      val response = await(ws.url(s"$baseUrl/queues/car").get())
 
       // Then
       response.status shouldBe OK

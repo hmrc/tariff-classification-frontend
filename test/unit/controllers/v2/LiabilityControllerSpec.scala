@@ -89,7 +89,7 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     .build()
 
   private lazy val pagedEvent: Paged[Event] = Paged(Seq(Events.event), 1, 1, 1)
-  private lazy val queues: Seq[Queue]       = Seq(Queue("", "", ""))
+  private lazy val queues: List[Queue]      = List(Queue("", "", ""))
   private lazy val eventService             = mock[EventsService]
   private lazy val queueService             = mock[QueuesService]
   private lazy val event                    = mock[Event]
@@ -125,7 +125,7 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
   private def mockLiabilityController(
     pagedEvent: Paged[Event]                    = pagedEvent,
-    queues: Seq[Queue]                          = queues,
+    queues: List[Queue]                          = queues,
     attachments: Seq[StoredAttachment]          = Seq(Cases.storedAttachment),
     letterOfAuthority: Option[StoredAttachment] = Some(Cases.letterOfAuthority)
   ): Any = {

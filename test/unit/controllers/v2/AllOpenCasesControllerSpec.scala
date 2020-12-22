@@ -34,8 +34,8 @@ import scala.concurrent.Future
 class AllOpenCasesControllerSpec extends ControllerBaseSpec {
 
   private val casesService  = mock[CasesService]
-  private val queuesService = mock[QueuesService]
-  private val queues = Seq(
+  private val queuesService = app.injector.instanceOf[QueuesService]
+  private val queues = List(
     Queue("2", "act", "ACT"),
     Queue("3", "cap", "CAP"),
     Queue("4", "cars", "Cars")
@@ -51,9 +51,6 @@ class AllOpenCasesControllerSpec extends ControllerBaseSpec {
     open_cases_view,
     realAppConfig
   )
-
-  override protected def beforeEach(): Unit =
-    given(queuesService.getNonGateway).willReturn(Future.successful(queues))
 
   "Open cases" should {
 
