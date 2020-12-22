@@ -29,6 +29,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
 import views.html.v2.gateway_cases_view
 
+
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class GatewayCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
@@ -51,7 +52,7 @@ class GatewayCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
 
     "return 200 and the correct content when no tab has ben specified" in {
       given(casesService.getCasesByQueue(any[Queue], any[Pagination], any[Seq[ApplicationType]])(any[HeaderCarrier])).
-        willReturn(Paged(Seq(Cases.aCase(), Cases.aCase())))
+        willReturn(Paged(Seq(Cases.btiNewCase, Cases.aCase())))
 
       val result = await(controller(Set(Permission.VIEW_QUEUE_CASES))).displayGatewayCases()(fakeRequest)
 

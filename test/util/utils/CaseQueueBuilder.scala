@@ -34,6 +34,21 @@ trait CaseQueueBuilder {
     queryString
   }
 
+  def buildQueryUrlAllQueues(
+                             types: Seq[ApplicationType] = Seq(ApplicationType.ATAR, ApplicationType.LIABILITY),
+                             statuses: String,
+                             queueIds: Seq[String],
+                             assigneeId: String,
+                             pagination: Pagination
+                           ): String = {
+    val sortBy = "application.type,application.status,days-elapsed"
+    val queryString =
+      s"/cases?application_type=${types.map(_.name).mkString(",")}&queue_id=${queueIds.mkString(",")}" +
+        s"&assignee_id=$assigneeId&status=$statuses&sort_by=$sortBy&sort_direction=desc&page=" +
+        s"${pagination.page}&page_size=${pagination.pageSize}"
+    queryString
+  }
+
   case class TestPagination(
     override val page: Int     = 1,
     override val pageSize: Int = 2

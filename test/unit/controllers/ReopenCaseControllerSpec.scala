@@ -59,14 +59,6 @@ class ReopenCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
       realAppConfig
     )
 
-  private def controllerForOldLiabilities(c: Case) =
-    new ReopenCaseController(
-      new SuccessfulRequestActions(playBodyParsers, operator, c = c),
-      casesService,
-      mcc,
-      appConfWithLiabilityToggleOff
-    )
-
   private def controller(requestCase: Case, permission: Set[Permission]) =
     new ReopenCaseController(
       new RequestActionsWithPermissions(playBodyParsers, permission, c = requestCase),
@@ -87,7 +79,7 @@ class ReopenCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
       )
 
       status(result)     shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/reference/applicant")
+      locationOf(result) shouldBe Some(controllers.routes.CaseController.applicantDetails("reference").url)
     }
 
     "return 303 and redirect to applicant details (case_details page) for BTI when case is suspended" in {
@@ -100,7 +92,7 @@ class ReopenCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
       )
 
       status(result)     shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/reference/applicant")
+      locationOf(result) shouldBe Some(controllers.routes.CaseController.applicantDetails("reference").url)
     }
 
     "return 303 and redirect to liability details (liability_details page) for liability when case is suspended" in {
@@ -108,12 +100,12 @@ class ReopenCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
         .thenReturn(successful(liabilityCaseWithStatusOpen))
 
       val result: Result = await(
-        controllerForOldLiabilities(liabilityCaseWithStatusSuspended)
+        controller(liabilityCaseWithStatusSuspended)
           .confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(app))
       )
 
       status(result)     shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/reference/liability")
+      locationOf(result) shouldBe Some(controllers.v2.routes.LiabilityController.displayLiability("reference").url)
     }
 
     "return 303 when user has right permissions" in {
@@ -126,7 +118,7 @@ class ReopenCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
       )
 
       status(result)     shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/reference/applicant")
+      locationOf(result) shouldBe Some(controllers.routes.CaseController.applicantDetails("reference").url)
     }
 
     "redirect to unauthorised when user does not have the right permissions" in {

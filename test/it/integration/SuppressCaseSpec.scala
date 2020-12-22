@@ -6,6 +6,7 @@ import play.api.libs.ws.WSResponse
 import play.api.test.Helpers._
 import models.CaseStatus
 import utils.{CasePayloads, Cases, EventPayloads}
+import utils.JsonFormatters._
 
 class SuppressCaseSpec extends IntegrationTest with MockitoSugar {
 

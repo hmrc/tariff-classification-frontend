@@ -42,7 +42,7 @@ trait StatusChangeAction[T] extends RenderCaseAction { this: FrontendController 
 
   protected def update(c: Case, status: T, operator: Operator)(implicit hc: HeaderCarrier): Future[Case]
 
-  protected def onSuccessRedirect(reference: String, isV2Liability: Boolean = false): Call
+  protected def onSuccessRedirect(reference: String): Call
 
   protected val requiredPermission: Permission
 
@@ -73,13 +73,12 @@ trait StatusChangeAction[T] extends RenderCaseAction { this: FrontendController 
             getCaseAndRespond(
               reference,
               c => {
-                val isV2Liability = config.newLiabilityDetails && !c.application.isBTI
                 if (statusHasChanged(c, status)) {
                   update(c, status, request.operator).flatMap { _ =>
-                    successful(Redirect(onSuccessRedirect(reference, isV2Liability)))
+                    successful(Redirect(onSuccessRedirect(reference)))
                   }
                 } else {
-                  successful(Redirect(onSuccessRedirect(reference, isV2Liability)))
+                  successful(Redirect(onSuccessRedirect(reference)))
                 }
               }
             )

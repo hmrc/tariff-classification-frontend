@@ -391,6 +391,19 @@ class PermissionTest extends ModelsBaseSpec {
       permission.appliesTo(caseUnassigned, manager)                shouldBe true
     }
 
+    "contain 'Edit Attachment Details'" in {
+      val permission = Permission.EDIT_ATTACHMENT_DETAIL
+      val name = "EDIT_ATTACHMENT_DETAIL"
+
+      permission.name shouldBe name
+      Permission.from(name) shouldBe Some(permission)
+
+      permission.appliesTo(caseUnassigned, readOnly)               shouldBe false
+      permission.appliesTo(caseUnassigned, teamMember)             shouldBe false
+      permission.appliesTo(caseAssignedTo(teamMember), teamMember) shouldBe true
+      permission.appliesTo(caseUnassigned, manager)                shouldBe true
+    }
+
     "contain 'Add/Remove Keywords'" in {
       val permission = Permission.KEYWORDS
       val name       = "KEYWORDS"

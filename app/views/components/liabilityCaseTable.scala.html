@@ -50,12 +50,18 @@
     @defining(result.application.asLiabilityOrder) { liability =>
 
      <tr id="@{caseTab.tabMessageKey}-details-@index">
-      <td id="@{caseTab.tabMessageKey}-reference-@index"><a href="@routes.CaseController.get(result.reference)">@{result.reference}</a></td>
+      <td id="@{caseTab.tabMessageKey}-reference-@index">
+       @if(result.queueId.isDefined && !result.assignee.map(_.id).contains(request.operator.id)) {
+        <a href="@routes.AssignCaseController.get(result.reference)">@result.reference</a>
+       }else {
+        <a href="@routes.CaseController.get(result.reference)">@result.reference</a>
+       }
+      </td>
       <td id="@{caseTab.tabMessageKey}-goods-@index" class="pre-wrap">@{liability.goodName}</td>
       <td id="@{caseTab.tabMessageKey}-trader-@index" class="pre-wrap">@{liability.traderName}</td>
       <td id="@{caseTab.tabMessageKey}-elapsed-days-@index" @if(result.isCaseOverdue) {style="color:red"}>@{result.daysElapsed}</td>
       <td id="@{caseTab.tabMessageKey}-type-@index"> @if(liability.isLiveLiabilityOrder) {
-       <span class="live-red-text">@{liability.status}</span>
+       <span class="govuk-tag govuk-tag--pink">@{liability.status}</span>
       }</td>
       <td id="@{caseTab.tabMessageKey}-status-@index">@case_status_tab(result, s"${caseTab.tabMessageKey}-status-label-$index")
       </td>

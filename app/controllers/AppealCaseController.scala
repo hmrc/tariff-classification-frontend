@@ -37,13 +37,13 @@ class AppealCaseController @Inject() (
   verify: RequestActions,
   override val caseService: CasesService,
   override implicit val config: AppConfig,
+  val caseDetailsView: views.html.case_details,
   mcc: MessagesControllerComponents
 ) extends FrontendController(mcc)
     with RenderCaseAction {
 
   private val typeForm: Form[AppealType]     = AppealForm.appealTypeForm
   private val statusForm: Form[AppealStatus] = AppealForm.appealStatusForm
-  private lazy val newliabilityDetailsToggle = config.newLiabilityDetails
 
   private val startTabIndexForAppeals = 8000
 
@@ -55,7 +55,7 @@ class AppealCaseController @Inject() (
             reference,
             c =>
               successful(
-                views.html.case_details(
+                caseDetailsView(
                   c,
                   CaseDetailPage.APPEAL,
                   views.html.partials.appeal.appeal_details(c, startTabIndexForAppeals),
@@ -65,21 +65,7 @@ class AppealCaseController @Inject() (
           )
 
         case ApplicationType.LIABILITY => {
-          if (newliabilityDetailsToggle)
             successful(Redirect(v2.routes.LiabilityController.displayLiability(reference).withFragment("appeal_tab")))
-          else
-            getCaseAndRenderView(
-              reference,
-              c =>
-                successful(
-                  views.html.case_details(
-                    c,
-                    CaseDetailPage.APPEAL,
-                    views.html.partials.appeal.appeal_details(c, startTabIndexForAppeals),
-                    activeTab = Some(ActiveTab.Appeals)
-                  )
-                )
-            )
         }
       }
     }
@@ -130,7 +116,7 @@ class AppealCaseController @Inject() (
             case Some(appeal) => successful(views.html.appeal_change_status(c, appeal, statusForm))
             case None =>
               successful(
-                views.html.case_details(c, CaseDetailPage.APPEAL, views.html.partials.appeal.appeal_details(c))
+                caseDetailsView(c, CaseDetailPage.APPEAL, views.html.partials.appeal.appeal_details(c))
               )
           }
       )

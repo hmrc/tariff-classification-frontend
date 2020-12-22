@@ -16,6 +16,7 @@
 
 @import views.html.components.atarsTable
 @import views.html.components.liabilitiesTable
+@import views.html.components.correspondenceTable
 @import models.request.AuthenticatedRequest
 @import config.AppConfig
 @import models.viewmodels.ApplicationTabViewModel
@@ -41,6 +42,7 @@
                 case (_, 0) => messages("cases.table.empty")
                 case (ApplicationType.ATAR, _) => atarsTable(caseTab, applicationTabViewModel.headingMessageKey)
                 case (ApplicationType.LIABILITY, _) => liabilitiesTable(caseTab, applicationTabViewModel.headingMessageKey)
+                case (ApplicationType.CORRESPONDENCE, _) => correspondenceTable(caseTab, applicationTabViewModel.headingMessageKey)
                 case _ => ""
             }
     }

@@ -29,7 +29,7 @@ class RulingConnectorTest extends ConnectorTest {
 
     "POST to the Ruling Store" in {
       stubFor(
-        post("/binding-tariff-rulings/ruling/id")
+        post("/search-for-advance-tariff-rulings/ruling/id")
           .willReturn(
             aResponse()
               .withStatus(Status.ACCEPTED)
@@ -39,7 +39,7 @@ class RulingConnectorTest extends ConnectorTest {
       await(connector.notify("id"))
 
       verify(
-        postRequestedFor(urlEqualTo("/binding-tariff-rulings/ruling/id"))
+        postRequestedFor(urlEqualTo("/search-for-advance-tariff-rulings/ruling/id"))
           .withHeader("X-Api-Token", equalTo(fakeAuthToken))
       )
     }

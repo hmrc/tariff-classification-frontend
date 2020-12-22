@@ -96,10 +96,6 @@ class AppConfigSpec extends SpecBase {
 
       realAppConfig.shutterExcludedUrls shouldBe "/ping/ping"
     }
-
-    "build new-liability-details" in {
-      realAppConfig.newLiabilityDetails shouldBe true
-    }
   }
 
 }

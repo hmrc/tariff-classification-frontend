@@ -21,6 +21,7 @@
 @import views.html.partials.{error_summary, back_link}
 @import models.viewmodels.CaseHeaderViewModel
 @import controllers.Tab._
+@import models.viewmodels.MyCasesTab
 
 @this(
         case_heading: views.html.v2.case_heading
@@ -28,7 +29,8 @@
 
 @(c: CaseHeaderViewModel, form: Form[Boolean], fileId: String, fileName: String)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("page.title.remove.attachment"))) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.remove.attachment")),
+    customPrimaryNavTab = MyCasesTab) {
 
     @back_link()
 

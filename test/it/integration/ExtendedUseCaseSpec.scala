@@ -7,6 +7,7 @@ import play.api.test.Helpers._
 import models.{CancelReason, Cancellation, CaseStatus}
 import utils.CasePayloads
 import utils.Cases._
+import utils.JsonFormatters._
 
 class ExtendedUseCaseSpec extends IntegrationTest with MockitoSugar {
 

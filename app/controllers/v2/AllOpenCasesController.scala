@@ -18,9 +18,9 @@ package controllers.v2
 
 import com.google.inject.Inject
 import config.AppConfig
-import controllers.{RenderCaseAction, RequestActions}
+import controllers.RequestActions
+import models.viewmodels._
 import models.{NoPagination, Permission}
-import models.viewmodels.{ATaRTab, CasesTabViewModel, CorrespondenceTab, LiabilitiesTab, MiscellaneousTab, SubNavigationTab}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import service.{CasesService, QueuesService}
@@ -38,19 +38,18 @@ class AllOpenCasesController @Inject() (
 ) extends FrontendController(mcc)
     with I18nSupport {
 
-  def displayAllOpenCases(activeSubNav: SubNavigationTab = ATaRTab): Action[AnyContent] = (verify.authenticated
-    andThen verify.mustHave(Permission.VIEW_CASES)).async {
-    implicit request =>
-
+  def displayAllOpenCases(activeSubNav: SubNavigationTab = ATaRTab): Action[AnyContent] =
+    (verify.authenticated
+      andThen verify.mustHave(Permission.VIEW_CASES)).async { implicit request =>
       for {
         nonGatewayQueues <- queueService.getNonGateway
         nonGatewayCases  <- casesService.getCasesByAllQueues(nonGatewayQueues, NoPagination())
         openCases: CasesTabViewModel = activeSubNav match {
-          case ATaRTab => CasesTabViewModel.atarCases(nonGatewayCases.results)
-          case LiabilitiesTab => CasesTabViewModel.liabilityCases(nonGatewayCases.results)
-          case CorrespondenceTab  => CasesTabViewModel.correspondence
-          case MiscellaneousTab => CasesTabViewModel.miscellaneous
+          case ATaRTab           => CasesTabViewModel.atarCases(nonGatewayCases.results)
+          case LiabilitiesTab    => CasesTabViewModel.liabilityCases(nonGatewayCases.results)
+          case CorrespondenceTab => CasesTabViewModel.correspondenceCases(nonGatewayCases.results)
+          case MiscellaneousTab  => CasesTabViewModel.miscellaneous
         }
-      } yield Ok(openCasesView(openCases))
-  }
+      } yield Ok(openCasesView(openCases, activeSubNav))
+    }
 }

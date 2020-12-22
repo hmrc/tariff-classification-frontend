@@ -16,6 +16,7 @@
 
 package models.viewmodels
 
+import java.time.Instant
 import models.{CaseStatus, _}
 
 case class ApplicationsTab(
@@ -35,13 +36,18 @@ object ApplicationsTab {
     referralEvent: Option[Map[String, ReferralCaseStatusChange]] = None
   ) =
     ApplicationsTab("applicationTab.atar", ApplicationType.ATAR, "atar_tab", searchResult, referralEvent)
+
   def liability(
     searchResult: Paged[Case]                                    = Paged.empty,
     referralEvent: Option[Map[String, ReferralCaseStatusChange]] = None
   ) =
     ApplicationsTab("applicationTab.liability", ApplicationType.LIABILITY, "liability_tab", searchResult, referralEvent)
-  def correspondence(searchResult: Paged[Case] = Paged.empty) =
+
+  def correspondence(searchResult: Paged[Case] = Paged.empty,
+    referralEvent: Option[Map[String, ReferralCaseStatusChange]] = None
+  ) =
     ApplicationsTab("applicationTab.correspondence", ApplicationType.CORRESPONDENCE, "correspondence_tab", searchResult)
+
   def miscellaneous(searchResult: Paged[Case] = Paged.empty) =
     ApplicationsTab("applicationTab.miscellaneous", ApplicationType.MISCELLANEOUS, "miscellaneous_tab", searchResult)
 
@@ -110,5 +116,4 @@ object ApplicationsTab {
       )
     )
   }
-
 }

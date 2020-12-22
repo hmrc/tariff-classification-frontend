@@ -6,6 +6,7 @@ import play.api.libs.ws.WSResponse
 import play.api.test.Helpers._
 import models.{CaseStatus, Operator, Role}
 import utils.{CasePayloads, Cases, EventPayloads}
+import utils.JsonFormatters._
 
 class RejectCaseSpec extends IntegrationTest with MockitoSugar {
 

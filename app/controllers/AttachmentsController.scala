@@ -43,6 +43,7 @@ class AttachmentsController @Inject() (
   casesService: CasesService,
   fileService: FileStoreService,
   mcc: MessagesControllerComponents,
+  val caseDetailsView: views.html.case_details,
   implicit val appConfig: AppConfig,
   implicit val mat: Materializer
 ) extends FrontendController(mcc)
@@ -98,11 +99,10 @@ class AttachmentsController @Inject() (
   )(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[Html] =
     for {
       attachments <- fileService.getAttachments(c)
-      letter      <- fileService.getLetterOfAuthority(c)
     } yield {
       val (applicantFiles, nonApplicantFiles) = attachments.partition(_.operator.isEmpty)
       views.html.partials
-        .attachments_details(c, uploadForm, applicantFiles, letter, nonApplicantFiles, tabStartIndexForAttachments)
+        .attachments_details(c, uploadForm, applicantFiles, nonApplicantFiles, tabStartIndexForAttachments)
     }
 
   private def getCaseAndRenderView(reference: String, page: CaseDetailPage, toHtml: Case => Future[Html])(
@@ -110,7 +110,7 @@ class AttachmentsController @Inject() (
   ): Future[Result] =
     casesService.getOne(reference).flatMap {
       case Some(c: Case) =>
-        toHtml(c).map(html => Ok(views.html.case_details(c, page, html, Some(ActiveTab.Attachments))))
+        toHtml(c).map(html => Ok(caseDetailsView(c, page, html, Some(ActiveTab.Attachments))))
       case _ => successful(Ok(views.html.case_not_found(reference)))
     }
 

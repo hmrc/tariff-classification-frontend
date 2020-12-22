@@ -17,9 +17,11 @@
 @import config.AppConfig
 @import controllers.routes.QueuesController
 @import views.html.includes.main
+@import models.viewmodels.NoTabSelected
+
 @(resource: String = "Resource")(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None) {
+@main(bodyClasses = None, customPrimaryNavTab = NoTabSelected) {
 
     <h2 class="heading-large">
         @messages("errors.resource-not-found.title", resource)

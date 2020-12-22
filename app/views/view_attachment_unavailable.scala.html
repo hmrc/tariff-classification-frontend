@@ -17,10 +17,12 @@
 @import config.AppConfig
 @import views.html.includes.main
 @import models.response.{ScanStatus, FileMetadata}
+@import models.viewmodels.MyCasesTab
 
 @(fileSubmitted: Option[FileMetadata])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("view.attachment.unavailable.title"))) {
+@main(bodyClasses = None, customTitle = Some(messages("view.attachment.unavailable.title")),
+ customPrimaryNavTab = MyCasesTab) {
  <h1 class="heading-xlarge mb-3" id="attachment-heading">@messages("view.attachment.unavailable.heading")</h1>
 
  @if(fileSubmitted.flatMap(_.scanStatus).contains(ScanStatus.FAILED)) {

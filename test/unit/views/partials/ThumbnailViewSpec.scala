@@ -32,14 +32,15 @@ class ThumbnailViewSpec extends ViewSpec {
       // Given
       val storedAttachment = StoredAttachment(
         "id",
-        public      = true,
-        operator    = None,
-        url         = Some("some/file/url"),
-        fileName    = "the-file-name.png",
-        mimeType    = "image/png",
-        scanStatus  = Some(ScanStatus.READY),
-        timestamp   = Instant.now(),
-        description = Some("test description")
+        public                 = true,
+        operator               = None,
+        url                    = Some("some/file/url"),
+        fileName               = "the-file-name.png",
+        mimeType               = "image/png",
+        scanStatus             = Some(ScanStatus.READY),
+        timestamp              = Instant.now(),
+        description            = Some("test description"),
+        shouldPublishToRulings = true
       )
 
       // When

@@ -25,9 +25,11 @@
 @import views.html.partials.{error_summary, back_link}
 @import controllers.ActiveTab
 @import views.CancelAction
+@import models.viewmodels.NoTabSelected
+
 @(c: Case, form: Form[String], activeTab: Option[ActiveTab] = None)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("page.title.suppress.case"))) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.suppress.case")), customPrimaryNavTab = NoTabSelected) {
 
     @back_link()
 

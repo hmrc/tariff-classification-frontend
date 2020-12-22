@@ -33,6 +33,8 @@ import utils.Cases._
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
 import java.nio.file.Path
+import akka.stream.scaladsl.Source
+import akka.util.ByteString
 
 class FileStoreServiceSpec extends ServiceSpecBase {
 
@@ -166,17 +168,28 @@ class FileStoreServiceSpec extends ServiceSpecBase {
 
   }
 
+  "Service 'downloadFile'" should {
+    val fileContent = Some(Source.single(ByteString("Some file content".getBytes())))
+
+    "call the connector" in {
+      given(connector.downloadFile(any[String])(any[HeaderCarrier])).willReturn(successful(fileContent))
+
+      await(service.downloadFile("http://localhost:4572/foo")) shouldBe fileContent
+    }
+  }
+
   private def aStoredAttachmentWithId(id: String): StoredAttachment =
     StoredAttachment(
-      id          = id,
-      public      = true,
-      operator    = None,
-      url         = Some(s"url-$id"),
-      fileName    = s"name-$id",
-      mimeType    = s"type-$id",
-      scanStatus  = Some(ScanStatus.READY),
-      timestamp   = Instant.EPOCH,
-      description = Some("test description")
+      id                     = id,
+      public                 = true,
+      operator               = None,
+      url                    = Some(s"url-$id"),
+      fileName               = s"name-$id",
+      mimeType               = s"type-$id",
+      scanStatus             = Some(ScanStatus.READY),
+      timestamp              = Instant.EPOCH,
+      description            = Some("test description"),
+      shouldPublishToRulings = true
     )
 
   private def aCase(modifiers: (Case => Case)*): Case = {
@@ -190,8 +203,9 @@ class FileStoreServiceSpec extends ServiceSpecBase {
       id     = id,
       public = true,
       None,
-      timestamp   = Instant.EPOCH,
-      description = Some("test description")
+      timestamp              = Instant.EPOCH,
+      description            = Some("test description"),
+      shouldPublishToRulings = true
     )
     c.copy(attachments = attachments)
   }
@@ -207,8 +221,9 @@ class FileStoreServiceSpec extends ServiceSpecBase {
       id     = id,
       public = true,
       None,
-      timestamp   = Instant.EPOCH,
-      description = Some("test description")
+      timestamp              = Instant.EPOCH,
+      description            = Some("test description"),
+      shouldPublishToRulings = true
     )
 
   private def withAgentDetails(): Case => Case = c => {
