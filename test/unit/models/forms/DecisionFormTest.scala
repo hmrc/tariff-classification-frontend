@@ -140,10 +140,7 @@ class DecisionFormTest extends ModelsBaseSpec {
           FormError("goodsDescription", "decision_form.error.itemDescription.required"),
           FormError("methodSearch", "decision_form.error.searchesPerformed.required"),
           FormError("justification", "decision_form.error.legalJustification.required"),
-          FormError("explanation", "decision_form.error.decisionExplanation.required"),
-          FormError("expiryDate.day",  "atar.editRuling.expiryDate.emptyDate.day"),
-          FormError("expiryDate.month", "atar.editRuling.expiryDate.emptyDate.month"),
-          FormError("expiryDate.year", "atar.editRuling.expiryDate.emptyDate.year"),
+          FormError("explanation", "decision_form.error.decisionExplanation.required")
         )
       }
     }

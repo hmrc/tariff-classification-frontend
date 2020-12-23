@@ -119,9 +119,9 @@ object FormDate {
     val emptyYear = "atar.editRuling.expiryDate.emptyDate.year"
 
     mapping(
-    "day"             -> text.verifying(emptyDay, validateDayInDate),
-    "month"           -> text.verifying(emptyMonth, validateMonthInDate),
-    "year"            -> text.verifying(emptyYear, validateYearInDate),
+    "day"             -> text,
+    "month"           -> text,
+    "year"            -> text,
     "explicitEndDate" -> boolean
   )(OptionalDateForm.apply)(OptionalDateForm.unapply)
     .verifying(validDateFormatOrEmpty)
