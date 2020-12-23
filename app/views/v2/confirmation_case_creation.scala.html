@@ -32,7 +32,7 @@
 @this(case_heading: views.html.v2.case_heading)
 @(c: Case, queueName: String)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("page.title.create_liability.h1"))) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.create_correspondence.h1"))) {
 <div class="grid-row column-two-thirds">
 
 @case_heading(CaseHeaderViewModel.fromCase(c))
