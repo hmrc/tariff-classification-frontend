@@ -29,6 +29,7 @@ import play.api.mvc.Result
 import play.api.test.Helpers.{redirectLocation, _}
 import service.{CasesService, CommodityCodeService}
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.Cases
 import utils.Cases._
 
 import scala.concurrent.Future.successful
@@ -102,9 +103,10 @@ class CompleteCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
         val c = aCase(
           withReference("reference"),
           withStatus(CaseStatus.OPEN),
-          withLiabilityApplication(),
+          liabilityApplicationWithC592(),
           withDecision(bindingCommodityCode = "040900")
         )
+
         when(casesService.completeCase(refEq(c), any[Operator])(any[HeaderCarrier], any[Messages]))
           .thenReturn(successful(caseWithStatusCOMPLETED))
 

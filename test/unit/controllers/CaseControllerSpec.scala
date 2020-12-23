@@ -333,5 +333,4 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       redirectLocation(result).get should include("unauthorized")
     }
   }
-
 }
