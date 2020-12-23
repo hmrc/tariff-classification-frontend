@@ -47,16 +47,13 @@ class SuppressCaseController @Inject() (
   override protected val config: AppConfig         = appConfig
   override protected val caseService: CasesService = casesService
 
-  def getSuppressCase(reference: String, activeTab: Option[ActiveTab]): Action[AnyContent] =
+  def getSuppressCase(reference: String): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference) andThen
       verify.mustHave(Permission.SUPPRESS_CASE)).async { implicit request =>
-      getCaseAndRenderView(reference, c => successful(views.html.suppress_case(c, form, activeTab)))
+      getCaseAndRenderView(reference, c => successful(views.html.suppress_case(c, form)))
     }
 
-  def postSuppressCase(
-    reference: String,
-    activeTab: Option[ActiveTab]
-  ): Action[MultipartFormData[Files.TemporaryFile]] =
+  def postSuppressCase(reference: String): Action[MultipartFormData[Files.TemporaryFile]] =
     (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.SUPPRESS_CASE))
       .async(parse.multipartFormData) {
         implicit request: AuthenticatedCaseRequest[MultipartFormData[Files.TemporaryFile]] =>
@@ -80,8 +77,8 @@ class SuppressCaseController @Inject() (
               form
                 .bindFromRequest()
                 .fold(
-                  formWithErrors => getCaseAndRenderEmailError(reference, formWithErrors, error, activeTab),
-                  note => getCaseAndRenderEmailError(reference, form.fill(note), error, activeTab)
+                  formWithErrors => getCaseAndRenderEmailError(reference, formWithErrors, error),
+                  note => getCaseAndRenderEmailError(reference, form.fill(note), error)
                 )
             },
             onFileInvalidType = () => {
@@ -89,8 +86,8 @@ class SuppressCaseController @Inject() (
               form
                 .bindFromRequest()
                 .fold(
-                  formWithErrors => getCaseAndRenderEmailError(reference, formWithErrors, error, activeTab),
-                  note => getCaseAndRenderEmailError(reference, form.fill(note), error, activeTab)
+                  formWithErrors => getCaseAndRenderEmailError(reference, formWithErrors, error),
+                  note => getCaseAndRenderEmailError(reference, form.fill(note), error)
                 )
             },
             onFileMissing = () => {
@@ -98,8 +95,8 @@ class SuppressCaseController @Inject() (
               form
                 .bindFromRequest()
                 .fold(
-                  formWithErrors => getCaseAndRenderEmailError(reference, formWithErrors, error, activeTab),
-                  note => getCaseAndRenderEmailError(reference, form.fill(note), error, activeTab)
+                  formWithErrors => getCaseAndRenderEmailError(reference, formWithErrors, error),
+                  note => getCaseAndRenderEmailError(reference, form.fill(note), error)
                 )
 
             }
@@ -109,12 +106,11 @@ class SuppressCaseController @Inject() (
   private def getCaseAndRenderEmailError(
     reference: String,
     form: Form[String],
-    error: String,
-    activeTab: Option[ActiveTab]
+    error: String
   )(implicit request: AuthenticatedCaseRequest[_]): Future[Result] =
     getCaseAndRenderView(
       reference,
-      c => successful(views.html.suppress_case(c, form.withError("email", error), activeTab))
+      c => successful(views.html.suppress_case(c, form.withError("email", error)))
     )
 
   def confirmSuppressCase(reference: String): Action[AnyContent] =

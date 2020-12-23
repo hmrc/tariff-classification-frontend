@@ -14,16 +14,16 @@
  * limitations under the License.
  *@
 
-@import helper._
-@import views.html.includes.main
-@import views.html.partials.case_heading
+@import controllers.Tab
 @import config.AppConfig
-@import models.forms.DecisionFormData
-@import models.response.ScanStatus
+@import helper._
 @import models.{BTIApplication, Case, StoredAttachment}
-@import views.html.forms.components.{input_text, input_textarea, edit_ruling_input_checkbox}
-@import views.html.partials.{attachments_edit_list, tab_heading, back_link}
+@import models.forms.DecisionFormData
 @import models.request.AuthenticatedRequest
+@import models.response.ScanStatus
+@import views.html.includes.main
+@import views.html.forms.components.{input_text, input_textarea, edit_ruling_input_checkbox}
+@import views.html.partials.{attachments_edit_list, back_link, case_heading, tab_heading}
 @import views.html.partials.error_summary
 @import utils.Dates
 

@@ -28,7 +28,7 @@ case class ActivityViewModel(
   events: Paged[Event],
   queues: Seq[Queue],
   queueName: String
-) {}
+)
 
 object ActivityViewModel {
   def fromCase(c: Case, events: Paged[Event], queues: Seq[Queue]): ActivityViewModel = {
@@ -36,7 +36,15 @@ object ActivityViewModel {
     def getQueueName =
       c.queueId.flatMap(id => queues.find(_.id == id)).map(_.name).getOrElse("unknown")
 
-    ActivityViewModel(c.reference, c.assignee, c.queueId, c.createdDate, events, queues, queueName = getQueueName)
+    ActivityViewModel(
+      c.reference,
+      c.assignee,
+      c.queueId,
+      c.createdDate,
+      events,
+      queues,
+      queueName = getQueueName
+    )
   }
 
 }

@@ -19,51 +19,99 @@
 @import models.forms.DecisionFormData
 @import models.request.AuthenticatedRequest
 @import models.{BTIApplication, Case, CaseStatus, CommodityCode, Decision, Permission, StoredAttachment}
-@import views.html.components.edit_ruling_button
+@import models.viewmodels.atar.RulingTabViewModel
 @import utils.Dates
+@import views.html.components.edit_ruling_button
 @import views.html.partials.ruling._
 @import views.html.partials.{attachments_list, tab_heading}
-@(c: Case, decisionForm: Option[Form[DecisionFormData]], files: Seq[StoredAttachment], commodityCode: Option[CommodityCode], startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@defining(c.application.asATAR) { btiApp: BTIApplication =>
+@(ruling: RulingTabViewModel, decisionForm: Option[Form[DecisionFormData]], files: Seq[StoredAttachment], startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-    @tab_heading("ruling", messages("case.menu.ruling-advance"))
+@tab_heading("ruling", messages("case.menu.ruling-advance"))
 
-    <div class="grid-row">
-        <div class="column-one-third">
-            @if(request.hasPermission(Permission.EDIT_RULING) ) {
-                @edit_ruling_button(RulingController.editRulingDetails(c.reference))
-            }
-        </div>
+<div class="grid-row">
+    <div class="column-one-third">
+        @if(request.hasPermission(Permission.EDIT_RULING) ) {
+            @edit_ruling_button(RulingController.editRulingDetails(ruling.caseReference))
+        }
     </div>
+</div>
 
-    <h3 class="heading-medium  mt-1">@messages("case.decision.application.title")</h3>
-    <dl class="govuk-check-your-answers cya-questions-short text-grey" >
-        <div class="grid-row">
-            <dt id="application_submittedDate" class="cya-question">
-                @messages("pdf.ruling.section.date.submitted")
-            </dt>
-            <dd class="cya-answer">
-                <span id="application_submittedDateValue">@{Dates.format(c.createdDate)}</span>
-            </dd>
-        </div>
+<h3 class="heading-medium  mt-1">@messages("case.decision.application.title")</h3>
+<dl class="govuk-check-your-answers cya-questions-short text-grey" >
+    <div class="grid-row">
+        <dt id="application_submittedDate" class="cya-question">
+            @messages("pdf.ruling.section.date.submitted")
+        </dt>
+        <dd class="cya-answer">
+            <span id="application_submittedDateValue">@{Dates.format(ruling.caseCreatedDate)}</span>
+        </dd>
+    </div>
+    <div class="grid-row">
+        <dt id="application_envisagedCommodityCode" class="cya-question">
+            @messages("case.application.suggested-commodity-code")
+        </dt>
+        <dd class="cya-answer">
+            @ruling.suggestedCommodityCode.map { suggestedCommodityCode =>
+                <span id="envisagedCommodityCodeValue">@suggestedCommodityCode</span>
+            }
+        </dd>
+    </div>
+    <div class="grid-row">
+        <dt id="application_goodDescription" class="cya-question">
+            @messages("case.application.ruling-tab-suggested-goods-description")
+        </dt>
+        <dd class="cya-answer">
+            <span id="application_goodDescriptionValue">@{ruling.goodsDescription}</span>
+        </dd>
+    </div>
+</dl>
+
+
+<div class="grid-row">
+    <div class="column-full">
+        <h3 class="heading-medium">@messages("case.menu.ruling-published-information")</h3>
+        @if(ruling.bindingCommodityCode.flatMap(_.expiry).isDefined) {
+            @ruling_commodity_code_expiry_section_warning_message(ruling,  clazz = "mb-3")
+        }
+    </div>
+</div>
+
+@ruling.decision.map { d =>
+    <dl class="govuk-check-your-answers cya-questions-short">
+        @if(d.effectiveEndDate.isDefined){
             <div class="grid-row">
-                <dt id="application_envisagedCommodityCode" class="cya-question">
-                     @messages("case.application.suggested-commodity-code")
+                <dt id="application_expiryDate" class="cya-question">
+                    @messages("pdf.ruling.section.date.expiry")
                 </dt>
                 <dd class="cya-answer">
-                    @if(btiApp.envisagedCommodityCode.isDefined) {
-                    <span id="envisagedCommodityCodeValue">@btiApp.envisagedCommodityCode.get</span>
-                    }
+                    <span id="application_expiryDateValue">@{Dates.format(d.effectiveEndDate.get)}</span>
                 </dd>
-
             </div>
+        }
         <div class="grid-row">
-            <dt id="application_goodDescription" class="cya-question">
-                @messages("case.application.ruling-tab-suggested-goods-description")
+            <dt id="ruling_bindingCommodityCode" class="cya-question">
+                @messages("case.decision.commodity-code")
             </dt>
             <dd class="cya-answer">
-                <span id="application_goodDescriptionValue">@{btiApp.goodDescription}</span>
+                <span id="ruling_bindingCommodityCodeValue">@d.bindingCommodityCode</span>
+            </dd>
+        </div>
+
+        <div class="grid-row">
+            <dt id="ruling_itemDescription" class="cya-question">
+                @messages("case.decision.goods-description")
+            </dt>
+            <dd class="cya-answer">
+                <span id="ruling_itemDescriptionValue" class="pre-wrap">@d.goodsDescription</span>
+            </dd>
+        </div>
+        <div class="grid-row">
+            <dt id="ruling_justification" class="cya-question">
+                @messages("case.decision.justification")
+            </dt>
+            <dd class="cya-answer">
+                <span id="ruling_justificationValue" class="pre-wrap">@d.justification</span>
             </dd>
         </div>
     </dl>
@@ -71,116 +119,63 @@
 
     <div class="grid-row">
         <div class="column-full">
-                <h3 class="heading-medium">@messages("case.menu.ruling-published-information")</h3>
-                @if(commodityCode.flatMap(_.expiry).isDefined) {
-                    @ruling_commodity_code_expiry_section_warning_message(c, commodityCode,  clazz = "mb-3")
-                }
+            <h3 class="heading-medium">@messages("case.menu.ruling-not-published-information")</h3>
+
         </div>
     </div>
 
-    @if(c.decision.isDefined) {
-        @defining(c.decision.get) { d: Decision =>
-            <dl class="govuk-check-your-answers cya-questions-short">
-                @if(d.effectiveEndDate.isDefined){
-                    <div class="grid-row">
-                        <dt id="application_expiryDate" class="cya-question">
-                            @messages("pdf.ruling.section.date.expiry")
-                        </dt>
-                        <dd class="cya-answer">
-                            <span id="application_expiryDateValue">@{Dates.format(d.effectiveEndDate.get)}</span>
-                        </dd>
-                    </div>
-                }
-                <div class="grid-row">
-                    <dt id="ruling_bindingCommodityCode" class="cya-question">
-                        @messages("case.decision.commodity-code")
-                    </dt>
-                    <dd class="cya-answer">
-                        <span id="ruling_bindingCommodityCodeValue">@d.bindingCommodityCode</span>
-                    </dd>
-                </div>
+    <dl class="govuk-check-your-answers cya-questions-short">
+        <div class="grid-row">
+            <dt id="ruling_methodCommercialDenomination" class="cya-question">
+                @messages("case.decision.method-commercial-denomination")
+            </dt>
+            <dd class="cya-answer">
+                <span id="ruling_methodCommercialDenominationValue" class="pre-wrap">@d.methodCommercialDenomination.getOrElse("")</span>
+            </dd>
+        </div>
+        <div class="grid-row">
+            <dt id="ruling_searches" class="cya-question">
+                @messages("case.decision.method-search")
+            </dt>
+            <dd class="cya-answer">
+                <span id="ruling_searchesValue" class="pre-wrap">@d.methodSearch.getOrElse("")</span>
+            </dd>
+        </div>
+        <div class="grid-row">
+            <dt id="ruling_exclusions" class="cya-question">
+                @messages("case.decision.method-exclusion")
+            </dt>
+            <dd class="cya-answer">
+                <span id="ruling_exclusionsValue" class="pre-wrap">@d.methodExclusion.getOrElse("")</span>
+            </dd>
+        </div>
+    </dl>
 
-                <div class="grid-row">
-                    <dt id="ruling_itemDescription" class="cya-question">
-                        @messages("case.decision.goods-description")
-                    </dt>
-                    <dd class="cya-answer">
-                        <span id="ruling_itemDescriptionValue" class="pre-wrap">@d.goodsDescription</span>
-                    </dd>
-                </div>
-                <div class="grid-row">
-                    <dt id="ruling_justification" class="cya-question">
-                        @messages("case.decision.justification")
-                    </dt>
-                    <dd class="cya-answer">
-                        <span id="ruling_justificationValue" class="pre-wrap">@d.justification</span>
-                    </dd>
-                </div>
-            </dl>
-
-
-            <div class="grid-row">
-                <div class="column-full">
-                    <h3 class="heading-medium">@messages("case.menu.ruling-not-published-information")</h3>
-
-                </div>
-            </div>
-
-            <dl class="govuk-check-your-answers cya-questions-short">
-                <div class="grid-row">
-                    <dt id="ruling_methodCommercialDenomination" class="cya-question">
-                        @messages("case.decision.method-commercial-denomination")
-                    </dt>
-                    <dd class="cya-answer">
-                        <span id="ruling_methodCommercialDenominationValue" class="pre-wrap">@d.methodCommercialDenomination.getOrElse("")</span>
-                    </dd>
-                </div>
-                <div class="grid-row">
-                    <dt id="ruling_searches" class="cya-question">
-                        @messages("case.decision.method-search")
-                    </dt>
-                    <dd class="cya-answer">
-                        <span id="ruling_searchesValue" class="pre-wrap">@d.methodSearch.getOrElse("")</span>
-                    </dd>
-                </div>
-                <div class="grid-row">
-                    <dt id="ruling_exclusions" class="cya-question">
-                        @messages("case.decision.method-exclusion")
-                    </dt>
-                    <dd class="cya-answer">
-                        <span id="ruling_exclusionsValue" class="pre-wrap">@d.methodExclusion.getOrElse("")</span>
-                    </dd>
-                </div>
-            </dl>
-        }
-
-    } else {
-        <span id="no-ruling-information">@messages("case.decision.empty")</span>
-    }
-
-    <h3 class="heading-medium">@messages("case.decision.attachments.ruling")</h3>
-
-    @attachments_list(
-        "attachments",
-        files.filter(_.shouldPublishToRulings),
-        startAtTabIndex = Some(startAtTabIndex+2)
-    )
-
-    @ruling_explanation(c,Some(startAtTabIndex+50))
-
-    @ruling_certificate_link(c,Some(startAtTabIndex+51))
-
-    @if(c.status == CaseStatus.COMPLETED || c.status == CaseStatus.CANCELLED) {
-        @ruling_commodity_code_expiry_section(c, commodityCode, clazz = "mt-3")
-    }
-
-    <div class="mt-3" id="ruling-actions">
-        @if(request.hasPermission(Permission.CANCEL_CASE)) {
-            @cancel_ruling_section(c,Some(startAtTabIndex+53))
-        }
-    </div>
-    <h3 class="heading-medium">@messages("case.decision.attachments.ruling")</h3>
-
-    @attachments_list("attachments", files.filter(_.public),startAtTabIndex = Some(startAtTabIndex+2))
-
+}.getOrElse {
+    <span id="no-ruling-information">@messages("case.decision.empty")</span>
 }
+
+<h3 class="heading-medium">@messages("case.decision.attachments.ruling")</h3>
+
+@attachments_list(
+    "attachments",
+    files.filter(_.shouldPublishToRulings),
+    startAtTabIndex = Some(startAtTabIndex+2)
+)
+
+@ruling_explanation(ruling.decision,Some(startAtTabIndex+50))
+
+@ruling_certificate_link(ruling,Some(startAtTabIndex+51))
+
+@if(ruling.caseStatus == CaseStatus.COMPLETED || ruling.caseStatus == CaseStatus.CANCELLED) {
+    @ruling_commodity_code_expiry_section(ruling, clazz = "mt-3")
+}
+
+<div class="mt-3" id="ruling-actions">
+    @if(request.hasPermission(Permission.CANCEL_CASE)) {
+        @cancel_ruling_section(ruling,Some(startAtTabIndex+53))
+    }
+</div>
+<h3 class="heading-medium">@messages("case.decision.attachments.ruling")</h3>
+
+@attachments_list("attachments", files.filter(_.public),startAtTabIndex = Some(startAtTabIndex+2))

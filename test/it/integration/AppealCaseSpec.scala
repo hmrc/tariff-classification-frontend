@@ -1,11 +1,11 @@
 package integration
 
 import com.github.tomakehurst.wiremock.client.WireMock._
-import models.{CaseStatus, Operator, Role}
+import models.{CaseStatus, Operator, Role, Pagination}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.ws.WSResponse
 import play.api.test.Helpers._
-import utils.CasePayloads
+import utils.{CasePayloads, EventPayloads}
 import utils.Cases.{aCase, withDecision}
 import utils.JsonFormatters._
 
@@ -56,6 +56,35 @@ class AppealCaseSpec extends IntegrationTest with MockitoSugar {
             aResponse()
               .withStatus(OK)
               .withBody(caseWithStatusCOMPLETE)
+          )
+      )
+      stubFor(
+        get(
+          urlEqualTo(
+            "/events?case_reference=1" +
+              "&type=SAMPLE_STATUS_CHANGE&type=SAMPLE_RETURN_CHANGE" +
+              s"&page=1&page_size=${Pagination.unlimited}"
+          )
+        ).willReturn(
+            aResponse()
+              .withStatus(OK)
+              .withBody(EventPayloads.pagedSampleEvents)
+          )
+      )
+      stubFor(
+        get(
+          urlEqualTo(
+            "/events?case_reference=1" +
+              "&type=EXPERT_ADVICE_RECEIVED&type=QUEUE_CHANGE&type=APPEAL_ADDED" +
+              "&type=APPEAL_STATUS_CHANGE&type=EXTENDED_USE_STATUS_CHANGE" +
+              "&type=CASE_STATUS_CHANGE&type=CASE_REFERRAL&type=NOTE&type=CASE_COMPLETED" +
+              "&type=CASE_CANCELLATION&type=CASE_CREATED&type=ASSIGNMENT_CHANGE" +
+              s"&page=1&page_size=${Pagination.unlimited}"
+          )
+        ).willReturn(
+            aResponse()
+              .withStatus(OK)
+              .withBody(EventPayloads.pagedEvents)
           )
       )
 

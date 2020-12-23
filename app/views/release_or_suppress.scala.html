@@ -15,18 +15,15 @@
  *@
 
 @import config.AppConfig
-@import models.Case
+@import controllers.routes
+@import models.{Case, CaseStatusRadioInput}
+@import models.viewmodels.NoTabSelected
 @import views.html.includes.main
 @import views.html.components.input_radio
-@import models.CaseStatusRadioInput
-@import controllers.routes.ReleaseOrSuppressCaseController
 @import views.html.components.confirm_or_cancel_buttons
 @import views.html.partials.{error_summary, case_heading, back_link}
-@import controllers.ActiveTab
-@import views.CancelAction
-@import models.viewmodels.NoTabSelected
 
-@(c: Case, form: Form[_], activeTab: Option[ActiveTab])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(c: Case, form: Form[_])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("action_this_case_status_title")), customPrimaryNavTab = NoTabSelected) {
     @back_link()
@@ -35,7 +32,7 @@
 
     @case_heading(c)
 
- @helper.form(action = ReleaseOrSuppressCaseController.onSubmit(c.reference, activeTab), 'novalidate -> "novalidate") {
+ @helper.form(action = routes.ReleaseOrSuppressCaseController.onSubmit(c.reference), 'novalidate -> "novalidate") {
 
     @helper.CSRF.formField
 
@@ -47,7 +44,7 @@
         id = "change_case_status",
         confirmText = "Submit",
         cancelText = "Cancel",
-        cancelHref = CancelAction.cancelHref(activeTab, c.reference)
+        cancelHref = routes.CaseController.get(c.reference)
     )
 
 

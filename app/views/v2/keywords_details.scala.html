@@ -18,14 +18,13 @@
 @import config.AppConfig
 @import controllers.routes
 @import controllers.routes.CaseController
+@import controllers.Tab
 @import models.request.AuthenticatedRequest
 @import models.Permission
 @import models.viewmodels.KeywordsTabViewModel
 @import views.html.components.input_auto_complete
 @import views.html.partials.tab_heading
 @import views.html.partials.error_summary
-@import controllers.v2.routes.LiabilityController
-@import controllers.Tab._
 
 @this()
 
@@ -59,7 +58,7 @@
                         </div>
                         @if(request.hasPermission(Permission.KEYWORDS)) {
                             <div id="keywords-row-@{index}-remove" class="column-one-third text-right">
-                                <a tabindex="@{startAtTabIndex+10+index}" id="keywords-row-@{index}-remove-link" aria-label="remove @keyword" href="@LiabilityController.removeKeyword(ktvm.caseReference, keyword)">Remove</a>
+                                <a tabindex="@{startAtTabIndex+10+index}" id="keywords-row-@{index}-remove-link" aria-label="remove @keyword" href="@routes.CaseController.removeKeyword(ktvm.caseReference, keyword)">Remove</a>
                             </div>
                         }
                     </div>
@@ -68,7 +67,7 @@
             </div>
 
             @if(request.hasPermission(Permission.KEYWORDS)) {
-                @form(action = LiabilityController.addKeyword(ktvm.caseReference).withFragment(KEYWORDS_TAB), 'class -> "form mt-3") {
+                @form(action = routes.CaseController.addKeyword(ktvm.caseReference), 'class -> "form mt-3") {
 
                     @CSRF.formField
                     @input_auto_complete(

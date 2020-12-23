@@ -24,6 +24,7 @@ import utils.Cases._
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.partials.case_trader
+import models.viewmodels.atar.ApplicantTabViewModel
 
 class CaseTraderViewSpec extends ViewSpec {
 
@@ -40,8 +41,10 @@ class CaseTraderViewSpec extends ViewSpec {
         withoutAgent()
       )
 
+      val applicantTab = ApplicantTabViewModel.fromCase(`case`, Map.empty)
+
       // When
-      val doc = view(case_trader(`case`, 0, s => Some("dummy country name")))
+      val doc = view(case_trader(applicantTab, 0))
 
       // Then
       doc shouldNot containElementWithID("agent-submitted-heading")
@@ -50,9 +53,10 @@ class CaseTraderViewSpec extends ViewSpec {
     "render boards file number when present" in {
       // Given
       val c = aCase().copy(caseBoardsFileNumber = Some("file 123"))
+      val applicantTab = ApplicantTabViewModel.fromCase(c, Map.empty)
 
       // When
-      val doc = view(case_trader(c, 0, s => Some("dummy country name")))
+      val doc = view(case_trader(applicantTab, 0))
 
       // Then
       val boardFileNumber = doc.getElementById("boards-file-number")
@@ -62,9 +66,10 @@ class CaseTraderViewSpec extends ViewSpec {
     "not show boards file number when not present" in {
       // Given
       val c = aCase()
+      val applicantTab = ApplicantTabViewModel.fromCase(c, Map.empty)
 
       // When
-      val doc = view(case_trader(c, 0, s => Some("dummy country name")))
+      val doc = view(case_trader(applicantTab, 0))
 
       // Then
       doc shouldNot containElementWithID("boards-file-number-label")

@@ -40,22 +40,23 @@ class ReleaseOrSuppressCaseController @Inject() (
 
   val form = new CaseStatusRadioInputFormProvider()()
 
-  def onPageLoad(reference: String, activeTab: Option[ActiveTab] = None): Action[AnyContent] =
+  def onPageLoad(reference: String): Action[AnyContent] =
     (verify.authenticated andThen
       verify.casePermissions(reference) andThen
       verify.mustHaveOneOf(Seq(Permission.SUPPRESS_CASE, Permission.RELEASE_CASE))).async { implicit request =>
-      validateAndRenderView(c => successful(release_or_suppress(c, form, activeTab)))
+      validateAndRenderView(c => successful(release_or_suppress(c, form)))
     }
 
-  def onSubmit(reference: String, activeTab: Option[ActiveTab] = None): Action[AnyContent] =
+  def onSubmit(reference: String): Action[AnyContent] =
     (verify.authenticated andThen
       verify.casePermissions(reference) andThen
       verify.mustHaveOneOf(Seq(Permission.SUPPRESS_CASE, Permission.RELEASE_CASE))) { implicit request =>
       form.bindFromRequest.fold(
-        hasErrors => Ok(release_or_suppress(request.`case`, hasErrors, activeTab)), {
-          case CaseStatusRadioInput.Release => Redirect(routes.ReleaseCaseController.releaseCase(reference, activeTab))
+        hasErrors => Ok(release_or_suppress(request.`case`, hasErrors)), {
+          case CaseStatusRadioInput.Release =>
+            Redirect(routes.ReleaseCaseController.releaseCase(reference))
           case CaseStatusRadioInput.Suppress =>
-            Redirect(routes.SuppressCaseController.getSuppressCase(reference, activeTab))
+            Redirect(routes.SuppressCaseController.getSuppressCase(reference))
         }
       )
     }

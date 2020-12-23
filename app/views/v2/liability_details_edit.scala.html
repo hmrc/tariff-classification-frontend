@@ -14,22 +14,17 @@
  * limitations under the License.
  *@
 
-@import helper._
 @import config.AppConfig
-@import models.Case
-@import views.html.forms.components.input_text
-@import models.request.AuthenticatedRequest
-@import views.html.partials.error_summary
-@import models.LiabilityOrder
-@import views.html.forms.components.input_date
-@import controllers.Tab._
+@import controllers.Tab
 @import controllers.v2.routes.LiabilityController
-@import views.html.includes.main
-@import models.viewmodels.CaseHeaderViewModel
-@import views.html.forms.components.input_checkbox
-@import views.html.forms.components.input_number
+@import helper._
+@import models.{Case, LiabilityOrder}
+@import models.request.AuthenticatedRequest
+@import models.viewmodels.{CaseHeaderViewModel, MyCasesTab}
 @import views.html.components.confirm_or_cancel_buttons
-@import models.viewmodels.MyCasesTab
+@import views.html.includes.main
+@import views.html.forms.components._
+@import views.html.partials.error_summary
 
 @this(case_heading: views.html.v2.case_heading)
 
@@ -218,7 +213,7 @@
                     id = "edit_liability_details",
                     confirmText = messages("case.v2.liability.c592.details_edit.save_and_continue_button"),
                     cancelText = messages("case.v2.liability.c592.details_edit.cancel_button"),
-                    cancelHref = controllers.v2.routes.LiabilityController.displayLiability(c.reference).withFragment(C592_TAB)
+                    cancelHref = controllers.v2.routes.LiabilityController.displayLiability(c.reference).withFragment(Tab.C592_TAB.name)
                 )
             }
         </div>

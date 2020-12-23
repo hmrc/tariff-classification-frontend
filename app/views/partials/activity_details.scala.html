@@ -17,14 +17,17 @@
 @import helper._
 @import config.AppConfig
 @import controllers.routes.{CaseController, ReassignCaseController}
+@import controllers.Tab
 @import models.forms.ActivityFormData
 @import models.CaseStatus._
 @import models.request.AuthenticatedRequest
 @import models.{Case, Event, Paged, Permission, Queue}
+@import models.viewmodels.ActivityViewModel
 @import views.html.forms.components.input_textarea
 @import views.html.partials.{activity_details_events_table, assignee, tab_heading}
 @import views.html.partials.error_summary
-@(c: Case, events: Paged[Event], activityForm: Form[ActivityFormData], queues: Seq[Queue], startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+
+@(activity: ActivityViewModel, activityForm: Form[ActivityFormData], startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
     @error_summary(activityForm.errors, Some(startAtTabIndex))
 
@@ -35,7 +38,7 @@
 
             <div class="column-full">
 
-            @form(action = CaseController.addNote(c.reference), 'class -> "form") {
+            @form(action = CaseController.addNote(activity.referenceNumber).withFragment(Tab.ACTIVITY_TAB.name), 'class -> "form") {
                 @CSRF.formField
                 @input_textarea(
                     field = activityForm("note"),
@@ -52,29 +55,27 @@
         </div>
     }
 
-    @activity_details_events_table(c, events, queues, startAtTabIndex+15)
+    @activity_details_events_table(activity, startAtTabIndex+15)
 
     <div class="grid-row mt-2">
         @if(request.hasPermission(Permission.VIEW_CASE_ASSIGNEE)){
             <div class="column-full">
-                @if(c.assignee.isDefined) {
+                @activity.assignee.map { assignedTo =>
                     <span id="activity-events-assignee-label">
                         @messages("case.activity.assigned-to")
                     </span>
                     <span id="activity-events-assignee">
-                        @assignee(c.assignee.get, true)
+                        @assignee(assignedTo, true)
                     </span>
-                } else {
+                }.getOrElse {
                     <span id="activity-events-assigned-queue-label">
                         @messages("case.activity.assigned-queue")
                     </span>
                     <span id="activity-events-assigned-queue">
-                    @{
-                        if(c.queueId.isDefined) {
-                            c.queueId.flatMap(id => queues.find(_.id == id)).map(_.name).getOrElse("unknown")
-                        } else {
-                            messages("case.activity.no-queue-assigned")
-                        }
+                    @activity.queueId.map { queueId =>
+                        @activity.queueName
+                    }.getOrElse {
+                        @messages("case.activity.no-queue-assigned")
                     }
                     </span>
                 }

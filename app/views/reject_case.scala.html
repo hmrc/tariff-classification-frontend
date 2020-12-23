@@ -15,20 +15,18 @@
  *@
 
 @import config.AppConfig
-@import controllers.routes.{RejectCaseController}
+@import controllers.routes
 @import models.Case
+@import models.viewmodels.NoTabSelected
 @import views.html.components.{confirm_or_cancel_buttons, warning}
 @import views.html.forms.components.input_textarea
 @import views.html.includes.main
 @import views.html.partials.case_heading
 @import views.html.partials.statuses.status_change_upload
 @import views.html.partials.{error_summary, back_link}
-@import controllers.ActiveTab
-@import views.CancelAction
 
-@import models.viewmodels.NoTabSelected
 
-@(c: Case, form: Form[String], activeTab: Option[ActiveTab] = None)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(c: Case, form: Form[String])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("page.title.reject.case")), customPrimaryNavTab = NoTabSelected) {
 
@@ -42,7 +40,7 @@
         <div class="column-full">
             <h2 class="heading-large mt-0">@messages("change_case_status.to.rejected")</h2>
 
-            @helper.form(action = RejectCaseController.postRejectCase(c.reference, activeTab),
+            @helper.form(action = routes.RejectCaseController.postRejectCase(c.reference),
             'enctype -> "multipart/form-data",
             'id -> "reject_case", 'novalidate -> "novalidate") {
 
@@ -67,7 +65,7 @@
                     id = "reject_case",
                     confirmText = "Confirm status change",
                     cancelText = "Cancel and return to case",
-                    cancelHref = CancelAction.cancelHref(activeTab, c.reference)
+                    cancelHref = routes.CaseController.get(c.reference)
                 )
             }
         </div>

@@ -23,6 +23,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.inject.Injector
+import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.Files.TemporaryFileCreator
 import play.api.libs.ws.WSClient
@@ -51,6 +52,7 @@ trait SpecBase
         //app related feature flag
         "toggle.new-liability-details" -> true
       )
+      .overrides(bind[Metrics].toInstance(new TestMetrics))
       .build()
 
   lazy val mcc: MessagesControllerComponents           = cc

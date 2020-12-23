@@ -17,10 +17,12 @@
 @import config.AppConfig
 @import models._
 @import models.request.AuthenticatedRequest
+@import models.viewmodels.ActivityViewModel
 @import utils.Dates
 @import views.html.partials.activity._
 @import views.html.partials.{assignee, progressive_disclosure}
-@(c: Case, events: Paged[Event], queues: Seq[Queue], startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+
+@(activity: ActivityViewModel, startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 <table id="activity-events">
     <thead>
@@ -32,7 +34,7 @@
         </tr>
     </thead>
     <tbody>
-    @for((event: Event, index: Int) <- events.results.zipWithIndex) {
+    @for((event: Event, index: Int) <- activity.events.results.zipWithIndex) {
         <tr id="activity-events-row-@{index}">
             <td id="activity-events-row-@{index}-operator" class="activity-cell">@event.operator.name.getOrElse("Unknown")</td>
 
@@ -127,7 +129,7 @@
                             val body = event.details.asInstanceOf[QueueChange]
                             progressive_disclosure(
                                 id = s"activity-events-row-$index",
-                                summary = s" ${assignee(event.operator, true)} moved this case to the ${body.to.flatMap(to => queues.find(to == _.id)).map(_.name).getOrElse("unknown")} queue",
+                                summary = s" ${assignee(event.operator, true)} moved this case to the ${body.to.flatMap(to => activity.queues.find(to == _.id)).map(_.name).getOrElse("unknown")} queue",
                                 body = body.comment.map(Html(_)),
                                 useTabIndex = Some(startAtTabIndex + (index*2))
                             )
