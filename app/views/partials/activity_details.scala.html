@@ -17,6 +17,7 @@
 @import helper._
 @import config.AppConfig
 @import controllers.routes.{CaseController, ReassignCaseController}
+@import controllers.Tab
 @import models.forms.ActivityFormData
 @import models.CaseStatus._
 @import models.request.AuthenticatedRequest
@@ -37,7 +38,7 @@
 
             <div class="column-full">
 
-            @form(action = CaseController.addNote(activity.referenceNumber), 'class -> "form") {
+            @form(action = CaseController.addNote(activity.referenceNumber).withFragment(Tab.ACTIVITY_TAB.name), 'class -> "form") {
                 @CSRF.formField
                 @input_textarea(
                     field = activityForm("note"),

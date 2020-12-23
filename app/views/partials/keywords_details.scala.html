@@ -18,6 +18,7 @@
 @import config.AppConfig
 @import controllers.routes
 @import controllers.routes.CaseController
+@import controllers.Tab
 @import models.request.AuthenticatedRequest
 @import models.{Case, Permission}
 @import models.viewmodels.KeywordsTabViewModel
@@ -64,7 +65,7 @@
             </div>
 
             @if(request.hasPermission(Permission.KEYWORDS)) {
-                @form(action = routes.CaseController.addKeyword(keywords.caseReference), 'class -> "form mt-3") {
+                @form(action = routes.CaseController.addKeyword(keywords.caseReference).withFragment(Tab.KEYWORDS_TAB.name), 'class -> "form mt-3") {
 
                     @CSRF.formField
                     @input_auto_complete(
