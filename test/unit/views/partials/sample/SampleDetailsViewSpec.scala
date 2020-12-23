@@ -39,7 +39,7 @@ class SampleDetailsViewSpec extends ViewSpec {
       val doc = view(sample_details(sampleTab))
 
       // Then
-      doc should containElementWithID("app-details-sending-samples")
+      doc should containElementWithID("app-details-sending-samples-answer")
       doc shouldNot containElementWithID("liability-sending-samples")
     }
 
