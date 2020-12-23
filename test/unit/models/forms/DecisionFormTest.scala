@@ -16,6 +16,8 @@
 
 package models.forms
 
+import java.time.Instant
+
 import models.{Decision, ModelsBaseSpec}
 import org.mockito.BDDMockito._
 import play.api.data.FormError
@@ -45,7 +47,9 @@ class DecisionFormTest extends ModelsBaseSpec {
     goodsDescription     = "desc",
     methodSearch         = "method",
     justification        = "justified",
-    explanation          = "some exp"
+    explanation          = "some exp",
+    expiryDate           = Some(Instant.now),
+    explicitEndDate      = true
   )
 
   private def formProvider(commodityCodeConstraints: CommodityCodeConstraints) =

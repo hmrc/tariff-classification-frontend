@@ -21,6 +21,7 @@ import utils.Cases
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.partials.ruling.cancel_ruling_section
+import models.viewmodels.atar.RulingTabViewModel
 
 class CancelRulingButtonViewSpec extends ViewSpec {
 
@@ -30,9 +31,10 @@ class CancelRulingButtonViewSpec extends ViewSpec {
 
     "render button for OPEN case" in {
       val c = Cases.btiCaseExample.copy(status = CaseStatus.COMPLETED)
+      val rulingTab = RulingTabViewModel.fromCase(c)
 
       // When
-      val doc = view(cancel_ruling_section(c))
+      val doc = view(cancel_ruling_section(rulingTab))
 
       // Then
       doc should containElementWithID(cancelButtonId)
@@ -44,9 +46,10 @@ class CancelRulingButtonViewSpec extends ViewSpec {
 
     "not render button for other case status" in {
       val c = Cases.btiCaseExample.copy(status = CaseStatus.OPEN)
+      val rulingTab = RulingTabViewModel.fromCase(c)
 
       // When
-      val doc = view(cancel_ruling_section(c))
+      val doc = view(cancel_ruling_section(rulingTab))
 
       // Then
       doc shouldNot containElementWithID(cancelButtonId)
@@ -54,9 +57,10 @@ class CancelRulingButtonViewSpec extends ViewSpec {
 
     "not render button for expired rulings" in {
       val c = Cases.btiCaseWithExpiredRuling
+      val rulingTab = RulingTabViewModel.fromCase(c)
 
       // When
-      val doc = view(cancel_ruling_section(c))
+      val doc = view(cancel_ruling_section(rulingTab))
 
       // Then
       doc shouldNot containElementWithID(cancelButtonId)

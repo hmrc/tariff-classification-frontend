@@ -21,6 +21,7 @@ import utils.Cases._
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.partials.sample.sample_details
+import models.viewmodels.atar.SampleTabViewModel
 
 class SampleDetailsViewSpec extends ViewSpec {
 
@@ -32,26 +33,14 @@ class SampleDetailsViewSpec extends ViewSpec {
         withBTIDetails()
       )
 
+      val sampleTab = SampleTabViewModel.fromCase(caseWithSample, Paged.empty)
+
       // When
-      val doc = view(sample_details(caseWithSample, Paged.empty[Event]))
+      val doc = view(sample_details(sampleTab))
 
       // Then
-      doc should containElementWithID("app-details-sending-samples")
+      doc should containElementWithID("app-details-sending-samples-answer")
       doc shouldNot containElementWithID("liability-sending-samples")
-    }
-
-    "render liability details" in {
-      // Given
-      val `case` = aCase(
-        withLiabilityApplication()
-      )
-
-      // When
-      val doc = view(sample_details(`case`, Paged.empty[Event]))
-
-      // Then
-      doc should containElementWithID("liability-sending-samples")
-      doc shouldNot containElementWithID("app-details-sending-samples")
     }
 
     "render sample status activity when present on case" in {
@@ -76,8 +65,10 @@ class SampleDetailsViewSpec extends ViewSpec {
       )
       val sampleStatusActivity: Seq[Event] = Seq(event1, event2, event3)
 
+      val sampleTab = SampleTabViewModel.fromCase(caseWithSample, Paged(sampleStatusActivity, NoPagination(), 3))
+
       // When
-      val doc = view(sample_details(caseWithSample, Paged.apply(sampleStatusActivity, NoPagination(), 3)))
+      val doc = view(sample_details(sampleTab))
 
       doc.getElementById("sample-status-events-row-0-title") should containText(
         "Sample status changed from none to awaiting sample"
@@ -88,21 +79,6 @@ class SampleDetailsViewSpec extends ViewSpec {
       doc.getElementById("sample-status-events-row-2-title") should containText(
         "Sample status changed from moved to ELM to destroyed"
       )
-    }
-
-    "render sample status event as sending sample for liability" in {
-      // Given
-      val caseWithSample = aCase(
-        withLiabilityApplication()
-      )
-
-      val event1: Event                    = Event("1", SampleStatusChange(None, Some(SampleStatus.AWAITING), None), Operator("1"), "1")
-      val sampleStatusActivity: Seq[Event] = Seq(event1)
-
-      // When
-      val doc = view(sample_details(caseWithSample, Paged.apply(sampleStatusActivity, NoPagination(), 3)))
-
-      doc.getElementById("sample-status-events-row-0-title") should containText("Sending sample changed from no to yes")
     }
 
   }

@@ -3,16 +3,15 @@ function postCurrentAnchor(anchor, url, csrf) {
     let xhr = new XMLHttpRequest();
     xhr.open("POST", url, true);
     xhr.setRequestHeader('Csrf-Token', csrf);
-
-    xhr.send('#' + anchor);
+    xhr.setRequestHeader('Content-Type', 'text/plain;charset=UTF-8')
+    xhr.send(anchor);
 }
 
 function saveAnchor(button, url, csrf) {
     button.addEventListener('click', function () {
-        let baseURL = window.location.href.toString();
-        let parts = baseURL.split("#");
-        if (parts.length === 2) {
-            let anchor = parts[1].toString();
+        const hash = window.location.hash;
+        const anchor = hash.length > 0 ? hash.substring(1) : hash;
+        if (anchor.length > 0) {
             postCurrentAnchor(anchor, url, csrf);
         }
     }, false);
@@ -36,8 +35,8 @@ function getAnchor(targetURL, csrf) {
 }
 
 function setLocation(anchor) {
-    if (anchor && anchor.toString().startsWith("#")) {
-        let ourElement = document.getElementById(anchor.toString().substr(1))
+    if (anchor) {
+        let ourElement = document.getElementById(anchor.toString())
         if (ourElement) {
             window.location.hash = anchor;
         }

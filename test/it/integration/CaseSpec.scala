@@ -51,6 +51,35 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
               .withBody(CasePayloads.jsonOf(c))
           )
       )
+      stubFor(
+        get(
+          urlEqualTo(
+            "/events?case_reference=1" +
+              "&type=SAMPLE_STATUS_CHANGE&type=SAMPLE_RETURN_CHANGE" +
+              s"&page=1&page_size=${Pagination.unlimited}"
+          )
+        ).willReturn(
+            aResponse()
+              .withStatus(OK)
+              .withBody(EventPayloads.pagedSampleEvents)
+          )
+      )
+      stubFor(
+        get(
+          urlEqualTo(
+            "/events?case_reference=1" +
+              "&type=EXPERT_ADVICE_RECEIVED&type=QUEUE_CHANGE&type=APPEAL_ADDED" +
+              "&type=APPEAL_STATUS_CHANGE&type=EXTENDED_USE_STATUS_CHANGE" +
+              "&type=CASE_STATUS_CHANGE&type=CASE_REFERRAL&type=NOTE&type=CASE_COMPLETED" +
+              "&type=CASE_CANCELLATION&type=CASE_CREATED&type=ASSIGNMENT_CHANGE" +
+              s"&page=1&page_size=${Pagination.unlimited}"
+          )
+        ).willReturn(
+            aResponse()
+              .withStatus(OK)
+              .withBody(EventPayloads.pagedEvents)
+          )
+      )
 
       // When
       val response = await(ws.url(s"$baseUrl/cases/1").get())
@@ -62,41 +91,6 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
 
     "redirect on auth failure" in {
       verifyNotAuthorisedFor("cases/1")
-    }
-  }
-
-  "Case Application Details" should {
-
-    "return status 200" in {
-      // Given
-      givenAuthSuccess()
-      stubFor(
-        get(urlEqualTo("/cases/1"))
-          .willReturn(
-            aResponse()
-              .withStatus(OK)
-              .withBody(CasePayloads.jsonOf(c))
-          )
-      )
-      stubFor(
-        post(urlEqualTo("/file?id="))
-          .willReturn(
-            aResponse()
-              .withStatus(OK)
-              .withBody("[]")
-          )
-      )
-
-      // When
-      val response = await(ws.url(s"$baseUrl/cases/1/item").get())
-
-      // Then
-      response.status shouldBe OK
-      response.body   should include("id=\"application-heading\"")
-    }
-
-    "redirect on auth failure" in {
-      verifyNotAuthorisedFor("cases/1/item")
     }
   }
 

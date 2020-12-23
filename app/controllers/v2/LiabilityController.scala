@@ -17,9 +17,10 @@
 package controllers.v2
 
 import config.AppConfig
-import controllers.{RequestActions, v2}
+import controllers.{RequestActions, Tab, v2}
 import javax.inject.{Inject, Singleton}
 import models.forms.{ActivityForm, ActivityFormData, KeywordForm, UploadAttachmentForm}
+import models.forms.v2.LiabilityDetailsForm
 import models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
 import models.viewmodels._
 import models.{Case, Permission, _}
@@ -29,12 +30,10 @@ import play.api.mvc._
 import service.{CasesService, EventsService, FileStoreService, KeywordsService, QueuesService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import controllers.Tab._
-import models.forms.v2.LiabilityDetailsForm
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class LiabilityController @Inject() (
@@ -48,13 +47,14 @@ class LiabilityController @Inject() (
   val liability_view: views.html.v2.liability_view,
   val liability_details_edit: views.html.v2.liability_details_edit,
   implicit val appConfig: AppConfig
-) extends FrontendController(mcc)
+)(implicit ec: ExecutionContext)
+    extends FrontendController(mcc)
     with I18nSupport {
 
   def displayLiability(reference: String): Action[AnyContent] =
-    (verify.authenticated andThen verify.casePermissions(reference)).async(implicit request => buildLiabilityView())
+    (verify.authenticated andThen verify.casePermissions(reference)).async(implicit request => renderView())
 
-  def buildLiabilityView(
+  def renderView(
     activityForm: Form[ActivityFormData] = ActivityForm.form,
     uploadAttachmentForm: Form[String]   = UploadAttachmentForm.form,
     keywordForm: Form[String]            = KeywordForm.form
@@ -116,46 +116,6 @@ class LiabilityController @Inject() (
       )
     }
 
-  def addNote(reference: String): Action[AnyContent] =
-    (verify.authenticated andThen
-      verify.casePermissions(reference) andThen verify.mustHave(Permission.ADD_NOTE)).async { implicit request =>
-      def onError: Form[ActivityFormData] => Future[Result] = errorForm => {
-        buildLiabilityView(errorForm)
-      }
-
-      def onSuccess: ActivityFormData => Future[Result] = validForm => {
-        eventsService
-          .addNote(request.`case`, validForm.note, request.operator)
-          .map(_ => Redirect(v2.routes.LiabilityController.displayLiability(reference)))
-      }
-
-      ActivityForm.form.bindFromRequest.fold(onError, onSuccess)
-    }
-
-  def addKeyword(reference: String): Action[AnyContent] =
-    (verify.authenticated andThen
-      verify.casePermissions(reference) andThen verify.mustHave(Permission.KEYWORDS)).async { implicit request =>
-      def onError: Form[String] => Future[Result] = (errorForm: Form[String]) => {
-        buildLiabilityView(keywordForm = errorForm)
-      }
-
-      def onSuccess: String => Future[Result] = validForm => {
-        keywordsService
-          .addKeyword(request.`case`, validForm, request.operator)
-          .map(_ => Redirect(v2.routes.LiabilityController.displayLiability(reference).withFragment(KEYWORDS_TAB)))
-      }
-
-      KeywordForm.form.bindFromRequest.fold(onError, onSuccess)
-    }
-
-  def removeKeyword(reference: String, keyword: String): Action[AnyContent] =
-    (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.KEYWORDS))
-      .async { implicit request: AuthenticatedCaseRequest[AnyContent] =>
-        keywordsService.removeKeyword(request.`case`, keyword, request.operator) map { _ =>
-          Redirect(v2.routes.LiabilityController.displayLiability(reference).withFragment(KEYWORDS_TAB))
-        }
-      }
-
   def editLiabilityDetails(reference: String): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference)
       andThen verify.mustHave(Permission.EDIT_LIABILITY)).async { implicit request =>
@@ -176,7 +136,7 @@ class LiabilityController @Inject() (
           updatedCase =>
             casesService
               .updateCase(updatedCase)
-              .map(_ => Redirect(v2.routes.LiabilityController.displayLiability(reference).withFragment(C592_TAB)))
+              .map(_ => Redirect(v2.routes.LiabilityController.displayLiability(reference)))
         )
     }
 

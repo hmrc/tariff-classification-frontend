@@ -14,30 +14,29 @@
  * limitations under the License.
  *@
 
-@import controllers.routes.AttachmentsController
-@import uk.gov.hmrc.play.views.html.helpers
 @import config.AppConfig
-@import models.{Case, StoredAttachment}
-@import views.html.components.input_file
-@import views.html.partials.{attachments_list_atar, attachments_state_message, tab_heading,error_summary}
-
+@import controllers.{Tab, routes, v2}
+@import models.{Case, Permission, StoredAttachment}
 @import models.request.AuthenticatedRequest
-@import models.Permission
-@(c: Case, form : Form[String], filesFromApplicant: Seq[StoredAttachment], filesFromClassification: Seq[StoredAttachment],
-                startAtTabIndex : Int = 0 )(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@import models.viewmodels.atar.AttachmentsTabViewModel
+@import uk.gov.hmrc.play.views.html.helpers
+@import views.html.components.input_file
+@import views.html.partials.{attachments_list_atar, attachments_state_message, tab_heading, error_summary}
+
+@(attachments: AttachmentsTabViewModel, form : Form[String], startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+
     @error_summary(form.errors, Some(startAtTabIndex))
 
     @tab_heading("attachments", messages("case.menu.attachments"))
 
     <h3 class="heading-medium mt-30 mb-30">@messages("page.title.case.attachments")</h3>
 
-    @attachments_state_message(attachments = filesFromApplicant ++ filesFromClassification, displayStateMessage = false)
+    @attachments_state_message(attachments = attachments.allAttachments, displayStateMessage = false)
 
-    @attachments_list_atar("classification-team", filesFromApplicant ++ filesFromClassification, c, startAtTabIndex = Some(startAtTabIndex+31))
-
+    @attachments_list_atar("classification-team", attachments, startAtTabIndex = Some(startAtTabIndex+31))
 
     @if(request.hasPermission(Permission.ADD_ATTACHMENT)) {
-        @helpers.form(action = AttachmentsController.uploadAttachment(c.reference),
+        @helpers.form(action = v2.routes.AttachmentsController.uploadAttachment(attachments.caseReference),
             'enctype -> "multipart/form-data",
             'id -> "upload-files-form") {
 

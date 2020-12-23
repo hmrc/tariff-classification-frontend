@@ -47,10 +47,10 @@ class ReferCaseController @Inject() (
   override protected val config: AppConfig         = appConfig
   override protected val caseService: CasesService = casesService
 
-  def getReferCase(reference: String, activeTab: Option[ActiveTab]): Action[AnyContent] =
+  def getReferCase(reference: String): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference) andThen
       verify.mustHave(Permission.REFER_CASE)).async { implicit request =>
-      validateAndRenderView(c => successful(views.html.refer_case(c, ReferCaseForm.form, activeTab)))
+      validateAndRenderView(c => successful(views.html.refer_case(c, ReferCaseForm.form)))
     }
 
   def confirmReferCase(reference: String): Action[AnyContent] =
@@ -60,7 +60,7 @@ class ReferCaseController @Inject() (
       renderView(c => c.status == REFERRED, c => successful(views.html.confirm_refer_case(c)))
     }
 
-  def postReferCase(reference: String, activeTab: Option[ActiveTab]): Action[MultipartFormData[Files.TemporaryFile]] =
+  def postReferCase(reference: String): Action[MultipartFormData[Files.TemporaryFile]] =
     (verify.authenticated andThen verify.casePermissions(reference) andThen
       verify.mustHave(Permission.REFER_CASE)).async(parse.multipartFormData) {
       implicit request: AuthenticatedCaseRequest[MultipartFormData[Files.TemporaryFile]] =>
@@ -90,7 +90,7 @@ class ReferCaseController @Inject() (
           onFileValid = validFile => {
             myForm.fold(
               formWithErrors =>
-                getCaseAndRenderView(reference, c => successful(views.html.refer_case(c, formWithErrors, activeTab))),
+                getCaseAndRenderView(reference, c => successful(views.html.refer_case(c, formWithErrors))),
               referral =>
                 validateAndRedirect(
                   casesService

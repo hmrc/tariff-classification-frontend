@@ -20,9 +20,10 @@ import models._
 import play.twirl.api.Html
 import utils.Cases._
 import views.ViewMatchers._
-import views.html.case_details
 import views.html.partials.ruling.ruling_details
 import views.{CaseDetailPage, ViewSpec}
+import controllers.routes.RulingController
+import models.viewmodels.atar.RulingTabViewModel
 
 import java.time.Instant
 
@@ -36,8 +37,10 @@ class RulingDetailsViewSpec extends ViewSpec {
         withOptionalApplicationFields(envisagedCommodityCode = Some("envisaged code"))
       )
 
+      val rulingTab = RulingTabViewModel.fromCase(c).copy(bindingCommodityCode = None)
+
       // When
-      val doc = view(ruling_details(c, None, Seq.empty, None))
+      val doc = view(ruling_details(rulingTab, None, Seq.empty))
 
       // Then
       doc                                               should containElementWithID("envisagedCommodityCodeValue")
@@ -50,8 +53,10 @@ class RulingDetailsViewSpec extends ViewSpec {
         withOptionalApplicationFields(envisagedCommodityCode = None)
       )
 
+      val rulingTab = RulingTabViewModel.fromCase(c).copy(bindingCommodityCode = None)
+
       // When
-      val doc = view(ruling_details(c, None, Seq.empty, None))
+      val doc = view(ruling_details(rulingTab, None, Seq.empty))
 
       // Then
       doc shouldNot containElementWithID("envisagedCommodityCodeValue")
@@ -60,27 +65,28 @@ class RulingDetailsViewSpec extends ViewSpec {
     "Render 'Edit' button for EDIT_RULING users" in {
       // Given
       val c = aCase(withReference("ref"), withStatus(CaseStatus.OPEN))
+      val rulingTab = RulingTabViewModel.fromCase(c).copy(bindingCommodityCode = None)
 
       // When
       val doc = view(
-        ruling_details(c, None, Seq.empty, None)(requestWithPermissions(Permission.EDIT_RULING), messages, appConfig)
+        ruling_details(rulingTab, None, Seq.empty)(requestWithPermissions(Permission.EDIT_RULING), messages, appConfig)
       )
 
       // Then
-      doc                               should containElementWithID("ruling_edit_details")
-      doc                               should containElementWithID("ruling_edit")
-      doc.getElementById("ruling_edit") should haveTag("a")
+      doc                               should containElementWithID("edit-ruling-button")
+      doc                               should containElementWithID("edit-ruling-buttons")
 
       val call = controllers.routes.RulingController.editRulingDetails("ref")
-      doc.getElementById("ruling_edit") should haveAttribute("href", call.url)
+      doc.getElementById("edit-ruling-button") should haveAttribute("href", call.url)
     }
 
     "Not render 'Edit' button when not permitted" in {
       // Given
       val c = aCase(withReference("ref"), withStatus(CaseStatus.OPEN))
+      val rulingTab = RulingTabViewModel.fromCase(c).copy(bindingCommodityCode = None)
 
       // When
-      val doc = view(ruling_details(c, None, Seq.empty, None)(operatorRequest, messages, appConfig))
+      val doc = view(ruling_details(rulingTab, None, Seq.empty)(operatorRequest, messages, appConfig))
 
       // Then
       doc shouldNot containElementWithID("ruling_edit_details")
@@ -90,9 +96,10 @@ class RulingDetailsViewSpec extends ViewSpec {
     "Not render Decision details if not present" in {
       // Given
       val c = aCase(withoutDecision())
+      val rulingTab = RulingTabViewModel.fromCase(c).copy(bindingCommodityCode = None)
 
       // When
-      val doc = view(ruling_details(c, None, Seq.empty, None))
+      val doc = view(ruling_details(rulingTab, None, Seq.empty))
 
       // Then
       doc shouldNot containElementWithID("ruling_bindingCommodityCode")
@@ -114,11 +121,14 @@ class RulingDetailsViewSpec extends ViewSpec {
           bindingCommodityCode = "commodity code"
         )
       )
+
       val commodityCode = CommodityCode("commodity code", Some(Instant.now.plusSeconds(60)))
+
+      val rulingTab = RulingTabViewModel.fromCase(c).copy(bindingCommodityCode = Some(commodityCode))
 
       // When
       val doc = view(
-        ruling_details(c, None, Seq.empty, Some(commodityCode))(
+        ruling_details(rulingTab, None, Seq.empty)(
           requestWithPermissions(Permission.COMPLETE_CASE),
           messages,
           appConfig
@@ -137,11 +147,14 @@ class RulingDetailsViewSpec extends ViewSpec {
           bindingCommodityCode = "commodity code"
         )
       )
+
       val commodityCode = CommodityCode("commodity code", Some(Instant.now.minusSeconds(60)))
+
+      val rulingTab = RulingTabViewModel.fromCase(c).copy(bindingCommodityCode = Some(commodityCode))
 
       // When
       val doc = view(
-        ruling_details(c, None, Seq.empty, Some(commodityCode))(
+        ruling_details(rulingTab, None, Seq.empty)(
           requestWithPermissions(Permission.COMPLETE_CASE),
           messages,
           appConfig
@@ -161,11 +174,14 @@ class RulingDetailsViewSpec extends ViewSpec {
             bindingCommodityCode = "commodity code"
           )
         )
+
         val commodityCode = CommodityCode("commodity code", Some(Instant.now.minusSeconds(60)))
+
+        val rulingTab = RulingTabViewModel.fromCase(c).copy(bindingCommodityCode = Some(commodityCode))
 
         // When
         val doc = view(
-          ruling_details(c, None, Seq.empty, Some(commodityCode))(
+          ruling_details(rulingTab, None, Seq.empty)(
             requestWithPermissions(Permission.COMPLETE_CASE),
             messages,
             appConfig
@@ -185,11 +201,14 @@ class RulingDetailsViewSpec extends ViewSpec {
             cancellation         = Some(Cancellation(reason = CancelReason.INVALIDATED_OTHER))
           )
         )
+
         val commodityCode = CommodityCode("commodity code", Some(Instant.now.minusSeconds(60)))
+
+        val rulingTab = RulingTabViewModel.fromCase(c).copy(bindingCommodityCode = Some(commodityCode))
 
         // When
         val doc = view(
-          ruling_details(c, None, Seq.empty, Some(commodityCode))(
+          ruling_details(rulingTab, None, Seq.empty)(
             requestWithPermissions(Permission.COMPLETE_CASE),
             messages,
             appConfig
@@ -208,11 +227,14 @@ class RulingDetailsViewSpec extends ViewSpec {
             bindingCommodityCode = "commodity code"
           )
         )
+
         val commodityCode = CommodityCode("commodity code", Some(Instant.now.minusSeconds(60)))
+
+        val rulingTab = RulingTabViewModel.fromCase(c).copy(bindingCommodityCode = Some(commodityCode))
 
         // When
         val doc = view(
-          ruling_details(c, None, Seq.empty, Some(commodityCode))(
+          ruling_details(rulingTab, None, Seq.empty)(
             requestWithPermissions(Permission.COMPLETE_CASE),
             messages,
             appConfig
@@ -233,11 +255,14 @@ class RulingDetailsViewSpec extends ViewSpec {
             bindingCommodityCode = "commodity code"
           )
         )
+
         val commodityCode = CommodityCode("commodity code", None)
+
+        val rulingTab = RulingTabViewModel.fromCase(c).copy(bindingCommodityCode = Some(commodityCode))
 
         // When
         val doc = view(
-          ruling_details(c, None, Seq.empty, Some(commodityCode))(
+          ruling_details(rulingTab, None, Seq.empty)(
             requestWithPermissions(Permission.COMPLETE_CASE),
             messages,
             appConfig
@@ -247,49 +272,6 @@ class RulingDetailsViewSpec extends ViewSpec {
         // Then
         doc shouldNot containElementWithID("ruling_commodity_code_expiry_section")
       }
-    }
-
-    "Render Decision details with COMPLETE_CASE permission" in {
-      // Given
-      val caseDetailsView = app.injector.instanceOf[case_details]
-      val c = aCase(
-        withStatus(CaseStatus.OPEN),
-        withDecision(
-          bindingCommodityCode         = "commodity code",
-          justification                = "justification",
-          goodsDescription             = "goods description",
-          methodSearch                 = Some("method search"),
-          methodExclusion              = Some("method exclusion"),
-          methodCommercialDenomination = Some("commercial denomination")
-        )
-      )
-
-      // When
-      val doc = view(
-        ruling_details(c, None, Seq.empty, None)(requestWithPermissions(Permission.COMPLETE_CASE), messages, appConfig)
-      )
-      val doc_case_details = view(
-        caseDetailsView(c, CaseDetailPage.RULING, Html("html"), None)(
-          requestWithPermissions(Permission.COMPLETE_CASE),
-          messages,
-          appConfig
-        )
-      )
-
-      // Then
-      doc                                                            should containElementWithID("ruling_bindingCommodityCodeValue")
-      doc.getElementById("ruling_bindingCommodityCodeValue")         should containText("commodity code")
-      doc                                                            should containElementWithID("ruling_itemDescriptionValue")
-      doc.getElementById("ruling_itemDescriptionValue")              should containText("goods description")
-      doc                                                            should containElementWithID("ruling_justificationValue")
-      doc.getElementById("ruling_justificationValue")                should containText("justification")
-      doc                                                            should containElementWithID("ruling_searchesValue")
-      doc.getElementById("ruling_searchesValue")                     should containText("method search")
-      doc                                                            should containElementWithID("ruling_methodCommercialDenominationValue")
-      doc.getElementById("ruling_methodCommercialDenominationValue") should containText("commercial denomination")
-      doc                                                            should containElementWithID("ruling_exclusionsValue")
-      doc.getElementById("ruling_exclusionsValue")                   should containText("method exclusion")
-      doc_case_details                                               should containElementWithID("change-case-status-button")
     }
 
     "Render Decision details without Complete button for READ_ONLY users" in {
@@ -306,8 +288,10 @@ class RulingDetailsViewSpec extends ViewSpec {
         )
       )
 
+      val rulingTab = RulingTabViewModel.fromCase(c).copy(bindingCommodityCode = None)
+
       // When
-      val doc = view(ruling_details(c, None, Seq.empty, None)(operatorRequest, messages, appConfig))
+      val doc = view(ruling_details(rulingTab, None, Seq.empty)(operatorRequest, messages, appConfig))
 
       // Then
       doc                                                            should containElementWithID("ruling_bindingCommodityCodeValue")
@@ -328,10 +312,11 @@ class RulingDetailsViewSpec extends ViewSpec {
     "Render Cancel Ruling when user has CANCEL_CASE permission" in {
       // Given
       val c = aCase(withReference("ref"), withStatus(CaseStatus.COMPLETED), withDecision())
+      val rulingTab = RulingTabViewModel.fromCase(c).copy(bindingCommodityCode = None)
 
       // When
       val doc = view(
-        ruling_details(c, None, Seq.empty, None)(requestWithPermissions(Permission.CANCEL_CASE), messages, appConfig)
+        ruling_details(rulingTab, None, Seq.empty)(requestWithPermissions(Permission.CANCEL_CASE), messages, appConfig)
       )
 
       // Then
@@ -341,9 +326,10 @@ class RulingDetailsViewSpec extends ViewSpec {
     "Not Render Cancel Ruling when user does not have CANCEL_CASE permission" in {
       // Given
       val c = aCase(withReference("ref"), withStatus(CaseStatus.COMPLETED), withDecision())
+      val rulingTab = RulingTabViewModel.fromCase(c).copy(bindingCommodityCode = None)
 
       // When
-      val doc = view(ruling_details(c, None, Seq.empty, None)(operatorRequest, messages, appConfig))
+      val doc = view(ruling_details(rulingTab, None, Seq.empty)(operatorRequest, messages, appConfig))
 
       // Then
       doc shouldNot containElementWithID("cancel-ruling-button")
@@ -354,6 +340,7 @@ class RulingDetailsViewSpec extends ViewSpec {
       val c = aCase(
         withDecision()
       )
+
       val stored = StoredAttachment(
         id                     = "FILE_ID",
         public                 = true,
@@ -367,8 +354,10 @@ class RulingDetailsViewSpec extends ViewSpec {
         shouldPublishToRulings = true
       )
 
+      val rulingTab = RulingTabViewModel.fromCase(c).copy(bindingCommodityCode = None)
+
       // When
-      val doc = view(ruling_details(c, None, Seq(stored), None))
+      val doc = view(ruling_details(rulingTab, None, Seq(stored)))
 
       // Then
       doc should containElementWithID("attachments-row-0-file")
@@ -379,6 +368,7 @@ class RulingDetailsViewSpec extends ViewSpec {
       val c = aCase(
         withDecision()
       )
+
       val stored = StoredAttachment(
         id                     = "FILE_ID",
         public                 = false,
@@ -392,8 +382,10 @@ class RulingDetailsViewSpec extends ViewSpec {
         shouldPublishToRulings = false
       )
 
+      val rulingTab = RulingTabViewModel.fromCase(c).copy(bindingCommodityCode = None)
+
       // When
-      val doc = view(ruling_details(c, None, Seq(stored), None))
+      val doc = view(ruling_details(rulingTab, None, Seq(stored)))
 
       // Then
       doc shouldNot containElementWithID("attachments-file-FILE_ID")

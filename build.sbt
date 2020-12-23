@@ -56,7 +56,7 @@ lazy val microservice = (project in file("."))
     addTestReportOption(Test, "test-reports")
   )
   .settings(RoutesKeys.routesImport += "models.Sort")
-  .settings(RoutesKeys.routesImport += "controllers.ActiveTab")
+  .settings(RoutesKeys.routesImport += "models.ApplicationType")
   .settings(RoutesKeys.routesImport += "models.Search")
   .settings(RoutesKeys.routesImport += "models.viewmodels.SubNavigationTab")
   .settings(RoutesKeys.routesImport += "models.viewmodels.ATaRTab")
@@ -100,6 +100,6 @@ lazy val TemplateItTest = config("tit") extend IntegrationTest
 //}
 
 // Coverage configuration
-coverageMinimum := 93
+coverageMinimum := 92
 coverageFailOnMinimum := true
 coverageExcludedPackages := "<empty>;com.kenshoo.play.metrics.*;prod.*;testOnlyDoNotUseInAppConf.*;app.*;uk.gov.hmrc.BuildInfo;.*repositories.*"

@@ -18,8 +18,10 @@ package models
 
 import java.time.Instant
 
+import cats.syntax.either._
 import models.LiabilityStatus.LiabilityStatus
 import models.MiscCaseType.MiscCaseType
+import play.api.mvc.PathBindable
 
 sealed trait Application {
   val `type`: ApplicationType
@@ -86,12 +88,24 @@ sealed abstract class ApplicationType(val name: String) extends Product with Ser
 object ApplicationType {
   val values = Set(ATAR, LIABILITY, CORRESPONDENCE, MISCELLANEOUS)
 
-  def withName(name: String) = values.find(_.name == name).getOrElse(throw new NoSuchElementException)
+  def withName(name: String) = values.find(_.name.equalsIgnoreCase(name)).getOrElse(throw new NoSuchElementException)
 
   case object ATAR extends ApplicationType("BTI")
   case object LIABILITY extends ApplicationType("LIABILITY_ORDER")
   case object CORRESPONDENCE extends ApplicationType("CORRESPONDENCE")
   case object MISCELLANEOUS extends ApplicationType("MISCELLANEOUS")
+
+  implicit def applicationTypePathBindable(implicit stringBindable: PathBindable[String]): PathBindable[ApplicationType] =
+    new PathBindable[ApplicationType] {
+      def bind(key: String, value: String): Either[String, ApplicationType] =
+        Either.catchOnly[NoSuchElementException] {
+          ApplicationType.withName(value)
+        }.leftMap { _ =>
+          "Invalid application type"
+        }
+      def unbind(key: String, value: ApplicationType): String =
+        stringBindable.unbind(key, value.name)
+    }
 }
 
 case class BTIApplication(

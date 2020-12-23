@@ -17,11 +17,12 @@
 @import config.AppConfig
 @import models.{Case, Contact}
 @import models.request.AuthenticatedRequest
+@import models.viewmodels.atar.ApplicantTabViewModel
 
-@(c: Case, useTabIndex : Option[Int] = None)(implicit  messages: Messages)
+@(applicant: ApplicantTabViewModel, useTabIndex : Option[Int] = None)(implicit  messages: Messages)
 <h3 class="heading-medium mt-30">Contact details</h3>
 
-@defining(c.application.contact) { co: Contact =>
+@defining(applicant.contact) { co: Contact =>
 <dl class="govuk-check-your-answers cya-questions-short">
 
 <div class="grid-row">
@@ -39,7 +40,7 @@
             </dt>
             <dd class="cya-answer">
             @if(co.email.contains("@")){
-                <a @if(useTabIndex.isDefined){ tabindex="@{useTabIndex.get}" } id="contact-email" href="mailto:@co.email?subject=@c.application.getType application #@c.reference">@co.email</a>
+                <a @if(useTabIndex.isDefined){ tabindex="@{useTabIndex.get}" } id="contact-email" href="mailto:@co.email?subject=ATaR application #@applicant.caseReference">@co.email</a>
             } else {
                 <span id="contact-email">@co.email</span>
             }
@@ -56,14 +57,14 @@
                 </dd>
             </div>
         }
-        @if(c.caseBoardsFileNumber.isDefined) {
+        @applicant.caseBoardsFileNumber.map { caseBoardsFileNumber =>
 
             <div class="grid-row">
                 <dt class="cya-question" id="boards-file-number-label">
                     @messages("case.application.boards-file-number")
                 </dt>
                 <dd class="cya-answer" id="boards-file-number">
-                    @{c.caseBoardsFileNumber.get}
+                    @{caseBoardsFileNumber}
                 </dd>
             </div>
 

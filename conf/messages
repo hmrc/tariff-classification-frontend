@@ -25,6 +25,9 @@ case.menu.application-details=Goods
 case.menu.sample-details=Sample
 case.menu.ruling=Ruling
 case.menu.ruling-details=Ruling details
+case.menu.ruling-published-information=Information to be published on the public rulings website
+case.menu.ruling-not-published-information=Information not to be published on the public rulings website
+case.menu.ruling-advance=Advance Tariff Ruling
 case.menu.attachments=Attachments
 case.menu.activity=Activity
 case.menu.keywords=Keywords
@@ -41,6 +44,8 @@ case.elapsed-days=Days elapsed
 case.application.type=Application type
 case.application.suggested-commodity-code=Suggested commodity code
 case.application.suggested-goods-description=Suggested item description
+case.application.suggested-goods-description-edit-ruling=Suggested goods description
+case.application.ruling-tab-suggested-goods-description=Suggested goods description
 case.application.contact.name=Contact name
 case.application.contact.email=Contact email
 case.application.contact.telephone=Contact telephone
@@ -100,17 +105,18 @@ case.application.submitted.link=View and print a PDF of the original application
 answer.no=No
 answer.yes=Yes
 answer.none=None
-case.decision.application.title=Information from the applicant
-case.decision.information-applicant=Information from the applicant
+case.decision.application.title=Information from applicant
+case.decision.information-applicant=Information from applicant
 case.decision.information-not-published=Information not to be published
 case.decision.edit-ruling=Edit ruling
-case.decision.ruling-details=Ruling details to be published
+case.decision.ruling-details=Information to be published on the public rulings website
 case.decision.commodity-code=Binding commodity code
-case.decision.goods-description=Item description
+case.decision.goods-description=Goods description
 case.decision.justification=Legal justification
 case.decision.method-search=Searches performed
-case.decision.method-commercial-denomination=Commercial denomination and additional information
-case.decision.method-exclusion=Exclusions and inclusions
+case.decision.method-commercial-denomination=Commercial denomination
+case.decision.method-commercial-denomination-edit-ruling=Commercial denomination and additional information
+case.decision.method-exclusion=Exclusions
 case.decision.attachments=Select files to attach to the ruling
 case.decision.attachments.ruling=Files attached to the ruling
 case.decision.empty=There is no ruling information associated to this case.
@@ -121,21 +127,22 @@ case.decision.constraint.justification=Justification
 case.decision.constraint.bindingCommodityCode=Binding commodity code
 case.decision.constraint.goodsDescription=Item description
 case.decision.constraint.explanation=Explanation for holder
+case.decision.constraint.no-information=There is no information.
 case.decision.ruling.certificate.content=If this case is under review or appeal
 case.decision.ruling.certificate.link=view and print a PDF of the ruling (opens in a new window or tab).
 case.decision.ruling.certificate.title=Ruling certificate
 case.decision.ruling.review.appeal.link=View the original application
 liability.decision.ruling.certificate.title=Liability decision
 liability.decision.ruling.certificate.link=View PDF document for this liability.
-case.decision.holder.information=Information for the BTI holder
-case.decision.explanation.label=Explanation for holder
-case.decision.explanation.hint=Explain how you came to your decision using clear language.
+case.decision.holder.information=Information for the ATaR holder
+case.decision.explanation.label=Clear language explanation of the ruling decision
+case.decision.explanation.hint=This explanation will be sent to the holder as part of the covering letter.
 case.decision.explanation.commodityCode=Not yet entered
 case.activity.assigned-to=Currently assigned to:
 case.activity.assigned-queue=Currently in:
 case.activity.no-queue-assigned=Gateway
 case.attachment.hint.text.header=Files will open in a new window or tab.
-case.attachment.table.empty=There are no attachments
+case.attachment.table.empty=There are no attachments for this case.
 case.attachment.edit.file.text=Edit details
 case.attachment.edit.file.hidden.text=Edit details of file {0}
 case.attachment.remove.file.text=Remove
@@ -306,6 +313,8 @@ pdf.ruling.title=Binding Tariff Information ruling
 pdf.ruling.issuedBy.label=Issued by
 pdf.ruling.issuedBy.text=HMRC Classification Team
 pdf.ruling.section.holder.heading=Holder details
+pdf.ruling.section.date.submitted=Date submitted
+pdf.ruling.section.date.expiry=Expiry date
 pdf.ruling.section.holder.note.label=Note:
 pdf.ruling.section.holder.note.text=These holder details are not included in the published ruling
 pdf.ruling.section.holder.name.label=Name
@@ -720,6 +729,24 @@ title.zambia=Zambia
 title.zimbabwe=Zimbabwe
 title.aland_islands=Åland Islands
 
+case.v2.atar.page_title=ATaR details
+
+case.v2.atar.applicant.tab_title=Applicant
+
+case.v2.atar.goods.tab_title=Goods
+
+case.v2.atar.sample.tab_title=Sample
+
+case.v2.atar.attachments.tab_title=Attachments
+
+case.v2.atar.activity.tab_title=Activity
+
+case.v2.atar.keywords.tab_title=Keywords
+
+case.v2.atar.ruling.tab_title=Ruling
+
+case.v2.atar.appeal.tab_title=Appeals
+
 case.v2.liability.page_title=Liability details
 case.v2.liability.c592.entry_number=Entry number
 case.v2.liability.c592.tab_title=C592
@@ -933,4 +960,10 @@ applicationTab.assignedToMe = Assigned to me
 applicationTab.referredByMe = Referred by me
 applicationTab.completedByMe = Completed by me
 applicationTab.gateway = Gateway cases
+
+atar.editRuling.expiryDate.emptyDate = Enter an expiry date
+atar.editRuling.expiryDate.emptyDate.day = Enter a day
+atar.editRuling.expiryDate.emptyDate.month = Enter a month
+atar.editRuling.expiryDate.emptyDate.year = Enter a year
+atar.editRuling.expiryDate.invalidFormat = Expiry date must be a real date
 

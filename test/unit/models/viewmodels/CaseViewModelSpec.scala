@@ -19,7 +19,7 @@ package models.viewmodels
 import java.time.Instant
 
 import models.CaseStatus.CaseStatus
-import models.{CaseStatus, ModelsBaseSpec, Permission}
+import models.{ApplicationType, CaseStatus, ModelsBaseSpec, Permission}
 import utils.Cases
 
 class CaseViewModelSpec extends ModelsBaseSpec {
@@ -38,7 +38,7 @@ class CaseViewModelSpec extends ModelsBaseSpec {
 
   private val caseHeaderViewModel =
     CaseHeaderViewModel(
-      "Liability",
+      ApplicationType.LIABILITY,
       Some("trader-business-name"),
       "good-name",
       "1",
@@ -169,7 +169,7 @@ class CaseViewModelSpec extends ModelsBaseSpec {
       assert(
         CaseViewModel.fromCase(c, op) === CaseViewModel(
           CaseHeaderViewModel(
-            "Liability",
+            ApplicationType.LIABILITY,
             Some("trader-business-name"),
             "good-name",
             "1",

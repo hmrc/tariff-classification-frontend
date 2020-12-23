@@ -15,16 +15,17 @@
  *@
 
 @import models.{Case, CaseStatus}
+@import models.viewmodels.atar.RulingTabViewModel
 @import controllers.routes.PdfDownloadController
 
-@(c: Case, useTabIndex : Option[Int] = None)(implicit messages: Messages)
+@(ruling: RulingTabViewModel, useTabIndex : Option[Int] = None)(implicit messages: Messages)
 
 @validStatus = @{ Seq(CaseStatus.COMPLETED, CaseStatus.CANCELLED)}
 
-@if(validStatus.contains(c.status) && c.decision.isDefined) {
+@if(validStatus.contains(ruling.caseStatus) && ruling.decision.isDefined) {
     <div id="ruling-certificate">
         <h3 class="heading-medium  mt-1">@messages("case.decision.ruling.certificate.title")</h3>
         @messages("case.decision.ruling.certificate.content"),
-        <a @if(useTabIndex.isDefined){tabindex="@{useTabIndex.get}"} id="ruling-certificate-link" target="_blank" href="@PdfDownloadController.getRulingPdf(c.reference)"> @messages("case.decision.ruling.certificate.link") </a>
+        <a @if(useTabIndex.isDefined){tabindex="@{useTabIndex.get}"} id="ruling-certificate-link" target="_blank" href="@PdfDownloadController.getRulingPdf(ruling.caseReference)"> @messages("case.decision.ruling.certificate.link") </a>
     </div>
 }

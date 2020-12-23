@@ -16,8 +16,9 @@
 
 package controllers
 
+import config.AppConfig
 import models.{Case, CaseStatus, Operator, Permission}
-import models.forms.{CommodityCodeConstraints, DecisionForm, DecisionFormMapper}
+import models.forms.{CommodityCodeConstraints, DecisionForm, DecisionFormMapper, FormDate}
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito._
 import org.mockito.Mockito.{never, reset, verify}
@@ -88,7 +89,7 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
     val attachment = storedAttachment
 
     "return OK and HTML content type" when {
-      "Case is a BTI" in {
+      "Case is an ATaR" in {
         given(fileService.getAttachments(refEq(btiCaseWithStatusOPEN))(any[HeaderCarrier]))
           .willReturn(Future.successful(Seq(attachment)))
 
@@ -98,7 +99,6 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
         charset(result)         shouldBe Some("utf-8")
         contentAsString(result) should (include("Ruling") and include("<form"))
       }
-
       "Case is a Liability" in {
         given(commodityCodeConstraints.commodityCodeLengthValid)
           .willReturn(Constraint[String]("error")(_ => Valid))
@@ -215,12 +215,16 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
         "methodCommercialDenomination" -> "",
         "methodExclusion"              -> "",
         "attachments"                  -> "[]",
-        "explanation"                  -> ""
+        "explanation"                  -> "",
+        "expiryDate.day"               -> "2",
+        "expiryDate.month"             -> "2",
+        "expiryDate.year"              -> "2020",
+        "explicitEndDate"              -> "false"
       )
     )
 
     "update and redirect for permitted user" when {
-      "Case is a BTI" in {
+      "Case is an ATaR" in {
         given(casesService.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(updatedCase))
         given(fileService.getAttachments(refEq(updatedCase))(any[HeaderCarrier]))
           .willReturn(Future.successful(Seq(attachment)))
@@ -228,12 +232,12 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
         val result = await(controller(caseWithStatusOPEN).updateRulingDetails("reference")(aValidForm))
         verify(casesService).updateCase(any[Case])(any[HeaderCarrier])
         status(result)     shouldBe Status.SEE_OTHER
-        locationOf(result) shouldBe Some(routes.CaseController.rulingDetails("reference").url)
+        locationOf(result) shouldBe Some(v2.routes.AtarController.displayAtar("reference").withFragment(Tab.RULING_TAB.name).path)
       }
     }
 
     "redirect back to edit ruling on Form Error" when {
-      "case is a BTI" in {
+      "case is an ATaR" in {
         given(fileService.getAttachments(refEq(caseWithStatusOPEN))(any[HeaderCarrier]))
           .willReturn(Future.successful(Seq(attachment)))
 

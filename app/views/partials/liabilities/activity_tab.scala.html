@@ -18,7 +18,8 @@
 
 @import helper._
 @import config.AppConfig
-@import controllers.v2.routes.LiabilityController
+@import controllers.Tab
+@import controllers.routes
 @import models.forms.ActivityFormData
 @import models.request.AuthenticatedRequest
 @import models.Permission
@@ -27,7 +28,6 @@
 @import views.html.partials.liabilities.activity_tab_events_table
 @import views.html.partials.error_summary
 @import models.viewmodels.ActivityViewModel
-@import controllers.Tab._
 
 @this()
 
@@ -44,7 +44,7 @@
 
   <div class="column-full">
 
-  @form(action = LiabilityController.addNote(activityViewModel.referenceNumber).withFragment(ACTIVITY_TAB), 'class -> "form") {
+  @form(action = routes.CaseController.addNote(activityViewModel.referenceNumber), 'class -> "form") {
    @CSRF.formField
    @input_textarea(
     field = activityForm("note"),

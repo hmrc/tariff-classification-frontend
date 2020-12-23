@@ -26,7 +26,9 @@ object EventPayloads {
   val event: String        = jsonOf(Events.event)
   val eventRequest: String = jsonOf(Events.eventRequest)
   val events: String       = jsonOf(Events.events)
+  val sampleEvents         = jsonOf(Events.sampleEvents)
   val pagedEvents: String  = jsonOf(Paged(Events.events, NoPagination(), 1))
+  val pagedSampleEvents    = jsonOf(Paged(Events.sampleEvents, NoPagination(), 1))
   val pagedEmpty: String   = jsonOf(Paged.empty[Event])
 
   def jsonOf(obj: Event): String =
