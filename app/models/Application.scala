@@ -146,7 +146,9 @@ case class LiabilityOrder(
   btiReference: Option[String]                       = None,
   repaymentClaim: Option[RepaymentClaim]             = None,
   dateOfReceipt: Option[Instant]                     = None,
-  traderContactDetails: Option[TraderContactDetails] = None
+  traderContactDetails: Option[TraderContactDetails] = None,
+  agentName: Option[String]                          = None,
+  port: Option[String]                               = None
 ) extends Application {
   override val `type`: models.ApplicationType = ApplicationType.LIABILITY
 }

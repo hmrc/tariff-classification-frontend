@@ -417,7 +417,9 @@ object Cases {
           )
         )
       )
-    )
+    ),
+    agentName = Some("agent"),
+    port      = Some("port")
   )
 
   val aCaseWithCompleteDecision: Case = Cases.liabilityCaseExample
