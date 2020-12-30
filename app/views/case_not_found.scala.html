@@ -15,11 +15,12 @@
  *@
 
 @import config.AppConfig
+@import models.request.AuthenticatedRequest
 @import controllers.routes.IndexController
 @import views.html.includes.main
 @import models.viewmodels.MyCasesTab
 
-@(reference: String)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(reference: String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("page.title.case.not.found")), customPrimaryNavTab = MyCasesTab) {
     <div id="case-not-found-section">

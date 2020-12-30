@@ -16,9 +16,7 @@
 
 package controllers.v2
 
-import controllers.Tab._
 import controllers.routes.CaseController
-import controllers.v2.routes.LiabilityController
 import controllers.{ControllerBaseSpec, RequestActionsWithPermissions, SuccessfulRequestActions}
 import models.{Permission, _}
 import org.mockito.ArgumentMatchers._
@@ -37,15 +35,14 @@ import utils.Cases
 import views.html.partials.liabilities.attachments_details
 import views.html.v2.remove_attachment
 
-import scala.concurrent.Future.successful
 import scala.concurrent.ExecutionContext.Implicits.global
-import controllers.CaseController
+import scala.concurrent.Future.successful
 
 class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   lazy val casesService: CasesService               = mock[CasesService]
   lazy val fileService: FileStoreService            = mock[FileStoreService]
-  lazy val operator: Operator                       = mock[Operator]
+  lazy val operator                                 = Operator(id = "id")
   lazy val liabilityController: LiabilityController = mock[LiabilityController]
   lazy val attachments_details: attachments_details = mock[attachments_details]
   lazy val remove_attachment: remove_attachment     = mock[remove_attachment]
@@ -53,7 +50,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
 
   def controller: AttachmentsController =
     new AttachmentsController(
-      verify              = new SuccessfulRequestActions(playBodyParsers, mock[Operator], c = Cases.btiCaseExample),
+      verify              = new SuccessfulRequestActions(playBodyParsers, operator, c = Cases.btiCaseExample),
       casesService        = casesService,
       fileService         = fileService,
       mcc                 = mcc,
@@ -141,7 +138,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
       val result: Result = await(controller.uploadAttachment(testReference)(postRequest))
 
       // Then
-      status(result) shouldBe SEE_OTHER
+      status(result)           shouldBe SEE_OTHER
       redirectLocation(result) shouldBe Some(CaseController.attachmentsDetails(testReference).path)
     }
 
@@ -180,7 +177,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
         val result: Result = await(controller.uploadAttachment(testReference)(postRequest))
 
         // Then
-        status(result) shouldBe SEE_OTHER
+        status(result)           shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(CaseController.attachmentsDetails(testReference).path)
       }
     }
@@ -229,7 +226,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
       val result: Result = await(controller.uploadAttachment(testReference)(postRequest))
 
       // Then
-      status(result) shouldBe SEE_OTHER
+      status(result)           shouldBe SEE_OTHER
       redirectLocation(result) shouldBe Some(CaseController.attachmentsDetails(testReference).path)
     }
 

@@ -41,7 +41,7 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
   private val largeFileSize: Long = 16485760
   private val casesService        = mock[CasesService]
-  private val operator            = mock[Operator]
+  private val operator            = Operator(id = "id")
 
   private val caseWithStatusNEW      = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.NEW)
   private val caseWithStatusOPEN     = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.OPEN)

@@ -36,7 +36,7 @@ class SearchControllerSpec extends ControllerBaseSpec {
   private val casesService     = mock[CasesService]
   private val fileStoreService = mock[FileStoreService]
   private val keywordsService  = mock[KeywordsService]
-  private val operator         = mock[Operator]
+  private val operator         = Operator(id = "id")
 
   private val defaultTab = SearchTab.DETAILS
 

@@ -16,9 +16,8 @@
 
 package controllers
 
-import config.AppConfig
+import models.forms.{CommodityCodeConstraints, DecisionForm, DecisionFormMapper}
 import models.{Case, CaseStatus, Operator, Permission}
-import models.forms.{CommodityCodeConstraints, DecisionForm, DecisionFormMapper, FormDate}
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito._
 import org.mockito.Mockito.{never, reset, verify}
@@ -32,15 +31,15 @@ import utils.Cases
 import utils.Cases._
 import views.html.v2.edit_liability_ruling
 
-import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   private val casesService             = mock[CasesService]
   private val fileService              = mock[FileStoreService]
   private val mapper                   = mock[DecisionFormMapper]
-  private val operator                 = mock[Operator]
+  private val operator                 = Operator(id = "id")
   private val commodityCodeConstraints = mock[CommodityCodeConstraints]
   private val decisionForm             = new DecisionForm(commodityCodeConstraints)
   private lazy val editLiabilityView   = injector.instanceOf[edit_liability_ruling]
@@ -53,7 +52,6 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       casesService,
       fileService,
       mapper,
-      operator,
       commodityCodeConstraints
     )
   }
@@ -108,7 +106,7 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
           .willReturn(Constraint[String]("error")(_ => Valid))
         val result = controller(
           liabilityCaseWithStatusOPEN,
-          permission = Set(Permission.EDIT_RULING),
+          permission = Set(Permission.EDIT_RULING)
         ).editRulingDetails("reference")(newFakeGETRequestWithCSRF(app))
         status(result) shouldBe Status.OK
         contentAsString(result) shouldNot (include("edit_liability_decision-heading"))
@@ -124,7 +122,7 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
           .willReturn(Constraint[String]("error")(_ => Valid))
         val result = controller(
           liabilityCaseWithStatusOPEN,
-          permission = Set.empty[Permission],
+          permission = Set.empty[Permission]
         ).editRulingDetails("reference")(newFakeGETRequestWithCSRF(app))
         status(result)               shouldBe Status.SEE_OTHER
         redirectLocation(result).get should include("unauthorized")
@@ -155,7 +153,12 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
     val liabilityCaseWithStatusOpenWithDecision =
       aLiabilityCase(withReference("reference"), withStatus(CaseStatus.COMPLETED), withDecision())
     val liabilityCaseWithStatusWithDecisionAndC592 =
-      aLiabilityCase(withReference("reference"), liabilityApplicationWithC592(), withStatus(CaseStatus.COMPLETED), withDecision())
+      aLiabilityCase(
+        withReference("reference"),
+        liabilityApplicationWithC592(),
+        withStatus(CaseStatus.COMPLETED),
+        withDecision()
+      )
     val attachment = storedAttachment
 
     "load edit details page when a mandatory field is missing" in {
@@ -194,7 +197,7 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       val result = controller(liabilityCaseWithStatusOpenWithDecision, Set(Permission.EDIT_RULING))
         .validateBeforeComplete("reference")(newFakeGETRequestWithCSRF(app))
 
-         status(result) shouldBe Status.OK
+      status(result) shouldBe Status.OK
     }
   }
 
@@ -231,8 +234,10 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
         val result = await(controller(caseWithStatusOPEN).updateRulingDetails("reference")(aValidForm))
         verify(casesService).updateCase(any[Case])(any[HeaderCarrier])
-        status(result)     shouldBe Status.SEE_OTHER
-        locationOf(result) shouldBe Some(v2.routes.AtarController.displayAtar("reference").withFragment(Tab.RULING_TAB.name).path)
+        status(result) shouldBe Status.SEE_OTHER
+        locationOf(result) shouldBe Some(
+          v2.routes.AtarController.displayAtar("reference").withFragment(Tab.RULING_TAB.name).path
+        )
       }
     }
 

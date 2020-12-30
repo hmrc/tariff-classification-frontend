@@ -15,13 +15,14 @@
  *@
 
 @import config.AppConfig
+@import models.request.AuthenticatedRequest
 @import models.Case
 @import controllers.routes.MyCasesController
 @import views.html.includes.main
 @import views.html.partials.{days_elapsed_paused, case_heading, back_link}
 @import models.viewmodels.NoTabSelected
 
-@(c: Case)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(c: Case)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("page.title.case.suspended")),
     customPrimaryNavTab = NoTabSelected) {

@@ -15,6 +15,7 @@
  *@
 
 @import config.AppConfig
+@import models.request.AuthenticatedRequest
 @import controllers.routes
 @import controllers.Tab
 @import models.viewmodels.CaseHeaderViewModel
@@ -31,7 +32,7 @@
         case_heading: views.html.v2.case_heading
 )
 
-@(caseHeaderViewModel: CaseHeaderViewModel, form: Form[Decision], traderCommodityCode: String, officerCommodityCode: String)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(caseHeaderViewModel: CaseHeaderViewModel, form: Form[Decision], traderCommodityCode: String, officerCommodityCode: String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("page.title.edit_liability_decision")), customPrimaryNavTab = MyCasesTab) {
 

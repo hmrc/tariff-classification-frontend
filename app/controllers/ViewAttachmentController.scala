@@ -37,13 +37,12 @@ class ViewAttachmentController @Inject() (
     with I18nSupport {
 
   def get(id: String): Action[AnyContent] =
-    (verify.authenticated andThen verify.mustHave(Permission.VIEW_CASES)).async {
-      implicit request: Request[AnyContent] =>
-        fileService.getFileMetadata(id) map {
-          case Some(fileSubmitted: FileMetadata) if fileSubmitted.url.isDefined =>
-            Redirect(Call(method = "GET", url = fileSubmitted.url.get))
-          case fileSubmitted: Option[FileMetadata] =>
-            Ok(views.html.view_attachment_unavailable(fileSubmitted))
-        }
+    (verify.authenticated andThen verify.mustHave(Permission.VIEW_CASES)).async { implicit request =>
+      fileService.getFileMetadata(id) map {
+        case Some(fileSubmitted: FileMetadata) if fileSubmitted.url.isDefined =>
+          Redirect(Call(method = "GET", url = fileSubmitted.url.get))
+        case fileSubmitted: Option[FileMetadata] =>
+          Ok(views.html.view_attachment_unavailable(fileSubmitted))
+      }
     }
 }

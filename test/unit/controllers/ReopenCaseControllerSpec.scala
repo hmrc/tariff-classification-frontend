@@ -33,7 +33,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class ReopenCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   private val casesService = mock[CasesService]
-  private val operator     = mock[Operator]
+  private val operator     = Operator(id = "id")
 
   private val btiCaseWithStatusOPEN = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.OPEN)
   private val btiCaseWithStatusREFERRED =
