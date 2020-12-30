@@ -45,14 +45,7 @@ class ReopenCaseController @Inject() (
       validateAndRedirect(_ =>
         casesService
           .reopenCase(request.`case`, request.operator)
-          .map(updatedCase =>
-            updatedCase.application.`type` match {
-              case ApplicationType.ATAR =>
-                routes.CaseController.applicantDetails(updatedCase.reference)
-              case ApplicationType.LIABILITY =>
-                v2.routes.LiabilityController.displayLiability(updatedCase.reference)
-            }
-          )
+          .map(updatedCase => routes.CaseController.get(updatedCase.reference))
       )
     }
 }

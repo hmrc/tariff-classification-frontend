@@ -17,6 +17,7 @@
 package controllers.v2
 
 import controllers.Tab._
+import controllers.routes.CaseController
 import controllers.v2.routes.LiabilityController
 import controllers.{ControllerBaseSpec, RequestActionsWithPermissions, SuccessfulRequestActions}
 import models.{Permission, _}
@@ -38,6 +39,7 @@ import views.html.v2.remove_attachment
 
 import scala.concurrent.Future.successful
 import scala.concurrent.ExecutionContext.Implicits.global
+import controllers.CaseController
 
 class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
@@ -140,9 +142,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
 
       // Then
       status(result) shouldBe SEE_OTHER
-      redirectLocation(result) shouldBe Some(
-        LiabilityController.displayLiability(testReference).withFragment(ATTACHMENTS_TAB).toString
-      )
+      redirectLocation(result) shouldBe Some(CaseController.attachmentsDetails(testReference).path)
     }
 
     "show not found case page when non existing case is provided" in {
@@ -181,9 +181,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
 
         // Then
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(
-          LiabilityController.displayLiability(testReference).withFragment(ATTACHMENTS_TAB).toString
-        )
+        redirectLocation(result) shouldBe Some(CaseController.attachmentsDetails(testReference).path)
       }
     }
 
@@ -232,9 +230,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
 
       // Then
       status(result) shouldBe SEE_OTHER
-      redirectLocation(result) shouldBe Some(
-        LiabilityController.displayLiability(testReference).withFragment(ATTACHMENTS_TAB).toString
-      )
+      redirectLocation(result) shouldBe Some(CaseController.attachmentsDetails(testReference).path)
     }
 
     "upload file which exceed max file size" in {
@@ -448,7 +444,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
           )
       )
 
-      redirectLocation(result) shouldBe Some("/manage-tariff-classifications/cases/v2/1/liability#attachments_tab")
+      redirectLocation(result) shouldBe Some(CaseController.attachmentsDetails(aCase.reference).path)
     }
 
     "redirect to attachments tab when user selects `no`" in {
@@ -460,7 +456,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
           )
       )
 
-      redirectLocation(result) shouldBe Some("/manage-tariff-classifications/cases/v2/1/liability#attachments_tab")
+      redirectLocation(result) shouldBe Some(CaseController.attachmentsDetails(aCase.reference).path)
     }
 
     "redirect back to confirm remove view on form error" in {
@@ -487,7 +483,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
     when(remove_attachment.apply(any(), any(), anyString(), anyString())(any(), any(), any()))
       .thenReturn(Html("heading"))
 
-    when(liabilityController.buildLiabilityView(any(), any(), any())(any())).thenReturn(successful(Ok("Ok")))
+    when(liabilityController.renderView(any(), any(), any())(any())).thenReturn(successful(Ok("Ok")))
 
     when(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).thenReturn(successful(Some(aCase)))
     when(fileService.getAttachments(refEq(aCase))(any[HeaderCarrier])).thenReturn(successful(Seq.empty))

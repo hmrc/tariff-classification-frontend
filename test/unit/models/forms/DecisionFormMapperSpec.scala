@@ -46,7 +46,7 @@ class DecisionFormMapperSpec extends ModelsBaseSpec {
       compareAllFields(validForm, result.decision.get)
     }
 
-    "make attachments public when are contained into the form" in {
+    "make attachments publishToRulings when they are contained in the form" in {
 
       val attToPublish                = attachment("url.to.publish")
       val attNotPublish               = attachment("url.to.not.be.published")
@@ -55,7 +55,7 @@ class DecisionFormMapperSpec extends ModelsBaseSpec {
 
       val result: Case = mapper.mergeFormIntoCase(caseWithAtt, decisionFormWithAttSelected)
 
-      val attachments = result.attachments.filter(_.public).toList
+      val attachments = result.attachments.filter(_.shouldPublishToRulings).toList
 
       attachments should contain only attToPublish
     }
@@ -69,7 +69,7 @@ class DecisionFormMapperSpec extends ModelsBaseSpec {
       val result: DecisionFormData = mapper.caseToDecisionFormData(caseWithAtt)
 
       compareAllFields(result, testCase.decision.get)
-      result.attachments shouldBe Seq.empty
+      result.attachments shouldBe Seq("url.to.publish")
     }
 
     "create empty decision form when a case does not have a decision" in {

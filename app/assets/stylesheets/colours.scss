@@ -5,6 +5,7 @@ $black: #0b0c0c;
 $gray: #dee0e2;
 $gray-dark: #57585C;
 $gray-very-dark: #6F777B;
+$grey-text: #626a6e;
 
 
 .text-red {
@@ -17,6 +18,10 @@ $gray-very-dark: #6F777B;
 
 .text-white {
   color: $white;
+}
+
+.text-grey {
+  color: $grey-text;
 }
 
 .bg-red {

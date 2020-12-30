@@ -18,7 +18,7 @@ package controllers.v2
 
 import akka.stream.Materializer
 import config.AppConfig
-import controllers.{RenderCaseAction, RequestActions}
+import controllers.{RenderCaseAction, RequestActions, Tab}
 import javax.inject.{Inject, Singleton}
 import models._
 import models.forms.{RemoveAttachmentForm, UploadAttachmentForm}
@@ -35,7 +35,6 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
-import controllers.Tab._
 
 @Singleton
 class AttachmentsController @Inject() (
@@ -83,19 +82,11 @@ class AttachmentsController @Inject() (
                 reference,
                 caseService
                   .removeAttachment(_, fileId)
-                  .map(_ =>
-                    Redirect(
-                      controllers.v2.routes.LiabilityController
-                        .displayLiability(reference)
-                        .withFragment(ATTACHMENTS_TAB)
-                    )
-                  )
+                  .map(_ => Redirect(controllers.routes.CaseController.attachmentsDetails(reference)))
               )
             case _ =>
               successful(
-                Redirect(
-                  controllers.v2.routes.LiabilityController.displayLiability(reference).withFragment(ATTACHMENTS_TAB)
-                )
+                Redirect(controllers.routes.CaseController.attachmentsDetails(reference))
               )
           }
         )
@@ -139,11 +130,7 @@ class AttachmentsController @Inject() (
           case Some(c: Case) =>
             casesService
               .addAttachment(c, fileUpload, request.operator)
-              .map(_ =>
-                Redirect(
-                  controllers.v2.routes.LiabilityController.displayLiability(reference).withFragment(ATTACHMENTS_TAB)
-                )
-              )
+              .map(_ => Redirect(controllers.routes.CaseController.attachmentsDetails(reference)))
           case _ =>
             successful(Ok(views.html.case_not_found(reference)))
         }
@@ -163,7 +150,7 @@ class AttachmentsController @Inject() (
   ): Future[Result] = {
     val errors         = Seq(FormError("file-input", errorMessage))
     val formWithErrors = UploadAttachmentForm.form.copy(errors = errors)
-    liabilityController.buildLiabilityView(uploadAttachmentForm = formWithErrors)
+    liabilityController.renderView(uploadAttachmentForm = formWithErrors)
   }
 
 }

@@ -224,7 +224,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder
     }
   }
 
-  "Cars Cases" should {
+  "CAR Cases" should {
 
     "return status 200" in {
       // Given
@@ -259,11 +259,11 @@ class QueuesSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder
       )
 
       // When
-      val response = await(ws.url(s"$baseUrl/queues/cars").get())
+      val response = await(ws.url(s"$baseUrl/queues/car").get())
 
       // Then
       response.status shouldBe OK
-      response.body   should include("Cars BTI cases")
+      response.body   should include("CAR BTI cases")
     }
 
     "redirect on auth failure" in {
@@ -271,7 +271,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder
       givenAuthFailed()
 
       // When
-      val response = await(ws.url(s"$baseUrl/queues/cars").get())
+      val response = await(ws.url(s"$baseUrl/queues/car").get())
 
       // Then
       response.status shouldBe OK

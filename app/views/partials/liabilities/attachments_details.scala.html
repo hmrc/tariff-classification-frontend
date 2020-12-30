@@ -14,16 +14,15 @@
  * limitations under the License.
  *@
 
-@import controllers.v2.routes.AttachmentsController
-@import uk.gov.hmrc.play.views.html.helpers
 @import config.AppConfig
+@import controllers.v2.routes.AttachmentsController
+@import controllers.Tab
+@import models.Permission
+@import models.request.AuthenticatedRequest
+@import models.viewmodels.AttachmentsTabViewModel
+@import uk.gov.hmrc.play.views.html.helpers
 @import views.html.components.input_file
 @import views.html.partials.{attachments_state_message, tab_heading, error_summary}
-
-@import models.request.AuthenticatedRequest
-@import models.Permission
-@import models.viewmodels.AttachmentsTabViewModel
-@import controllers.Tab._
 
 @this(
         attachments_list: views.html.partials.liabilities.attachments_list
@@ -51,7 +50,8 @@
 )
 
 @if(showUploadAttachments) {
-    @helpers.form(action = {AttachmentsController.uploadAttachment(attachmentsTabViewModel.caseReference).withFragment(ATTACHMENTS_TAB)},
+    @helpers.form(
+        action = AttachmentsController.uploadAttachment(attachmentsTabViewModel.caseReference),
         'enctype -> "multipart/form-data",
         'id -> "upload-files-form") {
 

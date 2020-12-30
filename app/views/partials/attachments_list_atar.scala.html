@@ -1,0 +1,93 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import models.{Case, Permission, StoredAttachment}
+@import models.request.AuthenticatedRequest
+@import models.response.ScanStatus
+@import models.viewmodels.atar.AttachmentsTabViewModel
+@import views.html.partials.attachment_atar
+
+@(id: String,
+  attachments: AttachmentsTabViewModel,
+  startAtTabIndex : Option[Int] = None
+)(implicit request: AuthenticatedRequest[_], messages: Messages)
+
+@if(attachments.allAttachments.nonEmpty){
+    <table id="@{id}-table" class="govuk-table govuk-!-font-size-16">
+        <thead class="govuk-table__head">
+            <tr>
+                <th class="govuk-table__header" scope="col">File name</th>
+                <th id="@{id}-header-uploaded_by" class="govuk-table__header" scope="col">Added by</th>
+                <th id="attachment-details" class="govuk-table__header" scope="col">Details</th>
+                <th id="attachment-status" class="govuk-table__header" scope="col">Status</th>
+                <th><span class="visually-hidden">attachment action</span></th>
+            </tr>
+        </thead>
+        <tbody class="govuk-table__body">
+            @for((file: StoredAttachment, index: Int) <- attachments.allAttachments.zipWithIndex) {
+                <tr id="@{id}-row-@{index}" class="govuk-table__row">
+                    <span class="pre-wrap"></span>
+                        <td id="@{id}-row-@{index}-title" class="govuk-table__cell">
+                            @attachment_atar(s"$id-row-$index", file, useTabIndex = startAtTabIndex.map(x => x+1+(0*index)))
+                        </td>
+                    </span>
+
+                    <td id="@{id}-row-@{index}-uploaded_by" class="govuk-table__cell w-15">
+                        @if(file.operator.nonEmpty) {
+                            @file.operator.flatMap(_.name).getOrElse("Unknown")
+                        } else {
+                            @attachments.caseContact
+                        }
+                    </td>
+
+                    <td id="@{id}-row-@{index}-attachment-details" class="govuk-table__cell w-15">
+                        @file.description
+                    </td>
+
+                    <td id="@{id}-row-@{index}-attachment-status" class="govuk-table__cell w-20">
+                        <span class="visually-hidden">attachment-status</span>
+                        @if(file.scanStatus.isEmpty) {
+                            <span id="@id" class="govuk-tag govuk-tag--blue">@messages("case.attachment.upload.status-processing")</span>
+                        } else if(file.scanStatus.contains(ScanStatus.FAILED)) {
+                            <span id="@id" class="govuk-tag govuk-tag--red">@messages("case.attachment.upload.status-failed")</span>
+                        } else {
+                            @{(file.public, file.shouldPublishToRulings) match {
+                                case (false, _) =>
+                                    <span id="@{id}" class="govuk-tag govuk-tag--yellow">{messages("case.attachment.upload.status-confidential")}</span>
+                                case (true, true) =>
+                                    <span id="@{id}" class="govuk-tag govuk-tag--green">{messages("case.attachment.upload.status-published")}</span>
+                                case (true, false) =>
+                                    <span id="@{id}" class="visually-hidden"></span>
+                            }}
+                        }
+                    </td>
+<!--                              TODO: uncomment once the functionality  is done-->
+<!--                            @if(request.hasPermission(Permission.EDIT_ATTACHMENT_DETAIL)) {-->
+<!--                                <td id="@{id}-row-@{index}-edit-attachment-details" class="govuk-table__row">-->
+<!--                                    @*                                    TODO href*@-->
+<!--                                    <a id="@{id}-row-@{index}-edit-attachment-link" href="#">-->
+<!--                                        <span>@messages("case.attachment.edit.file.text")</span>-->
+<!--                                        <span class="visually-hidden">@messages("case.attachment.edit.file.hidden.text",file.fileName)</span>-->
+<!--                                    </a>-->
+<!--                                </td>-->
+<!--                            }-->
+                </tr>
+            }
+        </tbody>
+    </table>
+} else {
+    <p id="@{id}-empty-table">@messages("case.attachment.table.empty")</p>
+}

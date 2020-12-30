@@ -17,53 +17,50 @@
 @import controllers.routes.SuppressCaseController
 @import models.{AgentDetails, Application, BTIApplication, Case, CaseStatus, EORIDetails, Permission, StoredAttachment}
 @import models.request.AuthenticatedRequest
+@import models.viewmodels.atar.ApplicantTabViewModel
 @import views.html.partials.{attachment, contact_details, tab_heading}
-@(c: Case, startAtTabIndex : Int = 0, getCountryName: String => Option[String])(implicit request: AuthenticatedRequest[_], messages: Messages)
 
-    @tab_heading("trader", "Applicant")
+@(applicant: ApplicantTabViewModel, startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
-    @defining(c.application) { a: Application =>
-        @defining(a.asATAR) { btiApp: BTIApplication =>
-            @defining(btiApp.holder) { btiHolder: EORIDetails =>
+@tab_heading("trader", "Applicant")
+
 <dl class="govuk-check-your-answers cya-questions-short">
-                    <h3 class="heading-medium" id="trader-submitted-heading">@messages("case.application.holder.section_heading")</h3>
-                    <div class="grid-row">
-                        <dt class="cya-question">
-                            @messages("case.application.holder.eori-number")
-                        </dt>
-                        <dd class="cya-answer">
-                            @btiHolder.eori
-                        </dd>
-                    </div>
+    <h3 class="heading-medium" id="trader-submitted-heading">@messages("case.application.holder.section_heading")</h3>
+    <div class="grid-row">
+        <dt class="cya-question">
+            @messages("case.application.holder.eori-number")
+        </dt>
+        <dd class="cya-answer">
+            @applicant.eoriDetails.eori
+        </dd>
+    </div>
 
-                    <div class="grid-row">
-                        <dt class="cya-question">
-                        @messages("case.application.holder.trader-name")
-                        </dt>
-                        <dd class="cya-answer">
-                        @btiHolder.businessName
-                        </dd>
-                    </div>
+    <div class="grid-row">
+        <dt class="cya-question">
+            @messages("case.application.holder.trader-name")
+        </dt>
+        <dd class="cya-answer">
+            @applicant.eoriDetails.businessName
+        </dd>
+    </div>
 
-                    <div class="grid-row">
-                        <dt class="cya-question">
-                        @messages("case.application.holder.address")
-                        </dt>
-                        <dd class="cya-answer">
-                        <span class="pre-wrap">@btiHolder.addressLine1</span> @if(!btiHolder.addressLine1.isEmpty) {<br>}
-                            <span class="pre-wrap">@btiHolder.addressLine2</span> @if(!btiHolder.addressLine2.isEmpty) {<br>}
-                            <span class="pre-wrap">@btiHolder.addressLine3</span> @if(!btiHolder.addressLine3.isEmpty) {<br>}
-                            <span class="pre-wrap">@btiHolder.postcode</span> @if(!btiHolder.postcode.isEmpty) {<br>}
-                            <span class="pre-wrap">@messages(getCountryName(btiHolder.country).mkString)</span>
-                        </dd>
-                    </div>
+    <div class="grid-row">
+        <dt class="cya-question">
+            @messages("case.application.holder.address")
+        </dt>
+        <dd class="cya-answer">
+        <span class="pre-wrap">@applicant.eoriDetails.addressLine1</span> @if(!applicant.eoriDetails.addressLine1.isEmpty) {<br>}
+            <span class="pre-wrap">@applicant.eoriDetails.addressLine2</span> @if(!applicant.eoriDetails.addressLine2.isEmpty) {<br>}
+            <span class="pre-wrap">@applicant.eoriDetails.addressLine3</span> @if(!applicant.eoriDetails.addressLine3.isEmpty) {<br>}
+            <span class="pre-wrap">@applicant.eoriDetails.postcode</span> @if(!applicant.eoriDetails.postcode.isEmpty) {<br>}
+            <span class="pre-wrap">@messages(applicant.countryName)</span>
+        </dd>
+    </div>
 
-                </dl>
-            }
-        }
-    }
+</dl>
 
-    @contact_details(c, Some(startAtTabIndex+1))
+@contact_details(applicant, Some(startAtTabIndex+1))
+
 
 
 

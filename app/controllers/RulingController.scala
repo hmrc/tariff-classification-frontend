@@ -17,6 +17,7 @@
 package controllers
 
 import config.AppConfig
+import controllers.Tab
 import models.forms.{DecisionForm, DecisionFormData, DecisionFormMapper}
 import javax.inject.{Inject, Singleton}
 import models._
@@ -31,6 +32,9 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import controllers.Tab._
+import models.forms.v2.LiabilityDetailsForm
+
+import scala.concurrent.Future.successful
 
 @Singleton
 class RulingController @Inject() (
@@ -41,6 +45,7 @@ class RulingController @Inject() (
   decisionForm: DecisionForm,
   mcc: MessagesControllerComponents,
   val editRulingView: views.html.v2.edit_liability_ruling,
+  val liability_details_edit: views.html.v2.liability_details_edit,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
     with I18nSupport {
@@ -75,8 +80,15 @@ class RulingController @Inject() (
               val decisionFormWithErrors = decisionForm.btiCompleteForm.fillAndValidate(formData)
               editBTIRulingView(decisionFormWithErrors, c)
             case ApplicationType.LIABILITY =>
-              //TODO add validate logic
-              Future.successful(Redirect(routes.CompleteCaseController.confirmCompleteCase(c.reference)))
+
+              val liabilityDecisionForm  = decisionForm.liabilityCompleteForm(c.decision.getOrElse(Decision()))
+
+              if(liabilityDecisionForm.errors.nonEmpty) {
+                editLiabilityRulingView(liabilityDecisionForm, c)
+              } else {
+                val liabilityDetailsForm = LiabilityDetailsForm.liabilityDetailsCompleteForm(c, appConfig)
+                Future.successful(Ok(liability_details_edit(c, liabilityDetailsForm)))
+              }
           }
         )
       }
@@ -92,7 +104,9 @@ class RulingController @Inject() (
                 validForm =>
                   for {
                     update <- casesService.updateCase(mapper.mergeFormIntoCase(c, validForm))
-                  } yield Redirect(routes.CaseController.rulingDetails(update.reference))
+                  } yield Redirect(
+                    v2.routes.AtarController.displayAtar(update.reference).withFragment(Tab.RULING_TAB.name)
+                  )
               )
 
             case ApplicationType.LIABILITY =>
@@ -105,7 +119,11 @@ class RulingController @Inject() (
                   updatedDecision =>
                     for {
                       update <- casesService.updateCase(c.copy(decision = Some(updatedDecision)))
-                    } yield Redirect(v2.routes.LiabilityController.displayLiability(update.reference).withFragment(RULING_TAB))
+                    } yield Redirect(
+                      v2.routes.LiabilityController
+                        .displayLiability(update.reference)
+                        .withFragment(Tab.RULING_TAB.name)
+                    )
                 )
           }
         )
@@ -129,6 +147,7 @@ class RulingController @Inject() (
 
     Future.successful(Ok(editRulingView(caseHeaderViewModel, f, traderCommodityCode, officerCommodityCode)))
   }
+
 
   private def getCaseAndThen(
     toResult: Case => Future[Result]

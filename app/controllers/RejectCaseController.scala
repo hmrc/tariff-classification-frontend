@@ -46,11 +46,11 @@ class RejectCaseController @Inject() (
   override protected val caseService: CasesService = casesService
   private val form: Form[String]                   = AddNoteForm.getForm("reject")
 
-  def getRejectCase(reference: String, activeTab: Option[ActiveTab]): Action[AnyContent] =
+  def getRejectCase(reference: String): Action[AnyContent] =
     (verify.authenticated
       andThen verify.casePermissions(reference)
       andThen verify.mustHave(Permission.REJECT_CASE)).async { implicit request =>
-      validateAndRenderView(c => successful(views.html.reject_case(c, form, activeTab)))
+      validateAndRenderView(c => successful(views.html.reject_case(c, form)))
     }
 
   def confirmRejectCase(reference: String): Action[AnyContent] =
@@ -60,7 +60,7 @@ class RejectCaseController @Inject() (
       renderView(c => c.status == REJECTED, c => successful(views.html.confirm_rejected(c)))
     }
 
-  def postRejectCase(reference: String, activeTab: Option[ActiveTab]): Action[MultipartFormData[Files.TemporaryFile]] =
+  def postRejectCase(reference: String): Action[MultipartFormData[Files.TemporaryFile]] =
     (verify.authenticated andThen
       verify.casePermissions(reference) andThen
       verify.mustHave(Permission.REJECT_CASE)).async(parse.multipartFormData) {
@@ -73,7 +73,7 @@ class RejectCaseController @Inject() (
                 formWithErrors =>
                   getCaseAndRenderView(
                     reference,
-                    c => successful(views.html.reject_case(c, formWithErrors, activeTab))
+                    c => successful(views.html.reject_case(c, formWithErrors))
                   ),
                 note =>
                   validateAndRedirect(

@@ -17,34 +17,35 @@
 @import config.AppConfig
 @import models.request.AuthenticatedRequest
 @import models.{Case, CaseStatus, CommodityCode}
+@import models.viewmodels.atar.RulingTabViewModel
 @import utils.Dates
-@(c: Case, commodityCode: Option[CommodityCode], clazz: String = "")(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(ruling: RulingTabViewModel, clazz: String = "")(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@if(commodityCode.flatMap(_.expiry).isDefined) {
+@ruling.bindingCommodityCode.filter(_.expiry.nonEmpty).map { bindingCommodityCode =>
     <div id="ruling_commodity_code_expiry_section" class="@clazz">
         <div class="notice">
             <i class="icon icon-important">
                 <span class="visually-hidden">Warning</span>
             </i>
             <strong id="ruling_commodity_code_expiry_section-warning" class="bold-small">
-                <span>Commodity code @c.decision.get.bindingCommodityCode </span>
-                @if(commodityCode.exists(_.isExpired(appConfig.clock))) {
+                <span>Commodity code @bindingCommodityCode </span>
+                @if(bindingCommodityCode.isExpired(appConfig.clock)) {
                     <span id="ruling_commodity_code_expiry_section-warning_expired">invalid from </span>
                 } else {
                     <span id="ruling_commodity_code_expiry_section-warning_expiring">is valid until </span>
                 }
-                <span>@Dates.format(commodityCode.flatMap(_.expiry).get)</span>
+                <span>@Dates.format(bindingCommodityCode.expiry.get)</span>
             </strong>
         </div>
-        @if(c.status != CaseStatus.CANCELLED && c.status != CaseStatus.OPEN) {
+        @if(ruling.caseStatus != CaseStatus.CANCELLED && ruling.caseStatus != CaseStatus.OPEN) {
             <p id="ruling_commodity_code_expiry_section-message" class="mt-30">
                 <span>Contact the trader to inform them the commodity code </span>
-                @if(commodityCode.exists(_.isExpired(appConfig.clock))) {
+                @if(bindingCommodityCode.isExpired(appConfig.clock)) {
                     <span id="ruling_commodity_code_expiry_section-message_expired">has expired </span>
                 } else {
                     <span id="ruling_commodity_code_expiry_section-message_expiring">will expire </span>
                 }
-                <span>on @Dates.format(commodityCode.flatMap(_.expiry).get).</span>
+                <span>on @Dates.format(bindingCommodityCode.expiry.get).</span>
             </p>
         }
     </div>

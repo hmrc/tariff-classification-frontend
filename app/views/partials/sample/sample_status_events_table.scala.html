@@ -17,11 +17,13 @@
 @import config.AppConfig
 @import models._
 @import models.request.AuthenticatedRequest
+@import models.viewmodels.atar.SampleTabViewModel
 @import utils.Dates
 @import views.html.partials.progressive_disclosure
-@(c: Case, events: Paged[Event], startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@if(events.nonEmpty) {
+@(sample: SampleTabViewModel, startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+
+@if(sample.sampleActivity.nonEmpty) {
     <h3 class="heading-medium" id="sample-status-events-heading">Sample activity</h3>
 
     <table id="activity-events">
@@ -34,7 +36,7 @@
             </tr>
         </thead>
         <tbody>
-        @for((event: Event, index: Int) <- events.results.zipWithIndex) {
+        @for((event: Event, index: Int) <- sample.sampleActivity.results.zipWithIndex) {
             <tr id="sample-status-events-row-@{
                 index
             }">
@@ -51,17 +53,16 @@
                             val body = event.details.asInstanceOf[SampleStatusChange]
                             progressive_disclosure(
                                 id = s"sample-status-events-row-$index",
-                                summary = body.renderSummaryFor(c.application.`type`),
+                                summary = body.renderSummaryFor(ApplicationType.ATAR),
                                 body = body.comment.map(Html(_)),
                                 useTabIndex = Some(startAtTabIndex + (index * 2))
                             )
                         }
                         case EventType.SAMPLE_RETURN_CHANGE => {
                             val body = event.details.asInstanceOf[SampleReturnChange]
-                            val sampleType = if(c.application.isLiabilityOrder) "Returning sample" else "Returning requested sample"
                             progressive_disclosure(
                                 id = s"sample-status-events-row-$index",
-                                summary = s"$sampleType changed from ${SampleReturn.format(body.from).toLowerCase} to ${SampleReturn.format(body.to).toLowerCase}",
+                                summary = s"Returning requested sample changed from ${SampleReturn.format(body.from).toLowerCase} to ${SampleReturn.format(body.to).toLowerCase}",
                                 body = body.comment.map(Html(_)),
                                 useTabIndex = Some(startAtTabIndex + (index * 2))
                             )

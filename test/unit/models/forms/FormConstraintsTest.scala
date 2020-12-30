@@ -142,15 +142,15 @@ class FormConstraintsTest extends ModelsBaseSpec {
     "entryNumberIsNumberOnly" should {
 
       "return valid when entry number does not contain characters" in {
-        val result = FormConstraints.entryNumberIsNumberOnly().apply("123456")
+        val result = FormConstraints.entryNumberIsNumbersAndLettersOnly().apply("123456eadJFG")
 
         result shouldBe Valid
       }
 
       "return invalid when entry number contains characters" in {
-        val result = FormConstraints.entryNumberIsNumberOnly().apply("1assedf23456")
+        val result = FormConstraints.entryNumberIsNumbersAndLettersOnly().apply("1assed&f23456")
 
-        result shouldBe Invalid("case.liability.error.entry-number", FormConstraints.numbersOnlyRegex.pattern.pattern())
+        result shouldBe Invalid("case.liability.error.entry-number", FormConstraints.numbersAndLettersRegex.pattern.pattern())
       }
     }
 

@@ -16,11 +16,11 @@
 
 @import config.AppConfig
 @import controllers.routes
+@import controllers.Tab
 @import models.viewmodels.CaseHeaderViewModel
 @import views.html.includes.main
 @import views.html.components.confirm_or_cancel_buttons
 @import views.html.forms.components.input_text
-@import Tab._
 @import models.Decision
 @import views.html.forms.components.input_textarea
 @import views.html.partials.error_summary
@@ -35,13 +35,13 @@
 
 @main(bodyClasses = None, customTitle = Some(messages("page.title.edit_liability_decision")), customPrimaryNavTab = MyCasesTab) {
 
+ @error_summary(form.errors)
+
  @case_heading(caseHeaderViewModel, headingPrefix = Some("Edit ruling"))
 
  @c592_information(traderCommodityCode, officerCommodityCode)
 
  <hr>
-
- @error_summary(form.errors)
 
  @helper.form(action = routes.RulingController.updateRulingDetails(caseHeaderViewModel.referenceNumber), 'id -> "edit_liability_decision-form") {
   @helper.CSRF.formField
@@ -54,7 +54,7 @@
 
   @input_textarea(
    field = form("goodsDescription"),
-   label = messages("case.liability.decision.goodsDescription")
+   label = messages("case.liability.decision.goodsDescriptionLabel")
   )
 
   @input_textarea(
@@ -76,7 +76,7 @@
    id = "edit_liability_decision",
    confirmText = messages("case.v2.liability.save_and_continue_button"),
    cancelText = messages("case.v2.liability.cancel_button"),
-   cancelHref = controllers.v2.routes.LiabilityController.displayLiability(caseHeaderViewModel.referenceNumber).withFragment(RULING_TAB)
+   cancelHref = controllers.routes.CaseController.rulingDetails(caseHeaderViewModel.referenceNumber)
   )
  }
 

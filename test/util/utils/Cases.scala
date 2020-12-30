@@ -26,7 +26,7 @@ import models.SampleReturn.SampleReturn
 import models.SampleStatus.SampleStatus
 import models._
 import models.response.ScanStatus
-import models.viewmodels._
+import models.viewmodels.{TraderContact, _}
 
 object Cases {
 
@@ -39,7 +39,8 @@ object Cases {
     "type",
     Some(ScanStatus.READY),
     Instant.now(),
-    Some("test description")
+    Some("test description"),
+    shouldPublishToRulings = true
   )
   val storedOperatorAttachment: StoredAttachment = StoredAttachment(
     "id",
@@ -50,7 +51,8 @@ object Cases {
     "type",
     Some(ScanStatus.READY),
     Instant.now(),
-    Some("test description")
+    Some("test description"),
+    shouldPublishToRulings = false
   )
   val letterOfAuthority: StoredAttachment = StoredAttachment(
     "id",
@@ -61,7 +63,8 @@ object Cases {
     "pdf",
     Some(ScanStatus.READY),
     Instant.now(),
-    Some("test description")
+    Some("test description"),
+    shouldPublishToRulings = true
   )
   val eoriDetailsExample: EORIDetails =
     EORIDetails("eori", "trader-business-name", "line1", "line2", "line3", "postcode", "country")
@@ -86,7 +89,7 @@ object Cases {
     None,
     sampleToBeProvided = false,
     sampleToBeReturned = false,
-    applicationPdf = Some(Attachment("id", false, Some(Operator("1", None))))
+    applicationPdf     = Some(Attachment("id", false, Some(Operator("1", None))))
   )
   val simpleBtiApplicationExample: BTIApplication = BTIApplication(
     eoriDetailsExample,
@@ -104,7 +107,7 @@ object Cases {
     None,
     sampleToBeProvided = false,
     sampleToBeReturned = false,
-    applicationPdf = None
+    applicationPdf     = None
   )
   val decision: Decision = Decision(
     "040900",
@@ -196,9 +199,33 @@ object Cases {
     referredDaysElapsed = 0
   )
   val simpleCaseExample: Case =
-    Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, None, simpleBtiApplicationExample, None, Seq() , referredDaysElapsed = 0)
+    Case(
+      "1",
+      CaseStatus.OPEN,
+      Instant.now(),
+      0,
+      None,
+      None,
+      None,
+      simpleBtiApplicationExample,
+      None,
+      Seq(),
+      referredDaysElapsed = 0
+    )
   val liabilityCaseExample: Case =
-    Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, None, liabilityApplicationExample, None, Seq(), referredDaysElapsed = 0)
+    Case(
+      "1",
+      CaseStatus.OPEN,
+      Instant.now(),
+      0,
+      None,
+      None,
+      None,
+      liabilityApplicationExample,
+      None,
+      Seq(),
+      referredDaysElapsed = 0
+    )
   val liabilityCaseWithDecisionExample: Case = Case(
     "1",
     CaseStatus.OPEN,
@@ -213,9 +240,33 @@ object Cases {
     referredDaysElapsed = 0
   )
   val liabilityLiveCaseExample: Case =
-    Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, None, liabilityLiveApplicationExample, None, Seq(), referredDaysElapsed = 0)
+    Case(
+      "1",
+      CaseStatus.OPEN,
+      Instant.now(),
+      0,
+      None,
+      None,
+      None,
+      liabilityLiveApplicationExample,
+      None,
+      Seq(),
+      referredDaysElapsed = 0
+    )
   val caseQueueExample: Case =
-    Case("1", CaseStatus.OPEN, Instant.now(), 0, None, None, Some("1"), btiApplicationExample, Some(decision), Seq(), referredDaysElapsed = 0)
+    Case(
+      "1",
+      CaseStatus.OPEN,
+      Instant.now(),
+      0,
+      None,
+      None,
+      Some("1"),
+      btiApplicationExample,
+      Some(decision),
+      Seq(),
+      referredDaysElapsed = 0
+    )
   val caseAssignedExample: Case = Case(
     "1",
     CaseStatus.OPEN,
@@ -327,7 +378,19 @@ object Cases {
     None
   )
   val newLiabilityLiveCaseExample: Case =
-    Case("1", CaseStatus.NEW, Instant.now(), 0, None, None, None, newLiabilityLiveApplicationExample, None, Seq(), referredDaysElapsed = 0)
+    Case(
+      "1",
+      CaseStatus.NEW,
+      Instant.now(),
+      0,
+      None,
+      None,
+      None,
+      newLiabilityLiveApplicationExample,
+      None,
+      Seq(),
+      referredDaysElapsed = 0
+    )
 
   val liabilityWithCompleteDecision: LiabilityOrder = LiabilityOrder(
     Contact(name = "contact-name", email = "contact@email.com", Some("contact-phone")),
@@ -354,7 +417,9 @@ object Cases {
           )
         )
       )
-    )
+    ),
+    agentName = Some("agent"),
+    port      = Some("port")
   )
 
   val aCaseWithCompleteDecision: Case = Cases.liabilityCaseExample
@@ -362,10 +427,11 @@ object Cases {
 
   def attachment(id: String = UUID.randomUUID().toString): Attachment =
     Attachment(
-      id        = id,
-      public    = true,
-      operator  = Some(Operator("0", Some("operatorName"))),
-      timestamp = Instant.now()
+      id                     = id,
+      public                 = true,
+      operator               = Some(Operator("0", Some("operatorName"))),
+      timestamp              = Instant.now(),
+      shouldPublishToRulings = true
     )
 
   def aCase(withModifier: (Case => Case)*): Case =
@@ -397,6 +463,44 @@ object Cases {
         entryNumber          = entryNumber,
         traderCommodityCode  = traderCommodityCode,
         officerCommodityCode = officerCommodityCode
+      )
+    )
+
+  def liabilityApplicationWithC592(
+    contact: Contact                     = Contact("name", "email@email.com", Some("1234")),
+    status: LiabilityStatus              = LiabilityStatus.NON_LIVE,
+    traderName: String                   = "trader",
+    goodName: Option[String]             = Some("Goods Name"),
+    entryDate: Option[Instant]           = Some(Instant.now.plus(-20, DAYS)),
+    entryNumber: Option[String]          = Some("1234567"),
+    traderCommodityCode: Option[String]  = Some("0100000000"),
+    officerCommodityCode: Option[String] = Some("0200000000"),
+    traderDetails: Option[TraderContactDetails] = Some(
+      TraderContactDetails(
+        email = Some("trader@email.com"),
+        phone = Some("2345"),
+        address = Some(
+          Address(
+            buildingAndStreet = "STREET 1",
+            townOrCity        = "Town",
+            county            = Some("County"),
+            postCode          = Some("postcode")
+          )
+        )
+      )
+    )
+  ): Case => Case =
+    _.copy(application =
+      liabilityApplicationExample.copy(
+        contact              = contact,
+        status               = status,
+        traderName           = traderName,
+        goodName             = goodName,
+        entryDate            = entryDate,
+        entryNumber          = entryNumber,
+        traderCommodityCode  = traderCommodityCode,
+        officerCommodityCode = officerCommodityCode,
+        traderContactDetails = traderDetails
       )
     )
 
@@ -507,7 +611,7 @@ object Cases {
     otherInformation: Option[String]        = None,
     reissuedBTIReference: Option[String]    = None,
     relatedBTIReference: Option[String]     = None,
-    relatedBTIReferences:  List[String]  = Nil,
+    relatedBTIReferences: List[String]      = Nil,
     knownLegalProceedings: Option[String]   = None,
     envisagedCommodityCode: Option[String]  = None
   ): Case => Case = { c =>
@@ -624,14 +728,12 @@ object Cases {
   def withCreatedDate(date: Instant): Case => Case =
     _.copy(createdDate = date)
 
-
   val correspondenceExample: CorrespondenceApplication = CorrespondenceApplication(
     None,
     None,
     Address("s", "s", None, None),
     Contact("name", "email"),
     None,
-    offline = false,
     "Laptop",
     "Personal Computer",
     sampleToBeProvided = false,
@@ -640,13 +742,12 @@ object Cases {
 
   val miscExample: MiscApplication = MiscApplication(
     Contact("name", "email"),
-    offline = false,
     "name",
     None,
     MiscCaseType.HARMONISED,
     None,
     sampleToBeProvided = false,
-    sampleToBeReturned = false,
+    sampleToBeReturned = false
   )
 
   val corrApplicationExample: CorrespondenceApplication = CorrespondenceApplication(
@@ -655,7 +756,6 @@ object Cases {
     Address("New building", "Old Town", None, None),
     Contact("a name", "anemail@some.com", None),
     None,
-    false,
     "A short summary",
     "A detailed desc",
     None,

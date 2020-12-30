@@ -18,8 +18,10 @@ package models
 
 import java.time.Instant
 
+import cats.syntax.either._
 import models.LiabilityStatus.LiabilityStatus
 import models.MiscCaseType.MiscCaseType
+import play.api.mvc.PathBindable
 
 sealed trait Application {
   val `type`: ApplicationType
@@ -62,7 +64,7 @@ sealed trait Application {
 
   def goodsName: String =
     `type` match {
-      case ApplicationType.ATAR             => asATAR.goodName
+      case ApplicationType.ATAR      => asATAR.goodName
       case ApplicationType.LIABILITY => asLiabilityOrder.goodName.getOrElse("")
       case ApplicationType.CORRESPONDENCE => asCorrespondence.summary
     }
@@ -72,28 +74,40 @@ sealed trait Application {
       case ApplicationType.ATAR             => "ATaR"
       case ApplicationType.LIABILITY => "Liability"
       case ApplicationType.CORRESPONDENCE => "Correspondence"
-      case ApplicationType.MISCELLANEOUS => "Misc"
+      case ApplicationType.MISCELLANEOUS  => "Misc"
     }
 }
 
 sealed abstract class ApplicationType(val name: String) extends Product with Serializable {
   def prettyName: String = this match {
-    case ApplicationType.ATAR => "ATaR"
-    case ApplicationType.LIABILITY => "Liability"
+    case ApplicationType.ATAR           => "ATaR"
+    case ApplicationType.LIABILITY      => "Liability"
     case ApplicationType.CORRESPONDENCE => "Correspondence"
-    case ApplicationType.MISCELLANEOUS => "Miscellaneous"
+    case ApplicationType.MISCELLANEOUS  => "Miscellaneous"
   }
 }
 
 object ApplicationType {
   val values = Set(ATAR, LIABILITY, CORRESPONDENCE, MISCELLANEOUS)
 
-  def withName(name: String) = values.find(_.name == name).getOrElse(throw new NoSuchElementException)
+  def withName(name: String) = values.find(_.name.equalsIgnoreCase(name)).getOrElse(throw new NoSuchElementException)
 
   case object ATAR extends ApplicationType("BTI")
   case object LIABILITY extends ApplicationType("LIABILITY_ORDER")
   case object CORRESPONDENCE extends ApplicationType("CORRESPONDENCE")
   case object MISCELLANEOUS extends ApplicationType("MISCELLANEOUS")
+
+  implicit def applicationTypePathBindable(implicit stringBindable: PathBindable[String]): PathBindable[ApplicationType] =
+    new PathBindable[ApplicationType] {
+      def bind(key: String, value: String): Either[String, ApplicationType] =
+        Either.catchOnly[NoSuchElementException] {
+          ApplicationType.withName(value)
+        }.leftMap { _ =>
+          "Invalid application type"
+        }
+      def unbind(key: String, value: ApplicationType): String =
+        stringBindable.unbind(key, value.name)
+    }
 }
 
 case class BTIApplication(
@@ -134,7 +148,9 @@ case class LiabilityOrder(
   btiReference: Option[String]                       = None,
   repaymentClaim: Option[RepaymentClaim]             = None,
   dateOfReceipt: Option[Instant]                     = None,
-  traderContactDetails: Option[TraderContactDetails] = None
+  traderContactDetails: Option[TraderContactDetails] = None,
+  agentName: Option[String]                          = None,
+  port: Option[String]                               = None
 ) extends Application {
   override val `type`: models.ApplicationType = ApplicationType.LIABILITY
 }
@@ -170,37 +186,34 @@ case class Message(
   name: String,
   date: Instant,
   message: String
-                  )
-
+)
 
 case class CorrespondenceApplication(
-                          correspondenceStarter: Option[String],
-                          agentName: Option[String],
-                          address: Address,
-                          override val contact: Contact,
-                          fax: Option[String] = None,
-                          offline: Boolean,
-                          summary: String,
-                          detailedDescription: String,
-                          relatedBTIReference: Option[String] = None,
-                          relatedBTIReferences: List[String]  = Nil,
-                          sampleToBeProvided: Boolean,
-                          sampleToBeReturned: Boolean,
-                          messagesLogged: List[Message]  = Nil
-                                    ) extends Application {
+  correspondenceStarter: Option[String],
+  agentName: Option[String],
+  address: Address,
+  override val contact: Contact,
+  fax: Option[String] = None,
+  summary: String,
+  detailedDescription: String,
+  relatedBTIReference: Option[String] = None,
+  relatedBTIReferences: List[String]  = Nil,
+  sampleToBeProvided: Boolean,
+  sampleToBeReturned: Boolean,
+  messagesLogged: List[Message] = Nil
+) extends Application {
   override val `type`: models.ApplicationType = ApplicationType.CORRESPONDENCE
 }
 
 case class MiscApplication(
-                           override val contact: Contact,
-                           offline: Boolean,
-                           name: String,
-                           contactName: Option[String],
-                           caseType: MiscCaseType,
-                           detailedDescription: Option[String],
-                           sampleToBeProvided: Boolean,
-                           sampleToBeReturned: Boolean,
-                           messagesLogged: List[Message]  = Nil
-                          ) extends Application {
+  override val contact: Contact,
+  name: String,
+  contactName: Option[String],
+  caseType: MiscCaseType,
+  detailedDescription: Option[String],
+  sampleToBeProvided: Boolean,
+  sampleToBeReturned: Boolean,
+  messagesLogged: List[Message] = Nil
+) extends Application {
   override val `type`: models.ApplicationType = ApplicationType.MISCELLANEOUS
 }

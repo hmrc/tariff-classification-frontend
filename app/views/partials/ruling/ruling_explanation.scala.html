@@ -19,21 +19,27 @@
 @import models.{BTIApplication, Case, CaseStatus, Decision, StoredAttachment}
 @import views.html.partials.{attachments_list, tab_heading}
 @import models.forms.DecisionFormData
-@import views.html.partials.ruling.{ruling_certificate_link, complete_ruling_section}
+@import views.html.partials.ruling.{ruling_certificate_link}
 @import models.request.AuthenticatedRequest
 
-@(c: Case, useTabIndex : Option[Int] = None)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(d: Option[Decision], useTabIndex : Option[Int] = None)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@if(c.decision.isDefined) {
-    @defining(c.decision.get) { d: Decision =>
+@d.map { d =>
+
+<div class="grid-row">
+    <div class="column-full">
         <h3 class="heading-medium">@messages("case.decision.holder.information")</h3>
+    </div>
+</div>
+<dl class="govuk-check-your-answers cya-questions-short">
+
         <div class="grid-row" id="information-for-holder">
-            <dt class="column-one-third">
+            @if(d.explanation.exists(_.trim.nonEmpty)) {
+            <dt class="cya-question middle-align">
                 @messages("case.decision.explanation.label")
             </dt>
-            <dd class="column-two-thirds">
-            @if(d.explanation.exists(_.trim.nonEmpty)) {
-                <p class="mt-0">Commodity code for your item:
+            <dd class="cya-answer">
+                <p class="mt-0">Commodity code for your goods:
                     <span id="binding-commodity-code">
                         @{
                             d.bindingCommodityCode match {
@@ -57,8 +63,13 @@
                         Apply for a Binding Tariff Information (BTI) ruling (Notice 600)
                     </a>
                 </p>
-            }
             </dd>
+            } else {
+                    <dt class="column-full">
+                    @messages("case.decision.constraint.no-information")
+                    </dt>
+                }
+
         </div>
-    }
+</dl>
 }

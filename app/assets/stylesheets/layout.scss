@@ -156,6 +156,10 @@
   padding-left: 0;
 }
 
+.pl-0-important{
+  padding-left: 0px !important;
+}
+
 .pl-30 {
   padding-left: 30px;
 }
@@ -207,6 +211,10 @@
 
 .w-15 {
   width: 15%;
+}
+
+.w-20 {
+  width: 20%;
 }
 
 .w-25 {
@@ -509,5 +517,14 @@ table tbody tr th {
     margin-bottom: 5px;
     color: #505a5f;
     font-weight: 400;
+}
+.middle-align {
+    vertical-align: middle;
+}
+
+.govuk-checkboxes__conditional {
+    margin-left: 18px;
+    padding-left: 33px;
+    border-left: 4px solid #b1b4b6;
 }
 

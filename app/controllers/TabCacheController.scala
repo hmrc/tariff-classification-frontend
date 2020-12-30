@@ -16,20 +16,20 @@
 
 package controllers
 
-import connector.DataCacheConnector
+import cats.syntax.all._
 import controllers.actions.{DataRetrievalAction, IdentifierAction}
 import javax.inject.{Inject, Singleton}
+import models.ApplicationType
 import play.api.Logging
-import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.http.cache.client.CacheMap
+import service.TabCacheService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class TabCacheController @Inject() (
-  dataCacheConnector: DataCacheConnector,
+  tabCacheService: TabCacheService,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   verify: RequestActions,
@@ -38,36 +38,29 @@ class TabCacheController @Inject() (
     extends FrontendController(mcc)
     with Logging {
 
-  def post(reference: String, itemType: String): Action[AnyContent] =
-    (identify andThen getData).async { implicit request =>
-      val anchor = request.body.asText.getOrElse("")
-      if (anchor.trim.nonEmpty) {
-        Tab.findAnchorInEnum(anchor) match {
-          case Some(_) =>
-            val key                       = reference + itemType.toLowerCase
-            val map: Map[String, JsValue] = Map(key -> Json.toJson(anchor))
-            val cacheMap                  = new CacheMap(request.internalId, map)
-            dataCacheConnector.save(cacheMap)
-          case _ =>
-            logger.warn(s"Can't find [$anchor] in tab list!")
-        }
-      }
+  def post(reference: String, itemType: ApplicationType): Action[AnyContent] =
+    identify.async { implicit request =>
+      val maybeTab = for {
+        bodyText  <- request.body.asText
+        activeTab <- Tab.fromValue(bodyText.trim)
+      } yield activeTab
 
-      Future.successful(Ok("Ok"))
+      maybeTab match {
+        case Some(activeTab) =>
+          tabCacheService
+            .setActiveTab(request.internalId, reference, itemType, activeTab)
+            .map(_ => Accepted)
+        case None =>
+          Future.successful(BadRequest)
+      }
     }
 
-  def get(reference: String, itemType: String): Action[AnyContent] =
+  def get(reference: String, itemType: ApplicationType): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference) andThen identify andThen getData).async {
       implicit request =>
-        lazy val defaultTab: String = if (itemType.toLowerCase.equals("liability")) "#c592_tab" else ""
-
-        dataCacheConnector.fetch(request.internalId).flatMap {
-          case Some(value) =>
-            dataCacheConnector
-              .remove(value)
-              .map(_ => Ok(value.getEntry[String](reference + itemType.toLowerCase).getOrElse(defaultTab)))
-          case _ => Future.successful(Ok(defaultTab))
-        }
+        tabCacheService
+          .getActiveTab(request.internalId, reference, itemType)
+          .map(tab => Ok(tab.map(_.name).orEmpty))
     }
 
 }

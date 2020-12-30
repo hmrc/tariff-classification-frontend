@@ -57,9 +57,9 @@ lazy val microservice = (project in file("."))
     "play.twirl.api.HtmlFormat"
   ))
   .settings(RoutesKeys.routesImport ++= Seq(
-    "controllers.ActiveTab",
     "models.Sort",
     "models.Search",
+    "models.ApplicationType",
     "models.viewmodels.AssignedToMeTab",
     "models.viewmodels.ATaRTab",
     "models.viewmodels.SubNavigationTab"
@@ -94,6 +94,6 @@ lazy val TemplateTest   = config("tt") extend Test
 lazy val TemplateItTest = config("tit") extend IntegrationTest
 
 // Coverage configuration
-coverageMinimum := 93.7
+coverageMinimum := 92
 coverageFailOnMinimum := true
 coverageExcludedPackages := "<empty>;com.kenshoo.play.metrics.*;prod.*;testOnlyDoNotUseInAppConf.*;app.*;uk.gov.hmrc.BuildInfo;.*repositories.*"

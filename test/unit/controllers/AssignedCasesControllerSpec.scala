@@ -58,7 +58,7 @@ class AssignedCasesControllerSpec extends ControllerBaseSpec {
         .willReturn(Future.successful(Paged.empty[Case]))
       given(casesService.countCasesByQueue(any[Operator])(any[HeaderCarrier]))
         .willReturn(Future.successful(Map.empty[String, Int]))
-      given(queuesService.getAll).willReturn(Future.successful(Seq(queue)))
+      given(queuesService.getAll).willReturn(Future.successful(List(queue)))
 
       val result = await(controller(requiredPermissions).assignedCases()(fakeRequest))
       status(result)                                         shouldBe Status.OK
@@ -87,7 +87,7 @@ class AssignedCasesControllerSpec extends ControllerBaseSpec {
         .willReturn(Future.successful(Paged.empty[Case]))
       given(casesService.countCasesByQueue(any[Operator])(any[HeaderCarrier]))
         .willReturn(Future.successful(Map.empty[String, Int]))
-      given(queuesService.getAll).willReturn(Future.successful(Seq(queue)))
+      given(queuesService.getAll).willReturn(Future.successful(List(queue)))
 
       val result = await(controller(requiredPermissions).assignedCasesFor("1", 0)(fakeRequest))
       status(result)                                         shouldBe Status.OK
@@ -105,7 +105,7 @@ class AssignedCasesControllerSpec extends ControllerBaseSpec {
     "return 200 OK and HTML content type when case is returned" in {
       given(casesService.getAssignedCases(refEq(NoPagination()))(any[HeaderCarrier]))
         .willReturn(Future.successful(Paged(Seq(assignedCase))))
-      given(queuesService.getAll).willReturn(Future.successful(Seq(queue)))
+      given(queuesService.getAll).willReturn(Future.successful(List(queue)))
 
       val result = await(controller(requiredPermissions).assignedCasesFor("1", 0)(fakeRequest))
       status(result)          shouldBe Status.OK

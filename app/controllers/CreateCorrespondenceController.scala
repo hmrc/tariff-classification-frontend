@@ -93,7 +93,7 @@ class CreateCorrespondenceController @Inject() (
           errors => getCaseAndRenderChoiceView(reference, errors),
           (choice: String) => {
             choice match {
-              case "Yes" => successful(Redirect(routes.ReleaseCaseController.releaseCase(reference, None)))
+              case "Yes" => successful(Redirect(routes.ReleaseCaseController.releaseCase(reference)))
               case _  => successful(Redirect(routes.CreateCorrespondenceController.displayConfirmation(reference)))
             }
           }

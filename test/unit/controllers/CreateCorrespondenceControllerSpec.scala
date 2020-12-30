@@ -161,7 +161,7 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
       )
 
       status(result)               shouldBe Status.SEE_OTHER
-      redirectLocation(result).get shouldBe ReleaseCaseController.releaseCase("reference", None).url
+      redirectLocation(result).get shouldBe ReleaseCaseController.releaseCase("reference").url
     }
 
     "Release choice should redirect to Confirmation page if No POST" in {

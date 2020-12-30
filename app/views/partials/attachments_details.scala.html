@@ -14,42 +14,34 @@
  * limitations under the License.
  *@
 
-@import controllers.routes.AttachmentsController
-@import uk.gov.hmrc.play.views.html.helpers
 @import config.AppConfig
-@import models.{Case, StoredAttachment}
-@import views.html.components.input_file
-@import views.html.partials.{attachments_list, attachments_state_message, tab_heading,error_summary}
-
+@import controllers.{Tab, routes, v2}
+@import models.{Case, Permission, StoredAttachment}
 @import models.request.AuthenticatedRequest
-@import models.Permission
-@(c: Case, form : Form[String], filesFromApplicant: Seq[StoredAttachment], letterOfAuthority : Option[StoredAttachment],
-        filesFromClassification: Seq[StoredAttachment], startAtTabIndex : Int = 0 )(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@import models.viewmodels.atar.AttachmentsTabViewModel
+@import uk.gov.hmrc.play.views.html.helpers
+@import views.html.components.input_file
+@import views.html.partials.{attachments_list_atar, attachments_state_message, tab_heading, error_summary}
+
+@(attachments: AttachmentsTabViewModel, form : Form[String], startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
     @error_summary(form.errors, Some(startAtTabIndex))
 
     @tab_heading("attachments", messages("case.menu.attachments"))
 
-    @attachments_state_message(attachments = filesFromApplicant ++ filesFromClassification)
+    <h3 class="heading-medium mt-30 mb-30">@messages("page.title.case.attachments")</h3>
 
-    <h3 class="heading-medium" id="applicant-heading">@messages(s"case.attachment.heading.applicant")</h3>
-    @attachments_list("applicant", filesFromApplicant, startAtTabIndex = Some(startAtTabIndex+10))
+    @attachments_state_message(attachments = attachments.allAttachments, displayStateMessage = false)
 
-    @if(letterOfAuthority.isDefined) {
-        <h3 class="heading-medium" id="letter-of-auth-heading">@messages(s"case.attachment.heading.letter-of-auth")</h3>
-        @attachments_list("letter-of-auth", Seq(letterOfAuthority.get), startAtTabIndex = Some(startAtTabIndex+30))
-    }
-
-    <h3 class="heading-medium" id="classification-team-heading">@messages(s"case.attachment.heading.classification-team")</h3>
-    @attachments_list("classification-team", filesFromClassification, showUploadedBy = true, showSelect = false, showRemoval = true, Some(c.reference), startAtTabIndex = Some(startAtTabIndex+31))
+    @attachments_list_atar("classification-team", attachments, startAtTabIndex = Some(startAtTabIndex+31))
 
     @if(request.hasPermission(Permission.ADD_ATTACHMENT)) {
-        @helpers.form(action = AttachmentsController.uploadAttachment(c.reference),
+        @helpers.form(action = v2.routes.AttachmentsController.uploadAttachment(attachments.caseReference),
             'enctype -> "multipart/form-data",
             'id -> "upload-files-form") {
 
             <div id="file-upload-heading">
-                <h3 class="heading-medium mt-30 mb-30" >@messages("upload.files.title")</h3>
+                <h3 class="heading-medium mt-30 mb-30">@messages("upload.files.title")</h3>
             </div>
 
             <div class="form-group">

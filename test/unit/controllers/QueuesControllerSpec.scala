@@ -56,7 +56,7 @@ class QueuesControllerSpec extends ControllerBaseSpec {
       given(casesService.countCasesByQueue(any[Operator])(any[HeaderCarrier]))
         .willReturn(Future.successful(Map.empty[String, Int]))
       given(queuesService.getOneBySlug("slug")).willReturn(Future.successful(Some(queue)))
-      given(queuesService.getAll).willReturn(Future.successful(Seq(queue)))
+      given(queuesService.getAll).willReturn(Future.successful(List(queue)))
 
       val result = await(controller(Set(Permission.VIEW_QUEUE_CASES)).queue("slug")(fakeRequest))
       status(result)                                                shouldBe Status.OK
@@ -78,7 +78,7 @@ class QueuesControllerSpec extends ControllerBaseSpec {
       given(casesService.countCasesByQueue(any[Operator])(any[HeaderCarrier]))
         .willReturn(Future.successful(Map.empty[String, Int]))
       given(queuesService.getOneBySlug("slug")).willReturn(Future.successful(Some(queue)))
-      given(queuesService.getAll).willReturn(Future.successful(Seq(queue)))
+      given(queuesService.getAll).willReturn(Future.successful(List(queue)))
 
       val result =
         await(controller(Set(Permission.VIEW_QUEUE_CASES)).queue("slug", Some("LIABILITY_ORDER"))(fakeRequest))
@@ -96,7 +96,7 @@ class QueuesControllerSpec extends ControllerBaseSpec {
         casesService.getCasesByQueue(refEq(queue), refEq(NoPagination()), any[Seq[ApplicationType]])(any[HeaderCarrier])
       ).willReturn(Future.successful(Paged.empty[Case]))
       given(queuesService.getOneBySlug("slug")).willReturn(Future.successful(None))
-      given(queuesService.getAll).willReturn(Future.successful(Seq(queue)))
+      given(queuesService.getAll).willReturn(Future.successful(List(queue)))
 
       val result = await(controller(Set(Permission.VIEW_QUEUE_CASES)).queue("slug")(fakeRequest))
       status(result)          shouldBe Status.OK

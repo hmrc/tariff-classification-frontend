@@ -37,13 +37,11 @@ class AppealCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
 
   private val casesService = mock[CasesService]
   private val operator     = Operator(id = "id")
-  private val caseDetailsView = app.injector.instanceOf[views.html.case_details]
 
   private def controller(requestCase: Case) = new AppealCaseController(
     new SuccessfulRequestActions(playBodyParsers, operator, c = requestCase),
     casesService,
     realAppConfig,
-    caseDetailsView,
     mcc
   )
 
@@ -51,7 +49,6 @@ class AppealCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
     new RequestActionsWithPermissions(playBodyParsers, permission, c = requestCase),
     casesService,
     realAppConfig,
-    caseDetailsView,
     mcc
   )
 
@@ -61,17 +58,18 @@ class AppealCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
   }
 
   "Case Appeal Details" should {
-    "Return 200" when {
+    "Redirect to case appeals page" when {
       for (s <- Seq(CaseStatus.COMPLETED, CaseStatus.CANCELLED)) {
         s"Case has status $s" in {
           val c = aCase(withStatus(s), withDecision())
 
           val result = await(controller(c).appealDetails(c.reference)(fakeRequest))
 
-          status(result)          shouldBe Status.OK
-          contentType(result)     shouldBe Some("text/html")
-          charset(result)         shouldBe Some("utf-8")
-          contentAsString(result) should include("appeal-heading")
+          status(result) shouldBe Status.SEE_OTHER
+
+          redirectLocation(result) shouldBe Some(
+            v2.routes.AtarController.displayAtar(c.reference).withFragment(Tab.APPEALS_TAB.name).path
+          )
         }
       }
 
@@ -85,22 +83,11 @@ class AppealCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
 
           val result = await(controller(c).appealDetails(c.reference)(fakeRequest))
 
-          status(result)           shouldBe 303
-          redirectLocation(result) shouldBe Some("/manage-tariff-classifications/cases/v2/1/liability#appeal_tab")
-        }
-      }
-    }
+          status(result) shouldBe Status.SEE_OTHER
 
-    "reload Appeals page when case is a BTI" when {
-      for (s <- Seq(CaseStatus.COMPLETED, CaseStatus.CANCELLED)) {
-        s"Case has status $s" in {
-
-          val c = aCase(withStatus(s))
-
-          val result = await(controller(c).appealDetails(c.reference)(fakeRequest))
-
-          status(result)          shouldBe 200
-          contentAsString(result) should include("appeal-heading")
+          redirectLocation(result) shouldBe Some(
+            v2.routes.LiabilityController.displayLiability(c.reference).withFragment(Tab.APPEALS_TAB.name).path
+          )
         }
       }
     }

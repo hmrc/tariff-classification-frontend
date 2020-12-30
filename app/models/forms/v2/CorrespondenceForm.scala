@@ -31,7 +31,6 @@ object CorrespondenceForm {
         correspondenceStarter = Some(source),
         agentName = None,
         contact = Contact("", contactEmail, None),
-        offline = false,
         summary = shortDescr,
         detailedDescription = "",
         sampleToBeProvided = false,

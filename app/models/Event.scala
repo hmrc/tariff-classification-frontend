@@ -200,5 +200,6 @@ object EventType extends Enumeration {
   val CASE_CREATED               = Value
   val EXPERT_ADVICE_RECEIVED     = Value
 
-  def sampleEvents: Set[models.EventType.Value] = Set(SAMPLE_STATUS_CHANGE, SAMPLE_RETURN_CHANGE)
+  def sampleEvents: Set[EventType.Value] = Set(SAMPLE_STATUS_CHANGE, SAMPLE_RETURN_CHANGE)
+  def nonSampleEvents: Set[EventType.Value] = EventType.values.diff(sampleEvents)
 }

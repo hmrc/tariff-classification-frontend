@@ -21,30 +21,22 @@ import utils.Cases._
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.partials.appeal.appeal_details
+import models.viewmodels.atar.AppealTabViewModel
 
 class AppealDetailsViewSpec extends ViewSpec {
 
   "Appeal Details" should {
 
-    "Render - Without Appeal" in {
-      // Given
-      val c = aCase(withDecision(appeal = Seq.empty))
-
-      // When
-      val doc = view(appeal_details(c))
-
-      // Then
-      for (t <- AppealType.values) {
-        doc shouldNot containElementWithID(s"appeal_details-$t")
-      }
-    }
-
     "Render - With 'Appeal Allowed'" in {
       // Given
-      val c = aCase(withDecision(appeal = Seq(Appeal("id", AppealStatus.ALLOWED, AppealType.APPEAL_TIER_1))))
+      val c = aCase(
+        withStatus(CaseStatus.COMPLETED),
+        withDecision(appeal = Seq(Appeal("id", AppealStatus.ALLOWED, AppealType.APPEAL_TIER_1)))
+      )
+      val appealTab = AppealTabViewModel.fromCase(c).get
 
       // When
-      val doc = view(appeal_details(c))
+      val doc = view(appeal_details(appealTab))
 
       // Then
       doc                                           should containElementWithID("appeal_details-0")
@@ -54,10 +46,14 @@ class AppealDetailsViewSpec extends ViewSpec {
 
     "Render - With 'Appeal Dismissed'" in {
       // Given
-      val c = aCase(withDecision(appeal = Seq(Appeal("id", AppealStatus.DISMISSED, AppealType.APPEAL_TIER_1))))
+      val c = aCase(
+        withStatus(CaseStatus.COMPLETED),
+        withDecision(appeal = Seq(Appeal("id", AppealStatus.DISMISSED, AppealType.APPEAL_TIER_1)))
+      )
+      val appealTab = AppealTabViewModel.fromCase(c).get
 
       // When
-      val doc = view(appeal_details(c))
+      val doc = view(appeal_details(appealTab))
 
       // Then
       doc                                           should containElementWithID("appeal_details-0")
@@ -67,10 +63,14 @@ class AppealDetailsViewSpec extends ViewSpec {
 
     "Render - With 'Under Appeal'" in {
       // Given
-      val c = aCase(withDecision(appeal = Seq(Appeal("id", AppealStatus.IN_PROGRESS, AppealType.APPEAL_TIER_1))))
+      val c = aCase(
+        withStatus(CaseStatus.COMPLETED),
+        withDecision(appeal = Seq(Appeal("id", AppealStatus.IN_PROGRESS, AppealType.APPEAL_TIER_1)))
+      )
+      val appealTab = AppealTabViewModel.fromCase(c).get
 
       // When
-      val doc = view(appeal_details(c))
+      val doc = view(appeal_details(appealTab))
 
       // Then
       doc                                           should containElementWithID("appeal_details-0")
@@ -87,8 +87,10 @@ class AppealDetailsViewSpec extends ViewSpec {
         )
       )
 
+      val appealTab = AppealTabViewModel.fromCase(c).get
+
       // When
-      val doc = view(appeal_details(c))
+      val doc = view(appeal_details(appealTab))
 
       // Then
       doc                                                      should containElementWithID("appeal_details-extended_use_status")
@@ -98,9 +100,10 @@ class AppealDetailsViewSpec extends ViewSpec {
     "Render Add Appeal if user has permission APPEAL_CASE" in {
       // Given
       val c = aCase(withDecision(), withStatus(CaseStatus.CANCELLED))
+      val appealTab = AppealTabViewModel.fromCase(c).get
 
       // When
-      val doc = view(appeal_details(c)(requestWithPermissions(Permission.APPEAL_CASE), messages, appConfig))
+      val doc = view(appeal_details(appealTab)(requestWithPermissions(Permission.APPEAL_CASE), messages, appConfig))
 
       doc should containElementWithID("appeal_details-add_new")
     }
@@ -108,9 +111,10 @@ class AppealDetailsViewSpec extends ViewSpec {
     "Not render Add Appeal if user does not have permission" in {
       // Given
       val c = aCase(withDecision(), withStatus(CaseStatus.CANCELLED))
+      val appealTab = AppealTabViewModel.fromCase(c).get
 
       // When
-      val doc = view(appeal_details(c)(operatorRequest, messages, appConfig))
+      val doc = view(appeal_details(appealTab)(operatorRequest, messages, appConfig))
 
       doc shouldNot containElementWithID("appeal_details-add_new")
     }
@@ -122,8 +126,10 @@ class AppealDetailsViewSpec extends ViewSpec {
         withStatus(CaseStatus.CANCELLED)
       )
 
+      val appealTab = AppealTabViewModel.fromCase(c).get
+
       // When
-      val doc = view(appeal_details(c)(requestWithPermissions(Permission.APPEAL_CASE), messages, appConfig))
+      val doc = view(appeal_details(appealTab)(requestWithPermissions(Permission.APPEAL_CASE), messages, appConfig))
 
       doc should containElementWithID("appeal_details-0-change-status")
     }
@@ -135,8 +141,10 @@ class AppealDetailsViewSpec extends ViewSpec {
         withStatus(CaseStatus.CANCELLED)
       )
 
+      val appealTab = AppealTabViewModel.fromCase(c).get
+
       // When
-      val doc = view(appeal_details(c)(operatorRequest, messages, appConfig))
+      val doc = view(appeal_details(appealTab)(operatorRequest, messages, appConfig))
 
       doc shouldNot containElementWithID("change-status-0")
     }
@@ -144,9 +152,10 @@ class AppealDetailsViewSpec extends ViewSpec {
     "Render Extended Use Change if user has permission EXTENDED_USE" in {
       // Given
       val c = aCase(withDecision(), withStatus(CaseStatus.CANCELLED))
+      val appealTab = AppealTabViewModel.fromCase(c).get
 
       // When
-      val doc = view(appeal_details(c)(requestWithPermissions(Permission.EXTENDED_USE), messages, appConfig))
+      val doc = view(appeal_details(appealTab)(requestWithPermissions(Permission.EXTENDED_USE), messages, appConfig))
 
       doc should containElementWithID("appeal_details-extended_use-change")
     }
@@ -154,9 +163,10 @@ class AppealDetailsViewSpec extends ViewSpec {
     "Not render Extended Use Change if user does not have permission" in {
       // Given
       val c = aCase(withDecision(), withStatus(CaseStatus.CANCELLED))
+      val appealTab = AppealTabViewModel.fromCase(c).get
 
       // When
-      val doc = view(appeal_details(c)(operatorRequest, messages, appConfig))
+      val doc = view(appeal_details(appealTab)(operatorRequest, messages, appConfig))
 
       doc shouldNot containElementWithID("appeal_details-extended_use-change")
     }

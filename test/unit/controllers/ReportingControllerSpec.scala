@@ -67,7 +67,7 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
   "GET Reports" should {
     "Return OK" in {
-      given(queueService.getAll) willReturn Future.successful(Seq.empty)
+      given(queueService.getAll) willReturn Future.successful(List.empty)
       given(casesService.countCasesByQueue(any[Operator])(any[HeaderCarrier]))
         .willReturn(Future.successful(Map.empty[String, Int]))
       given(operator.hasPermissions(requiredPermissions)) willReturn true
@@ -85,7 +85,7 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     }
 
     "Return Forbidden for Non-Manager" in {
-      given(queueService.getAll) willReturn Future.successful(Seq.empty)
+      given(queueService.getAll) willReturn Future.successful(List.empty)
 
       val req: AuthenticatedRequest[AnyContent] = request(operator, newFakeGETRequestWithCSRF(app))
       val result                                = await(controller(noPermissions).getReports(req.request))
@@ -97,7 +97,7 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
   "GET Report Criteria" should {
     "Return OK for SLA Report" in {
-      given(queueService.getAll) willReturn Future.successful(Seq.empty)
+      given(queueService.getAll) willReturn Future.successful(List.empty)
       given(casesService.countCasesByQueue(any[Operator])(any[HeaderCarrier]))
         .willReturn(Future.successful(Map.empty[String, Int]))
       given(operator.hasPermissions(requiredPermissions)) willReturn true
@@ -125,7 +125,7 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     }
 
     "Return OK for Referral Report" in {
-      given(queueService.getAll) willReturn Future.successful(Seq.empty)
+      given(queueService.getAll) willReturn Future.successful(List.empty)
       given(casesService.countCasesByQueue(any[Operator])(any[HeaderCarrier]))
         .willReturn(Future.successful(Map.empty[String, Int]))
       given(operator.hasPermissions(requiredPermissions)) willReturn true
@@ -163,7 +163,7 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     }
 
     "Return Forbidden for Non-Manager" in {
-      given(queueService.getAll) willReturn Future.successful(Seq.empty)
+      given(queueService.getAll) willReturn Future.successful(List.empty)
 
       val req: AuthenticatedRequest[AnyContent] = request(operator, newFakeGETRequestWithCSRF(app))
       val result                                = await(controller(noPermissions).getReportCriteria(Report.SLA.toString, 0)(req.request))
@@ -180,7 +180,7 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
     "Return OK for SLA Report" in {
 
-      given(queueService.getNonGateway) willReturn Future.successful(Seq.empty[Queue])
+      given(queueService.getNonGateway) willReturn Future.successful(List.empty[Queue])
       given(reportingService.getSLAReport(refEq(range))(any[HeaderCarrier])) willReturn Future.successful(
         Seq.empty[ReportResult]
       )
@@ -205,7 +205,7 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       charset(result)     shouldBe Some("utf-8")
 
       contentAsString(result) shouldBe views.html
-        .report_sla(range, Seq.empty[ReportResult], Seq.empty[Queue])(
+        .report_sla(range, Seq.empty[ReportResult], List.empty[Queue])(
           req,
           mcc.messagesApi.preferred(req),
           realAppConfig
@@ -214,7 +214,7 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     }
 
     "Return OK for Referral Report" in {
-      given(queueService.getNonGateway) willReturn Future.successful(Seq.empty[Queue])
+      given(queueService.getNonGateway) willReturn Future.successful(List.empty[Queue])
       given(casesService.countCasesByQueue(any[Operator])(any[HeaderCarrier]))
         .willReturn(Future.successful(Map.empty[String, Int]))
       given(reportingService.getReferralReport(refEq(range))(any[HeaderCarrier])) willReturn Future.successful(
@@ -240,7 +240,7 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       charset(result)     shouldBe Some("utf-8")
 
       contentAsString(result) shouldBe views.html
-        .report_referral(range, Seq.empty[ReportResult], Seq.empty[Queue])(
+        .report_referral(range, Seq.empty[ReportResult], List.empty[Queue])(
           req,
           mcc.messagesApi.preferred(req),
           realAppConfig
@@ -249,7 +249,7 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     }
 
     "Return Bad Request for missing params" in {
-      given(queueService.getAll) willReturn Future.successful(Seq.empty)
+      given(queueService.getAll) willReturn Future.successful(List.empty)
       given(casesService.countCasesByQueue(any[Operator])(any[HeaderCarrier]))
         .willReturn(Future.successful(Map.empty[String, Int]))
       given(operator.hasPermissions(requiredPermissions)) willReturn true
@@ -290,7 +290,7 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     }
 
     "Return Forbidden for Non-Manager" in {
-      given(queueService.getAll) willReturn Future.successful(Seq.empty)
+      given(queueService.getAll) willReturn Future.successful(List.empty)
 
       val req: AuthenticatedRequest[AnyContent] = request(operator, newFakeGETRequestWithCSRF(app))
       val result                                = await(controller(noPermissions).getReport(Report.SLA.toString)(req.request))

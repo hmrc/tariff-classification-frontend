@@ -14,6 +14,19 @@
  * limitations under the License.
  */
 
-package models.viewmodels
+package models
+package viewmodels
 
-case class KeywordsTabViewModel(caseReference: String, caseKeywords: Set[String], globalKeywords: Seq[String])
+case class KeywordsTabViewModel(
+  caseReference: String,
+  caseKeywords: Set[String],
+  globalKeywords: Seq[String]
+)
+
+object KeywordsTabViewModel {
+  def fromCase(cse: Case, globalKeywords: Seq[String]): KeywordsTabViewModel = KeywordsTabViewModel(
+    caseReference = cse.reference,
+    caseKeywords = cse.keywords,
+    globalKeywords = globalKeywords
+  )
+}

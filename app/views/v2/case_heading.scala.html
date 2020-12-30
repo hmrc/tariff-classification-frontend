@@ -30,7 +30,7 @@
 
     <div id="case-reference" class="case-reference">
         @caseHeader.businessName.map { businessName =>
-            @messages("case.heading.secondary", caseHeader.caseType, caseHeader.referenceNumber, businessName)
+            @messages("case.heading.secondary", caseHeader.caseType.prettyName, caseHeader.referenceNumber, businessName)
         }.getOrElse {
             @messages("case.heading.secondary.nosuffix", caseHeader.caseType, caseHeader.referenceNumber)
         }
