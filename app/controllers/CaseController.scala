@@ -46,8 +46,9 @@ class CaseController @Inject() (
   def get(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)) {
     implicit request =>
       request.`case`.application.`type` match {
-        case ApplicationType.ATAR      => Redirect(v2.routes.AtarController.displayAtar(reference))
-        case ApplicationType.LIABILITY => Redirect(v2.routes.LiabilityController.displayLiability(reference))
+        case ApplicationType.ATAR           => Redirect(v2.routes.AtarController.displayAtar(reference))
+        case ApplicationType.LIABILITY      => Redirect(v2.routes.LiabilityController.displayLiability(reference))
+        case ApplicationType.CORRESPONDENCE => Redirect(v2.routes.CorrespondenceController.displayCorrespondence(reference))
       }
   }
 
@@ -58,6 +59,8 @@ class CaseController @Inject() (
           Redirect(v2.routes.AtarController.displayAtar(reference).withFragment(Tab.SAMPLE_TAB.name))
         case ApplicationType.LIABILITY =>
           Redirect(v2.routes.LiabilityController.displayLiability(reference).withFragment(Tab.SAMPLE_TAB.name))
+        case ApplicationType.CORRESPONDENCE =>
+          Redirect(v2.routes.CorrespondenceController.displayCorrespondence(reference).withFragment(Tab.SAMPLE_TAB.name))
       }
     }
 
@@ -98,6 +101,8 @@ class CaseController @Inject() (
           Redirect(v2.routes.AtarController.displayAtar(reference).withFragment(Tab.ATTACHMENTS_TAB.name))
         case ApplicationType.LIABILITY =>
           Redirect(v2.routes.LiabilityController.displayLiability(reference).withFragment(Tab.ATTACHMENTS_TAB.name))
+        case ApplicationType.CORRESPONDENCE =>
+          Redirect(v2.routes.CorrespondenceController.displayCorrespondence(reference).withFragment(Tab.ATTACHMENTS_TAB.name))
       }
     }
 

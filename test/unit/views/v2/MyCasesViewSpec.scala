@@ -185,20 +185,20 @@ class MyCasesViewSpec extends ViewSpec {
       doc.getElementById("applicationTab.liability-status-1").text          should include("Other reason")
 
     }
-    //Uncomment the following tests when the components are implemented
-    /*
+
     "contain correspondence table" in {
       val doc = view(myCasesView(assignedToMeCasesTab))
 
       doc should containElementWithID("applicationTab.correspondence-table")
     }
 
+    //Uncomment the following tests when the components are implemented
+    /*
+        "contain liabilities miscellaneous" in {
+          val doc = view(myCasesView("title", applicationsTab))
 
-    "contain liabilities miscellaneous" in {
-      val doc = view(myCasesView("title", applicationsTab))
-
-      doc should containElementWithID("miscellaneous")
-    }*/
+          doc should containElementWithID("miscellaneous")
+        }*/
   }
 
 }

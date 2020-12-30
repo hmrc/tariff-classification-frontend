@@ -443,6 +443,9 @@ object Cases {
   def withBTIApplication: Case => Case =
     _.copy(application = btiApplicationExample)
 
+  def withCorrespondenceApplication: Case => Case =
+    _.copy(application = corrApplicationExample)
+
   def withLiabilityApplication(
     contact: Contact                     = Contact("name", "email@email.com", Some("1234")),
     status: LiabilityStatus              = LiabilityStatus.NON_LIVE,

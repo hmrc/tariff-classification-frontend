@@ -92,6 +92,14 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
         status(result)     shouldBe Status.SEE_OTHER
         locationOf(result) shouldBe Some(v2.routes.LiabilityController.displayLiability("reference").url)
       }
+
+      "case is a Correspondence" in {
+        val c      = aCase(withReference("reference"), withCorrespondenceApplication)
+        val result = controller(c).get("reference")(fakeRequest)
+
+        status(result)     shouldBe Status.SEE_OTHER
+        locationOf(result) shouldBe Some(v2.routes.CorrespondenceController.displayCorrespondence("reference").url)
+      }
     }
   }
 

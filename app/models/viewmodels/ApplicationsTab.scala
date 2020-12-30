@@ -53,16 +53,21 @@ object ApplicationsTab {
 
   def assignedToMeCases(cases: Seq[Case]): ApplicationTabViewModel = {
 
-    val atars = cases.filter(aCase => aCase.application.isBTI && aCase.status == CaseStatus.OPEN)
+    val assignedCases =
+      cases.filter(aCase => aCase.status == CaseStatus.OPEN)
 
-    val liabilities = cases.filter(aCase => aCase.application.isLiabilityOrder && aCase.status == CaseStatus.OPEN)
+    val atars = assignedCases.filter(_.application.isBTI)
+
+    val liabilities = assignedCases.filter(_.application.isLiabilityOrder)
+
+    val correspondence = assignedCases.filter(_.application.isCorrespondence)
 
     ApplicationTabViewModel(
       "applicationTab.assignedToMe",
       List(
         ApplicationsTab.atar(Paged(atars)),
         ApplicationsTab.liability(Paged(liabilities)),
-        ApplicationsTab.correspondence(),
+        ApplicationsTab.correspondence(Paged(correspondence)),
         ApplicationsTab.miscellaneous()
       )
     )
@@ -77,13 +82,14 @@ object ApplicationsTab {
 
     val liabilities = referredCases.filter(_.application.isLiabilityOrder)
 
+    val correspondence = referredCases.filter(_.application.isCorrespondence)
 
     ApplicationTabViewModel(
       "applicationTab.referredByMe",
       List(
         ApplicationsTab.atar(Paged(atars), Some(referralEvent)),
         ApplicationsTab.liability(Paged(liabilities), Some(referralEvent)),
-        ApplicationsTab.correspondence(),
+        ApplicationsTab.correspondence(Paged(correspondence)),
         ApplicationsTab.miscellaneous()
       )
     )
@@ -106,12 +112,15 @@ object ApplicationsTab {
     val liabilities = cases.filter(aCase =>
       aCase.application.isLiabilityOrder && aCase.status == CaseStatus.NEW)
 
+    val correspondenceCases = cases.filter(aCase =>
+      aCase.application.isCorrespondence && aCase.status == CaseStatus.NEW)
+
     ApplicationTabViewModel(
       "applicationTab.gateway",
       List(
         ApplicationsTab.atar(Paged(atars)),
         ApplicationsTab.liability(Paged(liabilities)),
-        ApplicationsTab.correspondence(),
+        ApplicationsTab.correspondence(Paged(correspondenceCases)),
         ApplicationsTab.miscellaneous()
       )
     )

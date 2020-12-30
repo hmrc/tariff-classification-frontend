@@ -65,6 +65,7 @@ sealed trait Application {
     `type` match {
       case ApplicationType.ATAR      => asATAR.goodName
       case ApplicationType.LIABILITY => asLiabilityOrder.goodName.getOrElse("")
+      case _ => ""
     }
 
   def getType: String =
