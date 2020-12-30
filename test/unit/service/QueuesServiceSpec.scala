@@ -25,14 +25,14 @@ class QueuesServiceSpec extends ServiceSpecBase {
   "Get All Queues" should {
 
     "retrieve queues" in {
-      await(service.getAll).size shouldBe 5
+      await(service.getAll).size shouldBe 9
     }
   }
 
   "Get Non Gateway" should {
 
     "retrieve queues" in {
-      await(service.getNonGateway).size shouldBe 4
+      await(service.getNonGateway).size shouldBe 8
     }
   }
 

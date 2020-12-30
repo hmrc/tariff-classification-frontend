@@ -65,7 +65,7 @@ class ReleaseCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
   "Release Case" should {
 
     "return OK and HTML content type" in {
-      when(queueService.getNonGateway).thenReturn(successful(Seq.empty))
+      when(queueService.getAllForCaseType(any())).thenReturn(successful(List.empty))
 
       val result: Result =
         await(controller(caseWithStatusNEW).releaseCase("reference")(newFakeGETRequestWithCSRF(app)))
@@ -77,7 +77,7 @@ class ReleaseCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
     }
 
     "return OK when user has right permissions" in {
-      when(queueService.getNonGateway).thenReturn(successful(Seq.empty))
+      when(queueService.getAllForCaseType(any())).thenReturn(successful(List.empty))
 
       val result: Result = await(
         controller(caseWithStatusNEW, Set(Permission.RELEASE_CASE))
@@ -125,7 +125,7 @@ class ReleaseCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
 
     "redirect back to case on Form Error" in {
       when(queueService.getOneBySlug("queue")).thenReturn(successful(Some(queue)))
-      when(queueService.getNonGateway).thenReturn(successful(Seq.empty))
+      when(queueService.getAllForCaseType(any())).thenReturn(successful(List.empty))
       when(casesService.releaseCase(refEq(caseWithStatusNEW), any[Queue], refEq(operator))(any[HeaderCarrier]))
         .thenReturn(successful(caseWithStatusOPEN))
 

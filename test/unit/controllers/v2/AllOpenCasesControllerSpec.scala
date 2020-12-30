@@ -17,8 +17,8 @@
 package controllers.v2
 
 import controllers.{ControllerBaseSpec, RequestActionsWithPermissions}
-import models.viewmodels.{ATaRTab, CorrespondenceTab, LiabilitiesTab, MiscellaneousTab}
 import models._
+import models.viewmodels.{ATaRTab, CorrespondenceTab, LiabilitiesTab, MiscellaneousTab}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.`given`
 import play.api.http.Status
@@ -29,17 +29,11 @@ import utils.Cases
 import views.html.v2.open_cases_view
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
 
 class AllOpenCasesControllerSpec extends ControllerBaseSpec {
 
   private val casesService  = mock[CasesService]
-  private val queuesService = mock[QueuesService]
-  private val queues = Seq(
-    Queue("2", "act", "ACT"),
-    Queue("3", "cap", "CAP"),
-    Queue("4", "cars", "Cars")
-  )
+  private val queuesService = app.injector.instanceOf[QueuesService]
 
   private lazy val open_cases_view = injector.instanceOf[open_cases_view]
 
@@ -51,9 +45,6 @@ class AllOpenCasesControllerSpec extends ControllerBaseSpec {
     open_cases_view,
     realAppConfig
   )
-
-  override protected def beforeEach(): Unit =
-    given(queuesService.getNonGateway).willReturn(Future.successful(queues))
 
   "Open cases" should {
 

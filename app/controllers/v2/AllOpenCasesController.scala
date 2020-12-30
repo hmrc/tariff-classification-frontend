@@ -27,6 +27,7 @@ import service.{CasesService, QueuesService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import models.ApplicationType
 
 class AllOpenCasesController @Inject() (
   verify: RequestActions,
@@ -39,17 +40,29 @@ class AllOpenCasesController @Inject() (
     with I18nSupport {
 
   def displayAllOpenCases(activeSubNav: SubNavigationTab = ATaRTab): Action[AnyContent] =
-    (verify.authenticated
-      andThen verify.mustHave(Permission.VIEW_CASES)).async { implicit request =>
+    (verify.authenticated andThen verify.mustHave(Permission.VIEW_CASES)).async { implicit request =>
+      val applicationType = activeSubNav match {
+        case ATaRTab           => ApplicationType.ATAR
+        case LiabilitiesTab    => ApplicationType.LIABILITY
+        case CorrespondenceTab => ApplicationType.CORRESPONDENCE
+        case MiscellaneousTab  => ApplicationType.MISCELLANEOUS
+      }
+
       for {
-        nonGatewayQueues <- queueService.getNonGateway
-        nonGatewayCases  <- casesService.getCasesByAllQueues(nonGatewayQueues, NoPagination())
-        openCases: CasesTabViewModel = activeSubNav match {
-          case ATaRTab           => CasesTabViewModel.atarCases(nonGatewayCases.results)
-          case LiabilitiesTab    => CasesTabViewModel.liabilityCases(nonGatewayCases.results)
-          case CorrespondenceTab => CasesTabViewModel.correspondenceCases(nonGatewayCases.results)
-          case MiscellaneousTab  => CasesTabViewModel.miscellaneous
-        }
+        queuesForType <- queueService.getAllForCaseType(applicationType)
+
+        casesForQueues <- casesService.getCasesByAllQueues(
+                           queue      = queuesForType,
+                           pagination = NoPagination(),
+                           forTypes   = Seq(applicationType)
+                         )
+
+        openCases = CasesTabViewModel.forApplicationType(
+          applicationType,
+          queuesForType,
+          casesForQueues.results
+        )
+
       } yield Ok(openCasesView(openCases, activeSubNav))
     }
 }
