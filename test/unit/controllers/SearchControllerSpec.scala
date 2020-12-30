@@ -17,8 +17,8 @@
 package controllers
 
 import java.time.Instant
-
 import models.{Permission, _}
+import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers._
 import org.mockito.BDDMockito._
 import play.api.http.Status
@@ -61,25 +61,49 @@ class SearchControllerSpec extends ControllerBaseSpec {
 
   "Search" should {
 
-    "redirect to case if searching by reference" in {
+    "redirect to case if searching by reference and the case exists" in {
+      given(casesService.getOne(ArgumentMatchers.eq("reference"))(any[HeaderCarrier])) willReturn Future.successful(
+        Some(mock[Case])
+      )
       val result = await(controller.search(defaultTab, reference = Some("reference"), page = 2)(fakeRequest))
 
       status(result)     shouldBe Status.SEE_OTHER
       locationOf(result) shouldBe Some(routes.CaseController.get("reference").url)
     }
 
-    "redirect to case if searching by reference with padding" in {
+    "redirect to case if searching by reference with padding and the case exists" in {
+      given(casesService.getOne(ArgumentMatchers.eq("reference"))(any[HeaderCarrier])) willReturn Future.successful(
+        Some(mock[Case])
+      )
       val result = await(controller.search(defaultTab, reference = Some(" reference "), page = 2)(fakeRequest))
 
       status(result)     shouldBe Status.SEE_OTHER
       locationOf(result) shouldBe Some(routes.CaseController.get("reference").url)
     }
 
-    "redirect to default page if reference is empty" in {
+    "render the advanced search page if searching by reference and the case does not exist" in {
+      given(casesService.getOne(ArgumentMatchers.eq("reference"))(any[HeaderCarrier])) willReturn Future.successful(
+        None
+      )
+      given(keywordsService.autoCompleteKeywords) willReturn Future.successful(Seq.empty[String])
+      val result = await(controller.search(defaultTab, reference = Some("reference"), page = 2)(fakeRequest))
+
+      status(result)          shouldBe Status.OK
+      contentType(result)     shouldBe Some("text/html")
+      charset(result)         shouldBe Some("utf-8")
+      contentAsString(result) should include("advanced_search-heading")
+      contentAsString(result) shouldNot include("advanced_search_results")
+    }
+
+    "render the advanced search page if searching by reference but it is empty" in {
+      given(keywordsService.autoCompleteKeywords) willReturn Future.successful(Seq.empty[String])
       val result = await(controller.search(defaultTab, reference = Some(" "), page = 2)(fakeRequest))
 
-      status(result)     shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some(routes.IndexController.get().url)
+      status(result)          shouldBe Status.OK
+      contentType(result)     shouldBe Some("text/html")
+      charset(result)         shouldBe Some("utf-8")
+      contentAsString(result) should include("advanced_search-heading")
+      contentAsString(result) shouldNot include("advanced_search_results")
     }
 
     "not render results if empty" in {
