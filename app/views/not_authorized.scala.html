@@ -30,4 +30,4 @@
   <p>@messages("not_authorised.paragraph2")</p>
 }
 
-@govuk_wrapper(appConfig = appConfig, title = messages("not_authorised.title"), contentHeader = Some(contentHeader), mainContent = mainContent)
+@govuk_wrapper(appConfig = appConfig, title = messages("not_authorised.title") + " - " + messages("site.title.suffix"), contentHeader = Some(contentHeader), mainContent = mainContent)
