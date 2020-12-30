@@ -224,7 +224,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder
     }
   }
 
-  "Cars Cases" should {
+  "CAR Cases" should {
 
     "return status 200" in {
       // Given
@@ -263,7 +263,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder
 
       // Then
       response.status shouldBe OK
-      response.body   should include("Cars BTI cases")
+      response.body   should include("CAR BTI cases")
     }
 
     "redirect on auth failure" in {
