@@ -18,13 +18,14 @@ package controllers
 
 import config.AppConfig
 import controllers.SessionKeys.{backToQueuesLinkLabel, backToQueuesLinkUrl, backToSearchResultsLinkLabel, backToSearchResultsLinkUrl}
-import javax.inject.{Inject, Singleton}
 import models.Role
 import models.request.AuthenticatedRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.read_only_home
+
+import javax.inject.{Inject, Singleton}
 
 @Singleton
 class IndexController @Inject() (
@@ -37,7 +38,7 @@ class IndexController @Inject() (
   def get(): Action[AnyContent] = authenticate { implicit request: AuthenticatedRequest[AnyContent] =>
     request.operator.role match {
       case Role.CLASSIFICATION_MANAGER | Role.CLASSIFICATION_OFFICER =>
-        Redirect(routes.MyCasesController.myCases())
+        Redirect(routes.OperatorDashboardController.onPageLoad())
       case _ =>
         Ok(read_only_home())
           .addingToSession((backToQueuesLinkLabel, ""), (backToQueuesLinkUrl, routes.IndexController.get().url))

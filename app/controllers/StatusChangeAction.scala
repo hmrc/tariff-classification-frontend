@@ -17,9 +17,10 @@
 package controllers
 
 import config.AppConfig
+import models.request.AuthenticatedRequest
 import models.{Case, Operator, Permission}
 import play.api.data.Form
-import play.api.mvc.{Action, AnyContent, Call, Request}
+import play.api.mvc.{Action, AnyContent, Call}
 import play.twirl.api.Html
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -37,7 +38,7 @@ trait StatusChangeAction[T] extends RenderCaseAction { this: FrontendController 
   protected def status(c: Case): T
 
   protected def chooseStatusView(c: Case, preFilledForm: Form[T], options: Option[String] = None)(
-    implicit request: Request[_]
+    implicit request: AuthenticatedRequest[_]
   ): Html
 
   protected def update(c: Case, status: T, operator: Operator)(implicit hc: HeaderCarrier): Future[Case]
@@ -72,7 +73,7 @@ trait StatusChangeAction[T] extends RenderCaseAction { this: FrontendController 
           (status: T) =>
             getCaseAndRespond(
               reference,
-              c => {
+              c =>
                 if (statusHasChanged(c, status)) {
                   update(c, status, request.operator).flatMap { _ =>
                     successful(Redirect(onSuccessRedirect(reference)))
@@ -80,7 +81,6 @@ trait StatusChangeAction[T] extends RenderCaseAction { this: FrontendController 
                 } else {
                   successful(Redirect(onSuccessRedirect(reference)))
                 }
-              }
             )
         )
 

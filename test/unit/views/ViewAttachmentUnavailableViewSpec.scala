@@ -16,6 +16,8 @@
 
 package views
 
+import models.Operator
+import models.request.AuthenticatedRequest
 import models.response.{FileMetadata, ScanStatus}
 import views.ViewMatchers._
 
@@ -28,7 +30,13 @@ class ViewAttachmentUnavailableViewSpec extends ViewSpec {
       val fileMetadata = None
 
       // When
-      val doc = view(html.view_attachment_unavailable(fileMetadata)(request, messages, appConfig))
+      val doc = view(
+        html.view_attachment_unavailable(fileMetadata)(
+          AuthenticatedRequest(Operator("0", Some("name")), request),
+          messages,
+          appConfig
+        )
+      )
 
       // Then
       doc should containElementWithID("attachment-not_found")
@@ -43,7 +51,13 @@ class ViewAttachmentUnavailableViewSpec extends ViewSpec {
     val fileMetadata = Some(FileMetadata("id", "filename", "mimetype", None, Some(ScanStatus.FAILED)))
 
     // When
-    val doc = view(html.view_attachment_unavailable(fileMetadata)(request, messages, appConfig))
+    val doc = view(
+      html.view_attachment_unavailable(fileMetadata)(
+        AuthenticatedRequest(Operator("0", Some("name")), request),
+        messages,
+        appConfig
+      )
+    )
 
     // Then
     doc should containElementWithID("attachment-scan_failed")
@@ -57,7 +71,13 @@ class ViewAttachmentUnavailableViewSpec extends ViewSpec {
     val fileMetadata = Some(FileMetadata("id", "filename", "mimetype", None, None))
 
     // When
-    val doc = view(html.view_attachment_unavailable(fileMetadata)(request, messages, appConfig))
+    val doc = view(
+      html.view_attachment_unavailable(fileMetadata)(
+        AuthenticatedRequest(Operator("0", Some("name")), request),
+        messages,
+        appConfig
+      )
+    )
 
     // Then
     doc should containElementWithID("attachment-processing")

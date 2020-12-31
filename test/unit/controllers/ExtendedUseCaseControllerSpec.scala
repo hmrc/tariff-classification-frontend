@@ -34,7 +34,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class ExtendedUseCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   private val casesService = mock[CasesService]
-  private val operator     = mock[Operator]
+  private val operator     = Operator(id = "id")
 
   private def controller(requestCase: Case) = new ExtendedUseCaseController(
     new SuccessfulRequestActions(playBodyParsers, operator, c = requestCase),

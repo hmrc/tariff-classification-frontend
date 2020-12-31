@@ -15,7 +15,8 @@
  *@
 
 @import controllers.routes
-@()(implicit request: Request[_], messages: Messages)
+@import models.request.AuthenticatedRequest
+@()(implicit request: AuthenticatedRequest[_], messages: Messages)
 
     @if(request.session.get(SessionKeys.backToSearchResultsLinkUrl).isDefined) {
         <a id="back-link" class="link-back mt-0" href="@request.session.get(SessionKeys.backToSearchResultsLinkUrl).getOrElse(routes.IndexController.get())">

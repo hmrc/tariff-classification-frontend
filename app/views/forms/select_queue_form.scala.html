@@ -15,8 +15,9 @@
  *@
 
 @import models.Queue
+@import models.request.AuthenticatedRequest
 
-@(field: Field, queues: Seq[Queue], id: String, postAction: Call, cancelUrl: String)(implicit request: Request[_], messages: Messages)
+@(field: Field, queues: Seq[Queue], id: String, postAction: Call, cancelUrl: String)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @helper.form(action = postAction, 'id -> s"$id-form", 'novalidate -> "novalidate") {
     @helper.CSRF.formField
