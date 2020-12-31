@@ -19,29 +19,31 @@
 @import models.forms.{ActivityFormData}
 @import models.request.AuthenticatedRequest
 @import models.viewmodels.{CaseViewModel, ActivityViewModel, MyCasesTab}
-@import models.viewmodels.atar._
+@import models.viewmodels.atar.AttachmentsTabViewModel
 @import views.html.includes.main
-@import views.html.partials.{case_trader, application_details, activity_details, keywords_details, attachments_details}
+@import views.html.partials.{activity_details, attachments_details, correspondence_case_details}
 @import models.viewmodels.correspondence.CaseDetailsViewModel
+@import views.html.partials.sample.sample_details_correspondence
+@import models.viewmodels.correspondence.CorrespondenceSampleTabViewModel
 
 @this(
-    case_heading: views.html.v2.case_heading,
-    case_action_buttons_partial: views.html.partials.liabilities.case_action_buttons_partial,
-    advanced_search_cases: views.html.partials.liabilities.advanced_search_cases,
+        case_heading: views.html.v2.case_heading,
+        case_action_buttons_partial: views.html.partials.liabilities.case_action_buttons_partial,
+        advanced_search_cases: views.html.partials.liabilities.advanced_search_cases,
 )
 
 @(
-    caseViewModel: CaseViewModel,
+        caseViewModel: CaseViewModel,
 
-    caseDetailsTab: CaseDetailsViewModel,
+        caseDetailsTab: CaseDetailsViewModel,
+        sampleTab: CorrespondenceSampleTabViewModel,
+        attachmentsTab: AttachmentsTabViewModel,
+        uploadForm: Form[String],
 
-    attachmentsTab: AttachmentsTabViewModel,
-    uploadForm: Form[String],
+        activityTab: ActivityViewModel,
+        activityForm: Form[ActivityFormData],
 
-    activityTab: ActivityViewModel,
-    activityForm: Form[ActivityFormData],
-
-    attachments: Seq[StoredAttachment]
+        attachments: Seq[StoredAttachment]
 
 )(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
@@ -50,7 +52,6 @@
     customTitle = Some(messages("case.v2.correspondence.page_title")),
     customPrimaryNavTab = MyCasesTab
 ) {
-
     @case_heading(caseViewModel.caseHeader)
 
     <div class="form-groups">
@@ -62,37 +63,43 @@
         <ul class="govuk-tabs__list">
             <li class="govuk-tabs__list-item">
                 <a class="govuk-tabs__tab" href="#case_details_tab">
-                    @messages("case.v2.correspondence.applicant.tab_title")
+                @messages("case.v2.correspondence.case-details.tab_title")
                 </a>
             </li>
 
             <li class="govuk-tabs__list-item">
                 <a class="govuk-tabs__tab" href="#contact_details_tab">
-                    @messages("case.v2.correspondence.contact_details.tab_title")
+                @messages("case.v2.correspondence.contact.tab_title")
                 </a>
             </li>
 
             <li class="govuk-tabs__list-item">
                 <a class="govuk-tabs__tab" href="#messages_tab">
-                    @messages("case.v2.correspondence.messages.tab_title")
+                @messages("case.v2.correspondence.messages.tab_title")
+                </a>
+            </li>
+
+            <li class="govuk-tabs__list-item">
+                <a class="govuk-tabs__tab" href="#samples_tab">
+                @messages("case.v2.correspondence.samples.tab_title")
                 </a>
             </li>
 
             <li class="govuk-tabs__list-item">
                 <a class="govuk-tabs__tab" href="#attachments_tab">
-                    @messages("case.v2.correspondence.attachments.tab_title")
+                @messages("case.v2.correspondence.attachments.tab_title")
                 </a>
             </li>
 
             <li class="govuk-tabs__list-item">
                 <a class="govuk-tabs__tab" href="#activity_tab">
-                    @messages("case.v2.correspondence.activity.tab_title")
+                @messages("case.v2.correspondence.activity.tab_title")
                 </a>
             </li>
         </ul>
 
-        <div class="govuk-tabs__panel" id="case_details_tab">
-            placeholder case details tab
+        <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="case_details_tab">
+            @correspondence_case_details(caseDetailsTab)
         </div>
 
         <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="contact_details_tab">
@@ -103,19 +110,23 @@
             placeholder for messages
         </div>
 
+        <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="sample_status_tab">
+        @sample_details_correspondence(sampleTab)
+        </div>
+
         <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="attachments_tab">
-            @attachments_details(attachmentsTab, uploadForm)
+        @attachments_details(attachmentsTab, uploadForm)
         </div>
 
         <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="activity_tab">
-            @activity_details(activityTab, activityForm)
+        @activity_details(activityTab, activityForm)
         </div>
 
     </div>
 }
 
 <script>
-    let cacheURL = "@routes.TabCacheController.get(caseViewModel.caseHeader.referenceNumber, ApplicationType.CORRESPONDENCE).url";
-    let csrfToken = "@CSRF.getToken.value";
-    window.addEventListener("load", () => fixAnchorInURL(cacheURL, csrfToken), false);
+        let cacheURL = "@routes.TabCacheController.get(caseViewModel.caseHeader.referenceNumber, ApplicationType.CORRESPONDENCE).url";
+        let csrfToken = "@CSRF.getToken.value";
+        window.addEventListener("load", () => fixAnchorInURL(cacheURL, csrfToken), false);
 </script>

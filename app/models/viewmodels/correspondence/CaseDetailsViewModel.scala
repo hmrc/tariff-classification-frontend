@@ -17,14 +17,31 @@
 package models
 package viewmodels.correspondence
 
+import java.time.Instant
+
 case class CaseDetailsViewModel(
   caseReference: String,
-  caseBoardsFileNumber: Option[String]
+  summary: String,
+  detailedDescription: String,
+  caseCreatedDate: Instant,
+  caseBoardsFileNumber: Option[String],
+  relatedBTIReferences: List[String]
 )
-object CaseDetailsViewModel {
-  def fromCase(cse: Case) = CaseDetailsViewModel(
-    cse.reference,
-    caseBoardsFileNumber = cse.caseBoardsFileNumber
-  )
 
+object CaseDetailsViewModel {
+  def fromCase(cse: Case): CaseDetailsViewModel = {
+    val correspondenceApplication = cse.application.asCorrespondence
+    CaseDetailsViewModel(
+      cse.reference,
+      summary              = correspondenceApplication.summary,
+      detailedDescription  = correspondenceApplication.detailedDescription,
+      caseCreatedDate      = cse.createdDate,
+      caseBoardsFileNumber = cse.caseBoardsFileNumber,
+      if (correspondenceApplication.relatedBTIReferences.nonEmpty) {
+        correspondenceApplication.relatedBTIReferences
+      } else {
+        correspondenceApplication.relatedBTIReference.toList
+      }
+    )
+  }
 }

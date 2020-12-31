@@ -1,0 +1,80 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.AppConfig
+@import models.request.AuthenticatedRequest
+@import views.html.partials._
+
+@import models.viewmodels.correspondence.CaseDetailsViewModel
+
+@(caseDetails: CaseDetailsViewModel, startAtTabIndex: Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+
+@tab_heading("correspondence", messages("case.v2.correspondence.case-details.heading"))
+
+<dl class="govuk-check-your-answers cya-questions-short">
+
+
+    <div id="app-details-goods-name" class="grid-row">
+        <dt class="cya-question">
+            @messages("case.summary")
+        </dt>
+        <dd class="cya-answer">
+            <span class="pre-wrap">@caseDetails.summary</span>
+        </dd>
+    </div>
+
+    <div id="app-details-goods-name" class="grid-row">
+        <dt class="cya-question">
+        @messages("case.detailed_description")
+        </dt>
+        <dd class="cya-answer">
+            <span class="pre-wrap">@caseDetails.detailedDescription</span>
+        </dd>
+    </div>
+
+    <div id="app-details-goods-name" class="grid-row">
+        <dt class="cya-question">
+        @messages("case.created")
+        </dt>
+        <dd class="cya-answer">
+            <span class="pre-wrap">@caseDetails.caseCreatedDate</span>
+        </dd>
+    </div>
+
+    @caseDetails.caseBoardsFileNumber.map { caseBoardsFileNumber =>
+
+        <div id="case-details-boards-file-number" class="grid-row">
+            <dt class="cya-question" id="boards-file-number-label">
+                @messages("case.application.boards-file-number")
+            </dt>
+            <dd class="cya-answer" id="boards-file-number">
+            @{caseBoardsFileNumber}
+            </dd>
+        </div>
+
+    }
+
+        <div id="app-details-similar-ruling-reference" class="grid-row">
+            <dt class="cya-question">
+            @messages("case.application.similar_cases")
+            </dt>
+            <dd class="cya-answer">
+                <span class="pre-wrap">@caseDetails.relatedBTIReferences.mkString("\n")</span>
+            </dd>
+        </div>
+
+</dl>
+

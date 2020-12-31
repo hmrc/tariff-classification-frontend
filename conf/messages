@@ -851,6 +851,20 @@ case.v2.liability.reopen.button=Reopen case
 
 case.v2.liability.advanced_search.button=Search cases
 
+
+case.v2.correspondence.case-details.tab_title=Case Details
+case.v2.correspondence.case-details.heading=Correspondence case details
+
+case.v2.correspondence.contact.tab_title=Contact
+case.v2.correspondence.messages.tab_title=Messages
+case.v2.correspondence.samples.tab_title=Samples
+case.v2.correspondence.attachments.tab_title=Attachments
+case.v2.correspondence.activity.tab_title=Activity
+
+
+
+
+
 upload.button = Upload
 upload.files.title = Upload new files
 upload.files.before = Before you upload a file, give it a useful and descriptive filename.

@@ -22,7 +22,8 @@ import models.forms._
 import models.request._
 import models.viewmodels.atar._
 import models.viewmodels.correspondence.CaseDetailsViewModel
-import models.viewmodels.{ActivityViewModel, CaseViewModel, KeywordsTabViewModel}
+import models.viewmodels.correspondence.CorrespondenceSampleTabViewModel
+import models.viewmodels.{ActivityViewModel, CaseViewModel}
 import models.{Case, EventType, NoPagination}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -35,7 +36,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class CorrespondenceController @Inject()(
+class CorrespondenceController @Inject() (
   verify: RequestActions,
   eventsService: EventsService,
   queuesService: QueuesService,
@@ -55,24 +56,26 @@ class CorrespondenceController @Inject()(
     activityForm: Form[ActivityFormData] = ActivityForm.form,
     uploadForm: Form[String]             = UploadAttachmentForm.form
   )(implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
-    val correspondenceCase: Case = request.`case`
-    val correspondenceViewModel  = CaseViewModel.fromCase(correspondenceCase, request.operator)
-    val countryNames   = countriesService.getAllCountriesById.mapValues(_.countryName)
-    val caseDetailsTab = CaseDetailsViewModel.fromCase(correspondenceCase)
-//    val goodsTab       = GoodsTabViewModel.fromCase(correspondenceCase)
-
-    val attachmentsTabViewModel = getAttachmentTab(correspondenceCase)
-    val activityTabViewModel    = getActivityTab(correspondenceCase)
-    val storedAttachments       = fileService.getAttachments(correspondenceCase)
+    val correspondenceCase: Case         = request.`case`
+    val correspondenceViewModel          = CaseViewModel.fromCase(correspondenceCase, request.operator)
+    val countryNames                     = countriesService.getAllCountriesById.mapValues(_.countryName)
+    val caseDetailsTab                   = CaseDetailsViewModel.fromCase(correspondenceCase)
+    val attachmentsTabViewModel          = getAttachmentTab(correspondenceCase)
+    val activityTabViewModel             = getActivityTab(correspondenceCase)
+    val storedAttachments                = fileService.getAttachments(correspondenceCase)
+    val correspondenceSampleTabViewModel = getSampleTab(correspondenceCase)
 
     for {
       attachmentsTab <- attachmentsTabViewModel
       activityTab    <- activityTabViewModel
       attachments    <- storedAttachments
+      sampleTab      <- correspondenceSampleTabViewModel
+
     } yield Ok(
       correspondenceView(
         correspondenceViewModel,
         caseDetailsTab,
+        sampleTab,
         attachmentsTab,
         uploadForm,
         activityTab,
@@ -83,16 +86,21 @@ class CorrespondenceController @Inject()(
   }
 
   private def getSampleTab(correspondenceCase: Case)(implicit request: AuthenticatedRequest[_]) =
-    eventsService.getFilteredEvents(correspondenceCase.reference, NoPagination(), Some(EventType.sampleEvents)).map { events =>
-      SampleTabViewModel.fromCase(correspondenceCase, events)
+    eventsService.getFilteredEvents(correspondenceCase.reference, NoPagination(), Some(EventType.sampleEvents)).map {
+      events => CorrespondenceSampleTabViewModel.fromCase(correspondenceCase, events)
     }
 
   private def getAttachmentTab(correspondenceCase: Case)(implicit hc: HeaderCarrier): Future[AttachmentsTabViewModel] =
-    fileService.getAttachments(correspondenceCase).map(attachments => AttachmentsTabViewModel.fromCase(correspondenceCase, attachments))
+    fileService
+      .getAttachments(correspondenceCase)
+      .map(attachments => AttachmentsTabViewModel.fromCase(correspondenceCase, attachments))
 
-  private def getActivityTab(correspondenceCase: Case)(implicit request: AuthenticatedRequest[_]): Future[ActivityViewModel] =
+  private def getActivityTab(
+    correspondenceCase: Case
+  )(implicit request: AuthenticatedRequest[_]): Future[ActivityViewModel] =
     for {
-      events <- eventsService.getFilteredEvents(correspondenceCase.reference, NoPagination(), Some(EventType.nonSampleEvents))
+      events <- eventsService
+                 .getFilteredEvents(correspondenceCase.reference, NoPagination(), Some(EventType.nonSampleEvents))
       queues <- queuesService.getAll
     } yield ActivityViewModel.fromCase(correspondenceCase, events, queues)
 
