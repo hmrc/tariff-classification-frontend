@@ -36,7 +36,7 @@ class ReassignCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
   private val casesService = mock[CasesService]
   private val queueService = mock[QueuesService]
   private val queue        = mock[Queue]
-  private val operator     = mock[Operator]
+  private val operator     = Operator(id = "id")
 
   private val caseWithStatusNEW = Cases.caseQueueExample.copy(reference = "reference", status = CaseStatus.NEW)
   private val caseWithStatusOPEN = Cases.caseQueueExample

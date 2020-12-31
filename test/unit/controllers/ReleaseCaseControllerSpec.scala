@@ -36,7 +36,7 @@ class ReleaseCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
   private val casesService = mock[CasesService]
   private val queueService = mock[QueuesService]
   private val queue        = mock[Queue]
-  private val operator     = mock[Operator]
+  private val operator     = Operator(id = "id")
 
   private val caseWithStatusNEW  = Cases.btiCaseExample.copy(status = CaseStatus.NEW)
   private val caseWithStatusOPEN = Cases.btiCaseExample.copy(status = CaseStatus.OPEN)

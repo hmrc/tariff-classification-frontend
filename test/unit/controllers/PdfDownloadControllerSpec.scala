@@ -37,14 +37,13 @@ class PdfDownloadControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
 
   private val caseService = mock[CasesService]
   private val fileService = mock[FileStoreService]
-  private val operator    = mock[Operator]
+  private val operator    = Operator(id = "id")
 
-  override protected def beforeEach(): Unit = {
+  override protected def beforeEach(): Unit =
     reset(
       caseService,
       fileService
     )
-  }
 
   private val decision = Decision(
     bindingCommodityCode = "040900",
@@ -90,9 +89,8 @@ class PdfDownloadControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
       .thenReturn(successful(Some(Source.single(ByteString("Some content".getBytes())))))
   }
 
-  private def givenNotFoundPdf(): Unit = {
+  private def givenNotFoundPdf(): Unit =
     when(fileService.getFileMetadata(any[String])(any[HeaderCarrier])).thenReturn(successful(None))
-  }
 
   private def givenNotFoundCase(): Unit =
     when(caseService.getOne(any[String])(any[HeaderCarrier])).thenReturn(successful(None))

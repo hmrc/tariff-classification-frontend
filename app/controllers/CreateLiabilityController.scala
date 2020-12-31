@@ -18,7 +18,6 @@ package controllers
 
 import config.AppConfig
 import models.forms.LiabilityForm
-import javax.inject.{Inject, Singleton}
 import models.{LiabilityOrder, Permission}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -26,6 +25,7 @@ import play.api.mvc._
 import service.CasesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -41,7 +41,7 @@ class CreateLiabilityController @Inject() (
   private val form: Form[LiabilityOrder] = LiabilityForm.newLiabilityForm
 
   def get(): Action[AnyContent] = (verify.authenticated andThen verify.mustHave(Permission.CREATE_CASES)).async {
-    implicit request: Request[AnyContent] => Future.successful(Ok(views.html.create_liability(form)))
+    implicit request => Future.successful(Ok(views.html.create_liability(form)))
   }
 
   def post(): Action[AnyContent] = (verify.authenticated andThen verify.mustHave(Permission.CREATE_CASES)).async {

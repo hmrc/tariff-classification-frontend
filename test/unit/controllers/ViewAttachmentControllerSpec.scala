@@ -34,7 +34,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class ViewAttachmentControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   private val fileService = mock[FileStoreService]
-  private val operator    = mock[Operator]
+  private val operator    = Operator(id = "id")
 
   override def afterEach(): Unit = {
     super.afterEach()

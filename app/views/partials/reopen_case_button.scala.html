@@ -14,12 +14,14 @@
  * limitations under the License.
  *@
 
+@import models.request.AuthenticatedRequest
+
 @(
         id: String,
         reference: String,
         action: play.api.mvc.Call,
         buttonText: String
-)(implicit request: Request[_])
+)(implicit request: AuthenticatedRequest[_])
 
 @*TODO rename this class to reopen_case_button and remove old reopen_button partial*@
 

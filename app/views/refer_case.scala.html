@@ -15,6 +15,7 @@
  *@
 
 @import config.AppConfig
+@import models.request.AuthenticatedRequest
 @import controllers.routes
 @import models.{Case, CaseReferral, ReferralReason}
 @import models.viewmodels.MyCasesTab
@@ -26,7 +27,7 @@
 @import views.forms.components.{CheckOption, RadioOption}
 @import views.html.partials.{error_summary, back_link}
 
-@(c: Case, form: Form[CaseReferral])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(c: Case, form: Form[CaseReferral])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @inputTextContent() = {
         @input_text(label = "Give details of who you are referring this case to", field = form("referManually"), inputClass = Some("w-50"),
