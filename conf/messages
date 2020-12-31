@@ -303,6 +303,7 @@ status.change.upload.error.mustSelect=Select a file to upload
 status.change.upload.error.fileType=Your document will not upload because it''s not a valid file type
 status.change.cancel.reason.error=Select a reason for cancelling this case
 release-case.submit.button=Save and continue
+release-case-queue.submit.button=Continue
 release-case.submit.choice.button=Continue
 release-case.submit.cancel=Cancel
 reassign-case.submit.button=Move back to queue
