@@ -851,11 +851,24 @@ case.v2.liability.reopen.button=Reopen case
 
 case.v2.liability.advanced_search.button=Search cases
 
-
 case.v2.correspondence.case-details.tab_title=Case Details
 case.v2.correspondence.case-details.heading=Correspondence case details
+case.v2.correspondence.case-details.summary=Summary
+case.v2.correspondence.case-details.detailed_description=Detailed description
+case.v2.correspondence.case-details.case_created=Case created
+case.v2.correspondence.case-details.boards_file_number=Boards file number
+case.v2.correspondence.case-details.similar_cases=Similar cases
 
-case.v2.correspondence.contact.tab_title=Contact
+case.v2.correspondence.contact-details.heading=Contact Details
+case.v2.correspondence.contact-details.tab_title=Contact
+case.v2.correspondence.contact-details.case_source=Case source
+case.v2.correspondence.contact-details.contact_name=Contact name
+case.v2.correspondence.contact-details.contact_email=Contact email
+case.v2.correspondence.contact-details.contact_telephone=Contact telephone
+case.v2.correspondence.contact-details.contact_fax=Contact fax
+case.v2.correspondence.contact-details.contact_address=Contact address
+
+
 case.v2.correspondence.messages.tab_title=Messages
 case.v2.correspondence.samples.tab_title=Samples
 case.v2.correspondence.attachments.tab_title=Attachments

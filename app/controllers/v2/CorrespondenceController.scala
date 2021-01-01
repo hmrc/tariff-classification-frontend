@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import models.forms._
 import models.request._
 import models.viewmodels.atar._
 import models.viewmodels.correspondence.CaseDetailsViewModel
-import models.viewmodels.correspondence.CorrespondenceSampleTabViewModel
+import models.viewmodels.correspondence.{CorrespondenceSampleTabViewModel, ContactDetailsTabViewModel}
 import models.viewmodels.{ActivityViewModel, CaseViewModel}
 import models.{Case, EventType, NoPagination}
 import play.api.data.Form
@@ -60,6 +60,7 @@ class CorrespondenceController @Inject() (
     val correspondenceViewModel          = CaseViewModel.fromCase(correspondenceCase, request.operator)
     val countryNames                     = countriesService.getAllCountriesById.mapValues(_.countryName)
     val caseDetailsTab                   = CaseDetailsViewModel.fromCase(correspondenceCase)
+    val contactDetailsTab                = ContactDetailsTabViewModel.fromCase(correspondenceCase)
     val attachmentsTabViewModel          = getAttachmentTab(correspondenceCase)
     val activityTabViewModel             = getActivityTab(correspondenceCase)
     val storedAttachments                = fileService.getAttachments(correspondenceCase)
@@ -75,6 +76,7 @@ class CorrespondenceController @Inject() (
       correspondenceView(
         correspondenceViewModel,
         caseDetailsTab,
+        contactDetailsTab,
         sampleTab,
         attachmentsTab,
         uploadForm,

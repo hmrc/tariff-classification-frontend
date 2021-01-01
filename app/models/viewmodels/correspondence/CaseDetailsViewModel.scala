@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +17,13 @@
 package models
 package viewmodels.correspondence
 
-import java.time.Instant
+import utils.Dates
 
 case class CaseDetailsViewModel(
   caseReference: String,
   summary: String,
   detailedDescription: String,
-  caseCreatedDate: Instant,
+  caseCreatedDate: String,
   caseBoardsFileNumber: Option[String],
   relatedBTIReferences: List[String]
 )
@@ -31,11 +31,12 @@ case class CaseDetailsViewModel(
 object CaseDetailsViewModel {
   def fromCase(cse: Case): CaseDetailsViewModel = {
     val correspondenceApplication = cse.application.asCorrespondence
+
     CaseDetailsViewModel(
       cse.reference,
       summary              = correspondenceApplication.summary,
       detailedDescription  = correspondenceApplication.detailedDescription,
-      caseCreatedDate      = cse.createdDate,
+      caseCreatedDate      = Dates.format(cse.createdDate),
       caseBoardsFileNumber = cse.caseBoardsFileNumber,
       if (correspondenceApplication.relatedBTIReferences.nonEmpty) {
         correspondenceApplication.relatedBTIReferences
