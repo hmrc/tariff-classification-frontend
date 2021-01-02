@@ -17,7 +17,7 @@
 package controllers
 
 import config.AppConfig
-import controllers.v2.{AtarController, LiabilityController}
+import controllers.v2.{AtarController, CorrespondenceController, LiabilityController}
 import models.forms._
 import javax.inject.{Inject, Singleton}
 import models._
@@ -38,6 +38,7 @@ class CaseController @Inject() (
   mcc: MessagesControllerComponents,
   liabilityController: LiabilityController,
   atarController: AtarController,
+  correspondenceController : CorrespondenceController,
   implicit val appConfig: AppConfig
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc)
@@ -81,6 +82,8 @@ class CaseController @Inject() (
           Redirect(v2.routes.AtarController.displayAtar(reference).withFragment(Tab.ACTIVITY_TAB.name))
         case ApplicationType.LIABILITY =>
           Redirect(v2.routes.LiabilityController.displayLiability(reference).withFragment(Tab.ACTIVITY_TAB.name))
+        case ApplicationType.CORRESPONDENCE =>
+          Redirect(v2.routes.CorrespondenceController.displayCorrespondence(reference).withFragment(Tab.ACTIVITY_TAB.name))
       }
     }
 

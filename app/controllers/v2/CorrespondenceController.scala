@@ -41,7 +41,6 @@ class CorrespondenceController @Inject() (
   eventsService: EventsService,
   queuesService: QueuesService,
   fileService: FileStoreService,
-  countriesService: CountriesService,
   mcc: MessagesControllerComponents,
   val correspondenceView: views.html.v2.correspondence_view,
   implicit val appConfig: AppConfig
@@ -58,7 +57,6 @@ class CorrespondenceController @Inject() (
   )(implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
     val correspondenceCase: Case         = request.`case`
     val correspondenceViewModel          = CaseViewModel.fromCase(correspondenceCase, request.operator)
-    val countryNames                     = countriesService.getAllCountriesById.mapValues(_.countryName)
     val caseDetailsTab                   = CaseDetailsViewModel.fromCase(correspondenceCase)
     val contactDetailsTab                = ContactDetailsTabViewModel.fromCase(correspondenceCase)
     val attachmentsTabViewModel          = getAttachmentTab(correspondenceCase)
