@@ -30,12 +30,12 @@ case class CorrespondenceSampleTabViewModel(
 
 object CorrespondenceSampleTabViewModel {
   def fromCase(cse: Case, activity: Paged[Event]): CorrespondenceSampleTabViewModel = {
-    val atarApplication = cse.application.asCorrespondence
+    val correspondenceApplication = cse.application.asCorrespondence
 
     CorrespondenceSampleTabViewModel(
       caseReference = cse.reference,
-      sampleToBeProvided = atarApplication.sampleToBeProvided,
-      sampleToBeReturned = atarApplication.sampleToBeReturned,
+      sampleToBeProvided = correspondenceApplication.sampleToBeProvided,
+      sampleToBeReturned = correspondenceApplication.sampleToBeReturned,
       sampleRequestedBy = cse.sample.requestedBy.flatMap(_.name),
       sampleReturnStatus = SampleReturn.format(cse.sample.returnStatus),
       sampleStatus = SampleStatus.format(cse.sample.status),

@@ -22,7 +22,7 @@ cases.table.empty=There are no cases in this queue.
 cases.table.move=Move to a queue
 case.menu.trader=Applicant
 case.menu.application-details=Goods
-case.menu.sample-details=Sample
+case.menu.sample-details=Sample status
 case.menu.ruling=Ruling
 case.menu.ruling-details=Ruling details
 case.menu.ruling-published-information=Information to be published on the public rulings website
@@ -870,11 +870,17 @@ case.v2.correspondence.contact-details.contact_address=Contact address
 case.v2.correspondence.contact-details.agent_name=Agent name
 
 case.v2.correspondence.messages.tab_title=Messages
-case.v2.correspondence.samples.tab_title=Samples
+case.v2.correspondence.samples.tab_title=Sample
 case.v2.correspondence.attachments.tab_title=Attachments
 case.v2.correspondence.activity.tab_title=Activity
 
+case.v2.correspondence.sample-details.hint=Sample photos are in the Attachments section.
+case.v2.correspondence.sample-details.sample-sent=Is a sample being sent?
+case.v2.correspondence.sample-details.sample-activity-title=Sample activity
+case.v2.correspondence.sample-details.sample-no-activity=No activity to show.
 
+
+case.v2.correspondence.messages-details.heading=Messages
 
 
 

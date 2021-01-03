@@ -16,11 +16,8 @@
 
 package views.partials
 
-import models.Contact
 import models.viewmodels.correspondence.ContactDetailsTabViewModel
-import utils.Cases
-import utils.Cases.corrApplicationExample.contact
-import utils.Cases.{aCorrespondenceCase, corrApplicationExample}
+import utils.Cases.aCorrespondenceCase
 import views.ViewSpec
 import views.html.partials.correspondence_contact_details
 

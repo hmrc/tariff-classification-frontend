@@ -27,11 +27,11 @@
 
 <dl class="dl-mb-2">
 
-    <h3 class="heading-medium" id="trader-submitted-heading">@messages("case.application.sample-info-from-applicant")</h3>
+    <span class="form-hint" style="padding-bottom:30px;" id="sample-details-hint">@messages("case.v2.correspondence.sample-details.hint")</span>
 
     <div id="app-details-sending-samples-answer" class="grid-row">
         <dt class="column-one-third">
-            @messages("case.application.provide-samples")
+            @messages("case.v2.correspondence.sample-details.sample-sent")
         </dt>
         <dd class="column-two-thirds">
             @if(sample.sampleToBeProvided) {
@@ -78,8 +78,12 @@
         </div>
     }
 
+    <h3 class="heading-medium mt-0">@messages("case.v2.correspondence.sample-details.sample-activity-title")</h3>
+
     @if(sample.sampleToBeProvided || sample.sampleRequestedBy.nonEmpty) {
         @sample_status_correspondence(sample, startAtTabIndex)
+    } else {
+        @messages("case.v2.correspondence.sample-details.sample-no-activity")
     }
 
 </dl>
