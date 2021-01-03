@@ -26,12 +26,11 @@
 
 <dl class="govuk-check-your-answers cya-questions-short">
 
-
     <div id="case-details-summary" class="grid-row">
         <dt class="cya-question">
-            @messages("case.v2.correspondence.case-details.summary")
+        @messages("case.v2.correspondence.case-details.summary")
         </dt>
-        <dd class="cya-answer">
+        <dd class="cya-answer" id="summary">
             <span class="pre-wrap">@caseDetails.summary</span>
         </dd>
     </div>
@@ -40,7 +39,7 @@
         <dt class="cya-question">
         @messages("case.v2.correspondence.case-details.detailed_description")
         </dt>
-        <dd class="cya-answer">
+        <dd class="cya-answer" id="detailed-description">
             <span class="pre-wrap">@caseDetails.detailedDescription</span>
         </dd>
     </div>
@@ -49,31 +48,28 @@
         <dt class="cya-question">
         @messages("case.v2.correspondence.case-details.case_created")
         </dt>
-        <dd class="cya-answer">
+        <dd class="cya-answer" id="case-created">
             <span class="pre-wrap">@caseDetails.caseCreatedDate</span>
         </dd>
     </div>
 
+    <div id="case-details-boards-file-number" class="grid-row">
+        <dt class="cya-question" id="boards-file-number-label">
+        @messages("case.v2.correspondence.case-details.boards_file_number")
+        </dt>
+        <dd class="cya-answer" id="boards-file-number">
+            <span class="pre-wrap">@caseDetails.caseBoardsFileNumber</span>
+        </dd>
+    </div>
 
-        <div id="case-details-boards-file-number" class="grid-row">
-            <dt class="cya-question" id="boards-file-number-label">
-                @messages("case.v2.correspondence.case-details.boards_file_number")
-            </dt>
-            <dd class="cya-answer" id="boards-file-number">
-            @{caseDetails.caseBoardsFileNumber}
-            </dd>
-        </div>
-
-
-
-        <div id="app-details-similar-reference" class="grid-row">
-            <dt class="cya-question">
-            @messages("case.v2.correspondence.case-details.similar_cases")
-            </dt>
-            <dd class="cya-answer">
-                <span class="pre-wrap">@caseDetails.relatedBTIReferences.mkString("\n")</span>
-            </dd>
-        </div>
+    <div id="case-details-similar-reference" class="grid-row">
+        <dt class="cya-question">
+        @messages("case.v2.correspondence.case-details.similar_cases")
+        </dt>
+        <dd class="cya-answer" id="similar-references">
+            <span class="pre-wrap">@caseDetails.relatedBTIReferences.mkString("\n")</span>
+        </dd>
+    </div>
 
 </dl>
 

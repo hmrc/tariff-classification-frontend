@@ -437,7 +437,7 @@ object Cases {
   def aCase(withModifier: (Case => Case)*): Case =
     withModifier.foldLeft(btiCaseExample)((current: Case, modifier) => modifier.apply(current))
 
-  def aCorrCase(withModifier: (Case => Case)*): Case =
+  def aCorrespondenceCase(withModifier: (Case => Case)*): Case =
     withModifier.foldLeft(corrCaseExample)((current: Case, modifier) => modifier.apply(current))
 
   def aLiabilityCase(withModifier: (Case => Case)*): Case =

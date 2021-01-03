@@ -80,7 +80,7 @@ class CorrespondenceViewSpec extends ViewSpec {
   "Correspondence View" should {
 
     "render with case reference" in {
-      val c = aCorrCase(withReference("reference"), withCorrespondenceApplication)
+      val c = aCorrespondenceCase(withReference("reference"), withCorrespondenceApplication)
       val doc = view(
         correspondenceView(
           CaseViewModel.fromCase(c, Cases.operatorWithoutPermissions),
@@ -98,7 +98,7 @@ class CorrespondenceViewSpec extends ViewSpec {
     }
 
     "render Case Details tab" in {
-      val c = aCorrCase(withReference("reference"), withCorrespondenceApplication)
+      val c = aCorrespondenceCase(withReference("reference"), withCorrespondenceApplication)
       val doc = view(
         correspondenceView(
           CaseViewModel.fromCase(c, Cases.operatorWithoutPermissions),
@@ -116,7 +116,7 @@ class CorrespondenceViewSpec extends ViewSpec {
     }
 
     "render Contact Details tab" in {
-      val c = aCorrCase(withReference("reference"), withCorrespondenceApplication)
+      val c = aCorrespondenceCase(withReference("reference"), withCorrespondenceApplication)
       val doc = view(
         correspondenceView(
           CaseViewModel.fromCase(c, Cases.operatorWithoutPermissions),
@@ -153,7 +153,7 @@ class CorrespondenceViewSpec extends ViewSpec {
 
 
     "render Sample Details tab" in {
-      val c = aCorrCase(withReference("reference"), withCorrespondenceApplication)
+      val c = aCorrespondenceCase(withReference("reference"), withCorrespondenceApplication)
       val doc = view(
         correspondenceView(
           CaseViewModel.fromCase(c, Cases.operatorWithoutPermissions),
@@ -172,7 +172,7 @@ class CorrespondenceViewSpec extends ViewSpec {
 
 
     "render Attachments Details tab" in {
-      val c = aCorrCase(withReference("reference"), withCorrespondenceApplication)
+      val c = aCorrespondenceCase(withReference("reference"), withCorrespondenceApplication)
       val doc = view(
         correspondenceView(
           CaseViewModel.fromCase(c, Cases.operatorWithoutPermissions),
@@ -190,7 +190,7 @@ class CorrespondenceViewSpec extends ViewSpec {
     }
 
     "render Activity tab" in {
-      val c = aCorrCase(withReference("reference"), withCorrespondenceApplication)
+      val c = aCorrespondenceCase(withReference("reference"), withCorrespondenceApplication)
       val doc = view(
         correspondenceView(
           CaseViewModel.fromCase(c, Cases.operatorWithoutPermissions),
