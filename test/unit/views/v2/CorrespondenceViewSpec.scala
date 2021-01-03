@@ -58,7 +58,8 @@ class CorrespondenceViewSpec extends ViewSpec {
     Seq.empty
   )
 
-  private val activityTab: ActivityViewModel = ActivityViewModel("1", None, None, Instant.now, Paged.empty, Seq.empty, "corr")
+  private val activityTab: ActivityViewModel =
+    ActivityViewModel("1", None, None, Instant.now, Paged.empty, Seq.empty, "corr")
 
   private val activityForm: Form[ActivityFormData] = ActivityForm.form
 
@@ -72,10 +73,10 @@ class CorrespondenceViewSpec extends ViewSpec {
 
   def keywordForm: Form[String] = KeywordForm.form
 
-  val contactDetails: ContactDetailsTabViewModel = ContactDetailsTabViewModel("Case source", contact, Some("943534543"), address)
+  val contactDetails: ContactDetailsTabViewModel =
+    ContactDetailsTabViewModel("Case source", contact, Some("943534543"), address, Some("agent Name"))
 
   val emptyKeywordsTabViewModel: KeywordsTabViewModel = KeywordsTabViewModel("", Set.empty[String], Nil)
-
 
   "Correspondence View" should {
 
@@ -151,7 +152,6 @@ class CorrespondenceViewSpec extends ViewSpec {
     //      doc should containElementWithID("messages_tab")
     //    }
 
-
     "render Sample Details tab" in {
       val c = aCorrespondenceCase(withReference("reference"), withCorrespondenceApplication)
       val doc = view(
@@ -169,7 +169,6 @@ class CorrespondenceViewSpec extends ViewSpec {
       )
       doc should containElementWithID("samples_tab")
     }
-
 
     "render Attachments Details tab" in {
       val c = aCorrespondenceCase(withReference("reference"), withCorrespondenceApplication)

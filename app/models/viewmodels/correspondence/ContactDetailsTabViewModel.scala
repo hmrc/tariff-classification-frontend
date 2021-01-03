@@ -22,7 +22,8 @@ case class ContactDetailsTabViewModel(
   caseSource: String,
   contact: Contact,
   fax: Option[String],
-  address: Address
+  address: Address,
+  agentName: Option[String]
 )
 
 object ContactDetailsTabViewModel {
@@ -32,7 +33,8 @@ object ContactDetailsTabViewModel {
       caseSource = correspondenceApplication.correspondenceStarter.getOrElse(""),
       contact = correspondenceApplication.contact,
       fax = correspondenceApplication.fax,
-      address = correspondenceApplication.address
+      address = correspondenceApplication.address,
+      agentName = correspondenceApplication.agentName
     )
   }
 }
