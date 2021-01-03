@@ -125,8 +125,6 @@ GET         /cases/v2/:reference/correspondence                 controllers.v2.C
 GET        /cases/cache/:reference/:itemType                    controllers.TabCacheController.get(reference: String, itemType: ApplicationType)
 POST       /cases/cache/:reference/:itemType                    controllers.TabCacheController.post(reference: String, itemType: ApplicationType)
 
-GET        /accessibility                                       controllers.AccessibilityController.onPageLoad
-
 GET        /operator-dashboard-classification                   controllers.OperatorDashboardController.onPageLoad
 
 
