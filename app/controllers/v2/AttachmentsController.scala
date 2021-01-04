@@ -32,8 +32,7 @@ import service.{CasesService, FileStoreService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.Future.successful
 
 @Singleton
@@ -43,10 +42,11 @@ class AttachmentsController @Inject() (
   fileService: FileStoreService,
   mcc: MessagesControllerComponents,
   liabilityController: LiabilityController,
+  atarController: AtarController,
   remove_attachment: views.html.v2.remove_attachment,
   implicit val appConfig: AppConfig,
   implicit val mat: Materializer
-) extends FrontendController(mcc)
+)(implicit ec: ExecutionContext) extends FrontendController(mcc)
     with RenderCaseAction
     with I18nSupport {
 
@@ -150,7 +150,12 @@ class AttachmentsController @Inject() (
   ): Future[Result] = {
     val errors         = Seq(FormError("file-input", errorMessage))
     val formWithErrors = UploadAttachmentForm.form.copy(errors = errors)
-    liabilityController.renderView(uploadAttachmentForm = formWithErrors)
+    request.`case`.application.`type` match {
+      case ApplicationType.ATAR =>
+        atarController.renderView(uploadForm = formWithErrors)
+      case ApplicationType.LIABILITY =>
+        liabilityController.renderView(uploadAttachmentForm = formWithErrors)
+    }
   }
 
 }
