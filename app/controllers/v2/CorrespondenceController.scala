@@ -22,8 +22,8 @@ import models.forms._
 import models.request._
 import models.viewmodels.atar._
 import models.viewmodels.correspondence.CaseDetailsViewModel
-import models.viewmodels.correspondence.{CorrespondenceSampleTabViewModel, ContactDetailsTabViewModel}
-import models.viewmodels.{ActivityViewModel, CaseViewModel}
+import models.viewmodels.correspondence.{ContactDetailsTabViewModel, CorrespondenceSampleTabViewModel}
+import models.viewmodels.{ActivityViewModel, CaseViewModel, MessagesTabViewModel}
 import models.{Case, EventType, NoPagination}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -31,8 +31,8 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import service._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-
 import javax.inject.{Inject, Singleton}
+
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -59,6 +59,7 @@ class CorrespondenceController @Inject() (
     val correspondenceViewModel          = CaseViewModel.fromCase(correspondenceCase, request.operator)
     val caseDetailsTab                   = CaseDetailsViewModel.fromCase(correspondenceCase)
     val contactDetailsTab                = ContactDetailsTabViewModel.fromCase(correspondenceCase)
+    val messagesTab                      = MessagesTabViewModel.fromCase(correspondenceCase)
     val attachmentsTabViewModel          = getAttachmentTab(correspondenceCase)
     val activityTabViewModel             = getActivityTab(correspondenceCase)
     val storedAttachments                = fileService.getAttachments(correspondenceCase)
