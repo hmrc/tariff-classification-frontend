@@ -50,7 +50,7 @@ class CaseTraderViewSpec extends ViewSpec {
 
     "render boards file number when present" in {
       // Given
-      val c = aCase().copy(caseBoardsFileNumber = Some("file 123"))
+      val c            = aCase().copy(caseBoardsFileNumber = Some("file 123"))
       val applicantTab = ApplicantTabViewModel.fromCase(c, Map.empty)
 
       // When
@@ -63,7 +63,7 @@ class CaseTraderViewSpec extends ViewSpec {
 
     "not show boards file number when not present" in {
       // Given
-      val c = aCase()
+      val c            = aCase()
       val applicantTab = ApplicantTabViewModel.fromCase(c, Map.empty)
 
       // When
@@ -74,10 +74,10 @@ class CaseTraderViewSpec extends ViewSpec {
       doc shouldNot containElementWithID("boards-file-number")
     }
 
-
     "show agent details for the Atar case if it is migrated" in {
 
-      val c = aCase(withBTIApplication,
+      val c = aCase(
+        withBTIApplication,
         withAgent(),
         withSampleStatus(Some(SampleStatus.AWAITING)),
         withBTIDetails(sampleToBeProvided = true, sampleToBeReturned = true)
@@ -87,13 +87,12 @@ class CaseTraderViewSpec extends ViewSpec {
 
       val doc = view(case_trader(applicantTab))
 
-      println("*" * 100 + doc)
-      doc should containElementWithID("agent-details-heading")
-      doc should containElementWithID("agent-details-eori")
-      doc.getElementById("agent-details-eori") should containText("agent-eori")
-      doc should containElementWithID("agent-details-name")
-      doc.getElementById("agent-details-name") should containText("agent-business")
-      doc should containElementWithID("agent-details-address")
+      doc                                         should containElementWithID("agent-details-heading")
+      doc                                         should containElementWithID("agent-details-eori")
+      doc.getElementById("agent-details-eori")    should containText("agent-eori")
+      doc                                         should containElementWithID("agent-details-name")
+      doc.getElementById("agent-details-name")    should containText("agent-business")
+      doc                                         should containElementWithID("agent-details-address")
       doc.getElementById("agent-details-address") should containText("agent-address1")
       doc.getElementById("agent-details-address") should containText("agent-address2")
       doc.getElementById("agent-details-address") should containText("agent-address3")
