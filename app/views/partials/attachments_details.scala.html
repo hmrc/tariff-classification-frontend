@@ -36,7 +36,7 @@
     @attachments_list_atar("classification-team", attachments, startAtTabIndex = Some(startAtTabIndex+31))
 
     @if(request.hasPermission(Permission.ADD_ATTACHMENT)) {
-        @helpers.form(action = v2.routes.AttachmentsController.uploadAttachment(attachments.caseReference),
+        @helpers.form(action = v2.routes.AttachmentsController.uploadAttachment(attachments.caseReference).withFragment(Tab.ATTACHMENTS_TAB.name),
             'enctype -> "multipart/form-data",
             'id -> "upload-files-form") {
 
