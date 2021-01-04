@@ -72,6 +72,8 @@ class AppConfig @Inject() (
     s"$accessibilityBaseUrl/accessibility-statement$accessibilityRedirectUrl?referrerUrl=${SafeRedirectUrl(
       accessibilityBaseUrl + referrer).encodedUrl}"
 
+  lazy val maxUriLength: Long = config.underlying.getBytes("akka.http.parsing.max-uri-length")
+
   lazy val clock: Clock = Clock.systemUTC()
 
   def runningAsDev: Boolean = {
