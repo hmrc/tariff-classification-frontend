@@ -28,7 +28,8 @@ case class GoodsTabViewModel(
   suggestedCommodityCode: Option[String],
   knownLegalProceedings: Option[String],
   reissuedBTIReference: Option[String],
-  relatedBTIReferences: List[String]
+  relatedBTIReferences: List[String],
+  otherInformation: Option[String]
 )
 
 object GoodsTabViewModel {
@@ -48,7 +49,8 @@ object GoodsTabViewModel {
       if (atarApplication.relatedBTIReferences.nonEmpty)
         atarApplication.relatedBTIReferences
       else
-        atarApplication.relatedBTIReference.toList
+        atarApplication.relatedBTIReference.toList,
+      atarApplication.otherInformation
     )
   }
 }

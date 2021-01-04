@@ -16,10 +16,8 @@
 
 package views.partials
 
-import models.response.ScanStatus
-import models.{Contact, Permission}
+import models.{Permission, SampleStatus}
 import service.CountriesService
-import utils.Cases
 import utils.Cases._
 import views.ViewMatchers._
 import views.ViewSpec
@@ -76,6 +74,32 @@ class CaseTraderViewSpec extends ViewSpec {
       doc shouldNot containElementWithID("boards-file-number")
     }
 
+
+    "show agent details for the Atar case if it is migrated" in {
+
+      val c = aCase(withBTIApplication,
+        withAgent(),
+        withSampleStatus(Some(SampleStatus.AWAITING)),
+        withBTIDetails(sampleToBeProvided = true, sampleToBeReturned = true)
+      )
+
+      val applicantTab = ApplicantTabViewModel.fromCase(c, Map.empty)
+
+      val doc = view(case_trader(applicantTab))
+
+      println("*" * 100 + doc)
+      doc should containElementWithID("agent-details-heading")
+      doc should containElementWithID("agent-details-eori")
+      doc.getElementById("agent-details-eori") should containText("agent-eori")
+      doc should containElementWithID("agent-details-name")
+      doc.getElementById("agent-details-name") should containText("agent-business")
+      doc should containElementWithID("agent-details-address")
+      doc.getElementById("agent-details-address") should containText("agent-address1")
+      doc.getElementById("agent-details-address") should containText("agent-address2")
+      doc.getElementById("agent-details-address") should containText("agent-address3")
+      doc.getElementById("agent-details-address") should containText("agent-postcode")
+      doc.getElementById("agent-details-address") should containText("agent-country")
+    }
   }
 
 }
