@@ -33,6 +33,18 @@
 
     <h1 class="heading-xlarge case-title">@c.application.goodsName</h1>
 
+    @if(c.application.isCorrespondence) {
+        <div id="contact-section" class="mb-1">
+            <div class="bold">
+                Case source - @c.application.asCorrespondence.correspondenceStarter
+            </div>
+            <div class="bold">
+                @c.application.asCorrespondence.contact.email
+            </div>
+        </div>
+    }
+
+
     <div id="case-status-section">
         @case_status(c, "case-status")
         @appeal_status(c, "appeal-status")

@@ -16,32 +16,33 @@
 
 package models
 
+import models.ApplicationType._
 import utils.{Enumerable, WithName}
 
-sealed trait CaseStatusRadioInput
+sealed abstract class CaseStatusRadioInput(name: String, val applicationTypes: Set[ApplicationType])
+    extends WithName(name) {
+
+  def validFor(applicationType: ApplicationType): Boolean =
+    applicationTypes.contains(applicationType)
+}
 
 object CaseStatusRadioInput extends Enumerable.Implicits {
 
-  case object Complete extends WithName("complete") with CaseStatusRadioInput
-  case object Refer extends WithName("refer") with CaseStatusRadioInput
-  case object Reject extends WithName("reject") with CaseStatusRadioInput
-  case object Suspend extends WithName("suspend") with CaseStatusRadioInput
-  case object MoveBackToQueue extends WithName("move_back_to_queue") with CaseStatusRadioInput
-  case object Release extends WithName("release") with CaseStatusRadioInput
-  case object Suppress extends WithName("suppress") with CaseStatusRadioInput
+  case object Complete extends CaseStatusRadioInput("complete", ApplicationType.values)
+  case object Refer extends CaseStatusRadioInput("refer", ApplicationType.values)
+  case object Reject extends CaseStatusRadioInput("reject", Set(ATAR, LIABILITY))
+  case object Suspend extends CaseStatusRadioInput("suspend", Set(ATAR, LIABILITY))
+  case object MoveBackToQueue extends CaseStatusRadioInput("move_back_to_queue", ApplicationType.values)
+  case object Release extends CaseStatusRadioInput("release", ApplicationType.values)
+  case object Suppress extends CaseStatusRadioInput("suppress", ApplicationType.values)
 
-  val changeCaseStatusValues: Seq[CaseStatusRadioInput]  = Seq(Complete, Refer, Reject, Suspend, MoveBackToQueue)
-  val releaseOrSuppressValues: Seq[CaseStatusRadioInput] = Seq(Release, Suppress)
+  private val changeCaseStatusValues: Seq[CaseStatusRadioInput]  = Seq(Complete, Refer, Reject, Suspend, MoveBackToQueue)
+  private val releaseOrSuppressValues: Seq[CaseStatusRadioInput] = Seq(Release, Suppress)
 
-  val corresChangeCaseStatusValues: Seq[CaseStatusRadioInput] = Seq(Complete, Refer, MoveBackToQueue)
-
-  val changeCaseStatusOptions: Seq[InputRadio] = changeCaseStatusValues.map { value =>
-    InputRadio("change_case_status", value.toString)
-  }
-
-  val corresChangeCaseStatusOptions: Seq[InputRadio] = corresChangeCaseStatusValues.map { value =>
-    InputRadio("change_case_status", value.toString)
-  }
+  def changeCaseStatusOptionsFor(applicationType: ApplicationType): Seq[InputRadio] =
+    changeCaseStatusValues.filter(_.validFor(applicationType)).map { value =>
+      InputRadio("change_case_status", value.toString)
+    }
 
   val releaseOrSuppressOptions: Seq[InputRadio] = releaseOrSuppressValues.map { value =>
     InputRadio("change_case_status", value.toString)

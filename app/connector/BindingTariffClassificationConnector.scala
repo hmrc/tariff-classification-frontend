@@ -61,7 +61,7 @@ class BindingTariffClassificationConnector @Inject() (
     }
 
   private def buildQueryUrl(
-    types: Seq[ApplicationType] = Seq(ApplicationType.ATAR, ApplicationType.LIABILITY),
+    types: Seq[ApplicationType] = ApplicationType.values.toSeq,
     statuses: String,
     queueIds: Seq[String],
     assigneeId: String,
