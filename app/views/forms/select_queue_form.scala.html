@@ -25,7 +25,6 @@
     <div class="form-group @if(field.hasErrors){form-group-error}" id="@{field.id}" >
         <fieldset>
             <legend>
-                <span class="heading-small mb-2">Choose a queue</span>
                 @field.errors.map { error =>
                     <span class="error-message" id="error-message-@{field.id}-input"><span class="visually-hidden">@messages("error.browser.title.prefix")</span>@messages(error.message, error.args: _*)</span>
                 }
@@ -40,8 +39,10 @@
         </fieldset>
     </div>
 
-    <div>
+    <div  class="confirm-cancel-alignment">
         <button class="button" id="@id-button" type="submit"> @messages(s"$id.submit.button") </button>
-        <a class="secondary-button" id="cancel-button" href="@cancelUrl">Cancel</a>
+        <a class="secondary-button-cancel" id="cancel-button" href="@cancelUrl">Cancel</a>
     </div>
+
+
 }

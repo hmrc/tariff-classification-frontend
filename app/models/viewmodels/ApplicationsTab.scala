@@ -106,12 +106,15 @@ object ApplicationsTab {
     val liabilities = cases.filter(aCase =>
       aCase.application.isLiabilityOrder && aCase.status == CaseStatus.NEW)
 
+    val correspondenceCases = cases.filter(aCase =>
+      aCase.application.isCorrespondence && aCase.status == CaseStatus.NEW)
+
     ApplicationTabViewModel(
       "applicationTab.gateway",
       List(
         ApplicationsTab.atar(Paged(atars)),
         ApplicationsTab.liability(Paged(liabilities)),
-        ApplicationsTab.correspondence(),
+        ApplicationsTab.correspondence(Paged(correspondenceCases)),
         ApplicationsTab.miscellaneous()
       )
     )
