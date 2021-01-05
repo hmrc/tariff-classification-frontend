@@ -22,7 +22,8 @@ case class ApplicantTabViewModel(
   eoriDetails: EORIDetails,
   contact: Contact,
   countryName: String,
-  caseBoardsFileNumber: Option[String]
+  caseBoardsFileNumber: Option[String],
+  agentDetails: Option[AgentDetails]
 )
 
 object ApplicantTabViewModel {
@@ -31,6 +32,7 @@ object ApplicantTabViewModel {
     cse.application.asATAR.holder,
     cse.application.contact,
     countryNames.get(cse.application.asATAR.holder.country).getOrElse(""),
-    caseBoardsFileNumber = cse.caseBoardsFileNumber
+    caseBoardsFileNumber = cse.caseBoardsFileNumber,
+    agentDetails         = cse.application.asATAR.agent
   )
 }
