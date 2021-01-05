@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-package models.viewmodels
+package models.forms
 
-import models.{Case, Message}
+import play.api.data.Form
+import play.api.data.Forms.mapping
+import models.forms.mappings.FormMappings.textNonEmpty
 
-case class MessagesTabViewModel(
-  messages : List[Message]
-)
+case class MessageFormData(message: String)
 
-object MessagesTabViewModel {
-  def fromCase(cse: Case): MessagesTabViewModel = {
-    val correspondenceApplication = cse.application.asCorrespondence
-    val messagesLogged: List[Message] = correspondenceApplication.messagesLogged
-    MessagesTabViewModel(messagesLogged)
-  }
+object MessageForm {
+  val form: Form[MessageFormData] = Form(
+    mapping(
+      "message" -> textNonEmpty("error.empty.message")
+    )(MessageFormData.apply)(MessageFormData.unapply)
+  )
 }
+

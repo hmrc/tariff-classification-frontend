@@ -59,7 +59,7 @@ class CorrespondenceController @Inject() (
     val correspondenceViewModel          = CaseViewModel.fromCase(correspondenceCase, request.operator)
     val caseDetailsTab                   = CaseDetailsViewModel.fromCase(correspondenceCase)
     val contactDetailsTab                = ContactDetailsTabViewModel.fromCase(correspondenceCase)
-    val messagesTab                      = MessagesTabViewModel.fromCase(correspondenceCase)
+    val messagesTab: MessagesTabViewModel = MessagesTabViewModel.fromCase(correspondenceCase)
     val attachmentsTabViewModel          = getAttachmentTab(correspondenceCase)
     val activityTabViewModel             = getActivityTab(correspondenceCase)
     val storedAttachments                = fileService.getAttachments(correspondenceCase)
@@ -76,6 +76,7 @@ class CorrespondenceController @Inject() (
         correspondenceViewModel,
         caseDetailsTab,
         contactDetailsTab,
+        messagesTab,
         sampleTab,
         attachmentsTab,
         uploadForm,
