@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,6 @@ import java.nio.file.Path
 class CancelRulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   private val casesService = mock[CasesService]
-  private val operator     = mock[Operator]
 
   private val caseWithStatusCOMPLETED = Cases.btiCaseExample.copy(status = CaseStatus.COMPLETED)
   private val caseWithStatusCANCELLED = Cases.btiCaseExample.copy(status = CaseStatus.CANCELLED)
@@ -46,7 +45,7 @@ class CancelRulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
   private val largeFileSize: Long = 16485760
 
   private def controller(requestCase: Case) = new CancelRulingController(
-    new SuccessfulRequestActions(playBodyParsers, operator, c = requestCase),
+    new SuccessfulRequestActions(playBodyParsers, Cases.operatorWithPermissions, c = requestCase),
     casesService,
     mcc,
     realAppConfig

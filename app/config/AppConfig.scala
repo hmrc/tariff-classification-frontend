@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,10 @@
 package config
 
 import java.time.Clock
-
 import javax.inject.{Inject, Singleton}
 import play.api.Mode.Mode
 import play.api.{Configuration, Environment, Mode}
+import uk.gov.hmrc.play.bootstrap.binders.SafeRedirectUrl
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 @Singleton
 class AppConfig @Inject() (
@@ -66,21 +66,11 @@ class AppConfig @Inject() (
   lazy val betaFeedbackUnauthenticatedUrl =
     s"$contactHost/contact/beta-feedback-unauthenticated?service=$contactFormServiceIdentifier"
 
-  //accessibility Urls
-  lazy val accessibilityUrl: String        = config.get[String]("accessibility-urls.accessibility")
-  lazy val govukAccessibilityUrl: String   = config.get[String]("accessibility-urls.govukAccessibilityUrl")
-  lazy val subdomainUrl: String            = config.get[String]("accessibility-urls.subdomainUrl")
-  lazy val abilityNetUrl: String           = config.get[String]("accessibility-urls.abilityNetUrl")
-  lazy val webStandards: String            = config.get[String]("accessibility-urls.webStandards")
-  lazy val reportEmail: String             = config.get[String]("accessibility-urls.reportEmail")
-  lazy val eassUrl: String                 = config.get[String]("accessibility-urls.eassUrl")
-  lazy val ecniUrl: String                 = config.get[String]("accessibility-urls.ecniUrl")
-  lazy val dacUrl: String                  = config.get[String]("accessibility-urls.dacUrl")
-  lazy val equalityadvisoryservice: String = config.get[String]("accessibility-urls.equalityadvisoryservice")
-  lazy val equalityni: String              = config.get[String]("accessibility-urls.equalityni")
-  lazy val extrasupport: String            = config.get[String]("accessibility-urls.extrasupport")
-  lazy val digitalcentre: String           = config.get[String]("accessibility-urls.digitalcentre")
-  //accessibility Urls end
+  lazy val accessibilityBaseUrl: String = config.get[String](s"accessibility-statement.baseUrl")
+  lazy private val accessibilityRedirectUrl: String = config.get[String](s"accessibility-statement.redirectUrl")
+  def accessibilityStatementUrl(referrer: String) =
+    s"$accessibilityBaseUrl/accessibility-statement$accessibilityRedirectUrl?referrerUrl=${SafeRedirectUrl(
+      accessibilityBaseUrl + referrer).encodedUrl}"
 
   lazy val clock: Clock = Clock.systemUTC()
 

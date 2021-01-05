@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,14 +48,14 @@ class IndexControllerSpec extends ControllerBaseSpec {
       val result = await(controller(Role.CLASSIFICATION_OFFICER).get()(fakeRequest))
 
       status(result)           shouldBe Status.SEE_OTHER
-      redirectLocation(result) shouldBe Some(routes.MyCasesController.myCases().url)
+      redirectLocation(result) shouldBe Some(routes.OperatorDashboardController.onPageLoad().url)
     }
 
     "Redirect for Manager role" in {
       val result = await(controller(Role.CLASSIFICATION_MANAGER).get()(fakeRequest))
 
       status(result)           shouldBe Status.SEE_OTHER
-      redirectLocation(result) shouldBe Some(routes.MyCasesController.myCases().url)
+      redirectLocation(result) shouldBe Some(routes.OperatorDashboardController.onPageLoad().url)
     }
   }
 

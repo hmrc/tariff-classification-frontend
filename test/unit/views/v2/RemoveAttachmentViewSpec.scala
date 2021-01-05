@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,7 +73,7 @@ class RemoveAttachmentViewSpec extends ViewSpec {
 
     "render without errors check form" in {
       val doc                   = view(renderWithoutError)
-      val expected: Seq[String] = Seq("Search", "cases", "Search", "cases", "Yes", "No", "Confirm")
+      val expected: Seq[String] = Seq("Yes", "No", "Confirm")
       val actual: Seq[String]   = doc.getElementsByTag("form").text().split(" ").toSeq
 
       actual shouldBe expected

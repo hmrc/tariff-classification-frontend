@@ -1,5 +1,5 @@
 @*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@
 
 <div id="dashboard-view" class="centered-content">
 
-        <h1 class="heading-xlarge mt-40 mb-0">Eileen Smith</h1>
+        <h1 class="heading-xlarge mt-40 mb-0">@request.operator.name.getOrElse("")</h1>
         <span class="caption-xl">@messages("operator.dashboard.classification.title")</span>
         <h2 class="heading-medium">@messages("cases.menu.my-cases")</h2>
         <div class="flex-container govuk-grid-row">

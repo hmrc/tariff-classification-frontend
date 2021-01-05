@@ -1,5 +1,5 @@
 @*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,11 +15,12 @@
  *@
 
 @import config.AppConfig
+@import models.request.AuthenticatedRequest
 @import controllers.routes.QueuesController
 @import views.html.includes.main
 @import models.viewmodels.NoTabSelected
 
-@(resource: String = "Resource")(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(resource: String = "Resource")(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customPrimaryNavTab = NoTabSelected) {
 

@@ -1,5 +1,5 @@
 @*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,13 +22,14 @@
 @import controllers.routes.CreateCorrespondenceController
 @import views.html.partials.{error_summary, back_link}
 @import models.viewmodels.CaseHeaderViewModel
+@import models.request.AuthenticatedRequest
 @import views.html.components.confirm_or_cancel_buttons
 @import views.html.forms.components.input_radiogroup
 @import views.forms.components.RadioOption
 
 @this(case_heading: views.html.v2.case_heading)
 
-@(c: Case, form: Form[String])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(c: Case, form: Form[String])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 @main(bodyClasses = None, customTitle = Some(messages("page.title.release.case"))) {
 
 @back_link()

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,11 @@ package controllers
 
 import config.AppConfig
 import models.forms.SampleReturnForm
+
 import javax.inject.{Inject, Singleton}
 import models.SampleReturn.SampleReturn
 import models._
+import models.request.AuthenticatedRequest
 import play.api.data.Form
 import play.api.mvc._
 import play.twirl.api.Html
@@ -50,7 +52,7 @@ class SampleReturnController @Inject() (
     c: Case,
     notFilledForm: Form[Option[SampleReturn]],
     options: Option[String] = None
-  )(implicit request: Request[_]): Html =
+  )(implicit request: AuthenticatedRequest[_]): Html =
     views.html.change_sample_return(c, notFilledForm)
 
   override def chooseStatus(reference: String, options: Option[String] = None): Action[AnyContent] =

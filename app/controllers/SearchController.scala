@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +19,8 @@ package controllers
 import config.AppConfig
 import controllers.SessionKeys.{backToSearchResultsLinkLabel, backToSearchResultsLinkUrl}
 import controllers.routes.SearchController
-import models.forms.SearchForm
-import javax.inject.{Inject, Singleton}
 import models._
+import models.forms.SearchForm
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import service.{CasesService, FileStoreService, KeywordsService}
@@ -30,6 +29,7 @@ import views.SearchTab.SearchTab
 import views.partials.SearchResult
 import views.{SearchTab, html}
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
@@ -55,15 +55,26 @@ class SearchController @Inject() (
   ): Action[AnyContent] = (verify.authenticated andThen verify.mustHave(Permission.ADVANCED_SEARCH)).async {
     implicit request =>
       val focus: SearchTab = if (addToSearch.contains(true)) SearchTab.SEARCH_BOX else selectedTab
-      if (reference.isDefined) {
-        reference match {
-          case Some(ref) if ref.trim.nonEmpty => successful(Redirect(routes.CaseController.get(ref.trim)))
-          case _                              => successful(Redirect(routes.IndexController.get()))
-        }
-      } else if (search.isEmpty) {
+      def defaultAction: Future[Result] =
         keywordsService.autoCompleteKeywords.map { keywords: Seq[String] =>
           Results.Ok(html.advanced_search(SearchForm.form, None, keywords, focus))
         }
+
+      if (reference.isDefined) {
+        reference match {
+          case Some(ref) if ref.trim.nonEmpty =>
+            casesService.getOne(ref.trim).flatMap { `case` =>
+              if (`case`.isDefined) {
+                successful(Redirect(routes.CaseController.get(ref.trim)))
+              } else {
+                defaultAction
+              }
+            }
+          case _ =>
+            defaultAction
+        }
+      } else if (search.isEmpty) {
+        defaultAction
       } else {
         keywordsService.autoCompleteKeywords.flatMap { keywords =>
           SearchForm.form.bindFromRequest.fold(

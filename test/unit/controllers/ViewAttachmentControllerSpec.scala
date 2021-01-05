@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class ViewAttachmentControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   private val fileService = mock[FileStoreService]
-  private val operator    = mock[Operator]
+  private val operator    = Operator(id = "id")
 
   override def afterEach(): Unit = {
     super.afterEach()

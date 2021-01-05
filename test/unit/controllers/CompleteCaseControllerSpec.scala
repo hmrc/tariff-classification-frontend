@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@
 
 package controllers
 
-import java.time.Instant
-
 import models.forms.{CommodityCodeConstraints, DecisionForm}
 import models.{Permission, _}
 import org.mockito.ArgumentMatchers.{any, refEq}
@@ -29,16 +27,16 @@ import play.api.mvc.Result
 import play.api.test.Helpers.{redirectLocation, _}
 import service.{CasesService, CommodityCodeService}
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.Cases
 import utils.Cases._
 
-import scala.concurrent.Future.successful
+import java.time.Instant
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future.successful
 
 class CompleteCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   private val casesService         = mock[CasesService]
-  private val operator             = mock[Operator]
+  private val operator             = Operator(id = "id")
   private val commodityCodeService = mock[CommodityCodeService]
   private val decisionForm         = new DecisionForm(new CommodityCodeConstraints(commodityCodeService, realAppConfig))
 

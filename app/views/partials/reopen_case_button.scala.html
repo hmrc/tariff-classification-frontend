@@ -1,5 +1,5 @@
 @*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,14 @@
  * limitations under the License.
  *@
 
+@import models.request.AuthenticatedRequest
+
 @(
         id: String,
         reference: String,
         action: play.api.mvc.Call,
         buttonText: String
-)(implicit request: Request[_])
+)(implicit request: AuthenticatedRequest[_])
 
 @*TODO rename this class to reopen_case_button and remove old reopen_button partial*@
 

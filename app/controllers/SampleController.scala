@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,20 +17,18 @@
 package controllers
 
 import config.AppConfig
-import models.forms.SampleStatusForm
-import javax.inject.{Inject, Singleton}
 import models.SampleStatus.SampleStatus
 import models._
-import models.viewmodels.atar.SampleTabViewModel
+import models.forms.SampleStatusForm
+import models.request.AuthenticatedRequest
 import play.api.data.Form
 import play.api.mvc._
 import play.twirl.api.Html
 import service.{CasesService, EventsService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.CaseDetailPage
 
-import scala.concurrent.ExecutionContext.Implicits.global
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
@@ -51,7 +49,7 @@ class SampleController @Inject() (
   override protected def status(c: Case): Option[SampleStatus] = c.sample.status
 
   protected def chooseStatusView(c: Case, notFilledForm: Form[Option[SampleStatus]], options: Option[String])(
-    implicit request: Request[_]
+    implicit request: AuthenticatedRequest[_]
   ): Html =
     if (options.contains("liability"))
       views.html.change_liablity_sending_sample(c, notFilledForm)

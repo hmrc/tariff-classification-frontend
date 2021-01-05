@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package controllers
 
 import models.forms.LiabilityForm
+import models.request.AuthenticatedRequest
 import models.{Permission, _}
 import org.mockito.ArgumentMatchers._
 import org.mockito.BDDMockito._
@@ -56,7 +57,7 @@ class CreateLiabilityControllerSpec extends ControllerBaseSpec {
       contentType(result) shouldBe Some("text/html")
       charset(result)     shouldBe Some("utf-8")
       contentAsString(result) shouldBe create_liability(LiabilityForm.newLiabilityForm)(
-        request,
+        AuthenticatedRequest(Operator("0", Some("name")), request),
         messages,
         realAppConfig
       ).toString()
@@ -77,10 +78,14 @@ class CreateLiabilityControllerSpec extends ControllerBaseSpec {
         val result    = await(controller(Set(Permission.CREATE_CASES)).post()(request))
         lazy val form = LiabilityForm.newLiabilityForm.bindFromRequest()(request)
 
-        status(result)          shouldBe Status.OK
-        contentType(result)     shouldBe Some("text/html")
-        charset(result)         shouldBe Some("utf-8")
-        contentAsString(result) shouldBe create_liability(form)(request, messages, realAppConfig).toString()
+        status(result)      shouldBe Status.OK
+        contentType(result) shouldBe Some("text/html")
+        charset(result)     shouldBe Some("utf-8")
+        contentAsString(result) shouldBe create_liability(form)(
+          AuthenticatedRequest(Operator("0", Some("name")), request),
+          messages,
+          realAppConfig
+        ).toString()
       }
     }
 
