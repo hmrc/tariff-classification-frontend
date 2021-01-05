@@ -24,7 +24,7 @@ case class CaseHeaderViewModel(
   goodsName: String,
   referenceNumber: String,
   caseStatus: CaseStatusViewModel,
-  contactEmail: Option[String]
+  contactEmail: Option[String] = None
 )
 
 object CaseHeaderViewModel {
