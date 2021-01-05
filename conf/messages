@@ -851,6 +851,8 @@ case.v2.liability.reopen.button=Reopen case
 
 case.v2.liability.advanced_search.button=Search cases
 
+case.v2.correspondence.page_title=Correspondence case details
+
 case.v2.correspondence.case-details.tab_title=Case Details
 case.v2.correspondence.case-details.heading=Correspondence case details
 case.v2.correspondence.case-details.summary=Summary
