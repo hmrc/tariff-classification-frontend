@@ -110,7 +110,8 @@
         </div>
 
         <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="messages_tab">
-          println(messagesTab)
+          @(messagesTab.messages.map(x=> (x.name, x.date, x.date)))
+            @messagesTab.messages
         </div>
 
         <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="samples_tab">

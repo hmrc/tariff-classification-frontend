@@ -31,7 +31,7 @@
         @caseHeader.businessName.map { businessName =>
             @messages("case.heading.secondary", caseHeader.caseType.prettyName, caseHeader.referenceNumber, businessName)
         }.getOrElse {
-            @messages("case.heading.secondary.nosuffix", caseHeader.caseType, caseHeader.referenceNumber)
+            @messages("case.heading.secondary.nosuffix", caseHeader.caseType.prettyName, caseHeader.referenceNumber)
         }
     </div>
 
