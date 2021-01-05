@@ -24,43 +24,80 @@ import play.api.data.Forms._
 
 object CorrespondenceContactForm extends Constraints {
 
-  def correspondenceDetailsForm(existingCorrespondence: Case): Form[Case] =
+  def correspondenceContactForm(existingCorrespondence: Case): Form[Case] =
     Form[Case](
       mapping[
         Case,
+        Option[String],
         String,
         String,
+        Option[String],
+        Option[String],
+        String,
+        String,
+        Option[String],
+        Option[String],
         Option[String]
       ](
-        "summary"             -> textNonEmpty("can not be empty"),
-        "detailedDescription" -> textNonEmpty("can not be empty"),
-        "boardsFileNumber"    -> optional(text)
+        "correspondenceStarter" -> optional(text),
+        "name"                  -> textNonEmpty("can not be empty"),
+        "email"                 -> textNonEmpty("can not be empty"),
+        "phone"                 -> optional(text),
+        "fax"                   -> optional(text),
+        "buildingAndStreet"     -> textNonEmpty("can not be empty"),
+        "townOrCity"            -> textNonEmpty("can not be empty"),
+        "county"                -> optional(text),
+        "postCode"              -> optional(text),
+        "agentName"             -> optional(text)
       )(form2Correspondence(existingCorrespondence))(correspondence2Form)
     ).fillAndValidate(existingCorrespondence)
 
   private def form2Correspondence(existingCase: Case): (
+    Option[String],
     String,
     String,
+    Option[String],
+    Option[String],
+    String,
+    String,
+    Option[String],
+    Option[String],
     Option[String]
   ) => Case = {
     case (
-        summary,
-        detailedDescription,
-        boardsFileNumber
+        correspondenceStarter,
+        name,
+        email,
+        phone,
+        fax,
+        buildingAndStreet,
+        townOrCity,
+        county,
+        postCode,
+        agentName
         ) =>
       existingCase.copy(
-        caseBoardsFileNumber = boardsFileNumber,
         application = existingCase.application.asCorrespondence.copy(
-          summary             = summary,
-          detailedDescription = detailedDescription
+          correspondenceStarter = correspondenceStarter,
+          agentName             = agentName,
+          address               = Address(buildingAndStreet, townOrCity, county, postCode),
+          contact               = Contact(name, email, phone),
+          fax                   = fax
         )
       )
   }
 
   private def correspondence2Form(existingCase: Case): Option[
     (
+      Option[String],
       String,
       String,
+      Option[String],
+      Option[String],
+      String,
+      String,
+      Option[String],
+      Option[String],
       Option[String]
     )
   ] = {
@@ -68,105 +105,17 @@ object CorrespondenceContactForm extends Constraints {
 
     Some(
       (
-        existingCorrespondence.summary,
-        existingCorrespondence.detailedDescription,
-        existingCase.caseBoardsFileNumber
+        existingCorrespondence.correspondenceStarter,
+        existingCorrespondence.contact.name,
+        existingCorrespondence.contact.email,
+        existingCorrespondence.contact.phone,
+        existingCorrespondence.fax,
+        existingCorrespondence.address.buildingAndStreet,
+        existingCorrespondence.address.townOrCity,
+        existingCorrespondence.address.county,
+        existingCorrespondence.address.postCode,
+        existingCorrespondence.agentName
       )
     )
   }
-
-  //TODO: COMPLETE CORRESPONDENCE FORM
-/*  def correspondenceDetailsCompleteForm(existingLiability: Case, appConfig: AppConfig): Form[Case] =
-    Form[Case](
-      mapping[
-        Case,
-        Option[Instant],
-        String,
-        Option[String],
-        Option[String],
-        Option[String],
-        Option[String],
-        Option[String],
-        Option[String],
-        Option[String],
-        Option[String],
-        Boolean,
-        Option[Instant],
-        Option[String],
-        Option[String],
-        Option[String],
-        Option[String],
-        String,
-        Option[String],
-        Option[String],
-        Option[String],
-        Option[Instant]
-      ](
-        "entryDate" -> optional(
-          FormDate
-            .date("case.liability.error.entry-date")
-            .verifying(dateMustBeInThePast("case.liability.error.entry-date.future"))
-            .verifying(
-              dateLowerBound("case.liability.error.entry-date.year.lower.bound", appConfig.entryDateYearLowerBound)
-            )
-        ).verifying("Enter an entry date", _.isDefined),
-        "traderName" -> textNonEmpty("case.liability.error.empty.trader-name"),
-        //TODO find what need to validate
-        //TODO not emptyOr but it is required need to change as part of other ticket
-        "traderEmail"             -> optional(text.verifying(customNonEmpty("Enter a trader email"))
-          .verifying(emptyOr(validEmail("case.liability.error.trader.email")): _*)),
-        "traderPhone"             -> optional(text),
-        "traderBuildingAndStreet" -> optional(text),
-        "traderTownOrCity"        -> optional(text),
-        "traderCounty"            -> optional(text),
-        "traderPostcode"          -> optional(text),
-        "boardsFileNumber"        -> optional(text),
-        //TODO take a look ^^
-        "btiReference"   -> optional(nonEmptyText),
-        "repaymentClaim" -> boolean,
-        "dateOfReceipt" -> optional(
-          FormDate
-            .date("case.liability.error.date-of-receipt")
-            .verifying(dateMustBeInThePast("case.liability.error.date-of-receipt.future"))
-            .verifying(
-              dateLowerBound(
-                "case.liability.error.date-of-receipt.year.lower.bound",
-                appConfig.dateOfReceiptYearLowerBound
-              )
-            )
-        ),
-        "goodName"             -> optional(nonEmptyText).verifying("Enter the goods name", _.isDefined),
-        "entryNumber"          -> optional(nonEmptyText).verifying("Enter an entry number", _.isDefined),
-        "traderCommodityCode"  -> optional(nonEmptyText).verifying("Enter the commodity code from the trader", _.isDefined),
-        "officerCommodityCode" -> optional(nonEmptyText).verifying("Enter the code suggested by the officer", _.isDefined),
-        "contactName"          -> textNonEmpty("case.liability.error.compliance_officer.name"),
-        //TODO not emptyOr but it is required need to change as part of other ticket
-        "contactEmail" -> optional(
-          text.verifying(customNonEmpty("Enter a contact email"))
-            .verifying(emptyOr(validEmail("case.liability.error.contact.email")): _*)
-        ),
-        "contactPhone" -> optional(text).verifying("Enter a contact telephone", _.isDefined),
-        "dvrNumber" -> optional(
-          text.verifying(dvrNumberIsNumberOnly())
-        ),
-        "dateForRepayment" -> optional(
-          FormDate
-            .date("case.liability.error.date-of-repayment")
-            .verifying(dateMustBeInThePast("case.liability.error.date-of-repayment.future"))
-            .verifying(
-              dateLowerBound(
-                "case.liability.error.date-for-repayment.year.lower.bound",
-                appConfig.dateForRepaymentYearLowerBound
-              )
-            )
-        ).verifying(
-          "Enter a real date, for example 11/12/2020",
-          f => {
-            if(existingLiability.application.asLiabilityOrder.repaymentClaim.isDefined) f.isDefined
-            else true
-          }
-
-        )
-      )(form2Correspondence(existingLiability))(correspondence2Form)
-    ).fillAndValidate(existingLiability)*/
 }

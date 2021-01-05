@@ -139,7 +139,7 @@ class CreateCorrespondenceController @Inject() (
         Ok(
           correspondence_contact_edit(
             request.`case`,
-            CorrespondenceContactForm.correspondenceDetailsForm(request.`case`)))
+            CorrespondenceContactForm.correspondenceContactForm(request.`case`)))
       )
     }
   }
