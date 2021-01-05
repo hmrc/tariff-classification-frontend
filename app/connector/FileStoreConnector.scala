@@ -16,8 +16,8 @@
 
 package connector
 
-import akka.stream.IOResult
-import akka.stream.scaladsl.{FileIO, Source}
+import akka.stream.{IOResult, Materializer}
+import akka.stream.scaladsl.{FileIO, Source, Sink}
 import akka.util.ByteString
 import com.google.inject.Inject
 import com.kenshoo.play.metrics.Metrics
@@ -42,16 +42,32 @@ class FileStoreConnector @Inject() (
   http: AuthenticatedHttpClient,
   ws: WSClient,
   val metrics: Metrics
-)(implicit ec: ExecutionContext)
+)(implicit mat: Materializer)
     extends HasMetrics {
+
+  implicit val ec: ExecutionContext = mat.executionContext
+
+  private val ParamLength = 42 // A 36-char UUID plus &id= and some wiggle room
+  private val BatchSize   = ((appConfig.maxUriLength - appConfig.fileStoreUrl.length) / ParamLength).intValue()
+
+  private def makeQuery(ids: Seq[String]): String = {
+    val query = s"?${ids.map("id=" + _).mkString("&")}"
+    s"${appConfig.fileStoreUrl}/file$query"
+  }
 
   def get(attachments: Seq[Attachment])(implicit headerCarrier: HeaderCarrier): Future[Seq[FileMetadata]] =
     withMetricsTimerAsync("get-file-metadata") { _ =>
       if (attachments.isEmpty) {
         Future.successful(Seq.empty)
       } else {
-        val query = s"?${attachments.map(att => s"id=${att.id}").mkString("&")}"
-        http.GET[Seq[FileMetadata]](s"${appConfig.fileStoreUrl}/file$query")
+        Source(attachments.map(_.id).toList)
+          .grouped(BatchSize)
+          .mapAsyncUnordered(Runtime.getRuntime().availableProcessors()) { ids =>
+            http.GET[Seq[FileMetadata]](makeQuery(ids))
+          }
+          .runFold(Seq.empty[FileMetadata]) {
+            case (acc, next) => acc ++ next
+          }
       }
     }
 

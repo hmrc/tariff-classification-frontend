@@ -109,7 +109,7 @@ class MyCasesViewSpec extends ViewSpec {
       )
 
       // Then
-      doc.getElementById("cases_list-row-0-type") should containText("BTI")
+      doc.getElementById("cases_list-row-0-type") should containText("ATaR")
       doc.getElementById("cases_list-row-1-type") should containText("Liability")
       doc.getElementById("cases_list-row-2-type") should containText("Liability")
       doc.getElementById("cases_list-row-2-type") should containElementWithAttribute("class", "govuk-tag govuk-tag--pink")

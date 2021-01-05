@@ -82,6 +82,15 @@ class SampleControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       status(result) shouldBe Status.OK
     }
 
+    "return OK when user has right permissions for liability" in {
+      val c = aCase(withStatus(CaseStatus.COMPLETED), withDecision())
+
+      val result =
+        await(controller(c, Set(Permission.EDIT_SAMPLE)).chooseStatus("reference", Some("liability"))(newFakeGETRequestWithCSRF(app)))
+
+      status(result) shouldBe Status.OK
+    }
+
     "redirect unauthorised when does not have right permissions" in {
       val c = aCase(withStatus(CaseStatus.COMPLETED), withDecision())
 

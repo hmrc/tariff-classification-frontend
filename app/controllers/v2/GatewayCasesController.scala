@@ -41,7 +41,7 @@ class GatewayCasesController @Inject()(
 
   def displayGatewayCases: Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.VIEW_QUEUE_CASES)).async { implicit request: AuthenticatedRequest[AnyContent] =>
-      val types: Seq[ApplicationType] = Seq(ApplicationType.ATAR, ApplicationType.LIABILITY)
+      val types: Seq[ApplicationType] = Seq(ApplicationType.ATAR, ApplicationType.LIABILITY, ApplicationType.CORRESPONDENCE)
 
       for {
         cases            <- casesService.getCasesByQueue(Queues.gateway, NoPagination(), types)

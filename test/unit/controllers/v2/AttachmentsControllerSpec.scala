@@ -44,6 +44,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
   lazy val fileService: FileStoreService            = mock[FileStoreService]
   lazy val operator                                 = Operator(id = "id")
   lazy val liabilityController: LiabilityController = mock[LiabilityController]
+  lazy val atarController: AtarController = mock[AtarController]
   lazy val attachments_details: attachments_details = mock[attachments_details]
   lazy val remove_attachment: remove_attachment     = mock[remove_attachment]
   private lazy val invalidFileTypes: Seq[String]    = Seq("test", "javascript/none", "so/so")
@@ -55,6 +56,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
       fileService         = fileService,
       mcc                 = mcc,
       liabilityController = liabilityController,
+      atarController = atarController,
       remove_attachment   = remove_attachment,
       appConfig           = realAppConfig,
       mat                 = mat
@@ -67,6 +69,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
       fileService         = fileService,
       mcc                 = mcc,
       liabilityController = liabilityController,
+      atarController = atarController,
       remove_attachment   = remove_attachment,
       appConfig           = realAppConfig,
       mat                 = mat
@@ -480,7 +483,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
     when(remove_attachment.apply(any(), any(), anyString(), anyString())(any(), any(), any()))
       .thenReturn(Html("heading"))
 
-    when(liabilityController.renderView(any(), any(), any())(any())).thenReturn(successful(Ok("Ok")))
+    when(atarController.renderView(any(), any(), any())(any())).thenReturn(successful(Ok("Ok")))
 
     when(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).thenReturn(successful(Some(aCase)))
     when(fileService.getAttachments(refEq(aCase))(any[HeaderCarrier])).thenReturn(successful(Seq.empty))
