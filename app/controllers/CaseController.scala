@@ -118,6 +118,8 @@ class CaseController @Inject() (
               atarController.renderView(activityForm = errorForm)
             case ApplicationType.LIABILITY =>
               liabilityController.renderView(activityForm = errorForm)
+            case ApplicationType.CORRESPONDENCE =>
+              correspondenceController.renderView(activityForm = errorForm)
           }
         }
 

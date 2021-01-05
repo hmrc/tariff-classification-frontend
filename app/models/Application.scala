@@ -63,9 +63,9 @@ sealed trait Application {
 
   def goodsName: String =
     `type` match {
-      case ApplicationType.ATAR      => asATAR.goodName
-      case ApplicationType.LIABILITY => asLiabilityOrder.goodName.getOrElse("")
-      case _ => ""
+      case ApplicationType.ATAR           => asATAR.goodName
+      case ApplicationType.LIABILITY      => asLiabilityOrder.goodName.getOrElse("")
+      case ApplicationType.CORRESPONDENCE => asCorrespondence.summary
     }
 
   def getType: String =
@@ -96,14 +96,16 @@ object ApplicationType {
   case object CORRESPONDENCE extends ApplicationType("CORRESPONDENCE")
   case object MISCELLANEOUS extends ApplicationType("MISCELLANEOUS")
 
-  implicit def applicationTypePathBindable(implicit stringBindable: PathBindable[String]): PathBindable[ApplicationType] =
+  implicit def applicationTypePathBindable(
+    implicit stringBindable: PathBindable[String]
+  ): PathBindable[ApplicationType] =
     new PathBindable[ApplicationType] {
       def bind(key: String, value: String): Either[String, ApplicationType] =
-        Either.catchOnly[NoSuchElementException] {
-          ApplicationType.withName(value)
-        }.leftMap { _ =>
-          "Invalid application type"
-        }
+        Either
+          .catchOnly[NoSuchElementException] {
+            ApplicationType.withName(value)
+          }
+          .leftMap(_ => "Invalid application type")
       def unbind(key: String, value: ApplicationType): String =
         stringBindable.unbind(key, value.name)
     }

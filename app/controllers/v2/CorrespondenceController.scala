@@ -76,6 +76,7 @@ class CorrespondenceController @Inject() (
         correspondenceViewModel,
         caseDetailsTab,
         contactDetailsTab,
+        messagesTab,
         sampleTab,
         attachmentsTab,
         uploadForm,
