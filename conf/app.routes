@@ -121,6 +121,7 @@ GET         /cases/v2/:reference/attachments/remove             controllers.v2.A
 POST        /cases/v2/:reference/attachments/remove             controllers.v2.AttachmentsController.confirmRemoveAttachment(reference: String, fileId: String, fileName: String)
 
 GET         /cases/v2/:reference/correspondence                 controllers.v2.CorrespondenceController.displayCorrespondence(reference: String)
+POST        /cases/v2/:reference/correspondence                 controllers.CaseController.addMessage(reference: String)
 
 GET        /cases/cache/:reference/:itemType                    controllers.TabCacheController.get(reference: String, itemType: ApplicationType)
 POST       /cases/cache/:reference/:itemType                    controllers.TabCacheController.post(reference: String, itemType: ApplicationType)

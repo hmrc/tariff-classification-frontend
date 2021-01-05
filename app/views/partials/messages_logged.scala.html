@@ -1,0 +1,85 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import helper._
+@import config.AppConfig
+@import controllers.routes.{CaseController}
+@import controllers.Tab
+@import models.request.AuthenticatedRequest
+@import models.{Permission}
+@import views.html.forms.components.input_textarea
+@import views.html.partials.{tab_heading}
+@import views.html.partials.error_summary
+@import utils.Dates
+
+@import models.viewmodels.MessagesTabViewModel
+
+@import models.forms.MessageFormData
+
+@(messagesLogged: MessagesTabViewModel, messageForm: Form[MessageFormData], startAtTabIndex: Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+
+@error_summary(messageForm.errors, Some(startAtTabIndex))
+
+@tab_heading("messages", messages("case.menu.messages"))
+
+@if(request.hasPermission(Permission.ADD_NOTE)) {
+    <div class="grid-row">
+
+        <div class="column-full">
+
+        @form(action = CaseController.addMessage(messagesLogged.caseReference).withFragment(Tab.MESSAGES_TAB.name), 'class -> "form") {
+            @CSRF.formField
+            @input_textarea(
+                field = messageForm("message"),
+                label = "Add message to log",
+                hint = Some("Copy and paste emails into this box, including the sender and recipient."),
+                tabIndex = Some(startAtTabIndex + 10),
+                customErrorMessage = Some(messages("error.empty.message"))
+            )
+            <div class="form-group">
+                <button tabindex="@{
+                    startAtTabIndex + 11
+                }" id="add-note-submit" class="button" type="submit">Add message to log</button>
+            </div>
+        }
+        </div>
+    </div>
+}
+
+<table id="messages-logged">
+    <thead>
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Date</th>
+            <th scope="col"></th>
+
+        </tr>
+    </thead>
+    <tbody>
+    @for((message: Message, index: Int) <- messagesLogged.messages.zipWithIndex.reverse) {
+        <tr id="messages-events-row-@{index}">
+            <td id="messages-events-row-@{index}-name" class="messages-cell">@message.name</td>
+
+            <td id="messages-events-row-@{index}-date" class="messages-cell-date">@Dates.format(message.date)</td>
+
+            <td id="messages-events-row-@{index}-message" class="messages-cell-desc">
+                <span id={s"messages-events-row-${index}-message"} class="pre-wrap">@message.message</span>
+            </td>
+        </tr>
+    }
+    </tbody>
+
+</table>

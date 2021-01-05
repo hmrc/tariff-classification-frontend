@@ -19,6 +19,7 @@ package models.viewmodels
 import models.{Case, Message}
 
 case class MessagesTabViewModel(
+  caseReference: String,
   messages : List[Message]
 )
 
@@ -26,6 +27,6 @@ object MessagesTabViewModel {
   def fromCase(cse: Case): MessagesTabViewModel = {
     val correspondenceApplication = cse.application.asCorrespondence
     val messagesLogged: List[Message] = correspondenceApplication.messagesLogged
-    MessagesTabViewModel(messagesLogged)
+    MessagesTabViewModel(cse.reference, messagesLogged)
   }
 }

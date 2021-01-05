@@ -92,6 +92,8 @@ class CorrespondenceControllerSpec extends ControllerBaseSpec with BeforeAndAfte
           any(),
           any(),
           any(),
+          any(),
+          any(),
         )(any(), any(), any())
       ) thenReturn Html("body")
 

@@ -21,8 +21,7 @@ import controllers.RequestActions
 import models.forms._
 import models.request._
 import models.viewmodels.atar._
-import models.viewmodels.correspondence.CaseDetailsViewModel
-import models.viewmodels.correspondence.{ContactDetailsTabViewModel, CorrespondenceSampleTabViewModel}
+import models.viewmodels.correspondence.{CaseDetailsViewModel, ContactDetailsTabViewModel, CorrespondenceSampleTabViewModel}
 import models.viewmodels.{ActivityViewModel, CaseViewModel, MessagesTabViewModel}
 import models.{Case, EventType, NoPagination}
 import play.api.data.Form
@@ -31,8 +30,8 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import service._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import javax.inject.{Inject, Singleton}
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -53,6 +52,7 @@ class CorrespondenceController @Inject() (
 
   def renderView(
     activityForm: Form[ActivityFormData] = ActivityForm.form,
+    messageForm: Form[MessageFormData]   = MessageForm.form,
     uploadForm: Form[String]             = UploadAttachmentForm.form
   )(implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
     val correspondenceCase: Case         = request.`case`
@@ -77,6 +77,7 @@ class CorrespondenceController @Inject() (
         caseDetailsTab,
         contactDetailsTab,
         messagesTab,
+        messageForm,
         sampleTab,
         attachmentsTab,
         uploadForm,

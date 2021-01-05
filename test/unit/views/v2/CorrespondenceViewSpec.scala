@@ -17,12 +17,11 @@
 package views.v2
 
 import java.time.Instant
-
 import models._
-import models.forms.{ActivityForm, ActivityFormData, KeywordForm, UploadAttachmentForm}
+import models.forms.{ActivityForm, ActivityFormData, KeywordForm, MessageForm, MessageFormData, UploadAttachmentForm}
 import models.viewmodels.atar.AttachmentsTabViewModel
 import models.viewmodels.correspondence.{CaseDetailsViewModel, ContactDetailsTabViewModel, CorrespondenceSampleTabViewModel}
-import models.viewmodels.{ActivityViewModel, CaseViewModel, KeywordsTabViewModel}
+import models.viewmodels.{ActivityViewModel, CaseViewModel, KeywordsTabViewModel, MessagesTabViewModel}
 import play.api.data.Form
 import utils.Cases
 import utils.Cases._
@@ -67,6 +66,13 @@ class CorrespondenceViewSpec extends ViewSpec {
 
   private val address: Address = Address("Street building", "Sofia", None, Some("NE2 8PN"));
 
+  private val exampleMessages = List(Message("name", Instant.now(), "message"),
+    Message("name2", Instant.now(), "message2"))
+
+  private val messagesTab: MessagesTabViewModel = MessagesTabViewModel("reference", exampleMessages)
+
+  private val messageForm: Form[MessageFormData] = MessageForm.form
+
   def correspondenceView: correspondence_view = injector.instanceOf[correspondence_view]
 
   def uploadAttachmentForm: Form[String] = UploadAttachmentForm.form
@@ -87,6 +93,8 @@ class CorrespondenceViewSpec extends ViewSpec {
           CaseViewModel.fromCase(c, Cases.operatorWithoutPermissions),
           caseDetailsTab,
           contactDetails,
+          messagesTab,
+          messageForm,
           sampleStatusTabViewModel,
           attachmentsTab,
           uploadAttachmentForm,
@@ -105,6 +113,8 @@ class CorrespondenceViewSpec extends ViewSpec {
           CaseViewModel.fromCase(c, Cases.operatorWithoutPermissions),
           caseDetailsTab,
           contactDetails,
+          messagesTab,
+          messageForm,
           sampleStatusTabViewModel,
           attachmentsTab,
           uploadAttachmentForm,
@@ -123,6 +133,8 @@ class CorrespondenceViewSpec extends ViewSpec {
           CaseViewModel.fromCase(c, Cases.operatorWithoutPermissions),
           caseDetailsTab,
           contactDetails,
+          messagesTab,
+          messageForm,
           sampleStatusTabViewModel,
           attachmentsTab,
           uploadAttachmentForm,
@@ -134,23 +146,25 @@ class CorrespondenceViewSpec extends ViewSpec {
       doc should containElementWithID("contact_details_tab")
     }
 
-    //    "render Messages details" in {
-    //      val c = aCorrCase(withReference("reference"), withCorrespondenceApplication)
-    //      val doc = view(
-    //        correspondenceView(
-    //          CaseViewModel.fromCase(c, Cases.operatorWithoutPermissions),
-    //          caseDetailsTab,
-    //          contactDetails,
-    //          sampleStatusTabViewModel,
-    //          attachmentsTab,
-    //          uploadAttachmentForm,
-    //          activityTab,
-    //          activityForm,
-    //          Seq.empty
-    //        )
-    //      )
-    //      doc should containElementWithID("messages_tab")
-    //    }
+        "render Messages details" in {
+          val c = aCorrespondenceCase(withReference("reference"), withCorrespondenceApplication)
+          val doc = view(
+            correspondenceView(
+              CaseViewModel.fromCase(c, Cases.operatorWithoutPermissions),
+              caseDetailsTab,
+              contactDetails,
+              messagesTab,
+              messageForm,
+              sampleStatusTabViewModel,
+              attachmentsTab,
+              uploadAttachmentForm,
+              activityTab,
+              activityForm,
+              Seq.empty
+            )
+          )
+          doc should containElementWithID("messages_tab")
+        }
 
     "render Sample Details tab" in {
       val c = aCorrespondenceCase(withReference("reference"), withCorrespondenceApplication)
@@ -159,6 +173,8 @@ class CorrespondenceViewSpec extends ViewSpec {
           CaseViewModel.fromCase(c, Cases.operatorWithoutPermissions),
           caseDetailsTab,
           contactDetails,
+          messagesTab,
+          messageForm,
           sampleStatusTabViewModel,
           attachmentsTab,
           uploadAttachmentForm,
@@ -177,6 +193,8 @@ class CorrespondenceViewSpec extends ViewSpec {
           CaseViewModel.fromCase(c, Cases.operatorWithoutPermissions),
           caseDetailsTab,
           contactDetails,
+          messagesTab,
+          messageForm,
           sampleStatusTabViewModel,
           attachmentsTab,
           uploadAttachmentForm,
@@ -195,6 +213,8 @@ class CorrespondenceViewSpec extends ViewSpec {
           CaseViewModel.fromCase(c, Cases.operatorWithoutPermissions),
           caseDetailsTab,
           contactDetails,
+          messagesTab,
+          messageForm,
           sampleStatusTabViewModel,
           attachmentsTab,
           uploadAttachmentForm,

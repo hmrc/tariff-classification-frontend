@@ -16,16 +16,15 @@
 
 @import config.AppConfig
 @import helper.CSRF
-@import models.forms.{ActivityFormData}
+@import models.forms.{ActivityFormData, MessageFormData}
 @import models.request.AuthenticatedRequest
 @import models.viewmodels.{CaseViewModel, ActivityViewModel, MyCasesTab, MessagesTabViewModel}
 @import models.viewmodels.atar.AttachmentsTabViewModel
 @import views.html.includes.main
-@import views.html.partials.{activity_details, attachments_details, correspondence_case_details, correspondence_contact_details}
+@import views.html.partials.{activity_details, messages_logged, attachments_details, correspondence_case_details, correspondence_contact_details}
 @import models.viewmodels.correspondence.CaseDetailsViewModel
 @import views.html.partials.sample.sample_details_correspondence
-@import models.viewmodels.correspondence.CorrespondenceSampleTabViewModel
-@import models.viewmodels.correspondence.ContactDetailsTabViewModel
+@import models.viewmodels.correspondence.{CorrespondenceSampleTabViewModel, ContactDetailsTabViewModel}
 
 @this(
         case_heading: views.html.v2.case_heading,
@@ -39,6 +38,7 @@
         caseDetailsTab: CaseDetailsViewModel,
         contactDetailsTab: ContactDetailsTabViewModel,
         messagesTab : MessagesTabViewModel,
+        messageForm: Form[MessageFormData],
         sampleTab: CorrespondenceSampleTabViewModel,
         attachmentsTab: AttachmentsTabViewModel,
         uploadForm: Form[String],
@@ -110,8 +110,7 @@
         </div>
 
         <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="messages_tab">
-          @(messagesTab.messages.map(x=> (x.name, x.date, x.date)))
-            @messagesTab.messages
+            @messages_logged(messagesTab, messageForm)
         </div>
 
         <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="samples_tab">
