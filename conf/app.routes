@@ -105,6 +105,7 @@ POST        /new-correspondence                                 controllers.Crea
 GET         /release-correspondence-choice                      controllers.CreateCorrespondenceController.displayQuestion(reference: String)
 POST        /release-correspondence-choice                      controllers.CreateCorrespondenceController.postChoice(reference: String)
 GET         /new-correspondence-confirm                         controllers.CreateCorrespondenceController.displayConfirmation(reference: String)
+GET         /cases/v2/:reference/correspondence/edit-case-details   controllers.CreateCorrespondenceController.editCorrespondence(reference: String)
 
 # Note: Browser links can't send a DELETE so it has to be GET in this case
 GET         /cases/:reference/keywords/:keyword                 controllers.CaseController.removeKeyword(reference: String, keyword: String)

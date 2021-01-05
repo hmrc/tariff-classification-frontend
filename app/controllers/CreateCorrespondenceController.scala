@@ -25,6 +25,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import play.api.data.Forms._
 import models.forms.mappings.FormMappings.fieldNonEmpty
+import models.forms.v2.CorrespondenceDetailsForm
 import service.{CasesService, QueuesService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.http.HeaderCarrier
@@ -43,6 +44,7 @@ class CreateCorrespondenceController @Inject() (
   val releaseCaseView: views.html.release_case,
   val releaseCaseQuestionView: views.html.v2.release_option_choice,
   val confirmation_case_creation: views.html.v2.confirmation_case_creation,
+  val correspondence_details_edit: views.html.v2.correspondence_details_edit,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
     with I18nSupport {
@@ -119,4 +121,20 @@ class CreateCorrespondenceController @Inject() (
           }
         }
     }
+
+  def editCorrespondence(reference: String): Action[AnyContent] =
+    (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
+      successful(
+        Ok(correspondence_details_edit(request.`case`, CorrespondenceDetailsForm.correspondenceDetailsForm(request.`case`)))
+      )
+    }
+
+
+  /*  def editLiabilityDetails(reference: String): Action[AnyContent] =
+    (verify.authenticated andThen verify.casePermissions(reference)
+      andThen verify.mustHave(Permission.EDIT_LIABILITY)).async { implicit request =>
+      successful(
+        Ok(liability_details_edit(request.`case`, LiabilityDetailsForm.liabilityDetailsForm(request.`case`, appConfig)))
+      )
+    }*/
   }

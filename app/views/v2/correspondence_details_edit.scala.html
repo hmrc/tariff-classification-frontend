@@ -1,0 +1,75 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.AppConfig
+@import controllers.Tab
+@import controllers.v2.routes.LiabilityController
+@import helper._
+@import models.{Case, CorrespondenceApplication}
+@import models.request.AuthenticatedRequest
+@import models.viewmodels.{CaseHeaderViewModel, MyCasesTab}
+@import views.html.components.confirm_or_cancel_buttons
+@import views.html.includes.main
+@import views.html.forms.components._
+@import views.html.partials.error_summary
+
+@this(correspondence_case_heading: views.html.v2.correspondence_case_heading)
+
+@(c: Case, form : Form[Case])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+
+@main(bodyClasses = None, customTitle = Some(messages("case.liability.edit.title")), customPrimaryNavTab = MyCasesTab) {
+
+    @correspondence_case_heading(CaseHeaderViewModel.fromCase(c))
+
+    <h2 id="liability-details-edit" class="heading-large">@messages("Edit case details")</h2>
+
+    @defining(c.application.asCorrespondence) { correspondence: CorrespondenceApplication =>
+        <div class="form-group">
+
+            @helper.form(action = LiabilityController.postLiabilityDetails(c.reference), 'class -> "form" , 'id -> "liability-details-edit-form", 'novalidate -> "novalidate") {
+
+                @CSRF.formField
+
+                @input_text(
+                    field = form("summary"),
+                    label = messages("Summary"),
+                    inputClass = Some("width-one-half"),
+                    disableAutoComplete = true
+                )
+
+                @input_textarea(
+                    field = form("detailedDescription"),
+                    label = messages("Detailed description"),
+                    inputClass = Some("width-one-half")
+                )
+
+                @input_text(
+                    field = form("boardsFileNumber"),
+                    label = messages("case.v2.liability.c592.boards_file_number"),
+                    inputClass = Some("width-one-half"),
+                    disableAutoComplete = true
+                )
+
+                @confirm_or_cancel_buttons(
+                    id = "edit_liability_details",
+                    confirmText = messages("case.v2.liability.c592.details_edit.save_and_continue_button"),
+                    cancelText = messages("case.v2.liability.c592.details_edit.cancel_button"),
+                    cancelHref = controllers.v2.routes.LiabilityController.displayLiability(c.reference).withFragment(Tab.C592_TAB.name)
+                )
+            }
+        </div>
+    }
+}
