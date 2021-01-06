@@ -27,6 +27,7 @@ import play.api.mvc._
 import service._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
+import java.time.Instant
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -151,8 +152,13 @@ class CaseController @Inject() (
         }
 
         def onSuccess: MessageFormData => Future[Result] = validForm => {
+          val messageToLog = Message(
+            name    = request.operator.name.getOrElse(""),
+            date    = Instant.now(),
+            message = validForm.message
+          )
           caseService
-            .addMessage(request.`case`, validForm.message, request.operator)
+            .addMessage(request.`case`, messageToLog, request.operator)
             .map(_ => Redirect(routes.CaseController.get(reference).withFragment(Tab.MESSAGES_TAB.name)))
         }
         MessageForm.form.bindFromRequest.fold(onError, onSuccess)

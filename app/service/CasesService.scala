@@ -406,21 +406,16 @@ class CasesService @Inject() (
       connector.updateCase(c.copy(attachments = c.attachments.filter(_.id != fileId)))
     }
 
-  def addMessage(original: Case, message: String, operator: Operator)(
+  def addMessage(original: Case, message: Message, operator: Operator)(
     implicit hc: HeaderCarrier
   ): Future[Case] = {
-    val messageToSend = Message(
-      name    = operator.name.getOrElse(""),
-      date    = Instant.now(),
-      message = message
-    )
     val applicationToUpdate = original.application.asCorrespondence
-      .copy(messagesLogged = original.application.asCorrespondence.messagesLogged :+ messageToSend)
+      .copy(messagesLogged = original.application.asCorrespondence.messagesLogged :+ message)
     val caseToUpdate = original.copy(application = applicationToUpdate)
     for {
       updated <- connector.updateCase(caseToUpdate)
-    //TODO: Added audit event
-      //_ = auditService.auditAddMessage(original, updated, operator)
+    //TODO: Add audit event
+    //  _ = auditService.auditAddMessage(original, updated, operator)
     } yield updated
   }
 
