@@ -20,6 +20,7 @@ cases.table.type=Type
 cases.table.elapsed-days=Days elapsed
 cases.table.empty=There are no cases in this queue.
 cases.table.move=Move to a queue
+case.menu.messages=Messages
 case.menu.trader=Applicant
 case.menu.application-details=Goods
 case.menu.sample-details=Sample status

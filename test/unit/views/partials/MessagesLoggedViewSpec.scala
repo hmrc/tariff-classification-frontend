@@ -21,6 +21,7 @@ import java.time.{Instant, ZoneOffset, ZonedDateTime}
 import models.forms.MessageForm
 import models.viewmodels.MessagesTabViewModel
 import models.{CaseStatus, _}
+import utils.Cases
 import utils.Cases._
 import views.ViewMatchers._
 import views.ViewSpec
@@ -30,8 +31,8 @@ class MessagesLoggedViewSpec extends ViewSpec {
 
   private val date   = ZonedDateTime.of(2019, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC).toInstant
 
-  private val exampleMessages = List(Message("name", Instant.now(), "message"),
-    Message("name2", Instant.now(), "message2"))
+  private val exampleMessages = List(Message("name", date, "message"),
+    Message("name2", date, "message2"))
 
   private val messagesTab: MessagesTabViewModel = MessagesTabViewModel("reference", exampleMessages)
 
@@ -71,7 +72,10 @@ class MessagesLoggedViewSpec extends ViewSpec {
 
     "Render 'Message'" in {
       // Given
-      val c = aCorrespondenceCase()
+
+      val c = aCorrespondenceCase().copy(
+        application = correspondenceExample.copy(messagesLogged = exampleMessages))
+
 
       val messagesTab = MessagesTabViewModel.fromCase(c)
 
@@ -85,7 +89,7 @@ class MessagesLoggedViewSpec extends ViewSpec {
       doc                                                  should containElementWithID("messages-events-row-0-name")
       doc.getElementById("messages-events-row-0-name") should containText("name")
       doc                                                  should containElementWithID("messages-events-row-0-message")
-      doc.getElementById("messages-events-row-0-message")  should containText("comment")
+      doc.getElementById("messages-events-row-0-message")  should containText("message")
       doc                                                  should containElementWithID("messages-events-row-0-date")
       doc.getElementById("messages-events-row-0-date")     should containText("01 Jan 2019")
     }

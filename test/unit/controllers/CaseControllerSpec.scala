@@ -16,11 +16,11 @@
 
 package controllers
 
-import java.time.Clock
+import java.time.{Clock, Instant}
 
 import controllers.v2.{AtarController, CorrespondenceController, LiabilityController}
-import models.{Case, Event, Operator, Permission}
-import models.forms.ActivityFormData
+import models.{Case, Event, Message, Operator, Permission}
+import models.forms.{ActivityFormData, MessageFormData}
 import models.request.AuthenticatedCaseRequest
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.Mockito._
@@ -381,6 +381,58 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       val fakeReq                = newFakeGETRequestWithCSRF(app)
       val result: Future[Result] = controller(aCase, Set()).removeKeyword(aCase.reference, keyword)(fakeReq)
       status(result)               shouldBe SEE_OTHER
+      redirectLocation(result).get should include("unauthorized")
+    }
+  }
+
+
+  "Case addMessage" should {
+    val aMessage = Message(Cases.operatorWithPermissions.name.get, Instant.now(), "message to be added")
+
+    val aCase = Cases.corrCaseExample.copy(assignee = Some(Cases.operatorWithPermissions))
+    val updatedCase = aCorrespondenceCase().copy(assignee = Some(Cases.operatorWithPermissions),
+      application = correspondenceExample.copy(messagesLogged = List(aMessage)))
+
+    "add a new message when a case message is provided" in {
+
+      when(
+        casesService.addMessage(refEq(aCase), refEq(aMessage), any[Operator])(
+          any[HeaderCarrier]
+        )
+      ) thenReturn Future(updatedCase)
+
+      val fakeReq                = newFakePOSTRequestWithCSRF(app, Map("message" -> "aMessage"))
+      val result: Future[Result] = controller(aCase, Set(Permission.ADD_NOTE)).addMessage(aCase.reference)(fakeReq)
+
+
+      status(result)     shouldBe SEE_OTHER
+      locationOf(result) shouldBe Some(routes.CaseController.get(aCase.reference).withFragment(Tab.MESSAGES_TAB.name).path())
+    }
+
+
+    "not add a new message when a case note is not provided" in {
+      val aMessage   = ""
+      val fakeReq = newFakePOSTRequestWithCSRF(app, Map("message" -> aMessage))
+
+      when(
+        correspondenceController.renderView(any[Form[ActivityFormData]], any[Form[MessageFormData]], any[Form[String]])(
+          any[AuthenticatedCaseRequest[_]]
+        )
+      ) thenReturn Future.successful(Results.Ok("error"))
+
+      val result: Future[Result] = controller(aCase, Set(Permission.ADD_NOTE)).addMessage(aCase.reference)(fakeReq)
+
+      status(result)          shouldBe OK
+      contentAsString(result) should include("error")
+
+      verifyZeroInteractions(casesService)
+    }
+
+    "redirect to unauthorised if the user does not have the right permissions" in {
+      val aMessages                  = "This is a message"
+      val fakeReq                = newFakePOSTRequestWithCSRF(app, Map("message" -> aMessages))
+      val result: Future[Result] = controller(aCase, Set()).addMessage(aCase.reference)(fakeReq)
+      status(result)               shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
     }
   }
