@@ -52,7 +52,7 @@ class GatewayCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
 
     "return 200 and the correct content when no tab has ben specified" in {
       given(casesService.getCasesByQueue(any[Queue], any[Pagination], any[Seq[ApplicationType]])(any[HeaderCarrier])).
-        willReturn(Paged(Seq(Cases.btiNewCase, Cases.aCase())))
+        willReturn(Paged(Seq(Cases.btiNewCase, Cases.aCase(), Cases.corrCaseExample)))
 
       val result = await(controller(Set(Permission.VIEW_QUEUE_CASES))).displayGatewayCases()(fakeRequest)
 

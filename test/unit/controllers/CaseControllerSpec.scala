@@ -18,7 +18,7 @@ package controllers
 
 import java.time.Clock
 
-import controllers.v2.{AtarController, LiabilityController}
+import controllers.v2.{AtarController, CorrespondenceController, LiabilityController}
 import models.{Case, Event, Operator, Permission}
 import models.forms.ActivityFormData
 import models.request.AuthenticatedCaseRequest
@@ -27,7 +27,7 @@ import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import play.api.data.Form
 import play.api.http.Status
-import play.api.mvc.{Results, Result}
+import play.api.mvc.{Result, Results}
 import play.api.test.Helpers._
 import service._
 import uk.gov.hmrc.http.HeaderCarrier
@@ -39,29 +39,35 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
-  private val keywordsService     = mock[KeywordsService]
-  private val eventService        = mock[EventsService]
-  private val operator            = Operator(id = "id")
-  private val event               = mock[Event]
-  private val atarController      = mock[AtarController]
-  private val liabilityController = mock[LiabilityController]
+  private val keywordsService          = mock[KeywordsService]
+  private val eventService             = mock[EventsService]
+  private val operator                 = Operator(id = "id")
+  private val event                    = mock[Event]
+  private val atarController           = mock[AtarController]
+  private val liabilityController      = mock[LiabilityController]
+  private val casesService             = mock[CasesService]
+  private val correspondenceController = mock[CorrespondenceController]
 
   override protected def beforeEach(): Unit =
     reset(
       keywordsService,
       eventService,
+      casesService,
       event,
       atarController,
-      liabilityController
+      liabilityController,
+      correspondenceController
     )
 
   private def controller(c: Case) = new CaseController(
     new SuccessfulRequestActions(playBodyParsers, operator, c = c),
     keywordsService,
     eventService,
+    casesService,
     mcc,
     liabilityController,
     atarController,
+    correspondenceController,
     realAppConfig
   )
 
@@ -69,9 +75,11 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
     new RequestActionsWithPermissions(playBodyParsers, permission, c = c),
     keywordsService,
     eventService,
+    casesService,
     mcc,
     liabilityController,
     atarController,
+    correspondenceController,
     realAppConfig
   )
 
@@ -91,6 +99,14 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
         status(result)     shouldBe Status.SEE_OTHER
         locationOf(result) shouldBe Some(v2.routes.LiabilityController.displayLiability("reference").url)
+      }
+
+      "case is a Correspondence" in {
+        val c      = aCase(withReference("reference"), withCorrespondenceApplication)
+        val result = controller(c).get("reference")(fakeRequest)
+
+        status(result)     shouldBe Status.SEE_OTHER
+        locationOf(result) shouldBe Some(v2.routes.CorrespondenceController.displayCorrespondence("reference").url)
       }
     }
   }
@@ -114,6 +130,18 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
         status(result) shouldBe Status.SEE_OTHER
         locationOf(result) shouldBe Some(
           v2.routes.LiabilityController.displayLiability("reference").withFragment(Tab.SAMPLE_TAB.name).path
+        )
+      }
+      "case is a Correspondence" in {
+        val c      = aCase(withReference("reference"), withCorrespondenceApplication)
+        val result = await(controller(c).sampleDetails("reference")(fakeRequest))
+
+        status(result) shouldBe Status.SEE_OTHER
+        locationOf(result) shouldBe Some(
+          v2.routes.CorrespondenceController
+            .displayCorrespondence("reference")
+            .withFragment(Tab.SAMPLE_TAB.name)
+            .path
         )
       }
     }
@@ -164,6 +192,16 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
           v2.routes.LiabilityController.displayLiability("reference").withFragment(Tab.ACTIVITY_TAB.name).path
         )
       }
+
+      "case is an Correspondence" in {
+        val c      = aCase(withReference("reference"), withCorrespondenceApplication)
+        val result = await(controller(c).activityDetails("reference")(fakeRequest))
+
+        status(result) shouldBe Status.SEE_OTHER
+        locationOf(result) shouldBe Some(
+          v2.routes.CorrespondenceController.displayCorrespondence("reference").withFragment(Tab.ACTIVITY_TAB.name).path
+        )
+      }
     }
   }
 
@@ -210,6 +248,19 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
         status(result) shouldBe Status.SEE_OTHER
         locationOf(result) shouldBe Some(
           v2.routes.LiabilityController.displayLiability("reference").withFragment(Tab.ATTACHMENTS_TAB.name).path
+        )
+      }
+
+      "case is a Correspondence" in {
+        val c      = aCase(withReference("reference"), withCorrespondenceApplication)
+        val result = await(controller(c).attachmentsDetails("reference")(fakeRequest))
+
+        status(result) shouldBe Status.SEE_OTHER
+        locationOf(result) shouldBe Some(
+          v2.routes.CorrespondenceController
+            .displayCorrespondence("reference")
+            .withFragment(Tab.ATTACHMENTS_TAB.name)
+            .path
         )
       }
     }
