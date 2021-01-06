@@ -20,11 +20,12 @@ import config.AppConfig
 import models.forms.ReleaseCaseForm
 import javax.inject.{Inject, Singleton}
 import models.request.AuthenticatedCaseRequest
-import models.{CaseStatus, Permission, Queue}
+import models._
 import play.api.data.Form
 import play.api.mvc._
 import service.{CasesService, QueuesService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.v2.confirmation_case_creation
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -36,6 +37,8 @@ class ReleaseCaseController @Inject() (
   casesService: CasesService,
   queueService: QueuesService,
   mcc: MessagesControllerComponents,
+  val releaseCaseView: views.html.release_case,
+  val confirmation_case_creation: views.html.v2.confirmation_case_creation,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
     with RenderCaseAction {
@@ -71,7 +74,7 @@ class ReleaseCaseController @Inject() (
   ): Future[Result] =
     getCaseAndRenderView(
       caseRef,
-      c => queueService.getAllForCaseType(c.application.`type`).map(views.html.release_case(c, f, _))
+      c => queueService.getAllForCaseType(c.application.`type`).map(releaseCaseView(c, f, _))
     )
 
   def confirmReleaseCase(reference: String): Action[AnyContent] =
@@ -87,11 +90,12 @@ class ReleaseCaseController @Inject() (
           c.queueId
             .map(id =>
               queueService.getOneById(id) flatMap {
-                case Some(queue) => successful(views.html.confirm_release_case(c, queue.name))
+                case Some(queue) => successful(confirmation_case_creation(c, queue.name))
                 case None        => queueNotFound
               }
             )
             .getOrElse(queueNotFound)
       )
     }
+
 }

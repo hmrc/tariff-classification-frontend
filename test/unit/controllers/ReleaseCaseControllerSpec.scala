@@ -37,6 +37,8 @@ class ReleaseCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
   private val queueService = mock[QueuesService]
   private val queue        = mock[Queue]
   private val operator     = Operator(id = "id")
+  private val releaseCaseView = injector.instanceOf[views.html.release_case]
+  private val confirmation_case_creation = injector.instanceOf[views.html.v2.confirmation_case_creation]
 
   private val caseWithStatusNEW  = Cases.btiCaseExample.copy(status = CaseStatus.NEW)
   private val caseWithStatusOPEN = Cases.btiCaseExample.copy(status = CaseStatus.OPEN)
@@ -51,6 +53,8 @@ class ReleaseCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
     casesService,
     queueService,
     mcc,
+    releaseCaseView,
+    confirmation_case_creation,
     realAppConfig
   )
 
@@ -59,6 +63,8 @@ class ReleaseCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
     casesService,
     queueService,
     mcc,
+    releaseCaseView,
+    confirmation_case_creation,
     realAppConfig
   )
 
