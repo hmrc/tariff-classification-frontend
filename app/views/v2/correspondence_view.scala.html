@@ -23,13 +23,15 @@
 @import views.html.includes.main
 @import views.html.partials.{activity_details, messages_logged, attachments_details, correspondence_case_details, correspondence_contact_details}
 @import models.viewmodels.correspondence.CaseDetailsViewModel
-@import views.html.partials.sample.sample_details_correspondence
-@import models.viewmodels.correspondence.{CorrespondenceSampleTabViewModel, ContactDetailsTabViewModel}
+@import models.viewmodels.correspondence.{ContactDetailsTabViewModel}
+@import models.viewmodels.SampleStatusTabViewModel
 
 @this(
         case_heading: views.html.v2.case_heading,
         case_action_buttons_partial: views.html.partials.liabilities.case_action_buttons_partial,
         advanced_search_cases: views.html.partials.liabilities.advanced_search_cases,
+        sample_status: views.html.partials.liabilities.sample.sample_details_liability,
+
 )
 
 @(
@@ -39,7 +41,7 @@
         contactDetailsTab: ContactDetailsTabViewModel,
         messagesTab : MessagesTabViewModel,
         messageForm: Form[MessageFormData],
-        sampleTab: CorrespondenceSampleTabViewModel,
+        sampleTab: SampleStatusTabViewModel,
         attachmentsTab: AttachmentsTabViewModel,
         uploadForm: Form[String],
 
@@ -114,8 +116,10 @@
         </div>
 
         <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="samples_tab">
-        @sample_details_correspondence(sampleTab)
+        @sample_status(sampleTab: SampleStatusTabViewModel)
         </div>
+
+
 
         <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="attachments_tab">
         @attachments_details(attachmentsTab, uploadForm)

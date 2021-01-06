@@ -20,8 +20,8 @@ import java.time.Instant
 import models._
 import models.forms.{ActivityForm, ActivityFormData, KeywordForm, MessageForm, MessageFormData, UploadAttachmentForm}
 import models.viewmodels.atar.AttachmentsTabViewModel
-import models.viewmodels.correspondence.{CaseDetailsViewModel, ContactDetailsTabViewModel, CorrespondenceSampleTabViewModel}
-import models.viewmodels.{ActivityViewModel, CaseViewModel, KeywordsTabViewModel, MessagesTabViewModel}
+import models.viewmodels.correspondence.{CaseDetailsViewModel, ContactDetailsTabViewModel}
+import models.viewmodels.{ActivityViewModel, CaseViewModel, KeywordsTabViewModel, MessagesTabViewModel, SampleStatusTabViewModel}
 import play.api.data.Form
 import utils.Cases
 import utils.Cases._
@@ -31,15 +31,14 @@ import views.html.v2.correspondence_view
 
 class CorrespondenceViewSpec extends ViewSpec {
 
-  private val sampleStatusTabViewModel = CorrespondenceSampleTabViewModel(
-    "1",
-    true,
-    false,
-    Some("officer"),
-    "return",
-    "return",
-    sampleActivity = Paged.empty[Event]
-  )
+  private val sampleStatusTabViewModel = SampleStatusTabViewModel(
+      "caseReference",
+      isSampleBeingSent = false,
+      Some("a person"),
+      None,
+      "location",
+      sampleActivity = Paged.empty[Event]
+    )
 
   private val caseDetailsTab: CaseDetailsViewModel = CaseDetailsViewModel(
     "1",
