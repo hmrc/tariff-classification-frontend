@@ -124,7 +124,7 @@
                 @messages("case.application.previous_ruling_reference")
             </dt>
             <dd class="cya-answer">
-                @reissuedBTIReference
+            @reissuedBTIReference
             </dd>
         </div>
     }
@@ -132,7 +132,7 @@
     @if(goods.relatedBTIReferences.nonEmpty) {
         <div id="app-details-similar-ruling-reference" class="grid-row">
             <dt class="cya-question">
-                @messages("case.application.similar_ruling_references")
+            @messages("case.application.similar_ruling_references")
             </dt>
             <dd class="cya-answer">
                 <span class="pre-wrap">@goods.relatedBTIReferences.mkString("\n")</span>
@@ -140,6 +140,18 @@
         </div>
     }
 }
+
+    @if(goods.otherInformation.isDefined) {
+        <div id="app-details-similar-ruling-reference" class="grid-row">
+            <dt class="cya-question">
+            @messages("case.application.supporting-information")
+            </dt>
+            <dd class="cya-answer">
+                <span class="pre-wrap">@goods.otherInformation</span>
+            </dd>
+        </div>
+    }
+
 </dl>
 
 <div class="mt-3">

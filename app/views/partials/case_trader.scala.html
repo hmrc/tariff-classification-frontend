@@ -14,11 +14,9 @@
  * limitations under the License.
  *@
 
-@import controllers.routes.SuppressCaseController
-@import models.{AgentDetails, Application, BTIApplication, Case, CaseStatus, EORIDetails, Permission, StoredAttachment}
 @import models.request.AuthenticatedRequest
 @import models.viewmodels.atar.ApplicantTabViewModel
-@import views.html.partials.{attachment, contact_details, tab_heading}
+@import views.html.partials.{contact_details, tab_heading}
 
 @(applicant: ApplicantTabViewModel, startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
@@ -61,8 +59,41 @@
 
 @contact_details(applicant, Some(startAtTabIndex+1))
 
+    @applicant.agentDetails.map { agentDetails =>
+        <h3 class="heading-medium" id="agent-details-heading">@messages("case.application.agent.agent-details-heading")</h3>
 
+        <dl class="govuk-check-your-answers cya-questions-short">
 
+            <div id="agent-details-eori" class="grid-row">
+                <dt class="cya-question">
+                @messages("case.application.holder.eori-number")
+                </dt>
+                <dd class="cya-answer">
+                @agentDetails.eoriDetails.eori
+                </dd>
+            </div>
 
+            <div id="agent-details-name" class="grid-row">
+                <dt class="cya-question">
+                @messages("case.application.agent.agent-name")
+                </dt>
+                <dd class="cya-answer">
+                @agentDetails.eoriDetails.businessName
+                </dd>
+            </div>
 
-
+            <div id="agent-details-address" class="grid-row">
+                <dt class="cya-question">
+                @messages("case.application.agent.agent-address")
+                </dt>
+                <dd class="cya-answer">
+                    <span class="pre-wrap">@agentDetails.eoriDetails.businessName</span>
+                    <span class="pre-wrap">@agentDetails.eoriDetails.addressLine1</span> @if(agentDetails.eoriDetails.addressLine1.nonEmpty) {<br>}
+                    <span class="pre-wrap">@agentDetails.eoriDetails.addressLine2</span> @if(agentDetails.eoriDetails.addressLine2.nonEmpty) {<br>}
+                    <span class="pre-wrap">@agentDetails.eoriDetails.addressLine3</span> @if(agentDetails.eoriDetails.addressLine3.nonEmpty) {<br>}
+                    <span class="pre-wrap">@agentDetails.eoriDetails.postcode</span> @if(agentDetails.eoriDetails.postcode.nonEmpty) {<br>}
+                    <span class="pre-wrap">@messages(agentDetails.eoriDetails.country)</span>
+                </dd>
+            </div>
+        </dl>
+    }

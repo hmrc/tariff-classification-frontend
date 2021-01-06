@@ -28,11 +28,12 @@ case class GoodsTabViewModel(
   suggestedCommodityCode: Option[String],
   knownLegalProceedings: Option[String],
   reissuedBTIReference: Option[String],
-  relatedBTIReferences: List[String]
+  relatedBTIReferences: List[String],
+  otherInformation: Option[String]
 )
 
 object GoodsTabViewModel {
-  def fromCase(cse: Case) = {
+  def fromCase(cse: Case): GoodsTabViewModel = {
     val atarApplication = cse.application.asATAR
     GoodsTabViewModel(
       cse.reference,
@@ -45,10 +46,12 @@ object GoodsTabViewModel {
       atarApplication.envisagedCommodityCode,
       atarApplication.knownLegalProceedings,
       atarApplication.reissuedBTIReference,
-      if (atarApplication.relatedBTIReferences.nonEmpty)
+      if (atarApplication.relatedBTIReferences.nonEmpty) {
         atarApplication.relatedBTIReferences
-      else
+      } else {
         atarApplication.relatedBTIReference.toList
+      },
+      atarApplication.otherInformation
     )
   }
 }
