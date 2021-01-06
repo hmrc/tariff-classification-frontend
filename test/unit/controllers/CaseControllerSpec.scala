@@ -18,6 +18,7 @@ package controllers
 
 import java.time.{Clock, Instant}
 
+import connector.BindingTariffClassificationConnector
 import controllers.v2.{AtarController, CorrespondenceController, LiabilityController}
 import models.{Case, Event, Message, Operator, Permission}
 import models.forms.{ActivityFormData, MessageFormData}
@@ -47,6 +48,7 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
   private val liabilityController      = mock[LiabilityController]
   private val casesService             = mock[CasesService]
   private val correspondenceController = mock[CorrespondenceController]
+  private val connector                = mock[BindingTariffClassificationConnector]
 
   override protected def beforeEach(): Unit =
     reset(
@@ -397,16 +399,17 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
       when(
         casesService.addMessage(refEq(aCase), refEq(aMessage), any[Operator])(
-          any[HeaderCarrier]
-        )
-      ) thenReturn Future(updatedCase)
+          any[HeaderCarrier])
+        ) thenReturn Future(updatedCase)
 
-      val fakeReq                = newFakePOSTRequestWithCSRF(app, Map("message" -> "aMessage"))
+      when(connector.updateCase(any[Case])(any[HeaderCarrier])) thenReturn Future.successful(updatedCase)
+
+      val fakeReq                = newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("message" -> "aMessage")
       val result: Future[Result] = controller(aCase, Set(Permission.ADD_NOTE)).addMessage(aCase.reference)(fakeReq)
 
 
       status(result)     shouldBe SEE_OTHER
-      locationOf(result) shouldBe Some(routes.CaseController.get(aCase.reference).withFragment(Tab.MESSAGES_TAB.name).path())
+      locationOf(result) shouldBe Some(routes.CaseController.get(aCase.reference).withFragment(Tab.MESSAGES_TAB.name).path)
     }
 
 
