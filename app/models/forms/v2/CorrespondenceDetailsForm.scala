@@ -30,29 +30,34 @@ object CorrespondenceDetailsForm extends Constraints {
         Case,
         String,
         String,
+        Option[String],
         Option[String]
       ](
         "summary"             -> textNonEmpty("can not be empty"),
         "detailedDescription" -> textNonEmpty("can not be empty"),
-        "boardsFileNumber"    -> optional(text)
+        "boardsFileNumber"    -> optional(text),
+        "relatedBTIReference" -> optional(text)
       )(form2Correspondence(existingCorrespondence))(correspondence2Form)
     ).fillAndValidate(existingCorrespondence)
 
   private def form2Correspondence(existingCase: Case): (
     String,
     String,
-    Option[String]
+    Option[String],
+      Option[String]
   ) => Case = {
     case (
         summary,
         detailedDescription,
-        boardsFileNumber
+        boardsFileNumber,
+        relatedBTIReference
         ) =>
       existingCase.copy(
         caseBoardsFileNumber = boardsFileNumber,
         application = existingCase.application.asCorrespondence.copy(
           summary             = summary,
-          detailedDescription = detailedDescription
+          detailedDescription = detailedDescription,
+          relatedBTIReference = relatedBTIReference
         )
       )
   }
@@ -61,6 +66,7 @@ object CorrespondenceDetailsForm extends Constraints {
     (
       String,
       String,
+      Option[String],
       Option[String]
     )
   ] = {
@@ -70,7 +76,8 @@ object CorrespondenceDetailsForm extends Constraints {
       (
         existingCorrespondence.summary,
         existingCorrespondence.detailedDescription,
-        existingCase.caseBoardsFileNumber
+        existingCase.caseBoardsFileNumber,
+        existingCorrespondence.relatedBTIReference
       )
     )
   }

@@ -63,6 +63,13 @@
                     disableAutoComplete = true
                 )
 
+                @input_text(
+                    field = form("relatedBTIReference"),
+                    label = messages("Similar cases"),
+                    inputClass = Some("width-one-half"),
+                    disableAutoComplete = true
+                )
+
                 @confirm_or_cancel_buttons(
                     id = "edit_liability_details",
                     confirmText = messages("case.v2.liability.c592.details_edit.save_and_continue_button"),
