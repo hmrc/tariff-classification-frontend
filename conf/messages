@@ -860,6 +860,7 @@ case.v2.liability.advanced_search.button=Search cases
 
 case.v2.correspondence.page_title=Correspondence case details
 
+case.v2.correspondence.case-details_title=Edit correspondence case details
 case.v2.correspondence.case-details.tab_title=Case Details
 case.v2.correspondence.case-details.heading=Correspondence case details
 case.v2.correspondence.case-details.summary=Summary
@@ -868,6 +869,7 @@ case.v2.correspondence.case-details.case_created=Case created
 case.v2.correspondence.case-details.boards_file_number=Boards file number
 case.v2.correspondence.case-details.similar_cases=Similar cases
 
+case.v2.correspondence.contact-details_title=Edit contact details
 case.v2.correspondence.contact-details.heading=Contact Details
 case.v2.correspondence.contact-details.tab_title=Contact
 case.v2.correspondence.contact-details.case_source=Case source
@@ -890,6 +892,8 @@ case.v2.correspondence.sample-details.sample-no-activity=No activity to show.
 
 
 case.v2.correspondence.messages-details.heading=Messages
+
+
 
 
 

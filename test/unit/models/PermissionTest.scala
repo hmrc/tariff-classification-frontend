@@ -573,6 +573,19 @@ class PermissionTest extends ModelsBaseSpec {
       permission.appliesTo(caseUnassigned, manager)    shouldBe true
     }
 
+    "contain 'Edit Correspondence'" in {
+      val permission = Permission.EDIT_CORRESPONDENCE
+      val name = "EDIT_CORRESPONDENCE"
+
+      permission.name shouldBe name
+      Permission.from(name) shouldBe Some(permission)
+
+      permission.appliesTo(caseUnassigned, readOnly)               shouldBe false
+      permission.appliesTo(caseUnassigned, teamMember)             shouldBe false
+      permission.appliesTo(caseAssignedTo(teamMember), teamMember) shouldBe true
+      permission.appliesTo(caseUnassigned, manager)                shouldBe true
+    }
+
   }
 
   private def anyOf[T](values: T*): T => Boolean = values.contains

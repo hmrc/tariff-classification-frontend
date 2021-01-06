@@ -24,6 +24,16 @@
 
 @tab_heading("correspondence", messages("case.v2.correspondence.contact-details.heading"))
 
+@if(request.hasPermission(Permission.EDIT_CORRESPONDENCE)) {
+<div class="grid-row  mb-2">
+            <span class="column-one-third">
+                <a id="edit-correspondence-contact-details" href="#">
+                @messages("case.v2.correspondence.contact-details_title")
+                </a>
+            </span>
+</div>
+}
+
 <dl class="govuk-check-your-answers cya-questions-short">
 
     <div id="contact-details-correspondence-starter" class="grid-row">
