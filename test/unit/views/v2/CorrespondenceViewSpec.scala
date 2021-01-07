@@ -182,7 +182,7 @@ class CorrespondenceViewSpec extends ViewSpec {
           Seq.empty
         )
       )
-      doc should containElementWithID("samples_tab")
+      doc should containElementWithID("sample_status_tab")
     }
 
     "render Attachments Details tab" in {

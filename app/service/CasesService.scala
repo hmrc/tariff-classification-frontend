@@ -410,12 +410,11 @@ class CasesService @Inject() (
     implicit hc: HeaderCarrier
   ): Future[Case] = {
     val applicationToUpdate = original.application.asCorrespondence
-      .copy(messagesLogged = original.application.asCorrespondence.messagesLogged :+ message)
+      .copy(messagesLogged = message :: original.application.asCorrespondence.messagesLogged)
     val caseToUpdate = original.copy(application = applicationToUpdate)
     for {
       updated <- connector.updateCase(caseToUpdate)
-    //TODO: Add audit event
-    //  _ = auditService.auditAddMessage(original, updated, operator)
+      _ = auditService.auditAddMessage(updated, operator)
     } yield updated
   }
 

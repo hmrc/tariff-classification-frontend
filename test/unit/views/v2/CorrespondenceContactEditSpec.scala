@@ -26,7 +26,7 @@ class CorrespondenceContactEditSpec extends ViewSpec {
 
   def correspondenceContactEdit: correspondence_contact_edit = injector.instanceOf[correspondence_contact_edit]
 
-  private val sampleCase = Cases.corrCaseExample
+  private val sampleCase = Cases.correspondenceCaseExample
 
   "Correspondence Contact Edit View" should {
 

@@ -1,0 +1,89 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.AppConfig
+@import controllers.routes
+@import models.request.AuthenticatedRequest
+@import models.Permission
+@import models.viewmodels.SampleStatusTabViewModel
+@import views.html.partials.tab_heading
+
+@this(
+sample_status: views.html.partials.liabilities.sample.sample_status,
+sample_status_events_table: views.html.partials.liabilities.sample.sample_status_events_table
+)
+
+@(s: SampleStatusTabViewModel, startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+
+@tab_heading("samples", messages("case.v2.liability.sample_status_tab.tab_title"), Some(messages("case.v2.liability.sample_status_tab.hint")))
+
+<dl class="dl-mb-2">
+
+
+    <div id="liability-sending-samples" class="grid-row">
+        <dt class="column-one-third">
+        @messages("case.liability.provide-samples")
+        </dt>
+        <dd id="liability-sending-samples_answer" class="column-one-third">
+            @if(s.isSampleBeingSent){@messages("answer.yes")} else { @messages("answer.no")}
+        </dd>
+        <dd class="column-one-third">
+            @if(request.hasPermission(Permission.EDIT_SAMPLE)) {
+                <a id="change-sending_sample-status" tabindex="@startAtTabIndex" href="@{routes.SampleController.updateStatus(s.caseReference, Some("correspondence"))}" >@messages("case.sample.request.change")</a>
+            }
+        </dd>
+    </div>
+
+    @if(s.isSampleBeingSent){
+        <div id="who-is-sending-sample" class="grid-row">
+            <dt class="column-one-third">
+                @messages("case.v2.liability.sample_status_tab.who_is_sending_sample_p")
+            </dt>
+
+            <dd id="who-is-sending-sample-value" class="column-one-third">
+                @s.whoIsSendingTheSample.getOrElse("")
+            </dd>
+
+            <dd class="column-one-third">
+                @if(request.hasPermission(Permission.EDIT_SAMPLE)) {
+                <a id="sample-requested-who-change" tabindex="@startAtTabIndex" href="#">@messages("case.sample.request.change")</a>
+                }
+            </dd>
+        </div>
+
+        <div id="liability-returning-samples" class="grid-row">
+            <dt class="column-one-third">
+                @messages("case.v2.liability.sample_status_tab.should_sample_return")
+            </dt>
+            <dd id="sample-requested-return-value" class="column-one-third">
+                @SampleReturn.format(s.shouldSampleBeReturned)
+            </dd>
+            <dd class="column-one-third">
+                @if(request.hasPermission(Permission.EDIT_SAMPLE)) {
+                  <a id="sample-requested-return-change" tabindex="@startAtTabIndex" href="@routes.SampleReturnController.updateStatus(s.caseReference)">@messages("case.sample.request.change")</a>
+                }
+            </dd>
+        </div>
+
+        @sample_status(s, startAtTabIndex)
+
+    }
+
+
+</dl>
+@if(s.sampleActivity.nonEmpty) {
+ @sample_status_events_table(s.sampleActivity,startAtTabIndex+15)
+}

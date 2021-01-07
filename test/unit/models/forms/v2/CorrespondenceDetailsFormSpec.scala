@@ -21,8 +21,8 @@ import utils.Cases
 
 class CorrespondenceDetailsFormSpec extends ModelsBaseSpec {
 
-  private val correspondenceCase = Cases.corrCaseExample
-  private val sampleEmptyCase    = Cases.corrCaseExample.copy(application = Cases.corrExampleWithMissingFields)
+  private val correspondenceCase = Cases.correspondenceCaseExample
+  private val sampleEmptyCase    = Cases.correspondenceCaseExample.copy(application = Cases.corrExampleWithMissingFields)
 
   private val emptyCaseWithEmail = sampleEmptyCase.copy(
     application = Cases.corrExampleWithMissingFields.copy(contact = Contact("name", "valid@email", Some("123"))))
