@@ -111,9 +111,9 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
 
     "redirect to Do you want to release case page POST" in {
       given(casesService.createCase(any[CorrespondenceApplication], any[Operator])(any[HeaderCarrier]))
-      .willReturn(successful(Cases.corrCaseExample))
+      .willReturn(successful(Cases.correspondenceCaseExample))
       given(casesService.getOne(any[String])(any[HeaderCarrier]))
-        .willReturn(successful(Some(Cases.corrCaseExample)))
+        .willReturn(successful(Some(Cases.correspondenceCaseExample)))
       val result = await(
         controller(caseWithStatusOPEN, Set(Permission.CREATE_CASES))
           .post()(
@@ -132,7 +132,7 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
 
     "display Corr details page if form has errors POST" in {
       given(casesService.createCase(any[CorrespondenceApplication], any[Operator])(any[HeaderCarrier]))
-        .willReturn(successful(Cases.corrCaseExample))
+        .willReturn(successful(Cases.correspondenceCaseExample))
       val result = await(
         controller(caseWithStatusOPEN, Set(Permission.CREATE_CASES))
           .post()(
@@ -181,7 +181,7 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
 
     "Release choice should display Do you want to release case page if form has errors POST" in {
       given(casesService.getOne(any[String])(any[HeaderCarrier]))
-        .willReturn(successful(Some(Cases.corrCaseExample)))
+        .willReturn(successful(Some(Cases.correspondenceCaseExample)))
       val result = await(
         controller(caseWithStatusOPEN, Set(Permission.CREATE_CASES, Permission.RELEASE_CASE))
           .postChoice("reference")(
@@ -212,9 +212,9 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
 
     "display Do you want to release case page GET" in {
       given(casesService.createCase(any[CorrespondenceApplication], any[Operator])(any[HeaderCarrier]))
-        .willReturn(successful(Cases.corrCaseExample))
+        .willReturn(successful(Cases.correspondenceCaseExample))
       given(casesService.getOne(any[String])(any[HeaderCarrier]))
-        .willReturn(successful(Some(Cases.corrCaseExample)))
+        .willReturn(successful(Some(Cases.correspondenceCaseExample)))
       val result = await(
         controller(caseWithStatusOPEN, Set(Permission.CREATE_CASES))
           .displayQuestion("reference")(newFakePOSTRequestWithCSRF(app))
@@ -226,9 +226,9 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
 
     "display Confirmation case page for creating a correspondence with no queue GET" in {
       given(casesService.createCase(any[CorrespondenceApplication], any[Operator])(any[HeaderCarrier]))
-        .willReturn(successful(Cases.corrCaseExample.copy(queueId = None)))
+        .willReturn(successful(Cases.correspondenceCaseExample.copy(queueId = None)))
       given(casesService.getOne(any[String])(any[HeaderCarrier]))
-        .willReturn(successful(Some(Cases.corrCaseExample.copy(queueId = None))))
+        .willReturn(successful(Some(Cases.correspondenceCaseExample.copy(queueId = None))))
       val result = await(
         controller(caseWithStatusOPEN, Set(Permission.CREATE_CASES))
           .displayConfirmation("reference")(newFakePOSTRequestWithCSRF(app))
@@ -240,9 +240,9 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
 
     "display Confirmation case page for creating a correspondence with a queue GET" in {
       given(casesService.createCase(any[CorrespondenceApplication], any[Operator])(any[HeaderCarrier]))
-        .willReturn(successful(Cases.corrCaseExample.copy(queueId = Some("queue"))))
+        .willReturn(successful(Cases.correspondenceCaseExample.copy(queueId = Some("queue"))))
       given(casesService.getOne(any[String])(any[HeaderCarrier]))
-        .willReturn(successful(Some(Cases.corrCaseExample.copy(queueId = Some("queue")))))
+        .willReturn(successful(Some(Cases.correspondenceCaseExample.copy(queueId = Some("queue")))))
 
       given(queuesService.getOneById(any[String]))
         .willReturn(successful(Some(Queue("queue", "queue", "queue"))))
@@ -258,9 +258,9 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
 
     "display no results found when a queue is not found GET" in {
       given(casesService.createCase(any[CorrespondenceApplication], any[Operator])(any[HeaderCarrier]))
-        .willReturn(successful(Cases.corrCaseExample.copy(queueId = Some("queue"))))
+        .willReturn(successful(Cases.correspondenceCaseExample.copy(queueId = Some("queue"))))
       given(casesService.getOne(any[String])(any[HeaderCarrier]))
-        .willReturn(successful(Some(Cases.corrCaseExample.copy(queueId = Some("queue")))))
+        .willReturn(successful(Some(Cases.correspondenceCaseExample.copy(queueId = Some("queue")))))
 
       given(queuesService.getOneById(any[String]))
         .willReturn(successful(None))
@@ -276,7 +276,7 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
 
     "display no results found when a case is not found GET" in {
       given(casesService.createCase(any[CorrespondenceApplication], any[Operator])(any[HeaderCarrier]))
-        .willReturn(successful(Cases.corrCaseExample.copy(queueId = Some("queue"))))
+        .willReturn(successful(Cases.correspondenceCaseExample.copy(queueId = Some("queue"))))
       given(casesService.getOne(any[String])(any[HeaderCarrier]))
         .willReturn(successful(None))
 

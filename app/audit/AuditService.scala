@@ -168,6 +168,15 @@ class AuditService @Inject() (auditConnector: DefaultAuditConnector) {
       )
     )
 
+  def auditAddMessage(updatedCase: Case, operator: Operator)(
+    implicit hc: HeaderCarrier
+  ): Unit =
+    sendExplicitAuditEvent(
+      auditEventType = CaseMessage,
+      auditPayload = baseAuditPayload(updatedCase, operator) + (
+        "message"      -> updatedCase.application.asCorrespondence.messagesLogged.reverse.last.message)
+    )
+
   private def statusChangeAuditPayload(oldCase: Case, updatedCase: Case, operator: Operator): Map[String, String] =
     baseAuditPayload(updatedCase, operator) + (
       "newStatus"      -> updatedCase.status.toString,
@@ -220,6 +229,7 @@ object AuditPayloadType {
   val CaseAppealStatusChange = "caseAppealStatusChange"
   val CaseExtendedUseChange  = "caseExtendedUseChange"
   val CaseNote               = "caseNote"
+  val CaseMessage            = "caseMessage"
   val CaseSampleStatusChange = "caseSampleStatusChange"
   val CaseSampleReturnChange = "caseSampleReturnChange"
 

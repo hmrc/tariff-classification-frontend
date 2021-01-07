@@ -29,7 +29,6 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
 import views.html.v2.gateway_cases_view
 
-
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class GatewayCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
@@ -38,7 +37,7 @@ class GatewayCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
 
   private val casesService = mock[CasesService]
 
-  private def controller(permission: Set[Permission]): GatewayCasesController = {
+  private def controller(permission: Set[Permission]): GatewayCasesController =
     new GatewayCasesController(
       new RequestActionsWithPermissions(playBodyParsers, permissions = permission),
       casesService,
@@ -46,19 +45,18 @@ class GatewayCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
       gateway_cases_view,
       realAppConfig
     )
-  }
 
   "GatewayCasesController" should {
 
     "return 200 and the correct content when no tab has ben specified" in {
-      given(casesService.getCasesByQueue(any[Queue], any[Pagination], any[Seq[ApplicationType]])(any[HeaderCarrier])).
-        willReturn(Paged(Seq(Cases.btiNewCase, Cases.aCase(), Cases.corrCaseExample)))
+      given(casesService.getCasesByQueue(any[Queue], any[Pagination], any[Seq[ApplicationType]])(any[HeaderCarrier]))
+        .willReturn(Paged(Seq(Cases.btiNewCase, Cases.aCase(), Cases.correspondenceCaseExample)))
 
       val result = await(controller(Set(Permission.VIEW_QUEUE_CASES))).displayGatewayCases()(fakeRequest)
 
       contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
-      status(result) shouldBe Status.OK
+      charset(result)     shouldBe Some("utf-8")
+      status(result)      shouldBe Status.OK
     }
 
     "return unauthorised with no permissions" in {

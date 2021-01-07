@@ -414,8 +414,7 @@ class CasesService @Inject() (
     val caseToUpdate = original.copy(application = applicationToUpdate)
     for {
       updated <- connector.updateCase(caseToUpdate)
-    //TODO: Add audit event
-    //  _ = auditService.auditAddMessage(original, updated, operator)
+      _ = auditService.auditAddMessage(updated, operator)
     } yield updated
   }
 

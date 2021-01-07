@@ -148,7 +148,7 @@ class OpenCasesViewSpec extends ViewSpec {
         CasesTabViewModel.forApplicationType(
           ApplicationType.CORRESPONDENCE,
           Queues.allCorresMiscQueues,
-          Seq(Cases.corrCaseExample, Cases.corrCaseExample)
+          Seq(Cases.correspondenceCaseExample, Cases.correspondenceCaseExample)
         )
       )
     )
@@ -167,7 +167,7 @@ class OpenCasesViewSpec extends ViewSpec {
         CasesTabViewModel.forApplicationType(
           ApplicationType.CORRESPONDENCE,
           Queues.allCorresMiscQueues,
-          Seq(Cases.corrCaseExample, Cases.corrCaseExample)
+          Seq(Cases.correspondenceCaseExample, Cases.correspondenceCaseExample)
         )
       )
     )
@@ -181,7 +181,7 @@ class OpenCasesViewSpec extends ViewSpec {
         CasesTabViewModel.forApplicationType(
           ApplicationType.CORRESPONDENCE,
           Queues.allCorresMiscQueues,
-          Seq(Cases.corrCaseExample, Cases.corrCaseExample)
+          Seq(Cases.correspondenceCaseExample, Cases.correspondenceCaseExample)
         )
       )
     )
