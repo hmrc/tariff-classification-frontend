@@ -169,7 +169,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
     "get cases in all queues" in {
       val url = buildQueryUrlAllQueues(
-        types      = Seq(ApplicationType.ATAR, ApplicationType.LIABILITY),
+        types      = Seq(ApplicationType.ATAR, ApplicationType.LIABILITY, ApplicationType.CORRESPONDENCE),
         statuses   = "NEW,OPEN,REFERRED,SUSPENDED",
         assigneeId = "none",
         queueIds   = Queues.allQueues.map(_.id),
