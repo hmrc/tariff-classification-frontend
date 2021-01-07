@@ -30,12 +30,12 @@
 
 @(c: Case, form : Form[Case])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("case.liability.edit.title")), customPrimaryNavTab = MyCasesTab) {
+@main(bodyClasses = None, customTitle = Some(messages("case.v2.correspondence.case-contact-edit-title")), customPrimaryNavTab = MyCasesTab) {
 
     @correspondence_case_heading(CaseHeaderViewModel.fromCase(c))
 
-    <h2 id="correspondence-contact-edit" class="heading-large">@messages("Edit details")</h2>
-    <h3 id="contact-details-edit" class="heading-medium">@messages("Contact details")</h3>
+    <h2 id="correspondence-contact-edit" class="heading-large">@messages("case.v2.correspondence.case-contact-edit-heading1")</h2>
+    <h3 id="contact-details-edit" class="heading-medium">@messages("case.v2.correspondence.case-contact-edit-heading2")</h3>
 
     @defining(c.application.asCorrespondence) { correspondence: CorrespondenceApplication =>
         <div class="form-group">
@@ -46,74 +46,74 @@
 
                 @input_text(
                     field = form("correspondenceStarter"),
-                    label = messages("Case source"),
+                    label = messages("case.v2.correspondence.case-details-edit-case-source"),
                     inputClass = Some("width-one-half"),
                     disableAutoComplete = true
                 )
 
                 @input_text(
                     field = form("name"),
-                    label = messages("Contact name"),
+                    label = messages("case.v2.correspondence.case-details-edit-name"),
                     inputClass = Some("width-one-half"),
                     disableAutoComplete = true
                 )
 
                 @input_text(
                     field = form("email"),
-                    label = messages("Contact email"),
+                    label = messages("case.v2.correspondence.case-details-edit-email"),
                     inputClass = Some("width-one-half"),
                     disableAutoComplete = true
                 )
 
                 @input_text(
                     field = form("phone"),
-                    label = messages("Contact telephone"),
+                    label = messages("case.v2.correspondence.case-details-edit-phone"),
                     inputClass = Some("width-one-half"),
                     disableAutoComplete = true
                 )
 
                 @input_text(
                     field = form("fax"),
-                    label = messages("Contact fax"),
+                    label = messages("case.v2.correspondence.case-details-edit-fax"),
                     inputClass = Some("width-one-half"),
                     disableAutoComplete = true
                 )
 
 
-            <h3 id="contact-details-edit" class="heading-medium">@messages("Contact address")</h3>
+            <h3 id="contact-details-edit" class="heading-medium">@messages("case.v2.correspondence.case-contact-edit-heading3")</h3>
 
 
                 @input_text(
                     field = form("buildingAndStreet"),
-                    label = messages("Building and street"),
+                    label = messages("case.v2.correspondence.case-details-edit-building-and-street"),
                     inputClass = Some("width-one-half"),
                     disableAutoComplete = true
                 )
 
                 @input_text(
                     field = form("townOrCity"),
-                    label = messages("Town or city"),
+                    label = messages("case.v2.correspondence.case-details-edit-town-or-city"),
                     inputClass = Some("width-one-half"),
                     disableAutoComplete = true
                 )
 
                 @input_text(
                     field = form("county"),
-                    label = messages("County"),
+                    label = messages("case.v2.correspondence.case-details-edit-county"),
                     inputClass = Some("width-one-half"),
                     disableAutoComplete = true
                 )
 
                 @input_text(
                     field = form("postCode"),
-                    label = messages("Postcode"),
+                    label = messages("case.v2.correspondence.case-details-edit-postCode"),
                     inputClass = Some("width-one-half"),
                     disableAutoComplete = true
                 )
 
                 @input_text(
                     field = form("agentName"),
-                    label = messages("Agent name"),
+                    label = messages("case.v2.correspondence.case-details-edit-agent-name"),
                     inputClass = Some("width-one-half"),
                     disableAutoComplete = true
                 )

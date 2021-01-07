@@ -30,11 +30,11 @@
 
 @(c: Case, form : Form[Case])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("case.liability.edit.title")), customPrimaryNavTab = MyCasesTab) {
+@main(bodyClasses = None, customTitle = Some(messages("case.v2.correspondence.case-details-edit-title")), customPrimaryNavTab = MyCasesTab) {
 
     @correspondence_case_heading(CaseHeaderViewModel.fromCase(c))
 
-    <h2 id="correspondence-details-edit" class="heading-large">@messages("Edit case details")</h2>
+    <h2 id="correspondence-details-edit" class="heading-large">@messages("case.v2.correspondence.case-details-edit-title")</h2>
 
     @defining(c.application.asCorrespondence) { correspondence: CorrespondenceApplication =>
         <div class="form-group">
@@ -45,33 +45,33 @@
 
                 @input_text(
                     field = form("summary"),
-                    label = messages("Summary"),
+                    label = messages("case.v2.correspondence.case-details-edit-summary"),
                     inputClass = Some("width-one-half"),
                     disableAutoComplete = true
                 )
 
                 @input_textarea(
                     field = form("detailedDescription"),
-                    label = messages("Detailed description"),
+                    label = messages("case.v2.correspondence.case-details-edit-description"),
                     inputClass = Some("width-one-half")
                 )
 
                 @input_text(
                     field = form("boardsFileNumber"),
-                    label = messages("case.v2.liability.c592.boards_file_number"),
+                    label = messages("case.v2.correspondence.case-details-edit-boards-file-number"),
                     inputClass = Some("width-one-half"),
                     disableAutoComplete = true
                 )
 
                 @input_text(
                     field = form("relatedBTIReference"),
-                    label = messages("Similar cases"),
+                    label = messages("case.v2.correspondence.case-details-edit-similar-cases"),
                     inputClass = Some("width-one-half"),
                     disableAutoComplete = true
                 )
 
                 @confirm_or_cancel_buttons(
-                    id = "edit_liability_details",
+                    id = "edit_correspondence_details",
                     confirmText = messages("case.v2.liability.c592.details_edit.save_and_continue_button"),
                     cancelText = messages("case.v2.liability.c592.details_edit.cancel_button"),
                     cancelHref = controllers.v2.routes.CorrespondenceController.displayCorrespondence(c.reference)
