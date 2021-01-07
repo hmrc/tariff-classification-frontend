@@ -39,5 +39,16 @@
         @headingPrefix.fold(caseHeader.goodsName)(messages("case.title", _, caseHeader.goodsName))
     </h1>
 
+    @if(caseHeader.caseType == ApplicationType.CORRESPONDENCE) {
+        <div id="contact-section" class="mb-1">
+            <div class="bold">
+                Case source - @caseHeader.businessName
+            </div>
+            <div class="bold">
+                @caseHeader.contact.email
+            </div>
+        </div>
+    }
+
     @caseStatus(caseHeader.caseStatus)
 </div>

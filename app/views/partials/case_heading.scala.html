@@ -36,10 +36,10 @@
     @if(c.application.isCorrespondence) {
         <div id="contact-section" class="mb-1">
             <div class="bold">
-                Case source - @c.application.asCorrespondence.correspondenceStarter
+                Case source - @c.application.caseSource
             </div>
             <div class="bold">
-                @c.application.asCorrespondence.contact.email
+                @c.application.contact.email
             </div>
         </div>
     }

@@ -16,6 +16,37 @@
 
 package views.forms.components
 
+import models.ApplicationType
+import models.ApplicationType.{ATAR, CORRESPONDENCE, LIABILITY, MISCELLANEOUS}
 import play.twirl.api.Html
 
-case class RadioOption(value: String, label: String, dataTarget: Option[String] = None, customHtml: Option[Html] = None)
+case class RadioOption(
+  value: String,
+  label: String,
+  dataTarget: Option[String]             = None,
+  customHtml: Option[Html]               = None,
+  applicationTypes: Set[ApplicationType] = ApplicationType.values
+) {
+
+  def validFor(applicationType: ApplicationType): Boolean =
+    applicationTypes.contains(applicationType)
+}
+//object RadioOption {
+//
+//  val applicant  = RadioOption("Applicant (the main contact for this case)", "", None, None, Set(ATAR, LIABILITY))
+//  val labAnalyst = RadioOption("Laboratory analyst", "", None, None, ApplicationType.values)
+//  val dtu        = RadioOption("DTU", "", None, None, Set(CORRESPONDENCE, MISCELLANEOUS))
+//  val ib         = RadioOption("IB", "", None, None, Set(CORRESPONDENCE, MISCELLANEOUS))
+//  val maff       = RadioOption("MAFF", "", None, None, Set(CORRESPONDENCE, MISCELLANEOUS))
+//  val ogd        = RadioOption("OGD", "", None, None, Set(CORRESPONDENCE, MISCELLANEOUS))
+//  val otherCe    = RadioOption("Other C&E", "", None, None, Set(CORRESPONDENCE, MISCELLANEOUS))
+//  val trader     = RadioOption("Trader", "", None, None, Set(CORRESPONDENCE, MISCELLANEOUS))
+//  val other      = RadioOption("Other", "", None, None, ApplicationType.values)
+//
+//  private val changeCaseStatusReferredValues: Seq[RadioOption] =
+//    Seq(applicant, dtu, ib, labAnalyst, maff, ogd, otherCe, trader, other)
+//
+//  def changeCaseStatusReferredOptionsFor(applicationType: ApplicationType): Seq[RadioOption] =
+//    changeCaseStatusReferredValues.filter(_.validFor(applicationType))
+//
+//}

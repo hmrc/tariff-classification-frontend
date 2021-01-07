@@ -50,7 +50,7 @@ class CompleteCaseController @Inject() (
             case ApplicationType.ATAR =>
               successful(Ok(views.html.complete_case(c)))
 
-            case ApplicationType.LIABILITY =>
+            case ApplicationType.LIABILITY | ApplicationType.CORRESPONDENCE | ApplicationType.MISCELLANEOUS =>
               casesService
                 .completeCase(c, request.operator)
                 .map(c => Redirect(routes.CompleteCaseController.confirmCompleteCase(c.reference)))
@@ -83,6 +83,8 @@ class CompleteCaseController @Inject() (
     case ApplicationType.LIABILITY =>
       LiabilityDetailsForm.liabilityDetailsCompleteForm(c, appConfig).errors.isEmpty&& decisionForm
         .liabilityCompleteForm(c.decision.getOrElse(Decision())).errors.isEmpty
+    case _ =>
+      true
   }
 
 }

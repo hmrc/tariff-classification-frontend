@@ -17,36 +17,30 @@
 @import config.AppConfig
 @import models.request.AuthenticatedRequest
 @import controllers.routes
-@import models.{Case, CaseReferral, ReferralReason}
+@import models.{Case, CaseReferral}
 @import models.viewmodels.MyCasesTab
 @import views.html.includes.main
 @import views.html.partials.{case_heading}
 @import views.html.components.{confirm_or_cancel_buttons}
 @import views.html.forms.components.{input_textarea, input_radiogroup, input_checkbox_group, input_text}
 @import views.html.partials.statuses.status_change_upload
-@import views.forms.components.{CheckOption, RadioOption}
+@import views.forms.components.RadioOption
 @import views.html.partials.{error_summary, back_link}
+
+@import models.ApplicationType._
 
 @(c: Case, form: Form[CaseReferral])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@inputTextContent() = {
-        @input_text(label = "Give details of who you are referring this case to", field = form("referManually"), inputClass = Some("w-50"),
+@inputTextContent(labelText: String) = {
+    @input_text(
+        label = labelText,
+        field = form("referManually"),
+        inputClass = Some("w-50"),
         customGroupClasses = Some("pl-15"))
 }
 
 @isChecked(f1: Option[String], f2: Option[String], matchText: String) = @{
     matchText == f1.getOrElse("") || matchText == f2.getOrElse("")
-}
-
-@inputCheckboxGroupContent(sampleChecked: Boolean, infoChecked: Boolean) = {
-    @input_checkbox_group(field = form("reasons"),
-        legend = Some("Why are you referring this case?"),
-        options = Seq(
-            CheckOption(label = "To request a sample", value = ReferralReason.REQUEST_SAMPLE.toString, checked = sampleChecked),
-            CheckOption(label = "To request more information", value =  ReferralReason.REQUEST_MORE_INFO.toString, infoChecked)
-        ),
-        customGroupId = Some("reasons")
-    )
 }
 
 @main(bodyClasses = None, customTitle = Some(messages("page.title.refer.case")),
@@ -60,7 +54,9 @@
 
     <div class="grid-row">
         <div class="column-full">
-            <h2 class="heading-large mt-0">@messages("change_case_status.to.referred")</h2>
+            @if(c.application.isBTI || c.application.isLiabilityOrder) {
+                <h2 class="heading-large mt-0">@messages("change_case_status.to.referred")</h2>
+            }
 
             @helper.form(action = routes.ReferCaseController.postReferCase(c.reference), 'id -> "refer_case", 'enctype -> "multipart/form-data", 'novalidate -> "novalidate") {
                 @helper.CSRF.formField
@@ -70,22 +66,79 @@
                     label = Some("Who are you referring this case to?"),
                     labelClass = Some ("heading-medium mt-1"),
                     options = Seq(
-                        RadioOption("Applicant","Applicant (the main contact for this case)",Some("reason-detail"),
-                            Some(inputCheckboxGroupContent(isChecked(form("reasons[0]").value,form("reasons[1]").value, ReferralReason.REQUEST_SAMPLE.toString),
-                                isChecked(form("reasons[0]").value,form("reasons[1]").value, ReferralReason.REQUEST_MORE_INFO.toString)))),
-                        RadioOption("Laboratory analyst","Laboratory analyst", None, None),
-                        RadioOption("Other", "Other", Some("other-detail"),Some(inputTextContent()))
-                    ),
+                      // ATARs and LIABILITY
+                        RadioOption(
+                            "Applicant",
+                            "Applicant (the main contact for this case)",
+                            Some("reason-detail"),
+                            Some(refer_reason_checkbox(form)),
+                            Set(ATAR, LIABILITY)),
+                        RadioOption(
+                            "Laboratory analyst",
+                            "Laboratory analyst",
+                            None,
+                            None,
+                            ApplicationType.values),
+                        RadioOption(
+                            "Other",
+                            "Other",
+                            Some("other-detail"),
+                            Some(inputTextContent(messages("change_case_status.referred.refer_details"))),
+                            Set(ATAR, LIABILITY)),
+                      // CORRESPONDENCE and MISC
+                        RadioOption(
+                            "DTU",
+                            "DTU",
+                            None,
+                            None,
+                            Set(CORRESPONDENCE, MISCELLANEOUS)),
+                        RadioOption(
+                            "IB",
+                            "IB",
+                            None,
+                            None,
+                            Set(CORRESPONDENCE, MISCELLANEOUS)),
+                        RadioOption(
+                            "MAFF",
+                            "MAFF",
+                            None,
+                            None,
+                            Set(CORRESPONDENCE, MISCELLANEOUS)),
+                        RadioOption(
+                            "OGD",
+                            "OGD",
+                            None,
+                            None,
+                            Set(CORRESPONDENCE, MISCELLANEOUS)),
+                        RadioOption(
+                            "Other C&E",
+                            "Other C&E",
+                            None,
+                            None,
+                            Set(CORRESPONDENCE, MISCELLANEOUS)),
+                        RadioOption(
+                            "Trader",
+                            "Trader",
+                            None,
+                            None,
+                            Set(CORRESPONDENCE, MISCELLANEOUS)),
+                        RadioOption(
+                            "Other",
+                            "Other",
+                            Some("other-detail"),
+                            Some(inputTextContent(messages("change_case_status.referred.other.contact"))),
+                            Set(CORRESPONDENCE, MISCELLANEOUS))
+                    ).filter(_.validFor(c.application.`type`)),
                     id = "referred_to-group",
                     customGroupId = Some("referredTo")
                 )
 
-                @input_textarea(
-                    field = form("note"),
-                    label = "Add a note",
-                    labelClass = Some("heading-medium"),
-                    hint = Some("Explain why you are making this referral. If this referral is to a 'laboratory analyst' or 'other', give contact details. Keep the note clear and concise.")
-                )
+                  @input_textarea(
+                      field = form("note"),
+                      label = messages("change_case_status.referred.note.label"),
+                      labelClass = Some("heading-medium"),
+                      hint = Some(messages("change_case_status.referred.note.hint"))
+                  )
 
                 @status_change_upload(form("email"), "referring")
 

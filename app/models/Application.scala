@@ -61,6 +61,12 @@ sealed trait Application {
       case _                         => None
     }
 
+  def caseSource: Option[String] =
+    `type` match {
+      case ApplicationType.CORRESPONDENCE => asCorrespondence.correspondenceStarter
+      case _                              => None
+    }
+
   def goodsName: String =
     `type` match {
       case ApplicationType.ATAR           => asATAR.goodName
