@@ -44,7 +44,8 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
   lazy val fileService: FileStoreService            = mock[FileStoreService]
   lazy val operator                                 = Operator(id = "id")
   lazy val liabilityController: LiabilityController = mock[LiabilityController]
-  lazy val atarController: AtarController = mock[AtarController]
+  lazy val atarController: AtarController = mock[AtarController],
+  lazy val correspondenceController : CorrespondenceController = mock[CorrespondenceController]
   lazy val attachments_details: attachments_details = mock[attachments_details]
   lazy val remove_attachment: remove_attachment     = mock[remove_attachment]
   private lazy val invalidFileTypes: Seq[String]    = Seq("test", "javascript/none", "so/so")
@@ -56,7 +57,8 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
       fileService         = fileService,
       mcc                 = mcc,
       liabilityController = liabilityController,
-      atarController = atarController,
+      atarController      = atarController,
+      correspondenceController = correspondenceController,
       remove_attachment   = remove_attachment,
       appConfig           = realAppConfig,
       mat                 = mat
@@ -70,6 +72,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
       mcc                 = mcc,
       liabilityController = liabilityController,
       atarController = atarController,
+      correspondenceController = correspondenceController,
       remove_attachment   = remove_attachment,
       appConfig           = realAppConfig,
       mat                 = mat

@@ -43,6 +43,7 @@ class AttachmentsController @Inject() (
   mcc: MessagesControllerComponents,
   liabilityController: LiabilityController,
   atarController: AtarController,
+  correspondenceController : CorrespondenceController,
   remove_attachment: views.html.v2.remove_attachment,
   implicit val appConfig: AppConfig,
   implicit val mat: Materializer
@@ -155,6 +156,8 @@ class AttachmentsController @Inject() (
         atarController.renderView(uploadForm = formWithErrors)
       case ApplicationType.LIABILITY =>
         liabilityController.renderView(uploadAttachmentForm = formWithErrors)
+      case ApplicationType.CORRESPONDENCE =>
+        correspondenceController.renderView(uploadForm = formWithErrors)
     }
   }
 
