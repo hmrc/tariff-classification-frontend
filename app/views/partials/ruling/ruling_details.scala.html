@@ -165,7 +165,11 @@
 
 <h3 class="heading-medium">@messages("case.decision.attachments.ruling")</h3>
 
-@attachments_list("attachments", files.filter(_.public),startAtTabIndex = Some(startAtTabIndex+2))
+@attachments_list(
+    "attachments",
+    files.filter(_.shouldPublishToRulings),
+    startAtTabIndex = Some(startAtTabIndex+2)
+)
 
 <div class="mt-3" id="ruling-actions">
     @if(request.hasPermission(Permission.CANCEL_CASE)) {
