@@ -39,13 +39,13 @@ object CorrespondenceContactForm extends Constraints {
         Option[String],
         Option[String]
       ](
-        "correspondenceStarter" -> optional(text),
-        "name"                  -> textNonEmpty("can not be empty"),
-        "email"                 -> textNonEmpty("can not be empty"),
+        "correspondenceStarter" -> optional(text).verifying("Please enter a case source", _.isDefined),
+        "name"                  -> text,
+        "email"                 -> text,
         "phone"                 -> optional(text),
         "fax"                   -> optional(text),
-        "buildingAndStreet"     -> textNonEmpty("can not be empty"),
-        "townOrCity"            -> textNonEmpty("can not be empty"),
+        "buildingAndStreet"     -> text,
+        "townOrCity"            -> text,
         "county"                -> optional(text),
         "postCode"              -> optional(text),
         "agentName"             -> optional(text)

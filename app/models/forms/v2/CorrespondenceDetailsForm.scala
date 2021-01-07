@@ -17,6 +17,7 @@
 package models.forms.v2
 
 import models._
+import models.forms.FormConstraints.{emptyOr, entryNumberIsNumbersAndLettersOnly}
 import models.forms.mappings.Constraints
 import models.forms.mappings.FormMappings._
 import play.api.data.Form
@@ -33,8 +34,8 @@ object CorrespondenceDetailsForm extends Constraints {
         Option[String],
         Option[String]
       ](
-        "summary"             -> textNonEmpty("can not be empty"),
-        "detailedDescription" -> textNonEmpty("can not be empty"),
+        "summary"             -> textNonEmpty("Please enter a short description"),
+        "detailedDescription" -> text,
         "boardsFileNumber"    -> optional(text),
         "relatedBTIReference" -> optional(text)
       )(form2Correspondence(existingCorrespondence))(correspondence2Form)

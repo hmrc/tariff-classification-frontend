@@ -16,7 +16,7 @@
 
 @import config.AppConfig
 @import controllers.Tab
-@import controllers.v2.routes.LiabilityController
+@import controllers.routes.CreateCorrespondenceController
 @import helper._
 @import models.{Case, CorrespondenceApplication}
 @import models.request.AuthenticatedRequest
@@ -40,7 +40,7 @@
     @defining(c.application.asCorrespondence) { correspondence: CorrespondenceApplication =>
         <div class="form-group">
 
-            @helper.form(action = LiabilityController.postLiabilityDetails(c.reference), 'class -> "form" , 'id -> "liability-details-edit-form", 'novalidate -> "novalidate") {
+            @helper.form(action = CreateCorrespondenceController.postCorrespondenceContact(c.reference), 'class -> "form" , 'id -> "contact-details-edit-form", 'novalidate -> "novalidate") {
 
                 @CSRF.formField
 
@@ -122,7 +122,7 @@
                     id = "edit_liability_details",
                     confirmText = messages("case.v2.liability.c592.details_edit.save_and_continue_button"),
                     cancelText = messages("case.v2.liability.c592.details_edit.cancel_button"),
-                    cancelHref = controllers.v2.routes.LiabilityController.displayLiability(c.reference).withFragment(Tab.C592_TAB.name)
+                    cancelHref = controllers.v2.routes.CorrespondenceController.displayCorrespondence(c.reference)
                 )
             }
         </div>

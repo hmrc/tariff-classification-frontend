@@ -36,7 +36,7 @@ import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
 @Singleton
-class CreateCorrespondenceController @Inject() (
+class CreateCorrespondenceController @Inject()(
   verify: RequestActions,
   casesService: CasesService,
   queueService: QueuesService,
@@ -97,30 +97,29 @@ class CreateCorrespondenceController @Inject() (
           (choice: String) => {
             choice match {
               case "Yes" => successful(Redirect(routes.ReleaseCaseController.releaseCase(reference)))
-              case _  => successful(Redirect(routes.CreateCorrespondenceController.displayConfirmation(reference)))
+              case _     => successful(Redirect(routes.CreateCorrespondenceController.displayConfirmation(reference)))
             }
           }
         )
     }
 
   def displayConfirmation(reference: String) =
-    (verify.authenticated andThen verify.mustHave(Permission.CREATE_CASES)).async {
-      implicit request =>
-        {
-          casesService.getOne(reference).flatMap {
-            case Some(c: Case) => {
-              c.queueId
-                .map(id =>
-                  queueService.getOneById(id) flatMap {
-                    case Some(queue) => Future.successful(Ok(confirmation_case_creation(c, queue.name)))
-                    case None        => Future.successful(Ok(views.html.resource_not_found(s"Case Queue")))
-                })
-                .getOrElse(Future.successful(Ok(confirmation_case_creation(c, ""))))
+    (verify.authenticated andThen verify.mustHave(Permission.CREATE_CASES)).async { implicit request =>
+      {
+        casesService.getOne(reference).flatMap {
+          case Some(c: Case) => {
+            c.queueId
+              .map(id =>
+                queueService.getOneById(id) flatMap {
+                  case Some(queue) => Future.successful(Ok(confirmation_case_creation(c, queue.name)))
+                  case None        => Future.successful(Ok(views.html.resource_not_found(s"Case Queue")))
+              })
+              .getOrElse(Future.successful(Ok(confirmation_case_creation(c, ""))))
 
-            }
-            case _ => successful(Ok(views.html.case_not_found(reference)))
           }
+          case _ => successful(Ok(views.html.case_not_found(reference)))
         }
+      }
     }
 
   def editCorrespondence(reference: String): Action[AnyContent] =
@@ -133,6 +132,21 @@ class CreateCorrespondenceController @Inject() (
       )
     }
 
+  def postCorrespondenceDetails(reference: String): Action[AnyContent] =
+    (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
+      CorrespondenceDetailsForm
+        .correspondenceDetailsForm(request.`case`)
+        .discardingErrors
+        .bindFromRequest
+        .fold(
+          errorForm => successful(Ok(correspondence_details_edit(request.`case`, errorForm))),
+          updatedCase =>
+            casesService
+              .updateCase(updatedCase)
+              .map(_ => Redirect(v2.routes.CorrespondenceController.displayCorrespondence(reference)))
+        )
+    }
+
   def editCorrespondenceContact(reference: String): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
       successful(
@@ -142,4 +156,20 @@ class CreateCorrespondenceController @Inject() (
             CorrespondenceContactForm.correspondenceContactForm(request.`case`)))
       )
     }
-  }
+
+  def postCorrespondenceContact(reference: String): Action[AnyContent] =
+    (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
+      CorrespondenceContactForm
+        .correspondenceContactForm(request.`case`)
+        .discardingErrors
+        .bindFromRequest
+        .fold(
+          errorForm => successful(Ok(correspondence_contact_edit(request.`case`, errorForm))),
+          updatedCase =>
+            casesService
+              .updateCase(updatedCase)
+              .map(_ => Redirect(v2.routes.CorrespondenceController.displayCorrespondence(reference)))
+        )
+    }
+
+}

@@ -27,7 +27,7 @@
 @if(request.hasPermission(Permission.EDIT_CORRESPONDENCE)) {
 <div class="grid-row  mb-2">
             <span class="column-one-third">
-                <a id="edit-correspondence-details" href="#">
+                <a id="edit-correspondence-details" href="@controllers.routes.CreateCorrespondenceController.editCorrespondence(caseDetails.caseReference)">
                 @messages("case.v2.correspondence.case-details_title")
                 </a>
             </span>
