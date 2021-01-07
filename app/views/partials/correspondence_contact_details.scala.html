@@ -25,9 +25,9 @@
 @tab_heading("correspondence", messages("case.v2.correspondence.contact-details.heading"))
 
 @if(request.hasPermission(Permission.EDIT_CORRESPONDENCE)) {
-<div class="grid-row  mb-2">
+<div id="edit-contact-details" class="grid-row mb-2">
             <span class="column-one-third">
-                <a id="edit-correspondence-contact-details" href="#">
+                <a id="edit-contact-details-link" href="#">
                 @messages("case.v2.correspondence.contact-details_title")
                 </a>
             </span>
