@@ -44,7 +44,7 @@
             @CSRF.formField
             @input_textarea(
                 field = messageForm("message"),
-                label = "Add message to log",
+                label = "",
                 hint = Some("Copy and paste emails into this box, including the sender and recipient."),
                 tabIndex = Some(startAtTabIndex + 10),
                 customErrorMessage = Some(messages("error.empty.message"))
@@ -69,7 +69,9 @@
         </tr>
     </thead>
     <tbody>
-    @for((message: Message, index: Int) <- messagesLogged.messages.zipWithIndex.reverse) {
+    @for((message: Message, index: Int) <- messagesLogged.messages.sortWith{
+            case (msg1, msg2) => msg1.date.isAfter(msg2.date)
+        }.zipWithIndex) {
         <tr id="messages-events-row-@{index}">
             <td id="messages-events-row-@{index}-name" class="messages-cell">@message.name</td>
 

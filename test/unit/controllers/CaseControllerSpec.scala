@@ -400,12 +400,10 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
     "add a new message when a case message is provided" in {
 
       when(
-        casesService.addMessage(refEq(aCase), refEq(aMessage), any[Operator])(any[HeaderCarrier])
+        casesService.addMessage(refEq(aCase), any[Message], any[Operator])(any[HeaderCarrier])
       ) thenReturn Future(updatedCase)
 
-      when(connector.updateCase(any[Case])(any[HeaderCarrier])) thenReturn Future.successful(updatedCase)
-
-      val fakeReq                = newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("message" -> "aMessage")
+      val fakeReq                = newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("message" -> aMessage.message)
       val result: Future[Result] = controller(aCase, Set(Permission.ADD_NOTE)).addMessage(aCase.reference)(fakeReq)
 
       status(result) shouldBe SEE_OTHER

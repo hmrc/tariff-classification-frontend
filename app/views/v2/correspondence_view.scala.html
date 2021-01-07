@@ -23,15 +23,14 @@
 @import views.html.includes.main
 @import views.html.partials.{activity_details, messages_logged, attachments_details, correspondence_case_details, correspondence_contact_details}
 @import models.viewmodels.correspondence.CaseDetailsViewModel
-@import models.viewmodels.correspondence.{ContactDetailsTabViewModel}
+@import models.viewmodels.correspondence.ContactDetailsTabViewModel
 @import models.viewmodels.SampleStatusTabViewModel
 
 @this(
         case_heading: views.html.v2.case_heading,
         case_action_buttons_partial: views.html.partials.liabilities.case_action_buttons_partial,
         advanced_search_cases: views.html.partials.liabilities.advanced_search_cases,
-        sample_status: views.html.partials.liabilities.sample.sample_details_liability,
-
+        sample_status: views.html.partials.sample.sample_details_correspondence
 )
 
 @(
@@ -85,7 +84,7 @@
             </li>
 
             <li class="govuk-tabs__list-item">
-                <a class="govuk-tabs__tab" href="#samples_tab">
+                <a class="govuk-tabs__tab" href="#sample_status_tab">
                 @messages("case.v2.correspondence.samples.tab_title")
                 </a>
             </li>
@@ -115,8 +114,8 @@
             @messages_logged(messagesTab, messageForm)
         </div>
 
-        <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="samples_tab">
-        @sample_status(sampleTab: SampleStatusTabViewModel)
+        <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="sample_status_tab">
+            @sample_status(sampleTab: SampleStatusTabViewModel)
         </div>
 
 

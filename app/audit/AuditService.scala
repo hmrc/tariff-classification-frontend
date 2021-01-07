@@ -174,7 +174,7 @@ class AuditService @Inject() (auditConnector: DefaultAuditConnector) {
     sendExplicitAuditEvent(
       auditEventType = CaseMessage,
       auditPayload = baseAuditPayload(updatedCase, operator) + (
-        "message"      -> updatedCase.application.asCorrespondence.messagesLogged.reverse.last.message)
+        "message"      -> updatedCase.application.asCorrespondence.messagesLogged.head.message)
     )
 
   private def statusChangeAuditPayload(oldCase: Case, updatedCase: Case, operator: Operator): Map[String, String] =
