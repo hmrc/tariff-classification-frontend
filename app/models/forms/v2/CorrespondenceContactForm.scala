@@ -17,8 +17,8 @@
 package models.forms.v2
 
 import models._
+import models.forms.FormConstraints.emptyOr
 import models.forms.mappings.Constraints
-import models.forms.mappings.FormMappings._
 import play.api.data.Form
 import play.api.data.Forms._
 
@@ -41,7 +41,7 @@ object CorrespondenceContactForm extends Constraints {
       ](
         "correspondenceStarter" -> optional(text).verifying("Please enter a case source", _.isDefined),
         "name"                  -> text,
-        "email"                 -> text,
+        "email"                 -> text.verifying(emptyOr(validEmail("case.liability.error.trader.email")): _*),
         "phone"                 -> optional(text),
         "fax"                   -> optional(text),
         "buildingAndStreet"     -> text,

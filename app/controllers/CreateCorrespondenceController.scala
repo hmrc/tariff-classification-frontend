@@ -123,7 +123,8 @@ class CreateCorrespondenceController @Inject()(
     }
 
   def editCorrespondence(reference: String): Action[AnyContent] =
-    (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
+    (verify.authenticated andThen verify.casePermissions(reference) andThen
+      verify.mustHave(Permission.EDIT_CORRESPONDENCE)).async { implicit request =>
       successful(
         Ok(
           correspondence_details_edit(
@@ -133,7 +134,8 @@ class CreateCorrespondenceController @Inject()(
     }
 
   def postCorrespondenceDetails(reference: String): Action[AnyContent] =
-    (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
+    (verify.authenticated andThen verify.casePermissions(reference) andThen
+      verify.mustHave(Permission.EDIT_CORRESPONDENCE)).async { implicit request =>
       CorrespondenceDetailsForm
         .correspondenceDetailsForm(request.`case`)
         .discardingErrors
@@ -148,7 +150,8 @@ class CreateCorrespondenceController @Inject()(
     }
 
   def editCorrespondenceContact(reference: String): Action[AnyContent] =
-    (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
+    (verify.authenticated andThen verify.casePermissions(reference) andThen
+      verify.mustHave(Permission.EDIT_CORRESPONDENCE)).async { implicit request =>
       successful(
         Ok(
           correspondence_contact_edit(
@@ -158,7 +161,8 @@ class CreateCorrespondenceController @Inject()(
     }
 
   def postCorrespondenceContact(reference: String): Action[AnyContent] =
-    (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
+    (verify.authenticated andThen verify.casePermissions(reference) andThen
+      verify.mustHave(Permission.EDIT_CORRESPONDENCE)).async { implicit request =>
       CorrespondenceContactForm
         .correspondenceContactForm(request.`case`)
         .discardingErrors

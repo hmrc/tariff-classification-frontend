@@ -746,6 +746,18 @@ object Cases {
     sampleToBeReturned = false
   )
 
+  val corrExampleWithMissingFields: CorrespondenceApplication = CorrespondenceApplication(
+    None,
+    None,
+    Address("s", "s", None, None),
+    Contact("name", "email"),
+    None,
+    "",
+    "Personal Computer",
+    sampleToBeProvided = false,
+    sampleToBeReturned = false
+  )
+
   val miscExample: MiscApplication = MiscApplication(
     Contact("name", "email"),
     "name",
