@@ -122,7 +122,7 @@
                     id = "edit_liability_details",
                     confirmText = messages("case.v2.liability.c592.details_edit.save_and_continue_button"),
                     cancelText = messages("case.v2.liability.c592.details_edit.cancel_button"),
-                    cancelHref = controllers.v2.routes.CorrespondenceController.displayCorrespondence(c.reference)
+                    cancelHref = controllers.v2.routes.CorrespondenceController.displayCorrespondence(c.reference).withFragment(Tab.CONTACT_TAB.name)
                 )
             }
         </div>

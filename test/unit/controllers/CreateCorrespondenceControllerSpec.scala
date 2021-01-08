@@ -407,7 +407,7 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
         status(result) shouldBe SEE_OTHER
 
         locationOf(result) shouldBe Some(
-          "/manage-tariff-classifications/cases/v2/" + "reference" + "/correspondence"
+          "/manage-tariff-classifications/cases/v2/" + "reference" + "/correspondence#contact_details_tab"
         )
       }
 

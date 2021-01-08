@@ -172,7 +172,7 @@ class CreateCorrespondenceController @Inject()(
           updatedCase =>
             casesService
               .updateCase(updatedCase)
-              .map(_ => Redirect(v2.routes.CorrespondenceController.displayCorrespondence(reference)))
+              .map(_ => Redirect(v2.routes.CorrespondenceController.displayCorrespondence(reference).withFragment(Tab.CONTACT_TAB.name)))
         )
     }
 
