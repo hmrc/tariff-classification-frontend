@@ -34,7 +34,7 @@ object CorrespondenceDetailsForm extends Constraints {
         Option[String],
         Option[String]
       ](
-        "summary"             -> textNonEmpty("Please enter a short description"),
+        "summary"             -> textNonEmpty("Enter a summary"),
         "detailedDescription" -> text,
         "boardsFileNumber"    -> optional(text),
         "relatedBTIReference" -> optional(text)

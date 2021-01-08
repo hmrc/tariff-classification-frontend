@@ -76,7 +76,7 @@ class CorrespondenceContactFormSpec extends ModelsBaseSpec {
               form.hasErrors         shouldBe true
               form.errors.size       shouldBe 1
               form.errors.map(_.key) shouldBe Seq("correspondenceStarter")
-              form.error("correspondenceStarter").map(_.message shouldBe "Please enter a case source")
+              form.error("correspondenceStarter").map(_.message shouldBe "Enter a case source")
 
             },
             _ => "form should not succeed"

@@ -71,7 +71,7 @@ class CorrespondenceDetailsFormSpec extends ModelsBaseSpec {
               form.hasErrors         shouldBe true
               form.errors.size       shouldBe 1
               form.errors.map(_.key) shouldBe Seq("summary")
-              form.error("summary").map(_.message shouldBe "Please enter a short description")
+              form.error("summary").map(_.message shouldBe "Enter a summary")
 
             },
             _ => "form should not succeed"
