@@ -33,19 +33,18 @@ import scala.concurrent.Future
 
 class CorrespondenceControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
-  private val queueService = mock[QueuesService]
-  private val eventService = mock[EventsService]
-  private val fileService =  mock[FileStoreService]
-  private val operator            = Operator(id = "id")
-  private val event               = mock[Event]
-  private val correspondenceController = mock[CorrespondenceController]
-  private val correspondenceView = mock[correspondence_view]
+  private val queueService                       = mock[QueuesService]
+  private val eventService                       = mock[EventsService]
+  private val fileService                        = mock[FileStoreService]
+  private val operator                           = Operator(id = "id")
+  private val event                              = mock[Event]
+  private val correspondenceController           = mock[CorrespondenceController]
+  private val correspondenceView                 = mock[correspondence_view]
   private val attachments: Seq[StoredAttachment] = Seq(Cases.storedAttachment)
-  private lazy val queues: List[Queue]      = List(Queue("", "", ""))
+  private lazy val queues: List[Queue]           = List(Queue("", "", ""))
 
   override protected def beforeEach(): Unit =
     reset(
-      eventService,
       queueService,
       fileService,
       event,
@@ -72,10 +71,10 @@ class CorrespondenceControllerSpec extends ControllerBaseSpec with BeforeAndAfte
     realAppConfig
   )
 
-  " Correspondence Controller" should {
+  "Correspondence Controller" should {
     "display Correspondence" in {
-      val c = aCase(withReference("reference"), withCorrespondenceApplication)
-      val result = await(controller(c, Set(Permission.ADD_ATTACHMENT))).displayCorrespondence("reference")(fakeRequest)
+      val c      = aCase(withReference("reference"), withCorrespondenceApplication)
+      val result = await(controller(c, Set(Permission.EDIT_CORRESPONDENCE))).displayCorrespondence("reference")(newFakeGETRequestWithCSRF(app))
 
       when(fileService.getAttachments(any[Case]())(any())) thenReturn (Future.successful(attachments))
       when(eventService.getFilteredEvents(any[String](), any[Pagination](), any())(any())) thenReturn Future(pagedEvent)
@@ -93,7 +92,7 @@ class CorrespondenceControllerSpec extends ControllerBaseSpec with BeforeAndAfte
           any(),
           any(),
           any(),
-          any(),
+          any()
         )(any(), any(), any())
       ) thenReturn Html("body")
 
