@@ -57,4 +57,17 @@
     margin: 0 0 15px 0;
     padding: 0;
 }
+/* extra requirements added  */
+
+.heading-margin-bottom {
+    margin-bottom: 0px;
+}
+.govuk-notification-banner-width {
+    width: 66.66667%;
+}
+@media screen and (max-width: 767px) {
+.govuk-notification-banner-width {
+    width: 100%;
+}
+}
 /* successful notification banner END */
