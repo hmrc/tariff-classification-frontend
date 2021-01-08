@@ -79,6 +79,12 @@
                     disableAutoComplete = true
                 )
 
+                @input_text(
+                    field = form("agentName"),
+                    label = messages("case.v2.correspondence.case-details-edit-agent-name"),
+                    inputClass = Some("width-one-half"),
+                    disableAutoComplete = true
+                )
 
             <h3 id="contact-details-edit" class="heading-medium">@messages("case.v2.correspondence.case-contact-edit-heading3")</h3>
 
@@ -107,13 +113,6 @@
                 @input_text(
                     field = form("postCode"),
                     label = messages("case.v2.correspondence.case-details-edit-postCode"),
-                    inputClass = Some("width-one-half"),
-                    disableAutoComplete = true
-                )
-
-                @input_text(
-                    field = form("agentName"),
-                    label = messages("case.v2.correspondence.case-details-edit-agent-name"),
                     inputClass = Some("width-one-half"),
                     disableAutoComplete = true
                 )
