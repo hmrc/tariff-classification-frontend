@@ -54,7 +54,7 @@ class CasesService_CompleteCaseSpec extends ServiceSpecBase with BeforeAndAfterE
   private val aLiability       = Cases.liabilityCaseExample
 
   private val service =
-    new CasesService(config, audit, emailService, fileStoreService, countriesService, reportingService, pdfService, connector, rulingConnector)
+    new CasesService(audit, emailService, fileStoreService, countriesService, reportingService, pdfService, connector, rulingConnector)(global, config)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()

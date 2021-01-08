@@ -42,7 +42,7 @@ class CasesService_UpdateExtendedUseStatusSpec extends ServiceSpecBase with Befo
   private val audit            = mock[AuditService]
 
   private val service =
-    new CasesService(realAppConfig, audit, emailService, fileStoreService, countriesService, reportingService, pdfService, connector, rulingConnector)
+    new CasesService(audit, emailService, fileStoreService, countriesService, reportingService, pdfService, connector, rulingConnector)(global, realAppConfig)
 
   override protected def afterEach(): Unit = {
     super.afterEach()
