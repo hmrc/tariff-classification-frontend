@@ -18,10 +18,11 @@
 @import models.request.AuthenticatedRequest
 @import models.Case
 @import views.html.includes.main
-@import views.html.partials._
+@import views.html.partials.{back_link, case_heading}
 @import models.ApplicationType
-@import models.viewmodels.NoTabSelected
+@import models.viewmodels.{NoTabSelected, CorrespondenceTab, LiabilitiesTab, ATaRTab}
 
+@import views.html.components.success_panel
 @(c: Case)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("page.title.case.completed")),
@@ -32,22 +33,32 @@
     @case_heading(c)
 
     <div class="grid-row">
-        <div id="confirm_complete_id" class="column-full">
-            @if(c.application.`type` == ApplicationType.ATAR) {
-                <h2 class="heading-large mt-0">This case has been completed</h2>
+        @if(c.application.`type` == ApplicationType.ATAR) {
+            @success_panel(
+                messages("case.completed.atar"),
+                "View ATaR cases",
+                ATaRTab
+            )
+        } else if (c.application.`type` == ApplicationType.LIABILITY) {
+            @success_panel(
+                messages("case.completed.liability"),
+                "View liability cases",
+                LiabilitiesTab
+            )
 
-                <p>The ruling has been published.</p>
-                <p>View the published ruling on the public rulings website.</p>
-                <p>The applicant has been notified by email.</p>
-                <p class="bold">The status of this case is now completed</p>
-            } else {
-                <h2 class="heading-large mt-0">This liability decision is complete</h2>
-
-                <p>Email the applicant with a copy of this decision.</p>
-            }
-
-            @confirmation_next_steps()
-        </div>
+        } else if (c.application.`type` == ApplicationType.CORRESPONDENCE) {
+            @success_panel(
+              messages("case.completed.correspondence"),
+              "View correspondence cases",
+                CorrespondenceTab
+            )
+        } else {
+            @success_panel(
+                messages("case.completed.misc"),
+                "View miscellaneous cases",
+                CorrespondenceTab
+            )
+        }
     </div>
 
 }

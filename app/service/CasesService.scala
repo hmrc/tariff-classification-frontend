@@ -391,7 +391,7 @@ class CasesService @Inject() (
     queue: Queue,
     pagination: Pagination,
     forTypes: Seq[ApplicationType] =
-      Seq(ApplicationType.ATAR, ApplicationType.LIABILITY, ApplicationType.CORRESPONDENCE)
+      Seq(ApplicationType.ATAR, ApplicationType.LIABILITY, ApplicationType.CORRESPONDENCE, ApplicationType.MISCELLANEOUS)
   )(implicit hc: HeaderCarrier): Future[Paged[Case]] =
     connector.findCasesByQueue(queue, pagination, forTypes)
 
@@ -399,7 +399,7 @@ class CasesService @Inject() (
     queue: Seq[Queue],
     pagination: Pagination,
     forTypes: Seq[ApplicationType] =
-      Seq(ApplicationType.ATAR, ApplicationType.LIABILITY, ApplicationType.CORRESPONDENCE)
+      Seq(ApplicationType.ATAR, ApplicationType.LIABILITY, ApplicationType.CORRESPONDENCE, ApplicationType.MISCELLANEOUS)
   )(implicit hc: HeaderCarrier): Future[Paged[Case]] =
     connector.findCasesByAllQueues(queue, pagination, forTypes)
 

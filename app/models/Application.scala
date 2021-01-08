@@ -58,7 +58,6 @@ sealed trait Application {
     `type` match {
       case ApplicationType.ATAR      => Some(asATAR.holder.businessName)
       case ApplicationType.LIABILITY => Some(asLiabilityOrder.traderName)
-      case ApplicationType.CORRESPONDENCE => asCorrespondence.correspondenceStarter
       case _                         => None
     }
 
