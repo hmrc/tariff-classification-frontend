@@ -35,6 +35,8 @@ object Tab {
   case object C592_TAB extends Tab("c592_tab")
 
   //Correspondence
+  case object CASE_DETAILS_TAB extends Tab("case_details_tab")
+  case object CONTACT_DETAILS_TAB extends Tab("contact_details_tab")
   case object MESSAGES_TAB extends Tab("messages_tab")
   val values =
     Set(
@@ -47,6 +49,8 @@ object Tab {
       APPLICANT_TAB,
       GOODS_TAB,
       C592_TAB,
+      CASE_DETAILS_TAB,
+      CONTACT_DETAILS_TAB,
       MESSAGES_TAB
     )
 

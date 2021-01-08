@@ -23,16 +23,16 @@ import play.api.libs.json.Writes
 
 object CasePayloads {
 
-  val btiCase: String             = jsonOf(Cases.btiCaseExample)
-  val simpleBtiCase: String       = jsonOf(Cases.simpleCaseExample)
-  val simpleLiabilityCase: String = jsonOf(Cases.liabilityCaseExample)
+  val btiCase: String                  = jsonOf(Cases.btiCaseExample)
+  val simpleBtiCase: String            = jsonOf(Cases.simpleCaseExample)
+  val simpleLiabilityCase: String      = jsonOf(Cases.liabilityCaseExample)
   val simpleCorrespondenceCase: String = jsonOf(Cases.correspondenceCaseExample)
-  val gatewayCases: String        = jsonOf(Seq(Cases.btiCaseExample))
-  val pagedGatewayCases: String   = jsonOf(Paged(Seq(Cases.btiCaseExample), NoPagination(), 1))
-  val pagedAssignedCases: String  = jsonOf(Paged(Seq(Cases.caseAssignedExample), NoPagination(), 1))
-  val report: String              = jsonOfReport(Seq(ReportResult(Map(CaseReportGroup.QUEUE -> Some("test-report")), Seq(1, 2))))
-  val reportEmpty: String         = jsonOfReport(Seq.empty)
-  val pagedEmpty: String          = jsonOf(Paged.empty[Case])
+  val gatewayCases: String             = jsonOf(Seq(Cases.btiCaseExample))
+  val pagedGatewayCases: String        = jsonOf(Paged(Seq(Cases.btiCaseExample), NoPagination(), 1))
+  val pagedAssignedCases: String       = jsonOf(Paged(Seq(Cases.caseAssignedExample), NoPagination(), 1))
+  val report: String                   = jsonOfReport(Seq(ReportResult(Map(CaseReportGroup.QUEUE -> Some("test-report")), Seq(1, 2))))
+  val reportEmpty: String              = jsonOfReport(Seq.empty)
+  val pagedEmpty: String               = jsonOf(Paged.empty[Case])
 
   def jsonOfReport(obj: Seq[ReportResult]): String =
     Json.toJson(obj).toString()
