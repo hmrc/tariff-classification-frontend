@@ -9,12 +9,10 @@ val appName = "tariff-classification-frontend"
 
 lazy val plugins: Seq[Plugins] =
   Seq(PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin, SbtArtifactory)
-lazy val playSettings: Seq[Setting[_]] = Seq.empty
 
 lazy val microservice = (project in file("."))
   .enablePlugins(plugins: _*)
   .disablePlugins(JUnitXmlReportPlugin) //Required to prevent https://github.com/scalatest/scalatest/issues/1427
-  .settings(playSettings: _*)
   .settings(scalaSettings: _*)
   .settings(publishingSettings: _*)
   .settings(defaultSettings(): _*)
@@ -55,12 +53,17 @@ lazy val microservice = (project in file("."))
     javaOptions in Test += "-Xmx1G",
     addTestReportOption(Test, "test-reports")
   )
-  .settings(RoutesKeys.routesImport += "models.Sort")
-  .settings(RoutesKeys.routesImport += "models.ApplicationType")
-  .settings(RoutesKeys.routesImport += "models.Search")
-  .settings(RoutesKeys.routesImport += "models.viewmodels.SubNavigationTab")
-  .settings(RoutesKeys.routesImport += "models.viewmodels.ATaRTab")
-  .settings(RoutesKeys.routesImport += "models.viewmodels.AssignedToMeTab")
+  .settings(TwirlKeys.templateImports ++= Seq(
+    "play.twirl.api.HtmlFormat"
+  ))
+  .settings(RoutesKeys.routesImport ++= Seq(
+    "models.Sort",
+    "models.Search",
+    "models.ApplicationType",
+    "models.viewmodels.AssignedToMeTab",
+    "models.viewmodels.ATaRTab",
+    "models.viewmodels.SubNavigationTab"
+  ))
   .configs(IntegrationTest)
   .settings(inConfig(IntegrationTest)(ScalafmtPlugin.scalafmtConfigSettings))
   .settings(inConfig(TemplateItTest)(Defaults.itSettings): _*)
@@ -89,15 +92,6 @@ lazy val allItPhases = "tit->it;it->it;it->compile;compile->compile"
 
 lazy val TemplateTest   = config("tt") extend Test
 lazy val TemplateItTest = config("tit") extend IntegrationTest
-
-//def unitFilter(name: String): Boolean = name startsWith "unit"
-//
-//def oneForkedJvmPerTest(tests: Seq[TestDefinition]): Seq[Group] = {
-//  tests map { test =>
-//    val forkOpts = ForkOptions().withRunJVMOptions(Vector("-Dtest.name=" + test.name))
-//    Group(test.name, Seq(test), SubProcess(forkOpts))
-//  }
-//}
 
 // Coverage configuration
 coverageMinimum := 92

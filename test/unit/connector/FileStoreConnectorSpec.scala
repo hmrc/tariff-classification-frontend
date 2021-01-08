@@ -23,10 +23,10 @@ import org.mockito.BDDMockito.given
 import play.api.http.Status
 import play.api.libs.Files.SingletonTemporaryFileCreator
 
-import scala.concurrent.ExecutionContext.Implicits.global
-
 class FileStoreConnectorSpec extends ConnectorTest {
 
+  given(mockAppConfig.maxUriLength) willReturn 2048L
+  given(mockAppConfig.fileStoreUrl) willReturn wireMockUrl
   private val attachmentId = "id"
   private val connector    = new FileStoreConnector(mockAppConfig, authenticatedHttpClient, wsClient, metrics)
 
