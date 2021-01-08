@@ -31,6 +31,8 @@
 
     @error_summary(activityForm.errors, Some(startAtTabIndex))
 
+    @success_notification_banner()
+
     @tab_heading("activity", messages("case.menu.activity"))
 
     @if(request.hasPermission(Permission.ADD_NOTE)) {
