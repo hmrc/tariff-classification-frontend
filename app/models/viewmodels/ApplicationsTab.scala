@@ -16,7 +16,6 @@
 
 package models.viewmodels
 
-import java.time.Instant
 import models.{CaseStatus, _}
 
 case class ApplicationsTab(
@@ -106,14 +105,16 @@ object ApplicationsTab {
   )
 
   def gateway(cases: Seq[Case]) = {
-    val atars = cases.filter(aCase =>
-      aCase.application.isBTI && aCase.status == CaseStatus.NEW)
 
-    val liabilities = cases.filter(aCase =>
-      aCase.application.isLiabilityOrder && aCase.status == CaseStatus.NEW)
+    val gatewayCases =
+      cases.filter(aCase => aCase.status == CaseStatus.NEW)
 
-    val correspondenceCases = cases.filter(aCase =>
-      aCase.application.isCorrespondence && aCase.status == CaseStatus.NEW)
+    val atars = gatewayCases.filter(_.application.isBTI)
+
+    val liabilities = gatewayCases.filter(_.application.isLiabilityOrder)
+
+    val correspondenceCases = gatewayCases.filter(_.application.isCorrespondence)
+
 
     ApplicationTabViewModel(
       "applicationTab.gateway",

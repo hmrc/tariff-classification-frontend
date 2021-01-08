@@ -81,6 +81,15 @@
         </dd>
     </div>
 
+    <div id="contact-details-agent-name" class="grid-row">
+        <dt class="cya-question">
+            @messages("case.v2.correspondence.contact-details.agent_name")
+        </dt>
+        <dd class="cya-answer" id="agent-name">
+            <span class="pre-wrap">@contactDetails.agentName</span>
+        </dd>
+    </div>
+
     <div id="contact-details-contact-address" class="grid-row">
         <dt class="cya-question">
         @messages("case.v2.correspondence.contact-details.contact_address")
@@ -92,15 +101,6 @@
             <span class="pre-wrap">@contactDetails.address.postCode</span> @if(contactDetails.address.postCode.nonEmpty) {<br>}
         </dd>
 
-    </div>
-
-    <div id="contact-details-agent-name" class="grid-row">
-        <dt class="cya-question">
-        @messages("case.v2.correspondence.contact-details.agent_name")
-        </dt>
-        <dd class="cya-answer" id="agent-name">
-            <span class="pre-wrap">@contactDetails.agentName</span>
-        </dd>
     </div>
 
 </dl>
