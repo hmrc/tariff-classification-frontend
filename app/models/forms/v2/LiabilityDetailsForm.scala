@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,7 +49,7 @@ object LiabilityDetailsForm extends Constraints {
         Option[String],
         Option[String],
         Option[String],
-        Option[String],
+        String,
         Option[String],
         Option[String],
         Option[String],
@@ -88,11 +88,11 @@ object LiabilityDetailsForm extends Constraints {
         ),
         "goodName" -> optional(text).verifying(defined("case.liability.error.empty.good-name")),
         "entryNumber" -> optional(
-          text.verifying(emptyOr(entryNumberIsNumberOnly()): _*)
+          text.verifying(emptyOr(entryNumberIsNumbersAndLettersOnly()): _*)
         ),
         "traderCommodityCode"  -> optional(text),
         "officerCommodityCode" -> optional(text),
-        "contactName"          -> optional(text),
+        "contactName"          -> textNonEmpty("case.liability.error.compliance_officer.name"),
         "contactEmail"         -> optional(text.verifying(emptyOr(validEmail("case.liability.error.contact.email")): _*)),
         "contactPhone"         -> optional(text),
         "dvrNumber" -> optional(
@@ -130,7 +130,7 @@ object LiabilityDetailsForm extends Constraints {
     Option[String],
     Option[String],
     Option[String],
-    Option[String],
+    String,
     Option[String],
     Option[String],
     Option[String],
@@ -187,7 +187,7 @@ object LiabilityDetailsForm extends Constraints {
           entryNumber          = entryNumber,
           traderCommodityCode  = traderCommodityCode,
           officerCommodityCode = officerCommodityCode,
-          contact              = Contact(contactName.getOrElse(""), contactEmail.getOrElse(""), contactPhone)
+          contact              = Contact(contactName, contactEmail.getOrElse(""), contactPhone)
         )
       )
   }
@@ -210,7 +210,7 @@ object LiabilityDetailsForm extends Constraints {
       Option[String],
       Option[String],
       Option[String],
-      Option[String],
+      String,
       Option[String],
       Option[String],
       Option[String],
@@ -247,7 +247,7 @@ object LiabilityDetailsForm extends Constraints {
         existingLiability.entryNumber,
         existingLiability.traderCommodityCode,
         existingLiability.officerCommodityCode,
-        Some(existingLiability.contact.name),
+        existingLiability.contact.name,
         Some(existingLiability.contact.email),
         existingLiability.contact.phone,
         existingLiability.repaymentClaim.flatMap(_.dvrNumber),
@@ -277,7 +277,7 @@ object LiabilityDetailsForm extends Constraints {
         Option[String],
         Option[String],
         Option[String],
-        Option[String],
+        String,
         Option[String],
         Option[String],
         Option[String],
@@ -290,11 +290,12 @@ object LiabilityDetailsForm extends Constraints {
             .verifying(
               dateLowerBound("case.liability.error.entry-date.year.lower.bound", appConfig.entryDateYearLowerBound)
             )
-        ).verifying("error.required", _.isDefined),
+        ).verifying("Enter an entry date", _.isDefined),
         "traderName" -> textNonEmpty("case.liability.error.empty.trader-name"),
         //TODO find what need to validate
         //TODO not emptyOr but it is required need to change as part of other ticket
-        "traderEmail"             -> optional(nonEmptyText.verifying(emptyOr(validEmail("case.liability.error.trader.email")): _*)),
+        "traderEmail"             -> optional(text.verifying(customNonEmpty("Enter a trader email"))
+          .verifying(emptyOr(validEmail("case.liability.error.trader.email")): _*)),
         "traderPhone"             -> optional(text),
         "traderBuildingAndStreet" -> optional(text),
         "traderTownOrCity"        -> optional(text),
@@ -315,16 +316,17 @@ object LiabilityDetailsForm extends Constraints {
               )
             )
         ),
-        "goodName"             -> optional(nonEmptyText).verifying("error.required", _.isDefined),
-        "entryNumber"          -> optional(nonEmptyText).verifying("error.required", _.isDefined),
-        "traderCommodityCode"  -> optional(nonEmptyText).verifying("error.required", _.isDefined),
-        "officerCommodityCode" -> optional(nonEmptyText).verifying("error.required", _.isDefined),
-        "contactName"          -> optional(nonEmptyText),
+        "goodName"             -> optional(nonEmptyText).verifying("Enter the goods name", _.isDefined),
+        "entryNumber"          -> optional(nonEmptyText).verifying("Enter an entry number", _.isDefined),
+        "traderCommodityCode"  -> optional(nonEmptyText).verifying("Enter the commodity code from the trader", _.isDefined),
+        "officerCommodityCode" -> optional(nonEmptyText).verifying("Enter the code suggested by the officer", _.isDefined),
+        "contactName"          -> textNonEmpty("case.liability.error.compliance_officer.name"),
         //TODO not emptyOr but it is required need to change as part of other ticket
         "contactEmail" -> optional(
-          nonEmptyText.verifying(emptyOr(validEmail("case.liability.error.contact.email")): _*)
+          text.verifying(customNonEmpty("Enter a contact email"))
+            .verifying(emptyOr(validEmail("case.liability.error.contact.email")): _*)
         ),
-        "contactPhone" -> optional(text).verifying("error.required", _.isDefined),
+        "contactPhone" -> optional(text).verifying("Enter a contact telephone", _.isDefined),
         "dvrNumber" -> optional(
           text.verifying(dvrNumberIsNumberOnly())
         ),
@@ -338,7 +340,14 @@ object LiabilityDetailsForm extends Constraints {
                 appConfig.dateForRepaymentYearLowerBound
               )
             )
-        ).verifying("error.required", _.isDefined)
+        ).verifying(
+          "Enter a real date, for example 11/12/2020",
+          f => {
+            if(existingLiability.application.asLiabilityOrder.repaymentClaim.isDefined) f.isDefined
+            else true
+          }
+
+        )
       )(form2Liability(existingLiability))(liability2Form)
     ).fillAndValidate(existingLiability)
 }

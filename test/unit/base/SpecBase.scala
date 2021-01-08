@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.inject.Injector
+import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.Files.TemporaryFileCreator
 import play.api.libs.ws.WSClient
@@ -51,6 +52,7 @@ trait SpecBase
         //app related feature flag
         "toggle.new-liability-details" -> true
       )
+      .overrides(bind[Metrics].toInstance(new TestMetrics))
       .build()
 
   lazy val mcc: MessagesControllerComponents           = cc

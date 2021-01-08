@@ -1,5 +1,5 @@
 @*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,12 +18,15 @@
 @import config.AppConfig
 @import controllers.routes
 @import controllers.routes.CaseController
+@import controllers.Tab
 @import models.request.AuthenticatedRequest
 @import models.{Case, Permission}
+@import models.viewmodels.KeywordsTabViewModel
 @import views.html.components.input_auto_complete
 @import views.html.partials.tab_heading
 @import views.html.partials.error_summary
-@(c: Case, autoCompleteOptions: Seq[String], keywordForm : Form[String], startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+
+@(keywords: KeywordsTabViewModel, keywordForm : Form[String], startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
     @error_summary(keywordForm.errors, Some(startAtTabIndex))
 
@@ -41,11 +44,11 @@
             }
 
             <div id="keywords-table">
-                @for((keyword: String, index: Int) <- c.keywords.toSeq.sorted.zipWithIndex) {
+                @for((keyword: String, index: Int) <- keywords.caseKeywords.toSeq.sorted.zipWithIndex) {
                     <div class="grid-row mt-1 mb-1">
                         <div id="keywords-row-@{index}-keyword" class="column-one-third word-break">@keyword</div>
                         <div id="keywords-row-@{index}-message" class="column-one-third">
-                            @if(!autoCompleteOptions.contains(keyword)) {
+                            @if(!keywords.globalKeywords.contains(keyword)) {
                                 Keyword is not from the list
                             }else{
                                 &nbsp;
@@ -53,7 +56,7 @@
                         </div>
                         @if(request.hasPermission(Permission.KEYWORDS)) {
                             <div id="keywords-row-@{index}-remove" class="column-one-third text-right">
-                                <a tabindex="@{startAtTabIndex+10+index}" id="keywords-row-@{index}-remove-link" aria-label="remove @keyword" href="@CaseController.removeKeyword(c.reference, keyword)">Remove</a>
+                                <a tabindex="@{startAtTabIndex+10+index}" id="keywords-row-@{index}-remove-link" aria-label="remove @keyword" href="@CaseController.removeKeyword(keywords.caseReference, keyword)">Remove</a>
                             </div>
                         }
                     </div>
@@ -62,14 +65,14 @@
             </div>
 
             @if(request.hasPermission(Permission.KEYWORDS)) {
-                @form(action = routes.CaseController.addKeyword(c.reference), 'class -> "form mt-3") {
+                @form(action = routes.CaseController.addKeyword(keywords.caseReference).withFragment(Tab.KEYWORDS_TAB.name), 'class -> "form mt-3") {
 
                     @CSRF.formField
                     @input_auto_complete(
                         field = keywordForm("keyword"),
                         label = Some("Search for or enter a keyword"),
                         hint = Some("Start typing and select a keyword if it appears in the list. To add a keyword that is not in the list, type it in full."),
-                        autoCompleteOptions = autoCompleteOptions,
+                        autoCompleteOptions = keywords.globalKeywords,
                         formControlClass = Some("w-100"),
                         useTabIndex = Some(startAtTabIndex+50)
                     )

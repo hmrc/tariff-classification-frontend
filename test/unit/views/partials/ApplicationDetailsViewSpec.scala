@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import utils.Cases._
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.partials.application_details
+import models.viewmodels.atar.GoodsTabViewModel
 
 class ApplicationDetailsViewSpec extends ViewSpec {
 
@@ -34,8 +35,10 @@ class ApplicationDetailsViewSpec extends ViewSpec {
         withoutAttachments()
       )
 
+      val goodsTab = GoodsTabViewModel.fromCase(`case`)
+
       // When
-      val doc = view(application_details(`case`, Seq.empty))
+      val doc = view(application_details(goodsTab))
 
       // Then
       doc.getElementById("app-details-confidential-info") shouldNot containText(messages("answer.none"))
@@ -56,11 +59,11 @@ class ApplicationDetailsViewSpec extends ViewSpec {
         ),
         withAttachment(attachment("FILE_ID"))
       )
-      val storedAttachment =
-        Cases.storedAttachment.copy(id = "FILE_ID", url = Some("url"), scanStatus = Some(ScanStatus.READY))
+
+      val goodsTab = GoodsTabViewModel.fromCase(`case`)
 
       // When
-      val doc = view(application_details(`case`, Seq(storedAttachment)))
+      val doc = view(application_details(goodsTab))
 
       // Then
       doc                                                        should containElementWithID("app-details-previous-ruling-reference")
@@ -83,8 +86,10 @@ class ApplicationDetailsViewSpec extends ViewSpec {
         )
       )
 
+      val goodsTab = GoodsTabViewModel.fromCase(`case`)
+
       // When
-      val doc = view(application_details(`case`, Nil))
+      val doc = view(application_details(goodsTab))
 
       //Then
       doc                                                        should containElementWithID("app-details-similar-ruling-reference")

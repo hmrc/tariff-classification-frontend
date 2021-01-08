@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,19 @@
  * limitations under the License.
  */
 
-package models.viewmodels
+package models
+package viewmodels
 
-case class KeywordsTabViewModel(caseReference: String, caseKeywords: Set[String], globalKeywords: Seq[String])
+case class KeywordsTabViewModel(
+  caseReference: String,
+  caseKeywords: Set[String],
+  globalKeywords: Seq[String]
+)
+
+object KeywordsTabViewModel {
+  def fromCase(cse: Case, globalKeywords: Seq[String]): KeywordsTabViewModel = KeywordsTabViewModel(
+    caseReference = cse.reference,
+    caseKeywords = cse.keywords,
+    globalKeywords = globalKeywords
+  )
+}

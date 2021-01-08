@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ package models.viewmodels
 import models._
 
 case class CaseHeaderViewModel(
-  caseType: String,
+  caseType: ApplicationType,
   businessName: Option[String],
   goodsName: String,
   referenceNumber: String,
@@ -29,7 +29,7 @@ case class CaseHeaderViewModel(
 object CaseHeaderViewModel {
   def fromCase(c: Case): CaseHeaderViewModel = {
     CaseHeaderViewModel(
-      c.application.`type`.prettyName,
+      c.application.`type`,
       c.application.businessName,
       c.application.goodsName,
       c.reference,

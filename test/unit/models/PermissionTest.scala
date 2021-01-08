@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -383,6 +383,19 @@ class PermissionTest extends ModelsBaseSpec {
       val name       = "REMOVE_ATTACHMENTS"
 
       permission.name       shouldBe name
+      Permission.from(name) shouldBe Some(permission)
+
+      permission.appliesTo(caseUnassigned, readOnly)               shouldBe false
+      permission.appliesTo(caseUnassigned, teamMember)             shouldBe false
+      permission.appliesTo(caseAssignedTo(teamMember), teamMember) shouldBe true
+      permission.appliesTo(caseUnassigned, manager)                shouldBe true
+    }
+
+    "contain 'Edit Attachment Details'" in {
+      val permission = Permission.EDIT_ATTACHMENT_DETAIL
+      val name = "EDIT_ATTACHMENT_DETAIL"
+
+      permission.name shouldBe name
       Permission.from(name) shouldBe Some(permission)
 
       permission.appliesTo(caseUnassigned, readOnly)               shouldBe false

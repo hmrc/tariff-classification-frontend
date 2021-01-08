@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,9 @@ class DecisionFormConstraintsSpec extends ModelsBaseSpec {
 
   private val commodityCodeService = mock[CommodityCodeService]
   private val decisionForm         = new DecisionForm(new CommodityCodeConstraints(commodityCodeService, mock[AppConfig]))
-  private val commodityCodeValidErrorMessage = "decision_form.error.bindingCommodityCode.valid"
+  private val commodityCodeValidLengthErrorMessage = "decision_form.error.bindingCommodityCode.valid.length"
+  private val commodityCodeValidNumberTypeErrorMessage = "decision_form.error.bindingCommodityCode.valid.number"
+  private val commodityCodeValidEvenDigitsErrorMessage = "decision_form.error.bindingCommodityCode.valid.evenDigits"
   private val bindingCommodityCodeElementId     = "bindingCommodityCode"
 
   "DecisionForm validation" should {
@@ -51,23 +53,23 @@ class DecisionFormConstraintsSpec extends ModelsBaseSpec {
     }
 
     "fail if the commodity code value contains more than 22 digits" in {
-      assertOnlyOneError("040900000023456789012345", Seq(commodityCodeValidErrorMessage))
+      assertOnlyOneError("040900000023456789012345", Seq(commodityCodeValidLengthErrorMessage))
     }
 
     "fail if the commodity code value contains less than 6 digits" in {
-      assertOnlyOneError("0409", Seq(commodityCodeValidErrorMessage))
+      assertOnlyOneError("0409", Seq(commodityCodeValidLengthErrorMessage))
     }
 
     "fail if the commodity code value contains non numeric characters" in {
-      assertOnlyOneError("12345Q", Seq(commodityCodeValidErrorMessage))
+      assertOnlyOneError("12345Q", Seq(commodityCodeValidNumberTypeErrorMessage))
     }
 
     "fail if the commodity code value contains special characters" in {
-      assertOnlyOneError("12345!", Seq(commodityCodeValidErrorMessage))
+      assertOnlyOneError("12345!", Seq(commodityCodeValidNumberTypeErrorMessage))
     }
 
     "fail if the commodity code value contains an odd number of digits" in {
-      assertOnlyOneError("1234567", Seq(commodityCodeValidErrorMessage))
+      assertOnlyOneError("1234567", Seq(commodityCodeValidEvenDigitsErrorMessage))
     }
   }
 

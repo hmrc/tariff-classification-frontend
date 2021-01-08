@@ -1,5 +1,5 @@
 @*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,19 +15,20 @@
  *@
 
 @import config.AppConfig
+@import models.request.AuthenticatedRequest
+@import controllers.Tab
 @import controllers.v2.routes.AttachmentsController
 @import views.html.includes.main
 @import views.html.forms.components.input_yes_no
 @import views.html.partials.{error_summary, back_link}
 @import models.viewmodels.CaseHeaderViewModel
-@import controllers.Tab._
 @import models.viewmodels.MyCasesTab
 
 @this(
         case_heading: views.html.v2.case_heading
 )
 
-@(c: CaseHeaderViewModel, form: Form[Boolean], fileId: String, fileName: String)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(c: CaseHeaderViewModel, form: Form[Boolean], fileId: String, fileName: String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("page.title.remove.attachment")),
     customPrimaryNavTab = MyCasesTab) {
@@ -43,7 +44,7 @@
 
             <h3 id="remove_question" class="heading-medium mt-0">Are you sure you want to remove @fileName from this case?</h3>
 
-            @helper.form(action = AttachmentsController.confirmRemoveAttachment(c.referenceNumber, fileId, fileName).withFragment(ATTACHMENTS_TAB), 'id -> "remove-attachment", 'novalidate -> "novalidate") {
+            @helper.form(action = AttachmentsController.confirmRemoveAttachment(c.referenceNumber, fileId, fileName), 'id -> "remove-attachment", 'novalidate -> "novalidate") {
                 @helper.CSRF.formField
 
                 @input_yes_no(form("state"), "remove-attachment")

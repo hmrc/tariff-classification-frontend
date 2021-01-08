@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ class ReassignCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
   private val casesService = mock[CasesService]
   private val queueService = mock[QueuesService]
   private val queue        = mock[Queue]
-  private val operator     = mock[Operator]
+  private val operator     = Operator(id = "id")
 
   private val caseWithStatusNEW = Cases.caseQueueExample.copy(reference = "reference", status = CaseStatus.NEW)
   private val caseWithStatusOPEN = Cases.caseQueueExample
@@ -67,7 +67,7 @@ class ReassignCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
   "Reassign Case" should {
 
     "return OK and HTML content type" in {
-      when(queueService.getNonGateway).thenReturn(successful(Seq.empty))
+      when(queueService.getAllForCaseType(any())).thenReturn(successful(List.empty))
       when(queueService.getOneById(any())).thenReturn(successful(None))
 
       val result: Result =
@@ -80,7 +80,7 @@ class ReassignCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
     }
 
     "return OK when user has right permissions" in {
-      when(queueService.getNonGateway).thenReturn(successful(Seq.empty))
+      when(queueService.getAllForCaseType(any())).thenReturn(successful(List.empty))
       when(queueService.getOneById(any())).thenReturn(successful(None))
 
       val result: Result = await(
@@ -124,7 +124,7 @@ class ReassignCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
     "show error message when no option is selected" in {
 
       when(queueService.getOneBySlug("queue")).thenReturn(successful(Some(queue)))
-      when(queueService.getNonGateway).thenReturn(successful(Seq.empty))
+      when(queueService.getAllForCaseType(any())).thenReturn(successful(List.empty))
       when(queue.name).thenReturn("SOME_QUEUE")
       when(queueService.getOneById(any())).thenReturn(successful(None))
       when(casesService.reassignCase(refEq(caseWithStatusOPEN), any[Queue], refEq(operator))(any[HeaderCarrier]))

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,9 @@ object EventPayloads {
   val event: String        = jsonOf(Events.event)
   val eventRequest: String = jsonOf(Events.eventRequest)
   val events: String       = jsonOf(Events.events)
+  val sampleEvents         = jsonOf(Events.sampleEvents)
   val pagedEvents: String  = jsonOf(Paged(Events.events, NoPagination(), 1))
+  val pagedSampleEvents    = jsonOf(Paged(Events.sampleEvents, NoPagination(), 1))
   val pagedEmpty: String   = jsonOf(Paged.empty[Event])
 
   def jsonOf(obj: Event): String =

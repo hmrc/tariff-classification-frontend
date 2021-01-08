@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class SampleReturnControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   private val casesService = mock[CasesService]
-  private val operator     = mock[Operator]
+  private val operator     = Operator(id = "id")
 
   private def controller(requestCase: Case) = new SampleReturnController(
     new SuccessfulRequestActions(playBodyParsers, operator, c = requestCase),
@@ -105,7 +105,7 @@ class SampleReturnControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
         .updateSampleReturn(refEq(c), refEq(Some(SampleReturn.YES)), any[Operator])(any[HeaderCarrier])
 
       status(result)     shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some(routes.CaseController.sampleDetails("reference").withFragment(Tab.SAMPLE_TAB).path)
+      locationOf(result) shouldBe Some(routes.CaseController.sampleDetails("reference").path)
     }
 
     "redirect for unchanged status" in {
@@ -119,7 +119,7 @@ class SampleReturnControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
         .updateSampleReturn(any[Case], any[Option[SampleReturn]], any[Operator])(any[HeaderCarrier])
 
       status(result)     shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some(routes.CaseController.sampleDetails("reference").withFragment(Tab.SAMPLE_TAB).path)
+      locationOf(result) shouldBe Some(routes.CaseController.sampleDetails("reference").path)
     }
 
     "when error form re-displays with error message" in {
@@ -151,7 +151,7 @@ class SampleReturnControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
       )
 
       status(result)     shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some(routes.CaseController.sampleDetails("reference").withFragment(Tab.SAMPLE_TAB).path)
+      locationOf(result) shouldBe Some(routes.CaseController.sampleDetails("reference").path)
     }
 
     "redirect unauthorised when does not have right permissions" in {

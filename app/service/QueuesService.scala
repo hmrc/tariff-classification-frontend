@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,23 +17,22 @@
 package service
 
 import javax.inject.Singleton
-import models.Queue
+import models.{ApplicationType, Queue, Queues}
 import models.Queues._
-
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
 class QueuesService {
+  def getAll: Future[List[Queue]] = Future.successful(Queues.allQueues)
 
-  def getAll: Future[Seq[Queue]] = Future.successful(Seq(gateway, act, cap, cars, elm))
-
-  def getNonGateway: Future[Seq[Queue]] = getAll map (_.filterNot(_ == gateway))
+  def getNonGateway: Future[List[Queue]] = Future.successful(Queues.allDynamicQueues)
 
   def getOneBySlug(slug: String): Future[Option[Queue]] =
-    getAll.map(_.find(_.slug == slug))
+    Future.successful(Queues.allQueuesBySlug.get(slug))
 
   def getOneById(id: String): Future[Option[Queue]] =
-    getAll.map(_.find(_.id == id))
+    Future.successful(Queues.allQueuesById.get(id))
 
+  def getAllForCaseType(applicationType: ApplicationType): Future[List[Queue]] =
+    Future.successful(Queues.queuesForType(applicationType))
 }

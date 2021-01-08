@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,7 +45,7 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
 
   private val casesService = mock[CasesService]
   private val queuesService = mock[QueuesService]
-  private val operator     = mock[Operator]
+  private val operator     = Operator("id")
   private val releaseCaseView = injector.instanceOf[views.html.release_case]
   private val releaseCaseQuestionView = injector.instanceOf[views.html.v2.release_option_choice]
   private val confirmation_case_creation = injector.instanceOf[views.html.v2.confirmation_case_creation]
@@ -161,7 +161,7 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
       )
 
       status(result)               shouldBe Status.SEE_OTHER
-      redirectLocation(result).get shouldBe ReleaseCaseController.releaseCase("reference", None).url
+      redirectLocation(result).get shouldBe ReleaseCaseController.releaseCase("reference").url
     }
 
     "Release choice should redirect to Confirmation page if No POST" in {

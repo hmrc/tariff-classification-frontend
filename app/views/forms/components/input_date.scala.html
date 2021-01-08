@@ -1,5 +1,5 @@
 @*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,12 +25,14 @@
         hint: Option[String] = None,
         labelClass: Option[String] = None,
         formControlClass: Option[String] = None,
-        startAtTabIndex : Option[Int] = None
+        formGroupClass: Option[String] = None,
+        startAtTabIndex : Option[Int] = None,
+        formControlUnBold: Boolean = false
 )(implicit messages: Messages)
 
 
 
-<div class="form-group @if(dateField.hasErrors) {form-group-error}">
+<div class="form-group @formGroupClass @if(dateField.hasErrors) {form-group-error}">
     <fieldset class="inline" id="@fieldsetId" @if(dateField.hasErrors || hint.nonEmpty){ aria-describedby="@if(hint.nonEmpty){@{dateField.id}-hint}@if(dateField.hasErrors && hint.nonEmpty){ }@if(dateField.hasErrors){error-message-date-input}"}>
         <legend class="@labelClass">
             @legend
@@ -51,7 +53,7 @@
         <div class="form-date">
             <div class="form-group form-group-day">
                 <label class="form-label" for="@{dayField.id}">
-                    <span class="bold">Day</span>
+                    <span class= @{if(formControlUnBold) "un-bold" else "bold"}>Day</span>
                 </label>
                 <div class="form-control-wrapper @formControlClass">
                     <input
@@ -69,7 +71,7 @@
 
             <div class="form-group form-group-month">
                 <label class="form-label" for="@{monthField.id}">
-                    <span class="bold">Month</span>
+                    <span class= @{if(formControlUnBold) "un-bold" else "bold"}>Month</span>
                 </label>
                 <div class="form-control-wrapper @formControlClass">
                     <input
@@ -87,7 +89,7 @@
 
             <div class="form-group form-group-year">
                 <label class="form-label" for="@{yearField.id}">
-                    <span class="bold">Year</span>
+                    <span class= @{if(formControlUnBold) "un-bold" else "bold"}>Year</span>
                 </label>
                 <div class="form-control-wrapper @formControlClass">
                     <input

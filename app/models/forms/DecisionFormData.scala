@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  */
 
 package models.forms
+
+import java.time.Instant
 
 import javax.inject.Inject
 import play.api.data.Form
@@ -32,25 +34,35 @@ case class DecisionFormData(
   methodCommercialDenomination: String = "",
   methodExclusion: String              = "",
   attachments: Seq[String]             = Seq.empty,
-  explanation: String                  = ""
+  explanation: String                  = "",
+  expiryDate: Option[Instant]          = None,
+  explicitEndDate: Boolean             = false
 )
 
 class DecisionForm @Inject() (commodityCodeConstraints: CommodityCodeConstraints) extends Constraints {
 
-  val btiForm: Form[DecisionFormData] = Form[DecisionFormData](
-    mapping(
-      "bindingCommodityCode" -> text.verifying(
-        emptyOr(commodityCodeConstraints.commodityCodeValid): _*
-      ),
-      "goodsDescription"             -> text,
-      "methodSearch"                 -> text,
-      "justification"                -> text,
-      "methodCommercialDenomination" -> text,
-      "methodExclusion"              -> text,
-      "attachments"                  -> seq(text),
-      "explanation"                  -> text
-    )(DecisionFormData.apply)(DecisionFormData.unapply)
-  )
+  def btiForm(): Form[DecisionFormData] = {
+   Form[DecisionFormData](
+      mapping(
+        "bindingCommodityCode" -> text.verifying(
+          emptyOr(commodityCodeConstraints.commodityCodeLengthValid,
+            commodityCodeConstraints.commodityCodeNumbersValid,
+            commodityCodeConstraints.commodityCodeEvenDigitsValid): _*
+        ),
+        "goodsDescription"             -> text,
+        "methodSearch"                 -> text,
+        "justification"                -> text,
+        "methodCommercialDenomination" -> text,
+        "methodExclusion"              -> text,
+        "attachments"                  -> seq(text),
+        "explanation"                  -> text,
+        "expiryDate"                   -> FormDate.optionalDate(),
+        "explicitEndDate"              -> boolean
+      )(DecisionFormData.apply)(DecisionFormData.unapply).verifying("atar.editRuling.expiryDate.emptyDate",
+        formData => if(formData.explicitEndDate)formData.expiryDate.isDefined else true
+      )
+    )
+  }
 
   val btiCompleteForm: Form[DecisionFormData] = Form[DecisionFormData](
     mapping(
@@ -58,7 +70,9 @@ class DecisionForm @Inject() (commodityCodeConstraints: CommodityCodeConstraints
         .verifying(
           StopOnFirstFail(
             commodityCodeConstraints.commodityCodeNonEmpty,
-            commodityCodeConstraints.commodityCodeValid
+            commodityCodeConstraints.commodityCodeLengthValid,
+            commodityCodeConstraints.commodityCodeNumbersValid,
+            commodityCodeConstraints.commodityCodeEvenDigitsValid
           )
         ),
       "goodsDescription"             -> text.verifying(customNonEmpty("decision_form.error.itemDescription.required")),
@@ -67,9 +81,15 @@ class DecisionForm @Inject() (commodityCodeConstraints: CommodityCodeConstraints
       "methodCommercialDenomination" -> text,
       "methodExclusion"              -> text,
       "attachments"                  -> seq(text),
-      "explanation"                  -> text.verifying(customNonEmpty("decision_form.error.decisionExplanation.required"))
-    )(DecisionFormData.apply)(DecisionFormData.unapply)
+      "explanation"                  -> text.verifying(customNonEmpty("decision_form.error.decisionExplanation.required")),
+      "expiryDate"                   -> FormDate.optionalDate(),
+      "explicitEndDate"              -> boolean
+    )(DecisionFormData.apply)(DecisionFormData.unapply).verifying("atar.editRuling.expiryDate.emptyDate",
+      formData => if(formData.explicitEndDate) formData.expiryDate.isDefined else true
+    )
   )
+
+
 
   def bindFrom: Option[Decision] => Option[Form[DecisionFormData]] =
     _.map(mapFrom)
@@ -84,14 +104,18 @@ class DecisionForm @Inject() (commodityCodeConstraints: CommodityCodeConstraints
       methodCommercialDenomination = d.methodCommercialDenomination.getOrElse(""),
       methodExclusion              = d.methodExclusion.getOrElse(""),
       attachments                  = Seq.empty,
-      explanation                  = d.explanation.getOrElse("")
+      explanation                  = d.explanation.getOrElse(""),
+      expiryDate                   = d.effectiveEndDate,
+      explicitEndDate              = d.effectiveEndDate.isDefined
     )
 
   def liabilityForm(existingDecision: Decision = Decision()): Form[Decision] =
     Form[Decision](
       mapping(
         "bindingCommodityCode" -> text.verifying(
-          emptyOr(commodityCodeConstraints.commodityCodeValid): _*
+          emptyOr(commodityCodeConstraints.commodityCodeLengthValid,
+            commodityCodeConstraints.commodityCodeNumbersValid,
+            commodityCodeConstraints.commodityCodeEvenDigitsValid): _*
         ),
         "goodsDescription" -> text,
         "methodSearch"     -> text,
@@ -103,13 +127,21 @@ class DecisionForm @Inject() (commodityCodeConstraints: CommodityCodeConstraints
   def liabilityCompleteForm(existingDecision: Decision = Decision()): Form[Decision] =
     Form[Decision](
       mapping(
-        "bindingCommodityCode" -> nonEmptyText.verifying(commodityCodeConstraints.commodityCodeValid),
-        "goodsDescription"     -> nonEmptyText,
-        "methodSearch"         -> nonEmptyText,
-        "justification"        -> nonEmptyText,
+        "bindingCommodityCode" -> text.verifying(
+          StopOnFirstFail(
+            commodityCodeConstraints.commodityCodeNonEmpty,
+            commodityCodeConstraints.commodityCodeLengthValid,
+            commodityCodeConstraints.commodityCodeNumbersValid,
+            commodityCodeConstraints.commodityCodeEvenDigitsValid
+          )
+        ),
+        "goodsDescription"     -> text.verifying(customNonEmpty("Enter a goods description")),
+        "methodSearch"         -> text.verifying(customNonEmpty("Enter the searches performed")),
+        "justification"        -> text.verifying(customNonEmpty("Enter the justification")),
         "methodExclusion"      -> text
       )(liabilityForm2Decision(existingDecision))(decision2LiabilityForm)
     ).fillAndValidate(existingDecision)
+
 
   private def liabilityForm2Decision(existingDecision: Decision): (String, String, String, String, String) => Decision = {
     case (code, description, search, justification, exclusion) =>

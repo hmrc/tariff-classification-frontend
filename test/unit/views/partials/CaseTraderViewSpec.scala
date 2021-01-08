@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,13 @@
 
 package views.partials
 
-import models.response.ScanStatus
-import models.{Contact, Permission}
+import models.{Permission, SampleStatus}
 import service.CountriesService
-import utils.Cases
 import utils.Cases._
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.partials.case_trader
+import models.viewmodels.atar.ApplicantTabViewModel
 
 class CaseTraderViewSpec extends ViewSpec {
 
@@ -40,8 +39,10 @@ class CaseTraderViewSpec extends ViewSpec {
         withoutAgent()
       )
 
+      val applicantTab = ApplicantTabViewModel.fromCase(`case`, Map.empty)
+
       // When
-      val doc = view(case_trader(`case`, 0, s => Some("dummy country name")))
+      val doc = view(case_trader(applicantTab, 0))
 
       // Then
       doc shouldNot containElementWithID("agent-submitted-heading")
@@ -49,10 +50,11 @@ class CaseTraderViewSpec extends ViewSpec {
 
     "render boards file number when present" in {
       // Given
-      val c = aCase().copy(caseBoardsFileNumber = Some("file 123"))
+      val c            = aCase().copy(caseBoardsFileNumber = Some("file 123"))
+      val applicantTab = ApplicantTabViewModel.fromCase(c, Map.empty)
 
       // When
-      val doc = view(case_trader(c, 0, s => Some("dummy country name")))
+      val doc = view(case_trader(applicantTab, 0))
 
       // Then
       val boardFileNumber = doc.getElementById("boards-file-number")
@@ -61,16 +63,42 @@ class CaseTraderViewSpec extends ViewSpec {
 
     "not show boards file number when not present" in {
       // Given
-      val c = aCase()
+      val c            = aCase()
+      val applicantTab = ApplicantTabViewModel.fromCase(c, Map.empty)
 
       // When
-      val doc = view(case_trader(c, 0, s => Some("dummy country name")))
+      val doc = view(case_trader(applicantTab, 0))
 
       // Then
       doc shouldNot containElementWithID("boards-file-number-label")
       doc shouldNot containElementWithID("boards-file-number")
     }
 
+    "show agent details for the Atar case if it is migrated" in {
+
+      val c = aCase(
+        withBTIApplication,
+        withAgent(),
+        withSampleStatus(Some(SampleStatus.AWAITING)),
+        withBTIDetails(sampleToBeProvided = true, sampleToBeReturned = true)
+      )
+
+      val applicantTab = ApplicantTabViewModel.fromCase(c, Map.empty)
+
+      val doc = view(case_trader(applicantTab))
+
+      doc                                         should containElementWithID("agent-details-heading")
+      doc                                         should containElementWithID("agent-details-eori")
+      doc.getElementById("agent-details-eori")    should containText("agent-eori")
+      doc                                         should containElementWithID("agent-details-name")
+      doc.getElementById("agent-details-name")    should containText("agent-business")
+      doc                                         should containElementWithID("agent-details-address")
+      doc.getElementById("agent-details-address") should containText("agent-address1")
+      doc.getElementById("agent-details-address") should containText("agent-address2")
+      doc.getElementById("agent-details-address") should containText("agent-address3")
+      doc.getElementById("agent-details-address") should containText("agent-postcode")
+      doc.getElementById("agent-details-address") should containText("agent-country")
+    }
   }
 
 }

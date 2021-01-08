@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,16 +18,17 @@ package controllers
 
 import config.AppConfig
 import models.forms.SampleReturnForm
+
 import javax.inject.{Inject, Singleton}
 import models.SampleReturn.SampleReturn
 import models._
+import models.request.AuthenticatedRequest
 import play.api.data.Form
 import play.api.mvc._
 import play.twirl.api.Html
 import service.CasesService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import controllers.Tab._
 
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
@@ -51,7 +52,7 @@ class SampleReturnController @Inject() (
     c: Case,
     notFilledForm: Form[Option[SampleReturn]],
     options: Option[String] = None
-  )(implicit request: Request[_]): Html =
+  )(implicit request: AuthenticatedRequest[_]): Html =
     views.html.change_sample_return(c, notFilledForm)
 
   override def chooseStatus(reference: String, options: Option[String] = None): Action[AnyContent] =
@@ -69,6 +70,6 @@ class SampleReturnController @Inject() (
     caseService.updateSampleReturn(c, status, operator)
 
   override protected def onSuccessRedirect(reference: String): Call =
-    controllers.routes.CaseController.sampleDetails(reference).withFragment(SAMPLE_TAB)
+    controllers.routes.CaseController.sampleDetails(reference)
 
 }

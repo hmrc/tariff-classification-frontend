@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,14 +32,15 @@ class ThumbnailViewSpec extends ViewSpec {
       // Given
       val storedAttachment = StoredAttachment(
         "id",
-        public      = true,
-        operator    = None,
-        url         = Some("some/file/url"),
-        fileName    = "the-file-name.png",
-        mimeType    = "image/png",
-        scanStatus  = Some(ScanStatus.READY),
-        timestamp   = Instant.now(),
-        description = Some("test description")
+        public                 = true,
+        operator               = None,
+        url                    = Some("some/file/url"),
+        fileName               = "the-file-name.png",
+        mimeType               = "image/png",
+        scanStatus             = Some(ScanStatus.READY),
+        timestamp              = Instant.now(),
+        description            = Some("test description"),
+        shouldPublishToRulings = true
       )
 
       // When

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package controllers.v2
 
 import akka.stream.Materializer
 import config.AppConfig
-import controllers.{RenderCaseAction, RequestActions}
+import controllers.{RenderCaseAction, RequestActions, Tab}
 import javax.inject.{Inject, Singleton}
 import models._
 import models.forms.{RemoveAttachmentForm, UploadAttachmentForm}
@@ -32,10 +32,8 @@ import service.{CasesService, FileStoreService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.Future.successful
-import controllers.Tab._
 
 @Singleton
 class AttachmentsController @Inject() (
@@ -44,10 +42,11 @@ class AttachmentsController @Inject() (
   fileService: FileStoreService,
   mcc: MessagesControllerComponents,
   liabilityController: LiabilityController,
+  atarController: AtarController,
   remove_attachment: views.html.v2.remove_attachment,
   implicit val appConfig: AppConfig,
   implicit val mat: Materializer
-) extends FrontendController(mcc)
+)(implicit ec: ExecutionContext) extends FrontendController(mcc)
     with RenderCaseAction
     with I18nSupport {
 
@@ -83,19 +82,11 @@ class AttachmentsController @Inject() (
                 reference,
                 caseService
                   .removeAttachment(_, fileId)
-                  .map(_ =>
-                    Redirect(
-                      controllers.v2.routes.LiabilityController
-                        .displayLiability(reference)
-                        .withFragment(ATTACHMENTS_TAB)
-                    )
-                  )
+                  .map(_ => Redirect(controllers.routes.CaseController.attachmentsDetails(reference)))
               )
             case _ =>
               successful(
-                Redirect(
-                  controllers.v2.routes.LiabilityController.displayLiability(reference).withFragment(ATTACHMENTS_TAB)
-                )
+                Redirect(controllers.routes.CaseController.attachmentsDetails(reference))
               )
           }
         )
@@ -139,11 +130,7 @@ class AttachmentsController @Inject() (
           case Some(c: Case) =>
             casesService
               .addAttachment(c, fileUpload, request.operator)
-              .map(_ =>
-                Redirect(
-                  controllers.v2.routes.LiabilityController.displayLiability(reference).withFragment(ATTACHMENTS_TAB)
-                )
-              )
+              .map(_ => Redirect(controllers.routes.CaseController.attachmentsDetails(reference)))
           case _ =>
             successful(Ok(views.html.case_not_found(reference)))
         }
@@ -163,7 +150,12 @@ class AttachmentsController @Inject() (
   ): Future[Result] = {
     val errors         = Seq(FormError("file-input", errorMessage))
     val formWithErrors = UploadAttachmentForm.form.copy(errors = errors)
-    liabilityController.buildLiabilityView(uploadAttachmentForm = formWithErrors)
+    request.`case`.application.`type` match {
+      case ApplicationType.ATAR =>
+        atarController.renderView(uploadForm = formWithErrors)
+      case ApplicationType.LIABILITY =>
+        liabilityController.renderView(uploadAttachmentForm = formWithErrors)
+    }
   }
 
 }

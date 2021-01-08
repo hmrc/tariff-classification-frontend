@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,7 +54,7 @@ class MyCasesControllerSpec extends ControllerBaseSpec {
         .willReturn(Future.successful(Paged.empty[Case]))
       given(casesService.countCasesByQueue(any[Operator])(any[HeaderCarrier]))
         .willReturn(Future.successful(Map.empty[String, Int]))
-      given(queuesService.getAll).willReturn(Future.successful(Seq(queue)))
+      given(queuesService.getAll).willReturn(Future.successful(List(queue)))
 
       val result = await(controller(Set(Permission.VIEW_MY_CASES)).myCases()(fakeRequest))
       status(result)                                         shouldBe Status.OK

@@ -1,5 +1,5 @@
 @*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,8 +24,7 @@
 @this()
 
 @(
-    caseViewModel: CaseViewModel,
-    activeTab: Option[ActiveTab] = None
+    caseViewModel: CaseViewModel
 )(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 
@@ -43,7 +42,7 @@
     @change_case_status_button(
         "action-this-case",
         messages("case.v2.liability.action_this_case.button"),
-        ReleaseOrSuppressCaseController.onPageLoad(caseViewModel.caseHeader.referenceNumber, activeTab)
+        ReleaseOrSuppressCaseController.onPageLoad(caseViewModel.caseHeader.referenceNumber)
     )
 }
 
@@ -51,7 +50,7 @@
     @change_case_status_button(
         "change-case-status",
         messages("case.v2.liability.change_case_status.button"),
-        ChangeCaseStatusController.onPageLoad(caseViewModel.caseHeader.referenceNumber, activeTab)
+        ChangeCaseStatusController.onPageLoad(caseViewModel.caseHeader.referenceNumber)
     )
 }
 
@@ -73,7 +72,7 @@
     )
 }
 
-@if(caseViewModel.caseHeader.caseType == "Liability" && idOfElement.nonEmpty) {
+@if(idOfElement.nonEmpty) {
     <script>
         let url = "@routes.TabCacheController.post(caseViewModel.caseHeader.referenceNumber, caseViewModel.caseHeader.caseType).url";
         let csrf = "@CSRF.getToken.value";

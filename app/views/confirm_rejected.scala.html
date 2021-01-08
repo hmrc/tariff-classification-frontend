@@ -1,5 +1,5 @@
 @*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,13 +15,14 @@
  *@
 
 @import config.AppConfig
+@import models.request.AuthenticatedRequest
 @import models.Case
 @import views.html.includes.main
 @import views.html.partials._
 @import controllers.routes.MyCasesController
 @import models.viewmodels.NoTabSelected
 
-@(c: Case)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(c: Case)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("page.title.case.rejected")),
     customPrimaryNavTab = NoTabSelected) {

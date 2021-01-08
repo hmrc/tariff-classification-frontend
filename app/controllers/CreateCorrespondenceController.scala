@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,7 +55,7 @@ class CreateCorrespondenceController @Inject() (
   )
 
   def get(): Action[AnyContent] = (verify.authenticated andThen verify.mustHave(Permission.CREATE_CASES)).async {
-    implicit request: Request[AnyContent] =>
+    implicit request =>
       Future.successful(Ok(views.html.v2.create_correspondence(form)))
   }
 
@@ -93,7 +93,7 @@ class CreateCorrespondenceController @Inject() (
           errors => getCaseAndRenderChoiceView(reference, errors),
           (choice: String) => {
             choice match {
-              case "Yes" => successful(Redirect(routes.ReleaseCaseController.releaseCase(reference, None)))
+              case "Yes" => successful(Redirect(routes.ReleaseCaseController.releaseCase(reference)))
               case _  => successful(Redirect(routes.CreateCorrespondenceController.displayConfirmation(reference)))
             }
           }
@@ -102,7 +102,7 @@ class CreateCorrespondenceController @Inject() (
 
   def displayConfirmation(reference: String) =
     (verify.authenticated andThen verify.mustHave(Permission.CREATE_CASES)).async {
-      implicit request: Request[AnyContent] =>
+      implicit request =>
         {
           casesService.getOne(reference).flatMap {
             case Some(c: Case) => {

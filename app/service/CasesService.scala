@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -349,14 +349,14 @@ class CasesService @Inject() (
   def getCasesByQueue(
     queue: Queue,
     pagination: Pagination,
-    forTypes: Seq[ApplicationType] = Seq(ApplicationType.ATAR, ApplicationType.LIABILITY)
+    forTypes: Seq[ApplicationType] = Seq(ApplicationType.ATAR, ApplicationType.LIABILITY, ApplicationType.CORRESPONDENCE)
   )(implicit hc: HeaderCarrier): Future[Paged[Case]] =
     connector.findCasesByQueue(queue, pagination, forTypes)
 
   def getCasesByAllQueues(
     queue: Seq[Queue],
     pagination: Pagination,
-    forTypes: Seq[ApplicationType] = Seq(ApplicationType.ATAR, ApplicationType.LIABILITY)
+    forTypes: Seq[ApplicationType] = Seq(ApplicationType.ATAR, ApplicationType.LIABILITY, ApplicationType.CORRESPONDENCE)
   )(implicit hc: HeaderCarrier): Future[Paged[Case]] =
     connector.findCasesByAllQueues(queue, pagination, forTypes)
 
@@ -394,7 +394,7 @@ class CasesService @Inject() (
 
   def addAttachment(c: Case, f: FileUpload, o: Operator)(implicit headerCarrier: HeaderCarrier): Future[Case] =
     fileService.upload(f) flatMap { fileStored: FileStoreAttachment =>
-      val attachment = Attachment(id = fileStored.id, operator = Some(o))
+      val attachment = Attachment(id = fileStored.id, public = true, operator = Some(o))
       connector.updateCase(c.addAttachment(attachment))
     }
 

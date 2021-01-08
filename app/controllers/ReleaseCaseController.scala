@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,17 +47,15 @@ class ReleaseCaseController @Inject() (
   override protected val config: AppConfig         = appConfig
   override protected val caseService: CasesService = casesService
 
-  def releaseCase(reference: String, activeTab: Option[ActiveTab]): Action[AnyContent] =
+  def releaseCase(reference: String): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference) andThen
-      verify.mustHave(Permission.RELEASE_CASE)).async { implicit request =>
-      releaseCase(releaseCaseForm, reference, activeTab)
-    }
+      verify.mustHave(Permission.RELEASE_CASE)).async(implicit request => releaseCase(releaseCaseForm, reference))
 
-  def releaseCaseToQueue(reference: String, activeTab: Option[ActiveTab]): Action[AnyContent] =
+  def releaseCaseToQueue(reference: String): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference) andThen
       verify.mustHave(Permission.RELEASE_CASE)).async { implicit request =>
       def onInvalidForm(formWithErrors: Form[String]): Future[Result] =
-        releaseCase(formWithErrors, reference, activeTab)
+        releaseCase(formWithErrors, reference)
 
       def onValidForm(queueSlug: String): Future[Result] =
         queueService.getOneBySlug(queueSlug) flatMap {
@@ -71,10 +69,13 @@ class ReleaseCaseController @Inject() (
       releaseCaseForm.bindFromRequest.fold(onInvalidForm, onValidForm)
     }
 
-  private def releaseCase(f: Form[String], caseRef: String, activeTab: Option[ActiveTab])(
+  private def releaseCase(f: Form[String], caseRef: String)(
     implicit request: AuthenticatedCaseRequest[_]
   ): Future[Result] =
-    getCaseAndRenderView(caseRef, c => queueService.getNonGateway.map(releaseCaseView(c, f, _, activeTab)))
+    getCaseAndRenderView(
+      caseRef,
+      c => queueService.getAllForCaseType(c.application.`type`).map(releaseCaseView(c, f, _))
+    )
 
   def confirmReleaseCase(reference: String): Action[AnyContent] =
     (verify.authenticated

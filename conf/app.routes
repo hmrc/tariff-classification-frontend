@@ -17,12 +17,10 @@ POST        /reports/:name                                      controllers.Repo
 
 GET         /cases                                              controllers.Default.redirect(to = controllers.routes.IndexController.get.url)
 GET         /cases/:reference                                   controllers.CaseController.get(reference: String)
-GET         /cases/:reference/applicant                         controllers.CaseController.applicantDetails(reference: String)
-GET         /cases/:reference/item                              controllers.CaseController.itemDetails(reference: String)
 GET         /cases/:reference/sample                            controllers.CaseController.sampleDetails(reference: String)
 
-GET         /cases/:reference/release                           controllers.ReleaseCaseController.releaseCase(reference: String, activeTab: Option[ActiveTab] ?= None)
-POST        /cases/:reference/release                           controllers.ReleaseCaseController.releaseCaseToQueue(reference: String, activeTab: Option[ActiveTab] ?= None)
+GET         /cases/:reference/release                           controllers.ReleaseCaseController.releaseCase(reference: String)
+POST        /cases/:reference/release                           controllers.ReleaseCaseController.releaseCaseToQueue(reference: String)
 GET         /cases/:reference/release/confirmation              controllers.ReleaseCaseController.confirmReleaseCase(reference: String)
 
 GET         /cases/:reference/assign                            controllers.AssignCaseController.get(reference: String)
@@ -32,21 +30,21 @@ GET         /cases/:reference/reassign-case                     controllers.Reas
 POST        /cases/:reference/reassign-case                     controllers.ReassignCaseController.reassignCase(reference: String, origin: String)
 GET         /cases/:reference/reassign-case/confirmation        controllers.ReassignCaseController.confirmReassignCase(reference: String, origin: String)
 
-GET         /cases/:reference/refer                             controllers.ReferCaseController.getReferCase(reference: String, activeTab: Option[ActiveTab] ?= None)
-POST        /cases/:reference/refer                             controllers.ReferCaseController.postReferCase(reference: String, activeTab: Option[ActiveTab] ?= None)
+GET         /cases/:reference/refer                             controllers.ReferCaseController.getReferCase(reference: String)
+POST        /cases/:reference/refer                             controllers.ReferCaseController.postReferCase(reference: String)
 GET         /cases/:reference/refer/confirmation                controllers.ReferCaseController.confirmReferCase(reference: String)
 
-GET         /cases/:reference/reject                            controllers.RejectCaseController.getRejectCase(reference: String, activeTab: Option[ActiveTab] ?= None)
-POST        /cases/:reference/reject                            controllers.RejectCaseController.postRejectCase(reference: String, activeTab: Option[ActiveTab] ?= None)
+GET         /cases/:reference/reject                            controllers.RejectCaseController.getRejectCase(reference: String)
+POST        /cases/:reference/reject                            controllers.RejectCaseController.postRejectCase(reference: String)
 GET         /cases/:reference/reject/confirmation               controllers.RejectCaseController.confirmRejectCase(reference: String)
 
-GET         /cases/:reference/suspend                           controllers.SuspendCaseController.getSuspendCase(reference: String, activeTab: Option[ActiveTab] ?= None)
-POST        /cases/:reference/suspend                           controllers.SuspendCaseController.postSuspendCase(reference: String, activeTab: Option[ActiveTab] ?= None)
+GET         /cases/:reference/suspend                           controllers.SuspendCaseController.getSuspendCase(reference: String)
+POST        /cases/:reference/suspend                           controllers.SuspendCaseController.postSuspendCase(reference: String)
 GET         /cases/:reference/suspend/confirmation              controllers.SuspendCaseController.confirmSuspendCase(reference: String)
 
 
-GET         /cases/:reference/suppress                          controllers.SuppressCaseController.getSuppressCase(reference: String, activeTab: Option[ActiveTab] ?= None)
-POST        /cases/:reference/suppress                          controllers.SuppressCaseController.postSuppressCase(reference: String, activeTab: Option[ActiveTab] ?= None)
+GET         /cases/:reference/suppress                          controllers.SuppressCaseController.getSuppressCase(reference: String)
+POST        /cases/:reference/suppress                          controllers.SuppressCaseController.postSuppressCase(reference: String)
 GET         /cases/:reference/suppress/confirmation             controllers.SuppressCaseController.confirmSuppressCase(reference: String)
 
 POST        /cases/:reference/reopen                            controllers.ReopenCaseController.confirmReopenCase(reference: String)
@@ -66,19 +64,16 @@ GET         /cases/:reference/ruling/cancel/confirmation        controllers.Canc
 GET         /cases/:reference/activity                          controllers.CaseController.activityDetails(reference: String)
 POST        /cases/:reference/activity                          controllers.CaseController.addNote(reference: String)
 
-GET         /cases/:reference/attachments                       controllers.AttachmentsController.attachmentsDetails(reference: String)
-POST        /cases/:reference/attachments                       controllers.AttachmentsController.uploadAttachment(reference: String)
-GET         /cases/:reference/attachments/remove                controllers.AttachmentsController.removeAttachment(reference: String, fileId: String, fileName: String)
-POST        /cases/:reference/attachments/remove                controllers.AttachmentsController.confirmRemoveAttachment(reference: String, fileId: String, fileName: String)
+GET         /cases/:reference/attachments                       controllers.CaseController.attachmentsDetails(reference: String)
 
 GET         /cases/:reference/keywords                          controllers.CaseController.keywordsDetails(reference: String)
 POST        /cases/:reference/keywords                          controllers.CaseController.addKeyword(reference: String)
 
-GET         /cases/:reference/change-case-status                controllers.ChangeCaseStatusController.onPageLoad(reference: String, activeTab: Option[ActiveTab] ?= None)
-POST        /cases/:reference/change-case-status                controllers.ChangeCaseStatusController.onSubmit(reference: String, activeTab: Option[ActiveTab] ?= None)
+GET         /cases/:reference/change-case-status                controllers.ChangeCaseStatusController.onPageLoad(reference: String)
+POST        /cases/:reference/change-case-status                controllers.ChangeCaseStatusController.onSubmit(reference: String)
 
-GET         /cases/:reference/release-or-suppress-case          controllers.ReleaseOrSuppressCaseController.onPageLoad(reference: String, activeTab: Option[ActiveTab] ?= None)
-POST        /cases/:reference/release-or-suppress-case          controllers.ReleaseOrSuppressCaseController.onSubmit(reference: String, activeTab: Option[ActiveTab] ?= None)
+GET         /cases/:reference/release-or-suppress-case          controllers.ReleaseOrSuppressCaseController.onPageLoad(reference: String)
+POST        /cases/:reference/release-or-suppress-case          controllers.ReleaseOrSuppressCaseController.onSubmit(reference: String)
 
 GET         /cases/:reference/appeal                            controllers.AppealCaseController.appealDetails(reference: String)
 
@@ -120,11 +115,9 @@ GET         /pdf/application/:reference                         controllers.PdfD
 GET         /attachment/:id                                     controllers.ViewAttachmentController.get(id: String)
 
 # v2
-GET         /cases/v2/:reference/liability                      controllers.v2.LiabilityController.displayLiability(reference: String)
-POST        /cases/v2/:reference/liability                      controllers.v2.LiabilityController.addNote(reference: String)
+GET         /cases/v2/:reference/atar                           controllers.v2.AtarController.displayAtar(reference: String)
 
-POST        /cases/v2/:reference/liability/add-keyword          controllers.v2.LiabilityController.addKeyword(reference: String)
-GET         /cases/v2/:reference/liability/remove-keyword/:keyword      controllers.v2.LiabilityController.removeKeyword(reference: String, keyword: String)
+GET         /cases/v2/:reference/liability                      controllers.v2.LiabilityController.displayLiability(reference: String)
 
 GET         /cases/v2/:reference/liability/edit-details         controllers.v2.LiabilityController.editLiabilityDetails(reference: String)
 POST        /cases/v2/:reference/liability/edit-details         controllers.v2.LiabilityController.postLiabilityDetails(reference: String)
@@ -134,10 +127,8 @@ GET         /cases/v2/:reference/attachments/remove             controllers.v2.A
 POST        /cases/v2/:reference/attachments/remove             controllers.v2.AttachmentsController.confirmRemoveAttachment(reference: String, fileId: String, fileName: String)
 
 
-GET        /cases/cache/:reference/:itemType                    controllers.TabCacheController.get(reference: String, itemType: String)
-POST       /cases/cache/:reference/:itemType                    controllers.TabCacheController.post(reference: String, itemType: String)
-
-GET        /accessibility                                       controllers.AccessibilityController.onPageLoad
+GET        /cases/cache/:reference/:itemType                    controllers.TabCacheController.get(reference: String, itemType: ApplicationType)
+POST       /cases/cache/:reference/:itemType                    controllers.TabCacheController.post(reference: String, itemType: ApplicationType)
 
 GET        /operator-dashboard-classification                   controllers.OperatorDashboardController.onPageLoad
 

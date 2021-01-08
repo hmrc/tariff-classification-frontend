@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,13 +37,12 @@ class ViewAttachmentController @Inject() (
     with I18nSupport {
 
   def get(id: String): Action[AnyContent] =
-    (verify.authenticated andThen verify.mustHave(Permission.VIEW_CASES)).async {
-      implicit request: Request[AnyContent] =>
-        fileService.getFileMetadata(id) map {
-          case Some(fileSubmitted: FileMetadata) if fileSubmitted.url.isDefined =>
-            Redirect(Call(method = "GET", url = fileSubmitted.url.get))
-          case fileSubmitted: Option[FileMetadata] =>
-            Ok(views.html.view_attachment_unavailable(fileSubmitted))
-        }
+    (verify.authenticated andThen verify.mustHave(Permission.VIEW_CASES)).async { implicit request =>
+      fileService.getFileMetadata(id) map {
+        case Some(fileSubmitted: FileMetadata) if fileSubmitted.url.isDefined =>
+          Redirect(Call(method = "GET", url = fileSubmitted.url.get))
+        case fileSubmitted: Option[FileMetadata] =>
+          Ok(views.html.view_attachment_unavailable(fileSubmitted))
+      }
     }
 }

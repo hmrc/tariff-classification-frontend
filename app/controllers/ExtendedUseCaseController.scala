@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,8 @@ package controllers
 
 import config.AppConfig
 import models.forms.BooleanForm
+import models.request.AuthenticatedRequest
+
 import javax.inject.{Inject, Singleton}
 import models.{Case, Operator, Permission}
 import play.api.data.Form
@@ -46,7 +48,7 @@ class ExtendedUseCaseController @Inject() (
     c.decision.flatMap(_.cancellation).exists(_.applicationForExtendedUse)
 
   override protected def chooseStatusView(c: Case, preFilledForm: Form[Boolean], options: Option[String] = None)(
-    implicit request: Request[_]
+    implicit request: AuthenticatedRequest[_]
   ): Html =
     views.html.change_extended_use_status(c, preFilledForm)
 

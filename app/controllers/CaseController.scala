@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,225 +17,137 @@
 package controllers
 
 import config.AppConfig
+import controllers.v2.{AtarController, LiabilityController}
 import models.forms._
 import javax.inject.{Inject, Singleton}
-import models.TabIndexes.tabIndexFor
 import models._
-import models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
+import models.request.AuthenticatedCaseRequest
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import play.twirl.api.{Html, HtmlFormat}
 import service._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.CaseDetailPage._
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class CaseController @Inject() (
   verify: RequestActions,
-  casesService: CasesService,
   keywordsService: KeywordsService,
-  fileService: FileStoreService,
   eventsService: EventsService,
-  queuesService: QueuesService,
-  commodityCodeService: CommodityCodeService,
-  decisionForm: DecisionForm,
-  countriesService: CountriesService,
   mcc: MessagesControllerComponents,
-  val caseDetailsView: views.html.case_details,
+  liabilityController: LiabilityController,
+  atarController: AtarController,
   implicit val appConfig: AppConfig
-) extends FrontendController(mcc)
+)(implicit ec: ExecutionContext)
+    extends FrontendController(mcc)
     with I18nSupport {
-
-  private type Keyword = String
-  private lazy val activityForm: Form[ActivityFormData] = ActivityForm.form
-  private lazy val keywordForm: Form[String]            = KeywordForm.form
 
   def get(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)) {
     implicit request =>
       request.`case`.application.`type` match {
-        case ApplicationType.ATAR => Redirect(routes.CaseController.applicantDetails(reference))
+        case ApplicationType.ATAR      => Redirect(v2.routes.AtarController.displayAtar(reference))
         case ApplicationType.LIABILITY => Redirect(v2.routes.LiabilityController.displayLiability(reference))
       }
   }
 
-  def applicantDetails(reference: String): Action[AnyContent] =
-    (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
-      validateAndRenderView(
-        TRADER,
-        c => Future.successful( views.html.partials.case_trader(c, tabIndexFor(TRADER), getCountryName)),
-        ActiveTab.Applicant
-      )
-    }
-
-  def itemDetails(reference: String): Action[AnyContent] =
-    (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
-      validateAndRenderView(
-        APPLICATION_DETAILS,
-        c =>
-          for {
-            attachments <- fileService.getAttachments(c)
-          } yield views.html.partials.application_details(c, attachments, tabIndexFor(APPLICATION_DETAILS)),
-        ActiveTab.Item
-      )
-    }
-
   def sampleDetails(reference: String): Action[AnyContent] =
-    (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
+    (verify.authenticated andThen verify.casePermissions(reference)) { implicit request =>
       request.`case`.application.`type` match {
-        case ApplicationType.LIABILITY =>
-          Future.successful(Redirect(v2.routes.LiabilityController.displayLiability(reference)))
         case ApplicationType.ATAR =>
-          validateAndRenderView(
-            SAMPLE_DETAILS,
-            c =>
-              for {
-                events <- eventsService.getFilteredEvents(c.reference, NoPagination(), Some(EventType.sampleEvents))
-              } yield views.html.partials.sample.sample_details(c, events, tabIndexFor(SAMPLE_DETAILS)),
-            ActiveTab.Sample
-          )
+          Redirect(v2.routes.AtarController.displayAtar(reference).withFragment(Tab.SAMPLE_TAB.name))
+        case ApplicationType.LIABILITY =>
+          Redirect(v2.routes.LiabilityController.displayLiability(reference).withFragment(Tab.SAMPLE_TAB.name))
       }
     }
 
   def rulingDetails(reference: String): Action[AnyContent] =
-    (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
-      validateAndRenderView(
-        RULING,
-        c =>
-          for {
-            attachments <- fileService.getAttachments(c)
-            // Commodity code expiry is not checked until we can integrate with the UK Global Tariff
-            commodityCode = c.decision.map(_.bindingCommodityCode).map(CommodityCode(_))
-          } yield views.html.partials.ruling
-            .ruling_details(c, decisionForm.bindFrom(c.decision), attachments, commodityCode, tabIndexFor(RULING)),
-        ActiveTab.Ruling
-      )
+    (verify.authenticated andThen verify.casePermissions(reference)) { implicit request =>
+      request.`case`.application.`type` match {
+        case ApplicationType.ATAR =>
+          Redirect(v2.routes.AtarController.displayAtar(reference).withFragment(Tab.RULING_TAB.name))
+        case ApplicationType.LIABILITY =>
+          Redirect(v2.routes.LiabilityController.displayLiability(reference).withFragment(Tab.RULING_TAB.name))
+      }
     }
 
   def activityDetails(reference: String): Action[AnyContent] =
-    (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
-      validateAndRenderView(
-        ACTIVITY,
-        showActivity(_, activityForm),
-        ActiveTab.Activity
-      )
-    }
-
-  def addNote(reference: String): Action[AnyContent] =
-    (verify.authenticated andThen
-      verify.casePermissions(reference) andThen
-      verify.mustHave(Permission.ADD_NOTE)).async { implicit request =>
-      def onError: Form[ActivityFormData] => Future[Result] = errorForm => {
-        validateAndRenderView(
-          ACTIVITY,
-          showActivity(_, errorForm),
-          ActiveTab.Activity
-        )
+    (verify.authenticated andThen verify.casePermissions(reference)) { implicit request =>
+      request.`case`.application.`type` match {
+        case ApplicationType.ATAR =>
+          Redirect(v2.routes.AtarController.displayAtar(reference).withFragment(Tab.ACTIVITY_TAB.name))
+        case ApplicationType.LIABILITY =>
+          Redirect(v2.routes.LiabilityController.displayLiability(reference).withFragment(Tab.ACTIVITY_TAB.name))
       }
-
-      def onSuccess: ActivityFormData => Future[Result] = validForm => {
-        validateAndRedirect(
-          reference,
-          ACTIVITY,
-          c =>
-            eventsService
-              .addNote(c, validForm.note, request.operator)
-              .map(_ => routes.CaseController.activityDetails(reference))
-        )
-      }
-
-      activityForm.bindFromRequest.fold(onError, onSuccess)
     }
 
   def keywordsDetails(reference: String): Action[AnyContent] =
-    (verify.authenticated andThen
-      verify.casePermissions(reference)).async { implicit request =>
-      validateAndRenderView(
-        reference,
-        KEYWORDS,
-        showKeywords(_, keywordForm),
-        request.`case`,
-        ActiveTab.Keywords
-      )
+    (verify.authenticated andThen verify.casePermissions(reference)) { implicit request =>
+      request.`case`.application.`type` match {
+        case ApplicationType.ATAR =>
+          Redirect(v2.routes.AtarController.displayAtar(reference).withFragment(Tab.KEYWORDS_TAB.name))
+        case ApplicationType.LIABILITY =>
+          Redirect(v2.routes.LiabilityController.displayLiability(reference).withFragment(Tab.KEYWORDS_TAB.name))
+      }
     }
+
+  def attachmentsDetails(reference: String): Action[AnyContent] =
+    (verify.authenticated andThen verify.casePermissions(reference)) { implicit request =>
+      request.`case`.application.`type` match {
+        case ApplicationType.ATAR =>
+          Redirect(v2.routes.AtarController.displayAtar(reference).withFragment(Tab.ATTACHMENTS_TAB.name))
+        case ApplicationType.LIABILITY =>
+          Redirect(v2.routes.LiabilityController.displayLiability(reference).withFragment(Tab.ATTACHMENTS_TAB.name))
+      }
+    }
+
+  def addNote(reference: String): Action[AnyContent] =
+    (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.ADD_NOTE))
+      .async { implicit request =>
+        def onError: Form[ActivityFormData] => Future[Result] = errorForm => {
+          request.`case`.application.`type` match {
+            case ApplicationType.ATAR =>
+              atarController.renderView(activityForm = errorForm)
+            case ApplicationType.LIABILITY =>
+              liabilityController.renderView(activityForm = errorForm)
+          }
+        }
+
+        def onSuccess: ActivityFormData => Future[Result] = validForm => {
+          eventsService
+            .addNote(request.`case`, validForm.note, request.operator)
+            .map(_ => Redirect(routes.CaseController.activityDetails(reference)))
+        }
+
+        ActivityForm.form.bindFromRequest.fold(onError, onSuccess)
+      }
 
   def addKeyword(reference: String): Action[AnyContent] =
-    (verify.authenticated andThen
-      verify.casePermissions(reference) andThen
-      verify.mustHave(Permission.KEYWORDS)).async { implicit request =>
-      keywordForm.bindFromRequest.fold(
-        errorForm =>
-          validateAndRenderView(
-            KEYWORDS,
-            showKeywords(_, errorForm),
-            ActiveTab.Keywords
-          ),
-        keyword =>
-          validateAndRenderView(
-            KEYWORDS,
-            updateKeywords(_, keyword)(keywordsService.addKeyword),
-            ActiveTab.Keywords
-          )
-      )
-    }
+    (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.KEYWORDS))
+      .async { implicit request =>
+        def onError: Form[String] => Future[Result] = (errorForm: Form[String]) => {
+          request.`case`.application.`type` match {
+            case ApplicationType.ATAR =>
+              atarController.renderView(keywordForm = errorForm)
+            case ApplicationType.LIABILITY =>
+              liabilityController.renderView(keywordForm = errorForm)
+          }
+        }
+
+        def onSuccess: String => Future[Result] = validForm => {
+          keywordsService
+            .addKeyword(request.`case`, validForm, request.operator)
+            .map(_ => Redirect(routes.CaseController.keywordsDetails(reference)))
+        }
+
+        KeywordForm.form.bindFromRequest.fold(onError, onSuccess)
+      }
 
   def removeKeyword(reference: String, keyword: String): Action[AnyContent] =
-    (verify.authenticated andThen
-      verify.casePermissions(reference) andThen
-      verify.mustHave(Permission.KEYWORDS)).async { implicit request: AuthenticatedCaseRequest[AnyContent] =>
-      validateAndRenderView(
-        KEYWORDS,
-        updateKeywords(_, keyword)(keywordsService.removeKeyword),
-        ActiveTab.Keywords
-      )
-    }
-
-  private def updateKeywords(c: Case, keyword: Keyword)(
-    updateKeywords: (Case, Keyword, Operator) => Future[Case]
-  )(implicit request: AuthenticatedRequest[AnyContent]): Future[HtmlFormat.Appendable] =
-    for {
-      updatedCase          <- updateKeywords(c, keyword, request.operator)
-      autoCompleteKeywords <- keywordsService.autoCompleteKeywords
-    } yield views.html.partials.keywords_details(updatedCase, autoCompleteKeywords, keywordForm, tabIndexFor(KEYWORDS))
-
-  private def showKeywords(c: Case, f: Form[String])(
-    implicit request: AuthenticatedRequest[AnyContent]
-  ): Future[HtmlFormat.Appendable] =
-    keywordsService.autoCompleteKeywords.map { keywords: Seq[String] =>
-      views.html.partials.keywords_details(c, keywords, f, tabIndexFor(KEYWORDS))
-    }
-
-  private def validateAndRenderView(
-    reference: String,
-    page: CaseDetailPage,
-    toHtml: Case => Future[Html],
-    c: Case,
-    activeTab: ActiveTab
-  )(implicit request: AuthenticatedCaseRequest[_]): Future[Result] =
-    toHtml(c).map(html => Ok(caseDetailsView(c, page, html, Some(activeTab))))
-
-  private def validateAndRenderView(page: CaseDetailPage, toHtml: Case => Future[Html], activeTab: ActiveTab)(
-    implicit request: AuthenticatedCaseRequest[_]
-  ): Future[Result] =
-    toHtml(request.`case`).map(html => Ok(caseDetailsView(request.`case`, page, html, Some(activeTab))))
-
-  private def validateAndRedirect(reference: String, page: CaseDetailPage, toHtml: Case => Future[Call])(
-    implicit request: AuthenticatedCaseRequest[_]
-  ): Future[Result] =
-    toHtml(request.`case`).map(_ => Redirect(routes.CaseController.activityDetails(reference)))
-
-  private def showActivity(c: Case, f: Form[ActivityFormData])(
-    implicit request: AuthenticatedRequest[AnyContent]
-  ): Future[HtmlFormat.Appendable] =
-    for {
-      events <- eventsService
-                 .getFilteredEvents(c.reference, NoPagination(), Some(EventType.values.diff(EventType.sampleEvents)))
-      queues <- queuesService.getAll
-    } yield views.html.partials.activity_details(c, events, f, queues, tabIndexFor(ACTIVITY))
-
-  def getCountryName(code: String) = countriesService.getAllCountries.find(_.code == code).map(_.countryName)
-
+    (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.KEYWORDS))
+      .async { implicit request: AuthenticatedCaseRequest[AnyContent] =>
+        keywordsService.removeKeyword(request.`case`, keyword, request.operator) map { _ =>
+          Redirect(routes.CaseController.keywordsDetails(reference))
+        }
+      }
 }

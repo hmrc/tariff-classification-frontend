@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class SuppressCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   private val casesService = mock[CasesService]
-  private val operator     = mock[Operator]
+  private val operator     = Operator(id = "id")
 
   private val caseWithStatusNEW  = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.NEW)
   private val caseWithStatusOPEN = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.OPEN)
@@ -65,7 +65,7 @@ class SuppressCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
 
     "return OK and HTML content type" in {
       val result: Result =
-        await(controller(caseWithStatusNEW).getSuppressCase("reference", None)(newFakeGETRequestWithCSRF(app)))
+        await(controller(caseWithStatusNEW).getSuppressCase("reference")(newFakeGETRequestWithCSRF(app)))
 
       status(result)        shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -76,7 +76,7 @@ class SuppressCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
     "return OK when user has right permissions" in {
       val result: Result = await(
         controller(caseWithStatusNEW, Set(Permission.SUPPRESS_CASE))
-          .getSuppressCase("reference", None)(newFakeGETRequestWithCSRF(app))
+          .getSuppressCase("reference")(newFakeGETRequestWithCSRF(app))
       )
 
       status(result) shouldBe Status.OK
@@ -84,7 +84,7 @@ class SuppressCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
 
     "redirect unauthorised when does not have right permissions" in {
       val result: Result = await(
-        controller(caseWithStatusNEW, Set.empty).getSuppressCase("reference", None)(newFakeGETRequestWithCSRF(app))
+        controller(caseWithStatusNEW, Set.empty).getSuppressCase("reference")(newFakeGETRequestWithCSRF(app))
       )
 
       status(result)               shouldBe Status.SEE_OTHER
@@ -119,7 +119,7 @@ class SuppressCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
 
       val result: Result =
         await(
-          controller(caseWithStatusNEW).postSuppressCase("reference", None)(
+          controller(caseWithStatusNEW).postSuppressCase("reference")(
             newFakePOSTRequestWithCSRF(app).withBody(aMultipartFileWithParams("text/plain", "note" -> Seq("some-note")))
           )
         )
@@ -131,7 +131,7 @@ class SuppressCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
     "return to form on missing file" in {
       val result: Result =
         await(
-          controller(caseWithStatusNEW).postSuppressCase("reference", None)(
+          controller(caseWithStatusNEW).postSuppressCase("reference")(
             newFakePOSTRequestWithCSRF(app).withBody(anEmptyMultipartFileWithParams())
           )
         )
@@ -143,7 +143,7 @@ class SuppressCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
     "return to form on missing form field" in {
       val result: Result =
         await(
-          controller(caseWithStatusNEW).postSuppressCase("reference", None)(
+          controller(caseWithStatusNEW).postSuppressCase("reference")(
             newFakePOSTRequestWithCSRF(app).withBody(aMultipartFileWithParams("text/plain"))
           )
         )
@@ -155,7 +155,7 @@ class SuppressCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
     "return to form on invalid file type" in {
       val result: Result =
         await(
-          controller(caseWithStatusNEW).postSuppressCase("reference", None)(
+          controller(caseWithStatusNEW).postSuppressCase("reference")(
             newFakePOSTRequestWithCSRF(app).withBody(aMultipartFileWithParams("audio/mpeg", "note" -> Seq("some-note")))
           )
         )
@@ -167,7 +167,7 @@ class SuppressCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
     "redirect unauthorised when does not have right permissions" in {
       val result: Result = await(
         controller(caseWithStatusNEW, Set.empty)
-          .postSuppressCase("reference", None)(
+          .postSuppressCase("reference")(
             newFakePOSTRequestWithCSRF(app).withBody(aMultipartFileWithParams("text/plain"))
           )
       )

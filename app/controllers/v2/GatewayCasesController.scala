@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@ class GatewayCasesController @Inject()(
 
   def displayGatewayCases: Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.VIEW_QUEUE_CASES)).async { implicit request: AuthenticatedRequest[AnyContent] =>
-      val types: Seq[ApplicationType] = Seq(ApplicationType.ATAR, ApplicationType.LIABILITY)
+      val types: Seq[ApplicationType] = Seq(ApplicationType.ATAR, ApplicationType.LIABILITY, ApplicationType.CORRESPONDENCE)
 
       for {
         cases            <- casesService.getCasesByQueue(Queues.gateway, NoPagination(), types)

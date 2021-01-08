@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,24 +40,24 @@ class ChangeCaseStatusController @Inject() (
 
   val form = new CaseStatusRadioInputFormProvider()()
 
-  def onPageLoad(reference: String, activeTab: Option[ActiveTab] = None): Action[AnyContent] =
+  def onPageLoad(reference: String): Action[AnyContent] =
     (verify.authenticated andThen
       verify.casePermissions(reference) andThen
       verify.mustHave(Permission.EDIT_RULING)).async { implicit request =>
-      validateAndRenderView(c => successful(change_case_status(c, form, activeTab)))
+      validateAndRenderView(c => successful(change_case_status(c, form)))
     }
 
-  def onSubmit(reference: String, activeTab: Option[ActiveTab] = None): Action[AnyContent] =
+  def onSubmit(reference: String): Action[AnyContent] =
     (verify.authenticated andThen
       verify.casePermissions(reference) andThen
       verify.mustHave(Permission.EDIT_RULING)) { implicit request =>
       form.bindFromRequest.fold(
-        hasErrors => Ok(change_case_status(request.`case`, hasErrors, activeTab)), {
+        hasErrors => Ok(change_case_status(request.`case`, hasErrors)), {
           case CaseStatusRadioInput.Complete => Redirect(routes.CompleteCaseController.completeCase(reference))
-          case CaseStatusRadioInput.Refer    => Redirect(routes.ReferCaseController.getReferCase(reference, activeTab))
-          case CaseStatusRadioInput.Reject   => Redirect(routes.RejectCaseController.getRejectCase(reference, activeTab))
+          case CaseStatusRadioInput.Refer    => Redirect(routes.ReferCaseController.getReferCase(reference))
+          case CaseStatusRadioInput.Reject   => Redirect(routes.RejectCaseController.getRejectCase(reference))
           case CaseStatusRadioInput.Suspend =>
-            Redirect(routes.SuspendCaseController.getSuspendCase(reference, activeTab))
+            Redirect(routes.SuspendCaseController.getSuspendCase(reference))
           case CaseStatusRadioInput.MoveBackToQueue =>
             Redirect(routes.ReassignCaseController.reassignCase(reference, request.uri))
         }

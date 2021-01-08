@@ -1,5 +1,5 @@
 @*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,19 +15,16 @@
  *@
 
 @import config.AppConfig
-@import models.Case
-@import views.html.includes.main
-@import views.html.partials.case_heading
-@import views.html.components.input_radio
-@import models.CaseStatusRadioInput
-@import controllers.routes.ChangeCaseStatusController
-@import views.html.components.confirm_or_cancel_buttons
-@import views.html.partials.{error_summary}
-@import controllers.ActiveTab
-@import views.CancelAction
+@import models.request.AuthenticatedRequest
+@import controllers.routes
+@import models.{Case, CaseStatusRadioInput}
 @import models.viewmodels.NoTabSelected
+@import views.html.includes.main
+@import views.html.components.{confirm_or_cancel_buttons, input_radio}
+@import views.html.components.input_radio
+@import views.html.partials.{case_heading, error_summary}
 
-@(c: Case, form: Form[_], activeTab: Option[ActiveTab])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(c: Case, form: Form[_])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("change_case_status_title")), customPrimaryNavTab = NoTabSelected) {
 
@@ -35,7 +32,7 @@
 
     @case_heading(c)
 
- @helper.form(action = ChangeCaseStatusController.onSubmit(c.reference, activeTab), 'novalidate -> "novalidate") {
+ @helper.form(action = routes.ChangeCaseStatusController.onSubmit(c.reference), 'novalidate -> "novalidate") {
 
     @helper.CSRF.formField
 
@@ -47,7 +44,7 @@
         id = "change_case_status",
         confirmText = "Submit",
         cancelText = "Cancel",
-        cancelHref = CancelAction.cancelHref(activeTab, c.reference)
+        cancelHref = routes.CaseController.get(c.reference)
     )
 
 

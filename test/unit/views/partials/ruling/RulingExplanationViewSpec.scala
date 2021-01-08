@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ class RulingExplanationViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(ruling_explanation(c))
+      val doc = view(ruling_explanation(c.decision))
 
       // Then
       doc shouldNot containElementWithID("information-for-holder")
@@ -48,7 +48,7 @@ class RulingExplanationViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(ruling_explanation(c))
+      val doc = view(ruling_explanation(c.decision))
 
       // Then
       doc shouldNot containElementWithID("holder_explanationValue")
@@ -60,7 +60,7 @@ class RulingExplanationViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(ruling_explanation(c))
+      val doc = view(ruling_explanation(c.decision))
 
       // Then
       doc shouldNot containElementWithID("holder_explanationValue")
@@ -75,7 +75,7 @@ class RulingExplanationViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(ruling_explanation(c))
+      val doc = view(ruling_explanation(c.decision))
 
       // Then
       doc                                          should containElementWithID("information-for-holder")
@@ -93,7 +93,7 @@ class RulingExplanationViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(ruling_explanation(c))
+      val doc = view(ruling_explanation(c.decision))
 
       // Then
       doc.getElementById("binding-commodity-code") should containText(

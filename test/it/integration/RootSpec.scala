@@ -10,7 +10,7 @@ class RootSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder {
 
   "Root" should {
 
-    "return status 200 and redirect to My Cases" in {
+    "return status 200 and redirect to Dashboard" in {
       // Given
       givenAuthSuccess()
       stubFor(
@@ -42,7 +42,9 @@ class RootSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder {
 
       // Then
       response.status shouldBe OK
-      response.body   should include("Cases for Forename Surname")
+      response.body   should include("My cases")
+      response.body   should include("All open cases")
+      response.body   should include("Gateway cases")
     }
 
     "redirect on auth failure" in {

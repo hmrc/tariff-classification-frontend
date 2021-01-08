@@ -1,5 +1,5 @@
 @*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@
 @import models.Case
 @import controllers.routes.PdfDownloadController
 
-@(c: Case, useTabIndex : Option[Int] = None)(implicit messages: Messages)
+@(caseReference: String, useTabIndex : Option[Int] = None)(implicit messages: Messages)
 
 <div id="submitted-application" class="mb-3">
-   <a  @if(useTabIndex.isDefined){ tabindex="@{useTabIndex.get}" } id="submitted-application-link" target="_blank" href="@PdfDownloadController.applicationPdf(c.reference)"> @messages("case.decision.ruling.review.appeal.link") </a>
+   <a  @if(useTabIndex.isDefined){ tabindex="@{useTabIndex.get}" } id="submitted-application-link" target="_blank" href="@PdfDownloadController.applicationPdf(caseReference)"> @messages("case.decision.ruling.review.appeal.link") </a>
 </div>

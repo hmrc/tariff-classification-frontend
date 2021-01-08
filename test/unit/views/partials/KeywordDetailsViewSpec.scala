@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import utils.Cases._
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.partials.keywords_details
+import models.viewmodels.KeywordsTabViewModel
 
 class KeywordDetailsViewSpec extends ViewSpec {
 
@@ -30,9 +31,10 @@ class KeywordDetailsViewSpec extends ViewSpec {
     "Render a case with no keywords" in {
       // Given
       val c = aCase()
+      val keywordsTab = KeywordsTabViewModel.fromCase(c, Seq("APPLES", "TOYS"))
 
       // When
-      val doc = view(keywords_details(c, Seq("APPLES", "TOYS"), KeywordForm.form))
+      val doc = view(keywords_details(keywordsTab, KeywordForm.form))
 
       // Then
       doc should containElementWithID("keywords-heading")
@@ -42,9 +44,10 @@ class KeywordDetailsViewSpec extends ViewSpec {
     "Render a case with keywords" in {
       // Given
       val c = aCase().copy(keywords = Set("APPLES", "CARS"))
+      val keywordsTab = KeywordsTabViewModel.fromCase(c, Seq("APPLES", "TOYS"))
 
       // When
-      val doc = view(keywords_details(c, Seq("APPLES", "TOYS"), KeywordForm.form))
+      val doc = view(keywords_details(keywordsTab, KeywordForm.form))
 
       // Then
       doc                                          should containElementWithID("keywords-heading")
@@ -56,10 +59,11 @@ class KeywordDetailsViewSpec extends ViewSpec {
     "Render a case with keywords with KEYWORDS permissions" in {
       // Given
       val c = aCase().copy(keywords = Set("APPLES", "CARS"))
+      val keywordsTab = KeywordsTabViewModel.fromCase(c, Seq("APPLES", "TOYS"))
 
       // When
       val doc = view(
-        keywords_details(c, Seq("APPLES", "TOYS"), KeywordForm.form)(
+        keywords_details(keywordsTab, KeywordForm.form)(
           requestWithPermissions(Permission.KEYWORDS),
           messages,
           appConfig
@@ -79,9 +83,10 @@ class KeywordDetailsViewSpec extends ViewSpec {
     "Render a case with keywords without KEYWORDS permissions" in {
       // Given
       val c = aCase().copy(keywords = Set("APPLES", "CARS"))
+      val keywordsTab = KeywordsTabViewModel.fromCase(c, Seq("APPLES", "TOYS"))
 
       // When
-      val doc = view(keywords_details(c, Seq("APPLES", "TOYS"), KeywordForm.form)(operatorRequest, messages, appConfig))
+      val doc = view(keywords_details(keywordsTab, KeywordForm.form)(operatorRequest, messages, appConfig))
 
       // Then
       doc shouldNot containElementWithID("keywords-row-0-remove")

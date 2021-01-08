@@ -1,5 +1,5 @@
 @*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,13 +15,13 @@
  *@
 
 @import config.AppConfig
-@import controllers.routes
-@import models.Case
+@import models.request.AuthenticatedRequest
+@import controllers.{Tab, routes}
+@import models.{Case, SampleReturn}
 @import views.forms.components.RadioOption
 @import views.html.forms.components.input_radiogroup
-@import models.SampleReturn
-@import controllers.Tab._
-@(c: Case, field: Field)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+
+@(c: Case, field: Field)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 
 @helper.form(action = routes.SampleReturnController.updateStatus(c.reference), 'id -> "sample_return_form", 'novalidate -> "novalidate") {
@@ -36,7 +36,7 @@
     )
     <div>
         <button id="sample_return_form-submit" class="button" type="submit">@messages("case.sample.return.change-return-confirm")</button>
-        <a id="sample_return_form-cancel" class="secondary-button" href="@controllers.v2.routes.LiabilityController.displayLiability(c.reference).withFragment(SAMPLE_TAB)">@messages("case.sample.return.change-return-cancel")</a>
+        <a id="sample_return_form-cancel" class="secondary-button" href="@routes.CaseController.sampleDetails(c.reference)">@messages("case.sample.return.change-return-cancel")</a>
     </div>
 }
 

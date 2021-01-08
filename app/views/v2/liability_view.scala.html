@@ -1,5 +1,5 @@
 @*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 @import config.AppConfig
 @import views.html.includes.main
+@import models.ApplicationType
 @import models.forms.ActivityFormData
 @import models.request.AuthenticatedRequest
 @import models.viewmodels._
@@ -188,9 +189,8 @@
     </div>
 }
 
-    <script>
-    let cacheURL = "@routes.TabCacheController.get(caseViewModel.caseHeader.referenceNumber, "Liability").url";
+<script>
+    let cacheURL = "@routes.TabCacheController.get(caseViewModel.caseHeader.referenceNumber, ApplicationType.LIABILITY).url";
     let csrfToken = "@CSRF.getToken.value";
-
-     window.addEventListener("load", () => fixAnchorInURL(cacheURL, csrfToken), false);
-    </script>
+    window.addEventListener("load", () => fixAnchorInURL(cacheURL, csrfToken), false);
+</script>

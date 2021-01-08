@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,15 +18,16 @@ package controllers.v2
 
 import com.google.inject.Inject
 import config.AppConfig
-import controllers.{RenderCaseAction, RequestActions}
+import controllers.RequestActions
+import models.viewmodels._
 import models.{NoPagination, Permission}
-import models.viewmodels.{ATaRTab, CasesTabViewModel, CorrespondenceTab, LiabilitiesTab, MiscellaneousTab, SubNavigationTab}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import service.{CasesService, QueuesService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import models.ApplicationType
 
 class AllOpenCasesController @Inject() (
   verify: RequestActions,
@@ -38,19 +39,30 @@ class AllOpenCasesController @Inject() (
 ) extends FrontendController(mcc)
     with I18nSupport {
 
-  def displayAllOpenCases(activeSubNav: SubNavigationTab = ATaRTab): Action[AnyContent] = (verify.authenticated
-    andThen verify.mustHave(Permission.VIEW_CASES)).async {
-    implicit request =>
+  def displayAllOpenCases(activeSubNav: SubNavigationTab = ATaRTab): Action[AnyContent] =
+    (verify.authenticated andThen verify.mustHave(Permission.VIEW_CASES)).async { implicit request =>
+      val applicationType = activeSubNav match {
+        case ATaRTab           => ApplicationType.ATAR
+        case LiabilitiesTab    => ApplicationType.LIABILITY
+        case CorrespondenceTab => ApplicationType.CORRESPONDENCE
+        case MiscellaneousTab  => ApplicationType.MISCELLANEOUS
+      }
 
       for {
-        nonGatewayQueues <- queueService.getNonGateway
-        nonGatewayCases  <- casesService.getCasesByAllQueues(nonGatewayQueues, NoPagination())
-        openCases: CasesTabViewModel = activeSubNav match {
-          case ATaRTab => CasesTabViewModel.atarCases(nonGatewayCases.results)
-          case LiabilitiesTab => CasesTabViewModel.liabilityCases(nonGatewayCases.results)
-          case CorrespondenceTab  => CasesTabViewModel.correspondence
-          case MiscellaneousTab => CasesTabViewModel.miscellaneous
-        }
+        queuesForType <- queueService.getAllForCaseType(applicationType)
+
+        casesForQueues <- casesService.getCasesByAllQueues(
+                           queue      = queuesForType,
+                           pagination = NoPagination(),
+                           forTypes   = Seq(applicationType)
+                         )
+
+        openCases = CasesTabViewModel.forApplicationType(
+          applicationType,
+          queuesForType,
+          casesForQueues.results
+        )
+
       } yield Ok(openCasesView(openCases, activeSubNav))
-  }
+    }
 }

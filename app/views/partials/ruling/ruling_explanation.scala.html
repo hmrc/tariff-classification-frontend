@@ -1,5 +1,5 @@
 @*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,21 +19,27 @@
 @import models.{BTIApplication, Case, CaseStatus, Decision, StoredAttachment}
 @import views.html.partials.{attachments_list, tab_heading}
 @import models.forms.DecisionFormData
-@import views.html.partials.ruling.{ruling_certificate_link, complete_ruling_section}
+@import views.html.partials.ruling.{ruling_certificate_link}
 @import models.request.AuthenticatedRequest
 
-@(c: Case, useTabIndex : Option[Int] = None)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(d: Option[Decision], useTabIndex : Option[Int] = None)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@if(c.decision.isDefined) {
-    @defining(c.decision.get) { d: Decision =>
+@d.map { d =>
+
+<div class="grid-row">
+    <div class="column-full">
         <h3 class="heading-medium">@messages("case.decision.holder.information")</h3>
+    </div>
+</div>
+<dl class="govuk-check-your-answers cya-questions-short">
+
         <div class="grid-row" id="information-for-holder">
-            <dt class="column-one-third">
+            @if(d.explanation.exists(_.trim.nonEmpty)) {
+            <dt class="cya-question middle-align">
                 @messages("case.decision.explanation.label")
             </dt>
-            <dd class="column-two-thirds">
-            @if(d.explanation.exists(_.trim.nonEmpty)) {
-                <p class="mt-0">Commodity code for your item:
+            <dd class="cya-answer">
+                <p class="mt-0">Commodity code for your goods:
                     <span id="binding-commodity-code">
                         @{
                             d.bindingCommodityCode match {
@@ -47,18 +53,23 @@
                 <p id="holder_explanationValue" class="pre-wrap">@d.explanation</p>
 
                 <p>
-                    In reaching this decision I have followed the legal procedure for Tariff Classification as
-                    shown in Volume 2, Part 1, Section 3 of the Tariff.
+                    I have made this decision under section 24 of The Taxation (Cross-border Trade) Act 2018
+                    by HM Revenue & Customs.
                 </p>
 
                 <p>
                     Get more information about classification in the guide
-                    <a @if(useTabIndex.isDefined){tabindex="@{useTabIndex.get}"} href="https://www.gov.uk/guidance/apply-for-a-binding-tariff-information-decision-notice-600">
-                        Apply for a Binding Tariff Information (BTI) ruling (Notice 600)
+                    <a @if(useTabIndex.isDefined){tabindex="@{useTabIndex.get}"} href="https://www.gov.uk/guidance/apply-for-an-advance-tariff-ruling-that-can-be-used-from-1-january-2021">
+                        Apply for an Advance Tariff Ruling that can be used from 1 January 2021.
                     </a>
                 </p>
-            }
             </dd>
+            } else {
+                    <dt class="column-full">
+                    @messages("case.decision.constraint.no-information")
+                    </dt>
+                }
+
         </div>
-    }
+</dl>
 }

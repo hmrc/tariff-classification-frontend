@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import org.scalatest.Assertion
 import play.twirl.api.{Html, HtmlFormat}
 import views.html.operator_dashboard_classification
 
-class OperatorDashboardClassifcationViewSpec extends ViewSpec {
+class OperatorDashboardClassificationViewSpec extends ViewSpec {
 
   val casesCounted: Map[String, Int] = Map("BTI" -> 2, "Liability" -> 3)
   val casesReferredByMe = 3
@@ -36,19 +36,22 @@ class OperatorDashboardClassifcationViewSpec extends ViewSpec {
     assert(doc.getElementById(id).attr("href").contains(href))
   }
 
-  def view = () => operator_dashboard_classification(Map("BTI" -> 2, "Liability" -> 3), casesReferredByMe)
+  def view: () => HtmlFormat.Appendable = () =>
+    operator_dashboard_classification(Map("BTI" -> 2, "Liability" -> 3), casesReferredByMe)(authenticatedManagerFakeRequest, messages, appConfig)
 
-  protected def normalPage(view: () => HtmlFormat.Appendable, messageKeyPrefix: String, messageHeadingArgs: Any*)(
-    expectedGuidanceKeys: String*
-  ): Unit =
-    "OperatorDashboardClassifcationView view" must {
-      behave like normalPage(view, messageKeyPrefix)()
+  "OperatorDashboardClassifcationView view" must {
 
-      "contain a link to my cases" in {
-        val doc = asDocument(view())
-        assertLinkContainsHref(doc, "my-cases-id", "my-cases")
-      }
+    "contain a link to my cases" in {
 
+      val doc = asDocument(view())
+      assertLinkContainsHref(doc, "my-cases-id", "my-cases")
     }
+
+    "contain operator name" in {
+      val doc = asDocument(view())
+
+      doc.getElementsByClass("heading-xlarge mt-40 mb-0").text() shouldBe "operator-name"
+    }
+  }
 
 }

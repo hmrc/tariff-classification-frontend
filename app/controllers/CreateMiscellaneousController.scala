@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,7 +54,7 @@ class CreateMiscellaneousController @Inject()(
   )
 
   def get(): Action[AnyContent] = (verify.authenticated andThen verify.mustHave(Permission.CREATE_CASES)).async {
-    implicit request: Request[AnyContent] =>
+    implicit request =>
       Future.successful(Ok(views.html.v2.create_misc(form)))
   }
 
@@ -63,8 +63,8 @@ class CreateMiscellaneousController @Inject()(
     implicit request =>
       form.bindFromRequest.fold(
         formWithErrors => Future.successful(Ok(views.html.v2.create_misc(formWithErrors))),
-        correspondenceApp =>
-          casesService.createCase(correspondenceApp, request.operator).map { caseCreated: Case =>
+        miscApp =>
+          casesService.createCase(miscApp, request.operator).map { caseCreated: Case =>
             Redirect(routes.CreateMiscellaneousController.displayQuestion(caseCreated.reference))
           }
       )
@@ -80,13 +80,13 @@ class CreateMiscellaneousController @Inject()(
     implicit hc: HeaderCarrier,
     request: AuthenticatedRequest[_]): Future[Result] =
     casesService.getOne(reference).flatMap {
-      case Some(c: Case) => successful(Redirect(routes.ReleaseCaseController.releaseCase(reference, None)))
+      case Some(c: Case) => successful(Redirect(routes.ReleaseCaseController.releaseCase(reference)))
       case _             => successful(Ok(views.html.case_not_found(reference)))
     }
 
   def displayConfirmation(reference: String) =
     (verify.authenticated andThen verify.mustHave(Permission.CREATE_CASES)).async {
-      implicit request: Request[AnyContent] =>
+      implicit request: AuthenticatedRequest[AnyContent] =>
       {
         casesService.getOne(reference).flatMap {
           case Some(c: Case) => {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,18 +29,20 @@ import service.{CasesService, CommodityCodeService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases._
 
-import scala.concurrent.Future.successful
+import java.time.Instant
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future.successful
 
 class CompleteCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   private val casesService         = mock[CasesService]
-  private val operator             = mock[Operator]
+  private val operator             = Operator(id = "id")
   private val commodityCodeService = mock[CommodityCodeService]
   private val decisionForm         = new DecisionForm(new CommodityCodeConstraints(commodityCodeService, realAppConfig))
 
   private val completeDecision = Decision(
     bindingCommodityCode = "040900",
+    effectiveEndDate     = Some(Instant.now),
     justification        = "justification-content",
     goodsDescription     = "goods-description",
     methodSearch         = Some("method-to-search"),
@@ -99,9 +101,10 @@ class CompleteCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
         val c = aCase(
           withReference("reference"),
           withStatus(CaseStatus.OPEN),
-          withLiabilityApplication(),
+          liabilityApplicationWithC592(),
           withDecision(bindingCommodityCode = "040900")
         )
+
         when(casesService.completeCase(refEq(c), any[Operator])(any[HeaderCarrier], any[Messages]))
           .thenReturn(successful(caseWithStatusCOMPLETED))
 

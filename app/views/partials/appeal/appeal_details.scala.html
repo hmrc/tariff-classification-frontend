@@ -1,5 +1,5 @@
 @*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,69 +18,66 @@
 @import controllers.routes
 @import models.request.AuthenticatedRequest
 @import models.{Appeal, AppealStatus, AppealType, Case, CaseStatus, Permission}
+@import models.viewmodels.atar.AppealTabViewModel
 @import views.html.partials.tab_heading
 
-@(c: Case, startTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(appealTab: AppealTabViewModel, startTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @tab_heading("appeal", messages("case.menu.appeal"))
 
- <p>If this ruling is reviewed or appealed, update the status here.</p>
+<p>If this ruling is reviewed or appealed, update the status here.</p>
 
- @defining(c.decision.map(_.appeal).getOrElse(Seq.empty)) { appeals: Seq[Appeal] =>
-   <table id="appeal_details">
+<table id="appeal_details">
     <tbody>
-     @for((appeal: Appeal, index: Int) <- appeals.sortWith((a, b) => a.`type`.id < b.`type`.id).zipWithIndex) {
-      <tr id="appeal_details-@{index}" class="grid-row mb-2">
-       <th id="appeal_details-@{index}-type" class="bold w-40">
-        @AppealType.format(appeal.`type`) status
-       </th>
-       <td id="appeal_details-@{index}-status" class=" w-30">
-        @AppealStatus.format(appeal.`type`, appeal.status)
-       </td>
-       <td class="w-30">
-       @if(request.hasPermission(Permission.APPEAL_CASE)) {
-         <a tabindex="@{startTabIndex+1+index}" id="appeal_details-@{index}-change-status" aria-label="Change status of @AppealType.format(appeal.`type`) " href="@routes.AppealCaseController.changeStatus(c.reference, appeal.id)">Change</a>
+        @for((appeal: Appeal, index: Int) <- appealTab.appeals.zipWithIndex) {
+            <tr id="appeal_details-@{index}" class="grid-row mb-2">
+                <th id="appeal_details-@{index}-type" class="bold w-40">
+                    @AppealType.format(appeal.`type`) status
+                </th>
+                <td id="appeal_details-@{index}-status" class=" w-30">
+                    @AppealStatus.format(appeal.`type`, appeal.status)
+                </td>
+                <td class="w-30">
+                    @if(request.hasPermission(Permission.APPEAL_CASE)) {
+                        <a tabindex="@{startTabIndex+1+index}" id="appeal_details-@{index}-change-status" aria-label="Change status of @AppealType.format(appeal.`type`) " href="@routes.AppealCaseController.changeStatus(appealTab.caseReference, appeal.id)">Change</a>
+                    }
+                </td>
+            </tr>
         }
-       </td>
-      </tr>
-     }
     </tbody>
-   </table>
- }
+</table>
 
- @if(request.hasPermission(Permission.APPEAL_CASE)) {
-  <a tabindex="@{startTabIndex+50}" id="appeal_details-add_new" class="button" role="button" href="@routes.AppealCaseController.chooseType(c.reference)">Add a review or appeal</a>
- }
+@if(request.hasPermission(Permission.APPEAL_CASE)) {
+    <a tabindex="@{startTabIndex+50}" id="appeal_details-add_new" class="button" role="button" href="@routes.AppealCaseController.chooseType(appealTab.caseReference)">Add a review or appeal</a>
+}
 
- @if(c.status == CaseStatus.CANCELLED) {
-  <div id="appeal_details-extended_use" class="mt-5">
-   <p>This ruling has been cancelled.</p>
-   <p>If the holder applies for a period of extended use of the ruling, update the status here.</p>
+@if(appealTab.caseStatus == CaseStatus.CANCELLED) {
+    <div id="appeal_details-extended_use" class="mt-5">
+    <p>This ruling has been cancelled.</p>
+    <p>If the holder applies for a period of extended use of the ruling, update the status here.</p>
 
-   <table>
-    <tbody>
-
-     <tr>
-      <th class="bold w-40">Application for extended use</th>
-      <td id="appeal_details-extended_use_status" class="w-30">
-       @if(c.decision.flatMap(_.cancellation).exists(_.applicationForExtendedUse)) {
-        Yes
-       } else {
-        No
-       }
-      </td>
-      <td class="w-30">
-      @if(request.hasPermission(Permission.EXTENDED_USE)) {
-          <a tabindex="@{startTabIndex+51}" id="appeal_details-extended_use-change" href="@routes.ExtendedUseCaseController.chooseStatus(c.reference)">
-              Change
-          </a>
-      }
-      </td>
-     </tr>
-
-    </tbody>
-   </table>
-  </div>
+    <table>
+        <tbody>
+            <tr>
+                <th class="bold w-40">Application for extended use</th>
+                <td id="appeal_details-extended_use_status" class="w-30">
+                    @if(appealTab.applicationForExtendedUse) {
+                        Yes
+                    } else {
+                        No
+                    }
+                </td>
+                <td class="w-30">
+                    @if(request.hasPermission(Permission.EXTENDED_USE)) {
+                        <a tabindex="@{startTabIndex+51}" id="appeal_details-extended_use-change" href="@routes.ExtendedUseCaseController.chooseStatus(appealTab.caseReference)">
+                            Change
+                        </a>
+                    }
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    </div>
  }
 
 

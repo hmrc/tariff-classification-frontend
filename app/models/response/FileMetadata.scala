@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,12 +19,12 @@ package models.response
 import models.response.ScanStatus.ScanStatus
 
 case class FileMetadata(
-  id: String,
-  fileName: String,
-  mimeType: String,
-  url: Option[String]            = None,
-  scanStatus: Option[ScanStatus] = None
-)
+                         id: String,
+                         fileName: String,
+                         mimeType: String,
+                         url: Option[String]            = None,
+                         scanStatus: Option[ScanStatus] = None
+                       )
 
 object ScanStatus extends Enumeration {
   type ScanStatus = Value

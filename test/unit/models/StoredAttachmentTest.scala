@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,15 +47,16 @@ class StoredAttachmentTest extends ModelsBaseSpec {
       val metadata   = someMetadataWithType("type")
 
       StoredAttachment(attachment, metadata) shouldBe StoredAttachment(
-        id          = attachment.id,
-        public      = attachment.public,
-        operator    = None,
-        timestamp   = attachment.timestamp,
-        url         = metadata.url,
-        fileName    = metadata.fileName,
-        mimeType    = metadata.mimeType,
-        scanStatus  = metadata.scanStatus,
-        description = Some("test description")
+        id                     = attachment.id,
+        public                 = attachment.public,
+        operator               = None,
+        timestamp              = attachment.timestamp,
+        url                    = metadata.url,
+        fileName               = metadata.fileName,
+        mimeType               = metadata.mimeType,
+        scanStatus             = metadata.scanStatus,
+        description            = Some("test description"),
+        shouldPublishToRulings = attachment.shouldPublishToRulings
       )
     }
 

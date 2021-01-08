@@ -1,5 +1,5 @@
 @*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,18 @@
  * limitations under the License.
  *@
 
+@import controllers.{Tab, routes, v2}
+@import models.{Case, Permission, StoredAttachment}
 @import models.request.AuthenticatedRequest
-@import models.Permission
-@import controllers.routes.AttachmentsController
-@import models.StoredAttachment
 @import utils.Dates
 @import views.html.partials.attachment
-@import models.Case
-@(id: String, attachments: Seq[StoredAttachment],
-showRemoval: Boolean = false, caseRef: Option[String] = None, startAtTabIndex : Option[Int] = None)(implicit request: AuthenticatedRequest[_], messages: Messages)
+
+@(id: String,
+  attachments: Seq[StoredAttachment],
+  showRemoval: Boolean = false,
+  caseRef: Option[String] = None,
+  startAtTabIndex : Option[Int] = None
+)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @if(attachments.nonEmpty){
 
@@ -40,18 +43,20 @@ showRemoval: Boolean = false, caseRef: Option[String] = None, startAtTabIndex : 
             </div>
 
             <div class="w-25 p-0">
-                <div class="form-group">
-                    <div class="multiple-choice">
-                        <input @if(startAtTabIndex.isDefined){tabindex="@{startAtTabIndex.get+1+(1*index)}"}
-                               id="attachments[@{index}]"
-                               name="attachments[@{index}]"
-                               type="checkbox"
-                               value="@file.id"
-                               aria-label="publish @file.fileName on GOV.UK"
-                               @if(file.public) {checked="checked"}/>
-                        <label for="attachments[@{index}]"><div class="hide-label">publish</div></label>
+                @if(file.public) {
+                    <div class="form-group">
+                        <div class="multiple-choice">
+                            <input @if(startAtTabIndex.isDefined){tabindex="@{startAtTabIndex.get+1+(1*index)}"}
+                                id="attachments[@{index}]"
+                                name="attachments[@{index}]"
+                                type="checkbox"
+                                value="@file.id"
+                                aria-label="publish @file.fileName on GOV.UK"
+                                @if(file.public && file.shouldPublishToRulings){ checked="checked" }/>
+                            <label for="attachments[@{index}]"><div class="hide-label">publish</div></label>
+                        </div>
                     </div>
-                </div>
+                }
             </div>
 
             <div id="@{id}-row-@{index}-date" class="w-25 p-0">

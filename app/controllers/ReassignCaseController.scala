@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,7 +54,7 @@ class ReassignCaseController @Inject() (
   ): Future[Result] =
     validateAndRenderView(c =>
       for {
-        queues        <- queueService.getNonGateway
+        queues        <- queueService.getAllForCaseType(c.application.`type`)
         assignedQueue <- c.queueId.map(queueService.getOneById).getOrElse(successful(None))
       } yield views.html.reassign_queue_case(c, f, queues, assignedQueue, origin)
     )

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,7 +59,8 @@ object Permission {
     APPEAL_CASE,
     EXTENDED_USE,
     MOVE_CASE_BACK_TO_QUEUE,
-    EDIT_SAMPLE
+    EDIT_SAMPLE,
+    EDIT_ATTACHMENT_DETAIL
   )
 
   def from(string: String): Option[Permission] = values.find(_.name == string)
@@ -228,7 +229,7 @@ object Permission {
   case object EDIT_ATTACHMENT_DETAIL extends CasePermission {
     override def name: String = nameOf(this)
     override def appliesTo(`case`: Case, operator: Operator): Boolean =
-      managersOrTeamMembersOnly(operator)
+      managersOrAssignedTeamMembersOnly(`case`, operator)
   }
 
   case object KEYWORDS extends CasePermission {

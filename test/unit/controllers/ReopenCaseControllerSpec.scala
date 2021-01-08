@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class ReopenCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   private val casesService = mock[CasesService]
-  private val operator     = mock[Operator]
+  private val operator     = Operator(id = "id")
 
   private val btiCaseWithStatusOPEN = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.OPEN)
   private val btiCaseWithStatusREFERRED =
@@ -79,7 +79,7 @@ class ReopenCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
       )
 
       status(result)     shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some(controllers.routes.CaseController.applicantDetails("reference").url)
+      locationOf(result) shouldBe Some(controllers.routes.CaseController.get("reference").url)
     }
 
     "return 303 and redirect to applicant details (case_details page) for BTI when case is suspended" in {
@@ -92,10 +92,10 @@ class ReopenCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
       )
 
       status(result)     shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some(controllers.routes.CaseController.applicantDetails("reference").url)
+      locationOf(result) shouldBe Some(controllers.routes.CaseController.get("reference").url)
     }
 
-    "return 303 and redirect to liability details (liability_details page) for liability when case is suspended" in {
+    "return 303 and redirect to case details for liability when case is suspended" in {
       when(casesService.reopenCase(refEq(liabilityCaseWithStatusSuspended), any[Operator])(any[HeaderCarrier]))
         .thenReturn(successful(liabilityCaseWithStatusOpen))
 
@@ -105,7 +105,7 @@ class ReopenCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
       )
 
       status(result)     shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some(controllers.v2.routes.LiabilityController.displayLiability("reference").url)
+      locationOf(result) shouldBe Some(controllers.routes.CaseController.get("reference").url)
     }
 
     "return 303 when user has right permissions" in {
@@ -118,7 +118,7 @@ class ReopenCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
       )
 
       status(result)     shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some(controllers.routes.CaseController.applicantDetails("reference").url)
+      locationOf(result) shouldBe Some(controllers.routes.CaseController.get("reference").url)
     }
 
     "redirect to unauthorised when user does not have the right permissions" in {

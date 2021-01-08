@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,141 +16,85 @@
 
 package controllers
 
-import connector.DataCacheConnector
+import connector.FakeDataCacheConnector
 import controllers.actions.{FakeDataRetrievalAction, FakeIdentifierAction}
-import models.Operator
-import org.mockito.ArgumentMatchers._
-import org.mockito.Mockito._
+import models.{ApplicationType, Operator}
 import org.scalatest.BeforeAndAfterEach
-import play.api.mvc.Result
+import play.api.http.Status
+import play.api.test.Helpers._
+import service.TabCacheService
 import uk.gov.hmrc.http.cache.client.CacheMap
-import utils.Cases
 
-import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class TabCacheControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
-  private val dataCacheConnector = mock[DataCacheConnector]
-  private val operator           = mock[Operator]
-  private val cacheMap           = mock[CacheMap]
+  private val operator           = Operator(id = "id")
+  private val dataCacheConnector = FakeDataCacheConnector
+  private val tabCacheService    = new TabCacheService(dataCacheConnector)
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(dataCacheConnector, operator, cacheMap)
+    await(dataCacheConnector.remove(CacheMap("id", Map.empty)))
   }
 
   def controller() =
     new TabCacheController(
-      dataCacheConnector,
+      tabCacheService,
       FakeIdentifierAction(),
       new FakeDataRetrievalAction(None),
       new SuccessfulRequestActions(playBodyParsers, operator),
       mcc
     )
 
-  "GET" should {
-
-    "retrieve anchor from storage get" in {
-      val reference = Cases.aLiabilityCase().reference
-      val itemType  = Cases.aLiabilityCase().application.getType.toLowerCase
-
-      when(dataCacheConnector.fetch(any())).thenReturn(Future.successful(Some(cacheMap)))
-      when(dataCacheConnector.remove(any())).thenReturn(Future.successful(true))
-      when(cacheMap.getEntry[String](reference + itemType)).thenReturn(Some(s"#${Tab.ATTACHMENTS_TAB}"))
-
-      val result: Future[Result] = controller().get(reference, itemType).apply(newFakeGETRequestWithCSRF(app))
-
-      await(bodyOf(result)) shouldBe s"#${Tab.ATTACHMENTS_TAB}"
-    }
-
-    "return default tab when there is no entry for the case and case is Liability" in {
-      val reference = Cases.aLiabilityCase().reference
-      val itemType  = Cases.aLiabilityCase().application.getType.toLowerCase
-
-      when(dataCacheConnector.fetch(any())).thenReturn(Future.successful(Some(cacheMap)))
-      when(dataCacheConnector.remove(any())).thenReturn(Future.successful(true))
-      when(cacheMap.getEntry[String](reference + itemType)).thenReturn(None)
-
-      val result: Future[Result] = controller().get(reference, itemType).apply(newFakeGETRequestWithCSRF(app))
-
-      await(bodyOf(result)) shouldBe s"#${Tab.C592_TAB}"
-    }
-
-    "return default tab when there is no entry for the case and case is Bti" in {
-      val reference = Cases.aCase().reference
-      val itemType  = Cases.aCase().application.getType.toLowerCase
-
-      when(dataCacheConnector.fetch(any())).thenReturn(Future.successful(Some(cacheMap)))
-      when(dataCacheConnector.remove(any())).thenReturn(Future.successful(true))
-      when(cacheMap.getEntry[String](reference + itemType)).thenReturn(None)
-
-      val result: Future[Result] = controller().get(reference, itemType).apply(newFakeGETRequestWithCSRF(app))
-
-      await(bodyOf(result)) shouldBe ""
-    }
-
-    "not retrieve anchor when no data are retrieved and itemType is Liability" in {
-      val reference = Cases.aLiabilityCase().reference
-      val itemType  = Cases.aLiabilityCase().application.getType.toLowerCase
-
-      when(dataCacheConnector.fetch(any())).thenReturn(Future.successful(None))
-
-      val result: Future[Result] = controller().get(reference, itemType).apply(newFakeGETRequestWithCSRF(app))
-
-      await(bodyOf(result)) shouldBe s"#${Tab.C592_TAB}"
-    }
-
-    "not retrieve anchor when no data are retrieved and itemType is BTI" in {
-      val reference = Cases.aCase().reference
-      val itemType  = Cases.aCase().application.getType.toLowerCase
-      when(dataCacheConnector.fetch(any())).thenReturn(Future.successful(None))
-
-      val result: Future[Result] = controller().get(reference, itemType).apply(newFakeGETRequestWithCSRF(app))
-
-      await(bodyOf(result)) shouldBe ""
-    }
-
-  }
-
   "POST" should {
-
     "save active tab in the database" in {
-      val fakeReq   = newFakePOSTRequestWithCSRF(app, s"#${Tab.C592_TAB}")
-      val reference = Cases.aLiabilityCase().reference
-      val itemType  = Cases.aLiabilityCase().application.getType.toLowerCase
-      when(dataCacheConnector.save(refEq[CacheMap](cacheMap))).thenReturn(Future.successful(cacheMap))
-
-      await(controller().post(reference, itemType).apply(fakeReq))
-
-      verify(dataCacheConnector).save(any[CacheMap]())
+      val result = controller()
+        .post("caseRef", ApplicationType.LIABILITY)
+        .apply(newFakePOSTRequestWithCSRF(app, Tab.C592_TAB.name))
+      status(result)                                                                  shouldBe Status.ACCEPTED
+      await(tabCacheService.getActiveTab("id", "caseRef", ApplicationType.LIABILITY)) shouldBe Some(Tab.C592_TAB)
     }
 
     "not save active tab when anchor is empty" in {
-      val reference = Cases.aLiabilityCase().reference
-      val itemType  = Cases.aLiabilityCase().application.getType.toLowerCase
-
-      await(controller().post(reference, itemType).apply(newFakePOSTRequestWithCSRF(app, "")))
-
-      verifyZeroInteractions(dataCacheConnector)
+      val result = controller().post("caseRef", ApplicationType.LIABILITY).apply(newFakePOSTRequestWithCSRF(app, ""))
+      status(result)                                                                  shouldBe Status.BAD_REQUEST
+      await(tabCacheService.getActiveTab("id", "caseRef", ApplicationType.LIABILITY)) shouldBe None
     }
 
-    "not save active tab when tab name does not exist or # is missing" in {
-      val reference = Cases.aLiabilityCase().reference
-      val itemType  = Cases.aLiabilityCase().application.getType.toLowerCase
-
-      await(controller().post(reference, itemType).apply(newFakePOSTRequestWithCSRF(app, Tab.ATTACHMENTS_TAB)))
-
-      verifyZeroInteractions(dataCacheConnector)
+    "not save active tab when tab name does not exist" in {
+      val result = controller().post("caseRef", ApplicationType.LIABILITY).apply(newFakePOSTRequestWithCSRF(app, "foo"))
+      status(result)                                                                  shouldBe Status.BAD_REQUEST
+      await(tabCacheService.getActiveTab("id", "caseRef", ApplicationType.LIABILITY)) shouldBe None
     }
 
     "not save active tab when body is null" in {
-      val reference = Cases.aLiabilityCase().reference
-      val itemType  = Cases.aLiabilityCase().application.getType.toLowerCase
+      val result = controller().post("caseRef", ApplicationType.LIABILITY).apply(newFakePOSTRequestWithCSRF(app))
+      status(result)                                                                  shouldBe Status.BAD_REQUEST
+      await(tabCacheService.getActiveTab("id", "caseRef", ApplicationType.LIABILITY)) shouldBe None
+    }
+  }
 
-      await(controller().post(reference, itemType).apply(newFakePOSTRequestWithCSRF(app)))
+  "GET" should {
+    "retrieve active tab from the database" in {
+      await(
+        controller().post("caseRef", ApplicationType.ATAR).apply(newFakePOSTRequestWithCSRF(app, Tab.ACTIVITY_TAB.name))
+      )
+      val result = controller().get("caseRef", ApplicationType.ATAR).apply(newFakeGETRequestWithCSRF(app))
+      status(result)          shouldBe Status.OK
+      contentAsString(result) shouldBe Tab.ACTIVITY_TAB.name
+    }
 
-      verifyZeroInteractions(dataCacheConnector)
+    "clear active tab after it is fetched" in {
+      await(
+        controller().post("caseRef", ApplicationType.ATAR).apply(newFakePOSTRequestWithCSRF(app, Tab.KEYWORDS_TAB.name))
+      )
+      val afterSet = await(controller().get("caseRef", ApplicationType.ATAR).apply(newFakeGETRequestWithCSRF(app)))
+      status(afterSet)          shouldBe Status.OK
+      contentAsString(afterSet) shouldBe Tab.KEYWORDS_TAB.name
+      val afterGet = await(controller().get("caseRef", ApplicationType.ATAR).apply(newFakeGETRequestWithCSRF(app)))
+      status(afterGet)          shouldBe Status.OK
+      contentAsString(afterGet) shouldBe ""
     }
   }
 }

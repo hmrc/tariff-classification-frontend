@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,7 +53,7 @@ object LiabilityDetailsForm {
         "entryNumber"          -> optional(text),
         "traderCommodityCode"  -> optional(text),
         "officerCommodityCode" -> optional(text),
-        "contactName"          -> text,
+        "contactName"          -> textNonEmpty("case.liability.error.compliance_officer.name"),
         "contactEmail"         -> text.verifying("case.liability.error.email", e => validEmailFormat(e)),
         "contactPhone"         -> optional(text)
       )(form2Liability(existingLiability))(liability2Form)
@@ -151,7 +151,7 @@ object LiabilityDetailsForm {
         "entryNumber"          -> optional(nonEmptyText).verifying("error.required", _.isDefined),
         "traderCommodityCode"  -> optional(nonEmptyText).verifying("error.required", _.isDefined),
         "officerCommodityCode" -> optional(nonEmptyText).verifying("error.required", _.isDefined),
-        "contactName"          -> nonEmptyText,
+        "contactName"          -> textNonEmpty("case.liability.error.compliance_officer.name"),
         "contactEmail"         -> nonEmptyText.verifying("case.liability.error.email", e => validEmailFormat(e)),
         "contactPhone"         -> optional(text).verifying("error.required", _.isDefined)
       )(form2Liability(existingLiability))(liability2Form)

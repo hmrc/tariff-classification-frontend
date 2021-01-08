@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,14 +45,7 @@ class ReopenCaseController @Inject() (
       validateAndRedirect(_ =>
         casesService
           .reopenCase(request.`case`, request.operator)
-          .map(updatedCase =>
-            updatedCase.application.`type` match {
-              case ApplicationType.ATAR =>
-                routes.CaseController.applicantDetails(updatedCase.reference)
-              case ApplicationType.LIABILITY =>
-                v2.routes.LiabilityController.displayLiability(updatedCase.reference)
-            }
-          )
+          .map(updatedCase => routes.CaseController.get(updatedCase.reference))
       )
     }
 }

@@ -1,5 +1,5 @@
 @*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,12 +15,13 @@
  *@
 
 @import config.AppConfig
+@import models.request.AuthenticatedRequest
 @import models.Case
 @import views.html.includes.main
 @import views.html.partials._
 @import models.viewmodels.NoTabSelected
 
-@(c: Case)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(c: Case)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("page.title.ruling.cancelled")),
     customPrimaryNavTab = NoTabSelected) {
@@ -33,7 +34,7 @@
         <div id="confirm_cancel_id" class="column-full">
             @if(c.application.isBTI) {
                 <h2 class="heading-large mt-0">The ruling has been cancelled</h2>
-                <p>The ruling has been removed from the 'Find Binding Tariff Information rulings' search.</p>
+                <p>The ruling has been removed from the 'Search for Advance Tariff Rulings' website.</p>
                 <p>The expiry date of the ruling has been set to today's date.</p>
             } else {
                 <h2 class="heading-large mt-0">The liability decision has been cancelled</h2>

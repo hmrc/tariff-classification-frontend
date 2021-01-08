@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,4 +33,7 @@ object Events {
   val referredEvent : Event = event.copy(details = referredDetailsCaseChange)
 
   val pagedReferredEvents :  Paged[Event] = Paged(Seq(referredEvent, referredEvent))
+
+  val sampleEvent = Event("id", SampleStatusChange(None, Some(SampleStatus.SENT_FOR_ANALYSIS)), Operator("user-id", Some("user name")), "case-ref", Instant.now())
+  val sampleEvents = Seq(sampleEvent)
 }

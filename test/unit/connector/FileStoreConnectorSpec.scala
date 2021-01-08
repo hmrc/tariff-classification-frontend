@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,10 +23,10 @@ import org.mockito.BDDMockito.given
 import play.api.http.Status
 import play.api.libs.Files.SingletonTemporaryFileCreator
 
-import scala.concurrent.ExecutionContext.Implicits.global
-
 class FileStoreConnectorSpec extends ConnectorTest {
 
+  given(mockAppConfig.maxUriLength) willReturn 2048L
+  given(mockAppConfig.fileStoreUrl) willReturn wireMockUrl
   private val attachmentId = "id"
   private val connector    = new FileStoreConnector(mockAppConfig, authenticatedHttpClient, wsClient, metrics)
 
@@ -218,6 +218,34 @@ class FileStoreConnectorSpec extends ConnectorTest {
       deleteRequestedFor(urlEqualTo("/file/fileId"))
         .withHeader("X-Api-Token", equalTo(fakeAuthToken))
     )
+  }
+
+  "Connector download" should {
+    "handle missing file" in {
+      stubFor(
+        get("/digital-tariffs-local/id")
+          .willReturn(
+            aResponse()
+              .withStatus(Status.NOT_FOUND)
+          )
+      )
+
+      val result = await(connector.downloadFile(wireMockUrl + "/digital-tariffs-local/id"))
+
+      result shouldBe None
+    }
+
+    "handle error response" in {
+      stubFor(
+        get("/digital-tariffs-local/id")
+          .willReturn(
+            aResponse()
+              .withStatus(Status.INTERNAL_SERVER_ERROR)
+          )
+      )
+
+      assertThrows[Exception](await(connector.downloadFile(wireMockUrl + "/digital-tariffs-local/id")))
+    }
   }
 
 }

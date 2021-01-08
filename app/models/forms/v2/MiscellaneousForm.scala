@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,6 @@ object MiscellaneousForm {
     case (detailedDescription, contactName, caseType) =>
       MiscApplication(
         contact = Contact(contactName, "", None),
-        offline = false,
         name = "",
         contactName = Some(contactName),
         caseType = MiscCaseType.withName(caseType),

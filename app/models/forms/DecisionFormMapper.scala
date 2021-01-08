@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package models.forms
 
+import java.time.Instant
+
 import javax.inject.Singleton
 import models.{Case, Decision}
 
@@ -30,7 +32,7 @@ class DecisionFormMapper {
     }
 
     val attachments = c.attachments
-      .map(att => att.copy(public = decisionForm.attachments.contains(att.id)))
+      .map(att => att.copy(shouldPublishToRulings = decisionForm.attachments.contains(att.id)))
 
     c.copy(decision = Some(decision), attachments = attachments)
   }
@@ -45,8 +47,10 @@ class DecisionFormMapper {
         d.justification,
         d.methodCommercialDenomination.getOrElse(""),
         d.methodExclusion.getOrElse(""),
-        Seq.empty, // TODO : So far this field is only used to read from the FE
-        d.explanation.getOrElse("")
+        c.attachments.filter(_.shouldPublishToRulings).map(_.id),
+        d.explanation.getOrElse(""),
+        d.effectiveEndDate,
+        explicitEndDate = if(d.effectiveEndDate.isDefined) true else false
       )
     }
 
@@ -61,7 +65,8 @@ class DecisionFormMapper {
       justification                = form.justification,
       methodCommercialDenomination = Some(form.methodCommercialDenomination),
       methodExclusion              = Some(form.methodExclusion),
-      explanation                  = Some(form.explanation)
+      explanation                  = Some(form.explanation),
+      effectiveEndDate             = form.expiryDate
     )
 
   private def from(form: DecisionFormData): Decision =
@@ -72,7 +77,8 @@ class DecisionFormMapper {
       justification                = form.justification,
       methodCommercialDenomination = Some(form.methodCommercialDenomination),
       methodExclusion              = Some(form.methodExclusion),
-      explanation                  = Some(form.explanation)
+      explanation                  = Some(form.explanation),
+      effectiveEndDate             = form.expiryDate
     )
 
 }

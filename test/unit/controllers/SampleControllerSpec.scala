@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,14 +38,12 @@ class SampleControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
   private val casesService  = mock[CasesService]
   private val eventsService = mock[EventsService]
   private val operator      = Operator(id = "id")
-  private val caseDetailsView = app.injector.instanceOf[views.html.case_details]
 
   private def controller(requestCase: Case) = new SampleController(
     new SuccessfulRequestActions(playBodyParsers, operator, c = requestCase),
     casesService,
     eventsService,
     mcc,
-    caseDetailsView,
     realAppConfig
   )
 
@@ -54,39 +52,12 @@ class SampleControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
     casesService,
     eventsService,
     mcc,
-    caseDetailsView,
     realAppConfig
   )
 
   override def afterEach(): Unit = {
     super.afterEach()
     Mockito.reset(casesService)
-  }
-
-  "Sample controller" should {
-
-    "return 200 OK and HTML content type - When retrieving samples for case" in {
-
-      when(
-        eventsService.getFilteredEvents(any[String], any[Pagination], any[Option[Set[EventType]]])(any[HeaderCarrier])
-      ).thenReturn(Future.successful(Paged.empty[Event]))
-
-      val c = aCase(withStatus(CaseStatus.OPEN), withBTIDetails(sampleToBeProvided = true))
-
-      val result = await(controller(c).sampleDetails("reference")(fakeRequest))
-
-      status(result)          shouldBe Status.OK
-      contentType(result)     shouldBe Some("text/html")
-      charset(result)         shouldBe Some("utf-8")
-      contentAsString(result) should include("sample-status-heading")
-
-      verify(eventsService).getFilteredEvents(
-        refEq(c.reference),
-        refEq(NoPagination()),
-        refEq(Some(EventType.sampleEvents))
-      )(any[HeaderCarrier])
-    }
-
   }
 
   "Sample - Choose Status" should {
@@ -147,7 +118,7 @@ class SampleControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
         .updateSampleStatus(refEq(c), refEq(Some(SampleStatus.DESTROYED)), any[Operator])(any[HeaderCarrier])
 
       status(result)     shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some(routes.CaseController.sampleDetails("reference").withFragment(Tab.SAMPLE_TAB).path)
+      locationOf(result) shouldBe Some(routes.CaseController.sampleDetails("reference").path)
     }
 
     "redirect for unchanged status" in {
@@ -161,7 +132,7 @@ class SampleControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
         .updateSampleStatus(any[Case], any[Option[SampleStatus]], any[Operator])(any[HeaderCarrier])
 
       status(result)     shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some(routes.CaseController.sampleDetails("reference").withFragment(Tab.SAMPLE_TAB).path)
+      locationOf(result) shouldBe Some(routes.CaseController.sampleDetails("reference").path)
     }
 
     "when error form re-displays with error message" in {
@@ -193,7 +164,7 @@ class SampleControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       )
 
       status(result)     shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some(routes.CaseController.sampleDetails("reference").withFragment(Tab.SAMPLE_TAB).path)
+      locationOf(result) shouldBe Some(routes.CaseController.sampleDetails("reference").path)
     }
 
     "redirect unauthorised when does not have right permissions" in {

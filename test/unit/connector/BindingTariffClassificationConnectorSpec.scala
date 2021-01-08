@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,13 +30,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
   import utils.JsonFormatters._
 
-  private val gatewayQueue = Queue("1", "gateway", "Gateway")
-  private val otherQueue   = Queue("2", "other", "Other")
-  private val cap     = Queue("3", "cap", "CAP")
-  private val cars    = Queue("4", "cars", "Cars")
-  private val elm     = Queue("5", "elm", "ELM")
-  private val allQueues = Seq(gatewayQueue, otherQueue, cap, cars, elm)
-  private val pagination   = SearchPagination(1, 2)
+  private val pagination = SearchPagination(1, 2)
 
   private val connector = new BindingTariffClassificationConnector(mockAppConfig, authenticatedHttpClient, metrics)
 
@@ -59,7 +53,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
           )
       )
 
-      await(connector.findCasesByQueue(gatewayQueue, pagination)) shouldBe Paged.empty[Case]
+      await(connector.findCasesByQueue(Queues.gateway, pagination)) shouldBe Paged.empty[Case]
 
       verify(
         getRequestedFor(urlEqualTo(url))
@@ -84,7 +78,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
           )
       )
 
-      await(connector.findCasesByQueue(gatewayQueue, pagination)) shouldBe Paged(Seq(Cases.btiCaseExample))
+      await(connector.findCasesByQueue(Queues.gateway, pagination)) shouldBe Paged(Seq(Cases.btiCaseExample))
 
       verify(
         getRequestedFor(urlEqualTo(url))
@@ -92,7 +86,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
       )
     }
 
-    "get empty cases in 'other' queue" in {
+    "get empty cases in 'act' queue" in {
       val url = buildQueryUrl(
         withStatuses = "NEW,OPEN,REFERRED,SUSPENDED",
         queueId      = "2",
@@ -109,7 +103,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
           )
       )
 
-      await(connector.findCasesByQueue(otherQueue, pagination)) shouldBe Paged.empty[Case]
+      await(connector.findCasesByQueue(Queues.act, pagination)) shouldBe Paged.empty[Case]
 
       verify(
         getRequestedFor(urlEqualTo(url))
@@ -117,7 +111,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
       )
     }
 
-    "get cases in 'other' queue" in {
+    "get cases in 'act' queue" in {
       val url = buildQueryUrl(
         withStatuses = "NEW,OPEN,REFERRED,SUSPENDED",
         queueId      = "2",
@@ -134,7 +128,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
           )
       )
 
-      await(connector.findCasesByQueue(otherQueue, pagination)) shouldBe Paged(Seq(Cases.btiCaseExample))
+      await(connector.findCasesByQueue(Queues.act, pagination)) shouldBe Paged(Seq(Cases.btiCaseExample))
 
       verify(
         getRequestedFor(urlEqualTo(url))
@@ -142,7 +136,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
       )
     }
 
-    "get cases for liability version of 'other' queue" in {
+    "get cases for liability version of 'act' queue" in {
       val url = buildQueryUrl(
         types        = Seq(ApplicationType.LIABILITY),
         withStatuses = "NEW,OPEN,REFERRED,SUSPENDED",
@@ -160,7 +154,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
           )
       )
 
-      await(connector.findCasesByQueue(otherQueue, pagination, Seq(ApplicationType.LIABILITY))) shouldBe Paged(
+      await(connector.findCasesByQueue(Queues.act, pagination, Seq(ApplicationType.LIABILITY))) shouldBe Paged(
         Seq(Cases.btiCaseExample)
       )
 
@@ -175,10 +169,10 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
     "get cases in all queues" in {
       val url = buildQueryUrlAllQueues(
-        types = Seq(ApplicationType.ATAR, ApplicationType.LIABILITY),
-        statuses = "NEW,OPEN,REFERRED,SUSPENDED",
+        types      = Seq(ApplicationType.ATAR, ApplicationType.LIABILITY),
+        statuses   = "NEW,OPEN,REFERRED,SUSPENDED",
         assigneeId = "none",
-        queueIds = allQueues.map(_.id),
+        queueIds   = Queues.allQueues.map(_.id),
         pagination = pagination
       )
 
@@ -191,7 +185,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
           )
       )
 
-      await(connector.findCasesByAllQueues(allQueues, pagination)) shouldBe Paged(Seq(Cases.btiCaseExample))
+      await(connector.findCasesByAllQueues(Queues.allQueues, pagination)) shouldBe Paged(Seq(Cases.btiCaseExample))
 
       verify(
         getRequestedFor(urlEqualTo(url))

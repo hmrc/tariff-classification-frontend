@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -124,8 +124,8 @@ class LiabilityDetailsFormSpec extends ModelsBaseSpec {
         val form = LiabilityDetailsForm.liabilityDetailsForm(sampleEmptyCase, appConfig).bindFromRequest(emptyParams)
 
         form.hasErrors         shouldBe true
-        form.errors            should have(size(2))
-        form.errors.map(_.key) shouldBe Seq("traderName", "goodName")
+        form.errors            should have(size(3))
+        form.errors.map(_.key) shouldBe Seq("traderName", "goodName", "contactName")
       }
     }
 

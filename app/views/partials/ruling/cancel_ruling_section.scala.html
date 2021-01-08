@@ -1,5 +1,5 @@
 @*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,16 +17,18 @@
 @import config.AppConfig
 @import controllers.routes.CancelRulingController
 @import models.{Case, CaseStatus}
-@(c: Case, useTabIndex : Option[Int] = None)(implicit messages: Messages, appConfig: AppConfig)
+@import models.viewmodels.atar.RulingTabViewModel
 
-@if(c.status == CaseStatus.COMPLETED && !c.hasExpiredRuling) {
+@(ruling: RulingTabViewModel, useTabIndex : Option[Int] = None)(implicit messages: Messages, appConfig: AppConfig)
+
+@if(ruling.caseStatus == CaseStatus.COMPLETED && !ruling.caseHasExpiredRuling) {
 
     <h3 class="heading-medium mt-1">Cancel this ruling</h3>
 
     <p>This ruling may be cancelled if the binding commodity code changes or expires, or if the applicant provided incorrect information.</p>
     <p>If the binding commodity code has changed, you may need to issue a revised ruling.</p>
 
-    <a @if(useTabIndex.isDefined){tabindex="@{useTabIndex.get}"} id="cancel-ruling-button" class="button" role="button" href="@CancelRulingController.getCancelRuling(c.reference)">
+    <a @if(useTabIndex.isDefined){tabindex="@{useTabIndex.get}"} id="cancel-ruling-button" class="button" role="button" href="@CancelRulingController.getCancelRuling(ruling.caseReference)">
         Cancel this ruling
     </a>
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,7 @@
 
 package controllers.v2
 
-import controllers.Tab._
-import controllers.v2.routes.LiabilityController
+import controllers.routes.CaseController
 import controllers.{ControllerBaseSpec, RequestActionsWithPermissions, SuccessfulRequestActions}
 import models.{Permission, _}
 import org.mockito.ArgumentMatchers._
@@ -36,26 +35,28 @@ import utils.Cases
 import views.html.partials.liabilities.attachments_details
 import views.html.v2.remove_attachment
 
-import scala.concurrent.Future.successful
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future.successful
 
 class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   lazy val casesService: CasesService               = mock[CasesService]
   lazy val fileService: FileStoreService            = mock[FileStoreService]
-  lazy val operator: Operator                       = mock[Operator]
+  lazy val operator                                 = Operator(id = "id")
   lazy val liabilityController: LiabilityController = mock[LiabilityController]
+  lazy val atarController: AtarController = mock[AtarController]
   lazy val attachments_details: attachments_details = mock[attachments_details]
   lazy val remove_attachment: remove_attachment     = mock[remove_attachment]
   private lazy val invalidFileTypes: Seq[String]    = Seq("test", "javascript/none", "so/so")
 
   def controller: AttachmentsController =
     new AttachmentsController(
-      verify              = new SuccessfulRequestActions(playBodyParsers, mock[Operator], c = Cases.btiCaseExample),
+      verify              = new SuccessfulRequestActions(playBodyParsers, operator, c = Cases.btiCaseExample),
       casesService        = casesService,
       fileService         = fileService,
       mcc                 = mcc,
       liabilityController = liabilityController,
+      atarController = atarController,
       remove_attachment   = remove_attachment,
       appConfig           = realAppConfig,
       mat                 = mat
@@ -68,6 +69,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
       fileService         = fileService,
       mcc                 = mcc,
       liabilityController = liabilityController,
+      atarController = atarController,
       remove_attachment   = remove_attachment,
       appConfig           = realAppConfig,
       mat                 = mat
@@ -139,10 +141,8 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
       val result: Result = await(controller.uploadAttachment(testReference)(postRequest))
 
       // Then
-      status(result) shouldBe SEE_OTHER
-      redirectLocation(result) shouldBe Some(
-        LiabilityController.displayLiability(testReference).withFragment(ATTACHMENTS_TAB).toString
-      )
+      status(result)           shouldBe SEE_OTHER
+      redirectLocation(result) shouldBe Some(CaseController.attachmentsDetails(testReference).path)
     }
 
     "show not found case page when non existing case is provided" in {
@@ -180,10 +180,8 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
         val result: Result = await(controller.uploadAttachment(testReference)(postRequest))
 
         // Then
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(
-          LiabilityController.displayLiability(testReference).withFragment(ATTACHMENTS_TAB).toString
-        )
+        status(result)           shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(CaseController.attachmentsDetails(testReference).path)
       }
     }
 
@@ -231,10 +229,8 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
       val result: Result = await(controller.uploadAttachment(testReference)(postRequest))
 
       // Then
-      status(result) shouldBe SEE_OTHER
-      redirectLocation(result) shouldBe Some(
-        LiabilityController.displayLiability(testReference).withFragment(ATTACHMENTS_TAB).toString
-      )
+      status(result)           shouldBe SEE_OTHER
+      redirectLocation(result) shouldBe Some(CaseController.attachmentsDetails(testReference).path)
     }
 
     "upload file which exceed max file size" in {
@@ -448,7 +444,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
           )
       )
 
-      redirectLocation(result) shouldBe Some("/manage-tariff-classifications/cases/v2/1/liability#attachments_tab")
+      redirectLocation(result) shouldBe Some(CaseController.attachmentsDetails(aCase.reference).path)
     }
 
     "redirect to attachments tab when user selects `no`" in {
@@ -460,7 +456,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
           )
       )
 
-      redirectLocation(result) shouldBe Some("/manage-tariff-classifications/cases/v2/1/liability#attachments_tab")
+      redirectLocation(result) shouldBe Some(CaseController.attachmentsDetails(aCase.reference).path)
     }
 
     "redirect back to confirm remove view on form error" in {
@@ -487,7 +483,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
     when(remove_attachment.apply(any(), any(), anyString(), anyString())(any(), any(), any()))
       .thenReturn(Html("heading"))
 
-    when(liabilityController.buildLiabilityView(any(), any(), any())(any())).thenReturn(successful(Ok("Ok")))
+    when(atarController.renderView(any(), any(), any())(any())).thenReturn(successful(Ok("Ok")))
 
     when(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).thenReturn(successful(Some(aCase)))
     when(fileService.getAttachments(refEq(aCase))(any[HeaderCarrier])).thenReturn(successful(Seq.empty))

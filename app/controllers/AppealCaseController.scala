@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@
 package controllers
 
 import config.AppConfig
+import controllers.routes
+import controllers.Tab
 import models.forms.AppealForm
 import javax.inject.{Inject, Singleton}
 import models.AppealStatus.AppealStatus
@@ -31,13 +33,13 @@ import views.CaseDetailPage
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
+import models.viewmodels.atar.AppealTabViewModel
 
 @Singleton
 class AppealCaseController @Inject() (
   verify: RequestActions,
   override val caseService: CasesService,
   override implicit val config: AppConfig,
-  val caseDetailsView: views.html.case_details,
   mcc: MessagesControllerComponents
 ) extends FrontendController(mcc)
     with RenderCaseAction {
@@ -51,21 +53,9 @@ class AppealCaseController @Inject() (
     (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
       request.`case`.application.`type` match {
         case ApplicationType.ATAR =>
-          getCaseAndRenderView(
-            reference,
-            c =>
-              successful(
-                caseDetailsView(
-                  c,
-                  CaseDetailPage.APPEAL,
-                  views.html.partials.appeal.appeal_details(c, startTabIndexForAppeals),
-                  activeTab = Some(ActiveTab.Appeals)
-                )
-              )
-          )
-
+          successful(Redirect(v2.routes.AtarController.displayAtar(reference).withFragment(Tab.APPEALS_TAB.name)))
         case ApplicationType.LIABILITY => {
-            successful(Redirect(v2.routes.LiabilityController.displayLiability(reference).withFragment("appeal_tab")))
+          successful(Redirect(v2.routes.LiabilityController.displayLiability(reference).withFragment(Tab.APPEALS_TAB.name)))
         }
       }
     }
@@ -109,15 +99,12 @@ class AppealCaseController @Inject() (
   def changeStatus(reference: String, appealId: String): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference)
       andThen verify.mustHave(Permission.APPEAL_CASE)).async { implicit request =>
-      getCaseAndRenderView(
+      getCaseAndRespond(
         reference,
         c =>
           c.findAppeal(appealId) match {
-            case Some(appeal) => successful(views.html.appeal_change_status(c, appeal, statusForm))
-            case None =>
-              successful(
-                caseDetailsView(c, CaseDetailPage.APPEAL, views.html.partials.appeal.appeal_details(c))
-              )
+            case Some(appeal) => successful(Ok(views.html.appeal_change_status(c, appeal, statusForm)))
+            case None => successful(Redirect(routes.AppealCaseController.appealDetails(reference)))
           }
       )
     }

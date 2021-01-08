@@ -1,5 +1,5 @@
 @*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import controllers.routes
+@import controllers.{Tab, routes}
 @import models.StoredAttachment
 
 @(id: String, caseReference : String, attachment: StoredAttachment, figureClass: Option[String] = None, useTabIndex: Option[Int] = None)(implicit messages: Messages)

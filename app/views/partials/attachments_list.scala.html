@@ -1,5 +1,5 @@
 @*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,22 @@
  * limitations under the License.
  *@
 
+@import controllers.{routes, v2}
+@import models.{Case, Permission, StoredAttachment}
 @import models.request.AuthenticatedRequest
-@import models.Permission
-@import controllers.routes.AttachmentsController
-@import models.StoredAttachment
 @import utils.Dates
 @import views.html.partials.attachment
-@import models.Case
-@(id: String, attachments: Seq[StoredAttachment], showUploadedBy: Boolean = false, showSelect: Boolean = false,
-        showRemoval: Boolean = false, caseRef: Option[String] = None, startAtTabIndex : Option[Int] = None)(implicit request: AuthenticatedRequest[_], messages: Messages)
+
+@(id: String,
+  attachments: Seq[StoredAttachment],
+  showUploadedBy: Boolean = false,
+  showSelect: Boolean = false, showRemoval: Boolean = false,
+  caseRef: Option[String] = None,
+  startAtTabIndex : Option[Int] = None
+)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
     @if(attachments.nonEmpty){
+
         <table id="@{id}-table">
             <thead>
                 <tr>
@@ -78,7 +83,7 @@
                                 caseRef.isDefined &&
                                 request.hasPermission(Permission.REMOVE_ATTACHMENTS)) {
                                 <td id="@{id}-row-@{index}-remove">
-                                    <a @if(startAtTabIndex.isDefined){tabindex="@{startAtTabIndex.get+2+(2*index)}"} id="@{id}-row-@{index}-remove-link" href="@AttachmentsController.removeAttachment(caseRef.get, file.id, file.fileName)">
+                                    <a @if(startAtTabIndex.isDefined){tabindex="@{startAtTabIndex.get+2+(2*index)}"} id="@{id}-row-@{index}-remove-link" href="@v2.routes.AttachmentsController.removeAttachment(caseRef.get, file.id, file.fileName)">
                                         <span>@messages("case.attachment.remove.file.text")</span>
                                         <span class="visually-hidden">@messages("case.attachment.remove.file.hidden.text",file.fileName)</span>
                                     </a>
@@ -89,5 +94,8 @@
             </tbody>
         </table>
     }else {
-        <p id="@{id}-empty-table"> @messages("case.attachment.table.empty") </p>
+    <div class="grid-row">
+        <dt class="column-full" id="@{id}-empty-table"> @messages("case.attachment.table.empty") </dt>
+
+    </div>
     }

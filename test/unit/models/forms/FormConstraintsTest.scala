@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -142,15 +142,15 @@ class FormConstraintsTest extends ModelsBaseSpec {
     "entryNumberIsNumberOnly" should {
 
       "return valid when entry number does not contain characters" in {
-        val result = FormConstraints.entryNumberIsNumberOnly().apply("123456")
+        val result = FormConstraints.entryNumberIsNumbersAndLettersOnly().apply("123456eadJFG")
 
         result shouldBe Valid
       }
 
       "return invalid when entry number contains characters" in {
-        val result = FormConstraints.entryNumberIsNumberOnly().apply("1assedf23456")
+        val result = FormConstraints.entryNumberIsNumbersAndLettersOnly().apply("1assed&f23456")
 
-        result shouldBe Invalid("case.liability.error.entry-number", FormConstraints.numbersOnlyRegex.pattern.pattern())
+        result shouldBe Invalid("case.liability.error.entry-number", FormConstraints.numbersAndLettersRegex.pattern.pattern())
       }
     }
 

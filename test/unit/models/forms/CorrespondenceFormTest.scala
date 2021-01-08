@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,7 +55,6 @@ class CorrespondenceFormTest extends ModelsBaseSpec {
         correspondenceStarter = Some("example"),
         agentName = None,
         contact = Contact("", "example@email.com", None),
-        offline = false,
         summary = "example",
         detailedDescription = "",
         sampleToBeProvided = false,
@@ -92,7 +91,7 @@ class CorrespondenceFormTest extends ModelsBaseSpec {
       form.hasErrors shouldBe true
       form.errors    should have(size(1))
       //TODO get message for messages
-      form.errors.head.message shouldBe "Please enter a correspondence starter"
+      form.errors.head.message shouldBe "Please enter a case source"
     }
 
     "Bind empty summary" in {
@@ -119,7 +118,6 @@ class CorrespondenceFormTest extends ModelsBaseSpec {
           correspondenceStarter = Some("source"),
           agentName = None,
           contact = Contact("", "contact@email.com", None),
-          offline = false,
           summary = "shortDescr",
           detailedDescription = "",
           sampleToBeProvided = false,

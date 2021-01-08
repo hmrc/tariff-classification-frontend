@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,6 @@ object CorrespondenceForm {
         correspondenceStarter = Some(source),
         agentName = None,
         contact = Contact("", contactEmail, None),
-        offline = false,
         summary = shortDescr,
         detailedDescription = "",
         sampleToBeProvided = false,
@@ -46,7 +45,7 @@ object CorrespondenceForm {
   val newCorrespondenceForm: Form[CorrespondenceApplication] = Form(
     mapping(
       "summary"      -> textNonEmpty("Please enter a short description"),
-      "source"       -> textNonEmpty("Please enter a correspondence starter"),
+      "source"       -> textNonEmpty("Please enter a case source"),
       "contactEmail" -> text.verifying("case.liability.error.email", e => validEmailFormat(e))
     )(form2Correspondence)(correspondence2Form)
   )

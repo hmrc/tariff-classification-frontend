@@ -1,5 +1,5 @@
 @*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,12 +21,13 @@
         inputClass: Option[String] = None,
         hint: Option[String] = None,
         labelClass: Option[String] = None,
-        submitOnChange: Boolean = false
+        submitOnChange: Boolean = false,
+        data_target: Option[String] = None
 )(implicit messages: Messages)
 
 <div class="form-group @if(field.hasErrors){form-group-error}">
 
-    <div class="multiple-choice">
+    <div class="multiple-choice" @if(data_target.isDefined){data-target="@data_target.get"}>
         <input
         class="form-control @inputClass"
         type="checkbox"
