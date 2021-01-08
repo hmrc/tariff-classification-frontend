@@ -992,5 +992,5 @@ atar.editRuling.expiryDate.emptyDate.month = Enter a month
 atar.editRuling.expiryDate.emptyDate.year = Enter a year
 atar.editRuling.expiryDate.invalidFormat = Expiry date must be a real date
 
-case.activity.note.success.header = Success
+site.notification.success = Success
 case.activity.note.success.text = Case note has been added to the Activity log

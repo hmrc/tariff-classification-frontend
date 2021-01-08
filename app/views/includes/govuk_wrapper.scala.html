@@ -16,6 +16,7 @@
 
 @import config.AppConfig
 @import views.html.includes.govuk_template
+@import views.html.partials.notification_banner
 @import play.twirl.api.HtmlFormat
 
 @import models.viewmodels.{PrimaryNavigationTab, HomeTab}
@@ -102,6 +103,7 @@
     @if(showPrimaryNav) {
         @components.primary_navigation(customPrimaryNavTab)
     }
+    @notification_banner()(request.flash, messages)
 }
 
 @getHelpForm = @{

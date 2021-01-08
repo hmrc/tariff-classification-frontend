@@ -14,15 +14,15 @@
  * limitations under the License.
  *@
 
-@(implicit messages: Messages)
+@import utils.NotificationType
 
-<div class="govuk-notification-banner govuk-notification-banner--success" role="alert" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
-    <div class="govuk-notification-banner__header">
-        <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
-            @messages("case.activity.note.success.header")
-        </h2>
-    </div>
-    <div class="govuk-notification-banner__content">
-        <p class="govuk-body">@messages("case.activity.note.success.text")</p>
-    </div>
-</div>
+@()(implicit flash: Flash, messages: Messages)
+
+@renderSuccess(message: String) = {
+    @notification_banner_success(
+        heading = messages("site.notification.success"),
+        message = message
+    )
+}
+
+@flash.get(NotificationType.Success.key).map(renderSuccess(_))
