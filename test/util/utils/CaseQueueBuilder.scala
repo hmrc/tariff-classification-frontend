@@ -21,7 +21,7 @@ import models.{ApplicationType, Pagination}
 trait CaseQueueBuilder {
 
   def buildQueryUrl(
-    types: Seq[ApplicationType] = Seq(ApplicationType.ATAR, ApplicationType.LIABILITY),
+    types: Seq[ApplicationType] = Seq(ApplicationType.ATAR, ApplicationType.LIABILITY, ApplicationType.CORRESPONDENCE),
     withStatuses: String,
     queueId: String = "",
     assigneeId: String,
@@ -35,7 +35,7 @@ trait CaseQueueBuilder {
   }
 
   def buildQueryUrlAllQueues(
-                             types: Seq[ApplicationType] = Seq(ApplicationType.ATAR, ApplicationType.LIABILITY),
+                             types: Seq[ApplicationType] = Seq(ApplicationType.ATAR, ApplicationType.LIABILITY, ApplicationType.CORRESPONDENCE),
                              statuses: String,
                              queueIds: Seq[String],
                              assigneeId: String,

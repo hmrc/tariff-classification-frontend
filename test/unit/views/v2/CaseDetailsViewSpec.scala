@@ -32,7 +32,7 @@ class CaseDetailsViewSpec extends ViewSpec {
       val caseDetailsTab = CaseDetailsViewModel.fromCase(caseDetails)
 
       val doc = view(correspondence_case_details(caseDetailsTab))
-      println(doc)
+
       doc.getElementById("case-details-summary") should containText("A short summary")
     }
   }
