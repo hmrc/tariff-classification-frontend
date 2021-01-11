@@ -28,6 +28,7 @@ import play.api.mvc.QueryStringBindable
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
 
+import java.time.Instant
 import scala.concurrent.Future.{failed, successful}
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -202,6 +203,21 @@ class CasesServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
       given(connector.updateCase(any[Case])(any[HeaderCarrier])) willReturn successful(updatedCase)
 
       val result = await(service.removeAttachment(oldCase, "file-id"))
+
+      result shouldBe updatedCase
+    }
+  }
+
+  "Add message into case" should {
+    val c           = Cases.aCorrespondenceCase()
+    val updatedCase = Cases.aCorrespondenceCase()
+    val exampleMessage = Message("name", Instant.now(), "message")
+
+    "add the given message into the case provided" in {
+
+      given(connector.updateCase(any[Case])(any[HeaderCarrier])) willReturn successful(updatedCase)
+
+      val result = await(service.addMessage(c, exampleMessage, Operator("assignee")))
 
       result shouldBe updatedCase
     }

@@ -17,10 +17,9 @@
 package controllers
 
 import config.AppConfig
-import controllers.v2.{AtarController, LiabilityController}
-import models.forms._
-import javax.inject.{Inject, Singleton}
+import controllers.v2.{AtarController, CorrespondenceController, LiabilityController}
 import models._
+import models.forms._
 import models.request.AuthenticatedCaseRequest
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -28,6 +27,8 @@ import play.api.mvc._
 import service._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
+import java.time.Instant
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -35,9 +36,11 @@ class CaseController @Inject() (
   verify: RequestActions,
   keywordsService: KeywordsService,
   eventsService: EventsService,
+  caseService: CasesService,
   mcc: MessagesControllerComponents,
   liabilityController: LiabilityController,
   atarController: AtarController,
+  correspondenceController: CorrespondenceController,
   implicit val appConfig: AppConfig
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc)
@@ -48,6 +51,8 @@ class CaseController @Inject() (
       request.`case`.application.`type` match {
         case ApplicationType.ATAR      => Redirect(v2.routes.AtarController.displayAtar(reference))
         case ApplicationType.LIABILITY => Redirect(v2.routes.LiabilityController.displayLiability(reference))
+        case ApplicationType.CORRESPONDENCE =>
+          Redirect(v2.routes.CorrespondenceController.displayCorrespondence(reference))
       }
   }
 
@@ -58,6 +63,10 @@ class CaseController @Inject() (
           Redirect(v2.routes.AtarController.displayAtar(reference).withFragment(Tab.SAMPLE_TAB.name))
         case ApplicationType.LIABILITY =>
           Redirect(v2.routes.LiabilityController.displayLiability(reference).withFragment(Tab.SAMPLE_TAB.name))
+        case ApplicationType.CORRESPONDENCE =>
+          Redirect(
+            v2.routes.CorrespondenceController.displayCorrespondence(reference).withFragment(Tab.SAMPLE_TAB.name)
+          )
       }
     }
 
@@ -78,6 +87,10 @@ class CaseController @Inject() (
           Redirect(v2.routes.AtarController.displayAtar(reference).withFragment(Tab.ACTIVITY_TAB.name))
         case ApplicationType.LIABILITY =>
           Redirect(v2.routes.LiabilityController.displayLiability(reference).withFragment(Tab.ACTIVITY_TAB.name))
+        case ApplicationType.CORRESPONDENCE =>
+          Redirect(
+            v2.routes.CorrespondenceController.displayCorrespondence(reference).withFragment(Tab.ACTIVITY_TAB.name)
+          )
       }
     }
 
@@ -98,6 +111,10 @@ class CaseController @Inject() (
           Redirect(v2.routes.AtarController.displayAtar(reference).withFragment(Tab.ATTACHMENTS_TAB.name))
         case ApplicationType.LIABILITY =>
           Redirect(v2.routes.LiabilityController.displayLiability(reference).withFragment(Tab.ATTACHMENTS_TAB.name))
+        case ApplicationType.CORRESPONDENCE =>
+          Redirect(
+            v2.routes.CorrespondenceController.displayCorrespondence(reference).withFragment(Tab.ATTACHMENTS_TAB.name)
+          )
       }
     }
 
@@ -110,6 +127,8 @@ class CaseController @Inject() (
               atarController.renderView(activityForm = errorForm)
             case ApplicationType.LIABILITY =>
               liabilityController.renderView(activityForm = errorForm)
+            case ApplicationType.CORRESPONDENCE =>
+              correspondenceController.renderView(activityForm = errorForm)
           }
         }
 
@@ -120,6 +139,29 @@ class CaseController @Inject() (
         }
 
         ActivityForm.form.bindFromRequest.fold(onError, onSuccess)
+      }
+
+  def addMessage(reference: String): Action[AnyContent] =
+    (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.ADD_NOTE))
+      .async { implicit request =>
+        def onError: Form[MessageFormData] => Future[Result] = errorForm => {
+          request.`case`.application.`type` match {
+            case ApplicationType.CORRESPONDENCE =>
+              correspondenceController.renderView(messageForm = errorForm)
+          }
+        }
+
+        def onSuccess: MessageFormData => Future[Result] = validForm => {
+          val messageToLog = Message(
+            name    = request.operator.name.getOrElse(""),
+            date    = Instant.now(),
+            message = validForm.message
+          )
+          caseService
+            .addMessage(request.`case`, messageToLog, request.operator)
+            .map(_ => Redirect(routes.CaseController.get(reference).withFragment(Tab.MESSAGES_TAB.name)))
+        }
+        MessageForm.form.bindFromRequest.fold(onError, onSuccess)
       }
 
   def addKeyword(reference: String): Action[AnyContent] =
