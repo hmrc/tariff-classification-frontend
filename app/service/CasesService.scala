@@ -262,7 +262,7 @@ class CasesService @Inject() (
         Future.successful(None)
       else
         emailService
-          .sendCaseCompleteEmail(updated)
+          .sendCaseCompleteEmail(updated, operator)
           .map { email: EmailTemplate =>
             Some(s"- Subject: ${email.subject}\n- Body: ${email.plain}")
           } recover {

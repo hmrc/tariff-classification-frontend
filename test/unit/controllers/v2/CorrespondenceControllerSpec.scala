@@ -30,6 +30,7 @@ import views.html.v2.correspondence_view
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import uk.gov.hmrc.http.HeaderCarrier
 
 class CorrespondenceControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
@@ -38,7 +39,6 @@ class CorrespondenceControllerSpec extends ControllerBaseSpec with BeforeAndAfte
   private val fileService                        = mock[FileStoreService]
   private val operator                           = Operator(id = "id")
   private val event                              = mock[Event]
-  private val correspondenceController           = mock[CorrespondenceController]
   private val correspondenceView                 = mock[correspondence_view]
   private val attachments: Seq[StoredAttachment] = Seq(Cases.storedAttachment)
   private lazy val queues: List[Queue]           = List(Queue("", "", ""))
@@ -48,7 +48,7 @@ class CorrespondenceControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       queueService,
       fileService,
       event,
-      correspondenceController
+      correspondenceView
     )
 
   private def controller(c: Case) = new CorrespondenceController(
@@ -74,10 +74,8 @@ class CorrespondenceControllerSpec extends ControllerBaseSpec with BeforeAndAfte
   "Correspondence Controller" should {
     "display Correspondence" in {
       val c      = aCase(withReference("reference"), withCorrespondenceApplication)
-      val result = await(controller(c, Set(Permission.EDIT_CORRESPONDENCE))).displayCorrespondence("reference")(newFakeGETRequestWithCSRF(app))
-
-      when(fileService.getAttachments(any[Case]())(any())) thenReturn (Future.successful(attachments))
-      when(eventService.getFilteredEvents(any[String](), any[Pagination](), any())(any())) thenReturn Future(pagedEvent)
+      when(fileService.getAttachments(any[Case])(any[HeaderCarrier])) thenReturn (Future.successful(attachments))
+      when(eventService.getFilteredEvents(any[String], any[Pagination], any[Option[Set[EventType.Value]]])(any[HeaderCarrier])) thenReturn Future(pagedEvent)
       when(queueService.getAll) thenReturn Future(queues)
 
       when(
@@ -96,6 +94,7 @@ class CorrespondenceControllerSpec extends ControllerBaseSpec with BeforeAndAfte
         )(any(), any(), any())
       ) thenReturn Html("body")
 
+      val result = await(controller(c, Set(Permission.EDIT_CORRESPONDENCE))).displayCorrespondence("reference")(newFakeGETRequestWithCSRF(app))
       status(result) shouldBe Status.OK
     }
 

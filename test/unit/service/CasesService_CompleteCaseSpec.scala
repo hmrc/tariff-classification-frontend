@@ -86,7 +86,7 @@ class CasesService_CompleteCaseSpec extends ServiceSpecBase with BeforeAndAfterE
         await(service.completeCase(originalCase, operator)) shouldBe caseUpdated
 
         verify(audit).auditCaseCompleted(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
-        verify(emailService, never()).sendCaseCompleteEmail(any[Case])(any[HeaderCarrier])
+        verify(emailService, never()).sendCaseCompleteEmail(any[Case], refEq(operator))(any[HeaderCarrier])
         verify(rulingConnector, never()).notify(refEq(originalCase.reference))(any[HeaderCarrier])
 
         val caseUpdating = theCaseUpdating(connector)
@@ -113,7 +113,7 @@ class CasesService_CompleteCaseSpec extends ServiceSpecBase with BeforeAndAfterE
         given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
         given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
           .willReturn(successful(mock[Event]))
-        given(emailService.sendCaseCompleteEmail(refEq(caseUpdated))(any[HeaderCarrier]))
+        given(emailService.sendCaseCompleteEmail(refEq(caseUpdated), refEq(operator))(any[HeaderCarrier]))
           .willReturn(Future.successful(emailTemplate))
         given(rulingConnector.notify(refEq(originalCase.reference))(any[HeaderCarrier]))
           .willReturn(Future.successful(()))
@@ -122,7 +122,7 @@ class CasesService_CompleteCaseSpec extends ServiceSpecBase with BeforeAndAfterE
         await(service.completeCase(originalCase, operator)) shouldBe caseUpdated
 
         verify(audit).auditCaseCompleted(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
-        verify(emailService).sendCaseCompleteEmail(refEq(caseUpdated))(any[HeaderCarrier])
+        verify(emailService).sendCaseCompleteEmail(refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
 
         val caseUpdating = theCaseUpdating(connector)
         caseUpdating.status                        shouldBe CaseStatus.COMPLETED
@@ -186,7 +186,7 @@ class CasesService_CompleteCaseSpec extends ServiceSpecBase with BeforeAndAfterE
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
         .willReturn(failed(new RuntimeException("Failed to create Event")))
-      given(emailService.sendCaseCompleteEmail(refEq(caseUpdated))(any[HeaderCarrier]))
+      given(emailService.sendCaseCompleteEmail(refEq(caseUpdated), refEq(operator))(any[HeaderCarrier]))
         .willReturn(Future.successful(emailTemplate))
       given(rulingConnector.notify(refEq(originalCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(()))
 
@@ -194,7 +194,7 @@ class CasesService_CompleteCaseSpec extends ServiceSpecBase with BeforeAndAfterE
       await(service.completeCase(originalCase, operator)) shouldBe caseUpdated
 
       verify(audit).auditCaseCompleted(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
-      verify(emailService).sendCaseCompleteEmail(refEq(caseUpdated))(any[HeaderCarrier])
+      verify(emailService).sendCaseCompleteEmail(refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
 
       val caseUpdating = theCaseUpdating(connector)
       caseUpdating.status shouldBe CaseStatus.COMPLETED
@@ -213,7 +213,7 @@ class CasesService_CompleteCaseSpec extends ServiceSpecBase with BeforeAndAfterE
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
         .willReturn(successful(mock[Event]))
-      given(emailService.sendCaseCompleteEmail(refEq(caseUpdated))(any[HeaderCarrier]))
+      given(emailService.sendCaseCompleteEmail(refEq(caseUpdated), refEq(operator))(any[HeaderCarrier]))
         .willReturn(failed(new RuntimeException("Failed to send Email")))
 
       // When Then
@@ -247,7 +247,7 @@ class CasesService_CompleteCaseSpec extends ServiceSpecBase with BeforeAndAfterE
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
         .willReturn(successful(mock[Event]))
-      given(emailService.sendCaseCompleteEmail(refEq(caseUpdated))(any[HeaderCarrier]))
+      given(emailService.sendCaseCompleteEmail(refEq(caseUpdated), refEq(operator))(any[HeaderCarrier]))
         .willReturn(Future.successful(emailTemplate))
       given(rulingConnector.notify(refEq(originalCase.reference))(any[HeaderCarrier]))
         .willReturn(Future.failed(new RuntimeException("Failed to notify ruling store")))
@@ -256,7 +256,7 @@ class CasesService_CompleteCaseSpec extends ServiceSpecBase with BeforeAndAfterE
       await(service.completeCase(originalCase, operator)) shouldBe caseUpdated
 
       verify(audit).auditCaseCompleted(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
-      verify(emailService).sendCaseCompleteEmail(refEq(caseUpdated))(any[HeaderCarrier])
+      verify(emailService).sendCaseCompleteEmail(refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
 
       val caseUpdating = theCaseUpdating(connector)
       caseUpdating.status shouldBe CaseStatus.COMPLETED
