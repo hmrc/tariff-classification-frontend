@@ -25,6 +25,8 @@ import play.api.libs.json.{Format, Writes}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future.successful
+import java.time.LocalDate
+import java.time.ZoneOffset
 
 class EmailServiceSpec extends ServiceSpecBase {
 
@@ -33,6 +35,7 @@ class EmailServiceSpec extends ServiceSpecBase {
 
   "Email Service 'sendCompleteCaseEmail'" should {
     val aCase       = mock[Case]
+    val anOperator = Operator("1", Some("officer"))
     val application = mock[BTIApplication]
     val contact     = Contact("name", "email", None)
     val template    = mock[EmailTemplate]
@@ -42,14 +45,20 @@ class EmailServiceSpec extends ServiceSpecBase {
       given(application.isBTI).willReturn(false)
 
       val exception = intercept[IllegalArgumentException] {
-        await(service.sendCaseCompleteEmail(aCase))
+        await(service.sendCaseCompleteEmail(aCase, anOperator))
       }
       exception.getMessage shouldBe "Cannot send email for non BTI types"
     }
 
     "Delegate to connector" in {
+      val aDate = LocalDate.of(2021, 1, 1)
+        .atStartOfDay()
+        .atZone(ZoneOffset.UTC)
+        .toInstant()
+
       given(aCase.reference).willReturn("ref")
       given(aCase.application).willReturn(application)
+      given(aCase.createdDate).willReturn(aDate)
       given(application.isBTI).willReturn(true)
       given(application.asATAR).willReturn(application)
       given(application.contact).willReturn(contact)
@@ -60,10 +69,19 @@ class EmailServiceSpec extends ServiceSpecBase {
       given(connector.generate(any[CaseCompletedEmail])(any[HeaderCarrier], any[Format[CaseCompletedEmailParameters]]))
         .willReturn(successful(template))
 
-      await(service.sendCaseCompleteEmail(aCase))
+      await(service.sendCaseCompleteEmail(aCase, anOperator))
 
       verify(connector).send(
-        refEq(CaseCompletedEmail(Seq("email"), CaseCompletedEmailParameters("name", "ref", "item")))
+        refEq(CaseCompletedEmail(
+          Seq("email"),
+          CaseCompletedEmailParameters(
+            recipientName_line1 = "name",
+            reference = "ref",
+            goodsName = "item",
+            officerName = "officer",
+            dateSubmitted = "01 Jan 2021"
+          )
+        ))
       )(any[HeaderCarrier], any[Writes[Any]])
     }
   }

@@ -35,7 +35,9 @@ case class CaseCompletedEmail(
 case class CaseCompletedEmailParameters(
   recipientName_line1: String, // Must match hrmc-email-renderer SalutationHelper param name The full name of the recipient
   reference: String,
-  itemName: String
+  goodsName: String,
+  officerName: String,
+  dateSubmitted: String
 )
 
 object EmailType extends Enumeration {
