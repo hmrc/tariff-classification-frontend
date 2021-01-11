@@ -19,6 +19,7 @@ package models.viewmodels.correspondence
 import models.{Address, Case, Contact}
 
 case class ContactDetailsTabViewModel(
+  caseReference: String,
   caseSource: String,
   contact: Contact,
   fax: Option[String],
@@ -30,6 +31,7 @@ object ContactDetailsTabViewModel {
   def fromCase(cse: Case): ContactDetailsTabViewModel = {
     val correspondenceApplication = cse.application.asCorrespondence
     ContactDetailsTabViewModel(
+      cse.reference,
       caseSource = correspondenceApplication.correspondenceStarter.getOrElse(""),
       contact = correspondenceApplication.contact,
       fax = correspondenceApplication.fax,

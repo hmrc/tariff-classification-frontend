@@ -79,6 +79,13 @@ sealed trait Application {
       case ApplicationType.CORRESPONDENCE => "Correspondence"
       case ApplicationType.MISCELLANEOUS  => "Misc"
     }
+
+  def contactEmail: Option[String] =
+    `type` match {
+      case ApplicationType.CORRESPONDENCE => Some(asCorrespondence.contact.email)
+      case ApplicationType.MISCELLANEOUS  => Some(asMisc.contact.email)
+      case _                              => None
+    }
 }
 
 sealed abstract class ApplicationType(val name: String) extends Product with Serializable {
