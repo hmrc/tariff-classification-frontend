@@ -79,7 +79,7 @@ class CorrespondenceViewSpec extends ViewSpec {
   def keywordForm: Form[String] = KeywordForm.form
 
   val contactDetails: ContactDetailsTabViewModel =
-    ContactDetailsTabViewModel("Case source", contact, Some("943534543"), address, Some("agent Name"))
+    ContactDetailsTabViewModel("123465", "Case source", contact, Some("943534543"), address, Some("agent Name"))
 
   val emptyKeywordsTabViewModel: KeywordsTabViewModel = KeywordsTabViewModel("", Set.empty[String], Nil)
 

@@ -15,6 +15,7 @@
  */
 
 package controllers
+import controllers.Tab.CONTACT_TAB
 
 sealed abstract class Tab(val name: String) extends Product with Serializable
 
@@ -36,7 +37,7 @@ object Tab {
 
   //Correspondence
   case object CASE_DETAILS_TAB extends Tab("case_details_tab")
-  case object CONTACT_DETAILS_TAB extends Tab("contact_details_tab")
+  case object CONTACT_TAB extends Tab("contact_details_tab")
   case object MESSAGES_TAB extends Tab("messages_tab")
   val values =
     Set(
@@ -50,7 +51,7 @@ object Tab {
       GOODS_TAB,
       C592_TAB,
       CASE_DETAILS_TAB,
-      CONTACT_DETAILS_TAB,
+      CONTACT_TAB,
       MESSAGES_TAB
     )
 

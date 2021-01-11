@@ -871,6 +871,27 @@ case.v2.correspondence.case-details.case_created=Case created
 case.v2.correspondence.case-details.boards_file_number=Boards file number
 case.v2.correspondence.case-details.similar_cases=Similar cases
 
+case.v2.correspondence.case-details-edit-title=Edit case details
+case.v2.correspondence.case-details-edit-summary=Summary
+case.v2.correspondence.case-details-edit-description=Detailed description
+case.v2.correspondence.case-details-edit-boards-file-number=Boards file number
+case.v2.correspondence.case-details-edit-similar-cases=Similar cases
+
+case.v2.correspondence.case-contact-edit-title=Edit contact details
+case.v2.correspondence.case-contact-edit-heading1=Edit details
+case.v2.correspondence.case-contact-edit-heading2=Contact details
+case.v2.correspondence.case-contact-edit-heading3=Contact address
+case.v2.correspondence.case-details-edit-case-source=Case source
+case.v2.correspondence.case-details-edit-name=Contact name
+case.v2.correspondence.case-details-edit-email=Contact email
+case.v2.correspondence.case-details-edit-phone=Contact phone
+case.v2.correspondence.case-details-edit-fax=Contact fax
+case.v2.correspondence.case-details-edit-building-and-street=Building and street
+case.v2.correspondence.case-details-edit-town-or-city=Town or city
+case.v2.correspondence.case-details-edit-county=County
+case.v2.correspondence.case-details-edit-postCode=Postcode
+case.v2.correspondence.case-details-edit-agent-name=Agent name
+
 case.v2.correspondence.contact-details_title=Edit contact details
 case.v2.correspondence.contact-details.heading=Contact Details
 case.v2.correspondence.contact-details.tab_title=Contact
