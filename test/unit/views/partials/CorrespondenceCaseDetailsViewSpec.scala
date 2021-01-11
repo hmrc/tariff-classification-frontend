@@ -16,9 +16,11 @@
 
 package views.partials
 
+import models.Permission
 import models.viewmodels.correspondence.CaseDetailsViewModel
 import utils.Cases.aCorrespondenceCase
 import utils.Dates
+import views.ViewMatchers.containElementWithID
 import views.ViewSpec
 import views.html.partials.correspondence_case_details
 
@@ -27,6 +29,31 @@ import java.time.Instant
 class CorrespondenceCaseDetailsViewSpec extends ViewSpec {
 
   "Correspondence Case Details" should {
+
+    "render edit correspondence case Details when user has permission to edit correspondence" in {
+      val c              = aCorrespondenceCase()
+      val caseDetailsTab = CaseDetailsViewModel.fromCase(c)
+
+      val doc = view(
+        correspondence_case_details(caseDetailsTab)(
+          requestWithPermissions(Permission.EDIT_CORRESPONDENCE),
+          messages,
+          appConfig
+        )
+      )
+
+      val editCorrespondence = doc.getElementById("edit-correspondence-details")
+      editCorrespondence.text() shouldBe "Edit correspondence case details"
+    }
+
+    "not render edit correspondence case Details when user does not have permission to edit" in {
+      val c              = aCorrespondenceCase()
+      val caseDetailsTab = CaseDetailsViewModel.fromCase(c)
+
+      val doc = view(correspondence_case_details(caseDetailsTab))
+
+      doc shouldNot containElementWithID("edit-correspondence-details")
+    }
 
     "render summary when present" in {
       val c              = aCorrespondenceCase()
@@ -44,8 +71,8 @@ class CorrespondenceCaseDetailsViewSpec extends ViewSpec {
 
       val doc = view(correspondence_case_details(caseDetailsTab))
 
-      val summary = doc.getElementById("detailed-description")
-      summary.text() shouldBe "A detailed desc"
+      val detailedDescription = doc.getElementById("detailed-description")
+      detailedDescription.text() shouldBe "A detailed desc"
     }
 
     "render case created date when present" in {
@@ -54,8 +81,8 @@ class CorrespondenceCaseDetailsViewSpec extends ViewSpec {
 
       val doc = view(correspondence_case_details(caseDetailsTab))
 
-      val summary = doc.getElementById("case-created")
-      summary.text() shouldBe Dates.format(Instant.now())
+      val createdDate = doc.getElementById("case-created")
+      createdDate.text() shouldBe Dates.format(Instant.now())
     }
 
     "render Boards file number when present" in {

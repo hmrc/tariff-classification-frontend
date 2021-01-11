@@ -438,7 +438,7 @@ object Cases {
     withModifier.foldLeft(btiCaseExample)((current: Case, modifier) => modifier.apply(current))
 
   def aCorrespondenceCase(withModifier: (Case => Case)*): Case =
-    withModifier.foldLeft(corrCaseExample)((current: Case, modifier) => modifier.apply(current))
+    withModifier.foldLeft(correspondenceCaseExample)((current: Case, modifier) => modifier.apply(current))
 
   def aLiabilityCase(withModifier: (Case => Case)*): Case =
     withModifier.foldLeft(liabilityCaseExample)((current: Case, modifier) => modifier.apply(current))
@@ -746,6 +746,18 @@ object Cases {
     sampleToBeReturned = false
   )
 
+  val corrExampleWithMissingFields: CorrespondenceApplication = CorrespondenceApplication(
+    None,
+    None,
+    Address("s", "s", None, None),
+    Contact("name", "email"),
+    None,
+    "",
+    "Personal Computer",
+    sampleToBeProvided = false,
+    sampleToBeReturned = false
+  )
+
   val miscExample: MiscApplication = MiscApplication(
     Contact("name", "email"),
     "name",
@@ -769,7 +781,7 @@ object Cases {
     sampleToBeReturned = false
   )
 
-  val corrCaseExample: Case = Case(
+  val correspondenceCaseExample: Case = Case(
     "1",
     CaseStatus.OPEN,
     Instant.now(),

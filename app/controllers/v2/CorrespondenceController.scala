@@ -21,9 +21,8 @@ import controllers.RequestActions
 import models.forms._
 import models.request._
 import models.viewmodels.atar._
-import models.viewmodels.correspondence.CaseDetailsViewModel
-import models.viewmodels.correspondence.{ContactDetailsTabViewModel, CorrespondenceSampleTabViewModel}
-import models.viewmodels.{ActivityViewModel, CaseViewModel, MessagesTabViewModel}
+import models.viewmodels.correspondence.{CaseDetailsViewModel, ContactDetailsTabViewModel}
+import models.viewmodels.{ActivityViewModel, CaseViewModel, MessagesTabViewModel, SampleStatusTabViewModel}
 import models.{Case, EventType, NoPagination}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -31,8 +30,8 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import service._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import javax.inject.{Inject, Singleton}
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -53,6 +52,7 @@ class CorrespondenceController @Inject() (
 
   def renderView(
     activityForm: Form[ActivityFormData] = ActivityForm.form,
+    messageForm: Form[MessageFormData]   = MessageForm.form,
     uploadForm: Form[String]             = UploadAttachmentForm.form
   )(implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
     val correspondenceCase: Case         = request.`case`
@@ -77,6 +77,7 @@ class CorrespondenceController @Inject() (
         caseDetailsTab,
         contactDetailsTab,
         messagesTab,
+        messageForm,
         sampleTab,
         attachmentsTab,
         uploadForm,
@@ -89,7 +90,7 @@ class CorrespondenceController @Inject() (
 
   private def getSampleTab(correspondenceCase: Case)(implicit request: AuthenticatedRequest[_]) =
     eventsService.getFilteredEvents(correspondenceCase.reference, NoPagination(), Some(EventType.sampleEvents)).map {
-      events => CorrespondenceSampleTabViewModel.fromCase(correspondenceCase, events)
+      sampleEvents => SampleStatusTabViewModel(correspondenceCase.reference, correspondenceCase.sample, sampleEvents)
     }
 
   private def getAttachmentTab(correspondenceCase: Case)(implicit hc: HeaderCarrier): Future[AttachmentsTabViewModel] =

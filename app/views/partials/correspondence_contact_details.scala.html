@@ -24,6 +24,16 @@
 
 @tab_heading("correspondence", messages("case.v2.correspondence.contact-details.heading"))
 
+@if(request.hasPermission(Permission.EDIT_CORRESPONDENCE)) {
+<div id="edit-contact-details" class="grid-row mb-2">
+            <span class="column-one-third">
+                <a id="edit-contact-details-link" href="@controllers.routes.CreateCorrespondenceController.editCorrespondenceContact(contactDetails.caseReference)">
+                @messages("case.v2.correspondence.contact-details_title")
+                </a>
+            </span>
+</div>
+}
+
 <dl class="govuk-check-your-answers cya-questions-short">
 
     <div id="contact-details-correspondence-starter" class="grid-row">
@@ -71,6 +81,15 @@
         </dd>
     </div>
 
+    <div id="contact-details-agent-name" class="grid-row">
+        <dt class="cya-question">
+            @messages("case.v2.correspondence.contact-details.agent_name")
+        </dt>
+        <dd class="cya-answer" id="agent-name">
+            <span class="pre-wrap">@contactDetails.agentName</span>
+        </dd>
+    </div>
+
     <div id="contact-details-contact-address" class="grid-row">
         <dt class="cya-question">
         @messages("case.v2.correspondence.contact-details.contact_address")
@@ -82,15 +101,6 @@
             <span class="pre-wrap">@contactDetails.address.postCode</span> @if(contactDetails.address.postCode.nonEmpty) {<br>}
         </dd>
 
-    </div>
-
-    <div id="contact-details-agent-name" class="grid-row">
-        <dt class="cya-question">
-        @messages("case.v2.correspondence.contact-details.agent_name")
-        </dt>
-        <dd class="cya-answer" id="agent-name">
-            <span class="pre-wrap">@contactDetails.agentName</span>
-        </dd>
     </div>
 
 </dl>

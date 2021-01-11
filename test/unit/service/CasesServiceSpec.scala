@@ -208,4 +208,19 @@ class CasesServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
     }
   }
 
+  "Add message into case" should {
+    val c           = Cases.aCorrespondenceCase()
+    val updatedCase = Cases.aCorrespondenceCase()
+    val exampleMessage = Message("name", Instant.now(), "message")
+
+    "add the given message into the case provided" in {
+
+      given(connector.updateCase(any[Case])(any[HeaderCarrier])) willReturn successful(updatedCase)
+
+      val result = await(service.addMessage(c, exampleMessage, Operator("assignee")))
+
+      result shouldBe updatedCase
+    }
+  }
+
 }

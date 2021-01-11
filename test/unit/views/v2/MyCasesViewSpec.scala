@@ -53,7 +53,7 @@ class MyCasesViewSpec extends ViewSpec {
   val assignedToMeCasesTab =
     ApplicationTabViewModel(
       "message key",
-      ApplicationsTab.assignedToMeCases(Seq(Cases.btiCaseExample, Cases.liabilityCaseExample, Cases.corrCaseExample)).applicationTabs
+      ApplicationsTab.assignedToMeCases(Seq(Cases.btiCaseExample, Cases.liabilityCaseExample, Cases.correspondenceCaseExample)).applicationTabs
     )
 
   val referredByMeCasesTab =

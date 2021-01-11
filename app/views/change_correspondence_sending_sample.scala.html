@@ -17,24 +17,23 @@
 @import config.AppConfig
 @import models.request.AuthenticatedRequest
 @import models.Case
+@import models.SampleStatus.SampleStatus
+@import views.html.forms.{liability_sending_sample_form, correspondence_sending_sample_form}
 @import views.html.includes.main
-@import views.html.partials._
+@import views.html.partials.{case_heading, error_summary, back_link}
 @import models.viewmodels.NoTabSelected
 
-@(c: Case, queueName: String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(c: Case, form: Form[Option[SampleStatus]])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("page.title.case.released")),
+@main(bodyClasses = None, customTitle = Some(messages("case.liability.provide-samples")),
     customPrimaryNavTab = NoTabSelected) {
 
     @back_link()
 
+    @error_summary(form.errors)
+
     @case_heading(c)
 
-    <div class="grid-row">
-        <div class="column-full">
-            <h2 class="heading-large mt-0">This case has been released to the @queueName queue for classification</h2>
-            <p>The case status is now <span id ="open-phase-tag" class="govuk-tag govuk-tag--blue">open</span></p>
-            @confirmation_next_steps()
-        </div>
-    </div>
+    @correspondence_sending_sample_form(c, form("status"))
+
 }

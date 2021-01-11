@@ -18,12 +18,11 @@ package views.v2
 
 import java.time.Instant
 import models._
-import models.forms.{ActivityForm, ActivityFormData, KeywordForm, UploadAttachmentForm}
+import models.forms.{ActivityForm, ActivityFormData, KeywordForm, MessageForm, MessageFormData, UploadAttachmentForm}
 import models.viewmodels.atar.AttachmentsTabViewModel
-import models.viewmodels.correspondence.{CaseDetailsViewModel, ContactDetailsTabViewModel, CorrespondenceSampleTabViewModel}
-import models.viewmodels.{ActivityViewModel, CaseViewModel, KeywordsTabViewModel, MessagesTabViewModel}
+import models.viewmodels.correspondence.{CaseDetailsViewModel, ContactDetailsTabViewModel}
+import models.viewmodels.{ActivityViewModel, CaseViewModel, KeywordsTabViewModel, MessagesTabViewModel, SampleStatusTabViewModel}
 import play.api.data.Form
-import play.api.i18n.Messages.Implicits.applicationMessages
 import utils.Cases
 import utils.Cases._
 import views.ViewMatchers.{containElementWithID, containText}
@@ -32,15 +31,14 @@ import views.html.v2.correspondence_view
 
 class CorrespondenceViewSpec extends ViewSpec {
 
-  private val sampleStatusTabViewModel = CorrespondenceSampleTabViewModel(
-    "1",
-    true,
-    false,
-    Some("officer"),
-    "return",
-    "return",
-    sampleActivity = Paged.empty[Event]
-  )
+  private val sampleStatusTabViewModel = SampleStatusTabViewModel(
+      "caseReference",
+      isSampleBeingSent = false,
+      Some("a person"),
+      None,
+      "location",
+      sampleActivity = Paged.empty[Event]
+    )
 
   private val caseDetailsTab: CaseDetailsViewModel = CaseDetailsViewModel(
     "1",
@@ -67,6 +65,13 @@ class CorrespondenceViewSpec extends ViewSpec {
 
   private val address: Address = Address("Street building", "Sofia", None, Some("NE2 8PN"));
 
+  private val exampleMessages = List(Message("name", Instant.now(), "message"),
+    Message("name2", Instant.now(), "message2"))
+
+  private val messagesTab: MessagesTabViewModel = MessagesTabViewModel("reference", exampleMessages)
+
+  private val messageForm: Form[MessageFormData] = MessageForm.form
+
   def correspondenceView: correspondence_view = injector.instanceOf[correspondence_view]
 
   def uploadAttachmentForm: Form[String] = UploadAttachmentForm.form
@@ -74,11 +79,9 @@ class CorrespondenceViewSpec extends ViewSpec {
   def keywordForm: Form[String] = KeywordForm.form
 
   val contactDetails: ContactDetailsTabViewModel =
-    ContactDetailsTabViewModel("Case source", contact, Some("943534543"), address, Some("agent Name"))
+    ContactDetailsTabViewModel("123465", "Case source", contact, Some("943534543"), address, Some("agent Name"))
 
   val emptyKeywordsTabViewModel: KeywordsTabViewModel = KeywordsTabViewModel("", Set.empty[String], Nil)
-
-  val messagesTo: MessagesTabViewModel = MessagesTabViewModel(List(Message("name", Instant.now, "message")))
 
   "Correspondence View" should {
 
@@ -89,7 +92,8 @@ class CorrespondenceViewSpec extends ViewSpec {
           CaseViewModel.fromCase(c, Cases.operatorWithoutPermissions),
           caseDetailsTab,
           contactDetails,
-          messagesTo,
+          messagesTab,
+          messageForm,
           sampleStatusTabViewModel,
           attachmentsTab,
           uploadAttachmentForm,
@@ -108,7 +112,8 @@ class CorrespondenceViewSpec extends ViewSpec {
           CaseViewModel.fromCase(c, Cases.operatorWithoutPermissions),
           caseDetailsTab,
           contactDetails,
-          messagesTo,
+          messagesTab,
+          messageForm,
           sampleStatusTabViewModel,
           attachmentsTab,
           uploadAttachmentForm,
@@ -127,7 +132,8 @@ class CorrespondenceViewSpec extends ViewSpec {
           CaseViewModel.fromCase(c, Cases.operatorWithoutPermissions),
           caseDetailsTab,
           contactDetails,
-          messagesTo,
+          messagesTab,
+          messageForm,
           sampleStatusTabViewModel,
           attachmentsTab,
           uploadAttachmentForm,
@@ -139,23 +145,25 @@ class CorrespondenceViewSpec extends ViewSpec {
       doc should containElementWithID("contact_details_tab")
     }
 
-    //    "render Messages details" in {
-    //      val c = aCorrCase(withReference("reference"), withCorrespondenceApplication)
-    //      val doc = view(
-    //        correspondenceView(
-    //          CaseViewModel.fromCase(c, Cases.operatorWithoutPermissions),
-    //          caseDetailsTab,
-    //          contactDetails,
-    //          sampleStatusTabViewModel,
-    //          attachmentsTab,
-    //          uploadAttachmentForm,
-    //          activityTab,
-    //          activityForm,
-    //          Seq.empty
-    //        )
-    //      )
-    //      doc should containElementWithID("messages_tab")
-    //    }
+        "render Messages details" in {
+          val c = aCorrespondenceCase(withReference("reference"), withCorrespondenceApplication)
+          val doc = view(
+            correspondenceView(
+              CaseViewModel.fromCase(c, Cases.operatorWithoutPermissions),
+              caseDetailsTab,
+              contactDetails,
+              messagesTab,
+              messageForm,
+              sampleStatusTabViewModel,
+              attachmentsTab,
+              uploadAttachmentForm,
+              activityTab,
+              activityForm,
+              Seq.empty
+            )
+          )
+          doc should containElementWithID("messages_tab")
+        }
 
     "render Sample Details tab" in {
       val c = aCorrespondenceCase(withReference("reference"), withCorrespondenceApplication)
@@ -164,7 +172,8 @@ class CorrespondenceViewSpec extends ViewSpec {
           CaseViewModel.fromCase(c, Cases.operatorWithoutPermissions),
           caseDetailsTab,
           contactDetails,
-          messagesTo,
+          messagesTab,
+          messageForm,
           sampleStatusTabViewModel,
           attachmentsTab,
           uploadAttachmentForm,
@@ -173,7 +182,7 @@ class CorrespondenceViewSpec extends ViewSpec {
           Seq.empty
         )
       )
-      doc should containElementWithID("samples_tab")
+      doc should containElementWithID("sample_status_tab")
     }
 
     "render Attachments Details tab" in {
@@ -183,7 +192,8 @@ class CorrespondenceViewSpec extends ViewSpec {
           CaseViewModel.fromCase(c, Cases.operatorWithoutPermissions),
           caseDetailsTab,
           contactDetails,
-          messagesTo,
+          messagesTab,
+          messageForm,
           sampleStatusTabViewModel,
           attachmentsTab,
           uploadAttachmentForm,
@@ -202,7 +212,8 @@ class CorrespondenceViewSpec extends ViewSpec {
           CaseViewModel.fromCase(c, Cases.operatorWithoutPermissions),
           caseDetailsTab,
           contactDetails,
-          messagesTo,
+          messagesTab,
+          messageForm,
           sampleStatusTabViewModel,
           attachmentsTab,
           uploadAttachmentForm,
