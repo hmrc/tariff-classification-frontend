@@ -789,7 +789,6 @@ object Cases {
 
   val miscApplicationExample: MiscApplication = MiscApplication(
     Contact("name", "email"),
-    offline = false,
     "name",
     None,
     MiscCaseType.OTHER,

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,7 +54,6 @@ class MiscellaneousFormSpec extends ModelsBaseSpec {
       form.hasErrors shouldBe false
       form.get shouldBe MiscApplication(
         contact = Contact("example", "", None),
-        offline = false,
         name = "",
         contactName = Some("example"),
         caseType = MiscCaseType.withName("Other government dept"),
@@ -101,7 +100,6 @@ class MiscellaneousFormSpec extends ModelsBaseSpec {
       val form =MiscellaneousForm.newMiscForm.fill(
         MiscApplication(
           contact = Contact("example", "", None),
-          offline = false,
           name = "",
           contactName = Some("example"),
           caseType = MiscCaseType.withName("Other government dept"),

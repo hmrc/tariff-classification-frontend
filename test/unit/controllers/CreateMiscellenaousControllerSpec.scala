@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package controllers
 
-import controllers.routes._
 import models._
 import models.forms.v2.MiscellaneousForm
 import org.mockito.ArgumentMatchers._
@@ -42,7 +41,7 @@ class CreateMiscellenaousControllerSpec extends ControllerBaseSpec with BeforeAn
   private val releaseCaseView = injector.instanceOf[views.html.release_case]
   private val confirmation_case_creation = injector.instanceOf[views.html.v2.confirmation_case_creation]
 
-  private val caseWithStatusOPEN = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.OPEN)
+  private val caseWithStatusOPEN = Cases.miscCaseExample.copy(reference = "reference", status = CaseStatus.OPEN)
 
   private def controller(c: Case) =
     new CreateMiscellaneousController(
@@ -70,7 +69,7 @@ class CreateMiscellenaousControllerSpec extends ControllerBaseSpec with BeforeAn
   "CreateMiscellaneousController" should {
 
     "return OK with correct HTML" in {
-      val result = await(controller(caseWithStatusOPEN).get()(newFakeGETRequestWithCSRF(app)))
+      val result = await(controller(caseWithStatusOPEN, Set(Permission.CREATE_CASES)).get()(newFakeGETRequestWithCSRF(app)))
 
       status(result)      shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -152,26 +151,6 @@ class CreateMiscellenaousControllerSpec extends ControllerBaseSpec with BeforeAn
 
       status(result)               shouldBe Status.OK
       contentAsString(result) should include("We could not find a Case with reference: reference")
-    }
-
-    def asFormParams(cc: Product): List[(String, String)] =
-  cc.getClass.getDeclaredFields.toList
-    .map { f =>
-      f.setAccessible(true)
-      (f.getName, f.get(cc))
-    }
-    .filterNot(_._1 == "serialVersionUID")
-    .filterNot(_._1 == "MODULE$")
-    .flatMap {
-      case (n, l: List[_]) if l.headOption.exists(_.isInstanceOf[Product]) =>
-        l.zipWithIndex.flatMap {
-          case (x, i) => asFormParams(x.asInstanceOf[Product]).map { case (k, v) => (s"$n[$i].$k", v) }
-        }
-      case (n, Some(p: Product)) => asFormParams(p).map { case (k, v) => (s"$n.$k", v) }
-      case (n, Some(a))          => List((n, a.toString))
-      case (n, None)             => List((n, ""))
-      case (n, p: Product)       => asFormParams(p).map { case (k, v) => (s"$n.$k", v) }
-      case (n, a)                => List((n, a.toString))
     }
   }
 }
