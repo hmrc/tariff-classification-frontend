@@ -18,10 +18,10 @@ package service
 
 import java.time.{Instant, LocalDate}
 import java.util.UUID
-
 import audit.AuditService
 import config.AppConfig
 import connector.{BindingTariffClassificationConnector, RulingConnector}
+
 import java.nio.file.{Files, StandardOpenOption}
 import javax.inject.{Inject, Singleton}
 import models.ApplicationType._
@@ -52,7 +52,8 @@ class CasesService @Inject() (
   pdfService: PdfService,
   connector: BindingTariffClassificationConnector,
   rulingConnector: RulingConnector
-)(implicit ec: ExecutionContext) extends Logging {
+)(implicit ec: ExecutionContext)
+    extends Logging {
 
   def updateExtendedUseStatus(original: Case, status: Boolean, operator: Operator)(
     implicit hc: HeaderCarrier
@@ -349,14 +350,16 @@ class CasesService @Inject() (
   def getCasesByQueue(
     queue: Queue,
     pagination: Pagination,
-    forTypes: Seq[ApplicationType] = Seq(ApplicationType.ATAR, ApplicationType.LIABILITY, ApplicationType.CORRESPONDENCE)
+    forTypes: Seq[ApplicationType] =
+      Seq(ApplicationType.ATAR, ApplicationType.LIABILITY, ApplicationType.CORRESPONDENCE)
   )(implicit hc: HeaderCarrier): Future[Paged[Case]] =
     connector.findCasesByQueue(queue, pagination, forTypes)
 
   def getCasesByAllQueues(
     queue: Seq[Queue],
     pagination: Pagination,
-    forTypes: Seq[ApplicationType] = Seq(ApplicationType.ATAR, ApplicationType.LIABILITY, ApplicationType.CORRESPONDENCE)
+    forTypes: Seq[ApplicationType] =
+      Seq(ApplicationType.ATAR, ApplicationType.LIABILITY, ApplicationType.CORRESPONDENCE)
   )(implicit hc: HeaderCarrier): Future[Paged[Case]] =
     connector.findCasesByAllQueues(queue, pagination, forTypes)
 
@@ -402,6 +405,18 @@ class CasesService @Inject() (
     fileService.removeAttachment(fileId) flatMap { _ =>
       connector.updateCase(c.copy(attachments = c.attachments.filter(_.id != fileId)))
     }
+
+  def addMessage(original: Case, message: Message, operator: Operator)(
+    implicit hc: HeaderCarrier
+  ): Future[Case] = {
+    val applicationToUpdate = original.application.asCorrespondence
+      .copy(messagesLogged = message :: original.application.asCorrespondence.messagesLogged)
+    val caseToUpdate = original.copy(application = applicationToUpdate)
+    for {
+      updated <- connector.updateCase(caseToUpdate)
+      _ = auditService.auditAddMessage(updated, operator)
+    } yield updated
+  }
 
   private def addCompletedEvent(
     original: Case,

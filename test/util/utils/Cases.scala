@@ -437,11 +437,17 @@ object Cases {
   def aCase(withModifier: (Case => Case)*): Case =
     withModifier.foldLeft(btiCaseExample)((current: Case, modifier) => modifier.apply(current))
 
+  def aCorrespondenceCase(withModifier: (Case => Case)*): Case =
+    withModifier.foldLeft(correspondenceCaseExample)((current: Case, modifier) => modifier.apply(current))
+
   def aLiabilityCase(withModifier: (Case => Case)*): Case =
     withModifier.foldLeft(liabilityCaseExample)((current: Case, modifier) => modifier.apply(current))
 
   def withBTIApplication: Case => Case =
     _.copy(application = btiApplicationExample)
+
+  def withCorrespondenceApplication: Case => Case =
+    _.copy(application = corrApplicationExample)
 
   def withLiabilityApplication(
     contact: Contact                     = Contact("name", "email@email.com", Some("1234")),
@@ -763,7 +769,7 @@ object Cases {
     sampleToBeReturned = false
   )
 
-  val corrCaseExample: Case = Case(
+  val correspondenceCaseExample: Case = Case(
     "1",
     CaseStatus.OPEN,
     Instant.now(),

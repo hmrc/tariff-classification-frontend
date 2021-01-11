@@ -28,6 +28,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.audit.DefaultAuditConnector
 import utils.Cases._
 
+import java.time.Instant
 import scala.concurrent.ExecutionContext
 
 class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
@@ -416,6 +417,27 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
       )
       verify(connector)
         .sendExplicitAudit(refEq("caseSampleReturnChange"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+    }
+  }
+
+  "Service 'audit message'" should {
+    val message = "this is my message"
+    val c = correspondenceCaseExample.copy(
+      reference   = "ref",
+      status      = OPEN,
+      application = correspondenceExample.copy(messagesLogged = List(Message("operator name", Instant.now, message)))
+    )
+
+    "Delegate to connector" in {
+      service.auditAddMessage(c, operator)
+
+      val payload = Map(
+        "caseReference" -> c.reference,
+        "operatorId"    -> operator.id,
+        "message"       -> c.application.asCorrespondence.messagesLogged.reverse.last.message
+      )
+      verify(connector)
+        .sendExplicitAudit(refEq("caseMessage"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
     }
   }
 
