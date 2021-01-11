@@ -1,0 +1,124 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.AppConfig
+@import helper.CSRF
+@import models.forms.{ActivityFormData, MessageFormData}
+@import models.request.AuthenticatedRequest
+@import models.viewmodels.{CaseViewModel, ActivityViewModel, MyCasesTab, MessagesTabViewModel}
+@import models.viewmodels.atar.AttachmentsTabViewModel
+@import views.html.includes.main
+@import views.html.partials.{activity_details, messages_logged, attachments_details}
+@import models.viewmodels.miscellaneous.DetailsViewModel
+@import models.viewmodels.SampleStatusTabViewModel
+
+@this(
+        case_heading: views.html.v2.case_heading,
+        case_action_buttons_partial: views.html.partials.liabilities.case_action_buttons_partial,
+        advanced_search_cases: views.html.partials.liabilities.advanced_search_cases,
+        sample_status: views.html.partials.sample.sample_details_correspondence
+)
+
+@(
+        caseViewModel: CaseViewModel,
+
+        caseDetailsTab: DetailsViewModel,
+        messagesTab : MessagesTabViewModel,
+        messageForm: Form[MessageFormData],
+        sampleTab: SampleStatusTabViewModel,
+        attachmentsTab: AttachmentsTabViewModel,
+        uploadForm: Form[String],
+
+        activityTab: ActivityViewModel,
+        activityForm: Form[ActivityFormData],
+
+        attachments: Seq[StoredAttachment]
+
+)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+
+@main(
+    bodyClasses = None,
+    customTitle = Some(messages("case.v2.correspondence.page_title")),
+    customPrimaryNavTab = MyCasesTab
+) {
+    @case_heading(caseViewModel.caseHeader)
+
+    <div class="form-groups">
+        @case_action_buttons_partial(caseViewModel)
+        @advanced_search_cases(caseViewModel)
+    </div>
+
+    <div id="correspondence_tabs" class="govuk-tabs" data-module="govuk-tabs">
+        <ul class="govuk-tabs__list">
+            <li class="govuk-tabs__list-item">
+                <a class="govuk-tabs__tab" href="#case_details_tab">
+                @messages("case.v2.correspondence.case-details.tab_title")
+                </a>
+            </li>
+
+            <li class="govuk-tabs__list-item">
+                <a class="govuk-tabs__tab" href="#messages_tab">
+                @messages("case.v2.correspondence.messages.tab_title")
+                </a>
+            </li>
+
+            <li class="govuk-tabs__list-item">
+                <a class="govuk-tabs__tab" href="#sample_status_tab">
+                @messages("case.v2.correspondence.samples.tab_title")
+                </a>
+            </li>
+
+            <li class="govuk-tabs__list-item">
+                <a class="govuk-tabs__tab" href="#attachments_tab">
+                @messages("case.v2.correspondence.attachments.tab_title")
+                </a>
+            </li>
+
+            <li class="govuk-tabs__list-item">
+                <a class="govuk-tabs__tab" href="#activity_tab">
+                @messages("case.v2.correspondence.activity.tab_title")
+                </a>
+            </li>
+        </ul>
+
+        <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="case_details_tab">
+@*//            @correspondence_case_details(caseDetailsTab)*@
+        </div>
+
+        <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="messages_tab">
+            @messages_logged(messagesTab, messageForm)
+        </div>
+
+        <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="sample_status_tab">
+            @sample_status(sampleTab: SampleStatusTabViewModel)
+        </div>
+
+        <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="attachments_tab">
+        @attachments_details(attachmentsTab, uploadForm)
+        </div>
+
+        <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="activity_tab">
+        @activity_details(activityTab, activityForm)
+        </div>
+
+    </div>
+}
+
+<script>
+        let cacheURL = "@routes.TabCacheController.get(caseViewModel.caseHeader.referenceNumber, ApplicationType.CORRESPONDENCE).url";
+        let csrfToken = "@CSRF.getToken.value";
+        window.addEventListener("load", () => fixAnchorInURL(cacheURL, csrfToken), false);
+</script>

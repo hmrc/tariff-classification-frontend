@@ -53,6 +53,8 @@ class CaseController @Inject() (
         case ApplicationType.LIABILITY => Redirect(v2.routes.LiabilityController.displayLiability(reference))
         case ApplicationType.CORRESPONDENCE =>
           Redirect(v2.routes.CorrespondenceController.displayCorrespondence(reference))
+        case ApplicationType.MISCELLANEOUS =>
+          Redirect(v2.routes.MiscellaneousController.displayMiscellaneous(reference))
       }
   }
 
@@ -67,6 +69,8 @@ class CaseController @Inject() (
           Redirect(
             v2.routes.CorrespondenceController.displayCorrespondence(reference).withFragment(Tab.SAMPLE_TAB.name)
           )
+        case ApplicationType.MISCELLANEOUS =>
+          Redirect(v2.routes.MiscellaneousController.displayMiscellaneous(reference).withFragment(Tab.SAMPLE_TAB.name))
       }
     }
 
@@ -91,6 +95,8 @@ class CaseController @Inject() (
           Redirect(
             v2.routes.CorrespondenceController.displayCorrespondence(reference).withFragment(Tab.ACTIVITY_TAB.name)
           )
+        case ApplicationType.MISCELLANEOUS =>
+          Redirect(v2.routes.MiscellaneousController.displayMiscellaneous(reference).withFragment(Tab.ACTIVITY_TAB.name))
       }
     }
 
@@ -115,6 +121,8 @@ class CaseController @Inject() (
           Redirect(
             v2.routes.CorrespondenceController.displayCorrespondence(reference).withFragment(Tab.ATTACHMENTS_TAB.name)
           )
+        case ApplicationType.MISCELLANEOUS =>
+          Redirect(v2.routes.MiscellaneousController.displayMiscellaneous(reference).withFragment(Tab.ATTACHMENTS_TAB.name))
       }
     }
 

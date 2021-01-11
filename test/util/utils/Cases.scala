@@ -449,6 +449,9 @@ object Cases {
   def withCorrespondenceApplication: Case => Case =
     _.copy(application = corrApplicationExample)
 
+  def withMiscellaneousApplcation: Case => Case =
+    _.copy(application = miscExample)
+
   def withLiabilityApplication(
     contact: Contact                     = Contact("name", "email@email.com", Some("1234")),
     status: LiabilityStatus              = LiabilityStatus.NON_LIVE,

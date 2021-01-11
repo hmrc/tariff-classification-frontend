@@ -61,13 +61,15 @@ object ApplicationsTab {
 
     val correspondence = assignedCases.filter(_.application.isCorrespondence)
 
+    val miscellaneous = assignedCases.filter(_.application.isMisc)
+
     ApplicationTabViewModel(
       "applicationTab.assignedToMe",
       List(
         ApplicationsTab.atar(Paged(atars)),
         ApplicationsTab.liability(Paged(liabilities)),
         ApplicationsTab.correspondence(Paged(correspondence)),
-        ApplicationsTab.miscellaneous()
+        ApplicationsTab.miscellaneous(Paged(miscellaneous))
       )
     )
   }
@@ -83,13 +85,15 @@ object ApplicationsTab {
 
     val correspondence = referredCases.filter(_.application.isCorrespondence)
 
+    val miscellaneous = referredCases.filter(_.application.isMisc)
+
     ApplicationTabViewModel(
       "applicationTab.referredByMe",
       List(
         ApplicationsTab.atar(Paged(atars), Some(referralEvent)),
         ApplicationsTab.liability(Paged(liabilities), Some(referralEvent)),
         ApplicationsTab.correspondence(Paged(correspondence)),
-        ApplicationsTab.miscellaneous()
+        ApplicationsTab.miscellaneous(Paged(miscellaneous))
       )
     )
   }
@@ -115,6 +119,7 @@ object ApplicationsTab {
 
     val correspondenceCases = gatewayCases.filter(_.application.isCorrespondence)
 
+    val miscellaneous = gatewayCases.filter(_.application.isMisc)
 
     ApplicationTabViewModel(
       "applicationTab.gateway",
@@ -122,7 +127,7 @@ object ApplicationsTab {
         ApplicationsTab.atar(Paged(atars)),
         ApplicationsTab.liability(Paged(liabilities)),
         ApplicationsTab.correspondence(Paged(correspondenceCases)),
-        ApplicationsTab.miscellaneous()
+        ApplicationsTab.miscellaneous(Paged(miscellaneous))
       )
     )
   }
