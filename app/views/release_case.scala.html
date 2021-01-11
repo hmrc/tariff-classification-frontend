@@ -51,7 +51,7 @@
             @select_queue_form(
                 form("queue"),
                 queues,
-                if(c.application.isCorrespondence) "release-case-queue" else "release-case",
+                if(c.application.isCorrespondence || c.application.isMisc) "release-case-queue" else "release-case",
                 routes.ReleaseCaseController.releaseCaseToQueue(c.reference),
                 routes.CaseController.get(c.reference).path
             )
