@@ -47,7 +47,7 @@
     @if(caseHeader.caseType == ApplicationType.CORRESPONDENCE) {
         <div id="contact-section" class="mb-1">
             <div class="bold">
-                Case source - @caseHeader.businessName
+                @messages("case.heading.correspondence.case_source", caseHeader.businessName.getOrElse(""))
             </div>
             <div class="bold">
                 @caseHeader.contact.email

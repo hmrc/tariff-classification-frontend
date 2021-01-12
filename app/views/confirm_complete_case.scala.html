@@ -20,7 +20,7 @@
 @import views.html.includes.main
 @import views.html.partials.{back_link, case_heading}
 @import models.ApplicationType
-@import models.viewmodels.{NoTabSelected, CorrespondenceTab, LiabilitiesTab, ATaRTab}
+@import models.viewmodels.{NoTabSelected, CorrespondenceTab, LiabilitiesTab, ATaRTab, MiscellaneousTab}
 
 @import views.html.components.success_panel
 @(c: Case)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
@@ -40,24 +40,24 @@
                 ATaRTab
             )
         } else if (c.application.`type` == ApplicationType.LIABILITY) {
-            @success_panel(
-                messages("case.completed.liability"),
-                "View liability cases",
-                LiabilitiesTab
-            )
+        @success_panel(
+            messages("case.completed.liability"),
+            "View liability cases",
+            LiabilitiesTab
+        )
 
         } else if (c.application.`type` == ApplicationType.CORRESPONDENCE) {
-            @success_panel(
-              messages("case.completed.correspondence"),
-              "View correspondence cases",
-                CorrespondenceTab
-            )
+        @success_panel(
+            messages("case.completed.correspondence"),
+            "View correspondence cases",
+            CorrespondenceTab
+        )
         } else {
-            @success_panel(
-                messages("case.completed.misc"),
-                "View miscellaneous cases",
-                CorrespondenceTab
-            )
+        @success_panel(
+            messages("case.completed.misc"),
+            "View miscellaneous cases",
+            MiscellaneousTab
+        )
         }
     </div>
 

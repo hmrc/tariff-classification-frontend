@@ -25,17 +25,17 @@
 
 @input_checkbox_group(
     field = form("reasons"),
-    legend = Some("Why are you referring this case?"),
+    legend = Some(messages("change_case_status.referred.check_box.heading")),
     options = Seq(
         CheckOption(
-            label = "To request a sample",
+            label = messages("change_case_status.referred.check_box.option_sample"),
             value = ReferralReason.REQUEST_SAMPLE.toString,
             checked = isChecked(
                 form("reasons[0]").value,
                 form("reasons[1]").value,
                 ReferralReason.REQUEST_SAMPLE.toString)),
         CheckOption(
-            label = "To request more information",
+            label = messages("change_case_status.referred.check_box.option_info"),
             value = ReferralReason.REQUEST_MORE_INFO.toString,
             isChecked(
                 form("reasons[0]").value,
