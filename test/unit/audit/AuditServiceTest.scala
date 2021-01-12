@@ -452,7 +452,7 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
       val payload = Map(
         "caseReference" -> miscCase.reference,
         "operatorId"    -> operator.id,
-        "message"       -> miscCase.application.asCorrespondence.messagesLogged.reverse.last.message
+        "message"       -> miscCase.application.asMisc.messagesLogged.reverse.last.message
       )
       verify(connector)
         .sendExplicitAudit(refEq("caseMessage"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
