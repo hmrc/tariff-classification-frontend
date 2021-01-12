@@ -49,7 +49,7 @@ class CreateMiscellaneousController @Inject()(
   private val form: Form[MiscApplication] = MiscellaneousForm.newMiscForm
   private val formTeamChoice: Form[String] = Form(
     mapping(
-      "choice" -> fieldNonEmpty("error.empty.queue")
+      "choice" -> fieldNonEmpty("error.empty.team")
     )(identity)(Some(_))
   )
 

@@ -25,10 +25,8 @@ object ReleaseCaseForm {
 
   val form: Form[String] = Form(
     mapping(
-      "queue" -> fieldNonEmpty("error.empty.queue")
+      "queue" -> fieldNonEmpty("error.empty.team")
     )(identity)(Some(_))
   )
-
-
 
 }
