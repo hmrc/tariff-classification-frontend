@@ -1078,6 +1078,6 @@ case.ownership.assign_case.view_case=View the case
 case.ownership.assign_case.back=Back to my cases
 
 case.change_status.move_back_to_team.heading=Move this case back to a team
-case.change_status.move_back_to_team.description=This case was previously assigned to the {0} team
+case.change_status.move_back_to_team.description=This case was previously assigned to the <span id="previous-queue">{0}</span> team
 
 

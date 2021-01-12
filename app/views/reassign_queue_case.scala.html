@@ -22,6 +22,7 @@
 @import views.html.includes.main
 @import views.html.partials.{case_heading, error_summary, back_link}
 @import models.viewmodels.NoTabSelected
+@import play.twirl.api.HtmlFormat
 
 @(c: Case, form: Form[String], queues: Seq[Queue], actualQueue: Option[Queue], originUrl: String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
@@ -36,7 +37,7 @@
     <div class="grid-row">
         <div class="column-full">
             <h2 class="heading-large mt-0">@messages("case.change_status.move_back_to_team.heading")</h2>
-            <p> @messages("case.change_status.move_back_to_team.description", actualQueue.map(_.name).getOrElse("")) </p>
+            <p> @Html(messages("case.change_status.move_back_to_team.description", HtmlFormat.escape(actualQueue.map(_.name).getOrElse("")))) </p>
 
             @select_queue_form(
                 form("queue"),
