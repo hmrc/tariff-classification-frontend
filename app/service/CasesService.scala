@@ -409,8 +409,14 @@ class CasesService @Inject() (
   def addMessage(original: Case, message: Message, operator: Operator)(
     implicit hc: HeaderCarrier
   ): Future[Case] = {
-    val applicationToUpdate = original.application.asCorrespondence
-      .copy(messagesLogged = message :: original.application.asCorrespondence.messagesLogged)
+    val applicationToUpdate = original.application.`type` match {
+      case CORRESPONDENCE =>
+        original.application.asCorrespondence
+          .copy(messagesLogged = message :: original.application.asCorrespondence.messagesLogged)
+      case MISCELLANEOUS =>
+        original.application.asMisc
+          .copy(messagesLogged = message :: original.application.asMisc.messagesLogged)
+    }
     val caseToUpdate = original.copy(application = applicationToUpdate)
     for {
       updated <- connector.updateCase(caseToUpdate)

@@ -440,6 +440,9 @@ object Cases {
   def aCorrespondenceCase(withModifier: (Case => Case)*): Case =
     withModifier.foldLeft(correspondenceCaseExample)((current: Case, modifier) => modifier.apply(current))
 
+  def aMiscellaneousCase(withModifier: (Case => Case)*): Case =
+    withModifier.foldLeft(miscellaneousCaseExample)((current: Case, modifier) => modifier.apply(current))
+
   def aLiabilityCase(withModifier: (Case => Case)*): Case =
     withModifier.foldLeft(liabilityCaseExample)((current: Case, modifier) => modifier.apply(current))
 
@@ -793,6 +796,24 @@ object Cases {
     None,
     None,
     corrApplicationExample,
+    None,
+    Seq(),
+    Set.empty,
+    Sample(),
+    Some(Instant.now()),
+    Some(5),
+    referredDaysElapsed = 0
+  )
+
+  val miscellaneousCaseExample : Case = Case (
+    "1",
+    CaseStatus.OPEN,
+    Instant.now(),
+    0,
+    None,
+    None,
+    None,
+    miscExample,
     None,
     Seq(),
     Set.empty,

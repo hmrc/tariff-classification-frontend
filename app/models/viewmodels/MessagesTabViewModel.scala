@@ -16,17 +16,18 @@
 
 package models.viewmodels
 
-import models.{Case, Message}
+import models.{ApplicationType, Case, Message}
 
 case class MessagesTabViewModel(
   caseReference: String,
-  messages : List[Message]
+  messages: List[Message]
 )
 
 object MessagesTabViewModel {
-  def fromCase(cse: Case): MessagesTabViewModel = {
-    val correspondenceApplication = cse.application.asCorrespondence
-    val messagesLogged: List[Message] = correspondenceApplication.messagesLogged
-    MessagesTabViewModel(cse.reference, messagesLogged)
+  def fromCase(cse: Case): MessagesTabViewModel = cse.application.`type` match {
+    case ApplicationType.CORRESPONDENCE =>
+      MessagesTabViewModel(cse.reference, cse.application.asCorrespondence.messagesLogged)
+    case ApplicationType.MISCELLANEOUS =>
+      MessagesTabViewModel(cse.reference, cse.application.asMisc.messagesLogged)
   }
 }
