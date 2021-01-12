@@ -24,6 +24,7 @@
 @import views.html.partials.{activity_details, messages_logged, attachments_details}
 @import models.viewmodels.miscellaneous.DetailsViewModel
 @import models.viewmodels.SampleStatusTabViewModel
+@import views.html.partials.miscellaneous_case_details
 
 @this(
         case_heading: views.html.v2.case_heading,
@@ -95,7 +96,7 @@
         </ul>
 
         <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="case_details_tab">
-@*//            @correspondence_case_details(caseDetailsTab)*@
+            @miscellaneous_case_details(caseDetailsTab)
         </div>
 
         <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="messages_tab">
