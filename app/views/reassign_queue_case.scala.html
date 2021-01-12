@@ -35,8 +35,8 @@
 
     <div class="grid-row">
         <div class="column-full">
-            <h2 class="heading-large mt-0">Move this case back to a queue</h2>
-            <p> This case was previously assigned to the <span id="previous-queue">@actualQueue.map(_.name).getOrElse("")</span> queue </p>
+            <h2 class="heading-large mt-0">@messages("case.change_status.move_back_to_team.heading")</h2>
+            <p> @messages("case.change_status.move_back_to_team.description", actualQueue.map(_.name).getOrElse("")) </p>
 
             @select_queue_form(
                 form("queue"),
