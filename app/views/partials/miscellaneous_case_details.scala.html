@@ -21,15 +21,15 @@
 
 @(caseDetails: DetailsViewModel, startAtTabIndex: Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@tab_heading("miscellaneous", messages("case.v2.correspondence.case-details.heading"))
+@tab_heading("miscellaneous", messages("case.v2.miscellaneous.case-details.heading"))
 
 @if(request.hasPermission(Permission.EDIT_MISCELLANEOUS)) {
-<div id="edit-correspondence-details" class="grid-row mb-2">
+<div id="edit-miscellaneous-details" class="grid-row mb-2">
             <span class="column-one-third">
-                <a id="edit-correspondence-details-link" href="#">
+                <a id="edit-miscellaneous-details-link" href="#">
                     @*TODO: Add href call when relevant ticket is done
 @*                href="@controllers.routes.CreateMiscellaneousController.editMiscellaneous(caseDetails.caseReference)">*@
-                @messages("case.v2.correspondence.case-details_title")
+                @messages("case.v2.miscellaneous.case-details_title")
                 </a>
             </span>
 </div>
@@ -39,34 +39,34 @@
 
     <div id="case-details-name" class="grid-row">
         <dt class="cya-question">
-        @messages("case.v2.correspondence.case-details.case-name")
+        @messages("case.v2.miscellaneous.case-details.case-name")
         </dt>
         <dd class="cya-answer" id="case-name">
            <span class="pre-wrap">@caseDetails.caseName</span>
         </dd>
     </div>
 
+    <div id="case-details-case-type" class="grid-row">
+        <dt class="cya-question">
+            @messages("case.v2.miscellaneous.case-details.case-type")
+        </dt>
+        <dd class="cya-answer" id="case-type">
+            <span class="pre-wrap">@caseDetails.caseType</span>
+        </dd>
+    </div>
+
     <div id="case-details-date-created" class="grid-row">
         <dt class="cya-question">
-        @messages("case.v2.correspondence.case-details.date_created")
+        @messages("case.v2.miscellaneous.case-details.date_created")
         </dt>
         <dd class="cya-answer" id="date-created">
             <span class="pre-wrap">@caseDetails.caseCreatedDate</span>
         </dd>
     </div>
 
-       <div id="case-details-case-type" class="grid-row">
-            <dt class="cya-question">
-            @messages("case.v2.correspondence.case-details.case-type")
-            </dt>
-            <dd class="cya-answer" id="case-type">
-                <span class="pre-wrap">@caseDetails.caseType</span>
-            </dd>
-        </div>
-
     <div id="case-details-detailed-description" class="grid-row">
         <dt class="cya-question">
-        @messages("case.v2.correspondence.case-details.detailed_description")
+        @messages("case.v2.miscellaneous.case-details.detailed_description")
         </dt>
         <dd class="cya-answer" id="detailed-description">
             <span class="pre-wrap">@caseDetails.detailedDescription</span>
@@ -76,14 +76,12 @@
 
     <div id="case-details-boards-file-number" class="grid-row">
         <dt class="cya-question" id="boards-file-number-label">
-        @messages("case.v2.correspondence.case-details.boards_file_number")
+        @messages("case.v2.miscellaneous.case-details.boards_file_number")
         </dt>
         <dd class="cya-answer" id="boards-file-number">
             <span class="pre-wrap">@caseDetails.caseBoardsFileNumber</span>
         </dd>
     </div>
-
-
 
 </dl>
 

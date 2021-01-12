@@ -769,7 +769,7 @@ object Cases {
     "name",
     None,
     MiscCaseType.HARMONISED,
-    None,
+    Some("A detailed description"),
     sampleToBeProvided = false,
     sampleToBeReturned = false
   )
@@ -810,7 +810,7 @@ object Cases {
     CaseStatus.OPEN,
     Instant.now(),
     0,
-    None,
+    Some("SOC/554/2015/JN"),
     None,
     None,
     miscExample,

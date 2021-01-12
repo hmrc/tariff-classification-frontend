@@ -52,7 +52,7 @@
 
 @main(
     bodyClasses = None,
-    customTitle = Some(messages("case.v2.correspondence.page_title")),
+    customTitle = Some(messages("case.v2.miscellaneous.page_title")),
     customPrimaryNavTab = MyCasesTab
 ) {
     @case_heading(caseViewModel.caseHeader)
@@ -66,31 +66,31 @@
         <ul class="govuk-tabs__list">
             <li class="govuk-tabs__list-item">
                 <a class="govuk-tabs__tab" href="#case_details_tab">
-                @messages("case.v2.correspondence.case-details.tab_title")
+                @messages("case.v2.miscellaneous.case-details.tab_title")
                 </a>
             </li>
 
             <li class="govuk-tabs__list-item">
                 <a class="govuk-tabs__tab" href="#messages_tab">
-                @messages("case.v2.correspondence.messages.tab_title")
+                @messages("case.v2.miscellaneous.messages.tab_title")
                 </a>
             </li>
 
             <li class="govuk-tabs__list-item">
                 <a class="govuk-tabs__tab" href="#sample_status_tab">
-                @messages("case.v2.correspondence.samples.tab_title")
+                @messages("case.v2.miscellaneous.samples.tab_title")
                 </a>
             </li>
 
             <li class="govuk-tabs__list-item">
                 <a class="govuk-tabs__tab" href="#attachments_tab">
-                @messages("case.v2.correspondence.attachments.tab_title")
+                @messages("case.v2.miscellaneous.attachments.tab_title")
                 </a>
             </li>
 
             <li class="govuk-tabs__list-item">
                 <a class="govuk-tabs__tab" href="#activity_tab">
-                @messages("case.v2.correspondence.activity.tab_title")
+                @messages("case.v2.miscellaneous.activity.tab_title")
                 </a>
             </li>
         </ul>
