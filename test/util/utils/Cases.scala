@@ -452,7 +452,7 @@ object Cases {
   def withCorrespondenceApplication: Case => Case =
     _.copy(application = corrApplicationExample)
 
-  def withMiscellaneousApplcation: Case => Case =
+  def withMiscellaneousApplication: Case => Case =
     _.copy(application = miscExample)
 
   def withLiabilityApplication(

@@ -350,16 +350,24 @@ class CasesService @Inject() (
   def getCasesByQueue(
     queue: Queue,
     pagination: Pagination,
-    forTypes: Seq[ApplicationType] =
-      Seq(ApplicationType.ATAR, ApplicationType.LIABILITY, ApplicationType.CORRESPONDENCE)
+    forTypes: Seq[ApplicationType] = Seq(
+      ApplicationType.ATAR,
+      ApplicationType.LIABILITY,
+      ApplicationType.CORRESPONDENCE,
+      ApplicationType.MISCELLANEOUS
+    )
   )(implicit hc: HeaderCarrier): Future[Paged[Case]] =
     connector.findCasesByQueue(queue, pagination, forTypes)
 
   def getCasesByAllQueues(
     queue: Seq[Queue],
     pagination: Pagination,
-    forTypes: Seq[ApplicationType] =
-      Seq(ApplicationType.ATAR, ApplicationType.LIABILITY, ApplicationType.CORRESPONDENCE)
+    forTypes: Seq[ApplicationType] = Seq(
+      ApplicationType.ATAR,
+      ApplicationType.LIABILITY,
+      ApplicationType.CORRESPONDENCE,
+      ApplicationType.MISCELLANEOUS
+    )
   )(implicit hc: HeaderCarrier): Future[Paged[Case]] =
     connector.findCasesByAllQueues(queue, pagination, forTypes)
 

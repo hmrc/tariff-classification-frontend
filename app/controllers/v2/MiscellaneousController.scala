@@ -21,7 +21,6 @@ import controllers.RequestActions
 import models.forms._
 import models.request._
 import models.viewmodels.atar._
-import models.viewmodels.correspondence.CaseDetailsViewModel
 import models.viewmodels.miscellaneous.DetailsViewModel
 import models.viewmodels.{ActivityViewModel, CaseViewModel, MessagesTabViewModel, SampleStatusTabViewModel}
 import models.{Case, EventType, NoPagination}
@@ -36,7 +35,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class MiscellaneousController @Inject()(
+class MiscellaneousController @Inject() (
   verify: RequestActions,
   eventsService: EventsService,
   queuesService: QueuesService,
@@ -57,23 +56,23 @@ class MiscellaneousController @Inject()(
     uploadForm: Form[String]             = UploadAttachmentForm.form
   )(implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
     val miscellaneousCase: Case         = request.`case`
-    val correspondenceViewModel          = CaseViewModel.fromCase(miscellaneousCase, request.operator)
-    val caseDetailsTab                   = DetailsViewModel.fromCase(miscellaneousCase)
-    val messagesTab                      = MessagesTabViewModel.fromCase(miscellaneousCase)
-    val attachmentsTabViewModel          = getAttachmentTab(miscellaneousCase)
-    val activityTabViewModel             = getActivityTab(miscellaneousCase)
-    val storedAttachments                = fileService.getAttachments(miscellaneousCase)
-    val correspondenceSampleTabViewModel = getSampleTab(miscellaneousCase)
+    val miscellaneousViewModel          = CaseViewModel.fromCase(miscellaneousCase, request.operator)
+    val caseDetailsTab                  = DetailsViewModel.fromCase(miscellaneousCase)
+    val messagesTab                     = MessagesTabViewModel.fromCase(miscellaneousCase)
+    val attachmentsTabViewModel         = getAttachmentTab(miscellaneousCase)
+    val activityTabViewModel            = getActivityTab(miscellaneousCase)
+    val storedAttachments               = fileService.getAttachments(miscellaneousCase)
+    val miscellaneousSampleTabViewModel = getSampleTab(miscellaneousCase)
 
     for {
       attachmentsTab <- attachmentsTabViewModel
       activityTab    <- activityTabViewModel
       attachments    <- storedAttachments
-      sampleTab      <- correspondenceSampleTabViewModel
+      sampleTab      <- miscellaneousSampleTabViewModel
 
     } yield Ok(
       miscellaneousView(
-        correspondenceViewModel,
+        miscellaneousViewModel,
         caseDetailsTab,
         messagesTab,
         messageForm,
@@ -87,23 +86,23 @@ class MiscellaneousController @Inject()(
     )
   }
 
-  private def getSampleTab(correspondenceCase: Case)(implicit request: AuthenticatedRequest[_]) =
-    eventsService.getFilteredEvents(correspondenceCase.reference, NoPagination(), Some(EventType.sampleEvents)).map {
-      sampleEvents => SampleStatusTabViewModel(correspondenceCase.reference, correspondenceCase.sample, sampleEvents)
+  private def getSampleTab(miscellaneousCase: Case)(implicit request: AuthenticatedRequest[_]) =
+    eventsService.getFilteredEvents(miscellaneousCase.reference, NoPagination(), Some(EventType.sampleEvents)).map {
+      sampleEvents => SampleStatusTabViewModel(miscellaneousCase.reference, miscellaneousCase.sample, sampleEvents)
     }
 
-  private def getAttachmentTab(correspondenceCase: Case)(implicit hc: HeaderCarrier): Future[AttachmentsTabViewModel] =
+  private def getAttachmentTab(miscellaneousCase: Case)(implicit hc: HeaderCarrier): Future[AttachmentsTabViewModel] =
     fileService
-      .getAttachments(correspondenceCase)
-      .map(attachments => AttachmentsTabViewModel.fromCase(correspondenceCase, attachments))
+      .getAttachments(miscellaneousCase)
+      .map(attachments => AttachmentsTabViewModel.fromCase(miscellaneousCase, attachments))
 
   private def getActivityTab(
-    correspondenceCase: Case
+    miscellaneousCase: Case
   )(implicit request: AuthenticatedRequest[_]): Future[ActivityViewModel] =
     for {
       events <- eventsService
-                 .getFilteredEvents(correspondenceCase.reference, NoPagination(), Some(EventType.nonSampleEvents))
+                 .getFilteredEvents(miscellaneousCase.reference, NoPagination(), Some(EventType.nonSampleEvents))
       queues <- queuesService.getAll
-    } yield ActivityViewModel.fromCase(correspondenceCase, events, queues)
+    } yield ActivityViewModel.fromCase(miscellaneousCase, events, queues)
 
 }

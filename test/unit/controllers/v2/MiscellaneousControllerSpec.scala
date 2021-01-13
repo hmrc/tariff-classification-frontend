@@ -17,7 +17,7 @@
 package controllers.v2
 
 import controllers.{ControllerBaseSpec, RequestActionsWithPermissions, SuccessfulRequestActions}
-import models.{Case, Event, EventType, Operator, Pagination, Permission, Queue, StoredAttachment}
+import models._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.BeforeAndAfterEach
@@ -26,12 +26,11 @@ import play.twirl.api.Html
 import service.{EventsService, FileStoreService, QueuesService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
-import utils.Cases.{aCase, pagedEvent, withMiscellaneousApplcation, withReference}
+import utils.Cases.{aCase, pagedEvent, withMiscellaneousApplication, withReference}
 import views.html.v2.miscellaneous_view
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import uk.gov.hmrc.http.HeaderCarrier
 
 class MiscellaneousControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
   private val queueService                       = mock[QueuesService]
@@ -73,7 +72,7 @@ class MiscellaneousControllerSpec extends ControllerBaseSpec with BeforeAndAfter
 
   "Miscellaneous Controller" should {
     "display miscellaneous case" in {
-      val c      = aCase(withReference("reference"), withMiscellaneousApplcation)
+      val c      = aCase(withReference("reference"), withMiscellaneousApplication)
       when(fileService.getAttachments(any[Case])(any[HeaderCarrier])) thenReturn (Future.successful(attachments))
       when(eventService.getFilteredEvents(any[String], any[Pagination], any[Option[Set[EventType.Value]]])(any[HeaderCarrier])) thenReturn Future(pagedEvent)
       when(queueService.getAll) thenReturn Future(queues)

@@ -17,14 +17,14 @@
 package connector
 
 import com.github.tomakehurst.wiremock.client.WireMock._
-import java.time.Instant
 import models._
 import org.apache.http.HttpStatus
 import play.api.libs.json.Json
+import uk.gov.hmrc.http.UpstreamErrorResponse
 import utils._
 
+import java.time.Instant
 import scala.concurrent.ExecutionContext.Implicits.global
-import uk.gov.hmrc.http.UpstreamErrorResponse
 
 class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQueueBuilder {
 
@@ -169,7 +169,12 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
     "get cases in all queues" in {
       val url = buildQueryUrlAllQueues(
-        types      = Seq(ApplicationType.ATAR, ApplicationType.LIABILITY, ApplicationType.CORRESPONDENCE, ApplicationType.MISCELLANEOUS),
+        types = Seq(
+          ApplicationType.ATAR,
+          ApplicationType.LIABILITY,
+          ApplicationType.CORRESPONDENCE,
+          ApplicationType.MISCELLANEOUS
+        ),
         statuses   = "NEW,OPEN,REFERRED,SUSPENDED",
         assigneeId = "none",
         queueIds   = Queues.allQueues.map(_.id),
@@ -332,9 +337,15 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
         commodityCode   = Some("comm-code"),
         decisionDetails = Some("decision-details"),
         status          = Some(Set(PseudoCaseStatus.OPEN, PseudoCaseStatus.LIVE)),
-        applicationType = Some(Set(ApplicationType.ATAR, ApplicationType.LIABILITY,
-                ApplicationType.CORRESPONDENCE, ApplicationType.MISCELLANEOUS)),
-        keywords        = Some(Set("K1", "K2"))
+        applicationType = Some(
+          Set(
+            ApplicationType.ATAR,
+            ApplicationType.LIABILITY,
+            ApplicationType.CORRESPONDENCE,
+            ApplicationType.MISCELLANEOUS
+          )
+        ),
+        keywords = Some(Set("K1", "K2"))
       )
 
       await(
@@ -495,7 +506,14 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
       )
 
       val search = Search(
-        applicationType = Some(Set(ApplicationType.ATAR, ApplicationType.LIABILITY, ApplicationType.CORRESPONDENCE, ApplicationType.MISCELLANEOUS))
+        applicationType = Some(
+          Set(
+            ApplicationType.ATAR,
+            ApplicationType.LIABILITY,
+            ApplicationType.CORRESPONDENCE,
+            ApplicationType.MISCELLANEOUS
+          )
+        )
       )
 
       await(

@@ -21,7 +21,12 @@ import models.{ApplicationType, Pagination}
 trait CaseQueueBuilder {
 
   def buildQueryUrl(
-    types: Seq[ApplicationType] = Seq(ApplicationType.ATAR, ApplicationType.LIABILITY, ApplicationType.CORRESPONDENCE),
+    types: Seq[ApplicationType] = Seq(
+      ApplicationType.ATAR,
+      ApplicationType.LIABILITY,
+      ApplicationType.CORRESPONDENCE,
+      ApplicationType.MISCELLANEOUS
+    ),
     withStatuses: String,
     queueId: String = "",
     assigneeId: String,
@@ -35,12 +40,17 @@ trait CaseQueueBuilder {
   }
 
   def buildQueryUrlAllQueues(
-                             types: Seq[ApplicationType] = Seq(ApplicationType.ATAR, ApplicationType.LIABILITY, ApplicationType.CORRESPONDENCE),
-                             statuses: String,
-                             queueIds: Seq[String],
-                             assigneeId: String,
-                             pagination: Pagination
-                           ): String = {
+    types: Seq[ApplicationType] = Seq(
+      ApplicationType.ATAR,
+      ApplicationType.LIABILITY,
+      ApplicationType.CORRESPONDENCE,
+      ApplicationType.MISCELLANEOUS
+    ),
+    statuses: String,
+    queueIds: Seq[String],
+    assigneeId: String,
+    pagination: Pagination
+  ): String = {
     val sortBy = "application.type,application.status,days-elapsed"
     val queryString =
       s"/cases?application_type=${types.map(_.name).mkString(",")}&queue_id=${queueIds.mkString(",")}" +

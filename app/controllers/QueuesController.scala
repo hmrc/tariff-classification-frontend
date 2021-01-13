@@ -43,7 +43,14 @@ class QueuesController @Inject() (
     (verify.authenticated andThen verify.mustHave(Permission.VIEW_QUEUE_CASES)).async { implicit request =>
       val types: Seq[ApplicationType] = caseType
         .map(x => Seq[ApplicationType](ApplicationType.withName(x)))
-        .getOrElse(Seq(ApplicationType.ATAR, ApplicationType.LIABILITY, ApplicationType.CORRESPONDENCE))
+        .getOrElse(
+          Seq(
+            ApplicationType.ATAR,
+            ApplicationType.LIABILITY,
+            ApplicationType.CORRESPONDENCE,
+            ApplicationType.MISCELLANEOUS
+          )
+        )
 
       queuesService.getOneBySlug(slug) flatMap {
         case None => successful(Ok(views.html.resource_not_found()))
