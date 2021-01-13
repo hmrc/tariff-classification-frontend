@@ -36,7 +36,7 @@
     @if(c.application.isCorrespondence) {
         <div id="contact-section" class="mb-1">
             <div class="bold">
-                @messages("case.heading.correspondence.case_source", c.application.caseSource.getOrElse(""))
+                @c.application.caseSource.getOrElse("")
             </div>
             <div class="bold">
                 @c.application.contact.email

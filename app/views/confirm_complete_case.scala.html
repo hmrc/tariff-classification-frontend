@@ -36,12 +36,14 @@
         @if(c.application.`type` == ApplicationType.ATAR) {
             @success_panel(
                 messages("case.completed.atar"),
+                None,
                 "View ATaR cases",
                 ATaRTab
             )
         } else if (c.application.`type` == ApplicationType.LIABILITY) {
         @success_panel(
             messages("case.completed.liability"),
+            Some(messages("case.completed.email")),
             "View liability cases",
             LiabilitiesTab
         )
@@ -49,12 +51,14 @@
         } else if (c.application.`type` == ApplicationType.CORRESPONDENCE) {
         @success_panel(
             messages("case.completed.correspondence"),
+            None,
             "View correspondence cases",
             CorrespondenceTab
         )
         } else {
         @success_panel(
             messages("case.completed.misc"),
+            None,
             "View miscellaneous cases",
             MiscellaneousTab
         )
