@@ -390,16 +390,24 @@ class CasesService @Inject() (
   def getCasesByQueue(
     queue: Queue,
     pagination: Pagination,
-    forTypes: Seq[ApplicationType] =
-      Seq(ApplicationType.ATAR, ApplicationType.LIABILITY, ApplicationType.CORRESPONDENCE, ApplicationType.MISCELLANEOUS)
+    forTypes: Seq[ApplicationType] = Seq(
+      ApplicationType.ATAR,
+      ApplicationType.LIABILITY,
+      ApplicationType.CORRESPONDENCE,
+      ApplicationType.MISCELLANEOUS
+    )
   )(implicit hc: HeaderCarrier): Future[Paged[Case]] =
     connector.findCasesByQueue(queue, pagination, forTypes)
 
   def getCasesByAllQueues(
     queue: Seq[Queue],
     pagination: Pagination,
-    forTypes: Seq[ApplicationType] =
-      Seq(ApplicationType.ATAR, ApplicationType.LIABILITY, ApplicationType.CORRESPONDENCE, ApplicationType.MISCELLANEOUS)
+    forTypes: Seq[ApplicationType] = Seq(
+      ApplicationType.ATAR,
+      ApplicationType.LIABILITY,
+      ApplicationType.CORRESPONDENCE,
+      ApplicationType.MISCELLANEOUS
+    )
   )(implicit hc: HeaderCarrier): Future[Paged[Case]] =
     connector.findCasesByAllQueues(queue, pagination, forTypes)
 
@@ -592,9 +600,9 @@ class CasesService @Inject() (
     addEvent(original, updated, details, operator)
   }
 
-  private def addCaseCreatedEvent(liabilityCase: Case, operator: Operator)(implicit hc: HeaderCarrier): Future[Unit] = {
-    val details = CaseCreated("Liability case created")
-    addEvent(liabilityCase, liabilityCase, details, operator)
+  private def addCaseCreatedEvent(caseCreated: Case, operator: Operator)(implicit hc: HeaderCarrier): Future[Unit] = {
+    val details = CaseCreated(s"${caseCreated.application.`type`.prettyName} case created")
+    addEvent(caseCreated, caseCreated, details, operator)
   }
 
   private def extendedUseStatus: Case => Boolean =
