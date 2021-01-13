@@ -52,7 +52,12 @@ class SampleController @Inject() (
     implicit request: AuthenticatedRequest[_]
   ): Html =
     c.application.`type` match {
-      case ApplicationType.LIABILITY => views.html.change_liablity_sending_sample(c, notFilledForm)
+      case ApplicationType.LIABILITY =>
+        if (options.contains("liability")) {
+          views.html.change_liablity_sending_sample(c, notFilledForm)
+        } else {
+          views.html.change_sample_status(c, notFilledForm)
+        }
       case ApplicationType.CORRESPONDENCE => views.html.change_correspondence_sending_sample(c, notFilledForm)
       case _ =>       views.html.change_sample_status(c, notFilledForm)
     }

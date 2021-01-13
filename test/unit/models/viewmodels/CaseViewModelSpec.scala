@@ -17,9 +17,8 @@
 package models.viewmodels
 
 import java.time.Instant
-
 import models.CaseStatus.CaseStatus
-import models.{ApplicationType, CaseStatus, ModelsBaseSpec, Permission}
+import models.{ApplicationType, CaseStatus, Contact, ModelsBaseSpec, Permission}
 import utils.Cases
 
 class CaseViewModelSpec extends ModelsBaseSpec {
@@ -42,6 +41,8 @@ class CaseViewModelSpec extends ModelsBaseSpec {
       Some("trader-business-name"),
       "good-name",
       "1",
+      Some("case-source"),
+      Contact("name", "email@email.com"),
       CaseStatusViewModel(None, Some(StatusTagViewModel("CANCELLED", "red")), None)
     )
 
@@ -67,7 +68,7 @@ class CaseViewModelSpec extends ModelsBaseSpec {
   "showActionThisCase" should {
 
     "not show action this case button when isNewCase = false and hasPermissions = false" in {
-      buildLiabilityModel(status = CaseStatus.OPEN, hasPermissions = false).showActionThisCase shouldBe false
+      buildLiabilityModel(status = CaseStatus.OPEN).showActionThisCase shouldBe false
     }
 
     "not show action this case button when isNewCase = false and hasPermissions = true" in {
@@ -75,7 +76,7 @@ class CaseViewModelSpec extends ModelsBaseSpec {
     }
 
     "not show action this case button when isNewCase = true and hasPermissions = false" in {
-      buildLiabilityModel(status = CaseStatus.NEW, hasPermissions = false).showActionThisCase shouldBe false
+      buildLiabilityModel(status = CaseStatus.NEW).showActionThisCase shouldBe false
     }
 
     "show action this case button when isNewCase = true and hasPermissions = true" in {
@@ -173,6 +174,8 @@ class CaseViewModelSpec extends ModelsBaseSpec {
             Some("trader-business-name"),
             "good-name",
             "1",
+            None,
+            Contact("name", "email", Some("phone")),
             CaseStatusViewModel(
               None,
               Some(StatusTagViewModel("CANCELLED", "red")),
