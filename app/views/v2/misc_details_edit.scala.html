@@ -21,12 +21,13 @@
 @import views.html.includes.main
 @import models.LiabilityOrder
 @import views.html.components.confirm_or_cancel_buttons
-@import views.html.forms.components.input_text
+@import views.html.forms.components._
 @import models.LiabilityStatus
 @import views.html.partials.error_summary
 @import models.request.AuthenticatedRequest
 
 @this()
+
 @(c: Case, form : Form[Case])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("page.title.create_misc.h1"))) {

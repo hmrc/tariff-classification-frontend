@@ -24,23 +24,23 @@ import play.api.data.Forms._
 
 object MiscDetailsForm extends Constraints {
 
-  def miscDetailsForm(existingCorrespondence: Case): Form[Case] =
+  def miscDetailsForm(existingMisc: Case): Form[Case] =
     Form[Case](
       mapping[
         Case,
         String,
-        String,
+        Option[String],
         String
       ](
         "summary"             -> textNonEmpty("Enter a summary"),
-        "detailedDescription" -> text,
+        "detailedDescription" -> optional(text),
         "caseType"            -> oneOf("error.empty.miscCaseType", MiscCaseType)
-      )(form2Misc(existingCorrespondence))(misc2Form)
-    ).fillAndValidate(existingCorrespondence)
+      )(form2Misc(existingMisc))(misc2Form)
+    ).fillAndValidate(existingMisc)
 
   private def form2Misc(existingCase: Case): (
     String,
-    String,
+    Option[String],
     String
   ) => Case = {
     case (
@@ -51,20 +51,26 @@ object MiscDetailsForm extends Constraints {
       existingCase.copy(
         application = existingCase.application.asMisc.copy(
           name                = summary,
-          detailedDescription = Some(detailedDescription),
+          detailedDescription = (detailedDescription),
           caseType            = MiscCaseType.withName(caseType)
         )
       )
   }
 
-  private def misc2Form(existingCase: Case): Some[(String, Option[String], String)] = {
-    val existingCorrespondence = existingCase.application.asMisc
+  private def misc2Form(existingCase: Case): Option[
+    (
+      String,
+      Option[String],
+      String
+    )
+  ] = {
+    val existingMisc = existingCase.application.asMisc
 
     Some(
       (
-        existingCorrespondence.name,
-        existingCorrespondence.detailedDescription,
-        existingCorrespondence.caseType.toString
+        existingMisc.name,
+        existingMisc.detailedDescription,
+        existingMisc.caseType.toString
       )
     )
   }
