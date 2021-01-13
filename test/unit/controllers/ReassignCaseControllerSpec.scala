@@ -136,7 +136,7 @@ class ReassignCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
       status(result)        shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result)     shouldBe Some("utf-8")
-      bodyOf(result)        should include("Select a queue")
+      bodyOf(result)        should include("Select a team")
     }
 
     "return Not Found and HTML content type on missing Queue" in {

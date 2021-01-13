@@ -15,6 +15,7 @@
  *@
 
 @import config.AppConfig
+@import models.{BTIApplication, MiscApplication, Case, Queue}
 @import models.request.AuthenticatedRequest
 @import controllers.routes
 @import models.{BTIApplication, Case, Queue}
@@ -25,6 +26,7 @@
 @import models.viewmodels.CaseHeaderViewModel
 @import models.viewmodels.NoTabSelected
 @import views.html.partials.{error_summary, case_heading, back_link}
+@import views.html.components.confirm_or_cancel_buttons
 
 @this(case_heading: views.html.v2.case_heading)
 
@@ -36,21 +38,23 @@
 
     @error_summary(form.errors)
 
-    @defining(CaseHeaderViewModel.fromCase(c)) { caseHeader =>
-        @case_heading(caseHeader, headingText = Some(messages("release_case.header", caseHeader.goodsName)))
+    @if(c.application.isMisc) {
+        @defining(CaseHeaderViewModel.fromCase(c)) { caseHeader =>
+            @case_heading(caseHeader, headingText = Some(messages("choose.team.misc", caseHeader.goodsName)))}
+    } else {
+            @defining(CaseHeaderViewModel.fromCase(c)) { caseHeader =>
+                @case_heading(caseHeader, headingText = Some(messages("release_case.header", caseHeader.goodsName)))}
     }
 
     <div class="grid-row">
         <div class="column-full">
-
             @select_queue_form(
                 form("queue"),
                 queues,
-                if(c.application.isCorrespondence) "release-case-queue" else "release-case",
+                if(c.application.isCorrespondence || c.application.isMisc) "release-case-queue" else "release-case",
                 routes.ReleaseCaseController.releaseCaseToQueue(c.reference),
                 routes.CaseController.get(c.reference).path
             )
-
         </div>
     </div>
 }
