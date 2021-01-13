@@ -73,7 +73,7 @@ sealed trait Application {
       case ApplicationType.ATAR           => asATAR.goodName
       case ApplicationType.LIABILITY      => asLiabilityOrder.goodName.getOrElse("")
       case ApplicationType.CORRESPONDENCE => asCorrespondence.summary
-      case ApplicationType.MISCELLANEOUS => asMisc.detailedDescription.getOrElse("")
+      case ApplicationType.MISCELLANEOUS => asMisc.name
 
     }
 
