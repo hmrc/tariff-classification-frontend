@@ -61,7 +61,8 @@ class BindingTariffClassificationConnector @Inject() (
     }
 
   private def buildQueryUrl(
-    types: Seq[ApplicationType] = Seq(ApplicationType.ATAR, ApplicationType.LIABILITY, ApplicationType.CORRESPONDENCE),
+    types: Seq[ApplicationType] = Seq(ApplicationType.ATAR, ApplicationType.LIABILITY,
+          ApplicationType.CORRESPONDENCE, ApplicationType.MISCELLANEOUS),
     statuses: String,
     queueIds: Seq[String],
     assigneeId: String,
@@ -77,7 +78,8 @@ class BindingTariffClassificationConnector @Inject() (
   def findCasesByQueue(
     queue: Queue,
     pagination: Pagination,
-    types: Seq[ApplicationType] = Seq(ApplicationType.ATAR, ApplicationType.LIABILITY, ApplicationType.CORRESPONDENCE)
+    types: Seq[ApplicationType] = Seq(ApplicationType.ATAR, ApplicationType.LIABILITY,
+          ApplicationType.CORRESPONDENCE, ApplicationType.MISCELLANEOUS)
   )(implicit hc: HeaderCarrier): Future[Paged[Case]] =
     withMetricsTimerAsync("get-cases-by-queue") { _ =>
       val queueId = if (queue == Queues.gateway) "none" else queue.id
@@ -94,7 +96,7 @@ class BindingTariffClassificationConnector @Inject() (
   def findCasesByAllQueues(
                         queue: Seq[Queue],
                         pagination: Pagination,
-                        types: Seq[ApplicationType] = Seq(ApplicationType.ATAR, ApplicationType.LIABILITY, ApplicationType.CORRESPONDENCE)
+                        types: Seq[ApplicationType] = Seq(ApplicationType.ATAR, ApplicationType.LIABILITY, ApplicationType.CORRESPONDENCE, ApplicationType.MISCELLANEOUS)
                       )(implicit hc: HeaderCarrier): Future[Paged[Case]] =
     withMetricsTimerAsync("get-cases-by-queue") { _ =>
       val url = buildQueryUrl(

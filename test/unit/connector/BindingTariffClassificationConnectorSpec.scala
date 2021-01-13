@@ -169,7 +169,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
     "get cases in all queues" in {
       val url = buildQueryUrlAllQueues(
-        types      = Seq(ApplicationType.ATAR, ApplicationType.LIABILITY, ApplicationType.CORRESPONDENCE),
+        types      = Seq(ApplicationType.ATAR, ApplicationType.LIABILITY, ApplicationType.CORRESPONDENCE, ApplicationType.MISCELLANEOUS),
         statuses   = "NEW,OPEN,REFERRED,SUSPENDED",
         assigneeId = "none",
         queueIds   = Queues.allQueues.map(_.id),
@@ -312,6 +312,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
         s"&application_type=BTI" +
         s"&application_type=LIABILITY_ORDER" +
         s"&application_type=CORRESPONDENCE" +
+        s"&application_type=MISCELLANEOUS" +
         s"&keyword=K1" +
         s"&keyword=K2" +
         s"&page=1" +
@@ -331,7 +332,8 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
         commodityCode   = Some("comm-code"),
         decisionDetails = Some("decision-details"),
         status          = Some(Set(PseudoCaseStatus.OPEN, PseudoCaseStatus.LIVE)),
-        applicationType = Some(Set(ApplicationType.ATAR, ApplicationType.LIABILITY, ApplicationType.CORRESPONDENCE)),
+        applicationType = Some(Set(ApplicationType.ATAR, ApplicationType.LIABILITY,
+                ApplicationType.CORRESPONDENCE, ApplicationType.MISCELLANEOUS)),
         keywords        = Some(Set("K1", "K2"))
       )
 
@@ -481,7 +483,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
     "get cases by 'application type'" in {
       val url =
-        s"/cases?sort_direction=asc&sort_by=commodity-code&application_type=BTI&application_type=LIABILITY_ORDER&application_type=CORRESPONDENCE&page=1&page_size=2"
+        s"/cases?sort_direction=asc&sort_by=commodity-code&application_type=BTI&application_type=LIABILITY_ORDER&application_type=CORRESPONDENCE&application_type=MISCELLANEOUS&page=1&page_size=2"
 
       stubFor(
         get(urlEqualTo(url))
@@ -493,7 +495,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
       )
 
       val search = Search(
-        applicationType = Some(Set(ApplicationType.ATAR, ApplicationType.LIABILITY, ApplicationType.CORRESPONDENCE))
+        applicationType = Some(Set(ApplicationType.ATAR, ApplicationType.LIABILITY, ApplicationType.CORRESPONDENCE, ApplicationType.MISCELLANEOUS))
       )
 
       await(

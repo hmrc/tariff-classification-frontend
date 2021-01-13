@@ -45,10 +45,11 @@ object ApplicationsTab {
   def correspondence(searchResult: Paged[Case] = Paged.empty,
     referralEvent: Option[Map[String, ReferralCaseStatusChange]] = None
   ) =
-    ApplicationsTab("applicationTab.correspondence", ApplicationType.CORRESPONDENCE, "correspondence_tab", searchResult)
+    ApplicationsTab("applicationTab.correspondence", ApplicationType.CORRESPONDENCE, "correspondence_tab", searchResult, referralEvent)
 
-  def miscellaneous(searchResult: Paged[Case] = Paged.empty) =
-    ApplicationsTab("applicationTab.miscellaneous", ApplicationType.MISCELLANEOUS, "miscellaneous_tab", searchResult)
+  def miscellaneous(searchResult: Paged[Case] = Paged.empty,
+      referralEvent: Option[Map[String, ReferralCaseStatusChange]] = None) =
+    ApplicationsTab("applicationTab.miscellaneous", ApplicationType.MISCELLANEOUS, "miscellaneous_tab", searchResult, referralEvent)
 
   def assignedToMeCases(cases: Seq[Case]): ApplicationTabViewModel = {
 
@@ -93,7 +94,7 @@ object ApplicationsTab {
         ApplicationsTab.atar(Paged(atars), Some(referralEvent)),
         ApplicationsTab.liability(Paged(liabilities), Some(referralEvent)),
         ApplicationsTab.correspondence(Paged(correspondence)),
-        ApplicationsTab.miscellaneous(Paged(miscellaneous))
+        ApplicationsTab.miscellaneous(Paged(miscellaneous), Some(referralEvent))
       )
     )
   }
